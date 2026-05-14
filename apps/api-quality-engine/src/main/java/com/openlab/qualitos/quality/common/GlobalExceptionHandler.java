@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.common;
 
+import com.openlab.qualitos.quality.fives.FiveSAuditNotFoundException;
+import com.openlab.qualitos.quality.fives.FiveSStateException;
 import com.openlab.qualitos.quality.ishikawa.IshikawaCauseNotFoundException;
 import com.openlab.qualitos.quality.ishikawa.IshikawaDiagramNotFoundException;
 import com.openlab.qualitos.quality.ishikawa.IshikawaStateException;
@@ -84,6 +86,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/ishikawa-invalid-state"));
         problem.setTitle("Invalid Ishikawa State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(FiveSAuditNotFoundException.class)
+    public ProblemDetail handleFiveSNotFound(FiveSAuditNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/fives-audit-not-found"));
+        problem.setTitle("5S Audit Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(FiveSStateException.class)
+    public ProblemDetail handleFiveSState(FiveSStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/fives-invalid-state"));
+        problem.setTitle("Invalid 5S Audit State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
