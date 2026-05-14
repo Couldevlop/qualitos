@@ -1,5 +1,8 @@
 package com.openlab.qualitos.quality.common;
 
+import com.openlab.qualitos.quality.capa.CapaActionNotFoundException;
+import com.openlab.qualitos.quality.capa.CapaNotFoundException;
+import com.openlab.qualitos.quality.capa.CapaStateException;
 import com.openlab.qualitos.quality.fives.FiveSAuditNotFoundException;
 import com.openlab.qualitos.quality.fives.FiveSStateException;
 import com.openlab.qualitos.quality.ishikawa.IshikawaCauseNotFoundException;
@@ -104,6 +107,33 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/fives-invalid-state"));
         problem.setTitle("Invalid 5S Audit State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CapaNotFoundException.class)
+    public ProblemDetail handleCapaNotFound(CapaNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/capa-not-found"));
+        problem.setTitle("CAPA Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CapaActionNotFoundException.class)
+    public ProblemDetail handleCapaActionNotFound(CapaActionNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/capa-action-not-found"));
+        problem.setTitle("CAPA Action Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CapaStateException.class)
+    public ProblemDetail handleCapaState(CapaStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/capa-invalid-state"));
+        problem.setTitle("Invalid CAPA State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
