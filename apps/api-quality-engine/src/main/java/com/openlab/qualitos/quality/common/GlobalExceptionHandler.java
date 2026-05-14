@@ -3,6 +3,10 @@ package com.openlab.qualitos.quality.common;
 import com.openlab.qualitos.quality.capa.CapaActionNotFoundException;
 import com.openlab.qualitos.quality.capa.CapaNotFoundException;
 import com.openlab.qualitos.quality.capa.CapaStateException;
+import com.openlab.qualitos.quality.docs.DocumentCodeConflictException;
+import com.openlab.qualitos.quality.docs.DocumentNotFoundException;
+import com.openlab.qualitos.quality.docs.DocumentStateException;
+import com.openlab.qualitos.quality.docs.DocumentVersionNotFoundException;
 import com.openlab.qualitos.quality.fives.FiveSAuditNotFoundException;
 import com.openlab.qualitos.quality.fives.FiveSStateException;
 import com.openlab.qualitos.quality.ishikawa.IshikawaCauseNotFoundException;
@@ -134,6 +138,42 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/capa-invalid-state"));
         problem.setTitle("Invalid CAPA State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DocumentNotFoundException.class)
+    public ProblemDetail handleDocNotFound(DocumentNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/document-not-found"));
+        problem.setTitle("Document Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DocumentVersionNotFoundException.class)
+    public ProblemDetail handleVersionNotFound(DocumentVersionNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/document-version-not-found"));
+        problem.setTitle("Document Version Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DocumentStateException.class)
+    public ProblemDetail handleDocState(DocumentStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/document-invalid-state"));
+        problem.setTitle("Invalid Document State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DocumentCodeConflictException.class)
+    public ProblemDetail handleDocCodeConflict(DocumentCodeConflictException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/document-code-conflict"));
+        problem.setTitle("Document Code Conflict");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
