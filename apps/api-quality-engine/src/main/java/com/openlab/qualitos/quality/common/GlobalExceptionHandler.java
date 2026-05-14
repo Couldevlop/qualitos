@@ -1,5 +1,8 @@
 package com.openlab.qualitos.quality.common;
 
+import com.openlab.qualitos.quality.pdca.PdcaCycleNotFoundException;
+import com.openlab.qualitos.quality.pdca.PdcaStepNotFoundException;
+import com.openlab.qualitos.quality.pdca.PdcaStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -24,6 +27,33 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/missing-tenant"));
         problem.setTitle("Missing Tenant Context");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(PdcaCycleNotFoundException.class)
+    public ProblemDetail handleCycleNotFound(PdcaCycleNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/pdca-cycle-not-found"));
+        problem.setTitle("PDCA Cycle Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(PdcaStepNotFoundException.class)
+    public ProblemDetail handleStepNotFound(PdcaStepNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/pdca-step-not-found"));
+        problem.setTitle("PDCA Step Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(PdcaStateException.class)
+    public ProblemDetail handlePdcaState(PdcaStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/pdca-invalid-transition"));
+        problem.setTitle("Invalid PDCA State Transition");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
