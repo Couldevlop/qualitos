@@ -16,6 +16,12 @@ import com.openlab.qualitos.quality.fives.FiveSStateException;
 import com.openlab.qualitos.quality.ishikawa.IshikawaCauseNotFoundException;
 import com.openlab.qualitos.quality.ishikawa.IshikawaDiagramNotFoundException;
 import com.openlab.qualitos.quality.ishikawa.IshikawaStateException;
+import com.openlab.qualitos.quality.standards.AdoptionConflictException;
+import com.openlab.qualitos.quality.standards.AdoptionStateException;
+import com.openlab.qualitos.quality.standards.EvidenceNotFoundException;
+import com.openlab.qualitos.quality.standards.RequirementNotFoundException;
+import com.openlab.qualitos.quality.standards.StandardNotFoundException;
+import com.openlab.qualitos.quality.standards.TenantStandardNotFoundException;
 import com.openlab.qualitos.quality.pdca.PdcaCycleNotFoundException;
 import com.openlab.qualitos.quality.pdca.PdcaStepNotFoundException;
 import com.openlab.qualitos.quality.pdca.PdcaStateException;
@@ -214,6 +220,60 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/audit-invalid-state"));
         problem.setTitle("Invalid Audit State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(StandardNotFoundException.class)
+    public ProblemDetail handleStandardNotFound(StandardNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/standard-not-found"));
+        problem.setTitle("Standard Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(TenantStandardNotFoundException.class)
+    public ProblemDetail handleTenantStandardNotFound(TenantStandardNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/tenant-standard-not-found"));
+        problem.setTitle("Tenant Standard Adoption Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(RequirementNotFoundException.class)
+    public ProblemDetail handleRequirementNotFound(RequirementNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/standard-requirement-not-found"));
+        problem.setTitle("Standard Requirement Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(EvidenceNotFoundException.class)
+    public ProblemDetail handleEvidenceNotFound(EvidenceNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/requirement-evidence-not-found"));
+        problem.setTitle("Requirement Evidence Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AdoptionConflictException.class)
+    public ProblemDetail handleAdoptionConflict(AdoptionConflictException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/adoption-conflict"));
+        problem.setTitle("Adoption Conflict");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AdoptionStateException.class)
+    public ProblemDetail handleAdoptionState(AdoptionStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/adoption-invalid-state"));
+        problem.setTitle("Invalid Adoption State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
