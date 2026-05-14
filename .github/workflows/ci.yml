@@ -150,13 +150,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: 'apps/web/.nvmrc'
-          cache: 'npm'
-          cache-dependency-path: 'apps/web/package-lock.json'
+          # Le cache npm exige un lockfile committé. Tant que apps/web/package-lock.json
+          # n'existe pas dans le repo (bootstrap initial — install local impossible, cf.
+          # ETIMEDOUT), on désactive le cache pour éviter l'erreur "Some specified paths
+          # were not resolved". À ré-activer dans la PR suivante une fois le lockfile
+          # généré par la CI et committé (cache: 'npm', cache-dependency-path: ...).
 
       - name: Install dependencies
         run: |
           if [ -f package-lock.json ]; then
-            npm ci
+            npm ci --no-audit --no-fund
           else
             npm install --no-audit --no-fund
           fi
