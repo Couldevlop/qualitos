@@ -1,5 +1,9 @@
 package com.openlab.qualitos.quality.common;
 
+import com.openlab.qualitos.quality.audit.AuditChecklistItemNotFoundException;
+import com.openlab.qualitos.quality.audit.AuditFindingNotFoundException;
+import com.openlab.qualitos.quality.audit.AuditPlanNotFoundException;
+import com.openlab.qualitos.quality.audit.AuditStateException;
 import com.openlab.qualitos.quality.capa.CapaActionNotFoundException;
 import com.openlab.qualitos.quality.capa.CapaNotFoundException;
 import com.openlab.qualitos.quality.capa.CapaStateException;
@@ -174,6 +178,42 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/document-code-conflict"));
         problem.setTitle("Document Code Conflict");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AuditPlanNotFoundException.class)
+    public ProblemDetail handleAuditPlanNotFound(AuditPlanNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/audit-plan-not-found"));
+        problem.setTitle("Audit Plan Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AuditChecklistItemNotFoundException.class)
+    public ProblemDetail handleAuditChecklistNotFound(AuditChecklistItemNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/audit-checklist-item-not-found"));
+        problem.setTitle("Audit Checklist Item Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AuditFindingNotFoundException.class)
+    public ProblemDetail handleAuditFindingNotFound(AuditFindingNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/audit-finding-not-found"));
+        problem.setTitle("Audit Finding Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AuditStateException.class)
+    public ProblemDetail handleAuditState(AuditStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/audit-invalid-state"));
+        problem.setTitle("Invalid Audit State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
