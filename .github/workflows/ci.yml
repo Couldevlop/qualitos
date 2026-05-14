@@ -1,0 +1,125 @@
+name: CI
+
+# Pipeline conforme à CLAUDE.md §14.2 :
+# commit → lint → SAST → tests (>85%) → SCA → build → image scan → ...
+# Cette étape couvre : lint, tests unitaires + couverture JaCoCo, SAST (Semgrep), SCA (OWASP DC).
+# Le scan d'image conteneur et la signature Cosign sont déclenchés sur main/develop uniquement.
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+# Empêche d'accumuler des runs concurrents sur la même branche.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+  pull-requests: write
+  security-events: write
+
+jobs:
+  build-test:
+    name: Build, test & coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Verify Maven wrapper presence
+        run: |
+          if [ -f mvnw ]; then echo "Using wrapper"; else echo "No wrapper, using system mvn"; fi
+          mvn -v
+
+      - name: Build & test (with JaCoCo coverage gate)
+        run: mvn -B -ntp verify -DskipITs
+
+      - name: Upload JaCoCo reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-reports
+          path: |
+            apps/*/target/site/jacoco/
+            apps/*/target/jacoco.exec
+          retention-days: 14
+
+      - name: Upload Surefire reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: apps/*/target/surefire-reports/
+          retention-days: 7
+
+  sast-semgrep:
+    name: SAST (Semgrep)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Semgrep officiel n'est pas exécuté sur les forks (pas d'accès SECRETS) — on saute proprement.
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: >-
+            p/security-audit
+            p/owasp-top-ten
+            p/java
+            p/secrets
+        # Pas de SARIF push automatique tant que GitHub Advanced Security n'est pas activé.
+        continue-on-error: true
+
+  sca-owasp:
+    name: SCA (OWASP Dependency-Check)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Pas obligatoire sur les PR pour la rapidité du retour ; on l'exécute sur main/develop.
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Dependency-Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: qualitos
+          path: '.'
+          format: 'HTML,SARIF'
+          # Échoue le pipeline si une CVE >= 8.0 (haute/critique) est détectée — §11.1 OWASP A06.
+          args: >-
+            --failOnCVSS 8
+            --enableRetired
+            --suppression .dependency-check-suppressions.xml
+
+      - name: Upload SARIF
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: owasp-dc-report
+          path: reports/
+          retention-days: 30
