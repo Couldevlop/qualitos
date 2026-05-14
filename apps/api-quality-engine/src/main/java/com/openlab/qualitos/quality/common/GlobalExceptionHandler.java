@@ -1,5 +1,8 @@
 package com.openlab.qualitos.quality.common;
 
+import com.openlab.qualitos.quality.ishikawa.IshikawaCauseNotFoundException;
+import com.openlab.qualitos.quality.ishikawa.IshikawaDiagramNotFoundException;
+import com.openlab.qualitos.quality.ishikawa.IshikawaStateException;
 import com.openlab.qualitos.quality.pdca.PdcaCycleNotFoundException;
 import com.openlab.qualitos.quality.pdca.PdcaStepNotFoundException;
 import com.openlab.qualitos.quality.pdca.PdcaStateException;
@@ -54,6 +57,33 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/pdca-invalid-transition"));
         problem.setTitle("Invalid PDCA State Transition");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(IshikawaDiagramNotFoundException.class)
+    public ProblemDetail handleDiagramNotFound(IshikawaDiagramNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ishikawa-diagram-not-found"));
+        problem.setTitle("Ishikawa Diagram Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(IshikawaCauseNotFoundException.class)
+    public ProblemDetail handleCauseNotFound(IshikawaCauseNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ishikawa-cause-not-found"));
+        problem.setTitle("Ishikawa Cause Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(IshikawaStateException.class)
+    public ProblemDetail handleIshikawaState(IshikawaStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ishikawa-invalid-state"));
+        problem.setTitle("Invalid Ishikawa State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
