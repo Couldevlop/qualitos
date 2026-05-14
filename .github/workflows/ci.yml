@@ -90,8 +90,10 @@ jobs:
     name: SCA (OWASP Dependency-Check)
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    # Pas obligatoire sur les PR pour la rapidité du retour ; on l'exécute sur main/develop.
-    if: github.event_name == 'push'
+    # Exécuté sur main/develop uniquement (lent à cause du téléchargement de la base NVD).
+    # Désactivé tant que NVD_API_KEY n'est pas configuré dans les secrets repo (sinon
+    # le téléchargement NVD échoue depuis les changements 2024 côté NIST).
+    if: github.event_name == 'push' && vars.OWASP_DC_ENABLED == 'true'
 
     steps:
       - name: Checkout
@@ -109,17 +111,66 @@ jobs:
         with:
           project: qualitos
           path: '.'
-          format: 'HTML,SARIF'
+          # Un seul format à la fois (l'action ne gère pas la liste fiablement) — HTML lisible
+          # dans l'artefact uploadé. Pour SARIF, dupliquer l'étape avec format: SARIF.
+          format: 'HTML'
           # Échoue le pipeline si une CVE >= 8.0 (haute/critique) est détectée — §11.1 OWASP A06.
+          # --nvdApiKey est requis depuis le changement de quotas NVD en 2024.
+          # https://nvd.nist.gov/developers/request-an-api-key
           args: >-
             --failOnCVSS 8
             --enableRetired
+            --nvdApiKey ${{ secrets.NVD_API_KEY }}
             --suppression .dependency-check-suppressions.xml
 
-      - name: Upload SARIF
+      - name: Upload report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: owasp-dc-report
           path: reports/
           retention-days: 30
+
+  frontend-build:
+    name: Frontend build & tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # On ne lance le job que si le frontend a bougé (apps/web/**) ou sur main/develop.
+    if: github.event_name == 'push' || contains(toJSON(github.event.pull_request.changed_files), 'apps/web')
+
+    defaults:
+      run:
+        working-directory: apps/web
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: 'apps/web/.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: 'apps/web/package-lock.json'
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install --no-audit --no-fund
+          fi
+
+      - name: Build (production)
+        run: npm run build:prod
+
+      - name: Tests (Chrome headless)
+        run: npm test
+
+      - name: Upload build artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: apps/web/dist/qualitos-web
+          retention-days: 7

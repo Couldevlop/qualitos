@@ -55,12 +55,15 @@ logs/
 .DS_Store
 Thumbs.db
 
-# Node (for frontend, future)
+# Node (frontend)
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .npm
+.angular/
+apps/web/dist/
+apps/web/coverage/
 
 # Docker
 .dockerignore
