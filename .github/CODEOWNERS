@@ -1,0 +1,18 @@
+# Code owners — chaque modification dans ces zones requiert la review de l'owner.
+# Réf. CLAUDE.md §14.1 : 2 reviewers obligatoires sur PR.
+
+# Default
+*                                       @Couldevlop
+
+# Sécurité, build, CI/CD : sensible
+/.github/                               @Couldevlop
+/pom.xml                                @Couldevlop
+/CLAUDE.md                              @Couldevlop
+
+# Coeur multi-tenant / sécurité
+/apps/api-core/src/main/java/com/openlab/qualitos/core/security/    @Couldevlop
+/apps/api-core/src/main/java/com/openlab/qualitos/core/config/      @Couldevlop
+/apps/api-core/src/main/java/com/openlab/qualitos/core/tenant/      @Couldevlop
+
+# Migrations Flyway : double review obligatoire
+**/src/main/resources/db/migration/**   @Couldevlop

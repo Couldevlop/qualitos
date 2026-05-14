@@ -1,0 +1,247 @@
+package com.openlab.qualitos.quality.common;
+
+import com.openlab.qualitos.quality.audit.AuditChecklistItemNotFoundException;
+import com.openlab.qualitos.quality.audit.AuditFindingNotFoundException;
+import com.openlab.qualitos.quality.audit.AuditPlanNotFoundException;
+import com.openlab.qualitos.quality.audit.AuditStateException;
+import com.openlab.qualitos.quality.capa.CapaActionNotFoundException;
+import com.openlab.qualitos.quality.capa.CapaNotFoundException;
+import com.openlab.qualitos.quality.capa.CapaStateException;
+import com.openlab.qualitos.quality.docs.DocumentCodeConflictException;
+import com.openlab.qualitos.quality.docs.DocumentNotFoundException;
+import com.openlab.qualitos.quality.docs.DocumentStateException;
+import com.openlab.qualitos.quality.docs.DocumentVersionNotFoundException;
+import com.openlab.qualitos.quality.fives.FiveSAuditNotFoundException;
+import com.openlab.qualitos.quality.fives.FiveSStateException;
+import com.openlab.qualitos.quality.ishikawa.IshikawaCauseNotFoundException;
+import com.openlab.qualitos.quality.ishikawa.IshikawaDiagramNotFoundException;
+import com.openlab.qualitos.quality.ishikawa.IshikawaStateException;
+import com.openlab.qualitos.quality.pdca.PdcaCycleNotFoundException;
+import com.openlab.qualitos.quality.pdca.PdcaStepNotFoundException;
+import com.openlab.qualitos.quality.pdca.PdcaStateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.net.URI;
+import java.time.Instant;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler(MissingTenantContextException.class)
+    public ProblemDetail handleMissingTenant(MissingTenantContextException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/missing-tenant"));
+        problem.setTitle("Missing Tenant Context");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(PdcaCycleNotFoundException.class)
+    public ProblemDetail handleCycleNotFound(PdcaCycleNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/pdca-cycle-not-found"));
+        problem.setTitle("PDCA Cycle Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(PdcaStepNotFoundException.class)
+    public ProblemDetail handleStepNotFound(PdcaStepNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/pdca-step-not-found"));
+        problem.setTitle("PDCA Step Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(PdcaStateException.class)
+    public ProblemDetail handlePdcaState(PdcaStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/pdca-invalid-transition"));
+        problem.setTitle("Invalid PDCA State Transition");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(IshikawaDiagramNotFoundException.class)
+    public ProblemDetail handleDiagramNotFound(IshikawaDiagramNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ishikawa-diagram-not-found"));
+        problem.setTitle("Ishikawa Diagram Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(IshikawaCauseNotFoundException.class)
+    public ProblemDetail handleCauseNotFound(IshikawaCauseNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ishikawa-cause-not-found"));
+        problem.setTitle("Ishikawa Cause Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(IshikawaStateException.class)
+    public ProblemDetail handleIshikawaState(IshikawaStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ishikawa-invalid-state"));
+        problem.setTitle("Invalid Ishikawa State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(FiveSAuditNotFoundException.class)
+    public ProblemDetail handleFiveSNotFound(FiveSAuditNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/fives-audit-not-found"));
+        problem.setTitle("5S Audit Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(FiveSStateException.class)
+    public ProblemDetail handleFiveSState(FiveSStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/fives-invalid-state"));
+        problem.setTitle("Invalid 5S Audit State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CapaNotFoundException.class)
+    public ProblemDetail handleCapaNotFound(CapaNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/capa-not-found"));
+        problem.setTitle("CAPA Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CapaActionNotFoundException.class)
+    public ProblemDetail handleCapaActionNotFound(CapaActionNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/capa-action-not-found"));
+        problem.setTitle("CAPA Action Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CapaStateException.class)
+    public ProblemDetail handleCapaState(CapaStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/capa-invalid-state"));
+        problem.setTitle("Invalid CAPA State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DocumentNotFoundException.class)
+    public ProblemDetail handleDocNotFound(DocumentNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/document-not-found"));
+        problem.setTitle("Document Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DocumentVersionNotFoundException.class)
+    public ProblemDetail handleVersionNotFound(DocumentVersionNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/document-version-not-found"));
+        problem.setTitle("Document Version Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DocumentStateException.class)
+    public ProblemDetail handleDocState(DocumentStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/document-invalid-state"));
+        problem.setTitle("Invalid Document State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DocumentCodeConflictException.class)
+    public ProblemDetail handleDocCodeConflict(DocumentCodeConflictException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/document-code-conflict"));
+        problem.setTitle("Document Code Conflict");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AuditPlanNotFoundException.class)
+    public ProblemDetail handleAuditPlanNotFound(AuditPlanNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/audit-plan-not-found"));
+        problem.setTitle("Audit Plan Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AuditChecklistItemNotFoundException.class)
+    public ProblemDetail handleAuditChecklistNotFound(AuditChecklistItemNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/audit-checklist-item-not-found"));
+        problem.setTitle("Audit Checklist Item Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AuditFindingNotFoundException.class)
+    public ProblemDetail handleAuditFindingNotFound(AuditFindingNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/audit-finding-not-found"));
+        problem.setTitle("Audit Finding Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AuditStateException.class)
+    public ProblemDetail handleAuditState(AuditStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/audit-invalid-state"));
+        problem.setTitle("Invalid Audit State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ProblemDetail handleValidation(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = ex.getBindingResult().getFieldErrors().stream()
+                .collect(Collectors.toMap(
+                        FieldError::getField,
+                        fe -> fe.getDefaultMessage() != null ? fe.getDefaultMessage() : "Invalid value",
+                        (existing, replacement) -> existing
+                ));
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Validation failed");
+        problem.setType(URI.create("https://qualitos.io/errors/validation-failed"));
+        problem.setTitle("Validation Failed");
+        problem.setProperty("errors", errors);
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ProblemDetail handleGeneric(Exception ex) {
+        log.error("Unhandled exception", ex);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
+        problem.setType(URI.create("https://qualitos.io/errors/internal-error"));
+        problem.setTitle("Internal Server Error");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+}
