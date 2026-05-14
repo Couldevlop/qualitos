@@ -7,6 +7,11 @@ import com.openlab.qualitos.quality.audit.AuditStateException;
 import com.openlab.qualitos.quality.capa.CapaActionNotFoundException;
 import com.openlab.qualitos.quality.capa.CapaNotFoundException;
 import com.openlab.qualitos.quality.capa.CapaStateException;
+import com.openlab.qualitos.quality.circle.CircleMeetingNotFoundException;
+import com.openlab.qualitos.quality.circle.CircleMemberNotFoundException;
+import com.openlab.qualitos.quality.circle.CircleNotFoundException;
+import com.openlab.qualitos.quality.circle.CircleProposalNotFoundException;
+import com.openlab.qualitos.quality.circle.CircleStateException;
 import com.openlab.qualitos.quality.docs.DocumentCodeConflictException;
 import com.openlab.qualitos.quality.docs.DocumentNotFoundException;
 import com.openlab.qualitos.quality.docs.DocumentStateException;
@@ -274,6 +279,51 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/adoption-invalid-state"));
         problem.setTitle("Invalid Adoption State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CircleNotFoundException.class)
+    public ProblemDetail handleCircleNotFound(CircleNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/circle-not-found"));
+        problem.setTitle("Quality Circle Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CircleMemberNotFoundException.class)
+    public ProblemDetail handleCircleMemberNotFound(CircleMemberNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/circle-member-not-found"));
+        problem.setTitle("Circle Member Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CircleMeetingNotFoundException.class)
+    public ProblemDetail handleCircleMeetingNotFound(CircleMeetingNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/circle-meeting-not-found"));
+        problem.setTitle("Circle Meeting Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CircleProposalNotFoundException.class)
+    public ProblemDetail handleCircleProposalNotFound(CircleProposalNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/circle-proposal-not-found"));
+        problem.setTitle("Circle Proposal Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CircleStateException.class)
+    public ProblemDetail handleCircleState(CircleStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/circle-invalid-state"));
+        problem.setTitle("Invalid Quality Circle State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
