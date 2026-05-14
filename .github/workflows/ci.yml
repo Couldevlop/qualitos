@@ -135,8 +135,9 @@ jobs:
     name: Frontend build & tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # On ne lance le job que si le frontend a bougé (apps/web/**) ou sur main/develop.
-    if: github.event_name == 'push' || contains(toJSON(github.event.pull_request.changed_files), 'apps/web')
+    # NB: pas de condition sur les paths modifiés — la filter API
+    # `github.event.pull_request.changed_files` est un compteur, pas une liste.
+    # Si on voudra plus tard skipper sur les PR Java-only, utiliser dorny/paths-filter.
 
     defaults:
       run:
@@ -176,4 +177,16 @@ jobs:
         with:
           name: web-dist
           path: apps/web/dist/qualitos-web
+          retention-days: 7
+
+      # Permet de récupérer le lockfile généré par CI quand on l'a pas encore
+      # commité (cas du bootstrap initial). Une fois commité, ce step devient
+      # inutile mais reste sans danger (il ré-upload le même fichier).
+      - name: Upload package-lock.json (for initial commit)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-package-lock
+          path: apps/web/package-lock.json
+          if-no-files-found: warn
           retention-days: 7
