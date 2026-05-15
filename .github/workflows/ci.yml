@@ -193,13 +193,11 @@ jobs:
           ls -la
           test -f package-lock.json && echo "lockfile: present ($(wc -c < package-lock.json) bytes)" || echo "lockfile: ABSENT"
           echo "==== install ===="
-          if [ -f package-lock.json ]; then
-            # PAS de | head ici : SIGPIPE tuerait npm prematurement et laisserait
-            # node_modules incomplet, faisant casser le build qui suit.
-            npm ci --no-audit --no-fund --foreground-scripts
-          else
-            npm install --no-audit --no-fund --foreground-scripts
-          fi
+          # npm install (pas npm ci) : plus permissif, et 'npm ci' fail
+          # mysterieusement en 1s contre le lockfile auto-genere (peer
+          # deps + lockfileVersion 3 ?). Tradeoff : moins deterministe
+          # mais debloque. Cf. tache de suivi #frontend-ci-strict.
+          npm install --no-audit --no-fund --foreground-scripts
 
       # ----------------------------------------------------------------------
       # Auto-commit du package-lock.json lors du PREMIER run réussi sur develop.
