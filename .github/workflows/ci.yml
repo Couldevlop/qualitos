@@ -196,7 +196,11 @@ jobs:
       # Cf. CLAUDE.md §14.2 : reproductibilité builds via lockfile committé.
       # ----------------------------------------------------------------------
       - name: Commit package-lock.json (first run only)
-        if: |
+        # if: doit etre une expression unique (pas un literal block). Le precedent
+        # `if: |` cassait le parser YAML d'Actions, ce qui produisait un run avec
+        # zero job sur le commit suivant. >- (folded scalar) joint les lignes en
+        # une seule expression evaluable.
+        if: >-
           steps.lockfile.outputs.tracked == 'false' &&
           github.event_name == 'push' &&
           (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main')
