@@ -51,6 +51,9 @@ import com.openlab.qualitos.quality.change.ChangeStateException;
 import com.openlab.qualitos.quality.complaints.ComplaintNotFoundException;
 import com.openlab.qualitos.quality.complaints.ComplaintResponseNotFoundException;
 import com.openlab.qualitos.quality.complaints.ComplaintStateException;
+import com.openlab.qualitos.quality.calibration.CalibrationChildNotFoundException;
+import com.openlab.qualitos.quality.calibration.CalibrationEquipmentNotFoundException;
+import com.openlab.qualitos.quality.calibration.CalibrationStateException;
 import com.openlab.qualitos.quality.itsm.ItsmConnectionNotFoundException;
 import com.openlab.qualitos.quality.itsm.ItsmSyncException;
 import com.openlab.qualitos.quality.webhooks.WebhookDeliveryNotFoundException;
@@ -426,6 +429,33 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/webhook-invalid-state"));
         problem.setTitle("Invalid Webhook State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CalibrationEquipmentNotFoundException.class)
+    public ProblemDetail handleCalibrationEquipmentNotFound(CalibrationEquipmentNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/calibration-equipment-not-found"));
+        problem.setTitle("Calibration Equipment Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CalibrationChildNotFoundException.class)
+    public ProblemDetail handleCalibrationChildNotFound(CalibrationChildNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/calibration-child-not-found"));
+        problem.setTitle("Calibration Sub-Resource Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CalibrationStateException.class)
+    public ProblemDetail handleCalibrationState(CalibrationStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/calibration-invalid-state"));
+        problem.setTitle("Invalid Calibration State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
