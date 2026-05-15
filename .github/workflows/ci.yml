@@ -157,6 +157,11 @@ jobs:
           # were not resolved". À ré-activer dans la PR suivante une fois le lockfile
           # généré par la CI et committé (cache: 'npm', cache-dependency-path: ...).
 
+      - name: Install Chrome (for Karma headless tests)
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
       - name: Install dependencies
         run: |
           if [ -f package-lock.json ]; then
@@ -169,7 +174,21 @@ jobs:
         run: npm run build:prod
 
       - name: Tests (Chrome headless)
-        run: npm test
+        env:
+          # Karma utilise CHROME_BIN si défini, sinon il cherche dans le PATH.
+          CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
+        run: npm test -- --reporters=progress,kjhtml --browsers=ChromeHeadlessCI
+
+      - name: Upload Karma reports (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: karma-reports
+          path: |
+            apps/web/coverage/
+            apps/web/karma*.log
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Upload build artifact
         if: success()
