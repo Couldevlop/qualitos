@@ -183,22 +183,21 @@ jobs:
           fi
 
       - name: Install dependencies
-        shell: bash
+        # Sortie directe dans le log du step (visible dans l'UI Actions).
+        # Diagnostic prealable (versions + ls) pour eliminer les pistes triviales.
         run: |
-          set -o pipefail
+          echo "==== diag ===="
+          pwd
+          npm --version
+          node --version
+          ls -la
+          test -f package-lock.json && echo "lockfile: present ($(wc -c < package-lock.json) bytes)" || echo "lockfile: ABSENT"
+          echo "==== install ===="
           if [ -f package-lock.json ]; then
-            npm ci --no-audit --no-fund 2>&1 | tee install.log
+            npm ci --no-audit --no-fund --foreground-scripts
           else
-            npm install --no-audit --no-fund 2>&1 | tee install.log
+            npm install --no-audit --no-fund --foreground-scripts
           fi
-
-      - name: Dump install log on failure
-        if: failure()
-        shell: bash
-        run: |
-          echo "============ INSTALL LOG (tail 200) ============"
-          tail -200 install.log 2>/dev/null || echo "(no install.log captured)"
-          echo "============ END ============"
 
       # ----------------------------------------------------------------------
       # Auto-commit du package-lock.json lors du PREMIER run réussi sur develop.
