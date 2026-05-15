@@ -20,8 +20,13 @@ export class MainShellComponent {
   readonly user$: Observable<AuthUser | null>;
 
   readonly nav: NavItem[] = [
-    { label: 'Accueil', route: '/home', icon: 'dashboard' },
-    { label: 'PDCA', route: '/pdca', icon: 'autorenew' }
+    { label: 'Accueil',       route: '/home',      icon: 'dashboard' },
+    { label: 'PDCA',          route: '/pdca',      icon: 'autorenew' },
+    { label: 'Ishikawa',      route: '/ishikawa',  icon: 'account_tree' },
+    { label: '5S',            route: '/fives',     icon: 'check_circle' },
+    { label: 'CAPA',          route: '/capa',      icon: 'engineering' },
+    { label: 'Audits',        route: '/audits',    icon: 'fact_check' },
+    { label: 'Standards Hub', route: '/standards', icon: 'workspace_premium' }
   ];
 
   constructor(private readonly auth: AuthService) {

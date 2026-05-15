@@ -16,6 +16,26 @@ const routes: Routes = [
       {
         path: 'pdca',
         loadChildren: () => import('./features/pdca/pdca.module').then(m => m.PdcaModule)
+      },
+      {
+        path: 'ishikawa',
+        loadChildren: () => import('./features/ishikawa/ishikawa.module').then(m => m.IshikawaModule)
+      },
+      {
+        path: 'fives',
+        loadChildren: () => import('./features/fives/fives.module').then(m => m.FivesModule)
+      },
+      {
+        path: 'capa',
+        loadChildren: () => import('./features/capa/capa.module').then(m => m.CapaModule)
+      },
+      {
+        path: 'audits',
+        loadChildren: () => import('./features/audits/audits.module').then(m => m.AuditsModule)
+      },
+      {
+        path: 'standards',
+        loadChildren: () => import('./features/standards/standards.module').then(m => m.StandardsModule)
       }
     ]
   },
