@@ -35,6 +35,9 @@ import com.openlab.qualitos.quality.standards.TenantStandardNotFoundException;
 import com.openlab.qualitos.quality.industry.IndustryPackNotFoundException;
 import com.openlab.qualitos.quality.iot.IotDeviceNotFoundException;
 import com.openlab.qualitos.quality.iot.IotDeviceStateException;
+import com.openlab.qualitos.quality.risk.FmeaItemNotFoundException;
+import com.openlab.qualitos.quality.risk.FmeaProjectNotFoundException;
+import com.openlab.qualitos.quality.risk.FmeaStateException;
 import com.openlab.qualitos.quality.itsm.ItsmConnectionNotFoundException;
 import com.openlab.qualitos.quality.itsm.ItsmSyncException;
 import com.openlab.qualitos.quality.webhooks.WebhookDeliveryNotFoundException;
@@ -410,6 +413,33 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/webhook-invalid-state"));
         problem.setTitle("Invalid Webhook State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(FmeaProjectNotFoundException.class)
+    public ProblemDetail handleFmeaProjectNotFound(FmeaProjectNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/fmea-project-not-found"));
+        problem.setTitle("FMEA Project Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(FmeaItemNotFoundException.class)
+    public ProblemDetail handleFmeaItemNotFound(FmeaItemNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/fmea-item-not-found"));
+        problem.setTitle("FMEA Item Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(FmeaStateException.class)
+    public ProblemDetail handleFmeaState(FmeaStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/fmea-invalid-state"));
+        problem.setTitle("Invalid FMEA State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
