@@ -13,7 +13,7 @@
         <mat-card-subtitle>{{ m.description }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-actions>
-        <a mat-button color="primary" *ngIf="m.available" [routerLink]="m.route">Ouvrir</a>
+        <a mat-button color="primary" *ngIf="m.available && m.route" [routerLink]="m.route">Ouvrir</a>
         <span class="soon" *ngIf="!m.available">Bientôt</span>
       </mat-card-actions>
     </mat-card>
