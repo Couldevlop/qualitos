@@ -38,6 +38,9 @@ import com.openlab.qualitos.quality.iot.IotDeviceStateException;
 import com.openlab.qualitos.quality.risk.FmeaItemNotFoundException;
 import com.openlab.qualitos.quality.risk.FmeaProjectNotFoundException;
 import com.openlab.qualitos.quality.risk.FmeaStateException;
+import com.openlab.qualitos.quality.supplier.SupplierChildNotFoundException;
+import com.openlab.qualitos.quality.supplier.SupplierNotFoundException;
+import com.openlab.qualitos.quality.supplier.SupplierStateException;
 import com.openlab.qualitos.quality.itsm.ItsmConnectionNotFoundException;
 import com.openlab.qualitos.quality.itsm.ItsmSyncException;
 import com.openlab.qualitos.quality.webhooks.WebhookDeliveryNotFoundException;
@@ -413,6 +416,33 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/webhook-invalid-state"));
         problem.setTitle("Invalid Webhook State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(SupplierNotFoundException.class)
+    public ProblemDetail handleSupplierNotFound(SupplierNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/supplier-not-found"));
+        problem.setTitle("Supplier Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(SupplierChildNotFoundException.class)
+    public ProblemDetail handleSupplierChildNotFound(SupplierChildNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/supplier-child-not-found"));
+        problem.setTitle("Supplier Sub-Resource Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(SupplierStateException.class)
+    public ProblemDetail handleSupplierState(SupplierStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/supplier-invalid-state"));
+        problem.setTitle("Invalid Supplier State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
