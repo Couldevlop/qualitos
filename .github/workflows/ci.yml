@@ -235,7 +235,14 @@ jobs:
           git push origin "HEAD:${BRANCH}"
 
       - name: Build (production)
-        run: npm run build:prod
+        run: |
+          npm run build:prod 2>&1 | tee build.log
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            echo "::error::Build failed (exit $status). Tail of build.log:"
+            tail -200 build.log
+          fi
+          exit "$status"
 
       - name: Tests (Chrome headless)
         shell: bash
