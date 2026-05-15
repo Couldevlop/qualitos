@@ -32,6 +32,8 @@ import com.openlab.qualitos.quality.standards.EvidenceNotFoundException;
 import com.openlab.qualitos.quality.standards.RequirementNotFoundException;
 import com.openlab.qualitos.quality.standards.StandardNotFoundException;
 import com.openlab.qualitos.quality.standards.TenantStandardNotFoundException;
+import com.openlab.qualitos.quality.itsm.ItsmConnectionNotFoundException;
+import com.openlab.qualitos.quality.itsm.ItsmSyncException;
 import com.openlab.qualitos.quality.webhooks.WebhookDeliveryNotFoundException;
 import com.openlab.qualitos.quality.webhooks.WebhookStateException;
 import com.openlab.qualitos.quality.webhooks.WebhookSubscriptionNotFoundException;
@@ -405,6 +407,25 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/webhook-invalid-state"));
         problem.setTitle("Invalid Webhook State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ItsmConnectionNotFoundException.class)
+    public ProblemDetail handleItsmNotFound(ItsmConnectionNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/itsm-connection-not-found"));
+        problem.setTitle("ITSM Connection Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ItsmSyncException.class)
+    public ProblemDetail handleItsmSync(ItsmSyncException ex) {
+        // 502 = Bad Gateway : appel sortant vers ITSM en erreur.
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/itsm-sync-failed"));
+        problem.setTitle("ITSM Sync Failed");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
