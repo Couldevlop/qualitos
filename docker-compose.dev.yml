@@ -1,0 +1,150 @@
+# QualitOS — stack dev complète (Postgres + Keycloak + api-core + api-quality-engine + web).
+# Usage : docker compose -f docker-compose.dev.yml up --build
+# - http://localhost:4200      → frontend Angular
+# - http://localhost:8081      → api-core (Swagger /swagger-ui.html)
+# - http://localhost:8082      → api-quality-engine (Swagger /swagger-ui.html)
+# - http://localhost:8080      → Keycloak admin (admin/admin)
+# - localhost:5432 / 5433      → Postgres core / quality
+#
+# Bascule du frontend en mode 'real API' : éditer apps/web/src/environments/environment.ts
+# (useMockApi = false) avant le build, ou reconstruire avec le profil 'web-real'.
+
+services:
+
+  # -------------------------------------------------------------------------
+  # Postgres — 2 bases : qualitos_core (api-core) et qualitos_quality (engine).
+  # En dev on partage 1 cluster, 2 databases. En prod chaque service aura son
+  # propre cluster managé (RDS / Aurora / Cloud SQL).
+  # -------------------------------------------------------------------------
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: qualitos-postgres
+    environment:
+      POSTGRES_USER: qualitos
+      POSTGRES_PASSWORD: qualitos
+      POSTGRES_MULTIPLE_DATABASES: qualitos_core,qualitos_quality,keycloak
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./infra/postgres/init-multiple-databases.sh:/docker-entrypoint-initdb.d/init-multiple-databases.sh:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U qualitos"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [qualitos]
+
+  # -------------------------------------------------------------------------
+  # Keycloak — IdP OIDC. Realm 'qualitos' pré-seedé via realm-export.json.
+  # En dev on utilise le storage Postgres (au lieu de h2 in-memory) pour
+  # garder la config entre restarts.
+  # -------------------------------------------------------------------------
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0
+    container_name: qualitos-keycloak
+    command:
+      - start-dev
+      - --import-realm
+      - --hostname-strict=false
+      - --http-port=8080
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: qualitos
+      KC_DB_PASSWORD: qualitos
+      KC_HEALTH_ENABLED: "true"
+      KC_METRICS_ENABLED: "true"
+    volumes:
+      - ./infra/keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /health/ready HTTP/1.1\\nhost: localhost\\n\\n' >&3 && cat <&3 | grep -q '\"status\": \"UP\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+    networks: [qualitos]
+
+  # -------------------------------------------------------------------------
+  # api-core — multi-tenant + auth + users (Spring Boot, Java 21).
+  # -------------------------------------------------------------------------
+
+  api-core:
+    build:
+      context: .
+      dockerfile: apps/api-core/Dockerfile
+    container_name: qualitos-api-core
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/qualitos_core
+      DB_USER: qualitos
+      DB_PASSWORD: qualitos
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_REALM: qualitos
+      SPRING_PROFILES_ACTIVE: dev
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    networks: [qualitos]
+
+  # -------------------------------------------------------------------------
+  # api-quality-engine — 8 modules métier qualité (Spring Boot, Java 21).
+  # -------------------------------------------------------------------------
+
+  api-quality-engine:
+    build:
+      context: .
+      dockerfile: apps/api-quality-engine/Dockerfile
+    container_name: qualitos-api-quality-engine
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/qualitos_quality
+      DB_USER: qualitos
+      DB_PASSWORD: qualitos
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_REALM: qualitos
+      SPRING_PROFILES_ACTIVE: dev
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    networks: [qualitos]
+
+  # -------------------------------------------------------------------------
+  # web — frontend Angular servi en statique via nginx.
+  # En dev quotidien préférer 'npm start' direct (HMR). Ce service est utile
+  # pour les démos end-to-end et la validation prod-like.
+  # -------------------------------------------------------------------------
+
+  web:
+    build:
+      context: apps/web
+      dockerfile: Dockerfile
+    container_name: qualitos-web
+    ports:
+      - "4200:80"
+    depends_on:
+      - api-core
+      - api-quality-engine
+    networks: [qualitos]
+
+volumes:
+  postgres-data:
+
+networks:
+  qualitos:
+    driver: bridge
