@@ -8,6 +8,11 @@ import com.openlab.qualitos.quality.capa.CapaActionNotFoundException;
 import com.openlab.qualitos.quality.capa.CapaNotFoundException;
 import com.openlab.qualitos.quality.capa.CapaStateException;
 import com.openlab.qualitos.quality.circle.CircleMeetingNotFoundException;
+import com.openlab.qualitos.quality.dmaic.DmaicProjectNotFoundException;
+import com.openlab.qualitos.quality.dmaic.DmaicStateException;
+import com.openlab.qualitos.quality.dmaic.PokaYokeAssignmentNotFoundException;
+import com.openlab.qualitos.quality.dmaic.PokaYokeDeviceNotFoundException;
+import com.openlab.qualitos.quality.dmaic.ProcessMeasureNotFoundException;
 import com.openlab.qualitos.quality.circle.CircleMemberNotFoundException;
 import com.openlab.qualitos.quality.circle.CircleNotFoundException;
 import com.openlab.qualitos.quality.circle.CircleProposalNotFoundException;
@@ -324,6 +329,51 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/circle-invalid-state"));
         problem.setTitle("Invalid Quality Circle State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DmaicProjectNotFoundException.class)
+    public ProblemDetail handleDmaicProjectNotFound(DmaicProjectNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/dmaic-project-not-found"));
+        problem.setTitle("DMAIC Project Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ProcessMeasureNotFoundException.class)
+    public ProblemDetail handleProcessMeasureNotFound(ProcessMeasureNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/process-measure-not-found"));
+        problem.setTitle("Process Measure Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(PokaYokeDeviceNotFoundException.class)
+    public ProblemDetail handlePokaYokeDeviceNotFound(PokaYokeDeviceNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/pokayoke-device-not-found"));
+        problem.setTitle("Poka-Yoke Device Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(PokaYokeAssignmentNotFoundException.class)
+    public ProblemDetail handlePokaYokeAssignmentNotFound(PokaYokeAssignmentNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/pokayoke-assignment-not-found"));
+        problem.setTitle("Poka-Yoke Assignment Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DmaicStateException.class)
+    public ProblemDetail handleDmaicState(DmaicStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/dmaic-invalid-state"));
+        problem.setTitle("Invalid DMAIC State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
