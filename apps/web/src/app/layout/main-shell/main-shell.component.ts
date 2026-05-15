@@ -27,7 +27,8 @@ export class MainShellComponent {
     { label: '5S',              route: '/fives',     icon: 'check_circle' },
     { label: 'CAPA',            route: '/capa',      icon: 'engineering' },
     { label: 'Audits',          route: '/audits',    icon: 'fact_check' },
-    { label: 'Standards Hub',   route: '/standards', icon: 'workspace_premium' }
+    { label: 'Standards Hub',   route: '/standards', icon: 'workspace_premium' },
+    { label: 'Cercles Qualité', route: '/circles',   icon: 'groups' }
   ];
 
   constructor(private readonly auth: AuthService) {

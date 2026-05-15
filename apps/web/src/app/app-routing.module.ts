@@ -40,6 +40,10 @@ const routes: Routes = [
       {
         path: 'standards',
         loadChildren: () => import('./features/standards/standards.module').then(m => m.StandardsModule)
+      },
+      {
+        path: 'circles',
+        loadChildren: () => import('./features/circles/circles.module').then(m => m.CirclesModule)
       }
     ]
   },
