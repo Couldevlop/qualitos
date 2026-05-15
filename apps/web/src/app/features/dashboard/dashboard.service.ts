@@ -15,7 +15,7 @@ import { AlignmentBar, KpiCard } from './dashboard.types';
 export class DashboardService {
 
   getExecutiveKpis(): Observable<KpiCard[]> {
-    return of([
+    const data: KpiCard[] = [
       {
         id: 'coq',
         label: 'Coût d\'Obtention de la Qualité',
@@ -52,13 +52,15 @@ export class DashboardService {
         icon: 'workspace_premium',
         state: 'warn'
       }
-    ]).pipe(delay(150));
+    ];
+    return of(data).pipe(delay(150));
   }
 
   getAlignmentBars(): Observable<AlignmentBar[]> {
-    return of([
+    const data: AlignmentBar[] = [
       { standardCode: 'iso-9001', standardName: 'ISO 9001:2015', score: 76, status: 'IN_PROGRESS' },
       { standardCode: 'iso-27001', standardName: 'ISO/IEC 27001:2022', score: 42, status: 'PLANNING' }
-    ]).pipe(delay(150));
+    ];
+    return of(data).pipe(delay(150));
   }
 }
