@@ -1,0 +1,47 @@
+code: manufacturing
+name: Manufacturing / Industrie
+description: >
+  Pack sectoriel industrie manufacturière. Couvre les SMQ classiques (ISO 9001,
+  IATF 16949), les outils statistiques (SPC, Cp/Cpk), les processus APQP/PPAP et
+  les connecteurs MES/IoT shop-floor (OPC-UA, MQTT, Sparkplug B).
+version: '1.0.0'
+locale: fr-FR
+tags:
+  - manufacturing
+  - shop-floor
+  - automotive
+  - industrial
+standards:
+  - iso-9001
+  - iatf-16949
+kpis:
+  - oee
+  - first-pass-yield
+  - scrap-rate
+  - rework-rate
+  - customer-reject-rate-ppm
+  - mtbf
+  - mttr
+  - lpa-score
+connectors:
+  - opc-ua
+  - mqtt
+  - sparkplug-b
+  - modbus-tcp
+  - mes-generic
+templates:
+  workflows:
+    - capa-manufacturing-default
+    - audit-lpa-shopfloor
+  ishikawa:
+    - encombrement-atelier
+    - dérive-machine
+  poka-yoke:
+    - shingo-physical-fixture
+    - shingo-sequence-check
+glossary:
+  OEE: Overall Equipment Effectiveness — disponibilité × performance × qualité
+  PPAP: Production Part Approval Process (IATF 16949)
+  APQP: Advanced Product Quality Planning
+  Cpk: Indice de capabilité processus tenant compte du décentrage
+  SPC: Statistical Process Control

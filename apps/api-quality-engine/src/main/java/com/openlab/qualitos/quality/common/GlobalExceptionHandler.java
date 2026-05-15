@@ -32,6 +32,7 @@ import com.openlab.qualitos.quality.standards.EvidenceNotFoundException;
 import com.openlab.qualitos.quality.standards.RequirementNotFoundException;
 import com.openlab.qualitos.quality.standards.StandardNotFoundException;
 import com.openlab.qualitos.quality.standards.TenantStandardNotFoundException;
+import com.openlab.qualitos.quality.industry.IndustryPackNotFoundException;
 import com.openlab.qualitos.quality.itsm.ItsmConnectionNotFoundException;
 import com.openlab.qualitos.quality.itsm.ItsmSyncException;
 import com.openlab.qualitos.quality.webhooks.WebhookDeliveryNotFoundException;
@@ -407,6 +408,15 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/webhook-invalid-state"));
         problem.setTitle("Invalid Webhook State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(IndustryPackNotFoundException.class)
+    public ProblemDetail handleIndustryPackNotFound(IndustryPackNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/industry-pack-not-found"));
+        problem.setTitle("Industry Pack Not Found");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
