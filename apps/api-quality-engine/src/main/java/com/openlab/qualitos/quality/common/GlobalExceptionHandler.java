@@ -48,6 +48,9 @@ import com.openlab.qualitos.quality.training.TrainingStateException;
 import com.openlab.qualitos.quality.change.ChangeChildNotFoundException;
 import com.openlab.qualitos.quality.change.ChangeRequestNotFoundException;
 import com.openlab.qualitos.quality.change.ChangeStateException;
+import com.openlab.qualitos.quality.complaints.ComplaintNotFoundException;
+import com.openlab.qualitos.quality.complaints.ComplaintResponseNotFoundException;
+import com.openlab.qualitos.quality.complaints.ComplaintStateException;
 import com.openlab.qualitos.quality.itsm.ItsmConnectionNotFoundException;
 import com.openlab.qualitos.quality.itsm.ItsmSyncException;
 import com.openlab.qualitos.quality.webhooks.WebhookDeliveryNotFoundException;
@@ -423,6 +426,33 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/webhook-invalid-state"));
         problem.setTitle("Invalid Webhook State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ComplaintNotFoundException.class)
+    public ProblemDetail handleComplaintNotFound(ComplaintNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/complaint-not-found"));
+        problem.setTitle("Complaint Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ComplaintResponseNotFoundException.class)
+    public ProblemDetail handleComplaintResponseNotFound(ComplaintResponseNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/complaint-response-not-found"));
+        problem.setTitle("Complaint Response Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ComplaintStateException.class)
+    public ProblemDetail handleComplaintState(ComplaintStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/complaint-invalid-state"));
+        problem.setTitle("Invalid Complaint State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
