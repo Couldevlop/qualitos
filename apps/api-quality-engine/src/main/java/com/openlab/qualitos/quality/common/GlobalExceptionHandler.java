@@ -45,6 +45,9 @@ import com.openlab.qualitos.quality.training.EnrollmentNotFoundException;
 import com.openlab.qualitos.quality.training.SkillNotFoundException;
 import com.openlab.qualitos.quality.training.TrainingPathNotFoundException;
 import com.openlab.qualitos.quality.training.TrainingStateException;
+import com.openlab.qualitos.quality.change.ChangeChildNotFoundException;
+import com.openlab.qualitos.quality.change.ChangeRequestNotFoundException;
+import com.openlab.qualitos.quality.change.ChangeStateException;
 import com.openlab.qualitos.quality.itsm.ItsmConnectionNotFoundException;
 import com.openlab.qualitos.quality.itsm.ItsmSyncException;
 import com.openlab.qualitos.quality.webhooks.WebhookDeliveryNotFoundException;
@@ -420,6 +423,33 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/webhook-invalid-state"));
         problem.setTitle("Invalid Webhook State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ChangeRequestNotFoundException.class)
+    public ProblemDetail handleChangeRequestNotFound(ChangeRequestNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/change-request-not-found"));
+        problem.setTitle("Change Request Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ChangeChildNotFoundException.class)
+    public ProblemDetail handleChangeChildNotFound(ChangeChildNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/change-child-not-found"));
+        problem.setTitle("Change Sub-Resource Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ChangeStateException.class)
+    public ProblemDetail handleChangeState(ChangeStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/change-invalid-state"));
+        problem.setTitle("Invalid Change Request State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
