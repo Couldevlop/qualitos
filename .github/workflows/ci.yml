@@ -158,9 +158,17 @@ jobs:
           # généré par la CI et committé (cache: 'npm', cache-dependency-path: ...).
 
       - name: Install Chrome (for Karma headless tests)
+        id: setup-chrome
         uses: browser-actions/setup-chrome@v1
         with:
           chrome-version: stable
+
+      - name: Print Chrome info
+        shell: bash
+        run: |
+          which google-chrome || which chrome || which chromium-browser || true
+          google-chrome --version || true
+          echo "chrome-path=${{ steps.setup-chrome.outputs.chrome-path }}"
 
       - name: Install dependencies
         run: |
@@ -174,10 +182,15 @@ jobs:
         run: npm run build:prod
 
       - name: Tests (Chrome headless)
+        shell: bash
         env:
           # Karma utilise CHROME_BIN si défini, sinon il cherche dans le PATH.
           CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
-        run: npm test -- --reporters=progress,kjhtml --browsers=ChromeHeadlessCI
+        # tee sauve la sortie Karma dans un fichier qu'on upload en artefact.
+        # set -o pipefail garde l'exit code du process gauche du pipe.
+        run: |
+          set -o pipefail
+          npm test -- --reporters=progress,kjhtml --browsers=ChromeHeadlessCI 2>&1 | tee karma.log
 
       - name: Upload Karma reports (on failure)
         if: failure()
@@ -186,9 +199,17 @@ jobs:
           name: karma-reports
           path: |
             apps/web/coverage/
-            apps/web/karma*.log
+            apps/web/karma.log
           if-no-files-found: warn
           retention-days: 7
+
+      - name: Dump Karma log inline (failure)
+        if: failure()
+        shell: bash
+        run: |
+          echo "============ KARMA LOG ============"
+          tail -200 karma.log 2>/dev/null || echo "(no karma.log)"
+          echo "============ END ============"
 
       - name: Upload build artifact
         if: success()
