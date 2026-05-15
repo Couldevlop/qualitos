@@ -242,9 +242,18 @@ jobs:
           status=${PIPESTATUS[0]}
           if [ "$status" -ne 0 ]; then
             echo "::error::Build failed (exit $status). Tail of build.log:"
-            tail -200 build.log
+            tail -300 build.log
           fi
           exit "$status"
+
+      - name: Upload build.log (always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: apps/web/build.log
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Tests (Chrome headless)
         shell: bash
