@@ -41,6 +41,10 @@ import com.openlab.qualitos.quality.risk.FmeaStateException;
 import com.openlab.qualitos.quality.supplier.SupplierChildNotFoundException;
 import com.openlab.qualitos.quality.supplier.SupplierNotFoundException;
 import com.openlab.qualitos.quality.supplier.SupplierStateException;
+import com.openlab.qualitos.quality.training.EnrollmentNotFoundException;
+import com.openlab.qualitos.quality.training.SkillNotFoundException;
+import com.openlab.qualitos.quality.training.TrainingPathNotFoundException;
+import com.openlab.qualitos.quality.training.TrainingStateException;
 import com.openlab.qualitos.quality.itsm.ItsmConnectionNotFoundException;
 import com.openlab.qualitos.quality.itsm.ItsmSyncException;
 import com.openlab.qualitos.quality.webhooks.WebhookDeliveryNotFoundException;
@@ -416,6 +420,42 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/webhook-invalid-state"));
         problem.setTitle("Invalid Webhook State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(SkillNotFoundException.class)
+    public ProblemDetail handleSkillNotFound(SkillNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/training-skill-not-found"));
+        problem.setTitle("Skill Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(TrainingPathNotFoundException.class)
+    public ProblemDetail handleTrainingPathNotFound(TrainingPathNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/training-path-not-found"));
+        problem.setTitle("Training Path Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(EnrollmentNotFoundException.class)
+    public ProblemDetail handleEnrollmentNotFound(EnrollmentNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/training-enrollment-not-found"));
+        problem.setTitle("Training Enrollment Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(TrainingStateException.class)
+    public ProblemDetail handleTrainingState(TrainingStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/training-invalid-state"));
+        problem.setTitle("Invalid Training State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
