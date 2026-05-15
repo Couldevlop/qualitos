@@ -32,6 +32,9 @@ import com.openlab.qualitos.quality.standards.EvidenceNotFoundException;
 import com.openlab.qualitos.quality.standards.RequirementNotFoundException;
 import com.openlab.qualitos.quality.standards.StandardNotFoundException;
 import com.openlab.qualitos.quality.standards.TenantStandardNotFoundException;
+import com.openlab.qualitos.quality.webhooks.WebhookDeliveryNotFoundException;
+import com.openlab.qualitos.quality.webhooks.WebhookStateException;
+import com.openlab.qualitos.quality.webhooks.WebhookSubscriptionNotFoundException;
 import com.openlab.qualitos.quality.pdca.PdcaCycleNotFoundException;
 import com.openlab.qualitos.quality.pdca.PdcaStepNotFoundException;
 import com.openlab.qualitos.quality.pdca.PdcaStateException;
@@ -39,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -374,6 +378,46 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/dmaic-invalid-state"));
         problem.setTitle("Invalid DMAIC State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(WebhookSubscriptionNotFoundException.class)
+    public ProblemDetail handleWebhookSubscriptionNotFound(WebhookSubscriptionNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/webhook-subscription-not-found"));
+        problem.setTitle("Webhook Subscription Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(WebhookDeliveryNotFoundException.class)
+    public ProblemDetail handleWebhookDeliveryNotFound(WebhookDeliveryNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/webhook-delivery-not-found"));
+        problem.setTitle("Webhook Delivery Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(WebhookStateException.class)
+    public ProblemDetail handleWebhookState(WebhookStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/webhook-invalid-state"));
+        problem.setTitle("Invalid Webhook State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ProblemDetail handleNotReadable(HttpMessageNotReadableException ex) {
+        // Malformed JSON or unparseable request body (e.g. enum value not accepted).
+        // Renvoyer 400 Bad Request, conformément RFC 7807 §3.1.
+        Throwable root = ex.getMostSpecificCause();
+        String detail = root != null ? root.getMessage() : "Malformed request body";
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail);
+        problem.setType(URI.create("https://qualitos.io/errors/malformed-request"));
+        problem.setTitle("Malformed Request Body");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
