@@ -218,15 +218,11 @@ jobs:
             exit 0
           fi
           BRANCH="${GITHUB_REF#refs/heads/}"
-          git commit -m "chore(web): commit auto-generated package-lock.json
-
-CI-generated lockfile pour activer npm ci + cache (cf. CLAUDE.md §14.2
-reproductibilite). Une fois committe, ce step CI devient no-op.
-
-[skip ci]"
+          # Message single-line (multi-line casserait le block scalar YAML car
+          # les lignes du message ne seraient pas indentees au niveau du script).
           # [skip ci] dans le message coupe le trigger d'un nouveau run sur ce push.
-          # Si le hook anti-loop ne fonctionne pas, l'install detectera le lockfile
-          # et le step de commit sera skip via lockfile.tracked=true → pas d'infinite loop.
+          # Anti-loop redondant : aux runs suivants lockfile.tracked=true -> step skip.
+          git commit -m "chore(web): commit CI-generated package-lock.json [skip ci]"
           git push origin "HEAD:${BRANCH}"
 
       - name: Build (production)
