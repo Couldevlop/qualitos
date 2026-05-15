@@ -14,10 +14,10 @@
         <span class="num">{{ k.value | number:'1.0-1' }}</span>
         <span class="unit">{{ k.unit }}</span>
       </div>
-      <div class="kpi-trend" *ngIf="k.trend != null">
+      <div class="kpi-trend" *ngIf="k.trend !== undefined && k.trend !== null">
         <mat-icon [class]="trendClass(k.trend)">{{ trendIcon(k.trend) }}</mat-icon>
-        <span [class]="trendClass(k.trend)">{{ k.trend > 0 ? '+' : '' }}{{ k.trend | number:'1.0-1' }}</span>
-        <span class="target" *ngIf="k.target != null">cible {{ k.target }}{{ k.unit.startsWith('%') ? '%' : '' }}</span>
+        <span [class]="trendClass(k.trend)">{{ (k.trend > 0 ? '+' : '') + (k.trend | number:'1.0-1') }}</span>
+        <span class="target" *ngIf="k.target !== undefined && k.target !== null">cible {{ k.target }}{{ k.unit.startsWith('%') ? '%' : '' }}</span>
       </div>
       <p class="kpi-desc">{{ k.description }}</p>
     </mat-card>
