@@ -1,0 +1,40 @@
+/* QualitOS — global styles.
+ * Le thème Material 3 est pré-appliqué via "azure-blue.css" (angular.json).
+ * On surcharge ici les tokens propres au design system QualitOS.
+ */
+
+@use '@angular/material' as mat;
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--mat-sys-surface-container-lowest, #fafafa);
+  color: var(--mat-sys-on-surface, #1c1b1f);
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+}
+
+/* Utility */
+.qos-page {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.qos-stretch {
+  flex: 1 1 auto;
+}
+
+.qos-spacer {
+  flex: 1 1 auto;
+}

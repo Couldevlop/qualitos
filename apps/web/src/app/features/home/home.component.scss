@@ -1,0 +1,45 @@
+.hero {
+  padding: 32px 0;
+
+  h1 {
+    margin: 0 0 12px;
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    font-size: 16px;
+    color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6));
+    max-width: 720px;
+  }
+}
+
+.methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.method-card {
+  &.disabled {
+    opacity: 0.55;
+  }
+
+  mat-card-avatar {
+    background: var(--mat-sys-primary-container, rgba(25, 118, 210, 0.12));
+    color: var(--mat-sys-primary, #1976d2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .soon {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    background: var(--mat-sys-secondary-container, rgba(0, 0, 0, 0.06));
+    color: var(--mat-sys-on-secondary-container, rgba(0, 0, 0, 0.7));
+  }
+}

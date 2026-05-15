@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Suppressions OWASP Dependency-Check pour QualitOS.
+  Format : https://jeremylong.github.io/DependencyCheck/general/suppression.html
+
+  Politique : on n'ajoute une suppression QUE si la CVE est avérée non-exploitable
+  dans notre contexte d'usage, avec justification écrite et review obligatoire.
+
+  Exemple (à dé-commenter quand pertinent) :
+
+  <suppress>
+    <notes><![CDATA[
+      CVE-XXXX-YYYY : faux positif documenté, vulnérabilité du chemin server
+      alors qu'on n'utilise la lib qu'en mode client.
+      Reviewer : @Couldevlop — date : 2026-01-15
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/com\.example/foo@.*$</packageUrl>
+    <cve>CVE-XXXX-YYYY</cve>
+  </suppress>
+-->
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+</suppressions>

@@ -1,0 +1,21 @@
+<div class="qos-page">
+  <header class="hero">
+    <h1>One platform. Five methods. Every industry.</h1>
+    <p>QualitOS agrège les méthodes fondamentales de la qualité totale dans un référentiel unique,
+       augmenté par l'IA et certifié par blockchain.</p>
+  </header>
+
+  <section class="methods">
+    <mat-card *ngFor="let m of methods" class="method-card" [class.disabled]="!m.available">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>{{ m.icon }}</mat-icon>
+        <mat-card-title>{{ m.title }}</mat-card-title>
+        <mat-card-subtitle>{{ m.description }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-actions>
+        <a mat-button color="primary" *ngIf="m.available" [routerLink]="m.route">Ouvrir</a>
+        <span class="soon" *ngIf="!m.available">Bientôt</span>
+      </mat-card-actions>
+    </mat-card>
+  </section>
+</div>
