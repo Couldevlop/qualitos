@@ -32,7 +32,7 @@
   </div>
 
   <mat-card class="table-card" *ngIf="(loading$ | async) === false && (error$ | async) === null">
-    <table mat-table [dataSource]="cycles$ | async" class="cycles-table">
+    <table mat-table [dataSource]="(cycles$ | async) ?? []" class="cycles-table">
 
       <ng-container matColumnDef="title">
         <th mat-header-cell *matHeaderCellDef>Titre</th>
