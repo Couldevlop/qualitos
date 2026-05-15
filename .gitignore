@@ -83,3 +83,11 @@ apps/web/coverage/
 # Claude Code local settings
 .claude/settings.local.json
 .claude/projects/
+
+# Temp debug files (CI API queries, build/karma logs)
+/*.json
+!/package.json
+ci-remote.yml
+install.log
+karma.log
+karma.zip
