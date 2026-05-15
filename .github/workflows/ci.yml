@@ -183,12 +183,22 @@ jobs:
           fi
 
       - name: Install dependencies
+        shell: bash
         run: |
+          set -o pipefail
           if [ -f package-lock.json ]; then
-            npm ci --no-audit --no-fund
+            npm ci --no-audit --no-fund 2>&1 | tee install.log
           else
-            npm install --no-audit --no-fund
+            npm install --no-audit --no-fund 2>&1 | tee install.log
           fi
+
+      - name: Dump install log on failure
+        if: failure()
+        shell: bash
+        run: |
+          echo "============ INSTALL LOG (tail 200) ============"
+          tail -200 install.log 2>/dev/null || echo "(no install.log captured)"
+          echo "============ END ============"
 
       # ----------------------------------------------------------------------
       # Auto-commit du package-lock.json lors du PREMIER run réussi sur develop.
