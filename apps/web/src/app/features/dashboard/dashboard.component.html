@@ -1,0 +1,48 @@
+<div class="qos-page">
+  <header class="page-header">
+    <h1>Tableau de bord exécutif</h1>
+    <p>Vue stratégique — 8 à 12 KPIs sur une page (CLAUDE.md §7.1).</p>
+  </header>
+
+  <section class="kpi-grid">
+    <mat-card class="kpi-card" *ngFor="let k of kpis$ | async" [attr.data-state]="k.state">
+      <div class="kpi-head">
+        <mat-icon class="kpi-icon">{{ k.icon }}</mat-icon>
+        <span class="kpi-label">{{ k.label }}</span>
+      </div>
+      <div class="kpi-value">
+        <span class="num">{{ k.value | number:'1.0-1' }}</span>
+        <span class="unit">{{ k.unit }}</span>
+      </div>
+      <div class="kpi-trend" *ngIf="k.trend != null">
+        <mat-icon [class]="trendClass(k.trend)">{{ trendIcon(k.trend) }}</mat-icon>
+        <span [class]="trendClass(k.trend)">{{ k.trend > 0 ? '+' : '' }}{{ k.trend | number:'1.0-1' }}</span>
+        <span class="target" *ngIf="k.target != null">cible {{ k.target }}{{ k.unit.startsWith('%') ? '%' : '' }}</span>
+      </div>
+      <p class="kpi-desc">{{ k.description }}</p>
+    </mat-card>
+  </section>
+
+  <section class="alignment-section">
+    <h2>Alignement normatif</h2>
+    <mat-card class="alignment-card" *ngFor="let a of alignments$ | async">
+      <div class="alignment-head">
+        <div>
+          <strong>{{ a.standardName }}</strong>
+          <small>{{ a.standardCode }} · {{ a.status }}</small>
+        </div>
+        <span class="alignment-score"
+              [class.high]="a.score >= 85"
+              [class.mid]="a.score >= 60 && a.score < 85"
+              [class.low]="a.score < 60">{{ a.score }}%</span>
+      </div>
+      <div class="alignment-bar">
+        <span class="alignment-fill"
+              [class.high]="a.score >= 85"
+              [class.mid]="a.score >= 60 && a.score < 85"
+              [class.low]="a.score < 60"
+              [style.width.%]="a.score"></span>
+      </div>
+    </mat-card>
+  </section>
+</div>
