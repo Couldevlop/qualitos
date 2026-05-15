@@ -194,7 +194,9 @@ jobs:
           test -f package-lock.json && echo "lockfile: present ($(wc -c < package-lock.json) bytes)" || echo "lockfile: ABSENT"
           echo "==== install ===="
           if [ -f package-lock.json ]; then
-            npm ci --no-audit --no-fund --foreground-scripts --loglevel=verbose 2>&1 | head -300
+            # PAS de | head ici : SIGPIPE tuerait npm prematurement et laisserait
+            # node_modules incomplet, faisant casser le build qui suit.
+            npm ci --no-audit --no-fund --foreground-scripts
           else
             npm install --no-audit --no-fund --foreground-scripts
           fi
