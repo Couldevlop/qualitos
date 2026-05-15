@@ -29,9 +29,9 @@ export class HomeComponent {
       icon: 'fact_check', route: '/audits', available: true },
     { title: 'Standards Hub', description: 'Catalogue normatif + adoption + alignment',
       icon: 'workspace_premium', route: '/standards', available: true },
+    { title: 'Cercles Qualité', description: 'Groupes, réunions, propositions, mesure d\'impact',
+      icon: 'groups', route: '/circles', available: true },
     { title: 'DMAIC', description: 'Six Sigma — Define / Measure / Analyze / Improve / Control',
-      icon: 'science', available: false },
-    { title: 'Cercle Qualité', description: 'Groupes, réunions, propositions',
-      icon: 'group', available: false }
+      icon: 'science', available: false }
   ];
 }
