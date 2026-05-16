@@ -1,0 +1,46 @@
+code: it-itsm
+name: IT / ITSM / SaaS
+description: >
+  Pack sectoriel services IT / ITSM. Aligné ITIL 4 et ISO 20000 ; pousse les
+  pratiques SRE (error budgets) à côté du management classique de qualité de
+  service. Connecteurs ServiceNow, Jira Service Management natifs.
+version: '1.0.0'
+locale: fr-FR
+tags:
+  - it
+  - itsm
+  - saas
+  - sre
+standards:
+  - iso-20000-1
+  - iso-27001
+kpis:
+  - mttr-incidents
+  - mtbf-it
+  - sla-respect-rate
+  - first-call-resolution
+  - csat-support
+  - change-success-rate
+  - failed-changes
+  - sre-error-budget-consumption
+  - uptime-percent
+connectors:
+  - servicenow
+  - jira-sm
+  - prometheus
+  - elk
+templates:
+  workflows:
+    - capa-incident-postmortem
+    - change-management-itil
+  ishikawa:
+    - incident-recurrent-cause
+  poka-yoke:
+    - shingo-canary-deploy
+    - shingo-feature-flag
+glossary:
+  MTTR: Mean Time To Recover/Resolve
+  SLA: Service Level Agreement
+  FCR: First Call Resolution
+  Error budget: Budget d'indisponibilité accepté par SLO SRE
+  ITIL: Information Technology Infrastructure Library (v4)

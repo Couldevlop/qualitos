@@ -84,6 +84,21 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
                         <useModulePath>false</useModulePath>
+                        <!-- Parallélisation JUnit 5 *dans* le même fork.
+                             Évite les conflits multi-forks avec l'agent JaCoCo
+                             (qui écrit dans target/jacoco.exec) tout en
+                             réduisant le temps wall-clock des tests purement
+                             unitaires (domain/application). Les WebMvcTest
+                             (Spring) restent isolés via @Execution(SAME_THREAD)
+                             par défaut sous JUnit. -->
+                        <properties>
+                            <configurationParameters>
+                                junit.jupiter.execution.parallel.enabled=true
+                                junit.jupiter.execution.parallel.mode.default=same_thread
+                                junit.jupiter.execution.parallel.mode.classes.default=concurrent
+                                junit.jupiter.execution.parallel.config.strategy=dynamic
+                            </configurationParameters>
+                        </properties>
                     </configuration>
                 </plugin>
                 <plugin>

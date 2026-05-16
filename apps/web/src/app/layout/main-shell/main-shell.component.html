@@ -1,0 +1,37 @@
+<mat-sidenav-container class="shell-container">
+
+  <mat-sidenav #sidenav mode="side" opened class="shell-sidenav">
+    <div class="brand">
+      <span class="brand-logo material-symbols-outlined">workspace_premium</span>
+      <div class="brand-text">
+        <strong>QualitOS</strong>
+        <small>Quality Operating System</small>
+      </div>
+    </div>
+
+    <mat-nav-list>
+      <a mat-list-item *ngFor="let item of nav" [routerLink]="item.route" routerLinkActive="active">
+        <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+        <span matListItemTitle>{{ item.label }}</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary" class="shell-toolbar">
+      <button mat-icon-button (click)="sidenav.toggle()" aria-label="Toggle navigation">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>QualitOS</span>
+      <span class="qos-spacer"></span>
+      <ng-container *ngIf="user$ | async as user">
+        <span class="user-name">{{ user.displayName }}</span>
+        <mat-icon class="user-avatar" aria-hidden="true">account_circle</mat-icon>
+      </ng-container>
+    </mat-toolbar>
+
+    <main class="shell-content">
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,52 @@
+code: healthcare-hospital
+name: Santé / Hôpital / CHU
+description: >
+  Pack sectoriel pour les établissements de santé (CHU, hôpitaux publics et
+  privés, cliniques). Couvre ISO 13485 (DM), ISO 15189 (labos), la certification
+  HAS V2024 et la dynamique Joint Commission International. Inclut les
+  indicateurs patient safety et un connecteur HL7 FHIR.
+version: '1.0.0'
+locale: fr-FR
+tags:
+  - healthcare
+  - hospital
+  - patient-safety
+  - has
+standards:
+  - iso-13485
+  - iso-15189
+  - has-v2024
+  - joint-commission
+kpis:
+  - hospital-acquired-infections-rate
+  - 30d-readmission-rate
+  - average-length-of-stay
+  - emergency-wait-time
+  - surgery-cancellation-rate
+  - hcahps-patient-satisfaction
+  - serious-adverse-events
+  - patient-fall-rate
+  - medication-error-rate
+  - bed-occupancy-rate
+connectors:
+  - hl7-fhir
+  - hl7-v2
+  - dicom
+  - lis-astm
+templates:
+  workflows:
+    - incident-indesirable-grave
+    - capa-soins-default
+    - audit-bloc-operatoire
+  ishikawa:
+    - infection-nosocomiale
+    - erreur-medicamenteuse
+  poka-yoke:
+    - shingo-double-check-medication
+    - shingo-wristband-id
+glossary:
+  EIG: Événement Indésirable Grave (CLAUDE.md §6.3)
+  HCAHPS: Hospital Consumer Assessment of Healthcare Providers and Systems
+  HAS: Haute Autorité de Santé (France)
+  PMS: Post-Market Surveillance (ISO 13485)
+  CCP: Critical Control Point (analogie HACCP appliquée à la sécurité patient)

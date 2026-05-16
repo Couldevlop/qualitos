@@ -1,0 +1,54 @@
+<div class="qos-page">
+  <header class="page-header">
+    <div>
+      <h1>Cercles de Qualité</h1>
+      <p>Groupes 5-10 personnes, réunions, propositions PROPOSED → MEASURED.</p>
+    </div>
+    <button mat-flat-button color="primary" disabled matTooltip="Création — bientôt">
+      <mat-icon>add</mat-icon>
+      Nouveau cercle
+    </button>
+  </header>
+
+  <mat-card class="filter-card">
+    <mat-form-field appearance="outline" class="status-filter">
+      <mat-label>Filtrer par statut</mat-label>
+      <mat-select [formControl]="statusFilter">
+        <mat-option [value]="''">Tous</mat-option>
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-card>
+
+  <div class="state-row" *ngIf="loading$ | async">
+    <mat-progress-spinner mode="indeterminate" diameter="36"></mat-progress-spinner>
+    <span>Chargement…</span>
+  </div>
+
+  <mat-card class="table-card" *ngIf="(loading$ | async) === false">
+    <table mat-table [dataSource]="(circles$ | async) ?? []" class="t">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Nom</th>
+        <td mat-cell *matCellDef="let c">
+          <div class="cell">
+            <strong>{{ c.name }}</strong>
+            <small *ngIf="c.topic">#{{ c.topic }}</small>
+          </div>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="status"><th mat-header-cell *matHeaderCellDef>Statut</th>
+        <td mat-cell *matCellDef="let c"><span [class]="badge(c.status)">{{ c.status }}</span></td></ng-container>
+      <ng-container matColumnDef="members"><th mat-header-cell *matHeaderCellDef>Membres</th>
+        <td mat-cell *matCellDef="let c">{{ c.memberCount || c.members?.length || 0 }}</td></ng-container>
+      <ng-container matColumnDef="meetings"><th mat-header-cell *matHeaderCellDef>Réunions</th>
+        <td mat-cell *matCellDef="let c">{{ c.meetings?.length || 0 }}</td></ng-container>
+      <ng-container matColumnDef="proposals"><th mat-header-cell *matHeaderCellDef>Propositions</th>
+        <td mat-cell *matCellDef="let c">{{ c.proposals?.length || 0 }}</td></ng-container>
+      <ng-container matColumnDef="updatedAt"><th mat-header-cell *matHeaderCellDef>MAJ</th>
+        <td mat-cell *matCellDef="let c">{{ c.updatedAt | date:'short' }}</td></ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <p class="empty" *ngIf="(circles$ | async)?.length === 0">Aucun cercle.</p>
+  </mat-card>
+</div>
