@@ -54,6 +54,9 @@ import com.openlab.qualitos.quality.complaints.ComplaintStateException;
 import com.openlab.qualitos.quality.calibration.CalibrationChildNotFoundException;
 import com.openlab.qualitos.quality.calibration.CalibrationEquipmentNotFoundException;
 import com.openlab.qualitos.quality.calibration.CalibrationStateException;
+import com.openlab.qualitos.quality.kpi.KpiMeasurementNotFoundException;
+import com.openlab.qualitos.quality.kpi.KpiNotFoundException;
+import com.openlab.qualitos.quality.kpi.KpiStateException;
 import com.openlab.qualitos.quality.itsm.ItsmConnectionNotFoundException;
 import com.openlab.qualitos.quality.itsm.ItsmSyncException;
 import com.openlab.qualitos.quality.webhooks.WebhookDeliveryNotFoundException;
@@ -429,6 +432,33 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/webhook-invalid-state"));
         problem.setTitle("Invalid Webhook State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(KpiNotFoundException.class)
+    public ProblemDetail handleKpiNotFound(KpiNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/kpi-not-found"));
+        problem.setTitle("KPI Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(KpiMeasurementNotFoundException.class)
+    public ProblemDetail handleKpiMeasurementNotFound(KpiMeasurementNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/kpi-measurement-not-found"));
+        problem.setTitle("KPI Measurement Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(KpiStateException.class)
+    public ProblemDetail handleKpiState(KpiStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/kpi-invalid-state"));
+        problem.setTitle("Invalid KPI State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
