@@ -22,11 +22,19 @@ public class IncidentService {
 
     private final IncidentRepository repo;
     private final TenantProvider tenantProvider;
+    private final IncidentEventPublisher events;
     private final Clock clock;
 
+    /** Constructeur sans audit — utile pour les tests / contextes sans audit log. */
     public IncidentService(IncidentRepository repo, TenantProvider tenantProvider, Clock clock) {
+        this(repo, tenantProvider, new IncidentEventPublisher.NoOp(), clock);
+    }
+
+    public IncidentService(IncidentRepository repo, TenantProvider tenantProvider,
+                           IncidentEventPublisher events, Clock clock) {
         this.repo = repo;
         this.tenantProvider = tenantProvider;
+        this.events = events;
         this.clock = clock;
     }
 
@@ -39,7 +47,9 @@ public class IncidentService {
                 tenantId, req.code(), req.title(), req.description(),
                 req.type(), req.severity(), req.occurredAt(), req.location(),
                 req.reportedBy(), Instant.now(clock));
-        return IncidentDto.IncidentView.of(repo.save(i));
+        Incident saved = repo.save(i);
+        events.publish(saved, IncidentEventPublisher.Action.REPORTED);
+        return IncidentDto.IncidentView.of(saved);
     }
 
     public IncidentDto.IncidentView get(UUID id) {
@@ -51,43 +61,57 @@ public class IncidentService {
         i.editDetails(req.title(), req.description(), req.location(),
                 req.personsInvolved(), req.severity(), req.standardsCsv(),
                 Instant.now(clock));
-        return IncidentDto.IncidentView.of(repo.save(i));
+        Incident saved = repo.save(i);
+        events.publish(saved, IncidentEventPublisher.Action.EDITED);
+        return IncidentDto.IncidentView.of(saved);
     }
 
     public IncidentDto.IncidentView investigate(UUID id, IncidentDto.InvestigateRequest req) {
         Incident i = loadForTenant(id);
         i.investigate(req.ownerUserId(), Instant.now(clock));
-        return IncidentDto.IncidentView.of(repo.save(i));
+        Incident saved = repo.save(i);
+        events.publish(saved, IncidentEventPublisher.Action.INVESTIGATING);
+        return IncidentDto.IncidentView.of(saved);
     }
 
     public IncidentDto.IncidentView mitigate(UUID id, IncidentDto.MitigateRequest req) {
         Incident i = loadForTenant(id);
         i.mitigate(req.rootCause(), req.correctiveActions(), Instant.now(clock));
-        return IncidentDto.IncidentView.of(repo.save(i));
+        Incident saved = repo.save(i);
+        events.publish(saved, IncidentEventPublisher.Action.MITIGATED);
+        return IncidentDto.IncidentView.of(saved);
     }
 
     public IncidentDto.IncidentView close(UUID id) {
         Incident i = loadForTenant(id);
         i.close(Instant.now(clock));
-        return IncidentDto.IncidentView.of(repo.save(i));
+        Incident saved = repo.save(i);
+        events.publish(saved, IncidentEventPublisher.Action.CLOSED);
+        return IncidentDto.IncidentView.of(saved);
     }
 
     public IncidentDto.IncidentView cancel(UUID id) {
         Incident i = loadForTenant(id);
         i.cancel(Instant.now(clock));
-        return IncidentDto.IncidentView.of(repo.save(i));
+        Incident saved = repo.save(i);
+        events.publish(saved, IncidentEventPublisher.Action.CANCELLED);
+        return IncidentDto.IncidentView.of(saved);
     }
 
     public IncidentDto.IncidentView linkCapa(UUID id, IncidentDto.LinkCapaRequest req) {
         Incident i = loadForTenant(id);
         i.linkCapa(req.capaCaseId(), Instant.now(clock));
-        return IncidentDto.IncidentView.of(repo.save(i));
+        Incident saved = repo.save(i);
+        events.publish(saved, IncidentEventPublisher.Action.CAPA_LINKED);
+        return IncidentDto.IncidentView.of(saved);
     }
 
     public IncidentDto.IncidentView linkNc(UUID id, IncidentDto.LinkNcRequest req) {
         Incident i = loadForTenant(id);
         i.linkNc(req.ncId(), Instant.now(clock));
-        return IncidentDto.IncidentView.of(repo.save(i));
+        Incident saved = repo.save(i);
+        events.publish(saved, IncidentEventPublisher.Action.NC_LINKED);
+        return IncidentDto.IncidentView.of(saved);
     }
 
     public void delete(UUID id) {
