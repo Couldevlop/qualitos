@@ -63,6 +63,8 @@ import com.openlab.qualitos.quality.ehs.domain.IncidentNotFoundException;
 import com.openlab.qualitos.quality.ehs.domain.IncidentStateException;
 import com.openlab.qualitos.quality.consent.domain.ConsentNotFoundException;
 import com.openlab.qualitos.quality.consent.domain.ConsentStateException;
+import com.openlab.qualitos.quality.retention.domain.RetentionRuleNotFoundException;
+import com.openlab.qualitos.quality.retention.domain.RetentionRuleStateException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestNotFoundException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestStateException;
 import com.openlab.qualitos.quality.tenantmodules.domain.ModuleActivationNotFoundException;
@@ -781,6 +783,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/itsm-sync-failed"));
         problem.setTitle("ITSM Sync Failed");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(RetentionRuleNotFoundException.class)
+    public ProblemDetail handleRetentionNotFound(RetentionRuleNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/gdpr-retention-rule-not-found"));
+        problem.setTitle("GDPR Retention Rule Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(RetentionRuleStateException.class)
+    public ProblemDetail handleRetentionState(RetentionRuleStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/gdpr-retention-rule-invalid-state"));
+        problem.setTitle("Invalid GDPR Retention Rule State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
