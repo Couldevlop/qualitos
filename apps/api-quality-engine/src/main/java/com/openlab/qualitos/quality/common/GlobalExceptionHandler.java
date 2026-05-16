@@ -69,6 +69,7 @@ import com.openlab.qualitos.quality.webhooks.WebhookSubscriptionNotFoundExceptio
 import com.openlab.qualitos.quality.pdca.PdcaCycleNotFoundException;
 import com.openlab.qualitos.quality.pdca.PdcaStepNotFoundException;
 import com.openlab.qualitos.quality.pdca.PdcaStateException;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -716,6 +717,18 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/itsm-sync-failed"));
         problem.setTitle("ITSM Sync Failed");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ProblemDetail handleConstraintViolation(ConstraintViolationException ex) {
+        // Validation des @RequestParam / @PathVariable via @Min/@Max/@Pattern :
+        // Spring lève ConstraintViolationException qui n'a pas de handler natif.
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/validation-failed"));
+        problem.setTitle("Constraint Violation");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
