@@ -69,6 +69,8 @@ import com.openlab.qualitos.quality.retention.domain.RetentionRuleNotFoundExcept
 import com.openlab.qualitos.quality.retention.domain.RetentionRuleStateException;
 import com.openlab.qualitos.quality.ropa.domain.ProcessingActivityNotFoundException;
 import com.openlab.qualitos.quality.ropa.domain.ProcessingActivityStateException;
+import com.openlab.qualitos.quality.dpia.domain.DpiaNotFoundException;
+import com.openlab.qualitos.quality.dpia.domain.DpiaStateException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestNotFoundException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestStateException;
 import com.openlab.qualitos.quality.tenantmodules.domain.ModuleActivationNotFoundException;
@@ -787,6 +789,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/itsm-sync-failed"));
         problem.setTitle("ITSM Sync Failed");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DpiaNotFoundException.class)
+    public ProblemDetail handleDpiaNotFound(DpiaNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/gdpr-dpia-not-found"));
+        problem.setTitle("GDPR DPIA Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DpiaStateException.class)
+    public ProblemDetail handleDpiaState(DpiaStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/gdpr-dpia-invalid-state"));
+        problem.setTitle("Invalid GDPR DPIA State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
