@@ -61,6 +61,8 @@ import com.openlab.qualitos.quality.auditlog.AuditEventNotFoundException;
 import com.openlab.qualitos.quality.auditlog.AuditEventStateException;
 import com.openlab.qualitos.quality.ehs.domain.IncidentNotFoundException;
 import com.openlab.qualitos.quality.ehs.domain.IncidentStateException;
+import com.openlab.qualitos.quality.tenantmodules.domain.ModuleActivationNotFoundException;
+import com.openlab.qualitos.quality.tenantmodules.domain.ModuleActivationStateException;
 import com.openlab.qualitos.quality.itsm.ItsmConnectionNotFoundException;
 import com.openlab.qualitos.quality.itsm.ItsmSyncException;
 import com.openlab.qualitos.quality.webhooks.WebhookDeliveryNotFoundException;
@@ -437,6 +439,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/webhook-invalid-state"));
         problem.setTitle("Invalid Webhook State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ModuleActivationNotFoundException.class)
+    public ProblemDetail handleModuleActivationNotFound(ModuleActivationNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/tenant-module-not-found"));
+        problem.setTitle("Module Activation Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ModuleActivationStateException.class)
+    public ProblemDetail handleModuleActivationState(ModuleActivationStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/tenant-module-invalid-state"));
+        problem.setTitle("Invalid Module Activation State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
