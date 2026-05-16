@@ -77,6 +77,8 @@ import com.openlab.qualitos.quality.privacynotices.domain.PrivacyNoticeNotFoundE
 import com.openlab.qualitos.quality.privacynotices.domain.PrivacyNoticeStateException;
 import com.openlab.qualitos.quality.automateddecisions.domain.AutomatedDecisionNotFoundException;
 import com.openlab.qualitos.quality.automateddecisions.domain.AutomatedDecisionStateException;
+import com.openlab.qualitos.quality.dpoappointments.domain.DpoAppointmentNotFoundException;
+import com.openlab.qualitos.quality.dpoappointments.domain.DpoAppointmentStateException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestNotFoundException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestStateException;
 import com.openlab.qualitos.quality.tenantmodules.domain.ModuleActivationNotFoundException;
@@ -795,6 +797,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/itsm-sync-failed"));
         problem.setTitle("ITSM Sync Failed");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DpoAppointmentNotFoundException.class)
+    public ProblemDetail handleDpoNotFound(DpoAppointmentNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/gdpr-dpo-appointment-not-found"));
+        problem.setTitle("GDPR DPO Appointment Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DpoAppointmentStateException.class)
+    public ProblemDetail handleDpoState(DpoAppointmentStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/gdpr-dpo-appointment-invalid-state"));
+        problem.setTitle("Invalid GDPR DPO Appointment State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
