@@ -75,6 +75,8 @@ import com.openlab.qualitos.quality.processoragreements.domain.ProcessorAgreemen
 import com.openlab.qualitos.quality.processoragreements.domain.ProcessorAgreementStateException;
 import com.openlab.qualitos.quality.privacynotices.domain.PrivacyNoticeNotFoundException;
 import com.openlab.qualitos.quality.privacynotices.domain.PrivacyNoticeStateException;
+import com.openlab.qualitos.quality.automateddecisions.domain.AutomatedDecisionNotFoundException;
+import com.openlab.qualitos.quality.automateddecisions.domain.AutomatedDecisionStateException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestNotFoundException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestStateException;
 import com.openlab.qualitos.quality.tenantmodules.domain.ModuleActivationNotFoundException;
@@ -793,6 +795,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/itsm-sync-failed"));
         problem.setTitle("ITSM Sync Failed");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AutomatedDecisionNotFoundException.class)
+    public ProblemDetail handleAdmNotFound(AutomatedDecisionNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/gdpr-automated-decision-not-found"));
+        problem.setTitle("GDPR Automated Decision Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AutomatedDecisionStateException.class)
+    public ProblemDetail handleAdmState(AutomatedDecisionStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/gdpr-automated-decision-invalid-state"));
+        problem.setTitle("Invalid GDPR Automated Decision State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
