@@ -57,6 +57,8 @@ import com.openlab.qualitos.quality.calibration.CalibrationStateException;
 import com.openlab.qualitos.quality.kpi.KpiMeasurementNotFoundException;
 import com.openlab.qualitos.quality.kpi.KpiNotFoundException;
 import com.openlab.qualitos.quality.kpi.KpiStateException;
+import com.openlab.qualitos.quality.auditlog.AuditEventNotFoundException;
+import com.openlab.qualitos.quality.auditlog.AuditEventStateException;
 import com.openlab.qualitos.quality.itsm.ItsmConnectionNotFoundException;
 import com.openlab.qualitos.quality.itsm.ItsmSyncException;
 import com.openlab.qualitos.quality.webhooks.WebhookDeliveryNotFoundException;
@@ -432,6 +434,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/webhook-invalid-state"));
         problem.setTitle("Invalid Webhook State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AuditEventNotFoundException.class)
+    public ProblemDetail handleAuditEventNotFound(AuditEventNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/audit-event-not-found"));
+        problem.setTitle("Audit Event Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AuditEventStateException.class)
+    public ProblemDetail handleAuditEventState(AuditEventStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/audit-event-invalid-state"));
+        problem.setTitle("Invalid Audit Event State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
