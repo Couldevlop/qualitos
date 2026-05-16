@@ -83,6 +83,12 @@ import com.openlab.qualitos.quality.crossbordertransfers.domain.CrossBorderTrans
 import com.openlab.qualitos.quality.crossbordertransfers.domain.CrossBorderTransferStateException;
 import com.openlab.qualitos.quality.cyberincidents.domain.CyberIncidentNotFoundException;
 import com.openlab.qualitos.quality.cyberincidents.domain.CyberIncidentStateException;
+import com.openlab.qualitos.quality.nis2measures.domain.Nis2MeasureNotFoundException;
+import com.openlab.qualitos.quality.nis2measures.domain.Nis2MeasureStateException;
+import com.openlab.qualitos.quality.aiact.domain.AiSystemNotFoundException;
+import com.openlab.qualitos.quality.aiact.domain.AiSystemStateException;
+import com.openlab.qualitos.quality.aiactfria.domain.FriaNotFoundException;
+import com.openlab.qualitos.quality.aiactfria.domain.FriaStateException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestNotFoundException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestStateException;
 import com.openlab.qualitos.quality.tenantmodules.domain.ModuleActivationNotFoundException;
@@ -109,6 +115,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.net.URI;
 import java.time.Instant;
@@ -805,6 +812,60 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(AiSystemNotFoundException.class)
+    public ProblemDetail handleAiSystemNotFound(AiSystemNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-act-system-not-found"));
+        problem.setTitle("AI Act System Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AiSystemStateException.class)
+    public ProblemDetail handleAiSystemState(AiSystemStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-act-system-invalid-state"));
+        problem.setTitle("Invalid AI Act System State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(FriaNotFoundException.class)
+    public ProblemDetail handleFriaNotFound(FriaNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-act-fria-not-found"));
+        problem.setTitle("AI Act FRIA Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(FriaStateException.class)
+    public ProblemDetail handleFriaState(FriaStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-act-fria-invalid-state"));
+        problem.setTitle("Invalid AI Act FRIA State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(Nis2MeasureNotFoundException.class)
+    public ProblemDetail handleNis2MeasureNotFound(Nis2MeasureNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/nis2-measure-not-found"));
+        problem.setTitle("NIS2 Measure Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(Nis2MeasureStateException.class)
+    public ProblemDetail handleNis2MeasureState(Nis2MeasureStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/nis2-measure-invalid-state"));
+        problem.setTitle("Invalid NIS2 Measure State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     @ExceptionHandler(CyberIncidentNotFoundException.class)
     public ProblemDetail handleCyberNotFound(CyberIncidentNotFoundException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
@@ -1042,6 +1103,19 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail);
         problem.setType(URI.create("https://qualitos.io/errors/malformed-request"));
         problem.setTitle("Malformed Request Body");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ProblemDetail handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        // Binding @RequestParam/@PathVariable error (e.g. enum value not accepted).
+        String name = ex.getName();
+        String value = ex.getValue() == null ? "null" : ex.getValue().toString();
+        String detail = "Invalid value '" + value + "' for parameter '" + name + "'";
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail);
+        problem.setType(URI.create("https://qualitos.io/errors/parameter-type-mismatch"));
+        problem.setTitle("Parameter Type Mismatch");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
