@@ -79,6 +79,8 @@ import com.openlab.qualitos.quality.automateddecisions.domain.AutomatedDecisionN
 import com.openlab.qualitos.quality.automateddecisions.domain.AutomatedDecisionStateException;
 import com.openlab.qualitos.quality.dpoappointments.domain.DpoAppointmentNotFoundException;
 import com.openlab.qualitos.quality.dpoappointments.domain.DpoAppointmentStateException;
+import com.openlab.qualitos.quality.crossbordertransfers.domain.CrossBorderTransferNotFoundException;
+import com.openlab.qualitos.quality.crossbordertransfers.domain.CrossBorderTransferStateException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestNotFoundException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestStateException;
 import com.openlab.qualitos.quality.tenantmodules.domain.ModuleActivationNotFoundException;
@@ -797,6 +799,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/itsm-sync-failed"));
         problem.setTitle("ITSM Sync Failed");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CrossBorderTransferNotFoundException.class)
+    public ProblemDetail handleCbtNotFound(CrossBorderTransferNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/gdpr-cross-border-transfer-not-found"));
+        problem.setTitle("GDPR Cross-Border Transfer Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CrossBorderTransferStateException.class)
+    public ProblemDetail handleCbtState(CrossBorderTransferStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/gdpr-cross-border-transfer-invalid-state"));
+        problem.setTitle("Invalid GDPR Cross-Border Transfer State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
