@@ -30,4 +30,8 @@ public interface AuditEventRepository extends JpaRepository<AuditEvent, UUID> {
     /** Vérification de chaîne : récupère [fromSeq, toSeq] inclus en ordre croissant. */
     List<AuditEvent> findByTenantIdAndSequenceNoBetweenOrderBySequenceNoAsc(
             UUID tenantId, long fromSeq, long toSeq);
+
+    /** Événements non encore ancrés sur blockchain, ordonnés par séquence. */
+    List<AuditEvent> findByTenantIdAndBlockchainTxRefIsNullOrderBySequenceNoAsc(
+            UUID tenantId, org.springframework.data.domain.Pageable pageable);
 }
