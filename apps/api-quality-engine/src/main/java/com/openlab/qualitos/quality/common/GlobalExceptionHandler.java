@@ -65,6 +65,8 @@ import com.openlab.qualitos.quality.tenantmodules.domain.ModuleActivationNotFoun
 import com.openlab.qualitos.quality.tenantmodules.domain.ModuleActivationStateException;
 import com.openlab.qualitos.quality.apikeys.domain.ApiKeyNotFoundException;
 import com.openlab.qualitos.quality.apikeys.domain.ApiKeyStateException;
+import com.openlab.qualitos.quality.ratelimit.domain.RateLimitPolicyException;
+import com.openlab.qualitos.quality.ratelimit.domain.RateLimitPolicyNotFoundException;
 import com.openlab.qualitos.quality.itsm.ItsmConnectionNotFoundException;
 import com.openlab.qualitos.quality.itsm.ItsmSyncException;
 import com.openlab.qualitos.quality.webhooks.WebhookDeliveryNotFoundException;
@@ -441,6 +443,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/webhook-invalid-state"));
         problem.setTitle("Invalid Webhook State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(RateLimitPolicyNotFoundException.class)
+    public ProblemDetail handleRateLimitNotFound(RateLimitPolicyNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/rate-limit-policy-not-found"));
+        problem.setTitle("Rate Limit Policy Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(RateLimitPolicyException.class)
+    public ProblemDetail handleRateLimitPolicy(RateLimitPolicyException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/rate-limit-policy-invalid"));
+        problem.setTitle("Invalid Rate Limit Policy");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
