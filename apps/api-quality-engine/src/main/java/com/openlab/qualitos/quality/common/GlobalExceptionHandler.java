@@ -61,6 +61,8 @@ import com.openlab.qualitos.quality.auditlog.AuditEventNotFoundException;
 import com.openlab.qualitos.quality.auditlog.AuditEventStateException;
 import com.openlab.qualitos.quality.ehs.domain.IncidentNotFoundException;
 import com.openlab.qualitos.quality.ehs.domain.IncidentStateException;
+import com.openlab.qualitos.quality.breach.domain.BreachNotFoundException;
+import com.openlab.qualitos.quality.breach.domain.BreachStateException;
 import com.openlab.qualitos.quality.consent.domain.ConsentNotFoundException;
 import com.openlab.qualitos.quality.consent.domain.ConsentStateException;
 import com.openlab.qualitos.quality.retention.domain.RetentionRuleNotFoundException;
@@ -783,6 +785,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/itsm-sync-failed"));
         problem.setTitle("ITSM Sync Failed");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(BreachNotFoundException.class)
+    public ProblemDetail handleBreachNotFound(BreachNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/gdpr-breach-not-found"));
+        problem.setTitle("GDPR Breach Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(BreachStateException.class)
+    public ProblemDetail handleBreachState(BreachStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/gdpr-breach-invalid-state"));
+        problem.setTitle("Invalid GDPR Breach State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
