@@ -87,6 +87,8 @@ import com.openlab.qualitos.quality.nis2measures.domain.Nis2MeasureNotFoundExcep
 import com.openlab.qualitos.quality.nis2measures.domain.Nis2MeasureStateException;
 import com.openlab.qualitos.quality.aiact.domain.AiSystemNotFoundException;
 import com.openlab.qualitos.quality.aiact.domain.AiSystemStateException;
+import com.openlab.qualitos.quality.aiactfria.domain.FriaNotFoundException;
+import com.openlab.qualitos.quality.aiactfria.domain.FriaStateException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestNotFoundException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestStateException;
 import com.openlab.qualitos.quality.tenantmodules.domain.ModuleActivationNotFoundException;
@@ -824,6 +826,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/ai-act-system-invalid-state"));
         problem.setTitle("Invalid AI Act System State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(FriaNotFoundException.class)
+    public ProblemDetail handleFriaNotFound(FriaNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-act-fria-not-found"));
+        problem.setTitle("AI Act FRIA Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(FriaStateException.class)
+    public ProblemDetail handleFriaState(FriaStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-act-fria-invalid-state"));
+        problem.setTitle("Invalid AI Act FRIA State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
