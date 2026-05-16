@@ -157,4 +157,34 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <!-- Profil dev : boucle d'itération rapide.
+             - Skip JaCoCo (rapport + check) → -2 phases
+             - Exclut les WebMvcTest taggés "web" (Spring context = ~6-8s/classe)
+             - Reste : domain + application + infrastructure mapper/publisher
+             Usage typique :
+                mvn -P dev test                                     (~10-15s total)
+                mvn -P dev -Dtest='com.…<module>.**' test          (~3-5s ciblé)
+             Le verify complet (suite + JaCoCo) reste obligatoire avant push. -->
+        <profile>
+            <id>dev</id>
+            <properties>
+                <jacoco.skip>true</jacoco.skip>
+            </properties>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-surefire-plugin</artifactId>
+                            <configuration>
+                                <excludedGroups>web</excludedGroups>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
 </project>
