@@ -67,6 +67,8 @@ import com.openlab.qualitos.quality.consent.domain.ConsentNotFoundException;
 import com.openlab.qualitos.quality.consent.domain.ConsentStateException;
 import com.openlab.qualitos.quality.retention.domain.RetentionRuleNotFoundException;
 import com.openlab.qualitos.quality.retention.domain.RetentionRuleStateException;
+import com.openlab.qualitos.quality.ropa.domain.ProcessingActivityNotFoundException;
+import com.openlab.qualitos.quality.ropa.domain.ProcessingActivityStateException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestNotFoundException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestStateException;
 import com.openlab.qualitos.quality.tenantmodules.domain.ModuleActivationNotFoundException;
@@ -785,6 +787,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/itsm-sync-failed"));
         problem.setTitle("ITSM Sync Failed");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ProcessingActivityNotFoundException.class)
+    public ProblemDetail handleRopaNotFound(ProcessingActivityNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/gdpr-ropa-not-found"));
+        problem.setTitle("GDPR Processing Activity Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ProcessingActivityStateException.class)
+    public ProblemDetail handleRopaState(ProcessingActivityStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/gdpr-ropa-invalid-state"));
+        problem.setTitle("Invalid GDPR Processing Activity State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
