@@ -85,6 +85,8 @@ import com.openlab.qualitos.quality.cyberincidents.domain.CyberIncidentNotFoundE
 import com.openlab.qualitos.quality.cyberincidents.domain.CyberIncidentStateException;
 import com.openlab.qualitos.quality.nis2measures.domain.Nis2MeasureNotFoundException;
 import com.openlab.qualitos.quality.nis2measures.domain.Nis2MeasureStateException;
+import com.openlab.qualitos.quality.aiact.domain.AiSystemNotFoundException;
+import com.openlab.qualitos.quality.aiact.domain.AiSystemStateException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestNotFoundException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestStateException;
 import com.openlab.qualitos.quality.tenantmodules.domain.ModuleActivationNotFoundException;
@@ -804,6 +806,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/itsm-sync-failed"));
         problem.setTitle("ITSM Sync Failed");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AiSystemNotFoundException.class)
+    public ProblemDetail handleAiSystemNotFound(AiSystemNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-act-system-not-found"));
+        problem.setTitle("AI Act System Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AiSystemStateException.class)
+    public ProblemDetail handleAiSystemState(AiSystemStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-act-system-invalid-state"));
+        problem.setTitle("Invalid AI Act System State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
