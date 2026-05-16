@@ -59,6 +59,8 @@ import com.openlab.qualitos.quality.kpi.KpiNotFoundException;
 import com.openlab.qualitos.quality.kpi.KpiStateException;
 import com.openlab.qualitos.quality.auditlog.AuditEventNotFoundException;
 import com.openlab.qualitos.quality.auditlog.AuditEventStateException;
+import com.openlab.qualitos.quality.ehs.domain.IncidentNotFoundException;
+import com.openlab.qualitos.quality.ehs.domain.IncidentStateException;
 import com.openlab.qualitos.quality.itsm.ItsmConnectionNotFoundException;
 import com.openlab.qualitos.quality.itsm.ItsmSyncException;
 import com.openlab.qualitos.quality.webhooks.WebhookDeliveryNotFoundException;
@@ -434,6 +436,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/webhook-invalid-state"));
         problem.setTitle("Invalid Webhook State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(IncidentNotFoundException.class)
+    public ProblemDetail handleIncidentNotFound(IncidentNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ehs-incident-not-found"));
+        problem.setTitle("EHS Incident Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(IncidentStateException.class)
+    public ProblemDetail handleIncidentState(IncidentStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ehs-incident-invalid-state"));
+        problem.setTitle("Invalid EHS Incident State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
