@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.ehs.infrastructure;
 
+import com.openlab.qualitos.quality.ehs.application.IncidentEventPublisher;
 import com.openlab.qualitos.quality.ehs.application.IncidentService;
 import com.openlab.qualitos.quality.ehs.application.TenantProvider;
 import com.openlab.qualitos.quality.ehs.domain.IncidentRepository;
@@ -18,8 +19,9 @@ public class EhsBeanConfiguration {
     @Bean
     public IncidentService ehsIncidentService(IncidentRepository repo,
                                               TenantProvider tenantProvider,
+                                              IncidentEventPublisher events,
                                               Clock clock) {
-        return new IncidentService(repo, tenantProvider, clock);
+        return new IncidentService(repo, tenantProvider, events, clock);
     }
 
     /**
