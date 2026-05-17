@@ -26,6 +26,7 @@ public class IncidentService {
     private final Clock clock;
 
     /** Constructeur sans audit — utile pour les tests / contextes sans audit log. */
+    @org.springframework.beans.factory.annotation.Autowired
     public IncidentService(IncidentRepository repo, TenantProvider tenantProvider, Clock clock) {
         this(repo, tenantProvider, new IncidentEventPublisher.NoOp(), clock);
     }

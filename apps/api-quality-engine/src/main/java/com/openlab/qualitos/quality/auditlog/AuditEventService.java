@@ -2,6 +2,7 @@ package com.openlab.qualitos.quality.auditlog;
 
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class AuditEventService {
     private final AuditEventCounterRepository counterRepo;
     private final Clock clock;
 
+    @Autowired
     public AuditEventService(AuditEventRepository eventRepo,
                              AuditEventCounterRepository counterRepo) {
         this(eventRepo, counterRepo, Clock.systemUTC());

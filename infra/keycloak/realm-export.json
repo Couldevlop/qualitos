@@ -83,6 +83,40 @@
   ],
   "users": [
     {
+      "username": "superadmin",
+      "email": "superadmin@qualitos.local",
+      "firstName": "Super",
+      "lastName": "Admin",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "superadmin", "temporary": false }
+      ],
+      "attributes": {
+        "tenant_id": ["00000000-0000-0000-0000-000000000099"]
+      },
+      "realmRoles": [
+        "super_admin"
+      ]
+    },
+    {
+      "username": "admin",
+      "email": "admin@qualitos.local",
+      "firstName": "Admin",
+      "lastName": "Tenant",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "admin", "temporary": false }
+      ],
+      "attributes": {
+        "tenant_id": ["00000000-0000-0000-0000-000000000099"]
+      },
+      "realmRoles": [
+        "admin_tenant"
+      ]
+    },
+    {
       "username": "demo",
       "email": "demo@qualitos.local",
       "firstName": "Demo",
@@ -98,24 +132,6 @@
       "realmRoles": [
         "quality_manager",
         "user"
-      ]
-    },
-    {
-      "username": "admin",
-      "email": "admin@qualitos.local",
-      "firstName": "Admin",
-      "lastName": "QualitOS",
-      "enabled": true,
-      "emailVerified": true,
-      "credentials": [
-        { "type": "password", "value": "admin", "temporary": false }
-      ],
-      "attributes": {
-        "tenant_id": ["00000000-0000-0000-0000-000000000099"]
-      },
-      "realmRoles": [
-        "super_admin",
-        "admin_tenant"
       ]
     }
   ]

@@ -30,6 +30,7 @@ public class ModuleActivationService {
     private final ModuleActivationEventPublisher events;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public ModuleActivationService(ModuleActivationRepository repo,
                                    TenantProvider tenantProvider,
                                    TenantTierProvider tierProvider,

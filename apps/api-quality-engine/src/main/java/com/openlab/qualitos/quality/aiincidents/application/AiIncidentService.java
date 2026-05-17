@@ -23,6 +23,7 @@ public class AiIncidentService {
     private final AiIncidentEventPublisher events;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public AiIncidentService(AiIncidentRepository repo,
                              TenantProvider tenantProvider, Clock clock) {
         this(repo, tenantProvider, new AiIncidentEventPublisher.NoOp(), clock);

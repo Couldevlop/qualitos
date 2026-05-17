@@ -72,8 +72,11 @@ public class AuditEvent {
     @Column(length = 500, updatable = false)
     private String summary;
 
-    @Lob
-    @Column(name = "payload_json", updatable = false)
+    // @Lob String mappe sur 'oid' (LargeObject) en Postgres alors que la migration
+    // V26 cree la colonne en TEXT. On garde TEXT (mieux pour requetes + index FTS)
+    // en forcant le JDBC type a LONGVARCHAR cote Hibernate.
+    @Column(name = "payload_json", updatable = false, columnDefinition = "TEXT")
+    @org.hibernate.annotations.JdbcTypeCode(java.sql.Types.LONGVARCHAR)
     private String payloadJson;
 
     @Column(name = "ip_address", length = 64, updatable = false)

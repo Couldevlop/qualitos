@@ -15,7 +15,10 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      # 'none' au lieu de 'validate': Flyway est la source de verite du schema.
+      # 'validate' generait des faux positifs sur @Lob String (Postgres attend
+      # oid alors que les migrations Flyway creent TEXT, qui est preferable).
+      ddl-auto: none
     properties:
       hibernate:
         default_schema: public

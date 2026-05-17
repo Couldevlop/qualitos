@@ -22,6 +22,7 @@ public class ConformityAssessmentService {
     private final ConformityAssessmentEventPublisher events;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public ConformityAssessmentService(ConformityAssessmentRepository repo,
                                        TenantProvider tenantProvider, Clock clock) {
         this(repo, tenantProvider, new ConformityAssessmentEventPublisher.NoOp(), clock);

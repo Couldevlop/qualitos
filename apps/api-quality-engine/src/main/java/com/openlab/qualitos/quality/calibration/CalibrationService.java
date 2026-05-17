@@ -34,6 +34,7 @@ public class CalibrationService {
     private final MsaStudyRepository msaRepo;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public CalibrationService(CalibrationEquipmentRepository equipmentRepo,
                               CalibrationPlanRepository planRepo,
                               CalibrationRecordRepository recordRepo,

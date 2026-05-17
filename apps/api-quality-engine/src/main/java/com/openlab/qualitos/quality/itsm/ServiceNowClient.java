@@ -43,6 +43,7 @@ public class ServiceNowClient implements ItsmProviderClient {
     private final HttpClient http;
     private final ObjectMapper mapper;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public ServiceNowClient() {
         this(HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build(), new ObjectMapper());
     }

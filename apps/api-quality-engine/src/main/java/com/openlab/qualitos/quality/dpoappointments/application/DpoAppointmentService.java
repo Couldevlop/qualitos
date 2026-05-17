@@ -32,6 +32,7 @@ public class DpoAppointmentService {
     private final DpoAppointmentEventPublisher events;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public DpoAppointmentService(DpoAppointmentRepository repo,
                                  TenantProvider tenantProvider, Clock clock) {
         this(repo, tenantProvider, new DpoAppointmentEventPublisher.NoOp(), clock);

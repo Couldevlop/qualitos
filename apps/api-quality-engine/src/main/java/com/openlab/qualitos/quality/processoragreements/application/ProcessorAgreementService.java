@@ -24,6 +24,7 @@ public class ProcessorAgreementService {
     private final ProcessorAgreementEventPublisher events;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public ProcessorAgreementService(ProcessorAgreementRepository repo,
                                      TenantProvider tenantProvider, Clock clock) {
         this(repo, tenantProvider, new ProcessorAgreementEventPublisher.NoOp(), clock);

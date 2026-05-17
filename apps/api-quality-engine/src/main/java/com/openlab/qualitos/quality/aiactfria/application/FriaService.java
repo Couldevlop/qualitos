@@ -22,6 +22,7 @@ public class FriaService {
     private final FriaEventPublisher events;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public FriaService(FriaRepository repo, TenantProvider tenantProvider, Clock clock) {
         this(repo, tenantProvider, new FriaEventPublisher.NoOp(), clock);
     }

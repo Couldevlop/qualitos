@@ -75,26 +75,26 @@ VALUES (
 );
 
 INSERT INTO standard_sections (id, standard_id, code, title, description, order_index) VALUES
-    ('g1111111-1111-1111-1111-111111111111', '44444444-4444-4444-4444-444444444444', '5', 'Leadership et participation des travailleurs', 'Engagement direction + politique SST + consultation des travailleurs.', 5),
-    ('g2222222-2222-2222-2222-222222222222', '44444444-4444-4444-4444-444444444444', '6', 'Planification', 'Identification dangers + évaluation risques + opportunités SST.', 6),
-    ('g3333333-3333-3333-3333-333333333333', '44444444-4444-4444-4444-444444444444', '8', 'Réalisation des activités opérationnelles', 'Maîtrise opérationnelle, préparation aux urgences.', 8),
-    ('g6666666-6666-6666-6666-666666666666', '44444444-4444-4444-4444-444444444444', '9', 'Évaluation des performances', 'Surveillance + audit interne SST + revue de direction.', 9),
-    ('g7777777-7777-7777-7777-777777777777', '44444444-4444-4444-4444-444444444444', '10', 'Amélioration', 'Événements indésirables, non-conformités, amélioration continue.', 10);
+    ('61111111-1111-1111-1111-111111111111', '44444444-4444-4444-4444-444444444444', '5', 'Leadership et participation des travailleurs', 'Engagement direction + politique SST + consultation des travailleurs.', 5),
+    ('62222222-2222-2222-2222-222222222222', '44444444-4444-4444-4444-444444444444', '6', 'Planification', 'Identification dangers + évaluation risques + opportunités SST.', 6),
+    ('63333333-3333-3333-3333-333333333333', '44444444-4444-4444-4444-444444444444', '8', 'Réalisation des activités opérationnelles', 'Maîtrise opérationnelle, préparation aux urgences.', 8),
+    ('66666666-6666-6666-6666-666666666666', '44444444-4444-4444-4444-444444444444', '9', 'Évaluation des performances', 'Surveillance + audit interne SST + revue de direction.', 9),
+    ('67777777-7777-7777-7777-777777777777', '44444444-4444-4444-4444-444444444444', '10', 'Amélioration', 'Événements indésirables, non-conformités, amélioration continue.', 10);
 
 INSERT INTO standard_clauses (id, section_id, code, title, description, order_index) VALUES
-    ('h0000051-0000-0000-0000-000000000001', 'g1111111-1111-1111-1111-111111111111', '5.4', 'Consultation et participation des travailleurs', 'Mécanismes de consultation et participation effective des travailleurs (et leurs représentants).', 4),
-    ('h0000061-0000-0000-0000-000000000001', 'g2222222-2222-2222-2222-222222222222', '6.1.2', 'Identification des dangers et évaluation des risques', NULL, 1),
-    ('h0000081-0000-0000-0000-000000000001', 'g3333333-3333-3333-3333-333333333333', '8.2', 'Préparation et réponse aux situations d''urgence', NULL, 2),
-    ('h0000091-0000-0000-0000-000000000002', 'g6666666-6666-6666-6666-666666666666', '9.2', 'Audit interne SST', NULL, 2),
-    ('h0000101-0000-0000-0000-000000000002', 'g7777777-7777-7777-7777-777777777777', '10.2', 'Événement indésirable, non-conformité et action corrective', NULL, 2);
+    ('70000051-0000-0000-0000-000000000001', '61111111-1111-1111-1111-111111111111', '5.4', 'Consultation et participation des travailleurs', 'Mécanismes de consultation et participation effective des travailleurs (et leurs représentants).', 4),
+    ('70000061-0000-0000-0000-000000000001', '62222222-2222-2222-2222-222222222222', '6.1.2', 'Identification des dangers et évaluation des risques', NULL, 1),
+    ('70000081-0000-0000-0000-000000000001', '63333333-3333-3333-3333-333333333333', '8.2', 'Préparation et réponse aux situations d''urgence', NULL, 2),
+    ('70000091-0000-0000-0000-000000000002', '66666666-6666-6666-6666-666666666666', '9.2', 'Audit interne SST', NULL, 2),
+    ('70000101-0000-0000-0000-000000000002', '67777777-7777-7777-7777-777777777777', '10.2', 'Événement indésirable, non-conformité et action corrective', NULL, 2);
 
 INSERT INTO standard_requirements (clause_id, code, text, obligation, evidence_types, measurable_criteria, risk_if_missing, order_index) VALUES
-    ('h0000051-0000-0000-0000-000000000001', '5.4', 'L''organisme doit établir, mettre en œuvre et tenir à jour un processus pour la consultation et la participation des travailleurs à tous les niveaux et fonctions applicables.', 'MUST', 'PV CSE/CSSCT, sondages travailleurs, comités SST', 'Réunions CSE ≥ trimestriel, taux participation > 80%', 'CRITICAL', 1),
-    ('h0000061-0000-0000-0000-000000000001', '6.1.2.1', 'L''organisme doit établir un processus permanent et proactif d''identification des dangers liés au travail.', 'MUST', 'Document unique d''évaluation des risques (DUER)', 'DUER à jour ≥ annuel, plan d''action associé', 'CRITICAL', 1),
-    ('h0000061-0000-0000-0000-000000000001', '6.1.2.2', 'L''organisme doit établir un processus pour évaluer les risques SST associés aux dangers identifiés.', 'MUST', 'Méthode d''évaluation (matrice gravité × fréquence)', 'Méthode formalisée, cotation systématique', 'CRITICAL', 2),
-    ('h0000081-0000-0000-0000-000000000001', '8.2', 'L''organisme doit établir, mettre en œuvre et tenir à jour les processus nécessaires pour se préparer aux situations d''urgence potentielles.', 'MUST', 'POI, plans d''urgence, comptes rendus d''exercices', 'Exercices ≥ 1/an, mise à jour POI ≥ 2 ans', 'CRITICAL', 1),
-    ('h0000091-0000-0000-0000-000000000002', '9.2.1', 'L''organisme doit réaliser des audits internes SST à intervalles planifiés.', 'MUST', 'Programme et rapports d''audit interne SST', 'Audit interne ≥ 1/an, couverture risques significatifs', 'HIGH', 1),
-    ('h0000101-0000-0000-0000-000000000002', '10.2.1', 'Lorsqu''un événement indésirable ou une non-conformité se produit, l''organisme doit réagir, examiner et entreprendre les actions correctives appropriées.', 'MUST', 'Registre événements indésirables + CAPA SST', 'Délai investigation < 5j ouvrés pour accidents graves', 'CRITICAL', 1);
+    ('70000051-0000-0000-0000-000000000001', '5.4', 'L''organisme doit établir, mettre en œuvre et tenir à jour un processus pour la consultation et la participation des travailleurs à tous les niveaux et fonctions applicables.', 'MUST', 'PV CSE/CSSCT, sondages travailleurs, comités SST', 'Réunions CSE ≥ trimestriel, taux participation > 80%', 'CRITICAL', 1),
+    ('70000061-0000-0000-0000-000000000001', '6.1.2.1', 'L''organisme doit établir un processus permanent et proactif d''identification des dangers liés au travail.', 'MUST', 'Document unique d''évaluation des risques (DUER)', 'DUER à jour ≥ annuel, plan d''action associé', 'CRITICAL', 1),
+    ('70000061-0000-0000-0000-000000000001', '6.1.2.2', 'L''organisme doit établir un processus pour évaluer les risques SST associés aux dangers identifiés.', 'MUST', 'Méthode d''évaluation (matrice gravité × fréquence)', 'Méthode formalisée, cotation systématique', 'CRITICAL', 2),
+    ('70000081-0000-0000-0000-000000000001', '8.2', 'L''organisme doit établir, mettre en œuvre et tenir à jour les processus nécessaires pour se préparer aux situations d''urgence potentielles.', 'MUST', 'POI, plans d''urgence, comptes rendus d''exercices', 'Exercices ≥ 1/an, mise à jour POI ≥ 2 ans', 'CRITICAL', 1),
+    ('70000091-0000-0000-0000-000000000002', '9.2.1', 'L''organisme doit réaliser des audits internes SST à intervalles planifiés.', 'MUST', 'Programme et rapports d''audit interne SST', 'Audit interne ≥ 1/an, couverture risques significatifs', 'HIGH', 1),
+    ('70000101-0000-0000-0000-000000000002', '10.2.1', 'Lorsqu''un événement indésirable ou une non-conformité se produit, l''organisme doit réagir, examiner et entreprendre les actions correctives appropriées.', 'MUST', 'Registre événements indésirables + CAPA SST', 'Délai investigation < 5j ouvrés pour accidents graves', 'CRITICAL', 1);
 
 -- ============================================================================
 -- ISO 22301:2019 — Continuité d'activité (BCMS)
@@ -121,20 +121,20 @@ VALUES (
 );
 
 INSERT INTO standard_sections (id, standard_id, code, title, description, order_index) VALUES
-    ('i2222222-2222-2222-2222-222222222222', '55555555-5555-5555-5555-555555555555', '6', 'Planification', 'Risques + objectifs BCMS + bilan d''impact sur l''activité (BIA).', 6),
-    ('i3333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '8', 'Fonctionnement', 'BIA, appréciation des risques, stratégie de continuité, procédures, exercices.', 8),
-    ('i6666666-6666-6666-6666-666666666666', '55555555-5555-5555-5555-555555555555', '9', 'Évaluation des performances', 'Surveillance, audit, revue de direction.', 9);
+    ('82222222-2222-2222-2222-222222222222', '55555555-5555-5555-5555-555555555555', '6', 'Planification', 'Risques + objectifs BCMS + bilan d''impact sur l''activité (BIA).', 6),
+    ('83333333-3333-3333-3333-333333333333', '55555555-5555-5555-5555-555555555555', '8', 'Fonctionnement', 'BIA, appréciation des risques, stratégie de continuité, procédures, exercices.', 8),
+    ('86666666-6666-6666-6666-666666666666', '55555555-5555-5555-5555-555555555555', '9', 'Évaluation des performances', 'Surveillance, audit, revue de direction.', 9);
 
 INSERT INTO standard_clauses (id, section_id, code, title, description, order_index) VALUES
-    ('j0000081-0000-0000-0000-000000000001', 'i3333333-3333-3333-3333-333333333333', '8.2.2', 'Bilan d''impact sur l''activité (BIA)', 'Évaluation des impacts de la perturbation des activités prioritaires.', 1),
-    ('j0000081-0000-0000-0000-000000000002', 'i3333333-3333-3333-3333-333333333333', '8.3', 'Stratégie et solutions de continuité d''activité', NULL, 2),
-    ('j0000081-0000-0000-0000-000000000003', 'i3333333-3333-3333-3333-333333333333', '8.4', 'Procédures de continuité d''activité', NULL, 3),
-    ('j0000081-0000-0000-0000-000000000004', 'i3333333-3333-3333-3333-333333333333', '8.5', 'Programme d''exercices', NULL, 4),
-    ('j0000091-0000-0000-0000-000000000001', 'i6666666-6666-6666-6666-666666666666', '9.2', 'Audit interne BCMS', NULL, 2);
+    ('90000081-0000-0000-0000-000000000001', '83333333-3333-3333-3333-333333333333', '8.2.2', 'Bilan d''impact sur l''activité (BIA)', 'Évaluation des impacts de la perturbation des activités prioritaires.', 1),
+    ('90000081-0000-0000-0000-000000000002', '83333333-3333-3333-3333-333333333333', '8.3', 'Stratégie et solutions de continuité d''activité', NULL, 2),
+    ('90000081-0000-0000-0000-000000000003', '83333333-3333-3333-3333-333333333333', '8.4', 'Procédures de continuité d''activité', NULL, 3),
+    ('90000081-0000-0000-0000-000000000004', '83333333-3333-3333-3333-333333333333', '8.5', 'Programme d''exercices', NULL, 4),
+    ('90000091-0000-0000-0000-000000000001', '86666666-6666-6666-6666-666666666666', '9.2', 'Audit interne BCMS', NULL, 2);
 
 INSERT INTO standard_requirements (clause_id, code, text, obligation, evidence_types, measurable_criteria, risk_if_missing, order_index) VALUES
-    ('j0000081-0000-0000-0000-000000000001', '8.2.2', 'L''organisme doit mettre en œuvre et tenir à jour un processus de bilan d''impact sur l''activité (BIA) pour déterminer les exigences de continuité et la priorité des activités.', 'MUST', 'Rapport BIA, RTO/RPO par activité prioritaire', 'BIA mise à jour ≥ 2 ans, RTO/RPO documentés', 'CRITICAL', 1),
-    ('j0000081-0000-0000-0000-000000000002', '8.3', 'L''organisme doit identifier et sélectionner des stratégies de continuité d''activité prenant en compte les options de prévention, préparation, réponse et reprise.', 'MUST', 'Document de stratégie BCMS, options évaluées', 'Stratégie validée direction, alignée RTO', 'CRITICAL', 1),
-    ('j0000081-0000-0000-0000-000000000003', '8.4.1', 'L''organisme doit mettre en œuvre des procédures de continuité d''activité qui répondent aux objectifs définis.', 'MUST', 'PCA / PCI documentés', 'Procédures testées, version diffusée', 'CRITICAL', 1),
-    ('j0000081-0000-0000-0000-000000000004', '8.5', 'L''organisme doit mettre en œuvre et tenir à jour un programme d''exercices et de tests de ses procédures de continuité d''activité.', 'MUST', 'Calendrier d''exercices + rapports de tests', 'Exercice ≥ 1/an, debriefing post-exercice formalisé', 'CRITICAL', 1),
-    ('j0000091-0000-0000-0000-000000000001', '9.2.1', 'L''organisme doit réaliser des audits internes BCMS à intervalles planifiés.', 'MUST', 'Programme et rapports d''audit interne BCMS', 'Audit interne ≥ 1/an', 'HIGH', 1);
+    ('90000081-0000-0000-0000-000000000001', '8.2.2', 'L''organisme doit mettre en œuvre et tenir à jour un processus de bilan d''impact sur l''activité (BIA) pour déterminer les exigences de continuité et la priorité des activités.', 'MUST', 'Rapport BIA, RTO/RPO par activité prioritaire', 'BIA mise à jour ≥ 2 ans, RTO/RPO documentés', 'CRITICAL', 1),
+    ('90000081-0000-0000-0000-000000000002', '8.3', 'L''organisme doit identifier et sélectionner des stratégies de continuité d''activité prenant en compte les options de prévention, préparation, réponse et reprise.', 'MUST', 'Document de stratégie BCMS, options évaluées', 'Stratégie validée direction, alignée RTO', 'CRITICAL', 1),
+    ('90000081-0000-0000-0000-000000000003', '8.4.1', 'L''organisme doit mettre en œuvre des procédures de continuité d''activité qui répondent aux objectifs définis.', 'MUST', 'PCA / PCI documentés', 'Procédures testées, version diffusée', 'CRITICAL', 1),
+    ('90000081-0000-0000-0000-000000000004', '8.5', 'L''organisme doit mettre en œuvre et tenir à jour un programme d''exercices et de tests de ses procédures de continuité d''activité.', 'MUST', 'Calendrier d''exercices + rapports de tests', 'Exercice ≥ 1/an, debriefing post-exercice formalisé', 'CRITICAL', 1),
+    ('90000091-0000-0000-0000-000000000001', '9.2.1', 'L''organisme doit réaliser des audits internes BCMS à intervalles planifiés.', 'MUST', 'Programme et rapports d''audit interne BCMS', 'Audit interne ≥ 1/an', 'HIGH', 1);

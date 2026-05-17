@@ -34,6 +34,7 @@ public class ChangeRequestService {
     private final ChangeApprovalRepository approvalRepo;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public ChangeRequestService(ChangeRequestRepository requestRepo,
                                 ChangeImpactRepository impactRepo,
                                 ChangeApprovalRepository approvalRepo) {

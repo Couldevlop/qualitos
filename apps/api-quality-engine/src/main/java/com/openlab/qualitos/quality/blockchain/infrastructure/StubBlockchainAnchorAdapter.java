@@ -3,7 +3,6 @@ package com.openlab.qualitos.quality.blockchain.infrastructure;
 import com.openlab.qualitos.quality.blockchain.domain.BlockchainAnchorPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -11,11 +10,10 @@ import java.util.UUID;
 /**
  * Adapter par défaut, en attente du vrai client Hyperledger Fabric (§11.3).
  * Renvoie une référence opaque déterministe par tenant + root pour faciliter
- * les tests d'intégration. La prod doit fournir un bean concret qui désactive
- * celui-ci ({@link ConditionalOnMissingBean} préserverait l'override).
+ * les tests d'intégration. Pour overrider en prod : declarer un autre bean
+ * BlockchainAnchorPort + marquer ce stub @Profile("dev") ou supprimer son @Component.
  */
 @Component
-@ConditionalOnMissingBean(BlockchainAnchorPort.class)
 public class StubBlockchainAnchorAdapter implements BlockchainAnchorPort {
 
     private static final Logger log = LoggerFactory.getLogger(StubBlockchainAnchorAdapter.class);

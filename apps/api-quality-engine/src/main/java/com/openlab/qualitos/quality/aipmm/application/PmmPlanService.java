@@ -22,6 +22,7 @@ public class PmmPlanService {
     private final PmmPlanEventPublisher events;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public PmmPlanService(PmmPlanRepository repo, TenantProvider tenantProvider, Clock clock) {
         this(repo, tenantProvider, new PmmPlanEventPublisher.NoOp(), clock);
     }

@@ -23,6 +23,7 @@ public class AiSystemService {
     private final AiSystemEventPublisher events;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public AiSystemService(AiSystemRepository repo,
                            TenantProvider tenantProvider, Clock clock) {
         this(repo, tenantProvider, new AiSystemEventPublisher.NoOp(), clock);

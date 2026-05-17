@@ -23,6 +23,7 @@ public class CrossBorderTransferService {
     private final CrossBorderTransferEventPublisher events;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public CrossBorderTransferService(CrossBorderTransferRepository repo,
                                       TenantProvider tenantProvider, Clock clock) {
         this(repo, tenantProvider, new CrossBorderTransferEventPublisher.NoOp(), clock);

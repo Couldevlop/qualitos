@@ -1,7 +1,6 @@
 package com.openlab.qualitos.quality.ratelimit.infrastructure;
 
 import com.openlab.qualitos.quality.ratelimit.domain.RateLimitCounter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -12,14 +11,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Compteur fenêtre fixe en mémoire. Adapté à un déploiement mono-instance V1
  * (sufficient pour SaaS jeune). Pour multi-instance, fournir un adapter Redis
- * qui désactive celui-ci via {@link ConditionalOnMissingBean}.
+ * et marquer ce stub @Profile("dev") (ou retirer son @Component).
  *
  * Threading : {@link ConcurrentHashMap} + {@link AtomicInteger} → atomique
  * pour increment ; pas de lock global. Auto-cleanup paresseux : à chaque
  * incrément on remplace l'entrée si la fenêtre a tourné.
  */
 @Component
-@ConditionalOnMissingBean(RateLimitCounter.class)
 public class InMemoryRateLimitCounter implements RateLimitCounter {
 
     private final ConcurrentHashMap<String, Bucket> buckets = new ConcurrentHashMap<>();

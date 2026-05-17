@@ -22,6 +22,7 @@ public class AiQmsService {
     private final AiQmsEventPublisher events;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public AiQmsService(AiQmsRepository repo, TenantProvider tenantProvider, Clock clock) {
         this(repo, tenantProvider, new AiQmsEventPublisher.NoOp(), clock);
     }

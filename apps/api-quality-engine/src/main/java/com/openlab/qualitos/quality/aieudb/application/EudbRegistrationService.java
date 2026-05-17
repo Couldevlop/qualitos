@@ -22,6 +22,7 @@ public class EudbRegistrationService {
     private final EudbRegistrationEventPublisher events;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public EudbRegistrationService(EudbRegistrationRepository repo,
                                    TenantProvider tenantProvider, Clock clock) {
         this(repo, tenantProvider, new EudbRegistrationEventPublisher.NoOp(), clock);
