@@ -1,0 +1,482 @@
+# =====================================================================
+# QualitOS — Industry Pack: Manufacturing / Industrie
+# CLAUDE.md §5.2 — first reference pack for P3
+# =====================================================================
+id: manufacturing
+version: 1.0.0
+name: "Manufacturing / Industrie"
+published_at: "2026-05-17T00:00:00Z"
+
+sectors:
+  - "ISIC-C"          # Manufacturing
+  - "NACE-C"
+  - "NACE-C-25"       # Fabricated metal products
+  - "NACE-C-28"       # Machinery and equipment
+  - "NACE-C-29"       # Motor vehicles
+
+supported_norms:
+  - "iso-9001"
+  - "iso-14001"
+  - "iso-45001"
+  - "iatf-16949"
+  - "iso-50001"
+
+glossary:
+  oee: "Overall Equipment Effectiveness — Disponibilité × Performance × Qualité"
+  trs: "Taux de Rendement Synthétique (équivalent FR de l'OEE)"
+  mtbf: "Mean Time Between Failures"
+  mttr: "Mean Time To Repair"
+  fmea: "Failure Mode and Effects Analysis — AMDEC"
+  spc: "Statistical Process Control"
+  ppap: "Production Part Approval Process"
+  apqp: "Advanced Product Quality Planning"
+  poka_yoke: "Mistake-proofing device — détrompeur"
+
+# ---------------------------------------------------------------------
+# KPIs — CLAUDE.md §6.3 Industry / Manufacturing
+# ---------------------------------------------------------------------
+kpis:
+  - id: oee
+    name: "Overall Equipment Effectiveness"
+    category: manufacturing
+    formula: "availability * performance * quality_rate"
+    unit: "%"
+    target: "> 85"
+    threshold_warning: "75-85"
+    threshold_critical: "< 75"
+    data_source: "timescaledb.iot_telemetry"
+    refresh_frequency: "realtime"
+    owner: production_manager
+    applicable_industries: [manufacturing]
+    related_kpis: [trs, mtbf, mttr]
+    explainability: "World-class OEE benchmark is 85%. Each percentage point lost costs revenue."
+
+  - id: trs
+    name: "Taux de Rendement Synthétique"
+    category: manufacturing
+    formula: "disponibilite * performance * qualite"
+    unit: "%"
+    target: "> 85"
+    threshold_warning: "75-85"
+    threshold_critical: "< 75"
+    data_source: "timescaledb.iot_telemetry"
+    refresh_frequency: realtime
+    owner: production_manager
+    applicable_industries: [manufacturing]
+    related_kpis: [oee]
+    explainability: "Equivalent francophone de l'OEE."
+
+  - id: mtbf
+    name: "Mean Time Between Failures"
+    category: maintenance
+    formula: "SUM(uptime_hours) / count(failures)"
+    unit: hours
+    target: "> 500"
+    threshold_warning: "200-500"
+    threshold_critical: "< 200"
+    data_source: cmms_events
+    refresh_frequency: hourly
+    owner: maintenance_manager
+    applicable_industries: [manufacturing]
+    related_kpis: [mttr]
+    explainability: "Indicator of equipment reliability."
+
+  - id: mttr
+    name: "Mean Time To Repair"
+    category: maintenance
+    formula: "SUM(repair_minutes) / count(failures)"
+    unit: minutes
+    target: "< 60"
+    threshold_warning: "60-120"
+    threshold_critical: "> 120"
+    data_source: cmms_events
+    refresh_frequency: hourly
+    owner: maintenance_manager
+    applicable_industries: [manufacturing]
+    related_kpis: [mtbf]
+    explainability: "Time to restore service after a failure."
+
+  - id: scrap_rate
+    name: "Scrap Rate"
+    category: quality
+    formula: "scrap_units / total_units_produced * 100"
+    unit: "%"
+    target: "< 1"
+    threshold_warning: "1-3"
+    threshold_critical: "> 3"
+    data_source: mes_production_events
+    refresh_frequency: realtime
+    owner: quality_manager
+    applicable_industries: [manufacturing]
+    related_kpis: [rework_rate, fpy]
+    explainability: "Direct quality cost indicator (COQ — external failures)."
+
+  - id: rework_rate
+    name: "Rework Rate"
+    category: quality
+    formula: "rework_units / total_units_produced * 100"
+    unit: "%"
+    target: "< 2"
+    threshold_warning: "2-5"
+    threshold_critical: "> 5"
+    data_source: mes_production_events
+    refresh_frequency: realtime
+    owner: quality_manager
+    applicable_industries: [manufacturing]
+    related_kpis: [scrap_rate, fpy]
+    explainability: "Hidden cost — labour + material consumed twice."
+
+  - id: fpy
+    name: "First Pass Yield"
+    category: quality
+    formula: "good_units_first_pass / total_units_started * 100"
+    unit: "%"
+    target: "> 98"
+    threshold_warning: "95-98"
+    threshold_critical: "< 95"
+    data_source: mes_production_events
+    refresh_frequency: realtime
+    owner: quality_manager
+    applicable_industries: [manufacturing]
+    related_kpis: [scrap_rate, rework_rate]
+    explainability: "Right First Time — pivot indicator of process maturity."
+
+  - id: customer_ppm
+    name: "Customer Reject PPM"
+    category: customer-quality
+    formula: "rejected_parts_per_million"
+    unit: PPM
+    target: "< 50"
+    threshold_warning: "50-200"
+    threshold_critical: "> 200"
+    data_source: complaint_events
+    refresh_frequency: daily
+    owner: quality_manager
+    applicable_industries: [manufacturing, automotive]
+    related_kpis: [fpy]
+    explainability: "IATF 16949 mandates tracking of escape rate to customer."
+
+  - id: cp_cpk
+    name: "Process Capability (Cp/Cpk)"
+    category: spc
+    formula: "min((USL - mean) / (3*sigma), (mean - LSL) / (3*sigma))"
+    unit: ratio
+    target: "> 1.33"
+    threshold_warning: "1.00-1.33"
+    threshold_critical: "< 1.00"
+    data_source: timescaledb.iot_telemetry
+    refresh_frequency: realtime
+    owner: quality_engineer
+    applicable_industries: [manufacturing]
+    related_kpis: [fpy, scrap_rate]
+    explainability: "Cpk ≥ 1.33 = capable process. < 1.00 = not capable."
+
+  - id: lpa_score
+    name: "Layered Process Audit Score"
+    category: audit
+    formula: "compliant_items / audited_items * 100"
+    unit: "%"
+    target: "> 95"
+    threshold_warning: "85-95"
+    threshold_critical: "< 85"
+    data_source: audit_events
+    refresh_frequency: weekly
+    owner: quality_manager
+    applicable_industries: [manufacturing, automotive]
+    related_kpis: [fpy]
+    explainability: "EASE-style layered audit — verifies controls hold."
+
+# ---------------------------------------------------------------------
+# Native connectors — declarative; actual adapters live in api-iot-hub
+# ---------------------------------------------------------------------
+connectors:
+  - type: opc-ua
+    name: "PLC OPC-UA (Siemens / Schneider / Rockwell)"
+    config:
+      protocol_version: "1.04"
+      security_mode: "SignAndEncrypt"
+      security_policy: "Basic256Sha256"
+      auth: "x509"
+
+  - type: mqtt
+    name: "Field MQTT broker (EMQX)"
+    config:
+      version: "5.0"
+      tls: required
+      sparkplug_b: enabled
+
+  - type: modbus
+    name: "Modbus TCP (legacy PLC)"
+    config:
+      port: "502"
+      framing: tcp
+      polling_ms: "1000"
+
+  - type: rest
+    name: "MES REST API"
+    config:
+      auth: oauth2-client-credentials
+
+# ---------------------------------------------------------------------
+# Ishikawa templates — 6M / 7M variants for typical manufacturing problems
+# ---------------------------------------------------------------------
+ishikawa_templates:
+  - id: ish-defect-product
+    name: "Product Defect — 6M"
+    problem_archetype: "Recurring product defect on assembly line"
+    branches: [Method, Machine, Material, Manpower, Measurement, Environment]
+    seed_causes:
+      Method:      ["SOP not followed", "Setup parameters drifted", "Process not capable"]
+      Machine:     ["Tool wear", "Calibration drift", "Spindle vibration", "Coolant low"]
+      Material:    ["Batch variation", "Supplier change", "Storage humidity"]
+      Manpower:    ["Insufficient training", "Operator fatigue", "Shift turnover"]
+      Measurement: ["Gauge R&R failure", "Inspection sampling too low"]
+      Environment: ["Temperature swing", "Vibration neighbour line", "Dust ingress"]
+
+  - id: ish-line-stoppage
+    name: "Line Stoppage — 6M"
+    problem_archetype: "Unplanned production line stop"
+    branches: [Method, Machine, Material, Manpower, Measurement, Environment]
+    seed_causes:
+      Method:      ["Changeover too long (SMED gap)", "PM schedule missed"]
+      Machine:     ["Bearing failure", "Sensor fault", "PLC alarm cascade", "Hydraulic leak"]
+      Material:    ["Component shortage", "Wrong material loaded"]
+      Manpower:    ["Operator absence", "Reaction time too slow"]
+      Measurement: ["False positive trigger", "Threshold mis-set"]
+      Environment: ["Power dip", "Compressed air pressure low"]
+
+  - id: ish-spc-drift
+    name: "SPC Drift — 6M"
+    problem_archetype: "Cpk falling below 1.33 on critical dimension"
+    branches: [Method, Machine, Material, Manpower, Measurement, Environment]
+    seed_causes:
+      Method:      ["Recipe not updated", "Sampling plan inadequate"]
+      Machine:     ["Tool insert worn", "Fixture loose", "Servo backlash"]
+      Material:    ["Lot mixing", "Hardness variation"]
+      Manpower:    ["Adjustment by ear (no SOP)"]
+      Measurement: ["Probe drift", "Reference standard expired"]
+      Environment: ["Cold start", "Coolant temperature unstable"]
+
+  - id: ish-customer-complaint
+    name: "Customer Complaint — 7M"
+    problem_archetype: "External NC reported by customer"
+    branches: [Method, Machine, Material, Manpower, Measurement, Environment, Management]
+    seed_causes:
+      Method:      ["Final inspection inadequate"]
+      Machine:     ["Pack equipment misalignment"]
+      Material:    ["Wrong revision shipped"]
+      Manpower:    ["Picker error"]
+      Measurement: ["Visual-only check"]
+      Environment: ["Transport vibration"]
+      Management:  ["Escalation rules unclear", "Containment plan absent"]
+
+  - id: ish-safety-incident
+    name: "Safety Incident — 6M+1 (Mother Nature)"
+    problem_archetype: "Near-miss or LTI on shop floor"
+    branches: [Method, Machine, Material, Manpower, Measurement, Environment]
+    seed_causes:
+      Method:      ["LOTO not applied", "Risk assessment outdated"]
+      Machine:     ["Guard missing", "E-stop not tested"]
+      Material:    ["MSDS not consulted"]
+      Manpower:    ["EPI not worn", "Training expired"]
+      Measurement: ["Gas detector off-calibration"]
+      Environment: ["Spill / slippery floor", "Lighting insufficient"]
+
+  - id: ish-supplier-defect
+    name: "Supplier Defect — 6M"
+    problem_archetype: "Incoming material non-conformance"
+    branches: [Method, Machine, Material, Manpower, Measurement, Environment]
+    seed_causes:
+      Method:      ["Incoming inspection skipped"]
+      Machine:     ["Supplier process drift"]
+      Material:    ["Substituted grade", "Counterfeit risk (AS9100)"]
+      Manpower:    ["Supplier operator change"]
+      Measurement: ["COC missing or invalid"]
+      Environment: ["Long-term storage degradation"]
+
+  - id: ish-changeover-overrun
+    name: "Changeover Overrun — 6M"
+    problem_archetype: "SMED time exceeds target"
+    branches: [Method, Machine, Material, Manpower, Measurement, Environment]
+    seed_causes:
+      Method:      ["External tasks done internally"]
+      Machine:     ["Quick-clamp missing"]
+      Material:    ["Setup parts not staged"]
+      Manpower:    ["Single-operator bottleneck"]
+      Measurement: ["First-off measure too slow"]
+      Environment: ["Crowded floor — tool not accessible"]
+
+  - id: ish-energy-overconsumption
+    name: "Energy Overconsumption — ISO 50001 — 6M"
+    problem_archetype: "Energy intensity above target"
+    branches: [Method, Machine, Material, Manpower, Measurement, Environment]
+    seed_causes:
+      Method:      ["Idle running on breaks"]
+      Machine:     ["Compressed-air leaks", "Inverter mis-set"]
+      Material:    ["Heating non-target loads"]
+      Manpower:    ["Lighting left on"]
+      Measurement: ["Sub-meter coverage <80%"]
+      Environment: ["Building envelope leaks"]
+
+  - id: ish-equipment-vibration
+    name: "Equipment Vibration Alarm — 6M"
+    problem_archetype: "Predictive-maintenance vibration alarm raised"
+    branches: [Method, Machine, Material, Manpower, Measurement, Environment]
+    seed_causes:
+      Method:      ["Greasing schedule missed"]
+      Machine:     ["Bearing wear", "Imbalance", "Misalignment"]
+      Material:    ["Wrong lubricant grade"]
+      Manpower:    ["Override by operator"]
+      Measurement: ["Sensor mount loose"]
+      Environment: ["Foundation crack", "Resonance neighbour line"]
+
+  - id: ish-environmental-spill
+    name: "Environmental Spill — ISO 14001 — 6M"
+    problem_archetype: "Chemical spill onto shop floor or to drain"
+    branches: [Method, Machine, Material, Manpower, Measurement, Environment]
+    seed_causes:
+      Method:      ["Decanting SOP absent"]
+      Machine:     ["Drum pump seal failure"]
+      Material:    ["Container compatibility wrong"]
+      Manpower:    ["Spill kit unknown"]
+      Measurement: ["Level sensor disabled"]
+      Environment: ["Bund undersized"]
+
+  - id: ish-cobot-collision
+    name: "Cobot Collision / Safety Event — 6M"
+    problem_archetype: "Collaborative robot hits operator or fixture"
+    branches: [Method, Machine, Material, Manpower, Measurement, Environment]
+    seed_causes:
+      Method:      ["Workspace not segregated"]
+      Machine:     ["Force-torque sensor mis-calibrated"]
+      Material:    ["Workpiece geometry not updated in model"]
+      Manpower:    ["Operator entered area"]
+      Measurement: ["LIDAR field of view obstructed"]
+      Environment: ["Ambient lighting glare"]
+
+# ---------------------------------------------------------------------
+# Poka-Yoke library — sector reference (Shingo categories)
+# ---------------------------------------------------------------------
+poka_yoke_library:
+  - id: pk-color-key
+    name: "Color-Keyed Connectors"
+    type: contact
+    category: prevention
+    description: "Physical color matches between hose and port make wrong connections impossible."
+    applies_to: [assembly, fluid-systems, pneumatic]
+
+  - id: pk-asymmetric-fixture
+    name: "Asymmetric Fixture"
+    type: contact
+    category: prevention
+    description: "Part can only be loaded one correct way thanks to asymmetric geometry."
+    applies_to: [machining, assembly]
+
+  - id: pk-count-down-sensor
+    name: "Bin Count-Down Sensor"
+    type: constant-number
+    category: detection
+    description: "Sensor verifies that exactly N components were picked per cycle."
+    applies_to: [assembly, kitting]
+
+  - id: pk-torque-watch
+    name: "Torque-Logging Tool"
+    type: motion-step
+    category: detection
+    description: "Smart torque wrench records every joint; missing/under-torqued joints flagged."
+    applies_to: [assembly, bolting]
+
+  - id: pk-rfid-recipe
+    name: "RFID Recipe Loader"
+    type: motion-step
+    category: prevention
+    description: "Tool reads tag on workpiece and loads correct CNC recipe — no manual entry."
+    applies_to: [machining, cnc]
+
+  - id: pk-light-curtain
+    name: "Safety Light Curtain Interlock"
+    type: contact
+    category: shut-out
+    description: "Operator entering area trips immediate safe-stop on cobot / press."
+    applies_to: [press, cobot, safety]
+
+  - id: pk-poke-photo
+    name: "First-Off Photo Capture"
+    type: motion-step
+    category: detection
+    description: "Camera + CV (5S/quality model) verifies first-off matches reference image."
+    applies_to: [assembly, packaging]
+
+# ---------------------------------------------------------------------
+# Training paths — gamification: Yellow → Green → Black Belt (CLAUDE.md §19.3)
+# ---------------------------------------------------------------------
+training_paths:
+  - id: tp-operator-yellow
+    name: "Operator — Yellow Belt Manufacturing"
+    target_role: operator
+    level: yellow
+    duration_hours: 8
+    modules:
+      - "Intro to QualitOS"
+      - "5S basics"
+      - "Reporting NC on mobile"
+      - "Reading SPC charts"
+      - "Safety LOTO basics"
+
+  - id: tp-quality-engineer-green
+    name: "Quality Engineer — Green Belt"
+    target_role: quality_engineer
+    level: green
+    duration_hours: 40
+    modules:
+      - "DMAIC walkthrough"
+      - "FMEA workshop"
+      - "SPC + Cp/Cpk"
+      - "Ishikawa + 5 Whys"
+      - "Poka-Yoke design"
+      - "IATF 16949 essentials"
+
+  - id: tp-quality-manager-black
+    name: "Quality Manager — Black Belt"
+    target_role: quality_manager
+    level: black
+    duration_hours: 120
+    modules:
+      - "Six Sigma project leadership"
+      - "Advanced SPC (EWMA, CUSUM, multivariate)"
+      - "APQP / PPAP end-to-end"
+      - "Risk-based thinking ISO 9001:2015"
+      - "Integrated mgmt system (9001+14001+45001)"
+      - "AI-augmented quality leadership"
+
+# ---------------------------------------------------------------------
+# Document templates — packaged assets (paths resolved by Standards Hub in P4)
+# ---------------------------------------------------------------------
+documents_templates:
+  - id: doc-quality-manual
+    name: "Quality Manual — Manufacturing"
+    kind: manual
+    media_type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+    path: templates/manufacturing/quality-manual.docx
+    maps_to_norms: [iso-9001, iatf-16949]
+
+  - id: doc-fmea
+    name: "Process FMEA template"
+    kind: record
+    media_type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+    path: templates/manufacturing/pfmea.xlsx
+    maps_to_norms: [iatf-16949, iso-9001]
+
+  - id: doc-lpa-checklist
+    name: "Layered Process Audit checklist"
+    kind: audit-checklist
+    media_type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+    path: templates/manufacturing/lpa-checklist.xlsx
+    maps_to_norms: [iatf-16949]
+
+  - id: doc-control-plan
+    name: "Control Plan (AIAG)"
+    kind: record
+    media_type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+    path: templates/manufacturing/control-plan.xlsx
+    maps_to_norms: [iatf-16949]
