@@ -1,0 +1,75 @@
+<div class="editor-shell" *ngIf="!loading; else loadingTpl">
+  <header class="editor-header">
+    <div class="title-row">
+      <button mat-icon-button (click)="back()" aria-label="Back to list">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+
+      <mat-form-field appearance="outline" class="name-field">
+        <mat-label>Dashboard name</mat-label>
+        <input matInput [value]="layout.name"
+               (input)="onNameChange($any($event.target).value)"
+               maxlength="120" required />
+      </mat-form-field>
+
+      <button mat-stroked-button color="primary"
+              [class.shared-active]="layout.shared"
+              (click)="onSharedChange(!layout.shared)">
+        <mat-icon>{{ layout.shared ? 'group' : 'lock' }}</mat-icon>
+        {{ layout.shared ? 'Shared' : 'Private' }}
+      </button>
+
+      <span class="spacer"></span>
+
+      <button mat-flat-button color="primary"
+              [disabled]="saving" (click)="save()"
+              class="save-btn">
+        <mat-icon *ngIf="!saving">save</mat-icon>
+        <mat-progress-spinner *ngIf="saving" diameter="18" mode="indeterminate"></mat-progress-spinner>
+        {{ saving ? 'Saving…' : 'Save' }}
+      </button>
+    </div>
+
+    <div class="palette" role="toolbar" aria-label="Widget palette">
+      <span class="palette-label">Add widget</span>
+      <button *ngFor="let t of availableTypes" mat-stroked-button
+              (click)="addWidget(t)"
+              [matTooltip]="'Add ' + t + ' widget'"
+              [attr.aria-label]="'Add ' + t + ' widget'">
+        <mat-icon>{{
+          t === 'kpi' ? 'speed' :
+          t === 'line' ? 'show_chart' :
+          t === 'bar' ? 'bar_chart' :
+          t === 'pie' ? 'pie_chart' :
+          t === 'gauge' ? 'gauge' :
+          t === 'table' ? 'table_chart' :
+          t === 'heatmap' ? 'grid_on' :
+          'auto_awesome'
+        }}</mat-icon>
+        {{ t }}
+      </button>
+    </div>
+  </header>
+
+  <section class="grid" aria-label="Dashboard widgets">
+    <div *ngFor="let w of layout.widgets; trackBy: trackById" class="grid-cell">
+      <qos-widget-host [widget]="w"></qos-widget-host>
+      <button mat-icon-button class="remove-btn"
+              (click)="removeWidget(w.id)"
+              [matTooltip]="'Remove ' + w.title">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="empty-state" *ngIf="layout.widgets.length === 0">
+      <mat-icon>dashboard_customize</mat-icon>
+      <p>Your dashboard is empty. Pick a widget above to begin.</p>
+    </div>
+  </section>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading">
+    <mat-progress-spinner mode="indeterminate" diameter="48"></mat-progress-spinner>
+  </div>
+</ng-template>

@@ -44,6 +44,11 @@ const routes: Routes = [
       {
         path: 'circles',
         loadChildren: () => import('./features/circles/circles.module').then(m => m.CirclesModule)
+      },
+      {
+        path: 'dashboard-builder',
+        loadChildren: () =>
+          import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)
       }
     ]
   },

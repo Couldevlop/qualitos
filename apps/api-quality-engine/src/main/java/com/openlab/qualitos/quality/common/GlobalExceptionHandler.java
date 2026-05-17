@@ -113,6 +113,10 @@ import com.openlab.qualitos.quality.webhooks.WebhookSubscriptionNotFoundExceptio
 import com.openlab.qualitos.quality.pdca.PdcaCycleNotFoundException;
 import com.openlab.qualitos.quality.pdca.PdcaStepNotFoundException;
 import com.openlab.qualitos.quality.pdca.PdcaStateException;
+import com.openlab.qualitos.quality.dashboards.domain.DashboardLayoutNotFoundException;
+import com.openlab.qualitos.quality.dashboards.domain.DashboardLayoutStateException;
+import com.openlab.qualitos.quality.marketplace.domain.MarketplacePackNotFoundException;
+import com.openlab.qualitos.quality.marketplace.domain.MarketplacePackStateException;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1212,6 +1216,44 @@ public class GlobalExceptionHandler {
         problem.setType(URI.create("https://qualitos.io/errors/validation-failed"));
         problem.setTitle("Validation Failed");
         problem.setProperty("errors", errors);
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    // ----- P5: dashboards & marketplace -----
+
+    @ExceptionHandler(DashboardLayoutNotFoundException.class)
+    public ProblemDetail handleDashboardNotFound(DashboardLayoutNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/dashboard-not-found"));
+        problem.setTitle("Dashboard Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DashboardLayoutStateException.class)
+    public ProblemDetail handleDashboardState(DashboardLayoutStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/dashboard-invalid-state"));
+        problem.setTitle("Invalid Dashboard State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(MarketplacePackNotFoundException.class)
+    public ProblemDetail handleMpNotFound(MarketplacePackNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/marketplace-pack-not-found"));
+        problem.setTitle("Marketplace Pack Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(MarketplacePackStateException.class)
+    public ProblemDetail handleMpState(MarketplacePackStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/marketplace-pack-invalid-state"));
+        problem.setTitle("Invalid Marketplace Pack State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
