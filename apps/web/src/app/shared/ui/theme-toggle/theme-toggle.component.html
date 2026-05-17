@@ -1,0 +1,32 @@
+<div class="qos-theme-toggle" role="radiogroup" aria-label="Préférence de thème" *ngIf="preference$ | async as pref">
+  <button
+    type="button"
+    role="radio"
+    [attr.aria-checked]="pref === 'light'"
+    [class.qos-theme-toggle__btn--active]="pref === 'light'"
+    class="qos-theme-toggle__btn"
+    (click)="set('light')"
+    title="Thème clair">
+    <span class="material-symbols-outlined" aria-hidden="true">light_mode</span>
+  </button>
+  <button
+    type="button"
+    role="radio"
+    [attr.aria-checked]="pref === 'system'"
+    [class.qos-theme-toggle__btn--active]="pref === 'system'"
+    class="qos-theme-toggle__btn"
+    (click)="set('system')"
+    title="Suivre le système">
+    <span class="material-symbols-outlined" aria-hidden="true">desktop_windows</span>
+  </button>
+  <button
+    type="button"
+    role="radio"
+    [attr.aria-checked]="pref === 'dark'"
+    [class.qos-theme-toggle__btn--active]="pref === 'dark'"
+    class="qos-theme-toggle__btn"
+    (click)="set('dark')"
+    title="Thème sombre">
+    <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
+  </button>
+</div>

@@ -1,0 +1,103 @@
+:host { display: block; }
+
+.qos-panel {
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  box-shadow: var(--qos-shadow-xs);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: box-shadow var(--qos-motion-fast),
+              border-color var(--qos-motion-fast);
+}
+
+.qos-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-3);
+  padding: var(--qos-space-4) var(--qos-space-5);
+  border-bottom: 1px solid var(--qos-border-subtle);
+}
+
+.qos-panel__heading {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-3);
+  min-width: 0;
+}
+
+.qos-panel__icon {
+  color: var(--qos-fg-secondary);
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.qos-panel__title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.qos-panel__title {
+  font-size: var(--qos-fs-md);
+  font-weight: var(--qos-fw-semibold);
+  letter-spacing: -0.01em;
+  line-height: var(--qos-lh-snug);
+  color: var(--qos-fg-primary);
+}
+
+.qos-panel__subtitle {
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-tertiary);
+  line-height: var(--qos-lh-snug);
+}
+
+.qos-panel__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  flex-shrink: 0;
+}
+
+.qos-panel__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  position: relative;
+
+  &--padded { padding: var(--qos-space-5); }
+}
+
+.qos-panel__footer {
+  &:empty { display: none; }
+  padding: var(--qos-space-3) var(--qos-space-5);
+  border-top: 1px solid var(--qos-border-subtle);
+  background: var(--qos-bg-sunken);
+}
+
+/* Loader overlay shimmer */
+.qos-panel__loader {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+.qos-panel__shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--qos-bg-hover) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: qos-panel-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes qos-panel-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

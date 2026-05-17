@@ -1,0 +1,44 @@
+<article
+  class="qos-kpi"
+  [class.qos-kpi--sm]="size === 'sm'"
+  [class.qos-kpi--lg]="size === 'lg'"
+  [class.qos-kpi--good]="state === 'good'"
+  [class.qos-kpi--warn]="state === 'warn'"
+  [class.qos-kpi--bad]="state === 'bad'"
+  [class.qos-kpi--loading]="loading"
+  [attr.aria-busy]="loading"
+  [attr.aria-label]="label + ': ' + value + ' ' + unit">
+
+  <header class="qos-kpi__head">
+    <span class="qos-kpi__label">{{ label }}</span>
+    <span *ngIf="icon" class="qos-kpi__icon material-symbols-outlined" aria-hidden="true">
+      {{ icon }}
+    </span>
+  </header>
+
+  <div class="qos-kpi__body" *ngIf="!loading; else skeleton">
+    <div class="qos-kpi__value-row">
+      <span class="qos-kpi__value qos-mono">{{ value }}</span>
+      <span *ngIf="unit" class="qos-kpi__unit">{{ unit }}</span>
+    </div>
+
+    <div class="qos-kpi__meta" *ngIf="trend != null || target != null">
+      <span *ngIf="trend != null" class="qos-kpi__trend" [ngClass]="trendClass()">
+        <span class="material-symbols-outlined" aria-hidden="true">{{ trendIcon() }}</span>
+        <span>{{ formattedTrend() }}</span>
+      </span>
+      <span *ngIf="target != null" class="qos-kpi__target">
+        Cible <span class="qos-mono">{{ target }}{{ unit }}</span>
+      </span>
+    </div>
+  </div>
+
+  <ng-template #skeleton>
+    <div class="qos-kpi__body">
+      <div class="qos-kpi__skeleton qos-kpi__skeleton--value"></div>
+      <div class="qos-kpi__skeleton qos-kpi__skeleton--meta"></div>
+    </div>
+  </ng-template>
+
+  <p *ngIf="description" class="qos-kpi__desc">{{ description }}</p>
+</article>

@@ -1,0 +1,27 @@
+<section class="qos-panel" [class.qos-panel--loading]="loading" [attr.aria-busy]="loading">
+  <header class="qos-panel__header" *ngIf="title || subtitle || icon">
+    <div class="qos-panel__heading">
+      <span *ngIf="icon" class="qos-panel__icon material-symbols-outlined" aria-hidden="true">
+        {{ icon }}
+      </span>
+      <div class="qos-panel__title-block">
+        <h3 *ngIf="title" class="qos-panel__title">{{ title }}</h3>
+        <p *ngIf="subtitle" class="qos-panel__subtitle">{{ subtitle }}</p>
+      </div>
+    </div>
+    <div class="qos-panel__actions">
+      <ng-content select="[qosActions]"></ng-content>
+    </div>
+  </header>
+
+  <div class="qos-panel__body" [class.qos-panel__body--padded]="padded">
+    <div class="qos-panel__loader" *ngIf="loading">
+      <span class="qos-panel__shimmer"></span>
+    </div>
+    <ng-content></ng-content>
+  </div>
+
+  <footer class="qos-panel__footer">
+    <ng-content select="[qosFooter]"></ng-content>
+  </footer>
+</section>
