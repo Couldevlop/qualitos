@@ -89,6 +89,14 @@ import com.openlab.qualitos.quality.aiact.domain.AiSystemNotFoundException;
 import com.openlab.qualitos.quality.aiact.domain.AiSystemStateException;
 import com.openlab.qualitos.quality.aiactfria.domain.FriaNotFoundException;
 import com.openlab.qualitos.quality.aiactfria.domain.FriaStateException;
+import com.openlab.qualitos.quality.aiincidents.domain.AiIncidentNotFoundException;
+import com.openlab.qualitos.quality.aiincidents.domain.AiIncidentStateException;
+import com.openlab.qualitos.quality.aipmm.domain.PmmPlanNotFoundException;
+import com.openlab.qualitos.quality.aipmm.domain.PmmPlanStateException;
+import com.openlab.qualitos.quality.aiqms.domain.AiQmsNotFoundException;
+import com.openlab.qualitos.quality.aiqms.domain.AiQmsStateException;
+import com.openlab.qualitos.quality.aiconformity.domain.ConformityAssessmentNotFoundException;
+import com.openlab.qualitos.quality.aiconformity.domain.ConformityAssessmentStateException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestNotFoundException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestStateException;
 import com.openlab.qualitos.quality.tenantmodules.domain.ModuleActivationNotFoundException;
@@ -844,6 +852,78 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/ai-act-fria-invalid-state"));
         problem.setTitle("Invalid AI Act FRIA State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AiIncidentNotFoundException.class)
+    public ProblemDetail handleAiIncidentNotFound(AiIncidentNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-act-incident-not-found"));
+        problem.setTitle("AI Act Incident Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AiIncidentStateException.class)
+    public ProblemDetail handleAiIncidentState(AiIncidentStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-act-incident-invalid-state"));
+        problem.setTitle("Invalid AI Act Incident State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(PmmPlanNotFoundException.class)
+    public ProblemDetail handlePmmPlanNotFound(PmmPlanNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-act-pmm-plan-not-found"));
+        problem.setTitle("AI Act PMM Plan Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(PmmPlanStateException.class)
+    public ProblemDetail handlePmmPlanState(PmmPlanStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-act-pmm-plan-invalid-state"));
+        problem.setTitle("Invalid AI Act PMM Plan State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AiQmsNotFoundException.class)
+    public ProblemDetail handleAiQmsNotFound(AiQmsNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-act-qms-not-found"));
+        problem.setTitle("AI Act QMS Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AiQmsStateException.class)
+    public ProblemDetail handleAiQmsState(AiQmsStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-act-qms-invalid-state"));
+        problem.setTitle("Invalid AI Act QMS State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ConformityAssessmentNotFoundException.class)
+    public ProblemDetail handleConformityNotFound(ConformityAssessmentNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-act-conformity-not-found"));
+        problem.setTitle("AI Act Conformity Assessment Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ConformityAssessmentStateException.class)
+    public ProblemDetail handleConformityState(ConformityAssessmentStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-act-conformity-invalid-state"));
+        problem.setTitle("Invalid AI Act Conformity Assessment State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
