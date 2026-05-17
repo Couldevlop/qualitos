@@ -1,0 +1,241 @@
+/* QualitOS — Design tokens.
+ * Sobre / corporate. Palette neutre profonde + accent bleu.
+ * Tous les tokens passent par des CSS custom properties pour permettre
+ * le switch light/dark instantané via :root.qos-theme-{light,dark}.
+ */
+
+/* ============================================================
+ * 1. Palette de base (raw colors, ne pas utiliser directement
+ *    dans les composants — passer par les tokens sémantiques).
+ * ============================================================ */
+$qos-neutral-0:    #ffffff;
+$qos-neutral-50:   #f8fafc;
+$qos-neutral-100:  #f1f5f9;
+$qos-neutral-200:  #e2e8f0;
+$qos-neutral-300:  #cbd5e1;
+$qos-neutral-400:  #94a3b8;
+$qos-neutral-500:  #64748b;
+$qos-neutral-600:  #475569;
+$qos-neutral-700:  #334155;
+$qos-neutral-800:  #1e293b;
+$qos-neutral-900:  #0f172a;
+$qos-neutral-950:  #020617;
+
+$qos-accent-50:    #eff6ff;
+$qos-accent-100:   #dbeafe;
+$qos-accent-200:   #bfdbfe;
+$qos-accent-400:   #60a5fa;
+$qos-accent-500:   #3b82f6;
+$qos-accent-600:   #2563eb;
+$qos-accent-700:   #1d4ed8;
+$qos-accent-900:   #1e3a8a;
+
+$qos-success-50:   #ecfdf5;
+$qos-success-500:  #10b981;
+$qos-success-600:  #059669;
+$qos-success-700:  #047857;
+
+$qos-warn-50:      #fffbeb;
+$qos-warn-500:     #f59e0b;
+$qos-warn-600:     #d97706;
+$qos-warn-700:     #b45309;
+
+$qos-danger-50:    #fef2f2;
+$qos-danger-500:   #ef4444;
+$qos-danger-600:   #dc2626;
+$qos-danger-700:   #b91c1c;
+
+/* ============================================================
+ * 2. Tokens sémantiques — LIGHT (par défaut).
+ * ============================================================ */
+:root,
+:root.qos-theme-light {
+  /* Surfaces */
+  --qos-bg-app:        #{$qos-neutral-50};
+  --qos-bg-elevated:   #{$qos-neutral-0};
+  --qos-bg-sunken:     #{$qos-neutral-100};
+  --qos-bg-hover:      rgba(15, 23, 42, 0.04);
+  --qos-bg-pressed:    rgba(15, 23, 42, 0.08);
+  --qos-bg-overlay:    rgba(15, 23, 42, 0.45);
+
+  /* Sidebar (légèrement contrastée vs app) */
+  --qos-bg-sidebar:    #{$qos-neutral-900};
+  --qos-fg-sidebar:    rgba(248, 250, 252, 0.78);
+  --qos-fg-sidebar-active: #{$qos-neutral-0};
+  --qos-bg-sidebar-hover:  rgba(255, 255, 255, 0.06);
+  --qos-bg-sidebar-active: rgba(59, 130, 246, 0.16);
+
+  /* Borders */
+  --qos-border-subtle:  #{$qos-neutral-200};
+  --qos-border-default: #{$qos-neutral-300};
+  --qos-border-strong:  #{$qos-neutral-400};
+  --qos-border-focus:   #{$qos-accent-500};
+
+  /* Texte */
+  --qos-fg-primary:     #{$qos-neutral-900};
+  --qos-fg-secondary:   #{$qos-neutral-600};
+  --qos-fg-tertiary:    #{$qos-neutral-500};
+  --qos-fg-disabled:    #{$qos-neutral-400};
+  --qos-fg-inverse:     #{$qos-neutral-0};
+  --qos-fg-link:        #{$qos-accent-700};
+
+  /* Accent (primary action) */
+  --qos-accent-fg:      #{$qos-neutral-0};
+  --qos-accent-bg:      #{$qos-accent-600};
+  --qos-accent-bg-hover:    #{$qos-accent-700};
+  --qos-accent-bg-soft:     #{$qos-accent-50};
+  --qos-accent-fg-soft:     #{$qos-accent-700};
+
+  /* États sémantiques */
+  --qos-success-bg-soft: #{$qos-success-50};
+  --qos-success-fg:      #{$qos-success-700};
+  --qos-warn-bg-soft:    #{$qos-warn-50};
+  --qos-warn-fg:         #{$qos-warn-700};
+  --qos-danger-bg-soft:  #{$qos-danger-50};
+  --qos-danger-fg:       #{$qos-danger-700};
+
+  /* Ombres (légères, neutres) */
+  --qos-shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  --qos-shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
+  --qos-shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
+  --qos-shadow-lg: 0 12px 24px -6px rgba(15, 23, 42, 0.12), 0 4px 8px -2px rgba(15, 23, 42, 0.06);
+  --qos-ring-focus: 0 0 0 3px rgba(59, 130, 246, 0.32);
+
+  /* Graphes (séries cohérentes light) */
+  --qos-chart-1: #{$qos-accent-600};
+  --qos-chart-2: #{$qos-success-600};
+  --qos-chart-3: #{$qos-warn-600};
+  --qos-chart-4: #{$qos-danger-600};
+  --qos-chart-5: #8b5cf6;
+  --qos-chart-6: #06b6d4;
+  --qos-chart-grid:  #{$qos-neutral-200};
+  --qos-chart-axis:  #{$qos-neutral-500};
+}
+
+/* ============================================================
+ * 3. Tokens sémantiques — DARK.
+ * ============================================================ */
+:root.qos-theme-dark {
+  --qos-bg-app:        #{$qos-neutral-950};
+  --qos-bg-elevated:   #{$qos-neutral-900};
+  --qos-bg-sunken:     #020617;
+  --qos-bg-hover:      rgba(248, 250, 252, 0.06);
+  --qos-bg-pressed:    rgba(248, 250, 252, 0.10);
+  --qos-bg-overlay:    rgba(2, 6, 23, 0.65);
+
+  --qos-bg-sidebar:    #060c1a;
+  --qos-fg-sidebar:    rgba(226, 232, 240, 0.74);
+  --qos-fg-sidebar-active: #{$qos-neutral-0};
+  --qos-bg-sidebar-hover:  rgba(255, 255, 255, 0.04);
+  --qos-bg-sidebar-active: rgba(96, 165, 250, 0.18);
+
+  --qos-border-subtle:  #1f2a3d;
+  --qos-border-default: #283449;
+  --qos-border-strong:  #{$qos-neutral-700};
+  --qos-border-focus:   #{$qos-accent-400};
+
+  --qos-fg-primary:     #{$qos-neutral-50};
+  --qos-fg-secondary:   #{$qos-neutral-300};
+  --qos-fg-tertiary:    #{$qos-neutral-400};
+  --qos-fg-disabled:    #{$qos-neutral-600};
+  --qos-fg-inverse:     #{$qos-neutral-900};
+  --qos-fg-link:        #{$qos-accent-400};
+
+  --qos-accent-fg:      #{$qos-neutral-0};
+  --qos-accent-bg:      #{$qos-accent-500};
+  --qos-accent-bg-hover:    #{$qos-accent-400};
+  --qos-accent-bg-soft:     rgba(59, 130, 246, 0.16);
+  --qos-accent-fg-soft:     #{$qos-accent-200};
+
+  --qos-success-bg-soft: rgba(16, 185, 129, 0.16);
+  --qos-success-fg:      #6ee7b7;
+  --qos-warn-bg-soft:    rgba(245, 158, 11, 0.16);
+  --qos-warn-fg:         #fcd34d;
+  --qos-danger-bg-soft:  rgba(239, 68, 68, 0.16);
+  --qos-danger-fg:       #fca5a5;
+
+  --qos-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.36);
+  --qos-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.44), 0 1px 2px -1px rgba(0, 0, 0, 0.28);
+  --qos-shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.48), 0 2px 4px -1px rgba(0, 0, 0, 0.32);
+  --qos-shadow-lg: 0 16px 32px -8px rgba(0, 0, 0, 0.56), 0 6px 12px -4px rgba(0, 0, 0, 0.36);
+  --qos-ring-focus: 0 0 0 3px rgba(96, 165, 250, 0.40);
+
+  --qos-chart-1: #{$qos-accent-400};
+  --qos-chart-2: #34d399;
+  --qos-chart-3: #fbbf24;
+  --qos-chart-4: #f87171;
+  --qos-chart-5: #a78bfa;
+  --qos-chart-6: #22d3ee;
+  --qos-chart-grid:  #1f2a3d;
+  --qos-chart-axis:  #{$qos-neutral-500};
+}
+
+/* ============================================================
+ * 4. Typographie, espace, rayons, motion.
+ * ============================================================ */
+:root {
+  /* Type scale */
+  --qos-font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto,
+                   'Helvetica Neue', Arial, sans-serif;
+  --qos-font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', 'Cascadia Mono',
+                   Menlo, Consolas, monospace;
+  --qos-fs-xs:   12px;
+  --qos-fs-sm:   13px;
+  --qos-fs-base: 14px;
+  --qos-fs-md:   15px;
+  --qos-fs-lg:   17px;
+  --qos-fs-xl:   20px;
+  --qos-fs-2xl:  24px;
+  --qos-fs-3xl:  32px;
+  --qos-fs-4xl:  40px;
+  --qos-fs-display: 56px;
+
+  --qos-lh-tight:  1.2;
+  --qos-lh-snug:   1.4;
+  --qos-lh-normal: 1.55;
+  --qos-lh-loose:  1.7;
+
+  --qos-fw-regular:  400;
+  --qos-fw-medium:   500;
+  --qos-fw-semibold: 600;
+  --qos-fw-bold:     700;
+
+  /* Espace (base 4) */
+  --qos-space-0:  0;
+  --qos-space-1:  4px;
+  --qos-space-2:  8px;
+  --qos-space-3:  12px;
+  --qos-space-4:  16px;
+  --qos-space-5:  20px;
+  --qos-space-6:  24px;
+  --qos-space-8:  32px;
+  --qos-space-10: 40px;
+  --qos-space-12: 48px;
+  --qos-space-16: 64px;
+
+  /* Rayons */
+  --qos-radius-xs:  4px;
+  --qos-radius-sm:  6px;
+  --qos-radius-md:  8px;
+  --qos-radius-lg:  12px;
+  --qos-radius-xl:  16px;
+  --qos-radius-pill: 999px;
+
+  /* Layout */
+  --qos-sidebar-width: 248px;
+  --qos-sidebar-width-collapsed: 64px;
+  --qos-topbar-height: 56px;
+
+  /* Animation */
+  --qos-motion-fast: 120ms cubic-bezier(0.2, 0, 0.2, 1);
+  --qos-motion-base: 200ms cubic-bezier(0.2, 0, 0.2, 1);
+  --qos-motion-slow: 320ms cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --qos-motion-fast: 0ms;
+    --qos-motion-base: 0ms;
+    --qos-motion-slow: 0ms;
+  }
+}

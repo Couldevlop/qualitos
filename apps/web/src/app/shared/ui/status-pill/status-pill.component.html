@@ -1,0 +1,5 @@
+<span class="qos-pill" [ngClass]="'qos-pill--' + tone">
+  <span *ngIf="dot && !icon" class="qos-pill__dot" aria-hidden="true"></span>
+  <span *ngIf="icon" class="qos-pill__icon material-symbols-outlined" aria-hidden="true">{{ icon }}</span>
+  <span class="qos-pill__label">{{ label }}</span>
+</span>

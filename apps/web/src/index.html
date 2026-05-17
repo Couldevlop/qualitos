@@ -9,7 +9,24 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Material+Symbols+Outlined&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Material+Symbols+Outlined&display=swap">
+  <script>
+    // Anti-flash dark : on applique le thème AVANT le rendu Angular.
+    (function () {
+      try {
+        var stored = localStorage.getItem('qos.theme');
+        var mode = stored;
+        if (!mode || mode === 'system') {
+          mode = window.matchMedia &&
+                 window.matchMedia('(prefers-color-scheme: dark)').matches
+                   ? 'dark' : 'light';
+        }
+        document.documentElement.classList.add('qos-theme-' + mode);
+      } catch (_) {
+        document.documentElement.classList.add('qos-theme-light');
+      }
+    })();
+  </script>
 </head>
 <body class="mat-typography">
   <qos-root>Chargement de QualitOS…</qos-root>

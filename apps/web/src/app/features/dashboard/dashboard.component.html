@@ -1,48 +1,182 @@
-<div class="qos-page">
-  <header class="page-header">
-    <h1>Tableau de bord exécutif</h1>
-    <p>Vue stratégique — 8 à 12 KPIs sur une page (CLAUDE.md §7.1).</p>
-  </header>
+<div class="qos-page qos-dashboard">
 
-  <section class="kpi-grid">
-    <mat-card class="kpi-card" *ngFor="let k of (kpis$ | async) ?? []" [attr.data-state]="k.state">
-      <div class="kpi-head">
-        <mat-icon class="kpi-icon">{{ k.icon }}</mat-icon>
-        <span class="kpi-label">{{ k.label }}</span>
+  <qos-page-header
+    eyebrow="Pilotage qualité"
+    title="Tableau de bord exécutif"
+    subtitle="Vue 360° de la performance, de la conformité et des risques — à destination de la Direction Qualité.">
+
+    <ng-container qosMeta>
+      <span class="qos-text-tertiary qos-row-2">
+        <span class="material-symbols-outlined" aria-hidden="true">schedule</span>
+        Mis à jour il y a 2 min
+      </span>
+      <span class="qos-text-tertiary qos-row-2">
+        <span class="material-symbols-outlined" aria-hidden="true">domain</span>
+        Périmètre — Groupe Acme
+      </span>
+    </ng-container>
+
+    <ng-container qosActions>
+      <div class="qos-period-picker" role="tablist" aria-label="Période">
+        <button
+          *ngFor="let p of periods"
+          type="button"
+          role="tab"
+          class="qos-period-picker__btn"
+          [class.qos-period-picker__btn--active]="selectedPeriod === p"
+          [attr.aria-selected]="selectedPeriod === p"
+          (click)="selectedPeriod = p">{{ p }}</button>
       </div>
-      <div class="kpi-value">
-        <span class="num">{{ k.value | number:'1.0-1' }}</span>
-        <span class="unit">{{ k.unit }}</span>
-      </div>
-      <div class="kpi-trend" *ngIf="k.trend !== undefined && k.trend !== null">
-        <mat-icon [class]="trendClass(k.trend)">{{ trendIcon(k.trend) }}</mat-icon>
-        <span [class]="trendClass(k.trend)">{{ (k.trend > 0 ? '+' : '') + (k.trend | number:'1.0-1') }}</span>
-        <span class="target" *ngIf="k.target !== undefined && k.target !== null">cible {{ k.target }}{{ k.unit.startsWith('%') ? '%' : '' }}</span>
-      </div>
-      <p class="kpi-desc">{{ k.description }}</p>
-    </mat-card>
+      <button type="button" class="qos-btn qos-btn--ghost">
+        <span class="material-symbols-outlined" aria-hidden="true">download</span>
+        Exporter
+      </button>
+      <button type="button" class="qos-btn qos-btn--primary">
+        <span class="material-symbols-outlined" aria-hidden="true">add</span>
+        Nouveau rapport
+      </button>
+    </ng-container>
+  </qos-page-header>
+
+  <!-- KPI grid -->
+  <section class="qos-dashboard__kpis" aria-label="Indicateurs stratégiques">
+    <qos-kpi-card
+      *ngFor="let k of (kpis$ | async) ?? []"
+      [label]="k.label"
+      [value]="k.value"
+      [unit]="k.unit"
+      [trend]="k.trend"
+      [target]="k.target"
+      [description]="k.description"
+      [icon]="k.icon"
+      [state]="k.state"
+      [trendInvertedIsGood]="!!k.trendInvertedIsGood">
+    </qos-kpi-card>
   </section>
 
-  <section class="alignment-section">
-    <h2>Alignement normatif</h2>
-    <mat-card class="alignment-card" *ngFor="let a of (alignments$ | async) ?? []">
-      <div class="alignment-head">
-        <div>
-          <strong>{{ a.standardName }}</strong>
-          <small>{{ a.standardCode }} · {{ a.status }}</small>
-        </div>
-        <span class="alignment-score"
-              [class.high]="a.score >= 85"
-              [class.mid]="a.score >= 60 && a.score < 85"
-              [class.low]="a.score < 60">{{ a.score }}%</span>
-      </div>
-      <div class="alignment-bar">
-        <span class="alignment-fill"
-              [class.high]="a.score >= 85"
-              [class.mid]="a.score >= 60 && a.score < 85"
-              [class.low]="a.score < 60"
+  <!-- Tendance qualité (full width) + Pareto (sidekick) -->
+  <section class="qos-dashboard__row qos-dashboard__row--7-5">
+    <qos-panel
+      title="Tendance qualité globale"
+      subtitle="12 mois — % conformité produit / service vs cible"
+      icon="show_chart">
+      <ng-container qosActions>
+        <qos-status-pill label="Live · OK" tone="success"></qos-status-pill>
+      </ng-container>
+      <qos-echart [option]="(trendOption$ | async) ?? null" [height]="280"></qos-echart>
+    </qos-panel>
+
+    <qos-panel
+      title="Pareto des défauts"
+      subtitle="Catégories 6M sur 30 jours"
+      icon="bar_chart">
+      <qos-echart [option]="(paretoOption$ | async) ?? null" [height]="280"></qos-echart>
+    </qos-panel>
+  </section>
+
+  <!-- Heatmap conformité + Top risques -->
+  <section class="qos-dashboard__row qos-dashboard__row--6-6">
+    <qos-panel
+      title="Heatmap conformité"
+      subtitle="Score par norme et par section — drill-down disponible"
+      icon="grid_view">
+      <ng-container qosActions>
+        <qos-status-pill label="5 normes suivies" tone="accent"></qos-status-pill>
+      </ng-container>
+      <qos-echart [option]="(heatmapOption$ | async) ?? null" [height]="280"></qos-echart>
+    </qos-panel>
+
+    <qos-panel
+      title="Top risques & alertes"
+      subtitle="Issues prioritaires nécessitant une action"
+      icon="warning">
+      <ul class="qos-risks">
+        <li class="qos-risks__item" *ngFor="let r of (topRisks$ | async) ?? []">
+          <span
+            class="qos-risks__indicator"
+            [attr.data-tone]="severityTone(r.severity)"
+            aria-hidden="true"></span>
+          <div class="qos-risks__body">
+            <div class="qos-risks__head">
+              <span class="qos-risks__title">{{ r.title }}</span>
+              <qos-status-pill
+                [label]="r.severity | uppercase"
+                [tone]="severityTone(r.severity)"
+                [dot]="false">
+              </qos-status-pill>
+            </div>
+            <div class="qos-risks__meta">
+              <span>{{ r.source }}</span>
+              <span *ngIf="r.owner" class="qos-row-2">
+                <span class="material-symbols-outlined" aria-hidden="true">person</span>
+                {{ r.owner }}
+              </span>
+              <span *ngIf="r.due" class="qos-row-2">
+                <span class="material-symbols-outlined" aria-hidden="true">event</span>
+                {{ r.due }}
+              </span>
+            </div>
+          </div>
+          <button type="button" class="qos-risks__action" aria-label="Ouvrir">
+            <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+          </button>
+        </li>
+      </ul>
+    </qos-panel>
+  </section>
+
+  <!-- Prédictions IA + alignement normatif -->
+  <section class="qos-dashboard__row qos-dashboard__row--6-6">
+    <qos-panel
+      title="Prédictions IA"
+      subtitle="Anticipation 7-45 jours · modèles LSTM / XGBoost / NLP"
+      icon="auto_awesome">
+      <ng-container qosActions>
+        <qos-status-pill label="Explicable" icon="psychology" tone="accent"></qos-status-pill>
+      </ng-container>
+      <ul class="qos-predictions">
+        <li class="qos-predictions__item" *ngFor="let p of (predictions$ | async) ?? []">
+          <span
+            class="qos-predictions__icon"
+            [attr.data-state]="p.state"
+            aria-hidden="true">
+            <span class="material-symbols-outlined">{{ predictionIcon(p.kind) }}</span>
+          </span>
+          <div class="qos-predictions__body">
+            <div class="qos-predictions__title">{{ p.title }}</div>
+            <p class="qos-predictions__detail">{{ p.detail }}</p>
+            <div class="qos-predictions__meta">
+              <span class="qos-mono">conf. {{ (p.confidence * 100) | number:'1.0-0' }}%</span>
+              <span aria-hidden="true">·</span>
+              <span>horizon {{ p.horizon }}</span>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </qos-panel>
+
+    <qos-panel
+      title="Alignement normatif"
+      subtitle="Couverture des exigences obligatoires par norme"
+      icon="workspace_premium">
+      <ul class="qos-alignment">
+        <li class="qos-alignment__row" *ngFor="let a of (alignments$ | async) ?? []">
+          <div class="qos-alignment__head">
+            <div class="qos-alignment__id">
+              <strong class="qos-alignment__name">{{ a.standardName }}</strong>
+              <span class="qos-alignment__code qos-mono">{{ a.standardCode }}</span>
+            </div>
+            <span class="qos-alignment__score qos-mono">{{ a.score }}%</span>
+          </div>
+          <div class="qos-alignment__bar">
+            <span
+              class="qos-alignment__fill"
+              [attr.data-tone]="alignmentTone(a.score)"
               [style.width.%]="a.score"></span>
-      </div>
-    </mat-card>
+          </div>
+        </li>
+      </ul>
+    </qos-panel>
   </section>
+
 </div>
