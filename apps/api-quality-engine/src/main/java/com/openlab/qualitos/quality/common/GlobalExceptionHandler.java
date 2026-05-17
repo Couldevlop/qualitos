@@ -97,6 +97,8 @@ import com.openlab.qualitos.quality.aiqms.domain.AiQmsNotFoundException;
 import com.openlab.qualitos.quality.aiqms.domain.AiQmsStateException;
 import com.openlab.qualitos.quality.aiconformity.domain.ConformityAssessmentNotFoundException;
 import com.openlab.qualitos.quality.aiconformity.domain.ConformityAssessmentStateException;
+import com.openlab.qualitos.quality.aieudb.domain.EudbRegistrationNotFoundException;
+import com.openlab.qualitos.quality.aieudb.domain.EudbRegistrationStateException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestNotFoundException;
 import com.openlab.qualitos.quality.gdpr.domain.SubjectRequestStateException;
 import com.openlab.qualitos.quality.tenantmodules.domain.ModuleActivationNotFoundException;
@@ -924,6 +926,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/ai-act-conformity-invalid-state"));
         problem.setTitle("Invalid AI Act Conformity Assessment State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(EudbRegistrationNotFoundException.class)
+    public ProblemDetail handleEudbNotFound(EudbRegistrationNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-act-eudb-not-found"));
+        problem.setTitle("AI Act EUDB Registration Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(EudbRegistrationStateException.class)
+    public ProblemDetail handleEudbState(EudbRegistrationStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-act-eudb-invalid-state"));
+        problem.setTitle("Invalid AI Act EUDB Registration State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
