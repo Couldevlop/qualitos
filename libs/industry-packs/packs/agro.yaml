@@ -1,0 +1,209 @@
+pack_id: agro
+version: 1.0.0
+name: Agro-alimentaire (Food & Beverage)
+sectors: [agro, food, beverage, catering, food-processing]
+norms:
+  - iso-22000
+  - iso-9001
+  - iso-14001
+kpis:
+  - kpi_id: agro_haccp_ccp_excursion
+    name: HACCP CCP Excursions / month
+    category: food-safety
+    formula: "COUNT(ccp_excursions) WHERE date >= NOW() - INTERVAL 30 DAY"
+    unit: "count"
+    target: "0"
+    threshold_warning: "1 - 3"
+    threshold_critical: "> 3"
+    data_source: ccp_monitoring
+    refresh_frequency: realtime
+    owner: food_safety_manager
+    applicable_industries: [agro]
+    related_kpis: [agro_recall_count]
+    explainability: "Suivi temps réel via IoT (sondes T°). Aligné ISO 22000 §8.7."
+  - kpi_id: agro_recall_count
+    name: Product Recalls / year
+    category: post-market
+    formula: "COUNT(recalls) WHERE issued_at >= NOW() - INTERVAL 365 DAY"
+    unit: "count"
+    target: "0"
+    threshold_warning: "1"
+    threshold_critical: ">= 2"
+    data_source: recall_events
+    refresh_frequency: per-event
+    owner: quality_director
+    applicable_industries: [agro]
+    related_kpis: []
+    explainability: "Tout rappel impacte image et obligations contractuelles distribuyteurs."
+  - kpi_id: agro_traceability_recall_time
+    name: Traceability Recall Time
+    category: traceability
+    formula: "AVG(time_to_identify_all_lot_destinations) in hours during recall drill"
+    unit: "hours"
+    target: "< 2"
+    threshold_warning: "2 - 4"
+    threshold_critical: "> 4"
+    data_source: recall_drills
+    refresh_frequency: annual
+    owner: logistics_manager
+    applicable_industries: [agro]
+    related_kpis: []
+    explainability: "Exigence GFSI/IFS Food §5.9 (traçabilité 4h max)."
+  - kpi_id: agro_allergen_complaints
+    name: Allergen Cross-Contamination Complaints / quarter
+    category: food-safety
+    formula: "COUNT(complaints) WHERE type='allergen-cross-contamination' AND date >= NOW() - INTERVAL 90 DAY"
+    unit: "count"
+    target: "0"
+    threshold_warning: "1 - 2"
+    threshold_critical: "> 2"
+    data_source: complaints
+    refresh_frequency: weekly
+    owner: food_safety_manager
+    applicable_industries: [agro]
+    related_kpis: []
+    explainability: "Allergens = risque vital. Tolérance zéro."
+  - kpi_id: agro_prp_audit_compliance
+    name: PRP Audit Compliance
+    category: compliance-audit
+    formula: "SUM(prp_checks_compliant) / SUM(prp_checks_executed) * 100"
+    unit: "%"
+    target: ">= 95"
+    threshold_warning: "85 - 95"
+    threshold_critical: "< 85"
+    data_source: prp_audits
+    refresh_frequency: monthly
+    owner: food_safety_manager
+    applicable_industries: [agro]
+    related_kpis: []
+    explainability: "PRP ISO 22000 §8.2 — fondation de la maîtrise HACCP."
+  - kpi_id: agro_supplier_coa_conformance
+    name: Supplier COA Conformance
+    category: supply-chain
+    formula: "COUNT(coa_compliant) / COUNT(coa_received) * 100"
+    unit: "%"
+    target: ">= 99"
+    threshold_warning: "97 - 99"
+    threshold_critical: "< 97"
+    data_source: receiving_inspections
+    refresh_frequency: weekly
+    owner: supply_chain_manager
+    applicable_industries: [agro]
+    related_kpis: []
+    explainability: "Conformité Certificats d'Analyse fournisseurs (matière première)."
+glossary:
+  - {term: HACCP, definition: "Hazard Analysis Critical Control Points (Codex Alimentarius)"}
+  - {term: CCP, definition: "Critical Control Point"}
+  - {term: PRP, definition: "Prerequisite Programme (ISO/TS 22002)"}
+  - {term: PRPo, definition: "Operational PRP — entre PRP et CCP"}
+  - {term: GFSI, definition: "Global Food Safety Initiative (schemas reconnus)"}
+  - {term: IFS, definition: "International Featured Standards — IFS Food v8"}
+  - {term: BRCGS, definition: "Brand Reputation Compliance Global Standards"}
+  - {term: TACCP, definition: "Threat Assessment Critical Control Points (food defense)"}
+  - {term: VACCP, definition: "Vulnerability Assessment Critical Control Points (food fraud)"}
+  - {term: COA, definition: "Certificate of Analysis"}
+  - {term: DLC, definition: "Date Limite de Consommation"}
+  - {term: DDM, definition: "Date de Durabilité Minimale"}
+connectors_required:
+  - mqtt
+  - lorawan
+  - sap-erp
+  - lims
+  - mes-food
+ishikawa_templates:
+  - problem_archetype: "Excursion T° chambre froide produits frais"
+    branches:
+      man: ["Procédure surveillance non suivie"]
+      machine: ["Compresseur défaillant", "Sonde T° dérive"]
+      material: []
+      method: ["Plan maintenance non respecté"]
+      measurement: ["Alarme T° désactivée par erreur"]
+      environment: ["Ouverture porte prolongée"]
+  - problem_archetype: "Contamination microbiologique produit"
+    branches:
+      man: ["Hygiène mains opérateur"]
+      machine: ["Nettoyage CIP incomplet"]
+      material: ["Matière première contaminée"]
+      method: ["Procédure désinfection non validée"]
+      measurement: ["Contrôle environnement absent"]
+      environment: ["Présence biofilm équipement"]
+  - problem_archetype: "Présence allergène non déclaré"
+    branches:
+      man: ["Méconnaissance allergènes"]
+      machine: []
+      material: ["Substitution fournisseur"]
+      method: ["Plan séquentiel non suivi", "Étiquetage non mis à jour"]
+      measurement: ["Pas de test ELISA"]
+      environment: ["Contamination croisée ligne partagée"]
+  - problem_archetype: "Présence corps étranger dans produit"
+    branches:
+      man: []
+      machine: ["Détecteur métaux non sensible"]
+      material: ["Emballage déficient"]
+      method: ["Inspection visuelle insuffisante"]
+      measurement: ["Détecteur RX non calibré"]
+      environment: ["Verre/plastique cassé non géré"]
+  - problem_archetype: "Échec exercice retrait/rappel — > 4h"
+    branches:
+      man: []
+      machine: ["ERP traçabilité lent"]
+      material: []
+      method: ["Procédure de retrait obsolète"]
+      measurement: ["Pas de drill annuel"]
+      environment: []
+  - problem_archetype: "Présence nuisibles audit IFS"
+    branches:
+      man: ["Discipline portes/fenêtres"]
+      machine: []
+      material: ["Stockage matière directement sol"]
+      method: ["Prestataire dératisation peu rigoureux"]
+      measurement: ["Cartographie pièges non revue"]
+      environment: ["Saison printemps activité accrue"]
+  - problem_archetype: "Eau process hors norme microbio"
+    branches:
+      man: []
+      machine: ["UF/UV en maintenance"]
+      material: []
+      method: ["Plan d'échantillonnage défaillant"]
+      measurement: ["Délai labo trop long"]
+      environment: ["Source eau pollution amont"]
+  - problem_archetype: "Réclamation consommateur (corps étranger)"
+    branches:
+      man: []
+      machine: []
+      material: []
+      method: ["NC fournisseur non identifiée"]
+      measurement: []
+      environment: []
+poka_yoke_library:
+  - id: poka-yoke-agro-001
+    name: Détecteur métaux + RX systématique fin de ligne
+    description: "Tous produits passent détection avant emballage final"
+    sector_fit: [agro, food]
+  - id: poka-yoke-agro-002
+    name: Lavage mains avec capteur passage obligatoire
+    description: "Tourniquet bloqué tant que séquence lavage non détectée"
+    sector_fit: [agro, food, healthcare]
+  - id: poka-yoke-agro-003
+    name: Étiquetage avec validation visuelle automatique (camera + OCR)
+    description: "Caméra vérifie présence allergènes / DLC / lot avant validation"
+    sector_fit: [agro, food, pharma]
+  - id: poka-yoke-agro-004
+    name: Verrouillage cycle stérilisation si profil T°×t hors limites
+    description: "Système ne valide cycle que si profil thermique conforme"
+    sector_fit: [agro, pharma]
+training_paths:
+  - role: food_safety_manager
+    modules: [iso-22000-intro, haccp-codex, taccp-vaccp, recall-drill]
+  - role: production_operator
+    modules: [hygiene-fundamentals, prp-awareness, allergen-management]
+  - role: quality_lab_technician
+    modules: [microbiological-testing, sample-management, traceability]
+documents_templates:
+  - /standards/templates/iso-22000/manuel-prp.md
+  - /standards/templates/iso-22000/plan-haccp.md
+  - /standards/templates/iso-22000/procedure-retrait-rappel.md
+processes_templates:
+  - /industry-packs/processes/agro/haccp-analysis.bpmn
+  - /industry-packs/processes/agro/recall-management.bpmn
+  - /industry-packs/processes/agro/prp-audit.bpmn
