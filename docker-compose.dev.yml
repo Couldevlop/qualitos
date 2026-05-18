@@ -91,7 +91,10 @@ services:
       KEYCLOAK_REALM: qualitos
       SPRING_PROFILES_ACTIVE: dev
     ports:
-      - "8081:8081"
+      # Host-side port shifted to 8181 to avoid conflict with a local Apache
+      # (httpd.exe Windows service) commonly bound to 8081 on dev machines.
+      # Container internal port stays 8081.
+      - "8181:8081"
     depends_on:
       postgres:
         condition: service_healthy

@@ -108,7 +108,7 @@ export class DashboardService {
   }
 
   getTopRisks(): Observable<TopRisk[]> {
-    return of([
+    return of<TopRisk[]>([
       { id: 'r1', title: 'Dérive SPC ligne d\'extrusion B',
         source: 'IoT Hub · Sigma déviation', severity: 'critical',
         due: '2026-05-19', owner: 'Atelier 3' },
@@ -128,7 +128,7 @@ export class DashboardService {
   }
 
   getAiPredictions(): Observable<AiPrediction[]> {
-    return of([
+    return of<AiPrediction[]>([
       { id: 'p1', kind: 'drift',
         title: 'Sortie limites SPC — ligne B',
         detail: 'Probabilité 87 % d\'excursion 2σ sur la prochaine semaine.',
@@ -149,7 +149,7 @@ export class DashboardService {
   }
 
   getAlignmentBars(): Observable<AlignmentBar[]> {
-    return of([
+    return of<AlignmentBar[]>([
       { standardCode: 'iso-9001',   standardName: 'ISO 9001:2015',       score: 76, status: 'IN_PROGRESS' },
       { standardCode: 'iso-27001',  standardName: 'ISO/IEC 27001:2022',  score: 62, status: 'IN_PROGRESS' },
       { standardCode: 'iso-14001',  standardName: 'ISO 14001:2015',      score: 71, status: 'IN_PROGRESS' },

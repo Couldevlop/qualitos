@@ -18,7 +18,7 @@ Accès :
 | Service                | URL                                  | Credentials       |
 | ---------------------- | ------------------------------------ | ----------------- |
 | Frontend Angular       | http://localhost:4200                | superadmin / superadmin |
-| api-core               | http://localhost:8081/swagger-ui.html | JWT requis        |
+| api-core               | http://localhost:8181/swagger-ui.html | JWT requis (port 8181 car httpd local sur 8081) |
 | api-quality-engine     | http://localhost:8082/swagger-ui.html | JWT requis        |
 | Keycloak               | http://localhost:8080                | admin / admin     |
 | Postgres               | localhost:5432                       | qualitos / qualitos |
