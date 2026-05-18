@@ -80,6 +80,17 @@ apps/web/coverage/
 # Build output
 **/build/
 
+# Python (P5 ai-service)
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+.venv/
+venv/
+
 # Claude Code local settings
 .claude/settings.local.json
 .claude/projects/
