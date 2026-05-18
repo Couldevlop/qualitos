@@ -3,6 +3,7 @@
   "realm": "qualitos",
   "enabled": true,
   "displayName": "QualitOS",
+  "loginTheme": "keycloak",
   "registrationAllowed": false,
   "registrationEmailAsUsername": false,
   "rememberMe": true,
