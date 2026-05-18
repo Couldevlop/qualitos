@@ -1,0 +1,57 @@
+server:
+  port: 8083
+  forward-headers-strategy: framework
+  error:
+    include-message: never
+    include-stacktrace: never
+
+spring:
+  application:
+    name: api-iot-hub
+  datasource:
+    url: ${IOT_DB_URL:jdbc:postgresql://postgres:5432/qualitos_iot}
+    username: ${IOT_DB_USERNAME:qualitos}
+    password: ${IOT_DB_PASSWORD:qualitos}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.batch_size: 50
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://keycloak:8080/realms/qualitos}
+
+qualitos:
+  iot:
+    quality-engine:
+      base-url: ${QUALITY_ENGINE_BASE_URL:http://api-quality-engine:8082}
+      # OWASP A10 SSRF: egress allow-list, comma-separated hosts
+      allowed-hosts: ${QUALITY_ENGINE_ALLOWED_HOSTS:api-quality-engine,localhost}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # OWASP A05: only health + info exposed (no env / heapdump / loggers)
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+
+logging:
+  level:
+    root: INFO
+    org.springframework.security: INFO
+  pattern:
+    # OWASP A09: structured-ish line — tenant_id + correlation_id from MDC if present.
+    # Use logback-jackson-classic in production for true JSON; this format is safe-by-default
+    # and parseable by Loki / Grafana with simple regex.
+    console: 'ts=%d{ISO8601} level=%p logger=%c tenant=%X{tenant_id:-} corr=%X{correlation_id:-} msg=%m%n'

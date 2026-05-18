@@ -19,8 +19,10 @@
     <description>Quality Operating System — Multi-tenant SaaS QMS Platform</description>
 
     <modules>
+        <module>libs/industry-commons</module>
         <module>apps/api-core</module>
         <module>apps/api-quality-engine</module>
+        <module>apps/api-iot-hub</module>
         <!-- api-connectors lives on feature/p4-foundations until merged. -->
     </modules>
 
