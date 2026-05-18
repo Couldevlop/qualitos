@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { OAuthService } from 'angular-oauth2-oidc';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
@@ -11,19 +12,21 @@ export interface AuthUser {
 }
 
 /**
- * Authentification minimaliste.
- *
- * En mode 'dev' : retourne un utilisateur fictif et un faux JWT
- * (pratique pour développer l'UI sans Keycloak).
- *
- * En mode 'oidc' : à brancher sur angular-oauth2-oidc dans une itération
- * suivante (méthode loginOidc()). On garde l'API stable pour ne pas
- * casser les composants consommateurs.
+ * Authentification : mode 'dev' (utilisateur fictif + fake JWT) ou 'oidc'
+ * (Keycloak via angular-oauth2-oidc, bootstrap dans APP_INITIALIZER).
  */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private readonly user$ = new BehaviorSubject<AuthUser | null>(this.bootstrapUser());
+  private readonly user$ = new BehaviorSubject<AuthUser | null>(null);
+
+  constructor(private readonly oauth: OAuthService) {
+    this.user$.next(this.bootstrapUser());
+    if (environment.authMode === 'oidc') {
+      // Reagit aux changements de token (refresh silencieux, logout, etc.).
+      this.oauth.events.subscribe(() => this.user$.next(this.bootstrapUser()));
+    }
+  }
 
   user(): Observable<AuthUser | null> {
     return this.user$.asObservable();
@@ -33,22 +36,27 @@ export class AuthService {
     return this.user$.getValue();
   }
 
-  /** Token Bearer à injecter dans les requêtes API. null = pas authentifié. */
+  /** Token Bearer a injecter dans les requetes API. null = pas authentifie. */
   getAccessToken(): string | null {
     if (environment.authMode === 'dev') {
       return this.devFakeJwt();
     }
-    // TODO: brancher angular-oauth2-oidc — récupérer this.oauthService.getAccessToken()
-    return null;
+    const t = this.oauth.getAccessToken();
+    return t && t.length > 0 ? t : null;
   }
 
   isAuthenticated(): boolean {
+    if (environment.authMode === 'oidc') {
+      return this.oauth.hasValidAccessToken();
+    }
     return this.snapshot() !== null;
   }
 
-  /** Logout placeholder. Réel en oidc plus tard. */
   logout(): void {
     this.user$.next(null);
+    if (environment.authMode === 'oidc') {
+      this.oauth.logOut();
+    }
   }
 
   private bootstrapUser(): AuthUser | null {
@@ -60,7 +68,16 @@ export class AuthService {
         roles: ['quality_manager']
       };
     }
-    return null;
+    // Mode oidc : on extrait les claims du JWT courant si dispo.
+    const claims = this.oauth.getIdentityClaims() as Record<string, unknown> | null;
+    if (!claims) return null;
+    const realmAccess = (claims['realm_access'] as { roles?: string[] } | undefined);
+    return {
+      userId: String(claims['sub'] ?? ''),
+      tenantId: String(claims['tenant_id'] ?? ''),
+      displayName: String(claims['preferred_username'] ?? claims['name'] ?? 'User'),
+      roles: realmAccess?.roles ?? []
+    };
   }
 
   /**

@@ -1,0 +1,36 @@
+:host { display: inline-flex; }
+
+.qos-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  background: var(--qos-bg-sunken);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-pill);
+  gap: 1px;
+}
+
+.qos-theme-toggle__btn {
+  appearance: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--qos-radius-pill);
+  color: var(--qos-fg-tertiary);
+  transition: background var(--qos-motion-fast), color var(--qos-motion-fast);
+
+  .material-symbols-outlined { font-size: 16px; }
+
+  &:hover { color: var(--qos-fg-secondary); }
+
+  &--active {
+    background: var(--qos-bg-elevated);
+    color: var(--qos-fg-primary);
+    box-shadow: var(--qos-shadow-xs);
+  }
+}

@@ -4,12 +4,19 @@ import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { IshikawaDiagramResponse, IshikawaPage, IshikawaStatus } from './ishikawa.types';
+import {
+  CreateIshikawaDiagramRequest,
+  IshikawaDiagramResponse,
+  IshikawaPage,
+  IshikawaStatus
+} from './ishikawa.types';
 
 @Injectable({ providedIn: 'root' })
 export class IshikawaService {
 
   private readonly endpoint = `${environment.apiBaseUrl}/api/v1/ishikawa/diagrams`;
+
+  private readonly mockStore: IshikawaDiagramResponse[] = this.seedMockDiagrams();
 
   constructor(private readonly http: HttpClient) {}
 
@@ -24,16 +31,36 @@ export class IshikawaService {
     return this.http.get<IshikawaPage>(this.endpoint, { params });
   }
 
+  createDiagram(input: CreateIshikawaDiagramRequest): Observable<IshikawaDiagramResponse> {
+    if (environment.useMockApi) {
+      const now = new Date().toISOString();
+      const diagram: IshikawaDiagramResponse = {
+        id: 'ish-' + (this.mockStore.length + 1) + '-' + Math.random().toString(36).slice(2, 7),
+        tenantId: 'demo-tenant',
+        problemStatement: input.problemStatement,
+        description: input.description,
+        mode: input.mode,
+        status: 'DRAFT',
+        ownerId: input.ownerId,
+        createdAt: now,
+        updatedAt: now,
+        causes: []
+      };
+      this.mockStore.unshift(diagram);
+      return of(diagram).pipe(delay(200));
+    }
+    return this.http.post<IshikawaDiagramResponse>(this.endpoint, input);
+  }
+
   private mockPage(status?: IshikawaStatus): IshikawaPage {
-    const all = this.mockDiagrams();
-    const filtered = status ? all.filter(d => d.status === status) : all;
+    const filtered = status ? this.mockStore.filter(d => d.status === status) : this.mockStore;
     return {
       content: filtered, totalElements: filtered.length, totalPages: 1,
       number: 0, size: filtered.length
     };
   }
 
-  private mockDiagrams(): IshikawaDiagramResponse[] {
+  private seedMockDiagrams(): IshikawaDiagramResponse[] {
     const now = new Date().toISOString();
     return [
       {

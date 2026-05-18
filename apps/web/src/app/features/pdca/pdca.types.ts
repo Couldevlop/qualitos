@@ -2,6 +2,12 @@ export type PdcaStatus = 'PLAN' | 'DO' | 'CHECK' | 'ACT' | 'COMPLETED' | 'CANCEL
 export type PdcaPhase = 'PLAN' | 'DO' | 'CHECK' | 'ACT';
 export type StepStatus = 'PENDING' | 'IN_PROGRESS' | 'DONE';
 
+export interface CreatePdcaCycleRequest {
+  title: string;
+  description?: string;
+  ownerId: string;
+}
+
 export interface PdcaStepResponse {
   id: string;
   cycleId: string;

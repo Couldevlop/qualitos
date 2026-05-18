@@ -39,6 +39,7 @@ public class IndustryPackLoader implements ApplicationRunner {
     private int lastRunErrorCount;
     private int lastRunLoadedCount;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public IndustryPackLoader(IndustryPackRepository repo) {
         this(repo, new PathMatchingResourcePatternResolver(), new ObjectMapper());
     }

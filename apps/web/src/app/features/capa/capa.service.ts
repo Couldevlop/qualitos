@@ -4,12 +4,19 @@ import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { CapaCaseResponse, CapaPage, CapaStatus } from './capa.types';
+import {
+  CapaCaseResponse,
+  CapaPage,
+  CapaStatus,
+  CreateCapaCaseRequest
+} from './capa.types';
 
 @Injectable({ providedIn: 'root' })
 export class CapaService {
 
   private readonly endpoint = `${environment.apiBaseUrl}/api/v1/capa/cases`;
+
+  private readonly mockStore: CapaCaseResponse[] = this.seedMockCases();
 
   constructor(private readonly http: HttpClient) {}
 
@@ -22,16 +29,40 @@ export class CapaService {
     return this.http.get<CapaPage>(this.endpoint, { params });
   }
 
+  createCase(input: CreateCapaCaseRequest): Observable<CapaCaseResponse> {
+    if (environment.useMockApi) {
+      const now = new Date().toISOString();
+      const c: CapaCaseResponse = {
+        id: 'capa-' + (this.mockStore.length + 1) + '-' + Math.random().toString(36).slice(2, 7),
+        tenantId: 'demo-tenant',
+        title: input.title,
+        description: input.description,
+        type: input.type,
+        criticity: input.criticity,
+        status: 'OPEN',
+        sourceType: input.sourceType,
+        sourceRef: input.sourceRef,
+        ownerId: input.ownerId,
+        dueDate: input.dueDate,
+        createdAt: now,
+        updatedAt: now,
+        actions: []
+      };
+      this.mockStore.unshift(c);
+      return of(c).pipe(delay(200));
+    }
+    return this.http.post<CapaCaseResponse>(this.endpoint, input);
+  }
+
   private mockPage(status?: CapaStatus): CapaPage {
-    const all = this.mockCases();
-    const filtered = status ? all.filter(c => c.status === status) : all;
+    const filtered = status ? this.mockStore.filter(c => c.status === status) : this.mockStore;
     return {
       content: filtered, totalElements: filtered.length, totalPages: 1,
       number: 0, size: filtered.length
     };
   }
 
-  private mockCases(): CapaCaseResponse[] {
+  private seedMockCases(): CapaCaseResponse[] {
     const now = new Date().toISOString();
     return [
       {

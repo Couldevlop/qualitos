@@ -54,6 +54,7 @@ public class SupplierService {
     private final SupplierScoringService scoringService;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public SupplierService(SupplierRepository supplierRepo,
                            SupplierAuditRecordRepository auditRepo,
                            SupplierNonConformityRepository ncRepo,

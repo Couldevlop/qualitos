@@ -23,6 +23,7 @@ public class SkillService {
     private final UserSkillAssignmentRepository userSkillRepo;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public SkillService(SkillRepository skillRepo, UserSkillAssignmentRepository userSkillRepo) {
         this(skillRepo, userSkillRepo, Clock.systemUTC());
     }

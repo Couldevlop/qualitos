@@ -32,3 +32,10 @@ export interface IshikawaDiagramResponse {
 }
 
 export type IshikawaPage = SpringPage<IshikawaDiagramResponse>;
+
+export interface CreateIshikawaDiagramRequest {
+  problemStatement: string;
+  description?: string;
+  mode: IshikawaMode;
+  ownerId: string;
+}

@@ -24,6 +24,7 @@ public class ProcessingActivityService {
     private final ProcessingActivityEventPublisher events;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public ProcessingActivityService(ProcessingActivityRepository repo,
                                      TenantProvider tenantProvider, Clock clock) {
         this(repo, tenantProvider, new ProcessingActivityEventPublisher.NoOp(), clock);

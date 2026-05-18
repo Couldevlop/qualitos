@@ -24,3 +24,12 @@ export interface AuditPlanResponse {
 }
 
 export type AuditsPage = SpringPage<AuditPlanResponse>;
+
+export interface CreateAuditPlanRequest {
+  title: string;
+  scope?: string;
+  type: AuditType;
+  standard?: string;
+  leadAuditorId: string;
+  scheduledDate?: string;
+}

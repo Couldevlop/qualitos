@@ -1,0 +1,28 @@
+<header class="qos-page-header">
+  <nav *ngIf="breadcrumbs?.length" class="qos-page-header__crumbs" aria-label="Fil d'Ariane">
+    <ol>
+      <li *ngFor="let crumb of breadcrumbs; let last = last">
+        <a *ngIf="crumb.route && !last" [routerLink]="crumb.route">{{ crumb.label }}</a>
+        <span *ngIf="!crumb.route || last" [class.qos-page-header__crumb-current]="last">
+          {{ crumb.label }}
+        </span>
+        <span *ngIf="!last" class="qos-page-header__crumb-sep" aria-hidden="true">/</span>
+      </li>
+    </ol>
+  </nav>
+
+  <div class="qos-page-header__main">
+    <div class="qos-page-header__text">
+      <span *ngIf="eyebrow" class="qos-page-header__eyebrow">{{ eyebrow }}</span>
+      <h1 class="qos-page-header__title">{{ title }}</h1>
+      <p *ngIf="subtitle" class="qos-page-header__subtitle">{{ subtitle }}</p>
+      <div class="qos-page-header__meta">
+        <ng-content select="[qosMeta]"></ng-content>
+      </div>
+    </div>
+
+    <div class="qos-page-header__actions">
+      <ng-content select="[qosActions]"></ng-content>
+    </div>
+  </div>
+</header>

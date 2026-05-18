@@ -30,6 +30,7 @@ public class TrainingEnrollmentService {
     private final TrainingPathRepository pathRepo;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public TrainingEnrollmentService(TrainingEnrollmentRepository enrollmentRepo,
                                      TrainingPathRepository pathRepo) {
         this(enrollmentRepo, pathRepo, Clock.systemUTC());

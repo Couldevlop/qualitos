@@ -91,7 +91,10 @@ services:
       KEYCLOAK_REALM: qualitos
       SPRING_PROFILES_ACTIVE: dev
     ports:
-      - "8081:8081"
+      # Host-side port shifted to 8181 to avoid conflict with a local Apache
+      # (httpd.exe Windows service) commonly bound to 8081 on dev machines.
+      # Container internal port stays 8081.
+      - "8181:8081"
     depends_on:
       postgres:
         condition: service_healthy
@@ -125,6 +128,86 @@ services:
     networks: [qualitos]
 
   # -------------------------------------------------------------------------
+  # P3 — IoT Hub (Spring Boot, Java 21, distroless). Device registry + telemetry.
+  # -------------------------------------------------------------------------
+
+  api-iot-hub:
+    build:
+      context: apps/api-iot-hub
+      dockerfile: Dockerfile
+    container_name: qualitos-api-iot-hub
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/qualitos_quality
+      DB_USER: qualitos
+      DB_PASSWORD: qualitos
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_REALM: qualitos
+      SPRING_PROFILES_ACTIVE: dev
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [qualitos]
+
+  # -------------------------------------------------------------------------
+  # P5 — AI gateway (FastAPI, distroless). Routes vers Ollama / Anthropic / Mistral
+  # via la passerelle AIProvider. Toutes les sorties sont PII-redacted (Presidio).
+  # -------------------------------------------------------------------------
+
+  ai-service:
+    build:
+      context: apps/ai-service
+      dockerfile: Dockerfile
+    container_name: qualitos-ai-service
+    environment:
+      QOS_ENV: dev
+      QOS_LOG_LEVEL: INFO
+      KEYCLOAK_ISSUER: http://keycloak:8080/realms/qualitos
+      KEYCLOAK_AUDIENCE: qualitos-ai
+      QDRANT_URL: http://qdrant:6333
+      NLQ_READONLY_DSN: postgresql://qualitos_nlq_ro:nlq_ro_pwd@postgres:5432/qualitos_quality
+      # Set these in your local .env (never commit):
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY:-}
+      QOS_FEDERATED_OPTIN_TENANTS: ""
+    ports:
+      - "8085:8085"
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+    networks: [qualitos]
+
+  # -------------------------------------------------------------------------
+  # P5 — Qdrant vector store (collection-per-tenant for RAG).
+  # -------------------------------------------------------------------------
+
+  qdrant:
+    image: qdrant/qdrant:v1.11.0
+    container_name: qualitos-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant-data:/qdrant/storage
+    networks: [qualitos]
+
+  # -------------------------------------------------------------------------
+  # P5 — Ollama local LLM (default provider when no API key is supplied).
+  # -------------------------------------------------------------------------
+
+  ollama:
+    image: ollama/ollama:0.3.12
+    container_name: qualitos-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    networks: [qualitos]
+
+  # -------------------------------------------------------------------------
   # web — frontend Angular servi en statique via nginx.
   # En dev quotidien préférer 'npm start' direct (HMR). Ce service est utile
   # pour les démos end-to-end et la validation prod-like.
@@ -144,6 +227,8 @@ services:
 
 volumes:
   postgres-data:
+  qdrant-data:
+  ollama-data:
 
 networks:
   qualitos:

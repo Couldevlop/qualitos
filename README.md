@@ -17,15 +17,24 @@ Accès :
 
 | Service                | URL                                  | Credentials       |
 | ---------------------- | ------------------------------------ | ----------------- |
-| Frontend Angular       | http://localhost:4200                | demo / demo       |
-| api-core               | http://localhost:8081/swagger-ui.html | JWT requis        |
+| Frontend Angular       | http://localhost:4200                | superadmin / superadmin |
+| api-core               | http://localhost:8181/swagger-ui.html | JWT requis (port 8181 car httpd local sur 8081) |
 | api-quality-engine     | http://localhost:8082/swagger-ui.html | JWT requis        |
 | Keycloak               | http://localhost:8080                | admin / admin     |
 | Postgres               | localhost:5432                       | qualitos / qualitos |
 
-Le realm `qualitos` est pré-seedé avec deux comptes (`demo` et `admin`) et les rôles
-(`super_admin`, `admin_tenant`, `quality_director`, `quality_manager`, `auditor`, `user`,
-`external_auditor`).
+Le realm `qualitos` est pré-seedé avec **trois comptes** et les rôles plateforme :
+
+| Compte       | Mot de passe | Rôle(s)                   | Usage                                          |
+| ------------ | ------------ | ------------------------- | ---------------------------------------------- |
+| `superadmin` | `superadmin` | `super_admin`             | **Compte principal** — admin plateforme global |
+| `admin`      | `admin`      | `admin_tenant`            | Admin d'un tenant                              |
+| `demo`       | `demo`       | `quality_manager`, `user` | Démos fonctionnelles                           |
+
+Rôles disponibles dans le realm : `super_admin`, `admin_tenant`, `quality_director`,
+`quality_manager`, `auditor`, `user`, `external_auditor`.
+
+> Console admin Keycloak (master realm) : `admin` / `admin` sur http://localhost:8080
 
 ## Structure du monorepo
 

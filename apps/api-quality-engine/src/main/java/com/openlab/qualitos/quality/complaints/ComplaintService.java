@@ -55,6 +55,7 @@ public class ComplaintService {
     private final ComplaintResponseRepository responseRepo;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public ComplaintService(ComplaintRepository complaintRepo,
                             ComplaintResponseRepository responseRepo) {
         this(complaintRepo, responseRepo, Clock.systemUTC());

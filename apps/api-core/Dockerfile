@@ -11,6 +11,9 @@ WORKDIR /workspace
 COPY pom.xml ./
 COPY apps/api-core/pom.xml apps/api-core/
 COPY apps/api-quality-engine/pom.xml apps/api-quality-engine/
+# Parent pom references libs/industry-commons (P3) and apps/api-iot-hub (P3).
+COPY libs/industry-commons/pom.xml libs/industry-commons/
+COPY apps/api-iot-hub/pom.xml apps/api-iot-hub/
 
 # Pré-télécharge les dépendances pour profiter du cache Docker.
 RUN mvn -B -ntp -pl apps/api-core -am dependency:go-offline || true

@@ -35,6 +35,7 @@ public class ApiKeyService {
     private final ApiKeyEventPublisher events;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public ApiKeyService(ApiKeyRepository repo, ApiKeyHasher hasher,
                          ApiKeySecretGenerator generator,
                          TenantProvider tenantProvider, Clock clock) {

@@ -19,3 +19,9 @@ export interface CircleResponse {
 }
 
 export type CirclesPage = SpringPage<CircleResponse>;
+
+export interface CreateCircleRequest {
+  name: string;
+  description?: string;
+  topic?: string;
+}

@@ -1,37 +1,96 @@
-<mat-sidenav-container class="shell-container">
+<div class="qos-shell" [class.qos-shell--collapsed]="collapsed">
 
-  <mat-sidenav #sidenav mode="side" opened class="shell-sidenav">
-    <div class="brand">
-      <span class="brand-logo material-symbols-outlined">workspace_premium</span>
-      <div class="brand-text">
+  <aside class="qos-sidebar" [attr.aria-label]="'Navigation principale'">
+    <div class="qos-sidebar__brand">
+      <span class="qos-sidebar__logo material-symbols-outlined" aria-hidden="true">
+        workspace_premium
+      </span>
+      <div class="qos-sidebar__brand-text" *ngIf="!collapsed">
         <strong>QualitOS</strong>
-        <small>Quality Operating System</small>
+        <small>Quality OS</small>
       </div>
     </div>
 
-    <mat-nav-list>
-      <a mat-list-item *ngFor="let item of nav" [routerLink]="item.route" routerLinkActive="active">
-        <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-        <span matListItemTitle>{{ item.label }}</span>
-      </a>
-    </mat-nav-list>
-  </mat-sidenav>
-
-  <mat-sidenav-content>
-    <mat-toolbar color="primary" class="shell-toolbar">
-      <button mat-icon-button (click)="sidenav.toggle()" aria-label="Toggle navigation">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <span>QualitOS</span>
-      <span class="qos-spacer"></span>
-      <ng-container *ngIf="user$ | async as user">
-        <span class="user-name">{{ user.displayName }}</span>
-        <mat-icon class="user-avatar" aria-hidden="true">account_circle</mat-icon>
+    <nav class="qos-sidebar__nav">
+      <ng-container *ngFor="let section of sections">
+        <div class="qos-sidebar__section-label" *ngIf="!collapsed">{{ section.label }}</div>
+        <ul class="qos-sidebar__items">
+          <li *ngFor="let item of section.items">
+            <a
+              [routerLink]="item.route"
+              routerLinkActive="qos-sidebar__link--active"
+              class="qos-sidebar__link"
+              [title]="collapsed ? item.label : null">
+              <span class="qos-sidebar__icon material-symbols-outlined" aria-hidden="true">
+                {{ item.icon }}
+              </span>
+              <span class="qos-sidebar__label" *ngIf="!collapsed">{{ item.label }}</span>
+              <span
+                *ngIf="item.badge && !collapsed"
+                class="qos-sidebar__badge">{{ item.badge }}</span>
+            </a>
+          </li>
+        </ul>
       </ng-container>
-    </mat-toolbar>
+    </nav>
 
-    <main class="shell-content">
+    <div class="qos-sidebar__footer">
+      <button
+        type="button"
+        class="qos-sidebar__collapse"
+        (click)="toggle()"
+        [attr.aria-label]="collapsed ? 'Déplier la navigation' : 'Replier la navigation'"
+        [attr.aria-expanded]="!collapsed">
+        <span class="material-symbols-outlined" aria-hidden="true">
+          {{ collapsed ? 'chevron_right' : 'chevron_left' }}
+        </span>
+        <span class="qos-sidebar__collapse-text" *ngIf="!collapsed">Replier</span>
+      </button>
+    </div>
+  </aside>
+
+  <div class="qos-shell__main">
+    <header class="qos-topbar">
+      <button
+        type="button"
+        class="qos-topbar__icon-btn qos-topbar__menu"
+        (click)="toggle()"
+        aria-label="Basculer la navigation">
+        <span class="material-symbols-outlined" aria-hidden="true">menu</span>
+      </button>
+
+      <div class="qos-topbar__search">
+        <span class="material-symbols-outlined qos-topbar__search-icon" aria-hidden="true">search</span>
+        <input
+          type="search"
+          class="qos-topbar__search-input"
+          placeholder="Rechercher : modules, normes, KPI, documents…"
+          aria-label="Recherche globale">
+        <kbd class="qos-topbar__kbd">⌘K</kbd>
+      </div>
+
+      <div class="qos-topbar__actions">
+        <qos-theme-toggle></qos-theme-toggle>
+
+        <button type="button" class="qos-topbar__icon-btn" aria-label="Notifications">
+          <span class="material-symbols-outlined" aria-hidden="true">notifications</span>
+          <span class="qos-topbar__dot" aria-hidden="true"></span>
+        </button>
+
+        <ng-container *ngIf="user$ | async as user">
+          <button type="button" class="qos-topbar__user" [attr.aria-label]="'Profil ' + user.displayName">
+            <span class="qos-topbar__avatar">{{ initials(user.displayName) }}</span>
+            <span class="qos-topbar__user-name">{{ user.displayName }}</span>
+            <span class="material-symbols-outlined qos-topbar__user-caret" aria-hidden="true">
+              expand_more
+            </span>
+          </button>
+        </ng-container>
+      </div>
+    </header>
+
+    <main class="qos-shell__content">
       <router-outlet></router-outlet>
     </main>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+  </div>
+</div>

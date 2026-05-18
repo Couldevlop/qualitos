@@ -38,6 +38,7 @@ public class JiraServiceManagementClient implements ItsmProviderClient {
     private final HttpClient http;
     private final ObjectMapper mapper;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public JiraServiceManagementClient() {
         this(HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build(), new ObjectMapper());
     }

@@ -1,12 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { AuthService, AuthUser } from '../../core/auth/auth.service';
 
-interface NavItem {
+export interface NavItem {
   label: string;
   route: string;
   icon: string;
+  badge?: string;
+}
+
+export interface NavSection {
+  label: string;
+  items: NavItem[];
 }
 
 @Component({
@@ -15,23 +21,56 @@ interface NavItem {
   styleUrls: ['./main-shell.component.scss'],
   standalone: false
 })
-export class MainShellComponent {
+export class MainShellComponent implements OnInit {
 
-  readonly user$: Observable<AuthUser | null>;
+  user$!: Observable<AuthUser | null>;
+  collapsed = false;
 
-  readonly nav: NavItem[] = [
-    { label: 'Accueil',         route: '/home',      icon: 'home' },
-    { label: 'Tableau de bord', route: '/dashboard', icon: 'dashboard' },
-    { label: 'PDCA',            route: '/pdca',      icon: 'autorenew' },
-    { label: 'Ishikawa',        route: '/ishikawa',  icon: 'account_tree' },
-    { label: '5S',              route: '/fives',     icon: 'check_circle' },
-    { label: 'CAPA',            route: '/capa',      icon: 'engineering' },
-    { label: 'Audits',          route: '/audits',    icon: 'fact_check' },
-    { label: 'Standards Hub',   route: '/standards', icon: 'workspace_premium' },
-    { label: 'Cercles Qualité', route: '/circles',   icon: 'groups' }
+  readonly sections: NavSection[] = [
+    {
+      label: 'Pilotage',
+      items: [
+        { label: 'Tableau de bord', route: '/dashboard', icon: 'dashboard' },
+        { label: 'Accueil',         route: '/home',      icon: 'home' }
+      ]
+    },
+    {
+      label: 'Méthodes qualité',
+      items: [
+        { label: 'PDCA',     route: '/pdca',     icon: 'autorenew' },
+        { label: 'Ishikawa', route: '/ishikawa', icon: 'account_tree' },
+        { label: '5S',       route: '/fives',    icon: 'check_circle' },
+        { label: 'Cercles',  route: '/circles',  icon: 'groups' }
+      ]
+    },
+    {
+      label: 'Processus',
+      items: [
+        { label: 'CAPA',          route: '/capa',      icon: 'engineering' },
+        { label: 'Audits',        route: '/audits',    icon: 'fact_check' },
+        { label: 'Standards Hub', route: '/standards', icon: 'workspace_premium' }
+      ]
+    },
+    {
+      label: 'Compliance UE',
+      items: [
+        { label: 'AI Act', route: '/ai-act', icon: 'smart_toy', badge: '7' },
+        { label: 'GDPR',   route: '/gdpr',   icon: 'shield' },
+        { label: 'NIS 2',  route: '/nis2',   icon: 'security' }
+      ]
+    }
   ];
 
-  constructor(private readonly auth: AuthService) {
+  constructor(private readonly auth: AuthService) {}
+
+  ngOnInit(): void {
     this.user$ = this.auth.user();
+  }
+
+  toggle(): void { this.collapsed = !this.collapsed; }
+
+  initials(name?: string | null): string {
+    if (!name) return '··';
+    return name.trim().split(/\s+/).slice(0, 2).map(p => p[0] ?? '').join('').toUpperCase();
   }
 }

@@ -27,6 +27,7 @@ public class WebhookDispatcher {
     private final HmacSigner signer;
     private final HttpClient httpClient;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public WebhookDispatcher(HmacSigner signer) {
         this.signer = signer;
         this.httpClient = HttpClient.newBuilder()

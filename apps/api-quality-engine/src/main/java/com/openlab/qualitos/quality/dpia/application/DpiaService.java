@@ -25,6 +25,7 @@ public class DpiaService {
     private final DpiaEventPublisher events;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public DpiaService(DpiaRepository repo, TenantProvider tenantProvider, Clock clock) {
         this(repo, tenantProvider, new DpiaEventPublisher.NoOp(), clock);
     }

@@ -24,6 +24,7 @@ public class AutomatedDecisionService {
     private final AutomatedDecisionEventPublisher events;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public AutomatedDecisionService(AutomatedDecisionRepository repo,
                                     TenantProvider tenantProvider, Clock clock) {
         this(repo, tenantProvider, new AutomatedDecisionEventPublisher.NoOp(), clock);

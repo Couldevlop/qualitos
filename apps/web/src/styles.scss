@@ -1,40 +1,142 @@
 /* QualitOS — global styles.
- * Le thème Material 3 est pré-appliqué via "azure-blue.css" (angular.json).
- * On surcharge ici les tokens propres au design system QualitOS.
+ * Design system QualitOS basé sur des CSS custom properties.
+ * Theme switching via :root.qos-theme-light | :root.qos-theme-dark.
+ * Material reste disponible mais surchargé par nos tokens.
  */
 
-@use '@angular/material' as mat;
+@use 'styles/tokens';
+
+/* ============================================================
+ * Reset / base.
+ * ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 
 html, body {
   height: 100%;
+  margin: 0;
 }
+
+html {
+  background: var(--qos-bg-app);
+  color-scheme: light;
+}
+
+html.qos-theme-dark { color-scheme: dark; }
 
 body {
+  font-family: var(--qos-font-sans);
+  font-size: var(--qos-fs-base);
+  line-height: var(--qos-lh-normal);
+  font-weight: var(--qos-fw-regular);
+  color: var(--qos-fg-primary);
+  background: var(--qos-bg-app);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'cv02', 'cv11', 'ss01';
+  transition:
+    background-color var(--qos-motion-base),
+    color var(--qos-motion-base);
+}
+
+/* ============================================================
+ * Typographie utilitaire.
+ * ============================================================ */
+h1, h2, h3, h4, h5, h6 {
   margin: 0;
-  font-family: 'Inter', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: var(--mat-sys-surface-container-lowest, #fafafa);
-  color: var(--mat-sys-on-surface, #1c1b1f);
+  font-weight: var(--qos-fw-semibold);
+  letter-spacing: -0.01em;
+  color: var(--qos-fg-primary);
 }
 
+h1 { font-size: var(--qos-fs-3xl); line-height: var(--qos-lh-tight); letter-spacing: -0.02em; }
+h2 { font-size: var(--qos-fs-2xl); line-height: var(--qos-lh-snug); }
+h3 { font-size: var(--qos-fs-xl);  line-height: var(--qos-lh-snug); }
+h4 { font-size: var(--qos-fs-lg);  line-height: var(--qos-lh-snug); }
+
+p { margin: 0; }
+
+.qos-mono { font-family: var(--qos-font-mono); font-feature-settings: 'zero', 'ss01'; }
+.qos-text-secondary { color: var(--qos-fg-secondary); }
+.qos-text-tertiary  { color: var(--qos-fg-tertiary); }
+.qos-text-success   { color: var(--qos-success-fg); }
+.qos-text-warn      { color: var(--qos-warn-fg); }
+.qos-text-danger    { color: var(--qos-danger-fg); }
+
+/* ============================================================
+ * Focus accessible (WCAG 2.2 AA).
+ * ============================================================ */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--qos-ring-focus);
+  border-radius: var(--qos-radius-sm);
+}
+
+/* ============================================================
+ * Icônes Material Symbols (chargées via index.html).
+ * ============================================================ */
 .material-symbols-outlined {
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+  font-size: 20px;
+  line-height: 1;
+  user-select: none;
 }
 
-/* Utility */
+/* ============================================================
+ * Surcharges Material 3 — alignement sur nos tokens.
+ * ============================================================ */
+.mat-mdc-card,
+.mdc-card,
+.mat-mdc-dialog-surface {
+  background-color: var(--qos-bg-elevated) !important;
+  color: var(--qos-fg-primary) !important;
+  border: 1px solid var(--qos-border-subtle);
+  box-shadow: var(--qos-shadow-sm) !important;
+}
+
+.mat-mdc-form-field-subscript-wrapper { font-size: var(--qos-fs-xs); }
+
+/* ============================================================
+ * Layout helpers.
+ * ============================================================ */
 .qos-page {
-  padding: 24px;
-  max-width: 1400px;
+  padding: var(--qos-space-8) var(--qos-space-10);
+  max-width: 1440px;
   margin: 0 auto;
 }
 
-.qos-stretch {
-  flex: 1 1 auto;
-}
+.qos-stack-1 { display: flex; flex-direction: column; gap: var(--qos-space-1); }
+.qos-stack-2 { display: flex; flex-direction: column; gap: var(--qos-space-2); }
+.qos-stack-3 { display: flex; flex-direction: column; gap: var(--qos-space-3); }
+.qos-stack-4 { display: flex; flex-direction: column; gap: var(--qos-space-4); }
+.qos-stack-6 { display: flex; flex-direction: column; gap: var(--qos-space-6); }
+.qos-stack-8 { display: flex; flex-direction: column; gap: var(--qos-space-8); }
 
-.qos-spacer {
-  flex: 1 1 auto;
+.qos-row-2 { display: flex; align-items: center; gap: var(--qos-space-2); }
+.qos-row-3 { display: flex; align-items: center; gap: var(--qos-space-3); }
+.qos-row-4 { display: flex; align-items: center; gap: var(--qos-space-4); }
+
+.qos-spacer { flex: 1 1 auto; }
+.qos-stretch { flex: 1 1 auto; }
+
+/* ============================================================
+ * Scrollbar fine.
+ * ============================================================ */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--qos-border-strong) transparent;
+}
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: var(--qos-border-default);
+  border: 2px solid transparent;
+  border-radius: var(--qos-radius-pill);
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--qos-border-strong);
+  background-clip: padding-box;
 }

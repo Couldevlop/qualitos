@@ -1,0 +1,31 @@
+<mat-card class="widget-card" appearance="outlined">
+  <mat-card-header>
+    <mat-card-title class="widget-title">{{ widget.title }}</mat-card-title>
+    <span class="widget-type" [matTooltip]="'Widget type'">{{ widget.type | uppercase }}</span>
+  </mat-card-header>
+
+  <mat-card-content class="widget-body">
+    <ng-container [ngSwitch]="widget.type">
+      <div *ngSwitchCase="'kpi'" class="kpi-block">
+        <div class="kpi-value">{{ kpiValue }}</div>
+        <div class="kpi-meta">
+          <span class="kpi-label">{{ widget.config['kpiLabel'] || 'Closure days (avg)' }}</span>
+          <span [ngClass]="trendClass()">{{ trendLabel() }}</span>
+        </div>
+      </div>
+
+      <div *ngSwitchCase="'narrative'" class="narrative-block">
+        <mat-icon class="narrative-icon">auto_awesome</mat-icon>
+        <p class="narrative-text">{{ narrative }}</p>
+      </div>
+
+      <div *ngSwitchDefault class="chart-placeholder" aria-hidden="false"
+           [attr.aria-label]="widget.title + ' chart placeholder'">
+        <div class="chart-skeleton">
+          <span>{{ widget.title }}</span>
+          <small>ECharts widget — install <code>ngx-echarts</code> to render</small>
+        </div>
+      </div>
+    </ng-container>
+  </mat-card-content>
+</mat-card>

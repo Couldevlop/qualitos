@@ -29,6 +29,7 @@ public class ConsentService {
     private final ConsentEventPublisher events;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public ConsentService(ConsentRepository repo, SubjectIdentifierHasher hasher,
                           TenantProvider tenantProvider, Clock clock) {
         this(repo, hasher, tenantProvider, new ConsentEventPublisher.NoOp(), clock);

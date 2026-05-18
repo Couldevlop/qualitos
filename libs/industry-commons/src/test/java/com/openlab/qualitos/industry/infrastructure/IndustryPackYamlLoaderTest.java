@@ -102,4 +102,60 @@ class IndustryPackYamlLoaderTest {
     assertThatThrownBy(() -> loader.load(dup.getBytes(StandardCharsets.UTF_8)))
         .isInstanceOf(Exception.class);
   }
+
+  @Test
+  @DisplayName("Rejects YAML where `sectors` is a scalar instead of a list (strList wrong-type)")
+  void rejectsScalarInsteadOfList() {
+    String bad = "id: x\nversion: 1.0.0\nname: a\nsectors: not-a-list\n";
+    assertThatThrownBy(() -> loader.load(bad.getBytes(StandardCharsets.UTF_8)))
+        .isInstanceOf(IndustryPackParseException.class)
+        .hasMessageContaining("list of strings");
+  }
+
+  @Test
+  @DisplayName("Rejects YAML where `glossary` is a scalar instead of a map (strMap wrong-type)")
+  void rejectsScalarInsteadOfMap() {
+    String bad = "id: x\nversion: 1.0.0\nname: a\nglossary: scalar\n";
+    assertThatThrownBy(() -> loader.load(bad.getBytes(StandardCharsets.UTF_8)))
+        .isInstanceOf(IndustryPackParseException.class)
+        .hasMessageContaining("map of strings");
+  }
+
+  @Test
+  @DisplayName("Rejects YAML where `kpis` is a scalar instead of a list (mapList wrong-type)")
+  void rejectsScalarInsteadOfListOfMaps() {
+    String bad = "id: x\nversion: 1.0.0\nname: a\nkpis: not-a-list\n";
+    assertThatThrownBy(() -> loader.load(bad.getBytes(StandardCharsets.UTF_8)))
+        .isInstanceOf(IndustryPackParseException.class)
+        .hasMessageContaining("Expected list");
+  }
+
+  @Test
+  @DisplayName("Rejects YAML where `kpis` is a list of scalars (mapList expects mappings)")
+  void rejectsListOfScalarsForMapList() {
+    String bad = "id: x\nversion: 1.0.0\nname: a\nkpis: [\"just-a-string\"]\n";
+    assertThatThrownBy(() -> loader.load(bad.getBytes(StandardCharsets.UTF_8)))
+        .isInstanceOf(IndustryPackParseException.class)
+        .hasMessageContaining("mapping inside list");
+  }
+
+  @Test
+  @DisplayName("InputStream overload reads bytes and parses identically")
+  void loadsFromInputStream() throws Exception {
+    String yaml = "id: io\nversion: 1.0.0\nname: I/O\n";
+    try (InputStream in = new java.io.ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8))) {
+      IndustryPack p = loader.load(in);
+      assertThat(p.id()).isEqualTo("io");
+      assertThat(p.version()).isEqualTo("1.0.0");
+      assertThat(p.sha256()).hasSize(64);
+    }
+  }
+
+  @Test
+  @DisplayName("Accepts explicit published_at and parses it as an Instant")
+  void parsesExplicitPublishedAt() {
+    String yaml = "id: ts\nversion: 1.0.0\nname: TS\npublished_at: 2025-01-15T10:30:00Z\n";
+    IndustryPack p = loader.load(yaml.getBytes(StandardCharsets.UTF_8));
+    assertThat(p.publishedAt()).isEqualTo(java.time.Instant.parse("2025-01-15T10:30:00Z"));
+  }
 }

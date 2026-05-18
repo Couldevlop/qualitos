@@ -29,6 +29,7 @@ public class PrivacyNoticeService {
     private final PrivacyNoticeEventPublisher events;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public PrivacyNoticeService(PrivacyNoticeRepository repo,
                                 TenantProvider tenantProvider, Clock clock) {
         this(repo, tenantProvider, new PrivacyNoticeEventPublisher.NoOp(), clock);

@@ -24,6 +24,7 @@ public class BreachService {
     private final BreachEventPublisher events;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public BreachService(BreachRepository repo, TenantProvider tenantProvider, Clock clock) {
         this(repo, tenantProvider, new BreachEventPublisher.NoOp(), clock);
     }

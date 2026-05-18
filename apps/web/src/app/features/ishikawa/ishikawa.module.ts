@@ -2,12 +2,13 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { IshikawaCreateDialogComponent } from './pages/ishikawa-create-dialog/ishikawa-create-dialog.component';
 import { IshikawaListComponent } from './pages/ishikawa-list/ishikawa-list.component';
 
 const routes: Routes = [{ path: '', component: IshikawaListComponent }];
 
 @NgModule({
-  declarations: [IshikawaListComponent],
+  declarations: [IshikawaListComponent, IshikawaCreateDialogComponent],
   imports: [SharedModule, RouterModule.forChild(routes)]
 })
 export class IshikawaModule {}

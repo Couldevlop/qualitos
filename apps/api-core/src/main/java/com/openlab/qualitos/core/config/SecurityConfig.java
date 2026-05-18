@@ -1,6 +1,7 @@
 package com.openlab.qualitos.core.config;
 
 import com.openlab.qualitos.core.security.TenantJwtFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -13,7 +14,14 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.core.Ordered;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -45,14 +53,45 @@ public class SecurityConfig {
         return new TenantJwtFilter(jwtDecoder);
     }
 
+    @Value("${qualitos.cors.allowed-origins:http://localhost:4200}")
+    private String allowedOriginsCsv;
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration cfg = new CorsConfiguration();
+        cfg.setAllowedOrigins(Arrays.asList(allowedOriginsCsv.split(",")));
+        cfg.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
+        cfg.setAllowedHeaders(List.of("Authorization","Content-Type","Accept","X-Requested-With","X-Tenant-Id","X-Correlation-Id"));
+        cfg.setExposedHeaders(List.of("Location","X-Correlation-Id"));
+        cfg.setAllowCredentials(true);
+        cfg.setMaxAge(3600L);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", cfg);
+        return source;
+    }
+
+    @Bean
+    public FilterRegistrationBean<CorsFilter> corsFilterRegistration(
+            @org.springframework.beans.factory.annotation.Qualifier("corsConfigurationSource")
+            CorsConfigurationSource source) {
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return bean;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                                   TenantJwtFilter tenantJwtFilter) throws Exception {
+                                                   TenantJwtFilter tenantJwtFilter,
+                                                   @org.springframework.beans.factory.annotation.Qualifier("corsConfigurationSource")
+                                                   CorsConfigurationSource corsSource) throws Exception {
         http
+            .cors(cors -> cors.configurationSource(corsSource))
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // CORS preflight: doit passer sans token.
+                .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                 // Endpoints publics
                 .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                 // OpenAPI / Swagger UI (dev)

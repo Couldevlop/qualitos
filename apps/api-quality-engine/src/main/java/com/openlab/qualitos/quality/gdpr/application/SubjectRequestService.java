@@ -26,6 +26,7 @@ public class SubjectRequestService {
     private final SubjectRequestEventPublisher events;
     private final Clock clock;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public SubjectRequestService(DataSubjectRequestRepository repo,
                                  SubjectIdentifierHasher hasher,
                                  TenantProvider tenantProvider, Clock clock) {
