@@ -128,6 +128,29 @@ services:
     networks: [qualitos]
 
   # -------------------------------------------------------------------------
+  # P3 — IoT Hub (Spring Boot, Java 21, distroless). Device registry + telemetry.
+  # -------------------------------------------------------------------------
+
+  api-iot-hub:
+    build:
+      context: apps/api-iot-hub
+      dockerfile: Dockerfile
+    container_name: qualitos-api-iot-hub
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/qualitos_quality
+      DB_USER: qualitos
+      DB_PASSWORD: qualitos
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_REALM: qualitos
+      SPRING_PROFILES_ACTIVE: dev
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [qualitos]
+
+  # -------------------------------------------------------------------------
   # P5 — AI gateway (FastAPI, distroless). Routes vers Ollama / Anthropic / Mistral
   # via la passerelle AIProvider. Toutes les sorties sont PII-redacted (Presidio).
   # -------------------------------------------------------------------------
