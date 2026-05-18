@@ -60,4 +60,27 @@ class ActivateIndustryPackUseCaseTest {
         new YamlIndustryPackProvider(samplePack("ok"))));
     assertThat(registry.listAll()).hasSize(1);
   }
+
+  @Test
+  void registryIgnoresProvidersWithNullId() {
+    // Exercises the `p.id() == null` branch in the registry's filter
+    var brokenProvider = new com.openlab.qualitos.industry.domain.port.IndustryPackProvider() {
+      @Override public String id() { return null; }
+      @Override public String version() { return "0"; }
+      @Override public java.util.List<String> sectors() { return java.util.List.of(); }
+      @Override public java.util.List<String> supportedNorms() { return java.util.List.of(); }
+      @Override public IndustryPack getPack() { return samplePack("ignored"); }
+      @Override public com.openlab.qualitos.industry.domain.model.ValidationResult validate() {
+        return com.openlab.qualitos.industry.domain.model.ValidationResult.ok();
+      }
+      @Override public com.openlab.qualitos.industry.domain.model.ApplyResult apply(UUID t, String by) {
+        throw new UnsupportedOperationException();
+      }
+    };
+    var registry = new InMemoryIndustryPackRegistry(java.util.List.of(
+        brokenProvider,
+        new YamlIndustryPackProvider(samplePack("good"))));
+    assertThat(registry.listAll()).hasSize(1);
+    assertThat(registry.findProvider("good")).isPresent();
+  }
 }
