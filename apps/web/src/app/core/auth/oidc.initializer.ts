@@ -27,7 +27,11 @@ export function initOidc(oauthService: OAuthService): () => Promise<void> {
     };
 
     oauthService.configure(cfg);
-    oauthService.setupAutomaticSilentRefresh();
+    // NOTE: setupAutomaticSilentRefresh() volontairement non appele ici. Il
+    // declenchait un iframe cache qui chargeait la page de login Keycloak
+    // (perception "popup sombre par-dessus la SPA"). Le silent refresh sera
+    // rebranche en P5.2 avec un iframe correctement dimensionne + bonne
+    // gestion de la session check, ou remplace par le refresh-token flow.
 
     try {
       await oauthService.loadDiscoveryDocumentAndTryLogin();
