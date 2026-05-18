@@ -4,12 +4,14 @@ import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { PdcaCycleResponse, SpringPage } from './pdca.types';
+import { CreatePdcaCycleRequest, PdcaCycleResponse, SpringPage } from './pdca.types';
 
 @Injectable({ providedIn: 'root' })
 export class PdcaService {
 
   private readonly endpoint = `${environment.apiBaseUrl}/api/v1/pdca/cycles`;
+
+  private readonly mockStore: PdcaCycleResponse[] = this.seedMockCycles();
 
   constructor(private readonly http: HttpClient) {}
 
@@ -26,15 +28,34 @@ export class PdcaService {
 
   getCycle(id: string): Observable<PdcaCycleResponse> {
     if (environment.useMockApi) {
-      const cycle = this.mockCycles().find(c => c.id === id);
-      return of(cycle ?? this.mockCycles()[0]).pipe(delay(150));
+      const cycle = this.mockStore.find(c => c.id === id);
+      return of(cycle ?? this.mockStore[0]).pipe(delay(150));
     }
     return this.http.get<PdcaCycleResponse>(`${this.endpoint}/${id}`);
   }
 
+  createCycle(input: CreatePdcaCycleRequest): Observable<PdcaCycleResponse> {
+    if (environment.useMockApi) {
+      const now = new Date().toISOString();
+      const cycle: PdcaCycleResponse = {
+        id: 'demo-' + (this.mockStore.length + 1) + '-' + Math.random().toString(36).slice(2, 7),
+        tenantId: 'demo-tenant',
+        title: input.title,
+        description: input.description,
+        status: 'PLAN',
+        ownerId: input.ownerId,
+        createdAt: now,
+        updatedAt: now,
+        steps: []
+      };
+      this.mockStore.unshift(cycle);
+      return of(cycle).pipe(delay(200));
+    }
+    return this.http.post<PdcaCycleResponse>(this.endpoint, input);
+  }
+
   private mockPage(status?: string): SpringPage<PdcaCycleResponse> {
-    const all = this.mockCycles();
-    const filtered = status ? all.filter(c => c.status === status) : all;
+    const filtered = status ? this.mockStore.filter(c => c.status === status) : this.mockStore;
     return {
       content: filtered,
       totalElements: filtered.length,
@@ -44,7 +65,7 @@ export class PdcaService {
     };
   }
 
-  private mockCycles(): PdcaCycleResponse[] {
+  private seedMockCycles(): PdcaCycleResponse[] {
     const now = new Date().toISOString();
     return [
       {

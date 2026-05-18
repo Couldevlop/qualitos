@@ -28,3 +28,10 @@ export interface FiveSAuditResponse {
 }
 
 export type FiveSPage = SpringPage<FiveSAuditResponse>;
+
+export interface CreateFiveSAuditRequest {
+  zone: string;
+  description?: string;
+  auditorId: string;
+  scheduledAt?: string;
+}

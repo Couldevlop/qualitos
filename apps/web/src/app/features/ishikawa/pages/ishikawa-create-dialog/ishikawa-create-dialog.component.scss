@@ -1,0 +1,33 @@
+.create-form {
+  display: flex;
+  flex-direction: column;
+  min-width: 480px;
+  max-width: 580px;
+}
+
+mat-dialog-content { padding-top: 8px; }
+
+.hint {
+  margin: 0 0 16px;
+  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6));
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.full { width: 100%; }
+
+.mode-hint {
+  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.55));
+  font-size: 12px;
+}
+
+mat-dialog-actions {
+  padding: 12px 0 0;
+  gap: 8px;
+}
+
+mat-dialog-actions button[type='submit'] {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}

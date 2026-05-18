@@ -4,12 +4,19 @@ import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { AuditPlanResponse, AuditStatus, AuditsPage } from './audits.types';
+import {
+  AuditPlanResponse,
+  AuditStatus,
+  AuditsPage,
+  CreateAuditPlanRequest
+} from './audits.types';
 
 @Injectable({ providedIn: 'root' })
 export class AuditsService {
 
   private readonly endpoint = `${environment.apiBaseUrl}/api/v1/audits/plans`;
+
+  private readonly mockStore: AuditPlanResponse[] = this.seedMockPlans();
 
   constructor(private readonly http: HttpClient) {}
 
@@ -20,13 +27,34 @@ export class AuditsService {
     return this.http.get<AuditsPage>(this.endpoint, { params });
   }
 
+  createPlan(input: CreateAuditPlanRequest): Observable<AuditPlanResponse> {
+    if (environment.useMockApi) {
+      const now = new Date().toISOString();
+      const plan: AuditPlanResponse = {
+        id: 'a-' + (this.mockStore.length + 1) + '-' + Math.random().toString(36).slice(2, 7),
+        tenantId: 'demo-tenant',
+        title: input.title,
+        scope: input.scope,
+        type: input.type,
+        status: 'PLANNED',
+        standard: input.standard,
+        leadAuditorId: input.leadAuditorId,
+        scheduledDate: input.scheduledDate,
+        createdAt: now,
+        updatedAt: now
+      };
+      this.mockStore.unshift(plan);
+      return of(plan).pipe(delay(200));
+    }
+    return this.http.post<AuditPlanResponse>(this.endpoint, input);
+  }
+
   private mockPage(status?: AuditStatus): AuditsPage {
-    const all = this.mockPlans();
-    const f = status ? all.filter(a => a.status === status) : all;
+    const f = status ? this.mockStore.filter(a => a.status === status) : this.mockStore;
     return { content: f, totalElements: f.length, totalPages: 1, number: 0, size: f.length };
   }
 
-  private mockPlans(): AuditPlanResponse[] {
+  private seedMockPlans(): AuditPlanResponse[] {
     const now = new Date().toISOString();
     return [
       { id: 'a1', tenantId: 't', title: 'Audit interne ISO 9001 §9.2', type: 'INTERNAL',

@@ -37,3 +37,14 @@ export interface CapaCaseResponse {
 }
 
 export type CapaPage = SpringPage<CapaCaseResponse>;
+
+export interface CreateCapaCaseRequest {
+  title: string;
+  description?: string;
+  type: CapaType;
+  criticity: CapaCriticity;
+  sourceType: CapaSourceType;
+  sourceRef?: string;
+  ownerId: string;
+  dueDate?: string;
+}

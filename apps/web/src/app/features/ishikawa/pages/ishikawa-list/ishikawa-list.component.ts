@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { catchError, finalize, map, startWith, switchMap, tap } from 'rxjs/operators';
 
 import { IshikawaService } from '../../ishikawa.service';
 import { IshikawaDiagramResponse, IshikawaStatus } from '../../ishikawa.types';
+import { IshikawaCreateDialogComponent } from '../ishikawa-create-dialog/ishikawa-create-dialog.component';
 
 @Component({
   selector: 'qos-ishikawa-list',
@@ -22,13 +24,20 @@ export class IshikawaListComponent implements OnInit {
   loading$ = new BehaviorSubject<boolean>(false);
   error$ = new BehaviorSubject<string | null>(null);
 
-  constructor(private readonly svc: IshikawaService) {}
+  private readonly refresh$ = new BehaviorSubject<void>(undefined);
+
+  constructor(
+    private readonly svc: IshikawaService,
+    private readonly dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
-    this.diagrams$ = this.statusFilter.valueChanges.pipe(
-      startWith(this.statusFilter.value),
+    this.diagrams$ = combineLatest([
+      this.statusFilter.valueChanges.pipe(startWith(this.statusFilter.value)),
+      this.refresh$
+    ]).pipe(
       tap(() => { this.loading$.next(true); this.error$.next(null); }),
-      switchMap(status =>
+      switchMap(([status]) =>
         this.svc.listDiagrams(0, 50, status || undefined).pipe(
           catchError(err => {
             this.error$.next(err?.message ?? 'Erreur réseau');
@@ -39,6 +48,17 @@ export class IshikawaListComponent implements OnInit {
       ),
       map(page => (Array.isArray(page) ? [] : page.content))
     );
+  }
+
+  openCreate(): void {
+    const ref = this.dialog.open(IshikawaCreateDialogComponent, {
+      autoFocus: 'first-tabbable',
+      restoreFocus: true,
+      panelClass: 'qos-dialog-panel'
+    });
+    ref.afterClosed().subscribe(created => {
+      if (created) this.refresh$.next();
+    });
   }
 
   badgeClass(status: IshikawaStatus): string {

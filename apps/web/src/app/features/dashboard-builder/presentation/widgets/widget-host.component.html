@@ -9,7 +9,7 @@
       <div *ngSwitchCase="'kpi'" class="kpi-block">
         <div class="kpi-value">{{ kpiValue }}</div>
         <div class="kpi-meta">
-          <span class="kpi-label">{{ widget.config?.['kpiLabel'] || 'Closure days (avg)' }}</span>
+          <span class="kpi-label">{{ widget.config['kpiLabel'] || 'Closure days (avg)' }}</span>
           <span [ngClass]="trendClass()">{{ trendLabel() }}</span>
         </div>
       </div>
@@ -22,7 +22,7 @@
       <div *ngSwitchDefault class="chart-placeholder" aria-hidden="false"
            [attr.aria-label]="widget.title + ' chart placeholder'">
         <div class="chart-skeleton">
-          <span>{{ echartsOptions?.['title']?.['text'] || widget.title }}</span>
+          <span>{{ widget.title }}</span>
           <small>ECharts widget — install <code>ngx-echarts</code> to render</small>
         </div>
       </div>

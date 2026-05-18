@@ -4,12 +4,19 @@ import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { CircleResponse, CircleStatus, CirclesPage } from './circles.types';
+import {
+  CircleResponse,
+  CircleStatus,
+  CirclesPage,
+  CreateCircleRequest
+} from './circles.types';
 
 @Injectable({ providedIn: 'root' })
 export class CirclesService {
 
   private readonly endpoint = `${environment.apiBaseUrl}/api/v1/circles`;
+
+  private readonly mockStore: CircleResponse[] = this.seedMockCircles();
 
   constructor(private readonly http: HttpClient) {}
 
@@ -20,13 +27,35 @@ export class CirclesService {
     return this.http.get<CirclesPage>(this.endpoint, { params });
   }
 
+  createCircle(input: CreateCircleRequest): Observable<CircleResponse> {
+    if (environment.useMockApi) {
+      const now = new Date().toISOString();
+      const circle: CircleResponse = {
+        id: 'c-' + (this.mockStore.length + 1) + '-' + Math.random().toString(36).slice(2, 7),
+        tenantId: 'demo-tenant',
+        name: input.name,
+        description: input.description,
+        topic: input.topic,
+        status: 'ACTIVE',
+        memberCount: 0,
+        createdAt: now,
+        updatedAt: now,
+        members: [],
+        meetings: [],
+        proposals: []
+      };
+      this.mockStore.unshift(circle);
+      return of(circle).pipe(delay(200));
+    }
+    return this.http.post<CircleResponse>(this.endpoint, input);
+  }
+
   private mockPage(status?: CircleStatus): CirclesPage {
-    const all = this.mockCircles();
-    const f = status ? all.filter(c => c.status === status) : all;
+    const f = status ? this.mockStore.filter(c => c.status === status) : this.mockStore;
     return { content: f, totalElements: f.length, totalPages: 1, number: 0, size: f.length };
   }
 
-  private mockCircles(): CircleResponse[] {
+  private seedMockCircles(): CircleResponse[] {
     const now = new Date().toISOString();
     return [
       {

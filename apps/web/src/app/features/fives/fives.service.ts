@@ -4,12 +4,19 @@ import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { FiveSAuditResponse, FiveSAuditStatus, FiveSPage } from './fives.types';
+import {
+  CreateFiveSAuditRequest,
+  FiveSAuditResponse,
+  FiveSAuditStatus,
+  FiveSPage
+} from './fives.types';
 
 @Injectable({ providedIn: 'root' })
 export class FivesService {
 
   private readonly endpoint = `${environment.apiBaseUrl}/api/v1/fives/audits`;
+
+  private readonly mockStore: FiveSAuditResponse[] = this.seedMockAudits();
 
   constructor(private readonly http: HttpClient) {}
 
@@ -22,16 +29,36 @@ export class FivesService {
     return this.http.get<FiveSPage>(this.endpoint, { params });
   }
 
+  createAudit(input: CreateFiveSAuditRequest): Observable<FiveSAuditResponse> {
+    if (environment.useMockApi) {
+      const now = new Date().toISOString();
+      const audit: FiveSAuditResponse = {
+        id: '5s-' + (this.mockStore.length + 1) + '-' + Math.random().toString(36).slice(2, 7),
+        tenantId: 'demo-tenant',
+        zone: input.zone,
+        description: input.description,
+        status: 'DRAFT',
+        auditorId: input.auditorId,
+        scheduledAt: input.scheduledAt,
+        createdAt: now,
+        updatedAt: now,
+        items: []
+      };
+      this.mockStore.unshift(audit);
+      return of(audit).pipe(delay(200));
+    }
+    return this.http.post<FiveSAuditResponse>(this.endpoint, input);
+  }
+
   private mockPage(status?: FiveSAuditStatus): FiveSPage {
-    const all = this.mockAudits();
-    const filtered = status ? all.filter(a => a.status === status) : all;
+    const filtered = status ? this.mockStore.filter(a => a.status === status) : this.mockStore;
     return {
       content: filtered, totalElements: filtered.length, totalPages: 1,
       number: 0, size: filtered.length
     };
   }
 
-  private mockAudits(): FiveSAuditResponse[] {
+  private seedMockAudits(): FiveSAuditResponse[] {
     const now = new Date().toISOString();
     return [
       {
