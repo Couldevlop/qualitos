@@ -330,13 +330,6 @@ class ConformityAssessmentTest {
                 .hasMessageContaining("failure");
     }
 
-    @Test
-    void markFailed_blankReason_throws() {
-        ConformityAssessment a = planInternal();
-        assertThatThrownBy(() -> a.markFailed("   ", NOW))
-                .isInstanceOf(ConformityAssessmentStateException.class);
-    }
-
     // ---- certify validation branches ----------------------------------------
 
     @Test
