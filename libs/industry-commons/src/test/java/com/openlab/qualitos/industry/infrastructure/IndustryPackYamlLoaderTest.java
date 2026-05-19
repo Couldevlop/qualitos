@@ -152,9 +152,12 @@ class IndustryPackYamlLoaderTest {
   }
 
   @Test
-  @DisplayName("Accepts explicit published_at and parses it as an Instant")
+  @DisplayName("Accepts explicit published_at (quoted ISO-8601 per pack convention) and parses it as an Instant")
   void parsesExplicitPublishedAt() {
-    String yaml = "id: ts\nversion: 1.0.0\nname: TS\npublished_at: 2025-01-15T10:30:00Z\n";
+    // Quoted to prevent SnakeYAML's implicit timestamp resolver from converting
+    // the scalar to java.util.Date (whose toString() loses ISO-8601 format).
+    // Reference packs (e.g. manufacturing.yaml) follow the same convention.
+    String yaml = "id: ts\nversion: 1.0.0\nname: TS\npublished_at: \"2025-01-15T10:30:00Z\"\n";
     IndustryPack p = loader.load(yaml.getBytes(StandardCharsets.UTF_8));
     assertThat(p.publishedAt()).isEqualTo(java.time.Instant.parse("2025-01-15T10:30:00Z"));
   }
