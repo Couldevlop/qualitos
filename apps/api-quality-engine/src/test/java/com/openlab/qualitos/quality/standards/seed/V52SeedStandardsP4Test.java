@@ -1,7 +1,6 @@
 package com.openlab.qualitos.quality.standards.seed;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -21,13 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Ces tests sont indépendants de la BDD (H2 ne supporte pas
  * {@code gen_random_uuid()} ni la syntaxe Postgres). L'exécution réelle
  * du seed est validée par le pipeline CI sur Postgres 17.
- * <p>
- * <b>Désactivé</b> par le commit {@code efb39f8 fix(flyway): disable V52 P4 seed}
- * — le fichier {@code V52__seed_standards_p4.sql} a été renommé en
- * {@code _DISABLED_V52__seed_standards_p4.sql} (UUID dupliqués dans les
- * INSERT de clauses). Réactiver lorsque V52/V53 seront re-shippés corrigés.
  */
-@Disabled("V52 seed renamed to _DISABLED_ in commit efb39f8 — re-enable when V52/V53 are re-shipped")
 class V52SeedStandardsP4Test {
 
     private static String sql;
