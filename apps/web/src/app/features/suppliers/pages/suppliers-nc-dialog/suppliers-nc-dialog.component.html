@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>Nouvelle non-conformité fournisseur</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="nc-form">
+  <mat-dialog-content>
+    <div class="row">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Date de détection</mat-label>
+        <input matInput formControlName="detectedOn" type="date" required>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Sévérité</mat-label>
+        <mat-select formControlName="severity" required>
+          <mat-option *ngFor="let s of severities" [value]="s.value">{{ s.label }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Référence lot</mat-label>
+      <input matInput formControlName="lotReference" maxlength="100"
+             placeholder="Ex. : LOT-2026-0421">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="4" maxlength="1000"></textarea>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
+      <mat-icon *ngIf="!submitting">check</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      Enregistrer
+    </button>
+  </mat-dialog-actions>
+</form>

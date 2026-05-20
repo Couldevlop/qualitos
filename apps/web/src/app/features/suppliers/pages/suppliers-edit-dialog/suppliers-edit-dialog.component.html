@@ -1,0 +1,37 @@
+<h2 mat-dialog-title>Modifier le fournisseur</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="sup-form">
+  <mat-dialog-content>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Raison sociale</mat-label>
+      <input matInput formControlName="name" maxlength="250" required>
+    </mat-form-field>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="col col-country">
+        <mat-label>Pays (ISO-2)</mat-label>
+        <input matInput formControlName="countryCode" maxlength="2">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Type</mat-label>
+        <mat-select formControlName="supplierType" required>
+          <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Email contact qualité</mat-label>
+      <input matInput formControlName="contactEmail" type="email" maxlength="320">
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
+      <mat-icon *ngIf="!submitting">check</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      Enregistrer
+    </button>
+  </mat-dialog-actions>
+</form>
