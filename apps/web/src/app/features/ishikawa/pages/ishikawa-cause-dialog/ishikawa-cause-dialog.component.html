@@ -1,8 +1,13 @@
-<h2 mat-dialog-title>Ajouter une cause</h2>
+<h2 mat-dialog-title>{{ data.parent ? '5 Pourquoi — ajouter une sous-cause' : 'Ajouter une cause' }}</h2>
 
 <form [formGroup]="form" (ngSubmit)="submit()" class="cause-form">
   <mat-dialog-content>
-    <p class="hint">Choisis la branche (M) et formule la cause de façon concise.
+    <p class="parent-banner" *ngIf="data.parent">
+      <mat-icon>arrow_outward</mat-icon>
+      <span>Cette sous-cause sera rattachée à <strong>« {{ data.parent.label }} »</strong>.</span>
+    </p>
+
+    <p class="hint" *ngIf="!data.parent">Choisis la branche (M) et formule la cause de façon concise.
        Le scoring racine sera ajusté plus tard par l'analyse 5 Pourquoi.</p>
 
     <mat-form-field appearance="outline" class="full">
@@ -10,6 +15,7 @@
       <mat-select formControlName="category">
         <mat-option *ngFor="let c of categories" [value]="c.value">{{ c.label }}</mat-option>
       </mat-select>
+      <mat-hint *ngIf="data.parent">Héritée de la cause parente.</mat-hint>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full">

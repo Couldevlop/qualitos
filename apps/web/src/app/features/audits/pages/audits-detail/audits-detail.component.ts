@@ -8,11 +8,15 @@ import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { AuditsService } from '../../audits.service';
-import { AuditPlanResponse, AuditStatus } from '../../audits.types';
+import { AuditPlanResponse, AuditStatus, ChecklistItemResponse } from '../../audits.types';
 import {
   AuditsChecklistDialogComponent,
   AuditsChecklistDialogData
 } from '../audits-checklist-dialog/audits-checklist-dialog.component';
+import {
+  AuditsResponseDialogComponent,
+  AuditsResponseDialogData
+} from '../audits-response-dialog/audits-response-dialog.component';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -24,7 +28,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 })
 export class AuditsDetailComponent implements OnInit {
 
-  readonly checklistColumns = ['orderIndex', 'question', 'clauseRef', 'weight', 'response'];
+  readonly checklistColumns = ['orderIndex', 'question', 'clauseRef', 'weight', 'response', 'actions'];
 
   plan$!: Observable<AuditPlanResponse | null>;
   loading$ = new BehaviorSubject<boolean>(false);
@@ -96,6 +100,28 @@ export class AuditsDetailComponent implements OnInit {
         }
       });
     });
+  }
+
+  openResponse(item: ChecklistItemResponse): void {
+    const data: AuditsResponseDialogData = {
+      planId: this.planId,
+      itemId: item.id,
+      question: item.question,
+      clauseRef: item.clauseRef,
+      initialResponse: item.response,
+      initialConformant: item.conformant
+    };
+    this.dialog
+      .open(AuditsResponseDialogComponent, {
+        data,
+        autoFocus: 'first-tabbable',
+        restoreFocus: true,
+        panelClass: 'qos-dialog-panel'
+      })
+      .afterClosed()
+      .subscribe(updated => {
+        if (updated) this.reload$.next();
+      });
   }
 
   openAddChecklist(): void {

@@ -22,10 +22,16 @@ import {
 // OWASP A03 — refuse malformed route params client-side.
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+interface CauseNode {
+  cause: IshikawaCauseResponse;
+  children: CauseNode[];
+}
+
 interface BranchView {
   category: CauseCategory;
   label: string;
-  causes: IshikawaCauseResponse[];
+  /** Top-level causes only (no parentId); children nested via tree(). */
+  roots: CauseNode[];
 }
 
 @Component({
@@ -135,7 +141,27 @@ export class IshikawaDetailComponent implements OnInit {
       });
   }
 
-  /** Group causes by category, ordered to match the diagram's mode. */
+  /** Add a sub-cause (5-Whys child) of an existing cause. */
+  openAddSubCause(d: IshikawaDiagramResponse, parent: IshikawaCauseResponse): void {
+    const data: IshikawaCauseDialogData = {
+      diagramId: d.id,
+      mode: d.mode,
+      parent: { id: parent.id, label: parent.label, category: parent.category }
+    };
+    this.dialog
+      .open(IshikawaCauseDialogComponent, {
+        data,
+        autoFocus: 'first-tabbable',
+        restoreFocus: true,
+        panelClass: 'qos-dialog-panel'
+      })
+      .afterClosed()
+      .subscribe(cause => {
+        if (cause) this.reload$.next();
+      });
+  }
+
+  /** Group causes by category and build a parent→children tree per branch. */
   branches(d: IshikawaDiagramResponse): BranchView[] {
     const order: { value: CauseCategory; label: string }[] = [
       { value: 'METHODS',      label: 'Méthodes' },
@@ -151,10 +177,22 @@ export class IshikawaDetailComponent implements OnInit {
     if (d.mode === 'EIGHT_M') {
       order.push({ value: 'MONEY', label: 'Moyens financiers' });
     }
+    const byParent = new Map<string, IshikawaCauseResponse[]>();
+    for (const c of d.causes) {
+      const key = c.parentId ?? '__root__';
+      const arr = byParent.get(key);
+      if (arr) arr.push(c); else byParent.set(key, [c]);
+    }
+    const buildNode = (c: IshikawaCauseResponse): CauseNode => ({
+      cause: c,
+      children: (byParent.get(c.id) ?? []).map(buildNode)
+    });
     return order.map(o => ({
       category: o.value,
       label: o.label,
-      causes: d.causes.filter(c => c.category === o.value)
+      roots: (byParent.get('__root__') ?? [])
+        .filter(c => c.category === o.value)
+        .map(buildNode)
     }));
   }
 

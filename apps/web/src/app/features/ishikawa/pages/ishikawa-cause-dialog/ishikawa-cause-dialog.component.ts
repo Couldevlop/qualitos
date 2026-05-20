@@ -11,6 +11,13 @@ import { CauseCategory, IshikawaCauseResponse, IshikawaMode } from '../../ishika
 export interface IshikawaCauseDialogData {
   diagramId: string;
   mode: IshikawaMode;
+  /** When set, the new cause is added as a child (5-Whys sub-cause) and the
+   *  category + parent are pre-filled and locked. */
+  parent?: {
+    id: string;
+    label: string;
+    category: CauseCategory;
+  };
 }
 
 interface CategoryOption { value: CauseCategory; label: string; }
@@ -43,6 +50,10 @@ export class IshikawaCauseDialogComponent {
     @Inject(MAT_DIALOG_DATA) public readonly data: IshikawaCauseDialogData
   ) {
     this.categories = this.categoriesFor(this.data.mode);
+    if (data.parent) {
+      this.form.controls.category.setValue(data.parent.category);
+      this.form.controls.category.disable();
+    }
   }
 
   private categoriesFor(mode: IshikawaMode): CategoryOption[] {
@@ -69,10 +80,11 @@ export class IshikawaCauseDialogComponent {
     const score = typeof rootCauseScore === 'number' && rootCauseScore > 0 ? rootCauseScore : undefined;
     this.ishikawa
       .addCause(this.data.diagramId, {
-        category,
+        category: this.data.parent?.category ?? category,
         label: label.trim(),
         description: description?.trim() || undefined,
-        rootCauseScore: score
+        rootCauseScore: score,
+        parentId: this.data.parent?.id
       })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({

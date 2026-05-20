@@ -81,12 +81,38 @@
               <span class="info-label">Résolu le</span>
               <span class="info-value">{{ c.resolvedAt | date:'medium' }}</span>
             </div>
+            <div class="info-item" *ngIf="c.effectivenessVerified != null">
+              <span class="info-label">Efficacité</span>
+              <span [class]="c.effectivenessVerified ? 'badge badge-resolved' : 'badge badge-rejected'">
+                {{ c.effectivenessVerified ? 'Vérifiée ✓' : 'Non efficace ✗' }}
+              </span>
+            </div>
             <div class="info-item">
               <span class="info-label">MAJ</span>
               <span class="info-value">{{ c.updatedAt | date:'medium' }}</span>
             </div>
           </div>
           <p class="description" *ngIf="c.description">{{ c.description }}</p>
+
+          <div class="effectiveness-block" *ngIf="canVerifyEffectiveness(c.status)">
+            <p class="effectiveness-prompt">
+              <mat-icon>fact_check</mat-icon>
+              <span><strong>Vérification d'efficacité requise.</strong>
+              Les actions ont-elles produit l'effet attendu (ISO 9001 §10.2) ?</span>
+            </p>
+            <div class="effectiveness-actions">
+              <button mat-stroked-button color="warn" type="button"
+                      (click)="verifyEffectiveness(false)"
+                      [disabled]="acting$ | async">
+                <mat-icon>cancel</mat-icon> Non efficace
+              </button>
+              <button mat-flat-button color="primary" type="button"
+                      (click)="verifyEffectiveness(true)"
+                      [disabled]="acting$ | async">
+                <mat-icon>check_circle</mat-icon> Efficace — clôturer
+              </button>
+            </div>
+          </div>
         </mat-card-content>
       </mat-card>
 

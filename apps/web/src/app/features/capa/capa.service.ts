@@ -93,6 +93,25 @@ export class CapaService {
     return this.http.post<CapaActionResponse>(`${this.endpoint}/${caseId}/actions`, input);
   }
 
+  verifyEffectiveness(id: string, effective: boolean): Observable<CapaCaseResponse> {
+    if (environment.useMockApi) {
+      const c = this.mockStore.find(x => x.id === id);
+      const now = new Date().toISOString();
+      if (c) {
+        c.effectivenessVerified = effective;
+        c.updatedAt = now;
+        if (effective) c.status = 'CLOSED';
+        c.closedAt = effective ? now : c.closedAt;
+        return of(c).pipe(delay(120));
+      }
+      return of(this.mockStore[0]).pipe(delay(120));
+    }
+    return this.http.patch<CapaCaseResponse>(
+      `${this.endpoint}/${id}/effectiveness`,
+      { effective }
+    );
+  }
+
   startCase(id: string): Observable<CapaCaseResponse> {
     return this.transition(id, 'IN_PROGRESS', 'start');
   }

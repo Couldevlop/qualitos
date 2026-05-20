@@ -9,6 +9,7 @@ import {
   AuditStatus,
   AuditsPage,
   ChecklistItemResponse,
+  ChecklistResponseRequest,
   CreateAuditPlanRequest,
   CreateChecklistItemRequest
 } from './audits.types';
@@ -95,6 +96,40 @@ export class AuditsService {
       return of(item).pipe(delay(120));
     }
     return this.http.post<ChecklistItemResponse>(`${this.endpoint}/${planId}/checklist`, input);
+  }
+
+  respondChecklistItem(
+    planId: string,
+    itemId: string,
+    input: ChecklistResponseRequest
+  ): Observable<ChecklistItemResponse> {
+    if (environment.useMockApi) {
+      const plan = this.mockStore.find(p => p.id === planId);
+      const now = new Date().toISOString();
+      let item: ChecklistItemResponse | undefined;
+      if (plan?.checklist) {
+        item = plan.checklist.find(i => i.id === itemId);
+        if (item) {
+          item.response = input.response;
+          item.conformant = input.conformant;
+          item.updatedAt = now;
+        }
+        const responded = plan.checklist.filter(i => i.conformant != null);
+        if (responded.length > 0) {
+          plan.conformityScore = Math.round(
+            (responded.filter(i => i.conformant).length / responded.length) * 100
+          );
+        }
+        plan.updatedAt = now;
+      }
+      return of(item ?? {
+        id: itemId, planId, question: '', createdAt: now, updatedAt: now
+      }).pipe(delay(120));
+    }
+    return this.http.put<ChecklistItemResponse>(
+      `${this.endpoint}/${planId}/checklist/${itemId}/response`,
+      input
+    );
   }
 
   startPlan(id: string): Observable<AuditPlanResponse> {

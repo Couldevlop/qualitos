@@ -119,6 +119,54 @@ export class CapaDetailComponent implements OnInit {
   resolve(): void { this.transition('resolve'); }
   reject(): void { this.transition('reject'); }
 
+  /**
+   * ISO 9001 §10.2 — once a CAPA is RESOLVED, the auditor must verify that
+   * the action was actually effective at the planned horizon (typically
+   * 3 / 6 / 12 months). Only allowed in RESOLVED state; transitions to
+   * CLOSED on positive verification.
+   */
+  verifyEffectiveness(effective: boolean): void {
+    if (this.acting$.value) return;
+    this.dialog.open(ConfirmDialogComponent, {
+      data: <ConfirmDialogData>{
+        title: effective ? 'Confirmer efficacité ?' : 'Confirmer non-efficacité ?',
+        message: effective
+          ? 'Tu confirmes que les actions ont eu l\'effet attendu. Le cas sera clôturé (CLOSED).'
+          : 'Tu signales que les actions n\'ont pas été efficaces. Le cas reste RESOLVED — il faudra rouvrir ou créer un nouveau CAPA.',
+        confirmLabel: effective ? 'Oui, efficace' : 'Oui, non efficace',
+        destructive: !effective
+      },
+      autoFocus: false,
+      restoreFocus: true
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.acting$.next(true);
+      this.capa.verifyEffectiveness(this.caseId, effective)
+        .pipe(finalize(() => this.acting$.next(false)))
+        .subscribe({
+          next: () => {
+            this.snack.open(
+              effective ? 'Efficacité validée — cas clôturé.' : 'Non-efficacité enregistrée.',
+              'OK', { duration: 2500 }
+            );
+            this.reload$.next();
+          },
+          error: err => {
+            // eslint-disable-next-line no-console
+            console.warn('[capa-detail] effectiveness failed', err?.status, err?.error?.title);
+            this.snack.open(
+              safeErrorMessage(err, 'Erreur lors de la vérification.'),
+              'OK', { duration: 4000 }
+            );
+          }
+        });
+    });
+  }
+
+  canVerifyEffectiveness(s: CapaStatus): boolean {
+    return s === 'RESOLVED';
+  }
+
   private transition(action: 'start' | 'resolve' | 'reject'): void {
     if (this.acting$.value) return;
     this.acting$.next(true);

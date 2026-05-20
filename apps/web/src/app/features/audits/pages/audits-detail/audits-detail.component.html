@@ -131,6 +131,19 @@
                 <span *ngIf="i.conformant === true" class="badge badge-conformant">Conforme</span>
                 <span *ngIf="i.conformant === false" class="badge badge-nonconformant">NC</span>
                 <span *ngIf="i.conformant == null">—</span>
+                <small *ngIf="i.response" class="response-snippet" [matTooltip]="i.response">
+                  {{ i.response.length > 40 ? (i.response | slice:0:40) + '…' : i.response }}
+                </small>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let i">
+                <button mat-stroked-button type="button" (click)="openResponse(i)"
+                        [disabled]="isTerminal(p.status)"
+                        matTooltip="Répondre à la question">
+                  <mat-icon>edit_note</mat-icon> Répondre
+                </button>
               </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="checklistColumns"></tr>

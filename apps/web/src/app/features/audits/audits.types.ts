@@ -73,3 +73,8 @@ export interface CreateChecklistItemRequest {
   weight?: number;
   orderIndex?: number;
 }
+
+export interface ChecklistResponseRequest {
+  response?: string;
+  conformant?: boolean;
+}

@@ -73,21 +73,15 @@
           <mat-card-header>
             <mat-card-title class="branch-title">
               <span class="branch-bullet">{{ b.label }}</span>
-              <span class="branch-count">{{ b.causes.length }}</span>
+              <span class="branch-count">{{ b.roots.length }}</span>
             </mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <p class="empty" *ngIf="b.causes.length === 0">Aucune cause pour cette branche.</p>
-            <ul class="cause-list" *ngIf="b.causes.length > 0">
-              <li *ngFor="let c of b.causes" class="cause-item">
-                <div class="cause-text">
-                  <strong>{{ c.label }}</strong>
-                  <small *ngIf="c.description">{{ c.description }}</small>
-                </div>
-                <span [class]="scoreClass(c.rootCauseScore)" *ngIf="c.rootCauseScore !== undefined">
-                  {{ (c.rootCauseScore * 100) | number:'1.0-0' }} %
-                </span>
-              </li>
+            <p class="empty" *ngIf="b.roots.length === 0">Aucune cause pour cette branche.</p>
+            <ul class="cause-list" *ngIf="b.roots.length > 0">
+              <ng-container *ngFor="let n of b.roots">
+                <ng-container *ngTemplateOutlet="causeNode; context: { $implicit: n, depth: 0, diagram: d }"></ng-container>
+              </ng-container>
             </ul>
           </mat-card-content>
         </mat-card>
@@ -95,5 +89,31 @@
 
     </ng-container>
   </ng-container>
+
+  <!-- Recursive cause renderer (parent → 5-Whys children, indented). -->
+  <ng-template #causeNode let-n let-depth="depth" let-diagram="diagram">
+    <li class="cause-item" [class.cause-item-child]="depth > 0">
+      <div class="cause-row">
+        <div class="cause-text">
+          <strong>{{ n.cause.label }}</strong>
+          <small *ngIf="n.cause.description">{{ n.cause.description }}</small>
+        </div>
+        <span [class]="scoreClass(n.cause.rootCauseScore)" *ngIf="n.cause.rootCauseScore !== undefined">
+          {{ (n.cause.rootCauseScore * 100) | number:'1.0-0' }} %
+        </span>
+        <button mat-icon-button type="button"
+                (click)="openAddSubCause(diagram, n.cause)"
+                matTooltip="Ajouter un Pourquoi ?"
+                [attr.aria-label]="'Ajouter un sous-pourquoi à ' + n.cause.label">
+          <mat-icon>add_circle_outline</mat-icon>
+        </button>
+      </div>
+      <ul class="cause-children" *ngIf="n.children.length > 0">
+        <ng-container *ngFor="let child of n.children">
+          <ng-container *ngTemplateOutlet="causeNode; context: { $implicit: child, depth: depth + 1, diagram: diagram }"></ng-container>
+        </ng-container>
+      </ul>
+    </li>
+  </ng-template>
 
 </div>
