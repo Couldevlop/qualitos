@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../shared/shared.module';
 import { CirclesCreateDialogComponent } from './pages/circles-create-dialog/circles-create-dialog.component';
 import { CirclesDetailComponent } from './pages/circles-detail/circles-detail.component';
+import { CirclesEditDialogComponent } from './pages/circles-edit-dialog/circles-edit-dialog.component';
 import { CirclesListComponent } from './pages/circles-list/circles-list.component';
 import { CirclesMemberDialogComponent } from './pages/circles-member-dialog/circles-member-dialog.component';
 
@@ -17,7 +18,8 @@ const routes: Routes = [
     CirclesListComponent,
     CirclesDetailComponent,
     CirclesCreateDialogComponent,
-    CirclesMemberDialogComponent
+    CirclesMemberDialogComponent,
+    CirclesEditDialogComponent
   ],
   imports: [SharedModule, RouterModule.forChild(routes)]
 })

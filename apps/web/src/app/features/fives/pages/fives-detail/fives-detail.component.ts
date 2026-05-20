@@ -10,6 +10,10 @@ import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { FivesService } from '../../fives.service';
 import { FiveSAuditResponse, FiveSAuditStatus, FiveSPillar } from '../../fives.types';
+import {
+  FivesEditDialogComponent,
+  FivesEditDialogData
+} from '../fives-edit-dialog/fives-edit-dialog.component';
 
 // OWASP A03 — refuse malformed UUIDs client-side. Demo mock ids ("5s-1"…)
 // are also accepted so the page stays usable with useMockApi=true.
@@ -105,6 +109,17 @@ export class FivesDetailComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/fives']);
+  }
+
+  openEdit(a: FiveSAuditResponse): void {
+    const data: FivesEditDialogData = { audit: a };
+    this.dialog
+      .open(FivesEditDialogComponent, {
+        data, autoFocus: 'first-tabbable', restoreFocus: true,
+        panelClass: 'qos-dialog-panel'
+      })
+      .afterClosed()
+      .subscribe(updated => { if (updated) this.reload$.next(); });
   }
 
   /** OWASP A04 — destructive action gated by a confirm dialog. */

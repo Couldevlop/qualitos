@@ -8,6 +8,10 @@ import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { CapaService } from '../../capa.service';
+import {
+  CapaEditDialogComponent,
+  CapaEditDialogData
+} from '../capa-edit-dialog/capa-edit-dialog.component';
 import { CapaCaseResponse, CapaCriticity, CapaStatus } from '../../capa.types';
 import {
   CapaActionDialogComponent,
@@ -68,6 +72,17 @@ export class CapaDetailComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/capa']);
+  }
+
+  openEdit(c: CapaCaseResponse): void {
+    const data: CapaEditDialogData = { capa: c };
+    this.dialog
+      .open(CapaEditDialogComponent, {
+        data, autoFocus: 'first-tabbable', restoreFocus: true,
+        panelClass: 'qos-dialog-panel'
+      })
+      .afterClosed()
+      .subscribe(updated => { if (updated) this.reload$.next(); });
   }
 
   /** OWASP A04 — destructive action gated by a confirm dialog. */

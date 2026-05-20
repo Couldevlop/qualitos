@@ -8,6 +8,10 @@ import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { AuditsService } from '../../audits.service';
+import {
+  AuditsEditDialogComponent,
+  AuditsEditDialogData
+} from '../audits-edit-dialog/audits-edit-dialog.component';
 import { AuditPlanResponse, AuditStatus, ChecklistItemResponse } from '../../audits.types';
 import {
   AuditsChecklistDialogComponent,
@@ -71,6 +75,17 @@ export class AuditsDetailComponent implements OnInit {
   }
 
   goBack(): void { this.router.navigate(['/audits']); }
+
+  openEdit(p: AuditPlanResponse): void {
+    const data: AuditsEditDialogData = { plan: p };
+    this.dialog
+      .open(AuditsEditDialogComponent, {
+        data, autoFocus: 'first-tabbable', restoreFocus: true,
+        panelClass: 'qos-dialog-panel'
+      })
+      .afterClosed()
+      .subscribe(updated => { if (updated) this.reload$.next(); });
+  }
 
   /** OWASP A04 — destructive action gated by a confirm dialog. */
   deletePlan(title: string): void {

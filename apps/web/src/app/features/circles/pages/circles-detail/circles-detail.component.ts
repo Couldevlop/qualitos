@@ -8,6 +8,10 @@ import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { CirclesService } from '../../circles.service';
+import {
+  CirclesEditDialogComponent,
+  CirclesEditDialogData
+} from '../circles-edit-dialog/circles-edit-dialog.component';
 import { CircleResponse, CircleStatus } from '../../circles.types';
 import {
   CirclesMemberDialogComponent,
@@ -67,6 +71,17 @@ export class CirclesDetailComponent implements OnInit {
   }
 
   goBack(): void { this.router.navigate(['/circles']); }
+
+  openEdit(c: CircleResponse): void {
+    const data: CirclesEditDialogData = { circle: c };
+    this.dialog
+      .open(CirclesEditDialogComponent, {
+        data, autoFocus: 'first-tabbable', restoreFocus: true,
+        panelClass: 'qos-dialog-panel'
+      })
+      .afterClosed()
+      .subscribe(updated => { if (updated) this.reload$.next(); });
+  }
 
   /** OWASP A04 — destructive action gated by a confirm dialog. */
   deleteCircle(name: string): void {

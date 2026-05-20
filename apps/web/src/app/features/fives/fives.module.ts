@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../shared/shared.module';
 import { FivesCreateDialogComponent } from './pages/fives-create-dialog/fives-create-dialog.component';
 import { FivesDetailComponent } from './pages/fives-detail/fives-detail.component';
+import { FivesEditDialogComponent } from './pages/fives-edit-dialog/fives-edit-dialog.component';
 import { FivesListComponent } from './pages/fives-list/fives-list.component';
 
 const routes: Routes = [
@@ -15,7 +16,8 @@ const routes: Routes = [
   declarations: [
     FivesListComponent,
     FivesDetailComponent,
-    FivesCreateDialogComponent
+    FivesCreateDialogComponent,
+    FivesEditDialogComponent
   ],
   imports: [SharedModule, RouterModule.forChild(routes)]
 })

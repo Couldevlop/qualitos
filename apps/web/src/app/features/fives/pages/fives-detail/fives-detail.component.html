@@ -20,6 +20,9 @@
                 matTooltip="Supprimer l'audit">
           <mat-icon>delete</mat-icon> Supprimer
         </button>
+        <button mat-stroked-button (click)="openEdit(a)" matTooltip="Modifier">
+          <mat-icon>edit</mat-icon> Modifier
+        </button>
         <button mat-stroked-button (click)="cancel()"
                 [disabled]="(acting$ | async) || isTerminal(a.status)"
                 matTooltip="Annuler l'audit">

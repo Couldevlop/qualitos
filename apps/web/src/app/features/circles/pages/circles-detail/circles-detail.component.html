@@ -18,6 +18,9 @@
                 matTooltip="Supprimer le cercle">
           <mat-icon>delete</mat-icon> Supprimer
         </button>
+        <button mat-stroked-button (click)="openEdit(c)" matTooltip="Modifier">
+          <mat-icon>edit</mat-icon> Modifier
+        </button>
         <button mat-stroked-button (click)="archive()"
                 [disabled]="(acting$ | async) || !canArchive(c.status)"
                 matTooltip="Archiver le cercle">

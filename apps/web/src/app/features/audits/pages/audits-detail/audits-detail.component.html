@@ -18,6 +18,9 @@
                 matTooltip="Supprimer le plan">
           <mat-icon>delete</mat-icon> Supprimer
         </button>
+        <button mat-stroked-button (click)="openEdit(p)" matTooltip="Modifier">
+          <mat-icon>edit</mat-icon> Modifier
+        </button>
         <button mat-stroked-button (click)="cancel()"
                 [disabled]="(acting$ | async) || isTerminal(p.status)">
           <mat-icon>cancel</mat-icon> Annuler
