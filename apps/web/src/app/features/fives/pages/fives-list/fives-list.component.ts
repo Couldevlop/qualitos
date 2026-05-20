@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { catchError, finalize, map, startWith, switchMap, tap } from 'rxjs/operators';
 
@@ -30,15 +30,11 @@ export class FivesListComponent implements OnInit {
   constructor(
     private readonly svc: FivesService,
     private readonly dialog: MatDialog,
-    private readonly snack: MatSnackBar
+    private readonly router: Router
   ) {}
 
   openAudit(a: FiveSAuditResponse): void {
-    this.snack.open(
-      `Détail de l'audit "${a.zone}" — en cours d'implémentation.`,
-      'OK',
-      { duration: 3000 }
-    );
+    this.router.navigate(['/fives', a.id]);
   }
 
   ngOnInit(): void {

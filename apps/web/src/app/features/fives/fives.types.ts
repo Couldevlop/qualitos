@@ -35,3 +35,10 @@ export interface CreateFiveSAuditRequest {
   auditorId: string;
   scheduledAt?: string;
 }
+
+export interface ScorePillarRequest {
+  pillar: FiveSPillar;
+  score: number;     // 0..10
+  note?: string;
+  photoUrl?: string;
+}

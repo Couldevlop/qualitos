@@ -8,7 +8,9 @@ import {
   CreateFiveSAuditRequest,
   FiveSAuditResponse,
   FiveSAuditStatus,
-  FiveSPage
+  FiveSItemResponse,
+  FiveSPage,
+  ScorePillarRequest
 } from './fives.types';
 
 @Injectable({ providedIn: 'root' })
@@ -27,6 +29,14 @@ export class FivesService {
     let params = new HttpParams().set('page', page).set('size', size);
     if (status) params = params.set('status', status);
     return this.http.get<FiveSPage>(this.endpoint, { params });
+  }
+
+  getAudit(id: string): Observable<FiveSAuditResponse> {
+    if (environment.useMockApi) {
+      const found = this.mockStore.find(a => a.id === id);
+      return of(found ?? this.mockStore[0]).pipe(delay(120));
+    }
+    return this.http.get<FiveSAuditResponse>(`${this.endpoint}/${id}`);
   }
 
   createAudit(input: CreateFiveSAuditRequest): Observable<FiveSAuditResponse> {
@@ -48,6 +58,70 @@ export class FivesService {
       return of(audit).pipe(delay(200));
     }
     return this.http.post<FiveSAuditResponse>(this.endpoint, input);
+  }
+
+  scorePillar(auditId: string, input: ScorePillarRequest): Observable<FiveSItemResponse> {
+    if (environment.useMockApi) {
+      const audit = this.mockStore.find(a => a.id === auditId);
+      const now = new Date().toISOString();
+      let item: FiveSItemResponse | undefined;
+      if (audit) {
+        item = audit.items.find(i => i.pillar === input.pillar);
+        if (item) {
+          item.score = input.score;
+          item.note = input.note;
+          item.photoUrl = input.photoUrl;
+        } else {
+          item = {
+            id: 'item-' + Math.random().toString(36).slice(2, 9),
+            auditId,
+            pillar: input.pillar,
+            score: input.score,
+            note: input.note,
+            photoUrl: input.photoUrl
+          };
+          audit.items = [...audit.items, item];
+        }
+        audit.overallScore = Math.round(
+          (audit.items.reduce((s, i) => s + i.score, 0) / audit.items.length) * 10
+        );
+        audit.updatedAt = now;
+      }
+      return of(item ?? {
+        id: 'orphan', auditId, pillar: input.pillar, score: input.score
+      }).pipe(delay(120));
+    }
+    return this.http.put<FiveSItemResponse>(`${this.endpoint}/${auditId}/score`, input);
+  }
+
+  startAudit(id: string): Observable<FiveSAuditResponse> {
+    return this.transition(id, 'IN_PROGRESS', 'start');
+  }
+
+  completeAudit(id: string): Observable<FiveSAuditResponse> {
+    return this.transition(id, 'COMPLETED', 'complete');
+  }
+
+  cancelAudit(id: string): Observable<FiveSAuditResponse> {
+    return this.transition(id, 'CANCELLED', 'cancel');
+  }
+
+  private transition(
+    id: string,
+    targetStatus: FiveSAuditStatus,
+    pathSegment: 'start' | 'complete' | 'cancel'
+  ): Observable<FiveSAuditResponse> {
+    if (environment.useMockApi) {
+      const audit = this.mockStore.find(a => a.id === id);
+      if (audit) {
+        audit.status = targetStatus;
+        audit.updatedAt = new Date().toISOString();
+        if (targetStatus === 'COMPLETED') audit.completedAt = audit.updatedAt;
+        return of(audit).pipe(delay(120));
+      }
+      return of(this.mockStore[0]).pipe(delay(120));
+    }
+    return this.http.patch<FiveSAuditResponse>(`${this.endpoint}/${id}/${pathSegment}`, {});
   }
 
   private mockPage(status?: FiveSAuditStatus): FiveSPage {
