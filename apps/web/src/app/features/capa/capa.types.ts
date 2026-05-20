@@ -56,3 +56,12 @@ export interface CreateCapaActionRequest {
   assigneeId?: string;
   dueDate?: string;
 }
+
+export interface UpdateCapaCaseRequest {
+  title?: string;
+  description?: string;
+  criticity?: CapaCriticity;
+  sourceRef?: string;
+  rootCauseId?: string;
+  dueDate?: string;
+}

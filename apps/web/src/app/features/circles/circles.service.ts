@@ -5,12 +5,17 @@ import { delay } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
 import {
+  AddMeetingRequest,
   AddMemberRequest,
+  AddProposalRequest,
+  CircleMeetingResponse,
   CircleMemberResponse,
+  CircleProposalResponse,
   CircleResponse,
   CircleStatus,
   CirclesPage,
-  CreateCircleRequest
+  CreateCircleRequest,
+  UpdateCircleRequest
 } from './circles.types';
 
 @Injectable({ providedIn: 'root' })
@@ -67,6 +72,61 @@ export class CirclesService {
       return of(undefined).pipe(delay(120));
     }
     return this.http.delete<void>(`${this.endpoint}/${id}`);
+  }
+
+  updateCircle(id: string, input: UpdateCircleRequest): Observable<CircleResponse> {
+    if (environment.useMockApi) {
+      const c = this.mockStore.find(x => x.id === id);
+      if (c) {
+        if (input.name !== undefined) c.name = input.name;
+        if (input.description !== undefined) c.description = input.description;
+        if (input.topic !== undefined) c.topic = input.topic;
+        c.updatedAt = new Date().toISOString();
+        return of(c).pipe(delay(120));
+      }
+      return of(this.mockStore[0]).pipe(delay(120));
+    }
+    return this.http.patch<CircleResponse>(`${this.endpoint}/${id}`, input);
+  }
+
+  addMeeting(circleId: string, input: AddMeetingRequest): Observable<CircleMeetingResponse> {
+    if (environment.useMockApi) {
+      const now = new Date().toISOString();
+      const meeting: CircleMeetingResponse = {
+        id: 'mt-' + Math.random().toString(36).slice(2, 9),
+        circleId, title: input.title, agenda: input.agenda,
+        scheduledAt: input.scheduledAt, durationMinutes: input.durationMinutes,
+        location: input.location, status: 'SCHEDULED',
+        createdAt: now, updatedAt: now
+      };
+      const c = this.mockStore.find(x => x.id === circleId);
+      if (c) {
+        c.meetings = [...c.meetings, meeting];
+        c.updatedAt = now;
+      }
+      return of(meeting).pipe(delay(120));
+    }
+    return this.http.post<CircleMeetingResponse>(`${this.endpoint}/${circleId}/meetings`, input);
+  }
+
+  addProposal(circleId: string, input: AddProposalRequest): Observable<CircleProposalResponse> {
+    if (environment.useMockApi) {
+      const now = new Date().toISOString();
+      const proposal: CircleProposalResponse = {
+        id: 'p-' + Math.random().toString(36).slice(2, 9),
+        circleId, title: input.title, description: input.description,
+        status: 'PROPOSED', proposedBy: input.proposedBy,
+        meetingId: input.meetingId,
+        createdAt: now, updatedAt: now
+      };
+      const c = this.mockStore.find(x => x.id === circleId);
+      if (c) {
+        c.proposals = [...c.proposals, proposal];
+        c.updatedAt = now;
+      }
+      return of(proposal).pipe(delay(120));
+    }
+    return this.http.post<CircleProposalResponse>(`${this.endpoint}/${circleId}/proposals`, input);
   }
 
   addMember(circleId: string, input: AddMemberRequest): Observable<CircleMemberResponse> {

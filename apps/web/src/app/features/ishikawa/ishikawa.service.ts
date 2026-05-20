@@ -10,7 +10,8 @@ import {
   IshikawaCauseResponse,
   IshikawaDiagramResponse,
   IshikawaPage,
-  IshikawaStatus
+  IshikawaStatus,
+  UpdateIshikawaDiagramRequest
 } from './ishikawa.types';
 
 @Injectable({ providedIn: 'root' })
@@ -60,6 +61,22 @@ export class IshikawaService {
       return of(diagram).pipe(delay(200));
     }
     return this.http.post<IshikawaDiagramResponse>(this.endpoint, input);
+  }
+
+  updateDiagram(id: string, input: UpdateIshikawaDiagramRequest): Observable<IshikawaDiagramResponse> {
+    if (environment.useMockApi) {
+      const d = this.mockStore.find(x => x.id === id);
+      if (d) {
+        if (input.problemStatement !== undefined) d.problemStatement = input.problemStatement;
+        if (input.description !== undefined) d.description = input.description;
+        if (input.mode !== undefined) d.mode = input.mode;
+        if (input.status !== undefined) d.status = input.status;
+        d.updatedAt = new Date().toISOString();
+        return of(d).pipe(delay(120));
+      }
+      return of(this.mockStore[0]).pipe(delay(120));
+    }
+    return this.http.patch<IshikawaDiagramResponse>(`${this.endpoint}/${id}`, input);
   }
 
   deleteDiagram(id: string): Observable<void> {

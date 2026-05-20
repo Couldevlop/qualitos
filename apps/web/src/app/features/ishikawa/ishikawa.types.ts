@@ -47,3 +47,10 @@ export interface CreateIshikawaCauseRequest {
   parentId?: string;
   rootCauseScore?: number;
 }
+
+export interface UpdateIshikawaDiagramRequest {
+  problemStatement?: string;
+  description?: string;
+  mode?: IshikawaMode;
+  status?: IshikawaStatus;
+}

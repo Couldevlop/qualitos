@@ -18,6 +18,10 @@ import {
   IshikawaCauseDialogComponent,
   IshikawaCauseDialogData
 } from '../ishikawa-cause-dialog/ishikawa-cause-dialog.component';
+import {
+  IshikawaEditDialogComponent,
+  IshikawaEditDialogData
+} from '../ishikawa-edit-dialog/ishikawa-edit-dialog.component';
 
 // OWASP A03 — refuse malformed route params client-side.
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -122,6 +126,21 @@ export class IshikawaDetailComponent implements OnInit {
         }
       });
     });
+  }
+
+  openEdit(d: IshikawaDiagramResponse): void {
+    const data: IshikawaEditDialogData = { diagram: d };
+    this.dialog
+      .open(IshikawaEditDialogComponent, {
+        data,
+        autoFocus: 'first-tabbable',
+        restoreFocus: true,
+        panelClass: 'qos-dialog-panel'
+      })
+      .afterClosed()
+      .subscribe(updated => {
+        if (updated) this.reload$.next();
+      });
   }
 
   openAddCause(d: IshikawaDiagramResponse): void {

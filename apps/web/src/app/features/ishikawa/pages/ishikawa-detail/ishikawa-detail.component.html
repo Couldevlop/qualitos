@@ -20,6 +20,9 @@
                 matTooltip="Supprimer le diagramme">
           <mat-icon>delete</mat-icon> Supprimer
         </button>
+        <button mat-stroked-button (click)="openEdit(d)" matTooltip="Modifier">
+          <mat-icon>edit</mat-icon> Modifier
+        </button>
         <button mat-flat-button color="primary" (click)="openAddCause(d)">
           <mat-icon>add</mat-icon> Ajouter une cause
         </button>

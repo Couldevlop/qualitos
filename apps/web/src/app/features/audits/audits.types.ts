@@ -78,3 +78,23 @@ export interface ChecklistResponseRequest {
   response?: string;
   conformant?: boolean;
 }
+
+export interface UpdateAuditPlanRequest {
+  title?: string;
+  scope?: string;
+  type?: AuditType;
+  standard?: string;
+  leadAuditorId?: string;
+  auditeeId?: string;
+  scheduledDate?: string;
+}
+
+export interface AddFindingRequest {
+  type: FindingType;
+  description: string;
+  clauseRef?: string;
+  photoUrl?: string;
+  checklistItemId?: string;
+  capaId?: string;
+  raisedBy: string;
+}

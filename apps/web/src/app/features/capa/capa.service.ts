@@ -10,7 +10,8 @@ import {
   CapaPage,
   CapaStatus,
   CreateCapaActionRequest,
-  CreateCapaCaseRequest
+  CreateCapaCaseRequest,
+  UpdateCapaCaseRequest
 } from './capa.types';
 
 @Injectable({ providedIn: 'root' })
@@ -62,6 +63,23 @@ export class CapaService {
       return of(c).pipe(delay(200));
     }
     return this.http.post<CapaCaseResponse>(this.endpoint, input);
+  }
+
+  updateCase(id: string, input: UpdateCapaCaseRequest): Observable<CapaCaseResponse> {
+    if (environment.useMockApi) {
+      const c = this.mockStore.find(x => x.id === id);
+      if (c) {
+        if (input.title !== undefined) c.title = input.title;
+        if (input.description !== undefined) c.description = input.description;
+        if (input.criticity !== undefined) c.criticity = input.criticity;
+        if (input.sourceRef !== undefined) c.sourceRef = input.sourceRef;
+        if (input.dueDate !== undefined) c.dueDate = input.dueDate;
+        c.updatedAt = new Date().toISOString();
+        return of(c).pipe(delay(120));
+      }
+      return of(this.mockStore[0]).pipe(delay(120));
+    }
+    return this.http.patch<CapaCaseResponse>(`${this.endpoint}/${id}`, input);
   }
 
   deleteCase(id: string): Observable<void> {

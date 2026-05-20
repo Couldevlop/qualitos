@@ -5,13 +5,16 @@ import { delay } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
 import {
+  AddFindingRequest,
   AuditPlanResponse,
   AuditStatus,
   AuditsPage,
   ChecklistItemResponse,
   ChecklistResponseRequest,
   CreateAuditPlanRequest,
-  CreateChecklistItemRequest
+  CreateChecklistItemRequest,
+  FindingResponse,
+  UpdateAuditPlanRequest
 } from './audits.types';
 
 @Injectable({ providedIn: 'root' })
@@ -60,6 +63,51 @@ export class AuditsService {
       return of(plan).pipe(delay(200));
     }
     return this.http.post<AuditPlanResponse>(this.endpoint, input);
+  }
+
+  updatePlan(id: string, input: UpdateAuditPlanRequest): Observable<AuditPlanResponse> {
+    if (environment.useMockApi) {
+      const p = this.mockStore.find(x => x.id === id);
+      if (p) {
+        if (input.title !== undefined) p.title = input.title;
+        if (input.scope !== undefined) p.scope = input.scope;
+        if (input.type !== undefined) p.type = input.type;
+        if (input.standard !== undefined) p.standard = input.standard;
+        if (input.leadAuditorId !== undefined) p.leadAuditorId = input.leadAuditorId;
+        if (input.scheduledDate !== undefined) p.scheduledDate = input.scheduledDate;
+        p.updatedAt = new Date().toISOString();
+        return of(p).pipe(delay(120));
+      }
+      return of(this.mockStore[0]).pipe(delay(120));
+    }
+    return this.http.patch<AuditPlanResponse>(`${this.endpoint}/${id}`, input);
+  }
+
+  addFinding(planId: string, input: AddFindingRequest): Observable<FindingResponse> {
+    if (environment.useMockApi) {
+      const now = new Date().toISOString();
+      const finding: FindingResponse = {
+        id: 'f-' + Math.random().toString(36).slice(2, 9),
+        planId,
+        type: input.type,
+        description: input.description,
+        clauseRef: input.clauseRef,
+        photoUrl: input.photoUrl,
+        checklistItemId: input.checklistItemId,
+        capaId: input.capaId,
+        raisedBy: input.raisedBy,
+        raisedAt: now,
+        createdAt: now,
+        updatedAt: now
+      };
+      const plan = this.mockStore.find(p => p.id === planId);
+      if (plan) {
+        plan.findings = [...(plan.findings ?? []), finding];
+        plan.updatedAt = now;
+      }
+      return of(finding).pipe(delay(120));
+    }
+    return this.http.post<FindingResponse>(`${this.endpoint}/${planId}/findings`, input);
   }
 
   deletePlan(id: string): Observable<void> {

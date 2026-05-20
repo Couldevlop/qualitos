@@ -42,3 +42,9 @@ export interface ScorePillarRequest {
   note?: string;
   photoUrl?: string;
 }
+
+export interface UpdateFiveSAuditRequest {
+  zone?: string;
+  description?: string;
+  scheduledAt?: string;
+}

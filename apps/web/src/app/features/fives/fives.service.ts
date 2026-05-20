@@ -10,7 +10,8 @@ import {
   FiveSAuditStatus,
   FiveSItemResponse,
   FiveSPage,
-  ScorePillarRequest
+  ScorePillarRequest,
+  UpdateFiveSAuditRequest
 } from './fives.types';
 
 @Injectable({ providedIn: 'root' })
@@ -58,6 +59,21 @@ export class FivesService {
       return of(audit).pipe(delay(200));
     }
     return this.http.post<FiveSAuditResponse>(this.endpoint, input);
+  }
+
+  updateAudit(id: string, input: UpdateFiveSAuditRequest): Observable<FiveSAuditResponse> {
+    if (environment.useMockApi) {
+      const a = this.mockStore.find(x => x.id === id);
+      if (a) {
+        if (input.zone !== undefined) a.zone = input.zone;
+        if (input.description !== undefined) a.description = input.description;
+        if (input.scheduledAt !== undefined) a.scheduledAt = input.scheduledAt;
+        a.updatedAt = new Date().toISOString();
+        return of(a).pipe(delay(120));
+      }
+      return of(this.mockStore[0]).pipe(delay(120));
+    }
+    return this.http.patch<FiveSAuditResponse>(`${this.endpoint}/${id}`, input);
   }
 
   deleteAudit(id: string): Observable<void> {
