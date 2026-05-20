@@ -1,13 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { catchError, finalize, map, startWith, switchMap, tap } from 'rxjs/operators';
 
+import { safeErrorMessage } from '../../../../core/http/error-message';
 import { AuditsService } from '../../audits.service';
 import { AuditPlanResponse, AuditStatus } from '../../audits.types';
 import { AuditsCreateDialogComponent } from '../audits-create-dialog/audits-create-dialog.component';
+
+const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
+const MAX_PAGE_SIZE = 100;
 
 @Component({
   selector: 'qos-audits-list',
@@ -21,10 +26,17 @@ export class AuditsListComponent implements OnInit {
   readonly statusFilter = new FormControl<AuditStatus | ''>('');
   readonly statuses: AuditStatus[] = ['PLANNED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'];
 
+  readonly pageSizeOptions = PAGE_SIZE_OPTIONS;
+  pageIndex = 0;
+  pageSize = 20;
+  totalElements = 0;
+
   plans$!: Observable<AuditPlanResponse[]>;
   loading$ = new BehaviorSubject<boolean>(false);
+  error$ = new BehaviorSubject<string | null>(null);
 
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
+  private readonly page$ = new BehaviorSubject<{ index: number; size: number }>({ index: 0, size: 20 });
 
   constructor(
     private readonly svc: AuditsService,
@@ -32,22 +44,34 @@ export class AuditsListComponent implements OnInit {
     private readonly router: Router
   ) {}
 
-  openPlan(p: AuditPlanResponse): void {
-    this.router.navigate(['/audits', p.id]);
-  }
-
   ngOnInit(): void {
     this.plans$ = combineLatest([
       this.statusFilter.valueChanges.pipe(startWith(this.statusFilter.value)),
+      this.page$,
       this.refresh$
     ]).pipe(
-      tap(() => this.loading$.next(true)),
-      switchMap(([s]) => this.svc.listPlans(0, 50, s || undefined).pipe(
-        catchError(() => []),
+      tap(() => { this.loading$.next(true); this.error$.next(null); }),
+      switchMap(([s, p]) => this.svc.listPlans(p.index, p.size, s || undefined).pipe(
+        catchError(err => {
+          // eslint-disable-next-line no-console
+          console.warn('[audits-list] listPlans failed', err?.status, err?.error?.title);
+          this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+          return [];
+        }),
         finalize(() => this.loading$.next(false))
       )),
-      map(p => Array.isArray(p) ? [] : p.content)
+      map(page => {
+        if (Array.isArray(page)) return [];
+        this.totalElements = page.totalElements;
+        return page.content;
+      })
     );
+  }
+
+  onPage(e: PageEvent): void {
+    this.pageIndex = Math.max(0, e.pageIndex);
+    this.pageSize = Math.min(MAX_PAGE_SIZE, Math.max(1, e.pageSize));
+    this.page$.next({ index: this.pageIndex, size: this.pageSize });
   }
 
   openCreate(): void {
@@ -57,8 +81,16 @@ export class AuditsListComponent implements OnInit {
       panelClass: 'qos-dialog-panel'
     });
     ref.afterClosed().subscribe(created => {
-      if (created) this.refresh$.next();
+      if (created) {
+        this.pageIndex = 0;
+        this.page$.next({ index: 0, size: this.pageSize });
+        this.refresh$.next();
+      }
     });
+  }
+
+  openPlan(p: AuditPlanResponse): void {
+    this.router.navigate(['/audits', p.id]);
   }
 
   statusBadge(s: AuditStatus): string { return 'badge badge-' + s.toLowerCase(); }

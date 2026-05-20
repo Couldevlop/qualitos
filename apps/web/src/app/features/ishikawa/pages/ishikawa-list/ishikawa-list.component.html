@@ -66,5 +66,14 @@
           [attr.aria-label]="'Ouvrir ' + row.problemStatement"></tr>
     </table>
     <p class="empty" *ngIf="(diagrams$ | async)?.length === 0">Aucun diagramme pour ce filtre.</p>
+
+    <mat-paginator [length]="totalElements"
+                   [pageSize]="pageSize"
+                   [pageIndex]="pageIndex"
+                   [pageSizeOptions]="pageSizeOptions"
+                   (page)="onPage($event)"
+                   showFirstLastButtons
+                   aria-label="Pagination des diagrammes">
+    </mat-paginator>
   </mat-card>
 </div>

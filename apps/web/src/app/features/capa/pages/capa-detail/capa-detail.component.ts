@@ -6,6 +6,7 @@ import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 
 import { safeErrorMessage } from '../../../../core/http/error-message';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { CapaService } from '../../capa.service';
 import { CapaCaseResponse, CapaCriticity, CapaStatus } from '../../capa.types';
 import {
@@ -67,6 +68,36 @@ export class CapaDetailComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/capa']);
+  }
+
+  /** OWASP A04 — destructive action gated by a confirm dialog. */
+  deleteCase(title: string): void {
+    this.dialog.open(ConfirmDialogComponent, {
+      data: <ConfirmDialogData>{
+        title: 'Supprimer ce cas CAPA ?',
+        message: `« ${title} » et toutes ses actions seront supprimés définitivement.`,
+        confirmLabel: 'Supprimer',
+        destructive: true
+      },
+      autoFocus: false,
+      restoreFocus: true
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.capa.deleteCase(this.caseId).subscribe({
+        next: () => {
+          this.snack.open('Cas supprimé.', 'OK', { duration: 2000 });
+          this.router.navigate(['/capa']);
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[capa-detail] delete failed', err?.status, err?.error?.title);
+          this.snack.open(
+            safeErrorMessage(err, 'Erreur lors de la suppression.'),
+            'OK', { duration: 4000 }
+          );
+        }
+      });
+    });
   }
 
   openAddAction(): void {

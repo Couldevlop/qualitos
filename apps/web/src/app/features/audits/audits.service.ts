@@ -61,6 +61,15 @@ export class AuditsService {
     return this.http.post<AuditPlanResponse>(this.endpoint, input);
   }
 
+  deletePlan(id: string): Observable<void> {
+    if (environment.useMockApi) {
+      const i = this.mockStore.findIndex(p => p.id === id);
+      if (i >= 0) this.mockStore.splice(i, 1);
+      return of(undefined).pipe(delay(120));
+    }
+    return this.http.delete<void>(`${this.endpoint}/${id}`);
+  }
+
   addChecklistItem(
     planId: string,
     input: CreateChecklistItemRequest

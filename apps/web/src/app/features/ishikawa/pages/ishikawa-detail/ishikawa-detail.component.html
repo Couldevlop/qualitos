@@ -16,6 +16,10 @@
 
     <ng-container *ngIf="diagram$ | async as d">
       <div class="actions" *ngIf="d">
+        <button mat-stroked-button color="warn" (click)="deleteDiagram(d.problemStatement)"
+                matTooltip="Supprimer le diagramme">
+          <mat-icon>delete</mat-icon> Supprimer
+        </button>
         <button mat-flat-button color="primary" (click)="openAddCause(d)">
           <mat-icon>add</mat-icon> Ajouter une cause
         </button>

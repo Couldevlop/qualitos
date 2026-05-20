@@ -64,6 +64,15 @@ export class CapaService {
     return this.http.post<CapaCaseResponse>(this.endpoint, input);
   }
 
+  deleteCase(id: string): Observable<void> {
+    if (environment.useMockApi) {
+      const i = this.mockStore.findIndex(c => c.id === id);
+      if (i >= 0) this.mockStore.splice(i, 1);
+      return of(undefined).pipe(delay(120));
+    }
+    return this.http.delete<void>(`${this.endpoint}/${id}`);
+  }
+
   addAction(caseId: string, input: CreateCapaActionRequest): Observable<CapaActionResponse> {
     if (environment.useMockApi) {
       const c = this.mockStore.find(x => x.id === caseId);

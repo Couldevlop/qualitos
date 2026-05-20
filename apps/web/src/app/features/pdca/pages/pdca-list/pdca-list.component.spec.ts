@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
 
 import { SharedModule } from '../../../../shared/shared.module';
 import { PdcaListComponent } from './pdca-list.component';
@@ -16,7 +17,9 @@ describe('PdcaListComponent', () => {
       imports: [SharedModule, NoopAnimationsModule],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
-        provideHttpClientTesting()
+        provideHttpClientTesting(),
+        // PdcaListComponent gained Router injection in the row-click feature.
+        provideRouter([])
       ]
     }).compileComponents();
     fixture = TestBed.createComponent(PdcaListComponent);

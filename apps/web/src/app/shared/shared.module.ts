@@ -16,6 +16,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 
+import { ConfirmDialogComponent } from './ui/confirm-dialog/confirm-dialog.component';
+
 const MATERIAL = [
   MatButtonModule, MatCardModule, MatChipsModule, MatDialogModule,
   MatFormFieldModule, MatIconModule, MatInputModule, MatPaginatorModule,
@@ -27,8 +29,13 @@ const MATERIAL = [
  * Module utilitaire — re-export des Material modules et primitives Angular
  * largement utilisées dans les features. Inclus une seule fois par feature
  * via son `imports`.
+ *
+ * Composants partagés (ConfirmDialogComponent) sont déclarés ici pour être
+ * disponibles dans tout feature qui importe SharedModule.
  */
 @NgModule({
-  exports: [CommonModule, ReactiveFormsModule, RouterModule, ...MATERIAL]
+  declarations: [ConfirmDialogComponent],
+  imports: [CommonModule, ...MATERIAL],
+  exports: [CommonModule, ReactiveFormsModule, RouterModule, ConfirmDialogComponent, ...MATERIAL]
 })
 export class SharedModule {}

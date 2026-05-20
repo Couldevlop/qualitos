@@ -61,5 +61,14 @@
           [attr.aria-label]="'Ouvrir ' + row.title"></tr>
     </table>
     <p class="empty" *ngIf="(cases$ | async)?.length === 0">Aucun CAPA pour ce filtre.</p>
+
+    <mat-paginator [length]="totalElements"
+                   [pageSize]="pageSize"
+                   [pageIndex]="pageIndex"
+                   [pageSizeOptions]="pageSizeOptions"
+                   (page)="onPage($event)"
+                   showFirstLastButtons
+                   aria-label="Pagination des CAPA">
+    </mat-paginator>
   </mat-card>
 </div>

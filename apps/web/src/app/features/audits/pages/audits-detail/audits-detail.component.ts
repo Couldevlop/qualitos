@@ -6,6 +6,7 @@ import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 
 import { safeErrorMessage } from '../../../../core/http/error-message';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { AuditsService } from '../../audits.service';
 import { AuditPlanResponse, AuditStatus } from '../../audits.types';
 import {
@@ -66,6 +67,36 @@ export class AuditsDetailComponent implements OnInit {
   }
 
   goBack(): void { this.router.navigate(['/audits']); }
+
+  /** OWASP A04 — destructive action gated by a confirm dialog. */
+  deletePlan(title: string): void {
+    this.dialog.open(ConfirmDialogComponent, {
+      data: <ConfirmDialogData>{
+        title: 'Supprimer ce plan ?',
+        message: `« ${title} », sa checklist et ses findings seront supprimés définitivement.`,
+        confirmLabel: 'Supprimer',
+        destructive: true
+      },
+      autoFocus: false,
+      restoreFocus: true
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.audits.deletePlan(this.planId).subscribe({
+        next: () => {
+          this.snack.open('Plan supprimé.', 'OK', { duration: 2000 });
+          this.router.navigate(['/audits']);
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[audits-detail] delete failed', err?.status, err?.error?.title);
+          this.snack.open(
+            safeErrorMessage(err, 'Erreur lors de la suppression.'),
+            'OK', { duration: 4000 }
+          );
+        }
+      });
+    });
+  }
 
   openAddChecklist(): void {
     const data: AuditsChecklistDialogData = { planId: this.planId };

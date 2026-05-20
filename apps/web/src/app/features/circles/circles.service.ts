@@ -60,6 +60,15 @@ export class CirclesService {
     return this.http.post<CircleResponse>(this.endpoint, input);
   }
 
+  deleteCircle(id: string): Observable<void> {
+    if (environment.useMockApi) {
+      const i = this.mockStore.findIndex(c => c.id === id);
+      if (i >= 0) this.mockStore.splice(i, 1);
+      return of(undefined).pipe(delay(120));
+    }
+    return this.http.delete<void>(`${this.endpoint}/${id}`);
+  }
+
   addMember(circleId: string, input: AddMemberRequest): Observable<CircleMemberResponse> {
     if (environment.useMockApi) {
       const now = new Date().toISOString();

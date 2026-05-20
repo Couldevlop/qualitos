@@ -16,6 +16,10 @@
 
     <ng-container *ngIf="audit$ | async as a">
       <div class="actions" *ngIf="a">
+        <button mat-stroked-button color="warn" (click)="deleteAudit(a.zone)"
+                matTooltip="Supprimer l'audit">
+          <mat-icon>delete</mat-icon> Supprimer
+        </button>
         <button mat-stroked-button (click)="cancel()"
                 [disabled]="(acting$ | async) || isTerminal(a.status)"
                 matTooltip="Annuler l'audit">

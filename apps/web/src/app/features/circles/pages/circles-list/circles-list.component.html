@@ -55,5 +55,14 @@
           [attr.aria-label]="'Ouvrir ' + row.name"></tr>
     </table>
     <p class="empty" *ngIf="(circles$ | async)?.length === 0">Aucun cercle.</p>
+
+    <mat-paginator [length]="totalElements"
+                   [pageSize]="pageSize"
+                   [pageIndex]="pageIndex"
+                   [pageSizeOptions]="pageSizeOptions"
+                   (page)="onPage($event)"
+                   showFirstLastButtons
+                   aria-label="Pagination des cercles">
+    </mat-paginator>
   </mat-card>
 </div>

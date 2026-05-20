@@ -57,5 +57,14 @@
           [attr.aria-label]="'Ouvrir ' + row.title"></tr>
     </table>
     <p class="empty" *ngIf="(plans$ | async)?.length === 0">Aucun plan pour ce filtre.</p>
+
+    <mat-paginator [length]="totalElements"
+                   [pageSize]="pageSize"
+                   [pageIndex]="pageIndex"
+                   [pageSizeOptions]="pageSizeOptions"
+                   (page)="onPage($event)"
+                   showFirstLastButtons
+                   aria-label="Pagination des audits">
+    </mat-paginator>
   </mat-card>
 </div>

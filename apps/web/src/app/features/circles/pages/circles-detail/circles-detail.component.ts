@@ -6,6 +6,7 @@ import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 
 import { safeErrorMessage } from '../../../../core/http/error-message';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { CirclesService } from '../../circles.service';
 import { CircleResponse, CircleStatus } from '../../circles.types';
 import {
@@ -66,6 +67,36 @@ export class CirclesDetailComponent implements OnInit {
   }
 
   goBack(): void { this.router.navigate(['/circles']); }
+
+  /** OWASP A04 — destructive action gated by a confirm dialog. */
+  deleteCircle(name: string): void {
+    this.dialog.open(ConfirmDialogComponent, {
+      data: <ConfirmDialogData>{
+        title: 'Supprimer ce cercle ?',
+        message: `« ${name} », ses membres, réunions et propositions seront supprimés définitivement.`,
+        confirmLabel: 'Supprimer',
+        destructive: true
+      },
+      autoFocus: false,
+      restoreFocus: true
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.circles.deleteCircle(this.circleId).subscribe({
+        next: () => {
+          this.snack.open('Cercle supprimé.', 'OK', { duration: 2000 });
+          this.router.navigate(['/circles']);
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[circles-detail] delete failed', err?.status, err?.error?.title);
+          this.snack.open(
+            safeErrorMessage(err, 'Erreur lors de la suppression.'),
+            'OK', { duration: 4000 }
+          );
+        }
+      });
+    });
+  }
 
   openAddMember(): void {
     const data: CirclesMemberDialogData = { circleId: this.circleId };

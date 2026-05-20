@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 
 import { safeErrorMessage } from '../../../../core/http/error-message';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { FivesService } from '../../fives.service';
 import { FiveSAuditResponse, FiveSAuditStatus, FiveSPillar } from '../../fives.types';
 
@@ -53,7 +55,8 @@ export class FivesDetailComponent implements OnInit {
     private readonly router: Router,
     private readonly fives: FivesService,
     private readonly snack: MatSnackBar,
-    private readonly fb: FormBuilder
+    private readonly fb: FormBuilder,
+    private readonly dialog: MatDialog
   ) {
     for (const p of this.pillars) {
       this.forms[p.pillar] = this.fb.nonNullable.group({
@@ -102,6 +105,36 @@ export class FivesDetailComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/fives']);
+  }
+
+  /** OWASP A04 — destructive action gated by a confirm dialog. */
+  deleteAudit(zone: string): void {
+    this.dialog.open(ConfirmDialogComponent, {
+      data: <ConfirmDialogData>{
+        title: 'Supprimer cet audit ?',
+        message: `L'audit de « ${zone} » et ses scores seront supprimés définitivement.`,
+        confirmLabel: 'Supprimer',
+        destructive: true
+      },
+      autoFocus: false,
+      restoreFocus: true
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.fives.deleteAudit(this.auditId).subscribe({
+        next: () => {
+          this.snack.open('Audit supprimé.', 'OK', { duration: 2000 });
+          this.router.navigate(['/fives']);
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[fives-detail] delete failed', err?.status, err?.error?.title);
+          this.snack.open(
+            safeErrorMessage(err, 'Erreur lors de la suppression.'),
+            'OK', { duration: 4000 }
+          );
+        }
+      });
+    });
   }
 
   score(pillar: FiveSPillar): void {

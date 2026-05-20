@@ -74,6 +74,15 @@
     <p class="empty" *ngIf="(cycles$ | async)?.length === 0">
       Aucun cycle pour ce filtre.
     </p>
+
+    <mat-paginator [length]="totalElements"
+                   [pageSize]="pageSize"
+                   [pageIndex]="pageIndex"
+                   [pageSizeOptions]="pageSizeOptions"
+                   (page)="onPage($event)"
+                   showFirstLastButtons
+                   aria-label="Pagination des cycles">
+    </mat-paginator>
   </mat-card>
 
 </div>

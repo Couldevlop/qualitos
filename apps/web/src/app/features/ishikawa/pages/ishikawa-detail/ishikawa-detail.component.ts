@@ -6,6 +6,7 @@ import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
 
 import { safeErrorMessage } from '../../../../core/http/error-message';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { IshikawaService } from '../../ishikawa.service';
 import {
   CauseCategory,
@@ -81,6 +82,40 @@ export class IshikawaDetailComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/ishikawa']);
+  }
+
+  /**
+   * OWASP A04 — destructive actions go through a confirm dialog. The backend
+   * also revalidates ownership via the JWT tenant_id claim; the front guard
+   * is UX defense-in-depth (prevent accidental clicks).
+   */
+  deleteDiagram(label: string): void {
+    this.dialog.open(ConfirmDialogComponent, {
+      data: <ConfirmDialogData>{
+        title: 'Supprimer ce diagramme ?',
+        message: `« ${label} » et toutes ses causes seront supprimés définitivement.`,
+        confirmLabel: 'Supprimer',
+        destructive: true
+      },
+      autoFocus: false,
+      restoreFocus: true
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.ishikawa.deleteDiagram(this.diagramId).subscribe({
+        next: () => {
+          this.snack.open('Diagramme supprimé.', 'OK', { duration: 2000 });
+          this.router.navigate(['/ishikawa']);
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[ishikawa-detail] delete failed', err?.status, err?.error?.title);
+          this.snack.open(
+            safeErrorMessage(err, 'Erreur lors de la suppression.'),
+            'OK', { duration: 4000 }
+          );
+        }
+      });
+    });
   }
 
   openAddCause(d: IshikawaDiagramResponse): void {

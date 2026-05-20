@@ -60,6 +60,15 @@ export class FivesService {
     return this.http.post<FiveSAuditResponse>(this.endpoint, input);
   }
 
+  deleteAudit(id: string): Observable<void> {
+    if (environment.useMockApi) {
+      const i = this.mockStore.findIndex(a => a.id === id);
+      if (i >= 0) this.mockStore.splice(i, 1);
+      return of(undefined).pipe(delay(120));
+    }
+    return this.http.delete<void>(`${this.endpoint}/${id}`);
+  }
+
   scorePillar(auditId: string, input: ScorePillarRequest): Observable<FiveSItemResponse> {
     if (environment.useMockApi) {
       const audit = this.mockStore.find(a => a.id === auditId);

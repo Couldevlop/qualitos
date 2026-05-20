@@ -62,6 +62,15 @@ export class IshikawaService {
     return this.http.post<IshikawaDiagramResponse>(this.endpoint, input);
   }
 
+  deleteDiagram(id: string): Observable<void> {
+    if (environment.useMockApi) {
+      const i = this.mockStore.findIndex(d => d.id === id);
+      if (i >= 0) this.mockStore.splice(i, 1);
+      return of(undefined).pipe(delay(120));
+    }
+    return this.http.delete<void>(`${this.endpoint}/${id}`);
+  }
+
   addCause(diagramId: string, input: CreateIshikawaCauseRequest): Observable<IshikawaCauseResponse> {
     if (environment.useMockApi) {
       const now = new Date().toISOString();
