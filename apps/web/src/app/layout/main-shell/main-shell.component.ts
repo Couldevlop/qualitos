@@ -51,6 +51,7 @@ export class MainShellComponent implements OnInit {
         { label: 'Audits',        route: '/audits',    icon: 'fact_check' },
         { label: 'FMEA / Risk',   route: '/fmea',      icon: 'warning' },
         { label: 'Fournisseurs',  route: '/suppliers', icon: 'local_shipping' },
+        { label: 'Formation',     route: '/training',  icon: 'school' },
         { label: 'Documents',     route: '/documents', icon: 'description' },
         { label: 'Standards Hub', route: '/standards', icon: 'workspace_premium' }
       ]

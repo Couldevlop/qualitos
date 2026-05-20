@@ -1,0 +1,9 @@
+.req-form { display: flex; flex-direction: column; min-width: 520px; max-width: 640px; }
+.hint { margin: 0 0 12px; color: rgba(0,0,0,0.6); font-size: 13px; }
+mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.full { width: 100%; }
+.banner { padding: 8px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 8px; }
+.banner-error { background: #fbe9e7; color: #b71c1c; }
+.banner-info  { background: #e3f2fd; color: #0d47a1; }
+mat-dialog-actions { padding: 12px 0 0; gap: 8px; }
+mat-dialog-actions button[type='submit'] { display: inline-flex; align-items: center; gap: 6px; }

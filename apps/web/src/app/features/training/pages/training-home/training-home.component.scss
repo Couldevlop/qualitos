@@ -1,0 +1,43 @@
+.training-home { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.head h1 { margin: 0 0 4px; font-size: 22px; }
+.head p  { margin: 0; color: rgba(0,0,0,0.6); font-size: 13px; }
+
+.banner { padding: 10px 14px; border-radius: 8px; font-size: 13px; }
+.banner-error { background: #fbe9e7; color: #b71c1c; }
+
+.tab-content { padding: 16px 0; display: flex; flex-direction: column; gap: 12px; }
+.tab-toolbar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.tab-toolbar .filter { min-width: 200px; }
+.spacer { flex: 1; }
+
+.table-wrap { background: #fff; border-radius: 12px; overflow: hidden; }
+.title-link { color: var(--mat-sys-primary, #1565c0); cursor: pointer; font-weight: 600; }
+.title-link:hover { text-decoration: underline; }
+.dim { color: rgba(0,0,0,0.55); font-size: 12px; }
+small.dim { display: block; margin-top: 2px; }
+
+.row-clickable { cursor: pointer; }
+.row-clickable:hover { background: rgba(0,0,0,0.025); }
+
+code { font-family: 'IBM Plex Mono','Fira Code',monospace; font-size: 12px; }
+
+.progress-cell { min-width: 220px; }
+.progress-cell mat-progress-bar { display: block; margin-bottom: 2px; }
+.progress-pct { font-size: 11px; color: rgba(0,0,0,0.6); font-variant-numeric: tabular-nums; }
+
+.actions { white-space: nowrap; }
+.cert { color: #1b5e20; display: inline-flex; align-items: center; padding: 0 6px; }
+
+.pbadge, .ebadge {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+}
+.pbadge-draft    { background: #f5f5f5; color: #424242; }
+.pbadge-active   { background: #e8f5e9; color: #1b5e20; }
+.pbadge-archived { background: #fbe9e7; color: #b71c1c; }
+
+.ebadge-enrolled    { background: #ede7f6; color: #4527a0; }
+.ebadge-in_progress { background: #fff3e0; color: #e65100; }
+.ebadge-completed   { background: #e8f5e9; color: #1b5e20; }
+.ebadge-failed      { background: #fbe9e7; color: #b71c1c; }
+.ebadge-cancelled   { background: #f5f5f5; color: #424242; }
