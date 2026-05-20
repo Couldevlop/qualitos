@@ -103,23 +103,23 @@ INSERT INTO standard_sections (id, standard_id, code, title, description, order_
     ('51010007-0000-0000-0000-000000000001', '50000001-0000-0000-0000-000000000001', '10', 'Amélioration', 'Non-conformités, actions correctives (8D), amélioration continue.', 10);
 
 INSERT INTO standard_clauses (id, section_id, code, title, description, order_index) VALUES
-    ('51020001-0000-0000-0000-000000000001', '51010001-0000-0000-0000-000000000001', '4.3.2', 'Exigences spécifiques des clients (CSR)
+    ('51020001-0000-0000-0000-000000000001', '51010001-0000-0000-0000-000000000001', '4.3.2', 'Exigences spécifiques des clients (CSR)', 'Identification, évaluation et intégration des exigences spécifiques OEM (Renault, Stellantis, BMW, Toyota, Ford, GM…).', 1),
     ('51020001-0000-0000-0000-000000000002', '51010001-0000-0000-0000-000000000001', '4.4.1.2', 'Sécurité produit', 'Identification des caractéristiques de sécurité et de réglementation produit.', 2),
     ('51020002-0000-0000-0000-000000000001', '51010002-0000-0000-0000-000000000001', '5.1.1.1', 'Responsabilité d''entreprise', 'Politique anticorruption, code de conduite éthique, escalade éthique.', 1),
     ('51020003-0000-0000-0000-000000000001', '51010003-0000-0000-0000-000000000001', '6.1.2.3', 'Plans de contingence', 'Plans de continuité production en cas de panne, catastrophe, indisponibilité fournisseur critique.', 1),
-    ('51020004-0000-0000-0000-000000000001', '51010004-0000-0000-0000-000000000001', '7.1.5.1.1', 'Analyse système de mesure (MSA)
+    ('51020004-0000-0000-0000-000000000001', '51010004-0000-0000-0000-000000000001', '7.1.5.1.1', 'Analyse système de mesure (MSA)', 'Études MSA (R&R, biais, linéarité, stabilité) pour les équipements de mesure critiques.', 1),
     ('51020004-0000-0000-0000-000000000002', '51010004-0000-0000-0000-000000000001', '7.1.5.2.1', 'Étalonnage / registres de vérification', 'Traçabilité des étalonnages, certificats reliés à étalons nationaux.', 2),
     ('51020004-0000-0000-0000-000000000003', '51010004-0000-0000-0000-000000000001', '7.2.1', 'Compétences — supplémentaire', 'Programme de compétences pour personnel affecté à activités impactant qualité, sécurité, environnement.', 3),
-    ('51020005-0000-0000-0000-000000000001', '51010005-0000-0000-0000-000000000001', '8.3.2.1', 'Planification de la conception et du développement — APQP', 'Application de la méthode APQP (Advanced Product Quality Planning) 
-    ('51020005-0000-0000-0000-000000000002', '51010005-0000-0000-0000-000000000001', '8.3.4.4', 'Processus de validation produit — PPAP', 'Soumission PPAP (Production Part Approval Process) 
-    ('51020005-0000-0000-0000-000000000003', '51010005-0000-0000-0000-000000000001', '8.3.5.2', 'Caractéristiques spéciales', 'Identification, documentation et maîtrise des caractéristiques spéciales (sécurité, critiques, significatives)
-    ('51020005-0000-0000-0000-000000000004', '51010005-0000-0000-0000-000000000001', '8.4.2.3.1', 'Logiciel — gestion qualité fournisseur (CARA logiciel embarqué)
-    ('51020005-0000-0000-0000-000000000005', '51010005-0000-0000-0000-000000000001', '8.5.1.1', 'Plan de contrôle', 'Plans de contrôle par étape de processus (prototype, pré-série, production)
+    ('51020005-0000-0000-0000-000000000001', '51010005-0000-0000-0000-000000000001', '8.3.2.1', 'Planification de la conception et du développement — APQP', 'Application de la méthode APQP (Advanced Product Quality Planning) en 5 phases.', 1),
+    ('51020005-0000-0000-0000-000000000002', '51010005-0000-0000-0000-000000000001', '8.3.4.4', 'Processus de validation produit — PPAP', 'Soumission PPAP (Production Part Approval Process) niveau 1-5 selon exigence client.', 2),
+    ('51020005-0000-0000-0000-000000000003', '51010005-0000-0000-0000-000000000001', '8.3.5.2', 'Caractéristiques spéciales', 'Identification, documentation et maîtrise des caractéristiques spéciales (sécurité, critiques, significatives).', 3),
+    ('51020005-0000-0000-0000-000000000004', '51010005-0000-0000-0000-000000000001', '8.4.2.3.1', 'Logiciel — gestion qualité fournisseur (CARA logiciel embarqué)', 'Évaluation des logiciels embarqués fournis par les fournisseurs.', 4),
+    ('51020005-0000-0000-0000-000000000005', '51010005-0000-0000-0000-000000000001', '8.5.1.1', 'Plan de contrôle', 'Plans de contrôle par étape de processus (prototype, pré-série, production).', 5),
     ('51020005-0000-0000-0000-000000000006', '51010005-0000-0000-0000-000000000001', '8.5.6.1.1', 'Maîtrise des changements de processus de production temporaire', 'Documentation et autorisation explicite avant changement temporaire.', 6),
     ('51020006-0000-0000-0000-000000000001', '51010006-0000-0000-0000-000000000001', '9.2.2.3', 'Audit processus de fabrication', 'Audit de chaque processus de production avec fréquence définie selon performance et risque.', 1),
     ('51020006-0000-0000-0000-000000000002', '51010006-0000-0000-0000-000000000001', '9.2.2.4', 'Audit produit', 'Audit produit à fréquence définie pour vérifier conformité aux spécifications.', 2),
-    ('51020007-0000-0000-0000-000000000001', '51010007-0000-0000-0000-000000000001', '10.2.3', 'Résolution de problèmes', 'Application méthode 8D (8 Disciplines) 
-    ('51020007-0000-0000-0000-000000000002', '51010007-0000-0000-0000-000000000001', '10.2.4', 'Détrompage (Poka-Yoke)
+    ('51020007-0000-0000-0000-000000000001', '51010007-0000-0000-0000-000000000001', '10.2.3', 'Résolution de problèmes', 'Application méthode 8D (8 Disciplines) pour les non-conformités issues clients.', 1),
+    ('51020007-0000-0000-0000-000000000002', '51010007-0000-0000-0000-000000000001', '10.2.4', 'Détrompage (Poka-Yoke)', 'Mise en œuvre de dispositifs de détrompage pour prévenir les non-conformités.', 2)
 ;
 
 INSERT INTO standard_requirements (clause_id, code, text, obligation, evidence_types, measurable_criteria, risk_if_missing, order_index) VALUES
@@ -132,7 +132,8 @@ INSERT INTO standard_requirements (clause_id, code, text, obligation, evidence_t
     ('51020005-0000-0000-0000-000000000002', '8.3.4.4', 'L''organisme doit soumettre les pièces neuves ou modifiées à la procédure PPAP avant production série.', 'MUST', 'Dossiers PPAP signés client', 'PPAP approuvé avant lancement série, taux de rejet < 5%', 'CRITICAL', 1),
     ('51020005-0000-0000-0000-000000000005', '8.5.1.1', 'L''organisme doit développer un plan de contrôle pour chaque processus de production.', 'MUST', 'Plans de contrôle par poste/processus', 'Plan de contrôle à jour pour 100% des processus actifs', 'CRITICAL', 1),
     ('51020006-0000-0000-0000-000000000001', '9.2.2.3', 'L''organisme doit auditer chaque processus de fabrication à fréquence définie.', 'MUST', 'Programme d''audit processus, rapports', '100% des processus audités sur 3 ans', 'HIGH', 1),
-    ('51020007-0000-0000-0000-000000000001', '10.2.3', 'L''organisme doit utiliser une méthodologie disciplinée de résolution de problèmes (8D).', 'MUST', 'Rapports 8D pour NC clients', 'Délai 8D D0-D8 < 90j, efficacité D8 ≥ 95%', 'CRITICAL', 1);
+    ('51020007-0000-0000-0000-000000000001', '10.2.3', 'L''organisme doit utiliser une méthodologie disciplinée de résolution de problèmes (8D).', 'MUST', 'Rapports 8D pour NC clients', 'Délai 8D D0-D8 < 90j, efficacité D8 ≥ 95%', 'CRITICAL', 1)
+;
 
 -- IATF certification path (§8.5)
 INSERT INTO standard_certification_paths (id, standard_id, estimated_duration_months_min, estimated_duration_months_max,
@@ -202,18 +203,18 @@ INSERT INTO standard_clauses (id, section_id, code, title, description, order_in
     ('52020006-0000-0000-0000-000000000002', '52010006-0000-0000-0000-000000000002', '6.1.2', 'Gestion du risque opérationnel', 'Plan d''atténuation par risque identifié.', 2),
     ('52020007-0000-0000-0000-000000000001', '52010007-0000-0000-0000-000000000002', '7.2', 'Compétences — formation aéronautique spécifique', NULL, 1),
     ('52020007-0000-0000-0000-000000000002', '52010007-0000-0000-0000-000000000002', '7.3', 'Sensibilisation — pièces contrefaites & FOD', 'Programme de sensibilisation à la prévention des Counterfeit Parts et Foreign Object Debris.', 2),
-    ('52020008-0000-0000-0000-000000000001', '52010008-0000-0000-0000-000000000002', '8.1.2', 'Prévention des pièces contrefaites', 'Procédure d''approvisionnement avec sources autorisées (OCM, OEM)
+    ('52020008-0000-0000-0000-000000000001', '52010008-0000-0000-0000-000000000002', '8.1.2', 'Prévention des pièces contrefaites', 'Procédure d''approvisionnement avec sources autorisées (OCM, OEM).', 1),
     ('52020008-0000-0000-0000-000000000002', '52010008-0000-0000-0000-000000000002', '8.1.3', 'Sécurité produit — analyse', 'Analyse FMEA orientée sécurité produit.', 2),
-    ('52020008-0000-0000-0000-000000000003', '52010008-0000-0000-0000-000000000002', '8.1.4', 'Prévention des FOD', 'Programme FOD (Foreign Object Debris) 
+    ('52020008-0000-0000-0000-000000000003', '52010008-0000-0000-0000-000000000002', '8.1.4', 'Prévention des FOD', 'Programme FOD (Foreign Object Debris) sur lignes de production.', 3),
     ('52020008-0000-0000-0000-000000000004', '52010008-0000-0000-0000-000000000002', '8.3.4', 'Vérification et validation conception', NULL, 4),
     ('52020008-0000-0000-0000-000000000005', '52010008-0000-0000-0000-000000000002', '8.4.3', 'Maîtrise des fournisseurs externes', 'Validation, surveillance, performances fournisseurs aéro.', 5),
     ('52020008-0000-0000-0000-000000000006', '52010008-0000-0000-0000-000000000002', '8.5.1.1', 'Maîtrise des équipements — production aéronautique', NULL, 6),
-    ('52020008-0000-0000-0000-000000000007', '52010008-0000-0000-0000-000000000002', '8.5.1.2', 'Validation des processus spéciaux', 'Procédés spéciaux (soudure, traitement thermique, NDT) 
-    ('52020008-0000-0000-0000-000000000008', '52010008-0000-0000-0000-000000000002', '8.5.1.3', 'First Article Inspection (FAI)
+    ('52020008-0000-0000-0000-000000000007', '52010008-0000-0000-0000-000000000002', '8.5.1.2', 'Validation des processus spéciaux', 'Procédés spéciaux (soudure, traitement thermique, NDT) — pré-qualification NADCAP.', 7),
+    ('52020008-0000-0000-0000-000000000008', '52010008-0000-0000-0000-000000000002', '8.5.1.3', 'First Article Inspection (FAI)', 'FAI selon AS9102 pour pièces nouvelles ou modifiées.', 8),
     ('52020008-0000-0000-0000-000000000009', '52010008-0000-0000-0000-000000000002', '8.5.2', 'Identification et traçabilité', 'Traçabilité matière, lot, batch, série pour pièces critiques.', 9),
     ('52020008-0000-0000-0000-000000000010', '52010008-0000-0000-0000-000000000002', '8.5.4', 'Préservation', 'Préservation matériaux et produits durant manutention, stockage, transport.', 10),
     ('52020009-0000-0000-0000-000000000001', '52010009-0000-0000-0000-000000000002', '9.1.1', 'Surveillance & mesure — performance fournisseurs aéro', NULL, 1),
-    ('52020010-0000-0000-0000-000000000001', '52010010-0000-0000-0000-000000000002', '10.2.1.1', 'Non-conformités — escape rate', 'Suivi escape rate (pièces NC livrées au client)
+    ('52020010-0000-0000-0000-000000000001', '52010010-0000-0000-0000-000000000002', '10.2.1.1', 'Non-conformités — escape rate', 'Suivi escape rate (pièces NC livrées au client).', 1)
 ;
 
 INSERT INTO standard_requirements (clause_id, code, text, obligation, evidence_types, measurable_criteria, risk_if_missing, order_index) VALUES
@@ -224,7 +225,8 @@ INSERT INTO standard_requirements (clause_id, code, text, obligation, evidence_t
     ('52020008-0000-0000-0000-000000000007', '8.5.1.2', 'L''organisme doit valider les processus spéciaux à intervalles définis.', 'MUST', 'Rapports validation NADCAP, qualifications opérateurs', 'Re-qualification ≥ 1/an, opérateurs certifiés 100%', 'CRITICAL', 1),
     ('52020008-0000-0000-0000-000000000008', '8.5.1.3', 'L''organisme doit réaliser une FAI selon AS9102 pour toute nouvelle pièce ou modification.', 'MUST', 'Rapport FAI AS9102', 'FAI complet et signé avant production série, 100% des pièces nouvelles', 'CRITICAL', 1),
     ('52020008-0000-0000-0000-000000000009', '8.5.2', 'L''organisme doit assurer l''identification et la traçabilité tout au long de la production.', 'MUST', 'Registre traçabilité, marquage produit', '100% des pièces critiques traçables matière → livraison', 'CRITICAL', 1),
-    ('52020010-0000-0000-0000-000000000001', '10.2.1.1', 'L''organisme doit suivre et améliorer son taux d''échappement de défauts (escape rate).', 'MUST', 'Indicateur escape rate, plans d''action', 'Escape rate < seuil contractuel client', 'HIGH', 1);
+    ('52020010-0000-0000-0000-000000000001', '10.2.1.1', 'L''organisme doit suivre et améliorer son taux d''échappement de défauts (escape rate).', 'MUST', 'Indicateur escape rate, plans d''action', 'Escape rate < seuil contractuel client', 'HIGH', 1)
+;
 
 INSERT INTO standard_certification_paths (id, standard_id, estimated_duration_months_min, estimated_duration_months_max,
     estimated_cost_eur_min, estimated_cost_eur_max, difficulty_level,
@@ -286,12 +288,12 @@ INSERT INTO standard_sections (id, standard_id, code, title, description, order_
 INSERT INTO standard_clauses (id, section_id, code, title, description, order_index) VALUES
     ('53020004-0000-0000-0000-000000000001', '53010004-0000-0000-0000-000000000003', '4.1.1', 'Exigences générales SMQ DM', 'SMQ documenté couvrant cycle de vie du DM.', 1),
     ('53020004-0000-0000-0000-000000000002', '53010004-0000-0000-0000-000000000003', '4.1.6', 'Validation des logiciels SMQ', 'Validation logiciels utilisés dans le SMQ et les processus de production.', 2),
-    ('53020004-0000-0000-0000-000000000003', '53010004-0000-0000-0000-000000000003', '4.2.3', 'Dossier de dispositif médical', 'Dossier technique par DM (Device Master Record)
+    ('53020004-0000-0000-0000-000000000003', '53010004-0000-0000-0000-000000000003', '4.2.3', 'Dossier de dispositif médical', 'Dossier technique par DM (Device Master Record).', 3),
     ('53020005-0000-0000-0000-000000000001', '53010005-0000-0000-0000-000000000003', '5.5.2', 'Représentant de la direction', NULL, 1),
-    ('53020006-0000-0000-0000-000000000001', '53010006-0000-0000-0000-000000000003', '6.4.1', 'Environnement de travail', 'Conditions environnementales pour conformité produit (salle blanche, ESD…)
+    ('53020006-0000-0000-0000-000000000001', '53010006-0000-0000-0000-000000000003', '6.4.1', 'Environnement de travail', 'Conditions environnementales pour conformité produit (salle blanche, ESD…).', 1),
     ('53020006-0000-0000-0000-000000000002', '53010006-0000-0000-0000-000000000003', '6.4.2', 'Maîtrise de la contamination', 'Mesures contre contamination produit & environnement.', 2),
     ('53020007-0000-0000-0000-000000000001', '53010007-0000-0000-0000-000000000003', '7.1', 'Planification de la réalisation du produit', NULL, 1),
-    ('53020007-0000-0000-0000-000000000002', '53010007-0000-0000-0000-000000000003', '7.2.1', 'Détermination exigences clients (DM)
+    ('53020007-0000-0000-0000-000000000002', '53010007-0000-0000-0000-000000000003', '7.2.1', 'Détermination exigences clients (DM)', NULL, 2),
     ('53020007-0000-0000-0000-000000000003', '53010007-0000-0000-0000-000000000003', '7.3.2', 'Planification conception & développement', NULL, 3),
     ('53020007-0000-0000-0000-000000000004', '53010007-0000-0000-0000-000000000003', '7.3.7', 'Transfert de conception', 'Procédure transfert R&D → production.', 4),
     ('53020007-0000-0000-0000-000000000005', '53010007-0000-0000-0000-000000000003', '7.3.9', 'Gestion des modifications de conception', NULL, 5),
@@ -299,10 +301,10 @@ INSERT INTO standard_clauses (id, section_id, code, title, description, order_in
     ('53020007-0000-0000-0000-000000000007', '53010007-0000-0000-0000-000000000003', '7.5.2', 'Propreté du produit', NULL, 7),
     ('53020007-0000-0000-0000-000000000008', '53010007-0000-0000-0000-000000000003', '7.5.5', 'Exigences particulières — DM stériles', 'Validation processus de stérilisation.', 8),
     ('53020007-0000-0000-0000-000000000009', '53010007-0000-0000-0000-000000000003', '7.5.6', 'Validation des processus de production', NULL, 9),
-    ('53020007-0000-0000-0000-000000000010', '53010007-0000-0000-0000-000000000003', '7.5.8', 'Identification — UDI', 'Identification unique des dispositifs (UDI)
+    ('53020007-0000-0000-0000-000000000010', '53010007-0000-0000-0000-000000000003', '7.5.8', 'Identification — UDI', 'Identification unique des dispositifs (UDI).', 10),
     ('53020007-0000-0000-0000-000000000011', '53010007-0000-0000-0000-000000000003', '7.5.9', 'Traçabilité', NULL, 11),
-    ('53020008-0000-0000-0000-000000000001', '53010008-0000-0000-0000-000000000003', '8.2.1', 'Retour d''information (vigilance)
-    ('53020008-0000-0000-0000-000000000002', '53010008-0000-0000-0000-000000000003', '8.2.3', 'Reporting aux autorités réglementaires', 'Notification d''incidents (ANSM, FDA, etc.)
+    ('53020008-0000-0000-0000-000000000001', '53010008-0000-0000-0000-000000000003', '8.2.1', 'Retour d''information (vigilance)', 'Système de surveillance après commercialisation (PMS).', 1),
+    ('53020008-0000-0000-0000-000000000002', '53010008-0000-0000-0000-000000000003', '8.2.3', 'Reporting aux autorités réglementaires', 'Notification d''incidents (ANSM, FDA, etc.).', 2),
     ('53020008-0000-0000-0000-000000000003', '53010008-0000-0000-0000-000000000003', '8.3.4', 'Actions correctives — DM', NULL, 3)
 ;
 
@@ -314,7 +316,8 @@ INSERT INTO standard_requirements (clause_id, code, text, obligation, evidence_t
     ('53020007-0000-0000-0000-000000000008', '7.5.5', 'Pour les DM stériles, l''organisme doit valider chaque processus de stérilisation.', 'MUST', 'Validation stérilisation (chaleur, gamma, EtO…)', 'Validation initiale + revalidation périodique', 'CRITICAL', 1),
     ('53020007-0000-0000-0000-000000000010', '7.5.8', 'L''organisme doit appliquer un UDI à chaque DM conformément aux exigences réglementaires applicables.', 'MUST', 'Registre UDI, intégration EUDAMED / GUDID', '100% DM avec UDI conforme au pays de mise sur marché', 'CRITICAL', 1),
     ('53020008-0000-0000-0000-000000000001', '8.2.1', 'L''organisme doit mettre en place une procédure documentée pour le retour d''information y compris la vigilance post-commercialisation.', 'MUST', 'Procédure vigilance, registre incidents', 'Délai analyse incident grave < 48h, déclaration autorité < 15j', 'CRITICAL', 1),
-    ('53020008-0000-0000-0000-000000000002', '8.2.3', 'L''organisme doit signaler aux autorités tout incident répondant aux critères de signalement.', 'MUST', 'Rapports vigilance ANSM/FDA, suivi', '100% incidents éligibles signalés dans les délais réglementaires', 'CRITICAL', 1);
+    ('53020008-0000-0000-0000-000000000002', '8.2.3', 'L''organisme doit signaler aux autorités tout incident répondant aux critères de signalement.', 'MUST', 'Rapports vigilance ANSM/FDA, suivi', '100% incidents éligibles signalés dans les délais réglementaires', 'CRITICAL', 1)
+;
 
 INSERT INTO standard_certification_paths (id, standard_id, estimated_duration_months_min, estimated_duration_months_max,
     estimated_cost_eur_min, estimated_cost_eur_max, difficulty_level,
@@ -382,13 +385,13 @@ INSERT INTO standard_clauses (id, section_id, code, title, description, order_in
     ('54020002-0000-0000-0000-000000000005', '54010002-0000-0000-0000-000000000004', '11.10(e)', 'Audit trails', 'Secure, computer-generated, time-stamped audit trails to record date/time of operator entries and actions; original information shall not be obscured.', 5),
     ('54020002-0000-0000-0000-000000000006', '54010002-0000-0000-0000-000000000004', '11.10(f)', 'Operational system checks', 'Sequencing of steps, events enforcement.', 6),
     ('54020002-0000-0000-0000-000000000007', '54010002-0000-0000-0000-000000000004', '11.10(g)', 'Authority checks', 'Authorized individuals can use the system, electronically sign, access, alter records.', 7),
-    ('54020002-0000-0000-0000-000000000008', '54010002-0000-0000-0000-000000000004', '11.10(h)', 'Device (terminal) 
+    ('54020002-0000-0000-0000-000000000008', '54010002-0000-0000-0000-000000000004', '11.10(h)', 'Device (terminal) checks', 'Validity of the source of data input.', 8),
     ('54020002-0000-0000-0000-000000000009', '54010002-0000-0000-0000-000000000004', '11.10(i)', 'Education, training, experience', 'Personnel qualified for system use.', 9),
     ('54020002-0000-0000-0000-000000000010', '54010002-0000-0000-0000-000000000004', '11.10(k)', 'Documentation controls', 'Distribution, access, use of system documentation.', 10),
     ('54020002-0000-0000-0000-000000000011', '54010002-0000-0000-0000-000000000004', '11.30', 'Controls for open systems', 'Encryption + digital signature for open systems.', 11),
     ('54020002-0000-0000-0000-000000000012', '54010002-0000-0000-0000-000000000004', '11.50', 'Signature manifestations', 'Printed/displayed name, date/time, meaning of signature.', 12),
-    ('54020003-0000-0000-0000-000000000001', '54010003-0000-0000-0000-000000000004', '11.100', 'General requirements (e-signature)
-    ('54020003-0000-0000-0000-000000000002', '54010003-0000-0000-0000-000000000004', '11.200', 'Signature components and controls', 'Two distinct identification components (e.g. ID + password) 
+    ('54020003-0000-0000-0000-000000000001', '54010003-0000-0000-0000-000000000004', '11.100', 'General requirements (e-signature)', 'Unique to one individual, never reused, identity verified.', 1),
+    ('54020003-0000-0000-0000-000000000002', '54010003-0000-0000-0000-000000000004', '11.200', 'Signature components and controls', 'Two distinct identification components (e.g. ID + password) for first signing in a session.', 2),
     ('54020003-0000-0000-0000-000000000003', '54010003-0000-0000-0000-000000000004', '11.300', 'Controls for identification codes/passwords', 'Uniqueness, periodic change, loss management, unauthorized use safeguards.', 3)
 ;
 
@@ -398,7 +401,8 @@ INSERT INTO standard_requirements (clause_id, code, text, obligation, evidence_t
     ('54020002-0000-0000-0000-000000000007', '11.10(g)', 'Use of authority checks to ensure that only authorized individuals can use the system, electronically sign a record, access the operation or computer system input or output device, alter a record, or perform the operation at hand.', 'MUST', 'Matrice RBAC, logs accès, revue accès', 'Revue accès ≥ 1/trimestre, 0 partage de compte', 'CRITICAL', 1),
     ('54020003-0000-0000-0000-000000000001', '11.100', 'Each electronic signature shall be unique to one individual and shall not be reused by, or reassigned to, anyone else. Before an organization establishes, assigns, certifies, or otherwise sanctions an individual''s electronic signature, the organization shall verify the identity of the individual.', 'MUST', 'Procédure enregistrement utilisateur, preuve d''identification', '100% utilisateurs identifiés et vérifiés avant attribution e-signature', 'CRITICAL', 1),
     ('54020003-0000-0000-0000-000000000002', '11.200', 'Electronic signatures that are not based upon biometrics shall employ at least two distinct identification components such as an identification code and password.', 'MUST', 'Configuration système (MFA/2FA), preuve double composante', '2FA activé 100% pour e-signatures GxP', 'CRITICAL', 1),
-    ('54020003-0000-0000-0000-000000000003', '11.300', 'Controls to ensure security and integrity of identification codes and passwords, including uniqueness, periodic checks, recalls, loss/theft management, transaction safeguards.', 'MUST', 'Politique mots de passe, rotation 90j, logs', 'Rotation password ≤ 90j, blocage après 5 échecs, alerte sur tentative anormale', 'CRITICAL', 1);
+    ('54020003-0000-0000-0000-000000000003', '11.300', 'Controls to ensure security and integrity of identification codes and passwords, including uniqueness, periodic checks, recalls, loss/theft management, transaction safeguards.', 'MUST', 'Politique mots de passe, rotation 90j, logs', 'Rotation password ≤ 90j, blocage après 5 échecs, alerte sur tentative anormale', 'CRITICAL', 1)
+;
 
 INSERT INTO standard_certification_paths (id, standard_id, estimated_duration_months_min, estimated_duration_months_max,
     estimated_cost_eur_min, estimated_cost_eur_max, difficulty_level,
@@ -460,25 +464,25 @@ INSERT INTO standard_sections (id, standard_id, code, title, description, order_
     ('55010010-0000-0000-0000-000000000005', '50000005-0000-0000-0000-000000000005', '10', 'Amélioration', NULL, 10);
 
 INSERT INTO standard_clauses (id, section_id, code, title, description, order_index) VALUES
-    ('55020004-0000-0000-0000-000000000001', '55010004-0000-0000-0000-000000000005', '4.1', 'Compréhension du contexte (filière alimentaire)
-    ('55020004-0000-0000-0000-000000000002', '55010004-0000-0000-0000-000000000005', '4.2', 'Parties intéressées (consommateur, autorité sanitaire)
+    ('55020004-0000-0000-0000-000000000001', '55010004-0000-0000-0000-000000000005', '4.1', 'Compréhension du contexte (filière alimentaire)', NULL, 1),
+    ('55020004-0000-0000-0000-000000000002', '55010004-0000-0000-0000-000000000005', '4.2', 'Parties intéressées (consommateur, autorité sanitaire)', NULL, 2),
     ('55020005-0000-0000-0000-000000000001', '55010005-0000-0000-0000-000000000005', '5.2', 'Politique sécurité des aliments', NULL, 1),
     ('55020006-0000-0000-0000-000000000001', '55010006-0000-0000-0000-000000000005', '6.2', 'Objectifs SMSDA', NULL, 1),
     ('55020007-0000-0000-0000-000000000001', '55010007-0000-0000-0000-000000000005', '7.1.6', 'Maîtrise des prestataires & sous-traitants', NULL, 1),
-    ('55020007-0000-0000-0000-000000000002', '55010007-0000-0000-0000-000000000005', '7.2', 'Compétences (équipe HACCP)
-    ('55020008-0000-0000-0000-000000000001', '55010008-0000-0000-0000-000000000005', '8.2', 'Programmes prérequis (PRP)
+    ('55020007-0000-0000-0000-000000000002', '55010007-0000-0000-0000-000000000005', '7.2', 'Compétences (équipe HACCP)', NULL, 2),
+    ('55020008-0000-0000-0000-000000000001', '55010008-0000-0000-0000-000000000005', '8.2', 'Programmes prérequis (PRP)', 'Construction, nettoyage/désinfection, lutte nuisibles, hygiène personnel.', 1),
     ('55020008-0000-0000-0000-000000000002', '55010008-0000-0000-0000-000000000005', '8.3', 'Système de traçabilité', 'Traçabilité amont/aval lot par lot.', 2),
-    ('55020008-0000-0000-0000-000000000003', '55010008-0000-0000-0000-000000000005', '8.4.1', 'Préparation et réponse aux situations d''urgence', 'Plan de gestion crise alimentaire (retrait/rappel)
+    ('55020008-0000-0000-0000-000000000003', '55010008-0000-0000-0000-000000000005', '8.4.1', 'Préparation et réponse aux situations d''urgence', 'Plan de gestion crise alimentaire (retrait/rappel).', 3),
     ('55020008-0000-0000-0000-000000000004', '55010008-0000-0000-0000-000000000005', '8.5.1', 'Étapes préliminaires à l''analyse des dangers', 'Équipe HACCP, caractéristiques produit, diagramme de flux.', 4),
-    ('55020008-0000-0000-0000-000000000005', '55010008-0000-0000-0000-000000000005', '8.5.2', 'Analyse des dangers (microbio, chimique, physique, allergènes)
-    ('55020008-0000-0000-0000-000000000006', '55010008-0000-0000-0000-000000000005', '8.5.4', 'Plan de maîtrise des dangers (PRPo + CCP)
+    ('55020008-0000-0000-0000-000000000005', '55010008-0000-0000-0000-000000000005', '8.5.2', 'Analyse des dangers (microbio, chimique, physique, allergènes)', NULL, 5),
+    ('55020008-0000-0000-0000-000000000006', '55010008-0000-0000-0000-000000000005', '8.5.4', 'Plan de maîtrise des dangers (PRPo + CCP)', 'Identification CCP/PRPo + limites critiques.', 6),
     ('55020008-0000-0000-0000-000000000007', '55010008-0000-0000-0000-000000000005', '8.7', 'Maîtrise de la surveillance et de la mesure', NULL, 7),
     ('55020008-0000-0000-0000-000000000008', '55010008-0000-0000-0000-000000000005', '8.8', 'Vérification PRP et plan HACCP', NULL, 8),
     ('55020008-0000-0000-0000-000000000009', '55010008-0000-0000-0000-000000000005', '8.9.1', 'Maîtrise des non-conformités produits', 'Produits potentiellement dangereux : quarantaine, retrait, rappel.', 9),
     ('55020008-0000-0000-0000-000000000010', '55010008-0000-0000-0000-000000000005', '8.9.4', 'Retrait/rappel', 'Procédure documentée, exercice annuel.', 10),
     ('55020009-0000-0000-0000-000000000001', '55010009-0000-0000-0000-000000000005', '9.2', 'Audit interne SMSDA', NULL, 1),
     ('55020009-0000-0000-0000-000000000002', '55010009-0000-0000-0000-000000000005', '9.3', 'Revue de direction SMSDA', NULL, 2),
-    ('55020010-0000-0000-0000-000000000001', '55010010-0000-0000-0000-000000000005', '10.2', 'Actions correctives (HACCP)
+    ('55020010-0000-0000-0000-000000000001', '55010010-0000-0000-0000-000000000005', '10.2', 'Actions correctives (HACCP)', NULL, 1)
 ;
 
 INSERT INTO standard_requirements (clause_id, code, text, obligation, evidence_types, measurable_criteria, risk_if_missing, order_index) VALUES
@@ -487,7 +491,8 @@ INSERT INTO standard_requirements (clause_id, code, text, obligation, evidence_t
     ('55020008-0000-0000-0000-000000000005', '8.5.2', 'L''équipe sécurité des aliments doit identifier et évaluer tous les dangers raisonnablement attendus en relation avec le type de produit, le procédé de production et les installations actuelles.', 'MUST', 'Analyse des dangers documentée par étape', 'Couverture 100% étapes du process, mise à jour à chaque changement', 'CRITICAL', 1),
     ('55020008-0000-0000-0000-000000000006', '8.5.4', 'L''organisme doit établir un plan de maîtrise des dangers qui identifie les CCP et leurs limites critiques.', 'MUST', 'Plan HACCP, registre CCP, limites critiques', '100% CCP identifiés avec limites validées scientifiquement', 'CRITICAL', 1),
     ('55020008-0000-0000-0000-000000000007', '8.7', 'L''organisme doit assurer la maîtrise des activités de surveillance et de mesure pour les CCP/PRPo (étalonnage, fréquence, méthodes).', 'MUST', 'Plans de surveillance, registres mesure, étalonnages', 'Surveillance CCP continue ou fréquence définie, étalonnage ≥ 1/an', 'CRITICAL', 1),
-    ('55020008-0000-0000-0000-000000000010', '8.9.4', 'L''organisme doit établir une procédure de retrait/rappel.', 'MUST', 'Procédure retrait/rappel, exercices', 'Exercice de simulation ≥ 1/an, temps de réaction < 4h', 'CRITICAL', 1);
+    ('55020008-0000-0000-0000-000000000010', '8.9.4', 'L''organisme doit établir une procédure de retrait/rappel.', 'MUST', 'Procédure retrait/rappel, exercices', 'Exercice de simulation ≥ 1/an, temps de réaction < 4h', 'CRITICAL', 1)
+;
 
 INSERT INTO standard_certification_paths (id, standard_id, estimated_duration_months_min, estimated_duration_months_max,
     estimated_cost_eur_min, estimated_cost_eur_max, difficulty_level,
@@ -547,20 +552,20 @@ INSERT INTO standard_sections (id, standard_id, code, title, description, order_
     ('56010006-0000-0000-0000-000000000006', '50000006-0000-0000-0000-000000000006', 'VI', 'Chapitre VI — Partage d''informations', NULL, 6);
 
 INSERT INTO standard_clauses (id, section_id, code, title, description, order_index) VALUES
-    ('56020002-0000-0000-0000-000000000001', '56010002-0000-0000-0000-000000000006', 'Art. 5', 'Cadre de gouvernance et de contrôle interne (TIC)
+    ('56020002-0000-0000-0000-000000000001', '56010002-0000-0000-0000-000000000006', 'Art. 5', 'Cadre de gouvernance et de contrôle interne (TIC)', 'L''organe de direction définit et approuve le cadre de gestion du risque TIC.', 1),
     ('56020002-0000-0000-0000-000000000002', '56010002-0000-0000-0000-000000000006', 'Art. 6', 'Cadre de gestion du risque lié aux TIC', NULL, 2),
     ('56020002-0000-0000-0000-000000000003', '56010002-0000-0000-0000-000000000006', 'Art. 7', 'Systèmes, protocoles et outils TIC', NULL, 3),
     ('56020002-0000-0000-0000-000000000004', '56010002-0000-0000-0000-000000000006', 'Art. 8', 'Identification — actifs TIC, processus, dépendances', NULL, 4),
     ('56020002-0000-0000-0000-000000000005', '56010002-0000-0000-0000-000000000006', 'Art. 9', 'Protection et prévention', 'Confidentialité, intégrité, disponibilité, authentification, autorisation.', 5),
-    ('56020002-0000-0000-0000-000000000006', '56010002-0000-0000-0000-000000000006', 'Art. 10', 'Détection (cybermenaces, anomalies)
-    ('56020002-0000-0000-0000-000000000007', '56010002-0000-0000-0000-000000000006', 'Art. 11', 'Réponse et reprise (continuité)
-    ('56020002-0000-0000-0000-000000000008', '56010002-0000-0000-0000-000000000006', 'Art. 12', 'Apprentissage et évolution (post-incident)
+    ('56020002-0000-0000-0000-000000000006', '56010002-0000-0000-0000-000000000006', 'Art. 10', 'Détection (cybermenaces, anomalies)', NULL, 6),
+    ('56020002-0000-0000-0000-000000000007', '56010002-0000-0000-0000-000000000006', 'Art. 11', 'Réponse et reprise (continuité)', 'Plan de continuité, RTO/RPO, backups.', 7),
+    ('56020002-0000-0000-0000-000000000008', '56010002-0000-0000-0000-000000000006', 'Art. 12', 'Apprentissage et évolution (post-incident)', NULL, 8),
     ('56020003-0000-0000-0000-000000000001', '56010003-0000-0000-0000-000000000006', 'Art. 17', 'Processus de gestion des incidents TIC', NULL, 1),
     ('56020003-0000-0000-0000-000000000002', '56010003-0000-0000-0000-000000000006', 'Art. 18', 'Classification des incidents', 'Critères : nombre clients impactés, criticité services, durée, impact réputationnel/économique.', 2),
-    ('56020003-0000-0000-0000-000000000003', '56010003-0000-0000-0000-000000000006', 'Art. 19', 'Notification aux autorités (incidents majeurs)
+    ('56020003-0000-0000-0000-000000000003', '56010003-0000-0000-0000-000000000006', 'Art. 19', 'Notification aux autorités (incidents majeurs)', 'Notification initiale ≤ 4h après classification, rapport intermédiaire, rapport final.', 3),
     ('56020004-0000-0000-0000-000000000001', '56010004-0000-0000-0000-000000000006', 'Art. 24', 'Programme de tests de résilience opérationnelle numérique', NULL, 1),
-    ('56020004-0000-0000-0000-000000000002', '56010004-0000-0000-0000-000000000006', 'Art. 25', 'Tests généraux (annuels)
-    ('56020004-0000-0000-0000-000000000003', '56010004-0000-0000-0000-000000000006', 'Art. 26', 'Tests avancés — TLPT (Threat-Led Penetration Testing)
+    ('56020004-0000-0000-0000-000000000002', '56010004-0000-0000-0000-000000000006', 'Art. 25', 'Tests généraux (annuels)', 'Tests de vulnérabilité, scénarios, source code review pour systèmes critiques.', 2),
+    ('56020004-0000-0000-0000-000000000003', '56010004-0000-0000-0000-000000000006', 'Art. 26', 'Tests avancés — TLPT (Threat-Led Penetration Testing)', 'TLPT au moins tous les 3 ans pour entités significatives.', 3),
     ('56020005-0000-0000-0000-000000000001', '56010005-0000-0000-0000-000000000006', 'Art. 28', 'Principes généraux — risques prestataires TIC tiers', NULL, 1),
     ('56020005-0000-0000-0000-000000000002', '56010005-0000-0000-0000-000000000006', 'Art. 29', 'Évaluation préliminaire — concentration TIC', NULL, 2),
     ('56020005-0000-0000-0000-000000000003', '56010005-0000-0000-0000-000000000006', 'Art. 30', 'Dispositions contractuelles', 'Clauses minimales obligatoires dans contrats TIC : audit, exit, sécurité, localisation.', 3),
@@ -575,7 +580,8 @@ INSERT INTO standard_requirements (clause_id, code, text, obligation, evidence_t
     ('56020003-0000-0000-0000-000000000003', 'Art. 19', 'Les entités financières notifient l''autorité compétente sans retard injustifié l''incident TIC majeur en respectant les délais réglementaires.', 'MUST', 'Procédure notification, registre incidents majeurs', 'Notification initiale ≤ 4h, rapport intermédiaire ≤ 72h, rapport final ≤ 1 mois', 'CRITICAL', 1),
     ('56020004-0000-0000-0000-000000000001', 'Art. 24', 'Les entités financières mettent en place, maintiennent et révisent un programme solide et complet de tests de résilience opérationnelle numérique.', 'MUST', 'Programme de tests, calendrier, rapports', 'Programme révisé ≥ 1/an, exécution selon calendrier', 'CRITICAL', 1),
     ('56020004-0000-0000-0000-000000000003', 'Art. 26', 'Les entités significatives effectuent des tests avancés (TLPT) au moins une fois tous les trois ans.', 'MUST', 'Rapport TLPT, plan d''action', 'TLPT exécuté ≤ 3 ans pour entités significatives, conduit par testeurs accrédités', 'CRITICAL', 1),
-    ('56020005-0000-0000-0000-000000000003', 'Art. 30', 'Les contrats entre les entités financières et les prestataires TIC tiers comportent les clauses obligatoires DORA (description services, lieux, sécurité, accès/audit, RTO/RPO, exit).', 'MUST', 'Registre contrats TIC, clauses contractuelles', '100% nouveaux contrats TIC alignés DORA, contrats existants migrés ≤ 17/01/2025', 'CRITICAL', 1);
+    ('56020005-0000-0000-0000-000000000003', 'Art. 30', 'Les contrats entre les entités financières et les prestataires TIC tiers comportent les clauses obligatoires DORA (description services, lieux, sécurité, accès/audit, RTO/RPO, exit).', 'MUST', 'Registre contrats TIC, clauses contractuelles', '100% nouveaux contrats TIC alignés DORA, contrats existants migrés ≤ 17/01/2025', 'CRITICAL', 1)
+;
 
 INSERT INTO standard_certification_paths (id, standard_id, estimated_duration_months_min, estimated_duration_months_max,
     estimated_cost_eur_min, estimated_cost_eur_max, difficulty_level,
