@@ -1,0 +1,79 @@
+<section class="fmea-list">
+  <header class="head">
+    <div>
+      <h1>FMEA — Risk Management</h1>
+      <p>Analyse des modes de défaillance, RPN dynamique, bow-tie cyber/RGPD.</p>
+    </div>
+    <button mat-flat-button color="primary" (click)="openCreate()">
+      <mat-icon>add</mat-icon> Nouveau projet
+    </button>
+  </header>
+
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Statut</mat-label>
+      <mat-select [formControl]="statusFilter">
+        <mat-option [value]="''">Tous</mat-option>
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Type</mat-label>
+      <mat-select [formControl]="typeFilter">
+        <mat-option [value]="''">Tous</mat-option>
+        <mat-option *ngFor="let t of types" [value]="t">{{ typeLabel(t) }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+
+  <div class="table-wrap mat-elevation-z1">
+    <table mat-table [dataSource]="(projects$ | async) ?? []">
+      <ng-container matColumnDef="code">
+        <th mat-header-cell *matHeaderCellDef>Code</th>
+        <td mat-cell *matCellDef="let p"><code>{{ p.code }}</code></td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Nom</th>
+        <td mat-cell *matCellDef="let p">
+          <a class="title-link" (click)="open(p)">{{ p.name }}</a>
+          <small *ngIf="p.scope" class="dim">{{ p.scope }}</small>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let p"><span [class]="typeBadge(p.type)">{{ typeLabel(p.type) }}</span></td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <td mat-cell *matCellDef="let p"><span [class]="statusBadge(p.status)">{{ p.status }}</span></td>
+      </ng-container>
+
+      <ng-container matColumnDef="criticalRpnThreshold">
+        <th mat-header-cell *matHeaderCellDef>Seuil RPN critique</th>
+        <td mat-cell *matCellDef="let p">{{ p.criticalRpnThreshold }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="revision">
+        <th mat-header-cell *matHeaderCellDef>Rév.</th>
+        <td mat-cell *matCellDef="let p">v{{ p.revision }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" class="row-clickable" (click)="open(row)"></tr>
+    </table>
+
+    <mat-paginator
+      [length]="totalElements"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="onPage($event)"
+      showFirstLastButtons></mat-paginator>
+  </div>
+</section>

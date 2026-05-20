@@ -1,0 +1,109 @@
+<h2 mat-dialog-title>{{ data.item ? 'Modifier l\'item FMEA' : 'Nouvel item FMEA' }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="item-form">
+  <mat-dialog-content>
+    <p class="hint">RPN = Sévérité × Occurrence × Détection. Échelle 1-10.
+       Items ≥ seuil critique ({{ data.criticalRpnThreshold }}) classés CRITIQUES.</p>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Fonction</mat-label>
+      <input matInput formControlName="function" maxlength="500"
+             placeholder="Quelle fonction est analysée ?">
+    </mat-form-field>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Mode de défaillance</mat-label>
+        <input matInput formControlName="failureMode" maxlength="500">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Effet</mat-label>
+        <input matInput formControlName="failureEffect" maxlength="500">
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Cause</mat-label>
+      <textarea matInput formControlName="failureCause" rows="2" maxlength="1000"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Contrôles actuels</mat-label>
+      <textarea matInput formControlName="currentControls" rows="2" maxlength="1000"></textarea>
+    </mat-form-field>
+
+    <h3 class="section">Cotation initiale</h3>
+    <div class="rpn-row">
+      <mat-form-field appearance="outline" class="col-sod">
+        <mat-label>Sévérité</mat-label>
+        <mat-select formControlName="severity" required>
+          <mat-option *ngFor="let n of scale" [value]="n">{{ n }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col-sod">
+        <mat-label>Occurrence</mat-label>
+        <mat-select formControlName="occurrence" required>
+          <mat-option *ngFor="let n of scale" [value]="n">{{ n }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col-sod">
+        <mat-label>Détection</mat-label>
+        <mat-select formControlName="detection" required>
+          <mat-option *ngFor="let n of scale" [value]="n">{{ n }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="rpn-display">
+        <span class="rpn-label">RPN</span>
+        <span [class]="rpnClass(rpnLive)">{{ rpnLive }}</span>
+      </div>
+    </div>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Action recommandée</mat-label>
+      <textarea matInput formControlName="recommendedAction" rows="2" maxlength="1000"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Échéance action</mat-label>
+      <input matInput formControlName="actionDueDate" type="date">
+    </mat-form-field>
+
+    <h3 class="section">Cotation résultante (après action — optionnel)</h3>
+    <div class="rpn-row">
+      <mat-form-field appearance="outline" class="col-sod">
+        <mat-label>Sévérité</mat-label>
+        <mat-select formControlName="resultingSeverity">
+          <mat-option [value]="null">—</mat-option>
+          <mat-option *ngFor="let n of scale" [value]="n">{{ n }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col-sod">
+        <mat-label>Occurrence</mat-label>
+        <mat-select formControlName="resultingOccurrence">
+          <mat-option [value]="null">—</mat-option>
+          <mat-option *ngFor="let n of scale" [value]="n">{{ n }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col-sod">
+        <mat-label>Détection</mat-label>
+        <mat-select formControlName="resultingDetection">
+          <mat-option [value]="null">—</mat-option>
+          <mat-option *ngFor="let n of scale" [value]="n">{{ n }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="rpn-display">
+        <span class="rpn-label">RPN après</span>
+        <span [class]="rpnClass(rpnAfterLive ?? 0)">{{ rpnAfterLive ?? '—' }}</span>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
+      <mat-icon *ngIf="!submitting">check</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      {{ data.item ? 'Enregistrer' : 'Ajouter' }}
+    </button>
+  </mat-dialog-actions>
+</form>

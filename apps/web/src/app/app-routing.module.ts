@@ -54,6 +54,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/documents/documents.module').then(m => m.DocumentsModule)
       },
       {
+        path: 'fmea',
+        loadChildren: () => import('./features/fmea/fmea.module').then(m => m.FmeaModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)

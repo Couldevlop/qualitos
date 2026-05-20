@@ -1,0 +1,154 @@
+<ng-container *ngIf="project$ | async as p; else fallback">
+  <section class="fmea-detail">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/fmea" class="back">
+          <mat-icon>arrow_back</mat-icon> Projets FMEA
+        </a>
+        <h1>
+          <code>{{ p.code }}</code>
+          {{ p.name }}
+        </h1>
+        <div class="meta-row">
+          <span [class]="typeBadge(p.type)">{{ typeLabel(p.type) }}</span>
+          <span [class]="statusBadge(p.status)">{{ p.status }}</span>
+          <span class="dim">Rév. {{ p.revision }}</span>
+          <span class="dim">Seuil RPN critique : {{ p.criticalRpnThreshold }}</span>
+        </div>
+        <p *ngIf="p.scope" class="desc">{{ p.scope }}</p>
+      </div>
+
+      <div class="toolbar">
+        <button mat-stroked-button (click)="openEdit(p)">
+          <mat-icon>edit</mat-icon> Modifier
+        </button>
+        <button mat-flat-button color="primary" *ngIf="p.status === 'DRAFT'" (click)="activate(p)">
+          <mat-icon>play_arrow</mat-icon> Activer
+        </button>
+        <button mat-stroked-button *ngIf="p.status === 'ACTIVE'" (click)="reopen(p)">
+          <mat-icon>history</mat-icon> Rouvrir (DRAFT)
+        </button>
+        <button mat-stroked-button color="warn" *ngIf="p.status !== 'ARCHIVED'" (click)="archive(p)">
+          <mat-icon>inventory_2</mat-icon> Archiver
+        </button>
+        <button mat-stroked-button color="warn" (click)="remove(p)">
+          <mat-icon>delete</mat-icon> Supprimer
+        </button>
+      </div>
+    </header>
+
+    <div class="stats-grid" *ngIf="stats">
+      <mat-card class="stat-card">
+        <span class="stat-label">Items</span>
+        <strong>{{ stats.totalItems }}</strong>
+      </mat-card>
+      <mat-card class="stat-card stat-critical" [class.is-zero]="stats.criticalItems === 0">
+        <span class="stat-label">Items critiques</span>
+        <strong>{{ stats.criticalItems }}</strong>
+      </mat-card>
+      <mat-card class="stat-card">
+        <span class="stat-label">RPN max</span>
+        <strong [class]="rpnClass(stats.maxRpn, p.criticalRpnThreshold)">{{ stats.maxRpn }}</strong>
+      </mat-card>
+      <mat-card class="stat-card">
+        <span class="stat-label">RPN moyen</span>
+        <strong>{{ stats.averageRpn | number:'1.1-1' }}</strong>
+      </mat-card>
+    </div>
+
+    <mat-card class="items-card">
+      <mat-card-header class="card-head">
+        <mat-card-title>Items FMEA ({{ items.length }})</mat-card-title>
+        <button mat-stroked-button color="primary" (click)="openAddItem(p)" [disabled]="p.status === 'ARCHIVED'">
+          <mat-icon>add</mat-icon> Nouvel item
+        </button>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="table-scroll">
+          <table mat-table [dataSource]="items" *ngIf="items.length; else emptyItems">
+            <ng-container matColumnDef="sequenceNo">
+              <th mat-header-cell *matHeaderCellDef>#</th>
+              <td mat-cell *matCellDef="let i">{{ i.sequenceNo }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="function">
+              <th mat-header-cell *matHeaderCellDef>Fonction</th>
+              <td mat-cell *matCellDef="let i">{{ i.function || '—' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="failureMode">
+              <th mat-header-cell *matHeaderCellDef>Mode</th>
+              <td mat-cell *matCellDef="let i">{{ i.failureMode || '—' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="failureEffect">
+              <th mat-header-cell *matHeaderCellDef>Effet</th>
+              <td mat-cell *matCellDef="let i">{{ i.failureEffect || '—' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="sod">
+              <th mat-header-cell *matHeaderCellDef>S / O / D</th>
+              <td mat-cell *matCellDef="let i" class="sod-cell">
+                <span class="sod">{{ i.severity }} · {{ i.occurrence }} · {{ i.detection }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="rpn">
+              <th mat-header-cell *matHeaderCellDef>RPN</th>
+              <td mat-cell *matCellDef="let i">
+                <span [class]="rpnClass(i.rpn, p.criticalRpnThreshold)">{{ i.rpn }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="sodAfter">
+              <th mat-header-cell *matHeaderCellDef>S/O/D après</th>
+              <td mat-cell *matCellDef="let i" class="sod-cell">
+                <span *ngIf="i.resultingSeverity" class="sod">
+                  {{ i.resultingSeverity }} · {{ i.resultingOccurrence }} · {{ i.resultingDetection }}
+                </span>
+                <span *ngIf="!i.resultingSeverity" class="dim">—</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="rpnAfter">
+              <th mat-header-cell *matHeaderCellDef>RPN après</th>
+              <td mat-cell *matCellDef="let i">
+                <span *ngIf="i.rpnAfter" [class]="rpnClass(i.rpnAfter, p.criticalRpnThreshold)">{{ i.rpnAfter }}</span>
+                <span *ngIf="!i.rpnAfter" class="dim">—</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let i" class="actions">
+                <button mat-icon-button (click)="openEditItem(p, i)" matTooltip="Modifier"
+                        [disabled]="p.status === 'ARCHIVED'">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button (click)="removeItem(p, i)" matTooltip="Supprimer"
+                        [disabled]="p.status === 'ARCHIVED'">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="itemColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: itemColumns"></tr>
+          </table>
+        </div>
+        <ng-template #emptyItems>
+          <p class="dim empty">Aucun item pour l'instant. Ajoutez le premier mode de défaillance.</p>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="fmea-detail">
+    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  </section>
+</ng-template>
