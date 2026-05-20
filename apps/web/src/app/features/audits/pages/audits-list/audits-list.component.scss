@@ -27,3 +27,15 @@
 .score-mid  { color: #ef6c00; }
 .score-low  { color: #c62828; }
 .empty { padding: 32px; text-align: center; color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); }
+
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.clickable-row:hover {
+  background: var(--mat-sys-surface-container-low, rgba(0, 0, 0, 0.04));
+}
+.clickable-row:focus-visible {
+  outline: 2px solid var(--mat-sys-primary, #1976d2);
+  outline-offset: -2px;
+}

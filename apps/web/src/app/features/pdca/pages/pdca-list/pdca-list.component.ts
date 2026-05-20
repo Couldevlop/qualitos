@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { catchError, finalize, map, startWith, switchMap, tap } from 'rxjs/operators';
 
@@ -28,8 +29,13 @@ export class PdcaListComponent implements OnInit {
 
   constructor(
     private readonly pdca: PdcaService,
-    private readonly dialog: MatDialog
+    private readonly dialog: MatDialog,
+    private readonly router: Router
   ) {}
+
+  openCycle(cycle: PdcaCycleResponse): void {
+    this.router.navigate(['/pdca', cycle.id]);
+  }
 
   ngOnInit(): void {
     this.cycles$ = combineLatest([

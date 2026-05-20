@@ -62,7 +62,13 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+          class="clickable-row"
+          (click)="openCycle(row)"
+          (keydown.enter)="openCycle(row)"
+          tabindex="0"
+          role="button"
+          [attr.aria-label]="'Ouvrir ' + row.title"></tr>
     </table>
 
     <p class="empty" *ngIf="(cycles$ | async)?.length === 0">

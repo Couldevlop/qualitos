@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/auth/auth.service';
+import { safeErrorMessage } from '../../../../core/http/error-message';
 import { CapaService } from '../../capa.service';
 import {
   CapaCaseResponse,
@@ -82,8 +83,10 @@ export class CapaCreateDialogComponent {
           this.dialogRef.close(c);
         },
         error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[capa-create] failed', err?.status, err?.error?.title);
           this.snack.open(
-            err?.error?.message ?? err?.message ?? 'Erreur lors de la création',
+            safeErrorMessage(err, 'Erreur lors de la création.'),
             'OK',
             { duration: 4000 }
           );

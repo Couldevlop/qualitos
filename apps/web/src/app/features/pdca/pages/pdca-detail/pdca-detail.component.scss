@@ -1,0 +1,125 @@
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.title-block {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.title-block h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.title-block .eyebrow {
+  margin: 4px 0 0;
+  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.55));
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.state-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+}
+
+.state-row.error {
+  color: var(--mat-sys-error, #b3261e);
+}
+
+.info-card,
+.steps-card {
+  margin-bottom: 16px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.55));
+}
+
+.info-value {
+  font-size: 14px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.description {
+  margin: 0;
+  padding: 12px 16px;
+  background: var(--mat-sys-surface-container-low, rgba(0, 0, 0, 0.03));
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.steps-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+}
+
+.steps-table {
+  width: 100%;
+}
+
+.cell-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cell-title small {
+  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.55));
+  font-size: 12px;
+}
+
+.empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.55));
+}
+
+// Phase color chips (PLAN / DO / CHECK / ACT)
+.phase {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.phase-plan  { background: #e3f2fd; color: #0d47a1; }
+.phase-do    { background: #fff3e0; color: #e65100; }
+.phase-check { background: #f3e5f5; color: #4a148c; }
+.phase-act   { background: #e8f5e9; color: #1b5e20; }

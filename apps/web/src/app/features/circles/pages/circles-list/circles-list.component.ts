@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { catchError, finalize, map, startWith, switchMap, tap } from 'rxjs/operators';
 
@@ -27,8 +28,17 @@ export class CirclesListComponent implements OnInit {
 
   constructor(
     private readonly svc: CirclesService,
-    private readonly dialog: MatDialog
+    private readonly dialog: MatDialog,
+    private readonly snack: MatSnackBar
   ) {}
+
+  openCircle(c: CircleResponse): void {
+    this.snack.open(
+      `Détail du cercle "${c.name}" — en cours d'implémentation.`,
+      'OK',
+      { duration: 3000 }
+    );
+  }
 
   ngOnInit(): void {
     this.circles$ = combineLatest([

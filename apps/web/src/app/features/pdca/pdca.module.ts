@@ -3,14 +3,22 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
 import { PdcaCreateDialogComponent } from './pages/pdca-create-dialog/pdca-create-dialog.component';
+import { PdcaDetailComponent } from './pages/pdca-detail/pdca-detail.component';
 import { PdcaListComponent } from './pages/pdca-list/pdca-list.component';
+import { PdcaStepDialogComponent } from './pages/pdca-step-dialog/pdca-step-dialog.component';
 
 const routes: Routes = [
-  { path: '', component: PdcaListComponent }
+  { path: '', component: PdcaListComponent },
+  { path: ':id', component: PdcaDetailComponent }
 ];
 
 @NgModule({
-  declarations: [PdcaListComponent, PdcaCreateDialogComponent],
+  declarations: [
+    PdcaListComponent,
+    PdcaDetailComponent,
+    PdcaCreateDialogComponent,
+    PdcaStepDialogComponent
+  ],
   imports: [SharedModule, RouterModule.forChild(routes)]
 })
 export class PdcaModule {}

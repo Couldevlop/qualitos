@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { catchError, finalize, map, startWith, switchMap, tap } from 'rxjs/operators';
 
@@ -28,8 +29,17 @@ export class IshikawaListComponent implements OnInit {
 
   constructor(
     private readonly svc: IshikawaService,
-    private readonly dialog: MatDialog
+    private readonly dialog: MatDialog,
+    private readonly snack: MatSnackBar
   ) {}
+
+  openDiagram(d: IshikawaDiagramResponse): void {
+    this.snack.open(
+      `Détail du diagramme "${d.problemStatement.slice(0, 60)}…" — en cours d'implémentation.`,
+      'OK',
+      { duration: 3000 }
+    );
+  }
 
   ngOnInit(): void {
     this.diagrams$ = combineLatest([

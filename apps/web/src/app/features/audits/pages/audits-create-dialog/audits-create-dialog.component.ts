@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/auth/auth.service';
+import { safeErrorMessage } from '../../../../core/http/error-message';
 import { AuditsService } from '../../audits.service';
 import { AuditPlanResponse, AuditType } from '../../audits.types';
 
@@ -71,8 +72,10 @@ export class AuditsCreateDialogComponent {
           this.dialogRef.close(plan);
         },
         error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[audits-create] failed', err?.status, err?.error?.title);
           this.snack.open(
-            err?.error?.message ?? err?.message ?? 'Erreur lors de la création',
+            safeErrorMessage(err, 'Erreur lors de la création.'),
             'OK',
             { duration: 4000 }
           );

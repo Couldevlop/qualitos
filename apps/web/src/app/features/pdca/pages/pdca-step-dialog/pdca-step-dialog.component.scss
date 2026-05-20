@@ -1,0 +1,31 @@
+.step-form {
+  display: flex;
+  flex-direction: column;
+  min-width: 520px;
+  max-width: 600px;
+}
+
+mat-dialog-content { padding-top: 8px; }
+
+.hint {
+  margin: 0 0 16px;
+  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6));
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.full { width: 100%; }
+
+.row { display: flex; gap: 12px; }
+.col { flex: 1; min-width: 0; }
+
+mat-dialog-actions {
+  padding: 12px 0 0;
+  gap: 8px;
+}
+
+mat-dialog-actions button[type='submit'] {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
