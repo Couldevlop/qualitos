@@ -1,0 +1,184 @@
+<ng-container *ngIf="project$ | async as p; else fallback">
+  <section class="dmaic-detail">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/dmaic" class="back">
+          <mat-icon>arrow_back</mat-icon> Projets DMAIC
+        </a>
+        <h1>{{ p.title }}</h1>
+        <div class="meta-row">
+          <span [class]="phaseBadge(p.phase)">{{ p.phase }}</span>
+          <span [class]="statusBadge(p.status)">{{ p.status }}</span>
+          <span class="dim">Cible : {{ p.targetCompletionDate || '—' }}</span>
+          <span *ngIf="p.estimatedSavingsEur" class="dim">
+            Économies estimées : {{ p.estimatedSavingsEur | number:'1.0-0' }} €
+          </span>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button mat-stroked-button (click)="openEdit(p)" matTooltip="Modifier">
+          <mat-icon>edit</mat-icon> Modifier
+        </button>
+        <button mat-flat-button color="primary"
+                [disabled]="p.status !== 'ACTIVE' || p.phase === 'CONTROL'"
+                (click)="advance(p)">
+          <mat-icon>skip_next</mat-icon> Avancer
+        </button>
+        <button mat-stroked-button *ngIf="p.status === 'ACTIVE'" (click)="hold(p)">
+          <mat-icon>pause</mat-icon> Pause
+        </button>
+        <button mat-stroked-button *ngIf="p.status === 'ON_HOLD'" (click)="resume(p)">
+          <mat-icon>play_arrow</mat-icon> Reprendre
+        </button>
+        <button mat-stroked-button color="warn" (click)="cancel(p)"
+                [disabled]="p.status === 'CANCELLED' || p.status === 'COMPLETED'">
+          <mat-icon>cancel</mat-icon> Annuler
+        </button>
+        <button mat-stroked-button color="warn" (click)="remove(p)">
+          <mat-icon>delete</mat-icon> Supprimer
+        </button>
+      </div>
+    </header>
+
+    <ol class="phase-stepper">
+      <li *ngFor="let ph of phases; let i = index"
+          [class.current]="i === phaseIndex(p.phase)"
+          [class.done]="i < phaseIndex(p.phase)">
+        <span class="step-idx">{{ i + 1 }}</span>
+        <span class="step-label">{{ ph }}</span>
+      </li>
+    </ol>
+
+    <div class="grid">
+      <mat-card *ngIf="p.problemStatement || p.goalStatement" class="charter-card">
+        <mat-card-header><mat-card-title>Charter</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p *ngIf="p.problemStatement"><strong>Problème :</strong> {{ p.problemStatement }}</p>
+          <p *ngIf="p.goalStatement"><strong>Objectif :</strong> {{ p.goalStatement }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="spec-card">
+        <mat-card-header><mat-card-title>Spécifications</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="spec-table">
+            <tr><th>LSL</th><td>{{ p.specLowerLimit ?? '—' }} {{ p.specUnit }}</td></tr>
+            <tr><th>Cible</th><td>{{ p.specTarget ?? '—' }} {{ p.specUnit }}</td></tr>
+            <tr><th>USL</th><td>{{ p.specUpperLimit ?? '—' }} {{ p.specUnit }}</td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="capability-card">
+        <mat-card-header><mat-card-title>Capabilité (Cp / Cpk)</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <div *ngIf="capability; else noCap" class="cap-grid">
+            <div><span class="dim">Échantillon</span><strong>{{ capability.sampleSize }}</strong></div>
+            <div><span class="dim">Moyenne</span><strong>{{ capability.mean | number:'1.3-3' }}</strong></div>
+            <div><span class="dim">σ</span><strong>{{ capability.stdDev | number:'1.3-3' }}</strong></div>
+            <div><span class="dim">Cp</span><strong>{{ capability.cp | number:'1.2-2' }}</strong></div>
+            <div><span class="dim">Cpk</span><strong [class.bad]="(capability.cpk ?? 0) < 1">{{ capability.cpk | number:'1.2-2' }}</strong></div>
+            <div><span class="dim">Niveau σ</span><strong>{{ capability.sigmaLevel | number:'1.2-2' }}</strong></div>
+            <div class="full-row" *ngIf="capability.interpretation">
+              <em>{{ capability.interpretation }}</em>
+            </div>
+            <div class="full-row warns" *ngIf="capability.warnings?.length">
+              <ul><li *ngFor="let w of capability.warnings">{{ w }}</li></ul>
+            </div>
+          </div>
+          <ng-template #noCap><p class="dim">Données insuffisantes pour le calcul.</p></ng-template>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <mat-card class="measures-card">
+      <mat-card-header class="card-head">
+        <mat-card-title>Mesures ({{ measures.length }})</mat-card-title>
+        <button mat-stroked-button color="primary" (click)="openAddMeasure()">
+          <mat-icon>add</mat-icon> Nouvelle mesure
+        </button>
+      </mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="measures" *ngIf="measures.length; else emptyM">
+          <ng-container matColumnDef="value">
+            <th mat-header-cell *matHeaderCellDef>Valeur</th>
+            <td mat-cell *matCellDef="let m">
+              <strong>{{ m.value }}</strong>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="subgroupId">
+            <th mat-header-cell *matHeaderCellDef>Sous-groupe</th>
+            <td mat-cell *matCellDef="let m">{{ m.subgroupId || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="recordedAt">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let m">{{ m.recordedAt || m.createdAt }}</td>
+          </ng-container>
+          <ng-container matColumnDef="sourceRef">
+            <th mat-header-cell *matHeaderCellDef>Réf.</th>
+            <td mat-cell *matCellDef="let m">
+              <span>{{ m.sourceRef || '—' }}</span>
+              <button mat-icon-button (click)="removeMeasure(m)" matTooltip="Supprimer" class="row-action">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="measureColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: measureColumns"></tr>
+        </table>
+        <ng-template #emptyM><p class="dim empty">Aucune mesure pour l'instant.</p></ng-template>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="pokayoke-card">
+      <mat-card-header class="card-head">
+        <mat-card-title>Poka-Yoke ({{ assignments.length }})</mat-card-title>
+        <button mat-stroked-button color="primary" (click)="openAddPokaYoke()">
+          <mat-icon>add</mat-icon> Assigner un Poka-Yoke
+        </button>
+      </mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="assignments" *ngIf="assignments.length; else emptyA">
+          <ng-container matColumnDef="deviceCode">
+            <th mat-header-cell *matHeaderCellDef>Code</th>
+            <td mat-cell *matCellDef="let a"><code>{{ a.deviceCode }}</code></td>
+          </ng-container>
+          <ng-container matColumnDef="deviceName">
+            <th mat-header-cell *matHeaderCellDef>Nom</th>
+            <td mat-cell *matCellDef="let a">{{ a.deviceName }}</td>
+          </ng-container>
+          <ng-container matColumnDef="deviceType">
+            <th mat-header-cell *matHeaderCellDef>Type</th>
+            <td mat-cell *matCellDef="let a">{{ a.deviceType }}</td>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Statut</th>
+            <td mat-cell *matCellDef="let a"><span [class]="assignmentBadge(a.status)">{{ a.status }}</span></td>
+          </ng-container>
+          <ng-container matColumnDef="note">
+            <th mat-header-cell *matHeaderCellDef>Note</th>
+            <td mat-cell *matCellDef="let a">
+              <span class="dim">{{ a.note || '—' }}</span>
+              <button mat-icon-button (click)="removeAssignment(a)" matTooltip="Supprimer" class="row-action">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="assignmentColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: assignmentColumns"></tr>
+        </table>
+        <ng-template #emptyA><p class="dim empty">Aucun Poka-Yoke assigné.</p></ng-template>
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="dmaic-detail">
+    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  </section>
+</ng-template>

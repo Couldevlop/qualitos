@@ -46,6 +46,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/circles/circles.module').then(m => m.CirclesModule)
       },
       {
+        path: 'dmaic',
+        loadChildren: () => import('./features/dmaic/dmaic.module').then(m => m.DmaicModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)

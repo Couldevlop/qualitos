@@ -40,6 +40,7 @@ export class MainShellComponent implements OnInit {
         { label: 'PDCA',     route: '/pdca',     icon: 'autorenew' },
         { label: 'Ishikawa', route: '/ishikawa', icon: 'account_tree' },
         { label: '5S',       route: '/fives',    icon: 'check_circle' },
+        { label: 'DMAIC',    route: '/dmaic',    icon: 'analytics' },
         { label: 'Cercles',  route: '/circles',  icon: 'groups' }
       ]
     },
