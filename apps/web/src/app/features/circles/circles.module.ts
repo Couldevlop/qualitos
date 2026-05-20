@@ -3,12 +3,22 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
 import { CirclesCreateDialogComponent } from './pages/circles-create-dialog/circles-create-dialog.component';
+import { CirclesDetailComponent } from './pages/circles-detail/circles-detail.component';
 import { CirclesListComponent } from './pages/circles-list/circles-list.component';
+import { CirclesMemberDialogComponent } from './pages/circles-member-dialog/circles-member-dialog.component';
 
-const routes: Routes = [{ path: '', component: CirclesListComponent }];
+const routes: Routes = [
+  { path: '', component: CirclesListComponent },
+  { path: ':id', component: CirclesDetailComponent }
+];
 
 @NgModule({
-  declarations: [CirclesListComponent, CirclesCreateDialogComponent],
+  declarations: [
+    CirclesListComponent,
+    CirclesDetailComponent,
+    CirclesCreateDialogComponent,
+    CirclesMemberDialogComponent
+  ],
   imports: [SharedModule, RouterModule.forChild(routes)]
 })
 export class CirclesModule {}

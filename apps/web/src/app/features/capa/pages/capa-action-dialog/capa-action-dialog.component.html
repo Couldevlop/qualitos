@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>Ajouter une action</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="action-form">
+  <mat-dialog-content>
+    <p class="hint">Définis l'action concrète à mener pour résoudre ce cas.</p>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Titre de l'action</mat-label>
+      <input matInput formControlName="title" maxlength="255" required
+             placeholder="Ex. : Recalibrer la sonde de température hebdo">
+      <mat-error *ngIf="form.controls.title.hasError('required')">Le titre est requis.</mat-error>
+      <mat-error *ngIf="form.controls.title.hasError('maxlength')">255 caractères maximum.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Description (optionnel)</mat-label>
+      <textarea matInput formControlName="description" rows="3"
+                placeholder="Méthode, ressources nécessaires, critère de fin…"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Échéance (optionnel)</mat-label>
+      <input matInput formControlName="dueDate" type="date">
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button color="primary" type="submit"
+            [disabled]="form.invalid || submitting">
+      <mat-icon *ngIf="!submitting">check</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      Ajouter
+    </button>
+  </mat-dialog-actions>
+</form>

@@ -5,6 +5,8 @@ import { delay } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
 import {
+  AddMemberRequest,
+  CircleMemberResponse,
   CircleResponse,
   CircleStatus,
   CirclesPage,
@@ -25,6 +27,14 @@ export class CirclesService {
     let params = new HttpParams().set('page', page).set('size', size);
     if (status) params = params.set('status', status);
     return this.http.get<CirclesPage>(this.endpoint, { params });
+  }
+
+  getCircle(id: string): Observable<CircleResponse> {
+    if (environment.useMockApi) {
+      const found = this.mockStore.find(c => c.id === id);
+      return of(found ?? this.mockStore[0]).pipe(delay(120));
+    }
+    return this.http.get<CircleResponse>(`${this.endpoint}/${id}`);
   }
 
   createCircle(input: CreateCircleRequest): Observable<CircleResponse> {
@@ -48,6 +58,55 @@ export class CirclesService {
       return of(circle).pipe(delay(200));
     }
     return this.http.post<CircleResponse>(this.endpoint, input);
+  }
+
+  addMember(circleId: string, input: AddMemberRequest): Observable<CircleMemberResponse> {
+    if (environment.useMockApi) {
+      const now = new Date().toISOString();
+      const member: CircleMemberResponse = {
+        id: 'm-' + Math.random().toString(36).slice(2, 9),
+        userId: input.userId,
+        role: input.role,
+        joinedAt: now
+      };
+      const c = this.mockStore.find(x => x.id === circleId);
+      if (c) {
+        c.members = [...c.members, member];
+        c.memberCount = c.members.length;
+        c.updatedAt = now;
+      }
+      return of(member).pipe(delay(120));
+    }
+    return this.http.post<CircleMemberResponse>(`${this.endpoint}/${circleId}/members`, input);
+  }
+
+  pauseCircle(id: string): Observable<CircleResponse> {
+    return this.transition(id, 'PAUSED', 'pause');
+  }
+
+  resumeCircle(id: string): Observable<CircleResponse> {
+    return this.transition(id, 'ACTIVE', 'resume');
+  }
+
+  archiveCircle(id: string): Observable<CircleResponse> {
+    return this.transition(id, 'ARCHIVED', 'archive');
+  }
+
+  private transition(
+    id: string,
+    targetStatus: CircleStatus,
+    pathSegment: 'pause' | 'resume' | 'archive'
+  ): Observable<CircleResponse> {
+    if (environment.useMockApi) {
+      const c = this.mockStore.find(x => x.id === id);
+      if (c) {
+        c.status = targetStatus;
+        c.updatedAt = new Date().toISOString();
+        return of(c).pipe(delay(120));
+      }
+      return of(this.mockStore[0]).pipe(delay(120));
+    }
+    return this.http.patch<CircleResponse>(`${this.endpoint}/${id}/${pathSegment}`, {});
   }
 
   private mockPage(status?: CircleStatus): CirclesPage {

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { catchError, finalize, map, startWith, switchMap, tap } from 'rxjs/operators';
 
@@ -29,15 +29,11 @@ export class AuditsListComponent implements OnInit {
   constructor(
     private readonly svc: AuditsService,
     private readonly dialog: MatDialog,
-    private readonly snack: MatSnackBar
+    private readonly router: Router
   ) {}
 
   openPlan(p: AuditPlanResponse): void {
-    this.snack.open(
-      `Détail du plan "${p.title}" — en cours d'implémentation.`,
-      'OK',
-      { duration: 3000 }
-    );
+    this.router.navigate(['/audits', p.id]);
   }
 
   ngOnInit(): void {

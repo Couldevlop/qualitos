@@ -1,0 +1,117 @@
+<div class="qos-page">
+
+  <header class="page-header">
+    <div class="title-block">
+      <button mat-icon-button (click)="goBack()" matTooltip="Retour à la liste">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h1 *ngIf="circle$ | async as c; else loadingTitle">{{ c?.name || 'Cercle introuvable' }}</h1>
+        <ng-template #loadingTitle><h1>Chargement…</h1></ng-template>
+        <p class="eyebrow">Cercle de Qualité · Groupe d'amélioration continue</p>
+      </div>
+    </div>
+
+    <ng-container *ngIf="circle$ | async as c">
+      <div class="actions" *ngIf="c">
+        <button mat-stroked-button (click)="archive()"
+                [disabled]="(acting$ | async) || !canArchive(c.status)"
+                matTooltip="Archiver le cercle">
+          <mat-icon>archive</mat-icon> Archiver
+        </button>
+        <button mat-stroked-button color="primary" *ngIf="c.status === 'ACTIVE'"
+                (click)="pause()" [disabled]="acting$ | async"
+                matTooltip="Mettre en pause">
+          <mat-icon>pause</mat-icon> Pause
+        </button>
+        <button mat-flat-button color="primary" *ngIf="c.status === 'PAUSED'"
+                (click)="resume()" [disabled]="acting$ | async"
+                matTooltip="Réactiver">
+          <mat-icon>play_arrow</mat-icon> Réactiver
+        </button>
+      </div>
+    </ng-container>
+  </header>
+
+  <div class="state-row" *ngIf="loading$ | async">
+    <mat-progress-spinner mode="indeterminate" diameter="32"></mat-progress-spinner>
+    <span>Chargement…</span>
+  </div>
+
+  <div class="state-row error" *ngIf="error$ | async as err">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ err }}</span>
+  </div>
+
+  <ng-container *ngIf="(circle$ | async) as c">
+    <ng-container *ngIf="c">
+
+      <mat-card class="info-card">
+        <mat-card-content>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Statut</span>
+              <span [class]="statusBadge(c.status)">{{ c.status }}</span>
+            </div>
+            <div class="info-item" *ngIf="c.topic">
+              <span class="info-label">Thème</span>
+              <span class="info-value">#{{ c.topic }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Membres</span>
+              <span class="info-value">{{ c.memberCount || c.members.length }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Réunions</span>
+              <span class="info-value">{{ c.meetings.length }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Propositions</span>
+              <span class="info-value">{{ c.proposals.length }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">MAJ</span>
+              <span class="info-value">{{ c.updatedAt | date:'medium' }}</span>
+            </div>
+          </div>
+          <p class="description" *ngIf="c.description">{{ c.description }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="members-card">
+        <mat-card-header class="members-header">
+          <mat-card-title>Membres ({{ c.members.length }})</mat-card-title>
+          <button mat-flat-button color="primary" type="button"
+                  (click)="openAddMember()"
+                  [disabled]="isTerminal(c.status)">
+            <mat-icon>person_add</mat-icon> Ajouter un membre
+          </button>
+        </mat-card-header>
+        <mat-card-content>
+          <table mat-table [dataSource]="c.members" class="members-table"
+                 *ngIf="c.members.length > 0">
+            <ng-container matColumnDef="role">
+              <th mat-header-cell *matHeaderCellDef>Rôle</th>
+              <td mat-cell *matCellDef="let m"><span class="role-pill">{{ m.role }}</span></td>
+            </ng-container>
+            <ng-container matColumnDef="userId">
+              <th mat-header-cell *matHeaderCellDef>User ID</th>
+              <td mat-cell *matCellDef="let m" class="mono">{{ m.userId }}</td>
+            </ng-container>
+            <ng-container matColumnDef="joinedAt">
+              <th mat-header-cell *matHeaderCellDef>Rejoint le</th>
+              <td mat-cell *matCellDef="let m">{{ m.joinedAt | date:'short' }}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="memberColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: memberColumns;"></tr>
+          </table>
+          <p class="empty" *ngIf="c.members.length === 0">
+            Aucun membre. Clique sur <strong>Ajouter un membre</strong> pour construire l'équipe.
+          </p>
+        </mat-card-content>
+      </mat-card>
+
+    </ng-container>
+  </ng-container>
+
+</div>

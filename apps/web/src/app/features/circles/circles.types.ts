@@ -25,3 +25,15 @@ export interface CreateCircleRequest {
   description?: string;
   topic?: string;
 }
+
+export interface AddMemberRequest {
+  userId: string;
+  role: CircleRole;
+}
+
+export interface CircleMemberResponse {
+  id: string;
+  userId: string;
+  role: CircleRole;
+  joinedAt: string;
+}
