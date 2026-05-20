@@ -51,4 +51,40 @@ class DeviceModelTest {
   void thresholdSeverityInOrder() {
     assertThat(Threshold.Severity.values()).hasSize(3);
   }
+
+  @Test
+  void deviceTwinNullDefaultsToEmptyMap() {
+    // Covers the `twin == null ? Map.of() : Map.copyOf(twin)` null branch.
+    Device d = new Device(UUID.randomUUID(), UUID.randomUUID(), "c", "n",
+        DeviceType.PLC, Protocol.OPC_UA, null, null, null, null, null, null,
+        null, Instant.now(), null);
+    assertThat(d.twin()).isEmpty();
+  }
+
+  // ---- Threshold.isBreached branch coverage ------------------------------
+
+  @Test
+  void thresholdBreached_onlyMinDefined_belowMin_returnsTrue() {
+    Threshold t = new Threshold("temp", 0.0, null, Threshold.Severity.WARNING);
+    assertThat(t.isBreached(-1.0)).isTrue();
+  }
+
+  @Test
+  void thresholdBreached_onlyMinDefined_aboveMin_returnsFalse() {
+    Threshold t = new Threshold("temp", 0.0, null, Threshold.Severity.WARNING);
+    assertThat(t.isBreached(5.0)).isFalse();
+  }
+
+  @Test
+  void thresholdBreached_onlyMaxDefined_aboveMax_returnsTrue() {
+    Threshold t = new Threshold("temp", null, 100.0, Threshold.Severity.CRITICAL);
+    assertThat(t.isBreached(101.0)).isTrue();
+  }
+
+  @Test
+  void thresholdBreached_bothNull_alwaysFalse() {
+    // Covers the both-null short-circuit through to `return false`.
+    Threshold t = new Threshold("temp", null, null, Threshold.Severity.INFO);
+    assertThat(t.isBreached(42.0)).isFalse();
+  }
 }

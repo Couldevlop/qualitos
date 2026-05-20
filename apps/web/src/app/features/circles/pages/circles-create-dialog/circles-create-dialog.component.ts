@@ -4,6 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs/operators';
 
+import { safeErrorMessage } from '../../../../core/http/error-message';
 import { CirclesService } from '../../circles.service';
 import { CircleResponse } from '../../circles.types';
 
@@ -50,8 +51,10 @@ export class CirclesCreateDialogComponent {
           this.dialogRef.close(circle);
         },
         error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[circles-create] failed', err?.status, err?.error?.title);
           this.snack.open(
-            err?.error?.message ?? err?.message ?? 'Erreur lors de la création',
+            safeErrorMessage(err, 'Erreur lors de la création.'),
             'OK',
             { duration: 4000 }
           );

@@ -32,3 +32,15 @@
 .crit-high     { background: #ffe0b2; color: #e65100; }
 .crit-critical { background: #ffcdd2; color: #b71c1c; }
 .empty { padding: 32px; text-align: center; color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); }
+
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.clickable-row:hover {
+  background: var(--mat-sys-surface-container-low, rgba(0, 0, 0, 0.04));
+}
+.clickable-row:focus-visible {
+  outline: 2px solid var(--mat-sys-primary, #1976d2);
+  outline-offset: -2px;
+}

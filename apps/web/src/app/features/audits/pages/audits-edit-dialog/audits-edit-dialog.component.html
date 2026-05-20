@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>Modifier le plan d'audit</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="edit-form">
+  <mat-dialog-content>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Titre</mat-label>
+      <input matInput formControlName="title" maxlength="255" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Périmètre</mat-label>
+      <textarea matInput formControlName="scope" rows="3"></textarea>
+    </mat-form-field>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Type</mat-label>
+        <mat-select formControlName="type">
+          <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Norme</mat-label>
+        <input matInput formControlName="standard" maxlength="100">
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Date prévue</mat-label>
+      <input matInput formControlName="scheduledDate" type="date">
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
+      <mat-icon *ngIf="!submitting">check</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      Enregistrer
+    </button>
+  </mat-dialog-actions>
+</form>

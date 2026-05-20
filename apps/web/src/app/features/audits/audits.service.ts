@@ -5,10 +5,16 @@ import { delay } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
 import {
+  AddFindingRequest,
   AuditPlanResponse,
   AuditStatus,
   AuditsPage,
-  CreateAuditPlanRequest
+  ChecklistItemResponse,
+  ChecklistResponseRequest,
+  CreateAuditPlanRequest,
+  CreateChecklistItemRequest,
+  FindingResponse,
+  UpdateAuditPlanRequest
 } from './audits.types';
 
 @Injectable({ providedIn: 'root' })
@@ -27,6 +33,14 @@ export class AuditsService {
     return this.http.get<AuditsPage>(this.endpoint, { params });
   }
 
+  getPlan(id: string): Observable<AuditPlanResponse> {
+    if (environment.useMockApi) {
+      const found = this.mockStore.find(p => p.id === id);
+      return of(found ?? this.mockStore[0]).pipe(delay(120));
+    }
+    return this.http.get<AuditPlanResponse>(`${this.endpoint}/${id}`);
+  }
+
   createPlan(input: CreateAuditPlanRequest): Observable<AuditPlanResponse> {
     if (environment.useMockApi) {
       const now = new Date().toISOString();
@@ -41,12 +55,173 @@ export class AuditsService {
         leadAuditorId: input.leadAuditorId,
         scheduledDate: input.scheduledDate,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
+        checklist: [],
+        findings: []
       };
       this.mockStore.unshift(plan);
       return of(plan).pipe(delay(200));
     }
     return this.http.post<AuditPlanResponse>(this.endpoint, input);
+  }
+
+  updatePlan(id: string, input: UpdateAuditPlanRequest): Observable<AuditPlanResponse> {
+    if (environment.useMockApi) {
+      const p = this.mockStore.find(x => x.id === id);
+      if (p) {
+        if (input.title !== undefined) p.title = input.title;
+        if (input.scope !== undefined) p.scope = input.scope;
+        if (input.type !== undefined) p.type = input.type;
+        if (input.standard !== undefined) p.standard = input.standard;
+        if (input.leadAuditorId !== undefined) p.leadAuditorId = input.leadAuditorId;
+        if (input.scheduledDate !== undefined) p.scheduledDate = input.scheduledDate;
+        p.updatedAt = new Date().toISOString();
+        return of(p).pipe(delay(120));
+      }
+      return of(this.mockStore[0]).pipe(delay(120));
+    }
+    return this.http.patch<AuditPlanResponse>(`${this.endpoint}/${id}`, input);
+  }
+
+  addFinding(planId: string, input: AddFindingRequest): Observable<FindingResponse> {
+    if (environment.useMockApi) {
+      const now = new Date().toISOString();
+      const finding: FindingResponse = {
+        id: 'f-' + Math.random().toString(36).slice(2, 9),
+        planId,
+        type: input.type,
+        description: input.description,
+        clauseRef: input.clauseRef,
+        photoUrl: input.photoUrl,
+        checklistItemId: input.checklistItemId,
+        capaId: input.capaId,
+        raisedBy: input.raisedBy,
+        raisedAt: now,
+        createdAt: now,
+        updatedAt: now
+      };
+      const plan = this.mockStore.find(p => p.id === planId);
+      if (plan) {
+        plan.findings = [...(plan.findings ?? []), finding];
+        plan.updatedAt = now;
+      }
+      return of(finding).pipe(delay(120));
+    }
+    return this.http.post<FindingResponse>(`${this.endpoint}/${planId}/findings`, input);
+  }
+
+  deletePlan(id: string): Observable<void> {
+    if (environment.useMockApi) {
+      const i = this.mockStore.findIndex(p => p.id === id);
+      if (i >= 0) this.mockStore.splice(i, 1);
+      return of(undefined).pipe(delay(120));
+    }
+    return this.http.delete<void>(`${this.endpoint}/${id}`);
+  }
+
+  addChecklistItem(
+    planId: string,
+    input: CreateChecklistItemRequest
+  ): Observable<ChecklistItemResponse> {
+    if (environment.useMockApi) {
+      const now = new Date().toISOString();
+      const item: ChecklistItemResponse = {
+        id: 'cli-' + Math.random().toString(36).slice(2, 9),
+        planId,
+        question: input.question,
+        clauseRef: input.clauseRef,
+        expectedEvidence: input.expectedEvidence,
+        weight: input.weight,
+        orderIndex: input.orderIndex,
+        createdAt: now,
+        updatedAt: now
+      };
+      const plan = this.mockStore.find(p => p.id === planId);
+      if (plan) {
+        plan.checklist = [...(plan.checklist ?? []), item];
+        plan.updatedAt = now;
+      }
+      return of(item).pipe(delay(120));
+    }
+    return this.http.post<ChecklistItemResponse>(`${this.endpoint}/${planId}/checklist`, input);
+  }
+
+  respondChecklistItem(
+    planId: string,
+    itemId: string,
+    input: ChecklistResponseRequest
+  ): Observable<ChecklistItemResponse> {
+    if (environment.useMockApi) {
+      const plan = this.mockStore.find(p => p.id === planId);
+      const now = new Date().toISOString();
+      let item: ChecklistItemResponse | undefined;
+      if (plan?.checklist) {
+        item = plan.checklist.find(i => i.id === itemId);
+        if (item) {
+          item.response = input.response;
+          item.conformant = input.conformant;
+          item.updatedAt = now;
+        }
+        const responded = plan.checklist.filter(i => i.conformant != null);
+        if (responded.length > 0) {
+          plan.conformityScore = Math.round(
+            (responded.filter(i => i.conformant).length / responded.length) * 100
+          );
+        }
+        plan.updatedAt = now;
+      }
+      return of(item ?? {
+        id: itemId, planId, question: '', createdAt: now, updatedAt: now
+      }).pipe(delay(120));
+    }
+    return this.http.put<ChecklistItemResponse>(
+      `${this.endpoint}/${planId}/checklist/${itemId}/response`,
+      input
+    );
+  }
+
+  startPlan(id: string): Observable<AuditPlanResponse> {
+    return this.transition(id, 'IN_PROGRESS', 'start');
+  }
+
+  completePlan(id: string, reportSummary?: string): Observable<AuditPlanResponse> {
+    if (environment.useMockApi) {
+      const plan = this.mockStore.find(p => p.id === id);
+      if (plan) {
+        plan.status = 'COMPLETED';
+        plan.completedAt = new Date().toISOString();
+        plan.updatedAt = plan.completedAt;
+        plan.reportSummary = reportSummary;
+        return of(plan).pipe(delay(120));
+      }
+      return of(this.mockStore[0]).pipe(delay(120));
+    }
+    return this.http.patch<AuditPlanResponse>(
+      `${this.endpoint}/${id}/complete`,
+      reportSummary ? { reportSummary } : {}
+    );
+  }
+
+  cancelPlan(id: string): Observable<AuditPlanResponse> {
+    return this.transition(id, 'CANCELLED', 'cancel');
+  }
+
+  private transition(
+    id: string,
+    targetStatus: AuditStatus,
+    pathSegment: 'start' | 'cancel'
+  ): Observable<AuditPlanResponse> {
+    if (environment.useMockApi) {
+      const plan = this.mockStore.find(p => p.id === id);
+      if (plan) {
+        plan.status = targetStatus;
+        plan.updatedAt = new Date().toISOString();
+        if (targetStatus === 'IN_PROGRESS') plan.startedAt = plan.updatedAt;
+        return of(plan).pipe(delay(120));
+      }
+      return of(this.mockStore[0]).pipe(delay(120));
+    }
+    return this.http.patch<AuditPlanResponse>(`${this.endpoint}/${id}/${pathSegment}`, {});
   }
 
   private mockPage(status?: AuditStatus): AuditsPage {
@@ -59,13 +234,16 @@ export class AuditsService {
     return [
       { id: 'a1', tenantId: 't', title: 'Audit interne ISO 9001 §9.2', type: 'INTERNAL',
         status: 'COMPLETED', standard: 'ISO_9001', leadAuditorId: 'u', scheduledDate: now,
-        completedAt: now, conformityScore: 92, createdAt: now, updatedAt: now },
+        completedAt: now, conformityScore: 92, createdAt: now, updatedAt: now,
+        checklist: [], findings: [] },
       { id: 'a2', tenantId: 't', title: 'Audit fournisseur Acme Forge', type: 'SUPPLIER',
         status: 'IN_PROGRESS', leadAuditorId: 'u', scheduledDate: now,
-        conformityScore: 65, createdAt: now, updatedAt: now },
+        conformityScore: 65, createdAt: now, updatedAt: now,
+        checklist: [], findings: [] },
       { id: 'a3', tenantId: 't', title: 'Pré-audit certification ISO 27001', type: 'CERTIFICATION',
         status: 'PLANNED', standard: 'ISO_27001', leadAuditorId: 'u', scheduledDate: now,
-        createdAt: now, updatedAt: now }
+        createdAt: now, updatedAt: now,
+        checklist: [], findings: [] }
     ];
   }
 }

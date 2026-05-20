@@ -5,10 +5,13 @@ import { delay } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
 import {
+  CreateIshikawaCauseRequest,
   CreateIshikawaDiagramRequest,
+  IshikawaCauseResponse,
   IshikawaDiagramResponse,
   IshikawaPage,
-  IshikawaStatus
+  IshikawaStatus,
+  UpdateIshikawaDiagramRequest
 } from './ishikawa.types';
 
 @Injectable({ providedIn: 'root' })
@@ -31,6 +34,14 @@ export class IshikawaService {
     return this.http.get<IshikawaPage>(this.endpoint, { params });
   }
 
+  getDiagram(id: string): Observable<IshikawaDiagramResponse> {
+    if (environment.useMockApi) {
+      const found = this.mockStore.find(d => d.id === id);
+      return of(found ?? this.mockStore[0]).pipe(delay(150));
+    }
+    return this.http.get<IshikawaDiagramResponse>(`${this.endpoint}/${id}`);
+  }
+
   createDiagram(input: CreateIshikawaDiagramRequest): Observable<IshikawaDiagramResponse> {
     if (environment.useMockApi) {
       const now = new Date().toISOString();
@@ -50,6 +61,55 @@ export class IshikawaService {
       return of(diagram).pipe(delay(200));
     }
     return this.http.post<IshikawaDiagramResponse>(this.endpoint, input);
+  }
+
+  updateDiagram(id: string, input: UpdateIshikawaDiagramRequest): Observable<IshikawaDiagramResponse> {
+    if (environment.useMockApi) {
+      const d = this.mockStore.find(x => x.id === id);
+      if (d) {
+        if (input.problemStatement !== undefined) d.problemStatement = input.problemStatement;
+        if (input.description !== undefined) d.description = input.description;
+        if (input.mode !== undefined) d.mode = input.mode;
+        if (input.status !== undefined) d.status = input.status;
+        d.updatedAt = new Date().toISOString();
+        return of(d).pipe(delay(120));
+      }
+      return of(this.mockStore[0]).pipe(delay(120));
+    }
+    return this.http.patch<IshikawaDiagramResponse>(`${this.endpoint}/${id}`, input);
+  }
+
+  deleteDiagram(id: string): Observable<void> {
+    if (environment.useMockApi) {
+      const i = this.mockStore.findIndex(d => d.id === id);
+      if (i >= 0) this.mockStore.splice(i, 1);
+      return of(undefined).pipe(delay(120));
+    }
+    return this.http.delete<void>(`${this.endpoint}/${id}`);
+  }
+
+  addCause(diagramId: string, input: CreateIshikawaCauseRequest): Observable<IshikawaCauseResponse> {
+    if (environment.useMockApi) {
+      const now = new Date().toISOString();
+      const cause: IshikawaCauseResponse = {
+        id: 'cause-' + Math.random().toString(36).slice(2, 9),
+        diagramId,
+        parentId: input.parentId,
+        category: input.category,
+        label: input.label,
+        description: input.description,
+        rootCauseScore: input.rootCauseScore,
+        createdAt: now,
+        updatedAt: now
+      };
+      const diagram = this.mockStore.find(d => d.id === diagramId);
+      if (diagram) {
+        diagram.causes = [...diagram.causes, cause];
+        diagram.updatedAt = now;
+      }
+      return of(cause).pipe(delay(150));
+    }
+    return this.http.post<IshikawaCauseResponse>(`${this.endpoint}/${diagramId}/causes`, input);
   }
 
   private mockPage(status?: IshikawaStatus): IshikawaPage {

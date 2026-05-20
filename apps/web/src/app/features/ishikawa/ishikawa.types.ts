@@ -39,3 +39,18 @@ export interface CreateIshikawaDiagramRequest {
   mode: IshikawaMode;
   ownerId: string;
 }
+
+export interface CreateIshikawaCauseRequest {
+  category: CauseCategory;
+  label: string;
+  description?: string;
+  parentId?: string;
+  rootCauseScore?: number;
+}
+
+export interface UpdateIshikawaDiagramRequest {
+  problemStatement?: string;
+  description?: string;
+  mode?: IshikawaMode;
+  status?: IshikawaStatus;
+}

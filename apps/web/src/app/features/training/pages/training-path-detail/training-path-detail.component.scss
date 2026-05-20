@@ -1,0 +1,36 @@
+.path-detail { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+
+.head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.head h1 { margin: 4px 0; font-size: 22px; display: flex; align-items: center; gap: 12px; }
+.head code {
+  display: inline-block; padding: 2px 10px;
+  background: #f5f5f5; border-radius: 6px;
+  font-family: 'IBM Plex Mono','Fira Code',monospace; font-size: 14px;
+}
+.back { display: inline-flex; align-items: center; gap: 4px; color: rgba(0,0,0,0.6); text-decoration: none; font-size: 13px; }
+.back:hover { color: var(--mat-sys-primary, #1565c0); }
+.meta-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.dim { color: rgba(0,0,0,0.55); font-size: 12px; }
+.desc { color: rgba(0,0,0,0.7); margin: 8px 0 0; max-width: 720px; }
+
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
+.toolbar button { display: inline-flex; align-items: center; gap: 6px; }
+
+.banner { padding: 10px 14px; border-radius: 8px; font-size: 13px; }
+.banner-error { background: #fbe9e7; color: #b71c1c; }
+.banner-info  { background: #e3f2fd; color: #0d47a1; }
+
+.card-head { display: flex; justify-content: space-between; align-items: center; }
+.card-head button { display: inline-flex; align-items: center; gap: 6px; }
+.empty { padding: 12px 4px; }
+
+code { font-family: 'IBM Plex Mono','Fira Code',monospace; font-size: 12px; }
+.lvl { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.pbadge {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+}
+.pbadge-draft    { background: #f5f5f5; color: #424242; }
+.pbadge-active   { background: #e8f5e9; color: #1b5e20; }
+.pbadge-archived { background: #fbe9e7; color: #b71c1c; }

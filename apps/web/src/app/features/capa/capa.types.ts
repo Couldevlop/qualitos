@@ -48,3 +48,20 @@ export interface CreateCapaCaseRequest {
   ownerId: string;
   dueDate?: string;
 }
+
+export interface CreateCapaActionRequest {
+  title: string;
+  description?: string;
+  status?: 'PENDING' | 'IN_PROGRESS' | 'DONE';
+  assigneeId?: string;
+  dueDate?: string;
+}
+
+export interface UpdateCapaCaseRequest {
+  title?: string;
+  description?: string;
+  criticity?: CapaCriticity;
+  sourceRef?: string;
+  rootCauseId?: string;
+  dueDate?: string;
+}

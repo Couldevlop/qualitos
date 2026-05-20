@@ -4,7 +4,13 @@ import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { CreatePdcaCycleRequest, PdcaCycleResponse, SpringPage } from './pdca.types';
+import {
+  CreatePdcaCycleRequest,
+  CreatePdcaStepRequest,
+  PdcaCycleResponse,
+  PdcaStepResponse,
+  SpringPage
+} from './pdca.types';
 
 @Injectable({ providedIn: 'root' })
 export class PdcaService {
@@ -32,6 +38,65 @@ export class PdcaService {
       return of(cycle ?? this.mockStore[0]).pipe(delay(150));
     }
     return this.http.get<PdcaCycleResponse>(`${this.endpoint}/${id}`);
+  }
+
+  addStep(cycleId: string, input: CreatePdcaStepRequest): Observable<PdcaStepResponse> {
+    if (environment.useMockApi) {
+      const now = new Date().toISOString();
+      const step: PdcaStepResponse = {
+        id: 'step-' + Math.random().toString(36).slice(2, 9),
+        cycleId,
+        phase: input.phase,
+        title: input.title,
+        description: input.description,
+        status: input.status ?? 'PENDING',
+        assigneeId: input.assigneeId,
+        dueDate: input.dueDate,
+        createdAt: now,
+        updatedAt: now
+      };
+      const cycle = this.mockStore.find(c => c.id === cycleId);
+      if (cycle) {
+        cycle.steps = [...cycle.steps, step];
+        cycle.updatedAt = now;
+      }
+      return of(step).pipe(delay(150));
+    }
+    return this.http.post<PdcaStepResponse>(`${this.endpoint}/${cycleId}/steps`, input);
+  }
+
+  advanceCycle(cycleId: string): Observable<PdcaCycleResponse> {
+    if (environment.useMockApi) {
+      const cycle = this.mockStore.find(c => c.id === cycleId);
+      if (cycle) {
+        const order: Array<PdcaCycleResponse['status']> =
+          ['PLAN', 'DO', 'CHECK', 'ACT', 'COMPLETED'];
+        const idx = order.indexOf(cycle.status);
+        if (idx >= 0 && idx < order.length - 1) {
+          cycle.status = order[idx + 1];
+          cycle.updatedAt = new Date().toISOString();
+          if (cycle.status === 'COMPLETED') {
+            cycle.completedAt = cycle.updatedAt;
+          }
+        }
+        return of(cycle).pipe(delay(150));
+      }
+      return of(this.mockStore[0]).pipe(delay(150));
+    }
+    return this.http.patch<PdcaCycleResponse>(`${this.endpoint}/${cycleId}/advance`, {});
+  }
+
+  cancelCycle(cycleId: string): Observable<PdcaCycleResponse> {
+    if (environment.useMockApi) {
+      const cycle = this.mockStore.find(c => c.id === cycleId);
+      if (cycle) {
+        cycle.status = 'CANCELLED';
+        cycle.updatedAt = new Date().toISOString();
+        return of(cycle).pipe(delay(150));
+      }
+      return of(this.mockStore[0]).pipe(delay(150));
+    }
+    return this.http.patch<PdcaCycleResponse>(`${this.endpoint}/${cycleId}/cancel`, {});
   }
 
   createCycle(input: CreatePdcaCycleRequest): Observable<PdcaCycleResponse> {

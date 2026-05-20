@@ -1,0 +1,93 @@
+<ng-container *ngIf="path$ | async as p; else fallback">
+  <section class="path-detail">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/training" class="back">
+          <mat-icon>arrow_back</mat-icon> Formation & Compétences
+        </a>
+        <h1>
+          <code>{{ p.code }}</code>
+          {{ p.name }}
+        </h1>
+        <div class="meta-row">
+          <span [class]="statusBadge(p.status)">{{ p.status }}</span>
+          <span class="dim" *ngIf="p.targetRole">Rôle cible : {{ p.targetRole }}</span>
+          <span class="dim">{{ p.durationHours }} h</span>
+          <span class="dim">Passing ≥ {{ p.passingScore }} %</span>
+          <span class="dim" *ngIf="p.validityMonths">Validité {{ p.validityMonths }} mois</span>
+        </div>
+        <p *ngIf="p.description" class="desc">{{ p.description }}</p>
+      </div>
+
+      <div class="toolbar">
+        <button mat-stroked-button (click)="openEdit(p)"><mat-icon>edit</mat-icon> Modifier</button>
+        <button mat-flat-button color="primary" *ngIf="p.status === 'DRAFT'" (click)="activate(p)">
+          <mat-icon>play_arrow</mat-icon> Activer
+        </button>
+        <button mat-stroked-button *ngIf="p.status === 'ACTIVE'" (click)="reopen(p)">
+          <mat-icon>history</mat-icon> Rouvrir (DRAFT)
+        </button>
+        <button mat-stroked-button color="warn" *ngIf="p.status !== 'ARCHIVED'" (click)="archive(p)">
+          <mat-icon>inventory_2</mat-icon> Archiver
+        </button>
+        <button mat-stroked-button color="warn" (click)="remove(p)">
+          <mat-icon>delete</mat-icon> Supprimer
+        </button>
+      </div>
+    </header>
+
+    <mat-card class="req-card">
+      <mat-card-header class="card-head">
+        <mat-card-title>Exigences de compétence ({{ requirements.length }})</mat-card-title>
+        <button mat-stroked-button color="primary" (click)="openAttach(p)" [disabled]="p.status === 'ARCHIVED'">
+          <mat-icon>add</mat-icon> Ajouter une exigence
+        </button>
+      </mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="requirements" *ngIf="requirements.length; else emptyR">
+          <ng-container matColumnDef="skillCode">
+            <th mat-header-cell *matHeaderCellDef>Code</th>
+            <td mat-cell *matCellDef="let r"><code>{{ skillCode(r) }}</code></td>
+          </ng-container>
+          <ng-container matColumnDef="skillName">
+            <th mat-header-cell *matHeaderCellDef>Compétence</th>
+            <td mat-cell *matCellDef="let r">{{ skillName(r) }}</td>
+          </ng-container>
+          <ng-container matColumnDef="category">
+            <th mat-header-cell *matHeaderCellDef>Catégorie</th>
+            <td mat-cell *matCellDef="let r">{{ skillCategory(r) }}</td>
+          </ng-container>
+          <ng-container matColumnDef="targetLevel">
+            <th mat-header-cell *matHeaderCellDef>Niveau cible</th>
+            <td mat-cell *matCellDef="let r">
+              <span class="lvl">{{ r.targetLevel }} — {{ levelLabel(r.targetLevel) }}</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let r">
+              <button mat-icon-button (click)="detach(p, r)" matTooltip="Retirer"
+                      [disabled]="p.status === 'ARCHIVED'">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="reqColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: reqColumns"></tr>
+        </table>
+        <ng-template #emptyR>
+          <p class="dim empty">Aucune exigence définie. Ajoutez les compétences requises pour ce parcours.</p>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="path-detail">
+    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  </section>
+</ng-template>

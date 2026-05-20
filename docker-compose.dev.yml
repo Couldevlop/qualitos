@@ -66,12 +66,17 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    # Keycloak 25 expose /health/ready uniquement sur le management port 9000
+    # (interne, non publié) et le container n'a ni curl ni wget. On vérifie
+    # juste que le port 8080 accepte les connexions TCP — `start_period: 60s`
+    # laisse le temps au démarrage Quarkus + import de realm avant que les
+    # checks comptent.
     healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /health/ready HTTP/1.1\\nhost: localhost\\n\\n' >&3 && cat <&3 | grep -q '\"status\": \"UP\"'"]
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 || exit 1"]
       interval: 10s
-      timeout: 5s
-      retries: 20
-      start_period: 30s
+      timeout: 3s
+      retries: 5
+      start_period: 60s
     networks: [qualitos]
 
   # -------------------------------------------------------------------------

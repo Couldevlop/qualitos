@@ -8,6 +8,15 @@ export interface CreatePdcaCycleRequest {
   ownerId: string;
 }
 
+export interface CreatePdcaStepRequest {
+  title: string;
+  description?: string;
+  phase: PdcaPhase;
+  status?: StepStatus;
+  assigneeId?: string;
+  dueDate?: string;
+}
+
 export interface PdcaStepResponse {
   id: string;
   cycleId: string;

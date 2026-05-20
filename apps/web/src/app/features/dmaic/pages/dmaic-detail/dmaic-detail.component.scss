@@ -1,0 +1,85 @@
+.dmaic-detail { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+
+.head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.head h1 { margin: 4px 0; font-size: 22px; }
+.back { display: inline-flex; align-items: center; gap: 4px; color: rgba(0,0,0,0.6); text-decoration: none; font-size: 13px; }
+.back:hover { color: var(--mat-sys-primary, #1565c0); }
+.meta-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.dim { color: rgba(0,0,0,0.55); font-size: 12px; }
+
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
+.toolbar button { display: inline-flex; align-items: center; gap: 6px; }
+
+.banner { padding: 10px 14px; border-radius: 8px; font-size: 13px; }
+.banner-error { background: #fbe9e7; color: #b71c1c; }
+.banner-info  { background: #e3f2fd; color: #0d47a1; }
+
+/* Stepper */
+.phase-stepper {
+  display: flex; gap: 0; list-style: none; padding: 0; margin: 8px 0;
+  border-radius: 12px; overflow: hidden; background: #fafafa; border: 1px solid rgba(0,0,0,0.06);
+}
+.phase-stepper li {
+  flex: 1; padding: 14px 12px; display: flex; align-items: center; gap: 8px;
+  position: relative; color: rgba(0,0,0,0.55); font-size: 13px; font-weight: 600;
+  border-right: 1px solid rgba(0,0,0,0.06);
+}
+.phase-stepper li:last-child { border-right: none; }
+.phase-stepper li.done { background: #e8f5e9; color: #1b5e20; }
+.phase-stepper li.current { background: #e3f2fd; color: #0d47a1; }
+.step-idx {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 11px;
+  background: rgba(0,0,0,0.08); color: rgba(0,0,0,0.65);
+  font-weight: 700; font-size: 11px;
+}
+.phase-stepper li.done    .step-idx { background: #1b5e20; color: #fff; }
+.phase-stepper li.current .step-idx { background: #0d47a1; color: #fff; }
+
+/* Grid */
+.grid { display: grid; grid-template-columns: 2fr 1fr 2fr; gap: 16px; }
+@media (max-width: 1100px) { .grid { grid-template-columns: 1fr; } }
+
+.charter-card p { margin: 0 0 8px; line-height: 1.45; }
+.spec-table { width: 100%; border-collapse: collapse; }
+.spec-table th { text-align: left; color: rgba(0,0,0,0.55); font-weight: 600; padding: 4px 0; width: 60px; }
+.spec-table td { padding: 4px 0; font-variant-numeric: tabular-nums; }
+
+.cap-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 16px;
+  font-variant-numeric: tabular-nums;
+}
+.cap-grid > div { display: flex; flex-direction: column; }
+.cap-grid strong { font-size: 18px; }
+.cap-grid .bad   { color: #b71c1c; }
+.cap-grid .full-row { grid-column: 1 / -1; }
+.cap-grid em { color: rgba(0,0,0,0.7); font-style: italic; font-size: 13px; }
+.cap-grid .warns ul { margin: 0; padding-left: 16px; color: #e65100; font-size: 12px; }
+
+.card-head { display: flex; justify-content: space-between; align-items: center; }
+.card-head button { display: inline-flex; align-items: center; gap: 6px; }
+.empty { padding: 12px 4px; }
+
+.row-action { float: right; }
+
+/* Badges */
+.phase, .badge, .assign {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+}
+.phase-define   { background: #ede7f6; color: #4527a0; }
+.phase-measure  { background: #e3f2fd; color: #0d47a1; }
+.phase-analyze  { background: #fff3e0; color: #e65100; }
+.phase-improve  { background: #e8f5e9; color: #1b5e20; }
+.phase-control  { background: #e0f7fa; color: #006064; }
+
+.badge-active     { background: #e8f5e9; color: #1b5e20; }
+.badge-on_hold    { background: #fff3e0; color: #e65100; }
+.badge-completed  { background: #e3f2fd; color: #0d47a1; }
+.badge-cancelled  { background: #fbe9e7; color: #b71c1c; }
+
+.assign-proposed     { background: #f5f5f5; color: #424242; }
+.assign-in_design    { background: #ede7f6; color: #4527a0; }
+.assign-implemented  { background: #e3f2fd; color: #0d47a1; }
+.assign-verified     { background: #e8f5e9; color: #1b5e20; }
+.assign-abandoned    { background: #fbe9e7; color: #b71c1c; }

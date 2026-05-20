@@ -36,6 +36,20 @@
   width: 100%;
 }
 
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+
+.clickable-row:hover {
+  background: var(--mat-sys-surface-container-low, rgba(0, 0, 0, 0.04));
+}
+
+.clickable-row:focus-visible {
+  outline: 2px solid var(--mat-sys-primary, #1976d2);
+  outline-offset: -2px;
+}
+
 .cell-title {
   display: flex;
   flex-direction: column;

@@ -1,0 +1,175 @@
+<section class="training-home">
+  <header class="head">
+    <div>
+      <h1>Formation & Compétences</h1>
+      <p>Parcours, compétences, matrice utilisateur (CLAUDE.md §4.7).</p>
+    </div>
+  </header>
+
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+
+  <mat-tab-group dynamicHeight>
+
+    <!-- ============== PARCOURS ============== -->
+    <mat-tab label="Parcours">
+      <div class="tab-content">
+        <div class="tab-toolbar">
+          <mat-form-field appearance="outline" class="filter">
+            <mat-label>Statut</mat-label>
+            <mat-select [formControl]="pathStatusFilter">
+              <mat-option [value]="''">Tous</mat-option>
+              <mat-option *ngFor="let s of pathStatuses" [value]="s">{{ s }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <span class="spacer"></span>
+          <button mat-flat-button color="primary" (click)="openPathCreate()">
+            <mat-icon>add</mat-icon> Nouveau parcours
+          </button>
+        </div>
+
+        <div class="table-wrap mat-elevation-z1">
+          <table mat-table [dataSource]="(paths$ | async) ?? []">
+            <ng-container matColumnDef="code">
+              <th mat-header-cell *matHeaderCellDef>Code</th>
+              <td mat-cell *matCellDef="let p"><code>{{ p.code }}</code></td>
+            </ng-container>
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Nom</th>
+              <td mat-cell *matCellDef="let p">
+                <a class="title-link" (click)="openPath(p)">{{ p.name }}</a>
+                <small *ngIf="p.description" class="dim">{{ p.description }}</small>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="targetRole">
+              <th mat-header-cell *matHeaderCellDef>Rôle cible</th>
+              <td mat-cell *matCellDef="let p">{{ p.targetRole || '—' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="durationHours">
+              <th mat-header-cell *matHeaderCellDef>Durée</th>
+              <td mat-cell *matCellDef="let p">{{ p.durationHours }} h</td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Statut</th>
+              <td mat-cell *matCellDef="let p"><span [class]="pathStatusBadge(p.status)">{{ p.status }}</span></td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="pathColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: pathColumns" class="row-clickable" (click)="openPath(row)"></tr>
+          </table>
+          <mat-paginator
+            [length]="pathTotal" [pageIndex]="pathIndex" [pageSize]="pathSize"
+            [pageSizeOptions]="pageSizeOptions" (page)="onPathPage($event)"
+            showFirstLastButtons></mat-paginator>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- ============== COMPÉTENCES ============== -->
+    <mat-tab label="Compétences">
+      <div class="tab-content">
+        <div class="tab-toolbar">
+          <mat-form-field appearance="outline" class="filter">
+            <mat-label>Catégorie</mat-label>
+            <input matInput [formControl]="skillCategoryFilter" placeholder="Audit, DMAIC, Méthodes…">
+          </mat-form-field>
+          <span class="spacer"></span>
+          <button mat-flat-button color="primary" (click)="openSkillCreate()">
+            <mat-icon>add</mat-icon> Nouvelle compétence
+          </button>
+        </div>
+
+        <div class="table-wrap mat-elevation-z1">
+          <table mat-table [dataSource]="(skills$ | async) ?? []">
+            <ng-container matColumnDef="code">
+              <th mat-header-cell *matHeaderCellDef>Code</th>
+              <td mat-cell *matCellDef="let s"><code>{{ s.code }}</code></td>
+            </ng-container>
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Nom</th>
+              <td mat-cell *matCellDef="let s">{{ s.name }}</td>
+            </ng-container>
+            <ng-container matColumnDef="category">
+              <th mat-header-cell *matHeaderCellDef>Catégorie</th>
+              <td mat-cell *matCellDef="let s">{{ s.category || '—' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef>Description</th>
+              <td mat-cell *matCellDef="let s" class="dim">{{ s.description || '—' }}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="skillColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: skillColumns"></tr>
+          </table>
+          <mat-paginator
+            [length]="skillTotal" [pageIndex]="skillIndex" [pageSize]="skillSize"
+            [pageSizeOptions]="pageSizeOptions" (page)="onSkillPage($event)"
+            showFirstLastButtons></mat-paginator>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- ============== MES INSCRIPTIONS ============== -->
+    <mat-tab label="Mes inscriptions">
+      <div class="tab-content">
+        <div class="tab-toolbar">
+          <span class="spacer"></span>
+          <button mat-flat-button color="primary" (click)="openEnroll()">
+            <mat-icon>school</mat-icon> S'inscrire à un parcours
+          </button>
+        </div>
+
+        <div class="table-wrap mat-elevation-z1">
+          <table mat-table [dataSource]="(enrollments$ | async) ?? []">
+            <ng-container matColumnDef="pathCode">
+              <th mat-header-cell *matHeaderCellDef>Parcours</th>
+              <td mat-cell *matCellDef="let e"><code>{{ pathName(e.pathId) }}</code></td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Statut</th>
+              <td mat-cell *matCellDef="let e"><span [class]="enrollStatusBadge(e.status)">{{ e.status }}</span></td>
+            </ng-container>
+            <ng-container matColumnDef="progressPct">
+              <th mat-header-cell *matHeaderCellDef>Progression</th>
+              <td mat-cell *matCellDef="let e" class="progress-cell">
+                <mat-progress-bar mode="determinate" [value]="e.progressPct" [color]="progressColor(e.progressPct)"></mat-progress-bar>
+                <span class="progress-pct">{{ e.progressPct }} %</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="enrolledOn">
+              <th mat-header-cell *matHeaderCellDef>Inscrit le</th>
+              <td mat-cell *matCellDef="let e">{{ e.enrolledOn }}</td>
+            </ng-container>
+            <ng-container matColumnDef="finalScore">
+              <th mat-header-cell *matHeaderCellDef>Score final</th>
+              <td mat-cell *matCellDef="let e">
+                <strong *ngIf="e.finalScore !== undefined && e.finalScore !== null">{{ e.finalScore }}</strong>
+                <span *ngIf="e.finalScore === undefined || e.finalScore === null" class="dim">—</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let e" class="actions">
+                <button mat-icon-button *ngIf="e.status === 'ENROLLED'" (click)="startEnrollment(e)"
+                        matTooltip="Démarrer">
+                  <mat-icon>play_arrow</mat-icon>
+                </button>
+                <button mat-icon-button *ngIf="e.status === 'ENROLLED' || e.status === 'IN_PROGRESS'"
+                        (click)="cancelEnrollment(e)" matTooltip="Annuler">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+                <span *ngIf="e.certificateCode" class="cert" matTooltip="Certificat : {{ e.certificateCode }}">
+                  <mat-icon>workspace_premium</mat-icon>
+                </span>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="enrollColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: enrollColumns"></tr>
+          </table>
+          <mat-paginator
+            [length]="enrollTotal" [pageIndex]="enrollIndex" [pageSize]="enrollSize"
+            [pageSizeOptions]="pageSizeOptions" (page)="onEnrollPage($event)"
+            showFirstLastButtons></mat-paginator>
+        </div>
+      </div>
+    </mat-tab>
+
+  </mat-tab-group>
+</section>

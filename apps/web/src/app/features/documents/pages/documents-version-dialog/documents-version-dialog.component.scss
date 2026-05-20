@@ -1,0 +1,6 @@
+.version-form { display: flex; flex-direction: column; min-width: 540px; max-width: 680px; }
+.hint { margin: 0 0 12px; color: rgba(0,0,0,0.6); font-size: 13px; }
+.full { width: 100%; }
+mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+mat-dialog-actions { padding: 12px 0 0; gap: 8px; }
+mat-dialog-actions button[type='submit'] { display: inline-flex; align-items: center; gap: 6px; }
