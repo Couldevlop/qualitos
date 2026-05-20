@@ -159,6 +159,50 @@
         </mat-card-content>
       </mat-card>
 
+      <mat-card class="findings-card">
+        <mat-card-header class="checklist-header">
+          <mat-card-title>Constats ({{ p.findings?.length || 0 }})</mat-card-title>
+          <button mat-flat-button color="primary" type="button"
+                  (click)="openAddFinding()"
+                  [disabled]="isTerminal(p.status)">
+            <mat-icon>flag</mat-icon> Ajouter un constat
+          </button>
+        </mat-card-header>
+        <mat-card-content>
+          <table mat-table [dataSource]="p.findings || []" class="checklist-table"
+                 *ngIf="(p.findings?.length || 0) > 0">
+            <ng-container matColumnDef="type">
+              <th mat-header-cell *matHeaderCellDef>Type</th>
+              <td mat-cell *matCellDef="let f">
+                <span [class]="findingBadge(f.type)">{{ f.type }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef>Constat</th>
+              <td mat-cell *matCellDef="let f">
+                <div class="cell">
+                  <strong>{{ f.description }}</strong>
+                  <small *ngIf="f.capaId">CAPA : {{ f.capaId }}</small>
+                </div>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="clauseRef">
+              <th mat-header-cell *matHeaderCellDef>Clause</th>
+              <td mat-cell *matCellDef="let f">{{ f.clauseRef || '—' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="raisedAt">
+              <th mat-header-cell *matHeaderCellDef>Soulevé le</th>
+              <td mat-cell *matCellDef="let f">{{ f.raisedAt | date:'short' }}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="findingColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: findingColumns;"></tr>
+          </table>
+          <p class="empty" *ngIf="!(p.findings?.length)">
+            Aucun constat. Les non-conformités majeures déclenchent un CAPA automatique.
+          </p>
+        </mat-card-content>
+      </mat-card>
+
     </ng-container>
   </ng-container>
 

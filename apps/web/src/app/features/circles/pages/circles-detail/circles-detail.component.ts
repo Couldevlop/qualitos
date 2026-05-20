@@ -12,6 +12,14 @@ import {
   CirclesEditDialogComponent,
   CirclesEditDialogData
 } from '../circles-edit-dialog/circles-edit-dialog.component';
+import {
+  CirclesMeetingDialogComponent,
+  CirclesMeetingDialogData
+} from '../circles-meeting-dialog/circles-meeting-dialog.component';
+import {
+  CirclesProposalDialogComponent,
+  CirclesProposalDialogData
+} from '../circles-proposal-dialog/circles-proposal-dialog.component';
 import { CircleResponse, CircleStatus } from '../../circles.types';
 import {
   CirclesMemberDialogComponent,
@@ -29,6 +37,8 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 export class CirclesDetailComponent implements OnInit {
 
   readonly memberColumns = ['role', 'userId', 'joinedAt'];
+  readonly meetingColumns = ['title', 'scheduledAt', 'status', 'location'];
+  readonly proposalColumns = ['title', 'status', 'proposedBy'];
 
   circle$!: Observable<CircleResponse | null>;
   loading$ = new BehaviorSubject<boolean>(false);
@@ -111,6 +121,36 @@ export class CirclesDetailComponent implements OnInit {
         }
       });
     });
+  }
+
+  openAddMeeting(): void {
+    const data: CirclesMeetingDialogData = { circleId: this.circleId };
+    this.dialog
+      .open(CirclesMeetingDialogComponent, {
+        data, autoFocus: 'first-tabbable', restoreFocus: true,
+        panelClass: 'qos-dialog-panel'
+      })
+      .afterClosed()
+      .subscribe(m => { if (m) this.reload$.next(); });
+  }
+
+  openAddProposal(): void {
+    const data: CirclesProposalDialogData = { circleId: this.circleId };
+    this.dialog
+      .open(CirclesProposalDialogComponent, {
+        data, autoFocus: 'first-tabbable', restoreFocus: true,
+        panelClass: 'qos-dialog-panel'
+      })
+      .afterClosed()
+      .subscribe(p => { if (p) this.reload$.next(); });
+  }
+
+  proposalBadge(status: string): string {
+    return 'proposal-badge proposal-' + status.toLowerCase();
+  }
+
+  meetingBadge(status: string): string {
+    return 'meeting-badge meeting-' + status.toLowerCase();
   }
 
   openAddMember(): void {

@@ -89,3 +89,31 @@
 .badge-active   { background: #e8f5e9; color: #1b5e20; }
 .badge-paused   { background: #fff3e0; color: #e65100; }
 .badge-archived { background: #f5f5f5; color: #424242; }
+
+.meetings-card, .proposals-card { margin-bottom: 16px; }
+
+.hint-small {
+  display: block;
+  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.55));
+  font-size: 12px;
+}
+
+.meeting-badge, .proposal-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.meeting-scheduled { background: #e3f2fd; color: #0d47a1; }
+.meeting-held      { background: #e8f5e9; color: #1b5e20; }
+.meeting-cancelled { background: #fbe9e7; color: #b71c1c; }
+
+.proposal-proposed    { background: #f5f5f5; color: #424242; }
+.proposal-reviewing   { background: #fff3e0; color: #e65100; }
+.proposal-approved    { background: #e8f5e9; color: #1b5e20; }
+.proposal-rejected    { background: #fbe9e7; color: #b71c1c; }
+.proposal-implemented { background: #e3f2fd; color: #0d47a1; }
+.proposal-measured    { background: #e0f7fa; color: #006064; }

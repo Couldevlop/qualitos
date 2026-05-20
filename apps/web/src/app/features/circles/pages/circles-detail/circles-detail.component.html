@@ -118,6 +118,84 @@
         </mat-card-content>
       </mat-card>
 
+      <mat-card class="meetings-card">
+        <mat-card-header class="members-header">
+          <mat-card-title>Réunions ({{ c.meetings.length }})</mat-card-title>
+          <button mat-flat-button color="primary" type="button"
+                  (click)="openAddMeeting()"
+                  [disabled]="isTerminal(c.status)">
+            <mat-icon>event</mat-icon> Planifier une réunion
+          </button>
+        </mat-card-header>
+        <mat-card-content>
+          <table mat-table [dataSource]="c.meetings" class="members-table"
+                 *ngIf="c.meetings.length > 0">
+            <ng-container matColumnDef="title">
+              <th mat-header-cell *matHeaderCellDef>Titre</th>
+              <td mat-cell *matCellDef="let m">
+                <div>
+                  <strong>{{ m.title }}</strong>
+                  <small *ngIf="m.agenda" class="hint-small">{{ m.agenda }}</small>
+                </div>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="scheduledAt">
+              <th mat-header-cell *matHeaderCellDef>Quand</th>
+              <td mat-cell *matCellDef="let m">{{ m.scheduledAt | date:'short' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Statut</th>
+              <td mat-cell *matCellDef="let m"><span [class]="meetingBadge(m.status)">{{ m.status }}</span></td>
+            </ng-container>
+            <ng-container matColumnDef="location">
+              <th mat-header-cell *matHeaderCellDef>Lieu</th>
+              <td mat-cell *matCellDef="let m">{{ m.location || '—' }}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="meetingColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: meetingColumns;"></tr>
+          </table>
+          <p class="empty" *ngIf="c.meetings.length === 0">Aucune réunion planifiée.</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="proposals-card">
+        <mat-card-header class="members-header">
+          <mat-card-title>Propositions ({{ c.proposals.length }})</mat-card-title>
+          <button mat-flat-button color="primary" type="button"
+                  (click)="openAddProposal()"
+                  [disabled]="isTerminal(c.status)">
+            <mat-icon>lightbulb</mat-icon> Nouvelle proposition
+          </button>
+        </mat-card-header>
+        <mat-card-content>
+          <table mat-table [dataSource]="c.proposals" class="members-table"
+                 *ngIf="c.proposals.length > 0">
+            <ng-container matColumnDef="title">
+              <th mat-header-cell *matHeaderCellDef>Titre</th>
+              <td mat-cell *matCellDef="let p">
+                <div>
+                  <strong>{{ p.title }}</strong>
+                  <small *ngIf="p.description" class="hint-small">{{ p.description }}</small>
+                </div>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Statut</th>
+              <td mat-cell *matCellDef="let p"><span [class]="proposalBadge(p.status)">{{ p.status }}</span></td>
+            </ng-container>
+            <ng-container matColumnDef="proposedBy">
+              <th mat-header-cell *matHeaderCellDef>Proposé par</th>
+              <td mat-cell *matCellDef="let p" class="mono">{{ p.proposedBy || '—' }}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="proposalColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: proposalColumns;"></tr>
+          </table>
+          <p class="empty" *ngIf="c.proposals.length === 0">
+            Aucune proposition. Workflow attendu : <strong>PROPOSED → APPROVED → IMPLEMENTED → MEASURED</strong>.
+          </p>
+        </mat-card-content>
+      </mat-card>
+
     </ng-container>
   </ng-container>
 

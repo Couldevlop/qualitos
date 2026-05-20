@@ -12,6 +12,10 @@ import {
   AuditsEditDialogComponent,
   AuditsEditDialogData
 } from '../audits-edit-dialog/audits-edit-dialog.component';
+import {
+  AuditsFindingDialogComponent,
+  AuditsFindingDialogData
+} from '../audits-finding-dialog/audits-finding-dialog.component';
 import { AuditPlanResponse, AuditStatus, ChecklistItemResponse } from '../../audits.types';
 import {
   AuditsChecklistDialogComponent,
@@ -33,6 +37,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 export class AuditsDetailComponent implements OnInit {
 
   readonly checklistColumns = ['orderIndex', 'question', 'clauseRef', 'weight', 'response', 'actions'];
+  readonly findingColumns = ['type', 'description', 'clauseRef', 'raisedAt'];
 
   plan$!: Observable<AuditPlanResponse | null>;
   loading$ = new BehaviorSubject<boolean>(false);
@@ -137,6 +142,21 @@ export class AuditsDetailComponent implements OnInit {
       .subscribe(updated => {
         if (updated) this.reload$.next();
       });
+  }
+
+  openAddFinding(checklistItemId?: string): void {
+    const data: AuditsFindingDialogData = { planId: this.planId, checklistItemId };
+    this.dialog
+      .open(AuditsFindingDialogComponent, {
+        data, autoFocus: 'first-tabbable', restoreFocus: true,
+        panelClass: 'qos-dialog-panel'
+      })
+      .afterClosed()
+      .subscribe(finding => { if (finding) this.reload$.next(); });
+  }
+
+  findingBadge(type: string): string {
+    return 'finding-badge finding-' + type.toLowerCase().replace('_', '-');
   }
 
   openAddChecklist(): void {

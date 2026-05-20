@@ -6,7 +6,9 @@ import { CirclesCreateDialogComponent } from './pages/circles-create-dialog/circ
 import { CirclesDetailComponent } from './pages/circles-detail/circles-detail.component';
 import { CirclesEditDialogComponent } from './pages/circles-edit-dialog/circles-edit-dialog.component';
 import { CirclesListComponent } from './pages/circles-list/circles-list.component';
+import { CirclesMeetingDialogComponent } from './pages/circles-meeting-dialog/circles-meeting-dialog.component';
 import { CirclesMemberDialogComponent } from './pages/circles-member-dialog/circles-member-dialog.component';
+import { CirclesProposalDialogComponent } from './pages/circles-proposal-dialog/circles-proposal-dialog.component';
 
 const routes: Routes = [
   { path: '', component: CirclesListComponent },
@@ -19,7 +21,9 @@ const routes: Routes = [
     CirclesDetailComponent,
     CirclesCreateDialogComponent,
     CirclesMemberDialogComponent,
-    CirclesEditDialogComponent
+    CirclesEditDialogComponent,
+    CirclesMeetingDialogComponent,
+    CirclesProposalDialogComponent
   ],
   imports: [SharedModule, RouterModule.forChild(routes)]
 })
