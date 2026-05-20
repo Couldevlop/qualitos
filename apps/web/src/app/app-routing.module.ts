@@ -50,6 +50,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/dmaic/dmaic.module').then(m => m.DmaicModule)
       },
       {
+        path: 'documents',
+        loadChildren: () => import('./features/documents/documents.module').then(m => m.DocumentsModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)

@@ -1,0 +1,108 @@
+<ng-container *ngIf="document$ | async as d; else fallback">
+  <section class="documents-detail">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/documents" class="back">
+          <mat-icon>arrow_back</mat-icon> Documents
+        </a>
+        <h1>
+          <code>{{ d.code }}</code>
+          {{ d.title }}
+        </h1>
+        <div class="meta-row">
+          <span class="dim">{{ typeLabel(d.type) }}</span>
+          <span [class]="statusBadge(d.status)">{{ d.status }}</span>
+          <mat-icon *ngIf="d.mandatoryRead" class="lock" matTooltip="Lecture obligatoire">verified_user</mat-icon>
+        </div>
+        <p *ngIf="d.description" class="desc">{{ d.description }}</p>
+      </div>
+
+      <div class="toolbar">
+        <button mat-stroked-button (click)="openEdit(d)">
+          <mat-icon>edit</mat-icon> Modifier
+        </button>
+        <button mat-flat-button color="primary" (click)="openNewVersion(d)"
+                [disabled]="d.status === 'ARCHIVED'">
+          <mat-icon>add_circle</mat-icon> Nouvelle version
+        </button>
+        <button mat-stroked-button color="warn" (click)="archive(d)"
+                [disabled]="d.status === 'ARCHIVED'">
+          <mat-icon>inventory_2</mat-icon> Archiver
+        </button>
+      </div>
+    </header>
+
+    <mat-card class="versions-card">
+      <mat-card-header><mat-card-title>Versions ({{ d.versions.length }})</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="d.versions">
+          <ng-container matColumnDef="versionNumber">
+            <th mat-header-cell *matHeaderCellDef>#</th>
+            <td mat-cell *matCellDef="let v">
+              <strong>v{{ v.versionNumber }}</strong>
+              <mat-icon *ngIf="d.currentVersionId === v.id" class="star"
+                        matTooltip="Version courante">star</mat-icon>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Statut</th>
+            <td mat-cell *matCellDef="let v"><span [class]="versionBadge(v.status)">{{ v.status }}</span></td>
+          </ng-container>
+
+          <ng-container matColumnDef="changeNote">
+            <th mat-header-cell *matHeaderCellDef>Note</th>
+            <td mat-cell *matCellDef="let v">{{ v.changeNote || '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="authorId">
+            <th mat-header-cell *matHeaderCellDef>Auteur</th>
+            <td mat-cell *matCellDef="let v"><code class="dim">{{ v.authorId }}</code></td>
+          </ng-container>
+
+          <ng-container matColumnDef="updatedAt">
+            <th mat-header-cell *matHeaderCellDef>Mis à jour</th>
+            <td mat-cell *matCellDef="let v">{{ v.updatedAt }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Workflow</th>
+            <td mat-cell *matCellDef="let v" class="actions">
+              <button mat-icon-button *ngIf="v.status === 'DRAFT'" (click)="submitForReview(v)"
+                      matTooltip="Soumettre à revue">
+                <mat-icon>send</mat-icon>
+              </button>
+              <button mat-icon-button *ngIf="v.status === 'IN_REVIEW'" (click)="approve(v)"
+                      matTooltip="Approuver">
+                <mat-icon>verified</mat-icon>
+              </button>
+              <button mat-icon-button *ngIf="v.status === 'APPROVED'" (click)="publish(v)"
+                      matTooltip="Publier" color="primary">
+                <mat-icon>publish</mat-icon>
+              </button>
+              <button mat-icon-button *ngIf="v.status === 'PUBLISHED' && d.mandatoryRead"
+                      (click)="acknowledge(v)" matTooltip="Acquitter la lecture">
+                <mat-icon>task_alt</mat-icon>
+              </button>
+              <span *ngIf="v.blockchainTxHash" matTooltip="Ancré blockchain" class="chain">
+                <mat-icon>link</mat-icon>
+              </span>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="versionColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: versionColumns"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="documents-detail">
+    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  </section>
+</ng-template>
