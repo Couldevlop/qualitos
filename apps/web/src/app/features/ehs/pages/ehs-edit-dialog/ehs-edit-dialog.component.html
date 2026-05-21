@@ -1,0 +1,49 @@
+<h2 mat-dialog-title>Modifier l'incident</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="ehs-form">
+  <mat-dialog-content>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Titre</mat-label>
+      <input matInput formControlName="title" maxlength="250" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="3" maxlength="4000"></textarea>
+    </mat-form-field>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Lieu</mat-label>
+        <input matInput formControlName="location" maxlength="500">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col col-small">
+        <mat-label>Sévérité</mat-label>
+        <mat-select formControlName="severity" required>
+          <mat-option *ngFor="let s of severities" [value]="s">{{ s }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Personnes impliquées</mat-label>
+      <textarea matInput formControlName="personsInvolved" rows="2" maxlength="1000"
+                placeholder="Anonyme si pertinent — pas de PII non nécessaire (RGPD)"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Normes concernées (CSV)</mat-label>
+      <input matInput formControlName="standardsCsv" maxlength="500"
+             placeholder="iso-45001, iso-14001, …">
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
+      <mat-icon *ngIf="!submitting">check</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      Enregistrer
+    </button>
+  </mat-dialog-actions>
+</form>

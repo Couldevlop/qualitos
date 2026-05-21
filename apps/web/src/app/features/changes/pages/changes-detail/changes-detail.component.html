@@ -1,0 +1,187 @@
+<ng-container *ngIf="change$ | async as c; else fallback">
+  <section class="changes-detail">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/changes" class="back"><mat-icon>arrow_back</mat-icon> Changements</a>
+        <h1>
+          <code>{{ c.code }}</code>
+          {{ c.title }}
+        </h1>
+        <div class="meta-row">
+          <span class="dim">{{ typeLabel(c.type) }}</span>
+          <span [class]="priorityBadge(c.priority)">{{ c.priority }}</span>
+          <span [class]="statusBadge(c.status)">{{ c.status }}</span>
+          <span class="dim" *ngIf="c.plannedFor">Prévu : {{ c.plannedFor }}</span>
+          <span class="dim" *ngIf="c.implementedAt">Implémenté : {{ c.implementedAt }}</span>
+        </div>
+        <p *ngIf="c.description" class="desc">{{ c.description }}</p>
+        <p *ngIf="c.rejectionReason" class="warn">Motif de rejet : {{ c.rejectionReason }}</p>
+      </div>
+
+      <div class="toolbar">
+        <button mat-stroked-button (click)="openEdit(c)"
+                [disabled]="c.status === 'IMPLEMENTED' || c.status === 'REJECTED' || c.status === 'CANCELLED'">
+          <mat-icon>edit</mat-icon> Modifier
+        </button>
+        <button mat-flat-button color="primary" *ngIf="c.status === 'DRAFT'" (click)="submitForReview(c)">
+          <mat-icon>send</mat-icon> Soumettre
+        </button>
+        <button mat-flat-button color="primary" *ngIf="c.status === 'APPROVED'" (click)="openImplement(c)">
+          <mat-icon>publish</mat-icon> Implémenter
+        </button>
+        <button mat-stroked-button color="warn"
+                *ngIf="c.status !== 'IMPLEMENTED' && c.status !== 'REJECTED' && c.status !== 'CANCELLED'"
+                (click)="cancel(c)">
+          <mat-icon>cancel</mat-icon> Annuler
+        </button>
+        <button mat-stroked-button color="warn" (click)="remove(c)">
+          <mat-icon>delete</mat-icon> Supprimer
+        </button>
+      </div>
+    </header>
+
+    <div class="stats-grid" *ngIf="summary">
+      <mat-card class="stat-card">
+        <span class="stat-label">Approbateurs</span>
+        <strong>{{ summary.totalApprovers }}</strong>
+      </mat-card>
+      <mat-card class="stat-card">
+        <span class="stat-label">Approuvés</span>
+        <strong class="good">{{ summary.approved }}</strong>
+      </mat-card>
+      <mat-card class="stat-card">
+        <span class="stat-label">Rejetés</span>
+        <strong [class.bad]="summary.rejected > 0">{{ summary.rejected }}</strong>
+      </mat-card>
+      <mat-card class="stat-card">
+        <span class="stat-label">En attente</span>
+        <strong>{{ summary.pending }}</strong>
+      </mat-card>
+      <mat-card class="stat-card">
+        <span class="stat-label">Impacts</span>
+        <strong>{{ summary.impactCount }}</strong>
+      </mat-card>
+    </div>
+
+    <div class="content-grid">
+      <mat-card>
+        <mat-card-header><mat-card-title>Synthèse impact</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p *ngIf="c.impactSummary; else noImpact">{{ c.impactSummary }}</p>
+          <ng-template #noImpact><p class="dim">Aucune synthèse renseignée.</p></ng-template>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-header><mat-card-title>Analyse de risque</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p *ngIf="c.riskAssessment; else noRisk">{{ c.riskAssessment }}</p>
+          <ng-template #noRisk><p class="dim">Aucune analyse renseignée.</p></ng-template>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <mat-card class="approvals-card">
+      <mat-card-header class="card-head">
+        <mat-card-title>Approbations ({{ approvals.length }})</mat-card-title>
+        <div class="card-actions">
+          <button mat-stroked-button color="primary" (click)="openAddApprover(c)"
+                  [disabled]="c.status === 'IMPLEMENTED' || c.status === 'REJECTED' || c.status === 'CANCELLED'">
+            <mat-icon>person_add</mat-icon> Ajouter
+          </button>
+          <button mat-stroked-button (click)="decide(c, 'APPROVED')"
+                  *ngIf="c.status === 'SUBMITTED' || c.status === 'UNDER_REVIEW'">
+            <mat-icon>verified</mat-icon> Approuver
+          </button>
+          <button mat-stroked-button color="warn" (click)="decide(c, 'REJECTED')"
+                  *ngIf="c.status === 'SUBMITTED' || c.status === 'UNDER_REVIEW'">
+            <mat-icon>block</mat-icon> Rejeter
+          </button>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="approvals" *ngIf="approvals.length; else emptyAp">
+          <ng-container matColumnDef="approverUserId">
+            <th mat-header-cell *matHeaderCellDef>Approbateur</th>
+            <td mat-cell *matCellDef="let a"><code class="dim">{{ a.approverUserId }}</code></td>
+          </ng-container>
+          <ng-container matColumnDef="approvalLevel">
+            <th mat-header-cell *matHeaderCellDef>Niveau</th>
+            <td mat-cell *matCellDef="let a">{{ a.approvalLevel }}</td>
+          </ng-container>
+          <ng-container matColumnDef="decision">
+            <th mat-header-cell *matHeaderCellDef>Décision</th>
+            <td mat-cell *matCellDef="let a"><span [class]="decisionBadge(a.decision)">{{ a.decision }}</span></td>
+          </ng-container>
+          <ng-container matColumnDef="comment">
+            <th mat-header-cell *matHeaderCellDef>Commentaire</th>
+            <td mat-cell *matCellDef="let a">{{ a.comment || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="decidedAt">
+            <th mat-header-cell *matHeaderCellDef>Décidé le</th>
+            <td mat-cell *matCellDef="let a">{{ a.decidedAt || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let a">
+              <button mat-icon-button (click)="removeApprover(c, a)" matTooltip="Retirer">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="approvalColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: approvalColumns"></tr>
+        </table>
+        <ng-template #emptyAp><p class="dim empty">Aucun approbateur défini.</p></ng-template>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="impacts-card">
+      <mat-card-header class="card-head">
+        <mat-card-title>Impacts ({{ impacts.length }})</mat-card-title>
+        <button mat-stroked-button color="primary" (click)="openAddImpact(c)">
+          <mat-icon>add</mat-icon> Ajouter un impact
+        </button>
+      </mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="impacts" *ngIf="impacts.length; else emptyIm">
+          <ng-container matColumnDef="targetType">
+            <th mat-header-cell *matHeaderCellDef>Type</th>
+            <td mat-cell *matCellDef="let im">{{ targetLabel(im.targetType) }}</td>
+          </ng-container>
+          <ng-container matColumnDef="targetId">
+            <th mat-header-cell *matHeaderCellDef>UUID cible</th>
+            <td mat-cell *matCellDef="let im"><code class="dim">{{ im.targetId }}</code></td>
+          </ng-container>
+          <ng-container matColumnDef="notes">
+            <th mat-header-cell *matHeaderCellDef>Notes</th>
+            <td mat-cell *matCellDef="let im">{{ im.notes || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef>Ajouté</th>
+            <td mat-cell *matCellDef="let im">{{ im.createdAt }}</td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let im">
+              <button mat-icon-button (click)="removeImpact(c, im)" matTooltip="Retirer">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="impactColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: impactColumns"></tr>
+        </table>
+        <ng-template #emptyIm><p class="dim empty">Aucun impact référencé.</p></ng-template>
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="changes-detail">
+    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  </section>
+</ng-template>

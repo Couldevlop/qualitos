@@ -1,0 +1,9 @@
+.chg-form { display: flex; flex-direction: column; min-width: 640px; max-width: 760px; }
+mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.full { width: 100%; }
+.row { display: flex; gap: 12px; }
+.col { flex: 1; min-width: 0; }
+.col-code { max-width: 220px; }
+.col-prio { max-width: 140px; }
+mat-dialog-actions { padding: 12px 0 0; gap: 8px; }
+mat-dialog-actions button[type='submit'] { display: inline-flex; align-items: center; gap: 6px; }

@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="dec-form">
+  <mat-dialog-content>
+    <p [class.warn]="danger">
+      <ng-container *ngIf="danger">
+        Un seul rejet marque la demande comme REJECTED — décision terminale.
+      </ng-container>
+      <ng-container *ngIf="!danger">
+        Votre approbation sera enregistrée. La demande passera en APPROVED lorsque tous
+        les approbateurs auront statué.
+      </ng-container>
+    </p>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Commentaire {{ danger ? '(obligatoire)' : '(optionnel)' }}</mat-label>
+      <textarea matInput formControlName="comment" rows="4" maxlength="1000"></textarea>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button [color]="danger ? 'warn' : 'primary'" type="submit"
+            [disabled]="form.invalid || submitting">
+      <mat-icon *ngIf="!submitting">{{ danger ? 'block' : 'verified' }}</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      {{ danger ? 'Rejeter' : 'Approuver' }}
+    </button>
+  </mat-dialog-actions>
+</form>
