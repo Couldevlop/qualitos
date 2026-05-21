@@ -1,0 +1,123 @@
+<ng-container *ngIf="incident$ | async as i; else fallback">
+  <section class="ehs-detail">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/ehs" class="back">
+          <mat-icon>arrow_back</mat-icon> Incidents EHS
+        </a>
+        <h1>
+          <code>{{ i.code }}</code>
+          {{ i.title }}
+        </h1>
+        <div class="meta-row">
+          <span class="dim">{{ typeLabel(i.type) }}</span>
+          <span [class]="severityBadge(i.severity)">{{ i.severity }}</span>
+          <span [class]="statusBadge(i.status)">{{ i.status }}</span>
+          <span class="dim" *ngIf="i.occurredAt">Survenu : {{ i.occurredAt }}</span>
+          <span class="dim">Reporté : {{ i.reportedAt }}</span>
+          <span class="dim" *ngIf="i.mitigatedAt">Mitigé : {{ i.mitigatedAt }}</span>
+          <span class="dim" *ngIf="i.closedAt">Clôturé : {{ i.closedAt }}</span>
+        </div>
+        <p *ngIf="i.location" class="loc"><mat-icon>place</mat-icon> {{ i.location }}</p>
+        <p *ngIf="i.description" class="desc">{{ i.description }}</p>
+      </div>
+
+      <div class="toolbar">
+        <button mat-stroked-button (click)="openEdit(i)"
+                [disabled]="i.status === 'CLOSED' || i.status === 'CANCELLED'">
+          <mat-icon>edit</mat-icon> Modifier
+        </button>
+        <button mat-flat-button color="primary" *ngIf="i.status === 'REPORTED'" (click)="investigate(i)">
+          <mat-icon>search</mat-icon> Investiguer
+        </button>
+        <button mat-flat-button color="primary" *ngIf="i.status === 'INVESTIGATING'" (click)="openMitigate(i)">
+          <mat-icon>healing</mat-icon> Mitiger
+        </button>
+        <button mat-stroked-button *ngIf="i.status === 'MITIGATED'" (click)="close(i)">
+          <mat-icon>check_circle</mat-icon> Clôturer
+        </button>
+        <button mat-stroked-button color="warn"
+                *ngIf="i.status !== 'CLOSED' && i.status !== 'CANCELLED'" (click)="cancel(i)">
+          <mat-icon>cancel</mat-icon> Annuler
+        </button>
+        <button mat-stroked-button color="warn" (click)="remove(i)">
+          <mat-icon>delete</mat-icon> Supprimer
+        </button>
+      </div>
+    </header>
+
+    <div class="content-grid">
+      <mat-card *ngIf="i.personsInvolved">
+        <mat-card-header><mat-card-title>Personnes impliquées</mat-card-title></mat-card-header>
+        <mat-card-content><p>{{ i.personsInvolved }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="i.rootCause">
+        <mat-card-header><mat-card-title>Cause racine</mat-card-title></mat-card-header>
+        <mat-card-content><p>{{ i.rootCause }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="i.correctiveActions">
+        <mat-card-header><mat-card-title>Actions correctives</mat-card-title></mat-card-header>
+        <mat-card-content><p>{{ i.correctiveActions }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="i.standardsCsv">
+        <mat-card-header><mat-card-title>Normes concernées</mat-card-title></mat-card-header>
+        <mat-card-content><p><code>{{ i.standardsCsv }}</code></p></mat-card-content>
+      </mat-card>
+    </div>
+
+    <mat-card class="links-card">
+      <mat-card-header class="card-head">
+        <mat-card-title>Liens transverses</mat-card-title>
+        <div class="card-actions">
+          <button mat-stroked-button (click)="openLink(i, 'CAPA')">
+            <mat-icon>link</mat-icon> Lier un CAPA
+          </button>
+          <button mat-stroked-button (click)="openLink(i, 'NC')">
+            <mat-icon>link</mat-icon> Lier une NC
+          </button>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <table class="link-table">
+          <tr>
+            <th>Cas CAPA</th>
+            <td>
+              <code *ngIf="i.capaCaseId">{{ i.capaCaseId }}</code>
+              <span *ngIf="!i.capaCaseId" class="dim">Aucun cas CAPA lié</span>
+            </td>
+          </tr>
+          <tr>
+            <th>Non-conformité</th>
+            <td>
+              <code *ngIf="i.ncId">{{ i.ncId }}</code>
+              <span *ngIf="!i.ncId" class="dim">Aucune NC liée</span>
+            </td>
+          </tr>
+          <tr>
+            <th>Propriétaire investigation</th>
+            <td>
+              <code *ngIf="i.ownerUserId" class="dim">{{ i.ownerUserId }}</code>
+              <span *ngIf="!i.ownerUserId" class="dim">—</span>
+            </td>
+          </tr>
+          <tr>
+            <th>Reporté par</th>
+            <td><code class="dim">{{ i.reportedBy }}</code></td>
+          </tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="ehs-detail">
+    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  </section>
+</ng-template>

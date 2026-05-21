@@ -70,6 +70,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/changes/changes.module').then(m => m.ChangesModule)
       },
       {
+        path: 'ehs',
+        loadChildren: () => import('./features/ehs/ehs.module').then(m => m.EhsModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)
