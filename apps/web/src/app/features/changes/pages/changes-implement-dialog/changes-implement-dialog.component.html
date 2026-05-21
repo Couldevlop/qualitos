@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>Marquer comme implémenté</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="impl-form">
+  <mat-dialog-content>
+    <p class="hint">Le changement doit être APPROVED. La transition vers IMPLEMENTED est terminale.</p>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Date d'implémentation</mat-label>
+      <input matInput formControlName="implementedAt" type="date" required>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
+      <mat-icon *ngIf="!submitting">check</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      Confirmer
+    </button>
+  </mat-dialog-actions>
+</form>

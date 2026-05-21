@@ -66,6 +66,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/training/training.module').then(m => m.TrainingModule)
       },
       {
+        path: 'changes',
+        loadChildren: () => import('./features/changes/changes.module').then(m => m.ChangesModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)
