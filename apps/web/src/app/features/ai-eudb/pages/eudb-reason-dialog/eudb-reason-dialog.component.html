@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="rsn-form">
+  <mat-dialog-content>
+    <p class="warn-note"><strong>{{ hint }}</strong></p>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Motif</mat-label>
+      <textarea matInput formControlName="reason" rows="5" maxlength="2000" required></textarea>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button color="warn" type="submit" [disabled]="form.invalid || submitting">
+      <mat-icon *ngIf="!submitting">{{ data.mode === 'REJECT' ? 'block' : 'archive' }}</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      Confirmer
+    </button>
+  </mat-dialog-actions>
+</form>

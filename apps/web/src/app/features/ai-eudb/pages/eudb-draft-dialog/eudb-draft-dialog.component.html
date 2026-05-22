@@ -1,0 +1,56 @@
+<h2 mat-dialog-title>Nouveau brouillon EUDB</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="drf-form">
+  <mat-dialog-content>
+    <p class="hint">Brouillon d'enregistrement EUDB — pas envoyé tant que vous n'avez pas
+       cliqué sur "Soumettre" dans le détail. Modifiable librement avant soumission.</p>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Référence interne</mat-label>
+        <input matInput formControlName="reference" maxlength="64" required
+               placeholder="EUDB-2026-XYZ-001">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>UUID système IA</mat-label>
+        <input matInput formControlName="aiSystemId" required
+               placeholder="00000000-0000-0000-0000-000000000000">
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Nom du fournisseur</mat-label>
+      <input matInput formControlName="providerEntityName" maxlength="250">
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Représentant UE (si fournisseur hors UE)</mat-label>
+      <input matInput formControlName="providerEuRepresentative" maxlength="250">
+    </mat-form-field>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="col-3">
+        <mat-label>État membre (ISO 3166-1 α-2)</mat-label>
+        <input matInput formControlName="memberStateOfReference" maxlength="2"
+               placeholder="FR" style="text-transform: uppercase;">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col-grow">
+        <mat-label>Ref. documentation technique</mat-label>
+        <input matInput formControlName="technicalDocumentationReference" maxlength="250">
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Résumé de la finalité prévue</mat-label>
+      <textarea matInput formControlName="intendedPurposeSummary" rows="4" maxlength="4000"></textarea>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
+      <mat-icon *ngIf="!submitting">save</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      Créer le brouillon
+    </button>
+  </mat-dialog-actions>
+</form>
