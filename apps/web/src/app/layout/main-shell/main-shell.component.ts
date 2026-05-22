@@ -83,7 +83,8 @@ export class MainShellComponent implements OnInit {
         { label: 'GDPR · Transferts',route: '/cross-border',      icon: 'public' },
         { label: 'GDPR · DPA Art.28', route: '/processor-agreements', icon: 'handshake' },
         { label: 'GDPR',             route: '/gdpr',              icon: 'shield_lock' },
-        { label: 'NIS 2',        route: '/nis2',   icon: 'security' }
+        { label: 'NIS 2',          route: '/nis2',           icon: 'security' },
+        { label: 'NIS 2 · Mesures',route: '/nis2-measures',  icon: 'rule' }
       ]
     }
   ];

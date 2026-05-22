@@ -134,6 +134,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/ai-eudb/ai-eudb.module').then(m => m.AiEudbModule)
       },
       {
+        path: 'nis2-measures',
+        loadChildren: () => import('./features/nis2-measures/nis2-measures.module').then(m => m.Nis2MeasuresModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)

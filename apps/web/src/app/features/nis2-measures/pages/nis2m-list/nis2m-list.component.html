@@ -1,0 +1,102 @@
+<section class="nis2m-list">
+
+  <header class="head">
+    <div>
+      <h1>NIS 2 · Mesures de gestion du risque cyber</h1>
+      <p class="sub">Art. 21 (a-j) — mesures techniques, opérationnelles et organisationnelles obligatoires pour les entités essentielles et importantes.</p>
+    </div>
+    <div class="actions">
+      <button mat-flat-button color="primary" (click)="plan()">
+        <mat-icon>add</mat-icon> Planifier une mesure
+      </button>
+    </div>
+  </header>
+
+  <div class="filters">
+    <mat-form-field appearance="outline" class="mode-filter">
+      <mat-label>Mode</mat-label>
+      <mat-select [formControl]="modeCtrl">
+        <mat-option value="ALL">Toutes</mat-option>
+        <mat-option value="OVERDUE">Revue en retard</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="status-filter">
+      <mat-label>Statut</mat-label>
+      <mat-select [formControl]="statusCtrl">
+        <mat-option value="">Tous</mat-option>
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="category-filter">
+      <mat-label>Catégorie Art. 21</mat-label>
+      <mat-select [formControl]="categoryCtrl">
+        <mat-option value="">Toutes</mat-option>
+        <mat-option *ngFor="let c of categories" [value]="c">{{ catLabel(c) }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+
+  <table mat-table [dataSource]="(rows$ | async) ?? []" class="qos-table" *ngIf="(rows$ | async)?.length; else empty">
+
+    <ng-container matColumnDef="reference">
+      <th mat-header-cell *matHeaderCellDef>Référence</th>
+      <td mat-cell *matCellDef="let r"><code>{{ r.reference }}</code></td>
+    </ng-container>
+
+    <ng-container matColumnDef="category">
+      <th mat-header-cell *matHeaderCellDef>Catégorie</th>
+      <td mat-cell *matCellDef="let r"><span class="cat-pill">{{ catLabel(r.category) }}</span></td>
+    </ng-container>
+
+    <ng-container matColumnDef="title">
+      <th mat-header-cell *matHeaderCellDef>Titre</th>
+      <td mat-cell *matCellDef="let r">{{ r.title }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="maturity">
+      <th mat-header-cell *matHeaderCellDef>Maturité</th>
+      <td mat-cell *matCellDef="let r"><span class="maturity">{{ r.maturityLevel }}/5</span></td>
+    </ng-container>
+
+    <ng-container matColumnDef="risk">
+      <th mat-header-cell *matHeaderCellDef>Risque résiduel</th>
+      <td mat-cell *matCellDef="let r"><span [class]="riskBadge(r.residualRiskRating)">{{ r.residualRiskRating }}</span></td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <td mat-cell *matCellDef="let r">
+        <span [class]="statusBadge(r.status)">{{ r.status }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="nextReview">
+      <th mat-header-cell *matHeaderCellDef>Prochaine revue</th>
+      <td mat-cell *matCellDef="let r">
+        <ng-container *ngIf="r.nextReviewDueAt; else noReview">
+          <span *ngIf="r.reviewOverdue" class="flag flag-overdue">
+            <mat-icon>warning</mat-icon> {{ r.nextReviewDueAt | slice:0:10 }}
+          </span>
+          <span *ngIf="!r.reviewOverdue">{{ r.nextReviewDueAt | slice:0:10 }}</span>
+        </ng-container>
+        <ng-template #noReview><span class="dim">—</span></ng-template>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns" (click)="open(row)" class="row-link"></tr>
+  </table>
+
+  <ng-template #empty>
+    <div *ngIf="!(loading$ | async)" class="empty">
+      <mat-icon>security</mat-icon>
+      <p>Aucune mesure pour le filtre courant.</p>
+    </div>
+  </ng-template>
+
+</section>

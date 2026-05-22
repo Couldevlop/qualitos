@@ -1,0 +1,149 @@
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
+
+import { ConfirmDialogComponent } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
+import { safeErrorMessage } from '../../../../core/http/error-message';
+import { Nis2MeasuresService } from '../../nis2m.service';
+import {
+  CATEGORY_LABEL,
+  Nis2MeasureCategory,
+  Nis2MeasureStatus,
+  Nis2MeasureView,
+  ResidualRiskRating
+} from '../../nis2m.types';
+import { Nis2mEditDialogComponent } from '../nis2m-edit-dialog/nis2m-edit-dialog.component';
+import { Nis2mReviewDialogComponent } from '../nis2m-review-dialog/nis2m-review-dialog.component';
+
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+@Component({
+  selector: 'qos-nis2m-detail',
+  templateUrl: './nis2m-detail.component.html',
+  styleUrls: ['./nis2m-detail.component.scss'],
+  standalone: false
+})
+export class Nis2mDetailComponent implements OnInit {
+
+  row$!: Observable<Nis2MeasureView | null>;
+  loading$ = new BehaviorSubject<boolean>(false);
+  error$   = new BehaviorSubject<string | null>(null);
+  readonly categoryLabel = CATEGORY_LABEL;
+
+  private readonly refresh$ = new BehaviorSubject<void>(undefined);
+
+  constructor(
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly svc: Nis2MeasuresService,
+    private readonly dialog: MatDialog,
+    private readonly snack: MatSnackBar
+  ) {}
+
+  ngOnInit(): void {
+    this.row$ = this.route.paramMap.pipe(
+      tap(() => { this.loading$.next(true); this.error$.next(null); }),
+      switchMap(p => {
+        const id = p.get('id') ?? '';
+        if (!UUID_REGEX.test(id) && !id.startsWith('nis2m-')) {
+          this.error$.next('Identifiant invalide.');
+          this.loading$.next(false);
+          return of(null);
+        }
+        return this.refresh$.pipe(
+          switchMap(() => this.svc.get(id).pipe(
+            catchError(err => {
+              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              return of(null);
+            }),
+            tap(() => this.loading$.next(false))
+          ))
+        );
+      })
+    );
+  }
+
+  edit(m: Nis2MeasureView): void {
+    this.dialog.open(Nis2mEditDialogComponent, {
+      data: { row: m }, panelClass: 'qos-dialog-panel',
+      autoFocus: 'first-tabbable', restoreFocus: true
+    }).afterClosed().subscribe(u => { if (u) this.refresh$.next(); });
+  }
+
+  start(m: Nis2MeasureView): void {
+    this.svc.startImplementation(m.id).subscribe({
+      next: () => { this.snack.open('Implémentation démarrée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, 'Démarrage impossible.')
+    });
+  }
+
+  markImplemented(m: Nis2MeasureView): void {
+    this.svc.markImplemented(m.id).subscribe({
+      next: () => { this.snack.open('Marquée comme implémentée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, 'Marquage impossible.')
+    });
+  }
+
+  verify(m: Nis2MeasureView): void {
+    this.dialog.open(Nis2mReviewDialogComponent, {
+      data: { id: m.id, mode: 'VERIFY' }, panelClass: 'qos-dialog-panel',
+      autoFocus: 'first-tabbable', restoreFocus: true
+    }).afterClosed().subscribe(u => { if (u) this.refresh$.next(); });
+  }
+
+  review(m: Nis2MeasureView): void {
+    this.dialog.open(Nis2mReviewDialogComponent, {
+      data: { id: m.id, mode: 'REVIEW' }, panelClass: 'qos-dialog-panel',
+      autoFocus: 'first-tabbable', restoreFocus: true
+    }).afterClosed().subscribe(u => { if (u) this.refresh$.next(); });
+  }
+
+  deprecate(m: Nis2MeasureView): void {
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      data: { title: 'Désactiver la mesure ?',
+              message: 'La mesure passe en DEPRECATED. Cette action est terminale.',
+              confirmLabel: 'Désactiver', cancelLabel: 'Annuler', danger: true }
+    });
+    ref.afterClosed().subscribe(ok => {
+      if (!ok) return;
+      this.svc.deprecate(m.id).subscribe({
+        next: () => { this.snack.open('Mesure désactivée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, 'Désactivation impossible.')
+      });
+    });
+  }
+
+  remove(m: Nis2MeasureView): void {
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      data: { title: 'Supprimer la mesure ?', message: 'Suppression définitive.',
+              confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true }
+    });
+    ref.afterClosed().subscribe(ok => {
+      if (!ok) return;
+      this.svc.delete(m.id).subscribe({
+        next: () => { this.snack.open('Mesure supprimée.', 'OK', { duration: 2200 }); this.router.navigate(['/nis2-measures']); },
+        error: err => this.fail(err, 'Suppression impossible.')
+      });
+    });
+  }
+
+  catLabel(c: Nis2MeasureCategory): string  { return this.categoryLabel[c]; }
+  statusBadge(s: Nis2MeasureStatus): string { return 'badge badge-' + s.toLowerCase(); }
+  riskBadge(r: ResidualRiskRating): string  { return 'risk risk-' + r.toLowerCase(); }
+
+  canEdit(s: Nis2MeasureStatus): boolean      { return s !== 'DEPRECATED'; }
+  canStart(s: Nis2MeasureStatus): boolean     { return s === 'PLANNED'; }
+  canImplement(s: Nis2MeasureStatus): boolean { return s === 'IN_PROGRESS'; }
+  canVerify(s: Nis2MeasureStatus): boolean    { return s === 'IMPLEMENTED'; }
+  canReview(s: Nis2MeasureStatus): boolean    { return s === 'VERIFIED'; }
+  canDeprecate(s: Nis2MeasureStatus): boolean { return s !== 'DEPRECATED'; }
+
+  private fail(err: unknown, fallback: string): void {
+    // eslint-disable-next-line no-console
+    console.warn('[nis2m-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
+    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+  }
+}
