@@ -1,0 +1,7 @@
+.rsn-form { display: flex; flex-direction: column; min-width: 520px; max-width: 660px; }
+.warn { margin: 0 0 12px; padding: 10px 12px; background: #fbe9e7; color: #b71c1c;
+        border-left: 4px solid #b71c1c; border-radius: 4px; line-height: 1.5; font-size: 13px; }
+mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.full { width: 100%; }
+mat-dialog-actions { padding: 12px 0 0; gap: 8px; }
+mat-dialog-actions button[type='submit'] { display: inline-flex; align-items: center; gap: 6px; }
