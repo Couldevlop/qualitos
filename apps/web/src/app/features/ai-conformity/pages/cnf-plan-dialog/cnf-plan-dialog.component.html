@@ -1,0 +1,63 @@
+<h2 mat-dialog-title>Planifier une évaluation de conformité</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="cnf-form">
+  <mat-dialog-content>
+    <p class="hint">Art. 43 AI Act — choisir la procédure adaptée :
+       contrôle interne (Annexe VI) pour non-high-risk, organisme notifié
+       (Annexe VII) pour high-risk Annexe III §1.a et certains autres.</p>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Référence</mat-label>
+      <input matInput formControlName="reference" maxlength="64" required
+             placeholder="CA-TELEMED-2026">
+    </mat-form-field>
+    <div class="row">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>UUID système IA</mat-label>
+        <input matInput formControlName="aiSystemId" required
+               placeholder="00000000-0000-0000-0000-000000000000">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>UUID QMS (optionnel)</mat-label>
+        <input matInput formControlName="qmsId">
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Procédure</mat-label>
+      <mat-select formControlName="procedure" required>
+        <mat-option value="INTERNAL_CONTROL">Contrôle interne (Annexe VI)</mat-option>
+        <mat-option value="NOTIFIED_BODY">Organisme notifié (Annexe VII)</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="row" *ngIf="isNotifiedBody()">
+      <mat-form-field appearance="outline" class="col col-small">
+        <mat-label>ID Notified Body (4 chiffres)</mat-label>
+        <input matInput formControlName="notifiedBodyId" maxlength="8"
+               placeholder="0123">
+        <mat-error *ngIf="form.controls.notifiedBodyId.hasError('pattern')">
+          4 chiffres exactement.
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Nom de l'organisme</mat-label>
+        <input matInput formControlName="notifiedBodyName" maxlength="250">
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Périmètre de l'évaluation</mat-label>
+      <textarea matInput formControlName="scope" rows="5" maxlength="4000" required></textarea>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
+      <mat-icon *ngIf="!submitting">check</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      Planifier
+    </button>
+  </mat-dialog-actions>
+</form>

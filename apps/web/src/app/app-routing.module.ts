@@ -118,6 +118,14 @@ const routes: Routes = [
         loadChildren: () => import('./features/processor-agreements/processor-agreements.module').then(m => m.ProcessorAgreementsModule)
       },
       {
+        path: 'ai-qms',
+        loadChildren: () => import('./features/ai-qms/ai-qms.module').then(m => m.AiQmsModule)
+      },
+      {
+        path: 'ai-conformity',
+        loadChildren: () => import('./features/ai-conformity/ai-conformity.module').then(m => m.AiConformityModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)
