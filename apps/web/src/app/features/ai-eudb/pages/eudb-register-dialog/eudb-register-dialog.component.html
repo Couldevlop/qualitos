@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>Marquer comme enregistré (EUDB)</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="reg-form">
+  <mat-dialog-content>
+    <p class="hint">Renseignez l'identifiant officiel attribué par la base EUDB
+       (format <code>EUDB-AI-XXXXXX</code>) et la date d'enregistrement.</p>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>EUDB ID</mat-label>
+      <input matInput formControlName="eudbId" maxlength="64" required
+             placeholder="EUDB-AI-A4F92K71" style="text-transform: uppercase;">
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Date d'enregistrement</mat-label>
+      <input matInput formControlName="registrationDate" type="datetime-local" required>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
+      <mat-icon *ngIf="!submitting">how_to_reg</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      Marquer enregistré
+    </button>
+  </mat-dialog-actions>
+</form>

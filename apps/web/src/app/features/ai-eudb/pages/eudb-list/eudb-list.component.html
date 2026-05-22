@@ -1,0 +1,74 @@
+<section class="eudb-list">
+
+  <header class="head">
+    <div>
+      <h1>EUDB · Enregistrements AI Act</h1>
+      <p class="sub">Art. 49 / 71 — base de données européenne des systèmes d'IA à haut risque.</p>
+    </div>
+    <div class="actions">
+      <button mat-flat-button color="primary" (click)="draft()">
+        <mat-icon>add</mat-icon> Nouveau brouillon
+      </button>
+    </div>
+  </header>
+
+  <div class="filters">
+    <mat-form-field appearance="outline" class="status-filter">
+      <mat-label>Statut</mat-label>
+      <mat-select [formControl]="statusCtrl">
+        <mat-option value="">Tous</mat-option>
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+
+  <table mat-table [dataSource]="(rows$ | async) ?? []" class="qos-table" *ngIf="(rows$ | async)?.length; else empty">
+
+    <ng-container matColumnDef="reference">
+      <th mat-header-cell *matHeaderCellDef>Référence</th>
+      <td mat-cell *matCellDef="let r"><code>{{ r.reference }}</code></td>
+    </ng-container>
+
+    <ng-container matColumnDef="eudbId">
+      <th mat-header-cell *matHeaderCellDef>EUDB ID</th>
+      <td mat-cell *matCellDef="let r">
+        <code *ngIf="r.eudbId; else noEudbId">{{ r.eudbId }}</code>
+        <ng-template #noEudbId><span class="dim">—</span></ng-template>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="providerEntityName">
+      <th mat-header-cell *matHeaderCellDef>Fournisseur</th>
+      <td mat-cell *matCellDef="let r">{{ r.providerEntityName || '—' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="memberState">
+      <th mat-header-cell *matHeaderCellDef>État membre</th>
+      <td mat-cell *matCellDef="let r">{{ r.memberStateOfReference || '—' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <td mat-cell *matCellDef="let r"><span [class]="statusBadge(r.status)">{{ r.status }}</span></td>
+    </ng-container>
+
+    <ng-container matColumnDef="updatedAt">
+      <th mat-header-cell *matHeaderCellDef>Mis à jour</th>
+      <td mat-cell *matCellDef="let r">{{ r.updatedAt | slice:0:10 }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns" (click)="open(row)" class="row-link"></tr>
+  </table>
+
+  <ng-template #empty>
+    <div *ngIf="!(loading$ | async)" class="empty">
+      <mat-icon>storage</mat-icon>
+      <p>Aucun enregistrement EUDB pour le filtre courant.</p>
+    </div>
+  </ng-template>
+
+</section>

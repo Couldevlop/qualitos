@@ -1,0 +1,135 @@
+<ng-container *ngIf="row$ | async as r; else fallback">
+  <section class="eudb-detail">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/ai-eudb" class="back">
+          <mat-icon>arrow_back</mat-icon> EUDB · Enregistrements
+        </a>
+        <h1>
+          <code>{{ r.reference }}</code>
+          <span *ngIf="r.eudbId" class="eudb-id">{{ r.eudbId }}</span>
+        </h1>
+        <div class="meta-row">
+          <span [class]="statusBadge(r.status)">{{ r.status }}</span>
+          <span class="dim" *ngIf="r.memberStateOfReference">État membre : {{ r.memberStateOfReference }}</span>
+          <span class="dim">Mis à jour : {{ r.updatedAt | slice:0:10 }}</span>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button mat-stroked-button *ngIf="canEdit(r.status)" (click)="edit(r)">
+          <mat-icon>edit</mat-icon> Éditer
+        </button>
+        <button mat-flat-button color="primary" *ngIf="canSubmit(r.status)" (click)="submit(r)">
+          <mat-icon>send</mat-icon> Soumettre
+        </button>
+        <button mat-flat-button color="primary" *ngIf="canRegister(r.status)" (click)="markRegistered(r)">
+          <mat-icon>how_to_reg</mat-icon> Marquer enregistré
+        </button>
+        <button mat-flat-button color="primary" *ngIf="canDeclareUpdate(r.status)" (click)="declareUpdate(r)">
+          <mat-icon>update</mat-icon> Déclarer une MAJ
+        </button>
+        <button mat-stroked-button color="warn" *ngIf="canReject(r.status)" (click)="reject(r)">
+          <mat-icon>block</mat-icon> Rejeter
+        </button>
+        <button mat-stroked-button color="warn" *ngIf="canRetire(r.status)" (click)="retire(r)">
+          <mat-icon>archive</mat-icon> Retirer
+        </button>
+        <button mat-stroked-button color="warn" (click)="remove(r)">
+          <mat-icon>delete</mat-icon> Supprimer
+        </button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <mat-card>
+        <mat-card-header><mat-card-title>Fournisseur</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Entité</th><td>{{ r.providerEntityName || '—' }}</td></tr>
+            <tr><th>Représentant UE</th><td>{{ r.providerEuRepresentative || '—' }}</td></tr>
+            <tr><th>État membre</th><td>{{ r.memberStateOfReference || '—' }}</td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header><mat-card-title>Système IA & doc. technique</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>UUID système IA</th><td><code>{{ r.aiSystemId }}</code></td></tr>
+            <tr><th>Ref. doc. technique</th><td>{{ r.technicalDocumentationReference || '—' }}</td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="span-2" *ngIf="r.intendedPurposeSummary">
+        <mat-card-header><mat-card-title>Finalité prévue</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ r.intendedPurposeSummary }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="r.submittedAt" class="ok-card">
+        <mat-card-header><mat-card-title>Soumission</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Soumis le</th><td>{{ r.submittedAt }}</td></tr>
+            <tr><th>Par</th><td><code>{{ r.submittedByUserId }}</code></td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="r.registrationDate" class="ok-card">
+        <mat-card-header><mat-card-title>Enregistrement EUDB</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>EUDB ID</th><td><code>{{ r.eudbId }}</code></td></tr>
+            <tr><th>Date</th><td>{{ r.registrationDate }}</td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="r.lastUpdateDate" class="span-2">
+        <mat-card-header><mat-card-title>Dernière mise à jour déclarée</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p class="text"><strong>Le {{ r.lastUpdateDate | slice:0:10 }}</strong> — {{ r.lastUpdateSummary }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="r.rejectedAt" class="warn-card span-2">
+        <mat-card-header><mat-card-title>Rejet</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p class="text">{{ r.rejectionReason }}</p>
+          <p class="dim">Rejeté le {{ r.rejectedAt }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="r.retiredAt" class="warn-card span-2">
+        <mat-card-header><mat-card-title>Retrait</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p class="text">{{ r.retirementReason }}</p>
+          <p class="dim">Retiré le {{ r.retiredAt }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="span-2">
+        <mat-card-header><mat-card-title>Trace</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Créé par</th><td><code>{{ r.createdByUserId }}</code></td></tr>
+            <tr><th>Créé le</th><td>{{ r.createdAt }}</td></tr>
+            <tr><th>Dernière MAJ</th><td>{{ r.updatedAt }}</td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="eudb-detail">
+    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  </section>
+</ng-template>

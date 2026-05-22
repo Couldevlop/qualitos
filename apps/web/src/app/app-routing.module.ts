@@ -130,6 +130,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/ai-incidents/ai-incidents.module').then(m => m.AiIncidentsModule)
       },
       {
+        path: 'ai-eudb',
+        loadChildren: () => import('./features/ai-eudb/ai-eudb.module').then(m => m.AiEudbModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)
