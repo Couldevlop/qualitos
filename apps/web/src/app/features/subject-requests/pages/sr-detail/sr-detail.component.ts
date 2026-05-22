@@ -1,0 +1,131 @@
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
+
+import { AuthService } from '../../../../core/auth/auth.service';
+import { safeErrorMessage } from '../../../../core/http/error-message';
+import { SubjectRequestsService } from '../../subject-requests.service';
+import {
+  SubjectRequestStatus,
+  SubjectRequestType,
+  SubjectRequestView
+} from '../../subject-requests.types';
+import { SrCompleteDialogComponent } from '../sr-complete-dialog/sr-complete-dialog.component';
+import { SrExtendDialogComponent } from '../sr-extend-dialog/sr-extend-dialog.component';
+import { SrRejectDialogComponent } from '../sr-reject-dialog/sr-reject-dialog.component';
+
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const MAX_EXTENSION_DAYS = 90; // Art. 12§3 — 3 mois max
+
+@Component({
+  selector: 'qos-sr-detail',
+  templateUrl: './sr-detail.component.html',
+  styleUrls: ['./sr-detail.component.scss'],
+  standalone: false
+})
+export class SrDetailComponent implements OnInit {
+
+  request$!: Observable<SubjectRequestView | null>;
+  loading$ = new BehaviorSubject<boolean>(false);
+  error$   = new BehaviorSubject<string | null>(null);
+
+  private readonly refresh$ = new BehaviorSubject<void>(undefined);
+
+  constructor(
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly svc: SubjectRequestsService,
+    private readonly auth: AuthService,
+    private readonly dialog: MatDialog,
+    private readonly snack: MatSnackBar
+  ) {}
+
+  ngOnInit(): void {
+    this.request$ = this.route.paramMap.pipe(
+      tap(() => { this.loading$.next(true); this.error$.next(null); }),
+      switchMap(p => {
+        const id = p.get('id') ?? '';
+        // OWASP A03 — UUID regex on path id (mock-id fallback).
+        if (!UUID_REGEX.test(id) && !id.startsWith('sr-')) {
+          this.error$.next('Identifiant invalide.');
+          this.loading$.next(false);
+          return of(null);
+        }
+        return this.refresh$.pipe(
+          switchMap(() => this.svc.get(id).pipe(
+            catchError(err => {
+              // eslint-disable-next-line no-console
+              console.warn('[sr-detail] failed', err?.status, err?.error?.title);
+              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              return of(null);
+            }),
+            tap(() => this.loading$.next(false))
+          ))
+        );
+      })
+    );
+  }
+
+  start(r: SubjectRequestView): void {
+    const handledByUserId = this.auth.snapshot()?.userId;
+    if (!handledByUserId) {
+      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      return;
+    }
+    this.svc.start(r.id, { handledByUserId }).subscribe({
+      next: () => { this.snack.open('Demande en cours de traitement.', 'OK', { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, 'Démarrage impossible.')
+    });
+  }
+
+  openComplete(r: SubjectRequestView): void {
+    const ref = this.dialog.open(SrCompleteDialogComponent, {
+      data: { requestId: r.id }, panelClass: 'qos-dialog-panel',
+      autoFocus: 'first-tabbable', restoreFocus: true
+    });
+    ref.afterClosed().subscribe(updated => { if (updated) this.refresh$.next(); });
+  }
+
+  openReject(r: SubjectRequestView): void {
+    const ref = this.dialog.open(SrRejectDialogComponent, {
+      data: { requestId: r.id }, panelClass: 'qos-dialog-panel',
+      autoFocus: 'first-tabbable', restoreFocus: true
+    });
+    ref.afterClosed().subscribe(updated => { if (updated) this.refresh$.next(); });
+  }
+
+  openExtend(r: SubjectRequestView): void {
+    const received = new Date(r.receivedAt);
+    const max = new Date(received.getTime() + MAX_EXTENSION_DAYS * 86400000);
+    const ref = this.dialog.open(SrExtendDialogComponent, {
+      data: { request: r, maxDeadlineIso: max.toISOString() },
+      panelClass: 'qos-dialog-panel',
+      autoFocus: 'first-tabbable', restoreFocus: true
+    });
+    ref.afterClosed().subscribe(updated => { if (updated) this.refresh$.next(); });
+  }
+
+  typeLabel(t: SubjectRequestType): string {
+    return ({
+      ACCESS: 'Accès aux données (Art. 15)',
+      ERASURE: 'Effacement / droit à l\'oubli (Art. 17)',
+      PORTABILITY: 'Portabilité (Art. 20)',
+      RECTIFICATION: 'Rectification (Art. 16)',
+      RESTRICTION: 'Limitation du traitement (Art. 18)',
+      OBJECTION: 'Opposition (Art. 21)'
+    })[t];
+  }
+  typeBadge(t: SubjectRequestType): string { return 'tbadge tbadge-' + t.toLowerCase(); }
+  statusBadge(s: SubjectRequestStatus): string { return 'badge badge-' + s.toLowerCase(); }
+
+  isTerminal(s: SubjectRequestStatus): boolean { return s === 'COMPLETED' || s === 'REJECTED'; }
+
+  private fail(err: unknown, fallback: string): void {
+    // eslint-disable-next-line no-console
+    console.warn('[sr-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
+    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+  }
+}

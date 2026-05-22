@@ -1,0 +1,50 @@
+.sr-list { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.head h1 { margin: 0 0 4px; font-size: 22px; }
+.head p  { margin: 0; color: rgba(0,0,0,0.6); font-size: 13px; max-width: 720px; }
+
+.filters { display: flex; gap: 12px; flex-wrap: wrap; }
+.filters mat-form-field { min-width: 200px; }
+
+.banner { padding: 10px 14px; border-radius: 8px; font-size: 13px; }
+.banner-error { background: #fbe9e7; color: #b71c1c; }
+.banner-info  { background: #e3f2fd; color: #0d47a1; }
+
+.table-wrap { background: #fff; border-radius: 12px; overflow: hidden; }
+.title-link { color: var(--mat-sys-primary, #1565c0); cursor: pointer; }
+.title-link:hover { text-decoration: underline; }
+.dim { color: rgba(0,0,0,0.5); font-size: 11px; }
+.hash { display: block; margin-top: 2px; }
+.hash code { font-size: 10px; color: rgba(0,0,0,0.45); }
+.row-clickable { cursor: pointer; }
+.row-clickable:hover { background: rgba(0,0,0,0.025); }
+
+.overdue { color: #b71c1c; font-weight: 600; }
+
+.flags-cell { display: flex; gap: 6px; flex-wrap: wrap; }
+.flag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 8px;
+  font-size: 11px; font-weight: 600;
+}
+.flag mat-icon { font-size: 13px; height: 13px; width: 13px; }
+.flag-overdue { background: #fbe9e7; color: #b71c1c; }
+.flag-ext     { background: #fff3e0; color: #e65100; }
+
+code { font-family: 'IBM Plex Mono','Fira Code',monospace; font-size: 12px; }
+
+.badge, .tbadge {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+}
+.badge-received    { background: #ede7f6; color: #4527a0; }
+.badge-in_progress { background: #fff3e0; color: #e65100; }
+.badge-completed   { background: #e8f5e9; color: #1b5e20; }
+.badge-rejected    { background: #fbe9e7; color: #b71c1c; }
+
+.tbadge-access        { background: #e3f2fd; color: #0d47a1; }
+.tbadge-erasure       { background: #fbe9e7; color: #b71c1c; }
+.tbadge-portability   { background: #e0f7fa; color: #006064; }
+.tbadge-rectification { background: #ede7f6; color: #4527a0; }
+.tbadge-restriction   { background: #fff3e0; color: #e65100; }
+.tbadge-objection     { background: #f3e5f5; color: #6a1b9a; }

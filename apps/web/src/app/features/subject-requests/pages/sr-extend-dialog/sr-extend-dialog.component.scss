@@ -1,0 +1,16 @@
+.ext-form { display: flex; flex-direction: column; min-width: 520px; max-width: 640px; }
+.hint { margin: 0 0 12px; padding: 10px 12px; border-left: 4px solid #1565c0;
+        background: #e3f2fd; color: #0d47a1; font-size: 13px; line-height: 1.45; border-radius: 4px; }
+mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.full { width: 100%; }
+
+.kv { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+.kv th {
+  text-align: left; padding: 4px 12px 4px 0;
+  color: rgba(0,0,0,0.55); font-size: 12px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.04em; width: 180px;
+}
+.kv td { padding: 4px 0; }
+
+mat-dialog-actions { padding: 12px 0 0; gap: 8px; }
+mat-dialog-actions button[type='submit'] { display: inline-flex; align-items: center; gap: 6px; }

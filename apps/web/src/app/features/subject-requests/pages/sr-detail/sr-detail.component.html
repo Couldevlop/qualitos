@@ -1,0 +1,107 @@
+<ng-container *ngIf="request$ | async as r; else fallback">
+  <section class="sr-detail">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/subject-requests" class="back">
+          <mat-icon>arrow_back</mat-icon> Demandes RGPD
+        </a>
+        <h1>
+          <span [class]="typeBadge(r.type)">{{ typeLabel(r.type) }}</span>
+        </h1>
+        <div class="meta-row">
+          <span [class]="statusBadge(r.status)">{{ r.status }}</span>
+          <span *ngIf="r.overdue" class="flag flag-overdue">
+            <mat-icon>schedule</mat-icon> en retard
+          </span>
+          <span *ngIf="r.extended" class="flag flag-ext">
+            <mat-icon>update</mat-icon> prolongée
+          </span>
+          <span class="dim">Reçue le {{ r.receivedAt }}</span>
+          <span class="dim" [class.overdue]="r.overdue">Échéance : {{ r.deadlineAt }}</span>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button mat-flat-button color="primary" *ngIf="r.status === 'RECEIVED'" (click)="start(r)">
+          <mat-icon>play_arrow</mat-icon> Démarrer
+        </button>
+        <button mat-flat-button color="primary" *ngIf="r.status === 'IN_PROGRESS'" (click)="openComplete(r)">
+          <mat-icon>check_circle</mat-icon> Clôturer
+        </button>
+        <button mat-stroked-button *ngIf="!isTerminal(r.status)" (click)="openExtend(r)">
+          <mat-icon>update</mat-icon> Prolonger
+        </button>
+        <button mat-stroked-button color="warn" *ngIf="!isTerminal(r.status)" (click)="openReject(r)">
+          <mat-icon>block</mat-icon> Rejeter
+        </button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <mat-card>
+        <mat-card-header><mat-card-title>Personne concernée (pseudonymisée)</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Étiquette</th><td>{{ r.subjectIdentifierLabel || '(non renseignée)' }}</td></tr>
+            <tr><th>Hash identifiant</th><td><code class="hash">{{ r.subjectIdentifierHash }}</code></td></tr>
+          </table>
+          <p class="footnote">L'identifiant en clair n'est jamais conservé.
+             Seul le hash permet de relier les demandes d'une même personne.</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header><mat-card-title>Trace temporelle</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Reçue</th><td>{{ r.receivedAt }}</td></tr>
+            <tr *ngIf="r.inProgressAt"><th>En cours depuis</th><td>{{ r.inProgressAt }}</td></tr>
+            <tr *ngIf="r.completedAt"><th>Clôturée</th><td>{{ r.completedAt }}</td></tr>
+            <tr><th>Échéance</th><td [class.overdue]="r.overdue">{{ r.deadlineAt }}</td></tr>
+            <tr><th>Dernière MAJ</th><td>{{ r.updatedAt }}</td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="r.status === 'COMPLETED'" class="ok-card">
+        <mat-card-header><mat-card-title>Résolution</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p class="text">{{ r.resolutionNotes }}</p>
+          <p *ngIf="r.evidenceUrl">
+            <a [href]="r.evidenceUrl" target="_blank" rel="noopener noreferrer">
+              <mat-icon class="ext">open_in_new</mat-icon> Preuve archivée
+            </a>
+          </p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="r.status === 'REJECTED'" class="rej-card">
+        <mat-card-header><mat-card-title>Motif du rejet</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p class="text">{{ r.rejectionReason }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header><mat-card-title>Acteurs</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Réceptionnée par</th><td><code>{{ r.requestedByUserId }}</code></td></tr>
+            <tr *ngIf="r.handledByUserId">
+              <th>Traitée par</th><td><code>{{ r.handledByUserId }}</code></td>
+            </tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="sr-detail">
+    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  </section>
+</ng-template>
