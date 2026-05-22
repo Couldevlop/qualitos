@@ -1,0 +1,12 @@
+.op-form { display: flex; flex-direction: column; min-width: 600px; max-width: 760px; }
+mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.full { width: 100%; }
+.head-note {
+  margin: 0 0 12px; padding: 10px 12px;
+  background: #e3f2fd; color: #0d47a1;
+  border-left: 4px solid #1565c0; border-radius: 4px;
+  line-height: 1.5; font-size: 13px;
+}
+.head-note.warn { background: #fbe9e7; color: #b71c1c; border-left-color: #b71c1c; }
+mat-dialog-actions { padding: 12px 0 0; gap: 8px; }
+mat-dialog-actions button[type='submit'] { display: inline-flex; align-items: center; gap: 6px; }

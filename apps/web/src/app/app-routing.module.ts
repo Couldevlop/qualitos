@@ -98,6 +98,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/privacy-notices/privacy-notices.module').then(m => m.PrivacyNoticesModule)
       },
       {
+        path: 'dpia',
+        loadChildren: () => import('./features/dpia/dpia.module').then(m => m.DpiaModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)

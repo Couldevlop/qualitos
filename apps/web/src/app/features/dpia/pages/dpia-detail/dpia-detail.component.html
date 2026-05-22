@@ -1,0 +1,132 @@
+<ng-container *ngIf="dpia$ | async as d; else fallback">
+  <section class="dpia-detail">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/dpia" class="back"><mat-icon>arrow_back</mat-icon> DPIA</a>
+        <h1>
+          <code>{{ d.reference }}</code>
+          {{ d.title }}
+        </h1>
+        <div class="meta-row">
+          <span [class]="riskBadge(d.overallRiskLevel)">{{ d.overallRiskLevel }}</span>
+          <span [class]="statusBadge(d.status)">{{ d.status }}</span>
+          <span *ngIf="d.consultationRequired" class="cons-flag">
+            <mat-icon>gavel</mat-icon> Consultation Art. 36 requise
+          </span>
+          <span class="dim" *ngIf="d.effectiveFrom">Effective depuis : {{ d.effectiveFrom }}</span>
+        </div>
+        <p *ngIf="d.description" class="desc">{{ d.description }}</p>
+      </div>
+
+      <div class="toolbar">
+        <button mat-stroked-button (click)="openEdit(d)"
+                [disabled]="d.status !== 'DRAFT' && d.status !== 'IN_PROGRESS'"
+                [matTooltip]="d.status === 'DRAFT' || d.status === 'IN_PROGRESS' ? 'Modifier' : 'Non éditable dans cet état'">
+          <mat-icon>edit</mat-icon> Modifier
+        </button>
+        <button mat-flat-button color="primary" *ngIf="d.status === 'DRAFT'" (click)="start(d)">
+          <mat-icon>play_arrow</mat-icon> Démarrer
+        </button>
+        <button mat-flat-button color="primary" *ngIf="d.status === 'IN_PROGRESS'" (click)="submitToDpo(d)">
+          <mat-icon>send</mat-icon> Soumettre au DPO
+        </button>
+        <button mat-stroked-button *ngIf="d.status === 'IN_PROGRESS'" (click)="returnToDraft(d)">
+          <mat-icon>history</mat-icon> Renvoyer en DRAFT
+        </button>
+        <button mat-flat-button color="primary" *ngIf="d.status === 'DPO_REVIEW'" (click)="decide(d, 'APPROVED')">
+          <mat-icon>verified</mat-icon> Avis DPO favorable
+        </button>
+        <button mat-stroked-button color="warn" *ngIf="d.status === 'DPO_REVIEW'" (click)="decide(d, 'REJECTED')">
+          <mat-icon>block</mat-icon> Avis DPO défavorable
+        </button>
+        <button mat-stroked-button color="warn" *ngIf="d.status !== 'ARCHIVED'" (click)="archive(d)">
+          <mat-icon>inventory_2</mat-icon> Archiver
+        </button>
+        <button mat-stroked-button color="warn" (click)="remove(d)" [disabled]="d.status !== 'DRAFT'"
+                [matTooltip]="d.status === 'DRAFT' ? 'Supprimer le brouillon' : 'Seul un brouillon peut être supprimé'">
+          <mat-icon>delete</mat-icon> Supprimer
+        </button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <mat-card>
+        <mat-card-header><mat-card-title>Nécessité &amp; proportionnalité (Art. 35§7.b)</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p *ngIf="d.necessityAndProportionalityNotes; else nNec" class="text">{{ d.necessityAndProportionalityNotes }}</p>
+          <ng-template #nNec><p class="dim">Section non renseignée.</p></ng-template>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header><mat-card-title>Risques pour les droits et libertés (§7.c)</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p *ngIf="d.risksToRightsAndFreedoms; else nRisk" class="text">{{ d.risksToRightsAndFreedoms }}</p>
+          <ng-template #nRisk><p class="dim">Section non renseignée.</p></ng-template>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header><mat-card-title>Mesures de mitigation (§7.d)</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p *ngIf="d.mitigationMeasures; else nMit" class="text">{{ d.mitigationMeasures }}</p>
+          <ng-template #nMit><p class="dim">Section non renseignée.</p></ng-template>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="d.consultationRequired" class="cons-card">
+        <mat-card-header><mat-card-title>Consultation Art. 36 (autorité de contrôle)</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p *ngIf="d.consultationNotes; else nCons" class="text">{{ d.consultationNotes }}</p>
+          <ng-template #nCons><p class="dim warn">À documenter — consultation préalable obligatoire avant déploiement.</p></ng-template>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="d.dpoOpinion"
+                [class]="d.status === 'APPROVED' ? 'ok-card' : (d.status === 'REJECTED' ? 'rej-card' : '')">
+        <mat-card-header>
+          <mat-card-title>Avis DPO {{ d.status === 'APPROVED' ? '(favorable)' : (d.status === 'REJECTED' ? '(défavorable)' : '') }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="text">{{ d.dpoOpinion }}</p>
+          <table class="kv">
+            <tr *ngIf="d.dpoUserId"><th>DPO</th><td><code>{{ d.dpoUserId }}</code></td></tr>
+            <tr *ngIf="d.dpoOpinionAt"><th>Avis rendu le</th><td>{{ d.dpoOpinionAt }}</td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="d.linkedProcessingActivityIds?.length">
+        <mat-card-header><mat-card-title>Activités RoPA liées</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <ul class="uuid-list">
+            <li *ngFor="let id of d.linkedProcessingActivityIds">
+              <a [routerLink]="['/ropa', id]"><code>{{ id }}</code></a>
+            </li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header><mat-card-title>Trace</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Créée par</th><td><code>{{ d.createdByUserId }}</code></td></tr>
+            <tr *ngIf="d.handledByUserId"><th>Pilotée par</th><td><code>{{ d.handledByUserId }}</code></td></tr>
+            <tr><th>Créée le</th><td>{{ d.createdAt }}</td></tr>
+            <tr><th>Dernière MAJ</th><td>{{ d.updatedAt }}</td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="dpia-detail">
+    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  </section>
+</ng-template>
