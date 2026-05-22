@@ -1,0 +1,71 @@
+.ropa-detail { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+
+.head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.head h1 { margin: 4px 0; font-size: 22px; display: flex; align-items: center; gap: 12px; }
+.head code {
+  display: inline-block; padding: 2px 10px;
+  background: #f5f5f5; border-radius: 6px;
+  font-family: 'IBM Plex Mono','Fira Code',monospace; font-size: 14px;
+}
+.back { display: inline-flex; align-items: center; gap: 4px; color: rgba(0,0,0,0.6); text-decoration: none; font-size: 13px; }
+.back:hover { color: var(--mat-sys-primary, #1565c0); }
+.meta-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.dim { color: rgba(0,0,0,0.55); font-size: 12px; }
+.text { line-height: 1.5; color: rgba(0,0,0,0.78); margin: 0 0 8px; white-space: pre-wrap; }
+
+.special-banner {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 10px; padding: 6px 12px; border-radius: 8px;
+  background: #fbe9e7; color: #b71c1c; font-weight: 600; font-size: 13px;
+}
+.special-banner mat-icon { font-size: 18px; height: 18px; width: 18px; }
+
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
+.toolbar button { display: inline-flex; align-items: center; gap: 6px; }
+
+.banner { padding: 10px 14px; border-radius: 8px; font-size: 13px; }
+.banner-error { background: #fbe9e7; color: #b71c1c; }
+.banner-info  { background: #e3f2fd; color: #0d47a1; }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 1000px) { .grid { grid-template-columns: 1fr; } }
+
+.kv { width: 100%; border-collapse: collapse; }
+.kv th {
+  text-align: left; padding: 6px 12px 6px 0;
+  color: rgba(0,0,0,0.55); font-size: 12px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.04em; width: 140px;
+}
+.kv td { padding: 6px 0; }
+.kv small { display: block; margin-top: 2px; }
+
+.chip-list { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.chip-list li {
+  background: #f5f5f5; padding: 4px 10px; border-radius: 12px;
+  font-size: 12px; color: rgba(0,0,0,0.78);
+}
+
+.uuid-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 4px; }
+.uuid-list code {
+  font-family: 'IBM Plex Mono','Fira Code',monospace; font-size: 11px;
+  color: rgba(0,0,0,0.7);
+}
+
+.special-card { border-left: 4px solid #b71c1c; }
+
+code { font-family: 'IBM Plex Mono','Fira Code',monospace; font-size: 12px; }
+
+.badge, .lb {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+}
+.badge-draft    { background: #f5f5f5; color: #424242; }
+.badge-active   { background: #e8f5e9; color: #1b5e20; }
+.badge-archived { background: #fbe9e7; color: #b71c1c; }
+
+.lb-consent              { background: #e8f5e9; color: #1b5e20; }
+.lb-contract             { background: #e3f2fd; color: #0d47a1; }
+.lb-legal_obligation     { background: #ede7f6; color: #4527a0; }
+.lb-vital_interests      { background: #fbe9e7; color: #b71c1c; }
+.lb-public_task          { background: #e0f7fa; color: #006064; }
+.lb-legitimate_interests { background: #fff3e0; color: #e65100; }

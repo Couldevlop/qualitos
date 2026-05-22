@@ -1,0 +1,98 @@
+<section class="consents-search">
+  <header class="head">
+    <div>
+      <h1>RGPD — Consentements (Art. 7)</h1>
+      <p>Registre des consentements collectés. L'identifiant de la personne est
+         <strong>hashé côté serveur</strong> ; aucune donnée nominative n'est
+         conservée en clair.</p>
+    </div>
+    <div class="head-actions">
+      <button mat-stroked-button (click)="expireDue()" [disabled]="expiring"
+              matTooltip="Marquer EXPIRED les consentements arrivés à terme">
+        <mat-icon *ngIf="!expiring">schedule</mat-icon>
+        <mat-progress-spinner *ngIf="expiring" mode="indeterminate" diameter="18"></mat-progress-spinner>
+        Maintenance
+      </button>
+      <button mat-flat-button color="primary" (click)="openGrant()">
+        <mat-icon>add</mat-icon> Nouveau consentement
+      </button>
+    </div>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="search-form mat-elevation-z1">
+    <mat-form-field appearance="outline" class="mode">
+      <mat-label>Mode de recherche</mat-label>
+      <mat-select formControlName="mode">
+        <mat-option *ngFor="let m of modes" [value]="m.value">{{ m.label }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="query" *ngIf="isSubjectMode()">
+      <mat-label>Identifiant (e-mail, ID interne, …)</mat-label>
+      <input matInput formControlName="subjectIdentifier" maxlength="320"
+             autocomplete="off" spellcheck="false"
+             placeholder="alice@example.fr">
+      <mat-hint>L'identifiant sera hashé avant interrogation — il n'est pas stocké en clair.</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="query" *ngIf="!isSubjectMode()">
+      <mat-label>Code de finalité</mat-label>
+      <input matInput formControlName="purposeCode" maxlength="64"
+             placeholder="newsletter.marketing">
+      <mat-hint>minuscules, chiffres, point, tiret, underscore</mat-hint>
+      <mat-error *ngIf="form.controls.purposeCode.hasError('pattern')">
+        Format invalide.
+      </mat-error>
+    </mat-form-field>
+
+    <button mat-flat-button color="primary" type="submit" [disabled]="loading">
+      <mat-icon *ngIf="!loading">search</mat-icon>
+      <mat-progress-spinner *ngIf="loading" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      Rechercher
+    </button>
+  </form>
+
+  <div *ngIf="error" class="banner banner-error" role="alert">{{ error }}</div>
+
+  <div *ngIf="searched && !loading && results.length === 0 && !error" class="empty-state">
+    <mat-icon>search_off</mat-icon>
+    <p>Aucun consentement trouvé.</p>
+  </div>
+
+  <div class="table-wrap mat-elevation-z1" *ngIf="results.length > 0">
+    <table mat-table [dataSource]="results">
+      <ng-container matColumnDef="subjectLabel">
+        <th mat-header-cell *matHeaderCellDef>Personne</th>
+        <td mat-cell *matCellDef="let c">
+          <strong>{{ c.subjectIdentifierLabel || '(pseudonymisé)' }}</strong>
+          <small class="dim hash"><code>{{ c.subjectIdentifierHash }}</code></small>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="purposeCode">
+        <th mat-header-cell *matHeaderCellDef>Finalité</th>
+        <td mat-cell *matCellDef="let c">
+          <a class="title-link" (click)="open(c)"><code>{{ c.purposeCode }}</code></a>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="purposeVersion">
+        <th mat-header-cell *matHeaderCellDef>Version</th>
+        <td mat-cell *matCellDef="let c"><code>{{ c.purposeVersion }}</code></td>
+      </ng-container>
+      <ng-container matColumnDef="source">
+        <th mat-header-cell *matHeaderCellDef>Source</th>
+        <td mat-cell *matCellDef="let c">{{ sourceLabel(c.source) }}</td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <td mat-cell *matCellDef="let c"><span [class]="statusBadge(c.status)">{{ c.status }}</span></td>
+      </ng-container>
+      <ng-container matColumnDef="grantedAt">
+        <th mat-header-cell *matHeaderCellDef>Recueilli le</th>
+        <td mat-cell *matCellDef="let c">{{ c.grantedAt }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" class="row-clickable" (click)="open(row)"></tr>
+    </table>
+  </div>
+</section>

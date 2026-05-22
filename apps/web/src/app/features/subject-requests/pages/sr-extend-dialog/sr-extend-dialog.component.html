@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>Prolonger l'échéance</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="ext-form">
+  <mat-dialog-content>
+    <p class="hint">L'Art. 12§3 RGPD autorise une extension jusqu'à <strong>2 mois supplémentaires</strong>
+       (donc 3 mois maximum après la réception) si la demande est complexe ou si
+       le nombre de demandes le justifie. La personne doit être informée du motif.</p>
+
+    <table class="kv">
+      <tr><th>Reçue le</th><td>{{ data.request.receivedAt }}</td></tr>
+      <tr><th>Échéance actuelle</th><td>{{ data.request.deadlineAt }}</td></tr>
+      <tr><th>Échéance maximale</th><td><strong>{{ data.maxDeadlineIso }}</strong></td></tr>
+    </table>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Nouvelle échéance</mat-label>
+      <input matInput formControlName="newDeadline" type="datetime-local" required>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
+      <mat-icon *ngIf="!submitting">update</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      Prolonger
+    </button>
+  </mat-dialog-actions>
+</form>

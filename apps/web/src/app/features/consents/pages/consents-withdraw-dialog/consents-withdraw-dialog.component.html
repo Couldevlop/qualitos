@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>Retirer le consentement</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="wd-form">
+  <mat-dialog-content>
+    <p class="warn">
+      <strong>Action irréversible (Art. 7§3 RGPD).</strong>
+      Le consentement passera en <strong>WITHDRAWN</strong>. Un nouveau
+      consentement nécessitera un nouvel enregistrement explicite.
+    </p>
+
+    <p class="meta">
+      Finalité : <code>{{ data.consent.purposeCode }}</code> · v<code>{{ data.consent.purposeVersion }}</code><br>
+      Personne : {{ data.consent.subjectIdentifierLabel || '(pseudonymisée)' }}
+    </p>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Motif (optionnel)</mat-label>
+      <textarea matInput formControlName="reason" rows="3" maxlength="2000"
+                placeholder="Demande explicite via formulaire opt-out, courrier postal, etc."></textarea>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button color="warn" type="submit" [disabled]="submitting">
+      <mat-icon *ngIf="!submitting">block</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      Confirmer le retrait
+    </button>
+  </mat-dialog-actions>
+</form>

@@ -82,6 +82,18 @@ const routes: Routes = [
         loadChildren: () => import('./features/kpis/kpis.module').then(m => m.KpisModule)
       },
       {
+        path: 'ropa',
+        loadChildren: () => import('./features/ropa/ropa.module').then(m => m.RopaModule)
+      },
+      {
+        path: 'consents',
+        loadChildren: () => import('./features/consents/consents.module').then(m => m.ConsentsModule)
+      },
+      {
+        path: 'subject-requests',
+        loadChildren: () => import('./features/subject-requests/subject-requests.module').then(m => m.SubjectRequestsModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)
