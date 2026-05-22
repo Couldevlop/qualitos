@@ -106,6 +106,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/dpo-appointments/dpo-appointments.module').then(m => m.DpoAppointmentsModule)
       },
       {
+        path: 'retention',
+        loadChildren: () => import('./features/retention/retention.module').then(m => m.RetentionModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)

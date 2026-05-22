@@ -75,6 +75,7 @@ export class MainShellComponent implements OnInit {
         { label: 'GDPR · Notices',   route: '/privacy-notices',  icon: 'article' },
         { label: 'GDPR · DPIA',      route: '/dpia',              icon: 'assessment' },
         { label: 'GDPR · DPO',       route: '/dpo-appointments',  icon: 'badge' },
+        { label: 'GDPR · Rétention', route: '/retention',         icon: 'auto_delete' },
         { label: 'GDPR',             route: '/gdpr',              icon: 'shield_lock' },
         { label: 'NIS 2',        route: '/nis2',   icon: 'security' }
       ]

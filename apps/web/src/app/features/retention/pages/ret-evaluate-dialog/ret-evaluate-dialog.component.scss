@@ -1,0 +1,33 @@
+.eval-form { display: flex; flex-direction: column; min-width: 520px; max-width: 660px; }
+.hint { margin: 0 0 12px; padding: 10px 12px; border-left: 4px solid #1565c0;
+        background: #e3f2fd; color: #0d47a1; font-size: 13px; line-height: 1.45; border-radius: 4px; }
+mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.full { width: 100%; }
+
+.banner-warn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px; border-radius: 8px;
+  background: #fff3e0; color: #e65100;
+  font-size: 13px; line-height: 1.45; margin-top: 8px;
+}
+
+.result {
+  margin-top: 12px; padding: 14px;
+  background: #e8f5e9; border-radius: 8px;
+  border-left: 4px solid #1b5e20;
+}
+.result.due { background: #fbe9e7; border-left-color: #b71c1c; }
+.result-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+               font-size: 14px; color: #1b5e20; }
+.result.due .result-head { color: #b71c1c; }
+.result-head mat-icon { font-size: 20px; height: 20px; width: 20px; }
+
+.kv { width: 100%; border-collapse: collapse; }
+.kv th { text-align: left; padding: 4px 12px 4px 0;
+         color: rgba(0,0,0,0.6); font-size: 12px; font-weight: 600;
+         text-transform: uppercase; letter-spacing: 0.04em; width: 180px; }
+.kv td { padding: 4px 0; font-variant-numeric: tabular-nums; }
+.kv code { font-family: 'IBM Plex Mono','Fira Code',monospace; font-size: 11px; }
+
+mat-dialog-actions { padding: 12px 0 0; gap: 8px; }
+mat-dialog-actions button[type='submit'] { display: inline-flex; align-items: center; gap: 6px; }

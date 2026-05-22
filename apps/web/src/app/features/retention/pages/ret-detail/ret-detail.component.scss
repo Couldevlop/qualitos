@@ -1,0 +1,47 @@
+.ret-detail { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+
+.head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.head h1 { margin: 4px 0; font-size: 22px; }
+.head h2.label { margin: 4px 0; font-size: 16px; font-weight: 500; color: rgba(0,0,0,0.78); }
+.head code {
+  display: inline-block; padding: 2px 10px;
+  background: #f5f5f5; border-radius: 6px;
+  font-family: 'IBM Plex Mono','Fira Code',monospace; font-size: 14px;
+}
+.back { display: inline-flex; align-items: center; gap: 4px; color: rgba(0,0,0,0.6); text-decoration: none; font-size: 13px; }
+.back:hover { color: var(--mat-sys-primary, #1565c0); }
+.meta-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.dim { color: rgba(0,0,0,0.55); font-size: 12px; }
+.period-big {
+  display: inline-block; padding: 4px 14px; border-radius: 12px;
+  background: #e3f2fd; color: #0d47a1;
+  font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums;
+}
+
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
+.toolbar button { display: inline-flex; align-items: center; gap: 6px; }
+
+.banner { padding: 10px 14px; border-radius: 8px; font-size: 13px; }
+.banner-error { background: #fbe9e7; color: #b71c1c; }
+.banner-info  { background: #e3f2fd; color: #0d47a1; }
+
+.text { margin: 0 0 8px; line-height: 1.5; white-space: pre-wrap; }
+a { color: var(--mat-sys-primary, #1565c0); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+a:hover { text-decoration: underline; }
+.ext { font-size: 14px; height: 14px; width: 14px; }
+
+.kv { width: 100%; border-collapse: collapse; }
+.kv th { text-align: left; padding: 6px 12px 6px 0;
+         color: rgba(0,0,0,0.55); font-size: 12px; font-weight: 600;
+         text-transform: uppercase; letter-spacing: 0.04em; width: 180px; }
+.kv td { padding: 6px 0; }
+
+code { font-family: 'IBM Plex Mono','Fira Code',monospace; font-size: 12px; }
+
+.badge {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+}
+.badge-draft    { background: #f5f5f5; color: #424242; }
+.badge-active   { background: #e8f5e9; color: #1b5e20; }
+.badge-archived { background: #fbe9e7; color: #b71c1c; }
