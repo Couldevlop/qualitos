@@ -1,0 +1,99 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Modifier le transfert' : 'Nouveau transfert international' }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="trx-form">
+  <mat-dialog-content>
+    <p class="hint">Chap. V RGPD — un transfert hors UE/EEE doit reposer sur un mécanisme
+       valide (Art. 45-49). Le mock store mirror l'invariant : SCC/BCR/CoC/Cert exigent
+       <code>safeguardsDescription</code> ; Art. 49 exige une justification motivée.</p>
+
+    <h3 class="section">Identification</h3>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Référence</mat-label>
+      <input matInput formControlName="reference" maxlength="64" required
+             placeholder="CRM-SALESFORCE-US">
+    </mat-form-field>
+
+    <h3 class="section">Destinataire</h3>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Nom commercial</mat-label>
+      <input matInput formControlName="recipientName" maxlength="250" required>
+    </mat-form-field>
+    <div class="row">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Entité légale (raison sociale + pays)</mat-label>
+        <input matInput formControlName="recipientLegalEntity" maxlength="250">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Contact</mat-label>
+        <input matInput formControlName="recipientContact" maxlength="250">
+      </mat-form-field>
+    </div>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Pays de destination (un par ligne)</mat-label>
+      <textarea matInput formControlName="destinationCountries" rows="2"
+                placeholder="USA&#10;Inde"></textarea>
+    </mat-form-field>
+
+    <h3 class="section">Mécanisme légal (Chap. V)</h3>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Mécanisme</mat-label>
+      <mat-select formControlName="mechanism" required>
+        <mat-option *ngFor="let m of mechanisms" [value]="m.value">{{ m.label }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full" *ngIf="!isDerogation()">
+      <mat-label>Description des garanties (obligatoire hors Art. 45/49)</mat-label>
+      <textarea matInput formControlName="safeguardsDescription" rows="4" maxlength="4000"
+                placeholder="SCC 2021 modules 2/3, mesures supplémentaires (chiffrement, contrôles d'accès), audit annuel…"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>URL document garanties (https://…)</mat-label>
+      <input matInput formControlName="safeguardsDocumentUrl" maxlength="1024">
+      <mat-error *ngIf="form.controls.safeguardsDocumentUrl.hasError('httpsOnly')">
+        Seules les URLs https:// sont acceptées.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full" *ngIf="isDerogation()">
+      <mat-label>Justification Art. 49 (obligatoire)</mat-label>
+      <textarea matInput formControlName="derogationJustification" rows="4" maxlength="4000" required
+                placeholder="Cas Art. 49 invoqué (intérêt vital, contrat, motif d'intérêt public, …). Caractère exceptionnel et non répétitif documenté."></textarea>
+    </mat-form-field>
+
+    <h3 class="section">Données transférées</h3>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Catégories de données (une par ligne)</mat-label>
+      <textarea matInput formControlName="dataCategories" rows="2"
+                placeholder="Identité prospects&#10;Coordonnées professionnelles"></textarea>
+    </mat-form-field>
+
+    <h3 class="section">Liens</h3>
+    <div class="row">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>UUIDs RoPA liées</mat-label>
+        <textarea matInput formControlName="linkedProcessingActivityIds" rows="2"></textarea>
+        <mat-error *ngIf="form.controls.linkedProcessingActivityIds.hasError('uuidLine')">
+          Chaque ligne doit être un UUID v4.
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>UUIDs contrats sous-traitance liés</mat-label>
+        <textarea matInput formControlName="linkedProcessorAgreementIds" rows="2"></textarea>
+        <mat-error *ngIf="form.controls.linkedProcessorAgreementIds.hasError('uuidLine')">
+          Chaque ligne doit être un UUID v4.
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
+      <mat-icon *ngIf="!submitting">check</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      {{ isEdit ? 'Enregistrer' : 'Créer (DRAFT)' }}
+    </button>
+  </mat-dialog-actions>
+</form>

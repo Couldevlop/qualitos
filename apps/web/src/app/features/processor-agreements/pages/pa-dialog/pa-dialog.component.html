@@ -1,0 +1,127 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Modifier le DPA' : 'Nouveau DPA (Art. 28)' }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="pa-form">
+  <mat-dialog-content>
+    <p class="hint">L'Art. 28 RGPD impose un contrat écrit incluant : nature et objet du
+       traitement, type de données, obligations du sous-traitant, mesures de sécurité,
+       engagement de notification d'incident, droits d'audit, modalités de restitution
+       ou suppression des données en fin de contrat.</p>
+
+    <h3 class="section">Identification</h3>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Référence</mat-label>
+      <input matInput formControlName="reference" maxlength="64" required
+             placeholder="DPA-AWS-EU">
+    </mat-form-field>
+
+    <h3 class="section">Sous-traitant</h3>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Nom commercial</mat-label>
+      <input matInput formControlName="processorName" maxlength="250" required>
+    </mat-form-field>
+    <div class="row">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Entité légale</mat-label>
+        <input matInput formControlName="processorLegalEntity" maxlength="250">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col col-small">
+        <mat-label>Pays (ISO-2)</mat-label>
+        <input matInput formControlName="processorCountry" maxlength="2"
+               placeholder="LU">
+      </mat-form-field>
+    </div>
+    <div class="row">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Contact</mat-label>
+        <input matInput formControlName="processorContact" maxlength="250">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>DPO sous-traitant</mat-label>
+        <input matInput formControlName="processorDpoContact" maxlength="250">
+      </mat-form-field>
+    </div>
+
+    <h3 class="section">Services</h3>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Description des services</mat-label>
+      <textarea matInput formControlName="servicesDescription" rows="4" maxlength="4000" required></textarea>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Catégories de sous-traitants ultérieurs (une par ligne)</mat-label>
+      <textarea matInput formControlName="subProcessorCategories" rows="2"></textarea>
+    </mat-form-field>
+
+    <h3 class="section">Transferts hors UE</h3>
+    <div class="row">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Pays de transfert (un par ligne)</mat-label>
+        <textarea matInput formControlName="thirdCountryTransfers" rows="2"></textarea>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Garanties (obligatoires si transferts)</mat-label>
+        <textarea matInput formControlName="transferSafeguards" rows="2" maxlength="4000"></textarea>
+      </mat-form-field>
+    </div>
+
+    <h3 class="section">Contrat</h3>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>URL du contrat signé (https://…)</mat-label>
+      <input matInput formControlName="contractDocumentUrl" maxlength="1024">
+      <mat-error *ngIf="form.controls.contractDocumentUrl.hasError('httpsOnly')">
+        Seules les URLs https:// sont acceptées.
+      </mat-error>
+    </mat-form-field>
+    <div class="row">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Signé le</mat-label>
+        <input matInput formControlName="signedAt" type="date">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Entrée en vigueur</mat-label>
+        <input matInput formControlName="effectiveFrom" type="date">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Expiration</mat-label>
+        <input matInput formControlName="expirationDate" type="date">
+      </mat-form-field>
+    </div>
+
+    <h3 class="section">Sécurité &amp; obligations Art. 28</h3>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Mesures de sécurité (Art. 32)</mat-label>
+      <textarea matInput formControlName="securityMeasures" rows="3" maxlength="4000"></textarea>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Délai notification incident (heures, 1-720)</mat-label>
+      <input matInput formControlName="breachNotificationCommitmentHours" type="number" min="1" max="720" required>
+      <mat-hint>Art. 33§2 : "sans délai" — recommandation CNIL ≤ 72h</mat-hint>
+    </mat-form-field>
+    <mat-checkbox formControlName="auditRights">Droits d'audit prévus au contrat (Art. 28§3.h)</mat-checkbox>
+    <mat-form-field appearance="outline" class="full" *ngIf="form.controls.auditRights.value">
+      <mat-label>Modalités d'audit</mat-label>
+      <textarea matInput formControlName="auditRightsNotes" rows="2" maxlength="4000"></textarea>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Restitution ou suppression des données (Art. 28§3.g)</mat-label>
+      <textarea matInput formControlName="dataReturnOrDeletionTerms" rows="2" maxlength="4000"></textarea>
+    </mat-form-field>
+
+    <h3 class="section">Liens RoPA</h3>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>UUIDs RoPA liées (une par ligne)</mat-label>
+      <textarea matInput formControlName="linkedProcessingActivityIds" rows="2"></textarea>
+      <mat-error *ngIf="form.controls.linkedProcessingActivityIds.hasError('uuidLine')">
+        Chaque ligne doit être un UUID v4.
+      </mat-error>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
+      <mat-icon *ngIf="!submitting">check</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      {{ isEdit ? 'Enregistrer' : 'Créer (DRAFT)' }}
+    </button>
+  </mat-dialog-actions>
+</form>

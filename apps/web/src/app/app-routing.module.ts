@@ -110,6 +110,14 @@ const routes: Routes = [
         loadChildren: () => import('./features/retention/retention.module').then(m => m.RetentionModule)
       },
       {
+        path: 'cross-border',
+        loadChildren: () => import('./features/transfers/transfers.module').then(m => m.TransfersModule)
+      },
+      {
+        path: 'processor-agreements',
+        loadChildren: () => import('./features/processor-agreements/processor-agreements.module').then(m => m.ProcessorAgreementsModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)
