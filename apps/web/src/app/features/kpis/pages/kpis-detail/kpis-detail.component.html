@@ -1,0 +1,143 @@
+<ng-container *ngIf="kpi$ | async as k; else fallback">
+  <section class="kpis-detail">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/kpis" class="back"><mat-icon>arrow_back</mat-icon> Catalogue KPI</a>
+        <h1>
+          <code>{{ k.code }}</code>
+          {{ k.name }}
+        </h1>
+        <div class="meta-row">
+          <span [class]="statusBadge(k.status)">{{ k.status }}</span>
+          <span class="dim">{{ directionLabel(k.direction) }}</span>
+          <span class="dim" *ngIf="k.category">Catégorie : {{ k.category }}</span>
+          <span class="dim" *ngIf="k.frequency">Fréquence : {{ k.frequency }}</span>
+        </div>
+        <p *ngIf="k.description" class="desc">{{ k.description }}</p>
+      </div>
+
+      <div class="toolbar">
+        <button mat-stroked-button (click)="openEdit(k)"><mat-icon>edit</mat-icon> Modifier</button>
+        <button mat-flat-button color="primary" (click)="openRecord(k)" [disabled]="k.status === 'ARCHIVED'">
+          <mat-icon>add</mat-icon> Mesurer
+        </button>
+        <button mat-flat-button color="primary" *ngIf="k.status === 'DRAFT'" (click)="activate(k)">
+          <mat-icon>play_arrow</mat-icon> Activer
+        </button>
+        <button mat-stroked-button *ngIf="k.status === 'ACTIVE'" (click)="reopen(k)">
+          <mat-icon>history</mat-icon> Rouvrir (DRAFT)
+        </button>
+        <button mat-stroked-button color="warn" *ngIf="k.status !== 'ARCHIVED'" (click)="archive(k)">
+          <mat-icon>inventory_2</mat-icon> Archiver
+        </button>
+        <button mat-stroked-button color="warn" (click)="remove(k)">
+          <mat-icon>delete</mat-icon> Supprimer
+        </button>
+      </div>
+    </header>
+
+    <div class="hero-row" *ngIf="status">
+      <mat-card class="big-value-card" [class]="healthBadge(status.health)">
+        <div class="big-value-head">
+          <span class="big-value-label">Dernière valeur</span>
+          <span [class]="healthBadge(status.health)">{{ status.health }}</span>
+        </div>
+        <div class="big-value">
+          <strong *ngIf="status.latestValue !== undefined && status.latestValue !== null">
+            {{ status.latestValue }}
+          </strong>
+          <strong *ngIf="status.latestValue === undefined || status.latestValue === null" class="dim">—</strong>
+          <span class="unit" *ngIf="status.unit">{{ status.unit }}</span>
+        </div>
+        <p class="dim" *ngIf="status.latestPeriodEnd">Période close au {{ status.latestPeriodEnd | slice:0:10 }}</p>
+        <p class="dim" *ngIf="!status.latestPeriodEnd">Aucune mesure enregistrée.</p>
+      </mat-card>
+
+      <mat-card class="thresholds-card">
+        <mat-card-header><mat-card-title>Seuils</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="thresh-table">
+            <tr><th>Cible</th><td>
+              <span *ngIf="k.targetValue !== undefined && k.targetValue !== null">{{ k.targetValue }} {{ k.unit }}</span>
+              <span *ngIf="k.targetValue === undefined || k.targetValue === null" class="dim">—</span>
+            </td></tr>
+            <tr><th>Warning</th><td>
+              <span *ngIf="k.thresholdWarning !== undefined && k.thresholdWarning !== null">{{ k.thresholdWarning }} {{ k.unit }}</span>
+              <span *ngIf="k.thresholdWarning === undefined || k.thresholdWarning === null" class="dim">—</span>
+            </td></tr>
+            <tr><th>Critical</th><td>
+              <span *ngIf="k.thresholdCritical !== undefined && k.thresholdCritical !== null">{{ k.thresholdCritical }} {{ k.unit }}</span>
+              <span *ngIf="k.thresholdCritical === undefined || k.thresholdCritical === null" class="dim">—</span>
+            </td></tr>
+            <tr *ngIf="k.applicableIndustriesCsv"><th>Secteurs</th><td>{{ k.applicableIndustriesCsv }}</td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="sparkline-card">
+        <mat-card-header><mat-card-title>Tendance ({{ trend?.sampleCount ?? 0 }} points)</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <svg *ngIf="(trend?.points?.length ?? 0) >= 2" viewBox="0 0 100 30" preserveAspectRatio="none" class="spark">
+            <path [attr.d]="sparklineFill()" class="spark-fill"></path>
+            <path [attr.d]="sparklinePath()" class="spark-line"></path>
+          </svg>
+          <p *ngIf="(trend?.points?.length ?? 0) < 2" class="dim empty">
+            Données insuffisantes pour tracer la tendance.
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <mat-card class="measurements-card">
+      <mat-card-header class="card-head">
+        <mat-card-title>Mesures ({{ measurements.length }})</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="measurements" *ngIf="measurements.length; else emptyM">
+          <ng-container matColumnDef="periodEnd">
+            <th mat-header-cell *matHeaderCellDef>Fin de période</th>
+            <td mat-cell *matCellDef="let m">{{ m.periodEnd }}</td>
+          </ng-container>
+          <ng-container matColumnDef="value">
+            <th mat-header-cell *matHeaderCellDef>Valeur</th>
+            <td mat-cell *matCellDef="let m"><strong>{{ m.value }}</strong></td>
+          </ng-container>
+          <ng-container matColumnDef="unit">
+            <th mat-header-cell *matHeaderCellDef>Unité</th>
+            <td mat-cell *matCellDef="let m">{{ m.unit || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="source">
+            <th mat-header-cell *matHeaderCellDef>Source</th>
+            <td mat-cell *matCellDef="let m">{{ m.source || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="health">
+            <th mat-header-cell *matHeaderCellDef>Santé</th>
+            <td mat-cell *matCellDef="let m"><span [class]="healthBadge(m.health)">{{ m.health }}</span></td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let m">
+              <button mat-icon-button (click)="removeMeasurement(k, m)" matTooltip="Supprimer">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="measurementColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: measurementColumns"></tr>
+        </table>
+        <ng-template #emptyM>
+          <p class="dim empty">Aucune mesure pour l'instant. Cliquez "Mesurer" pour enregistrer la première.</p>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="kpis-detail">
+    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  </section>
+</ng-template>

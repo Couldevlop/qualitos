@@ -74,6 +74,14 @@ const routes: Routes = [
         loadChildren: () => import('./features/ehs/ehs.module').then(m => m.EhsModule)
       },
       {
+        path: 'itsm',
+        loadChildren: () => import('./features/itsm/itsm.module').then(m => m.ItsmModule)
+      },
+      {
+        path: 'kpis',
+        loadChildren: () => import('./features/kpis/kpis.module').then(m => m.KpisModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)

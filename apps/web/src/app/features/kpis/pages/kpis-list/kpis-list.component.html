@@ -1,0 +1,84 @@
+<section class="kpis-list">
+  <header class="head">
+    <div>
+      <h1>Catalogue KPI</h1>
+      <p>Indicateurs qualité, seuils, fréquences (CLAUDE.md §6) — fiche par KPI avec tendance et mesures.</p>
+    </div>
+    <button mat-flat-button color="primary" (click)="openCreate()">
+      <mat-icon>add</mat-icon> Nouveau KPI
+    </button>
+  </header>
+
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Statut</mat-label>
+      <mat-select [formControl]="statusFilter">
+        <mat-option [value]="''">Tous</mat-option>
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Catégorie</mat-label>
+      <input matInput [formControl]="categoryFilter" placeholder="CAPA, Qualité, DMAIC…">
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+
+  <div class="table-wrap mat-elevation-z1">
+    <table mat-table [dataSource]="(kpis$ | async) ?? []">
+      <ng-container matColumnDef="code">
+        <th mat-header-cell *matHeaderCellDef>Code</th>
+        <td mat-cell *matCellDef="let k"><code>{{ k.code }}</code></td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Nom</th>
+        <td mat-cell *matCellDef="let k">
+          <a class="title-link" (click)="open(k)">{{ k.name }}</a>
+          <small *ngIf="k.description" class="dim">{{ k.description }}</small>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef>Catégorie</th>
+        <td mat-cell *matCellDef="let k">{{ k.category || '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="direction">
+        <th mat-header-cell *matHeaderCellDef>Sens</th>
+        <td mat-cell *matCellDef="let k"><span [class]="directionBadge(k.direction)">{{ directionLabel(k.direction) }}</span></td>
+      </ng-container>
+
+      <ng-container matColumnDef="target">
+        <th mat-header-cell *matHeaderCellDef>Cible</th>
+        <td mat-cell *matCellDef="let k">
+          <span *ngIf="k.targetValue !== undefined && k.targetValue !== null">
+            {{ k.targetValue }} <span class="dim">{{ k.unit }}</span>
+          </span>
+          <span *ngIf="k.targetValue === undefined || k.targetValue === null" class="dim">—</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="frequency">
+        <th mat-header-cell *matHeaderCellDef>Fréquence</th>
+        <td mat-cell *matCellDef="let k">{{ k.frequency || '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <td mat-cell *matCellDef="let k"><span [class]="statusBadge(k.status)">{{ k.status }}</span></td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" class="row-clickable" (click)="open(row)"></tr>
+    </table>
+
+    <mat-paginator
+      [length]="totalElements"
+      [pageIndex]="pageIndex" [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions" (page)="onPage($event)"
+      showFirstLastButtons></mat-paginator>
+  </div>
+</section>

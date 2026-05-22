@@ -1,0 +1,62 @@
+<section class="itsm-list">
+  <header class="head">
+    <div>
+      <h1>ITSM — Connecteurs</h1>
+      <p>Intégration ServiceNow / Jira SM (CLAUDE.md §13.3) — import des incidents,
+         changements et problèmes pour boucler la qualité avec le SAV IT.</p>
+    </div>
+    <button mat-flat-button color="primary" (click)="openCreate()">
+      <mat-icon>add</mat-icon> Nouvelle connexion
+    </button>
+  </header>
+
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+
+  <div class="table-wrap mat-elevation-z1">
+    <table mat-table [dataSource]="(connections$ | async) ?? []">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Nom</th>
+        <td mat-cell *matCellDef="let c">
+          <a class="title-link" (click)="open(c)">{{ c.name }}</a>
+          <small *ngIf="c.username" class="dim">user: <code>{{ c.username }}</code></small>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="provider">
+        <th mat-header-cell *matHeaderCellDef>Provider</th>
+        <td mat-cell *matCellDef="let c"><span [class]="providerBadge(c.provider)">{{ providerLabel(c.provider) }}</span></td>
+      </ng-container>
+
+      <ng-container matColumnDef="baseUrl">
+        <th mat-header-cell *matHeaderCellDef>Base URL</th>
+        <td mat-cell *matCellDef="let c"><code class="url">{{ c.baseUrl }}</code></td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <td mat-cell *matCellDef="let c">
+          <span [class]="statusBadge(c.status)">{{ c.status }}</span>
+          <span *ngIf="c.consecutiveFailures > 0" class="fail-count"
+                matTooltip="Échecs consécutifs">
+            <mat-icon>error_outline</mat-icon>{{ c.consecutiveFailures }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="lastSyncAt">
+        <th mat-header-cell *matHeaderCellDef>Dernière sync</th>
+        <td mat-cell *matCellDef="let c">{{ c.lastSyncAt || '—' }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" class="row-clickable" (click)="open(row)"></tr>
+    </table>
+
+    <mat-paginator
+      [length]="totalElements"
+      [pageIndex]="pageIndex" [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions" (page)="onPage($event)"
+      showFirstLastButtons></mat-paginator>
+  </div>
+</section>

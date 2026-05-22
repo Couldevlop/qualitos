@@ -1,0 +1,131 @@
+<ng-container *ngIf="connection$ | async as c; else fallback">
+  <section class="itsm-detail">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/itsm" class="back">
+          <mat-icon>arrow_back</mat-icon> Connecteurs ITSM
+        </a>
+        <h1>{{ c.name }}</h1>
+        <div class="meta-row">
+          <span [class]="providerBadge(c.provider)">{{ providerLabel(c.provider) }}</span>
+          <span [class]="statusBadge(c.status)">{{ c.status }}</span>
+          <span *ngIf="c.consecutiveFailures > 0" class="fail">
+            <mat-icon>error_outline</mat-icon> {{ c.consecutiveFailures }} échec(s) consécutif(s)
+          </span>
+        </div>
+        <p class="url"><code>{{ c.baseUrl }}</code></p>
+        <p class="dim" *ngIf="c.username">Utilisateur : <code>{{ c.username }}</code></p>
+        <p class="dim" *ngIf="c.externalScope">Périmètre : {{ c.externalScope }}</p>
+      </div>
+
+      <div class="toolbar">
+        <button mat-stroked-button (click)="openEdit(c)"><mat-icon>edit</mat-icon> Modifier</button>
+        <button mat-flat-button color="primary" (click)="sync(c)" [disabled]="syncing || c.status !== 'ACTIVE'">
+          <mat-icon *ngIf="!syncing">sync</mat-icon>
+          <mat-progress-spinner *ngIf="syncing" mode="indeterminate" diameter="18"></mat-progress-spinner>
+          Synchroniser
+        </button>
+        <button mat-stroked-button color="warn" (click)="remove(c)">
+          <mat-icon>delete</mat-icon> Supprimer
+        </button>
+      </div>
+    </header>
+
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <span class="stat-label">Dernière sync</span>
+        <strong class="small">{{ c.lastSyncAt || '—' }}</strong>
+      </mat-card>
+      <mat-card class="stat-card">
+        <span class="stat-label">Dernier succès</span>
+        <strong class="small">{{ c.lastSuccessAt || '—' }}</strong>
+      </mat-card>
+      <mat-card class="stat-card">
+        <span class="stat-label">Mappings importés</span>
+        <strong>{{ mappings.length }}</strong>
+      </mat-card>
+      <mat-card class="stat-card">
+        <span class="stat-label">Échecs consécutifs</span>
+        <strong [class.bad]="c.consecutiveFailures > 0">{{ c.consecutiveFailures }}</strong>
+      </mat-card>
+    </div>
+
+    <div *ngIf="lastSync" class="sync-card">
+      <mat-card>
+        <mat-card-header><mat-card-title>Dernière sync — résultats</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <ng-container *ngIf="!lastSync.errorMessage; else syncErr">
+            <p>
+              <strong>{{ lastSync.totalFetched }}</strong> tickets récupérés —
+              <strong class="good">{{ lastSync.newImports }}</strong> nouveaux,
+              <span class="dim">{{ lastSync.alreadyKnown }}</span> déjà connus.
+            </p>
+            <p class="dim">Exécutée à {{ lastSync.ranAt }}.</p>
+          </ng-container>
+          <ng-template #syncErr>
+            <p class="warn">Erreur de synchronisation : {{ lastSync.errorMessage }}</p>
+          </ng-template>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <mat-card class="mappings-card">
+      <mat-card-header><mat-card-title>Mappings ({{ mappings.length }})</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="mappings" *ngIf="mappings.length; else emptyM">
+          <ng-container matColumnDef="externalId">
+            <th mat-header-cell *matHeaderCellDef>ID externe</th>
+            <td mat-cell *matCellDef="let m">
+              <a *ngIf="m.externalUrl" [href]="m.externalUrl" target="_blank"
+                 rel="noopener noreferrer" class="ext-link">
+                <code>{{ m.externalId }}</code>
+                <mat-icon class="ext-icon">open_in_new</mat-icon>
+              </a>
+              <code *ngIf="!m.externalUrl">{{ m.externalId }}</code>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="externalTitle">
+            <th mat-header-cell *matHeaderCellDef>Titre</th>
+            <td mat-cell *matCellDef="let m">{{ m.externalTitle || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="externalStatus">
+            <th mat-header-cell *matHeaderCellDef>Statut externe</th>
+            <td mat-cell *matCellDef="let m">{{ m.externalStatus || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="externalPriority">
+            <th mat-header-cell *matHeaderCellDef>Priorité externe</th>
+            <td mat-cell *matCellDef="let m">{{ m.externalPriority || '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="internalEntity">
+            <th mat-header-cell *matHeaderCellDef>Entité interne</th>
+            <td mat-cell *matCellDef="let m">
+              <span *ngIf="m.internalEntityType && m.internalEntityId">
+                {{ m.internalEntityType }} · <code class="dim">{{ m.internalEntityId }}</code>
+              </span>
+              <span *ngIf="!m.internalEntityType" class="dim">—</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="lastSeenAt">
+            <th mat-header-cell *matHeaderCellDef>Vu le</th>
+            <td mat-cell *matCellDef="let m">{{ m.lastSeenAt }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="mappingColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: mappingColumns"></tr>
+        </table>
+        <ng-template #emptyM>
+          <p class="dim empty">Aucun mapping. Déclenchez une synchronisation pour importer les tickets.</p>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="itsm-detail">
+    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  </section>
+</ng-template>
