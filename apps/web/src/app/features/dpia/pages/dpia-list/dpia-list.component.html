@@ -1,0 +1,78 @@
+<section class="dpia-list">
+  <header class="head">
+    <div>
+      <h1>RGPD — Analyses d'impact (DPIA, Art. 35)</h1>
+      <p>Évaluation préalable des traitements présentant un risque élevé pour les
+         droits et libertés. Un risque résiduel <strong>HIGH</strong> ou
+         <strong>SEVERE</strong> déclenche l'obligation de consultation préalable
+         de l'autorité de contrôle (Art. 36).</p>
+    </div>
+    <button mat-flat-button color="primary" (click)="openCreate()">
+      <mat-icon>add</mat-icon> Nouvelle DPIA
+    </button>
+  </header>
+
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Mode</mat-label>
+      <mat-select [formControl]="modeFilter">
+        <mat-option *ngFor="let m of modes" [value]="m.value">{{ m.label }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" *ngIf="!isConsultationMode()">
+      <mat-label>Statut</mat-label>
+      <mat-select [formControl]="statusFilter">
+        <mat-option [value]="''">Tous</mat-option>
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+
+  <div class="table-wrap mat-elevation-z1">
+    <table mat-table [dataSource]="(rows$ | async) ?? []">
+      <ng-container matColumnDef="reference">
+        <th mat-header-cell *matHeaderCellDef>Référence</th>
+        <td mat-cell *matCellDef="let d"><code>{{ d.reference }}</code></td>
+      </ng-container>
+
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef>Titre</th>
+        <td mat-cell *matCellDef="let d">
+          <a class="title-link" (click)="open(d)">{{ d.title }}</a>
+          <small *ngIf="d.description" class="dim">{{ d.description }}</small>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="risk">
+        <th mat-header-cell *matHeaderCellDef>Risque résiduel</th>
+        <td mat-cell *matCellDef="let d"><span [class]="riskBadge(d.overallRiskLevel)">{{ d.overallRiskLevel }}</span></td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <td mat-cell *matCellDef="let d"><span [class]="statusBadge(d.status)">{{ d.status }}</span></td>
+      </ng-container>
+
+      <ng-container matColumnDef="consultation">
+        <th mat-header-cell *matHeaderCellDef>Consultation</th>
+        <td mat-cell *matCellDef="let d">
+          <span *ngIf="d.consultationRequired" class="cons-flag" matTooltip="Consultation préalable Art. 36 requise">
+            <mat-icon>gavel</mat-icon> Art. 36
+          </span>
+          <span *ngIf="!d.consultationRequired" class="dim">—</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="updatedAt">
+        <th mat-header-cell *matHeaderCellDef>MAJ</th>
+        <td mat-cell *matCellDef="let d">{{ d.updatedAt }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" class="row-clickable" (click)="open(row)"></tr>
+    </table>
+  </div>
+</section>

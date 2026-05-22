@@ -1,0 +1,11 @@
+.dpia-form { display: flex; flex-direction: column; min-width: 720px; max-width: 880px; max-height: 80vh; }
+mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.full { width: 100%; }
+.section {
+  margin: 16px 0 8px; font-size: 12px; font-weight: 700;
+  color: rgba(0,0,0,0.65); text-transform: uppercase; letter-spacing: 0.06em;
+  border-top: 1px solid rgba(0,0,0,0.08); padding-top: 12px;
+}
+mat-checkbox { margin: 8px 0; }
+mat-dialog-actions { padding: 12px 0 0; gap: 8px; }
+mat-dialog-actions button[type='submit'] { display: inline-flex; align-items: center; gap: 6px; }

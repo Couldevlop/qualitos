@@ -1,0 +1,65 @@
+<section class="pn-list">
+  <header class="head">
+    <div>
+      <h1>RGPD — Mentions d'information (Art. 13/14)</h1>
+      <p>Notices publiées aux personnes concernées, versionnées par référence + langue.
+         Une version PUBLISHED est immutable — toute évolution = nouveau brouillon.</p>
+    </div>
+    <button mat-flat-button color="primary" (click)="openCreate()">
+      <mat-icon>add</mat-icon> Nouvelle mention
+    </button>
+  </header>
+
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Statut</mat-label>
+      <mat-select [formControl]="statusFilter">
+        <mat-option [value]="''">Tous</mat-option>
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+
+  <div class="table-wrap mat-elevation-z1">
+    <table mat-table [dataSource]="(notices$ | async) ?? []">
+      <ng-container matColumnDef="reference">
+        <th mat-header-cell *matHeaderCellDef>Référence</th>
+        <td mat-cell *matCellDef="let n"><code>{{ n.reference }}</code></td>
+      </ng-container>
+
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef>Titre</th>
+        <td mat-cell *matCellDef="let n">
+          <a class="title-link" (click)="open(n)">{{ n.title }}</a>
+          <small *ngIf="n.summary" class="dim">{{ n.summary }}</small>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="language">
+        <th mat-header-cell *matHeaderCellDef>Langue</th>
+        <td mat-cell *matCellDef="let n"><span class="lang">{{ n.language | uppercase }}</span></td>
+      </ng-container>
+
+      <ng-container matColumnDef="version">
+        <th mat-header-cell *matHeaderCellDef>Version</th>
+        <td mat-cell *matCellDef="let n"><code>{{ n.version }}</code></td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <td mat-cell *matCellDef="let n"><span [class]="statusBadge(n.status)">{{ n.status }}</span></td>
+      </ng-container>
+
+      <ng-container matColumnDef="effectiveFrom">
+        <th mat-header-cell *matHeaderCellDef>Effectif depuis</th>
+        <td mat-cell *matCellDef="let n">{{ n.effectiveFrom || '—' }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" class="row-clickable" (click)="open(row)"></tr>
+    </table>
+  </div>
+</section>

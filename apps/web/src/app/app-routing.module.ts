@@ -94,6 +94,22 @@ const routes: Routes = [
         loadChildren: () => import('./features/subject-requests/subject-requests.module').then(m => m.SubjectRequestsModule)
       },
       {
+        path: 'privacy-notices',
+        loadChildren: () => import('./features/privacy-notices/privacy-notices.module').then(m => m.PrivacyNoticesModule)
+      },
+      {
+        path: 'dpia',
+        loadChildren: () => import('./features/dpia/dpia.module').then(m => m.DpiaModule)
+      },
+      {
+        path: 'dpo-appointments',
+        loadChildren: () => import('./features/dpo-appointments/dpo-appointments.module').then(m => m.DpoAppointmentsModule)
+      },
+      {
+        path: 'retention',
+        loadChildren: () => import('./features/retention/retention.module').then(m => m.RetentionModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)

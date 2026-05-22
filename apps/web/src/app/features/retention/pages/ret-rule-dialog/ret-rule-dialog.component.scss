@@ -1,0 +1,18 @@
+.rule-form { display: flex; flex-direction: column; min-width: 620px; max-width: 760px; }
+.hint { margin: 0 0 12px; padding: 10px 12px; border-left: 4px solid #1565c0;
+        background: #e3f2fd; color: #0d47a1; font-size: 13px; line-height: 1.45; border-radius: 4px; }
+mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.full { width: 100%; }
+.section {
+  margin: 16px 0 8px; font-size: 12px; font-weight: 700;
+  color: rgba(0,0,0,0.65); text-transform: uppercase; letter-spacing: 0.06em;
+  border-top: 1px solid rgba(0,0,0,0.08); padding-top: 12px;
+}
+.section:first-of-type { border-top: none; padding-top: 0; margin-top: 4px; }
+
+.period-row { display: flex; gap: 12px; }
+.col-amount { width: 160px; }
+.col-unit   { flex: 1; }
+
+mat-dialog-actions { padding: 12px 0 0; gap: 8px; }
+mat-dialog-actions button[type='submit'] { display: inline-flex; align-items: center; gap: 6px; }

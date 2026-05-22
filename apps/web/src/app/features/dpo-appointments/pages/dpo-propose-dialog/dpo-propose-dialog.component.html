@@ -1,0 +1,80 @@
+<h2 mat-dialog-title>Proposer une désignation DPO</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="dpo-form">
+  <mat-dialog-content>
+    <p class="hint">La désignation passera en <strong>PROPOSED</strong>. L'activation
+       suppose la notification préalable à l'autorité de contrôle (Art. 37§7) — référence
+       de notification + date saisies à l'étape d'activation.</p>
+
+    <h3 class="section">Identification</h3>
+    <div class="row">
+      <mat-form-field appearance="outline" class="col col-ref">
+        <mat-label>Référence</mat-label>
+        <input matInput formControlName="reference" maxlength="64" required
+               placeholder="DPO-GROUPE-2026">
+        <mat-hint>Majuscules, chiffres, tiret, underscore</mat-hint>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Périmètre</mat-label>
+        <input matInput formControlName="scope" maxlength="64" required
+               placeholder="GROUPE, HOPITAL_SUD, FILIALE_FR…">
+        <mat-hint>Un seul DPO ACTIVE par périmètre</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <h3 class="section">DPO désigné</h3>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Nom complet</mat-label>
+      <input matInput formControlName="dpoFullName" maxlength="250" required>
+    </mat-form-field>
+    <div class="row">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>E-mail</mat-label>
+        <input matInput formControlName="dpoEmail" type="email" maxlength="320" required>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Téléphone (optionnel)</mat-label>
+        <input matInput formControlName="dpoPhone" maxlength="64">
+      </mat-form-field>
+    </div>
+
+    <h3 class="section">Type & qualification</h3>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Type de DPO (Art. 37§6)</mat-label>
+      <mat-select formControlName="dpoType" required>
+        <mat-option value="INTERNAL">Interne (salarié)</mat-option>
+        <mat-option value="EXTERNAL">Externe (prestataire)</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full" *ngIf="isExternal()">
+      <mat-label>Société hébergeante (obligatoire pour un DPO externe)</mat-label>
+      <input matInput formControlName="externalCompanyName" maxlength="250">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Qualifications &amp; expérience (Art. 37§5)</mat-label>
+      <textarea matInput formControlName="qualifications" rows="4" maxlength="4000"
+                placeholder="Certifications, diplômes, années d'expérience, connaissances sectorielles…"></textarea>
+    </mat-form-field>
+
+    <h3 class="section">Activités RoPA liées (optionnel)</h3>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>UUIDs (une par ligne)</mat-label>
+      <textarea matInput formControlName="linkedProcessingActivityIds" rows="2"
+                placeholder="00000000-0000-0000-0000-000000000000"></textarea>
+      <mat-error *ngIf="form.controls.linkedProcessingActivityIds.hasError('uuidLine')">
+        Chaque ligne doit être un UUID v4 valide.
+      </mat-error>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
+      <mat-icon *ngIf="!submitting">check</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      Proposer
+    </button>
+  </mat-dialog-actions>
+</form>

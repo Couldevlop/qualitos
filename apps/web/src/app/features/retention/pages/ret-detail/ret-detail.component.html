@@ -1,0 +1,71 @@
+<ng-container *ngIf="rule$ | async as r; else fallback">
+  <section class="ret-detail">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/retention" class="back">
+          <mat-icon>arrow_back</mat-icon> Règles de rétention
+        </a>
+        <h1>
+          <code>{{ r.dataCategoryCode }}</code>
+        </h1>
+        <h2 class="label">{{ r.dataCategoryLabel || '(libellé non renseigné)' }}</h2>
+        <div class="meta-row">
+          <span [class]="statusBadge(r.status)">{{ r.status }}</span>
+          <span class="period-big">{{ describe(r.retentionPeriod) }}</span>
+          <span class="dim" *ngIf="r.effectiveFrom">Effective depuis : {{ r.effectiveFrom }}</span>
+          <span class="dim" *ngIf="r.effectiveTo">Archivée le : {{ r.effectiveTo }}</span>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button mat-stroked-button (click)="openEdit(r)" [disabled]="r.status !== 'DRAFT'"
+                [matTooltip]="r.status === 'DRAFT' ? 'Modifier le brouillon' : 'Une règle ACTIVE est immutable'">
+          <mat-icon>edit</mat-icon> Modifier
+        </button>
+        <button mat-flat-button color="primary" *ngIf="r.status === 'DRAFT'" (click)="activate(r)">
+          <mat-icon>play_arrow</mat-icon> Activer
+        </button>
+        <button mat-stroked-button color="warn" *ngIf="r.status !== 'ARCHIVED'" (click)="archive(r)">
+          <mat-icon>inventory_2</mat-icon> Archiver
+        </button>
+        <button mat-stroked-button color="warn" (click)="remove(r)" [disabled]="r.status !== 'DRAFT'"
+                [matTooltip]="r.status === 'DRAFT' ? 'Supprimer le brouillon' : 'Seul un brouillon peut être supprimé'">
+          <mat-icon>delete</mat-icon> Supprimer
+        </button>
+      </div>
+    </header>
+
+    <mat-card>
+      <mat-card-header><mat-card-title>Base légale</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <p class="text">{{ r.legalBasis }}</p>
+        <p *ngIf="r.lawfulBasisReference">
+          <a [href]="r.lawfulBasisReference" target="_blank" rel="noopener noreferrer">
+            <mat-icon class="ext">open_in_new</mat-icon> Source légale
+          </a>
+        </p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header><mat-card-title>Trace</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <table class="kv">
+          <tr><th>Période ISO-8601</th><td><code>{{ r.retentionPeriod }}</code></td></tr>
+          <tr><th>Créée par</th><td><code>{{ r.createdByUserId }}</code></td></tr>
+          <tr><th>Créée le</th><td>{{ r.createdAt }}</td></tr>
+          <tr><th>Dernière MAJ</th><td>{{ r.updatedAt }}</td></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="ret-detail">
+    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  </section>
+</ng-template>
