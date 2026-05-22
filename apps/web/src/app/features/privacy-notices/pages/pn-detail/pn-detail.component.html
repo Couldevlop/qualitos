@@ -1,0 +1,123 @@
+<ng-container *ngIf="notice$ | async as n; else fallback">
+  <section class="pn-detail">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/privacy-notices" class="back">
+          <mat-icon>arrow_back</mat-icon> Mentions d'information
+        </a>
+        <h1>
+          <code>{{ n.reference }}</code>
+          <span class="dim version">v{{ n.version }}</span>
+          <span class="lang">{{ n.language | uppercase }}</span>
+        </h1>
+        <h2 class="title">{{ n.title }}</h2>
+        <div class="meta-row">
+          <span [class]="statusBadge(n.status)">{{ n.status }}</span>
+          <span class="dim" *ngIf="n.effectiveFrom">Effectif depuis : {{ n.effectiveFrom }}</span>
+          <span class="dim" *ngIf="n.effectiveTo">Effectif jusqu'à : {{ n.effectiveTo }}</span>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button mat-stroked-button (click)="openEdit(n)" [disabled]="n.status !== 'DRAFT'"
+                [matTooltip]="n.status !== 'DRAFT' ? 'Une mention PUBLISHED est immutable' : 'Modifier le brouillon'">
+          <mat-icon>edit</mat-icon> Modifier
+        </button>
+        <button mat-flat-button color="primary" *ngIf="n.status === 'DRAFT'" (click)="publish(n)">
+          <mat-icon>publish</mat-icon> Publier
+        </button>
+        <button mat-stroked-button color="warn" *ngIf="n.status !== 'ARCHIVED'" (click)="archive(n)">
+          <mat-icon>inventory_2</mat-icon> Archiver
+        </button>
+        <button mat-stroked-button color="warn" (click)="remove(n)" [disabled]="n.status !== 'DRAFT'"
+                [matTooltip]="n.status !== 'DRAFT' ? 'Seul un brouillon peut être supprimé' : 'Supprimer'">
+          <mat-icon>delete</mat-icon> Supprimer
+        </button>
+      </div>
+    </header>
+
+    <mat-card *ngIf="n.summary">
+      <mat-card-header><mat-card-title>Résumé</mat-card-title></mat-card-header>
+      <mat-card-content><p class="text">{{ n.summary }}</p></mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header><mat-card-title>Contenu (Markdown)</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <pre class="markdown" *ngIf="n.contentMarkdown; else noContent">{{ n.contentMarkdown }}</pre>
+        <ng-template #noContent><p class="dim">Aucun contenu renseigné.</p></ng-template>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="grid">
+      <mat-card>
+        <mat-card-header><mat-card-title>Contact</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Nom</th><td>{{ n.contactName || '—' }}</td></tr>
+            <tr><th>E-mail</th><td>{{ n.contactEmail || '—' }}</td></tr>
+            <tr *ngIf="n.publishUrl">
+              <th>URL publique</th>
+              <td>
+                <a [href]="n.publishUrl" target="_blank" rel="noopener noreferrer">
+                  {{ n.publishUrl }} <mat-icon class="ext">open_in_new</mat-icon>
+                </a>
+              </td>
+            </tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header><mat-card-title>Publication</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Créée par</th><td><code>{{ n.createdByUserId }}</code></td></tr>
+            <tr><th>Créée le</th><td>{{ n.createdAt }}</td></tr>
+            <tr *ngIf="n.publishedByUserId">
+              <th>Publiée par</th><td><code>{{ n.publishedByUserId }}</code></td>
+            </tr>
+            <tr *ngIf="n.publishedAt">
+              <th>Publiée le</th><td>{{ n.publishedAt }}</td>
+            </tr>
+            <tr><th>Dernière MAJ</th><td>{{ n.updatedAt }}</td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="n.linkedProcessingActivityIds?.length">
+        <mat-card-header><mat-card-title>Activités RoPA liées</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <ul class="uuid-list">
+            <li *ngFor="let id of n.linkedProcessingActivityIds">
+              <a [routerLink]="['/ropa', id]"><code>{{ id }}</code></a>
+            </li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="versions.length > 1">
+        <mat-card-header><mat-card-title>Autres versions ({{ versions.length }})</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <ul class="version-list">
+            <li *ngFor="let v of versions" [class.current]="v.id === n.id">
+              <a (click)="openVersion(v)">
+                <code>v{{ v.version }}</code> <span class="lang">{{ v.language | uppercase }}</span>
+                <span [class]="statusBadge(v.status)">{{ v.status }}</span>
+              </a>
+            </li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="pn-detail">
+    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  </section>
+</ng-template>
