@@ -1,0 +1,67 @@
+<section class="fria-list">
+
+  <header class="head">
+    <div>
+      <h1>AI Act · FRIA (Art. 27)</h1>
+      <p class="sub">Évaluation d'impact sur les droits fondamentaux — obligatoire pour les
+         autorités publiques et certains opérateurs utilisant un système IA à haut risque.</p>
+    </div>
+    <div class="actions">
+      <button mat-flat-button color="primary" (click)="draft()">
+        <mat-icon>add</mat-icon> Nouvelle FRIA
+      </button>
+    </div>
+  </header>
+
+  <div class="filters">
+    <mat-form-field appearance="outline" class="status-filter">
+      <mat-label>Statut</mat-label>
+      <mat-select [formControl]="statusCtrl">
+        <mat-option value="">Tous</mat-option>
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+
+  <table mat-table [dataSource]="(rows$ | async) ?? []" class="qos-table" *ngIf="(rows$ | async)?.length; else empty">
+
+    <ng-container matColumnDef="reference">
+      <th mat-header-cell *matHeaderCellDef>Référence</th>
+      <td mat-cell *matCellDef="let f"><code>{{ f.reference }}</code></td>
+    </ng-container>
+
+    <ng-container matColumnDef="aiSystem">
+      <th mat-header-cell *matHeaderCellDef>Système IA</th>
+      <td mat-cell *matCellDef="let f"><code>{{ f.aiSystemId.slice(0, 8) }}…</code></td>
+    </ng-container>
+
+    <ng-container matColumnDef="affectedPersons">
+      <th mat-header-cell *matHeaderCellDef>Personnes concernées</th>
+      <td mat-cell *matCellDef="let f">{{ truncate(f.affectedPersonsCategories, 100) }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <td mat-cell *matCellDef="let f"><span [class]="statusBadge(f.status)">{{ f.status }}</span></td>
+    </ng-container>
+
+    <ng-container matColumnDef="updatedAt">
+      <th mat-header-cell *matHeaderCellDef>Mis à jour</th>
+      <td mat-cell *matCellDef="let f">{{ f.updatedAt | slice:0:10 }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns" (click)="open(row)" class="row-link"></tr>
+  </table>
+
+  <ng-template #empty>
+    <div *ngIf="!(loading$ | async)" class="empty">
+      <mat-icon>balance</mat-icon>
+      <p>Aucune FRIA pour le filtre courant.</p>
+    </div>
+  </ng-template>
+
+</section>

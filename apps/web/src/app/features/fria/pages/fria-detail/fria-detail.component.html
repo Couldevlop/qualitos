@@ -1,0 +1,126 @@
+<ng-container *ngIf="row$ | async as f; else fallback">
+  <section class="fria-detail">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/fria" class="back">
+          <mat-icon>arrow_back</mat-icon> AI Act · FRIA
+        </a>
+        <h1>
+          <code>{{ f.reference }}</code>
+        </h1>
+        <div class="meta-row">
+          <span [class]="statusBadge(f.status)">{{ f.status }}</span>
+          <span class="dim">Système IA <code>{{ f.aiSystemId.slice(0, 8) }}…</code></span>
+          <span class="dim">Mis à jour : {{ f.updatedAt | slice:0:10 }}</span>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button mat-stroked-button *ngIf="canEdit(f.status)" (click)="edit(f)">
+          <mat-icon>edit</mat-icon> Éditer
+        </button>
+        <button mat-flat-button color="primary" *ngIf="canSubmit(f.status)" (click)="submit(f)">
+          <mat-icon>send</mat-icon> Soumettre
+        </button>
+        <button mat-flat-button color="primary" *ngIf="canApprove(f.status)" (click)="approve(f)">
+          <mat-icon>verified</mat-icon> Approuver
+        </button>
+        <button mat-stroked-button color="warn" *ngIf="canReturn(f.status)" (click)="returnToDraft(f)">
+          <mat-icon>undo</mat-icon> Retourner en brouillon
+        </button>
+        <button mat-stroked-button *ngIf="canArchive(f.status)" (click)="archive(f)">
+          <mat-icon>archive</mat-icon> Archiver
+        </button>
+        <button mat-stroked-button color="warn" (click)="remove(f)">
+          <mat-icon>delete</mat-icon> Supprimer
+        </button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <mat-card class="span-2">
+        <mat-card-header><mat-card-title>Processus déployé</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ f.processDescription }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="f.deploymentDurationDescription" class="span-2">
+        <mat-card-header><mat-card-title>Durée du déploiement</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ f.deploymentDurationDescription }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card class="span-2">
+        <mat-card-header><mat-card-title>Personnes affectées</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ f.affectedPersonsCategories }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card class="span-2 warn-card">
+        <mat-card-header><mat-card-title>Risques spécifiques sur les droits fondamentaux</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ f.specificRisks }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="f.mitigationMeasures" class="ok-card">
+        <mat-card-header><mat-card-title>Mesures d'atténuation</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ f.mitigationMeasures }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="f.humanOversightMeasures" class="ok-card">
+        <mat-card-header><mat-card-title>Supervision humaine</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ f.humanOversightMeasures }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="f.complaintMechanismDescription" class="span-2">
+        <mat-card-header><mat-card-title>Mécanisme de réclamation</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ f.complaintMechanismDescription }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="f.submittedAt">
+        <mat-card-header><mat-card-title>Soumission</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Soumise le</th><td>{{ f.submittedAt }}</td></tr>
+            <tr><th>Par</th><td><code>{{ f.submittedByUserId }}</code></td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="f.approvedAt" class="ok-card">
+        <mat-card-header><mat-card-title>Approbation</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Approuvée le</th><td>{{ f.approvedAt }}</td></tr>
+            <tr><th>Par</th><td><code>{{ f.approvedByUserId }}</code></td></tr>
+          </table>
+          <p *ngIf="f.approvalNotes" class="text"><strong>Notes :</strong> {{ f.approvalNotes }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="f.archivedReason" class="warn-card span-2">
+        <mat-card-header><mat-card-title>Archivage</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p class="text">{{ f.archivedReason }}</p>
+          <p class="dim">Archivée le {{ f.effectiveTo }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="span-2">
+        <mat-card-header><mat-card-title>Trace</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Créée par</th><td><code>{{ f.createdByUserId }}</code></td></tr>
+            <tr><th>Créée le</th><td>{{ f.createdAt }}</td></tr>
+            <tr><th>Dernière MAJ</th><td>{{ f.updatedAt }}</td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="fria-detail">
+    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  </section>
+</ng-template>

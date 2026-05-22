@@ -146,6 +146,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/breach/breach.module').then(m => m.BreachModule)
       },
       {
+        path: 'fria',
+        loadChildren: () => import('./features/fria/fria.module').then(m => m.FriaModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)
