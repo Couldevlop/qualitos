@@ -102,6 +102,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/dpia/dpia.module').then(m => m.DpiaModule)
       },
       {
+        path: 'dpo-appointments',
+        loadChildren: () => import('./features/dpo-appointments/dpo-appointments.module').then(m => m.DpoAppointmentsModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)

@@ -1,0 +1,123 @@
+<ng-container *ngIf="appointment$ | async as a; else fallback">
+  <section class="dpo-detail">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/dpo-appointments" class="back">
+          <mat-icon>arrow_back</mat-icon> Désignations DPO
+        </a>
+        <h1>
+          <code>{{ a.reference }}</code>
+          {{ a.dpoFullName }}
+        </h1>
+        <div class="meta-row">
+          <span [class]="typeBadge(a.dpoType)">{{ typeLabel(a.dpoType) }}</span>
+          <span [class]="statusBadge(a.status)">{{ a.status }}</span>
+          <span class="dim">Périmètre : <code>{{ a.scope }}</code></span>
+          <span class="dim" *ngIf="a.effectiveFrom">Effective depuis : {{ a.effectiveFrom }}</span>
+          <span class="dim" *ngIf="a.effectiveTo">Terminée le : {{ a.effectiveTo }}</span>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button mat-stroked-button (click)="openEdit(a)"
+                [disabled]="a.status !== 'PROPOSED' && a.status !== 'ACTIVE'"
+                [matTooltip]="a.status === 'PROPOSED' || a.status === 'ACTIVE' ? 'Modifier' : 'Non éditable dans cet état'">
+          <mat-icon>edit</mat-icon> Modifier
+        </button>
+        <button mat-flat-button color="primary" *ngIf="a.status === 'PROPOSED'" (click)="activate(a)">
+          <mat-icon>verified</mat-icon> Activer
+        </button>
+        <button mat-stroked-button color="warn" *ngIf="a.status === 'ACTIVE'" (click)="end(a)">
+          <mat-icon>event_busy</mat-icon> Clôturer
+        </button>
+        <button mat-stroked-button color="warn" *ngIf="a.status === 'PROPOSED'" (click)="cancelAppointment(a)">
+          <mat-icon>cancel</mat-icon> Annuler
+        </button>
+        <button mat-stroked-button color="warn" (click)="remove(a)" [disabled]="a.status !== 'PROPOSED'"
+                [matTooltip]="a.status === 'PROPOSED' ? 'Supprimer la proposition' : 'Seule une PROPOSED peut être supprimée'">
+          <mat-icon>delete</mat-icon> Supprimer
+        </button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <mat-card>
+        <mat-card-header><mat-card-title>Coordonnées DPO</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Nom complet</th><td>{{ a.dpoFullName }}</td></tr>
+            <tr><th>E-mail</th><td><a [href]="'mailto:' + a.dpoEmail">{{ a.dpoEmail }}</a></td></tr>
+            <tr *ngIf="a.dpoPhone"><th>Téléphone</th><td>{{ a.dpoPhone }}</td></tr>
+            <tr><th>Type</th><td>{{ typeLabel(a.dpoType) }}</td></tr>
+            <tr *ngIf="a.externalCompanyName">
+              <th>Société hébergeante</th><td>{{ a.externalCompanyName }}</td>
+            </tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header><mat-card-title>Notification autorité (Art. 37§7)</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr *ngIf="a.regulatorNotifiedAt"><th>Notifiée le</th><td>{{ a.regulatorNotifiedAt }}</td></tr>
+            <tr *ngIf="a.regulatorNotificationReference">
+              <th>Référence</th>
+              <td><code>{{ a.regulatorNotificationReference }}</code></td>
+            </tr>
+            <tr *ngIf="!a.regulatorNotifiedAt">
+              <td colspan="2" class="dim warn">Notification autorité non encore enregistrée — requise pour activation.</td>
+            </tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="a.qualifications" class="quals-card">
+        <mat-card-header><mat-card-title>Qualifications & expérience (Art. 37§5)</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p class="text">{{ a.qualifications }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="a.endReason" [class]="a.status === 'CANCELLED' ? 'rej-card' : 'end-card'">
+        <mat-card-header>
+          <mat-card-title>{{ a.status === 'CANCELLED' ? 'Motif d\'annulation' : 'Motif de fin de mandat' }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="text">{{ a.endReason }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="a.linkedProcessingActivityIds?.length">
+        <mat-card-header><mat-card-title>Activités RoPA liées</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <ul class="uuid-list">
+            <li *ngFor="let id of a.linkedProcessingActivityIds">
+              <a [routerLink]="['/ropa', id]"><code>{{ id }}</code></a>
+            </li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header><mat-card-title>Trace</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Créée par</th><td><code>{{ a.createdByUserId }}</code></td></tr>
+            <tr><th>Créée le</th><td>{{ a.createdAt }}</td></tr>
+            <tr><th>Dernière MAJ</th><td>{{ a.updatedAt }}</td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="dpo-detail">
+    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  </section>
+</ng-template>

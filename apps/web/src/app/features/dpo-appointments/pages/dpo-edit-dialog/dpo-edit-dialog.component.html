@@ -1,0 +1,55 @@
+<h2 mat-dialog-title>Modifier la désignation</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="dpo-form">
+  <mat-dialog-content>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Nom complet</mat-label>
+      <input matInput formControlName="dpoFullName" maxlength="250" required>
+    </mat-form-field>
+    <div class="row">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>E-mail</mat-label>
+        <input matInput formControlName="dpoEmail" type="email" maxlength="320" required>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Téléphone</mat-label>
+        <input matInput formControlName="dpoPhone" maxlength="64">
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Type</mat-label>
+      <mat-select formControlName="dpoType" required>
+        <mat-option value="INTERNAL">Interne</mat-option>
+        <mat-option value="EXTERNAL">Externe</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full" *ngIf="isExternal()">
+      <mat-label>Société hébergeante</mat-label>
+      <input matInput formControlName="externalCompanyName" maxlength="250">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Qualifications &amp; expérience</mat-label>
+      <textarea matInput formControlName="qualifications" rows="4" maxlength="4000"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>UUIDs RoPA liées (une par ligne)</mat-label>
+      <textarea matInput formControlName="linkedProcessingActivityIds" rows="2"></textarea>
+      <mat-error *ngIf="form.controls.linkedProcessingActivityIds.hasError('uuidLine')">
+        Chaque ligne doit être un UUID v4 valide.
+      </mat-error>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
+      <mat-icon *ngIf="!submitting">check</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      Enregistrer
+    </button>
+  </mat-dialog-actions>
+</form>
