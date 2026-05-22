@@ -138,6 +138,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/nis2-measures/nis2-measures.module').then(m => m.Nis2MeasuresModule)
       },
       {
+        path: 'cyber-incidents',
+        loadChildren: () => import('./features/cyber-incidents/cyber-incidents.module').then(m => m.CyberIncidentsModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)

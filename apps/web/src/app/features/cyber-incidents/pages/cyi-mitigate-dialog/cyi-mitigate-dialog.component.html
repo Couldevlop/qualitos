@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Endiguer l'incident</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="mit-form">
+  <mat-dialog-content>
+    <p class="hint">Décrire les mesures de containment appliquées et l'impact constaté.
+       L'incident passe en statut MITIGATED.</p>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Mesures de containment</mat-label>
+      <textarea matInput formControlName="containmentMeasures" rows="5" maxlength="4000" required></textarea>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Impact constaté (optionnel)</mat-label>
+      <textarea matInput formControlName="impactDescription" rows="4" maxlength="4000"></textarea>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
+      <mat-icon *ngIf="!submitting">healing</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      Endiguer
+    </button>
+  </mat-dialog-actions>
+</form>

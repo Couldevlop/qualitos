@@ -1,0 +1,101 @@
+<section class="cyi-list">
+
+  <header class="head">
+    <div>
+      <h1>NIS 2 · Incidents cyber</h1>
+      <p class="sub">Art. 23 — pour les incidents <strong>significatifs</strong> (HIGH/CRITICAL) :
+         alerte CSIRT à 24h, évaluation initiale à 72h, rapport final à 1 mois.</p>
+    </div>
+    <div class="actions">
+      <button mat-flat-button color="warn" (click)="detect()">
+        <mat-icon>shield</mat-icon> Signaler un incident
+      </button>
+    </div>
+  </header>
+
+  <div class="filters">
+    <mat-form-field appearance="outline" class="mode-filter">
+      <mat-label>Mode</mat-label>
+      <mat-select [formControl]="modeCtrl">
+        <mat-option value="ALL">Tous</mat-option>
+        <mat-option value="EW_OVERDUE">Alerte 24h en retard</mat-option>
+        <mat-option value="IA_OVERDUE">Évaluation 72h en retard</mat-option>
+        <mat-option value="FR_OVERDUE">Rapport 1 mois en retard</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="status-filter">
+      <mat-label>Statut</mat-label>
+      <mat-select [formControl]="statusCtrl">
+        <mat-option value="">Tous</mat-option>
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+
+  <table mat-table [dataSource]="(rows$ | async) ?? []" class="qos-table" *ngIf="(rows$ | async)?.length; else empty">
+
+    <ng-container matColumnDef="reference">
+      <th mat-header-cell *matHeaderCellDef>Référence</th>
+      <td mat-cell *matCellDef="let r"><code>{{ r.reference }}</code></td>
+    </ng-container>
+
+    <ng-container matColumnDef="title">
+      <th mat-header-cell *matHeaderCellDef>Titre</th>
+      <td mat-cell *matCellDef="let r">{{ r.title }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef>Type</th>
+      <td mat-cell *matCellDef="let r"><span class="type-pill">{{ typeOf(r.incidentType) }}</span></td>
+    </ng-container>
+
+    <ng-container matColumnDef="severity">
+      <th mat-header-cell *matHeaderCellDef>Sévérité</th>
+      <td mat-cell *matCellDef="let r"><span [class]="severityBadge(r.severity)">{{ r.severity }}</span></td>
+    </ng-container>
+
+    <ng-container matColumnDef="affected">
+      <th mat-header-cell *matHeaderCellDef>Utilisateurs impactés</th>
+      <td mat-cell *matCellDef="let r" class="num">{{ r.estimatedAffectedUsers | number }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <td mat-cell *matCellDef="let r"><span [class]="statusBadge(r.status)">{{ r.status }}</span></td>
+    </ng-container>
+
+    <ng-container matColumnDef="deadlines">
+      <th mat-header-cell *matHeaderCellDef>Échéances NIS 2</th>
+      <td mat-cell *matCellDef="let r" class="deadlines">
+        <span *ngIf="!r.significant" class="dim">non applicable</span>
+        <ng-container *ngIf="r.significant">
+          <span *ngIf="r.earlyWarningOverdue" class="flag flag-overdue" title="Alerte 24h en retard">
+            <mat-icon>warning</mat-icon> 24h
+          </span>
+          <span *ngIf="r.initialAssessmentOverdue" class="flag flag-overdue" title="Évaluation 72h en retard">
+            <mat-icon>warning</mat-icon> 72h
+          </span>
+          <span *ngIf="r.finalReportOverdue" class="flag flag-overdue" title="Rapport 1 mois en retard">
+            <mat-icon>warning</mat-icon> 1 mois
+          </span>
+          <span *ngIf="!r.earlyWarningOverdue && !r.initialAssessmentOverdue && !r.finalReportOverdue" class="ok">OK</span>
+        </ng-container>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns" (click)="open(row)" class="row-link"></tr>
+  </table>
+
+  <ng-template #empty>
+    <div *ngIf="!(loading$ | async)" class="empty">
+      <mat-icon>shield</mat-icon>
+      <p>Aucun incident pour le filtre courant.</p>
+    </div>
+  </ng-template>
+
+</section>
