@@ -142,6 +142,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/cyber-incidents/cyber-incidents.module').then(m => m.CyberIncidentsModule)
       },
       {
+        path: 'breaches',
+        loadChildren: () => import('./features/breach/breach.module').then(m => m.BreachModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)

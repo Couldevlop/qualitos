@@ -1,0 +1,147 @@
+<ng-container *ngIf="row$ | async as b; else fallback">
+  <section class="breach-detail">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/breaches" class="back">
+          <mat-icon>arrow_back</mat-icon> RGPD · Violations
+        </a>
+        <h1>
+          <code>{{ b.internalReference }}</code>
+          <span class="title">{{ b.title }}</span>
+        </h1>
+        <div class="meta-row">
+          <span [class]="statusBadge(b.status)">{{ b.status }}</span>
+          <span [class]="severityBadge(b.severity)">{{ b.severity }}</span>
+          <span class="dim">{{ b.affectedSubjectsCount | number }} personnes concernées</span>
+          <span *ngIf="b.subjectNotificationRequired" class="flag flag-sig">
+            <mat-icon>privacy_tip</mat-icon> Art. 34 — notification personnes requise
+          </span>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button mat-stroked-button *ngIf="canSev(b.status)" (click)="changeSeverity(b)">
+          <mat-icon>tune</mat-icon> Sévérité
+        </button>
+        <button mat-flat-button color="primary" *ngIf="canStart(b.status)" (click)="startAssessment(b)">
+          <mat-icon>search</mat-icon> Évaluer
+        </button>
+        <button mat-flat-button color="primary" *ngIf="canContain(b.status)" (click)="contain(b)">
+          <mat-icon>healing</mat-icon> Endiguer
+        </button>
+        <button mat-flat-button color="primary" *ngIf="canNotifyDpa(b)" (click)="notifyDpa(b)">
+          <mat-icon>send</mat-icon> Notifier CNIL
+        </button>
+        <button mat-flat-button color="primary" *ngIf="canNotifySubjects(b)" (click)="notifySubjects(b)">
+          <mat-icon>mail</mat-icon> Notifier personnes
+        </button>
+        <button mat-flat-button color="primary" *ngIf="canClose(b.status)" (click)="close(b)">
+          <mat-icon>check_circle</mat-icon> Clôturer
+        </button>
+        <button mat-stroked-button color="warn" *ngIf="canReject(b.status)" (click)="reject(b)">
+          <mat-icon>block</mat-icon> Rejeter
+        </button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <mat-card class="span-2" *ngIf="b.description">
+        <mat-card-header><mat-card-title>Description</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ b.description }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card class="deadlines-card">
+        <mat-card-header><mat-card-title>Échéances RGPD</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr>
+              <th>CNIL (72h)</th>
+              <td>
+                <span *ngIf="b.dpaNotifiedAt" class="status-ok">
+                  ✓ {{ b.dpaNotifiedAt | slice:0:16 }} · <code>{{ b.dpaReference }}</code>
+                </span>
+                <span *ngIf="!b.dpaNotifiedAt">
+                  <span [class.overdue]="b.dpaOverdue">{{ b.dpaOverdue ? '⚠ ' : '' }}Échéance : {{ b.dpaDeadlineAt | slice:0:16 }}</span>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>Art. 34</th>
+              <td>
+                <ng-container *ngIf="b.subjectNotificationRequired; else notReq">
+                  <span *ngIf="b.subjectsNotifiedAt" class="status-ok">
+                    ✓ {{ b.subjectsNotifiedAt | slice:0:16 }} · canal : {{ b.subjectsNotificationChannel }}
+                  </span>
+                  <span *ngIf="!b.subjectsNotifiedAt" class="overdue">Notification personnes en attente</span>
+                </ng-container>
+                <ng-template #notReq><span class="dim">Non requise (sévérité LOW/MEDIUM)</span></ng-template>
+              </td>
+            </tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header><mat-card-title>Chronologie</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Survenue le</th><td>{{ b.occurredAt || '—' }}</td></tr>
+            <tr><th>Détectée le</th><td>{{ b.detectedAt }}</td></tr>
+            <tr><th>Pris en charge</th>
+                <td><code *ngIf="b.handledByUserId; else noHandler">{{ b.handledByUserId }}</code>
+                    <ng-template #noHandler><span class="dim">—</span></ng-template></td></tr>
+            <tr><th>Dernière MAJ</th><td>{{ b.updatedAt }}</td></tr>
+            <tr *ngIf="b.closedAt"><th>Clôturée le</th><td>{{ b.closedAt }}</td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="(b.affectedDataCategories?.length ?? 0) > 0">
+        <mat-card-header><mat-card-title>Catégories de données</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <ul class="bullets">
+            <li *ngFor="let c of b.affectedDataCategories">{{ c }}</li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="b.riskOfHarmDescription">
+        <mat-card-header><mat-card-title>Risque de préjudice</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ b.riskOfHarmDescription }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="b.containmentMeasures" class="span-2 ok-card">
+        <mat-card-header><mat-card-title>Mesures de containment</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ b.containmentMeasures }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="b.closureNotes" class="ok-card">
+        <mat-card-header><mat-card-title>Notes de clôture</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ b.closureNotes }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="b.rejectionReason" class="warn-card span-2">
+        <mat-card-header><mat-card-title>Motif du rejet</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ b.rejectionReason }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card class="span-2">
+        <mat-card-header><mat-card-title>Trace</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Signalée par</th><td><code>{{ b.reportedByUserId }}</code></td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="breach-detail">
+    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  </section>
+</ng-template>
