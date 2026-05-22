@@ -1,0 +1,36 @@
+.itsm-list { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.head h1 { margin: 0 0 4px; font-size: 22px; }
+.head p  { margin: 0; color: rgba(0,0,0,0.6); font-size: 13px; max-width: 720px; }
+
+.banner { padding: 10px 14px; border-radius: 8px; font-size: 13px; }
+.banner-error { background: #fbe9e7; color: #b71c1c; }
+.banner-info  { background: #e3f2fd; color: #0d47a1; }
+
+.table-wrap { background: #fff; border-radius: 12px; overflow: hidden; }
+.title-link { color: var(--mat-sys-primary, #1565c0); cursor: pointer; font-weight: 600; }
+.title-link:hover { text-decoration: underline; }
+.dim { display: block; color: rgba(0,0,0,0.5); font-size: 11px; margin-top: 2px; }
+.row-clickable { cursor: pointer; }
+.row-clickable:hover { background: rgba(0,0,0,0.025); }
+
+code { font-family: 'IBM Plex Mono','Fira Code',monospace; font-size: 12px; }
+.url { color: rgba(0,0,0,0.7); }
+
+.fail-count {
+  display: inline-flex; align-items: center; gap: 2px;
+  margin-left: 8px; color: #b71c1c; font-weight: 600; font-size: 12px;
+  vertical-align: middle;
+}
+.fail-count mat-icon { font-size: 14px; height: 14px; width: 14px; }
+
+.badge, .pbadge {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+}
+.badge-active             { background: #e8f5e9; color: #1b5e20; }
+.badge-disabled           { background: #f5f5f5; color: #424242; }
+.badge-disabled_on_errors { background: #fbe9e7; color: #b71c1c; }
+
+.pbadge-servicenow { background: #e8f5e9; color: #1b5e20; }
+.pbadge-jira_sm    { background: #e3f2fd; color: #0d47a1; }

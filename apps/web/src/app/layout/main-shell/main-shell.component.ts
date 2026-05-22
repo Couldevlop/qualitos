@@ -59,6 +59,12 @@ export class MainShellComponent implements OnInit {
       ]
     },
     {
+      label: 'Intégrations',
+      items: [
+        { label: 'ITSM',         route: '/itsm',         icon: 'hub' }
+      ]
+    },
+    {
       label: 'Compliance UE',
       items: [
         { label: 'AI Act', route: '/ai-act', icon: 'smart_toy', badge: '7' },
