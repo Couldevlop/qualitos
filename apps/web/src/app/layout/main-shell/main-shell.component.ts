@@ -31,7 +31,8 @@ export class MainShellComponent implements OnInit {
       label: 'Pilotage',
       items: [
         { label: 'Tableau de bord', route: '/dashboard', icon: 'dashboard' },
-        { label: 'Accueil',         route: '/home',      icon: 'home' }
+        { label: 'Accueil',         route: '/home',      icon: 'home' },
+        { label: 'KPI catalog',     route: '/kpis',      icon: 'monitoring' }
       ]
     },
     {
