@@ -1,0 +1,125 @@
+<ng-container *ngIf="inc$ | async as i; else fallback">
+  <section class="inc-detail">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/ai-incidents" class="back">
+          <mat-icon>arrow_back</mat-icon> Incidents IA
+        </a>
+        <h1>
+          <code>{{ i.reference }}</code>
+        </h1>
+        <div class="meta-row">
+          <span [class]="severityBadge(i.severity)">{{ severityLabel(i.severity) }}</span>
+          <span [class]="statusBadge(i.status)">{{ i.status }}</span>
+          <span *ngIf="i.overdueForRegulator" class="flag flag-overdue">
+            <mat-icon>warning</mat-icon> Délai régulateur dépassé
+          </span>
+          <span class="dim">Détecté : {{ i.detectedAt | slice:0:10 }}</span>
+          <span class="dim" *ngIf="i.regulatorNotificationDeadline">
+            Échéance régulateur : {{ i.regulatorNotificationDeadline | slice:0:10 }}
+          </span>
+        </div>
+        <p class="text">{{ i.description }}</p>
+      </div>
+
+      <div class="toolbar">
+        <button mat-flat-button color="primary" *ngIf="i.status === 'DETECTED'" (click)="startInvestigation(i)">
+          <mat-icon>search</mat-icon> Démarrer investigation
+        </button>
+        <button mat-flat-button color="primary"
+                *ngIf="i.status === 'DETECTED' || i.status === 'INVESTIGATING'"
+                (click)="notifyRegulator(i)">
+          <mat-icon>send</mat-icon> Notifier régulateur
+        </button>
+        <button mat-flat-button color="primary"
+                *ngIf="i.status === 'NOTIFIED_REGULATOR'" (click)="close(i)">
+          <mat-icon>check_circle</mat-icon> Clôturer
+        </button>
+        <button mat-stroked-button color="warn"
+                *ngIf="i.status === 'DETECTED' || i.status === 'INVESTIGATING'" (click)="dismiss(i)">
+          <mat-icon>block</mat-icon> Rejeter
+        </button>
+        <button mat-stroked-button color="warn" (click)="remove(i)">
+          <mat-icon>delete</mat-icon> Supprimer
+        </button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <mat-card *ngIf="i.affectedPersonsDescription">
+        <mat-card-header><mat-card-title>Personnes affectées</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ i.affectedPersonsDescription }}</p></mat-card-content>
+      </mat-card>
+      <mat-card *ngIf="i.immediateActionsTaken">
+        <mat-card-header><mat-card-title>Actions immédiates</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ i.immediateActionsTaken }}</p></mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-header><mat-card-title>Système IA</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>UUID</th><td><code>{{ i.aiSystemId }}</code></td></tr>
+            <tr><th>Survenu le</th><td>{{ i.occurredAt }}</td></tr>
+            <tr><th>Détecté le</th><td>{{ i.detectedAt }}</td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="i.status === 'INVESTIGATING' || i.investigationStartedAt">
+        <mat-card-header><mat-card-title>Investigation</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Démarrée le</th><td>{{ i.investigationStartedAt }}</td></tr>
+            <tr *ngIf="i.investigationLeadUserId">
+              <th>Pilote</th><td><code>{{ i.investigationLeadUserId }}</code></td>
+            </tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="i.regulatorNotifiedAt" class="ok-card">
+        <mat-card-header><mat-card-title>Notification régulateur</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Notifié le</th><td>{{ i.regulatorNotifiedAt }}</td></tr>
+            <tr><th>Référence</th><td><code>{{ i.regulatorReference }}</code></td></tr>
+          </table>
+          <p *ngIf="i.rootCauseAnalysis" class="text"><strong>Cause racine :</strong> {{ i.rootCauseAnalysis }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="i.correctiveActions">
+        <mat-card-header><mat-card-title>Actions correctives</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ i.correctiveActions }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="i.status === 'DISMISSED' && i.dismissReason" class="warn-card">
+        <mat-card-header><mat-card-title>Motif du rejet</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p class="text">{{ i.dismissReason }}</p>
+          <p class="dim">Rejeté le {{ i.dismissedAt }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header><mat-card-title>Trace</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Créé par</th><td><code>{{ i.createdByUserId }}</code></td></tr>
+            <tr><th>Créé le</th><td>{{ i.createdAt }}</td></tr>
+            <tr><th>Dernière MAJ</th><td>{{ i.updatedAt }}</td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="inc-detail">
+    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  </section>
+</ng-template>

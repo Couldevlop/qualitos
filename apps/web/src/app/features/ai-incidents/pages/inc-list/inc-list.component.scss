@@ -1,0 +1,36 @@
+.inc-list { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.head h1 { margin: 0 0 4px; font-size: 22px; }
+.head p  { margin: 0; color: rgba(0,0,0,0.6); font-size: 13px; max-width: 720px; }
+
+.filters { display: flex; gap: 12px; flex-wrap: wrap; }
+.filters mat-form-field { min-width: 200px; }
+
+.banner { padding: 10px 14px; border-radius: 8px; font-size: 13px; }
+.banner-error { background: #fbe9e7; color: #b71c1c; }
+.banner-info  { background: #e3f2fd; color: #0d47a1; }
+
+.table-wrap { background: #fff; border-radius: 12px; overflow: hidden; }
+.title-link { color: var(--mat-sys-primary, #1565c0); cursor: pointer; font-weight: 600; }
+.title-link:hover { text-decoration: underline; }
+.row-clickable { cursor: pointer; }
+.row-clickable:hover { background: rgba(0,0,0,0.025); }
+
+.overdue { color: #b71c1c; font-weight: 600; }
+.warn-icon { color: #b71c1c; vertical-align: middle; font-size: 16px; height: 16px; width: 16px; }
+code { font-family: 'IBM Plex Mono','Fira Code',monospace; font-size: 12px; }
+
+.badge, .sev {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+}
+.badge-detected           { background: #fff3e0; color: #e65100; }
+.badge-investigating      { background: #ede7f6; color: #4527a0; }
+.badge-notified_regulator { background: #e3f2fd; color: #0d47a1; }
+.badge-closed             { background: #e8f5e9; color: #1b5e20; }
+.badge-dismissed          { background: #f5f5f5; color: #424242; }
+
+.sev-death_or_serious_harm_to_health           { background: #b71c1c; color: #fff; }
+.sev-serious_infringement_fundamental_rights   { background: #fbe9e7; color: #b71c1c; }
+.sev-critical_infrastructure_disruption        { background: #fff3e0; color: #e65100; }
+.sev-serious_property_or_environmental_damage  { background: #fff3e0; color: #e65100; }
