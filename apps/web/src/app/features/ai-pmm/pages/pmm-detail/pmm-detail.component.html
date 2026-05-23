@@ -1,0 +1,131 @@
+<ng-container *ngIf="row$ | async as p; else fallback">
+  <section class="pmm-detail">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/ai-pmm" class="back">
+          <mat-icon>arrow_back</mat-icon> AI Act · Plans PMM
+        </a>
+        <h1>
+          <code>{{ p.reference }}</code>
+          <span class="title">{{ p.name }}</span>
+        </h1>
+        <div class="meta-row">
+          <span [class]="statusBadge(p.status)">{{ p.status }}</span>
+          <span class="freq-pill">{{ freqOf(p.reviewFrequency) }}</span>
+          <span class="dim">Système IA <code>{{ p.aiSystemId.slice(0, 8) }}…</code></span>
+          <span *ngIf="isOverdue(p)" class="flag flag-overdue">
+            <mat-icon>warning</mat-icon> Revue en retard
+          </span>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button mat-stroked-button *ngIf="canEdit(p)" (click)="edit(p)">
+          <mat-icon>edit</mat-icon> Éditer
+        </button>
+        <button mat-flat-button color="primary" *ngIf="canActivate(p)" (click)="activate(p)">
+          <mat-icon>play_arrow</mat-icon> Activer
+        </button>
+        <button mat-flat-button color="primary" *ngIf="canReview(p)" (click)="recordReview(p)">
+          <mat-icon>fact_check</mat-icon> Revue
+        </button>
+        <button mat-stroked-button *ngIf="canSuspend(p)" (click)="suspend(p)">
+          <mat-icon>pause</mat-icon> Suspendre
+        </button>
+        <button mat-stroked-button color="warn" *ngIf="canClose(p)" (click)="close(p)">
+          <mat-icon>archive</mat-icon> Clôturer
+        </button>
+        <button mat-stroked-button color="warn" (click)="remove(p)">
+          <mat-icon>delete</mat-icon> Supprimer
+        </button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <mat-card class="span-2" *ngIf="p.description">
+        <mat-card-header><mat-card-title>Description</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ p.description }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header><mat-card-title>Cycle de vie</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Activé le</th><td>{{ p.activatedAt ? (p.activatedAt | slice:0:10) : '—' }}</td></tr>
+            <tr><th>Dernière revue</th><td>{{ p.lastReviewedAt ? (p.lastReviewedAt | slice:0:10) : '—' }}</td></tr>
+            <tr><th>Prochaine revue</th>
+                <td><span *ngIf="isOverdue(p)" class="overdue">⚠ </span>
+                    {{ p.nextReviewDueAt ? (p.nextReviewDueAt | slice:0:10) : '—' }}</td></tr>
+            <tr *ngIf="p.lastReviewedByUserId">
+              <th>Dernière revue par</th><td><code>{{ p.lastReviewedByUserId }}</code></td>
+            </tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header><mat-card-title>Lien QMS</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p *ngIf="p.qmsLinkReference; else noQms" class="text"><code>{{ p.qmsLinkReference }}</code></p>
+          <ng-template #noQms><p class="dim">Aucune référence QMS renseignée.</p></ng-template>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="p.metricsMonitored" class="span-2">
+        <mat-card-header><mat-card-title>Métriques surveillées</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ p.metricsMonitored }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="p.collectionMethod">
+        <mat-card-header><mat-card-title>Méthode de collecte</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ p.collectionMethod }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="p.responsiblePartyDescription">
+        <mat-card-header><mat-card-title>Partie responsable</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ p.responsiblePartyDescription }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="p.triggerCriteria" class="span-2 warn-card">
+        <mat-card-header><mat-card-title>Critères de déclenchement</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ p.triggerCriteria }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="p.suspensionReason" class="warn-card span-2">
+        <mat-card-header><mat-card-title>Motif de suspension</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p class="text">{{ p.suspensionReason }}</p>
+          <p class="dim">Suspendu le {{ p.suspendedAt }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="p.closureReason" class="warn-card span-2">
+        <mat-card-header><mat-card-title>Motif de clôture</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p class="text">{{ p.closureReason }}</p>
+          <p class="dim">Clos le {{ p.effectiveTo }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="span-2">
+        <mat-card-header><mat-card-title>Trace</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Créé par</th><td><code>{{ p.createdByUserId }}</code></td></tr>
+            <tr><th>Créé le</th><td>{{ p.createdAt }}</td></tr>
+            <tr><th>Dernière MAJ</th><td>{{ p.updatedAt }}</td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="pmm-detail">
+    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  </section>
+</ng-template>

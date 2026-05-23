@@ -74,6 +74,7 @@ export class MainShellComponent implements OnInit {
         { label: 'AI Act · Incidents',  route: '/ai-incidents',   icon: 'warning' },
         { label: 'AI Act · EUDB',       route: '/ai-eudb',        icon: 'storage' },
         { label: 'AI Act · FRIA',       route: '/fria',           icon: 'balance' },
+        { label: 'AI Act · PMM',        route: '/ai-pmm',         icon: 'monitoring' },
         { label: 'GDPR · RoPA',      route: '/ropa',     icon: 'shield' },
         { label: 'GDPR · Consents',  route: '/consents',         icon: 'how_to_reg' },
         { label: 'GDPR · DSAR',      route: '/subject-requests', icon: 'gavel' },

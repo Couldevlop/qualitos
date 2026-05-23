@@ -150,6 +150,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/fria/fria.module').then(m => m.FriaModule)
       },
       {
+        path: 'ai-pmm',
+        loadChildren: () => import('./features/ai-pmm/ai-pmm.module').then(m => m.AiPmmModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)
