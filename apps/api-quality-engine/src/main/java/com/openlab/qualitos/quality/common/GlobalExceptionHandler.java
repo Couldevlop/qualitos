@@ -131,6 +131,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.net.URI;
 import java.time.Instant;
@@ -1284,6 +1285,18 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/marketplace-pack-invalid-state"));
         problem.setTitle("Invalid Marketplace Pack State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ProblemDetail handleNoResource(NoResourceFoundException ex) {
+        // Chemin inexistant → 404 (et non 500). Évite de masquer une 404 en
+        // erreur serveur et ne divulgue aucune information interne (OWASP A05/A09).
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND, "Resource not found");
+        problem.setType(URI.create("https://qualitos.io/errors/resource-not-found"));
+        problem.setTitle("Resource Not Found");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
