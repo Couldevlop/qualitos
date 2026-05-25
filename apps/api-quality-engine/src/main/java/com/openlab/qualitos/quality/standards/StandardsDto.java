@@ -151,4 +151,112 @@ public final class StandardsDto {
             int totalRequirements,
             int coveredRequirements
     ) {}
+
+    // ---- Roadmap de certification (§8.5) ----
+
+    public record RoadmapStageResponse(
+            UUID id,
+            int stepNumber,
+            String name,
+            String description,
+            String typicalDuration,
+            String deliverables,
+            String responsibleRole,
+            String involvedModules,
+            StageStatus status,
+            UUID assigneeId,
+            LocalDate plannedStartDate,
+            LocalDate plannedEndDate,
+            LocalDate actualStartDate,
+            LocalDate actualEndDate,
+            String notes,
+            int orderIndex
+    ) {}
+
+    public record UpdateStageRequest(
+            StageStatus status,
+            UUID assigneeId,
+            LocalDate plannedStartDate,
+            LocalDate plannedEndDate,
+            LocalDate actualStartDate,
+            LocalDate actualEndDate,
+            String notes
+    ) {}
+
+    /** Synthèse de progression de la roadmap (pour pilotage / dashboard). */
+    public record RoadmapSummary(
+            UUID tenantStandardId,
+            int totalStages,
+            int doneStages,
+            int inProgressStages,
+            int skippedStages,
+            double completionPercent,
+            List<RoadmapStageResponse> stages
+    ) {}
+
+    // ---- Audit blanc / gap analysis (§8.4 onglet 7, §8.7) ----
+
+    /**
+     * Rapport d'audit blanc : simulation d'audit avant l'audit réel.
+     * Confronte les preuves liées aux exigences et produit un score de
+     * préparation, la liste des écarts (findings) et un plan de remédiation.
+     */
+    public record AuditBlancReport(
+            UUID tenantStandardId,
+            UUID standardId,
+            String standardCode,
+            String standardName,
+            Instant generatedAt,
+            double readinessScore,
+            int totalRequirements,
+            int coveredRequirements,
+            int mustTotal,
+            int mustCovered,
+            int criticalGaps,
+            int majorGaps,
+            int minorGaps,
+            String verdict,
+            List<AuditFinding> findings
+    ) {}
+
+    /**
+     * Un écart constaté lors de l'audit blanc (exigence non couverte par une preuve),
+     * avec une action de remédiation suggérée et sa priorité.
+     */
+    public record AuditFinding(
+            UUID requirementId,
+            String sectionCode,
+            String clauseCode,
+            String requirementCode,
+            String requirementText,
+            ObligationLevel obligation,
+            RiskLevel riskIfMissing,
+            String findingSeverity,
+            String expectedEvidence,
+            String remediationAction,
+            int remediationPriority
+    ) {}
+
+    // ---- Dossier de certification (§8.4 onglet 6) ----
+
+    /**
+     * Dossier de certification complet, généré à la demande, intégrant
+     * exigences, roadmap, alignement, audit blanc et preuves. Le contenu HTML
+     * est imprimable en PDF ; son empreinte SHA-256 est ancrée (blockchain)
+     * pour garantir l'intégrité à l'instant T (audit-ready, §8.7).
+     */
+    public record DossierResponse(
+            UUID tenantStandardId,
+            String standardCode,
+            String standardName,
+            Instant generatedAt,
+            String sha256,
+            String anchorTxRef,
+            String fileName,
+            String contentType,
+            double readinessScore,
+            double roadmapCompletion,
+            int evidenceCount,
+            String htmlContent
+    ) {}
 }

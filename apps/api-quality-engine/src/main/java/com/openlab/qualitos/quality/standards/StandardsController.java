@@ -15,8 +15,13 @@ import java.util.UUID;
 public class StandardsController {
 
     private final StandardsService service;
+    private final CertificationDossierService dossierService;
 
-    public StandardsController(StandardsService service) { this.service = service; }
+    public StandardsController(StandardsService service,
+                               CertificationDossierService dossierService) {
+        this.service = service;
+        this.dossierService = dossierService;
+    }
 
     // ---- Catalog ----
 
@@ -117,5 +122,35 @@ public class StandardsController {
     @GetMapping("/adoptions/{id}/alignment")
     public StandardsDto.AlignmentReport alignment(@PathVariable UUID id) {
         return service.computeAlignment(id);
+    }
+
+    // ---- Audit blanc (§8.7) ----
+
+    @GetMapping("/adoptions/{id}/audit-blanc")
+    public StandardsDto.AuditBlancReport auditBlanc(@PathVariable UUID id) {
+        return service.computeAuditBlanc(id);
+    }
+
+    // ---- Roadmap de certification (§8.5) ----
+
+    @GetMapping("/adoptions/{id}/roadmap")
+    public StandardsDto.RoadmapSummary roadmap(@PathVariable UUID id) {
+        return service.getRoadmap(id);
+    }
+
+    @PatchMapping("/adoptions/{id}/roadmap/{stageId}")
+    public StandardsDto.RoadmapStageResponse updateStage(
+            @PathVariable UUID id,
+            @PathVariable UUID stageId,
+            @Valid @RequestBody StandardsDto.UpdateStageRequest request) {
+        return service.updateStage(id, stageId, request);
+    }
+
+    // ---- Dossier de certification (§8.4 onglet 6) ----
+    // POST : la génération produit un artefact ancré (effet de bord), d'où POST.
+
+    @PostMapping("/adoptions/{id}/dossier")
+    public StandardsDto.DossierResponse generateDossier(@PathVariable UUID id) {
+        return dossierService.generate(id);
     }
 }

@@ -33,6 +33,7 @@ class StandardsControllerTest {
 
     @Autowired MockMvc mockMvc;
     @MockitoBean StandardsService service;
+    @MockitoBean CertificationDossierService dossierService;
     ObjectMapper om;
 
     static final UUID STD = UUID.randomUUID();
@@ -274,6 +275,52 @@ class StandardsControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test @WithMockUser
+    void roadmap_returns200() throws Exception {
+        when(service.getRoadmap(ADO)).thenReturn(new StandardsDto.RoadmapSummary(
+                ADO, 19, 3, 1, 0, 15.0, List.of()));
+        mockMvc.perform(get("/api/v1/standards/adoptions/{id}/roadmap", ADO))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalStages").value(19))
+                .andExpect(jsonPath("$.doneStages").value(3));
+    }
+
+    @Test @WithMockUser
+    void updateStage_returns200() throws Exception {
+        when(service.updateStage(eq(ADO), any(), any())).thenReturn(
+                new StandardsDto.RoadmapStageResponse(UUID.randomUUID(), 1, "Cadrage", null,
+                        "2-4 sem", null, "Direction", "PDCA", StageStatus.IN_PROGRESS, null,
+                        null, null, null, null, "go", 1));
+        mockMvc.perform(patch("/api/v1/standards/adoptions/{id}/roadmap/{sid}", ADO, UUID.randomUUID())
+                        .with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"status\":\"IN_PROGRESS\",\"notes\":\"go\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
+    }
+
+    @Test @WithMockUser
+    void auditBlanc_returns200() throws Exception {
+        when(service.computeAuditBlanc(ADO)).thenReturn(new StandardsDto.AuditBlancReport(
+                ADO, STD, "iso-9001", "ISO 9001:2015", Instant.now(),
+                50d, 42, 21, 40, 20, 1, 1, 0, "NON PRÊT — écarts majeurs à corriger", List.of()));
+        mockMvc.perform(get("/api/v1/standards/adoptions/{id}/audit-blanc", ADO))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.readinessScore").value(50.0))
+                .andExpect(jsonPath("$.criticalGaps").value(1));
+    }
+
+    @Test @WithMockUser
+    void generateDossier_returns200() throws Exception {
+        when(dossierService.generate(ADO)).thenReturn(new StandardsDto.DossierResponse(
+                ADO, "iso-9001", "ISO 9001:2015", Instant.now(),
+                "a".repeat(64), "stub-tx-1", "dossier.html", "text/html",
+                50d, 15d, 1, "<html>...</html>"));
+        mockMvc.perform(post("/api/v1/standards/adoptions/{id}/dossier", ADO).with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.sha256").isNotEmpty())
+                .andExpect(jsonPath("$.anchorTxRef").value("stub-tx-1"));
     }
 
     // helpers

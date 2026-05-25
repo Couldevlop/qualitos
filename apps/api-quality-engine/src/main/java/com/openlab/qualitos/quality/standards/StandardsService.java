@@ -22,15 +22,18 @@ public class StandardsService {
     private final StandardRequirementRepository requirementRepository;
     private final TenantStandardRepository tenantStandardRepository;
     private final RequirementEvidenceRepository evidenceRepository;
+    private final CertificationRoadmapStageRepository roadmapStageRepository;
 
     public StandardsService(StandardRepository standardRepository,
                             StandardRequirementRepository requirementRepository,
                             TenantStandardRepository tenantStandardRepository,
-                            RequirementEvidenceRepository evidenceRepository) {
+                            RequirementEvidenceRepository evidenceRepository,
+                            CertificationRoadmapStageRepository roadmapStageRepository) {
         this.standardRepository = standardRepository;
         this.requirementRepository = requirementRepository;
         this.tenantStandardRepository = tenantStandardRepository;
         this.evidenceRepository = evidenceRepository;
+        this.roadmapStageRepository = roadmapStageRepository;
     }
 
     // ===== Catalog =====
@@ -99,7 +102,30 @@ public class StandardsService {
         ts.setTargetCertificationDate(request.targetCertificationDate());
         ts.setLeadAuditorId(request.leadAuditorId());
         ts.setCertificationBody(request.certificationBody());
-        return toAdoptionResponse(tenantStandardRepository.save(ts));
+        TenantStandard saved = tenantStandardRepository.save(ts);
+        generateRoadmap(saved);
+        return toAdoptionResponse(saved);
+    }
+
+    /** Instancie la trame générique des 19 étapes (§8.5) pour une adoption. */
+    private void generateRoadmap(TenantStandard ts) {
+        List<CertificationRoadmapStage> stages = new ArrayList<>();
+        for (RoadmapTemplate.StageDefinition def : RoadmapTemplate.STAGES) {
+            CertificationRoadmapStage stage = new CertificationRoadmapStage();
+            stage.setTenantId(ts.getTenantId());
+            stage.setTenantStandard(ts);
+            stage.setStepNumber(def.stepNumber());
+            stage.setName(def.name());
+            stage.setDescription(def.description());
+            stage.setTypicalDuration(def.typicalDuration());
+            stage.setDeliverables(def.deliverables());
+            stage.setResponsibleRole(def.responsibleRole());
+            stage.setInvolvedModules(def.involvedModules());
+            stage.setStatus(StageStatus.NOT_STARTED);
+            stage.setOrderIndex(def.stepNumber());
+            stages.add(stage);
+        }
+        roadmapStageRepository.saveAll(stages);
     }
 
     public StandardsDto.AdoptionResponse updateAdoption(UUID id,
@@ -268,6 +294,145 @@ public class StandardsService {
                 ts.getId(), std.getId(), std.getCode(),
                 overall, totalReq, coveredReq, totalMust, coveredMust,
                 sectionResults);
+    }
+
+    // ===== Audit blanc / gap analysis (§8.7) =====
+
+    @Transactional(readOnly = true)
+    public StandardsDto.AuditBlancReport computeAuditBlanc(UUID adoptionId) {
+        TenantStandard ts = loadAdoption(adoptionId);
+        Standard std = ts.getStandard();
+
+        Set<UUID> covered = new HashSet<>();
+        for (RequirementEvidence ev : evidenceRepository.findByTenantStandardId(adoptionId)) {
+            covered.add(ev.getRequirement().getId());
+        }
+
+        int total = 0, coveredCount = 0, mustTotal = 0, mustCovered = 0;
+        int critical = 0, major = 0, minor = 0;
+        List<StandardsDto.AuditFinding> findings = new ArrayList<>();
+
+        for (StandardSection section : std.getSections()) {
+            for (StandardClause clause : section.getClauses()) {
+                for (StandardRequirement req : clause.getRequirements()) {
+                    total++;
+                    boolean isCovered = covered.contains(req.getId());
+                    boolean isMust = req.getObligation() == ObligationLevel.MUST;
+                    if (isMust) mustTotal++;
+                    if (isCovered) {
+                        coveredCount++;
+                        if (isMust) mustCovered++;
+                        continue;
+                    }
+                    // Exigence non couverte → écart (finding).
+                    String severity = severityOf(req);
+                    switch (severity) {
+                        case "CRITICAL" -> critical++;
+                        case "MAJOR" -> major++;
+                        default -> minor++;
+                    }
+                    findings.add(new StandardsDto.AuditFinding(
+                            req.getId(), section.getCode(), clause.getCode(), req.getCode(),
+                            req.getText(), req.getObligation(), req.getRiskIfMissing(),
+                            severity, req.getEvidenceTypes(),
+                            remediationFor(req), priorityOf(severity)));
+                }
+            }
+        }
+
+        // Score de préparation = couverture des exigences MUST (obligatoires pour la certif).
+        double readiness = mustTotal == 0 ? 0d : (mustCovered * 100d) / mustTotal;
+        findings.sort((a, b) -> Integer.compare(a.remediationPriority(), b.remediationPriority()));
+
+        return new StandardsDto.AuditBlancReport(
+                ts.getId(), std.getId(), std.getCode(), std.getFullName(),
+                Instant.now(), readiness, total, coveredCount, mustTotal, mustCovered,
+                critical, major, minor, verdict(readiness, critical), findings);
+    }
+
+    private String severityOf(StandardRequirement req) {
+        boolean must = req.getObligation() == ObligationLevel.MUST;
+        RiskLevel risk = req.getRiskIfMissing();
+        if (must && (risk == RiskLevel.CRITICAL || risk == RiskLevel.HIGH)) return "CRITICAL";
+        if (must) return "MAJOR";
+        return "MINOR";
+    }
+
+    private int priorityOf(String severity) {
+        return switch (severity) {
+            case "CRITICAL" -> 1;
+            case "MAJOR" -> 2;
+            default -> 3;
+        };
+    }
+
+    private String remediationFor(StandardRequirement req) {
+        String evidence = req.getEvidenceTypes();
+        String base = "Couvrir l'exigence " + req.getCode()
+                + " en produisant puis en liant une preuve.";
+        if (evidence != null && !evidence.isBlank()) {
+            return base + " Preuve attendue : " + evidence + ".";
+        }
+        return base;
+    }
+
+    private String verdict(double readiness, int criticalGaps) {
+        if (criticalGaps == 0 && readiness >= 95d) return "PRÊT POUR L'AUDIT";
+        if (criticalGaps == 0 && readiness >= 80d) return "QUASI PRÊT — écarts mineurs à traiter";
+        if (readiness >= 50d) return "NON PRÊT — écarts majeurs à corriger";
+        return "NON PRÊT — préparation insuffisante";
+    }
+
+    // ===== Roadmap de certification (§8.5) =====
+
+    @Transactional(readOnly = true)
+    public StandardsDto.RoadmapSummary getRoadmap(UUID adoptionId) {
+        loadAdoption(adoptionId);
+        List<CertificationRoadmapStage> stages =
+                roadmapStageRepository.findByTenantStandardIdOrderByOrderIndexAsc(adoptionId);
+        int total = stages.size();
+        int done = 0, inProgress = 0, skipped = 0;
+        List<StandardsDto.RoadmapStageResponse> responses = new ArrayList<>(total);
+        for (CertificationRoadmapStage st : stages) {
+            switch (st.getStatus()) {
+                case DONE -> done++;
+                case IN_PROGRESS -> inProgress++;
+                case SKIPPED -> skipped++;
+                default -> { /* NOT_STARTED */ }
+            }
+            responses.add(toStageResponse(st));
+        }
+        // Les étapes SKIPPED sortent du dénominateur de progression.
+        int applicable = total - skipped;
+        double completion = applicable == 0 ? 0d : (done * 100d) / applicable;
+        return new StandardsDto.RoadmapSummary(
+                adoptionId, total, done, inProgress, skipped, completion, responses);
+    }
+
+    public StandardsDto.RoadmapStageResponse updateStage(
+            UUID adoptionId, UUID stageId, StandardsDto.UpdateStageRequest request) {
+        loadAdoption(adoptionId);
+        CertificationRoadmapStage stage = roadmapStageRepository
+                .findByIdAndTenantStandardId(stageId, adoptionId)
+                .orElseThrow(() -> new RoadmapStageNotFoundException(stageId));
+        if (request.status() != null) stage.setStatus(request.status());
+        if (request.assigneeId() != null) stage.setAssigneeId(request.assigneeId());
+        if (request.plannedStartDate() != null) stage.setPlannedStartDate(request.plannedStartDate());
+        if (request.plannedEndDate() != null) stage.setPlannedEndDate(request.plannedEndDate());
+        if (request.actualStartDate() != null) stage.setActualStartDate(request.actualStartDate());
+        if (request.actualEndDate() != null) stage.setActualEndDate(request.actualEndDate());
+        if (request.notes() != null) stage.setNotes(request.notes());
+        return toStageResponse(roadmapStageRepository.save(stage));
+    }
+
+    private StandardsDto.RoadmapStageResponse toStageResponse(CertificationRoadmapStage s) {
+        return new StandardsDto.RoadmapStageResponse(
+                s.getId(), s.getStepNumber(), s.getName(), s.getDescription(),
+                s.getTypicalDuration(), s.getDeliverables(), s.getResponsibleRole(),
+                s.getInvolvedModules(), s.getStatus(), s.getAssigneeId(),
+                s.getPlannedStartDate(), s.getPlannedEndDate(),
+                s.getActualStartDate(), s.getActualEndDate(),
+                s.getNotes(), s.getOrderIndex());
     }
 
     // ===== helpers =====
