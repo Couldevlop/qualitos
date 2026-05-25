@@ -66,6 +66,22 @@ class IsoCompletionSeedTest {
     }
 
     @Test
+    void v61_enriches_p4_norm_requirements() throws IOException {
+        String sql = read("V61__seed_p4_norms_requirements.sql");
+        // une INSERT INTO standard_requirements par norme P4 (6)
+        int inserts = sql.split("INSERT INTO standard_requirements").length - 1;
+        assertThat(inserts).as("≥ 6 INSERT (un par norme P4)").isGreaterThanOrEqualTo(6);
+        // clause_id des 6 normes P4 (préfixes V52)
+        assertThat(sql).contains("51020"); // IATF
+        assertThat(sql).contains("52020"); // AS9100
+        assertThat(sql).contains("53020"); // ISO 13485
+        assertThat(sql).contains("54020"); // FDA 21 CFR 11
+        assertThat(sql).contains("55020"); // ISO 22000
+        assertThat(sql).contains("56020"); // DORA
+        assertThat(sql).contains("'MUST'");
+    }
+
+    @Test
     void v60_completes_iso22301_full_hls() throws IOException {
         String sql = read("V60__seed_iso22301_complete.sql");
         assertThat(sql).contains("'55555555-5555-5555-5555-555555555555'"); // ISO 22301
