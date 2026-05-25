@@ -10,3 +10,5 @@
   background: var(--mat-sys-secondary-container, rgba(0, 0, 0, 0.08));
 }
 .empty { padding: 32px; text-align: center; color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); }
+.clickable { cursor: pointer; transition: background .15s; }
+.clickable:hover { background: var(--mat-sys-secondary-container, rgba(57, 73, 171, 0.06)); }

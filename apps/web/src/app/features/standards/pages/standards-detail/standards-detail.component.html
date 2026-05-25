@@ -1,0 +1,160 @@
+<div class="qos-page" *ngIf="!error; else errTpl">
+  <a routerLink="/standards" class="back">← Standards Hub</a>
+
+  <header class="page-header" *ngIf="adoption as a">
+    <div class="title-row">
+      <h1>{{ a.standardCode | uppercase }}</h1>
+      <span class="badge status-{{ a.status }}">{{ a.status }}</span>
+    </div>
+    <p>{{ a.standardName }}</p>
+    <p class="meta">
+      Périmètre : <strong>{{ a.scopeDescription || '—' }}</strong>
+      · Organisme : <strong>{{ a.certificationBody || '—' }}</strong>
+      · Cible : <strong>{{ a.targetCertificationDate ? (a.targetCertificationDate | date) : '—' }}</strong>
+    </p>
+  </header>
+
+  <!-- KPI cards -->
+  <div class="kpi-row" *ngIf="!loading">
+    <mat-card class="kpi">
+      <span class="kpi-label">Préparation audit (MUST)</span>
+      <span class="kpi-value" [ngClass]="scoreClass(audit?.readinessScore ?? 0)">
+        {{ (audit?.readinessScore ?? 0) | number:'1.0-0' }}%
+      </span>
+      <mat-progress-bar mode="determinate" [value]="audit?.readinessScore ?? 0"></mat-progress-bar>
+    </mat-card>
+    <mat-card class="kpi">
+      <span class="kpi-label">Alignement global</span>
+      <span class="kpi-value" [ngClass]="scoreClass(alignment?.overallScore ?? 0)">
+        {{ (alignment?.overallScore ?? 0) | number:'1.0-0' }}%
+      </span>
+      <mat-progress-bar mode="determinate" [value]="alignment?.overallScore ?? 0"></mat-progress-bar>
+    </mat-card>
+    <mat-card class="kpi">
+      <span class="kpi-label">Roadmap</span>
+      <span class="kpi-value" [ngClass]="scoreClass(roadmap?.completionPercent ?? 0)">
+        {{ (roadmap?.completionPercent ?? 0) | number:'1.0-0' }}%
+      </span>
+      <mat-progress-bar mode="determinate" [value]="roadmap?.completionPercent ?? 0"></mat-progress-bar>
+    </mat-card>
+    <mat-card class="kpi">
+      <span class="kpi-label">Écarts critiques</span>
+      <span class="kpi-value bad">{{ audit?.criticalGaps ?? 0 }}</span>
+      <span class="kpi-sub">{{ audit?.majorGaps ?? 0 }} majeurs · {{ audit?.minorGaps ?? 0 }} mineurs</span>
+    </mat-card>
+  </div>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <mat-tab-group *ngIf="!loading" animationDuration="200ms" class="qos-tabs">
+
+    <!-- Onglet Exigences -->
+    <mat-tab label="Exigences">
+      <div class="tab-body" *ngIf="standard as s">
+        <div class="section" *ngFor="let sec of s.sections">
+          <h3>§{{ sec.code }} — {{ sec.title }}</h3>
+          <div class="clause" *ngFor="let cl of sec.clauses">
+            <div class="clause-head">
+              <strong>{{ cl.code }}</strong> {{ cl.title }}
+            </div>
+            <table class="req-table">
+              <tr *ngFor="let r of cl.requirements">
+                <td class="req-code">{{ r.code }}</td>
+                <td>
+                  <span class="ob ob-{{ r.obligation }}">{{ r.obligation }}</span>
+                  <span class="risk" *ngIf="r.riskIfMissing" [ngClass]="'risk-' + r.riskIfMissing">{{ r.riskIfMissing }}</span>
+                </td>
+                <td class="req-text">{{ r.text }}
+                  <div class="req-evid" *ngIf="r.evidenceTypes">Preuve attendue : {{ r.evidenceTypes }}</div>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Onglet Roadmap -->
+    <mat-tab label="Roadmap de certification">
+      <div class="tab-body" *ngIf="roadmap as rm">
+        <p class="muted">{{ rm.doneStages }}/{{ rm.totalStages }} étapes terminées
+          ({{ rm.completionPercent | number:'1.0-0' }}%).</p>
+        <table class="roadmap-table">
+          <thead><tr><th>#</th><th>Étape</th><th>Durée</th><th>Responsable</th><th>Statut</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let st of rm.stages" [class.done]="st.status === 'DONE'">
+              <td>{{ st.stepNumber }}</td>
+              <td>
+                <strong>{{ st.name }}</strong>
+                <div class="stage-deliv" *ngIf="st.deliverables">{{ st.deliverables }}</div>
+                <div class="stage-mod" *ngIf="st.involvedModules">⚙ {{ st.involvedModules }}</div>
+              </td>
+              <td class="nowrap">{{ st.typicalDuration || '—' }}</td>
+              <td>{{ st.responsibleRole || '—' }}</td>
+              <td>
+                <mat-form-field appearance="outline" class="status-select">
+                  <mat-select [value]="st.status"
+                              (selectionChange)="changeStageStatus(st, $event.value)">
+                    <mat-option *ngFor="let s of stageStatuses" [value]="s">{{ s }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </mat-tab>
+
+    <!-- Onglet Audit blanc -->
+    <mat-tab label="Audit blanc">
+      <div class="tab-body" *ngIf="audit as ab">
+        <div class="verdict" [ngClass]="scoreClass(ab.readinessScore)">
+          <strong>Verdict :</strong> {{ ab.verdict }}
+          <span class="verdict-sub">MUST couvertes : {{ ab.mustCovered }}/{{ ab.mustTotal }}</span>
+        </div>
+        <p class="muted">{{ ab.findings.length }} écart(s) — triés par priorité.
+          {{ ab.criticalGaps }} critiques, {{ ab.majorGaps }} majeurs, {{ ab.minorGaps }} mineurs.</p>
+        <p class="empty" *ngIf="ab.findings.length === 0">Aucun écart : toutes les exigences sont couvertes 🎉</p>
+        <table class="findings-table" *ngIf="ab.findings.length">
+          <thead><tr><th>Exigence</th><th>Sévérité</th><th>Action de remédiation</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let f of ab.findings">
+              <td class="nowrap"><strong>{{ f.requirementCode }}</strong><br><small>§{{ f.sectionCode }}</small></td>
+              <td><span class="sev" [ngClass]="severityClass(f.findingSeverity)">{{ f.findingSeverity }}</span></td>
+              <td>{{ f.remediationAction }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </mat-tab>
+
+    <!-- Onglet Dossier -->
+    <mat-tab label="Dossier de certification">
+      <div class="tab-body">
+        <p class="muted">Génère le dossier complet (norme, roadmap, alignement, audit blanc, preuves),
+          calcule son empreinte SHA-256 et l'ancre (preuve d'intégrité audit-ready).</p>
+        <button mat-raised-button color="primary" (click)="generateDossier()" [disabled]="generatingDossier">
+          <mat-icon>description</mat-icon>
+          {{ generatingDossier ? 'Génération…' : 'Générer le dossier' }}
+        </button>
+
+        <mat-card class="dossier-card" *ngIf="dossier as d">
+          <h3>{{ d.fileName }}</h3>
+          <p>Préparation : <strong>{{ d.readinessScore | number:'1.0-0' }}%</strong>
+            · Roadmap : <strong>{{ d.roadmapCompletion | number:'1.0-0' }}%</strong>
+            · Preuves : <strong>{{ d.evidenceCount }}</strong></p>
+          <p class="hash"><span>SHA-256</span><code>{{ d.sha256 }}</code></p>
+          <p class="hash"><span>Ancrage</span><code>{{ d.anchorTxRef }}</code></p>
+          <button mat-stroked-button (click)="downloadDossier()">
+            <mat-icon>download</mat-icon> Télécharger (HTML imprimable)
+          </button>
+        </mat-card>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>
+
+<ng-template #errTpl>
+  <div class="qos-page"><mat-card class="section-card"><p class="empty">{{ error }}</p>
+    <a routerLink="/standards">← Retour</a></mat-card></div>
+</ng-template>

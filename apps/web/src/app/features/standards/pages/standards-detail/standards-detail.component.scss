@@ -1,0 +1,100 @@
+:host { display: block; }
+
+.back {
+  display: inline-block;
+  margin-bottom: 12px;
+  color: #5c6bc0;
+  text-decoration: none;
+  font-size: 13px;
+  &:hover { text-decoration: underline; }
+}
+
+.page-header {
+  .title-row { display: flex; align-items: center; gap: 12px; }
+  h1 { margin: 0; font-size: 28px; letter-spacing: -.5px; }
+  p { margin: 4px 0; color: #555; }
+  .meta { font-size: 13px; color: #777; }
+}
+
+.badge {
+  font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 12px;
+  background: #eceff1; color: #455a64; text-transform: uppercase; letter-spacing: .5px;
+}
+.status-IN_PROGRESS { background: #e3f2fd; color: #1565c0; }
+.status-CERTIFIED   { background: #e8f5e9; color: #2e7d32; }
+.status-PLANNING    { background: #fff8e1; color: #f9a825; }
+.status-SURVEILLANCE{ background: #f3e5f5; color: #6a1b9a; }
+
+.kpi-row {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 16px; margin: 20px 0;
+}
+.kpi {
+  display: flex; flex-direction: column; gap: 6px; padding: 16px;
+  .kpi-label { font-size: 12px; color: #78909c; text-transform: uppercase; letter-spacing: .5px; }
+  .kpi-value { font-size: 30px; font-weight: 700; line-height: 1; }
+  .kpi-sub { font-size: 12px; color: #90a4ae; }
+  .ok   { color: #2e7d32; }
+  .warn { color: #f9a825; }
+  .bad  { color: #c62828; }
+}
+
+.qos-tabs { margin-top: 12px; }
+.tab-body { padding: 20px 4px; }
+.muted { color: #78909c; font-size: 13px; }
+.empty { color: #90a4ae; font-style: italic; padding: 16px 0; }
+.nowrap { white-space: nowrap; }
+
+/* Exigences */
+.section { margin-bottom: 24px; }
+.section h3 { color: #3949ab; font-size: 16px; margin-bottom: 8px; border-bottom: 1px solid #e0e0e0; padding-bottom: 4px; }
+.clause { margin: 10px 0 14px; }
+.clause-head { font-size: 14px; margin-bottom: 4px; }
+.req-table { width: 100%; border-collapse: collapse; }
+.req-table td { padding: 6px 8px; border-bottom: 1px solid #f0f0f0; vertical-align: top; font-size: 13px; }
+.req-code { font-weight: 600; color: #455a64; width: 60px; white-space: nowrap; }
+.req-text { color: #37474f; }
+.req-evid { font-size: 12px; color: #90a4ae; margin-top: 2px; }
+
+.ob { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 8px; }
+.ob-MUST { background: #ffebee; color: #c62828; }
+.ob-SHOULD { background: #fff3e0; color: #ef6c00; }
+.ob-MAY { background: #f1f8e9; color: #558b2f; }
+.risk { font-size: 10px; margin-left: 6px; padding: 2px 6px; border-radius: 8px; background: #eceff1; color: #607d8b; }
+.risk-CRITICAL { background: #b71c1c; color: #fff; }
+.risk-HIGH { background: #ef6c00; color: #fff; }
+
+/* Roadmap */
+.roadmap-table, .findings-table {
+  width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px;
+}
+.roadmap-table th, .findings-table th {
+  text-align: left; padding: 8px; background: #f5f6fb; color: #455a64; font-size: 12px;
+}
+.roadmap-table td, .findings-table td { padding: 8px; border-bottom: 1px solid #eee; vertical-align: top; }
+.roadmap-table tr.done td { background: #f9fdf9; }
+.stage-deliv { font-size: 12px; color: #90a4ae; margin-top: 2px; }
+.stage-mod { font-size: 11px; color: #b0bec5; }
+.status-select { width: 150px; font-size: 12px; }
+.status-select ::ng-deep .mat-mdc-form-field-subscript-wrapper { display: none; }
+
+/* Audit blanc */
+.verdict {
+  padding: 12px 16px; border-radius: 8px; margin-bottom: 12px; font-size: 15px;
+  background: #eceff1;
+  &.ok { background: #e8f5e9; color: #2e7d32; }
+  &.warn { background: #fff8e1; color: #f57f17; }
+  &.bad { background: #ffebee; color: #c62828; }
+  .verdict-sub { float: right; font-size: 13px; opacity: .85; }
+}
+.sev { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 8px; }
+.sev-crit { background: #b71c1c; color: #fff; }
+.sev-maj { background: #ef6c00; color: #fff; }
+.sev-min { background: #eceff1; color: #607d8b; }
+
+/* Dossier */
+.dossier-card { margin-top: 20px; padding: 18px; max-width: 720px; }
+.dossier-card h3 { margin: 0 0 8px; font-size: 15px; }
+.hash { display: flex; align-items: center; gap: 10px; font-size: 13px; margin: 6px 0; }
+.hash span { width: 80px; color: #78909c; font-weight: 600; }
+.hash code { background: #f5f5f7; padding: 4px 8px; border-radius: 4px; word-break: break-all; font-size: 12px; }

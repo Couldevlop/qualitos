@@ -3,11 +3,15 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
 import { StandardsListComponent } from './pages/standards-list/standards-list.component';
+import { StandardsDetailComponent } from './pages/standards-detail/standards-detail.component';
 
-const routes: Routes = [{ path: '', component: StandardsListComponent }];
+const routes: Routes = [
+  { path: '', component: StandardsListComponent },
+  { path: 'adoptions/:id', component: StandardsDetailComponent }
+];
 
 @NgModule({
-  declarations: [StandardsListComponent],
+  declarations: [StandardsListComponent, StandardsDetailComponent],
   imports: [SharedModule, RouterModule.forChild(routes)]
 })
 export class StandardsModule {}
