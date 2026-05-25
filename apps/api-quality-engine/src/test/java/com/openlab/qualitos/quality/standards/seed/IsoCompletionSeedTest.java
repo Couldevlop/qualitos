@@ -64,4 +64,16 @@ class IsoCompletionSeedTest {
         assertThat(sql).contains("INSERT INTO standard_clauses");
         assertThat(sql).contains("INSERT INTO standard_requirements");
     }
+
+    @Test
+    void v60_completes_iso22301_full_hls() throws IOException {
+        String sql = read("V60__seed_iso22301_complete.sql");
+        assertThat(sql).contains("'55555555-5555-5555-5555-555555555555'"); // ISO 22301
+        assertThat(sql).contains("84444444-4444-4444-4444-444444444444");   // §4 ajoutée
+        assertThat(sql).contains("85555555-5555-5555-5555-555555555555");   // §5 ajoutée
+        assertThat(sql).contains("87777777-7777-7777-7777-777777777777");   // §7 ajoutée
+        assertThat(sql).contains("88888888-8888-8888-8888-888888888888");   // §10 ajoutée
+        assertThat(sql).contains("'8.4.4'");                                // plans de continuité
+        assertThat(sql).contains("INSERT INTO standard_requirements");
+    }
 }
