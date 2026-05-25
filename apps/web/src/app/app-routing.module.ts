@@ -154,6 +154,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/ai-pmm/ai-pmm.module').then(m => m.AiPmmModule)
       },
       {
+        path: 'automated-decisions',
+        loadChildren: () => import('./features/automated-decisions/automated-decisions.module').then(m => m.AutomatedDecisionsModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)
