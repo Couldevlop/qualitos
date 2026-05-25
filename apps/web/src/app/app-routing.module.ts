@@ -134,6 +134,30 @@ const routes: Routes = [
         loadChildren: () => import('./features/ai-eudb/ai-eudb.module').then(m => m.AiEudbModule)
       },
       {
+        path: 'nis2-measures',
+        loadChildren: () => import('./features/nis2-measures/nis2-measures.module').then(m => m.Nis2MeasuresModule)
+      },
+      {
+        path: 'cyber-incidents',
+        loadChildren: () => import('./features/cyber-incidents/cyber-incidents.module').then(m => m.CyberIncidentsModule)
+      },
+      {
+        path: 'breaches',
+        loadChildren: () => import('./features/breach/breach.module').then(m => m.BreachModule)
+      },
+      {
+        path: 'fria',
+        loadChildren: () => import('./features/fria/fria.module').then(m => m.FriaModule)
+      },
+      {
+        path: 'ai-pmm',
+        loadChildren: () => import('./features/ai-pmm/ai-pmm.module').then(m => m.AiPmmModule)
+      },
+      {
+        path: 'automated-decisions',
+        loadChildren: () => import('./features/automated-decisions/automated-decisions.module').then(m => m.AutomatedDecisionsModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)

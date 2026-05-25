@@ -1,0 +1,127 @@
+<ng-container *ngIf="row$ | async as r; else fallback">
+  <section class="adm-detail">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/automated-decisions" class="back">
+          <mat-icon>arrow_back</mat-icon> RGPD · Décisions automatisées
+        </a>
+        <h1>
+          <code>{{ r.reference }}</code>
+          <span class="title">{{ r.name }}</span>
+        </h1>
+        <div class="meta-row">
+          <span [class]="statusBadge(r.status)">{{ r.status }}</span>
+          <span [class]="typeBadge(r.decisionType)">{{ typeOf(r.decisionType) }}</span>
+          <span *ngIf="isLegalEffect(r.decisionType)" class="flag flag-sig">
+            <mat-icon>gavel</mat-icon> Effet juridique (Art. 22.1)
+          </span>
+          <span class="dim">Mis à jour : {{ r.updatedAt | slice:0:10 }}</span>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button mat-stroked-button *ngIf="canEdit(r.status)" (click)="edit(r)">
+          <mat-icon>edit</mat-icon> Éditer
+        </button>
+        <button mat-flat-button color="primary" *ngIf="canActivate(r.status)" (click)="activate(r)">
+          <mat-icon>play_arrow</mat-icon> Activer
+        </button>
+        <button mat-stroked-button *ngIf="canDeprecate(r.status)" (click)="deprecate(r)">
+          <mat-icon>history</mat-icon> Déprécier
+        </button>
+        <button mat-stroked-button color="warn" *ngIf="canArchive(r.status)" (click)="archive(r)">
+          <mat-icon>archive</mat-icon> Archiver
+        </button>
+        <button mat-stroked-button color="warn" *ngIf="canDelete(r.status)" (click)="remove(r)">
+          <mat-icon>delete</mat-icon> Supprimer
+        </button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <mat-card class="span-2" *ngIf="r.description">
+        <mat-card-header><mat-card-title>Description</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ r.description }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="isLegalEffect(r.decisionType)" class="warn-card span-2">
+        <mat-card-header><mat-card-title>Base légale Art. 22.2</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Base</th><td>{{ basisOf(r.art22LawfulBasis) }}</td></tr>
+          </table>
+          <p *ngIf="r.lawfulBasisDetails" class="text">{{ r.lawfulBasisDetails }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="!isLegalEffect(r.decisionType) && r.lawfulBasisDetails">
+        <mat-card-header><mat-card-title>Base légale / contexte</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ r.lawfulBasisDetails }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="(r.inputDataCategories?.length ?? 0) > 0">
+        <mat-card-header><mat-card-title>Catégories de données d'entrée</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <ul class="bullets">
+            <li *ngFor="let c of r.inputDataCategories">{{ c }}</li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="(r.linkedProcessingActivityIds?.length ?? 0) > 0 || r.linkedDpiaId">
+        <mat-card-header><mat-card-title>Liens RGPD</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p *ngIf="r.linkedDpiaId"><strong>DPIA liée :</strong> <code>{{ r.linkedDpiaId }}</code></p>
+          <ng-container *ngIf="(r.linkedProcessingActivityIds?.length ?? 0) > 0">
+            <p><strong>Activités RoPA liées :</strong></p>
+            <ul class="bullets">
+              <li *ngFor="let id of r.linkedProcessingActivityIds"><code>{{ id }}</code></li>
+            </ul>
+          </ng-container>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="r.algorithmDescription" class="span-2">
+        <mat-card-header><mat-card-title>Description de l'algorithme</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ r.algorithmDescription }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="r.significanceForSubject" class="span-2">
+        <mat-card-header><mat-card-title>Importance pour la personne</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ r.significanceForSubject }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="r.humanReviewMechanism" class="ok-card">
+        <mat-card-header><mat-card-title>Révision humaine</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ r.humanReviewMechanism }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="r.objectionMechanism">
+        <mat-card-header><mat-card-title>Mécanisme d'opposition</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ r.objectionMechanism }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card class="span-2">
+        <mat-card-header><mat-card-title>Trace</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr><th>Créé par</th><td><code>{{ r.createdByUserId }}</code></td></tr>
+            <tr><th>Créé le</th><td>{{ r.createdAt }}</td></tr>
+            <tr><th>En vigueur depuis</th><td>{{ r.effectiveFrom || '—' }}</td></tr>
+            <tr *ngIf="r.effectiveTo"><th>Archivé le</th><td>{{ r.effectiveTo }}</td></tr>
+            <tr><th>Dernière MAJ</th><td>{{ r.updatedAt }}</td></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="adm-detail">
+    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  </section>
+</ng-template>

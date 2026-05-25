@@ -30,6 +30,7 @@ import com.openlab.qualitos.quality.standards.AdoptionConflictException;
 import com.openlab.qualitos.quality.standards.AdoptionStateException;
 import com.openlab.qualitos.quality.standards.EvidenceNotFoundException;
 import com.openlab.qualitos.quality.standards.RequirementNotFoundException;
+import com.openlab.qualitos.quality.standards.RoadmapStageNotFoundException;
 import com.openlab.qualitos.quality.standards.StandardNotFoundException;
 import com.openlab.qualitos.quality.standards.TenantStandardNotFoundException;
 import com.openlab.qualitos.quality.industry.IndustryPackNotFoundException;
@@ -353,6 +354,15 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/requirement-evidence-not-found"));
         problem.setTitle("Requirement Evidence Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(RoadmapStageNotFoundException.class)
+    public ProblemDetail handleRoadmapStageNotFound(RoadmapStageNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/certification-roadmap-stage-not-found"));
+        problem.setTitle("Certification Roadmap Stage Not Found");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

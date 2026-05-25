@@ -1,0 +1,74 @@
+<h2 mat-dialog-title>Nouveau plan PMM (Art. 72)</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="drf-form">
+  <mat-dialog-content>
+    <p class="hint">Le plan démarre en statut <strong>DRAFT</strong>. La revue périodique
+       est calculée à partir de la fréquence et démarre dès l'activation.</p>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Référence interne</mat-label>
+        <input matInput formControlName="reference" maxlength="64" required
+               placeholder="PMM-2026-XXX-NNN">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>UUID système IA</mat-label>
+        <input matInput formControlName="aiSystemId" required
+               placeholder="00000000-0000-0000-0000-000000000000">
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Nom du plan</mat-label>
+      <input matInput formControlName="name" maxlength="250" required>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="3" maxlength="4000"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Métriques surveillées</mat-label>
+      <textarea matInput formControlName="metricsMonitored" rows="3" maxlength="4000"
+                placeholder="Précision, recall, dérive démographique, taux d'overrides…"></textarea>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Méthode de collecte</mat-label>
+      <textarea matInput formControlName="collectionMethod" rows="3" maxlength="4000"
+                placeholder="Logs d'inférence + audit qualité trimestriel…"></textarea>
+    </mat-form-field>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Fréquence de revue</mat-label>
+        <mat-select formControlName="reviewFrequency" required>
+          <mat-option *ngFor="let f of frequencies" [value]="f">{{ freqLabel[f] }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col">
+        <mat-label>Lien QMS (référence)</mat-label>
+        <input matInput formControlName="qmsLinkReference" maxlength="250"
+               placeholder="AIQMS-2026-001/SOP-PMM">
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Partie responsable</mat-label>
+      <textarea matInput formControlName="responsiblePartyDescription" rows="2" maxlength="4000"></textarea>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Critères de déclenchement</mat-label>
+      <textarea matInput formControlName="triggerCriteria" rows="3" maxlength="4000"
+                placeholder="Conditions qui doivent déclencher une action corrective ou un incident."></textarea>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
+      <mat-icon *ngIf="!submitting">save</mat-icon>
+      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
+      Créer
+    </button>
+  </mat-dialog-actions>
+</form>

@@ -73,6 +73,8 @@ export class MainShellComponent implements OnInit {
         { label: 'AI Act · Conformité', route: '/ai-conformity',  icon: 'verified_user' },
         { label: 'AI Act · Incidents',  route: '/ai-incidents',   icon: 'warning' },
         { label: 'AI Act · EUDB',       route: '/ai-eudb',        icon: 'storage' },
+        { label: 'AI Act · FRIA',       route: '/fria',           icon: 'balance' },
+        { label: 'AI Act · PMM',        route: '/ai-pmm',         icon: 'monitoring' },
         { label: 'GDPR · RoPA',      route: '/ropa',     icon: 'shield' },
         { label: 'GDPR · Consents',  route: '/consents',         icon: 'how_to_reg' },
         { label: 'GDPR · DSAR',      route: '/subject-requests', icon: 'gavel' },
@@ -82,8 +84,12 @@ export class MainShellComponent implements OnInit {
         { label: 'GDPR · Rétention', route: '/retention',         icon: 'auto_delete' },
         { label: 'GDPR · Transferts',route: '/cross-border',      icon: 'public' },
         { label: 'GDPR · DPA Art.28', route: '/processor-agreements', icon: 'handshake' },
+        { label: 'GDPR · Violations', route: '/breaches',           icon: 'privacy_tip' },
+        { label: 'GDPR · Décisions auto. (Art.22)', route: '/automated-decisions', icon: 'account_tree' },
         { label: 'GDPR',             route: '/gdpr',              icon: 'shield_lock' },
-        { label: 'NIS 2',        route: '/nis2',   icon: 'security' }
+        { label: 'NIS 2',          route: '/nis2',           icon: 'security' },
+        { label: 'NIS 2 · Mesures',route: '/nis2-measures',  icon: 'rule' },
+        { label: 'NIS 2 · Incidents cyber', route: '/cyber-incidents', icon: 'shield' }
       ]
     }
   ];

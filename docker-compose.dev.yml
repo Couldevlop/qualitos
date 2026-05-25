@@ -28,7 +28,10 @@ services:
       - postgres-data:/var/lib/postgresql/data
       - ./infra/postgres/init-multiple-databases.sh:/docker-entrypoint-initdb.d/init-multiple-databases.sh:ro
     ports:
-      - "5432:5432"
+      # Host 5432 est occupé par un PostgreSQL natif Windows (postgresql-x64-17).
+      # On publie le conteneur sur 5434 pour éviter le conflit. Le réseau interne
+      # 'qualitos' (Keycloak, api-*) continue d'utiliser postgres:5432.
+      - "5434:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U qualitos"]
       interval: 5s

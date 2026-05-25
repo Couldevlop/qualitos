@@ -1,0 +1,99 @@
+<section class="breach-list">
+
+  <header class="head">
+    <div>
+      <h1>RGPD · Violations de données personnelles</h1>
+      <p class="sub">Art. 33 — notification CNIL dans les <strong>72h</strong>.
+         Art. 34 — notification aux personnes concernées si risque élevé (HIGH/CRITICAL).</p>
+    </div>
+    <div class="actions">
+      <button mat-flat-button color="warn" (click)="detect()">
+        <mat-icon>privacy_tip</mat-icon> Déclarer une violation
+      </button>
+    </div>
+  </header>
+
+  <div class="filters">
+    <mat-form-field appearance="outline" class="mode-filter">
+      <mat-label>Mode</mat-label>
+      <mat-select [formControl]="modeCtrl">
+        <mat-option value="ALL">Toutes</mat-option>
+        <mat-option value="DPA_OVERDUE">Notification CNIL en retard (72h)</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="status-filter">
+      <mat-label>Statut</mat-label>
+      <mat-select [formControl]="statusCtrl">
+        <mat-option value="">Tous</mat-option>
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+
+  <table mat-table [dataSource]="(rows$ | async) ?? []" class="qos-table" *ngIf="(rows$ | async)?.length; else empty">
+
+    <ng-container matColumnDef="reference">
+      <th mat-header-cell *matHeaderCellDef>Référence</th>
+      <td mat-cell *matCellDef="let r"><code>{{ r.internalReference }}</code></td>
+    </ng-container>
+
+    <ng-container matColumnDef="title">
+      <th mat-header-cell *matHeaderCellDef>Titre</th>
+      <td mat-cell *matCellDef="let r">{{ r.title }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="severity">
+      <th mat-header-cell *matHeaderCellDef>Sévérité</th>
+      <td mat-cell *matCellDef="let r"><span [class]="severityBadge(r.severity)">{{ r.severity }}</span></td>
+    </ng-container>
+
+    <ng-container matColumnDef="subjects">
+      <th mat-header-cell *matHeaderCellDef>Personnes</th>
+      <td mat-cell *matCellDef="let r" class="num">{{ r.affectedSubjectsCount | number }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <td mat-cell *matCellDef="let r"><span [class]="statusBadge(r.status)">{{ r.status }}</span></td>
+    </ng-container>
+
+    <ng-container matColumnDef="dpa">
+      <th mat-header-cell *matHeaderCellDef>CNIL (72h)</th>
+      <td mat-cell *matCellDef="let r">
+        <span *ngIf="r.dpaNotifiedAt" class="status-ok">✓ {{ r.dpaNotifiedAt | slice:0:10 }}</span>
+        <span *ngIf="!r.dpaNotifiedAt && r.dpaOverdue" class="flag flag-overdue">
+          <mat-icon>warning</mat-icon> Retard
+        </span>
+        <span *ngIf="!r.dpaNotifiedAt && !r.dpaOverdue" class="dim">{{ r.dpaDeadlineAt | slice:0:10 }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="subjectsNotif">
+      <th mat-header-cell *matHeaderCellDef>Art. 34</th>
+      <td mat-cell *matCellDef="let r">
+        <ng-container *ngIf="r.subjectNotificationRequired; else notReq">
+          <span *ngIf="r.subjectsNotifiedAt" class="status-ok">✓ {{ r.subjectsNotifiedAt | slice:0:10 }}</span>
+          <span *ngIf="!r.subjectsNotifiedAt" class="flag flag-pending">
+            <mat-icon>info</mat-icon> Requise
+          </span>
+        </ng-container>
+        <ng-template #notReq><span class="dim">non requise</span></ng-template>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns" (click)="open(row)" class="row-link"></tr>
+  </table>
+
+  <ng-template #empty>
+    <div *ngIf="!(loading$ | async)" class="empty">
+      <mat-icon>privacy_tip</mat-icon>
+      <p>Aucune violation pour le filtre courant.</p>
+    </div>
+  </ng-template>
+
+</section>

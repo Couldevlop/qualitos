@@ -101,4 +101,9 @@ venv/
 ci-remote.yml
 install.log
 karma.log
+
+# JVM / shell crash dumps (générés lors d'un OOM build)
+*.stackdump
+hs_err_pid*.log
+replay_pid*.log
 karma.zip

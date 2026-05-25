@@ -4,7 +4,11 @@ import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { AdoptionResponse, AdoptionsPage, StandardSummary, StandardsPage } from './standards.types';
+import {
+  AdoptionResponse, AdoptionsPage, AdoptRequest, AlignmentReport, AuditBlancReport,
+  DossierResponse, RoadmapSummary, StandardDetail, StandardSummary, StandardsPage,
+  UpdateStageRequest
+} from './standards.types';
 
 @Injectable({ providedIn: 'root' })
 export class StandardsService {
@@ -13,16 +17,64 @@ export class StandardsService {
 
   constructor(private readonly http: HttpClient) {}
 
+  // ---- Catalogue ----
+
   listCatalog(page = 0, size = 50): Observable<StandardsPage> {
     if (environment.useMockApi) return of(this.mockCatalog()).pipe(delay(120));
     return this.http.get<StandardsPage>(this.baseEndpoint,
       { params: new HttpParams().set('page', page).set('size', size) });
   }
 
+  getStandardDetail(id: string): Observable<StandardDetail> {
+    return this.http.get<StandardDetail>(`${this.baseEndpoint}/${id}`);
+  }
+
+  // ---- Adoptions ----
+
   listAdoptions(): Observable<AdoptionsPage> {
     if (environment.useMockApi) return of(this.mockAdoptions()).pipe(delay(120));
     return this.http.get<AdoptionsPage>(`${this.baseEndpoint}/adoptions`);
   }
+
+  getAdoption(id: string): Observable<AdoptionResponse> {
+    return this.http.get<AdoptionResponse>(`${this.baseEndpoint}/adoptions/${id}`);
+  }
+
+  adopt(req: AdoptRequest): Observable<AdoptionResponse> {
+    return this.http.post<AdoptionResponse>(`${this.baseEndpoint}/adoptions`, req);
+  }
+
+  startProgress(id: string): Observable<AdoptionResponse> {
+    return this.http.patch<AdoptionResponse>(`${this.baseEndpoint}/adoptions/${id}/start`, {});
+  }
+
+  // ---- Roadmap (§8.5) ----
+
+  getRoadmap(id: string): Observable<RoadmapSummary> {
+    return this.http.get<RoadmapSummary>(`${this.baseEndpoint}/adoptions/${id}/roadmap`);
+  }
+
+  updateStage(id: string, stageId: string, req: UpdateStageRequest): Observable<unknown> {
+    return this.http.patch(`${this.baseEndpoint}/adoptions/${id}/roadmap/${stageId}`, req);
+  }
+
+  // ---- Alignement & audit blanc ----
+
+  getAlignment(id: string): Observable<AlignmentReport> {
+    return this.http.get<AlignmentReport>(`${this.baseEndpoint}/adoptions/${id}/alignment`);
+  }
+
+  getAuditBlanc(id: string): Observable<AuditBlancReport> {
+    return this.http.get<AuditBlancReport>(`${this.baseEndpoint}/adoptions/${id}/audit-blanc`);
+  }
+
+  // ---- Dossier de certification (§8.4) ----
+
+  generateDossier(id: string): Observable<DossierResponse> {
+    return this.http.post<DossierResponse>(`${this.baseEndpoint}/adoptions/${id}/dossier`, {});
+  }
+
+  // ---- Mocks (mode démo sans backend) ----
 
   private mockCatalog(): StandardsPage {
     const items: StandardSummary[] = [
@@ -43,11 +95,7 @@ export class StandardsService {
         standardName: 'ISO 9001:2015', status: 'IN_PROGRESS',
         scopeDescription: 'SMQ siège + 3 usines',
         targetCertificationDate: '2026-12-15', certificationBody: 'AFNOR',
-        createdAt: now, updatedAt: now },
-      { id: 'ad2', tenantId: 't', standardId: 's2', standardCode: 'iso-27001',
-        standardName: 'ISO/IEC 27001:2022', status: 'PLANNING',
-        scopeDescription: 'SMSI direction technique',
-        certificationBody: 'BSI', createdAt: now, updatedAt: now }
+        createdAt: now, updatedAt: now }
     ];
     return { content: items, totalElements: items.length, totalPages: 1, number: 0, size: items.length };
   }

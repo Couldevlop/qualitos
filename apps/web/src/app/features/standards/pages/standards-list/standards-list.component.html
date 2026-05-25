@@ -18,9 +18,12 @@
       <ng-container matColumnDef="target"><th mat-header-cell *matHeaderCellDef>Cible</th>
         <td mat-cell *matCellDef="let a">{{ a.targetCertificationDate ? (a.targetCertificationDate | date) : '—' }}</td></ng-container>
       <tr mat-header-row *matHeaderRowDef="adoptCols"></tr>
-      <tr mat-row *matRowDef="let row; columns: adoptCols;"></tr>
+      <tr mat-row *matRowDef="let row; columns: adoptCols;"
+          class="clickable" (click)="open(row)"></tr>
     </table>
-    <p class="empty" *ngIf="(adoptions$ | async)?.length === 0">Aucune adoption.</p>
+    <p class="empty" *ngIf="(adoptions$ | async)?.length === 0">
+      Aucune adoption. Adoptez une norme du catalogue ci-dessous pour démarrer un dossier de certification.
+    </p>
   </mat-card>
 
   <mat-card class="section-card">
@@ -36,6 +39,11 @@
         <td mat-cell *matCellDef="let s">{{ s.status }}</td></ng-container>
       <ng-container matColumnDef="cycle"><th mat-header-cell *matHeaderCellDef>Recert.</th>
         <td mat-cell *matCellDef="let s">{{ s.recertificationCycleMonths ? s.recertificationCycleMonths + ' mois' : '—' }}</td></ng-container>
+      <ng-container matColumnDef="actions"><th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let s">
+          <button mat-stroked-button color="primary" (click)="adopt(s)" [disabled]="adopting === s.id">
+            {{ adopting === s.id ? '…' : 'Adopter →' }}
+          </button></td></ng-container>
       <tr mat-header-row *matHeaderRowDef="catalogCols"></tr>
       <tr mat-row *matRowDef="let row; columns: catalogCols;"></tr>
     </table>

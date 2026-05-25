@@ -6,6 +6,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -31,6 +32,7 @@ class StandardsServiceTest {
     @Mock StandardRequirementRepository requirementRepo;
     @Mock TenantStandardRepository tenantStandardRepo;
     @Mock RequirementEvidenceRepository evidenceRepo;
+    @Mock CertificationRoadmapStageRepository roadmapRepo;
     @InjectMocks StandardsService service;
 
     static final UUID TENANT = UUID.randomUUID();
@@ -501,6 +503,145 @@ class StandardsServiceTest {
         StandardsDto.AlignmentReport report = service.computeAlignment(ts.getId());
         assertThat(report.totalRequirements()).isZero();
         assertThat(report.overallScore()).isZero();
+    }
+
+    // --- audit blanc (§8.7) ---
+    @Test
+    void auditBlanc_noEvidence_allRequirementsAreFindings() {
+        Standard s = stdWithTree(); // 2 exigences MUST, 0 preuve
+        TenantStandard ts = adoption(AdoptionStatus.IN_PROGRESS);
+        ts.setStandard(s);
+        when(tenantStandardRepo.findByIdAndTenantId(ts.getId(), TENANT)).thenReturn(Optional.of(ts));
+        when(evidenceRepo.findByTenantStandardId(ts.getId())).thenReturn(List.of());
+
+        StandardsDto.AuditBlancReport r = service.computeAuditBlanc(ts.getId());
+
+        assertThat(r.totalRequirements()).isEqualTo(2);
+        assertThat(r.coveredRequirements()).isZero();
+        assertThat(r.mustTotal()).isEqualTo(2);
+        assertThat(r.readinessScore()).isZero();
+        assertThat(r.findings()).hasSize(2);
+        assertThat(r.verdict()).contains("NON PRÊT");
+    }
+
+    @Test
+    void auditBlanc_criticalRiskMustGap_isCriticalSeverityAndTopPriority() {
+        Standard s = stdWithTree();
+        StandardRequirement r1 = s.getSections().get(0).getClauses().get(0).getRequirements().get(0);
+        r1.setRiskIfMissing(RiskLevel.CRITICAL);
+        TenantStandard ts = adoption(AdoptionStatus.IN_PROGRESS);
+        ts.setStandard(s);
+        when(tenantStandardRepo.findByIdAndTenantId(ts.getId(), TENANT)).thenReturn(Optional.of(ts));
+        when(evidenceRepo.findByTenantStandardId(ts.getId())).thenReturn(List.of());
+
+        StandardsDto.AuditBlancReport r = service.computeAuditBlanc(ts.getId());
+
+        assertThat(r.criticalGaps()).isEqualTo(1);
+        // findings triés par priorité → le critique en tête
+        assertThat(r.findings().get(0).findingSeverity()).isEqualTo("CRITICAL");
+        assertThat(r.findings().get(0).remediationPriority()).isEqualTo(1);
+        assertThat(r.findings().get(0).remediationAction()).contains(r1.getCode());
+    }
+
+    @Test
+    void auditBlanc_partialCoverage_readinessReflectsMustCoverage() {
+        Standard s = stdWithTree();
+        StandardRequirement r1 = s.getSections().get(0).getClauses().get(0).getRequirements().get(0);
+        TenantStandard ts = adoption(AdoptionStatus.IN_PROGRESS);
+        ts.setStandard(s);
+        RequirementEvidence ev = new RequirementEvidence();
+        ev.setRequirement(r1);
+        when(tenantStandardRepo.findByIdAndTenantId(ts.getId(), TENANT)).thenReturn(Optional.of(ts));
+        when(evidenceRepo.findByTenantStandardId(ts.getId())).thenReturn(List.of(ev));
+
+        StandardsDto.AuditBlancReport r = service.computeAuditBlanc(ts.getId());
+
+        assertThat(r.mustCovered()).isEqualTo(1);
+        assertThat(r.readinessScore()).isEqualTo(50d);
+        assertThat(r.findings()).hasSize(1);
+    }
+
+    // --- roadmap de certification (§8.5) ---
+    @Test
+    void adopt_generatesNineteenStageRoadmap() {
+        Standard s = std("iso-9001", StandardStatus.PUBLISHED);
+        when(standardRepo.findById(s.getId())).thenReturn(Optional.of(s));
+        when(tenantStandardRepo.existsByTenantIdAndStandardId(TENANT, s.getId())).thenReturn(false);
+        when(tenantStandardRepo.save(any())).thenAnswer(inv -> {
+            TenantStandard t = inv.getArgument(0);
+            t.setId(UUID.randomUUID());
+            t.setCreatedAt(Instant.now());
+            t.setUpdatedAt(Instant.now());
+            return t;
+        });
+
+        service.adopt(new StandardsDto.AdoptRequest(s.getId(), "scope", null, null, null));
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<CertificationRoadmapStage>> captor = ArgumentCaptor.forClass(List.class);
+        verify(roadmapRepo).saveAll(captor.capture());
+        List<CertificationRoadmapStage> stages = captor.getValue();
+        assertThat(stages).hasSize(19);
+        assertThat(stages.get(0).getStepNumber()).isEqualTo(1);
+        assertThat(stages.get(0).getStatus()).isEqualTo(StageStatus.NOT_STARTED);
+        assertThat(stages).allSatisfy(st -> assertThat(st.getTenantId()).isEqualTo(TENANT));
+    }
+
+    @Test
+    void getRoadmap_computesCompletionExcludingSkipped() {
+        TenantStandard ts = adoption(AdoptionStatus.IN_PROGRESS);
+        when(tenantStandardRepo.findByIdAndTenantId(ts.getId(), TENANT)).thenReturn(Optional.of(ts));
+        // 4 étapes : 2 DONE, 1 SKIPPED, 1 NOT_STARTED → progression = 2 / (4-1) = 66.67%
+        when(roadmapRepo.findByTenantStandardIdOrderByOrderIndexAsc(ts.getId())).thenReturn(List.of(
+                stage(1, StageStatus.DONE), stage(2, StageStatus.DONE),
+                stage(3, StageStatus.SKIPPED), stage(4, StageStatus.NOT_STARTED)));
+
+        StandardsDto.RoadmapSummary r = service.getRoadmap(ts.getId());
+
+        assertThat(r.totalStages()).isEqualTo(4);
+        assertThat(r.doneStages()).isEqualTo(2);
+        assertThat(r.skippedStages()).isEqualTo(1);
+        assertThat(r.completionPercent()).isEqualTo(200d / 3);
+        assertThat(r.stages()).hasSize(4);
+    }
+
+    @Test
+    void updateStage_success() {
+        TenantStandard ts = adoption(AdoptionStatus.IN_PROGRESS);
+        CertificationRoadmapStage st = stage(2, StageStatus.NOT_STARTED);
+        UUID assignee = UUID.randomUUID();
+        when(tenantStandardRepo.findByIdAndTenantId(ts.getId(), TENANT)).thenReturn(Optional.of(ts));
+        when(roadmapRepo.findByIdAndTenantStandardId(st.getId(), ts.getId())).thenReturn(Optional.of(st));
+        when(roadmapRepo.save(st)).thenReturn(st);
+
+        service.updateStage(ts.getId(), st.getId(), new StandardsDto.UpdateStageRequest(
+                StageStatus.IN_PROGRESS, assignee, LocalDate.now(), null, null, null, "go"));
+
+        assertThat(st.getStatus()).isEqualTo(StageStatus.IN_PROGRESS);
+        assertThat(st.getAssigneeId()).isEqualTo(assignee);
+        assertThat(st.getNotes()).isEqualTo("go");
+    }
+
+    @Test
+    void updateStage_notFound_throws() {
+        TenantStandard ts = adoption(AdoptionStatus.IN_PROGRESS);
+        UUID stageId = UUID.randomUUID();
+        when(tenantStandardRepo.findByIdAndTenantId(ts.getId(), TENANT)).thenReturn(Optional.of(ts));
+        when(roadmapRepo.findByIdAndTenantStandardId(stageId, ts.getId())).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> service.updateStage(ts.getId(), stageId,
+                new StandardsDto.UpdateStageRequest(StageStatus.DONE, null, null, null, null, null, null)))
+                .isInstanceOf(RoadmapStageNotFoundException.class);
+    }
+
+    private CertificationRoadmapStage stage(int step, StageStatus status) {
+        CertificationRoadmapStage st = new CertificationRoadmapStage();
+        st.setId(UUID.randomUUID());
+        st.setTenantId(TENANT);
+        st.setStepNumber(step);
+        st.setOrderIndex(step);
+        st.setName("Étape " + step);
+        st.setStatus(status);
+        return st;
     }
 
     // --- helpers ---
