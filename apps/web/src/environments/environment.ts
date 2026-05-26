@@ -7,9 +7,9 @@
  */
 export const environment = {
   production: false,
-  useMockApi: true,
+  useMockApi: false,
   apiBaseUrl: 'http://localhost:8082',
-  authMode: 'dev' as 'dev' | 'oidc',
+  authMode: 'oidc' as 'dev' | 'oidc',
   keycloak: {
     issuer: 'http://localhost:8080/realms/qualitos',
     clientId: 'qualitos-web',
