@@ -58,7 +58,7 @@
               <strong>{{ cl.code }}</strong> {{ cl.title }}
             </div>
             <table class="req-table">
-              <tr *ngFor="let r of cl.requirements">
+              <tr *ngFor="let r of cl.requirements" [class.covered]="coveredRequirementIds.has(r.id)">
                 <td class="req-code">{{ r.code }}</td>
                 <td>
                   <span class="ob ob-{{ r.obligation }}">{{ r.obligation }}</span>
@@ -66,6 +66,10 @@
                 </td>
                 <td class="req-text">{{ r.text }}
                   <div class="req-evid" *ngIf="r.evidenceTypes">Preuve attendue : {{ r.evidenceTypes }}</div>
+                </td>
+                <td class="req-cov">
+                  <span class="cov-ok" *ngIf="coveredRequirementIds.has(r.id); else notcov">✓ couverte</span>
+                  <ng-template #notcov><span class="cov-no">—</span></ng-template>
                 </td>
               </tr>
             </table>
@@ -125,6 +129,141 @@
             </tr>
           </tbody>
         </table>
+      </div>
+    </mat-tab>
+
+    <!-- Onglet Mes preuves -->
+    <mat-tab label="Mes preuves">
+      <div class="tab-body">
+        <p class="muted">Liez des preuves (documents, audits, CAPA, cycles PDCA, 5S, formations, KPI…)
+          aux exigences. Chaque exigence couverte fait monter le score de préparation et d'alignement.</p>
+
+        <div class="link-form" *ngIf="standard as s">
+          <mat-form-field appearance="outline" class="grow">
+            <mat-label>Exigence à couvrir</mat-label>
+            <mat-select [(value)]="linkRequirementId">
+              <mat-optgroup *ngFor="let sec of s.sections" [label]="'§' + sec.code + ' ' + sec.title">
+                <ng-container *ngFor="let cl of sec.clauses">
+                  <mat-option *ngFor="let r of cl.requirements" [value]="r.id">
+                    {{ r.code }} — {{ r.text | slice:0:60 }}…
+                  </mat-option>
+                </ng-container>
+              </mat-optgroup>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Type</mat-label>
+            <mat-select [(value)]="linkEvidenceType">
+              <mat-option *ngFor="let t of evidenceTypes" [value]="t">{{ t }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="grow">
+            <mat-label>Note</mat-label>
+            <input matInput [(ngModel)]="linkNote" placeholder="Référence / commentaire">
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="grow">
+            <mat-label>Lien (optionnel)</mat-label>
+            <input matInput [(ngModel)]="linkUri" placeholder="https://…">
+          </mat-form-field>
+          <button mat-raised-button color="primary" (click)="linkEvidence()" [disabled]="linking">
+            <mat-icon>add_link</mat-icon> Lier
+          </button>
+        </div>
+
+        <p class="muted">{{ evidence.length }} preuve(s) liée(s).</p>
+        <p class="empty" *ngIf="evidence.length === 0">Aucune preuve liée. Utilisez le formulaire ci-dessus.</p>
+        <table class="evidence-table" *ngIf="evidence.length">
+          <thead><tr><th>Exigence</th><th>Type</th><th>Référence / note</th><th>Liée le</th><th></th></tr></thead>
+          <tbody>
+            <tr *ngFor="let e of evidence">
+              <td class="nowrap"><strong>{{ e.requirementCode }}</strong></td>
+              <td><span class="evid-type">{{ e.evidenceType }}</span></td>
+              <td>
+                <a *ngIf="e.evidenceUri" [href]="e.evidenceUri" target="_blank" rel="noopener">{{ e.evidenceUri }}</a>
+                <span *ngIf="e.note" class="evid-note">{{ e.note }}</span>
+                <code *ngIf="e.evidenceRefId" class="evid-ref">{{ e.evidenceRefId }}</code>
+              </td>
+              <td class="nowrap">{{ e.linkedAt | date:'dd/MM/yy' }}</td>
+              <td><button mat-icon-button (click)="unlinkEvidence(e)" aria-label="Retirer">
+                <mat-icon>delete_outline</mat-icon></button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </mat-tab>
+
+    <!-- Onglet Certification à blanc -->
+    <mat-tab label="Certification à blanc">
+      <div class="tab-body">
+        <p class="muted">Simule l'audit de certification en 2 étapes (revue documentaire §4-7, audit terrain §8-10)
+          selon ISO/IEC 17021 : classement des non-conformités (majeures / mineures / observations),
+          décision de certification et émission d'un certificat à blanc signé et ancré.</p>
+        <button mat-raised-button color="primary" (click)="runCertificationBlanc()" [disabled]="runningCertBlanc">
+          <mat-icon>verified</mat-icon>
+          {{ runningCertBlanc ? 'Simulation…' : 'Lancer la certification à blanc' }}
+        </button>
+
+        <div *ngIf="certBlanc as cb" class="cb-result">
+          <div class="verdict" [ngClass]="decisionClass(cb.decision)">
+            <strong>Décision :</strong> {{ cb.decisionLabel }}
+            <span class="verdict-sub">{{ cb.majorNonConformities }} NC majeure(s) ·
+              {{ cb.minorNonConformities }} mineure(s) · {{ cb.observations }} observation(s)</span>
+          </div>
+
+          <div class="stage-row">
+            <mat-card class="stage-card" [ngClass]="cb.stage1.passed ? 'pass' : 'fail'">
+              <h4>① {{ cb.stage1.name }}</h4>
+              <span class="stage-state">{{ cb.stage1.passed ? 'Franchie' : 'Non franchie' }}
+                · {{ cb.stage1.score | number:'1.0-0' }}%</span>
+              <p>{{ cb.stage1.summary }}</p>
+              <p class="watch" *ngIf="cb.stage1.watchPoints.length">
+                Points d'attention : {{ cb.stage1.watchPoints.join(', ') }}</p>
+            </mat-card>
+            <mat-card class="stage-card" [ngClass]="cb.stage2.passed ? 'pass' : 'fail'">
+              <h4>② {{ cb.stage2.name }}</h4>
+              <span class="stage-state">{{ cb.stage2.passed ? 'Franchie' : 'Non franchie' }}
+                · {{ cb.stage2.score | number:'1.0-0' }}%</span>
+              <p>{{ cb.stage2.summary }}</p>
+              <p class="watch" *ngIf="cb.stage2.watchPoints.length">
+                Points d'attention : {{ cb.stage2.watchPoints.join(', ') }}</p>
+            </mat-card>
+          </div>
+
+          <!-- Certificat à blanc -->
+          <mat-card class="cert-card" *ngIf="cb.certificate as c">
+            <div class="cert-head">
+              <mat-icon>workspace_premium</mat-icon>
+              <div>
+                <h3>Certificat à blanc</h3>
+                <span class="cert-num">{{ c.certificateNumber }}</span>
+              </div>
+            </div>
+            <p>Norme : <strong>{{ c.standardCode | uppercase }}</strong>
+              · Organisme : <strong>{{ c.certificationBody }}</strong></p>
+            <p>Périmètre : {{ c.scope }}</p>
+            <p>Émis le <strong>{{ c.issuedAt | date }}</strong>
+              · Valide jusqu'au <strong>{{ c.expiresAt | date }}</strong></p>
+            <p class="cert-cond" *ngIf="c.conditions">Conditions : {{ c.conditions }}</p>
+            <p class="cert-disclaimer">{{ c.disclaimer }}</p>
+          </mat-card>
+
+          <!-- Liste des non-conformités -->
+          <h3 class="nc-title" *ngIf="cb.nonConformities.length">Non-conformités &amp; observations</h3>
+          <table class="findings-table" *ngIf="cb.nonConformities.length">
+            <thead><tr><th>Exigence</th><th>Classement</th><th>Constat</th><th>Correction demandée</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let nc of cb.nonConformities">
+                <td class="nowrap"><strong>{{ nc.requirementCode }}</strong><br><small>§{{ nc.sectionCode }}</small></td>
+                <td><span class="sev" [ngClass]="ncClass(nc.type)">{{ nc.type }}</span></td>
+                <td>{{ nc.requirementText }}</td>
+                <td>{{ nc.requiredCorrection }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p class="hash"><span>Verdict ancré · SHA-256</span><code>{{ cb.sha256 }}</code></p>
+          <p class="hash"><span>Ancrage</span><code>{{ cb.anchorTxRef }}</code></p>
+        </div>
       </div>
     </mat-tab>
 

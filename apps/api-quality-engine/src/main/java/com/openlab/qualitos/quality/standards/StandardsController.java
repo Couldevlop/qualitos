@@ -16,11 +16,14 @@ public class StandardsController {
 
     private final StandardsService service;
     private final CertificationDossierService dossierService;
+    private final CertificationBlancService certificationBlancService;
 
     public StandardsController(StandardsService service,
-                               CertificationDossierService dossierService) {
+                               CertificationDossierService dossierService,
+                               CertificationBlancService certificationBlancService) {
         this.service = service;
         this.dossierService = dossierService;
+        this.certificationBlancService = certificationBlancService;
     }
 
     // ---- Catalog ----
@@ -152,5 +155,13 @@ public class StandardsController {
     @PostMapping("/adoptions/{id}/dossier")
     public StandardsDto.DossierResponse generateDossier(@PathVariable UUID id) {
         return dossierService.generate(id);
+    }
+
+    // ---- Certification à blanc (§8.5 étapes 14-15 ; ISO/IEC 17021-1) ----
+    // POST : la simulation produit un verdict signé + ancré (effet de bord), d'où POST.
+
+    @PostMapping("/adoptions/{id}/certification-blanc")
+    public StandardsDto.CertificationBlancReport certificationBlanc(@PathVariable UUID id) {
+        return certificationBlancService.simulate(id);
     }
 }

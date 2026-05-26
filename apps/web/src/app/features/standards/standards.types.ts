@@ -127,5 +127,87 @@ export interface DossierResponse {
   evidenceCount: number; htmlContent: string;
 }
 
+// ---- Preuves (§8.4 onglet 6) ----
+export type EvidenceType =
+  | 'DOCUMENT' | 'AUDIT' | 'CAPA' | 'PDCA_CYCLE' | 'ISHIKAWA' | 'FIVES_AUDIT'
+  | 'TRAINING_RECORD' | 'KPI_RECORD' | 'EXTERNAL_FILE' | 'OTHER';
+
+export interface EvidenceResponse {
+  id: string;
+  tenantStandardId: string;
+  requirementId: string;
+  requirementCode: string;
+  evidenceType: EvidenceType;
+  evidenceRefId?: string;
+  evidenceUri?: string;
+  note?: string;
+  linkedBy: string;
+  linkedAt: string;
+}
+
+export interface LinkEvidenceRequest {
+  requirementId: string;
+  evidenceType: EvidenceType;
+  evidenceRefId?: string;
+  evidenceUri?: string;
+  note?: string;
+  linkedBy: string;
+}
+
+// ---- Certification à blanc (§8.5 étapes 14-15 ; ISO/IEC 17021-1) ----
+export type CertificationDecision =
+  | 'CERTIFIABLE' | 'CERTIFIABLE_SOUS_RESERVE' | 'NON_CERTIFIABLE' | 'AJOURNE';
+
+export interface AuditStageResult {
+  stageNumber: number;
+  name: string;
+  passed: boolean;
+  score: number;
+  summary: string;
+  watchPoints: string[];
+}
+
+export interface NonConformity {
+  requirementId: string;
+  sectionCode: string;
+  clauseCode: string;
+  requirementCode: string;
+  requirementText: string;
+  type: 'MAJOR' | 'MINOR' | 'OBSERVATION';
+  description: string;
+  requiredCorrection: string;
+}
+
+export interface MockCertificate {
+  certificateNumber: string;
+  standardCode: string;
+  scope: string;
+  certificationBody: string;
+  issuedAt: string;
+  expiresAt: string;
+  conditions: string;
+  disclaimer: string;
+}
+
+export interface CertificationBlancReport {
+  tenantStandardId: string;
+  standardId: string;
+  standardCode: string;
+  standardName: string;
+  generatedAt: string;
+  stage1: AuditStageResult;
+  stage2: AuditStageResult;
+  majorNonConformities: number;
+  minorNonConformities: number;
+  observations: number;
+  decision: CertificationDecision;
+  decisionLabel: string;
+  nonConformities: NonConformity[];
+  certificate?: MockCertificate;
+  sha256: string;
+  anchorTxRef: string;
+  signature: string;
+}
+
 export type StandardsPage = SpringPage<StandardSummary>;
 export type AdoptionsPage = SpringPage<AdoptionResponse>;

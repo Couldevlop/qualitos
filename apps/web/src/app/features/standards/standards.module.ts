@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
@@ -12,6 +13,6 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [StandardsListComponent, StandardsDetailComponent],
-  imports: [SharedModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, FormsModule, RouterModule.forChild(routes)]
 })
 export class StandardsModule {}

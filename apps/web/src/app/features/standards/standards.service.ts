@@ -6,8 +6,8 @@ import { delay } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {
   AdoptionResponse, AdoptionsPage, AdoptRequest, AlignmentReport, AuditBlancReport,
-  DossierResponse, RoadmapSummary, StandardDetail, StandardSummary, StandardsPage,
-  UpdateStageRequest
+  CertificationBlancReport, DossierResponse, EvidenceResponse, LinkEvidenceRequest,
+  RoadmapSummary, StandardDetail, StandardSummary, StandardsPage, UpdateStageRequest
 } from './standards.types';
 
 @Injectable({ providedIn: 'root' })
@@ -68,10 +68,31 @@ export class StandardsService {
     return this.http.get<AuditBlancReport>(`${this.baseEndpoint}/adoptions/${id}/audit-blanc`);
   }
 
+  // ---- Preuves (§8.4 onglet 6) ----
+
+  listEvidence(id: string): Observable<EvidenceResponse[]> {
+    return this.http.get<EvidenceResponse[]>(`${this.baseEndpoint}/adoptions/${id}/evidence`);
+  }
+
+  linkEvidence(id: string, req: LinkEvidenceRequest): Observable<EvidenceResponse> {
+    return this.http.post<EvidenceResponse>(`${this.baseEndpoint}/adoptions/${id}/evidence`, req);
+  }
+
+  unlinkEvidence(id: string, evidenceId: string): Observable<unknown> {
+    return this.http.delete(`${this.baseEndpoint}/adoptions/${id}/evidence/${evidenceId}`);
+  }
+
   // ---- Dossier de certification (§8.4) ----
 
   generateDossier(id: string): Observable<DossierResponse> {
     return this.http.post<DossierResponse>(`${this.baseEndpoint}/adoptions/${id}/dossier`, {});
+  }
+
+  // ---- Certification à blanc (§8.5 étapes 14-15) ----
+
+  runCertificationBlanc(id: string): Observable<CertificationBlancReport> {
+    return this.http.post<CertificationBlancReport>(
+      `${this.baseEndpoint}/adoptions/${id}/certification-blanc`, {});
   }
 
   // ---- Mocks (mode démo sans backend) ----

@@ -34,6 +34,7 @@ class StandardsControllerTest {
     @Autowired MockMvc mockMvc;
     @MockitoBean StandardsService service;
     @MockitoBean CertificationDossierService dossierService;
+    @MockitoBean CertificationBlancService certificationBlancService;
     ObjectMapper om;
 
     static final UUID STD = UUID.randomUUID();
@@ -316,11 +317,31 @@ class StandardsControllerTest {
         when(dossierService.generate(ADO)).thenReturn(new StandardsDto.DossierResponse(
                 ADO, "iso-9001", "ISO 9001:2015", Instant.now(),
                 "a".repeat(64), "stub-tx-1", "dossier.html", "text/html",
-                50d, 15d, 1, "<html>...</html>"));
+                50d, 15d, 1, "<html>...</html>", "c2lnbmF0dXJl"));
         mockMvc.perform(post("/api/v1/standards/adoptions/{id}/dossier", ADO).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.sha256").isNotEmpty())
                 .andExpect(jsonPath("$.anchorTxRef").value("stub-tx-1"));
+    }
+
+    @Test @WithMockUser
+    void certificationBlanc_returns200() throws Exception {
+        var stage1 = new StandardsDto.AuditStageResult(1, "Revue documentaire (§4-7)",
+                true, 92d, "ok", List.of());
+        var stage2 = new StandardsDto.AuditStageResult(2, "Audit terrain (§8-10)",
+                true, 88d, "ok", List.of("8.2.1"));
+        var cert = new StandardsDto.MockCertificate("QOS-BLANC/ISO-9001/2026/AB12", "iso-9001",
+                "SMQ siège", "AFNOR", Instant.now(), Instant.now(), "sous réserve", "simulation");
+        when(certificationBlancService.simulate(ADO)).thenReturn(new StandardsDto.CertificationBlancReport(
+                ADO, STD, "iso-9001", "ISO 9001:2015", Instant.now(), stage1, stage2,
+                0, 1, 2, "CERTIFIABLE_SOUS_RESERVE", "Recommandé sous réserve",
+                List.of(), cert, "b".repeat(64), "stub-tx-cb", "c2ln"));
+        mockMvc.perform(post("/api/v1/standards/adoptions/{id}/certification-blanc", ADO).with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.decision").value("CERTIFIABLE_SOUS_RESERVE"))
+                .andExpect(jsonPath("$.minorNonConformities").value(1))
+                .andExpect(jsonPath("$.certificate.certificateNumber").value("QOS-BLANC/ISO-9001/2026/AB12"))
+                .andExpect(jsonPath("$.anchorTxRef").value("stub-tx-cb"));
     }
 
     // helpers

@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.standards;
 
+import com.openlab.qualitos.crypto.application.HybridSignatureService;
+import com.openlab.qualitos.crypto.domain.model.SignatureEnvelope;
 import com.openlab.qualitos.quality.blockchain.domain.BlockchainAnchorPort;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.stereotype.Service;
@@ -33,13 +35,19 @@ public class CertificationDossierService {
 
     private static final DateTimeFormatter TS = DateTimeFormatter.ISO_INSTANT;
 
+    /** Contexte de suite crypto pour les artefacts de preuve signés (ADR 0011). */
+    private static final String SIGN_CONTEXT = "audit-report";
+
     private final StandardsService standards;
     private final BlockchainAnchorPort blockchain;
+    private final HybridSignatureService signer;
 
     public CertificationDossierService(StandardsService standards,
-                                       BlockchainAnchorPort blockchain) {
+                                       BlockchainAnchorPort blockchain,
+                                       HybridSignatureService signer) {
         this.standards = standards;
         this.blockchain = blockchain;
+        this.signer = signer;
     }
 
     @Transactional(readOnly = true)
@@ -55,6 +63,11 @@ public class CertificationDossierService {
         String html = renderHtml(adoption, standard, roadmap, alignment, audit, evidence, now);
         String sha256 = sha256(html);
 
+        // Signature hybride (Ed25519 + ML-DSA-65) du SHA-256 du dossier : preuve
+        // d'intégrité signée, résistante au quantique, vérifiable a posteriori (ADR 0011).
+        SignatureEnvelope envelope = signer.sign(SIGN_CONTEXT, sha256.getBytes(StandardCharsets.UTF_8));
+        String signature = envelope.encode();
+
         // Ancrage de l'empreinte (preuve d'intégrité). En dev, adapter stub.
         UUID tenantId = UUID.fromString(TenantContext.getTenantId());
         String anchorTxRef = blockchain.submitRoot(tenantId, sha256);
@@ -66,7 +79,7 @@ public class CertificationDossierService {
                 adoptionId, standard.code(), standard.fullName(), now,
                 sha256, anchorTxRef, fileName, "text/html",
                 audit.readinessScore(), roadmap.completionPercent(),
-                evidence.size(), html);
+                evidence.size(), html, signature);
     }
 
     // ===== rendu HTML (auto-contenu, imprimable) =====
