@@ -38,6 +38,7 @@ class StandardsControllerTest {
     @MockitoBean StandardsService service;
     @MockitoBean CertificationDossierService dossierService;
     @MockitoBean CertificationBlancService certificationBlancService;
+    @MockitoBean AiDraftService aiDraftService;
     ObjectMapper om;
 
     static final UUID STD = UUID.randomUUID();
@@ -394,6 +395,24 @@ class StandardsControllerTest {
                 .thenReturn("/standards/templates/../../application.yml");
         mockMvc.perform(get("/api/v1/standards/{id}/document-templates/{tid}/download", STD, EV))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test @WithMockUser
+    void aiDraft_returns200() throws Exception {
+        when(aiDraftService.generate(STD, EV)).thenReturn(new StandardsDto.AiDraftResponse(
+                EV, "ISO9001-MQ", "Manuel Qualité", "# Manuel Qualité\n…", "ollama", 1234));
+        mockMvc.perform(post("/api/v1/standards/{id}/document-templates/{tid}/ai-draft", STD, EV).with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.provider").value("ollama"))
+                .andExpect(jsonPath("$.templateCode").value("ISO9001-MQ"));
+    }
+
+    @Test @WithMockUser
+    void aiDraft_gatewayDown_returns502() throws Exception {
+        when(aiDraftService.generate(STD, EV))
+                .thenThrow(new com.openlab.qualitos.quality.aigateway.AiGatewayException("ai down"));
+        mockMvc.perform(post("/api/v1/standards/{id}/document-templates/{tid}/ai-draft", STD, EV).with(csrf()))
+                .andExpect(status().isBadGateway());
     }
 
     @Test @WithMockUser

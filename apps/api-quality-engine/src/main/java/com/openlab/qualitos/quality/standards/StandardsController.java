@@ -22,13 +22,16 @@ public class StandardsController {
     private final StandardsService service;
     private final CertificationDossierService dossierService;
     private final CertificationBlancService certificationBlancService;
+    private final AiDraftService aiDraftService;
 
     public StandardsController(StandardsService service,
                                CertificationDossierService dossierService,
-                               CertificationBlancService certificationBlancService) {
+                               CertificationBlancService certificationBlancService,
+                               AiDraftService aiDraftService) {
         this.service = service;
         this.dossierService = dossierService;
         this.certificationBlancService = certificationBlancService;
+        this.aiDraftService = aiDraftService;
     }
 
     // ---- Catalog ----
@@ -204,6 +207,12 @@ public class StandardsController {
     @GetMapping("/{id}/process-templates")
     public List<StandardsDto.ProcessTemplateResponse> processTemplates(@PathVariable UUID id) {
         return service.listProcessTemplates(id);
+    }
+
+    // Génération IA d'un brouillon de document (POST : effet de bord côté LLM). §8.8
+    @PostMapping("/{id}/document-templates/{templateId}/ai-draft")
+    public StandardsDto.AiDraftResponse aiDraft(@PathVariable UUID id, @PathVariable UUID templateId) {
+        return aiDraftService.generate(id, templateId);
     }
 
     @GetMapping("/{id}/revisions")

@@ -5,10 +5,10 @@ import { delay } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
 import {
-  AdoptionResponse, AdoptionsPage, AdoptRequest, AlignmentReport, AuditBlancReport,
-  CertificationBlancReport, DocumentTemplate, DossierResponse, EvidenceResponse,
-  LinkEvidenceRequest, ProcessTemplate, RoadmapSummary, StandardDetail, StandardRevision,
-  StandardSummary, StandardsPage, UpdateStageRequest
+  AdoptionResponse, AdoptionsPage, AdoptRequest, AiDraftResponse, AlignmentReport,
+  AuditBlancReport, CertificationBlancReport, DocumentTemplate, DossierResponse,
+  EvidenceResponse, LinkEvidenceRequest, ProcessTemplate, RoadmapSummary, StandardDetail,
+  StandardRevision, StandardSummary, StandardsPage, UpdateStageRequest
 } from './standards.types';
 
 @Injectable({ providedIn: 'root' })
@@ -107,6 +107,12 @@ export class StandardsService {
     return this.http.get(
       `${this.baseEndpoint}/${standardId}/document-templates/${templateId}/download`,
       { observe: 'response', responseType: 'blob' });
+  }
+
+  /** Génère un brouillon de document par LLM (via api-quality-engine → ai-service). */
+  generateAiDraft(standardId: string, templateId: string): Observable<AiDraftResponse> {
+    return this.http.post<AiDraftResponse>(
+      `${this.baseEndpoint}/${standardId}/document-templates/${templateId}/ai-draft`, {});
   }
 
   listProcessTemplates(standardId: string): Observable<ProcessTemplate[]> {

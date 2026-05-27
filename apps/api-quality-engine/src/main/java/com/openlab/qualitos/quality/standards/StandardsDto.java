@@ -359,6 +359,17 @@ public final class StandardsDto {
             int orderIndex
     ) {}
 
+    // ---- Génération IA d'un brouillon de document normatif (§8.8) ----
+
+    public record AiDraftResponse(
+            UUID templateId,
+            String templateCode,
+            String templateName,
+            String draft,
+            String provider,
+            int latencyMs
+    ) {}
+
     // ---- Veille normative (§8.4 onglet 8) ----
 
     public record RevisionResponse(

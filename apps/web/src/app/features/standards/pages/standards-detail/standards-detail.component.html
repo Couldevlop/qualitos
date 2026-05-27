@@ -46,7 +46,8 @@
 
   <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
 
-  <mat-tab-group *ngIf="!loading" animationDuration="200ms" class="qos-tabs">
+  <mat-tab-group *ngIf="!loading" animationDuration="200ms" class="qos-tabs"
+                 [(selectedIndex)]="selectedTab">
 
     <!-- Onglet Exigences -->
     <mat-tab label="Exigences">
@@ -69,7 +70,9 @@
                 </td>
                 <td class="req-cov">
                   <span class="cov-ok" *ngIf="coveredRequirementIds.has(r.id); else notcov">✓ couverte</span>
-                  <ng-template #notcov><span class="cov-no">—</span></ng-template>
+                  <ng-template #notcov>
+                    <button mat-button class="cover-btn" (click)="coverRequirement(r.id)">+ preuve</button>
+                  </ng-template>
                 </td>
               </tr>
             </table>
@@ -93,11 +96,29 @@
               <td><span class="ob" [ngClass]="obligationClass(d.obligation)">{{ obligationLabel(d.obligation) }}</span></td>
               <td><span class="clause-chip" *ngFor="let c of clauseList(d.mapsToClauses)">{{ c }}</span></td>
               <td class="nowrap">{{ d.format || '—' }}</td>
-              <td><button mat-stroked-button *ngIf="d.downloadable" (click)="downloadTemplate(d)">
-                <mat-icon>download</mat-icon> Modèle</button></td>
+              <td class="nowrap">
+                <button mat-stroked-button *ngIf="d.downloadable" (click)="downloadTemplate(d)">
+                  <mat-icon>download</mat-icon> Modèle</button>
+                <button mat-stroked-button color="primary" class="ia-btn" (click)="generateAiDraft(d)"
+                        [disabled]="generatingDraftId === d.id">
+                  <mat-icon>auto_awesome</mat-icon>
+                  {{ generatingDraftId === d.id ? 'Génération…' : 'Brouillon IA' }}</button>
+              </td>
             </tr>
           </tbody>
         </table>
+
+        <mat-card class="ai-draft-card" *ngIf="aiDraft as ad">
+          <div class="ai-draft-head">
+            <mat-icon>auto_awesome</mat-icon>
+            <div>
+              <h3>Brouillon IA — {{ ad.templateName }}</h3>
+              <span class="muted small">généré par {{ ad.provider }} · {{ ad.latencyMs }} ms ·
+                à relire et valider avant publication (l'IA suggère, l'humain décide)</span>
+            </div>
+          </div>
+          <pre class="ai-draft-text">{{ ad.draft }}</pre>
+        </mat-card>
       </div>
     </mat-tab>
 
@@ -161,12 +182,17 @@
           {{ ab.criticalGaps }} critiques, {{ ab.majorGaps }} majeurs, {{ ab.minorGaps }} mineurs.</p>
         <p class="empty" *ngIf="ab.findings.length === 0">Aucun écart : toutes les exigences sont couvertes 🎉</p>
         <table class="findings-table" *ngIf="ab.findings.length">
-          <thead><tr><th>Exigence</th><th>Sévérité</th><th>Action de remédiation</th></tr></thead>
+          <thead><tr><th>Exigence</th><th>Sévérité</th><th>Action de remédiation</th><th></th></tr></thead>
           <tbody>
             <tr *ngFor="let f of ab.findings">
               <td class="nowrap"><strong>{{ f.requirementCode }}</strong><br><small>§{{ f.sectionCode }}</small></td>
               <td><span class="sev" [ngClass]="severityClass(f.findingSeverity)">{{ f.findingSeverity }}</span></td>
               <td>{{ f.remediationAction }}</td>
+              <td class="nowrap">
+                <button mat-stroked-button color="primary" class="cover-btn" (click)="coverRequirement(f.requirementId)">
+                  <mat-icon>link</mat-icon> Couvrir
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>

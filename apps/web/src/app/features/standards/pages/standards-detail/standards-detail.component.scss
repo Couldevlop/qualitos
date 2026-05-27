@@ -97,6 +97,8 @@
 .req-cov { width: 90px; white-space: nowrap; text-align: right; }
 .cov-ok { font-size: 11px; font-weight: 700; color: #2e7d32; }
 .cov-no { color: #cfd8dc; }
+.cover-btn { font-size: 12px; line-height: 28px; min-width: 0; padding: 0 10px;
+  mat-icon { font-size: 16px; width: 16px; height: 16px; vertical-align: middle; } }
 
 /* Mes preuves */
 .link-form {
@@ -148,6 +150,22 @@
 .clause-chip {
   display: inline-block; font-size: 11px; font-weight: 600; color: #3949ab;
   background: #e8eaf6; border-radius: 8px; padding: 2px 7px; margin: 2px 4px 2px 0;
+}
+.ia-btn { margin-left: 6px; }
+
+/* Brouillon IA */
+.ai-draft-card {
+  margin-top: 18px; padding: 18px; max-width: 860px;
+  border: 1px solid #c5cae9; background: linear-gradient(180deg,#fbfcff,#f5f3fd);
+  .ai-draft-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+    mat-icon { color: #5c35b8; font-size: 30px; width: 30px; height: 30px; }
+    h3 { margin: 0; font-size: 16px; }
+  }
+  .ai-draft-text {
+    white-space: pre-wrap; word-break: break-word; font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px; line-height: 1.5; background: #fff; border: 1px solid #e8eaf6;
+    border-radius: 6px; padding: 14px; max-height: 460px; overflow: auto; margin: 0;
+  }
 }
 
 /* Veille normative — timeline */

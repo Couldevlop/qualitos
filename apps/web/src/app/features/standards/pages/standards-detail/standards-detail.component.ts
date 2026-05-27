@@ -5,7 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { StandardsService } from '../../standards.service';
 import {
-  AdoptionResponse, AlignmentReport, AuditBlancReport, CertificationBlancReport,
+  AdoptionResponse, AiDraftResponse, AlignmentReport, AuditBlancReport, CertificationBlancReport,
   DocumentTemplate, DossierResponse, EvidenceResponse, EvidenceType, ProcessTemplate,
   RoadmapStageResponse, RoadmapSummary, StageStatus, StandardDetail, StandardRevision
 } from '../../standards.types';
@@ -39,12 +39,20 @@ export class StandardsDetailComponent implements OnInit {
   processTemplates: ProcessTemplate[] = [];
   revisions: StandardRevision[] = [];
 
+  aiDraft?: AiDraftResponse;
+  generatingDraftId?: string;
+
   // Formulaire de liaison de preuve.
   linkRequirementId = '';
   linkEvidenceType: EvidenceType = 'DOCUMENT';
   linkNote = '';
   linkUri = '';
   linking = false;
+
+  // Onglet actif (piloté pour le saut « Couvrir cet écart »).
+  selectedTab = 0;
+  /** Index de l'onglet « Mes preuves » dans le mat-tab-group (ordre statique). */
+  private readonly EVIDENCE_TAB_INDEX = 4;
 
   readonly stageStatuses: StageStatus[] = ['NOT_STARTED', 'IN_PROGRESS', 'DONE', 'SKIPPED'];
   readonly evidenceTypes: EvidenceType[] = [
@@ -106,6 +114,12 @@ export class StandardsDetailComponent implements OnInit {
   }
 
   // ---- Preuves ----
+
+  /** Saute à l'onglet « Mes preuves » avec l'exigence pré-sélectionnée (boucle de remédiation). */
+  coverRequirement(requirementId: string): void {
+    this.linkRequirementId = requirementId;
+    this.selectedTab = this.EVIDENCE_TAB_INDEX;
+  }
 
   linkEvidence(): void {
     if (!this.linkRequirementId) {
@@ -212,6 +226,25 @@ export class StandardsDetailComponent implements OnInit {
         URL.revokeObjectURL(url);
       },
       error: () => this.snack.open('Téléchargement du modèle impossible', 'Fermer', { duration: 3000 })
+    });
+  }
+
+  // ---- Génération IA d'un brouillon (§8.8) ----
+
+  generateAiDraft(t: DocumentTemplate): void {
+    if (!this.adoption) return;
+    this.generatingDraftId = t.id;
+    this.aiDraft = undefined;
+    this.svc.generateAiDraft(this.adoption.standardId, t.id).subscribe({
+      next: r => {
+        this.aiDraft = r;
+        this.generatingDraftId = undefined;
+        this.snack.open(`Brouillon généré (${r.provider}, ${r.latencyMs} ms)`, 'OK', { duration: 2500 });
+      },
+      error: () => {
+        this.generatingDraftId = undefined;
+        this.snack.open('Génération IA indisponible (ai-service / Ollama)', 'Fermer', { duration: 3500 });
+      }
     });
   }
 

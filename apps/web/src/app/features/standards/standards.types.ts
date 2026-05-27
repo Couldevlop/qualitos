@@ -203,6 +203,16 @@ export interface DocumentTemplate {
   downloadable: boolean;
 }
 
+// ---- Génération IA d'un brouillon de document (§8.8) ----
+export interface AiDraftResponse {
+  templateId: string;
+  templateCode: string;
+  templateName: string;
+  draft: string;
+  provider: string;
+  latencyMs: number;
+}
+
 // ---- Cartographie des processus (§8.4 onglet 4) ----
 export interface ProcessTemplate {
   id: string;
