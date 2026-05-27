@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
@@ -6,8 +6,9 @@ import { delay } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {
   AdoptionResponse, AdoptionsPage, AdoptRequest, AlignmentReport, AuditBlancReport,
-  CertificationBlancReport, DossierResponse, EvidenceResponse, LinkEvidenceRequest,
-  RoadmapSummary, StandardDetail, StandardSummary, StandardsPage, UpdateStageRequest
+  CertificationBlancReport, DocumentTemplate, DossierResponse, EvidenceResponse,
+  LinkEvidenceRequest, ProcessTemplate, RoadmapSummary, StandardDetail, StandardRevision,
+  StandardSummary, StandardsPage, UpdateStageRequest
 } from './standards.types';
 
 @Injectable({ providedIn: 'root' })
@@ -93,6 +94,27 @@ export class StandardsService {
   runCertificationBlanc(id: string): Observable<CertificationBlancReport> {
     return this.http.post<CertificationBlancReport>(
       `${this.baseEndpoint}/adoptions/${id}/certification-blanc`, {});
+  }
+
+  // ---- Catalogue : bibliothèque / processus / veille (§8.4, par standardId) ----
+
+  listDocumentTemplates(standardId: string): Observable<DocumentTemplate[]> {
+    return this.http.get<DocumentTemplate[]>(`${this.baseEndpoint}/${standardId}/document-templates`);
+  }
+
+  /** Télécharge le modèle (blob via l'intercepteur → token attaché). */
+  downloadDocumentTemplate(standardId: string, templateId: string): Observable<HttpResponse<Blob>> {
+    return this.http.get(
+      `${this.baseEndpoint}/${standardId}/document-templates/${templateId}/download`,
+      { observe: 'response', responseType: 'blob' });
+  }
+
+  listProcessTemplates(standardId: string): Observable<ProcessTemplate[]> {
+    return this.http.get<ProcessTemplate[]>(`${this.baseEndpoint}/${standardId}/process-templates`);
+  }
+
+  listRevisions(standardId: string): Observable<StandardRevision[]> {
+    return this.http.get<StandardRevision[]>(`${this.baseEndpoint}/${standardId}/revisions`);
   }
 
   // ---- Mocks (mode démo sans backend) ----

@@ -78,6 +78,47 @@
       </div>
     </mat-tab>
 
+    <!-- Onglet Bibliothèque documentaire -->
+    <mat-tab label="Bibliothèque documentaire">
+      <div class="tab-body">
+        <p class="muted">Modèles de documents exigés par la norme, prêts à adapter et télécharger
+          (génération IA pré-remplie à venir).</p>
+        <p class="empty" *ngIf="docTemplates.length === 0">Aucun modèle catalogué pour cette norme.</p>
+        <table class="catalog-table" *ngIf="docTemplates.length">
+          <thead><tr><th>Document</th><th>Catégorie</th><th>Caractère</th><th>Clauses</th><th>Format</th><th></th></tr></thead>
+          <tbody>
+            <tr *ngFor="let d of docTemplates">
+              <td><strong>{{ d.name }}</strong><div class="muted small" *ngIf="d.description">{{ d.description }}</div></td>
+              <td class="nowrap">{{ d.category || '—' }}</td>
+              <td><span class="ob" [ngClass]="obligationClass(d.obligation)">{{ obligationLabel(d.obligation) }}</span></td>
+              <td><span class="clause-chip" *ngFor="let c of clauseList(d.mapsToClauses)">{{ c }}</span></td>
+              <td class="nowrap">{{ d.format || '—' }}</td>
+              <td><button mat-stroked-button *ngIf="d.downloadable" (click)="downloadTemplate(d)">
+                <mat-icon>download</mat-icon> Modèle</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </mat-tab>
+
+    <!-- Onglet Cartographie des processus -->
+    <mat-tab label="Cartographie des processus">
+      <div class="tab-body">
+        <p class="muted">Processus types couvrant les exigences — matrice de co-couverture processus ↔ clauses (§8.3).</p>
+        <p class="empty" *ngIf="processTemplates.length === 0">Aucun processus catalogué pour cette norme.</p>
+        <table class="catalog-table" *ngIf="processTemplates.length">
+          <thead><tr><th>#</th><th>Processus</th><th>Clauses couvertes</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let p of processTemplates">
+              <td class="nowrap">{{ p.orderIndex }}</td>
+              <td><strong>{{ p.name }}</strong><div class="muted small" *ngIf="p.description">{{ p.description }}</div></td>
+              <td><span class="clause-chip" *ngFor="let c of clauseList(p.mapsToClauses)">{{ c }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </mat-tab>
+
     <!-- Onglet Roadmap -->
     <mat-tab label="Roadmap de certification">
       <div class="tab-body" *ngIf="roadmap as rm">
@@ -263,6 +304,27 @@
 
           <p class="hash"><span>Verdict ancré · SHA-256</span><code>{{ cb.sha256 }}</code></p>
           <p class="hash"><span>Ancrage</span><code>{{ cb.anchorTxRef }}</code></p>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Onglet Veille normative -->
+    <mat-tab label="Veille normative">
+      <div class="tab-body">
+        <p class="muted">Historique et évolutions de la norme. Les versions planifiées permettent
+          d'anticiper les écarts et de lisser la transition (§8.10).</p>
+        <p class="empty" *ngIf="revisions.length === 0">Aucune entrée de veille pour cette norme.</p>
+        <div class="timeline" *ngIf="revisions.length">
+          <div class="rev" *ngFor="let r of revisions" [ngClass]="revisionClass(r.status)">
+            <div class="rev-head">
+              <span class="rev-version">{{ r.version }}</span>
+              <span class="rev-status">{{ r.status }}</span>
+              <span class="rev-date" *ngIf="r.publishedDate">· {{ r.publishedDate | date }}</span>
+            </div>
+            <p class="rev-summary" *ngIf="r.summary">{{ r.summary }}</p>
+            <p class="rev-impact" *ngIf="r.impactNote"><mat-icon>insights</mat-icon> {{ r.impactNote }}</p>
+            <a class="rev-src" *ngIf="r.sourceUrl" [href]="r.sourceUrl" target="_blank" rel="noopener">Source officielle ↗</a>
+          </div>
         </div>
       </div>
     </mat-tab>

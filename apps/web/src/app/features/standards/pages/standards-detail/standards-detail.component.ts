@@ -6,8 +6,8 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { StandardsService } from '../../standards.service';
 import {
   AdoptionResponse, AlignmentReport, AuditBlancReport, CertificationBlancReport,
-  DossierResponse, EvidenceResponse, EvidenceType, RoadmapStageResponse, RoadmapSummary,
-  StageStatus, StandardDetail
+  DocumentTemplate, DossierResponse, EvidenceResponse, EvidenceType, ProcessTemplate,
+  RoadmapStageResponse, RoadmapSummary, StageStatus, StandardDetail, StandardRevision
 } from '../../standards.types';
 
 @Component({
@@ -34,6 +34,10 @@ export class StandardsDetailComponent implements OnInit {
 
   certBlanc?: CertificationBlancReport;
   runningCertBlanc = false;
+
+  docTemplates: DocumentTemplate[] = [];
+  processTemplates: ProcessTemplate[] = [];
+  revisions: StandardRevision[] = [];
 
   // Formulaire de liaison de preuve.
   linkRequirementId = '';
@@ -66,6 +70,9 @@ export class StandardsDetailComponent implements OnInit {
       next: a => {
         this.adoption = a;
         this.svc.getStandardDetail(a.standardId).subscribe(s => this.standard = s);
+        this.svc.listDocumentTemplates(a.standardId).subscribe(d => this.docTemplates = d);
+        this.svc.listProcessTemplates(a.standardId).subscribe(p => this.processTemplates = p);
+        this.svc.listRevisions(a.standardId).subscribe(r => this.revisions = r);
         this.loadReports();
         this.loading = false;
       },
@@ -188,7 +195,43 @@ export class StandardsDetailComponent implements OnInit {
     });
   }
 
+  // ---- Bibliothèque documentaire ----
+
+  downloadTemplate(t: DocumentTemplate): void {
+    if (!this.adoption) return;
+    this.svc.downloadDocumentTemplate(this.adoption.standardId, t.id).subscribe({
+      next: resp => {
+        const blob = resp.body;
+        if (!blob) { return; }
+        const cd = resp.headers.get('Content-Disposition') || '';
+        const m = /filename="?([^"]+)"?/.exec(cd);
+        const filename = m ? m[1] : `${t.code}.md`;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = filename; a.click();
+        URL.revokeObjectURL(url);
+      },
+      error: () => this.snack.open('Téléchargement du modèle impossible', 'Fermer', { duration: 3000 })
+    });
+  }
+
   // ---- helpers UI ----
+
+  obligationClass(o: string): string {
+    return o === 'MANDATORY' ? 'ob-MUST' : o === 'RECOMMENDED' ? 'ob-SHOULD' : 'ob-MAY';
+  }
+
+  obligationLabel(o: string): string {
+    return o === 'MANDATORY' ? 'Obligatoire' : o === 'RECOMMENDED' ? 'Recommandé' : 'Optionnel';
+  }
+
+  revisionClass(status: string): string {
+    return status === 'CURRENT' ? 'rev-current' : status === 'PLANNED' ? 'rev-planned' : 'rev-superseded';
+  }
+
+  clauseList(csv?: string): string[] {
+    return csv ? csv.split(',').map(c => c.trim()).filter(c => c.length > 0) : [];
+  }
 
   severityClass(sev: string): string {
     return sev === 'CRITICAL' ? 'sev-crit' : sev === 'MAJOR' ? 'sev-maj' : 'sev-min';

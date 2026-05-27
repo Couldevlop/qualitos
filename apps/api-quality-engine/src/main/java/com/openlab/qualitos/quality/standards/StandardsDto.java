@@ -332,4 +332,44 @@ public final class StandardsDto {
             String conditions,
             String disclaimer
     ) {}
+
+    // ---- Bibliothèque documentaire (§8.4 onglet 3) ----
+
+    public record DocumentTemplateResponse(
+            UUID id,
+            String code,
+            String name,
+            DocumentObligation obligation,
+            String category,
+            String format,            // dérivé de l'extension du modèle (MD, DOCX, BPMN…)
+            String mapsToClauses,
+            String description,
+            boolean downloadable
+    ) {}
+
+    // ---- Cartographie des processus (§8.4 onglet 4) ----
+
+    public record ProcessTemplateResponse(
+            UUID id,
+            String code,
+            String name,
+            String description,
+            String mapsToClauses,
+            String bpmnUri,
+            int orderIndex
+    ) {}
+
+    // ---- Veille normative (§8.4 onglet 8) ----
+
+    public record RevisionResponse(
+            UUID id,
+            String version,
+            RevisionStatus status,
+            LocalDate publishedDate,
+            LocalDate effectiveDate,
+            String summary,
+            String impactNote,
+            String sourceUrl,
+            int orderIndex
+    ) {}
 }

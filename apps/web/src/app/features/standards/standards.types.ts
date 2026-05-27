@@ -189,6 +189,45 @@ export interface MockCertificate {
   disclaimer: string;
 }
 
+// ---- Bibliothèque documentaire (§8.4 onglet 3) ----
+export type DocumentObligation = 'MANDATORY' | 'RECOMMENDED' | 'OPTIONAL';
+export interface DocumentTemplate {
+  id: string;
+  code: string;
+  name: string;
+  obligation: DocumentObligation;
+  category?: string;
+  format?: string;
+  mapsToClauses?: string;
+  description?: string;
+  downloadable: boolean;
+}
+
+// ---- Cartographie des processus (§8.4 onglet 4) ----
+export interface ProcessTemplate {
+  id: string;
+  code: string;
+  name: string;
+  description?: string;
+  mapsToClauses?: string;
+  bpmnUri?: string;
+  orderIndex: number;
+}
+
+// ---- Veille normative (§8.4 onglet 8) ----
+export type RevisionStatus = 'CURRENT' | 'PLANNED' | 'SUPERSEDED';
+export interface StandardRevision {
+  id: string;
+  version: string;
+  status: RevisionStatus;
+  publishedDate?: string;
+  effectiveDate?: string;
+  summary?: string;
+  impactNote?: string;
+  sourceUrl?: string;
+  orderIndex: number;
+}
+
 export interface CertificationBlancReport {
   tenantStandardId: string;
   standardId: string;

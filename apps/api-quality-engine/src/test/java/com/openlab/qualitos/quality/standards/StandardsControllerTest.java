@@ -16,8 +16,11 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+
+import static org.hamcrest.Matchers.containsString;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -342,6 +345,62 @@ class StandardsControllerTest {
                 .andExpect(jsonPath("$.minorNonConformities").value(1))
                 .andExpect(jsonPath("$.certificate.certificateNumber").value("QOS-BLANC/ISO-9001/2026/AB12"))
                 .andExpect(jsonPath("$.anchorTxRef").value("stub-tx-cb"));
+    }
+
+    @Test @WithMockUser
+    void documentTemplates_returns200() throws Exception {
+        when(service.listDocumentTemplates(STD)).thenReturn(List.of(
+                new StandardsDto.DocumentTemplateResponse(UUID.randomUUID(), "ISO9001-POL-Q",
+                        "Politique Qualité", DocumentObligation.MANDATORY, "POLICY", "MD",
+                        "5.2", "desc", true)));
+        mockMvc.perform(get("/api/v1/standards/{id}/document-templates", STD))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].code").value("ISO9001-POL-Q"))
+                .andExpect(jsonPath("$[0].format").value("MD"));
+    }
+
+    @Test @WithMockUser
+    void processTemplates_returns200() throws Exception {
+        when(service.listProcessTemplates(STD)).thenReturn(List.of(
+                new StandardsDto.ProcessTemplateResponse(UUID.randomUUID(), "PROC-AUDIT",
+                        "Audit interne", "desc", "9.2", null, 1)));
+        mockMvc.perform(get("/api/v1/standards/{id}/process-templates", STD))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].mapsToClauses").value("9.2"));
+    }
+
+    @Test @WithMockUser
+    void revisions_returns200() throws Exception {
+        when(service.listRevisions(STD)).thenReturn(List.of(
+                new StandardsDto.RevisionResponse(UUID.randomUUID(), "2015", RevisionStatus.CURRENT,
+                        LocalDate.of(2015, 9, 15), LocalDate.of(2015, 9, 15), "sum", "impact", "url", 1)));
+        mockMvc.perform(get("/api/v1/standards/{id}/revisions", STD))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].status").value("CURRENT"));
+    }
+
+    @Test @WithMockUser
+    void downloadTemplate_returns200() throws Exception {
+        when(service.resolveTemplateUri(STD, EV))
+                .thenReturn("/standards/templates/iso-9001/politique-qualite.md");
+        mockMvc.perform(get("/api/v1/standards/{id}/document-templates/{tid}/download", STD, EV))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Content-Disposition", containsString("politique-qualite.md")));
+    }
+
+    @Test @WithMockUser
+    void downloadTemplate_rejectsPathTraversal_returns404() throws Exception {
+        when(service.resolveTemplateUri(STD, EV))
+                .thenReturn("/standards/templates/../../application.yml");
+        mockMvc.perform(get("/api/v1/standards/{id}/document-templates/{tid}/download", STD, EV))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test @WithMockUser
+    void documentTemplates_standardNotFound_returns404() throws Exception {
+        when(service.listDocumentTemplates(STD)).thenThrow(new StandardNotFoundException(STD));
+        mockMvc.perform(get("/api/v1/standards/{id}/document-templates", STD))
+                .andExpect(status().isNotFound());
     }
 
     // helpers

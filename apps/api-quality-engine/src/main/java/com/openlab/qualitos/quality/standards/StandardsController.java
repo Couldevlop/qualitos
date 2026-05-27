@@ -1,10 +1,15 @@
 package com.openlab.qualitos.quality.standards;
 
 import jakarta.validation.Valid;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -163,5 +168,46 @@ public class StandardsController {
     @PostMapping("/adoptions/{id}/certification-blanc")
     public StandardsDto.CertificationBlancReport certificationBlanc(@PathVariable UUID id) {
         return certificationBlancService.simulate(id);
+    }
+
+    // ---- Catalogue : bibliothèque documentaire / processus / veille (§8.4) ----
+    // Lecture du référentiel platform-level (par standardId).
+
+    @GetMapping("/{id}/document-templates")
+    public List<StandardsDto.DocumentTemplateResponse> documentTemplates(@PathVariable UUID id) {
+        return service.listDocumentTemplates(id);
+    }
+
+    @GetMapping("/{id}/document-templates/{templateId}/download")
+    public ResponseEntity<Resource> downloadDocumentTemplate(
+            @PathVariable UUID id, @PathVariable UUID templateId) {
+        String uri = service.resolveTemplateUri(id, templateId);
+        String path = uri.startsWith("/") ? uri.substring(1) : uri;
+        // Défense en profondeur : confiner au dossier des modèles (OWASP A01/A03).
+        if (path.contains("..") || !path.startsWith("standards/templates/")) {
+            return ResponseEntity.notFound().build();
+        }
+        ClassPathResource resource = new ClassPathResource(path);
+        if (!resource.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+        String filename = path.substring(path.lastIndexOf('/') + 1);
+        MediaType type = filename.endsWith(".md")
+                ? MediaType.parseMediaType("text/markdown;charset=UTF-8")
+                : MediaType.APPLICATION_OCTET_STREAM;
+        return ResponseEntity.ok()
+                .contentType(type)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .body(resource);
+    }
+
+    @GetMapping("/{id}/process-templates")
+    public List<StandardsDto.ProcessTemplateResponse> processTemplates(@PathVariable UUID id) {
+        return service.listProcessTemplates(id);
+    }
+
+    @GetMapping("/{id}/revisions")
+    public List<StandardsDto.RevisionResponse> revisions(@PathVariable UUID id) {
+        return service.listRevisions(id);
     }
 }
