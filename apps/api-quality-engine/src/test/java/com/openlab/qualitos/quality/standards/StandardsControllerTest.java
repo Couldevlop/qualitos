@@ -16,8 +16,11 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+
+import static org.hamcrest.Matchers.containsString;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -34,6 +37,8 @@ class StandardsControllerTest {
     @Autowired MockMvc mockMvc;
     @MockitoBean StandardsService service;
     @MockitoBean CertificationDossierService dossierService;
+    @MockitoBean CertificationBlancService certificationBlancService;
+    @MockitoBean AiDraftService aiDraftService;
     ObjectMapper om;
 
     static final UUID STD = UUID.randomUUID();
@@ -316,11 +321,105 @@ class StandardsControllerTest {
         when(dossierService.generate(ADO)).thenReturn(new StandardsDto.DossierResponse(
                 ADO, "iso-9001", "ISO 9001:2015", Instant.now(),
                 "a".repeat(64), "stub-tx-1", "dossier.html", "text/html",
-                50d, 15d, 1, "<html>...</html>"));
+                50d, 15d, 1, "<html>...</html>", "c2lnbmF0dXJl"));
         mockMvc.perform(post("/api/v1/standards/adoptions/{id}/dossier", ADO).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.sha256").isNotEmpty())
                 .andExpect(jsonPath("$.anchorTxRef").value("stub-tx-1"));
+    }
+
+    @Test @WithMockUser
+    void certificationBlanc_returns200() throws Exception {
+        var stage1 = new StandardsDto.AuditStageResult(1, "Revue documentaire (§4-7)",
+                true, 92d, "ok", List.of());
+        var stage2 = new StandardsDto.AuditStageResult(2, "Audit terrain (§8-10)",
+                true, 88d, "ok", List.of("8.2.1"));
+        var cert = new StandardsDto.MockCertificate("QOS-BLANC/ISO-9001/2026/AB12", "iso-9001",
+                "SMQ siège", "AFNOR", Instant.now(), Instant.now(), "sous réserve", "simulation");
+        when(certificationBlancService.simulate(ADO)).thenReturn(new StandardsDto.CertificationBlancReport(
+                ADO, STD, "iso-9001", "ISO 9001:2015", Instant.now(), stage1, stage2,
+                0, 1, 2, "CERTIFIABLE_SOUS_RESERVE", "Recommandé sous réserve",
+                List.of(), cert, "b".repeat(64), "stub-tx-cb", "c2ln"));
+        mockMvc.perform(post("/api/v1/standards/adoptions/{id}/certification-blanc", ADO).with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.decision").value("CERTIFIABLE_SOUS_RESERVE"))
+                .andExpect(jsonPath("$.minorNonConformities").value(1))
+                .andExpect(jsonPath("$.certificate.certificateNumber").value("QOS-BLANC/ISO-9001/2026/AB12"))
+                .andExpect(jsonPath("$.anchorTxRef").value("stub-tx-cb"));
+    }
+
+    @Test @WithMockUser
+    void documentTemplates_returns200() throws Exception {
+        when(service.listDocumentTemplates(STD)).thenReturn(List.of(
+                new StandardsDto.DocumentTemplateResponse(UUID.randomUUID(), "ISO9001-POL-Q",
+                        "Politique Qualité", DocumentObligation.MANDATORY, "POLICY", "MD",
+                        "5.2", "desc", true)));
+        mockMvc.perform(get("/api/v1/standards/{id}/document-templates", STD))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].code").value("ISO9001-POL-Q"))
+                .andExpect(jsonPath("$[0].format").value("MD"));
+    }
+
+    @Test @WithMockUser
+    void processTemplates_returns200() throws Exception {
+        when(service.listProcessTemplates(STD)).thenReturn(List.of(
+                new StandardsDto.ProcessTemplateResponse(UUID.randomUUID(), "PROC-AUDIT",
+                        "Audit interne", "desc", "9.2", null, 1)));
+        mockMvc.perform(get("/api/v1/standards/{id}/process-templates", STD))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].mapsToClauses").value("9.2"));
+    }
+
+    @Test @WithMockUser
+    void revisions_returns200() throws Exception {
+        when(service.listRevisions(STD)).thenReturn(List.of(
+                new StandardsDto.RevisionResponse(UUID.randomUUID(), "2015", RevisionStatus.CURRENT,
+                        LocalDate.of(2015, 9, 15), LocalDate.of(2015, 9, 15), "sum", "impact", "url", 1)));
+        mockMvc.perform(get("/api/v1/standards/{id}/revisions", STD))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].status").value("CURRENT"));
+    }
+
+    @Test @WithMockUser
+    void downloadTemplate_returns200() throws Exception {
+        when(service.resolveTemplateUri(STD, EV))
+                .thenReturn("/standards/templates/iso-9001/politique-qualite.md");
+        mockMvc.perform(get("/api/v1/standards/{id}/document-templates/{tid}/download", STD, EV))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Content-Disposition", containsString("politique-qualite.md")));
+    }
+
+    @Test @WithMockUser
+    void downloadTemplate_rejectsPathTraversal_returns404() throws Exception {
+        when(service.resolveTemplateUri(STD, EV))
+                .thenReturn("/standards/templates/../../application.yml");
+        mockMvc.perform(get("/api/v1/standards/{id}/document-templates/{tid}/download", STD, EV))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test @WithMockUser
+    void aiDraft_returns200() throws Exception {
+        when(aiDraftService.generate(STD, EV)).thenReturn(new StandardsDto.AiDraftResponse(
+                EV, "ISO9001-MQ", "Manuel Qualité", "# Manuel Qualité\n…", "ollama", 1234));
+        mockMvc.perform(post("/api/v1/standards/{id}/document-templates/{tid}/ai-draft", STD, EV).with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.provider").value("ollama"))
+                .andExpect(jsonPath("$.templateCode").value("ISO9001-MQ"));
+    }
+
+    @Test @WithMockUser
+    void aiDraft_gatewayDown_returns502() throws Exception {
+        when(aiDraftService.generate(STD, EV))
+                .thenThrow(new com.openlab.qualitos.quality.aigateway.AiGatewayException("ai down"));
+        mockMvc.perform(post("/api/v1/standards/{id}/document-templates/{tid}/ai-draft", STD, EV).with(csrf()))
+                .andExpect(status().isBadGateway());
+    }
+
+    @Test @WithMockUser
+    void documentTemplates_standardNotFound_returns404() throws Exception {
+        when(service.listDocumentTemplates(STD)).thenThrow(new StandardNotFoundException(STD));
+        mockMvc.perform(get("/api/v1/standards/{id}/document-templates", STD))
+                .andExpect(status().isNotFound());
     }
 
     // helpers

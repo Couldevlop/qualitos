@@ -12,7 +12,7 @@ import {
   CapaEditDialogComponent,
   CapaEditDialogData
 } from '../capa-edit-dialog/capa-edit-dialog.component';
-import { CapaCaseResponse, CapaCriticity, CapaStatus } from '../../capa.types';
+import { CapaCaseResponse, CapaCriticity, CapaStatus, SuggestedAction } from '../../capa.types';
 import {
   CapaActionDialogComponent,
   CapaActionDialogData
@@ -34,6 +34,11 @@ export class CapaDetailComponent implements OnInit {
   loading$ = new BehaviorSubject<boolean>(false);
   error$ = new BehaviorSubject<string | null>(null);
   acting$ = new BehaviorSubject<boolean>(false);
+
+  // Suggestions d'actions par l'IA (non persistées tant que non ajoutées).
+  suggestions: SuggestedAction[] = [];
+  suggesting = false;
+  addingKey: string | null = null;
 
   private caseId = '';
   private readonly reload$ = new Subject<void>();
@@ -129,6 +134,46 @@ export class CapaDetailComponent implements OnInit {
         if (action) this.reload$.next();
       });
   }
+
+  // ---- Suggestion d'actions par l'IA (§4.2) ----
+
+  suggestActions(): void {
+    this.suggesting = true;
+    this.suggestions = [];
+    this.capa.suggestActions(this.caseId).subscribe({
+      next: list => {
+        this.suggestions = list;
+        this.suggesting = false;
+        if (!list.length) {
+          this.snack.open('Aucune action exploitable — précisez le problème.', 'OK', { duration: 3000 });
+        }
+      },
+      error: err => {
+        this.suggesting = false;
+        this.snack.open(
+          safeErrorMessage(err, 'Suggestion IA indisponible (ai-service / Ollama).'),
+          'Fermer', { duration: 4000 });
+      }
+    });
+  }
+
+  addSuggestion(s: SuggestedAction): void {
+    this.addingKey = s.title;
+    this.capa.addAction(this.caseId, { title: s.title, description: s.description }).subscribe({
+      next: () => {
+        this.addingKey = null;
+        this.suggestions = this.suggestions.filter(x => x !== s);
+        this.snack.open('Action ajoutée à la CAPA.', 'OK', { duration: 2000 });
+        this.reload$.next();
+      },
+      error: err => {
+        this.addingKey = null;
+        this.snack.open(safeErrorMessage(err, 'Ajout impossible.'), 'Fermer', { duration: 3500 });
+      }
+    });
+  }
+
+  dismissSuggestions(): void { this.suggestions = []; }
 
   start(): void { this.transition('start'); }
   resolve(): void { this.transition('resolve'); }

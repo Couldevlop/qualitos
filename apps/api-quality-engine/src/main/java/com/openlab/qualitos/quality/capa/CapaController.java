@@ -68,6 +68,12 @@ public class CapaController {
         return service.addAction(id, request);
     }
 
+    // Suggestion d'actions par l'IA (§4.2) — POST : appel LLM, pas de persistance.
+    @PostMapping("/cases/{id}/suggest-actions")
+    public java.util.List<CapaDto.SuggestedAction> suggestActions(@PathVariable UUID id) {
+        return service.suggestActions(id);
+    }
+
     @PatchMapping("/cases/{id}/actions/{actionId}")
     public CapaDto.ActionResponse updateAction(
             @PathVariable UUID id,

@@ -1,5 +1,12 @@
 package com.openlab.qualitos.quality.standards;
 
+import com.openlab.qualitos.crypto.application.CryptoSuiteConfig;
+import com.openlab.qualitos.crypto.application.HybridSignatureService;
+import com.openlab.qualitos.crypto.domain.model.SignatureAlgorithm;
+import com.openlab.qualitos.crypto.domain.model.SignatureEnvelope;
+import com.openlab.qualitos.crypto.domain.port.SignatureProvider;
+import com.openlab.qualitos.crypto.infrastructure.BouncyCastleSignatureProvider;
+import com.openlab.qualitos.crypto.infrastructure.InMemorySigningKeyProvider;
 import com.openlab.qualitos.quality.blockchain.domain.BlockchainAnchorPort;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.junit.jupiter.api.AfterEach;
@@ -9,6 +16,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.nio.charset.StandardCharsets;
+import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -24,13 +33,22 @@ class CertificationDossierServiceTest {
     @Mock StandardsService standards;
     @Mock BlockchainAnchorPort blockchain;
     CertificationDossierService dossierService;
+    HybridSignatureService signer;
 
     static final UUID TENANT = UUID.fromString("00000000-0000-0000-0000-000000000099");
     static final UUID ADOPTION = UUID.randomUUID();
     static final UUID STD = UUID.randomUUID();
 
     @BeforeEach void setup() {
-        dossierService = new CertificationDossierService(standards, blockchain);
+        List<SignatureProvider> providers = List.of(
+                new BouncyCastleSignatureProvider(SignatureAlgorithm.ED25519),
+                new BouncyCastleSignatureProvider(SignatureAlgorithm.ML_DSA_65));
+        signer = new HybridSignatureService(
+                new CryptoSuiteConfig(), providers,
+                new InMemorySigningKeyProvider("platform-v1",
+                        algo -> new BouncyCastleSignatureProvider(algo).generateKeyPair()),
+                Clock.systemUTC());
+        dossierService = new CertificationDossierService(standards, blockchain, signer);
         TenantContext.setTenantId(TENANT.toString());
     }
     @AfterEach void clr() { TenantContext.clear(); }
@@ -53,6 +71,25 @@ class CertificationDossierServiceTest {
                 .contains("Audit blanc")
                 .contains("SMQ siège");
         assertThat(r.evidenceCount()).isEqualTo(1);
+
+        // Signature hybride réelle, vérifiable, épinglée à la clé plateforme.
+        assertThat(r.signature()).isNotBlank();
+        SignatureEnvelope envelope = SignatureEnvelope.decode(r.signature());
+        assertThat(envelope.parts()).extracting(SignatureEnvelope.Part::algorithm)
+                .containsExactly(SignatureAlgorithm.ED25519, SignatureAlgorithm.ML_DSA_65);
+        assertThat(signer.verify(r.sha256().getBytes(StandardCharsets.UTF_8), envelope)).isTrue();
+    }
+
+    @Test
+    void generate_signature_failsVerificationIfDossierTampered() {
+        stubStandardsPort("SMQ siège");
+        when(blockchain.submitRoot(eq(TENANT), any())).thenReturn("stub-tx");
+
+        StandardsDto.DossierResponse r = dossierService.generate(ADOPTION);
+        SignatureEnvelope envelope = SignatureEnvelope.decode(r.signature());
+
+        byte[] tamperedHash = "0".repeat(64).getBytes(StandardCharsets.UTF_8);
+        assertThat(signer.verify(tamperedHash, envelope)).isFalse();
     }
 
     @Test

@@ -75,4 +75,11 @@ public final class IshikawaDto {
             Instant createdAt,
             Instant updatedAt
     ) {}
+
+    /** Cause probable suggérée par l'IA (à valider/ajouter par l'utilisateur). §3.5 */
+    public record SuggestedCause(
+            CauseCategory category,
+            String label,
+            String rationale
+    ) {}
 }

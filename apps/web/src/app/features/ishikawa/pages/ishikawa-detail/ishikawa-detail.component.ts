@@ -12,7 +12,8 @@ import {
   CauseCategory,
   IshikawaCauseResponse,
   IshikawaDiagramResponse,
-  IshikawaStatus
+  IshikawaStatus,
+  SuggestedCause
 } from '../../ishikawa.types';
 import {
   IshikawaCauseDialogComponent,
@@ -50,8 +51,19 @@ export class IshikawaDetailComponent implements OnInit {
   loading$ = new BehaviorSubject<boolean>(false);
   error$ = new BehaviorSubject<string | null>(null);
 
+  // Suggestions de causes par l'IA (non persistées tant que l'utilisateur ne les ajoute pas).
+  suggestions: SuggestedCause[] = [];
+  suggesting = false;
+  addingKey: string | null = null;
+
   private diagramId = '';
   private readonly reload$ = new Subject<void>();
+
+  private readonly CATEGORY_LABELS: Record<CauseCategory, string> = {
+    METHODS: 'Méthodes', MANPOWER: 'Main-d\'œuvre', MACHINES: 'Machines',
+    MATERIALS: 'Matières', MEASUREMENTS: 'Mesures', ENVIRONMENT: 'Milieu',
+    MANAGEMENT: 'Management', MONEY: 'Moyens financiers'
+  };
 
   // For accepting either a UUID or the demo mock-store ids ("ish-1" …) so
   // the page works both against the real backend AND useMockApi=true.
@@ -178,6 +190,59 @@ export class IshikawaDetailComponent implements OnInit {
       .subscribe(cause => {
         if (cause) this.reload$.next();
       });
+  }
+
+  // ---- Suggestion de causes par l'IA (§3.5) ----
+
+  suggestCauses(d: IshikawaDiagramResponse): void {
+    this.suggesting = true;
+    this.suggestions = [];
+    this.ishikawa.suggestCauses(d.id).subscribe({
+      next: list => {
+        this.suggestions = list;
+        this.suggesting = false;
+        if (!list.length) {
+          this.snack.open('Aucune suggestion exploitable — reformulez le problème.', 'OK', { duration: 3500 });
+        }
+      },
+      error: err => {
+        this.suggesting = false;
+        // eslint-disable-next-line no-console
+        console.warn('[ishikawa-detail] suggestCauses failed', err?.status);
+        this.snack.open(
+          safeErrorMessage(err, 'Suggestion IA indisponible (ai-service / Ollama).'),
+          'Fermer', { duration: 4000 });
+      }
+    });
+  }
+
+  /** Ajoute une cause suggérée au diagramme (l'humain valide). */
+  addSuggestion(d: IshikawaDiagramResponse, s: SuggestedCause): void {
+    this.addingKey = s.label;
+    this.ishikawa.addCause(d.id, {
+      category: s.category,
+      label: s.label,
+      description: s.rationale
+    }).subscribe({
+      next: () => {
+        this.addingKey = null;
+        this.suggestions = this.suggestions.filter(x => x !== s);
+        this.snack.open('Cause ajoutée au diagramme.', 'OK', { duration: 2000 });
+        this.reload$.next();
+      },
+      error: err => {
+        this.addingKey = null;
+        this.snack.open(safeErrorMessage(err, 'Ajout impossible.'), 'Fermer', { duration: 3500 });
+      }
+    });
+  }
+
+  dismissSuggestions(): void {
+    this.suggestions = [];
+  }
+
+  categoryLabel(c: CauseCategory): string {
+    return this.CATEGORY_LABELS[c] ?? c;
   }
 
   /** Group causes by category and build a parent→children tree per branch. */

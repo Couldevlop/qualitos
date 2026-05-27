@@ -78,4 +78,10 @@ public final class CapaDto {
             Instant createdAt,
             Instant updatedAt
     ) {}
+
+    /** Action corrective/préventive suggérée par l'IA (à valider/ajouter). §4.2 */
+    public record SuggestedAction(
+            String title,
+            String description
+    ) {}
 }

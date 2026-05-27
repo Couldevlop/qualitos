@@ -127,8 +127,39 @@
                   [disabled]="isTerminal(c.status)">
             <mat-icon>add</mat-icon> Ajouter une action
           </button>
+          <button mat-stroked-button color="primary" type="button" class="ia-btn"
+                  (click)="suggestActions()" [disabled]="suggesting || isTerminal(c.status)"
+                  matTooltip="Suggérer des actions par l'IA">
+            <mat-icon>auto_awesome</mat-icon>
+            {{ suggesting ? 'Analyse…' : 'Suggérer (IA)' }}
+          </button>
         </mat-card-header>
         <mat-card-content>
+          <div class="suggest-box" *ngIf="suggesting || suggestions.length">
+            <div class="suggest-head">
+              <mat-icon>auto_awesome</mat-icon>
+              <span class="suggest-title">Actions suggérées par l'IA</span>
+              <span class="spacer"></span>
+              <button mat-icon-button *ngIf="suggestions.length && !suggesting"
+                      (click)="dismissSuggestions()" matTooltip="Masquer">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+            <div class="suggest-loading" *ngIf="suggesting">
+              <mat-progress-spinner mode="indeterminate" diameter="26"></mat-progress-spinner>
+              <span>Génération des actions… (peut prendre ~1 min sur CPU)</span>
+            </div>
+            <ul class="suggest-list" *ngIf="suggestions.length">
+              <li *ngFor="let s of suggestions">
+                <span class="sug-label">{{ s.title }}</span>
+                <button mat-stroked-button color="primary" class="sug-add"
+                        (click)="addSuggestion(s)"
+                        [disabled]="addingKey === s.title || isTerminal(c.status)">
+                  <mat-icon>add</mat-icon> {{ addingKey === s.title ? '…' : 'Ajouter' }}
+                </button>
+              </li>
+            </ul>
+          </div>
           <table mat-table [dataSource]="c.actions" class="actions-table"
                  *ngIf="c.actions.length > 0">
             <ng-container matColumnDef="title">

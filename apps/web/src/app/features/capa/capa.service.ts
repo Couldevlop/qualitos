@@ -11,6 +11,7 @@ import {
   CapaStatus,
   CreateCapaActionRequest,
   CreateCapaCaseRequest,
+  SuggestedAction,
   UpdateCapaCaseRequest
 } from './capa.types';
 
@@ -109,6 +110,19 @@ export class CapaService {
       return of(action).pipe(delay(120));
     }
     return this.http.post<CapaActionResponse>(`${this.endpoint}/${caseId}/actions`, input);
+  }
+
+  /** Suggestions d'actions correctives/préventives par l'IA (via api-quality-engine → ai-service). §4.2 */
+  suggestActions(caseId: string): Observable<SuggestedAction[]> {
+    if (environment.useMockApi) {
+      return of(<SuggestedAction[]>[
+        { title: 'Auditer le fournisseur sur site et revoir le PPAP' },
+        { title: 'Renforcer le plan de contrôle réception (échantillonnage 100%)' },
+        { title: 'Mettre à jour la fiche de non-conformité et informer les parties prenantes' },
+        { title: 'Former les opérateurs au nouveau critère de contrôle' }
+      ]).pipe(delay(500));
+    }
+    return this.http.post<SuggestedAction[]>(`${this.endpoint}/${caseId}/suggest-actions`, {});
   }
 
   verifyEffectiveness(id: string, effective: boolean): Observable<CapaCaseResponse> {

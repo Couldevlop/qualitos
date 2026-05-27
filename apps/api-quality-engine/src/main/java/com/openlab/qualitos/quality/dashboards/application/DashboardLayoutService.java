@@ -1,10 +1,13 @@
 package com.openlab.qualitos.quality.dashboards.application;
 
+import com.openlab.qualitos.crypto.application.HybridSignatureService;
+import com.openlab.qualitos.crypto.domain.model.SignatureEnvelope;
 import com.openlab.qualitos.quality.dashboards.domain.DashboardLayout;
 import com.openlab.qualitos.quality.dashboards.domain.DashboardLayoutNotFoundException;
 import com.openlab.qualitos.quality.dashboards.domain.DashboardLayoutRepository;
 import com.openlab.qualitos.quality.dashboards.domain.DashboardLayoutStateException;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
@@ -13,18 +16,27 @@ import java.util.UUID;
 /**
  * Use cases — save / get / list / delete custom dashboards.
  * Cross-tenant access returns 404 (OWASP A01).
+ *
+ * <p>Each saved layout is signed with a hybrid Ed25519+ML-DSA-65 envelope
+ * (ADR 0011) attesting its content — vérifiable, résistant au quantique.
  */
 public class DashboardLayoutService {
 
+    /** Contexte de suite crypto pour les artefacts attestés (ADR 0011). */
+    private static final String SIGN_CONTEXT = "dashboard";
+
     private final DashboardLayoutRepository repo;
     private final TenantProvider tenantProvider;
+    private final HybridSignatureService signer;
     private final Clock clock;
 
     public DashboardLayoutService(DashboardLayoutRepository repo,
                                   TenantProvider tenantProvider,
+                                  HybridSignatureService signer,
                                   Clock clock) {
         this.repo = repo;
         this.tenantProvider = tenantProvider;
+        this.signer = signer;
         this.clock = clock;
     }
 
@@ -39,6 +51,7 @@ public class DashboardLayoutService {
         DashboardLayout layout = DashboardLayout.create(
                 tenantId, userId, req.name(), req.description(),
                 req.layoutJson(), req.shared(), now);
+        sign(layout);
         return DashboardLayoutDto.View.of(repo.save(layout));
     }
 
@@ -46,7 +59,15 @@ public class DashboardLayoutService {
         DashboardLayout layout = loadForUser(id);
         Instant now = Instant.now(clock);
         layout.update(req.name(), req.description(), req.layoutJson(), req.shared(), now);
+        sign(layout); // update() reset la signature → re-signature du nouveau contenu
         return DashboardLayoutDto.View.of(repo.save(layout));
+    }
+
+    /** Signe le contenu canonique du layout (nom + version + JSON). */
+    private void sign(DashboardLayout layout) {
+        String canonical = layout.getName() + "\n" + layout.getVersion() + "\n" + layout.getLayoutJson();
+        SignatureEnvelope envelope = signer.sign(SIGN_CONTEXT, canonical.getBytes(StandardCharsets.UTF_8));
+        layout.attachSignature(envelope.encode());
     }
 
     public DashboardLayoutDto.View get(UUID id) {

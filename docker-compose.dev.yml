@@ -171,6 +171,13 @@ services:
     environment:
       QOS_ENV: dev
       QOS_LOG_LEVEL: INFO
+      # Dev only : appel serveur-à-serveur depuis api-quality-engine via en-tête
+      # X-Dev-Claims (bypass JWT). En prod : OIDC client_credentials aud=qualitos-ai (ADR 0014).
+      QOS_DEV_AUTH: "1"
+      # Petit modèle local pour tenir dans le timeout CPU (30 s) — cf. ADR 0014.
+      OLLAMA_MODEL: llama3.2:1b
+      OLLAMA_BASE_URL: http://ollama:11434
+      OLLAMA_TIMEOUT_S: "120"
       KEYCLOAK_ISSUER: http://keycloak:8080/realms/qualitos
       KEYCLOAK_AUDIENCE: qualitos-ai
       QDRANT_URL: http://qdrant:6333
@@ -209,6 +216,9 @@ services:
   ollama:
     image: ollama/ollama:0.3.12
     container_name: qualitos-ollama
+    environment:
+      # Garde le modèle chargé en mémoire (évite le rechargement à froid ~100 s sur CPU).
+      OLLAMA_KEEP_ALIVE: "-1"
     ports:
       - "11434:11434"
     volumes:

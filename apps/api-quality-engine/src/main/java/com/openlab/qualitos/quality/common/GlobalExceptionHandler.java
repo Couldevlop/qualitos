@@ -31,6 +31,8 @@ import com.openlab.qualitos.quality.standards.AdoptionStateException;
 import com.openlab.qualitos.quality.standards.EvidenceNotFoundException;
 import com.openlab.qualitos.quality.standards.RequirementNotFoundException;
 import com.openlab.qualitos.quality.standards.RoadmapStageNotFoundException;
+import com.openlab.qualitos.quality.standards.DocumentTemplateNotFoundException;
+import com.openlab.qualitos.quality.aigateway.AiGatewayException;
 import com.openlab.qualitos.quality.standards.StandardNotFoundException;
 import com.openlab.qualitos.quality.standards.TenantStandardNotFoundException;
 import com.openlab.qualitos.quality.industry.IndustryPackNotFoundException;
@@ -364,6 +366,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/certification-roadmap-stage-not-found"));
         problem.setTitle("Certification Roadmap Stage Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DocumentTemplateNotFoundException.class)
+    public ProblemDetail handleDocumentTemplateNotFound(DocumentTemplateNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/standard-document-template-not-found"));
+        problem.setTitle("Standard Document Template Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AiGatewayException.class)
+    public ProblemDetail handleAiGateway(AiGatewayException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-gateway-unavailable"));
+        problem.setTitle("AI Gateway Unavailable");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

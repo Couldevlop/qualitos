@@ -92,6 +92,111 @@
 .sev-maj { background: #ef6c00; color: #fff; }
 .sev-min { background: #eceff1; color: #607d8b; }
 
+/* Couverture des exigences (onglet Exigences) */
+.req-table tr.covered td { background: #f6fbf7; }
+.req-cov { width: 90px; white-space: nowrap; text-align: right; }
+.cov-ok { font-size: 11px; font-weight: 700; color: #2e7d32; }
+.cov-no { color: #cfd8dc; }
+.cover-btn { font-size: 12px; line-height: 28px; min-width: 0; padding: 0 10px;
+  mat-icon { font-size: 16px; width: 16px; height: 16px; vertical-align: middle; } }
+
+/* Mes preuves */
+.link-form {
+  display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px;
+  margin: 14px 0 8px; padding: 16px; background: #f7f8fc; border-radius: 10px;
+  .grow { flex: 1 1 220px; }
+  button { margin-top: 6px; }
+}
+.evidence-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+.evidence-table th { text-align: left; padding: 8px; background: #f5f6fb; color: #455a64; font-size: 12px; }
+.evidence-table td { padding: 8px; border-bottom: 1px solid #eee; vertical-align: middle; }
+.evid-type { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 8px; background: #e8eaf6; color: #3949ab; }
+.evid-note { color: #546e7a; }
+.evid-ref { font-size: 11px; color: #90a4ae; background: #f5f5f7; padding: 2px 6px; border-radius: 4px; word-break: break-all; }
+
+/* Certification à blanc */
+.cb-result { margin-top: 18px; }
+.stage-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 14px 0; }
+@media (max-width: 720px) { .stage-row { grid-template-columns: 1fr; } }
+.stage-card {
+  padding: 16px; border-left: 4px solid #cfd8dc;
+  h4 { margin: 0 0 4px; font-size: 15px; }
+  p { font-size: 13px; color: #455a64; margin: 6px 0 0; }
+  .stage-state { font-size: 12px; font-weight: 700; color: #607d8b; }
+  .watch { font-size: 12px; color: #ef6c00; }
+  &.pass { border-left-color: #2e7d32; }
+  &.fail { border-left-color: #c62828; }
+}
+.cert-card {
+  margin: 18px 0; padding: 20px; max-width: 720px;
+  border: 1px solid #c5cae9; background: linear-gradient(180deg,#fbfcff,#f4f6fd);
+  .cert-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+    mat-icon { color: #3949ab; font-size: 36px; width: 36px; height: 36px; }
+    h3 { margin: 0; font-size: 17px; }
+    .cert-num { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #5c6bc0; }
+  }
+  p { font-size: 13px; margin: 5px 0; color: #37474f; }
+  .cert-cond { color: #ef6c00; }
+  .cert-disclaimer { font-size: 12px; color: #90a4ae; font-style: italic; margin-top: 10px;
+    border-top: 1px dashed #cfd8dc; padding-top: 8px; }
+}
+.nc-title { font-size: 15px; color: #3949ab; margin-top: 20px; }
+
+/* Catalogue : bibliothèque documentaire & cartographie des processus */
+.catalog-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+.catalog-table th { text-align: left; padding: 8px; background: #f5f6fb; color: #455a64; font-size: 12px; }
+.catalog-table td { padding: 8px; border-bottom: 1px solid #eee; vertical-align: top; }
+.small { font-size: 12px; margin-top: 2px; }
+.clause-chip {
+  display: inline-block; font-size: 11px; font-weight: 600; color: #3949ab;
+  background: #e8eaf6; border-radius: 8px; padding: 2px 7px; margin: 2px 4px 2px 0;
+}
+.ia-btn { margin-left: 6px; }
+
+/* Brouillon IA */
+.ai-draft-card {
+  margin-top: 18px; padding: 18px; max-width: 860px;
+  border: 1px solid #c5cae9; background: linear-gradient(180deg,#fbfcff,#f5f3fd);
+  .ai-draft-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+    mat-icon { color: #5c35b8; font-size: 30px; width: 30px; height: 30px; }
+    h3 { margin: 0; font-size: 16px; }
+  }
+  .ai-draft-text {
+    white-space: pre-wrap; word-break: break-word; font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px; line-height: 1.5; background: #fff; border: 1px solid #e8eaf6;
+    border-radius: 6px; padding: 14px; max-height: 460px; overflow: auto; margin: 0;
+  }
+}
+
+/* Veille normative — timeline */
+.timeline { margin-top: 10px; border-left: 2px solid #e0e0e0; padding-left: 18px; }
+.rev {
+  position: relative; margin: 0 0 18px; padding: 12px 16px; border-radius: 8px; background: #fafbfe;
+  border: 1px solid #eceff1;
+}
+.rev::before {
+  content: ''; position: absolute; left: -25px; top: 16px; width: 12px; height: 12px;
+  border-radius: 50%; background: #b0bec5; border: 2px solid #fff;
+}
+.rev.rev-current::before { background: #2e7d32; }
+.rev.rev-planned::before { background: #f9a825; }
+.rev.rev-superseded::before { background: #b0bec5; }
+.rev-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.rev-version { font-weight: 700; font-size: 15px; }
+.rev-status {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 8px;
+  background: #eceff1; color: #607d8b; text-transform: uppercase; letter-spacing: .5px;
+}
+.rev-current .rev-status { background: #e8f5e9; color: #2e7d32; }
+.rev-planned .rev-status { background: #fff8e1; color: #f57f17; }
+.rev-date { font-size: 12px; color: #90a4ae; }
+.rev-summary { font-size: 13px; color: #37474f; margin: 8px 0 0; }
+.rev-impact {
+  font-size: 13px; color: #ef6c00; margin: 8px 0 0; display: flex; align-items: flex-start; gap: 6px;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}
+.rev-src { font-size: 12px; color: #5c6bc0; text-decoration: none; &:hover { text-decoration: underline; } }
+
 /* Dossier */
 .dossier-card { margin-top: 20px; padding: 18px; max-width: 720px; }
 .dossier-card h3 { margin: 0 0 8px; font-size: 15px; }

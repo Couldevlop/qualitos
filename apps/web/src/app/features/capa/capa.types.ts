@@ -57,6 +57,12 @@ export interface CreateCapaActionRequest {
   dueDate?: string;
 }
 
+/** Action corrective/préventive suggérée par l'IA (à valider/ajouter). §4.2 */
+export interface SuggestedAction {
+  title: string;
+  description?: string;
+}
+
 export interface UpdateCapaCaseRequest {
   title?: string;
   description?: string;

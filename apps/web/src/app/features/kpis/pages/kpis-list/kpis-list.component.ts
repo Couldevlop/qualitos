@@ -34,7 +34,10 @@ export class KpisListComponent implements OnInit {
   totalElements = 0;
 
   kpis$!: Observable<KpiResponse[]>;
-  loading$ = new BehaviorSubject<boolean>(false);
+  // Démarre à `true` : c'est vrai au premier rendu (chargement initial en cours) et
+  // cela évite NG0100 (le `tap` du flux remet `true` → aucun changement détecté dans
+  // le même cycle de détection). Repasse à `false` via `finalize`.
+  loading$ = new BehaviorSubject<boolean>(true);
   error$   = new BehaviorSubject<string | null>(null);
 
   private readonly refresh$ = new BehaviorSubject<void>(undefined);

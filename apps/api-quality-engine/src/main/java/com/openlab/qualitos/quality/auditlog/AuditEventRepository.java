@@ -3,6 +3,7 @@ package com.openlab.qualitos.quality.auditlog;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.time.Instant;
 import java.util.List;
@@ -34,4 +35,15 @@ public interface AuditEventRepository extends JpaRepository<AuditEvent, UUID> {
     /** Événements non encore ancrés sur blockchain, ordonnés par séquence. */
     List<AuditEvent> findByTenantIdAndBlockchainTxRefIsNullOrderBySequenceNoAsc(
             UUID tenantId, org.springframework.data.domain.Pageable pageable);
+
+    /** Vérification d'ancrage : retrouve l'événement par son hash d'intégrité. */
+    Optional<AuditEvent> findByTenantIdAndIntegrityHash(UUID tenantId, String integrityHash);
+
+    /** Le lot ancré sous une même référence de reçu, en ordre de séquence. */
+    List<AuditEvent> findByTenantIdAndBlockchainTxRefOrderBySequenceNoAsc(
+            UUID tenantId, String blockchainTxRef);
+
+    /** Tenants ayant des événements non ancrés (pilotage du scheduler d'ancrage). */
+    @Query("select distinct e.tenantId from AuditEvent e where e.blockchainTxRef is null")
+    List<UUID> findDistinctTenantIdsWithUnanchoredEvents();
 }
