@@ -11,6 +11,7 @@ import {
   IshikawaDiagramResponse,
   IshikawaPage,
   IshikawaStatus,
+  SuggestedCause,
   UpdateIshikawaDiagramRequest
 } from './ishikawa.types';
 
@@ -110,6 +111,19 @@ export class IshikawaService {
       return of(cause).pipe(delay(150));
     }
     return this.http.post<IshikawaCauseResponse>(`${this.endpoint}/${diagramId}/causes`, input);
+  }
+
+  /** Suggestions de causes par l'IA (via api-quality-engine → ai-service). §3.5 */
+  suggestCauses(diagramId: string): Observable<SuggestedCause[]> {
+    if (environment.useMockApi) {
+      return of(<SuggestedCause[]>[
+        { category: 'METHODS', label: 'Procédure de contrôle obsolète ou non suivie' },
+        { category: 'MANPOWER', label: 'Formation insuffisante des opérateurs' },
+        { category: 'MACHINES', label: 'Maintenance préventive non respectée' },
+        { category: 'MATERIALS', label: 'Variabilité du lot de matière première' }
+      ]).pipe(delay(500));
+    }
+    return this.http.post<SuggestedCause[]>(`${this.endpoint}/${diagramId}/suggest-causes`, {});
   }
 
   private mockPage(status?: IshikawaStatus): IshikawaPage {

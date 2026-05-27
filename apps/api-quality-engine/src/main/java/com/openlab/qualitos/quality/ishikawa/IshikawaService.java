@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.ishikawa;
 
+import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
+import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.data.domain.Page;
@@ -7,19 +9,39 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class IshikawaService {
 
+    /** Borne de génération (latence CPU raisonnable ; cf. ADR 0014). */
+    private static final int SUGGEST_MAX_TOKENS = 320;
+    /** Nombre max de suggestions retournées. */
+    private static final int SUGGEST_MAX = 12;
+    /** Préfixe catégorie entre accolades/crochets : « {METHODS} - cause » / « [Méthodes] : cause ». */
+    private static final java.util.regex.Pattern BRACED =
+            java.util.regex.Pattern.compile("^[\\{\\[]\\s*([^\\}\\]]+?)\\s*[\\}\\]]\\s*[-–—:|]*\\s*(.*)$");
+    /** Séparateurs catégorie/cause (espacés d'abord pour ne pas casser « Main-d'œuvre »). */
+    private static final String[] SEPARATORS = { " | ", " - ", " – ", " — ", " : ", "|", ":" };
+
     private final IshikawaDiagramRepository diagramRepository;
     private final IshikawaCauseRepository causeRepository;
+    private final AiGatewayClient ai;
 
     public IshikawaService(IshikawaDiagramRepository diagramRepository,
-                           IshikawaCauseRepository causeRepository) {
+                           IshikawaCauseRepository causeRepository,
+                           AiGatewayClient ai) {
         this.diagramRepository = diagramRepository;
         this.causeRepository = causeRepository;
+        this.ai = ai;
     }
 
     @Transactional(readOnly = true)
@@ -125,6 +147,141 @@ public class IshikawaService {
         }
 
         return toCauseResponse(causeRepository.save(cause));
+    }
+
+    /**
+     * Suggère par l'IA (passerelle → ai-service) des causes racines probables pour le
+     * problème du diagramme, réparties par catégorie autorisée par le mode (6M/7M/8M).
+     * L'IA suggère, l'humain valide : les suggestions ne sont PAS persistées (§3.5, §12.3).
+     */
+    @Transactional(readOnly = true)
+    public List<IshikawaDto.SuggestedCause> suggestCauses(UUID diagramId) {
+        UUID tenantId = requireTenantId();
+        IshikawaDiagram diagram = diagramRepository.findByIdAndTenantId(diagramId, tenantId)
+                .orElseThrow(() -> new IshikawaDiagramNotFoundException(diagramId));
+
+        List<CauseCategory> allowed = Arrays.stream(CauseCategory.values())
+                .filter(c -> diagram.getMode().allows(c)).toList();
+        Set<String> existing = diagram.getCauses().stream()
+                .map(c -> c.getLabel().trim().toLowerCase(Locale.ROOT))
+                .collect(Collectors.toSet());
+
+        String allowedList = allowed.stream()
+                .map(c -> c.name() + " (" + frLabel(c) + ")").collect(Collectors.joining(", "));
+
+        // Prompt concret + exemple : les petits modèles recopient les gabarits abstraits
+        // (« CODE | cause ») au lieu de les instancier — un exemple réel est imité plus fidèlement.
+        String system = "Tu es un expert qualité (méthode Ishikawa). Pour le problème donné, "
+                + "propose des causes racines PROBABLES. Donne UNE cause par ligne au format "
+                + "« [CATÉGORIE] cause concrète ». Exemple : [MACHINES] réglage de l'équipement dérivé. "
+                + "Utilise UNIQUEMENT ces catégories : " + allowedList + ". "
+                + "Donne 8 à 12 causes variées et concrètes, sans numéro ni autre texte.";
+        StringBuilder user = new StringBuilder("Problème : ")
+                .append(diagram.getProblemStatement()).append("\n");
+        if (diagram.getDescription() != null && !diagram.getDescription().isBlank()) {
+            user.append("Contexte : ").append(diagram.getDescription()).append("\n");
+        }
+        user.append("Liste les causes probables :");
+
+        AiCompletionResult r = ai.complete(system, user.toString(), SUGGEST_MAX_TOKENS);
+        return parseSuggestions(r.text(), allowed, existing);
+    }
+
+    /**
+     * Parse tolérant : le petit modèle ne respecte pas toujours « CODE | cause ».
+     * Gère deux formats fréquents :
+     *   (a) inline      : « METHODS | cause » ou « Méthodes : cause »
+     *   (b) en-tête+liste: « Méthodes : » (en-tête) puis « - cause » sur les lignes suivantes.
+     * Une ligne sans catégorie reconnaissable est rattachée à la dernière catégorie vue.
+     */
+    private List<IshikawaDto.SuggestedCause> parseSuggestions(
+            String text, List<CauseCategory> allowed, Set<String> existing) {
+        List<IshikawaDto.SuggestedCause> out = new ArrayList<>();
+        Set<String> seen = new LinkedHashSet<>();
+        if (text == null) return out;
+        CauseCategory current = null;
+        for (String raw : text.split("\\r?\\n")) {
+            String line = raw.strip().replaceFirst("^[-*•·\\d.)\\s]+", "").strip();
+            if (line.isBlank()) continue;
+            String[] parts = splitCauseLine(line);
+            if (parts != null) {
+                CauseCategory cat = categoryFromToken(parts[0]);
+                if (cat != null) {
+                    current = allowed.contains(cat) ? cat : null;
+                    String rest = parts[1].strip();
+                    if (current != null && !rest.isBlank()) {
+                        addSuggestion(out, seen, existing, current, rest);
+                    }
+                    if (out.size() >= SUGGEST_MAX) break;
+                    continue;
+                }
+            }
+            // Ligne de cause rattachée à la catégorie courante (format en-tête + liste).
+            if (current != null) {
+                addSuggestion(out, seen, existing, current, line);
+                if (out.size() >= SUGGEST_MAX) break;
+            }
+        }
+        return out;
+    }
+
+    /** Sépare une ligne en [token-catégorie, cause] selon accolades ou un séparateur ; null si aucun. */
+    private String[] splitCauseLine(String line) {
+        java.util.regex.Matcher m = BRACED.matcher(line);
+        if (m.matches()) {
+            return new String[] { m.group(1), m.group(2) };
+        }
+        for (String sep : SEPARATORS) {
+            int i = line.indexOf(sep);
+            if (i > 0) {
+                return new String[] { line.substring(0, i), line.substring(i + sep.length()) };
+            }
+        }
+        return null;
+    }
+
+    private void addSuggestion(List<IshikawaDto.SuggestedCause> out, Set<String> seen,
+                               Set<String> existing, CauseCategory cat, String labelRaw) {
+        String label = labelRaw.strip()
+                // Retire un éventuel 2ᵉ préfixe entre crochets/accolades laissé par le modèle.
+                .replaceFirst("^[\\{\\[][^\\}\\]]*[\\}\\]]\\s*[-–—:|]*\\s*", "")
+                .replaceFirst("^[-*•·:\\s]+", "").strip();
+        if (label.length() > 500) label = label.substring(0, 500);
+        if (label.isBlank()) return;
+        String key = label.toLowerCase(Locale.ROOT);
+        if (existing.contains(key) || !seen.add(key)) return;
+        out.add(new IshikawaDto.SuggestedCause(cat, label, null));
+    }
+
+    /** Tolérant : accepte le code enum ou un synonyme FR/EN. */
+    private CauseCategory categoryFromToken(String token) {
+        String t = token.strip().toUpperCase(Locale.ROOT);
+        if (t.isEmpty()) return null;
+        if (t.contains("METHOD") || t.contains("MÉTHOD") || t.contains("METHOD")) return CauseCategory.METHODS;
+        if (t.contains("MANPOWER") || t.contains("MAIN") || t.contains("ŒUVRE") || t.contains("OEUVRE")
+                || t.contains("PERSONNEL")) return CauseCategory.MANPOWER;
+        if (t.contains("MACHINE") || t.contains("MATÉRIEL") || t.contains("MATERIEL")
+                || t.contains("ÉQUIP") || t.contains("EQUIP")) return CauseCategory.MACHINES;
+        if (t.contains("MATERIAL") || t.contains("MATIÈRE") || t.contains("MATIERE")) return CauseCategory.MATERIALS;
+        if (t.contains("MEASURE") || t.contains("MESURE")) return CauseCategory.MEASUREMENTS;
+        if (t.contains("ENVIRON") || t.contains("MILIEU")) return CauseCategory.ENVIRONMENT;
+        if (t.contains("MANAGEMENT") || t.contains("MANAGE")) return CauseCategory.MANAGEMENT;
+        if (t.contains("MONEY") || t.contains("MOYEN") || t.contains("ARGENT")
+                || t.contains("FINANC")) return CauseCategory.MONEY;
+        return null;
+    }
+
+    private String frLabel(CauseCategory c) {
+        return switch (c) {
+            case METHODS -> "Méthodes";
+            case MANPOWER -> "Main-d'œuvre";
+            case MACHINES -> "Machines";
+            case MATERIALS -> "Matières";
+            case MEASUREMENTS -> "Mesures";
+            case ENVIRONMENT -> "Milieu";
+            case MANAGEMENT -> "Management";
+            case MONEY -> "Moyens financiers";
+        };
     }
 
     public IshikawaDto.CauseResponse updateCause(UUID diagramId, UUID causeId,

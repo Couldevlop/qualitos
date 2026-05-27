@@ -48,6 +48,13 @@ export interface CreateIshikawaCauseRequest {
   rootCauseScore?: number;
 }
 
+/** Cause probable suggérée par l'IA (à valider/ajouter). §3.5 */
+export interface SuggestedCause {
+  category: CauseCategory;
+  label: string;
+  rationale?: string;
+}
+
 export interface UpdateIshikawaDiagramRequest {
   problemStatement?: string;
   description?: string;
