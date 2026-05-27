@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.capa;
 
+import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
+import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.junit.jupiter.api.AfterEach;
@@ -29,6 +31,7 @@ class CapaServiceTest {
 
     @Mock CapaCaseRepository caseRepo;
     @Mock CapaActionRepository actionRepo;
+    @Mock AiGatewayClient ai;
     @InjectMocks CapaService service;
 
     static final UUID TENANT = UUID.randomUUID();
@@ -37,6 +40,33 @@ class CapaServiceTest {
 
     @BeforeEach void ctx() { TenantContext.setTenantId(TENANT.toString()); }
     @AfterEach  void clr() { TenantContext.clear(); }
+
+    // --- suggestActions (IA) ---
+    @Test
+    void suggestActions_parsesLinesAsActions_ignoresPreamble_dedups() {
+        UUID id = UUID.randomUUID();
+        CapaCase c = new CapaCase();
+        c.setTenantId(TENANT);
+        c.setTitle("NC répétitive sur joint torique fournisseur Alpha");
+        c.setType(CapaType.CORRECTIVE);
+        c.setCriticity(CapaCriticity.HIGH);
+        c.setStatus(CapaStatus.IN_PROGRESS);
+        when(caseRepo.findByIdAndTenantId(id, TENANT)).thenReturn(Optional.of(c));
+
+        String llm = String.join("\n",
+                "Voici les actions correctives :",
+                "- Auditer le fournisseur Alpha sur site",
+                "2. Renforcer le plan de contrôle réception",
+                "- Auditer le fournisseur Alpha sur site");
+        when(ai.complete(any(), any(), anyInt()))
+                .thenReturn(new AiCompletionResult(llm, "ollama", 80, 900));
+
+        List<CapaDto.SuggestedAction> res = service.suggestActions(id);
+
+        assertThat(res).extracting(CapaDto.SuggestedAction::title)
+                .containsExactly("Auditer le fournisseur Alpha sur site",
+                        "Renforcer le plan de contrôle réception");
+    }
 
     // --- create ---
     @Test

@@ -56,6 +56,17 @@ class CapaControllerTest {
     }
 
     @Test @WithMockUser
+    void suggestActions_returns200() throws Exception {
+        when(service.suggestActions(CAPA)).thenReturn(List.of(
+                new CapaDto.SuggestedAction("Auditer le fournisseur Alpha sur site", null),
+                new CapaDto.SuggestedAction("Renforcer le plan de contrôle réception", null)));
+        mockMvc.perform(post("/api/v1/capa/cases/{id}/suggest-actions", CAPA).with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].title").value("Auditer le fournisseur Alpha sur site"));
+    }
+
+    @Test @WithMockUser
     void list_withFilter() throws Exception {
         when(service.findAll(eq(CapaStatus.CLOSED), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(caseResp(CapaStatus.CLOSED))));
