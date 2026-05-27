@@ -20,6 +20,7 @@
 
     <modules>
         <module>libs/industry-commons</module>
+        <module>libs/security-commons-crypto</module>
         <module>apps/api-core</module>
         <module>apps/api-quality-engine</module>
         <module>apps/api-iot-hub</module>
@@ -36,6 +37,10 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <jjwt.version>0.12.6</jjwt.version>
         <springdoc.version>2.8.8</springdoc.version>
+        <!-- Bouncy Castle : fournit ML-DSA (FIPS 204) + ML-KEM (FIPS 203). cf. ADR 0011.
+             bcprov-jdk18on n'est PAS FIPS-validé → marqué dev dans le CBOM ; la prod
+             régulée bascule sur bc-fips via le même SPI (crypto-agility). -->
+        <bouncycastle.version>1.79</bouncycastle.version>
     </properties>
 
     <dependencyManagement>
@@ -66,6 +71,11 @@
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>${springdoc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>${bouncycastle.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

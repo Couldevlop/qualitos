@@ -59,6 +59,12 @@ public class IshikawaController {
         return ishikawaService.addCause(id, request);
     }
 
+    // Suggestion de causes par l'IA (§3.5) — POST : appel LLM (effet de bord), pas de persistance.
+    @PostMapping("/diagrams/{id}/suggest-causes")
+    public java.util.List<IshikawaDto.SuggestedCause> suggestCauses(@PathVariable UUID id) {
+        return ishikawaService.suggestCauses(id);
+    }
+
     @PatchMapping("/diagrams/{id}/causes/{causeId}")
     public IshikawaDto.CauseResponse updateCause(
             @PathVariable UUID id,

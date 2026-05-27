@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.capa;
 
+import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
+import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.data.domain.Page;
@@ -8,18 +10,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
 @Transactional
 public class CapaService {
 
+    /** Borne de génération (latence CPU raisonnable ; cf. ADR 0014). */
+    private static final int SUGGEST_MAX_TOKENS = 320;
+    private static final int SUGGEST_MAX = 8;
+
     private final CapaCaseRepository caseRepository;
     private final CapaActionRepository actionRepository;
+    private final AiGatewayClient ai;
 
-    public CapaService(CapaCaseRepository caseRepository, CapaActionRepository actionRepository) {
+    public CapaService(CapaCaseRepository caseRepository, CapaActionRepository actionRepository,
+                       AiGatewayClient ai) {
         this.caseRepository = caseRepository;
         this.actionRepository = actionRepository;
+        this.ai = ai;
     }
 
     @Transactional(readOnly = true)
@@ -140,6 +154,52 @@ public class CapaService {
         a.setAssigneeId(request.assigneeId());
         a.setDueDate(request.dueDate());
         return toActionResponse(actionRepository.save(a));
+    }
+
+    /**
+     * Suggère par l'IA (passerelle → ai-service) des actions correctives/préventives
+     * pour la CAPA (§4.2). L'IA suggère, l'humain valide : rien n'est persisté tant que
+     * l'utilisateur ne clique pas « Ajouter ».
+     */
+    @Transactional(readOnly = true)
+    public List<CapaDto.SuggestedAction> suggestActions(UUID capaId) {
+        CapaCase c = loadCase(capaId);
+        String kind = c.getType() == CapaType.PREVENTIVE
+                ? "préventives (empêcher l'apparition du problème)"
+                : "correctives (corriger et éliminer la cause racine)";
+
+        String system = "Tu es un expert qualité (démarche CAPA). Pour le problème donné, propose "
+                + "des actions " + kind + " concrètes et activables. Donne UNE action par ligne, "
+                + "commençant par un verbe d'action. Exemple : - Réviser le plan de contrôle réception. "
+                + "Donne 5 à 8 actions concrètes, sans numéro ni autre texte.";
+        StringBuilder user = new StringBuilder("Problème : ").append(c.getTitle()).append("\n");
+        if (c.getDescription() != null && !c.getDescription().isBlank()) {
+            user.append("Détail : ").append(c.getDescription()).append("\n");
+        }
+        user.append("Type : ").append(c.getType())
+            .append(", criticité : ").append(c.getCriticity()).append(".\n")
+            .append("Liste les actions :");
+
+        AiCompletionResult r = ai.complete(system, user.toString(), SUGGEST_MAX_TOKENS);
+        return parseActions(r.text());
+    }
+
+    /** Une action par ligne ; ignore préambules/titres ; déduplique. */
+    private List<CapaDto.SuggestedAction> parseActions(String text) {
+        List<CapaDto.SuggestedAction> out = new ArrayList<>();
+        Set<String> seen = new LinkedHashSet<>();
+        if (text == null) return out;
+        for (String raw : text.split("\\r?\\n")) {
+            String line = raw.strip().replaceFirst("^[-*•·\\d.)\\s]+", "").strip();
+            if (line.length() < 5 || line.endsWith(":")) continue;
+            String title = line;
+            String description = null;
+            if (title.length() > 255) { description = title; title = title.substring(0, 255); }
+            if (!seen.add(title.toLowerCase(Locale.ROOT))) continue;
+            out.add(new CapaDto.SuggestedAction(title, description));
+            if (out.size() >= SUGGEST_MAX) break;
+        }
+        return out;
     }
 
     public CapaDto.ActionResponse updateAction(UUID capaId, UUID actionId, CapaDto.ActionRequest request) {

@@ -127,5 +127,136 @@ export interface DossierResponse {
   evidenceCount: number; htmlContent: string;
 }
 
+// ---- Preuves (§8.4 onglet 6) ----
+export type EvidenceType =
+  | 'DOCUMENT' | 'AUDIT' | 'CAPA' | 'PDCA_CYCLE' | 'ISHIKAWA' | 'FIVES_AUDIT'
+  | 'TRAINING_RECORD' | 'KPI_RECORD' | 'EXTERNAL_FILE' | 'OTHER';
+
+export interface EvidenceResponse {
+  id: string;
+  tenantStandardId: string;
+  requirementId: string;
+  requirementCode: string;
+  evidenceType: EvidenceType;
+  evidenceRefId?: string;
+  evidenceUri?: string;
+  note?: string;
+  linkedBy: string;
+  linkedAt: string;
+}
+
+export interface LinkEvidenceRequest {
+  requirementId: string;
+  evidenceType: EvidenceType;
+  evidenceRefId?: string;
+  evidenceUri?: string;
+  note?: string;
+  linkedBy: string;
+}
+
+// ---- Certification à blanc (§8.5 étapes 14-15 ; ISO/IEC 17021-1) ----
+export type CertificationDecision =
+  | 'CERTIFIABLE' | 'CERTIFIABLE_SOUS_RESERVE' | 'NON_CERTIFIABLE' | 'AJOURNE';
+
+export interface AuditStageResult {
+  stageNumber: number;
+  name: string;
+  passed: boolean;
+  score: number;
+  summary: string;
+  watchPoints: string[];
+}
+
+export interface NonConformity {
+  requirementId: string;
+  sectionCode: string;
+  clauseCode: string;
+  requirementCode: string;
+  requirementText: string;
+  type: 'MAJOR' | 'MINOR' | 'OBSERVATION';
+  description: string;
+  requiredCorrection: string;
+}
+
+export interface MockCertificate {
+  certificateNumber: string;
+  standardCode: string;
+  scope: string;
+  certificationBody: string;
+  issuedAt: string;
+  expiresAt: string;
+  conditions: string;
+  disclaimer: string;
+}
+
+// ---- Bibliothèque documentaire (§8.4 onglet 3) ----
+export type DocumentObligation = 'MANDATORY' | 'RECOMMENDED' | 'OPTIONAL';
+export interface DocumentTemplate {
+  id: string;
+  code: string;
+  name: string;
+  obligation: DocumentObligation;
+  category?: string;
+  format?: string;
+  mapsToClauses?: string;
+  description?: string;
+  downloadable: boolean;
+}
+
+// ---- Génération IA d'un brouillon de document (§8.8) ----
+export interface AiDraftResponse {
+  templateId: string;
+  templateCode: string;
+  templateName: string;
+  draft: string;
+  provider: string;
+  latencyMs: number;
+}
+
+// ---- Cartographie des processus (§8.4 onglet 4) ----
+export interface ProcessTemplate {
+  id: string;
+  code: string;
+  name: string;
+  description?: string;
+  mapsToClauses?: string;
+  bpmnUri?: string;
+  orderIndex: number;
+}
+
+// ---- Veille normative (§8.4 onglet 8) ----
+export type RevisionStatus = 'CURRENT' | 'PLANNED' | 'SUPERSEDED';
+export interface StandardRevision {
+  id: string;
+  version: string;
+  status: RevisionStatus;
+  publishedDate?: string;
+  effectiveDate?: string;
+  summary?: string;
+  impactNote?: string;
+  sourceUrl?: string;
+  orderIndex: number;
+}
+
+export interface CertificationBlancReport {
+  tenantStandardId: string;
+  standardId: string;
+  standardCode: string;
+  standardName: string;
+  generatedAt: string;
+  stage1: AuditStageResult;
+  stage2: AuditStageResult;
+  majorNonConformities: number;
+  minorNonConformities: number;
+  observations: number;
+  decision: CertificationDecision;
+  decisionLabel: string;
+  nonConformities: NonConformity[];
+  certificate?: MockCertificate;
+  sha256: string;
+  anchorTxRef: string;
+  signature: string;
+}
+
 export type StandardsPage = SpringPage<StandardSummary>;
 export type AdoptionsPage = SpringPage<AdoptionResponse>;

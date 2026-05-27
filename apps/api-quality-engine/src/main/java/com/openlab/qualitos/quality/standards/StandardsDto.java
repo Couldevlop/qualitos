@@ -257,6 +257,130 @@ public final class StandardsDto {
             double readinessScore,
             double roadmapCompletion,
             int evidenceCount,
-            String htmlContent
+            String htmlContent,
+            // Enveloppe de signature hybride (Ed25519 + ML-DSA-65) du SHA-256 du dossier,
+            // encodée Base64URL (cf. ADR 0011). Vérifiable a posteriori.
+            String signature
+    ) {}
+
+    // ---- Certification à blanc (§8.5 étapes 14-15 ; ISO/IEC 17021-1) ----
+
+    /**
+     * Simulation de l'audit de certification (« certification à blanc »), distincte
+     * de l'audit blanc (gap analysis). Reproduit la logique d'un organisme
+     * certificateur accrédité ISO/IEC 17021-1 : audit en deux étapes (revue
+     * documentaire §4-7 puis audit terrain §8-10), classification des
+     * non-conformités en <b>majeures</b> / <b>mineures</b> / <b>observations</b>,
+     * puis décision de certification. Un certificat à blanc est émis lorsque la
+     * décision est (conditionnellement) favorable — <i>sans valeur d'accréditation</i>.
+     * Le verdict est haché, signé (hybride PQ, ADR 0011) et ancré (audit-ready, §8.7).
+     */
+    public record CertificationBlancReport(
+            UUID tenantStandardId,
+            UUID standardId,
+            String standardCode,
+            String standardName,
+            Instant generatedAt,
+            AuditStageResult stage1,        // revue documentaire (§4-7)
+            AuditStageResult stage2,        // audit terrain (§8-10)
+            int majorNonConformities,
+            int minorNonConformities,
+            int observations,
+            String decision,               // CERTIFIABLE | CERTIFIABLE_SOUS_RESERVE | NON_CERTIFIABLE | AJOURNE
+            String decisionLabel,
+            List<NonConformity> nonConformities,
+            MockCertificate certificate,   // null si non certifiable / ajourné
+            String sha256,
+            String anchorTxRef,
+            String signature
+    ) {}
+
+    /** Résultat d'une étape de l'audit de certification (1 = documentaire, 2 = terrain). */
+    public record AuditStageResult(
+            int stageNumber,
+            String name,
+            boolean passed,
+            double score,                  // % de couverture des exigences du périmètre de l'étape
+            String summary,
+            List<String> watchPoints       // points d'attention (codes d'exigences)
+    ) {}
+
+    /** Non-conformité relevée lors de la certification à blanc. */
+    public record NonConformity(
+            UUID requirementId,
+            String sectionCode,
+            String clauseCode,
+            String requirementCode,
+            String requirementText,
+            String type,                   // MAJOR | MINOR | OBSERVATION
+            String description,
+            String requiredCorrection
+    ) {}
+
+    /**
+     * Certificat à blanc émis quand le verdict est favorable ou favorable sous
+     * réserve. Porte un avertissement explicite : il s'agit d'une simulation
+     * interne, sans valeur d'accréditation (COFRAC/UKAS…).
+     */
+    public record MockCertificate(
+            String certificateNumber,
+            String standardCode,
+            String scope,
+            String certificationBody,
+            Instant issuedAt,
+            Instant expiresAt,
+            String conditions,
+            String disclaimer
+    ) {}
+
+    // ---- Bibliothèque documentaire (§8.4 onglet 3) ----
+
+    public record DocumentTemplateResponse(
+            UUID id,
+            String code,
+            String name,
+            DocumentObligation obligation,
+            String category,
+            String format,            // dérivé de l'extension du modèle (MD, DOCX, BPMN…)
+            String mapsToClauses,
+            String description,
+            boolean downloadable
+    ) {}
+
+    // ---- Cartographie des processus (§8.4 onglet 4) ----
+
+    public record ProcessTemplateResponse(
+            UUID id,
+            String code,
+            String name,
+            String description,
+            String mapsToClauses,
+            String bpmnUri,
+            int orderIndex
+    ) {}
+
+    // ---- Génération IA d'un brouillon de document normatif (§8.8) ----
+
+    public record AiDraftResponse(
+            UUID templateId,
+            String templateCode,
+            String templateName,
+            String draft,
+            String provider,
+            int latencyMs
+    ) {}
+
+    // ---- Veille normative (§8.4 onglet 8) ----
+
+    public record RevisionResponse(
+            UUID id,
+            String version,
+            RevisionStatus status,
+            LocalDate publishedDate,
+            LocalDate effectiveDate,
+            String summary,
+            String impactNote,
+            String sourceUrl,
+            int orderIndex
     ) {}
 }

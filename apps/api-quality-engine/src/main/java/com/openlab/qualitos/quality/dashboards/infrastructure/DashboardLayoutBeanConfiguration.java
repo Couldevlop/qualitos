@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.dashboards.infrastructure;
 
+import com.openlab.qualitos.crypto.application.HybridSignatureService;
 import com.openlab.qualitos.quality.dashboards.application.DashboardLayoutService;
 import com.openlab.qualitos.quality.dashboards.application.TenantProvider;
 import com.openlab.qualitos.quality.dashboards.domain.DashboardLayoutRepository;
@@ -16,7 +17,8 @@ public class DashboardLayoutBeanConfiguration {
     public DashboardLayoutService dashboardLayoutService(
             DashboardLayoutRepository repo,
             @Qualifier("dashboardsTenantContextProvider") TenantProvider tenantProvider,
+            HybridSignatureService signer,
             Clock clock) {
-        return new DashboardLayoutService(repo, tenantProvider, clock);
+        return new DashboardLayoutService(repo, tenantProvider, signer, clock);
     }
 }

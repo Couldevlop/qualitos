@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.ishikawa;
 
+import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
+import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.junit.jupiter.api.AfterEach;
@@ -32,6 +34,9 @@ class IshikawaServiceTest {
     @Mock
     private IshikawaCauseRepository causeRepository;
 
+    @Mock
+    private AiGatewayClient ai;
+
     @InjectMocks
     private IshikawaService ishikawaService;
 
@@ -47,6 +52,35 @@ class IshikawaServiceTest {
     @AfterEach
     void clearTenantContext() {
         TenantContext.clear();
+    }
+
+    // --- suggestCauses (IA) ---
+
+    @Test
+    void suggestCauses_parsesByCategory_respectsMode_andDedups() {
+        UUID id = UUID.randomUUID();
+        IshikawaDiagram d = new IshikawaDiagram();
+        d.setTenantId(TENANT_ID);
+        d.setMode(IshikawaMode.SIX_M);
+        d.setProblemStatement("Pourquoi le taux de défauts augmente ?");
+        when(diagramRepository.findByIdAndTenantId(id, TENANT_ID)).thenReturn(Optional.of(d));
+
+        // Format réel observé du petit modèle : « {CATEGORY} - cause » + ligne d'écho.
+        String llm = String.join("\n",
+                "CODE | cause courte (max 12 mots)",
+                "{METHODS} - Procédure de contrôle obsolète",
+                "{MANPOWER} - Formation insuffisante des opérateurs",
+                "{MANAGEMENT} - Hors mode 6M, doit être ignoré",
+                "{METHODS} - Procédure de contrôle obsolète");
+        when(ai.complete(any(), any(), anyInt()))
+                .thenReturn(new AiCompletionResult(llm, "ollama", 100, 1000));
+
+        List<IshikawaDto.SuggestedCause> res = ishikawaService.suggestCauses(id);
+
+        assertThat(res).hasSize(2);
+        assertThat(res).extracting(IshikawaDto.SuggestedCause::category)
+                .containsExactly(CauseCategory.METHODS, CauseCategory.MANPOWER);
+        assertThat(res).noneMatch(s -> s.category() == CauseCategory.MANAGEMENT);
     }
 
     // --- createDiagram ---

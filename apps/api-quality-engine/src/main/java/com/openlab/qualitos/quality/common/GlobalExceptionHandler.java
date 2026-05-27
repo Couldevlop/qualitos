@@ -31,6 +31,8 @@ import com.openlab.qualitos.quality.standards.AdoptionStateException;
 import com.openlab.qualitos.quality.standards.EvidenceNotFoundException;
 import com.openlab.qualitos.quality.standards.RequirementNotFoundException;
 import com.openlab.qualitos.quality.standards.RoadmapStageNotFoundException;
+import com.openlab.qualitos.quality.standards.DocumentTemplateNotFoundException;
+import com.openlab.qualitos.quality.aigateway.AiGatewayException;
 import com.openlab.qualitos.quality.standards.StandardNotFoundException;
 import com.openlab.qualitos.quality.standards.TenantStandardNotFoundException;
 import com.openlab.qualitos.quality.industry.IndustryPackNotFoundException;
@@ -131,6 +133,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.net.URI;
 import java.time.Instant;
@@ -363,6 +366,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/certification-roadmap-stage-not-found"));
         problem.setTitle("Certification Roadmap Stage Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(DocumentTemplateNotFoundException.class)
+    public ProblemDetail handleDocumentTemplateNotFound(DocumentTemplateNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/standard-document-template-not-found"));
+        problem.setTitle("Standard Document Template Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AiGatewayException.class)
+    public ProblemDetail handleAiGateway(AiGatewayException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-gateway-unavailable"));
+        problem.setTitle("AI Gateway Unavailable");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
@@ -1284,6 +1305,18 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/marketplace-pack-invalid-state"));
         problem.setTitle("Invalid Marketplace Pack State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ProblemDetail handleNoResource(NoResourceFoundException ex) {
+        // Chemin inexistant → 404 (et non 500). Évite de masquer une 404 en
+        // erreur serveur et ne divulgue aucune information interne (OWASP A05/A09).
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND, "Resource not found");
+        problem.setType(URI.create("https://qualitos.io/errors/resource-not-found"));
+        problem.setTitle("Resource Not Found");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

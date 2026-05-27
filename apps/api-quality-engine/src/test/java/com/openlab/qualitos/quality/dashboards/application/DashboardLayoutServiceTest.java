@@ -1,5 +1,12 @@
 package com.openlab.qualitos.quality.dashboards.application;
 
+import com.openlab.qualitos.crypto.application.CryptoSuiteConfig;
+import com.openlab.qualitos.crypto.application.HybridSignatureService;
+import com.openlab.qualitos.crypto.domain.model.SignatureAlgorithm;
+import com.openlab.qualitos.crypto.domain.model.SignatureEnvelope;
+import com.openlab.qualitos.crypto.domain.port.SignatureProvider;
+import com.openlab.qualitos.crypto.infrastructure.BouncyCastleSignatureProvider;
+import com.openlab.qualitos.crypto.infrastructure.InMemorySigningKeyProvider;
 import com.openlab.qualitos.quality.dashboards.domain.DashboardLayout;
 import com.openlab.qualitos.quality.dashboards.domain.DashboardLayoutNotFoundException;
 import com.openlab.qualitos.quality.dashboards.domain.DashboardLayoutRepository;
@@ -7,11 +14,13 @@ import com.openlab.qualitos.quality.dashboards.domain.DashboardLayoutStateExcept
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -22,6 +31,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,10 +50,19 @@ class DashboardLayoutServiceTest {
     static final UUID ID = UUID.randomUUID();
 
     DashboardLayoutService service;
+    HybridSignatureService signer;
 
     @BeforeEach
     void setup() {
-        service = new DashboardLayoutService(repo, tenantProvider, CLOCK);
+        List<SignatureProvider> providers = List.of(
+                new BouncyCastleSignatureProvider(SignatureAlgorithm.ED25519),
+                new BouncyCastleSignatureProvider(SignatureAlgorithm.ML_DSA_65));
+        signer = new HybridSignatureService(
+                new CryptoSuiteConfig(), providers,
+                new InMemorySigningKeyProvider("platform-v1",
+                        algo -> new BouncyCastleSignatureProvider(algo).generateKeyPair()),
+                CLOCK);
+        service = new DashboardLayoutService(repo, tenantProvider, signer, CLOCK);
         when(tenantProvider.requireTenantId()).thenReturn(TENANT);
         when(tenantProvider.requireUserId()).thenReturn(USER);
         when(repo.existsByTenantUserName(any(), any(), any())).thenReturn(false);
@@ -62,6 +81,22 @@ class DashboardLayoutServiceTest {
         assertThat(view.tenantId()).isEqualTo(TENANT);
         assertThat(view.userId()).isEqualTo(USER);
         assertThat(view.version()).isEqualTo(1);
+    }
+
+    @Test
+    void create_attachesVerifiableHybridSignature() {
+        service.create(new DashboardLayoutDto.SaveRequest("Exec", "d", "{\"grid\":[]}", false));
+
+        ArgumentCaptor<DashboardLayout> captor = ArgumentCaptor.forClass(DashboardLayout.class);
+        verify(repo).save(captor.capture());
+        DashboardLayout saved = captor.getValue();
+
+        assertThat(saved.getSignatureHash()).isNotBlank();
+        SignatureEnvelope envelope = SignatureEnvelope.decode(saved.getSignatureHash());
+        assertThat(envelope.parts()).extracting(SignatureEnvelope.Part::algorithm)
+                .containsExactly(SignatureAlgorithm.ED25519, SignatureAlgorithm.ML_DSA_65);
+        String canonical = "Exec\n1\n{\"grid\":[]}";
+        assertThat(signer.verify(canonical.getBytes(StandardCharsets.UTF_8), envelope)).isTrue();
     }
 
     @Test

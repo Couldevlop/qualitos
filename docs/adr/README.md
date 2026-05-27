@@ -15,6 +15,10 @@ supersession).
 | [0001](./0001-multi-tenant-via-jwt-claim.md) | Multi-tenant via claim JWT, jamais via le body | Accepté |
 | [0002](./0002-angular-ngmodules-no-standalone.md) | Angular en NgModules (pas de composants standalone) | Accepté |
 | [0003](./0003-mock-first-frontend-services.md) | Services frontend en mode "mock-first" par défaut | Accepté |
+| [0011](./0011-pq-crypto-agility-signing.md) | Crypto-agility & signatures post-quantiques (ML-DSA hybride) | Accepté |
+| [0012](./0012-blockchain-anchoring-fabric.md) | Ancrage blockchain : reçus signés (Phase A) → Hyperledger Fabric (Phase B) | Accepté (Phase A) |
+| [0013](./0013-ai-service-distroless-python-alignment.md) | ai-service : image distroless alignée sur Python 3.11 (sans venv) | Accepté |
+| [0014](./0014-ai-gateway-integration.md) | Intégration passerelle IA : SPA → api-quality-engine → ai-service (dev X-Dev-Claims, prod aud qualitos-ai) | Accepté |
 
 ## Statuts possibles
 

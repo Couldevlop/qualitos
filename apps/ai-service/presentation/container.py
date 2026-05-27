@@ -64,7 +64,14 @@ class Container:
     def build_default(cls, overrides: dict[str, Any] | None = None) -> "Container":
         o = overrides or {}
         providers: dict[ProviderName, AIProvider] = o.get("providers") or {
-            ProviderName.OLLAMA: OllamaProvider(),
+            # Modèle/endpoint Ollama configurables par env (cf. ADR 0014) — permet un
+            # petit modèle en dev (llama3.2:1b) tenant dans le timeout CPU.
+            ProviderName.OLLAMA: OllamaProvider(
+                base_url=os.environ.get("OLLAMA_BASE_URL", "http://ollama:11434"),
+                model=os.environ.get("OLLAMA_MODEL", "llama3.1:8b"),
+                # Timeout large : l'inférence CPU + chargement à froid du modèle dépasse 30 s.
+                timeout_s=float(os.environ.get("OLLAMA_TIMEOUT_S", "120")),
+            ),
             ProviderName.ANTHROPIC: AnthropicProvider(),
             ProviderName.MISTRAL: MistralProvider(),
         }

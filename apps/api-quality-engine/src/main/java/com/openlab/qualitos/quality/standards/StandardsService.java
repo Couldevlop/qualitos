@@ -23,17 +23,26 @@ public class StandardsService {
     private final TenantStandardRepository tenantStandardRepository;
     private final RequirementEvidenceRepository evidenceRepository;
     private final CertificationRoadmapStageRepository roadmapStageRepository;
+    private final StandardDocumentTemplateRepository documentTemplateRepository;
+    private final StandardProcessTemplateRepository processTemplateRepository;
+    private final StandardRevisionRepository revisionRepository;
 
     public StandardsService(StandardRepository standardRepository,
                             StandardRequirementRepository requirementRepository,
                             TenantStandardRepository tenantStandardRepository,
                             RequirementEvidenceRepository evidenceRepository,
-                            CertificationRoadmapStageRepository roadmapStageRepository) {
+                            CertificationRoadmapStageRepository roadmapStageRepository,
+                            StandardDocumentTemplateRepository documentTemplateRepository,
+                            StandardProcessTemplateRepository processTemplateRepository,
+                            StandardRevisionRepository revisionRepository) {
         this.standardRepository = standardRepository;
         this.requirementRepository = requirementRepository;
         this.tenantStandardRepository = tenantStandardRepository;
         this.evidenceRepository = evidenceRepository;
         this.roadmapStageRepository = roadmapStageRepository;
+        this.documentTemplateRepository = documentTemplateRepository;
+        this.processTemplateRepository = processTemplateRepository;
+        this.revisionRepository = revisionRepository;
     }
 
     // ===== Catalog =====
@@ -433,6 +442,63 @@ public class StandardsService {
                 s.getPlannedStartDate(), s.getPlannedEndDate(),
                 s.getActualStartDate(), s.getActualEndDate(),
                 s.getNotes(), s.getOrderIndex());
+    }
+
+    // ===== Catalogue : bibliothèque documentaire, processus, veille (§8.4) =====
+
+    @Transactional(readOnly = true)
+    public List<StandardsDto.DocumentTemplateResponse> listDocumentTemplates(UUID standardId) {
+        requireStandard(standardId);
+        return documentTemplateRepository.findByStandardIdOrderByOrderIndexAscNameAsc(standardId)
+                .stream().map(this::toDocumentTemplateResponse).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<StandardsDto.ProcessTemplateResponse> listProcessTemplates(UUID standardId) {
+        requireStandard(standardId);
+        return processTemplateRepository.findByStandardIdOrderByOrderIndexAsc(standardId)
+                .stream().map(p -> new StandardsDto.ProcessTemplateResponse(
+                        p.getId(), p.getCode(), p.getName(), p.getDescription(),
+                        p.getMapsToClauses(), p.getBpmnUri(), p.getOrderIndex())).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<StandardsDto.RevisionResponse> listRevisions(UUID standardId) {
+        requireStandard(standardId);
+        return revisionRepository.findByStandardIdOrderByOrderIndexAsc(standardId)
+                .stream().map(r -> new StandardsDto.RevisionResponse(
+                        r.getId(), r.getVersion(), r.getStatus(), r.getPublishedDate(),
+                        r.getEffectiveDate(), r.getSummary(), r.getImpactNote(),
+                        r.getSourceUrl(), r.getOrderIndex())).toList();
+    }
+
+    /** Retourne l'URI classpath du modèle, validée, pour le téléchargement (§8.4 onglet 3). */
+    @Transactional(readOnly = true)
+    public String resolveTemplateUri(UUID standardId, UUID templateId) {
+        StandardDocumentTemplate tpl = documentTemplateRepository
+                .findByIdAndStandardId(templateId, standardId)
+                .orElseThrow(() -> new DocumentTemplateNotFoundException(templateId));
+        return tpl.getTemplateUri();
+    }
+
+    private void requireStandard(UUID standardId) {
+        if (!standardRepository.existsById(standardId)) {
+            throw new StandardNotFoundException(standardId);
+        }
+    }
+
+    private StandardsDto.DocumentTemplateResponse toDocumentTemplateResponse(StandardDocumentTemplate t) {
+        return new StandardsDto.DocumentTemplateResponse(
+                t.getId(), t.getCode(), t.getName(), t.getObligation(),
+                t.getCategory(), formatOf(t.getTemplateUri()), t.getMapsToClauses(),
+                t.getDescription(), t.getTemplateUri() != null && !t.getTemplateUri().isBlank());
+    }
+
+    /** Format dérivé de l'extension du fichier modèle (MD, DOCX, BPMN, XLSX…). */
+    private String formatOf(String uri) {
+        if (uri == null) return null;
+        int dot = uri.lastIndexOf('.');
+        return dot < 0 ? null : uri.substring(dot + 1).toUpperCase();
     }
 
     // ===== helpers =====
