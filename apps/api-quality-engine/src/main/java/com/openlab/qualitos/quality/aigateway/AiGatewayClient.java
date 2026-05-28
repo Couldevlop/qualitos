@@ -33,12 +33,17 @@ public class AiGatewayClient {
     private final RestClient client;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public AiGatewayClient(@Value("${qualitos.ai.base-url:http://localhost:8085}") String baseUrl) {
-        // Timeout lecture large : l'inférence CPU + chargement à froid du modèle Ollama
-        // peut dépasser 60 s (cf. ADR 0014). Doit rester > OLLAMA_TIMEOUT_S côté ai-service.
+    public AiGatewayClient(
+            @Value("${qualitos.ai.base-url:http://localhost:8085}") String baseUrl,
+            @Value("${qualitos.ai.connect-timeout-ms:5000}") int connectTimeoutMs,
+            @Value("${qualitos.ai.read-timeout-ms:260000}") int readTimeoutMs) {
+        // Timeouts CONFIGURABLES (cf. ADR 0014). Le read-timeout doit rester
+        // > OLLAMA_TIMEOUT_S côté ai-service (lui-même > latence du modèle). Pour un
+        // modèle plus lent/précis sur CPU (ex. qualitos-sql-lite), relever de concert
+        // qualitos.ai.read-timeout-ms ET OLLAMA_TIMEOUT_S — sans toucher au code.
         SimpleClientHttpRequestFactory rf = new SimpleClientHttpRequestFactory();
-        rf.setConnectTimeout(5_000);
-        rf.setReadTimeout(260_000);
+        rf.setConnectTimeout(connectTimeoutMs);
+        rf.setReadTimeout(readTimeoutMs);
         this.client = RestClient.builder().baseUrl(baseUrl).requestFactory(rf).build();
     }
 
