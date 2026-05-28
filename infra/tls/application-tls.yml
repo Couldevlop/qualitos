@@ -1,0 +1,24 @@
+# Config de référence — terminaison TLS hybride PQ au niveau de l'app (Mode B, ADR 0015).
+# À fusionner dans le profil de l'app qui termine TLS (mono-service / on-prem).
+#
+# Pré-requis (non couverts par ce YAML) :
+#  1. Deps : org.bouncycastle:bctls-jdk18on (dev) ou bctls-fips (prod régulée).
+#  2. Enregistrer le provider BC-JSSE au démarrage (ou via java.security) :
+#       Security.addProvider(new BouncyCastleProvider());
+#       Security.addProvider(new BouncyCastleJsseProvider());
+#  3. Activer le groupe hybride côté JVM :
+#       -Djdk.tls.namedGroups=X25519MLKEM768,X25519
+#     (X25519 en repli pour les clients non-PQ ; cf. suite legacy-classical au CBOM)
+
+server:
+  port: 8443
+  ssl:
+    enabled: true
+    protocol: TLS
+    enabled-protocols: TLSv1.3
+    # Provider JSSE Bouncy Castle (PQ) — pas le SunJSSE (qui ignore X25519MLKEM768).
+    provider: BCJSSE
+    key-store: classpath:tls/keystore.p12
+    key-store-type: PKCS12
+    key-store-password: ${TLS_KEYSTORE_PASSWORD}
+    key-alias: qualitos
