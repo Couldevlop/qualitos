@@ -44,7 +44,7 @@ revient pas à temps.
 marge CPU (ou en relevant `OLLAMA_TIMEOUT_S` et le read-timeout de
 `AiGatewayClient`). Sur CPU, on utilise la **variante allégée** ci-dessous.
 
-## Variante allégée `qualitos-sql-lite` (modèle dev ACTIF)
+## Variante allégée `qualitos-sql-lite` (artefact — non active sur CPU)
 
 `Modelfile.lite` : même base, mais `SYSTEM` minimal = **4 exemples few-shot** +
 2 garde-fous (le schéma vient déjà du prompt d'`ai-service`, inutile de le
@@ -52,14 +52,20 @@ répéter). Build : `ollama create qualitos-sql-lite -f Modelfile.lite`.
 
 Latences **mesurées** (CPU, ce poste, 2026-05-28) :
 
-| | à froid (1ʳᵉ requête) | à chaud |
-| --- | --- | --- |
-| `qualitos-sql-lite` | ~302 s | **~97 s** (< timeout 240 s ✅) |
+| Requête | à froid | à chaud (direct) | E2E via ai-service |
+| --- | --- | --- | --- |
+| **dans** les exemples (5S, criticité) | ~302 s | **~97 s** | < 240 s ✅ (SQL correct) |
+| **hors** exemples (fournisseurs) | — | — | **247 s ❌ → 503** |
 
-SQL correct sur les cas couverts (CAPA par statut/criticité, 5S par zone, RPN
-FMEA). C'est le **modèle dev actif** (`OLLAMA_MODEL=qualitos-sql-lite`), à
-condition de **préchauffer** après chaque redémarrage (`OLLAMA_KEEP_ALIVE=-1`
-garde ensuite le modèle en mémoire ; voir runbook).
+Constat : le `SYSTEM` few-shot (~200 tokens) accélère les requêtes-exemples
+(quasi-copie) mais **alourdit le prompt-eval** ; sur les requêtes nouvelles,
+ça dépasse le timeout `OLLAMA_TIMEOUT_S=240` sur CPU sans GPU.
+
+**Décision** : modèle dev actif = **`qwen2.5-coder:3b`** (sans SYSTEM baké → plus
+léger, passe sur les requêtes nouvelles). `qualitos-sql` / `qualitos-sql-lite`
+restent des **artefacts** à activer **avec GPU** (ou en relevant les timeouts si
+une latence élevée est acceptable). Toujours **préchauffer** après un restart
+(`OLLAMA_KEEP_ALIVE=-1`).
 
 > Ne pas empiler plusieurs modèles épinglés (`keep_alive=-1`) : ils se disputent
 > le CPU. `ollama stop <model>` pour décharger les inutilisés.
