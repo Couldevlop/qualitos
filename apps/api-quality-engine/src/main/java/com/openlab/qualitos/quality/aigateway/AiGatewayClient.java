@@ -74,6 +74,35 @@ public class AiGatewayClient {
         }
     }
 
+    /**
+     * Relaie une requête NLQ (langage naturel → SQL validé → exécution read-only) vers
+     * {@code ai-service} (§7.3). Renvoie la réponse JSON brute (mappée par la couche
+     * application). Le tenant provient du {@link TenantContext} (JWT), jamais du body.
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> askNlq(String question, int maxRows) {
+        if (!TenantContext.hasTenant()) {
+            throw new MissingTenantContextException();
+        }
+        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        Map<String, Object> body = Map.of("question", question, "max_rows", maxRows);
+        try {
+            Map<String, Object> resp = client.post()
+                    .uri("/v1/ai/nlq/ask")
+                    .header("X-Dev-Claims", devClaims)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(body)
+                    .retrieve()
+                    .body(Map.class);
+            if (resp == null) {
+                throw new AiGatewayException("Réponse vide de la passerelle IA (NLQ)");
+            }
+            return resp;
+        } catch (RestClientException e) {
+            throw new AiGatewayException("Passerelle IA indisponible (NLQ) : " + e.getMessage(), e);
+        }
+    }
+
     private String devClaims(UUID tenantId) {
         try {
             return objectMapper.writeValueAsString(Map.of(
