@@ -24,8 +24,9 @@
           <mat-icon>edit</mat-icon> Modifier
         </button>
         <button mat-stroked-button color="primary" (click)="suggestCauses(d)" [disabled]="suggesting"
+                [attr.aria-busy]="suggesting"
                 matTooltip="Suggérer des causes probables par l'IA">
-          <mat-icon>auto_awesome</mat-icon>
+          <mat-icon aria-hidden="true">auto_awesome</mat-icon>
           {{ suggesting ? 'Analyse…' : 'Suggérer (IA)' }}
         </button>
         <button mat-flat-button color="primary" (click)="openAddCause(d)">
@@ -35,13 +36,13 @@
     </ng-container>
   </header>
 
-  <div class="state-row" *ngIf="loading$ | async">
-    <mat-progress-spinner mode="indeterminate" diameter="32"></mat-progress-spinner>
+  <div class="state-row" *ngIf="loading$ | async" role="status" aria-live="polite">
+    <mat-progress-spinner mode="indeterminate" diameter="32" aria-label="Chargement"></mat-progress-spinner>
     <span>Chargement…</span>
   </div>
 
-  <div class="state-row error" *ngIf="error$ | async as err">
-    <mat-icon>error_outline</mat-icon>
+  <div class="state-row error" *ngIf="error$ | async as err" role="alert">
+    <mat-icon aria-hidden="true">error_outline</mat-icon>
     <span>{{ err }}</span>
   </div>
 
@@ -76,18 +77,21 @@
         </mat-card-content>
       </mat-card>
 
-      <mat-card class="suggest-card" *ngIf="suggesting || suggestions.length">
+      <mat-card class="suggest-card" *ngIf="suggesting || suggestions.length"
+                role="region" aria-label="Causes suggérées par l'IA" aria-live="polite">
         <div class="suggest-head">
-          <mat-icon>auto_awesome</mat-icon>
+          <mat-icon aria-hidden="true">auto_awesome</mat-icon>
           <h3>Causes suggérées par l'IA</h3>
           <span class="spacer"></span>
           <button mat-icon-button *ngIf="suggestions.length && !suggesting"
-                  (click)="dismissSuggestions()" matTooltip="Masquer">
-            <mat-icon>close</mat-icon>
+                  (click)="dismissSuggestions()"
+                  aria-label="Masquer les suggestions" matTooltip="Masquer">
+            <mat-icon aria-hidden="true">close</mat-icon>
           </button>
         </div>
-        <div class="state-row" *ngIf="suggesting">
-          <mat-progress-spinner mode="indeterminate" diameter="28"></mat-progress-spinner>
+        <div class="state-row" *ngIf="suggesting" role="status" aria-live="polite">
+          <mat-progress-spinner mode="indeterminate" diameter="28"
+                                aria-label="Génération des causes en cours"></mat-progress-spinner>
           <span>Génération des causes probables… (peut prendre ~1 min sur CPU)</span>
         </div>
         <p class="suggest-hint" *ngIf="suggestions.length">
@@ -98,8 +102,9 @@
             <span class="cat-chip">{{ categoryLabel(s.category) }}</span>
             <span class="sug-label">{{ s.label }}</span>
             <button mat-stroked-button color="primary" class="sug-add"
-                    (click)="addSuggestion(d, s)" [disabled]="addingKey === s.label">
-              <mat-icon>add</mat-icon> {{ addingKey === s.label ? '…' : 'Ajouter' }}
+                    (click)="addSuggestion(d, s)" [disabled]="addingKey === s.label"
+                    [attr.aria-label]="'Ajouter la cause : ' + s.label">
+              <mat-icon aria-hidden="true">add</mat-icon> {{ addingKey === s.label ? '…' : 'Ajouter' }}
             </button>
           </li>
         </ul>
