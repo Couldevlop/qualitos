@@ -40,12 +40,26 @@ mais **alourdit le prompt-eval**. Sur ce poste **CPU sans GPU**, chaque requête
 dépasse alors le timeout configuré (`OLLAMA_TIMEOUT_S=240`) → l'inférence ne
 revient pas à temps.
 
-**Décision dev** : le modèle actif reste **`qwen2.5-coder:3b`** (latence
-acceptable, corrige déjà les hallucinations grâce au prompt durci côté
-`ai-service`). Activer `qualitos-sql` **uniquement avec GPU** ou plus de marge
-CPU (ou en relevant `OLLAMA_TIMEOUT_S` et le read-timeout de `AiGatewayClient`
-si une latence élevée par requête est acceptable).
+**Décision dev** : activer `qualitos-sql` **uniquement avec GPU** ou plus de
+marge CPU (ou en relevant `OLLAMA_TIMEOUT_S` et le read-timeout de
+`AiGatewayClient`). Sur CPU, on utilise la **variante allégée** ci-dessous.
 
-Pistes pour réduire la latence sans GPU : alléger le `SYSTEM` (2-3 exemples),
-ou retirer le prompt système redondant côté `ai-service` quand ce modèle est
-actif (le `SYSTEM` baké suffit alors).
+## Variante allégée `qualitos-sql-lite` (modèle dev ACTIF)
+
+`Modelfile.lite` : même base, mais `SYSTEM` minimal = **4 exemples few-shot** +
+2 garde-fous (le schéma vient déjà du prompt d'`ai-service`, inutile de le
+répéter). Build : `ollama create qualitos-sql-lite -f Modelfile.lite`.
+
+Latences **mesurées** (CPU, ce poste, 2026-05-28) :
+
+| | à froid (1ʳᵉ requête) | à chaud |
+| --- | --- | --- |
+| `qualitos-sql-lite` | ~302 s | **~97 s** (< timeout 240 s ✅) |
+
+SQL correct sur les cas couverts (CAPA par statut/criticité, 5S par zone, RPN
+FMEA). C'est le **modèle dev actif** (`OLLAMA_MODEL=qualitos-sql-lite`), à
+condition de **préchauffer** après chaque redémarrage (`OLLAMA_KEEP_ALIVE=-1`
+garde ensuite le modèle en mémoire ; voir runbook).
+
+> Ne pas empiler plusieurs modèles épinglés (`keep_alive=-1`) : ils se disputent
+> le CPU. `ollama stop <model>` pour décharger les inutilisés.

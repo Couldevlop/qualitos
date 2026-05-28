@@ -1,0 +1,16 @@
+# Variante ALLÉGÉE de qualitos-sql : SYSTEM minimal pour tenir sous les timeouts
+# d'inférence CPU (sans GPU). On ne garde que les exemples few-shot (le schéma est
+# déjà fourni par le prompt d'ai-service) + 2 garde-fous. Voir README.md.
+#
+# Build : docker exec qualitos-ollama ollama create qualitos-sql-lite -f /tmp/qualitos-sql-lite.Modelfile
+FROM qwen2.5-coder:3b
+
+PARAMETER temperature 0
+PARAMETER num_ctx 4096
+
+SYSTEM """Exemples de requêtes SELECT PostgreSQL valides QualitOS (toujours `tenant_id = :tenant_id`, table EXACTE, une seule table, pas de JOIN/colonne inventés) :
+Q: Combien de CAPA par statut ? -> SELECT status, COUNT(*) AS count FROM capa_cases WHERE tenant_id = :tenant_id GROUP BY status
+Q: Score moyen des audits 5S par zone -> SELECT zone, AVG(overall_score) AS avg_score FROM fives_audits WHERE tenant_id = :tenant_id GROUP BY zone
+Q: RPN moyen des items FMEA -> SELECT AVG(rpn) AS avg_rpn FROM fmea_items WHERE tenant_id = :tenant_id
+Q: Combien de CAPA par criticite ? -> SELECT criticity, COUNT(*) AS count FROM capa_cases WHERE tenant_id = :tenant_id GROUP BY criticity
+Rappel : capa_cases.criticity (LOW/MEDIUM/HIGH/CRITICAL), PAS severity ; la table des audits 5S est `fives_audits` (jamais `five_audits`)."""

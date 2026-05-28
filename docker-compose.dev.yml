@@ -174,12 +174,12 @@ services:
       # Dev only : appel serveur-à-serveur depuis api-quality-engine via en-tête
       # X-Dev-Claims (bypass JWT). En prod : OIDC client_credentials aud=qualitos-ai (ADR 0014).
       QOS_DEV_AUTH: "1"
-      # Modèle dev actif : qwen2.5-coder:3b (code-tuned) — bon text-to-SQL, latence CPU
-      # acceptable. Le modèle spécialisé `qualitos-sql` (few-shot baké, cf.
-      # apps/ai-service/models/qualitos-sql) est meilleur mais son gros prompt SYSTEM
-      # dépasse les timeouts sur CPU sans GPU → l'activer (OLLAMA_MODEL=qualitos-sql)
-      # uniquement avec du GPU ou plus de marge CPU. §7.3, ADR 0014.
-      OLLAMA_MODEL: qwen2.5-coder:3b
+      # Modèle dev actif : qualitos-sql-lite (spécialisé QualitOS, few-shot léger
+      # dérivé de qwen2.5-coder:3b, cf. apps/ai-service/models/qualitos-sql/Modelfile.lite).
+      # Latence CPU mesurée : ~97s à chaud (< timeout 240s) ; SQL correct sur les cas
+      # courants. La variante riche `qualitos-sql` (7 exemples) est meilleure mais
+      # dépasse les timeouts sur CPU sans GPU. §7.3, ADR 0014.
+      OLLAMA_MODEL: qualitos-sql-lite
       OLLAMA_BASE_URL: http://ollama:11434
       OLLAMA_TIMEOUT_S: "240"
       KEYCLOAK_ISSUER: http://keycloak:8080/realms/qualitos
