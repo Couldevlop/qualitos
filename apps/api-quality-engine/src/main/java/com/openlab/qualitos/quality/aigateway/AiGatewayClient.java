@@ -38,7 +38,7 @@ public class AiGatewayClient {
         // peut dépasser 60 s (cf. ADR 0014). Doit rester > OLLAMA_TIMEOUT_S côté ai-service.
         SimpleClientHttpRequestFactory rf = new SimpleClientHttpRequestFactory();
         rf.setConnectTimeout(5_000);
-        rf.setReadTimeout(130_000);
+        rf.setReadTimeout(260_000);
         this.client = RestClient.builder().baseUrl(baseUrl).requestFactory(rf).build();
     }
 

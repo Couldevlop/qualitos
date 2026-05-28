@@ -174,10 +174,11 @@ services:
       # Dev only : appel serveur-à-serveur depuis api-quality-engine via en-tête
       # X-Dev-Claims (bypass JWT). En prod : OIDC client_credentials aud=qualitos-ai (ADR 0014).
       QOS_DEV_AUTH: "1"
-      # Petit modèle local pour tenir dans le timeout CPU (30 s) — cf. ADR 0014.
-      OLLAMA_MODEL: llama3.2:1b
+      # Modèle local plus capable (meilleur suivi d'instructions + multilingue) — cf. ADR 0014.
+      # Sur CPU il est plus lent : timeout relevé en conséquence.
+      OLLAMA_MODEL: qwen2.5:3b
       OLLAMA_BASE_URL: http://ollama:11434
-      OLLAMA_TIMEOUT_S: "120"
+      OLLAMA_TIMEOUT_S: "240"
       KEYCLOAK_ISSUER: http://keycloak:8080/realms/qualitos
       KEYCLOAK_AUDIENCE: qualitos-ai
       QDRANT_URL: http://qdrant:6333
