@@ -7,7 +7,8 @@ import { StandardsService } from '../../standards.service';
 import {
   AdoptionResponse, AiDraftResponse, AlignmentReport, AuditBlancReport, CertificationBlancReport,
   DocumentTemplate, DossierResponse, EvidenceResponse, EvidenceType, ProcessTemplate,
-  RoadmapStageResponse, RoadmapSummary, StageStatus, StandardDetail, StandardRevision
+  RoadmapStageResponse, RoadmapSummary, StageStatus, StandardDetail, StandardRevision,
+  StoryboardResponse
 } from '../../standards.types';
 
 @Component({
@@ -31,6 +32,9 @@ export class StandardsDetailComponent implements OnInit {
 
   dossier?: DossierResponse;
   generatingDossier = false;
+
+  storyboard?: StoryboardResponse;
+  generatingStoryboard = false;
 
   certBlanc?: CertificationBlancReport;
   runningCertBlanc = false;
@@ -177,6 +181,20 @@ export class StandardsDetailComponent implements OnInit {
       error: () => {
         this.generatingDossier = false;
         this.snack.open('Échec de la génération du dossier', 'Fermer', { duration: 3000 });
+      }
+    });
+  }
+
+  generateStoryboard(): void {
+    this.generatingStoryboard = true;
+    this.svc.generateStoryboard(this.adoptionId).subscribe({
+      next: s => {
+        this.storyboard = s;
+        this.generatingStoryboard = false;
+      },
+      error: () => {
+        this.generatingStoryboard = false;
+        this.snack.open('Récit IA indisponible (ai-service / Ollama)', 'Fermer', { duration: 3500 });
       }
     });
   }

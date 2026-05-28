@@ -39,6 +39,7 @@ class StandardsControllerTest {
     @MockitoBean CertificationDossierService dossierService;
     @MockitoBean CertificationBlancService certificationBlancService;
     @MockitoBean AiDraftService aiDraftService;
+    @MockitoBean StoryboardService storyboardService;
     ObjectMapper om;
 
     static final UUID STD = UUID.randomUUID();
@@ -420,6 +421,16 @@ class StandardsControllerTest {
         when(service.listDocumentTemplates(STD)).thenThrow(new StandardNotFoundException(STD));
         mockMvc.perform(get("/api/v1/standards/{id}/document-templates", STD))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test @WithMockUser
+    void storyboard_returns200() throws Exception {
+        when(storyboardService.generate(ADO)).thenReturn(new StandardsDto.StoryboardResponse(
+                ADO, "iso-9001", "Le projet ISO 9001 est à 92 % de préparation…", "ollama", Instant.now()));
+        mockMvc.perform(post("/api/v1/standards/adoptions/{id}/storyboard", ADO).with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.provider").value("ollama"))
+                .andExpect(jsonPath("$.narrative").isNotEmpty());
     }
 
     // helpers

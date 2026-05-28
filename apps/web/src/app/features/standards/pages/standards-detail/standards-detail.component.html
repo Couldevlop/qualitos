@@ -376,6 +376,23 @@
             <mat-icon>download</mat-icon> Télécharger (HTML imprimable)
           </button>
         </mat-card>
+
+        <div class="storyboard-block">
+          <p class="muted">Récit narratif IA de l'état d'avancement (synthèse pour revue de direction, §7.4).</p>
+          <button mat-stroked-button color="primary" (click)="generateStoryboard()"
+                  [disabled]="generatingStoryboard">
+            <mat-icon>auto_stories</mat-icon>
+            {{ generatingStoryboard ? 'Rédaction…' : 'Générer le récit (IA)' }}
+          </button>
+          <mat-card class="storyboard-card" *ngIf="storyboard as s">
+            <div class="sb-head">
+              <mat-icon>auto_awesome</mat-icon>
+              <span class="sb-title">Récit — {{ s.standardCode | uppercase }}</span>
+              <span class="muted small">généré par {{ s.provider }}</span>
+            </div>
+            <p class="sb-text">{{ s.narrative }}</p>
+          </mat-card>
+        </div>
       </div>
     </mat-tab>
   </mat-tab-group>

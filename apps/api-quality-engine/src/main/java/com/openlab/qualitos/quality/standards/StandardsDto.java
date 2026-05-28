@@ -333,6 +333,17 @@ public final class StandardsDto {
             String disclaimer
     ) {}
 
+    // ---- Storyboard IA (§7.4) ----
+
+    /** Récit narratif IA de l'état d'avancement de la certification (synthèse des chiffres). */
+    public record StoryboardResponse(
+            UUID tenantStandardId,
+            String standardCode,
+            String narrative,
+            String provider,
+            Instant generatedAt
+    ) {}
+
     // ---- Bibliothèque documentaire (§8.4 onglet 3) ----
 
     public record DocumentTemplateResponse(
