@@ -1,7 +1,7 @@
 # CBOM — Cryptographic Bill of Materials
 
 > Cf. CLAUDE.md §11.1, §11.4, §21 (risque migration PQ) ; ADR 0011, ADR 0012.
-> Module : `libs/security-commons-crypto`. Dernière mise à jour : 2026-05-26.
+> Module : `libs/security-commons-crypto`. Dernière mise à jour : 2026-05-28 (WS5).
 
 Le CBOM recense les algorithmes cryptographiques utilisés, leur statut FIPS, et le
 plan de migration post-quantique. La **crypto-agility** (suites nommées + SPI)
@@ -34,7 +34,7 @@ permet de changer un algorithme sans toucher aux consommateurs.
 
 | Algorithme | Standard | Type | Statut |
 | --- | --- | --- | --- |
-| X25519 | RFC 7748 | classique | companion hybride TLS (WS5, différé) |
+| X25519 | RFC 7748 | classique | companion hybride TLS `X25519MLKEM768` (WS5, spécifié — ADR 0015) ; repli clients non-PQ |
 | ML-KEM-512/768/1024 | FIPS 203 | post-quantique | **ML-KEM-768 actif** |
 
 ### Symétrique / hachage
@@ -74,5 +74,5 @@ d'une seule primitive (IETF draft-ietf-tls-hybrid-design).
 | --- | --- |
 | Court terme | bcprov-jdk18on en dev — **marqué non-FIPS ici**. |
 | Avant prod régulée | bascule `bc-fips`, revalidation des suites, mise à jour de ce CBOM. |
-| WS5 (différé) | TLS hybride X25519+ML-KEM-768 au niveau gateway. |
+| WS5 (spécifié — ADR 0015) | TLS hybride `X25519MLKEM768` : Mode A ingress (Envoy/Istio+OQS ou nginx+oqs-provider) ou Mode B app-level (BC-JSSE). Config de réf. `infra/tls/`. Handshake à valider en CI/infra. |
 | Continu | suivre les avis NIST/ANSSI ; déprécier `legacy-classical` dès que possible. |
