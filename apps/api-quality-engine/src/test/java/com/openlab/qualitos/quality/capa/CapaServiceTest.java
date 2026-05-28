@@ -68,6 +68,52 @@ class CapaServiceTest {
                         "Renforcer le plan de contrôle réception");
     }
 
+    @Test
+    void suggestActions_preventive_withDescription_skipsShort_splitsLong_andCaps() {
+        UUID id = UUID.randomUUID();
+        CapaCase c = new CapaCase();
+        c.setTenantId(TENANT);
+        c.setTitle("Risque de dérive du procédé de collage");
+        c.setDescription("Contexte détaillé non vide");   // branche description != null && !blank
+        c.setType(CapaType.PREVENTIVE);                    // branche PREVENTIVE
+        c.setCriticity(CapaCriticity.LOW);
+        c.setStatus(CapaStatus.OPEN);
+        when(caseRepo.findByIdAndTenantId(id, TENANT)).thenReturn(Optional.of(c));
+
+        String longLine = "Mettre en place une surveillance renforcée " + "x".repeat(300);
+        StringBuilder sb = new StringBuilder();
+        sb.append("ok\n");                                 // < 5 caractères -> ignorée
+        sb.append(longLine).append("\n");                  // > 255 -> title tronqué, description = ligne complète
+        for (int i = 0; i < 10; i++) {                     // dépasse le plafond (8)
+            sb.append("Action préventive numéro ").append(i).append("\n");
+        }
+        when(ai.complete(any(), any(), anyInt()))
+                .thenReturn(new AiCompletionResult(sb.toString(), "ollama", 90, 1100));
+
+        List<CapaDto.SuggestedAction> res = service.suggestActions(id);
+
+        assertThat(res).hasSize(8);                        // plafonné
+        assertThat(res.get(0).title()).hasSize(255);       // ligne longue tronquée
+        assertThat(res.get(0).description()).isEqualTo(longLine);
+        assertThat(res).noneMatch(a -> a.title().equals("ok"));
+    }
+
+    @Test
+    void suggestActions_nullLlmText_returnsEmpty() {
+        UUID id = UUID.randomUUID();
+        CapaCase c = new CapaCase();
+        c.setTenantId(TENANT);
+        c.setTitle("Pb");
+        c.setType(CapaType.CORRECTIVE);
+        c.setCriticity(CapaCriticity.MEDIUM);
+        c.setStatus(CapaStatus.OPEN);
+        when(caseRepo.findByIdAndTenantId(id, TENANT)).thenReturn(Optional.of(c));
+        when(ai.complete(any(), any(), anyInt()))
+                .thenReturn(new AiCompletionResult(null, "ollama", 0, 10));
+
+        assertThat(service.suggestActions(id)).isEmpty();
+    }
+
     // --- create ---
     @Test
     void create_success() {

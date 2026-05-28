@@ -29,17 +29,18 @@ from domain.model.errors import UnsafeSqlError
 from domain.model.nlq import GeneratedSql
 from domain.port.sql_validator import SqlValidator
 
-# Allow-listed tables (snake_case). Keep narrow.
+# Allow-listed tables (snake_case) — alignées sur le schéma réel de qualitos_quality.
+# Le rôle PG read-only n'a SELECT que sur ces tables (moindre privilège, OWASP A01).
 ALLOWED_TABLES: frozenset[str] = frozenset(
     {
         "pdca_cycles",
-        "non_conformities",
-        "capas",
-        "audits",
-        "five_s_audits",
+        "capa_cases",
+        "fives_audits",
+        "ishikawa_diagrams",
         "fmea_items",
         "suppliers",
-        "kpis",
+        "kpi_definitions",
+        "kpi_measurements",
     }
 )
 
@@ -93,6 +94,12 @@ _FORBIDDEN_TEXT_SUBSTRINGS: tuple[str, ...] = (
 
 _MAX_LIMIT = 10_000
 
+# Opérateurs logiques/de comparaison parfois remontés comme « fonctions » par sqlglot.
+# Non pertinents pour l'allow-list de fonctions (ce ne sont pas des appels exfiltrants).
+_OPERATOR_KEYWORDS: frozenset[str] = frozenset(
+    {"and", "or", "not", "in", "like", "ilike", "between", "is", "exists"}
+)
+
 
 class SqlglotValidator(SqlValidator):
     """The sole gatekeeper."""
@@ -137,11 +144,16 @@ class SqlglotValidator(SqlValidator):
             if name not in ALLOWED_TABLES:
                 raise UnsafeSqlError(f"table not in allow-list: {name}")
 
-        # Layer 4 â€” walk functions.
+        # Layer 4 — walk functions.
+        # Note : selon la version de sqlglot, find_all(exp.Func) peut remonter des
+        # opérateurs logiques/de comparaison (and, or, not, in, like…). Ce ne sont
+        # pas des fonctions d'exfiltration — la sûreté repose sur l'allow-list de
+        # TABLES + SELECT-only + rôle PG read-only. On les ignore donc ici, tout en
+        # continuant à imposer l'allow-list sur les VRAIES fonctions (OWASP A03/LLM02).
         funcs_used: set[str] = set()
         for func in stmt.find_all(exp.Func):
             fname = (func.sql_name() or func.name or "").lower()
-            if not fname:
+            if not fname or fname in _OPERATOR_KEYWORDS:
                 continue
             if fname not in ALLOWED_FUNCS:
                 raise UnsafeSqlError(f"function not in allow-list: {fname}")

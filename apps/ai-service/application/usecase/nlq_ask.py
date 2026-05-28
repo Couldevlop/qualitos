@@ -35,20 +35,26 @@ from domain.port.sql_validator import SqlValidator
 from domain.service.chart_inferrer import ChartInferrer
 from domain.service.narrative_builder import NarrativeBuilder
 
-# Schema hint kept narrow on purpose â€” only KPI-relevant tables exposed.
+# Schema hint kept narrow on purpose — only KPI-relevant tables, aligned on the
+# real qualitos_quality schema. Enum values are given to guide WHERE clauses.
 _SCHEMA_HINT = """
-Tables you may query (snake_case columns, tenant_id is mandatory in WHERE):
+Tables you may query (snake_case columns; tenant_id is mandatory in WHERE):
 
-  pdca_cycles(id, tenant_id, title, status, created_at, target_kpi)
-  non_conformities(id, tenant_id, severity, status, created_at, closed_at)
-  capas(id, tenant_id, priority, status, created_at, closed_at, criticality)
-  audits(id, tenant_id, type, status, scheduled_at, completed_at, score)
-  five_s_audits(id, tenant_id, area_id, score, audited_at)
-  fmea_items(id, tenant_id, rpn, status)
-  suppliers(id, tenant_id, name, quality_score)
-  kpis(id, tenant_id, kpi_id, value, period, computed_at)
+  pdca_cycles(id, tenant_id, title, status, owner_id, created_at, completed_at)
+     status in (PLAN, DO, CHECK, ACT, COMPLETED)
+  capa_cases(id, tenant_id, title, type, criticity, status, source_type, due_date, resolved_at, closed_at, created_at)
+     type in (CORRECTIVE, PREVENTIVE); criticity in (LOW, MEDIUM, HIGH, CRITICAL);
+     status in (OPEN, IN_PROGRESS, RESOLVED, CLOSED, REJECTED);
+     source_type in (NON_CONFORMITY, AUDIT, COMPLAINT, INTERNAL, IOT_ALERT, OTHER)
+  fives_audits(id, tenant_id, zone, status, overall_score, scheduled_at, completed_at, created_at)
+  ishikawa_diagrams(id, tenant_id, problem_statement, mode, status, created_at)
+  fmea_items(id, tenant_id, rpn, severity, occurrence, detection, created_at)
+  suppliers(id, tenant_id, name, supplier_type, status, score, created_at)
+  kpi_definitions(id, tenant_id, code, name, category, unit, target_value, status)
+  kpi_measurements(id, tenant_id, kpi_id, period_start, period_end, value)
 
 Allowed aggregations: sum, avg, count, min, max, date_trunc, percentile_cont.
+A non-conformity is a capa_cases row with source_type = 'NON_CONFORMITY'.
 """.strip()
 
 _SQL_SYSTEM_PROMPT = (

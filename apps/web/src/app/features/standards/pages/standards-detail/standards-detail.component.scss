@@ -199,6 +199,18 @@
 
 /* Dossier */
 .dossier-card { margin-top: 20px; padding: 18px; max-width: 720px; }
+
+/* Storyboard IA */
+.storyboard-block { margin-top: 24px; border-top: 1px solid #eceff1; padding-top: 18px; }
+.storyboard-card {
+  margin-top: 14px; padding: 18px; max-width: 720px;
+  border: 1px solid #c5cae9; background: linear-gradient(180deg,#fbfcff,#f5f3fd);
+  .sb-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+    mat-icon { color: #5c35b8; }
+    .sb-title { font-weight: 700; font-size: 15px; }
+  }
+  .sb-text { font-size: 14px; line-height: 1.6; color: #37474f; margin: 0; }
+}
 .dossier-card h3 { margin: 0 0 8px; font-size: 15px; }
 .hash { display: flex; align-items: center; gap: 10px; font-size: 13px; margin: 6px 0; }
 .hash span { width: 80px; color: #78909c; font-weight: 600; }
