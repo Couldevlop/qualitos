@@ -55,6 +55,14 @@ Tables you may query (snake_case columns; tenant_id is mandatory in WHERE):
 
 Allowed aggregations: sum, avg, count, min, max, date_trunc, percentile_cont.
 A non-conformity is a capa_cases row with source_type = 'NON_CONFORMITY'.
+
+IMPORTANT: use table names EXACTLY as written above. Do NOT add or drop a
+trailing 's' (the 5S audits table is `fives_audits`, never `five_audits`).
+Qualify columns with the SAME table name you put in the FROM clause.
+Prefer a SINGLE table: do NOT use JOIN unless the question truly needs columns
+from two tables. Most questions are one table + GROUP BY (e.g. "score moyen des
+audits 5S par zone" -> SELECT zone, AVG(overall_score) FROM fives_audits
+WHERE tenant_id = :tenant_id GROUP BY zone). Never invent columns or foreign keys.
 """.strip()
 
 _SQL_SYSTEM_PROMPT = (

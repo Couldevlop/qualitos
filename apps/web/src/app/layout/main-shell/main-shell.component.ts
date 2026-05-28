@@ -32,7 +32,8 @@ export class MainShellComponent implements OnInit {
       items: [
         { label: 'Tableau de bord', route: '/dashboard', icon: 'dashboard' },
         { label: 'Accueil',         route: '/home',      icon: 'home' },
-        { label: 'KPI catalog',     route: '/kpis',      icon: 'monitoring' }
+        { label: 'KPI catalog',     route: '/kpis',      icon: 'monitoring' },
+        { label: 'Assistant NLQ',   route: '/nlq',       icon: 'forum' }
       ]
     },
     {

@@ -62,6 +62,11 @@ ALLOWED_FUNCS: frozenset[str] = frozenset(
         "coalesce",
         "round",
         "extract",
+        # Conversions/scalaires sûrs : pas d'effet de bord ni d'exfiltration.
+        # La sûreté repose de toute façon sur l'allow-list de TABLES + rôle PG read-only.
+        "cast",
+        "nullif",
+        "abs",
     }
 )
 

@@ -1,0 +1,113 @@
+<div class="nlq-page">
+  <header class="page-header">
+    <div class="title-row">
+      <mat-icon class="hero-icon">forum</mat-icon>
+      <div>
+        <h1>Assistant — Question en langage naturel</h1>
+        <p class="subtitle">
+          Posez une question sur vos données qualité. L'IA la traduit en requête
+          <strong>sécurisée</strong> (lecture seule, filtrée par tenant) et vous répond.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <mat-card class="ask-card" appearance="outlined">
+    <form [formGroup]="form" (ngSubmit)="ask()">
+      <mat-form-field appearance="outline" class="ask-field">
+        <mat-label>Votre question</mat-label>
+        <input matInput formControlName="question" maxlength="500"
+               placeholder="Ex : Combien de CAPA par statut ?"
+               (keydown.enter)="$event.preventDefault(); ask()" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <button mat-flat-button color="primary" type="submit"
+              [disabled]="form.invalid || loading">
+        <mat-icon>auto_awesome</mat-icon>
+        Interroger
+      </button>
+    </form>
+
+    <div class="examples">
+      <span class="examples-label">Exemples :</span>
+      <mat-chip-set>
+        <mat-chip *ngFor="let ex of examples" (click)="ask(ex)" [disabled]="loading">{{ ex }}</mat-chip>
+      </mat-chip-set>
+    </div>
+  </mat-card>
+
+  <div class="loading" *ngIf="loading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <p class="muted">Traduction en requête sécurisée et exécution…</p>
+  </div>
+
+  <div class="error" *ngIf="error && !loading">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <section class="result" *ngIf="result && !loading">
+    <!-- Récit IA -->
+    <mat-card class="narrative-card" appearance="outlined">
+      <div class="narr-head">
+        <mat-icon>insights</mat-icon>
+        <span>Réponse</span>
+        <span class="spacer"></span>
+        <span class="confidence" [ngClass]="confidenceClass()">
+          Confiance {{ confidencePct() }} %
+        </span>
+      </div>
+      <p class="narrative">{{ result.narrative }}</p>
+    </mat-card>
+
+    <!-- Résultats -->
+    <mat-card class="table-card" appearance="outlined" *ngIf="result.rows.length; else noRows">
+      <div class="table-head">
+        <span class="t-title">Résultats</span>
+        <span class="t-count">{{ result.rowCount }} ligne(s)</span>
+      </div>
+      <div class="table-wrap">
+        <table class="result-table">
+          <thead>
+            <tr>
+              <th *ngFor="let c of columns()">{{ c }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of result.rows">
+              <td *ngFor="let c of columns()" [class.num]="isNumericColumn(c)">
+                <ng-container *ngIf="isNumericColumn(c); else plainCell">
+                  <span class="bar-cell">
+                    <span class="bar" [style.width.%]="barPercent(row[c], c)"></span>
+                    <span class="bar-value">{{ cell(row[c]) }}</span>
+                  </span>
+                </ng-container>
+                <ng-template #plainCell>{{ cell(row[c]) }}</ng-template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </mat-card>
+    <ng-template #noRows>
+      <p class="empty">Aucune donnée ne correspond à cette question.</p>
+    </ng-template>
+
+    <!-- Transparence : SQL généré + métadonnées de sécurité -->
+    <div class="meta-row">
+      <span class="meta-chip secure" matTooltip="Filtre tenant_id appliqué automatiquement">
+        <mat-icon>verified_user</mat-icon>
+        {{ result.tenantFilterApplied ? 'Filtré par tenant' : 'Tenant non filtré' }}
+      </span>
+      <span class="meta-chip" *ngFor="let t of result.tablesUsed">
+        <mat-icon>table_chart</mat-icon> {{ t }}
+      </span>
+      <button mat-stroked-button type="button" class="sql-toggle" (click)="showSql = !showSql">
+        <mat-icon>{{ showSql ? 'expand_less' : 'code' }}</mat-icon>
+        {{ showSql ? 'Masquer le SQL' : 'Voir le SQL généré' }}
+      </button>
+    </div>
+
+    <pre class="sql" *ngIf="showSql">{{ result.sql }}</pre>
+  </section>
+</div>
