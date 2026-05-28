@@ -82,6 +82,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/kpis/kpis.module').then(m => m.KpisModule)
       },
       {
+        path: 'nlq',
+        loadChildren: () => import('./features/nlq/nlq.module').then(m => m.NlqModule)
+      },
+      {
         path: 'ropa',
         loadChildren: () => import('./features/ropa/ropa.module').then(m => m.RopaModule)
       },
