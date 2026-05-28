@@ -1,0 +1,24 @@
+server:
+  port: ${SERVER_PORT:8090}
+
+spring:
+  application:
+    name: blockchain-service
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+# Connexion Hyperledger Fabric — matériel MSP fourni par le test-network
+# (cf. infra/blockchain/README.md). Tout vient de l'environnement : aucun secret en clair.
+fabric:
+  peer-endpoint: ${FABRIC_PEER_ENDPOINT:localhost:7051}
+  peer-host-alias: ${FABRIC_PEER_HOST_ALIAS:peer0.org1.example.com}
+  tls-cert: ${FABRIC_TLS_CERT:}
+  msp-id: ${FABRIC_MSP_ID:Org1MSP}
+  cert: ${FABRIC_CERT:}
+  key: ${FABRIC_KEY:}
+  channel: ${FABRIC_CHANNEL:qualitos}
+  chaincode: ${FABRIC_CHAINCODE:qualitos-anchor}

@@ -1,7 +1,8 @@
 # ADR 0012 — Ancrage blockchain réel : reçus signés (Phase A) → Hyperledger Fabric (Phase B)
 
-- **Statut** : Accepté — Phase A validée (WS3). Phase B (Fabric, WS4) à rouvrir.
-- **Date** : 2026-05-26
+- **Statut** : Accepté — Phase A validée (WS3) ; Phase B (Fabric, WS4) **en cours**
+  (code livré : chaincode + adapter + service + infra ; E2E réseau Fabric live restant).
+- **Date** : 2026-05-26 (MAJ 2026-05-28)
 - **Owners** : @Couldevlop
 
 ## Contexte
@@ -94,6 +95,31 @@ sur l'infrastructure Fabric (lourde).
 - Idempotence du batch (re-run ne ré-ancre pas, `blockchainTxRef` déjà posé).
 - Isolation tenant : un reçu/événement d'un autre tenant → 404 (OWASP A01).
 - Phase B : test d'intégration Testcontainers contre un réseau Fabric de test.
+
+## Avancement Phase B — WS4 (2026-05-28)
+
+Livré (code revu, testable hors réseau Fabric) :
+
+- **Chaincode Go** `qualitos-anchor` (`infra/blockchain/chaincode/qualitos-anchor/`) :
+  `AnchorAudit(tenant, root, ts, n)` (idempotent, first-write) + `VerifyEvidence(tenant, root)`.
+  Clé composite `(objectType, tenantId, root)` → isolation tenant (OWASP A01). Hashes only (§11.3).
+- **`apps/blockchain-service`** (Spring Boot **autonome, hors réacteur** pour isoler les
+  deps Fabric/gRPC) : `FabricGatewayConfig` (mTLS depuis MSP env), `FabricAnchorService`
+  (propose→endorse→submitAsync pour capturer le txId), `POST /internal/v1/anchor` +
+  `GET /internal/v1/verify`. Dockerfile distroless.
+- **`FabricBlockchainAnchorAdapter`** (engine, `@Profile("fabric")` `@Primary`) → HTTP via
+  `FabricGatewayClient` ; **repli** automatique sur `SignedAnchorAdapter` (Phase A) si Fabric
+  indisponible → l'ancrage n'est jamais perdu. Aucune dep Fabric dans l'engine. Test unitaire OK.
+- **`infra/blockchain/README.md`** : bring-up via `fabric-samples/test-network`, déploiement
+  chaincode, variables MSP, activation du profil `fabric`.
+
+Décision de simplification vs plan initial : le **port `BlockchainAnchorPort` reste
+inchangé** (tenant + root) ; `blockchain-service` complète l'horodatage et `eventCount`
+défaut. Bascule par profil Spring `fabric` (défaut = `signed`/Phase A).
+
+Restant (env-bloqué ici) : déployer un réseau Fabric 2.5 réel, lancer `blockchain-service`
+contre lui, et exécuter le test d'intégration Testcontainers E2E ; router le chemin
+`verify` selon le préfixe `fabric:` vs id de reçu signé.
 
 ## Références
 
