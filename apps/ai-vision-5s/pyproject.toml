@@ -8,6 +8,15 @@ version = "0.1.0"
 description = "QualitOS Vision 5S — FastAPI service for 5S scoring from images."
 requires-python = ">=3.11"
 
+[project.optional-dependencies]
+# Real ONNX Runtime inference backend. Optional: without it the service falls
+# back to the deterministic stub (lazy/guarded imports in
+# app.infrastructure.onnx_backend). Pillow/numpy already ship as core deps.
+onnx = [
+    "onnxruntime==1.19.2",
+    "numpy>=1.26,<2",
+]
+
 [tool.pytest.ini_options]
 addopts = "-q --strict-markers --cov=app --cov-report=term-missing --cov-fail-under=85"
 testpaths = ["tests"]

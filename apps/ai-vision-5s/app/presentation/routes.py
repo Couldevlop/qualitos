@@ -11,8 +11,8 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 
 from app.application.use_cases import AnalyzeImageUseCase, ScoreImageUseCase
-from app.domain.analyzer import DeterministicStubBackend
 from app.infrastructure.auth import TenantContext, require_tenant_context
+from app.infrastructure.backend_factory import build_backend
 from app.infrastructure.image_safety import ImageRejected, sanitize
 from app.presentation.dtos import (
     AnalysisResponse,
@@ -29,7 +29,9 @@ router = APIRouter(prefix="/v1/vision/5s", tags=["vision-5s"])
 # Per-tenant quotas should be added in P5 once API Gateway is in place.
 limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])
 
-_backend = DeterministicStubBackend()
+# Composition root: pick ONNX backend if a model is configured & loadable,
+# otherwise fall back transparently to the deterministic stub.
+_backend = build_backend()
 _analyze_uc = AnalyzeImageUseCase(_backend)
 _score_uc = ScoreImageUseCase(_backend)
 
