@@ -22,7 +22,7 @@
 | **Chaincode Go** AnchorAudit/VerifyEvidence | RÉEL | `qualitos_anchor.go:37-80` GetState/PutState réels, clé composite tenant |
 | **Modules AI Act** aiconformity/aiincidents/aipmm | RÉEL (CRUD réglementaire) | workflows d'état ; **ce sont des modules de _gouvernance_ de l'IA (AI Act), pas des features prédictives** — pas d'appel LLM, et c'est normal |
 | **Vision 5S (YOLOv8)** | ~~STUB~~ → **RÉEL (ONNX + fallback)** | ✅ Résolu : `OnnxInferenceBackend` (vraie inférence si modèle fourni via `VISION5S_ONNX_MODEL_PATH`, sinon fallback stub). Aucun modèle entraîné commité. |
-| **IoT protocoles terrain** (OPC-UA/MQTT/HL7/LoRaWAN…) | ~~STUB~~ → **MQTT RÉEL** | ✅ Connecteur MQTT (Eclipse Paho v5) livré dans api-iot-hub (gating off par défaut). Reste STUB : OPC-UA, HL7 FHIR, LoRaWAN. |
+| **IoT protocoles terrain** (OPC-UA/MQTT/HL7/LoRaWAN…) | ~~STUB~~ → **MQTT + OPC-UA RÉELS** | ✅ Connecteurs MQTT (Paho v5) et OPC-UA (Milo 0.6.16) livrés dans api-iot-hub (gating off, tenant depuis registre device). Reste STUB : HL7 FHIR, LoRaWAN. |
 | **IoT Digital Twin / Shadow** | STUB | `twin_json` stocké mais **réhydraté vide** en lecture (`JpaDeviceRepository:86`, TODO P4) |
 | **Federated learning** (Flower) | SCAFFOLD | `opt_in_federated_client.py:27` retourne `samples_used=0` synthétique |
 | **IoT Stream rule engine → NC** | ~~SCAFFOLD~~ → **RÉEL (in-engine)** | ✅ Résolu (ADR 0016, V65) : détection dans `TelemetryIngestionService` → CAPA `IOT_ALERT` (seuils configurables `/api/v1/iot/thresholds`, anti-spam, tenant via JWT). Le chemin `api-iot-hub→/nc/from-iot` reste hors périmètre. |
@@ -51,7 +51,7 @@
 **P1 — profondeur des features phares**
 3. ~~**Chaîne capteur→NC cassée**~~ → ✅ **Résolu** (2026-05-29, ADR 0016) : détection de seuil in-engine ouvrant une CAPA `IOT_ALERT`, seuils configurables, anti-spam. Reste : enrichir §9.9 (lien FMEA, cycle PDCA auto).
 4. ~~**Vision 5S**~~ → ✅ **Résolu** : backend ONNX réel + fallback (aucun modèle entraîné commité ; reste à fournir/entraîner un `.onnx` 5S réel pour la prod).
-5. ~~**Connecteurs protocoles IoT**~~ → ✅ **MQTT livré** (Eclipse Paho v5, tenant résolu depuis le registre device). Reste : OPC-UA / HL7 FHIR / LoRaWAN.
+5. ~~**Connecteurs protocoles IoT**~~ → ✅ **MQTT + OPC-UA livrés** (Paho v5, Milo 0.6.16 ; tenant depuis le registre device). Reste : HL7 FHIR / LoRaWAN.
 
 **P2 — capacités ML annoncées absentes**
 6. **IA prédictive** : implémenter au moins 1-2 modèles réels (prédiction KPI, anomalies SPC) pour étayer « IA épine dorsale », ou recadrer §12.
@@ -60,4 +60,4 @@
 **P3 — hygiène**
 8. Digital Twin réhydraté vide (TODO P4).
 9. Garde-fous IA (rate-limit / circuit breaker / quotas budgétaires) non branchés sur le chemin LLM.
-10. Couverture front : ✅ **améliorée** — +24 specs services (67 → 183 tests). Reste : couches composant + ~16 services (AI-Act, itsm, ehs, home…).
+10. Couverture front : ✅ **fortement améliorée** — +35 specs services (67 → **271 tests**, tous les services métier couverts). Reste : couches composant (`*-list`/`*-view`) + `core/theme`.
