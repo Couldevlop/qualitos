@@ -73,6 +73,16 @@
             <version>1.2.5</version>
         </dependency>
 
+        <!-- OPC-UA ingestion connector (CLAUDE.md §9.4) — Eclipse Milo client (IEC 62541).
+             Activated only when qualitos.iot.opcua.enabled=true. Version 0.6.16 = latest of the
+             mature 0.6.x line; recent transitives (Netty 4.1.119, BouncyCastle 1.78.1) — no
+             known Critical/High CVEs at time of integration. -->
+        <dependency>
+            <groupId>org.eclipse.milo</groupId>
+            <artifactId>sdk-client</artifactId>
+            <version>0.6.16</version>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
