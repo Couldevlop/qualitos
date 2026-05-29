@@ -138,6 +138,10 @@ class IngestTelemetryUseCaseTest {
     @Override public Optional<Device> findByCode(UUID t, String c) {
       return byId.values().stream().filter(d -> d.tenantId().equals(t) && d.code().equals(c)).findFirst();
     }
+    @Override public Optional<Device> findUniqueByCode(String c) {
+      var matches = byId.values().stream().filter(d -> d.code().equals(c)).toList();
+      return matches.size() == 1 ? Optional.of(matches.get(0)) : Optional.empty();
+    }
     @Override public List<Device> findAllByTenant(UUID t) {
       return byId.values().stream().filter(d -> d.tenantId().equals(t)).toList();
     }

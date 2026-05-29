@@ -40,6 +40,16 @@ public class JpaDeviceRepository implements DeviceRepository {
   }
 
   @Override
+  public Optional<Device> findUniqueByCode(String code) {
+    List<DeviceEntity> matches = jpa.findByCode(code);
+    // Fail-closed on cross-tenant ambiguity: never guess the tenant.
+    if (matches.size() != 1) {
+      return Optional.empty();
+    }
+    return Optional.of(toDomain(matches.get(0)));
+  }
+
+  @Override
   public List<Device> findAllByTenant(UUID tenantId) {
     return jpa.findAllByTenantId(tenantId).stream().map(this::toDomain).toList();
   }
