@@ -1,6 +1,5 @@
 package com.openlab.qualitos.blockchain.anchor;
 
-import org.hyperledger.fabric.client.CommitException;
 import org.hyperledger.fabric.client.Contract;
 import org.hyperledger.fabric.client.GatewayException;
 import org.hyperledger.fabric.client.Status;
@@ -47,7 +46,7 @@ public class FabricAnchorService {
             }
             log.info("[fabric] anchored tenant={} root={} → tx={}", tenantId, merkleRoot, txId);
             return new AnchorResult(txId, new String(result, StandardCharsets.UTF_8));
-        } catch (GatewayException | CommitException e) {
+        } catch (GatewayException e) {
             throw new FabricInvocationException("ancrage Fabric échoué : " + e.getMessage(), e);
         }
     }
