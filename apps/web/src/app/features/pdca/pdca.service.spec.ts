@@ -2,12 +2,18 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
+import { environment } from '../../../environments/environment';
 import { PdcaService } from './pdca.service';
 
 describe('PdcaService (mock mode)', () => {
   let service: PdcaService;
+  let prevMock: boolean;
 
   beforeEach(() => {
+    // Ce spec teste le chemin mock : on force le flag (indépendant du défaut
+    // d'environment.ts, qui peut être basculé en oidc/no-mock pour la démo).
+    prevMock = environment.useMockApi;
+    environment.useMockApi = true;
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
@@ -16,6 +22,8 @@ describe('PdcaService (mock mode)', () => {
     });
     service = TestBed.inject(PdcaService);
   });
+
+  afterEach(() => { environment.useMockApi = prevMock; });
 
   it('returns demo cycles', (done) => {
     service.listCycles().subscribe(page => {
