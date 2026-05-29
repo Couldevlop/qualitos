@@ -8,7 +8,7 @@ import {
   AdoptionResponse, AdoptionsPage, AdoptRequest, AiDraftResponse, AlignmentReport,
   AuditBlancReport, CertificationBlancReport, DocumentTemplate, DossierResponse,
   EvidenceResponse, LinkEvidenceRequest, ProcessTemplate, RoadmapSummary, StandardDetail,
-  StandardRevision, StandardSummary, StandardsPage, UpdateStageRequest
+  StandardRevision, StandardSummary, StandardsPage, StoryboardResponse, UpdateStageRequest
 } from './standards.types';
 
 @Injectable({ providedIn: 'root' })
@@ -94,6 +94,12 @@ export class StandardsService {
   runCertificationBlanc(id: string): Observable<CertificationBlancReport> {
     return this.http.post<CertificationBlancReport>(
       `${this.baseEndpoint}/adoptions/${id}/certification-blanc`, {});
+  }
+
+  /** Récit narratif IA de l'état d'avancement (§7.4). */
+  generateStoryboard(id: string): Observable<StoryboardResponse> {
+    return this.http.post<StoryboardResponse>(
+      `${this.baseEndpoint}/adoptions/${id}/storyboard`, {});
   }
 
   // ---- Catalogue : bibliothèque / processus / veille (§8.4, par standardId) ----

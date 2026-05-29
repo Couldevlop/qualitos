@@ -127,6 +127,15 @@ export interface DossierResponse {
   evidenceCount: number; htmlContent: string;
 }
 
+// ---- Storyboard IA (§7.4) ----
+export interface StoryboardResponse {
+  tenantStandardId: string;
+  standardCode: string;
+  narrative: string;
+  provider: string;
+  generatedAt: string;
+}
+
 // ---- Preuves (§8.4 onglet 6) ----
 export type EvidenceType =
   | 'DOCUMENT' | 'AUDIT' | 'CAPA' | 'PDCA_CYCLE' | 'ISHIKAWA' | 'FIVES_AUDIT'

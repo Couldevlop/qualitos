@@ -1,0 +1,130 @@
+<div class="nlq-page">
+  <header class="page-header">
+    <div class="title-row">
+      <mat-icon class="hero-icon" aria-hidden="true">forum</mat-icon>
+      <div>
+        <h1>Assistant — Question en langage naturel</h1>
+        <p class="subtitle">
+          Posez une question sur vos données qualité. L'IA la traduit en requête
+          <strong>sécurisée</strong> (lecture seule, filtrée par tenant) et vous répond.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <mat-card class="ask-card" appearance="outlined">
+    <form [formGroup]="form" (ngSubmit)="ask()" role="search" aria-label="Question en langage naturel">
+      <mat-form-field appearance="outline" class="ask-field">
+        <mat-label>Votre question</mat-label>
+        <input matInput formControlName="question" maxlength="500"
+               aria-label="Votre question en langage naturel"
+               placeholder="Ex : Combien de CAPA par statut ?"
+               (keydown.enter)="$event.preventDefault(); ask()" />
+        <mat-icon matSuffix aria-hidden="true">search</mat-icon>
+      </mat-form-field>
+      <button mat-flat-button color="primary" type="submit"
+              [disabled]="form.invalid || loading">
+        <mat-icon aria-hidden="true">auto_awesome</mat-icon>
+        Interroger
+      </button>
+    </form>
+
+    <div class="examples">
+      <span class="examples-label" id="nlq-examples-label">Exemples :</span>
+      <mat-chip-set role="list" aria-labelledby="nlq-examples-label">
+        <mat-chip *ngFor="let ex of examples"
+                  role="button"
+                  [attr.tabindex]="loading ? -1 : 0"
+                  [attr.aria-disabled]="loading"
+                  [attr.aria-label]="'Utiliser l\'exemple : ' + ex"
+                  (click)="ask(ex)"
+                  (keydown.enter)="ask(ex)"
+                  (keydown.space)="$event.preventDefault(); ask(ex)">{{ ex }}</mat-chip>
+      </mat-chip-set>
+    </div>
+  </mat-card>
+
+  <div class="loading" *ngIf="loading" role="status" aria-live="polite">
+    <mat-progress-bar mode="indeterminate" aria-label="Traitement en cours"></mat-progress-bar>
+    <p class="muted">Traduction en requête sécurisée et exécution…</p>
+  </div>
+
+  <div class="error" *ngIf="error && !loading" role="alert">
+    <mat-icon aria-hidden="true">error_outline</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <section class="result" *ngIf="result && !loading"
+           aria-live="polite" aria-label="Résultats de la requête">
+    <!-- Récit IA -->
+    <mat-card class="narrative-card" appearance="outlined">
+      <div class="narr-head">
+        <mat-icon aria-hidden="true">insights</mat-icon>
+        <span>Réponse</span>
+        <span class="spacer"></span>
+        <span class="confidence" [ngClass]="confidenceClass()"
+              [attr.aria-label]="'Indice de confiance : ' + confidencePct() + ' pour cent'">
+          Confiance {{ confidencePct() }} %
+        </span>
+      </div>
+      <p class="narrative">{{ result.narrative }}</p>
+    </mat-card>
+
+    <!-- Résultats -->
+    <mat-card class="table-card" appearance="outlined" *ngIf="result.rows.length; else noRows">
+      <div class="table-head">
+        <span class="t-title">Résultats</span>
+        <span class="t-count">{{ result.rowCount }} ligne(s)</span>
+      </div>
+      <div class="table-wrap">
+        <table class="result-table">
+          <caption class="sr-only">Résultats de la requête : {{ result.rowCount }} ligne(s)</caption>
+          <thead>
+            <tr>
+              <th *ngFor="let c of columns()" scope="col">{{ c }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of result.rows">
+              <td *ngFor="let c of columns()" [class.num]="isNumericColumn(c)">
+                <ng-container *ngIf="isNumericColumn(c); else plainCell">
+                  <span class="bar-cell">
+                    <span class="bar" [style.width.%]="barPercent(row[c], c)" aria-hidden="true"></span>
+                    <span class="bar-value">{{ cell(row[c]) }}</span>
+                  </span>
+                </ng-container>
+                <ng-template #plainCell>{{ cell(row[c]) }}</ng-template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </mat-card>
+    <ng-template #noRows>
+      <p class="empty" role="status">Aucune donnée ne correspond à cette question.</p>
+    </ng-template>
+
+    <!-- Transparence : SQL généré + métadonnées de sécurité -->
+    <div class="meta-row">
+      <span class="meta-chip secure"
+            [attr.aria-label]="result.tenantFilterApplied ? 'Sécurité : filtre tenant appliqué' : 'Attention : tenant non filtré'"
+            matTooltip="Filtre tenant_id appliqué automatiquement">
+        <mat-icon aria-hidden="true">verified_user</mat-icon>
+        {{ result.tenantFilterApplied ? 'Filtré par tenant' : 'Tenant non filtré' }}
+      </span>
+      <span class="meta-chip" *ngFor="let t of result.tablesUsed"
+            [attr.aria-label]="'Table interrogée : ' + t">
+        <mat-icon aria-hidden="true">table_chart</mat-icon> {{ t }}
+      </span>
+      <button mat-stroked-button type="button" class="sql-toggle"
+              [attr.aria-expanded]="showSql" aria-controls="nlq-generated-sql"
+              (click)="showSql = !showSql">
+        <mat-icon aria-hidden="true">{{ showSql ? 'expand_less' : 'code' }}</mat-icon>
+        {{ showSql ? 'Masquer le SQL' : 'Voir le SQL généré' }}
+      </button>
+    </div>
+
+    <pre class="sql" id="nlq-generated-sql" *ngIf="showSql"
+         tabindex="0" aria-label="SQL généré">{{ result.sql }}</pre>
+  </section>
+</div>

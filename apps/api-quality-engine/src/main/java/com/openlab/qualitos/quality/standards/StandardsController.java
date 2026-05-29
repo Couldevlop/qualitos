@@ -23,15 +23,18 @@ public class StandardsController {
     private final CertificationDossierService dossierService;
     private final CertificationBlancService certificationBlancService;
     private final AiDraftService aiDraftService;
+    private final StoryboardService storyboardService;
 
     public StandardsController(StandardsService service,
                                CertificationDossierService dossierService,
                                CertificationBlancService certificationBlancService,
-                               AiDraftService aiDraftService) {
+                               AiDraftService aiDraftService,
+                               StoryboardService storyboardService) {
         this.service = service;
         this.dossierService = dossierService;
         this.certificationBlancService = certificationBlancService;
         this.aiDraftService = aiDraftService;
+        this.storyboardService = storyboardService;
     }
 
     // ---- Catalog ----
@@ -171,6 +174,12 @@ public class StandardsController {
     @PostMapping("/adoptions/{id}/certification-blanc")
     public StandardsDto.CertificationBlancReport certificationBlanc(@PathVariable UUID id) {
         return certificationBlancService.simulate(id);
+    }
+
+    // Storyboard IA (§7.4) — récit narratif de l'état d'avancement (POST : appel LLM).
+    @PostMapping("/adoptions/{id}/storyboard")
+    public StandardsDto.StoryboardResponse storyboard(@PathVariable UUID id) {
+        return storyboardService.generate(id);
     }
 
     // ---- Catalogue : bibliothèque documentaire / processus / veille (§8.4) ----

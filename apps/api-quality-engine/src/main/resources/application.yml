@@ -84,3 +84,19 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
     operationsSorter: method
+
+# Passerelle IA (ai-service) — ADR 0014. Entièrement paramétrable par variables d'env.
+qualitos:
+  ai:
+    base-url: ${AI_SERVICE_URL:http://localhost:8085}
+    # Timeouts du client HTTP vers ai-service (ms). Le read-timeout DOIT rester
+    # supérieur à OLLAMA_TIMEOUT_S (ai-service), lui-même supérieur à la latence du
+    # modèle. Pour un modèle plus lent/précis sur CPU (ex. qualitos-sql-lite),
+    # relever de concert AI_READ_TIMEOUT_MS et OLLAMA_TIMEOUT_S — aucun code à changer.
+    connect-timeout-ms: ${AI_CONNECT_TIMEOUT_MS:5000}
+    read-timeout-ms: ${AI_READ_TIMEOUT_MS:260000}
+  blockchain:
+    # Client vers blockchain-service (actif sous le profil "fabric" ; ADR 0012 Phase B).
+    service-url: ${BLOCKCHAIN_SERVICE_URL:http://localhost:8090}
+    connect-timeout-ms: ${BLOCKCHAIN_CONNECT_TIMEOUT_MS:5000}
+    read-timeout-ms: ${BLOCKCHAIN_READ_TIMEOUT_MS:30000}

@@ -1,5 +1,11 @@
 package com.openlab.qualitos.quality.iot;
 
+import com.openlab.qualitos.quality.capa.CapaCaseRepository;
+import com.openlab.qualitos.quality.capa.CapaDto;
+import com.openlab.qualitos.quality.capa.CapaService;
+import com.openlab.qualitos.quality.capa.CapaSourceType;
+import com.openlab.qualitos.quality.capa.CapaStatus;
+import com.openlab.qualitos.quality.capa.CapaType;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.data.domain.Page;
@@ -8,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -24,13 +31,26 @@ import java.util.UUID;
 @Service
 public class TelemetryIngestionService {
 
+    /** Statuts d'une CAPA encore « active » (anti-spam des CAPA auto-générées). */
+    private static final List<CapaStatus> ACTIVE_CAPA_STATUSES =
+            List.of(CapaStatus.OPEN, CapaStatus.IN_PROGRESS);
+
     private final IotDeviceRepository deviceRepo;
     private final IotTelemetryEventRepository eventRepo;
+    private final IotThresholdRepository thresholdRepo;
+    private final CapaService capaService;
+    private final CapaCaseRepository capaCaseRepo;
 
     public TelemetryIngestionService(IotDeviceRepository deviceRepo,
-                                     IotTelemetryEventRepository eventRepo) {
+                                     IotTelemetryEventRepository eventRepo,
+                                     IotThresholdRepository thresholdRepo,
+                                     CapaService capaService,
+                                     CapaCaseRepository capaCaseRepo) {
         this.deviceRepo = deviceRepo;
         this.eventRepo = eventRepo;
+        this.thresholdRepo = thresholdRepo;
+        this.capaService = capaService;
+        this.capaCaseRepo = capaCaseRepo;
     }
 
     @Transactional
@@ -62,7 +82,58 @@ public class TelemetryIngestionService {
         d.setLastSeenAt(saved.getIngestedAt());
         deviceRepo.save(d);
 
+        if (saved.getValueNumeric() != null) {
+            evaluateThresholds(tenantId, saved);
+        }
+
         return toResponse(saved);
+    }
+
+    /**
+     * Détection de dérive (§9.9) : si la mesure dépasse un seuil configuré, ouvre
+     * automatiquement une CAPA ({@code sourceType=IOT_ALERT}) dans la même transaction.
+     * Anti-spam : une seule CAPA active par (device, métrique) — la {@code sourceRef}
+     * est stable, le verrou est l'existence d'une CAPA non clôturée.
+     */
+    private void evaluateThresholds(UUID tenantId, IotTelemetryEvent ev) {
+        double value = ev.getValueNumeric().doubleValue();
+        List<IotThreshold> applicable = thresholdRepo.findApplicable(tenantId, ev.getDeviceId(), ev.getMetric());
+        for (IotThreshold t : applicable) {
+            if (!t.isBreached(value)) continue;
+
+            String sourceRef = "iot:device:" + ev.getDeviceId() + ":metric:" + ev.getMetric();
+            if (capaCaseRepo.existsByTenantIdAndSourceTypeAndSourceRefAndStatusIn(
+                    tenantId, CapaSourceType.IOT_ALERT, sourceRef, ACTIVE_CAPA_STATUSES)) {
+                return; // une CAPA active couvre déjà cette origine
+            }
+
+            String unit = ev.getUnit() != null ? ev.getUnit() : "";
+            String measured = ev.getValueNumeric().toPlainString() + unit;
+            capaService.createCase(new CapaDto.CreateCaseRequest(
+                    truncate("Dérive IoT " + ev.getMetric() + " = " + measured, 255),
+                    "Seuil " + describeBounds(t) + " dépassé sur l'équipement " + ev.getDeviceId()
+                            + " (mesure " + measured + " à " + ev.getRecordedAt() + ").",
+                    CapaType.CORRECTIVE,
+                    t.getCapaCriticity(),
+                    CapaSourceType.IOT_ALERT,
+                    sourceRef,
+                    t.getCapaOwnerId(),
+                    null,
+                    null));
+            return; // une seule CAPA par mesure même si plusieurs seuils matchent
+        }
+    }
+
+    private static String describeBounds(IotThreshold t) {
+        if (t.getMinValue() != null && t.getMaxValue() != null) {
+            return "[" + t.getMinValue() + " .. " + t.getMaxValue() + "]";
+        }
+        if (t.getMinValue() != null) return ">= " + t.getMinValue();
+        return "<= " + t.getMaxValue();
+    }
+
+    private static String truncate(String s, int max) {
+        return s.length() <= max ? s : s.substring(0, max);
     }
 
     @Transactional(readOnly = true)

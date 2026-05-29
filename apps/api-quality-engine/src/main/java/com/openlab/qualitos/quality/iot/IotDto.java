@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.iot;
 
+import com.openlab.qualitos.quality.capa.CapaCriticity;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -76,5 +78,42 @@ public final class IotDto {
             IotProtocol source,
             Instant recordedAt,
             Instant ingestedAt
+    ) {}
+
+    // ---- Thresholds (§9.7, §9.9) ----
+
+    public record ThresholdRequest(
+            /** Null = seuil applicable à tous les équipements du tenant pour la métrique. */
+            UUID deviceId,
+            @NotBlank @Size(max = 100) String metric,
+            Double minValue,
+            Double maxValue,
+            @NotNull CapaCriticity capaCriticity,
+            @NotNull UUID capaOwnerId,
+            /** Si null à la création, le seuil est activé par défaut. */
+            Boolean enabled
+    ) {
+        @AssertTrue(message = "au moins une borne (minValue ou maxValue) doit être définie")
+        public boolean isBoundsDefined() {
+            return minValue != null || maxValue != null;
+        }
+
+        @AssertTrue(message = "minValue doit être <= maxValue")
+        public boolean isRangeConsistent() {
+            return minValue == null || maxValue == null || minValue <= maxValue;
+        }
+    }
+
+    public record ThresholdResponse(
+            UUID id,
+            UUID tenantId,
+            UUID deviceId,
+            String metric,
+            Double minValue,
+            Double maxValue,
+            CapaCriticity capaCriticity,
+            UUID capaOwnerId,
+            boolean enabled,
+            Instant createdAt
     ) {}
 }

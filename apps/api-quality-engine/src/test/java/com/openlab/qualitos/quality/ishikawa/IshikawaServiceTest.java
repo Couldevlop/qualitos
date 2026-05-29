@@ -83,6 +83,136 @@ class IshikawaServiceTest {
         assertThat(res).noneMatch(s -> s.category() == CauseCategory.MANAGEMENT);
     }
 
+    @Test
+    void suggestCauses_recognizesEverySynonym_andTolerantFormats() {
+        UUID id = UUID.randomUUID();
+        IshikawaDiagram d = new IshikawaDiagram();
+        d.setTenantId(TENANT_ID);
+        d.setMode(IshikawaMode.EIGHT_M);          // toutes catégories autorisées
+        d.setProblemStatement("Pourquoi ?");
+        d.setDescription(null);                    // couvre la branche description == null
+        when(diagramRepository.findByIdAndTenantId(id, TENANT_ID)).thenReturn(Optional.of(d));
+
+        // Une ligne par synonyme FR/EN de chaque catégorie + formats variés.
+        // Libellé identique partout : la déduplication garde 1 seule suggestion,
+        // donc le plafond n'est jamais atteint et categoryFromToken s'exécute pour TOUS les tokens.
+        String llm = String.join("\n",
+                "texte d'introduction sans catégorie",   // current null + splitCauseLine null
+                "{METHODS} cause identique",
+                "{MÉTHODES} cause identique",
+                "Méthodes : cause identique",            // séparateur (i>0) au lieu d'accolades
+                ":cause identique",                       // séparateur en position 0 (i>0 faux)
+                "{MANPOWER} cause identique",
+                "{MAIN} cause identique",
+                "{ŒUVRE} cause identique",
+                "{OEUVRE} cause identique",
+                "{PERSONNEL} cause identique",
+                "{MACHINE} cause identique",
+                "{MATÉRIEL} cause identique",
+                "{MATERIEL} cause identique",
+                "{ÉQUIPEMENT} cause identique",
+                "{EQUIPEMENT} cause identique",
+                "{MATERIAL} cause identique",
+                "{MATIÈRE} cause identique",
+                "{MATIERE} cause identique",
+                "{MEASURE} cause identique",
+                "{MESURE} cause identique",
+                "{ENVIRONNEMENT} cause identique",
+                "{MILIEU} cause identique",
+                "{MANAGEMENT} cause identique",
+                "{MANAGE} cause identique",
+                "{MONEY} cause identique",
+                "{MOYENS} cause identique",
+                "{ARGENT} cause identique",
+                "{FINANCE} cause identique",
+                "{INCONNU} cause identique");            // token non reconnu -> categoryFromToken == null
+        when(ai.complete(any(), any(), anyInt()))
+                .thenReturn(new AiCompletionResult(llm, "ollama", 100, 1000));
+
+        List<IshikawaDto.SuggestedCause> res = ishikawaService.suggestCauses(id);
+
+        // Dédupliqué : une seule suggestion, première catégorie reconnue = METHODS.
+        assertThat(res).hasSize(1);
+        assertThat(res.get(0).category()).isEqualTo(CauseCategory.METHODS);
+        assertThat(res.get(0).label()).isEqualTo("cause identique");
+    }
+
+    @Test
+    void suggestCauses_capsAtMax_skipsExisting_andDeduplicates() {
+        UUID id = UUID.randomUUID();
+        IshikawaDiagram d = new IshikawaDiagram();
+        d.setTenantId(TENANT_ID);
+        d.setMode(IshikawaMode.SIX_M);
+        d.setProblemStatement("Pb");
+        IshikawaCause known = buildCause(d, CauseCategory.METHODS);
+        known.setLabel("déjà connu");
+        d.getCauses().add(known);
+        when(diagramRepository.findByIdAndTenantId(id, TENANT_ID)).thenReturn(Optional.of(d));
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("{METHODS} déjà connu\n");          // existing -> ignoré
+        sb.append("{METHODS} doublon\n");
+        sb.append("{METHODS} doublon\n");             // dédupliqué
+        for (int i = 0; i < 15; i++) {                // largement plus que le plafond (12)
+            sb.append("{MANPOWER} cause numéro ").append(i).append("\n");
+        }
+        when(ai.complete(any(), any(), anyInt()))
+                .thenReturn(new AiCompletionResult(sb.toString(), "ollama", 100, 1000));
+
+        List<IshikawaDto.SuggestedCause> res = ishikawaService.suggestCauses(id);
+
+        assertThat(res).hasSize(12);                  // plafonné
+        assertThat(res).noneMatch(s -> s.label().equals("déjà connu"));
+    }
+
+    @Test
+    void suggestCauses_headerThenBulletList_attachesToCurrentCategory() {
+        UUID id = UUID.randomUUID();
+        IshikawaDiagram d = new IshikawaDiagram();
+        d.setTenantId(TENANT_ID);
+        d.setMode(IshikawaMode.SIX_M);
+        d.setProblemStatement("Pb");
+        d.setDescription("contexte non vide");       // couvre la branche description non vide
+        when(diagramRepository.findByIdAndTenantId(id, TENANT_ID)).thenReturn(Optional.of(d));
+
+        String llm = String.join("\n",
+                "Machines :",                          // en-tête : rest vide -> définit current
+                "- réglage de la presse dérivé",       // rattachée à MACHINES
+                "* usure des outils");                 // rattachée à MACHINES
+        when(ai.complete(any(), any(), anyInt()))
+                .thenReturn(new AiCompletionResult(llm, "ollama", 50, 500));
+
+        List<IshikawaDto.SuggestedCause> res = ishikawaService.suggestCauses(id);
+
+        assertThat(res).hasSize(2);
+        assertThat(res).allMatch(s -> s.category() == CauseCategory.MACHINES);
+        assertThat(res).extracting(IshikawaDto.SuggestedCause::label)
+                .containsExactly("réglage de la presse dérivé", "usure des outils");
+    }
+
+    @Test
+    void suggestCauses_nullLlmText_returnsEmpty() {
+        UUID id = UUID.randomUUID();
+        IshikawaDiagram d = new IshikawaDiagram();
+        d.setTenantId(TENANT_ID);
+        d.setMode(IshikawaMode.SIX_M);
+        d.setProblemStatement("Pb");
+        when(diagramRepository.findByIdAndTenantId(id, TENANT_ID)).thenReturn(Optional.of(d));
+        when(ai.complete(any(), any(), anyInt()))
+                .thenReturn(new AiCompletionResult(null, "ollama", 0, 10));
+
+        assertThat(ishikawaService.suggestCauses(id)).isEmpty();
+    }
+
+    @Test
+    void suggestCauses_diagramNotFound_throws() {
+        UUID unknown = UUID.randomUUID();
+        when(diagramRepository.findByIdAndTenantId(unknown, TENANT_ID)).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> ishikawaService.suggestCauses(unknown))
+                .isInstanceOf(IshikawaDiagramNotFoundException.class);
+        verifyNoInteractions(ai);
+    }
+
     // --- createDiagram ---
 
     @Test

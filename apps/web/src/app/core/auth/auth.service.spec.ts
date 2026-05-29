@@ -1,14 +1,27 @@
 import { TestBed } from '@angular/core/testing';
+import { OAuthService } from 'angular-oauth2-oidc';
 
+import { environment } from '../../../environments/environment';
 import { AuthService } from './auth.service';
 
 describe('AuthService (dev mode)', () => {
   let service: AuthService;
+  let prevMode: 'dev' | 'oidc';
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    // Force le mode dev AVANT l'inject (bootstrapUser() lit authMode au
+    // constructeur). Indépendant du défaut d'environment.ts (oidc pour la démo).
+    prevMode = environment.authMode;
+    environment.authMode = 'dev';
+    // En mode dev, AuthService n'appelle aucune méthode d'OAuthService : un stub
+    // vide suffit à satisfaire l'injection (OAuthService n'est pas providedIn root).
+    TestBed.configureTestingModule({
+      providers: [{ provide: OAuthService, useValue: {} as unknown as OAuthService }]
+    });
     service = TestBed.inject(AuthService);
   });
+
+  afterEach(() => { environment.authMode = prevMode; });
 
   it('exposes a demo user', () => {
     const u = service.snapshot();

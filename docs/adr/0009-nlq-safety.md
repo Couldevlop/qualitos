@@ -78,3 +78,39 @@ the tenant filter applied/rewritten.
 - Files: `apps/ai-service/infrastructure/nlq/sqlglot_validator.py`,
   `apps/ai-service/application/usecase/nlq_ask.py`,
   `apps/ai-service/tests/nlq_adversarial/`.
+
+## Update (2026-05-28) — schema realignment, end-to-end delivery
+
+The safety model above is unchanged; the following supersede the implementation
+details, and NLQ is now wired all the way to the SPA.
+
+- **Real schema allow-list.** The table list in the original Decision was
+  aspirational and never matched the database. `ALLOWED_TABLES` (and the
+  generator's schema hint) now reflect the actual `qualitos_quality` schema:
+  `{pdca_cycles, capa_cases, fives_audits, ishikawa_diagrams, fmea_items,
+  suppliers, kpi_definitions, kpi_measurements}`. A non-conformity is a
+  `capa_cases` row with `source_type = 'NON_CONFORMITY'`. Adding a table to NLQ
+  remains a deliberate, security-reviewed change (per "Consequences").
+- **Function allow-list extended** with safe, side-effect-free scalars:
+  `cast`, `nullif`, `abs` (in addition to the original aggregations). Logical/
+  comparison operators (`and`, `or`, `not`, `in`, `like`, `between`, `is`,
+  `exists`) that sqlglot sometimes surfaces as `exp.Func` are skipped — they are
+  not exfiltrating calls; safety rests on the TABLE allow-list + read-only role.
+- **Validator is model-agnostic.** The gatekeeper is the contract regardless of
+  which local Ollama model generates the SQL. A weaker model simply produces
+  more *rejected* (422) or *non-executable* (503 ProblemDetail) queries — never
+  an unsafe one. Verified live: hallucinated JOINs / invented columns fail
+  cleanly with the tenant filter still enforced.
+- **Engine relay + SPA.** The SPA never calls ai-service directly. New endpoint
+  `POST /api/v1/ai/nlq/ask` in api-quality-engine (`NlqController` → `NlqService`
+  → `AiGatewayClient`, the gateway of ADR 0014) relays to ai-service. Tenant is
+  derived from the validated JWT (`TenantContext`), **never** from the body
+  (CLAUDE.md §18.2 #2); `question` (≤500 chars) and `maxRows` (≤1000) are bounded
+  to limit LLM-DoS (LLM04). Gateway failures surface as `502` ProblemDetail.
+  SPA feature `features/nlq` (route `/nlq`) renders the AI narrative, results,
+  confidence, the tenant-filter security badge, and the generated SQL (§12.3
+  explicability).
+- **Runtime PII filter.** Presidio is excluded from the runtime image (ADR 0013,
+  spaCy auto-download breaks the distroless build); a `HeuristicPiiFilter`
+  fallback runs instead. Re-enable Presidio in prod by embedding the spaCy model
+  at build time.
