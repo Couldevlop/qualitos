@@ -21,13 +21,13 @@
 | **IoT Ingestion télémétrie** | RÉEL | `IngestTelemetryUseCase.java:40-56` save JPA + batch ; **TimescaleDB déclaré mais inactif** |
 | **Chaincode Go** AnchorAudit/VerifyEvidence | RÉEL | `qualitos_anchor.go:37-80` GetState/PutState réels, clé composite tenant |
 | **Modules AI Act** aiconformity/aiincidents/aipmm | RÉEL (CRUD réglementaire) | workflows d'état ; **ce sont des modules de _gouvernance_ de l'IA (AI Act), pas des features prédictives** — pas d'appel LLM, et c'est normal |
-| **Vision 5S (YOLOv8)** | STUB | `analyzer.py:34-40` scores dérivés du SHA-256 de l'image — « real YOLOv8 added in P5 » |
-| **IoT protocoles terrain** (OPC-UA/MQTT/HL7/LoRaWAN…) | STUB | `Protocol.java` enum + colonne SQL ; **zéro connecteur**, entrée unique = REST HTTP |
+| **Vision 5S (YOLOv8)** | ~~STUB~~ → **RÉEL (ONNX + fallback)** | ✅ Résolu : `OnnxInferenceBackend` (vraie inférence si modèle fourni via `VISION5S_ONNX_MODEL_PATH`, sinon fallback stub). Aucun modèle entraîné commité. |
+| **IoT protocoles terrain** (OPC-UA/MQTT/HL7/LoRaWAN…) | ~~STUB~~ → **MQTT RÉEL** | ✅ Connecteur MQTT (Eclipse Paho v5) livré dans api-iot-hub (gating off par défaut). Reste STUB : OPC-UA, HL7 FHIR, LoRaWAN. |
 | **IoT Digital Twin / Shadow** | STUB | `twin_json` stocké mais **réhydraté vide** en lecture (`JpaDeviceRepository:86`, TODO P4) |
 | **Federated learning** (Flower) | SCAFFOLD | `opt_in_federated_client.py:27` retourne `samples_used=0` synthétique |
 | **IoT Stream rule engine → NC** | ~~SCAFFOLD~~ → **RÉEL (in-engine)** | ✅ Résolu (ADR 0016, V65) : détection dans `TelemetryIngestionService` → CAPA `IOT_ALERT` (seuils configurables `/api/v1/iot/thresholds`, anti-spam, tenant via JWT). Le chemin `api-iot-hub→/nc/from-iot` reste hors périmètre. |
 | **Ancrage Phase B (Fabric)** | SCAFFOLD | `FabricAnchorService` propose→endorse→submit réel **mais** `@Profile("fabric")` désactivé, **0 test**, **réseau Fabric absent** (réutilise fabric-samples externe), fallback auto → Phase A |
-| **TLS hybride X25519+ML-KEM-768 (WS5)** | DOCUMENTAIRE | suite `tls-hybrid-p3` définie + `infra/tls/application-tls.yml` ref ; **aucun endpoint ne l'utilise**, `bctls-jdk18on` non importé, 0 test handshake |
+| **TLS hybride X25519+ML-KEM-768 (WS5)** | ~~DOCUMENTAIRE~~ → **RÉEL (profil optionnel)** | ✅ Résolu : BC 1.81 + `bctls`, `HybridTlsConfig @Profile("tls")` (BCJSSE + `jdk.tls.namedGroups=X25519MLKEM768`), `application-tls.yml`. **Preuve** : `HybridTlsHandshakeTest` (handshake TLS 1.3 hybride en loopback). OFF par défaut. |
 | **Edge Gateway K3s (§9.5)** | ABSENT | aucun artefact (ni Helm, ni manifests, ni code edge, ni ONNX/TFLite) |
 | **Prédiction LSTM/Prophet/TFT (§12)** | ABSENT | aucun import |
 | **Anomalies ML (Isolation Forest/Autoencoder)** | ABSENT | aucun import |
@@ -45,13 +45,13 @@
 ## Dette technique priorisée
 
 **P0 — écarts « annoncé/livré » vs réel (crédibilité & sécurité)**
-1. **TLS hybride** : §11.4 annonce « TLS hybride sur flux entrants » — en réalité non activé. → soit l'activer (importer `bctls-jdk18on`, profil `tls`, test handshake `X25519MLKEM768`), soit reclasser la promesse.
-2. **blockchain-service** : 0 test + Fabric non opérationnel. → test-network en CI (Testcontainers) + tests `FabricAnchorService`, ou assumer Phase A comme cible prod et marquer Phase B « expérimental ».
+1. ~~**TLS hybride**~~ → ✅ **Résolu** (2026-05-29) : profil `tls` optionnel (BC 1.81 + BCJSSE + `X25519MLKEM768`), handshake hybride prouvé par test. OFF par défaut.
+2. **blockchain-service** : ✅ tests unitaires ajoutés (`FabricAnchorServiceTest`, 7 cas). **Reste** : réseau Fabric réel en CI (Testcontainers) — Phase B toujours non opérationnelle (profil `fabric` off), Phase A reste la cible prod.
 
 **P1 — profondeur des features phares**
 3. ~~**Chaîne capteur→NC cassée**~~ → ✅ **Résolu** (2026-05-29, ADR 0016) : détection de seuil in-engine ouvrant une CAPA `IOT_ALERT`, seuils configurables, anti-spam. Reste : enrichir §9.9 (lien FMEA, cycle PDCA auto).
-4. **Vision 5S** : stub SHA-256 → vrai YOLOv8 (swap `InferenceBackend` déjà prévu), sinon dépromettre la CV.
-5. **Connecteurs protocoles IoT** : 0 connecteur (OPC-UA/MQTT/HL7/LoRaWAN). → en livrer au moins 1 (MQTT/EMQX) pour étayer l'universalité.
+4. ~~**Vision 5S**~~ → ✅ **Résolu** : backend ONNX réel + fallback (aucun modèle entraîné commité ; reste à fournir/entraîner un `.onnx` 5S réel pour la prod).
+5. ~~**Connecteurs protocoles IoT**~~ → ✅ **MQTT livré** (Eclipse Paho v5, tenant résolu depuis le registre device). Reste : OPC-UA / HL7 FHIR / LoRaWAN.
 
 **P2 — capacités ML annoncées absentes**
 6. **IA prédictive** : implémenter au moins 1-2 modèles réels (prédiction KPI, anomalies SPC) pour étayer « IA épine dorsale », ou recadrer §12.
@@ -60,4 +60,4 @@
 **P3 — hygiène**
 8. Digital Twin réhydraté vide (TODO P4).
 9. Garde-fous IA (rate-limit / circuit breaker / quotas budgétaires) non branchés sur le chemin LLM.
-10. Couverture front (10 specs / 38 features) — hors périmètre de cet audit.
+10. Couverture front : ✅ **améliorée** — +24 specs services (67 → 183 tests). Reste : couches composant + ~16 services (AI-Act, itsm, ehs, home…).
