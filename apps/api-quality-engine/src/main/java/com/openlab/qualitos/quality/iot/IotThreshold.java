@@ -58,6 +58,14 @@ public class IotThreshold {
     @Column(nullable = false)
     private boolean enabled = true;
 
+    /** Lien optionnel vers une fiche FMEA (§9.9 « lien vers la fiche FMEA »). */
+    @Column(name = "fmea_item_id")
+    private UUID fmeaItemId;
+
+    /** Si vrai, une dérive ouvre aussi un cycle PDCA d'amélioration (§9.9). */
+    @Column(name = "open_pdca_cycle", nullable = false)
+    private boolean openPdcaCycle = false;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -98,6 +106,12 @@ public class IotThreshold {
 
     public boolean isEnabled() { return enabled; }
     public void setEnabled(boolean enabled) { this.enabled = enabled; }
+
+    public UUID getFmeaItemId() { return fmeaItemId; }
+    public void setFmeaItemId(UUID fmeaItemId) { this.fmeaItemId = fmeaItemId; }
+
+    public boolean isOpenPdcaCycle() { return openPdcaCycle; }
+    public void setOpenPdcaCycle(boolean openPdcaCycle) { this.openPdcaCycle = openPdcaCycle; }
 
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }

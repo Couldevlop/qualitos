@@ -91,7 +91,11 @@ public final class IotDto {
             @NotNull CapaCriticity capaCriticity,
             @NotNull UUID capaOwnerId,
             /** Si null à la création, le seuil est activé par défaut. */
-            Boolean enabled
+            Boolean enabled,
+            /** Lien optionnel vers une fiche FMEA (§9.9). */
+            UUID fmeaItemId,
+            /** Si vrai, une dérive ouvre aussi un cycle PDCA (§9.9). Null = false. */
+            Boolean openPdcaCycle
     ) {
         @AssertTrue(message = "au moins une borne (minValue ou maxValue) doit être définie")
         public boolean isBoundsDefined() {
@@ -114,6 +118,8 @@ public final class IotDto {
             CapaCriticity capaCriticity,
             UUID capaOwnerId,
             boolean enabled,
+            UUID fmeaItemId,
+            boolean openPdcaCycle,
             Instant createdAt
     ) {}
 }

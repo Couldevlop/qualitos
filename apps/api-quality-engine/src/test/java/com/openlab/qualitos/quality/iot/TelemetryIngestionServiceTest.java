@@ -6,6 +6,9 @@ import com.openlab.qualitos.quality.capa.CapaDto;
 import com.openlab.qualitos.quality.capa.CapaService;
 import com.openlab.qualitos.quality.capa.CapaSourceType;
 import com.openlab.qualitos.quality.capa.CapaType;
+import com.openlab.qualitos.quality.pdca.PdcaDto;
+import com.openlab.qualitos.quality.pdca.PdcaService;
+import com.openlab.qualitos.quality.pdca.PdcaStatus;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +41,7 @@ class TelemetryIngestionServiceTest {
     @Mock IotThresholdRepository thresholdRepo;
     @Mock CapaService capaService;
     @Mock CapaCaseRepository capaCaseRepo;
+    @Mock PdcaService pdcaService;
     @InjectMocks TelemetryIngestionService service;
 
     static final UUID TENANT = UUID.randomUUID();
@@ -219,6 +223,34 @@ class TelemetryIngestionServiceTest {
         assertThat(cap.getValue().criticity()).isEqualTo(CapaCriticity.HIGH);
         assertThat(cap.getValue().ownerId()).isEqualTo(owner);
         assertThat(cap.getValue().sourceRef()).isEqualTo("iot:device:" + DEV + ":metric:temperature");
+        verify(pdcaService, never()).createCycle(any()); // openPdcaCycle=false par défaut
+    }
+
+    @Test
+    void ingest_breachWithPdcaEnabled_opensCycleAndReferencesIt() {
+        when(deviceRepo.findById(DEV)).thenReturn(Optional.of(device(IotDeviceStatus.ACTIVE)));
+        stubSaves();
+        IotThreshold t = threshold(null, 8.0, CapaCriticity.HIGH, UUID.randomUUID());
+        t.setOpenPdcaCycle(true);
+        when(thresholdRepo.findApplicable(TENANT, DEV, "temperature")).thenReturn(List.of(t));
+        when(capaCaseRepo.existsByTenantIdAndSourceTypeAndSourceRefAndStatusIn(any(), any(), any(), any()))
+                .thenReturn(false);
+        UUID cycleId = UUID.randomUUID();
+        when(pdcaService.createCycle(any())).thenReturn(cycleResp(cycleId));
+
+        service.ingest(DEV, new IotDto.TelemetryIngestRequest(
+                "temperature", new BigDecimal("12.0"), null, "C", null, null));
+
+        verify(pdcaService).createCycle(any());
+        ArgumentCaptor<CapaDto.CreateCaseRequest> cap = ArgumentCaptor.forClass(CapaDto.CreateCaseRequest.class);
+        verify(capaService).createCase(cap.capture());
+        assertThat(cap.getValue().description()).contains(cycleId.toString());
+    }
+
+    private PdcaDto.CycleResponse cycleResp(UUID id) {
+        return new PdcaDto.CycleResponse(
+                id, TENANT, "t", null, PdcaStatus.PLAN, UUID.randomUUID(),
+                Instant.now(), Instant.now(), null, List.of());
     }
 
     @Test
