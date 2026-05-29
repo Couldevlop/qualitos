@@ -1,0 +1,28 @@
+# Override : bascule le NLQ (§7.3) sur le modèle spécialisé `qualitos-sql-lite`.
+#
+# La lite est plus précise sur les cas-exemples mais plus lente sur CPU (requêtes
+# nouvelles ~247s) : on relève donc les timeouts de concert (ai-service ET engine).
+#
+# Usage :
+#   1. Construire le modèle (100% local, FROM qwen2.5-coder:3b déjà pull) :
+#        apps/ai-service/models/qualitos-sql/build-qualitos-sql.sh
+#        # puis pour la variante allégée :
+#        docker exec qualitos-ollama ollama create qualitos-sql-lite \
+#          -f /tmp/qualitos-sql-lite.Modelfile
+#   2. Lancer ai-service avec cet override :
+#        docker-compose -f docker-compose.dev.yml -f docker-compose.lite.yml up -d ai-service
+#   3. Préchauffer (le 1er appel charge le modèle à froid, >3 min) :
+#        Invoke-RestMethod -Method Post http://localhost:11434/api/generate `
+#          -Body (@{model='qualitos-sql-lite';prompt='ok';stream=$false;keep_alive=-1}|ConvertTo-Json) `
+#          -ContentType application/json
+#   4. Lancer l'engine (natif) avec un read-timeout cohérent (> OLLAMA_TIMEOUT_S) :
+#        AI_READ_TIMEOUT_MS=420000 DB_URL=jdbc:postgresql://localhost:5434/qualitos_quality \
+#          mvn -pl apps/api-quality-engine spring-boot:run
+#
+# Pour revenir au défaut (rapide) : relancer sans cet override (-f docker-compose.dev.yml seul).
+services:
+  ai-service:
+    environment:
+      OLLAMA_MODEL: qualitos-sql-lite
+      # > latence du modèle ; doit rester < AI_READ_TIMEOUT_MS côté engine.
+      OLLAMA_TIMEOUT_S: "400"

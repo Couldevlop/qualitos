@@ -97,27 +97,31 @@
               <td><span class="clause-chip" *ngFor="let c of clauseList(d.mapsToClauses)">{{ c }}</span></td>
               <td class="nowrap">{{ d.format || '—' }}</td>
               <td class="nowrap">
-                <button mat-stroked-button *ngIf="d.downloadable" (click)="downloadTemplate(d)">
-                  <mat-icon>download</mat-icon> Modèle</button>
+                <button mat-stroked-button *ngIf="d.downloadable" (click)="downloadTemplate(d)"
+                        [attr.aria-label]="'Télécharger le modèle : ' + d.name">
+                  <mat-icon aria-hidden="true">download</mat-icon> Modèle</button>
                 <button mat-stroked-button color="primary" class="ia-btn" (click)="generateAiDraft(d)"
-                        [disabled]="generatingDraftId === d.id">
-                  <mat-icon>auto_awesome</mat-icon>
+                        [disabled]="generatingDraftId === d.id"
+                        [attr.aria-busy]="generatingDraftId === d.id"
+                        [attr.aria-label]="'Générer un brouillon IA : ' + d.name">
+                  <mat-icon aria-hidden="true">auto_awesome</mat-icon>
                   {{ generatingDraftId === d.id ? 'Génération…' : 'Brouillon IA' }}</button>
               </td>
             </tr>
           </tbody>
         </table>
 
-        <mat-card class="ai-draft-card" *ngIf="aiDraft as ad">
+        <mat-card class="ai-draft-card" *ngIf="aiDraft as ad"
+                  role="region" aria-label="Brouillon de document généré par l'IA" aria-live="polite">
           <div class="ai-draft-head">
-            <mat-icon>auto_awesome</mat-icon>
+            <mat-icon aria-hidden="true">auto_awesome</mat-icon>
             <div>
               <h3>Brouillon IA — {{ ad.templateName }}</h3>
               <span class="muted small">généré par {{ ad.provider }} · {{ ad.latencyMs }} ms ·
                 à relire et valider avant publication (l'IA suggère, l'humain décide)</span>
             </div>
           </div>
-          <pre class="ai-draft-text">{{ ad.draft }}</pre>
+          <pre class="ai-draft-text" tabindex="0" aria-label="Texte du brouillon généré">{{ ad.draft }}</pre>
         </mat-card>
       </div>
     </mat-tab>
@@ -380,13 +384,14 @@
         <div class="storyboard-block">
           <p class="muted">Récit narratif IA de l'état d'avancement (synthèse pour revue de direction, §7.4).</p>
           <button mat-stroked-button color="primary" (click)="generateStoryboard()"
-                  [disabled]="generatingStoryboard">
-            <mat-icon>auto_stories</mat-icon>
+                  [disabled]="generatingStoryboard" [attr.aria-busy]="generatingStoryboard">
+            <mat-icon aria-hidden="true">auto_stories</mat-icon>
             {{ generatingStoryboard ? 'Rédaction…' : 'Générer le récit (IA)' }}
           </button>
-          <mat-card class="storyboard-card" *ngIf="storyboard as s">
+          <mat-card class="storyboard-card" *ngIf="storyboard as s"
+                    role="region" aria-label="Récit IA d'avancement" aria-live="polite">
             <div class="sb-head">
-              <mat-icon>auto_awesome</mat-icon>
+              <mat-icon aria-hidden="true">auto_awesome</mat-icon>
               <span class="sb-title">Récit — {{ s.standardCode | uppercase }}</span>
               <span class="muted small">généré par {{ s.provider }}</span>
             </div>

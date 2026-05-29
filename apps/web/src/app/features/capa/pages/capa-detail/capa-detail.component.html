@@ -40,13 +40,13 @@
     </ng-container>
   </header>
 
-  <div class="state-row" *ngIf="loading$ | async">
-    <mat-progress-spinner mode="indeterminate" diameter="32"></mat-progress-spinner>
+  <div class="state-row" *ngIf="loading$ | async" role="status" aria-live="polite">
+    <mat-progress-spinner mode="indeterminate" diameter="32" aria-label="Chargement"></mat-progress-spinner>
     <span>Chargement…</span>
   </div>
 
-  <div class="state-row error" *ngIf="error$ | async as err">
-    <mat-icon>error_outline</mat-icon>
+  <div class="state-row error" *ngIf="error$ | async as err" role="alert">
+    <mat-icon aria-hidden="true">error_outline</mat-icon>
     <span>{{ err }}</span>
   </div>
 
@@ -129,24 +129,28 @@
           </button>
           <button mat-stroked-button color="primary" type="button" class="ia-btn"
                   (click)="suggestActions()" [disabled]="suggesting || isTerminal(c.status)"
+                  [attr.aria-busy]="suggesting"
                   matTooltip="Suggérer des actions par l'IA">
-            <mat-icon>auto_awesome</mat-icon>
+            <mat-icon aria-hidden="true">auto_awesome</mat-icon>
             {{ suggesting ? 'Analyse…' : 'Suggérer (IA)' }}
           </button>
         </mat-card-header>
         <mat-card-content>
-          <div class="suggest-box" *ngIf="suggesting || suggestions.length">
+          <div class="suggest-box" *ngIf="suggesting || suggestions.length"
+               role="region" aria-label="Actions suggérées par l'IA" aria-live="polite">
             <div class="suggest-head">
-              <mat-icon>auto_awesome</mat-icon>
+              <mat-icon aria-hidden="true">auto_awesome</mat-icon>
               <span class="suggest-title">Actions suggérées par l'IA</span>
               <span class="spacer"></span>
               <button mat-icon-button *ngIf="suggestions.length && !suggesting"
-                      (click)="dismissSuggestions()" matTooltip="Masquer">
-                <mat-icon>close</mat-icon>
+                      (click)="dismissSuggestions()"
+                      aria-label="Masquer les suggestions" matTooltip="Masquer">
+                <mat-icon aria-hidden="true">close</mat-icon>
               </button>
             </div>
-            <div class="suggest-loading" *ngIf="suggesting">
-              <mat-progress-spinner mode="indeterminate" diameter="26"></mat-progress-spinner>
+            <div class="suggest-loading" *ngIf="suggesting" role="status" aria-live="polite">
+              <mat-progress-spinner mode="indeterminate" diameter="26"
+                                    aria-label="Génération des actions en cours"></mat-progress-spinner>
               <span>Génération des actions… (peut prendre ~1 min sur CPU)</span>
             </div>
             <ul class="suggest-list" *ngIf="suggestions.length">
@@ -154,8 +158,9 @@
                 <span class="sug-label">{{ s.title }}</span>
                 <button mat-stroked-button color="primary" class="sug-add"
                         (click)="addSuggestion(s)"
-                        [disabled]="addingKey === s.title || isTerminal(c.status)">
-                  <mat-icon>add</mat-icon> {{ addingKey === s.title ? '…' : 'Ajouter' }}
+                        [disabled]="addingKey === s.title || isTerminal(c.status)"
+                        [attr.aria-label]="'Ajouter l\'action : ' + s.title">
+                  <mat-icon aria-hidden="true">add</mat-icon> {{ addingKey === s.title ? '…' : 'Ajouter' }}
                 </button>
               </li>
             </ul>

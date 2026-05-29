@@ -34,7 +34,10 @@ export class PdcaListComponent implements OnInit {
   totalElements = 0;
 
   cycles$!: Observable<PdcaCycleResponse[]>;
-  loading$ = new BehaviorSubject<boolean>(false);
+  // Init à true : on charge dès l'init, et cela évite le NG0100
+  // (ExpressionChangedAfterItHasBeenChecked) quand le tap() passe false→true
+  // dans le même cycle de détection (même correctif que kpis-list).
+  loading$ = new BehaviorSubject<boolean>(true);
   error$ = new BehaviorSubject<string | null>(null);
 
   private readonly refresh$ = new BehaviorSubject<void>(undefined);

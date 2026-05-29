@@ -27,10 +27,12 @@ public class FabricGatewayClient {
     private final RestClient client;
 
     public FabricGatewayClient(
-            @Value("${qualitos.blockchain.service-url:http://localhost:8090}") String baseUrl) {
+            @Value("${qualitos.blockchain.service-url:http://localhost:8090}") String baseUrl,
+            @Value("${qualitos.blockchain.connect-timeout-ms:5000}") int connectTimeoutMs,
+            @Value("${qualitos.blockchain.read-timeout-ms:30000}") int readTimeoutMs) {
         SimpleClientHttpRequestFactory rf = new SimpleClientHttpRequestFactory();
-        rf.setConnectTimeout(5_000);
-        rf.setReadTimeout(30_000);
+        rf.setConnectTimeout(connectTimeoutMs);
+        rf.setReadTimeout(readTimeoutMs);
         this.client = RestClient.builder().baseUrl(baseUrl).requestFactory(rf).build();
     }
 
