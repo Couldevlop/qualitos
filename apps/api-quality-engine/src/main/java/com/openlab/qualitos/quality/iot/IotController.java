@@ -17,10 +17,13 @@ public class IotController {
 
     private final IotDeviceService deviceService;
     private final TelemetryIngestionService telemetryService;
+    private final IotThresholdService thresholdService;
 
-    public IotController(IotDeviceService deviceService, TelemetryIngestionService telemetryService) {
+    public IotController(IotDeviceService deviceService, TelemetryIngestionService telemetryService,
+                         IotThresholdService thresholdService) {
         this.deviceService = deviceService;
         this.telemetryService = telemetryService;
+        this.thresholdService = thresholdService;
     }
 
     // ---- Devices ----
@@ -87,5 +90,35 @@ public class IotController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant to,
             @PageableDefault(size = 500) Pageable pageable) {
         return telemetryService.range(id, metric, from, to, pageable);
+    }
+
+    // ---- Thresholds (§9.7, §9.9) : dépassement → CAPA auto ----
+
+    @GetMapping("/thresholds")
+    public Page<IotDto.ThresholdResponse> listThresholds(@PageableDefault(size = 50) Pageable pageable) {
+        return thresholdService.list(pageable);
+    }
+
+    @PostMapping("/thresholds")
+    @ResponseStatus(HttpStatus.CREATED)
+    public IotDto.ThresholdResponse createThreshold(@Valid @RequestBody IotDto.ThresholdRequest req) {
+        return thresholdService.create(req);
+    }
+
+    @GetMapping("/thresholds/{id}")
+    public IotDto.ThresholdResponse getThreshold(@PathVariable UUID id) {
+        return thresholdService.get(id);
+    }
+
+    @PatchMapping("/thresholds/{id}")
+    public IotDto.ThresholdResponse updateThreshold(@PathVariable UUID id,
+                                                    @Valid @RequestBody IotDto.ThresholdRequest req) {
+        return thresholdService.update(id, req);
+    }
+
+    @DeleteMapping("/thresholds/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteThreshold(@PathVariable UUID id) {
+        thresholdService.delete(id);
     }
 }

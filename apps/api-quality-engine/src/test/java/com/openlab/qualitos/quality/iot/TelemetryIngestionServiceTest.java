@@ -1,5 +1,11 @@
 package com.openlab.qualitos.quality.iot;
 
+import com.openlab.qualitos.quality.capa.CapaCaseRepository;
+import com.openlab.qualitos.quality.capa.CapaCriticity;
+import com.openlab.qualitos.quality.capa.CapaDto;
+import com.openlab.qualitos.quality.capa.CapaService;
+import com.openlab.qualitos.quality.capa.CapaSourceType;
+import com.openlab.qualitos.quality.capa.CapaType;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,13 +35,20 @@ class TelemetryIngestionServiceTest {
 
     @Mock IotDeviceRepository deviceRepo;
     @Mock IotTelemetryEventRepository eventRepo;
+    @Mock IotThresholdRepository thresholdRepo;
+    @Mock CapaService capaService;
+    @Mock CapaCaseRepository capaCaseRepo;
     @InjectMocks TelemetryIngestionService service;
 
     static final UUID TENANT = UUID.randomUUID();
     static final UUID DEV = UUID.randomUUID();
 
     @BeforeEach
-    void setup() { TenantContext.setTenantId(TENANT.toString()); }
+    void setup() {
+        TenantContext.setTenantId(TENANT.toString());
+        // Par défaut, aucun seuil configuré → pas de CAPA (surclassé par les tests de dérive).
+        lenient().when(thresholdRepo.findApplicable(any(), any(), any())).thenReturn(List.of());
+    }
 
     @AfterEach
     void tearDown() { TenantContext.clear(); }
@@ -181,6 +194,93 @@ class TelemetryIngestionServiceTest {
     void purgeBefore_delegatesToRepo() {
         when(eventRepo.deleteByRecordedAtBefore(any())).thenReturn(17L);
         assertThat(service.purgeBefore(Instant.now())).isEqualTo(17L);
+    }
+
+    // ---- Détection de seuil → CAPA (§9.9) ----
+
+    @Test
+    void ingest_breachesMax_opensCapa() {
+        when(deviceRepo.findById(DEV)).thenReturn(Optional.of(device(IotDeviceStatus.ACTIVE)));
+        stubSaves();
+        UUID owner = UUID.randomUUID();
+        when(thresholdRepo.findApplicable(TENANT, DEV, "temperature"))
+                .thenReturn(List.of(threshold(null, 8.0, CapaCriticity.HIGH, owner)));
+        when(capaCaseRepo.existsByTenantIdAndSourceTypeAndSourceRefAndStatusIn(any(), any(), any(), any()))
+                .thenReturn(false);
+
+        service.ingest(DEV, new IotDto.TelemetryIngestRequest(
+                "temperature", new BigDecimal("12.0"), null, "C", null, null));
+
+        ArgumentCaptor<CapaDto.CreateCaseRequest> cap = ArgumentCaptor.forClass(CapaDto.CreateCaseRequest.class);
+        verify(capaService).createCase(cap.capture());
+        verify(thresholdRepo).findApplicable(eq(TENANT), eq(DEV), eq("temperature")); // tenant via JWT
+        assertThat(cap.getValue().sourceType()).isEqualTo(CapaSourceType.IOT_ALERT);
+        assertThat(cap.getValue().type()).isEqualTo(CapaType.CORRECTIVE);
+        assertThat(cap.getValue().criticity()).isEqualTo(CapaCriticity.HIGH);
+        assertThat(cap.getValue().ownerId()).isEqualTo(owner);
+        assertThat(cap.getValue().sourceRef()).isEqualTo("iot:device:" + DEV + ":metric:temperature");
+    }
+
+    @Test
+    void ingest_withinBounds_noCapa() {
+        when(deviceRepo.findById(DEV)).thenReturn(Optional.of(device(IotDeviceStatus.ACTIVE)));
+        stubSaves();
+        when(thresholdRepo.findApplicable(TENANT, DEV, "temperature"))
+                .thenReturn(List.of(threshold(null, 8.0, CapaCriticity.HIGH, UUID.randomUUID())));
+
+        service.ingest(DEV, new IotDto.TelemetryIngestRequest(
+                "temperature", new BigDecimal("5.0"), null, "C", null, null));
+
+        verifyNoInteractions(capaService);
+    }
+
+    @Test
+    void ingest_breachButActiveCapaExists_noDuplicate() {
+        when(deviceRepo.findById(DEV)).thenReturn(Optional.of(device(IotDeviceStatus.ACTIVE)));
+        stubSaves();
+        when(thresholdRepo.findApplicable(TENANT, DEV, "temperature"))
+                .thenReturn(List.of(threshold(null, 8.0, CapaCriticity.HIGH, UUID.randomUUID())));
+        when(capaCaseRepo.existsByTenantIdAndSourceTypeAndSourceRefAndStatusIn(any(), any(), any(), any()))
+                .thenReturn(true); // une CAPA OPEN/IN_PROGRESS couvre déjà l'origine
+
+        service.ingest(DEV, new IotDto.TelemetryIngestRequest(
+                "temperature", new BigDecimal("12.0"), null, "C", null, null));
+
+        verify(capaService, never()).createCase(any());
+    }
+
+    @Test
+    void ingest_textOnly_noThresholdEvaluation() {
+        when(deviceRepo.findById(DEV)).thenReturn(Optional.of(device(IotDeviceStatus.ACTIVE)));
+        stubSaves();
+
+        service.ingest(DEV, new IotDto.TelemetryIngestRequest(
+                "state", null, "RUNNING", null, null, IotProtocol.OPC_UA));
+
+        verify(thresholdRepo, never()).findApplicable(any(), any(), any());
+        verifyNoInteractions(capaService);
+    }
+
+    private IotThreshold threshold(Double min, Double max, CapaCriticity crit, UUID owner) {
+        IotThreshold t = new IotThreshold();
+        t.setTenantId(TENANT);
+        t.setMetric("temperature");
+        t.setMinValue(min);
+        t.setMaxValue(max);
+        t.setCapaCriticity(crit);
+        t.setCapaOwnerId(owner);
+        t.setEnabled(true);
+        return t;
+    }
+
+    private void stubSaves() {
+        when(eventRepo.save(any())).thenAnswer(inv -> {
+            IotTelemetryEvent e = inv.getArgument(0);
+            if (e.getId() == null) e.setId(UUID.randomUUID());
+            e.setIngestedAt(Instant.now());
+            return e;
+        });
+        when(deviceRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
     }
 
     private IotDevice device(IotDeviceStatus status) {
