@@ -23,7 +23,7 @@ import java.security.InvalidKeyException;
 import java.security.PrivateKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Construit la connexion Hyperledger Fabric (mTLS) à partir du matériel MSP fourni
@@ -67,10 +67,10 @@ public class FabricGatewayConfig {
                 .identity(identity)
                 .signer(signer)
                 .connection(fabricGrpcChannel)
-                .evaluateOptions(o -> o.withTimeout(Duration.ofSeconds(30)))
-                .endorseOptions(o -> o.withTimeout(Duration.ofSeconds(30)))
-                .submitOptions(o -> o.withTimeout(Duration.ofSeconds(60)))
-                .commitStatusOptions(o -> o.withTimeout(Duration.ofMinutes(1)))
+                .evaluateOptions(o -> o.withDeadlineAfter(30, TimeUnit.SECONDS))
+                .endorseOptions(o -> o.withDeadlineAfter(30, TimeUnit.SECONDS))
+                .submitOptions(o -> o.withDeadlineAfter(60, TimeUnit.SECONDS))
+                .commitStatusOptions(o -> o.withDeadlineAfter(1, TimeUnit.MINUTES))
                 .connect();
     }
 
