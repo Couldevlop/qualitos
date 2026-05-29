@@ -38,6 +38,7 @@ import com.openlab.qualitos.quality.standards.TenantStandardNotFoundException;
 import com.openlab.qualitos.quality.industry.IndustryPackNotFoundException;
 import com.openlab.qualitos.quality.iot.IotDeviceNotFoundException;
 import com.openlab.qualitos.quality.iot.IotDeviceStateException;
+import com.openlab.qualitos.quality.iot.IotThresholdNotFoundException;
 import com.openlab.qualitos.quality.risk.FmeaItemNotFoundException;
 import com.openlab.qualitos.quality.risk.FmeaProjectNotFoundException;
 import com.openlab.qualitos.quality.risk.FmeaStateException;
@@ -825,6 +826,15 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/iot-device-invalid-state"));
         problem.setTitle("Invalid IoT Device State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(IotThresholdNotFoundException.class)
+    public ProblemDetail handleIotThresholdNotFound(IotThresholdNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/iot-threshold-not-found"));
+        problem.setTitle("IoT Threshold Not Found");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

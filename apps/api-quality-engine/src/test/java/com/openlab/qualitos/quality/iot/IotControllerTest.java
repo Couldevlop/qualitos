@@ -34,6 +34,7 @@ class IotControllerTest {
     @Autowired MockMvc mockMvc;
     @MockitoBean IotDeviceService deviceService;
     @MockitoBean TelemetryIngestionService telemetryService;
+    @MockitoBean IotThresholdService thresholdService;
     ObjectMapper om;
 
     static final UUID DEV = UUID.randomUUID();
@@ -180,6 +181,40 @@ class IotControllerTest {
                         .param("from", "2026-01-01T00:00:00Z")
                         .param("to", "2026-01-02T00:00:00Z"))
                 .andExpect(status().isOk());
+    }
+
+    @Test @WithMockUser
+    void createThreshold_returns201() throws Exception {
+        when(thresholdService.create(any())).thenReturn(thresholdResp());
+        IotDto.ThresholdRequest req = new IotDto.ThresholdRequest(
+                DEV, "temperature", null, 8.0,
+                com.openlab.qualitos.quality.capa.CapaCriticity.HIGH, USER, null);
+        mockMvc.perform(post("/api/v1/iot/thresholds").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsString(req)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test @WithMockUser
+    void createThreshold_noBounds_returns400() throws Exception {
+        String body = "{\"metric\":\"temperature\",\"capaCriticity\":\"HIGH\",\"capaOwnerId\":\""
+                + USER + "\"}";
+        mockMvc.perform(post("/api/v1/iot/thresholds").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test @WithMockUser
+    void listThresholds_returns200() throws Exception {
+        when(thresholdService.list(any())).thenReturn(new PageImpl<>(List.of(thresholdResp())));
+        mockMvc.perform(get("/api/v1/iot/thresholds"))
+                .andExpect(status().isOk());
+    }
+
+    private IotDto.ThresholdResponse thresholdResp() {
+        return new IotDto.ThresholdResponse(
+                UUID.randomUUID(), TENANT, DEV, "temperature", null, 8.0,
+                com.openlab.qualitos.quality.capa.CapaCriticity.HIGH, USER, true, Instant.now());
     }
 
     private IotDto.DeviceResponse deviceResp() {
