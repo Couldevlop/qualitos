@@ -25,7 +25,7 @@
 | **IoT protocoles terrain** (OPC-UA/MQTT/HL7/LoRaWAN…) | STUB | `Protocol.java` enum + colonne SQL ; **zéro connecteur**, entrée unique = REST HTTP |
 | **IoT Digital Twin / Shadow** | STUB | `twin_json` stocké mais **réhydraté vide** en lecture (`JpaDeviceRepository:86`, TODO P4) |
 | **Federated learning** (Flower) | SCAFFOLD | `opt_in_federated_client.py:27` retourne `samples_used=0` synthétique |
-| **IoT Stream rule engine → NC** | SCAFFOLD | logique seuils OK (`StreamRuleEngine`) mais **registry vide** (pas d'endpoint config) et **endpoint destinataire `/api/v1/nc/from-iot` introuvable côté engine** → chaîne capteur→NC cassée e2e |
+| **IoT Stream rule engine → NC** | ~~SCAFFOLD~~ → **RÉEL (in-engine)** | ✅ Résolu (ADR 0016, V65) : détection dans `TelemetryIngestionService` → CAPA `IOT_ALERT` (seuils configurables `/api/v1/iot/thresholds`, anti-spam, tenant via JWT). Le chemin `api-iot-hub→/nc/from-iot` reste hors périmètre. |
 | **Ancrage Phase B (Fabric)** | SCAFFOLD | `FabricAnchorService` propose→endorse→submit réel **mais** `@Profile("fabric")` désactivé, **0 test**, **réseau Fabric absent** (réutilise fabric-samples externe), fallback auto → Phase A |
 | **TLS hybride X25519+ML-KEM-768 (WS5)** | DOCUMENTAIRE | suite `tls-hybrid-p3` définie + `infra/tls/application-tls.yml` ref ; **aucun endpoint ne l'utilise**, `bctls-jdk18on` non importé, 0 test handshake |
 | **Edge Gateway K3s (§9.5)** | ABSENT | aucun artefact (ni Helm, ni manifests, ni code edge, ni ONNX/TFLite) |
@@ -49,7 +49,7 @@
 2. **blockchain-service** : 0 test + Fabric non opérationnel. → test-network en CI (Testcontainers) + tests `FabricAnchorService`, ou assumer Phase A comme cible prod et marquer Phase B « expérimental ».
 
 **P1 — profondeur des features phares**
-3. **Chaîne capteur→NC cassée** : endpoint `/api/v1/nc/from-iot` absent côté engine + registry de seuils vide. Le cas d'usage emblématique §9.9 ne marche pas e2e. → créer l'endpoint + une admin de seuils.
+3. ~~**Chaîne capteur→NC cassée**~~ → ✅ **Résolu** (2026-05-29, ADR 0016) : détection de seuil in-engine ouvrant une CAPA `IOT_ALERT`, seuils configurables, anti-spam. Reste : enrichir §9.9 (lien FMEA, cycle PDCA auto).
 4. **Vision 5S** : stub SHA-256 → vrai YOLOv8 (swap `InferenceBackend` déjà prévu), sinon dépromettre la CV.
 5. **Connecteurs protocoles IoT** : 0 connecteur (OPC-UA/MQTT/HL7/LoRaWAN). → en livrer au moins 1 (MQTT/EMQX) pour étayer l'universalité.
 
