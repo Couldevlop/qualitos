@@ -1,6 +1,8 @@
 package com.openlab.qualitos.quality.aigateway;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openlab.qualitos.quality.ai.guard.AiCallContext;
+import com.openlab.qualitos.quality.ai.guard.AiGuard;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,11 +34,14 @@ public class AiGatewayClient {
 
     private final RestClient client;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final AiGuard guard;
 
     public AiGatewayClient(
             @Value("${qualitos.ai.base-url:http://localhost:8085}") String baseUrl,
             @Value("${qualitos.ai.connect-timeout-ms:5000}") int connectTimeoutMs,
-            @Value("${qualitos.ai.read-timeout-ms:260000}") int readTimeoutMs) {
+            @Value("${qualitos.ai.read-timeout-ms:260000}") int readTimeoutMs,
+            AiGuard guard) {
+        this.guard = guard;
         // Timeouts CONFIGURABLES (cf. ADR 0014). Le read-timeout doit rester
         // > OLLAMA_TIMEOUT_S côté ai-service (lui-même > latence du modèle). Pour un
         // modèle plus lent/précis sur CPU (ex. qualitos-sql-lite), relever de concert
@@ -58,6 +63,10 @@ public class AiGatewayClient {
                 "user_prompt", userPrompt,
                 "max_tokens", maxTokens,
                 "temperature", 0.2);
+        AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "complete",
+                (systemPrompt == null ? 0 : systemPrompt.length())
+                        + (userPrompt == null ? 0 : userPrompt.length()));
+        guard.check(ctx);
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/complete")
@@ -69,12 +78,14 @@ public class AiGatewayClient {
             if (resp == null || resp.get("text") == null) {
                 throw new AiGatewayException("Réponse vide de la passerelle IA");
             }
+            guard.recordSuccess(ctx.tenantId());
             return new AiCompletionResult(
                     String.valueOf(resp.get("text")),
                     String.valueOf(resp.getOrDefault("provider", "")),
                     intValue(resp.get("tokens_used")),
                     intValue(resp.get("latency_ms")));
         } catch (RestClientException e) {
+            guard.recordFailure(ctx.tenantId());
             throw new AiGatewayException("Passerelle IA indisponible : " + e.getMessage(), e);
         }
     }
@@ -91,6 +102,9 @@ public class AiGatewayClient {
         }
         String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
         Map<String, Object> body = Map.of("question", question, "max_rows", maxRows);
+        AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "nlq",
+                question == null ? 0 : question.length());
+        guard.check(ctx);
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/nlq/ask")
@@ -102,8 +116,10 @@ public class AiGatewayClient {
             if (resp == null) {
                 throw new AiGatewayException("Réponse vide de la passerelle IA (NLQ)");
             }
+            guard.recordSuccess(ctx.tenantId());
             return resp;
         } catch (RestClientException e) {
+            guard.recordFailure(ctx.tenantId());
             throw new AiGatewayException("Passerelle IA indisponible (NLQ) : " + e.getMessage(), e);
         }
     }
