@@ -39,6 +39,8 @@ export class FormDialogComponent {
   @Input() submitDisabled = false;
   @Input() submitLabel = 'Enregistrer';
   @Input() submitIcon = 'check';
+  /** Couleur du bouton de validation ('primary' par défaut, 'warn' pour les actions sensibles). */
+  @Input() submitColor: 'primary' | 'accent' | 'warn' = 'primary';
   @Input() cancelLabel = 'Annuler';
 
   /** Émis à la soumission (le parent appelle son service). */
@@ -46,3 +48,4 @@ export class FormDialogComponent {
   /** Émis à l'annulation (le parent ferme le dialogRef). */
   @Output() cancelled = new EventEmitter<void>();
 }
+

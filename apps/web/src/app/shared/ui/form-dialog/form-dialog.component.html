@@ -10,7 +10,7 @@
     <button mat-button type="button" (click)="cancelled.emit()" [disabled]="submitting">
       {{ cancelLabel }}
     </button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="submitDisabled || submitting">
+    <button mat-flat-button [color]="submitColor" type="submit" [disabled]="submitDisabled || submitting">
       <mat-icon *ngIf="!submitting" aria-hidden="true">{{ submitIcon }}</mat-icon>
       <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
       {{ submitLabel }}

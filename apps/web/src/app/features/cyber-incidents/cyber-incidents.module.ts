@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { UiModule } from '../../shared/ui/ui.module';
 import { CyiDetailComponent } from './pages/cyi-detail/cyi-detail.component';
 import { CyiDetectDialogComponent } from './pages/cyi-detect-dialog/cyi-detect-dialog.component';
 import { CyiLinkBreachDialogComponent } from './pages/cyi-link-breach-dialog/cyi-link-breach-dialog.component';
@@ -27,6 +28,6 @@ const routes: Routes = [
     CyiSeverityDialogComponent,
     CyiLinkBreachDialogComponent
   ],
-  imports: [SharedModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class CyberIncidentsModule {}

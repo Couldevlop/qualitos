@@ -1,7 +1,12 @@
-<h2 mat-dialog-title>Nouvel audit fournisseur</h2>
+<qos-form-dialog
+  title="Nouvel audit fournisseur"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitLabel="Enregistrer"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="audit-form">
-  <mat-dialog-content>
     <div class="row">
       <mat-form-field appearance="outline" class="col">
         <mat-label>Date de l'audit</mat-label>
@@ -33,14 +38,5 @@
       <mat-label>Synthèse des constats</mat-label>
       <textarea matInput formControlName="findingsSummary" rows="4" maxlength="2000"></textarea>
     </mat-form-field>
-  </mat-dialog-content>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">check</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Enregistrer
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>

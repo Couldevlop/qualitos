@@ -1,23 +1,19 @@
-<h2 mat-dialog-title>{{ title }}</h2>
+<qos-form-dialog
+  [title]="title"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  [submitColor]="danger ? 'warn' : 'primary'"
+  submitLabel="Confirmer"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="status-form">
-  <mat-dialog-content>
-    <p [class.warn]="danger">{{ description }}</p>
+  <p [class.warn]="danger">{{ description }}</p>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Motif {{ data.reasonRequired ? '(obligatoire)' : '(optionnel)' }}</mat-label>
-      <textarea matInput formControlName="reason" rows="3" maxlength="1000"
-                placeholder="Justification du changement de statut, références"></textarea>
-    </mat-form-field>
-  </mat-dialog-content>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Motif {{ data.reasonRequired ? '(obligatoire)' : '(optionnel)' }}</mat-label>
+    <textarea matInput formControlName="reason" rows="3" maxlength="1000"
+              placeholder="Justification du changement de statut, références"></textarea>
+  </mat-form-field>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button [color]="danger ? 'warn' : 'primary'" type="submit"
-            [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">check</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Confirmer
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>
