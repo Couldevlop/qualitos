@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.UUID;
@@ -37,5 +38,14 @@ class GlobalExceptionHandlerTest {
     void missingTenant_mapsTo403() {
         ProblemDetail pd = handler.handleMissingTenant(new MissingTenantContextException());
         assertThat(pd.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
+    }
+
+    @Test
+    void missingRequiredParam_mapsTo400() {
+        ProblemDetail pd = handler.handleMissingParam(
+                new MissingServletRequestParameterException("category", "Nis2MeasureCategory"));
+        assertThat(pd.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(pd.getDetail()).contains("category");
+        assertThat(pd.getTitle()).isEqualTo("Missing Required Parameter");
     }
 }
