@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { UiModule } from '../../shared/ui/ui.module';
 import { CapaActionDialogComponent } from './pages/capa-action-dialog/capa-action-dialog.component';
 import { CapaCreateDialogComponent } from './pages/capa-create-dialog/capa-create-dialog.component';
 import { CapaDetailComponent } from './pages/capa-detail/capa-detail.component';
@@ -21,6 +22,6 @@ const routes: Routes = [
     CapaActionDialogComponent,
     CapaEditDialogComponent
   ],
-  imports: [SharedModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class CapaModule {}
