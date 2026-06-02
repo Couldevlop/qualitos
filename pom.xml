@@ -158,11 +158,16 @@
                             <configuration>
                                 <!-- Exclure les classes de configuration Spring et les entités
                                      du calcul de couverture — elles sont couvertes indirectement
-                                     par les tests d'intégration, pas par les tests unitaires. -->
+                                     par les tests d'intégration, pas par les tests unitaires.
+                                     Les connecteurs d'ingestion réseau (OPC-UA Milo, MQTT Paho)
+                                     et leur câblage Spring exigent un serveur/broker live :
+                                     testés en intégration (gating off par défaut), pas en unitaire. -->
                                 <excludes>
                                     <exclude>**/config/**</exclude>
                                     <exclude>**/*Application.class</exclude>
                                     <exclude>**/*Entity.class</exclude>
+                                    <exclude>**/*IngestionConnector.class</exclude>
+                                    <exclude>**/*ConnectorConfig.class</exclude>
                                 </excludes>
                                 <rules>
                                     <rule>
