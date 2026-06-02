@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * DTO de détection d'anomalies SPC (CLAUDE.md §3.4, §12.1). La série de mesures est
@@ -53,5 +54,21 @@ public final class SpcDto {
             boolean outOfControl,
             Limits limits,
             List<Violation> violations
+    ) {}
+
+    /**
+     * Analyse SPC d'un KPI : série tirée de {@code kpi_measurements} (chronologique),
+     * + verdict + éventuelle CAPA ouverte sur dérive ({@code capaId} non nul si une CAPA
+     * a été créée — procédé hors-contrôle et {@code openCapa=true}).
+     */
+    public record KpiSpcResponse(
+            UUID kpiId,
+            String kpiCode,
+            String kpiName,
+            String unit,
+            List<String> periods,
+            List<Double> values,
+            AnalyzeResponse analysis,
+            UUID capaId
     ) {}
 }
