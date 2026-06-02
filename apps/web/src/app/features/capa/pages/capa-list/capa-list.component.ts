@@ -50,7 +50,7 @@ export class CapaListComponent implements OnInit {
       this.page$,
       this.refresh$
     ]).pipe(
-      tap(() => { this.loading$.next(true); this.error$.next(null); }),
+      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
       switchMap(([status, p]) =>
         this.svc.listCases(p.index, p.size, status || undefined).pipe(
           catchError(err => {

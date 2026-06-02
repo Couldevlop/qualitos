@@ -32,6 +32,10 @@ import com.openlab.qualitos.quality.standards.EvidenceNotFoundException;
 import com.openlab.qualitos.quality.standards.RequirementNotFoundException;
 import com.openlab.qualitos.quality.standards.RoadmapStageNotFoundException;
 import com.openlab.qualitos.quality.standards.DocumentTemplateNotFoundException;
+import com.openlab.qualitos.quality.ai.guard.AiCircuitOpenException;
+import com.openlab.qualitos.quality.ai.guard.AiPromptTooLargeException;
+import com.openlab.qualitos.quality.ai.guard.AiQuotaExceededException;
+import com.openlab.qualitos.quality.ai.guard.AiRateLimitExceededException;
 import com.openlab.qualitos.quality.aigateway.AiGatewayException;
 import com.openlab.qualitos.quality.standards.StandardNotFoundException;
 import com.openlab.qualitos.quality.standards.TenantStandardNotFoundException;
@@ -385,6 +389,46 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/ai-gateway-unavailable"));
         problem.setTitle("AI Gateway Unavailable");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    // --- Garde-fous IA (OWASP LLM04 — Model Denial of Service) ---
+
+    @ExceptionHandler(AiPromptTooLargeException.class)
+    public ProblemDetail handleAiPromptTooLarge(AiPromptTooLargeException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-prompt-too-large"));
+        problem.setTitle("AI Prompt Too Large");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AiRateLimitExceededException.class)
+    public ProblemDetail handleAiRateLimit(AiRateLimitExceededException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-rate-limit-exceeded"));
+        problem.setTitle("AI Rate Limit Exceeded");
+        problem.setProperty("retryAfterSeconds", ex.getRetryAfterSeconds());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AiQuotaExceededException.class)
+    public ProblemDetail handleAiQuota(AiQuotaExceededException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-quota-exceeded"));
+        problem.setTitle("AI Quota Exceeded");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AiCircuitOpenException.class)
+    public ProblemDetail handleAiCircuitOpen(AiCircuitOpenException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/ai-circuit-open"));
+        problem.setTitle("AI Service Unavailable");
+        problem.setProperty("retryAfterSeconds", ex.getRetryAfterSeconds());
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

@@ -31,8 +31,8 @@ STRIDE applied to the AI gateway (`apps/ai-service`).
 |                        | Cross-tenant NLQ exfil                        | sqlglot validator rejects literal tenant_id; tenant filter rewriter (`LLM02`/`LLM08`) |
 |                        | LLM-side data exfil to external provider      | AIProvider allow-list (api.anthropic.com, api.mistral.ai, local Ollama)    |
 |                        | Prompt-injection coaxing system prompt        | PromptInjectionFilter; system/user role separation                         |
-| **D**enial of Service  | Massive prompt                                | FastAPI body size, max_tokens cap, slowapi rate-limit (sprint-2)           |
-|                        | Slow provider                                 | httpx timeout 30s, circuit breaker (sprint-2)                              |
+| **D**enial of Service  | Massive prompt                                | FastAPI body size, max_tokens cap, slowapi (sprint-2) **+ garde-fou par tenant côté engine : `AiGuard` débit/min + quota journalier + borne de taille de prompt (ADR 0017)** |
+|                        | Slow provider                                 | httpx timeout 30s, circuit breaker ai-service (sprint-2) **+ disjoncteur par tenant côté engine (`AiGuard`, ADR 0017)** |
 |                        | NLQ runaway query                             | statement_timeout 5s, LIMIT cap 10 000, row cap 1 000                      |
 | **E**levation          | Federated training abuse                      | Hard opt-in gate; non-opted-in tenant raises 403                           |
 |                        | Tool-use sandbox escape                       | No shell exec, no file write, no eval in adapters                          |

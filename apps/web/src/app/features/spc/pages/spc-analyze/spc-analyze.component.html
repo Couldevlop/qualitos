@@ -1,0 +1,134 @@
+<div class="qos-page">
+  <qos-page-header
+    eyebrow="DMAIC · Control"
+    title="Détection d'anomalies SPC"
+    subtitle="Carte des valeurs individuelles — limites de contrôle (σ = MR̄/d₂) et 8 règles de Nelson, calculées par l'IA.">
+  </qos-page-header>
+
+  <div class="spc-grid">
+    <!-- Saisie -->
+    <qos-panel title="Série de mesures" icon="timeline" class="spc-input">
+      <form [formGroup]="form" (ngSubmit)="analyze()">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Mesures (séparées par virgule, espace ou retour ligne)</mat-label>
+          <textarea matInput rows="6" formControlName="valuesText"
+                    placeholder="10.0, 10.2, 9.8, 10.1, …"></textarea>
+        </mat-form-field>
+
+        <p class="baseline-hint">Baseline connue (optionnel) — sinon les limites sont estimées :</p>
+        <div class="baseline-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Ligne centrale (center)</mat-label>
+            <input matInput type="number" formControlName="center" placeholder="auto">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>σ (sigma)</mat-label>
+            <input matInput type="number" formControlName="sigma" placeholder="auto" min="0">
+          </mat-form-field>
+        </div>
+
+        <div class="actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="loading || form.invalid">
+            <mat-icon>insights</mat-icon>
+            {{ loading ? 'Analyse…' : 'Analyser la série' }}
+          </button>
+          <button mat-button type="button" (click)="loadExample()" [disabled]="loading">
+            <mat-icon>science</mat-icon> Exemple
+          </button>
+        </div>
+      </form>
+
+      <p class="error" *ngIf="error" role="alert">{{ error }}</p>
+    </qos-panel>
+
+    <!-- Mode : depuis un KPI -->
+    <qos-panel title="Depuis un KPI" icon="monitoring" class="spc-input">
+      <p class="baseline-hint">Tire automatiquement les dernières mesures d'un KPI du catalogue.</p>
+      <form [formGroup]="kpiForm" (ngSubmit)="analyzeKpi()">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>KPI</mat-label>
+          <mat-select formControlName="kpiId">
+            <mat-option *ngFor="let k of kpis" [value]="k.id">{{ k.code }} — {{ k.name }}</mat-option>
+          </mat-select>
+          <mat-hint *ngIf="kpis.length === 0">Aucun KPI au catalogue.</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Fenêtre (nombre de mesures)</mat-label>
+          <input matInput type="number" formControlName="limit" min="2" max="10000">
+        </mat-form-field>
+
+        <mat-checkbox formControlName="openCapa" class="capa-check">
+          Ouvrir une CAPA si le procédé est hors-contrôle
+        </mat-checkbox>
+
+        <div class="actions">
+          <button mat-raised-button color="primary" type="submit"
+                  [disabled]="loading || kpiForm.invalid">
+            <mat-icon>monitoring</mat-icon>
+            {{ loading ? 'Analyse…' : 'Analyser le KPI' }}
+          </button>
+        </div>
+      </form>
+    </qos-panel>
+  </div>
+
+  <!-- Bannière contexte KPI / CAPA ouverte -->
+  <div class="kpi-banner" *ngIf="kpiContext as k">
+    <mat-icon>insights</mat-icon>
+    <span>Analyse du KPI <strong>{{ k.code }}</strong> — {{ k.name }}.</span>
+    <a *ngIf="k.capaId" class="capa-link" [routerLink]="['/capa', k.capaId]">
+      <mat-icon>assignment_late</mat-icon> CAPA ouverte — voir le dossier
+    </a>
+  </div>
+
+  <!-- Verdict (cartes) -->
+  <div class="kpi-col" *ngIf="result as r">
+    <qos-kpi-card
+      label="État du procédé"
+      [value]="r.outOfControl ? 'Hors contrôle' : 'Sous contrôle'"
+      [state]="r.outOfControl ? 'bad' : 'good'"
+      [icon]="r.outOfControl ? 'error' : 'verified'"
+      [description]="r.violations.length + ' règle(s) de Nelson déclenchée(s) · ' + r.n + ' points'">
+    </qos-kpi-card>
+    <qos-kpi-card
+      label="Ligne centrale"
+      [value]="r.limits.centerLine | number:'1.0-3'"
+      state="neutral" icon="horizontal_rule"
+      [description]="r.limits.estimated ? 'Estimée depuis la série' : 'Baseline fournie'">
+    </qos-kpi-card>
+    <qos-kpi-card
+      label="Limites de contrôle (3σ)"
+      [value]="(r.limits.lcl | number:'1.0-2') + ' … ' + (r.limits.ucl | number:'1.0-2')"
+      state="neutral" icon="straighten"
+      [description]="'σ = ' + (r.limits.sigma | number:'1.0-3')">
+    </qos-kpi-card>
+  </div>
+
+  <!-- Carte de contrôle -->
+  <qos-panel title="Carte de contrôle" icon="show_chart" *ngIf="chartOption">
+    <qos-echart [option]="chartOption" [height]="360"></qos-echart>
+  </qos-panel>
+
+  <!-- Violations -->
+  <qos-panel title="Règles de Nelson déclenchées" icon="rule" *ngIf="result as r">
+    <p class="empty" *ngIf="r.violations.length === 0">
+      Aucune règle déclenchée : le procédé est statistiquement maîtrisé 🎉
+    </p>
+    <table class="violations-table" *ngIf="r.violations.length">
+      <thead>
+        <tr><th>Règle</th><th>Sévérité</th><th>Constat</th><th>Points concernés</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let v of r.violations">
+          <td class="nowrap"><strong>{{ v.rule }}</strong><div class="v-title">{{ v.title }}</div></td>
+          <td><span class="sev" [ngClass]="severityClass(v.severity)">{{ v.severity }}</span></td>
+          <td>{{ v.description }}</td>
+          <td class="pts">
+            <span class="pt-chip" *ngFor="let i of v.pointIndices">#{{ i + 1 }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </qos-panel>
+</div>

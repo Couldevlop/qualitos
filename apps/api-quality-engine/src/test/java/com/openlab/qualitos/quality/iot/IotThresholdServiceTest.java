@@ -2,6 +2,9 @@ package com.openlab.qualitos.quality.iot;
 
 import com.openlab.qualitos.quality.capa.CapaCriticity;
 import com.openlab.qualitos.quality.common.TenantContext;
+import com.openlab.qualitos.quality.risk.FmeaItem;
+import com.openlab.qualitos.quality.risk.FmeaItemNotFoundException;
+import com.openlab.qualitos.quality.risk.FmeaItemRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,11 +28,13 @@ class IotThresholdServiceTest {
 
     @Mock IotThresholdRepository repo;
     @Mock IotDeviceRepository deviceRepo;
+    @Mock FmeaItemRepository fmeaItemRepo;
     @InjectMocks IotThresholdService service;
 
     static final UUID TENANT = UUID.randomUUID();
     static final UUID DEV = UUID.randomUUID();
     static final UUID OWNER = UUID.randomUUID();
+    static final UUID FMEA = UUID.randomUUID();
 
     @BeforeEach
     void setup() { TenantContext.setTenantId(TENANT.toString()); }
@@ -42,13 +47,36 @@ class IotThresholdServiceTest {
         when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         IotDto.ThresholdResponse out = service.create(new IotDto.ThresholdRequest(
-                null, "temperature", null, 8.0, CapaCriticity.HIGH, OWNER, null));
+                null, "temperature", null, 8.0, CapaCriticity.HIGH, OWNER, null, null, null));
 
         assertThat(out.tenantId()).isEqualTo(TENANT);
         assertThat(out.deviceId()).isNull();
         assertThat(out.maxValue()).isEqualTo(8.0);
         assertThat(out.enabled()).isTrue(); // null → activé par défaut
+        assertThat(out.openPdcaCycle()).isFalse(); // null → false
         verifyNoInteractions(deviceRepo); // pas de seuil ciblé device
+    }
+
+    @Test
+    void create_withValidFmeaLink_ok() {
+        when(fmeaItemRepo.findByIdAndTenantId(FMEA, TENANT)).thenReturn(Optional.of(new FmeaItem()));
+        when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        IotDto.ThresholdResponse out = service.create(new IotDto.ThresholdRequest(
+                null, "temperature", null, 8.0, CapaCriticity.HIGH, OWNER, null, FMEA, true));
+
+        assertThat(out.fmeaItemId()).isEqualTo(FMEA);
+        assertThat(out.openPdcaCycle()).isTrue();
+    }
+
+    @Test
+    void create_withUnknownFmeaLink_rejected() {
+        when(fmeaItemRepo.findByIdAndTenantId(FMEA, TENANT)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.create(new IotDto.ThresholdRequest(
+                null, "temperature", null, 8.0, CapaCriticity.HIGH, OWNER, null, FMEA, null)))
+                .isInstanceOf(FmeaItemNotFoundException.class);
+        verify(repo, never()).save(any());
     }
 
     @Test
@@ -60,7 +88,7 @@ class IotThresholdServiceTest {
         when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         IotDto.ThresholdResponse out = service.create(new IotDto.ThresholdRequest(
-                DEV, "temperature", 2.0, 8.0, CapaCriticity.MEDIUM, OWNER, true));
+                DEV, "temperature", 2.0, 8.0, CapaCriticity.MEDIUM, OWNER, true, null, null));
 
         assertThat(out.deviceId()).isEqualTo(DEV);
     }
@@ -73,7 +101,7 @@ class IotThresholdServiceTest {
         when(deviceRepo.findById(DEV)).thenReturn(Optional.of(d));
 
         assertThatThrownBy(() -> service.create(new IotDto.ThresholdRequest(
-                DEV, "temperature", null, 8.0, CapaCriticity.HIGH, OWNER, null)))
+                DEV, "temperature", null, 8.0, CapaCriticity.HIGH, OWNER, null, null, null)))
                 .isInstanceOf(IotDeviceNotFoundException.class);
         verify(repo, never()).save(any());
     }
@@ -99,7 +127,7 @@ class IotThresholdServiceTest {
         when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         IotDto.ThresholdResponse out = service.update(t.getId(), new IotDto.ThresholdRequest(
-                null, "pressure", 1.0, 5.0, CapaCriticity.CRITICAL, OWNER, false));
+                null, "pressure", 1.0, 5.0, CapaCriticity.CRITICAL, OWNER, false, null, null));
 
         assertThat(out.metric()).isEqualTo("pressure");
         assertThat(out.minValue()).isEqualTo(1.0);

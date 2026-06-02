@@ -39,8 +39,12 @@
         <springdoc.version>2.8.8</springdoc.version>
         <!-- Bouncy Castle : fournit ML-DSA (FIPS 204) + ML-KEM (FIPS 203). cf. ADR 0011.
              bcprov-jdk18on n'est PAS FIPS-validé → marqué dev dans le CBOM ; la prod
-             régulée bascule sur bc-fips via le même SPI (crypto-agility). -->
-        <bouncycastle.version>1.79</bouncycastle.version>
+             régulée bascule sur bc-fips via le même SPI (crypto-agility).
+             1.81 requis pour bctls : c'est la 1re version qui enregistre le groupe
+             hybride standardisé X25519MLKEM768 (RFC 9794, codepoint 0x11EC) dans le
+             provider BCJSSE — cf. §11.4 « TLS hybride X25519 + ML-KEM-768 ». Les
+             versions 1.79/1.80 n'exposent que des ML-KEM purs (pas d'hybride X25519). -->
+        <bouncycastle.version>1.81</bouncycastle.version>
     </properties>
 
     <dependencyManagement>
@@ -75,6 +79,20 @@
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+            <!-- bctls : provider BCJSSE pour le TLS hybride post-quantique (§11.4).
+                 Apporte le groupe nommé X25519MLKEM768. Optionnel à l'exécution :
+                 activé uniquement sous le profil Spring "tls" de api-core. -->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bctls-jdk18on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+            <!-- bcpkix : génération de certificats X.509 (self-signed en test, CSR/PKI). -->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk18on</artifactId>
                 <version>${bouncycastle.version}</version>
             </dependency>
         </dependencies>

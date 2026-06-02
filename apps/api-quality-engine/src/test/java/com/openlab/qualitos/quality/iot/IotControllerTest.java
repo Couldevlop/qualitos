@@ -188,7 +188,7 @@ class IotControllerTest {
         when(thresholdService.create(any())).thenReturn(thresholdResp());
         IotDto.ThresholdRequest req = new IotDto.ThresholdRequest(
                 DEV, "temperature", null, 8.0,
-                com.openlab.qualitos.quality.capa.CapaCriticity.HIGH, USER, null);
+                com.openlab.qualitos.quality.capa.CapaCriticity.HIGH, USER, null, null, null);
         mockMvc.perform(post("/api/v1/iot/thresholds").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
@@ -214,7 +214,7 @@ class IotControllerTest {
     private IotDto.ThresholdResponse thresholdResp() {
         return new IotDto.ThresholdResponse(
                 UUID.randomUUID(), TENANT, DEV, "temperature", null, 8.0,
-                com.openlab.qualitos.quality.capa.CapaCriticity.HIGH, USER, true, Instant.now());
+                com.openlab.qualitos.quality.capa.CapaCriticity.HIGH, USER, true, null, false, Instant.now());
     }
 
     private IotDto.DeviceResponse deviceResp() {

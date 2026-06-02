@@ -41,7 +41,7 @@ export class RopaDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.activity$ = this.route.paramMap.pipe(
-      tap(() => { this.loading$.next(true); this.error$.next(null); }),
+      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
       switchMap(p => {
         const id = p.get('id') ?? '';
         // OWASP A03 — UUID v4 regex on path id (mock-id fallback for demo data).

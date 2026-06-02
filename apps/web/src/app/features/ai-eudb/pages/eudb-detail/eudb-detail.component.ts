@@ -42,7 +42,7 @@ export class EudbDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.row$ = this.route.paramMap.pipe(
-      tap(() => { this.loading$.next(true); this.error$.next(null); }),
+      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
       switchMap(p => {
         const id = p.get('id') ?? '';
         if (!UUID_REGEX.test(id) && !id.startsWith('eudb-')) {

@@ -3,11 +3,14 @@ package com.openlab.qualitos.quality.kpi;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -218,6 +221,28 @@ public class KpiService {
                     KpiEvaluator.evaluate(d, m.getValue())));
         }
         return new KpiDto.KpiTrend(d.getId(), d.getCode(), points.size(), points);
+    }
+
+    /**
+     * Série chronologique des {@code limit} dernières mesures d'un KPI, pour alimenter
+     * une carte de contrôle SPC (§3.4). Le tenant est vérifié via {@link #loadForTenant}.
+     * {@code ownerId} = propriétaire du KPI (ou son créateur) — porteur par défaut d'une
+     * CAPA ouverte sur dérive (cf. SpcService).
+     */
+    @Transactional(readOnly = true)
+    public KpiDto.SpcSeries spcSeries(UUID kpiId, int limit) {
+        KpiDefinition d = loadForTenant(kpiId);
+        int capped = Math.max(1, Math.min(limit, 10000));
+        List<KpiMeasurement> desc = measureRepo
+                .findByKpiIdOrderByPeriodStartDesc(kpiId, PageRequest.of(0, capped))
+                .getContent();
+        List<KpiMeasurement> asc = new ArrayList<>(desc);
+        Collections.reverse(asc); // chronologique croissant pour la carte de contrôle
+        List<Instant> periods = asc.stream().map(KpiMeasurement::getPeriodStart).toList();
+        List<Double> values = asc.stream().map(m -> m.getValue().doubleValue()).toList();
+        UUID owner = d.getOwnerUserId() != null ? d.getOwnerUserId() : d.getCreatedBy();
+        return new KpiDto.SpcSeries(d.getId(), d.getCode(), d.getName(), d.getUnit(),
+                owner, periods, values);
     }
 
     // ---- helpers ----

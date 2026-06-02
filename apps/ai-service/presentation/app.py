@@ -14,6 +14,7 @@ from presentation.routers import (
     health_router,
     nlq_router,
     rag_router,
+    spc_router,
 )
 
 logging.basicConfig(
@@ -42,6 +43,7 @@ def create_app() -> FastAPI:
     app.include_router(rag_router)
     app.include_router(nlq_router)
     app.include_router(federated_router)
+    app.include_router(spc_router)
 
     @app.exception_handler(DomainError)
     async def _domain_error_handler(_: Request, exc: DomainError) -> JSONResponse:

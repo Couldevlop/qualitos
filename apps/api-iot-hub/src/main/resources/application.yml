@@ -29,6 +29,17 @@ spring:
 
 qualitos:
   iot:
+    # MQTT ingestion connector (CLAUDE.md §9.4). Disabled by default — no broker
+    # required in CI or REST-only deployments. Topic schema: qualitos/<deviceCode>/<metric>.
+    mqtt:
+      enabled: ${IOT_MQTT_ENABLED:false}
+      broker-url: ${IOT_MQTT_BROKER_URL:tcp://emqx:1883}
+      client-id: ${IOT_MQTT_CLIENT_ID:qualitos-iot-hub}
+      username: ${IOT_MQTT_USERNAME:}
+      password: ${IOT_MQTT_PASSWORD:}
+      topic-filter: ${IOT_MQTT_TOPIC_FILTER:qualitos/+/+}
+      qos: ${IOT_MQTT_QOS:1}
+      tls-enabled: ${IOT_MQTT_TLS_ENABLED:false}
     quality-engine:
       base-url: ${QUALITY_ENGINE_BASE_URL:http://api-quality-engine:8082}
       # OWASP A10 SSRF: egress allow-list, comma-separated hosts
