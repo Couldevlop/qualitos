@@ -1,46 +1,39 @@
-<h2 mat-dialog-title>Ajouter un constat d'audit</h2>
+<qos-form-dialog
+  title="Ajouter un constat d'audit"
+  subtitle="Catégorise le constat et décris-le précisément. Une NC majeure ouvrira automatiquement un CAPA dans la prochaine itération du workflow audit."
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitLabel="Enregistrer"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="finding-form">
-  <mat-dialog-content>
-    <p class="hint">Catégorise le constat et décris-le précisément.
-       Une NC majeure ouvrira automatiquement un CAPA dans la prochaine itération
-       du workflow audit.</p>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Type</mat-label>
+    <mat-select formControlName="type">
+      <mat-option *ngFor="let t of types" [value]="t.value">
+        <strong>{{ t.label }}</strong> — <span class="muted">{{ t.hint }}</span>
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Type</mat-label>
-      <mat-select formControlName="type">
-        <mat-option *ngFor="let t of types" [value]="t.value">
-          <strong>{{ t.label }}</strong> — <span class="muted">{{ t.hint }}</span>
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Description du constat</mat-label>
+    <textarea matInput formControlName="description" rows="4" required
+              placeholder="Ce qui a été observé, où, quand, pourquoi c'est un écart…"></textarea>
+    <mat-error *ngIf="form.controls.description.hasError('required')">Description requise.</mat-error>
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Description du constat</mat-label>
-      <textarea matInput formControlName="description" rows="4" required
-                placeholder="Ce qui a été observé, où, quand, pourquoi c'est un écart…"></textarea>
-      <mat-error *ngIf="form.controls.description.hasError('required')">Description requise.</mat-error>
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Clause (optionnel)</mat-label>
+    <input matInput formControlName="clauseRef" maxlength="100"
+           placeholder="Ex. : 7.1.5.1 ISO 9001">
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Clause (optionnel)</mat-label>
-      <input matInput formControlName="clauseRef" maxlength="100"
-             placeholder="Ex. : 7.1.5.1 ISO 9001">
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>URL photo (optionnel)</mat-label>
+    <input matInput formControlName="photoUrl" maxlength="1024"
+           placeholder="https://…">
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>URL photo (optionnel)</mat-label>
-      <input matInput formControlName="photoUrl" maxlength="1024"
-             placeholder="https://…">
-    </mat-form-field>
-  </mat-dialog-content>
-
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">check</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Enregistrer
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>
