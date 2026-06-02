@@ -42,7 +42,7 @@ export class AdmListComponent implements OnInit {
       this.statusCtrl.valueChanges.pipe(startWith(this.statusCtrl.value), debounceTime(120)),
       this.refresh$
     ]).pipe(
-      tap(() => { this.loading$.next(true); this.error$.next(null); }),
+      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
       switchMap(([status]) => this.svc.list(status || undefined).pipe(
         catchError(err => {
           this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));

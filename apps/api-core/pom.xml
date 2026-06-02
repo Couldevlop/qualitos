@@ -57,6 +57,19 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- TLS hybride post-quantique (§11.4) : provider BCJSSE + groupe nommé
+             X25519MLKEM768. Activé UNIQUEMENT par le profil Spring "tls" ; OFF par
+             défaut (cf. HybridTlsConfig + application-tls.yml). La présence du jar
+             au classpath est inerte tant que le provider n'est pas enregistré. -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bctls-jdk18on</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
+        </dependency>
+
         <!-- Spring AOP (pour TenantHibernateFilterInterceptor) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

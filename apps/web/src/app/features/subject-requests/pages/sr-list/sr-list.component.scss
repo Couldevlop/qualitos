@@ -10,7 +10,7 @@
 .banner-error { background: #fbe9e7; color: #b71c1c; }
 .banner-info  { background: #e3f2fd; color: #0d47a1; }
 
-.table-wrap { background: #fff; border-radius: 12px; overflow: hidden; }
+.table-wrap { background: var(--qos-bg-elevated); border: 1px solid var(--qos-border-subtle); border-radius: var(--qos-radius-lg); overflow: hidden; }
 .title-link { color: var(--mat-sys-primary, #1565c0); cursor: pointer; }
 .title-link:hover { text-decoration: underline; }
 .dim { color: rgba(0,0,0,0.5); font-size: 11px; }

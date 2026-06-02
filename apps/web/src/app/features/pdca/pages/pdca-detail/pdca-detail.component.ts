@@ -51,7 +51,7 @@ export class PdcaDetailComponent implements OnInit {
     }
     this.cycleId = raw;
     this.cycle$ = this.reload$.pipe(
-      tap(() => { this.loading$.next(true); this.error$.next(null); }),
+      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
       switchMap(() => this.pdca.getCycle(this.cycleId).pipe(
         catchError(err => {
           // OWASP A09 — do not echo backend error.detail to the UI: it can

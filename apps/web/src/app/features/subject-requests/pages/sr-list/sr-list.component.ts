@@ -53,7 +53,10 @@ export class SrListComponent implements OnInit {
       this.statusFilter.valueChanges.pipe(startWith(this.statusFilter.value)),
       this.refresh$
     ]).pipe(
-      tap(() => { this.loading$.next(true); this.error$.next(null); }),
+      // loading différé hors de la passe de détection de changements courante :
+      // évite NG0100 (le banner *ngIf="loading$ | async" est évalué avant que la
+      // souscription synchrone de rows$ ne bascule loading$ à true).
+      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
       switchMap(([mode, status]) => {
         const op$ = mode === 'overdue'
           ? this.svc.overdue(200)

@@ -111,4 +111,18 @@ public final class KpiDto {
             int sampleCount,
             List<KpiTrendPoint> points
     ) {}
+
+    /**
+     * Série chronologique destinée à une carte de contrôle SPC (§3.4). {@code ownerId}
+     * = porteur par défaut d'une CAPA ouverte sur dérive.
+     */
+    public record SpcSeries(
+            UUID kpiId,
+            String code,
+            String name,
+            String unit,
+            UUID ownerId,
+            List<Instant> periods,
+            List<Double> values
+    ) {}
 }

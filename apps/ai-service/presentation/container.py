@@ -14,6 +14,7 @@ from application.usecase import (
     FederatedTrainRoundUseCase,
     NlqAskUseCase,
     RagQueryUseCase,
+    SpcDetectUseCase,
 )
 from domain.model.completion import ProviderName
 from domain.port.ai_provider import AIProvider
@@ -130,3 +131,7 @@ class Container:
 
     def federated_round(self) -> FederatedTrainRoundUseCase:
         return FederatedTrainRoundUseCase(self.federated_client)
+
+    def spc_detect(self) -> SpcDetectUseCase:
+        # Pure compute (no external adapters): the use case wraps the domain service.
+        return SpcDetectUseCase()

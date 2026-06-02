@@ -140,3 +140,121 @@ p { margin: 0; }
   background: var(--qos-border-strong);
   background-clip: padding-box;
 }
+
+/* ============================================================
+ * Dialogs — ergonomie standard (panelClass commun `qos-dialog-panel`,
+ * utilisée par les 132 ouvertures de dialog du SPA).
+ *
+ * Objectif UI/UX : UNE seule zone de défilement (le contenu), en-tête et
+ * actions toujours visibles (fixes), largeur responsive, plein écran utile
+ * sur mobile. Supprime les « ascenseurs imbriqués » du dimensionnement
+ * Material par défaut. Gère les deux structures rencontrées :
+ *   surface > [title, content, actions]      (dialogs simples)
+ *   surface > [title, form > [content, actions]]  (dialogs formulaire)
+ * ============================================================ */
+.qos-dialog-panel {
+  width: min(680px, 94vw);
+  max-width: 94vw;
+
+  .mat-mdc-dialog-surface {
+    display: flex;
+    flex-direction: column;
+    max-height: 88vh;            /* jamais plus haut que la fenêtre */
+    overflow: hidden;            /* pas de scroll sur la surface elle-même */
+    padding: 0;
+    border-radius: var(--qos-radius-lg);
+    box-shadow: var(--qos-shadow-lg) !important;
+  }
+
+  /* Si un <form> enveloppe contenu + actions, il porte la colonne flex. */
+  .mat-mdc-dialog-surface > form {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .mat-mdc-dialog-title {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: var(--qos-space-5) var(--qos-space-6) var(--qos-space-4);
+    border-bottom: 1px solid var(--qos-border-subtle);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+  .mat-mdc-dialog-title::before { display: none; }  /* retire l'espace baseline MDC */
+
+  /* Zone de contenu = UNIQUE ascenseur. */
+  .mat-mdc-dialog-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;            /* retire le plafond MDC (source du 2e scroll) */
+    margin: 0;
+    padding: var(--qos-space-5) var(--qos-space-6);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* Actions fixes en bas, séparées par un filet. */
+  .mat-mdc-dialog-actions {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: var(--qos-space-4) var(--qos-space-6);
+    border-top: 1px solid var(--qos-border-subtle);
+    gap: var(--qos-space-3);
+    justify-content: flex-end;
+  }
+
+  .mat-mdc-form-field { width: 100%; }
+}
+
+/* Mobile : dialog plein écran (plus d'ergonomie tactile, zéro débordement). */
+@media (max-width: 640px) {
+  .qos-dialog-panel {
+    width: 100vw;
+    max-width: 100vw;
+
+    .mat-mdc-dialog-surface {
+      max-height: 100dvh;
+      border-radius: 0;
+    }
+  }
+}
+
+/* ============================================================
+ * Tables — polish global cohérent (toutes les listes mat-table).
+ * Classes Material globales : s'applique sans toucher aux templates.
+ * Les en-têtes deviennent des libellés sobres, les lignes réagissent
+ * au survol, les filets s'alignent sur les tokens (dark mode inclus).
+ * ============================================================ */
+.mat-mdc-table {
+  background: transparent;
+  width: 100%;
+}
+
+.mat-mdc-header-cell {
+  color: var(--qos-fg-secondary);
+  font-weight: 600;
+  font-size: var(--qos-fs-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-bottom-color: var(--qos-border-default) !important;
+}
+
+.mat-mdc-cell {
+  color: var(--qos-fg-primary);
+  border-bottom-color: var(--qos-border-subtle) !important;
+}
+
+.mat-mdc-row {
+  transition: background-color 0.12s ease;
+}
+.mat-mdc-row:hover {
+  background: var(--qos-bg-subtle, rgba(127, 127, 127, 0.06));
+}
+
+/* Dernière ligne sans filet (le conteneur .table-wrap porte déjà la bordure). */
+.mat-mdc-row:last-of-type .mat-mdc-cell {
+  border-bottom: none;
+}

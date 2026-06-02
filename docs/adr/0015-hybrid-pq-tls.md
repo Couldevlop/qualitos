@@ -1,7 +1,9 @@
 # ADR 0015 — TLS hybride post-quantique (X25519 + ML-KEM-768)
 
-- **Statut** : Accepté (WS5) — décision de conception + config de référence livrées ;
-  déploiement/E2E sur un environnement avec terminaison TLS (ingress ou JSSE BC).
+- **Statut** : Accepté (WS5) — **activé le 2026-05-29** comme profil Spring `tls`
+  optionnel (OFF par défaut) sur api-core, prouvé par `HybridTlsHandshakeTest`
+  (handshake TLS 1.3 hybride en loopback). Nécessite **Bouncy Castle 1.81** (1re
+  version exposant le groupe nommé `X25519MLKEM768` / RFC 9794, 0x11EC, dans BCJSSE).
 - **Date** : 2026-05-28
 - **Owners** : @Couldevlop
 - **Lié à** : [0011](./0011-pq-crypto-agility-signing.md) (crypto-agility + signatures),

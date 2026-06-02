@@ -46,7 +46,7 @@ export class BreachListComponent implements OnInit {
       this.refresh$
     ]).pipe(
       debounceTime(120),
-      tap(() => { this.loading$.next(true); this.error$.next(null); }),
+      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
       switchMap(([mode, status]) => {
         const src$ = mode === 'DPA_OVERDUE'
           ? this.svc.dpaOverdue()

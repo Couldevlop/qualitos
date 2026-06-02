@@ -8,3 +8,10 @@ python-magic-bin==0.4.14 ; sys_platform == "win32"
 python-jose[cryptography]==3.3.0
 httpx==0.27.2
 slowapi==0.1.9
+
+# --- Optional: real ONNX inference backend ---------------------------------
+# These power `OnnxInferenceBackend`. They are OPTIONAL: when absent, the
+# service falls back to the deterministic stub (imports are lazy / guarded).
+# Install with the "onnx" extra (see pyproject.toml) or uncomment below.
+# onnxruntime==1.19.2
+# numpy==1.26.4

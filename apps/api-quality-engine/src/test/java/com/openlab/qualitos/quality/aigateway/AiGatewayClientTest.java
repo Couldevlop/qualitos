@@ -1,5 +1,8 @@
 package com.openlab.qualitos.quality.aigateway;
 
+import com.openlab.qualitos.quality.ai.guard.AiGuard;
+import com.openlab.qualitos.quality.ai.guard.AiGuardProperties;
+import com.openlab.qualitos.quality.ai.guard.TokenBucketAiGuard;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import com.sun.net.httpserver.HttpServer;
@@ -9,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -40,6 +44,11 @@ class AiGatewayClientTest {
         TenantContext.clear();
     }
 
+    /** Garde-fou par défaut (débit large) : neutre pour les appels uniques de chaque test. */
+    private static AiGuard newGuard() {
+        return new TokenBucketAiGuard(new AiGuardProperties());
+    }
+
     /** Enregistre une réponse canned et renvoie un client pointé sur le serveur. */
     private AiGatewayClient clientReturning(int status, String body) {
         server.createContext("/", exchange -> {
@@ -51,7 +60,7 @@ class AiGatewayClientTest {
             }
             exchange.close();
         });
-        return new AiGatewayClient("http://localhost:" + port, 2000, 5000);
+        return new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
     }
 
     @Test
@@ -89,7 +98,7 @@ class AiGatewayClientTest {
     @Test
     void complete_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000);
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
         assertThatThrownBy(() -> c.complete("s", "u", 10))
                 .isInstanceOf(MissingTenantContextException.class);
     }
@@ -120,8 +129,39 @@ class AiGatewayClientTest {
     @Test
     void askNlq_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000);
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
         assertThatThrownBy(() -> c.askNlq("q", 10))
+                .isInstanceOf(MissingTenantContextException.class);
+    }
+
+    @Test
+    void detectSpc_success_returnsRawMap() {
+        AiGatewayClient c = clientReturning(200,
+                "{\"n\":3,\"out_of_control\":true,\"limits\":{\"ucl\":3.5},\"violations\":[]}");
+        Map<String, Object> resp = c.detectSpc(List.of(1.0, 2.0, 3.0), null, null);
+        assertThat(resp).containsKey("limits");
+        assertThat(resp.get("out_of_control")).isEqualTo(true);
+    }
+
+    @Test
+    void detectSpc_emptyBody_throws() {
+        AiGatewayClient c = clientReturning(200, "");
+        assertThatThrownBy(() -> c.detectSpc(List.of(1.0), null, null))
+                .isInstanceOf(AiGatewayException.class);
+    }
+
+    @Test
+    void detectSpc_serverError_throws() {
+        AiGatewayClient c = clientReturning(500, "boom");
+        assertThatThrownBy(() -> c.detectSpc(List.of(1.0), null, null))
+                .isInstanceOf(AiGatewayException.class);
+    }
+
+    @Test
+    void detectSpc_missingTenant_throws() {
+        TenantContext.clear();
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
+        assertThatThrownBy(() -> c.detectSpc(List.of(1.0), null, null))
                 .isInstanceOf(MissingTenantContextException.class);
     }
 }

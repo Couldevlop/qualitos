@@ -11,7 +11,8 @@ permet de changer un algorithme sans toucher aux consommateurs.
 
 | Provider | Version | Statut FIPS | Usage |
 | --- | --- | --- | --- |
-| `org.bouncycastle:bcprov-jdk18on` | 1.79 | ❌ **non FIPS-validé** | dev / on-prem non régulé |
+| `org.bouncycastle:bcprov-jdk18on` | 1.81 | ❌ **non FIPS-validé** | dev / on-prem non régulé |
+| `org.bouncycastle:bctls-jdk18on` | 1.81 | ❌ non FIPS-validé | TLS hybride X25519+ML-KEM-768 (profil `tls` api-core, §11.4) ; prod régulée → `bctls-fips` |
 | `org.bouncycastle:bc-fips` | (cible) | ✅ FIPS 140-3 | **prod régulée** — bascule prévue via le même SPI |
 | JDK (SunEC) | Java 21 | — | Ed25519 (classique) |
 

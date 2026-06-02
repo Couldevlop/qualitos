@@ -32,6 +32,21 @@
             <artifactId>jakarta.validation-api</artifactId>
         </dependency>
 
+        <!-- TLS hybride PQ (§11.4) : provider BCJSSE (groupe X25519MLKEM768) et
+             génération de certificat X.509 auto-signé. Test-scope : la PREUVE de
+             handshake hybride vit ici ; la prod active bctls via le profil "tls"
+             de api-core. -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bctls-jdk18on</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk18on</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

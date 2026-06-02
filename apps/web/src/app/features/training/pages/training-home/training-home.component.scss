@@ -10,7 +10,7 @@
 .tab-toolbar .filter { min-width: 200px; }
 .spacer { flex: 1; }
 
-.table-wrap { background: #fff; border-radius: 12px; overflow: hidden; }
+.table-wrap { background: var(--qos-bg-elevated); border: 1px solid var(--qos-border-subtle); border-radius: var(--qos-radius-lg); overflow: hidden; }
 .title-link { color: var(--mat-sys-primary, #1565c0); cursor: pointer; font-weight: 600; }
 .title-link:hover { text-decoration: underline; }
 .dim { color: rgba(0,0,0,0.55); font-size: 12px; }

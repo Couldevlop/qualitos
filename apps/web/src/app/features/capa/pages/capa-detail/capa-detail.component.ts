@@ -61,7 +61,7 @@ export class CapaDetailComponent implements OnInit {
     }
     this.caseId = raw;
     this.case$ = this.reload$.pipe(
-      tap(() => { this.loading$.next(true); this.error$.next(null); }),
+      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
       switchMap(() => this.capa.getCase(this.caseId).pipe(
         catchError(err => {
           // eslint-disable-next-line no-console

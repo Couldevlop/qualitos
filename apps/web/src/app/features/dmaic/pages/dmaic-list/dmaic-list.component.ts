@@ -59,7 +59,7 @@ export class DmaicListComponent implements OnInit {
       this.page$,
       this.refresh$
     ]).pipe(
-      tap(() => { this.loading$.next(true); this.error$.next(null); }),
+      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
       switchMap(([status, phase, p]) =>
         this.svc.listProjects(p.index, p.size, status || undefined, phase || undefined).pipe(
           catchError(err => {

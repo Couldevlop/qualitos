@@ -16,6 +16,11 @@ public interface DeviceJpaRepository extends JpaRepository<DeviceEntity, UUID> {
 
   Optional<DeviceEntity> findByTenantIdAndCode(UUID tenantId, String code);
 
+  /** Tenant-agnostic lookup by code (MQTT ingestion path). May return more than
+   * one row when the same code is used by different tenants — the adapter
+   * fails-closed on ambiguity. */
+  List<DeviceEntity> findByCode(String code);
+
   List<DeviceEntity> findAllByTenantId(UUID tenantId);
 
   long countByTenantId(UUID tenantId);

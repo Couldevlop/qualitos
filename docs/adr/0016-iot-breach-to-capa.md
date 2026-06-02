@@ -47,4 +47,7 @@ Deux options pour câbler la détection :
 - Le chemin `api-iot-hub → /api/v1/nc/from-iot` reste **hors périmètre** (documenté) :
   il faudra, pour l'activer, un client de service Keycloak `qualitos-iot` + validation
   tenant côté engine. `api-iot-hub` reste utile comme ingestion edge buffer.
-- Itérations ultérieures (§9.9 « + lien FMEA + cycle PDCA », outbox/retry) non couvertes ici.
+- **Enrichissement §9.9 (V66)** : le seuil porte un `fmeaItemId` optionnel (lien vers la fiche
+  FMEA, validé au même tenant à la création) et un flag `openPdcaCycle` ; à la dérive, un cycle
+  PDCA d'amélioration est ouvert (même transaction) et les références FMEA/PDCA sont inscrites dans
+  la description de la CAPA. Reste non couvert : outbox/retry, alerte temps réel manager.
