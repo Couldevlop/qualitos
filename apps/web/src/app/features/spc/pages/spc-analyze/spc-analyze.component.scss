@@ -1,0 +1,125 @@
+:host {
+  display: block;
+}
+
+.qos-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 8px 4px;
+}
+
+.spc-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.9fr);
+  gap: 20px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.full {
+  width: 100%;
+}
+
+.baseline-hint {
+  margin: 4px 0 8px;
+  font-size: 0.82rem;
+  color: var(--qos-fg-secondary, #475569);
+}
+
+.baseline-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+
+  mat-icon {
+    margin-right: 6px;
+  }
+}
+
+.error {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(220, 38, 38, 0.08);
+  color: #b91c1c;
+  font-size: 0.88rem;
+}
+
+.kpi-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.empty {
+  color: var(--qos-fg-secondary, #475569);
+  font-size: 0.92rem;
+}
+
+.violations-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+
+  th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--qos-fg-secondary, #475569);
+    border-bottom: 1px solid var(--qos-border-subtle, #e2e8f0);
+    padding: 8px 10px;
+  }
+
+  td {
+    padding: 10px;
+    border-bottom: 1px solid var(--qos-border-subtle, #e2e8f0);
+    vertical-align: top;
+  }
+
+  .nowrap {
+    white-space: nowrap;
+  }
+
+  .v-title {
+    font-size: 0.78rem;
+    color: var(--qos-fg-secondary, #475569);
+  }
+}
+
+.sev {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+
+  &.sev-crit { background: rgba(220, 38, 38, 0.12); color: #b91c1c; }
+  &.sev-maj  { background: rgba(217, 119, 6, 0.14); color: #b45309; }
+  &.sev-min  { background: rgba(37, 99, 235, 0.12); color: #1d4ed8; }
+}
+
+.pts {
+  max-width: 280px;
+}
+
+.pt-chip {
+  display: inline-block;
+  margin: 2px 4px 2px 0;
+  padding: 1px 8px;
+  border-radius: 6px;
+  background: var(--qos-bg-subtle, #f1f5f9);
+  color: var(--qos-fg-primary, #0f172a);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.78rem;
+}

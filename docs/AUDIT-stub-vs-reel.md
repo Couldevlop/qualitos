@@ -30,7 +30,8 @@
 | **TLS hybride X25519+ML-KEM-768 (WS5)** | ~~DOCUMENTAIRE~~ → **RÉEL (profil optionnel)** | ✅ Résolu : BC 1.81 + `bctls`, `HybridTlsConfig @Profile("tls")` (BCJSSE + `jdk.tls.namedGroups=X25519MLKEM768`), `application-tls.yml`. **Preuve** : `HybridTlsHandshakeTest` (handshake TLS 1.3 hybride en loopback). OFF par défaut. |
 | **Edge Gateway K3s (§9.5)** | ABSENT | aucun artefact (ni Helm, ni manifests, ni code edge, ni ONNX/TFLite) |
 | **Prédiction LSTM/Prophet/TFT (§12)** | ABSENT | aucun import |
-| **Anomalies ML (Isolation Forest/Autoencoder)** | ABSENT | aucun import |
+| **Anomalies SPC / Nelson rules (§3.4, §12.1)** | ~~ABSENT~~ → **RÉEL (branché engine)** | ✅ ADR 0018 : `domain/service/spc_rules.py` (limites I-chart MR̄/d2 + 8 règles Nelson, NumPy), use case `SpcDetectUseCase`, endpoint `POST /v1/ai/spc/analyze` ; 19 tests. **Branché côté engine (2026-06-01)** : `AiGatewayClient.detectSpc` (garde-fou LLM04 réutilisé) + `spc/SpcController`+`SpcService`+`SpcDto` (`POST /api/v1/ai/spc/analyze`), 6 tests ; E2E vérifié (NELSON_1/2 détectées). |
+| **Anomalies ML (Isolation Forest/Autoencoder)** | ABSENT | aucun import (le SPC ci-dessus couvre la détection règle/statistique ; ML non-supervisé reste à faire) |
 | **Clustering NC (HDBSCAN)** | ABSENT | aucun import |
 | **Explicabilité SHAP/LIME** | ABSENT | aucun import |
 | **NLP audits / sentiment (BERT/Whisper)** | ABSENT | aucun import transformers/whisper |
@@ -54,10 +55,10 @@
 5. ~~**Connecteurs protocoles IoT**~~ → ✅ **MQTT + OPC-UA livrés** (Paho v5, Milo 0.6.16 ; tenant depuis le registre device). Reste : HL7 FHIR / LoRaWAN.
 
 **P2 — capacités ML annoncées absentes**
-6. **IA prédictive** : implémenter au moins 1-2 modèles réels (prédiction KPI, anomalies SPC) pour étayer « IA épine dorsale », ou recadrer §12.
+6. **IA prédictive** : ⏳ **Entamé** (2026-05-31, ADR 0018) — détection d'anomalies **SPC réelle** (8 règles Nelson + limites de contrôle, `POST /v1/ai/spc/analyze`, 19 tests). ✅ **SPC branché côté engine** (2026-06-01) : `AiGatewayClient.detectSpc` + `spc/SpcController` (`POST /api/v1/ai/spc/analyze`, 6 tests, E2E OK). Reste : prédiction KPI (LSTM/Prophet) et anomalies ML non-supervisées (Isolation Forest/autoencoder) ; UI SPC + dérivation auto depuis `kpi_measurements`.
 7. **Federated learning** : laisser en opt-in mais ne pas survendre.
 
 **P3 — hygiène**
 8. Digital Twin réhydraté vide (TODO P4).
-9. Garde-fous IA (rate-limit / circuit breaker / quotas budgétaires) non branchés sur le chemin LLM.
+9. ~~Garde-fous IA (rate-limit / circuit breaker / quotas budgétaires) non branchés sur le chemin LLM.~~ → ✅ **Résolu** (2026-05-31, ADR 0017) : `AiGuard`/`TokenBucketAiGuard` cloisonné par tenant (token bucket débit/min + quota journalier + disjoncteur + borne de taille de prompt) branché dans `AiGatewayClient.complete`/`askNlq` avant tout départ réseau ; rejets mappés 429/413/503 (`GlobalExceptionHandler`) ; paramétrable `qualitos.ai.guard.*`. État en mémoire/nœud — port `AiGuard` swappable Redis pour le cluster.
 10. Couverture front : ✅ **fortement améliorée** — +35 specs services (67 → **271 tests**, tous les services métier couverts). Reste : couches composant (`*-list`/`*-view`) + `core/theme`.

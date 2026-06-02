@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -121,6 +122,53 @@ public class AiGatewayClient {
         } catch (RestClientException e) {
             guard.recordFailure(ctx.tenantId());
             throw new AiGatewayException("Passerelle IA indisponible (NLQ) : " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Relaie une série de mesures vers la détection d'anomalies SPC de {@code ai-service}
+     * (§3.4, §12.1 : limites de contrôle + 8 règles de Nelson, NumPy). Renvoie la réponse
+     * JSON brute (mappée par la couche application). Le tenant provient du {@link TenantContext}
+     * (JWT), jamais du body. {@code center}/{@code sigma} optionnels (baseline connue).
+     *
+     * <p>Bien que l'analyse SPC soit statistique (pas un LLM), elle passe par le même
+     * garde-fou ({@link AiGuard}) que les appels IA : cloisonnement du débit/quota par
+     * tenant sur la passerelle (OWASP LLM04, cohérence des chemins sortants).
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> detectSpc(List<Double> values, Double center, Double sigma) {
+        if (!TenantContext.hasTenant()) {
+            throw new MissingTenantContextException();
+        }
+        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        // Map.of refuse les valeurs null → construire la map en tenant compte de la baseline.
+        Map<String, Object> body = new HashMap<>();
+        body.put("values", values);
+        if (center != null) {
+            body.put("center", center);
+        }
+        if (sigma != null) {
+            body.put("sigma", sigma);
+        }
+        AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "spc",
+                values == null ? 0 : values.size());
+        guard.check(ctx);
+        try {
+            Map<String, Object> resp = client.post()
+                    .uri("/v1/ai/spc/analyze")
+                    .header("X-Dev-Claims", devClaims)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(body)
+                    .retrieve()
+                    .body(Map.class);
+            if (resp == null) {
+                throw new AiGatewayException("Réponse vide de la passerelle IA (SPC)");
+            }
+            guard.recordSuccess(ctx.tenantId());
+            return resp;
+        } catch (RestClientException e) {
+            guard.recordFailure(ctx.tenantId());
+            throw new AiGatewayException("Passerelle IA indisponible (SPC) : " + e.getMessage(), e);
         }
     }
 
