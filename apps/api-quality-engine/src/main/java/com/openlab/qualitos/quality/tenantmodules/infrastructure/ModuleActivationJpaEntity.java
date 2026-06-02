@@ -35,8 +35,9 @@ public class ModuleActivationJpaEntity {
     @Column(name = "billing_tier", nullable = false, length = 32)
     private BillingTier billingTier;
 
-    @Lob
-    @Column(name = "configuration_json")
+    // TEXT cote DB — éviter le mapping @Lob→oid (cf. AuditEvent.payloadJson).
+    @Column(name = "configuration_json", columnDefinition = "TEXT")
+    @org.hibernate.annotations.JdbcTypeCode(java.sql.Types.LONGVARCHAR)
     private String configurationJson;
 
     @Column(name = "trial_ends_at")

@@ -52,8 +52,9 @@ public class TenantIndustryPackActivation {
     private UUID deactivatedBy;
 
     /** JSON optionnel pour overrides par-tenant (KPIs custom, glossaire, etc.). */
-    @Lob
-    @Column(name = "config_overrides_json")
+    // TEXT cote DB (V17) — éviter le mapping @Lob→oid (cf. AuditEvent.payloadJson).
+    @Column(name = "config_overrides_json", columnDefinition = "TEXT")
+    @org.hibernate.annotations.JdbcTypeCode(java.sql.Types.LONGVARCHAR)
     private String configOverridesJson;
 
     @PrePersist
