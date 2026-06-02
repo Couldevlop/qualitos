@@ -88,7 +88,7 @@ export class IshikawaDetailComponent implements OnInit {
     }
     this.diagramId = raw;
     this.diagram$ = this.reload$.pipe(
-      tap(() => { this.loading$.next(true); this.error$.next(null); }),
+      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
       switchMap(() => this.ishikawa.getDiagram(this.diagramId).pipe(
         catchError(err => {
           // eslint-disable-next-line no-console

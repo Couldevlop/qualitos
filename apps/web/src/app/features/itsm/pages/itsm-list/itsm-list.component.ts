@@ -43,7 +43,7 @@ export class ItsmListComponent implements OnInit {
 
   ngOnInit(): void {
     this.connections$ = this.refresh$.pipe(
-      tap(() => { this.loading$.next(true); this.error$.next(null); }),
+      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
       switchMap(() => this.page$.pipe(
         switchMap(p =>
           this.svc.list(p.index, p.size).pipe(

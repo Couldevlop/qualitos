@@ -65,7 +65,7 @@ export class AuditsDetailComponent implements OnInit {
     }
     this.planId = raw;
     this.plan$ = this.reload$.pipe(
-      tap(() => { this.loading$.next(true); this.error$.next(null); }),
+      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
       switchMap(() => this.audits.getPlan(this.planId).pipe(
         catchError(err => {
           // eslint-disable-next-line no-console

@@ -67,7 +67,7 @@ export class EhsListComponent implements OnInit {
       this.page$,
       this.refresh$
     ]).pipe(
-      tap(() => { this.loading$.next(true); this.error$.next(null); }),
+      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
       switchMap(([status, type, severity, p]) =>
         this.svc.list(p.index, p.size, status || undefined, type || undefined, severity || undefined).pipe(
           catchError(err => {

@@ -50,7 +50,7 @@ export class AuditsListComponent implements OnInit {
       this.page$,
       this.refresh$
     ]).pipe(
-      tap(() => { this.loading$.next(true); this.error$.next(null); }),
+      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
       switchMap(([s, p]) => this.svc.listPlans(p.index, p.size, s || undefined).pipe(
         catchError(err => {
           // eslint-disable-next-line no-console

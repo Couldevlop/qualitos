@@ -57,7 +57,7 @@ export class Nis2mListComponent implements OnInit {
       this.refresh$
     ]).pipe(
       debounceTime(120),
-      tap(() => { this.loading$.next(true); this.error$.next(null); }),
+      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
       switchMap(([mode, status, category]) => {
         let src$: Observable<Nis2MeasureView[]>;
         if (mode === 'OVERDUE') {

@@ -24,7 +24,7 @@
 .empty-state mat-icon { font-size: 48px; height: 48px; width: 48px; opacity: 0.4; }
 .empty-state p { margin: 0; }
 
-.table-wrap { background: #fff; border-radius: 12px; overflow: hidden; }
+.table-wrap { background: var(--qos-bg-elevated); border: 1px solid var(--qos-border-subtle); border-radius: var(--qos-radius-lg); overflow: hidden; }
 .title-link { color: var(--mat-sys-primary, #1565c0); cursor: pointer; }
 .title-link:hover { text-decoration: underline; }
 .dim { color: rgba(0,0,0,0.5); font-size: 11px; }

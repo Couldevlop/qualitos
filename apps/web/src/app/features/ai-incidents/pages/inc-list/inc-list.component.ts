@@ -49,7 +49,7 @@ export class IncListComponent implements OnInit {
       this.statusFilter.valueChanges.pipe(startWith(this.statusFilter.value)),
       this.refresh$
     ]).pipe(
-      tap(() => { this.loading$.next(true); this.error$.next(null); }),
+      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
       switchMap(([mode, status]) => {
         const op$ = mode === 'overdue' ? this.svc.listOverdue(200) : this.svc.list(status || undefined);
         return op$.pipe(
