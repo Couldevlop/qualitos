@@ -2,6 +2,7 @@ package com.openlab.qualitos.quality.ai.guard;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
@@ -36,6 +37,7 @@ public class TokenBucketAiGuard implements AiGuard {
     private final Clock clock;
     private final ConcurrentHashMap<String, TenantState> states = new ConcurrentHashMap<>();
 
+    @Autowired
     public TokenBucketAiGuard(AiGuardProperties props) {
         this(props, Clock.systemUTC());
     }
