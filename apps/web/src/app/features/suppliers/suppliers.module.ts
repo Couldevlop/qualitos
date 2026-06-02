@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { UiModule } from '../../shared/ui/ui.module';
 import { SuppliersAuditDialogComponent } from './pages/suppliers-audit-dialog/suppliers-audit-dialog.component';
 import { SuppliersCertDialogComponent } from './pages/suppliers-cert-dialog/suppliers-cert-dialog.component';
 import { SuppliersCreateDialogComponent } from './pages/suppliers-create-dialog/suppliers-create-dialog.component';
@@ -27,6 +28,6 @@ const routes: Routes = [
     SuppliersNcDialogComponent,
     SuppliersCertDialogComponent
   ],
-  imports: [SharedModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class SuppliersModule {}

@@ -1,21 +1,15 @@
-<h2 mat-dialog-title>Endiguer la violation</h2>
-
-<form [formGroup]="form" (ngSubmit)="submit()" class="cnt-form">
-  <mat-dialog-content>
-    <p class="hint">Décrire les mesures de containment appliquées. La violation passe en statut CONTAINED.</p>
-
-    <mat-form-field appearance="outline" class="full">
+<qos-form-dialog
+  title="Endiguer la violation"
+  subtitle="Décrire les mesures de containment appliquées. La violation passe en statut CONTAINED."
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitLabel="Endiguer"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+<mat-form-field appearance="outline" class="full">
       <mat-label>Mesures de containment</mat-label>
       <textarea matInput formControlName="containmentMeasures" rows="6" maxlength="4000" required></textarea>
     </mat-form-field>
-  </mat-dialog-content>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">healing</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Endiguer
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>
