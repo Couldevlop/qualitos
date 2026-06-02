@@ -1,8 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
 
 import { EchartComponent } from './echart/echart.component';
+import { FormDialogComponent } from './form-dialog/form-dialog.component';
 import { KpiCardComponent } from './kpi-card/kpi-card.component';
 import { PageHeaderComponent } from './page-header/page-header.component';
 import { PanelComponent } from './panel/panel.component';
@@ -15,7 +21,8 @@ const COMPONENTS = [
   PanelComponent,
   StatusPillComponent,
   ThemeToggleComponent,
-  EchartComponent
+  EchartComponent,
+  FormDialogComponent
 ];
 
 /**
@@ -24,7 +31,10 @@ const COMPONENTS = [
  */
 @NgModule({
   declarations: COMPONENTS,
-  imports: [CommonModule, RouterModule],
+  imports: [
+    CommonModule, RouterModule, ReactiveFormsModule,
+    MatButtonModule, MatDialogModule, MatIconModule, MatProgressSpinnerModule
+  ],
   exports: COMPONENTS
 })
 export class UiModule {}
