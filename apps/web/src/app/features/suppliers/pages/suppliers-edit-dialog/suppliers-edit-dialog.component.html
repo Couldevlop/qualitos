@@ -1,7 +1,12 @@
-<h2 mat-dialog-title>Modifier le fournisseur</h2>
+<qos-form-dialog
+  title="Modifier le fournisseur"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitLabel="Enregistrer"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="sup-form">
-  <mat-dialog-content>
     <mat-form-field appearance="outline" class="full">
       <mat-label>Raison sociale</mat-label>
       <input matInput formControlName="name" maxlength="250" required>
@@ -24,14 +29,5 @@
       <mat-label>Email contact qualité</mat-label>
       <input matInput formControlName="contactEmail" type="email" maxlength="320">
     </mat-form-field>
-  </mat-dialog-content>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">check</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Enregistrer
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>

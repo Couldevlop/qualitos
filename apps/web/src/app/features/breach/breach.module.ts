@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { UiModule } from '../../shared/ui/ui.module';
 import { BreachContainDialogComponent } from './pages/breach-contain-dialog/breach-contain-dialog.component';
 import { BreachDetailComponent } from './pages/breach-detail/breach-detail.component';
 import { BreachDetectDialogComponent } from './pages/breach-detect-dialog/breach-detect-dialog.component';
@@ -27,6 +28,6 @@ const routes: Routes = [
     BreachTextDialogComponent,
     BreachSeverityDialogComponent
   ],
-  imports: [SharedModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class BreachModule {}
