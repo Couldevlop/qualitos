@@ -1,9 +1,14 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { SpcAnalyzeRequest, SpcAnalyzeResponse } from './spc.types';
+import { KpiOption, KpiSpcResponse, SpcAnalyzeRequest, SpcAnalyzeResponse } from './spc.types';
+
+interface KpiPage {
+  content: Array<{ id: string; code: string; name: string; unit?: string }>;
+}
 
 /**
  * Service SPC (§3.4) : relaie la série vers l'engine (`POST /api/v1/ai/spc/analyze`),
@@ -20,5 +25,23 @@ export class SpcService {
 
   analyze(req: SpcAnalyzeRequest): Observable<SpcAnalyzeResponse> {
     return this.http.post<SpcAnalyzeResponse>(this.endpoint, req);
+  }
+
+  /** Liste des KPI (catalogue) pour le sélecteur du mode « depuis un KPI ». */
+  listKpis(): Observable<KpiOption[]> {
+    const params = new HttpParams().set('size', 200);
+    return this.http.get<KpiPage>(`${environment.apiBaseUrl}/api/v1/kpis`, { params })
+      .pipe(map(page => (page.content ?? []).map(k =>
+        ({ id: k.id, code: k.code, name: k.name, unit: k.unit }))));
+  }
+
+  /**
+   * Carte de contrôle SPC d'un KPI : série tirée de kpi_measurements. Si openCapa,
+   * ouvre une CAPA corrective sur procédé hors-contrôle (anti-spam côté serveur).
+   */
+  analyzeKpi(kpiId: string, limit: number, openCapa: boolean): Observable<KpiSpcResponse> {
+    const params = new HttpParams().set('limit', limit).set('openCapa', openCapa);
+    return this.http.post<KpiSpcResponse>(
+      `${this.endpoint.replace('/analyze', '')}/kpi/${kpiId}/analyze`, {}, { params });
   }
 }

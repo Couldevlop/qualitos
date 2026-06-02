@@ -33,3 +33,26 @@ export interface SpcAnalyzeResponse {
   limits: SpcLimits;
   violations: SpcViolation[];
 }
+
+/** Option de la liste déroulante des KPI (mode « depuis un KPI »). */
+export interface KpiOption {
+  id: string;
+  code: string;
+  name: string;
+  unit?: string;
+}
+
+/**
+ * Réponse SPC d'un KPI : série tirée de kpi_measurements + analyse + éventuelle
+ * CAPA ouverte sur dérive (capaId non nul si une CAPA a été créée).
+ */
+export interface KpiSpcResponse {
+  kpiId: string;
+  kpiCode: string;
+  kpiName: string;
+  unit?: string;
+  periods: string[];
+  values: number[];
+  analysis: SpcAnalyzeResponse;
+  capaId?: string | null;
+}

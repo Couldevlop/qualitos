@@ -55,10 +55,45 @@
   font-size: 0.88rem;
 }
 
+/* Cartes de verdict : rangée pleine largeur (responsive). */
 .kpi-col {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+
+  @media (max-width: 760px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Bannière contexte KPI + lien vers la CAPA ouverte. */
+.kpi-banner {
   display: flex;
-  flex-direction: column;
-  gap: 14px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--qos-radius-md, 10px);
+  background: var(--qos-bg-subtle, rgba(37, 99, 235, 0.06));
+  border: 1px solid var(--qos-border-subtle, #e2e8f0);
+  font-size: 0.9rem;
+
+  .capa-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    color: #b45309;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+    mat-icon { font-size: 18px; height: 18px; width: 18px; }
+  }
+}
+
+.capa-check {
+  display: block;
+  margin: 4px 0 12px;
 }
 
 .empty {

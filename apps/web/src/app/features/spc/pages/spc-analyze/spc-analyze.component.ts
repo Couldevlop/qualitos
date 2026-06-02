@@ -1,10 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import type { EChartsCoreOption } from 'echarts/core';
 
 import { SpcService } from '../../spc.service';
-import { SpcAnalyzeResponse } from '../../spc.types';
+import { KpiOption, KpiSpcResponse, SpcAnalyzeResponse } from '../../spc.types';
 
 /**
  * Carte de contrôle SPC (§3.4, §12.1) : l'utilisateur saisit une série de mesures
@@ -18,7 +18,7 @@ import { SpcAnalyzeResponse } from '../../spc.types';
   styleUrls: ['./spc-analyze.component.scss'],
   standalone: false
 })
-export class SpcAnalyzeComponent {
+export class SpcAnalyzeComponent implements OnInit {
 
   readonly form = this.fb.group({
     valuesText: ['', [Validators.required]],
@@ -26,15 +26,34 @@ export class SpcAnalyzeComponent {
     sigma: [null as number | null]
   });
 
+  /** Mode « depuis un KPI » : sélection du KPI, fenêtre, et ouverture CAPA. */
+  readonly kpiForm = this.fb.group({
+    kpiId: ['', [Validators.required]],
+    limit: [30, [Validators.min(2), Validators.max(10000)]],
+    openCapa: [false]
+  });
+
   /** Série de démonstration : process stable avec un point aberrant en fin de série. */
   readonly example = '10.0, 10.2, 9.8, 10.1, 9.9, 10.05, 9.95, 10.0, 10.1, 9.9, 13.6';
+
+  kpis: KpiOption[] = [];
 
   loading = false;
   result: SpcAnalyzeResponse | null = null;
   error: string | null = null;
   chartOption: EChartsCoreOption | null = null;
 
+  /** Contexte KPI courant (libellé + CAPA éventuelle) quand l'analyse vient d'un KPI. */
+  kpiContext: { code: string; name: string; capaId?: string | null } | null = null;
+
   constructor(private readonly fb: FormBuilder, private readonly spc: SpcService) {}
+
+  ngOnInit(): void {
+    this.spc.listKpis().subscribe({
+      next: list => this.kpis = list,
+      error: () => { /* le mode saisie manuelle reste utilisable */ }
+    });
+  }
 
   loadExample(): void {
     this.form.patchValue({ valuesText: this.example, center: null, sigma: null });
@@ -72,10 +91,7 @@ export class SpcAnalyzeComponent {
       return;
     }
 
-    this.loading = true;
-    this.error = null;
-    this.result = null;
-    this.chartOption = null;
+    this.beginRun();
     this.spc.analyze({
       values,
       center: center ?? undefined,
@@ -93,6 +109,53 @@ export class SpcAnalyzeComponent {
     });
   }
 
+  /** Analyse SPC du KPI sélectionné (série tirée de kpi_measurements). */
+  analyzeKpi(): void {
+    if (this.loading) {
+      return;
+    }
+    const kpiId = this.kpiForm.value.kpiId;
+    if (!kpiId) {
+      this.error = 'Sélectionnez un KPI.';
+      return;
+    }
+    const limit = this.kpiForm.value.limit ?? 30;
+    const openCapa = !!this.kpiForm.value.openCapa;
+
+    this.beginRun();
+    this.spc.analyzeKpi(kpiId, limit, openCapa).subscribe({
+      next: res => {
+        this.result = res.analysis;
+        this.kpiContext = { code: res.kpiCode, name: res.kpiName, capaId: res.capaId };
+        this.chartOption = this.buildChart(res.analysis, res.values, res.periods.map(p => this.shortDate(p)));
+        this.loading = false;
+      },
+      error: (err: HttpErrorResponse) => {
+        this.loading = false;
+        this.error = err.status === 422
+          ? 'Au moins 2 mesures sont nécessaires pour ce KPI.'
+          : this.messageFor(err);
+      }
+    });
+  }
+
+  /** Réinitialise l'état avant un nouveau calcul (manuel ou KPI). */
+  private beginRun(): void {
+    this.loading = true;
+    this.error = null;
+    this.result = null;
+    this.chartOption = null;
+    this.kpiContext = null;
+  }
+
+  /** ISO → libellé d'axe court (jj/mm). */
+  private shortDate(iso: string): string {
+    const d = new Date(iso);
+    return Number.isNaN(d.getTime())
+      ? iso
+      : d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+  }
+
   /** Indices (0-based) impliqués dans au moins une violation → points hors-contrôle. */
   private outOfControlIndices(res: SpcAnalyzeResponse): Set<number> {
     const s = new Set<number>();
@@ -100,9 +163,11 @@ export class SpcAnalyzeComponent {
     return s;
   }
 
-  private buildChart(res: SpcAnalyzeResponse, values: number[]): EChartsCoreOption {
+  private buildChart(res: SpcAnalyzeResponse, values: number[], labels?: string[]): EChartsCoreOption {
     const ooc = this.outOfControlIndices(res);
-    const categories = values.map((_, i) => `${i + 1}`);
+    const categories = labels && labels.length === values.length
+      ? labels
+      : values.map((_, i) => `${i + 1}`);
     const oocPoints = values
       .map((v, i) => [i, v] as [number, number])
       .filter(([i]) => ooc.has(i));
