@@ -42,8 +42,11 @@ public class IndustryPack {
     private String tagsCsv;
 
     /** Manifest complet (YAML re-sérialisé en JSON) pour traçabilité audit. */
-    @Lob
-    @Column(name = "manifest_json", nullable = false)
+    // @Lob String mappe sur 'oid' (LargeObject) en Postgres alors que la migration
+    // V17 cree la colonne en TEXT → "Unable to access lob stream". On force le JDBC
+    // type a LONGVARCHAR cote Hibernate pour rester en TEXT (cf. AuditEvent.payloadJson).
+    @Column(name = "manifest_json", nullable = false, columnDefinition = "TEXT")
+    @org.hibernate.annotations.JdbcTypeCode(java.sql.Types.LONGVARCHAR)
     private String manifestJson;
 
     @Column(name = "created_at", nullable = false, updatable = false)

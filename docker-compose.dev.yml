@@ -159,6 +159,40 @@ services:
     networks: [qualitos]
 
   # -------------------------------------------------------------------------
+  # WS4 — blockchain-service : passerelle Hyperledger Fabric (ADR 0012 Phase B).
+  # Porte le Fabric Gateway SDK (gRPC/mTLS) et invoque le chaincode qualitos-anchor.
+  # Démarré uniquement avec le profil compose 'fabric' (il se connecte au réseau
+  # Fabric AU BOOT — inutile sans réseau Fabric joignable). Le matériel MSP (certs,
+  # clé, TLS CA) généré par le test-network est monté en lecture seule ; renseigner
+  # les chemins via .env. Voir infra/blockchain/README.md.
+  # -------------------------------------------------------------------------
+
+  blockchain-service:
+    build:
+      context: apps/blockchain-service
+      dockerfile: Dockerfile
+    container_name: qualitos-blockchain-service
+    profiles: ["fabric"]
+    environment:
+      SERVER_PORT: 8090
+      FABRIC_PEER_ENDPOINT: ${FABRIC_PEER_ENDPOINT:-host.docker.internal:7051}
+      FABRIC_PEER_HOST_ALIAS: ${FABRIC_PEER_HOST_ALIAS:-peer0.org1.example.com}
+      FABRIC_TLS_CERT: ${FABRIC_TLS_CERT:-/fabric-msp/peer-tls-ca.crt}
+      FABRIC_MSP_ID: ${FABRIC_MSP_ID:-Org1MSP}
+      FABRIC_CERT: ${FABRIC_CERT:-/fabric-msp/user-cert.pem}
+      FABRIC_KEY: ${FABRIC_KEY:-/fabric-msp/user-key.pem}
+      FABRIC_CHANNEL: ${FABRIC_CHANNEL:-qualitos}
+      FABRIC_CHAINCODE: ${FABRIC_CHAINCODE:-qualitos-anchor}
+    volumes:
+      # Monter ici le MSP du test-network (organizations/peerOrganizations/org1...).
+      - ${FABRIC_MSP_DIR:-./infra/blockchain/fabric-msp}:/fabric-msp:ro
+    ports:
+      - "8090:8090"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks: [qualitos]
+
+  # -------------------------------------------------------------------------
   # P5 — AI gateway (FastAPI, distroless). Routes vers Ollama / Anthropic / Mistral
   # via la passerelle AIProvider. Toutes les sorties sont PII-redacted (Presidio).
   # -------------------------------------------------------------------------

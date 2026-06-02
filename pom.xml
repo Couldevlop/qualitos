@@ -24,6 +24,7 @@
         <module>apps/api-core</module>
         <module>apps/api-quality-engine</module>
         <module>apps/api-iot-hub</module>
+        <module>apps/blockchain-service</module>
         <!-- api-connectors lives on feature/p4-foundations until merged. -->
     </modules>
 

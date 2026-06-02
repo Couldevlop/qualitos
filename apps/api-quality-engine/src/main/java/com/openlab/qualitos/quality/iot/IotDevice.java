@@ -58,8 +58,9 @@ public class IotDevice {
     private String description;
 
     /** Métadonnées custom JSON. */
-    @Lob
-    @Column(name = "metadata_json")
+    // TEXT cote DB — éviter le mapping @Lob→oid (cf. AuditEvent.payloadJson).
+    @Column(name = "metadata_json", columnDefinition = "TEXT")
+    @org.hibernate.annotations.JdbcTypeCode(java.sql.Types.LONGVARCHAR)
     private String metadataJson;
 
     @Column(name = "last_seen_at")
