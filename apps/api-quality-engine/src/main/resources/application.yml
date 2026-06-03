@@ -13,6 +13,16 @@ spring:
       idle-timeout: 600000
       max-lifetime: 1800000
 
+  # Socle Kafka (§10.1) — producteur String. Le KafkaTemplate auto-configuré est
+  # paresseux : sans broker joignable il ne casse rien tant que le relais (off par
+  # défaut) ne publie pas. Broker dev = profil compose 'kafka' (Redpanda).
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+
   jpa:
     hibernate:
       # 'none' au lieu de 'validate': Flyway est la source de verite du schema.
@@ -87,6 +97,14 @@ springdoc:
 
 # Passerelle IA (ai-service) — ADR 0014. Entièrement paramétrable par variables d'env.
 qualitos:
+  # Relais Kafka outbox (audit_events → topic). OFF par défaut = aucun changement de
+  # comportement (le bean AuditEventKafkaRelay n'est même pas créé). §10.1, §13.2.
+  kafka:
+    enabled: ${QUALITOS_KAFKA_ENABLED:false}
+    topic: ${QUALITOS_KAFKA_TOPIC:qualitos.audit-events}
+    batch-size: ${QUALITOS_KAFKA_BATCH_SIZE:200}
+    initial-delay-ms: ${QUALITOS_KAFKA_INITIAL_DELAY_MS:30000}
+    fixed-delay-ms: ${QUALITOS_KAFKA_FIXED_DELAY_MS:10000}
   ai:
     base-url: ${AI_SERVICE_URL:http://localhost:8085}
     # Timeouts du client HTTP vers ai-service (ms). Le read-timeout DOIT rester

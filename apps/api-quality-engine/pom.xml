@@ -36,6 +36,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
+        <!-- Socle Kafka (CLAUDE.md §10.1) : producteur du relais outbox audit_events.
+             INERTE par défaut (relais gated par qualitos.kafka.enabled=false) — le
+             KafkaTemplate auto-configuré est paresseux et ne se connecte que si utilisé. -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
