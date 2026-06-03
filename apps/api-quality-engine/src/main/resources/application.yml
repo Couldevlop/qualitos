@@ -22,6 +22,10 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
       acks: all
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
 
   jpa:
     hibernate:
@@ -102,6 +106,7 @@ qualitos:
   kafka:
     enabled: ${QUALITOS_KAFKA_ENABLED:false}
     topic: ${QUALITOS_KAFKA_TOPIC:qualitos.audit-events}
+    consumer-group: ${QUALITOS_KAFKA_CONSUMER_GROUP:qualitos-activity-feed}
     batch-size: ${QUALITOS_KAFKA_BATCH_SIZE:200}
     initial-delay-ms: ${QUALITOS_KAFKA_INITIAL_DELAY_MS:30000}
     fixed-delay-ms: ${QUALITOS_KAFKA_FIXED_DELAY_MS:10000}
