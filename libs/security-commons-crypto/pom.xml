@@ -20,31 +20,14 @@
     </description>
 
     <dependencies>
-        <!-- Primitives réelles : ML-DSA (FIPS 204), ML-KEM (FIPS 203), Ed25519.
-             Caché derrière le SPI (domain/port) pour la crypto-agility. -->
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk18on</artifactId>
-        </dependency>
+        <!-- Primitives crypto (ML-DSA FIPS 204, ML-KEM FIPS 203, Ed25519) : voir les
+             profils <profiles> en bas. Tout passe par l'API JCA standard + provider BC
+             résolu dynamiquement (BcProviderRegistrar) → le MÊME code marche en bcprov
+             (défaut) et en bc-fips (profil 'fips'). ADR 0011 (crypto-agility). -->
 
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
-        </dependency>
-
-        <!-- TLS hybride PQ (§11.4) : provider BCJSSE (groupe X25519MLKEM768) et
-             génération de certificat X.509 auto-signé. Test-scope : la PREUVE de
-             handshake hybride vit ici ; la prod active bctls via le profil "tls"
-             de api-core. -->
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bctls-jdk18on</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk18on</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -81,4 +64,102 @@
             </plugin>
         </plugins>
     </build>
+
+    <!--
+      Crypto-agility : sélection du fournisseur Bouncy Castle par PROFIL (ADR 0011).
+      bcprov-jdk18on (non-FIPS) et bc-fips partagent les packages org.bouncycastle.* et
+      NE PEUVENT PAS coexister sur le classpath → on swappe la dépendance, jamais l'ajouter.
+      Le code source est identique (JCA pur + BcProviderRegistrar) : c'est le seul jar
+      présent qui détermine le provider à l'exécution.
+
+      - défaut (dev/CI)      : bcprov-jdk18on  → provider « BC »      (rapide, non certifié FIPS)
+      - mvn -Dcrypto.fips=true : bc-fips        → provider « BCFIPS » (prod régulée)
+
+      Activation par PROPRIÉTÉ (pas activeByDefault) pour rester robuste si d'autres
+      profils sont actifs. En mode fips, la classe provider est passée au runtime via
+      -Dqualitos.crypto.bc-provider-class (cf. BcProviderRegistrar) ; argLine surefire ci-dessous.
+
+      ⚠ La validation FIPS 203/204 (ML-KEM/ML-DSA) de bc-fips est en cours au CMVP : tant
+      qu'elle n'est pas publiée, ces algos tournent en mode « approved-pending ». Versions
+      bc-fips à figer/valider lors de l'activation prod (cf. CBOM docs/security/cbom.md).
+    -->
+    <profiles>
+        <profile>
+            <id>bc-default</id>
+            <activation>
+                <property><name>!crypto.fips</name></property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcprov-jdk18on</artifactId>
+                </dependency>
+                <!-- TLS hybride PQ (§11.4) : BCJSSE (groupe X25519MLKEM768) + cert X.509
+                     auto-signé. Test-scope : la preuve de handshake hybride vit ici. -->
+                <dependency>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bctls-jdk18on</artifactId>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcpkix-jdk18on</artifactId>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>fips</id>
+            <activation>
+                <property><name>crypto.fips</name></property>
+            </activation>
+            <properties>
+                <bc.fips.version>2.1.0</bc.fips.version>
+                <bctls.fips.version>2.1.20</bctls.fips.version>
+                <bcpkix.fips.version>2.1.9</bcpkix.fips.version>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bc-fips</artifactId>
+                    <version>${bc.fips.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bctls-fips</artifactId>
+                    <version>${bctls.fips.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcpkix-fips</artifactId>
+                    <version>${bcpkix.fips.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <!-- Via systemPropertyVariables (PAS argLine) pour NE PAS écraser
+                                 l'argLine parent (agent JaCoCo + flags fork Windows). -->
+                            <systemPropertyVariables>
+                                <qualitos.crypto.bc-provider-class>org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider</qualitos.crypto.bc-provider-class>
+                            </systemPropertyVariables>
+                            <!-- Preuve TLS hybride WS5 : référence en dur les classes bctls/
+                                 bcprov non-FIPS (BouncyCastleProvider) → non exécutable sous
+                                 bc-fips. La portabilité FIPS concerne les primitives signature/
+                                 KEM (JCA), pas ce test d'intégration TLS bcprov-spécifique. -->
+                            <excludes>
+                                <exclude>**/HybridTlsHandshakeTest.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
