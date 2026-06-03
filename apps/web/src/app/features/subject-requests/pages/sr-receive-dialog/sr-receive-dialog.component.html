@@ -1,39 +1,35 @@
-<h2 mat-dialog-title>Enregistrer une demande RGPD</h2>
+<qos-form-dialog
+  title="Enregistrer une demande RGPD"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitLabel="Enregistrer"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="rcv-form" autocomplete="off">
-  <mat-dialog-content>
-    <p class="hint">L'identifiant de la personne (e-mail, identifiant interne, etc.) sera
-       <strong>hashé côté serveur</strong> avant d'être stocké. Aucune PII en clair n'est
-       conservée. Le délai légal RGPD est de 1 mois à compter de la réception.</p>
+  <p class="hint">L'identifiant de la personne (e-mail, identifiant interne, etc.) sera
+     <strong>hashé côté serveur</strong> avant d'être stocké. Aucune PII en clair n'est
+     conservée. Le délai légal RGPD est de 1 mois à compter de la réception.</p>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Type de demande</mat-label>
-      <mat-select formControlName="type" required>
-        <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Type de demande</mat-label>
+    <mat-select formControlName="type" required>
+      <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
+    </mat-select>
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Identifiant de la personne</mat-label>
-      <input matInput formControlName="subjectIdentifier" maxlength="320" required
-             autocomplete="off" spellcheck="false"
-             placeholder="alice@example.fr ou client#12345">
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Identifiant de la personne</mat-label>
+    <input matInput formControlName="subjectIdentifier" maxlength="320" required
+           autocomplete="off" spellcheck="false"
+           placeholder="alice@example.fr ou client#12345">
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Étiquette pseudonymisée (optionnelle)</mat-label>
-      <input matInput formControlName="subjectIdentifierLabel" maxlength="250"
-             placeholder="client#A-001">
-      <mat-hint>Facilite la recherche ultérieure sans réintroduire d'identifiant en clair.</mat-hint>
-    </mat-form-field>
-  </mat-dialog-content>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Étiquette pseudonymisée (optionnelle)</mat-label>
+    <input matInput formControlName="subjectIdentifierLabel" maxlength="250"
+           placeholder="client#A-001">
+    <mat-hint>Facilite la recherche ultérieure sans réintroduire d'identifiant en clair.</mat-hint>
+  </mat-form-field>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">check</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Enregistrer
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>

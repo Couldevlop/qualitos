@@ -1,33 +1,28 @@
-<h2 mat-dialog-title>Ajouter un membre</h2>
+<qos-form-dialog
+  title="Ajouter un membre"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitLabel="Ajouter"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="member-form">
-  <mat-dialog-content>
-    <p class="hint">Renseigne l'identifiant utilisateur (UUID) et le rôle. La liste
-       de sélection sera branchée sur l'annuaire Keycloak dans une prochaine itération.</p>
+  <p class="hint">Renseigne l'identifiant utilisateur (UUID) et le rôle. La liste
+     de sélection sera branchée sur l'annuaire Keycloak dans une prochaine itération.</p>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>User ID (UUID)</mat-label>
-      <input matInput formControlName="userId" required
-             placeholder="00000000-0000-0000-0000-000000000000">
-      <mat-error *ngIf="form.controls.userId.hasError('required')">UUID requis.</mat-error>
-      <mat-error *ngIf="form.controls.userId.hasError('pattern')">Format UUID invalide.</mat-error>
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>User ID (UUID)</mat-label>
+    <input matInput formControlName="userId" required
+           placeholder="00000000-0000-0000-0000-000000000000">
+    <mat-error *ngIf="form.controls.userId.hasError('required')">UUID requis.</mat-error>
+    <mat-error *ngIf="form.controls.userId.hasError('pattern')">Format UUID invalide.</mat-error>
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Rôle</mat-label>
-      <mat-select formControlName="role">
-        <mat-option *ngFor="let r of roles" [value]="r.value">{{ r.label }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </mat-dialog-content>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Rôle</mat-label>
+    <mat-select formControlName="role">
+      <mat-option *ngFor="let r of roles" [value]="r.value">{{ r.label }}</mat-option>
+    </mat-select>
+  </mat-form-field>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="primary" type="submit"
-            [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">check</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Ajouter
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>

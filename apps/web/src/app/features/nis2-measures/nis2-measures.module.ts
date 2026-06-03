@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { UiModule } from '../../shared/ui/ui.module';
 import { Nis2mDetailComponent } from './pages/nis2m-detail/nis2m-detail.component';
 import { Nis2mEditDialogComponent } from './pages/nis2m-edit-dialog/nis2m-edit-dialog.component';
 import { Nis2mListComponent } from './pages/nis2m-list/nis2m-list.component';
@@ -21,6 +22,6 @@ const routes: Routes = [
     Nis2mEditDialogComponent,
     Nis2mReviewDialogComponent
   ],
-  imports: [SharedModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class Nis2MeasuresModule {}

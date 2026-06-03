@@ -1,34 +1,28 @@
-<h2 mat-dialog-title>Nouvelle version (v{{ data.nextVersionNumber }})</h2>
+<qos-form-dialog
+  [title]="'Nouvelle version (v' + data.nextVersionNumber + ')'"
+  subtitle="Workflow : DRAFT → IN_REVIEW → APPROVED → PUBLISHED. La précédente version publiée sera automatiquement marquée OBSOLETE à la publication."
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitLabel="Créer"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="version-form">
-  <mat-dialog-content>
-    <p class="hint">Workflow : DRAFT → IN_REVIEW → APPROVED → PUBLISHED. La précédente version publiée
-       sera automatiquement marquée OBSOLETE à la publication.</p>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Note de version</mat-label>
+    <input matInput formControlName="changeNote" maxlength="255" required
+           placeholder="Décrivez les modifications apportées">
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Note de version</mat-label>
-      <input matInput formControlName="changeNote" maxlength="255" required
-             placeholder="Décrivez les modifications apportées">
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Contenu</mat-label>
+    <textarea matInput formControlName="content" rows="6"></textarea>
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Contenu</mat-label>
-      <textarea matInput formControlName="content" rows="6"></textarea>
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>URI / lien vers fichier externe</mat-label>
+    <input matInput formControlName="contentUri" maxlength="1024"
+           placeholder="https://… (optionnel — fichier externe signé)">
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>URI / lien vers fichier externe</mat-label>
-      <input matInput formControlName="contentUri" maxlength="1024"
-             placeholder="https://… (optionnel — fichier externe signé)">
-    </mat-form-field>
-  </mat-dialog-content>
-
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">check</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Créer
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>

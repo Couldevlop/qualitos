@@ -1,40 +1,35 @@
-<h2 mat-dialog-title>Modifier le diagramme</h2>
+<qos-form-dialog
+  title="Modifier le diagramme"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="edit-form">
-  <mat-dialog-content>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Énoncé du problème</mat-label>
-      <textarea matInput formControlName="problemStatement" rows="2" maxlength="500" required></textarea>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Énoncé du problème</mat-label>
+    <textarea matInput formControlName="problemStatement" rows="2" maxlength="500" required></textarea>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Description</mat-label>
+    <textarea matInput formControlName="description" rows="3"></textarea>
+  </mat-form-field>
+
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label>Mode</mat-label>
+      <mat-select formControlName="mode">
+        <mat-option *ngFor="let m of modes" [value]="m.value">{{ m.label }}</mat-option>
+      </mat-select>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Description</mat-label>
-      <textarea matInput formControlName="description" rows="3"></textarea>
+    <mat-form-field appearance="outline" class="col">
+      <mat-label>Statut</mat-label>
+      <mat-select formControlName="status">
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+      </mat-select>
     </mat-form-field>
+  </div>
 
-    <div class="row">
-      <mat-form-field appearance="outline" class="col">
-        <mat-label>Mode</mat-label>
-        <mat-select formControlName="mode">
-          <mat-option *ngFor="let m of modes" [value]="m.value">{{ m.label }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="col">
-        <mat-label>Statut</mat-label>
-        <mat-select formControlName="status">
-          <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-  </mat-dialog-content>
-
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">check</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Enregistrer
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>

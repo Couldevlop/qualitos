@@ -1,24 +1,21 @@
-<h2 mat-dialog-title>{{ title }}</h2>
+<qos-form-dialog
+  [title]="title"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitLabel="Lier"
+  submitIcon="link"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="link-form">
-  <mat-dialog-content>
-    <p class="hint">Le lien permet la traçabilité bout-en-bout entre l'incident EHS,
-       le cas CAPA d'investigation et la non-conformité associée.</p>
+  <p class="hint">Le lien permet la traçabilité bout-en-bout entre l'incident EHS,
+     le cas CAPA d'investigation et la non-conformité associée.</p>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>{{ fieldLabel }}</mat-label>
-      <input matInput formControlName="targetId" required
-             placeholder="00000000-0000-0000-0000-000000000000">
-      <mat-hint>UUID v4 attendu</mat-hint>
-    </mat-form-field>
-  </mat-dialog-content>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>{{ fieldLabel }}</mat-label>
+    <input matInput formControlName="targetId" required
+           placeholder="00000000-0000-0000-0000-000000000000">
+    <mat-hint>UUID v4 attendu</mat-hint>
+  </mat-form-field>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">link</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Lier
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { UiModule } from '../../shared/ui/ui.module';
 import { PmmDetailComponent } from './pages/pmm-detail/pmm-detail.component';
 import { PmmDraftDialogComponent } from './pages/pmm-draft-dialog/pmm-draft-dialog.component';
 import { PmmEditDialogComponent } from './pages/pmm-edit-dialog/pmm-edit-dialog.component';
@@ -21,6 +22,6 @@ const routes: Routes = [
     PmmEditDialogComponent,
     PmmReasonDialogComponent
   ],
-  imports: [SharedModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class AiPmmModule {}

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { UiModule } from '../../shared/ui/ui.module';
 import { IncCloseDialogComponent } from './pages/inc-close-dialog/inc-close-dialog.component';
 import { IncDetailComponent } from './pages/inc-detail/inc-detail.component';
 import { IncDetectDialogComponent } from './pages/inc-detect-dialog/inc-detect-dialog.component';
@@ -21,6 +22,6 @@ const routes: Routes = [
     IncNotifyDialogComponent,
     IncCloseDialogComponent
   ],
-  imports: [SharedModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class AiIncidentsModule {}

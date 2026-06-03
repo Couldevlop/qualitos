@@ -1,23 +1,20 @@
-<h2 mat-dialog-title>{{ title }}</h2>
+<qos-form-dialog
+  [title]="title"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitLabel="Confirmer"
+  [submitIcon]="data.mode === 'RETURN' ? 'undo' : 'archive'"
+  [submitColor]="data.mode === 'ARCHIVE' ? 'warn' : 'primary'"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="rsn-form">
-  <mat-dialog-content>
-    <p class="hint" [class.warn]="data.mode === 'ARCHIVE'">{{ hint }}</p>
+  <p class="hint" [class.warn]="data.mode === 'ARCHIVE'">{{ hint }}</p>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>{{ data.mode === 'RETURN' ? 'Motif du retour' : 'Motif de l\'archivage' }}</mat-label>
-      <textarea matInput formControlName="reason" rows="5"
-                [attr.maxlength]="data.mode === 'RETURN' ? 4000 : 2000" required></textarea>
-    </mat-form-field>
-  </mat-dialog-content>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>{{ data.mode === 'RETURN' ? 'Motif du retour' : 'Motif de l\'archivage' }}</mat-label>
+    <textarea matInput formControlName="reason" rows="5"
+              [attr.maxlength]="data.mode === 'RETURN' ? 4000 : 2000" required></textarea>
+  </mat-form-field>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button [color]="data.mode === 'ARCHIVE' ? 'warn' : 'primary'" type="submit"
-            [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">{{ data.mode === 'RETURN' ? 'undo' : 'archive' }}</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Confirmer
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>

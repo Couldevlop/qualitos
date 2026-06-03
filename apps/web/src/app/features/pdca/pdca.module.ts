@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { UiModule } from '../../shared/ui/ui.module';
 import { PdcaCreateDialogComponent } from './pages/pdca-create-dialog/pdca-create-dialog.component';
 import { PdcaDetailComponent } from './pages/pdca-detail/pdca-detail.component';
 import { PdcaListComponent } from './pages/pdca-list/pdca-list.component';
@@ -19,6 +20,6 @@ const routes: Routes = [
     PdcaCreateDialogComponent,
     PdcaStepDialogComponent
   ],
-  imports: [SharedModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class PdcaModule {}
