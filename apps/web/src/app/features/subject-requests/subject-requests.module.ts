@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { UiModule } from '../../shared/ui/ui.module';
 import { SrCompleteDialogComponent } from './pages/sr-complete-dialog/sr-complete-dialog.component';
 import { SrDetailComponent } from './pages/sr-detail/sr-detail.component';
 import { SrExtendDialogComponent } from './pages/sr-extend-dialog/sr-extend-dialog.component';
@@ -23,6 +24,6 @@ const routes: Routes = [
     SrRejectDialogComponent,
     SrExtendDialogComponent
   ],
-  imports: [SharedModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class SubjectRequestsModule {}

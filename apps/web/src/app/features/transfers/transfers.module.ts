@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { UiModule } from '../../shared/ui/ui.module';
 import { TrxDetailComponent } from './pages/trx-detail/trx-detail.component';
 import { TrxDialogComponent } from './pages/trx-dialog/trx-dialog.component';
 import { TrxListComponent } from './pages/trx-list/trx-list.component';
@@ -19,6 +20,6 @@ const routes: Routes = [
     TrxDialogComponent,
     TrxReasonDialogComponent
   ],
-  imports: [SharedModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class TransfersModule {}

@@ -1,31 +1,28 @@
-<h2 mat-dialog-title>{{ title }}</h2>
+<qos-form-dialog
+  [title]="title"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitLabel="Confirmer"
+  [submitIcon]="data.mode === 'CLOSE' ? 'check_circle' : 'block'"
+  [submitColor]="data.mode === 'DISMISS' ? 'warn' : 'primary'"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="cls-form">
-  <mat-dialog-content>
-    <p [class.warn]="data.mode === 'DISMISS'" class="head-note">
-      <ng-container *ngIf="data.mode === 'CLOSE'">
-        Décrire les actions correctives définitives. La clôture est terminale.
-      </ng-container>
-      <ng-container *ngIf="data.mode === 'DISMISS'">
-        <strong>Action terminale.</strong>
-        Motiver le rejet (faux positif, hors champ AI Act, doublon, etc.).
-      </ng-container>
-    </p>
+  <p [class.warn]="data.mode === 'DISMISS'" class="head-note">
+    <ng-container *ngIf="data.mode === 'CLOSE'">
+      Décrire les actions correctives définitives. La clôture est terminale.
+    </ng-container>
+    <ng-container *ngIf="data.mode === 'DISMISS'">
+      <strong>Action terminale.</strong>
+      Motiver le rejet (faux positif, hors champ AI Act, doublon, etc.).
+    </ng-container>
+  </p>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>{{ data.mode === 'CLOSE' ? 'Actions correctives définitives' : 'Motif du rejet' }}</mat-label>
-      <textarea matInput formControlName="text" rows="5"
-                [attr.maxlength]="data.mode === 'CLOSE' ? 4000 : 2000" required></textarea>
-    </mat-form-field>
-  </mat-dialog-content>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>{{ data.mode === 'CLOSE' ? 'Actions correctives définitives' : 'Motif du rejet' }}</mat-label>
+    <textarea matInput formControlName="text" rows="5"
+              [attr.maxlength]="data.mode === 'CLOSE' ? 4000 : 2000" required></textarea>
+  </mat-form-field>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button [color]="data.mode === 'DISMISS' ? 'warn' : 'primary'" type="submit"
-            [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">{{ data.mode === 'CLOSE' ? 'check_circle' : 'block' }}</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Confirmer
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>

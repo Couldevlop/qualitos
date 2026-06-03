@@ -1,145 +1,139 @@
-<h2 mat-dialog-title>{{ isEdit ? 'Modifier l\'activité de traitement' : 'Nouvelle activité de traitement' }}</h2>
+<qos-form-dialog
+  [title]="isEdit ? 'Modifier l\'activité de traitement' : 'Nouvelle activité de traitement'"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  [submitLabel]="isEdit ? 'Enregistrer' : 'Créer (DRAFT)'"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="ropa-form">
-  <mat-dialog-content>
-
-    <h3 class="section">Identification</h3>
-    <div class="row">
-      <mat-form-field appearance="outline" class="col col-ref">
-        <mat-label>Référence</mat-label>
-        <input matInput formControlName="reference" maxlength="64" required
-               placeholder="RH-PAYROLL-FR">
-        <mat-hint>Majuscules, chiffres, tiret, underscore (immutable)</mat-hint>
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="col">
-        <mat-label>Nom de l'activité</mat-label>
-        <input matInput formControlName="name" maxlength="250" required>
-      </mat-form-field>
-    </div>
-
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Finalités</mat-label>
-      <textarea matInput formControlName="purposes" rows="3" maxlength="4000" required
-                placeholder="Pourquoi ce traitement existe — finalités détaillées (Art. 5.1.b)"></textarea>
+  <h3 class="section">Identification</h3>
+  <div class="row">
+    <mat-form-field appearance="outline" class="col col-ref">
+      <mat-label>Référence</mat-label>
+      <input matInput formControlName="reference" maxlength="64" required
+             placeholder="RH-PAYROLL-FR">
+      <mat-hint>Majuscules, chiffres, tiret, underscore (immutable)</mat-hint>
     </mat-form-field>
-
-    <h3 class="section">Base légale (Art. 6 / Art. 9)</h3>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Base légale</mat-label>
-      <mat-select formControlName="lawfulBasis" required>
-        <mat-option *ngFor="let b of bases" [value]="b.value">{{ b.label }}</mat-option>
-      </mat-select>
+    <mat-form-field appearance="outline" class="col">
+      <mat-label>Nom de l'activité</mat-label>
+      <input matInput formControlName="name" maxlength="250" required>
     </mat-form-field>
+  </div>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>{{ needsLia() ? 'Mise en balance (LIA) — obligatoire' : 'Détails / justification' }}</mat-label>
-      <textarea matInput formControlName="lawfulBasisDetails" rows="3" maxlength="4000"
-                [placeholder]="needsLia() ? 'Test des intérêts légitimes : description de l\'intérêt poursuivi, nécessité, balance avec les droits des personnes…' : 'Référence légale, mention contractuelle, etc.'"></textarea>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Finalités</mat-label>
+    <textarea matInput formControlName="purposes" rows="3" maxlength="4000" required
+              placeholder="Pourquoi ce traitement existe — finalités détaillées (Art. 5.1.b)"></textarea>
+  </mat-form-field>
+
+  <h3 class="section">Base légale (Art. 6 / Art. 9)</h3>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Base légale</mat-label>
+    <mat-select formControlName="lawfulBasis" required>
+      <mat-option *ngFor="let b of bases" [value]="b.value">{{ b.label }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>{{ needsLia() ? 'Mise en balance (LIA) — obligatoire' : 'Détails / justification' }}</mat-label>
+    <textarea matInput formControlName="lawfulBasisDetails" rows="3" maxlength="4000"
+              [placeholder]="needsLia() ? 'Test des intérêts légitimes : description de l\'intérêt poursuivi, nécessité, balance avec les droits des personnes…' : 'Référence légale, mention contractuelle, etc.'"></textarea>
+  </mat-form-field>
+
+  <h3 class="section">Responsables</h3>
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label>Responsable de traitement</mat-label>
+      <input matInput formControlName="controllerName" maxlength="250" required>
     </mat-form-field>
-
-    <h3 class="section">Responsables</h3>
-    <div class="row">
-      <mat-form-field appearance="outline" class="col">
-        <mat-label>Responsable de traitement</mat-label>
-        <input matInput formControlName="controllerName" maxlength="250" required>
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="col">
-        <mat-label>Contact responsable</mat-label>
-        <input matInput formControlName="controllerContact" maxlength="250" required>
-      </mat-form-field>
-    </div>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Contact DPO</mat-label>
-      <input matInput formControlName="dpoContact" maxlength="250">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label>Contact responsable</mat-label>
+      <input matInput formControlName="controllerContact" maxlength="250" required>
     </mat-form-field>
-    <div class="row">
-      <mat-form-field appearance="outline" class="col">
-        <mat-label>Co-responsable (optionnel)</mat-label>
-        <input matInput formControlName="jointControllerName" maxlength="250">
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="col">
-        <mat-label>Contact co-responsable</mat-label>
-        <input matInput formControlName="jointControllerContact" maxlength="250">
-      </mat-form-field>
-    </div>
-
-    <h3 class="section">Personnes concernées & données</h3>
-    <p class="hint">Une catégorie par ligne. Exemple : Salariés / Clients / Mineurs / Patients.</p>
-    <div class="row">
-      <mat-form-field appearance="outline" class="col">
-        <mat-label>Catégories de personnes concernées</mat-label>
-        <textarea matInput formControlName="dataSubjectCategories" rows="3"
-                  placeholder="Salariés&#10;Stagiaires&#10;Apprentis"></textarea>
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="col">
-        <mat-label>Catégories de données</mat-label>
-        <textarea matInput formControlName="dataCategories" rows="3"
-                  placeholder="Identité&#10;Coordonnées&#10;Données salariales"></textarea>
-      </mat-form-field>
-    </div>
-
-    <div class="checkbox-row">
-      <mat-checkbox formControlName="specialCategoriesProcessed">
-        Traitement de catégories particulières (Art. 9 RGPD)
-      </mat-checkbox>
-    </div>
-
-    <mat-form-field appearance="outline" class="full" *ngIf="form.controls.specialCategoriesProcessed.value">
-      <mat-label>Justification Art. 9§2 (obligatoire)</mat-label>
-      <textarea matInput formControlName="specialCategoriesJustification" rows="3" maxlength="4000"
-                placeholder="Quel cas Art. 9§2 ? (consentement explicite, médecine du travail, intérêt public substantiel, etc.)"></textarea>
+  </div>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Contact DPO</mat-label>
+    <input matInput formControlName="dpoContact" maxlength="250">
+  </mat-form-field>
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label>Co-responsable (optionnel)</mat-label>
+      <input matInput formControlName="jointControllerName" maxlength="250">
     </mat-form-field>
-
-    <h3 class="section">Destinataires & transferts</h3>
-    <p class="hint">Une entrée par ligne.</p>
-    <div class="row">
-      <mat-form-field appearance="outline" class="col">
-        <mat-label>Destinataires</mat-label>
-        <textarea matInput formControlName="recipientCategories" rows="3"
-                  placeholder="Équipe RH interne&#10;URSSAF&#10;Cabinet comptable"></textarea>
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="col">
-        <mat-label>Transferts hors UE (pays)</mat-label>
-        <textarea matInput formControlName="thirdCountryTransfers" rows="3"
-                  placeholder="USA (sous-traitant cloud)&#10;Inde (centre de service)"></textarea>
-      </mat-form-field>
-    </div>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Garanties pour les transferts (Chap. V RGPD)</mat-label>
-      <textarea matInput formControlName="transferSafeguards" rows="3" maxlength="4000"
-                placeholder="SCC 2021, BCR, décision d'adéquation, dérogation Art. 49…"></textarea>
+    <mat-form-field appearance="outline" class="col">
+      <mat-label>Contact co-responsable</mat-label>
+      <input matInput formControlName="jointControllerContact" maxlength="250">
     </mat-form-field>
+  </div>
 
-    <h3 class="section">Mesures de sécurité (Art. 32)</h3>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Mesures techniques</mat-label>
-      <textarea matInput formControlName="technicalMeasures" rows="3" maxlength="4000"
-                placeholder="Chiffrement, pseudonymisation, MFA, segmentation réseau, sauvegardes chiffrées…"></textarea>
+  <h3 class="section">Personnes concernées & données</h3>
+  <p class="hint">Une catégorie par ligne. Exemple : Salariés / Clients / Mineurs / Patients.</p>
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label>Catégories de personnes concernées</mat-label>
+      <textarea matInput formControlName="dataSubjectCategories" rows="3"
+                placeholder="Salariés&#10;Stagiaires&#10;Apprentis"></textarea>
     </mat-form-field>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Mesures organisationnelles</mat-label>
-      <textarea matInput formControlName="organizationalMeasures" rows="3" maxlength="4000"
-                placeholder="Habilitations, formation RGPD, charte, séparation des rôles, audits…"></textarea>
+    <mat-form-field appearance="outline" class="col">
+      <mat-label>Catégories de données</mat-label>
+      <textarea matInput formControlName="dataCategories" rows="3"
+                placeholder="Identité&#10;Coordonnées&#10;Données salariales"></textarea>
     </mat-form-field>
+  </div>
 
-    <h3 class="section">Liens règles de rétention</h3>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>UUIDs des règles liées (une par ligne)</mat-label>
-      <textarea matInput formControlName="linkedRetentionRuleIds" rows="3"
-                placeholder="00000000-0000-0000-0000-000000000000"></textarea>
-      <mat-error *ngIf="form.controls.linkedRetentionRuleIds.hasError('uuidLine')">
-        Chaque ligne doit être un UUID v4 valide.
-      </mat-error>
+  <div class="checkbox-row">
+    <mat-checkbox formControlName="specialCategoriesProcessed">
+      Traitement de catégories particulières (Art. 9 RGPD)
+    </mat-checkbox>
+  </div>
+
+  <mat-form-field appearance="outline" class="full" *ngIf="form.controls.specialCategoriesProcessed.value">
+    <mat-label>Justification Art. 9§2 (obligatoire)</mat-label>
+    <textarea matInput formControlName="specialCategoriesJustification" rows="3" maxlength="4000"
+              placeholder="Quel cas Art. 9§2 ? (consentement explicite, médecine du travail, intérêt public substantiel, etc.)"></textarea>
+  </mat-form-field>
+
+  <h3 class="section">Destinataires & transferts</h3>
+  <p class="hint">Une entrée par ligne.</p>
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label>Destinataires</mat-label>
+      <textarea matInput formControlName="recipientCategories" rows="3"
+                placeholder="Équipe RH interne&#10;URSSAF&#10;Cabinet comptable"></textarea>
     </mat-form-field>
+    <mat-form-field appearance="outline" class="col">
+      <mat-label>Transferts hors UE (pays)</mat-label>
+      <textarea matInput formControlName="thirdCountryTransfers" rows="3"
+                placeholder="USA (sous-traitant cloud)&#10;Inde (centre de service)"></textarea>
+    </mat-form-field>
+  </div>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Garanties pour les transferts (Chap. V RGPD)</mat-label>
+    <textarea matInput formControlName="transferSafeguards" rows="3" maxlength="4000"
+              placeholder="SCC 2021, BCR, décision d'adéquation, dérogation Art. 49…"></textarea>
+  </mat-form-field>
 
-  </mat-dialog-content>
+  <h3 class="section">Mesures de sécurité (Art. 32)</h3>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Mesures techniques</mat-label>
+    <textarea matInput formControlName="technicalMeasures" rows="3" maxlength="4000"
+              placeholder="Chiffrement, pseudonymisation, MFA, segmentation réseau, sauvegardes chiffrées…"></textarea>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Mesures organisationnelles</mat-label>
+    <textarea matInput formControlName="organizationalMeasures" rows="3" maxlength="4000"
+              placeholder="Habilitations, formation RGPD, charte, séparation des rôles, audits…"></textarea>
+  </mat-form-field>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">check</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      {{ isEdit ? 'Enregistrer' : 'Créer (DRAFT)' }}
-    </button>
-  </mat-dialog-actions>
-</form>
+  <h3 class="section">Liens règles de rétention</h3>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>UUIDs des règles liées (une par ligne)</mat-label>
+    <textarea matInput formControlName="linkedRetentionRuleIds" rows="3"
+              placeholder="00000000-0000-0000-0000-000000000000"></textarea>
+    <mat-error *ngIf="form.controls.linkedRetentionRuleIds.hasError('uuidLine')">
+      Chaque ligne doit être un UUID v4 valide.
+    </mat-error>
+  </mat-form-field>
+
+</qos-form-dialog>

@@ -1,86 +1,83 @@
-<h2 mat-dialog-title>Éditer la décision automatisée</h2>
+<qos-form-dialog
+  title="Éditer la décision automatisée"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitLabel="Enregistrer"
+  submitIcon="save"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="edt-form">
-  <mat-dialog-content>
-    <p class="hint" [class.warn]="isLegalEffect()">
-      <ng-container *ngIf="isLegalEffect()">
-        <strong>Effet juridique</strong> — base Art. 22.2 et révision humaine Art. 22.3 obligatoires.
-      </ng-container>
-      <ng-container *ngIf="!isLegalEffect()">
-        Édition disponible dans tous les statuts sauf ARCHIVED.
-      </ng-container>
-    </p>
+  <p class="hint" [class.warn]="isLegalEffect()">
+    <ng-container *ngIf="isLegalEffect()">
+      <strong>Effet juridique</strong> — base Art. 22.2 et révision humaine Art. 22.3 obligatoires.
+    </ng-container>
+    <ng-container *ngIf="!isLegalEffect()">
+      Édition disponible dans tous les statuts sauf ARCHIVED.
+    </ng-container>
+  </p>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Nom</mat-label>
-      <input matInput formControlName="name" maxlength="250" required>
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Description</mat-label>
-      <textarea matInput formControlName="description" rows="3" maxlength="4000"></textarea>
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Nom</mat-label>
+    <input matInput formControlName="name" maxlength="250" required>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Description</mat-label>
+    <textarea matInput formControlName="description" rows="3" maxlength="4000"></textarea>
+  </mat-form-field>
 
-    <div class="row">
-      <mat-form-field appearance="outline" class="col">
-        <mat-label>Type</mat-label>
-        <mat-select formControlName="decisionType" required>
-          <mat-option *ngFor="let t of types" [value]="t">{{ typeLabel[t] }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="col" *ngIf="isLegalEffect()">
-        <mat-label>Base légale Art. 22.2</mat-label>
-        <mat-select formControlName="art22LawfulBasis" required>
-          <mat-option *ngFor="let b of bases" [value]="b">{{ basisLabel[b] }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label>Type</mat-label>
+      <mat-select formControlName="decisionType" required>
+        <mat-option *ngFor="let t of types" [value]="t">{{ typeLabel[t] }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="col" *ngIf="isLegalEffect()">
+      <mat-label>Base légale Art. 22.2</mat-label>
+      <mat-select formControlName="art22LawfulBasis" required>
+        <mat-option *ngFor="let b of bases" [value]="b">{{ basisLabel[b] }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Détails base légale</mat-label>
-      <textarea matInput formControlName="lawfulBasisDetails" rows="2" maxlength="4000"></textarea>
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Détails base légale</mat-label>
+    <textarea matInput formControlName="lawfulBasisDetails" rows="2" maxlength="4000"></textarea>
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Catégories de données d'entrée (une par ligne)</mat-label>
-      <textarea matInput formControlName="inputDataCategoriesRaw" rows="3" maxlength="4000"></textarea>
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>UUIDs activités RoPA liées (une par ligne)</mat-label>
-      <textarea matInput formControlName="linkedActivitiesRaw" rows="3"></textarea>
-      <mat-error *ngIf="form.controls.linkedActivitiesRaw.errors?.['lines']">
-        {{ form.controls.linkedActivitiesRaw.errors?.['lines'] }}
-      </mat-error>
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>UUID DPIA liée (optionnel)</mat-label>
-      <input matInput formControlName="linkedDpiaId">
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Catégories de données d'entrée (une par ligne)</mat-label>
+    <textarea matInput formControlName="inputDataCategoriesRaw" rows="3" maxlength="4000"></textarea>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>UUIDs activités RoPA liées (une par ligne)</mat-label>
+    <textarea matInput formControlName="linkedActivitiesRaw" rows="3"></textarea>
+    <mat-error *ngIf="form.controls.linkedActivitiesRaw.errors?.['lines']">
+      {{ form.controls.linkedActivitiesRaw.errors?.['lines'] }}
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>UUID DPIA liée (optionnel)</mat-label>
+    <input matInput formControlName="linkedDpiaId">
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Description de l'algorithme</mat-label>
-      <textarea matInput formControlName="algorithmDescription" rows="5" maxlength="8000"></textarea>
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Importance pour la personne</mat-label>
-      <textarea matInput formControlName="significanceForSubject" rows="3" maxlength="4000"></textarea>
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="full" [class.critical]="isLegalEffect()">
-      <mat-label>{{ isLegalEffect() ? 'Révision humaine (Art. 22.3 — obligatoire)' : 'Révision humaine' }}</mat-label>
-      <textarea matInput formControlName="humanReviewMechanism" rows="4" maxlength="4000"
-                [required]="isLegalEffect()"></textarea>
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Mécanisme d'opposition</mat-label>
-      <textarea matInput formControlName="objectionMechanism" rows="3" maxlength="4000"></textarea>
-    </mat-form-field>
-  </mat-dialog-content>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Description de l'algorithme</mat-label>
+    <textarea matInput formControlName="algorithmDescription" rows="5" maxlength="8000"></textarea>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Importance pour la personne</mat-label>
+    <textarea matInput formControlName="significanceForSubject" rows="3" maxlength="4000"></textarea>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full" [class.critical]="isLegalEffect()">
+    <mat-label>{{ isLegalEffect() ? 'Révision humaine (Art. 22.3 — obligatoire)' : 'Révision humaine' }}</mat-label>
+    <textarea matInput formControlName="humanReviewMechanism" rows="4" maxlength="4000"
+              [required]="isLegalEffect()"></textarea>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Mécanisme d'opposition</mat-label>
+    <textarea matInput formControlName="objectionMechanism" rows="3" maxlength="4000"></textarea>
+  </mat-form-field>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">save</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Enregistrer
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>

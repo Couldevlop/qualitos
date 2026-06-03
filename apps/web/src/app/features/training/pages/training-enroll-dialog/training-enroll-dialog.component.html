@@ -1,35 +1,31 @@
-<h2 mat-dialog-title>S'inscrire à un parcours</h2>
+<qos-form-dialog
+  title="S'inscrire à un parcours"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitLabel="S'inscrire"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="enroll-form">
-  <mat-dialog-content>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Filtre statut</mat-label>
-      <mat-select [formControl]="statusFilter">
-        <mat-option [value]="'DRAFT'">DRAFT</mat-option>
-        <mat-option [value]="'ACTIVE'">ACTIVE</mat-option>
-        <mat-option [value]="'ARCHIVED'">ARCHIVED</mat-option>
-      </mat-select>
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Filtre statut</mat-label>
+    <mat-select [formControl]="statusFilter">
+      <mat-option [value]="'DRAFT'">DRAFT</mat-option>
+      <mat-option [value]="'ACTIVE'">ACTIVE</mat-option>
+      <mat-option [value]="'ARCHIVED'">ARCHIVED</mat-option>
+    </mat-select>
+  </mat-form-field>
 
-    <div *ngIf="loadError" class="banner banner-error" role="alert">{{ loadError }}</div>
-    <div *ngIf="loading"   class="banner banner-info">Chargement parcours…</div>
+  <div *ngIf="loadError" class="banner banner-error" role="alert">{{ loadError }}</div>
+  <div *ngIf="loading"   class="banner banner-info">Chargement parcours…</div>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Parcours</mat-label>
-      <mat-select formControlName="pathId" required>
-        <mat-option *ngFor="let p of (paths$ | async)" [value]="p.id">
-          {{ p.code }} — {{ p.name }} ({{ p.durationHours }} h)
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </mat-dialog-content>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Parcours</mat-label>
+    <mat-select formControlName="pathId" required>
+      <mat-option *ngFor="let p of (paths$ | async)" [value]="p.id">
+        {{ p.code }} — {{ p.name }} ({{ p.durationHours }} h)
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">check</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      S'inscrire
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>

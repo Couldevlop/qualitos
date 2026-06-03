@@ -1,46 +1,42 @@
-<h2 mat-dialog-title>Nouveau projet FMEA</h2>
+<qos-form-dialog
+  title="Nouveau projet FMEA"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitLabel="Créer"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="fmea-form">
-  <mat-dialog-content>
-    <div class="row">
-      <mat-form-field appearance="outline" class="col col-code">
-        <mat-label>Code</mat-label>
-        <input matInput formControlName="code" maxlength="120" required
-               placeholder="Ex. : PFMEA-ASM-A">
-        <mat-hint>A-Z, 0-9, point, tiret, underscore</mat-hint>
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="col">
-        <mat-label>Type</mat-label>
-        <mat-select formControlName="type" required>
-          <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Nom</mat-label>
-      <input matInput formControlName="name" maxlength="250" required>
+  <div class="row">
+    <mat-form-field appearance="outline" class="col col-code">
+      <mat-label>Code</mat-label>
+      <input matInput formControlName="code" maxlength="120" required
+             placeholder="Ex. : PFMEA-ASM-A">
+      <mat-hint>A-Z, 0-9, point, tiret, underscore</mat-hint>
     </mat-form-field>
-
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Périmètre</mat-label>
-      <textarea matInput formControlName="scope" rows="3" maxlength="1000"
-                placeholder="Décrivez le périmètre de l'analyse"></textarea>
+    <mat-form-field appearance="outline" class="col">
+      <mat-label>Type</mat-label>
+      <mat-select formControlName="type" required>
+        <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
+      </mat-select>
     </mat-form-field>
+  </div>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Seuil RPN critique</mat-label>
-      <input matInput formControlName="criticalRpnThreshold" type="number" min="1" max="1000" required>
-      <mat-hint>RPN = Sévérité × Occurrence × Détection. Items ≥ seuil = CRITIQUES.</mat-hint>
-    </mat-form-field>
-  </mat-dialog-content>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Nom</mat-label>
+    <input matInput formControlName="name" maxlength="250" required>
+  </mat-form-field>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">check</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Créer
-    </button>
-  </mat-dialog-actions>
-</form>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Périmètre</mat-label>
+    <textarea matInput formControlName="scope" rows="3" maxlength="1000"
+              placeholder="Décrivez le périmètre de l'analyse"></textarea>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Seuil RPN critique</mat-label>
+    <input matInput formControlName="criticalRpnThreshold" type="number" min="1" max="1000" required>
+    <mat-hint>RPN = Sévérité × Occurrence × Détection. Items ≥ seuil = CRITIQUES.</mat-hint>
+  </mat-form-field>
+
+</qos-form-dialog>

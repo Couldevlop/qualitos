@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { UiModule } from '../../shared/ui/ui.module';
 import { FriaApproveDialogComponent } from './pages/fria-approve-dialog/fria-approve-dialog.component';
 import { FriaDetailComponent } from './pages/fria-detail/fria-detail.component';
 import { FriaDraftDialogComponent } from './pages/fria-draft-dialog/fria-draft-dialog.component';
@@ -23,6 +24,6 @@ const routes: Routes = [
     FriaApproveDialogComponent,
     FriaReasonDialogComponent
   ],
-  imports: [SharedModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class FriaModule {}

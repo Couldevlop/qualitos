@@ -1,52 +1,46 @@
-<h2 mat-dialog-title>Assigner un Poka-Yoke</h2>
+<qos-form-dialog
+  title="Assigner un Poka-Yoke"
+  subtitle="Dispositif de prévention ou de détection issu du catalogue, attaché au projet (phase Improve). Workflow par défaut : PROPOSED → IN_DESIGN → IMPLEMENTED → VERIFIED."
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitLabel="Assigner"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="pokayoke-form">
-  <mat-dialog-content>
-    <p class="hint">Dispositif de prévention ou de détection issu du catalogue, attaché au projet
-       (phase Improve). Workflow par défaut : PROPOSED → IN_DESIGN → IMPLEMENTED → VERIFIED.</p>
-
-    <div class="filters">
-      <mat-form-field appearance="outline">
-        <mat-label>Type</mat-label>
-        <mat-select [formControl]="typeFilter">
-          <mat-option [value]="''">Tous</mat-option>
-          <mat-option *ngFor="let t of types" [value]="t">{{ t }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Mécanisme</mat-label>
-        <mat-select [formControl]="mechanismFilter">
-          <mat-option [value]="''">Tous</mat-option>
-          <mat-option *ngFor="let m of mechanisms" [value]="m">{{ m }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-
-    <div *ngIf="loadError" class="banner banner-error" role="alert">{{ loadError }}</div>
-    <div *ngIf="loading"   class="banner banner-info">Chargement du catalogue…</div>
-
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Dispositif</mat-label>
-      <mat-select formControlName="deviceId" required>
-        <mat-option *ngFor="let d of (devices$ | async)" [value]="d.id">
-          {{ d.code }} — {{ d.name }} ({{ d.type }} / {{ d.mechanism }})
-        </mat-option>
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Type</mat-label>
+      <mat-select [formControl]="typeFilter">
+        <mat-option [value]="''">Tous</mat-option>
+        <mat-option *ngFor="let t of types" [value]="t">{{ t }}</mat-option>
       </mat-select>
     </mat-form-field>
-
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Note</mat-label>
-      <textarea matInput formControlName="note" rows="3"
-                placeholder="Implémentation prévue, contraintes, lien CAPA…"></textarea>
+    <mat-form-field appearance="outline">
+      <mat-label>Mécanisme</mat-label>
+      <mat-select [formControl]="mechanismFilter">
+        <mat-option [value]="''">Tous</mat-option>
+        <mat-option *ngFor="let m of mechanisms" [value]="m">{{ m }}</mat-option>
+      </mat-select>
     </mat-form-field>
-  </mat-dialog-content>
+  </div>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">check</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Assigner
-    </button>
-  </mat-dialog-actions>
-</form>
+  <div *ngIf="loadError" class="banner banner-error" role="alert">{{ loadError }}</div>
+  <div *ngIf="loading"   class="banner banner-info">Chargement du catalogue…</div>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Dispositif</mat-label>
+    <mat-select formControlName="deviceId" required>
+      <mat-option *ngFor="let d of (devices$ | async)" [value]="d.id">
+        {{ d.code }} — {{ d.name }} ({{ d.type }} / {{ d.mechanism }})
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Note</mat-label>
+    <textarea matInput formControlName="note" rows="3"
+              placeholder="Implémentation prévue, contraintes, lien CAPA…"></textarea>
+  </mat-form-field>
+
+</qos-form-dialog>

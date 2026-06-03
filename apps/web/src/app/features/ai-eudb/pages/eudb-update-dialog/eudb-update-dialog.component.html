@@ -1,26 +1,21 @@
-<h2 mat-dialog-title>Déclarer une mise à jour</h2>
+<qos-form-dialog
+  title="Déclarer une mise à jour"
+  subtitle="Toute modification substantielle du système IA enregistré doit être déclarée à la base EUDB. Décrivez la mise à jour et indiquez la date effective."
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitLabel="Déclarer"
+  submitIcon="update"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="upd-form">
-  <mat-dialog-content>
-    <p class="hint">Toute modification substantielle du système IA enregistré doit être
-       déclarée à la base EUDB. Décrivez la mise à jour et indiquez la date effective.</p>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Date de mise à jour</mat-label>
+    <input matInput formControlName="updateDate" type="datetime-local" required>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Résumé de la mise à jour</mat-label>
+    <textarea matInput formControlName="updateSummary" rows="5" maxlength="4000" required></textarea>
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Date de mise à jour</mat-label>
-      <input matInput formControlName="updateDate" type="datetime-local" required>
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Résumé de la mise à jour</mat-label>
-      <textarea matInput formControlName="updateSummary" rows="5" maxlength="4000" required></textarea>
-    </mat-form-field>
-  </mat-dialog-content>
-
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">update</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Déclarer
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>

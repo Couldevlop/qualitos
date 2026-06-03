@@ -1,71 +1,66 @@
-<h2 mat-dialog-title>Éditer l'analyse d'impact</h2>
+<qos-form-dialog
+  title="Éditer l'analyse d'impact"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="dpia-form">
-  <mat-dialog-content>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Titre</mat-label>
-      <input matInput formControlName="title" maxlength="250" required>
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Titre</mat-label>
+    <input matInput formControlName="title" maxlength="250" required>
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Description</mat-label>
-      <textarea matInput formControlName="description" rows="2" maxlength="4000"></textarea>
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Description</mat-label>
+    <textarea matInput formControlName="description" rows="2" maxlength="4000"></textarea>
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>UUIDs des activités RoPA liées (une par ligne)</mat-label>
-      <textarea matInput formControlName="linkedProcessingActivityIds" rows="2"></textarea>
-      <mat-error *ngIf="form.controls.linkedProcessingActivityIds.hasError('uuidLine')">
-        Chaque ligne doit être un UUID v4 valide.
-      </mat-error>
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>UUIDs des activités RoPA liées (une par ligne)</mat-label>
+    <textarea matInput formControlName="linkedProcessingActivityIds" rows="2"></textarea>
+    <mat-error *ngIf="form.controls.linkedProcessingActivityIds.hasError('uuidLine')">
+      Chaque ligne doit être un UUID v4 valide.
+    </mat-error>
+  </mat-form-field>
 
-    <h3 class="section">Analyse</h3>
+  <h3 class="section">Analyse</h3>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Nécessité & proportionnalité (Art. 35§7.b)</mat-label>
-      <textarea matInput formControlName="necessityAndProportionalityNotes" rows="4" maxlength="8000"
-                placeholder="Justifier que le traitement est nécessaire à la finalité et proportionné."></textarea>
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Nécessité & proportionnalité (Art. 35§7.b)</mat-label>
+    <textarea matInput formControlName="necessityAndProportionalityNotes" rows="4" maxlength="8000"
+              placeholder="Justifier que le traitement est nécessaire à la finalité et proportionné."></textarea>
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Risques pour les droits et libertés (Art. 35§7.c)</mat-label>
-      <textarea matInput formControlName="risksToRightsAndFreedoms" rows="4" maxlength="8000"
-                placeholder="Identifier menaces, vulnérabilités, impacts (accès non autorisé, modification, perte…)."></textarea>
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Risques pour les droits et libertés (Art. 35§7.c)</mat-label>
+    <textarea matInput formControlName="risksToRightsAndFreedoms" rows="4" maxlength="8000"
+              placeholder="Identifier menaces, vulnérabilités, impacts (accès non autorisé, modification, perte…)."></textarea>
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Mesures de mitigation (Art. 35§7.d)</mat-label>
-      <textarea matInput formControlName="mitigationMeasures" rows="4" maxlength="8000"
-                placeholder="Mesures techniques + organisationnelles ramenant le risque à un niveau acceptable."></textarea>
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Mesures de mitigation (Art. 35§7.d)</mat-label>
+    <textarea matInput formControlName="mitigationMeasures" rows="4" maxlength="8000"
+              placeholder="Mesures techniques + organisationnelles ramenant le risque à un niveau acceptable."></textarea>
+  </mat-form-field>
 
-    <h3 class="section">Risque résiduel & consultation</h3>
+  <h3 class="section">Risque résiduel & consultation</h3>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Niveau de risque résiduel</mat-label>
-      <mat-select formControlName="overallRiskLevel" required>
-        <mat-option *ngFor="let r of risks" [value]="r">{{ r }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Niveau de risque résiduel</mat-label>
+    <mat-select formControlName="overallRiskLevel" required>
+      <mat-option *ngFor="let r of risks" [value]="r">{{ r }}</mat-option>
+    </mat-select>
+  </mat-form-field>
 
-    <mat-checkbox formControlName="consultationRequired">
-      Consultation préalable de l'autorité de contrôle requise (Art. 36)
-    </mat-checkbox>
+  <mat-checkbox formControlName="consultationRequired">
+    Consultation préalable de l'autorité de contrôle requise (Art. 36)
+  </mat-checkbox>
 
-    <mat-form-field appearance="outline" class="full" *ngIf="form.controls.consultationRequired.value">
-      <mat-label>Notes consultation (CNIL/EDPB)</mat-label>
-      <textarea matInput formControlName="consultationNotes" rows="3" maxlength="8000"
-                placeholder="Date contact, références échanges, réponse attendue…"></textarea>
-    </mat-form-field>
-  </mat-dialog-content>
+  <mat-form-field appearance="outline" class="full" *ngIf="form.controls.consultationRequired.value">
+    <mat-label>Notes consultation (CNIL/EDPB)</mat-label>
+    <textarea matInput formControlName="consultationNotes" rows="3" maxlength="8000"
+              placeholder="Date contact, références échanges, réponse attendue…"></textarea>
+  </mat-form-field>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">check</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Enregistrer
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>

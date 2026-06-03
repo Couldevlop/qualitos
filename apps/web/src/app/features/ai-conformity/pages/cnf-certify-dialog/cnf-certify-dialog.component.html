@@ -1,33 +1,27 @@
-<h2 mat-dialog-title>Enregistrer la certification</h2>
+<qos-form-dialog
+  title="Enregistrer la certification"
+  subtitle="L'évaluation est conclue avec succès. Renseignez le numéro de certificat délivré par l'organisme (ou la référence interne pour Annexe VI), la référence de la déclaration UE de conformité et la date de validité."
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitLabel="Certifier"
+  submitIcon="verified"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="cert-form">
-  <mat-dialog-content>
-    <p class="hint">L'évaluation est conclue avec succès. Renseignez le numéro de certificat
-       délivré par l'organisme (ou la référence interne pour Annexe VI), la référence
-       de la déclaration UE de conformité et la date de validité.</p>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Numéro de certificat</mat-label>
+    <input matInput formControlName="certificateNumber" maxlength="250" required
+           placeholder="NB0123-AI-2026-0042">
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Référence déclaration UE</mat-label>
+    <input matInput formControlName="euDeclarationReference" maxlength="250" required
+           placeholder="EU-DECL-2026-Org-System-001">
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Valide jusqu'au</mat-label>
+    <input matInput formControlName="validUntil" type="date" required>
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Numéro de certificat</mat-label>
-      <input matInput formControlName="certificateNumber" maxlength="250" required
-             placeholder="NB0123-AI-2026-0042">
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Référence déclaration UE</mat-label>
-      <input matInput formControlName="euDeclarationReference" maxlength="250" required
-             placeholder="EU-DECL-2026-Org-System-001">
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Valide jusqu'au</mat-label>
-      <input matInput formControlName="validUntil" type="date" required>
-    </mat-form-field>
-  </mat-dialog-content>
-
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">verified</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Certifier
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>

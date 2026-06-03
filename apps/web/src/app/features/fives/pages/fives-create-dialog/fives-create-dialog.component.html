@@ -1,37 +1,32 @@
-<h2 mat-dialog-title>Nouvel audit 5S</h2>
+<qos-form-dialog
+  title="Nouvel audit 5S"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitLabel="Créer"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="create-form">
-  <mat-dialog-content>
-    <p class="hint">Définis la zone à auditer et la date prévue. Les scores
-       Seiri · Seiton · Seiso · Seiketsu · Shitsuke seront saisis lors de l'audit terrain.</p>
+  <p class="hint">Définis la zone à auditer et la date prévue. Les scores
+     Seiri · Seiton · Seiso · Seiketsu · Shitsuke seront saisis lors de l'audit terrain.</p>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Zone</mat-label>
-      <input matInput formControlName="zone" maxlength="200" required
-             placeholder="Ex. : Atelier mécanique A — ligne 1">
-      <mat-error *ngIf="form.controls.zone.hasError('required')">La zone est requise.</mat-error>
-      <mat-error *ngIf="form.controls.zone.hasError('maxlength')">200 caractères maximum.</mat-error>
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Zone</mat-label>
+    <input matInput formControlName="zone" maxlength="200" required
+           placeholder="Ex. : Atelier mécanique A — ligne 1">
+    <mat-error *ngIf="form.controls.zone.hasError('required')">La zone est requise.</mat-error>
+    <mat-error *ngIf="form.controls.zone.hasError('maxlength')">200 caractères maximum.</mat-error>
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Description (optionnel)</mat-label>
-      <textarea matInput formControlName="description" rows="3"
-                placeholder="Périmètre, observations préalables, équipement…"></textarea>
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Description (optionnel)</mat-label>
+    <textarea matInput formControlName="description" rows="3"
+              placeholder="Périmètre, observations préalables, équipement…"></textarea>
+  </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Date prévue (optionnel)</mat-label>
-      <input matInput formControlName="scheduledAt" type="datetime-local">
-    </mat-form-field>
-  </mat-dialog-content>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Date prévue (optionnel)</mat-label>
+    <input matInput formControlName="scheduledAt" type="datetime-local">
+  </mat-form-field>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="primary" type="submit"
-            [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">check</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Créer
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>

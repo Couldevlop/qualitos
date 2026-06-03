@@ -1,85 +1,79 @@
-<h2 mat-dialog-title>{{ isEdit ? 'Modifier la mention' : 'Nouvelle mention d\'information' }}</h2>
+<qos-form-dialog
+  [title]="isEdit ? 'Modifier la mention' : 'Nouvelle mention d\'information'"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  [submitLabel]="isEdit ? 'Enregistrer' : 'Créer (DRAFT)'"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="pn-form">
-  <mat-dialog-content>
-
-    <h3 class="section">Identification</h3>
-    <div class="row">
-      <mat-form-field appearance="outline" class="col col-ref">
-        <mat-label>Référence</mat-label>
-        <input matInput formControlName="reference" maxlength="64" required
-               placeholder="PUBLIC_WEB_NOTICE">
-        <mat-hint>Majuscules, chiffres, tiret, underscore (immutable)</mat-hint>
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="col col-version">
-        <mat-label>Version</mat-label>
-        <input matInput formControlName="version" maxlength="32" required
-               placeholder="2026.1">
-        <mat-hint>Immutable</mat-hint>
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="col col-lang">
-        <mat-label>Langue (ISO-639-1)</mat-label>
-        <input matInput formControlName="language" maxlength="2" required
-               placeholder="fr">
-      </mat-form-field>
-    </div>
-
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Titre</mat-label>
-      <input matInput formControlName="title" maxlength="250" required>
+  <h3 class="section">Identification</h3>
+  <div class="row">
+    <mat-form-field appearance="outline" class="col col-ref">
+      <mat-label>Référence</mat-label>
+      <input matInput formControlName="reference" maxlength="64" required
+             placeholder="PUBLIC_WEB_NOTICE">
+      <mat-hint>Majuscules, chiffres, tiret, underscore (immutable)</mat-hint>
     </mat-form-field>
-
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Résumé (visible dans les bandeaux / cookies)</mat-label>
-      <textarea matInput formControlName="summary" rows="2" maxlength="2000"></textarea>
+    <mat-form-field appearance="outline" class="col col-version">
+      <mat-label>Version</mat-label>
+      <input matInput formControlName="version" maxlength="32" required
+             placeholder="2026.1">
+      <mat-hint>Immutable</mat-hint>
     </mat-form-field>
-
-    <h3 class="section">Contenu Markdown</h3>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Contenu — Art. 13/14 RGPD complet</mat-label>
-      <textarea matInput formControlName="contentMarkdown" rows="10" maxlength="65000"
-                placeholder="# Politique de confidentialité&#10;&#10;## Identité du responsable&#10;..."></textarea>
-      <mat-hint>Markdown — rendu côté front public</mat-hint>
+    <mat-form-field appearance="outline" class="col col-lang">
+      <mat-label>Langue (ISO-639-1)</mat-label>
+      <input matInput formControlName="language" maxlength="2" required
+             placeholder="fr">
     </mat-form-field>
+  </div>
 
-    <h3 class="section">Contact + publication</h3>
-    <div class="row">
-      <mat-form-field appearance="outline" class="col">
-        <mat-label>Nom du contact (DPO)</mat-label>
-        <input matInput formControlName="contactName" maxlength="250">
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="col">
-        <mat-label>E-mail de contact</mat-label>
-        <input matInput formControlName="contactEmail" type="email" maxlength="250">
-      </mat-form-field>
-    </div>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>URL publique (https://… — optionnelle)</mat-label>
-      <input matInput formControlName="publishUrl" maxlength="1024"
-             placeholder="https://www.qualitos.io/privacy">
-      <mat-error *ngIf="form.controls.publishUrl.hasError('pattern')">
-        Seules les URLs https:// sont acceptées.
-      </mat-error>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Titre</mat-label>
+    <input matInput formControlName="title" maxlength="250" required>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Résumé (visible dans les bandeaux / cookies)</mat-label>
+    <textarea matInput formControlName="summary" rows="2" maxlength="2000"></textarea>
+  </mat-form-field>
+
+  <h3 class="section">Contenu Markdown</h3>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Contenu — Art. 13/14 RGPD complet</mat-label>
+    <textarea matInput formControlName="contentMarkdown" rows="10" maxlength="65000"
+              placeholder="# Politique de confidentialité&#10;&#10;## Identité du responsable&#10;..."></textarea>
+    <mat-hint>Markdown — rendu côté front public</mat-hint>
+  </mat-form-field>
+
+  <h3 class="section">Contact + publication</h3>
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label>Nom du contact (DPO)</mat-label>
+      <input matInput formControlName="contactName" maxlength="250">
     </mat-form-field>
-
-    <h3 class="section">Activités de traitement liées (RoPA)</h3>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>UUIDs des activités RoPA liées (une par ligne)</mat-label>
-      <textarea matInput formControlName="linkedProcessingActivityIds" rows="3"
-                placeholder="00000000-0000-0000-0000-000000000000"></textarea>
-      <mat-error *ngIf="form.controls.linkedProcessingActivityIds.hasError('uuidLine')">
-        Chaque ligne doit être un UUID v4 valide.
-      </mat-error>
+    <mat-form-field appearance="outline" class="col">
+      <mat-label>E-mail de contact</mat-label>
+      <input matInput formControlName="contactEmail" type="email" maxlength="250">
     </mat-form-field>
+  </div>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>URL publique (https://… — optionnelle)</mat-label>
+    <input matInput formControlName="publishUrl" maxlength="1024"
+           placeholder="https://www.qualitos.io/privacy">
+    <mat-error *ngIf="form.controls.publishUrl.hasError('pattern')">
+      Seules les URLs https:// sont acceptées.
+    </mat-error>
+  </mat-form-field>
 
-  </mat-dialog-content>
+  <h3 class="section">Activités de traitement liées (RoPA)</h3>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>UUIDs des activités RoPA liées (une par ligne)</mat-label>
+    <textarea matInput formControlName="linkedProcessingActivityIds" rows="3"
+              placeholder="00000000-0000-0000-0000-000000000000"></textarea>
+    <mat-error *ngIf="form.controls.linkedProcessingActivityIds.hasError('uuidLine')">
+      Chaque ligne doit être un UUID v4 valide.
+    </mat-error>
+  </mat-form-field>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">check</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      {{ isEdit ? 'Enregistrer' : 'Créer (DRAFT)' }}
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>
