@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { UiModule } from '../../shared/ui/ui.module';
 import { TrainingEnrollDialogComponent } from './pages/training-enroll-dialog/training-enroll-dialog.component';
 import { TrainingHomeComponent } from './pages/training-home/training-home.component';
 import { TrainingPathDetailComponent } from './pages/training-path-detail/training-path-detail.component';
@@ -23,6 +24,6 @@ const routes: Routes = [
     TrainingEnrollDialogComponent,
     TrainingRequirementDialogComponent
   ],
-  imports: [SharedModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class TrainingModule {}

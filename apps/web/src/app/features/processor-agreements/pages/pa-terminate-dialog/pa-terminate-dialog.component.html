@@ -1,25 +1,23 @@
-<h2 mat-dialog-title>Résilier le DPA</h2>
+<qos-form-dialog
+  title="Résilier le DPA"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitLabel="Confirmer"
+  submitIcon="cancel"
+  submitColor="warn"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="term-form">
-  <mat-dialog-content>
-    <p class="warn">
-      <strong>Action terminale.</strong>
-      La résiliation déclenche les obligations Art. 28§3.g (restitution
-      ou suppression des données dans les conditions prévues au contrat).
-    </p>
+  <p class="warn">
+    <strong>Action terminale.</strong>
+    La résiliation déclenche les obligations Art. 28§3.g (restitution
+    ou suppression des données dans les conditions prévues au contrat).
+  </p>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Motif de la résiliation</mat-label>
-      <textarea matInput formControlName="reason" rows="4" maxlength="2000" required></textarea>
-    </mat-form-field>
-  </mat-dialog-content>
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Motif de la résiliation</mat-label>
+    <textarea matInput formControlName="reason" rows="4" maxlength="2000" required></textarea>
+  </mat-form-field>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancel()" [disabled]="submitting">Annuler</button>
-    <button mat-flat-button color="warn" type="submit" [disabled]="form.invalid || submitting">
-      <mat-icon *ngIf="!submitting">cancel</mat-icon>
-      <mat-progress-spinner *ngIf="submitting" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Confirmer
-    </button>
-  </mat-dialog-actions>
-</form>
+</qos-form-dialog>

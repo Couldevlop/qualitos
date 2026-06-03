@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { UiModule } from '../../shared/ui/ui.module';
 import { FmeaCreateDialogComponent } from './pages/fmea-create-dialog/fmea-create-dialog.component';
 import { FmeaDetailComponent } from './pages/fmea-detail/fmea-detail.component';
 import { FmeaEditDialogComponent } from './pages/fmea-edit-dialog/fmea-edit-dialog.component';
@@ -21,6 +22,6 @@ const routes: Routes = [
     FmeaEditDialogComponent,
     FmeaItemDialogComponent
   ],
-  imports: [SharedModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class FmeaModule {}

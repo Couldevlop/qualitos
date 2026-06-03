@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { UiModule } from '../../shared/ui/ui.module';
 import { DocumentsCreateDialogComponent } from './pages/documents-create-dialog/documents-create-dialog.component';
 import { DocumentsDetailComponent } from './pages/documents-detail/documents-detail.component';
 import { DocumentsEditDialogComponent } from './pages/documents-edit-dialog/documents-edit-dialog.component';
@@ -21,6 +22,6 @@ const routes: Routes = [
     DocumentsEditDialogComponent,
     DocumentsVersionDialogComponent
   ],
-  imports: [SharedModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class DocumentsModule {}
