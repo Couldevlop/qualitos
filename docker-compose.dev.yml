@@ -193,6 +193,38 @@ services:
     networks: [qualitos]
 
   # -------------------------------------------------------------------------
+  # Socle Kafka (CLAUDE.md §10.1 event-driven). Redpanda = API Kafka, mono-binaire,
+  # sans Zookeeper (léger pour le dev). Démarré uniquement avec le profil compose
+  # 'kafka' (off par défaut). L'engine (host) publie via localhost:9092 (listener
+  # external) ; les conteneurs internes via redpanda:29092. Consommé par le relais
+  # outbox audit_events (qualitos.kafka.enabled=true côté engine).
+  # -------------------------------------------------------------------------
+
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
+    container_name: qualitos-redpanda
+    profiles: ["kafka"]
+    command:
+      - redpanda
+      - start
+      - --mode=dev-container
+      - --smp=1
+      - --default-log-level=warn
+      - --kafka-addr=internal://0.0.0.0:29092,external://0.0.0.0:9092
+      - --advertise-kafka-addr=internal://redpanda:29092,external://localhost:9092
+    ports:
+      - "9092:9092"
+      - "9644:9644"
+    volumes:
+      - redpanda-data:/var/lib/redpanda/data
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health | grep -q 'Healthy:.*true'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [qualitos]
+
+  # -------------------------------------------------------------------------
   # P5 — AI gateway (FastAPI, distroless). Routes vers Ollama / Anthropic / Mistral
   # via la passerelle AIProvider. Toutes les sorties sont PII-redacted (Presidio).
   # -------------------------------------------------------------------------
@@ -285,6 +317,7 @@ volumes:
   postgres-data:
   qdrant-data:
   ollama-data:
+  redpanda-data:
 
 networks:
   qualitos:

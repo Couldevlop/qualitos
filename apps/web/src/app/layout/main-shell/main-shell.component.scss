@@ -100,6 +100,38 @@
     padding: var(--qos-space-3) var(--qos-space-3) var(--qos-space-1);
   }
 
+  /* En-tête de section repliable (groupes de conformité GRC). */
+  &__section-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--qos-space-2);
+    appearance: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: var(--qos-space-3) var(--qos-space-2) var(--qos-space-1) var(--qos-space-3);
+    border-radius: var(--qos-radius-md);
+    transition: background var(--qos-motion-fast);
+
+    .qos-sidebar__section-label { padding: 0; }
+
+    &:hover {
+      background: var(--qos-bg-sidebar-hover);
+      .qos-sidebar__section-chevron { color: var(--qos-fg-sidebar-active); }
+    }
+  }
+
+  &__section-chevron {
+    font-size: 16px;
+    color: rgba(148, 163, 184, 0.5);
+    transform: rotate(-90deg); /* replié → chevron vers la droite */
+    transition: transform var(--qos-motion-fast), color var(--qos-motion-fast);
+
+    &--open { transform: rotate(0deg); } /* déplié → chevron vers le bas */
+  }
+
   &__items {
     list-style: none;
     padding: 0;
