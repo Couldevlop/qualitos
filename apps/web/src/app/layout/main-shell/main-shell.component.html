@@ -13,8 +13,28 @@
 
     <nav class="qos-sidebar__nav">
       <ng-container *ngFor="let section of sections">
-        <div class="qos-sidebar__section-label" *ngIf="!collapsed">{{ section.label }}</div>
-        <ul class="qos-sidebar__items">
+        <!-- En-tête de section : bouton repliable (GRC) ou simple libellé -->
+        <ng-container *ngIf="!collapsed">
+          <button
+            *ngIf="section.collapsible; else staticLabel"
+            type="button"
+            class="qos-sidebar__section-toggle"
+            (click)="toggleSection(section.label)"
+            [attr.aria-expanded]="!isSectionCollapsed(section.label)">
+            <span class="qos-sidebar__section-label">{{ section.label }}</span>
+            <span
+              class="qos-sidebar__section-chevron material-symbols-outlined"
+              [class.qos-sidebar__section-chevron--open]="!isSectionCollapsed(section.label)"
+              aria-hidden="true">expand_more</span>
+          </button>
+          <ng-template #staticLabel>
+            <div class="qos-sidebar__section-label">{{ section.label }}</div>
+          </ng-template>
+        </ng-container>
+
+        <ul
+          class="qos-sidebar__items"
+          *ngIf="collapsed || !isSectionCollapsed(section.label)">
           <li *ngFor="let item of section.items">
             <a
               [routerLink]="item.route"

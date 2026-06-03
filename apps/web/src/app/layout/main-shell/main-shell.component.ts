@@ -13,6 +13,8 @@ export interface NavItem {
 export interface NavSection {
   label: string;
   items: NavItem[];
+  /** Section repliable (groupes de conformité GRC), repliée par défaut. */
+  collapsible?: boolean;
 }
 
 @Component({
@@ -26,14 +28,23 @@ export class MainShellComponent implements OnInit {
   user$!: Observable<AuthUser | null>;
   collapsed = false;
 
+  /** Labels des sections repliées (persistées). */
+  collapsedSections = new Set<string>();
+
+  private static readonly COLLAPSED_KEY = 'qos.nav.collapsed';
+
+  // Architecture d'information par domaine (Qualité vs Gouvernance/Conformité GRC),
+  // inspirée des leaders QMS (MasterControl, ETQ, Veeva, Qualio). Les 3 blocs de
+  // conformité sont repliables pour éviter la surcharge cognitive (règle 7±2).
   readonly sections: NavSection[] = [
     {
       label: 'Pilotage',
       items: [
-        { label: 'Tableau de bord', route: '/dashboard', icon: 'dashboard' },
-        { label: 'Accueil',         route: '/home',      icon: 'home' },
-        { label: 'KPI catalog',     route: '/kpis',      icon: 'monitoring' },
-        { label: 'Assistant NLQ',   route: '/nlq',       icon: 'forum' }
+        { label: 'Tableau de bord', route: '/dashboard',         icon: 'dashboard' },
+        { label: 'Accueil',         route: '/home',              icon: 'home' },
+        { label: 'Mes dashboards',  route: '/dashboard-builder', icon: 'dashboard_customize' },
+        { label: 'Indicateurs (KPI)', route: '/kpis',            icon: 'monitoring' },
+        { label: 'Assistant IA',    route: '/nlq',               icon: 'forum' }
       ]
     },
     {
@@ -48,50 +59,70 @@ export class MainShellComponent implements OnInit {
       ]
     },
     {
-      label: 'Processus',
+      label: 'Qualité opérationnelle',
       items: [
         { label: 'CAPA',          route: '/capa',      icon: 'engineering' },
         { label: 'Audits',        route: '/audits',    icon: 'fact_check' },
-        { label: 'FMEA / Risk',   route: '/fmea',      icon: 'warning' },
-        { label: 'Fournisseurs',  route: '/suppliers', icon: 'local_shipping' },
-        { label: 'Formation',     route: '/training',  icon: 'school' },
-        { label: 'Changements',   route: '/changes',   icon: 'change_circle' },
-        { label: 'EHS',           route: '/ehs',       icon: 'health_and_safety' },
+        { label: 'Risques (FMEA)', route: '/fmea',     icon: 'warning' },
         { label: 'Documents',     route: '/documents', icon: 'description' },
+        { label: 'Changements',   route: '/changes',   icon: 'change_circle' },
+        { label: 'EHS',           route: '/ehs',       icon: 'health_and_safety' }
+      ]
+    },
+    {
+      label: 'Fournisseurs & compétences',
+      items: [
+        { label: 'Fournisseurs', route: '/suppliers', icon: 'local_shipping' },
+        { label: 'Formation',    route: '/training',  icon: 'school' }
+      ]
+    },
+    {
+      label: 'Normes & certification',
+      items: [
         { label: 'Standards Hub', route: '/standards', icon: 'workspace_premium' }
+      ]
+    },
+    {
+      label: 'Conformité — IA (AI Act)',
+      collapsible: true,
+      items: [
+        { label: 'QMS',        route: '/ai-qms',        icon: 'memory' },
+        { label: 'Conformité', route: '/ai-conformity', icon: 'verified_user' },
+        { label: 'Incidents',  route: '/ai-incidents',  icon: 'warning' },
+        { label: 'EUDB',       route: '/ai-eudb',       icon: 'storage' },
+        { label: 'FRIA',       route: '/fria',          icon: 'balance' },
+        { label: 'PMM',        route: '/ai-pmm',        icon: 'monitoring' }
+      ]
+    },
+    {
+      label: 'Conformité — Données (RGPD)',
+      collapsible: true,
+      items: [
+        { label: 'Registre (RoPA)',   route: '/ropa',                 icon: 'shield' },
+        { label: 'Consentements',     route: '/consents',             icon: 'how_to_reg' },
+        { label: 'Demandes (DSAR)',   route: '/subject-requests',     icon: 'gavel' },
+        { label: 'Mentions',          route: '/privacy-notices',      icon: 'article' },
+        { label: 'DPIA',              route: '/dpia',                 icon: 'assessment' },
+        { label: 'DPO',               route: '/dpo-appointments',     icon: 'badge' },
+        { label: 'Rétention',         route: '/retention',            icon: 'auto_delete' },
+        { label: 'Transferts',        route: '/cross-border',         icon: 'public' },
+        { label: 'Sous-traitants (DPA)', route: '/processor-agreements', icon: 'handshake' },
+        { label: 'Violations',        route: '/breaches',             icon: 'privacy_tip' },
+        { label: 'Décisions auto.',   route: '/automated-decisions',  icon: 'account_tree' }
+      ]
+    },
+    {
+      label: 'Conformité — Cyber (NIS 2)',
+      collapsible: true,
+      items: [
+        { label: 'Mesures',         route: '/nis2-measures',  icon: 'rule' },
+        { label: 'Incidents cyber', route: '/cyber-incidents', icon: 'shield' }
       ]
     },
     {
       label: 'Intégrations',
       items: [
-        { label: 'ITSM',         route: '/itsm',         icon: 'hub' }
-      ]
-    },
-    {
-      label: 'Compliance UE',
-      items: [
-        { label: 'AI Act',       route: '/ai-act', icon: 'smart_toy', badge: '7' },
-        { label: 'AI Act · QMS',        route: '/ai-qms',         icon: 'memory' },
-        { label: 'AI Act · Conformité', route: '/ai-conformity',  icon: 'verified_user' },
-        { label: 'AI Act · Incidents',  route: '/ai-incidents',   icon: 'warning' },
-        { label: 'AI Act · EUDB',       route: '/ai-eudb',        icon: 'storage' },
-        { label: 'AI Act · FRIA',       route: '/fria',           icon: 'balance' },
-        { label: 'AI Act · PMM',        route: '/ai-pmm',         icon: 'monitoring' },
-        { label: 'GDPR · RoPA',      route: '/ropa',     icon: 'shield' },
-        { label: 'GDPR · Consents',  route: '/consents',         icon: 'how_to_reg' },
-        { label: 'GDPR · DSAR',      route: '/subject-requests', icon: 'gavel' },
-        { label: 'GDPR · Notices',   route: '/privacy-notices',  icon: 'article' },
-        { label: 'GDPR · DPIA',      route: '/dpia',              icon: 'assessment' },
-        { label: 'GDPR · DPO',       route: '/dpo-appointments',  icon: 'badge' },
-        { label: 'GDPR · Rétention', route: '/retention',         icon: 'auto_delete' },
-        { label: 'GDPR · Transferts',route: '/cross-border',      icon: 'public' },
-        { label: 'GDPR · DPA Art.28', route: '/processor-agreements', icon: 'handshake' },
-        { label: 'GDPR · Violations', route: '/breaches',           icon: 'privacy_tip' },
-        { label: 'GDPR · Décisions auto. (Art.22)', route: '/automated-decisions', icon: 'account_tree' },
-        { label: 'GDPR',             route: '/gdpr',              icon: 'shield_lock' },
-        { label: 'NIS 2',          route: '/nis2',           icon: 'security' },
-        { label: 'NIS 2 · Mesures',route: '/nis2-measures',  icon: 'rule' },
-        { label: 'NIS 2 · Incidents cyber', route: '/cyber-incidents', icon: 'shield' }
+        { label: 'ITSM', route: '/itsm', icon: 'hub' }
       ]
     }
   ];
@@ -100,9 +131,49 @@ export class MainShellComponent implements OnInit {
 
   ngOnInit(): void {
     this.user$ = this.auth.user();
+    this.restoreCollapsedSections();
   }
 
   toggle(): void { this.collapsed = !this.collapsed; }
+
+  isSectionCollapsed(label: string): boolean {
+    return this.collapsedSections.has(label);
+  }
+
+  toggleSection(label: string): void {
+    if (this.collapsedSections.has(label)) {
+      this.collapsedSections.delete(label);
+    } else {
+      this.collapsedSections.add(label);
+    }
+    this.persistCollapsedSections();
+  }
+
+  /** Restaure l'état replié depuis localStorage ; par défaut, replie les sections GRC. */
+  private restoreCollapsedSections(): void {
+    try {
+      const raw = localStorage.getItem(MainShellComponent.COLLAPSED_KEY);
+      if (raw) {
+        this.collapsedSections = new Set<string>(JSON.parse(raw) as string[]);
+        return;
+      }
+    } catch {
+      // localStorage indisponible / JSON corrompu → on retombe sur le défaut
+    }
+    this.sections
+      .filter(s => s.collapsible)
+      .forEach(s => this.collapsedSections.add(s.label));
+  }
+
+  private persistCollapsedSections(): void {
+    try {
+      localStorage.setItem(
+        MainShellComponent.COLLAPSED_KEY,
+        JSON.stringify([...this.collapsedSections]));
+    } catch {
+      // best-effort : pas de persistance si localStorage indisponible
+    }
+  }
 
   initials(name?: string | null): string {
     if (!name) return '··';
