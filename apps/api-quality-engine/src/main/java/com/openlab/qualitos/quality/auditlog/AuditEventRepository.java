@@ -46,4 +46,12 @@ public interface AuditEventRepository extends JpaRepository<AuditEvent, UUID> {
     /** Tenants ayant des événements non ancrés (pilotage du scheduler d'ancrage). */
     @Query("select distinct e.tenantId from AuditEvent e where e.blockchainTxRef is null")
     List<UUID> findDistinctTenantIdsWithUnanchoredEvents();
+
+    /** Tous les tenants ayant des événements (pilotage du relais Kafka outbox). */
+    @Query("select distinct e.tenantId from AuditEvent e")
+    List<UUID> findDistinctTenantIds();
+
+    /** Événements d'un tenant au-delà d'une séquence (relais Kafka), ordre croissant. */
+    List<AuditEvent> findByTenantIdAndSequenceNoGreaterThanOrderBySequenceNoAsc(
+            UUID tenantId, long sequenceNo, Pageable pageable);
 }
