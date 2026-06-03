@@ -3,38 +3,45 @@ package com.openlab.qualitos.crypto.infrastructure;
 import com.openlab.qualitos.crypto.domain.CryptoException;
 import com.openlab.qualitos.crypto.domain.model.KemAlgorithm;
 import com.openlab.qualitos.crypto.domain.port.KemProvider;
-import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
-import org.bouncycastle.crypto.SecretWithEncapsulation;
-import org.bouncycastle.pqc.crypto.mlkem.MLKEMExtractor;
-import org.bouncycastle.pqc.crypto.mlkem.MLKEMGenerator;
-import org.bouncycastle.pqc.crypto.mlkem.MLKEMKeyGenerationParameters;
-import org.bouncycastle.pqc.crypto.mlkem.MLKEMKeyPairGenerator;
-import org.bouncycastle.pqc.crypto.mlkem.MLKEMParameters;
-import org.bouncycastle.pqc.crypto.mlkem.MLKEMPrivateKeyParameters;
-import org.bouncycastle.pqc.crypto.mlkem.MLKEMPublicKeyParameters;
 
+import javax.crypto.KEM;
+import javax.crypto.SecretKey;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.security.SecureRandom;
+import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 
 /**
- * Real ML-KEM (FIPS 203) key encapsulation backed by Bouncy Castle's low-level
- * PQC API (ADR 0011 §2). Used by the hybrid TLS suite (WS5, deferred) — shipped
- * now so the KEM half of crypto-agility is real and tested.
+ * Real ML-KEM (FIPS 203) key encapsulation backed by the <b>standard JCA</b> :
+ * {@link KeyPairGenerator}/{@link KeyFactory} {@code "ML-KEM"} + {@link javax.crypto.KEM}
+ * (JDK 21, JEP 452). Le provider Bouncy Castle est obtenu dynamiquement
+ * ({@link BcProviderRegistrar}) — donc le MÊME code marche en {@code bcprov} (« BC ») et
+ * en {@code bc-fips} (« BCFIPS »), ce dernier n'exposant QUE l'API JCA (frontière FIPS) et
+ * PAS l'API bas-niveau {@code org.bouncycastle.pqc.crypto.*} utilisée auparavant (ADR 0011,
+ * crypto-agility).
  *
- * <p>Serialization (impl-specific, self-describing):
+ * <p>Sérialisation (impl-specific, auto-descriptive — inchangée vs l'impl bas-niveau) :
  * <ul>
- *   <li>{@code generateKeyPair()} → {@code [int pubLen][pub][priv]}</li>
+ *   <li>{@code generateKeyPair()} → {@code [int pubLen][pub(X.509)][priv(PKCS#8)]}</li>
  *   <li>{@code encapsulate(pub)} → {@code [int secretLen][secret][ciphertext]}</li>
  * </ul>
+ * Les clés voyagent encodées (X.509 SubjectPublicKeyInfo / PKCS#8) — l'encodage porte le
+ * jeu de paramètres ML-KEM, donc un {@code KeyFactory("ML-KEM")} générique les reconstruit.
  */
 public final class BouncyCastleKemProvider implements KemProvider {
 
-  private final SecureRandom random = new SecureRandom();
+  private static final String BC = BcProviderRegistrar.ensureRegistered();
+  private static final String ALG = "ML-KEM";
 
   @Override
   public KemAlgorithm algorithm() {
@@ -43,35 +50,41 @@ public final class BouncyCastleKemProvider implements KemProvider {
 
   @Override
   public byte[] generateKeyPair() {
-    MLKEMKeyPairGenerator generator = new MLKEMKeyPairGenerator();
-    generator.init(new MLKEMKeyGenerationParameters(random, MLKEMParameters.ml_kem_768));
-    AsymmetricCipherKeyPair kp = generator.generateKeyPair();
-    byte[] pub = ((MLKEMPublicKeyParameters) kp.getPublic()).getEncoded();
-    byte[] priv = ((MLKEMPrivateKeyParameters) kp.getPrivate()).getEncoded();
-    return pack(pub, priv);
+    try {
+      // Nom d'algorithme portant le paramètre (ML-KEM-768) plutôt qu'une classe spec BC
+      // (MLKEMParameterSpec absente sous ce package en bc-fips) → portable JCA.
+      KeyPairGenerator kpg = KeyPairGenerator.getInstance("ML-KEM-768", BC);
+      KeyPair kp = kpg.generateKeyPair();
+      return pack(kp.getPublic().getEncoded(), kp.getPrivate().getEncoded());
+    } catch (GeneralSecurityException e) {
+      throw new CryptoException("ML-KEM key generation failed", e);
+    }
   }
 
   @Override
   public byte[] encapsulate(byte[] publicKey) {
-    MLKEMPublicKeyParameters pub =
-        new MLKEMPublicKeyParameters(MLKEMParameters.ml_kem_768, publicKey);
-    SecretWithEncapsulation swe = new MLKEMGenerator(random).generateEncapsulated(pub);
     try {
-      return pack(swe.getSecret(), swe.getEncapsulation());
-    } finally {
-      try {
-        swe.destroy();
-      } catch (Exception ignored) {
-        // best effort zeroisation
-      }
+      PublicKey pub = KeyFactory.getInstance(ALG, BC)
+          .generatePublic(new X509EncodedKeySpec(publicKey));
+      KEM.Encapsulator enc = KEM.getInstance(ALG, BC).newEncapsulator(pub);
+      KEM.Encapsulated e = enc.encapsulate();
+      return pack(e.key().getEncoded(), e.encapsulation());
+    } catch (GeneralSecurityException e) {
+      throw new CryptoException("ML-KEM encapsulation failed", e);
     }
   }
 
   @Override
   public byte[] decapsulate(byte[] privateKey, byte[] ciphertext) {
-    MLKEMPrivateKeyParameters priv =
-        new MLKEMPrivateKeyParameters(MLKEMParameters.ml_kem_768, privateKey);
-    return new MLKEMExtractor(priv).extractSecret(ciphertext);
+    try {
+      PrivateKey priv = KeyFactory.getInstance(ALG, BC)
+          .generatePrivate(new PKCS8EncodedKeySpec(privateKey));
+      KEM.Decapsulator dec = KEM.getInstance(ALG, BC).newDecapsulator(priv);
+      SecretKey secret = dec.decapsulate(ciphertext);
+      return secret.getEncoded();
+    } catch (GeneralSecurityException e) {
+      throw new CryptoException("ML-KEM decapsulation failed", e);
+    }
   }
 
   /** First component of a {@link #generateKeyPair()} blob (public key bytes). */

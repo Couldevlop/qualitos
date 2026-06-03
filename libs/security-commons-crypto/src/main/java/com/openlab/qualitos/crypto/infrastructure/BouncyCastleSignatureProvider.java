@@ -4,8 +4,6 @@ import com.openlab.qualitos.crypto.domain.CryptoException;
 import com.openlab.qualitos.crypto.domain.model.KeyMaterial;
 import com.openlab.qualitos.crypto.domain.model.SignatureAlgorithm;
 import com.openlab.qualitos.crypto.domain.port.SignatureProvider;
-import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
@@ -13,11 +11,8 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SecureRandom;
-import java.security.Security;
 import java.security.Signature;
 import java.security.SignatureException;
-import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
@@ -37,13 +32,8 @@ import java.security.spec.X509EncodedKeySpec;
  */
 public final class BouncyCastleSignatureProvider implements SignatureProvider {
 
-  private static final String BC = BouncyCastleProvider.PROVIDER_NAME;
-
-  static {
-    if (Security.getProvider(BC) == null) {
-      Security.addProvider(new BouncyCastleProvider());
-    }
-  }
+  /** Nom JCA du provider BC actif (« BC » par défaut, « BCFIPS » sous profil fips). */
+  private static final String BC = BcProviderRegistrar.ensureRegistered();
 
   private final SignatureAlgorithm algorithm;
 
@@ -66,8 +56,11 @@ public final class BouncyCastleSignatureProvider implements SignatureProvider {
       if (algorithm == SignatureAlgorithm.ED25519) {
         kpg = KeyPairGenerator.getInstance("Ed25519");
       } else {
-        kpg = KeyPairGenerator.getInstance("ML-DSA", BC);
-        kpg.initialize(mldsaSpec(), new SecureRandom());
+        // Nom d'algorithme portant le jeu de paramètres (ML-DSA-44/65/87) plutôt qu'une
+        // classe spec BC : MLDSAParameterSpec n'existe pas (sous ce package) en bc-fips.
+        // L'API JCA par nom est portable bcprov ↔ bc-fips. Le SecureRandom du provider
+        // est utilisé par défaut (DRBG approuvé en mode FIPS).
+        kpg = KeyPairGenerator.getInstance(algorithm.oid(), BC);
       }
       KeyPair kp = kpg.generateKeyPair();
       return new KeyMaterial(kp.getPublic().getEncoded(), kp.getPrivate().getEncoded());
@@ -120,14 +113,5 @@ public final class BouncyCastleSignatureProvider implements SignatureProvider {
     return algorithm == SignatureAlgorithm.ED25519
         ? Signature.getInstance("Ed25519")
         : Signature.getInstance("ML-DSA", BC);
-  }
-
-  private AlgorithmParameterSpec mldsaSpec() {
-    return switch (algorithm) {
-      case ML_DSA_44 -> MLDSAParameterSpec.ml_dsa_44;
-      case ML_DSA_65 -> MLDSAParameterSpec.ml_dsa_65;
-      case ML_DSA_87 -> MLDSAParameterSpec.ml_dsa_87;
-      default -> throw new CryptoException("not an ML-DSA algorithm: " + algorithm);
-    };
   }
 }
