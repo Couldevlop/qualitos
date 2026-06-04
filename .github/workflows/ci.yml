@@ -326,7 +326,8 @@ jobs:
             context: .
             dockerfile: apps/api-quality-engine/Dockerfile
           - service: api-iot-hub
-            context: apps/api-iot-hub
+            # Contexte racine : pom hérité de qualitos-parent + dep industry-commons.
+            context: .
             dockerfile: apps/api-iot-hub/Dockerfile
           - service: ai-service
             context: apps/ai-service

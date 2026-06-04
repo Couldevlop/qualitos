@@ -141,8 +141,10 @@ services:
 
   api-iot-hub:
     build:
-      context: apps/api-iot-hub
-      dockerfile: Dockerfile
+      # Contexte racine : le pom hérite de qualitos-parent + dépend de
+      # libs/industry-commons (voir l'en-tête du Dockerfile).
+      context: .
+      dockerfile: apps/api-iot-hub/Dockerfile
     container_name: qualitos-api-iot-hub
     environment:
       DB_URL: jdbc:postgresql://postgres:5432/qualitos_quality

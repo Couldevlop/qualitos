@@ -11,9 +11,13 @@ WORKDIR /workspace
 COPY pom.xml ./
 COPY apps/api-core/pom.xml apps/api-core/
 COPY apps/api-quality-engine/pom.xml apps/api-quality-engine/
-# Parent pom references libs/industry-commons (P3) and apps/api-iot-hub (P3).
+# Maven valide TOUS les <modules> du pom parent au chargement du réacteur :
+# placeholder pom requis pour chaque module référencé, même non construit.
+# Tenir cette liste synchronisée avec <modules> de /pom.xml.
 COPY libs/industry-commons/pom.xml libs/industry-commons/
+COPY libs/security-commons-crypto/pom.xml libs/security-commons-crypto/
 COPY apps/api-iot-hub/pom.xml apps/api-iot-hub/
+COPY apps/blockchain-service/pom.xml apps/blockchain-service/
 
 # Pré-télécharge les dépendances pour profiter du cache Docker.
 RUN mvn -B -ntp -pl apps/api-core -am dependency:go-offline || true
