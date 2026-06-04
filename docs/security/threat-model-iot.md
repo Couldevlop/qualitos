@@ -71,6 +71,20 @@
 | DAST | OWASP ZAP scan automatisé sur OpenAPI | Pre-deploy CI |
 | Pentest | Annuel — focus iot-hub + connectors externes | — |
 
+## Extension 2026-06 — Ingestion HL7 FHIR R5 (`POST /api/v1/iot/fhir`)
+
+Nouvelle surface : endpoint REST entrant recevant des `Observation` / `Bundle`
+FHIR poussés par un moteur d'intégration santé (Mirth, Rhapsody, EHR).
+
+| Menace (STRIDE) | Impact | Mitigation |
+|--------|--------|------------|
+| S — Push FHIR sans identité | Injection télémétrie | OAuth2 client_credentials obligatoire, `@PreAuthorize` rôles DEVICE/GATEWAY/TENANT_ADMIN/QUALITY_MANAGER (deny-by-default A01) |
+| T — `tenant_id` forgé dans le payload | Écriture cross-tenant | Tenant lu EXCLUSIVEMENT du JWT (TenantContext, §18.2-2) ; résolution device **tenant-scopée** `findByCode(tenantId, code)` — fail-closed, testé (`crossTenantDeviceIsInvisible_failClosed`) |
+| I — PII patient dans les Observations | Fuite données santé | Le mapper ignore `subject`/`performer`/etc. — seule la mesure physique est extraite ; aucun champ patient persisté ni journalisé |
+| D — Bundle pathologique (10⁶ entrées) | Épuisement ressources | Borne `max-bundle-entries` (200 par défaut), troncature signalée ; limite de taille requête Spring |
+| R/A09 — Log injection via codes device | Falsification de logs | Sanitization CRLF + troncature 64 chars avant toute citation (testé `issuesAreSanitized`) |
+| E — Endpoint inutilisé hors santé | Surface résiduelle | `qualitos.iot.fhir.enabled=false` supprime contrôleur ET handler du contexte (testé `FhirConnectorDisabledTest`) |
+
 ## Suivi
 
 - Owner sécurité : RSSI tenant + RSSI plateforme (escalade).
