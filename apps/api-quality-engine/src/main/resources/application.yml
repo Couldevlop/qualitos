@@ -107,6 +107,7 @@ qualitos:
     enabled: ${QUALITOS_KAFKA_ENABLED:false}
     topic: ${QUALITOS_KAFKA_TOPIC:qualitos.audit-events}
     consumer-group: ${QUALITOS_KAFKA_CONSUMER_GROUP:qualitos-activity-feed}
+    webhooks-consumer-group: ${QUALITOS_KAFKA_WEBHOOKS_GROUP:qualitos-webhooks}
     batch-size: ${QUALITOS_KAFKA_BATCH_SIZE:200}
     initial-delay-ms: ${QUALITOS_KAFKA_INITIAL_DELAY_MS:30000}
     fixed-delay-ms: ${QUALITOS_KAFKA_FIXED_DELAY_MS:10000}
