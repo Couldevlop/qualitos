@@ -50,11 +50,16 @@
         <!-- Bouncy Castle : fournit ML-DSA (FIPS 204) + ML-KEM (FIPS 203). cf. ADR 0011.
              bcprov-jdk18on n'est PAS FIPS-validé → marqué dev dans le CBOM ; la prod
              régulée bascule sur bc-fips via le même SPI (crypto-agility).
-             1.81 requis pour bctls : c'est la 1re version qui enregistre le groupe
+             ≥ 1.81 requis pour bctls : 1re version qui enregistre le groupe
              hybride standardisé X25519MLKEM768 (RFC 9794, codepoint 0x11EC) dans le
              provider BCJSSE — cf. §11.4 « TLS hybride X25519 + ML-KEM-768 ». Les
-             versions 1.79/1.80 n'exposent que des ML-KEM purs (pas d'hybride X25519). -->
-        <bouncycastle.version>1.81</bouncycastle.version>
+             versions 1.79/1.80 n'exposent que des ML-KEM purs (pas d'hybride X25519).
+             1.84 : corrige CVE-2026-5598 (fuite de clé privée via comparaisons non
+             constant-time) — critique pour nos signatures ML-DSA. -->
+        <bouncycastle.version>1.84</bouncycastle.version>
+        <!-- Boot 3.5.14 gère pgjdbc 42.7.10 — CVE-2026-42198 corrigée en 42.7.11.
+             À retirer quand Boot rattrape. -->
+        <postgresql.version>42.7.11</postgresql.version>
     </properties>
 
     <dependencyManagement>
