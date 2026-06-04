@@ -10,6 +10,7 @@
     "build:prod": "ng build --configuration production",
     "test": "ng test --watch=false --browsers=ChromeHeadlessCI",
     "test:watch": "ng test",
+    "e2e": "playwright test",
     "lint": "ng lint"
   },
   "dependencies": {
@@ -32,6 +33,7 @@
     "zone.js": "~0.14.10"
   },
   "devDependencies": {
+    "@playwright/test": "^1.48.0",
     "@angular-devkit/build-angular": "^18.2.0",
     "@angular/cli": "^18.2.0",
     "@angular/compiler-cli": "^18.2.0",

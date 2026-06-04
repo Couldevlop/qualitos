@@ -1,8 +1,9 @@
 name: Release
 
 # Déclenchement : push d'un tag sémantique vX.Y.Z sur main.
-# Construit les JARs des modules, génère un SBOM SPDX et crée la release GitHub.
-# La signature Cosign + push d'images conteneur est ajoutée quand le registre sera défini.
+# 1) JARs + SBOM SPDX → release GitHub.
+# 2) Images conteneur → scan Trivy (bloquant) → push GHCR → signature Cosign
+#    keyless (OIDC GitHub) + SBOM d'image attaché en attestation. §14.2, §18.2.6.
 
 on:
   push:
@@ -12,6 +13,12 @@ on:
 
 permissions:
   contents: write
+  packages: write
+  id-token: write   # signature Cosign keyless (OIDC)
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ghcr.io/${{ github.repository_owner }}/qualitos
 
 jobs:
   build:
@@ -51,3 +58,86 @@ jobs:
           files: release-artifacts/*
           generate_release_notes: true
           fail_on_unmatched_files: true
+
+  images:
+    name: Images — scan, push & sign (${{ matrix.service }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: api-core
+            context: .
+            dockerfile: apps/api-core/Dockerfile
+          - service: api-quality-engine
+            context: .
+            dockerfile: apps/api-quality-engine/Dockerfile
+          - service: api-iot-hub
+            context: apps/api-iot-hub
+            dockerfile: apps/api-iot-hub/Dockerfile
+          - service: ai-service
+            context: apps/ai-service
+            dockerfile: apps/ai-service/Dockerfile
+          - service: web
+            context: apps/web
+            dockerfile: apps/web/Dockerfile
+          - service: blockchain-service
+            context: apps/blockchain-service
+            dockerfile: apps/blockchain-service/Dockerfile
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: meta
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Build image
+        run: >
+          docker build
+          -t "$IMAGE_PREFIX/${{ matrix.service }}:${{ steps.meta.outputs.version }}"
+          -f ${{ matrix.dockerfile }}
+          ${{ matrix.context }}
+
+      # Règle §18.2.6 : aucun déploiement sans scan vert. Le push n'a lieu
+      # que si Trivy ne trouve aucune CVE Critique/Haute corrigeable.
+      - name: Trivy scan (blocking)
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: ${{ env.IMAGE_PREFIX }}/${{ matrix.service }}:${{ steps.meta.outputs.version }}
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH
+
+      - name: Login GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image
+        id: push
+        run: |
+          IMAGE="$IMAGE_PREFIX/${{ matrix.service }}:${{ steps.meta.outputs.version }}"
+          docker push "$IMAGE"
+          DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' "$IMAGE")
+          echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+
+      # Signature keyless : l'identité OIDC du workflow GitHub est consignée
+      # dans Rekor (transparence). Vérification :
+      #   cosign verify --certificate-identity-regexp '.*github.com/.*/qualitos.*' \
+      #     --certificate-oidc-issuer https://token.actions.githubusercontent.com <image>
+      - name: Sign image (Cosign keyless)
+        run: cosign sign --yes "${{ steps.push.outputs.digest }}"
+
+      - name: Generate image SBOM (SPDX) & attest
+        run: |
+          docker run --rm anchore/syft:v1.18.1 "${{ steps.push.outputs.digest }}" -o spdx-json > sbom-${{ matrix.service }}.spdx.json
+          cosign attest --yes --predicate sbom-${{ matrix.service }}.spdx.json --type spdxjson "${{ steps.push.outputs.digest }}"
