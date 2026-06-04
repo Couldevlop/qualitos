@@ -40,6 +40,13 @@ qualitos:
       topic-filter: ${IOT_MQTT_TOPIC_FILTER:qualitos/+/+}
       qos: ${IOT_MQTT_QOS:1}
       tls-enabled: ${IOT_MQTT_TLS_ENABLED:false}
+    # Ingestion HL7 FHIR R5 (CLAUDE.md §9.4 — Santé). Endpoint REST entrant
+    # POST /api/v1/iot/fhir (Observation | Bundle) — actif par défaut car aucun
+    # système externe n'est requis ; le client (EHR/Mirth) s'authentifie en
+    # OAuth2 client_credentials avec claim tenant_id.
+    fhir:
+      enabled: ${IOT_FHIR_ENABLED:true}
+      max-bundle-entries: ${IOT_FHIR_MAX_BUNDLE_ENTRIES:200}
     quality-engine:
       base-url: ${QUALITY_ENGINE_BASE_URL:http://api-quality-engine:8082}
       # OWASP A10 SSRF: egress allow-list, comma-separated hosts
@@ -56,6 +63,15 @@ management:
       probes:
         enabled: true
       show-details: never
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      slo:
+        # SLO §20 : p95 API < 300 ms — buckets alignés pour les alertes Prometheus.
+        http.server.requests: 100ms,300ms,800ms
 
 logging:
   level:

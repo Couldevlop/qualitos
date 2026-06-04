@@ -1,0 +1,14 @@
+# Allège le contexte de build racine (api-core, api-quality-engine, api-iot-hub
+# se construisent avec context=. pour résoudre le réacteur Maven).
+**/node_modules
+**/dist
+**/target
+**/.angular
+.git
+.github
+.claude
+docs
+infra/observability
+infra/k8s
+infra/edge
+**/*.log

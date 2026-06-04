@@ -141,8 +141,10 @@ services:
 
   api-iot-hub:
     build:
-      context: apps/api-iot-hub
-      dockerfile: Dockerfile
+      # Contexte racine : le pom hérite de qualitos-parent + dépend de
+      # libs/industry-commons (voir l'en-tête du Dockerfile).
+      context: .
+      dockerfile: apps/api-iot-hub/Dockerfile
     container_name: qualitos-api-iot-hub
     environment:
       DB_URL: jdbc:postgresql://postgres:5432/qualitos_quality
@@ -296,6 +298,47 @@ services:
     networks: [qualitos]
 
   # -------------------------------------------------------------------------
+  # Observabilité (§14) — Prometheus + Grafana, profil compose 'observability'
+  # (off par défaut). Scrape les /actuator/prometheus des services Java + les
+  # métriques Keycloak (port management 9000). Dashboards provisionnés depuis
+  # infra/observability/. Grafana : admin/admin sur http://localhost:3000.
+  # -------------------------------------------------------------------------
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: qualitos-prometheus
+    profiles: ["observability"]
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=7d
+    volumes:
+      - ./infra/observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./infra/observability/rules:/etc/prometheus/rules:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    networks: [qualitos]
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    container_name: qualitos-grafana
+    profiles: ["observability"]
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+    volumes:
+      - ./infra/observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./infra/observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks: [qualitos]
+
+  # -------------------------------------------------------------------------
   # web — frontend Angular servi en statique via nginx.
   # En dev quotidien préférer 'npm start' direct (HMR). Ce service est utile
   # pour les démos end-to-end et la validation prod-like.
@@ -318,6 +361,8 @@ volumes:
   qdrant-data:
   ollama-data:
   redpanda-data:
+  prometheus-data:
+  grafana-data:
 
 networks:
   qualitos:

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Observabilité (CLAUDE.md §14, §22.9) — logging structuré.
+
+  - Par défaut (dev, test, CI) : appender console Spring Boot classique ; le pattern
+    avec [%X{tenantId}] vient de logging.pattern.console (application.yml).
+  - Profils 'prod' ou 'json-logs' : sortie JSON une-ligne (LogstashEncoder) parsable
+    par Loki / OpenSearch sans regex. Le MDC complet est inclus (tenantId posé par
+    TenantJwtFilter). Jamais de PII en clair dans les messages (règle §22.9) —
+    l'encodeur n'ajoute aucune donnée métier, uniquement les champs techniques.
+-->
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <springProfile name="prod | json-logs">
+        <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <customFields>{"service":"api-quality-engine"}</customFields>
+                <timeZone>UTC</timeZone>
+            </encoder>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="JSON"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="!prod &amp; !json-logs">
+        <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+</configuration>

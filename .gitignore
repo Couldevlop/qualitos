@@ -65,9 +65,6 @@ yarn-error.log*
 apps/web/dist/
 apps/web/coverage/
 
-# Docker
-.dockerignore
-
 # Nx (future monorepo)
 .nx/cache
 

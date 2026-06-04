@@ -304,3 +304,104 @@ jobs:
           path: apps/web/package-lock.json
           if-no-files-found: warn
           retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # Scan d'images conteneur (§14.2 ; règle §18.2.1 : aucune CVE Critique/Haute).
+  # Build Docker + Trivy, uniquement sur push main/develop (étape lourde).
+  # ignore-unfixed : ne bloque pas sur les CVE sans correctif disponible amont.
+  # ---------------------------------------------------------------------------
+  image-scan:
+    name: Image scan (Trivy)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: api-core
+            context: .
+            dockerfile: apps/api-core/Dockerfile
+          - service: api-quality-engine
+            context: .
+            dockerfile: apps/api-quality-engine/Dockerfile
+          - service: api-iot-hub
+            # Contexte racine : pom hérité de qualitos-parent + dep industry-commons.
+            context: .
+            dockerfile: apps/api-iot-hub/Dockerfile
+          - service: ai-service
+            context: apps/ai-service
+            dockerfile: apps/ai-service/Dockerfile
+          - service: web
+            context: apps/web
+            dockerfile: apps/web/Dockerfile
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: >
+          docker build
+          -t qualitos/${{ matrix.service }}:ci
+          -f ${{ matrix.dockerfile }}
+          ${{ matrix.context }}
+
+      - name: Trivy scan (fail on CRITICAL/HIGH)
+        # NB : les tags de cette action sont préfixés 'v' (v0.36.0) — '0.24.0' n'existe pas.
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: qualitos/${{ matrix.service }}:ci
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH
+          # Exceptions time-boxées (CVE distroless en attente de rebuild Google) —
+          # chaque entrée est motivée et datée dans le fichier.
+          trivyignores: .trivyignore
+        env:
+          # ghcr.io rate-limite les pulls anonymes de la DB Trivy quand les 5 jobs
+          # de la matrice la téléchargent en parallèle (TOO MANY REQUESTS) →
+          # repli sur le miroir ECR public, ghcr en secours.
+          TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db:2,ghcr.io/aquasecurity/trivy-db:2
+          TRIVY_JAVA_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-java-db:1,ghcr.io/aquasecurity/trivy-java-db:1
+
+  # ---------------------------------------------------------------------------
+  # E2E smoke (§14.3) — Playwright sur la SPA en configuration 'e2e'
+  # (useMockApi=true, authMode=dev) : zéro backend requis. Valide le shell,
+  # le routing lazy et le rendu des features clés.
+  # ---------------------------------------------------------------------------
+  e2e-smoke:
+    name: E2E smoke (Playwright)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    defaults:
+      run:
+        working-directory: apps/web
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: 'apps/web/.nvmrc'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run smoke tests
+        run: npm run e2e
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report/
+          retention-days: 7

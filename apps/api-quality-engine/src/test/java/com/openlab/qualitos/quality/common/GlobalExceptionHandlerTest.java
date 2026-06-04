@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.common;
 
+import com.openlab.qualitos.quality.notifications.domain.NotificationNotFoundException;
 import com.openlab.qualitos.quality.standards.RoadmapStageNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
@@ -47,5 +48,13 @@ class GlobalExceptionHandlerTest {
         assertThat(pd.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
         assertThat(pd.getDetail()).contains("category");
         assertThat(pd.getTitle()).isEqualTo("Missing Required Parameter");
+    }
+
+    @Test
+    void notificationNotFound_mapsTo404() {
+        ProblemDetail pd = handler.handleNotificationNotFound(
+                new NotificationNotFoundException(UUID.randomUUID()));
+        assertThat(pd.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        assertThat(pd.getTitle()).isEqualTo("Notification Not Found");
     }
 }

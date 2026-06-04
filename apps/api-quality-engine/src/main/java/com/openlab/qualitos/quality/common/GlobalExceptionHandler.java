@@ -127,6 +127,7 @@ import com.openlab.qualitos.quality.dashboards.domain.DashboardLayoutNotFoundExc
 import com.openlab.qualitos.quality.dashboards.domain.DashboardLayoutStateException;
 import com.openlab.qualitos.quality.marketplace.domain.MarketplacePackNotFoundException;
 import com.openlab.qualitos.quality.marketplace.domain.MarketplacePackStateException;
+import com.openlab.qualitos.quality.notifications.domain.NotificationNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1362,6 +1363,15 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/marketplace-pack-not-found"));
         problem.setTitle("Marketplace Pack Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(NotificationNotFoundException.class)
+    public ProblemDetail handleNotificationNotFound(NotificationNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/notification-not-found"));
+        problem.setTitle("Notification Not Found");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

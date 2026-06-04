@@ -1,0 +1,34 @@
+# QualitOS — règles d'alerte de base (SLO CLAUDE.md §20 : p95 API < 300 ms).
+groups:
+  - name: qualitos-slo
+    rules:
+      - alert: ApiP95LatencyHigh
+        # Le bucket 0.3s vient de management.metrics.distribution.slo (application.yml).
+        expr: |
+          histogram_quantile(0.95,
+            sum by (le, application) (rate(http_server_requests_seconds_bucket[5m]))
+          ) > 0.3
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "p95 > 300 ms sur {{ $labels.application }} (SLO §20)"
+
+      - alert: ApiErrorRateHigh
+        expr: |
+          sum by (application) (rate(http_server_requests_seconds_count{status=~"5.."}[5m]))
+            /
+          sum by (application) (rate(http_server_requests_seconds_count[5m])) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Taux de 5xx > 5 % sur {{ $labels.application }}"
+
+      - alert: ServiceDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Cible {{ $labels.job }} injoignable"

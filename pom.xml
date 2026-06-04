@@ -7,7 +7,10 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.0</version>
+        <!-- Suivre le dernier patch de la ligne 3.5 (règle §18.2.1 : 0 CVE
+             Critique/Haute) — 3.5.0 embarquait spring-core 6.2.7 / tomcat 10.1.41 /
+             netty 4.1.121, tous porteurs de CVE HIGH/CRITICAL corrigées depuis. -->
+        <version>3.5.14</version>
         <relativePath/>
     </parent>
 
@@ -34,6 +37,12 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- Overrides de versions gérées par Spring Boot (§18.2.1) : Boot 3.5.14
+             gère tomcat 10.1.54 / netty 4.1.132, un cran sous les correctifs des
+             CVE 2026-41293/43512/43515 (tomcat, dont bypass d'auth CRITICAL) et
+             2026-42583/42584/42587 (netty). À RETIRER quand Boot les rattrape. -->
+        <tomcat.version>10.1.55</tomcat.version>
+        <netty.version>4.1.133.Final</netty.version>
         <!-- Dependency versions -->
         <mapstruct.version>1.6.3</mapstruct.version>
         <jjwt.version>0.12.6</jjwt.version>
@@ -41,11 +50,16 @@
         <!-- Bouncy Castle : fournit ML-DSA (FIPS 204) + ML-KEM (FIPS 203). cf. ADR 0011.
              bcprov-jdk18on n'est PAS FIPS-validé → marqué dev dans le CBOM ; la prod
              régulée bascule sur bc-fips via le même SPI (crypto-agility).
-             1.81 requis pour bctls : c'est la 1re version qui enregistre le groupe
+             ≥ 1.81 requis pour bctls : 1re version qui enregistre le groupe
              hybride standardisé X25519MLKEM768 (RFC 9794, codepoint 0x11EC) dans le
              provider BCJSSE — cf. §11.4 « TLS hybride X25519 + ML-KEM-768 ». Les
-             versions 1.79/1.80 n'exposent que des ML-KEM purs (pas d'hybride X25519). -->
-        <bouncycastle.version>1.81</bouncycastle.version>
+             versions 1.79/1.80 n'exposent que des ML-KEM purs (pas d'hybride X25519).
+             1.84 : corrige CVE-2026-5598 (fuite de clé privée via comparaisons non
+             constant-time) — critique pour nos signatures ML-DSA. -->
+        <bouncycastle.version>1.84</bouncycastle.version>
+        <!-- Boot 3.5.14 gère pgjdbc 42.7.10 — CVE-2026-42198 corrigée en 42.7.11.
+             À retirer quand Boot rattrape. -->
+        <postgresql.version>42.7.11</postgresql.version>
     </properties>
 
     <dependencyManagement>

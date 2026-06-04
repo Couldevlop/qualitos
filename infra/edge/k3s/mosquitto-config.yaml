@@ -1,0 +1,49 @@
+# Configuration du broker MQTT local de l'Edge Gateway (CLAUDE.md §9.5).
+#
+# Rôle : les capteurs du site publient en local (réseau OT isolé) ; le broker
+# fait STORE-AND-FORWARD vers le hub cloud via un bridge TLS SORTANT uniquement
+# (§9.8 — aucune connexion entrante sur l'edge). En cas de coupure WAN, les
+# messages sont persistés sur disque et rejoués au retour du lien.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mosquitto-config
+  namespace: qualitos-edge
+data:
+  mosquitto.conf: |
+    # ---- Listener local (réseau OT du site) --------------------------------
+    listener 1883 0.0.0.0
+    # Auth locale par fichier de mots de passe (monté depuis un Secret).
+    allow_anonymous false
+    password_file /mosquitto/secrets/passwd
+
+    # ---- Persistance : tampon local 24-72 h (§9.5) --------------------------
+    persistence true
+    persistence_location /mosquitto/data/
+    autosave_interval 60
+    max_queued_messages 1000000
+    max_inflight_messages 100
+
+    # ---- Bridge sortant vers le hub QualitOS (TLS 1.3, sortant only §9.8) ---
+    connection qualitos-cloud
+    # Adresse du broker du IoT Hub cloud (EMQX/Redpanda-MQTT) — à adapter.
+    address ${QUALITOS_HUB_MQTT_HOST}:8883
+    bridge_protocol_version mqttv50
+    cleansession false
+    notifications true
+    restart_timeout 5 60
+    # File d'attente du bridge = cœur du store-and-forward.
+    queue_qos0_messages true
+    # Tous les topics télémétrie du site remontent au hub (QoS 1 = at-least-once).
+    topic qualitos/# out 1
+    # mTLS : CA du hub + certificat client X.509 du gateway (rotation 90 j max §9.8).
+    bridge_cafile /mosquitto/certs/hub-ca.crt
+    bridge_certfile /mosquitto/certs/gateway.crt
+    bridge_keyfile /mosquitto/certs/gateway.key
+    bridge_tls_version tlsv1.3
+
+    # ---- Journalisation ------------------------------------------------------
+    log_dest stdout
+    log_type error
+    log_type warning
+    log_type notice

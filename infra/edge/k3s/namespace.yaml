@@ -1,0 +1,7 @@
+# QualitOS Edge Gateway — namespace dédié sur le K3s du site.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: qualitos-edge
+  labels:
+    app.kubernetes.io/part-of: qualitos-edge

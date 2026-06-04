@@ -24,7 +24,12 @@ RUN npm run build:prod
 # -----------------------------------------------------------------------------
 # Stage 2 : runtime nginx
 # -----------------------------------------------------------------------------
-FROM nginx:1.27-alpine
+FROM nginx:1.29-alpine
+
+# Règle §18.2.1 (0 CVE Critique/Haute) : applique les correctifs alpine publiés
+# après le build de l'image nginx (ex. libxml2, nghttp2-libs). Sans coût quand
+# la base est déjà à jour.
+RUN apk upgrade --no-cache
 
 COPY --from=build /workspace/dist/qualitos-web/browser /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
