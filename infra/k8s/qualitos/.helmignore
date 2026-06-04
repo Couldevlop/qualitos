@@ -1,0 +1,5 @@
+# Patterns ignorés au packaging du chart.
+.DS_Store
+*.swp
+*.tmp
+.git/

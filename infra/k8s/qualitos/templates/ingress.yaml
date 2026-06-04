@@ -1,0 +1,55 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: qualitos
+  labels:
+    {{- include "qualitos.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+    - hosts: [{{ .Values.ingress.host | quote }}]
+      secretName: {{ .Values.ingress.tls.secretName }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.host | quote }}
+      http:
+        paths:
+          # Le SPA appelle les APIs en chemins relatifs /api/* — l'ingress route
+          # par préfixe vers chaque service ; tout le reste va au frontend.
+          - path: /api/v1/tenants
+            pathType: Prefix
+            backend:
+              service:
+                name: api-core
+                port: { name: http }
+          - path: /api/v1/users
+            pathType: Prefix
+            backend:
+              service:
+                name: api-core
+                port: { name: http }
+          - path: /api/v1/iot
+            pathType: Prefix
+            backend:
+              service:
+                name: api-iot-hub
+                port: { name: http }
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: api-quality-engine
+                port: { name: http }
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web
+                port: { name: http }
+{{- end }}

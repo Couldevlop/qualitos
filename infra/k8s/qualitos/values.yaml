@@ -1,0 +1,146 @@
+# =============================================================================
+# QualitOS — values par défaut.
+# Sécurité (§11, §18.2) : aucun secret en clair ici — les credentials DB et
+# clés API sont injectés via des Secrets K8s référencés par nom, eux-mêmes
+# matérialisés par External Secrets Operator depuis Vault (§10.2).
+# =============================================================================
+
+global:
+  imageRegistry: ghcr.io/couldevlop/qualitos
+  imageTag: latest
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
+  # Profil Spring 'prod' = logs JSON structurés (logback-spring.xml) ;
+  # 'tls' (api-core) active le TLS hybride post-quantique (ADR 0015).
+  springProfiles: "prod"
+  keycloak:
+    # Keycloak est déployé à part (chart Bitnami ou opérateur) ou managé.
+    url: http://keycloak.qualitos.svc.cluster.local:8080
+    realm: qualitos
+
+# Services d'état attendus HORS de ce chart (managés ou charts dédiés).
+# Renseignés ici uniquement à titre documentaire / pour les URLs par défaut.
+externalServices:
+  postgresHost: postgres.qualitos.svc.cluster.local
+  kafkaBootstrap: kafka.qualitos.svc.cluster.local:9092
+  qdrantUrl: http://qdrant.qualitos.svc.cluster.local:6333
+  ollamaUrl: http://ollama.qualitos.svc.cluster.local:11434
+
+serviceAccount:
+  create: true
+  name: qualitos
+
+# Annotations de scrape Prometheus posées sur chaque pod (operator non requis).
+prometheus:
+  scrapeAnnotations: true
+  # Si le Prometheus Operator est présent, génère aussi des ServiceMonitors.
+  serviceMonitor:
+    enabled: false
+    interval: 30s
+
+networkPolicy:
+  # Default-deny ingress + autorisation intra-namespace (zero-trust §11).
+  enabled: true
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  host: qualitos.example.com
+  tls:
+    enabled: true
+    secretName: qualitos-tls
+
+# -----------------------------------------------------------------------------
+# Déploiements applicatifs — un bloc = un Deployment + Service générés par les
+# templates. `secretRef` désigne un Secret K8s (créé par ESO) injecté en envFrom.
+# -----------------------------------------------------------------------------
+services:
+  web:
+    enabled: true
+    image: web
+    port: 80
+    replicas: 2
+    healthPath: /
+    isSpringBoot: false
+    resources:
+      requests: { cpu: 50m, memory: 64Mi }
+      limits: { cpu: 250m, memory: 128Mi }
+
+  api-core:
+    enabled: true
+    image: api-core
+    port: 8081
+    replicas: 2
+    isSpringBoot: true
+    secretRef: qualitos-api-core
+    env:
+      DB_URL: jdbc:postgresql://postgres.qualitos.svc.cluster.local:5432/qualitos_core
+    resources:
+      requests: { cpu: 250m, memory: 512Mi }
+      limits: { cpu: "1", memory: 1Gi }
+
+  api-quality-engine:
+    enabled: true
+    image: api-quality-engine
+    port: 8082
+    replicas: 2
+    isSpringBoot: true
+    secretRef: qualitos-api-quality-engine
+    env:
+      DB_URL: jdbc:postgresql://postgres.qualitos.svc.cluster.local:5432/qualitos_quality
+      AI_SERVICE_URL: http://ai-service.qualitos.svc.cluster.local:8085
+      QUALITOS_KAFKA_ENABLED: "false"
+    resources:
+      requests: { cpu: 500m, memory: 768Mi }
+      limits: { cpu: "2", memory: 1536Mi }
+
+  api-iot-hub:
+    enabled: true
+    image: api-iot-hub
+    port: 8083
+    replicas: 1
+    isSpringBoot: true
+    secretRef: qualitos-api-iot-hub
+    env:
+      IOT_DB_URL: jdbc:postgresql://postgres.qualitos.svc.cluster.local:5432/qualitos_iot
+      QUALITY_ENGINE_BASE_URL: http://api-quality-engine.qualitos.svc.cluster.local:8082
+    resources:
+      requests: { cpu: 250m, memory: 512Mi }
+      limits: { cpu: "1", memory: 1Gi }
+
+  ai-service:
+    enabled: true
+    image: ai-service
+    port: 8085
+    replicas: 1
+    healthPath: /health
+    isSpringBoot: false
+    secretRef: qualitos-ai-service
+    env:
+      QOS_ENV: prod
+      QOS_DEV_AUTH: "0"
+      OLLAMA_BASE_URL: http://ollama.qualitos.svc.cluster.local:11434
+      QDRANT_URL: http://qdrant.qualitos.svc.cluster.local:6333
+    resources:
+      requests: { cpu: 500m, memory: 1Gi }
+      limits: { cpu: "2", memory: 2Gi }
+
+  blockchain-service:
+    # Optionnel : nécessite un réseau Hyperledger Fabric joignable (ADR 0012).
+    enabled: false
+    image: blockchain-service
+    port: 8090
+    replicas: 1
+    isSpringBoot: true
+    secretRef: qualitos-blockchain-service
+    resources:
+      requests: { cpu: 250m, memory: 512Mi }
+      limits: { cpu: "1", memory: 1Gi }
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70

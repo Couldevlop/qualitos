@@ -1,0 +1,14 @@
+apiVersion: v2
+name: qualitos
+description: >-
+  QualitOS — Quality Operating System. Chart umbrella déployant le frontend
+  Angular, les APIs Spring Boot (core, quality-engine, iot-hub) et la
+  passerelle IA FastAPI. Les dépendances d'état (PostgreSQL, Keycloak, Kafka,
+  Qdrant, Ollama) sont attendues en services managés ou charts dédiés — voir
+  values.yaml (externalServices) et README.md.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords: [qms, quality, multi-tenant]
+maintainers:
+  - name: QualitOS Team

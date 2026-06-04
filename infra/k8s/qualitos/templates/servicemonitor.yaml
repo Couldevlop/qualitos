@@ -1,0 +1,22 @@
+{{- if .Values.prometheus.serviceMonitor.enabled }}
+{{- range $name, $svc := .Values.services }}
+{{- if and $svc.enabled $svc.isSpringBoot }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ $name }}
+  labels:
+    app.kubernetes.io/name: {{ $name }}
+    {{- include "qualitos.labels" $ | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ $name }}
+  endpoints:
+    - port: http
+      path: /actuator/prometheus
+      interval: {{ $.Values.prometheus.serviceMonitor.interval }}
+{{- end }}
+{{- end }}
+{{- end }}
