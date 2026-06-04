@@ -24,6 +24,10 @@ class CleanArchitectureTest {
   @ArchTest
   static final ArchRule layered = Architectures.layeredArchitecture()
       .consideringAllDependencies()
+      // Lib sans couche presentation (SPI consommé par les services) : sans
+      // withOptionalLayers, ArchUnit échoue sur "Layer 'presentation' is empty".
+      // (Violation latente révélée par le bump Surefire de Boot 3.5.14.)
+      .withOptionalLayers(true)
       .layer("domain").definedBy("com.openlab.qualitos.industry.domain..")
       .layer("application").definedBy("com.openlab.qualitos.industry.application..")
       .layer("infrastructure").definedBy("com.openlab.qualitos.industry.infrastructure..")
