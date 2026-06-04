@@ -1,0 +1,30 @@
+<section class="qos-activity" aria-label="Activité récente">
+  <header class="qos-activity__head">
+    <span class="material-symbols-outlined" aria-hidden="true">history</span>
+    <h3>Activité récente</h3>
+  </header>
+
+  <div class="qos-activity__state" *ngIf="loading">
+    <mat-progress-spinner mode="indeterminate" diameter="22"></mat-progress-spinner>
+    <span>Chargement…</span>
+  </div>
+
+  <div class="qos-activity__state qos-activity__state--error" *ngIf="errored && !loading">
+    <span class="material-symbols-outlined" aria-hidden="true">error_outline</span>
+    <span>Flux indisponible pour le moment.</span>
+  </div>
+
+  <p class="qos-activity__empty" *ngIf="!loading && !errored && entries.length === 0">
+    Aucune activité récente.
+  </p>
+
+  <ul class="qos-activity__list" *ngIf="!loading && !errored && entries.length > 0">
+    <li class="qos-activity__item" *ngFor="let e of entries; trackBy: trackById">
+      <span class="qos-activity__icon material-symbols-outlined" aria-hidden="true">{{ iconFor(e) }}</span>
+      <span class="qos-activity__text">
+        <span class="qos-activity__label">{{ labelFor(e) }}</span>
+        <span class="qos-activity__meta">{{ e.action }} · {{ timeAgo(e.occurredAt) }}</span>
+      </span>
+    </li>
+  </ul>
+</section>
