@@ -79,10 +79,22 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        # OWASP A05 : exposition minimale — pas d'env/heapdump/loggers.
+        include: health,info,metrics,prometheus
   endpoint:
     health:
       show-details: when-authorized
+      probes:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      slo:
+        # SLO §20 : p95 API < 300 ms — buckets alignés pour les alertes Prometheus.
+        http.server.requests: 100ms,300ms,800ms
 
 logging:
   level:

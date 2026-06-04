@@ -1,0 +1,10 @@
+# Provisioning Grafana — chargement des dashboards JSON du dossier monté.
+apiVersion: 1
+providers:
+  - name: qualitos
+    folder: QualitOS
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards
