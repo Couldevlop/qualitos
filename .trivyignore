@@ -1,0 +1,20 @@
+# Exceptions Trivy — TIME-BOXÉES et MOTIVÉES (règle §18.2.1 : par défaut, aucune
+# CVE Critique/Haute ne franchit la CI ; toute entrée ici doit citer le correctif
+# attendu et une date de revue).
+#
+# Contexte : les images distroless (gcr.io) n'ont pas de gestionnaire de paquets —
+# impossible de patcher nous-mêmes ; on attend le rebuild Google (cadence ~2 sem).
+# À la date de revue : re-scanner (docker run aquasec/trivy image <base>) ; si le
+# rebuild est passé, SUPPRIMER l'entrée. Si non, réévaluer et re-time-boxer.
+
+# distroless/java21-debian12 (api-core, api-quality-engine, api-iot-hub)
+# liblcms2 (color management, java.awt) — non utilisé par nos services (pas de
+# traitement d'image côté API). Fix deb12u1 publié, rebuild distroless attendu.
+# Revue : 2026-06-18
+CVE-2026-41254
+
+# distroless/python3-debian12 (ai-service)
+# cpython http.client — DoS par buffering excessif. ai-service utilise httpx ;
+# exposition indirecte limitée (urllib). Fix 3.11.2-6+deb12u7 publié, rebuild
+# distroless attendu. Revue : 2026-06-18
+CVE-2025-13836

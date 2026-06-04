@@ -111,6 +111,8 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
           severity: CRITICAL,HIGH
+          # Exceptions time-boxées (CVE distroless en attente de rebuild Google).
+          trivyignores: .trivyignore
         env:
           # Repli miroir ECR public — ghcr.io rate-limite les pulls anonymes de la
           # DB quand la matrice la télécharge en parallèle (TOO MANY REQUESTS).

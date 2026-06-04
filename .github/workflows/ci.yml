@@ -355,6 +355,9 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
           severity: CRITICAL,HIGH
+          # Exceptions time-boxées (CVE distroless en attente de rebuild Google) —
+          # chaque entrée est motivée et datée dans le fichier.
+          trivyignores: .trivyignore
         env:
           # ghcr.io rate-limite les pulls anonymes de la DB Trivy quand les 5 jobs
           # de la matrice la téléchargent en parallèle (TOO MANY REQUESTS) →
