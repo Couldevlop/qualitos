@@ -81,7 +81,8 @@
           "configurations": {
             "production": { "buildTarget": "qualitos-web:build:production" },
             "development": { "buildTarget": "qualitos-web:build:development" },
-            "local": { "buildTarget": "qualitos-web:build:local" }
+            "local": { "buildTarget": "qualitos-web:build:local" },
+            "e2e": { "buildTarget": "qualitos-web:build:e2e" }
           },
           "defaultConfiguration": "development"
         },
