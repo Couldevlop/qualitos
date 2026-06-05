@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Généré par scripts/gen-i18n-xlf.py — NE PAS éditer à la main :
+     modifier la table TRANSLATIONS puis regénérer. -->
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="fr" target-language="ja" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="shell.search.placeholder" datatype="html">
+        <source>Rechercher : modules, normes, KPI, documents…</source>
+        <target state="translated">検索：モジュール、規格、KPI、文書…</target>
+      </trans-unit>
+      <trans-unit id="shell.search.aria" datatype="html">
+        <source>Recherche globale</source>
+        <target state="translated">全体検索</target>
+      </trans-unit>
+      <trans-unit id="nav.pilotage" datatype="html">
+        <source>Pilotage</source>
+        <target state="translated">ダッシュボード</target>
+      </trans-unit>
+      <trans-unit id="nav.tableau-de-bord" datatype="html">
+        <source>Tableau de bord</source>
+        <target state="translated">ダッシュボード</target>
+      </trans-unit>
+      <trans-unit id="nav.accueil" datatype="html">
+        <source>Accueil</source>
+        <target state="translated">ホーム</target>
+      </trans-unit>
+      <trans-unit id="nav.mes-dashboards" datatype="html">
+        <source>Mes dashboards</source>
+        <target state="translated">マイダッシュボード</target>
+      </trans-unit>
+      <trans-unit id="nav.indicateurs-kpi" datatype="html">
+        <source>Indicateurs (KPI)</source>
+        <target state="translated">指標（KPI）</target>
+      </trans-unit>
+      <trans-unit id="nav.assistant-ia" datatype="html">
+        <source>Assistant IA</source>
+        <target state="translated">AIアシスタント</target>
+      </trans-unit>
+      <trans-unit id="nav.methodes-qualite" datatype="html">
+        <source>Méthodes qualité</source>
+        <target state="translated">品質手法</target>
+      </trans-unit>
+      <trans-unit id="nav.pdca" datatype="html">
+        <source>PDCA</source>
+        <target state="translated">PDCA</target>
+      </trans-unit>
+      <trans-unit id="nav.ishikawa" datatype="html">
+        <source>Ishikawa</source>
+        <target state="translated">特性要因図</target>
+      </trans-unit>
+      <trans-unit id="nav.5s" datatype="html">
+        <source>5S</source>
+        <target state="translated">5S</target>
+      </trans-unit>
+      <trans-unit id="nav.dmaic" datatype="html">
+        <source>DMAIC</source>
+        <target state="translated">DMAIC</target>
+      </trans-unit>
+      <trans-unit id="nav.spc" datatype="html">
+        <source>SPC</source>
+        <target state="translated">SPC</target>
+      </trans-unit>
+      <trans-unit id="nav.cercles" datatype="html">
+        <source>Cercles</source>
+        <target state="translated">QCサークル</target>
+      </trans-unit>
+      <trans-unit id="nav.qualite-operationnelle" datatype="html">
+        <source>Qualité opérationnelle</source>
+        <target state="translated">オペレーション品質</target>
+      </trans-unit>
+      <trans-unit id="nav.capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="nav.audits" datatype="html">
+        <source>Audits</source>
+        <target state="translated">監査</target>
+      </trans-unit>
+      <trans-unit id="nav.risques-fmea" datatype="html">
+        <source>Risques (FMEA)</source>
+        <target state="translated">リスク（FMEA）</target>
+      </trans-unit>
+      <trans-unit id="nav.documents" datatype="html">
+        <source>Documents</source>
+        <target state="translated">文書</target>
+      </trans-unit>
+      <trans-unit id="nav.changements" datatype="html">
+        <source>Changements</source>
+        <target state="translated">変更管理</target>
+      </trans-unit>
+      <trans-unit id="nav.ehs" datatype="html">
+        <source>EHS</source>
+        <target state="translated">EHS</target>
+      </trans-unit>
+      <trans-unit id="nav.fournisseurs-competences" datatype="html">
+        <source>Fournisseurs &amp; compétences</source>
+        <target state="translated">サプライヤーとスキル</target>
+      </trans-unit>
+      <trans-unit id="nav.fournisseurs" datatype="html">
+        <source>Fournisseurs</source>
+        <target state="translated">サプライヤー</target>
+      </trans-unit>
+      <trans-unit id="nav.formation" datatype="html">
+        <source>Formation</source>
+        <target state="translated">トレーニング</target>
+      </trans-unit>
+      <trans-unit id="nav.normes-certification" datatype="html">
+        <source>Normes &amp; certification</source>
+        <target state="translated">規格と認証</target>
+      </trans-unit>
+      <trans-unit id="nav.standards-hub" datatype="html">
+        <source>Standards Hub</source>
+        <target state="translated">規格ハブ</target>
+      </trans-unit>
+      <trans-unit id="nav.conformite-ia-ai-act" datatype="html">
+        <source>Conformité — IA (AI Act)</source>
+        <target state="translated">コンプライアンス — AI（AI法）</target>
+      </trans-unit>
+      <trans-unit id="nav.qms" datatype="html">
+        <source>QMS</source>
+        <target state="translated">QMS</target>
+      </trans-unit>
+      <trans-unit id="nav.conformite" datatype="html">
+        <source>Conformité</source>
+        <target state="translated">コンプライアンス</target>
+      </trans-unit>
+      <trans-unit id="nav.incidents" datatype="html">
+        <source>Incidents</source>
+        <target state="translated">インシデント</target>
+      </trans-unit>
+      <trans-unit id="nav.eudb" datatype="html">
+        <source>EUDB</source>
+        <target state="translated">EUDB</target>
+      </trans-unit>
+      <trans-unit id="nav.fria" datatype="html">
+        <source>FRIA</source>
+        <target state="translated">FRIA</target>
+      </trans-unit>
+      <trans-unit id="nav.pmm" datatype="html">
+        <source>PMM</source>
+        <target state="translated">PMM</target>
+      </trans-unit>
+      <trans-unit id="nav.conformite-donnees-rgpd" datatype="html">
+        <source>Conformité — Données (RGPD)</source>
+        <target state="translated">コンプライアンス — データ（GDPR）</target>
+      </trans-unit>
+      <trans-unit id="nav.registre-ropa" datatype="html">
+        <source>Registre (RoPA)</source>
+        <target state="translated">処理記録（RoPA）</target>
+      </trans-unit>
+      <trans-unit id="nav.consentements" datatype="html">
+        <source>Consentements</source>
+        <target state="translated">同意管理</target>
+      </trans-unit>
+      <trans-unit id="nav.demandes-dsar" datatype="html">
+        <source>Demandes (DSAR)</source>
+        <target state="translated">請求（DSAR）</target>
+      </trans-unit>
+      <trans-unit id="nav.mentions" datatype="html">
+        <source>Mentions</source>
+        <target state="translated">プライバシー通知</target>
+      </trans-unit>
+      <trans-unit id="nav.dpia" datatype="html">
+        <source>DPIA</source>
+        <target state="translated">DPIA</target>
+      </trans-unit>
+      <trans-unit id="nav.dpo" datatype="html">
+        <source>DPO</source>
+        <target state="translated">DPO</target>
+      </trans-unit>
+      <trans-unit id="nav.retention" datatype="html">
+        <source>Rétention</source>
+        <target state="translated">保持期間</target>
+      </trans-unit>
+      <trans-unit id="nav.transferts" datatype="html">
+        <source>Transferts</source>
+        <target state="translated">越境移転</target>
+      </trans-unit>
+      <trans-unit id="nav.sous-traitants-dpa" datatype="html">
+        <source>Sous-traitants (DPA)</source>
+        <target state="translated">処理者（DPA）</target>
+      </trans-unit>
+      <trans-unit id="nav.violations" datatype="html">
+        <source>Violations</source>
+        <target state="translated">侵害</target>
+      </trans-unit>
+      <trans-unit id="nav.decisions-auto" datatype="html">
+        <source>Décisions auto.</source>
+        <target state="translated">自動意思決定</target>
+      </trans-unit>
+      <trans-unit id="nav.conformite-cyber-nis-2" datatype="html">
+        <source>Conformité — Cyber (NIS 2)</source>
+        <target state="translated">コンプライアンス — サイバー（NIS 2）</target>
+      </trans-unit>
+      <trans-unit id="nav.mesures" datatype="html">
+        <source>Mesures</source>
+        <target state="translated">対策</target>
+      </trans-unit>
+      <trans-unit id="nav.incidents-cyber" datatype="html">
+        <source>Incidents cyber</source>
+        <target state="translated">サイバーインシデント</target>
+      </trans-unit>
+      <trans-unit id="nav.integrations" datatype="html">
+        <source>Intégrations</source>
+        <target state="translated">連携</target>
+      </trans-unit>
+      <trans-unit id="nav.itsm" datatype="html">
+        <source>ITSM</source>
+        <target state="translated">ITSM</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
