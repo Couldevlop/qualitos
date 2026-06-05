@@ -7,6 +7,7 @@ import { ApiInterceptor } from './http/api.interceptor';
 /**
  * Module singleton. Doit être importé UNE seule fois (dans AppModule).
  * Contient services applicatifs partagés (auth, interceptor, etc.).
+ * NB : la file offline (core/offline) est auto-fournie au root (tree-shakable).
  */
 @NgModule({
   imports: [CommonModule],

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { AuthService, AuthUser } from '../../core/auth/auth.service';
+import { ConnectivityService } from '../../core/offline/connectivity.service';
+import { OfflineQueueService } from '../../core/offline/offline-queue.service';
 
 export interface NavItem {
   label: string;
@@ -127,10 +129,20 @@ export class MainShellComponent implements OnInit {
     }
   ];
 
-  constructor(private readonly auth: AuthService) {}
+  /** État réseau + file offline (§15.2-15.3) — chip de synchro dans la topbar. */
+  online$!: Observable<boolean>;
+  pendingSync$!: Observable<number>;
+
+  constructor(
+    private readonly auth: AuthService,
+    private readonly connectivity: ConnectivityService,
+    private readonly offlineQueue: OfflineQueueService
+  ) {}
 
   ngOnInit(): void {
     this.user$ = this.auth.user();
+    this.online$ = this.connectivity.online$;
+    this.pendingSync$ = this.offlineQueue.pendingCount$;
     this.restoreCollapsedSections();
   }
 

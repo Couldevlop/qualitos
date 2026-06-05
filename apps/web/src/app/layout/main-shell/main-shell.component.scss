@@ -374,3 +374,31 @@
 }
 
 .qos-topbar__user-caret { font-size: 16px; color: var(--qos-fg-tertiary); }
+
+// Chip de synchronisation offline (§15.2-15.3) — discret, lisible, tokens DS.
+.qos-topbar__sync {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: var(--qos-radius-pill);
+  background: color-mix(in srgb, var(--qos-warn-fg) 12%, transparent);
+  color: var(--qos-warn-fg);
+  font-size: var(--qos-fs-xs);
+  font-weight: 600;
+
+  .material-symbols-outlined {
+    font-size: 18px;
+  }
+
+  &--offline {
+    background: color-mix(in srgb, var(--qos-danger-fg) 12%, transparent);
+    color: var(--qos-danger-fg);
+  }
+}
+
+.qos-topbar__sync-count {
+  min-width: 14px;
+  text-align: center;
+}
