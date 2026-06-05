@@ -257,11 +257,9 @@ jobs:
         shell: bash
         env:
           CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
-        # TEMPORAIRE : continue-on-error tant que karma-chrome-launcher pose
-        # souci sur ubuntu-latest sans repro local possible (ETIMEDOUT npm
-        # depuis le poste de dev, cf. .nvmrc / network). À retirer dans la PR
-        # qui commitera le package-lock.json + reproduira les tests en local.
-        continue-on-error: true
+        # Bloquant depuis 2026-06-05 : le continue-on-error historique a masqué
+        # une vraie régression (polyfill $localize absent de la config test).
+        # La suite est verte en local (306/306) — un échec ici est un échec réel.
         run: |
           set -o pipefail
           npm test -- --reporters=progress,kjhtml --browsers=ChromeHeadlessCI 2>&1 | tee karma.log
