@@ -32,6 +32,7 @@ RUN python -m pip install --no-cache-dir --upgrade pip \
     "pydantic>=2.9" \
     "httpx>=0.27" \
     "sqlglot>=25.5" \
+    "numpy>=1.26" \
     "pyjwt[crypto]>=2.9" \
     "slowapi>=0.1.9" \
     "qdrant-client>=1.11" \
