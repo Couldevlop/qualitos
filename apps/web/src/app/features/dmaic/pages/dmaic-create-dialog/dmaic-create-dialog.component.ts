@@ -47,7 +47,7 @@ export class DmaicCreateDialogComponent {
     }
     const blackBeltId = this.auth.snapshot()?.userId;
     if (!blackBeltId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, 'OK', { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -68,13 +68,13 @@ export class DmaicCreateDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: p => {
-          this.snack.open('Projet DMAIC créé.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@dmaic.create.created:Projet DMAIC créé.`, 'OK', { duration: 2500 });
           this.dialogRef.close(p);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[dmaic-create] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de la création.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@common.error-create:Erreur lors de la création.`), 'OK', { duration: 4000 });
         }
       });
   }

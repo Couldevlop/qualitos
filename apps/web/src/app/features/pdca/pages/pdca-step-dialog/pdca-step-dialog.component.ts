@@ -62,14 +62,14 @@ export class PdcaStepDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: step => {
-          this.snack.open('Étape ajoutée.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@pdca.step.success:Étape ajoutée.`, 'OK', { duration: 2500 });
           this.dialogRef.close(step);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[pdca-step-dialog] addStep failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de l\'ajout.'),
+            safeErrorMessage(err, $localize`:@@pdca.step.add-error:Erreur lors de l'ajout.`),
             'OK', { duration: 4000 }
           );
         }

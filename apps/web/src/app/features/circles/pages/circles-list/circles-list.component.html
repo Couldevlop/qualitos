@@ -1,20 +1,20 @@
 <div class="qos-page">
   <header class="page-header">
     <div>
-      <h1>Cercles de Qualité</h1>
-      <p>Groupes 5-10 personnes, réunions, propositions PROPOSED → MEASURED.</p>
+      <h1 i18n="@@circles.list.title">Cercles de Qualité</h1>
+      <p i18n="@@circles.list.subtitle">Groupes 5-10 personnes, réunions, propositions PROPOSED → MEASURED.</p>
     </div>
     <button mat-flat-button color="primary" type="button" (click)="openCreate()">
       <mat-icon>add</mat-icon>
-      Nouveau cercle
+      <span i18n="@@circles.list.new-circle">Nouveau cercle</span>
     </button>
   </header>
 
   <mat-card class="filter-card">
     <mat-form-field appearance="outline" class="status-filter">
-      <mat-label>Filtrer par statut</mat-label>
+      <mat-label i18n="@@common.filter-by-status">Filtrer par statut</mat-label>
       <mat-select [formControl]="statusFilter">
-        <mat-option [value]="''">Tous</mat-option>
+        <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
         <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
       </mat-select>
     </mat-form-field>
@@ -22,13 +22,13 @@
 
   <div class="state-row" *ngIf="loading$ | async">
     <mat-progress-spinner mode="indeterminate" diameter="36"></mat-progress-spinner>
-    <span>Chargement…</span>
+    <span i18n="@@common.loading">Chargement…</span>
   </div>
 
   <mat-card class="table-card" *ngIf="(loading$ | async) === false">
     <table mat-table [dataSource]="(circles$ | async) ?? []" class="t">
       <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef>Nom</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.name">Nom</th>
         <td mat-cell *matCellDef="let c">
           <div class="cell">
             <strong>{{ c.name }}</strong>
@@ -36,15 +36,15 @@
           </div>
         </td>
       </ng-container>
-      <ng-container matColumnDef="status"><th mat-header-cell *matHeaderCellDef>Statut</th>
+      <ng-container matColumnDef="status"><th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
         <td mat-cell *matCellDef="let c"><span [class]="badge(c.status)">{{ c.status }}</span></td></ng-container>
-      <ng-container matColumnDef="members"><th mat-header-cell *matHeaderCellDef>Membres</th>
+      <ng-container matColumnDef="members"><th mat-header-cell *matHeaderCellDef i18n="@@circles.list.col-members">Membres</th>
         <td mat-cell *matCellDef="let c">{{ c.memberCount || c.members?.length || 0 }}</td></ng-container>
-      <ng-container matColumnDef="meetings"><th mat-header-cell *matHeaderCellDef>Réunions</th>
+      <ng-container matColumnDef="meetings"><th mat-header-cell *matHeaderCellDef i18n="@@circles.list.col-meetings">Réunions</th>
         <td mat-cell *matCellDef="let c">{{ c.meetings?.length || 0 }}</td></ng-container>
-      <ng-container matColumnDef="proposals"><th mat-header-cell *matHeaderCellDef>Propositions</th>
+      <ng-container matColumnDef="proposals"><th mat-header-cell *matHeaderCellDef i18n="@@circles.list.col-proposals">Propositions</th>
         <td mat-cell *matCellDef="let c">{{ c.proposals?.length || 0 }}</td></ng-container>
-      <ng-container matColumnDef="updatedAt"><th mat-header-cell *matHeaderCellDef>MAJ</th>
+      <ng-container matColumnDef="updatedAt"><th mat-header-cell *matHeaderCellDef i18n="@@circles.list.col-updated">MAJ</th>
         <td mat-cell *matCellDef="let c">{{ c.updatedAt | date:'short' }}</td></ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"
@@ -54,7 +54,7 @@
           tabindex="0" role="button"
           [attr.aria-label]="'Ouvrir ' + row.name"></tr>
     </table>
-    <p class="empty" *ngIf="(circles$ | async)?.length === 0">Aucun cercle.</p>
+    <p class="empty" *ngIf="(circles$ | async)?.length === 0" i18n="@@circles.list.empty">Aucun cercle.</p>
 
     <mat-paginator [length]="totalElements"
                    [pageSize]="pageSize"
@@ -62,6 +62,7 @@
                    [pageSizeOptions]="pageSizeOptions"
                    (page)="onPage($event)"
                    showFirstLastButtons
+                   i18n-aria-label="@@circles.list.paginator-aria"
                    aria-label="Pagination des cercles">
     </mat-paginator>
   </mat-card>

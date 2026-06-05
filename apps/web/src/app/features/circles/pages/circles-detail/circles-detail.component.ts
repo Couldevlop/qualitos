@@ -36,6 +36,8 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 })
 export class CirclesDetailComponent implements OnInit {
 
+  readonly circleNotFoundLabel = $localize`:@@circles.detail.not-found:Cercle introuvable`;
+
   readonly memberColumns = ['role', 'userId', 'joinedAt'];
   readonly meetingColumns = ['title', 'scheduledAt', 'status', 'location'];
   readonly proposalColumns = ['title', 'status', 'proposedBy'];
@@ -60,7 +62,7 @@ export class CirclesDetailComponent implements OnInit {
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('id') ?? '';
     if (!UUID_RE.test(raw) && !this.isMockId(raw)) {
-      this.snack.open('Identifiant invalide.', 'OK', { duration: 3000 });
+      this.snack.open($localize`:@@circles.detail.invalid-id:Identifiant invalide.`, 'OK', { duration: 3000 });
       this.router.navigate(['/circles']);
       return;
     }
@@ -71,7 +73,7 @@ export class CirclesDetailComponent implements OnInit {
         catchError(err => {
           // eslint-disable-next-line no-console
           console.warn('[circles-detail] getCircle failed', err?.status, err?.error?.title);
-          this.error$.next(safeErrorMessage(err, 'Cercle introuvable.'));
+          this.error$.next(safeErrorMessage(err, $localize`:@@circles.detail.load-error:Cercle introuvable.`));
           return of(null);
         }),
         finalize(() => this.loading$.next(false))
@@ -97,9 +99,9 @@ export class CirclesDetailComponent implements OnInit {
   deleteCircle(name: string): void {
     this.dialog.open(ConfirmDialogComponent, {
       data: <ConfirmDialogData>{
-        title: 'Supprimer ce cercle ?',
-        message: `« ${name} », ses membres, réunions et propositions seront supprimés définitivement.`,
-        confirmLabel: 'Supprimer',
+        title: $localize`:@@circles.detail.delete-confirm-title:Supprimer ce cercle ?`,
+        message: $localize`:@@circles.detail.delete-confirm-message:« ${name}:name: », ses membres, réunions et propositions seront supprimés définitivement.`,
+        confirmLabel: $localize`:@@common.delete:Supprimer`,
         destructive: true
       },
       autoFocus: false,
@@ -108,14 +110,14 @@ export class CirclesDetailComponent implements OnInit {
       if (!confirmed) return;
       this.circles.deleteCircle(this.circleId).subscribe({
         next: () => {
-          this.snack.open('Cercle supprimé.', 'OK', { duration: 2000 });
+          this.snack.open($localize`:@@circles.detail.deleted:Cercle supprimé.`, 'OK', { duration: 2000 });
           this.router.navigate(['/circles']);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[circles-detail] delete failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de la suppression.'),
+            safeErrorMessage(err, $localize`:@@circles.detail.delete-error:Erreur lors de la suppression.`),
             'OK', { duration: 4000 }
           );
         }
@@ -181,15 +183,19 @@ export class CirclesDetailComponent implements OnInit {
       : this.circles.archiveCircle(this.circleId);
     call.pipe(finalize(() => this.acting$.next(false))).subscribe({
       next: () => {
-        const label = action === 'pause' ? 'mis en pause' : action === 'resume' ? 'réactivé' : 'archivé';
-        this.snack.open(`Cercle ${label}.`, 'OK', { duration: 2000 });
+        const msg = action === 'pause'
+          ? $localize`:@@circles.detail.paused:Cercle mis en pause.`
+          : action === 'resume'
+            ? $localize`:@@circles.detail.resumed:Cercle réactivé.`
+            : $localize`:@@circles.detail.archived:Cercle archivé.`;
+        this.snack.open(msg, 'OK', { duration: 2000 });
         this.reload$.next();
       },
       error: err => {
         // eslint-disable-next-line no-console
         console.warn('[circles-detail] transition failed', action, err?.status, err?.error?.title);
         this.snack.open(
-          safeErrorMessage(err, 'Erreur lors de la transition.'),
+          safeErrorMessage(err, $localize`:@@circles.detail.transition-error:Erreur lors de la transition.`),
           'OK', { duration: 4000 }
         );
       }

@@ -1,24 +1,29 @@
 <qos-form-dialog
+  i18n-title="@@pdca.create.title"
   title="Nouveau cycle PDCA"
+  i18n-subtitle="@@pdca.create.subtitle"
   subtitle="Décris brièvement le problème ou l'objectif. Les étapes Plan / Do / Check / Act pourront être ajoutées ensuite."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.create"
   submitLabel="Créer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre du cycle</mat-label>
+    <mat-label i18n="@@pdca.create.cycle-title-label">Titre du cycle</mat-label>
     <input matInput formControlName="title" maxlength="255" required
+           i18n-placeholder="@@pdca.create.cycle-title-placeholder"
            placeholder="Ex. : Réduction des défauts de soudure — ligne 3">
-    <mat-error *ngIf="form.controls.title.hasError('required')">Le titre est requis.</mat-error>
-    <mat-error *ngIf="form.controls.title.hasError('maxlength')">255 caractères maximum.</mat-error>
+    <mat-error *ngIf="form.controls.title.hasError('required')" i18n="@@pdca.create.title-required">Le titre est requis.</mat-error>
+    <mat-error *ngIf="form.controls.title.hasError('maxlength')" i18n="@@common.maxlength-255">255 caractères maximum.</mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description (optionnel)</mat-label>
+    <mat-label i18n="@@common.description-optional">Description (optionnel)</mat-label>
     <textarea matInput formControlName="description" rows="4"
+              i18n-placeholder="@@pdca.create.description-placeholder"
               placeholder="Pilote, périmètre, objectif chiffré, échéance…"></textarea>
   </mat-form-field>
 

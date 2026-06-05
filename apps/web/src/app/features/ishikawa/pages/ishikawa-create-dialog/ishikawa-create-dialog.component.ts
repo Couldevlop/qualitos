@@ -48,7 +48,7 @@ export class IshikawaCreateDialogComponent {
     }
     const ownerId = this.auth.snapshot()?.userId;
     if (!ownerId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, 'OK', { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -63,14 +63,14 @@ export class IshikawaCreateDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: diagram => {
-          this.snack.open('Diagramme Ishikawa créé.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@ishikawa.create.created:Diagramme Ishikawa créé.`, 'OK', { duration: 2500 });
           this.dialogRef.close(diagram);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[ishikawa-create] failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de la création.'),
+            safeErrorMessage(err, $localize`:@@common.error-create:Erreur lors de la création.`),
             'OK',
             { duration: 4000 }
           );

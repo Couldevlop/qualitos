@@ -82,7 +82,7 @@ export class IshikawaDetailComponent implements OnInit {
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('id') ?? '';
     if (!UUID_RE.test(raw) && !this.isMockId(raw)) {
-      this.snack.open('Identifiant invalide.', 'OK', { duration: 3000 });
+      this.snack.open($localize`:@@common.invalid-id:Identifiant invalide.`, 'OK', { duration: 3000 });
       this.router.navigate(['/ishikawa']);
       return;
     }
@@ -93,7 +93,7 @@ export class IshikawaDetailComponent implements OnInit {
         catchError(err => {
           // eslint-disable-next-line no-console
           console.warn('[ishikawa-detail] getDiagram failed', err?.status, err?.error?.title);
-          this.error$.next(safeErrorMessage(err, 'Diagramme introuvable.'));
+          this.error$.next(safeErrorMessage(err, $localize`:@@ishikawa.detail.not-found:Diagramme introuvable.`));
           return of(null);
         }),
         finalize(() => this.loading$.next(false))
@@ -114,9 +114,9 @@ export class IshikawaDetailComponent implements OnInit {
   deleteDiagram(label: string): void {
     this.dialog.open(ConfirmDialogComponent, {
       data: <ConfirmDialogData>{
-        title: 'Supprimer ce diagramme ?',
+        title: $localize`:@@ishikawa.detail.delete-confirm-title:Supprimer ce diagramme ?`,
         message: `« ${label} » et toutes ses causes seront supprimés définitivement.`,
-        confirmLabel: 'Supprimer',
+        confirmLabel: $localize`:@@common.delete:Supprimer`,
         destructive: true
       },
       autoFocus: false,
@@ -125,14 +125,14 @@ export class IshikawaDetailComponent implements OnInit {
       if (!confirmed) return;
       this.ishikawa.deleteDiagram(this.diagramId).subscribe({
         next: () => {
-          this.snack.open('Diagramme supprimé.', 'OK', { duration: 2000 });
+          this.snack.open($localize`:@@ishikawa.detail.deleted:Diagramme supprimé.`, 'OK', { duration: 2000 });
           this.router.navigate(['/ishikawa']);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[ishikawa-detail] delete failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de la suppression.'),
+            safeErrorMessage(err, $localize`:@@common.error-delete:Erreur lors de la suppression.`),
             'OK', { duration: 4000 }
           );
         }
@@ -202,7 +202,7 @@ export class IshikawaDetailComponent implements OnInit {
         this.suggestions = list;
         this.suggesting = false;
         if (!list.length) {
-          this.snack.open('Aucune suggestion exploitable — reformulez le problème.', 'OK', { duration: 3500 });
+          this.snack.open($localize`:@@ishikawa.detail.no-suggestions:Aucune suggestion exploitable — reformulez le problème.`, 'OK', { duration: 3500 });
         }
       },
       error: err => {
@@ -210,7 +210,7 @@ export class IshikawaDetailComponent implements OnInit {
         // eslint-disable-next-line no-console
         console.warn('[ishikawa-detail] suggestCauses failed', err?.status);
         this.snack.open(
-          safeErrorMessage(err, 'Suggestion IA indisponible (ai-service / Ollama).'),
+          safeErrorMessage(err, $localize`:@@ishikawa.detail.suggest-unavailable:Suggestion IA indisponible (ai-service / Ollama).`),
           'Fermer', { duration: 4000 });
       }
     });
@@ -227,12 +227,12 @@ export class IshikawaDetailComponent implements OnInit {
       next: () => {
         this.addingKey = null;
         this.suggestions = this.suggestions.filter(x => x !== s);
-        this.snack.open('Cause ajoutée au diagramme.', 'OK', { duration: 2000 });
+        this.snack.open($localize`:@@ishikawa.detail.cause-added:Cause ajoutée au diagramme.`, 'OK', { duration: 2000 });
         this.reload$.next();
       },
       error: err => {
         this.addingKey = null;
-        this.snack.open(safeErrorMessage(err, 'Ajout impossible.'), 'Fermer', { duration: 3500 });
+        this.snack.open(safeErrorMessage(err, $localize`:@@common.add-failed:Ajout impossible.`), 'Fermer', { duration: 3500 });
       }
     });
   }

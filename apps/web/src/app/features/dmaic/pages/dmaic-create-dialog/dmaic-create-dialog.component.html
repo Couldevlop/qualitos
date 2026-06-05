@@ -1,63 +1,63 @@
 <qos-form-dialog
-  title="Nouveau projet DMAIC"
+  i18n-title="@@dmaic.create.title" title="Nouveau projet DMAIC"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
-  submitLabel="Créer"
+  i18n-submitLabel="@@common.create" submitLabel="Créer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre</mat-label>
+    <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="255" required
-           placeholder="Ex. : Réduire le taux de rebut ligne A">
+           i18n-placeholder="@@dmaic.create.title-placeholder" placeholder="Ex. : Réduire le taux de rebut ligne A">
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Énoncé du problème</mat-label>
+    <mat-label i18n="@@dmaic.create.problem-label">Énoncé du problème</mat-label>
     <textarea matInput formControlName="problemStatement" rows="3"
-              placeholder="Contexte, données chiffrées du problème"></textarea>
+              i18n-placeholder="@@dmaic.create.problem-placeholder" placeholder="Contexte, données chiffrées du problème"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Énoncé de l'objectif</mat-label>
+    <mat-label i18n="@@dmaic.create.goal-label">Énoncé de l'objectif</mat-label>
     <textarea matInput formControlName="goalStatement" rows="2"
-              placeholder="Objectif SMART + impact business attendu"></textarea>
+              i18n-placeholder="@@dmaic.create.goal-placeholder" placeholder="Objectif SMART + impact business attendu"></textarea>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Champion (ID)</mat-label>
-      <input matInput formControlName="championId" placeholder="UUID utilisateur">
+      <mat-label i18n="@@dmaic.create.champion-label">Champion (ID)</mat-label>
+      <input matInput formControlName="championId" i18n-placeholder="@@dmaic.create.champion-placeholder" placeholder="UUID utilisateur">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Date cible</mat-label>
+      <mat-label i18n="@@dmaic.create.target-date-label">Date cible</mat-label>
       <input matInput formControlName="targetCompletionDate" type="date">
     </mat-form-field>
   </div>
 
-  <h3 class="section">Spécifications procédé (optionnel — requis pour Cp/Cpk)</h3>
+  <h3 class="section" i18n="@@dmaic.create.specs-section">Spécifications procédé (optionnel — requis pour Cp/Cpk)</h3>
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>LSL</mat-label>
+      <mat-label i18n="@@dmaic.detail.lsl">LSL</mat-label>
       <input matInput formControlName="specLowerLimit" type="number" step="any">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Cible</mat-label>
+      <mat-label i18n="@@dmaic.detail.target">Cible</mat-label>
       <input matInput formControlName="specTarget" type="number" step="any">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>USL</mat-label>
+      <mat-label i18n="@@dmaic.detail.usl">USL</mat-label>
       <input matInput formControlName="specUpperLimit" type="number" step="any">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col col-small">
-      <mat-label>Unité</mat-label>
-      <input matInput formControlName="specUnit" maxlength="50" placeholder="mm, s, °C…">
+      <mat-label i18n="@@dmaic.create.unit-label">Unité</mat-label>
+      <input matInput formControlName="specUnit" maxlength="50" i18n-placeholder="@@dmaic.create.unit-placeholder" placeholder="mm, s, °C…">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Économies estimées (€)</mat-label>
+    <mat-label i18n="@@dmaic.create.savings-label">Économies estimées (€)</mat-label>
     <input matInput formControlName="estimatedSavingsEur" type="number" min="0" step="any">
   </mat-form-field>
 

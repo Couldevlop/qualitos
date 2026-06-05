@@ -1,40 +1,40 @@
 <section class="dmaic-list">
   <header class="head">
     <div>
-      <h1>Projets DMAIC</h1>
-      <p>Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.</p>
+      <h1 i18n="@@dmaic.list.title">Projets DMAIC</h1>
+      <p i18n="@@dmaic.list.subtitle">Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.</p>
     </div>
     <button mat-flat-button color="primary" (click)="openCreate()">
-      <mat-icon>add</mat-icon> Nouveau projet
+      <mat-icon>add</mat-icon> <span i18n="@@dmaic.list.new-project">Nouveau projet</span>
     </button>
   </header>
 
   <div class="filters">
     <mat-form-field appearance="outline">
-      <mat-label>Statut</mat-label>
+      <mat-label i18n="@@common.status">Statut</mat-label>
       <mat-select [formControl]="statusFilter">
-        <mat-option [value]="''">Tous</mat-option>
+        <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
         <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Phase</mat-label>
+      <mat-label i18n="@@dmaic.list.phase">Phase</mat-label>
       <mat-select [formControl]="phaseFilter">
-        <mat-option [value]="''">Toutes</mat-option>
+        <mat-option [value]="''" i18n="@@dmaic.list.all-phases">Toutes</mat-option>
         <mat-option *ngFor="let p of phases" [value]="p">{{ p }}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
 
   <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
-  <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+  <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
 
   <div class="table-wrap mat-elevation-z1">
     <table mat-table [dataSource]="(projects$ | async) ?? []">
 
       <ng-container matColumnDef="title">
-        <th mat-header-cell *matHeaderCellDef>Projet</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@dmaic.list.col-project">Projet</th>
         <td mat-cell *matCellDef="let p">
           <a class="title-link" (click)="open(p)">{{ p.title }}</a>
           <small *ngIf="p.problemStatement" class="dim">{{ p.problemStatement }}</small>
@@ -42,27 +42,27 @@
       </ng-container>
 
       <ng-container matColumnDef="phase">
-        <th mat-header-cell *matHeaderCellDef>Phase</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@dmaic.list.phase">Phase</th>
         <td mat-cell *matCellDef="let p"><span [class]="phaseBadge(p.phase)">{{ p.phase }}</span></td>
       </ng-container>
 
       <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
         <td mat-cell *matCellDef="let p"><span [class]="statusBadge(p.status)">{{ p.status }}</span></td>
       </ng-container>
 
       <ng-container matColumnDef="measureCount">
-        <th mat-header-cell *matHeaderCellDef>Mesures</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@dmaic.list.col-measures">Mesures</th>
         <td mat-cell *matCellDef="let p">{{ p.measureCount }}</td>
       </ng-container>
 
       <ng-container matColumnDef="pokaYokeCount">
-        <th mat-header-cell *matHeaderCellDef>Poka-Yoke</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@dmaic.list.col-pokayoke">Poka-Yoke</th>
         <td mat-cell *matCellDef="let p">{{ p.pokaYokeCount }}</td>
       </ng-container>
 
       <ng-container matColumnDef="targetCompletionDate">
-        <th mat-header-cell *matHeaderCellDef>Échéance</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@dmaic.list.col-deadline">Échéance</th>
         <td mat-cell *matCellDef="let p">{{ p.targetCompletionDate || '—' }}</td>
       </ng-container>
 

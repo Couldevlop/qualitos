@@ -1,22 +1,27 @@
 <qos-form-dialog
+  i18n-title="@@circles.proposal.title"
   title="Nouvelle proposition"
+  i18n-subtitle="@@circles.proposal.subtitle"
   subtitle="Idée d'amélioration soumise au cercle. Elle sera évaluée puis implémentée et mesurée si approuvée (workflow PROPOSED → APPROVED → MEASURED)."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@circles.proposal.submit"
   submitLabel="Proposer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre</mat-label>
+    <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="255" required
+           i18n-placeholder="@@circles.proposal.title-placeholder"
            placeholder="Ex. : Ajouter un Poka-Yoke positionnement pièce">
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description</mat-label>
+    <mat-label i18n="@@common.description">Description</mat-label>
     <textarea matInput formControlName="description" rows="4"
+              i18n-placeholder="@@circles.proposal.description-placeholder"
               placeholder="Contexte, objectif, bénéfice attendu, charge estimée…"></textarea>
   </mat-form-field>
 

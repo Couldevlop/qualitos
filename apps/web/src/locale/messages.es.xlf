@@ -4,6 +4,170 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="fr" target-language="es" datatype="plaintext" original="ng2.template">
     <body>
+      <trans-unit id="common.loading" datatype="html">
+        <source>Chargement…</source>
+        <target state="translated">Cargando…</target>
+      </trans-unit>
+      <trans-unit id="common.all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">Todos</target>
+      </trans-unit>
+      <trans-unit id="common.filter-by-status" datatype="html">
+        <source>Filtrer par statut</source>
+        <target state="translated">Filtrar por estado</target>
+      </trans-unit>
+      <trans-unit id="common.status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">Estado</target>
+      </trans-unit>
+      <trans-unit id="common.title" datatype="html">
+        <source>Titre</source>
+        <target state="translated">Título</target>
+      </trans-unit>
+      <trans-unit id="common.description" datatype="html">
+        <source>Description</source>
+        <target state="translated">Descripción</target>
+      </trans-unit>
+      <trans-unit id="common.actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">Acciones</target>
+      </trans-unit>
+      <trans-unit id="common.last-updated" datatype="html">
+        <source>Dernière MAJ</source>
+        <target state="translated">Última actualización</target>
+      </trans-unit>
+      <trans-unit id="common.created-at" datatype="html">
+        <source>Créé le</source>
+        <target state="translated">Creado el</target>
+      </trans-unit>
+      <trans-unit id="common.save" datatype="html">
+        <source>Enregistrer</source>
+        <target state="translated">Guardar</target>
+      </trans-unit>
+      <trans-unit id="common.cancel" datatype="html">
+        <source>Annuler</source>
+        <target state="translated">Cancelar</target>
+      </trans-unit>
+      <trans-unit id="common.create" datatype="html">
+        <source>Créer</source>
+        <target state="translated">Crear</target>
+      </trans-unit>
+      <trans-unit id="common.close" datatype="html">
+        <source>Fermer</source>
+        <target state="translated">Cerrar</target>
+      </trans-unit>
+      <trans-unit id="common.delete" datatype="html">
+        <source>Supprimer</source>
+        <target state="translated">Eliminar</target>
+      </trans-unit>
+      <trans-unit id="common.edit" datatype="html">
+        <source>Modifier</source>
+        <target state="translated">Editar</target>
+      </trans-unit>
+      <trans-unit id="common.add" datatype="html">
+        <source>Ajouter</source>
+        <target state="translated">Añadir</target>
+      </trans-unit>
+      <trans-unit id="common.back" datatype="html">
+        <source>Retour</source>
+        <target state="translated">Volver</target>
+      </trans-unit>
+      <trans-unit id="common.search" datatype="html">
+        <source>Rechercher</source>
+        <target state="translated">Buscar</target>
+      </trans-unit>
+      <trans-unit id="common.details" datatype="html">
+        <source>Détails</source>
+        <target state="translated">Detalles</target>
+      </trans-unit>
+      <trans-unit id="common.open" datatype="html">
+        <source>Ouvrir</source>
+        <target state="translated">Abrir</target>
+      </trans-unit>
+      <trans-unit id="common.name" datatype="html">
+        <source>Nom</source>
+        <target state="translated">Nombre</target>
+      </trans-unit>
+      <trans-unit id="common.date" datatype="html">
+        <source>Date</source>
+        <target state="translated">Fecha</target>
+      </trans-unit>
+      <trans-unit id="common.type" datatype="html">
+        <source>Type</source>
+        <target state="translated">Tipo</target>
+      </trans-unit>
+      <trans-unit id="common.score" datatype="html">
+        <source>Score</source>
+        <target state="translated">Puntuación</target>
+      </trans-unit>
+      <trans-unit id="common.zone" datatype="html">
+        <source>Zone</source>
+        <target state="translated">Zona</target>
+      </trans-unit>
+      <trans-unit id="common.progress" datatype="html">
+        <source>Avancement</source>
+        <target state="translated">Progreso</target>
+      </trans-unit>
+      <trans-unit id="common.required-field" datatype="html">
+        <source>Champ obligatoire</source>
+        <target state="translated">Campo obligatorio</target>
+      </trans-unit>
+      <trans-unit id="common.loading-aria" datatype="html">
+        <source>Chargement</source>
+        <target state="translated">Cargando</target>
+      </trans-unit>
+      <trans-unit id="common.description-optional" datatype="html">
+        <source>Description (optionnel)</source>
+        <target state="translated">Descripción (opcional)</target>
+      </trans-unit>
+      <trans-unit id="common.maxlength-200" datatype="html">
+        <source>200 caractères maximum.</source>
+        <target state="translated">Máximo 200 caracteres.</target>
+      </trans-unit>
+      <trans-unit id="common.maxlength-255" datatype="html">
+        <source>255 caractères maximum.</source>
+        <target state="translated">Máximo 255 caracteres.</target>
+      </trans-unit>
+      <trans-unit id="common.maxlength-500" datatype="html">
+        <source>500 caractères maximum.</source>
+        <target state="translated">Máximo 500 caracteres.</target>
+      </trans-unit>
+      <trans-unit id="common.invalid-id" datatype="html">
+        <source>Identifiant invalide.</source>
+        <target state="translated">Identificador no válido.</target>
+      </trans-unit>
+      <trans-unit id="common.session-expired" datatype="html">
+        <source>Session expirée — veuillez vous reconnecter.</source>
+        <target state="translated">Sesión expirada — vuelva a iniciar sesión.</target>
+      </trans-unit>
+      <trans-unit id="common.error-loading" datatype="html">
+        <source>Erreur lors du chargement.</source>
+        <target state="translated">Error al cargar.</target>
+      </trans-unit>
+      <trans-unit id="common.error-create" datatype="html">
+        <source>Erreur lors de la création.</source>
+        <target state="translated">Error al crear.</target>
+      </trans-unit>
+      <trans-unit id="common.error-update" datatype="html">
+        <source>Erreur lors de la mise à jour.</source>
+        <target state="translated">Error al actualizar.</target>
+      </trans-unit>
+      <trans-unit id="common.error-delete" datatype="html">
+        <source>Erreur lors de la suppression.</source>
+        <target state="translated">Error al eliminar.</target>
+      </trans-unit>
+      <trans-unit id="common.error-add" datatype="html">
+        <source>Erreur lors de l'ajout.</source>
+        <target state="translated">Error al añadir.</target>
+      </trans-unit>
+      <trans-unit id="common.add-failed" datatype="html">
+        <source>Ajout impossible.</source>
+        <target state="translated">No se puede añadir.</target>
+      </trans-unit>
+      <trans-unit id="common.delete-failed" datatype="html">
+        <source>Suppression impossible.</source>
+        <target state="translated">No se puede eliminar.</target>
+      </trans-unit>
       <trans-unit id="shell.search.placeholder" datatype="html">
         <source>Rechercher : modules, normes, KPI, documents…</source>
         <target state="translated">Buscar: módulos, normas, KPI, documentos…</target>
@@ -207,6 +371,1546 @@
       <trans-unit id="nav.itsm" datatype="html">
         <source>ITSM</source>
         <target state="translated">ITSM</target>
+      </trans-unit>
+      <trans-unit id="pdca.list.title" datatype="html">
+        <source>Cycles PDCA</source>
+        <target state="translated">Ciclos PDCA</target>
+      </trans-unit>
+      <trans-unit id="pdca.list.subtitle" datatype="html">
+        <source>Roue de Deming : Plan → Do → Check → Act.</source>
+        <target state="translated">Rueda de Deming: Plan → Do → Check → Act.</target>
+      </trans-unit>
+      <trans-unit id="pdca.list.new-cycle" datatype="html">
+        <source>Nouveau cycle</source>
+        <target state="translated">Nuevo ciclo</target>
+      </trans-unit>
+      <trans-unit id="pdca.list.col-steps" datatype="html">
+        <source>Étapes</source>
+        <target state="translated">Etapas</target>
+      </trans-unit>
+      <trans-unit id="pdca.list.empty" datatype="html">
+        <source>Aucun cycle pour ce filtre.</source>
+        <target state="translated">Ningún ciclo para este filtro.</target>
+      </trans-unit>
+      <trans-unit id="pdca.list.paginator-aria" datatype="html">
+        <source>Pagination des cycles</source>
+        <target state="translated">Paginación de ciclos</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.back-tooltip" datatype="html">
+        <source>Retour à la liste</source>
+        <target state="translated">Volver a la lista</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.eyebrow" datatype="html">
+        <source>Cycle PDCA · Roue de Deming</source>
+        <target state="translated">Ciclo PDCA · Rueda de Deming</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.cancel-tooltip" datatype="html">
+        <source>Annuler le cycle</source>
+        <target state="translated">Cancelar el ciclo</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.advance-tooltip" datatype="html">
+        <source>Passer à la phase suivante</source>
+        <target state="translated">Pasar a la fase siguiente</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.advance" datatype="html">
+        <source>Avancer la phase</source>
+        <target state="translated">Avanzar de fase</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.owner" datatype="html">
+        <source>Pilote</source>
+        <target state="translated">Responsable</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.completed-at" datatype="html">
+        <source>Clôturé le</source>
+        <target state="translated">Cerrado el</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.steps-title" datatype="html">
+        <source>Étapes</source>
+        <target state="translated">Etapas</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.add-step-tooltip" datatype="html">
+        <source>Ajouter une étape Plan / Do / Check / Act</source>
+        <target state="translated">Añadir una etapa Plan / Do / Check / Act</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.add-step" datatype="html">
+        <source>Ajouter une étape</source>
+        <target state="translated">Añadir una etapa</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.col-phase" datatype="html">
+        <source>Phase</source>
+        <target state="translated">Fase</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.col-step" datatype="html">
+        <source>Étape</source>
+        <target state="translated">Etapa</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.col-due-date" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">Vencimiento</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.col-updated" datatype="html">
+        <source>MAJ</source>
+        <target state="translated">Actualizado</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.steps-empty" datatype="html">
+        <source>Aucune étape pour l'instant. Clique sur Ajouter une étape pour démarrer ton cycle Plan → Do → Check → Act.</source>
+        <target state="translated">Aún no hay etapas. Haz clic en Añadir una etapa para iniciar tu ciclo Plan → Do → Check → Act.</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.not-found" datatype="html">
+        <source>Cycle introuvable.</source>
+        <target state="translated">Ciclo no encontrado.</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.advanced" datatype="html">
+        <source>Cycle avancé.</source>
+        <target state="translated">Ciclo avanzado.</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.advance-error" datatype="html">
+        <source>Erreur lors de l'avancement.</source>
+        <target state="translated">Error al avanzar.</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.cancelled" datatype="html">
+        <source>Cycle annulé.</source>
+        <target state="translated">Ciclo cancelado.</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.cancel-error" datatype="html">
+        <source>Erreur lors de l'annulation.</source>
+        <target state="translated">Error al cancelar.</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.title" datatype="html">
+        <source>Nouveau cycle PDCA</source>
+        <target state="translated">Nuevo ciclo PDCA</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.subtitle" datatype="html">
+        <source>Décris brièvement le problème ou l'objectif. Les étapes Plan / Do / Check / Act pourront être ajoutées ensuite.</source>
+        <target state="translated">Describe brevemente el problema o el objetivo. Las etapas Plan / Do / Check / Act se podrán añadir después.</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.cycle-title-label" datatype="html">
+        <source>Titre du cycle</source>
+        <target state="translated">Título del ciclo</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.cycle-title-placeholder" datatype="html">
+        <source>Ex. : Réduction des défauts de soudure — ligne 3</source>
+        <target state="translated">Ej.: Reducción de defectos de soldadura — línea 3</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.title-required" datatype="html">
+        <source>Le titre est requis.</source>
+        <target state="translated">El título es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.description-placeholder" datatype="html">
+        <source>Pilote, périmètre, objectif chiffré, échéance…</source>
+        <target state="translated">Responsable, alcance, objetivo cuantificado, plazo…</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.success" datatype="html">
+        <source>Cycle PDCA créé.</source>
+        <target state="translated">Ciclo PDCA creado.</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.title" datatype="html">
+        <source>Ajouter une étape</source>
+        <target state="translated">Añadir una etapa</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.subtitle" datatype="html">
+        <source>Décris l'action concrète et choisis sa phase dans le cycle PDCA.</source>
+        <target state="translated">Describe la acción concreta y elige su fase en el ciclo PDCA.</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.title-label" datatype="html">
+        <source>Titre de l'étape</source>
+        <target state="translated">Título de la etapa</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.title-placeholder" datatype="html">
+        <source>Ex. : Analyse Pareto des défauts soudure</source>
+        <target state="translated">Ej.: Análisis de Pareto de defectos de soldadura</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.description-placeholder" datatype="html">
+        <source>Méthode, livrable attendu, parties prenantes…</source>
+        <target state="translated">Método, entregable esperado, partes interesadas…</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.phase-label" datatype="html">
+        <source>Phase</source>
+        <target state="translated">Fase</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.due-date-label" datatype="html">
+        <source>Échéance (optionnel)</source>
+        <target state="translated">Vencimiento (opcional)</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.success" datatype="html">
+        <source>Étape ajoutée.</source>
+        <target state="translated">Etapa añadida.</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.add-error" datatype="html">
+        <source>Erreur lors de l'ajout.</source>
+        <target state="translated">Error al añadir.</target>
+      </trans-unit>
+      <trans-unit id="fives.list.title" datatype="html">
+        <source>Audits 5S</source>
+        <target state="translated">Auditorías 5S</target>
+      </trans-unit>
+      <trans-unit id="fives.list.subtitle" datatype="html">
+        <source>Seiri · Seiton · Seiso · Seiketsu · Shitsuke — score pondéré 0-100.</source>
+        <target state="translated">Seiri · Seiton · Seiso · Seiketsu · Shitsuke — puntuación ponderada 0-100.</target>
+      </trans-unit>
+      <trans-unit id="fives.list.new-audit" datatype="html">
+        <source>Nouvel audit</source>
+        <target state="translated">Nueva auditoría</target>
+      </trans-unit>
+      <trans-unit id="fives.list.col-scheduled" datatype="html">
+        <source>Planifié</source>
+        <target state="translated">Planificado</target>
+      </trans-unit>
+      <trans-unit id="fives.list.col-updated" datatype="html">
+        <source>MAJ</source>
+        <target state="translated">Actualizado</target>
+      </trans-unit>
+      <trans-unit id="fives.list.empty" datatype="html">
+        <source>Aucun audit pour ce filtre.</source>
+        <target state="translated">Ninguna auditoría para este filtro.</target>
+      </trans-unit>
+      <trans-unit id="fives.list.paginator-aria" datatype="html">
+        <source>Pagination des audits 5S</source>
+        <target state="translated">Paginación de auditorías 5S</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.back-tooltip" datatype="html">
+        <source>Retour à la liste</source>
+        <target state="translated">Volver a la lista</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.eyebrow" datatype="html">
+        <source>Audit 5S · Seiri · Seiton · Seiso · Seiketsu · Shitsuke</source>
+        <target state="translated">Auditoría 5S · Seiri · Seiton · Seiso · Seiketsu · Shitsuke</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.delete-tooltip" datatype="html">
+        <source>Supprimer l'audit</source>
+        <target state="translated">Eliminar la auditoría</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.cancel-tooltip" datatype="html">
+        <source>Annuler l'audit</source>
+        <target state="translated">Cancelar la auditoría</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.start-tooltip" datatype="html">
+        <source>Démarrer l'audit</source>
+        <target state="translated">Iniciar la auditoría</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.start" datatype="html">
+        <source>Démarrer</source>
+        <target state="translated">Iniciar</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.complete-tooltip" datatype="html">
+        <source>Clôturer l'audit</source>
+        <target state="translated">Cerrar la auditoría</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.complete" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">Cerrar</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.auditor" datatype="html">
+        <source>Auditeur</source>
+        <target state="translated">Auditor</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.overall-score" datatype="html">
+        <source>Score global</source>
+        <target state="translated">Puntuación global</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.scheduled" datatype="html">
+        <source>Planifié</source>
+        <target state="translated">Planificado</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.completed" datatype="html">
+        <source>Clôturé</source>
+        <target state="translated">Cerrado</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.pillar-score-label" datatype="html">
+        <source>Score (0–10)</source>
+        <target state="translated">Puntuación (0–10)</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.note-label" datatype="html">
+        <source>Note (optionnel)</source>
+        <target state="translated">Nota (opcional)</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.note-placeholder" datatype="html">
+        <source>Observation, photo URL, action…</source>
+        <target state="translated">Observación, URL de foto, acción…</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.not-found" datatype="html">
+        <source>Audit introuvable.</source>
+        <target state="translated">Auditoría no encontrada.</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.delete-confirm-title" datatype="html">
+        <source>Supprimer cet audit ?</source>
+        <target state="translated">¿Eliminar esta auditoría?</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.delete-success" datatype="html">
+        <source>Audit supprimé.</source>
+        <target state="translated">Auditoría eliminada.</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.delete-error" datatype="html">
+        <source>Erreur lors de la suppression.</source>
+        <target state="translated">Error al eliminar.</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.score-error" datatype="html">
+        <source>Erreur lors de l'enregistrement.</source>
+        <target state="translated">Error al guardar.</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.transition-error" datatype="html">
+        <source>Erreur lors de la transition.</source>
+        <target state="translated">Error durante la transición.</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiri.label" datatype="html">
+        <source>Seiri</source>
+        <target state="translated">Seiri</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiri.hint" datatype="html">
+        <source>Trier — éliminer l'inutile</source>
+        <target state="translated">Clasificar — eliminar lo innecesario</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiton.label" datatype="html">
+        <source>Seiton</source>
+        <target state="translated">Seiton</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiton.hint" datatype="html">
+        <source>Ranger — une place pour chaque chose</source>
+        <target state="translated">Ordenar — un lugar para cada cosa</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiso.label" datatype="html">
+        <source>Seiso</source>
+        <target state="translated">Seiso</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiso.hint" datatype="html">
+        <source>Nettoyer — détecter les anomalies en nettoyant</source>
+        <target state="translated">Limpiar — detectar anomalías al limpiar</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiketsu.label" datatype="html">
+        <source>Seiketsu</source>
+        <target state="translated">Seiketsu</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiketsu.hint" datatype="html">
+        <source>Standardiser — figer les pratiques</source>
+        <target state="translated">Estandarizar — fijar las prácticas</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.shitsuke.label" datatype="html">
+        <source>Shitsuke</source>
+        <target state="translated">Shitsuke</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.shitsuke.hint" datatype="html">
+        <source>Maintenir — discipliner &amp; auditer</source>
+        <target state="translated">Mantener — disciplinar y auditar</target>
+      </trans-unit>
+      <trans-unit id="fives.create.title" datatype="html">
+        <source>Nouvel audit 5S</source>
+        <target state="translated">Nueva auditoría 5S</target>
+      </trans-unit>
+      <trans-unit id="fives.create.hint" datatype="html">
+        <source>Définis la zone à auditer et la date prévue. Les scores Seiri · Seiton · Seiso · Seiketsu · Shitsuke seront saisis lors de l'audit terrain.</source>
+        <target state="translated">Define la zona a auditar y la fecha prevista. Las puntuaciones Seiri · Seiton · Seiso · Seiketsu · Shitsuke se registrarán durante la auditoría de campo.</target>
+      </trans-unit>
+      <trans-unit id="fives.create.zone-placeholder" datatype="html">
+        <source>Ex. : Atelier mécanique A — ligne 1</source>
+        <target state="translated">Ej.: Taller mecánico A — línea 1</target>
+      </trans-unit>
+      <trans-unit id="fives.create.zone-required" datatype="html">
+        <source>La zone est requise.</source>
+        <target state="translated">La zona es obligatoria.</target>
+      </trans-unit>
+      <trans-unit id="fives.create.description-placeholder" datatype="html">
+        <source>Périmètre, observations préalables, équipement…</source>
+        <target state="translated">Alcance, observaciones previas, equipo…</target>
+      </trans-unit>
+      <trans-unit id="fives.create.scheduled-label" datatype="html">
+        <source>Date prévue (optionnel)</source>
+        <target state="translated">Fecha prevista (opcional)</target>
+      </trans-unit>
+      <trans-unit id="fives.create.success" datatype="html">
+        <source>Audit 5S créé.</source>
+        <target state="translated">Auditoría 5S creada.</target>
+      </trans-unit>
+      <trans-unit id="fives.edit.title" datatype="html">
+        <source>Modifier l'audit</source>
+        <target state="translated">Editar la auditoría</target>
+      </trans-unit>
+      <trans-unit id="fives.edit.scheduled-label" datatype="html">
+        <source>Date prévue</source>
+        <target state="translated">Fecha prevista</target>
+      </trans-unit>
+      <trans-unit id="fives.edit.success" datatype="html">
+        <source>Audit mis à jour.</source>
+        <target state="translated">Auditoría actualizada.</target>
+      </trans-unit>
+      <trans-unit id="fives.edit.update-error" datatype="html">
+        <source>Erreur lors de la mise à jour.</source>
+        <target state="translated">Error al actualizar.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.title" datatype="html">
+        <source>Diagrammes Ishikawa</source>
+        <target state="translated">Diagramas de Ishikawa</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.subtitle" datatype="html">
+        <source>Cause–effet (6M / 7M / 8M) avec sous-causes (5 Pourquoi) et scoring racine.</source>
+        <target state="translated">Causa–efecto (6M / 7M / 8M) con subcausas (5 Porqués) y puntuación de causa raíz.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.new-diagram" datatype="html">
+        <source>Nouveau diagramme</source>
+        <target state="translated">Nuevo diagrama</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.col-problem" datatype="html">
+        <source>Problème</source>
+        <target state="translated">Problema</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.col-mode" datatype="html">
+        <source>Mode</source>
+        <target state="translated">Modo</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.col-causes" datatype="html">
+        <source>Causes</source>
+        <target state="translated">Causas</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.empty" datatype="html">
+        <source>Aucun diagramme pour ce filtre.</source>
+        <target state="translated">Ningún diagrama para este filtro.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.paginator-aria" datatype="html">
+        <source>Pagination des diagrammes</source>
+        <target state="translated">Paginación de diagramas</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.back-tooltip" datatype="html">
+        <source>Retour à la liste</source>
+        <target state="translated">Volver a la lista</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.eyebrow" datatype="html">
+        <source>Diagramme Ishikawa · Cause–effet</source>
+        <target state="translated">Diagrama de Ishikawa · Causa–efecto</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.delete-tooltip" datatype="html">
+        <source>Supprimer le diagramme</source>
+        <target state="translated">Eliminar el diagrama</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.suggest-tooltip" datatype="html">
+        <source>Suggérer des causes probables par l'IA</source>
+        <target state="translated">Sugerir causas probables con IA</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.add-cause" datatype="html">
+        <source>Ajouter une cause</source>
+        <target state="translated">Añadir una causa</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.mode" datatype="html">
+        <source>Mode</source>
+        <target state="translated">Modo</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.owner" datatype="html">
+        <source>Pilote</source>
+        <target state="translated">Responsable</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.causes-total" datatype="html">
+        <source>Causes totales</source>
+        <target state="translated">Causas totales</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.maj" datatype="html">
+        <source>MAJ</source>
+        <target state="translated">Actualizado</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.suggest-region-aria" datatype="html">
+        <source>Causes suggérées par l'IA</source>
+        <target state="translated">Causas sugeridas por IA</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.suggest-title" datatype="html">
+        <source>Causes suggérées par l'IA</source>
+        <target state="translated">Causas sugeridas por IA</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.dismiss-aria" datatype="html">
+        <source>Masquer les suggestions</source>
+        <target state="translated">Ocultar las sugerencias</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.dismiss-tooltip" datatype="html">
+        <source>Masquer</source>
+        <target state="translated">Ocultar</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.generating-aria" datatype="html">
+        <source>Génération des causes en cours</source>
+        <target state="translated">Generando causas</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.generating" datatype="html">
+        <source>Génération des causes probables… (peut prendre ~1 min sur CPU)</source>
+        <target state="translated">Generando causas probables… (puede tardar ~1 min en CPU)</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.suggest-hint" datatype="html">
+        <source>L'IA suggère, vous validez : « Ajouter » intègre la cause au diagramme.</source>
+        <target state="translated">La IA sugiere, usted valida: «Añadir» integra la causa en el diagrama.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.branch-empty" datatype="html">
+        <source>Aucune cause pour cette branche.</source>
+        <target state="translated">Ninguna causa para esta rama.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.add-why-tooltip" datatype="html">
+        <source>Ajouter un Pourquoi ?</source>
+        <target state="translated">¿Añadir un Porqué?</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.delete-confirm-title" datatype="html">
+        <source>Supprimer ce diagramme ?</source>
+        <target state="translated">¿Eliminar este diagrama?</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.deleted" datatype="html">
+        <source>Diagramme supprimé.</source>
+        <target state="translated">Diagrama eliminado.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.not-found" datatype="html">
+        <source>Diagramme introuvable.</source>
+        <target state="translated">Diagrama no encontrado.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.no-suggestions" datatype="html">
+        <source>Aucune suggestion exploitable — reformulez le problème.</source>
+        <target state="translated">Ninguna sugerencia útil — reformule el problema.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.suggest-unavailable" datatype="html">
+        <source>Suggestion IA indisponible (ai-service / Ollama).</source>
+        <target state="translated">Sugerencia de IA no disponible (ai-service / Ollama).</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.cause-added" datatype="html">
+        <source>Cause ajoutée au diagramme.</source>
+        <target state="translated">Causa añadida al diagrama.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.title" datatype="html">
+        <source>Nouveau diagramme Ishikawa</source>
+        <target state="translated">Nuevo diagrama de Ishikawa</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.subtitle" datatype="html">
+        <source>Formule clairement le problème observé. Les branches et causes pourront être enrichies après création (avec l'aide de l'IA).</source>
+        <target state="translated">Formule claramente el problema observado. Las ramas y causas podrán enriquecerse tras la creación (con ayuda de la IA).</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.problem-label" datatype="html">
+        <source>Énoncé du problème</source>
+        <target state="translated">Enunciado del problema</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.problem-placeholder" datatype="html">
+        <source>Ex. : Hausse des défauts de soudure ligne 3 (+18% sur 30j)</source>
+        <target state="translated">Ej.: Aumento de defectos de soldadura en la línea 3 (+18% en 30 d)</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.problem-required" datatype="html">
+        <source>L'énoncé est requis.</source>
+        <target state="translated">El enunciado es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.desc-placeholder" datatype="html">
+        <source>Contexte, participants, périmètre…</source>
+        <target state="translated">Contexto, participantes, alcance…</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.mode-label" datatype="html">
+        <source>Mode d'analyse</source>
+        <target state="translated">Modo de análisis</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.created" datatype="html">
+        <source>Diagramme Ishikawa créé.</source>
+        <target state="translated">Diagrama de Ishikawa creado.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.edit.title" datatype="html">
+        <source>Modifier le diagramme</source>
+        <target state="translated">Editar el diagrama</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.edit.mode" datatype="html">
+        <source>Mode</source>
+        <target state="translated">Modo</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.edit.updated" datatype="html">
+        <source>Diagramme mis à jour.</source>
+        <target state="translated">Diagrama actualizado.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.parent-prefix" datatype="html">
+        <source>Cette sous-cause sera rattachée à</source>
+        <target state="translated">Esta subcausa se vinculará a</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.hint" datatype="html">
+        <source>Choisis la branche (M) et formule la cause de façon concise. Le scoring racine sera ajusté plus tard par l'analyse 5 Pourquoi.</source>
+        <target state="translated">Elija la rama (M) y formule la causa de forma concisa. La puntuación raíz se ajustará más tarde mediante el análisis de los 5 Porqués.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.branch-label" datatype="html">
+        <source>Branche</source>
+        <target state="translated">Rama</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.branch-hint" datatype="html">
+        <source>Héritée de la cause parente.</source>
+        <target state="translated">Heredada de la causa principal.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.label-label" datatype="html">
+        <source>Libellé de la cause</source>
+        <target state="translated">Etiqueta de la causa</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.label-placeholder" datatype="html">
+        <source>Ex. : Calibration robot soudure dérivée</source>
+        <target state="translated">Ej.: Desviación de la calibración del robot de soldadura</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.label-required" datatype="html">
+        <source>Le libellé est requis.</source>
+        <target state="translated">La etiqueta es obligatoria.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.desc-placeholder" datatype="html">
+        <source>Détails, mesures, observations…</source>
+        <target state="translated">Detalles, mediciones, observaciones…</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.score-label" datatype="html">
+        <source>Score racine (0 → 1, optionnel)</source>
+        <target state="translated">Puntuación raíz (0 → 1, opcional)</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.score-hint" datatype="html">
+        <source>Probabilité estimée que ce soit une cause racine.</source>
+        <target state="translated">Probabilidad estimada de que sea una causa raíz.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.added" datatype="html">
+        <source>Cause ajoutée.</source>
+        <target state="translated">Causa añadida.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.title" datatype="html">
+        <source>Projets DMAIC</source>
+        <target state="translated">Proyectos DMAIC</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.subtitle" datatype="html">
+        <source>Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.</source>
+        <target state="translated">Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.new-project" datatype="html">
+        <source>Nouveau projet</source>
+        <target state="translated">Nuevo proyecto</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.phase" datatype="html">
+        <source>Phase</source>
+        <target state="translated">Fase</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.all-phases" datatype="html">
+        <source>Toutes</source>
+        <target state="translated">Todas</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.col-project" datatype="html">
+        <source>Projet</source>
+        <target state="translated">Proyecto</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.col-measures" datatype="html">
+        <source>Mesures</source>
+        <target state="translated">Mediciones</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.col-pokayoke" datatype="html">
+        <source>Poka-Yoke</source>
+        <target state="translated">Poka-Yoke</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.col-deadline" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">Fecha límite</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.target-prefix" datatype="html">
+        <source>Cible :</source>
+        <target state="translated">Objetivo:</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.savings-prefix" datatype="html">
+        <source>Économies estimées :</source>
+        <target state="translated">Ahorros estimados:</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.advance" datatype="html">
+        <source>Avancer</source>
+        <target state="translated">Avanzar</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.hold" datatype="html">
+        <source>Pause</source>
+        <target state="translated">Pausar</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.resume" datatype="html">
+        <source>Reprendre</source>
+        <target state="translated">Reanudar</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.charter" datatype="html">
+        <source>Charter</source>
+        <target state="translated">Acta</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.problem-label" datatype="html">
+        <source>Problème :</source>
+        <target state="translated">Problema:</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.goal-label" datatype="html">
+        <source>Objectif :</source>
+        <target state="translated">Objetivo:</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.specs" datatype="html">
+        <source>Spécifications</source>
+        <target state="translated">Especificaciones</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.lsl" datatype="html">
+        <source>LSL</source>
+        <target state="translated">LSL</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">Objetivo</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.usl" datatype="html">
+        <source>USL</source>
+        <target state="translated">USL</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.capability" datatype="html">
+        <source>Capabilité (Cp / Cpk)</source>
+        <target state="translated">Capacidad (Cp / Cpk)</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.sample" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">Muestra</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.mean" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">Media</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.sigma-level" datatype="html">
+        <source>Niveau σ</source>
+        <target state="translated">Nivel σ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.no-capability" datatype="html">
+        <source>Données insuffisantes pour le calcul.</source>
+        <target state="translated">Datos insuficientes para el cálculo.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.measures-title" datatype="html">
+        <source>Mesures</source>
+        <target state="translated">Mediciones</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.new-measure" datatype="html">
+        <source>Nouvelle mesure</source>
+        <target state="translated">Nueva medición</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.col-value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">Valor</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.col-subgroup" datatype="html">
+        <source>Sous-groupe</source>
+        <target state="translated">Subgrupo</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.col-ref" datatype="html">
+        <source>Réf.</source>
+        <target state="translated">Ref.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.measures-empty" datatype="html">
+        <source>Aucune mesure pour l'instant.</source>
+        <target state="translated">Ninguna medición por ahora.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.assign-pokayoke" datatype="html">
+        <source>Assigner un Poka-Yoke</source>
+        <target state="translated">Asignar un Poka-Yoke</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.col-code" datatype="html">
+        <source>Code</source>
+        <target state="translated">Código</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.col-note" datatype="html">
+        <source>Note</source>
+        <target state="translated">Nota</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.pokayoke-empty" datatype="html">
+        <source>Aucun Poka-Yoke assigné.</source>
+        <target state="translated">Ningún Poka-Yoke asignado.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.phase-advanced" datatype="html">
+        <source>Phase avancée.</source>
+        <target state="translated">Fase avanzada.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.advance-failed" datatype="html">
+        <source>Avance impossible.</source>
+        <target state="translated">No se puede avanzar.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.project-held" datatype="html">
+        <source>Projet en pause.</source>
+        <target state="translated">Proyecto en pausa.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.hold-failed" datatype="html">
+        <source>Mise en pause impossible.</source>
+        <target state="translated">No se puede pausar.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.project-resumed" datatype="html">
+        <source>Projet repris.</source>
+        <target state="translated">Proyecto reanudado.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.resume-failed" datatype="html">
+        <source>Reprise impossible.</source>
+        <target state="translated">No se puede reanudar.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.cancel-confirm-title" datatype="html">
+        <source>Annuler le projet ?</source>
+        <target state="translated">¿Cancelar el proyecto?</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.cancel-confirm-label" datatype="html">
+        <source>Annuler le projet</source>
+        <target state="translated">Cancelar proyecto</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.keep-label" datatype="html">
+        <source>Conserver</source>
+        <target state="translated">Conservar</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.project-cancelled" datatype="html">
+        <source>Projet annulé.</source>
+        <target state="translated">Proyecto cancelado.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.cancel-failed" datatype="html">
+        <source>Annulation impossible.</source>
+        <target state="translated">No se puede cancelar.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.delete-confirm-title" datatype="html">
+        <source>Supprimer le projet ?</source>
+        <target state="translated">¿Eliminar el proyecto?</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.project-deleted" datatype="html">
+        <source>Projet supprimé.</source>
+        <target state="translated">Proyecto eliminado.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.delete-measure-title" datatype="html">
+        <source>Supprimer la mesure ?</source>
+        <target state="translated">¿Eliminar la medición?</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.delete-measure-message" datatype="html">
+        <source>Cette mesure sera retirée du calcul de capabilité.</source>
+        <target state="translated">Esta medición se excluirá del cálculo de capacidad.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.delete-assignment-title" datatype="html">
+        <source>Supprimer l'assignation ?</source>
+        <target state="translated">¿Eliminar la asignación?</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.title" datatype="html">
+        <source>Nouveau projet DMAIC</source>
+        <target state="translated">Nuevo proyecto DMAIC</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.title-placeholder" datatype="html">
+        <source>Ex. : Réduire le taux de rebut ligne A</source>
+        <target state="translated">Ej.: Reducir la tasa de desechos en la línea A</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.problem-label" datatype="html">
+        <source>Énoncé du problème</source>
+        <target state="translated">Enunciado del problema</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.problem-placeholder" datatype="html">
+        <source>Contexte, données chiffrées du problème</source>
+        <target state="translated">Contexto, datos cuantificados del problema</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.goal-label" datatype="html">
+        <source>Énoncé de l'objectif</source>
+        <target state="translated">Enunciado del objetivo</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.goal-placeholder" datatype="html">
+        <source>Objectif SMART + impact business attendu</source>
+        <target state="translated">Objetivo SMART + impacto empresarial esperado</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.champion-label" datatype="html">
+        <source>Champion (ID)</source>
+        <target state="translated">Champion (ID)</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.champion-placeholder" datatype="html">
+        <source>UUID utilisateur</source>
+        <target state="translated">UUID de usuario</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.target-date-label" datatype="html">
+        <source>Date cible</source>
+        <target state="translated">Fecha objetivo</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.specs-section" datatype="html">
+        <source>Spécifications procédé (optionnel — requis pour Cp/Cpk)</source>
+        <target state="translated">Especificaciones del proceso (opcional — requerido para Cp/Cpk)</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.unit-label" datatype="html">
+        <source>Unité</source>
+        <target state="translated">Unidad</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.unit-placeholder" datatype="html">
+        <source>mm, s, °C…</source>
+        <target state="translated">mm, s, °C…</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.savings-label" datatype="html">
+        <source>Économies estimées (€)</source>
+        <target state="translated">Ahorros estimados (€)</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.created" datatype="html">
+        <source>Projet DMAIC créé.</source>
+        <target state="translated">Proyecto DMAIC creado.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.edit.title" datatype="html">
+        <source>Modifier le projet</source>
+        <target state="translated">Editar proyecto</target>
+      </trans-unit>
+      <trans-unit id="dmaic.edit.specs-section" datatype="html">
+        <source>Spécifications procédé</source>
+        <target state="translated">Especificaciones del proceso</target>
+      </trans-unit>
+      <trans-unit id="dmaic.edit.updated" datatype="html">
+        <source>Projet mis à jour.</source>
+        <target state="translated">Proyecto actualizado.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.title" datatype="html">
+        <source>Nouvelle mesure</source>
+        <target state="translated">Nueva medición</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.subtitle" datatype="html">
+        <source>Mesure d'un point caractéristique du procédé (Y critique). Sera utilisée pour le calcul des indices de capabilité Cp/Cpk.</source>
+        <target state="translated">Medición de una característica del proceso (Y crítica). Se usará para calcular los índices de capacidad Cp/Cpk.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.subgroup-placeholder" datatype="html">
+        <source>Ex. : équipe-A, machine-3</source>
+        <target state="translated">Ej.: equipo-A, máquina-3</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.datetime-label" datatype="html">
+        <source>Date / heure</source>
+        <target state="translated">Fecha / hora</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.source-label" datatype="html">
+        <source>Référence source</source>
+        <target state="translated">Referencia de origen</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.source-placeholder" datatype="html">
+        <source>Ex. : OF-2026-1145, lot-3214</source>
+        <target state="translated">Ej.: OF-2026-1145, lote-3214</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.value-required" datatype="html">
+        <source>Une valeur numérique est requise.</source>
+        <target state="translated">Se requiere un valor numérico.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.saved" datatype="html">
+        <source>Mesure enregistrée.</source>
+        <target state="translated">Medición guardada.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.error-save" datatype="html">
+        <source>Erreur lors de l'enregistrement.</source>
+        <target state="translated">Error al guardar.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.title" datatype="html">
+        <source>Assigner un Poka-Yoke</source>
+        <target state="translated">Asignar un Poka-Yoke</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.subtitle" datatype="html">
+        <source>Dispositif de prévention ou de détection issu du catalogue, attaché au projet (phase Improve). Workflow par défaut : PROPOSED → IN_DESIGN → IMPLEMENTED → VERIFIED.</source>
+        <target state="translated">Dispositivo de prevención o detección del catálogo, asociado al proyecto (fase Improve). Flujo por defecto: PROPOSED → IN_DESIGN → IMPLEMENTED → VERIFIED.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.submit" datatype="html">
+        <source>Assigner</source>
+        <target state="translated">Asignar</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.mechanism-label" datatype="html">
+        <source>Mécanisme</source>
+        <target state="translated">Mecanismo</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.loading-catalog" datatype="html">
+        <source>Chargement du catalogue…</source>
+        <target state="translated">Cargando el catálogo…</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.device-label" datatype="html">
+        <source>Dispositif</source>
+        <target state="translated">Dispositivo</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.note-placeholder" datatype="html">
+        <source>Implémentation prévue, contraintes, lien CAPA…</source>
+        <target state="translated">Implementación prevista, restricciones, enlace CAPA…</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.catalog-unavailable" datatype="html">
+        <source>Catalogue Poka-Yoke indisponible.</source>
+        <target state="translated">Catálogo Poka-Yoke no disponible.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.assigned" datatype="html">
+        <source>Poka-Yoke assigné.</source>
+        <target state="translated">Poka-Yoke asignado.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.error-assign" datatype="html">
+        <source>Erreur lors de l'assignation.</source>
+        <target state="translated">Error al asignar.</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.title" datatype="html">
+        <source>Détection d'anomalies SPC</source>
+        <target state="translated">Detección de anomalías SPC</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.subtitle" datatype="html">
+        <source>Carte des valeurs individuelles — limites de contrôle (σ = MR̄/d₂) et 8 règles de Nelson, calculées par l'IA.</source>
+        <target state="translated">Gráfico de valores individuales — límites de control (σ = MR̄/d₂) y 8 reglas de Nelson, calculados por IA.</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.series-panel" datatype="html">
+        <source>Série de mesures</source>
+        <target state="translated">Serie de mediciones</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.measures-label" datatype="html">
+        <source>Mesures (séparées par virgule, espace ou retour ligne)</source>
+        <target state="translated">Mediciones (separadas por coma, espacio o salto de línea)</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.baseline-hint" datatype="html">
+        <source>Baseline connue (optionnel) — sinon les limites sont estimées :</source>
+        <target state="translated">Línea base conocida (opcional) — de lo contrario los límites se estiman:</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.center-label" datatype="html">
+        <source>Ligne centrale (center)</source>
+        <target state="translated">Línea central (center)</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.sigma-label" datatype="html">
+        <source>σ (sigma)</source>
+        <target state="translated">σ (sigma)</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.analyze-series" datatype="html">
+        <source>Analyser la série</source>
+        <target state="translated">Analizar la serie</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.analyzing" datatype="html">
+        <source>Analyse…</source>
+        <target state="translated">Analizando…</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.example" datatype="html">
+        <source>Exemple</source>
+        <target state="translated">Ejemplo</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.from-kpi-panel" datatype="html">
+        <source>Depuis un KPI</source>
+        <target state="translated">Desde un KPI</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.from-kpi-hint" datatype="html">
+        <source>Tire automatiquement les dernières mesures d'un KPI du catalogue.</source>
+        <target state="translated">Extrae automáticamente las últimas mediciones de un KPI del catálogo.</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.no-kpi" datatype="html">
+        <source>Aucun KPI au catalogue.</source>
+        <target state="translated">Ningún KPI en el catálogo.</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.window-label" datatype="html">
+        <source>Fenêtre (nombre de mesures)</source>
+        <target state="translated">Ventana (número de mediciones)</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.open-capa" datatype="html">
+        <source>Ouvrir une CAPA si le procédé est hors-contrôle</source>
+        <target state="translated">Abrir una CAPA si el proceso está fuera de control</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.analyze-kpi" datatype="html">
+        <source>Analyser le KPI</source>
+        <target state="translated">Analizar el KPI</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.capa-open-link" datatype="html">
+        <source>CAPA ouverte — voir le dossier</source>
+        <target state="translated">CAPA abierta — ver expediente</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.process-state" datatype="html">
+        <source>État du procédé</source>
+        <target state="translated">Estado del proceso</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.state-out" datatype="html">
+        <source>Hors contrôle</source>
+        <target state="translated">Fuera de control</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.state-in" datatype="html">
+        <source>Sous contrôle</source>
+        <target state="translated">Bajo control</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.center-line" datatype="html">
+        <source>Ligne centrale</source>
+        <target state="translated">Línea central</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.center-estimated" datatype="html">
+        <source>Estimée depuis la série</source>
+        <target state="translated">Estimada a partir de la serie</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.center-baseline" datatype="html">
+        <source>Baseline fournie</source>
+        <target state="translated">Línea base proporcionada</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.control-limits" datatype="html">
+        <source>Limites de contrôle (3σ)</source>
+        <target state="translated">Límites de control (3σ)</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.control-chart" datatype="html">
+        <source>Carte de contrôle</source>
+        <target state="translated">Gráfico de control</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.nelson-rules" datatype="html">
+        <source>Règles de Nelson déclenchées</source>
+        <target state="translated">Reglas de Nelson activadas</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.no-violation" datatype="html">
+        <source>Aucune règle déclenchée : le procédé est statistiquement maîtrisé 🎉</source>
+        <target state="translated">Ninguna regla activada: el proceso está estadísticamente bajo control 🎉</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.col-rule" datatype="html">
+        <source>Règle</source>
+        <target state="translated">Regla</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.col-severity" datatype="html">
+        <source>Sévérité</source>
+        <target state="translated">Severidad</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.col-finding" datatype="html">
+        <source>Constat</source>
+        <target state="translated">Constatación</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.col-points" datatype="html">
+        <source>Points concernés</source>
+        <target state="translated">Puntos afectados</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-no-measure" datatype="html">
+        <source>Saisissez au moins une mesure numérique.</source>
+        <target state="translated">Introduzca al menos una medición numérica.</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-baseline-both" datatype="html">
+        <source>La baseline exige center ET σ (ou aucun des deux).</source>
+        <target state="translated">La línea base requiere center Y σ (o ninguno).</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-sigma-positive" datatype="html">
+        <source>σ doit être strictement positif.</source>
+        <target state="translated">σ debe ser estrictamente positivo.</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-select-kpi" datatype="html">
+        <source>Sélectionnez un KPI.</source>
+        <target state="translated">Seleccione un KPI.</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-min-two" datatype="html">
+        <source>Au moins 2 mesures sont nécessaires pour ce KPI.</source>
+        <target state="translated">Se requieren al menos 2 mediciones para este KPI.</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">Backend inaccesible (¿engine en 8082?).</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-invalid-series" datatype="html">
+        <source>Série invalide (1 à 10000 mesures attendues).</source>
+        <target state="translated">Serie no válida (se esperan de 1 a 10000 mediciones).</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-too-large" datatype="html">
+        <source>Série trop volumineuse (garde-fou IA).</source>
+        <target state="translated">Serie demasiado grande (salvaguarda de IA).</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">Tasa/cuota de IA superada para este tenant — inténtelo más tarde.</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-gateway" datatype="html">
+        <source>Passerelle IA indisponible (ai-service injoignable).</source>
+        <target state="translated">Pasarela de IA no disponible (ai-service inaccesible).</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-unavailable" datatype="html">
+        <source>Service IA momentanément indisponible (disjoncteur ouvert).</source>
+        <target state="translated">Servicio de IA temporalmente no disponible (disyuntor abierto).</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-generic" datatype="html">
+        <source>Échec de l'analyse SPC (HTTP <x id="status"/>).</source>
+        <target state="translated">Error en el análisis SPC (HTTP <x id="status"/>).</target>
+      </trans-unit>
+      <trans-unit id="circles.list.title" datatype="html">
+        <source>Cercles de Qualité</source>
+        <target state="translated">Círculos de calidad</target>
+      </trans-unit>
+      <trans-unit id="circles.list.subtitle" datatype="html">
+        <source>Groupes 5-10 personnes, réunions, propositions PROPOSED → MEASURED.</source>
+        <target state="translated">Grupos de 5-10 personas, reuniones, propuestas PROPOSED → MEASURED.</target>
+      </trans-unit>
+      <trans-unit id="circles.list.new-circle" datatype="html">
+        <source>Nouveau cercle</source>
+        <target state="translated">Nuevo círculo</target>
+      </trans-unit>
+      <trans-unit id="circles.list.col-members" datatype="html">
+        <source>Membres</source>
+        <target state="translated">Miembros</target>
+      </trans-unit>
+      <trans-unit id="circles.list.col-meetings" datatype="html">
+        <source>Réunions</source>
+        <target state="translated">Reuniones</target>
+      </trans-unit>
+      <trans-unit id="circles.list.col-proposals" datatype="html">
+        <source>Propositions</source>
+        <target state="translated">Propuestas</target>
+      </trans-unit>
+      <trans-unit id="circles.list.col-updated" datatype="html">
+        <source>MAJ</source>
+        <target state="translated">Actualizado</target>
+      </trans-unit>
+      <trans-unit id="circles.list.empty" datatype="html">
+        <source>Aucun cercle.</source>
+        <target state="translated">Ningún círculo.</target>
+      </trans-unit>
+      <trans-unit id="circles.list.paginator-aria" datatype="html">
+        <source>Pagination des cercles</source>
+        <target state="translated">Paginación de círculos</target>
+      </trans-unit>
+      <trans-unit id="circles.list.load-error" datatype="html">
+        <source>Erreur lors du chargement.</source>
+        <target state="translated">Error al cargar.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.back-tooltip" datatype="html">
+        <source>Retour à la liste</source>
+        <target state="translated">Volver a la lista</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.not-found" datatype="html">
+        <source>Cercle introuvable</source>
+        <target state="translated">Círculo no encontrado</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.eyebrow" datatype="html">
+        <source>Cercle de Qualité · Groupe d'amélioration continue</source>
+        <target state="translated">Círculo de calidad · Grupo de mejora continua</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.delete-tooltip" datatype="html">
+        <source>Supprimer le cercle</source>
+        <target state="translated">Eliminar círculo</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.archive" datatype="html">
+        <source>Archiver</source>
+        <target state="translated">Archivar</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.archive-tooltip" datatype="html">
+        <source>Archiver le cercle</source>
+        <target state="translated">Archivar círculo</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.pause" datatype="html">
+        <source>Pause</source>
+        <target state="translated">Pausar</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.pause-tooltip" datatype="html">
+        <source>Mettre en pause</source>
+        <target state="translated">Poner en pausa</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.resume" datatype="html">
+        <source>Réactiver</source>
+        <target state="translated">Reactivar</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.resume-tooltip" datatype="html">
+        <source>Réactiver</source>
+        <target state="translated">Reactivar</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.topic" datatype="html">
+        <source>Thème</source>
+        <target state="translated">Tema</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.members" datatype="html">
+        <source>Membres</source>
+        <target state="translated">Miembros</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.meetings" datatype="html">
+        <source>Réunions</source>
+        <target state="translated">Reuniones</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.proposals" datatype="html">
+        <source>Propositions</source>
+        <target state="translated">Propuestas</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.updated" datatype="html">
+        <source>MAJ</source>
+        <target state="translated">Actualizado</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.add-member" datatype="html">
+        <source>Ajouter un membre</source>
+        <target state="translated">Añadir miembro</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.role" datatype="html">
+        <source>Rôle</source>
+        <target state="translated">Rol</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.user-id" datatype="html">
+        <source>User ID</source>
+        <target state="translated">ID de usuario</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.joined-at" datatype="html">
+        <source>Rejoint le</source>
+        <target state="translated">Se unió el</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.no-member" datatype="html">
+        <source>Aucun membre. Clique sur Ajouter un membre pour construire l'équipe.</source>
+        <target state="translated">Ningún miembro. Haga clic en Añadir miembro para formar el equipo.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.schedule-meeting" datatype="html">
+        <source>Planifier une réunion</source>
+        <target state="translated">Programar una reunión</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.when" datatype="html">
+        <source>Quand</source>
+        <target state="translated">Cuándo</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.location" datatype="html">
+        <source>Lieu</source>
+        <target state="translated">Lugar</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.no-meeting" datatype="html">
+        <source>Aucune réunion planifiée.</source>
+        <target state="translated">Ninguna reunión programada.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.new-proposal" datatype="html">
+        <source>Nouvelle proposition</source>
+        <target state="translated">Nueva propuesta</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.proposed-by" datatype="html">
+        <source>Proposé par</source>
+        <target state="translated">Propuesto por</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.no-proposal" datatype="html">
+        <source>Aucune proposition. Workflow attendu : PROPOSED → APPROVED → IMPLEMENTED → MEASURED.</source>
+        <target state="translated">Ninguna propuesta. Flujo esperado: PROPOSED → APPROVED → IMPLEMENTED → MEASURED.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.invalid-id" datatype="html">
+        <source>Identifiant invalide.</source>
+        <target state="translated">Identificador no válido.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.load-error" datatype="html">
+        <source>Cercle introuvable.</source>
+        <target state="translated">Círculo no encontrado.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.delete-confirm-title" datatype="html">
+        <source>Supprimer ce cercle ?</source>
+        <target state="translated">¿Eliminar este círculo?</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.delete-confirm-message" datatype="html">
+        <source>« <x id="name"/> », ses membres, réunions et propositions seront supprimés définitivement.</source>
+        <target state="translated">«<x id="name"/>», sus miembros, reuniones y propuestas se eliminarán definitivamente.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.deleted" datatype="html">
+        <source>Cercle supprimé.</source>
+        <target state="translated">Círculo eliminado.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.delete-error" datatype="html">
+        <source>Erreur lors de la suppression.</source>
+        <target state="translated">Error al eliminar.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.paused" datatype="html">
+        <source>Cercle mis en pause.</source>
+        <target state="translated">Círculo en pausa.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.resumed" datatype="html">
+        <source>Cercle réactivé.</source>
+        <target state="translated">Círculo reactivado.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.archived" datatype="html">
+        <source>Cercle archivé.</source>
+        <target state="translated">Círculo archivado.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.transition-error" datatype="html">
+        <source>Erreur lors de la transition.</source>
+        <target state="translated">Error durante la transición.</target>
+      </trans-unit>
+      <trans-unit id="circles.create.title" datatype="html">
+        <source>Nouveau cercle de qualité</source>
+        <target state="translated">Nuevo círculo de calidad</target>
+      </trans-unit>
+      <trans-unit id="circles.create.subtitle" datatype="html">
+        <source>Crée le groupe (5-10 personnes recommandé). Les membres, réunions et propositions seront ajoutés ensuite.</source>
+        <target state="translated">Crea el grupo (se recomiendan 5-10 personas). Los miembros, reuniones y propuestas se añadirán después.</target>
+      </trans-unit>
+      <trans-unit id="circles.create.name-label" datatype="html">
+        <source>Nom du cercle</source>
+        <target state="translated">Nombre del círculo</target>
+      </trans-unit>
+      <trans-unit id="circles.create.name-placeholder" datatype="html">
+        <source>Ex. : Cercle production ligne 3</source>
+        <target state="translated">Ej.: Círculo producción línea 3</target>
+      </trans-unit>
+      <trans-unit id="circles.create.name-required" datatype="html">
+        <source>Le nom est requis.</source>
+        <target state="translated">El nombre es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="circles.create.maxlength" datatype="html">
+        <source>255 caractères maximum.</source>
+        <target state="translated">255 caracteres máximo.</target>
+      </trans-unit>
+      <trans-unit id="circles.create.topic-label" datatype="html">
+        <source>Thème (optionnel)</source>
+        <target state="translated">Tema (opcional)</target>
+      </trans-unit>
+      <trans-unit id="circles.create.topic-placeholder" datatype="html">
+        <source>Ex. : production-soudure, fournisseurs, sécurité</source>
+        <target state="translated">Ej.: producción-soldadura, proveedores, seguridad</target>
+      </trans-unit>
+      <trans-unit id="circles.create.description-label" datatype="html">
+        <source>Description (optionnel)</source>
+        <target state="translated">Descripción (opcional)</target>
+      </trans-unit>
+      <trans-unit id="circles.create.description-placeholder" datatype="html">
+        <source>Mission du cercle, périmètre, fréquence visée…</source>
+        <target state="translated">Misión del círculo, alcance, frecuencia prevista…</target>
+      </trans-unit>
+      <trans-unit id="circles.create.created" datatype="html">
+        <source>Cercle créé.</source>
+        <target state="translated">Círculo creado.</target>
+      </trans-unit>
+      <trans-unit id="circles.create.error" datatype="html">
+        <source>Erreur lors de la création.</source>
+        <target state="translated">Error al crear.</target>
+      </trans-unit>
+      <trans-unit id="circles.edit.title" datatype="html">
+        <source>Modifier le cercle</source>
+        <target state="translated">Editar círculo</target>
+      </trans-unit>
+      <trans-unit id="circles.edit.updated" datatype="html">
+        <source>Cercle mis à jour.</source>
+        <target state="translated">Círculo actualizado.</target>
+      </trans-unit>
+      <trans-unit id="circles.edit.error" datatype="html">
+        <source>Erreur lors de la mise à jour.</source>
+        <target state="translated">Error al actualizar.</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.title" datatype="html">
+        <source>Planifier une réunion</source>
+        <target state="translated">Programar una reunión</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.submit" datatype="html">
+        <source>Planifier</source>
+        <target state="translated">Programar</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.title-placeholder" datatype="html">
+        <source>Ex. : Revue mensuelle production</source>
+        <target state="translated">Ej.: Revisión mensual de producción</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.agenda" datatype="html">
+        <source>Ordre du jour</source>
+        <target state="translated">Orden del día</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.agenda-placeholder" datatype="html">
+        <source>Points à aborder, propositions à valider…</source>
+        <target state="translated">Puntos a tratar, propuestas a aprobar…</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.datetime" datatype="html">
+        <source>Date et heure</source>
+        <target state="translated">Fecha y hora</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.duration" datatype="html">
+        <source>Durée (min)</source>
+        <target state="translated">Duración (min)</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.location-placeholder" datatype="html">
+        <source>Salle, ou lien visio</source>
+        <target state="translated">Sala, o enlace de videollamada</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.scheduled" datatype="html">
+        <source>Réunion planifiée.</source>
+        <target state="translated">Reunión programada.</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.error" datatype="html">
+        <source>Erreur lors de la planification.</source>
+        <target state="translated">Error al programar.</target>
+      </trans-unit>
+      <trans-unit id="circles.member.title" datatype="html">
+        <source>Ajouter un membre</source>
+        <target state="translated">Añadir un miembro</target>
+      </trans-unit>
+      <trans-unit id="circles.member.hint" datatype="html">
+        <source>Renseigne l'identifiant utilisateur (UUID) et le rôle. La liste de sélection sera branchée sur l'annuaire Keycloak dans une prochaine itération.</source>
+        <target state="translated">Introduzca el identificador de usuario (UUID) y el rol. La lista de selección se conectará al directorio Keycloak en una próxima iteración.</target>
+      </trans-unit>
+      <trans-unit id="circles.member.user-id" datatype="html">
+        <source>User ID (UUID)</source>
+        <target state="translated">ID de usuario (UUID)</target>
+      </trans-unit>
+      <trans-unit id="circles.member.uuid-required" datatype="html">
+        <source>UUID requis.</source>
+        <target state="translated">UUID obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="circles.member.uuid-invalid" datatype="html">
+        <source>Format UUID invalide.</source>
+        <target state="translated">Formato UUID no válido.</target>
+      </trans-unit>
+      <trans-unit id="circles.member.role-facilitator" datatype="html">
+        <source>Animateur</source>
+        <target state="translated">Facilitador</target>
+      </trans-unit>
+      <trans-unit id="circles.member.role-secretary" datatype="html">
+        <source>Secrétaire</source>
+        <target state="translated">Secretario</target>
+      </trans-unit>
+      <trans-unit id="circles.member.role-member" datatype="html">
+        <source>Membre</source>
+        <target state="translated">Miembro</target>
+      </trans-unit>
+      <trans-unit id="circles.member.added" datatype="html">
+        <source>Membre ajouté.</source>
+        <target state="translated">Miembro añadido.</target>
+      </trans-unit>
+      <trans-unit id="circles.member.error" datatype="html">
+        <source>Erreur lors de l'ajout.</source>
+        <target state="translated">Error al añadir.</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.title" datatype="html">
+        <source>Nouvelle proposition</source>
+        <target state="translated">Nueva propuesta</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.subtitle" datatype="html">
+        <source>Idée d'amélioration soumise au cercle. Elle sera évaluée puis implémentée et mesurée si approuvée (workflow PROPOSED → APPROVED → MEASURED).</source>
+        <target state="translated">Idea de mejora presentada al círculo. Se evaluará y, si se aprueba, se implementará y medirá (flujo PROPOSED → APPROVED → MEASURED).</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.submit" datatype="html">
+        <source>Proposer</source>
+        <target state="translated">Proponer</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.title-placeholder" datatype="html">
+        <source>Ex. : Ajouter un Poka-Yoke positionnement pièce</source>
+        <target state="translated">Ej.: Añadir un Poka-Yoke de posicionamiento de pieza</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.description-placeholder" datatype="html">
+        <source>Contexte, objectif, bénéfice attendu, charge estimée…</source>
+        <target state="translated">Contexto, objetivo, beneficio esperado, esfuerzo estimado…</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.session-expired" datatype="html">
+        <source>Session expirée — veuillez vous reconnecter.</source>
+        <target state="translated">Sesión caducada — vuelva a iniciar sesión.</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.saved" datatype="html">
+        <source>Proposition enregistrée.</source>
+        <target state="translated">Propuesta guardada.</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.error" datatype="html">
+        <source>Erreur lors de l'enregistrement.</source>
+        <target state="translated">Error al guardar.</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.title" datatype="html">
+        <source>File d'attente offline</source>
+        <target state="translated">Cola sin conexión</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.subtitle" datatype="html">
+        <source>Actions terrain saisies sans réseau, rejouées dans l'ordre au retour de la connexion.</source>
+        <target state="translated">Acciones de campo registradas sin red, reproducidas en orden al recuperar la conexión.</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.sync-now" datatype="html">
+        <source>Synchroniser maintenant</source>
+        <target state="translated">Sincronizar ahora</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.state-offline" datatype="html">
+        <source>Hors-ligne</source>
+        <target state="translated">Sin conexión</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.state-online" datatype="html">
+        <source>En ligne</source>
+        <target state="translated">En línea</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.pending-suffix" datatype="html">
+        <source>action(s) en attente de synchronisation</source>
+        <target state="translated">acción(es) pendiente(s) de sincronización</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.nothing-pending" datatype="html">
+        <source>Aucune action en attente — tout est synchronisé.</source>
+        <target state="translated">Ninguna acción pendiente — todo está sincronizado.</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.col-action" datatype="html">
+        <source>Action</source>
+        <target state="translated">Acción</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.col-queued-at" datatype="html">
+        <source>Mise en attente le</source>
+        <target state="translated">En cola desde</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.discard-tooltip" datatype="html">
+        <source>Abandonner cette action</source>
+        <target state="translated">Descartar esta acción</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.discard-title" datatype="html">
+        <source>Abandonner cette action ?</source>
+        <target state="translated">¿Descartar esta acción?</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.discard-message" datatype="html">
+        <source>« <x id="label"/> » ne sera jamais synchronisée vers le serveur. Cette décision est définitive.</source>
+        <target state="translated">«<x id="label"/>» nunca se sincronizará con el servidor. Esta decisión es definitiva.</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.discard-confirm" datatype="html">
+        <source>Abandonner</source>
+        <target state="translated">Descartar</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.discard-keep" datatype="html">
+        <source>Conserver</source>
+        <target state="translated">Conservar</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.discarded" datatype="html">
+        <source>Action abandonnée.</source>
+        <target state="translated">Acción descartada.</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.still-offline" datatype="html">
+        <source>Toujours hors-ligne — la synchronisation reprendra au retour du réseau.</source>
+        <target state="translated">Aún sin conexión — la sincronización se reanudará al volver la red.</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.sync-done" datatype="html">
+        <source>Synchronisation terminée.</source>
+        <target state="translated">Sincronización finalizada.</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.empty-title" datatype="html">
+        <source>File vide</source>
+        <target state="translated">Cola vacía</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.empty-hint" datatype="html">
+        <source>Les audits 5S saisis hors connexion apparaîtront ici jusqu'à leur synchronisation.</source>
+        <target state="translated">Las auditorías 5S registradas sin conexión aparecerán aquí hasta su sincronización.</target>
       </trans-unit>
     </body>
   </file>

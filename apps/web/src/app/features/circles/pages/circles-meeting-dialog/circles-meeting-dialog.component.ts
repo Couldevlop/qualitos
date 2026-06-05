@@ -55,14 +55,14 @@ export class CirclesMeetingDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: m => {
-          this.snack.open('Réunion planifiée.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@circles.meeting.scheduled:Réunion planifiée.`, 'OK', { duration: 2500 });
           this.dialogRef.close(m);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[circles-meeting-dialog] failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de la planification.'),
+            safeErrorMessage(err, $localize`:@@circles.meeting.error:Erreur lors de la planification.`),
             'OK', { duration: 4000 }
           );
         }

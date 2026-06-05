@@ -1,31 +1,35 @@
 <qos-form-dialog
+  i18n-title="@@fives.create.title"
   title="Nouvel audit 5S"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.create"
   submitLabel="Créer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="hint">Définis la zone à auditer et la date prévue. Les scores
+  <p class="hint" i18n="@@fives.create.hint">Définis la zone à auditer et la date prévue. Les scores
      Seiri · Seiton · Seiso · Seiketsu · Shitsuke seront saisis lors de l'audit terrain.</p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Zone</mat-label>
+    <mat-label i18n="@@common.zone">Zone</mat-label>
     <input matInput formControlName="zone" maxlength="200" required
+           i18n-placeholder="@@fives.create.zone-placeholder"
            placeholder="Ex. : Atelier mécanique A — ligne 1">
-    <mat-error *ngIf="form.controls.zone.hasError('required')">La zone est requise.</mat-error>
-    <mat-error *ngIf="form.controls.zone.hasError('maxlength')">200 caractères maximum.</mat-error>
+    <mat-error *ngIf="form.controls.zone.hasError('required')" i18n="@@fives.create.zone-required">La zone est requise.</mat-error>
+    <mat-error *ngIf="form.controls.zone.hasError('maxlength')" i18n="@@common.maxlength-200">200 caractères maximum.</mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description (optionnel)</mat-label>
+    <mat-label i18n="@@common.description-optional">Description (optionnel)</mat-label>
     <textarea matInput formControlName="description" rows="3"
+              i18n-placeholder="@@fives.create.description-placeholder"
               placeholder="Périmètre, observations préalables, équipement…"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Date prévue (optionnel)</mat-label>
+    <mat-label i18n="@@fives.create.scheduled-label">Date prévue (optionnel)</mat-label>
     <input matInput formControlName="scheduledAt" type="datetime-local">
   </mat-form-field>
 

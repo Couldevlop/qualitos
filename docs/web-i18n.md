@@ -37,10 +37,31 @@ Déploiement : servir chaque locale sous son préfixe (`/en/`, `/ar/`…) — ro
 nginx/ingress par préfixe + négociation `Accept-Language` à ajouter au moment
 du go-live multilingue.
 
+## Placeholders d'interpolation
+
+Pour une chaîne TS avec interpolation, nommer le placeholder côté code :
+`` $localize`:@@spc.analyze.err-generic:Échec (HTTP ${err.status}:status:).` ``
+et l'écrire `{$status}` dans la table du générateur — il devient `<x id="status"/>`
+dans les XLF. **Jamais** d'interpolation anonyme dans une chaîne traduite.
+
+## Vocabulaire commun
+
+Les termes transverses (boutons, états, erreurs génériques) ont un ID `common.*`
+unique réutilisé par tous les écrans (ex. `common.save`, `common.error-loading`,
+`common.maxlength-255`). Règle Angular : même ID ⇒ même source FR au caractère
+près. Consulter la section « vocabulaire commun » du générateur avant de créer
+un nouvel ID.
+
 ## Périmètre couvert / restant
 
-- ✅ Infrastructure complète + shell (navigation 49 libellés, topbar) traduits
-  dans les 5 langues (51 unités).
-- ⏳ Les 41 features (templates) : à marquer progressivement avec des IDs
-  `@@<feature>.*` et à ajouter à la table du générateur. Règle : **toute
-  nouvelle chaîne UI naît avec son attribut i18n et son ID.**
+- ✅ Infrastructure complète + shell (navigation 49 libellés, topbar).
+- ✅ **Les 6 modules méthodes** (PDCA, 5S, Ishikawa, DMAIC, SPC, Cercles) :
+  27 templates + chaînes TS (snackbars, dialogs de confirmation) — 477 unités
+  × 5 langues au total, vocabulaire `common.*` partagé.
+- ✅ Page « File d'attente offline » (`offline.queue.*`).
+- ⏳ Les ~34 features restantes (CAPA, Audits, Documents, GRC…) : à marquer
+  progressivement avec des IDs `@@<feature>.*`. Règle : **toute nouvelle chaîne
+  UI naît avec son attribut i18n et son ID.**
+- ⏳ Chaînes signalées non marquées (ternaires dans interpolations, libellés
+  d'axes ECharts, `aria-label` dynamiques concaténés) — nécessitent un léger
+  refactor TS (getter `$localize`) ; listées dans les commentaires de revue.

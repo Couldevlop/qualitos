@@ -57,14 +57,14 @@ export class CirclesEditDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: c => {
-          this.snack.open('Cercle mis à jour.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@circles.edit.updated:Cercle mis à jour.`, 'OK', { duration: 2500 });
           this.dialogRef.close(c);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[circles-edit] failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de la mise à jour.'),
+            safeErrorMessage(err, $localize`:@@circles.edit.error:Erreur lors de la mise à jour.`),
             'OK', { duration: 4000 }
           );
         }

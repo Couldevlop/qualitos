@@ -47,14 +47,14 @@ export class CirclesCreateDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: circle => {
-          this.snack.open('Cercle créé.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@circles.create.created:Cercle créé.`, 'OK', { duration: 2500 });
           this.dialogRef.close(circle);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[circles-create] failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de la création.'),
+            safeErrorMessage(err, $localize`:@@circles.create.error:Erreur lors de la création.`),
             'OK',
             { duration: 4000 }
           );

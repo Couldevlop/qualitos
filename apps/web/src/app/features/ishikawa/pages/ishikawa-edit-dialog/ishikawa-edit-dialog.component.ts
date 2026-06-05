@@ -68,14 +68,14 @@ export class IshikawaEditDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: d => {
-          this.snack.open('Diagramme mis à jour.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@ishikawa.edit.updated:Diagramme mis à jour.`, 'OK', { duration: 2500 });
           this.dialogRef.close(d);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[ishikawa-edit] failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de la mise à jour.'),
+            safeErrorMessage(err, $localize`:@@common.error-update:Erreur lors de la mise à jour.`),
             'OK', { duration: 4000 }
           );
         }

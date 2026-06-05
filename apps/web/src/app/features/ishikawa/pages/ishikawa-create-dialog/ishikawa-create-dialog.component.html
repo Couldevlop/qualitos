@@ -1,30 +1,30 @@
 <qos-form-dialog
-  title="Nouveau diagramme Ishikawa"
-  subtitle="Formule clairement le problème observé. Les branches et causes pourront être enrichies après création (avec l'aide de l'IA)."
+  i18n-title="@@ishikawa.create.title" title="Nouveau diagramme Ishikawa"
+  i18n-subtitle="@@ishikawa.create.subtitle" subtitle="Formule clairement le problème observé. Les branches et causes pourront être enrichies après création (avec l'aide de l'IA)."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
-  submitLabel="Créer"
+  i18n-submitLabel="@@common.create" submitLabel="Créer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Énoncé du problème</mat-label>
+    <mat-label i18n="@@ishikawa.create.problem-label">Énoncé du problème</mat-label>
     <textarea matInput formControlName="problemStatement" rows="3" maxlength="500" required
-              placeholder="Ex. : Hausse des défauts de soudure ligne 3 (+18% sur 30j)"></textarea>
+              i18n-placeholder="@@ishikawa.create.problem-placeholder" placeholder="Ex. : Hausse des défauts de soudure ligne 3 (+18% sur 30j)"></textarea>
     <mat-hint align="end">{{ form.controls.problemStatement.value.length || 0 }} / 500</mat-hint>
-    <mat-error *ngIf="form.controls.problemStatement.hasError('required')">L'énoncé est requis.</mat-error>
-    <mat-error *ngIf="form.controls.problemStatement.hasError('maxlength')">500 caractères maximum.</mat-error>
+    <mat-error *ngIf="form.controls.problemStatement.hasError('required')" i18n="@@ishikawa.create.problem-required">L'énoncé est requis.</mat-error>
+    <mat-error *ngIf="form.controls.problemStatement.hasError('maxlength')" i18n="@@common.maxlength-500">500 caractères maximum.</mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description (optionnel)</mat-label>
+    <mat-label i18n="@@common.description-optional">Description (optionnel)</mat-label>
     <textarea matInput formControlName="description" rows="3"
-              placeholder="Contexte, participants, périmètre…"></textarea>
+              i18n-placeholder="@@ishikawa.create.desc-placeholder" placeholder="Contexte, participants, périmètre…"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Mode d'analyse</mat-label>
+    <mat-label i18n="@@ishikawa.create.mode-label">Mode d'analyse</mat-label>
     <mat-select formControlName="mode">
       <mat-option *ngFor="let m of modes" [value]="m.value">
         <strong>{{ m.label }}</strong> — <span class="mode-hint">{{ m.hint }}</span>

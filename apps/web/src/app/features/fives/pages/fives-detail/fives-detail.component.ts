@@ -39,11 +39,11 @@ export class FivesDetailComponent implements OnInit {
   acting$ = new BehaviorSubject<boolean>(false);
 
   readonly pillars: PillarRow[] = [
-    { pillar: 'SEIRI',    label: 'Seiri',    hint: 'Trier — éliminer l\'inutile' },
-    { pillar: 'SEITON',   label: 'Seiton',   hint: 'Ranger — une place pour chaque chose' },
-    { pillar: 'SEISO',    label: 'Seiso',    hint: 'Nettoyer — détecter les anomalies en nettoyant' },
-    { pillar: 'SEIKETSU', label: 'Seiketsu', hint: 'Standardiser — figer les pratiques' },
-    { pillar: 'SHITSUKE', label: 'Shitsuke', hint: 'Maintenir — discipliner & auditer' }
+    { pillar: 'SEIRI',    label: $localize`:@@fives.pillar.seiri.label:Seiri`,    hint: $localize`:@@fives.pillar.seiri.hint:Trier — éliminer l'inutile` },
+    { pillar: 'SEITON',   label: $localize`:@@fives.pillar.seiton.label:Seiton`,   hint: $localize`:@@fives.pillar.seiton.hint:Ranger — une place pour chaque chose` },
+    { pillar: 'SEISO',    label: $localize`:@@fives.pillar.seiso.label:Seiso`,    hint: $localize`:@@fives.pillar.seiso.hint:Nettoyer — détecter les anomalies en nettoyant` },
+    { pillar: 'SEIKETSU', label: $localize`:@@fives.pillar.seiketsu.label:Seiketsu`, hint: $localize`:@@fives.pillar.seiketsu.hint:Standardiser — figer les pratiques` },
+    { pillar: 'SHITSUKE', label: $localize`:@@fives.pillar.shitsuke.label:Shitsuke`, hint: $localize`:@@fives.pillar.shitsuke.hint:Maintenir — discipliner & auditer` }
   ];
 
   /** Per-pillar score form (one FormGroup per pillar). */
@@ -74,7 +74,7 @@ export class FivesDetailComponent implements OnInit {
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('id') ?? '';
     if (!UUID_RE.test(raw) && !this.isMockId(raw)) {
-      this.snack.open('Identifiant invalide.', 'OK', { duration: 3000 });
+      this.snack.open($localize`:@@common.invalid-id:Identifiant invalide.`, 'OK', { duration: 3000 });
       this.router.navigate(['/fives']);
       return;
     }
@@ -85,7 +85,7 @@ export class FivesDetailComponent implements OnInit {
         catchError(err => {
           // eslint-disable-next-line no-console
           console.warn('[fives-detail] getAudit failed', err?.status, err?.error?.title);
-          this.error$.next(safeErrorMessage(err, 'Audit introuvable.'));
+          this.error$.next(safeErrorMessage(err, $localize`:@@fives.detail.not-found:Audit introuvable.`));
           return of(null);
         }),
         finalize(() => this.loading$.next(false))
@@ -126,9 +126,9 @@ export class FivesDetailComponent implements OnInit {
   deleteAudit(zone: string): void {
     this.dialog.open(ConfirmDialogComponent, {
       data: <ConfirmDialogData>{
-        title: 'Supprimer cet audit ?',
+        title: $localize`:@@fives.detail.delete-confirm-title:Supprimer cet audit ?`,
         message: `L'audit de « ${zone} » et ses scores seront supprimés définitivement.`,
-        confirmLabel: 'Supprimer',
+        confirmLabel: $localize`:@@common.delete:Supprimer`,
         destructive: true
       },
       autoFocus: false,
@@ -137,14 +137,14 @@ export class FivesDetailComponent implements OnInit {
       if (!confirmed) return;
       this.fives.deleteAudit(this.auditId).subscribe({
         next: () => {
-          this.snack.open('Audit supprimé.', 'OK', { duration: 2000 });
+          this.snack.open($localize`:@@fives.detail.delete-success:Audit supprimé.`, 'OK', { duration: 2000 });
           this.router.navigate(['/fives']);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[fives-detail] delete failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de la suppression.'),
+            safeErrorMessage(err, $localize`:@@fives.detail.delete-error:Erreur lors de la suppression.`),
             'OK', { duration: 4000 }
           );
         }
@@ -177,7 +177,7 @@ export class FivesDetailComponent implements OnInit {
           // eslint-disable-next-line no-console
           console.warn('[fives-detail] score failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'),
+            safeErrorMessage(err, $localize`:@@fives.detail.score-error:Erreur lors de l'enregistrement.`),
             'OK', { duration: 4000 }
           );
         }
@@ -205,7 +205,7 @@ export class FivesDetailComponent implements OnInit {
         // eslint-disable-next-line no-console
         console.warn('[fives-detail] transition failed', action, err?.status, err?.error?.title);
         this.snack.open(
-          safeErrorMessage(err, 'Erreur lors de la transition.'),
+          safeErrorMessage(err, $localize`:@@fives.detail.transition-error:Erreur lors de la transition.`),
           'OK', { duration: 4000 }
         );
       }

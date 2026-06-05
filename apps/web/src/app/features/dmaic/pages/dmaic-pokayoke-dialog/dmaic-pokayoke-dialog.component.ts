@@ -69,7 +69,7 @@ export class DmaicPokaYokeDialogComponent implements OnInit {
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[dmaic-pokayoke-dialog] catalog failed', err?.status, err?.error?.title);
-          this.loadError = safeErrorMessage(err, 'Catalogue Poka-Yoke indisponible.');
+          this.loadError = safeErrorMessage(err, $localize`:@@dmaic.pokayoke.catalog-unavailable:Catalogue Poka-Yoke indisponible.`);
         }
       });
   }
@@ -88,13 +88,13 @@ export class DmaicPokaYokeDialogComponent implements OnInit {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: a => {
-          this.snack.open('Poka-Yoke assigné.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@dmaic.pokayoke.assigned:Poka-Yoke assigné.`, 'OK', { duration: 2500 });
           this.dialogRef.close(a);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[dmaic-pokayoke] assign failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'assignation.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@dmaic.pokayoke.error-assign:Erreur lors de l'assignation.`), 'OK', { duration: 4000 });
         }
       });
   }

@@ -45,7 +45,7 @@ export class PdcaDetailComponent implements OnInit {
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('id') ?? '';
     if (!UUID_RE.test(raw)) {
-      this.snack.open('Identifiant invalide.', 'OK', { duration: 3000 });
+      this.snack.open($localize`:@@common.invalid-id:Identifiant invalide.`, 'OK', { duration: 3000 });
       this.router.navigate(['/pdca']);
       return;
     }
@@ -59,7 +59,7 @@ export class PdcaDetailComponent implements OnInit {
           // technical info to console for ops only.
           // eslint-disable-next-line no-console
           console.warn('[pdca-detail] getCycle failed', err?.status, err?.error?.title);
-          this.error$.next(safeErrorMessage(err, 'Cycle introuvable.'));
+          this.error$.next(safeErrorMessage(err, $localize`:@@pdca.detail.not-found:Cycle introuvable.`));
           return of(null);
         }),
         finalize(() => this.loading$.next(false))
@@ -104,13 +104,13 @@ export class PdcaDetailComponent implements OnInit {
       .pipe(finalize(() => this.acting$.next(false)))
       .subscribe({
         next: () => {
-          this.snack.open('Cycle avancé.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@pdca.detail.advanced:Cycle avancé.`, 'OK', { duration: 2500 });
           this.reload$.next();
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[pdca-detail] advance failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'avancement.'),
+          this.snack.open(safeErrorMessage(err, $localize`:@@pdca.detail.advance-error:Erreur lors de l'avancement.`),
             'OK', { duration: 4000 });
         }
       });
@@ -124,13 +124,13 @@ export class PdcaDetailComponent implements OnInit {
       .pipe(finalize(() => this.acting$.next(false)))
       .subscribe({
         next: () => {
-          this.snack.open('Cycle annulé.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@pdca.detail.cancelled:Cycle annulé.`, 'OK', { duration: 2500 });
           this.reload$.next();
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[pdca-detail] cancel failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'annulation.'),
+          this.snack.open(safeErrorMessage(err, $localize`:@@pdca.detail.cancel-error:Erreur lors de l'annulation.`),
             'OK', { duration: 4000 });
         }
       });

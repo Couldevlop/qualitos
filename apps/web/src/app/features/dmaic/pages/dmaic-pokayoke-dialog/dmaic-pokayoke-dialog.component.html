@@ -1,35 +1,35 @@
 <qos-form-dialog
-  title="Assigner un Poka-Yoke"
-  subtitle="Dispositif de prévention ou de détection issu du catalogue, attaché au projet (phase Improve). Workflow par défaut : PROPOSED → IN_DESIGN → IMPLEMENTED → VERIFIED."
+  i18n-title="@@dmaic.pokayoke.title" title="Assigner un Poka-Yoke"
+  i18n-subtitle="@@dmaic.pokayoke.subtitle" subtitle="Dispositif de prévention ou de détection issu du catalogue, attaché au projet (phase Improve). Workflow par défaut : PROPOSED → IN_DESIGN → IMPLEMENTED → VERIFIED."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
-  submitLabel="Assigner"
+  i18n-submitLabel="@@dmaic.pokayoke.submit" submitLabel="Assigner"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <div class="filters">
     <mat-form-field appearance="outline">
-      <mat-label>Type</mat-label>
+      <mat-label i18n="@@common.type">Type</mat-label>
       <mat-select [formControl]="typeFilter">
-        <mat-option [value]="''">Tous</mat-option>
+        <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
         <mat-option *ngFor="let t of types" [value]="t">{{ t }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline">
-      <mat-label>Mécanisme</mat-label>
+      <mat-label i18n="@@dmaic.pokayoke.mechanism-label">Mécanisme</mat-label>
       <mat-select [formControl]="mechanismFilter">
-        <mat-option [value]="''">Tous</mat-option>
+        <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
         <mat-option *ngFor="let m of mechanisms" [value]="m">{{ m }}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
 
   <div *ngIf="loadError" class="banner banner-error" role="alert">{{ loadError }}</div>
-  <div *ngIf="loading"   class="banner banner-info">Chargement du catalogue…</div>
+  <div *ngIf="loading"   class="banner banner-info" i18n="@@dmaic.pokayoke.loading-catalog">Chargement du catalogue…</div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Dispositif</mat-label>
+    <mat-label i18n="@@dmaic.pokayoke.device-label">Dispositif</mat-label>
     <mat-select formControlName="deviceId" required>
       <mat-option *ngFor="let d of (devices$ | async)" [value]="d.id">
         {{ d.code }} — {{ d.name }} ({{ d.type }} / {{ d.mechanism }})
@@ -38,9 +38,9 @@
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Note</mat-label>
+    <mat-label i18n="@@dmaic.detail.col-note">Note</mat-label>
     <textarea matInput formControlName="note" rows="3"
-              placeholder="Implémentation prévue, contraintes, lien CAPA…"></textarea>
+              i18n-placeholder="@@dmaic.pokayoke.note-placeholder" placeholder="Implémentation prévue, contraintes, lien CAPA…"></textarea>
   </mat-form-field>
 
 </qos-form-dialog>

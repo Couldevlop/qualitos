@@ -1,39 +1,44 @@
 <qos-form-dialog
+  i18n-title="@@circles.meeting.title"
   title="Planifier une réunion"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@circles.meeting.submit"
   submitLabel="Planifier"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre</mat-label>
+    <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="255" required
+           i18n-placeholder="@@circles.meeting.title-placeholder"
            placeholder="Ex. : Revue mensuelle production">
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Ordre du jour</mat-label>
+    <mat-label i18n="@@circles.meeting.agenda">Ordre du jour</mat-label>
     <textarea matInput formControlName="agenda" rows="3"
+              i18n-placeholder="@@circles.meeting.agenda-placeholder"
               placeholder="Points à aborder, propositions à valider…"></textarea>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Date et heure</mat-label>
+      <mat-label i18n="@@circles.meeting.datetime">Date et heure</mat-label>
       <input matInput formControlName="scheduledAt" type="datetime-local" required>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="col-small">
-      <mat-label>Durée (min)</mat-label>
+      <mat-label i18n="@@circles.meeting.duration">Durée (min)</mat-label>
       <input matInput formControlName="durationMinutes" type="number" min="1">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Lieu</mat-label>
+    <mat-label i18n="@@circles.detail.location">Lieu</mat-label>
     <input matInput formControlName="location" maxlength="500"
+           i18n-placeholder="@@circles.meeting.location-placeholder"
            placeholder="Salle, ou lien visio">
   </mat-form-field>
 

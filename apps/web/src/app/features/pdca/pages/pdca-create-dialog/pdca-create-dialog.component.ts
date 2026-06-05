@@ -39,7 +39,7 @@ export class PdcaCreateDialogComponent {
     }
     const ownerId = this.auth.snapshot()?.userId;
     if (!ownerId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, 'OK', { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -49,14 +49,14 @@ export class PdcaCreateDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: cycle => {
-          this.snack.open('Cycle PDCA créé.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@pdca.create.success:Cycle PDCA créé.`, 'OK', { duration: 2500 });
           this.dialogRef.close(cycle);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[pdca-create] failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de la création.'),
+            safeErrorMessage(err, $localize`:@@common.error-create:Erreur lors de la création.`),
             'OK',
             { duration: 4000 }
           );

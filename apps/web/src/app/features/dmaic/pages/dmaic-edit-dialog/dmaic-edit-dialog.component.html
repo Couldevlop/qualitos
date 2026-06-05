@@ -1,5 +1,5 @@
 <qos-form-dialog
-  title="Modifier le projet"
+  i18n-title="@@dmaic.edit.title" title="Modifier le projet"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
@@ -7,53 +7,53 @@
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre</mat-label>
+    <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="255" required>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Énoncé du problème</mat-label>
+    <mat-label i18n="@@dmaic.create.problem-label">Énoncé du problème</mat-label>
     <textarea matInput formControlName="problemStatement" rows="3"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Énoncé de l'objectif</mat-label>
+    <mat-label i18n="@@dmaic.create.goal-label">Énoncé de l'objectif</mat-label>
     <textarea matInput formControlName="goalStatement" rows="2"></textarea>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Champion (ID)</mat-label>
+      <mat-label i18n="@@dmaic.create.champion-label">Champion (ID)</mat-label>
       <input matInput formControlName="championId">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Date cible</mat-label>
+      <mat-label i18n="@@dmaic.create.target-date-label">Date cible</mat-label>
       <input matInput formControlName="targetCompletionDate" type="date">
     </mat-form-field>
   </div>
 
-  <h3 class="section">Spécifications procédé</h3>
+  <h3 class="section" i18n="@@dmaic.edit.specs-section">Spécifications procédé</h3>
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>LSL</mat-label>
+      <mat-label i18n="@@dmaic.detail.lsl">LSL</mat-label>
       <input matInput formControlName="specLowerLimit" type="number" step="any">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Cible</mat-label>
+      <mat-label i18n="@@dmaic.detail.target">Cible</mat-label>
       <input matInput formControlName="specTarget" type="number" step="any">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>USL</mat-label>
+      <mat-label i18n="@@dmaic.detail.usl">USL</mat-label>
       <input matInput formControlName="specUpperLimit" type="number" step="any">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col col-small">
-      <mat-label>Unité</mat-label>
+      <mat-label i18n="@@dmaic.create.unit-label">Unité</mat-label>
       <input matInput formControlName="specUnit" maxlength="50">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Économies estimées (€)</mat-label>
+    <mat-label i18n="@@dmaic.create.savings-label">Économies estimées (€)</mat-label>
     <input matInput formControlName="estimatedSavingsEur" type="number" min="0" step="any">
   </mat-form-field>
 
