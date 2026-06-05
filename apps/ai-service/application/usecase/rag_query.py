@@ -4,7 +4,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from domain.model.completion import (
-    Citation,
     CompletionRequest,
     Confidence,
     ProviderName,
@@ -117,10 +116,6 @@ class RagQueryUseCase:
         )
 
         scan_out = self._pii.redact(completion.text)
-        citations = tuple(
-            Citation(document_id=d.document_id, score=s, excerpt=d.content[:200])
-            for d, s in hits
-        )
 
         rag = RagResult(
             answer=scan_out.redacted_text,

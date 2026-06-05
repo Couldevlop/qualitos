@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import json
 import os
-from base64 import b64encode
 
 os.environ["QOS_DEV_AUTH"] = "true"
 

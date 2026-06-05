@@ -53,6 +53,9 @@ exclude_lines = [
 
 [tool.importlinter]
 root_packages = ["domain", "application", "infrastructure", "presentation", "federated"]
+# Requis pour pouvoir interdire des packages EXTERNES (fastapi, pydantic…)
+# dans les contrats ci-dessous — sans ce flag, lint-imports refuse de tourner.
+include_external_packages = true
 
 [[tool.importlinter.contracts]]
 name = "Domain has no infra/presentation/framework imports"
