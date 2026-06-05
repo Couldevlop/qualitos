@@ -150,17 +150,17 @@ def test_benign_with_tenant_filter_passes(v: SqlglotValidator):
 
 def test_benign_without_tenant_filter_gets_rewritten(v: SqlglotValidator):
     out = v.validate_and_rewrite(
-        "SELECT id, severity FROM non_conformities",
+        "SELECT id, severity FROM capa_cases",
         TENANT,
     )
     assert out.tenant_filter_applied
     assert "tenant_id" in out.sql.lower()
-    assert "non_conformities" in out.tables_used
+    assert "capa_cases" in out.tables_used
 
 
 def test_benign_with_existing_where_keeps_filter(v: SqlglotValidator):
     out = v.validate_and_rewrite(
-        "SELECT id FROM capas WHERE priority = 'high'",
+        "SELECT id FROM capa_cases WHERE priority = 'high'",
         TENANT,
     )
     assert out.tenant_filter_applied
@@ -171,11 +171,11 @@ def test_benign_with_existing_where_keeps_filter(v: SqlglotValidator):
 
 def test_benign_aggregate_with_date_trunc(v: SqlglotValidator):
     out = v.validate_and_rewrite(
-        "SELECT date_trunc('month', created_at) AS m, count(*) FROM audits "
+        "SELECT date_trunc('month', created_at) AS m, count(*) FROM fives_audits "
         "WHERE tenant_id = :tenant_id GROUP BY 1 ORDER BY 1",
         TENANT,
     )
     # sqlglot may normalize date_trunc -> timestamp_trunc; accept either.
     assert any(f in out.functions_used for f in ("date_trunc", "timestamp_trunc"))
     assert "count" in out.functions_used
-    assert "audits" in out.tables_used
+    assert "fives_audits" in out.tables_used

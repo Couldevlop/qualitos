@@ -12,9 +12,12 @@ from typing import Any
 from application.usecase import (
     CompleteTextUseCase,
     FederatedTrainRoundUseCase,
+    KpiForecastUseCase,
+    NcClusterUseCase,
     NlqAskUseCase,
     RagQueryUseCase,
     SpcDetectUseCase,
+    SupplierRiskUseCase,
 )
 from domain.model.completion import ProviderName
 from domain.port.ai_provider import AIProvider
@@ -135,3 +138,14 @@ class Container:
     def spc_detect(self) -> SpcDetectUseCase:
         # Pure compute (no external adapters): the use case wraps the domain service.
         return SpcDetectUseCase()
+
+    # ---- prédictif (§6.5) : calcul pur, aucun adaptateur externe ------------------
+
+    def kpi_forecast(self) -> KpiForecastUseCase:
+        return KpiForecastUseCase()
+
+    def supplier_risk(self) -> SupplierRiskUseCase:
+        return SupplierRiskUseCase()
+
+    def nc_cluster(self) -> NcClusterUseCase:
+        return NcClusterUseCase()

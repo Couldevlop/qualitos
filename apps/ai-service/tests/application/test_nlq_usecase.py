@@ -102,8 +102,8 @@ def test_nlq_rejects_malicious_llm_output(user_context):
 
 
 def test_nlq_auto_injects_tenant_filter(user_context):
-    fixtures = {"capas": [{"id": "x", "priority": "high"}]}
-    provider = _SqlProvider("SELECT id, priority FROM capas WHERE priority = 'high'")
+    fixtures = {"capa_cases": [{"id": "x", "priority": "high"}]}
+    provider = _SqlProvider("SELECT id, priority FROM capa_cases WHERE priority = 'high'")
     uc = NlqAskUseCase(
         providers={ProviderName.OLLAMA: provider},
         sql_validator=SqlglotValidator(),
