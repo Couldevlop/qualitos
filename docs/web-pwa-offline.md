@@ -25,7 +25,18 @@ saisie terrain ──offline──▶ OfflineQueueService ──▶ IndexedDB (q
   hors-ligne **ou** sur coupure pendant l'envoi (status 0) ; réponse optimiste
   marquée `pendingSync: true`.
 - Shell : chip topbar `cloud_off` / `cloud_sync n` (hors-ligne / n actions en
-  attente), `role="status"` accessible.
+  attente), `role="status"` accessible — **cliquable → page `/offline-queue`**.
+
+### Page « File d'attente » (`/offline-queue`)
+- Feature lazy `features/offline-queue` : liste des opérations en attente
+  (label non-PII, méthode, URL, horodatage), bandeau d'état réseau.
+- **Synchroniser maintenant** : relance `replay()` manuellement (utile si le
+  navigateur n'a pas émis l'événement `online`).
+- **Abandonner** (par opération, dialog de confirmation destructive) :
+  `OfflineQueueService.discard(id)` retire l'op définitivement et émet
+  l'événement `discarded`.
+- La liste se rafraîchit sur chaque événement de la file (`events$`) — pas de
+  polling. i18n complet (`offline.queue.*`, 6 langues).
 
 ## Sémantique de rejeu
 | Situation au rejeu | Comportement |
@@ -52,4 +63,3 @@ saisie terrain ──offline──▶ OfflineQueueService ──▶ IndexedDB (q
 - Icônes = placeholder monogramme « Q » (générées) — à remplacer par le logo DS.
 - Couverture offline limitée au flux 5S terrain (create + score) — étendre aux
   NC mobiles et audits génériques ensuite.
-- Pas encore de page « file d'attente » détaillée (liste des ops, purge manuelle).

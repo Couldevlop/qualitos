@@ -93,10 +93,11 @@
 
       <div class="qos-topbar__actions">
         <!-- Synchro offline (§15.2-15.3) : visible hors-ligne ou si des actions
-             terrain attendent leur rejeu. -->
+             terrain attendent leur rejeu. Cliquable → page « File d'attente ». -->
         <ng-container *ngIf="{ online: online$ | async, pending: pendingSync$ | async } as sync">
-          <span
+          <a
             *ngIf="sync.online === false || (sync.pending ?? 0) > 0"
+            routerLink="/offline-queue"
             class="qos-topbar__sync"
             [class.qos-topbar__sync--offline]="sync.online === false"
             role="status"
@@ -109,7 +110,7 @@
             <span class="qos-topbar__sync-count" *ngIf="(sync.pending ?? 0) > 0">
               {{ sync.pending }}
             </span>
-          </span>
+          </a>
         </ng-container>
 
         <qos-theme-toggle></qos-theme-toggle>

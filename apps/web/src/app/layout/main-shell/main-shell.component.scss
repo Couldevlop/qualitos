@@ -387,6 +387,10 @@
   color: var(--qos-warn-fg);
   font-size: var(--qos-fs-xs);
   font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover { background: color-mix(in srgb, var(--qos-warn-fg) 20%, transparent); }
 
   .material-symbols-outlined {
     font-size: 18px;

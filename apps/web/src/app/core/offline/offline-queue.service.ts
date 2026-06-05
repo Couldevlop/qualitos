@@ -7,7 +7,7 @@ import { OfflineQueueStore, QueuedOperation } from './offline-queue.store';
 
 /** Événement de cycle de vie de la file — consommé par le shell (badge, snackbar). */
 export interface OfflineQueueEvent {
-  type: 'queued' | 'replayed' | 'replay-failed';
+  type: 'queued' | 'replayed' | 'replay-failed' | 'discarded';
   operation: QueuedOperation;
 }
 
@@ -72,6 +72,26 @@ export class OfflineQueueService {
         return op;
       })
     );
+  }
+
+  /** Opérations en attente, dans l'ordre de rejeu (page « File d'attente »). */
+  list(): Promise<QueuedOperation[]> {
+    return this.store.loadAll();
+  }
+
+  /**
+   * Abandonne définitivement une opération en attente (décision utilisateur
+   * depuis la page « File d'attente »). L'écriture ne sera jamais rejouée.
+   */
+  async discard(id: string): Promise<void> {
+    const ops = await this.store.loadAll();
+    const op = ops.find(o => o.id === id);
+    if (!op) {
+      return;
+    }
+    await this.store.remove(id);
+    await this.refreshCount();
+    this.queueEvents.next({ type: 'discarded', operation: op });
   }
 
   /** Rejoue la file dans l'ordre. Sans effet si déjà en cours ou hors-ligne. */
