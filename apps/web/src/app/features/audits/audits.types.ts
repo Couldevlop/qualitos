@@ -16,6 +16,8 @@ export interface ChecklistItemResponse {
   conformant?: boolean;
   createdAt: string;
   updatedAt: string;
+  /** true = répondu hors-ligne, en attente de synchronisation (réponse optimiste). */
+  pendingSync?: boolean;
 }
 
 export interface FindingResponse {
@@ -31,6 +33,8 @@ export interface FindingResponse {
   raisedAt: string;
   createdAt: string;
   updatedAt: string;
+  /** true = déclaré hors-ligne, en attente de synchronisation (réponse optimiste). */
+  pendingSync?: boolean;
 }
 
 export interface AuditPlanResponse {

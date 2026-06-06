@@ -1,9 +1,11 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, delay, map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
+import { ConnectivityService } from '../../core/offline/connectivity.service';
+import { OfflineQueueService } from '../../core/offline/offline-queue.service';
 import {
   AddFindingRequest,
   AuditPlanResponse,
@@ -24,7 +26,11 @@ export class AuditsService {
 
   private readonly mockStore: AuditPlanResponse[] = this.seedMockPlans();
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(
+    private readonly http: HttpClient,
+    private readonly connectivity: ConnectivityService,
+    private readonly offlineQueue: OfflineQueueService
+  ) {}
 
   listPlans(page = 0, size = 50, status?: AuditStatus): Observable<AuditsPage> {
     if (environment.useMockApi) return of(this.mockPage(status)).pipe(delay(150));
@@ -107,7 +113,16 @@ export class AuditsService {
       }
       return of(finding).pipe(delay(120));
     }
-    return this.http.post<FindingResponse>(`${this.endpoint}/${planId}/findings`, input);
+    // Offline-first terrain (§15.2-15.3) : un constat soulevé en zone blanche
+    // est mis en file et créé pour de vrai à la resynchronisation.
+    if (!this.connectivity.isOnline()) {
+      return this.enqueueFinding(planId, input);
+    }
+    return this.http.post<FindingResponse>(`${this.endpoint}/${planId}/findings`, input).pipe(
+      catchError(err => this.isNetworkError(err)
+        ? this.enqueueFinding(planId, input)
+        : throwError(() => err))
+    );
   }
 
   deletePlan(id: string): Observable<void> {
@@ -174,9 +189,16 @@ export class AuditsService {
         id: itemId, planId, question: '', createdAt: now, updatedAt: now
       }).pipe(delay(120));
     }
-    return this.http.put<ChecklistItemResponse>(
-      `${this.endpoint}/${planId}/checklist/${itemId}/response`,
-      input
+    const url = `${this.endpoint}/${planId}/checklist/${itemId}/response`;
+    // Offline-first terrain (§15.2-15.3) : la réponse à un item de checklist
+    // saisie sans réseau est mise en file et rejouée à la resynchronisation.
+    if (!this.connectivity.isOnline()) {
+      return this.enqueueChecklistResponse(planId, itemId, input, url);
+    }
+    return this.http.put<ChecklistItemResponse>(url, input).pipe(
+      catchError(err => this.isNetworkError(err)
+        ? this.enqueueChecklistResponse(planId, itemId, input, url)
+        : throwError(() => err))
     );
   }
 
@@ -222,6 +244,56 @@ export class AuditsService {
       return of(this.mockStore[0]).pipe(delay(120));
     }
     return this.http.patch<AuditPlanResponse>(`${this.endpoint}/${id}/${pathSegment}`, {});
+  }
+
+  // ---- offline (file d'attente + réponses optimistes) -------------------------
+
+  private enqueueFinding(planId: string, input: AddFindingRequest): Observable<FindingResponse> {
+    const now = new Date().toISOString();
+    return this.offlineQueue
+      .enqueue('POST', `${this.endpoint}/${planId}/findings`, input,
+        `Constat audit — plan ${planId} (${input.type})`)
+      .pipe(map(op => ({
+        id: 'offline-' + op.id,
+        planId,
+        type: input.type,
+        description: input.description,
+        clauseRef: input.clauseRef,
+        photoUrl: input.photoUrl,
+        checklistItemId: input.checklistItemId,
+        capaId: input.capaId,
+        raisedBy: input.raisedBy,
+        raisedAt: now,
+        createdAt: now,
+        updatedAt: now,
+        pendingSync: true
+      })));
+  }
+
+  private enqueueChecklistResponse(
+    planId: string,
+    itemId: string,
+    input: ChecklistResponseRequest,
+    url: string
+  ): Observable<ChecklistItemResponse> {
+    const now = new Date().toISOString();
+    return this.offlineQueue
+      .enqueue('PUT', url, input, `Réponse checklist — plan ${planId} / item ${itemId}`)
+      .pipe(map(() => ({
+        id: itemId,
+        planId,
+        question: '',
+        response: input.response,
+        conformant: input.conformant,
+        createdAt: now,
+        updatedAt: now,
+        pendingSync: true
+      })));
+  }
+
+  /** status 0 = la requête n'a pas atteint le serveur (coupure pendant l'envoi). */
+  private isNetworkError(err: unknown): boolean {
+    return err instanceof HttpErrorResponse && err.status === 0;
   }
 
   private mockPage(status?: AuditStatus): AuditsPage {
