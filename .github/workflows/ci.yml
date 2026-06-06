@@ -157,6 +157,20 @@ jobs:
           # were not resolved". À ré-activer dans la PR suivante une fois le lockfile
           # généré par la CI et committé (cache: 'npm', cache-dependency-path: ...).
 
+      # ----------------------------------------------------------------------
+      # Garde-fou i18n (§15.1) : tout @@id marqué dans le code doit avoir son
+      # entrée dans les tables scripts/i18n/*.py, et les XLF committés doivent
+      # être à jour (régénérés). Échec rapide, avant npm install.
+      # ----------------------------------------------------------------------
+      - name: i18n cross-check (tables <-> code <-> XLF)
+        shell: bash
+        run: |
+          python3 scripts/gen-i18n-xlf.py --check
+          if ! git diff --exit-code -- src/locale; then
+            echo "::error::XLF désynchronisés des tables — lancer 'python scripts/gen-i18n-xlf.py' et committer."
+            exit 1
+          fi
+
       - name: Install Chrome (for Karma headless tests)
         id: setup-chrome
         uses: browser-actions/setup-chrome@v1
@@ -374,7 +388,9 @@ jobs:
   image-scan:
     name: Image scan (Trivy)
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    # 50 min : l'image web compile désormais les 6 locales (AOT ×6, ~15-20 min
+    # de build Docker) avant le scan.
+    timeout-minutes: 50
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
     strategy:
       fail-fast: false
