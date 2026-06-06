@@ -112,6 +112,12 @@ logging:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{tenantId:-no-tenant}] %logger{36} - %msg%n"
 
 springdoc:
+  # use-fqn : nomme les schémas OpenAPI par nom de classe QUALIFIÉ. Sans ça,
+  # springdoc indexe par nom simple → les records homonymes de modules
+  # différents (ex. ActivateRequest industry vs tenant-modules, CreateRequest
+  # nc vs notification) se télescopent dans #/components/schemas et le doc
+  # devient trompeur (un schéma écrase l'autre). BUG #24.
+  use-fqn: true
   api-docs:
     path: /v3/api-docs
   swagger-ui:

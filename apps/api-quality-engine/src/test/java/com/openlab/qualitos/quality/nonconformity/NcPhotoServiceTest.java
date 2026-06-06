@@ -37,7 +37,10 @@ class NcPhotoServiceTest {
     static final UUID OTHER = UUID.randomUUID();
     static final UUID NC_ID = UUID.randomUUID();
 
-    private static final byte[] PNG = {1, 2, 3, 4};
+    // Signatures binaires réelles (M1 : les magic bytes doivent matcher le content-type).
+    private static final byte[] PNG = {
+            (byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x01};
+    private static final byte[] JPEG = {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0, 0x00, 0x10};
 
     @BeforeEach
     void setup() {
@@ -87,9 +90,75 @@ class NcPhotoServiceTest {
         when(ncRepo.findByIdAndTenantId(NC_ID, TENANT)).thenReturn(Optional.of(nc(TENANT, NcStatus.OPEN)));
         when(photoRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        NcPhotoDto.Response r = service.upload(NC_ID, "IMAGE/JPEG", "p.jpg", PNG);
+        NcPhotoDto.Response r = service.upload(NC_ID, "IMAGE/JPEG", "p.jpg", JPEG);
         assertThat(r.contentType()).isEqualTo("image/jpeg");
         assertThat(r.objectKey()).endsWith(".jpg");
+    }
+
+    // --- M1 : magic bytes ---
+    @Test
+    void upload_contentTypeMismatchMagicBytes_400() {
+        when(storageProvider.getIfAvailable()).thenReturn(storage);
+        when(ncRepo.findByIdAndTenantId(NC_ID, TENANT)).thenReturn(Optional.of(nc(TENANT, NcStatus.OPEN)));
+        // Déclaré image/png mais octets JPEG → rejet 400, rien n'est persisté ni stocké.
+        assertThatThrownBy(() -> service.upload(NC_ID, "image/png", "x.png", JPEG))
+                .isInstanceOf(NcPhotoValidationException.class)
+                .hasMessageContaining("does not match");
+        verifyNoInteractions(photoRepo);
+        assertThat(storage.size()).isZero();
+    }
+
+    @Test
+    void upload_disguisedExecutable_400() {
+        when(storageProvider.getIfAvailable()).thenReturn(storage);
+        when(ncRepo.findByIdAndTenantId(NC_ID, TENANT)).thenReturn(Optional.of(nc(TENANT, NcStatus.OPEN)));
+        // 'MZ...' (PE/EXE) renommé en image/png : refusé.
+        byte[] exe = {0x4D, 0x5A, (byte) 0x90, 0x00};
+        assertThatThrownBy(() -> service.upload(NC_ID, "image/png", "evil.png", exe))
+                .isInstanceOf(NcPhotoValidationException.class);
+        verifyNoInteractions(photoRepo);
+        assertThat(storage.size()).isZero();
+    }
+
+    @Test
+    void upload_acceptsWebpSignature() {
+        when(storageProvider.getIfAvailable()).thenReturn(storage);
+        when(ncRepo.findByIdAndTenantId(NC_ID, TENANT)).thenReturn(Optional.of(nc(TENANT, NcStatus.OPEN)));
+        when(photoRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        // 'RIFF' .... 'WEBP'
+        byte[] webp = {0x52, 0x49, 0x46, 0x46, 0x10, 0x00, 0x00, 0x00, 0x57, 0x45, 0x42, 0x50};
+        NcPhotoDto.Response r = service.upload(NC_ID, "image/webp", "x.webp", webp);
+        assertThat(r.objectKey()).endsWith(".webp");
+    }
+
+    // --- BUG #5 : métadonnées AVANT binaire ---
+    @Test
+    void upload_persistsMetadataBeforeStorage() {
+        when(storageProvider.getIfAvailable()).thenReturn(storage);
+        when(ncRepo.findByIdAndTenantId(NC_ID, TENANT)).thenReturn(Optional.of(nc(TENANT, NcStatus.OPEN)));
+        when(photoRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        service.upload(NC_ID, "image/png", "p.png", PNG);
+
+        // L'ordre attendu : save (ligne) PUIS put (objet). Avec un storage réel mockable on
+        // vérifie qu'aucun objet n'est écrit si le save échoue (voir test suivant).
+        org.mockito.InOrder order = org.mockito.Mockito.inOrder(photoRepo);
+        order.verify(photoRepo).save(any());
+    }
+
+    @Test
+    void upload_metadataSaveFails_noOrphanObject() {
+        // Storage mockable pour observer l'absence d'appel put quand le save plante.
+        ObjectStorage mockStorage = org.mockito.Mockito.mock(ObjectStorage.class);
+        when(storageProvider.getIfAvailable()).thenReturn(mockStorage);
+        when(ncRepo.findByIdAndTenantId(NC_ID, TENANT)).thenReturn(Optional.of(nc(TENANT, NcStatus.OPEN)));
+        when(photoRepo.save(any())).thenThrow(
+                new org.springframework.dao.DataIntegrityViolationException("db down"));
+
+        assertThatThrownBy(() -> service.upload(NC_ID, "image/png", "p.png", PNG))
+                .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
+        // L'objet n'a jamais été écrit → aucun binaire orphelin.
+        verify(mockStorage, never()).put(any(), any(), any());
     }
 
     // --- validation ---

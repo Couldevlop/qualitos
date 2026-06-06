@@ -94,6 +94,42 @@ public class SecurityConfig {
                 .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+
+                // --- H1 (OWASP A01) : durcissement des endpoints SENSIBLES ---
+                // On cible UNIQUEMENT les actions d'administration / d'intégrité, pour ne
+                // pas casser l'accès qualité courant (NC, CAPA, audits, 5S restent ouverts
+                // à tout utilisateur authentifié — quality_manager / user). La matrice de
+                // rôles complète (CLAUDE.md §16) reste à propager par endpoint (DETTE/SUIVI).
+                // Noms de rôles = realm_access.roles Keycloak mappés en ROLE_<UPPER>
+                // (cf. jwtAuthenticationConverter). On s'aligne sur api-core (ADMIN / SUPER_ADMIN).
+
+                // Activation/désactivation des Industry Packs : admin.
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/industry-packs/*/activate")
+                    .hasAnyRole("ADMIN", "SUPER_ADMIN")
+                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/industry-packs/*/activate")
+                    .hasAnyRole("ADMIN", "SUPER_ADMIN")
+
+                // Activation des modules tenant (toutes les transitions d'état d'abonnement) : admin.
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/tenant-modules/**")
+                    .hasAnyRole("ADMIN", "SUPER_ADMIN")
+
+                // Clés API (création/révocation) : admin.
+                .requestMatchers("/api/v1/api-keys/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+
+                // Configuration des webhooks sortants : admin.
+                .requestMatchers("/api/v1/webhooks/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+
+                // Déclenchement d'un batch d'ancrage blockchain : admin + responsable qualité
+                // (action d'intégrité légitime côté pilotage qualité). La vérification (GET)
+                // reste ouverte aux authentifiés.
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/blockchain/anchor/run")
+                    .hasAnyRole("ADMIN", "SUPER_ADMIN", "QUALITY_MANAGER")
+
+                // NB : l'écriture directe du journal d'audit (POST /api/v1/audit/events) est
+                // verrouillée par @PreAuthorize sur le contrôleur (C1) en plus de la couche URL.
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/audit/events")
+                    .hasAnyRole("ADMIN", "SUPER_ADMIN")
+
                 .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2

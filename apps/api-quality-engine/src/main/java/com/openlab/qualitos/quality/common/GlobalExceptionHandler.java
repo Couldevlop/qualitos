@@ -137,6 +137,7 @@ import com.openlab.qualitos.quality.nonconformity.storage.StorageDisabledExcepti
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -1469,6 +1470,42 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ProblemDetail handleDataIntegrity(DataIntegrityViolationException ex) {
+        // BUG #3 — Une violation de contrainte d'intégrité (unicité, FK, NOT NULL) qui
+        // n'a pas été traduite en exception métier dédiée est un CONFLIT de données, pas
+        // une erreur serveur : 409 (et non 500). On NE divulgue PAS le message SQL brut
+        // (nom de contrainte, colonnes, valeurs) — OWASP A09. Le détail technique reste
+        // dans les logs serveur.
+        log.warn("Data integrity violation mapped to 409", ex);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT,
+                "The request conflicts with the current state of the resource "
+                        + "(duplicate or constraint violation)");
+        problem.setType(URI.create("https://qualitos.io/errors/data-conflict"));
+        problem.setTitle("Data Conflict");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(org.springframework.data.mapping.PropertyReferenceException.class)
+    public ProblemDetail handlePropertyReference(
+            org.springframework.data.mapping.PropertyReferenceException ex) {
+        // BUG #24 — Un ?sort=champInconnu (ou tout tri sur une propriété absente) fait
+        // remonter PropertyReferenceException depuis Spring Data jusqu'au handler
+        // générique → 500 sur TOUS les endpoints paginés. C'est une erreur du CLIENT
+        // (paramètre de tri invalide) : 400. On expose le nom de propriété fautif
+        // (déjà fourni par le client, pas une info interne sensible) pour aider au debug.
+        log.debug("Invalid sort/property reference mapped to 400: {}", ex.getPropertyName());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST,
+                "Unknown sort or filter property: '" + ex.getPropertyName() + "'");
+        problem.setType(URI.create("https://qualitos.io/errors/invalid-sort-property"));
+        problem.setTitle("Invalid Sort Property");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     @ExceptionHandler(NoResourceFoundException.class)
     public ProblemDetail handleNoResource(NoResourceFoundException ex) {
         // Chemin inexistant → 404 (et non 500). Évite de masquer une 404 en
@@ -1477,6 +1514,21 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND, "Resource not found");
         problem.setType(URI.create("https://qualitos.io/errors/resource-not-found"));
         problem.setTitle("Resource Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler({
+            org.springframework.security.access.AccessDeniedException.class,
+            org.springframework.security.authorization.AuthorizationDeniedException.class})
+    public ProblemDetail handleAccessDenied(RuntimeException ex) {
+        // H1/C1 — Un refus d'autorisation (@PreAuthorize ou règle URL propagée jusqu'au
+        // handler) doit être un 403, pas un 500. Sans ce handler, le catch-all
+        // Exception → 500 masquerait le refus (OWASP A01/A09). Aucun détail interne exposé.
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.FORBIDDEN, "Access denied");
+        problem.setType(URI.create("https://qualitos.io/errors/access-denied"));
+        problem.setTitle("Access Denied");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

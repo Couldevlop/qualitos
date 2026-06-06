@@ -49,12 +49,12 @@ class NcServiceTest {
     void create_generatesReference_andSavesOpen() {
         when(repo.countByTenantIdAndReferenceStartingWith(eq(TENANT), anyString())).thenReturn(2L);
         when(repo.existsByTenantIdAndReference(eq(TENANT), anyString())).thenReturn(false);
-        when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(repo.saveAndFlush(any())).thenAnswer(inv -> inv.getArgument(0));
 
         NcDto.Response r = service.create(req());
 
         ArgumentCaptor<NonConformity> cap = ArgumentCaptor.forClass(NonConformity.class);
-        verify(repo).save(cap.capture());
+        verify(repo).saveAndFlush(cap.capture());
         assertThat(cap.getValue().getStatus()).isEqualTo(NcStatus.OPEN);
         assertThat(cap.getValue().getTenantId()).isEqualTo(TENANT);
         assertThat(r.reference()).matches("NC-\\d{4}-0003");
@@ -66,10 +66,39 @@ class NcServiceTest {
         when(repo.countByTenantIdAndReferenceStartingWith(eq(TENANT), anyString())).thenReturn(0L);
         // première référence prise, deuxième libre
         when(repo.existsByTenantIdAndReference(eq(TENANT), anyString())).thenReturn(true, false);
-        when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(repo.saveAndFlush(any())).thenAnswer(inv -> inv.getArgument(0));
 
         NcDto.Response r = service.create(req());
         assertThat(r.reference()).endsWith("0002");
+    }
+
+    // --- BUG #4 : race sur la référence → retry puis succès ---
+    @Test
+    void create_concurrentReferenceCollision_retriesAndSucceeds() {
+        when(repo.countByTenantIdAndReferenceStartingWith(eq(TENANT), anyString())).thenReturn(0L);
+        when(repo.existsByTenantIdAndReference(eq(TENANT), anyString())).thenReturn(false);
+        // 1re insertion : la référence a été prise par une transaction concurrente
+        // (violation d'unicité au flush) ; 2e tentative : succès.
+        when(repo.saveAndFlush(any()))
+                .thenThrow(new org.springframework.dao.DataIntegrityViolationException("dup reference"))
+                .thenAnswer(inv -> inv.getArgument(0));
+
+        NcDto.Response r = service.create(req());
+
+        assertThat(r).isNotNull();
+        verify(repo, times(2)).saveAndFlush(any());
+    }
+
+    @Test
+    void create_referenceCollision_exhaustsRetries_propagates() {
+        when(repo.countByTenantIdAndReferenceStartingWith(eq(TENANT), anyString())).thenReturn(0L);
+        when(repo.existsByTenantIdAndReference(eq(TENANT), anyString())).thenReturn(false);
+        when(repo.saveAndFlush(any()))
+                .thenThrow(new org.springframework.dao.DataIntegrityViolationException("dup reference"));
+
+        assertThatThrownBy(() -> service.create(req()))
+                .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
+        verify(repo, times(3)).saveAndFlush(any());
     }
 
     @Test

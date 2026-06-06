@@ -6,8 +6,10 @@ import com.openlab.qualitos.quality.capa.CapaCriticity;
 import com.openlab.qualitos.quality.capa.CapaSourceType;
 import com.openlab.qualitos.quality.capa.CapaStatus;
 import com.openlab.qualitos.quality.capa.CapaType;
+import com.openlab.qualitos.quality.common.CurrentUser;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -63,11 +65,18 @@ public class NcService {
         return toResponse(load(id));
     }
 
+    /** Nombre de tentatives sur collision de référence concurrente (BUG #4). */
+    private static final int REFERENCE_RETRY_ATTEMPTS = 3;
+
     public NcDto.Response create(NcDto.CreateRequest request) {
         UUID tenantId = requireTenantId();
+        // H2 (OWASP A01) : le rapporteur est dérivé du JWT (sub), jamais d'un champ de
+        // body falsifiable. On retombe sur le body uniquement hors contexte authentifié
+        // (tests unitaires de service) ; en production le principal est toujours présent.
+        UUID reporterId = CurrentUser.userId().orElse(request.reporterId());
+
         NonConformity nc = new NonConformity();
         nc.setTenantId(tenantId);
-        nc.setReference(generateReference(tenantId));
         nc.setTitle(request.title());
         nc.setDescription(request.description());
         nc.setCategory(request.category());
@@ -78,8 +87,23 @@ public class NcService {
         nc.setGeoLat(request.geoLat());
         nc.setGeoLng(request.geoLng());
         nc.setPhotoUrls(request.photoUrls());
-        nc.setReporterId(request.reporterId());
-        return toResponse(repository.save(nc));
+        nc.setReporterId(reporterId);
+
+        // BUG #4 — Race sur la génération de référence : deux créations concurrentes
+        // peuvent calculer la même référence et violer la contrainte d'unicité
+        // (tenant_id, reference). On retente quelques fois en régénérant la référence ;
+        // au-delà on laisse remonter → 409 via le GlobalExceptionHandler.
+        DataIntegrityViolationException last = null;
+        for (int attempt = 0; attempt < REFERENCE_RETRY_ATTEMPTS; attempt++) {
+            nc.setReference(generateReference(tenantId));
+            try {
+                return toResponse(repository.saveAndFlush(nc));
+            } catch (DataIntegrityViolationException ex) {
+                last = ex;
+                // Référence reprise entre temps : on régénère et on retente.
+            }
+        }
+        throw last;
     }
 
     public NcDto.Response update(UUID id, NcDto.UpdateRequest request) {

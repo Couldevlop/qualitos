@@ -71,11 +71,23 @@ public class NcPhotoService {
                     + " (allowed: " + ALLOWED_TYPES.keySet() + ")");
         }
 
+        // M1 — Le content-type déclaré est falsifiable : on vérifie la SIGNATURE binaire
+        // (magic bytes) et on exige qu'elle corresponde au type annoncé. Un .exe renommé
+        // en .png (ou un content-type menteur) est rejeté en 400.
+        if (!magicBytesMatch(normalizedType, content)) {
+            throw new NcPhotoValidationException(
+                    "File content does not match the declared type '" + normalizedType + "'");
+        }
+
         // Clé tenantisée. L'extension vient du content-type validé, JAMAIS du nom de
         // fichier client (qui peut contenir des séquences de traversée de chemin).
         String key = "tenants/" + tenantId + "/nc/" + ncId + "/" + UUID.randomUUID() + "." + ext;
-        storage.put(key, normalizedType, content);
 
+        // BUG #5 — Ordre métadonnées → binaire. On persiste d'abord la ligne (dans la
+        // transaction), puis on écrit l'objet. Si le put échoue, l'exception remonte et la
+        // transaction rollback la ligne : aucune métadonnée orpheline. L'objet, lui, n'a
+        // jamais été écrit. (Inverser l'ordre laisserait au contraire un binaire orphelin
+        // si le save échouait.)
         NcPhoto photo = new NcPhoto();
         photo.setTenantId(tenantId);
         photo.setNcId(ncId);
@@ -84,6 +96,8 @@ public class NcPhotoService {
         photo.setSizeBytes(content.length);
         photo.setOriginalFilename(sanitizeFilename(originalFilename));
         NcPhoto saved = photoRepository.save(photo);
+
+        storage.put(key, normalizedType, content);
         return toResponse(saved);
     }
 
@@ -102,8 +116,12 @@ public class NcPhotoService {
         ObjectStorage storage = requireStorage();
         NcPhoto photo = photoRepository.findByIdAndTenantIdAndNcId(photoId, tenantId, ncId)
                 .orElseThrow(() -> new NcPhotoNotFoundException(photoId));
-        storage.delete(photo.getObjectKey()); // idempotent côté storage
+        // BUG #5 (symétrique) — On supprime d'abord la ligne, puis l'objet. Si le delete
+        // storage échoue, la transaction rollback la suppression de la ligne : la photo
+        // reste cohérente (ligne + objet présents) plutôt que de laisser une ligne pointant
+        // vers un objet déjà supprimé. Le storage.delete est idempotent.
         photoRepository.delete(photo);
+        storage.delete(photo.getObjectKey());
     }
 
     // --- helpers ---
@@ -126,6 +144,44 @@ public class NcPhotoService {
             throw new MissingTenantContextException();
         }
         return UUID.fromString(TenantContext.getTenantId());
+    }
+
+    /**
+     * M1 — Vérifie que les premiers octets ("magic bytes") correspondent au content-type
+     * déclaré. Sniff manuel, aucune dépendance externe.
+     *
+     * <ul>
+     *   <li>JPEG : {@code FF D8 FF}</li>
+     *   <li>PNG  : {@code 89 50 4E 47 0D 0A 1A 0A}</li>
+     *   <li>WEBP : {@code 'RIFF' .... 'WEBP'} (octets 0-3 = RIFF, 8-11 = WEBP)</li>
+     *   <li>HEIC : boîte {@code ftyp} à l'offset 4 (octets 4-7 = 'ftyp')</li>
+     * </ul>
+     */
+    static boolean magicBytesMatch(String normalizedType, byte[] c) {
+        return switch (normalizedType) {
+            case "image/jpeg" -> startsWith(c, 0xFF, 0xD8, 0xFF);
+            case "image/png" -> startsWith(c, 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A);
+            case "image/webp" -> c.length >= 12
+                    && startsWith(c, 0x52, 0x49, 0x46, 0x46) // "RIFF"
+                    && c[8] == 'W' && c[9] == 'E' && c[10] == 'B' && c[11] == 'P';
+            // HEIC : 'ftyp' à l'offset 4 ; la marque (heic/heix/mif1/…) suit, on reste
+            // permissif sur la sous-marque mais on exige la boîte ftyp.
+            case "image/heic" -> c.length >= 8
+                    && c[4] == 'f' && c[5] == 't' && c[6] == 'y' && c[7] == 'p';
+            default -> false; // type non whitelisté : déjà rejeté en amont
+        };
+    }
+
+    private static boolean startsWith(byte[] c, int... prefix) {
+        if (c.length < prefix.length) {
+            return false;
+        }
+        for (int i = 0; i < prefix.length; i++) {
+            if ((c[i] & 0xFF) != (prefix[i] & 0xFF)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** Garde le nom d'origine à titre informatif uniquement, neutralisé (jamais réutilisé dans la clé). */
