@@ -126,7 +126,7 @@ jobs:
       # toolcache de l'HÔTE casse le conteneur ("JAVA_HOME is not defined correctly").
       # Action pinnée (le @main avait changé de comportement entre deux runs).
       - name: Dependency-Check
-        uses: dependency-check/Dependency-Check_Action@75ba02d9c7e0184d913a674ec40d537ddff3a40e # 1.1.0
+        uses: dependency-check/Dependency-Check_Action@75ba02d6183445fe0761d26e836bde58b1560600 # 1.1.0
         with:
           project: qualitos
           path: '.'
