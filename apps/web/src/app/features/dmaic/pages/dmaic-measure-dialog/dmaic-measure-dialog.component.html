@@ -1,6 +1,6 @@
 <qos-form-dialog
-  title="Nouvelle mesure"
-  subtitle="Mesure d'un point caractéristique du procédé (Y critique). Sera utilisée pour le calcul des indices de capabilité Cp/Cpk."
+  i18n-title="@@dmaic.measure.title" title="Nouvelle mesure"
+  i18n-subtitle="@@dmaic.measure.subtitle" subtitle="Mesure d'un point caractéristique du procédé (Y critique). Sera utilisée pour le calcul des indices de capabilité Cp/Cpk."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
@@ -8,30 +8,30 @@
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Valeur</mat-label>
+    <mat-label i18n="@@dmaic.detail.col-value">Valeur</mat-label>
     <input matInput formControlName="value" type="number" step="any" required>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Sous-groupe</mat-label>
+      <mat-label i18n="@@dmaic.detail.col-subgroup">Sous-groupe</mat-label>
       <input matInput formControlName="subgroupId" maxlength="100"
-             placeholder="Ex. : équipe-A, machine-3">
+             i18n-placeholder="@@dmaic.measure.subgroup-placeholder" placeholder="Ex. : équipe-A, machine-3">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Date / heure</mat-label>
+      <mat-label i18n="@@dmaic.measure.datetime-label">Date / heure</mat-label>
       <input matInput formControlName="recordedAt" type="datetime-local">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Référence source</mat-label>
+    <mat-label i18n="@@dmaic.measure.source-label">Référence source</mat-label>
     <input matInput formControlName="sourceRef" maxlength="255"
-           placeholder="Ex. : OF-2026-1145, lot-3214">
+           i18n-placeholder="@@dmaic.measure.source-placeholder" placeholder="Ex. : OF-2026-1145, lot-3214">
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Note</mat-label>
+    <mat-label i18n="@@dmaic.detail.col-note">Note</mat-label>
     <textarea matInput formControlName="note" rows="2"></textarea>
   </mat-form-field>
 

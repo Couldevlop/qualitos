@@ -3,9 +3,13 @@ from .complete_text import CompleteTextUseCase, CompleteTextRequest, CompleteTex
 from .rag_query import RagQueryUseCase, RagQueryRequest, RagQueryResult
 from .nlq_ask import NlqAskUseCase, NlqAskRequest
 from .federated_train_round import FederatedTrainRoundUseCase
+from .predict import KpiForecastUseCase, NcClusterUseCase, SupplierRiskUseCase
 from .spc_detect import SpcDetectUseCase
 
 __all__ = [
+    "KpiForecastUseCase",
+    "NcClusterUseCase",
+    "SupplierRiskUseCase",
     "CompleteTextUseCase",
     "CompleteTextRequest",
     "CompleteTextResult",

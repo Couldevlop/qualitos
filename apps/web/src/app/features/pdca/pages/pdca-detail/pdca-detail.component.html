@@ -2,13 +2,14 @@
 
   <header class="page-header">
     <div class="title-block">
-      <button mat-icon-button (click)="goBack()" matTooltip="Retour à la liste">
+      <button mat-icon-button (click)="goBack()"
+              i18n-matTooltip="@@pdca.detail.back-tooltip" matTooltip="Retour à la liste">
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div>
         <h1 *ngIf="cycle$ | async as c; else loadingTitle">{{ c?.title || 'Cycle introuvable' }}</h1>
-        <ng-template #loadingTitle><h1>Chargement…</h1></ng-template>
-        <p class="eyebrow">Cycle PDCA · Roue de Deming</p>
+        <ng-template #loadingTitle><h1 i18n="@@common.loading">Chargement…</h1></ng-template>
+        <p class="eyebrow" i18n="@@pdca.detail.eyebrow">Cycle PDCA · Roue de Deming</p>
       </div>
     </div>
 
@@ -16,13 +17,13 @@
       <div class="actions" *ngIf="c">
         <button mat-stroked-button (click)="cancel()"
                 [disabled]="(acting$ | async) || isTerminal(c.status)"
-                matTooltip="Annuler le cycle">
-          <mat-icon>cancel</mat-icon> Annuler
+                i18n-matTooltip="@@pdca.detail.cancel-tooltip" matTooltip="Annuler le cycle">
+          <mat-icon>cancel</mat-icon> <span i18n="@@common.cancel">Annuler</span>
         </button>
         <button mat-flat-button color="primary" (click)="advance(c.status)"
                 [disabled]="(acting$ | async) || isTerminal(c.status)"
-                matTooltip="Passer à la phase suivante">
-          <mat-icon>fast_forward</mat-icon> Avancer la phase
+                i18n-matTooltip="@@pdca.detail.advance-tooltip" matTooltip="Passer à la phase suivante">
+          <mat-icon>fast_forward</mat-icon> <span i18n="@@pdca.detail.advance">Avancer la phase</span>
         </button>
       </div>
     </ng-container>
@@ -30,7 +31,7 @@
 
   <div class="state-row" *ngIf="loading$ | async">
     <mat-progress-spinner mode="indeterminate" diameter="32"></mat-progress-spinner>
-    <span>Chargement…</span>
+    <span i18n="@@common.loading">Chargement…</span>
   </div>
 
   <div class="state-row error" *ngIf="error$ | async as err">
@@ -45,23 +46,23 @@
         <mat-card-content>
           <div class="info-grid">
             <div class="info-item">
-              <span class="info-label">Statut</span>
+              <span class="info-label" i18n="@@common.status">Statut</span>
               <span [class]="statusBadge(c.status)">{{ c.status }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">Pilote</span>
+              <span class="info-label" i18n="@@pdca.detail.owner">Pilote</span>
               <span class="info-value">{{ c.ownerId }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">Créé le</span>
+              <span class="info-label" i18n="@@common.created-at">Créé le</span>
               <span class="info-value">{{ c.createdAt | date:'medium' }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">Dernière MAJ</span>
+              <span class="info-label" i18n="@@common.last-updated">Dernière MAJ</span>
               <span class="info-value">{{ c.updatedAt | date:'medium' }}</span>
             </div>
             <div class="info-item" *ngIf="c.completedAt">
-              <span class="info-label">Clôturé le</span>
+              <span class="info-label" i18n="@@pdca.detail.completed-at">Clôturé le</span>
               <span class="info-value">{{ c.completedAt | date:'medium' }}</span>
             </div>
           </div>
@@ -72,13 +73,14 @@
 
       <mat-card class="steps-card">
         <mat-card-header class="steps-header">
-          <mat-card-title>Étapes ({{ c.steps.length }})</mat-card-title>
+          <mat-card-title><span i18n="@@pdca.detail.steps-title">Étapes</span> ({{ c.steps.length }})</mat-card-title>
           <button mat-flat-button color="primary" type="button"
                   (click)="openAddStep(c.status)"
                   [disabled]="isTerminal(c.status)"
+                  i18n-matTooltip="@@pdca.detail.add-step-tooltip"
                   matTooltip="Ajouter une étape Plan / Do / Check / Act">
             <mat-icon>add</mat-icon>
-            Ajouter une étape
+            <span i18n="@@pdca.detail.add-step">Ajouter une étape</span>
           </button>
         </mat-card-header>
 
@@ -86,11 +88,11 @@
           <table mat-table [dataSource]="c.steps" class="steps-table"
                  *ngIf="c.steps.length > 0">
             <ng-container matColumnDef="phase">
-              <th mat-header-cell *matHeaderCellDef>Phase</th>
+              <th mat-header-cell *matHeaderCellDef i18n="@@pdca.detail.col-phase">Phase</th>
               <td mat-cell *matCellDef="let s"><span [class]="phaseColor(s.phase)">{{ s.phase }}</span></td>
             </ng-container>
             <ng-container matColumnDef="title">
-              <th mat-header-cell *matHeaderCellDef>Étape</th>
+              <th mat-header-cell *matHeaderCellDef i18n="@@pdca.detail.col-step">Étape</th>
               <td mat-cell *matCellDef="let s">
                 <div class="cell-title">
                   <strong>{{ s.title }}</strong>
@@ -99,22 +101,22 @@
               </td>
             </ng-container>
             <ng-container matColumnDef="status">
-              <th mat-header-cell *matHeaderCellDef>Statut</th>
+              <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
               <td mat-cell *matCellDef="let s"><span [class]="stepStatusBadge(s.status)">{{ s.status }}</span></td>
             </ng-container>
             <ng-container matColumnDef="dueDate">
-              <th mat-header-cell *matHeaderCellDef>Échéance</th>
+              <th mat-header-cell *matHeaderCellDef i18n="@@pdca.detail.col-due-date">Échéance</th>
               <td mat-cell *matCellDef="let s">{{ s.dueDate ? (s.dueDate | date) : '—' }}</td>
             </ng-container>
             <ng-container matColumnDef="updatedAt">
-              <th mat-header-cell *matHeaderCellDef>MAJ</th>
+              <th mat-header-cell *matHeaderCellDef i18n="@@pdca.detail.col-updated">MAJ</th>
               <td mat-cell *matCellDef="let s">{{ s.updatedAt | date:'short' }}</td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="stepColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: stepColumns;"></tr>
           </table>
 
-          <p class="empty" *ngIf="c.steps.length === 0">
+          <p class="empty" *ngIf="c.steps.length === 0" i18n="@@pdca.detail.steps-empty">
             Aucune étape pour l'instant. Clique sur <strong>Ajouter une étape</strong>
             pour démarrer ton cycle Plan → Do → Check → Act.
           </p>

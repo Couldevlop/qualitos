@@ -257,11 +257,9 @@ jobs:
         shell: bash
         env:
           CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
-        # TEMPORAIRE : continue-on-error tant que karma-chrome-launcher pose
-        # souci sur ubuntu-latest sans repro local possible (ETIMEDOUT npm
-        # depuis le poste de dev, cf. .nvmrc / network). À retirer dans la PR
-        # qui commitera le package-lock.json + reproduira les tests en local.
-        continue-on-error: true
+        # Bloquant depuis 2026-06-05 : le continue-on-error historique a masqué
+        # une vraie régression (polyfill $localize absent de la config test).
+        # La suite est verte en local (306/306) — un échec ici est un échec réel.
         run: |
           set -o pipefail
           npm test -- --reporters=progress,kjhtml --browsers=ChromeHeadlessCI 2>&1 | tee karma.log
@@ -304,6 +302,69 @@ jobs:
           path: apps/web/package-lock.json
           if-no-files-found: warn
           retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # Tests Python de l'ai-service (§14.3) — pytest + couverture >= 85 % (gate
+  # dans pyproject.toml), lint ruff, contrats d'architecture import-linter.
+  # Angle mort comblé : sans ce job, des tests cassés pouvaient atterrir sur
+  # develop sans détection (cf. régression NLQ corrigée dans f699d50).
+  # ---------------------------------------------------------------------------
+  ai-service-tests:
+    name: AI service tests (pytest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        working-directory: apps/ai-service
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        # 3.11 = version du runtime distroless (ADR 0013) — on teste sur la
+        # même mineure que la prod, pas sur celle du poste de dev.
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: apps/ai-service/pyproject.toml
+
+      - name: Install dependencies
+        # `pip install .[dev]` est impossible : flat-layout avec plusieurs
+        # packages top-level (setuptools refuse) — cf. ADR 0013. On installe
+        # donc les dépendances explicitement, alignées sur
+        # [project.dependencies] du pyproject.toml. Presidio et l'extra `ml`
+        # sont volontairement exclus (lourds ; le filtre PII bascule sur
+        # HeuristicPiiFilter, comportement prévu — même choix que l'image prod).
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install \
+            "fastapi>=0.115" \
+            "uvicorn[standard]>=0.32" \
+            "pydantic>=2.9" \
+            "httpx>=0.27" \
+            "sqlglot>=25.5" \
+            "numpy>=1.26" \
+            "pyjwt[crypto]>=2.9" \
+            "slowapi>=0.1.9" \
+            "qdrant-client>=1.11" \
+            "psycopg[binary]>=3.2" \
+            "pytest>=8.3" "pytest-cov>=5.0" "pytest-asyncio>=0.24" \
+            "import-linter>=2.0" "ruff>=0.6"
+
+      - name: Lint (ruff)
+        run: python -m ruff check .
+
+      - name: Architecture contracts (import-linter)
+        # Vérifie les contrats Clean Architecture du pyproject.toml
+        # (domain sans framework, application sans infra/presentation).
+        run: lint-imports
+
+      - name: Tests + coverage gate (>= 85 %)
+        # Le gate de couverture vient de [tool.coverage.report] fail_under=85.
+        run: python -m pytest
 
   # ---------------------------------------------------------------------------
   # Scan d'images conteneur (§14.2 ; règle §18.2.1 : aucune CVE Critique/Haute).

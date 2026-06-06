@@ -1,30 +1,36 @@
 <qos-form-dialog
+  i18n-title="@@circles.create.title"
   title="Nouveau cercle de qualité"
+  i18n-subtitle="@@circles.create.subtitle"
   subtitle="Crée le groupe (5-10 personnes recommandé). Les membres, réunions et propositions seront ajoutés ensuite."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.create"
   submitLabel="Créer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Nom du cercle</mat-label>
+    <mat-label i18n="@@circles.create.name-label">Nom du cercle</mat-label>
     <input matInput formControlName="name" maxlength="255" required
+           i18n-placeholder="@@circles.create.name-placeholder"
            placeholder="Ex. : Cercle production ligne 3">
-    <mat-error *ngIf="form.controls.name.hasError('required')">Le nom est requis.</mat-error>
-    <mat-error *ngIf="form.controls.name.hasError('maxlength')">255 caractères maximum.</mat-error>
+    <mat-error *ngIf="form.controls.name.hasError('required')" i18n="@@circles.create.name-required">Le nom est requis.</mat-error>
+    <mat-error *ngIf="form.controls.name.hasError('maxlength')" i18n="@@circles.create.maxlength">255 caractères maximum.</mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Thème (optionnel)</mat-label>
+    <mat-label i18n="@@circles.create.topic-label">Thème (optionnel)</mat-label>
     <input matInput formControlName="topic" maxlength="255"
+           i18n-placeholder="@@circles.create.topic-placeholder"
            placeholder="Ex. : production-soudure, fournisseurs, sécurité">
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description (optionnel)</mat-label>
+    <mat-label i18n="@@circles.create.description-label">Description (optionnel)</mat-label>
     <textarea matInput formControlName="description" rows="3"
+              i18n-placeholder="@@circles.create.description-placeholder"
               placeholder="Mission du cercle, périmètre, fréquence visée…"></textarea>
   </mat-form-field>
 

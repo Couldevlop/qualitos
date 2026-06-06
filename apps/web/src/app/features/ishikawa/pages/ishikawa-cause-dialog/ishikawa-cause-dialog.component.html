@@ -3,46 +3,46 @@
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
-  submitLabel="Ajouter"
+  i18n-submitLabel="@@common.add" submitLabel="Ajouter"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <p class="parent-banner" *ngIf="data.parent">
     <mat-icon>arrow_outward</mat-icon>
-    <span>Cette sous-cause sera rattachée à <strong>« {{ data.parent.label }} »</strong>.</span>
+    <span><span i18n="@@ishikawa.cause.parent-prefix">Cette sous-cause sera rattachée à</span> <strong>« {{ data.parent.label }} »</strong>.</span>
   </p>
 
-  <p class="hint" *ngIf="!data.parent">Choisis la branche (M) et formule la cause de façon concise.
+  <p class="hint" *ngIf="!data.parent" i18n="@@ishikawa.cause.hint">Choisis la branche (M) et formule la cause de façon concise.
      Le scoring racine sera ajusté plus tard par l'analyse 5 Pourquoi.</p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Branche</mat-label>
+    <mat-label i18n="@@ishikawa.cause.branch-label">Branche</mat-label>
     <mat-select formControlName="category">
       <mat-option *ngFor="let c of categories" [value]="c.value">{{ c.label }}</mat-option>
     </mat-select>
-    <mat-hint *ngIf="data.parent">Héritée de la cause parente.</mat-hint>
+    <mat-hint *ngIf="data.parent" i18n="@@ishikawa.cause.branch-hint">Héritée de la cause parente.</mat-hint>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Libellé de la cause</mat-label>
+    <mat-label i18n="@@ishikawa.cause.label-label">Libellé de la cause</mat-label>
     <input matInput formControlName="label" maxlength="500" required
-           placeholder="Ex. : Calibration robot soudure dérivée">
+           i18n-placeholder="@@ishikawa.cause.label-placeholder" placeholder="Ex. : Calibration robot soudure dérivée">
     <mat-hint align="end">{{ form.controls.label.value.length || 0 }} / 500</mat-hint>
-    <mat-error *ngIf="form.controls.label.hasError('required')">Le libellé est requis.</mat-error>
-    <mat-error *ngIf="form.controls.label.hasError('maxlength')">500 caractères maximum.</mat-error>
+    <mat-error *ngIf="form.controls.label.hasError('required')" i18n="@@ishikawa.cause.label-required">Le libellé est requis.</mat-error>
+    <mat-error *ngIf="form.controls.label.hasError('maxlength')" i18n="@@common.maxlength-500">500 caractères maximum.</mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description (optionnel)</mat-label>
+    <mat-label i18n="@@common.description-optional">Description (optionnel)</mat-label>
     <textarea matInput formControlName="description" rows="3"
-              placeholder="Détails, mesures, observations…"></textarea>
+              i18n-placeholder="@@ishikawa.cause.desc-placeholder" placeholder="Détails, mesures, observations…"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Score racine (0 → 1, optionnel)</mat-label>
+    <mat-label i18n="@@ishikawa.cause.score-label">Score racine (0 → 1, optionnel)</mat-label>
     <input matInput formControlName="rootCauseScore" type="number"
            min="0" max="1" step="0.05" placeholder="Ex. : 0.85">
-    <mat-hint>Probabilité estimée que ce soit une cause racine.</mat-hint>
+    <mat-hint i18n="@@ishikawa.cause.score-hint">Probabilité estimée que ce soit une cause racine.</mat-hint>
   </mat-form-field>
 
 </qos-form-dialog>

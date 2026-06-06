@@ -40,7 +40,7 @@ export class FivesCreateDialogComponent {
     }
     const auditorId = this.auth.snapshot()?.userId;
     if (!auditorId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, 'OK', { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -55,14 +55,14 @@ export class FivesCreateDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: audit => {
-          this.snack.open('Audit 5S créé.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@fives.create.success:Audit 5S créé.`, 'OK', { duration: 2500 });
           this.dialogRef.close(audit);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[fives-create] failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de la création.'),
+            safeErrorMessage(err, $localize`:@@common.error-create:Erreur lors de la création.`),
             'OK',
             { duration: 4000 }
           );

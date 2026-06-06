@@ -2,27 +2,43 @@ import {
   AfterViewInit, ChangeDetectionStrategy, Component, ElementRef,
   Input, NgZone, OnChanges, OnDestroy, SimpleChanges, ViewChild
 } from '@angular/core';
-import * as echarts from 'echarts/core';
-import {
-  LineChart, BarChart, PieChart, HeatmapChart, ScatterChart
-} from 'echarts/charts';
-import {
-  GridComponent, TooltipComponent, LegendComponent,
-  TitleComponent, DataZoomComponent, VisualMapComponent,
-  MarkLineComponent
-} from 'echarts/components';
-import { CanvasRenderer } from 'echarts/renderers';
 import type { EChartsCoreOption, ECharts } from 'echarts/core';
 import { Subscription } from 'rxjs';
 
 import { ThemeMode, ThemeService } from '../../../core/theme/theme.service';
 
-echarts.use([
-  LineChart, BarChart, PieChart, HeatmapChart, ScatterChart,
-  GridComponent, TooltipComponent, LegendComponent, TitleComponent,
-  DataZoomComponent, VisualMapComponent, MarkLineComponent,
-  CanvasRenderer
-]);
+type EchartsCore = typeof import('echarts/core');
+
+let echartsCore: Promise<EchartsCore> | null = null;
+
+/**
+ * Charge ECharts à la demande (import dynamique) : la lib (~340 kB min) sort
+ * du bundle initial — UiModule est importé par le shell EAGER alors que seuls
+ * dashboard et SPC affichent des graphiques. Le chunk est partagé et mis en
+ * cache au premier rendu d'un chart. Singleton : `use()` n'est appelé qu'une fois.
+ */
+function loadEcharts(): Promise<EchartsCore> {
+  if (!echartsCore) {
+    echartsCore = Promise.all([
+      import('echarts/core'),
+      import('echarts/charts'),
+      import('echarts/components'),
+      import('echarts/renderers')
+    ]).then(([core, charts, components, renderers]) => {
+      core.use([
+        charts.LineChart, charts.BarChart, charts.PieChart,
+        charts.HeatmapChart, charts.ScatterChart,
+        components.GridComponent, components.TooltipComponent,
+        components.LegendComponent, components.TitleComponent,
+        components.DataZoomComponent, components.VisualMapComponent,
+        components.MarkLineComponent,
+        renderers.CanvasRenderer
+      ]);
+      return core;
+    });
+  }
+  return echartsCore;
+}
 
 /**
  * Wrapper léger d'ECharts.
@@ -52,16 +68,20 @@ export class EchartComponent implements AfterViewInit, OnChanges, OnDestroy {
   private observer?: ResizeObserver;
   private themeSub?: Subscription;
   private currentMode: ThemeMode = 'light';
+  private destroyed = false;
 
   constructor(private readonly zone: NgZone, private readonly themeSvc: ThemeService) {}
 
   ngAfterViewInit(): void {
-    this.zone.runOutsideAngular(() => {
-      this.chart = echarts.init(this.host.nativeElement);
-      this.attachResize();
-      this.themeSub = this.themeSvc.mode().subscribe(mode => {
-        this.currentMode = mode;
-        this.render();
+    void loadEcharts().then(core => {
+      if (this.destroyed) return;   // composant détruit pendant le chargement
+      this.zone.runOutsideAngular(() => {
+        this.chart = core.init(this.host.nativeElement);
+        this.attachResize();
+        this.themeSub = this.themeSvc.mode().subscribe(mode => {
+          this.currentMode = mode;
+          this.render();
+        });
       });
     });
   }
@@ -71,6 +91,7 @@ export class EchartComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
     this.themeSub?.unsubscribe();
     this.observer?.disconnect();
     this.chart?.dispose();

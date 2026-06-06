@@ -2,41 +2,43 @@
 
   <header class="page-header">
     <div class="title-block">
-      <button mat-icon-button (click)="goBack()" matTooltip="Retour à la liste">
+      <button mat-icon-button (click)="goBack()"
+              i18n-matTooltip="@@fives.detail.back-tooltip" matTooltip="Retour à la liste">
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div>
         <h1 *ngIf="audit$ | async as a; else loadingTitle">
           {{ a?.zone || 'Audit introuvable' }}
         </h1>
-        <ng-template #loadingTitle><h1>Chargement…</h1></ng-template>
-        <p class="eyebrow">Audit 5S · Seiri · Seiton · Seiso · Seiketsu · Shitsuke</p>
+        <ng-template #loadingTitle><h1 i18n="@@common.loading">Chargement…</h1></ng-template>
+        <p class="eyebrow" i18n="@@fives.detail.eyebrow">Audit 5S · Seiri · Seiton · Seiso · Seiketsu · Shitsuke</p>
       </div>
     </div>
 
     <ng-container *ngIf="audit$ | async as a">
       <div class="actions" *ngIf="a">
         <button mat-stroked-button color="warn" (click)="deleteAudit(a.zone)"
-                matTooltip="Supprimer l'audit">
-          <mat-icon>delete</mat-icon> Supprimer
+                i18n-matTooltip="@@fives.detail.delete-tooltip" matTooltip="Supprimer l'audit">
+          <mat-icon>delete</mat-icon> <span i18n="@@common.delete">Supprimer</span>
         </button>
-        <button mat-stroked-button (click)="openEdit(a)" matTooltip="Modifier">
-          <mat-icon>edit</mat-icon> Modifier
+        <button mat-stroked-button (click)="openEdit(a)"
+                i18n-matTooltip="@@common.edit" matTooltip="Modifier">
+          <mat-icon>edit</mat-icon> <span i18n="@@common.edit">Modifier</span>
         </button>
         <button mat-stroked-button (click)="cancel()"
                 [disabled]="(acting$ | async) || isTerminal(a.status)"
-                matTooltip="Annuler l'audit">
-          <mat-icon>cancel</mat-icon> Annuler
+                i18n-matTooltip="@@fives.detail.cancel-tooltip" matTooltip="Annuler l'audit">
+          <mat-icon>cancel</mat-icon> <span i18n="@@common.cancel">Annuler</span>
         </button>
         <button mat-stroked-button color="primary" (click)="start()"
                 [disabled]="(acting$ | async) || !canStart(a.status)"
-                matTooltip="Démarrer l'audit">
-          <mat-icon>play_arrow</mat-icon> Démarrer
+                i18n-matTooltip="@@fives.detail.start-tooltip" matTooltip="Démarrer l'audit">
+          <mat-icon>play_arrow</mat-icon> <span i18n="@@fives.detail.start">Démarrer</span>
         </button>
         <button mat-flat-button color="primary" (click)="complete()"
                 [disabled]="(acting$ | async) || !canComplete(a.status)"
-                matTooltip="Clôturer l'audit">
-          <mat-icon>check</mat-icon> Clôturer
+                i18n-matTooltip="@@fives.detail.complete-tooltip" matTooltip="Clôturer l'audit">
+          <mat-icon>check</mat-icon> <span i18n="@@fives.detail.complete">Clôturer</span>
         </button>
       </div>
     </ng-container>
@@ -44,7 +46,7 @@
 
   <div class="state-row" *ngIf="loading$ | async">
     <mat-progress-spinner mode="indeterminate" diameter="32"></mat-progress-spinner>
-    <span>Chargement…</span>
+    <span i18n="@@common.loading">Chargement…</span>
   </div>
 
   <div class="state-row error" *ngIf="error$ | async as err">
@@ -59,26 +61,26 @@
         <mat-card-content>
           <div class="info-grid">
             <div class="info-item">
-              <span class="info-label">Statut</span>
+              <span class="info-label" i18n="@@common.status">Statut</span>
               <span [class]="badgeClass(a.status)">{{ a.status }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">Auditeur</span>
+              <span class="info-label" i18n="@@fives.detail.auditor">Auditeur</span>
               <span class="info-value">{{ a.auditorId }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">Score global</span>
+              <span class="info-label" i18n="@@fives.detail.overall-score">Score global</span>
               <span class="overall-score" *ngIf="a.overallScore != null; else noScore">
                 {{ a.overallScore | number:'1.0-0' }} / 100
               </span>
               <ng-template #noScore><span class="overall-score muted">—</span></ng-template>
             </div>
             <div class="info-item" *ngIf="a.scheduledAt">
-              <span class="info-label">Planifié</span>
+              <span class="info-label" i18n="@@fives.detail.scheduled">Planifié</span>
               <span class="info-value">{{ a.scheduledAt | date:'medium' }}</span>
             </div>
             <div class="info-item" *ngIf="a.completedAt">
-              <span class="info-label">Clôturé</span>
+              <span class="info-label" i18n="@@fives.detail.completed">Clôturé</span>
               <span class="info-value">{{ a.completedAt | date:'medium' }}</span>
             </div>
           </div>
@@ -95,7 +97,7 @@
 
           <mat-card-content [formGroup]="forms[p.pillar]" class="pillar-form">
             <mat-form-field appearance="outline" class="score-field">
-              <mat-label>Score (0–10)</mat-label>
+              <mat-label i18n="@@fives.detail.pillar-score-label">Score (0–10)</mat-label>
               <input matInput type="number" min="0" max="10" step="1"
                      formControlName="score"
                      [disabled]="!canScore(a.status)">
@@ -106,8 +108,9 @@
             </span>
 
             <mat-form-field appearance="outline" class="note-field">
-              <mat-label>Note (optionnel)</mat-label>
+              <mat-label i18n="@@fives.detail.note-label">Note (optionnel)</mat-label>
               <input matInput formControlName="note"
+                     i18n-placeholder="@@fives.detail.note-placeholder"
                      placeholder="Observation, photo URL, action…"
                      [disabled]="!canScore(a.status)">
             </mat-form-field>
@@ -117,7 +120,7 @@
                     [disabled]="saving[p.pillar] || forms[p.pillar].invalid || !canScore(a.status)">
               <mat-icon *ngIf="!saving[p.pillar]">save</mat-icon>
               <mat-progress-spinner *ngIf="saving[p.pillar]" mode="indeterminate" diameter="18"></mat-progress-spinner>
-              Enregistrer
+              <span i18n="@@common.save">Enregistrer</span>
             </button>
           </mat-card-content>
         </mat-card>

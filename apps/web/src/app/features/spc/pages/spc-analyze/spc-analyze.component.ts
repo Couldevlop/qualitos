@@ -76,18 +76,18 @@ export class SpcAnalyzeComponent implements OnInit {
     }
     const values = this.parseValues();
     if (values.length === 0) {
-      this.error = 'Saisissez au moins une mesure numérique.';
+      this.error = $localize`:@@spc.analyze.err-no-measure:Saisissez au moins une mesure numérique.`;
       return;
     }
     const center = this.form.value.center;
     const sigma = this.form.value.sigma;
     // Baseline : center et sigma doivent être fournis ensemble (sinon limites estimées).
     if ((center == null) !== (sigma == null)) {
-      this.error = 'La baseline exige center ET σ (ou aucun des deux).';
+      this.error = $localize`:@@spc.analyze.err-baseline-both:La baseline exige center ET σ (ou aucun des deux).`;
       return;
     }
     if (sigma != null && sigma <= 0) {
-      this.error = 'σ doit être strictement positif.';
+      this.error = $localize`:@@spc.analyze.err-sigma-positive:σ doit être strictement positif.`;
       return;
     }
 
@@ -116,7 +116,7 @@ export class SpcAnalyzeComponent implements OnInit {
     }
     const kpiId = this.kpiForm.value.kpiId;
     if (!kpiId) {
-      this.error = 'Sélectionnez un KPI.';
+      this.error = $localize`:@@spc.analyze.err-select-kpi:Sélectionnez un KPI.`;
       return;
     }
     const limit = this.kpiForm.value.limit ?? 30;
@@ -133,7 +133,7 @@ export class SpcAnalyzeComponent implements OnInit {
       error: (err: HttpErrorResponse) => {
         this.loading = false;
         this.error = err.status === 422
-          ? 'Au moins 2 mesures sont nécessaires pour ce KPI.'
+          ? $localize`:@@spc.analyze.err-min-two:Au moins 2 mesures sont nécessaires pour ce KPI.`
           : this.messageFor(err);
       }
     });
@@ -212,14 +212,28 @@ export class SpcAnalyzeComponent implements OnInit {
 
   private messageFor(err: HttpErrorResponse): string {
     switch (err.status) {
-      case 0: return 'Backend injoignable (engine sur 8082 ?).';
-      case 400: return 'Série invalide (1 à 10000 mesures attendues).';
-      case 413: return 'Série trop volumineuse (garde-fou IA).';
-      case 429: return 'Débit/quota IA dépassé pour ce tenant — réessayez plus tard.';
-      case 502: return 'Passerelle IA indisponible (ai-service injoignable).';
-      case 503: return 'Service IA momentanément indisponible (disjoncteur ouvert).';
-      default:  return `Échec de l'analyse SPC (HTTP ${err.status}).`;
+      case 0: return $localize`:@@spc.analyze.err-backend:Backend injoignable (engine sur 8082 ?).`;
+      case 400: return $localize`:@@spc.analyze.err-invalid-series:Série invalide (1 à 10000 mesures attendues).`;
+      case 413: return $localize`:@@spc.analyze.err-too-large:Série trop volumineuse (garde-fou IA).`;
+      case 429: return $localize`:@@spc.analyze.err-quota:Débit/quota IA dépassé pour ce tenant — réessayez plus tard.`;
+      case 502: return $localize`:@@spc.analyze.err-gateway:Passerelle IA indisponible (ai-service injoignable).`;
+      case 503: return $localize`:@@spc.analyze.err-unavailable:Service IA momentanément indisponible (disjoncteur ouvert).`;
+      default:  return $localize`:@@spc.analyze.err-generic:Échec de l'analyse SPC (HTTP ${err.status}:status:).`;
     }
+  }
+
+  /** Libellé de l'état du procédé (carte verdict). */
+  processStateValue(outOfControl: boolean): string {
+    return outOfControl
+      ? $localize`:@@spc.analyze.state-out:Hors contrôle`
+      : $localize`:@@spc.analyze.state-in:Sous contrôle`;
+  }
+
+  /** Origine de la ligne centrale (estimée vs baseline fournie). */
+  estimatedDesc(estimated: boolean): string {
+    return estimated
+      ? $localize`:@@spc.analyze.center-estimated:Estimée depuis la série`
+      : $localize`:@@spc.analyze.center-baseline:Baseline fournie`;
   }
 
   severityClass(sev: string): string {

@@ -1,9 +1,11 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, delay, map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
+import { ConnectivityService } from '../../core/offline/connectivity.service';
+import { OfflineQueueService } from '../../core/offline/offline-queue.service';
 import {
   CreateFiveSAuditRequest,
   FiveSAuditResponse,
@@ -21,7 +23,11 @@ export class FivesService {
 
   private readonly mockStore: FiveSAuditResponse[] = this.seedMockAudits();
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(
+    private readonly http: HttpClient,
+    private readonly connectivity: ConnectivityService,
+    private readonly offlineQueue: OfflineQueueService
+  ) {}
 
   listAudits(page = 0, size = 50, status?: FiveSAuditStatus): Observable<FiveSPage> {
     if (environment.useMockApi) {
@@ -58,7 +64,14 @@ export class FivesService {
       this.mockStore.unshift(audit);
       return of(audit).pipe(delay(200));
     }
-    return this.http.post<FiveSAuditResponse>(this.endpoint, input);
+    // Offline-first terrain (§15.2-15.3) : hors-ligne, l'audit est mis en file
+    // et créé pour de vrai à la resynchronisation — réponse optimiste en attendant.
+    if (!this.connectivity.isOnline()) {
+      return this.enqueueCreate(input);
+    }
+    return this.http.post<FiveSAuditResponse>(this.endpoint, input).pipe(
+      catchError(err => this.isNetworkError(err) ? this.enqueueCreate(input) : throwError(() => err))
+    );
   }
 
   updateAudit(id: string, input: UpdateFiveSAuditRequest): Observable<FiveSAuditResponse> {
@@ -116,7 +129,12 @@ export class FivesService {
         id: 'orphan', auditId, pillar: input.pillar, score: input.score
       }).pipe(delay(120));
     }
-    return this.http.put<FiveSItemResponse>(`${this.endpoint}/${auditId}/score`, input);
+    if (!this.connectivity.isOnline()) {
+      return this.enqueueScore(auditId, input);
+    }
+    return this.http.put<FiveSItemResponse>(`${this.endpoint}/${auditId}/score`, input).pipe(
+      catchError(err => this.isNetworkError(err) ? this.enqueueScore(auditId, input) : throwError(() => err))
+    );
   }
 
   startAudit(id: string): Observable<FiveSAuditResponse> {
@@ -147,6 +165,46 @@ export class FivesService {
       return of(this.mockStore[0]).pipe(delay(120));
     }
     return this.http.patch<FiveSAuditResponse>(`${this.endpoint}/${id}/${pathSegment}`, {});
+  }
+
+  // ---- offline (file d'attente + réponses optimistes) -------------------------
+
+  private enqueueCreate(input: CreateFiveSAuditRequest): Observable<FiveSAuditResponse> {
+    const now = new Date().toISOString();
+    return this.offlineQueue
+      .enqueue('POST', this.endpoint, input, `Création audit 5S — ${input.zone}`)
+      .pipe(map(op => ({
+        id: 'offline-' + op.id,
+        tenantId: '',
+        zone: input.zone,
+        description: input.description,
+        status: 'DRAFT' as FiveSAuditStatus,
+        auditorId: input.auditorId,
+        scheduledAt: input.scheduledAt,
+        createdAt: now,
+        updatedAt: now,
+        items: [],
+        pendingSync: true
+      })));
+  }
+
+  private enqueueScore(auditId: string, input: ScorePillarRequest): Observable<FiveSItemResponse> {
+    return this.offlineQueue
+      .enqueue('PUT', `${this.endpoint}/${auditId}/score`, input, `Score 5S ${input.pillar}`)
+      .pipe(map(op => ({
+        id: 'offline-' + op.id,
+        auditId,
+        pillar: input.pillar,
+        score: input.score,
+        note: input.note,
+        photoUrl: input.photoUrl,
+        pendingSync: true
+      })));
+  }
+
+  /** status 0 = la requête n'a pas atteint le serveur (coupure pendant l'envoi). */
+  private isNetworkError(err: unknown): boolean {
+    return err instanceof HttpErrorResponse && err.status === 0;
   }
 
   private mockPage(status?: FiveSAuditStatus): FiveSPage {

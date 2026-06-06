@@ -10,6 +10,8 @@ export interface FiveSItemResponse {
   score: number;
   note?: string;
   photoUrl?: string;
+  /** true = saisi hors-ligne, en attente de synchronisation (réponse optimiste). */
+  pendingSync?: boolean;
 }
 
 export interface FiveSAuditResponse {
@@ -25,6 +27,8 @@ export interface FiveSAuditResponse {
   createdAt: string;
   updatedAt: string;
   items: FiveSItemResponse[];
+  /** true = créé hors-ligne, en attente de synchronisation (réponse optimiste). */
+  pendingSync?: boolean;
 }
 
 export type FiveSPage = SpringPage<FiveSAuditResponse>;

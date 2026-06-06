@@ -1,0 +1,1917 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Généré par scripts/gen-i18n-xlf.py — NE PAS éditer à la main :
+     modifier la table TRANSLATIONS puis regénérer. -->
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="fr" target-language="ja" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="common.loading" datatype="html">
+        <source>Chargement…</source>
+        <target state="translated">読み込み中…</target>
+      </trans-unit>
+      <trans-unit id="common.all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">すべて</target>
+      </trans-unit>
+      <trans-unit id="common.filter-by-status" datatype="html">
+        <source>Filtrer par statut</source>
+        <target state="translated">ステータスで絞り込む</target>
+      </trans-unit>
+      <trans-unit id="common.status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">ステータス</target>
+      </trans-unit>
+      <trans-unit id="common.title" datatype="html">
+        <source>Titre</source>
+        <target state="translated">タイトル</target>
+      </trans-unit>
+      <trans-unit id="common.description" datatype="html">
+        <source>Description</source>
+        <target state="translated">説明</target>
+      </trans-unit>
+      <trans-unit id="common.actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">操作</target>
+      </trans-unit>
+      <trans-unit id="common.last-updated" datatype="html">
+        <source>Dernière MAJ</source>
+        <target state="translated">最終更新</target>
+      </trans-unit>
+      <trans-unit id="common.created-at" datatype="html">
+        <source>Créé le</source>
+        <target state="translated">作成日</target>
+      </trans-unit>
+      <trans-unit id="common.save" datatype="html">
+        <source>Enregistrer</source>
+        <target state="translated">保存</target>
+      </trans-unit>
+      <trans-unit id="common.cancel" datatype="html">
+        <source>Annuler</source>
+        <target state="translated">キャンセル</target>
+      </trans-unit>
+      <trans-unit id="common.create" datatype="html">
+        <source>Créer</source>
+        <target state="translated">作成</target>
+      </trans-unit>
+      <trans-unit id="common.close" datatype="html">
+        <source>Fermer</source>
+        <target state="translated">閉じる</target>
+      </trans-unit>
+      <trans-unit id="common.delete" datatype="html">
+        <source>Supprimer</source>
+        <target state="translated">削除</target>
+      </trans-unit>
+      <trans-unit id="common.edit" datatype="html">
+        <source>Modifier</source>
+        <target state="translated">編集</target>
+      </trans-unit>
+      <trans-unit id="common.add" datatype="html">
+        <source>Ajouter</source>
+        <target state="translated">追加</target>
+      </trans-unit>
+      <trans-unit id="common.back" datatype="html">
+        <source>Retour</source>
+        <target state="translated">戻る</target>
+      </trans-unit>
+      <trans-unit id="common.search" datatype="html">
+        <source>Rechercher</source>
+        <target state="translated">検索</target>
+      </trans-unit>
+      <trans-unit id="common.details" datatype="html">
+        <source>Détails</source>
+        <target state="translated">詳細</target>
+      </trans-unit>
+      <trans-unit id="common.open" datatype="html">
+        <source>Ouvrir</source>
+        <target state="translated">開く</target>
+      </trans-unit>
+      <trans-unit id="common.name" datatype="html">
+        <source>Nom</source>
+        <target state="translated">名前</target>
+      </trans-unit>
+      <trans-unit id="common.date" datatype="html">
+        <source>Date</source>
+        <target state="translated">日付</target>
+      </trans-unit>
+      <trans-unit id="common.type" datatype="html">
+        <source>Type</source>
+        <target state="translated">種類</target>
+      </trans-unit>
+      <trans-unit id="common.score" datatype="html">
+        <source>Score</source>
+        <target state="translated">スコア</target>
+      </trans-unit>
+      <trans-unit id="common.zone" datatype="html">
+        <source>Zone</source>
+        <target state="translated">ゾーン</target>
+      </trans-unit>
+      <trans-unit id="common.progress" datatype="html">
+        <source>Avancement</source>
+        <target state="translated">進捗</target>
+      </trans-unit>
+      <trans-unit id="common.required-field" datatype="html">
+        <source>Champ obligatoire</source>
+        <target state="translated">必須項目</target>
+      </trans-unit>
+      <trans-unit id="common.loading-aria" datatype="html">
+        <source>Chargement</source>
+        <target state="translated">読み込み中</target>
+      </trans-unit>
+      <trans-unit id="common.description-optional" datatype="html">
+        <source>Description (optionnel)</source>
+        <target state="translated">説明（任意）</target>
+      </trans-unit>
+      <trans-unit id="common.maxlength-200" datatype="html">
+        <source>200 caractères maximum.</source>
+        <target state="translated">最大200文字。</target>
+      </trans-unit>
+      <trans-unit id="common.maxlength-255" datatype="html">
+        <source>255 caractères maximum.</source>
+        <target state="translated">最大255文字。</target>
+      </trans-unit>
+      <trans-unit id="common.maxlength-500" datatype="html">
+        <source>500 caractères maximum.</source>
+        <target state="translated">最大500文字。</target>
+      </trans-unit>
+      <trans-unit id="common.invalid-id" datatype="html">
+        <source>Identifiant invalide.</source>
+        <target state="translated">無効な識別子です。</target>
+      </trans-unit>
+      <trans-unit id="common.session-expired" datatype="html">
+        <source>Session expirée — veuillez vous reconnecter.</source>
+        <target state="translated">セッションが期限切れです — 再度ログインしてください。</target>
+      </trans-unit>
+      <trans-unit id="common.error-loading" datatype="html">
+        <source>Erreur lors du chargement.</source>
+        <target state="translated">読み込み中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="common.error-create" datatype="html">
+        <source>Erreur lors de la création.</source>
+        <target state="translated">作成中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="common.error-update" datatype="html">
+        <source>Erreur lors de la mise à jour.</source>
+        <target state="translated">更新中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="common.error-delete" datatype="html">
+        <source>Erreur lors de la suppression.</source>
+        <target state="translated">削除中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="common.error-add" datatype="html">
+        <source>Erreur lors de l'ajout.</source>
+        <target state="translated">追加中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="common.add-failed" datatype="html">
+        <source>Ajout impossible.</source>
+        <target state="translated">追加できません。</target>
+      </trans-unit>
+      <trans-unit id="common.delete-failed" datatype="html">
+        <source>Suppression impossible.</source>
+        <target state="translated">削除できません。</target>
+      </trans-unit>
+      <trans-unit id="shell.search.placeholder" datatype="html">
+        <source>Rechercher : modules, normes, KPI, documents…</source>
+        <target state="translated">検索：モジュール、規格、KPI、文書…</target>
+      </trans-unit>
+      <trans-unit id="shell.search.aria" datatype="html">
+        <source>Recherche globale</source>
+        <target state="translated">全体検索</target>
+      </trans-unit>
+      <trans-unit id="nav.pilotage" datatype="html">
+        <source>Pilotage</source>
+        <target state="translated">ダッシュボード</target>
+      </trans-unit>
+      <trans-unit id="nav.tableau-de-bord" datatype="html">
+        <source>Tableau de bord</source>
+        <target state="translated">ダッシュボード</target>
+      </trans-unit>
+      <trans-unit id="nav.accueil" datatype="html">
+        <source>Accueil</source>
+        <target state="translated">ホーム</target>
+      </trans-unit>
+      <trans-unit id="nav.mes-dashboards" datatype="html">
+        <source>Mes dashboards</source>
+        <target state="translated">マイダッシュボード</target>
+      </trans-unit>
+      <trans-unit id="nav.indicateurs-kpi" datatype="html">
+        <source>Indicateurs (KPI)</source>
+        <target state="translated">指標（KPI）</target>
+      </trans-unit>
+      <trans-unit id="nav.assistant-ia" datatype="html">
+        <source>Assistant IA</source>
+        <target state="translated">AIアシスタント</target>
+      </trans-unit>
+      <trans-unit id="nav.methodes-qualite" datatype="html">
+        <source>Méthodes qualité</source>
+        <target state="translated">品質手法</target>
+      </trans-unit>
+      <trans-unit id="nav.pdca" datatype="html">
+        <source>PDCA</source>
+        <target state="translated">PDCA</target>
+      </trans-unit>
+      <trans-unit id="nav.ishikawa" datatype="html">
+        <source>Ishikawa</source>
+        <target state="translated">特性要因図</target>
+      </trans-unit>
+      <trans-unit id="nav.5s" datatype="html">
+        <source>5S</source>
+        <target state="translated">5S</target>
+      </trans-unit>
+      <trans-unit id="nav.dmaic" datatype="html">
+        <source>DMAIC</source>
+        <target state="translated">DMAIC</target>
+      </trans-unit>
+      <trans-unit id="nav.spc" datatype="html">
+        <source>SPC</source>
+        <target state="translated">SPC</target>
+      </trans-unit>
+      <trans-unit id="nav.cercles" datatype="html">
+        <source>Cercles</source>
+        <target state="translated">QCサークル</target>
+      </trans-unit>
+      <trans-unit id="nav.qualite-operationnelle" datatype="html">
+        <source>Qualité opérationnelle</source>
+        <target state="translated">オペレーション品質</target>
+      </trans-unit>
+      <trans-unit id="nav.capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="nav.audits" datatype="html">
+        <source>Audits</source>
+        <target state="translated">監査</target>
+      </trans-unit>
+      <trans-unit id="nav.risques-fmea" datatype="html">
+        <source>Risques (FMEA)</source>
+        <target state="translated">リスク（FMEA）</target>
+      </trans-unit>
+      <trans-unit id="nav.documents" datatype="html">
+        <source>Documents</source>
+        <target state="translated">文書</target>
+      </trans-unit>
+      <trans-unit id="nav.changements" datatype="html">
+        <source>Changements</source>
+        <target state="translated">変更管理</target>
+      </trans-unit>
+      <trans-unit id="nav.ehs" datatype="html">
+        <source>EHS</source>
+        <target state="translated">EHS</target>
+      </trans-unit>
+      <trans-unit id="nav.fournisseurs-competences" datatype="html">
+        <source>Fournisseurs &amp; compétences</source>
+        <target state="translated">サプライヤーとスキル</target>
+      </trans-unit>
+      <trans-unit id="nav.fournisseurs" datatype="html">
+        <source>Fournisseurs</source>
+        <target state="translated">サプライヤー</target>
+      </trans-unit>
+      <trans-unit id="nav.formation" datatype="html">
+        <source>Formation</source>
+        <target state="translated">トレーニング</target>
+      </trans-unit>
+      <trans-unit id="nav.normes-certification" datatype="html">
+        <source>Normes &amp; certification</source>
+        <target state="translated">規格と認証</target>
+      </trans-unit>
+      <trans-unit id="nav.standards-hub" datatype="html">
+        <source>Standards Hub</source>
+        <target state="translated">規格ハブ</target>
+      </trans-unit>
+      <trans-unit id="nav.conformite-ia-ai-act" datatype="html">
+        <source>Conformité — IA (AI Act)</source>
+        <target state="translated">コンプライアンス — AI（AI法）</target>
+      </trans-unit>
+      <trans-unit id="nav.qms" datatype="html">
+        <source>QMS</source>
+        <target state="translated">QMS</target>
+      </trans-unit>
+      <trans-unit id="nav.conformite" datatype="html">
+        <source>Conformité</source>
+        <target state="translated">コンプライアンス</target>
+      </trans-unit>
+      <trans-unit id="nav.incidents" datatype="html">
+        <source>Incidents</source>
+        <target state="translated">インシデント</target>
+      </trans-unit>
+      <trans-unit id="nav.eudb" datatype="html">
+        <source>EUDB</source>
+        <target state="translated">EUDB</target>
+      </trans-unit>
+      <trans-unit id="nav.fria" datatype="html">
+        <source>FRIA</source>
+        <target state="translated">FRIA</target>
+      </trans-unit>
+      <trans-unit id="nav.pmm" datatype="html">
+        <source>PMM</source>
+        <target state="translated">PMM</target>
+      </trans-unit>
+      <trans-unit id="nav.conformite-donnees-rgpd" datatype="html">
+        <source>Conformité — Données (RGPD)</source>
+        <target state="translated">コンプライアンス — データ（GDPR）</target>
+      </trans-unit>
+      <trans-unit id="nav.registre-ropa" datatype="html">
+        <source>Registre (RoPA)</source>
+        <target state="translated">処理記録（RoPA）</target>
+      </trans-unit>
+      <trans-unit id="nav.consentements" datatype="html">
+        <source>Consentements</source>
+        <target state="translated">同意管理</target>
+      </trans-unit>
+      <trans-unit id="nav.demandes-dsar" datatype="html">
+        <source>Demandes (DSAR)</source>
+        <target state="translated">請求（DSAR）</target>
+      </trans-unit>
+      <trans-unit id="nav.mentions" datatype="html">
+        <source>Mentions</source>
+        <target state="translated">プライバシー通知</target>
+      </trans-unit>
+      <trans-unit id="nav.dpia" datatype="html">
+        <source>DPIA</source>
+        <target state="translated">DPIA</target>
+      </trans-unit>
+      <trans-unit id="nav.dpo" datatype="html">
+        <source>DPO</source>
+        <target state="translated">DPO</target>
+      </trans-unit>
+      <trans-unit id="nav.retention" datatype="html">
+        <source>Rétention</source>
+        <target state="translated">保持期間</target>
+      </trans-unit>
+      <trans-unit id="nav.transferts" datatype="html">
+        <source>Transferts</source>
+        <target state="translated">越境移転</target>
+      </trans-unit>
+      <trans-unit id="nav.sous-traitants-dpa" datatype="html">
+        <source>Sous-traitants (DPA)</source>
+        <target state="translated">処理者（DPA）</target>
+      </trans-unit>
+      <trans-unit id="nav.violations" datatype="html">
+        <source>Violations</source>
+        <target state="translated">侵害</target>
+      </trans-unit>
+      <trans-unit id="nav.decisions-auto" datatype="html">
+        <source>Décisions auto.</source>
+        <target state="translated">自動意思決定</target>
+      </trans-unit>
+      <trans-unit id="nav.conformite-cyber-nis-2" datatype="html">
+        <source>Conformité — Cyber (NIS 2)</source>
+        <target state="translated">コンプライアンス — サイバー（NIS 2）</target>
+      </trans-unit>
+      <trans-unit id="nav.mesures" datatype="html">
+        <source>Mesures</source>
+        <target state="translated">対策</target>
+      </trans-unit>
+      <trans-unit id="nav.incidents-cyber" datatype="html">
+        <source>Incidents cyber</source>
+        <target state="translated">サイバーインシデント</target>
+      </trans-unit>
+      <trans-unit id="nav.integrations" datatype="html">
+        <source>Intégrations</source>
+        <target state="translated">連携</target>
+      </trans-unit>
+      <trans-unit id="nav.itsm" datatype="html">
+        <source>ITSM</source>
+        <target state="translated">ITSM</target>
+      </trans-unit>
+      <trans-unit id="pdca.list.title" datatype="html">
+        <source>Cycles PDCA</source>
+        <target state="translated">PDCAサイクル</target>
+      </trans-unit>
+      <trans-unit id="pdca.list.subtitle" datatype="html">
+        <source>Roue de Deming : Plan → Do → Check → Act.</source>
+        <target state="translated">デミングサイクル：Plan → Do → Check → Act。</target>
+      </trans-unit>
+      <trans-unit id="pdca.list.new-cycle" datatype="html">
+        <source>Nouveau cycle</source>
+        <target state="translated">新規サイクル</target>
+      </trans-unit>
+      <trans-unit id="pdca.list.col-steps" datatype="html">
+        <source>Étapes</source>
+        <target state="translated">ステップ</target>
+      </trans-unit>
+      <trans-unit id="pdca.list.empty" datatype="html">
+        <source>Aucun cycle pour ce filtre.</source>
+        <target state="translated">この絞り込みに該当するサイクルはありません。</target>
+      </trans-unit>
+      <trans-unit id="pdca.list.paginator-aria" datatype="html">
+        <source>Pagination des cycles</source>
+        <target state="translated">サイクルのページ送り</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.back-tooltip" datatype="html">
+        <source>Retour à la liste</source>
+        <target state="translated">一覧へ戻る</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.eyebrow" datatype="html">
+        <source>Cycle PDCA · Roue de Deming</source>
+        <target state="translated">PDCAサイクル · デミングサイクル</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.cancel-tooltip" datatype="html">
+        <source>Annuler le cycle</source>
+        <target state="translated">サイクルを取り消す</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.advance-tooltip" datatype="html">
+        <source>Passer à la phase suivante</source>
+        <target state="translated">次のフェーズへ進む</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.advance" datatype="html">
+        <source>Avancer la phase</source>
+        <target state="translated">フェーズを進める</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.owner" datatype="html">
+        <source>Pilote</source>
+        <target state="translated">オーナー</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.completed-at" datatype="html">
+        <source>Clôturé le</source>
+        <target state="translated">完了日</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.steps-title" datatype="html">
+        <source>Étapes</source>
+        <target state="translated">ステップ</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.add-step-tooltip" datatype="html">
+        <source>Ajouter une étape Plan / Do / Check / Act</source>
+        <target state="translated">Plan / Do / Check / Act のステップを追加</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.add-step" datatype="html">
+        <source>Ajouter une étape</source>
+        <target state="translated">ステップを追加</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.col-phase" datatype="html">
+        <source>Phase</source>
+        <target state="translated">フェーズ</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.col-step" datatype="html">
+        <source>Étape</source>
+        <target state="translated">ステップ</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.col-due-date" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">期限</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.col-updated" datatype="html">
+        <source>MAJ</source>
+        <target state="translated">更新</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.steps-empty" datatype="html">
+        <source>Aucune étape pour l'instant. Clique sur Ajouter une étape pour démarrer ton cycle Plan → Do → Check → Act.</source>
+        <target state="translated">ステップはまだありません。ステップを追加をクリックして Plan → Do → Check → Act サイクルを開始してください。</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.not-found" datatype="html">
+        <source>Cycle introuvable.</source>
+        <target state="translated">サイクルが見つかりません。</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.advanced" datatype="html">
+        <source>Cycle avancé.</source>
+        <target state="translated">サイクルを進めました。</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.advance-error" datatype="html">
+        <source>Erreur lors de l'avancement.</source>
+        <target state="translated">進行中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.cancelled" datatype="html">
+        <source>Cycle annulé.</source>
+        <target state="translated">サイクルを取り消しました。</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.cancel-error" datatype="html">
+        <source>Erreur lors de l'annulation.</source>
+        <target state="translated">取り消し中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.title" datatype="html">
+        <source>Nouveau cycle PDCA</source>
+        <target state="translated">新規 PDCA サイクル</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.subtitle" datatype="html">
+        <source>Décris brièvement le problème ou l'objectif. Les étapes Plan / Do / Check / Act pourront être ajoutées ensuite.</source>
+        <target state="translated">問題または目標を簡潔に記述してください。Plan / Do / Check / Act のステップは後で追加できます。</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.cycle-title-label" datatype="html">
+        <source>Titre du cycle</source>
+        <target state="translated">サイクルのタイトル</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.cycle-title-placeholder" datatype="html">
+        <source>Ex. : Réduction des défauts de soudure — ligne 3</source>
+        <target state="translated">例：溶接欠陥の削減 — ライン3</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.title-required" datatype="html">
+        <source>Le titre est requis.</source>
+        <target state="translated">タイトルは必須です。</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.description-placeholder" datatype="html">
+        <source>Pilote, périmètre, objectif chiffré, échéance…</source>
+        <target state="translated">オーナー、範囲、定量目標、期限…</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.success" datatype="html">
+        <source>Cycle PDCA créé.</source>
+        <target state="translated">PDCAサイクルを作成しました。</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.title" datatype="html">
+        <source>Ajouter une étape</source>
+        <target state="translated">ステップを追加</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.subtitle" datatype="html">
+        <source>Décris l'action concrète et choisis sa phase dans le cycle PDCA.</source>
+        <target state="translated">具体的なアクションを記述し、PDCAサイクル内のフェーズを選択してください。</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.title-label" datatype="html">
+        <source>Titre de l'étape</source>
+        <target state="translated">ステップのタイトル</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.title-placeholder" datatype="html">
+        <source>Ex. : Analyse Pareto des défauts soudure</source>
+        <target state="translated">例：溶接欠陥のパレート分析</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.description-placeholder" datatype="html">
+        <source>Méthode, livrable attendu, parties prenantes…</source>
+        <target state="translated">手法、想定成果物、関係者…</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.phase-label" datatype="html">
+        <source>Phase</source>
+        <target state="translated">フェーズ</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.due-date-label" datatype="html">
+        <source>Échéance (optionnel)</source>
+        <target state="translated">期限（任意）</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.success" datatype="html">
+        <source>Étape ajoutée.</source>
+        <target state="translated">ステップを追加しました。</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.add-error" datatype="html">
+        <source>Erreur lors de l'ajout.</source>
+        <target state="translated">追加中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="fives.list.title" datatype="html">
+        <source>Audits 5S</source>
+        <target state="translated">5S 監査</target>
+      </trans-unit>
+      <trans-unit id="fives.list.subtitle" datatype="html">
+        <source>Seiri · Seiton · Seiso · Seiketsu · Shitsuke — score pondéré 0-100.</source>
+        <target state="translated">整理 · 整頓 · 清掃 · 清潔 · 躾 — 加重スコア 0-100。</target>
+      </trans-unit>
+      <trans-unit id="fives.list.new-audit" datatype="html">
+        <source>Nouvel audit</source>
+        <target state="translated">新規監査</target>
+      </trans-unit>
+      <trans-unit id="fives.list.col-scheduled" datatype="html">
+        <source>Planifié</source>
+        <target state="translated">予定</target>
+      </trans-unit>
+      <trans-unit id="fives.list.col-updated" datatype="html">
+        <source>MAJ</source>
+        <target state="translated">更新</target>
+      </trans-unit>
+      <trans-unit id="fives.list.empty" datatype="html">
+        <source>Aucun audit pour ce filtre.</source>
+        <target state="translated">この絞り込みに該当する監査はありません。</target>
+      </trans-unit>
+      <trans-unit id="fives.list.paginator-aria" datatype="html">
+        <source>Pagination des audits 5S</source>
+        <target state="translated">5S監査のページ送り</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.back-tooltip" datatype="html">
+        <source>Retour à la liste</source>
+        <target state="translated">一覧へ戻る</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.eyebrow" datatype="html">
+        <source>Audit 5S · Seiri · Seiton · Seiso · Seiketsu · Shitsuke</source>
+        <target state="translated">5S 監査 · 整理 · 整頓 · 清掃 · 清潔 · 躾</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.delete-tooltip" datatype="html">
+        <source>Supprimer l'audit</source>
+        <target state="translated">監査を削除</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.cancel-tooltip" datatype="html">
+        <source>Annuler l'audit</source>
+        <target state="translated">監査を取り消す</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.start-tooltip" datatype="html">
+        <source>Démarrer l'audit</source>
+        <target state="translated">監査を開始</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.start" datatype="html">
+        <source>Démarrer</source>
+        <target state="translated">開始</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.complete-tooltip" datatype="html">
+        <source>Clôturer l'audit</source>
+        <target state="translated">監査を完了</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.complete" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">完了</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.auditor" datatype="html">
+        <source>Auditeur</source>
+        <target state="translated">監査者</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.overall-score" datatype="html">
+        <source>Score global</source>
+        <target state="translated">総合スコア</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.scheduled" datatype="html">
+        <source>Planifié</source>
+        <target state="translated">予定</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.completed" datatype="html">
+        <source>Clôturé</source>
+        <target state="translated">完了</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.pillar-score-label" datatype="html">
+        <source>Score (0–10)</source>
+        <target state="translated">スコア（0〜10）</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.note-label" datatype="html">
+        <source>Note (optionnel)</source>
+        <target state="translated">メモ（任意）</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.note-placeholder" datatype="html">
+        <source>Observation, photo URL, action…</source>
+        <target state="translated">所見、写真URL、アクション…</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.not-found" datatype="html">
+        <source>Audit introuvable.</source>
+        <target state="translated">監査が見つかりません。</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.delete-confirm-title" datatype="html">
+        <source>Supprimer cet audit ?</source>
+        <target state="translated">この監査を削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.delete-success" datatype="html">
+        <source>Audit supprimé.</source>
+        <target state="translated">監査を削除しました。</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.delete-error" datatype="html">
+        <source>Erreur lors de la suppression.</source>
+        <target state="translated">削除中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.score-error" datatype="html">
+        <source>Erreur lors de l'enregistrement.</source>
+        <target state="translated">保存中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.transition-error" datatype="html">
+        <source>Erreur lors de la transition.</source>
+        <target state="translated">遷移中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiri.label" datatype="html">
+        <source>Seiri</source>
+        <target state="translated">整理（Seiri）</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiri.hint" datatype="html">
+        <source>Trier — éliminer l'inutile</source>
+        <target state="translated">整理 — 不要なものを取り除く</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiton.label" datatype="html">
+        <source>Seiton</source>
+        <target state="translated">整頓（Seiton）</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiton.hint" datatype="html">
+        <source>Ranger — une place pour chaque chose</source>
+        <target state="translated">整頓 — すべてに定位置を</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiso.label" datatype="html">
+        <source>Seiso</source>
+        <target state="translated">清掃（Seiso）</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiso.hint" datatype="html">
+        <source>Nettoyer — détecter les anomalies en nettoyant</source>
+        <target state="translated">清掃 — 清掃しながら異常を発見する</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiketsu.label" datatype="html">
+        <source>Seiketsu</source>
+        <target state="translated">清潔（Seiketsu）</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiketsu.hint" datatype="html">
+        <source>Standardiser — figer les pratiques</source>
+        <target state="translated">清潔 — やり方を標準化する</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.shitsuke.label" datatype="html">
+        <source>Shitsuke</source>
+        <target state="translated">躾（Shitsuke）</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.shitsuke.hint" datatype="html">
+        <source>Maintenir — discipliner &amp; auditer</source>
+        <target state="translated">躾 — 規律を守り監査する</target>
+      </trans-unit>
+      <trans-unit id="fives.create.title" datatype="html">
+        <source>Nouvel audit 5S</source>
+        <target state="translated">新規 5S 監査</target>
+      </trans-unit>
+      <trans-unit id="fives.create.hint" datatype="html">
+        <source>Définis la zone à auditer et la date prévue. Les scores Seiri · Seiton · Seiso · Seiketsu · Shitsuke seront saisis lors de l'audit terrain.</source>
+        <target state="translated">監査対象のゾーンと予定日を設定してください。整理・整頓・清掃・清潔・躾のスコアは現場監査時に入力します。</target>
+      </trans-unit>
+      <trans-unit id="fives.create.zone-placeholder" datatype="html">
+        <source>Ex. : Atelier mécanique A — ligne 1</source>
+        <target state="translated">例：機械加工工場A — ライン1</target>
+      </trans-unit>
+      <trans-unit id="fives.create.zone-required" datatype="html">
+        <source>La zone est requise.</source>
+        <target state="translated">ゾーンは必須です。</target>
+      </trans-unit>
+      <trans-unit id="fives.create.description-placeholder" datatype="html">
+        <source>Périmètre, observations préalables, équipement…</source>
+        <target state="translated">範囲、事前所見、設備…</target>
+      </trans-unit>
+      <trans-unit id="fives.create.scheduled-label" datatype="html">
+        <source>Date prévue (optionnel)</source>
+        <target state="translated">予定日（任意）</target>
+      </trans-unit>
+      <trans-unit id="fives.create.success" datatype="html">
+        <source>Audit 5S créé.</source>
+        <target state="translated">5S監査を作成しました。</target>
+      </trans-unit>
+      <trans-unit id="fives.edit.title" datatype="html">
+        <source>Modifier l'audit</source>
+        <target state="translated">監査を編集</target>
+      </trans-unit>
+      <trans-unit id="fives.edit.scheduled-label" datatype="html">
+        <source>Date prévue</source>
+        <target state="translated">予定日</target>
+      </trans-unit>
+      <trans-unit id="fives.edit.success" datatype="html">
+        <source>Audit mis à jour.</source>
+        <target state="translated">監査を更新しました。</target>
+      </trans-unit>
+      <trans-unit id="fives.edit.update-error" datatype="html">
+        <source>Erreur lors de la mise à jour.</source>
+        <target state="translated">更新中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.title" datatype="html">
+        <source>Diagrammes Ishikawa</source>
+        <target state="translated">特性要因図</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.subtitle" datatype="html">
+        <source>Cause–effet (6M / 7M / 8M) avec sous-causes (5 Pourquoi) et scoring racine.</source>
+        <target state="translated">原因と結果（6M / 7M / 8M）、サブ要因（なぜなぜ分析）と根本原因スコアリング。</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.new-diagram" datatype="html">
+        <source>Nouveau diagramme</source>
+        <target state="translated">新規ダイアグラム</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.col-problem" datatype="html">
+        <source>Problème</source>
+        <target state="translated">問題</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.col-mode" datatype="html">
+        <source>Mode</source>
+        <target state="translated">モード</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.col-causes" datatype="html">
+        <source>Causes</source>
+        <target state="translated">原因</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.empty" datatype="html">
+        <source>Aucun diagramme pour ce filtre.</source>
+        <target state="translated">このフィルターに該当するダイアグラムはありません。</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.paginator-aria" datatype="html">
+        <source>Pagination des diagrammes</source>
+        <target state="translated">ダイアグラムのページネーション</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.back-tooltip" datatype="html">
+        <source>Retour à la liste</source>
+        <target state="translated">一覧に戻る</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.eyebrow" datatype="html">
+        <source>Diagramme Ishikawa · Cause–effet</source>
+        <target state="translated">特性要因図 · 原因と結果</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.delete-tooltip" datatype="html">
+        <source>Supprimer le diagramme</source>
+        <target state="translated">ダイアグラムを削除</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.suggest-tooltip" datatype="html">
+        <source>Suggérer des causes probables par l'IA</source>
+        <target state="translated">AIで考えられる原因を提案</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.add-cause" datatype="html">
+        <source>Ajouter une cause</source>
+        <target state="translated">原因を追加</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.mode" datatype="html">
+        <source>Mode</source>
+        <target state="translated">モード</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.owner" datatype="html">
+        <source>Pilote</source>
+        <target state="translated">オーナー</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.causes-total" datatype="html">
+        <source>Causes totales</source>
+        <target state="translated">原因の合計</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.maj" datatype="html">
+        <source>MAJ</source>
+        <target state="translated">更新</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.suggest-region-aria" datatype="html">
+        <source>Causes suggérées par l'IA</source>
+        <target state="translated">AIが提案した原因</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.suggest-title" datatype="html">
+        <source>Causes suggérées par l'IA</source>
+        <target state="translated">AIが提案した原因</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.dismiss-aria" datatype="html">
+        <source>Masquer les suggestions</source>
+        <target state="translated">提案を非表示</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.dismiss-tooltip" datatype="html">
+        <source>Masquer</source>
+        <target state="translated">非表示</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.generating-aria" datatype="html">
+        <source>Génération des causes en cours</source>
+        <target state="translated">原因を生成中</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.generating" datatype="html">
+        <source>Génération des causes probables… (peut prendre ~1 min sur CPU)</source>
+        <target state="translated">考えられる原因を生成中…（CPUでは約1分かかる場合があります）</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.suggest-hint" datatype="html">
+        <source>L'IA suggère, vous validez : « Ajouter » intègre la cause au diagramme.</source>
+        <target state="translated">AIが提案し、あなたが承認します。「追加」で原因が図に組み込まれます。</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.branch-empty" datatype="html">
+        <source>Aucune cause pour cette branche.</source>
+        <target state="translated">この枝に原因はありません。</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.add-why-tooltip" datatype="html">
+        <source>Ajouter un Pourquoi ?</source>
+        <target state="translated">「なぜ？」を追加</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.delete-confirm-title" datatype="html">
+        <source>Supprimer ce diagramme ?</source>
+        <target state="translated">このダイアグラムを削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.deleted" datatype="html">
+        <source>Diagramme supprimé.</source>
+        <target state="translated">ダイアグラムを削除しました。</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.not-found" datatype="html">
+        <source>Diagramme introuvable.</source>
+        <target state="translated">ダイアグラムが見つかりません。</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.no-suggestions" datatype="html">
+        <source>Aucune suggestion exploitable — reformulez le problème.</source>
+        <target state="translated">有効な提案がありません。問題を言い換えてください。</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.suggest-unavailable" datatype="html">
+        <source>Suggestion IA indisponible (ai-service / Ollama).</source>
+        <target state="translated">AI提案は利用できません（ai-service / Ollama）。</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.cause-added" datatype="html">
+        <source>Cause ajoutée au diagramme.</source>
+        <target state="translated">原因を図に追加しました。</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.title" datatype="html">
+        <source>Nouveau diagramme Ishikawa</source>
+        <target state="translated">新規特性要因図</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.subtitle" datatype="html">
+        <source>Formule clairement le problème observé. Les branches et causes pourront être enrichies après création (avec l'aide de l'IA).</source>
+        <target state="translated">観察された問題を明確に記述してください。枝と原因は作成後に（AIの支援で）充実させられます。</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.problem-label" datatype="html">
+        <source>Énoncé du problème</source>
+        <target state="translated">問題の記述</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.problem-placeholder" datatype="html">
+        <source>Ex. : Hausse des défauts de soudure ligne 3 (+18% sur 30j)</source>
+        <target state="translated">例：3号ラインの溶接不良が増加（30日で+18%）</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.problem-required" datatype="html">
+        <source>L'énoncé est requis.</source>
+        <target state="translated">記述は必須です。</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.desc-placeholder" datatype="html">
+        <source>Contexte, participants, périmètre…</source>
+        <target state="translated">背景、参加者、範囲…</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.mode-label" datatype="html">
+        <source>Mode d'analyse</source>
+        <target state="translated">分析モード</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.created" datatype="html">
+        <source>Diagramme Ishikawa créé.</source>
+        <target state="translated">特性要因図を作成しました。</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.edit.title" datatype="html">
+        <source>Modifier le diagramme</source>
+        <target state="translated">ダイアグラムを編集</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.edit.mode" datatype="html">
+        <source>Mode</source>
+        <target state="translated">モード</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.edit.updated" datatype="html">
+        <source>Diagramme mis à jour.</source>
+        <target state="translated">ダイアグラムを更新しました。</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.parent-prefix" datatype="html">
+        <source>Cette sous-cause sera rattachée à</source>
+        <target state="translated">このサブ要因は次に紐づけられます</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.hint" datatype="html">
+        <source>Choisis la branche (M) et formule la cause de façon concise. Le scoring racine sera ajusté plus tard par l'analyse 5 Pourquoi.</source>
+        <target state="translated">枝（M）を選び、原因を簡潔に記述してください。根本原因スコアは後でなぜなぜ分析により調整されます。</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.branch-label" datatype="html">
+        <source>Branche</source>
+        <target state="translated">枝</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.branch-hint" datatype="html">
+        <source>Héritée de la cause parente.</source>
+        <target state="translated">親の原因から継承されます。</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.label-label" datatype="html">
+        <source>Libellé de la cause</source>
+        <target state="translated">原因のラベル</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.label-placeholder" datatype="html">
+        <source>Ex. : Calibration robot soudure dérivée</source>
+        <target state="translated">例：溶接ロボットの校正ずれ</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.label-required" datatype="html">
+        <source>Le libellé est requis.</source>
+        <target state="translated">ラベルは必須です。</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.desc-placeholder" datatype="html">
+        <source>Détails, mesures, observations…</source>
+        <target state="translated">詳細、測定、観察…</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.score-label" datatype="html">
+        <source>Score racine (0 → 1, optionnel)</source>
+        <target state="translated">根本原因スコア（0→1、任意）</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.score-hint" datatype="html">
+        <source>Probabilité estimée que ce soit une cause racine.</source>
+        <target state="translated">これが根本原因である推定確率。</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.added" datatype="html">
+        <source>Cause ajoutée.</source>
+        <target state="translated">原因を追加しました。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.title" datatype="html">
+        <source>Projets DMAIC</source>
+        <target state="translated">DMAICプロジェクト</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.subtitle" datatype="html">
+        <source>Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.</source>
+        <target state="translated">シックスシグマ — Define / Measure / Analyze / Improve / Control + ポカヨケ。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.new-project" datatype="html">
+        <source>Nouveau projet</source>
+        <target state="translated">新規プロジェクト</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.phase" datatype="html">
+        <source>Phase</source>
+        <target state="translated">フェーズ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.all-phases" datatype="html">
+        <source>Toutes</source>
+        <target state="translated">すべて</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.col-project" datatype="html">
+        <source>Projet</source>
+        <target state="translated">プロジェクト</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.col-measures" datatype="html">
+        <source>Mesures</source>
+        <target state="translated">測定</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.col-pokayoke" datatype="html">
+        <source>Poka-Yoke</source>
+        <target state="translated">ポカヨケ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.col-deadline" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">期限</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.target-prefix" datatype="html">
+        <source>Cible :</source>
+        <target state="translated">目標：</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.savings-prefix" datatype="html">
+        <source>Économies estimées :</source>
+        <target state="translated">推定削減額：</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.advance" datatype="html">
+        <source>Avancer</source>
+        <target state="translated">進める</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.hold" datatype="html">
+        <source>Pause</source>
+        <target state="translated">保留</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.resume" datatype="html">
+        <source>Reprendre</source>
+        <target state="translated">再開</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.charter" datatype="html">
+        <source>Charter</source>
+        <target state="translated">チャーター</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.problem-label" datatype="html">
+        <source>Problème :</source>
+        <target state="translated">問題：</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.goal-label" datatype="html">
+        <source>Objectif :</source>
+        <target state="translated">目標：</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.specs" datatype="html">
+        <source>Spécifications</source>
+        <target state="translated">仕様</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.lsl" datatype="html">
+        <source>LSL</source>
+        <target state="translated">LSL</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">目標</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.usl" datatype="html">
+        <source>USL</source>
+        <target state="translated">USL</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.capability" datatype="html">
+        <source>Capabilité (Cp / Cpk)</source>
+        <target state="translated">工程能力（Cp / Cpk）</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.sample" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">サンプル</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.mean" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">平均</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.sigma-level" datatype="html">
+        <source>Niveau σ</source>
+        <target state="translated">σレベル</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.no-capability" datatype="html">
+        <source>Données insuffisantes pour le calcul.</source>
+        <target state="translated">計算に十分なデータがありません。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.measures-title" datatype="html">
+        <source>Mesures</source>
+        <target state="translated">測定</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.new-measure" datatype="html">
+        <source>Nouvelle mesure</source>
+        <target state="translated">新規測定</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.col-value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">値</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.col-subgroup" datatype="html">
+        <source>Sous-groupe</source>
+        <target state="translated">サブグループ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.col-ref" datatype="html">
+        <source>Réf.</source>
+        <target state="translated">参照</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.measures-empty" datatype="html">
+        <source>Aucune mesure pour l'instant.</source>
+        <target state="translated">まだ測定がありません。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.assign-pokayoke" datatype="html">
+        <source>Assigner un Poka-Yoke</source>
+        <target state="translated">ポカヨケを割り当て</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.col-code" datatype="html">
+        <source>Code</source>
+        <target state="translated">コード</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.col-note" datatype="html">
+        <source>Note</source>
+        <target state="translated">メモ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.pokayoke-empty" datatype="html">
+        <source>Aucun Poka-Yoke assigné.</source>
+        <target state="translated">ポカヨケが割り当てられていません。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.phase-advanced" datatype="html">
+        <source>Phase avancée.</source>
+        <target state="translated">フェーズを進めました。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.advance-failed" datatype="html">
+        <source>Avance impossible.</source>
+        <target state="translated">進めることができません。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.project-held" datatype="html">
+        <source>Projet en pause.</source>
+        <target state="translated">プロジェクトを保留しました。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.hold-failed" datatype="html">
+        <source>Mise en pause impossible.</source>
+        <target state="translated">保留できません。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.project-resumed" datatype="html">
+        <source>Projet repris.</source>
+        <target state="translated">プロジェクトを再開しました。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.resume-failed" datatype="html">
+        <source>Reprise impossible.</source>
+        <target state="translated">再開できません。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.cancel-confirm-title" datatype="html">
+        <source>Annuler le projet ?</source>
+        <target state="translated">プロジェクトをキャンセルしますか？</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.cancel-confirm-label" datatype="html">
+        <source>Annuler le projet</source>
+        <target state="translated">プロジェクトをキャンセル</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.keep-label" datatype="html">
+        <source>Conserver</source>
+        <target state="translated">保持</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.project-cancelled" datatype="html">
+        <source>Projet annulé.</source>
+        <target state="translated">プロジェクトをキャンセルしました。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.cancel-failed" datatype="html">
+        <source>Annulation impossible.</source>
+        <target state="translated">キャンセルできません。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.delete-confirm-title" datatype="html">
+        <source>Supprimer le projet ?</source>
+        <target state="translated">プロジェクトを削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.project-deleted" datatype="html">
+        <source>Projet supprimé.</source>
+        <target state="translated">プロジェクトを削除しました。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.delete-measure-title" datatype="html">
+        <source>Supprimer la mesure ?</source>
+        <target state="translated">測定を削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.delete-measure-message" datatype="html">
+        <source>Cette mesure sera retirée du calcul de capabilité.</source>
+        <target state="translated">この測定は工程能力の計算から除外されます。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.delete-assignment-title" datatype="html">
+        <source>Supprimer l'assignation ?</source>
+        <target state="translated">割り当てを削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.title" datatype="html">
+        <source>Nouveau projet DMAIC</source>
+        <target state="translated">新規DMAICプロジェクト</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.title-placeholder" datatype="html">
+        <source>Ex. : Réduire le taux de rebut ligne A</source>
+        <target state="translated">例：Aラインの不良率を削減</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.problem-label" datatype="html">
+        <source>Énoncé du problème</source>
+        <target state="translated">問題の記述</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.problem-placeholder" datatype="html">
+        <source>Contexte, données chiffrées du problème</source>
+        <target state="translated">背景、問題の定量データ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.goal-label" datatype="html">
+        <source>Énoncé de l'objectif</source>
+        <target state="translated">目標の記述</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.goal-placeholder" datatype="html">
+        <source>Objectif SMART + impact business attendu</source>
+        <target state="translated">SMART目標＋期待されるビジネスインパクト</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.champion-label" datatype="html">
+        <source>Champion (ID)</source>
+        <target state="translated">チャンピオン（ID）</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.champion-placeholder" datatype="html">
+        <source>UUID utilisateur</source>
+        <target state="translated">ユーザーUUID</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.target-date-label" datatype="html">
+        <source>Date cible</source>
+        <target state="translated">目標日</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.specs-section" datatype="html">
+        <source>Spécifications procédé (optionnel — requis pour Cp/Cpk)</source>
+        <target state="translated">工程仕様（任意 — Cp/Cpkに必要）</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.unit-label" datatype="html">
+        <source>Unité</source>
+        <target state="translated">単位</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.unit-placeholder" datatype="html">
+        <source>mm, s, °C…</source>
+        <target state="translated">mm, s, °C…</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.savings-label" datatype="html">
+        <source>Économies estimées (€)</source>
+        <target state="translated">推定削減額（€）</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.created" datatype="html">
+        <source>Projet DMAIC créé.</source>
+        <target state="translated">DMAICプロジェクトを作成しました。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.edit.title" datatype="html">
+        <source>Modifier le projet</source>
+        <target state="translated">プロジェクトを編集</target>
+      </trans-unit>
+      <trans-unit id="dmaic.edit.specs-section" datatype="html">
+        <source>Spécifications procédé</source>
+        <target state="translated">工程仕様</target>
+      </trans-unit>
+      <trans-unit id="dmaic.edit.updated" datatype="html">
+        <source>Projet mis à jour.</source>
+        <target state="translated">プロジェクトを更新しました。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.title" datatype="html">
+        <source>Nouvelle mesure</source>
+        <target state="translated">新規測定</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.subtitle" datatype="html">
+        <source>Mesure d'un point caractéristique du procédé (Y critique). Sera utilisée pour le calcul des indices de capabilité Cp/Cpk.</source>
+        <target state="translated">工程の特性値（重要なY）の測定。Cp/Cpk工程能力指数の計算に使用されます。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.subgroup-placeholder" datatype="html">
+        <source>Ex. : équipe-A, machine-3</source>
+        <target state="translated">例：チームA、機械3</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.datetime-label" datatype="html">
+        <source>Date / heure</source>
+        <target state="translated">日時</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.source-label" datatype="html">
+        <source>Référence source</source>
+        <target state="translated">ソース参照</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.source-placeholder" datatype="html">
+        <source>Ex. : OF-2026-1145, lot-3214</source>
+        <target state="translated">例：OF-2026-1145、ロット3214</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.value-required" datatype="html">
+        <source>Une valeur numérique est requise.</source>
+        <target state="translated">数値が必要です。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.saved" datatype="html">
+        <source>Mesure enregistrée.</source>
+        <target state="translated">測定を保存しました。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.error-save" datatype="html">
+        <source>Erreur lors de l'enregistrement.</source>
+        <target state="translated">保存中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.title" datatype="html">
+        <source>Assigner un Poka-Yoke</source>
+        <target state="translated">ポカヨケを割り当て</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.subtitle" datatype="html">
+        <source>Dispositif de prévention ou de détection issu du catalogue, attaché au projet (phase Improve). Workflow par défaut : PROPOSED → IN_DESIGN → IMPLEMENTED → VERIFIED.</source>
+        <target state="translated">カタログからの予防または検出デバイスをプロジェクトに紐付け（Improveフェーズ）。デフォルトワークフロー：PROPOSED → IN_DESIGN → IMPLEMENTED → VERIFIED。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.submit" datatype="html">
+        <source>Assigner</source>
+        <target state="translated">割り当て</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.mechanism-label" datatype="html">
+        <source>Mécanisme</source>
+        <target state="translated">メカニズム</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.loading-catalog" datatype="html">
+        <source>Chargement du catalogue…</source>
+        <target state="translated">カタログを読み込み中…</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.device-label" datatype="html">
+        <source>Dispositif</source>
+        <target state="translated">デバイス</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.note-placeholder" datatype="html">
+        <source>Implémentation prévue, contraintes, lien CAPA…</source>
+        <target state="translated">実装予定、制約、CAPAリンク…</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.catalog-unavailable" datatype="html">
+        <source>Catalogue Poka-Yoke indisponible.</source>
+        <target state="translated">ポカヨケカタログは利用できません。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.assigned" datatype="html">
+        <source>Poka-Yoke assigné.</source>
+        <target state="translated">ポカヨケを割り当てました。</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.error-assign" datatype="html">
+        <source>Erreur lors de l'assignation.</source>
+        <target state="translated">割り当て中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.title" datatype="html">
+        <source>Détection d'anomalies SPC</source>
+        <target state="translated">SPC異常検出</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.subtitle" datatype="html">
+        <source>Carte des valeurs individuelles — limites de contrôle (σ = MR̄/d₂) et 8 règles de Nelson, calculées par l'IA.</source>
+        <target state="translated">個別値管理図 — 管理限界（σ = MR̄/d₂）とネルソンの8ルールをAIが算出。</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.series-panel" datatype="html">
+        <source>Série de mesures</source>
+        <target state="translated">測定系列</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.measures-label" datatype="html">
+        <source>Mesures (séparées par virgule, espace ou retour ligne)</source>
+        <target state="translated">測定値（カンマ・スペース・改行で区切る）</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.baseline-hint" datatype="html">
+        <source>Baseline connue (optionnel) — sinon les limites sont estimées :</source>
+        <target state="translated">既知のベースライン（任意）— 指定しない場合は限界を推定します:</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.center-label" datatype="html">
+        <source>Ligne centrale (center)</source>
+        <target state="translated">中心線 (center)</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.sigma-label" datatype="html">
+        <source>σ (sigma)</source>
+        <target state="translated">σ (sigma)</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.analyze-series" datatype="html">
+        <source>Analyser la série</source>
+        <target state="translated">系列を分析</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.analyzing" datatype="html">
+        <source>Analyse…</source>
+        <target state="translated">分析中…</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.example" datatype="html">
+        <source>Exemple</source>
+        <target state="translated">例</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.from-kpi-panel" datatype="html">
+        <source>Depuis un KPI</source>
+        <target state="translated">KPIから</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.from-kpi-hint" datatype="html">
+        <source>Tire automatiquement les dernières mesures d'un KPI du catalogue.</source>
+        <target state="translated">カタログのKPIから最新の測定値を自動取得します。</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.no-kpi" datatype="html">
+        <source>Aucun KPI au catalogue.</source>
+        <target state="translated">カタログにKPIがありません。</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.window-label" datatype="html">
+        <source>Fenêtre (nombre de mesures)</source>
+        <target state="translated">ウィンドウ（測定値の数）</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.open-capa" datatype="html">
+        <source>Ouvrir une CAPA si le procédé est hors-contrôle</source>
+        <target state="translated">工程が管理外の場合はCAPAを起票する</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.analyze-kpi" datatype="html">
+        <source>Analyser le KPI</source>
+        <target state="translated">KPIを分析</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.capa-open-link" datatype="html">
+        <source>CAPA ouverte — voir le dossier</source>
+        <target state="translated">CAPA起票済み — 記録を表示</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.process-state" datatype="html">
+        <source>État du procédé</source>
+        <target state="translated">工程の状態</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.state-out" datatype="html">
+        <source>Hors contrôle</source>
+        <target state="translated">管理外</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.state-in" datatype="html">
+        <source>Sous contrôle</source>
+        <target state="translated">管理状態</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.center-line" datatype="html">
+        <source>Ligne centrale</source>
+        <target state="translated">中心線</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.center-estimated" datatype="html">
+        <source>Estimée depuis la série</source>
+        <target state="translated">系列から推定</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.center-baseline" datatype="html">
+        <source>Baseline fournie</source>
+        <target state="translated">ベースライン指定済み</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.control-limits" datatype="html">
+        <source>Limites de contrôle (3σ)</source>
+        <target state="translated">管理限界 (3σ)</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.control-chart" datatype="html">
+        <source>Carte de contrôle</source>
+        <target state="translated">管理図</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.nelson-rules" datatype="html">
+        <source>Règles de Nelson déclenchées</source>
+        <target state="translated">発動したネルソンのルール</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.no-violation" datatype="html">
+        <source>Aucune règle déclenchée : le procédé est statistiquement maîtrisé 🎉</source>
+        <target state="translated">ルールは発動していません：工程は統計的に管理されています 🎉</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.col-rule" datatype="html">
+        <source>Règle</source>
+        <target state="translated">ルール</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.col-severity" datatype="html">
+        <source>Sévérité</source>
+        <target state="translated">重大度</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.col-finding" datatype="html">
+        <source>Constat</source>
+        <target state="translated">所見</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.col-points" datatype="html">
+        <source>Points concernés</source>
+        <target state="translated">該当ポイント</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-no-measure" datatype="html">
+        <source>Saisissez au moins une mesure numérique.</source>
+        <target state="translated">数値の測定値を少なくとも1つ入力してください。</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-baseline-both" datatype="html">
+        <source>La baseline exige center ET σ (ou aucun des deux).</source>
+        <target state="translated">ベースラインには center と σ の両方が必要です（または両方とも省略）。</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-sigma-positive" datatype="html">
+        <source>σ doit être strictement positif.</source>
+        <target state="translated">σ は正の値でなければなりません。</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-select-kpi" datatype="html">
+        <source>Sélectionnez un KPI.</source>
+        <target state="translated">KPIを選択してください。</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-min-two" datatype="html">
+        <source>Au moins 2 mesures sont nécessaires pour ce KPI.</source>
+        <target state="translated">このKPIには少なくとも2つの測定値が必要です。</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">バックエンドに接続できません（engine は 8082 ですか？）。</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-invalid-series" datatype="html">
+        <source>Série invalide (1 à 10000 mesures attendues).</source>
+        <target state="translated">無効な系列です（1～10000件の測定値が必要）。</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-too-large" datatype="html">
+        <source>Série trop volumineuse (garde-fou IA).</source>
+        <target state="translated">系列が大きすぎます（AIガードレール）。</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">このテナントのAIレート/クォータを超過しました — 後でやり直してください。</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-gateway" datatype="html">
+        <source>Passerelle IA indisponible (ai-service injoignable).</source>
+        <target state="translated">AIゲートウェイが利用できません（ai-service に接続不可）。</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-unavailable" datatype="html">
+        <source>Service IA momentanément indisponible (disjoncteur ouvert).</source>
+        <target state="translated">AIサービスは一時的に利用できません（サーキットブレーカー作動）。</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-generic" datatype="html">
+        <source>Échec de l'analyse SPC (HTTP <x id="status"/>).</source>
+        <target state="translated">SPC分析に失敗しました（HTTP <x id="status"/>）。</target>
+      </trans-unit>
+      <trans-unit id="circles.list.title" datatype="html">
+        <source>Cercles de Qualité</source>
+        <target state="translated">QCサークル</target>
+      </trans-unit>
+      <trans-unit id="circles.list.subtitle" datatype="html">
+        <source>Groupes 5-10 personnes, réunions, propositions PROPOSED → MEASURED.</source>
+        <target state="translated">5～10名のグループ、会議、提案 PROPOSED → MEASURED。</target>
+      </trans-unit>
+      <trans-unit id="circles.list.new-circle" datatype="html">
+        <source>Nouveau cercle</source>
+        <target state="translated">新規サークル</target>
+      </trans-unit>
+      <trans-unit id="circles.list.col-members" datatype="html">
+        <source>Membres</source>
+        <target state="translated">メンバー</target>
+      </trans-unit>
+      <trans-unit id="circles.list.col-meetings" datatype="html">
+        <source>Réunions</source>
+        <target state="translated">会議</target>
+      </trans-unit>
+      <trans-unit id="circles.list.col-proposals" datatype="html">
+        <source>Propositions</source>
+        <target state="translated">提案</target>
+      </trans-unit>
+      <trans-unit id="circles.list.col-updated" datatype="html">
+        <source>MAJ</source>
+        <target state="translated">更新</target>
+      </trans-unit>
+      <trans-unit id="circles.list.empty" datatype="html">
+        <source>Aucun cercle.</source>
+        <target state="translated">サークルがありません。</target>
+      </trans-unit>
+      <trans-unit id="circles.list.paginator-aria" datatype="html">
+        <source>Pagination des cercles</source>
+        <target state="translated">サークルのページネーション</target>
+      </trans-unit>
+      <trans-unit id="circles.list.load-error" datatype="html">
+        <source>Erreur lors du chargement.</source>
+        <target state="translated">読み込み中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.back-tooltip" datatype="html">
+        <source>Retour à la liste</source>
+        <target state="translated">一覧に戻る</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.not-found" datatype="html">
+        <source>Cercle introuvable</source>
+        <target state="translated">サークルが見つかりません</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.eyebrow" datatype="html">
+        <source>Cercle de Qualité · Groupe d'amélioration continue</source>
+        <target state="translated">QCサークル · 継続的改善グループ</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.delete-tooltip" datatype="html">
+        <source>Supprimer le cercle</source>
+        <target state="translated">サークルを削除</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.archive" datatype="html">
+        <source>Archiver</source>
+        <target state="translated">アーカイブ</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.archive-tooltip" datatype="html">
+        <source>Archiver le cercle</source>
+        <target state="translated">サークルをアーカイブ</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.pause" datatype="html">
+        <source>Pause</source>
+        <target state="translated">一時停止</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.pause-tooltip" datatype="html">
+        <source>Mettre en pause</source>
+        <target state="translated">一時停止する</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.resume" datatype="html">
+        <source>Réactiver</source>
+        <target state="translated">再開</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.resume-tooltip" datatype="html">
+        <source>Réactiver</source>
+        <target state="translated">再開する</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.topic" datatype="html">
+        <source>Thème</source>
+        <target state="translated">テーマ</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.members" datatype="html">
+        <source>Membres</source>
+        <target state="translated">メンバー</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.meetings" datatype="html">
+        <source>Réunions</source>
+        <target state="translated">会議</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.proposals" datatype="html">
+        <source>Propositions</source>
+        <target state="translated">提案</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.updated" datatype="html">
+        <source>MAJ</source>
+        <target state="translated">更新</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.add-member" datatype="html">
+        <source>Ajouter un membre</source>
+        <target state="translated">メンバーを追加</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.role" datatype="html">
+        <source>Rôle</source>
+        <target state="translated">役割</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.user-id" datatype="html">
+        <source>User ID</source>
+        <target state="translated">ユーザーID</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.joined-at" datatype="html">
+        <source>Rejoint le</source>
+        <target state="translated">参加日</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.no-member" datatype="html">
+        <source>Aucun membre. Clique sur Ajouter un membre pour construire l'équipe.</source>
+        <target state="translated">メンバーがいません。「メンバーを追加」をクリックしてチームを構成してください。</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.schedule-meeting" datatype="html">
+        <source>Planifier une réunion</source>
+        <target state="translated">会議を予定する</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.when" datatype="html">
+        <source>Quand</source>
+        <target state="translated">日時</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.location" datatype="html">
+        <source>Lieu</source>
+        <target state="translated">場所</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.no-meeting" datatype="html">
+        <source>Aucune réunion planifiée.</source>
+        <target state="translated">予定された会議はありません。</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.new-proposal" datatype="html">
+        <source>Nouvelle proposition</source>
+        <target state="translated">新規提案</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.proposed-by" datatype="html">
+        <source>Proposé par</source>
+        <target state="translated">提案者</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.no-proposal" datatype="html">
+        <source>Aucune proposition. Workflow attendu : PROPOSED → APPROVED → IMPLEMENTED → MEASURED.</source>
+        <target state="translated">提案がありません。想定ワークフロー：PROPOSED → APPROVED → IMPLEMENTED → MEASURED。</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.invalid-id" datatype="html">
+        <source>Identifiant invalide.</source>
+        <target state="translated">無効な識別子です。</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.load-error" datatype="html">
+        <source>Cercle introuvable.</source>
+        <target state="translated">サークルが見つかりません。</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.delete-confirm-title" datatype="html">
+        <source>Supprimer ce cercle ?</source>
+        <target state="translated">このサークルを削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.delete-confirm-message" datatype="html">
+        <source>« <x id="name"/> », ses membres, réunions et propositions seront supprimés définitivement.</source>
+        <target state="translated">「<x id="name"/>」、そのメンバー・会議・提案が完全に削除されます。</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.deleted" datatype="html">
+        <source>Cercle supprimé.</source>
+        <target state="translated">サークルを削除しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.delete-error" datatype="html">
+        <source>Erreur lors de la suppression.</source>
+        <target state="translated">削除中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.paused" datatype="html">
+        <source>Cercle mis en pause.</source>
+        <target state="translated">サークルを一時停止しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.resumed" datatype="html">
+        <source>Cercle réactivé.</source>
+        <target state="translated">サークルを再開しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.archived" datatype="html">
+        <source>Cercle archivé.</source>
+        <target state="translated">サークルをアーカイブしました。</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.transition-error" datatype="html">
+        <source>Erreur lors de la transition.</source>
+        <target state="translated">状態遷移中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.create.title" datatype="html">
+        <source>Nouveau cercle de qualité</source>
+        <target state="translated">新規QCサークル</target>
+      </trans-unit>
+      <trans-unit id="circles.create.subtitle" datatype="html">
+        <source>Crée le groupe (5-10 personnes recommandé). Les membres, réunions et propositions seront ajoutés ensuite.</source>
+        <target state="translated">グループを作成します（5～10名を推奨）。メンバー・会議・提案は後で追加します。</target>
+      </trans-unit>
+      <trans-unit id="circles.create.name-label" datatype="html">
+        <source>Nom du cercle</source>
+        <target state="translated">サークル名</target>
+      </trans-unit>
+      <trans-unit id="circles.create.name-placeholder" datatype="html">
+        <source>Ex. : Cercle production ligne 3</source>
+        <target state="translated">例：生産ライン3サークル</target>
+      </trans-unit>
+      <trans-unit id="circles.create.name-required" datatype="html">
+        <source>Le nom est requis.</source>
+        <target state="translated">名前は必須です。</target>
+      </trans-unit>
+      <trans-unit id="circles.create.maxlength" datatype="html">
+        <source>255 caractères maximum.</source>
+        <target state="translated">最大255文字。</target>
+      </trans-unit>
+      <trans-unit id="circles.create.topic-label" datatype="html">
+        <source>Thème (optionnel)</source>
+        <target state="translated">テーマ（任意）</target>
+      </trans-unit>
+      <trans-unit id="circles.create.topic-placeholder" datatype="html">
+        <source>Ex. : production-soudure, fournisseurs, sécurité</source>
+        <target state="translated">例：溶接生産、サプライヤー、安全</target>
+      </trans-unit>
+      <trans-unit id="circles.create.description-label" datatype="html">
+        <source>Description (optionnel)</source>
+        <target state="translated">説明（任意）</target>
+      </trans-unit>
+      <trans-unit id="circles.create.description-placeholder" datatype="html">
+        <source>Mission du cercle, périmètre, fréquence visée…</source>
+        <target state="translated">サークルの使命、範囲、目標頻度…</target>
+      </trans-unit>
+      <trans-unit id="circles.create.created" datatype="html">
+        <source>Cercle créé.</source>
+        <target state="translated">サークルを作成しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.create.error" datatype="html">
+        <source>Erreur lors de la création.</source>
+        <target state="translated">作成中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.edit.title" datatype="html">
+        <source>Modifier le cercle</source>
+        <target state="translated">サークルを編集</target>
+      </trans-unit>
+      <trans-unit id="circles.edit.updated" datatype="html">
+        <source>Cercle mis à jour.</source>
+        <target state="translated">サークルを更新しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.edit.error" datatype="html">
+        <source>Erreur lors de la mise à jour.</source>
+        <target state="translated">更新中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.title" datatype="html">
+        <source>Planifier une réunion</source>
+        <target state="translated">会議を予定する</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.submit" datatype="html">
+        <source>Planifier</source>
+        <target state="translated">予定する</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.title-placeholder" datatype="html">
+        <source>Ex. : Revue mensuelle production</source>
+        <target state="translated">例：月次生産レビュー</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.agenda" datatype="html">
+        <source>Ordre du jour</source>
+        <target state="translated">議題</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.agenda-placeholder" datatype="html">
+        <source>Points à aborder, propositions à valider…</source>
+        <target state="translated">検討事項、承認する提案…</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.datetime" datatype="html">
+        <source>Date et heure</source>
+        <target state="translated">日付と時刻</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.duration" datatype="html">
+        <source>Durée (min)</source>
+        <target state="translated">所要時間（分）</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.location-placeholder" datatype="html">
+        <source>Salle, ou lien visio</source>
+        <target state="translated">会議室、またはビデオリンク</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.scheduled" datatype="html">
+        <source>Réunion planifiée.</source>
+        <target state="translated">会議を予定しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.error" datatype="html">
+        <source>Erreur lors de la planification.</source>
+        <target state="translated">予定登録中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.member.title" datatype="html">
+        <source>Ajouter un membre</source>
+        <target state="translated">メンバーを追加</target>
+      </trans-unit>
+      <trans-unit id="circles.member.hint" datatype="html">
+        <source>Renseigne l'identifiant utilisateur (UUID) et le rôle. La liste de sélection sera branchée sur l'annuaire Keycloak dans une prochaine itération.</source>
+        <target state="translated">ユーザー識別子（UUID）と役割を入力してください。選択リストは今後のイテレーションでKeycloakディレクトリに接続されます。</target>
+      </trans-unit>
+      <trans-unit id="circles.member.user-id" datatype="html">
+        <source>User ID (UUID)</source>
+        <target state="translated">ユーザーID (UUID)</target>
+      </trans-unit>
+      <trans-unit id="circles.member.uuid-required" datatype="html">
+        <source>UUID requis.</source>
+        <target state="translated">UUIDは必須です。</target>
+      </trans-unit>
+      <trans-unit id="circles.member.uuid-invalid" datatype="html">
+        <source>Format UUID invalide.</source>
+        <target state="translated">UUID形式が無効です。</target>
+      </trans-unit>
+      <trans-unit id="circles.member.role-facilitator" datatype="html">
+        <source>Animateur</source>
+        <target state="translated">ファシリテーター</target>
+      </trans-unit>
+      <trans-unit id="circles.member.role-secretary" datatype="html">
+        <source>Secrétaire</source>
+        <target state="translated">書記</target>
+      </trans-unit>
+      <trans-unit id="circles.member.role-member" datatype="html">
+        <source>Membre</source>
+        <target state="translated">メンバー</target>
+      </trans-unit>
+      <trans-unit id="circles.member.added" datatype="html">
+        <source>Membre ajouté.</source>
+        <target state="translated">メンバーを追加しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.member.error" datatype="html">
+        <source>Erreur lors de l'ajout.</source>
+        <target state="translated">追加中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.title" datatype="html">
+        <source>Nouvelle proposition</source>
+        <target state="translated">新規提案</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.subtitle" datatype="html">
+        <source>Idée d'amélioration soumise au cercle. Elle sera évaluée puis implémentée et mesurée si approuvée (workflow PROPOSED → APPROVED → MEASURED).</source>
+        <target state="translated">サークルに提出される改善案。承認されれば評価後に実施・測定されます（ワークフロー PROPOSED → APPROVED → MEASURED）。</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.submit" datatype="html">
+        <source>Proposer</source>
+        <target state="translated">提案する</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.title-placeholder" datatype="html">
+        <source>Ex. : Ajouter un Poka-Yoke positionnement pièce</source>
+        <target state="translated">例：部品位置決めのポカヨケを追加</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.description-placeholder" datatype="html">
+        <source>Contexte, objectif, bénéfice attendu, charge estimée…</source>
+        <target state="translated">背景、目的、期待効果、見積工数…</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.session-expired" datatype="html">
+        <source>Session expirée — veuillez vous reconnecter.</source>
+        <target state="translated">セッションが期限切れです — 再度サインインしてください。</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.saved" datatype="html">
+        <source>Proposition enregistrée.</source>
+        <target state="translated">提案を保存しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.error" datatype="html">
+        <source>Erreur lors de l'enregistrement.</source>
+        <target state="translated">保存中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.title" datatype="html">
+        <source>File d'attente offline</source>
+        <target state="translated">オフラインキュー</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.subtitle" datatype="html">
+        <source>Actions terrain saisies sans réseau, rejouées dans l'ordre au retour de la connexion.</source>
+        <target state="translated">ネットワークなしで記録された現場アクション。接続回復時に順番に再実行されます。</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.sync-now" datatype="html">
+        <source>Synchroniser maintenant</source>
+        <target state="translated">今すぐ同期</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.state-offline" datatype="html">
+        <source>Hors-ligne</source>
+        <target state="translated">オフライン</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.state-online" datatype="html">
+        <source>En ligne</source>
+        <target state="translated">オンライン</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.pending-suffix" datatype="html">
+        <source>action(s) en attente de synchronisation</source>
+        <target state="translated">件のアクションが同期待ち</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.nothing-pending" datatype="html">
+        <source>Aucune action en attente — tout est synchronisé.</source>
+        <target state="translated">保留中のアクションはありません — すべて同期済みです。</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.col-action" datatype="html">
+        <source>Action</source>
+        <target state="translated">アクション</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.col-queued-at" datatype="html">
+        <source>Mise en attente le</source>
+        <target state="translated">キュー追加日時</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.discard-tooltip" datatype="html">
+        <source>Abandonner cette action</source>
+        <target state="translated">このアクションを破棄</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.discard-title" datatype="html">
+        <source>Abandonner cette action ?</source>
+        <target state="translated">このアクションを破棄しますか？</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.discard-message" datatype="html">
+        <source>« <x id="label"/> » ne sera jamais synchronisée vers le serveur. Cette décision est définitive.</source>
+        <target state="translated">「<x id="label"/>」はサーバーに同期されません。この決定は取り消せません。</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.discard-confirm" datatype="html">
+        <source>Abandonner</source>
+        <target state="translated">破棄</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.discard-keep" datatype="html">
+        <source>Conserver</source>
+        <target state="translated">保持</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.discarded" datatype="html">
+        <source>Action abandonnée.</source>
+        <target state="translated">アクションを破棄しました。</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.still-offline" datatype="html">
+        <source>Toujours hors-ligne — la synchronisation reprendra au retour du réseau.</source>
+        <target state="translated">まだオフラインです — ネットワーク回復時に同期が再開されます。</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.sync-done" datatype="html">
+        <source>Synchronisation terminée.</source>
+        <target state="translated">同期が完了しました。</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.empty-title" datatype="html">
+        <source>File vide</source>
+        <target state="translated">キューは空です</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.empty-hint" datatype="html">
+        <source>Les audits 5S saisis hors connexion apparaîtront ici jusqu'à leur synchronisation.</source>
+        <target state="translated">オフラインで記録された5S監査は、同期されるまでここに表示されます。</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

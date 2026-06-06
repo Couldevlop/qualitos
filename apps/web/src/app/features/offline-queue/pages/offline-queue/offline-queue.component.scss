@@ -1,0 +1,60 @@
+.page-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 16px;
+  h1 { margin: 0 0 4px; font-size: 24px; font-weight: 600; }
+  p  { margin: 0; color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); }
+}
+
+.status-card {
+  padding: 16px; margin-bottom: 16px;
+  border-left: 4px solid var(--mat-sys-primary, #1976d2);
+
+  &--offline {
+    border-left-color: var(--mat-sys-error, #b71c1c);
+    background: var(--mat-sys-error-container, #fbe9e7);
+  }
+}
+.status-row {
+  display: flex; align-items: center; gap: 16px;
+  mat-icon { font-size: 28px; width: 28px; height: 28px; }
+}
+.status-text {
+  display: flex; flex-direction: column; gap: 2px;
+  strong { font-weight: 600; }
+}
+.status-detail { color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); font-size: 13px; }
+
+.state-row { display: flex; align-items: center; gap: 12px; padding: 24px 0; }
+
+.table-card { padding: 0; overflow: hidden; }
+.ops-table { width: 100%; }
+.cell {
+  display: flex; flex-direction: column;
+  strong { font-weight: 600; }
+  small  {
+    color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6));
+    font-size: 12px;
+    font-family: var(--qos-font-mono, monospace);
+    word-break: break-all;
+  }
+}
+
+.method {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.4px;
+  background: var(--mat-sys-secondary-container, rgba(0, 0, 0, 0.08));
+}
+.method-post   { background: #e8f5e9; color: #1b5e20; }
+.method-put    { background: #e3f2fd; color: #0d47a1; }
+.method-patch  { background: #fff8e1; color: #ff6f00; }
+.method-delete { background: #fbe9e7; color: #b71c1c; }
+
+.empty-card {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 48px 24px; text-align: center;
+}
+.empty-icon {
+  font-size: 48px; width: 48px; height: 48px;
+  color: var(--mat-sys-primary, #1976d2); margin-bottom: 12px;
+}
+.empty-title { margin: 0 0 4px; font-size: 18px; font-weight: 600; }
+.empty-hint  { margin: 0; color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); }

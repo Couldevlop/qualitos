@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { AuthService, AuthUser } from '../../core/auth/auth.service';
+import { ConnectivityService } from '../../core/offline/connectivity.service';
+import { OfflineQueueService } from '../../core/offline/offline-queue.service';
 
 export interface NavItem {
   label: string;
@@ -38,99 +40,109 @@ export class MainShellComponent implements OnInit {
   // conformité sont repliables pour éviter la surcharge cognitive (règle 7±2).
   readonly sections: NavSection[] = [
     {
-      label: 'Pilotage',
+      label: $localize`:@@nav.pilotage:Pilotage`,
       items: [
-        { label: 'Tableau de bord', route: '/dashboard',         icon: 'dashboard' },
-        { label: 'Accueil',         route: '/home',              icon: 'home' },
-        { label: 'Mes dashboards',  route: '/dashboard-builder', icon: 'dashboard_customize' },
-        { label: 'Indicateurs (KPI)', route: '/kpis',            icon: 'monitoring' },
-        { label: 'Assistant IA',    route: '/nlq',               icon: 'forum' }
+        { label: $localize`:@@nav.tableau-de-bord:Tableau de bord`, route: '/dashboard',         icon: 'dashboard' },
+        { label: $localize`:@@nav.accueil:Accueil`,         route: '/home',              icon: 'home' },
+        { label: $localize`:@@nav.mes-dashboards:Mes dashboards`,  route: '/dashboard-builder', icon: 'dashboard_customize' },
+        { label: $localize`:@@nav.indicateurs-kpi:Indicateurs (KPI)`, route: '/kpis',            icon: 'monitoring' },
+        { label: $localize`:@@nav.assistant-ia:Assistant IA`,    route: '/nlq',               icon: 'forum' }
       ]
     },
     {
-      label: 'Méthodes qualité',
+      label: $localize`:@@nav.methodes-qualite:Méthodes qualité`,
       items: [
-        { label: 'PDCA',     route: '/pdca',     icon: 'autorenew' },
-        { label: 'Ishikawa', route: '/ishikawa', icon: 'account_tree' },
-        { label: '5S',       route: '/fives',    icon: 'check_circle' },
-        { label: 'DMAIC',    route: '/dmaic',    icon: 'analytics' },
-        { label: 'SPC',      route: '/spc',      icon: 'show_chart' },
-        { label: 'Cercles',  route: '/circles',  icon: 'groups' }
+        { label: $localize`:@@nav.pdca:PDCA`,     route: '/pdca',     icon: 'autorenew' },
+        { label: $localize`:@@nav.ishikawa:Ishikawa`, route: '/ishikawa', icon: 'account_tree' },
+        { label: $localize`:@@nav.5s:5S`,       route: '/fives',    icon: 'check_circle' },
+        { label: $localize`:@@nav.dmaic:DMAIC`,    route: '/dmaic',    icon: 'analytics' },
+        { label: $localize`:@@nav.spc:SPC`,      route: '/spc',      icon: 'show_chart' },
+        { label: $localize`:@@nav.cercles:Cercles`,  route: '/circles',  icon: 'groups' }
       ]
     },
     {
-      label: 'Qualité opérationnelle',
+      label: $localize`:@@nav.qualite-operationnelle:Qualité opérationnelle`,
       items: [
-        { label: 'CAPA',          route: '/capa',      icon: 'engineering' },
-        { label: 'Audits',        route: '/audits',    icon: 'fact_check' },
-        { label: 'Risques (FMEA)', route: '/fmea',     icon: 'warning' },
-        { label: 'Documents',     route: '/documents', icon: 'description' },
-        { label: 'Changements',   route: '/changes',   icon: 'change_circle' },
-        { label: 'EHS',           route: '/ehs',       icon: 'health_and_safety' }
+        { label: $localize`:@@nav.capa:CAPA`,          route: '/capa',      icon: 'engineering' },
+        { label: $localize`:@@nav.audits:Audits`,        route: '/audits',    icon: 'fact_check' },
+        { label: $localize`:@@nav.risques-fmea:Risques (FMEA)`, route: '/fmea',     icon: 'warning' },
+        { label: $localize`:@@nav.documents:Documents`,     route: '/documents', icon: 'description' },
+        { label: $localize`:@@nav.changements:Changements`,   route: '/changes',   icon: 'change_circle' },
+        { label: $localize`:@@nav.ehs:EHS`,           route: '/ehs',       icon: 'health_and_safety' }
       ]
     },
     {
-      label: 'Fournisseurs & compétences',
+      label: $localize`:@@nav.fournisseurs-competences:Fournisseurs & compétences`,
       items: [
-        { label: 'Fournisseurs', route: '/suppliers', icon: 'local_shipping' },
-        { label: 'Formation',    route: '/training',  icon: 'school' }
+        { label: $localize`:@@nav.fournisseurs:Fournisseurs`, route: '/suppliers', icon: 'local_shipping' },
+        { label: $localize`:@@nav.formation:Formation`,    route: '/training',  icon: 'school' }
       ]
     },
     {
-      label: 'Normes & certification',
+      label: $localize`:@@nav.normes-certification:Normes & certification`,
       items: [
-        { label: 'Standards Hub', route: '/standards', icon: 'workspace_premium' }
+        { label: $localize`:@@nav.standards-hub:Standards Hub`, route: '/standards', icon: 'workspace_premium' }
       ]
     },
     {
-      label: 'Conformité — IA (AI Act)',
+      label: $localize`:@@nav.conformite-ia-ai-act:Conformité — IA (AI Act)`,
       collapsible: true,
       items: [
-        { label: 'QMS',        route: '/ai-qms',        icon: 'memory' },
-        { label: 'Conformité', route: '/ai-conformity', icon: 'verified_user' },
-        { label: 'Incidents',  route: '/ai-incidents',  icon: 'warning' },
-        { label: 'EUDB',       route: '/ai-eudb',       icon: 'storage' },
-        { label: 'FRIA',       route: '/fria',          icon: 'balance' },
-        { label: 'PMM',        route: '/ai-pmm',        icon: 'monitoring' }
+        { label: $localize`:@@nav.qms:QMS`,        route: '/ai-qms',        icon: 'memory' },
+        { label: $localize`:@@nav.conformite:Conformité`, route: '/ai-conformity', icon: 'verified_user' },
+        { label: $localize`:@@nav.incidents:Incidents`,  route: '/ai-incidents',  icon: 'warning' },
+        { label: $localize`:@@nav.eudb:EUDB`,       route: '/ai-eudb',       icon: 'storage' },
+        { label: $localize`:@@nav.fria:FRIA`,       route: '/fria',          icon: 'balance' },
+        { label: $localize`:@@nav.pmm:PMM`,        route: '/ai-pmm',        icon: 'monitoring' }
       ]
     },
     {
-      label: 'Conformité — Données (RGPD)',
+      label: $localize`:@@nav.conformite-donnees-rgpd:Conformité — Données (RGPD)`,
       collapsible: true,
       items: [
-        { label: 'Registre (RoPA)',   route: '/ropa',                 icon: 'shield' },
-        { label: 'Consentements',     route: '/consents',             icon: 'how_to_reg' },
-        { label: 'Demandes (DSAR)',   route: '/subject-requests',     icon: 'gavel' },
-        { label: 'Mentions',          route: '/privacy-notices',      icon: 'article' },
-        { label: 'DPIA',              route: '/dpia',                 icon: 'assessment' },
-        { label: 'DPO',               route: '/dpo-appointments',     icon: 'badge' },
-        { label: 'Rétention',         route: '/retention',            icon: 'auto_delete' },
-        { label: 'Transferts',        route: '/cross-border',         icon: 'public' },
-        { label: 'Sous-traitants (DPA)', route: '/processor-agreements', icon: 'handshake' },
-        { label: 'Violations',        route: '/breaches',             icon: 'privacy_tip' },
-        { label: 'Décisions auto.',   route: '/automated-decisions',  icon: 'account_tree' }
+        { label: $localize`:@@nav.registre-ropa:Registre (RoPA)`,   route: '/ropa',                 icon: 'shield' },
+        { label: $localize`:@@nav.consentements:Consentements`,     route: '/consents',             icon: 'how_to_reg' },
+        { label: $localize`:@@nav.demandes-dsar:Demandes (DSAR)`,   route: '/subject-requests',     icon: 'gavel' },
+        { label: $localize`:@@nav.mentions:Mentions`,          route: '/privacy-notices',      icon: 'article' },
+        { label: $localize`:@@nav.dpia:DPIA`,              route: '/dpia',                 icon: 'assessment' },
+        { label: $localize`:@@nav.dpo:DPO`,               route: '/dpo-appointments',     icon: 'badge' },
+        { label: $localize`:@@nav.retention:Rétention`,         route: '/retention',            icon: 'auto_delete' },
+        { label: $localize`:@@nav.transferts:Transferts`,        route: '/cross-border',         icon: 'public' },
+        { label: $localize`:@@nav.sous-traitants-dpa:Sous-traitants (DPA)`, route: '/processor-agreements', icon: 'handshake' },
+        { label: $localize`:@@nav.violations:Violations`,        route: '/breaches',             icon: 'privacy_tip' },
+        { label: $localize`:@@nav.decisions-auto:Décisions auto.`,   route: '/automated-decisions',  icon: 'account_tree' }
       ]
     },
     {
-      label: 'Conformité — Cyber (NIS 2)',
+      label: $localize`:@@nav.conformite-cyber-nis-2:Conformité — Cyber (NIS 2)`,
       collapsible: true,
       items: [
-        { label: 'Mesures',         route: '/nis2-measures',  icon: 'rule' },
-        { label: 'Incidents cyber', route: '/cyber-incidents', icon: 'shield' }
+        { label: $localize`:@@nav.mesures:Mesures`,         route: '/nis2-measures',  icon: 'rule' },
+        { label: $localize`:@@nav.incidents-cyber:Incidents cyber`, route: '/cyber-incidents', icon: 'shield' }
       ]
     },
     {
-      label: 'Intégrations',
+      label: $localize`:@@nav.integrations:Intégrations`,
       items: [
-        { label: 'ITSM', route: '/itsm', icon: 'hub' }
+        { label: $localize`:@@nav.itsm:ITSM`, route: '/itsm', icon: 'hub' }
       ]
     }
   ];
 
-  constructor(private readonly auth: AuthService) {}
+  /** État réseau + file offline (§15.2-15.3) — chip de synchro dans la topbar. */
+  online$!: Observable<boolean>;
+  pendingSync$!: Observable<number>;
+
+  constructor(
+    private readonly auth: AuthService,
+    private readonly connectivity: ConnectivityService,
+    private readonly offlineQueue: OfflineQueueService
+  ) {}
 
   ngOnInit(): void {
     this.user$ = this.auth.user();
+    this.online$ = this.connectivity.online$;
+    this.pendingSync$ = this.offlineQueue.pendingCount$;
     this.restoreCollapsedSections();
   }
 

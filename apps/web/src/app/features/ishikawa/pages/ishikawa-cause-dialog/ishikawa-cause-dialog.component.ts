@@ -89,14 +89,14 @@ export class IshikawaCauseDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: cause => {
-          this.snack.open('Cause ajoutée.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@ishikawa.cause.added:Cause ajoutée.`, 'OK', { duration: 2500 });
           this.dialogRef.close(cause);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[ishikawa-cause-dialog] addCause failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de l\'ajout.'),
+            safeErrorMessage(err, $localize`:@@common.error-add:Erreur lors de l'ajout.`),
             'OK', { duration: 4000 }
           );
         }

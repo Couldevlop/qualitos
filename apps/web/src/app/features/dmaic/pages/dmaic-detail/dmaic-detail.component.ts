@@ -66,7 +66,7 @@ export class DmaicDetailComponent implements OnInit {
         const id = p.get('id') ?? '';
         // OWASP A03 — validate path param shape before hitting backend (mock allows demo ids).
         if (!UUID_REGEX.test(id) && !id.startsWith('dmaic-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
@@ -76,7 +76,7 @@ export class DmaicDetailComponent implements OnInit {
             catchError(err => {
               // eslint-disable-next-line no-console
               console.warn('[dmaic-detail] getProject failed', err?.status, err?.error?.title);
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             })
           ))
@@ -116,40 +116,40 @@ export class DmaicDetailComponent implements OnInit {
 
   advance(p: DmaicProjectResponse): void {
     this.svc.advance(p.id).subscribe({
-      next: () => { this.snack.open('Phase avancée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Avance impossible.')
+      next: () => { this.snack.open($localize`:@@dmaic.detail.phase-advanced:Phase avancée.`, 'OK', { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@dmaic.detail.advance-failed:Avance impossible.`)
     });
   }
 
   hold(p: DmaicProjectResponse): void {
     this.svc.hold(p.id).subscribe({
-      next: () => { this.snack.open('Projet en pause.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Mise en pause impossible.')
+      next: () => { this.snack.open($localize`:@@dmaic.detail.project-held:Projet en pause.`, 'OK', { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@dmaic.detail.hold-failed:Mise en pause impossible.`)
     });
   }
 
   resume(p: DmaicProjectResponse): void {
     this.svc.resume(p.id).subscribe({
-      next: () => { this.snack.open('Projet repris.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Reprise impossible.')
+      next: () => { this.snack.open($localize`:@@dmaic.detail.project-resumed:Projet repris.`, 'OK', { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@dmaic.detail.resume-failed:Reprise impossible.`)
     });
   }
 
   cancel(p: DmaicProjectResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Annuler le projet ?',
+        title: $localize`:@@dmaic.detail.cancel-confirm-title:Annuler le projet ?`,
         message: 'Le projet « ' + p.title + ' » sera marqué comme annulé. Cette action est irréversible.',
-        confirmLabel: 'Annuler le projet',
-        cancelLabel: 'Conserver',
+        confirmLabel: $localize`:@@dmaic.detail.cancel-confirm-label:Annuler le projet`,
+        cancelLabel: $localize`:@@dmaic.detail.keep-label:Conserver`,
         danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.cancel(p.id).subscribe({
-        next: () => { this.snack.open('Projet annulé.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Annulation impossible.')
+        next: () => { this.snack.open($localize`:@@dmaic.detail.project-cancelled:Projet annulé.`, 'OK', { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@dmaic.detail.cancel-failed:Annulation impossible.`)
       });
     });
   }
@@ -157,10 +157,10 @@ export class DmaicDetailComponent implements OnInit {
   remove(p: DmaicProjectResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer le projet ?',
+        title: $localize`:@@dmaic.detail.delete-confirm-title:Supprimer le projet ?`,
         message: 'Suppression définitive de « ' + p.title + ' » et de ses mesures + assignations.',
-        confirmLabel: 'Supprimer',
-        cancelLabel: 'Annuler',
+        confirmLabel: $localize`:@@common.delete:Supprimer`,
+        cancelLabel: $localize`:@@common.cancel:Annuler`,
         danger: true
       }
     });
@@ -168,10 +168,10 @@ export class DmaicDetailComponent implements OnInit {
       if (!ok) return;
       this.svc.deleteProject(p.id).subscribe({
         next: () => {
-          this.snack.open('Projet supprimé.', 'OK', { duration: 2200 });
+          this.snack.open($localize`:@@dmaic.detail.project-deleted:Projet supprimé.`, 'OK', { duration: 2200 });
           this.router.navigate(['/dmaic']);
         },
-        error: err => this.fail(err, 'Suppression impossible.')
+        error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
       });
     });
   }
@@ -209,9 +209,9 @@ export class DmaicDetailComponent implements OnInit {
   removeMeasure(m: MeasureResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer la mesure ?',
-        message: 'Cette mesure sera retirée du calcul de capabilité.',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        title: $localize`:@@dmaic.detail.delete-measure-title:Supprimer la mesure ?`,
+        message: $localize`:@@dmaic.detail.delete-measure-message:Cette mesure sera retirée du calcul de capabilité.`,
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
@@ -221,7 +221,7 @@ export class DmaicDetailComponent implements OnInit {
           this.measures = this.measures.filter(x => x.id !== m.id);
           this.refresh$.next();
         },
-        error: err => this.fail(err, 'Suppression impossible.')
+        error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
       });
     });
   }
@@ -229,9 +229,9 @@ export class DmaicDetailComponent implements OnInit {
   removeAssignment(a: AssignmentResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer l\'assignation ?',
+        title: $localize`:@@dmaic.detail.delete-assignment-title:Supprimer l'assignation ?`,
         message: 'Le Poka-Yoke « ' + a.deviceCode + ' » sera détaché du projet.',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
@@ -241,7 +241,7 @@ export class DmaicDetailComponent implements OnInit {
           this.assignments = this.assignments.filter(x => x.id !== a.id);
           this.refresh$.next();
         },
-        error: err => this.fail(err, 'Suppression impossible.')
+        error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
       });
     });
   }

@@ -43,7 +43,7 @@ export class CirclesProposalDialogComponent {
     }
     const proposedBy = this.auth.snapshot()?.userId;
     if (!proposedBy) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@circles.proposal.session-expired:Session expirée — veuillez vous reconnecter.`, 'OK', { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -57,14 +57,14 @@ export class CirclesProposalDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: p => {
-          this.snack.open('Proposition enregistrée.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@circles.proposal.saved:Proposition enregistrée.`, 'OK', { duration: 2500 });
           this.dialogRef.close(p);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[circles-proposal-dialog] failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'),
+            safeErrorMessage(err, $localize`:@@circles.proposal.error:Erreur lors de l'enregistrement.`),
             'OK', { duration: 4000 }
           );
         }

@@ -59,14 +59,14 @@ export class FivesEditDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: a => {
-          this.snack.open('Audit mis à jour.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@fives.edit.success:Audit mis à jour.`, 'OK', { duration: 2500 });
           this.dialogRef.close(a);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[fives-edit] failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de la mise à jour.'),
+            safeErrorMessage(err, $localize`:@@fives.edit.update-error:Erreur lors de la mise à jour.`),
             'OK', { duration: 4000 }
           );
         }

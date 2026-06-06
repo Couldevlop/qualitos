@@ -169,6 +169,13 @@ const routes: Routes = [
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)
+      },
+      {
+        // File d'attente offline (§15.2-15.3) — accessible depuis le chip de
+        // synchro de la topbar ; pas d'entrée de nav dédiée (page utilitaire).
+        path: 'offline-queue',
+        loadChildren: () =>
+          import('./features/offline-queue/offline-queue.module').then(m => m.OfflineQueueModule)
       }
     ]
   },

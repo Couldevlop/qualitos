@@ -1,36 +1,41 @@
 <qos-form-dialog
+  i18n-title="@@pdca.step.title"
   title="Ajouter une étape"
+  i18n-subtitle="@@pdca.step.subtitle"
   subtitle="Décris l'action concrète et choisis sa phase dans le cycle PDCA."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.add"
   submitLabel="Ajouter"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre de l'étape</mat-label>
+    <mat-label i18n="@@pdca.step.title-label">Titre de l'étape</mat-label>
     <input matInput formControlName="title" maxlength="255" required
+           i18n-placeholder="@@pdca.step.title-placeholder"
            placeholder="Ex. : Analyse Pareto des défauts soudure">
-    <mat-error *ngIf="form.controls.title.hasError('required')">Le titre est requis.</mat-error>
+    <mat-error *ngIf="form.controls.title.hasError('required')" i18n="@@pdca.create.title-required">Le titre est requis.</mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description (optionnel)</mat-label>
+    <mat-label i18n="@@common.description-optional">Description (optionnel)</mat-label>
     <textarea matInput formControlName="description" rows="3"
+              i18n-placeholder="@@pdca.step.description-placeholder"
               placeholder="Méthode, livrable attendu, parties prenantes…"></textarea>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Phase</mat-label>
+      <mat-label i18n="@@pdca.step.phase-label">Phase</mat-label>
       <mat-select formControlName="phase">
         <mat-option *ngFor="let p of phases" [value]="p">{{ p }}</mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Échéance (optionnel)</mat-label>
+      <mat-label i18n="@@pdca.step.due-date-label">Échéance (optionnel)</mat-label>
       <input matInput formControlName="dueDate" type="date">
     </mat-form-field>
   </div>

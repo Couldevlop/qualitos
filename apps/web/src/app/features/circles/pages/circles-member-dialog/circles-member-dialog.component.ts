@@ -27,9 +27,9 @@ export class CirclesMemberDialogComponent {
   submitting = false;
 
   readonly roles: { value: CircleRole; label: string }[] = [
-    { value: 'FACILITATOR', label: 'Animateur' },
-    { value: 'SECRETARY',   label: 'Secrétaire' },
-    { value: 'MEMBER',      label: 'Membre' }
+    { value: 'FACILITATOR', label: $localize`:@@circles.member.role-facilitator:Animateur` },
+    { value: 'SECRETARY',   label: $localize`:@@circles.member.role-secretary:Secrétaire` },
+    { value: 'MEMBER',      label: $localize`:@@circles.member.role-member:Membre` }
   ];
 
   readonly form = this.fb.nonNullable.group({
@@ -57,14 +57,14 @@ export class CirclesMemberDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: member => {
-          this.snack.open('Membre ajouté.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@circles.member.added:Membre ajouté.`, 'OK', { duration: 2500 });
           this.dialogRef.close(member);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[circles-member-dialog] addMember failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de l\'ajout.'),
+            safeErrorMessage(err, $localize`:@@circles.member.error:Erreur lors de l'ajout.`),
             'OK', { duration: 4000 }
           );
         }

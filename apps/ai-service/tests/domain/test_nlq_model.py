@@ -39,8 +39,6 @@ def test_nlq_question_length_cap(tenant_id):
 
 
 def test_nlq_answer_confidence_bounds():
-    from uuid import UUID, uuid4
-
     sql = GeneratedSql(
         sql="SELECT 1",
         parameters={},

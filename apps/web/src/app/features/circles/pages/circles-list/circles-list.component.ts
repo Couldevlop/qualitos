@@ -55,7 +55,7 @@ export class CirclesListComponent implements OnInit {
         catchError(err => {
           // eslint-disable-next-line no-console
           console.warn('[circles-list] listCircles failed', err?.status, err?.error?.title);
-          this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+          this.error$.next(safeErrorMessage(err, $localize`:@@circles.list.load-error:Erreur lors du chargement.`));
           return [];
         }),
         finalize(() => this.loading$.next(false))

@@ -19,6 +19,16 @@
       "root": "",
       "sourceRoot": "src",
       "prefix": "qos",
+      "i18n": {
+        "sourceLocale": "fr",
+        "locales": {
+          "en": "src/locale/messages.en.xlf",
+          "es": "src/locale/messages.es.xlf",
+          "ar": "src/locale/messages.ar.xlf",
+          "ja": "src/locale/messages.ja.xlf",
+          "zh": "src/locale/messages.zh.xlf"
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
@@ -26,19 +36,20 @@
             "outputPath": "dist/qualitos-web",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["zone.js"],
+            "polyfills": ["zone.js", "@angular/localize/init"],
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": ["src/favicon.ico", "src/assets", "src/manifest.webmanifest"],
             "styles": ["@angular/material/prebuilt-themes/azure-blue.css", "src/styles.scss"],
             "scripts": []
           },
           "configurations": {
             "production": {
               "budgets": [
-                { "type": "initial", "maximumWarning": "800kb", "maximumError": "1.5mb" },
-                { "type": "anyComponentStyle", "maximumWarning": "8kb", "maximumError": "32kb" }
+                { "type": "initial", "maximumWarning": "900kb", "maximumError": "1.2mb" },
+                { "type": "anyComponentStyle", "maximumWarning": "10kb", "maximumError": "32kb" }
               ],
               "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -72,6 +83,14 @@
                   "with": "src/environments/environment.e2e.ts"
                 }
               ]
+            },
+            "analyze": {
+              "optimization": {"scripts": true, "styles": true, "fonts": false},
+              "outputHashing": "all",
+              "statsJson": true
+            },
+            "i18n-all": {
+              "localize": true
             }
           },
           "defaultConfiguration": "production"
@@ -89,7 +108,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
+            "polyfills": ["zone.js", "zone.js/testing", "@angular/localize/init"],
             "tsConfig": "tsconfig.spec.json",
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": ["@angular/material/prebuilt-themes/azure-blue.css", "src/styles.scss"],

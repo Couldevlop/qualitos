@@ -1,4 +1,5 @@
 <qos-form-dialog
+  i18n-title="@@fives.edit.title"
   title="Modifier l'audit"
   [formGroup]="form"
   [submitting]="submitting"
@@ -7,17 +8,17 @@
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Zone</mat-label>
+    <mat-label i18n="@@common.zone">Zone</mat-label>
     <input matInput formControlName="zone" maxlength="200" required>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description</mat-label>
+    <mat-label i18n="@@common.description">Description</mat-label>
     <textarea matInput formControlName="description" rows="3"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Date prévue</mat-label>
+    <mat-label i18n="@@fives.edit.scheduled-label">Date prévue</mat-label>
     <input matInput formControlName="scheduledAt" type="datetime-local">
   </mat-form-field>
 

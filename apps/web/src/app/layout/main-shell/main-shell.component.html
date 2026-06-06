@@ -85,11 +85,34 @@
           type="search"
           class="qos-topbar__search-input"
           placeholder="Rechercher : modules, normes, KPI, documents…"
-          aria-label="Recherche globale">
+          i18n-placeholder="@@shell.search.placeholder"
+          aria-label="Recherche globale"
+          i18n-aria-label="@@shell.search.aria">
         <kbd class="qos-topbar__kbd">⌘K</kbd>
       </div>
 
       <div class="qos-topbar__actions">
+        <!-- Synchro offline (§15.2-15.3) : visible hors-ligne ou si des actions
+             terrain attendent leur rejeu. Cliquable → page « File d'attente ». -->
+        <ng-container *ngIf="{ online: online$ | async, pending: pendingSync$ | async } as sync">
+          <a
+            *ngIf="sync.online === false || (sync.pending ?? 0) > 0"
+            routerLink="/offline-queue"
+            class="qos-topbar__sync"
+            [class.qos-topbar__sync--offline]="sync.online === false"
+            role="status"
+            [attr.aria-label]="sync.online === false
+              ? 'Hors-ligne — ' + (sync.pending ?? 0) + ' action(s) en attente'
+              : (sync.pending ?? 0) + ' action(s) en attente de synchronisation'">
+            <span class="material-symbols-outlined" aria-hidden="true">
+              {{ sync.online === false ? 'cloud_off' : 'cloud_sync' }}
+            </span>
+            <span class="qos-topbar__sync-count" *ngIf="(sync.pending ?? 0) > 0">
+              {{ sync.pending }}
+            </span>
+          </a>
+        </ng-container>
+
         <qos-theme-toggle></qos-theme-toggle>
 
         <button type="button" class="qos-topbar__icon-btn" aria-label="Notifications">

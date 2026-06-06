@@ -2,20 +2,20 @@
 
   <header class="page-header">
     <div>
-      <h1>Cycles PDCA</h1>
-      <p>Roue de Deming : Plan → Do → Check → Act.</p>
+      <h1 i18n="@@pdca.list.title">Cycles PDCA</h1>
+      <p i18n="@@pdca.list.subtitle">Roue de Deming : Plan → Do → Check → Act.</p>
     </div>
     <button mat-flat-button color="primary" type="button" (click)="openCreate()">
       <mat-icon>add</mat-icon>
-      Nouveau cycle
+      <span i18n="@@pdca.list.new-cycle">Nouveau cycle</span>
     </button>
   </header>
 
   <mat-card class="filter-card">
     <mat-form-field appearance="outline" class="status-filter">
-      <mat-label>Filtrer par statut</mat-label>
+      <mat-label i18n="@@common.filter-by-status">Filtrer par statut</mat-label>
       <mat-select [formControl]="statusFilter">
-        <mat-option [value]="''">Tous</mat-option>
+        <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
         <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
       </mat-select>
     </mat-form-field>
@@ -23,7 +23,7 @@
 
   <div class="state-row" *ngIf="loading$ | async">
     <mat-progress-spinner mode="indeterminate" diameter="36"></mat-progress-spinner>
-    <span>Chargement…</span>
+    <span i18n="@@common.loading">Chargement…</span>
   </div>
 
   <div class="state-row error" *ngIf="error$ | async as err">
@@ -35,7 +35,7 @@
     <table mat-table [dataSource]="(cycles$ | async) ?? []" class="cycles-table">
 
       <ng-container matColumnDef="title">
-        <th mat-header-cell *matHeaderCellDef>Titre</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.title">Titre</th>
         <td mat-cell *matCellDef="let c">
           <div class="cell-title">
             <strong>{{ c.title }}</strong>
@@ -45,19 +45,19 @@
       </ng-container>
 
       <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
         <td mat-cell *matCellDef="let c">
           <span [class]="statusBadgeClass(c.status)">{{ c.status }}</span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="steps">
-        <th mat-header-cell *matHeaderCellDef>Étapes</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@pdca.list.col-steps">Étapes</th>
         <td mat-cell *matCellDef="let c">{{ c.steps?.length || 0 }}</td>
       </ng-container>
 
       <ng-container matColumnDef="updatedAt">
-        <th mat-header-cell *matHeaderCellDef>Dernière MAJ</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.last-updated">Dernière MAJ</th>
         <td mat-cell *matCellDef="let c">{{ c.updatedAt | date:'short' }}</td>
       </ng-container>
 
@@ -71,7 +71,7 @@
           [attr.aria-label]="'Ouvrir ' + row.title"></tr>
     </table>
 
-    <p class="empty" *ngIf="(cycles$ | async)?.length === 0">
+    <p class="empty" *ngIf="(cycles$ | async)?.length === 0" i18n="@@pdca.list.empty">
       Aucun cycle pour ce filtre.
     </p>
 
@@ -81,6 +81,7 @@
                    [pageSizeOptions]="pageSizeOptions"
                    (page)="onPage($event)"
                    showFirstLastButtons
+                   i18n-aria-label="@@pdca.list.paginator-aria"
                    aria-label="Pagination des cycles">
     </mat-paginator>
   </mat-card>

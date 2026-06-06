@@ -1,5 +1,5 @@
 <qos-form-dialog
-  title="Modifier le diagramme"
+  i18n-title="@@ishikawa.edit.title" title="Modifier le diagramme"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
@@ -7,25 +7,25 @@
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Énoncé du problème</mat-label>
+    <mat-label i18n="@@ishikawa.create.problem-label">Énoncé du problème</mat-label>
     <textarea matInput formControlName="problemStatement" rows="2" maxlength="500" required></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description</mat-label>
+    <mat-label i18n="@@common.description">Description</mat-label>
     <textarea matInput formControlName="description" rows="3"></textarea>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Mode</mat-label>
+      <mat-label i18n="@@ishikawa.edit.mode">Mode</mat-label>
       <mat-select formControlName="mode">
         <mat-option *ngFor="let m of modes" [value]="m.value">{{ m.label }}</mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Statut</mat-label>
+      <mat-label i18n="@@common.status">Statut</mat-label>
       <mat-select formControlName="status">
         <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
       </mat-select>

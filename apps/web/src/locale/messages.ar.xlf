@@ -1,0 +1,1917 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Généré par scripts/gen-i18n-xlf.py — NE PAS éditer à la main :
+     modifier la table TRANSLATIONS puis regénérer. -->
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="fr" target-language="ar" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="common.loading" datatype="html">
+        <source>Chargement…</source>
+        <target state="translated">جارٍ التحميل…</target>
+      </trans-unit>
+      <trans-unit id="common.all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">الكل</target>
+      </trans-unit>
+      <trans-unit id="common.filter-by-status" datatype="html">
+        <source>Filtrer par statut</source>
+        <target state="translated">تصفية حسب الحالة</target>
+      </trans-unit>
+      <trans-unit id="common.status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">الحالة</target>
+      </trans-unit>
+      <trans-unit id="common.title" datatype="html">
+        <source>Titre</source>
+        <target state="translated">العنوان</target>
+      </trans-unit>
+      <trans-unit id="common.description" datatype="html">
+        <source>Description</source>
+        <target state="translated">الوصف</target>
+      </trans-unit>
+      <trans-unit id="common.actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">الإجراءات</target>
+      </trans-unit>
+      <trans-unit id="common.last-updated" datatype="html">
+        <source>Dernière MAJ</source>
+        <target state="translated">آخر تحديث</target>
+      </trans-unit>
+      <trans-unit id="common.created-at" datatype="html">
+        <source>Créé le</source>
+        <target state="translated">تاريخ الإنشاء</target>
+      </trans-unit>
+      <trans-unit id="common.save" datatype="html">
+        <source>Enregistrer</source>
+        <target state="translated">حفظ</target>
+      </trans-unit>
+      <trans-unit id="common.cancel" datatype="html">
+        <source>Annuler</source>
+        <target state="translated">إلغاء</target>
+      </trans-unit>
+      <trans-unit id="common.create" datatype="html">
+        <source>Créer</source>
+        <target state="translated">إنشاء</target>
+      </trans-unit>
+      <trans-unit id="common.close" datatype="html">
+        <source>Fermer</source>
+        <target state="translated">إغلاق</target>
+      </trans-unit>
+      <trans-unit id="common.delete" datatype="html">
+        <source>Supprimer</source>
+        <target state="translated">حذف</target>
+      </trans-unit>
+      <trans-unit id="common.edit" datatype="html">
+        <source>Modifier</source>
+        <target state="translated">تعديل</target>
+      </trans-unit>
+      <trans-unit id="common.add" datatype="html">
+        <source>Ajouter</source>
+        <target state="translated">إضافة</target>
+      </trans-unit>
+      <trans-unit id="common.back" datatype="html">
+        <source>Retour</source>
+        <target state="translated">رجوع</target>
+      </trans-unit>
+      <trans-unit id="common.search" datatype="html">
+        <source>Rechercher</source>
+        <target state="translated">بحث</target>
+      </trans-unit>
+      <trans-unit id="common.details" datatype="html">
+        <source>Détails</source>
+        <target state="translated">التفاصيل</target>
+      </trans-unit>
+      <trans-unit id="common.open" datatype="html">
+        <source>Ouvrir</source>
+        <target state="translated">فتح</target>
+      </trans-unit>
+      <trans-unit id="common.name" datatype="html">
+        <source>Nom</source>
+        <target state="translated">الاسم</target>
+      </trans-unit>
+      <trans-unit id="common.date" datatype="html">
+        <source>Date</source>
+        <target state="translated">التاريخ</target>
+      </trans-unit>
+      <trans-unit id="common.type" datatype="html">
+        <source>Type</source>
+        <target state="translated">النوع</target>
+      </trans-unit>
+      <trans-unit id="common.score" datatype="html">
+        <source>Score</source>
+        <target state="translated">النتيجة</target>
+      </trans-unit>
+      <trans-unit id="common.zone" datatype="html">
+        <source>Zone</source>
+        <target state="translated">المنطقة</target>
+      </trans-unit>
+      <trans-unit id="common.progress" datatype="html">
+        <source>Avancement</source>
+        <target state="translated">التقدم</target>
+      </trans-unit>
+      <trans-unit id="common.required-field" datatype="html">
+        <source>Champ obligatoire</source>
+        <target state="translated">حقل إلزامي</target>
+      </trans-unit>
+      <trans-unit id="common.loading-aria" datatype="html">
+        <source>Chargement</source>
+        <target state="translated">جارٍ التحميل</target>
+      </trans-unit>
+      <trans-unit id="common.description-optional" datatype="html">
+        <source>Description (optionnel)</source>
+        <target state="translated">الوصف (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="common.maxlength-200" datatype="html">
+        <source>200 caractères maximum.</source>
+        <target state="translated">200 حرفًا كحد أقصى.</target>
+      </trans-unit>
+      <trans-unit id="common.maxlength-255" datatype="html">
+        <source>255 caractères maximum.</source>
+        <target state="translated">255 حرفًا كحد أقصى.</target>
+      </trans-unit>
+      <trans-unit id="common.maxlength-500" datatype="html">
+        <source>500 caractères maximum.</source>
+        <target state="translated">500 حرفًا كحد أقصى.</target>
+      </trans-unit>
+      <trans-unit id="common.invalid-id" datatype="html">
+        <source>Identifiant invalide.</source>
+        <target state="translated">معرّف غير صالح.</target>
+      </trans-unit>
+      <trans-unit id="common.session-expired" datatype="html">
+        <source>Session expirée — veuillez vous reconnecter.</source>
+        <target state="translated">انتهت الجلسة — يُرجى تسجيل الدخول من جديد.</target>
+      </trans-unit>
+      <trans-unit id="common.error-loading" datatype="html">
+        <source>Erreur lors du chargement.</source>
+        <target state="translated">خطأ أثناء التحميل.</target>
+      </trans-unit>
+      <trans-unit id="common.error-create" datatype="html">
+        <source>Erreur lors de la création.</source>
+        <target state="translated">خطأ أثناء الإنشاء.</target>
+      </trans-unit>
+      <trans-unit id="common.error-update" datatype="html">
+        <source>Erreur lors de la mise à jour.</source>
+        <target state="translated">خطأ أثناء التحديث.</target>
+      </trans-unit>
+      <trans-unit id="common.error-delete" datatype="html">
+        <source>Erreur lors de la suppression.</source>
+        <target state="translated">خطأ أثناء الحذف.</target>
+      </trans-unit>
+      <trans-unit id="common.error-add" datatype="html">
+        <source>Erreur lors de l'ajout.</source>
+        <target state="translated">خطأ أثناء الإضافة.</target>
+      </trans-unit>
+      <trans-unit id="common.add-failed" datatype="html">
+        <source>Ajout impossible.</source>
+        <target state="translated">تعذّرت الإضافة.</target>
+      </trans-unit>
+      <trans-unit id="common.delete-failed" datatype="html">
+        <source>Suppression impossible.</source>
+        <target state="translated">تعذّر الحذف.</target>
+      </trans-unit>
+      <trans-unit id="shell.search.placeholder" datatype="html">
+        <source>Rechercher : modules, normes, KPI, documents…</source>
+        <target state="translated">بحث: الوحدات، المعايير، المؤشرات، المستندات…</target>
+      </trans-unit>
+      <trans-unit id="shell.search.aria" datatype="html">
+        <source>Recherche globale</source>
+        <target state="translated">بحث شامل</target>
+      </trans-unit>
+      <trans-unit id="nav.pilotage" datatype="html">
+        <source>Pilotage</source>
+        <target state="translated">القيادة</target>
+      </trans-unit>
+      <trans-unit id="nav.tableau-de-bord" datatype="html">
+        <source>Tableau de bord</source>
+        <target state="translated">لوحة المعلومات</target>
+      </trans-unit>
+      <trans-unit id="nav.accueil" datatype="html">
+        <source>Accueil</source>
+        <target state="translated">الرئيسية</target>
+      </trans-unit>
+      <trans-unit id="nav.mes-dashboards" datatype="html">
+        <source>Mes dashboards</source>
+        <target state="translated">لوحاتي</target>
+      </trans-unit>
+      <trans-unit id="nav.indicateurs-kpi" datatype="html">
+        <source>Indicateurs (KPI)</source>
+        <target state="translated">المؤشرات (KPI)</target>
+      </trans-unit>
+      <trans-unit id="nav.assistant-ia" datatype="html">
+        <source>Assistant IA</source>
+        <target state="translated">مساعد الذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="nav.methodes-qualite" datatype="html">
+        <source>Méthodes qualité</source>
+        <target state="translated">أساليب الجودة</target>
+      </trans-unit>
+      <trans-unit id="nav.pdca" datatype="html">
+        <source>PDCA</source>
+        <target state="translated">PDCA</target>
+      </trans-unit>
+      <trans-unit id="nav.ishikawa" datatype="html">
+        <source>Ishikawa</source>
+        <target state="translated">إيشيكاوا</target>
+      </trans-unit>
+      <trans-unit id="nav.5s" datatype="html">
+        <source>5S</source>
+        <target state="translated">5S</target>
+      </trans-unit>
+      <trans-unit id="nav.dmaic" datatype="html">
+        <source>DMAIC</source>
+        <target state="translated">DMAIC</target>
+      </trans-unit>
+      <trans-unit id="nav.spc" datatype="html">
+        <source>SPC</source>
+        <target state="translated">SPC</target>
+      </trans-unit>
+      <trans-unit id="nav.cercles" datatype="html">
+        <source>Cercles</source>
+        <target state="translated">حلقات الجودة</target>
+      </trans-unit>
+      <trans-unit id="nav.qualite-operationnelle" datatype="html">
+        <source>Qualité opérationnelle</source>
+        <target state="translated">الجودة التشغيلية</target>
+      </trans-unit>
+      <trans-unit id="nav.capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="nav.audits" datatype="html">
+        <source>Audits</source>
+        <target state="translated">التدقيقات</target>
+      </trans-unit>
+      <trans-unit id="nav.risques-fmea" datatype="html">
+        <source>Risques (FMEA)</source>
+        <target state="translated">المخاطر (FMEA)</target>
+      </trans-unit>
+      <trans-unit id="nav.documents" datatype="html">
+        <source>Documents</source>
+        <target state="translated">المستندات</target>
+      </trans-unit>
+      <trans-unit id="nav.changements" datatype="html">
+        <source>Changements</source>
+        <target state="translated">التغييرات</target>
+      </trans-unit>
+      <trans-unit id="nav.ehs" datatype="html">
+        <source>EHS</source>
+        <target state="translated">البيئة والصحة والسلامة</target>
+      </trans-unit>
+      <trans-unit id="nav.fournisseurs-competences" datatype="html">
+        <source>Fournisseurs &amp; compétences</source>
+        <target state="translated">الموردون والكفاءات</target>
+      </trans-unit>
+      <trans-unit id="nav.fournisseurs" datatype="html">
+        <source>Fournisseurs</source>
+        <target state="translated">الموردون</target>
+      </trans-unit>
+      <trans-unit id="nav.formation" datatype="html">
+        <source>Formation</source>
+        <target state="translated">التدريب</target>
+      </trans-unit>
+      <trans-unit id="nav.normes-certification" datatype="html">
+        <source>Normes &amp; certification</source>
+        <target state="translated">المعايير والاعتماد</target>
+      </trans-unit>
+      <trans-unit id="nav.standards-hub" datatype="html">
+        <source>Standards Hub</source>
+        <target state="translated">مركز المعايير</target>
+      </trans-unit>
+      <trans-unit id="nav.conformite-ia-ai-act" datatype="html">
+        <source>Conformité — IA (AI Act)</source>
+        <target state="translated">الامتثال — الذكاء الاصطناعي (AI Act)</target>
+      </trans-unit>
+      <trans-unit id="nav.qms" datatype="html">
+        <source>QMS</source>
+        <target state="translated">نظام إدارة الجودة</target>
+      </trans-unit>
+      <trans-unit id="nav.conformite" datatype="html">
+        <source>Conformité</source>
+        <target state="translated">الامتثال</target>
+      </trans-unit>
+      <trans-unit id="nav.incidents" datatype="html">
+        <source>Incidents</source>
+        <target state="translated">الحوادث</target>
+      </trans-unit>
+      <trans-unit id="nav.eudb" datatype="html">
+        <source>EUDB</source>
+        <target state="translated">EUDB</target>
+      </trans-unit>
+      <trans-unit id="nav.fria" datatype="html">
+        <source>FRIA</source>
+        <target state="translated">FRIA</target>
+      </trans-unit>
+      <trans-unit id="nav.pmm" datatype="html">
+        <source>PMM</source>
+        <target state="translated">PMM</target>
+      </trans-unit>
+      <trans-unit id="nav.conformite-donnees-rgpd" datatype="html">
+        <source>Conformité — Données (RGPD)</source>
+        <target state="translated">الامتثال — البيانات (GDPR)</target>
+      </trans-unit>
+      <trans-unit id="nav.registre-ropa" datatype="html">
+        <source>Registre (RoPA)</source>
+        <target state="translated">السجل (RoPA)</target>
+      </trans-unit>
+      <trans-unit id="nav.consentements" datatype="html">
+        <source>Consentements</source>
+        <target state="translated">الموافقات</target>
+      </trans-unit>
+      <trans-unit id="nav.demandes-dsar" datatype="html">
+        <source>Demandes (DSAR)</source>
+        <target state="translated">الطلبات (DSAR)</target>
+      </trans-unit>
+      <trans-unit id="nav.mentions" datatype="html">
+        <source>Mentions</source>
+        <target state="translated">الإشعارات</target>
+      </trans-unit>
+      <trans-unit id="nav.dpia" datatype="html">
+        <source>DPIA</source>
+        <target state="translated">تقييم الأثر (DPIA)</target>
+      </trans-unit>
+      <trans-unit id="nav.dpo" datatype="html">
+        <source>DPO</source>
+        <target state="translated">مسؤول حماية البيانات</target>
+      </trans-unit>
+      <trans-unit id="nav.retention" datatype="html">
+        <source>Rétention</source>
+        <target state="translated">الاحتفاظ</target>
+      </trans-unit>
+      <trans-unit id="nav.transferts" datatype="html">
+        <source>Transferts</source>
+        <target state="translated">عمليات النقل</target>
+      </trans-unit>
+      <trans-unit id="nav.sous-traitants-dpa" datatype="html">
+        <source>Sous-traitants (DPA)</source>
+        <target state="translated">المعالجون (DPA)</target>
+      </trans-unit>
+      <trans-unit id="nav.violations" datatype="html">
+        <source>Violations</source>
+        <target state="translated">الانتهاكات</target>
+      </trans-unit>
+      <trans-unit id="nav.decisions-auto" datatype="html">
+        <source>Décisions auto.</source>
+        <target state="translated">القرارات الآلية</target>
+      </trans-unit>
+      <trans-unit id="nav.conformite-cyber-nis-2" datatype="html">
+        <source>Conformité — Cyber (NIS 2)</source>
+        <target state="translated">الامتثال — السيبراني (NIS 2)</target>
+      </trans-unit>
+      <trans-unit id="nav.mesures" datatype="html">
+        <source>Mesures</source>
+        <target state="translated">التدابير</target>
+      </trans-unit>
+      <trans-unit id="nav.incidents-cyber" datatype="html">
+        <source>Incidents cyber</source>
+        <target state="translated">الحوادث السيبرانية</target>
+      </trans-unit>
+      <trans-unit id="nav.integrations" datatype="html">
+        <source>Intégrations</source>
+        <target state="translated">التكاملات</target>
+      </trans-unit>
+      <trans-unit id="nav.itsm" datatype="html">
+        <source>ITSM</source>
+        <target state="translated">ITSM</target>
+      </trans-unit>
+      <trans-unit id="pdca.list.title" datatype="html">
+        <source>Cycles PDCA</source>
+        <target state="translated">دورات PDCA</target>
+      </trans-unit>
+      <trans-unit id="pdca.list.subtitle" datatype="html">
+        <source>Roue de Deming : Plan → Do → Check → Act.</source>
+        <target state="translated">عجلة ديمنغ: تخطيط ← تنفيذ ← فحص ← تصرّف.</target>
+      </trans-unit>
+      <trans-unit id="pdca.list.new-cycle" datatype="html">
+        <source>Nouveau cycle</source>
+        <target state="translated">دورة جديدة</target>
+      </trans-unit>
+      <trans-unit id="pdca.list.col-steps" datatype="html">
+        <source>Étapes</source>
+        <target state="translated">الخطوات</target>
+      </trans-unit>
+      <trans-unit id="pdca.list.empty" datatype="html">
+        <source>Aucun cycle pour ce filtre.</source>
+        <target state="translated">لا توجد دورات لهذا المرشّح.</target>
+      </trans-unit>
+      <trans-unit id="pdca.list.paginator-aria" datatype="html">
+        <source>Pagination des cycles</source>
+        <target state="translated">ترقيم صفحات الدورات</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.back-tooltip" datatype="html">
+        <source>Retour à la liste</source>
+        <target state="translated">العودة إلى القائمة</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.eyebrow" datatype="html">
+        <source>Cycle PDCA · Roue de Deming</source>
+        <target state="translated">دورة PDCA · عجلة ديمنغ</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.cancel-tooltip" datatype="html">
+        <source>Annuler le cycle</source>
+        <target state="translated">إلغاء الدورة</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.advance-tooltip" datatype="html">
+        <source>Passer à la phase suivante</source>
+        <target state="translated">الانتقال إلى المرحلة التالية</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.advance" datatype="html">
+        <source>Avancer la phase</source>
+        <target state="translated">تقديم المرحلة</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.owner" datatype="html">
+        <source>Pilote</source>
+        <target state="translated">المسؤول</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.completed-at" datatype="html">
+        <source>Clôturé le</source>
+        <target state="translated">أُغلق في</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.steps-title" datatype="html">
+        <source>Étapes</source>
+        <target state="translated">الخطوات</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.add-step-tooltip" datatype="html">
+        <source>Ajouter une étape Plan / Do / Check / Act</source>
+        <target state="translated">إضافة خطوة Plan / Do / Check / Act</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.add-step" datatype="html">
+        <source>Ajouter une étape</source>
+        <target state="translated">إضافة خطوة</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.col-phase" datatype="html">
+        <source>Phase</source>
+        <target state="translated">المرحلة</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.col-step" datatype="html">
+        <source>Étape</source>
+        <target state="translated">الخطوة</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.col-due-date" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">تاريخ الاستحقاق</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.col-updated" datatype="html">
+        <source>MAJ</source>
+        <target state="translated">آخر تحديث</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.steps-empty" datatype="html">
+        <source>Aucune étape pour l'instant. Clique sur Ajouter une étape pour démarrer ton cycle Plan → Do → Check → Act.</source>
+        <target state="translated">لا توجد خطوات بعد. انقر على إضافة خطوة لبدء دورة Plan → Do → Check → Act.</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.not-found" datatype="html">
+        <source>Cycle introuvable.</source>
+        <target state="translated">تعذّر العثور على الدورة.</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.advanced" datatype="html">
+        <source>Cycle avancé.</source>
+        <target state="translated">تم تقديم الدورة.</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.advance-error" datatype="html">
+        <source>Erreur lors de l'avancement.</source>
+        <target state="translated">خطأ أثناء التقديم.</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.cancelled" datatype="html">
+        <source>Cycle annulé.</source>
+        <target state="translated">تم إلغاء الدورة.</target>
+      </trans-unit>
+      <trans-unit id="pdca.detail.cancel-error" datatype="html">
+        <source>Erreur lors de l'annulation.</source>
+        <target state="translated">خطأ أثناء الإلغاء.</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.title" datatype="html">
+        <source>Nouveau cycle PDCA</source>
+        <target state="translated">دورة PDCA جديدة</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.subtitle" datatype="html">
+        <source>Décris brièvement le problème ou l'objectif. Les étapes Plan / Do / Check / Act pourront être ajoutées ensuite.</source>
+        <target state="translated">صِف المشكلة أو الهدف بإيجاز. يمكن إضافة خطوات Plan / Do / Check / Act لاحقًا.</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.cycle-title-label" datatype="html">
+        <source>Titre du cycle</source>
+        <target state="translated">عنوان الدورة</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.cycle-title-placeholder" datatype="html">
+        <source>Ex. : Réduction des défauts de soudure — ligne 3</source>
+        <target state="translated">مثال: تقليل عيوب اللحام — الخط 3</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.title-required" datatype="html">
+        <source>Le titre est requis.</source>
+        <target state="translated">العنوان مطلوب.</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.description-placeholder" datatype="html">
+        <source>Pilote, périmètre, objectif chiffré, échéance…</source>
+        <target state="translated">المسؤول، النطاق، الهدف الرقمي، الموعد النهائي…</target>
+      </trans-unit>
+      <trans-unit id="pdca.create.success" datatype="html">
+        <source>Cycle PDCA créé.</source>
+        <target state="translated">تم إنشاء دورة PDCA.</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.title" datatype="html">
+        <source>Ajouter une étape</source>
+        <target state="translated">إضافة خطوة</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.subtitle" datatype="html">
+        <source>Décris l'action concrète et choisis sa phase dans le cycle PDCA.</source>
+        <target state="translated">صِف الإجراء الملموس واختر مرحلته في دورة PDCA.</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.title-label" datatype="html">
+        <source>Titre de l'étape</source>
+        <target state="translated">عنوان الخطوة</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.title-placeholder" datatype="html">
+        <source>Ex. : Analyse Pareto des défauts soudure</source>
+        <target state="translated">مثال: تحليل باريتو لعيوب اللحام</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.description-placeholder" datatype="html">
+        <source>Méthode, livrable attendu, parties prenantes…</source>
+        <target state="translated">المنهجية، المُخرَج المتوقع، الأطراف المعنية…</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.phase-label" datatype="html">
+        <source>Phase</source>
+        <target state="translated">المرحلة</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.due-date-label" datatype="html">
+        <source>Échéance (optionnel)</source>
+        <target state="translated">تاريخ الاستحقاق (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.success" datatype="html">
+        <source>Étape ajoutée.</source>
+        <target state="translated">تمت إضافة الخطوة.</target>
+      </trans-unit>
+      <trans-unit id="pdca.step.add-error" datatype="html">
+        <source>Erreur lors de l'ajout.</source>
+        <target state="translated">خطأ أثناء الإضافة.</target>
+      </trans-unit>
+      <trans-unit id="fives.list.title" datatype="html">
+        <source>Audits 5S</source>
+        <target state="translated">تدقيقات 5S</target>
+      </trans-unit>
+      <trans-unit id="fives.list.subtitle" datatype="html">
+        <source>Seiri · Seiton · Seiso · Seiketsu · Shitsuke — score pondéré 0-100.</source>
+        <target state="translated">Seiri · Seiton · Seiso · Seiketsu · Shitsuke — درجة مرجّحة 0-100.</target>
+      </trans-unit>
+      <trans-unit id="fives.list.new-audit" datatype="html">
+        <source>Nouvel audit</source>
+        <target state="translated">تدقيق جديد</target>
+      </trans-unit>
+      <trans-unit id="fives.list.col-scheduled" datatype="html">
+        <source>Planifié</source>
+        <target state="translated">مُجدوَل</target>
+      </trans-unit>
+      <trans-unit id="fives.list.col-updated" datatype="html">
+        <source>MAJ</source>
+        <target state="translated">آخر تحديث</target>
+      </trans-unit>
+      <trans-unit id="fives.list.empty" datatype="html">
+        <source>Aucun audit pour ce filtre.</source>
+        <target state="translated">لا توجد تدقيقات لهذا المرشّح.</target>
+      </trans-unit>
+      <trans-unit id="fives.list.paginator-aria" datatype="html">
+        <source>Pagination des audits 5S</source>
+        <target state="translated">ترقيم صفحات تدقيقات 5S</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.back-tooltip" datatype="html">
+        <source>Retour à la liste</source>
+        <target state="translated">العودة إلى القائمة</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.eyebrow" datatype="html">
+        <source>Audit 5S · Seiri · Seiton · Seiso · Seiketsu · Shitsuke</source>
+        <target state="translated">تدقيق 5S · Seiri · Seiton · Seiso · Seiketsu · Shitsuke</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.delete-tooltip" datatype="html">
+        <source>Supprimer l'audit</source>
+        <target state="translated">حذف التدقيق</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.cancel-tooltip" datatype="html">
+        <source>Annuler l'audit</source>
+        <target state="translated">إلغاء التدقيق</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.start-tooltip" datatype="html">
+        <source>Démarrer l'audit</source>
+        <target state="translated">بدء التدقيق</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.start" datatype="html">
+        <source>Démarrer</source>
+        <target state="translated">بدء</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.complete-tooltip" datatype="html">
+        <source>Clôturer l'audit</source>
+        <target state="translated">إغلاق التدقيق</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.complete" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">إغلاق</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.auditor" datatype="html">
+        <source>Auditeur</source>
+        <target state="translated">المدقّق</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.overall-score" datatype="html">
+        <source>Score global</source>
+        <target state="translated">الدرجة الإجمالية</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.scheduled" datatype="html">
+        <source>Planifié</source>
+        <target state="translated">مُجدوَل</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.completed" datatype="html">
+        <source>Clôturé</source>
+        <target state="translated">مُغلَق</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.pillar-score-label" datatype="html">
+        <source>Score (0–10)</source>
+        <target state="translated">الدرجة (0–10)</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.note-label" datatype="html">
+        <source>Note (optionnel)</source>
+        <target state="translated">ملاحظة (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.note-placeholder" datatype="html">
+        <source>Observation, photo URL, action…</source>
+        <target state="translated">ملاحظة، رابط صورة، إجراء…</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.not-found" datatype="html">
+        <source>Audit introuvable.</source>
+        <target state="translated">تعذّر العثور على التدقيق.</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.delete-confirm-title" datatype="html">
+        <source>Supprimer cet audit ?</source>
+        <target state="translated">حذف هذا التدقيق؟</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.delete-success" datatype="html">
+        <source>Audit supprimé.</source>
+        <target state="translated">تم حذف التدقيق.</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.delete-error" datatype="html">
+        <source>Erreur lors de la suppression.</source>
+        <target state="translated">خطأ أثناء الحذف.</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.score-error" datatype="html">
+        <source>Erreur lors de l'enregistrement.</source>
+        <target state="translated">خطأ أثناء الحفظ.</target>
+      </trans-unit>
+      <trans-unit id="fives.detail.transition-error" datatype="html">
+        <source>Erreur lors de la transition.</source>
+        <target state="translated">خطأ أثناء الانتقال.</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiri.label" datatype="html">
+        <source>Seiri</source>
+        <target state="translated">Seiri</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiri.hint" datatype="html">
+        <source>Trier — éliminer l'inutile</source>
+        <target state="translated">الفرز — التخلّص من غير الضروري</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiton.label" datatype="html">
+        <source>Seiton</source>
+        <target state="translated">Seiton</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiton.hint" datatype="html">
+        <source>Ranger — une place pour chaque chose</source>
+        <target state="translated">الترتيب — مكان لكل شيء</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiso.label" datatype="html">
+        <source>Seiso</source>
+        <target state="translated">Seiso</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiso.hint" datatype="html">
+        <source>Nettoyer — détecter les anomalies en nettoyant</source>
+        <target state="translated">التنظيف — اكتشاف الأعطال أثناء التنظيف</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiketsu.label" datatype="html">
+        <source>Seiketsu</source>
+        <target state="translated">Seiketsu</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.seiketsu.hint" datatype="html">
+        <source>Standardiser — figer les pratiques</source>
+        <target state="translated">التوحيد — تثبيت الممارسات</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.shitsuke.label" datatype="html">
+        <source>Shitsuke</source>
+        <target state="translated">Shitsuke</target>
+      </trans-unit>
+      <trans-unit id="fives.pillar.shitsuke.hint" datatype="html">
+        <source>Maintenir — discipliner &amp; auditer</source>
+        <target state="translated">الاستدامة — الانضباط والتدقيق</target>
+      </trans-unit>
+      <trans-unit id="fives.create.title" datatype="html">
+        <source>Nouvel audit 5S</source>
+        <target state="translated">تدقيق 5S جديد</target>
+      </trans-unit>
+      <trans-unit id="fives.create.hint" datatype="html">
+        <source>Définis la zone à auditer et la date prévue. Les scores Seiri · Seiton · Seiso · Seiketsu · Shitsuke seront saisis lors de l'audit terrain.</source>
+        <target state="translated">حدّد المنطقة المراد تدقيقها والتاريخ المقرر. ستُدخَل درجات Seiri · Seiton · Seiso · Seiketsu · Shitsuke أثناء التدقيق الميداني.</target>
+      </trans-unit>
+      <trans-unit id="fives.create.zone-placeholder" datatype="html">
+        <source>Ex. : Atelier mécanique A — ligne 1</source>
+        <target state="translated">مثال: ورشة الميكانيكا A — الخط 1</target>
+      </trans-unit>
+      <trans-unit id="fives.create.zone-required" datatype="html">
+        <source>La zone est requise.</source>
+        <target state="translated">المنطقة مطلوبة.</target>
+      </trans-unit>
+      <trans-unit id="fives.create.description-placeholder" datatype="html">
+        <source>Périmètre, observations préalables, équipement…</source>
+        <target state="translated">النطاق، الملاحظات المسبقة، المعدات…</target>
+      </trans-unit>
+      <trans-unit id="fives.create.scheduled-label" datatype="html">
+        <source>Date prévue (optionnel)</source>
+        <target state="translated">التاريخ المقرر (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="fives.create.success" datatype="html">
+        <source>Audit 5S créé.</source>
+        <target state="translated">تم إنشاء تدقيق 5S.</target>
+      </trans-unit>
+      <trans-unit id="fives.edit.title" datatype="html">
+        <source>Modifier l'audit</source>
+        <target state="translated">تعديل التدقيق</target>
+      </trans-unit>
+      <trans-unit id="fives.edit.scheduled-label" datatype="html">
+        <source>Date prévue</source>
+        <target state="translated">التاريخ المقرر</target>
+      </trans-unit>
+      <trans-unit id="fives.edit.success" datatype="html">
+        <source>Audit mis à jour.</source>
+        <target state="translated">تم تحديث التدقيق.</target>
+      </trans-unit>
+      <trans-unit id="fives.edit.update-error" datatype="html">
+        <source>Erreur lors de la mise à jour.</source>
+        <target state="translated">خطأ أثناء التحديث.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.title" datatype="html">
+        <source>Diagrammes Ishikawa</source>
+        <target state="translated">مخططات إيشيكاوا</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.subtitle" datatype="html">
+        <source>Cause–effet (6M / 7M / 8M) avec sous-causes (5 Pourquoi) et scoring racine.</source>
+        <target state="translated">السبب–الأثر (6M / 7M / 8M) مع الأسباب الفرعية (5 لماذا) وتقييم السبب الجذري.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.new-diagram" datatype="html">
+        <source>Nouveau diagramme</source>
+        <target state="translated">مخطط جديد</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.col-problem" datatype="html">
+        <source>Problème</source>
+        <target state="translated">المشكلة</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.col-mode" datatype="html">
+        <source>Mode</source>
+        <target state="translated">النمط</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.col-causes" datatype="html">
+        <source>Causes</source>
+        <target state="translated">الأسباب</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.empty" datatype="html">
+        <source>Aucun diagramme pour ce filtre.</source>
+        <target state="translated">لا يوجد مخطط لهذا المرشّح.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.list.paginator-aria" datatype="html">
+        <source>Pagination des diagrammes</source>
+        <target state="translated">ترقيم صفحات المخططات</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.back-tooltip" datatype="html">
+        <source>Retour à la liste</source>
+        <target state="translated">العودة إلى القائمة</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.eyebrow" datatype="html">
+        <source>Diagramme Ishikawa · Cause–effet</source>
+        <target state="translated">مخطط إيشيكاوا · السبب–الأثر</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.delete-tooltip" datatype="html">
+        <source>Supprimer le diagramme</source>
+        <target state="translated">حذف المخطط</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.suggest-tooltip" datatype="html">
+        <source>Suggérer des causes probables par l'IA</source>
+        <target state="translated">اقتراح الأسباب المحتملة بالذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.add-cause" datatype="html">
+        <source>Ajouter une cause</source>
+        <target state="translated">إضافة سبب</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.mode" datatype="html">
+        <source>Mode</source>
+        <target state="translated">النمط</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.owner" datatype="html">
+        <source>Pilote</source>
+        <target state="translated">المسؤول</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.causes-total" datatype="html">
+        <source>Causes totales</source>
+        <target state="translated">إجمالي الأسباب</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.maj" datatype="html">
+        <source>MAJ</source>
+        <target state="translated">آخر تحديث</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.suggest-region-aria" datatype="html">
+        <source>Causes suggérées par l'IA</source>
+        <target state="translated">أسباب مقترحة من الذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.suggest-title" datatype="html">
+        <source>Causes suggérées par l'IA</source>
+        <target state="translated">أسباب مقترحة من الذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.dismiss-aria" datatype="html">
+        <source>Masquer les suggestions</source>
+        <target state="translated">إخفاء الاقتراحات</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.dismiss-tooltip" datatype="html">
+        <source>Masquer</source>
+        <target state="translated">إخفاء</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.generating-aria" datatype="html">
+        <source>Génération des causes en cours</source>
+        <target state="translated">جارٍ توليد الأسباب</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.generating" datatype="html">
+        <source>Génération des causes probables… (peut prendre ~1 min sur CPU)</source>
+        <target state="translated">جارٍ توليد الأسباب المحتملة… (قد يستغرق ~دقيقة على المعالج)</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.suggest-hint" datatype="html">
+        <source>L'IA suggère, vous validez : « Ajouter » intègre la cause au diagramme.</source>
+        <target state="translated">الذكاء الاصطناعي يقترح وأنت تعتمد: «إضافة» تُدرج السبب في المخطط.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.branch-empty" datatype="html">
+        <source>Aucune cause pour cette branche.</source>
+        <target state="translated">لا يوجد سبب لهذا الفرع.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.add-why-tooltip" datatype="html">
+        <source>Ajouter un Pourquoi ?</source>
+        <target state="translated">إضافة «لماذا»؟</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.delete-confirm-title" datatype="html">
+        <source>Supprimer ce diagramme ?</source>
+        <target state="translated">حذف هذا المخطط؟</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.deleted" datatype="html">
+        <source>Diagramme supprimé.</source>
+        <target state="translated">تم حذف المخطط.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.not-found" datatype="html">
+        <source>Diagramme introuvable.</source>
+        <target state="translated">المخطط غير موجود.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.no-suggestions" datatype="html">
+        <source>Aucune suggestion exploitable — reformulez le problème.</source>
+        <target state="translated">لا توجد اقتراحات قابلة للاستخدام — أعد صياغة المشكلة.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.suggest-unavailable" datatype="html">
+        <source>Suggestion IA indisponible (ai-service / Ollama).</source>
+        <target state="translated">اقتراح الذكاء الاصطناعي غير متاح (ai-service / Ollama).</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.cause-added" datatype="html">
+        <source>Cause ajoutée au diagramme.</source>
+        <target state="translated">تمت إضافة السبب إلى المخطط.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.title" datatype="html">
+        <source>Nouveau diagramme Ishikawa</source>
+        <target state="translated">مخطط إيشيكاوا جديد</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.subtitle" datatype="html">
+        <source>Formule clairement le problème observé. Les branches et causes pourront être enrichies après création (avec l'aide de l'IA).</source>
+        <target state="translated">صِغ المشكلة المُلاحظة بوضوح. يمكن إثراء الفروع والأسباب بعد الإنشاء (بمساعدة الذكاء الاصطناعي).</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.problem-label" datatype="html">
+        <source>Énoncé du problème</source>
+        <target state="translated">بيان المشكلة</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.problem-placeholder" datatype="html">
+        <source>Ex. : Hausse des défauts de soudure ligne 3 (+18% sur 30j)</source>
+        <target state="translated">مثال: ارتفاع عيوب اللحام في الخط 3 (+18% خلال 30 يومًا)</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.problem-required" datatype="html">
+        <source>L'énoncé est requis.</source>
+        <target state="translated">البيان مطلوب.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.desc-placeholder" datatype="html">
+        <source>Contexte, participants, périmètre…</source>
+        <target state="translated">السياق، المشاركون، النطاق…</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.mode-label" datatype="html">
+        <source>Mode d'analyse</source>
+        <target state="translated">نمط التحليل</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.create.created" datatype="html">
+        <source>Diagramme Ishikawa créé.</source>
+        <target state="translated">تم إنشاء مخطط إيشيكاوا.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.edit.title" datatype="html">
+        <source>Modifier le diagramme</source>
+        <target state="translated">تعديل المخطط</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.edit.mode" datatype="html">
+        <source>Mode</source>
+        <target state="translated">النمط</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.edit.updated" datatype="html">
+        <source>Diagramme mis à jour.</source>
+        <target state="translated">تم تحديث المخطط.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.parent-prefix" datatype="html">
+        <source>Cette sous-cause sera rattachée à</source>
+        <target state="translated">سيُربط هذا السبب الفرعي بـ</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.hint" datatype="html">
+        <source>Choisis la branche (M) et formule la cause de façon concise. Le scoring racine sera ajusté plus tard par l'analyse 5 Pourquoi.</source>
+        <target state="translated">اختر الفرع (M) وصِغ السبب بإيجاز. سيُعدَّل تقييم السبب الجذري لاحقًا عبر تحليل 5 لماذا.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.branch-label" datatype="html">
+        <source>Branche</source>
+        <target state="translated">الفرع</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.branch-hint" datatype="html">
+        <source>Héritée de la cause parente.</source>
+        <target state="translated">موروثة من السبب الأصلي.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.label-label" datatype="html">
+        <source>Libellé de la cause</source>
+        <target state="translated">تسمية السبب</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.label-placeholder" datatype="html">
+        <source>Ex. : Calibration robot soudure dérivée</source>
+        <target state="translated">مثال: انحراف معايرة روبوت اللحام</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.label-required" datatype="html">
+        <source>Le libellé est requis.</source>
+        <target state="translated">التسمية مطلوبة.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.desc-placeholder" datatype="html">
+        <source>Détails, mesures, observations…</source>
+        <target state="translated">تفاصيل، قياسات، ملاحظات…</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.score-label" datatype="html">
+        <source>Score racine (0 → 1, optionnel)</source>
+        <target state="translated">تقييم الجذر (0 ← 1، اختياري)</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.score-hint" datatype="html">
+        <source>Probabilité estimée que ce soit une cause racine.</source>
+        <target state="translated">الاحتمال المُقدَّر أن يكون سببًا جذريًا.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.cause.added" datatype="html">
+        <source>Cause ajoutée.</source>
+        <target state="translated">تمت إضافة السبب.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.title" datatype="html">
+        <source>Projets DMAIC</source>
+        <target state="translated">مشاريع DMAIC</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.subtitle" datatype="html">
+        <source>Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.</source>
+        <target state="translated">Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.new-project" datatype="html">
+        <source>Nouveau projet</source>
+        <target state="translated">مشروع جديد</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.phase" datatype="html">
+        <source>Phase</source>
+        <target state="translated">المرحلة</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.all-phases" datatype="html">
+        <source>Toutes</source>
+        <target state="translated">الكل</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.col-project" datatype="html">
+        <source>Projet</source>
+        <target state="translated">المشروع</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.col-measures" datatype="html">
+        <source>Mesures</source>
+        <target state="translated">القياسات</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.col-pokayoke" datatype="html">
+        <source>Poka-Yoke</source>
+        <target state="translated">Poka-Yoke</target>
+      </trans-unit>
+      <trans-unit id="dmaic.list.col-deadline" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">الموعد النهائي</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.target-prefix" datatype="html">
+        <source>Cible :</source>
+        <target state="translated">الهدف:</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.savings-prefix" datatype="html">
+        <source>Économies estimées :</source>
+        <target state="translated">الوفورات المقدّرة:</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.advance" datatype="html">
+        <source>Avancer</source>
+        <target state="translated">تقدّم</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.hold" datatype="html">
+        <source>Pause</source>
+        <target state="translated">إيقاف مؤقت</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.resume" datatype="html">
+        <source>Reprendre</source>
+        <target state="translated">استئناف</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.charter" datatype="html">
+        <source>Charter</source>
+        <target state="translated">ميثاق المشروع</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.problem-label" datatype="html">
+        <source>Problème :</source>
+        <target state="translated">المشكلة:</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.goal-label" datatype="html">
+        <source>Objectif :</source>
+        <target state="translated">الهدف:</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.specs" datatype="html">
+        <source>Spécifications</source>
+        <target state="translated">المواصفات</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.lsl" datatype="html">
+        <source>LSL</source>
+        <target state="translated">LSL</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">الهدف</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.usl" datatype="html">
+        <source>USL</source>
+        <target state="translated">USL</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.capability" datatype="html">
+        <source>Capabilité (Cp / Cpk)</source>
+        <target state="translated">القدرة (Cp / Cpk)</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.sample" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">العينة</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.mean" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">المتوسط</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.sigma-level" datatype="html">
+        <source>Niveau σ</source>
+        <target state="translated">مستوى σ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.no-capability" datatype="html">
+        <source>Données insuffisantes pour le calcul.</source>
+        <target state="translated">بيانات غير كافية للحساب.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.measures-title" datatype="html">
+        <source>Mesures</source>
+        <target state="translated">القياسات</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.new-measure" datatype="html">
+        <source>Nouvelle mesure</source>
+        <target state="translated">قياس جديد</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.col-value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">القيمة</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.col-subgroup" datatype="html">
+        <source>Sous-groupe</source>
+        <target state="translated">المجموعة الفرعية</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.col-ref" datatype="html">
+        <source>Réf.</source>
+        <target state="translated">المرجع</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.measures-empty" datatype="html">
+        <source>Aucune mesure pour l'instant.</source>
+        <target state="translated">لا توجد قياسات بعد.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.assign-pokayoke" datatype="html">
+        <source>Assigner un Poka-Yoke</source>
+        <target state="translated">تعيين Poka-Yoke</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.col-code" datatype="html">
+        <source>Code</source>
+        <target state="translated">الرمز</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.col-note" datatype="html">
+        <source>Note</source>
+        <target state="translated">ملاحظة</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.pokayoke-empty" datatype="html">
+        <source>Aucun Poka-Yoke assigné.</source>
+        <target state="translated">لم يتم تعيين أي Poka-Yoke.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.phase-advanced" datatype="html">
+        <source>Phase avancée.</source>
+        <target state="translated">تم تقديم المرحلة.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.advance-failed" datatype="html">
+        <source>Avance impossible.</source>
+        <target state="translated">تعذّر التقدّم.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.project-held" datatype="html">
+        <source>Projet en pause.</source>
+        <target state="translated">تم إيقاف المشروع مؤقتًا.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.hold-failed" datatype="html">
+        <source>Mise en pause impossible.</source>
+        <target state="translated">تعذّر الإيقاف المؤقت.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.project-resumed" datatype="html">
+        <source>Projet repris.</source>
+        <target state="translated">تم استئناف المشروع.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.resume-failed" datatype="html">
+        <source>Reprise impossible.</source>
+        <target state="translated">تعذّر الاستئناف.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.cancel-confirm-title" datatype="html">
+        <source>Annuler le projet ?</source>
+        <target state="translated">إلغاء المشروع؟</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.cancel-confirm-label" datatype="html">
+        <source>Annuler le projet</source>
+        <target state="translated">إلغاء المشروع</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.keep-label" datatype="html">
+        <source>Conserver</source>
+        <target state="translated">الاحتفاظ</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.project-cancelled" datatype="html">
+        <source>Projet annulé.</source>
+        <target state="translated">تم إلغاء المشروع.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.cancel-failed" datatype="html">
+        <source>Annulation impossible.</source>
+        <target state="translated">تعذّر الإلغاء.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.delete-confirm-title" datatype="html">
+        <source>Supprimer le projet ?</source>
+        <target state="translated">حذف المشروع؟</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.project-deleted" datatype="html">
+        <source>Projet supprimé.</source>
+        <target state="translated">تم حذف المشروع.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.delete-measure-title" datatype="html">
+        <source>Supprimer la mesure ?</source>
+        <target state="translated">حذف القياس؟</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.delete-measure-message" datatype="html">
+        <source>Cette mesure sera retirée du calcul de capabilité.</source>
+        <target state="translated">سيُزال هذا القياس من حساب القدرة.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.detail.delete-assignment-title" datatype="html">
+        <source>Supprimer l'assignation ?</source>
+        <target state="translated">حذف التعيين؟</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.title" datatype="html">
+        <source>Nouveau projet DMAIC</source>
+        <target state="translated">مشروع DMAIC جديد</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.title-placeholder" datatype="html">
+        <source>Ex. : Réduire le taux de rebut ligne A</source>
+        <target state="translated">مثال: تقليل معدل الهدر في الخط A</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.problem-label" datatype="html">
+        <source>Énoncé du problème</source>
+        <target state="translated">بيان المشكلة</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.problem-placeholder" datatype="html">
+        <source>Contexte, données chiffrées du problème</source>
+        <target state="translated">السياق، بيانات المشكلة الرقمية</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.goal-label" datatype="html">
+        <source>Énoncé de l'objectif</source>
+        <target state="translated">بيان الهدف</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.goal-placeholder" datatype="html">
+        <source>Objectif SMART + impact business attendu</source>
+        <target state="translated">هدف SMART + الأثر التجاري المتوقع</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.champion-label" datatype="html">
+        <source>Champion (ID)</source>
+        <target state="translated">الراعي (المعرّف)</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.champion-placeholder" datatype="html">
+        <source>UUID utilisateur</source>
+        <target state="translated">معرّف المستخدم UUID</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.target-date-label" datatype="html">
+        <source>Date cible</source>
+        <target state="translated">التاريخ المستهدف</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.specs-section" datatype="html">
+        <source>Spécifications procédé (optionnel — requis pour Cp/Cpk)</source>
+        <target state="translated">مواصفات العملية (اختياري — مطلوب لـ Cp/Cpk)</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.unit-label" datatype="html">
+        <source>Unité</source>
+        <target state="translated">الوحدة</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.unit-placeholder" datatype="html">
+        <source>mm, s, °C…</source>
+        <target state="translated">مم، ث، °م…</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.savings-label" datatype="html">
+        <source>Économies estimées (€)</source>
+        <target state="translated">الوفورات المقدّرة (€)</target>
+      </trans-unit>
+      <trans-unit id="dmaic.create.created" datatype="html">
+        <source>Projet DMAIC créé.</source>
+        <target state="translated">تم إنشاء مشروع DMAIC.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.edit.title" datatype="html">
+        <source>Modifier le projet</source>
+        <target state="translated">تعديل المشروع</target>
+      </trans-unit>
+      <trans-unit id="dmaic.edit.specs-section" datatype="html">
+        <source>Spécifications procédé</source>
+        <target state="translated">مواصفات العملية</target>
+      </trans-unit>
+      <trans-unit id="dmaic.edit.updated" datatype="html">
+        <source>Projet mis à jour.</source>
+        <target state="translated">تم تحديث المشروع.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.title" datatype="html">
+        <source>Nouvelle mesure</source>
+        <target state="translated">قياس جديد</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.subtitle" datatype="html">
+        <source>Mesure d'un point caractéristique du procédé (Y critique). Sera utilisée pour le calcul des indices de capabilité Cp/Cpk.</source>
+        <target state="translated">قياس خاصية مميِّزة للعملية (Y الحرجة). يُستخدم لحساب مؤشرات القدرة Cp/Cpk.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.subgroup-placeholder" datatype="html">
+        <source>Ex. : équipe-A, machine-3</source>
+        <target state="translated">مثال: الفريق-A، الآلة-3</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.datetime-label" datatype="html">
+        <source>Date / heure</source>
+        <target state="translated">التاريخ / الوقت</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.source-label" datatype="html">
+        <source>Référence source</source>
+        <target state="translated">مرجع المصدر</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.source-placeholder" datatype="html">
+        <source>Ex. : OF-2026-1145, lot-3214</source>
+        <target state="translated">مثال: OF-2026-1145، الدفعة-3214</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.value-required" datatype="html">
+        <source>Une valeur numérique est requise.</source>
+        <target state="translated">يلزم إدخال قيمة رقمية.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.saved" datatype="html">
+        <source>Mesure enregistrée.</source>
+        <target state="translated">تم حفظ القياس.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.measure.error-save" datatype="html">
+        <source>Erreur lors de l'enregistrement.</source>
+        <target state="translated">خطأ أثناء الحفظ.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.title" datatype="html">
+        <source>Assigner un Poka-Yoke</source>
+        <target state="translated">تعيين Poka-Yoke</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.subtitle" datatype="html">
+        <source>Dispositif de prévention ou de détection issu du catalogue, attaché au projet (phase Improve). Workflow par défaut : PROPOSED → IN_DESIGN → IMPLEMENTED → VERIFIED.</source>
+        <target state="translated">جهاز وقاية أو كشف من الكتالوج، مرتبط بالمشروع (مرحلة Improve). سير العمل الافتراضي: PROPOSED → IN_DESIGN → IMPLEMENTED → VERIFIED.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.submit" datatype="html">
+        <source>Assigner</source>
+        <target state="translated">تعيين</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.mechanism-label" datatype="html">
+        <source>Mécanisme</source>
+        <target state="translated">الآلية</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.loading-catalog" datatype="html">
+        <source>Chargement du catalogue…</source>
+        <target state="translated">جارٍ تحميل الكتالوج…</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.device-label" datatype="html">
+        <source>Dispositif</source>
+        <target state="translated">الجهاز</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.note-placeholder" datatype="html">
+        <source>Implémentation prévue, contraintes, lien CAPA…</source>
+        <target state="translated">التنفيذ المخطط، القيود، رابط CAPA…</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.catalog-unavailable" datatype="html">
+        <source>Catalogue Poka-Yoke indisponible.</source>
+        <target state="translated">كتالوج Poka-Yoke غير متاح.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.assigned" datatype="html">
+        <source>Poka-Yoke assigné.</source>
+        <target state="translated">تم تعيين Poka-Yoke.</target>
+      </trans-unit>
+      <trans-unit id="dmaic.pokayoke.error-assign" datatype="html">
+        <source>Erreur lors de l'assignation.</source>
+        <target state="translated">خطأ أثناء التعيين.</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.title" datatype="html">
+        <source>Détection d'anomalies SPC</source>
+        <target state="translated">كشف الحالات الشاذة SPC</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.subtitle" datatype="html">
+        <source>Carte des valeurs individuelles — limites de contrôle (σ = MR̄/d₂) et 8 règles de Nelson, calculées par l'IA.</source>
+        <target state="translated">مخطط القيم الفردية — حدود التحكم (σ = MR̄/d₂) و8 قواعد نيلسون، محسوبة بالذكاء الاصطناعي.</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.series-panel" datatype="html">
+        <source>Série de mesures</source>
+        <target state="translated">سلسلة القياسات</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.measures-label" datatype="html">
+        <source>Mesures (séparées par virgule, espace ou retour ligne)</source>
+        <target state="translated">القياسات (مفصولة بفاصلة أو مسافة أو سطر جديد)</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.baseline-hint" datatype="html">
+        <source>Baseline connue (optionnel) — sinon les limites sont estimées :</source>
+        <target state="translated">خط الأساس المعروف (اختياري) — وإلا تُقدَّر الحدود:</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.center-label" datatype="html">
+        <source>Ligne centrale (center)</source>
+        <target state="translated">الخط المركزي (center)</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.sigma-label" datatype="html">
+        <source>σ (sigma)</source>
+        <target state="translated">σ (sigma)</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.analyze-series" datatype="html">
+        <source>Analyser la série</source>
+        <target state="translated">تحليل السلسلة</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.analyzing" datatype="html">
+        <source>Analyse…</source>
+        <target state="translated">جارٍ التحليل…</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.example" datatype="html">
+        <source>Exemple</source>
+        <target state="translated">مثال</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.from-kpi-panel" datatype="html">
+        <source>Depuis un KPI</source>
+        <target state="translated">من مؤشر أداء</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.from-kpi-hint" datatype="html">
+        <source>Tire automatiquement les dernières mesures d'un KPI du catalogue.</source>
+        <target state="translated">يجلب تلقائياً أحدث قياسات مؤشر أداء من الكتالوج.</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.no-kpi" datatype="html">
+        <source>Aucun KPI au catalogue.</source>
+        <target state="translated">لا يوجد مؤشر أداء في الكتالوج.</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.window-label" datatype="html">
+        <source>Fenêtre (nombre de mesures)</source>
+        <target state="translated">النافذة (عدد القياسات)</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.open-capa" datatype="html">
+        <source>Ouvrir une CAPA si le procédé est hors-contrôle</source>
+        <target state="translated">فتح إجراء CAPA إذا كانت العملية خارج السيطرة</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.analyze-kpi" datatype="html">
+        <source>Analyser le KPI</source>
+        <target state="translated">تحليل مؤشر الأداء</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.capa-open-link" datatype="html">
+        <source>CAPA ouverte — voir le dossier</source>
+        <target state="translated">تم فتح CAPA — عرض الملف</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.process-state" datatype="html">
+        <source>État du procédé</source>
+        <target state="translated">حالة العملية</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.state-out" datatype="html">
+        <source>Hors contrôle</source>
+        <target state="translated">خارج السيطرة</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.state-in" datatype="html">
+        <source>Sous contrôle</source>
+        <target state="translated">تحت السيطرة</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.center-line" datatype="html">
+        <source>Ligne centrale</source>
+        <target state="translated">الخط المركزي</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.center-estimated" datatype="html">
+        <source>Estimée depuis la série</source>
+        <target state="translated">مُقدَّرة من السلسلة</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.center-baseline" datatype="html">
+        <source>Baseline fournie</source>
+        <target state="translated">خط الأساس المُقدَّم</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.control-limits" datatype="html">
+        <source>Limites de contrôle (3σ)</source>
+        <target state="translated">حدود التحكم (3σ)</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.control-chart" datatype="html">
+        <source>Carte de contrôle</source>
+        <target state="translated">مخطط التحكم</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.nelson-rules" datatype="html">
+        <source>Règles de Nelson déclenchées</source>
+        <target state="translated">قواعد نيلسون المُفعَّلة</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.no-violation" datatype="html">
+        <source>Aucune règle déclenchée : le procédé est statistiquement maîtrisé 🎉</source>
+        <target state="translated">لم تُفعَّل أي قاعدة: العملية مضبوطة إحصائياً 🎉</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.col-rule" datatype="html">
+        <source>Règle</source>
+        <target state="translated">القاعدة</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.col-severity" datatype="html">
+        <source>Sévérité</source>
+        <target state="translated">الخطورة</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.col-finding" datatype="html">
+        <source>Constat</source>
+        <target state="translated">الملاحظة</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.col-points" datatype="html">
+        <source>Points concernés</source>
+        <target state="translated">النقاط المعنية</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-no-measure" datatype="html">
+        <source>Saisissez au moins une mesure numérique.</source>
+        <target state="translated">أدخل قياساً رقمياً واحداً على الأقل.</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-baseline-both" datatype="html">
+        <source>La baseline exige center ET σ (ou aucun des deux).</source>
+        <target state="translated">يتطلب خط الأساس center و σ معاً (أو لا شيء منهما).</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-sigma-positive" datatype="html">
+        <source>σ doit être strictement positif.</source>
+        <target state="translated">يجب أن يكون σ موجباً تماماً.</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-select-kpi" datatype="html">
+        <source>Sélectionnez un KPI.</source>
+        <target state="translated">اختر مؤشر أداء.</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-min-two" datatype="html">
+        <source>Au moins 2 mesures sont nécessaires pour ce KPI.</source>
+        <target state="translated">يلزم قياسان على الأقل لهذا المؤشر.</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">تعذّر الوصول إلى الخادم (engine على 8082؟).</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-invalid-series" datatype="html">
+        <source>Série invalide (1 à 10000 mesures attendues).</source>
+        <target state="translated">سلسلة غير صالحة (من 1 إلى 10000 قياس متوقع).</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-too-large" datatype="html">
+        <source>Série trop volumineuse (garde-fou IA).</source>
+        <target state="translated">السلسلة كبيرة جداً (حاجز أمان الذكاء الاصطناعي).</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">تم تجاوز معدّل/حصة الذكاء الاصطناعي لهذا المستأجر — حاول لاحقاً.</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-gateway" datatype="html">
+        <source>Passerelle IA indisponible (ai-service injoignable).</source>
+        <target state="translated">بوابة الذكاء الاصطناعي غير متاحة (تعذّر الوصول إلى ai-service).</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-unavailable" datatype="html">
+        <source>Service IA momentanément indisponible (disjoncteur ouvert).</source>
+        <target state="translated">خدمة الذكاء الاصطناعي غير متاحة مؤقتاً (قاطع الدائرة مفتوح).</target>
+      </trans-unit>
+      <trans-unit id="spc.analyze.err-generic" datatype="html">
+        <source>Échec de l'analyse SPC (HTTP <x id="status"/>).</source>
+        <target state="translated">فشل تحليل SPC (HTTP <x id="status"/>).</target>
+      </trans-unit>
+      <trans-unit id="circles.list.title" datatype="html">
+        <source>Cercles de Qualité</source>
+        <target state="translated">حلقات الجودة</target>
+      </trans-unit>
+      <trans-unit id="circles.list.subtitle" datatype="html">
+        <source>Groupes 5-10 personnes, réunions, propositions PROPOSED → MEASURED.</source>
+        <target state="translated">مجموعات من 5 إلى 10 أشخاص، اجتماعات، مقترحات PROPOSED → MEASURED.</target>
+      </trans-unit>
+      <trans-unit id="circles.list.new-circle" datatype="html">
+        <source>Nouveau cercle</source>
+        <target state="translated">حلقة جديدة</target>
+      </trans-unit>
+      <trans-unit id="circles.list.col-members" datatype="html">
+        <source>Membres</source>
+        <target state="translated">الأعضاء</target>
+      </trans-unit>
+      <trans-unit id="circles.list.col-meetings" datatype="html">
+        <source>Réunions</source>
+        <target state="translated">الاجتماعات</target>
+      </trans-unit>
+      <trans-unit id="circles.list.col-proposals" datatype="html">
+        <source>Propositions</source>
+        <target state="translated">المقترحات</target>
+      </trans-unit>
+      <trans-unit id="circles.list.col-updated" datatype="html">
+        <source>MAJ</source>
+        <target state="translated">آخر تحديث</target>
+      </trans-unit>
+      <trans-unit id="circles.list.empty" datatype="html">
+        <source>Aucun cercle.</source>
+        <target state="translated">لا توجد حلقات.</target>
+      </trans-unit>
+      <trans-unit id="circles.list.paginator-aria" datatype="html">
+        <source>Pagination des cercles</source>
+        <target state="translated">ترقيم صفحات الحلقات</target>
+      </trans-unit>
+      <trans-unit id="circles.list.load-error" datatype="html">
+        <source>Erreur lors du chargement.</source>
+        <target state="translated">حدث خطأ أثناء التحميل.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.back-tooltip" datatype="html">
+        <source>Retour à la liste</source>
+        <target state="translated">العودة إلى القائمة</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.not-found" datatype="html">
+        <source>Cercle introuvable</source>
+        <target state="translated">الحلقة غير موجودة</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.eyebrow" datatype="html">
+        <source>Cercle de Qualité · Groupe d'amélioration continue</source>
+        <target state="translated">حلقة جودة · مجموعة التحسين المستمر</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.delete-tooltip" datatype="html">
+        <source>Supprimer le cercle</source>
+        <target state="translated">حذف الحلقة</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.archive" datatype="html">
+        <source>Archiver</source>
+        <target state="translated">أرشفة</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.archive-tooltip" datatype="html">
+        <source>Archiver le cercle</source>
+        <target state="translated">أرشفة الحلقة</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.pause" datatype="html">
+        <source>Pause</source>
+        <target state="translated">إيقاف مؤقت</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.pause-tooltip" datatype="html">
+        <source>Mettre en pause</source>
+        <target state="translated">تعليق مؤقت</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.resume" datatype="html">
+        <source>Réactiver</source>
+        <target state="translated">إعادة التفعيل</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.resume-tooltip" datatype="html">
+        <source>Réactiver</source>
+        <target state="translated">إعادة التفعيل</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.topic" datatype="html">
+        <source>Thème</source>
+        <target state="translated">الموضوع</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.members" datatype="html">
+        <source>Membres</source>
+        <target state="translated">الأعضاء</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.meetings" datatype="html">
+        <source>Réunions</source>
+        <target state="translated">الاجتماعات</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.proposals" datatype="html">
+        <source>Propositions</source>
+        <target state="translated">المقترحات</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.updated" datatype="html">
+        <source>MAJ</source>
+        <target state="translated">آخر تحديث</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.add-member" datatype="html">
+        <source>Ajouter un membre</source>
+        <target state="translated">إضافة عضو</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.role" datatype="html">
+        <source>Rôle</source>
+        <target state="translated">الدور</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.user-id" datatype="html">
+        <source>User ID</source>
+        <target state="translated">معرّف المستخدم</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.joined-at" datatype="html">
+        <source>Rejoint le</source>
+        <target state="translated">تاريخ الانضمام</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.no-member" datatype="html">
+        <source>Aucun membre. Clique sur Ajouter un membre pour construire l'équipe.</source>
+        <target state="translated">لا يوجد أعضاء. انقر على «إضافة عضو» لبناء الفريق.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.schedule-meeting" datatype="html">
+        <source>Planifier une réunion</source>
+        <target state="translated">جدولة اجتماع</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.when" datatype="html">
+        <source>Quand</source>
+        <target state="translated">متى</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.location" datatype="html">
+        <source>Lieu</source>
+        <target state="translated">المكان</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.no-meeting" datatype="html">
+        <source>Aucune réunion planifiée.</source>
+        <target state="translated">لا توجد اجتماعات مجدولة.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.new-proposal" datatype="html">
+        <source>Nouvelle proposition</source>
+        <target state="translated">مقترح جديد</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.proposed-by" datatype="html">
+        <source>Proposé par</source>
+        <target state="translated">اقترحه</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.no-proposal" datatype="html">
+        <source>Aucune proposition. Workflow attendu : PROPOSED → APPROVED → IMPLEMENTED → MEASURED.</source>
+        <target state="translated">لا توجد مقترحات. سير العمل المتوقع: PROPOSED → APPROVED → IMPLEMENTED → MEASURED.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.invalid-id" datatype="html">
+        <source>Identifiant invalide.</source>
+        <target state="translated">معرّف غير صالح.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.load-error" datatype="html">
+        <source>Cercle introuvable.</source>
+        <target state="translated">الحلقة غير موجودة.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.delete-confirm-title" datatype="html">
+        <source>Supprimer ce cercle ?</source>
+        <target state="translated">حذف هذه الحلقة؟</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.delete-confirm-message" datatype="html">
+        <source>« <x id="name"/> », ses membres, réunions et propositions seront supprimés définitivement.</source>
+        <target state="translated">«<x id="name"/>»، وأعضاؤها واجتماعاتها ومقترحاتها سيتم حذفها نهائياً.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.deleted" datatype="html">
+        <source>Cercle supprimé.</source>
+        <target state="translated">تم حذف الحلقة.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.delete-error" datatype="html">
+        <source>Erreur lors de la suppression.</source>
+        <target state="translated">حدث خطأ أثناء الحذف.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.paused" datatype="html">
+        <source>Cercle mis en pause.</source>
+        <target state="translated">تم تعليق الحلقة.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.resumed" datatype="html">
+        <source>Cercle réactivé.</source>
+        <target state="translated">تمت إعادة تفعيل الحلقة.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.archived" datatype="html">
+        <source>Cercle archivé.</source>
+        <target state="translated">تمت أرشفة الحلقة.</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.transition-error" datatype="html">
+        <source>Erreur lors de la transition.</source>
+        <target state="translated">حدث خطأ أثناء الانتقال.</target>
+      </trans-unit>
+      <trans-unit id="circles.create.title" datatype="html">
+        <source>Nouveau cercle de qualité</source>
+        <target state="translated">حلقة جودة جديدة</target>
+      </trans-unit>
+      <trans-unit id="circles.create.subtitle" datatype="html">
+        <source>Crée le groupe (5-10 personnes recommandé). Les membres, réunions et propositions seront ajoutés ensuite.</source>
+        <target state="translated">أنشئ المجموعة (يُنصح بـ 5-10 أشخاص). ستُضاف الأعضاء والاجتماعات والمقترحات لاحقاً.</target>
+      </trans-unit>
+      <trans-unit id="circles.create.name-label" datatype="html">
+        <source>Nom du cercle</source>
+        <target state="translated">اسم الحلقة</target>
+      </trans-unit>
+      <trans-unit id="circles.create.name-placeholder" datatype="html">
+        <source>Ex. : Cercle production ligne 3</source>
+        <target state="translated">مثال: حلقة إنتاج الخط 3</target>
+      </trans-unit>
+      <trans-unit id="circles.create.name-required" datatype="html">
+        <source>Le nom est requis.</source>
+        <target state="translated">الاسم مطلوب.</target>
+      </trans-unit>
+      <trans-unit id="circles.create.maxlength" datatype="html">
+        <source>255 caractères maximum.</source>
+        <target state="translated">255 حرفاً كحد أقصى.</target>
+      </trans-unit>
+      <trans-unit id="circles.create.topic-label" datatype="html">
+        <source>Thème (optionnel)</source>
+        <target state="translated">الموضوع (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="circles.create.topic-placeholder" datatype="html">
+        <source>Ex. : production-soudure, fournisseurs, sécurité</source>
+        <target state="translated">مثال: إنتاج-اللحام، الموردون، السلامة</target>
+      </trans-unit>
+      <trans-unit id="circles.create.description-label" datatype="html">
+        <source>Description (optionnel)</source>
+        <target state="translated">الوصف (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="circles.create.description-placeholder" datatype="html">
+        <source>Mission du cercle, périmètre, fréquence visée…</source>
+        <target state="translated">مهمة الحلقة، النطاق، التكرار المستهدف…</target>
+      </trans-unit>
+      <trans-unit id="circles.create.created" datatype="html">
+        <source>Cercle créé.</source>
+        <target state="translated">تم إنشاء الحلقة.</target>
+      </trans-unit>
+      <trans-unit id="circles.create.error" datatype="html">
+        <source>Erreur lors de la création.</source>
+        <target state="translated">حدث خطأ أثناء الإنشاء.</target>
+      </trans-unit>
+      <trans-unit id="circles.edit.title" datatype="html">
+        <source>Modifier le cercle</source>
+        <target state="translated">تعديل الحلقة</target>
+      </trans-unit>
+      <trans-unit id="circles.edit.updated" datatype="html">
+        <source>Cercle mis à jour.</source>
+        <target state="translated">تم تحديث الحلقة.</target>
+      </trans-unit>
+      <trans-unit id="circles.edit.error" datatype="html">
+        <source>Erreur lors de la mise à jour.</source>
+        <target state="translated">حدث خطأ أثناء التحديث.</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.title" datatype="html">
+        <source>Planifier une réunion</source>
+        <target state="translated">جدولة اجتماع</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.submit" datatype="html">
+        <source>Planifier</source>
+        <target state="translated">جدولة</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.title-placeholder" datatype="html">
+        <source>Ex. : Revue mensuelle production</source>
+        <target state="translated">مثال: مراجعة الإنتاج الشهرية</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.agenda" datatype="html">
+        <source>Ordre du jour</source>
+        <target state="translated">جدول الأعمال</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.agenda-placeholder" datatype="html">
+        <source>Points à aborder, propositions à valider…</source>
+        <target state="translated">النقاط المطروحة، المقترحات المراد اعتمادها…</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.datetime" datatype="html">
+        <source>Date et heure</source>
+        <target state="translated">التاريخ والوقت</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.duration" datatype="html">
+        <source>Durée (min)</source>
+        <target state="translated">المدة (دقيقة)</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.location-placeholder" datatype="html">
+        <source>Salle, ou lien visio</source>
+        <target state="translated">القاعة، أو رابط الفيديو</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.scheduled" datatype="html">
+        <source>Réunion planifiée.</source>
+        <target state="translated">تمت جدولة الاجتماع.</target>
+      </trans-unit>
+      <trans-unit id="circles.meeting.error" datatype="html">
+        <source>Erreur lors de la planification.</source>
+        <target state="translated">حدث خطأ أثناء الجدولة.</target>
+      </trans-unit>
+      <trans-unit id="circles.member.title" datatype="html">
+        <source>Ajouter un membre</source>
+        <target state="translated">إضافة عضو</target>
+      </trans-unit>
+      <trans-unit id="circles.member.hint" datatype="html">
+        <source>Renseigne l'identifiant utilisateur (UUID) et le rôle. La liste de sélection sera branchée sur l'annuaire Keycloak dans une prochaine itération.</source>
+        <target state="translated">أدخل معرّف المستخدم (UUID) والدور. ستُربط قائمة الاختيار بدليل Keycloak في تكرار لاحق.</target>
+      </trans-unit>
+      <trans-unit id="circles.member.user-id" datatype="html">
+        <source>User ID (UUID)</source>
+        <target state="translated">معرّف المستخدم (UUID)</target>
+      </trans-unit>
+      <trans-unit id="circles.member.uuid-required" datatype="html">
+        <source>UUID requis.</source>
+        <target state="translated">UUID مطلوب.</target>
+      </trans-unit>
+      <trans-unit id="circles.member.uuid-invalid" datatype="html">
+        <source>Format UUID invalide.</source>
+        <target state="translated">صيغة UUID غير صالحة.</target>
+      </trans-unit>
+      <trans-unit id="circles.member.role-facilitator" datatype="html">
+        <source>Animateur</source>
+        <target state="translated">الميسّر</target>
+      </trans-unit>
+      <trans-unit id="circles.member.role-secretary" datatype="html">
+        <source>Secrétaire</source>
+        <target state="translated">أمين السر</target>
+      </trans-unit>
+      <trans-unit id="circles.member.role-member" datatype="html">
+        <source>Membre</source>
+        <target state="translated">عضو</target>
+      </trans-unit>
+      <trans-unit id="circles.member.added" datatype="html">
+        <source>Membre ajouté.</source>
+        <target state="translated">تمت إضافة العضو.</target>
+      </trans-unit>
+      <trans-unit id="circles.member.error" datatype="html">
+        <source>Erreur lors de l'ajout.</source>
+        <target state="translated">حدث خطأ أثناء الإضافة.</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.title" datatype="html">
+        <source>Nouvelle proposition</source>
+        <target state="translated">مقترح جديد</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.subtitle" datatype="html">
+        <source>Idée d'amélioration soumise au cercle. Elle sera évaluée puis implémentée et mesurée si approuvée (workflow PROPOSED → APPROVED → MEASURED).</source>
+        <target state="translated">فكرة تحسين مُقدَّمة إلى الحلقة. ستُقيَّم ثم تُنفَّذ وتُقاس إذا اعتُمدت (سير العمل PROPOSED → APPROVED → MEASURED).</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.submit" datatype="html">
+        <source>Proposer</source>
+        <target state="translated">اقتراح</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.title-placeholder" datatype="html">
+        <source>Ex. : Ajouter un Poka-Yoke positionnement pièce</source>
+        <target state="translated">مثال: إضافة Poka-Yoke لتموضع القطعة</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.description-placeholder" datatype="html">
+        <source>Contexte, objectif, bénéfice attendu, charge estimée…</source>
+        <target state="translated">السياق، الهدف، الفائدة المتوقعة، الجهد المُقدَّر…</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.session-expired" datatype="html">
+        <source>Session expirée — veuillez vous reconnecter.</source>
+        <target state="translated">انتهت الجلسة — يُرجى تسجيل الدخول مرة أخرى.</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.saved" datatype="html">
+        <source>Proposition enregistrée.</source>
+        <target state="translated">تم حفظ المقترح.</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.error" datatype="html">
+        <source>Erreur lors de l'enregistrement.</source>
+        <target state="translated">حدث خطأ أثناء الحفظ.</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.title" datatype="html">
+        <source>File d'attente offline</source>
+        <target state="translated">قائمة الانتظار دون اتصال</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.subtitle" datatype="html">
+        <source>Actions terrain saisies sans réseau, rejouées dans l'ordre au retour de la connexion.</source>
+        <target state="translated">إجراءات ميدانية سُجِّلت دون شبكة، تُعاد بالترتيب عند عودة الاتصال.</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.sync-now" datatype="html">
+        <source>Synchroniser maintenant</source>
+        <target state="translated">مزامنة الآن</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.state-offline" datatype="html">
+        <source>Hors-ligne</source>
+        <target state="translated">غير متصل</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.state-online" datatype="html">
+        <source>En ligne</source>
+        <target state="translated">متصل</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.pending-suffix" datatype="html">
+        <source>action(s) en attente de synchronisation</source>
+        <target state="translated">إجراء(ات) في انتظار المزامنة</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.nothing-pending" datatype="html">
+        <source>Aucune action en attente — tout est synchronisé.</source>
+        <target state="translated">لا توجد إجراءات معلّقة — كل شيء متزامن.</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.col-action" datatype="html">
+        <source>Action</source>
+        <target state="translated">الإجراء</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.col-queued-at" datatype="html">
+        <source>Mise en attente le</source>
+        <target state="translated">أُدرج في الانتظار في</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.discard-tooltip" datatype="html">
+        <source>Abandonner cette action</source>
+        <target state="translated">التخلّي عن هذا الإجراء</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.discard-title" datatype="html">
+        <source>Abandonner cette action ?</source>
+        <target state="translated">التخلّي عن هذا الإجراء؟</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.discard-message" datatype="html">
+        <source>« <x id="label"/> » ne sera jamais synchronisée vers le serveur. Cette décision est définitive.</source>
+        <target state="translated">«<x id="label"/>» لن يُزامَن مع الخادم أبداً. هذا القرار نهائي.</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.discard-confirm" datatype="html">
+        <source>Abandonner</source>
+        <target state="translated">تخلٍّ</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.discard-keep" datatype="html">
+        <source>Conserver</source>
+        <target state="translated">الاحتفاظ</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.discarded" datatype="html">
+        <source>Action abandonnée.</source>
+        <target state="translated">تم التخلّي عن الإجراء.</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.still-offline" datatype="html">
+        <source>Toujours hors-ligne — la synchronisation reprendra au retour du réseau.</source>
+        <target state="translated">لا يزال الاتصال مقطوعاً — ستُستأنف المزامنة عند عودة الشبكة.</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.sync-done" datatype="html">
+        <source>Synchronisation terminée.</source>
+        <target state="translated">اكتملت المزامنة.</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.empty-title" datatype="html">
+        <source>File vide</source>
+        <target state="translated">قائمة الانتظار فارغة</target>
+      </trans-unit>
+      <trans-unit id="offline.queue.empty-hint" datatype="html">
+        <source>Les audits 5S saisis hors connexion apparaîtront ici jusqu'à leur synchronisation.</source>
+        <target state="translated">ستظهر تدقيقات 5S المسجّلة دون اتصال هنا حتى تتم مزامنتها.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

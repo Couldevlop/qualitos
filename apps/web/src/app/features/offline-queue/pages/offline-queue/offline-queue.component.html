@@ -1,0 +1,90 @@
+<div class="qos-page">
+
+  <header class="page-header">
+    <div>
+      <h1 i18n="@@offline.queue.title">File d'attente offline</h1>
+      <p i18n="@@offline.queue.subtitle">Actions terrain saisies sans réseau, rejouées dans l'ordre au retour de la connexion.</p>
+    </div>
+    <button mat-flat-button color="primary" type="button"
+            (click)="syncNow()"
+            [disabled]="replayRequested || (online$ | async) === false">
+      <mat-icon>cloud_sync</mat-icon>
+      <ng-container i18n="@@offline.queue.sync-now">Synchroniser maintenant</ng-container>
+    </button>
+  </header>
+
+  <!-- Bandeau d'état réseau -->
+  <ng-container *ngIf="{ online: online$ | async, pending: pendingCount$ | async } as state">
+    <mat-card class="status-card" [class.status-card--offline]="state.online === false">
+      <div class="status-row">
+        <mat-icon aria-hidden="true">{{ state.online === false ? 'cloud_off' : 'cloud_done' }}</mat-icon>
+        <div class="status-text">
+          <strong *ngIf="state.online === false" i18n="@@offline.queue.state-offline">Hors-ligne</strong>
+          <strong *ngIf="state.online !== false" i18n="@@offline.queue.state-online">En ligne</strong>
+          <span class="status-detail" *ngIf="(state.pending ?? 0) > 0">
+            {{ state.pending }} <ng-container i18n="@@offline.queue.pending-suffix">action(s) en attente de synchronisation</ng-container>
+          </span>
+          <span class="status-detail" *ngIf="(state.pending ?? 0) === 0" i18n="@@offline.queue.nothing-pending">
+            Aucune action en attente — tout est synchronisé.
+          </span>
+        </div>
+      </div>
+    </mat-card>
+  </ng-container>
+
+  <div class="state-row" *ngIf="loading$ | async">
+    <mat-progress-spinner mode="indeterminate" diameter="36"></mat-progress-spinner>
+    <span i18n="@@common.loading">Chargement…</span>
+  </div>
+
+  <mat-card class="table-card" *ngIf="(loading$ | async) === false && (operations$ | async)?.length">
+    <table mat-table [dataSource]="(operations$ | async) ?? []" [trackBy]="trackById" class="ops-table">
+
+      <ng-container matColumnDef="label">
+        <th mat-header-cell *matHeaderCellDef i18n="@@offline.queue.col-action">Action</th>
+        <td mat-cell *matCellDef="let op">
+          <div class="cell">
+            <strong>{{ op.label }}</strong>
+            <small>{{ op.url }}</small>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="method">
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.type">Type</th>
+        <td mat-cell *matCellDef="let op">
+          <span [class]="methodBadgeClass(op.method)">{{ op.method }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="queuedAt">
+        <th mat-header-cell *matHeaderCellDef i18n="@@offline.queue.col-queued-at">Mise en attente le</th>
+        <td mat-cell *matCellDef="let op">{{ op.queuedAt | date:'short' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.actions">Actions</th>
+        <td mat-cell *matCellDef="let op">
+          <button mat-icon-button type="button" color="warn"
+                  (click)="discard(op)"
+                  matTooltip="Abandonner cette action"
+                  i18n-matTooltip="@@offline.queue.discard-tooltip"
+                  aria-label="Abandonner cette action"
+                  i18n-aria-label="@@offline.queue.discard-tooltip">
+            <mat-icon>delete_forever</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </mat-card>
+
+  <mat-card class="empty-card" *ngIf="(loading$ | async) === false && !(operations$ | async)?.length">
+    <mat-icon class="empty-icon" aria-hidden="true">cloud_done</mat-icon>
+    <p class="empty-title" i18n="@@offline.queue.empty-title">File vide</p>
+    <p class="empty-hint" i18n="@@offline.queue.empty-hint">Les audits 5S saisis hors connexion apparaîtront ici jusqu'à leur synchronisation.</p>
+  </mat-card>
+
+</div>

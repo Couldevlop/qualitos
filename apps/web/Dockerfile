@@ -7,7 +7,9 @@ FROM node:20-alpine AS build
 WORKDIR /workspace
 
 COPY package.json ./
-COPY angular.json tsconfig.json tsconfig.app.json tsconfig.spec.json karma.conf.js ./
+# ngsw-config.json : requis par le build prod depuis l'ajout du Service Worker
+# PWA (a77df3a) — sans lui, `ng build` échoue ("could not be found").
+COPY angular.json tsconfig.json tsconfig.app.json tsconfig.spec.json karma.conf.js ngsw-config.json ./
 # package-lock.json est facultatif (cas du bootstrap initial où il n'existe pas).
 COPY package-lock.json* ./
 

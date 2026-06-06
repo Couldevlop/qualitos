@@ -13,6 +13,7 @@ from presentation.routers import (
     federated_router,
     health_router,
     nlq_router,
+    predict_router,
     rag_router,
     spc_router,
 )
@@ -44,6 +45,7 @@ def create_app() -> FastAPI:
     app.include_router(nlq_router)
     app.include_router(federated_router)
     app.include_router(spc_router)
+    app.include_router(predict_router)
 
     @app.exception_handler(DomainError)
     async def _domain_error_handler(_: Request, exc: DomainError) -> JSONResponse:
