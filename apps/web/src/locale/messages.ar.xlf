@@ -2652,6 +2652,10 @@
         <source>Standards Hub</source>
         <target state="translated">مركز المعايير</target>
       </trans-unit>
+      <trans-unit id="nav.packs-sectoriels" datatype="html">
+        <source>Packs sectoriels</source>
+        <target state="translated">حزم القطاعات</target>
+      </trans-unit>
       <trans-unit id="nav.conformite-ia-ai-act" datatype="html">
         <source>Conformité — IA (AI Act)</source>
         <target state="translated">الامتثال — الذكاء الاصطناعي (AI Act)</target>
@@ -5913,6 +5917,146 @@ historique 12 mois</source>
       <trans-unit id="automated-decisions.edit.update-failed" datatype="html">
         <source>Mise à jour impossible.</source>
         <target state="translated">تعذّر التحديث.</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.list.title" datatype="html">
+        <source>Packs sectoriels</source>
+        <target state="translated">حزم القطاعات</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.list.subtitle" datatype="html">
+        <source>Activez un pack métier pour pré-charger KPIs, normes, templates Ishikawa et bibliothèque Poka-Yoke adaptés à votre secteur.</source>
+        <target state="translated">فعّل حزمة قطاعية لتحميل مؤشرات الأداء والمعايير وقوالب إيشيكاوا ومكتبة بوكا-يوكي المناسبة لقطاعك مسبقًا.</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.list.search" datatype="html">
+        <source>Rechercher un pack</source>
+        <target state="translated">البحث عن حزمة</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.list.search-placeholder" datatype="html">
+        <source>Secteur, code, mot-clé…</source>
+        <target state="translated">القطاع، الرمز، كلمة مفتاحية…</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.list.empty" datatype="html">
+        <source>Aucun pack ne correspond à votre recherche.</source>
+        <target state="translated">لا توجد حزمة تطابق بحثك.</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.badge-active" datatype="html">
+        <source>Actif</source>
+        <target state="translated">مُفعّل</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.badge-inactive" datatype="html">
+        <source>Inactif</source>
+        <target state="translated">غير مُفعّل</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.version" datatype="html">
+        <source>Version</source>
+        <target state="translated">الإصدار</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.retry" datatype="html">
+        <source>Réessayer</source>
+        <target state="translated">إعادة المحاولة</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.flat-note" datatype="html">
+        <source>Pack de base — contenu structuré (KPIs détaillés, Ishikawa, Poka-Yoke) à venir.</source>
+        <target state="translated">حزمة أساسية — المحتوى المنظَّم (مؤشرات أداء مفصّلة، إيشيكاوا، بوكا-يوكي) قريبًا.</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.activate" datatype="html">
+        <source>Activer</source>
+        <target state="translated">تفعيل</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.deactivate" datatype="html">
+        <source>Désactiver</source>
+        <target state="translated">إلغاء التفعيل</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.activate-success" datatype="html">
+        <source>Pack activé</source>
+        <target state="translated">تم تفعيل الحزمة</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.activate-success-counts" datatype="html">
+        <source>Pack activé — <x id="created"/> KPIs provisionnés, <x id="skipped"/> ignorés</source>
+        <target state="translated">تم تفعيل الحزمة — تم تهيئة <x id="created"/> مؤشرات أداء، وتم تجاهل <x id="skipped"/></target>
+      </trans-unit>
+      <trans-unit id="industry-packs.activate-error" datatype="html">
+        <source>Échec de l'activation du pack</source>
+        <target state="translated">فشل تفعيل الحزمة</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.deactivate-success" datatype="html">
+        <source>Pack désactivé</source>
+        <target state="translated">تم إلغاء تفعيل الحزمة</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.deactivate-error" datatype="html">
+        <source>Échec de la désactivation</source>
+        <target state="translated">فشل إلغاء التفعيل</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.deactivate-title" datatype="html">
+        <source>Désactiver le pack ?</source>
+        <target state="translated">إلغاء تفعيل الحزمة؟</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.deactivate-message" datatype="html">
+        <source>Le pack sera désactivé pour ce tenant. Ses contenus restent disponibles dans le catalogue et peuvent être réactivés.</source>
+        <target state="translated">سيتم إلغاء تفعيل الحزمة لهذا المستأجر. يبقى محتواها متاحًا في الكتالوج ويمكن إعادة تفعيله.</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.tab-norms" datatype="html">
+        <source>Normes</source>
+        <target state="translated">المعايير</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.tab-kpis" datatype="html">
+        <source>KPIs</source>
+        <target state="translated">مؤشرات الأداء</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.tab-ishikawa" datatype="html">
+        <source>Templates Ishikawa</source>
+        <target state="translated">قوالب إيشيكاوا</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.tab-pokayoke" datatype="html">
+        <source>Poka-Yoke</source>
+        <target state="translated">بوكا-يوكي</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.tab-glossary" datatype="html">
+        <source>Glossaire</source>
+        <target state="translated">المسرد</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.norms-empty" datatype="html">
+        <source>Aucune norme référencée par ce pack.</source>
+        <target state="translated">لا توجد معايير مرجعية لهذه الحزمة.</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.kpi-formula" datatype="html">
+        <source>Formule</source>
+        <target state="translated">الصيغة</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.kpi-unit" datatype="html">
+        <source>Unité</source>
+        <target state="translated">الوحدة</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.kpi-target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">الهدف</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.kpi-thresholds" datatype="html">
+        <source>Seuils</source>
+        <target state="translated">العتبات</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.kpi-owner" datatype="html">
+        <source>Propriétaire</source>
+        <target state="translated">المالك</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.kpis-flat-note" datatype="html">
+        <source>Ce pack référence des KPIs par identifiant ; les définitions détaillées (formule, seuils) ne sont pas encore structurées.</source>
+        <target state="translated">تشير هذه الحزمة إلى مؤشرات الأداء بالمعرّف؛ التعريفات التفصيلية (الصيغة، العتبات) غير منظَّمة بعد.</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.kpis-empty" datatype="html">
+        <source>Aucun KPI défini par ce pack.</source>
+        <target state="translated">لا توجد مؤشرات أداء معرّفة في هذه الحزمة.</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.ishikawa-empty" datatype="html">
+        <source>Aucun template Ishikawa dans ce pack.</source>
+        <target state="translated">لا توجد قوالب إيشيكاوا في هذه الحزمة.</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.pokayoke-empty" datatype="html">
+        <source>Aucun dispositif Poka-Yoke dans ce pack.</source>
+        <target state="translated">لا توجد أدوات بوكا-يوكي في هذه الحزمة.</target>
+      </trans-unit>
+      <trans-unit id="industry-packs.glossary-empty" datatype="html">
+        <source>Aucun glossaire dans ce pack.</source>
+        <target state="translated">لا يوجد مسرد في هذه الحزمة.</target>
       </trans-unit>
       <trans-unit id="pdca.list.title" datatype="html">
         <source>Cycles PDCA</source>

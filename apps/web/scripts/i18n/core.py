@@ -79,6 +79,7 @@ TRANSLATIONS = {
     'nav.formation': ('Formation', 'Training', 'Formación', 'التدريب', 'トレーニング', '培训'),
     'nav.normes-certification': ('Normes & certification', 'Standards & certification', 'Normas y certificación', 'المعايير والاعتماد', '規格と認証', '标准与认证'),
     'nav.standards-hub': ('Standards Hub', 'Standards Hub', 'Standards Hub', 'مركز المعايير', '規格ハブ', '标准中心'),
+    'nav.packs-sectoriels': ('Packs sectoriels', 'Industry packs', 'Packs sectoriales', 'حزم القطاعات', '業種パック', '行业包'),
     'nav.conformite-ia-ai-act': ('Conformité — IA (AI Act)', 'Compliance — AI (AI Act)', 'Cumplimiento — IA (AI Act)', 'الامتثال — الذكاء الاصطناعي (AI Act)', 'コンプライアンス — AI（AI法）', '合规 — AI（AI 法案）'),
     'nav.qms': ('QMS', 'QMS', 'QMS', 'نظام إدارة الجودة', 'QMS', 'QMS'),
     'nav.conformite': ('Conformité', 'Compliance', 'Cumplimiento', 'الامتثال', 'コンプライアンス', '合规'),

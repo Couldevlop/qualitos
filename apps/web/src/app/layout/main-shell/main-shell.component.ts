@@ -86,7 +86,8 @@ export class MainShellComponent implements OnInit {
     {
       label: $localize`:@@nav.normes-certification:Normes & certification`,
       items: [
-        { label: $localize`:@@nav.standards-hub:Standards Hub`, route: '/standards', icon: 'workspace_premium' }
+        { label: $localize`:@@nav.standards-hub:Standards Hub`, route: '/standards', icon: 'workspace_premium' },
+        { label: $localize`:@@nav.packs-sectoriels:Packs sectoriels`, route: '/industry-packs', icon: 'category' }
       ]
     },
     {

@@ -46,6 +46,11 @@ const routes: Routes = [
         loadChildren: () => import('./features/standards/standards.module').then(m => m.StandardsModule)
       },
       {
+        path: 'industry-packs',
+        loadChildren: () =>
+          import('./features/industry-packs/industry-packs.module').then(m => m.IndustryPacksModule)
+      },
+      {
         path: 'circles',
         loadChildren: () => import('./features/circles/circles.module').then(m => m.CirclesModule)
       },

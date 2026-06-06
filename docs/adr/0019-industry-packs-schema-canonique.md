@@ -57,3 +57,56 @@ pack n'a **aucun effet de provisionnement** ; aucune validation référentielle
   Phase 2 — documenté dans la réponse de l'API (champ description du pack).
 - Le test de contrat P4 (`P4IndustryPacksYamlTest`) migre vers les ressources
   de l'engine et s'étend aux nouveaux packs.
+
+## Phase 2 — provisionnement (LIVRÉ pour les KPIs, 2026-06-06)
+
+La décision §5 (« le provisionnement à l'activation matérialisant KPIs… »)
+était actée comme chantier distinct. **Statut : LIVRÉ pour les KPIs.**
+
+### Ce qui est matérialisé
+
+À l'activation d'un pack (`POST /api/v1/industry-packs/{code}/activate`),
+`IndustryPackProvisioningService.provision(...)` est appelé par
+`IndustryPackService.activate(...)` **après** l'enregistrement de l'activation,
+**dans la même transaction**. Pour chaque KPI riche (§6.6) du manifeste, une
+`KpiDefinition` du tenant est créée (statut `DRAFT`) **si aucune n'existe déjà
+avec ce code** (`code = kpi_id` du pack).
+
+- **Idempotence / non-écrasement** : re-activation, ou second pack partageant un
+  `kpi_id` → `skip`, jamais d'écrasement. Une collision de code pré-existant
+  produit un `warning` et conserve le KPI du tenant en l'état.
+- **Packs PLATS** (sans `richKpis`) : aucun provisionnement, comportement
+  inchangé.
+- **Résilience contenu** : l'échec de provisionnement d'**un** KPI (mapping,
+  persistance) devient un `warning` dans le résultat ; **pas de rollback** de
+  l'activation ni interruption des autres KPIs.
+- **Désactivation** : **ne supprime rien**. Les KPIs provisionnés appartiennent
+  désormais au tenant (catalogue éditable, mesures et CAPA attachées) ; les
+  supprimer serait destructeur.
+
+### Mapping tolérant pack → `KpiDefinition`
+
+| Champ pack | `KpiDefinition` | Règle |
+|---|---|---|
+| `kpi_id` | `code` | clé d'idempotence |
+| `name` / `category` / `unit` | idem | repli `name` ← `kpi_id` si vide |
+| `formula` + `explainability` | `description` | `formula + ' — ' + explainability`, tronqué à 2000 |
+| `target` / `threshold_warning` / `threshold_critical` | `targetValue` / `thresholdWarning` / `thresholdCritical` | **premier nombre décimal** de la chaîne (gère `>= 95 %`, `< 2.5`, `0,5` virgule FR, `80% budget`) → `BigDecimal` ; `null` si aucun nombre (jamais d'échec) |
+| `target` (opérateur) | `direction` | `>=`/`>` → `HIGHER_IS_BETTER` ; `<=`/`<` → `LOWER_IS_BETTER` ; défaut `HIGHER_IS_BETTER` |
+| `refresh_frequency` | `frequency` | mappé vers l'enum (`realtime`/`per-event` → `REALTIME`, `annual` → `YEARLY`…) ; défaut `MONTHLY` |
+| (utilisateur qui active) | `ownerUserId` + `createdBy` | `activatedBy` du flux d'activation |
+
+### Réponse d'activation enrichie (rétro-compatible)
+
+`ActivationResponse` reçoit un champ **additif** `provisioning`
+(`{ kpisCreated, kpisSkipped, warnings[] }`), `null` pour les réponses qui ne
+provisionnent pas (activation idempotente déjà active, désactivation, listes).
+
+### Hors périmètre (assumé)
+
+Le **glossaire**, les **templates Ishikawa 6M/7M** et la **bibliothèque
+Poka-Yoke** restent **exposés via le `manifest_json`** du pack **sans
+matérialisation** chez le tenant. Leur provisionnement (création d'entités
+dédiées) est différé : les modules cibles n'ont pas encore de table « seed »
+multi-tenant équivalente au catalogue KPI. Dette explicite, à reprendre quand
+ces modules exposeront un point d'entrée de provisionnement.
