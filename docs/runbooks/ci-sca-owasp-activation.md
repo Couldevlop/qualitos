@@ -35,6 +35,12 @@ le secret (chiffrement libsodium via l'API) et la variable en une commande.
 
 ## État au 2026-06-06
 
-- Secret `NVD_API_KEY` : ❌ absent
-- Variable `OWASP_DC_ENABLED` : ❌ absente
-- Job : *skipped* sur tous les runs (vérifié via l'API Actions)
+- Secret `NVD_API_KEY` : ✅ posé (via API, sealed box libsodium)
+- Variable `OWASP_DC_ENABLED` : ✅ `true`
+- Job : actif sur les push `develop`/`main` depuis le re-run du run 27056575726.
+
+## Rotation / révocation
+
+Pour remplacer la clé : reposer le secret (même procédure, PUT écrase). Pour
+désactiver temporairement le job sans toucher au secret : variable
+`OWASP_DC_ENABLED=false`.
