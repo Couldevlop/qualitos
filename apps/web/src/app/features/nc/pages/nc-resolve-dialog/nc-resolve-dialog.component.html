@@ -1,0 +1,25 @@
+<qos-form-dialog
+  i18n-title="@@nc.resolve.title"
+  title="Résoudre la non-conformité"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@nc.resolve.submit"
+  submitLabel="Résoudre"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <p class="hint">
+    <span i18n="@@nc.resolve.hint">Décris l'action menée et la preuve d'efficacité pour clôturer la résolution de</span>
+    <span class="ref">{{ data.reference }}</span>.
+  </p>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@nc.resolve.note-label">Note de résolution</mat-label>
+    <textarea matInput formControlName="resolutionNote" rows="5" maxlength="2000" required
+              i18n-placeholder="@@nc.resolve.note-placeholder"
+              placeholder="Action corrective réalisée, vérification, preuve d'efficacité…"></textarea>
+    <mat-error *ngIf="form.controls.resolutionNote.hasError('required')" i18n="@@nc.resolve.note-required">La note de résolution est requise.</mat-error>
+  </mat-form-field>
+
+</qos-form-dialog>

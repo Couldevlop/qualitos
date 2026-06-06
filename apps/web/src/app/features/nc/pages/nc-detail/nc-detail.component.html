@@ -1,0 +1,142 @@
+<div class="qos-page">
+
+  <header class="page-header">
+    <div class="title-block">
+      <button mat-icon-button (click)="goBack()"
+              i18n-matTooltip="@@nc.detail.back-tooltip" matTooltip="Retour à la liste">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h1 *ngIf="nc$ | async as n; else loadingTitle">
+          {{ n?.reference || ('Non-conformité introuvable') }}
+        </h1>
+        <ng-template #loadingTitle><h1 i18n="@@common.loading">Chargement…</h1></ng-template>
+        <p class="eyebrow" i18n="@@nc.detail.eyebrow">Non-conformité · Saisie terrain · Analyse · Résolution</p>
+      </div>
+    </div>
+
+    <ng-container *ngIf="nc$ | async as n">
+      <div class="actions" *ngIf="n">
+        <button mat-stroked-button (click)="cancel()"
+                [disabled]="(acting$ | async) || !canCancel(n.status)"
+                i18n-matTooltip="@@nc.detail.cancel-tooltip" matTooltip="Annuler la NC">
+          <mat-icon>cancel</mat-icon> <span i18n="@@common.cancel">Annuler</span>
+        </button>
+        <button mat-stroked-button (click)="escalateToCapa()"
+                [disabled]="(acting$ | async) || !canEscalate(n.status) || !!n.capaCaseId"
+                i18n-matTooltip="@@nc.detail.escalate-tooltip" matTooltip="Créer une CAPA liée">
+          <mat-icon>engineering</mat-icon> <span i18n="@@nc.detail.escalate">Escalader CAPA</span>
+        </button>
+        <button mat-stroked-button color="primary" (click)="startAnalysis()"
+                [disabled]="(acting$ | async) || !canStartAnalysis(n.status)"
+                i18n-matTooltip="@@nc.detail.start-analysis-tooltip" matTooltip="Démarrer l'analyse">
+          <mat-icon>search</mat-icon> <span i18n="@@nc.detail.start-analysis">Analyser</span>
+        </button>
+        <button mat-stroked-button color="primary" (click)="defineAction()"
+                [disabled]="(acting$ | async) || !canDefineAction(n.status)"
+                i18n-matTooltip="@@nc.detail.define-action-tooltip" matTooltip="Définir l'action">
+          <mat-icon>checklist</mat-icon> <span i18n="@@nc.detail.define-action">Définir action</span>
+        </button>
+        <button mat-flat-button color="primary" (click)="openResolve(n)"
+                [disabled]="(acting$ | async) || !canResolve(n.status)"
+                i18n-matTooltip="@@nc.detail.resolve-tooltip" matTooltip="Résoudre la NC">
+          <mat-icon>task_alt</mat-icon> <span i18n="@@nc.detail.resolve">Résoudre</span>
+        </button>
+        <button mat-flat-button color="primary" (click)="close()"
+                [disabled]="(acting$ | async) || !canClose(n.status)"
+                i18n-matTooltip="@@nc.detail.close-tooltip" matTooltip="Clôturer la NC">
+          <mat-icon>lock</mat-icon> <span i18n="@@nc.detail.close">Clôturer</span>
+        </button>
+      </div>
+    </ng-container>
+  </header>
+
+  <div class="state-row" *ngIf="loading$ | async">
+    <mat-progress-spinner mode="indeterminate" diameter="32"></mat-progress-spinner>
+    <span i18n="@@common.loading">Chargement…</span>
+  </div>
+
+  <div class="state-row error" *ngIf="error$ | async as err">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ err }}</span>
+  </div>
+
+  <ng-container *ngIf="(nc$ | async) as n">
+    <ng-container *ngIf="n">
+
+      <mat-card class="info-card">
+        <mat-card-content>
+          <h2 class="nc-title">{{ n.title }}</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label" i18n="@@common.status">Statut</span>
+              <span [class]="statusBadgeClass(n.status)">{{ n.status }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label" i18n="@@nc.create.severity">Sévérité</span>
+              <span [class]="severityBadgeClass(n.severity)">{{ n.severity }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label" i18n="@@nc.create.category">Catégorie</span>
+              <span class="info-value">{{ n.category }}</span>
+            </div>
+            <div class="info-item" *ngIf="n.zone">
+              <span class="info-label" i18n="@@common.zone">Zone</span>
+              <span class="info-value">{{ n.zone }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label" i18n="@@nc.detail.detected">Détectée le</span>
+              <span class="info-value">{{ n.detectedAt | date:'medium' }}</span>
+            </div>
+            <div class="info-item" *ngIf="n.resolvedAt">
+              <span class="info-label" i18n="@@nc.detail.resolved">Résolue le</span>
+              <span class="info-value">{{ n.resolvedAt | date:'medium' }}</span>
+            </div>
+            <div class="info-item" *ngIf="n.closedAt">
+              <span class="info-label" i18n="@@nc.detail.closed">Clôturée le</span>
+              <span class="info-value">{{ n.closedAt | date:'medium' }}</span>
+            </div>
+            <div class="info-item" *ngIf="n.geoLat != null && n.geoLng != null">
+              <span class="info-label" i18n="@@nc.detail.location">Position</span>
+              <span class="info-value">{{ n.geoLat | number:'1.5-6' }}, {{ n.geoLng | number:'1.5-6' }}</span>
+            </div>
+            <div class="info-item" *ngIf="n.capaCaseId">
+              <span class="info-label" i18n="@@nc.detail.capa-link">CAPA liée</span>
+              <span class="info-value">{{ n.capaCaseId }}</span>
+            </div>
+          </div>
+
+          <p class="description" *ngIf="n.description">{{ n.description }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="analysis-card" *ngIf="n.rootCause || n.resolutionNote">
+        <mat-card-content>
+          <div class="block" *ngIf="n.rootCause">
+            <span class="info-label" i18n="@@nc.detail.root-cause">Cause racine</span>
+            <p>{{ n.rootCause }}</p>
+          </div>
+          <div class="block" *ngIf="n.resolutionNote">
+            <span class="info-label" i18n="@@nc.detail.resolution-note">Note de résolution</span>
+            <p>{{ n.resolutionNote }}</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="photos-card" *ngIf="photoList(n.photoUrls).length > 0">
+        <mat-card-header>
+          <mat-card-title i18n="@@nc.detail.photos">Photos</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <ul class="photo-list">
+            <li *ngFor="let url of photoList(n.photoUrls)">
+              <a [href]="url" target="_blank" rel="noopener noreferrer">{{ url }}</a>
+            </li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+
+    </ng-container>
+  </ng-container>
+
+</div>

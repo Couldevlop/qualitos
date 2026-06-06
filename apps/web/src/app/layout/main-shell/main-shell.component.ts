@@ -67,6 +67,7 @@ export class MainShellComponent implements OnInit {
     {
       label: $localize`:@@nav.qualite-operationnelle:Qualité opérationnelle`,
       items: [
+        { label: $localize`:@@nav.non-conformites:Non-conformités`, route: '/nc', icon: 'report_problem' },
         { label: $localize`:@@nav.capa:CAPA`,          route: '/capa',      icon: 'engineering' },
         { label: $localize`:@@nav.audits:Audits`,        route: '/audits',    icon: 'fact_check' },
         { label: $localize`:@@nav.risques-fmea:Risques (FMEA)`, route: '/fmea',     icon: 'warning' },

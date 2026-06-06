@@ -1,0 +1,57 @@
+.page-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 16px;
+  h1 { margin: 0 0 4px; font-size: 24px; font-weight: 600; }
+  p  { margin: 0; color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); }
+}
+.filter-card { padding: 16px; margin-bottom: 16px; display: flex; gap: 16px; flex-wrap: wrap; }
+.filter-field { width: 220px; }
+.state-row { display: flex; align-items: center; gap: 12px; padding: 24px 0; }
+.state-row.error { color: var(--mat-sys-error, #b3261e); padding: 16px 0; }
+.table-card { padding: 0; overflow: hidden; }
+.t { width: 100%; }
+.cell {
+  display: flex; flex-direction: column;
+  strong { font-weight: 600; }
+  small  { color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); font-size: 12px; }
+}
+.ref { font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
+.pending {
+  display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 10px;
+  font-size: 11px; font-weight: 600; background: #fff8e1; color: #ff6f00;
+}
+
+.badge {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 12px; font-weight: 600;
+  background: var(--mat-sys-secondary-container, rgba(0, 0, 0, 0.08));
+}
+.badge-open            { background: #e3f2fd; color: #0d47a1; }
+.badge-under_analysis  { background: #fff8e1; color: #ff6f00; }
+.badge-action_defined  { background: #ede7f6; color: #4527a0; }
+.badge-resolved        { background: #e8f5e9; color: #1b5e20; }
+.badge-closed          { background: #eceff1; color: #37474f; }
+.badge-cancelled       { background: #fbe9e7; color: #b71c1c; }
+
+.sev {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 12px; font-weight: 600;
+}
+.sev-minor    { background: #e8f5e9; color: #1b5e20; }
+.sev-major    { background: #fff3e0; color: #e65100; }
+.sev-critical { background: #ffebee; color: #b71c1c; }
+
+.empty { padding: 32px; text-align: center; color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); }
+
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.clickable-row:hover {
+  background: var(--mat-sys-surface-container-low, rgba(0, 0, 0, 0.04));
+}
+.clickable-row:focus-visible {
+  outline: 2px solid var(--mat-sys-primary, #1976d2);
+  outline-offset: -2px;
+}
+.row-disabled { cursor: default; opacity: 0.75; }
+.row-disabled:hover { background: transparent; }
