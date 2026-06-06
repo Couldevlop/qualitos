@@ -29,6 +29,8 @@ export class OfflineQueueService {
   private readonly pendingCount = new BehaviorSubject<number>(0);
   private readonly queueEvents = new Subject<OfflineQueueEvent>();
   private replaying = false;
+  /** Compteur monotone d'enfilement — départage les ops de la même seconde. */
+  private seqCounter = 0;
 
   /** Nombre d'opérations en attente de synchronisation (badge UI). */
   readonly pendingCount$ = this.pendingCount.asObservable();
@@ -63,7 +65,10 @@ export class OfflineQueueService {
       url,
       body,
       label,
-      queuedAt: new Date().toISOString()
+      queuedAt: new Date().toISOString(),
+      // base = nombre d'ops déjà en file (survit à un reload : le rejeu au
+      // démarrage repart au-dessus du max existant via refreshCount/seed).
+      seq: this.nextSeq()
     };
     return from(
       this.store.append(op).then(async () => {
@@ -126,7 +131,17 @@ export class OfflineQueueService {
 
   private async refreshCount(): Promise<void> {
     const ops = await this.store.loadAll();
+    // Réamorce le compteur au-dessus du max persisté : garantit la monotonie
+    // de seq après un rechargement de page (les ops survivent en IndexedDB).
+    const maxSeq = ops.reduce((m, o) => Math.max(m, o.seq ?? 0), 0);
+    if (maxSeq >= this.seqCounter) {
+      this.seqCounter = maxSeq;
+    }
     this.pendingCount.next(ops.length);
+  }
+
+  private nextSeq(): number {
+    return ++this.seqCounter;
   }
 
   private isNetworkError(err: unknown): boolean {

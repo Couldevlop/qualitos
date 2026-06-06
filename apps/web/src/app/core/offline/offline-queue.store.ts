@@ -16,6 +16,29 @@ export interface QueuedOperation {
   /** Description courte non sensible pour l'UI (« Score 5S Seiri — zone A »). */
   label: string;
   queuedAt: string;
+  /**
+   * Compteur monotone d'insertion : départage les opérations mises en file
+   * dans la même seconde (queuedAt est à la seconde). Garantit un rejeu dans
+   * l'ordre EXACT d'enfilement (create avant son score). Optionnel pour la
+   * rétro-compatibilité des opérations déjà persistées sans ce champ.
+   */
+  seq?: number;
+}
+
+/**
+ * Ordre de rejeu canonique : seq d'abord (ordre d'enfilement exact), puis
+ * queuedAt en repli pour les opérations héritées sans seq. Partagé par les
+ * deux adaptateurs pour que tests (mémoire) et prod (IndexedDB) soient alignés.
+ */
+export function compareQueued(a: QueuedOperation, b: QueuedOperation): number {
+  if (a.seq != null && b.seq != null && a.seq !== b.seq) {
+    return a.seq - b.seq;
+  }
+  const byTime = a.queuedAt.localeCompare(b.queuedAt);
+  if (byTime !== 0) {
+    return byTime;
+  }
+  return (a.seq ?? 0) - (b.seq ?? 0);
 }
 
 /**
@@ -36,7 +59,7 @@ export class InMemoryQueueStore extends OfflineQueueStore {
   private readonly ops = new Map<string, QueuedOperation>();
 
   override async loadAll(): Promise<QueuedOperation[]> {
-    return [...this.ops.values()].sort((a, b) => a.queuedAt.localeCompare(b.queuedAt));
+    return [...this.ops.values()].sort(compareQueued);
   }
 
   override async append(op: QueuedOperation): Promise<void> {
@@ -61,8 +84,14 @@ export class IndexedDbQueueStore extends OfflineQueueStore {
 
   private dbPromise: Promise<IDBDatabase> | null = null;
 
-  override loadAll(): Promise<QueuedOperation[]> {
-    return this.withStore('readonly', store => store.getAll()) as Promise<QueuedOperation[]>;
+  override async loadAll(): Promise<QueuedOperation[]> {
+    // IndexedDB.getAll() renvoie dans l'ordre de la clé primaire (id = UUID
+    // aléatoire) — PAS l'ordre de mise en file. Le rejeu DOIT respecter l'ordre
+    // chronologique (un POST create avant son PUT score), sinon le PUT part en
+    // premier → 404 → opération perdue. On retrie donc par seq puis queuedAt
+    // (même invariant que l'adaptateur mémoire).
+    const ops = await this.withStore('readonly', store => store.getAll()) as QueuedOperation[];
+    return ops.sort(compareQueued);
   }
 
   override async append(op: QueuedOperation): Promise<void> {
