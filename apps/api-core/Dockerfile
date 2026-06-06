@@ -16,6 +16,7 @@ COPY apps/api-quality-engine/pom.xml apps/api-quality-engine/
 # Tenir cette liste synchronisée avec <modules> de /pom.xml.
 COPY libs/industry-commons/pom.xml libs/industry-commons/
 COPY libs/security-commons-crypto/pom.xml libs/security-commons-crypto/
+COPY libs/keycloak-spi-ldap/pom.xml libs/keycloak-spi-ldap/
 COPY apps/api-iot-hub/pom.xml apps/api-iot-hub/
 COPY apps/blockchain-service/pom.xml apps/blockchain-service/
 
