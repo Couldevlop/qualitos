@@ -8,6 +8,7 @@
     "start": "ng serve",
     "build": "ng build",
     "build:prod": "ng build --configuration production",
+    "build:i18n": "ng build --configuration production,i18n-all",
     "test": "ng test --watch=false --browsers=ChromeHeadlessCI",
     "test:watch": "ng test",
     "e2e": "playwright test",

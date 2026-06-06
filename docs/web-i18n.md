@@ -38,9 +38,28 @@ brancher en CI. `ng extract-i18n` reste utile en complément.
 | `ng build` | build FR seul (comportement historique inchangé) |
 | `ng build -c production,i18n-all` | 6 builds (`dist/qualitos-web/browser/{fr,en,es,ar,ja,zh}`) |
 
-Déploiement : servir chaque locale sous son préfixe (`/en/`, `/ar/`…) — routage
-nginx/ingress par préfixe + négociation `Accept-Language` à ajouter au moment
-du go-live multilingue.
+### Déploiement (routage livré)
+
+L'image Docker `apps/web` construit les 6 locales (`npm run build:i18n`) et les
+sert sous leur préfixe via `nginx.conf` :
+
+- **Négociation** : `GET /` répond `302 /<locale>/` selon `Accept-Language`
+  (`map $http_accept_language $qos_locale`). Match « commence par » sur la
+  première langue (les variantes régionales `fr-CA`, `zh-Hans`… sont captées par
+  le préfixe 2 lettres), filets de secours non ancrés pour les en-têtes où la
+  langue cible n'est pas en tête. **Défaut : `fr`** (locale source).
+- **Fallback SPA par locale** : `location /<locale>/` ⇒
+  `try_files $uri $uri/ /<locale>/index.html` — on ne renvoie jamais l'index
+  d'une autre locale (chaque build a son `<base href="/<locale>/">`).
+- **Routes héritées sans préfixe** (favoris `/dashboard`…) : `302 /fr$request_uri`
+  en dernier recours (302, pas 301 — la préférence peut changer).
+- **Cache** : assets hashés `immutable` 1 an ; `index.html` / `ngsw.json` /
+  `ngsw-worker.js` forcés en `no-cache` (sinon les déploiements ne se propagent
+  pas). Headers de sécurité OWASP ré-émis sur toutes les réponses, redirections
+  comprises.
+- **Ingress K8s** : aucune réécriture de chemin n'est requise côté ingress ;
+  laisser passer l'en-tête `Accept-Language` tel quel jusqu'au pod web pour que
+  la négociation nginx fonctionne.
 
 ## Placeholders d'interpolation
 

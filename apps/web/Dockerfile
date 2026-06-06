@@ -21,7 +21,9 @@ RUN if [ -f package-lock.json ]; then \
 
 COPY src ./src
 
-RUN npm run build:prod
+# Build multilingue : produit dist/qualitos-web/browser/{fr,en,es,ar,ja,zh}/,
+# chaque locale avec son <base href="/<locale>/"> et son ngsw propre.
+RUN npm run build:i18n
 
 # -----------------------------------------------------------------------------
 # Stage 2 : runtime nginx
@@ -33,8 +35,12 @@ FROM nginx:1.29-alpine
 # la base est déjà à jour.
 RUN apk upgrade --no-cache
 
+# Copie les 6 sous-dossiers de locale (fr/ en/ es/ ar/ ja/ zh/).
 COPY --from=build /workspace/dist/qualitos-web/browser /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
-HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://localhost/ >/dev/null || exit 1
+# La racine `/` répond désormais 302 vers /<locale>/ (négociation Accept-Language).
+# `wget` suit les redirections par défaut → atterrit sur /fr/index.html (200) et
+# le HEALTHCHECK reste sain. `--max-redirect=5` borne la chaîne par prudence.
+HEALTHCHECK --interval=30s --timeout=3s CMD wget -q --max-redirect=5 -O- http://localhost/ >/dev/null || exit 1
