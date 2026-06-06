@@ -20,12 +20,12 @@ export class SrReceiveDialogComponent {
   submitting = false;
 
   readonly types: { value: SubjectRequestType; label: string }[] = [
-    { value: 'ACCESS',        label: 'Accès aux données (Art. 15)' },
-    { value: 'RECTIFICATION', label: 'Rectification (Art. 16)' },
-    { value: 'ERASURE',       label: 'Effacement / droit à l\'oubli (Art. 17)' },
-    { value: 'RESTRICTION',   label: 'Limitation du traitement (Art. 18)' },
-    { value: 'PORTABILITY',   label: 'Portabilité des données (Art. 20)' },
-    { value: 'OBJECTION',     label: 'Opposition au traitement (Art. 21)' }
+    { value: 'ACCESS',        label: $localize`:@@subject-requests.type.access:Accès aux données (Art. 15)` },
+    { value: 'RECTIFICATION', label: $localize`:@@subject-requests.type.rectification:Rectification (Art. 16)` },
+    { value: 'ERASURE',       label: $localize`:@@subject-requests.type.erasure:Effacement / droit à l'oubli (Art. 17)` },
+    { value: 'RESTRICTION',   label: $localize`:@@subject-requests.type.restriction:Limitation du traitement (Art. 18)` },
+    { value: 'PORTABILITY',   label: $localize`:@@subject-requests.receive.type-portability:Portabilité des données (Art. 20)` },
+    { value: 'OBJECTION',     label: $localize`:@@subject-requests.receive.type-objection:Opposition au traitement (Art. 21)` }
   ];
 
   // OWASP A03 — longueurs miroirs backend @Size.
@@ -47,7 +47,7 @@ export class SrReceiveDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const requestedByUserId = this.auth.snapshot()?.userId;
     if (!requestedByUserId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -63,13 +63,13 @@ export class SrReceiveDialogComponent {
         next: r => {
           // OWASP A02 — clear plaintext after successful submit
           this.form.controls.subjectIdentifier.reset('');
-          this.snack.open('Demande enregistrée — délai RGPD 1 mois.', 'OK', { duration: 3000 });
+          this.snack.open($localize`:@@subject-requests.receive.success:Demande enregistrée — délai RGPD 1 mois.`, $localize`:@@common.ok:OK`, { duration: 3000 });
           this.dialogRef.close(r);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[sr-receive] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Enregistrement impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@subject-requests.receive.error:Enregistrement impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

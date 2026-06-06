@@ -42,7 +42,7 @@ export class PaDetailComponent implements OnInit {
       switchMap(p => {
         const id = p.get('id') ?? '';
         if (!UUID_REGEX.test(id) && !id.startsWith('pa-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
@@ -51,7 +51,7 @@ export class PaDetailComponent implements OnInit {
             catchError(err => {
               // eslint-disable-next-line no-console
               console.warn('[pa-detail] failed', err?.status, err?.error?.title);
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             }),
             tap(() => this.loading$.next(false))
@@ -63,7 +63,7 @@ export class PaDetailComponent implements OnInit {
 
   openEdit(p: PaView): void {
     if (p.status === 'TERMINATED' || p.status === 'EXPIRED') {
-      this.snack.open('Un DPA terminé ne peut plus être modifié.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@dpa.detail.edit-terminated-blocked:Un DPA terminé ne peut plus être modifié.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(PaDialogComponent, {
@@ -75,8 +75,8 @@ export class PaDetailComponent implements OnInit {
 
   activate(p: PaView): void {
     this.svc.activate(p.id).subscribe({
-      next: () => { this.snack.open('DPA activé.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Activation impossible.')
+      next: () => { this.snack.open($localize`:@@dpa.detail.activated:DPA activé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@dpa.detail.activate-failed:Activation impossible.`)
     });
   }
 
@@ -90,21 +90,21 @@ export class PaDetailComponent implements OnInit {
 
   remove(p: PaView): void {
     if (p.status !== 'DRAFT') {
-      this.snack.open('Seul un brouillon peut être supprimé.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@dpa.detail.only-draft-deletable:Seul un brouillon peut être supprimé.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer le brouillon ?',
+        title: $localize`:@@dpa.detail.delete-confirm-title:Supprimer le brouillon ?`,
         message: 'Suppression définitive de « ' + p.reference + ' ».',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(p.id).subscribe({
-        next: () => { this.snack.open('Brouillon supprimé.', 'OK', { duration: 2200 }); this.router.navigate(['/processor-agreements']); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        next: () => { this.snack.open($localize`:@@dpa.detail.deleted:Brouillon supprimé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/processor-agreements']); },
+        error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
       });
     });
   }

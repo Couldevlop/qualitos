@@ -116,21 +116,21 @@ export class DmaicDetailComponent implements OnInit {
 
   advance(p: DmaicProjectResponse): void {
     this.svc.advance(p.id).subscribe({
-      next: () => { this.snack.open($localize`:@@dmaic.detail.phase-advanced:Phase avancée.`, 'OK', { duration: 2200 }); this.refresh$.next(); },
+      next: () => { this.snack.open($localize`:@@dmaic.detail.phase-advanced:Phase avancée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
       error: err => this.fail(err, $localize`:@@dmaic.detail.advance-failed:Avance impossible.`)
     });
   }
 
   hold(p: DmaicProjectResponse): void {
     this.svc.hold(p.id).subscribe({
-      next: () => { this.snack.open($localize`:@@dmaic.detail.project-held:Projet en pause.`, 'OK', { duration: 2200 }); this.refresh$.next(); },
+      next: () => { this.snack.open($localize`:@@dmaic.detail.project-held:Projet en pause.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
       error: err => this.fail(err, $localize`:@@dmaic.detail.hold-failed:Mise en pause impossible.`)
     });
   }
 
   resume(p: DmaicProjectResponse): void {
     this.svc.resume(p.id).subscribe({
-      next: () => { this.snack.open($localize`:@@dmaic.detail.project-resumed:Projet repris.`, 'OK', { duration: 2200 }); this.refresh$.next(); },
+      next: () => { this.snack.open($localize`:@@dmaic.detail.project-resumed:Projet repris.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
       error: err => this.fail(err, $localize`:@@dmaic.detail.resume-failed:Reprise impossible.`)
     });
   }
@@ -148,7 +148,7 @@ export class DmaicDetailComponent implements OnInit {
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.cancel(p.id).subscribe({
-        next: () => { this.snack.open($localize`:@@dmaic.detail.project-cancelled:Projet annulé.`, 'OK', { duration: 2200 }); this.refresh$.next(); },
+        next: () => { this.snack.open($localize`:@@dmaic.detail.project-cancelled:Projet annulé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
         error: err => this.fail(err, $localize`:@@dmaic.detail.cancel-failed:Annulation impossible.`)
       });
     });
@@ -168,7 +168,7 @@ export class DmaicDetailComponent implements OnInit {
       if (!ok) return;
       this.svc.deleteProject(p.id).subscribe({
         next: () => {
-          this.snack.open($localize`:@@dmaic.detail.project-deleted:Projet supprimé.`, 'OK', { duration: 2200 });
+          this.snack.open($localize`:@@dmaic.detail.project-deleted:Projet supprimé.`, $localize`:@@common.ok:OK`, { duration: 2200 });
           this.router.navigate(['/dmaic']);
         },
         error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
@@ -256,6 +256,6 @@ export class DmaicDetailComponent implements OnInit {
   private fail(err: unknown, fallback: string): void {
     // eslint-disable-next-line no-console
     console.warn('[dmaic-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
-    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+    this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 4000 });
   }
 }

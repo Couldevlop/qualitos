@@ -24,6 +24,9 @@ export class BreachTextDialogComponent {
 
   submitting = false;
 
+  readonly closeLabel  = $localize`:@@breach.text.close-label:Notes de clôture (optionnel)`;
+  readonly rejectLabel = $localize`:@@breach.text.reject-label:Motif du rejet`;
+
   readonly form = this.fb.nonNullable.group({
     text: ['', this.data.mode === 'REJECT'
         ? [Validators.required, Validators.maxLength(2000)]
@@ -39,7 +42,9 @@ export class BreachTextDialogComponent {
   ) {}
 
   get title(): string {
-    return this.data.mode === 'CLOSE' ? 'Clôturer la violation' : 'Rejeter (non-violation / faux positif)';
+    return this.data.mode === 'CLOSE'
+      ? $localize`:@@breach.text.title-close:Clôturer la violation`
+      : $localize`:@@breach.text.title-reject:Rejeter (non-violation / faux positif)`;
   }
 
   submit(): void {
@@ -52,12 +57,14 @@ export class BreachTextDialogComponent {
     op$
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: b => { this.snack.open(this.data.mode === 'CLOSE' ? 'Violation clôturée.' : 'Violation rejetée.',
-                                     'OK', { duration: 2200 }); this.dialogRef.close(b); },
+        next: b => { this.snack.open(this.data.mode === 'CLOSE'
+                                     ? $localize`:@@breach.text.closed-toast:Violation clôturée.`
+                                     : $localize`:@@breach.text.rejected-toast:Violation rejetée.`,
+                                     $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(b); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[breach-text] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Opération impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@breach.text.failed:Opération impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

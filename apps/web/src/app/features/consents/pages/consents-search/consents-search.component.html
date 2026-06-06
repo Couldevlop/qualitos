@@ -1,46 +1,46 @@
 <section class="consents-search">
   <header class="head">
     <div>
-      <h1>RGPD — Consentements (Art. 7)</h1>
-      <p>Registre des consentements collectés. L'identifiant de la personne est
+      <h1 i18n="@@consents.search.title">RGPD — Consentements (Art. 7)</h1>
+      <p i18n="@@consents.search.subtitle">Registre des consentements collectés. L'identifiant de la personne est
          <strong>hashé côté serveur</strong> ; aucune donnée nominative n'est
          conservée en clair.</p>
     </div>
     <div class="head-actions">
       <button mat-stroked-button (click)="expireDue()" [disabled]="expiring"
-              matTooltip="Marquer EXPIRED les consentements arrivés à terme">
+              matTooltip="Marquer EXPIRED les consentements arrivés à terme" i18n-matTooltip="@@consents.search.maintenance-tooltip">
         <mat-icon *ngIf="!expiring">schedule</mat-icon>
         <mat-progress-spinner *ngIf="expiring" mode="indeterminate" diameter="18"></mat-progress-spinner>
-        Maintenance
+        <span i18n="@@consents.search.maintenance">Maintenance</span>
       </button>
       <button mat-flat-button color="primary" (click)="openGrant()">
-        <mat-icon>add</mat-icon> Nouveau consentement
+        <mat-icon>add</mat-icon> <span i18n="@@consents.search.new-consent">Nouveau consentement</span>
       </button>
     </div>
   </header>
 
   <form [formGroup]="form" (ngSubmit)="submit()" class="search-form mat-elevation-z1">
     <mat-form-field appearance="outline" class="mode">
-      <mat-label>Mode de recherche</mat-label>
+      <mat-label i18n="@@consents.search.mode-label">Mode de recherche</mat-label>
       <mat-select formControlName="mode">
         <mat-option *ngFor="let m of modes" [value]="m.value">{{ m.label }}</mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="query" *ngIf="isSubjectMode()">
-      <mat-label>Identifiant (e-mail, ID interne, …)</mat-label>
+      <mat-label i18n="@@consents.search.identifier-label">Identifiant (e-mail, ID interne, …)</mat-label>
       <input matInput formControlName="subjectIdentifier" maxlength="320"
              autocomplete="off" spellcheck="false"
              placeholder="alice@example.fr">
-      <mat-hint>L'identifiant sera hashé avant interrogation — il n'est pas stocké en clair.</mat-hint>
+      <mat-hint i18n="@@consents.search.identifier-hint">L'identifiant sera hashé avant interrogation — il n'est pas stocké en clair.</mat-hint>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="query" *ngIf="!isSubjectMode()">
-      <mat-label>Code de finalité</mat-label>
+      <mat-label i18n="@@consents.search.purpose-code-label">Code de finalité</mat-label>
       <input matInput formControlName="purposeCode" maxlength="64"
              placeholder="newsletter.marketing">
-      <mat-hint>minuscules, chiffres, point, tiret, underscore</mat-hint>
-      <mat-error *ngIf="form.controls.purposeCode.hasError('pattern')">
+      <mat-hint i18n="@@consents.purpose-code-hint">minuscules, chiffres, point, tiret, underscore</mat-hint>
+      <mat-error *ngIf="form.controls.purposeCode.hasError('pattern')" i18n="@@consents.search.purpose-code-error">
         Format invalide.
       </mat-error>
     </mat-form-field>
@@ -48,7 +48,7 @@
     <button mat-flat-button color="primary" type="submit" [disabled]="loading">
       <mat-icon *ngIf="!loading">search</mat-icon>
       <mat-progress-spinner *ngIf="loading" mode="indeterminate" diameter="18"></mat-progress-spinner>
-      Rechercher
+      <span i18n="@@common.search">Rechercher</span>
     </button>
   </form>
 
@@ -56,38 +56,38 @@
 
   <div *ngIf="searched && !loading && results.length === 0 && !error" class="empty-state">
     <mat-icon>search_off</mat-icon>
-    <p>Aucun consentement trouvé.</p>
+    <p i18n="@@consents.search.no-result">Aucun consentement trouvé.</p>
   </div>
 
   <div class="table-wrap mat-elevation-z1" *ngIf="results.length > 0">
     <table mat-table [dataSource]="results">
       <ng-container matColumnDef="subjectLabel">
-        <th mat-header-cell *matHeaderCellDef>Personne</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@consents.search.col-subject">Personne</th>
         <td mat-cell *matCellDef="let c">
-          <strong>{{ c.subjectIdentifierLabel || '(pseudonymisé)' }}</strong>
+          <strong>{{ c.subjectIdentifierLabel || pseudonymizedLabel }}</strong>
           <small class="dim hash"><code>{{ c.subjectIdentifierHash }}</code></small>
         </td>
       </ng-container>
       <ng-container matColumnDef="purposeCode">
-        <th mat-header-cell *matHeaderCellDef>Finalité</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@consents.search.col-purpose">Finalité</th>
         <td mat-cell *matCellDef="let c">
           <a class="title-link" (click)="open(c)"><code>{{ c.purposeCode }}</code></a>
         </td>
       </ng-container>
       <ng-container matColumnDef="purposeVersion">
-        <th mat-header-cell *matHeaderCellDef>Version</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@consents.search.col-version">Version</th>
         <td mat-cell *matCellDef="let c"><code>{{ c.purposeVersion }}</code></td>
       </ng-container>
       <ng-container matColumnDef="source">
-        <th mat-header-cell *matHeaderCellDef>Source</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@consents.search.col-source">Source</th>
         <td mat-cell *matCellDef="let c">{{ sourceLabel(c.source) }}</td>
       </ng-container>
       <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
         <td mat-cell *matCellDef="let c"><span [class]="statusBadge(c.status)">{{ c.status }}</span></td>
       </ng-container>
       <ng-container matColumnDef="grantedAt">
-        <th mat-header-cell *matHeaderCellDef>Recueilli le</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@consents.search.col-granted-at">Recueilli le</th>
         <td mat-cell *matCellDef="let c">{{ c.grantedAt }}</td>
       </ng-container>
 

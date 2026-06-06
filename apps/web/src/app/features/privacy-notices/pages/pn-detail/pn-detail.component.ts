@@ -28,6 +28,11 @@ export class PnDetailComponent implements OnInit {
 
   versions: PrivacyNoticeView[] = [];
 
+  readonly editTooltipImmutable = $localize`:@@privacy-notices.detail.edit-tooltip-immutable:Une mention PUBLISHED est immutable`;
+  readonly editTooltipDraft     = $localize`:@@privacy-notices.detail.edit-tooltip-draft:Modifier le brouillon`;
+  readonly deleteTooltip          = $localize`:@@common.delete:Supprimer`;
+  readonly deleteTooltipDraftOnly = $localize`:@@privacy-notices.detail.delete-tooltip-draft-only:Seul un brouillon peut être supprimé`;
+
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
 
   constructor(
@@ -45,14 +50,14 @@ export class PnDetailComponent implements OnInit {
       switchMap(p => {
         const id = p.get('id') ?? '';
         if (!UUID_REGEX.test(id) && !id.startsWith('pn-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
         return this.refresh$.pipe(
           switchMap(() => this.svc.get(id).pipe(
             catchError(err => {
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             }),
             tap(n => {
@@ -74,7 +79,7 @@ export class PnDetailComponent implements OnInit {
   openEdit(n: PrivacyNoticeView): void {
     // OWASP A04 — PUBLISHED est immutable (mirror backend invariant).
     if (n.status !== 'DRAFT') {
-      this.snack.open('Seul un brouillon peut être édité.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@privacy-notices.detail.only-draft-editable:Seul un brouillon peut être édité.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(PnDialogComponent, {
@@ -87,21 +92,21 @@ export class PnDetailComponent implements OnInit {
   publish(n: PrivacyNoticeView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Publier cette mention ?',
+        title: $localize`:@@privacy-notices.detail.publish-confirm-title:Publier cette mention ?`,
         message: 'La version DRAFT « ' + n.reference + ' v' + n.version + ' [' + n.language.toUpperCase() + '] » deviendra PUBLISHED, donc immutable. Toute version PUBLISHED précédente pour cette même référence + langue sera automatiquement archivée.',
-        confirmLabel: 'Publier', cancelLabel: 'Annuler', danger: false
+        confirmLabel: $localize`:@@privacy-notices.detail.publish:Publier`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: false
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       const publishedByUserId = this.auth.snapshot()?.userId;
       if (!publishedByUserId) {
-        this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+        this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
         return;
       }
       this.svc.publish(n.id, { publishedByUserId }).subscribe({
-        next: () => { this.snack.open('Mention publiée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Publication impossible.')
+        next: () => { this.snack.open($localize`:@@privacy-notices.detail.published:Mention publiée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@privacy-notices.detail.publish-failed:Publication impossible.`)
       });
     });
   }
@@ -109,16 +114,16 @@ export class PnDetailComponent implements OnInit {
   archive(n: PrivacyNoticeView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Archiver cette mention ?',
+        title: $localize`:@@privacy-notices.detail.archive-confirm-title:Archiver cette mention ?`,
         message: '« ' + n.title + ' » sera marquée ARCHIVED. Conservée pour la traçabilité (preuve de ce qui a été affiché).',
-        confirmLabel: 'Archiver', cancelLabel: 'Annuler', danger: true
+        confirmLabel: $localize`:@@privacy-notices.detail.archive:Archiver`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.archive(n.id).subscribe({
-        next: () => { this.snack.open('Mention archivée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Archivage impossible.')
+        next: () => { this.snack.open($localize`:@@privacy-notices.detail.archived:Mention archivée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@privacy-notices.detail.archive-failed:Archivage impossible.`)
       });
     });
   }
@@ -126,21 +131,21 @@ export class PnDetailComponent implements OnInit {
   remove(n: PrivacyNoticeView): void {
     // OWASP A04 — only DRAFT can be deleted (mirror backend invariant).
     if (n.status !== 'DRAFT') {
-      this.snack.open('Une mention publiée ou archivée ne peut pas être supprimée.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@privacy-notices.detail.cannot-delete-published:Une mention publiée ou archivée ne peut pas être supprimée.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer le brouillon ?',
+        title: $localize`:@@privacy-notices.detail.delete-confirm-title:Supprimer le brouillon ?`,
         message: 'Suppression définitive de « ' + n.title + ' » (statut DRAFT).',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(n.id).subscribe({
-        next: () => { this.snack.open('Brouillon supprimé.', 'OK', { duration: 2200 }); this.router.navigate(['/privacy-notices']); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        next: () => { this.snack.open($localize`:@@privacy-notices.detail.draft-deleted:Brouillon supprimé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/privacy-notices']); },
+        error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
       });
     });
   }
@@ -152,6 +157,6 @@ export class PnDetailComponent implements OnInit {
   private fail(err: unknown, fallback: string): void {
     // eslint-disable-next-line no-console
     console.warn('[pn-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
-    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+    this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 4000 });
   }
 }

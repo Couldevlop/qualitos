@@ -22,12 +22,12 @@ export class AuditsEditDialogComponent {
   submitting = false;
 
   readonly types: { value: AuditType; label: string }[] = [
-    { value: 'INTERNAL',      label: 'Interne' },
-    { value: 'EXTERNAL',      label: 'Externe' },
-    { value: 'SUPPLIER',      label: 'Fournisseur' },
-    { value: 'LPA',           label: 'LPA' },
-    { value: 'CERTIFICATION', label: 'Certification' },
-    { value: 'SURVEILLANCE',  label: 'Surveillance' }
+    { value: 'INTERNAL',      label: $localize`:@@audits.type.internal:Interne` },
+    { value: 'EXTERNAL',      label: $localize`:@@audits.type.external:Externe` },
+    { value: 'SUPPLIER',      label: $localize`:@@audits.type.supplier:Fournisseur` },
+    { value: 'LPA',           label: $localize`:@@audits.type.lpa-short:LPA` },
+    { value: 'CERTIFICATION', label: $localize`:@@audits.type.certification:Certification` },
+    { value: 'SURVEILLANCE',  label: $localize`:@@audits.type.surveillance:Surveillance` }
   ];
 
   readonly form = this.fb.nonNullable.group({
@@ -72,15 +72,15 @@ export class AuditsEditDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: p => {
-          this.snack.open('Plan mis à jour.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@audits.edit.success:Plan mis à jour.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(p);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[audits-edit] failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de la mise à jour.'),
-            'OK', { duration: 4000 }
+            safeErrorMessage(err, $localize`:@@common.error-update:Erreur lors de la mise à jour.`),
+            $localize`:@@common.ok:OK`, { duration: 4000 }
           );
         }
       });

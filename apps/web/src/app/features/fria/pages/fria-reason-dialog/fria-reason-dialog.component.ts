@@ -38,13 +38,20 @@ export class FriaReasonDialogComponent {
 
   get title(): string {
     return this.data.mode === 'RETURN'
-      ? 'Retourner la FRIA au brouillon' : 'Archiver la FRIA';
+      ? $localize`:@@fria.reason.title-return:Retourner la FRIA au brouillon`
+      : $localize`:@@fria.reason.title-archive:Archiver la FRIA`;
   }
 
   get hint(): string {
     return this.data.mode === 'RETURN'
-      ? 'La FRIA repasse en DRAFT. Le motif sera consigné dans les notes d\'approbation.'
-      : 'Action terminale. La FRIA passe en ARCHIVED — fin du déploiement de l\'IA évalué.';
+      ? $localize`:@@fria.reason.hint-return:La FRIA repasse en DRAFT. Le motif sera consigné dans les notes d'approbation.`
+      : $localize`:@@fria.reason.hint-archive:Action terminale. La FRIA passe en ARCHIVED — fin du déploiement de l'IA évalué.`;
+  }
+
+  get reasonLabel(): string {
+    return this.data.mode === 'RETURN'
+      ? $localize`:@@fria.reason.label-return:Motif du retour`
+      : $localize`:@@fria.reason.label-archive:Motif de l'archivage`;
   }
 
   submit(): void {
@@ -57,12 +64,14 @@ export class FriaReasonDialogComponent {
     op$
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: f => { this.snack.open(this.data.mode === 'RETURN' ? 'FRIA renvoyée en brouillon.' : 'FRIA archivée.',
-                                     'OK', { duration: 2200 }); this.dialogRef.close(f); },
+        next: f => { this.snack.open(this.data.mode === 'RETURN'
+                                       ? $localize`:@@fria.reason.returned:FRIA renvoyée en brouillon.`
+                                       : $localize`:@@fria.reason.archived:FRIA archivée.`,
+                                     $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(f); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[fria-reason] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Opération impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@fria.reason.op-failed:Opération impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

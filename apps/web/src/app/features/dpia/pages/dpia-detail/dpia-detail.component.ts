@@ -27,6 +27,13 @@ export class DpiaDetailComponent implements OnInit {
   loading$ = new BehaviorSubject<boolean>(false);
   error$   = new BehaviorSubject<string | null>(null);
 
+  readonly editTooltip       = $localize`:@@common.edit:Modifier`;
+  readonly editTooltipLocked = $localize`:@@dpia.detail.edit-tooltip-locked:Non éditable dans cet état`;
+  readonly deleteTooltipDraft     = $localize`:@@dpia.detail.delete-tooltip-draft:Supprimer le brouillon`;
+  readonly deleteTooltipDraftOnly = $localize`:@@dpia.detail.delete-tooltip-draft-only:Seul un brouillon peut être supprimé`;
+  readonly opinionFavorable   = $localize`:@@dpia.detail.opinion-favorable:(favorable)`;
+  readonly opinionUnfavorable = $localize`:@@dpia.detail.opinion-unfavorable:(défavorable)`;
+
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
 
   constructor(
@@ -45,7 +52,7 @@ export class DpiaDetailComponent implements OnInit {
         const id = p.get('id') ?? '';
         // OWASP A03 — UUID v4 regex on path id (mock-id fallback).
         if (!UUID_REGEX.test(id) && !id.startsWith('dpia-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
@@ -54,7 +61,7 @@ export class DpiaDetailComponent implements OnInit {
             catchError(err => {
               // eslint-disable-next-line no-console
               console.warn('[dpia-detail] failed', err?.status, err?.error?.title);
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             }),
             tap(() => this.loading$.next(false))
@@ -67,7 +74,7 @@ export class DpiaDetailComponent implements OnInit {
   openEdit(d: DpiaView): void {
     // OWASP A04 — édition limitée aux statuts mutables (mirror backend).
     if (d.status !== 'DRAFT' && d.status !== 'IN_PROGRESS') {
-      this.snack.open('La fiche n\'est éditable qu\'en DRAFT ou IN_PROGRESS.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@dpia.detail.only-draft-progress-editable:La fiche n'est éditable qu'en DRAFT ou IN_PROGRESS.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(DpiaEditDialogComponent, {
@@ -80,35 +87,35 @@ export class DpiaDetailComponent implements OnInit {
   start(d: DpiaView): void {
     const handledByUserId = this.auth.snapshot()?.userId;
     if (!handledByUserId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.svc.start(d.id, { handledByUserId }).subscribe({
-      next: () => { this.snack.open('Analyse démarrée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Démarrage impossible.')
+      next: () => { this.snack.open($localize`:@@dpia.detail.started:Analyse démarrée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@dpia.detail.start-failed:Démarrage impossible.`)
     });
   }
 
   returnToDraft(d: DpiaView): void {
     this.svc.returnToDraft(d.id).subscribe({
-      next: () => { this.snack.open('Renvoyée en DRAFT.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Retour DRAFT impossible.')
+      next: () => { this.snack.open($localize`:@@dpia.detail.returned-to-draft:Renvoyée en DRAFT.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@dpia.detail.return-draft-failed:Retour DRAFT impossible.`)
     });
   }
 
   submitToDpo(d: DpiaView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Soumettre au DPO ?',
-        message: 'La DPIA passera en DPO_REVIEW. Pendant cette phase, le DPO rend un avis motivé (Art. 39§1.c).',
-        confirmLabel: 'Soumettre au DPO', cancelLabel: 'Annuler', danger: false
+        title: $localize`:@@dpia.detail.submit-confirm-title:Soumettre au DPO ?`,
+        message: $localize`:@@dpia.detail.submit-confirm-message:La DPIA passera en DPO_REVIEW. Pendant cette phase, le DPO rend un avis motivé (Art. 39§1.c).`,
+        confirmLabel: $localize`:@@dpia.detail.submit-to-dpo:Soumettre au DPO`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: false
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.submitToDpo(d.id).subscribe({
-        next: () => { this.snack.open('Soumise au DPO.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Soumission impossible.')
+        next: () => { this.snack.open($localize`:@@dpia.detail.submitted:Soumise au DPO.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@dpia.detail.submit-failed:Soumission impossible.`)
       });
     });
   }
@@ -124,16 +131,16 @@ export class DpiaDetailComponent implements OnInit {
   archive(d: DpiaView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Archiver la DPIA ?',
+        title: $localize`:@@dpia.detail.archive-confirm-title:Archiver la DPIA ?`,
         message: '« ' + d.title + ' » sera marquée ARCHIVED. Conservée pour la traçabilité historique.',
-        confirmLabel: 'Archiver', cancelLabel: 'Annuler', danger: true
+        confirmLabel: $localize`:@@dpia.detail.archive:Archiver`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.archive(d.id).subscribe({
-        next: () => { this.snack.open('DPIA archivée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Archivage impossible.')
+        next: () => { this.snack.open($localize`:@@dpia.detail.archived:DPIA archivée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@dpia.detail.archive-failed:Archivage impossible.`)
       });
     });
   }
@@ -141,21 +148,21 @@ export class DpiaDetailComponent implements OnInit {
   remove(d: DpiaView): void {
     // OWASP A04 — only DRAFT can be deleted (mirror backend).
     if (d.status !== 'DRAFT') {
-      this.snack.open('Seule une DPIA en DRAFT peut être supprimée.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@dpia.detail.only-draft-deletable:Seule une DPIA en DRAFT peut être supprimée.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer le brouillon ?',
+        title: $localize`:@@dpia.detail.delete-confirm-title:Supprimer le brouillon ?`,
         message: 'Suppression définitive du brouillon « ' + d.title + ' ».',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(d.id).subscribe({
-        next: () => { this.snack.open('Brouillon supprimé.', 'OK', { duration: 2200 }); this.router.navigate(['/dpia']); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        next: () => { this.snack.open($localize`:@@dpia.detail.draft-deleted:Brouillon supprimé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/dpia']); },
+        error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
       });
     });
   }
@@ -168,6 +175,6 @@ export class DpiaDetailComponent implements OnInit {
   private fail(err: unknown, fallback: string): void {
     // eslint-disable-next-line no-console
     console.warn('[dpia-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
-    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+    this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 4000 });
   }
 }

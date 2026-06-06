@@ -53,11 +53,11 @@ export class FriaEditDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: f => { this.snack.open('FRIA mise à jour.', 'OK', { duration: 2200 }); this.dialogRef.close(f); },
+        next: f => { this.snack.open($localize`:@@fria.edit.updated:FRIA mise à jour.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(f); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[fria-edit] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Mise à jour impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@fria.edit.update-failed:Mise à jour impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

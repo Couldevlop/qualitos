@@ -22,6 +22,9 @@ export class TrainingEnrollDialogComponent implements OnInit {
   loading = true;
   loadError: string | null = null;
 
+  readonly dialogTitle = $localize`:@@training.home.enroll:S'inscrire à un parcours`;
+  readonly submitLabel = $localize`:@@training.enroll-dialog.submit:S'inscrire`;
+
   readonly statusFilter = new FormControl<TrainingPathStatus>('ACTIVE');
   paths$ = new BehaviorSubject<PathResponse[]>([]);
 
@@ -51,7 +54,7 @@ export class TrainingEnrollDialogComponent implements OnInit {
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[training-enroll] paths failed', err?.status, err?.error?.title);
-          this.loadError = safeErrorMessage(err, 'Chargement parcours impossible.');
+          this.loadError = safeErrorMessage(err, $localize`:@@training.enroll-dialog.load-error:Chargement parcours impossible.`);
         }
       });
   }
@@ -60,7 +63,7 @@ export class TrainingEnrollDialogComponent implements OnInit {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const userId = this.auth.snapshot()?.userId;
     if (!userId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -69,13 +72,13 @@ export class TrainingEnrollDialogComponent implements OnInit {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: e => {
-          this.snack.open('Inscription enregistrée.', 'OK', { duration: 2200 });
+          this.snack.open($localize`:@@training.enroll-dialog.enrolled:Inscription enregistrée.`, $localize`:@@common.ok:OK`, { duration: 2200 });
           this.dialogRef.close(e);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[training-enroll] enroll failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Inscription impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@training.enroll-dialog.enroll-error:Inscription impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

@@ -3,7 +3,7 @@
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
-  [submitLabel]="danger ? 'Rejeter' : 'Approuver'"
+  [submitLabel]="danger ? rejectLabel : approveLabel"
   [submitIcon]="danger ? 'block' : 'verified'"
   [submitColor]="danger ? 'warn' : 'primary'"
   (submitted)="submit()"
@@ -11,20 +11,21 @@
 
   <p [class.warn]="danger" class="head-note">
     <ng-container *ngIf="danger">
-      <strong>Rejet DPO — action terminale.</strong>
-      Le traitement ne doit pas être mis en œuvre tel quel.
-      Une nouvelle DPIA devra être déclenchée après correction.
+      <strong i18n="@@dpia.opinion.reject-title">Rejet DPO — action terminale.</strong>
+      <span i18n="@@dpia.opinion.reject-text">Le traitement ne doit pas être mis en œuvre tel quel.
+      Une nouvelle DPIA devra être déclenchée après correction.</span>
     </ng-container>
     <ng-container *ngIf="!danger">
-      L'avis du DPO sera enregistré, horodaté et signé (Art. 39§1.c RGPD).
+      <span i18n="@@dpia.opinion.approve-text">L'avis du DPO sera enregistré, horodaté et signé (Art. 39§1.c RGPD).
       Si la consultation préalable Art. 36 est requise, l'approbation
-      DPO ne dispense pas de la consultation de l'autorité.
+      DPO ne dispense pas de la consultation de l'autorité.</span>
     </ng-container>
   </p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Avis DPO motivé (obligatoire)</mat-label>
+    <mat-label i18n="@@dpia.opinion.opinion-label">Avis DPO motivé (obligatoire)</mat-label>
     <textarea matInput formControlName="dpoOpinion" rows="8" maxlength="8000" required
+              i18n-placeholder="@@dpia.opinion.opinion-placeholder"
               placeholder="Analyse, points de vigilance, conditions à l'avis, références EDPB/CNIL…"></textarea>
   </mat-form-field>
 

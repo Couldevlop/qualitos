@@ -47,7 +47,7 @@ export class RetListComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[ret-list] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return of([] as RetentionRuleView[]);
           }),
           finalize(() => this.loading$.next(false))

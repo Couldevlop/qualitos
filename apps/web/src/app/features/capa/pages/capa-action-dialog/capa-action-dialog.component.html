@@ -1,30 +1,35 @@
 <qos-form-dialog
+  i18n-title="@@capa.action.title"
   title="Ajouter une action"
+  i18n-subtitle="@@capa.action.subtitle"
   subtitle="Définis l'action concrète à mener pour résoudre ce cas."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.add"
   submitLabel="Ajouter"
   submitIcon="add"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre de l'action</mat-label>
+    <mat-label i18n="@@capa.action.title-label">Titre de l'action</mat-label>
     <input matInput formControlName="title" maxlength="255" required
+           i18n-placeholder="@@capa.action.title-placeholder"
            placeholder="Ex. : Recalibrer la sonde de température hebdo">
-    <mat-error *ngIf="form.controls.title.hasError('required')">Le titre est requis.</mat-error>
-    <mat-error *ngIf="form.controls.title.hasError('maxlength')">255 caractères maximum.</mat-error>
+    <mat-error *ngIf="form.controls.title.hasError('required')" i18n="@@capa.action.title-required">Le titre est requis.</mat-error>
+    <mat-error *ngIf="form.controls.title.hasError('maxlength')" i18n="@@common.maxlength-255">255 caractères maximum.</mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description (optionnel)</mat-label>
+    <mat-label i18n="@@common.description-optional">Description (optionnel)</mat-label>
     <textarea matInput formControlName="description" rows="3"
+              i18n-placeholder="@@capa.action.description-placeholder"
               placeholder="Méthode, ressources nécessaires, critère de fin…"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Échéance (optionnel)</mat-label>
+    <mat-label i18n="@@capa.action.due-date">Échéance (optionnel)</mat-label>
     <input matInput formControlName="dueDate" type="date">
   </mat-form-field>
 

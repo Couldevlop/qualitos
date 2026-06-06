@@ -68,7 +68,7 @@ export class IshikawaEditDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: d => {
-          this.snack.open($localize`:@@ishikawa.edit.updated:Diagramme mis à jour.`, 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@ishikawa.edit.updated:Diagramme mis à jour.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(d);
         },
         error: err => {

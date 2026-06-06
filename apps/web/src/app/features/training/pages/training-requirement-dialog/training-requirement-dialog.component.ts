@@ -28,6 +28,10 @@ export class TrainingRequirementDialogComponent implements OnInit {
   loading = true;
   loadError: string | null = null;
 
+  readonly dialogTitle = $localize`:@@training.requirement-dialog.title:Ajouter une exigence de compétence`;
+  readonly dialogSubtitle = $localize`:@@training.requirement-dialog.subtitle:Échelle Dreyfus 0-4 : NONE / AWARE / PRACTITIONER / COMPETENT / EXPERT. Le gap = (cible - acquis) sera utilisé par l'analyse de gap par utilisateur.`;
+  readonly submitLabel = $localize`:@@training.requirement-dialog.submit:Rattacher`;
+
   readonly levels = [0, 1, 2, 3, 4];
   readonly levelLabels = LEVEL_LABELS;
 
@@ -57,7 +61,7 @@ export class TrainingRequirementDialogComponent implements OnInit {
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[training-req] skills failed', err?.status, err?.error?.title);
-          this.loadError = safeErrorMessage(err, 'Catalogue compétences indisponible.');
+          this.loadError = safeErrorMessage(err, $localize`:@@training.requirement-dialog.skills-error:Catalogue compétences indisponible.`);
         }
       });
   }
@@ -73,13 +77,13 @@ export class TrainingRequirementDialogComponent implements OnInit {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: r => {
-          this.snack.open('Compétence rattachée.', 'OK', { duration: 2200 });
+          this.snack.open($localize`:@@training.requirement-dialog.attached:Compétence rattachée.`, $localize`:@@common.ok:OK`, { duration: 2200 });
           this.dialogRef.close(r);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[training-req] attach failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Rattachement impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@training.requirement-dialog.attach-error:Rattachement impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

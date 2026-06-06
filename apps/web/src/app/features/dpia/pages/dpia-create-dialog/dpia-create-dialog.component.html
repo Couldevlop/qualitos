@@ -1,25 +1,27 @@
 <qos-form-dialog
+  i18n-title="@@dpia.create.title"
   title="Nouvelle analyse d'impact (DPIA)"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@dpia.create.submit"
   submitLabel="Créer (DRAFT)"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="hint">L'Art. 35 RGPD impose une DPIA pour les traitements présentant un
+  <p class="hint" i18n="@@dpia.create.hint">L'Art. 35 RGPD impose une DPIA pour les traitements présentant un
      <strong>risque élevé</strong> pour les droits et libertés. Les sections analytiques
      (nécessité, risques, mesures, avis DPO) seront renseignées dans la fiche détaillée.</p>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col col-ref">
-      <mat-label>Référence</mat-label>
+      <mat-label i18n="@@dpia.create.reference-label">Référence</mat-label>
       <input matInput formControlName="reference" maxlength="64" required
              placeholder="TELEMEDICINE-V1">
-      <mat-hint>Majuscules, chiffres, tiret, underscore</mat-hint>
+      <mat-hint i18n="@@dpia.create.reference-hint">Majuscules, chiffres, tiret, underscore</mat-hint>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Niveau de risque initial estimé</mat-label>
+      <mat-label i18n="@@dpia.create.initial-risk-label">Niveau de risque initial estimé</mat-label>
       <mat-select formControlName="initialRiskLevel" required>
         <mat-option *ngFor="let r of risks" [value]="r.value" [class.warn]="r.warn">
           {{ r.label }}
@@ -29,29 +31,28 @@
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre</mat-label>
+    <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="250" required>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description</mat-label>
+    <mat-label i18n="@@common.description">Description</mat-label>
     <textarea matInput formControlName="description" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>UUIDs des activités RoPA liées (une par ligne)</mat-label>
+    <mat-label i18n="@@dpia.create.ropa-label">UUIDs des activités RoPA liées (une par ligne)</mat-label>
     <textarea matInput formControlName="linkedProcessingActivityIds" rows="3"
               placeholder="00000000-0000-0000-0000-000000000000"></textarea>
-    <mat-error *ngIf="form.controls.linkedProcessingActivityIds.hasError('uuidLine')">
+    <mat-error *ngIf="form.controls.linkedProcessingActivityIds.hasError('uuidLine')" i18n="@@dpia.create.uuid-line-error">
       Chaque ligne doit être un UUID v4 valide.
     </mat-error>
   </mat-form-field>
 
   <p *ngIf="needsConsultation()" class="warn">
     <mat-icon>gavel</mat-icon>
-    <strong>Consultation préalable Art. 36 obligatoire.</strong>
-    Ce niveau de risque exige la consultation de l'autorité de contrôle avant
-    la mise en œuvre. À planifier dès la fiche créée.
+    <strong i18n="@@dpia.create.consultation-warning-title">Consultation préalable Art. 36 obligatoire.</strong>
+    <span i18n="@@dpia.create.consultation-warning-text">Ce niveau de risque exige la consultation de l'autorité de contrôle avant la mise en œuvre. À planifier dès la fiche créée.</span>
   </p>
 
 </qos-form-dialog>

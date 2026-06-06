@@ -1,14 +1,17 @@
 <qos-form-dialog
   title="Lier une violation RGPD"
+  i18n-title="@@cyber-incidents.link-breach.title"
   subtitle="Lier ce cyber-incident à une violation de données personnelles (RGPD Art. 33-34). Renseignez l'UUID de la violation."
+  i18n-subtitle="@@cyber-incidents.link-breach.subtitle"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitLabel="Lier"
+  i18n-submitLabel="@@cyber-incidents.detail.link-breach-short"
   (submitted)="submit()"
   (cancelled)="cancel()">
 <mat-form-field appearance="outline" class="full">
-      <mat-label>UUID violation</mat-label>
+      <mat-label i18n="@@cyber-incidents.link-breach.uuid">UUID violation</mat-label>
       <input matInput formControlName="breachId" required
              placeholder="00000000-0000-0000-0000-000000000000">
     </mat-form-field>

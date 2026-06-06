@@ -24,6 +24,9 @@ export class DpiaOpinionDialogComponent {
 
   submitting = false;
 
+  readonly rejectLabel  = $localize`:@@dpia.opinion.reject:Rejeter`;
+  readonly approveLabel = $localize`:@@dpia.opinion.approve:Approuver`;
+
   readonly form = this.fb.nonNullable.group({
     dpoOpinion: ['', [Validators.required, Validators.maxLength(8000)]]
   });
@@ -39,8 +42,8 @@ export class DpiaOpinionDialogComponent {
 
   get title(): string {
     return this.data.decision === 'APPROVED'
-      ? 'Avis DPO — Approuver la DPIA'
-      : 'Avis DPO — Rejeter la DPIA';
+      ? $localize`:@@dpia.opinion.title-approve:Avis DPO — Approuver la DPIA`
+      : $localize`:@@dpia.opinion.title-reject:Avis DPO — Rejeter la DPIA`;
   }
   get danger(): boolean { return this.data.decision === 'REJECTED'; }
 
@@ -48,7 +51,7 @@ export class DpiaOpinionDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const dpoUserId = this.auth.snapshot()?.userId;
     if (!dpoUserId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -61,14 +64,15 @@ export class DpiaOpinionDialogComponent {
       .subscribe({
         next: d => {
           this.snack.open(this.data.decision === 'APPROVED'
-            ? 'DPIA approuvée par le DPO.' : 'DPIA rejetée par le DPO.',
-            'OK', { duration: 2800 });
+            ? $localize`:@@dpia.opinion.approved-toast:DPIA approuvée par le DPO.`
+            : $localize`:@@dpia.opinion.rejected-toast:DPIA rejetée par le DPO.`,
+            $localize`:@@common.ok:OK`, { duration: 2800 });
           this.dialogRef.close(d);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[dpia-opinion] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Décision impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@dpia.opinion.failed:Décision impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

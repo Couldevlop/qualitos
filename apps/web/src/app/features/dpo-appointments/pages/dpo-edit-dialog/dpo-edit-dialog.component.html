@@ -1,4 +1,5 @@
 <qos-form-dialog
+  i18n-title="@@dpo-appointments.edit.title"
   title="Modifier la désignation"
   [formGroup]="form"
   [submitting]="submitting"
@@ -7,42 +8,42 @@
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Nom complet</mat-label>
+    <mat-label i18n="@@dpo-appointments.edit.full-name">Nom complet</mat-label>
     <input matInput formControlName="dpoFullName" maxlength="250" required>
   </mat-form-field>
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>E-mail</mat-label>
+      <mat-label i18n="@@dpo-appointments.edit.email">E-mail</mat-label>
       <input matInput formControlName="dpoEmail" type="email" maxlength="320" required>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Téléphone</mat-label>
+      <mat-label i18n="@@dpo-appointments.edit.phone">Téléphone</mat-label>
       <input matInput formControlName="dpoPhone" maxlength="64">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Type</mat-label>
+    <mat-label i18n="@@common.type">Type</mat-label>
     <mat-select formControlName="dpoType" required>
-      <mat-option value="INTERNAL">Interne</mat-option>
-      <mat-option value="EXTERNAL">Externe</mat-option>
+      <mat-option value="INTERNAL" i18n="@@dpo-appointments.edit.type-internal">Interne</mat-option>
+      <mat-option value="EXTERNAL" i18n="@@dpo-appointments.edit.type-external">Externe</mat-option>
     </mat-select>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full" *ngIf="isExternal()">
-    <mat-label>Société hébergeante</mat-label>
+    <mat-label i18n="@@dpo-appointments.edit.host-company">Société hébergeante</mat-label>
     <input matInput formControlName="externalCompanyName" maxlength="250">
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Qualifications &amp; expérience</mat-label>
+    <mat-label i18n="@@dpo-appointments.edit.qualifications-label">Qualifications &amp; expérience</mat-label>
     <textarea matInput formControlName="qualifications" rows="4" maxlength="4000"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>UUIDs RoPA liées (une par ligne)</mat-label>
+    <mat-label i18n="@@dpo-appointments.edit.ropa-label">UUIDs RoPA liées (une par ligne)</mat-label>
     <textarea matInput formControlName="linkedProcessingActivityIds" rows="2"></textarea>
-    <mat-error *ngIf="form.controls.linkedProcessingActivityIds.hasError('uuidLine')">
+    <mat-error *ngIf="form.controls.linkedProcessingActivityIds.hasError('uuidLine')" i18n="@@dpo-appointments.edit.uuid-line-error">
       Chaque ligne doit être un UUID v4 valide.
     </mat-error>
   </mat-form-field>

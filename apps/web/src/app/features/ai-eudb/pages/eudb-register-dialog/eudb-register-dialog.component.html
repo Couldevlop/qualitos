@@ -1,23 +1,25 @@
 <qos-form-dialog
   title="Marquer comme enregistré (EUDB)"
+  i18n-title="@@ai-eudb.register.title"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitLabel="Marquer enregistré"
+  i18n-submitLabel="@@ai-eudb.detail.mark-registered"
   submitIcon="how_to_reg"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="hint">Renseignez l'identifiant officiel attribué par la base EUDB
+  <p class="hint" i18n="@@ai-eudb.register.hint">Renseignez l'identifiant officiel attribué par la base EUDB
      (format <code>EUDB-AI-XXXXXX</code>) et la date d'enregistrement.</p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>EUDB ID</mat-label>
+    <mat-label i18n="@@ai-eudb.detail.eudb-id">EUDB ID</mat-label>
     <input matInput formControlName="eudbId" maxlength="64" required
            placeholder="EUDB-AI-A4F92K71" style="text-transform: uppercase;">
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Date d'enregistrement</mat-label>
+    <mat-label i18n="@@ai-eudb.register.registration-date">Date d'enregistrement</mat-label>
     <input matInput formControlName="registrationDate" type="datetime-local" required>
   </mat-form-field>
 

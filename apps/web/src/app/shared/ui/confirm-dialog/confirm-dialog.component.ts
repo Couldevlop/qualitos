@@ -22,6 +22,10 @@ export interface ConfirmDialogData {
   standalone: false
 })
 export class ConfirmDialogComponent {
+  /** Défauts localisés des boutons (les interpolations ne sont pas marquables i18n). */
+  readonly defaultCancelLabel = $localize`:@@common.cancel:Annuler`;
+  readonly defaultConfirmLabel = $localize`:@@common.confirm:Confirmer`;
+
   constructor(
     public readonly dialogRef: MatDialogRef<ConfirmDialogComponent, boolean>,
     @Inject(MAT_DIALOG_DATA) public readonly data: ConfirmDialogData

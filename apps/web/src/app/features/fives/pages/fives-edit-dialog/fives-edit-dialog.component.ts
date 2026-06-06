@@ -59,7 +59,7 @@ export class FivesEditDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: a => {
-          this.snack.open($localize`:@@fives.edit.success:Audit mis à jour.`, 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@fives.edit.success:Audit mis à jour.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(a);
         },
         error: err => {

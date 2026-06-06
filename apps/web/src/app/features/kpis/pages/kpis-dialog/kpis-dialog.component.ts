@@ -24,9 +24,20 @@ export class KpisDialogComponent {
   readonly form;
 
   readonly directions: { value: KpiDirection; label: string }[] = [
-    { value: 'HIGHER_IS_BETTER', label: '↑ Plus haut = mieux (FPY, OEE, satisfaction…)' },
-    { value: 'LOWER_IS_BETTER',  label: '↓ Plus bas  = mieux (DPMO, scrap, MTTR…)' }
+    { value: 'HIGHER_IS_BETTER', label: $localize`:@@kpis.dialog.dir-higher:↑ Plus haut = mieux (FPY, OEE, satisfaction…)` },
+    { value: 'LOWER_IS_BETTER',  label: $localize`:@@kpis.dialog.dir-lower:↓ Plus bas  = mieux (DPMO, scrap, MTTR…)` }
   ];
+
+  get dialogTitle(): string {
+    return this.isEdit
+      ? $localize`:@@kpis.dialog.edit-title:Modifier le KPI`
+      : $localize`:@@kpis.dialog.create-title:Nouveau KPI`;
+  }
+  get submitLabel(): string {
+    return this.isEdit
+      ? $localize`:@@common.save:Enregistrer`
+      : $localize`:@@common.create:Créer`;
+  }
   readonly frequencies: KpiFrequency[] = [
     'REALTIME', 'DAILY', 'WEEKLY', 'MONTHLY', 'QUARTERLY', 'YEARLY', 'ON_DEMAND'
   ];
@@ -73,8 +84,8 @@ export class KpisDialogComponent {
         : v.targetValue <= v.thresholdWarning && v.thresholdWarning <= v.thresholdCritical;
       if (!ordered) {
         this.snack.open(
-          'Cible / Warning / Critical doivent être ordonnés selon le sens du KPI.',
-          'OK', { duration: 4500 }
+          $localize`:@@kpis.dialog.threshold-order:Cible / Warning / Critical doivent être ordonnés selon le sens du KPI.`,
+          $localize`:@@common.ok:OK`, { duration: 4500 }
         );
         return;
       }
@@ -96,7 +107,7 @@ export class KpisDialogComponent {
       : (() => {
           const createdBy = this.auth.snapshot()?.userId;
           if (!createdBy) {
-            this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+            this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
             this.submitting = false;
             throw new Error('No session');
           }
@@ -120,13 +131,13 @@ export class KpisDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: k => {
-          this.snack.open(this.isEdit ? 'KPI mis à jour.' : 'KPI créé.', 'OK', { duration: 2500 });
+          this.snack.open(this.isEdit ? $localize`:@@kpis.dialog.updated:KPI mis à jour.` : $localize`:@@kpis.dialog.created:KPI créé.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(k);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[kpis-dialog] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@kpis.dialog.save-error:Erreur lors de l'enregistrement.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

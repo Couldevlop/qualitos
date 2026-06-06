@@ -20,14 +20,14 @@ export class ConsentsGrantDialogComponent {
   submitting = false;
 
   readonly sources: { value: ConsentSource; label: string }[] = [
-    { value: 'WEB_FORM',   label: 'Formulaire web' },
-    { value: 'MOBILE_APP', label: 'Application mobile' },
-    { value: 'EMAIL',      label: 'E-mail' },
-    { value: 'PAPER',      label: 'Papier (signé)' },
-    { value: 'PHONE',      label: 'Téléphone (enregistré)' },
-    { value: 'API',        label: 'API' },
-    { value: 'IMPORT',     label: 'Import en masse' },
-    { value: 'OTHER',      label: 'Autre' }
+    { value: 'WEB_FORM',   label: $localize`:@@consents.source.web-form:Formulaire web` },
+    { value: 'MOBILE_APP', label: $localize`:@@consents.source.mobile-app:Application mobile` },
+    { value: 'EMAIL',      label: $localize`:@@consents.source.email:E-mail` },
+    { value: 'PAPER',      label: $localize`:@@consents.grant.source-paper:Papier (signé)` },
+    { value: 'PHONE',      label: $localize`:@@consents.grant.source-phone:Téléphone (enregistré)` },
+    { value: 'API',        label: $localize`:@@consents.source.api:API` },
+    { value: 'IMPORT',     label: $localize`:@@consents.grant.source-import:Import en masse` },
+    { value: 'OTHER',      label: $localize`:@@consents.source.other:Autre` }
   ];
 
   // OWASP A03 — regex + length mirror backend @Pattern + @Size.
@@ -68,7 +68,7 @@ export class ConsentsGrantDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const grantedByUserId = this.auth.snapshot()?.userId;
     if (!grantedByUserId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -93,13 +93,13 @@ export class ConsentsGrantDialogComponent {
           // Effacer le plaintext du formulaire après envoi — l'identifiant
           // est désormais hashé côté backend, on ne le garde plus côté client.
           this.form.controls.subjectIdentifier.reset('');
-          this.snack.open('Consentement enregistré.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@consents.grant.success:Consentement enregistré.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(c);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[consents-grant] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Enregistrement impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@consents.grant.error:Enregistrement impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

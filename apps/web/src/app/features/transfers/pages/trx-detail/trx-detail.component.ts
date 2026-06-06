@@ -42,7 +42,7 @@ export class TrxDetailComponent implements OnInit {
       switchMap(p => {
         const id = p.get('id') ?? '';
         if (!UUID_REGEX.test(id) && !id.startsWith('cbt-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
@@ -51,7 +51,7 @@ export class TrxDetailComponent implements OnInit {
             catchError(err => {
               // eslint-disable-next-line no-console
               console.warn('[trx-detail] failed', err?.status, err?.error?.title);
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             }),
             tap(() => this.loading$.next(false))
@@ -63,7 +63,7 @@ export class TrxDetailComponent implements OnInit {
 
   openEdit(t: TransferView): void {
     if (t.status === 'TERMINATED') {
-      this.snack.open('Un transfert TERMINATED ne peut plus être modifié.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@transfers.detail.edit-terminated-blocked:Un transfert TERMINATED ne peut plus être modifié.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(TrxDialogComponent, {
@@ -75,8 +75,8 @@ export class TrxDetailComponent implements OnInit {
 
   activate(t: TransferView): void {
     this.svc.activate(t.id).subscribe({
-      next: () => { this.snack.open('Transfert activé.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Activation impossible.')
+      next: () => { this.snack.open($localize`:@@transfers.detail.activated:Transfert activé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@transfers.detail.activate-failed:Activation impossible.`)
     });
   }
 
@@ -98,33 +98,33 @@ export class TrxDetailComponent implements OnInit {
 
   remove(t: TransferView): void {
     if (t.status !== 'DRAFT') {
-      this.snack.open('Seul un brouillon peut être supprimé.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@transfers.detail.only-draft-deletable:Seul un brouillon peut être supprimé.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer le brouillon ?',
+        title: $localize`:@@transfers.detail.delete-confirm-title:Supprimer le brouillon ?`,
         message: 'Suppression définitive de « ' + t.reference + ' ».',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(t.id).subscribe({
-        next: () => { this.snack.open('Brouillon supprimé.', 'OK', { duration: 2200 }); this.router.navigate(['/cross-border']); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        next: () => { this.snack.open($localize`:@@transfers.detail.deleted:Brouillon supprimé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/cross-border']); },
+        error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
       });
     });
   }
 
   mechLabel(m: TransferMechanism): string {
     return ({
-      ADEQUACY_DECISION: 'Décision d\'adéquation (Art. 45)',
-      STANDARD_CONTRACTUAL_CLAUSES: 'Clauses contractuelles types — SCC (Art. 46.2)',
-      BINDING_CORPORATE_RULES: 'Règles d\'entreprise contraignantes (Art. 47)',
-      CODE_OF_CONDUCT: 'Code de conduite (Art. 46.2.e)',
-      CERTIFICATION: 'Certification (Art. 46.2.f)',
-      DEROGATION_ART49: 'Dérogation Art. 49'
+      ADEQUACY_DECISION: $localize`:@@transfers.mech.adequacy:Décision d'adéquation (Art. 45)`,
+      STANDARD_CONTRACTUAL_CLAUSES: $localize`:@@transfers.mech.scc:Clauses contractuelles types — SCC (Art. 46.2)`,
+      BINDING_CORPORATE_RULES: $localize`:@@transfers.mech.bcr:Règles d'entreprise contraignantes (Art. 47)`,
+      CODE_OF_CONDUCT: $localize`:@@transfers.mech.coc:Code de conduite (Art. 46.2.e)`,
+      CERTIFICATION: $localize`:@@transfers.mech.certification:Certification (Art. 46.2.f)`,
+      DEROGATION_ART49: $localize`:@@transfers.mech.derogation:Dérogation Art. 49`
     })[m];
   }
   mechBadge(m: TransferMechanism): string { return 'mech mech-' + m.toLowerCase(); }

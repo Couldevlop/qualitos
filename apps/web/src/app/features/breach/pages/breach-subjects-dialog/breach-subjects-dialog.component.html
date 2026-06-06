@@ -1,22 +1,25 @@
 <qos-form-dialog
+  i18n-title="@@breach.subjects.title"
   title="Notifier les personnes concernées (Art. 34)"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.save"
   submitLabel="Enregistrer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-    <p class="hint">Notification requise lorsque la violation est susceptible d'engendrer un
-       <strong>risque élevé</strong> pour les droits et libertés des personnes (sévérité HIGH/CRITICAL).</p>
+    <p class="hint"><span i18n="@@breach.subjects.hint-1">Notification requise lorsque la violation est susceptible d'engendrer un</span>
+       <strong i18n="@@breach.subjects.hint-high-risk">risque élevé</strong> <span i18n="@@breach.subjects.hint-2">pour les droits et libertés des personnes (sévérité HIGH/CRITICAL).</span></p>
 
     <mat-form-field appearance="outline" class="full">
-      <mat-label>Date / heure de notification</mat-label>
+      <mat-label i18n="@@breach.subjects.notified-at">Date / heure de notification</mat-label>
       <input matInput type="datetime-local" formControlName="notifiedAt" required>
     </mat-form-field>
     <mat-form-field appearance="outline" class="full">
-      <mat-label>Canal de notification</mat-label>
+      <mat-label i18n="@@breach.subjects.channel-label">Canal de notification</mat-label>
       <input matInput formControlName="channel" maxlength="250" required
+             i18n-placeholder="@@breach.subjects.channel-placeholder"
              placeholder="Email individuel + courrier postal recommandé">
     </mat-form-field>
 

@@ -43,9 +43,9 @@ export class Nis2mEditDialogComponent {
     residualRiskRating:        [this.data.row.residualRiskRating,             [Validators.required]],
     criticalRiskJustification: [this.data.row.criticalRiskJustification ?? '',[Validators.maxLength(4000)]],
     reviewIntervalDays:        [this.data.row.reviewIntervalDays,             [Validators.required, Validators.min(30), Validators.max(1095)]],
-    evidenceUrlsRaw:           [(this.data.row.evidenceUrls ?? []).join('\n'),                 [linesValidator(URL_LINE, 'Une URL http(s) par ligne.')]],
-    linkedActivitiesRaw:       [(this.data.row.linkedProcessingActivityIds ?? []).join('\n'),  [linesValidator(UUID_LINE, 'Un UUID par ligne.')]],
-    linkedAgreementsRaw:       [(this.data.row.linkedProcessorAgreementIds ?? []).join('\n'),  [linesValidator(UUID_LINE, 'Un UUID par ligne.')]],
+    evidenceUrlsRaw:           [(this.data.row.evidenceUrls ?? []).join('\n'),                 [linesValidator(URL_LINE, $localize`:@@nis2-measures.plan.url-per-line:Une URL http(s) par ligne.`)]],
+    linkedActivitiesRaw:       [(this.data.row.linkedProcessingActivityIds ?? []).join('\n'),  [linesValidator(UUID_LINE, $localize`:@@nis2-measures.plan.uuid-per-line:Un UUID par ligne.`)]],
+    linkedAgreementsRaw:       [(this.data.row.linkedProcessorAgreementIds ?? []).join('\n'),  [linesValidator(UUID_LINE, $localize`:@@nis2-measures.plan.uuid-per-line:Un UUID par ligne.`)]],
     notes:                     [this.data.row.notes ?? '',                    [Validators.maxLength(4000)]]
   });
 
@@ -63,7 +63,7 @@ export class Nis2mEditDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const v = this.form.getRawValue();
     if (v.residualRiskRating === 'CRITICAL' && !v.criticalRiskJustification.trim()) {
-      this.snack.open('Justification obligatoire pour un risque résiduel CRITICAL.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@nis2-measures.plan.critical-required:Justification obligatoire pour un risque résiduel CRITICAL.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -82,11 +82,11 @@ export class Nis2mEditDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: m => { this.snack.open('Mesure mise à jour.', 'OK', { duration: 2200 }); this.dialogRef.close(m); },
+        next: m => { this.snack.open($localize`:@@nis2-measures.edit.updated:Mesure mise à jour.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(m); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[nis2m-edit] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Mise à jour impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@nis2-measures.edit.update-failed:Mise à jour impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

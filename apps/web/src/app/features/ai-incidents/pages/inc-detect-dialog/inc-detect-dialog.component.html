@@ -1,57 +1,60 @@
 <qos-form-dialog
   title="Signaler un incident IA"
+  i18n-title="@@ai-incidents.detect.title"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitLabel="Signaler"
+  i18n-submitLabel="@@ai-incidents.list.report-short"
   submitIcon="warning"
   submitColor="warn"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="hint">Art. 73 AI Act — délai de notification au régulateur calculé
+  <p class="hint" i18n="@@ai-incidents.detect.hint">Art. 73 AI Act — délai de notification au régulateur calculé
      automatiquement à partir de la sévérité. Sélectionnez avec soin :
      <strong>{{ deadlineDays() }} jour(s)</strong> à compter de la détection.</p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Référence</mat-label>
+    <mat-label i18n="@@ai-incidents.detect.reference">Référence</mat-label>
     <input matInput formControlName="reference" maxlength="64" required
            placeholder="AIINC-2026-001">
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>UUID système IA</mat-label>
+    <mat-label i18n="@@ai-incidents.detect.ai-system-uuid">UUID système IA</mat-label>
     <input matInput formControlName="aiSystemId" required
            placeholder="00000000-0000-0000-0000-000000000000">
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Sévérité</mat-label>
+    <mat-label i18n="@@ai-incidents.detect.severity">Sévérité</mat-label>
     <mat-select formControlName="severity" required>
       <mat-option *ngFor="let s of severities" [value]="s.value">{{ s.label }}</mat-option>
     </mat-select>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description de l'incident</mat-label>
+    <mat-label i18n="@@ai-incidents.detect.description">Description de l'incident</mat-label>
     <textarea matInput formControlName="description" rows="4" maxlength="4000" required></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Personnes affectées</mat-label>
+    <mat-label i18n="@@ai-incidents.detect.affected-persons">Personnes affectées</mat-label>
     <textarea matInput formControlName="affectedPersonsDescription" rows="2" maxlength="4000"
-              placeholder="Anonyme si pertinent — pas de PII non nécessaire (RGPD)"></textarea>
+              placeholder="Anonyme si pertinent — pas de PII non nécessaire (RGPD)"
+              i18n-placeholder="@@ai-incidents.detect.affected-persons-ph"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Actions immédiates prises</mat-label>
+    <mat-label i18n="@@ai-incidents.detect.immediate-actions">Actions immédiates prises</mat-label>
     <textarea matInput formControlName="immediateActionsTaken" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Survenu le</mat-label>
+      <mat-label i18n="@@ai-incidents.detail.occurred-on">Survenu le</mat-label>
       <input matInput formControlName="occurredAt" type="datetime-local" required>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Détecté le</mat-label>
+      <mat-label i18n="@@ai-incidents.detail.detected-on">Détecté le</mat-label>
       <input matInput formControlName="detectedAt" type="datetime-local" required>
     </mat-form-field>
   </div>

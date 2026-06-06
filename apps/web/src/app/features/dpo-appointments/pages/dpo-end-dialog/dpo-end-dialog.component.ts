@@ -39,8 +39,8 @@ export class DpoEndDialogComponent {
 
   get title(): string {
     return this.data.mode === 'END'
-      ? 'Clôturer la désignation (départ / fin de mandat)'
-      : 'Annuler la désignation (avant prise d\'effet)';
+      ? $localize`:@@dpo-appointments.end.title-end:Clôturer la désignation (départ / fin de mandat)`
+      : $localize`:@@dpo-appointments.end.title-cancel:Annuler la désignation (avant prise d'effet)`;
   }
 
   submit(): void {
@@ -57,14 +57,16 @@ export class DpoEndDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: a => {
-          this.snack.open(this.data.mode === 'END' ? 'Désignation clôturée.' : 'Désignation annulée.',
-            'OK', { duration: 2500 });
+          this.snack.open(this.data.mode === 'END'
+            ? $localize`:@@dpo-appointments.end.ended-toast:Désignation clôturée.`
+            : $localize`:@@dpo-appointments.end.cancelled-toast:Désignation annulée.`,
+            $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(a);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[dpo-end] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Opération impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@dpo-appointments.end.failed:Opération impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

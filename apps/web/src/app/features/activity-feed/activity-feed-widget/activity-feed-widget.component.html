@@ -1,20 +1,20 @@
-<section class="qos-activity" aria-label="Activité récente">
+<section class="qos-activity" i18n-aria-label="@@activity-feed.widget.aria" aria-label="Activité récente">
   <header class="qos-activity__head">
     <span class="material-symbols-outlined" aria-hidden="true">history</span>
-    <h3>Activité récente</h3>
+    <h3 i18n="@@activity-feed.widget.title">Activité récente</h3>
   </header>
 
   <div class="qos-activity__state" *ngIf="loading">
     <mat-progress-spinner mode="indeterminate" diameter="22"></mat-progress-spinner>
-    <span>Chargement…</span>
+    <span i18n="@@common.loading">Chargement…</span>
   </div>
 
   <div class="qos-activity__state qos-activity__state--error" *ngIf="errored && !loading">
     <span class="material-symbols-outlined" aria-hidden="true">error_outline</span>
-    <span>Flux indisponible pour le moment.</span>
+    <span i18n="@@activity-feed.widget.error">Flux indisponible pour le moment.</span>
   </div>
 
-  <p class="qos-activity__empty" *ngIf="!loading && !errored && entries.length === 0">
+  <p class="qos-activity__empty" *ngIf="!loading && !errored && entries.length === 0" i18n="@@activity-feed.widget.empty">
     Aucune activité récente.
   </p>
 

@@ -40,10 +40,10 @@ export class DpiaCreateDialogComponent {
   submitting = false;
 
   readonly risks: { value: RiskLevel; label: string; warn?: boolean }[] = [
-    { value: 'LOW',    label: 'LOW — Risque faible' },
-    { value: 'MEDIUM', label: 'MEDIUM — Risque modéré' },
-    { value: 'HIGH',   label: 'HIGH — Risque élevé (consultation Art. 36 requise)', warn: true },
-    { value: 'SEVERE', label: 'SEVERE — Risque sévère (consultation Art. 36 obligatoire)', warn: true }
+    { value: 'LOW',    label: $localize`:@@dpia.create.risk-low:LOW — Risque faible` },
+    { value: 'MEDIUM', label: $localize`:@@dpia.create.risk-medium:MEDIUM — Risque modéré` },
+    { value: 'HIGH',   label: $localize`:@@dpia.create.risk-high:HIGH — Risque élevé (consultation Art. 36 requise)`, warn: true },
+    { value: 'SEVERE', label: $localize`:@@dpia.create.risk-severe:SEVERE — Risque sévère (consultation Art. 36 obligatoire)`, warn: true }
   ];
 
   readonly form = this.fb.nonNullable.group({
@@ -73,7 +73,7 @@ export class DpiaCreateDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const createdByUserId = this.auth.snapshot()?.userId;
     if (!createdByUserId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -88,11 +88,11 @@ export class DpiaCreateDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: d => { this.snack.open('DPIA créée (DRAFT).', 'OK', { duration: 2500 }); this.dialogRef.close(d); },
+        next: d => { this.snack.open($localize`:@@dpia.create.success:DPIA créée (DRAFT).`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(d); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[dpia-create] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de la création.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@common.error-create:Erreur lors de la création.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

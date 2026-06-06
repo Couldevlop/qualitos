@@ -4,7 +4,7 @@
     <header class="head">
       <div class="meta">
         <a routerLink="/breaches" class="back">
-          <mat-icon>arrow_back</mat-icon> RGPD · Violations
+          <mat-icon>arrow_back</mat-icon> <span i18n="@@breach.detail.back">RGPD · Violations</span>
         </a>
         <h1>
           <code>{{ b.internalReference }}</code>
@@ -13,56 +13,56 @@
         <div class="meta-row">
           <span [class]="statusBadge(b.status)">{{ b.status }}</span>
           <span [class]="severityBadge(b.severity)">{{ b.severity }}</span>
-          <span class="dim">{{ b.affectedSubjectsCount | number }} personnes concernées</span>
+          <span class="dim">{{ b.affectedSubjectsCount | number }} <span i18n="@@breach.detail.affected-subjects">personnes concernées</span></span>
           <span *ngIf="b.subjectNotificationRequired" class="flag flag-sig">
-            <mat-icon>privacy_tip</mat-icon> Art. 34 — notification personnes requise
+            <mat-icon>privacy_tip</mat-icon> <span i18n="@@breach.detail.art34-flag">Art. 34 — notification personnes requise</span>
           </span>
         </div>
       </div>
 
       <div class="toolbar">
         <button mat-stroked-button *ngIf="canSev(b.status)" (click)="changeSeverity(b)">
-          <mat-icon>tune</mat-icon> Sévérité
+          <mat-icon>tune</mat-icon> <span i18n="@@breach.detail.severity">Sévérité</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="canStart(b.status)" (click)="startAssessment(b)">
-          <mat-icon>search</mat-icon> Évaluer
+          <mat-icon>search</mat-icon> <span i18n="@@breach.detail.assess">Évaluer</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="canContain(b.status)" (click)="contain(b)">
-          <mat-icon>healing</mat-icon> Endiguer
+          <mat-icon>healing</mat-icon> <span i18n="@@breach.detail.contain">Endiguer</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="canNotifyDpa(b)" (click)="notifyDpa(b)">
-          <mat-icon>send</mat-icon> Notifier CNIL
+          <mat-icon>send</mat-icon> <span i18n="@@breach.detail.notify-dpa">Notifier CNIL</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="canNotifySubjects(b)" (click)="notifySubjects(b)">
-          <mat-icon>mail</mat-icon> Notifier personnes
+          <mat-icon>mail</mat-icon> <span i18n="@@breach.detail.notify-subjects">Notifier personnes</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="canClose(b.status)" (click)="close(b)">
-          <mat-icon>check_circle</mat-icon> Clôturer
+          <mat-icon>check_circle</mat-icon> <span i18n="@@breach.detail.close">Clôturer</span>
         </button>
         <button mat-stroked-button color="warn" *ngIf="canReject(b.status)" (click)="reject(b)">
-          <mat-icon>block</mat-icon> Rejeter
+          <mat-icon>block</mat-icon> <span i18n="@@breach.detail.reject">Rejeter</span>
         </button>
       </div>
     </header>
 
     <div class="grid">
       <mat-card class="span-2" *ngIf="b.description">
-        <mat-card-header><mat-card-title>Description</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@common.description">Description</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ b.description }}</p></mat-card-content>
       </mat-card>
 
       <mat-card class="deadlines-card">
-        <mat-card-header><mat-card-title>Échéances RGPD</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@breach.detail.deadlines-title">Échéances RGPD</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
             <tr>
-              <th>CNIL (72h)</th>
+              <th i18n="@@breach.detail.dpa-72h">CNIL (72h)</th>
               <td>
                 <span *ngIf="b.dpaNotifiedAt" class="status-ok">
                   ✓ {{ b.dpaNotifiedAt | slice:0:16 }} · <code>{{ b.dpaReference }}</code>
                 </span>
                 <span *ngIf="!b.dpaNotifiedAt">
-                  <span [class.overdue]="b.dpaOverdue">{{ b.dpaOverdue ? '⚠ ' : '' }}Échéance : {{ b.dpaDeadlineAt | slice:0:16 }}</span>
+                  <span [class.overdue]="b.dpaOverdue">{{ b.dpaOverdue ? '⚠ ' : '' }}<span i18n="@@breach.detail.deadline-label">Échéance :</span> {{ b.dpaDeadlineAt | slice:0:16 }}</span>
                 </span>
               </td>
             </tr>
@@ -71,11 +71,11 @@
               <td>
                 <ng-container *ngIf="b.subjectNotificationRequired; else notReq">
                   <span *ngIf="b.subjectsNotifiedAt" class="status-ok">
-                    ✓ {{ b.subjectsNotifiedAt | slice:0:16 }} · canal : {{ b.subjectsNotificationChannel }}
+                    ✓ {{ b.subjectsNotifiedAt | slice:0:16 }} · <span i18n="@@breach.detail.channel-label">canal :</span> {{ b.subjectsNotificationChannel }}
                   </span>
-                  <span *ngIf="!b.subjectsNotifiedAt" class="overdue">Notification personnes en attente</span>
+                  <span *ngIf="!b.subjectsNotifiedAt" class="overdue" i18n="@@breach.detail.subjects-pending">Notification personnes en attente</span>
                 </ng-container>
-                <ng-template #notReq><span class="dim">Non requise (sévérité LOW/MEDIUM)</span></ng-template>
+                <ng-template #notReq><span class="dim" i18n="@@breach.detail.not-required">Non requise (sévérité LOW/MEDIUM)</span></ng-template>
               </td>
             </tr>
           </table>
@@ -83,22 +83,22 @@
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Chronologie</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@breach.detail.timeline-title">Chronologie</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>Survenue le</th><td>{{ b.occurredAt || '—' }}</td></tr>
-            <tr><th>Détectée le</th><td>{{ b.detectedAt }}</td></tr>
-            <tr><th>Pris en charge</th>
+            <tr><th i18n="@@breach.detail.occurred-at">Survenue le</th><td>{{ b.occurredAt || '—' }}</td></tr>
+            <tr><th i18n="@@breach.detail.detected-at">Détectée le</th><td>{{ b.detectedAt }}</td></tr>
+            <tr><th i18n="@@breach.detail.handled-by">Pris en charge</th>
                 <td><code *ngIf="b.handledByUserId; else noHandler">{{ b.handledByUserId }}</code>
                     <ng-template #noHandler><span class="dim">—</span></ng-template></td></tr>
-            <tr><th>Dernière MAJ</th><td>{{ b.updatedAt }}</td></tr>
-            <tr *ngIf="b.closedAt"><th>Clôturée le</th><td>{{ b.closedAt }}</td></tr>
+            <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ b.updatedAt }}</td></tr>
+            <tr *ngIf="b.closedAt"><th i18n="@@breach.detail.closed-at">Clôturée le</th><td>{{ b.closedAt }}</td></tr>
           </table>
         </mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="(b.affectedDataCategories?.length ?? 0) > 0">
-        <mat-card-header><mat-card-title>Catégories de données</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@breach.detail.data-categories-title">Catégories de données</mat-card-title></mat-card-header>
         <mat-card-content>
           <ul class="bullets">
             <li *ngFor="let c of b.affectedDataCategories">{{ c }}</li>
@@ -107,30 +107,30 @@
       </mat-card>
 
       <mat-card *ngIf="b.riskOfHarmDescription">
-        <mat-card-header><mat-card-title>Risque de préjudice</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@breach.detail.risk-title">Risque de préjudice</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ b.riskOfHarmDescription }}</p></mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="b.containmentMeasures" class="span-2 ok-card">
-        <mat-card-header><mat-card-title>Mesures de containment</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@breach.detail.containment-title">Mesures de containment</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ b.containmentMeasures }}</p></mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="b.closureNotes" class="ok-card">
-        <mat-card-header><mat-card-title>Notes de clôture</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@breach.detail.closure-notes-title">Notes de clôture</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ b.closureNotes }}</p></mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="b.rejectionReason" class="warn-card span-2">
-        <mat-card-header><mat-card-title>Motif du rejet</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@breach.detail.rejection-title">Motif du rejet</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ b.rejectionReason }}</p></mat-card-content>
       </mat-card>
 
       <mat-card class="span-2">
-        <mat-card-header><mat-card-title>Trace</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@breach.detail.trace-title">Trace</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>Signalée par</th><td><code>{{ b.reportedByUserId }}</code></td></tr>
+            <tr><th i18n="@@breach.detail.reported-by">Signalée par</th><td><code>{{ b.reportedByUserId }}</code></td></tr>
           </table>
         </mat-card-content>
       </mat-card>
@@ -141,7 +141,7 @@
 
 <ng-template #fallback>
   <section class="breach-detail">
-    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
     <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
   </section>
 </ng-template>

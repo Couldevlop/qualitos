@@ -23,14 +23,14 @@ export class ChangesImpactDialogComponent {
   submitting = false;
 
   readonly targetTypes: { value: ChangeImpactTargetType; label: string }[] = [
-    { value: 'DOCUMENT',      label: 'Document' },
-    { value: 'TRAINING_PATH', label: 'Parcours de formation' },
-    { value: 'SUPPLIER',      label: 'Fournisseur' },
-    { value: 'IOT_DEVICE',    label: 'Équipement IoT' },
-    { value: 'FMEA_PROJECT',  label: 'Projet FMEA' },
-    { value: 'PDCA_CYCLE',    label: 'Cycle PDCA' },
-    { value: 'STANDARD',      label: 'Norme' },
-    { value: 'OTHER',         label: 'Autre' }
+    { value: 'DOCUMENT',      label: $localize`:@@changes.impact-target.document:Document` },
+    { value: 'TRAINING_PATH', label: $localize`:@@changes.impact-target.training-path:Parcours de formation` },
+    { value: 'SUPPLIER',      label: $localize`:@@changes.impact-target.supplier:Fournisseur` },
+    { value: 'IOT_DEVICE',    label: $localize`:@@changes.impact-target.iot-device:Équipement IoT` },
+    { value: 'FMEA_PROJECT',  label: $localize`:@@changes.impact-target.fmea-project:Projet FMEA` },
+    { value: 'PDCA_CYCLE',    label: $localize`:@@changes.impact-target.pdca-cycle:Cycle PDCA` },
+    { value: 'STANDARD',      label: $localize`:@@changes.impact-target.standard:Norme` },
+    { value: 'OTHER',         label: $localize`:@@changes.impact-target.other:Autre` }
   ];
 
   readonly form = this.fb.nonNullable.group({
@@ -58,11 +58,11 @@ export class ChangesImpactDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: im => { this.snack.open('Impact ajouté.', 'OK', { duration: 2200 }); this.dialogRef.close(im); },
+        next: im => { this.snack.open($localize`:@@changes.impact.added:Impact ajouté.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(im); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[changes-impact] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'ajout.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@common.error-add:Erreur lors de l'ajout.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

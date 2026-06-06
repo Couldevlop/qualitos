@@ -65,7 +65,7 @@ export class FmeaListComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[fmea-list] list failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return [];
           }),
           finalize(() => this.loading$.next(false))
@@ -103,8 +103,11 @@ export class FmeaListComponent implements OnInit {
 
   typeLabel(t: FmeaType): string {
     return ({
-      PROCESS_FMEA: 'Processus', DESIGN_FMEA: 'Conception', SYSTEM_FMEA: 'Système',
-      SERVICE_FMEA: 'Service', BOW_TIE: 'Bow-tie'
+      PROCESS_FMEA: $localize`:@@fmea.type.process:Processus`,
+      DESIGN_FMEA: $localize`:@@fmea.type.design:Conception`,
+      SYSTEM_FMEA: $localize`:@@fmea.type.system:Système`,
+      SERVICE_FMEA: $localize`:@@fmea.type.service:Service`,
+      BOW_TIE: $localize`:@@fmea.type.bow-tie:Bow-tie`
     })[t];
   }
 

@@ -3,54 +3,54 @@
 
     <header class="head">
       <div class="meta">
-        <a routerLink="/consents" class="back"><mat-icon>arrow_back</mat-icon> Consentements</a>
+        <a routerLink="/consents" class="back"><mat-icon>arrow_back</mat-icon> <span i18n="@@consents.detail.back">Consentements</span></a>
         <h1>
           <code>{{ c.purposeCode }}</code>
           <span class="dim version">v{{ c.purposeVersion }}</span>
         </h1>
         <div class="meta-row">
           <span [class]="statusBadge(c.status)">{{ c.status }}</span>
-          <span *ngIf="c.active" class="badge badge-active-flag">ACTIF</span>
+          <span *ngIf="c.active" class="badge badge-active-flag" i18n="@@consents.detail.active-flag">ACTIF</span>
           <span class="dim">{{ sourceLabel(c.source) }}</span>
-          <span class="dim">Recueilli le {{ c.grantedAt }}</span>
-          <span *ngIf="c.expiresAt" class="dim">Expire le {{ c.expiresAt }}</span>
+          <span class="dim"><span i18n="@@consents.detail.granted-on">Recueilli le</span> {{ c.grantedAt }}</span>
+          <span *ngIf="c.expiresAt" class="dim"><span i18n="@@consents.detail.expires-on">Expire le</span> {{ c.expiresAt }}</span>
         </div>
       </div>
 
       <div class="toolbar">
         <button mat-stroked-button color="warn" (click)="withdraw(c)"
                 [disabled]="c.status !== 'GRANTED'"
-                [matTooltip]="c.status !== 'GRANTED' ? 'Statut terminal — retrait impossible' : 'Art. 7§3 RGPD'">
-          <mat-icon>block</mat-icon> Retirer
+                [matTooltip]="c.status !== 'GRANTED' ? withdrawTooltipTerminal : withdrawTooltipAllowed">
+          <mat-icon>block</mat-icon> <span i18n="@@consents.detail.withdraw">Retirer</span>
         </button>
       </div>
     </header>
 
     <div class="grid">
       <mat-card>
-        <mat-card-header><mat-card-title>Personne concernée (pseudonymisée)</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@consents.detail.subject-title">Personne concernée (pseudonymisée)</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
             <tr>
-              <th>Étiquette</th>
-              <td>{{ c.subjectIdentifierLabel || '(non renseignée)' }}</td>
+              <th i18n="@@consents.detail.label">Étiquette</th>
+              <td>{{ c.subjectIdentifierLabel || notFilledLabel }}</td>
             </tr>
             <tr>
-              <th>Hash identifiant</th>
+              <th i18n="@@consents.detail.hash">Hash identifiant</th>
               <td><code class="hash">{{ c.subjectIdentifierHash }}</code></td>
             </tr>
           </table>
-          <p class="footnote">L'identifiant en clair n'est jamais conservé.
+          <p class="footnote" i18n="@@consents.detail.footnote">L'identifiant en clair n'est jamais conservé.
              Seul le hash sert à retrouver les consentements d'une même personne.</p>
         </mat-card-content>
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Preuves</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@consents.detail.evidence-title">Preuves</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
             <tr *ngIf="c.evidenceUrl">
-              <th>URL preuve</th>
+              <th i18n="@@consents.detail.evidence-url">URL preuve</th>
               <td>
                 <a [href]="c.evidenceUrl" target="_blank" rel="noopener noreferrer">
                   {{ c.evidenceUrl }} <mat-icon class="ext">open_in_new</mat-icon>
@@ -58,38 +58,38 @@
               </td>
             </tr>
             <tr *ngIf="c.ipAddress">
-              <th>IP collectée</th><td><code>{{ c.ipAddress }}</code></td>
+              <th i18n="@@consents.detail.ip">IP collectée</th><td><code>{{ c.ipAddress }}</code></td>
             </tr>
             <tr *ngIf="c.userAgent">
-              <th>User-Agent</th><td><code class="ua">{{ c.userAgent }}</code></td>
+              <th i18n="@@consents.detail.user-agent">User-Agent</th><td><code class="ua">{{ c.userAgent }}</code></td>
             </tr>
             <tr *ngIf="!c.evidenceUrl && !c.ipAddress && !c.userAgent">
-              <td colspan="2" class="dim">Aucune preuve technique conservée.</td>
+              <td colspan="2" class="dim" i18n="@@consents.detail.no-evidence">Aucune preuve technique conservée.</td>
             </tr>
           </table>
         </mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="c.status === 'WITHDRAWN'" class="wd-card">
-        <mat-card-header><mat-card-title>Retrait du consentement (Art. 7§3)</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@consents.detail.withdrawal-title">Retrait du consentement (Art. 7§3)</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>Retiré le</th><td>{{ c.withdrawnAt }}</td></tr>
-            <tr><th>Acteur</th><td><code>{{ c.withdrawnByUserId }}</code></td></tr>
+            <tr><th i18n="@@consents.detail.withdrawn-on">Retiré le</th><td>{{ c.withdrawnAt }}</td></tr>
+            <tr><th i18n="@@consents.detail.actor">Acteur</th><td><code>{{ c.withdrawnByUserId }}</code></td></tr>
             <tr *ngIf="c.withdrawalReason">
-              <th>Motif</th><td>{{ c.withdrawalReason }}</td>
+              <th i18n="@@consents.detail.reason">Motif</th><td>{{ c.withdrawalReason }}</td>
             </tr>
           </table>
         </mat-card-content>
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Trace technique</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@consents.detail.trace-title">Trace technique</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>Recueilli par</th><td><code>{{ c.grantedByUserId }}</code></td></tr>
-            <tr><th>Créé le</th><td>{{ c.grantedAt }}</td></tr>
-            <tr><th>Dernière mise à jour</th><td>{{ c.updatedAt }}</td></tr>
+            <tr><th i18n="@@consents.detail.granted-by">Recueilli par</th><td><code>{{ c.grantedByUserId }}</code></td></tr>
+            <tr><th i18n="@@consents.detail.created-on">Créé le</th><td>{{ c.grantedAt }}</td></tr>
+            <tr><th i18n="@@consents.detail.last-update">Dernière mise à jour</th><td>{{ c.updatedAt }}</td></tr>
           </table>
         </mat-card-content>
       </mat-card>
@@ -100,7 +100,7 @@
 
 <ng-template #fallback>
   <section class="consents-detail">
-    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
     <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
   </section>
 </ng-template>

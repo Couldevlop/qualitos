@@ -63,7 +63,7 @@ export class ChangesDetailComponent implements OnInit {
       switchMap(p => {
         const id = p.get('id') ?? '';
         if (!UUID_REGEX.test(id) && !id.startsWith('chg-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
@@ -71,7 +71,7 @@ export class ChangesDetailComponent implements OnInit {
         return this.refresh$.pipe(
           switchMap(() => forkJoin({
             change: this.svc.get(id).pipe(catchError(err => {
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             })),
             summary: this.svc.summary(id).pipe(catchError(() => of(null))),
@@ -100,24 +100,24 @@ export class ChangesDetailComponent implements OnInit {
 
   submitForReview(c: ChangeResponse): void {
     this.svc.submit(c.id).subscribe({
-      next: () => { this.snack.open('Demande soumise.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Soumission impossible.')
+      next: () => { this.snack.open($localize`:@@changes.detail.submitted:Demande soumise.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@changes.detail.submit-failed:Soumission impossible.`)
     });
   }
 
   cancel(c: ChangeResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Annuler la demande ?',
+        title: $localize`:@@changes.detail.cancel-confirm-title:Annuler la demande ?`,
         message: 'La demande « ' + c.title + ' » sera marquée CANCELLED. Transition terminale.',
-        confirmLabel: 'Annuler la demande', cancelLabel: 'Conserver', danger: true
+        confirmLabel: $localize`:@@changes.detail.cancel-confirm-label:Annuler la demande`, cancelLabel: $localize`:@@changes.detail.keep:Conserver`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.cancel(c.id).subscribe({
-        next: () => { this.snack.open('Demande annulée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Annulation impossible.')
+        next: () => { this.snack.open($localize`:@@changes.detail.cancelled:Demande annulée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@changes.detail.cancel-failed:Annulation impossible.`)
       });
     });
   }
@@ -125,16 +125,16 @@ export class ChangesDetailComponent implements OnInit {
   remove(c: ChangeResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer la demande ?',
+        title: $localize`:@@changes.detail.delete-confirm-title:Supprimer la demande ?`,
         message: 'Suppression définitive de « ' + c.title + ' » avec son historique d\'approbations et d\'impacts.',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(c.id).subscribe({
-        next: () => { this.snack.open('Demande supprimée.', 'OK', { duration: 2200 }); this.router.navigate(['/changes']); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        next: () => { this.snack.open($localize`:@@changes.detail.deleted:Demande supprimée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/changes']); },
+        error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
       });
     });
   }
@@ -158,16 +158,16 @@ export class ChangesDetailComponent implements OnInit {
   removeApprover(c: ChangeResponse, a: ApprovalResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Retirer l\'approbateur ?',
+        title: $localize`:@@changes.detail.remove-approver-title:Retirer l'approbateur ?`,
         message: 'L\'approbateur ' + a.approverUserId.slice(0, 8) + '… sera retiré de ce changement.',
-        confirmLabel: 'Retirer', cancelLabel: 'Annuler', danger: true
+        confirmLabel: $localize`:@@changes.detail.remove:Retirer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.removeApprover(c.id, a.approverUserId).subscribe({
         next: () => { this.approvals = this.approvals.filter(x => x.id !== a.id); this.refresh$.next(); },
-        error: err => this.fail(err, 'Retrait impossible.')
+        error: err => this.fail(err, $localize`:@@changes.detail.remove-failed:Retrait impossible.`)
       });
     });
   }
@@ -191,16 +191,16 @@ export class ChangesDetailComponent implements OnInit {
   removeImpact(c: ChangeResponse, im: ImpactResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Retirer l\'impact ?',
+        title: $localize`:@@changes.detail.remove-impact-title:Retirer l'impact ?`,
         message: 'L\'entité ' + this.targetLabel(im.targetType) + ' ' + im.targetId.slice(0, 8) + '… sera détachée.',
-        confirmLabel: 'Retirer', cancelLabel: 'Annuler', danger: true
+        confirmLabel: $localize`:@@changes.detail.remove:Retirer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.removeImpact(c.id, im.id).subscribe({
         next: () => { this.impacts = this.impacts.filter(x => x.id !== im.id); this.refresh$.next(); },
-        error: err => this.fail(err, 'Retrait impossible.')
+        error: err => this.fail(err, $localize`:@@changes.detail.remove-failed:Retrait impossible.`)
       });
     });
   }
@@ -209,16 +209,25 @@ export class ChangesDetailComponent implements OnInit {
   priorityBadge(p: ChangeRequestPriority): string { return 'prio prio-' + p.toLowerCase(); }
   typeLabel(t: ChangeRequestType): string {
     return ({
-      DOCUMENT: 'Document', PROCESS: 'Processus', EQUIPMENT: 'Équipement',
-      SUPPLIER: 'Fournisseur', IT_SYSTEM: 'Système IT', ORGANIZATIONAL: 'Organisationnel',
-      OTHER: 'Autre'
+      DOCUMENT: $localize`:@@changes.type.document:Document`,
+      PROCESS: $localize`:@@changes.type.process:Processus`,
+      EQUIPMENT: $localize`:@@changes.type.equipment:Équipement`,
+      SUPPLIER: $localize`:@@changes.type.supplier:Fournisseur`,
+      IT_SYSTEM: $localize`:@@changes.type.it-system:Système IT`,
+      ORGANIZATIONAL: $localize`:@@changes.type.organizational:Organisationnel`,
+      OTHER: $localize`:@@changes.type.other:Autre`
     })[t];
   }
   targetLabel(t: ChangeImpactTargetType): string {
     return ({
-      DOCUMENT: 'Document', TRAINING_PATH: 'Parcours', SUPPLIER: 'Fournisseur',
-      IOT_DEVICE: 'IoT', FMEA_PROJECT: 'FMEA', PDCA_CYCLE: 'PDCA',
-      STANDARD: 'Norme', OTHER: 'Autre'
+      DOCUMENT: $localize`:@@changes.target.document:Document`,
+      TRAINING_PATH: $localize`:@@changes.target.training-path:Parcours`,
+      SUPPLIER: $localize`:@@changes.target.supplier:Fournisseur`,
+      IOT_DEVICE: $localize`:@@changes.target.iot-device:IoT`,
+      FMEA_PROJECT: $localize`:@@changes.target.fmea-project:FMEA`,
+      PDCA_CYCLE: $localize`:@@changes.target.pdca-cycle:PDCA`,
+      STANDARD: $localize`:@@changes.target.standard:Norme`,
+      OTHER: $localize`:@@changes.target.other:Autre`
     })[t];
   }
   decisionBadge(d: ApprovalDecision): string { return 'dbadge dbadge-' + d.toLowerCase(); }
@@ -226,6 +235,6 @@ export class ChangesDetailComponent implements OnInit {
   private fail(err: unknown, fallback: string): void {
     // eslint-disable-next-line no-console
     console.warn('[changes-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
-    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+    this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 4000 });
   }
 }

@@ -1,30 +1,32 @@
 <qos-form-dialog
+  i18n-title="@@changes.impact.title"
   title="Ajouter un impact"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.add"
   submitLabel="Ajouter"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="hint">Décrivez les entités QualitOS impactées par ce changement (document à mettre à jour,
+  <p class="hint" i18n="@@changes.impact.hint">Décrivez les entités QualitOS impactées par ce changement (document à mettre à jour,
      parcours de formation à actualiser, équipement à recalibrer…).</p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Type d'entité impactée</mat-label>
+    <mat-label i18n="@@changes.impact.target-type-label">Type d'entité impactée</mat-label>
     <mat-select formControlName="targetType" required>
       <mat-option *ngFor="let t of targetTypes" [value]="t.value">{{ t.label }}</mat-option>
     </mat-select>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>UUID de l'entité</mat-label>
+    <mat-label i18n="@@changes.impact.uuid-label">UUID de l'entité</mat-label>
     <input matInput formControlName="targetId" required
            placeholder="00000000-0000-0000-0000-000000000000">
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Notes</mat-label>
+    <mat-label i18n="@@changes.impact.notes-label">Notes</mat-label>
     <textarea matInput formControlName="notes" rows="3" maxlength="1000"></textarea>
   </mat-form-field>
 

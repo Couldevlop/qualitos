@@ -4,7 +4,7 @@
     <header class="head">
       <div class="meta">
         <a routerLink="/suppliers" class="back">
-          <mat-icon>arrow_back</mat-icon> Fournisseurs
+          <mat-icon>arrow_back</mat-icon> <span i18n="@@suppliers.detail.back">Fournisseurs</span>
         </a>
         <h1>
           <code>{{ s.code }}</code>
@@ -20,164 +20,164 @@
 
       <div class="score-box">
         <span [class]="scoreClass(s.score, s.status)">{{ s.score }}</span>
-        <span class="score-caption">Score qualité</span>
+        <span class="score-caption" i18n="@@suppliers.detail.score-caption">Score qualité</span>
       </div>
 
       <div class="toolbar">
-        <button mat-stroked-button (click)="openEdit(s)"><mat-icon>edit</mat-icon> Modifier</button>
+        <button mat-stroked-button (click)="openEdit(s)"><mat-icon>edit</mat-icon> <span i18n="@@common.edit">Modifier</span></button>
         <button mat-flat-button color="primary" (click)="changeStatus(s, 'APPROVED')"
                 *ngIf="s.status !== 'APPROVED' && s.status !== 'BLACKLISTED'">
-          <mat-icon>verified</mat-icon> Approuver
+          <mat-icon>verified</mat-icon> <span i18n="@@suppliers.detail.approve">Approuver</span>
         </button>
         <button mat-stroked-button (click)="changeStatus(s, 'CONDITIONAL')"
                 *ngIf="s.status === 'APPROVED' || s.status === 'SUSPENDED'">
-          <mat-icon>warning_amber</mat-icon> Conditionner
+          <mat-icon>warning_amber</mat-icon> <span i18n="@@suppliers.detail.conditional">Conditionner</span>
         </button>
         <button mat-stroked-button color="warn" (click)="changeStatus(s, 'SUSPENDED')"
                 *ngIf="s.status !== 'SUSPENDED' && s.status !== 'BLACKLISTED'">
-          <mat-icon>pause_circle</mat-icon> Suspendre
+          <mat-icon>pause_circle</mat-icon> <span i18n="@@suppliers.detail.suspend">Suspendre</span>
         </button>
         <button mat-stroked-button color="warn" (click)="changeStatus(s, 'BLACKLISTED')"
                 *ngIf="s.status !== 'BLACKLISTED'">
-          <mat-icon>block</mat-icon> Black-lister
+          <mat-icon>block</mat-icon> <span i18n="@@suppliers.detail.blacklist">Black-lister</span>
         </button>
         <button mat-stroked-button color="warn" (click)="remove(s)">
-          <mat-icon>delete</mat-icon> Supprimer
+          <mat-icon>delete</mat-icon> <span i18n="@@common.delete">Supprimer</span>
         </button>
       </div>
     </header>
 
     <div class="stats-grid" *ngIf="stats">
       <mat-card class="stat-card">
-        <span class="stat-label">NC ouvertes</span>
+        <span class="stat-label" i18n="@@suppliers.detail.stat-open-nc">NC ouvertes</span>
         <strong [class.bad]="stats.openNonConformities > 0">{{ stats.openNonConformities }}</strong>
       </mat-card>
       <mat-card class="stat-card">
-        <span class="stat-label">NC résolues</span>
+        <span class="stat-label" i18n="@@suppliers.detail.stat-resolved-nc">NC résolues</span>
         <strong>{{ stats.resolvedNonConformitiesRecent }}</strong>
       </mat-card>
       <mat-card class="stat-card">
-        <span class="stat-label">Certificats expirés</span>
+        <span class="stat-label" i18n="@@suppliers.detail.stat-expired-certs">Certificats expirés</span>
         <strong [class.bad]="stats.expiredCertificates > 0">{{ stats.expiredCertificates }}</strong>
       </mat-card>
       <mat-card class="stat-card">
-        <span class="stat-label">Dernier audit</span>
+        <span class="stat-label" i18n="@@suppliers.detail.stat-last-audit">Dernier audit</span>
         <strong class="small">{{ stats.lastAuditAt || '—' }}</strong>
       </mat-card>
     </div>
 
     <mat-card class="audits-card">
       <mat-card-header class="card-head">
-        <mat-card-title>Audits ({{ audits.length }})</mat-card-title>
+        <mat-card-title><span i18n="@@suppliers.detail.audits-title">Audits</span> ({{ audits.length }})</mat-card-title>
         <button mat-stroked-button color="primary" (click)="openAudit(s)">
-          <mat-icon>add</mat-icon> Nouvel audit
+          <mat-icon>add</mat-icon> <span i18n="@@suppliers.detail.new-audit">Nouvel audit</span>
         </button>
       </mat-card-header>
       <mat-card-content>
         <table mat-table [dataSource]="audits" *ngIf="audits.length; else emptyA">
           <ng-container matColumnDef="auditedOn">
-            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <th mat-header-cell *matHeaderCellDef i18n="@@common.date">Date</th>
             <td mat-cell *matCellDef="let a">{{ a.auditedOn }}</td>
           </ng-container>
           <ng-container matColumnDef="score">
-            <th mat-header-cell *matHeaderCellDef>Score</th>
+            <th mat-header-cell *matHeaderCellDef i18n="@@common.score">Score</th>
             <td mat-cell *matCellDef="let a"><strong>{{ a.score }}</strong></td>
           </ng-container>
           <ng-container matColumnDef="critical">
-            <th mat-header-cell *matHeaderCellDef>Crit.</th>
+            <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.detail.col-critical">Crit.</th>
             <td mat-cell *matCellDef="let a"><span class="badge badge-suspended" *ngIf="a.criticalFindingsCount > 0">{{ a.criticalFindingsCount }}</span><span *ngIf="!a.criticalFindingsCount" class="dim">0</span></td>
           </ng-container>
           <ng-container matColumnDef="major">
-            <th mat-header-cell *matHeaderCellDef>Maj.</th>
+            <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.detail.col-major">Maj.</th>
             <td mat-cell *matCellDef="let a"><span class="badge badge-conditional" *ngIf="a.majorFindingsCount > 0">{{ a.majorFindingsCount }}</span><span *ngIf="!a.majorFindingsCount" class="dim">0</span></td>
           </ng-container>
           <ng-container matColumnDef="minor">
-            <th mat-header-cell *matHeaderCellDef>Min.</th>
+            <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.detail.col-minor">Min.</th>
             <td mat-cell *matCellDef="let a"><span class="dim">{{ a.minorFindingsCount }}</span></td>
           </ng-container>
           <ng-container matColumnDef="findingsSummary">
-            <th mat-header-cell *matHeaderCellDef>Synthèse</th>
+            <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.detail.col-summary">Synthèse</th>
             <td mat-cell *matCellDef="let a">{{ a.findingsSummary || '—' }}</td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="auditColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: auditColumns"></tr>
         </table>
-        <ng-template #emptyA><p class="dim empty">Aucun audit enregistré.</p></ng-template>
+        <ng-template #emptyA><p class="dim empty" i18n="@@suppliers.detail.no-audits">Aucun audit enregistré.</p></ng-template>
       </mat-card-content>
     </mat-card>
 
     <mat-card class="ncs-card">
       <mat-card-header class="card-head">
-        <mat-card-title>Non-conformités ({{ ncs.length }})</mat-card-title>
+        <mat-card-title><span i18n="@@suppliers.detail.ncs-title">Non-conformités</span> ({{ ncs.length }})</mat-card-title>
         <button mat-stroked-button color="primary" (click)="openNc(s)">
-          <mat-icon>add</mat-icon> Nouvelle NC
+          <mat-icon>add</mat-icon> <span i18n="@@suppliers.detail.new-nc">Nouvelle NC</span>
         </button>
       </mat-card-header>
       <mat-card-content>
         <table mat-table [dataSource]="ncs" *ngIf="ncs.length; else emptyN">
           <ng-container matColumnDef="detectedOn">
-            <th mat-header-cell *matHeaderCellDef>Détectée</th>
+            <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.detail.col-detected">Détectée</th>
             <td mat-cell *matCellDef="let nc">{{ nc.detectedOn }}</td>
           </ng-container>
           <ng-container matColumnDef="severity">
-            <th mat-header-cell *matHeaderCellDef>Sévérité</th>
+            <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.detail.col-severity">Sévérité</th>
             <td mat-cell *matCellDef="let nc"><span [class]="severityBadge(nc.severity)">{{ nc.severity }}</span></td>
           </ng-container>
           <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef>Statut</th>
+            <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
             <td mat-cell *matCellDef="let nc"><span [class]="ncStatusBadge(nc.status)">{{ nc.status }}</span></td>
           </ng-container>
           <ng-container matColumnDef="lotReference">
-            <th mat-header-cell *matHeaderCellDef>Lot</th>
+            <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.detail.col-lot">Lot</th>
             <td mat-cell *matCellDef="let nc"><code class="dim">{{ nc.lotReference || '—' }}</code></td>
           </ng-container>
           <ng-container matColumnDef="description">
-            <th mat-header-cell *matHeaderCellDef>Description</th>
+            <th mat-header-cell *matHeaderCellDef i18n="@@common.description">Description</th>
             <td mat-cell *matCellDef="let nc">{{ nc.description || '—' }}</td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="ncColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: ncColumns"></tr>
         </table>
-        <ng-template #emptyN><p class="dim empty">Aucune non-conformité.</p></ng-template>
+        <ng-template #emptyN><p class="dim empty" i18n="@@suppliers.detail.no-ncs">Aucune non-conformité.</p></ng-template>
       </mat-card-content>
     </mat-card>
 
     <mat-card class="certs-card">
       <mat-card-header class="card-head">
-        <mat-card-title>Certificats ({{ certs.length }})</mat-card-title>
+        <mat-card-title><span i18n="@@suppliers.detail.certs-title">Certificats</span> ({{ certs.length }})</mat-card-title>
         <button mat-stroked-button color="primary" (click)="openCert(s)">
-          <mat-icon>add</mat-icon> Nouveau certificat
+          <mat-icon>add</mat-icon> <span i18n="@@suppliers.detail.new-cert">Nouveau certificat</span>
         </button>
       </mat-card-header>
       <mat-card-content>
         <table mat-table [dataSource]="certs" *ngIf="certs.length; else emptyC">
           <ng-container matColumnDef="standardCode">
-            <th mat-header-cell *matHeaderCellDef>Norme</th>
+            <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.detail.col-standard">Norme</th>
             <td mat-cell *matCellDef="let c"><code>{{ c.standardCode }}</code></td>
           </ng-container>
           <ng-container matColumnDef="reference">
-            <th mat-header-cell *matHeaderCellDef>Réf.</th>
+            <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.detail.col-reference">Réf.</th>
             <td mat-cell *matCellDef="let c">{{ c.reference || '—' }}</td>
           </ng-container>
           <ng-container matColumnDef="issuedOn">
-            <th mat-header-cell *matHeaderCellDef>Émis</th>
+            <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.detail.col-issued">Émis</th>
             <td mat-cell *matCellDef="let c">{{ c.issuedOn }}</td>
           </ng-container>
           <ng-container matColumnDef="expiresOn">
-            <th mat-header-cell *matHeaderCellDef>Expire</th>
+            <th mat-header-cell *matHeaderCellDef i18n="@@suppliers.detail.col-expires">Expire</th>
             <td mat-cell *matCellDef="let c">
               {{ c.expiresOn }}
-              <mat-icon *ngIf="c.expired" class="expired" matTooltip="Expiré">warning</mat-icon>
+              <mat-icon *ngIf="c.expired" class="expired" matTooltip="Expiré" i18n-matTooltip="@@suppliers.detail.expired-tooltip">warning</mat-icon>
             </td>
           </ng-container>
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let c">
               <a *ngIf="c.documentUrl" mat-icon-button [href]="c.documentUrl" target="_blank"
-                 rel="noopener noreferrer" matTooltip="Document">
+                 rel="noopener noreferrer" matTooltip="Document" i18n-matTooltip="@@suppliers.detail.document-tooltip">
                 <mat-icon>open_in_new</mat-icon>
               </a>
-              <button mat-icon-button (click)="removeCert(s, c)" matTooltip="Supprimer">
+              <button mat-icon-button (click)="removeCert(s, c)" matTooltip="Supprimer" i18n-matTooltip="@@common.delete">
                 <mat-icon>delete</mat-icon>
               </button>
             </td>
@@ -185,7 +185,7 @@
           <tr mat-header-row *matHeaderRowDef="certColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: certColumns"></tr>
         </table>
-        <ng-template #emptyC><p class="dim empty">Aucun certificat enregistré.</p></ng-template>
+        <ng-template #emptyC><p class="dim empty" i18n="@@suppliers.detail.no-certs">Aucun certificat enregistré.</p></ng-template>
       </mat-card-content>
     </mat-card>
 

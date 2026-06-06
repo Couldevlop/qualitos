@@ -40,7 +40,7 @@ export class RetEvaluateDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const v = this.form.getRawValue();
     if (new Date(v.recordCreatedAt) > new Date()) {
-      this.snack.open('La date de création ne peut pas être dans le futur.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@retention.evaluate-dialog.future-date:La date de création ne peut pas être dans le futur.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -56,7 +56,7 @@ export class RetEvaluateDialogComponent {
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[ret-evaluate] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Évaluation impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@retention.evaluate-dialog.eval-failed:Évaluation impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

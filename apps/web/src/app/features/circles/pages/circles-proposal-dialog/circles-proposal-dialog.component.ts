@@ -43,7 +43,7 @@ export class CirclesProposalDialogComponent {
     }
     const proposedBy = this.auth.snapshot()?.userId;
     if (!proposedBy) {
-      this.snack.open($localize`:@@circles.proposal.session-expired:Session expirée — veuillez vous reconnecter.`, 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@circles.proposal.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -57,7 +57,7 @@ export class CirclesProposalDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: p => {
-          this.snack.open($localize`:@@circles.proposal.saved:Proposition enregistrée.`, 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@circles.proposal.saved:Proposition enregistrée.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(p);
         },
         error: err => {

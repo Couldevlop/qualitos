@@ -54,7 +54,7 @@ export class TrainingPathDetailComponent implements OnInit {
       switchMap(p => {
         const id = p.get('id') ?? '';
         if (!UUID_REGEX.test(id) && !id.startsWith('path-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
@@ -62,7 +62,7 @@ export class TrainingPathDetailComponent implements OnInit {
         return this.refresh$.pipe(
           switchMap(() => forkJoin({
             path: this.svc.getPath(id).pipe(catchError(err => {
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             })),
             requirements: this.svc.listRequirements(id).pipe(catchError(() => of([]))),
@@ -92,45 +92,45 @@ export class TrainingPathDetailComponent implements OnInit {
 
   activate(p: PathResponse): void {
     this.svc.activatePath(p.id).subscribe({
-      next: () => { this.snack.open('Parcours activé.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Activation impossible.')
+      next: () => { this.snack.open($localize`:@@training.path-detail.activated:Parcours activé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@training.path-detail.activate-error:Activation impossible.`)
     });
   }
   reopen(p: PathResponse): void {
     this.svc.reopenPath(p.id).subscribe({
-      next: () => { this.snack.open('Parcours rouvert (DRAFT).', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Réouverture impossible.')
+      next: () => { this.snack.open($localize`:@@training.path-detail.reopened:Parcours rouvert (DRAFT).`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@training.path-detail.reopen-error:Réouverture impossible.`)
     });
   }
   archive(p: PathResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Archiver le parcours ?',
-        message: '« ' + p.name + ' » sera marqué ARCHIVED. Les inscriptions en cours ne sont pas annulées.',
-        confirmLabel: 'Archiver', cancelLabel: 'Annuler', danger: true
+        title: $localize`:@@training.path-detail.archive-confirm-title:Archiver le parcours ?`,
+        message: $localize`:@@training.path-detail.archive-confirm-message:« ${p.name}:name: » sera marqué ARCHIVED. Les inscriptions en cours ne sont pas annulées.`,
+        confirmLabel: $localize`:@@training.path-detail.archive:Archiver`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.archivePath(p.id).subscribe({
-        next: () => { this.snack.open('Parcours archivé.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Archivage impossible.')
+        next: () => { this.snack.open($localize`:@@training.path-detail.archived:Parcours archivé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@training.path-detail.archive-error:Archivage impossible.`)
       });
     });
   }
   remove(p: PathResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer le parcours ?',
-        message: 'Suppression définitive de « ' + p.name + ' » et de toutes ses exigences.',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        title: $localize`:@@training.path-detail.delete-confirm-title:Supprimer le parcours ?`,
+        message: $localize`:@@training.path-detail.delete-confirm-message:Suppression définitive de « ${p.name}:name: » et de toutes ses exigences.`,
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.deletePath(p.id).subscribe({
-        next: () => { this.snack.open('Parcours supprimé.', 'OK', { duration: 2200 }); this.router.navigate(['/training']); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        next: () => { this.snack.open($localize`:@@training.path-detail.deleted:Parcours supprimé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/training']); },
+        error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
       });
     });
   }
@@ -148,16 +148,16 @@ export class TrainingPathDetailComponent implements OnInit {
     const skill = this.skillsById[r.skillId];
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Retirer l\'exigence ?',
-        message: 'La compétence « ' + (skill?.name ?? r.skillId) + ' » ne sera plus requise pour ce parcours.',
-        confirmLabel: 'Retirer', cancelLabel: 'Annuler', danger: true
+        title: $localize`:@@training.path-detail.detach-confirm-title:Retirer l'exigence ?`,
+        message: $localize`:@@training.path-detail.detach-confirm-message:La compétence « ${skill?.name ?? r.skillId}:skill: » ne sera plus requise pour ce parcours.`,
+        confirmLabel: $localize`:@@training.path-detail.detach-tooltip:Retirer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.detachRequirement(p.id, r.skillId).subscribe({
         next: () => { this.requirements = this.requirements.filter(x => x.skillId !== r.skillId); this.refresh$.next(); },
-        error: err => this.fail(err, 'Retrait impossible.')
+        error: err => this.fail(err, $localize`:@@training.path-detail.detach-error:Retrait impossible.`)
       });
     });
   }

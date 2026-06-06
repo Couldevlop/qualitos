@@ -74,7 +74,7 @@ export class FivesDetailComponent implements OnInit {
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('id') ?? '';
     if (!UUID_RE.test(raw) && !this.isMockId(raw)) {
-      this.snack.open($localize`:@@common.invalid-id:Identifiant invalide.`, 'OK', { duration: 3000 });
+      this.snack.open($localize`:@@common.invalid-id:Identifiant invalide.`, $localize`:@@common.ok:OK`, { duration: 3000 });
       this.router.navigate(['/fives']);
       return;
     }
@@ -137,7 +137,7 @@ export class FivesDetailComponent implements OnInit {
       if (!confirmed) return;
       this.fives.deleteAudit(this.auditId).subscribe({
         next: () => {
-          this.snack.open($localize`:@@fives.detail.delete-success:Audit supprimé.`, 'OK', { duration: 2000 });
+          this.snack.open($localize`:@@fives.detail.delete-success:Audit supprimé.`, $localize`:@@common.ok:OK`, { duration: 2000 });
           this.router.navigate(['/fives']);
         },
         error: err => {
@@ -170,7 +170,7 @@ export class FivesDetailComponent implements OnInit {
       .pipe(finalize(() => (this.saving[pillar] = false)))
       .subscribe({
         next: () => {
-          this.snack.open(`${pillar} enregistré.`, 'OK', { duration: 2000 });
+          this.snack.open(`${pillar} enregistré.`, $localize`:@@common.ok:OK`, { duration: 2000 });
           this.reload$.next();
         },
         error: err => {
@@ -198,7 +198,7 @@ export class FivesDetailComponent implements OnInit {
     call.pipe(finalize(() => this.acting$.next(false))).subscribe({
       next: () => {
         const label = action === 'start' ? 'démarré' : action === 'complete' ? 'clôturé' : 'annulé';
-        this.snack.open(`Audit ${label}.`, 'OK', { duration: 2000 });
+        this.snack.open(`Audit ${label}.`, $localize`:@@common.ok:OK`, { duration: 2000 });
         this.reload$.next();
       },
       error: err => {

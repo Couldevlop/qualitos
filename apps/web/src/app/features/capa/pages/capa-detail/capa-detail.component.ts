@@ -30,6 +30,11 @@ export class CapaDetailComponent implements OnInit {
 
   readonly actionColumns = ['title', 'status', 'dueDate', 'completedAt'];
 
+  readonly notFoundLabel = $localize`:@@capa.detail.not-found:Cas introuvable`;
+  readonly analysingLabel = $localize`:@@capa.detail.analysing:Analyse…`;
+  readonly suggestLabel = $localize`:@@capa.detail.suggest:Suggérer (IA)`;
+  readonly addLabel = $localize`:@@common.add:Ajouter`;
+
   case$!: Observable<CapaCaseResponse | null>;
   loading$ = new BehaviorSubject<boolean>(false);
   error$ = new BehaviorSubject<string | null>(null);
@@ -55,7 +60,7 @@ export class CapaDetailComponent implements OnInit {
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('id') ?? '';
     if (!UUID_RE.test(raw) && !this.isMockId(raw)) {
-      this.snack.open('Identifiant invalide.', 'OK', { duration: 3000 });
+      this.snack.open($localize`:@@common.invalid-id:Identifiant invalide.`, $localize`:@@common.ok:OK`, { duration: 3000 });
       this.router.navigate(['/capa']);
       return;
     }
@@ -66,7 +71,7 @@ export class CapaDetailComponent implements OnInit {
         catchError(err => {
           // eslint-disable-next-line no-console
           console.warn('[capa-detail] getCase failed', err?.status, err?.error?.title);
-          this.error$.next(safeErrorMessage(err, 'Cas CAPA introuvable.'));
+          this.error$.next(safeErrorMessage(err, $localize`:@@capa.detail.case-not-found:Cas CAPA introuvable.`));
           return of(null);
         }),
         finalize(() => this.loading$.next(false))
@@ -94,9 +99,9 @@ export class CapaDetailComponent implements OnInit {
   deleteCase(title: string): void {
     this.dialog.open(ConfirmDialogComponent, {
       data: <ConfirmDialogData>{
-        title: 'Supprimer ce cas CAPA ?',
-        message: `« ${title} » et toutes ses actions seront supprimés définitivement.`,
-        confirmLabel: 'Supprimer',
+        title: $localize`:@@capa.detail.delete-title:Supprimer ce cas CAPA ?`,
+        message: $localize`:@@capa.detail.delete-message:« ${title}:title: » et toutes ses actions seront supprimés définitivement.`,
+        confirmLabel: $localize`:@@common.delete:Supprimer`,
         destructive: true
       },
       autoFocus: false,
@@ -105,15 +110,15 @@ export class CapaDetailComponent implements OnInit {
       if (!confirmed) return;
       this.capa.deleteCase(this.caseId).subscribe({
         next: () => {
-          this.snack.open('Cas supprimé.', 'OK', { duration: 2000 });
+          this.snack.open($localize`:@@capa.detail.deleted:Cas supprimé.`, $localize`:@@common.ok:OK`, { duration: 2000 });
           this.router.navigate(['/capa']);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[capa-detail] delete failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de la suppression.'),
-            'OK', { duration: 4000 }
+            safeErrorMessage(err, $localize`:@@common.error-delete:Erreur lors de la suppression.`),
+            $localize`:@@common.ok:OK`, { duration: 4000 }
           );
         }
       });
@@ -145,14 +150,14 @@ export class CapaDetailComponent implements OnInit {
         this.suggestions = list;
         this.suggesting = false;
         if (!list.length) {
-          this.snack.open('Aucune action exploitable — précisez le problème.', 'OK', { duration: 3000 });
+          this.snack.open($localize`:@@capa.detail.no-suggestion:Aucune action exploitable — précisez le problème.`, $localize`:@@common.ok:OK`, { duration: 3000 });
         }
       },
       error: err => {
         this.suggesting = false;
         this.snack.open(
-          safeErrorMessage(err, 'Suggestion IA indisponible (ai-service / Ollama).'),
-          'Fermer', { duration: 4000 });
+          safeErrorMessage(err, $localize`:@@capa.detail.suggestion-unavailable:Suggestion IA indisponible (ai-service / Ollama).`),
+          $localize`:@@common.close:Fermer`, { duration: 4000 });
       }
     });
   }
@@ -163,12 +168,12 @@ export class CapaDetailComponent implements OnInit {
       next: () => {
         this.addingKey = null;
         this.suggestions = this.suggestions.filter(x => x !== s);
-        this.snack.open('Action ajoutée à la CAPA.', 'OK', { duration: 2000 });
+        this.snack.open($localize`:@@capa.detail.action-added:Action ajoutée à la CAPA.`, $localize`:@@common.ok:OK`, { duration: 2000 });
         this.reload$.next();
       },
       error: err => {
         this.addingKey = null;
-        this.snack.open(safeErrorMessage(err, 'Ajout impossible.'), 'Fermer', { duration: 3500 });
+        this.snack.open(safeErrorMessage(err, $localize`:@@common.add-failed:Ajout impossible.`), $localize`:@@common.close:Fermer`, { duration: 3500 });
       }
     });
   }
@@ -189,11 +194,15 @@ export class CapaDetailComponent implements OnInit {
     if (this.acting$.value) return;
     this.dialog.open(ConfirmDialogComponent, {
       data: <ConfirmDialogData>{
-        title: effective ? 'Confirmer efficacité ?' : 'Confirmer non-efficacité ?',
+        title: effective
+          ? $localize`:@@capa.detail.confirm-effective-title:Confirmer efficacité ?`
+          : $localize`:@@capa.detail.confirm-not-effective-title:Confirmer non-efficacité ?`,
         message: effective
-          ? 'Tu confirmes que les actions ont eu l\'effet attendu. Le cas sera clôturé (CLOSED).'
-          : 'Tu signales que les actions n\'ont pas été efficaces. Le cas reste RESOLVED — il faudra rouvrir ou créer un nouveau CAPA.',
-        confirmLabel: effective ? 'Oui, efficace' : 'Oui, non efficace',
+          ? $localize`:@@capa.detail.confirm-effective-message:Tu confirmes que les actions ont eu l'effet attendu. Le cas sera clôturé (CLOSED).`
+          : $localize`:@@capa.detail.confirm-not-effective-message:Tu signales que les actions n'ont pas été efficaces. Le cas reste RESOLVED — il faudra rouvrir ou créer un nouveau CAPA.`,
+        confirmLabel: effective
+          ? $localize`:@@capa.detail.yes-effective:Oui, efficace`
+          : $localize`:@@capa.detail.yes-not-effective:Oui, non efficace`,
         destructive: !effective
       },
       autoFocus: false,
@@ -206,8 +215,10 @@ export class CapaDetailComponent implements OnInit {
         .subscribe({
           next: () => {
             this.snack.open(
-              effective ? 'Efficacité validée — cas clôturé.' : 'Non-efficacité enregistrée.',
-              'OK', { duration: 2500 }
+              effective
+                ? $localize`:@@capa.detail.effectiveness-validated:Efficacité validée — cas clôturé.`
+                : $localize`:@@capa.detail.not-effectiveness-recorded:Non-efficacité enregistrée.`,
+              $localize`:@@common.ok:OK`, { duration: 2500 }
             );
             this.reload$.next();
           },
@@ -215,8 +226,8 @@ export class CapaDetailComponent implements OnInit {
             // eslint-disable-next-line no-console
             console.warn('[capa-detail] effectiveness failed', err?.status, err?.error?.title);
             this.snack.open(
-              safeErrorMessage(err, 'Erreur lors de la vérification.'),
-              'OK', { duration: 4000 }
+              safeErrorMessage(err, $localize`:@@capa.detail.verification-error:Erreur lors de la vérification.`),
+              $localize`:@@common.ok:OK`, { duration: 4000 }
             );
           }
         });
@@ -236,16 +247,20 @@ export class CapaDetailComponent implements OnInit {
       : this.capa.rejectCase(this.caseId);
     call.pipe(finalize(() => this.acting$.next(false))).subscribe({
       next: () => {
-        const label = action === 'start' ? 'démarré' : action === 'resolve' ? 'résolu' : 'rejeté';
-        this.snack.open(`Cas ${label}.`, 'OK', { duration: 2000 });
+        const msg = action === 'start'
+          ? $localize`:@@capa.detail.case-started:Cas démarré.`
+          : action === 'resolve'
+            ? $localize`:@@capa.detail.case-resolved:Cas résolu.`
+            : $localize`:@@capa.detail.case-rejected:Cas rejeté.`;
+        this.snack.open(msg, $localize`:@@common.ok:OK`, { duration: 2000 });
         this.reload$.next();
       },
       error: err => {
         // eslint-disable-next-line no-console
         console.warn('[capa-detail] transition failed', action, err?.status, err?.error?.title);
         this.snack.open(
-          safeErrorMessage(err, 'Erreur lors de la transition.'),
-          'OK', { duration: 4000 }
+          safeErrorMessage(err, $localize`:@@capa.detail.transition-error:Erreur lors de la transition.`),
+          $localize`:@@common.ok:OK`, { duration: 4000 }
         );
       }
     });
@@ -255,6 +270,12 @@ export class CapaDetailComponent implements OnInit {
   canResolve(s: CapaStatus): boolean { return s === 'IN_PROGRESS'; }
   canReject(s: CapaStatus): boolean { return s === 'OPEN' || s === 'IN_PROGRESS'; }
   isTerminal(s: CapaStatus): boolean { return s === 'CLOSED' || s === 'REJECTED'; }
+
+  effectivenessLabel(verified: boolean): string {
+    return verified
+      ? $localize`:@@capa.detail.effectiveness-verified:Vérifiée ✓`
+      : $localize`:@@capa.detail.effectiveness-not-effective:Non efficace ✗`;
+  }
 
   statusBadge(s: CapaStatus): string { return 'badge badge-' + s.toLowerCase(); }
   criticityBadge(c: CapaCriticity): string { return 'crit crit-' + c.toLowerCase(); }

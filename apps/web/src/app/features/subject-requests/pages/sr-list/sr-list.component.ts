@@ -31,8 +31,8 @@ export class SrListComponent implements OnInit {
   readonly modeFilter   = new FormControl<Mode>('all');
 
   readonly modes: { value: Mode; label: string }[] = [
-    { value: 'all',     label: 'Toutes les demandes' },
-    { value: 'overdue', label: 'En retard uniquement' }
+    { value: 'all',     label: $localize`:@@subject-requests.list.mode-all:Toutes les demandes` },
+    { value: 'overdue', label: $localize`:@@subject-requests.list.mode-overdue:En retard uniquement` }
   ];
 
   rows$!: Observable<SubjectRequestView[]>;
@@ -65,7 +65,7 @@ export class SrListComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[sr-list] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return of([] as SubjectRequestView[]);
           }),
           finalize(() => this.loading$.next(false))
@@ -86,9 +86,12 @@ export class SrListComponent implements OnInit {
 
   typeLabel(t: SubjectRequestType): string {
     return ({
-      ACCESS: 'Accès (Art. 15)', ERASURE: 'Effacement (Art. 17)',
-      PORTABILITY: 'Portabilité (Art. 20)', RECTIFICATION: 'Rectification (Art. 16)',
-      RESTRICTION: 'Limitation (Art. 18)', OBJECTION: 'Opposition (Art. 21)'
+      ACCESS: $localize`:@@subject-requests.type-short.access:Accès (Art. 15)`,
+      ERASURE: $localize`:@@subject-requests.type-short.erasure:Effacement (Art. 17)`,
+      PORTABILITY: $localize`:@@subject-requests.type-short.portability:Portabilité (Art. 20)`,
+      RECTIFICATION: $localize`:@@subject-requests.type-short.rectification:Rectification (Art. 16)`,
+      RESTRICTION: $localize`:@@subject-requests.type-short.restriction:Limitation (Art. 18)`,
+      OBJECTION: $localize`:@@subject-requests.type-short.objection:Opposition (Art. 21)`
     })[t];
   }
   typeBadge(t: SubjectRequestType): string { return 'tbadge tbadge-' + t.toLowerCase(); }

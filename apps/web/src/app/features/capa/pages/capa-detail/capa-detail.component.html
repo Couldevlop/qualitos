@@ -2,47 +2,47 @@
 
   <header class="page-header">
     <div class="title-block">
-      <button mat-icon-button (click)="goBack()" matTooltip="Retour à la liste">
+      <button mat-icon-button (click)="goBack()" i18n-matTooltip="@@capa.detail.back-tooltip" matTooltip="Retour à la liste">
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div>
-        <h1 *ngIf="case$ | async as c; else loadingTitle">{{ c?.title || 'Cas introuvable' }}</h1>
-        <ng-template #loadingTitle><h1>Chargement…</h1></ng-template>
-        <p class="eyebrow">CAPA · Corrective &amp; Preventive Actions</p>
+        <h1 *ngIf="case$ | async as c; else loadingTitle">{{ c?.title || notFoundLabel }}</h1>
+        <ng-template #loadingTitle><h1 i18n="@@common.loading">Chargement…</h1></ng-template>
+        <p class="eyebrow" i18n="@@capa.detail.eyebrow">CAPA · Corrective &amp; Preventive Actions</p>
       </div>
     </div>
 
     <ng-container *ngIf="case$ | async as c">
       <div class="actions" *ngIf="c">
         <button mat-stroked-button color="warn" (click)="deleteCase(c.title)"
-                matTooltip="Supprimer le cas">
-          <mat-icon>delete</mat-icon> Supprimer
+                i18n-matTooltip="@@capa.detail.delete-tooltip" matTooltip="Supprimer le cas">
+          <mat-icon>delete</mat-icon> <span i18n="@@common.delete">Supprimer</span>
         </button>
-        <button mat-stroked-button (click)="openEdit(c)" matTooltip="Modifier">
-          <mat-icon>edit</mat-icon> Modifier
+        <button mat-stroked-button (click)="openEdit(c)" i18n-matTooltip="@@common.edit" matTooltip="Modifier">
+          <mat-icon>edit</mat-icon> <span i18n="@@common.edit">Modifier</span>
         </button>
         <button mat-stroked-button (click)="reject()"
                 [disabled]="(acting$ | async) || !canReject(c.status)"
-                matTooltip="Rejeter le cas">
-          <mat-icon>block</mat-icon> Rejeter
+                i18n-matTooltip="@@capa.detail.reject-tooltip" matTooltip="Rejeter le cas">
+          <mat-icon>block</mat-icon> <span i18n="@@capa.detail.reject">Rejeter</span>
         </button>
         <button mat-stroked-button color="primary" (click)="start()"
                 [disabled]="(acting$ | async) || !canStart(c.status)"
-                matTooltip="Démarrer le traitement">
-          <mat-icon>play_arrow</mat-icon> Démarrer
+                i18n-matTooltip="@@capa.detail.start-tooltip" matTooltip="Démarrer le traitement">
+          <mat-icon>play_arrow</mat-icon> <span i18n="@@capa.detail.start">Démarrer</span>
         </button>
         <button mat-flat-button color="primary" (click)="resolve()"
                 [disabled]="(acting$ | async) || !canResolve(c.status)"
-                matTooltip="Marquer résolu">
-          <mat-icon>check</mat-icon> Résoudre
+                i18n-matTooltip="@@capa.detail.resolve-tooltip" matTooltip="Marquer résolu">
+          <mat-icon>check</mat-icon> <span i18n="@@capa.detail.resolve">Résoudre</span>
         </button>
       </div>
     </ng-container>
   </header>
 
   <div class="state-row" *ngIf="loading$ | async" role="status" aria-live="polite">
-    <mat-progress-spinner mode="indeterminate" diameter="32" aria-label="Chargement"></mat-progress-spinner>
-    <span>Chargement…</span>
+    <mat-progress-spinner mode="indeterminate" diameter="32" i18n-aria-label="@@common.loading-aria" aria-label="Chargement"></mat-progress-spinner>
+    <span i18n="@@common.loading">Chargement…</span>
   </div>
 
   <div class="state-row error" *ngIf="error$ | async as err" role="alert">
@@ -57,41 +57,41 @@
         <mat-card-content>
           <div class="info-grid">
             <div class="info-item">
-              <span class="info-label">Statut</span>
+              <span class="info-label" i18n="@@common.status">Statut</span>
               <span [class]="statusBadge(c.status)">{{ c.status }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">Type</span>
+              <span class="info-label" i18n="@@common.type">Type</span>
               <span class="info-value">{{ c.type }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">Criticité</span>
+              <span class="info-label" i18n="@@capa.detail.criticity">Criticité</span>
               <span [class]="criticityBadge(c.criticity)">{{ c.criticity }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">Source</span>
+              <span class="info-label" i18n="@@capa.detail.source">Source</span>
               <span class="info-value">{{ c.sourceType }}<span *ngIf="c.sourceRef"> · {{ c.sourceRef }}</span></span>
             </div>
             <div class="info-item">
-              <span class="info-label">Pilote</span>
+              <span class="info-label" i18n="@@capa.detail.owner">Pilote</span>
               <span class="info-value">{{ c.ownerId }}</span>
             </div>
             <div class="info-item" *ngIf="c.dueDate">
-              <span class="info-label">Échéance</span>
+              <span class="info-label" i18n="@@capa.detail.due-date">Échéance</span>
               <span class="info-value">{{ c.dueDate | date }}</span>
             </div>
             <div class="info-item" *ngIf="c.resolvedAt">
-              <span class="info-label">Résolu le</span>
+              <span class="info-label" i18n="@@capa.detail.resolved-at">Résolu le</span>
               <span class="info-value">{{ c.resolvedAt | date:'medium' }}</span>
             </div>
             <div class="info-item" *ngIf="c.effectivenessVerified != null">
-              <span class="info-label">Efficacité</span>
+              <span class="info-label" i18n="@@capa.detail.effectiveness">Efficacité</span>
               <span [class]="c.effectivenessVerified ? 'badge badge-resolved' : 'badge badge-rejected'">
-                {{ c.effectivenessVerified ? 'Vérifiée ✓' : 'Non efficace ✗' }}
+                {{ effectivenessLabel(c.effectivenessVerified) }}
               </span>
             </div>
             <div class="info-item">
-              <span class="info-label">MAJ</span>
+              <span class="info-label" i18n="@@capa.detail.updated">MAJ</span>
               <span class="info-value">{{ c.updatedAt | date:'medium' }}</span>
             </div>
           </div>
@@ -100,19 +100,19 @@
           <div class="effectiveness-block" *ngIf="canVerifyEffectiveness(c.status)">
             <p class="effectiveness-prompt">
               <mat-icon>fact_check</mat-icon>
-              <span><strong>Vérification d'efficacité requise.</strong>
-              Les actions ont-elles produit l'effet attendu (ISO 9001 §10.2) ?</span>
+              <span><strong i18n="@@capa.detail.effectiveness-required">Vérification d'efficacité requise.</strong>
+              <ng-container i18n="@@capa.detail.effectiveness-prompt">Les actions ont-elles produit l'effet attendu (ISO 9001 §10.2) ?</ng-container></span>
             </p>
             <div class="effectiveness-actions">
               <button mat-stroked-button color="warn" type="button"
                       (click)="verifyEffectiveness(false)"
                       [disabled]="acting$ | async">
-                <mat-icon>cancel</mat-icon> Non efficace
+                <mat-icon>cancel</mat-icon> <span i18n="@@capa.detail.not-effective">Non efficace</span>
               </button>
               <button mat-flat-button color="primary" type="button"
                       (click)="verifyEffectiveness(true)"
                       [disabled]="acting$ | async">
-                <mat-icon>check_circle</mat-icon> Efficace — clôturer
+                <mat-icon>check_circle</mat-icon> <span i18n="@@capa.detail.effective-close">Efficace — clôturer</span>
               </button>
             </div>
           </div>
@@ -121,37 +121,38 @@
 
       <mat-card class="actions-card">
         <mat-card-header class="actions-header">
-          <mat-card-title>Actions ({{ c.actions.length }})</mat-card-title>
+          <mat-card-title i18n="@@capa.detail.actions-count">Actions ({{ c.actions.length }})</mat-card-title>
           <button mat-flat-button color="primary" type="button"
                   (click)="openAddAction()"
                   [disabled]="isTerminal(c.status)">
-            <mat-icon>add</mat-icon> Ajouter une action
+            <mat-icon>add</mat-icon> <span i18n="@@capa.detail.add-action">Ajouter une action</span>
           </button>
           <button mat-stroked-button color="primary" type="button" class="ia-btn"
                   (click)="suggestActions()" [disabled]="suggesting || isTerminal(c.status)"
                   [attr.aria-busy]="suggesting"
-                  matTooltip="Suggérer des actions par l'IA">
+                  i18n-matTooltip="@@capa.detail.suggest-tooltip" matTooltip="Suggérer des actions par l'IA">
             <mat-icon aria-hidden="true">auto_awesome</mat-icon>
-            {{ suggesting ? 'Analyse…' : 'Suggérer (IA)' }}
+            {{ suggesting ? analysingLabel : suggestLabel }}
           </button>
         </mat-card-header>
         <mat-card-content>
           <div class="suggest-box" *ngIf="suggesting || suggestions.length"
-               role="region" aria-label="Actions suggérées par l'IA" aria-live="polite">
+               role="region" i18n-aria-label="@@capa.detail.suggestions-region" aria-label="Actions suggérées par l'IA" aria-live="polite">
             <div class="suggest-head">
               <mat-icon aria-hidden="true">auto_awesome</mat-icon>
-              <span class="suggest-title">Actions suggérées par l'IA</span>
+              <span class="suggest-title" i18n="@@capa.detail.suggestions-title">Actions suggérées par l'IA</span>
               <span class="spacer"></span>
               <button mat-icon-button *ngIf="suggestions.length && !suggesting"
                       (click)="dismissSuggestions()"
-                      aria-label="Masquer les suggestions" matTooltip="Masquer">
+                      i18n-aria-label="@@capa.detail.hide-suggestions" aria-label="Masquer les suggestions"
+                      i18n-matTooltip="@@capa.detail.hide" matTooltip="Masquer">
                 <mat-icon aria-hidden="true">close</mat-icon>
               </button>
             </div>
             <div class="suggest-loading" *ngIf="suggesting" role="status" aria-live="polite">
               <mat-progress-spinner mode="indeterminate" diameter="26"
-                                    aria-label="Génération des actions en cours"></mat-progress-spinner>
-              <span>Génération des actions… (peut prendre ~1 min sur CPU)</span>
+                                    i18n-aria-label="@@capa.detail.generating-aria" aria-label="Génération des actions en cours"></mat-progress-spinner>
+              <span i18n="@@capa.detail.generating">Génération des actions… (peut prendre ~1 min sur CPU)</span>
             </div>
             <ul class="suggest-list" *ngIf="suggestions.length">
               <li *ngFor="let s of suggestions">
@@ -160,7 +161,7 @@
                         (click)="addSuggestion(s)"
                         [disabled]="addingKey === s.title || isTerminal(c.status)"
                         [attr.aria-label]="'Ajouter l\'action : ' + s.title">
-                  <mat-icon aria-hidden="true">add</mat-icon> {{ addingKey === s.title ? '…' : 'Ajouter' }}
+                  <mat-icon aria-hidden="true">add</mat-icon> {{ addingKey === s.title ? '…' : addLabel }}
                 </button>
               </li>
             </ul>
@@ -168,25 +169,25 @@
           <table mat-table [dataSource]="c.actions" class="actions-table"
                  *ngIf="c.actions.length > 0">
             <ng-container matColumnDef="title">
-              <th mat-header-cell *matHeaderCellDef>Action</th>
+              <th mat-header-cell *matHeaderCellDef i18n="@@capa.detail.col-action">Action</th>
               <td mat-cell *matCellDef="let a"><strong>{{ a.title }}</strong></td>
             </ng-container>
             <ng-container matColumnDef="status">
-              <th mat-header-cell *matHeaderCellDef>Statut</th>
+              <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
               <td mat-cell *matCellDef="let a"><span [class]="actionBadge(a.status)">{{ a.status }}</span></td>
             </ng-container>
             <ng-container matColumnDef="dueDate">
-              <th mat-header-cell *matHeaderCellDef>Échéance</th>
+              <th mat-header-cell *matHeaderCellDef i18n="@@capa.detail.col-due-date">Échéance</th>
               <td mat-cell *matCellDef="let a">{{ a.dueDate ? (a.dueDate | date) : '—' }}</td>
             </ng-container>
             <ng-container matColumnDef="completedAt">
-              <th mat-header-cell *matHeaderCellDef>Complétée</th>
+              <th mat-header-cell *matHeaderCellDef i18n="@@capa.detail.col-completed">Complétée</th>
               <td mat-cell *matCellDef="let a">{{ a.completedAt ? (a.completedAt | date:'short') : '—' }}</td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="actionColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: actionColumns;"></tr>
           </table>
-          <p class="empty" *ngIf="c.actions.length === 0">
+          <p class="empty" *ngIf="c.actions.length === 0" i18n="@@capa.detail.actions-empty">
             Aucune action. Clique sur <strong>Ajouter une action</strong> pour démarrer.
           </p>
         </mat-card-content>

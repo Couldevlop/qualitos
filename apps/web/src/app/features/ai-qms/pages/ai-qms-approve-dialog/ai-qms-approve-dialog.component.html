@@ -1,22 +1,23 @@
 <qos-form-dialog
-  title="Approuver le QMS"
+  i18n-title="@@ai-qms.approve.title" title="Approuver le QMS"
+  i18n-subtitle="@@ai-qms.approve.subtitle"
   subtitle="L'approbation enregistre l'identité du soumissionnaire et de l'approbateur (séparation des rôles requise par AI Act Art. 17). Vous serez enregistré comme approbateur via votre session courante."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
-  submitLabel="Approuver"
+  i18n-submitLabel="@@ai-qms.approve.submit" submitLabel="Approuver"
   submitIcon="verified"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>UUID du soumissionnaire (doit ≠ vous)</mat-label>
+    <mat-label i18n="@@ai-qms.approve.submitter-uuid">UUID du soumissionnaire (doit ≠ vous)</mat-label>
     <input matInput formControlName="submittedByUserId" required
            placeholder="00000000-0000-0000-0000-000000000000">
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Notes d'approbation</mat-label>
+    <mat-label i18n="@@ai-qms.approve.notes">Notes d'approbation</mat-label>
     <textarea matInput formControlName="approvalNotes" rows="4" maxlength="4000"></textarea>
   </mat-form-field>
 

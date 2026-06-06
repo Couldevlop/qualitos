@@ -38,7 +38,7 @@ export class FriaApproveDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const userId = this.auth.snapshot()?.userId;
     if (!userId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -48,11 +48,11 @@ export class FriaApproveDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: f => { this.snack.open('FRIA approuvée.', 'OK', { duration: 2200 }); this.dialogRef.close(f); },
+        next: f => { this.snack.open($localize`:@@fria.approve.approved:FRIA approuvée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(f); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[fria-approve] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Approbation impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@fria.approve.approve-failed:Approbation impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

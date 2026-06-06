@@ -1,4 +1,5 @@
 <qos-form-dialog
+  i18n-title="@@dpia.edit.title"
   title="Éditer l'analyse d'impact"
   [formGroup]="form"
   [submitting]="submitting"
@@ -7,59 +8,63 @@
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre</mat-label>
+    <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="250" required>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description</mat-label>
+    <mat-label i18n="@@common.description">Description</mat-label>
     <textarea matInput formControlName="description" rows="2" maxlength="4000"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>UUIDs des activités RoPA liées (une par ligne)</mat-label>
+    <mat-label i18n="@@dpia.create.ropa-label">UUIDs des activités RoPA liées (une par ligne)</mat-label>
     <textarea matInput formControlName="linkedProcessingActivityIds" rows="2"></textarea>
-    <mat-error *ngIf="form.controls.linkedProcessingActivityIds.hasError('uuidLine')">
+    <mat-error *ngIf="form.controls.linkedProcessingActivityIds.hasError('uuidLine')" i18n="@@dpia.create.uuid-line-error">
       Chaque ligne doit être un UUID v4 valide.
     </mat-error>
   </mat-form-field>
 
-  <h3 class="section">Analyse</h3>
+  <h3 class="section" i18n="@@dpia.edit.analysis-section">Analyse</h3>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Nécessité & proportionnalité (Art. 35§7.b)</mat-label>
+    <mat-label i18n="@@dpia.edit.necessity-label">Nécessité & proportionnalité (Art. 35§7.b)</mat-label>
     <textarea matInput formControlName="necessityAndProportionalityNotes" rows="4" maxlength="8000"
+              i18n-placeholder="@@dpia.edit.necessity-placeholder"
               placeholder="Justifier que le traitement est nécessaire à la finalité et proportionné."></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Risques pour les droits et libertés (Art. 35§7.c)</mat-label>
+    <mat-label i18n="@@dpia.edit.risks-label">Risques pour les droits et libertés (Art. 35§7.c)</mat-label>
     <textarea matInput formControlName="risksToRightsAndFreedoms" rows="4" maxlength="8000"
+              i18n-placeholder="@@dpia.edit.risks-placeholder"
               placeholder="Identifier menaces, vulnérabilités, impacts (accès non autorisé, modification, perte…)."></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Mesures de mitigation (Art. 35§7.d)</mat-label>
+    <mat-label i18n="@@dpia.edit.mitigation-label">Mesures de mitigation (Art. 35§7.d)</mat-label>
     <textarea matInput formControlName="mitigationMeasures" rows="4" maxlength="8000"
+              i18n-placeholder="@@dpia.edit.mitigation-placeholder"
               placeholder="Mesures techniques + organisationnelles ramenant le risque à un niveau acceptable."></textarea>
   </mat-form-field>
 
-  <h3 class="section">Risque résiduel & consultation</h3>
+  <h3 class="section" i18n="@@dpia.edit.residual-section">Risque résiduel & consultation</h3>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Niveau de risque résiduel</mat-label>
+    <mat-label i18n="@@dpia.edit.residual-risk-label">Niveau de risque résiduel</mat-label>
     <mat-select formControlName="overallRiskLevel" required>
       <mat-option *ngFor="let r of risks" [value]="r">{{ r }}</mat-option>
     </mat-select>
   </mat-form-field>
 
-  <mat-checkbox formControlName="consultationRequired">
+  <mat-checkbox formControlName="consultationRequired" i18n="@@dpia.edit.consultation-checkbox">
     Consultation préalable de l'autorité de contrôle requise (Art. 36)
   </mat-checkbox>
 
   <mat-form-field appearance="outline" class="full" *ngIf="form.controls.consultationRequired.value">
-    <mat-label>Notes consultation (CNIL/EDPB)</mat-label>
+    <mat-label i18n="@@dpia.edit.consultation-notes-label">Notes consultation (CNIL/EDPB)</mat-label>
     <textarea matInput formControlName="consultationNotes" rows="3" maxlength="8000"
+              i18n-placeholder="@@dpia.edit.consultation-notes-placeholder"
               placeholder="Date contact, références échanges, réponse attendue…"></textarea>
   </mat-form-field>
 

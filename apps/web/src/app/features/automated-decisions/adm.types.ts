@@ -3,15 +3,15 @@ export type AdmType = 'PROFILING_ONLY' | 'AUTOMATED_DECISION' | 'AUTOMATED_DECIS
 export type Art22Basis = 'EXPLICIT_CONSENT' | 'CONTRACTUAL_NECESSITY' | 'AUTHORIZED_BY_LAW';
 
 export const TYPE_LABEL: Record<AdmType, string> = {
-  PROFILING_ONLY:                       'Profilage seul (Art. 4.4)',
-  AUTOMATED_DECISION:                   'Décision automatisée — sans effet juridique',
-  AUTOMATED_DECISION_WITH_LEGAL_EFFECT: 'Décision automatisée — avec effet juridique (Art. 22.1)'
+  PROFILING_ONLY:                       $localize`:@@automated-decisions.type.profiling-only:Profilage seul (Art. 4.4)`,
+  AUTOMATED_DECISION:                   $localize`:@@automated-decisions.type.automated-decision:Décision automatisée — sans effet juridique`,
+  AUTOMATED_DECISION_WITH_LEGAL_EFFECT: $localize`:@@automated-decisions.type.legal-effect:Décision automatisée — avec effet juridique (Art. 22.1)`
 };
 
 export const BASIS_LABEL: Record<Art22Basis, string> = {
-  EXPLICIT_CONSENT:      'Consentement explicite',
-  CONTRACTUAL_NECESSITY: 'Nécessité contractuelle',
-  AUTHORIZED_BY_LAW:     'Autorisée par la loi UE/État membre'
+  EXPLICIT_CONSENT:      $localize`:@@automated-decisions.basis.explicit-consent:Consentement explicite`,
+  CONTRACTUAL_NECESSITY: $localize`:@@automated-decisions.basis.contractual-necessity:Nécessité contractuelle`,
+  AUTHORIZED_BY_LAW:     $localize`:@@automated-decisions.basis.authorized-by-law:Autorisée par la loi UE/État membre`
 };
 
 export interface AdmView {

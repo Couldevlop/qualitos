@@ -43,14 +43,14 @@ export class AiQmsDetailComponent implements OnInit {
       switchMap(p => {
         const id = p.get('id') ?? '';
         if (!UUID_REGEX.test(id) && !id.startsWith('qms-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
         return this.refresh$.pipe(
           switchMap(() => this.svc.get(id).pipe(
             catchError(err => {
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             }),
             tap(() => this.loading$.next(false))
@@ -62,7 +62,7 @@ export class AiQmsDetailComponent implements OnInit {
 
   openEdit(q: AiQmsView): void {
     if (q.status !== 'DRAFT') {
-      this.snack.open('Seul un DRAFT peut être édité.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@ai-qms.detail.only-draft-edit:Seul un DRAFT peut être édité.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(AiQmsDialogComponent, {
@@ -83,16 +83,16 @@ export class AiQmsDetailComponent implements OnInit {
   putInForce(q: AiQmsView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Mettre en vigueur ?',
-        message: 'Toute version IN_FORCE précédente pour la référence « ' + q.reference + ' » sera automatiquement marquée SUPERSEDED.',
-        confirmLabel: 'Mettre en vigueur', cancelLabel: 'Annuler', danger: false
+        title: $localize`:@@ai-qms.detail.put-in-force-title:Mettre en vigueur ?`,
+        message: $localize`:@@ai-qms.detail.put-in-force-message:Toute version IN_FORCE précédente pour la référence « ${q.reference}:reference: » sera automatiquement marquée SUPERSEDED.`,
+        confirmLabel: $localize`:@@ai-qms.detail.put-in-force:Mettre en vigueur`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: false
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.putInForce(q.id).subscribe({
-        next: () => { this.snack.open('QMS en vigueur.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Mise en vigueur impossible.')
+        next: () => { this.snack.open($localize`:@@ai-qms.detail.in-force:QMS en vigueur.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@ai-qms.detail.put-in-force-failed:Mise en vigueur impossible.`)
       });
     });
   }
@@ -101,42 +101,42 @@ export class AiQmsDetailComponent implements OnInit {
     // Simple confirm avec reason — pour rester compact, reason demandée via prompt côté UI minimaliste
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Archiver ce QMS ?',
-        message: 'L\'archivage est terminal. Saisissez le motif au prochain prompt.',
-        confirmLabel: 'Archiver', cancelLabel: 'Annuler', danger: true
+        title: $localize`:@@ai-qms.detail.archive-title:Archiver ce QMS ?`,
+        message: $localize`:@@ai-qms.detail.archive-message:L'archivage est terminal. Saisissez le motif au prochain prompt.`,
+        confirmLabel: $localize`:@@ai-qms.detail.archive:Archiver`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
-      const reason = prompt('Motif d\'archivage (obligatoire, ≤ 2000 chars) :');
+      const reason = prompt($localize`:@@ai-qms.detail.archive-prompt:Motif d'archivage (obligatoire, ≤ 2000 chars) :`);
       if (!reason || !reason.trim()) {
-        this.snack.open('Motif obligatoire — archivage annulé.', 'OK', { duration: 3000 });
+        this.snack.open($localize`:@@ai-qms.detail.reason-required:Motif obligatoire — archivage annulé.`, $localize`:@@common.ok:OK`, { duration: 3000 });
         return;
       }
       this.svc.archive(q.id, { reason: reason.trim() }).subscribe({
-        next: () => { this.snack.open('QMS archivé.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Archivage impossible.')
+        next: () => { this.snack.open($localize`:@@ai-qms.detail.archived:QMS archivé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@ai-qms.detail.archive-failed:Archivage impossible.`)
       });
     });
   }
 
   remove(q: AiQmsView): void {
     if (q.status !== 'DRAFT') {
-      this.snack.open('Seul un DRAFT peut être supprimé.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@ai-qms.detail.only-draft-delete:Seul un DRAFT peut être supprimé.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer le brouillon ?',
-        message: 'Suppression définitive de « ' + q.reference + ' v' + q.version + ' ».',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        title: $localize`:@@ai-qms.detail.delete-title:Supprimer le brouillon ?`,
+        message: $localize`:@@ai-qms.detail.delete-message:Suppression définitive de « ${q.reference}:reference: v${q.version}:version: ».`,
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(q.id).subscribe({
-        next: () => { this.snack.open('Brouillon supprimé.', 'OK', { duration: 2200 }); this.router.navigate(['/ai-qms']); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        next: () => { this.snack.open($localize`:@@ai-qms.detail.deleted:Brouillon supprimé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/ai-qms']); },
+        error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
       });
     });
   }
@@ -146,6 +146,6 @@ export class AiQmsDetailComponent implements OnInit {
   private fail(err: unknown, fallback: string): void {
     // eslint-disable-next-line no-console
     console.warn('[ai-qms-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
-    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+    this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 4000 });
   }
 }

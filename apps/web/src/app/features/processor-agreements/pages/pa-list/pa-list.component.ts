@@ -49,7 +49,7 @@ export class PaListComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[pa-list] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return of([] as PaView[]);
           }),
           finalize(() => this.loading$.next(false))
@@ -72,12 +72,12 @@ export class PaListComponent implements OnInit {
     this.svc.expireDue(200).subscribe({
       next: r => {
         this.expiring = false;
-        this.snack.open('Maintenance : ' + r.expired + ' DPA expiré(s).', 'OK', { duration: 3500 });
+        this.snack.open($localize`:@@dpa.list.maintenance-done:Maintenance : ${r.expired}:count: DPA expiré(s).`, $localize`:@@common.ok:OK`, { duration: 3500 });
         this.refresh$.next();
       },
       error: err => {
         this.expiring = false;
-        this.snack.open(safeErrorMessage(err, 'Maintenance impossible.'), 'OK', { duration: 4000 });
+        this.snack.open(safeErrorMessage(err, $localize`:@@dpa.list.maintenance-failed:Maintenance impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
       }
     });
   }

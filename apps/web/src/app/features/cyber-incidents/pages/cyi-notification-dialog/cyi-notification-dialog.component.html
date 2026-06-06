@@ -5,17 +5,18 @@
   [submitDisabled]="form.invalid"
   submitIcon="send"
   submitLabel="Enregistrer"
+  i18n-submitLabel="@@common.save"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <p class="hint">{{ hint }}</p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Date / heure d'envoi</mat-label>
+    <mat-label i18n="@@cyber-incidents.notification.sent-at">Date / heure d'envoi</mat-label>
     <input matInput type="datetime-local" formControlName="sentAt" required>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Référence de la notification CSIRT</mat-label>
+    <mat-label i18n="@@cyber-incidents.notification.csirt-reference">Référence de la notification CSIRT</mat-label>
     <input matInput formControlName="reference" maxlength="250" required
            placeholder="CSIRT-FR-2026-INC-XXX">
   </mat-form-field>

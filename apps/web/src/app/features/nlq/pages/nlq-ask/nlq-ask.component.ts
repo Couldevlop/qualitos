@@ -23,10 +23,10 @@ export class NlqAskComponent {
   });
 
   readonly examples: string[] = [
-    'Combien de CAPA par statut ?',
-    'Nombre de diagrammes Ishikawa par statut',
-    'Combien de CAPA par criticité ?',
-    'Nombre de fournisseurs par statut'
+    $localize`:@@nlq.ask.example-1:Combien de CAPA par statut ?`,
+    $localize`:@@nlq.ask.example-2:Nombre de diagrammes Ishikawa par statut`,
+    $localize`:@@nlq.ask.example-3:Combien de CAPA par criticité ?`,
+    $localize`:@@nlq.ask.example-4:Nombre de fournisseurs par statut`
   ];
 
   loading = false;
@@ -105,13 +105,25 @@ export class NlqAskComponent {
     return c >= 0.8 ? 'ok' : c >= 0.5 ? 'warn' : 'bad';
   }
 
+  tenantFilterLabel(): string {
+    return this.result?.tenantFilterApplied
+      ? $localize`:@@nlq.ask.tenant-filtered:Filtré par tenant`
+      : $localize`:@@nlq.ask.tenant-unfiltered:Tenant non filtré`;
+  }
+
+  sqlToggleLabel(): string {
+    return this.showSql
+      ? $localize`:@@nlq.ask.hide-sql:Masquer le SQL`
+      : $localize`:@@nlq.ask.show-sql:Voir le SQL généré`;
+  }
+
   private messageFor(err: HttpErrorResponse): string {
     if (err.status === 502 || err.status === 503) {
-      return "L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessaie dans un instant.";
+      return $localize`:@@nlq.ask.err-unavailable:L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessaie dans un instant.`;
     }
     if (err.status === 422 || err.status === 400) {
-      return "La question n'a pas pu être traduite en requête sûre. Reformule-la plus simplement.";
+      return $localize`:@@nlq.ask.err-untranslatable:La question n'a pas pu être traduite en requête sûre. Reformule-la plus simplement.`;
     }
-    return "Une erreur est survenue lors du traitement de la question.";
+    return $localize`:@@nlq.ask.err-generic:Une erreur est survenue lors du traitement de la question.`;
   }
 }

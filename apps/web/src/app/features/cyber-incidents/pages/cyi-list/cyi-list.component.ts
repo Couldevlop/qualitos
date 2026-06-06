@@ -58,7 +58,7 @@ export class CyiListComponent implements OnInit {
         }
         return src$.pipe(
           catchError(err => {
-            this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return of([] as CyiView[]);
           }),
           tap(() => this.loading$.next(false)),
@@ -77,7 +77,7 @@ export class CyiListComponent implements OnInit {
     this.dialog.open(CyiDetectDialogComponent, {
       panelClass: 'qos-dialog-panel', autoFocus: 'first-tabbable', restoreFocus: true
     }).afterClosed().subscribe((i?: CyiView) => {
-      if (i) { this.snack.open('Incident enregistré.', 'OK', { duration: 2200 }); this.refresh$.next(); }
+      if (i) { this.snack.open($localize`:@@cyber-incidents.list.recorded:Incident enregistré.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); }
     });
   }
 

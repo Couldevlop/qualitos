@@ -50,7 +50,7 @@ export class RopaListComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[ropa-list] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return of([] as ProcessingActivityView[]);
           }),
           finalize(() => this.loading$.next(false))
@@ -71,12 +71,12 @@ export class RopaListComponent implements OnInit {
 
   basisLabel(b: LawfulBasis): string {
     return ({
-      CONSENT: 'Consentement (6.1.a)',
-      CONTRACT: 'Contrat (6.1.b)',
-      LEGAL_OBLIGATION: 'Obligation légale (6.1.c)',
-      VITAL_INTERESTS: 'Intérêts vitaux (6.1.d)',
-      PUBLIC_TASK: 'Mission de service public (6.1.e)',
-      LEGITIMATE_INTERESTS: 'Intérêt légitime (6.1.f)'
+      CONSENT: $localize`:@@ropa.list.basis-consent:Consentement (6.1.a)`,
+      CONTRACT: $localize`:@@ropa.list.basis-contract:Contrat (6.1.b)`,
+      LEGAL_OBLIGATION: $localize`:@@ropa.list.basis-legal-obligation:Obligation légale (6.1.c)`,
+      VITAL_INTERESTS: $localize`:@@ropa.list.basis-vital-interests:Intérêts vitaux (6.1.d)`,
+      PUBLIC_TASK: $localize`:@@ropa.list.basis-public-task:Mission de service public (6.1.e)`,
+      LEGITIMATE_INTERESTS: $localize`:@@ropa.list.basis-legitimate-interests:Intérêt légitime (6.1.f)`
     })[b];
   }
   basisBadge(b: LawfulBasis): string  { return 'lb lb-' + b.toLowerCase(); }

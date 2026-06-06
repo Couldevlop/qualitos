@@ -42,8 +42,8 @@ export class DpoActivateDialogComponent {
     // OWASP A04 — la notification doit être antérieure ou simultanée à l'activation
     if (new Date(v.regulatorNotifiedAt) > new Date(v.effectiveFrom)) {
       this.snack.open(
-        'La notification à l\'autorité doit être antérieure ou simultanée à la prise d\'effet (Art. 37§7).',
-        'OK', { duration: 4500 }
+        $localize`:@@dpo-appointments.activate.notif-before-effect:La notification à l'autorité doit être antérieure ou simultanée à la prise d'effet (Art. 37§7).`,
+        $localize`:@@common.ok:OK`, { duration: 4500 }
       );
       return;
     }
@@ -55,11 +55,11 @@ export class DpoActivateDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: a => { this.snack.open('Désignation activée.', 'OK', { duration: 2500 }); this.dialogRef.close(a); },
+        next: a => { this.snack.open($localize`:@@dpo-appointments.activate.activated-toast:Désignation activée.`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(a); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[dpo-activate] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Activation impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@dpo-appointments.activate.failed:Activation impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

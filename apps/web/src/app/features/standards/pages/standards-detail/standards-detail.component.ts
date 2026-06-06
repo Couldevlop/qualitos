@@ -88,7 +88,7 @@ export class StandardsDetailComponent implements OnInit {
         this.loadReports();
         this.loading = false;
       },
-      error: () => { this.error = "Impossible de charger l'adoption."; this.loading = false; }
+      error: () => { this.error = $localize`:@@standards.detail.load-error:Impossible de charger l'adoption.`; this.loading = false; }
     });
   }
 
@@ -110,10 +110,10 @@ export class StandardsDetailComponent implements OnInit {
     if (stage.status === status) return;
     this.svc.updateStage(this.adoptionId, stage.id, { status }).subscribe({
       next: () => {
-        this.snack.open(`Étape ${stage.stepNumber} → ${status}`, 'OK', { duration: 2000 });
+        this.snack.open($localize`:@@standards.detail.stage-updated:Étape ${stage.stepNumber}:step: → ${status}:status:`, $localize`:@@common.ok:OK`, { duration: 2000 });
         this.svc.getRoadmap(this.adoptionId).subscribe(r => this.roadmap = r);
       },
-      error: () => this.snack.open('Échec de la mise à jour', 'Fermer', { duration: 3000 })
+      error: () => this.snack.open($localize`:@@standards.detail.stage-update-error:Échec de la mise à jour`, $localize`:@@common.close:Fermer`, { duration: 3000 })
     });
   }
 
@@ -127,12 +127,12 @@ export class StandardsDetailComponent implements OnInit {
 
   linkEvidence(): void {
     if (!this.linkRequirementId) {
-      this.snack.open('Sélectionnez une exigence', 'OK', { duration: 2500 });
+      this.snack.open($localize`:@@standards.detail.select-requirement:Sélectionnez une exigence`, $localize`:@@common.ok:OK`, { duration: 2500 });
       return;
     }
     const linkedBy = this.auth.snapshot()?.userId;
     if (!linkedBy) {
-      this.snack.open('Session expirée', 'Fermer', { duration: 3000 });
+      this.snack.open($localize`:@@standards.detail.session-expired-short:Session expirée`, $localize`:@@common.close:Fermer`, { duration: 3000 });
       return;
     }
     this.linking = true;
@@ -146,14 +146,15 @@ export class StandardsDetailComponent implements OnInit {
       next: () => {
         this.linking = false;
         this.linkNote = ''; this.linkUri = ''; this.linkRequirementId = '';
-        this.snack.open('Preuve liée — scores recalculés', 'OK', { duration: 2500 });
+        this.snack.open($localize`:@@standards.detail.evidence-linked:Preuve liée — scores recalculés`, $localize`:@@common.ok:OK`, { duration: 2500 });
         this.loadReports();
       },
       error: err => {
         this.linking = false;
-        const msg = err?.status === 409 ? 'Cette preuve est déjà liée à cette exigence'
-          : 'Échec de la liaison de preuve';
-        this.snack.open(msg, 'Fermer', { duration: 3000 });
+        const msg = err?.status === 409
+          ? $localize`:@@standards.detail.evidence-conflict:Cette preuve est déjà liée à cette exigence`
+          : $localize`:@@standards.detail.evidence-link-error:Échec de la liaison de preuve`;
+        this.snack.open(msg, $localize`:@@common.close:Fermer`, { duration: 3000 });
       }
     });
   }
@@ -161,10 +162,10 @@ export class StandardsDetailComponent implements OnInit {
   unlinkEvidence(ev: EvidenceResponse): void {
     this.svc.unlinkEvidence(this.adoptionId, ev.id).subscribe({
       next: () => {
-        this.snack.open('Preuve retirée', 'OK', { duration: 2000 });
+        this.snack.open($localize`:@@standards.detail.evidence-unlinked:Preuve retirée`, $localize`:@@common.ok:OK`, { duration: 2000 });
         this.loadReports();
       },
-      error: () => this.snack.open('Échec du retrait', 'Fermer', { duration: 3000 })
+      error: () => this.snack.open($localize`:@@standards.detail.evidence-unlink-error:Échec du retrait`, $localize`:@@common.close:Fermer`, { duration: 3000 })
     });
   }
 
@@ -176,11 +177,11 @@ export class StandardsDetailComponent implements OnInit {
       next: d => {
         this.dossier = d;
         this.generatingDossier = false;
-        this.snack.open('Dossier généré et ancré (SHA-256)', 'OK', { duration: 2500 });
+        this.snack.open($localize`:@@standards.detail.dossier-success:Dossier généré et ancré (SHA-256)`, $localize`:@@common.ok:OK`, { duration: 2500 });
       },
       error: () => {
         this.generatingDossier = false;
-        this.snack.open('Échec de la génération du dossier', 'Fermer', { duration: 3000 });
+        this.snack.open($localize`:@@standards.detail.dossier-error:Échec de la génération du dossier`, $localize`:@@common.close:Fermer`, { duration: 3000 });
       }
     });
   }
@@ -194,7 +195,7 @@ export class StandardsDetailComponent implements OnInit {
       },
       error: () => {
         this.generatingStoryboard = false;
-        this.snack.open('Récit IA indisponible (ai-service / Ollama)', 'Fermer', { duration: 3500 });
+        this.snack.open($localize`:@@standards.detail.storyboard-unavailable:Récit IA indisponible (ai-service / Ollama)`, $localize`:@@common.close:Fermer`, { duration: 3500 });
       }
     });
   }
@@ -218,11 +219,11 @@ export class StandardsDetailComponent implements OnInit {
       next: r => {
         this.certBlanc = r;
         this.runningCertBlanc = false;
-        this.snack.open('Certification à blanc simulée et ancrée', 'OK', { duration: 2500 });
+        this.snack.open($localize`:@@standards.detail.cert-blanc-success:Certification à blanc simulée et ancrée`, $localize`:@@common.ok:OK`, { duration: 2500 });
       },
       error: () => {
         this.runningCertBlanc = false;
-        this.snack.open('Échec de la simulation', 'Fermer', { duration: 3000 });
+        this.snack.open($localize`:@@standards.detail.cert-blanc-error:Échec de la simulation`, $localize`:@@common.close:Fermer`, { duration: 3000 });
       }
     });
   }
@@ -243,7 +244,7 @@ export class StandardsDetailComponent implements OnInit {
         a.href = url; a.download = filename; a.click();
         URL.revokeObjectURL(url);
       },
-      error: () => this.snack.open('Téléchargement du modèle impossible', 'Fermer', { duration: 3000 })
+      error: () => this.snack.open($localize`:@@standards.detail.template-download-error:Téléchargement du modèle impossible`, $localize`:@@common.close:Fermer`, { duration: 3000 })
     });
   }
 
@@ -257,11 +258,11 @@ export class StandardsDetailComponent implements OnInit {
       next: r => {
         this.aiDraft = r;
         this.generatingDraftId = undefined;
-        this.snack.open(`Brouillon généré (${r.provider}, ${r.latencyMs} ms)`, 'OK', { duration: 2500 });
+        this.snack.open($localize`:@@standards.detail.ai-draft-success:Brouillon généré (${r.provider}:provider:, ${r.latencyMs}:latency: ms)`, $localize`:@@common.ok:OK`, { duration: 2500 });
       },
       error: () => {
         this.generatingDraftId = undefined;
-        this.snack.open('Génération IA indisponible (ai-service / Ollama)', 'Fermer', { duration: 3500 });
+        this.snack.open($localize`:@@standards.detail.ai-draft-unavailable:Génération IA indisponible (ai-service / Ollama)`, $localize`:@@common.close:Fermer`, { duration: 3500 });
       }
     });
   }
@@ -273,7 +274,11 @@ export class StandardsDetailComponent implements OnInit {
   }
 
   obligationLabel(o: string): string {
-    return o === 'MANDATORY' ? 'Obligatoire' : o === 'RECOMMENDED' ? 'Recommandé' : 'Optionnel';
+    return o === 'MANDATORY'
+      ? $localize`:@@standards.detail.obligation-mandatory:Obligatoire`
+      : o === 'RECOMMENDED'
+        ? $localize`:@@standards.detail.obligation-recommended:Recommandé`
+        : $localize`:@@standards.detail.obligation-optional:Optionnel`;
   }
 
   revisionClass(status: string): string {

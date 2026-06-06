@@ -45,14 +45,14 @@ export class PmmDetailComponent implements OnInit {
       switchMap(p => {
         const id = p.get('id') ?? '';
         if (!UUID_REGEX.test(id) && !id.startsWith('pmm-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
         return this.refresh$.pipe(
           switchMap(() => this.svc.get(id).pipe(
             catchError(err => {
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             }),
             tap(() => this.loading$.next(false))
@@ -71,27 +71,27 @@ export class PmmDetailComponent implements OnInit {
 
   activate(p: PmmPlanView): void {
     this.svc.activate(p.id).subscribe({
-      next: () => { this.snack.open('Plan activé.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Activation impossible.')
+      next: () => { this.snack.open($localize`:@@ai-pmm.detail.activated:Plan activé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@ai-pmm.detail.activate-failed:Activation impossible.`)
     });
   }
 
   recordReview(p: PmmPlanView): void {
     const userId = this.auth.snapshot()?.userId;
     if (!userId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Enregistrer une revue ?',
-              message: 'La date de revue sera horodatée maintenant. La prochaine échéance est recalculée.',
-              confirmLabel: 'Enregistrer', cancelLabel: 'Annuler', danger: false }
+      data: { title: $localize`:@@ai-pmm.detail.record-review-title:Enregistrer une revue ?`,
+              message: $localize`:@@ai-pmm.detail.record-review-message:La date de revue sera horodatée maintenant. La prochaine échéance est recalculée.`,
+              confirmLabel: $localize`:@@common.save:Enregistrer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: false }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.recordReview(p.id, { reviewedByUserId: userId }).subscribe({
-        next: () => { this.snack.open('Revue enregistrée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Enregistrement impossible.')
+        next: () => { this.snack.open($localize`:@@ai-pmm.detail.review-recorded:Revue enregistrée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@ai-pmm.detail.review-failed:Enregistrement impossible.`)
       });
     });
   }
@@ -112,14 +112,14 @@ export class PmmDetailComponent implements OnInit {
 
   remove(p: PmmPlanView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Supprimer le plan PMM ?', message: 'Suppression définitive.',
-              confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true }
+      data: { title: $localize`:@@ai-pmm.detail.delete-title:Supprimer le plan PMM ?`, message: $localize`:@@ai-pmm.detail.delete-message:Suppression définitive.`,
+              confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(p.id).subscribe({
-        next: () => { this.snack.open('Plan supprimé.', 'OK', { duration: 2200 }); this.router.navigate(['/ai-pmm']); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        next: () => { this.snack.open($localize`:@@ai-pmm.detail.deleted:Plan supprimé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/ai-pmm']); },
+        error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
       });
     });
   }
@@ -140,6 +140,6 @@ export class PmmDetailComponent implements OnInit {
   private fail(err: unknown, fallback: string): void {
     // eslint-disable-next-line no-console
     console.warn('[pmm-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
-    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+    this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 4000 });
   }
 }

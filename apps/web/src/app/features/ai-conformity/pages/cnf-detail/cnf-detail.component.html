@@ -4,7 +4,7 @@
     <header class="head">
       <div class="meta">
         <a routerLink="/ai-conformity" class="back">
-          <mat-icon>arrow_back</mat-icon> Évaluations de conformité
+          <mat-icon>arrow_back</mat-icon> <span i18n="@@ai-conformity.detail.back">Évaluations de conformité</span>
         </a>
         <h1>
           <code>{{ c.reference }}</code>
@@ -12,52 +12,52 @@
         <div class="meta-row">
           <span [class]="procedureBadge(c.procedure)">{{ procedureLabel(c.procedure) }}</span>
           <span [class]="statusBadge(c.status)">{{ c.status }}</span>
-          <span class="dim" *ngIf="c.validUntil">Valide jusqu'au {{ c.validUntil | slice:0:10 }}</span>
+          <span class="dim" *ngIf="c.validUntil"><span i18n="@@ai-conformity.detail.valid-until">Valide jusqu'au</span> {{ c.validUntil | slice:0:10 }}</span>
         </div>
       </div>
 
       <div class="toolbar">
         <button mat-flat-button color="primary" *ngIf="c.status === 'PLANNED'" (click)="start(c)">
-          <mat-icon>play_arrow</mat-icon> Démarrer
+          <mat-icon>play_arrow</mat-icon> <span i18n="@@ai-conformity.detail.start">Démarrer</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="c.status === 'IN_PROGRESS'" (click)="certify(c)">
-          <mat-icon>verified</mat-icon> Certifier
+          <mat-icon>verified</mat-icon> <span i18n="@@ai-conformity.detail.certify">Certifier</span>
         </button>
         <button mat-stroked-button color="warn" *ngIf="c.status === 'CERTIFIED'" (click)="markExpired(c)">
-          <mat-icon>schedule</mat-icon> Marquer expiré
+          <mat-icon>schedule</mat-icon> <span i18n="@@ai-conformity.detail.mark-expired">Marquer expiré</span>
         </button>
         <button mat-stroked-button color="warn"
                 *ngIf="c.status === 'PLANNED' || c.status === 'IN_PROGRESS' || c.status === 'CERTIFIED'"
                 (click)="revoke(c)">
-          <mat-icon>cancel</mat-icon> Révoquer
+          <mat-icon>cancel</mat-icon> <span i18n="@@ai-conformity.detail.revoke">Révoquer</span>
         </button>
         <button mat-stroked-button color="warn"
                 *ngIf="c.status === 'PLANNED' || c.status === 'IN_PROGRESS'"
                 (click)="failed(c)">
-          <mat-icon>block</mat-icon> Échec
+          <mat-icon>block</mat-icon> <span i18n="@@ai-conformity.detail.fail">Échec</span>
         </button>
         <button mat-stroked-button color="warn" (click)="remove(c)" [disabled]="c.status !== 'PLANNED'">
-          <mat-icon>delete</mat-icon> Supprimer
+          <mat-icon>delete</mat-icon> <span i18n="@@common.delete">Supprimer</span>
         </button>
       </div>
     </header>
 
     <div class="grid">
       <mat-card>
-        <mat-card-header><mat-card-title>Périmètre</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-conformity.detail.scope">Périmètre</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ c.scope }}</p></mat-card-content>
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Procédure</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-conformity.detail.procedure">Procédure</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>Type</th><td>{{ procedureLabel(c.procedure) }}</td></tr>
-            <tr *ngIf="c.notifiedBodyId"><th>ID organisme</th><td><code>NB{{ c.notifiedBodyId }}</code></td></tr>
-            <tr *ngIf="c.notifiedBodyName"><th>Organisme</th><td>{{ c.notifiedBodyName }}</td></tr>
-            <tr><th>Système IA</th><td><code>{{ c.aiSystemId }}</code></td></tr>
+            <tr><th i18n="@@common.type">Type</th><td>{{ procedureLabel(c.procedure) }}</td></tr>
+            <tr *ngIf="c.notifiedBodyId"><th i18n="@@ai-conformity.detail.body-id">ID organisme</th><td><code>NB{{ c.notifiedBodyId }}</code></td></tr>
+            <tr *ngIf="c.notifiedBodyName"><th i18n="@@ai-conformity.detail.body">Organisme</th><td>{{ c.notifiedBodyName }}</td></tr>
+            <tr><th i18n="@@ai-conformity.detail.ai-system">Système IA</th><td><code>{{ c.aiSystemId }}</code></td></tr>
             <tr *ngIf="c.qmsId">
-              <th>QMS lié</th>
+              <th i18n="@@ai-conformity.detail.linked-qms">QMS lié</th>
               <td><a [routerLink]="['/ai-qms', c.qmsId]"><code>{{ c.qmsId }}</code></a></td>
             </tr>
           </table>
@@ -65,41 +65,41 @@
       </mat-card>
 
       <mat-card *ngIf="c.status === 'CERTIFIED' || c.status === 'EXPIRED'" class="ok-card">
-        <mat-card-header><mat-card-title>Certificat</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-conformity.detail.certificate">Certificat</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>N° certificat</th><td><code>{{ c.certificateNumber }}</code></td></tr>
-            <tr><th>Déclaration UE</th><td><code>{{ c.euDeclarationReference }}</code></td></tr>
-            <tr><th>Certifié le</th><td>{{ c.certifiedAt }}</td></tr>
-            <tr><th>Valide jusqu'au</th><td>{{ c.validUntil | slice:0:10 }}</td></tr>
+            <tr><th i18n="@@ai-conformity.detail.certificate-number">N° certificat</th><td><code>{{ c.certificateNumber }}</code></td></tr>
+            <tr><th i18n="@@ai-conformity.detail.eu-declaration">Déclaration UE</th><td><code>{{ c.euDeclarationReference }}</code></td></tr>
+            <tr><th i18n="@@ai-conformity.detail.certified-at">Certifié le</th><td>{{ c.certifiedAt }}</td></tr>
+            <tr><th i18n="@@ai-conformity.detail.valid-until-th">Valide jusqu'au</th><td>{{ c.validUntil | slice:0:10 }}</td></tr>
           </table>
         </mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="c.revokeReason" class="warn-card">
-        <mat-card-header><mat-card-title>Révocation</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-conformity.detail.revocation">Révocation</mat-card-title></mat-card-header>
         <mat-card-content>
           <p class="text">{{ c.revokeReason }}</p>
-          <p class="dim">Révoqué le {{ c.revokedAt }}</p>
+          <p class="dim"><span i18n="@@ai-conformity.detail.revoked-on">Révoqué le</span> {{ c.revokedAt }}</p>
         </mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="c.failReason" class="warn-card">
-        <mat-card-header><mat-card-title>Échec</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-conformity.detail.failure">Échec</mat-card-title></mat-card-header>
         <mat-card-content>
           <p class="text">{{ c.failReason }}</p>
-          <p class="dim">Marqué FAILED le {{ c.failedAt }}</p>
+          <p class="dim"><span i18n="@@ai-conformity.detail.failed-on">Marqué FAILED le</span> {{ c.failedAt }}</p>
         </mat-card-content>
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Trace</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-conformity.detail.trace">Trace</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>Créé par</th><td><code>{{ c.createdByUserId }}</code></td></tr>
-            <tr><th>Créé le</th><td>{{ c.createdAt }}</td></tr>
-            <tr *ngIf="c.startedAt"><th>Démarré le</th><td>{{ c.startedAt }}</td></tr>
-            <tr><th>Dernière MAJ</th><td>{{ c.updatedAt }}</td></tr>
+            <tr><th i18n="@@ai-conformity.detail.created-by">Créé par</th><td><code>{{ c.createdByUserId }}</code></td></tr>
+            <tr><th i18n="@@common.created-at">Créé le</th><td>{{ c.createdAt }}</td></tr>
+            <tr *ngIf="c.startedAt"><th i18n="@@ai-conformity.detail.started-at">Démarré le</th><td>{{ c.startedAt }}</td></tr>
+            <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ c.updatedAt }}</td></tr>
           </table>
         </mat-card-content>
       </mat-card>
@@ -110,7 +110,7 @@
 
 <ng-template #fallback>
   <section class="cnf-detail">
-    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
     <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
   </section>
 </ng-template>

@@ -63,15 +63,15 @@ export class AuditsResponseDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: item => {
-          this.snack.open('Réponse enregistrée.', 'OK', { duration: 2000 });
+          this.snack.open($localize`:@@audits.response.saved:Réponse enregistrée.`, $localize`:@@common.ok:OK`, { duration: 2000 });
           this.dialogRef.close(item);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[audits-response-dialog] failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'),
-            'OK', { duration: 4000 }
+            safeErrorMessage(err, $localize`:@@audits.response.save-error:Erreur lors de l'enregistrement.`),
+            $localize`:@@common.ok:OK`, { duration: 4000 }
           );
         }
       });

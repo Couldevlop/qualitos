@@ -3,7 +3,7 @@
 
     <header class="head">
       <div class="meta">
-        <a routerLink="/ropa" class="back"><mat-icon>arrow_back</mat-icon> Registre RGPD</a>
+        <a routerLink="/ropa" class="back"><mat-icon>arrow_back</mat-icon> <span i18n="@@ropa.detail.back">Registre RGPD</span></a>
         <h1>
           <code>{{ a.reference }}</code>
           {{ a.name }}
@@ -11,57 +11,57 @@
         <div class="meta-row">
           <span [class]="basisBadge(a.lawfulBasis)">{{ basisLabel(a.lawfulBasis) }}</span>
           <span [class]="statusBadge(a.status)">{{ a.status }}</span>
-          <span class="dim" *ngIf="a.effectiveFrom">Effectif depuis : {{ a.effectiveFrom }}</span>
-          <span class="dim" *ngIf="a.effectiveTo">Archivé : {{ a.effectiveTo }}</span>
+          <span class="dim" *ngIf="a.effectiveFrom"><span i18n="@@ropa.detail.effective-from">Effectif depuis :</span> {{ a.effectiveFrom }}</span>
+          <span class="dim" *ngIf="a.effectiveTo"><span i18n="@@ropa.detail.archived-on">Archivé :</span> {{ a.effectiveTo }}</span>
         </div>
         <p *ngIf="a.specialCategoriesProcessed" class="special-banner">
           <mat-icon>priority_high</mat-icon>
-          Catégories particulières Art. 9 RGPD traitées
+          <span i18n="@@ropa.detail.special-banner">Catégories particulières Art. 9 RGPD traitées</span>
         </p>
       </div>
 
       <div class="toolbar">
         <button mat-stroked-button (click)="openEdit(a)" [disabled]="a.status !== 'DRAFT'"
-                [matTooltip]="a.status !== 'DRAFT' ? 'Une fiche ACTIVE est immutable' : 'Modifier le brouillon'">
-          <mat-icon>edit</mat-icon> Modifier
+                [matTooltip]="a.status !== 'DRAFT' ? editTooltipImmutable : editTooltipDraft">
+          <mat-icon>edit</mat-icon> <span i18n="@@common.edit">Modifier</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="a.status === 'DRAFT'" (click)="activate(a)">
-          <mat-icon>play_arrow</mat-icon> Activer
+          <mat-icon>play_arrow</mat-icon> <span i18n="@@ropa.detail.activate">Activer</span>
         </button>
         <button mat-stroked-button color="warn" *ngIf="a.status !== 'ARCHIVED'" (click)="archive(a)">
-          <mat-icon>inventory_2</mat-icon> Archiver
+          <mat-icon>inventory_2</mat-icon> <span i18n="@@ropa.detail.archive">Archiver</span>
         </button>
         <button mat-stroked-button color="warn" (click)="remove(a)" [disabled]="a.status === 'ACTIVE'"
-                [matTooltip]="a.status === 'ACTIVE' ? 'Impossible — archivez d\'abord' : 'Supprimer'">
-          <mat-icon>delete</mat-icon> Supprimer
+                [matTooltip]="a.status === 'ACTIVE' ? deleteTooltipActive : deleteTooltipDefault">
+          <mat-icon>delete</mat-icon> <span i18n="@@common.delete">Supprimer</span>
         </button>
       </div>
     </header>
 
     <mat-card>
-      <mat-card-header><mat-card-title>Finalités</mat-card-title></mat-card-header>
+      <mat-card-header><mat-card-title i18n="@@ropa.detail.purposes-title">Finalités</mat-card-title></mat-card-header>
       <mat-card-content><p class="text">{{ a.purposes }}</p></mat-card-content>
     </mat-card>
 
     <div class="grid">
       <mat-card>
-        <mat-card-header><mat-card-title>Base légale</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ropa.detail.basis-title">Base légale</mat-card-title></mat-card-header>
         <mat-card-content>
           <p><strong>{{ basisLabel(a.lawfulBasis) }}</strong></p>
           <p *ngIf="a.lawfulBasisDetails" class="text">{{ a.lawfulBasisDetails }}</p>
-          <p *ngIf="!a.lawfulBasisDetails" class="dim">Aucun détail renseigné.</p>
+          <p *ngIf="!a.lawfulBasisDetails" class="dim" i18n="@@ropa.detail.basis-no-details">Aucun détail renseigné.</p>
         </mat-card-content>
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Responsables</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ropa.detail.controllers-title">Responsables</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>Responsable</th><td>{{ a.controllerName }}</td></tr>
-            <tr><th>Contact</th><td>{{ a.controllerContact }}</td></tr>
-            <tr *ngIf="a.dpoContact"><th>DPO</th><td>{{ a.dpoContact }}</td></tr>
+            <tr><th i18n="@@ropa.detail.controller">Responsable</th><td>{{ a.controllerName }}</td></tr>
+            <tr><th i18n="@@ropa.detail.contact">Contact</th><td>{{ a.controllerContact }}</td></tr>
+            <tr *ngIf="a.dpoContact"><th i18n="@@ropa.detail.dpo">DPO</th><td>{{ a.dpoContact }}</td></tr>
             <tr *ngIf="a.jointControllerName">
-              <th>Co-responsable</th>
+              <th i18n="@@ropa.detail.joint-controller">Co-responsable</th>
               <td>{{ a.jointControllerName }} <small class="dim">{{ a.jointControllerContact }}</small></td>
             </tr>
           </table>
@@ -69,71 +69,71 @@
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Personnes concernées</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ropa.detail.subjects-title">Personnes concernées</mat-card-title></mat-card-header>
         <mat-card-content>
           <ul class="chip-list" *ngIf="a.dataSubjectCategories?.length; else noSubj">
             <li *ngFor="let c of a.dataSubjectCategories">{{ c }}</li>
           </ul>
-          <ng-template #noSubj><p class="dim">Non renseignées.</p></ng-template>
+          <ng-template #noSubj><p class="dim" i18n="@@ropa.detail.not-filled">Non renseignées.</p></ng-template>
         </mat-card-content>
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Catégories de données</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ropa.detail.data-title">Catégories de données</mat-card-title></mat-card-header>
         <mat-card-content>
           <ul class="chip-list" *ngIf="a.dataCategories?.length; else noData">
             <li *ngFor="let c of a.dataCategories">{{ c }}</li>
           </ul>
-          <ng-template #noData><p class="dim">Non renseignées.</p></ng-template>
+          <ng-template #noData><p class="dim" i18n="@@ropa.detail.not-filled">Non renseignées.</p></ng-template>
         </mat-card-content>
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Destinataires</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ropa.detail.recipients-title">Destinataires</mat-card-title></mat-card-header>
         <mat-card-content>
           <ul class="chip-list" *ngIf="a.recipientCategories?.length; else noRec">
             <li *ngFor="let c of a.recipientCategories">{{ c }}</li>
           </ul>
-          <ng-template #noRec><p class="dim">Aucun destinataire.</p></ng-template>
+          <ng-template #noRec><p class="dim" i18n="@@ropa.detail.no-recipient">Aucun destinataire.</p></ng-template>
         </mat-card-content>
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Transferts hors UE</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ropa.detail.transfers-title">Transferts hors UE</mat-card-title></mat-card-header>
         <mat-card-content>
           <ul class="chip-list" *ngIf="a.thirdCountryTransfers?.length; else noXfer">
             <li *ngFor="let c of a.thirdCountryTransfers">{{ c }}</li>
           </ul>
-          <ng-template #noXfer><p class="dim">Aucun transfert.</p></ng-template>
-          <p *ngIf="a.transferSafeguards" class="text"><strong>Garanties :</strong> {{ a.transferSafeguards }}</p>
+          <ng-template #noXfer><p class="dim" i18n="@@ropa.detail.no-transfer">Aucun transfert.</p></ng-template>
+          <p *ngIf="a.transferSafeguards" class="text"><strong i18n="@@ropa.detail.safeguards">Garanties :</strong> {{ a.transferSafeguards }}</p>
         </mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="a.specialCategoriesProcessed" class="special-card">
-        <mat-card-header><mat-card-title>Catégories particulières (Art. 9)</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ropa.detail.special-title">Catégories particulières (Art. 9)</mat-card-title></mat-card-header>
         <mat-card-content>
-          <p class="text">{{ a.specialCategoriesJustification || 'Aucune justification — à compléter.' }}</p>
+          <p class="text">{{ a.specialCategoriesJustification || noJustificationLabel }}</p>
         </mat-card-content>
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Mesures techniques (Art. 32)</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ropa.detail.technical-title">Mesures techniques (Art. 32)</mat-card-title></mat-card-header>
         <mat-card-content>
           <p *ngIf="a.technicalMeasures; else noTech" class="text">{{ a.technicalMeasures }}</p>
-          <ng-template #noTech><p class="dim">Aucune mesure documentée.</p></ng-template>
+          <ng-template #noTech><p class="dim" i18n="@@ropa.detail.no-measure">Aucune mesure documentée.</p></ng-template>
         </mat-card-content>
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Mesures organisationnelles</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ropa.detail.organizational-title">Mesures organisationnelles</mat-card-title></mat-card-header>
         <mat-card-content>
           <p *ngIf="a.organizationalMeasures; else noOrg" class="text">{{ a.organizationalMeasures }}</p>
-          <ng-template #noOrg><p class="dim">Aucune mesure documentée.</p></ng-template>
+          <ng-template #noOrg><p class="dim" i18n="@@ropa.detail.no-measure">Aucune mesure documentée.</p></ng-template>
         </mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="a.linkedRetentionRuleIds?.length">
-        <mat-card-header><mat-card-title>Règles de rétention liées</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ropa.detail.retention-title">Règles de rétention liées</mat-card-title></mat-card-header>
         <mat-card-content>
           <ul class="uuid-list">
             <li *ngFor="let id of a.linkedRetentionRuleIds"><code>{{ id }}</code></li>
@@ -147,7 +147,7 @@
 
 <ng-template #fallback>
   <section class="ropa-detail">
-    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
     <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
   </section>
 </ng-template>

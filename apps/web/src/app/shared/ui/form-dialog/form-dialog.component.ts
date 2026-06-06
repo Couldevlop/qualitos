@@ -37,11 +37,11 @@ export class FormDialogComponent {
   @Input() submitting = false;
   /** Désactive le bouton de validation (typiquement form.invalid). */
   @Input() submitDisabled = false;
-  @Input() submitLabel = 'Enregistrer';
+  @Input() submitLabel = $localize`:@@common.save:Enregistrer`;
   @Input() submitIcon = 'check';
   /** Couleur du bouton de validation ('primary' par défaut, 'warn' pour les actions sensibles). */
   @Input() submitColor: 'primary' | 'accent' | 'warn' = 'primary';
-  @Input() cancelLabel = 'Annuler';
+  @Input() cancelLabel = $localize`:@@common.cancel:Annuler`;
 
   /** Émis à la soumission (le parent appelle son service). */
   @Output() submitted = new EventEmitter<void>();

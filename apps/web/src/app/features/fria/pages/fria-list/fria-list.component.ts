@@ -44,7 +44,7 @@ export class FriaListComponent implements OnInit {
       tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
       switchMap(([status]) => this.svc.list(status || undefined).pipe(
         catchError(err => {
-          this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+          this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
           return of([] as FriaView[]);
         }),
         tap(() => this.loading$.next(false))
@@ -58,7 +58,7 @@ export class FriaListComponent implements OnInit {
     this.dialog.open(FriaDraftDialogComponent, {
       panelClass: 'qos-dialog-panel', autoFocus: 'first-tabbable', restoreFocus: true
     }).afterClosed().subscribe((f?: FriaView) => {
-      if (f) { this.snack.open('Brouillon FRIA créé.', 'OK', { duration: 2200 }); this.refresh$.next(); }
+      if (f) { this.snack.open($localize`:@@fria.list.created:Brouillon FRIA créé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); }
     });
   }
 

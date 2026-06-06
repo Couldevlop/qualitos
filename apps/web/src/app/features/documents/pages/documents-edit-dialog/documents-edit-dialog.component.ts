@@ -23,13 +23,13 @@ export class DocumentsEditDialogComponent {
   submitting = false;
 
   readonly types: { value: DocumentType; label: string }[] = [
-    { value: 'POLICY',           label: 'Politique' },
-    { value: 'PROCEDURE',        label: 'Procédure' },
-    { value: 'WORK_INSTRUCTION', label: 'Mode opératoire' },
-    { value: 'RECORD',           label: 'Enregistrement' },
-    { value: 'FORM',             label: 'Formulaire' },
-    { value: 'MANUAL',           label: 'Manuel' },
-    { value: 'OTHER',            label: 'Autre' }
+    { value: 'POLICY',           label: $localize`:@@documents.type.policy:Politique` },
+    { value: 'PROCEDURE',        label: $localize`:@@documents.type.procedure:Procédure` },
+    { value: 'WORK_INSTRUCTION', label: $localize`:@@documents.type.work-instruction:Mode opératoire` },
+    { value: 'RECORD',           label: $localize`:@@documents.type.record:Enregistrement` },
+    { value: 'FORM',             label: $localize`:@@documents.type.form:Formulaire` },
+    { value: 'MANUAL',           label: $localize`:@@documents.type.manual:Manuel` },
+    { value: 'OTHER',            label: $localize`:@@documents.type.other:Autre` }
   ];
 
   readonly form = this.fb.nonNullable.group({
@@ -63,13 +63,13 @@ export class DocumentsEditDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: d => {
-          this.snack.open('Document mis à jour.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@documents.edit.updated:Document mis à jour.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(d);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[documents-edit] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de la mise à jour.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@common.error-update:Erreur lors de la mise à jour.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

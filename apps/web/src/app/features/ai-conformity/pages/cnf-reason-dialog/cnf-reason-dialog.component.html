@@ -3,16 +3,16 @@
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
-  submitLabel="Confirmer"
+  i18n-submitLabel="@@common.confirm" submitLabel="Confirmer"
   [submitIcon]="data.mode === 'REVOKE' ? 'cancel' : 'block'"
   submitColor="warn"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="warn"><strong>Action terminale.</strong> Le motif est obligatoire pour la traçabilité (audit AI Office).</p>
+  <p class="warn"><strong i18n="@@ai-conformity.reason.warning-title">Action terminale.</strong> <span i18n="@@ai-conformity.reason.warning-text">Le motif est obligatoire pour la traçabilité (audit AI Office).</span></p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Motif</mat-label>
+    <mat-label i18n="@@ai-conformity.reason.reason">Motif</mat-label>
     <textarea matInput formControlName="reason" rows="4" maxlength="2000" required></textarea>
   </mat-form-field>
 

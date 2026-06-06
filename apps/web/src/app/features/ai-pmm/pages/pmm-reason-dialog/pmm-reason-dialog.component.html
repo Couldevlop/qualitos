@@ -4,6 +4,7 @@
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitLabel="Confirmer"
+  i18n-submitLabel="@@ai-pmm.reason.confirm"
   [submitIcon]="data.mode === 'SUSPEND' ? 'pause' : 'archive'"
   [submitColor]="data.mode === 'CLOSE' ? 'warn' : 'primary'"
   (submitted)="submit()"
@@ -12,7 +13,7 @@
   <p class="hint" [class.warn]="data.mode === 'CLOSE'" [innerHTML]="hint"></p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>{{ data.mode === 'SUSPEND' ? 'Motif de la suspension' : 'Motif de la clôture' }}</mat-label>
+    <mat-label>{{ reasonLabel }}</mat-label>
     <textarea matInput formControlName="reason" rows="5" maxlength="2000" required></textarea>
   </mat-form-field>
 

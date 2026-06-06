@@ -46,7 +46,7 @@ export class AiQmsListComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[ai-qms-list] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return of([] as AiQmsView[]);
           }),
           finalize(() => this.loading$.next(false))

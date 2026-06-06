@@ -4,7 +4,7 @@
     <header class="head">
       <div class="meta">
         <a routerLink="/ai-qms" class="back">
-          <mat-icon>arrow_back</mat-icon> AI Act · QMS
+          <mat-icon>arrow_back</mat-icon> <span i18n="@@ai-qms.detail.back">AI Act · QMS</span>
         </a>
         <h1>
           <code>{{ q.reference }}</code>
@@ -13,92 +13,92 @@
         <h2 class="name">{{ q.name }}</h2>
         <div class="meta-row">
           <span [class]="statusBadge(q.status)">{{ q.status }}</span>
-          <span class="dim" *ngIf="q.inForceFrom">En vigueur depuis : {{ q.inForceFrom }}</span>
-          <span class="dim" *ngIf="q.supersededAt">Remplacé : {{ q.supersededAt }}</span>
+          <span class="dim" *ngIf="q.inForceFrom"><span i18n="@@ai-qms.detail.in-force-since">En vigueur depuis :</span> {{ q.inForceFrom }}</span>
+          <span class="dim" *ngIf="q.supersededAt"><span i18n="@@ai-qms.detail.superseded">Remplacé :</span> {{ q.supersededAt }}</span>
         </div>
         <p *ngIf="q.description" class="text">{{ q.description }}</p>
       </div>
 
       <div class="toolbar">
         <button mat-stroked-button (click)="openEdit(q)" [disabled]="q.status !== 'DRAFT'">
-          <mat-icon>edit</mat-icon> Modifier
+          <mat-icon>edit</mat-icon> <span i18n="@@common.edit">Modifier</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="q.status === 'DRAFT'" (click)="approve(q)">
-          <mat-icon>verified</mat-icon> Approuver
+          <mat-icon>verified</mat-icon> <span i18n="@@ai-qms.detail.approve">Approuver</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="q.status === 'APPROVED'" (click)="putInForce(q)">
-          <mat-icon>publish</mat-icon> Mettre en vigueur
+          <mat-icon>publish</mat-icon> <span i18n="@@ai-qms.detail.put-in-force">Mettre en vigueur</span>
         </button>
         <button mat-stroked-button color="warn"
                 *ngIf="q.status !== 'ARCHIVED' && q.status !== 'SUPERSEDED'" (click)="archive(q)">
-          <mat-icon>inventory_2</mat-icon> Archiver
+          <mat-icon>inventory_2</mat-icon> <span i18n="@@ai-qms.detail.archive">Archiver</span>
         </button>
         <button mat-stroked-button color="warn" (click)="remove(q)" [disabled]="q.status !== 'DRAFT'">
-          <mat-icon>delete</mat-icon> Supprimer
+          <mat-icon>delete</mat-icon> <span i18n="@@common.delete">Supprimer</span>
         </button>
       </div>
     </header>
 
     <div class="art17-grid">
       <mat-card *ngIf="q.regulatoryComplianceStrategy">
-        <mat-card-header><mat-card-title>(a) Conformité réglementaire</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-qms.detail.section-a">(a) Conformité réglementaire</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ q.regulatoryComplianceStrategy }}</p></mat-card-content>
       </mat-card>
       <mat-card *ngIf="q.designControlDescription">
-        <mat-card-header><mat-card-title>(b) Maîtrise de la conception</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-qms.detail.section-b">(b) Maîtrise de la conception</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ q.designControlDescription }}</p></mat-card-content>
       </mat-card>
       <mat-card *ngIf="q.qualityControlDescription">
-        <mat-card-header><mat-card-title>(c) Contrôle qualité</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-qms.detail.section-c">(c) Contrôle qualité</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ q.qualityControlDescription }}</p></mat-card-content>
       </mat-card>
       <mat-card *ngIf="q.dataManagementDescription">
-        <mat-card-header><mat-card-title>(d) Gestion des données (Art. 10)</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-qms.detail.section-d">(d) Gestion des données (Art. 10)</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ q.dataManagementDescription }}</p></mat-card-content>
       </mat-card>
       <mat-card *ngIf="q.riskManagementDescription">
-        <mat-card-header><mat-card-title>(e) Gestion des risques (Art. 9)</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-qms.detail.section-e">(e) Gestion des risques (Art. 9)</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ q.riskManagementDescription }}</p></mat-card-content>
       </mat-card>
       <mat-card *ngIf="q.pmmDescription">
-        <mat-card-header><mat-card-title>(f) Surveillance PMM (Art. 72)</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-qms.detail.section-f">(f) Surveillance PMM (Art. 72)</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ q.pmmDescription }}</p></mat-card-content>
       </mat-card>
       <mat-card *ngIf="q.regulatorCommunicationDescription">
-        <mat-card-header><mat-card-title>(g) Communication autorités</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-qms.detail.section-g">(g) Communication autorités</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ q.regulatorCommunicationDescription }}</p></mat-card-content>
       </mat-card>
       <mat-card *ngIf="q.resourceManagementDescription">
-        <mat-card-header><mat-card-title>(h) Ressources &amp; gouvernance</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-qms.detail.section-h">(h) Ressources &amp; gouvernance</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ q.resourceManagementDescription }}</p></mat-card-content>
       </mat-card>
       <mat-card *ngIf="q.supplierMonitoringDescription">
-        <mat-card-header><mat-card-title>(i) Surveillance fournisseurs</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-qms.detail.section-i">(i) Surveillance fournisseurs</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ q.supplierMonitoringDescription }}</p></mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="q.status === 'APPROVED' || q.status === 'IN_FORCE' || q.status === 'SUPERSEDED'" class="ok-card">
-        <mat-card-header><mat-card-title>Approbation</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-qms.detail.approval">Approbation</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr *ngIf="q.submittedByUserId"><th>Soumis par</th><td><code>{{ q.submittedByUserId }}</code></td></tr>
-            <tr *ngIf="q.approvedByUserId"><th>Approuvé par</th><td><code>{{ q.approvedByUserId }}</code></td></tr>
-            <tr *ngIf="q.approvedAt"><th>Approuvé le</th><td>{{ q.approvedAt }}</td></tr>
-            <tr *ngIf="q.approvalNotes"><th>Notes</th><td>{{ q.approvalNotes }}</td></tr>
+            <tr *ngIf="q.submittedByUserId"><th i18n="@@ai-qms.detail.submitted-by">Soumis par</th><td><code>{{ q.submittedByUserId }}</code></td></tr>
+            <tr *ngIf="q.approvedByUserId"><th i18n="@@ai-qms.detail.approved-by">Approuvé par</th><td><code>{{ q.approvedByUserId }}</code></td></tr>
+            <tr *ngIf="q.approvedAt"><th i18n="@@ai-qms.detail.approved-at">Approuvé le</th><td>{{ q.approvedAt }}</td></tr>
+            <tr *ngIf="q.approvalNotes"><th i18n="@@ai-qms.detail.notes">Notes</th><td>{{ q.approvalNotes }}</td></tr>
           </table>
         </mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="q.archiveReason" class="warn-card">
-        <mat-card-header><mat-card-title>Archivage</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-qms.detail.archiving">Archivage</mat-card-title></mat-card-header>
         <mat-card-content>
           <p class="text">{{ q.archiveReason }}</p>
-          <p class="dim" *ngIf="q.archivedAt">Archivé le {{ q.archivedAt }}</p>
+          <p class="dim" *ngIf="q.archivedAt"><span i18n="@@ai-qms.detail.archived-on">Archivé le</span> {{ q.archivedAt }}</p>
         </mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="q.coveredAiSystemIds?.length">
-        <mat-card-header><mat-card-title>Systèmes IA couverts</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-qms.detail.covered-systems">Systèmes IA couverts</mat-card-title></mat-card-header>
         <mat-card-content>
           <ul class="uuid-list">
             <li *ngFor="let id of q.coveredAiSystemIds"><code>{{ id }}</code></li>
@@ -112,7 +112,7 @@
 
 <ng-template #fallback>
   <section class="ai-qms-detail">
-    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
     <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
   </section>
 </ng-template>

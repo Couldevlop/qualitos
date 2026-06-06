@@ -1,25 +1,27 @@
 <qos-form-dialog
+  i18n-title="@@subject-requests.extend.title"
   title="Prolonger l'échéance"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@subject-requests.extend.submit"
   submitLabel="Prolonger"
   submitIcon="update"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="hint">L'Art. 12§3 RGPD autorise une extension jusqu'à <strong>2 mois supplémentaires</strong>
+  <p class="hint" i18n="@@subject-requests.extend.hint">L'Art. 12§3 RGPD autorise une extension jusqu'à <strong>2 mois supplémentaires</strong>
      (donc 3 mois maximum après la réception) si la demande est complexe ou si
      le nombre de demandes le justifie. La personne doit être informée du motif.</p>
 
   <table class="kv">
-    <tr><th>Reçue le</th><td>{{ data.request.receivedAt }}</td></tr>
-    <tr><th>Échéance actuelle</th><td>{{ data.request.deadlineAt }}</td></tr>
-    <tr><th>Échéance maximale</th><td><strong>{{ data.maxDeadlineIso }}</strong></td></tr>
+    <tr><th i18n="@@subject-requests.detail.received-on">Reçue le</th><td>{{ data.request.receivedAt }}</td></tr>
+    <tr><th i18n="@@subject-requests.extend.current-deadline">Échéance actuelle</th><td>{{ data.request.deadlineAt }}</td></tr>
+    <tr><th i18n="@@subject-requests.extend.max-deadline">Échéance maximale</th><td><strong>{{ data.maxDeadlineIso }}</strong></td></tr>
   </table>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Nouvelle échéance</mat-label>
+    <mat-label i18n="@@subject-requests.extend.new-deadline">Nouvelle échéance</mat-label>
     <input matInput formControlName="newDeadline" type="datetime-local" required>
   </mat-form-field>
 

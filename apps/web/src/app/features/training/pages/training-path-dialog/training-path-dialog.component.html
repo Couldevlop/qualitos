@@ -1,47 +1,47 @@
 <qos-form-dialog
-  [title]="isEdit ? 'Modifier le parcours' : 'Nouveau parcours'"
+  [title]="isEdit ? editTitle : createTitle"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
-  [submitLabel]="isEdit ? 'Enregistrer' : 'Créer'"
+  [submitLabel]="isEdit ? editSubmitLabel : createSubmitLabel"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <div class="row">
     <mat-form-field appearance="outline" class="col col-code">
-      <mat-label>Code</mat-label>
+      <mat-label i18n="@@training.home.col-code">Code</mat-label>
       <input matInput formControlName="code" maxlength="100" required
              placeholder="Ex. : yellow-belt-quality">
-      <mat-hint>minuscules, chiffres, tiret, underscore</mat-hint>
+      <mat-hint i18n="@@training.path-dialog.code-hint">minuscules, chiffres, tiret, underscore</mat-hint>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Rôle cible</mat-label>
+      <mat-label i18n="@@training.home.col-target-role">Rôle cible</mat-label>
       <input matInput formControlName="targetRole" maxlength="100"
-             placeholder="Ex. : Auditeur interne">
+             placeholder="Ex. : Auditeur interne" i18n-placeholder="@@training.path-dialog.target-role-placeholder">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Nom</mat-label>
+    <mat-label i18n="@@common.name">Nom</mat-label>
     <input matInput formControlName="name" maxlength="200" required>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description</mat-label>
+    <mat-label i18n="@@common.description">Description</mat-label>
     <textarea matInput formControlName="description" rows="3" maxlength="2000"></textarea>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Durée (heures)</mat-label>
+      <mat-label i18n="@@training.path-dialog.duration-label">Durée (heures)</mat-label>
       <input matInput formControlName="durationHours" type="number" min="1" max="10000" required>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Score de passage</mat-label>
+      <mat-label i18n="@@training.path-dialog.passing-score-label">Score de passage</mat-label>
       <input matInput formControlName="passingScore" type="number" min="0" max="100">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Validité (mois)</mat-label>
+      <mat-label i18n="@@training.path-dialog.validity-label">Validité (mois)</mat-label>
       <input matInput formControlName="validityMonths" type="number" min="1" max="120">
     </mat-form-field>
   </div>

@@ -3,19 +3,20 @@
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@ehs.link.submit-label"
   submitLabel="Lier"
   submitIcon="link"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="hint">Le lien permet la traçabilité bout-en-bout entre l'incident EHS,
+  <p class="hint" i18n="@@ehs.link.hint">Le lien permet la traçabilité bout-en-bout entre l'incident EHS,
      le cas CAPA d'investigation et la non-conformité associée.</p>
 
   <mat-form-field appearance="outline" class="full">
     <mat-label>{{ fieldLabel }}</mat-label>
     <input matInput formControlName="targetId" required
            placeholder="00000000-0000-0000-0000-000000000000">
-    <mat-hint>UUID v4 attendu</mat-hint>
+    <mat-hint i18n="@@ehs.link.uuid-hint">UUID v4 attendu</mat-hint>
   </mat-form-field>
 
 </qos-form-dialog>

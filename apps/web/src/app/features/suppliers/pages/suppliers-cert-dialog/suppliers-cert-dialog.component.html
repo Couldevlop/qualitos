@@ -1,8 +1,10 @@
 <qos-form-dialog
+  i18n-title="@@suppliers.cert.title"
   title="Nouveau certificat"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.add"
   submitLabel="Ajouter"
   submitIcon="add"
   (submitted)="submit()"
@@ -10,31 +12,32 @@
 
     <div class="row">
       <mat-form-field appearance="outline" class="col">
-        <mat-label>Code norme</mat-label>
+        <mat-label i18n="@@suppliers.cert.standard-code">Code norme</mat-label>
         <input matInput formControlName="standardCode" maxlength="64" required
                placeholder="Ex. : iso-9001, iatf-16949, as9100">
-        <mat-hint>minuscules, chiffres, tiret, underscore</mat-hint>
+        <mat-hint i18n="@@suppliers.cert.standard-code-hint">minuscules, chiffres, tiret, underscore</mat-hint>
       </mat-form-field>
       <mat-form-field appearance="outline" class="col">
-        <mat-label>Référence</mat-label>
+        <mat-label i18n="@@suppliers.reference">Référence</mat-label>
         <input matInput formControlName="reference" maxlength="200">
       </mat-form-field>
     </div>
 
     <div class="row">
       <mat-form-field appearance="outline" class="col">
-        <mat-label>Date d'émission</mat-label>
+        <mat-label i18n="@@suppliers.cert.issued-on">Date d'émission</mat-label>
         <input matInput formControlName="issuedOn" type="date" required>
       </mat-form-field>
       <mat-form-field appearance="outline" class="col">
-        <mat-label>Date d'expiration</mat-label>
+        <mat-label i18n="@@suppliers.cert.expires-on">Date d'expiration</mat-label>
         <input matInput formControlName="expiresOn" type="date" required>
       </mat-form-field>
     </div>
 
     <mat-form-field appearance="outline" class="full">
-      <mat-label>URL document</mat-label>
+      <mat-label i18n="@@suppliers.cert.document-url">URL document</mat-label>
       <input matInput formControlName="documentUrl" maxlength="1024"
+             i18n-placeholder="@@suppliers.cert.document-url-placeholder"
              placeholder="https://… (PDF signé)">
     </mat-form-field>
 

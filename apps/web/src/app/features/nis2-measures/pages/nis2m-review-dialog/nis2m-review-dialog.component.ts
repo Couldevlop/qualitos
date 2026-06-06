@@ -40,26 +40,26 @@ export class Nis2mReviewDialogComponent {
 
   get title(): string {
     return this.data.mode === 'VERIFY'
-      ? 'Vérifier la mesure (passe en VERIFIED)'
-      : 'Effectuer une revue périodique';
+      ? $localize`:@@nis2-measures.review.title-verify:Vérifier la mesure (passe en VERIFIED)`
+      : $localize`:@@nis2-measures.review.title-review:Effectuer une revue périodique`;
   }
 
   get hint(): string {
     return this.data.mode === 'VERIFY'
-      ? 'Confirme que la mesure a été testée et est effective. Démarre le cycle de revues périodiques.'
-      : 'Enregistre une revue périodique. La prochaine échéance est recalculée automatiquement.';
+      ? $localize`:@@nis2-measures.review.hint-verify:Confirme que la mesure a été testée et est effective. Démarre le cycle de revues périodiques.`
+      : $localize`:@@nis2-measures.review.hint-review:Enregistre une revue périodique. La prochaine échéance est recalculée automatiquement.`;
   }
 
   submit(): void {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const v = this.form.getRawValue();
     if (new Date(v.reviewedAt).getTime() > Date.now()) {
-      this.snack.open('La date de revue ne peut pas être dans le futur.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@nis2-measures.review.future-date:La date de revue ne peut pas être dans le futur.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const userId = this.auth.snapshot()?.userId;
     if (!userId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -70,12 +70,14 @@ export class Nis2mReviewDialogComponent {
     op$
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: m => { this.snack.open(this.data.mode === 'VERIFY' ? 'Mesure vérifiée.' : 'Revue enregistrée.',
-                                     'OK', { duration: 2200 }); this.dialogRef.close(m); },
+        next: m => { this.snack.open(this.data.mode === 'VERIFY'
+                                       ? $localize`:@@nis2-measures.review.verified:Mesure vérifiée.`
+                                       : $localize`:@@nis2-measures.review.reviewed:Revue enregistrée.`,
+                                     $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(m); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[nis2m-review] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Opération impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@nis2-measures.review.op-failed:Opération impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

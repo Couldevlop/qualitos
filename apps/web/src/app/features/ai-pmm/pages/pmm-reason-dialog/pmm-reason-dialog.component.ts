@@ -37,13 +37,21 @@ export class PmmReasonDialogComponent {
   ) {}
 
   get title(): string {
-    return this.data.mode === 'SUSPEND' ? 'Suspendre le plan PMM' : 'Clôturer le plan PMM';
+    return this.data.mode === 'SUSPEND'
+      ? $localize`:@@ai-pmm.reason.title-suspend:Suspendre le plan PMM`
+      : $localize`:@@ai-pmm.reason.title-close:Clôturer le plan PMM`;
   }
 
   get hint(): string {
     return this.data.mode === 'SUSPEND'
-      ? 'Le plan passe en SUSPENDED — la surveillance est mise en pause mais peut être réactivée.'
-      : '<strong>Action terminale.</strong> Le plan PMM est clos — fin de la surveillance post-marché.';
+      ? $localize`:@@ai-pmm.reason.hint-suspend:Le plan passe en SUSPENDED — la surveillance est mise en pause mais peut être réactivée.`
+      : $localize`:@@ai-pmm.reason.hint-close:<strong>Action terminale.</strong> Le plan PMM est clos — fin de la surveillance post-marché.`;
+  }
+
+  get reasonLabel(): string {
+    return this.data.mode === 'SUSPEND'
+      ? $localize`:@@ai-pmm.reason.label-suspend:Motif de la suspension`
+      : $localize`:@@ai-pmm.reason.label-close:Motif de la clôture`;
   }
 
   submit(): void {
@@ -56,12 +64,14 @@ export class PmmReasonDialogComponent {
     op$
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: p => { this.snack.open(this.data.mode === 'SUSPEND' ? 'Plan suspendu.' : 'Plan clos.',
-                                     'OK', { duration: 2200 }); this.dialogRef.close(p); },
+        next: p => { this.snack.open(this.data.mode === 'SUSPEND'
+                                       ? $localize`:@@ai-pmm.reason.suspended:Plan suspendu.`
+                                       : $localize`:@@ai-pmm.reason.closed:Plan clos.`,
+                                     $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(p); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[pmm-reason] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Opération impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@ai-pmm.reason.op-failed:Opération impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

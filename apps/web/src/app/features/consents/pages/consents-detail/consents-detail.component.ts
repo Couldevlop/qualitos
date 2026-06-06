@@ -24,6 +24,10 @@ export class ConsentsDetailComponent implements OnInit {
   loading$ = new BehaviorSubject<boolean>(false);
   error$   = new BehaviorSubject<string | null>(null);
 
+  readonly withdrawTooltipTerminal = $localize`:@@consents.detail.withdraw-tooltip-terminal:Statut terminal — retrait impossible`;
+  readonly withdrawTooltipAllowed = $localize`:@@consents.detail.withdraw-tooltip-allowed:Art. 7§3 RGPD`;
+  readonly notFilledLabel = $localize`:@@consents.detail.not-filled:(non renseignée)`;
+
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
 
   constructor(
@@ -41,7 +45,7 @@ export class ConsentsDetailComponent implements OnInit {
         const id = p.get('id') ?? '';
         // OWASP A03 — UUID regex on path id, mock-id fallback.
         if (!UUID_REGEX.test(id) && !id.startsWith('cons-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
@@ -50,7 +54,7 @@ export class ConsentsDetailComponent implements OnInit {
             catchError(err => {
               // eslint-disable-next-line no-console
               console.warn('[consents-detail] failed', err?.status, err?.error?.title);
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             }),
             tap(() => this.loading$.next(false))
@@ -63,7 +67,7 @@ export class ConsentsDetailComponent implements OnInit {
   withdraw(c: ConsentView): void {
     // OWASP A04 — only GRANTED + active consents can be withdrawn
     if (c.status !== 'GRANTED') {
-      this.snack.open('Ce consentement n\'est plus actif — retrait impossible.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@consents.detail.not-active:Ce consentement n'est plus actif — retrait impossible.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(ConsentsWithdrawDialogComponent, {
@@ -75,8 +79,14 @@ export class ConsentsDetailComponent implements OnInit {
 
   sourceLabel(s: ConsentSource): string {
     return ({
-      WEB_FORM: 'Formulaire web', MOBILE_APP: 'Application mobile', EMAIL: 'E-mail',
-      PAPER: 'Papier', PHONE: 'Téléphone', API: 'API', IMPORT: 'Import', OTHER: 'Autre'
+      WEB_FORM: $localize`:@@consents.source.web-form:Formulaire web`,
+      MOBILE_APP: $localize`:@@consents.source.mobile-app:Application mobile`,
+      EMAIL: $localize`:@@consents.source.email:E-mail`,
+      PAPER: $localize`:@@consents.source.paper:Papier`,
+      PHONE: $localize`:@@consents.source.phone:Téléphone`,
+      API: $localize`:@@consents.source.api:API`,
+      IMPORT: $localize`:@@consents.source.import:Import`,
+      OTHER: $localize`:@@consents.source.other:Autre`
     })[s];
   }
   statusBadge(s: ConsentStatus): string { return 'badge badge-' + s.toLowerCase(); }

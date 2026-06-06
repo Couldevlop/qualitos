@@ -48,12 +48,12 @@ export class KpisMeasurementDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const v = this.form.getRawValue();
     if (v.value === null) {
-      this.snack.open('Une valeur numérique est requise.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@kpis.measurement.value-required:Une valeur numérique est requise.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     // OWASP A03 — refuse swapped period bounds at the form layer
     if (new Date(v.periodEnd) < new Date(v.periodStart)) {
-      this.snack.open('La fin de période doit être ≥ au début.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@kpis.measurement.period-order:La fin de période doit être ≥ au début.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -68,11 +68,11 @@ export class KpisMeasurementDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: m => { this.snack.open('Mesure enregistrée.', 'OK', { duration: 2500 }); this.dialogRef.close(m); },
+        next: m => { this.snack.open($localize`:@@kpis.measurement.saved:Mesure enregistrée.`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(m); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[kpis-measurement] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@kpis.dialog.save-error:Erreur lors de l'enregistrement.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

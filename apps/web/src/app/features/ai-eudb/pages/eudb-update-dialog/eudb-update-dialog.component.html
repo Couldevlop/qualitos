@@ -1,20 +1,23 @@
 <qos-form-dialog
   title="Déclarer une mise à jour"
+  i18n-title="@@ai-eudb.update.title"
   subtitle="Toute modification substantielle du système IA enregistré doit être déclarée à la base EUDB. Décrivez la mise à jour et indiquez la date effective."
+  i18n-subtitle="@@ai-eudb.update.subtitle"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitLabel="Déclarer"
+  i18n-submitLabel="@@ai-eudb.update.submit"
   submitIcon="update"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Date de mise à jour</mat-label>
+    <mat-label i18n="@@ai-eudb.update.update-date">Date de mise à jour</mat-label>
     <input matInput formControlName="updateDate" type="datetime-local" required>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Résumé de la mise à jour</mat-label>
+    <mat-label i18n="@@ai-eudb.update.update-summary">Résumé de la mise à jour</mat-label>
     <textarea matInput formControlName="updateSummary" rows="5" maxlength="4000" required></textarea>
   </mat-form-field>
 

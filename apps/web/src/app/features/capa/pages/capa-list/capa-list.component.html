@@ -1,20 +1,20 @@
 <div class="qos-page">
   <header class="page-header">
     <div>
-      <h1>CAPA</h1>
-      <p>Actions correctives & préventives — workflow et vérification d'efficacité.</p>
+      <h1 i18n="@@capa.list.title">CAPA</h1>
+      <p i18n="@@capa.list.subtitle">Actions correctives & préventives — workflow et vérification d'efficacité.</p>
     </div>
     <button mat-flat-button color="primary" type="button" (click)="openCreate()">
       <mat-icon>add</mat-icon>
-      Nouveau CAPA
+      <span i18n="@@capa.list.new-capa">Nouveau CAPA</span>
     </button>
   </header>
 
   <mat-card class="filter-card">
     <mat-form-field appearance="outline" class="status-filter">
-      <mat-label>Filtrer par statut</mat-label>
+      <mat-label i18n="@@common.filter-by-status">Filtrer par statut</mat-label>
       <mat-select [formControl]="statusFilter">
-        <mat-option [value]="''">Tous</mat-option>
+        <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
         <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
       </mat-select>
     </mat-form-field>
@@ -22,13 +22,13 @@
 
   <div class="state-row" *ngIf="loading$ | async">
     <mat-progress-spinner mode="indeterminate" diameter="36"></mat-progress-spinner>
-    <span>Chargement…</span>
+    <span i18n="@@common.loading">Chargement…</span>
   </div>
 
   <mat-card class="table-card" *ngIf="(loading$ | async) === false">
     <table mat-table [dataSource]="(cases$ | async) ?? []" class="t">
       <ng-container matColumnDef="title">
-        <th mat-header-cell *matHeaderCellDef>Titre</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.title">Titre</th>
         <td mat-cell *matCellDef="let c">
           <div class="cell">
             <strong>{{ c.title }}</strong>
@@ -37,19 +37,19 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="type">
-        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.type">Type</th>
         <td mat-cell *matCellDef="let c">{{ c.type }}</td>
       </ng-container>
       <ng-container matColumnDef="criticity">
-        <th mat-header-cell *matHeaderCellDef>Criticité</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@capa.list.col-criticity">Criticité</th>
         <td mat-cell *matCellDef="let c"><span [class]="criticityBadge(c.criticity)">{{ c.criticity }}</span></td>
       </ng-container>
       <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
         <td mat-cell *matCellDef="let c"><span [class]="statusBadge(c.status)">{{ c.status }}</span></td>
       </ng-container>
       <ng-container matColumnDef="dueDate">
-        <th mat-header-cell *matHeaderCellDef>Échéance</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@capa.list.col-due-date">Échéance</th>
         <td mat-cell *matCellDef="let c">{{ c.dueDate ? (c.dueDate | date) : '—' }}</td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -60,7 +60,7 @@
           tabindex="0" role="button"
           [attr.aria-label]="'Ouvrir ' + row.title"></tr>
     </table>
-    <p class="empty" *ngIf="(cases$ | async)?.length === 0">Aucun CAPA pour ce filtre.</p>
+    <p class="empty" *ngIf="(cases$ | async)?.length === 0" i18n="@@capa.list.empty">Aucun CAPA pour ce filtre.</p>
 
     <mat-paginator [length]="totalElements"
                    [pageSize]="pageSize"
@@ -68,6 +68,7 @@
                    [pageSizeOptions]="pageSizeOptions"
                    (page)="onPage($event)"
                    showFirstLastButtons
+                   i18n-aria-label="@@capa.list.paginator-aria"
                    aria-label="Pagination des CAPA">
     </mat-paginator>
   </mat-card>

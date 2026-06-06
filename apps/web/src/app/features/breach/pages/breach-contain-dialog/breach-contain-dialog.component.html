@@ -1,14 +1,17 @@
 <qos-form-dialog
+  i18n-title="@@breach.contain.title"
   title="Endiguer la violation"
+  i18n-subtitle="@@breach.contain.subtitle"
   subtitle="Décrire les mesures de containment appliquées. La violation passe en statut CONTAINED."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@breach.contain.submit"
   submitLabel="Endiguer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 <mat-form-field appearance="outline" class="full">
-      <mat-label>Mesures de containment</mat-label>
+      <mat-label i18n="@@breach.contain.measures-label">Mesures de containment</mat-label>
       <textarea matInput formControlName="containmentMeasures" rows="6" maxlength="4000" required></textarea>
     </mat-form-field>
 

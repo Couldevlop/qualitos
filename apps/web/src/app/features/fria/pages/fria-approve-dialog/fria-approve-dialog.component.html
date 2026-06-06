@@ -1,20 +1,23 @@
 <qos-form-dialog
   title="Approuver la FRIA"
+  i18n-title="@@fria.approve.title"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitLabel="Approuver"
+  i18n-submitLabel="@@fria.detail.approve"
   submitIcon="verified"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="hint">Vous approuvez la FRIA en tant que responsable conformité. Une fois
+  <p class="hint" i18n="@@fria.approve.hint">Vous approuvez la FRIA en tant que responsable conformité. Une fois
      approuvée, la FRIA peut être archivée mais plus modifiée.</p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Notes d'approbation (optionnel)</mat-label>
+    <mat-label i18n="@@fria.approve.notes">Notes d'approbation (optionnel)</mat-label>
     <textarea matInput formControlName="approvalNotes" rows="5" maxlength="4000"
-              placeholder="Conditions, recommandations, points d'attention…"></textarea>
+              placeholder="Conditions, recommandations, points d'attention…"
+              i18n-placeholder="@@fria.approve.notes-ph"></textarea>
   </mat-form-field>
 
 </qos-form-dialog>

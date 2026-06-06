@@ -41,15 +41,15 @@ export class AiQmsApproveDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const approvedByUserId = this.auth.snapshot()?.userId;
     if (!approvedByUserId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const v = this.form.getRawValue();
     // OWASP A04 — séparation des rôles : submitter ≠ approver.
     if (v.submittedByUserId.trim() === approvedByUserId) {
       this.snack.open(
-        'Séparation des rôles : le soumissionnaire et l\'approbateur doivent être différents.',
-        'OK', { duration: 4500 }
+        $localize`:@@ai-qms.approve.role-separation:Séparation des rôles : le soumissionnaire et l'approbateur doivent être différents.`,
+        $localize`:@@common.ok:OK`, { duration: 4500 }
       );
       return;
     }
@@ -61,11 +61,11 @@ export class AiQmsApproveDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: q => { this.snack.open('QMS approuvé.', 'OK', { duration: 2500 }); this.dialogRef.close(q); },
+        next: q => { this.snack.open($localize`:@@ai-qms.approve.approved:QMS approuvé.`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(q); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[ai-qms-approve] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Approbation impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@ai-qms.approve.failed:Approbation impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

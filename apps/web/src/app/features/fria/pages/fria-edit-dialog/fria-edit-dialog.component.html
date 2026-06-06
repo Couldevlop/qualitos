@@ -1,5 +1,6 @@
 <qos-form-dialog
   title="Éditer la FRIA"
+  i18n-title="@@fria.edit.title"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
@@ -7,35 +8,35 @@
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="hint">Édition possible uniquement en statut DRAFT. La référence et
+  <p class="hint" i18n="@@fria.edit.hint">Édition possible uniquement en statut DRAFT. La référence et
      le système IA ne sont pas modifiables.</p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description du processus déployé</mat-label>
+    <mat-label i18n="@@fria.draft.process">Description du processus déployé</mat-label>
     <textarea matInput formControlName="processDescription" rows="4" maxlength="4000" required></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Durée prévue du déploiement</mat-label>
+    <mat-label i18n="@@fria.draft.deployment-duration">Durée prévue du déploiement</mat-label>
     <textarea matInput formControlName="deploymentDurationDescription" rows="2" maxlength="4000"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Catégories de personnes affectées</mat-label>
+    <mat-label i18n="@@fria.draft.affected-persons">Catégories de personnes affectées</mat-label>
     <textarea matInput formControlName="affectedPersonsCategories" rows="3" maxlength="4000" required></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Risques spécifiques</mat-label>
+    <mat-label i18n="@@fria.edit.specific-risks">Risques spécifiques</mat-label>
     <textarea matInput formControlName="specificRisks" rows="4" maxlength="4000" required></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Mesures d'atténuation</mat-label>
+    <mat-label i18n="@@fria.detail.mitigation">Mesures d'atténuation</mat-label>
     <textarea matInput formControlName="mitigationMeasures" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Mesures de supervision humaine</mat-label>
+    <mat-label i18n="@@fria.draft.human-oversight">Mesures de supervision humaine</mat-label>
     <textarea matInput formControlName="humanOversightMeasures" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Mécanisme de réclamation</mat-label>
+    <mat-label i18n="@@fria.detail.complaint-mechanism">Mécanisme de réclamation</mat-label>
     <textarea matInput formControlName="complaintMechanismDescription" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
 

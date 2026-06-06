@@ -65,13 +65,13 @@ export class DmaicEditDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: p => {
-          this.snack.open($localize`:@@dmaic.edit.updated:Projet mis à jour.`, 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@dmaic.edit.updated:Projet mis à jour.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(p);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[dmaic-edit] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, $localize`:@@common.error-update:Erreur lors de la mise à jour.`), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@common.error-update:Erreur lors de la mise à jour.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

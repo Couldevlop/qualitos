@@ -4,11 +4,11 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button type="button" (click)="cancel()">
-    {{ data.cancelLabel || 'Annuler' }}
+    {{ data.cancelLabel || defaultCancelLabel }}
   </button>
   <button mat-flat-button type="button"
           [color]="data.destructive ? 'warn' : 'primary'"
           (click)="confirm()">
-    {{ data.confirmLabel || 'Confirmer' }}
+    {{ data.confirmLabel || defaultConfirmLabel }}
   </button>
 </mat-dialog-actions>

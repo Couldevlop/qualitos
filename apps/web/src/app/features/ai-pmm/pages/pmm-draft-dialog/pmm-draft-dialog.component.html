@@ -1,71 +1,76 @@
 <qos-form-dialog
   title="Nouveau plan PMM (Art. 72)"
+  i18n-title="@@ai-pmm.draft.title"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitLabel="Créer"
+  i18n-submitLabel="@@common.create"
   submitIcon="save"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="hint">Le plan démarre en statut <strong>DRAFT</strong>. La revue périodique
+  <p class="hint" i18n="@@ai-pmm.draft.hint">Le plan démarre en statut <strong>DRAFT</strong>. La revue périodique
      est calculée à partir de la fréquence et démarre dès l'activation.</p>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Référence interne</mat-label>
+      <mat-label i18n="@@ai-pmm.draft.internal-reference">Référence interne</mat-label>
       <input matInput formControlName="reference" maxlength="64" required
              placeholder="PMM-2026-XXX-NNN">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>UUID système IA</mat-label>
+      <mat-label i18n="@@ai-pmm.draft.ai-system-uuid">UUID système IA</mat-label>
       <input matInput formControlName="aiSystemId" required
              placeholder="00000000-0000-0000-0000-000000000000">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Nom du plan</mat-label>
+    <mat-label i18n="@@ai-pmm.draft.plan-name">Nom du plan</mat-label>
     <input matInput formControlName="name" maxlength="250" required>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description</mat-label>
+    <mat-label i18n="@@common.description">Description</mat-label>
     <textarea matInput formControlName="description" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Métriques surveillées</mat-label>
+    <mat-label i18n="@@ai-pmm.draft.metrics">Métriques surveillées</mat-label>
     <textarea matInput formControlName="metricsMonitored" rows="3" maxlength="4000"
-              placeholder="Précision, recall, dérive démographique, taux d'overrides…"></textarea>
+              placeholder="Précision, recall, dérive démographique, taux d'overrides…"
+              i18n-placeholder="@@ai-pmm.draft.metrics-ph"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Méthode de collecte</mat-label>
+    <mat-label i18n="@@ai-pmm.draft.collection-method">Méthode de collecte</mat-label>
     <textarea matInput formControlName="collectionMethod" rows="3" maxlength="4000"
-              placeholder="Logs d'inférence + audit qualité trimestriel…"></textarea>
+              placeholder="Logs d'inférence + audit qualité trimestriel…"
+              i18n-placeholder="@@ai-pmm.draft.collection-method-ph"></textarea>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Fréquence de revue</mat-label>
+      <mat-label i18n="@@ai-pmm.draft.review-frequency">Fréquence de revue</mat-label>
       <mat-select formControlName="reviewFrequency" required>
         <mat-option *ngFor="let f of frequencies" [value]="f">{{ freqLabel[f] }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Lien QMS (référence)</mat-label>
+      <mat-label i18n="@@ai-pmm.draft.qms-link-ref">Lien QMS (référence)</mat-label>
       <input matInput formControlName="qmsLinkReference" maxlength="250"
              placeholder="AIQMS-2026-001/SOP-PMM">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Partie responsable</mat-label>
+    <mat-label i18n="@@ai-pmm.draft.responsible-party">Partie responsable</mat-label>
     <textarea matInput formControlName="responsiblePartyDescription" rows="2" maxlength="4000"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Critères de déclenchement</mat-label>
+    <mat-label i18n="@@ai-pmm.draft.trigger-criteria">Critères de déclenchement</mat-label>
     <textarea matInput formControlName="triggerCriteria" rows="3" maxlength="4000"
-              placeholder="Conditions qui doivent déclencher une action corrective ou un incident."></textarea>
+              placeholder="Conditions qui doivent déclencher une action corrective ou un incident."
+              i18n-placeholder="@@ai-pmm.draft.trigger-criteria-ph"></textarea>
   </mat-form-field>
 
 </qos-form-dialog>

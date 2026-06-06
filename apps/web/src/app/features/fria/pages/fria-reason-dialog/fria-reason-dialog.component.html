@@ -4,6 +4,7 @@
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitLabel="Confirmer"
+  i18n-submitLabel="@@fria.reason.confirm"
   [submitIcon]="data.mode === 'RETURN' ? 'undo' : 'archive'"
   [submitColor]="data.mode === 'ARCHIVE' ? 'warn' : 'primary'"
   (submitted)="submit()"
@@ -12,7 +13,7 @@
   <p class="hint" [class.warn]="data.mode === 'ARCHIVE'">{{ hint }}</p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>{{ data.mode === 'RETURN' ? 'Motif du retour' : 'Motif de l\'archivage' }}</mat-label>
+    <mat-label>{{ reasonLabel }}</mat-label>
     <textarea matInput formControlName="reason" rows="5"
               [attr.maxlength]="data.mode === 'RETURN' ? 4000 : 2000" required></textarea>
   </mat-form-field>

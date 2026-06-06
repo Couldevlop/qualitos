@@ -44,11 +44,11 @@ export class BreachContainDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: b => { this.snack.open('Violation endiguée.', 'OK', { duration: 2200 }); this.dialogRef.close(b); },
+        next: b => { this.snack.open($localize`:@@breach.contain.contained-toast:Violation endiguée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(b); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[breach-contain] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Endiguement impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@breach.contain.failed:Endiguement impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

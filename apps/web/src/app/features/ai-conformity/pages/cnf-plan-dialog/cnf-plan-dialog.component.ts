@@ -51,13 +51,13 @@ export class CnfPlanDialogComponent {
     const v = this.form.getRawValue();
     // OWASP A04 — NOTIFIED_BODY exige id + name
     if (v.procedure === 'NOTIFIED_BODY' && (!v.notifiedBodyId?.trim() || !v.notifiedBodyName?.trim())) {
-      this.snack.open('La procédure NOTIFIED_BODY exige l\'ID 4 chiffres + nom de l\'organisme.',
-        'OK', { duration: 4500 });
+      this.snack.open($localize`:@@ai-conformity.plan.notified-body-required:La procédure NOTIFIED_BODY exige l'ID 4 chiffres + nom de l'organisme.`,
+        $localize`:@@common.ok:OK`, { duration: 4500 });
       return;
     }
     const createdByUserId = this.auth.snapshot()?.userId;
     if (!createdByUserId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -73,11 +73,11 @@ export class CnfPlanDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: c => { this.snack.open('Évaluation planifiée.', 'OK', { duration: 2500 }); this.dialogRef.close(c); },
+        next: c => { this.snack.open($localize`:@@ai-conformity.plan.planned:Évaluation planifiée.`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(c); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[cnf-plan] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de la création.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@common.error-create:Erreur lors de la création.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

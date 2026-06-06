@@ -1,4 +1,5 @@
 <qos-form-dialog
+  i18n-title="@@ehs.edit.title"
   title="Modifier l'incident"
   [formGroup]="form"
   [submitting]="submitting"
@@ -7,22 +8,22 @@
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre</mat-label>
+    <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="250" required>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description</mat-label>
+    <mat-label i18n="@@common.description">Description</mat-label>
     <textarea matInput formControlName="description" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Lieu</mat-label>
+      <mat-label i18n="@@ehs.edit.location">Lieu</mat-label>
       <input matInput formControlName="location" maxlength="500">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col col-small">
-      <mat-label>Sévérité</mat-label>
+      <mat-label i18n="@@ehs.list.severity">Sévérité</mat-label>
       <mat-select formControlName="severity" required>
         <mat-option *ngFor="let s of severities" [value]="s">{{ s }}</mat-option>
       </mat-select>
@@ -30,13 +31,14 @@
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Personnes impliquées</mat-label>
+    <mat-label i18n="@@ehs.detail.persons-involved">Personnes impliquées</mat-label>
     <textarea matInput formControlName="personsInvolved" rows="2" maxlength="1000"
+              i18n-placeholder="@@ehs.edit.persons-placeholder"
               placeholder="Anonyme si pertinent — pas de PII non nécessaire (RGPD)"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Normes concernées (CSV)</mat-label>
+    <mat-label i18n="@@ehs.edit.standards-csv">Normes concernées (CSV)</mat-label>
     <input matInput formControlName="standardsCsv" maxlength="500"
            placeholder="iso-45001, iso-14001, …">
   </mat-form-field>

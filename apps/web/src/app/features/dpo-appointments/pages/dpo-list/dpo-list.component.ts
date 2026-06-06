@@ -53,7 +53,7 @@ export class DpoListComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[dpo-list] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return of([] as DpoAppointmentView[]);
           }),
           finalize(() => this.loading$.next(false))
@@ -72,7 +72,11 @@ export class DpoListComponent implements OnInit {
 
   open(a: DpoAppointmentView): void { this.router.navigate(['/dpo-appointments', a.id]); }
 
-  typeLabel(t: DpoType): string { return t === 'INTERNAL' ? 'Interne' : 'Externe'; }
+  typeLabel(t: DpoType): string {
+    return t === 'INTERNAL'
+      ? $localize`:@@dpo-appointments.edit.type-internal:Interne`
+      : $localize`:@@dpo-appointments.edit.type-external:Externe`;
+  }
   typeBadge(t: DpoType): string { return 'type-badge type-' + t.toLowerCase(); }
   statusBadge(s: DpoAppointmentStatus): string { return 'badge badge-' + s.toLowerCase(); }
 }

@@ -1,5 +1,5 @@
 <qos-form-dialog
-  title="Nouvelle mesure"
+  title="Nouvelle mesure" i18n-title="@@kpis.measurement.title"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
@@ -8,26 +8,26 @@
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Début de période</mat-label>
+      <mat-label i18n="@@kpis.measurement.period-start">Début de période</mat-label>
       <input matInput formControlName="periodStart" type="datetime-local" required>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Fin de période</mat-label>
+      <mat-label i18n="@@kpis.detail.col-period-end">Fin de période</mat-label>
       <input matInput formControlName="periodEnd" type="datetime-local" required>
     </mat-form-field>
   </div>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Valeur</mat-label>
+      <mat-label i18n="@@kpis.detail.col-value">Valeur</mat-label>
       <input matInput formControlName="value" type="number" step="any" required>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col col-small">
-      <mat-label>Unité</mat-label>
+      <mat-label i18n="@@kpis.dialog.unit">Unité</mat-label>
       <input matInput formControlName="unit" maxlength="32">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Source</mat-label>
+      <mat-label i18n="@@kpis.detail.col-source">Source</mat-label>
       <mat-select formControlName="source">
         <mat-option *ngFor="let s of sources" [value]="s">{{ s }}</mat-option>
       </mat-select>
@@ -35,7 +35,7 @@
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Notes</mat-label>
+    <mat-label i18n="@@kpis.measurement.notes">Notes</mat-label>
     <textarea matInput formControlName="notes" rows="2" maxlength="1000"></textarea>
   </mat-form-field>
 

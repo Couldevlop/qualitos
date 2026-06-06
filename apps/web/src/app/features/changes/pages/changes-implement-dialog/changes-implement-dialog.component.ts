@@ -39,11 +39,11 @@ export class ChangesImplementDialogComponent {
     this.svc.implement(this.data.changeId, { implementedAt: v.implementedAt })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: c => { this.snack.open('Demande marquée IMPLEMENTED.', 'OK', { duration: 2200 }); this.dialogRef.close(c); },
+        next: c => { this.snack.open($localize`:@@changes.implement.implemented:Demande marquée IMPLEMENTED.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(c); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[changes-implement] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Implémentation impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@changes.implement.failed:Implémentation impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

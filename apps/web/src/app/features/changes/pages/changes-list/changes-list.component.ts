@@ -72,7 +72,7 @@ export class ChangesListComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[changes-list] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return [];
           }),
           finalize(() => this.loading$.next(false))
@@ -113,9 +113,13 @@ export class ChangesListComponent implements OnInit {
   typeBadge(t: ChangeRequestType): string       { return 'tbadge tbadge-' + t.toLowerCase(); }
   typeLabel(t: ChangeRequestType): string {
     return ({
-      DOCUMENT: 'Document', PROCESS: 'Processus', EQUIPMENT: 'Équipement',
-      SUPPLIER: 'Fournisseur', IT_SYSTEM: 'Système IT', ORGANIZATIONAL: 'Organisationnel',
-      OTHER: 'Autre'
+      DOCUMENT: $localize`:@@changes.type.document:Document`,
+      PROCESS: $localize`:@@changes.type.process:Processus`,
+      EQUIPMENT: $localize`:@@changes.type.equipment:Équipement`,
+      SUPPLIER: $localize`:@@changes.type.supplier:Fournisseur`,
+      IT_SYSTEM: $localize`:@@changes.type.it-system:Système IT`,
+      ORGANIZATIONAL: $localize`:@@changes.type.organizational:Organisationnel`,
+      OTHER: $localize`:@@changes.type.other:Autre`
     })[t];
   }
 }

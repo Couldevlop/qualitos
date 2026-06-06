@@ -57,7 +57,7 @@ export class FmeaDetailComponent implements OnInit {
       switchMap(p => {
         const id = p.get('id') ?? '';
         if (!UUID_REGEX.test(id) && !id.startsWith('fmea-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
@@ -65,7 +65,7 @@ export class FmeaDetailComponent implements OnInit {
         return this.refresh$.pipe(
           switchMap(() => forkJoin({
             project: this.svc.get(id).pipe(catchError(err => {
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             })),
             items: this.svc.listItems(id).pipe(catchError(() => of({
@@ -100,31 +100,31 @@ export class FmeaDetailComponent implements OnInit {
 
   activate(p: FmeaProjectResponse): void {
     this.svc.activate(p.id).subscribe({
-      next: () => { this.snack.open('Projet activé.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Activation impossible.')
+      next: () => { this.snack.open($localize`:@@fmea.detail.activated:Projet activé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@fmea.detail.activate-failed:Activation impossible.`)
     });
   }
 
   reopen(p: FmeaProjectResponse): void {
     this.svc.reopen(p.id).subscribe({
-      next: () => { this.snack.open('Projet repassé en DRAFT.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Réouverture impossible.')
+      next: () => { this.snack.open($localize`:@@fmea.detail.reopened:Projet repassé en DRAFT.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@fmea.detail.reopen-failed:Réouverture impossible.`)
     });
   }
 
   archive(p: FmeaProjectResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Archiver le projet ?',
-        message: '« ' + p.name + ' » sera marqué ARCHIVED. Les items resteront consultables.',
-        confirmLabel: 'Archiver', cancelLabel: 'Annuler', danger: true
+        title: $localize`:@@fmea.detail.archive-title:Archiver le projet ?`,
+        message: $localize`:@@fmea.detail.archive-message:« ${p.name}:name: » sera marqué ARCHIVED. Les items resteront consultables.`,
+        confirmLabel: $localize`:@@fmea.detail.archive:Archiver`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.archive(p.id).subscribe({
-        next: () => { this.snack.open('Projet archivé.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Archivage impossible.')
+        next: () => { this.snack.open($localize`:@@fmea.detail.archived:Projet archivé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@fmea.detail.archive-failed:Archivage impossible.`)
       });
     });
   }
@@ -132,19 +132,19 @@ export class FmeaDetailComponent implements OnInit {
   remove(p: FmeaProjectResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer le projet ?',
-        message: 'Suppression définitive de « ' + p.name + ' » et de tous ses items.',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        title: $localize`:@@fmea.detail.delete-title:Supprimer le projet ?`,
+        message: $localize`:@@fmea.detail.delete-message:Suppression définitive de « ${p.name}:name: » et de tous ses items.`,
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(p.id).subscribe({
         next: () => {
-          this.snack.open('Projet supprimé.', 'OK', { duration: 2200 });
+          this.snack.open($localize`:@@fmea.detail.deleted:Projet supprimé.`, $localize`:@@common.ok:OK`, { duration: 2200 });
           this.router.navigate(['/fmea']);
         },
-        error: err => this.fail(err, 'Suppression impossible.')
+        error: err => this.fail(err, $localize`:@@fmea.detail.delete-failed:Suppression impossible.`)
       });
     });
   }
@@ -170,16 +170,16 @@ export class FmeaDetailComponent implements OnInit {
   removeItem(p: FmeaProjectResponse, item: FmeaItemResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer l\'item ?',
-        message: 'Item #' + item.sequenceNo + ' (RPN = ' + item.rpn + ') sera supprimé.',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        title: $localize`:@@fmea.detail.delete-item-title:Supprimer l'item ?`,
+        message: $localize`:@@fmea.detail.delete-item-message:Item #${item.sequenceNo}:seq: (RPN = ${item.rpn}:rpn:) sera supprimé.`,
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.deleteItem(p.id, item.id).subscribe({
         next: () => { this.items = this.items.filter(x => x.id !== item.id); this.refresh$.next(); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        error: err => this.fail(err, $localize`:@@fmea.detail.delete-item-failed:Suppression impossible.`)
       });
     });
   }
@@ -195,8 +195,11 @@ export class FmeaDetailComponent implements OnInit {
   typeBadge(t: FmeaType): string     { return 'tbadge tbadge-' + t.toLowerCase(); }
   typeLabel(t: FmeaType): string {
     return ({
-      PROCESS_FMEA: 'Processus', DESIGN_FMEA: 'Conception', SYSTEM_FMEA: 'Système',
-      SERVICE_FMEA: 'Service', BOW_TIE: 'Bow-tie'
+      PROCESS_FMEA: $localize`:@@fmea.type.process:Processus`,
+      DESIGN_FMEA: $localize`:@@fmea.type.design:Conception`,
+      SYSTEM_FMEA: $localize`:@@fmea.type.system:Système`,
+      SERVICE_FMEA: $localize`:@@fmea.type.service:Service`,
+      BOW_TIE: $localize`:@@fmea.type.bow-tie:Bow-tie`
     })[t];
   }
 

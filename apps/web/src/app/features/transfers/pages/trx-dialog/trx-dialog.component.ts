@@ -45,13 +45,25 @@ export class TrxDialogComponent {
   readonly form;
 
   readonly mechanisms: { value: TransferMechanism; label: string; warn?: boolean }[] = [
-    { value: 'ADEQUACY_DECISION',            label: 'Décision d\'adéquation (Art. 45)' },
-    { value: 'STANDARD_CONTRACTUAL_CLAUSES', label: 'Clauses contractuelles types — SCC 2021 (Art. 46.2.c-d)' },
-    { value: 'BINDING_CORPORATE_RULES',      label: 'Règles d\'entreprise contraignantes — BCR (Art. 47)' },
-    { value: 'CODE_OF_CONDUCT',              label: 'Code de conduite approuvé (Art. 46.2.e)' },
-    { value: 'CERTIFICATION',                label: 'Mécanisme de certification (Art. 46.2.f)' },
-    { value: 'DEROGATION_ART49',             label: 'Dérogation — situation particulière (Art. 49) ⚠ exceptionnel', warn: true }
+    { value: 'ADEQUACY_DECISION',            label: $localize`:@@transfers.dialog.mech-adequacy:Décision d'adéquation (Art. 45)` },
+    { value: 'STANDARD_CONTRACTUAL_CLAUSES', label: $localize`:@@transfers.dialog.mech-scc:Clauses contractuelles types — SCC 2021 (Art. 46.2.c-d)` },
+    { value: 'BINDING_CORPORATE_RULES',      label: $localize`:@@transfers.dialog.mech-bcr:Règles d'entreprise contraignantes — BCR (Art. 47)` },
+    { value: 'CODE_OF_CONDUCT',              label: $localize`:@@transfers.dialog.mech-coc:Code de conduite approuvé (Art. 46.2.e)` },
+    { value: 'CERTIFICATION',                label: $localize`:@@transfers.dialog.mech-certification:Mécanisme de certification (Art. 46.2.f)` },
+    { value: 'DEROGATION_ART49',             label: $localize`:@@transfers.dialog.mech-derogation:Dérogation — situation particulière (Art. 49) ⚠ exceptionnel`, warn: true }
   ];
+
+  get dialogTitle(): string {
+    return this.isEdit
+      ? $localize`:@@transfers.dialog.title-edit:Modifier le transfert`
+      : $localize`:@@transfers.dialog.title-create:Nouveau transfert international`;
+  }
+
+  get submitLabelText(): string {
+    return this.isEdit
+      ? $localize`:@@common.save:Enregistrer`
+      : $localize`:@@transfers.dialog.submit-create:Créer (DRAFT)`;
+  }
 
   constructor(
     private readonly fb: FormBuilder,
@@ -99,8 +111,8 @@ export class TrxDialogComponent {
     // OWASP A04 — Art. 49 requires explicit justification.
     if (requiresDerogationJustification(v.mechanism) && !v.derogationJustification?.trim()) {
       this.snack.open(
-        'Une dérogation Art. 49 exige une justification explicite (intérêt vital, exécution contrat, motifs publics importants, …).',
-        'OK', { duration: 5000 }
+        $localize`:@@transfers.dialog.derogation-required:Une dérogation Art. 49 exige une justification explicite (intérêt vital, exécution contrat, motifs publics importants, …).`,
+        $localize`:@@common.ok:OK`, { duration: 5000 }
       );
       return;
     }
@@ -109,8 +121,8 @@ export class TrxDialogComponent {
         && v.mechanism !== 'DEROGATION_ART49'
         && !v.safeguardsDescription?.trim()) {
       this.snack.open(
-        'Les mécanismes Art. 46 (SCC / BCR / Code / Certification) exigent une description des garanties.',
-        'OK', { duration: 5000 }
+        $localize`:@@transfers.dialog.safeguards-required:Les mécanismes Art. 46 (SCC / BCR / Code / Certification) exigent une description des garanties.`,
+        $localize`:@@common.ok:OK`, { duration: 5000 }
       );
       return;
     }
@@ -135,7 +147,7 @@ export class TrxDialogComponent {
       : (() => {
           const createdByUserId = this.auth.snapshot()?.userId;
           if (!createdByUserId) {
-            this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+            this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
             this.submitting = false;
             throw new Error('No session');
           }
@@ -145,11 +157,11 @@ export class TrxDialogComponent {
     op$
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: t => { this.snack.open(this.isEdit ? 'Transfert mis à jour.' : 'Transfert créé (DRAFT).', 'OK', { duration: 2500 }); this.dialogRef.close(t); },
+        next: t => { this.snack.open(this.isEdit ? $localize`:@@transfers.dialog.updated:Transfert mis à jour.` : $localize`:@@transfers.dialog.created:Transfert créé (DRAFT).`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(t); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[trx-dialog] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@transfers.dialog.save-error:Erreur lors de l'enregistrement.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

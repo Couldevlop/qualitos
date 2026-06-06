@@ -53,11 +53,11 @@ export class SrCompleteDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: r => { this.snack.open('Demande clôturée.', 'OK', { duration: 2500 }); this.dialogRef.close(r); },
+        next: r => { this.snack.open($localize`:@@subject-requests.complete.success:Demande clôturée.`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(r); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[sr-complete] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Clôture impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@subject-requests.complete.error:Clôture impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

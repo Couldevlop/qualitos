@@ -1,543 +1,76 @@
 # -*- coding: utf-8 -*-
-"""Génère src/locale/messages.<lang>.xlf à partir de la table TRANSLATIONS.
+"""Génère src/locale/messages.<lang>.xlf à partir des tables scripts/i18n/*.py.
 
-Usage : python scripts/gen-i18n-xlf.py   (depuis apps/web)
+Usage : python scripts/gen-i18n-xlf.py            (depuis apps/web)
+        python scripts/gen-i18n-xlf.py --check    (+ vérif croisée code <-> tables)
 
 Pourquoi un générateur plutôt que des XLF édités à la main : une seule source
-de vérité par ID, diff lisibles, et l'ajout d'une langue = une colonne.
-Les IDs sont explicites (@@nav.*, @@shell.*) — pas de dépendance à l'ordre
+de vérité par ID, diffs lisibles, et l'ajout d'une langue = une colonne.
+Les IDs sont explicites (@@nav.*, @@capa.*, …) — pas de dépendance à l'ordre
 d'extraction. `ng extract-i18n` reste utilisable pour détecter les oublis.
+
+Les tables sont éclatées PAR DOMAINE dans scripts/i18n/ (core, methods,
+offline_queue, capa, grc_data, …) : chaque chantier i18n ajoute son fichier
+sans toucher aux autres — pas de conflit de merge. Chaque fichier expose un
+dict TRANSLATIONS = { id: (fr, en, es, ar, ja, zh) }. Un même id défini dans
+deux fichiers avec un contenu différent est une erreur fatale.
+
+Placeholder d'interpolation $localize : `${expr}:nom:` côté TS s'écrit `{$nom}`
+dans la table et devient `<x id="nom"/>` dans le XLF généré.
 """
+import glob
+import importlib.util
 import io
 import os
 import re
+import sys
 
 LANGS = ["en", "es", "ar", "ja", "zh"]
+N_COLS = len(LANGS) + 1   # fr + 5 cibles
 
-# Placeholder d'interpolation $localize : `${expr}:nom:` côté TS s'écrit `{$nom}`
-# dans la table ci-dessous et devient `<x id="nom"/>` dans le XLF généré.
 PLACEHOLDER_RE = re.compile(r"\{\$([A-Za-z0-9_]+)\}")
-
-# id: (source FR, en, es, ar, ja, zh)
-TRANSLATIONS = {
-    # ---- vocabulaire commun (réutilisé par tous les écrans features) ------------
-    # Règle : un terme partagé = UN id common.* ; même source FR partout où l'id
-    # est utilisé (exigence Angular i18n : id identique => source identique).
-    "common.loading": ("Chargement…", "Loading…", "Cargando…", "جارٍ التحميل…", "読み込み中…", "加载中…"),
-    "common.all": ("Tous", "All", "Todos", "الكل", "すべて", "全部"),
-    "common.filter-by-status": ("Filtrer par statut", "Filter by status", "Filtrar por estado", "تصفية حسب الحالة", "ステータスで絞り込む", "按状态筛选"),
-    "common.status": ("Statut", "Status", "Estado", "الحالة", "ステータス", "状态"),
-    "common.title": ("Titre", "Title", "Título", "العنوان", "タイトル", "标题"),
-    "common.description": ("Description", "Description", "Descripción", "الوصف", "説明", "描述"),
-    "common.actions": ("Actions", "Actions", "Acciones", "الإجراءات", "操作", "操作"),
-    "common.last-updated": ("Dernière MAJ", "Last updated", "Última actualización", "آخر تحديث", "最終更新", "最后更新"),
-    "common.created-at": ("Créé le", "Created on", "Creado el", "تاريخ الإنشاء", "作成日", "创建于"),
-    "common.save": ("Enregistrer", "Save", "Guardar", "حفظ", "保存", "保存"),
-    "common.cancel": ("Annuler", "Cancel", "Cancelar", "إلغاء", "キャンセル", "取消"),
-    "common.create": ("Créer", "Create", "Crear", "إنشاء", "作成", "创建"),
-    "common.close": ("Fermer", "Close", "Cerrar", "إغلاق", "閉じる", "关闭"),
-    "common.delete": ("Supprimer", "Delete", "Eliminar", "حذف", "削除", "删除"),
-    "common.edit": ("Modifier", "Edit", "Editar", "تعديل", "編集", "编辑"),
-    "common.add": ("Ajouter", "Add", "Añadir", "إضافة", "追加", "添加"),
-    "common.back": ("Retour", "Back", "Volver", "رجوع", "戻る", "返回"),
-    "common.search": ("Rechercher", "Search", "Buscar", "بحث", "検索", "搜索"),
-    "common.details": ("Détails", "Details", "Detalles", "التفاصيل", "詳細", "详情"),
-    "common.open": ("Ouvrir", "Open", "Abrir", "فتح", "開く", "打开"),
-    "common.name": ("Nom", "Name", "Nombre", "الاسم", "名前", "名称"),
-    "common.date": ("Date", "Date", "Fecha", "التاريخ", "日付", "日期"),
-    "common.type": ("Type", "Type", "Tipo", "النوع", "種類", "类型"),
-    "common.score": ("Score", "Score", "Puntuación", "النتيجة", "スコア", "得分"),
-    "common.zone": ("Zone", "Zone", "Zona", "المنطقة", "ゾーン", "区域"),
-    "common.progress": ("Avancement", "Progress", "Progreso", "التقدم", "進捗", "进度"),
-    "common.required-field": ("Champ obligatoire", "Required field", "Campo obligatorio", "حقل إلزامي", "必須項目", "必填字段"),
-    "common.loading-aria": ("Chargement", "Loading", "Cargando", "جارٍ التحميل", "読み込み中", "加载中"),
-    "common.description-optional": ("Description (optionnel)", "Description (optional)", "Descripción (opcional)", "الوصف (اختياري)", "説明（任意）", "描述（可选）"),
-    "common.maxlength-200": ("200 caractères maximum.", "200 characters maximum.", "Máximo 200 caracteres.", "200 حرفًا كحد أقصى.", "最大200文字。", "最多200个字符。"),
-    "common.maxlength-255": ("255 caractères maximum.", "255 characters maximum.", "Máximo 255 caracteres.", "255 حرفًا كحد أقصى.", "最大255文字。", "最多255个字符。"),
-    "common.maxlength-500": ("500 caractères maximum.", "500 characters maximum.", "Máximo 500 caracteres.", "500 حرفًا كحد أقصى.", "最大500文字。", "最多500个字符。"),
-    "common.invalid-id": ("Identifiant invalide.", "Invalid identifier.", "Identificador no válido.", "معرّف غير صالح.", "無効な識別子です。", "标识符无效。"),
-    "common.session-expired": ("Session expirée — veuillez vous reconnecter.", "Session expired — please log in again.", "Sesión expirada — vuelva a iniciar sesión.", "انتهت الجلسة — يُرجى تسجيل الدخول من جديد.", "セッションが期限切れです — 再度ログインしてください。", "会话已过期 — 请重新登录。"),
-    "common.error-loading": ("Erreur lors du chargement.", "Error while loading.", "Error al cargar.", "خطأ أثناء التحميل.", "読み込み中にエラーが発生しました。", "加载时出错。"),
-    "common.error-create": ("Erreur lors de la création.", "Error while creating.", "Error al crear.", "خطأ أثناء الإنشاء.", "作成中にエラーが発生しました。", "创建时出错。"),
-    "common.error-update": ("Erreur lors de la mise à jour.", "Error while updating.", "Error al actualizar.", "خطأ أثناء التحديث.", "更新中にエラーが発生しました。", "更新时出错。"),
-    "common.error-delete": ("Erreur lors de la suppression.", "Error while deleting.", "Error al eliminar.", "خطأ أثناء الحذف.", "削除中にエラーが発生しました。", "删除时出错。"),
-    "common.error-add": ("Erreur lors de l'ajout.", "Error while adding.", "Error al añadir.", "خطأ أثناء الإضافة.", "追加中にエラーが発生しました。", "添加时出错。"),
-    "common.add-failed": ("Ajout impossible.", "Cannot add.", "No se puede añadir.", "تعذّرت الإضافة.", "追加できません。", "无法添加。"),
-    "common.delete-failed": ("Suppression impossible.", "Cannot delete.", "No se puede eliminar.", "تعذّر الحذف.", "削除できません。", "无法删除。"),
-
-    # ---- shell -----------------------------------------------------------------
-    "shell.search.placeholder": (
-        "Rechercher : modules, normes, KPI, documents…",
-        "Search: modules, standards, KPIs, documents…",
-        "Buscar: módulos, normas, KPI, documentos…",
-        "بحث: الوحدات، المعايير، المؤشرات، المستندات…",
-        "検索：モジュール、規格、KPI、文書…",
-        "搜索：模块、标准、KPI、文档…",
-    ),
-    "shell.search.aria": (
-        "Recherche globale", "Global search", "Búsqueda global",
-        "بحث شامل", "全体検索", "全局搜索",
-    ),
-    # ---- navigation -------------------------------------------------------------
-    "nav.pilotage": ("Pilotage", "Steering", "Pilotaje", "القيادة", "ダッシュボード", "驾驶舱"),
-    "nav.tableau-de-bord": ("Tableau de bord", "Dashboard", "Panel de control", "لوحة المعلومات", "ダッシュボード", "仪表盘"),
-    "nav.accueil": ("Accueil", "Home", "Inicio", "الرئيسية", "ホーム", "首页"),
-    "nav.mes-dashboards": ("Mes dashboards", "My dashboards", "Mis paneles", "لوحاتي", "マイダッシュボード", "我的仪表盘"),
-    "nav.indicateurs-kpi": ("Indicateurs (KPI)", "Indicators (KPIs)", "Indicadores (KPI)", "المؤشرات (KPI)", "指標（KPI）", "指标（KPI）"),
-    "nav.assistant-ia": ("Assistant IA", "AI Assistant", "Asistente IA", "مساعد الذكاء الاصطناعي", "AIアシスタント", "AI 助手"),
-    "nav.methodes-qualite": ("Méthodes qualité", "Quality methods", "Métodos de calidad", "أساليب الجودة", "品質手法", "质量方法"),
-    "nav.pdca": ("PDCA", "PDCA", "PDCA", "PDCA", "PDCA", "PDCA"),
-    "nav.ishikawa": ("Ishikawa", "Ishikawa", "Ishikawa", "إيشيكاوا", "特性要因図", "鱼骨图"),
-    "nav.5s": ("5S", "5S", "5S", "5S", "5S", "5S"),
-    "nav.dmaic": ("DMAIC", "DMAIC", "DMAIC", "DMAIC", "DMAIC", "DMAIC"),
-    "nav.spc": ("SPC", "SPC", "SPC", "SPC", "SPC", "SPC"),
-    "nav.cercles": ("Cercles", "Quality circles", "Círculos", "حلقات الجودة", "QCサークル", "质量圈"),
-    "nav.qualite-operationnelle": ("Qualité opérationnelle", "Operational quality", "Calidad operativa", "الجودة التشغيلية", "オペレーション品質", "运营质量"),
-    "nav.capa": ("CAPA", "CAPA", "CAPA", "CAPA", "CAPA", "CAPA"),
-    "nav.audits": ("Audits", "Audits", "Auditorías", "التدقيقات", "監査", "审核"),
-    "nav.risques-fmea": ("Risques (FMEA)", "Risks (FMEA)", "Riesgos (AMFE)", "المخاطر (FMEA)", "リスク（FMEA）", "风险（FMEA）"),
-    "nav.documents": ("Documents", "Documents", "Documentos", "المستندات", "文書", "文档"),
-    "nav.changements": ("Changements", "Changes", "Cambios", "التغييرات", "変更管理", "变更"),
-    "nav.ehs": ("EHS", "EHS", "EHS", "البيئة والصحة والسلامة", "EHS", "EHS"),
-    "nav.fournisseurs-competences": ("Fournisseurs & compétences", "Suppliers & skills", "Proveedores y competencias", "الموردون والكفاءات", "サプライヤーとスキル", "供应商与能力"),
-    "nav.fournisseurs": ("Fournisseurs", "Suppliers", "Proveedores", "الموردون", "サプライヤー", "供应商"),
-    "nav.formation": ("Formation", "Training", "Formación", "التدريب", "トレーニング", "培训"),
-    "nav.normes-certification": ("Normes & certification", "Standards & certification", "Normas y certificación", "المعايير والاعتماد", "規格と認証", "标准与认证"),
-    "nav.standards-hub": ("Standards Hub", "Standards Hub", "Standards Hub", "مركز المعايير", "規格ハブ", "标准中心"),
-    "nav.conformite-ia-ai-act": ("Conformité — IA (AI Act)", "Compliance — AI (AI Act)", "Cumplimiento — IA (AI Act)", "الامتثال — الذكاء الاصطناعي (AI Act)", "コンプライアンス — AI（AI法）", "合规 — AI（AI 法案）"),
-    "nav.qms": ("QMS", "QMS", "QMS", "نظام إدارة الجودة", "QMS", "QMS"),
-    "nav.conformite": ("Conformité", "Compliance", "Cumplimiento", "الامتثال", "コンプライアンス", "合规"),
-    "nav.incidents": ("Incidents", "Incidents", "Incidentes", "الحوادث", "インシデント", "事件"),
-    "nav.eudb": ("EUDB", "EUDB", "EUDB", "EUDB", "EUDB", "EUDB"),
-    "nav.fria": ("FRIA", "FRIA", "FRIA", "FRIA", "FRIA", "FRIA"),
-    "nav.pmm": ("PMM", "PMM", "PMM", "PMM", "PMM", "PMM"),
-    "nav.conformite-donnees-rgpd": ("Conformité — Données (RGPD)", "Compliance — Data (GDPR)", "Cumplimiento — Datos (RGPD)", "الامتثال — البيانات (GDPR)", "コンプライアンス — データ（GDPR）", "合规 — 数据（GDPR）"),
-    "nav.registre-ropa": ("Registre (RoPA)", "Register (RoPA)", "Registro (RoPA)", "السجل (RoPA)", "処理記録（RoPA）", "记录（RoPA）"),
-    "nav.consentements": ("Consentements", "Consents", "Consentimientos", "الموافقات", "同意管理", "同意管理"),
-    "nav.demandes-dsar": ("Demandes (DSAR)", "Requests (DSAR)", "Solicitudes (DSAR)", "الطلبات (DSAR)", "請求（DSAR）", "请求（DSAR）"),
-    "nav.mentions": ("Mentions", "Notices", "Avisos", "الإشعارات", "プライバシー通知", "隐私声明"),
-    "nav.dpia": ("DPIA", "DPIA", "EIPD", "تقييم الأثر (DPIA)", "DPIA", "DPIA"),
-    "nav.dpo": ("DPO", "DPO", "DPD", "مسؤول حماية البيانات", "DPO", "DPO"),
-    "nav.retention": ("Rétention", "Retention", "Retención", "الاحتفاظ", "保持期間", "保留"),
-    "nav.transferts": ("Transferts", "Transfers", "Transferencias", "عمليات النقل", "越境移転", "数据传输"),
-    "nav.sous-traitants-dpa": ("Sous-traitants (DPA)", "Processors (DPA)", "Encargados (DPA)", "المعالجون (DPA)", "処理者（DPA）", "处理方（DPA）"),
-    "nav.violations": ("Violations", "Breaches", "Brechas", "الانتهاكات", "侵害", "数据泄露"),
-    "nav.decisions-auto": ("Décisions auto.", "Automated decisions", "Decisiones autom.", "القرارات الآلية", "自動意思決定", "自动化决策"),
-    "nav.conformite-cyber-nis-2": ("Conformité — Cyber (NIS 2)", "Compliance — Cyber (NIS 2)", "Cumplimiento — Ciber (NIS 2)", "الامتثال — السيبراني (NIS 2)", "コンプライアンス — サイバー（NIS 2）", "合规 — 网络（NIS 2）"),
-    "nav.mesures": ("Mesures", "Measures", "Medidas", "التدابير", "対策", "措施"),
-    "nav.incidents-cyber": ("Incidents cyber", "Cyber incidents", "Incidentes ciber", "الحوادث السيبرانية", "サイバーインシデント", "网络事件"),
-    "nav.integrations": ("Intégrations", "Integrations", "Integraciones", "التكاملات", "連携", "集成"),
-    "nav.itsm": ("ITSM", "ITSM", "ITSM", "ITSM", "ITSM", "ITSM"),
-
-    # ---- PDCA --------------------------------------------------------------------
-    "pdca.list.title": ("Cycles PDCA", "PDCA cycles", "Ciclos PDCA", "دورات PDCA", "PDCAサイクル", "PDCA循环"),
-    "pdca.list.subtitle": ("Roue de Deming : Plan → Do → Check → Act.", "Deming wheel: Plan → Do → Check → Act.", "Rueda de Deming: Plan → Do → Check → Act.", "عجلة ديمنغ: تخطيط ← تنفيذ ← فحص ← تصرّف.", "デミングサイクル：Plan → Do → Check → Act。", "戴明环：Plan → Do → Check → Act。"),
-    "pdca.list.new-cycle": ("Nouveau cycle", "New cycle", "Nuevo ciclo", "دورة جديدة", "新規サイクル", "新建循环"),
-    "pdca.list.col-steps": ("Étapes", "Steps", "Etapas", "الخطوات", "ステップ", "步骤"),
-    "pdca.list.empty": ("Aucun cycle pour ce filtre.", "No cycle for this filter.", "Ningún ciclo para este filtro.", "لا توجد دورات لهذا المرشّح.", "この絞り込みに該当するサイクルはありません。", "没有符合此筛选条件的循环。"),
-    "pdca.list.paginator-aria": ("Pagination des cycles", "Cycles pagination", "Paginación de ciclos", "ترقيم صفحات الدورات", "サイクルのページ送り", "循环分页"),
-    "pdca.detail.back-tooltip": ("Retour à la liste", "Back to list", "Volver a la lista", "العودة إلى القائمة", "一覧へ戻る", "返回列表"),
-    "pdca.detail.eyebrow": ("Cycle PDCA · Roue de Deming", "PDCA cycle · Deming wheel", "Ciclo PDCA · Rueda de Deming", "دورة PDCA · عجلة ديمنغ", "PDCAサイクル · デミングサイクル", "PDCA循环 · 戴明环"),
-    "pdca.detail.cancel-tooltip": ("Annuler le cycle", "Cancel cycle", "Cancelar el ciclo", "إلغاء الدورة", "サイクルを取り消す", "取消循环"),
-    "pdca.detail.advance-tooltip": ("Passer à la phase suivante", "Move to next phase", "Pasar a la fase siguiente", "الانتقال إلى المرحلة التالية", "次のフェーズへ進む", "进入下一阶段"),
-    "pdca.detail.advance": ("Avancer la phase", "Advance phase", "Avanzar de fase", "تقديم المرحلة", "フェーズを進める", "推进阶段"),
-    "pdca.detail.owner": ("Pilote", "Owner", "Responsable", "المسؤول", "オーナー", "负责人"),
-    "pdca.detail.completed-at": ("Clôturé le", "Closed on", "Cerrado el", "أُغلق في", "完了日", "结束于"),
-    "pdca.detail.steps-title": ("Étapes", "Steps", "Etapas", "الخطوات", "ステップ", "步骤"),
-    "pdca.detail.add-step-tooltip": ("Ajouter une étape Plan / Do / Check / Act", "Add a Plan / Do / Check / Act step", "Añadir una etapa Plan / Do / Check / Act", "إضافة خطوة Plan / Do / Check / Act", "Plan / Do / Check / Act のステップを追加", "添加 Plan / Do / Check / Act 步骤"),
-    "pdca.detail.add-step": ("Ajouter une étape", "Add a step", "Añadir una etapa", "إضافة خطوة", "ステップを追加", "添加步骤"),
-    "pdca.detail.col-phase": ("Phase", "Phase", "Fase", "المرحلة", "フェーズ", "阶段"),
-    "pdca.detail.col-step": ("Étape", "Step", "Etapa", "الخطوة", "ステップ", "步骤"),
-    "pdca.detail.col-due-date": ("Échéance", "Due date", "Vencimiento", "تاريخ الاستحقاق", "期限", "截止日期"),
-    "pdca.detail.col-updated": ("MAJ", "Updated", "Actualizado", "آخر تحديث", "更新", "更新"),
-    "pdca.detail.steps-empty": ("Aucune étape pour l'instant. Clique sur Ajouter une étape pour démarrer ton cycle Plan → Do → Check → Act.", "No step yet. Click Add a step to start your Plan → Do → Check → Act cycle.", "Aún no hay etapas. Haz clic en Añadir una etapa para iniciar tu ciclo Plan → Do → Check → Act.", "لا توجد خطوات بعد. انقر على إضافة خطوة لبدء دورة Plan → Do → Check → Act.", "ステップはまだありません。ステップを追加をクリックして Plan → Do → Check → Act サイクルを開始してください。", "暂无步骤。点击添加步骤以开始您的 Plan → Do → Check → Act 循环。"),
-    "pdca.detail.not-found": ("Cycle introuvable.", "Cycle not found.", "Ciclo no encontrado.", "تعذّر العثور على الدورة.", "サイクルが見つかりません。", "未找到循环。"),
-    "pdca.detail.advanced": ("Cycle avancé.", "Cycle advanced.", "Ciclo avanzado.", "تم تقديم الدورة.", "サイクルを進めました。", "循环已推进。"),
-    "pdca.detail.advance-error": ("Erreur lors de l'avancement.", "Error while advancing.", "Error al avanzar.", "خطأ أثناء التقديم.", "進行中にエラーが発生しました。", "推进时出错。"),
-    "pdca.detail.cancelled": ("Cycle annulé.", "Cycle cancelled.", "Ciclo cancelado.", "تم إلغاء الدورة.", "サイクルを取り消しました。", "循环已取消。"),
-    "pdca.detail.cancel-error": ("Erreur lors de l'annulation.", "Error while cancelling.", "Error al cancelar.", "خطأ أثناء الإلغاء.", "取り消し中にエラーが発生しました。", "取消时出错。"),
-    "pdca.create.title": ("Nouveau cycle PDCA", "New PDCA cycle", "Nuevo ciclo PDCA", "دورة PDCA جديدة", "新規 PDCA サイクル", "新建 PDCA 循环"),
-    "pdca.create.subtitle": ("Décris brièvement le problème ou l'objectif. Les étapes Plan / Do / Check / Act pourront être ajoutées ensuite.", "Briefly describe the problem or goal. Plan / Do / Check / Act steps can be added afterwards.", "Describe brevemente el problema o el objetivo. Las etapas Plan / Do / Check / Act se podrán añadir después.", "صِف المشكلة أو الهدف بإيجاز. يمكن إضافة خطوات Plan / Do / Check / Act لاحقًا.", "問題または目標を簡潔に記述してください。Plan / Do / Check / Act のステップは後で追加できます。", "简要描述问题或目标。Plan / Do / Check / Act 步骤可稍后添加。"),
-    "pdca.create.cycle-title-label": ("Titre du cycle", "Cycle title", "Título del ciclo", "عنوان الدورة", "サイクルのタイトル", "循环标题"),
-    "pdca.create.cycle-title-placeholder": ("Ex. : Réduction des défauts de soudure — ligne 3", "E.g.: Reducing welding defects — line 3", "Ej.: Reducción de defectos de soldadura — línea 3", "مثال: تقليل عيوب اللحام — الخط 3", "例：溶接欠陥の削減 — ライン3", "例：减少焊接缺陷 — 3号线"),
-    "pdca.create.title-required": ("Le titre est requis.", "Title is required.", "El título es obligatorio.", "العنوان مطلوب.", "タイトルは必須です。", "标题为必填项。"),
-    "pdca.create.description-placeholder": ("Pilote, périmètre, objectif chiffré, échéance…", "Owner, scope, quantified goal, deadline…", "Responsable, alcance, objetivo cuantificado, plazo…", "المسؤول، النطاق، الهدف الرقمي، الموعد النهائي…", "オーナー、範囲、定量目標、期限…", "负责人、范围、量化目标、截止日期…"),
-    "pdca.create.success": ("Cycle PDCA créé.", "PDCA cycle created.", "Ciclo PDCA creado.", "تم إنشاء دورة PDCA.", "PDCAサイクルを作成しました。", "已创建 PDCA 循环。"),
-    "pdca.step.title": ("Ajouter une étape", "Add a step", "Añadir una etapa", "إضافة خطوة", "ステップを追加", "添加步骤"),
-    "pdca.step.subtitle": ("Décris l'action concrète et choisis sa phase dans le cycle PDCA.", "Describe the concrete action and choose its phase in the PDCA cycle.", "Describe la acción concreta y elige su fase en el ciclo PDCA.", "صِف الإجراء الملموس واختر مرحلته في دورة PDCA.", "具体的なアクションを記述し、PDCAサイクル内のフェーズを選択してください。", "描述具体行动并选择其在 PDCA 循环中的阶段。"),
-    "pdca.step.title-label": ("Titre de l'étape", "Step title", "Título de la etapa", "عنوان الخطوة", "ステップのタイトル", "步骤标题"),
-    "pdca.step.title-placeholder": ("Ex. : Analyse Pareto des défauts soudure", "E.g.: Pareto analysis of welding defects", "Ej.: Análisis de Pareto de defectos de soldadura", "مثال: تحليل باريتو لعيوب اللحام", "例：溶接欠陥のパレート分析", "例：焊接缺陷帕累托分析"),
-    "pdca.step.description-placeholder": ("Méthode, livrable attendu, parties prenantes…", "Method, expected deliverable, stakeholders…", "Método, entregable esperado, partes interesadas…", "المنهجية، المُخرَج المتوقع، الأطراف المعنية…", "手法、想定成果物、関係者…", "方法、预期交付物、相关方…"),
-    "pdca.step.phase-label": ("Phase", "Phase", "Fase", "المرحلة", "フェーズ", "阶段"),
-    "pdca.step.due-date-label": ("Échéance (optionnel)", "Due date (optional)", "Vencimiento (opcional)", "تاريخ الاستحقاق (اختياري)", "期限（任意）", "截止日期（可选）"),
-    "pdca.step.success": ("Étape ajoutée.", "Step added.", "Etapa añadida.", "تمت إضافة الخطوة.", "ステップを追加しました。", "已添加步骤。"),
-    "pdca.step.add-error": ("Erreur lors de l'ajout.", "Error while adding.", "Error al añadir.", "خطأ أثناء الإضافة.", "追加中にエラーが発生しました。", "添加时出错。"),
-
-    # ---- 5S (fives) ----------------------------------------------------------------
-    "fives.list.title": ("Audits 5S", "5S audits", "Auditorías 5S", "تدقيقات 5S", "5S 監査", "5S 审核"),
-    "fives.list.subtitle": ("Seiri · Seiton · Seiso · Seiketsu · Shitsuke — score pondéré 0-100.", "Seiri · Seiton · Seiso · Seiketsu · Shitsuke — weighted score 0-100.", "Seiri · Seiton · Seiso · Seiketsu · Shitsuke — puntuación ponderada 0-100.", "Seiri · Seiton · Seiso · Seiketsu · Shitsuke — درجة مرجّحة 0-100.", "整理 · 整頓 · 清掃 · 清潔 · 躾 — 加重スコア 0-100。", "整理 · 整顿 · 清扫 · 清洁 · 素养 — 加权评分 0-100。"),
-    "fives.list.new-audit": ("Nouvel audit", "New audit", "Nueva auditoría", "تدقيق جديد", "新規監査", "新建审核"),
-    "fives.list.col-scheduled": ("Planifié", "Scheduled", "Planificado", "مُجدوَل", "予定", "已计划"),
-    "fives.list.col-updated": ("MAJ", "Updated", "Actualizado", "آخر تحديث", "更新", "更新"),
-    "fives.list.empty": ("Aucun audit pour ce filtre.", "No audit for this filter.", "Ninguna auditoría para este filtro.", "لا توجد تدقيقات لهذا المرشّح.", "この絞り込みに該当する監査はありません。", "没有符合此筛选条件的审核。"),
-    "fives.list.paginator-aria": ("Pagination des audits 5S", "5S audits pagination", "Paginación de auditorías 5S", "ترقيم صفحات تدقيقات 5S", "5S監査のページ送り", "5S审核分页"),
-    "fives.detail.back-tooltip": ("Retour à la liste", "Back to list", "Volver a la lista", "العودة إلى القائمة", "一覧へ戻る", "返回列表"),
-    "fives.detail.eyebrow": ("Audit 5S · Seiri · Seiton · Seiso · Seiketsu · Shitsuke", "5S audit · Seiri · Seiton · Seiso · Seiketsu · Shitsuke", "Auditoría 5S · Seiri · Seiton · Seiso · Seiketsu · Shitsuke", "تدقيق 5S · Seiri · Seiton · Seiso · Seiketsu · Shitsuke", "5S 監査 · 整理 · 整頓 · 清掃 · 清潔 · 躾", "5S 审核 · 整理 · 整顿 · 清扫 · 清洁 · 素养"),
-    "fives.detail.delete-tooltip": ("Supprimer l'audit", "Delete audit", "Eliminar la auditoría", "حذف التدقيق", "監査を削除", "删除审核"),
-    "fives.detail.cancel-tooltip": ("Annuler l'audit", "Cancel audit", "Cancelar la auditoría", "إلغاء التدقيق", "監査を取り消す", "取消审核"),
-    "fives.detail.start-tooltip": ("Démarrer l'audit", "Start audit", "Iniciar la auditoría", "بدء التدقيق", "監査を開始", "开始审核"),
-    "fives.detail.start": ("Démarrer", "Start", "Iniciar", "بدء", "開始", "开始"),
-    "fives.detail.complete-tooltip": ("Clôturer l'audit", "Close audit", "Cerrar la auditoría", "إغلاق التدقيق", "監査を完了", "结束审核"),
-    "fives.detail.complete": ("Clôturer", "Close", "Cerrar", "إغلاق", "完了", "结束"),
-    "fives.detail.auditor": ("Auditeur", "Auditor", "Auditor", "المدقّق", "監査者", "审核员"),
-    "fives.detail.overall-score": ("Score global", "Overall score", "Puntuación global", "الدرجة الإجمالية", "総合スコア", "总体评分"),
-    "fives.detail.scheduled": ("Planifié", "Scheduled", "Planificado", "مُجدوَل", "予定", "已计划"),
-    "fives.detail.completed": ("Clôturé", "Closed", "Cerrado", "مُغلَق", "完了", "已结束"),
-    "fives.detail.pillar-score-label": ("Score (0–10)", "Score (0–10)", "Puntuación (0–10)", "الدرجة (0–10)", "スコア（0〜10）", "评分（0–10）"),
-    "fives.detail.note-label": ("Note (optionnel)", "Note (optional)", "Nota (opcional)", "ملاحظة (اختياري)", "メモ（任意）", "备注（可选）"),
-    "fives.detail.note-placeholder": ("Observation, photo URL, action…", "Observation, photo URL, action…", "Observación, URL de foto, acción…", "ملاحظة، رابط صورة، إجراء…", "所見、写真URL、アクション…", "观察、照片URL、行动…"),
-    "fives.detail.not-found": ("Audit introuvable.", "Audit not found.", "Auditoría no encontrada.", "تعذّر العثور على التدقيق.", "監査が見つかりません。", "未找到审核。"),
-    "fives.detail.delete-confirm-title": ("Supprimer cet audit ?", "Delete this audit?", "¿Eliminar esta auditoría?", "حذف هذا التدقيق؟", "この監査を削除しますか？", "删除此审核？"),
-    "fives.detail.delete-success": ("Audit supprimé.", "Audit deleted.", "Auditoría eliminada.", "تم حذف التدقيق.", "監査を削除しました。", "已删除审核。"),
-    "fives.detail.delete-error": ("Erreur lors de la suppression.", "Error while deleting.", "Error al eliminar.", "خطأ أثناء الحذف.", "削除中にエラーが発生しました。", "删除时出错。"),
-    "fives.detail.score-error": ("Erreur lors de l'enregistrement.", "Error while saving.", "Error al guardar.", "خطأ أثناء الحفظ.", "保存中にエラーが発生しました。", "保存时出错。"),
-    "fives.detail.transition-error": ("Erreur lors de la transition.", "Error during transition.", "Error durante la transición.", "خطأ أثناء الانتقال.", "遷移中にエラーが発生しました。", "状态切换时出错。"),
-    "fives.pillar.seiri.label": ("Seiri", "Seiri", "Seiri", "Seiri", "整理（Seiri）", "整理（Seiri）"),
-    "fives.pillar.seiri.hint": ("Trier — éliminer l'inutile", "Sort — eliminate the unnecessary", "Clasificar — eliminar lo innecesario", "الفرز — التخلّص من غير الضروري", "整理 — 不要なものを取り除く", "整理 — 清除不必要之物"),
-    "fives.pillar.seiton.label": ("Seiton", "Seiton", "Seiton", "Seiton", "整頓（Seiton）", "整顿（Seiton）"),
-    "fives.pillar.seiton.hint": ("Ranger — une place pour chaque chose", "Set in order — a place for everything", "Ordenar — un lugar para cada cosa", "الترتيب — مكان لكل شيء", "整頓 — すべてに定位置を", "整顿 — 物有定位"),
-    "fives.pillar.seiso.label": ("Seiso", "Seiso", "Seiso", "Seiso", "清掃（Seiso）", "清扫（Seiso）"),
-    "fives.pillar.seiso.hint": ("Nettoyer — détecter les anomalies en nettoyant", "Shine — detect anomalies while cleaning", "Limpiar — detectar anomalías al limpiar", "التنظيف — اكتشاف الأعطال أثناء التنظيف", "清掃 — 清掃しながら異常を発見する", "清扫 — 在清扫中发现异常"),
-    "fives.pillar.seiketsu.label": ("Seiketsu", "Seiketsu", "Seiketsu", "Seiketsu", "清潔（Seiketsu）", "清洁（Seiketsu）"),
-    "fives.pillar.seiketsu.hint": ("Standardiser — figer les pratiques", "Standardize — lock in practices", "Estandarizar — fijar las prácticas", "التوحيد — تثبيت الممارسات", "清潔 — やり方を標準化する", "清洁 — 固化做法"),
-    "fives.pillar.shitsuke.label": ("Shitsuke", "Shitsuke", "Shitsuke", "Shitsuke", "躾（Shitsuke）", "素养（Shitsuke）"),
-    "fives.pillar.shitsuke.hint": ("Maintenir — discipliner & auditer", "Sustain — discipline & audit", "Mantener — disciplinar y auditar", "الاستدامة — الانضباط والتدقيق", "躾 — 規律を守り監査する", "素养 — 保持纪律并审核"),
-    "fives.create.title": ("Nouvel audit 5S", "New 5S audit", "Nueva auditoría 5S", "تدقيق 5S جديد", "新規 5S 監査", "新建 5S 审核"),
-    "fives.create.hint": ("Définis la zone à auditer et la date prévue. Les scores Seiri · Seiton · Seiso · Seiketsu · Shitsuke seront saisis lors de l'audit terrain.", "Define the zone to audit and the planned date. The Seiri · Seiton · Seiso · Seiketsu · Shitsuke scores will be entered during the field audit.", "Define la zona a auditar y la fecha prevista. Las puntuaciones Seiri · Seiton · Seiso · Seiketsu · Shitsuke se registrarán durante la auditoría de campo.", "حدّد المنطقة المراد تدقيقها والتاريخ المقرر. ستُدخَل درجات Seiri · Seiton · Seiso · Seiketsu · Shitsuke أثناء التدقيق الميداني.", "監査対象のゾーンと予定日を設定してください。整理・整頓・清掃・清潔・躾のスコアは現場監査時に入力します。", "定义待审核的区域和计划日期。Seiri · Seiton · Seiso · Seiketsu · Shitsuke 评分将在现场审核时录入。"),
-    "fives.create.zone-placeholder": ("Ex. : Atelier mécanique A — ligne 1", "E.g.: Machining workshop A — line 1", "Ej.: Taller mecánico A — línea 1", "مثال: ورشة الميكانيكا A — الخط 1", "例：機械加工工場A — ライン1", "例：机加工车间A — 1号线"),
-    "fives.create.zone-required": ("La zone est requise.", "Zone is required.", "La zona es obligatoria.", "المنطقة مطلوبة.", "ゾーンは必須です。", "区域为必填项。"),
-    "fives.create.description-placeholder": ("Périmètre, observations préalables, équipement…", "Scope, prior observations, equipment…", "Alcance, observaciones previas, equipo…", "النطاق، الملاحظات المسبقة، المعدات…", "範囲、事前所見、設備…", "范围、前期观察、设备…"),
-    "fives.create.scheduled-label": ("Date prévue (optionnel)", "Planned date (optional)", "Fecha prevista (opcional)", "التاريخ المقرر (اختياري)", "予定日（任意）", "计划日期（可选）"),
-    "fives.create.success": ("Audit 5S créé.", "5S audit created.", "Auditoría 5S creada.", "تم إنشاء تدقيق 5S.", "5S監査を作成しました。", "已创建 5S 审核。"),
-    "fives.edit.title": ("Modifier l'audit", "Edit audit", "Editar la auditoría", "تعديل التدقيق", "監査を編集", "编辑审核"),
-    "fives.edit.scheduled-label": ("Date prévue", "Planned date", "Fecha prevista", "التاريخ المقرر", "予定日", "计划日期"),
-    "fives.edit.success": ("Audit mis à jour.", "Audit updated.", "Auditoría actualizada.", "تم تحديث التدقيق.", "監査を更新しました。", "已更新审核。"),
-    "fives.edit.update-error": ("Erreur lors de la mise à jour.", "Error while updating.", "Error al actualizar.", "خطأ أثناء التحديث.", "更新中にエラーが発生しました。", "更新时出错。"),
-
-    # ---- Ishikawa ------------------------------------------------------------------
-    "ishikawa.list.title": ("Diagrammes Ishikawa", "Ishikawa diagrams", "Diagramas de Ishikawa", "مخططات إيشيكاوا", "特性要因図", "鱼骨图"),
-    "ishikawa.list.subtitle": ("Cause–effet (6M / 7M / 8M) avec sous-causes (5 Pourquoi) et scoring racine.", "Cause–effect (6M / 7M / 8M) with sub-causes (5 Whys) and root-cause scoring.", "Causa–efecto (6M / 7M / 8M) con subcausas (5 Porqués) y puntuación de causa raíz.", "السبب–الأثر (6M / 7M / 8M) مع الأسباب الفرعية (5 لماذا) وتقييم السبب الجذري.", "原因と結果（6M / 7M / 8M）、サブ要因（なぜなぜ分析）と根本原因スコアリング。", "因果（6M / 7M / 8M），含子原因（5个为什么）和根本原因评分。"),
-    "ishikawa.list.new-diagram": ("Nouveau diagramme", "New diagram", "Nuevo diagrama", "مخطط جديد", "新規ダイアグラム", "新建图"),
-    "ishikawa.list.col-problem": ("Problème", "Problem", "Problema", "المشكلة", "問題", "问题"),
-    "ishikawa.list.col-mode": ("Mode", "Mode", "Modo", "النمط", "モード", "模式"),
-    "ishikawa.list.col-causes": ("Causes", "Causes", "Causas", "الأسباب", "原因", "原因"),
-    "ishikawa.list.empty": ("Aucun diagramme pour ce filtre.", "No diagram for this filter.", "Ningún diagrama para este filtro.", "لا يوجد مخطط لهذا المرشّح.", "このフィルターに該当するダイアグラムはありません。", "此筛选条件下没有图。"),
-    "ishikawa.list.paginator-aria": ("Pagination des diagrammes", "Diagram pagination", "Paginación de diagramas", "ترقيم صفحات المخططات", "ダイアグラムのページネーション", "图分页"),
-    "ishikawa.detail.back-tooltip": ("Retour à la liste", "Back to list", "Volver a la lista", "العودة إلى القائمة", "一覧に戻る", "返回列表"),
-    "ishikawa.detail.eyebrow": ("Diagramme Ishikawa · Cause–effet", "Ishikawa diagram · Cause–effect", "Diagrama de Ishikawa · Causa–efecto", "مخطط إيشيكاوا · السبب–الأثر", "特性要因図 · 原因と結果", "鱼骨图 · 因果"),
-    "ishikawa.detail.delete-tooltip": ("Supprimer le diagramme", "Delete diagram", "Eliminar el diagrama", "حذف المخطط", "ダイアグラムを削除", "删除图"),
-    "ishikawa.detail.suggest-tooltip": ("Suggérer des causes probables par l'IA", "Suggest probable causes with AI", "Sugerir causas probables con IA", "اقتراح الأسباب المحتملة بالذكاء الاصطناعي", "AIで考えられる原因を提案", "用AI建议可能的原因"),
-    "ishikawa.detail.add-cause": ("Ajouter une cause", "Add a cause", "Añadir una causa", "إضافة سبب", "原因を追加", "添加原因"),
-    "ishikawa.detail.mode": ("Mode", "Mode", "Modo", "النمط", "モード", "模式"),
-    "ishikawa.detail.owner": ("Pilote", "Owner", "Responsable", "المسؤول", "オーナー", "负责人"),
-    "ishikawa.detail.causes-total": ("Causes totales", "Total causes", "Causas totales", "إجمالي الأسباب", "原因の合計", "原因总数"),
-    "ishikawa.detail.maj": ("MAJ", "Updated", "Actualizado", "آخر تحديث", "更新", "更新"),
-    "ishikawa.detail.suggest-region-aria": ("Causes suggérées par l'IA", "AI-suggested causes", "Causas sugeridas por IA", "أسباب مقترحة من الذكاء الاصطناعي", "AIが提案した原因", "AI建议的原因"),
-    "ishikawa.detail.suggest-title": ("Causes suggérées par l'IA", "AI-suggested causes", "Causas sugeridas por IA", "أسباب مقترحة من الذكاء الاصطناعي", "AIが提案した原因", "AI建议的原因"),
-    "ishikawa.detail.dismiss-aria": ("Masquer les suggestions", "Hide suggestions", "Ocultar las sugerencias", "إخفاء الاقتراحات", "提案を非表示", "隐藏建议"),
-    "ishikawa.detail.dismiss-tooltip": ("Masquer", "Hide", "Ocultar", "إخفاء", "非表示", "隐藏"),
-    "ishikawa.detail.generating-aria": ("Génération des causes en cours", "Generating causes", "Generando causas", "جارٍ توليد الأسباب", "原因を生成中", "正在生成原因"),
-    "ishikawa.detail.generating": ("Génération des causes probables… (peut prendre ~1 min sur CPU)", "Generating probable causes… (may take ~1 min on CPU)", "Generando causas probables… (puede tardar ~1 min en CPU)", "جارٍ توليد الأسباب المحتملة… (قد يستغرق ~دقيقة على المعالج)", "考えられる原因を生成中…（CPUでは約1分かかる場合があります）", "正在生成可能的原因……（在CPU上可能需约1分钟）"),
-    "ishikawa.detail.suggest-hint": ("L'IA suggère, vous validez : « Ajouter » intègre la cause au diagramme.", "AI suggests, you validate: “Add” inserts the cause into the diagram.", "La IA sugiere, usted valida: «Añadir» integra la causa en el diagrama.", "الذكاء الاصطناعي يقترح وأنت تعتمد: «إضافة» تُدرج السبب في المخطط.", "AIが提案し、あなたが承認します。「追加」で原因が図に組み込まれます。", "AI建议，您确认：“添加”会将原因加入图中。"),
-    "ishikawa.detail.branch-empty": ("Aucune cause pour cette branche.", "No cause for this branch.", "Ninguna causa para esta rama.", "لا يوجد سبب لهذا الفرع.", "この枝に原因はありません。", "此分支没有原因。"),
-    "ishikawa.detail.add-why-tooltip": ("Ajouter un Pourquoi ?", "Add a Why?", "¿Añadir un Porqué?", "إضافة «لماذا»؟", "「なぜ？」を追加", "添加一个“为什么”？"),
-    "ishikawa.detail.delete-confirm-title": ("Supprimer ce diagramme ?", "Delete this diagram?", "¿Eliminar este diagrama?", "حذف هذا المخطط؟", "このダイアグラムを削除しますか？", "删除此图？"),
-    "ishikawa.detail.deleted": ("Diagramme supprimé.", "Diagram deleted.", "Diagrama eliminado.", "تم حذف المخطط.", "ダイアグラムを削除しました。", "图已删除。"),
-    "ishikawa.detail.not-found": ("Diagramme introuvable.", "Diagram not found.", "Diagrama no encontrado.", "المخطط غير موجود.", "ダイアグラムが見つかりません。", "未找到图。"),
-    "ishikawa.detail.no-suggestions": ("Aucune suggestion exploitable — reformulez le problème.", "No usable suggestion — rephrase the problem.", "Ninguna sugerencia útil — reformule el problema.", "لا توجد اقتراحات قابلة للاستخدام — أعد صياغة المشكلة.", "有効な提案がありません。問題を言い換えてください。", "无可用建议——请重新表述问题。"),
-    "ishikawa.detail.suggest-unavailable": ("Suggestion IA indisponible (ai-service / Ollama).", "AI suggestion unavailable (ai-service / Ollama).", "Sugerencia de IA no disponible (ai-service / Ollama).", "اقتراح الذكاء الاصطناعي غير متاح (ai-service / Ollama).", "AI提案は利用できません（ai-service / Ollama）。", "AI建议不可用（ai-service / Ollama）。"),
-    "ishikawa.detail.cause-added": ("Cause ajoutée au diagramme.", "Cause added to the diagram.", "Causa añadida al diagrama.", "تمت إضافة السبب إلى المخطط.", "原因を図に追加しました。", "原因已添加到图中。"),
-    "ishikawa.create.title": ("Nouveau diagramme Ishikawa", "New Ishikawa diagram", "Nuevo diagrama de Ishikawa", "مخطط إيشيكاوا جديد", "新規特性要因図", "新建鱼骨图"),
-    "ishikawa.create.subtitle": ("Formule clairement le problème observé. Les branches et causes pourront être enrichies après création (avec l'aide de l'IA).", "Clearly state the observed problem. Branches and causes can be enriched after creation (with AI assistance).", "Formule claramente el problema observado. Las ramas y causas podrán enriquecerse tras la creación (con ayuda de la IA).", "صِغ المشكلة المُلاحظة بوضوح. يمكن إثراء الفروع والأسباب بعد الإنشاء (بمساعدة الذكاء الاصطناعي).", "観察された問題を明確に記述してください。枝と原因は作成後に（AIの支援で）充実させられます。", "清晰描述观察到的问题。分支和原因可在创建后（借助AI）补充完善。"),
-    "ishikawa.create.problem-label": ("Énoncé du problème", "Problem statement", "Enunciado del problema", "بيان المشكلة", "問題の記述", "问题陈述"),
-    "ishikawa.create.problem-placeholder": ("Ex. : Hausse des défauts de soudure ligne 3 (+18% sur 30j)", "E.g. Rise in welding defects on line 3 (+18% over 30d)", "Ej.: Aumento de defectos de soldadura en la línea 3 (+18% en 30 d)", "مثال: ارتفاع عيوب اللحام في الخط 3 (+18% خلال 30 يومًا)", "例：3号ラインの溶接不良が増加（30日で+18%）", "例：3号线焊接缺陷上升（30天内+18%）"),
-    "ishikawa.create.problem-required": ("L'énoncé est requis.", "The statement is required.", "El enunciado es obligatorio.", "البيان مطلوب.", "記述は必須です。", "陈述为必填项。"),
-    "ishikawa.create.desc-placeholder": ("Contexte, participants, périmètre…", "Context, participants, scope…", "Contexto, participantes, alcance…", "السياق، المشاركون، النطاق…", "背景、参加者、範囲…", "背景、参与者、范围……"),
-    "ishikawa.create.mode-label": ("Mode d'analyse", "Analysis mode", "Modo de análisis", "نمط التحليل", "分析モード", "分析模式"),
-    "ishikawa.create.created": ("Diagramme Ishikawa créé.", "Ishikawa diagram created.", "Diagrama de Ishikawa creado.", "تم إنشاء مخطط إيشيكاوا.", "特性要因図を作成しました。", "已创建鱼骨图。"),
-    "ishikawa.edit.title": ("Modifier le diagramme", "Edit diagram", "Editar el diagrama", "تعديل المخطط", "ダイアグラムを編集", "编辑图"),
-    "ishikawa.edit.mode": ("Mode", "Mode", "Modo", "النمط", "モード", "模式"),
-    "ishikawa.edit.updated": ("Diagramme mis à jour.", "Diagram updated.", "Diagrama actualizado.", "تم تحديث المخطط.", "ダイアグラムを更新しました。", "图已更新。"),
-    "ishikawa.cause.parent-prefix": ("Cette sous-cause sera rattachée à", "This sub-cause will be attached to", "Esta subcausa se vinculará a", "سيُربط هذا السبب الفرعي بـ", "このサブ要因は次に紐づけられます", "此子原因将关联到"),
-    "ishikawa.cause.hint": ("Choisis la branche (M) et formule la cause de façon concise. Le scoring racine sera ajusté plus tard par l'analyse 5 Pourquoi.", "Choose the branch (M) and state the cause concisely. Root scoring will be refined later through 5-Whys analysis.", "Elija la rama (M) y formule la causa de forma concisa. La puntuación raíz se ajustará más tarde mediante el análisis de los 5 Porqués.", "اختر الفرع (M) وصِغ السبب بإيجاز. سيُعدَّل تقييم السبب الجذري لاحقًا عبر تحليل 5 لماذا.", "枝（M）を選び、原因を簡潔に記述してください。根本原因スコアは後でなぜなぜ分析により調整されます。", "选择分支（M）并简洁地描述原因。根本原因评分稍后将通过5个为什么分析进行调整。"),
-    "ishikawa.cause.branch-label": ("Branche", "Branch", "Rama", "الفرع", "枝", "分支"),
-    "ishikawa.cause.branch-hint": ("Héritée de la cause parente.", "Inherited from the parent cause.", "Heredada de la causa principal.", "موروثة من السبب الأصلي.", "親の原因から継承されます。", "继承自父原因。"),
-    "ishikawa.cause.label-label": ("Libellé de la cause", "Cause label", "Etiqueta de la causa", "تسمية السبب", "原因のラベル", "原因标签"),
-    "ishikawa.cause.label-placeholder": ("Ex. : Calibration robot soudure dérivée", "E.g. Welding robot calibration drift", "Ej.: Desviación de la calibración del robot de soldadura", "مثال: انحراف معايرة روبوت اللحام", "例：溶接ロボットの校正ずれ", "例：焊接机器人校准漂移"),
-    "ishikawa.cause.label-required": ("Le libellé est requis.", "The label is required.", "La etiqueta es obligatoria.", "التسمية مطلوبة.", "ラベルは必須です。", "标签为必填项。"),
-    "ishikawa.cause.desc-placeholder": ("Détails, mesures, observations…", "Details, measurements, observations…", "Detalles, mediciones, observaciones…", "تفاصيل، قياسات، ملاحظات…", "詳細、測定、観察…", "细节、测量、观察……"),
-    "ishikawa.cause.score-label": ("Score racine (0 → 1, optionnel)", "Root score (0 → 1, optional)", "Puntuación raíz (0 → 1, opcional)", "تقييم الجذر (0 ← 1، اختياري)", "根本原因スコア（0→1、任意）", "根本原因评分（0→1，可选）"),
-    "ishikawa.cause.score-hint": ("Probabilité estimée que ce soit une cause racine.", "Estimated probability that this is a root cause.", "Probabilidad estimada de que sea una causa raíz.", "الاحتمال المُقدَّر أن يكون سببًا جذريًا.", "これが根本原因である推定確率。", "其为根本原因的估计概率。"),
-    "ishikawa.cause.added": ("Cause ajoutée.", "Cause added.", "Causa añadida.", "تمت إضافة السبب.", "原因を追加しました。", "原因已添加。"),
-
-    # ---- DMAIC ---------------------------------------------------------------------
-    "dmaic.list.title": ("Projets DMAIC", "DMAIC projects", "Proyectos DMAIC", "مشاريع DMAIC", "DMAICプロジェクト", "DMAIC项目"),
-    "dmaic.list.subtitle": ("Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.", "Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.", "Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.", "Six Sigma — Define / Measure / Analyze / Improve / Control + Poka-Yoke.", "シックスシグマ — Define / Measure / Analyze / Improve / Control + ポカヨケ。", "六西格玛 — Define / Measure / Analyze / Improve / Control + 防错。"),
-    "dmaic.list.new-project": ("Nouveau projet", "New project", "Nuevo proyecto", "مشروع جديد", "新規プロジェクト", "新建项目"),
-    "dmaic.list.phase": ("Phase", "Phase", "Fase", "المرحلة", "フェーズ", "阶段"),
-    "dmaic.list.all-phases": ("Toutes", "All", "Todas", "الكل", "すべて", "全部"),
-    "dmaic.list.col-project": ("Projet", "Project", "Proyecto", "المشروع", "プロジェクト", "项目"),
-    "dmaic.list.col-measures": ("Mesures", "Measures", "Mediciones", "القياسات", "測定", "测量"),
-    "dmaic.list.col-pokayoke": ("Poka-Yoke", "Poka-Yoke", "Poka-Yoke", "Poka-Yoke", "ポカヨケ", "防错"),
-    "dmaic.list.col-deadline": ("Échéance", "Due date", "Fecha límite", "الموعد النهائي", "期限", "截止日期"),
-    "dmaic.detail.target-prefix": ("Cible :", "Target:", "Objetivo:", "الهدف:", "目標：", "目标："),
-    "dmaic.detail.savings-prefix": ("Économies estimées :", "Estimated savings:", "Ahorros estimados:", "الوفورات المقدّرة:", "推定削減額：", "预计节省："),
-    "dmaic.detail.advance": ("Avancer", "Advance", "Avanzar", "تقدّم", "進める", "推进"),
-    "dmaic.detail.hold": ("Pause", "Hold", "Pausar", "إيقاف مؤقت", "保留", "暂停"),
-    "dmaic.detail.resume": ("Reprendre", "Resume", "Reanudar", "استئناف", "再開", "恢复"),
-    "dmaic.detail.charter": ("Charter", "Charter", "Acta", "ميثاق المشروع", "チャーター", "项目章程"),
-    "dmaic.detail.problem-label": ("Problème :", "Problem:", "Problema:", "المشكلة:", "問題：", "问题："),
-    "dmaic.detail.goal-label": ("Objectif :", "Goal:", "Objetivo:", "الهدف:", "目標：", "目标："),
-    "dmaic.detail.specs": ("Spécifications", "Specifications", "Especificaciones", "المواصفات", "仕様", "规格"),
-    "dmaic.detail.lsl": ("LSL", "LSL", "LSL", "LSL", "LSL", "LSL"),
-    "dmaic.detail.target": ("Cible", "Target", "Objetivo", "الهدف", "目標", "目标"),
-    "dmaic.detail.usl": ("USL", "USL", "USL", "USL", "USL", "USL"),
-    "dmaic.detail.capability": ("Capabilité (Cp / Cpk)", "Capability (Cp / Cpk)", "Capacidad (Cp / Cpk)", "القدرة (Cp / Cpk)", "工程能力（Cp / Cpk）", "过程能力（Cp / Cpk）"),
-    "dmaic.detail.sample": ("Échantillon", "Sample", "Muestra", "العينة", "サンプル", "样本"),
-    "dmaic.detail.mean": ("Moyenne", "Mean", "Media", "المتوسط", "平均", "均值"),
-    "dmaic.detail.sigma-level": ("Niveau σ", "σ level", "Nivel σ", "مستوى σ", "σレベル", "σ水平"),
-    "dmaic.detail.no-capability": ("Données insuffisantes pour le calcul.", "Insufficient data for calculation.", "Datos insuficientes para el cálculo.", "بيانات غير كافية للحساب.", "計算に十分なデータがありません。", "数据不足，无法计算。"),
-    "dmaic.detail.measures-title": ("Mesures", "Measures", "Mediciones", "القياسات", "測定", "测量"),
-    "dmaic.detail.new-measure": ("Nouvelle mesure", "New measure", "Nueva medición", "قياس جديد", "新規測定", "新建测量"),
-    "dmaic.detail.col-value": ("Valeur", "Value", "Valor", "القيمة", "値", "数值"),
-    "dmaic.detail.col-subgroup": ("Sous-groupe", "Subgroup", "Subgrupo", "المجموعة الفرعية", "サブグループ", "子组"),
-    "dmaic.detail.col-ref": ("Réf.", "Ref.", "Ref.", "المرجع", "参照", "参考"),
-    "dmaic.detail.measures-empty": ("Aucune mesure pour l'instant.", "No measure yet.", "Ninguna medición por ahora.", "لا توجد قياسات بعد.", "まだ測定がありません。", "暂无测量。"),
-    "dmaic.detail.assign-pokayoke": ("Assigner un Poka-Yoke", "Assign a Poka-Yoke", "Asignar un Poka-Yoke", "تعيين Poka-Yoke", "ポカヨケを割り当て", "分配防错装置"),
-    "dmaic.detail.col-code": ("Code", "Code", "Código", "الرمز", "コード", "代码"),
-    "dmaic.detail.col-note": ("Note", "Note", "Nota", "ملاحظة", "メモ", "备注"),
-    "dmaic.detail.pokayoke-empty": ("Aucun Poka-Yoke assigné.", "No Poka-Yoke assigned.", "Ningún Poka-Yoke asignado.", "لم يتم تعيين أي Poka-Yoke.", "ポカヨケが割り当てられていません。", "未分配防错装置。"),
-    "dmaic.detail.phase-advanced": ("Phase avancée.", "Phase advanced.", "Fase avanzada.", "تم تقديم المرحلة.", "フェーズを進めました。", "阶段已推进。"),
-    "dmaic.detail.advance-failed": ("Avance impossible.", "Cannot advance.", "No se puede avanzar.", "تعذّر التقدّم.", "進めることができません。", "无法推进。"),
-    "dmaic.detail.project-held": ("Projet en pause.", "Project on hold.", "Proyecto en pausa.", "تم إيقاف المشروع مؤقتًا.", "プロジェクトを保留しました。", "项目已暂停。"),
-    "dmaic.detail.hold-failed": ("Mise en pause impossible.", "Cannot put on hold.", "No se puede pausar.", "تعذّر الإيقاف المؤقت.", "保留できません。", "无法暂停。"),
-    "dmaic.detail.project-resumed": ("Projet repris.", "Project resumed.", "Proyecto reanudado.", "تم استئناف المشروع.", "プロジェクトを再開しました。", "项目已恢复。"),
-    "dmaic.detail.resume-failed": ("Reprise impossible.", "Cannot resume.", "No se puede reanudar.", "تعذّر الاستئناف.", "再開できません。", "无法恢复。"),
-    "dmaic.detail.cancel-confirm-title": ("Annuler le projet ?", "Cancel the project?", "¿Cancelar el proyecto?", "إلغاء المشروع؟", "プロジェクトをキャンセルしますか？", "取消该项目？"),
-    "dmaic.detail.cancel-confirm-label": ("Annuler le projet", "Cancel project", "Cancelar proyecto", "إلغاء المشروع", "プロジェクトをキャンセル", "取消项目"),
-    "dmaic.detail.keep-label": ("Conserver", "Keep", "Conservar", "الاحتفاظ", "保持", "保留"),
-    "dmaic.detail.project-cancelled": ("Projet annulé.", "Project cancelled.", "Proyecto cancelado.", "تم إلغاء المشروع.", "プロジェクトをキャンセルしました。", "项目已取消。"),
-    "dmaic.detail.cancel-failed": ("Annulation impossible.", "Cannot cancel.", "No se puede cancelar.", "تعذّر الإلغاء.", "キャンセルできません。", "无法取消。"),
-    "dmaic.detail.delete-confirm-title": ("Supprimer le projet ?", "Delete the project?", "¿Eliminar el proyecto?", "حذف المشروع؟", "プロジェクトを削除しますか？", "删除该项目？"),
-    "dmaic.detail.project-deleted": ("Projet supprimé.", "Project deleted.", "Proyecto eliminado.", "تم حذف المشروع.", "プロジェクトを削除しました。", "项目已删除。"),
-    "dmaic.detail.delete-measure-title": ("Supprimer la mesure ?", "Delete the measure?", "¿Eliminar la medición?", "حذف القياس؟", "測定を削除しますか？", "删除该测量？"),
-    "dmaic.detail.delete-measure-message": ("Cette mesure sera retirée du calcul de capabilité.", "This measure will be removed from the capability calculation.", "Esta medición se excluirá del cálculo de capacidad.", "سيُزال هذا القياس من حساب القدرة.", "この測定は工程能力の計算から除外されます。", "此测量将从过程能力计算中移除。"),
-    "dmaic.detail.delete-assignment-title": ("Supprimer l'assignation ?", "Delete the assignment?", "¿Eliminar la asignación?", "حذف التعيين؟", "割り当てを削除しますか？", "删除该分配？"),
-    "dmaic.create.title": ("Nouveau projet DMAIC", "New DMAIC project", "Nuevo proyecto DMAIC", "مشروع DMAIC جديد", "新規DMAICプロジェクト", "新建DMAIC项目"),
-    "dmaic.create.title-placeholder": ("Ex. : Réduire le taux de rebut ligne A", "E.g. Reduce scrap rate on line A", "Ej.: Reducir la tasa de desechos en la línea A", "مثال: تقليل معدل الهدر في الخط A", "例：Aラインの不良率を削減", "例：降低A线报废率"),
-    "dmaic.create.problem-label": ("Énoncé du problème", "Problem statement", "Enunciado del problema", "بيان المشكلة", "問題の記述", "问题陈述"),
-    "dmaic.create.problem-placeholder": ("Contexte, données chiffrées du problème", "Context, quantified problem data", "Contexto, datos cuantificados del problema", "السياق، بيانات المشكلة الرقمية", "背景、問題の定量データ", "背景、问题的量化数据"),
-    "dmaic.create.goal-label": ("Énoncé de l'objectif", "Goal statement", "Enunciado del objetivo", "بيان الهدف", "目標の記述", "目标陈述"),
-    "dmaic.create.goal-placeholder": ("Objectif SMART + impact business attendu", "SMART goal + expected business impact", "Objetivo SMART + impacto empresarial esperado", "هدف SMART + الأثر التجاري المتوقع", "SMART目標＋期待されるビジネスインパクト", "SMART目标＋预期业务影响"),
-    "dmaic.create.champion-label": ("Champion (ID)", "Champion (ID)", "Champion (ID)", "الراعي (المعرّف)", "チャンピオン（ID）", "倡导者（ID）"),
-    "dmaic.create.champion-placeholder": ("UUID utilisateur", "User UUID", "UUID de usuario", "معرّف المستخدم UUID", "ユーザーUUID", "用户UUID"),
-    "dmaic.create.target-date-label": ("Date cible", "Target date", "Fecha objetivo", "التاريخ المستهدف", "目標日", "目标日期"),
-    "dmaic.create.specs-section": ("Spécifications procédé (optionnel — requis pour Cp/Cpk)", "Process specifications (optional — required for Cp/Cpk)", "Especificaciones del proceso (opcional — requerido para Cp/Cpk)", "مواصفات العملية (اختياري — مطلوب لـ Cp/Cpk)", "工程仕様（任意 — Cp/Cpkに必要）", "过程规格（可选 — Cp/Cpk所需）"),
-    "dmaic.create.unit-label": ("Unité", "Unit", "Unidad", "الوحدة", "単位", "单位"),
-    "dmaic.create.unit-placeholder": ("mm, s, °C…", "mm, s, °C…", "mm, s, °C…", "مم، ث، °م…", "mm, s, °C…", "mm、s、°C……"),
-    "dmaic.create.savings-label": ("Économies estimées (€)", "Estimated savings (€)", "Ahorros estimados (€)", "الوفورات المقدّرة (€)", "推定削減額（€）", "预计节省（€）"),
-    "dmaic.create.created": ("Projet DMAIC créé.", "DMAIC project created.", "Proyecto DMAIC creado.", "تم إنشاء مشروع DMAIC.", "DMAICプロジェクトを作成しました。", "DMAIC项目已创建。"),
-    "dmaic.edit.title": ("Modifier le projet", "Edit project", "Editar proyecto", "تعديل المشروع", "プロジェクトを編集", "编辑项目"),
-    "dmaic.edit.specs-section": ("Spécifications procédé", "Process specifications", "Especificaciones del proceso", "مواصفات العملية", "工程仕様", "过程规格"),
-    "dmaic.edit.updated": ("Projet mis à jour.", "Project updated.", "Proyecto actualizado.", "تم تحديث المشروع.", "プロジェクトを更新しました。", "项目已更新。"),
-    "dmaic.measure.title": ("Nouvelle mesure", "New measure", "Nueva medición", "قياس جديد", "新規測定", "新建测量"),
-    "dmaic.measure.subtitle": ("Mesure d'un point caractéristique du procédé (Y critique). Sera utilisée pour le calcul des indices de capabilité Cp/Cpk.", "Measurement of a process characteristic (critical Y). Used to compute the Cp/Cpk capability indices.", "Medición de una característica del proceso (Y crítica). Se usará para calcular los índices de capacidad Cp/Cpk.", "قياس خاصية مميِّزة للعملية (Y الحرجة). يُستخدم لحساب مؤشرات القدرة Cp/Cpk.", "工程の特性値（重要なY）の測定。Cp/Cpk工程能力指数の計算に使用されます。", "对工艺特性点（关键Y）的测量。用于计算Cp/Cpk能力指数。"),
-    "dmaic.measure.subgroup-placeholder": ("Ex. : équipe-A, machine-3", "E.g. team-A, machine-3", "Ej.: equipo-A, máquina-3", "مثال: الفريق-A، الآلة-3", "例：チームA、機械3", "例：A班、3号机"),
-    "dmaic.measure.datetime-label": ("Date / heure", "Date / time", "Fecha / hora", "التاريخ / الوقت", "日時", "日期 / 时间"),
-    "dmaic.measure.source-label": ("Référence source", "Source reference", "Referencia de origen", "مرجع المصدر", "ソース参照", "来源参考"),
-    "dmaic.measure.source-placeholder": ("Ex. : OF-2026-1145, lot-3214", "E.g. WO-2026-1145, batch-3214", "Ej.: OF-2026-1145, lote-3214", "مثال: OF-2026-1145، الدفعة-3214", "例：OF-2026-1145、ロット3214", "例：OF-2026-1145、批次3214"),
-    "dmaic.measure.value-required": ("Une valeur numérique est requise.", "A numeric value is required.", "Se requiere un valor numérico.", "يلزم إدخال قيمة رقمية.", "数値が必要です。", "需要一个数值。"),
-    "dmaic.measure.saved": ("Mesure enregistrée.", "Measure saved.", "Medición guardada.", "تم حفظ القياس.", "測定を保存しました。", "测量已保存。"),
-    "dmaic.measure.error-save": ("Erreur lors de l'enregistrement.", "Error while saving.", "Error al guardar.", "خطأ أثناء الحفظ.", "保存中にエラーが発生しました。", "保存时出错。"),
-    "dmaic.pokayoke.title": ("Assigner un Poka-Yoke", "Assign a Poka-Yoke", "Asignar un Poka-Yoke", "تعيين Poka-Yoke", "ポカヨケを割り当て", "分配防错装置"),
-    "dmaic.pokayoke.subtitle": ("Dispositif de prévention ou de détection issu du catalogue, attaché au projet (phase Improve). Workflow par défaut : PROPOSED → IN_DESIGN → IMPLEMENTED → VERIFIED.", "Prevention or detection device from the catalog, attached to the project (Improve phase). Default workflow: PROPOSED → IN_DESIGN → IMPLEMENTED → VERIFIED.", "Dispositivo de prevención o detección del catálogo, asociado al proyecto (fase Improve). Flujo por defecto: PROPOSED → IN_DESIGN → IMPLEMENTED → VERIFIED.", "جهاز وقاية أو كشف من الكتالوج، مرتبط بالمشروع (مرحلة Improve). سير العمل الافتراضي: PROPOSED → IN_DESIGN → IMPLEMENTED → VERIFIED.", "カタログからの予防または検出デバイスをプロジェクトに紐付け（Improveフェーズ）。デフォルトワークフロー：PROPOSED → IN_DESIGN → IMPLEMENTED → VERIFIED。", "来自目录的预防或检测装置，关联到项目（Improve阶段）。默认流程：PROPOSED → IN_DESIGN → IMPLEMENTED → VERIFIED。"),
-    "dmaic.pokayoke.submit": ("Assigner", "Assign", "Asignar", "تعيين", "割り当て", "分配"),
-    "dmaic.pokayoke.mechanism-label": ("Mécanisme", "Mechanism", "Mecanismo", "الآلية", "メカニズム", "机制"),
-    "dmaic.pokayoke.loading-catalog": ("Chargement du catalogue…", "Loading catalog…", "Cargando el catálogo…", "جارٍ تحميل الكتالوج…", "カタログを読み込み中…", "正在加载目录……"),
-    "dmaic.pokayoke.device-label": ("Dispositif", "Device", "Dispositivo", "الجهاز", "デバイス", "装置"),
-    "dmaic.pokayoke.note-placeholder": ("Implémentation prévue, contraintes, lien CAPA…", "Planned implementation, constraints, CAPA link…", "Implementación prevista, restricciones, enlace CAPA…", "التنفيذ المخطط، القيود، رابط CAPA…", "実装予定、制約、CAPAリンク…", "计划实施、约束、CAPA链接……"),
-    "dmaic.pokayoke.catalog-unavailable": ("Catalogue Poka-Yoke indisponible.", "Poka-Yoke catalog unavailable.", "Catálogo Poka-Yoke no disponible.", "كتالوج Poka-Yoke غير متاح.", "ポカヨケカタログは利用できません。", "防错目录不可用。"),
-    "dmaic.pokayoke.assigned": ("Poka-Yoke assigné.", "Poka-Yoke assigned.", "Poka-Yoke asignado.", "تم تعيين Poka-Yoke.", "ポカヨケを割り当てました。", "防错装置已分配。"),
-    "dmaic.pokayoke.error-assign": ("Erreur lors de l'assignation.", "Error while assigning.", "Error al asignar.", "خطأ أثناء التعيين.", "割り当て中にエラーが発生しました。", "分配时出错。"),
-
-    # ---- SPC -----------------------------------------------------------------------
-    "spc.analyze.title": ("Détection d'anomalies SPC", "SPC anomaly detection", "Detección de anomalías SPC", "كشف الحالات الشاذة SPC", "SPC異常検出", "SPC异常检测"),
-    "spc.analyze.subtitle": ("Carte des valeurs individuelles — limites de contrôle (σ = MR̄/d₂) et 8 règles de Nelson, calculées par l'IA.", "Individuals chart — control limits (σ = MR̄/d₂) and 8 Nelson rules, computed by AI.", "Gráfico de valores individuales — límites de control (σ = MR̄/d₂) y 8 reglas de Nelson, calculados por IA.", "مخطط القيم الفردية — حدود التحكم (σ = MR̄/d₂) و8 قواعد نيلسون، محسوبة بالذكاء الاصطناعي.", "個別値管理図 — 管理限界（σ = MR̄/d₂）とネルソンの8ルールをAIが算出。", "单值控制图 — 控制限（σ = MR̄/d₂）和8条Nelson规则，由AI计算。"),
-    "spc.analyze.series-panel": ("Série de mesures", "Measurement series", "Serie de mediciones", "سلسلة القياسات", "測定系列", "测量序列"),
-    "spc.analyze.measures-label": ("Mesures (séparées par virgule, espace ou retour ligne)", "Measurements (separated by comma, space or line break)", "Mediciones (separadas por coma, espacio o salto de línea)", "القياسات (مفصولة بفاصلة أو مسافة أو سطر جديد)", "測定値（カンマ・スペース・改行で区切る）", "测量值（用逗号、空格或换行分隔）"),
-    "spc.analyze.baseline-hint": ("Baseline connue (optionnel) — sinon les limites sont estimées :", "Known baseline (optional) — otherwise limits are estimated:", "Línea base conocida (opcional) — de lo contrario los límites se estiman:", "خط الأساس المعروف (اختياري) — وإلا تُقدَّر الحدود:", "既知のベースライン（任意）— 指定しない場合は限界を推定します:", "已知基线（可选）— 否则将估算控制限："),
-    "spc.analyze.center-label": ("Ligne centrale (center)", "Center line (center)", "Línea central (center)", "الخط المركزي (center)", "中心線 (center)", "中心线 (center)"),
-    "spc.analyze.sigma-label": ("σ (sigma)", "σ (sigma)", "σ (sigma)", "σ (sigma)", "σ (sigma)", "σ (sigma)"),
-    "spc.analyze.analyze-series": ("Analyser la série", "Analyze series", "Analizar la serie", "تحليل السلسلة", "系列を分析", "分析序列"),
-    "spc.analyze.analyzing": ("Analyse…", "Analyzing…", "Analizando…", "جارٍ التحليل…", "分析中…", "分析中…"),
-    "spc.analyze.example": ("Exemple", "Example", "Ejemplo", "مثال", "例", "示例"),
-    "spc.analyze.from-kpi-panel": ("Depuis un KPI", "From a KPI", "Desde un KPI", "من مؤشر أداء", "KPIから", "从KPI"),
-    "spc.analyze.from-kpi-hint": ("Tire automatiquement les dernières mesures d'un KPI du catalogue.", "Automatically pulls the latest measurements of a catalog KPI.", "Extrae automáticamente las últimas mediciones de un KPI del catálogo.", "يجلب تلقائياً أحدث قياسات مؤشر أداء من الكتالوج.", "カタログのKPIから最新の測定値を自動取得します。", "自动提取目录中某个KPI的最新测量值。"),
-    "spc.analyze.no-kpi": ("Aucun KPI au catalogue.", "No KPI in catalog.", "Ningún KPI en el catálogo.", "لا يوجد مؤشر أداء في الكتالوج.", "カタログにKPIがありません。", "目录中无KPI。"),
-    "spc.analyze.window-label": ("Fenêtre (nombre de mesures)", "Window (number of measurements)", "Ventana (número de mediciones)", "النافذة (عدد القياسات)", "ウィンドウ（測定値の数）", "窗口（测量值数量）"),
-    "spc.analyze.open-capa": ("Ouvrir une CAPA si le procédé est hors-contrôle", "Open a CAPA if the process is out of control", "Abrir una CAPA si el proceso está fuera de control", "فتح إجراء CAPA إذا كانت العملية خارج السيطرة", "工程が管理外の場合はCAPAを起票する", "若过程失控则创建CAPA"),
-    "spc.analyze.analyze-kpi": ("Analyser le KPI", "Analyze KPI", "Analizar el KPI", "تحليل مؤشر الأداء", "KPIを分析", "分析KPI"),
-    "spc.analyze.capa-open-link": ("CAPA ouverte — voir le dossier", "CAPA opened — view record", "CAPA abierta — ver expediente", "تم فتح CAPA — عرض الملف", "CAPA起票済み — 記録を表示", "已创建CAPA — 查看档案"),
-    "spc.analyze.process-state": ("État du procédé", "Process state", "Estado del proceso", "حالة العملية", "工程の状態", "过程状态"),
-    "spc.analyze.state-out": ("Hors contrôle", "Out of control", "Fuera de control", "خارج السيطرة", "管理外", "失控"),
-    "spc.analyze.state-in": ("Sous contrôle", "In control", "Bajo control", "تحت السيطرة", "管理状態", "受控"),
-    "spc.analyze.center-line": ("Ligne centrale", "Center line", "Línea central", "الخط المركزي", "中心線", "中心线"),
-    "spc.analyze.center-estimated": ("Estimée depuis la série", "Estimated from series", "Estimada a partir de la serie", "مُقدَّرة من السلسلة", "系列から推定", "由序列估算"),
-    "spc.analyze.center-baseline": ("Baseline fournie", "Baseline provided", "Línea base proporcionada", "خط الأساس المُقدَّم", "ベースライン指定済み", "已提供基线"),
-    "spc.analyze.control-limits": ("Limites de contrôle (3σ)", "Control limits (3σ)", "Límites de control (3σ)", "حدود التحكم (3σ)", "管理限界 (3σ)", "控制限 (3σ)"),
-    "spc.analyze.control-chart": ("Carte de contrôle", "Control chart", "Gráfico de control", "مخطط التحكم", "管理図", "控制图"),
-    "spc.analyze.nelson-rules": ("Règles de Nelson déclenchées", "Triggered Nelson rules", "Reglas de Nelson activadas", "قواعد نيلسون المُفعَّلة", "発動したネルソンのルール", "触发的Nelson规则"),
-    "spc.analyze.no-violation": ("Aucune règle déclenchée : le procédé est statistiquement maîtrisé 🎉", "No rule triggered: the process is statistically in control 🎉", "Ninguna regla activada: el proceso está estadísticamente bajo control 🎉", "لم تُفعَّل أي قاعدة: العملية مضبوطة إحصائياً 🎉", "ルールは発動していません：工程は統計的に管理されています 🎉", "未触发任何规则：过程处于统计受控状态 🎉"),
-    "spc.analyze.col-rule": ("Règle", "Rule", "Regla", "القاعدة", "ルール", "规则"),
-    "spc.analyze.col-severity": ("Sévérité", "Severity", "Severidad", "الخطورة", "重大度", "严重程度"),
-    "spc.analyze.col-finding": ("Constat", "Finding", "Constatación", "الملاحظة", "所見", "结论"),
-    "spc.analyze.col-points": ("Points concernés", "Affected points", "Puntos afectados", "النقاط المعنية", "該当ポイント", "涉及的点"),
-    "spc.analyze.err-no-measure": ("Saisissez au moins une mesure numérique.", "Enter at least one numeric measurement.", "Introduzca al menos una medición numérica.", "أدخل قياساً رقمياً واحداً على الأقل.", "数値の測定値を少なくとも1つ入力してください。", "请至少输入一个数值测量值。"),
-    "spc.analyze.err-baseline-both": ("La baseline exige center ET σ (ou aucun des deux).", "The baseline requires both center AND σ (or neither).", "La línea base requiere center Y σ (o ninguno).", "يتطلب خط الأساس center و σ معاً (أو لا شيء منهما).", "ベースラインには center と σ の両方が必要です（または両方とも省略）。", "基线需要同时提供 center 和 σ（或两者都不提供）。"),
-    "spc.analyze.err-sigma-positive": ("σ doit être strictement positif.", "σ must be strictly positive.", "σ debe ser estrictamente positivo.", "يجب أن يكون σ موجباً تماماً.", "σ は正の値でなければなりません。", "σ 必须为正数。"),
-    "spc.analyze.err-select-kpi": ("Sélectionnez un KPI.", "Select a KPI.", "Seleccione un KPI.", "اختر مؤشر أداء.", "KPIを選択してください。", "请选择一个KPI。"),
-    "spc.analyze.err-min-two": ("Au moins 2 mesures sont nécessaires pour ce KPI.", "At least 2 measurements are required for this KPI.", "Se requieren al menos 2 mediciones para este KPI.", "يلزم قياسان على الأقل لهذا المؤشر.", "このKPIには少なくとも2つの測定値が必要です。", "此KPI至少需要2个测量值。"),
-    "spc.analyze.err-backend": ("Backend injoignable (engine sur 8082 ?).", "Backend unreachable (engine on 8082?).", "Backend inaccesible (¿engine en 8082?).", "تعذّر الوصول إلى الخادم (engine على 8082؟).", "バックエンドに接続できません（engine は 8082 ですか？）。", "无法连接后端（engine 在 8082？）。"),
-    "spc.analyze.err-invalid-series": ("Série invalide (1 à 10000 mesures attendues).", "Invalid series (1 to 10000 measurements expected).", "Serie no válida (se esperan de 1 a 10000 mediciones).", "سلسلة غير صالحة (من 1 إلى 10000 قياس متوقع).", "無効な系列です（1～10000件の測定値が必要）。", "序列无效（应为1至10000个测量值）。"),
-    "spc.analyze.err-too-large": ("Série trop volumineuse (garde-fou IA).", "Series too large (AI safeguard).", "Serie demasiado grande (salvaguarda de IA).", "السلسلة كبيرة جداً (حاجز أمان الذكاء الاصطناعي).", "系列が大きすぎます（AIガードレール）。", "序列过大（AI防护）。"),
-    "spc.analyze.err-quota": ("Débit/quota IA dépassé pour ce tenant — réessayez plus tard.", "AI rate/quota exceeded for this tenant — try again later.", "Tasa/cuota de IA superada para este tenant — inténtelo más tarde.", "تم تجاوز معدّل/حصة الذكاء الاصطناعي لهذا المستأجر — حاول لاحقاً.", "このテナントのAIレート/クォータを超過しました — 後でやり直してください。", "该租户的AI速率/配额已超出 — 请稍后重试。"),
-    "spc.analyze.err-gateway": ("Passerelle IA indisponible (ai-service injoignable).", "AI gateway unavailable (ai-service unreachable).", "Pasarela de IA no disponible (ai-service inaccesible).", "بوابة الذكاء الاصطناعي غير متاحة (تعذّر الوصول إلى ai-service).", "AIゲートウェイが利用できません（ai-service に接続不可）。", "AI网关不可用（无法连接 ai-service）。"),
-    "spc.analyze.err-unavailable": ("Service IA momentanément indisponible (disjoncteur ouvert).", "AI service temporarily unavailable (circuit breaker open).", "Servicio de IA temporalmente no disponible (disyuntor abierto).", "خدمة الذكاء الاصطناعي غير متاحة مؤقتاً (قاطع الدائرة مفتوح).", "AIサービスは一時的に利用できません（サーキットブレーカー作動）。", "AI服务暂时不可用（熔断器开启）。"),
-    "spc.analyze.err-generic": ("Échec de l'analyse SPC (HTTP {$status}).", "SPC analysis failed (HTTP {$status}).", "Error en el análisis SPC (HTTP {$status}).", "فشل تحليل SPC (HTTP {$status}).", "SPC分析に失敗しました（HTTP {$status}）。", "SPC分析失败（HTTP {$status}）。"),
-
-    # ---- Cercles de Qualité ----------------------------------------------------------
-    "circles.list.title": ("Cercles de Qualité", "Quality circles", "Círculos de calidad", "حلقات الجودة", "QCサークル", "质量圈"),
-    "circles.list.subtitle": ("Groupes 5-10 personnes, réunions, propositions PROPOSED → MEASURED.", "Groups of 5-10 people, meetings, proposals PROPOSED → MEASURED.", "Grupos de 5-10 personas, reuniones, propuestas PROPOSED → MEASURED.", "مجموعات من 5 إلى 10 أشخاص، اجتماعات، مقترحات PROPOSED → MEASURED.", "5～10名のグループ、会議、提案 PROPOSED → MEASURED。", "5-10人小组、会议、提案 PROPOSED → MEASURED。"),
-    "circles.list.new-circle": ("Nouveau cercle", "New circle", "Nuevo círculo", "حلقة جديدة", "新規サークル", "新建圈"),
-    "circles.list.col-members": ("Membres", "Members", "Miembros", "الأعضاء", "メンバー", "成员"),
-    "circles.list.col-meetings": ("Réunions", "Meetings", "Reuniones", "الاجتماعات", "会議", "会议"),
-    "circles.list.col-proposals": ("Propositions", "Proposals", "Propuestas", "المقترحات", "提案", "提案"),
-    "circles.list.col-updated": ("MAJ", "Updated", "Actualizado", "آخر تحديث", "更新", "更新"),
-    "circles.list.empty": ("Aucun cercle.", "No circle.", "Ningún círculo.", "لا توجد حلقات.", "サークルがありません。", "无质量圈。"),
-    "circles.list.paginator-aria": ("Pagination des cercles", "Circles pagination", "Paginación de círculos", "ترقيم صفحات الحلقات", "サークルのページネーション", "质量圈分页"),
-    "circles.list.load-error": ("Erreur lors du chargement.", "Error while loading.", "Error al cargar.", "حدث خطأ أثناء التحميل.", "読み込み中にエラーが発生しました。", "加载时出错。"),
-    "circles.detail.back-tooltip": ("Retour à la liste", "Back to list", "Volver a la lista", "العودة إلى القائمة", "一覧に戻る", "返回列表"),
-    "circles.detail.not-found": ("Cercle introuvable", "Circle not found", "Círculo no encontrado", "الحلقة غير موجودة", "サークルが見つかりません", "未找到质量圈"),
-    "circles.detail.eyebrow": ("Cercle de Qualité · Groupe d'amélioration continue", "Quality circle · Continuous improvement group", "Círculo de calidad · Grupo de mejora continua", "حلقة جودة · مجموعة التحسين المستمر", "QCサークル · 継続的改善グループ", "质量圈 · 持续改进小组"),
-    "circles.detail.delete-tooltip": ("Supprimer le cercle", "Delete circle", "Eliminar círculo", "حذف الحلقة", "サークルを削除", "删除质量圈"),
-    "circles.detail.archive": ("Archiver", "Archive", "Archivar", "أرشفة", "アーカイブ", "归档"),
-    "circles.detail.archive-tooltip": ("Archiver le cercle", "Archive circle", "Archivar círculo", "أرشفة الحلقة", "サークルをアーカイブ", "归档质量圈"),
-    "circles.detail.pause": ("Pause", "Pause", "Pausar", "إيقاف مؤقت", "一時停止", "暂停"),
-    "circles.detail.pause-tooltip": ("Mettre en pause", "Put on hold", "Poner en pausa", "تعليق مؤقت", "一時停止する", "设为暂停"),
-    "circles.detail.resume": ("Réactiver", "Resume", "Reactivar", "إعادة التفعيل", "再開", "恢复"),
-    "circles.detail.resume-tooltip": ("Réactiver", "Resume", "Reactivar", "إعادة التفعيل", "再開する", "恢复"),
-    "circles.detail.topic": ("Thème", "Topic", "Tema", "الموضوع", "テーマ", "主题"),
-    "circles.detail.members": ("Membres", "Members", "Miembros", "الأعضاء", "メンバー", "成员"),
-    "circles.detail.meetings": ("Réunions", "Meetings", "Reuniones", "الاجتماعات", "会議", "会议"),
-    "circles.detail.proposals": ("Propositions", "Proposals", "Propuestas", "المقترحات", "提案", "提案"),
-    "circles.detail.updated": ("MAJ", "Updated", "Actualizado", "آخر تحديث", "更新", "更新"),
-    "circles.detail.add-member": ("Ajouter un membre", "Add member", "Añadir miembro", "إضافة عضو", "メンバーを追加", "添加成员"),
-    "circles.detail.role": ("Rôle", "Role", "Rol", "الدور", "役割", "角色"),
-    "circles.detail.user-id": ("User ID", "User ID", "ID de usuario", "معرّف المستخدم", "ユーザーID", "用户ID"),
-    "circles.detail.joined-at": ("Rejoint le", "Joined on", "Se unió el", "تاريخ الانضمام", "参加日", "加入时间"),
-    "circles.detail.no-member": ("Aucun membre. Clique sur Ajouter un membre pour construire l'équipe.", "No member. Click Add member to build the team.", "Ningún miembro. Haga clic en Añadir miembro para formar el equipo.", "لا يوجد أعضاء. انقر على «إضافة عضو» لبناء الفريق.", "メンバーがいません。「メンバーを追加」をクリックしてチームを構成してください。", "暂无成员。点击「添加成员」以组建团队。"),
-    "circles.detail.schedule-meeting": ("Planifier une réunion", "Schedule a meeting", "Programar una reunión", "جدولة اجتماع", "会議を予定する", "安排会议"),
-    "circles.detail.when": ("Quand", "When", "Cuándo", "متى", "日時", "时间"),
-    "circles.detail.location": ("Lieu", "Location", "Lugar", "المكان", "場所", "地点"),
-    "circles.detail.no-meeting": ("Aucune réunion planifiée.", "No meeting scheduled.", "Ninguna reunión programada.", "لا توجد اجتماعات مجدولة.", "予定された会議はありません。", "暂无已安排的会议。"),
-    "circles.detail.new-proposal": ("Nouvelle proposition", "New proposal", "Nueva propuesta", "مقترح جديد", "新規提案", "新建提案"),
-    "circles.detail.proposed-by": ("Proposé par", "Proposed by", "Propuesto por", "اقترحه", "提案者", "提案人"),
-    "circles.detail.no-proposal": ("Aucune proposition. Workflow attendu : PROPOSED → APPROVED → IMPLEMENTED → MEASURED.", "No proposal. Expected workflow: PROPOSED → APPROVED → IMPLEMENTED → MEASURED.", "Ninguna propuesta. Flujo esperado: PROPOSED → APPROVED → IMPLEMENTED → MEASURED.", "لا توجد مقترحات. سير العمل المتوقع: PROPOSED → APPROVED → IMPLEMENTED → MEASURED.", "提案がありません。想定ワークフロー：PROPOSED → APPROVED → IMPLEMENTED → MEASURED。", "暂无提案。预期流程：PROPOSED → APPROVED → IMPLEMENTED → MEASURED。"),
-    "circles.detail.invalid-id": ("Identifiant invalide.", "Invalid identifier.", "Identificador no válido.", "معرّف غير صالح.", "無効な識別子です。", "标识符无效。"),
-    "circles.detail.load-error": ("Cercle introuvable.", "Circle not found.", "Círculo no encontrado.", "الحلقة غير موجودة.", "サークルが見つかりません。", "未找到质量圈。"),
-    "circles.detail.delete-confirm-title": ("Supprimer ce cercle ?", "Delete this circle?", "¿Eliminar este círculo?", "حذف هذه الحلقة؟", "このサークルを削除しますか？", "删除此质量圈？"),
-    "circles.detail.delete-confirm-message": ("« {$name} », ses membres, réunions et propositions seront supprimés définitivement.", "“{$name}”, its members, meetings and proposals will be permanently deleted.", "«{$name}», sus miembros, reuniones y propuestas se eliminarán definitivamente.", "«{$name}»، وأعضاؤها واجتماعاتها ومقترحاتها سيتم حذفها نهائياً.", "「{$name}」、そのメンバー・会議・提案が完全に削除されます。", "「{$name}」及其成员、会议和提案将被永久删除。"),
-    "circles.detail.deleted": ("Cercle supprimé.", "Circle deleted.", "Círculo eliminado.", "تم حذف الحلقة.", "サークルを削除しました。", "已删除质量圈。"),
-    "circles.detail.delete-error": ("Erreur lors de la suppression.", "Error while deleting.", "Error al eliminar.", "حدث خطأ أثناء الحذف.", "削除中にエラーが発生しました。", "删除时出错。"),
-    "circles.detail.paused": ("Cercle mis en pause.", "Circle paused.", "Círculo en pausa.", "تم تعليق الحلقة.", "サークルを一時停止しました。", "已暂停质量圈。"),
-    "circles.detail.resumed": ("Cercle réactivé.", "Circle resumed.", "Círculo reactivado.", "تمت إعادة تفعيل الحلقة.", "サークルを再開しました。", "已恢复质量圈。"),
-    "circles.detail.archived": ("Cercle archivé.", "Circle archived.", "Círculo archivado.", "تمت أرشفة الحلقة.", "サークルをアーカイブしました。", "已归档质量圈。"),
-    "circles.detail.transition-error": ("Erreur lors de la transition.", "Error during transition.", "Error durante la transición.", "حدث خطأ أثناء الانتقال.", "状態遷移中にエラーが発生しました。", "状态转换时出错。"),
-    "circles.create.title": ("Nouveau cercle de qualité", "New quality circle", "Nuevo círculo de calidad", "حلقة جودة جديدة", "新規QCサークル", "新建质量圈"),
-    "circles.create.subtitle": ("Crée le groupe (5-10 personnes recommandé). Les membres, réunions et propositions seront ajoutés ensuite.", "Create the group (5-10 people recommended). Members, meetings and proposals will be added afterwards.", "Crea el grupo (se recomiendan 5-10 personas). Los miembros, reuniones y propuestas se añadirán después.", "أنشئ المجموعة (يُنصح بـ 5-10 أشخاص). ستُضاف الأعضاء والاجتماعات والمقترحات لاحقاً.", "グループを作成します（5～10名を推奨）。メンバー・会議・提案は後で追加します。", "创建小组（建议5-10人）。成员、会议和提案稍后添加。"),
-    "circles.create.name-label": ("Nom du cercle", "Circle name", "Nombre del círculo", "اسم الحلقة", "サークル名", "圈名称"),
-    "circles.create.name-placeholder": ("Ex. : Cercle production ligne 3", "E.g.: Production circle line 3", "Ej.: Círculo producción línea 3", "مثال: حلقة إنتاج الخط 3", "例：生産ライン3サークル", "例：生产线3圈"),
-    "circles.create.name-required": ("Le nom est requis.", "Name is required.", "El nombre es obligatorio.", "الاسم مطلوب.", "名前は必須です。", "名称为必填项。"),
-    "circles.create.maxlength": ("255 caractères maximum.", "255 characters maximum.", "255 caracteres máximo.", "255 حرفاً كحد أقصى.", "最大255文字。", "最多255个字符。"),
-    "circles.create.topic-label": ("Thème (optionnel)", "Topic (optional)", "Tema (opcional)", "الموضوع (اختياري)", "テーマ（任意）", "主题（可选）"),
-    "circles.create.topic-placeholder": ("Ex. : production-soudure, fournisseurs, sécurité", "E.g.: welding-production, suppliers, safety", "Ej.: producción-soldadura, proveedores, seguridad", "مثال: إنتاج-اللحام، الموردون، السلامة", "例：溶接生産、サプライヤー、安全", "例：焊接生产、供应商、安全"),
-    "circles.create.description-label": ("Description (optionnel)", "Description (optional)", "Descripción (opcional)", "الوصف (اختياري)", "説明（任意）", "描述（可选）"),
-    "circles.create.description-placeholder": ("Mission du cercle, périmètre, fréquence visée…", "Circle mission, scope, target frequency…", "Misión del círculo, alcance, frecuencia prevista…", "مهمة الحلقة، النطاق، التكرار المستهدف…", "サークルの使命、範囲、目標頻度…", "圈使命、范围、目标频率…"),
-    "circles.create.created": ("Cercle créé.", "Circle created.", "Círculo creado.", "تم إنشاء الحلقة.", "サークルを作成しました。", "已创建质量圈。"),
-    "circles.create.error": ("Erreur lors de la création.", "Error while creating.", "Error al crear.", "حدث خطأ أثناء الإنشاء.", "作成中にエラーが発生しました。", "创建时出错。"),
-    "circles.edit.title": ("Modifier le cercle", "Edit circle", "Editar círculo", "تعديل الحلقة", "サークルを編集", "编辑质量圈"),
-    "circles.edit.updated": ("Cercle mis à jour.", "Circle updated.", "Círculo actualizado.", "تم تحديث الحلقة.", "サークルを更新しました。", "已更新质量圈。"),
-    "circles.edit.error": ("Erreur lors de la mise à jour.", "Error while updating.", "Error al actualizar.", "حدث خطأ أثناء التحديث.", "更新中にエラーが発生しました。", "更新时出错。"),
-    "circles.meeting.title": ("Planifier une réunion", "Schedule a meeting", "Programar una reunión", "جدولة اجتماع", "会議を予定する", "安排会议"),
-    "circles.meeting.submit": ("Planifier", "Schedule", "Programar", "جدولة", "予定する", "安排"),
-    "circles.meeting.title-placeholder": ("Ex. : Revue mensuelle production", "E.g.: Monthly production review", "Ej.: Revisión mensual de producción", "مثال: مراجعة الإنتاج الشهرية", "例：月次生産レビュー", "例：月度生产评审"),
-    "circles.meeting.agenda": ("Ordre du jour", "Agenda", "Orden del día", "جدول الأعمال", "議題", "议程"),
-    "circles.meeting.agenda-placeholder": ("Points à aborder, propositions à valider…", "Topics to discuss, proposals to approve…", "Puntos a tratar, propuestas a aprobar…", "النقاط المطروحة، المقترحات المراد اعتمادها…", "検討事項、承認する提案…", "待讨论事项、待批准提案…"),
-    "circles.meeting.datetime": ("Date et heure", "Date and time", "Fecha y hora", "التاريخ والوقت", "日付と時刻", "日期和时间"),
-    "circles.meeting.duration": ("Durée (min)", "Duration (min)", "Duración (min)", "المدة (دقيقة)", "所要時間（分）", "时长（分钟）"),
-    "circles.meeting.location-placeholder": ("Salle, ou lien visio", "Room, or video link", "Sala, o enlace de videollamada", "القاعة، أو رابط الفيديو", "会議室、またはビデオリンク", "会议室或视频链接"),
-    "circles.meeting.scheduled": ("Réunion planifiée.", "Meeting scheduled.", "Reunión programada.", "تمت جدولة الاجتماع.", "会議を予定しました。", "会议已安排。"),
-    "circles.meeting.error": ("Erreur lors de la planification.", "Error while scheduling.", "Error al programar.", "حدث خطأ أثناء الجدولة.", "予定登録中にエラーが発生しました。", "安排时出错。"),
-    "circles.member.title": ("Ajouter un membre", "Add a member", "Añadir un miembro", "إضافة عضو", "メンバーを追加", "添加成员"),
-    "circles.member.hint": ("Renseigne l'identifiant utilisateur (UUID) et le rôle. La liste de sélection sera branchée sur l'annuaire Keycloak dans une prochaine itération.", "Enter the user identifier (UUID) and the role. The selection list will be connected to the Keycloak directory in a future iteration.", "Introduzca el identificador de usuario (UUID) y el rol. La lista de selección se conectará al directorio Keycloak en una próxima iteración.", "أدخل معرّف المستخدم (UUID) والدور. ستُربط قائمة الاختيار بدليل Keycloak في تكرار لاحق.", "ユーザー識別子（UUID）と役割を入力してください。選択リストは今後のイテレーションでKeycloakディレクトリに接続されます。", "请输入用户标识符（UUID）和角色。选择列表将在后续迭代中接入Keycloak目录。"),
-    "circles.member.user-id": ("User ID (UUID)", "User ID (UUID)", "ID de usuario (UUID)", "معرّف المستخدم (UUID)", "ユーザーID (UUID)", "用户ID (UUID)"),
-    "circles.member.uuid-required": ("UUID requis.", "UUID required.", "UUID obligatorio.", "UUID مطلوب.", "UUIDは必須です。", "UUID 为必填项。"),
-    "circles.member.uuid-invalid": ("Format UUID invalide.", "Invalid UUID format.", "Formato UUID no válido.", "صيغة UUID غير صالحة.", "UUID形式が無効です。", "UUID 格式无效。"),
-    "circles.member.role-facilitator": ("Animateur", "Facilitator", "Facilitador", "الميسّر", "ファシリテーター", "主持人"),
-    "circles.member.role-secretary": ("Secrétaire", "Secretary", "Secretario", "أمين السر", "書記", "秘书"),
-    "circles.member.role-member": ("Membre", "Member", "Miembro", "عضو", "メンバー", "成员"),
-    "circles.member.added": ("Membre ajouté.", "Member added.", "Miembro añadido.", "تمت إضافة العضو.", "メンバーを追加しました。", "已添加成员。"),
-    "circles.member.error": ("Erreur lors de l'ajout.", "Error while adding.", "Error al añadir.", "حدث خطأ أثناء الإضافة.", "追加中にエラーが発生しました。", "添加时出错。"),
-    "circles.proposal.title": ("Nouvelle proposition", "New proposal", "Nueva propuesta", "مقترح جديد", "新規提案", "新建提案"),
-    "circles.proposal.subtitle": ("Idée d'amélioration soumise au cercle. Elle sera évaluée puis implémentée et mesurée si approuvée (workflow PROPOSED → APPROVED → MEASURED).", "Improvement idea submitted to the circle. It will be evaluated, then implemented and measured if approved (workflow PROPOSED → APPROVED → MEASURED).", "Idea de mejora presentada al círculo. Se evaluará y, si se aprueba, se implementará y medirá (flujo PROPOSED → APPROVED → MEASURED).", "فكرة تحسين مُقدَّمة إلى الحلقة. ستُقيَّم ثم تُنفَّذ وتُقاس إذا اعتُمدت (سير العمل PROPOSED → APPROVED → MEASURED).", "サークルに提出される改善案。承認されれば評価後に実施・測定されます（ワークフロー PROPOSED → APPROVED → MEASURED）。", "提交给质量圈的改进想法。经评估后，若获批准则实施并测量（流程 PROPOSED → APPROVED → MEASURED）。"),
-    "circles.proposal.submit": ("Proposer", "Submit", "Proponer", "اقتراح", "提案する", "提交"),
-    "circles.proposal.title-placeholder": ("Ex. : Ajouter un Poka-Yoke positionnement pièce", "E.g.: Add a part-positioning Poka-Yoke", "Ej.: Añadir un Poka-Yoke de posicionamiento de pieza", "مثال: إضافة Poka-Yoke لتموضع القطعة", "例：部品位置決めのポカヨケを追加", "例：增加零件定位防错装置 (Poka-Yoke)"),
-    "circles.proposal.description-placeholder": ("Contexte, objectif, bénéfice attendu, charge estimée…", "Context, objective, expected benefit, estimated effort…", "Contexto, objetivo, beneficio esperado, esfuerzo estimado…", "السياق، الهدف، الفائدة المتوقعة، الجهد المُقدَّر…", "背景、目的、期待効果、見積工数…", "背景、目标、预期收益、预估工作量…"),
-    "circles.proposal.session-expired": ("Session expirée — veuillez vous reconnecter.", "Session expired — please sign in again.", "Sesión caducada — vuelva a iniciar sesión.", "انتهت الجلسة — يُرجى تسجيل الدخول مرة أخرى.", "セッションが期限切れです — 再度サインインしてください。", "会话已过期 — 请重新登录。"),
-    "circles.proposal.saved": ("Proposition enregistrée.", "Proposal saved.", "Propuesta guardada.", "تم حفظ المقترح.", "提案を保存しました。", "已保存提案。"),
-    "circles.proposal.error": ("Erreur lors de l'enregistrement.", "Error while saving.", "Error al guardar.", "حدث خطأ أثناء الحفظ.", "保存中にエラーが発生しました。", "保存时出错。"),
-
-    # ---- File d'attente offline (§15.2-15.3) -----------------------------------------
-    "offline.queue.title": ("File d'attente offline", "Offline queue", "Cola sin conexión", "قائمة الانتظار دون اتصال", "オフラインキュー", "离线队列"),
-    "offline.queue.subtitle": ("Actions terrain saisies sans réseau, rejouées dans l'ordre au retour de la connexion.", "Field actions captured without network, replayed in order once the connection returns.", "Acciones de campo registradas sin red, reproducidas en orden al recuperar la conexión.", "إجراءات ميدانية سُجِّلت دون شبكة، تُعاد بالترتيب عند عودة الاتصال.", "ネットワークなしで記録された現場アクション。接続回復時に順番に再実行されます。", "无网络时录入的现场操作，恢复连接后按顺序重放。"),
-    "offline.queue.sync-now": ("Synchroniser maintenant", "Sync now", "Sincronizar ahora", "مزامنة الآن", "今すぐ同期", "立即同步"),
-    "offline.queue.state-offline": ("Hors-ligne", "Offline", "Sin conexión", "غير متصل", "オフライン", "离线"),
-    "offline.queue.state-online": ("En ligne", "Online", "En línea", "متصل", "オンライン", "在线"),
-    "offline.queue.pending-suffix": ("action(s) en attente de synchronisation", "action(s) awaiting synchronization", "acción(es) pendiente(s) de sincronización", "إجراء(ات) في انتظار المزامنة", "件のアクションが同期待ち", "项操作等待同步"),
-    "offline.queue.nothing-pending": ("Aucune action en attente — tout est synchronisé.", "No pending action — everything is synchronized.", "Ninguna acción pendiente — todo está sincronizado.", "لا توجد إجراءات معلّقة — كل شيء متزامن.", "保留中のアクションはありません — すべて同期済みです。", "没有待处理的操作——全部已同步。"),
-    "offline.queue.col-action": ("Action", "Action", "Acción", "الإجراء", "アクション", "操作"),
-    "offline.queue.col-queued-at": ("Mise en attente le", "Queued on", "En cola desde", "أُدرج في الانتظار في", "キュー追加日時", "加入队列时间"),
-    "offline.queue.discard-tooltip": ("Abandonner cette action", "Discard this action", "Descartar esta acción", "التخلّي عن هذا الإجراء", "このアクションを破棄", "放弃此操作"),
-    "offline.queue.discard-title": ("Abandonner cette action ?", "Discard this action?", "¿Descartar esta acción?", "التخلّي عن هذا الإجراء؟", "このアクションを破棄しますか？", "放弃此操作？"),
-    "offline.queue.discard-message": ("« {$label} » ne sera jamais synchronisée vers le serveur. Cette décision est définitive.", "“{$label}” will never be synchronized to the server. This decision is final.", "«{$label}» nunca se sincronizará con el servidor. Esta decisión es definitiva.", "«{$label}» لن يُزامَن مع الخادم أبداً. هذا القرار نهائي.", "「{$label}」はサーバーに同期されません。この決定は取り消せません。", "「{$label}」将永远不会同步到服务器。此决定不可撤销。"),
-    "offline.queue.discard-confirm": ("Abandonner", "Discard", "Descartar", "تخلٍّ", "破棄", "放弃"),
-    "offline.queue.discard-keep": ("Conserver", "Keep", "Conservar", "الاحتفاظ", "保持", "保留"),
-    "offline.queue.discarded": ("Action abandonnée.", "Action discarded.", "Acción descartada.", "تم التخلّي عن الإجراء.", "アクションを破棄しました。", "已放弃操作。"),
-    "offline.queue.still-offline": ("Toujours hors-ligne — la synchronisation reprendra au retour du réseau.", "Still offline — synchronization will resume once the network returns.", "Aún sin conexión — la sincronización se reanudará al volver la red.", "لا يزال الاتصال مقطوعاً — ستُستأنف المزامنة عند عودة الشبكة.", "まだオフラインです — ネットワーク回復時に同期が再開されます。", "仍处于离线状态——网络恢复后将继续同步。"),
-    "offline.queue.sync-done": ("Synchronisation terminée.", "Synchronization complete.", "Sincronización finalizada.", "اكتملت المزامنة.", "同期が完了しました。", "同步完成。"),
-    "offline.queue.empty-title": ("File vide", "Empty queue", "Cola vacía", "قائمة الانتظار فارغة", "キューは空です", "队列为空"),
-    "offline.queue.empty-hint": ("Les audits 5S saisis hors connexion apparaîtront ici jusqu'à leur synchronisation.", "5S audits captured offline will appear here until they are synchronized.", "Las auditorías 5S registradas sin conexión aparecerán aquí hasta su sincronización.", "ستظهر تدقيقات 5S المسجّلة دون اتصال هنا حتى تتم مزامنتها.", "オフラインで記録された5S監査は、同期されるまでここに表示されます。", "离线录入的5S审核将显示在此处，直至完成同步。"),
-}
 
 HEADER = (
     '<?xml version="1.0" encoding="UTF-8"?>\n'
     '<!-- Généré par scripts/gen-i18n-xlf.py — NE PAS éditer à la main :\n'
-    '     modifier la table TRANSLATIONS puis regénérer. -->\n'
+    '     modifier les tables scripts/i18n/*.py puis regénérer. -->\n'
     '<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">\n'
     '  <file source-language="fr" target-language="{lang}" datatype="plaintext" original="ng2.template">\n'
     "    <body>\n"
 )
 FOOTER = "    </body>\n  </file>\n</xliff>\n"
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+TABLES_DIR = os.path.join(BASE_DIR, "i18n")
+SRC_APP = os.path.normpath(os.path.join(BASE_DIR, "..", "src", "app"))
+OUT_DIR = os.path.normpath(os.path.join(BASE_DIR, "..", "src", "locale"))
+
+
+def load_tables() -> dict:
+    """Agrège les TRANSLATIONS de tous les fichiers scripts/i18n/*.py."""
+    merged: dict = {}
+    origin: dict = {}
+    files = sorted(glob.glob(os.path.join(TABLES_DIR, "*.py")))
+    if not files:
+        sys.exit("ERREUR : aucune table dans %s" % TABLES_DIR)
+    for path in files:
+        name = os.path.splitext(os.path.basename(path))[0]
+        spec = importlib.util.spec_from_file_location("i18n_" + name, path)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)  # type: ignore[union-attr]
+        table = getattr(mod, "TRANSLATIONS", None)
+        if not isinstance(table, dict):
+            sys.exit("ERREUR : %s n'expose pas un dict TRANSLATIONS" % path)
+        for key, row in table.items():
+            if not isinstance(row, tuple) or len(row) != N_COLS:
+                sys.exit("ERREUR : %s — '%s' doit être un tuple de %d chaînes (fr, %s)"
+                         % (name, key, N_COLS, ", ".join(LANGS)))
+            if key in merged and merged[key] != row:
+                sys.exit("ERREUR : id '%s' défini différemment dans %s et %s"
+                         % (key, origin[key], name))
+            merged[key] = row
+            origin[key] = name
+    return merged
 
 
 def esc(s: str) -> str:
@@ -546,21 +79,50 @@ def esc(s: str) -> str:
     return PLACEHOLDER_RE.sub(r'<x id="\1"/>', s)
 
 
-def main() -> None:
-    out_dir = os.path.join(os.path.dirname(__file__), "..", "src", "locale")
-    os.makedirs(out_dir, exist_ok=True)
+def write_xlf(translations: dict) -> None:
+    os.makedirs(OUT_DIR, exist_ok=True)
     for idx, lang in enumerate(LANGS, start=1):
-        path = os.path.join(out_dir, f"messages.{lang}.xlf")
+        path = os.path.join(OUT_DIR, "messages.%s.xlf" % lang)
         with io.open(path, "w", encoding="utf-8", newline="\n") as f:
             f.write(HEADER.format(lang=lang))
-            for unit_id, row in TRANSLATIONS.items():
+            for unit_id, row in translations.items():
                 source, target = row[0], row[idx]
-                f.write(f'      <trans-unit id="{unit_id}" datatype="html">\n')
-                f.write(f"        <source>{esc(source)}</source>\n")
-                f.write(f'        <target state="translated">{esc(target)}</target>\n')
+                f.write('      <trans-unit id="%s" datatype="html">\n' % unit_id)
+                f.write("        <source>%s</source>\n" % esc(source))
+                f.write('        <target state="translated">%s</target>\n' % esc(target))
                 f.write("      </trans-unit>\n")
             f.write(FOOTER)
-        print(f"OK {path} ({len(TRANSLATIONS)} unités)")
+        print("OK %s (%d unités)" % (path, len(translations)))
+
+
+def check(translations: dict) -> int:
+    """Vérif croisée : tout @@id du code existe en table (et l'inverse, en info)."""
+    used: set = set()
+    id_re = re.compile(r"@@([A-Za-z0-9._-]+)")
+    for root, _dirs, files in os.walk(SRC_APP):
+        for fn in files:
+            if fn.endswith((".html", ".ts")):
+                text = io.open(os.path.join(root, fn), encoding="utf-8").read()
+                used.update(id_re.findall(text))
+    missing = sorted(used - set(translations))
+    unused = sorted(set(translations) - used)
+    print("ids utilisés dans le code :", len(used))
+    if missing:
+        print("MANQUANTS dans les tables (build i18n incomplet) :")
+        for m in missing:
+            print("  -", m)
+    if unused:
+        print("Dans les tables mais inutilisés (%d) — toléré (vocabulaire de réserve) :" % len(unused))
+        for u in unused:
+            print("  -", u)
+    return 1 if missing else 0
+
+
+def main() -> None:
+    translations = load_tables()
+    write_xlf(translations)
+    if "--check" in sys.argv:
+        sys.exit(check(translations))
 
 
 if __name__ == "__main__":

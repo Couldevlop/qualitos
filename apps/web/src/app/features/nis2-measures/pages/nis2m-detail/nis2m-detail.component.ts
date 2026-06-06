@@ -49,14 +49,14 @@ export class Nis2mDetailComponent implements OnInit {
       switchMap(p => {
         const id = p.get('id') ?? '';
         if (!UUID_REGEX.test(id) && !id.startsWith('nis2m-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
         return this.refresh$.pipe(
           switchMap(() => this.svc.get(id).pipe(
             catchError(err => {
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             }),
             tap(() => this.loading$.next(false))
@@ -75,15 +75,15 @@ export class Nis2mDetailComponent implements OnInit {
 
   start(m: Nis2MeasureView): void {
     this.svc.startImplementation(m.id).subscribe({
-      next: () => { this.snack.open('Implémentation démarrée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Démarrage impossible.')
+      next: () => { this.snack.open($localize`:@@nis2-measures.detail.started:Implémentation démarrée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@nis2-measures.detail.start-failed:Démarrage impossible.`)
     });
   }
 
   markImplemented(m: Nis2MeasureView): void {
     this.svc.markImplemented(m.id).subscribe({
-      next: () => { this.snack.open('Marquée comme implémentée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Marquage impossible.')
+      next: () => { this.snack.open($localize`:@@nis2-measures.detail.marked-implemented:Marquée comme implémentée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@nis2-measures.detail.mark-failed:Marquage impossible.`)
     });
   }
 
@@ -103,29 +103,29 @@ export class Nis2mDetailComponent implements OnInit {
 
   deprecate(m: Nis2MeasureView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Désactiver la mesure ?',
-              message: 'La mesure passe en DEPRECATED. Cette action est terminale.',
-              confirmLabel: 'Désactiver', cancelLabel: 'Annuler', danger: true }
+      data: { title: $localize`:@@nis2-measures.detail.deprecate-title:Désactiver la mesure ?`,
+              message: $localize`:@@nis2-measures.detail.deprecate-message:La mesure passe en DEPRECATED. Cette action est terminale.`,
+              confirmLabel: $localize`:@@nis2-measures.detail.deprecate:Désactiver`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.deprecate(m.id).subscribe({
-        next: () => { this.snack.open('Mesure désactivée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Désactivation impossible.')
+        next: () => { this.snack.open($localize`:@@nis2-measures.detail.deprecated:Mesure désactivée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@nis2-measures.detail.deprecate-failed:Désactivation impossible.`)
       });
     });
   }
 
   remove(m: Nis2MeasureView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Supprimer la mesure ?', message: 'Suppression définitive.',
-              confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true }
+      data: { title: $localize`:@@nis2-measures.detail.delete-title:Supprimer la mesure ?`, message: $localize`:@@nis2-measures.detail.delete-message:Suppression définitive.`,
+              confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(m.id).subscribe({
-        next: () => { this.snack.open('Mesure supprimée.', 'OK', { duration: 2200 }); this.router.navigate(['/nis2-measures']); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        next: () => { this.snack.open($localize`:@@nis2-measures.detail.deleted:Mesure supprimée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/nis2-measures']); },
+        error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
       });
     });
   }
@@ -144,6 +144,6 @@ export class Nis2mDetailComponent implements OnInit {
   private fail(err: unknown, fallback: string): void {
     // eslint-disable-next-line no-console
     console.warn('[nis2m-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
-    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+    this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 4000 });
   }
 }

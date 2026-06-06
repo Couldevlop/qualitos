@@ -26,9 +26,11 @@ export class ConsentsSearchComponent {
 
   readonly displayedColumns = ['subjectLabel', 'purposeCode', 'purposeVersion', 'source', 'status', 'grantedAt'];
 
+  readonly pseudonymizedLabel = $localize`:@@consents.pseudonymized:(pseudonymisé)`;
+
   readonly modes: { value: SearchMode; label: string }[] = [
-    { value: 'subject', label: 'Par identifiant de personne (sera hashé côté serveur)' },
-    { value: 'purpose', label: 'Par code de finalité' }
+    { value: 'subject', label: $localize`:@@consents.search.mode-subject:Par identifiant de personne (sera hashé côté serveur)` },
+    { value: 'purpose', label: $localize`:@@consents.search.mode-purpose:Par code de finalité` }
   ];
 
   // OWASP A03 — patterns mirror backend @Pattern / @Size constraints.
@@ -58,11 +60,11 @@ export class ConsentsSearchComponent {
   submit(): void {
     const v = this.form.getRawValue();
     if (v.mode === 'subject' && !v.subjectIdentifier?.trim()) {
-      this.snack.open('Renseignez un identifiant.', 'OK', { duration: 3000 });
+      this.snack.open($localize`:@@consents.search.enter-identifier:Renseignez un identifiant.`, $localize`:@@common.ok:OK`, { duration: 3000 });
       return;
     }
     if (v.mode === 'purpose' && !v.purposeCode?.trim()) {
-      this.snack.open('Renseignez un code de finalité.', 'OK', { duration: 3000 });
+      this.snack.open($localize`:@@consents.search.enter-purpose:Renseignez un code de finalité.`, $localize`:@@common.ok:OK`, { duration: 3000 });
       return;
     }
     this.loading = true;
@@ -78,7 +80,7 @@ export class ConsentsSearchComponent {
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[consents-search] failed', err?.status, err?.error?.title);
-          this.error = safeErrorMessage(err, 'Recherche impossible.');
+          this.error = safeErrorMessage(err, $localize`:@@consents.search.search-error:Recherche impossible.`);
           this.results = [];
         }
       });
@@ -98,14 +100,14 @@ export class ConsentsSearchComponent {
     this.svc.expireDue(200).subscribe({
       next: r => {
         this.expiring = false;
-        this.snack.open('Maintenance : ' + r.expired + ' consentement(s) expiré(s).', 'OK', { duration: 3500 });
+        this.snack.open($localize`:@@consents.search.maintenance-result:Maintenance : ${r.expired}:count: consentement(s) expiré(s).`, $localize`:@@common.ok:OK`, { duration: 3500 });
         if (this.searched) this.submit();
       },
       error: err => {
         this.expiring = false;
         // eslint-disable-next-line no-console
         console.warn('[consents-search] expire-due failed', err?.status, err?.error?.title);
-        this.snack.open(safeErrorMessage(err, 'Maintenance impossible.'), 'OK', { duration: 4000 });
+        this.snack.open(safeErrorMessage(err, $localize`:@@consents.search.maintenance-error:Maintenance impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
       }
     });
   }
@@ -114,8 +116,14 @@ export class ConsentsSearchComponent {
 
   sourceLabel(s: ConsentSource): string {
     return ({
-      WEB_FORM: 'Formulaire web', MOBILE_APP: 'Application mobile', EMAIL: 'E-mail',
-      PAPER: 'Papier', PHONE: 'Téléphone', API: 'API', IMPORT: 'Import', OTHER: 'Autre'
+      WEB_FORM: $localize`:@@consents.source.web-form:Formulaire web`,
+      MOBILE_APP: $localize`:@@consents.source.mobile-app:Application mobile`,
+      EMAIL: $localize`:@@consents.source.email:E-mail`,
+      PAPER: $localize`:@@consents.source.paper:Papier`,
+      PHONE: $localize`:@@consents.source.phone:Téléphone`,
+      API: $localize`:@@consents.source.api:API`,
+      IMPORT: $localize`:@@consents.source.import:Import`,
+      OTHER: $localize`:@@consents.source.other:Autre`
     })[s];
   }
   statusBadge(s: ConsentStatus): string { return 'badge badge-' + s.toLowerCase(); }

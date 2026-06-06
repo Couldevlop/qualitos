@@ -1,35 +1,38 @@
 <qos-form-dialog
   title="Éditer le brouillon"
+  i18n-title="@@ai-eudb.edit.title"
   subtitle="Édition autorisée uniquement en statut DRAFT."
+  i18n-subtitle="@@ai-eudb.edit.subtitle"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitLabel="Enregistrer"
+  i18n-submitLabel="@@common.save"
   submitIcon="save"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Nom du fournisseur</mat-label>
+    <mat-label i18n="@@ai-eudb.draft.provider-name">Nom du fournisseur</mat-label>
     <input matInput formControlName="providerEntityName" maxlength="250">
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Représentant UE</mat-label>
+    <mat-label i18n="@@ai-eudb.detail.eu-representative">Représentant UE</mat-label>
     <input matInput formControlName="providerEuRepresentative" maxlength="250">
   </mat-form-field>
   <div class="row">
     <mat-form-field appearance="outline" class="col-3">
-      <mat-label>État membre (α-2)</mat-label>
+      <mat-label i18n="@@ai-eudb.edit.member-state-short">État membre (α-2)</mat-label>
       <input matInput formControlName="memberStateOfReference" maxlength="2"
              style="text-transform: uppercase;">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col-grow">
-      <mat-label>Ref. documentation technique</mat-label>
+      <mat-label i18n="@@ai-eudb.draft.tech-doc-ref">Ref. documentation technique</mat-label>
       <input matInput formControlName="technicalDocumentationReference" maxlength="250">
     </mat-form-field>
   </div>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Résumé de la finalité prévue</mat-label>
+    <mat-label i18n="@@ai-eudb.draft.intended-purpose-summary">Résumé de la finalité prévue</mat-label>
     <textarea matInput formControlName="intendedPurposeSummary" rows="4" maxlength="4000"></textarea>
   </mat-form-field>
 

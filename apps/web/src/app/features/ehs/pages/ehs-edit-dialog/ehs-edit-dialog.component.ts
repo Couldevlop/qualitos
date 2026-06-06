@@ -53,11 +53,11 @@ export class EhsEditDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: i => { this.snack.open('Incident mis à jour.', 'OK', { duration: 2500 }); this.dialogRef.close(i); },
+        next: i => { this.snack.open($localize`:@@ehs.edit.updated:Incident mis à jour.`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(i); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[ehs-edit] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de la mise à jour.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@common.error-update:Erreur lors de la mise à jour.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

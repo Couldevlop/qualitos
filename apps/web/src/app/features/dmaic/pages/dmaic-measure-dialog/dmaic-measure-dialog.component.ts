@@ -47,7 +47,7 @@ export class DmaicMeasureDialogComponent {
     }
     const v = this.form.getRawValue();
     if (v.value === null) {
-      this.snack.open($localize`:@@dmaic.measure.value-required:Une valeur numérique est requise.`, 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@dmaic.measure.value-required:Une valeur numérique est requise.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const operatorId = this.auth.snapshot()?.userId;
@@ -63,13 +63,13 @@ export class DmaicMeasureDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: m => {
-          this.snack.open($localize`:@@dmaic.measure.saved:Mesure enregistrée.`, 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@dmaic.measure.saved:Mesure enregistrée.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(m);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[dmaic-measure] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, $localize`:@@dmaic.measure.error-save:Erreur lors de l'enregistrement.`), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@dmaic.measure.error-save:Erreur lors de l'enregistrement.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

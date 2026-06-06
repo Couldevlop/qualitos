@@ -1,25 +1,29 @@
 <qos-form-dialog
+  i18n-title="@@subject-requests.complete.title"
   title="Clôturer la demande"
+  i18n-subtitle="@@subject-requests.complete.subtitle"
   subtitle="Notez le détail de la réponse fournie (Art. 12§3 — accuser la suite donnée). Joignez optionnellement une URL de preuve archivée (PDF signé, ticket interne…)."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@subject-requests.complete.submit"
   submitLabel="Clôturer"
   submitIcon="check_circle"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Notes de résolution</mat-label>
+    <mat-label i18n="@@subject-requests.complete.notes-label">Notes de résolution</mat-label>
     <textarea matInput formControlName="resolutionNotes" rows="6" maxlength="4000" required
+              i18n-placeholder="@@subject-requests.complete.notes-placeholder"
               placeholder="Données fournies, format, canal de transmission, périmètre…"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>URL de preuve (https://… — optionnelle)</mat-label>
+    <mat-label i18n="@@subject-requests.complete.evidence-label">URL de preuve (https://… — optionnelle)</mat-label>
     <input matInput formControlName="evidenceUrl" maxlength="1024"
            placeholder="https://www.qualitos.io/audit/sr-xxx.pdf">
-    <mat-error *ngIf="form.controls.evidenceUrl.hasError('pattern')">
+    <mat-error *ngIf="form.controls.evidenceUrl.hasError('pattern')" i18n="@@subject-requests.complete.https-only">
       Seules les URLs https:// sont acceptées.
     </mat-error>
   </mat-form-field>

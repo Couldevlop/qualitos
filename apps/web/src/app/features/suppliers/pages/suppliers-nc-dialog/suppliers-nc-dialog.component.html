@@ -1,19 +1,21 @@
 <qos-form-dialog
+  i18n-title="@@suppliers.nc.title"
   title="Nouvelle non-conformité fournisseur"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.save"
   submitLabel="Enregistrer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
     <div class="row">
       <mat-form-field appearance="outline" class="col">
-        <mat-label>Date de détection</mat-label>
+        <mat-label i18n="@@suppliers.nc.detected-on">Date de détection</mat-label>
         <input matInput formControlName="detectedOn" type="date" required>
       </mat-form-field>
       <mat-form-field appearance="outline" class="col">
-        <mat-label>Sévérité</mat-label>
+        <mat-label i18n="@@suppliers.detail.col-severity">Sévérité</mat-label>
         <mat-select formControlName="severity" required>
           <mat-option *ngFor="let s of severities" [value]="s.value">{{ s.label }}</mat-option>
         </mat-select>
@@ -21,13 +23,14 @@
     </div>
 
     <mat-form-field appearance="outline" class="full">
-      <mat-label>Référence lot</mat-label>
+      <mat-label i18n="@@suppliers.nc.lot-reference">Référence lot</mat-label>
       <input matInput formControlName="lotReference" maxlength="100"
+             i18n-placeholder="@@suppliers.nc.lot-reference-placeholder"
              placeholder="Ex. : LOT-2026-0421">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full">
-      <mat-label>Description</mat-label>
+      <mat-label i18n="@@common.description">Description</mat-label>
       <textarea matInput formControlName="description" rows="4" maxlength="1000"></textarea>
     </mat-form-field>
 

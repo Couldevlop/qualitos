@@ -17,14 +17,19 @@
 
 ## Fichiers de traduction — générés, pas édités
 
-`apps/web/scripts/gen-i18n-xlf.py` détient la table {id → 6 langues} et génère
-les 5 XLF (une seule source de vérité, ajout d'une langue = une colonne) :
+Les tables {id → 6 langues} vivent dans `apps/web/scripts/i18n/*.py`, **un
+fichier par domaine** (core, methods, offline_queue, quality_ops, quality_docs,
+pilotage, standards_privacy, grc_data1, grc_data2, ai_act, ai_cyber) : chaque
+chantier ajoute son fichier sans toucher aux autres — pas de conflit de merge.
+Un même id défini différemment dans deux fichiers = erreur fatale du générateur.
 
 ```bash
-cd apps/web && python scripts/gen-i18n-xlf.py
+cd apps/web && python scripts/gen-i18n-xlf.py          # génère les 5 XLF
+cd apps/web && python scripts/gen-i18n-xlf.py --check  # + vérif croisée code <-> tables
 ```
 
-`ng extract-i18n` reste utile pour détecter les chaînes non couvertes.
+`--check` échoue (exit 1) si un `@@id` du code manque dans les tables — à
+brancher en CI. `ng extract-i18n` reste utile en complément.
 
 ## Builds
 
@@ -52,16 +57,25 @@ unique réutilisé par tous les écrans (ex. `common.save`, `common.error-loadin
 près. Consulter la section « vocabulaire commun » du générateur avant de créer
 un nouvel ID.
 
+## Placeholders de balises imbriquées
+
+Un élément i18n contenant `<strong>`/`<b>`/interpolation utilise les
+placeholders canoniques Angular dans la table : `{$INTERPOLATION}` (puis
+`{$INTERPOLATION_1}`…), `{$START_TAG_STRONG}`/`{$CLOSE_TAG_STRONG}` pour
+`<strong>` (⚠ `START_BOLD_TEXT` = `<b>` uniquement). En cas de doute,
+préférer le découpage en segments (`<strong i18n="@@x-title">` +
+`<span i18n="@@x-text">`).
+
 ## Périmètre couvert / restant
 
-- ✅ Infrastructure complète + shell (navigation 49 libellés, topbar).
-- ✅ **Les 6 modules méthodes** (PDCA, 5S, Ishikawa, DMAIC, SPC, Cercles) :
-  27 templates + chaînes TS (snackbars, dialogs de confirmation) — 477 unités
-  × 5 langues au total, vocabulaire `common.*` partagé.
-- ✅ Page « File d'attente offline » (`offline.queue.*`).
-- ⏳ Les ~34 features restantes (CAPA, Audits, Documents, GRC…) : à marquer
-  progressivement avec des IDs `@@<feature>.*`. Règle : **toute nouvelle chaîne
-  UI naît avec son attribut i18n et son ID.**
-- ⏳ Chaînes signalées non marquées (ternaires dans interpolations, libellés
-  d'axes ECharts, `aria-label` dynamiques concaténés) — nécessitent un léger
-  refactor TS (getter `$localize`) ; listées dans les commentaires de revue.
+- ✅ Infrastructure + shell (navigation, topbar, a11y) + composants partagés
+  (form-dialog, confirm-dialog, `common.ok`/`common.confirm`).
+- ✅ **TOUTES les features** (41) : méthodes qualité, qualité opérationnelle,
+  pilotage, Standards Hub, GRC RGPD, AI Act, NIS 2, offline — **3 105 unités
+  × 5 langues**, vocabulaire `common.*` partagé.
+- ⏳ Hors périmètre assumé : libellés d'axes/légendes ECharts (config de
+  graphique), valeurs d'enum backend affichées brutes (DRAFT, CRITICAL…),
+  données mock des services, fragments non isolables mêlés à des ternaires
+  dans `{{ }}`.
+- Règle : **toute nouvelle chaîne UI naît avec son attribut i18n, son ID et
+  son entrée de table** (`--check` la rattrape sinon).

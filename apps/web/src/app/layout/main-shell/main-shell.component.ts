@@ -30,6 +30,10 @@ export class MainShellComponent implements OnInit {
   user$!: Observable<AuthUser | null>;
   collapsed = false;
 
+  /** Libellés a11y du bouton repli (binding dynamique → $localize côté TS). */
+  readonly expandNavLabel = $localize`:@@shell.expand-nav.aria:Déplier la navigation`;
+  readonly collapseNavLabel = $localize`:@@shell.collapse-nav.aria:Replier la navigation`;
+
   /** Labels des sections repliées (persistées). */
   collapsedSections = new Set<string>();
 

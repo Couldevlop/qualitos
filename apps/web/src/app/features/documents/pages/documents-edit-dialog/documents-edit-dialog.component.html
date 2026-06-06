@@ -1,4 +1,5 @@
 <qos-form-dialog
+  i18n-title="@@documents.edit.title"
   title="Modifier le document"
   [formGroup]="form"
   [submitting]="submitting"
@@ -7,22 +8,22 @@
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre</mat-label>
+    <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="255" required>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Type</mat-label>
+    <mat-label i18n="@@common.type">Type</mat-label>
     <mat-select formControlName="type" required>
       <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
     </mat-select>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description</mat-label>
+    <mat-label i18n="@@common.description">Description</mat-label>
     <textarea matInput formControlName="description" rows="3"></textarea>
   </mat-form-field>
 
-  <mat-checkbox formControlName="mandatoryRead">Lecture obligatoire</mat-checkbox>
+  <mat-checkbox formControlName="mandatoryRead" i18n="@@documents.edit.mandatory-read">Lecture obligatoire</mat-checkbox>
 
 </qos-form-dialog>

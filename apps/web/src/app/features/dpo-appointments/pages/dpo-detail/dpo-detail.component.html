@@ -4,7 +4,7 @@
     <header class="head">
       <div class="meta">
         <a routerLink="/dpo-appointments" class="back">
-          <mat-icon>arrow_back</mat-icon> Désignations DPO
+          <mat-icon>arrow_back</mat-icon> <span i18n="@@dpo-appointments.detail.back">Désignations DPO</span>
         </a>
         <h1>
           <code>{{ a.reference }}</code>
@@ -13,68 +13,68 @@
         <div class="meta-row">
           <span [class]="typeBadge(a.dpoType)">{{ typeLabel(a.dpoType) }}</span>
           <span [class]="statusBadge(a.status)">{{ a.status }}</span>
-          <span class="dim">Périmètre : <code>{{ a.scope }}</code></span>
-          <span class="dim" *ngIf="a.effectiveFrom">Effective depuis : {{ a.effectiveFrom }}</span>
-          <span class="dim" *ngIf="a.effectiveTo">Terminée le : {{ a.effectiveTo }}</span>
+          <span class="dim"><span i18n="@@dpo-appointments.detail.scope">Périmètre :</span> <code>{{ a.scope }}</code></span>
+          <span class="dim" *ngIf="a.effectiveFrom"><span i18n="@@dpo-appointments.detail.effective-from">Effective depuis :</span> {{ a.effectiveFrom }}</span>
+          <span class="dim" *ngIf="a.effectiveTo"><span i18n="@@dpo-appointments.detail.effective-to">Terminée le :</span> {{ a.effectiveTo }}</span>
         </div>
       </div>
 
       <div class="toolbar">
         <button mat-stroked-button (click)="openEdit(a)"
                 [disabled]="a.status !== 'PROPOSED' && a.status !== 'ACTIVE'"
-                [matTooltip]="a.status === 'PROPOSED' || a.status === 'ACTIVE' ? 'Modifier' : 'Non éditable dans cet état'">
-          <mat-icon>edit</mat-icon> Modifier
+                [matTooltip]="a.status === 'PROPOSED' || a.status === 'ACTIVE' ? editTooltip : editTooltipLocked">
+          <mat-icon>edit</mat-icon> <span i18n="@@common.edit">Modifier</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="a.status === 'PROPOSED'" (click)="activate(a)">
-          <mat-icon>verified</mat-icon> Activer
+          <mat-icon>verified</mat-icon> <span i18n="@@dpo-appointments.detail.activate">Activer</span>
         </button>
         <button mat-stroked-button color="warn" *ngIf="a.status === 'ACTIVE'" (click)="end(a)">
-          <mat-icon>event_busy</mat-icon> Clôturer
+          <mat-icon>event_busy</mat-icon> <span i18n="@@dpo-appointments.detail.end">Clôturer</span>
         </button>
         <button mat-stroked-button color="warn" *ngIf="a.status === 'PROPOSED'" (click)="cancelAppointment(a)">
-          <mat-icon>cancel</mat-icon> Annuler
+          <mat-icon>cancel</mat-icon> <span i18n="@@common.cancel">Annuler</span>
         </button>
         <button mat-stroked-button color="warn" (click)="remove(a)" [disabled]="a.status !== 'PROPOSED'"
-                [matTooltip]="a.status === 'PROPOSED' ? 'Supprimer la proposition' : 'Seule une PROPOSED peut être supprimée'">
-          <mat-icon>delete</mat-icon> Supprimer
+                [matTooltip]="a.status === 'PROPOSED' ? removeTooltip : removeTooltipLocked">
+          <mat-icon>delete</mat-icon> <span i18n="@@common.delete">Supprimer</span>
         </button>
       </div>
     </header>
 
     <div class="grid">
       <mat-card>
-        <mat-card-header><mat-card-title>Coordonnées DPO</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@dpo-appointments.detail.contact-title">Coordonnées DPO</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>Nom complet</th><td>{{ a.dpoFullName }}</td></tr>
-            <tr><th>E-mail</th><td><a [href]="'mailto:' + a.dpoEmail">{{ a.dpoEmail }}</a></td></tr>
-            <tr *ngIf="a.dpoPhone"><th>Téléphone</th><td>{{ a.dpoPhone }}</td></tr>
-            <tr><th>Type</th><td>{{ typeLabel(a.dpoType) }}</td></tr>
+            <tr><th i18n="@@dpo-appointments.detail.full-name">Nom complet</th><td>{{ a.dpoFullName }}</td></tr>
+            <tr><th i18n="@@dpo-appointments.detail.email">E-mail</th><td><a [href]="'mailto:' + a.dpoEmail">{{ a.dpoEmail }}</a></td></tr>
+            <tr *ngIf="a.dpoPhone"><th i18n="@@dpo-appointments.detail.phone">Téléphone</th><td>{{ a.dpoPhone }}</td></tr>
+            <tr><th i18n="@@common.type">Type</th><td>{{ typeLabel(a.dpoType) }}</td></tr>
             <tr *ngIf="a.externalCompanyName">
-              <th>Société hébergeante</th><td>{{ a.externalCompanyName }}</td>
+              <th i18n="@@dpo-appointments.detail.host-company">Société hébergeante</th><td>{{ a.externalCompanyName }}</td>
             </tr>
           </table>
         </mat-card-content>
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Notification autorité (Art. 37§7)</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@dpo-appointments.detail.regulator-title">Notification autorité (Art. 37§7)</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr *ngIf="a.regulatorNotifiedAt"><th>Notifiée le</th><td>{{ a.regulatorNotifiedAt }}</td></tr>
+            <tr *ngIf="a.regulatorNotifiedAt"><th i18n="@@dpo-appointments.detail.notified-at">Notifiée le</th><td>{{ a.regulatorNotifiedAt }}</td></tr>
             <tr *ngIf="a.regulatorNotificationReference">
-              <th>Référence</th>
+              <th i18n="@@dpo-appointments.detail.reference">Référence</th>
               <td><code>{{ a.regulatorNotificationReference }}</code></td>
             </tr>
             <tr *ngIf="!a.regulatorNotifiedAt">
-              <td colspan="2" class="dim warn">Notification autorité non encore enregistrée — requise pour activation.</td>
+              <td colspan="2" class="dim warn" i18n="@@dpo-appointments.detail.regulator-missing">Notification autorité non encore enregistrée — requise pour activation.</td>
             </tr>
           </table>
         </mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="a.qualifications" class="quals-card">
-        <mat-card-header><mat-card-title>Qualifications & expérience (Art. 37§5)</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@dpo-appointments.detail.qualifications-title">Qualifications & expérience (Art. 37§5)</mat-card-title></mat-card-header>
         <mat-card-content>
           <p class="text">{{ a.qualifications }}</p>
         </mat-card-content>
@@ -82,7 +82,7 @@
 
       <mat-card *ngIf="a.endReason" [class]="a.status === 'CANCELLED' ? 'rej-card' : 'end-card'">
         <mat-card-header>
-          <mat-card-title>{{ a.status === 'CANCELLED' ? 'Motif d\'annulation' : 'Motif de fin de mandat' }}</mat-card-title>
+          <mat-card-title>{{ a.status === 'CANCELLED' ? cancelReasonTitle : endReasonTitle }}</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <p class="text">{{ a.endReason }}</p>
@@ -90,7 +90,7 @@
       </mat-card>
 
       <mat-card *ngIf="a.linkedProcessingActivityIds?.length">
-        <mat-card-header><mat-card-title>Activités RoPA liées</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@dpo-appointments.detail.linked-ropa-title">Activités RoPA liées</mat-card-title></mat-card-header>
         <mat-card-content>
           <ul class="uuid-list">
             <li *ngFor="let id of a.linkedProcessingActivityIds">
@@ -101,12 +101,12 @@
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Trace</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@dpo-appointments.detail.trace-title">Trace</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>Créée par</th><td><code>{{ a.createdByUserId }}</code></td></tr>
-            <tr><th>Créée le</th><td>{{ a.createdAt }}</td></tr>
-            <tr><th>Dernière MAJ</th><td>{{ a.updatedAt }}</td></tr>
+            <tr><th i18n="@@dpo-appointments.detail.created-by">Créée par</th><td><code>{{ a.createdByUserId }}</code></td></tr>
+            <tr><th i18n="@@dpo-appointments.detail.created-at">Créée le</th><td>{{ a.createdAt }}</td></tr>
+            <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ a.updatedAt }}</td></tr>
           </table>
         </mat-card-content>
       </mat-card>
@@ -117,7 +117,7 @@
 
 <ng-template #fallback>
   <section class="dpo-detail">
-    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
     <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
   </section>
 </ng-template>

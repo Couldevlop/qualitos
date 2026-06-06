@@ -1,38 +1,38 @@
 <section class="ropa-list">
   <header class="head">
     <div>
-      <h1>RGPD — Registre des traitements (Art. 30)</h1>
-      <p>Registre des activités de traitement de données personnelles. Une fiche
+      <h1 i18n="@@ropa.list.title">RGPD — Registre des traitements (Art. 30)</h1>
+      <p i18n="@@ropa.list.subtitle">Registre des activités de traitement de données personnelles. Une fiche
          ACTIVE est immutable pour la traçabilité ; toute évolution passe par un
          nouveau DRAFT.</p>
     </div>
     <button mat-flat-button color="primary" (click)="openCreate()">
-      <mat-icon>add</mat-icon> Nouvelle activité
+      <mat-icon>add</mat-icon> <span i18n="@@ropa.list.new-activity">Nouvelle activité</span>
     </button>
   </header>
 
   <div class="filters">
     <mat-form-field appearance="outline">
-      <mat-label>Statut</mat-label>
+      <mat-label i18n="@@common.status">Statut</mat-label>
       <mat-select [formControl]="statusFilter">
-        <mat-option [value]="''">Tous</mat-option>
+        <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
         <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
 
   <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
-  <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+  <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
 
   <div class="table-wrap mat-elevation-z1">
     <table mat-table [dataSource]="(activities$ | async) ?? []">
       <ng-container matColumnDef="reference">
-        <th mat-header-cell *matHeaderCellDef>Référence</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@ropa.list.col-reference">Référence</th>
         <td mat-cell *matCellDef="let a"><code>{{ a.reference }}</code></td>
       </ng-container>
 
       <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef>Nom</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.name">Nom</th>
         <td mat-cell *matCellDef="let a">
           <a class="title-link" (click)="open(a)">{{ a.name }}</a>
           <small *ngIf="a.purposes" class="dim">{{ a.purposes }}</small>
@@ -40,12 +40,12 @@
       </ng-container>
 
       <ng-container matColumnDef="lawfulBasis">
-        <th mat-header-cell *matHeaderCellDef>Base légale</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@ropa.list.col-lawful-basis">Base légale</th>
         <td mat-cell *matCellDef="let a"><span [class]="basisBadge(a.lawfulBasis)">{{ basisLabel(a.lawfulBasis) }}</span></td>
       </ng-container>
 
       <ng-container matColumnDef="controller">
-        <th mat-header-cell *matHeaderCellDef>Responsable</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@ropa.list.col-controller">Responsable</th>
         <td mat-cell *matCellDef="let a">
           <strong>{{ a.controllerName }}</strong>
           <small class="dim">{{ a.controllerContact }}</small>
@@ -53,16 +53,16 @@
       </ng-container>
 
       <ng-container matColumnDef="special">
-        <th mat-header-cell *matHeaderCellDef>Cat. particulières</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@ropa.list.col-special">Cat. particulières</th>
         <td mat-cell *matCellDef="let a">
           <mat-icon *ngIf="a.specialCategoriesProcessed" class="special-yes"
-                    matTooltip="Catégories particulières Art. 9 traitées">priority_high</mat-icon>
+                    matTooltip="Catégories particulières Art. 9 traitées" i18n-matTooltip="@@ropa.list.special-tooltip">priority_high</mat-icon>
           <span *ngIf="!a.specialCategoriesProcessed" class="dim">—</span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
         <td mat-cell *matCellDef="let a"><span [class]="statusBadge(a.status)">{{ a.status }}</span></td>
       </ng-container>
 

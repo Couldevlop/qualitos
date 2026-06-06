@@ -2,81 +2,81 @@
 
   <header class="head">
     <div>
-      <h1>NIS 2 · Mesures de gestion du risque cyber</h1>
-      <p class="sub">Art. 21 (a-j) — mesures techniques, opérationnelles et organisationnelles obligatoires pour les entités essentielles et importantes.</p>
+      <h1 i18n="@@nis2-measures.list.title">NIS 2 · Mesures de gestion du risque cyber</h1>
+      <p class="sub" i18n="@@nis2-measures.list.subtitle">Art. 21 (a-j) — mesures techniques, opérationnelles et organisationnelles obligatoires pour les entités essentielles et importantes.</p>
     </div>
     <div class="actions">
       <button mat-flat-button color="primary" (click)="plan()">
-        <mat-icon>add</mat-icon> Planifier une mesure
+        <mat-icon>add</mat-icon> <span i18n="@@nis2-measures.list.plan">Planifier une mesure</span>
       </button>
     </div>
   </header>
 
   <div class="filters">
     <mat-form-field appearance="outline" class="mode-filter">
-      <mat-label>Mode</mat-label>
+      <mat-label i18n="@@nis2-measures.list.mode">Mode</mat-label>
       <mat-select [formControl]="modeCtrl">
-        <mat-option value="ALL">Toutes</mat-option>
-        <mat-option value="OVERDUE">Revue en retard</mat-option>
+        <mat-option value="ALL" i18n="@@nis2-measures.list.all-fem">Toutes</mat-option>
+        <mat-option value="OVERDUE" i18n="@@nis2-measures.list.mode-overdue">Revue en retard</mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="status-filter">
-      <mat-label>Statut</mat-label>
+      <mat-label i18n="@@common.status">Statut</mat-label>
       <mat-select [formControl]="statusCtrl">
-        <mat-option value="">Tous</mat-option>
+        <mat-option value="" i18n="@@common.all">Tous</mat-option>
         <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="category-filter">
-      <mat-label>Catégorie Art. 21</mat-label>
+      <mat-label i18n="@@nis2-measures.list.category-art21">Catégorie Art. 21</mat-label>
       <mat-select [formControl]="categoryCtrl">
-        <mat-option value="">Toutes</mat-option>
+        <mat-option value="" i18n="@@nis2-measures.list.all-fem">Toutes</mat-option>
         <mat-option *ngFor="let c of categories" [value]="c">{{ catLabel(c) }}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
 
-  <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+  <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
   <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
 
   <table mat-table [dataSource]="(rows$ | async) ?? []" class="qos-table" *ngIf="(rows$ | async)?.length; else empty">
 
     <ng-container matColumnDef="reference">
-      <th mat-header-cell *matHeaderCellDef>Référence</th>
+      <th mat-header-cell *matHeaderCellDef i18n="@@nis2-measures.list.col-reference">Référence</th>
       <td mat-cell *matCellDef="let r"><code>{{ r.reference }}</code></td>
     </ng-container>
 
     <ng-container matColumnDef="category">
-      <th mat-header-cell *matHeaderCellDef>Catégorie</th>
+      <th mat-header-cell *matHeaderCellDef i18n="@@nis2-measures.list.col-category">Catégorie</th>
       <td mat-cell *matCellDef="let r"><span class="cat-pill">{{ catLabel(r.category) }}</span></td>
     </ng-container>
 
     <ng-container matColumnDef="title">
-      <th mat-header-cell *matHeaderCellDef>Titre</th>
+      <th mat-header-cell *matHeaderCellDef i18n="@@common.title">Titre</th>
       <td mat-cell *matCellDef="let r">{{ r.title }}</td>
     </ng-container>
 
     <ng-container matColumnDef="maturity">
-      <th mat-header-cell *matHeaderCellDef>Maturité</th>
+      <th mat-header-cell *matHeaderCellDef i18n="@@nis2-measures.list.col-maturity">Maturité</th>
       <td mat-cell *matCellDef="let r"><span class="maturity">{{ r.maturityLevel }}/5</span></td>
     </ng-container>
 
     <ng-container matColumnDef="risk">
-      <th mat-header-cell *matHeaderCellDef>Risque résiduel</th>
+      <th mat-header-cell *matHeaderCellDef i18n="@@nis2-measures.list.col-residual-risk">Risque résiduel</th>
       <td mat-cell *matCellDef="let r"><span [class]="riskBadge(r.residualRiskRating)">{{ r.residualRiskRating }}</span></td>
     </ng-container>
 
     <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
       <td mat-cell *matCellDef="let r">
         <span [class]="statusBadge(r.status)">{{ r.status }}</span>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="nextReview">
-      <th mat-header-cell *matHeaderCellDef>Prochaine revue</th>
+      <th mat-header-cell *matHeaderCellDef i18n="@@nis2-measures.list.col-next-review">Prochaine revue</th>
       <td mat-cell *matCellDef="let r">
         <ng-container *ngIf="r.nextReviewDueAt; else noReview">
           <span *ngIf="r.reviewOverdue" class="flag flag-overdue">
@@ -95,7 +95,7 @@
   <ng-template #empty>
     <div *ngIf="!(loading$ | async)" class="empty">
       <mat-icon>security</mat-icon>
-      <p>Aucune mesure pour le filtre courant.</p>
+      <p i18n="@@nis2-measures.list.empty">Aucune mesure pour le filtre courant.</p>
     </div>
   </ng-template>
 

@@ -3,8 +3,8 @@
     <div class="title-row">
       <mat-icon class="hero-icon" aria-hidden="true">forum</mat-icon>
       <div>
-        <h1>Assistant — Question en langage naturel</h1>
-        <p class="subtitle">
+        <h1 i18n="@@nlq.ask.title">Assistant — Question en langage naturel</h1>
+        <p class="subtitle" i18n="@@nlq.ask.subtitle">
           Posez une question sur vos données qualité. L'IA la traduit en requête
           <strong>sécurisée</strong> (lecture seule, filtrée par tenant) et vous répond.
         </p>
@@ -13,24 +13,24 @@
   </header>
 
   <mat-card class="ask-card" appearance="outlined">
-    <form [formGroup]="form" (ngSubmit)="ask()" role="search" aria-label="Question en langage naturel">
+    <form [formGroup]="form" (ngSubmit)="ask()" role="search" aria-label="Question en langage naturel" i18n-aria-label="@@nlq.ask.form-aria">
       <mat-form-field appearance="outline" class="ask-field">
-        <mat-label>Votre question</mat-label>
+        <mat-label i18n="@@nlq.ask.question-label">Votre question</mat-label>
         <input matInput formControlName="question" maxlength="500"
-               aria-label="Votre question en langage naturel"
-               placeholder="Ex : Combien de CAPA par statut ?"
+               aria-label="Votre question en langage naturel" i18n-aria-label="@@nlq.ask.question-aria"
+               placeholder="Ex : Combien de CAPA par statut ?" i18n-placeholder="@@nlq.ask.question-placeholder"
                (keydown.enter)="$event.preventDefault(); ask()" />
         <mat-icon matSuffix aria-hidden="true">search</mat-icon>
       </mat-form-field>
       <button mat-flat-button color="primary" type="submit"
               [disabled]="form.invalid || loading">
         <mat-icon aria-hidden="true">auto_awesome</mat-icon>
-        Interroger
+        <span i18n="@@nlq.ask.submit">Interroger</span>
       </button>
     </form>
 
     <div class="examples">
-      <span class="examples-label" id="nlq-examples-label">Exemples :</span>
+      <span class="examples-label" id="nlq-examples-label" i18n="@@nlq.ask.examples-label">Exemples :</span>
       <mat-chip-set role="list" aria-labelledby="nlq-examples-label">
         <mat-chip *ngFor="let ex of examples"
                   role="button"
@@ -45,8 +45,8 @@
   </mat-card>
 
   <div class="loading" *ngIf="loading" role="status" aria-live="polite">
-    <mat-progress-bar mode="indeterminate" aria-label="Traitement en cours"></mat-progress-bar>
-    <p class="muted">Traduction en requête sécurisée et exécution…</p>
+    <mat-progress-bar mode="indeterminate" aria-label="Traitement en cours" i18n-aria-label="@@nlq.ask.progress-aria"></mat-progress-bar>
+    <p class="muted" i18n="@@nlq.ask.translating">Traduction en requête sécurisée et exécution…</p>
   </div>
 
   <div class="error" *ngIf="error && !loading" role="alert">
@@ -55,16 +55,16 @@
   </div>
 
   <section class="result" *ngIf="result && !loading"
-           aria-live="polite" aria-label="Résultats de la requête">
+           aria-live="polite" aria-label="Résultats de la requête" i18n-aria-label="@@nlq.ask.results-aria">
     <!-- Récit IA -->
     <mat-card class="narrative-card" appearance="outlined">
       <div class="narr-head">
         <mat-icon aria-hidden="true">insights</mat-icon>
-        <span>Réponse</span>
+        <span i18n="@@nlq.ask.answer">Réponse</span>
         <span class="spacer"></span>
         <span class="confidence" [ngClass]="confidenceClass()"
               [attr.aria-label]="'Indice de confiance : ' + confidencePct() + ' pour cent'">
-          Confiance {{ confidencePct() }} %
+          <span i18n="@@nlq.ask.confidence-prefix">Confiance</span> {{ confidencePct() }} %
         </span>
       </div>
       <p class="narrative">{{ result.narrative }}</p>
@@ -73,12 +73,12 @@
     <!-- Résultats -->
     <mat-card class="table-card" appearance="outlined" *ngIf="result.rows.length; else noRows">
       <div class="table-head">
-        <span class="t-title">Résultats</span>
-        <span class="t-count">{{ result.rowCount }} ligne(s)</span>
+        <span class="t-title" i18n="@@nlq.ask.results-title">Résultats</span>
+        <span class="t-count">{{ result.rowCount }} <span i18n="@@nlq.ask.rows-suffix">ligne(s)</span></span>
       </div>
       <div class="table-wrap">
         <table class="result-table">
-          <caption class="sr-only">Résultats de la requête : {{ result.rowCount }} ligne(s)</caption>
+          <caption class="sr-only"><span i18n="@@nlq.ask.results-caption-prefix">Résultats de la requête :</span> {{ result.rowCount }} <span i18n="@@nlq.ask.rows-suffix">ligne(s)</span></caption>
           <thead>
             <tr>
               <th *ngFor="let c of columns()" scope="col">{{ c }}</th>
@@ -101,16 +101,16 @@
       </div>
     </mat-card>
     <ng-template #noRows>
-      <p class="empty" role="status">Aucune donnée ne correspond à cette question.</p>
+      <p class="empty" role="status" i18n="@@nlq.ask.no-rows">Aucune donnée ne correspond à cette question.</p>
     </ng-template>
 
     <!-- Transparence : SQL généré + métadonnées de sécurité -->
     <div class="meta-row">
       <span class="meta-chip secure"
             [attr.aria-label]="result.tenantFilterApplied ? 'Sécurité : filtre tenant appliqué' : 'Attention : tenant non filtré'"
-            matTooltip="Filtre tenant_id appliqué automatiquement">
+            matTooltip="Filtre tenant_id appliqué automatiquement" i18n-matTooltip="@@nlq.ask.tenant-tooltip">
         <mat-icon aria-hidden="true">verified_user</mat-icon>
-        {{ result.tenantFilterApplied ? 'Filtré par tenant' : 'Tenant non filtré' }}
+        {{ tenantFilterLabel() }}
       </span>
       <span class="meta-chip" *ngFor="let t of result.tablesUsed"
             [attr.aria-label]="'Table interrogée : ' + t">
@@ -120,11 +120,11 @@
               [attr.aria-expanded]="showSql" aria-controls="nlq-generated-sql"
               (click)="showSql = !showSql">
         <mat-icon aria-hidden="true">{{ showSql ? 'expand_less' : 'code' }}</mat-icon>
-        {{ showSql ? 'Masquer le SQL' : 'Voir le SQL généré' }}
+        {{ sqlToggleLabel() }}
       </button>
     </div>
 
     <pre class="sql" id="nlq-generated-sql" *ngIf="showSql"
-         tabindex="0" aria-label="SQL généré">{{ result.sql }}</pre>
+         tabindex="0" aria-label="SQL généré" i18n-aria-label="@@nlq.ask.sql-aria">{{ result.sql }}</pre>
   </section>
 </div>

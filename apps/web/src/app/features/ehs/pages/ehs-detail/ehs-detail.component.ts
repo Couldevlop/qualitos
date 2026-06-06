@@ -99,16 +99,16 @@ export class EhsDetailComponent implements OnInit {
   close(i: IncidentView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Clôturer l\'incident ?',
-        message: 'L\'incident « ' + i.title + ' » sera marqué CLOSED. Aucune nouvelle modification possible.',
-        confirmLabel: 'Clôturer', cancelLabel: 'Annuler', danger: false
+        title: $localize`:@@ehs.detail.close-title:Clôturer l'incident ?`,
+        message: $localize`:@@ehs.detail.close-message:L'incident « ${i.title}:title: » sera marqué CLOSED. Aucune nouvelle modification possible.`,
+        confirmLabel: $localize`:@@ehs.detail.close-incident:Clôturer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: false
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.close(i.id).subscribe({
-        next: () => { this.snack.open('Incident clôturé.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Clôture impossible.')
+        next: () => { this.snack.open($localize`:@@ehs.detail.closed:Incident clôturé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@ehs.detail.close-failed:Clôture impossible.`)
       });
     });
   }
@@ -116,16 +116,16 @@ export class EhsDetailComponent implements OnInit {
   cancel(i: IncidentView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Annuler l\'incident ?',
-        message: 'L\'incident « ' + i.title + ' » sera marqué CANCELLED. Transition terminale.',
-        confirmLabel: 'Annuler l\'incident', cancelLabel: 'Conserver', danger: true
+        title: $localize`:@@ehs.detail.cancel-title:Annuler l'incident ?`,
+        message: $localize`:@@ehs.detail.cancel-message:L'incident « ${i.title}:title: » sera marqué CANCELLED. Transition terminale.`,
+        confirmLabel: $localize`:@@ehs.detail.cancel-confirm:Annuler l'incident`, cancelLabel: $localize`:@@ehs.detail.keep:Conserver`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.cancel(i.id).subscribe({
-        next: () => { this.snack.open('Incident annulé.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Annulation impossible.')
+        next: () => { this.snack.open($localize`:@@ehs.detail.cancelled:Incident annulé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@ehs.detail.cancel-failed:Annulation impossible.`)
       });
     });
   }
@@ -133,16 +133,16 @@ export class EhsDetailComponent implements OnInit {
   remove(i: IncidentView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer l\'incident ?',
-        message: 'Suppression définitive de « ' + i.title + ' » et de tout son historique.',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        title: $localize`:@@ehs.detail.delete-title:Supprimer l'incident ?`,
+        message: $localize`:@@ehs.detail.delete-message:Suppression définitive de « ${i.title}:title: » et de tout son historique.`,
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(i.id).subscribe({
-        next: () => { this.snack.open('Incident supprimé.', 'OK', { duration: 2200 }); this.router.navigate(['/ehs']); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        next: () => { this.snack.open($localize`:@@ehs.detail.deleted:Incident supprimé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/ehs']); },
+        error: err => this.fail(err, $localize`:@@ehs.detail.delete-failed:Suppression impossible.`)
       });
     });
   }
@@ -159,9 +159,12 @@ export class EhsDetailComponent implements OnInit {
   severityBadge(s: IncidentSeverity): string { return 'sev sev-' + s.toLowerCase(); }
   typeLabel(t: IncidentType): string {
     return ({
-      INJURY: 'Accident corporel', NEAR_MISS: 'Presque-accident',
-      ENVIRONMENTAL: 'Environnement', SECURITY: 'Sécurité',
-      PROPERTY_DAMAGE: 'Dommage matériel', OTHER: 'Autre'
+      INJURY: $localize`:@@ehs.detail.type-injury:Accident corporel`,
+      NEAR_MISS: $localize`:@@ehs.type.near-miss:Presque-accident`,
+      ENVIRONMENTAL: $localize`:@@ehs.type.environmental:Environnement`,
+      SECURITY: $localize`:@@ehs.type.security:Sécurité`,
+      PROPERTY_DAMAGE: $localize`:@@ehs.type.property-damage:Dommage matériel`,
+      OTHER: $localize`:@@ehs.type.other:Autre`
     })[t];
   }
 

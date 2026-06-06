@@ -1,79 +1,80 @@
 <qos-form-dialog
-  [title]="isEdit ? 'Modifier le QMS' : 'Nouveau QMS IA (Art. 17)'"
+  [title]="isEdit ? editTitle : createTitle"
+  i18n-subtitle="@@ai-qms.dialog.subtitle"
   subtitle="Art. 17 AI Act — 9 sections obligatoires du système de management qualité pour fournisseurs de systèmes IA à haut risque. Tout en mode DRAFT, peut être complété progressivement avant approbation."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
-  [submitLabel]="isEdit ? 'Enregistrer' : 'Créer (DRAFT)'"
+  [submitLabel]="isEdit ? editLabel : createLabel"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <h3 class="section">Identification</h3>
+  <h3 class="section" i18n="@@ai-qms.dialog.identification">Identification</h3>
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Référence</mat-label>
+      <mat-label i18n="@@ai-qms.dialog.reference">Référence</mat-label>
       <input matInput formControlName="reference" maxlength="64" required
              placeholder="QMS-AI-MEDPHARM">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col col-small">
-      <mat-label>Version (X.Y ou X.Y.Z)</mat-label>
+      <mat-label i18n="@@ai-qms.dialog.version">Version (X.Y ou X.Y.Z)</mat-label>
       <input matInput formControlName="version" maxlength="32" required
              placeholder="2026.1">
     </mat-form-field>
   </div>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Nom</mat-label>
+    <mat-label i18n="@@common.name">Nom</mat-label>
     <input matInput formControlName="name" maxlength="250" required>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description courte</mat-label>
+    <mat-label i18n="@@ai-qms.dialog.short-description">Description courte</mat-label>
     <textarea matInput formControlName="description" rows="2" maxlength="4000"></textarea>
   </mat-form-field>
 
-  <h3 class="section">Art. 17 — Sections du QMS</h3>
+  <h3 class="section" i18n="@@ai-qms.dialog.sections">Art. 17 — Sections du QMS</h3>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>(a) Stratégie de conformité réglementaire</mat-label>
+    <mat-label i18n="@@ai-qms.dialog.label-a">(a) Stratégie de conformité réglementaire</mat-label>
     <textarea matInput formControlName="regulatoryComplianceStrategy" rows="3" maxlength="8000"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>(b) Maîtrise de la conception</mat-label>
+    <mat-label i18n="@@ai-qms.dialog.label-b">(b) Maîtrise de la conception</mat-label>
     <textarea matInput formControlName="designControlDescription" rows="3" maxlength="8000"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>(c) Contrôle qualité et assurance qualité</mat-label>
+    <mat-label i18n="@@ai-qms.dialog.label-c">(c) Contrôle qualité et assurance qualité</mat-label>
     <textarea matInput formControlName="qualityControlDescription" rows="3" maxlength="8000"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>(d) Gestion des données (Art. 10)</mat-label>
+    <mat-label i18n="@@ai-qms.dialog.label-d">(d) Gestion des données (Art. 10)</mat-label>
     <textarea matInput formControlName="dataManagementDescription" rows="3" maxlength="8000"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>(e) Gestion des risques (Art. 9)</mat-label>
+    <mat-label i18n="@@ai-qms.dialog.label-e">(e) Gestion des risques (Art. 9)</mat-label>
     <textarea matInput formControlName="riskManagementDescription" rows="3" maxlength="8000"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>(f) Surveillance post-market PMM (Art. 72)</mat-label>
+    <mat-label i18n="@@ai-qms.dialog.label-f">(f) Surveillance post-market PMM (Art. 72)</mat-label>
     <textarea matInput formControlName="pmmDescription" rows="3" maxlength="8000"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>(g) Communication avec les autorités</mat-label>
+    <mat-label i18n="@@ai-qms.dialog.label-g">(g) Communication avec les autorités</mat-label>
     <textarea matInput formControlName="regulatorCommunicationDescription" rows="3" maxlength="8000"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>(h) Ressources humaines &amp; gouvernance</mat-label>
+    <mat-label i18n="@@ai-qms.dialog.label-h">(h) Ressources humaines &amp; gouvernance</mat-label>
     <textarea matInput formControlName="resourceManagementDescription" rows="3" maxlength="8000"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>(i) Surveillance des fournisseurs</mat-label>
+    <mat-label i18n="@@ai-qms.dialog.label-i">(i) Surveillance des fournisseurs</mat-label>
     <textarea matInput formControlName="supplierMonitoringDescription" rows="3" maxlength="8000"></textarea>
   </mat-form-field>
 
-  <h3 class="section">Systèmes IA couverts</h3>
+  <h3 class="section" i18n="@@ai-qms.dialog.covered-systems">Systèmes IA couverts</h3>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>UUIDs systèmes IA couverts (un par ligne)</mat-label>
+    <mat-label i18n="@@ai-qms.dialog.covered-uuids">UUIDs systèmes IA couverts (un par ligne)</mat-label>
     <textarea matInput formControlName="coveredAiSystemIds" rows="2"></textarea>
-    <mat-error *ngIf="form.controls.coveredAiSystemIds.hasError('uuidLine')">
+    <mat-error *ngIf="form.controls.coveredAiSystemIds.hasError('uuidLine')" i18n="@@ai-qms.dialog.uuid-error">
       Chaque ligne doit être un UUID v4.
     </mat-error>
   </mat-form-field>

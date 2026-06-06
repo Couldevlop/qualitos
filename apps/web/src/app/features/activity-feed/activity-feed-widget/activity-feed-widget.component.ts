@@ -76,18 +76,18 @@ export class ActivityFeedWidgetComponent implements OnInit {
     }
     const sec = Math.max(0, Math.floor((now.getTime() - then) / 1000));
     if (sec < 60) {
-      return "à l'instant";
+      return $localize`:@@activity-feed.widget.time-now:à l'instant`;
     }
     const min = Math.floor(sec / 60);
     if (min < 60) {
-      return `il y a ${min} min`;
+      return $localize`:@@activity-feed.widget.time-min:il y a ${min}:count: min`;
     }
     const hrs = Math.floor(min / 60);
     if (hrs < 24) {
-      return `il y a ${hrs} h`;
+      return $localize`:@@activity-feed.widget.time-hrs:il y a ${hrs}:count: h`;
     }
     const days = Math.floor(hrs / 24);
-    return `il y a ${days} j`;
+    return $localize`:@@activity-feed.widget.time-days:il y a ${days}:count: j`;
   }
 
   trackById(_index: number, entry: ActivityEntry): string {
