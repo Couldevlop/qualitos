@@ -15,6 +15,20 @@
     <name>QualitOS Quality Engine</name>
     <description>Quality Engine — PDCA, 5S, Ishikawa, DMAIC, Cercle de Qualité</description>
 
+    <dependencyManagement>
+        <dependencies>
+            <!-- BOM AWS SDK v2 : aligne s3 + ses transitives (smithy, http-client).
+                 Version explicite (le parent qualitos n'embarque pas le BOM AWS). -->
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>2.31.78</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -89,6 +103,15 @@
             <groupId>com.openlab.qualitos</groupId>
             <artifactId>security-commons-crypto</artifactId>
             <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- Stockage binaire S3-compatible (MinIO) des photos de NC (§4.3).
+             Adaptateur activé uniquement sous qualitos.storage.s3.enabled=true ;
+             sans config le client S3 n'est jamais instancié. Version gérée par le
+             BOM AWS (dependencyManagement ci-dessous). -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
         </dependency>
 
         <!-- Test -->

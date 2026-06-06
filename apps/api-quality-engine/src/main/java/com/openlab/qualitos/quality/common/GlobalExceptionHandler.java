@@ -130,6 +130,10 @@ import com.openlab.qualitos.quality.marketplace.domain.MarketplacePackStateExcep
 import com.openlab.qualitos.quality.notifications.domain.NotificationNotFoundException;
 import com.openlab.qualitos.quality.nonconformity.NcNotFoundException;
 import com.openlab.qualitos.quality.nonconformity.NcStateException;
+import com.openlab.qualitos.quality.nonconformity.NcPhotoNotFoundException;
+import com.openlab.qualitos.quality.nonconformity.NcPhotoTooLargeException;
+import com.openlab.qualitos.quality.nonconformity.NcPhotoValidationException;
+import com.openlab.qualitos.quality.nonconformity.storage.StorageDisabledException;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,9 +143,11 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.net.URI;
@@ -276,6 +282,53 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/non-conformity-invalid-state"));
         problem.setTitle("Invalid Non-Conformity State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(NcPhotoNotFoundException.class)
+    public ProblemDetail handleNcPhotoNotFound(NcPhotoNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/non-conformity-photo-not-found"));
+        problem.setTitle("Non-Conformity Photo Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(NcPhotoValidationException.class)
+    public ProblemDetail handleNcPhotoValidation(NcPhotoValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/non-conformity-photo-invalid"));
+        problem.setTitle("Invalid Non-Conformity Photo");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(NcPhotoTooLargeException.class)
+    public ProblemDetail handleNcPhotoTooLarge(NcPhotoTooLargeException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/non-conformity-photo-too-large"));
+        problem.setTitle("Non-Conformity Photo Too Large");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ProblemDetail handleMaxUpload(MaxUploadSizeExceededException ex) {
+        // Limite multipart Spring dépassée (1er rempart, avant lecture des octets).
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.PAYLOAD_TOO_LARGE, "Uploaded file exceeds the maximum allowed size");
+        problem.setType(URI.create("https://qualitos.io/errors/non-conformity-photo-too-large"));
+        problem.setTitle("Non-Conformity Photo Too Large");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(StorageDisabledException.class)
+    public ProblemDetail handleStorageDisabled(StorageDisabledException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/storage-disabled"));
+        problem.setTitle("Binary Storage Disabled");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
@@ -1327,6 +1380,17 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail);
         problem.setType(URI.create("https://qualitos.io/errors/parameter-type-mismatch"));
         problem.setTitle("Parameter Type Mismatch");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ProblemDetail handleMissingPart(MissingServletRequestPartException ex) {
+        // Part multipart requise absente (ex. champ 'file' manquant) → 400 (et non 500).
+        String detail = "Missing required multipart part '" + ex.getRequestPartName() + "'";
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail);
+        problem.setType(URI.create("https://qualitos.io/errors/missing-multipart-part"));
+        problem.setTitle("Missing Required Multipart Part");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
