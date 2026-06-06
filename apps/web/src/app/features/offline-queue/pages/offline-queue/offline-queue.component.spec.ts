@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, flushMicrotasks, TestBed } from '@angular/core/testing';
+import { ComponentFixture, discardPeriodicTasks, fakeAsync, flush, tick, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -89,81 +89,90 @@ describe('OfflineQueueComponent', () => {
 
   it('liste les opérations en attente dans l’ordre', fakeAsync(() => {
     fixture.detectChanges();
-    flushMicrotasks();
+    // loading$ est désormais une vue différée (asyncScheduler) : tick() draine la
+    // macrotâche RxJS pour que le gate `(loading$ | async) === false` libère la table.
+    tick();
     fixture.detectChanges();
 
     const rows = fixture.nativeElement.querySelectorAll('tr[mat-row]');
     expect(rows.length).toBe(2);
     expect(rows[0].textContent).toContain('Création audit 5S — zone A');
     expect(rows[1].textContent).toContain('Score 5S SEIRI');
+    discardPeriodicTasks();
   }));
 
   it('affiche l’état vide quand la file est vide', fakeAsync(() => {
     queue.ops = [];
     fixture.detectChanges();
-    flushMicrotasks();
+    tick();
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('.empty-card')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('table')).toBeFalsy();
+    discardPeriodicTasks();
   }));
 
   it('se rafraîchit sur événement de la file (replayed)', fakeAsync(() => {
     fixture.detectChanges();
-    flushMicrotasks();
+    tick();
 
     queue.ops = [OP_B];
     queue.events$.next({ type: 'replayed', operation: OP_A });
-    flushMicrotasks();
+    tick();
     fixture.detectChanges();
 
     const rows = fixture.nativeElement.querySelectorAll('tr[mat-row]');
     expect(rows.length).toBe(1);
     expect(rows[0].textContent).toContain('Score 5S SEIRI');
+    discardPeriodicTasks();
   }));
 
   it('syncNow() déclenche le rejeu quand en ligne', fakeAsync(() => {
     fixture.detectChanges();
-    flushMicrotasks();
+    flush();
 
     void component.syncNow();
-    flushMicrotasks();
+    flush();
 
     expect(queue.replayCalls).toBe(1);
     expect(snack.open).toHaveBeenCalled();
+    discardPeriodicTasks();
   }));
 
   it('syncNow() ne rejoue pas hors-ligne et informe l’utilisateur', fakeAsync(() => {
     connectivity.online$.next(false);
     fixture.detectChanges();
-    flushMicrotasks();
+    flush();
 
     void component.syncNow();
-    flushMicrotasks();
+    flush();
 
     expect(queue.replayCalls).toBe(0);
     expect(snack.open).toHaveBeenCalled();
+    discardPeriodicTasks();
   }));
 
   it('discard() abandonne l’opération après confirmation', fakeAsync(() => {
     dialog.open.and.returnValue({ afterClosed: () => of(true) } as never);
     fixture.detectChanges();
-    flushMicrotasks();
+    flush();
 
     component.discard(OP_A);
-    flushMicrotasks();
+    flush();
 
     expect(queue.discarded).toEqual(['op-a']);
+    discardPeriodicTasks();
   }));
 
   it('discard() ne fait rien si l’utilisateur annule', fakeAsync(() => {
     dialog.open.and.returnValue({ afterClosed: () => of(false) } as never);
     fixture.detectChanges();
-    flushMicrotasks();
+    flush();
 
     component.discard(OP_A);
-    flushMicrotasks();
+    flush();
 
     expect(queue.discarded).toEqual([]);
+    discardPeriodicTasks();
   }));
 });

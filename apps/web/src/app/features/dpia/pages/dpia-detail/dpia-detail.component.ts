@@ -3,8 +3,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { catchError, shareReplay, switchMap, tap } from 'rxjs/operators';
 
+import { deferredView } from '../../../../core/rx/deferred-view';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ConfirmDialogComponent } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { safeErrorMessage } from '../../../../core/http/error-message';
@@ -24,8 +25,10 @@ const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12
 export class DpiaDetailComponent implements OnInit {
 
   dpia$!: Observable<DpiaView | null>;
-  loading$ = new BehaviorSubject<boolean>(false);
-  error$   = new BehaviorSubject<string | null>(null);
+  private readonly loadingState$ = new BehaviorSubject<boolean>(false);
+  readonly loading$ = deferredView(this.loadingState$);
+  private readonly errorState$ = new BehaviorSubject<string | null>(null);
+  readonly error$ = deferredView(this.errorState$);
 
   readonly editTooltip       = $localize`:@@common.edit:Modifier`;
   readonly editTooltipLocked = $localize`:@@dpia.detail.edit-tooltip-locked:Non éditable dans cet état`;
@@ -47,13 +50,13 @@ export class DpiaDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.dpia$ = this.route.paramMap.pipe(
-      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
+      tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
       switchMap(p => {
         const id = p.get('id') ?? '';
         // OWASP A03 — UUID v4 regex on path id (mock-id fallback).
         if (!UUID_REGEX.test(id) && !id.startsWith('dpia-')) {
-          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
-          this.loading$.next(false);
+          this.errorState$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
+          this.loadingState$.next(false);
           return of(null);
         }
         return this.refresh$.pipe(
@@ -61,13 +64,14 @@ export class DpiaDetailComponent implements OnInit {
             catchError(err => {
               // eslint-disable-next-line no-console
               console.warn('[dpia-detail] failed', err?.status, err?.error?.title);
-              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
+              this.errorState$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             }),
-            tap(() => this.loading$.next(false))
+            tap(() => this.loadingState$.next(false))
           ))
         );
-      })
+      }),
+      shareReplay({ bufferSize: 1, refCount: true })
     );
   }
 

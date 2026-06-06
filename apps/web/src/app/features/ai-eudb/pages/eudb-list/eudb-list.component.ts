@@ -4,8 +4,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { catchError, debounceTime, startWith, switchMap, tap } from 'rxjs/operators';
+import { catchError, debounceTime, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 
+import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { EudbService } from '../../eudb.service';
 import { EudbStatus, EudbView } from '../../eudb.types';
@@ -23,8 +24,10 @@ export class EudbListComponent implements OnInit {
   readonly statuses: EudbStatus[] = ['DRAFT', 'SUBMITTED', 'REGISTERED', 'UPDATED', 'REJECTED', 'RETIRED'];
 
   rows$!: Observable<EudbView[]>;
-  loading$ = new BehaviorSubject<boolean>(false);
-  error$   = new BehaviorSubject<string | null>(null);
+  private readonly loadingState$ = new BehaviorSubject<boolean>(false);
+  readonly loading$ = deferredView(this.loadingState$);
+  private readonly errorState$ = new BehaviorSubject<string | null>(null);
+  readonly error$ = deferredView(this.errorState$);
 
   readonly columns = ['reference', 'eudbId', 'providerEntityName', 'memberState', 'status', 'updatedAt'];
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
@@ -41,14 +44,15 @@ export class EudbListComponent implements OnInit {
       this.statusCtrl.valueChanges.pipe(startWith(this.statusCtrl.value), debounceTime(120)),
       this.refresh$
     ]).pipe(
-      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
+      tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
       switchMap(([status]) => this.svc.list(status || undefined).pipe(
         catchError(err => {
-          this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+          this.errorState$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
           return of([] as EudbView[]);
         }),
-        tap(() => this.loading$.next(false))
-      ))
+        tap(() => this.loadingState$.next(false))
+      )),
+      shareReplay({ bufferSize: 1, refCount: true })
     );
   }
 

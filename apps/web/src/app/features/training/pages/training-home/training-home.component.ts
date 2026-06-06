@@ -4,9 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
-import { catchError, finalize, map, startWith, switchMap, tap } from 'rxjs/operators';
+import { catchError, finalize, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/auth/auth.service';
+import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { TrainingService } from '../../training.service';
 import {
@@ -56,8 +57,10 @@ export class TrainingHomeComponent implements OnInit {
   enrollIndex = 0;
   enrollSize  = 20;
 
-  loading$ = new BehaviorSubject<boolean>(false);
-  error$   = new BehaviorSubject<string | null>(null);
+  private readonly loadingState$ = new BehaviorSubject<boolean>(false);
+  readonly loading$ = deferredView(this.loadingState$);
+  private readonly errorState$ = new BehaviorSubject<string | null>(null);
+  readonly error$ = deferredView(this.errorState$);
 
   pageSizeOptions = PAGE_SIZE_OPTIONS;
 
@@ -82,13 +85,13 @@ export class TrainingHomeComponent implements OnInit {
       this.pathPage$,
       this.refreshPaths$
     ]).pipe(
-      tap(() => this.error$.next(null)),
+      tap(() => this.errorState$.next(null)),
       switchMap(([status, p]) =>
         this.svc.listPaths(p.index, p.size, status || undefined).pipe(
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[training:paths] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, $localize`:@@training.home.paths-error:Erreur de chargement des parcours.`));
+            this.errorState$.next(safeErrorMessage(err, $localize`:@@training.home.paths-error:Erreur de chargement des parcours.`));
             return of(null);
           })
         )
@@ -98,7 +101,8 @@ export class TrainingHomeComponent implements OnInit {
         this.pathTotal = page.totalElements;
         page.content.forEach(p => (this.pathLookup[p.id] = p));
         return page.content;
-      })
+      }),
+      shareReplay({ bufferSize: 1, refCount: true })
     );
 
     // Skills
@@ -112,7 +116,7 @@ export class TrainingHomeComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[training:skills] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, $localize`:@@training.home.skills-error:Erreur de chargement des compétences.`));
+            this.errorState$.next(safeErrorMessage(err, $localize`:@@training.home.skills-error:Erreur de chargement des compétences.`));
             return of(null);
           })
         )
@@ -121,7 +125,8 @@ export class TrainingHomeComponent implements OnInit {
         if (!page) return [];
         this.skillTotal = page.totalElements;
         return page.content;
-      })
+      }),
+      shareReplay({ bufferSize: 1, refCount: true })
     );
 
     // Enrollments (current user)
@@ -133,7 +138,7 @@ export class TrainingHomeComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[training:enroll] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, $localize`:@@training.home.enrollments-error:Erreur de chargement des inscriptions.`));
+            this.errorState$.next(safeErrorMessage(err, $localize`:@@training.home.enrollments-error:Erreur de chargement des inscriptions.`));
             return of(null);
           }),
           map(page => {
@@ -142,7 +147,8 @@ export class TrainingHomeComponent implements OnInit {
             return page.content;
           })
         );
-      })
+      }),
+      shareReplay({ bufferSize: 1, refCount: true })
     );
   }
 

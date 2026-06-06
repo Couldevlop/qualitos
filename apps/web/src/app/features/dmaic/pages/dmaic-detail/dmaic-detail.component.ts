@@ -3,8 +3,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, finalize, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 
+import { deferredView } from '../../../../core/rx/deferred-view';
 import { ConfirmDialogComponent } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { DmaicService } from '../../dmaic.service';
@@ -34,8 +35,10 @@ export class DmaicDetailComponent implements OnInit {
   readonly phases: DmaicPhase[] = ['DEFINE', 'MEASURE', 'ANALYZE', 'IMPROVE', 'CONTROL'];
 
   project$!: Observable<DmaicProjectResponse | null>;
-  loading$ = new BehaviorSubject<boolean>(false);
-  error$   = new BehaviorSubject<string | null>(null);
+  private readonly loadingState$ = new BehaviorSubject<boolean>(false);
+  readonly loading$ = deferredView(this.loadingState$);
+  private readonly errorState$ = new BehaviorSubject<string | null>(null);
+  readonly error$ = deferredView(this.errorState$);
 
   measures: MeasureResponse[]      = [];
   assignments: AssignmentResponse[] = [];
@@ -61,13 +64,13 @@ export class DmaicDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.project$ = this.route.paramMap.pipe(
-      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
+      tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
       switchMap(p => {
         const id = p.get('id') ?? '';
         // OWASP A03 — validate path param shape before hitting backend (mock allows demo ids).
         if (!UUID_REGEX.test(id) && !id.startsWith('dmaic-')) {
-          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
-          this.loading$.next(false);
+          this.errorState$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
+          this.loadingState$.next(false);
           return of(null);
         }
         this.projectId = id;
@@ -76,21 +79,22 @@ export class DmaicDetailComponent implements OnInit {
             catchError(err => {
               // eslint-disable-next-line no-console
               console.warn('[dmaic-detail] getProject failed', err?.status, err?.error?.title);
-              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
+              this.errorState$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             })
           ))
         );
       }),
       tap(p => {
-        this.loading$.next(false);
+        this.loadingState$.next(false);
         if (p) {
           this.measures    = this.svc.listMeasures(p.id);
           this.assignments = this.svc.listAssignments(p.id);
           this.refreshCapability();
         }
       }),
-      map(p => p)
+      map(p => p),
+      shareReplay({ bufferSize: 1, refCount: true })
     );
   }
 

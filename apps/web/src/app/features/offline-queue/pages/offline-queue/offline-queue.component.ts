@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
+import { deferredView } from '../../../../core/rx/deferred-view';
 import { ConnectivityService } from '../../../../core/offline/connectivity.service';
 import { OfflineQueueService } from '../../../../core/offline/offline-queue.service';
 import { QueuedOperation } from '../../../../core/offline/offline-queue.store';
@@ -30,7 +31,8 @@ export class OfflineQueueComponent implements OnInit, OnDestroy {
   readonly displayedColumns = ['label', 'method', 'queuedAt', 'actions'];
 
   readonly operations$ = new BehaviorSubject<QueuedOperation[]>([]);
-  readonly loading$ = new BehaviorSubject<boolean>(false);
+  private readonly loadingState$ = new BehaviorSubject<boolean>(false);
+  readonly loading$ = deferredView(this.loadingState$);
   online$!: Observable<boolean>;
   pendingCount$!: Observable<number>;
   replayRequested = false;
@@ -56,11 +58,11 @@ export class OfflineQueueComponent implements OnInit, OnDestroy {
   }
 
   async refresh(): Promise<void> {
-    queueMicrotask(() => this.loading$.next(true));
+    this.loadingState$.next(true);
     try {
       this.operations$.next(await this.queue.list());
     } finally {
-      this.loading$.next(false);
+      this.loadingState$.next(false);
     }
   }
 

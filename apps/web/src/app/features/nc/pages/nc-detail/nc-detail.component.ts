@@ -3,8 +3,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
-import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
+import { catchError, finalize, shareReplay, switchMap, tap } from 'rxjs/operators';
 
+import { deferredView } from '../../../../core/rx/deferred-view';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConnectivityService } from '../../../../core/offline/connectivity.service';
@@ -29,8 +30,10 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 export class NcDetailComponent implements OnInit {
 
   nc$!: Observable<NcResponse | null>;
-  loading$ = new BehaviorSubject<boolean>(false);
-  error$ = new BehaviorSubject<string | null>(null);
+  private readonly loadingState$ = new BehaviorSubject<boolean>(false);
+  readonly loading$ = deferredView(this.loadingState$);
+  private readonly errorState$ = new BehaviorSubject<string | null>(null);
+  readonly error$ = deferredView(this.errorState$);
   acting$ = new BehaviorSubject<boolean>(false);
 
   // --- photos (upload binaire, online-only) ---------------------------------
@@ -69,16 +72,17 @@ export class NcDetailComponent implements OnInit {
     }
     this.ncId = raw;
     this.nc$ = this.reload$.pipe(
-      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
+      tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
       switchMap(() => this.svc.getNc(this.ncId).pipe(
         catchError(err => {
           // eslint-disable-next-line no-console
           console.warn('[nc-detail] getNc failed', err?.status, err?.error?.title);
-          this.error$.next(safeErrorMessage(err, $localize`:@@nc.detail.not-found:Non-conformité introuvable.`));
+          this.errorState$.next(safeErrorMessage(err, $localize`:@@nc.detail.not-found:Non-conformité introuvable.`));
           return of(null);
         }),
-        finalize(() => this.loading$.next(false))
-      ))
+        finalize(() => this.loadingState$.next(false))
+      )),
+      shareReplay({ bufferSize: 1, refCount: true })
     );
     this.reload$.next();
     this.loadPhotos();

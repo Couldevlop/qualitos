@@ -4,8 +4,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { catchError, debounceTime, startWith, switchMap, tap } from 'rxjs/operators';
+import { catchError, debounceTime, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 
+import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { PmmService } from '../../pmm.service';
 import { FREQUENCY_LABEL, PmmPlanStatus, PmmPlanView, PmmReviewFrequency } from '../../pmm.types';
@@ -27,8 +28,10 @@ export class PmmListComponent implements OnInit {
   readonly freqLabel = FREQUENCY_LABEL;
 
   rows$!: Observable<PmmPlanView[]>;
-  loading$ = new BehaviorSubject<boolean>(false);
-  error$   = new BehaviorSubject<string | null>(null);
+  private readonly loadingState$ = new BehaviorSubject<boolean>(false);
+  readonly loading$ = deferredView(this.loadingState$);
+  private readonly errorState$ = new BehaviorSubject<string | null>(null);
+  readonly error$ = deferredView(this.errorState$);
 
   readonly columns = ['reference', 'name', 'frequency', 'status', 'nextReview'];
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
@@ -47,23 +50,24 @@ export class PmmListComponent implements OnInit {
       this.refresh$
     ]).pipe(
       debounceTime(120),
-      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
+      tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
       switchMap(([mode, status]) => {
         const src$ = mode === 'OVERDUE'
           ? this.svc.overdueReviews()
           : this.svc.list(status || undefined);
         return src$.pipe(
           catchError(err => {
-            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
+            this.errorState$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return of([] as PmmPlanView[]);
           }),
-          tap(() => this.loading$.next(false)),
+          tap(() => this.loadingState$.next(false)),
           switchMap(rows => {
             if (mode === 'OVERDUE' && status) rows = rows.filter(r => r.status === status);
             return of(rows);
           })
         );
-      })
+      }),
+      shareReplay({ bufferSize: 1, refCount: true })
     );
   }
 
