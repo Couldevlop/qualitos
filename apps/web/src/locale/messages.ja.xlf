@@ -2604,6 +2604,10 @@
         <source>Qualité opérationnelle</source>
         <target state="translated">オペレーション品質</target>
       </trans-unit>
+      <trans-unit id="nav.non-conformites" datatype="html">
+        <source>Non-conformités</source>
+        <target state="translated">不適合</target>
+      </trans-unit>
       <trans-unit id="nav.capa" datatype="html">
         <source>CAPA</source>
         <target state="translated">CAPA</target>
@@ -7376,6 +7380,282 @@ historique 12 mois</source>
       <trans-unit id="spc.analyze.kpi-banner-prefix" datatype="html">
         <source>Analyse du KPI</source>
         <target state="translated">KPI分析</target>
+      </trans-unit>
+      <trans-unit id="nc.list.title" datatype="html">
+        <source>Non-conformités</source>
+        <target state="translated">不適合</target>
+      </trans-unit>
+      <trans-unit id="nc.list.subtitle" datatype="html">
+        <source>Saisie terrain, analyse de cause racine, résolution et escalade CAPA — traçables de bout en bout.</source>
+        <target state="translated">現場での記録、根本原因分析、解決、CAPAへのエスカレーション — 一貫してトレーサブル。</target>
+      </trans-unit>
+      <trans-unit id="nc.list.new-nc" datatype="html">
+        <source>Déclarer une NC</source>
+        <target state="translated">不適合を報告</target>
+      </trans-unit>
+      <trans-unit id="nc.list.filter-severity" datatype="html">
+        <source>Filtrer par sévérité</source>
+        <target state="translated">重大度で絞り込む</target>
+      </trans-unit>
+      <trans-unit id="nc.list.filter-category" datatype="html">
+        <source>Filtrer par catégorie</source>
+        <target state="translated">カテゴリで絞り込む</target>
+      </trans-unit>
+      <trans-unit id="nc.list.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">参照番号</target>
+      </trans-unit>
+      <trans-unit id="nc.list.col-category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">カテゴリ</target>
+      </trans-unit>
+      <trans-unit id="nc.list.col-severity" datatype="html">
+        <source>Sévérité</source>
+        <target state="translated">重大度</target>
+      </trans-unit>
+      <trans-unit id="nc.list.col-detected" datatype="html">
+        <source>Détectée le</source>
+        <target state="translated">検出日</target>
+      </trans-unit>
+      <trans-unit id="nc.list.empty" datatype="html">
+        <source>Aucune non-conformité pour ce filtre.</source>
+        <target state="translated">このフィルターに該当する不適合はありません。</target>
+      </trans-unit>
+      <trans-unit id="nc.list.pending-sync" datatype="html">
+        <source>En attente</source>
+        <target state="translated">保留中</target>
+      </trans-unit>
+      <trans-unit id="nc.list.pending-sync-tooltip" datatype="html">
+        <source>Sera synchronisée au retour du réseau</source>
+        <target state="translated">ネットワーク回復時に同期されます</target>
+      </trans-unit>
+      <trans-unit id="nc.list.paginator-aria" datatype="html">
+        <source>Pagination des non-conformités</source>
+        <target state="translated">不適合のページネーション</target>
+      </trans-unit>
+      <trans-unit id="nc.create.title" datatype="html">
+        <source>Déclarer une non-conformité</source>
+        <target state="translated">不適合を報告</target>
+      </trans-unit>
+      <trans-unit id="nc.create.hint" datatype="html">
+        <source>Saisis l'essentiel sur le terrain : la NC pourra être analysée et résolue ensuite. Hors-ligne, elle est mise en attente et synchronisée au retour du réseau.</source>
+        <target state="translated">現場で要点を記録します。不適合は後で分析・解決できます。オフライン時はキューに入り、ネットワーク回復時に同期されます。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">カテゴリ</target>
+      </trans-unit>
+      <trans-unit id="nc.create.severity" datatype="html">
+        <source>Sévérité</source>
+        <target state="translated">重大度</target>
+      </trans-unit>
+      <trans-unit id="nc.create.title-placeholder" datatype="html">
+        <source>Ex. : Étiquetage lot manquant — ligne 1</source>
+        <target state="translated">例：ロットラベル欠落 — ライン1</target>
+      </trans-unit>
+      <trans-unit id="nc.create.title-required" datatype="html">
+        <source>Le titre est requis.</source>
+        <target state="translated">タイトルは必須です。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.zone-placeholder" datatype="html">
+        <source>Ex. : Atelier conditionnement A</source>
+        <target state="translated">例：包装工程A</target>
+      </trans-unit>
+      <trans-unit id="nc.create.description-placeholder" datatype="html">
+        <source>Constat, contexte, impact observé…</source>
+        <target state="translated">所見、状況、確認された影響…</target>
+      </trans-unit>
+      <trans-unit id="nc.create.use-location" datatype="html">
+        <source>Utiliser ma position</source>
+        <target state="translated">現在地を使用</target>
+      </trans-unit>
+      <trans-unit id="nc.create.clear-location" datatype="html">
+        <source>Retirer</source>
+        <target state="translated">削除</target>
+      </trans-unit>
+      <trans-unit id="nc.create.geo-label" datatype="html">
+        <source>Position :</source>
+        <target state="translated">位置：</target>
+      </trans-unit>
+      <trans-unit id="nc.create.geo-unsupported" datatype="html">
+        <source>La géolocalisation n'est pas disponible sur cet appareil.</source>
+        <target state="translated">この端末では位置情報を利用できません。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.geo-error" datatype="html">
+        <source>Impossible de récupérer la position.</source>
+        <target state="translated">位置を取得できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photos" datatype="html">
+        <source>Photos — URLs (une par ligne)</source>
+        <target state="translated">写真 — URL（1行に1つ）</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photos-placeholder" datatype="html">
+        <source>https://… (une URL par ligne)</source>
+        <target state="translated">https://…（1行に1つのURL）</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photos-hint" datatype="html">
+        <source>L'envoi de fichiers depuis l'appareil arrivera prochainement.</source>
+        <target state="translated">端末からのファイルアップロードは近日対応予定です。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.submit" datatype="html">
+        <source>Déclarer</source>
+        <target state="translated">報告</target>
+      </trans-unit>
+      <trans-unit id="nc.create.success" datatype="html">
+        <source>Non-conformité déclarée.</source>
+        <target state="translated">不適合を報告しました。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.success-offline" datatype="html">
+        <source>NC enregistrée hors-ligne — elle sera synchronisée au retour du réseau.</source>
+        <target state="translated">不適合をオフラインで保存しました — ネットワーク回復時に同期されます。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.eyebrow" datatype="html">
+        <source>Non-conformité · Saisie terrain · Analyse · Résolution</source>
+        <target state="translated">不適合 · 現場記録 · 分析 · 解決</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.back-tooltip" datatype="html">
+        <source>Retour à la liste</source>
+        <target state="translated">一覧に戻る</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.not-found" datatype="html">
+        <source>Non-conformité introuvable.</source>
+        <target state="translated">不適合が見つかりません。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.detected" datatype="html">
+        <source>Détectée le</source>
+        <target state="translated">検出日</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolved" datatype="html">
+        <source>Résolue le</source>
+        <target state="translated">解決日</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.closed" datatype="html">
+        <source>Clôturée le</source>
+        <target state="translated">クローズ日</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.location" datatype="html">
+        <source>Position</source>
+        <target state="translated">位置</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.capa-link" datatype="html">
+        <source>CAPA liée</source>
+        <target state="translated">関連CAPA</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.root-cause" datatype="html">
+        <source>Cause racine</source>
+        <target state="translated">根本原因</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolution-note" datatype="html">
+        <source>Note de résolution</source>
+        <target state="translated">解決ノート</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.photos" datatype="html">
+        <source>Photos</source>
+        <target state="translated">写真</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.start-analysis" datatype="html">
+        <source>Analyser</source>
+        <target state="translated">分析</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.start-analysis-tooltip" datatype="html">
+        <source>Démarrer l'analyse</source>
+        <target state="translated">分析を開始</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.define-action" datatype="html">
+        <source>Définir action</source>
+        <target state="translated">アクションを定義</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.define-action-tooltip" datatype="html">
+        <source>Définir l'action corrective</source>
+        <target state="translated">是正処置を定義</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve" datatype="html">
+        <source>Résoudre</source>
+        <target state="translated">解決</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve-tooltip" datatype="html">
+        <source>Résoudre la non-conformité</source>
+        <target state="translated">不適合を解決</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.close" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">クローズ</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.close-tooltip" datatype="html">
+        <source>Clôturer la non-conformité</source>
+        <target state="translated">不適合をクローズ</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cancel-tooltip" datatype="html">
+        <source>Annuler la non-conformité</source>
+        <target state="translated">不適合をキャンセル</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cancel-confirm-title" datatype="html">
+        <source>Annuler cette non-conformité ?</source>
+        <target state="translated">この不適合をキャンセルしますか？</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cancel-confirm-message" datatype="html">
+        <source>La non-conformité sera marquée comme annulée. Cette décision est traçable.</source>
+        <target state="translated">不適合はキャンセル済みとしてマークされます。この決定はトレーサブルです。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.escalate" datatype="html">
+        <source>Escalader CAPA</source>
+        <target state="translated">CAPAへエスカレーション</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.escalate-tooltip" datatype="html">
+        <source>Créer une CAPA liée</source>
+        <target state="translated">関連CAPAを作成</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.escalate-confirm-title" datatype="html">
+        <source>Escalader vers une CAPA ?</source>
+        <target state="translated">CAPAへエスカレーションしますか？</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.escalate-confirm-message" datatype="html">
+        <source>Une action corrective/préventive (CAPA) sera créée et liée à cette non-conformité.</source>
+        <target state="translated">是正・予防処置（CAPA）が作成され、この不適合に関連付けられます。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.escalate-success" datatype="html">
+        <source>CAPA créée et liée à la non-conformité.</source>
+        <target state="translated">CAPAを作成し、不適合に関連付けました。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.escalate-error" datatype="html">
+        <source>Erreur lors de l'escalade.</source>
+        <target state="translated">エスカレーション中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.transition-success" datatype="html">
+        <source>Statut mis à jour.</source>
+        <target state="translated">ステータスを更新しました。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.transition-error" datatype="html">
+        <source>Erreur lors de la transition.</source>
+        <target state="translated">遷移中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.title" datatype="html">
+        <source>Résoudre la non-conformité</source>
+        <target state="translated">不適合を解決</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.hint" datatype="html">
+        <source>Décris l'action menée et la preuve d'efficacité pour clôturer la résolution de</source>
+        <target state="translated">実施した処置と有効性の証拠を記述して解決をクローズします：</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.note-label" datatype="html">
+        <source>Note de résolution</source>
+        <target state="translated">解決ノート</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.note-placeholder" datatype="html">
+        <source>Action corrective réalisée, vérification, preuve d'efficacité…</source>
+        <target state="translated">実施した是正処置、検証、有効性の証拠…</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.note-required" datatype="html">
+        <source>La note de résolution est requise.</source>
+        <target state="translated">解決ノートは必須です。</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.submit" datatype="html">
+        <source>Résoudre</source>
+        <target state="translated">解決</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.success" datatype="html">
+        <source>Non-conformité résolue.</source>
+        <target state="translated">不適合を解決しました。</target>
       </trans-unit>
       <trans-unit id="offline.queue.title" datatype="html">
         <source>File d'attente offline</source>

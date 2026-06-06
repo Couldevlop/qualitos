@@ -1,0 +1,83 @@
+<qos-form-dialog
+  i18n-title="@@nc.create.title"
+  title="Déclarer une non-conformité"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@nc.create.submit"
+  submitLabel="Déclarer"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <p class="hint" i18n="@@nc.create.hint">Saisis l'essentiel sur le terrain : la NC pourra être analysée et
+     résolue ensuite. Hors-ligne, elle est mise en attente et synchronisée au retour du réseau.</p>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@common.title">Titre</mat-label>
+    <input matInput formControlName="title" maxlength="255" required
+           i18n-placeholder="@@nc.create.title-placeholder"
+           placeholder="Ex. : Étiquetage lot manquant — ligne 1">
+    <mat-error *ngIf="form.controls.title.hasError('required')" i18n="@@nc.create.title-required">Le titre est requis.</mat-error>
+    <mat-error *ngIf="form.controls.title.hasError('maxlength')" i18n="@@common.maxlength-255">255 caractères maximum.</mat-error>
+  </mat-form-field>
+
+  <div class="row">
+    <mat-form-field appearance="outline" class="half">
+      <mat-label i18n="@@nc.create.category">Catégorie</mat-label>
+      <mat-select formControlName="category" required>
+        <mat-option *ngFor="let c of categories" [value]="c">{{ c }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="half">
+      <mat-label i18n="@@nc.create.severity">Sévérité</mat-label>
+      <mat-select formControlName="severity" required>
+        <mat-option *ngFor="let s of severities" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@common.zone">Zone</mat-label>
+    <input matInput formControlName="zone" maxlength="255"
+           i18n-placeholder="@@nc.create.zone-placeholder"
+           placeholder="Ex. : Atelier conditionnement A">
+    <mat-error *ngIf="form.controls.zone.hasError('maxlength')" i18n="@@common.maxlength-255">255 caractères maximum.</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@common.description-optional">Description (optionnel)</mat-label>
+    <textarea matInput formControlName="description" rows="3"
+              i18n-placeholder="@@nc.create.description-placeholder"
+              placeholder="Constat, contexte, impact observé…"></textarea>
+  </mat-form-field>
+
+  <div class="geo-block">
+    <div class="geo-actions">
+      <button mat-stroked-button type="button" (click)="useMyLocation()" [disabled]="locating">
+        <mat-icon *ngIf="!locating">my_location</mat-icon>
+        <mat-progress-spinner *ngIf="locating" mode="indeterminate" diameter="18"></mat-progress-spinner>
+        <span i18n="@@nc.create.use-location">Utiliser ma position</span>
+      </button>
+      <button mat-button type="button" (click)="clearLocation()"
+              *ngIf="form.controls.geoLat.value != null">
+        <mat-icon>location_off</mat-icon>
+        <span i18n="@@nc.create.clear-location">Retirer</span>
+      </button>
+    </div>
+    <p class="geo-readout" *ngIf="form.controls.geoLat.value != null">
+      <mat-icon>place</mat-icon>
+      <span i18n="@@nc.create.geo-label">Position :</span>
+      <span class="coords">{{ form.controls.geoLat.value | number:'1.5-6' }}, {{ form.controls.geoLng.value | number:'1.5-6' }}</span>
+    </p>
+  </div>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@nc.create.photos">Photos — URLs (une par ligne)</mat-label>
+    <textarea matInput formControlName="photoUrls" rows="3"
+              i18n-placeholder="@@nc.create.photos-placeholder"
+              placeholder="https://… (une URL par ligne)"></textarea>
+    <mat-hint i18n="@@nc.create.photos-hint">L'envoi de fichiers depuis l'appareil arrivera prochainement.</mat-hint>
+  </mat-form-field>
+
+</qos-form-dialog>

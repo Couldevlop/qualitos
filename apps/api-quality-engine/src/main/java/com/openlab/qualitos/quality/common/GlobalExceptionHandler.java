@@ -128,6 +128,8 @@ import com.openlab.qualitos.quality.dashboards.domain.DashboardLayoutStateExcept
 import com.openlab.qualitos.quality.marketplace.domain.MarketplacePackNotFoundException;
 import com.openlab.qualitos.quality.marketplace.domain.MarketplacePackStateException;
 import com.openlab.qualitos.quality.notifications.domain.NotificationNotFoundException;
+import com.openlab.qualitos.quality.nonconformity.NcNotFoundException;
+import com.openlab.qualitos.quality.nonconformity.NcStateException;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -256,6 +258,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/capa-invalid-state"));
         problem.setTitle("Invalid CAPA State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(NcNotFoundException.class)
+    public ProblemDetail handleNcNotFound(NcNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/non-conformity-not-found"));
+        problem.setTitle("Non-Conformity Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(NcStateException.class)
+    public ProblemDetail handleNcState(NcStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/non-conformity-invalid-state"));
+        problem.setTitle("Invalid Non-Conformity State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

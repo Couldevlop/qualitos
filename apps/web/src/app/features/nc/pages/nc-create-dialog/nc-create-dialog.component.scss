@@ -1,0 +1,40 @@
+.hint {
+  margin: 0 0 16px;
+  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6));
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.full { width: 100%; }
+
+.row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.half { flex: 1; min-width: 180px; }
+
+.geo-block {
+  margin: 0 0 16px;
+}
+.geo-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.geo-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.geo-readout {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.7));
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+  .coords { font-family: 'IBM Plex Mono', monospace; }
+}

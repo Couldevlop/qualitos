@@ -30,6 +30,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/fives/fives.module').then(m => m.FivesModule)
       },
       {
+        path: 'nc',
+        loadChildren: () => import('./features/nc/nc.module').then(m => m.NcModule)
+      },
+      {
         path: 'capa',
         loadChildren: () => import('./features/capa/capa.module').then(m => m.CapaModule)
       },

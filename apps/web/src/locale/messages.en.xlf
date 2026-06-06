@@ -2604,6 +2604,10 @@
         <source>Qualité opérationnelle</source>
         <target state="translated">Operational quality</target>
       </trans-unit>
+      <trans-unit id="nav.non-conformites" datatype="html">
+        <source>Non-conformités</source>
+        <target state="translated">Non-conformances</target>
+      </trans-unit>
       <trans-unit id="nav.capa" datatype="html">
         <source>CAPA</source>
         <target state="translated">CAPA</target>
@@ -7377,6 +7381,282 @@ declared income
       <trans-unit id="spc.analyze.kpi-banner-prefix" datatype="html">
         <source>Analyse du KPI</source>
         <target state="translated">KPI analysis</target>
+      </trans-unit>
+      <trans-unit id="nc.list.title" datatype="html">
+        <source>Non-conformités</source>
+        <target state="translated">Non-conformances</target>
+      </trans-unit>
+      <trans-unit id="nc.list.subtitle" datatype="html">
+        <source>Saisie terrain, analyse de cause racine, résolution et escalade CAPA — traçables de bout en bout.</source>
+        <target state="translated">Field capture, root-cause analysis, resolution and CAPA escalation — traceable end to end.</target>
+      </trans-unit>
+      <trans-unit id="nc.list.new-nc" datatype="html">
+        <source>Déclarer une NC</source>
+        <target state="translated">Report an NC</target>
+      </trans-unit>
+      <trans-unit id="nc.list.filter-severity" datatype="html">
+        <source>Filtrer par sévérité</source>
+        <target state="translated">Filter by severity</target>
+      </trans-unit>
+      <trans-unit id="nc.list.filter-category" datatype="html">
+        <source>Filtrer par catégorie</source>
+        <target state="translated">Filter by category</target>
+      </trans-unit>
+      <trans-unit id="nc.list.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">Reference</target>
+      </trans-unit>
+      <trans-unit id="nc.list.col-category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">Category</target>
+      </trans-unit>
+      <trans-unit id="nc.list.col-severity" datatype="html">
+        <source>Sévérité</source>
+        <target state="translated">Severity</target>
+      </trans-unit>
+      <trans-unit id="nc.list.col-detected" datatype="html">
+        <source>Détectée le</source>
+        <target state="translated">Detected on</target>
+      </trans-unit>
+      <trans-unit id="nc.list.empty" datatype="html">
+        <source>Aucune non-conformité pour ce filtre.</source>
+        <target state="translated">No non-conformance for this filter.</target>
+      </trans-unit>
+      <trans-unit id="nc.list.pending-sync" datatype="html">
+        <source>En attente</source>
+        <target state="translated">Pending</target>
+      </trans-unit>
+      <trans-unit id="nc.list.pending-sync-tooltip" datatype="html">
+        <source>Sera synchronisée au retour du réseau</source>
+        <target state="translated">Will be synchronized once the network returns</target>
+      </trans-unit>
+      <trans-unit id="nc.list.paginator-aria" datatype="html">
+        <source>Pagination des non-conformités</source>
+        <target state="translated">Non-conformances pagination</target>
+      </trans-unit>
+      <trans-unit id="nc.create.title" datatype="html">
+        <source>Déclarer une non-conformité</source>
+        <target state="translated">Report a non-conformance</target>
+      </trans-unit>
+      <trans-unit id="nc.create.hint" datatype="html">
+        <source>Saisis l'essentiel sur le terrain : la NC pourra être analysée et résolue ensuite. Hors-ligne, elle est mise en attente et synchronisée au retour du réseau.</source>
+        <target state="translated">Capture the essentials in the field: the NC can be analyzed and resolved later. Offline, it is queued and synchronized once the network returns.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">Category</target>
+      </trans-unit>
+      <trans-unit id="nc.create.severity" datatype="html">
+        <source>Sévérité</source>
+        <target state="translated">Severity</target>
+      </trans-unit>
+      <trans-unit id="nc.create.title-placeholder" datatype="html">
+        <source>Ex. : Étiquetage lot manquant — ligne 1</source>
+        <target state="translated">E.g.: Missing batch label — line 1</target>
+      </trans-unit>
+      <trans-unit id="nc.create.title-required" datatype="html">
+        <source>Le titre est requis.</source>
+        <target state="translated">The title is required.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.zone-placeholder" datatype="html">
+        <source>Ex. : Atelier conditionnement A</source>
+        <target state="translated">E.g.: Packaging workshop A</target>
+      </trans-unit>
+      <trans-unit id="nc.create.description-placeholder" datatype="html">
+        <source>Constat, contexte, impact observé…</source>
+        <target state="translated">Observation, context, observed impact…</target>
+      </trans-unit>
+      <trans-unit id="nc.create.use-location" datatype="html">
+        <source>Utiliser ma position</source>
+        <target state="translated">Use my location</target>
+      </trans-unit>
+      <trans-unit id="nc.create.clear-location" datatype="html">
+        <source>Retirer</source>
+        <target state="translated">Remove</target>
+      </trans-unit>
+      <trans-unit id="nc.create.geo-label" datatype="html">
+        <source>Position :</source>
+        <target state="translated">Location:</target>
+      </trans-unit>
+      <trans-unit id="nc.create.geo-unsupported" datatype="html">
+        <source>La géolocalisation n'est pas disponible sur cet appareil.</source>
+        <target state="translated">Geolocation is not available on this device.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.geo-error" datatype="html">
+        <source>Impossible de récupérer la position.</source>
+        <target state="translated">Unable to retrieve the location.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photos" datatype="html">
+        <source>Photos — URLs (une par ligne)</source>
+        <target state="translated">Photos — URLs (one per line)</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photos-placeholder" datatype="html">
+        <source>https://… (une URL par ligne)</source>
+        <target state="translated">https://… (one URL per line)</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photos-hint" datatype="html">
+        <source>L'envoi de fichiers depuis l'appareil arrivera prochainement.</source>
+        <target state="translated">Uploading files from the device is coming soon.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.submit" datatype="html">
+        <source>Déclarer</source>
+        <target state="translated">Report</target>
+      </trans-unit>
+      <trans-unit id="nc.create.success" datatype="html">
+        <source>Non-conformité déclarée.</source>
+        <target state="translated">Non-conformance reported.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.success-offline" datatype="html">
+        <source>NC enregistrée hors-ligne — elle sera synchronisée au retour du réseau.</source>
+        <target state="translated">NC saved offline — it will be synchronized once the network returns.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.eyebrow" datatype="html">
+        <source>Non-conformité · Saisie terrain · Analyse · Résolution</source>
+        <target state="translated">Non-conformance · Field capture · Analysis · Resolution</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.back-tooltip" datatype="html">
+        <source>Retour à la liste</source>
+        <target state="translated">Back to list</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.not-found" datatype="html">
+        <source>Non-conformité introuvable.</source>
+        <target state="translated">Non-conformance not found.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.detected" datatype="html">
+        <source>Détectée le</source>
+        <target state="translated">Detected on</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolved" datatype="html">
+        <source>Résolue le</source>
+        <target state="translated">Resolved on</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.closed" datatype="html">
+        <source>Clôturée le</source>
+        <target state="translated">Closed on</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.location" datatype="html">
+        <source>Position</source>
+        <target state="translated">Location</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.capa-link" datatype="html">
+        <source>CAPA liée</source>
+        <target state="translated">Linked CAPA</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.root-cause" datatype="html">
+        <source>Cause racine</source>
+        <target state="translated">Root cause</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolution-note" datatype="html">
+        <source>Note de résolution</source>
+        <target state="translated">Resolution note</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.photos" datatype="html">
+        <source>Photos</source>
+        <target state="translated">Photos</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.start-analysis" datatype="html">
+        <source>Analyser</source>
+        <target state="translated">Analyze</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.start-analysis-tooltip" datatype="html">
+        <source>Démarrer l'analyse</source>
+        <target state="translated">Start analysis</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.define-action" datatype="html">
+        <source>Définir action</source>
+        <target state="translated">Define action</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.define-action-tooltip" datatype="html">
+        <source>Définir l'action corrective</source>
+        <target state="translated">Define the corrective action</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve" datatype="html">
+        <source>Résoudre</source>
+        <target state="translated">Resolve</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve-tooltip" datatype="html">
+        <source>Résoudre la non-conformité</source>
+        <target state="translated">Resolve the non-conformance</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.close" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">Close</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.close-tooltip" datatype="html">
+        <source>Clôturer la non-conformité</source>
+        <target state="translated">Close the non-conformance</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cancel-tooltip" datatype="html">
+        <source>Annuler la non-conformité</source>
+        <target state="translated">Cancel the non-conformance</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cancel-confirm-title" datatype="html">
+        <source>Annuler cette non-conformité ?</source>
+        <target state="translated">Cancel this non-conformance?</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cancel-confirm-message" datatype="html">
+        <source>La non-conformité sera marquée comme annulée. Cette décision est traçable.</source>
+        <target state="translated">The non-conformance will be marked as cancelled. This decision is traceable.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.escalate" datatype="html">
+        <source>Escalader CAPA</source>
+        <target state="translated">Escalate to CAPA</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.escalate-tooltip" datatype="html">
+        <source>Créer une CAPA liée</source>
+        <target state="translated">Create a linked CAPA</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.escalate-confirm-title" datatype="html">
+        <source>Escalader vers une CAPA ?</source>
+        <target state="translated">Escalate to a CAPA?</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.escalate-confirm-message" datatype="html">
+        <source>Une action corrective/préventive (CAPA) sera créée et liée à cette non-conformité.</source>
+        <target state="translated">A corrective/preventive action (CAPA) will be created and linked to this non-conformance.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.escalate-success" datatype="html">
+        <source>CAPA créée et liée à la non-conformité.</source>
+        <target state="translated">CAPA created and linked to the non-conformance.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.escalate-error" datatype="html">
+        <source>Erreur lors de l'escalade.</source>
+        <target state="translated">Error while escalating.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.transition-success" datatype="html">
+        <source>Statut mis à jour.</source>
+        <target state="translated">Status updated.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.transition-error" datatype="html">
+        <source>Erreur lors de la transition.</source>
+        <target state="translated">Error during the transition.</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.title" datatype="html">
+        <source>Résoudre la non-conformité</source>
+        <target state="translated">Resolve the non-conformance</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.hint" datatype="html">
+        <source>Décris l'action menée et la preuve d'efficacité pour clôturer la résolution de</source>
+        <target state="translated">Describe the action taken and the evidence of effectiveness to close the resolution of</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.note-label" datatype="html">
+        <source>Note de résolution</source>
+        <target state="translated">Resolution note</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.note-placeholder" datatype="html">
+        <source>Action corrective réalisée, vérification, preuve d'efficacité…</source>
+        <target state="translated">Corrective action taken, verification, evidence of effectiveness…</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.note-required" datatype="html">
+        <source>La note de résolution est requise.</source>
+        <target state="translated">The resolution note is required.</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.submit" datatype="html">
+        <source>Résoudre</source>
+        <target state="translated">Resolve</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.success" datatype="html">
+        <source>Non-conformité résolue.</source>
+        <target state="translated">Non-conformance resolved.</target>
       </trans-unit>
       <trans-unit id="offline.queue.title" datatype="html">
         <source>File d'attente offline</source>

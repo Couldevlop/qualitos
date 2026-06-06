@@ -2604,6 +2604,10 @@
         <source>Qualité opérationnelle</source>
         <target state="translated">运营质量</target>
       </trans-unit>
+      <trans-unit id="nav.non-conformites" datatype="html">
+        <source>Non-conformités</source>
+        <target state="translated">不合格项</target>
+      </trans-unit>
       <trans-unit id="nav.capa" datatype="html">
         <source>CAPA</source>
         <target state="translated">CAPA</target>
@@ -7377,6 +7381,282 @@ historique 12 mois</source>
       <trans-unit id="spc.analyze.kpi-banner-prefix" datatype="html">
         <source>Analyse du KPI</source>
         <target state="translated">KPI分析</target>
+      </trans-unit>
+      <trans-unit id="nc.list.title" datatype="html">
+        <source>Non-conformités</source>
+        <target state="translated">不合格项</target>
+      </trans-unit>
+      <trans-unit id="nc.list.subtitle" datatype="html">
+        <source>Saisie terrain, analyse de cause racine, résolution et escalade CAPA — traçables de bout en bout.</source>
+        <target state="translated">现场录入、根本原因分析、解决与 CAPA 升级——全程可追溯。</target>
+      </trans-unit>
+      <trans-unit id="nc.list.new-nc" datatype="html">
+        <source>Déclarer une NC</source>
+        <target state="translated">上报不合格</target>
+      </trans-unit>
+      <trans-unit id="nc.list.filter-severity" datatype="html">
+        <source>Filtrer par sévérité</source>
+        <target state="translated">按严重程度筛选</target>
+      </trans-unit>
+      <trans-unit id="nc.list.filter-category" datatype="html">
+        <source>Filtrer par catégorie</source>
+        <target state="translated">按类别筛选</target>
+      </trans-unit>
+      <trans-unit id="nc.list.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">编号</target>
+      </trans-unit>
+      <trans-unit id="nc.list.col-category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">类别</target>
+      </trans-unit>
+      <trans-unit id="nc.list.col-severity" datatype="html">
+        <source>Sévérité</source>
+        <target state="translated">严重程度</target>
+      </trans-unit>
+      <trans-unit id="nc.list.col-detected" datatype="html">
+        <source>Détectée le</source>
+        <target state="translated">检测日期</target>
+      </trans-unit>
+      <trans-unit id="nc.list.empty" datatype="html">
+        <source>Aucune non-conformité pour ce filtre.</source>
+        <target state="translated">此筛选条件下没有不合格项。</target>
+      </trans-unit>
+      <trans-unit id="nc.list.pending-sync" datatype="html">
+        <source>En attente</source>
+        <target state="translated">待处理</target>
+      </trans-unit>
+      <trans-unit id="nc.list.pending-sync-tooltip" datatype="html">
+        <source>Sera synchronisée au retour du réseau</source>
+        <target state="translated">网络恢复后将同步</target>
+      </trans-unit>
+      <trans-unit id="nc.list.paginator-aria" datatype="html">
+        <source>Pagination des non-conformités</source>
+        <target state="translated">不合格项分页</target>
+      </trans-unit>
+      <trans-unit id="nc.create.title" datatype="html">
+        <source>Déclarer une non-conformité</source>
+        <target state="translated">上报不合格项</target>
+      </trans-unit>
+      <trans-unit id="nc.create.hint" datatype="html">
+        <source>Saisis l'essentiel sur le terrain : la NC pourra être analysée et résolue ensuite. Hors-ligne, elle est mise en attente et synchronisée au retour du réseau.</source>
+        <target state="translated">在现场录入要点：不合格项可稍后分析和解决。离线时将进入队列，网络恢复后同步。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">类别</target>
+      </trans-unit>
+      <trans-unit id="nc.create.severity" datatype="html">
+        <source>Sévérité</source>
+        <target state="translated">严重程度</target>
+      </trans-unit>
+      <trans-unit id="nc.create.title-placeholder" datatype="html">
+        <source>Ex. : Étiquetage lot manquant — ligne 1</source>
+        <target state="translated">例：批次标签缺失 — 1号线</target>
+      </trans-unit>
+      <trans-unit id="nc.create.title-required" datatype="html">
+        <source>Le titre est requis.</source>
+        <target state="translated">标题为必填项。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.zone-placeholder" datatype="html">
+        <source>Ex. : Atelier conditionnement A</source>
+        <target state="translated">例：包装车间 A</target>
+      </trans-unit>
+      <trans-unit id="nc.create.description-placeholder" datatype="html">
+        <source>Constat, contexte, impact observé…</source>
+        <target state="translated">观察、背景、所见影响……</target>
+      </trans-unit>
+      <trans-unit id="nc.create.use-location" datatype="html">
+        <source>Utiliser ma position</source>
+        <target state="translated">使用我的位置</target>
+      </trans-unit>
+      <trans-unit id="nc.create.clear-location" datatype="html">
+        <source>Retirer</source>
+        <target state="translated">移除</target>
+      </trans-unit>
+      <trans-unit id="nc.create.geo-label" datatype="html">
+        <source>Position :</source>
+        <target state="translated">位置：</target>
+      </trans-unit>
+      <trans-unit id="nc.create.geo-unsupported" datatype="html">
+        <source>La géolocalisation n'est pas disponible sur cet appareil.</source>
+        <target state="translated">此设备不支持地理定位。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.geo-error" datatype="html">
+        <source>Impossible de récupérer la position.</source>
+        <target state="translated">无法获取位置。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photos" datatype="html">
+        <source>Photos — URLs (une par ligne)</source>
+        <target state="translated">照片 — URL（每行一个）</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photos-placeholder" datatype="html">
+        <source>https://… (une URL par ligne)</source>
+        <target state="translated">https://…（每行一个 URL）</target>
+      </trans-unit>
+      <trans-unit id="nc.create.photos-hint" datatype="html">
+        <source>L'envoi de fichiers depuis l'appareil arrivera prochainement.</source>
+        <target state="translated">从设备上传文件功能即将推出。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.submit" datatype="html">
+        <source>Déclarer</source>
+        <target state="translated">上报</target>
+      </trans-unit>
+      <trans-unit id="nc.create.success" datatype="html">
+        <source>Non-conformité déclarée.</source>
+        <target state="translated">已上报不合格项。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.success-offline" datatype="html">
+        <source>NC enregistrée hors-ligne — elle sera synchronisée au retour du réseau.</source>
+        <target state="translated">不合格项已离线保存——网络恢复后将同步。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.eyebrow" datatype="html">
+        <source>Non-conformité · Saisie terrain · Analyse · Résolution</source>
+        <target state="translated">不合格项 · 现场录入 · 分析 · 解决</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.back-tooltip" datatype="html">
+        <source>Retour à la liste</source>
+        <target state="translated">返回列表</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.not-found" datatype="html">
+        <source>Non-conformité introuvable.</source>
+        <target state="translated">未找到不合格项。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.detected" datatype="html">
+        <source>Détectée le</source>
+        <target state="translated">检测日期</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolved" datatype="html">
+        <source>Résolue le</source>
+        <target state="translated">解决日期</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.closed" datatype="html">
+        <source>Clôturée le</source>
+        <target state="translated">关闭日期</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.location" datatype="html">
+        <source>Position</source>
+        <target state="translated">位置</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.capa-link" datatype="html">
+        <source>CAPA liée</source>
+        <target state="translated">关联 CAPA</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.root-cause" datatype="html">
+        <source>Cause racine</source>
+        <target state="translated">根本原因</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolution-note" datatype="html">
+        <source>Note de résolution</source>
+        <target state="translated">解决说明</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.photos" datatype="html">
+        <source>Photos</source>
+        <target state="translated">照片</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.start-analysis" datatype="html">
+        <source>Analyser</source>
+        <target state="translated">分析</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.start-analysis-tooltip" datatype="html">
+        <source>Démarrer l'analyse</source>
+        <target state="translated">开始分析</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.define-action" datatype="html">
+        <source>Définir action</source>
+        <target state="translated">定义措施</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.define-action-tooltip" datatype="html">
+        <source>Définir l'action corrective</source>
+        <target state="translated">定义纠正措施</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve" datatype="html">
+        <source>Résoudre</source>
+        <target state="translated">解决</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.resolve-tooltip" datatype="html">
+        <source>Résoudre la non-conformité</source>
+        <target state="translated">解决不合格项</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.close" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">关闭</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.close-tooltip" datatype="html">
+        <source>Clôturer la non-conformité</source>
+        <target state="translated">关闭不合格项</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cancel-tooltip" datatype="html">
+        <source>Annuler la non-conformité</source>
+        <target state="translated">取消不合格项</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cancel-confirm-title" datatype="html">
+        <source>Annuler cette non-conformité ?</source>
+        <target state="translated">取消此不合格项？</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.cancel-confirm-message" datatype="html">
+        <source>La non-conformité sera marquée comme annulée. Cette décision est traçable.</source>
+        <target state="translated">该不合格项将被标记为已取消。此决定可追溯。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.escalate" datatype="html">
+        <source>Escalader CAPA</source>
+        <target state="translated">升级为 CAPA</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.escalate-tooltip" datatype="html">
+        <source>Créer une CAPA liée</source>
+        <target state="translated">创建关联 CAPA</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.escalate-confirm-title" datatype="html">
+        <source>Escalader vers une CAPA ?</source>
+        <target state="translated">升级为 CAPA？</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.escalate-confirm-message" datatype="html">
+        <source>Une action corrective/préventive (CAPA) sera créée et liée à cette non-conformité.</source>
+        <target state="translated">将创建一项纠正/预防措施（CAPA）并关联到此不合格项。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.escalate-success" datatype="html">
+        <source>CAPA créée et liée à la non-conformité.</source>
+        <target state="translated">已创建 CAPA 并关联到不合格项。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.escalate-error" datatype="html">
+        <source>Erreur lors de l'escalade.</source>
+        <target state="translated">升级时出错。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.transition-success" datatype="html">
+        <source>Statut mis à jour.</source>
+        <target state="translated">状态已更新。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.transition-error" datatype="html">
+        <source>Erreur lors de la transition.</source>
+        <target state="translated">状态转换时出错。</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.title" datatype="html">
+        <source>Résoudre la non-conformité</source>
+        <target state="translated">解决不合格项</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.hint" datatype="html">
+        <source>Décris l'action menée et la preuve d'efficacité pour clôturer la résolution de</source>
+        <target state="translated">描述已采取的措施及有效性证据，以关闭以下项的解决：</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.note-label" datatype="html">
+        <source>Note de résolution</source>
+        <target state="translated">解决说明</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.note-placeholder" datatype="html">
+        <source>Action corrective réalisée, vérification, preuve d'efficacité…</source>
+        <target state="translated">已采取的纠正措施、验证、有效性证据……</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.note-required" datatype="html">
+        <source>La note de résolution est requise.</source>
+        <target state="translated">解决说明为必填项。</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.submit" datatype="html">
+        <source>Résoudre</source>
+        <target state="translated">解决</target>
+      </trans-unit>
+      <trans-unit id="nc.resolve.success" datatype="html">
+        <source>Non-conformité résolue.</source>
+        <target state="translated">不合格项已解决。</target>
       </trans-unit>
       <trans-unit id="offline.queue.title" datatype="html">
         <source>File d'attente offline</source>

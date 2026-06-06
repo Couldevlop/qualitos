@@ -67,6 +67,7 @@ TRANSLATIONS = {
     'nav.spc': ('SPC', 'SPC', 'SPC', 'SPC', 'SPC', 'SPC'),
     'nav.cercles': ('Cercles', 'Quality circles', 'Círculos', 'حلقات الجودة', 'QCサークル', '质量圈'),
     'nav.qualite-operationnelle': ('Qualité opérationnelle', 'Operational quality', 'Calidad operativa', 'الجودة التشغيلية', 'オペレーション品質', '运营质量'),
+    'nav.non-conformites': ('Non-conformités', 'Non-conformances', 'No conformidades', 'حالات عدم المطابقة', '不適合', '不合格项'),
     'nav.capa': ('CAPA', 'CAPA', 'CAPA', 'CAPA', 'CAPA', 'CAPA'),
     'nav.audits': ('Audits', 'Audits', 'Auditorías', 'التدقيقات', '監査', '审核'),
     'nav.risques-fmea': ('Risques (FMEA)', 'Risks (FMEA)', 'Riesgos (AMFE)', 'المخاطر (FMEA)', 'リスク（FMEA）', '风险（FMEA）'),
