@@ -64,6 +64,28 @@ jobs:
           path: apps/*/target/surefire-reports/
           retention-days: 7
 
+  # ---------------------------------------------------------------------------
+  # Scan anti-secrets (§18.2.3 : aucun secret en clair). Historique COMPLET à
+  # chaque run (fetch-depth 0) — rapide (~10 s pour 260+ commits) et attrape
+  # aussi un secret introduit puis « supprimé » dans une même PR.
+  # Binaire direct (pas gitleaks-action) : pas de licence requise, version pinnée.
+  # ---------------------------------------------------------------------------
+  secrets-scan:
+    name: Secrets scan (gitleaks)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run gitleaks (full history)
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.21.2/gitleaks_8.21.2_linux_x64.tar.gz | tar -xz gitleaks
+          ./gitleaks git --log-opts="--all" --redact -v
+
   sast-semgrep:
     name: SAST (Semgrep)
     runs-on: ubuntu-latest

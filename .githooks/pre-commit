@@ -1,0 +1,27 @@
+#!/bin/sh
+# =============================================================================
+# Hook pre-commit QualitOS — scan anti-secrets (gitleaks) sur le staged.
+#
+# Activation (une fois par clone) :  git config core.hooksPath .githooks
+# Bypass exceptionnel (à justifier en revue) :  git commit --no-verify
+#
+# Si gitleaks n'est pas installé, le hook PRÉVIENT mais ne bloque pas
+# (le job CI secrets-scan reste le filet bloquant).
+# Installation : https://github.com/gitleaks/gitleaks#installing
+# =============================================================================
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "[pre-commit] gitleaks non installé — scan local sauté (la CI scannera)." >&2
+  echo "[pre-commit] Installation : https://github.com/gitleaks/gitleaks#installing" >&2
+  exit 0
+fi
+
+gitleaks git --pre-commit --staged --redact -v
+status=$?
+if [ $status -ne 0 ]; then
+  echo "" >&2
+  echo "[pre-commit] ✘ Secret potentiel détecté dans le staged — commit refusé." >&2
+  echo "[pre-commit] Faux positif ? L'ajouter (motivé) à .gitleaks.toml [allowlist]." >&2
+  exit $status
+fi
+exit 0
