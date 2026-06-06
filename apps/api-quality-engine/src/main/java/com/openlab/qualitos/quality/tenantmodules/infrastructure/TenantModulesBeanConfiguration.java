@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.tenantmodules.infrastructure;
 
+import com.openlab.qualitos.quality.tenantmodules.application.ActorProvider;
 import com.openlab.qualitos.quality.tenantmodules.application.ModuleActivationEventPublisher;
 import com.openlab.qualitos.quality.tenantmodules.application.ModuleActivationService;
 import com.openlab.qualitos.quality.tenantmodules.application.TenantProvider;
@@ -19,9 +20,11 @@ public class TenantModulesBeanConfiguration {
             ModuleActivationRepository repo,
             TenantProvider tenantProvider,
             TenantTierProvider tierProvider,
+            ActorProvider actorProvider,
             ModuleActivationEventPublisher events,
             Clock clock) {
-        return new ModuleActivationService(repo, tenantProvider, tierProvider, events, clock);
+        return new ModuleActivationService(
+                repo, tenantProvider, tierProvider, actorProvider, events, clock);
     }
 
     /** Tier par défaut FREE tant qu'un module billing concret n'est pas livré. */

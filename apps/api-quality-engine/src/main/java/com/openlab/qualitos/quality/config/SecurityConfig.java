@@ -96,39 +96,74 @@ public class SecurityConfig {
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
                 // --- H1 (OWASP A01) : durcissement des endpoints SENSIBLES ---
-                // On cible UNIQUEMENT les actions d'administration / d'intégrité, pour ne
-                // pas casser l'accès qualité courant (NC, CAPA, audits, 5S restent ouverts
-                // à tout utilisateur authentifié — quality_manager / user). La matrice de
-                // rôles complète (CLAUDE.md §16) reste à propager par endpoint (DETTE/SUIVI).
-                // Noms de rôles = realm_access.roles Keycloak mappés en ROLE_<UPPER>
-                // (cf. jwtAuthenticationConverter). On s'aligne sur api-core (ADMIN / SUPER_ADMIN).
+                // On cible les actions d'ADMINISTRATION (plateforme/tenant), d'INTÉGRITÉ
+                // et les SUPPRESSIONS, sans casser l'accès qualité courant : les écritures
+                // métier (POST/PUT/PATCH de NC, CAPA, 5S, audits, ishikawa, pdca, dmaic…)
+                // restent ouvertes à tout authentifié (quality_manager ET user terrain),
+                // et la lecture (GET) reste authentifiée simple.
+                //
+                // Mapping des rôles (CLAUDE.md §16 → rôles realm Keycloak → ROLE_<UPPER>,
+                // cf. jwtAuthenticationConverter + infra/keycloak/realm-export.json) :
+                //   Super Admin   → super_admin   → ROLE_SUPER_ADMIN
+                //   Admin Tenant  → admin_tenant  → ROLE_ADMIN_TENANT
+                //   Manager Qualité → quality_manager → ROLE_QUALITY_MANAGER
+                // NB : le realm n'a PAS de rôle "admin" nu ; on conserve ROLE_ADMIN par
+                // compat (api-core / tokens legacy) MAIS on ajoute ROLE_ADMIN_TENANT pour
+                // ne pas verrouiller l'admin de tenant réel (sinon lock-out — cf. ADR 0020).
 
-                // Activation/désactivation des Industry Packs : admin.
+                // Activation/désactivation des Industry Packs : Admin Tenant / Super Admin.
                 .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/industry-packs/*/activate")
-                    .hasAnyRole("ADMIN", "SUPER_ADMIN")
+                    .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
                 .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/industry-packs/*/activate")
-                    .hasAnyRole("ADMIN", "SUPER_ADMIN")
+                    .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
 
-                // Activation des modules tenant (toutes les transitions d'état d'abonnement) : admin.
+                // Activation des modules tenant (transitions d'abonnement) : Admin Tenant / Super Admin.
                 .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/tenant-modules/**")
-                    .hasAnyRole("ADMIN", "SUPER_ADMIN")
+                    .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
 
-                // Clés API (création/révocation) : admin.
-                .requestMatchers("/api/v1/api-keys/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                // Clés API (création/révocation) : Admin Tenant / Super Admin.
+                .requestMatchers("/api/v1/api-keys/**").hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
 
-                // Configuration des webhooks sortants : admin.
-                .requestMatchers("/api/v1/webhooks/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                // Configuration des webhooks sortants : Admin Tenant / Super Admin.
+                .requestMatchers("/api/v1/webhooks/**").hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
 
-                // Déclenchement d'un batch d'ancrage blockchain : admin + responsable qualité
+                // Marketplace de packs normatifs (§8.11) : publication/retrait = administration
+                // plateforme. Réservé Admin Tenant / Super Admin (la lecture du catalogue passe
+                // par GET, gardé ci-dessous au niveau méthode pour rester consultable).
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/marketplace/**")
+                    .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
+                .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/v1/marketplace/**")
+                    .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
+                .requestMatchers(org.springframework.http.HttpMethod.PATCH, "/api/v1/marketplace/**")
+                    .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
+
+                // Déclenchement d'un batch d'ancrage blockchain : Admin + Manager Qualité
                 // (action d'intégrité légitime côté pilotage qualité). La vérification (GET)
                 // reste ouverte aux authentifiés.
                 .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/blockchain/anchor/run")
-                    .hasAnyRole("ADMIN", "SUPER_ADMIN", "QUALITY_MANAGER")
+                    .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN", "QUALITY_MANAGER")
 
                 // NB : l'écriture directe du journal d'audit (POST /api/v1/audit/events) est
                 // verrouillée par @PreAuthorize sur le contrôleur (C1) en plus de la couche URL.
                 .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/audit/events")
-                    .hasAnyRole("ADMIN", "SUPER_ADMIN")
+                    .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
+
+                // --- Suppressions (DELETE) sur les ressources qualité : action sensible ---
+                // Réservées Admin / Super Admin / Manager Qualité (CLAUDE.md §16 : un manager
+                // qualité supprime dans son périmètre ; un simple "user" non).
+                // CARVE-OUTS terrain : on NE gate PAS les suppressions de capture terrain
+                // (NC/5S/audit), explicitement laissées ouvertes aux opérateurs authentifiés
+                // (cf. consigne "ne jamais gater les écritures terrain NC/5S/audit").
+                // Ces matchers doivent précéder la règle DELETE générique (premier match gagne).
+                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/nc/*/photos/**")
+                    .authenticated()
+                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/fives/**")
+                    .authenticated()
+                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/audit/**")
+                    .authenticated()
+                // Suppression générique de ressource qualité : Manager Qualité ou plus.
+                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/**")
+                    .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN", "QUALITY_MANAGER")
 
                 .anyRequest().authenticated()
             )

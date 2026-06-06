@@ -27,6 +27,7 @@ public class ModuleActivationService {
     private final ModuleActivationRepository repo;
     private final TenantProvider tenantProvider;
     private final TenantTierProvider tierProvider;
+    private final ActorProvider actorProvider;
     private final ModuleActivationEventPublisher events;
     private final Clock clock;
 
@@ -34,18 +35,22 @@ public class ModuleActivationService {
     public ModuleActivationService(ModuleActivationRepository repo,
                                    TenantProvider tenantProvider,
                                    TenantTierProvider tierProvider,
+                                   ActorProvider actorProvider,
                                    Clock clock) {
-        this(repo, tenantProvider, tierProvider, new ModuleActivationEventPublisher.NoOp(), clock);
+        this(repo, tenantProvider, tierProvider, actorProvider,
+                new ModuleActivationEventPublisher.NoOp(), clock);
     }
 
     public ModuleActivationService(ModuleActivationRepository repo,
                                    TenantProvider tenantProvider,
                                    TenantTierProvider tierProvider,
+                                   ActorProvider actorProvider,
                                    ModuleActivationEventPublisher events,
                                    Clock clock) {
         this.repo = repo;
         this.tenantProvider = tenantProvider;
         this.tierProvider = tierProvider;
+        this.actorProvider = actorProvider;
         this.events = events;
         this.clock = clock;
     }
@@ -66,7 +71,7 @@ public class ModuleActivationService {
         Instant now = Instant.now(clock);
         ModuleActivation a = ModuleActivation.startTrial(
                 tenantId, entry.code(), entry.minimumTier(),
-                req.trialEndsAt(), req.actor(), now);
+                req.trialEndsAt(), actorProvider.requireActorId(), now);
         ModuleActivation saved = repo.save(a);
         events.publish(saved, ModuleActivationEventPublisher.Action.TRIAL_STARTED);
         return ModuleActivationDto.ActivationView.of(saved);
@@ -80,7 +85,7 @@ public class ModuleActivationService {
         Instant now = Instant.now(clock);
         ModuleActivation a = ModuleActivation.activateNow(
                 tenantId, entry.code(), entry.minimumTier(),
-                req.expiresAt(), req.actor(), now);
+                req.expiresAt(), actorProvider.requireActorId(), now);
         ModuleActivation saved = repo.save(a);
         events.publish(saved, ModuleActivationEventPublisher.Action.ACTIVATED);
         return ModuleActivationDto.ActivationView.of(saved);
@@ -89,7 +94,7 @@ public class ModuleActivationService {
     public ModuleActivationDto.ActivationView convertTrial(UUID id,
                                                            ModuleActivationDto.ConvertTrialRequest req) {
         ModuleActivation a = loadForTenant(id);
-        a.convertTrialToActive(req.expiresAt(), req.actor(), Instant.now(clock));
+        a.convertTrialToActive(req.expiresAt(), actorProvider.requireActorId(), Instant.now(clock));
         ModuleActivation saved = repo.save(a);
         events.publish(saved, ModuleActivationEventPublisher.Action.ACTIVATED);
         return ModuleActivationDto.ActivationView.of(saved);
@@ -97,7 +102,7 @@ public class ModuleActivationService {
 
     public ModuleActivationDto.ActivationView suspend(UUID id, ModuleActivationDto.SuspendRequest req) {
         ModuleActivation a = loadForTenant(id);
-        a.suspend(req.actor(), Instant.now(clock));
+        a.suspend(actorProvider.requireActorId(), Instant.now(clock));
         ModuleActivation saved = repo.save(a);
         events.publish(saved, ModuleActivationEventPublisher.Action.SUSPENDED);
         return ModuleActivationDto.ActivationView.of(saved);
@@ -107,7 +112,7 @@ public class ModuleActivationService {
         ModuleActivation a = loadForTenant(id);
         // S'assurer que les dépendances sont toujours actives
         ensureDependenciesSatisfied(a.getTenantId(), ModuleCatalog.require(a.getModuleCode()));
-        a.resume(req.actor(), Instant.now(clock));
+        a.resume(actorProvider.requireActorId(), Instant.now(clock));
         ModuleActivation saved = repo.save(a);
         events.publish(saved, ModuleActivationEventPublisher.Action.RESUMED);
         return ModuleActivationDto.ActivationView.of(saved);
@@ -121,7 +126,7 @@ public class ModuleActivationService {
                     "Cannot disable a core module: " + entry.code());
         }
         ensureNoDependentModulesEnabled(a.getTenantId(), entry.code());
-        a.disable(req.actor(), Instant.now(clock));
+        a.disable(actorProvider.requireActorId(), Instant.now(clock));
         ModuleActivation saved = repo.save(a);
         events.publish(saved, ModuleActivationEventPublisher.Action.DISABLED);
         return ModuleActivationDto.ActivationView.of(saved);
@@ -129,7 +134,7 @@ public class ModuleActivationService {
 
     public ModuleActivationDto.ActivationView expire(UUID id, ModuleActivationDto.ExpireRequest req) {
         ModuleActivation a = loadForTenant(id);
-        a.expire(req.actor(), Instant.now(clock));
+        a.expire(actorProvider.requireActorId(), Instant.now(clock));
         ModuleActivation saved = repo.save(a);
         events.publish(saved, ModuleActivationEventPublisher.Action.EXPIRED);
         return ModuleActivationDto.ActivationView.of(saved);
@@ -138,7 +143,7 @@ public class ModuleActivationService {
     public ModuleActivationDto.ActivationView changeTier(UUID id,
                                                           ModuleActivationDto.ChangeTierRequest req) {
         ModuleActivation a = loadForTenant(id);
-        a.changeTier(req.newTier(), req.actor(), Instant.now(clock));
+        a.changeTier(req.newTier(), actorProvider.requireActorId(), Instant.now(clock));
         ModuleActivation saved = repo.save(a);
         events.publish(saved, ModuleActivationEventPublisher.Action.TIER_CHANGED);
         return ModuleActivationDto.ActivationView.of(saved);
@@ -147,7 +152,7 @@ public class ModuleActivationService {
     public ModuleActivationDto.ActivationView configure(UUID id,
                                                          ModuleActivationDto.ConfigureRequest req) {
         ModuleActivation a = loadForTenant(id);
-        a.configure(req.configurationJson(), req.actor(), Instant.now(clock));
+        a.configure(req.configurationJson(), actorProvider.requireActorId(), Instant.now(clock));
         ModuleActivation saved = repo.save(a);
         events.publish(saved, ModuleActivationEventPublisher.Action.CONFIGURED);
         return ModuleActivationDto.ActivationView.of(saved);

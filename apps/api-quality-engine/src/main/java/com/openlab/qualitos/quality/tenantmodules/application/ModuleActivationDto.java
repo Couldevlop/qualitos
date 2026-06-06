@@ -13,15 +13,17 @@ public final class ModuleActivationDto {
 
     private ModuleActivationDto() {}
 
-    public record StartTrialRequest(String moduleCode, Instant trialEndsAt, UUID actor) {}
-    public record ActivateRequest(String moduleCode, Instant expiresAt, UUID actor) {}
-    public record ConvertTrialRequest(Instant expiresAt, UUID actor) {}
-    public record SuspendRequest(UUID actor) {}
-    public record ResumeRequest(UUID actor) {}
-    public record DisableRequest(UUID actor) {}
-    public record ExpireRequest(UUID actor) {}
-    public record ChangeTierRequest(BillingTier newTier, UUID actor) {}
-    public record ConfigureRequest(String configurationJson, UUID actor) {}
+    // H2 : l'acteur n'est plus porté par le DTO — il est dérivé du JWT (ActorProvider)
+    // côté service. Aucun champ "actor" falsifiable ne transite par le corps de requête.
+    public record StartTrialRequest(String moduleCode, Instant trialEndsAt) {}
+    public record ActivateRequest(String moduleCode, Instant expiresAt) {}
+    public record ConvertTrialRequest(Instant expiresAt) {}
+    public record SuspendRequest() {}
+    public record ResumeRequest() {}
+    public record DisableRequest() {}
+    public record ExpireRequest() {}
+    public record ChangeTierRequest(BillingTier newTier) {}
+    public record ConfigureRequest(String configurationJson) {}
 
     public record ActivationView(
             UUID id, UUID tenantId, String moduleCode,

@@ -5,9 +5,13 @@ import com.openlab.qualitos.quality.apikeys.web.ApiKeyController;
 import com.openlab.qualitos.quality.blockchain.application.AnchorVerificationService;
 import com.openlab.qualitos.quality.blockchain.application.AnchoringService;
 import com.openlab.qualitos.quality.blockchain.web.AnchoringController;
+import com.openlab.qualitos.quality.capa.CapaController;
+import com.openlab.qualitos.quality.capa.CapaService;
 import com.openlab.qualitos.quality.common.TenantContext;
 import com.openlab.qualitos.quality.industry.IndustryPackController;
 import com.openlab.qualitos.quality.industry.IndustryPackService;
+import com.openlab.qualitos.quality.tenantmodules.application.ModuleActivationService;
+import com.openlab.qualitos.quality.tenantmodules.web.ModuleActivationController;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -39,7 +43,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @Tag("web")
 @WebMvcTest(controllers = {
-        IndustryPackController.class, ApiKeyController.class, AnchoringController.class})
+        IndustryPackController.class, ApiKeyController.class, AnchoringController.class,
+        ModuleActivationController.class, CapaController.class})
 @Import(SecurityConfig.class)
 class SecurityConfigAuthorizationTest {
 
@@ -50,6 +55,8 @@ class SecurityConfigAuthorizationTest {
     @MockitoBean ApiKeyService apiKeyService;
     @MockitoBean AnchoringService anchoringService;
     @MockitoBean AnchorVerificationService anchorVerificationService;
+    @MockitoBean ModuleActivationService moduleActivationService;
+    @MockitoBean CapaService capaService;
 
     @BeforeEach
     void ctx() { TenantContext.setTenantId(UUID.randomUUID().toString()); }
@@ -83,6 +90,15 @@ class SecurityConfigAuthorizationTest {
                 .andExpect(status().is(org.springframework.http.HttpStatus.OK.value()));
     }
 
+    @Test @WithMockUser(roles = "ADMIN_TENANT")
+    void packActivate_adminTenant_notForbidden() throws Exception {
+        // Rôle réel du realm Keycloak (admin_tenant → ROLE_ADMIN_TENANT) : ne doit PAS
+        // être verrouillé (régression de lock-out — cf. ADR 0020).
+        mockMvc.perform(post("/api/v1/industry-packs/manufacturing/activate").with(csrf())
+                        .contentType("application/json").content("{}"))
+                .andExpect(status().is(org.springframework.http.HttpStatus.OK.value()));
+    }
+
     @Test @WithMockUser(roles = "USER")
     void packDeactivate_nonAdmin_403() throws Exception {
         mockMvc.perform(delete("/api/v1/industry-packs/manufacturing/activate").with(csrf()))
@@ -111,5 +127,58 @@ class SecurityConfigAuthorizationTest {
         // Action d'intégrité légitime côté pilotage qualité : autorisée (pas de 403).
         mockMvc.perform(post("/api/v1/blockchain/anchor/run").with(csrf()))
                 .andExpect(status().is(org.springframework.http.HttpStatus.OK.value()));
+    }
+
+    // --- Tenant-modules (administration tenant) : admin only ---
+
+    @Test @WithMockUser(roles = "USER")
+    void tenantModuleActivate_plainUser_403() throws Exception {
+        mockMvc.perform(post("/api/v1/tenant-modules/activations").with(csrf())
+                        .contentType("application/json")
+                        .content("{\"moduleCode\":\"kpi\",\"expiresAt\":\"2026-12-31T00:00:00Z\"}"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void tenantModuleActivate_qualityManager_403() throws Exception {
+        // L'activation d'un module est une action d'administration tenant : refusée au
+        // manager qualité (CLAUDE.md §16).
+        mockMvc.perform(post("/api/v1/tenant-modules/activations").with(csrf())
+                        .contentType("application/json")
+                        .content("{\"moduleCode\":\"kpi\",\"expiresAt\":\"2026-12-31T00:00:00Z\"}"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test @WithMockUser(roles = "ADMIN_TENANT")
+    void tenantModuleActivate_adminTenant_notForbidden() throws Exception {
+        mockMvc.perform(post("/api/v1/tenant-modules/activations").with(csrf())
+                        .contentType("application/json")
+                        .content("{\"moduleCode\":\"kpi\",\"expiresAt\":\"2026-12-31T00:00:00Z\"}"))
+                .andExpect(status().is(org.springframework.http.HttpStatus.CREATED.value()));
+    }
+
+    // --- Suppression d'une ressource qualité (DELETE) : manager qualité ou plus ---
+
+    @Test @WithMockUser(roles = "USER")
+    void capaDelete_plainUser_403() throws Exception {
+        // Un simple "user" ne peut pas supprimer une ressource qualité.
+        mockMvc.perform(delete("/api/v1/capa/cases/{id}", UUID.randomUUID()).with(csrf()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void capaDelete_qualityManager_allowed() throws Exception {
+        // Le manager qualité supprime dans son périmètre (pas de 403 ; 204 No Content).
+        mockMvc.perform(delete("/api/v1/capa/cases/{id}", UUID.randomUUID()).with(csrf()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test @WithMockUser(roles = "USER")
+    void capaCreate_plainUser_allowed() throws Exception {
+        // Écriture métier (création CAPA) : RESTE ouverte au user terrain (pas de 403).
+        // Le corps invalide → 400, ce qui prouve qu'on a passé la couche d'autorisation.
+        mockMvc.perform(post("/api/v1/capa/cases").with(csrf())
+                        .contentType("application/json").content("{}"))
+                .andExpect(status().isBadRequest());
     }
 }
