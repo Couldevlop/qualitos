@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.industry;
 
+import com.openlab.qualitos.quality.common.CurrentUser;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.data.domain.Page;
@@ -25,11 +26,14 @@ public class IndustryPackService {
 
     private final IndustryPackRepository packRepo;
     private final TenantIndustryPackActivationRepository activationRepo;
+    private final IndustryPackProvisioningService provisioningService;
 
     public IndustryPackService(IndustryPackRepository packRepo,
-                               TenantIndustryPackActivationRepository activationRepo) {
+                               TenantIndustryPackActivationRepository activationRepo,
+                               IndustryPackProvisioningService provisioningService) {
         this.packRepo = packRepo;
         this.activationRepo = activationRepo;
+        this.provisioningService = provisioningService;
     }
 
     // ---------- Catalog ----------
@@ -50,47 +54,70 @@ public class IndustryPackService {
     @Transactional
     public IndustryPackDto.ActivationResponse activate(String code, IndustryPackDto.ActivateRequest req) {
         UUID tenantId = requireTenantId();
+        // H2 (OWASP A01) : l'acteur est dérivé du JWT (sub), jamais d'un champ de body.
+        UUID actor = CurrentUser.requireUserId();
         // Pack must exist in catalog.
-        packRepo.findByCode(code).orElseThrow(() -> new IndustryPackNotFoundException(code));
+        IndustryPack pack = packRepo.findByCode(code).orElseThrow(() -> new IndustryPackNotFoundException(code));
 
         Optional<TenantIndustryPackActivation> existing =
                 activationRepo.findByTenantIdAndPackCodeAndStatus(tenantId, code, ActivationStatus.ACTIVE);
-        if (existing.isPresent()) return toResponse(existing.get()); // idempotent
+        if (existing.isPresent()) {
+            // Idempotent : déjà actif. Aucun nouveau provisionnement (les KPIs sont déjà chez
+            // le tenant — provision() est lui-même idempotent, mais on évite le travail inutile).
+            return toResponse(existing.get(), null);
+        }
 
         TenantIndustryPackActivation a = new TenantIndustryPackActivation();
         a.setTenantId(tenantId);
         a.setPackCode(code);
         a.setStatus(ActivationStatus.ACTIVE);
-        a.setActivatedBy(req.activatedBy());
+        a.setActivatedBy(actor);
         a.setActivatedAt(Instant.now());
         a.setConfigOverridesJson(req.configOverridesJson());
-        return toResponse(activationRepo.save(a));
+        // BUG #3 — Double activation concurrente : deux requêtes passent le check
+        // d'idempotence puis insèrent en parallèle, violant la contrainte d'unicité
+        // (tenant_id, pack_code, status=ACTIVE). On laisse remonter la
+        // DataIntegrityViolationException → 409 via le GlobalExceptionHandler, plutôt
+        // qu'un 500 opaque.
+        TenantIndustryPackActivation saved = activationRepo.save(a);
+
+        // Phase 2 (ADR 0019) : provisionnement du contenu APRÈS l'enregistrement de
+        // l'activation, dans la même transaction. Résilience contenu : un échec de KPI
+        // produit un warning, jamais un rollback de l'activation.
+        IndustryPackProvisioningService.ProvisioningResult result =
+                provisioningService.provision(tenantId, actor, pack.getManifestJson());
+        return toResponse(saved, result);
     }
 
     @Transactional
-    public IndustryPackDto.ActivationResponse deactivate(String code, UUID deactivatedBy) {
+    public IndustryPackDto.ActivationResponse deactivate(String code) {
         UUID tenantId = requireTenantId();
+        // H2 (OWASP A01) : l'acteur de la désactivation est dérivé du JWT (sub).
+        UUID actor = CurrentUser.requireUserId();
         TenantIndustryPackActivation a = activationRepo
                 .findByTenantIdAndPackCodeAndStatus(tenantId, code, ActivationStatus.ACTIVE)
                 .orElseThrow(() -> new IndustryPackNotFoundException(code + " (no active activation)"));
         a.setStatus(ActivationStatus.DEACTIVATED);
         a.setDeactivatedAt(Instant.now());
-        a.setDeactivatedBy(deactivatedBy);
-        return toResponse(activationRepo.save(a));
+        a.setDeactivatedBy(actor);
+        // Phase 2 (ADR 0019) : la désactivation NE SUPPRIME RIEN. Les KPIs provisionnés
+        // appartiennent désormais au tenant (catalogue éditable indépendamment du pack) ;
+        // les supprimer effacerait des mesures et des CAPA attachées. Aucun provisionnement.
+        return toResponse(activationRepo.save(a), null);
     }
 
     @Transactional(readOnly = true)
     public List<IndustryPackDto.ActivationResponse> myActiveActivations() {
         UUID tenantId = requireTenantId();
         return activationRepo.findByTenantIdAndStatus(tenantId, ActivationStatus.ACTIVE)
-                .stream().map(this::toResponse).toList();
+                .stream().map(a -> toResponse(a, null)).toList();
     }
 
     @Transactional(readOnly = true)
     public List<IndustryPackDto.ActivationResponse> myActivationHistory() {
         UUID tenantId = requireTenantId();
         return activationRepo.findByTenantIdOrderByActivatedAtDesc(tenantId)
-                .stream().map(this::toResponse).toList();
+                .stream().map(a -> toResponse(a, null)).toList();
     }
 
     // ---------- helpers ----------
@@ -105,11 +132,17 @@ public class IndustryPackService {
                 p.getCreatedAt(), p.getUpdatedAt());
     }
 
-    private IndustryPackDto.ActivationResponse toResponse(TenantIndustryPackActivation a) {
+    private IndustryPackDto.ActivationResponse toResponse(
+            TenantIndustryPackActivation a,
+            IndustryPackProvisioningService.ProvisioningResult result) {
+        IndustryPackDto.Provisioning provisioning = result == null ? null
+                : new IndustryPackDto.Provisioning(
+                        result.kpisCreated(), result.kpisSkipped(), result.warnings());
         return new IndustryPackDto.ActivationResponse(
                 a.getId(), a.getTenantId(), a.getPackCode(), a.getStatus(),
                 a.getActivatedBy(), a.getActivatedAt(),
-                a.getDeactivatedAt(), a.getDeactivatedBy());
+                a.getDeactivatedAt(), a.getDeactivatedBy(),
+                provisioning);
     }
 
     private UUID requireTenantId() {
