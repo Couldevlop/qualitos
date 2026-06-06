@@ -76,6 +76,9 @@ p { margin: 0; }
 
 /* ============================================================
  * Icônes Material Symbols (chargées via index.html).
+ * MatIconRegistry pointe sur cette classe (app.module) : les <mat-icon>
+ * la portent aussi — centrage du glyphe dans la boîte 24px et alignement
+ * vertical avec le libellé des boutons.
  * ============================================================ */
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
@@ -84,19 +87,121 @@ p { margin: 0; }
   user-select: none;
 }
 
+mat-icon.material-symbols-outlined {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Dans les boutons M3, l'icône suit la taille prévue par MDC (18px) pour
+ * rester sur la même ligne de base que le texte. */
+.mat-mdc-button-base mat-icon.material-symbols-outlined {
+  font-size: 18px;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 18;
+}
+
 /* ============================================================
  * Surcharges Material 3 — alignement sur nos tokens.
+ * Direction premium « clair & aéré » : 1px border + ombre minimale,
+ * rayons 10-12px, outline fin, lignes de table aérées.
  * ============================================================ */
 .mat-mdc-card,
-.mdc-card,
+.mdc-card {
+  background-color: var(--qos-bg-elevated) !important;
+  color: var(--qos-fg-primary) !important;
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg) !important;
+  box-shadow: var(--qos-shadow-xs) !important;
+}
+
 .mat-mdc-dialog-surface {
   background-color: var(--qos-bg-elevated) !important;
   color: var(--qos-fg-primary) !important;
   border: 1px solid var(--qos-border-subtle);
-  box-shadow: var(--qos-shadow-sm) !important;
+  border-radius: var(--qos-radius-lg) !important;
 }
 
+/* ---- Boutons : rayon 10px, ombre nulle au repos, accent profond. ---- */
+.mat-mdc-button,
+.mat-mdc-outlined-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-raised-button,
+.mat-mdc-icon-button {
+  --mdc-text-button-container-shape: var(--qos-radius-md);
+  --mdc-outlined-button-container-shape: var(--qos-radius-md);
+  --mdc-filled-button-container-shape: var(--qos-radius-md);
+  --mdc-protected-button-container-shape: var(--qos-radius-md);
+  border-radius: var(--qos-radius-md);
+  letter-spacing: 0;
+  font-weight: var(--qos-fw-medium);
+}
+
+/* Bouton plein (action primaire) = accent profond, ombre quasi nulle. */
+.mat-mdc-unelevated-button.mat-primary,
+.mat-mdc-raised-button.mat-primary {
+  --mdc-filled-button-container-color: var(--qos-accent-bg);
+  --mdc-filled-button-label-text-color: var(--qos-accent-fg);
+  --mdc-protected-button-container-color: var(--qos-accent-bg);
+  --mdc-protected-button-label-text-color: var(--qos-accent-fg);
+  box-shadow: var(--qos-shadow-xs) !important;
+
+  &:hover { --mdc-filled-button-container-color: var(--qos-accent-bg-hover); }
+}
+
+.mat-mdc-outlined-button {
+  --mdc-outlined-button-outline-color: var(--qos-border-default);
+  --mdc-outlined-button-label-text-color: var(--qos-fg-primary);
+  &:hover { background: var(--qos-bg-hover); }
+}
+
+/* ---- Form fields : outline fin, rayon 10px, focus accent doux. ---- */
+.mat-mdc-form-field {
+  --mdc-outlined-text-field-container-shape: var(--qos-radius-md);
+  --mdc-outlined-text-field-outline-color: var(--qos-border-default);
+  --mdc-outlined-text-field-hover-outline-color: var(--qos-border-strong);
+  --mdc-outlined-text-field-focus-outline-color: var(--qos-accent-bg);
+  --mdc-outlined-text-field-outline-width: 1px;
+  --mdc-outlined-text-field-focus-outline-width: 1.5px;
+  --mdc-outlined-text-field-label-text-color: var(--qos-fg-tertiary);
+}
 .mat-mdc-form-field-subscript-wrapper { font-size: var(--qos-fs-xs); }
+
+/* ---- Paginator : surface transparente, filet haut subtil. ---- */
+.mat-mdc-paginator {
+  background: transparent;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+}
+
+/* ---- Tabs : indicateur accent profond, libellés sobres. ---- */
+.mat-mdc-tab,
+.mat-mdc-tab-link {
+  --mat-tab-header-active-label-text-color: var(--qos-fg-primary);
+  --mat-tab-header-inactive-label-text-color: var(--qos-fg-tertiary);
+  --mat-tab-header-active-ripple-color: var(--qos-accent-bg-soft);
+  letter-spacing: 0;
+  font-weight: var(--qos-fw-medium);
+}
+.mat-mdc-tab-group,
+.mat-mdc-tab-nav-bar {
+  --mdc-tab-indicator-active-indicator-color: var(--qos-accent-bg);
+  --mat-tab-header-active-focus-indicator-color: var(--qos-accent-bg);
+  --mat-tab-header-active-hover-indicator-color: var(--qos-accent-bg);
+}
+
+/* ---- Menus / overlays : rayon 10px, filet + ombre douce. ---- */
+.mat-mdc-menu-panel,
+.mat-mdc-autocomplete-panel,
+.mat-mdc-select-panel {
+  border-radius: var(--qos-radius-lg) !important;
+  border: 1px solid var(--qos-border-subtle);
+  box-shadow: var(--qos-shadow-md) !important;
+}
+
+/* ---- Chips : rayon pill, fond doux. ---- */
+.mat-mdc-chip {
+  --mdc-chip-container-shape-radius: var(--qos-radius-pill);
+}
 
 /* ============================================================
  * Layout helpers.
@@ -233,13 +338,17 @@ p { margin: 0; }
   width: 100%;
 }
 
+.mat-mdc-header-row {
+  background: var(--qos-bg-sunken);
+}
+
 .mat-mdc-header-cell {
-  color: var(--qos-fg-secondary);
-  font-weight: 600;
+  color: var(--qos-fg-tertiary);
+  font-weight: var(--qos-fw-semibold);
   font-size: var(--qos-fs-xs);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  border-bottom-color: var(--qos-border-default) !important;
+  border-bottom-color: var(--qos-border-subtle) !important;
 }
 
 .mat-mdc-cell {
@@ -247,11 +356,15 @@ p { margin: 0; }
   border-bottom-color: var(--qos-border-subtle) !important;
 }
 
+/* Lignes aérées : un peu plus de hauteur de respiration. */
+.mat-mdc-header-row { min-height: 44px; }
+.mat-mdc-row { min-height: 52px; }
+
 .mat-mdc-row {
-  transition: background-color 0.12s ease;
+  transition: background-color var(--qos-motion-fast);
 }
 .mat-mdc-row:hover {
-  background: var(--qos-bg-subtle, rgba(127, 127, 127, 0.06));
+  background: var(--qos-bg-subtle);
 }
 
 /* Dernière ligne sans filet (le conteneur .table-wrap porte déjà la bordure). */

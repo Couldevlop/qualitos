@@ -37,7 +37,7 @@
   color: var(--qos-fg-sidebar);
   display: flex;
   flex-direction: column;
-  border-right: 1px solid rgba(255, 255, 255, 0.04);
+  border-right: 1px solid var(--qos-border-sidebar);
   overflow: hidden;
 
   &__brand {
@@ -45,14 +45,14 @@
     align-items: center;
     gap: var(--qos-space-3);
     padding: var(--qos-space-5) var(--qos-space-5);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid var(--qos-border-sidebar);
     height: var(--qos-topbar-height);
     min-height: var(--qos-topbar-height);
   }
 
   &__logo {
     color: var(--qos-accent-bg);
-    background: rgba(59, 130, 246, 0.16);
+    background: var(--qos-accent-bg-soft);
     width: 32px;
     height: 32px;
     border-radius: var(--qos-radius-md);
@@ -72,12 +72,12 @@
     strong {
       font-size: var(--qos-fs-md);
       font-weight: var(--qos-fw-semibold);
-      color: var(--qos-fg-sidebar-active);
+      color: var(--qos-fg-primary);
       letter-spacing: -0.01em;
     }
     small {
       font-size: 11px;
-      color: rgba(148, 163, 184, 0.7);
+      color: var(--qos-fg-tertiary);
       letter-spacing: 0.02em;
     }
   }
@@ -96,7 +96,7 @@
     font-weight: var(--qos-fw-semibold);
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(148, 163, 184, 0.55);
+    color: var(--qos-fg-tertiary);
     padding: var(--qos-space-3) var(--qos-space-3) var(--qos-space-1);
   }
 
@@ -119,13 +119,13 @@
 
     &:hover {
       background: var(--qos-bg-sidebar-hover);
-      .qos-sidebar__section-chevron { color: var(--qos-fg-sidebar-active); }
+      .qos-sidebar__section-chevron { color: var(--qos-fg-secondary); }
     }
   }
 
   &__section-chevron {
     font-size: 16px;
-    color: rgba(148, 163, 184, 0.5);
+    color: var(--qos-fg-tertiary);
     transform: rotate(-90deg); /* replié → chevron vers la droite */
     transition: transform var(--qos-motion-fast), color var(--qos-motion-fast);
 
@@ -158,21 +158,25 @@
 
     &:hover {
       background: var(--qos-bg-sidebar-hover);
-      color: var(--qos-fg-sidebar-active);
+      color: var(--qos-fg-primary);
     }
 
     &--active {
       background: var(--qos-bg-sidebar-active);
       color: var(--qos-fg-sidebar-active);
+      font-weight: var(--qos-fw-semibold);
 
+      .qos-sidebar__icon { color: var(--qos-fg-sidebar-active); }
+
+      /* Barre d'accent gauche fine, flush au bord du rail. */
       &::before {
         content: '';
         position: absolute;
-        left: -8px;
-        top: 8px;
-        bottom: 8px;
+        left: calc(-1 * var(--qos-space-1) - 2px);
+        top: 7px;
+        bottom: 7px;
         width: 3px;
-        border-radius: 0 2px 2px 0;
+        border-radius: 0 3px 3px 0;
         background: var(--qos-accent-bg);
       }
     }
@@ -193,7 +197,7 @@
 
   &__footer {
     padding: var(--qos-space-3);
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-top: 1px solid var(--qos-border-sidebar);
   }
 
   &__collapse {
@@ -201,7 +205,7 @@
     appearance: none;
     background: transparent;
     border: none;
-    color: rgba(148, 163, 184, 0.7);
+    color: var(--qos-fg-tertiary);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -211,7 +215,7 @@
     font-size: var(--qos-fs-xs);
     transition: background var(--qos-motion-fast), color var(--qos-motion-fast);
 
-    &:hover { background: var(--qos-bg-sidebar-hover); color: var(--qos-fg-sidebar-active); }
+    &:hover { background: var(--qos-bg-sidebar-hover); color: var(--qos-fg-primary); }
     .material-symbols-outlined { font-size: 16px; }
   }
 }
@@ -297,18 +301,21 @@
     height: 36px;
     padding: 0 56px 0 36px;
     background: var(--qos-bg-sunken);
-    border: 1px solid transparent;
+    border: 1px solid var(--qos-border-subtle);
     border-radius: var(--qos-radius-md);
     color: var(--qos-fg-primary);
     font-size: var(--qos-fs-sm);
     font-family: inherit;
-    transition: background var(--qos-motion-fast), border-color var(--qos-motion-fast);
+    transition: background var(--qos-motion-fast),
+                border-color var(--qos-motion-fast),
+                box-shadow var(--qos-motion-fast);
 
     &::placeholder { color: var(--qos-fg-tertiary); }
-    &:hover { background: var(--qos-bg-hover); }
+    &:hover { border-color: var(--qos-border-default); }
     &:focus {
       background: var(--qos-bg-elevated);
-      border-color: var(--qos-border-default);
+      border-color: var(--qos-accent-bg);
+      box-shadow: var(--qos-ring-focus);
       outline: none;
     }
   }
