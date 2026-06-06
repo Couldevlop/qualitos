@@ -7630,6 +7630,66 @@ historique 12 mois</source>
         <source>Erreur lors de la transition.</source>
         <target state="translated">状态转换时出错。</target>
       </trans-unit>
+      <trans-unit id="nc.photos.add" datatype="html">
+        <source>Ajouter une photo</source>
+        <target state="translated">添加照片</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.empty" datatype="html">
+        <source>Aucune photo. Ajoutez une vue terrain depuis la caméra ou la galerie.</source>
+        <target state="translated">暂无照片。请从相机或图库添加现场视图。</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.delete-tooltip" datatype="html">
+        <source>Supprimer la photo</source>
+        <target state="translated">删除照片</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.delete-confirm-title" datatype="html">
+        <source>Supprimer cette photo ?</source>
+        <target state="translated">删除此照片？</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.delete-confirm-message" datatype="html">
+        <source>La photo sera définitivement supprimée du stockage. Cette action est irréversible.</source>
+        <target state="translated">照片将从存储中永久删除。此操作不可撤销。</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.delete-success" datatype="html">
+        <source>Photo supprimée.</source>
+        <target state="translated">已删除照片。</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.delete-error" datatype="html">
+        <source>Échec de la suppression de la photo.</source>
+        <target state="translated">删除照片失败。</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.upload-success" datatype="html">
+        <source>Photo ajoutée.</source>
+        <target state="translated">已添加照片。</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.upload-error" datatype="html">
+        <source>Échec de l'ajout de la photo.</source>
+        <target state="translated">添加照片失败。</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.upload-rejected" datatype="html">
+        <source>Fichier refusé — image (JPEG, PNG, WebP, HEIC) de 10 Mo maximum.</source>
+        <target state="translated">文件被拒绝——图片（JPEG、PNG、WebP、HEIC）最大 10 MB。</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.upload-closed" datatype="html">
+        <source>Impossible d'ajouter une photo à une non-conformité clôturée ou annulée.</source>
+        <target state="translated">无法向已关闭或已取消的不合格项添加照片。</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.storage-disabled" datatype="html">
+        <source>Stockage de photos non configuré sur cet environnement.</source>
+        <target state="translated">此环境未配置照片存储。</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.offline-tooltip" datatype="html">
+        <source>Photos disponibles en ligne uniquement</source>
+        <target state="translated">照片仅在线时可用</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.offline-note" datatype="html">
+        <source>Hors-ligne : l'ajout de photos est disponible uniquement en ligne.</source>
+        <target state="translated">离线：仅在线时可添加照片。</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.legacy-subtitle" datatype="html">
+        <source>URLs renseignées (sans envoi de fichier)</source>
+        <target state="translated">已填写的 URL（未上传文件）</target>
+      </trans-unit>
       <trans-unit id="nc.resolve.title" datatype="html">
         <source>Résoudre la non-conformité</source>
         <target state="translated">解决不合格项</target>

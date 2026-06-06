@@ -70,6 +70,23 @@ TRANSLATIONS = {
     'nc.detail.transition-success': ('Statut mis à jour.', 'Status updated.', 'Estado actualizado.', 'تم تحديث الحالة.', 'ステータスを更新しました。', '状态已更新。'),
     'nc.detail.transition-error': ('Erreur lors de la transition.', 'Error during the transition.', 'Error durante la transición.', 'خطأ أثناء الانتقال.', '遷移中にエラーが発生しました。', '状态转换时出错。'),
 
+    # --- photos (upload binaire) ---------------------------------------------
+    'nc.photos.add': ('Ajouter une photo', 'Add a photo', 'Añadir una foto', 'إضافة صورة', '写真を追加', '添加照片'),
+    'nc.photos.empty': ('Aucune photo. Ajoutez une vue terrain depuis la caméra ou la galerie.', 'No photos. Add a field view from the camera or gallery.', 'Sin fotos. Añade una vista de campo desde la cámara o la galería.', 'لا توجد صور. أضف لقطة ميدانية من الكاميرا أو المعرض.', '写真がありません。カメラまたはギャラリーから現場の画像を追加してください。', '暂无照片。请从相机或图库添加现场视图。'),
+    'nc.photos.delete-tooltip': ('Supprimer la photo', 'Delete the photo', 'Eliminar la foto', 'حذف الصورة', '写真を削除', '删除照片'),
+    'nc.photos.delete-confirm-title': ('Supprimer cette photo ?', 'Delete this photo?', '¿Eliminar esta foto?', 'حذف هذه الصورة؟', 'この写真を削除しますか？', '删除此照片？'),
+    'nc.photos.delete-confirm-message': ('La photo sera définitivement supprimée du stockage. Cette action est irréversible.', 'The photo will be permanently deleted from storage. This action cannot be undone.', 'La foto se eliminará permanentemente del almacenamiento. Esta acción es irreversible.', 'سيتم حذف الصورة نهائيًا من التخزين. لا يمكن التراجع عن هذا الإجراء.', '写真はストレージから完全に削除されます。この操作は取り消せません。', '照片将从存储中永久删除。此操作不可撤销。'),
+    'nc.photos.delete-success': ('Photo supprimée.', 'Photo deleted.', 'Foto eliminada.', 'تم حذف الصورة.', '写真を削除しました。', '已删除照片。'),
+    'nc.photos.delete-error': ('Échec de la suppression de la photo.', 'Failed to delete the photo.', 'Error al eliminar la foto.', 'فشل حذف الصورة.', '写真の削除に失敗しました。', '删除照片失败。'),
+    'nc.photos.upload-success': ('Photo ajoutée.', 'Photo added.', 'Foto añadida.', 'تمت إضافة الصورة.', '写真を追加しました。', '已添加照片。'),
+    'nc.photos.upload-error': ("Échec de l'ajout de la photo.", 'Failed to add the photo.', 'Error al añadir la foto.', 'فشل إضافة الصورة.', '写真の追加に失敗しました。', '添加照片失败。'),
+    'nc.photos.upload-rejected': ('Fichier refusé — image (JPEG, PNG, WebP, HEIC) de 10 Mo maximum.', 'File rejected — image (JPEG, PNG, WebP, HEIC) up to 10 MB.', 'Archivo rechazado — imagen (JPEG, PNG, WebP, HEIC) de 10 MB como máximo.', 'تم رفض الملف — صورة (JPEG، PNG، WebP، HEIC) بحد أقصى 10 ميغابايت.', 'ファイルが拒否されました — 画像（JPEG、PNG、WebP、HEIC）は最大10MBです。', '文件被拒绝——图片（JPEG、PNG、WebP、HEIC）最大 10 MB。'),
+    'nc.photos.upload-closed': ("Impossible d'ajouter une photo à une non-conformité clôturée ou annulée.", 'Cannot add a photo to a closed or cancelled non-conformance.', 'No se puede añadir una foto a una no conformidad cerrada o cancelada.', 'لا يمكن إضافة صورة إلى عدم مطابقة مغلقة أو ملغاة.', 'クローズまたはキャンセルされた不適合には写真を追加できません。', '无法向已关闭或已取消的不合格项添加照片。'),
+    'nc.photos.storage-disabled': ('Stockage de photos non configuré sur cet environnement.', 'Photo storage is not configured on this environment.', 'El almacenamiento de fotos no está configurado en este entorno.', 'لم يتم تكوين تخزين الصور في هذه البيئة.', 'この環境では写真ストレージが設定されていません。', '此环境未配置照片存储。'),
+    'nc.photos.offline-tooltip': ('Photos disponibles en ligne uniquement', 'Photos available online only', 'Fotos disponibles solo en línea', 'الصور متاحة عبر الإنترنت فقط', '写真はオンラインでのみ利用可能', '照片仅在线时可用'),
+    'nc.photos.offline-note': ("Hors-ligne : l'ajout de photos est disponible uniquement en ligne.", 'Offline: adding photos is available online only.', 'Sin conexión: añadir fotos solo está disponible en línea.', 'دون اتصال: إضافة الصور متاحة عبر الإنترنت فقط.', 'オフライン：写真の追加はオンライン時のみ利用できます。', '离线：仅在线时可添加照片。'),
+    'nc.photos.legacy-subtitle': ('URLs renseignées (sans envoi de fichier)', 'Entered URLs (without file upload)', 'URLs introducidas (sin subir archivo)', 'روابط مُدخَلة (بدون رفع ملف)', '入力されたURL（ファイルアップロードなし）', '已填写的 URL（未上传文件）'),
+
     # --- résolution ----------------------------------------------------------
     'nc.resolve.title': ('Résoudre la non-conformité', 'Resolve the non-conformance', 'Resolver la no conformidad', 'حل عدم المطابقة', '不適合を解決', '解决不合格项'),
     'nc.resolve.hint': ("Décris l'action menée et la preuve d'efficacité pour clôturer la résolution de", 'Describe the action taken and the evidence of effectiveness to close the resolution of', 'Describe la acción realizada y la prueba de eficacia para cerrar la resolución de', 'صِف الإجراء المُتّخذ ودليل الفعالية لإغلاق حل', '実施した処置と有効性の証拠を記述して解決をクローズします：', '描述已采取的措施及有效性证据，以关闭以下项的解决：'),

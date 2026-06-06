@@ -7630,6 +7630,66 @@ historique 12 mois</source>
         <source>Erreur lors de la transition.</source>
         <target state="translated">خطأ أثناء الانتقال.</target>
       </trans-unit>
+      <trans-unit id="nc.photos.add" datatype="html">
+        <source>Ajouter une photo</source>
+        <target state="translated">إضافة صورة</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.empty" datatype="html">
+        <source>Aucune photo. Ajoutez une vue terrain depuis la caméra ou la galerie.</source>
+        <target state="translated">لا توجد صور. أضف لقطة ميدانية من الكاميرا أو المعرض.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.delete-tooltip" datatype="html">
+        <source>Supprimer la photo</source>
+        <target state="translated">حذف الصورة</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.delete-confirm-title" datatype="html">
+        <source>Supprimer cette photo ?</source>
+        <target state="translated">حذف هذه الصورة؟</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.delete-confirm-message" datatype="html">
+        <source>La photo sera définitivement supprimée du stockage. Cette action est irréversible.</source>
+        <target state="translated">سيتم حذف الصورة نهائيًا من التخزين. لا يمكن التراجع عن هذا الإجراء.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.delete-success" datatype="html">
+        <source>Photo supprimée.</source>
+        <target state="translated">تم حذف الصورة.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.delete-error" datatype="html">
+        <source>Échec de la suppression de la photo.</source>
+        <target state="translated">فشل حذف الصورة.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.upload-success" datatype="html">
+        <source>Photo ajoutée.</source>
+        <target state="translated">تمت إضافة الصورة.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.upload-error" datatype="html">
+        <source>Échec de l'ajout de la photo.</source>
+        <target state="translated">فشل إضافة الصورة.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.upload-rejected" datatype="html">
+        <source>Fichier refusé — image (JPEG, PNG, WebP, HEIC) de 10 Mo maximum.</source>
+        <target state="translated">تم رفض الملف — صورة (JPEG، PNG، WebP، HEIC) بحد أقصى 10 ميغابايت.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.upload-closed" datatype="html">
+        <source>Impossible d'ajouter une photo à une non-conformité clôturée ou annulée.</source>
+        <target state="translated">لا يمكن إضافة صورة إلى عدم مطابقة مغلقة أو ملغاة.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.storage-disabled" datatype="html">
+        <source>Stockage de photos non configuré sur cet environnement.</source>
+        <target state="translated">لم يتم تكوين تخزين الصور في هذه البيئة.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.offline-tooltip" datatype="html">
+        <source>Photos disponibles en ligne uniquement</source>
+        <target state="translated">الصور متاحة عبر الإنترنت فقط</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.offline-note" datatype="html">
+        <source>Hors-ligne : l'ajout de photos est disponible uniquement en ligne.</source>
+        <target state="translated">دون اتصال: إضافة الصور متاحة عبر الإنترنت فقط.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.legacy-subtitle" datatype="html">
+        <source>URLs renseignées (sans envoi de fichier)</source>
+        <target state="translated">روابط مُدخَلة (بدون رفع ملف)</target>
+      </trans-unit>
       <trans-unit id="nc.resolve.title" datatype="html">
         <source>Résoudre la non-conformité</source>
         <target state="translated">حل عدم المطابقة</target>

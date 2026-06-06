@@ -11,6 +11,7 @@ import {
   EscalateCapaNcRequest,
   NcCategory,
   NcPage,
+  NcPhoto,
   NcResponse,
   NcSeverity,
   NcStatus,
@@ -169,6 +170,51 @@ export class NcService {
     return this.http.post<NcResponse>(`${this.endpoint}/${id}/escalate-capa`, input);
   }
 
+  // ---- photos (upload binaire, ONLINE-ONLY ce sprint) ------------------------
+  // Contrairement à createNc, l'upload de fichiers ne bascule PAS en file
+  // hors-ligne : un binaire ne se sérialise pas raisonnablement dans IndexedDB
+  // de la file existante (voir docs/web-pwa-offline.md § limites). L'UI désactive
+  // le bouton d'ajout hors-ligne ; l'erreur réseau est propagée telle quelle.
+
+  /** Liste les photos d'une NC (URLs présignées ~15 min). */
+  listPhotos(ncId: string): Observable<NcPhoto[]> {
+    if (environment.useMockApi) {
+      return of(this.mockPhotos(ncId)).pipe(delay(120));
+    }
+    return this.http.get<NcPhoto[]>(`${this.endpoint}/${ncId}/photos`);
+  }
+
+  /** Téléverse une photo (multipart, champ 'file'). 201 → métadonnées de la photo. */
+  uploadPhoto(ncId: string, file: File): Observable<NcPhoto> {
+    if (environment.useMockApi) {
+      const now = new Date().toISOString();
+      const photo: NcPhoto = {
+        id: 'photo-' + Math.random().toString(36).slice(2, 9),
+        url: URL.createObjectURL(file),
+        contentType: file.type || 'application/octet-stream',
+        sizeBytes: file.size,
+        originalFilename: file.name,
+        createdAt: now
+      };
+      this.mockPhotoStore(ncId).unshift(photo);
+      return of(photo).pipe(delay(250));
+    }
+    const form = new FormData();
+    form.append('file', file, file.name);
+    return this.http.post<NcPhoto>(`${this.endpoint}/${ncId}/photos`, form);
+  }
+
+  /** Supprime une photo. 204 → void. */
+  deletePhoto(ncId: string, photoId: string): Observable<void> {
+    if (environment.useMockApi) {
+      const store = this.mockPhotoStore(ncId);
+      const idx = store.findIndex(p => p.id === photoId);
+      if (idx >= 0) store.splice(idx, 1);
+      return of(void 0).pipe(delay(120));
+    }
+    return this.http.delete<void>(`${this.endpoint}/${ncId}/photos/${photoId}`);
+  }
+
   private transition(
     id: string,
     targetStatus: NcStatus,
@@ -218,6 +264,19 @@ export class NcService {
   /** status 0 = la requête n'a pas atteint le serveur (coupure pendant l'envoi). */
   private isNetworkError(err: unknown): boolean {
     return err instanceof HttpErrorResponse && err.status === 0;
+  }
+
+  /** Mémoire de photos par NC (mock mode uniquement). */
+  private readonly mockPhotoStores = new Map<string, NcPhoto[]>();
+
+  private mockPhotoStore(ncId: string): NcPhoto[] {
+    let store = this.mockPhotoStores.get(ncId);
+    if (!store) { store = []; this.mockPhotoStores.set(ncId, store); }
+    return store;
+  }
+
+  private mockPhotos(ncId: string): NcPhoto[] {
+    return [...this.mockPhotoStore(ncId)];
   }
 
   private mockPage(filters: NcListFilters): NcPage {

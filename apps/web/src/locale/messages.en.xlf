@@ -7630,6 +7630,66 @@ declared income
         <source>Erreur lors de la transition.</source>
         <target state="translated">Error during the transition.</target>
       </trans-unit>
+      <trans-unit id="nc.photos.add" datatype="html">
+        <source>Ajouter une photo</source>
+        <target state="translated">Add a photo</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.empty" datatype="html">
+        <source>Aucune photo. Ajoutez une vue terrain depuis la caméra ou la galerie.</source>
+        <target state="translated">No photos. Add a field view from the camera or gallery.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.delete-tooltip" datatype="html">
+        <source>Supprimer la photo</source>
+        <target state="translated">Delete the photo</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.delete-confirm-title" datatype="html">
+        <source>Supprimer cette photo ?</source>
+        <target state="translated">Delete this photo?</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.delete-confirm-message" datatype="html">
+        <source>La photo sera définitivement supprimée du stockage. Cette action est irréversible.</source>
+        <target state="translated">The photo will be permanently deleted from storage. This action cannot be undone.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.delete-success" datatype="html">
+        <source>Photo supprimée.</source>
+        <target state="translated">Photo deleted.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.delete-error" datatype="html">
+        <source>Échec de la suppression de la photo.</source>
+        <target state="translated">Failed to delete the photo.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.upload-success" datatype="html">
+        <source>Photo ajoutée.</source>
+        <target state="translated">Photo added.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.upload-error" datatype="html">
+        <source>Échec de l'ajout de la photo.</source>
+        <target state="translated">Failed to add the photo.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.upload-rejected" datatype="html">
+        <source>Fichier refusé — image (JPEG, PNG, WebP, HEIC) de 10 Mo maximum.</source>
+        <target state="translated">File rejected — image (JPEG, PNG, WebP, HEIC) up to 10 MB.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.upload-closed" datatype="html">
+        <source>Impossible d'ajouter une photo à une non-conformité clôturée ou annulée.</source>
+        <target state="translated">Cannot add a photo to a closed or cancelled non-conformance.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.storage-disabled" datatype="html">
+        <source>Stockage de photos non configuré sur cet environnement.</source>
+        <target state="translated">Photo storage is not configured on this environment.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.offline-tooltip" datatype="html">
+        <source>Photos disponibles en ligne uniquement</source>
+        <target state="translated">Photos available online only</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.offline-note" datatype="html">
+        <source>Hors-ligne : l'ajout de photos est disponible uniquement en ligne.</source>
+        <target state="translated">Offline: adding photos is available online only.</target>
+      </trans-unit>
+      <trans-unit id="nc.photos.legacy-subtitle" datatype="html">
+        <source>URLs renseignées (sans envoi de fichier)</source>
+        <target state="translated">Entered URLs (without file upload)</target>
+      </trans-unit>
       <trans-unit id="nc.resolve.title" datatype="html">
         <source>Résoudre la non-conformité</source>
         <target state="translated">Resolve the non-conformance</target>
