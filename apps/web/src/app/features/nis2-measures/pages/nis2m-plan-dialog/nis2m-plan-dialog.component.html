@@ -1,24 +1,26 @@
 <qos-form-dialog
   title="Planifier une mesure NIS 2"
+  i18n-title="@@nis2-measures.plan.title"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitLabel="Planifier"
+  i18n-submitLabel="@@nis2-measures.plan.submit"
   submitIcon="add_task"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="hint">La mesure démarre en statut <strong>PLANNED</strong>. Précisez la
+  <p class="hint" i18n="@@nis2-measures.plan.hint">La mesure démarre en statut <strong>PLANNED</strong>. Précisez la
      catégorie Art. 21 visée, la maturité actuelle et le risque résiduel attendu.</p>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Référence interne</mat-label>
+      <mat-label i18n="@@nis2-measures.plan.internal-reference">Référence interne</mat-label>
       <input matInput formControlName="reference" maxlength="64" required
              placeholder="NIS2-CAT-NNN">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Catégorie Art. 21</mat-label>
+      <mat-label i18n="@@nis2-measures.list.category-art21">Catégorie Art. 21</mat-label>
       <mat-select formControlName="category" required>
         <mat-option *ngFor="let c of categories" [value]="c">{{ categoryLabel[c] }}</mat-option>
       </mat-select>
@@ -26,46 +28,46 @@
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre</mat-label>
+    <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="250" required>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description</mat-label>
+    <mat-label i18n="@@common.description">Description</mat-label>
     <textarea matInput formControlName="description" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>UUID propriétaire (optionnel)</mat-label>
+      <mat-label i18n="@@nis2-measures.plan.owner-uuid">UUID propriétaire (optionnel)</mat-label>
       <input matInput formControlName="ownerUserId"
              placeholder="00000000-0000-0000-0000-000000000000">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col-3">
-      <mat-label>Maturité (1-5)</mat-label>
+      <mat-label i18n="@@nis2-measures.plan.maturity">Maturité (1-5)</mat-label>
       <input matInput type="number" formControlName="maturityLevel" min="1" max="5" required>
     </mat-form-field>
   </div>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Risque résiduel</mat-label>
+      <mat-label i18n="@@nis2-measures.plan.residual-risk">Risque résiduel</mat-label>
       <mat-select formControlName="residualRiskRating" required>
         <mat-option *ngFor="let r of risks" [value]="r">{{ r }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Intervalle de revue (jours)</mat-label>
+      <mat-label i18n="@@nis2-measures.plan.review-interval">Intervalle de revue (jours)</mat-label>
       <input matInput type="number" formControlName="reviewIntervalDays" min="30" max="1095" required>
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full critical" *ngIf="isCritical()">
-    <mat-label>Justification du risque CRITICAL (obligatoire)</mat-label>
+    <mat-label i18n="@@nis2-measures.plan.critical-justification">Justification du risque CRITICAL (obligatoire)</mat-label>
     <textarea matInput formControlName="criticalRiskJustification" rows="3" maxlength="4000" required></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>URLs de preuves (une par ligne)</mat-label>
+    <mat-label i18n="@@nis2-measures.plan.evidence-urls">URLs de preuves (une par ligne)</mat-label>
     <textarea matInput formControlName="evidenceUrlsRaw" rows="3"
               placeholder="https://wiki.qualitos.local/security/mfa-policy.pdf"></textarea>
     <mat-error *ngIf="form.controls.evidenceUrlsRaw.errors?.['lines']">
@@ -75,14 +77,14 @@
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Activités de traitement liées (UUID par ligne)</mat-label>
+      <mat-label i18n="@@nis2-measures.plan.linked-activities">Activités de traitement liées (UUID par ligne)</mat-label>
       <textarea matInput formControlName="linkedActivitiesRaw" rows="3"></textarea>
       <mat-error *ngIf="form.controls.linkedActivitiesRaw.errors?.['lines']">
         {{ form.controls.linkedActivitiesRaw.errors?.['lines'] }}
       </mat-error>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>DPA sous-traitants liés (UUID par ligne)</mat-label>
+      <mat-label i18n="@@nis2-measures.plan.linked-agreements">DPA sous-traitants liés (UUID par ligne)</mat-label>
       <textarea matInput formControlName="linkedAgreementsRaw" rows="3"></textarea>
       <mat-error *ngIf="form.controls.linkedAgreementsRaw.errors?.['lines']">
         {{ form.controls.linkedAgreementsRaw.errors?.['lines'] }}
@@ -91,7 +93,7 @@
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Notes (optionnel)</mat-label>
+    <mat-label i18n="@@nis2-measures.plan.notes">Notes (optionnel)</mat-label>
     <textarea matInput formControlName="notes" rows="2" maxlength="4000"></textarea>
   </mat-form-field>
 

@@ -1,40 +1,43 @@
 <qos-form-dialog
+  i18n-title="@@suppliers.create.title"
   title="Nouveau fournisseur"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.create"
   submitLabel="Créer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
     <div class="row">
       <mat-form-field appearance="outline" class="col col-code">
-        <mat-label>Code</mat-label>
+        <mat-label i18n="@@suppliers.list.col-code">Code</mat-label>
         <input matInput formControlName="code" maxlength="120" required
+               i18n-placeholder="@@suppliers.create.code-placeholder"
                placeholder="Ex. : STEEL-FR-001">
-        <mat-hint>A-Z, 0-9, point, tiret, underscore</mat-hint>
+        <mat-hint i18n="@@documents.create.code-hint">A-Z, 0-9, point, tiret, underscore</mat-hint>
       </mat-form-field>
       <mat-form-field appearance="outline" class="col col-country">
-        <mat-label>Pays (ISO-2)</mat-label>
+        <mat-label i18n="@@suppliers.create.country">Pays (ISO-2)</mat-label>
         <input matInput formControlName="countryCode" maxlength="2"
                placeholder="FR, DE, US…">
       </mat-form-field>
     </div>
 
     <mat-form-field appearance="outline" class="full">
-      <mat-label>Raison sociale</mat-label>
+      <mat-label i18n="@@suppliers.create.legal-name">Raison sociale</mat-label>
       <input matInput formControlName="name" maxlength="250" required>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full">
-      <mat-label>Type</mat-label>
+      <mat-label i18n="@@common.type">Type</mat-label>
       <mat-select formControlName="supplierType" required>
         <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full">
-      <mat-label>Email contact qualité</mat-label>
+      <mat-label i18n="@@suppliers.create.contact-email">Email contact qualité</mat-label>
       <input matInput formControlName="contactEmail" type="email" maxlength="320">
     </mat-form-field>
 

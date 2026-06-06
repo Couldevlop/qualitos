@@ -1,41 +1,43 @@
 <qos-form-dialog
+  i18n-title="@@suppliers.audit.title"
   title="Nouvel audit fournisseur"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.save"
   submitLabel="Enregistrer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
     <div class="row">
       <mat-form-field appearance="outline" class="col">
-        <mat-label>Date de l'audit</mat-label>
+        <mat-label i18n="@@suppliers.audit.audited-on">Date de l'audit</mat-label>
         <input matInput formControlName="auditedOn" type="date" required>
       </mat-form-field>
       <mat-form-field appearance="outline" class="col col-small">
-        <mat-label>Score (0-100)</mat-label>
+        <mat-label i18n="@@suppliers.audit.score">Score (0-100)</mat-label>
         <input matInput formControlName="score" type="number" min="0" max="100" required>
       </mat-form-field>
     </div>
 
-    <h3 class="section">Constats</h3>
+    <h3 class="section" i18n="@@suppliers.audit.findings">Constats</h3>
     <div class="row">
       <mat-form-field appearance="outline" class="col-small">
-        <mat-label>Critiques</mat-label>
+        <mat-label i18n="@@suppliers.audit.critical">Critiques</mat-label>
         <input matInput formControlName="criticalFindingsCount" type="number" min="0">
       </mat-form-field>
       <mat-form-field appearance="outline" class="col-small">
-        <mat-label>Majeurs</mat-label>
+        <mat-label i18n="@@suppliers.audit.major">Majeurs</mat-label>
         <input matInput formControlName="majorFindingsCount" type="number" min="0">
       </mat-form-field>
       <mat-form-field appearance="outline" class="col-small">
-        <mat-label>Mineurs</mat-label>
+        <mat-label i18n="@@suppliers.audit.minor">Mineurs</mat-label>
         <input matInput formControlName="minorFindingsCount" type="number" min="0">
       </mat-form-field>
     </div>
 
     <mat-form-field appearance="outline" class="full">
-      <mat-label>Synthèse des constats</mat-label>
+      <mat-label i18n="@@suppliers.audit.findings-summary">Synthèse des constats</mat-label>
       <textarea matInput formControlName="findingsSummary" rows="4" maxlength="2000"></textarea>
     </mat-form-field>
 

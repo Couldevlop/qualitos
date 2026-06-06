@@ -31,6 +31,13 @@ export class DpoDetailComponent implements OnInit {
   loading$ = new BehaviorSubject<boolean>(false);
   error$   = new BehaviorSubject<string | null>(null);
 
+  readonly editTooltip         = $localize`:@@common.edit:Modifier`;
+  readonly editTooltipLocked   = $localize`:@@dpo-appointments.detail.edit-tooltip-locked:Non éditable dans cet état`;
+  readonly removeTooltip       = $localize`:@@dpo-appointments.detail.delete-tooltip-proposed:Supprimer la proposition`;
+  readonly removeTooltipLocked = $localize`:@@dpo-appointments.detail.delete-tooltip-proposed-only:Seule une PROPOSED peut être supprimée`;
+  readonly cancelReasonTitle   = $localize`:@@dpo-appointments.detail.cancel-reason-title:Motif d'annulation`;
+  readonly endReasonTitle      = $localize`:@@dpo-appointments.detail.end-reason-title:Motif de fin de mandat`;
+
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
 
   constructor(
@@ -48,7 +55,7 @@ export class DpoDetailComponent implements OnInit {
         const id = p.get('id') ?? '';
         // OWASP A03 — UUID v4 regex on path id (mock-id fallback).
         if (!UUID_REGEX.test(id) && !id.startsWith('dpo-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
@@ -57,7 +64,7 @@ export class DpoDetailComponent implements OnInit {
             catchError(err => {
               // eslint-disable-next-line no-console
               console.warn('[dpo-detail] failed', err?.status, err?.error?.title);
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             }),
             tap(() => this.loading$.next(false))
@@ -70,7 +77,7 @@ export class DpoDetailComponent implements OnInit {
   openEdit(a: DpoAppointmentView): void {
     // OWASP A04 — édition limitée à PROPOSED/ACTIVE (mirror backend).
     if (a.status !== 'PROPOSED' && a.status !== 'ACTIVE') {
-      this.snack.open('La fiche n\'est éditable qu\'en PROPOSED ou ACTIVE.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@dpo-appointments.detail.only-proposed-active-editable:La fiche n'est éditable qu'en PROPOSED ou ACTIVE.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(DpoEditDialogComponent, {
@@ -107,32 +114,36 @@ export class DpoDetailComponent implements OnInit {
   remove(a: DpoAppointmentView): void {
     // OWASP A04 — only PROPOSED can be deleted (mirror backend).
     if (a.status !== 'PROPOSED') {
-      this.snack.open('Seule une désignation PROPOSED peut être supprimée.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@dpo-appointments.detail.only-proposed-deletable:Seule une désignation PROPOSED peut être supprimée.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer la proposition ?',
+        title: $localize`:@@dpo-appointments.detail.delete-confirm-title:Supprimer la proposition ?`,
         message: 'Suppression définitive de « ' + a.reference + ' » (statut PROPOSED).',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(a.id).subscribe({
-        next: () => { this.snack.open('Proposition supprimée.', 'OK', { duration: 2200 }); this.router.navigate(['/dpo-appointments']); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        next: () => { this.snack.open($localize`:@@dpo-appointments.detail.proposal-deleted:Proposition supprimée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/dpo-appointments']); },
+        error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
       });
     });
   }
 
-  typeLabel(t: DpoType): string { return t === 'INTERNAL' ? 'Interne (salarié)' : 'Externe (prestataire)'; }
+  typeLabel(t: DpoType): string {
+    return t === 'INTERNAL'
+      ? $localize`:@@dpo-appointments.type-internal:Interne (salarié)`
+      : $localize`:@@dpo-appointments.type-external:Externe (prestataire)`;
+  }
   typeBadge(t: DpoType): string { return 'type-badge type-' + t.toLowerCase(); }
   statusBadge(s: DpoAppointmentStatus): string { return 'badge badge-' + s.toLowerCase(); }
 
   private fail(err: unknown, fallback: string): void {
     // eslint-disable-next-line no-console
     console.warn('[dpo-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
-    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+    this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 4000 });
   }
 }

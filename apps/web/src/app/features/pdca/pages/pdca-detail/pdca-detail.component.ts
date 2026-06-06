@@ -45,7 +45,7 @@ export class PdcaDetailComponent implements OnInit {
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('id') ?? '';
     if (!UUID_RE.test(raw)) {
-      this.snack.open($localize`:@@common.invalid-id:Identifiant invalide.`, 'OK', { duration: 3000 });
+      this.snack.open($localize`:@@common.invalid-id:Identifiant invalide.`, $localize`:@@common.ok:OK`, { duration: 3000 });
       this.router.navigate(['/pdca']);
       return;
     }
@@ -104,7 +104,7 @@ export class PdcaDetailComponent implements OnInit {
       .pipe(finalize(() => this.acting$.next(false)))
       .subscribe({
         next: () => {
-          this.snack.open($localize`:@@pdca.detail.advanced:Cycle avancé.`, 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@pdca.detail.advanced:Cycle avancé.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.reload$.next();
         },
         error: err => {
@@ -124,7 +124,7 @@ export class PdcaDetailComponent implements OnInit {
       .pipe(finalize(() => this.acting$.next(false)))
       .subscribe({
         next: () => {
-          this.snack.open($localize`:@@pdca.detail.cancelled:Cycle annulé.`, 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@pdca.detail.cancelled:Cycle annulé.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.reload$.next();
         },
         error: err => {

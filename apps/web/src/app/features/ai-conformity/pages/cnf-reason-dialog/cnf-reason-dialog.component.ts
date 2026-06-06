@@ -36,7 +36,9 @@ export class CnfReasonDialogComponent {
   ) {}
 
   get title(): string {
-    return this.data.mode === 'REVOKE' ? 'Révoquer le certificat' : 'Marquer en échec';
+    return this.data.mode === 'REVOKE'
+      ? $localize`:@@ai-conformity.reason.revoke-title:Révoquer le certificat`
+      : $localize`:@@ai-conformity.reason.fail-title:Marquer en échec`;
   }
 
   submit(): void {

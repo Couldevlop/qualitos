@@ -1,5 +1,5 @@
 <div class="qos-page" *ngIf="!error; else errTpl">
-  <a routerLink="/standards" class="back">← Standards Hub</a>
+  <a routerLink="/standards" class="back" i18n="@@standards.detail.back">← Standards Hub</a>
 
   <header class="page-header" *ngIf="adoption as a">
     <div class="title-row">
@@ -8,39 +8,39 @@
     </div>
     <p>{{ a.standardName }}</p>
     <p class="meta">
-      Périmètre : <strong>{{ a.scopeDescription || '—' }}</strong>
-      · Organisme : <strong>{{ a.certificationBody || '—' }}</strong>
-      · Cible : <strong>{{ a.targetCertificationDate ? (a.targetCertificationDate | date) : '—' }}</strong>
+      <span i18n="@@standards.detail.meta-scope">Périmètre :</span> <strong>{{ a.scopeDescription || '—' }}</strong>
+      · <span i18n="@@standards.detail.meta-body">Organisme :</span> <strong>{{ a.certificationBody || '—' }}</strong>
+      · <span i18n="@@standards.detail.meta-target">Cible :</span> <strong>{{ a.targetCertificationDate ? (a.targetCertificationDate | date) : '—' }}</strong>
     </p>
   </header>
 
   <!-- KPI cards -->
   <div class="kpi-row" *ngIf="!loading">
     <mat-card class="kpi">
-      <span class="kpi-label">Préparation audit (MUST)</span>
+      <span class="kpi-label" i18n="@@standards.detail.kpi-readiness">Préparation audit (MUST)</span>
       <span class="kpi-value" [ngClass]="scoreClass(audit?.readinessScore ?? 0)">
         {{ (audit?.readinessScore ?? 0) | number:'1.0-0' }}%
       </span>
       <mat-progress-bar mode="determinate" [value]="audit?.readinessScore ?? 0"></mat-progress-bar>
     </mat-card>
     <mat-card class="kpi">
-      <span class="kpi-label">Alignement global</span>
+      <span class="kpi-label" i18n="@@standards.detail.kpi-alignment">Alignement global</span>
       <span class="kpi-value" [ngClass]="scoreClass(alignment?.overallScore ?? 0)">
         {{ (alignment?.overallScore ?? 0) | number:'1.0-0' }}%
       </span>
       <mat-progress-bar mode="determinate" [value]="alignment?.overallScore ?? 0"></mat-progress-bar>
     </mat-card>
     <mat-card class="kpi">
-      <span class="kpi-label">Roadmap</span>
+      <span class="kpi-label" i18n="@@standards.detail.kpi-roadmap">Roadmap</span>
       <span class="kpi-value" [ngClass]="scoreClass(roadmap?.completionPercent ?? 0)">
         {{ (roadmap?.completionPercent ?? 0) | number:'1.0-0' }}%
       </span>
       <mat-progress-bar mode="determinate" [value]="roadmap?.completionPercent ?? 0"></mat-progress-bar>
     </mat-card>
     <mat-card class="kpi">
-      <span class="kpi-label">Écarts critiques</span>
+      <span class="kpi-label" i18n="@@standards.detail.kpi-critical-gaps">Écarts critiques</span>
       <span class="kpi-value bad">{{ audit?.criticalGaps ?? 0 }}</span>
-      <span class="kpi-sub">{{ audit?.majorGaps ?? 0 }} majeurs · {{ audit?.minorGaps ?? 0 }} mineurs</span>
+      <span class="kpi-sub">{{ audit?.majorGaps ?? 0 }} <span i18n="@@standards.detail.kpi-majors">majeurs</span> · {{ audit?.minorGaps ?? 0 }} <span i18n="@@standards.detail.kpi-minors">mineurs</span></span>
     </mat-card>
   </div>
 
@@ -50,7 +50,7 @@
                  [(selectedIndex)]="selectedTab">
 
     <!-- Onglet Exigences -->
-    <mat-tab label="Exigences">
+    <mat-tab label="Exigences" i18n-label="@@standards.detail.tab-requirements">
       <div class="tab-body" *ngIf="standard as s">
         <div class="section" *ngFor="let sec of s.sections">
           <h3>§{{ sec.code }} — {{ sec.title }}</h3>
@@ -66,12 +66,12 @@
                   <span class="risk" *ngIf="r.riskIfMissing" [ngClass]="'risk-' + r.riskIfMissing">{{ r.riskIfMissing }}</span>
                 </td>
                 <td class="req-text">{{ r.text }}
-                  <div class="req-evid" *ngIf="r.evidenceTypes">Preuve attendue : {{ r.evidenceTypes }}</div>
+                  <div class="req-evid" *ngIf="r.evidenceTypes"><span i18n="@@standards.detail.req-evidence-expected">Preuve attendue :</span> {{ r.evidenceTypes }}</div>
                 </td>
                 <td class="req-cov">
-                  <span class="cov-ok" *ngIf="coveredRequirementIds.has(r.id); else notcov">✓ couverte</span>
+                  <span class="cov-ok" *ngIf="coveredRequirementIds.has(r.id); else notcov" i18n="@@standards.detail.req-covered">✓ couverte</span>
                   <ng-template #notcov>
-                    <button mat-button class="cover-btn" (click)="coverRequirement(r.id)">+ preuve</button>
+                    <button mat-button class="cover-btn" (click)="coverRequirement(r.id)" i18n="@@standards.detail.req-add-evidence">+ preuve</button>
                   </ng-template>
                 </td>
               </tr>
@@ -82,13 +82,13 @@
     </mat-tab>
 
     <!-- Onglet Bibliothèque documentaire -->
-    <mat-tab label="Bibliothèque documentaire">
+    <mat-tab label="Bibliothèque documentaire" i18n-label="@@standards.detail.tab-doc-library">
       <div class="tab-body">
-        <p class="muted">Modèles de documents exigés par la norme, prêts à adapter et télécharger
+        <p class="muted" i18n="@@standards.detail.doc-library-intro">Modèles de documents exigés par la norme, prêts à adapter et télécharger
           (génération IA pré-remplie à venir).</p>
-        <p class="empty" *ngIf="docTemplates.length === 0">Aucun modèle catalogué pour cette norme.</p>
+        <p class="empty" *ngIf="docTemplates.length === 0" i18n="@@standards.detail.doc-library-empty">Aucun modèle catalogué pour cette norme.</p>
         <table class="catalog-table" *ngIf="docTemplates.length">
-          <thead><tr><th>Document</th><th>Catégorie</th><th>Caractère</th><th>Clauses</th><th>Format</th><th></th></tr></thead>
+          <thead><tr><th i18n="@@standards.detail.doc-col-document">Document</th><th i18n="@@standards.detail.doc-col-category">Catégorie</th><th i18n="@@standards.detail.doc-col-obligation">Caractère</th><th i18n="@@standards.detail.doc-col-clauses">Clauses</th><th i18n="@@standards.detail.doc-col-format">Format</th><th></th></tr></thead>
           <tbody>
             <tr *ngFor="let d of docTemplates">
               <td><strong>{{ d.name }}</strong><div class="muted small" *ngIf="d.description">{{ d.description }}</div></td>
@@ -99,40 +99,41 @@
               <td class="nowrap">
                 <button mat-stroked-button *ngIf="d.downloadable" (click)="downloadTemplate(d)"
                         [attr.aria-label]="'Télécharger le modèle : ' + d.name">
-                  <mat-icon aria-hidden="true">download</mat-icon> Modèle</button>
+                  <mat-icon aria-hidden="true">download</mat-icon> <span i18n="@@standards.detail.doc-template">Modèle</span></button>
                 <button mat-stroked-button color="primary" class="ia-btn" (click)="generateAiDraft(d)"
                         [disabled]="generatingDraftId === d.id"
                         [attr.aria-busy]="generatingDraftId === d.id"
                         [attr.aria-label]="'Générer un brouillon IA : ' + d.name">
                   <mat-icon aria-hidden="true">auto_awesome</mat-icon>
-                  {{ generatingDraftId === d.id ? 'Génération…' : 'Brouillon IA' }}</button>
+                  <span *ngIf="generatingDraftId === d.id" i18n="@@standards.detail.doc-generating">Génération…</span>
+                  <span *ngIf="generatingDraftId !== d.id" i18n="@@standards.detail.doc-ai-draft">Brouillon IA</span></button>
               </td>
             </tr>
           </tbody>
         </table>
 
         <mat-card class="ai-draft-card" *ngIf="aiDraft as ad"
-                  role="region" aria-label="Brouillon de document généré par l'IA" aria-live="polite">
+                  role="region" aria-label="Brouillon de document généré par l'IA" i18n-aria-label="@@standards.detail.ai-draft-region" aria-live="polite">
           <div class="ai-draft-head">
             <mat-icon aria-hidden="true">auto_awesome</mat-icon>
             <div>
-              <h3>Brouillon IA — {{ ad.templateName }}</h3>
-              <span class="muted small">généré par {{ ad.provider }} · {{ ad.latencyMs }} ms ·
-                à relire et valider avant publication (l'IA suggère, l'humain décide)</span>
+              <h3><span i18n="@@standards.detail.ai-draft-title">Brouillon IA —</span> {{ ad.templateName }}</h3>
+              <span class="muted small"><span i18n="@@standards.detail.ai-draft-generated-by">généré par</span> {{ ad.provider }} · {{ ad.latencyMs }} ms ·
+                <span i18n="@@standards.detail.ai-draft-disclaimer">à relire et valider avant publication (l'IA suggère, l'humain décide)</span></span>
             </div>
           </div>
-          <pre class="ai-draft-text" tabindex="0" aria-label="Texte du brouillon généré">{{ ad.draft }}</pre>
+          <pre class="ai-draft-text" tabindex="0" aria-label="Texte du brouillon généré" i18n-aria-label="@@standards.detail.ai-draft-text-aria">{{ ad.draft }}</pre>
         </mat-card>
       </div>
     </mat-tab>
 
     <!-- Onglet Cartographie des processus -->
-    <mat-tab label="Cartographie des processus">
+    <mat-tab label="Cartographie des processus" i18n-label="@@standards.detail.tab-process-map">
       <div class="tab-body">
-        <p class="muted">Processus types couvrant les exigences — matrice de co-couverture processus ↔ clauses (§8.3).</p>
-        <p class="empty" *ngIf="processTemplates.length === 0">Aucun processus catalogué pour cette norme.</p>
+        <p class="muted" i18n="@@standards.detail.process-intro">Processus types couvrant les exigences — matrice de co-couverture processus ↔ clauses (§8.3).</p>
+        <p class="empty" *ngIf="processTemplates.length === 0" i18n="@@standards.detail.process-empty">Aucun processus catalogué pour cette norme.</p>
         <table class="catalog-table" *ngIf="processTemplates.length">
-          <thead><tr><th>#</th><th>Processus</th><th>Clauses couvertes</th></tr></thead>
+          <thead><tr><th>#</th><th i18n="@@standards.detail.process-col-name">Processus</th><th i18n="@@standards.detail.process-col-clauses">Clauses couvertes</th></tr></thead>
           <tbody>
             <tr *ngFor="let p of processTemplates">
               <td class="nowrap">{{ p.orderIndex }}</td>
@@ -145,12 +146,12 @@
     </mat-tab>
 
     <!-- Onglet Roadmap -->
-    <mat-tab label="Roadmap de certification">
+    <mat-tab label="Roadmap de certification" i18n-label="@@standards.detail.tab-roadmap">
       <div class="tab-body" *ngIf="roadmap as rm">
-        <p class="muted">{{ rm.doneStages }}/{{ rm.totalStages }} étapes terminées
+        <p class="muted">{{ rm.doneStages }}/{{ rm.totalStages }} <span i18n="@@standards.detail.roadmap-stages-done">étapes terminées</span>
           ({{ rm.completionPercent | number:'1.0-0' }}%).</p>
         <table class="roadmap-table">
-          <thead><tr><th>#</th><th>Étape</th><th>Durée</th><th>Responsable</th><th>Statut</th></tr></thead>
+          <thead><tr><th>#</th><th i18n="@@standards.detail.roadmap-col-stage">Étape</th><th i18n="@@standards.detail.roadmap-col-duration">Durée</th><th i18n="@@standards.detail.roadmap-col-responsible">Responsable</th><th i18n="@@common.status">Statut</th></tr></thead>
           <tbody>
             <tr *ngFor="let st of rm.stages" [class.done]="st.status === 'DONE'">
               <td>{{ st.stepNumber }}</td>
@@ -176,17 +177,17 @@
     </mat-tab>
 
     <!-- Onglet Audit blanc -->
-    <mat-tab label="Audit blanc">
+    <mat-tab label="Audit blanc" i18n-label="@@standards.detail.tab-audit-blanc">
       <div class="tab-body" *ngIf="audit as ab">
         <div class="verdict" [ngClass]="scoreClass(ab.readinessScore)">
-          <strong>Verdict :</strong> {{ ab.verdict }}
-          <span class="verdict-sub">MUST couvertes : {{ ab.mustCovered }}/{{ ab.mustTotal }}</span>
+          <strong i18n="@@standards.detail.audit-verdict-label">Verdict :</strong> {{ ab.verdict }}
+          <span class="verdict-sub"><span i18n="@@standards.detail.audit-must-covered">MUST couvertes :</span> {{ ab.mustCovered }}/{{ ab.mustTotal }}</span>
         </div>
-        <p class="muted">{{ ab.findings.length }} écart(s) — triés par priorité.
-          {{ ab.criticalGaps }} critiques, {{ ab.majorGaps }} majeurs, {{ ab.minorGaps }} mineurs.</p>
-        <p class="empty" *ngIf="ab.findings.length === 0">Aucun écart : toutes les exigences sont couvertes 🎉</p>
+        <p class="muted">{{ ab.findings.length }} <span i18n="@@standards.detail.audit-gaps-suffix">écart(s) — triés par priorité.</span>
+          {{ ab.criticalGaps }} <span i18n="@@standards.detail.audit-critical">critiques,</span> {{ ab.majorGaps }} <span i18n="@@standards.detail.audit-major">majeurs,</span> {{ ab.minorGaps }} <span i18n="@@standards.detail.audit-minor">mineurs.</span></p>
+        <p class="empty" *ngIf="ab.findings.length === 0" i18n="@@standards.detail.audit-no-gap">Aucun écart : toutes les exigences sont couvertes 🎉</p>
         <table class="findings-table" *ngIf="ab.findings.length">
-          <thead><tr><th>Exigence</th><th>Sévérité</th><th>Action de remédiation</th><th></th></tr></thead>
+          <thead><tr><th i18n="@@standards.detail.audit-col-requirement">Exigence</th><th i18n="@@standards.detail.audit-col-severity">Sévérité</th><th i18n="@@standards.detail.audit-col-remediation">Action de remédiation</th><th></th></tr></thead>
           <tbody>
             <tr *ngFor="let f of ab.findings">
               <td class="nowrap"><strong>{{ f.requirementCode }}</strong><br><small>§{{ f.sectionCode }}</small></td>
@@ -194,7 +195,7 @@
               <td>{{ f.remediationAction }}</td>
               <td class="nowrap">
                 <button mat-stroked-button color="primary" class="cover-btn" (click)="coverRequirement(f.requirementId)">
-                  <mat-icon>link</mat-icon> Couvrir
+                  <mat-icon>link</mat-icon> <span i18n="@@standards.detail.audit-cover">Couvrir</span>
                 </button>
               </td>
             </tr>
@@ -204,14 +205,14 @@
     </mat-tab>
 
     <!-- Onglet Mes preuves -->
-    <mat-tab label="Mes preuves">
+    <mat-tab label="Mes preuves" i18n-label="@@standards.detail.tab-evidence">
       <div class="tab-body">
-        <p class="muted">Liez des preuves (documents, audits, CAPA, cycles PDCA, 5S, formations, KPI…)
+        <p class="muted" i18n="@@standards.detail.evidence-intro">Liez des preuves (documents, audits, CAPA, cycles PDCA, 5S, formations, KPI…)
           aux exigences. Chaque exigence couverte fait monter le score de préparation et d'alignement.</p>
 
         <div class="link-form" *ngIf="standard as s">
           <mat-form-field appearance="outline" class="grow">
-            <mat-label>Exigence à couvrir</mat-label>
+            <mat-label i18n="@@standards.detail.evidence-requirement-label">Exigence à couvrir</mat-label>
             <mat-select [(value)]="linkRequirementId">
               <mat-optgroup *ngFor="let sec of s.sections" [label]="'§' + sec.code + ' ' + sec.title">
                 <ng-container *ngFor="let cl of sec.clauses">
@@ -223,28 +224,28 @@
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline">
-            <mat-label>Type</mat-label>
+            <mat-label i18n="@@common.type">Type</mat-label>
             <mat-select [(value)]="linkEvidenceType">
               <mat-option *ngFor="let t of evidenceTypes" [value]="t">{{ t }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline" class="grow">
-            <mat-label>Note</mat-label>
-            <input matInput [(ngModel)]="linkNote" placeholder="Référence / commentaire">
+            <mat-label i18n="@@standards.detail.evidence-note-label">Note</mat-label>
+            <input matInput [(ngModel)]="linkNote" placeholder="Référence / commentaire" i18n-placeholder="@@standards.detail.evidence-note-placeholder">
           </mat-form-field>
           <mat-form-field appearance="outline" class="grow">
-            <mat-label>Lien (optionnel)</mat-label>
+            <mat-label i18n="@@standards.detail.evidence-uri-label">Lien (optionnel)</mat-label>
             <input matInput [(ngModel)]="linkUri" placeholder="https://…">
           </mat-form-field>
           <button mat-raised-button color="primary" (click)="linkEvidence()" [disabled]="linking">
-            <mat-icon>add_link</mat-icon> Lier
+            <mat-icon>add_link</mat-icon> <span i18n="@@standards.detail.evidence-link">Lier</span>
           </button>
         </div>
 
-        <p class="muted">{{ evidence.length }} preuve(s) liée(s).</p>
-        <p class="empty" *ngIf="evidence.length === 0">Aucune preuve liée. Utilisez le formulaire ci-dessus.</p>
+        <p class="muted">{{ evidence.length }} <span i18n="@@standards.detail.evidence-count-suffix">preuve(s) liée(s).</span></p>
+        <p class="empty" *ngIf="evidence.length === 0" i18n="@@standards.detail.evidence-empty">Aucune preuve liée. Utilisez le formulaire ci-dessus.</p>
         <table class="evidence-table" *ngIf="evidence.length">
-          <thead><tr><th>Exigence</th><th>Type</th><th>Référence / note</th><th>Liée le</th><th></th></tr></thead>
+          <thead><tr><th i18n="@@standards.detail.evidence-col-requirement">Exigence</th><th i18n="@@common.type">Type</th><th i18n="@@standards.detail.evidence-col-ref">Référence / note</th><th i18n="@@standards.detail.evidence-col-linked-at">Liée le</th><th></th></tr></thead>
           <tbody>
             <tr *ngFor="let e of evidence">
               <td class="nowrap"><strong>{{ e.requirementCode }}</strong></td>
@@ -255,7 +256,7 @@
                 <code *ngIf="e.evidenceRefId" class="evid-ref">{{ e.evidenceRefId }}</code>
               </td>
               <td class="nowrap">{{ e.linkedAt | date:'dd/MM/yy' }}</td>
-              <td><button mat-icon-button (click)="unlinkEvidence(e)" aria-label="Retirer">
+              <td><button mat-icon-button (click)="unlinkEvidence(e)" aria-label="Retirer" i18n-aria-label="@@standards.detail.evidence-unlink-aria">
                 <mat-icon>delete_outline</mat-icon></button></td>
             </tr>
           </tbody>
@@ -264,39 +265,40 @@
     </mat-tab>
 
     <!-- Onglet Certification à blanc -->
-    <mat-tab label="Certification à blanc">
+    <mat-tab label="Certification à blanc" i18n-label="@@standards.detail.tab-cert-blanc">
       <div class="tab-body">
-        <p class="muted">Simule l'audit de certification en 2 étapes (revue documentaire §4-7, audit terrain §8-10)
+        <p class="muted" i18n="@@standards.detail.cert-intro">Simule l'audit de certification en 2 étapes (revue documentaire §4-7, audit terrain §8-10)
           selon ISO/IEC 17021 : classement des non-conformités (majeures / mineures / observations),
           décision de certification et émission d'un certificat à blanc signé et ancré.</p>
         <button mat-raised-button color="primary" (click)="runCertificationBlanc()" [disabled]="runningCertBlanc">
           <mat-icon>verified</mat-icon>
-          {{ runningCertBlanc ? 'Simulation…' : 'Lancer la certification à blanc' }}
+          <span *ngIf="runningCertBlanc" i18n="@@standards.detail.cert-running">Simulation…</span>
+          <span *ngIf="!runningCertBlanc" i18n="@@standards.detail.cert-run">Lancer la certification à blanc</span>
         </button>
 
         <div *ngIf="certBlanc as cb" class="cb-result">
           <div class="verdict" [ngClass]="decisionClass(cb.decision)">
-            <strong>Décision :</strong> {{ cb.decisionLabel }}
-            <span class="verdict-sub">{{ cb.majorNonConformities }} NC majeure(s) ·
-              {{ cb.minorNonConformities }} mineure(s) · {{ cb.observations }} observation(s)</span>
+            <strong i18n="@@standards.detail.cert-decision-label">Décision :</strong> {{ cb.decisionLabel }}
+            <span class="verdict-sub">{{ cb.majorNonConformities }} <span i18n="@@standards.detail.cert-major-nc">NC majeure(s)</span> ·
+              {{ cb.minorNonConformities }} <span i18n="@@standards.detail.cert-minor-nc">mineure(s)</span> · {{ cb.observations }} <span i18n="@@standards.detail.cert-observations">observation(s)</span></span>
           </div>
 
           <div class="stage-row">
             <mat-card class="stage-card" [ngClass]="cb.stage1.passed ? 'pass' : 'fail'">
               <h4>① {{ cb.stage1.name }}</h4>
-              <span class="stage-state">{{ cb.stage1.passed ? 'Franchie' : 'Non franchie' }}
+              <span class="stage-state"><span *ngIf="cb.stage1.passed" i18n="@@standards.detail.cert-stage-passed">Franchie</span><span *ngIf="!cb.stage1.passed" i18n="@@standards.detail.cert-stage-failed">Non franchie</span>
                 · {{ cb.stage1.score | number:'1.0-0' }}%</span>
               <p>{{ cb.stage1.summary }}</p>
               <p class="watch" *ngIf="cb.stage1.watchPoints.length">
-                Points d'attention : {{ cb.stage1.watchPoints.join(', ') }}</p>
+                <span i18n="@@standards.detail.cert-watch-points">Points d'attention :</span> {{ cb.stage1.watchPoints.join(', ') }}</p>
             </mat-card>
             <mat-card class="stage-card" [ngClass]="cb.stage2.passed ? 'pass' : 'fail'">
               <h4>② {{ cb.stage2.name }}</h4>
-              <span class="stage-state">{{ cb.stage2.passed ? 'Franchie' : 'Non franchie' }}
+              <span class="stage-state"><span *ngIf="cb.stage2.passed" i18n="@@standards.detail.cert-stage-passed">Franchie</span><span *ngIf="!cb.stage2.passed" i18n="@@standards.detail.cert-stage-failed">Non franchie</span>
                 · {{ cb.stage2.score | number:'1.0-0' }}%</span>
               <p>{{ cb.stage2.summary }}</p>
               <p class="watch" *ngIf="cb.stage2.watchPoints.length">
-                Points d'attention : {{ cb.stage2.watchPoints.join(', ') }}</p>
+                <span i18n="@@standards.detail.cert-watch-points">Points d'attention :</span> {{ cb.stage2.watchPoints.join(', ') }}</p>
             </mat-card>
           </div>
 
@@ -305,23 +307,23 @@
             <div class="cert-head">
               <mat-icon>workspace_premium</mat-icon>
               <div>
-                <h3>Certificat à blanc</h3>
+                <h3 i18n="@@standards.detail.cert-certificate-title">Certificat à blanc</h3>
                 <span class="cert-num">{{ c.certificateNumber }}</span>
               </div>
             </div>
-            <p>Norme : <strong>{{ c.standardCode | uppercase }}</strong>
-              · Organisme : <strong>{{ c.certificationBody }}</strong></p>
-            <p>Périmètre : {{ c.scope }}</p>
-            <p>Émis le <strong>{{ c.issuedAt | date }}</strong>
-              · Valide jusqu'au <strong>{{ c.expiresAt | date }}</strong></p>
-            <p class="cert-cond" *ngIf="c.conditions">Conditions : {{ c.conditions }}</p>
+            <p><span i18n="@@standards.detail.cert-norm">Norme :</span> <strong>{{ c.standardCode | uppercase }}</strong>
+              · <span i18n="@@standards.detail.cert-body">Organisme :</span> <strong>{{ c.certificationBody }}</strong></p>
+            <p><span i18n="@@standards.detail.cert-scope">Périmètre :</span> {{ c.scope }}</p>
+            <p><span i18n="@@standards.detail.cert-issued-at">Émis le</span> <strong>{{ c.issuedAt | date }}</strong>
+              · <span i18n="@@standards.detail.cert-expires-at">Valide jusqu'au</span> <strong>{{ c.expiresAt | date }}</strong></p>
+            <p class="cert-cond" *ngIf="c.conditions"><span i18n="@@standards.detail.cert-conditions">Conditions :</span> {{ c.conditions }}</p>
             <p class="cert-disclaimer">{{ c.disclaimer }}</p>
           </mat-card>
 
           <!-- Liste des non-conformités -->
-          <h3 class="nc-title" *ngIf="cb.nonConformities.length">Non-conformités &amp; observations</h3>
+          <h3 class="nc-title" *ngIf="cb.nonConformities.length" i18n="@@standards.detail.cert-nc-title">Non-conformités &amp; observations</h3>
           <table class="findings-table" *ngIf="cb.nonConformities.length">
-            <thead><tr><th>Exigence</th><th>Classement</th><th>Constat</th><th>Correction demandée</th></tr></thead>
+            <thead><tr><th i18n="@@standards.detail.cert-nc-col-requirement">Exigence</th><th i18n="@@standards.detail.cert-nc-col-classification">Classement</th><th i18n="@@standards.detail.cert-nc-col-finding">Constat</th><th i18n="@@standards.detail.cert-nc-col-correction">Correction demandée</th></tr></thead>
             <tbody>
               <tr *ngFor="let nc of cb.nonConformities">
                 <td class="nowrap"><strong>{{ nc.requirementCode }}</strong><br><small>§{{ nc.sectionCode }}</small></td>
@@ -332,18 +334,18 @@
             </tbody>
           </table>
 
-          <p class="hash"><span>Verdict ancré · SHA-256</span><code>{{ cb.sha256 }}</code></p>
-          <p class="hash"><span>Ancrage</span><code>{{ cb.anchorTxRef }}</code></p>
+          <p class="hash"><span i18n="@@standards.detail.cert-anchored-sha">Verdict ancré · SHA-256</span><code>{{ cb.sha256 }}</code></p>
+          <p class="hash"><span i18n="@@standards.detail.anchor-label">Ancrage</span><code>{{ cb.anchorTxRef }}</code></p>
         </div>
       </div>
     </mat-tab>
 
     <!-- Onglet Veille normative -->
-    <mat-tab label="Veille normative">
+    <mat-tab label="Veille normative" i18n-label="@@standards.detail.tab-watch">
       <div class="tab-body">
-        <p class="muted">Historique et évolutions de la norme. Les versions planifiées permettent
+        <p class="muted" i18n="@@standards.detail.watch-intro">Historique et évolutions de la norme. Les versions planifiées permettent
           d'anticiper les écarts et de lisser la transition (§8.10).</p>
-        <p class="empty" *ngIf="revisions.length === 0">Aucune entrée de veille pour cette norme.</p>
+        <p class="empty" *ngIf="revisions.length === 0" i18n="@@standards.detail.watch-empty">Aucune entrée de veille pour cette norme.</p>
         <div class="timeline" *ngIf="revisions.length">
           <div class="rev" *ngFor="let r of revisions" [ngClass]="revisionClass(r.status)">
             <div class="rev-head">
@@ -353,47 +355,49 @@
             </div>
             <p class="rev-summary" *ngIf="r.summary">{{ r.summary }}</p>
             <p class="rev-impact" *ngIf="r.impactNote"><mat-icon>insights</mat-icon> {{ r.impactNote }}</p>
-            <a class="rev-src" *ngIf="r.sourceUrl" [href]="r.sourceUrl" target="_blank" rel="noopener">Source officielle ↗</a>
+            <a class="rev-src" *ngIf="r.sourceUrl" [href]="r.sourceUrl" target="_blank" rel="noopener" i18n="@@standards.detail.watch-source">Source officielle ↗</a>
           </div>
         </div>
       </div>
     </mat-tab>
 
     <!-- Onglet Dossier -->
-    <mat-tab label="Dossier de certification">
+    <mat-tab label="Dossier de certification" i18n-label="@@standards.detail.tab-dossier">
       <div class="tab-body">
-        <p class="muted">Génère le dossier complet (norme, roadmap, alignement, audit blanc, preuves),
+        <p class="muted" i18n="@@standards.detail.dossier-intro">Génère le dossier complet (norme, roadmap, alignement, audit blanc, preuves),
           calcule son empreinte SHA-256 et l'ancre (preuve d'intégrité audit-ready).</p>
         <button mat-raised-button color="primary" (click)="generateDossier()" [disabled]="generatingDossier">
           <mat-icon>description</mat-icon>
-          {{ generatingDossier ? 'Génération…' : 'Générer le dossier' }}
+          <span *ngIf="generatingDossier" i18n="@@standards.detail.dossier-generating">Génération…</span>
+          <span *ngIf="!generatingDossier" i18n="@@standards.detail.dossier-generate">Générer le dossier</span>
         </button>
 
         <mat-card class="dossier-card" *ngIf="dossier as d">
           <h3>{{ d.fileName }}</h3>
-          <p>Préparation : <strong>{{ d.readinessScore | number:'1.0-0' }}%</strong>
-            · Roadmap : <strong>{{ d.roadmapCompletion | number:'1.0-0' }}%</strong>
-            · Preuves : <strong>{{ d.evidenceCount }}</strong></p>
+          <p><span i18n="@@standards.detail.dossier-readiness">Préparation :</span> <strong>{{ d.readinessScore | number:'1.0-0' }}%</strong>
+            · <span i18n="@@standards.detail.dossier-roadmap">Roadmap :</span> <strong>{{ d.roadmapCompletion | number:'1.0-0' }}%</strong>
+            · <span i18n="@@standards.detail.dossier-evidence">Preuves :</span> <strong>{{ d.evidenceCount }}</strong></p>
           <p class="hash"><span>SHA-256</span><code>{{ d.sha256 }}</code></p>
-          <p class="hash"><span>Ancrage</span><code>{{ d.anchorTxRef }}</code></p>
+          <p class="hash"><span i18n="@@standards.detail.anchor-label">Ancrage</span><code>{{ d.anchorTxRef }}</code></p>
           <button mat-stroked-button (click)="downloadDossier()">
-            <mat-icon>download</mat-icon> Télécharger (HTML imprimable)
+            <mat-icon>download</mat-icon> <span i18n="@@standards.detail.dossier-download">Télécharger (HTML imprimable)</span>
           </button>
         </mat-card>
 
         <div class="storyboard-block">
-          <p class="muted">Récit narratif IA de l'état d'avancement (synthèse pour revue de direction, §7.4).</p>
+          <p class="muted" i18n="@@standards.detail.storyboard-intro">Récit narratif IA de l'état d'avancement (synthèse pour revue de direction, §7.4).</p>
           <button mat-stroked-button color="primary" (click)="generateStoryboard()"
                   [disabled]="generatingStoryboard" [attr.aria-busy]="generatingStoryboard">
             <mat-icon aria-hidden="true">auto_stories</mat-icon>
-            {{ generatingStoryboard ? 'Rédaction…' : 'Générer le récit (IA)' }}
+            <span *ngIf="generatingStoryboard" i18n="@@standards.detail.storyboard-writing">Rédaction…</span>
+            <span *ngIf="!generatingStoryboard" i18n="@@standards.detail.storyboard-generate">Générer le récit (IA)</span>
           </button>
           <mat-card class="storyboard-card" *ngIf="storyboard as s"
-                    role="region" aria-label="Récit IA d'avancement" aria-live="polite">
+                    role="region" aria-label="Récit IA d'avancement" i18n-aria-label="@@standards.detail.storyboard-region" aria-live="polite">
             <div class="sb-head">
               <mat-icon aria-hidden="true">auto_awesome</mat-icon>
-              <span class="sb-title">Récit — {{ s.standardCode | uppercase }}</span>
-              <span class="muted small">généré par {{ s.provider }}</span>
+              <span class="sb-title"><span i18n="@@standards.detail.storyboard-title">Récit —</span> {{ s.standardCode | uppercase }}</span>
+              <span class="muted small"><span i18n="@@standards.detail.ai-draft-generated-by">généré par</span> {{ s.provider }}</span>
             </div>
             <p class="sb-text">{{ s.narrative }}</p>
           </mat-card>
@@ -405,5 +409,5 @@
 
 <ng-template #errTpl>
   <div class="qos-page"><mat-card class="section-card"><p class="empty">{{ error }}</p>
-    <a routerLink="/standards">← Retour</a></mat-card></div>
+    <a routerLink="/standards" i18n="@@standards.detail.back-short">← Retour</a></mat-card></div>
 </ng-template>

@@ -43,7 +43,7 @@ export class SuppliersCertDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const v = this.form.getRawValue();
     if (new Date(v.expiresOn) <= new Date(v.issuedOn)) {
-      this.snack.open('La date d\'expiration doit être postérieure à la date d\'émission.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@suppliers.cert.date-order-error:La date d'expiration doit être postérieure à la date d'émission.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -56,11 +56,11 @@ export class SuppliersCertDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: c => { this.snack.open('Certificat ajouté.', 'OK', { duration: 2500 }); this.dialogRef.close(c); },
+        next: c => { this.snack.open($localize`:@@suppliers.cert.added:Certificat ajouté.`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(c); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[suppliers-cert] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@suppliers.save-error:Erreur lors de l'enregistrement.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

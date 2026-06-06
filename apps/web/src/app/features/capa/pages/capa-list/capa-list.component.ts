@@ -56,7 +56,7 @@ export class CapaListComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[capa-list] listCases failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return [];
           }),
           finalize(() => this.loading$.next(false))

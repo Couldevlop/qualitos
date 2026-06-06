@@ -39,7 +39,7 @@ export class CnfCertifyDialogComponent {
     const v = this.form.getRawValue();
     // OWASP A04 — validUntil obligatoirement futur (mirror @Future backend)
     if (new Date(v.validUntil) <= new Date()) {
-      this.snack.open('La date de validité doit être dans le futur.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@ai-conformity.certify.future-date:La date de validité doit être dans le futur.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -50,11 +50,11 @@ export class CnfCertifyDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: c => { this.snack.open('Certification enregistrée.', 'OK', { duration: 2500 }); this.dialogRef.close(c); },
+        next: c => { this.snack.open($localize`:@@ai-conformity.certify.recorded:Certification enregistrée.`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(c); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[cnf-certify] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Certification impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@ai-conformity.certify.failed:Certification impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

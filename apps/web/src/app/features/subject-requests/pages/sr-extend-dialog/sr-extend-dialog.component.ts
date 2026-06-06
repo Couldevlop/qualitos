@@ -44,11 +44,11 @@ export class SrExtendDialogComponent {
 
     // OWASP A04 — refuser une extension qui dégrade ou dépasse le maximum légal.
     if (proposed <= currentDeadline) {
-      this.snack.open('La nouvelle échéance doit être postérieure à l\'actuelle.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@subject-requests.extend.must-be-later:La nouvelle échéance doit être postérieure à l'actuelle.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     if (proposed > max) {
-      this.snack.open('Le RGPD limite l\'extension à 90 jours après la réception (Art. 12§3).', 'OK', { duration: 4500 });
+      this.snack.open($localize`:@@subject-requests.extend.max-90-days:Le RGPD limite l'extension à 90 jours après la réception (Art. 12§3).`, $localize`:@@common.ok:OK`, { duration: 4500 });
       return;
     }
 
@@ -56,11 +56,11 @@ export class SrExtendDialogComponent {
     this.svc.extend(this.data.request.id, { newDeadline: proposed.toISOString() })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: r => { this.snack.open('Échéance prolongée.', 'OK', { duration: 2500 }); this.dialogRef.close(r); },
+        next: r => { this.snack.open($localize`:@@subject-requests.extend.success:Échéance prolongée.`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(r); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[sr-extend] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Prolongation impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@subject-requests.extend.error:Prolongation impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

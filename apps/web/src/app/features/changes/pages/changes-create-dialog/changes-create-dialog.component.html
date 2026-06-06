@@ -9,18 +9,19 @@
 
   <div class="row">
     <mat-form-field appearance="outline" class="col col-code">
-      <mat-label>Code</mat-label>
+      <mat-label i18n="@@changes.create.code-label">Code</mat-label>
       <input matInput formControlName="code" maxlength="100" required
+             i18n-placeholder="@@changes.create.code-placeholder"
              placeholder="Ex. : CHG-2026-014">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Type</mat-label>
+      <mat-label i18n="@@common.type">Type</mat-label>
       <mat-select formControlName="type" required>
         <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col col-prio">
-      <mat-label>Priorité</mat-label>
+      <mat-label i18n="@@changes.create.priority-label">Priorité</mat-label>
       <mat-select formControlName="priority" required>
         <mat-option *ngFor="let p of priorities" [value]="p">{{ p }}</mat-option>
       </mat-select>
@@ -28,27 +29,27 @@
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre</mat-label>
+    <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="250" required>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description</mat-label>
+    <mat-label i18n="@@common.description">Description</mat-label>
     <textarea matInput formControlName="description" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Date prévue</mat-label>
+    <mat-label i18n="@@changes.create.planned-for-label">Date prévue</mat-label>
     <input matInput formControlName="plannedFor" type="date">
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Synthèse d'impact</mat-label>
+    <mat-label i18n="@@changes.create.impact-summary-label">Synthèse d'impact</mat-label>
     <textarea matInput formControlName="impactSummary" rows="3" maxlength="2000"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Analyse de risque</mat-label>
+    <mat-label i18n="@@changes.create.risk-label">Analyse de risque</mat-label>
     <textarea matInput formControlName="riskAssessment" rows="3" maxlength="2000"></textarea>
   </mat-form-field>
 

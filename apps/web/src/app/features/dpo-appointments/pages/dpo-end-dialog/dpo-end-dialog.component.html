@@ -3,6 +3,7 @@
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.confirm"
   submitLabel="Confirmer"
   [submitIcon]="data.mode === 'END' ? 'event_busy' : 'cancel'"
   submitColor="warn"
@@ -10,25 +11,25 @@
   (cancelled)="cancel()">
 
   <p class="warn">
-    <strong>Action terminale.</strong>
+    <strong i18n="@@dpo-appointments.end.terminal-action">Action terminale.</strong>
     <ng-container *ngIf="data.mode === 'END'">
-      La désignation passera en <strong>ENDED</strong> à la date saisie.
+      <span i18n="@@dpo-appointments.end.warning-end-1">La désignation passera en</span> <strong>ENDED</strong> <span i18n="@@dpo-appointments.end.warning-end-2">à la date saisie.
       Pensez à activer un nouveau DPO ACTIVE sur le périmètre si nécessaire,
-      et à notifier le changement à l'autorité de contrôle (Art. 37§7).
+      et à notifier le changement à l'autorité de contrôle (Art. 37§7).</span>
     </ng-container>
     <ng-container *ngIf="data.mode === 'CANCEL'">
-      La désignation passera en <strong>CANCELLED</strong>. À utiliser
-      uniquement pour annuler une désignation <em>avant</em> sa prise d'effet.
+      <span i18n="@@dpo-appointments.end.warning-cancel-1">La désignation passera en</span> <strong>CANCELLED</strong>. <span i18n="@@dpo-appointments.end.warning-cancel-2">À utiliser
+      uniquement pour annuler une désignation</span> <em i18n="@@dpo-appointments.end.warning-cancel-em">avant</em> <span i18n="@@dpo-appointments.end.warning-cancel-3">sa prise d'effet.</span>
     </ng-container>
   </p>
 
   <mat-form-field appearance="outline" class="full" *ngIf="data.mode === 'END'">
-    <mat-label>Date de fin effective</mat-label>
+    <mat-label i18n="@@dpo-appointments.end.effective-to-label">Date de fin effective</mat-label>
     <input matInput formControlName="effectiveTo" type="date" required>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Motif</mat-label>
+    <mat-label i18n="@@dpo-appointments.end.reason-label">Motif</mat-label>
     <textarea matInput formControlName="reason" rows="4" maxlength="2000" required></textarea>
   </mat-form-field>
 

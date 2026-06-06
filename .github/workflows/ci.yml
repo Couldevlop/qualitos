@@ -64,6 +64,28 @@ jobs:
           path: apps/*/target/surefire-reports/
           retention-days: 7
 
+  # ---------------------------------------------------------------------------
+  # Scan anti-secrets (§18.2.3 : aucun secret en clair). Historique COMPLET à
+  # chaque run (fetch-depth 0) — rapide (~10 s pour 260+ commits) et attrape
+  # aussi un secret introduit puis « supprimé » dans une même PR.
+  # Binaire direct (pas gitleaks-action) : pas de licence requise, version pinnée.
+  # ---------------------------------------------------------------------------
+  secrets-scan:
+    name: Secrets scan (gitleaks)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run gitleaks (full history)
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.21.2/gitleaks_8.21.2_linux_x64.tar.gz | tar -xz gitleaks
+          ./gitleaks git --log-opts="--all" --redact -v
+
   sast-semgrep:
     name: SAST (Semgrep)
     runs-on: ubuntu-latest
@@ -99,15 +121,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
-
+      # PAS de setup-java ici : l'action tourne dans son propre conteneur Docker
+      # (Java embarqué) et hérite des env du job — un JAVA_HOME pointant vers le
+      # toolcache de l'HÔTE casse le conteneur ("JAVA_HOME is not defined correctly").
+      # Action pinnée (le @main avait changé de comportement entre deux runs).
       - name: Dependency-Check
-        uses: dependency-check/Dependency-Check_Action@main
+        uses: dependency-check/Dependency-Check_Action@75ba02d6183445fe0761d26e836bde58b1560600 # 1.1.0
         with:
           project: qualitos
           path: '.'
@@ -156,6 +175,20 @@ jobs:
           # ETIMEDOUT), on désactive le cache pour éviter l'erreur "Some specified paths
           # were not resolved". À ré-activer dans la PR suivante une fois le lockfile
           # généré par la CI et committé (cache: 'npm', cache-dependency-path: ...).
+
+      # ----------------------------------------------------------------------
+      # Garde-fou i18n (§15.1) : tout @@id marqué dans le code doit avoir son
+      # entrée dans les tables scripts/i18n/*.py, et les XLF committés doivent
+      # être à jour (régénérés). Échec rapide, avant npm install.
+      # ----------------------------------------------------------------------
+      - name: i18n cross-check (tables <-> code <-> XLF)
+        shell: bash
+        run: |
+          python3 scripts/gen-i18n-xlf.py --check
+          if ! git diff --exit-code -- src/locale; then
+            echo "::error::XLF désynchronisés des tables — lancer 'python scripts/gen-i18n-xlf.py' et committer."
+            exit 1
+          fi
 
       - name: Install Chrome (for Karma headless tests)
         id: setup-chrome
@@ -374,7 +407,9 @@ jobs:
   image-scan:
     name: Image scan (Trivy)
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    # 50 min : l'image web compile désormais les 6 locales (AOT ×6, ~15-20 min
+    # de build Docker) avant le scan.
+    timeout-minutes: 50
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
     strategy:
       fail-fast: false

@@ -1,21 +1,24 @@
 <qos-form-dialog
+  i18n-title="@@documents.create.title"
   title="Nouveau document"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.create"
   submitLabel="Créer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <div class="row">
     <mat-form-field appearance="outline" class="col col-code">
-      <mat-label>Code</mat-label>
+      <mat-label i18n="@@documents.create.code-label">Code</mat-label>
       <input matInput formControlName="code" maxlength="100" required
+             i18n-placeholder="@@documents.create.code-placeholder"
              placeholder="Ex. : POL-QUAL-001">
-      <mat-hint>A-Z, 0-9, point, tiret, underscore</mat-hint>
+      <mat-hint i18n="@@documents.create.code-hint">A-Z, 0-9, point, tiret, underscore</mat-hint>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Type</mat-label>
+      <mat-label i18n="@@common.type">Type</mat-label>
       <mat-select formControlName="type" required>
         <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
       </mat-select>
@@ -23,29 +26,30 @@
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre</mat-label>
+    <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="255" required>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description</mat-label>
+    <mat-label i18n="@@common.description">Description</mat-label>
     <textarea matInput formControlName="description" rows="2"></textarea>
   </mat-form-field>
 
-  <mat-checkbox formControlName="mandatoryRead">
+  <mat-checkbox formControlName="mandatoryRead" i18n="@@documents.create.mandatory-read">
     Lecture obligatoire — chaque utilisateur cible devra acquitter la version publiée.
   </mat-checkbox>
 
-  <h3 class="section">Première version (DRAFT)</h3>
+  <h3 class="section" i18n="@@documents.create.first-version">Première version (DRAFT)</h3>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Contenu</mat-label>
+    <mat-label i18n="@@documents.create.content-label">Contenu</mat-label>
     <textarea matInput formControlName="initialContent" rows="5"
+              i18n-placeholder="@@documents.create.content-placeholder"
               placeholder="Corps du document, ou laissez vide pour ne créer qu'une enveloppe."></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Note de version</mat-label>
+    <mat-label i18n="@@documents.create.version-note-label">Note de version</mat-label>
     <input matInput formControlName="initialChangeNote" maxlength="255">
   </mat-form-field>
 

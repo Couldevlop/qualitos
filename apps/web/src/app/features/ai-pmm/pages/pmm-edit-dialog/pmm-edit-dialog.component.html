@@ -1,48 +1,51 @@
 <qos-form-dialog
   title="Éditer le plan PMM"
+  i18n-title="@@ai-pmm.edit.title"
   subtitle="La référence et le système IA ne sont pas modifiables. Changer la fréquence recalcule la prochaine échéance de revue."
+  i18n-subtitle="@@ai-pmm.edit.subtitle"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitLabel="Enregistrer"
+  i18n-submitLabel="@@common.save"
   submitIcon="save"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Nom du plan</mat-label>
+    <mat-label i18n="@@ai-pmm.draft.plan-name">Nom du plan</mat-label>
     <input matInput formControlName="name" maxlength="250" required>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description</mat-label>
+    <mat-label i18n="@@common.description">Description</mat-label>
     <textarea matInput formControlName="description" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Métriques surveillées</mat-label>
+    <mat-label i18n="@@ai-pmm.draft.metrics">Métriques surveillées</mat-label>
     <textarea matInput formControlName="metricsMonitored" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Méthode de collecte</mat-label>
+    <mat-label i18n="@@ai-pmm.draft.collection-method">Méthode de collecte</mat-label>
     <textarea matInput formControlName="collectionMethod" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Fréquence de revue</mat-label>
+      <mat-label i18n="@@ai-pmm.draft.review-frequency">Fréquence de revue</mat-label>
       <mat-select formControlName="reviewFrequency" required>
         <mat-option *ngFor="let f of frequencies" [value]="f">{{ freqLabel[f] }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Lien QMS</mat-label>
+      <mat-label i18n="@@ai-pmm.detail.qms-link">Lien QMS</mat-label>
       <input matInput formControlName="qmsLinkReference" maxlength="250">
     </mat-form-field>
   </div>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Partie responsable</mat-label>
+    <mat-label i18n="@@ai-pmm.draft.responsible-party">Partie responsable</mat-label>
     <textarea matInput formControlName="responsiblePartyDescription" rows="2" maxlength="4000"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Critères de déclenchement</mat-label>
+    <mat-label i18n="@@ai-pmm.draft.trigger-criteria">Critères de déclenchement</mat-label>
     <textarea matInput formControlName="triggerCriteria" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
 

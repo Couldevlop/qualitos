@@ -52,13 +52,22 @@ export class RopaDialogComponent {
   readonly isEdit: boolean;
   readonly form;
 
+  readonly editTitle = $localize`:@@ropa.dialog.edit-title:Modifier l'activité de traitement`;
+  readonly createTitle = $localize`:@@ropa.dialog.create-title:Nouvelle activité de traitement`;
+  readonly editSubmitLabel = $localize`:@@common.save:Enregistrer`;
+  readonly createSubmitLabel = $localize`:@@ropa.dialog.create-submit:Créer (DRAFT)`;
+  readonly liaLabel = $localize`:@@ropa.dialog.lia-label:Mise en balance (LIA) — obligatoire`;
+  readonly detailsLabel = $localize`:@@ropa.dialog.details-label:Détails / justification`;
+  readonly liaPlaceholder = $localize`:@@ropa.dialog.lia-placeholder:Test des intérêts légitimes : description de l'intérêt poursuivi, nécessité, balance avec les droits des personnes…`;
+  readonly detailsPlaceholder = $localize`:@@ropa.dialog.details-placeholder:Référence légale, mention contractuelle, etc.`;
+
   readonly bases: { value: LawfulBasis; label: string; needsLia?: boolean }[] = [
-    { value: 'CONSENT',              label: 'Consentement (Art. 6.1.a)' },
-    { value: 'CONTRACT',             label: 'Exécution d\'un contrat (Art. 6.1.b)' },
-    { value: 'LEGAL_OBLIGATION',     label: 'Obligation légale (Art. 6.1.c)' },
-    { value: 'VITAL_INTERESTS',      label: 'Intérêts vitaux (Art. 6.1.d)' },
-    { value: 'PUBLIC_TASK',          label: 'Mission de service public (Art. 6.1.e)' },
-    { value: 'LEGITIMATE_INTERESTS', label: 'Intérêt légitime (Art. 6.1.f) — LIA requise', needsLia: true }
+    { value: 'CONSENT',              label: $localize`:@@ropa.basis-art.consent:Consentement (Art. 6.1.a)` },
+    { value: 'CONTRACT',             label: $localize`:@@ropa.basis-art.contract:Exécution d'un contrat (Art. 6.1.b)` },
+    { value: 'LEGAL_OBLIGATION',     label: $localize`:@@ropa.basis-art.legal-obligation:Obligation légale (Art. 6.1.c)` },
+    { value: 'VITAL_INTERESTS',      label: $localize`:@@ropa.basis-art.vital-interests:Intérêts vitaux (Art. 6.1.d)` },
+    { value: 'PUBLIC_TASK',          label: $localize`:@@ropa.basis-art.public-task:Mission de service public (Art. 6.1.e)` },
+    { value: 'LEGITIMATE_INTERESTS', label: $localize`:@@ropa.dialog.basis-legitimate-lia:Intérêt légitime (Art. 6.1.f) — LIA requise`, needsLia: true }
   ];
 
   constructor(
@@ -118,8 +127,8 @@ export class RopaDialogComponent {
     // 1. Special categories processed → justification required (RGPD Art. 9§2).
     if (v.specialCategoriesProcessed && !v.specialCategoriesJustification?.trim()) {
       this.snack.open(
-        'Une justification est requise lorsque des catégories particulières (Art. 9) sont traitées.',
-        'OK', { duration: 4500 }
+        $localize`:@@ropa.dialog.special-justification-required:Une justification est requise lorsque des catégories particulières (Art. 9) sont traitées.`,
+        $localize`:@@common.ok:OK`, { duration: 4500 }
       );
       return;
     }
@@ -127,16 +136,16 @@ export class RopaDialogComponent {
     const transfers = linesToList(v.thirdCountryTransfers);
     if (transfers.length > 0 && !v.transferSafeguards?.trim()) {
       this.snack.open(
-        'Les transferts hors UE exigent des garanties documentées (Chap. V RGPD).',
-        'OK', { duration: 4500 }
+        $localize`:@@ropa.dialog.transfers-safeguards-required:Les transferts hors UE exigent des garanties documentées (Chap. V RGPD).`,
+        $localize`:@@common.ok:OK`, { duration: 4500 }
       );
       return;
     }
     // 3. LIA mandatory for legitimate interests basis.
     if (v.lawfulBasis === 'LEGITIMATE_INTERESTS' && !v.lawfulBasisDetails?.trim()) {
       this.snack.open(
-        'L\'intérêt légitime exige une mise en balance (LIA) documentée.',
-        'OK', { duration: 4500 }
+        $localize`:@@ropa.dialog.lia-required:L'intérêt légitime exige une mise en balance (LIA) documentée.`,
+        $localize`:@@common.ok:OK`, { duration: 4500 }
       );
       return;
     }
@@ -170,7 +179,7 @@ export class RopaDialogComponent {
       : (() => {
           const createdByUserId = this.auth.snapshot()?.userId;
           if (!createdByUserId) {
-            this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+            this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
             this.submitting = false;
             throw new Error('No session');
           }
@@ -185,13 +194,13 @@ export class RopaDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: a => {
-          this.snack.open(this.isEdit ? 'Activité mise à jour.' : 'Activité créée (DRAFT).', 'OK', { duration: 2500 });
+          this.snack.open(this.isEdit ? $localize`:@@ropa.dialog.updated:Activité mise à jour.` : $localize`:@@ropa.dialog.created:Activité créée (DRAFT).`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(a);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[ropa-dialog] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@ropa.dialog.save-error:Erreur lors de l'enregistrement.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

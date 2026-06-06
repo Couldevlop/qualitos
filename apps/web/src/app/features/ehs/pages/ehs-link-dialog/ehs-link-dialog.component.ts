@@ -39,12 +39,14 @@ export class EhsLinkDialogComponent {
 
   get title(): string {
     return this.data.kind === 'CAPA'
-      ? 'Lier un cas CAPA'
-      : 'Lier une non-conformité';
+      ? $localize`:@@ehs.link.title-capa:Lier un cas CAPA`
+      : $localize`:@@ehs.link.title-nc:Lier une non-conformité`;
   }
 
   get fieldLabel(): string {
-    return this.data.kind === 'CAPA' ? 'UUID du cas CAPA' : 'UUID de la NC';
+    return this.data.kind === 'CAPA'
+      ? $localize`:@@ehs.link.field-capa:UUID du cas CAPA`
+      : $localize`:@@ehs.link.field-nc:UUID de la NC`;
   }
 
   submit(): void {
@@ -58,11 +60,11 @@ export class EhsLinkDialogComponent {
     op$
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: i => { this.snack.open('Lien créé.', 'OK', { duration: 2200 }); this.dialogRef.close(i); },
+        next: i => { this.snack.open($localize`:@@ehs.link.created:Lien créé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(i); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[ehs-link] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Lien impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@ehs.link.failed:Lien impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

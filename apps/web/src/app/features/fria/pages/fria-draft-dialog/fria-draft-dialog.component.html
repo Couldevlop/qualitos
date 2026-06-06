@@ -1,60 +1,65 @@
 <qos-form-dialog
   title="Nouvelle FRIA (Art. 27)"
+  i18n-title="@@fria.draft.title"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitLabel="Créer le brouillon"
+  i18n-submitLabel="@@fria.draft.submit"
   submitIcon="save"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="hint">Renseignez les 5 sections obligatoires Art. 27 : processus, durée,
+  <p class="hint" i18n="@@fria.draft.hint">Renseignez les 5 sections obligatoires Art. 27 : processus, durée,
      personnes concernées, risques spécifiques. Les mesures et le mécanisme de
      réclamation sont fortement recommandés.</p>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Référence interne</mat-label>
+      <mat-label i18n="@@fria.draft.internal-reference">Référence interne</mat-label>
       <input matInput formControlName="reference" maxlength="64" required
              placeholder="FRIA-2026-XXX-NNN">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>UUID système IA</mat-label>
+      <mat-label i18n="@@fria.draft.ai-system-uuid">UUID système IA</mat-label>
       <input matInput formControlName="aiSystemId" required
              placeholder="00000000-0000-0000-0000-000000000000">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description du processus déployé</mat-label>
+    <mat-label i18n="@@fria.draft.process">Description du processus déployé</mat-label>
     <textarea matInput formControlName="processDescription" rows="4" maxlength="4000" required></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Durée prévue du déploiement</mat-label>
+    <mat-label i18n="@@fria.draft.deployment-duration">Durée prévue du déploiement</mat-label>
     <textarea matInput formControlName="deploymentDurationDescription" rows="2" maxlength="4000"
-              placeholder="Ex. : pilote 6 mois, déploiement permanent, etc."></textarea>
+              placeholder="Ex. : pilote 6 mois, déploiement permanent, etc."
+              i18n-placeholder="@@fria.draft.deployment-duration-ph"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Catégories de personnes affectées</mat-label>
+    <mat-label i18n="@@fria.draft.affected-persons">Catégories de personnes affectées</mat-label>
     <textarea matInput formControlName="affectedPersonsCategories" rows="3" maxlength="4000" required
-              placeholder="Patients hospitalisés, candidats à un poste, allocataires…"></textarea>
+              placeholder="Patients hospitalisés, candidats à un poste, allocataires…"
+              i18n-placeholder="@@fria.draft.affected-persons-ph"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Risques spécifiques sur les droits fondamentaux</mat-label>
+    <mat-label i18n="@@fria.draft.specific-risks">Risques spécifiques sur les droits fondamentaux</mat-label>
     <textarea matInput formControlName="specificRisks" rows="4" maxlength="4000" required
-              placeholder="Discrimination, opacité, surveillance, exclusion…"></textarea>
+              placeholder="Discrimination, opacité, surveillance, exclusion…"
+              i18n-placeholder="@@fria.draft.specific-risks-ph"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Mesures d'atténuation</mat-label>
+    <mat-label i18n="@@fria.detail.mitigation">Mesures d'atténuation</mat-label>
     <textarea matInput formControlName="mitigationMeasures" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Mesures de supervision humaine</mat-label>
+    <mat-label i18n="@@fria.draft.human-oversight">Mesures de supervision humaine</mat-label>
     <textarea matInput formControlName="humanOversightMeasures" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Mécanisme de réclamation</mat-label>
+    <mat-label i18n="@@fria.detail.complaint-mechanism">Mécanisme de réclamation</mat-label>
     <textarea matInput formControlName="complaintMechanismDescription" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
 

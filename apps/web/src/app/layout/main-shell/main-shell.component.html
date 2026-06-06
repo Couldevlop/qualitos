@@ -1,6 +1,6 @@
 <div class="qos-shell" [class.qos-shell--collapsed]="collapsed">
 
-  <aside class="qos-sidebar" [attr.aria-label]="'Navigation principale'">
+  <aside class="qos-sidebar" aria-label="Navigation principale" i18n-aria-label="@@shell.nav.aria">
     <div class="qos-sidebar__brand">
       <span class="qos-sidebar__logo material-symbols-outlined" aria-hidden="true">
         workspace_premium
@@ -59,12 +59,12 @@
         type="button"
         class="qos-sidebar__collapse"
         (click)="toggle()"
-        [attr.aria-label]="collapsed ? 'Déplier la navigation' : 'Replier la navigation'"
+        [attr.aria-label]="collapsed ? expandNavLabel : collapseNavLabel"
         [attr.aria-expanded]="!collapsed">
         <span class="material-symbols-outlined" aria-hidden="true">
           {{ collapsed ? 'chevron_right' : 'chevron_left' }}
         </span>
-        <span class="qos-sidebar__collapse-text" *ngIf="!collapsed">Replier</span>
+        <span class="qos-sidebar__collapse-text" *ngIf="!collapsed" i18n="@@shell.collapse">Replier</span>
       </button>
     </div>
   </aside>
@@ -75,7 +75,8 @@
         type="button"
         class="qos-topbar__icon-btn qos-topbar__menu"
         (click)="toggle()"
-        aria-label="Basculer la navigation">
+        aria-label="Basculer la navigation"
+        i18n-aria-label="@@shell.toggle-nav.aria">
         <span class="material-symbols-outlined" aria-hidden="true">menu</span>
       </button>
 
@@ -115,7 +116,8 @@
 
         <qos-theme-toggle></qos-theme-toggle>
 
-        <button type="button" class="qos-topbar__icon-btn" aria-label="Notifications">
+        <button type="button" class="qos-topbar__icon-btn"
+                aria-label="Notifications" i18n-aria-label="@@shell.notifications.aria">
           <span class="material-symbols-outlined" aria-hidden="true">notifications</span>
           <span class="qos-topbar__dot" aria-hidden="true"></span>
         </button>

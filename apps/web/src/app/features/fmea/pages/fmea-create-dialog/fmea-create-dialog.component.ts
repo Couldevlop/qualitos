@@ -20,11 +20,11 @@ export class FmeaCreateDialogComponent {
   submitting = false;
 
   readonly types: { value: FmeaType; label: string }[] = [
-    { value: 'PROCESS_FMEA', label: 'Processus (PFMEA)' },
-    { value: 'DESIGN_FMEA',  label: 'Conception (DFMEA)' },
-    { value: 'SYSTEM_FMEA',  label: 'Système' },
-    { value: 'SERVICE_FMEA', label: 'Service' },
-    { value: 'BOW_TIE',      label: 'Bow-tie (cyber/HSE)' }
+    { value: 'PROCESS_FMEA', label: $localize`:@@fmea.create.type-process:Processus (PFMEA)` },
+    { value: 'DESIGN_FMEA',  label: $localize`:@@fmea.create.type-design:Conception (DFMEA)` },
+    { value: 'SYSTEM_FMEA',  label: $localize`:@@fmea.type.system:Système` },
+    { value: 'SERVICE_FMEA', label: $localize`:@@fmea.type.service:Service` },
+    { value: 'BOW_TIE',      label: $localize`:@@fmea.create.type-bow-tie:Bow-tie (cyber/HSE)` }
   ];
 
   readonly form = this.fb.nonNullable.group({
@@ -53,7 +53,7 @@ export class FmeaCreateDialogComponent {
     }
     const createdBy = this.auth.snapshot()?.userId;
     if (!createdBy) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -69,13 +69,13 @@ export class FmeaCreateDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: p => {
-          this.snack.open('Projet FMEA créé.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@fmea.create.success:Projet FMEA créé.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(p);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[fmea-create] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de la création.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@common.error-create:Erreur lors de la création.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

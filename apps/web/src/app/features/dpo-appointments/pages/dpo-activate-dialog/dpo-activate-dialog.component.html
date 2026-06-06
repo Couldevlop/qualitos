@@ -1,32 +1,34 @@
 <qos-form-dialog
+  i18n-title="@@dpo-appointments.activate.title"
   title="Activer la désignation"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@dpo-appointments.activate.submit"
   submitLabel="Activer"
   submitIcon="verified"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="hint">L'activation du DPO suppose que la notification à l'autorité de
+  <p class="hint"><span i18n="@@dpo-appointments.activate.hint-1">L'activation du DPO suppose que la notification à l'autorité de
      contrôle a déjà été effectuée (Art. 37§7 RGPD). Renseignez la référence et la
      date de cette notification. Si un autre DPO est actuellement ACTIVE sur le
-     même périmètre <code>{{ data.appointment.scope }}</code>, sa désignation sera
-     automatiquement clôturée à la date de prise d'effet.</p>
+     même périmètre</span> <code>{{ data.appointment.scope }}</code><span i18n="@@dpo-appointments.activate.hint-2">, sa désignation sera
+     automatiquement clôturée à la date de prise d'effet.</span></p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Date de prise d'effet</mat-label>
+    <mat-label i18n="@@dpo-appointments.activate.effective-from-label">Date de prise d'effet</mat-label>
     <input matInput formControlName="effectiveFrom" type="date" required>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Date de notification à l'autorité de contrôle</mat-label>
+    <mat-label i18n="@@dpo-appointments.activate.notified-at-label">Date de notification à l'autorité de contrôle</mat-label>
     <input matInput formControlName="regulatorNotifiedAt" type="date" required>
-    <mat-hint>Doit être antérieure ou simultanée à la prise d'effet</mat-hint>
+    <mat-hint i18n="@@dpo-appointments.activate.notified-at-hint">Doit être antérieure ou simultanée à la prise d'effet</mat-hint>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Référence notification (CNIL ou équivalent)</mat-label>
+    <mat-label i18n="@@dpo-appointments.activate.reference-label">Référence notification (CNIL ou équivalent)</mat-label>
     <input matInput formControlName="regulatorNotificationReference" maxlength="250" required
            placeholder="CNIL-DPO-2026-DESIG-0042">
   </mat-form-field>

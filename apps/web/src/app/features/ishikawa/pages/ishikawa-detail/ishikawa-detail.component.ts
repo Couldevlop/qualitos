@@ -82,7 +82,7 @@ export class IshikawaDetailComponent implements OnInit {
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('id') ?? '';
     if (!UUID_RE.test(raw) && !this.isMockId(raw)) {
-      this.snack.open($localize`:@@common.invalid-id:Identifiant invalide.`, 'OK', { duration: 3000 });
+      this.snack.open($localize`:@@common.invalid-id:Identifiant invalide.`, $localize`:@@common.ok:OK`, { duration: 3000 });
       this.router.navigate(['/ishikawa']);
       return;
     }
@@ -125,7 +125,7 @@ export class IshikawaDetailComponent implements OnInit {
       if (!confirmed) return;
       this.ishikawa.deleteDiagram(this.diagramId).subscribe({
         next: () => {
-          this.snack.open($localize`:@@ishikawa.detail.deleted:Diagramme supprimé.`, 'OK', { duration: 2000 });
+          this.snack.open($localize`:@@ishikawa.detail.deleted:Diagramme supprimé.`, $localize`:@@common.ok:OK`, { duration: 2000 });
           this.router.navigate(['/ishikawa']);
         },
         error: err => {
@@ -202,7 +202,7 @@ export class IshikawaDetailComponent implements OnInit {
         this.suggestions = list;
         this.suggesting = false;
         if (!list.length) {
-          this.snack.open($localize`:@@ishikawa.detail.no-suggestions:Aucune suggestion exploitable — reformulez le problème.`, 'OK', { duration: 3500 });
+          this.snack.open($localize`:@@ishikawa.detail.no-suggestions:Aucune suggestion exploitable — reformulez le problème.`, $localize`:@@common.ok:OK`, { duration: 3500 });
         }
       },
       error: err => {
@@ -227,7 +227,7 @@ export class IshikawaDetailComponent implements OnInit {
       next: () => {
         this.addingKey = null;
         this.suggestions = this.suggestions.filter(x => x !== s);
-        this.snack.open($localize`:@@ishikawa.detail.cause-added:Cause ajoutée au diagramme.`, 'OK', { duration: 2000 });
+        this.snack.open($localize`:@@ishikawa.detail.cause-added:Cause ajoutée au diagramme.`, $localize`:@@common.ok:OK`, { duration: 2000 });
         this.reload$.next();
       },
       error: err => {

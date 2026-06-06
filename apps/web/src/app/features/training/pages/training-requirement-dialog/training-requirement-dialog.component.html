@@ -1,18 +1,18 @@
 <qos-form-dialog
-  title="Ajouter une exigence de compétence"
-  subtitle="Échelle Dreyfus 0-4 : NONE / AWARE / PRACTITIONER / COMPETENT / EXPERT. Le gap = (cible - acquis) sera utilisé par l'analyse de gap par utilisateur."
+  [title]="dialogTitle"
+  [subtitle]="dialogSubtitle"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
-  submitLabel="Rattacher"
+  [submitLabel]="submitLabel"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <div *ngIf="loadError" class="banner banner-error" role="alert">{{ loadError }}</div>
-  <div *ngIf="loading"   class="banner banner-info">Chargement…</div>
+  <div *ngIf="loading"   class="banner banner-info" i18n="@@common.loading">Chargement…</div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Compétence</mat-label>
+    <mat-label i18n="@@training.path-detail.col-skill">Compétence</mat-label>
     <mat-select formControlName="skillId" required>
       <mat-option *ngFor="let s of (skills$ | async)" [value]="s.id">
         {{ s.code }} — {{ s.name }}
@@ -21,7 +21,7 @@
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Niveau cible</mat-label>
+    <mat-label i18n="@@training.path-detail.col-target-level">Niveau cible</mat-label>
     <mat-select formControlName="targetLevel" required>
       <mat-option *ngFor="let n of levels" [value]="n">{{ n }} — {{ levelLabels[n] }}</mat-option>
     </mat-select>

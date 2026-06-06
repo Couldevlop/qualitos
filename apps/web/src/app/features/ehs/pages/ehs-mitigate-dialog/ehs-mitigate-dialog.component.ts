@@ -43,11 +43,11 @@ export class EhsMitigateDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: i => { this.snack.open('Incident mitigé.', 'OK', { duration: 2500 }); this.dialogRef.close(i); },
+        next: i => { this.snack.open($localize`:@@ehs.mitigate.mitigated:Incident mitigé.`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(i); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[ehs-mitigate] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Mitigation impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@ehs.mitigate.failed:Mitigation impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

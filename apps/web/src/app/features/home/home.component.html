@@ -1,7 +1,7 @@
 <div class="qos-page">
   <header class="hero">
-    <h1>One platform. Five methods. Every industry.</h1>
-    <p>QualitOS agrège les méthodes fondamentales de la qualité totale dans un référentiel unique,
+    <h1 i18n="@@home.welcome.title">One platform. Five methods. Every industry.</h1>
+    <p i18n="@@home.welcome.subtitle">QualitOS agrège les méthodes fondamentales de la qualité totale dans un référentiel unique,
        augmenté par l'IA et certifié par blockchain.</p>
   </header>
 
@@ -13,8 +13,8 @@
         <mat-card-subtitle>{{ m.description }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-actions>
-        <a mat-button color="primary" *ngIf="m.available && m.route" [routerLink]="m.route">Ouvrir</a>
-        <span class="soon" *ngIf="!m.available">Bientôt</span>
+        <a mat-button color="primary" *ngIf="m.available && m.route" [routerLink]="m.route" i18n="@@common.open">Ouvrir</a>
+        <span class="soon" *ngIf="!m.available" i18n="@@home.welcome.soon">Bientôt</span>
       </mat-card-actions>
     </mat-card>
   </section>

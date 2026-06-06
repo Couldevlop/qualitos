@@ -1,26 +1,27 @@
 <qos-form-dialog
-  title="Enregistrer la certification"
+  i18n-title="@@ai-conformity.certify.title" title="Enregistrer la certification"
+  i18n-subtitle="@@ai-conformity.certify.subtitle"
   subtitle="L'évaluation est conclue avec succès. Renseignez le numéro de certificat délivré par l'organisme (ou la référence interne pour Annexe VI), la référence de la déclaration UE de conformité et la date de validité."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
-  submitLabel="Certifier"
+  i18n-submitLabel="@@ai-conformity.certify.submit" submitLabel="Certifier"
   submitIcon="verified"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Numéro de certificat</mat-label>
+    <mat-label i18n="@@ai-conformity.certify.certificate-number">Numéro de certificat</mat-label>
     <input matInput formControlName="certificateNumber" maxlength="250" required
            placeholder="NB0123-AI-2026-0042">
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Référence déclaration UE</mat-label>
+    <mat-label i18n="@@ai-conformity.certify.eu-declaration-ref">Référence déclaration UE</mat-label>
     <input matInput formControlName="euDeclarationReference" maxlength="250" required
            placeholder="EU-DECL-2026-Org-System-001">
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Valide jusqu'au</mat-label>
+    <mat-label i18n="@@ai-conformity.certify.valid-until">Valide jusqu'au</mat-label>
     <input matInput formControlName="validUntil" type="date" required>
   </mat-form-field>
 

@@ -1,0 +1,17 @@
+# Config gitleaks QualitOS — règles par défaut + allowlist motivée.
+# Audit complet de l'historique (261 commits) le 2026-06-06 : aucune fuite.
+# Toute entrée d'allowlist DOIT être motivée et datée.
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Faux positifs assumés (dev local uniquement)"
+paths = [
+  # Identifiants DEV locaux assumés des compose (admin/admin, postgres
+  # 'qualitos') — jamais utilisés hors du poste de dev. 2026-06-06.
+  '''docker-compose\.dev\.yml''',
+  '''docker-compose\.lite\.yml''',
+  # Modèle sans valeurs.
+  '''\.env\.example''',
+]

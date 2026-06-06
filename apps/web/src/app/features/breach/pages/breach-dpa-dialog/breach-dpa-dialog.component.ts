@@ -37,7 +37,7 @@ export class BreachDpaDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const v = this.form.getRawValue();
     if (new Date(v.notifiedAt).getTime() > Date.now()) {
-      this.snack.open('La date de notification ne peut pas être dans le futur.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@breach.notif-date-future:La date de notification ne peut pas être dans le futur.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -47,11 +47,11 @@ export class BreachDpaDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: b => { this.snack.open('CNIL notifiée.', 'OK', { duration: 2200 }); this.dialogRef.close(b); },
+        next: b => { this.snack.open($localize`:@@breach.dpa.notified-toast:CNIL notifiée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(b); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[breach-dpa] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Notification impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@breach.notification-failed:Notification impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

@@ -4,6 +4,7 @@
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitLabel="Confirmer"
+  i18n-submitLabel="@@common.confirm"
   [submitIcon]="data.mode === 'CLOSE' ? 'check_circle' : 'block'"
   [submitColor]="data.mode === 'DISMISS' ? 'warn' : 'primary'"
   (submitted)="submit()"
@@ -11,11 +12,11 @@
 
   <p [class.warn]="data.mode === 'DISMISS'" class="head-note">
     <ng-container *ngIf="data.mode === 'CLOSE'">
-      Décrire les actions correctives définitives. La clôture est terminale.
+      <span i18n="@@ai-incidents.close.hint-close">Décrire les actions correctives définitives. La clôture est terminale.</span>
     </ng-container>
     <ng-container *ngIf="data.mode === 'DISMISS'">
-      <strong>Action terminale.</strong>
-      Motiver le rejet (faux positif, hors champ AI Act, doublon, etc.).
+      <strong i18n="@@ai-incidents.close.terminal-action">Action terminale.</strong>
+      <span i18n="@@ai-incidents.close.hint-dismiss">Motiver le rejet (faux positif, hors champ AI Act, doublon, etc.).</span>
     </ng-container>
   </p>
 

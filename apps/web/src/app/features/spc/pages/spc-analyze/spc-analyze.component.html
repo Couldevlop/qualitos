@@ -80,7 +80,7 @@
   <!-- Bannière contexte KPI / CAPA ouverte -->
   <div class="kpi-banner" *ngIf="kpiContext as k">
     <mat-icon>insights</mat-icon>
-    <span>Analyse du KPI <strong>{{ k.code }}</strong> — {{ k.name }}.</span>
+    <span><span i18n="@@spc.analyze.kpi-banner-prefix">Analyse du KPI</span> <strong>{{ k.code }}</strong> — {{ k.name }}.</span>
     <a *ngIf="k.capaId" class="capa-link" [routerLink]="['/capa', k.capaId]">
       <mat-icon>assignment_late</mat-icon> <span i18n="@@spc.analyze.capa-open-link">CAPA ouverte — voir le dossier</span>
     </a>

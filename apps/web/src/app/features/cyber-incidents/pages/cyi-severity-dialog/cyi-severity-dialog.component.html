@@ -1,24 +1,27 @@
 <qos-form-dialog
   title="Modifier la sévérité"
+  i18n-title="@@cyber-incidents.severity.title"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitLabel="Mettre à jour"
+  i18n-submitLabel="@@cyber-incidents.severity.submit"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
     <p class="hint" [class.warn]="willEnableNotif()">
       <ng-container *ngIf="willEnableNotif()">
-        <strong>Attention :</strong> passer en HIGH/CRITICAL active automatiquement les
-        échéances CSIRT NIS 2 (24h / 72h / 1 mois) à compter de la date de détection.
+        <strong i18n="@@cyber-incidents.severity.warn-label">Attention :</strong>
+        <span i18n="@@cyber-incidents.severity.warn-text">passer en HIGH/CRITICAL active automatiquement les
+        échéances CSIRT NIS 2 (24h / 72h / 1 mois) à compter de la date de détection.</span>
       </ng-container>
-      <ng-container *ngIf="!willEnableNotif()">
+      <ng-container *ngIf="!willEnableNotif()" i18n="@@cyber-incidents.severity.current">
         Sévérité courante : <strong>{{ data.current }}</strong>.
       </ng-container>
     </p>
 
     <mat-form-field appearance="outline" class="full">
-      <mat-label>Nouvelle sévérité</mat-label>
+      <mat-label i18n="@@cyber-incidents.severity.new-severity">Nouvelle sévérité</mat-label>
       <mat-select formControlName="severity" required>
         <mat-option *ngFor="let s of severities" [value]="s">{{ s }}</mat-option>
       </mat-select>

@@ -28,13 +28,13 @@ export class ChangesCreateDialogComponent {
   readonly form;
 
   readonly types: { value: ChangeRequestType; label: string }[] = [
-    { value: 'DOCUMENT',       label: 'Document' },
-    { value: 'PROCESS',        label: 'Processus' },
-    { value: 'EQUIPMENT',      label: 'Équipement' },
-    { value: 'SUPPLIER',       label: 'Fournisseur' },
-    { value: 'IT_SYSTEM',      label: 'Système IT' },
-    { value: 'ORGANIZATIONAL', label: 'Organisationnel' },
-    { value: 'OTHER',          label: 'Autre' }
+    { value: 'DOCUMENT',       label: $localize`:@@changes.type.document:Document` },
+    { value: 'PROCESS',        label: $localize`:@@changes.type.process:Processus` },
+    { value: 'EQUIPMENT',      label: $localize`:@@changes.type.equipment:Équipement` },
+    { value: 'SUPPLIER',       label: $localize`:@@changes.type.supplier:Fournisseur` },
+    { value: 'IT_SYSTEM',      label: $localize`:@@changes.type.it-system:Système IT` },
+    { value: 'ORGANIZATIONAL', label: $localize`:@@changes.type.organizational:Organisationnel` },
+    { value: 'OTHER',          label: $localize`:@@changes.type.other:Autre` }
   ];
   readonly priorities: ChangeRequestPriority[] = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
 
@@ -80,7 +80,7 @@ export class ChangesCreateDialogComponent {
       : (() => {
           const requesterUserId = this.auth.snapshot()?.userId;
           if (!requesterUserId) {
-            this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+            this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
             this.submitting = false;
             throw new Error('No session');
           }
@@ -101,13 +101,13 @@ export class ChangesCreateDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: c => {
-          this.snack.open(this.isEdit ? 'Demande mise à jour.' : 'Demande créée.', 'OK', { duration: 2200 });
+          this.snack.open(this.isEdit ? $localize`:@@changes.create.updated:Demande mise à jour.` : $localize`:@@changes.create.created:Demande créée.`, $localize`:@@common.ok:OK`, { duration: 2200 });
           this.dialogRef.close(c);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[changes-create] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@changes.create.save-error:Erreur lors de l'enregistrement.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

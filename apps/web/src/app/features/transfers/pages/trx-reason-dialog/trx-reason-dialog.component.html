@@ -3,6 +3,7 @@
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@transfers.reason-dialog.confirm"
   submitLabel="Confirmer"
   [submitIcon]="data.mode === 'SUSPEND' ? 'pause_circle' : 'cancel'"
   submitColor="warn"
@@ -10,13 +11,13 @@
   (cancelled)="cancel()">
 
   <p class="warn">
-    <strong *ngIf="data.mode === 'SUSPEND'">Suspension temporaire.</strong>
-    <strong *ngIf="data.mode === 'TERMINATE'">Action terminale.</strong>
-    Le motif est obligatoire pour la traçabilité.
+    <strong *ngIf="data.mode === 'SUSPEND'" i18n="@@transfers.reason-dialog.suspend-temp">Suspension temporaire.</strong>
+    <strong *ngIf="data.mode === 'TERMINATE'" i18n="@@transfers.reason-dialog.terminal-action">Action terminale.</strong>
+    <span i18n="@@transfers.reason-dialog.reason-mandatory">Le motif est obligatoire pour la traçabilité.</span>
   </p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Motif</mat-label>
+    <mat-label i18n="@@transfers.reason-dialog.reason">Motif</mat-label>
     <textarea matInput formControlName="reason" rows="4" maxlength="2000" required></textarea>
   </mat-form-field>
 

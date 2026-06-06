@@ -53,7 +53,7 @@ export class DocumentsDetailComponent implements OnInit {
       switchMap(p => {
         const id = p.get('id') ?? '';
         if (!UUID_REGEX.test(id) && !id.startsWith('doc-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
@@ -63,7 +63,7 @@ export class DocumentsDetailComponent implements OnInit {
             catchError(err => {
               // eslint-disable-next-line no-console
               console.warn('[documents-detail] get failed', err?.status, err?.error?.title);
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             }),
             tap(() => this.loading$.next(false))
@@ -84,18 +84,18 @@ export class DocumentsDetailComponent implements OnInit {
   archive(d: DocumentResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Archiver le document ?',
+        title: $localize`:@@documents.detail.archive-confirm-title:Archiver le document ?`,
         message: '« ' + d.title + ' » sera marqué ARCHIVED — non éditable mais conservé pour audit.',
-        confirmLabel: 'Archiver',
-        cancelLabel: 'Annuler',
+        confirmLabel: $localize`:@@documents.detail.archive:Archiver`,
+        cancelLabel: $localize`:@@common.cancel:Annuler`,
         danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.archive(d.id).subscribe({
-        next: () => { this.snack.open('Document archivé.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Archivage impossible.')
+        next: () => { this.snack.open($localize`:@@documents.detail.archived:Document archivé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@documents.detail.archive-failed:Archivage impossible.`)
       });
     });
   }
@@ -112,20 +112,20 @@ export class DocumentsDetailComponent implements OnInit {
 
   submitForReview(v: DocumentVersionResponse): void {
     this.svc.submit(v.documentId, v.id).subscribe({
-      next: () => { this.snack.open('Soumise à revue.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Soumission impossible.')
+      next: () => { this.snack.open($localize`:@@documents.detail.submitted:Soumise à revue.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@documents.detail.submit-failed:Soumission impossible.`)
     });
   }
 
   approve(v: DocumentVersionResponse): void {
     const approverId = this.auth.snapshot()?.userId;
     if (!approverId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.svc.approve(v.documentId, v.id, { approverId }).subscribe({
-      next: () => { this.snack.open('Version approuvée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Approbation impossible.')
+      next: () => { this.snack.open($localize`:@@documents.detail.approved:Version approuvée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@documents.detail.approve-failed:Approbation impossible.`)
     });
   }
 
@@ -133,17 +133,17 @@ export class DocumentsDetailComponent implements OnInit {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: 'Publier la version v' + v.versionNumber + ' ?',
-        message: 'La version actuellement publiée sera marquée OBSOLETE.',
-        confirmLabel: 'Publier',
-        cancelLabel: 'Annuler',
+        message: $localize`:@@documents.detail.publish-confirm-message:La version actuellement publiée sera marquée OBSOLETE.`,
+        confirmLabel: $localize`:@@documents.detail.publish:Publier`,
+        cancelLabel: $localize`:@@common.cancel:Annuler`,
         danger: false
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.publish(v.documentId, v.id).subscribe({
-        next: () => { this.snack.open('Version publiée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Publication impossible.')
+        next: () => { this.snack.open($localize`:@@documents.detail.published:Version publiée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@documents.detail.publish-failed:Publication impossible.`)
       });
     });
   }
@@ -151,12 +151,12 @@ export class DocumentsDetailComponent implements OnInit {
   acknowledge(v: DocumentVersionResponse): void {
     const userId = this.auth.snapshot()?.userId;
     if (!userId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.svc.acknowledge(v.documentId, v.id, { userId }).subscribe({
-      next: () => this.snack.open('Lecture confirmée.', 'OK', { duration: 2500 }),
-      error: err => this.fail(err, 'Acquittement impossible.')
+      next: () => this.snack.open($localize`:@@documents.detail.acknowledged:Lecture confirmée.`, $localize`:@@common.ok:OK`, { duration: 2500 }),
+      error: err => this.fail(err, $localize`:@@documents.detail.acknowledge-failed:Acquittement impossible.`)
     });
   }
 
@@ -164,14 +164,19 @@ export class DocumentsDetailComponent implements OnInit {
   versionBadge(s: VersionStatus): string { return 'vbadge vbadge-' + s.toLowerCase(); }
   typeLabel(t: DocumentType): string {
     return ({
-      POLICY: 'Politique', PROCEDURE: 'Procédure', WORK_INSTRUCTION: 'Mode opératoire',
-      RECORD: 'Enregistrement', FORM: 'Formulaire', MANUAL: 'Manuel', OTHER: 'Autre'
+      POLICY: $localize`:@@documents.type.policy:Politique`,
+      PROCEDURE: $localize`:@@documents.type.procedure:Procédure`,
+      WORK_INSTRUCTION: $localize`:@@documents.type.work-instruction:Mode opératoire`,
+      RECORD: $localize`:@@documents.type.record:Enregistrement`,
+      FORM: $localize`:@@documents.type.form:Formulaire`,
+      MANUAL: $localize`:@@documents.type.manual:Manuel`,
+      OTHER: $localize`:@@documents.type.other:Autre`
     })[t];
   }
 
   private fail(err: unknown, fallback: string): void {
     // eslint-disable-next-line no-console
     console.warn('[documents-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
-    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+    this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 4000 });
   }
 }

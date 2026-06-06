@@ -1,38 +1,40 @@
 <qos-form-dialog
+  i18n-title="@@capa.edit.title"
   title="Modifier le cas CAPA"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.save"
   submitLabel="Enregistrer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre</mat-label>
+    <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="255" required>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description</mat-label>
+    <mat-label i18n="@@common.description">Description</mat-label>
     <textarea matInput formControlName="description" rows="3"></textarea>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Criticité</mat-label>
+      <mat-label i18n="@@capa.create.criticity">Criticité</mat-label>
       <mat-select formControlName="criticity">
         <mat-option *ngFor="let c of criticities" [value]="c">{{ c }}</mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Échéance</mat-label>
+      <mat-label i18n="@@capa.edit.due-date">Échéance</mat-label>
       <input matInput formControlName="dueDate" type="date">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Référence source</mat-label>
+    <mat-label i18n="@@capa.edit.source-ref">Référence source</mat-label>
     <input matInput formControlName="sourceRef" maxlength="255">
   </mat-form-field>
 

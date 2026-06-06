@@ -1,6 +1,6 @@
-# PWA & mode hors-ligne 5S — apps/web
+# PWA & mode hors-ligne terrain — apps/web
 
-> CLAUDE.md §15.2-15.3 : offline-first terrain, audits 5S en zone blanche.
+> CLAUDE.md §15.2-15.3 : offline-first terrain (audits 5S + audits) en zone blanche.
 
 ## Ce qui est livré
 
@@ -24,6 +24,11 @@ saisie terrain ──offline──▶ OfflineQueueService ──▶ IndexedDB (q
 - `FivesService` : `createAudit` et `scorePillar` basculent en file quand
   hors-ligne **ou** sur coupure pendant l'envoi (status 0) ; réponse optimiste
   marquée `pendingSync: true`.
+- `AuditsService` : mêmes garanties pour les **écritures terrain** d'un audit —
+  `respondChecklistItem` (réponse à un item de checklist en zone blanche) et
+  `addFinding` (constat soulevé sur le terrain). Le back-office reste online-only
+  (planification, checklist préparée, transitions, validation manager). Labels de
+  file non-PII (`plan <id>` / `item <id>`, jamais de nom d'auditeur ou d'audité).
 - Shell : chip topbar `cloud_off` / `cloud_sync n` (hors-ligne / n actions en
   attente), `role="status"` accessible — **cliquable → page `/offline-queue`**.
 
@@ -61,5 +66,5 @@ saisie terrain ──offline──▶ OfflineQueueService ──▶ IndexedDB (q
 
 ## Limites connues / suite
 - Icônes = placeholder monogramme « Q » (générées) — à remplacer par le logo DS.
-- Couverture offline limitée au flux 5S terrain (create + score) — étendre aux
-  NC mobiles et audits génériques ensuite.
+- Couverture offline : flux 5S terrain (create + score) et audits terrain
+  (réponse checklist + constat) — étendre aux NC mobiles ensuite.

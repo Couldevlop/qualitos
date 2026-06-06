@@ -62,7 +62,7 @@ export class PdcaStepDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: step => {
-          this.snack.open($localize`:@@pdca.step.success:Étape ajoutée.`, 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@pdca.step.success:Étape ajoutée.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(step);
         },
         error: err => {

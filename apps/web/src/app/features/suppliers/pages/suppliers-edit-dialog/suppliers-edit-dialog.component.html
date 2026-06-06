@@ -1,24 +1,26 @@
 <qos-form-dialog
+  i18n-title="@@suppliers.edit.title"
   title="Modifier le fournisseur"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.save"
   submitLabel="Enregistrer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
     <mat-form-field appearance="outline" class="full">
-      <mat-label>Raison sociale</mat-label>
+      <mat-label i18n="@@suppliers.create.legal-name">Raison sociale</mat-label>
       <input matInput formControlName="name" maxlength="250" required>
     </mat-form-field>
 
     <div class="row">
       <mat-form-field appearance="outline" class="col col-country">
-        <mat-label>Pays (ISO-2)</mat-label>
+        <mat-label i18n="@@suppliers.create.country">Pays (ISO-2)</mat-label>
         <input matInput formControlName="countryCode" maxlength="2">
       </mat-form-field>
       <mat-form-field appearance="outline" class="col">
-        <mat-label>Type</mat-label>
+        <mat-label i18n="@@common.type">Type</mat-label>
         <mat-select formControlName="supplierType" required>
           <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
         </mat-select>
@@ -26,7 +28,7 @@
     </div>
 
     <mat-form-field appearance="outline" class="full">
-      <mat-label>Email contact qualité</mat-label>
+      <mat-label i18n="@@suppliers.create.contact-email">Email contact qualité</mat-label>
       <input matInput formControlName="contactEmail" type="email" maxlength="320">
     </mat-form-field>
 

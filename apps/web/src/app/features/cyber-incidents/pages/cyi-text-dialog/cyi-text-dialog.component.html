@@ -6,6 +6,7 @@
   [submitColor]="data.mode === 'REJECT' ? 'warn' : 'primary'"
   [submitIcon]="data.mode === 'CLOSE' ? 'check_circle' : 'block'"
   submitLabel="Confirmer"
+  i18n-submitLabel="@@common.confirm"
   (submitted)="submit()"
   (cancelled)="cancel()">
 

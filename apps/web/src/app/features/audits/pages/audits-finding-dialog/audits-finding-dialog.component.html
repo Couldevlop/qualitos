@@ -1,15 +1,18 @@
 <qos-form-dialog
+  i18n-title="@@audits.finding.title"
   title="Ajouter un constat d'audit"
+  i18n-subtitle="@@audits.finding.subtitle"
   subtitle="Catégorise le constat et décris-le précisément. Une NC majeure ouvrira automatiquement un CAPA dans la prochaine itération du workflow audit."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.save"
   submitLabel="Enregistrer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Type</mat-label>
+    <mat-label i18n="@@common.type">Type</mat-label>
     <mat-select formControlName="type">
       <mat-option *ngFor="let t of types" [value]="t.value">
         <strong>{{ t.label }}</strong> — <span class="muted">{{ t.hint }}</span>
@@ -18,20 +21,22 @@
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description du constat</mat-label>
+    <mat-label i18n="@@audits.finding.description">Description du constat</mat-label>
     <textarea matInput formControlName="description" rows="4" required
+              i18n-placeholder="@@audits.finding.description-placeholder"
               placeholder="Ce qui a été observé, où, quand, pourquoi c'est un écart…"></textarea>
-    <mat-error *ngIf="form.controls.description.hasError('required')">Description requise.</mat-error>
+    <mat-error *ngIf="form.controls.description.hasError('required')" i18n="@@audits.finding.description-required">Description requise.</mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Clause (optionnel)</mat-label>
+    <mat-label i18n="@@audits.finding.clause">Clause (optionnel)</mat-label>
     <input matInput formControlName="clauseRef" maxlength="100"
+           i18n-placeholder="@@audits.finding.clause-placeholder"
            placeholder="Ex. : 7.1.5.1 ISO 9001">
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>URL photo (optionnel)</mat-label>
+    <mat-label i18n="@@audits.finding.photo-url">URL photo (optionnel)</mat-label>
     <input matInput formControlName="photoUrl" maxlength="1024"
            placeholder="https://…">
   </mat-form-field>

@@ -58,7 +58,7 @@ export class ItsmDetailComponent implements OnInit {
         const id = p.get('id') ?? '';
         // OWASP A03 — UUID regex on path id before backend call
         if (!UUID_REGEX.test(id) && !id.startsWith('itsm-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
@@ -66,7 +66,7 @@ export class ItsmDetailComponent implements OnInit {
         return this.refresh$.pipe(
           switchMap(() => forkJoin({
             connection: this.svc.get(id).pipe(catchError(err => {
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             })),
             mappings: this.svc.listMappings(id).pipe(catchError(() => of({
@@ -99,10 +99,10 @@ export class ItsmDetailComponent implements OnInit {
         this.lastSync = r;
         this.syncing = false;
         if (r.errorMessage) {
-          this.snack.open('Sync terminée avec erreur — voir détail.', 'OK', { duration: 4000 });
+          this.snack.open($localize`:@@itsm.detail.sync-error-snack:Sync terminée avec erreur — voir détail.`, $localize`:@@common.ok:OK`, { duration: 4000 });
         } else {
-          this.snack.open(`Sync OK — ${r.newImports} nouveau(x), ${r.alreadyKnown} déjà connu(s).`,
-            'OK', { duration: 3000 });
+          this.snack.open($localize`:@@itsm.detail.sync-ok:Sync OK — ${r.newImports}:newImports: nouveau(x), ${r.alreadyKnown}:alreadyKnown: déjà connu(s).`,
+            $localize`:@@common.ok:OK`, { duration: 3000 });
         }
         this.refresh$.next();
       },
@@ -110,7 +110,7 @@ export class ItsmDetailComponent implements OnInit {
         this.syncing = false;
         // eslint-disable-next-line no-console
         console.warn('[itsm-detail] sync failed', err?.status, err?.error?.title);
-        this.snack.open(safeErrorMessage(err, 'Synchronisation impossible.'), 'OK', { duration: 4000 });
+        this.snack.open(safeErrorMessage(err, $localize`:@@itsm.detail.sync-failed:Synchronisation impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
       }
     });
   }
@@ -118,19 +118,19 @@ export class ItsmDetailComponent implements OnInit {
   remove(c: ConnectionResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer la connexion ?',
+        title: $localize`:@@itsm.detail.delete-title:Supprimer la connexion ?`,
         message: 'La connexion « ' + c.name + ' » et ses ' + this.mappings.length + ' mapping(s) seront supprimés. Le secret chiffré sera révoqué.',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(c.id).subscribe({
-        next: () => { this.snack.open('Connexion supprimée.', 'OK', { duration: 2200 }); this.router.navigate(['/itsm']); },
+        next: () => { this.snack.open($localize`:@@itsm.detail.deleted:Connexion supprimée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/itsm']); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[itsm-detail] delete failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Suppression impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@common.delete-failed:Suppression impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
     });

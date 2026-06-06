@@ -36,7 +36,9 @@ export class TrxReasonDialogComponent {
   ) {}
 
   get title(): string {
-    return this.data.mode === 'SUSPEND' ? 'Suspendre le transfert' : 'Terminer le transfert';
+    return this.data.mode === 'SUSPEND'
+      ? $localize`:@@transfers.reason-dialog.title-suspend:Suspendre le transfert`
+      : $localize`:@@transfers.reason-dialog.title-terminate:Terminer le transfert`;
   }
 
   submit(): void {
@@ -50,14 +52,14 @@ export class TrxReasonDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: t => {
-          this.snack.open(this.data.mode === 'SUSPEND' ? 'Transfert suspendu.' : 'Transfert terminé.',
-            'OK', { duration: 2500 });
+          this.snack.open(this.data.mode === 'SUSPEND' ? $localize`:@@transfers.reason-dialog.suspended:Transfert suspendu.` : $localize`:@@transfers.reason-dialog.terminated:Transfert terminé.`,
+            $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(t);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[trx-reason] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Opération impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@transfers.reason-dialog.op-failed:Opération impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

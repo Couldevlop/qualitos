@@ -46,13 +46,15 @@ export class StandardsListComponent implements OnInit {
     this.svc.adopt({ standardId: s.id }).subscribe({
       next: a => {
         this.adopting = undefined;
-        this.snack.open(`${s.code} adopté — roadmap générée`, 'OK', { duration: 2500 });
+        this.snack.open($localize`:@@standards.list.adopt-success:${s.code}:code: adopté — roadmap générée`, $localize`:@@common.ok:OK`, { duration: 2500 });
         this.router.navigate(['/standards/adoptions', a.id]);
       },
       error: err => {
         this.adopting = undefined;
-        const msg = err?.status === 409 ? 'Norme déjà adoptée' : "Échec de l'adoption";
-        this.snack.open(msg, 'Fermer', { duration: 3000 });
+        const msg = err?.status === 409
+          ? $localize`:@@standards.list.adopt-conflict:Norme déjà adoptée`
+          : $localize`:@@standards.list.adopt-error:Échec de l'adoption`;
+        this.snack.open(msg, $localize`:@@common.close:Fermer`, { duration: 3000 });
         this.load();
       }
     });

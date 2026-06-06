@@ -24,10 +24,22 @@ export class RetRuleDialogComponent {
   readonly form;
 
   readonly units: { value: RetentionUnit; label: string }[] = [
-    { value: 'DAY',   label: 'Jour(s)' },
-    { value: 'MONTH', label: 'Mois (~30 j)' },
-    { value: 'YEAR',  label: 'An(s) (~365 j)' }
+    { value: 'DAY',   label: $localize`:@@retention.rule-dialog.unit-day:Jour(s)` },
+    { value: 'MONTH', label: $localize`:@@retention.rule-dialog.unit-month:Mois (~30 j)` },
+    { value: 'YEAR',  label: $localize`:@@retention.rule-dialog.unit-year:An(s) (~365 j)` }
   ];
+
+  get dialogTitle(): string {
+    return this.isEdit
+      ? $localize`:@@retention.rule-dialog.title-edit:Modifier la règle`
+      : $localize`:@@retention.rule-dialog.title-create:Nouvelle règle de rétention`;
+  }
+
+  get submitLabelText(): string {
+    return this.isEdit
+      ? $localize`:@@common.save:Enregistrer`
+      : $localize`:@@retention.rule-dialog.submit-create:Créer (DRAFT)`;
+  }
 
   constructor(
     private readonly fb: FormBuilder,
@@ -98,7 +110,7 @@ export class RetRuleDialogComponent {
       : (() => {
           const createdByUserId = this.auth.snapshot()?.userId;
           if (!createdByUserId) {
-            this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+            this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
             this.submitting = false;
             throw new Error('No session');
           }
@@ -113,13 +125,13 @@ export class RetRuleDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: r => {
-          this.snack.open(this.isEdit ? 'Règle mise à jour.' : 'Règle créée (DRAFT).', 'OK', { duration: 2500 });
+          this.snack.open(this.isEdit ? $localize`:@@retention.rule-dialog.updated:Règle mise à jour.` : $localize`:@@retention.rule-dialog.created:Règle créée (DRAFT).`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(r);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[ret-rule-dialog] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@retention.rule-dialog.save-error:Erreur lors de l'enregistrement.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

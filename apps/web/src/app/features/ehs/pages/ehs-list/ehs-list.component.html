@@ -1,11 +1,11 @@
 <section class="ehs-list">
   <header class="head">
     <div>
-      <h1>EHS — Incidents</h1>
-      <p>Environnement, hygiène, sécurité (CLAUDE.md §4.11) — déclaration, investigation, mitigation.</p>
+      <h1 i18n="@@ehs.list.title">EHS — Incidents</h1>
+      <p i18n="@@ehs.list.subtitle">Environnement, hygiène, sécurité (CLAUDE.md §4.11) — déclaration, investigation, mitigation.</p>
     </div>
     <button mat-flat-button color="primary" (click)="openReport()">
-      <mat-icon>warning</mat-icon> Déclarer un incident
+      <mat-icon>warning</mat-icon> <span i18n="@@ehs.list.report-incident">Déclarer un incident</span>
     </button>
   </header>
 
@@ -15,7 +15,7 @@
       <strong>{{ stats.reported }}</strong>
     </mat-card>
     <mat-card class="stat-card">
-      <span class="stat-label">En investigation</span>
+      <span class="stat-label" i18n="@@ehs.list.stat-investigating">En investigation</span>
       <strong [class.warn]="stats.investigating > 0">{{ stats.investigating }}</strong>
     </mat-card>
     <mat-card class="stat-card">
@@ -27,51 +27,51 @@
       <strong class="good">{{ stats.closed }}</strong>
     </mat-card>
     <mat-card class="stat-card">
-      <span class="stat-label">Accidents</span>
+      <span class="stat-label" i18n="@@ehs.list.stat-injuries">Accidents</span>
       <strong [class.bad]="stats.injuries > 0">{{ stats.injuries }}</strong>
     </mat-card>
     <mat-card class="stat-card">
-      <span class="stat-label">Presque-accidents</span>
+      <span class="stat-label" i18n="@@ehs.list.stat-near-misses">Presque-accidents</span>
       <strong>{{ stats.nearMisses }}</strong>
     </mat-card>
   </div>
 
   <div class="filters">
     <mat-form-field appearance="outline">
-      <mat-label>Statut</mat-label>
+      <mat-label i18n="@@common.status">Statut</mat-label>
       <mat-select [formControl]="statusFilter">
-        <mat-option [value]="''">Tous</mat-option>
+        <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
         <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline">
-      <mat-label>Type</mat-label>
+      <mat-label i18n="@@common.type">Type</mat-label>
       <mat-select [formControl]="typeFilter">
-        <mat-option [value]="''">Tous</mat-option>
+        <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
         <mat-option *ngFor="let t of types" [value]="t">{{ typeLabel(t) }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline">
-      <mat-label>Sévérité</mat-label>
+      <mat-label i18n="@@ehs.list.severity">Sévérité</mat-label>
       <mat-select [formControl]="severityFilter">
-        <mat-option [value]="''">Toutes</mat-option>
+        <mat-option [value]="''" i18n="@@ehs.list.severity-all">Toutes</mat-option>
         <mat-option *ngFor="let s of severities" [value]="s">{{ s }}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
 
   <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
-  <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+  <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
 
   <div class="table-wrap mat-elevation-z1">
     <table mat-table [dataSource]="(incidents$ | async) ?? []">
       <ng-container matColumnDef="code">
-        <th mat-header-cell *matHeaderCellDef>Code</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@ehs.list.col-code">Code</th>
         <td mat-cell *matCellDef="let i"><code>{{ i.code }}</code></td>
       </ng-container>
 
       <ng-container matColumnDef="title">
-        <th mat-header-cell *matHeaderCellDef>Titre</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.title">Titre</th>
         <td mat-cell *matCellDef="let i">
           <a class="title-link" (click)="open(i)">{{ i.title }}</a>
           <small *ngIf="i.location" class="dim"><mat-icon class="loc-icon">place</mat-icon>{{ i.location }}</small>
@@ -79,22 +79,22 @@
       </ng-container>
 
       <ng-container matColumnDef="type">
-        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.type">Type</th>
         <td mat-cell *matCellDef="let i"><span [class]="typeBadge(i.type)">{{ typeLabel(i.type) }}</span></td>
       </ng-container>
 
       <ng-container matColumnDef="severity">
-        <th mat-header-cell *matHeaderCellDef>Sévérité</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@ehs.list.severity">Sévérité</th>
         <td mat-cell *matCellDef="let i"><span [class]="severityBadge(i.severity)">{{ i.severity }}</span></td>
       </ng-container>
 
       <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
         <td mat-cell *matCellDef="let i"><span [class]="statusBadge(i.status)">{{ i.status }}</span></td>
       </ng-container>
 
       <ng-container matColumnDef="occurredAt">
-        <th mat-header-cell *matHeaderCellDef>Survenu le</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@ehs.list.col-occurred-at">Survenu le</th>
         <td mat-cell *matCellDef="let i">{{ i.occurredAt || i.reportedAt }}</td>
       </ng-container>
 

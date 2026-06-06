@@ -11,16 +11,15 @@
 
   <p [class.warn]="danger">
     <ng-container *ngIf="danger">
-      Un seul rejet marque la demande comme REJECTED — décision terminale.
+      <span i18n="@@changes.decision.reject-hint">Un seul rejet marque la demande comme REJECTED — décision terminale.</span>
     </ng-container>
     <ng-container *ngIf="!danger">
-      Votre approbation sera enregistrée. La demande passera en APPROVED lorsque tous
-      les approbateurs auront statué.
+      <span i18n="@@changes.decision.approve-hint">Votre approbation sera enregistrée. La demande passera en APPROVED lorsque tous les approbateurs auront statué.</span>
     </ng-container>
   </p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Commentaire {{ danger ? '(obligatoire)' : '(optionnel)' }}</mat-label>
+    <mat-label><span i18n="@@changes.decision.comment-label">Commentaire</span> {{ danger ? '(obligatoire)' : '(optionnel)' }}</mat-label>
     <textarea matInput formControlName="comment" rows="4" maxlength="1000"></textarea>
   </mat-form-field>
 

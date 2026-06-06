@@ -43,6 +43,11 @@ export class AiQmsDialogComponent {
   readonly isEdit: boolean;
   readonly form;
 
+  readonly editTitle   = $localize`:@@ai-qms.dialog.edit-title:Modifier le QMS`;
+  readonly createTitle = $localize`:@@ai-qms.dialog.create-title:Nouveau QMS IA (Art. 17)`;
+  readonly editLabel   = $localize`:@@common.save:Enregistrer`;
+  readonly createLabel = $localize`:@@ai-qms.dialog.create-label:Créer (DRAFT)`;
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly svc: AiQmsService,
@@ -105,7 +110,7 @@ export class AiQmsDialogComponent {
       : (() => {
           const createdByUserId = this.auth.snapshot()?.userId;
           if (!createdByUserId) {
-            this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+            this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
             this.submitting = false;
             throw new Error('No session');
           }
@@ -114,11 +119,11 @@ export class AiQmsDialogComponent {
     op$
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: q => { this.snack.open(this.isEdit ? 'QMS mis à jour.' : 'QMS créé (DRAFT).', 'OK', { duration: 2500 }); this.dialogRef.close(q); },
+        next: q => { this.snack.open(this.isEdit ? $localize`:@@ai-qms.dialog.updated:QMS mis à jour.` : $localize`:@@ai-qms.dialog.created:QMS créé (DRAFT).`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(q); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[ai-qms-dialog] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@ai-qms.dialog.error-save:Erreur lors de l'enregistrement.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

@@ -1,33 +1,35 @@
 <qos-form-dialog
+  i18n-title="@@breach.detect.title"
   title="Déclarer une violation de données"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitColor="warn"
   submitIcon="privacy_tip"
+  i18n-submitLabel="@@breach.detect.submit"
   submitLabel="Déclarer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <p class="hint" [class.warn]="isHighRisk()">
     <ng-container *ngIf="isHighRisk()">
-      <strong>Risque élevé</strong> — la notification aux personnes concernées (Art. 34)
-      sera obligatoire. Délai CNIL : 72h depuis la détection.
+      <strong i18n="@@breach.detect.high-risk">Risque élevé</strong> <span i18n="@@breach.detect.high-risk-text">— la notification aux personnes concernées (Art. 34)
+      sera obligatoire. Délai CNIL : 72h depuis la détection.</span>
     </ng-container>
     <ng-container *ngIf="!isHighRisk()">
-      Délai de notification CNIL : <strong>72h</strong> depuis la détection (Art. 33).
-      Notification personnes non requise pour sévérité LOW/MEDIUM.
+      <span i18n="@@breach.detect.low-risk-text-1">Délai de notification CNIL :</span> <strong>72h</strong> <span i18n="@@breach.detect.low-risk-text-2">depuis la détection (Art. 33).
+      Notification personnes non requise pour sévérité LOW/MEDIUM.</span>
     </ng-container>
   </p>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Référence interne</mat-label>
+      <mat-label i18n="@@breach.detect.internal-reference">Référence interne</mat-label>
       <input matInput formControlName="internalReference" maxlength="64" required
              placeholder="BR-2026-NNN">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Sévérité</mat-label>
+      <mat-label i18n="@@breach.detect.severity">Sévérité</mat-label>
       <mat-select formControlName="severity" required>
         <mat-option *ngFor="let s of severities" [value]="s">{{ s }}</mat-option>
       </mat-select>
@@ -35,39 +37,41 @@
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre</mat-label>
+    <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="250" required>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description</mat-label>
+    <mat-label i18n="@@common.description">Description</mat-label>
     <textarea matInput formControlName="description" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Détectée le</mat-label>
+      <mat-label i18n="@@breach.detect.detected-at">Détectée le</mat-label>
       <input matInput type="datetime-local" formControlName="detectedAt" required>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Survenue le (si connue)</mat-label>
+      <mat-label i18n="@@breach.detect.occurred-at">Survenue le (si connue)</mat-label>
       <input matInput type="datetime-local" formControlName="occurredAt">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Nombre de personnes concernées (estimation)</mat-label>
+    <mat-label i18n="@@breach.detect.affected-count">Nombre de personnes concernées (estimation)</mat-label>
     <input matInput type="number" formControlName="affectedSubjectsCount" min="0" required>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Catégories de données impactées (une par ligne)</mat-label>
+    <mat-label i18n="@@breach.detect.data-categories">Catégories de données impactées (une par ligne)</mat-label>
     <textarea matInput formControlName="affectedDataCategoriesRaw" rows="3"
+              i18n-placeholder="@@breach.detect.data-categories-placeholder"
               placeholder="identité&#10;email pro&#10;santé"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Risque de préjudice pour les personnes</mat-label>
+    <mat-label i18n="@@breach.detect.risk-label">Risque de préjudice pour les personnes</mat-label>
     <textarea matInput formControlName="riskOfHarmDescription" rows="3" maxlength="2000"
+              i18n-placeholder="@@breach.detect.risk-placeholder"
               placeholder="Atteinte vie privée, risque financier, discrimination, usurpation d'identité…"></textarea>
   </mat-form-field>
 

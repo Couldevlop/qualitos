@@ -46,7 +46,7 @@ export class TrxListComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[trx-list] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return of([] as TransferView[]);
           }),
           finalize(() => this.loading$.next(false))
@@ -67,12 +67,12 @@ export class TrxListComponent implements OnInit {
 
   mechLabel(m: TransferMechanism): string {
     return ({
-      ADEQUACY_DECISION: 'Adéquation (Art. 45)',
-      STANDARD_CONTRACTUAL_CLAUSES: 'SCC (Art. 46.2)',
-      BINDING_CORPORATE_RULES: 'BCR (Art. 47)',
-      CODE_OF_CONDUCT: 'Code de conduite (Art. 46.2.e)',
-      CERTIFICATION: 'Certification (Art. 46.2.f)',
-      DEROGATION_ART49: 'Dérogation (Art. 49)'
+      ADEQUACY_DECISION: $localize`:@@transfers.mech-short.adequacy:Adéquation (Art. 45)`,
+      STANDARD_CONTRACTUAL_CLAUSES: $localize`:@@transfers.mech-short.scc:SCC (Art. 46.2)`,
+      BINDING_CORPORATE_RULES: $localize`:@@transfers.mech-short.bcr:BCR (Art. 47)`,
+      CODE_OF_CONDUCT: $localize`:@@transfers.mech-short.coc:Code de conduite (Art. 46.2.e)`,
+      CERTIFICATION: $localize`:@@transfers.mech-short.certification:Certification (Art. 46.2.f)`,
+      DEROGATION_ART49: $localize`:@@transfers.mech-short.derogation:Dérogation (Art. 49)`
     })[m];
   }
   mechBadge(m: TransferMechanism): string { return 'mech mech-' + m.toLowerCase(); }

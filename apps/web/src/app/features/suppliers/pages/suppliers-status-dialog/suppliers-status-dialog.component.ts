@@ -43,21 +43,21 @@ export class SuppliersStatusDialogComponent {
 
   get title(): string {
     return ({
-      PROSPECT:    'Repasser en PROSPECT',
-      APPROVED:    'Approuver le fournisseur',
-      CONDITIONAL: 'Mettre sous surveillance (CONDITIONAL)',
-      SUSPENDED:   'Suspendre le fournisseur',
-      BLACKLISTED: 'Black-lister le fournisseur'
+      PROSPECT:    $localize`:@@suppliers.status.title-prospect:Repasser en PROSPECT`,
+      APPROVED:    $localize`:@@suppliers.status.title-approved:Approuver le fournisseur`,
+      CONDITIONAL: $localize`:@@suppliers.status.title-conditional:Mettre sous surveillance (CONDITIONAL)`,
+      SUSPENDED:   $localize`:@@suppliers.status.title-suspended:Suspendre le fournisseur`,
+      BLACKLISTED: $localize`:@@suppliers.status.title-blacklisted:Black-lister le fournisseur`
     })[this.data.target];
   }
 
   get description(): string {
     return ({
-      PROSPECT:    'Le fournisseur ne pourra plus être source d\'achats fermes.',
-      APPROVED:    'Le fournisseur sera actif et conforme. Les commandes peuvent être passées.',
-      CONDITIONAL: 'Commandes possibles mais sous surveillance renforcée.',
-      SUSPENDED:   'Toutes les commandes seront gelées. Réintégration possible vers APPROVED après remédiation.',
-      BLACKLISTED: 'Statut TERMINAL : le fournisseur sera exclu. Toute réintégration future passera par un nouvel onboarding avec un code différent.'
+      PROSPECT:    $localize`:@@suppliers.status.desc-prospect:Le fournisseur ne pourra plus être source d'achats fermes.`,
+      APPROVED:    $localize`:@@suppliers.status.desc-approved:Le fournisseur sera actif et conforme. Les commandes peuvent être passées.`,
+      CONDITIONAL: $localize`:@@suppliers.status.desc-conditional:Commandes possibles mais sous surveillance renforcée.`,
+      SUSPENDED:   $localize`:@@suppliers.status.desc-suspended:Toutes les commandes seront gelées. Réintégration possible vers APPROVED après remédiation.`,
+      BLACKLISTED: $localize`:@@suppliers.status.desc-blacklisted:Statut TERMINAL : le fournisseur sera exclu. Toute réintégration future passera par un nouvel onboarding avec un code différent.`
     })[this.data.target];
   }
 
@@ -69,7 +69,7 @@ export class SuppliersStatusDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const actorUserId = this.auth.snapshot()?.userId;
     if (!actorUserId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -81,13 +81,13 @@ export class SuppliersStatusDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: s => {
-          this.snack.open('Statut mis à jour : ' + s.status + '.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@suppliers.status.updated:Statut mis à jour : ${s.status}:status:.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(s);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[suppliers-status] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Changement de statut impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@suppliers.status.failed:Changement de statut impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

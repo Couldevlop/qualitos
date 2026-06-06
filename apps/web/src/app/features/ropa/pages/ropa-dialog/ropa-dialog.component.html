@@ -1,137 +1,137 @@
 <qos-form-dialog
-  [title]="isEdit ? 'Modifier l\'activité de traitement' : 'Nouvelle activité de traitement'"
+  [title]="isEdit ? editTitle : createTitle"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
-  [submitLabel]="isEdit ? 'Enregistrer' : 'Créer (DRAFT)'"
+  [submitLabel]="isEdit ? editSubmitLabel : createSubmitLabel"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <h3 class="section">Identification</h3>
+  <h3 class="section" i18n="@@ropa.dialog.section-identification">Identification</h3>
   <div class="row">
     <mat-form-field appearance="outline" class="col col-ref">
-      <mat-label>Référence</mat-label>
+      <mat-label i18n="@@ropa.dialog.reference-label">Référence</mat-label>
       <input matInput formControlName="reference" maxlength="64" required
              placeholder="RH-PAYROLL-FR">
-      <mat-hint>Majuscules, chiffres, tiret, underscore (immutable)</mat-hint>
+      <mat-hint i18n="@@ropa.dialog.reference-hint">Majuscules, chiffres, tiret, underscore (immutable)</mat-hint>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Nom de l'activité</mat-label>
+      <mat-label i18n="@@ropa.dialog.name-label">Nom de l'activité</mat-label>
       <input matInput formControlName="name" maxlength="250" required>
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Finalités</mat-label>
+    <mat-label i18n="@@ropa.dialog.purposes-label">Finalités</mat-label>
     <textarea matInput formControlName="purposes" rows="3" maxlength="4000" required
-              placeholder="Pourquoi ce traitement existe — finalités détaillées (Art. 5.1.b)"></textarea>
+              placeholder="Pourquoi ce traitement existe — finalités détaillées (Art. 5.1.b)" i18n-placeholder="@@ropa.dialog.purposes-placeholder"></textarea>
   </mat-form-field>
 
-  <h3 class="section">Base légale (Art. 6 / Art. 9)</h3>
+  <h3 class="section" i18n="@@ropa.dialog.section-lawful-basis">Base légale (Art. 6 / Art. 9)</h3>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Base légale</mat-label>
+    <mat-label i18n="@@ropa.dialog.basis-label">Base légale</mat-label>
     <mat-select formControlName="lawfulBasis" required>
       <mat-option *ngFor="let b of bases" [value]="b.value">{{ b.label }}</mat-option>
     </mat-select>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>{{ needsLia() ? 'Mise en balance (LIA) — obligatoire' : 'Détails / justification' }}</mat-label>
+    <mat-label>{{ needsLia() ? liaLabel : detailsLabel }}</mat-label>
     <textarea matInput formControlName="lawfulBasisDetails" rows="3" maxlength="4000"
-              [placeholder]="needsLia() ? 'Test des intérêts légitimes : description de l\'intérêt poursuivi, nécessité, balance avec les droits des personnes…' : 'Référence légale, mention contractuelle, etc.'"></textarea>
+              [placeholder]="needsLia() ? liaPlaceholder : detailsPlaceholder"></textarea>
   </mat-form-field>
 
-  <h3 class="section">Responsables</h3>
+  <h3 class="section" i18n="@@ropa.dialog.section-controllers">Responsables</h3>
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Responsable de traitement</mat-label>
+      <mat-label i18n="@@ropa.dialog.controller-name-label">Responsable de traitement</mat-label>
       <input matInput formControlName="controllerName" maxlength="250" required>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Contact responsable</mat-label>
+      <mat-label i18n="@@ropa.dialog.controller-contact-label">Contact responsable</mat-label>
       <input matInput formControlName="controllerContact" maxlength="250" required>
     </mat-form-field>
   </div>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Contact DPO</mat-label>
+    <mat-label i18n="@@ropa.dialog.dpo-contact-label">Contact DPO</mat-label>
     <input matInput formControlName="dpoContact" maxlength="250">
   </mat-form-field>
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Co-responsable (optionnel)</mat-label>
+      <mat-label i18n="@@ropa.dialog.joint-controller-label">Co-responsable (optionnel)</mat-label>
       <input matInput formControlName="jointControllerName" maxlength="250">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Contact co-responsable</mat-label>
+      <mat-label i18n="@@ropa.dialog.joint-controller-contact-label">Contact co-responsable</mat-label>
       <input matInput formControlName="jointControllerContact" maxlength="250">
     </mat-form-field>
   </div>
 
-  <h3 class="section">Personnes concernées & données</h3>
-  <p class="hint">Une catégorie par ligne. Exemple : Salariés / Clients / Mineurs / Patients.</p>
+  <h3 class="section" i18n="@@ropa.dialog.section-subjects-data">Personnes concernées & données</h3>
+  <p class="hint" i18n="@@ropa.dialog.subjects-hint">Une catégorie par ligne. Exemple : Salariés / Clients / Mineurs / Patients.</p>
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Catégories de personnes concernées</mat-label>
+      <mat-label i18n="@@ropa.dialog.subject-categories-label">Catégories de personnes concernées</mat-label>
       <textarea matInput formControlName="dataSubjectCategories" rows="3"
-                placeholder="Salariés&#10;Stagiaires&#10;Apprentis"></textarea>
+                placeholder="Salariés&#10;Stagiaires&#10;Apprentis" i18n-placeholder="@@ropa.dialog.subject-categories-placeholder"></textarea>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Catégories de données</mat-label>
+      <mat-label i18n="@@ropa.dialog.data-categories-label">Catégories de données</mat-label>
       <textarea matInput formControlName="dataCategories" rows="3"
-                placeholder="Identité&#10;Coordonnées&#10;Données salariales"></textarea>
+                placeholder="Identité&#10;Coordonnées&#10;Données salariales" i18n-placeholder="@@ropa.dialog.data-categories-placeholder"></textarea>
     </mat-form-field>
   </div>
 
   <div class="checkbox-row">
-    <mat-checkbox formControlName="specialCategoriesProcessed">
+    <mat-checkbox formControlName="specialCategoriesProcessed" i18n="@@ropa.dialog.special-checkbox">
       Traitement de catégories particulières (Art. 9 RGPD)
     </mat-checkbox>
   </div>
 
   <mat-form-field appearance="outline" class="full" *ngIf="form.controls.specialCategoriesProcessed.value">
-    <mat-label>Justification Art. 9§2 (obligatoire)</mat-label>
+    <mat-label i18n="@@ropa.dialog.special-justification-label">Justification Art. 9§2 (obligatoire)</mat-label>
     <textarea matInput formControlName="specialCategoriesJustification" rows="3" maxlength="4000"
-              placeholder="Quel cas Art. 9§2 ? (consentement explicite, médecine du travail, intérêt public substantiel, etc.)"></textarea>
+              placeholder="Quel cas Art. 9§2 ? (consentement explicite, médecine du travail, intérêt public substantiel, etc.)" i18n-placeholder="@@ropa.dialog.special-justification-placeholder"></textarea>
   </mat-form-field>
 
-  <h3 class="section">Destinataires & transferts</h3>
-  <p class="hint">Une entrée par ligne.</p>
+  <h3 class="section" i18n="@@ropa.dialog.section-recipients-transfers">Destinataires & transferts</h3>
+  <p class="hint" i18n="@@ropa.dialog.one-per-line-hint">Une entrée par ligne.</p>
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Destinataires</mat-label>
+      <mat-label i18n="@@ropa.dialog.recipients-label">Destinataires</mat-label>
       <textarea matInput formControlName="recipientCategories" rows="3"
-                placeholder="Équipe RH interne&#10;URSSAF&#10;Cabinet comptable"></textarea>
+                placeholder="Équipe RH interne&#10;URSSAF&#10;Cabinet comptable" i18n-placeholder="@@ropa.dialog.recipients-placeholder"></textarea>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Transferts hors UE (pays)</mat-label>
+      <mat-label i18n="@@ropa.dialog.transfers-label">Transferts hors UE (pays)</mat-label>
       <textarea matInput formControlName="thirdCountryTransfers" rows="3"
-                placeholder="USA (sous-traitant cloud)&#10;Inde (centre de service)"></textarea>
+                placeholder="USA (sous-traitant cloud)&#10;Inde (centre de service)" i18n-placeholder="@@ropa.dialog.transfers-placeholder"></textarea>
     </mat-form-field>
   </div>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Garanties pour les transferts (Chap. V RGPD)</mat-label>
+    <mat-label i18n="@@ropa.dialog.safeguards-label">Garanties pour les transferts (Chap. V RGPD)</mat-label>
     <textarea matInput formControlName="transferSafeguards" rows="3" maxlength="4000"
-              placeholder="SCC 2021, BCR, décision d'adéquation, dérogation Art. 49…"></textarea>
+              placeholder="SCC 2021, BCR, décision d'adéquation, dérogation Art. 49…" i18n-placeholder="@@ropa.dialog.safeguards-placeholder"></textarea>
   </mat-form-field>
 
-  <h3 class="section">Mesures de sécurité (Art. 32)</h3>
+  <h3 class="section" i18n="@@ropa.dialog.section-security">Mesures de sécurité (Art. 32)</h3>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Mesures techniques</mat-label>
+    <mat-label i18n="@@ropa.dialog.technical-label">Mesures techniques</mat-label>
     <textarea matInput formControlName="technicalMeasures" rows="3" maxlength="4000"
-              placeholder="Chiffrement, pseudonymisation, MFA, segmentation réseau, sauvegardes chiffrées…"></textarea>
+              placeholder="Chiffrement, pseudonymisation, MFA, segmentation réseau, sauvegardes chiffrées…" i18n-placeholder="@@ropa.dialog.technical-placeholder"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Mesures organisationnelles</mat-label>
+    <mat-label i18n="@@ropa.dialog.organizational-label">Mesures organisationnelles</mat-label>
     <textarea matInput formControlName="organizationalMeasures" rows="3" maxlength="4000"
-              placeholder="Habilitations, formation RGPD, charte, séparation des rôles, audits…"></textarea>
+              placeholder="Habilitations, formation RGPD, charte, séparation des rôles, audits…" i18n-placeholder="@@ropa.dialog.organizational-placeholder"></textarea>
   </mat-form-field>
 
-  <h3 class="section">Liens règles de rétention</h3>
+  <h3 class="section" i18n="@@ropa.dialog.section-retention">Liens règles de rétention</h3>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>UUIDs des règles liées (une par ligne)</mat-label>
+    <mat-label i18n="@@ropa.dialog.retention-label">UUIDs des règles liées (une par ligne)</mat-label>
     <textarea matInput formControlName="linkedRetentionRuleIds" rows="3"
               placeholder="00000000-0000-0000-0000-000000000000"></textarea>
-    <mat-error *ngIf="form.controls.linkedRetentionRuleIds.hasError('uuidLine')">
+    <mat-error *ngIf="form.controls.linkedRetentionRuleIds.hasError('uuidLine')" i18n="@@ropa.dialog.retention-error">
       Chaque ligne doit être un UUID v4 valide.
     </mat-error>
   </mat-form-field>

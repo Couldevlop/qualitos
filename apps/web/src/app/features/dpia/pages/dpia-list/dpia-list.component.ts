@@ -29,8 +29,8 @@ export class DpiaListComponent implements OnInit {
   readonly modeFilter   = new FormControl<Mode>('all');
 
   readonly modes: { value: Mode; label: string }[] = [
-    { value: 'all',          label: 'Toutes les DPIA' },
-    { value: 'consultation', label: 'Exigeant consultation Art. 36' }
+    { value: 'all',          label: $localize`:@@dpia.list.mode-all:Toutes les DPIA` },
+    { value: 'consultation', label: $localize`:@@dpia.list.mode-consultation:Exigeant consultation Art. 36` }
   ];
 
   rows$!: Observable<DpiaView[]>;
@@ -60,7 +60,7 @@ export class DpiaListComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[dpia-list] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return of([] as DpiaView[]);
           }),
           finalize(() => this.loading$.next(false))

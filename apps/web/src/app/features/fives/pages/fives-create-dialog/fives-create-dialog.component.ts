@@ -40,7 +40,7 @@ export class FivesCreateDialogComponent {
     }
     const auditorId = this.auth.snapshot()?.userId;
     if (!auditorId) {
-      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -55,7 +55,7 @@ export class FivesCreateDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: audit => {
-          this.snack.open($localize`:@@fives.create.success:Audit 5S créé.`, 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@fives.create.success:Audit 5S créé.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(audit);
         },
         error: err => {

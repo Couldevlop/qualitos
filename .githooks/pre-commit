@@ -1,0 +1,35 @@
+#!/bin/sh
+# =============================================================================
+# Hook pre-commit QualitOS — scan anti-secrets (gitleaks) sur le staged.
+#
+# Activation (une fois par clone) :  git config core.hooksPath .githooks
+# Bypass exceptionnel (à justifier en revue) :  git commit --no-verify
+#
+# Si gitleaks n'est pas installé, le hook PRÉVIENT mais ne bloque pas
+# (le job CI secrets-scan reste le filet bloquant).
+# Installation : https://github.com/gitleaks/gitleaks#installing
+# =============================================================================
+
+# Résolution du binaire : PATH, puis variable GITLEAKS_BIN, puis emplacement
+# utilisateur Windows courant (le sh des hooks Git for Windows ne voit pas
+# toujours %LOCALAPPDATA%\Microsoft\WindowsApps dans son PATH).
+GITLEAKS="$(command -v gitleaks 2>/dev/null)"
+[ -z "$GITLEAKS" ] && [ -n "$GITLEAKS_BIN" ] && [ -x "$GITLEAKS_BIN" ] && GITLEAKS="$GITLEAKS_BIN"
+[ -z "$GITLEAKS" ] && [ -n "$LOCALAPPDATA" ] && [ -x "$LOCALAPPDATA/Microsoft/WindowsApps/gitleaks.exe" ] \
+  && GITLEAKS="$LOCALAPPDATA/Microsoft/WindowsApps/gitleaks.exe"
+
+if [ -z "$GITLEAKS" ]; then
+  echo "[pre-commit] gitleaks non installé — scan local sauté (la CI scannera)." >&2
+  echo "[pre-commit] Installation : https://github.com/gitleaks/gitleaks#installing" >&2
+  exit 0
+fi
+
+"$GITLEAKS" git --pre-commit --staged --redact -v
+status=$?
+if [ $status -ne 0 ]; then
+  echo "" >&2
+  echo "[pre-commit] ✘ Secret potentiel détecté dans le staged — commit refusé." >&2
+  echo "[pre-commit] Faux positif ? L'ajouter (motivé) à .gitleaks.toml [allowlist]." >&2
+  exit $status
+fi
+exit 0

@@ -16,7 +16,7 @@ function uuidLinesValidator(): ValidatorFn {
     const v = (c.value ?? '').toString().trim();
     if (!v) return null;
     for (const l of v.split(/\r?\n/).map((s: string) => s.trim()).filter((s: string) => s)) {
-      if (!UUID_REGEX.test(l)) return { lines: 'Un UUID par ligne.' };
+      if (!UUID_REGEX.test(l)) return { lines: $localize`:@@automated-decisions.create.uuid-per-line:Un UUID par ligne.` };
     }
     return null;
   };
@@ -35,6 +35,9 @@ export class AdmCreateDialogComponent {
   readonly bases: Art22Basis[] = ['EXPLICIT_CONSENT', 'CONTRACTUAL_NECESSITY', 'AUTHORIZED_BY_LAW'];
   readonly typeLabel = TYPE_LABEL;
   readonly basisLabel = BASIS_LABEL;
+
+  readonly humanReviewLabel         = $localize`:@@automated-decisions.create.human-review:Mécanisme de révision humaine`;
+  readonly humanReviewLabelRequired = $localize`:@@automated-decisions.create.human-review-required:Mécanisme de révision humaine (Art. 22.3 — obligatoire)`;
 
   readonly form = this.fb.nonNullable.group({
     reference:                   ['', [Validators.required, Validators.maxLength(64), Validators.pattern(/^[A-Z][A-Z0-9_-]{1,63}$/)]],
@@ -67,17 +70,17 @@ export class AdmCreateDialogComponent {
     const v = this.form.getRawValue();
     if (v.decisionType === 'AUTOMATED_DECISION_WITH_LEGAL_EFFECT') {
       if (!v.art22LawfulBasis) {
-        this.snack.open('Art. 22.2 — base légale obligatoire pour une décision automatisée à effet juridique.', 'OK', { duration: 5000 });
+        this.snack.open($localize`:@@automated-decisions.create.art22-basis-required:Art. 22.2 — base légale obligatoire pour une décision automatisée à effet juridique.`, $localize`:@@common.ok:OK`, { duration: 5000 });
         return;
       }
       if (!v.humanReviewMechanism?.trim()) {
-        this.snack.open('Art. 22.3 — mécanisme de révision humaine obligatoire.', 'OK', { duration: 5000 });
+        this.snack.open($localize`:@@automated-decisions.create.art22-human-review-required:Art. 22.3 — mécanisme de révision humaine obligatoire.`, $localize`:@@common.ok:OK`, { duration: 5000 });
         return;
       }
     }
     const userId = this.auth.snapshot()?.userId;
     if (!userId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -103,7 +106,7 @@ export class AdmCreateDialogComponent {
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[adm-create] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Création impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@automated-decisions.create.failed:Création impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

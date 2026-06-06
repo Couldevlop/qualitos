@@ -55,11 +55,11 @@ export class SuppliersAuditDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: a => { this.snack.open('Audit enregistré.', 'OK', { duration: 2500 }); this.dialogRef.close(a); },
+        next: a => { this.snack.open($localize`:@@suppliers.audit.saved:Audit enregistré.`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(a); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[suppliers-audit] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@suppliers.save-error:Erreur lors de l'enregistrement.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

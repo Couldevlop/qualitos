@@ -69,7 +69,7 @@ export class Nis2mListComponent implements OnInit {
         }
         return src$.pipe(
           catchError(err => {
-            this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return of([] as Nis2MeasureView[]);
           }),
           tap(rows => {
@@ -101,7 +101,7 @@ export class Nis2mListComponent implements OnInit {
     this.dialog.open(Nis2mPlanDialogComponent, {
       panelClass: 'qos-dialog-panel', autoFocus: 'first-tabbable', restoreFocus: true
     }).afterClosed().subscribe((m?: Nis2MeasureView) => {
-      if (m) { this.snack.open('Mesure planifiée.', 'OK', { duration: 2200 }); this.refresh$.next(); }
+      if (m) { this.snack.open($localize`:@@nis2-measures.list.planned:Mesure planifiée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); }
     });
   }
 

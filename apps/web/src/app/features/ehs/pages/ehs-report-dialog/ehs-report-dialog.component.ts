@@ -20,12 +20,12 @@ export class EhsReportDialogComponent {
   submitting = false;
 
   readonly types: { value: IncidentType; label: string }[] = [
-    { value: 'INJURY',          label: 'Accident corporel' },
-    { value: 'NEAR_MISS',       label: 'Presque-accident' },
-    { value: 'ENVIRONMENTAL',   label: 'Environnement (déversement, pollution)' },
-    { value: 'SECURITY',        label: 'Sécurité / sûreté' },
-    { value: 'PROPERTY_DAMAGE', label: 'Dommage matériel' },
-    { value: 'OTHER',           label: 'Autre' }
+    { value: 'INJURY',          label: $localize`:@@ehs.detail.type-injury:Accident corporel` },
+    { value: 'NEAR_MISS',       label: $localize`:@@ehs.type.near-miss:Presque-accident` },
+    { value: 'ENVIRONMENTAL',   label: $localize`:@@ehs.report.type-environmental:Environnement (déversement, pollution)` },
+    { value: 'SECURITY',        label: $localize`:@@ehs.report.type-security:Sécurité / sûreté` },
+    { value: 'PROPERTY_DAMAGE', label: $localize`:@@ehs.type.property-damage:Dommage matériel` },
+    { value: 'OTHER',           label: $localize`:@@ehs.type.other:Autre` }
   ];
   readonly severities: IncidentSeverity[] = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
 
@@ -55,7 +55,7 @@ export class EhsReportDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const reportedBy = this.auth.snapshot()?.userId;
     if (!reportedBy) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -74,11 +74,11 @@ export class EhsReportDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: i => { this.snack.open('Incident déclaré.', 'OK', { duration: 2500 }); this.dialogRef.close(i); },
+        next: i => { this.snack.open($localize`:@@ehs.report.reported:Incident déclaré.`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(i); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[ehs-report] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Déclaration impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@ehs.report.failed:Déclaration impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

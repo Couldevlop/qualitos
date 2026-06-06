@@ -57,7 +57,7 @@ export class CirclesEditDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: c => {
-          this.snack.open($localize`:@@circles.edit.updated:Cercle mis à jour.`, 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@circles.edit.updated:Cercle mis à jour.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(c);
         },
         error: err => {

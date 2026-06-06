@@ -4,7 +4,7 @@
     <header class="head">
       <div class="meta">
         <a routerLink="/nis2-measures" class="back">
-          <mat-icon>arrow_back</mat-icon> NIS 2 · Mesures
+          <mat-icon>arrow_back</mat-icon> <span i18n="@@nis2-measures.detail.back">NIS 2 · Mesures</span>
         </a>
         <h1>
           <code>{{ m.reference }}</code>
@@ -14,78 +14,78 @@
           <span class="cat-pill">{{ catLabel(m.category) }}</span>
           <span [class]="statusBadge(m.status)">{{ m.status }}</span>
           <span [class]="riskBadge(m.residualRiskRating)">{{ m.residualRiskRating }}</span>
-          <span class="maturity">Maturité {{ m.maturityLevel }}/5</span>
+          <span class="maturity"><span i18n="@@nis2-measures.detail.maturity-prefix">Maturité</span> {{ m.maturityLevel }}/5</span>
           <span *ngIf="m.criticalResidualRisk" class="flag flag-overdue">
-            <mat-icon>error</mat-icon> Attention direction requise
+            <mat-icon>error</mat-icon> <span i18n="@@nis2-measures.detail.board-attention">Attention direction requise</span>
           </span>
           <span *ngIf="m.reviewOverdue" class="flag flag-overdue">
-            <mat-icon>warning</mat-icon> Revue en retard
+            <mat-icon>warning</mat-icon> <span i18n="@@nis2-measures.detail.review-overdue">Revue en retard</span>
           </span>
         </div>
       </div>
 
       <div class="toolbar">
         <button mat-stroked-button *ngIf="canEdit(m.status)" (click)="edit(m)">
-          <mat-icon>edit</mat-icon> Éditer
+          <mat-icon>edit</mat-icon> <span i18n="@@nis2-measures.detail.edit">Éditer</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="canStart(m.status)" (click)="start(m)">
-          <mat-icon>play_arrow</mat-icon> Démarrer
+          <mat-icon>play_arrow</mat-icon> <span i18n="@@nis2-measures.detail.start">Démarrer</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="canImplement(m.status)" (click)="markImplemented(m)">
-          <mat-icon>done</mat-icon> Implémentée
+          <mat-icon>done</mat-icon> <span i18n="@@nis2-measures.detail.implemented">Implémentée</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="canVerify(m.status)" (click)="verify(m)">
-          <mat-icon>verified</mat-icon> Vérifier
+          <mat-icon>verified</mat-icon> <span i18n="@@nis2-measures.detail.verify">Vérifier</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="canReview(m.status)" (click)="review(m)">
-          <mat-icon>fact_check</mat-icon> Revue périodique
+          <mat-icon>fact_check</mat-icon> <span i18n="@@nis2-measures.detail.periodic-review">Revue périodique</span>
         </button>
         <button mat-stroked-button color="warn" *ngIf="canDeprecate(m.status)" (click)="deprecate(m)">
-          <mat-icon>archive</mat-icon> Désactiver
+          <mat-icon>archive</mat-icon> <span i18n="@@nis2-measures.detail.deprecate">Désactiver</span>
         </button>
         <button mat-stroked-button color="warn" (click)="remove(m)">
-          <mat-icon>delete</mat-icon> Supprimer
+          <mat-icon>delete</mat-icon> <span i18n="@@common.delete">Supprimer</span>
         </button>
       </div>
     </header>
 
     <div class="grid">
       <mat-card class="span-2" *ngIf="m.description">
-        <mat-card-header><mat-card-title>Description</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@common.description">Description</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ m.description }}</p></mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="m.criticalResidualRisk" class="warn-card span-2">
         <mat-card-header>
-          <mat-card-title>Justification — risque résiduel CRITICAL</mat-card-title>
+          <mat-card-title i18n="@@nis2-measures.detail.critical-justification">Justification — risque résiduel CRITICAL</mat-card-title>
         </mat-card-header>
         <mat-card-content><p class="text">{{ m.criticalRiskJustification }}</p></mat-card-content>
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Pilotage</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@nis2-measures.detail.steering">Pilotage</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>Propriétaire</th>
+            <tr><th i18n="@@nis2-measures.detail.owner">Propriétaire</th>
                 <td><code *ngIf="m.ownerUserId; else noOwner">{{ m.ownerUserId }}</code>
-                    <ng-template #noOwner><span class="dim">Non attribué</span></ng-template></td></tr>
-            <tr><th>Maturité</th><td>{{ m.maturityLevel }}/5</td></tr>
-            <tr><th>Revue tous les</th><td>{{ m.reviewIntervalDays }} jours</td></tr>
+                    <ng-template #noOwner><span class="dim" i18n="@@nis2-measures.detail.unassigned">Non attribué</span></ng-template></td></tr>
+            <tr><th i18n="@@nis2-measures.detail.maturity">Maturité</th><td>{{ m.maturityLevel }}/5</td></tr>
+            <tr><th i18n="@@nis2-measures.detail.review-every">Revue tous les</th><td>{{ m.reviewIntervalDays }} <span i18n="@@nis2-measures.detail.days">jours</span></td></tr>
           </table>
         </mat-card-content>
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Cycle de vie</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@nis2-measures.detail.lifecycle">Cycle de vie</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>En vigueur depuis</th>
+            <tr><th i18n="@@nis2-measures.detail.effective-from">En vigueur depuis</th>
                 <td>{{ m.effectiveFrom ? (m.effectiveFrom | slice:0:10) : '—' }}</td></tr>
-            <tr><th>Désactivée le</th>
+            <tr><th i18n="@@nis2-measures.detail.deactivated-on">Désactivée le</th>
                 <td>{{ m.effectiveTo ? (m.effectiveTo | slice:0:10) : '—' }}</td></tr>
-            <tr><th>Dernière revue</th>
+            <tr><th i18n="@@nis2-measures.detail.last-review">Dernière revue</th>
                 <td>{{ m.lastReviewedAt ? (m.lastReviewedAt | slice:0:10) : '—' }}</td></tr>
-            <tr><th>Prochaine revue</th>
+            <tr><th i18n="@@nis2-measures.detail.next-review">Prochaine revue</th>
                 <td><span *ngIf="m.reviewOverdue" class="overdue">⚠ </span>
                     {{ m.nextReviewDueAt ? (m.nextReviewDueAt | slice:0:10) : '—' }}</td></tr>
           </table>
@@ -93,7 +93,7 @@
       </mat-card>
 
       <mat-card class="span-2" *ngIf="(m.evidenceUrls?.length ?? 0) > 0">
-        <mat-card-header><mat-card-title>Preuves liées</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@nis2-measures.detail.linked-evidence">Preuves liées</mat-card-title></mat-card-header>
         <mat-card-content>
           <ul class="links">
             <li *ngFor="let u of m.evidenceUrls">
@@ -106,7 +106,7 @@
       </mat-card>
 
       <mat-card *ngIf="(m.linkedProcessingActivityIds?.length ?? 0) > 0">
-        <mat-card-header><mat-card-title>Activités de traitement liées</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@nis2-measures.detail.linked-processing">Activités de traitement liées</mat-card-title></mat-card-header>
         <mat-card-content>
           <ul class="uuids">
             <li *ngFor="let id of m.linkedProcessingActivityIds"><code>{{ id }}</code></li>
@@ -115,7 +115,7 @@
       </mat-card>
 
       <mat-card *ngIf="(m.linkedProcessorAgreementIds?.length ?? 0) > 0">
-        <mat-card-header><mat-card-title>DPA sous-traitants liés</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@nis2-measures.detail.linked-dpa">DPA sous-traitants liés</mat-card-title></mat-card-header>
         <mat-card-content>
           <ul class="uuids">
             <li *ngFor="let id of m.linkedProcessorAgreementIds"><code>{{ id }}</code></li>
@@ -124,17 +124,17 @@
       </mat-card>
 
       <mat-card class="span-2" *ngIf="m.notes">
-        <mat-card-header><mat-card-title>Notes</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@nis2-measures.detail.notes">Notes</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ m.notes }}</p></mat-card-content>
       </mat-card>
 
       <mat-card class="span-2">
-        <mat-card-header><mat-card-title>Trace</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@nis2-measures.detail.trace">Trace</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>Créé par</th><td><code>{{ m.createdByUserId }}</code></td></tr>
-            <tr><th>Créé le</th><td>{{ m.createdAt }}</td></tr>
-            <tr><th>Dernière MAJ</th><td>{{ m.updatedAt }}</td></tr>
+            <tr><th i18n="@@nis2-measures.detail.created-by">Créé par</th><td><code>{{ m.createdByUserId }}</code></td></tr>
+            <tr><th i18n="@@common.created-at">Créé le</th><td>{{ m.createdAt }}</td></tr>
+            <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ m.updatedAt }}</td></tr>
           </table>
         </mat-card-content>
       </mat-card>
@@ -145,7 +145,7 @@
 
 <ng-template #fallback>
   <section class="nis2m-detail">
-    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
     <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
   </section>
 </ng-template>

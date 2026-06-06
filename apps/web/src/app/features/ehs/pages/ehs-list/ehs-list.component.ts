@@ -122,9 +122,12 @@ export class EhsListComponent implements OnInit {
   typeBadge(t: IncidentType): string       { return 'tbadge tbadge-' + t.toLowerCase(); }
   typeLabel(t: IncidentType): string {
     return ({
-      INJURY: 'Accident', NEAR_MISS: 'Presque-accident',
-      ENVIRONMENTAL: 'Environnement', SECURITY: 'Sécurité',
-      PROPERTY_DAMAGE: 'Dommage matériel', OTHER: 'Autre'
+      INJURY: $localize`:@@ehs.type.injury:Accident`,
+      NEAR_MISS: $localize`:@@ehs.type.near-miss:Presque-accident`,
+      ENVIRONMENTAL: $localize`:@@ehs.type.environmental:Environnement`,
+      SECURITY: $localize`:@@ehs.type.security:Sécurité`,
+      PROPERTY_DAMAGE: $localize`:@@ehs.type.property-damage:Dommage matériel`,
+      OTHER: $localize`:@@ehs.type.other:Autre`
     })[t];
   }
 }

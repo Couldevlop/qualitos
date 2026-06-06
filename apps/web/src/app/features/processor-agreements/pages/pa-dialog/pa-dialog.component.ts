@@ -44,6 +44,18 @@ export class PaDialogComponent {
   readonly isEdit: boolean;
   readonly form;
 
+  get dialogTitle(): string {
+    return this.isEdit
+      ? $localize`:@@dpa.dialog.title-edit:Modifier le DPA`
+      : $localize`:@@dpa.dialog.title-create:Nouveau DPA (Art. 28)`;
+  }
+
+  get submitLabelText(): string {
+    return this.isEdit
+      ? $localize`:@@common.save:Enregistrer`
+      : $localize`:@@dpa.dialog.submit-create:Créer (DRAFT)`;
+  }
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly svc: PaService,
@@ -103,19 +115,19 @@ export class PaDialogComponent {
 
     // OWASP A04 — cohérence dates : effectiveFrom ≥ signedAt, expirationDate > effectiveFrom
     if (v.signedAt && v.effectiveFrom && new Date(v.effectiveFrom) < new Date(v.signedAt)) {
-      this.snack.open('La date d\'entrée en vigueur doit être ≥ à la date de signature.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@dpa.dialog.date-effective-error:La date d'entrée en vigueur doit être ≥ à la date de signature.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     if (v.effectiveFrom && v.expirationDate && new Date(v.expirationDate) <= new Date(v.effectiveFrom)) {
-      this.snack.open('La date d\'expiration doit être > à l\'entrée en vigueur.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@dpa.dialog.date-expiration-error:La date d'expiration doit être > à l'entrée en vigueur.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     // OWASP A04 — transferts hors UE exigent garanties (sauf si Adequacy implicite côté UE)
     const transfers = lines(v.thirdCountryTransfers);
     if (transfers.length > 0 && !v.transferSafeguards?.trim()) {
       this.snack.open(
-        'Les transferts hors UE exigent des garanties documentées (Chap. V RGPD).',
-        'OK', { duration: 4500 }
+        $localize`:@@dpa.dialog.transfers-safeguards-required:Les transferts hors UE exigent des garanties documentées (Chap. V RGPD).`,
+        $localize`:@@common.ok:OK`, { duration: 4500 }
       );
       return;
     }
@@ -149,7 +161,7 @@ export class PaDialogComponent {
       : (() => {
           const createdByUserId = this.auth.snapshot()?.userId;
           if (!createdByUserId) {
-            this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+            this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
             this.submitting = false;
             throw new Error('No session');
           }
@@ -159,11 +171,11 @@ export class PaDialogComponent {
     op$
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: a => { this.snack.open(this.isEdit ? 'DPA mis à jour.' : 'DPA créé (DRAFT).', 'OK', { duration: 2500 }); this.dialogRef.close(a); },
+        next: a => { this.snack.open(this.isEdit ? $localize`:@@dpa.dialog.updated:DPA mis à jour.` : $localize`:@@dpa.dialog.created:DPA créé (DRAFT).`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(a); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[pa-dialog] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@dpa.dialog.save-error:Erreur lors de l'enregistrement.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

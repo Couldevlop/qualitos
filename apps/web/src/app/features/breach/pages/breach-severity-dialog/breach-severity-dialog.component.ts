@@ -44,11 +44,11 @@ export class BreachSeverityDialogComponent {
     this.svc.updateSeverity(this.data.id, { severity: this.form.getRawValue().severity })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: b => { this.snack.open('Sévérité mise à jour.', 'OK', { duration: 2200 }); this.dialogRef.close(b); },
+        next: b => { this.snack.open($localize`:@@breach.severity.updated-toast:Sévérité mise à jour.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(b); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[breach-sev] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Mise à jour impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@breach.severity.update-failed:Mise à jour impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

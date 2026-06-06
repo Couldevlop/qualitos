@@ -45,7 +45,7 @@ export class AdmListComponent implements OnInit {
       tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
       switchMap(([status]) => this.svc.list(status || undefined).pipe(
         catchError(err => {
-          this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+          this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
           return of([] as AdmView[]);
         }),
         tap(() => this.loading$.next(false))
@@ -59,7 +59,7 @@ export class AdmListComponent implements OnInit {
     this.dialog.open(AdmCreateDialogComponent, {
       panelClass: 'qos-dialog-panel', autoFocus: 'first-tabbable', restoreFocus: true
     }).afterClosed().subscribe((r?: AdmView) => {
-      if (r) { this.snack.open('Décision automatisée créée.', 'OK', { duration: 2200 }); this.refresh$.next(); }
+      if (r) { this.snack.open($localize`:@@automated-decisions.list.created-toast:Décision automatisée créée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); }
     });
   }
 

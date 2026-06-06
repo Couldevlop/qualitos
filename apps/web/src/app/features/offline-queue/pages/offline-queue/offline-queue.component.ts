@@ -69,7 +69,7 @@ export class OfflineQueueComponent implements OnInit, OnDestroy {
     if (!this.connectivity.isOnline()) {
       this.snack.open(
         $localize`:@@offline.queue.still-offline:Toujours hors-ligne — la synchronisation reprendra au retour du réseau.`,
-        'OK',
+        $localize`:@@common.ok:OK`,
         { duration: 3500 }
       );
       return;
@@ -80,7 +80,7 @@ export class OfflineQueueComponent implements OnInit, OnDestroy {
       await this.refresh();
       this.snack.open(
         $localize`:@@offline.queue.sync-done:Synchronisation terminée.`,
-        'OK',
+        $localize`:@@common.ok:OK`,
         { duration: 2500 }
       );
     } finally {
@@ -106,7 +106,7 @@ export class OfflineQueueComponent implements OnInit, OnDestroy {
         void this.queue.discard(op.id).then(() => {
           this.snack.open(
             $localize`:@@offline.queue.discarded:Action abandonnée.`,
-            'OK',
+            $localize`:@@common.ok:OK`,
             { duration: 2500 }
           );
         });

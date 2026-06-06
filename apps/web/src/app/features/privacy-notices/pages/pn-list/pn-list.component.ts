@@ -46,7 +46,7 @@ export class PnListComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[pn-list] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return of([] as PrivacyNoticeView[]);
           }),
           finalize(() => this.loading$.next(false))

@@ -15,7 +15,7 @@ function uuidLinesValidator(): ValidatorFn {
     const v = (c.value ?? '').toString().trim();
     if (!v) return null;
     for (const l of v.split(/\r?\n/).map((s: string) => s.trim()).filter((s: string) => s)) {
-      if (!UUID_REGEX.test(l)) return { lines: 'Un UUID par ligne.' };
+      if (!UUID_REGEX.test(l)) return { lines: $localize`:@@automated-decisions.create.uuid-per-line:Un UUID par ligne.` };
     }
     return null;
   };
@@ -36,6 +36,9 @@ export class AdmEditDialogComponent {
   readonly bases: Art22Basis[] = ['EXPLICIT_CONSENT', 'CONTRACTUAL_NECESSITY', 'AUTHORIZED_BY_LAW'];
   readonly typeLabel = TYPE_LABEL;
   readonly basisLabel = BASIS_LABEL;
+
+  readonly humanReviewLabel         = $localize`:@@automated-decisions.edit.human-review:Révision humaine`;
+  readonly humanReviewLabelRequired = $localize`:@@automated-decisions.edit.human-review-required:Révision humaine (Art. 22.3 — obligatoire)`;
 
   readonly form = this.fb.nonNullable.group({
     name:                   [this.data.row.name,                              [Validators.required, Validators.maxLength(250)]],
@@ -67,11 +70,11 @@ export class AdmEditDialogComponent {
     const v = this.form.getRawValue();
     if (v.decisionType === 'AUTOMATED_DECISION_WITH_LEGAL_EFFECT') {
       if (!v.art22LawfulBasis) {
-        this.snack.open('Art. 22.2 — base légale obligatoire.', 'OK', { duration: 5000 });
+        this.snack.open($localize`:@@automated-decisions.edit.art22-basis-required:Art. 22.2 — base légale obligatoire.`, $localize`:@@common.ok:OK`, { duration: 5000 });
         return;
       }
       if (!v.humanReviewMechanism?.trim()) {
-        this.snack.open('Art. 22.3 — mécanisme de révision humaine obligatoire.', 'OK', { duration: 5000 });
+        this.snack.open($localize`:@@automated-decisions.create.art22-human-review-required:Art. 22.3 — mécanisme de révision humaine obligatoire.`, $localize`:@@common.ok:OK`, { duration: 5000 });
         return;
       }
     }
@@ -92,11 +95,11 @@ export class AdmEditDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: r => { this.snack.open('Décision mise à jour.', 'OK', { duration: 2200 }); this.dialogRef.close(r); },
+        next: r => { this.snack.open($localize`:@@automated-decisions.edit.updated-toast:Décision mise à jour.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.dialogRef.close(r); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[adm-edit] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Mise à jour impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@automated-decisions.edit.update-failed:Mise à jour impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

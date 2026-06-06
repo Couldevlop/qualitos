@@ -47,7 +47,7 @@ export class CirclesCreateDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: circle => {
-          this.snack.open($localize`:@@circles.create.created:Cercle créé.`, 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@circles.create.created:Cercle créé.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(circle);
         },
         error: err => {

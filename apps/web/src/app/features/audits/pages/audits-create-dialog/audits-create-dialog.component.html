@@ -1,44 +1,50 @@
 <qos-form-dialog
+  i18n-title="@@audits.create.title"
   title="Nouveau plan d'audit"
+  i18n-subtitle="@@audits.create.subtitle"
   subtitle="Définis le périmètre, le type et la date de l'audit. La checklist et les findings seront ajoutés ensuite."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.create"
   submitLabel="Créer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre</mat-label>
+    <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="255" required
+           i18n-placeholder="@@audits.create.title-placeholder"
            placeholder="Ex. : Audit interne ISO 9001 §9.2">
-    <mat-error *ngIf="form.controls.title.hasError('required')">Le titre est requis.</mat-error>
-    <mat-error *ngIf="form.controls.title.hasError('maxlength')">255 caractères maximum.</mat-error>
+    <mat-error *ngIf="form.controls.title.hasError('required')" i18n="@@audits.create.title-required">Le titre est requis.</mat-error>
+    <mat-error *ngIf="form.controls.title.hasError('maxlength')" i18n="@@common.maxlength-255">255 caractères maximum.</mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Périmètre (optionnel)</mat-label>
+    <mat-label i18n="@@audits.create.scope">Périmètre (optionnel)</mat-label>
     <textarea matInput formControlName="scope" rows="3"
+              i18n-placeholder="@@audits.create.scope-placeholder"
               placeholder="Processus, sites, périodes couverts par l'audit…"></textarea>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Type</mat-label>
+      <mat-label i18n="@@common.type">Type</mat-label>
       <mat-select formControlName="type">
         <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Norme (optionnel)</mat-label>
+      <mat-label i18n="@@audits.create.standard">Norme (optionnel)</mat-label>
       <input matInput formControlName="standard" maxlength="100"
+             i18n-placeholder="@@audits.create.standard-placeholder"
              placeholder="Ex. : ISO_9001, IATF_16949, ISO_27001">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Date prévue (optionnel)</mat-label>
+    <mat-label i18n="@@audits.create.scheduled-date">Date prévue (optionnel)</mat-label>
     <input matInput formControlName="scheduledDate" type="date">
   </mat-form-field>
 

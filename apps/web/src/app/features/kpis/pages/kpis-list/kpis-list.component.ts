@@ -62,7 +62,7 @@ export class KpisListComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[kpis-list] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return of(null);
           }),
           finalize(() => this.loading$.next(false))
@@ -99,7 +99,9 @@ export class KpisListComponent implements OnInit {
   open(k: KpiResponse): void { this.router.navigate(['/kpis', k.id]); }
 
   directionLabel(d: KpiDirection): string {
-    return d === 'HIGHER_IS_BETTER' ? '↑ mieux' : '↓ mieux';
+    return d === 'HIGHER_IS_BETTER'
+      ? $localize`:@@kpis.list.dir-higher:↑ mieux`
+      : $localize`:@@kpis.list.dir-lower:↓ mieux`;
   }
   directionBadge(d: KpiDirection): string {
     return 'dir dir-' + (d === 'HIGHER_IS_BETTER' ? 'up' : 'down');

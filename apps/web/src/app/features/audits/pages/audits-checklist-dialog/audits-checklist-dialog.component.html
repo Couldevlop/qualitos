@@ -1,37 +1,43 @@
 <qos-form-dialog
+  i18n-title="@@audits.checklist.title"
   title="Ajouter une question"
+  i18n-subtitle="@@audits.checklist.subtitle"
   subtitle="Une question vérifiable sur le terrain, idéalement reliée à une clause de la norme auditée."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.add"
   submitLabel="Ajouter"
   submitIcon="add"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Question</mat-label>
+    <mat-label i18n="@@audits.checklist.question">Question</mat-label>
     <textarea matInput formControlName="question" rows="2" required
+              i18n-placeholder="@@audits.checklist.question-placeholder"
               placeholder="Ex. : Les enregistrements de calibration sont-ils traçables ?"></textarea>
-    <mat-error *ngIf="form.controls.question.hasError('required')">Requis.</mat-error>
+    <mat-error *ngIf="form.controls.question.hasError('required')" i18n="@@audits.checklist.required">Requis.</mat-error>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Clause (optionnel)</mat-label>
+      <mat-label i18n="@@audits.checklist.clause">Clause (optionnel)</mat-label>
       <input matInput formControlName="clauseRef" maxlength="100"
+             i18n-placeholder="@@audits.checklist.clause-placeholder"
              placeholder="Ex. : 7.1.5.1">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="col-small">
-      <mat-label>Poids</mat-label>
+      <mat-label i18n="@@audits.checklist.weight">Poids</mat-label>
       <input matInput formControlName="weight" type="number" min="1">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Preuve attendue (optionnel)</mat-label>
+    <mat-label i18n="@@audits.checklist.expected-evidence">Preuve attendue (optionnel)</mat-label>
     <textarea matInput formControlName="expectedEvidence" rows="2"
+              i18n-placeholder="@@audits.checklist.expected-evidence-placeholder"
               placeholder="Ex. : Certificat d'étalonnage signé sous 12 mois"></textarea>
   </mat-form-field>
 

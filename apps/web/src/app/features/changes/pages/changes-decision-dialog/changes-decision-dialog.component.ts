@@ -40,14 +40,14 @@ export class ChangesDecisionDialogComponent {
     @Inject(MAT_DIALOG_DATA) public readonly data: ChangesDecisionDialogData
   ) {}
 
-  get title(): string { return this.data.decision === 'APPROVED' ? 'Approuver la demande' : 'Rejeter la demande'; }
+  get title(): string { return this.data.decision === 'APPROVED' ? $localize`:@@changes.decision.title-approve:Approuver la demande` : $localize`:@@changes.decision.title-reject:Rejeter la demande`; }
   get danger(): boolean { return this.data.decision === 'REJECTED'; }
 
   submit(): void {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const approverUserId = this.auth.snapshot()?.userId;
     if (!approverUserId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -60,13 +60,13 @@ export class ChangesDecisionDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: a => {
-          this.snack.open(this.data.decision === 'APPROVED' ? 'Décision enregistrée : approuvée.' : 'Décision enregistrée : rejetée.', 'OK', { duration: 2500 });
+          this.snack.open(this.data.decision === 'APPROVED' ? $localize`:@@changes.decision.recorded-approved:Décision enregistrée : approuvée.` : $localize`:@@changes.decision.recorded-rejected:Décision enregistrée : rejetée.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(a);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[changes-decision] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Décision impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@changes.decision.failed:Décision impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

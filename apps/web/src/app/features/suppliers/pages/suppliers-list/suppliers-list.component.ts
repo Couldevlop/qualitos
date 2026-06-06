@@ -64,7 +64,7 @@ export class SuppliersListComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[suppliers-list] list failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return [];
           }),
           finalize(() => this.loading$.next(false))
@@ -111,9 +111,13 @@ export class SuppliersListComponent implements OnInit {
   typeBadge(t: SupplierType): string     { return 'tbadge tbadge-' + t.toLowerCase(); }
   typeLabel(t: SupplierType): string {
     return ({
-      RAW_MATERIAL: 'Matière première', COMPONENT: 'Composant', SERVICE: 'Service',
-      CONTRACT_MANUFACTURER: 'Sous-traitant', SOFTWARE: 'Logiciel',
-      LOGISTICS: 'Logistique', OTHER: 'Autre'
+      RAW_MATERIAL: $localize`:@@suppliers.type.raw-material:Matière première`,
+      COMPONENT: $localize`:@@suppliers.type.component:Composant`,
+      SERVICE: $localize`:@@suppliers.type.service:Service`,
+      CONTRACT_MANUFACTURER: $localize`:@@suppliers.type.contract-manufacturer:Sous-traitant`,
+      SOFTWARE: $localize`:@@suppliers.type.software:Logiciel`,
+      LOGISTICS: $localize`:@@suppliers.type.logistics:Logistique`,
+      OTHER: $localize`:@@suppliers.type.other:Autre`
     })[t];
   }
 }

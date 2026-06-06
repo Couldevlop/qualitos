@@ -26,11 +26,11 @@ export class AuditsFindingDialogComponent {
   submitting = false;
 
   readonly types: { value: FindingType; label: string; hint: string }[] = [
-    { value: 'MAJOR_NC',    label: 'Non-conformité majeure', hint: 'Défaillance système — corrective action obligatoire' },
-    { value: 'MINOR_NC',    label: 'Non-conformité mineure', hint: 'Écart ponctuel — à corriger' },
-    { value: 'OBSERVATION', label: 'Observation',           hint: 'Risque potentiel à surveiller' },
-    { value: 'OPPORTUNITY', label: 'Opportunité',           hint: 'Amélioration suggérée' },
-    { value: 'CONFORMITY',  label: 'Conformité',            hint: 'Bonne pratique relevée' }
+    { value: 'MAJOR_NC',    label: $localize`:@@audits.finding.major-nc:Non-conformité majeure`, hint: $localize`:@@audits.finding.major-nc-hint:Défaillance système — corrective action obligatoire` },
+    { value: 'MINOR_NC',    label: $localize`:@@audits.finding.minor-nc:Non-conformité mineure`, hint: $localize`:@@audits.finding.minor-nc-hint:Écart ponctuel — à corriger` },
+    { value: 'OBSERVATION', label: $localize`:@@audits.finding.observation:Observation`,          hint: $localize`:@@audits.finding.observation-hint:Risque potentiel à surveiller` },
+    { value: 'OPPORTUNITY', label: $localize`:@@audits.finding.opportunity:Opportunité`,          hint: $localize`:@@audits.finding.opportunity-hint:Amélioration suggérée` },
+    { value: 'CONFORMITY',  label: $localize`:@@audits.finding.conformity:Conformité`,            hint: $localize`:@@audits.finding.conformity-hint:Bonne pratique relevée` }
   ];
 
   readonly form = this.fb.nonNullable.group({
@@ -56,7 +56,7 @@ export class AuditsFindingDialogComponent {
     }
     const raisedBy = this.auth.snapshot()?.userId;
     if (!raisedBy) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -73,15 +73,15 @@ export class AuditsFindingDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: f => {
-          this.snack.open('Constat enregistré.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@audits.finding.saved:Constat enregistré.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(f);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[audits-finding-dialog] failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'),
-            'OK', { duration: 4000 }
+            safeErrorMessage(err, $localize`:@@audits.finding.save-error:Erreur lors de l'enregistrement.`),
+            $localize`:@@common.ok:OK`, { duration: 4000 }
           );
         }
       });

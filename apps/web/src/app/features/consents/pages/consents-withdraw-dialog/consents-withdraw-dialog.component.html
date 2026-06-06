@@ -1,29 +1,31 @@
 <qos-form-dialog
   title="Retirer le consentement"
+  i18n-title="@@consents.withdraw.title"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="false"
   submitLabel="Confirmer le retrait"
+  i18n-submitLabel="@@consents.withdraw.submit"
   submitIcon="block"
   submitColor="warn"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <p class="warn">
-    <strong>Action irréversible (Art. 7§3 RGPD).</strong>
-    Le consentement passera en <strong>WITHDRAWN</strong>. Un nouveau
-    consentement nécessitera un nouvel enregistrement explicite.
+    <strong i18n="@@consents.withdraw.warn-strong">Action irréversible (Art. 7§3 RGPD).</strong>
+    <span i18n="@@consents.withdraw.warn-text">Le consentement passera en <strong>WITHDRAWN</strong>. Un nouveau
+    consentement nécessitera un nouvel enregistrement explicite.</span>
   </p>
 
   <p class="meta">
-    Finalité : <code>{{ data.consent.purposeCode }}</code> · v<code>{{ data.consent.purposeVersion }}</code><br>
-    Personne : {{ data.consent.subjectIdentifierLabel || '(pseudonymisée)' }}
+    <span i18n="@@consents.withdraw.purpose">Finalité :</span> <code>{{ data.consent.purposeCode }}</code> · v<code>{{ data.consent.purposeVersion }}</code><br>
+    <span i18n="@@consents.withdraw.subject">Personne :</span> {{ data.consent.subjectIdentifierLabel || pseudonymizedLabel }}
   </p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Motif (optionnel)</mat-label>
+    <mat-label i18n="@@consents.withdraw.reason-label">Motif (optionnel)</mat-label>
     <textarea matInput formControlName="reason" rows="3" maxlength="2000"
-              placeholder="Demande explicite via formulaire opt-out, courrier postal, etc."></textarea>
+              placeholder="Demande explicite via formulaire opt-out, courrier postal, etc." i18n-placeholder="@@consents.withdraw.reason-placeholder"></textarea>
   </mat-form-field>
 
 </qos-form-dialog>

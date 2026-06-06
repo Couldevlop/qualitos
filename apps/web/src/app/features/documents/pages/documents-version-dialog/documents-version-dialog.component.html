@@ -1,27 +1,31 @@
 <qos-form-dialog
   [title]="'Nouvelle version (v' + data.nextVersionNumber + ')'"
+  i18n-subtitle="@@documents.version.subtitle"
   subtitle="Workflow : DRAFT → IN_REVIEW → APPROVED → PUBLISHED. La précédente version publiée sera automatiquement marquée OBSOLETE à la publication."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.create"
   submitLabel="Créer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Note de version</mat-label>
+    <mat-label i18n="@@documents.version.note-label">Note de version</mat-label>
     <input matInput formControlName="changeNote" maxlength="255" required
+           i18n-placeholder="@@documents.version.note-placeholder"
            placeholder="Décrivez les modifications apportées">
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Contenu</mat-label>
+    <mat-label i18n="@@documents.version.content-label">Contenu</mat-label>
     <textarea matInput formControlName="content" rows="6"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>URI / lien vers fichier externe</mat-label>
+    <mat-label i18n="@@documents.version.uri-label">URI / lien vers fichier externe</mat-label>
     <input matInput formControlName="contentUri" maxlength="1024"
+           i18n-placeholder="@@documents.version.uri-placeholder"
            placeholder="https://… (optionnel — fichier externe signé)">
   </mat-form-field>
 

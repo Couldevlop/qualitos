@@ -54,7 +54,7 @@ export class PmmListComponent implements OnInit {
           : this.svc.list(status || undefined);
         return src$.pipe(
           catchError(err => {
-            this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return of([] as PmmPlanView[]);
           }),
           tap(() => this.loading$.next(false)),
@@ -73,7 +73,7 @@ export class PmmListComponent implements OnInit {
     this.dialog.open(PmmDraftDialogComponent, {
       panelClass: 'qos-dialog-panel', autoFocus: 'first-tabbable', restoreFocus: true
     }).afterClosed().subscribe((p?: PmmPlanView) => {
-      if (p) { this.snack.open('Plan PMM créé.', 'OK', { duration: 2200 }); this.refresh$.next(); }
+      if (p) { this.snack.open($localize`:@@ai-pmm.list.created:Plan PMM créé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); }
     });
   }
 

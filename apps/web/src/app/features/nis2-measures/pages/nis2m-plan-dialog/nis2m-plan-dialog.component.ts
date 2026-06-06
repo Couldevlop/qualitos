@@ -51,9 +51,9 @@ export class Nis2mPlanDialogComponent {
     residualRiskRating:        ['MEDIUM' as ResidualRiskRating, [Validators.required]],
     criticalRiskJustification: ['', [Validators.maxLength(4000)]],
     reviewIntervalDays:        [180, [Validators.required, Validators.min(30), Validators.max(1095)]],
-    evidenceUrlsRaw:           ['',  [linesValidator(URL_LINE, 'Une URL http(s) par ligne.')]],
-    linkedActivitiesRaw:       ['',  [linesValidator(UUID_LINE, 'Un UUID par ligne.')]],
-    linkedAgreementsRaw:       ['',  [linesValidator(UUID_LINE, 'Un UUID par ligne.')]],
+    evidenceUrlsRaw:           ['',  [linesValidator(URL_LINE, $localize`:@@nis2-measures.plan.url-per-line:Une URL http(s) par ligne.`)]],
+    linkedActivitiesRaw:       ['',  [linesValidator(UUID_LINE, $localize`:@@nis2-measures.plan.uuid-per-line:Un UUID par ligne.`)]],
+    linkedAgreementsRaw:       ['',  [linesValidator(UUID_LINE, $localize`:@@nis2-measures.plan.uuid-per-line:Un UUID par ligne.`)]],
     notes:                     ['',  [Validators.maxLength(4000)]]
   });
 
@@ -71,12 +71,12 @@ export class Nis2mPlanDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const v = this.form.getRawValue();
     if (v.residualRiskRating === 'CRITICAL' && !v.criticalRiskJustification.trim()) {
-      this.snack.open('Justification obligatoire pour un risque résiduel CRITICAL.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@nis2-measures.plan.critical-required:Justification obligatoire pour un risque résiduel CRITICAL.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const userId = this.auth.snapshot()?.userId;
     if (!userId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -102,7 +102,7 @@ export class Nis2mPlanDialogComponent {
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[nis2m-plan] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Planification impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@nis2-measures.plan.plan-failed:Planification impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

@@ -4,7 +4,7 @@
     <header class="head">
       <div class="meta">
         <a routerLink="/ehs" class="back">
-          <mat-icon>arrow_back</mat-icon> Incidents EHS
+          <mat-icon>arrow_back</mat-icon> <span i18n="@@ehs.detail.back">Incidents EHS</span>
         </a>
         <h1>
           <code>{{ i.code }}</code>
@@ -14,10 +14,10 @@
           <span class="dim">{{ typeLabel(i.type) }}</span>
           <span [class]="severityBadge(i.severity)">{{ i.severity }}</span>
           <span [class]="statusBadge(i.status)">{{ i.status }}</span>
-          <span class="dim" *ngIf="i.occurredAt">Survenu : {{ i.occurredAt }}</span>
-          <span class="dim">Reporté : {{ i.reportedAt }}</span>
-          <span class="dim" *ngIf="i.mitigatedAt">Mitigé : {{ i.mitigatedAt }}</span>
-          <span class="dim" *ngIf="i.closedAt">Clôturé : {{ i.closedAt }}</span>
+          <span class="dim" *ngIf="i.occurredAt"><span i18n="@@ehs.detail.occurred-label">Survenu :</span> {{ i.occurredAt }}</span>
+          <span class="dim"><span i18n="@@ehs.detail.reported-label">Reporté :</span> {{ i.reportedAt }}</span>
+          <span class="dim" *ngIf="i.mitigatedAt"><span i18n="@@ehs.detail.mitigated-label">Mitigé :</span> {{ i.mitigatedAt }}</span>
+          <span class="dim" *ngIf="i.closedAt"><span i18n="@@ehs.detail.closed-label">Clôturé :</span> {{ i.closedAt }}</span>
         </div>
         <p *ngIf="i.location" class="loc"><mat-icon>place</mat-icon> {{ i.location }}</p>
         <p *ngIf="i.description" class="desc">{{ i.description }}</p>
@@ -26,86 +26,86 @@
       <div class="toolbar">
         <button mat-stroked-button (click)="openEdit(i)"
                 [disabled]="i.status === 'CLOSED' || i.status === 'CANCELLED'">
-          <mat-icon>edit</mat-icon> Modifier
+          <mat-icon>edit</mat-icon> <span i18n="@@common.edit">Modifier</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="i.status === 'REPORTED'" (click)="investigate(i)">
-          <mat-icon>search</mat-icon> Investiguer
+          <mat-icon>search</mat-icon> <span i18n="@@ehs.detail.investigate">Investiguer</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="i.status === 'INVESTIGATING'" (click)="openMitigate(i)">
-          <mat-icon>healing</mat-icon> Mitiger
+          <mat-icon>healing</mat-icon> <span i18n="@@ehs.detail.mitigate">Mitiger</span>
         </button>
         <button mat-stroked-button *ngIf="i.status === 'MITIGATED'" (click)="close(i)">
-          <mat-icon>check_circle</mat-icon> Clôturer
+          <mat-icon>check_circle</mat-icon> <span i18n="@@ehs.detail.close-incident">Clôturer</span>
         </button>
         <button mat-stroked-button color="warn"
                 *ngIf="i.status !== 'CLOSED' && i.status !== 'CANCELLED'" (click)="cancel(i)">
-          <mat-icon>cancel</mat-icon> Annuler
+          <mat-icon>cancel</mat-icon> <span i18n="@@common.cancel">Annuler</span>
         </button>
         <button mat-stroked-button color="warn" (click)="remove(i)">
-          <mat-icon>delete</mat-icon> Supprimer
+          <mat-icon>delete</mat-icon> <span i18n="@@common.delete">Supprimer</span>
         </button>
       </div>
     </header>
 
     <div class="content-grid">
       <mat-card *ngIf="i.personsInvolved">
-        <mat-card-header><mat-card-title>Personnes impliquées</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ehs.detail.persons-involved">Personnes impliquées</mat-card-title></mat-card-header>
         <mat-card-content><p>{{ i.personsInvolved }}</p></mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="i.rootCause">
-        <mat-card-header><mat-card-title>Cause racine</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ehs.detail.root-cause">Cause racine</mat-card-title></mat-card-header>
         <mat-card-content><p>{{ i.rootCause }}</p></mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="i.correctiveActions">
-        <mat-card-header><mat-card-title>Actions correctives</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ehs.detail.corrective-actions">Actions correctives</mat-card-title></mat-card-header>
         <mat-card-content><p>{{ i.correctiveActions }}</p></mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="i.standardsCsv">
-        <mat-card-header><mat-card-title>Normes concernées</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ehs.detail.standards">Normes concernées</mat-card-title></mat-card-header>
         <mat-card-content><p><code>{{ i.standardsCsv }}</code></p></mat-card-content>
       </mat-card>
     </div>
 
     <mat-card class="links-card">
       <mat-card-header class="card-head">
-        <mat-card-title>Liens transverses</mat-card-title>
+        <mat-card-title i18n="@@ehs.detail.cross-links">Liens transverses</mat-card-title>
         <div class="card-actions">
           <button mat-stroked-button (click)="openLink(i, 'CAPA')">
-            <mat-icon>link</mat-icon> Lier un CAPA
+            <mat-icon>link</mat-icon> <span i18n="@@ehs.detail.link-capa">Lier un CAPA</span>
           </button>
           <button mat-stroked-button (click)="openLink(i, 'NC')">
-            <mat-icon>link</mat-icon> Lier une NC
+            <mat-icon>link</mat-icon> <span i18n="@@ehs.detail.link-nc">Lier une NC</span>
           </button>
         </div>
       </mat-card-header>
       <mat-card-content>
         <table class="link-table">
           <tr>
-            <th>Cas CAPA</th>
+            <th i18n="@@ehs.detail.capa-case">Cas CAPA</th>
             <td>
               <code *ngIf="i.capaCaseId">{{ i.capaCaseId }}</code>
-              <span *ngIf="!i.capaCaseId" class="dim">Aucun cas CAPA lié</span>
+              <span *ngIf="!i.capaCaseId" class="dim" i18n="@@ehs.detail.no-capa-linked">Aucun cas CAPA lié</span>
             </td>
           </tr>
           <tr>
-            <th>Non-conformité</th>
+            <th i18n="@@ehs.detail.non-conformity">Non-conformité</th>
             <td>
               <code *ngIf="i.ncId">{{ i.ncId }}</code>
-              <span *ngIf="!i.ncId" class="dim">Aucune NC liée</span>
+              <span *ngIf="!i.ncId" class="dim" i18n="@@ehs.detail.no-nc-linked">Aucune NC liée</span>
             </td>
           </tr>
           <tr>
-            <th>Propriétaire investigation</th>
+            <th i18n="@@ehs.detail.investigation-owner">Propriétaire investigation</th>
             <td>
               <code *ngIf="i.ownerUserId" class="dim">{{ i.ownerUserId }}</code>
               <span *ngIf="!i.ownerUserId" class="dim">—</span>
             </td>
           </tr>
           <tr>
-            <th>Reporté par</th>
+            <th i18n="@@ehs.detail.reported-by">Reporté par</th>
             <td><code class="dim">{{ i.reportedBy }}</code></td>
           </tr>
         </table>
@@ -117,7 +117,7 @@
 
 <ng-template #fallback>
   <section class="ehs-detail">
-    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
     <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
   </section>
 </ng-template>

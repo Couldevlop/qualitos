@@ -4,6 +4,7 @@
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitLabel="Confirmer"
+  i18n-submitLabel="@@common.confirm"
   [submitIcon]="data.mode === 'REJECT' ? 'block' : 'archive'"
   submitColor="warn"
   (submitted)="submit()"
@@ -12,7 +13,7 @@
   <p class="warn-note"><strong>{{ hint }}</strong></p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Motif</mat-label>
+    <mat-label i18n="@@ai-eudb.reason.motive">Motif</mat-label>
     <textarea matInput formControlName="reason" rows="5" maxlength="2000" required></textarea>
   </mat-form-field>
 

@@ -21,9 +21,9 @@ export class SuppliersNcDialogComponent {
   submitting = false;
 
   readonly severities: { value: NonConformitySeverity; label: string }[] = [
-    { value: 'MINOR',    label: 'Mineure' },
-    { value: 'MAJOR',    label: 'Majeure' },
-    { value: 'CRITICAL', label: 'Critique' }
+    { value: 'MINOR',    label: $localize`:@@suppliers.nc.severity-minor:Mineure` },
+    { value: 'MAJOR',    label: $localize`:@@suppliers.nc.severity-major:Majeure` },
+    { value: 'CRITICAL', label: $localize`:@@suppliers.nc.severity-critical:Critique` }
   ];
 
   readonly form = this.fb.nonNullable.group({
@@ -53,11 +53,11 @@ export class SuppliersNcDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: nc => { this.snack.open('NC fournisseur enregistrée.', 'OK', { duration: 2500 }); this.dialogRef.close(nc); },
+        next: nc => { this.snack.open($localize`:@@suppliers.nc.saved:NC fournisseur enregistrée.`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(nc); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[suppliers-nc] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@suppliers.save-error:Erreur lors de l'enregistrement.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

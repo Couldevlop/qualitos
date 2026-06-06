@@ -1,41 +1,46 @@
 <qos-form-dialog
+  i18n-title="@@retention.evaluate-dialog.title"
   title="Évaluer une date d'effacement"
+  i18n-subtitle="@@retention.evaluate-dialog.subtitle"
   subtitle="Pour une catégorie de données et une date de création d'enregistrement, calcule la date d'effacement attendue selon la règle ACTIVE en vigueur."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@retention.evaluate-dialog.submit"
   submitLabel="Évaluer"
   submitIcon="calculate"
+  i18n-cancelLabel="@@common.close"
   cancelLabel="Fermer"
   (submitted)="submit()"
   (cancelled)="close()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Code catégorie</mat-label>
+    <mat-label i18n="@@retention.rule-dialog.category-code">Code catégorie</mat-label>
     <input matInput formControlName="dataCategoryCode" maxlength="64" required
            placeholder="rh.bulletin_paie">
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Date de création de l'enregistrement</mat-label>
+    <mat-label i18n="@@retention.evaluate-dialog.record-created-at">Date de création de l'enregistrement</mat-label>
     <input matInput formControlName="recordCreatedAt" type="date" required>
   </mat-form-field>
 
   <div *ngIf="notFound" class="banner banner-warn">
     <mat-icon>info</mat-icon>
-    Aucune règle ACTIVE trouvée pour cette catégorie. Définissez-en une avant de pouvoir évaluer.
+    <span i18n="@@retention.evaluate-dialog.not-found">Aucune règle ACTIVE trouvée pour cette catégorie. Définissez-en une avant de pouvoir évaluer.</span>
   </div>
 
   <div *ngIf="result" class="result"
        [class.due]="result.dueNow">
     <div class="result-head">
       <mat-icon>{{ result.dueNow ? 'warning' : 'event_available' }}</mat-icon>
-      <strong>{{ result.dueNow ? 'Effacement DÛ' : 'Effacement à venir' }}</strong>
+      <strong *ngIf="result.dueNow" i18n="@@retention.evaluate-dialog.due-now">Effacement DÛ</strong>
+      <strong *ngIf="!result.dueNow" i18n="@@retention.evaluate-dialog.due-later">Effacement à venir</strong>
     </div>
     <table class="kv">
-      <tr><th>Date d'effacement</th><td><strong>{{ result.erasureAt | slice:0:10 }}</strong></td></tr>
-      <tr><th>Période appliquée</th><td>{{ describe(result.retentionPeriod) }}</td></tr>
-      <tr><th>Règle</th><td><code>{{ result.ruleId }}</code></td></tr>
+      <tr><th i18n="@@retention.evaluate-dialog.erasure-date">Date d'effacement</th><td><strong>{{ result.erasureAt | slice:0:10 }}</strong></td></tr>
+      <tr><th i18n="@@retention.evaluate-dialog.applied-period">Période appliquée</th><td>{{ describe(result.retentionPeriod) }}</td></tr>
+      <tr><th i18n="@@retention.evaluate-dialog.rule">Règle</th><td><code>{{ result.ruleId }}</code></td></tr>
     </table>
   </div>
 

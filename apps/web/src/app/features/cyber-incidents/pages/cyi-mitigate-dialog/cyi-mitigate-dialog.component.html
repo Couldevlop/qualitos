@@ -1,18 +1,21 @@
 <qos-form-dialog
   title="Endiguer l'incident"
+  i18n-title="@@cyber-incidents.mitigate.title"
   subtitle="Décrire les mesures de containment appliquées et l'impact constaté. L'incident passe en statut MITIGATED."
+  i18n-subtitle="@@cyber-incidents.mitigate.subtitle"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitLabel="Endiguer"
+  i18n-submitLabel="@@cyber-incidents.detail.contain"
   (submitted)="submit()"
   (cancelled)="cancel()">
 <mat-form-field appearance="outline" class="full">
-      <mat-label>Mesures de containment</mat-label>
+      <mat-label i18n="@@cyber-incidents.detail.containment">Mesures de containment</mat-label>
       <textarea matInput formControlName="containmentMeasures" rows="5" maxlength="4000" required></textarea>
     </mat-form-field>
     <mat-form-field appearance="outline" class="full">
-      <mat-label>Impact constaté (optionnel)</mat-label>
+      <mat-label i18n="@@cyber-incidents.mitigate.impact-optional">Impact constaté (optionnel)</mat-label>
       <textarea matInput formControlName="impactDescription" rows="4" maxlength="4000"></textarea>
     </mat-form-field>
 

@@ -1,22 +1,24 @@
 <qos-form-dialog
+  i18n-title="@@ehs.mitigate.title"
   title="Mitiger l'incident"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@ehs.detail.mitigate"
   submitLabel="Mitiger"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="hint">Renseignez la cause racine et les actions correctives engagées.
+  <p class="hint" i18n="@@ehs.mitigate.hint">Renseignez la cause racine et les actions correctives engagées.
      Le statut passera à MITIGATED et l'incident pourra être clôturé ensuite.</p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Cause racine</mat-label>
+    <mat-label i18n="@@ehs.detail.root-cause">Cause racine</mat-label>
     <textarea matInput formControlName="rootCause" rows="4" maxlength="2000" required></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Actions correctives</mat-label>
+    <mat-label i18n="@@ehs.detail.corrective-actions">Actions correctives</mat-label>
     <textarea matInput formControlName="correctiveActions" rows="4" maxlength="2000" required></textarea>
   </mat-form-field>
 

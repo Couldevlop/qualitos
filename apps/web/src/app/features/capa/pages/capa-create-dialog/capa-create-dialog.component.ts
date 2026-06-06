@@ -27,12 +27,12 @@ export class CapaCreateDialogComponent {
   readonly types: CapaType[] = ['CORRECTIVE', 'PREVENTIVE'];
   readonly criticities: CapaCriticity[] = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
   readonly sourceTypes: { value: CapaSourceType; label: string }[] = [
-    { value: 'NON_CONFORMITY', label: 'Non-conformité' },
-    { value: 'AUDIT',          label: 'Audit' },
-    { value: 'COMPLAINT',      label: 'Réclamation client' },
-    { value: 'INTERNAL',       label: 'Détection interne' },
-    { value: 'IOT_ALERT',      label: 'Alerte IoT' },
-    { value: 'OTHER',          label: 'Autre' }
+    { value: 'NON_CONFORMITY', label: $localize`:@@capa.source.non-conformity:Non-conformité` },
+    { value: 'AUDIT',          label: $localize`:@@capa.source.audit:Audit` },
+    { value: 'COMPLAINT',      label: $localize`:@@capa.source.complaint:Réclamation client` },
+    { value: 'INTERNAL',       label: $localize`:@@capa.source.internal:Détection interne` },
+    { value: 'IOT_ALERT',      label: $localize`:@@capa.source.iot-alert:Alerte IoT` },
+    { value: 'OTHER',          label: $localize`:@@capa.source.other:Autre` }
   ];
 
   readonly form = this.fb.nonNullable.group({
@@ -60,7 +60,7 @@ export class CapaCreateDialogComponent {
     }
     const ownerId = this.auth.snapshot()?.userId;
     if (!ownerId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -79,15 +79,15 @@ export class CapaCreateDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: c => {
-          this.snack.open('Cas CAPA créé.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@capa.create.success:Cas CAPA créé.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(c);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[capa-create] failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de la création.'),
-            'OK',
+            safeErrorMessage(err, $localize`:@@common.error-create:Erreur lors de la création.`),
+            $localize`:@@common.ok:OK`,
             { duration: 4000 }
           );
         }

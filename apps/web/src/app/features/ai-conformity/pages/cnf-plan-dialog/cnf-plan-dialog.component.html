@@ -1,55 +1,56 @@
 <qos-form-dialog
-  title="Planifier une évaluation de conformité"
+  i18n-title="@@ai-conformity.plan.title" title="Planifier une évaluation de conformité"
+  i18n-subtitle="@@ai-conformity.plan.subtitle"
   subtitle="Art. 43 AI Act — choisir la procédure adaptée : contrôle interne (Annexe VI) pour non-high-risk, organisme notifié (Annexe VII) pour high-risk Annexe III §1.a et certains autres."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
-  submitLabel="Planifier"
+  i18n-submitLabel="@@ai-conformity.plan.submit" submitLabel="Planifier"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Référence</mat-label>
+    <mat-label i18n="@@ai-conformity.plan.reference">Référence</mat-label>
     <input matInput formControlName="reference" maxlength="64" required
            placeholder="CA-TELEMED-2026">
   </mat-form-field>
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>UUID système IA</mat-label>
+      <mat-label i18n="@@ai-conformity.plan.ai-system-uuid">UUID système IA</mat-label>
       <input matInput formControlName="aiSystemId" required
              placeholder="00000000-0000-0000-0000-000000000000">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>UUID QMS (optionnel)</mat-label>
+      <mat-label i18n="@@ai-conformity.plan.qms-uuid">UUID QMS (optionnel)</mat-label>
       <input matInput formControlName="qmsId">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Procédure</mat-label>
+    <mat-label i18n="@@ai-conformity.plan.procedure">Procédure</mat-label>
     <mat-select formControlName="procedure" required>
-      <mat-option value="INTERNAL_CONTROL">Contrôle interne (Annexe VI)</mat-option>
-      <mat-option value="NOTIFIED_BODY">Organisme notifié (Annexe VII)</mat-option>
+      <mat-option value="INTERNAL_CONTROL" i18n="@@ai-conformity.procedure.internal-control">Contrôle interne (Annexe VI)</mat-option>
+      <mat-option value="NOTIFIED_BODY" i18n="@@ai-conformity.procedure.notified-body">Organisme notifié (Annexe VII)</mat-option>
     </mat-select>
   </mat-form-field>
 
   <div class="row" *ngIf="isNotifiedBody()">
     <mat-form-field appearance="outline" class="col col-small">
-      <mat-label>ID Notified Body (4 chiffres)</mat-label>
+      <mat-label i18n="@@ai-conformity.plan.notified-body-id">ID Notified Body (4 chiffres)</mat-label>
       <input matInput formControlName="notifiedBodyId" maxlength="8"
              placeholder="0123">
-      <mat-error *ngIf="form.controls.notifiedBodyId.hasError('pattern')">
+      <mat-error *ngIf="form.controls.notifiedBodyId.hasError('pattern')" i18n="@@ai-conformity.plan.four-digits-error">
         4 chiffres exactement.
       </mat-error>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Nom de l'organisme</mat-label>
+      <mat-label i18n="@@ai-conformity.plan.notified-body-name">Nom de l'organisme</mat-label>
       <input matInput formControlName="notifiedBodyName" maxlength="250">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Périmètre de l'évaluation</mat-label>
+    <mat-label i18n="@@ai-conformity.plan.scope">Périmètre de l'évaluation</mat-label>
     <textarea matInput formControlName="scope" rows="5" maxlength="4000" required></textarea>
   </mat-form-field>
 

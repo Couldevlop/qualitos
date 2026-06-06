@@ -121,19 +121,19 @@ export class SuppliersDetailComponent implements OnInit {
   remove(s: SupplierResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer le fournisseur ?',
-        message: 'Suppression définitive de « ' + s.name + ' » et de tout son historique (audits, NC, certificats).',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        title: $localize`:@@suppliers.detail.delete-title:Supprimer le fournisseur ?`,
+        message: $localize`:@@suppliers.detail.delete-message:Suppression définitive de « ${s.name}:name: » et de tout son historique (audits, NC, certificats).`,
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(s.id).subscribe({
         next: () => {
-          this.snack.open('Fournisseur supprimé.', 'OK', { duration: 2200 });
+          this.snack.open($localize`:@@suppliers.detail.deleted:Fournisseur supprimé.`, $localize`:@@common.ok:OK`, { duration: 2200 });
           this.router.navigate(['/suppliers']);
         },
-        error: err => this.fail(err, 'Suppression impossible.')
+        error: err => this.fail(err, $localize`:@@suppliers.detail.delete-failed:Suppression impossible.`)
       });
     });
   }
@@ -165,16 +165,16 @@ export class SuppliersDetailComponent implements OnInit {
   removeCert(s: SupplierResponse, c: CertificateResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer le certificat ?',
-        message: 'Le certificat ' + c.standardCode + ' (' + c.reference + ') sera supprimé.',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        title: $localize`:@@suppliers.detail.delete-cert-title:Supprimer le certificat ?`,
+        message: $localize`:@@suppliers.detail.delete-cert-message:Le certificat ${c.standardCode}:code: (${c.reference}:reference:) sera supprimé.`,
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.deleteCert(s.id, c.id).subscribe({
         next: () => { this.certs = this.certs.filter(x => x.id !== c.id); this.refresh$.next(); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        error: err => this.fail(err, $localize`:@@suppliers.detail.delete-failed:Suppression impossible.`)
       });
     });
   }
@@ -192,15 +192,19 @@ export class SuppliersDetailComponent implements OnInit {
   typeBadge(t: SupplierType): string     { return 'tbadge tbadge-' + t.toLowerCase(); }
   typeLabel(t: SupplierType): string {
     return ({
-      RAW_MATERIAL: 'Matière première', COMPONENT: 'Composant', SERVICE: 'Service',
-      CONTRACT_MANUFACTURER: 'Sous-traitant', SOFTWARE: 'Logiciel',
-      LOGISTICS: 'Logistique', OTHER: 'Autre'
+      RAW_MATERIAL: $localize`:@@suppliers.type.raw-material:Matière première`,
+      COMPONENT: $localize`:@@suppliers.type.component:Composant`,
+      SERVICE: $localize`:@@suppliers.type.service:Service`,
+      CONTRACT_MANUFACTURER: $localize`:@@suppliers.type.contract-manufacturer:Sous-traitant`,
+      SOFTWARE: $localize`:@@suppliers.type.software:Logiciel`,
+      LOGISTICS: $localize`:@@suppliers.type.logistics:Logistique`,
+      OTHER: $localize`:@@suppliers.type.other:Autre`
     })[t];
   }
 
   private fail(err: unknown, fallback: string): void {
     // eslint-disable-next-line no-console
     console.warn('[suppliers-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
-    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+    this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 4000 });
   }
 }

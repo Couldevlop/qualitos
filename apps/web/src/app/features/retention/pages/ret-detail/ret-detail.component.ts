@@ -43,7 +43,7 @@ export class RetDetailComponent implements OnInit {
       switchMap(p => {
         const id = p.get('id') ?? '';
         if (!UUID_REGEX.test(id) && !id.startsWith('ret-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
@@ -52,7 +52,7 @@ export class RetDetailComponent implements OnInit {
             catchError(err => {
               // eslint-disable-next-line no-console
               console.warn('[ret-detail] failed', err?.status, err?.error?.title);
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             }),
             tap(() => this.loading$.next(false))
@@ -65,7 +65,7 @@ export class RetDetailComponent implements OnInit {
   openEdit(r: RetentionRuleView): void {
     // OWASP A04 — ACTIVE est immutable (mirror backend RetentionRuleStateException).
     if (r.status !== 'DRAFT') {
-      this.snack.open('Seule une règle DRAFT peut être modifiée. Créez une nouvelle règle pour changer la durée.', 'OK', { duration: 5000 });
+      this.snack.open($localize`:@@retention.detail.edit-active-blocked:Seule une règle DRAFT peut être modifiée. Créez une nouvelle règle pour changer la durée.`, $localize`:@@common.ok:OK`, { duration: 5000 });
       return;
     }
     const ref = this.dialog.open(RetRuleDialogComponent, {
@@ -78,16 +78,16 @@ export class RetDetailComponent implements OnInit {
   activate(r: RetentionRuleView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Activer cette règle ?',
+        title: $localize`:@@retention.detail.activate-confirm-title:Activer cette règle ?`,
         message: 'La règle deviendra ACTIVE et immutable. Toute autre règle ACTIVE pour la catégorie « ' + r.dataCategoryCode + ' » sera automatiquement archivée.',
-        confirmLabel: 'Activer', cancelLabel: 'Annuler', danger: false
+        confirmLabel: $localize`:@@retention.detail.activate:Activer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: false
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.activate(r.id).subscribe({
-        next: () => { this.snack.open('Règle activée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Activation impossible.')
+        next: () => { this.snack.open($localize`:@@retention.detail.activated:Règle activée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@retention.detail.activate-failed:Activation impossible.`)
       });
     });
   }
@@ -95,37 +95,37 @@ export class RetDetailComponent implements OnInit {
   archive(r: RetentionRuleView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Archiver cette règle ?',
-        message: 'La règle sera ARCHIVED. Conservée pour la traçabilité historique des effacements passés.',
-        confirmLabel: 'Archiver', cancelLabel: 'Annuler', danger: true
+        title: $localize`:@@retention.detail.archive-confirm-title:Archiver cette règle ?`,
+        message: $localize`:@@retention.detail.archive-confirm-message:La règle sera ARCHIVED. Conservée pour la traçabilité historique des effacements passés.`,
+        confirmLabel: $localize`:@@retention.detail.archive:Archiver`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.archive(r.id).subscribe({
-        next: () => { this.snack.open('Règle archivée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Archivage impossible.')
+        next: () => { this.snack.open($localize`:@@retention.detail.archived:Règle archivée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@retention.detail.archive-failed:Archivage impossible.`)
       });
     });
   }
 
   remove(r: RetentionRuleView): void {
     if (r.status !== 'DRAFT') {
-      this.snack.open('Seul un brouillon peut être supprimé.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@retention.detail.only-draft-deletable:Seul un brouillon peut être supprimé.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer le brouillon ?',
+        title: $localize`:@@retention.detail.delete-confirm-title:Supprimer le brouillon ?`,
         message: 'Suppression définitive du brouillon « ' + r.dataCategoryCode + ' ».',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(r.id).subscribe({
-        next: () => { this.snack.open('Brouillon supprimé.', 'OK', { duration: 2200 }); this.router.navigate(['/retention']); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        next: () => { this.snack.open($localize`:@@retention.detail.deleted:Brouillon supprimé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/retention']); },
+        error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
       });
     });
   }

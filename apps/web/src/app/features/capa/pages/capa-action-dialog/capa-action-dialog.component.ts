@@ -52,15 +52,15 @@ export class CapaActionDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: action => {
-          this.snack.open('Action ajoutée.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@capa.action.added:Action ajoutée.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(action);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[capa-action-dialog] addAction failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de l\'ajout.'),
-            'OK', { duration: 4000 }
+            safeErrorMessage(err, $localize`:@@common.error-add:Erreur lors de l'ajout.`),
+            $localize`:@@common.ok:OK`, { duration: 4000 }
           );
         }
       });

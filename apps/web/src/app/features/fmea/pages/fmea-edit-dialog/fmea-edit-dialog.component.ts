@@ -54,13 +54,13 @@ export class FmeaEditDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: p => {
-          this.snack.open('Projet mis à jour.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@fmea.edit.success:Projet mis à jour.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(p);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[fmea-edit] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de la mise à jour.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@common.error-update:Erreur lors de la mise à jour.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

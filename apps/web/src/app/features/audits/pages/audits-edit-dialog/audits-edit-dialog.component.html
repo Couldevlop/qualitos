@@ -1,38 +1,40 @@
 <qos-form-dialog
+  i18n-title="@@audits.edit.title"
   title="Modifier le plan d'audit"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.save"
   submitLabel="Enregistrer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre</mat-label>
+    <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="255" required>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Périmètre</mat-label>
+    <mat-label i18n="@@audits.edit.scope">Périmètre</mat-label>
     <textarea matInput formControlName="scope" rows="3"></textarea>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Type</mat-label>
+      <mat-label i18n="@@common.type">Type</mat-label>
       <mat-select formControlName="type">
         <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Norme</mat-label>
+      <mat-label i18n="@@audits.edit.standard">Norme</mat-label>
       <input matInput formControlName="standard" maxlength="100">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Date prévue</mat-label>
+    <mat-label i18n="@@audits.edit.scheduled-date">Date prévue</mat-label>
     <input matInput formControlName="scheduledDate" type="date">
   </mat-form-field>
 

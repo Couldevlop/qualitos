@@ -21,13 +21,13 @@ export class SuppliersEditDialogComponent {
   submitting = false;
 
   readonly types: { value: SupplierType; label: string }[] = [
-    { value: 'RAW_MATERIAL',          label: 'Matière première' },
-    { value: 'COMPONENT',             label: 'Composant' },
-    { value: 'SERVICE',               label: 'Service' },
-    { value: 'CONTRACT_MANUFACTURER', label: 'Sous-traitant' },
-    { value: 'SOFTWARE',              label: 'Logiciel / SaaS' },
-    { value: 'LOGISTICS',             label: 'Logistique' },
-    { value: 'OTHER',                 label: 'Autre' }
+    { value: 'RAW_MATERIAL',          label: $localize`:@@suppliers.type.raw-material:Matière première` },
+    { value: 'COMPONENT',             label: $localize`:@@suppliers.type.component:Composant` },
+    { value: 'SERVICE',               label: $localize`:@@suppliers.type.service:Service` },
+    { value: 'CONTRACT_MANUFACTURER', label: $localize`:@@suppliers.type.contract-manufacturer:Sous-traitant` },
+    { value: 'SOFTWARE',              label: $localize`:@@suppliers.create.type-software:Logiciel / SaaS` },
+    { value: 'LOGISTICS',             label: $localize`:@@suppliers.type.logistics:Logistique` },
+    { value: 'OTHER',                 label: $localize`:@@suppliers.type.other:Autre` }
   ];
 
   readonly form = this.fb.nonNullable.group({
@@ -57,11 +57,11 @@ export class SuppliersEditDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: s => { this.snack.open('Fournisseur mis à jour.', 'OK', { duration: 2500 }); this.dialogRef.close(s); },
+        next: s => { this.snack.open($localize`:@@suppliers.edit.updated:Fournisseur mis à jour.`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(s); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[suppliers-edit] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de la mise à jour.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@common.error-update:Erreur lors de la mise à jour.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

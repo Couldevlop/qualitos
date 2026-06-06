@@ -46,14 +46,14 @@ export class CnfDetailComponent implements OnInit {
       switchMap(p => {
         const id = p.get('id') ?? '';
         if (!UUID_REGEX.test(id) && !id.startsWith('ca-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
         return this.refresh$.pipe(
           switchMap(() => this.svc.get(id).pipe(
             catchError(err => {
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             }),
             tap(() => this.loading$.next(false))
@@ -65,8 +65,8 @@ export class CnfDetailComponent implements OnInit {
 
   start(c: ConformityView): void {
     this.svc.start(c.id).subscribe({
-      next: () => { this.snack.open('Évaluation démarrée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Démarrage impossible.')
+      next: () => { this.snack.open($localize`:@@ai-conformity.detail.started:Évaluation démarrée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@ai-conformity.detail.start-failed:Démarrage impossible.`)
     });
   }
 
@@ -80,14 +80,14 @@ export class CnfDetailComponent implements OnInit {
 
   markExpired(c: ConformityView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Marquer comme expiré ?', message: 'Le certificat sera marqué EXPIRED. Vérifiez avant de continuer.',
-              confirmLabel: 'Marquer EXPIRED', cancelLabel: 'Annuler', danger: true }
+      data: { title: $localize`:@@ai-conformity.detail.mark-expired-title:Marquer comme expiré ?`, message: $localize`:@@ai-conformity.detail.mark-expired-message:Le certificat sera marqué EXPIRED. Vérifiez avant de continuer.`,
+              confirmLabel: $localize`:@@ai-conformity.detail.mark-expired-confirm:Marquer EXPIRED`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.markExpired(c.id).subscribe({
-        next: () => { this.snack.open('Certificat expiré.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Opération impossible.')
+        next: () => { this.snack.open($localize`:@@ai-conformity.detail.expired:Certificat expiré.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@ai-conformity.detail.operation-failed:Opération impossible.`)
       });
     });
   }
@@ -108,24 +108,26 @@ export class CnfDetailComponent implements OnInit {
 
   remove(c: ConformityView): void {
     if (c.status !== 'PLANNED') {
-      this.snack.open('Seul un PLANNED peut être supprimé.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@ai-conformity.detail.only-planned-delete:Seul un PLANNED peut être supprimé.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Supprimer la planification ?', message: 'Suppression définitive.',
-              confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true }
+      data: { title: $localize`:@@ai-conformity.detail.delete-title:Supprimer la planification ?`, message: $localize`:@@ai-conformity.detail.delete-message:Suppression définitive.`,
+              confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(c.id).subscribe({
-        next: () => { this.snack.open('Planification supprimée.', 'OK', { duration: 2200 }); this.router.navigate(['/ai-conformity']); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        next: () => { this.snack.open($localize`:@@ai-conformity.detail.deleted:Planification supprimée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/ai-conformity']); },
+        error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
       });
     });
   }
 
   procedureLabel(p: ConformityProcedure): string {
-    return p === 'NOTIFIED_BODY' ? 'Organisme notifié (Annexe VII)' : 'Contrôle interne (Annexe VI)';
+    return p === 'NOTIFIED_BODY'
+      ? $localize`:@@ai-conformity.procedure.notified-body:Organisme notifié (Annexe VII)`
+      : $localize`:@@ai-conformity.procedure.internal-control:Contrôle interne (Annexe VI)`;
   }
   procedureBadge(p: ConformityProcedure): string { return 'proc proc-' + p.toLowerCase(); }
   statusBadge(s: ConformityStatus): string { return 'badge badge-' + s.toLowerCase(); }
@@ -133,6 +135,6 @@ export class CnfDetailComponent implements OnInit {
   private fail(err: unknown, fallback: string): void {
     // eslint-disable-next-line no-console
     console.warn('[cnf-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
-    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+    this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 4000 });
   }
 }

@@ -43,14 +43,14 @@ export class AdmDetailComponent implements OnInit {
       switchMap(p => {
         const id = p.get('id') ?? '';
         if (!UUID_REGEX.test(id) && !id.startsWith('adm-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
         return this.refresh$.pipe(
           switchMap(() => this.svc.get(id).pipe(
             catchError(err => {
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             }),
             tap(() => this.loading$.next(false))
@@ -69,59 +69,59 @@ export class AdmDetailComponent implements OnInit {
 
   activate(r: AdmView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Activer la décision ?',
-              message: 'Mise en production. Les invariants Art. 22 seront re-vérifiés côté serveur.',
-              confirmLabel: 'Activer', cancelLabel: 'Annuler', danger: false }
+      data: { title: $localize`:@@automated-decisions.detail.activate-confirm-title:Activer la décision ?`,
+              message: $localize`:@@automated-decisions.detail.activate-confirm-message:Mise en production. Les invariants Art. 22 seront re-vérifiés côté serveur.`,
+              confirmLabel: $localize`:@@automated-decisions.detail.activate:Activer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: false }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.activate(r.id).subscribe({
-        next: () => { this.snack.open('Décision activée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Activation impossible.')
+        next: () => { this.snack.open($localize`:@@automated-decisions.detail.activated-toast:Décision activée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@automated-decisions.detail.activate-failed:Activation impossible.`)
       });
     });
   }
 
   deprecate(r: AdmView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Déprécier la décision ?',
-              message: 'Le traitement reste en production mais est signalé pour remplacement.',
-              confirmLabel: 'Déprécier', cancelLabel: 'Annuler', danger: false }
+      data: { title: $localize`:@@automated-decisions.detail.deprecate-confirm-title:Déprécier la décision ?`,
+              message: $localize`:@@automated-decisions.detail.deprecate-confirm-message:Le traitement reste en production mais est signalé pour remplacement.`,
+              confirmLabel: $localize`:@@automated-decisions.detail.deprecate:Déprécier`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: false }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.deprecate(r.id).subscribe({
-        next: () => { this.snack.open('Décision dépréciée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Dépréciation impossible.')
+        next: () => { this.snack.open($localize`:@@automated-decisions.detail.deprecated-toast:Décision dépréciée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@automated-decisions.detail.deprecate-failed:Dépréciation impossible.`)
       });
     });
   }
 
   archive(r: AdmView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Archiver la décision ?',
-              message: 'Action terminale. Le traitement n\'est plus en production.',
-              confirmLabel: 'Archiver', cancelLabel: 'Annuler', danger: true }
+      data: { title: $localize`:@@automated-decisions.detail.archive-confirm-title:Archiver la décision ?`,
+              message: $localize`:@@automated-decisions.detail.archive-confirm-message:Action terminale. Le traitement n'est plus en production.`,
+              confirmLabel: $localize`:@@automated-decisions.detail.archive:Archiver`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.archive(r.id).subscribe({
-        next: () => { this.snack.open('Décision archivée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Archivage impossible.')
+        next: () => { this.snack.open($localize`:@@automated-decisions.detail.archived-toast:Décision archivée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@automated-decisions.detail.archive-failed:Archivage impossible.`)
       });
     });
   }
 
   remove(r: AdmView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Supprimer la décision ?', message: 'Suppression définitive (DRAFT uniquement).',
-              confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true }
+      data: { title: $localize`:@@automated-decisions.detail.delete-confirm-title:Supprimer la décision ?`, message: $localize`:@@automated-decisions.detail.delete-confirm-message:Suppression définitive (DRAFT uniquement).`,
+              confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(r.id).subscribe({
-        next: () => { this.snack.open('Décision supprimée.', 'OK', { duration: 2200 }); this.router.navigate(['/automated-decisions']); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        next: () => { this.snack.open($localize`:@@automated-decisions.detail.deleted-toast:Décision supprimée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/automated-decisions']); },
+        error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
       });
     });
   }
@@ -141,6 +141,6 @@ export class AdmDetailComponent implements OnInit {
   private fail(err: unknown, fallback: string): void {
     // eslint-disable-next-line no-console
     console.warn('[adm-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
-    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+    this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 4000 });
   }
 }

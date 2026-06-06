@@ -1,24 +1,26 @@
 <qos-form-dialog
+  i18n-title="@@breach.severity.title"
   title="Modifier la sévérité"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@breach.severity.submit"
   submitLabel="Mettre à jour"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
     <p class="hint" [class.warn]="willEnableSubjects()">
       <ng-container *ngIf="willEnableSubjects()">
-        <strong>Attention :</strong> passer en HIGH/CRITICAL active l'obligation de
-        notifier les personnes concernées (Art. 34).
+        <strong i18n="@@breach.severity.warning-title">Attention :</strong> <span i18n="@@breach.severity.warning-text">passer en HIGH/CRITICAL active l'obligation de
+        notifier les personnes concernées (Art. 34).</span>
       </ng-container>
       <ng-container *ngIf="!willEnableSubjects()">
-        Sévérité courante : <strong>{{ data.current }}</strong>.
+        <span i18n="@@breach.severity.current-label">Sévérité courante :</span> <strong>{{ data.current }}</strong>.
       </ng-container>
     </p>
 
     <mat-form-field appearance="outline" class="full">
-      <mat-label>Nouvelle sévérité</mat-label>
+      <mat-label i18n="@@breach.severity.new-label">Nouvelle sévérité</mat-label>
       <mat-select formControlName="severity" required>
         <mat-option *ngFor="let s of severities" [value]="s">{{ s }}</mat-option>
       </mat-select>

@@ -4,7 +4,7 @@
     <header class="head">
       <div class="meta">
         <a routerLink="/processor-agreements" class="back">
-          <mat-icon>arrow_back</mat-icon> Contrats Art. 28
+          <mat-icon>arrow_back</mat-icon> <span i18n="@@dpa.detail.back">Contrats Art. 28</span>
         </a>
         <h1>
           <code>{{ p.reference }}</code>
@@ -13,13 +13,13 @@
         <div class="meta-row">
           <span [class]="statusBadge(p.status)">{{ p.status }}</span>
           <span class="dim" *ngIf="p.processorLegalEntity">{{ p.processorLegalEntity }}</span>
-          <span class="dim" *ngIf="p.processorCountry">Pays : <code>{{ p.processorCountry }}</code></span>
+          <span class="dim" *ngIf="p.processorCountry"><span i18n="@@dpa.detail.country-label">Pays :</span> <code>{{ p.processorCountry }}</code></span>
           <span *ngIf="daysUntilExpiration(p) !== null"
                 [class]="(daysUntilExpiration(p)! < 60 && p.status === 'ACTIVE') ? 'flag flag-warn' : 'dim'">
             <ng-container *ngIf="daysUntilExpiration(p)! > 0">
               Expire dans {{ daysUntilExpiration(p) }} jour(s)
             </ng-container>
-            <ng-container *ngIf="daysUntilExpiration(p)! <= 0">Expiré</ng-container>
+            <ng-container *ngIf="daysUntilExpiration(p)! <= 0"><span i18n="@@dpa.detail.expired">Expiré</span></ng-container>
           </span>
         </div>
       </div>
@@ -27,46 +27,46 @@
       <div class="toolbar">
         <button mat-stroked-button (click)="openEdit(p)"
                 [disabled]="p.status === 'TERMINATED' || p.status === 'EXPIRED'">
-          <mat-icon>edit</mat-icon> Modifier
+          <mat-icon>edit</mat-icon> <span i18n="@@common.edit">Modifier</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="p.status === 'DRAFT'" (click)="activate(p)">
-          <mat-icon>play_arrow</mat-icon> Activer
+          <mat-icon>play_arrow</mat-icon> <span i18n="@@dpa.detail.activate">Activer</span>
         </button>
         <button mat-stroked-button color="warn" *ngIf="p.status === 'ACTIVE'" (click)="terminate(p)">
-          <mat-icon>cancel</mat-icon> Résilier
+          <mat-icon>cancel</mat-icon> <span i18n="@@dpa.detail.terminate">Résilier</span>
         </button>
         <button mat-stroked-button color="warn" (click)="remove(p)" [disabled]="p.status !== 'DRAFT'">
-          <mat-icon>delete</mat-icon> Supprimer
+          <mat-icon>delete</mat-icon> <span i18n="@@common.delete">Supprimer</span>
         </button>
       </div>
     </header>
 
     <div class="grid">
       <mat-card>
-        <mat-card-header><mat-card-title>Sous-traitant</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@dpa.detail.processor">Sous-traitant</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>Nom</th><td>{{ p.processorName }}</td></tr>
-            <tr *ngIf="p.processorLegalEntity"><th>Entité légale</th><td>{{ p.processorLegalEntity }}</td></tr>
-            <tr *ngIf="p.processorContact"><th>Contact</th><td>{{ p.processorContact }}</td></tr>
-            <tr *ngIf="p.processorDpoContact"><th>DPO</th><td>{{ p.processorDpoContact }}</td></tr>
-            <tr *ngIf="p.processorCountry"><th>Pays</th><td><code>{{ p.processorCountry }}</code></td></tr>
+            <tr><th i18n="@@common.name">Nom</th><td>{{ p.processorName }}</td></tr>
+            <tr *ngIf="p.processorLegalEntity"><th i18n="@@dpa.detail.legal-entity">Entité légale</th><td>{{ p.processorLegalEntity }}</td></tr>
+            <tr *ngIf="p.processorContact"><th i18n="@@dpa.detail.contact">Contact</th><td>{{ p.processorContact }}</td></tr>
+            <tr *ngIf="p.processorDpoContact"><th i18n="@@dpa.detail.dpo">DPO</th><td>{{ p.processorDpoContact }}</td></tr>
+            <tr *ngIf="p.processorCountry"><th i18n="@@dpa.detail.country">Pays</th><td><code>{{ p.processorCountry }}</code></td></tr>
           </table>
         </mat-card-content>
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Contrat</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@dpa.detail.contract">Contrat</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr *ngIf="p.signedAt"><th>Signé le</th><td>{{ p.signedAt | slice:0:10 }}</td></tr>
-            <tr *ngIf="p.effectiveFrom"><th>Effectif depuis</th><td>{{ p.effectiveFrom | slice:0:10 }}</td></tr>
-            <tr *ngIf="p.expirationDate"><th>Expiration</th><td>{{ p.expirationDate | slice:0:10 }}</td></tr>
+            <tr *ngIf="p.signedAt"><th i18n="@@dpa.detail.signed-on">Signé le</th><td>{{ p.signedAt | slice:0:10 }}</td></tr>
+            <tr *ngIf="p.effectiveFrom"><th i18n="@@dpa.detail.effective-from">Effectif depuis</th><td>{{ p.effectiveFrom | slice:0:10 }}</td></tr>
+            <tr *ngIf="p.expirationDate"><th i18n="@@dpa.detail.expiration">Expiration</th><td>{{ p.expirationDate | slice:0:10 }}</td></tr>
             <tr *ngIf="p.contractDocumentUrl">
-              <th>Document</th>
+              <th i18n="@@dpa.detail.document">Document</th>
               <td>
                 <a [href]="p.contractDocumentUrl" target="_blank" rel="noopener noreferrer">
-                  <mat-icon class="ext">open_in_new</mat-icon> Contrat signé
+                  <mat-icon class="ext">open_in_new</mat-icon> <span i18n="@@dpa.detail.signed-contract">Contrat signé</span>
                 </a>
               </td>
             </tr>
@@ -75,14 +75,14 @@
       </mat-card>
 
       <mat-card class="services-card">
-        <mat-card-header><mat-card-title>Services confiés</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@dpa.detail.services">Services confiés</mat-card-title></mat-card-header>
         <mat-card-content>
           <p class="text">{{ p.servicesDescription }}</p>
         </mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="p.subProcessorCategories?.length">
-        <mat-card-header><mat-card-title>Sous-traitants ultérieurs</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@dpa.detail.sub-processors">Sous-traitants ultérieurs</mat-card-title></mat-card-header>
         <mat-card-content>
           <ul class="chip-list">
             <li *ngFor="let c of p.subProcessorCategories">{{ c }}</li>
@@ -91,40 +91,41 @@
       </mat-card>
 
       <mat-card *ngIf="p.thirdCountryTransfers?.length" class="warn-card">
-        <mat-card-header><mat-card-title>Transferts hors UE</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@dpa.detail.third-country-transfers">Transferts hors UE</mat-card-title></mat-card-header>
         <mat-card-content>
           <ul class="chip-list">
             <li *ngFor="let c of p.thirdCountryTransfers">{{ c }}</li>
           </ul>
-          <p *ngIf="p.transferSafeguards" class="text"><strong>Garanties :</strong> {{ p.transferSafeguards }}</p>
+          <p *ngIf="p.transferSafeguards" class="text"><strong i18n="@@dpa.detail.safeguards-label">Garanties :</strong> {{ p.transferSafeguards }}</p>
         </mat-card-content>
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Sécurité &amp; obligations Art. 28</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@dpa.detail.security-obligations">Sécurité &amp; obligations Art. 28</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>Délai notification incident</th>
+            <tr><th i18n="@@dpa.detail.breach-delay">Délai notification incident</th>
                 <td><strong>{{ p.breachNotificationCommitmentHours }} h</strong>
-                  <span *ngIf="p.breachNotificationCommitmentHours > 72" class="warn-text">
+                  <span *ngIf="p.breachNotificationCommitmentHours > 72" class="warn-text" i18n="@@dpa.detail.over-72h">
                     (> 72h — non aligné CNIL)
                   </span>
                 </td></tr>
-            <tr><th>Droits d'audit</th>
+            <tr><th i18n="@@dpa.detail.audit-rights">Droits d'audit</th>
                 <td>
                   <mat-icon *ngIf="p.auditRights" class="ok">verified</mat-icon>
                   <mat-icon *ngIf="!p.auditRights" class="bad">block</mat-icon>
-                  {{ p.auditRights ? 'Prévus au contrat' : 'NON prévus — risque' }}
+                  <span *ngIf="p.auditRights" i18n="@@dpa.detail.audit-provided">Prévus au contrat</span>
+                  <span *ngIf="!p.auditRights" i18n="@@dpa.detail.audit-not-provided">NON prévus — risque</span>
                 </td></tr>
           </table>
-          <p *ngIf="p.securityMeasures" class="text"><strong>Mesures :</strong> {{ p.securityMeasures }}</p>
-          <p *ngIf="p.auditRightsNotes" class="text"><strong>Modalités d'audit :</strong> {{ p.auditRightsNotes }}</p>
-          <p *ngIf="p.dataReturnOrDeletionTerms" class="text"><strong>Fin de contrat (§3.g) :</strong> {{ p.dataReturnOrDeletionTerms }}</p>
+          <p *ngIf="p.securityMeasures" class="text"><strong i18n="@@dpa.detail.measures-label">Mesures :</strong> {{ p.securityMeasures }}</p>
+          <p *ngIf="p.auditRightsNotes" class="text"><strong i18n="@@dpa.detail.audit-terms-label">Modalités d'audit :</strong> {{ p.auditRightsNotes }}</p>
+          <p *ngIf="p.dataReturnOrDeletionTerms" class="text"><strong i18n="@@dpa.detail.contract-end-label">Fin de contrat (§3.g) :</strong> {{ p.dataReturnOrDeletionTerms }}</p>
         </mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="p.linkedProcessingActivityIds?.length">
-        <mat-card-header><mat-card-title>RoPA liées</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@dpa.detail.linked-ropa">RoPA liées</mat-card-title></mat-card-header>
         <mat-card-content>
           <ul class="uuid-list">
             <li *ngFor="let id of p.linkedProcessingActivityIds">
@@ -135,17 +136,17 @@
       </mat-card>
 
       <mat-card *ngIf="p.status === 'TERMINATED' && p.terminationReason" class="warn-card">
-        <mat-card-header><mat-card-title>Motif de résiliation</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@dpa.detail.termination-reason">Motif de résiliation</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ p.terminationReason }}</p></mat-card-content>
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Trace</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@dpa.detail.trace">Trace</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>Créé par</th><td><code>{{ p.createdByUserId }}</code></td></tr>
-            <tr><th>Créé le</th><td>{{ p.createdAt }}</td></tr>
-            <tr><th>Dernière MAJ</th><td>{{ p.updatedAt }}</td></tr>
+            <tr><th i18n="@@dpa.detail.created-by">Créé par</th><td><code>{{ p.createdByUserId }}</code></td></tr>
+            <tr><th i18n="@@common.created-at">Créé le</th><td>{{ p.createdAt }}</td></tr>
+            <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ p.updatedAt }}</td></tr>
           </table>
         </mat-card-content>
       </mat-card>
@@ -156,7 +157,7 @@
 
 <ng-template #fallback>
   <section class="pa-detail">
-    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
     <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
   </section>
 </ng-template>

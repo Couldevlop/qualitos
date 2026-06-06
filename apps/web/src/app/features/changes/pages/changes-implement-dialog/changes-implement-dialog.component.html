@@ -1,15 +1,18 @@
 <qos-form-dialog
+  i18n-title="@@changes.implement.title"
   title="Marquer comme implémenté"
+  i18n-subtitle="@@changes.implement.subtitle"
   subtitle="Le changement doit être APPROVED. La transition vers IMPLEMENTED est terminale."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@changes.implement.confirm"
   submitLabel="Confirmer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Date d'implémentation</mat-label>
+    <mat-label i18n="@@changes.implement.date-label">Date d'implémentation</mat-label>
     <input matInput formControlName="implementedAt" type="date" required>
   </mat-form-field>
 

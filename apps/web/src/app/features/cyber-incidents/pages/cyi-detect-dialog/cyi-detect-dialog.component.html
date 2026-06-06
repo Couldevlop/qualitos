@@ -1,33 +1,34 @@
 <qos-form-dialog
   title="Signaler un incident cyber NIS 2"
+  i18n-title="@@cyber-incidents.detect.title"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitColor="warn"
   submitIcon="shield"
   submitLabel="Signaler"
+  i18n-submitLabel="@@cyber-incidents.detect.submit"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <p class="hint" [class.significant]="isSignificant()">
     <ng-container *ngIf="isSignificant()">
-      <strong>Incident significatif</strong> — déclenche automatiquement les
-      échéances CSIRT NIS 2 : <strong>24h</strong> alerte initiale,
-      <strong>72h</strong> évaluation, <strong>1 mois</strong> rapport final.
+      <strong i18n="@@cyber-incidents.detect.hint-significant-title">Incident significatif</strong>
+      <span i18n="@@cyber-incidents.detect.hint-significant-text">— déclenche automatiquement les échéances CSIRT NIS 2 : 24h alerte initiale, 72h évaluation, 1 mois rapport final.</span>
     </ng-container>
-    <ng-container *ngIf="!isSignificant()">
+    <ng-container *ngIf="!isSignificant()" i18n="@@cyber-incidents.detect.hint-standard">
       Incident standard — aucune notification CSIRT requise tant que la sévérité reste LOW/MEDIUM.
     </ng-container>
   </p>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Référence interne</mat-label>
+      <mat-label i18n="@@cyber-incidents.detect.internal-reference">Référence interne</mat-label>
       <input matInput formControlName="reference" maxlength="64" required
              placeholder="NIS2-INC-2026-NNN">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Type</mat-label>
+      <mat-label i18n="@@common.type">Type</mat-label>
       <mat-select formControlName="incidentType" required>
         <mat-option *ngFor="let t of types" [value]="t">{{ typeLabel[t] }}</mat-option>
       </mat-select>
@@ -35,53 +36,54 @@
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre</mat-label>
+    <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="250" required>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description</mat-label>
+    <mat-label i18n="@@common.description">Description</mat-label>
     <textarea matInput formControlName="description" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Sévérité</mat-label>
+      <mat-label i18n="@@cyber-incidents.detect.severity">Sévérité</mat-label>
       <mat-select formControlName="severity" required>
         <mat-option *ngFor="let s of severities" [value]="s">{{ s }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Utilisateurs impactés (estimation)</mat-label>
+      <mat-label i18n="@@cyber-incidents.detect.affected-users">Utilisateurs impactés (estimation)</mat-label>
       <input matInput type="number" formControlName="estimatedAffectedUsers" min="0" required>
     </mat-form-field>
   </div>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Date de détection</mat-label>
+      <mat-label i18n="@@cyber-incidents.detect.detected-at">Date de détection</mat-label>
       <input matInput type="datetime-local" formControlName="detectedAt" required>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Date de survenue (si connue)</mat-label>
+      <mat-label i18n="@@cyber-incidents.detect.occurred-at">Date de survenue (si connue)</mat-label>
       <input matInput type="datetime-local" formControlName="occurredAt">
     </mat-form-field>
   </div>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Actifs impactés (un par ligne)</mat-label>
+      <mat-label i18n="@@cyber-incidents.detect.affected-assets">Actifs impactés (un par ligne)</mat-label>
       <textarea matInput formControlName="affectedAssets" rows="3"
                 placeholder="LAPTOP-RH-042&#10;DB-PROD-01"></textarea>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Services impactés (un par ligne)</mat-label>
+      <mat-label i18n="@@cyber-incidents.detect.affected-services">Services impactés (un par ligne)</mat-label>
       <textarea matInput formControlName="affectedServices" rows="3"
-                placeholder="API publique&#10;Portail clients"></textarea>
+                placeholder="API publique&#10;Portail clients"
+                i18n-placeholder="@@cyber-incidents.detect.affected-services-ph"></textarea>
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>UUID violation RGPD liée (optionnel)</mat-label>
+    <mat-label i18n="@@cyber-incidents.detect.linked-breach-uuid">UUID violation RGPD liée (optionnel)</mat-label>
     <input matInput formControlName="linkedBreachId"
            placeholder="00000000-0000-0000-0000-000000000000">
   </mat-form-field>

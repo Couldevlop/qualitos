@@ -65,15 +65,15 @@ export class CapaEditDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: c => {
-          this.snack.open('Cas mis à jour.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@capa.edit.success:Cas mis à jour.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(c);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[capa-edit] failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de la mise à jour.'),
-            'OK', { duration: 4000 }
+            safeErrorMessage(err, $localize`:@@common.error-update:Erreur lors de la mise à jour.`),
+            $localize`:@@common.ok:OK`, { duration: 4000 }
           );
         }
       });

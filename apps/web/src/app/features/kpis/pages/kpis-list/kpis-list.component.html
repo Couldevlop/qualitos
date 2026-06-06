@@ -1,40 +1,40 @@
 <section class="kpis-list">
   <header class="head">
     <div>
-      <h1>Catalogue KPI</h1>
-      <p>Indicateurs qualité, seuils, fréquences (CLAUDE.md §6) — fiche par KPI avec tendance et mesures.</p>
+      <h1 i18n="@@kpis.list.title">Catalogue KPI</h1>
+      <p i18n="@@kpis.list.subtitle">Indicateurs qualité, seuils, fréquences (CLAUDE.md §6) — fiche par KPI avec tendance et mesures.</p>
     </div>
     <button mat-flat-button color="primary" (click)="openCreate()">
-      <mat-icon>add</mat-icon> Nouveau KPI
+      <mat-icon>add</mat-icon> <span i18n="@@kpis.list.new">Nouveau KPI</span>
     </button>
   </header>
 
   <div class="filters">
     <mat-form-field appearance="outline">
-      <mat-label>Statut</mat-label>
+      <mat-label i18n="@@common.status">Statut</mat-label>
       <mat-select [formControl]="statusFilter">
-        <mat-option [value]="''">Tous</mat-option>
+        <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
         <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline">
-      <mat-label>Catégorie</mat-label>
-      <input matInput [formControl]="categoryFilter" placeholder="CAPA, Qualité, DMAIC…">
+      <mat-label i18n="@@kpis.list.category">Catégorie</mat-label>
+      <input matInput [formControl]="categoryFilter" placeholder="CAPA, Qualité, DMAIC…" i18n-placeholder="@@kpis.list.category-placeholder">
     </mat-form-field>
   </div>
 
   <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
-  <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+  <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
 
   <div class="table-wrap mat-elevation-z1">
     <table mat-table [dataSource]="(kpis$ | async) ?? []">
       <ng-container matColumnDef="code">
-        <th mat-header-cell *matHeaderCellDef>Code</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@kpis.list.col-code">Code</th>
         <td mat-cell *matCellDef="let k"><code>{{ k.code }}</code></td>
       </ng-container>
 
       <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef>Nom</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.name">Nom</th>
         <td mat-cell *matCellDef="let k">
           <a class="title-link" (click)="open(k)">{{ k.name }}</a>
           <small *ngIf="k.description" class="dim">{{ k.description }}</small>
@@ -42,17 +42,17 @@
       </ng-container>
 
       <ng-container matColumnDef="category">
-        <th mat-header-cell *matHeaderCellDef>Catégorie</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@kpis.list.col-category">Catégorie</th>
         <td mat-cell *matCellDef="let k">{{ k.category || '—' }}</td>
       </ng-container>
 
       <ng-container matColumnDef="direction">
-        <th mat-header-cell *matHeaderCellDef>Sens</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@kpis.list.col-direction">Sens</th>
         <td mat-cell *matCellDef="let k"><span [class]="directionBadge(k.direction)">{{ directionLabel(k.direction) }}</span></td>
       </ng-container>
 
       <ng-container matColumnDef="target">
-        <th mat-header-cell *matHeaderCellDef>Cible</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@kpis.list.col-target">Cible</th>
         <td mat-cell *matCellDef="let k">
           <span *ngIf="k.targetValue !== undefined && k.targetValue !== null">
             {{ k.targetValue }} <span class="dim">{{ k.unit }}</span>
@@ -62,12 +62,12 @@
       </ng-container>
 
       <ng-container matColumnDef="frequency">
-        <th mat-header-cell *matHeaderCellDef>Fréquence</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@kpis.list.col-frequency">Fréquence</th>
         <td mat-cell *matCellDef="let k">{{ k.frequency || '—' }}</td>
       </ng-container>
 
       <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
         <td mat-cell *matCellDef="let k"><span [class]="statusBadge(k.status)">{{ k.status }}</span></td>
       </ng-container>
 

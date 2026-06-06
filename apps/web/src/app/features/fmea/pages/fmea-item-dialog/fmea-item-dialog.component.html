@@ -1,9 +1,9 @@
 <qos-form-dialog
-  [title]="data.item ? 'Modifier l\'item FMEA' : 'Nouvel item FMEA'"
+  [title]="dialogTitle"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
-  [submitLabel]="data.item ? 'Enregistrer' : 'Ajouter'"
+  [submitLabel]="submitLabel"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
@@ -11,48 +11,49 @@
      Items ≥ seuil critique ({{ data.criticalRpnThreshold }}) classés CRITIQUES.</p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Fonction</mat-label>
+    <mat-label i18n="@@fmea.detail.col-function">Fonction</mat-label>
     <input matInput formControlName="function" maxlength="500"
+           i18n-placeholder="@@fmea.item.function-placeholder"
            placeholder="Quelle fonction est analysée ?">
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Mode de défaillance</mat-label>
+      <mat-label i18n="@@fmea.item.failure-mode">Mode de défaillance</mat-label>
       <input matInput formControlName="failureMode" maxlength="500">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Effet</mat-label>
+      <mat-label i18n="@@fmea.detail.col-effect">Effet</mat-label>
       <input matInput formControlName="failureEffect" maxlength="500">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Cause</mat-label>
+    <mat-label i18n="@@fmea.item.cause">Cause</mat-label>
     <textarea matInput formControlName="failureCause" rows="2" maxlength="1000"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Contrôles actuels</mat-label>
+    <mat-label i18n="@@fmea.item.current-controls">Contrôles actuels</mat-label>
     <textarea matInput formControlName="currentControls" rows="2" maxlength="1000"></textarea>
   </mat-form-field>
 
-  <h3 class="section">Cotation initiale</h3>
+  <h3 class="section" i18n="@@fmea.item.initial-rating">Cotation initiale</h3>
   <div class="rpn-row">
     <mat-form-field appearance="outline" class="col-sod">
-      <mat-label>Sévérité</mat-label>
+      <mat-label i18n="@@fmea.item.severity">Sévérité</mat-label>
       <mat-select formControlName="severity" required>
         <mat-option *ngFor="let n of scale" [value]="n">{{ n }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col-sod">
-      <mat-label>Occurrence</mat-label>
+      <mat-label i18n="@@fmea.item.occurrence">Occurrence</mat-label>
       <mat-select formControlName="occurrence" required>
         <mat-option *ngFor="let n of scale" [value]="n">{{ n }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col-sod">
-      <mat-label>Détection</mat-label>
+      <mat-label i18n="@@fmea.item.detection">Détection</mat-label>
       <mat-select formControlName="detection" required>
         <mat-option *ngFor="let n of scale" [value]="n">{{ n }}</mat-option>
       </mat-select>
@@ -64,40 +65,40 @@
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Action recommandée</mat-label>
+    <mat-label i18n="@@fmea.item.recommended-action">Action recommandée</mat-label>
     <textarea matInput formControlName="recommendedAction" rows="2" maxlength="1000"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Échéance action</mat-label>
+    <mat-label i18n="@@fmea.item.action-due-date">Échéance action</mat-label>
     <input matInput formControlName="actionDueDate" type="date">
   </mat-form-field>
 
-  <h3 class="section">Cotation résultante (après action — optionnel)</h3>
+  <h3 class="section" i18n="@@fmea.item.resulting-rating">Cotation résultante (après action — optionnel)</h3>
   <div class="rpn-row">
     <mat-form-field appearance="outline" class="col-sod">
-      <mat-label>Sévérité</mat-label>
+      <mat-label i18n="@@fmea.item.severity">Sévérité</mat-label>
       <mat-select formControlName="resultingSeverity">
         <mat-option [value]="null">—</mat-option>
         <mat-option *ngFor="let n of scale" [value]="n">{{ n }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col-sod">
-      <mat-label>Occurrence</mat-label>
+      <mat-label i18n="@@fmea.item.occurrence">Occurrence</mat-label>
       <mat-select formControlName="resultingOccurrence">
         <mat-option [value]="null">—</mat-option>
         <mat-option *ngFor="let n of scale" [value]="n">{{ n }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col-sod">
-      <mat-label>Détection</mat-label>
+      <mat-label i18n="@@fmea.item.detection">Détection</mat-label>
       <mat-select formControlName="resultingDetection">
         <mat-option [value]="null">—</mat-option>
         <mat-option *ngFor="let n of scale" [value]="n">{{ n }}</mat-option>
       </mat-select>
     </mat-form-field>
     <div class="rpn-display">
-      <span class="rpn-label">RPN après</span>
+      <span class="rpn-label" i18n="@@fmea.detail.col-rpn-after">RPN après</span>
       <span [class]="rpnClass(rpnAfterLive ?? 0)">{{ rpnAfterLive ?? '—' }}</span>
     </div>
   </div>

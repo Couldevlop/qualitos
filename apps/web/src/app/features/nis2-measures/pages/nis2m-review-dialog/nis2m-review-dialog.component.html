@@ -5,12 +5,13 @@
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitLabel="Confirmer"
+  i18n-submitLabel="@@nis2-measures.review.confirm"
   [submitIcon]="data.mode === 'VERIFY' ? 'verified' : 'fact_check'"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Date de la revue</mat-label>
+    <mat-label i18n="@@nis2-measures.review.date">Date de la revue</mat-label>
     <input matInput formControlName="reviewedAt" type="datetime-local" required>
   </mat-form-field>
 

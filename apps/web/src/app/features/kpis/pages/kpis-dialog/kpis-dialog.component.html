@@ -1,77 +1,77 @@
 <qos-form-dialog
-  [title]="isEdit ? 'Modifier le KPI' : 'Nouveau KPI'"
+  [title]="dialogTitle"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
-  [submitLabel]="isEdit ? 'Enregistrer' : 'Créer'"
+  [submitLabel]="submitLabel"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <div class="row">
     <mat-form-field appearance="outline" class="col col-code">
-      <mat-label>Code</mat-label>
+      <mat-label i18n="@@kpis.dialog.code">Code</mat-label>
       <input matInput formControlName="code" maxlength="100" required
              placeholder="capa-closure-time">
-      <mat-hint>minuscules, chiffres, tiret, underscore</mat-hint>
+      <mat-hint i18n="@@kpis.dialog.code-hint">minuscules, chiffres, tiret, underscore</mat-hint>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Catégorie</mat-label>
+      <mat-label i18n="@@kpis.dialog.category">Catégorie</mat-label>
       <input matInput formControlName="category" maxlength="64"
-             placeholder="CAPA, Qualité, DMAIC…">
+             placeholder="CAPA, Qualité, DMAIC…" i18n-placeholder="@@kpis.list.category-placeholder">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col col-small">
-      <mat-label>Unité</mat-label>
+      <mat-label i18n="@@kpis.dialog.unit">Unité</mat-label>
       <input matInput formControlName="unit" maxlength="32"
-             placeholder="%, jours, DPMO…">
+             placeholder="%, jours, DPMO…" i18n-placeholder="@@kpis.dialog.unit-placeholder">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Nom</mat-label>
+    <mat-label i18n="@@common.name">Nom</mat-label>
     <input matInput formControlName="name" maxlength="250" required>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Définition / formule</mat-label>
+    <mat-label i18n="@@kpis.dialog.definition">Définition / formule</mat-label>
     <textarea matInput formControlName="description" rows="3" maxlength="2000"
-              placeholder="Définition explicite — formule, source, propriétaire (§6.1)"></textarea>
+              placeholder="Définition explicite — formule, source, propriétaire (§6.1)" i18n-placeholder="@@kpis.dialog.definition-placeholder"></textarea>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Sens d'optimisation</mat-label>
+      <mat-label i18n="@@kpis.dialog.direction">Sens d'optimisation</mat-label>
       <mat-select formControlName="direction" required>
         <mat-option *ngFor="let d of directions" [value]="d.value">{{ d.label }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col col-small">
-      <mat-label>Fréquence</mat-label>
+      <mat-label i18n="@@kpis.dialog.frequency">Fréquence</mat-label>
       <mat-select formControlName="frequency">
         <mat-option *ngFor="let f of frequencies" [value]="f">{{ f }}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
 
-  <h3 class="section">Seuils</h3>
+  <h3 class="section" i18n="@@kpis.detail.thresholds">Seuils</h3>
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Cible</mat-label>
+      <mat-label i18n="@@kpis.detail.col-target">Cible</mat-label>
       <input matInput formControlName="targetValue" type="number" step="any">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Warning</mat-label>
+      <mat-label i18n="@@kpis.detail.col-warning">Warning</mat-label>
       <input matInput formControlName="thresholdWarning" type="number" step="any">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Critical</mat-label>
+      <mat-label i18n="@@kpis.detail.col-critical">Critical</mat-label>
       <input matInput formControlName="thresholdCritical" type="number" step="any">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Secteurs applicables (CSV)</mat-label>
+    <mat-label i18n="@@kpis.dialog.industries">Secteurs applicables (CSV)</mat-label>
     <input matInput formControlName="applicableIndustriesCsv" maxlength="1000"
-           placeholder="all, Manufacturing, Pharma, Banque…">
+           placeholder="all, Manufacturing, Pharma, Banque…" i18n-placeholder="@@kpis.dialog.industries-placeholder">
   </mat-form-field>
 
 </qos-form-dialog>

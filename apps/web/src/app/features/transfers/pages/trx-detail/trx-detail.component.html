@@ -4,7 +4,7 @@
     <header class="head">
       <div class="meta">
         <a routerLink="/cross-border" class="back">
-          <mat-icon>arrow_back</mat-icon> Transferts internationaux
+          <mat-icon>arrow_back</mat-icon> <span i18n="@@transfers.detail.back">Transferts internationaux</span>
         </a>
         <h1>
           <code>{{ t.reference }}</code>
@@ -13,41 +13,43 @@
         <div class="meta-row">
           <span [class]="mechBadge(t.mechanism)">{{ mechLabel(t.mechanism) }}</span>
           <span [class]="statusBadge(t.status)">{{ t.status }}</span>
-          <span class="dim" *ngIf="t.effectiveFrom">Effectif depuis : {{ t.effectiveFrom }}</span>
-          <span class="dim" *ngIf="t.effectiveTo">Terminé : {{ t.effectiveTo }}</span>
+          <span class="dim" *ngIf="t.effectiveFrom"><span i18n="@@transfers.detail.effective-from">Effectif depuis :</span> {{ t.effectiveFrom }}</span>
+          <span class="dim" *ngIf="t.effectiveTo"><span i18n="@@transfers.detail.terminated-on">Terminé :</span> {{ t.effectiveTo }}</span>
         </div>
       </div>
 
       <div class="toolbar">
         <button mat-stroked-button (click)="openEdit(t)" [disabled]="t.status === 'TERMINATED'">
-          <mat-icon>edit</mat-icon> Modifier
+          <mat-icon>edit</mat-icon> <span i18n="@@common.edit">Modifier</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="t.status === 'DRAFT' || t.status === 'SUSPENDED'" (click)="activate(t)">
-          <mat-icon>play_arrow</mat-icon> {{ t.status === 'SUSPENDED' ? 'Reprendre' : 'Activer' }}
+          <mat-icon>play_arrow</mat-icon>
+          <span *ngIf="t.status === 'SUSPENDED'" i18n="@@transfers.detail.resume">Reprendre</span>
+          <span *ngIf="t.status !== 'SUSPENDED'" i18n="@@transfers.detail.activate">Activer</span>
         </button>
         <button mat-stroked-button color="warn" *ngIf="t.status === 'ACTIVE'" (click)="suspend(t)">
-          <mat-icon>pause_circle</mat-icon> Suspendre
+          <mat-icon>pause_circle</mat-icon> <span i18n="@@transfers.detail.suspend">Suspendre</span>
         </button>
         <button mat-stroked-button color="warn"
                 *ngIf="t.status !== 'TERMINATED' && t.status !== 'DRAFT'" (click)="terminate(t)">
-          <mat-icon>block</mat-icon> Terminer
+          <mat-icon>block</mat-icon> <span i18n="@@transfers.detail.terminate">Terminer</span>
         </button>
         <button mat-stroked-button color="warn" (click)="remove(t)" [disabled]="t.status !== 'DRAFT'"
                 [matTooltip]="t.status === 'DRAFT' ? 'Supprimer le brouillon' : 'Seul un brouillon peut être supprimé'">
-          <mat-icon>delete</mat-icon> Supprimer
+          <mat-icon>delete</mat-icon> <span i18n="@@common.delete">Supprimer</span>
         </button>
       </div>
     </header>
 
     <div class="grid">
       <mat-card>
-        <mat-card-header><mat-card-title>Destinataire</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@transfers.detail.recipient">Destinataire</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>Nom commercial</th><td>{{ t.recipientName }}</td></tr>
-            <tr *ngIf="t.recipientLegalEntity"><th>Entité légale</th><td>{{ t.recipientLegalEntity }}</td></tr>
-            <tr *ngIf="t.recipientContact"><th>Contact</th><td>{{ t.recipientContact }}</td></tr>
-            <tr><th>Pays</th><td>
+            <tr><th i18n="@@transfers.detail.trade-name">Nom commercial</th><td>{{ t.recipientName }}</td></tr>
+            <tr *ngIf="t.recipientLegalEntity"><th i18n="@@transfers.detail.legal-entity">Entité légale</th><td>{{ t.recipientLegalEntity }}</td></tr>
+            <tr *ngIf="t.recipientContact"><th i18n="@@transfers.detail.contact">Contact</th><td>{{ t.recipientContact }}</td></tr>
+            <tr><th i18n="@@transfers.detail.countries">Pays</th><td>
               <span *ngFor="let c of t.destinationCountries; let last = last">
                 <strong>{{ c }}</strong>{{ last ? '' : ', ' }}
               </span>
@@ -58,28 +60,28 @@
       </mat-card>
 
       <mat-card *ngIf="!isDerogation(t.mechanism)">
-        <mat-card-header><mat-card-title>Garanties</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@transfers.detail.safeguards">Garanties</mat-card-title></mat-card-header>
         <mat-card-content>
           <p *ngIf="t.safeguardsDescription; else nGuar" class="text">{{ t.safeguardsDescription }}</p>
-          <ng-template #nGuar><p class="dim">Aucune description renseignée.</p></ng-template>
+          <ng-template #nGuar><p class="dim" i18n="@@transfers.detail.no-safeguards">Aucune description renseignée.</p></ng-template>
           <p *ngIf="t.safeguardsDocumentUrl">
             <a [href]="t.safeguardsDocumentUrl" target="_blank" rel="noopener noreferrer">
-              <mat-icon class="ext">open_in_new</mat-icon> Document signé
+              <mat-icon class="ext">open_in_new</mat-icon> <span i18n="@@transfers.detail.signed-document">Document signé</span>
             </a>
           </p>
         </mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="isDerogation(t.mechanism)" class="warn-card">
-        <mat-card-header><mat-card-title>Justification dérogation Art. 49</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@transfers.detail.derogation-justif">Justification dérogation Art. 49</mat-card-title></mat-card-header>
         <mat-card-content>
           <p *ngIf="t.derogationJustification; else nJustif" class="text">{{ t.derogationJustification }}</p>
-          <ng-template #nJustif><p class="dim warn">Aucune justification — non conforme.</p></ng-template>
+          <ng-template #nJustif><p class="dim warn" i18n="@@transfers.detail.no-justif">Aucune justification — non conforme.</p></ng-template>
         </mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="t.dataCategories?.length">
-        <mat-card-header><mat-card-title>Catégories de données</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@transfers.detail.data-categories">Catégories de données</mat-card-title></mat-card-header>
         <mat-card-content>
           <ul class="chip-list">
             <li *ngFor="let c of t.dataCategories">{{ c }}</li>
@@ -88,7 +90,7 @@
       </mat-card>
 
       <mat-card *ngIf="t.linkedProcessingActivityIds?.length">
-        <mat-card-header><mat-card-title>RoPA liées</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@transfers.detail.linked-ropa">RoPA liées</mat-card-title></mat-card-header>
         <mat-card-content>
           <ul class="uuid-list">
             <li *ngFor="let id of t.linkedProcessingActivityIds">
@@ -99,22 +101,22 @@
       </mat-card>
 
       <mat-card *ngIf="t.status === 'SUSPENDED' && t.suspendReason" class="warn-card">
-        <mat-card-header><mat-card-title>Suspension</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@transfers.detail.suspension">Suspension</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ t.suspendReason }}</p></mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="t.status === 'TERMINATED' && t.terminationReason" class="warn-card">
-        <mat-card-header><mat-card-title>Motif de fin</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@transfers.detail.termination-reason">Motif de fin</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ t.terminationReason }}</p></mat-card-content>
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Trace</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@transfers.detail.trace">Trace</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>Créé par</th><td><code>{{ t.createdByUserId }}</code></td></tr>
-            <tr><th>Créé le</th><td>{{ t.createdAt }}</td></tr>
-            <tr><th>Dernière MAJ</th><td>{{ t.updatedAt }}</td></tr>
+            <tr><th i18n="@@transfers.detail.created-by">Créé par</th><td><code>{{ t.createdByUserId }}</code></td></tr>
+            <tr><th i18n="@@common.created-at">Créé le</th><td>{{ t.createdAt }}</td></tr>
+            <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ t.updatedAt }}</td></tr>
           </table>
         </mat-card-content>
       </mat-card>
@@ -125,7 +127,7 @@
 
 <ng-template #fallback>
   <section class="trx-detail">
-    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
     <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
   </section>
 </ng-template>

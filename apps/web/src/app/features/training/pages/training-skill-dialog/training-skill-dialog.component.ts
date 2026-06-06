@@ -20,6 +20,12 @@ export class TrainingSkillDialogComponent {
 
   submitting = false;
   readonly isEdit: boolean;
+
+  readonly editTitle = $localize`:@@training.skill-dialog.edit-title:Modifier la compétence`;
+  readonly createTitle = $localize`:@@training.skill-dialog.create-title:Nouvelle compétence`;
+  readonly editSubmitLabel = $localize`:@@common.save:Enregistrer`;
+  readonly createSubmitLabel = $localize`:@@common.create:Créer`;
+
   readonly form;
 
   constructor(
@@ -64,13 +70,13 @@ export class TrainingSkillDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: s => {
-          this.snack.open(this.isEdit ? 'Compétence mise à jour.' : 'Compétence créée.', 'OK', { duration: 2200 });
+          this.snack.open(this.isEdit ? $localize`:@@training.skill-dialog.updated:Compétence mise à jour.` : $localize`:@@training.skill-dialog.created:Compétence créée.`, $localize`:@@common.ok:OK`, { duration: 2200 });
           this.dialogRef.close(s);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[training-skill-dialog] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@training.skill-dialog.save-error:Erreur lors de l'enregistrement.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

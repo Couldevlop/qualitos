@@ -1,20 +1,20 @@
 <qos-form-dialog
-  [title]="isEdit ? 'Modifier la connexion' : 'Nouvelle connexion ITSM'"
+  [title]="dialogTitle"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
-  [submitLabel]="isEdit ? 'Enregistrer' : 'Créer'"
+  [submitLabel]="submitLabel"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Nom</mat-label>
+      <mat-label i18n="@@common.name">Nom</mat-label>
       <input matInput formControlName="name" maxlength="120" required
-             placeholder="Ex. : ServiceNow Production">
+             placeholder="Ex. : ServiceNow Production" i18n-placeholder="@@itsm.dialog.name-placeholder">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col col-small">
-      <mat-label>Provider</mat-label>
+      <mat-label i18n="@@itsm.list.col-provider">Provider</mat-label>
       <mat-select formControlName="provider" required>
         <mat-option *ngFor="let p of providers" [value]="p.value">{{ p.label }}</mat-option>
       </mat-select>
@@ -22,30 +22,30 @@
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Base URL (https obligatoire)</mat-label>
+    <mat-label i18n="@@itsm.dialog.base-url">Base URL (https obligatoire)</mat-label>
     <input matInput formControlName="baseUrl" maxlength="512" required
            placeholder="https://your-instance.service-now.com">
-    <mat-error *ngIf="form.controls.baseUrl.hasError('pattern')">
+    <mat-error *ngIf="form.controls.baseUrl.hasError('pattern')" i18n="@@itsm.dialog.base-url-error">
       L'URL doit commencer par https://
     </mat-error>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Utilisateur (intégration)</mat-label>
+      <mat-label i18n="@@itsm.dialog.username">Utilisateur (intégration)</mat-label>
       <input matInput formControlName="username" maxlength="200"
              autocomplete="off" placeholder="bot-qualitos@org.tld">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Périmètre externe</mat-label>
+      <mat-label i18n="@@itsm.dialog.external-scope">Périmètre externe</mat-label>
       <input matInput formControlName="externalScope" maxlength="200"
-             placeholder="project=SRE, incident,problem,change…">
+             placeholder="project=SRE, incident,problem,change…" i18n-placeholder="@@itsm.dialog.external-scope-placeholder">
     </mat-form-field>
   </div>
 
   <div class="secret-row">
     <mat-form-field appearance="outline" class="full secret-field">
-      <mat-label>{{ isEdit ? 'Nouveau secret (laisser vide pour conserver)' : 'Secret / API token' }}</mat-label>
+      <mat-label>{{ secretLabel }}</mat-label>
       <input matInput formControlName="secret"
              [type]="showSecret ? 'text' : 'password'"
              maxlength="1024"
@@ -53,23 +53,23 @@
              spellcheck="false"
              [required]="!isEdit">
       <button mat-icon-button matSuffix type="button" (click)="toggleSecret()"
-              [attr.aria-label]="showSecret ? 'Masquer le secret' : 'Afficher le secret'"
-              [matTooltip]="showSecret ? 'Masquer' : 'Afficher'">
+              [attr.aria-label]="secretToggleAria"
+              [matTooltip]="secretToggleTooltip">
         <mat-icon>{{ showSecret ? 'visibility_off' : 'visibility' }}</mat-icon>
       </button>
-      <mat-hint>Stocké chiffré côté serveur ; jamais retourné par l'API.</mat-hint>
-      <mat-error *ngIf="form.controls.secret.hasError('minlength')">
+      <mat-hint i18n="@@itsm.dialog.secret-hint">Stocké chiffré côté serveur ; jamais retourné par l'API.</mat-hint>
+      <mat-error *ngIf="form.controls.secret.hasError('minlength')" i18n="@@itsm.dialog.secret-minlength">
         Minimum 4 caractères.
       </mat-error>
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full" *ngIf="isEdit">
-    <mat-label>Statut</mat-label>
+    <mat-label i18n="@@common.status">Statut</mat-label>
     <mat-select formControlName="status">
       <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
     </mat-select>
-    <mat-hint>DISABLED_ON_ERRORS est positionné automatiquement par le système.</mat-hint>
+    <mat-hint i18n="@@itsm.dialog.status-hint">DISABLED_ON_ERRORS est positionné automatiquement par le système.</mat-hint>
   </mat-form-field>
 
 </qos-form-dialog>

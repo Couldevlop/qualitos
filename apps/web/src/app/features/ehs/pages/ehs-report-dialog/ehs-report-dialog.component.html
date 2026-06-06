@@ -1,26 +1,29 @@
 <qos-form-dialog
+  i18n-title="@@ehs.report.title"
   title="Déclarer un incident EHS"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@ehs.report.submit-label"
   submitLabel="Déclarer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <div class="row">
     <mat-form-field appearance="outline" class="col col-code">
-      <mat-label>Code</mat-label>
+      <mat-label i18n="@@ehs.list.col-code">Code</mat-label>
       <input matInput formControlName="code" maxlength="100" required
+             i18n-placeholder="@@ehs.report.code-placeholder"
              placeholder="Ex. : EHS-2026-014">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Type</mat-label>
+      <mat-label i18n="@@common.type">Type</mat-label>
       <mat-select formControlName="type" required>
         <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col col-small">
-      <mat-label>Sévérité</mat-label>
+      <mat-label i18n="@@ehs.list.severity">Sévérité</mat-label>
       <mat-select formControlName="severity" required>
         <mat-option *ngFor="let s of severities" [value]="s">{{ s }}</mat-option>
       </mat-select>
@@ -28,23 +31,24 @@
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre</mat-label>
+    <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="250" required>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description</mat-label>
+    <mat-label i18n="@@common.description">Description</mat-label>
     <textarea matInput formControlName="description" rows="4" maxlength="4000"
+              i18n-placeholder="@@ehs.report.description-placeholder"
               placeholder="Faits, contexte, personnes impactées, suite immédiate"></textarea>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Date et heure de l'événement</mat-label>
+      <mat-label i18n="@@ehs.report.event-datetime">Date et heure de l'événement</mat-label>
       <input matInput formControlName="occurredAt" type="datetime-local">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Lieu</mat-label>
+      <mat-label i18n="@@ehs.edit.location">Lieu</mat-label>
       <input matInput formControlName="location" maxlength="500"
              placeholder="Atelier B, zone 3…">
     </mat-form-field>

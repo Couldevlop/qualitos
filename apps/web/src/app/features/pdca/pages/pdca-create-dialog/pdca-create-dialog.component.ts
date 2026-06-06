@@ -39,7 +39,7 @@ export class PdcaCreateDialogComponent {
     }
     const ownerId = this.auth.snapshot()?.userId;
     if (!ownerId) {
-      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -49,7 +49,7 @@ export class PdcaCreateDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: cycle => {
-          this.snack.open($localize`:@@pdca.create.success:Cycle PDCA créé.`, 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@pdca.create.success:Cycle PDCA créé.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(cycle);
         },
         error: err => {

@@ -53,6 +53,18 @@ export class FmeaItemDialogComponent {
     @Inject(MAT_DIALOG_DATA) public readonly data: FmeaItemDialogData
   ) {}
 
+  get dialogTitle(): string {
+    return this.data.item
+      ? $localize`:@@fmea.item.title-edit:Modifier l'item FMEA`
+      : $localize`:@@fmea.item.title-create:Nouvel item FMEA`;
+  }
+
+  get submitLabel(): string {
+    return this.data.item
+      ? $localize`:@@common.save:Enregistrer`
+      : $localize`:@@common.add:Ajouter`;
+  }
+
   get rpnLive(): number {
     const v = this.form.getRawValue();
     return (v.severity ?? 0) * (v.occurrence ?? 0) * (v.detection ?? 0);
@@ -101,13 +113,13 @@ export class FmeaItemDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: item => {
-          this.snack.open(this.data.item ? 'Item mis à jour.' : 'Item ajouté.', 'OK', { duration: 2200 });
+          this.snack.open(this.data.item ? $localize`:@@fmea.item.updated:Item mis à jour.` : $localize`:@@fmea.item.added:Item ajouté.`, $localize`:@@common.ok:OK`, { duration: 2200 });
           this.dialogRef.close(item);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[fmea-item] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@fmea.item.save-error:Erreur lors de l'enregistrement.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

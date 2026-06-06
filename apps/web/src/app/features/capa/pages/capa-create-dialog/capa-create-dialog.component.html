@@ -1,37 +1,42 @@
 <qos-form-dialog
+  i18n-title="@@capa.create.title"
   title="Nouveau cas CAPA"
+  i18n-subtitle="@@capa.create.subtitle"
   subtitle="Crée un cas correctif ou préventif. Les actions seront ajoutées ensuite et l'efficacité vérifiée à la clôture."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.create"
   submitLabel="Créer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Titre</mat-label>
+    <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="255" required
+           i18n-placeholder="@@capa.create.title-placeholder"
            placeholder="Ex. : Recalibration robot soudure cobot-3">
-    <mat-error *ngIf="form.controls.title.hasError('required')">Le titre est requis.</mat-error>
-    <mat-error *ngIf="form.controls.title.hasError('maxlength')">255 caractères maximum.</mat-error>
+    <mat-error *ngIf="form.controls.title.hasError('required')" i18n="@@capa.create.title-required">Le titre est requis.</mat-error>
+    <mat-error *ngIf="form.controls.title.hasError('maxlength')" i18n="@@common.maxlength-255">255 caractères maximum.</mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description (optionnel)</mat-label>
+    <mat-label i18n="@@common.description-optional">Description (optionnel)</mat-label>
     <textarea matInput formControlName="description" rows="3"
+              i18n-placeholder="@@capa.create.description-placeholder"
               placeholder="Contexte, impact, observations…"></textarea>
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Type</mat-label>
+      <mat-label i18n="@@common.type">Type</mat-label>
       <mat-select formControlName="type">
         <mat-option *ngFor="let t of types" [value]="t">{{ t }}</mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Criticité</mat-label>
+      <mat-label i18n="@@capa.create.criticity">Criticité</mat-label>
       <mat-select formControlName="criticity">
         <mat-option *ngFor="let c of criticities" [value]="c">{{ c }}</mat-option>
       </mat-select>
@@ -40,21 +45,22 @@
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Source</mat-label>
+      <mat-label i18n="@@capa.create.source">Source</mat-label>
       <mat-select formControlName="sourceType">
         <mat-option *ngFor="let s of sourceTypes" [value]="s.value">{{ s.label }}</mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Référence source (optionnel)</mat-label>
+      <mat-label i18n="@@capa.create.source-ref">Référence source (optionnel)</mat-label>
       <input matInput formControlName="sourceRef" maxlength="255"
+             i18n-placeholder="@@capa.create.source-ref-placeholder"
              placeholder="Ex. : NC-2026-018">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Échéance (optionnel)</mat-label>
+    <mat-label i18n="@@capa.create.due-date">Échéance (optionnel)</mat-label>
     <input matInput formControlName="dueDate" type="date">
   </mat-form-field>
 

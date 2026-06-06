@@ -1,55 +1,57 @@
 <qos-form-dialog
-  [title]="isEdit ? 'Modifier la règle' : 'Nouvelle règle de rétention'"
+  [title]="dialogTitle"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
-  [submitLabel]="isEdit ? 'Enregistrer' : 'Créer (DRAFT)'"
+  [submitLabel]="submitLabelText"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="hint">L'Art. 5§1.e RGPD impose une durée de conservation limitée et justifiée
+  <p class="hint" i18n="@@retention.rule-dialog.hint">L'Art. 5§1.e RGPD impose une durée de conservation limitée et justifiée
      par une base légale (Code du travail, fiscalité, recommandation CNIL, intérêt
      légitime documenté…). La règle activée est immutable pour la traçabilité.</p>
 
-  <h3 class="section">Catégorie de données</h3>
+  <h3 class="section" i18n="@@retention.rule-dialog.category-section">Catégorie de données</h3>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Code catégorie</mat-label>
+    <mat-label i18n="@@retention.rule-dialog.category-code">Code catégorie</mat-label>
     <input matInput formControlName="dataCategoryCode" maxlength="64" required
            placeholder="rh.bulletin_paie">
-    <mat-hint>minuscules, chiffres, point, tiret, underscore — immutable</mat-hint>
+    <mat-hint i18n="@@retention.rule-dialog.category-code-hint">minuscules, chiffres, point, tiret, underscore — immutable</mat-hint>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Libellé lisible</mat-label>
+    <mat-label i18n="@@retention.rule-dialog.category-label">Libellé lisible</mat-label>
     <input matInput formControlName="dataCategoryLabel" maxlength="250"
            placeholder="Bulletins de paie salariés">
   </mat-form-field>
 
-  <h3 class="section">Durée de conservation</h3>
+  <h3 class="section" i18n="@@retention.rule-dialog.period-section">Durée de conservation</h3>
   <div class="period-row">
     <mat-form-field appearance="outline" class="col-amount">
-      <mat-label>Quantité</mat-label>
+      <mat-label i18n="@@retention.rule-dialog.quantity">Quantité</mat-label>
       <input matInput formControlName="periodAmount" type="number"
              min="1" max="36500" required>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col-unit">
-      <mat-label>Unité</mat-label>
+      <mat-label i18n="@@retention.rule-dialog.unit">Unité</mat-label>
       <mat-select formControlName="periodUnit" required>
         <mat-option *ngFor="let u of units" [value]="u.value">{{ u.label }}</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
 
-  <h3 class="section">Base légale</h3>
+  <h3 class="section" i18n="@@retention.rule-dialog.legal-section">Base légale</h3>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Justification</mat-label>
+    <mat-label i18n="@@retention.rule-dialog.justification">Justification</mat-label>
     <textarea matInput formControlName="legalBasis" rows="4" maxlength="2000" required
+              i18n-placeholder="@@retention.rule-dialog.justification-placeholder"
               placeholder="Article L3243-4 du Code du travail. Recommandation CNIL XYZ. RGPD Art. 6.1.c."></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Lien vers la source légale (https://…)</mat-label>
+    <mat-label i18n="@@retention.rule-dialog.legal-ref">Lien vers la source légale (https://…)</mat-label>
     <input matInput formControlName="lawfulBasisReference" maxlength="1024"
            placeholder="https://www.legifrance.gouv.fr/…">
-    <mat-error *ngIf="form.controls.lawfulBasisReference.hasError('httpsOnly')">
+    <mat-error *ngIf="form.controls.lawfulBasisReference.hasError('httpsOnly')"
+               i18n="@@retention.rule-dialog.https-only">
       Seules les URLs https:// sont acceptées.
     </mat-error>
   </mat-form-field>

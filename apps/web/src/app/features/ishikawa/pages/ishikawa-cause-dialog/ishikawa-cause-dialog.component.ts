@@ -89,7 +89,7 @@ export class IshikawaCauseDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: cause => {
-          this.snack.open($localize`:@@ishikawa.cause.added:Cause ajoutée.`, 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@ishikawa.cause.added:Cause ajoutée.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(cause);
         },
         error: err => {

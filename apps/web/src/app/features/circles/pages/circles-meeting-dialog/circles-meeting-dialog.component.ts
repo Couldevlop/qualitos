@@ -55,7 +55,7 @@ export class CirclesMeetingDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: m => {
-          this.snack.open($localize`:@@circles.meeting.scheduled:Réunion planifiée.`, 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@circles.meeting.scheduled:Réunion planifiée.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(m);
         },
         error: err => {

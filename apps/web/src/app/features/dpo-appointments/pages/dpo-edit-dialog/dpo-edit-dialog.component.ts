@@ -66,7 +66,7 @@ export class DpoEditDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const v = this.form.getRawValue();
     if (v.dpoType === 'EXTERNAL' && !v.externalCompanyName?.trim()) {
-      this.snack.open('Un DPO externe doit indiquer la société hébergeante.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@dpo-appointments.external-needs-company:Un DPO externe doit indiquer la société hébergeante.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -81,11 +81,11 @@ export class DpoEditDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: a => { this.snack.open('Désignation mise à jour.', 'OK', { duration: 2500 }); this.dialogRef.close(a); },
+        next: a => { this.snack.open($localize`:@@dpo-appointments.edit.updated-toast:Désignation mise à jour.`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(a); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[dpo-edit] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de la mise à jour.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@common.error-update:Erreur lors de la mise à jour.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

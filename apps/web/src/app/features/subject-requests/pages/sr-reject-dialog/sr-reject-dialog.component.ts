@@ -45,11 +45,11 @@ export class SrRejectDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: r => { this.snack.open('Demande rejetée.', 'OK', { duration: 2500 }); this.dialogRef.close(r); },
+        next: r => { this.snack.open($localize`:@@subject-requests.reject.success:Demande rejetée.`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(r); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[sr-reject] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Rejet impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@subject-requests.reject.error:Rejet impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

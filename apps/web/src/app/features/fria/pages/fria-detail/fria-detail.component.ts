@@ -45,14 +45,14 @@ export class FriaDetailComponent implements OnInit {
       switchMap(p => {
         const id = p.get('id') ?? '';
         if (!UUID_REGEX.test(id) && !id.startsWith('fria-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
         return this.refresh$.pipe(
           switchMap(() => this.svc.get(id).pipe(
             catchError(err => {
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             }),
             tap(() => this.loading$.next(false))
@@ -72,19 +72,19 @@ export class FriaDetailComponent implements OnInit {
   submit(f: FriaView): void {
     const userId = this.auth.snapshot()?.userId;
     if (!userId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Soumettre la FRIA pour validation ?',
-              message: 'Une fois soumise, la FRIA n\'est plus modifiable tant qu\'un responsable conformité ne l\'a pas renvoyée en brouillon.',
-              confirmLabel: 'Soumettre', cancelLabel: 'Annuler', danger: false }
+      data: { title: $localize`:@@fria.detail.submit-title:Soumettre la FRIA pour validation ?`,
+              message: $localize`:@@fria.detail.submit-message:Une fois soumise, la FRIA n'est plus modifiable tant qu'un responsable conformité ne l'a pas renvoyée en brouillon.`,
+              confirmLabel: $localize`:@@fria.detail.submit:Soumettre`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: false }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.submit(f.id, { submittedByUserId: userId }).subscribe({
-        next: () => { this.snack.open('FRIA soumise.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Soumission impossible.')
+        next: () => { this.snack.open($localize`:@@fria.detail.submitted:FRIA soumise.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@fria.detail.submit-failed:Soumission impossible.`)
       });
     });
   }
@@ -112,14 +112,14 @@ export class FriaDetailComponent implements OnInit {
 
   remove(f: FriaView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Supprimer la FRIA ?', message: 'Suppression définitive.',
-              confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true }
+      data: { title: $localize`:@@fria.detail.delete-title:Supprimer la FRIA ?`, message: $localize`:@@fria.detail.delete-message:Suppression définitive.`,
+              confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(f.id).subscribe({
-        next: () => { this.snack.open('FRIA supprimée.', 'OK', { duration: 2200 }); this.router.navigate(['/fria']); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        next: () => { this.snack.open($localize`:@@fria.detail.deleted:FRIA supprimée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/fria']); },
+        error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
       });
     });
   }
@@ -135,6 +135,6 @@ export class FriaDetailComponent implements OnInit {
   private fail(err: unknown, fallback: string): void {
     // eslint-disable-next-line no-console
     console.warn('[fria-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
-    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+    this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 4000 });
   }
 }

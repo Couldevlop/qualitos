@@ -1,24 +1,26 @@
 <qos-form-dialog
+  i18n-title="@@changes.approver.title"
   title="Ajouter un approbateur"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.add"
   submitLabel="Ajouter"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="hint">Le workflow d'approbation passe en APPROVED quand tous les approbateurs ont
+  <p class="hint" i18n="@@changes.approver.hint">Le workflow d'approbation passe en APPROVED quand tous les approbateurs ont
      statué favorablement. Un seul REJECT marque la demande comme REJECTED.</p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>UUID approbateur</mat-label>
+    <mat-label i18n="@@changes.approver.uuid-label">UUID approbateur</mat-label>
     <input matInput formControlName="approverUserId" required
            placeholder="00000000-0000-0000-0000-000000000000">
-    <mat-hint>UUID v4 de l'utilisateur Keycloak</mat-hint>
+    <mat-hint i18n="@@changes.approver.uuid-hint">UUID v4 de l'utilisateur Keycloak</mat-hint>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Niveau d'approbation</mat-label>
+    <mat-label i18n="@@changes.approver.level-label">Niveau d'approbation</mat-label>
     <input matInput formControlName="approvalLevel" type="number" min="1">
   </mat-form-field>
 

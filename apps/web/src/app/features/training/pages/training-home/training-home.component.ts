@@ -88,7 +88,7 @@ export class TrainingHomeComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[training:paths] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, 'Erreur de chargement des parcours.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@training.home.paths-error:Erreur de chargement des parcours.`));
             return of(null);
           })
         )
@@ -112,7 +112,7 @@ export class TrainingHomeComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[training:skills] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, 'Erreur de chargement des compétences.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@training.home.skills-error:Erreur de chargement des compétences.`));
             return of(null);
           })
         )
@@ -133,7 +133,7 @@ export class TrainingHomeComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[training:enroll] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, 'Erreur de chargement des inscriptions.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@training.home.enrollments-error:Erreur de chargement des inscriptions.`));
             return of(null);
           }),
           map(page => {

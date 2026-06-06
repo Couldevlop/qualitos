@@ -1,8 +1,10 @@
 <qos-form-dialog
+  i18n-title="@@dpa.terminate-dialog.title"
   title="Résilier le DPA"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@dpa.terminate-dialog.confirm"
   submitLabel="Confirmer"
   submitIcon="cancel"
   submitColor="warn"
@@ -10,13 +12,13 @@
   (cancelled)="cancel()">
 
   <p class="warn">
-    <strong>Action terminale.</strong>
-    La résiliation déclenche les obligations Art. 28§3.g (restitution
-    ou suppression des données dans les conditions prévues au contrat).
+    <strong i18n="@@dpa.terminate-dialog.terminal-action">Action terminale.</strong>
+    <span i18n="@@dpa.terminate-dialog.warning">La résiliation déclenche les obligations Art. 28§3.g (restitution
+    ou suppression des données dans les conditions prévues au contrat).</span>
   </p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Motif de la résiliation</mat-label>
+    <mat-label i18n="@@dpa.terminate-dialog.reason">Motif de la résiliation</mat-label>
     <textarea matInput formControlName="reason" rows="4" maxlength="2000" required></textarea>
   </mat-form-field>
 

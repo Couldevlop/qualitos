@@ -1,50 +1,53 @@
 <qos-form-dialog
   title="Nouveau brouillon EUDB"
+  i18n-title="@@ai-eudb.draft.title"
   subtitle='Brouillon d&#39;enregistrement EUDB — pas envoyé tant que vous n&#39;avez pas cliqué sur "Soumettre" dans le détail. Modifiable librement avant soumission.'
+  i18n-subtitle="@@ai-eudb.draft.subtitle"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitLabel="Créer le brouillon"
+  i18n-submitLabel="@@ai-eudb.draft.submit"
   submitIcon="save"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Référence interne</mat-label>
+      <mat-label i18n="@@ai-eudb.draft.internal-reference">Référence interne</mat-label>
       <input matInput formControlName="reference" maxlength="64" required
              placeholder="EUDB-2026-XYZ-001">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>UUID système IA</mat-label>
+      <mat-label i18n="@@ai-eudb.draft.ai-system-uuid">UUID système IA</mat-label>
       <input matInput formControlName="aiSystemId" required
              placeholder="00000000-0000-0000-0000-000000000000">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Nom du fournisseur</mat-label>
+    <mat-label i18n="@@ai-eudb.draft.provider-name">Nom du fournisseur</mat-label>
     <input matInput formControlName="providerEntityName" maxlength="250">
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Représentant UE (si fournisseur hors UE)</mat-label>
+    <mat-label i18n="@@ai-eudb.draft.eu-representative-long">Représentant UE (si fournisseur hors UE)</mat-label>
     <input matInput formControlName="providerEuRepresentative" maxlength="250">
   </mat-form-field>
 
   <div class="row">
     <mat-form-field appearance="outline" class="col-3">
-      <mat-label>État membre (ISO 3166-1 α-2)</mat-label>
+      <mat-label i18n="@@ai-eudb.draft.member-state-iso">État membre (ISO 3166-1 α-2)</mat-label>
       <input matInput formControlName="memberStateOfReference" maxlength="2"
              placeholder="FR" style="text-transform: uppercase;">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col-grow">
-      <mat-label>Ref. documentation technique</mat-label>
+      <mat-label i18n="@@ai-eudb.draft.tech-doc-ref">Ref. documentation technique</mat-label>
       <input matInput formControlName="technicalDocumentationReference" maxlength="250">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Résumé de la finalité prévue</mat-label>
+    <mat-label i18n="@@ai-eudb.draft.intended-purpose-summary">Résumé de la finalité prévue</mat-label>
     <textarea matInput formControlName="intendedPurposeSummary" rows="4" maxlength="4000"></textarea>
   </mat-form-field>
 

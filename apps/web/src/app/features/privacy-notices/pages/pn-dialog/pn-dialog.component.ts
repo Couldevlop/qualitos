@@ -119,7 +119,7 @@ export class PnDialogComponent {
       : (() => {
           const createdByUserId = this.auth.snapshot()?.userId;
           if (!createdByUserId) {
-            this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+            this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
             this.submitting = false;
             throw new Error('No session');
           }
@@ -136,13 +136,15 @@ export class PnDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: n => {
-          this.snack.open(this.isEdit ? 'Mention mise à jour.' : 'Mention créée (DRAFT).', 'OK', { duration: 2500 });
+          this.snack.open(this.isEdit
+            ? $localize`:@@privacy-notices.dialog.updated:Mention mise à jour.`
+            : $localize`:@@privacy-notices.dialog.created:Mention créée (DRAFT).`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(n);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[pn-dialog] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@privacy-notices.dialog.save-error:Erreur lors de l'enregistrement.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

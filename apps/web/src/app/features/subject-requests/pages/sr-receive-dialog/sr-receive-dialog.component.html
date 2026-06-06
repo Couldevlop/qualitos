@@ -1,35 +1,38 @@
 <qos-form-dialog
+  i18n-title="@@subject-requests.receive.title"
   title="Enregistrer une demande RGPD"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.save"
   submitLabel="Enregistrer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="hint">L'identifiant de la personne (e-mail, identifiant interne, etc.) sera
+  <p class="hint" i18n="@@subject-requests.receive.hint">L'identifiant de la personne (e-mail, identifiant interne, etc.) sera
      <strong>hashé côté serveur</strong> avant d'être stocké. Aucune PII en clair n'est
      conservée. Le délai légal RGPD est de 1 mois à compter de la réception.</p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Type de demande</mat-label>
+    <mat-label i18n="@@subject-requests.receive.type-label">Type de demande</mat-label>
     <mat-select formControlName="type" required>
       <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
     </mat-select>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Identifiant de la personne</mat-label>
+    <mat-label i18n="@@subject-requests.receive.identifier-label">Identifiant de la personne</mat-label>
     <input matInput formControlName="subjectIdentifier" maxlength="320" required
            autocomplete="off" spellcheck="false"
+           i18n-placeholder="@@subject-requests.receive.identifier-placeholder"
            placeholder="alice@example.fr ou client#12345">
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Étiquette pseudonymisée (optionnelle)</mat-label>
+    <mat-label i18n="@@subject-requests.receive.label-label">Étiquette pseudonymisée (optionnelle)</mat-label>
     <input matInput formControlName="subjectIdentifierLabel" maxlength="250"
            placeholder="client#A-001">
-    <mat-hint>Facilite la recherche ultérieure sans réintroduire d'identifiant en clair.</mat-hint>
+    <mat-hint i18n="@@subject-requests.receive.label-hint">Facilite la recherche ultérieure sans réintroduire d'identifiant en clair.</mat-hint>
   </mat-form-field>
 
 </qos-form-dialog>

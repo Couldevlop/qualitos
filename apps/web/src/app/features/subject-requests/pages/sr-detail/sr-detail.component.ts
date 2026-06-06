@@ -50,7 +50,7 @@ export class SrDetailComponent implements OnInit {
         const id = p.get('id') ?? '';
         // OWASP A03 — UUID regex on path id (mock-id fallback).
         if (!UUID_REGEX.test(id) && !id.startsWith('sr-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
@@ -59,7 +59,7 @@ export class SrDetailComponent implements OnInit {
             catchError(err => {
               // eslint-disable-next-line no-console
               console.warn('[sr-detail] failed', err?.status, err?.error?.title);
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             }),
             tap(() => this.loading$.next(false))
@@ -72,12 +72,12 @@ export class SrDetailComponent implements OnInit {
   start(r: SubjectRequestView): void {
     const handledByUserId = this.auth.snapshot()?.userId;
     if (!handledByUserId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.svc.start(r.id, { handledByUserId }).subscribe({
-      next: () => { this.snack.open('Demande en cours de traitement.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Démarrage impossible.')
+      next: () => { this.snack.open($localize`:@@subject-requests.detail.started:Demande en cours de traitement.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@subject-requests.detail.start-failed:Démarrage impossible.`)
     });
   }
 
@@ -110,12 +110,12 @@ export class SrDetailComponent implements OnInit {
 
   typeLabel(t: SubjectRequestType): string {
     return ({
-      ACCESS: 'Accès aux données (Art. 15)',
-      ERASURE: 'Effacement / droit à l\'oubli (Art. 17)',
-      PORTABILITY: 'Portabilité (Art. 20)',
-      RECTIFICATION: 'Rectification (Art. 16)',
-      RESTRICTION: 'Limitation du traitement (Art. 18)',
-      OBJECTION: 'Opposition (Art. 21)'
+      ACCESS: $localize`:@@subject-requests.type.access:Accès aux données (Art. 15)`,
+      ERASURE: $localize`:@@subject-requests.type.erasure:Effacement / droit à l'oubli (Art. 17)`,
+      PORTABILITY: $localize`:@@subject-requests.type.portability:Portabilité (Art. 20)`,
+      RECTIFICATION: $localize`:@@subject-requests.type.rectification:Rectification (Art. 16)`,
+      RESTRICTION: $localize`:@@subject-requests.type.restriction:Limitation du traitement (Art. 18)`,
+      OBJECTION: $localize`:@@subject-requests.type.objection:Opposition (Art. 21)`
     })[t];
   }
   typeBadge(t: SubjectRequestType): string { return 'tbadge tbadge-' + t.toLowerCase(); }
@@ -126,6 +126,6 @@ export class SrDetailComponent implements OnInit {
   private fail(err: unknown, fallback: string): void {
     // eslint-disable-next-line no-console
     console.warn('[sr-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
-    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+    this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 4000 });
   }
 }

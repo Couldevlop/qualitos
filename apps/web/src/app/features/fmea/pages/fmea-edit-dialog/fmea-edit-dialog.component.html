@@ -1,4 +1,5 @@
 <qos-form-dialog
+  i18n-title="@@fmea.edit.title"
   title="Modifier le projet FMEA"
   [formGroup]="form"
   [submitting]="submitting"
@@ -7,17 +8,17 @@
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Nom</mat-label>
+    <mat-label i18n="@@common.name">Nom</mat-label>
     <input matInput formControlName="name" maxlength="250" required>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Périmètre</mat-label>
+    <mat-label i18n="@@fmea.create.scope">Périmètre</mat-label>
     <textarea matInput formControlName="scope" rows="3" maxlength="1000"></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Seuil RPN critique</mat-label>
+    <mat-label i18n="@@fmea.create.rpn-threshold">Seuil RPN critique</mat-label>
     <input matInput formControlName="criticalRpnThreshold" type="number" min="1" max="1000" required>
   </mat-form-field>
 

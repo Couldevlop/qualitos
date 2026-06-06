@@ -1,18 +1,21 @@
 <qos-form-dialog
+  i18n-title="@@breach.dpa.title"
   title="Notifier la CNIL (Art. 33)"
+  i18n-subtitle="@@breach.dpa.subtitle"
   subtitle="Délai légal : 72h depuis la détection de la violation (Art. 33§1 RGPD)."
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.save"
   submitLabel="Enregistrer"
   (submitted)="submit()"
   (cancelled)="cancel()">
 <mat-form-field appearance="outline" class="full">
-      <mat-label>Date / heure de notification</mat-label>
+      <mat-label i18n="@@breach.dpa.notified-at">Date / heure de notification</mat-label>
       <input matInput type="datetime-local" formControlName="notifiedAt" required>
     </mat-form-field>
     <mat-form-field appearance="outline" class="full">
-      <mat-label>Référence CNIL</mat-label>
+      <mat-label i18n="@@breach.dpa.reference">Référence CNIL</mat-label>
       <input matInput formControlName="reference" maxlength="250" required
              placeholder="CNIL-NOT-2026-XXXXX">
     </mat-form-field>

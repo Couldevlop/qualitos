@@ -48,7 +48,7 @@ export class PmmDraftDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const userId = this.auth.snapshot()?.userId;
     if (!userId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -72,7 +72,7 @@ export class PmmDraftDialogComponent {
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[pmm-draft] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Création impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@ai-pmm.draft.create-failed:Création impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

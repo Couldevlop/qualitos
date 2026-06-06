@@ -39,6 +39,8 @@ export class AuditsDetailComponent implements OnInit {
   readonly checklistColumns = ['orderIndex', 'question', 'clauseRef', 'weight', 'response', 'actions'];
   readonly findingColumns = ['type', 'description', 'clauseRef', 'raisedAt'];
 
+  readonly notFoundLabel = $localize`:@@audits.detail.not-found:Audit introuvable`;
+
   plan$!: Observable<AuditPlanResponse | null>;
   loading$ = new BehaviorSubject<boolean>(false);
   error$ = new BehaviorSubject<string | null>(null);
@@ -59,7 +61,7 @@ export class AuditsDetailComponent implements OnInit {
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('id') ?? '';
     if (!UUID_RE.test(raw) && !this.isMockId(raw)) {
-      this.snack.open('Identifiant invalide.', 'OK', { duration: 3000 });
+      this.snack.open($localize`:@@common.invalid-id:Identifiant invalide.`, $localize`:@@common.ok:OK`, { duration: 3000 });
       this.router.navigate(['/audits']);
       return;
     }
@@ -70,7 +72,7 @@ export class AuditsDetailComponent implements OnInit {
         catchError(err => {
           // eslint-disable-next-line no-console
           console.warn('[audits-detail] getPlan failed', err?.status, err?.error?.title);
-          this.error$.next(safeErrorMessage(err, 'Plan d\'audit introuvable.'));
+          this.error$.next(safeErrorMessage(err, $localize`:@@audits.detail.plan-not-found:Plan d'audit introuvable.`));
           return of(null);
         }),
         finalize(() => this.loading$.next(false))
@@ -96,9 +98,9 @@ export class AuditsDetailComponent implements OnInit {
   deletePlan(title: string): void {
     this.dialog.open(ConfirmDialogComponent, {
       data: <ConfirmDialogData>{
-        title: 'Supprimer ce plan ?',
-        message: `« ${title} », sa checklist et ses findings seront supprimés définitivement.`,
-        confirmLabel: 'Supprimer',
+        title: $localize`:@@audits.detail.delete-title:Supprimer ce plan ?`,
+        message: $localize`:@@audits.detail.delete-message:« ${title}:title: », sa checklist et ses findings seront supprimés définitivement.`,
+        confirmLabel: $localize`:@@common.delete:Supprimer`,
         destructive: true
       },
       autoFocus: false,
@@ -107,15 +109,15 @@ export class AuditsDetailComponent implements OnInit {
       if (!confirmed) return;
       this.audits.deletePlan(this.planId).subscribe({
         next: () => {
-          this.snack.open('Plan supprimé.', 'OK', { duration: 2000 });
+          this.snack.open($localize`:@@audits.detail.deleted:Plan supprimé.`, $localize`:@@common.ok:OK`, { duration: 2000 });
           this.router.navigate(['/audits']);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[audits-detail] delete failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de la suppression.'),
-            'OK', { duration: 4000 }
+            safeErrorMessage(err, $localize`:@@common.error-delete:Erreur lors de la suppression.`),
+            $localize`:@@common.ok:OK`, { duration: 4000 }
           );
         }
       });
@@ -187,16 +189,20 @@ export class AuditsDetailComponent implements OnInit {
       : this.audits.cancelPlan(this.planId);
     call.pipe(finalize(() => this.acting$.next(false))).subscribe({
       next: () => {
-        const label = action === 'start' ? 'démarré' : action === 'complete' ? 'clôturé' : 'annulé';
-        this.snack.open(`Audit ${label}.`, 'OK', { duration: 2000 });
+        const msg = action === 'start'
+          ? $localize`:@@audits.detail.started-msg:Audit démarré.`
+          : action === 'complete'
+            ? $localize`:@@audits.detail.completed-msg:Audit clôturé.`
+            : $localize`:@@audits.detail.cancelled-msg:Audit annulé.`;
+        this.snack.open(msg, $localize`:@@common.ok:OK`, { duration: 2000 });
         this.reload$.next();
       },
       error: err => {
         // eslint-disable-next-line no-console
         console.warn('[audits-detail] transition failed', action, err?.status, err?.error?.title);
         this.snack.open(
-          safeErrorMessage(err, 'Erreur lors de la transition.'),
-          'OK', { duration: 4000 }
+          safeErrorMessage(err, $localize`:@@audits.detail.transition-error:Erreur lors de la transition.`),
+          $localize`:@@common.ok:OK`, { duration: 4000 }
         );
       }
     });

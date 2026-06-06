@@ -4,6 +4,7 @@
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   [submitColor]="danger ? 'warn' : 'primary'"
+  i18n-submitLabel="@@common.confirm"
   submitLabel="Confirmer"
   (submitted)="submit()"
   (cancelled)="cancel()">
@@ -11,8 +12,9 @@
   <p [class.warn]="danger">{{ description }}</p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Motif {{ data.reasonRequired ? '(obligatoire)' : '(optionnel)' }}</mat-label>
+    <mat-label><span i18n="@@suppliers.status.reason">Motif</span> {{ data.reasonRequired ? '(obligatoire)' : '(optionnel)' }}</mat-label>
     <textarea matInput formControlName="reason" rows="3" maxlength="1000"
+              i18n-placeholder="@@suppliers.status.reason-placeholder"
               placeholder="Justification du changement de statut, références"></textarea>
   </mat-form-field>
 

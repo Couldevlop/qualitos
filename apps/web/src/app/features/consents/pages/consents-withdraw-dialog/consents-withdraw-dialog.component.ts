@@ -21,6 +21,8 @@ export class ConsentsWithdrawDialogComponent {
 
   submitting = false;
 
+  readonly pseudonymizedLabel = $localize`:@@consents.withdraw.pseudonymized:(pseudonymisée)`;
+
   readonly form = this.fb.nonNullable.group({
     reason: ['', [Validators.maxLength(2000)]]
   });
@@ -38,7 +40,7 @@ export class ConsentsWithdrawDialogComponent {
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     const actorUserId = this.auth.snapshot()?.userId;
     if (!actorUserId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -50,13 +52,13 @@ export class ConsentsWithdrawDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: c => {
-          this.snack.open('Consentement retiré.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@consents.withdraw.success:Consentement retiré.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(c);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[consents-withdraw] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Retrait impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@consents.withdraw.error:Retrait impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

@@ -54,15 +54,15 @@ export class AuditsChecklistDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: item => {
-          this.snack.open('Question ajoutée.', 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@audits.checklist.added:Question ajoutée.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(item);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[audits-checklist-dialog] add failed', err?.status, err?.error?.title);
           this.snack.open(
-            safeErrorMessage(err, 'Erreur lors de l\'ajout.'),
-            'OK', { duration: 4000 }
+            safeErrorMessage(err, $localize`:@@common.error-add:Erreur lors de l'ajout.`),
+            $localize`:@@common.ok:OK`, { duration: 4000 }
           );
         }
       });

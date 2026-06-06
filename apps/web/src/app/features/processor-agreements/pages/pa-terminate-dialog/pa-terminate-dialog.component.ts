@@ -39,11 +39,11 @@ export class PaTerminateDialogComponent {
     this.svc.terminate(this.data.agreementId, { reason })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: a => { this.snack.open('DPA résilié.', 'OK', { duration: 2500 }); this.dialogRef.close(a); },
+        next: a => { this.snack.open($localize`:@@dpa.terminate-dialog.terminated:DPA résilié.`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(a); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[pa-terminate] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Résiliation impossible.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@dpa.terminate-dialog.terminate-failed:Résiliation impossible.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

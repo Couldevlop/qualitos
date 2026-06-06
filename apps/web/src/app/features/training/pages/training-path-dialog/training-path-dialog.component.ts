@@ -24,6 +24,11 @@ export class TrainingPathDialogComponent {
   submitting = false;
   readonly isEdit: boolean;
 
+  readonly editTitle = $localize`:@@training.path-dialog.edit-title:Modifier le parcours`;
+  readonly createTitle = $localize`:@@training.path-dialog.create-title:Nouveau parcours`;
+  readonly editSubmitLabel = $localize`:@@common.save:Enregistrer`;
+  readonly createSubmitLabel = $localize`:@@common.create:Créer`;
+
   readonly form;
 
   constructor(
@@ -67,7 +72,7 @@ export class TrainingPathDialogComponent {
       : (() => {
           const createdBy = this.auth.snapshot()?.userId;
           if (!createdBy) {
-            this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+            this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
             this.submitting = false;
             throw new Error('No session');
           }
@@ -87,13 +92,13 @@ export class TrainingPathDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: p => {
-          this.snack.open(this.isEdit ? 'Parcours mis à jour.' : 'Parcours créé.', 'OK', { duration: 2200 });
+          this.snack.open(this.isEdit ? $localize`:@@training.path-dialog.updated:Parcours mis à jour.` : $localize`:@@training.path-dialog.created:Parcours créé.`, $localize`:@@common.ok:OK`, { duration: 2200 });
           this.dialogRef.close(p);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[training-path-dialog] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@training.path-dialog.save-error:Erreur lors de l'enregistrement.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

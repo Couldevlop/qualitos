@@ -58,7 +58,7 @@ export class KpisDetailComponent implements OnInit {
         const id = p.get('id') ?? '';
         // OWASP A03 — UUID/mock-id regex before backend call
         if (!UUID_REGEX.test(id) && !id.startsWith('kpi-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
@@ -66,7 +66,7 @@ export class KpisDetailComponent implements OnInit {
         return this.refresh$.pipe(
           switchMap(() => forkJoin({
             kpi:     this.svc.get(id).pipe(catchError(err => {
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             })),
             status:  this.svc.currentStatus(id).pipe(catchError(() => of(null))),
@@ -106,45 +106,45 @@ export class KpisDetailComponent implements OnInit {
 
   activate(k: KpiResponse): void {
     this.svc.activate(k.id).subscribe({
-      next: () => { this.snack.open('KPI activé.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Activation impossible.')
+      next: () => { this.snack.open($localize`:@@kpis.detail.activated:KPI activé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@kpis.detail.activate-failed:Activation impossible.`)
     });
   }
   reopen(k: KpiResponse): void {
     this.svc.reopen(k.id).subscribe({
-      next: () => { this.snack.open('KPI rouvert (DRAFT).', 'OK', { duration: 2200 }); this.refresh$.next(); },
-      error: err => this.fail(err, 'Réouverture impossible.')
+      next: () => { this.snack.open($localize`:@@kpis.detail.reopened:KPI rouvert (DRAFT).`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+      error: err => this.fail(err, $localize`:@@kpis.detail.reopen-failed:Réouverture impossible.`)
     });
   }
   archive(k: KpiResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Archiver le KPI ?',
+        title: $localize`:@@kpis.detail.archive-title:Archiver le KPI ?`,
         message: '« ' + k.name + ' » sera marqué ARCHIVED. Les mesures restent consultables.',
-        confirmLabel: 'Archiver', cancelLabel: 'Annuler', danger: true
+        confirmLabel: $localize`:@@kpis.detail.archive:Archiver`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.archive(k.id).subscribe({
-        next: () => { this.snack.open('KPI archivé.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Archivage impossible.')
+        next: () => { this.snack.open($localize`:@@kpis.detail.archived:KPI archivé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@kpis.detail.archive-failed:Archivage impossible.`)
       });
     });
   }
   remove(k: KpiResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer le KPI ?',
+        title: $localize`:@@kpis.detail.delete-title:Supprimer le KPI ?`,
         message: 'Suppression définitive de « ' + k.name + ' » et de ses ' + this.measurements.length + ' mesure(s).',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(k.id).subscribe({
-        next: () => { this.snack.open('KPI supprimé.', 'OK', { duration: 2200 }); this.router.navigate(['/kpis']); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        next: () => { this.snack.open($localize`:@@kpis.detail.deleted:KPI supprimé.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/kpis']); },
+        error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
       });
     });
   }
@@ -152,16 +152,16 @@ export class KpisDetailComponent implements OnInit {
   removeMeasurement(k: KpiResponse, m: MeasurementResponse): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer cette mesure ?',
+        title: $localize`:@@kpis.detail.delete-measurement-title:Supprimer cette mesure ?`,
         message: 'La mesure de ' + m.value + ' ' + (m.unit ?? '') + ' sera retirée de la tendance.',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.deleteMeasurement(k.id, m.id).subscribe({
         next: () => { this.measurements = this.measurements.filter(x => x.id !== m.id); this.refresh$.next(); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        error: err => this.fail(err, $localize`:@@common.delete-failed:Suppression impossible.`)
       });
     });
   }
@@ -189,13 +189,17 @@ export class KpisDetailComponent implements OnInit {
     return base + ' L100,30 L0,30 Z';
   }
 
-  directionLabel(d: KpiDirection): string { return d === 'HIGHER_IS_BETTER' ? '↑ Plus haut = mieux' : '↓ Plus bas = mieux'; }
+  directionLabel(d: KpiDirection): string {
+    return d === 'HIGHER_IS_BETTER'
+      ? $localize`:@@kpis.detail.dir-higher:↑ Plus haut = mieux`
+      : $localize`:@@kpis.detail.dir-lower:↓ Plus bas = mieux`;
+  }
   statusBadge(s: KpiStatus): string { return 'badge badge-' + s.toLowerCase(); }
   healthBadge(h: KpiHealth): string { return 'health health-' + h.toLowerCase(); }
 
   private fail(err: unknown, fallback: string): void {
     // eslint-disable-next-line no-console
     console.warn('[kpis-detail] action failed', (err as any)?.status, (err as any)?.error?.title);
-    this.snack.open(safeErrorMessage(err, fallback), 'OK', { duration: 4000 });
+    this.snack.open(safeErrorMessage(err, fallback), $localize`:@@common.ok:OK`, { duration: 4000 });
   }
 }

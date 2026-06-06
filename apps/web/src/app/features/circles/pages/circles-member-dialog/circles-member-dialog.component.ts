@@ -57,7 +57,7 @@ export class CirclesMemberDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: member => {
-          this.snack.open($localize`:@@circles.member.added:Membre ajouté.`, 'OK', { duration: 2500 });
+          this.snack.open($localize`:@@circles.member.added:Membre ajouté.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(member);
         },
         error: err => {

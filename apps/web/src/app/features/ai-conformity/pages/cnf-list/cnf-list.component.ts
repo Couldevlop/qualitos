@@ -31,8 +31,8 @@ export class CnfListComponent implements OnInit {
   readonly modeFilter   = new FormControl<Mode>('all');
 
   readonly modes: { value: Mode; label: string }[] = [
-    { value: 'all',      label: 'Toutes' },
-    { value: 'expiring', label: 'Certificats arrivant à échéance (< 90 j)' }
+    { value: 'all',      label: $localize`:@@ai-conformity.list.mode-all:Toutes` },
+    { value: 'expiring', label: $localize`:@@ai-conformity.list.mode-expiring:Certificats arrivant à échéance (< 90 j)` }
   ];
 
   rows$!: Observable<ConformityView[]>;
@@ -60,7 +60,7 @@ export class CnfListComponent implements OnInit {
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[cnf-list] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return of([] as ConformityView[]);
           }),
           finalize(() => this.loading$.next(false))
@@ -81,7 +81,9 @@ export class CnfListComponent implements OnInit {
   isExpiring(): boolean { return this.modeFilter.value === 'expiring'; }
 
   procedureLabel(p: ConformityProcedure): string {
-    return p === 'NOTIFIED_BODY' ? 'Organisme notifié (Annexe VII)' : 'Contrôle interne (Annexe VI)';
+    return p === 'NOTIFIED_BODY'
+      ? $localize`:@@ai-conformity.procedure.notified-body:Organisme notifié (Annexe VII)`
+      : $localize`:@@ai-conformity.procedure.internal-control:Contrôle interne (Annexe VI)`;
   }
   procedureBadge(p: ConformityProcedure): string { return 'proc proc-' + p.toLowerCase(); }
   statusBadge(s: ConformityStatus): string { return 'badge badge-' + s.toLowerCase(); }

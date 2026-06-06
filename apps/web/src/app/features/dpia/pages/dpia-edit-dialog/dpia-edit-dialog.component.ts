@@ -79,8 +79,8 @@ export class DpiaEditDialogComponent {
 
     // OWASP A04 — refuser de désactiver la consultation si le risque l'impose.
     if (DpiaService.requiresPriorConsultation(v.overallRiskLevel) && !v.consultationRequired) {
-      this.snack.open('Le risque HIGH/SEVERE impose la consultation préalable Art. 36 — case obligatoire.',
-        'OK', { duration: 4500 });
+      this.snack.open($localize`:@@dpia.edit.consultation-mandatory:Le risque HIGH/SEVERE impose la consultation préalable Art. 36 — case obligatoire.`,
+        $localize`:@@common.ok:OK`, { duration: 4500 });
       return;
     }
 

@@ -53,7 +53,7 @@ export class BreachListComponent implements OnInit {
           : this.svc.list(status || undefined);
         return src$.pipe(
           catchError(err => {
-            this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return of([] as BreachView[]);
           }),
           tap(() => this.loading$.next(false)),
@@ -72,7 +72,7 @@ export class BreachListComponent implements OnInit {
     this.dialog.open(BreachDetectDialogComponent, {
       panelClass: 'qos-dialog-panel', autoFocus: 'first-tabbable', restoreFocus: true
     }).afterClosed().subscribe((b?: BreachView) => {
-      if (b) { this.snack.open('Violation enregistrée.', 'OK', { duration: 2200 }); this.refresh$.next(); }
+      if (b) { this.snack.open($localize`:@@breach.list.saved-toast:Violation enregistrée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); }
     });
   }
 

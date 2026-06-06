@@ -1,23 +1,23 @@
 <div class="qos-page qos-dashboard">
 
   <qos-page-header
-    eyebrow="Pilotage qualité"
-    title="Tableau de bord exécutif"
-    subtitle="Vue 360° de la performance, de la conformité et des risques — à destination de la Direction Qualité.">
+    eyebrow="Pilotage qualité" i18n-eyebrow="@@dashboard.exec.eyebrow"
+    title="Tableau de bord exécutif" i18n-title="@@dashboard.exec.title"
+    subtitle="Vue 360° de la performance, de la conformité et des risques — à destination de la Direction Qualité." i18n-subtitle="@@dashboard.exec.subtitle">
 
     <ng-container qosMeta>
       <span class="qos-text-tertiary qos-row-2">
         <span class="material-symbols-outlined" aria-hidden="true">schedule</span>
-        Mis à jour il y a 2 min
+        <span i18n="@@dashboard.exec.updated-ago">Mis à jour il y a 2 min</span>
       </span>
       <span class="qos-text-tertiary qos-row-2">
         <span class="material-symbols-outlined" aria-hidden="true">domain</span>
-        Périmètre — Groupe Acme
+        <span i18n="@@dashboard.exec.scope">Périmètre — Groupe Acme</span>
       </span>
     </ng-container>
 
     <ng-container qosActions>
-      <div class="qos-period-picker" role="tablist" aria-label="Période">
+      <div class="qos-period-picker" role="tablist" aria-label="Période" i18n-aria-label="@@dashboard.exec.period-aria">
         <button
           *ngFor="let p of periods"
           type="button"
@@ -29,17 +29,17 @@
       </div>
       <button type="button" class="qos-btn qos-btn--ghost">
         <span class="material-symbols-outlined" aria-hidden="true">download</span>
-        Exporter
+        <span i18n="@@dashboard.exec.export">Exporter</span>
       </button>
       <button type="button" class="qos-btn qos-btn--primary">
         <span class="material-symbols-outlined" aria-hidden="true">add</span>
-        Nouveau rapport
+        <span i18n="@@dashboard.exec.new-report">Nouveau rapport</span>
       </button>
     </ng-container>
   </qos-page-header>
 
   <!-- KPI grid -->
-  <section class="qos-dashboard__kpis" aria-label="Indicateurs stratégiques">
+  <section class="qos-dashboard__kpis" aria-label="Indicateurs stratégiques" i18n-aria-label="@@dashboard.exec.kpis-aria">
     <qos-kpi-card
       *ngFor="let k of (kpis$ | async) ?? []"
       [label]="k.label"
@@ -57,18 +57,18 @@
   <!-- Tendance qualité (full width) + Pareto (sidekick) -->
   <section class="qos-dashboard__row qos-dashboard__row--7-5">
     <qos-panel
-      title="Tendance qualité globale"
-      subtitle="12 mois — % conformité produit / service vs cible"
+      title="Tendance qualité globale" i18n-title="@@dashboard.exec.trend-title"
+      subtitle="12 mois — % conformité produit / service vs cible" i18n-subtitle="@@dashboard.exec.trend-subtitle"
       icon="show_chart">
       <ng-container qosActions>
-        <qos-status-pill label="Live · OK" tone="success"></qos-status-pill>
+        <qos-status-pill label="Live · OK" i18n-label="@@dashboard.exec.live-ok" tone="success"></qos-status-pill>
       </ng-container>
       <qos-echart [option]="(trendOption$ | async) ?? null" [height]="280"></qos-echart>
     </qos-panel>
 
     <qos-panel
-      title="Pareto des défauts"
-      subtitle="Catégories 6M sur 30 jours"
+      title="Pareto des défauts" i18n-title="@@dashboard.exec.pareto-title"
+      subtitle="Catégories 6M sur 30 jours" i18n-subtitle="@@dashboard.exec.pareto-subtitle"
       icon="bar_chart">
       <qos-echart [option]="(paretoOption$ | async) ?? null" [height]="280"></qos-echart>
     </qos-panel>
@@ -77,18 +77,18 @@
   <!-- Heatmap conformité + Top risques -->
   <section class="qos-dashboard__row qos-dashboard__row--6-6">
     <qos-panel
-      title="Heatmap conformité"
-      subtitle="Score par norme et par section — drill-down disponible"
+      title="Heatmap conformité" i18n-title="@@dashboard.exec.heatmap-title"
+      subtitle="Score par norme et par section — drill-down disponible" i18n-subtitle="@@dashboard.exec.heatmap-subtitle"
       icon="grid_view">
       <ng-container qosActions>
-        <qos-status-pill label="5 normes suivies" tone="accent"></qos-status-pill>
+        <qos-status-pill label="5 normes suivies" i18n-label="@@dashboard.exec.norms-tracked" tone="accent"></qos-status-pill>
       </ng-container>
       <qos-echart [option]="(heatmapOption$ | async) ?? null" [height]="280"></qos-echart>
     </qos-panel>
 
     <qos-panel
-      title="Top risques & alertes"
-      subtitle="Issues prioritaires nécessitant une action"
+      title="Top risques & alertes" i18n-title="@@dashboard.exec.risks-title"
+      subtitle="Issues prioritaires nécessitant une action" i18n-subtitle="@@dashboard.exec.risks-subtitle"
       icon="warning">
       <ul class="qos-risks">
         <li class="qos-risks__item" *ngFor="let r of (topRisks$ | async) ?? []">
@@ -117,7 +117,7 @@
               </span>
             </div>
           </div>
-          <button type="button" class="qos-risks__action" aria-label="Ouvrir">
+          <button type="button" class="qos-risks__action" aria-label="Ouvrir" i18n-aria-label="@@common.open">
             <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
           </button>
         </li>
@@ -128,11 +128,11 @@
   <!-- Prédictions IA + alignement normatif -->
   <section class="qos-dashboard__row qos-dashboard__row--6-6">
     <qos-panel
-      title="Prédictions IA"
-      subtitle="Anticipation 7-45 jours · modèles LSTM / XGBoost / NLP"
+      title="Prédictions IA" i18n-title="@@dashboard.exec.predictions-title"
+      subtitle="Anticipation 7-45 jours · modèles LSTM / XGBoost / NLP" i18n-subtitle="@@dashboard.exec.predictions-subtitle"
       icon="auto_awesome">
       <ng-container qosActions>
-        <qos-status-pill label="Explicable" icon="psychology" tone="accent"></qos-status-pill>
+        <qos-status-pill label="Explicable" i18n-label="@@dashboard.exec.explainable" icon="psychology" tone="accent"></qos-status-pill>
       </ng-container>
       <ul class="qos-predictions">
         <li class="qos-predictions__item" *ngFor="let p of (predictions$ | async) ?? []">
@@ -146,9 +146,9 @@
             <div class="qos-predictions__title">{{ p.title }}</div>
             <p class="qos-predictions__detail">{{ p.detail }}</p>
             <div class="qos-predictions__meta">
-              <span class="qos-mono">conf. {{ (p.confidence * 100) | number:'1.0-0' }}%</span>
+              <span class="qos-mono"><span i18n="@@dashboard.exec.conf-prefix">conf.</span> {{ (p.confidence * 100) | number:'1.0-0' }}%</span>
               <span aria-hidden="true">·</span>
-              <span>horizon {{ p.horizon }}</span>
+              <span><span i18n="@@dashboard.exec.horizon-prefix">horizon</span> {{ p.horizon }}</span>
             </div>
           </div>
         </li>
@@ -156,8 +156,8 @@
     </qos-panel>
 
     <qos-panel
-      title="Alignement normatif"
-      subtitle="Couverture des exigences obligatoires par norme"
+      title="Alignement normatif" i18n-title="@@dashboard.exec.alignment-title"
+      subtitle="Couverture des exigences obligatoires par norme" i18n-subtitle="@@dashboard.exec.alignment-subtitle"
       icon="workspace_premium">
       <ul class="qos-alignment">
         <li class="qos-alignment__row" *ngFor="let a of (alignments$ | async) ?? []">

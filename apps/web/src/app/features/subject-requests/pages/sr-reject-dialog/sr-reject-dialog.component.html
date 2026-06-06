@@ -1,8 +1,10 @@
 <qos-form-dialog
+  i18n-title="@@subject-requests.reject.title"
   title="Rejeter la demande"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@subject-requests.reject.submit"
   submitLabel="Confirmer le rejet"
   submitIcon="block"
   submitColor="warn"
@@ -10,15 +12,14 @@
   (cancelled)="cancel()">
 
   <p class="warn">
-    <strong>Action terminale.</strong>
-    Un rejet doit être motivé conformément à l'Art. 12§4 RGPD :
-    la personne doit être informée du motif et de la possibilité
-    d'introduire une réclamation (CNIL/EDPB).
+    <strong i18n="@@subject-requests.reject.warning-title">Action terminale.</strong>
+    <span i18n="@@subject-requests.reject.warning-text">Un rejet doit être motivé conformément à l'Art. 12§4 RGPD : la personne doit être informée du motif et de la possibilité d'introduire une réclamation (CNIL/EDPB).</span>
   </p>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Motif du rejet</mat-label>
+    <mat-label i18n="@@subject-requests.reject.reason-label">Motif du rejet</mat-label>
     <textarea matInput formControlName="reason" rows="6" maxlength="2000" required
+              i18n-placeholder="@@subject-requests.reject.reason-placeholder"
               placeholder="Demande manifestement infondée / excessive (Art. 12§5), identité non vérifiée, exception légale, etc."></textarea>
   </mat-form-field>
 

@@ -46,6 +46,32 @@ export class ItsmConnectionDialogComponent {
 
   readonly statuses: ConnectionStatus[] = ['ACTIVE', 'DISABLED'];
 
+  get dialogTitle(): string {
+    return this.isEdit
+      ? $localize`:@@itsm.dialog.edit-title:Modifier la connexion`
+      : $localize`:@@itsm.dialog.create-title:Nouvelle connexion ITSM`;
+  }
+  get submitLabel(): string {
+    return this.isEdit
+      ? $localize`:@@common.save:Enregistrer`
+      : $localize`:@@common.create:Créer`;
+  }
+  get secretLabel(): string {
+    return this.isEdit
+      ? $localize`:@@itsm.dialog.secret-edit-label:Nouveau secret (laisser vide pour conserver)`
+      : $localize`:@@itsm.dialog.secret-create-label:Secret / API token`;
+  }
+  get secretToggleAria(): string {
+    return this.showSecret
+      ? $localize`:@@itsm.dialog.secret-hide-aria:Masquer le secret`
+      : $localize`:@@itsm.dialog.secret-show-aria:Afficher le secret`;
+  }
+  get secretToggleTooltip(): string {
+    return this.showSecret
+      ? $localize`:@@itsm.dialog.secret-hide:Masquer`
+      : $localize`:@@itsm.dialog.secret-show:Afficher`;
+  }
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly svc: ItsmService,
@@ -100,7 +126,7 @@ export class ItsmConnectionDialogComponent {
       : (() => {
           const createdBy = this.auth.snapshot()?.userId;
           if (!createdBy) {
-            this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+            this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
             this.submitting = false;
             throw new Error('No session');
           }
@@ -119,13 +145,13 @@ export class ItsmConnectionDialogComponent {
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
         next: c => {
-          this.snack.open(this.isEdit ? 'Connexion mise à jour.' : 'Connexion créée.', 'OK', { duration: 2500 });
+          this.snack.open(this.isEdit ? $localize`:@@itsm.dialog.updated:Connexion mise à jour.` : $localize`:@@itsm.dialog.created:Connexion créée.`, $localize`:@@common.ok:OK`, { duration: 2500 });
           this.dialogRef.close(c);
         },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[itsm-conn] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de l\'enregistrement.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@itsm.dialog.save-error:Erreur lors de l'enregistrement.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

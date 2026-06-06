@@ -72,12 +72,12 @@ export class DpoProposeDialogComponent {
     const v = this.form.getRawValue();
     // OWASP A04 — cohérence : DPO externe doit indiquer la société hébergeante
     if (v.dpoType === 'EXTERNAL' && !v.externalCompanyName?.trim()) {
-      this.snack.open('Un DPO externe doit indiquer la société hébergeante.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@dpo-appointments.external-needs-company:Un DPO externe doit indiquer la société hébergeante.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const createdByUserId = this.auth.snapshot()?.userId;
     if (!createdByUserId) {
-      this.snack.open('Session expirée — veuillez vous reconnecter.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@common.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     this.submitting = true;
@@ -95,11 +95,11 @@ export class DpoProposeDialogComponent {
     })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
-        next: a => { this.snack.open('Désignation proposée (PROPOSED).', 'OK', { duration: 2500 }); this.dialogRef.close(a); },
+        next: a => { this.snack.open($localize`:@@dpo-appointments.propose.proposed-toast:Désignation proposée (PROPOSED).`, $localize`:@@common.ok:OK`, { duration: 2500 }); this.dialogRef.close(a); },
         error: err => {
           // eslint-disable-next-line no-console
           console.warn('[dpo-propose] failed', err?.status, err?.error?.title);
-          this.snack.open(safeErrorMessage(err, 'Erreur lors de la création.'), 'OK', { duration: 4000 });
+          this.snack.open(safeErrorMessage(err, $localize`:@@common.error-create:Erreur lors de la création.`), $localize`:@@common.ok:OK`, { duration: 4000 });
         }
       });
   }

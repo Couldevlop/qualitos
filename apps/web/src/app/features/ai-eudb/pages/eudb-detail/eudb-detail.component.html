@@ -4,7 +4,7 @@
     <header class="head">
       <div class="meta">
         <a routerLink="/ai-eudb" class="back">
-          <mat-icon>arrow_back</mat-icon> EUDB · Enregistrements
+          <mat-icon>arrow_back</mat-icon> <span i18n="@@ai-eudb.detail.back">EUDB · Enregistrements</span>
         </a>
         <h1>
           <code>{{ r.reference }}</code>
@@ -12,113 +12,113 @@
         </h1>
         <div class="meta-row">
           <span [class]="statusBadge(r.status)">{{ r.status }}</span>
-          <span class="dim" *ngIf="r.memberStateOfReference">État membre : {{ r.memberStateOfReference }}</span>
-          <span class="dim">Mis à jour : {{ r.updatedAt | slice:0:10 }}</span>
+          <span class="dim" *ngIf="r.memberStateOfReference" i18n="@@ai-eudb.detail.member-state-inline">État membre : {{ r.memberStateOfReference }}</span>
+          <span class="dim" i18n="@@ai-eudb.detail.updated-inline">Mis à jour : {{ r.updatedAt | slice:0:10 }}</span>
         </div>
       </div>
 
       <div class="toolbar">
         <button mat-stroked-button *ngIf="canEdit(r.status)" (click)="edit(r)">
-          <mat-icon>edit</mat-icon> Éditer
+          <mat-icon>edit</mat-icon> <span i18n="@@ai-eudb.detail.edit">Éditer</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="canSubmit(r.status)" (click)="submit(r)">
-          <mat-icon>send</mat-icon> Soumettre
+          <mat-icon>send</mat-icon> <span i18n="@@ai-eudb.detail.submit">Soumettre</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="canRegister(r.status)" (click)="markRegistered(r)">
-          <mat-icon>how_to_reg</mat-icon> Marquer enregistré
+          <mat-icon>how_to_reg</mat-icon> <span i18n="@@ai-eudb.detail.mark-registered">Marquer enregistré</span>
         </button>
         <button mat-flat-button color="primary" *ngIf="canDeclareUpdate(r.status)" (click)="declareUpdate(r)">
-          <mat-icon>update</mat-icon> Déclarer une MAJ
+          <mat-icon>update</mat-icon> <span i18n="@@ai-eudb.detail.declare-update">Déclarer une MAJ</span>
         </button>
         <button mat-stroked-button color="warn" *ngIf="canReject(r.status)" (click)="reject(r)">
-          <mat-icon>block</mat-icon> Rejeter
+          <mat-icon>block</mat-icon> <span i18n="@@ai-eudb.detail.reject">Rejeter</span>
         </button>
         <button mat-stroked-button color="warn" *ngIf="canRetire(r.status)" (click)="retire(r)">
-          <mat-icon>archive</mat-icon> Retirer
+          <mat-icon>archive</mat-icon> <span i18n="@@ai-eudb.detail.retire">Retirer</span>
         </button>
         <button mat-stroked-button color="warn" (click)="remove(r)">
-          <mat-icon>delete</mat-icon> Supprimer
+          <mat-icon>delete</mat-icon> <span i18n="@@common.delete">Supprimer</span>
         </button>
       </div>
     </header>
 
     <div class="grid">
       <mat-card>
-        <mat-card-header><mat-card-title>Fournisseur</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-eudb.detail.provider">Fournisseur</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>Entité</th><td>{{ r.providerEntityName || '—' }}</td></tr>
-            <tr><th>Représentant UE</th><td>{{ r.providerEuRepresentative || '—' }}</td></tr>
-            <tr><th>État membre</th><td>{{ r.memberStateOfReference || '—' }}</td></tr>
+            <tr><th i18n="@@ai-eudb.detail.entity">Entité</th><td>{{ r.providerEntityName || '—' }}</td></tr>
+            <tr><th i18n="@@ai-eudb.detail.eu-representative">Représentant UE</th><td>{{ r.providerEuRepresentative || '—' }}</td></tr>
+            <tr><th i18n="@@ai-eudb.detail.member-state">État membre</th><td>{{ r.memberStateOfReference || '—' }}</td></tr>
           </table>
         </mat-card-content>
       </mat-card>
 
       <mat-card>
-        <mat-card-header><mat-card-title>Système IA & doc. technique</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-eudb.detail.ai-system-and-doc">Système IA & doc. technique</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>UUID système IA</th><td><code>{{ r.aiSystemId }}</code></td></tr>
-            <tr><th>Ref. doc. technique</th><td>{{ r.technicalDocumentationReference || '—' }}</td></tr>
+            <tr><th i18n="@@ai-eudb.detail.ai-system-uuid">UUID système IA</th><td><code>{{ r.aiSystemId }}</code></td></tr>
+            <tr><th i18n="@@ai-eudb.detail.tech-doc-ref">Ref. doc. technique</th><td>{{ r.technicalDocumentationReference || '—' }}</td></tr>
           </table>
         </mat-card-content>
       </mat-card>
 
       <mat-card class="span-2" *ngIf="r.intendedPurposeSummary">
-        <mat-card-header><mat-card-title>Finalité prévue</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-eudb.detail.intended-purpose">Finalité prévue</mat-card-title></mat-card-header>
         <mat-card-content><p class="text">{{ r.intendedPurposeSummary }}</p></mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="r.submittedAt" class="ok-card">
-        <mat-card-header><mat-card-title>Soumission</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-eudb.detail.submission">Soumission</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>Soumis le</th><td>{{ r.submittedAt }}</td></tr>
-            <tr><th>Par</th><td><code>{{ r.submittedByUserId }}</code></td></tr>
+            <tr><th i18n="@@ai-eudb.detail.submitted-on">Soumis le</th><td>{{ r.submittedAt }}</td></tr>
+            <tr><th i18n="@@ai-eudb.detail.by">Par</th><td><code>{{ r.submittedByUserId }}</code></td></tr>
           </table>
         </mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="r.registrationDate" class="ok-card">
-        <mat-card-header><mat-card-title>Enregistrement EUDB</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-eudb.detail.registration">Enregistrement EUDB</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>EUDB ID</th><td><code>{{ r.eudbId }}</code></td></tr>
-            <tr><th>Date</th><td>{{ r.registrationDate }}</td></tr>
+            <tr><th i18n="@@ai-eudb.detail.eudb-id">EUDB ID</th><td><code>{{ r.eudbId }}</code></td></tr>
+            <tr><th i18n="@@common.date">Date</th><td>{{ r.registrationDate }}</td></tr>
           </table>
         </mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="r.lastUpdateDate" class="span-2">
-        <mat-card-header><mat-card-title>Dernière mise à jour déclarée</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-eudb.detail.last-update">Dernière mise à jour déclarée</mat-card-title></mat-card-header>
         <mat-card-content>
-          <p class="text"><strong>Le {{ r.lastUpdateDate | slice:0:10 }}</strong> — {{ r.lastUpdateSummary }}</p>
+          <p class="text" i18n="@@ai-eudb.detail.last-update-line"><strong>Le {{ r.lastUpdateDate | slice:0:10 }}</strong> — {{ r.lastUpdateSummary }}</p>
         </mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="r.rejectedAt" class="warn-card span-2">
-        <mat-card-header><mat-card-title>Rejet</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-eudb.detail.rejection">Rejet</mat-card-title></mat-card-header>
         <mat-card-content>
           <p class="text">{{ r.rejectionReason }}</p>
-          <p class="dim">Rejeté le {{ r.rejectedAt }}</p>
+          <p class="dim" i18n="@@ai-eudb.detail.rejected-on">Rejeté le {{ r.rejectedAt }}</p>
         </mat-card-content>
       </mat-card>
 
       <mat-card *ngIf="r.retiredAt" class="warn-card span-2">
-        <mat-card-header><mat-card-title>Retrait</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-eudb.detail.retirement">Retrait</mat-card-title></mat-card-header>
         <mat-card-content>
           <p class="text">{{ r.retirementReason }}</p>
-          <p class="dim">Retiré le {{ r.retiredAt }}</p>
+          <p class="dim" i18n="@@ai-eudb.detail.retired-on">Retiré le {{ r.retiredAt }}</p>
         </mat-card-content>
       </mat-card>
 
       <mat-card class="span-2">
-        <mat-card-header><mat-card-title>Trace</mat-card-title></mat-card-header>
+        <mat-card-header><mat-card-title i18n="@@ai-eudb.detail.trace">Trace</mat-card-title></mat-card-header>
         <mat-card-content>
           <table class="kv">
-            <tr><th>Créé par</th><td><code>{{ r.createdByUserId }}</code></td></tr>
-            <tr><th>Créé le</th><td>{{ r.createdAt }}</td></tr>
-            <tr><th>Dernière MAJ</th><td>{{ r.updatedAt }}</td></tr>
+            <tr><th i18n="@@ai-eudb.detail.created-by">Créé par</th><td><code>{{ r.createdByUserId }}</code></td></tr>
+            <tr><th i18n="@@common.created-at">Créé le</th><td>{{ r.createdAt }}</td></tr>
+            <tr><th i18n="@@common.last-updated">Dernière MAJ</th><td>{{ r.updatedAt }}</td></tr>
           </table>
         </mat-card-content>
       </mat-card>
@@ -129,7 +129,7 @@
 
 <ng-template #fallback>
   <section class="eudb-detail">
-    <div *ngIf="loading$ | async" class="banner banner-info">Chargement…</div>
+    <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
     <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
   </section>
 </ng-template>

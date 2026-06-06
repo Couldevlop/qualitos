@@ -62,7 +62,7 @@ export class CirclesDetailComponent implements OnInit {
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('id') ?? '';
     if (!UUID_RE.test(raw) && !this.isMockId(raw)) {
-      this.snack.open($localize`:@@circles.detail.invalid-id:Identifiant invalide.`, 'OK', { duration: 3000 });
+      this.snack.open($localize`:@@circles.detail.invalid-id:Identifiant invalide.`, $localize`:@@common.ok:OK`, { duration: 3000 });
       this.router.navigate(['/circles']);
       return;
     }
@@ -110,7 +110,7 @@ export class CirclesDetailComponent implements OnInit {
       if (!confirmed) return;
       this.circles.deleteCircle(this.circleId).subscribe({
         next: () => {
-          this.snack.open($localize`:@@circles.detail.deleted:Cercle supprimé.`, 'OK', { duration: 2000 });
+          this.snack.open($localize`:@@circles.detail.deleted:Cercle supprimé.`, $localize`:@@common.ok:OK`, { duration: 2000 });
           this.router.navigate(['/circles']);
         },
         error: err => {
@@ -188,7 +188,7 @@ export class CirclesDetailComponent implements OnInit {
           : action === 'resume'
             ? $localize`:@@circles.detail.resumed:Cercle réactivé.`
             : $localize`:@@circles.detail.archived:Cercle archivé.`;
-        this.snack.open(msg, 'OK', { duration: 2000 });
+        this.snack.open(msg, $localize`:@@common.ok:OK`, { duration: 2000 });
         this.reload$.next();
       },
       error: err => {

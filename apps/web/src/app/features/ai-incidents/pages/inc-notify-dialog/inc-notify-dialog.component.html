@@ -1,27 +1,30 @@
 <qos-form-dialog
   title="Notifier le régulateur (Art. 73)"
+  i18n-title="@@ai-incidents.notify.title"
   subtitle="Renseignez la référence de la notification au régulateur (CNIL/EU AI Office) et l'analyse de cause racine. Les actions correctives peuvent être complétées par la suite."
+  i18n-subtitle="@@ai-incidents.notify.subtitle"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
   submitLabel="Notifier"
+  i18n-submitLabel="@@ai-incidents.notify.submit"
   submitIcon="send"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Référence notification (CNIL ou équivalent)</mat-label>
+    <mat-label i18n="@@ai-incidents.notify.regulator-reference">Référence notification (CNIL ou équivalent)</mat-label>
     <input matInput formControlName="regulatorReference" maxlength="250" required
            placeholder="CNIL-IA-2026-INC-007">
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Analyse de cause racine</mat-label>
+    <mat-label i18n="@@ai-incidents.notify.root-cause-analysis">Analyse de cause racine</mat-label>
     <textarea matInput formControlName="rootCauseAnalysis" rows="5" maxlength="4000" required></textarea>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Actions correctives (optionnel)</mat-label>
+    <mat-label i18n="@@ai-incidents.notify.corrective-actions">Actions correctives (optionnel)</mat-label>
     <textarea matInput formControlName="correctiveActions" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
 

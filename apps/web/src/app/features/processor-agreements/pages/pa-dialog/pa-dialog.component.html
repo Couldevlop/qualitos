@@ -1,121 +1,123 @@
 <qos-form-dialog
-  [title]="isEdit ? 'Modifier le DPA' : 'Nouveau DPA (Art. 28)'"
+  [title]="dialogTitle"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
-  [submitLabel]="isEdit ? 'Enregistrer' : 'Créer (DRAFT)'"
+  [submitLabel]="submitLabelText"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
-  <p class="hint">L'Art. 28 RGPD impose un contrat écrit incluant : nature et objet du
+  <p class="hint" i18n="@@dpa.dialog.hint">L'Art. 28 RGPD impose un contrat écrit incluant : nature et objet du
      traitement, type de données, obligations du sous-traitant, mesures de sécurité,
      engagement de notification d'incident, droits d'audit, modalités de restitution
      ou suppression des données en fin de contrat.</p>
 
-  <h3 class="section">Identification</h3>
+  <h3 class="section" i18n="@@dpa.dialog.identification">Identification</h3>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Référence</mat-label>
+    <mat-label i18n="@@dpa.dialog.reference">Référence</mat-label>
     <input matInput formControlName="reference" maxlength="64" required
            placeholder="DPA-AWS-EU">
   </mat-form-field>
 
-  <h3 class="section">Sous-traitant</h3>
+  <h3 class="section" i18n="@@dpa.detail.processor">Sous-traitant</h3>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Nom commercial</mat-label>
+    <mat-label i18n="@@dpa.dialog.trade-name">Nom commercial</mat-label>
     <input matInput formControlName="processorName" maxlength="250" required>
   </mat-form-field>
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Entité légale</mat-label>
+      <mat-label i18n="@@dpa.detail.legal-entity">Entité légale</mat-label>
       <input matInput formControlName="processorLegalEntity" maxlength="250">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col col-small">
-      <mat-label>Pays (ISO-2)</mat-label>
+      <mat-label i18n="@@dpa.dialog.country-iso2">Pays (ISO-2)</mat-label>
       <input matInput formControlName="processorCountry" maxlength="2"
              placeholder="LU">
     </mat-form-field>
   </div>
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Contact</mat-label>
+      <mat-label i18n="@@dpa.detail.contact">Contact</mat-label>
       <input matInput formControlName="processorContact" maxlength="250">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>DPO sous-traitant</mat-label>
+      <mat-label i18n="@@dpa.dialog.processor-dpo">DPO sous-traitant</mat-label>
       <input matInput formControlName="processorDpoContact" maxlength="250">
     </mat-form-field>
   </div>
 
-  <h3 class="section">Services</h3>
+  <h3 class="section" i18n="@@dpa.dialog.services-section">Services</h3>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description des services</mat-label>
+    <mat-label i18n="@@dpa.dialog.services-description">Description des services</mat-label>
     <textarea matInput formControlName="servicesDescription" rows="4" maxlength="4000" required></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Catégories de sous-traitants ultérieurs (une par ligne)</mat-label>
+    <mat-label i18n="@@dpa.dialog.sub-processor-categories">Catégories de sous-traitants ultérieurs (une par ligne)</mat-label>
     <textarea matInput formControlName="subProcessorCategories" rows="2"></textarea>
   </mat-form-field>
 
-  <h3 class="section">Transferts hors UE</h3>
+  <h3 class="section" i18n="@@dpa.detail.third-country-transfers">Transferts hors UE</h3>
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Pays de transfert (un par ligne)</mat-label>
+      <mat-label i18n="@@dpa.dialog.transfer-countries">Pays de transfert (un par ligne)</mat-label>
       <textarea matInput formControlName="thirdCountryTransfers" rows="2"></textarea>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Garanties (obligatoires si transferts)</mat-label>
+      <mat-label i18n="@@dpa.dialog.transfer-safeguards">Garanties (obligatoires si transferts)</mat-label>
       <textarea matInput formControlName="transferSafeguards" rows="2" maxlength="4000"></textarea>
     </mat-form-field>
   </div>
 
-  <h3 class="section">Contrat</h3>
+  <h3 class="section" i18n="@@dpa.detail.contract">Contrat</h3>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>URL du contrat signé (https://…)</mat-label>
+    <mat-label i18n="@@dpa.dialog.contract-url">URL du contrat signé (https://…)</mat-label>
     <input matInput formControlName="contractDocumentUrl" maxlength="1024">
-    <mat-error *ngIf="form.controls.contractDocumentUrl.hasError('httpsOnly')">
+    <mat-error *ngIf="form.controls.contractDocumentUrl.hasError('httpsOnly')"
+               i18n="@@dpa.dialog.https-only">
       Seules les URLs https:// sont acceptées.
     </mat-error>
   </mat-form-field>
   <div class="row">
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Signé le</mat-label>
+      <mat-label i18n="@@dpa.detail.signed-on">Signé le</mat-label>
       <input matInput formControlName="signedAt" type="date">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Entrée en vigueur</mat-label>
+      <mat-label i18n="@@dpa.dialog.effective-start">Entrée en vigueur</mat-label>
       <input matInput formControlName="effectiveFrom" type="date">
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Expiration</mat-label>
+      <mat-label i18n="@@dpa.detail.expiration">Expiration</mat-label>
       <input matInput formControlName="expirationDate" type="date">
     </mat-form-field>
   </div>
 
-  <h3 class="section">Sécurité &amp; obligations Art. 28</h3>
+  <h3 class="section" i18n="@@dpa.detail.security-obligations">Sécurité &amp; obligations Art. 28</h3>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Mesures de sécurité (Art. 32)</mat-label>
+    <mat-label i18n="@@dpa.dialog.security-measures">Mesures de sécurité (Art. 32)</mat-label>
     <textarea matInput formControlName="securityMeasures" rows="3" maxlength="4000"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Délai notification incident (heures, 1-720)</mat-label>
+    <mat-label i18n="@@dpa.dialog.breach-delay">Délai notification incident (heures, 1-720)</mat-label>
     <input matInput formControlName="breachNotificationCommitmentHours" type="number" min="1" max="720" required>
-    <mat-hint>Art. 33§2 : "sans délai" — recommandation CNIL ≤ 72h</mat-hint>
+    <mat-hint i18n="@@dpa.dialog.breach-delay-hint">Art. 33§2 : "sans délai" — recommandation CNIL ≤ 72h</mat-hint>
   </mat-form-field>
-  <mat-checkbox formControlName="auditRights">Droits d'audit prévus au contrat (Art. 28§3.h)</mat-checkbox>
+  <mat-checkbox formControlName="auditRights" i18n="@@dpa.dialog.audit-rights-checkbox">Droits d'audit prévus au contrat (Art. 28§3.h)</mat-checkbox>
   <mat-form-field appearance="outline" class="full" *ngIf="form.controls.auditRights.value">
-    <mat-label>Modalités d'audit</mat-label>
+    <mat-label i18n="@@dpa.dialog.audit-terms">Modalités d'audit</mat-label>
     <textarea matInput formControlName="auditRightsNotes" rows="2" maxlength="4000"></textarea>
   </mat-form-field>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Restitution ou suppression des données (Art. 28§3.g)</mat-label>
+    <mat-label i18n="@@dpa.dialog.data-return">Restitution ou suppression des données (Art. 28§3.g)</mat-label>
     <textarea matInput formControlName="dataReturnOrDeletionTerms" rows="2" maxlength="4000"></textarea>
   </mat-form-field>
 
-  <h3 class="section">Liens RoPA</h3>
+  <h3 class="section" i18n="@@dpa.dialog.ropa-links">Liens RoPA</h3>
   <mat-form-field appearance="outline" class="full">
-    <mat-label>UUIDs RoPA liées (une par ligne)</mat-label>
+    <mat-label i18n="@@dpa.dialog.ropa-uuids">UUIDs RoPA liées (une par ligne)</mat-label>
     <textarea matInput formControlName="linkedProcessingActivityIds" rows="2"></textarea>
-    <mat-error *ngIf="form.controls.linkedProcessingActivityIds.hasError('uuidLine')">
+    <mat-error *ngIf="form.controls.linkedProcessingActivityIds.hasError('uuidLine')"
+               i18n="@@dpa.dialog.uuid-line">
       Chaque ligne doit être un UUID v4.
     </mat-error>
   </mat-form-field>

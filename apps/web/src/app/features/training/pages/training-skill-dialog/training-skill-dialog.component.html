@@ -1,33 +1,33 @@
 <qos-form-dialog
-  [title]="isEdit ? 'Modifier la compétence' : 'Nouvelle compétence'"
+  [title]="isEdit ? editTitle : createTitle"
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
-  [submitLabel]="isEdit ? 'Enregistrer' : 'Créer'"
+  [submitLabel]="isEdit ? editSubmitLabel : createSubmitLabel"
   (submitted)="submit()"
   (cancelled)="cancel()">
 
   <div class="row">
     <mat-form-field appearance="outline" class="col col-code">
-      <mat-label>Code</mat-label>
+      <mat-label i18n="@@training.home.col-code">Code</mat-label>
       <input matInput formControlName="code" maxlength="100" required
              placeholder="Ex. : iso-9001-internal-auditor">
-      <mat-hint>minuscules, chiffres, tiret, underscore</mat-hint>
+      <mat-hint i18n="@@training.path-dialog.code-hint">minuscules, chiffres, tiret, underscore</mat-hint>
     </mat-form-field>
     <mat-form-field appearance="outline" class="col">
-      <mat-label>Catégorie</mat-label>
+      <mat-label i18n="@@kpis.dialog.category">Catégorie</mat-label>
       <input matInput formControlName="category" maxlength="64"
-             placeholder="Audit, DMAIC, Méthodes…">
+             placeholder="Audit, DMAIC, Méthodes…" i18n-placeholder="@@training.home.skill-category-placeholder">
     </mat-form-field>
   </div>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Nom</mat-label>
+    <mat-label i18n="@@common.name">Nom</mat-label>
     <input matInput formControlName="name" maxlength="200" required>
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Description</mat-label>
+    <mat-label i18n="@@common.description">Description</mat-label>
     <textarea matInput formControlName="description" rows="3" maxlength="1000"></textarea>
   </mat-form-field>
 

@@ -29,6 +29,12 @@ export class RopaDetailComponent implements OnInit {
   loading$ = new BehaviorSubject<boolean>(false);
   error$   = new BehaviorSubject<string | null>(null);
 
+  readonly editTooltipImmutable = $localize`:@@ropa.detail.edit-tooltip-immutable:Une fiche ACTIVE est immutable`;
+  readonly editTooltipDraft = $localize`:@@ropa.detail.edit-tooltip-draft:Modifier le brouillon`;
+  readonly deleteTooltipActive = $localize`:@@ropa.detail.delete-tooltip-active:Impossible — archivez d'abord`;
+  readonly deleteTooltipDefault = $localize`:@@common.delete:Supprimer`;
+  readonly noJustificationLabel = $localize`:@@ropa.detail.no-justification:Aucune justification — à compléter.`;
+
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
 
   constructor(
@@ -46,7 +52,7 @@ export class RopaDetailComponent implements OnInit {
         const id = p.get('id') ?? '';
         // OWASP A03 — UUID v4 regex on path id (mock-id fallback for demo data).
         if (!UUID_REGEX.test(id) && !id.startsWith('ropa-')) {
-          this.error$.next('Identifiant invalide.');
+          this.error$.next($localize`:@@common.invalid-id:Identifiant invalide.`);
           this.loading$.next(false);
           return of(null);
         }
@@ -55,7 +61,7 @@ export class RopaDetailComponent implements OnInit {
             catchError(err => {
               // eslint-disable-next-line no-console
               console.warn('[ropa-detail] failed', err?.status, err?.error?.title);
-              this.error$.next(safeErrorMessage(err, 'Erreur lors du chargement.'));
+              this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
               return of(null);
             }),
             tap(() => this.loading$.next(false))
@@ -68,7 +74,7 @@ export class RopaDetailComponent implements OnInit {
   openEdit(a: ProcessingActivityView): void {
     // OWASP A04 — ACTIVE is immutable (matches backend invariant).
     if (a.status !== 'DRAFT') {
-      this.snack.open('Seul un brouillon peut être édité. Archivez pour modifier ensuite.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@ropa.detail.only-draft-editable:Seul un brouillon peut être édité. Archivez pour modifier ensuite.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(RopaDialogComponent, {
@@ -81,16 +87,16 @@ export class RopaDetailComponent implements OnInit {
   activate(a: ProcessingActivityView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Activer cette activité de traitement ?',
-        message: 'Une fois ACTIVE, la fiche devient immutable pour préserver la traçabilité (Art. 30 RGPD). Toute évolution future devra passer par un nouveau brouillon.',
-        confirmLabel: 'Activer', cancelLabel: 'Annuler', danger: false
+        title: $localize`:@@ropa.detail.activate-confirm-title:Activer cette activité de traitement ?`,
+        message: $localize`:@@ropa.detail.activate-confirm-message:Une fois ACTIVE, la fiche devient immutable pour préserver la traçabilité (Art. 30 RGPD). Toute évolution future devra passer par un nouveau brouillon.`,
+        confirmLabel: $localize`:@@ropa.detail.activate:Activer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: false
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.activate(a.id).subscribe({
-        next: () => { this.snack.open('Activité activée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Activation impossible.')
+        next: () => { this.snack.open($localize`:@@ropa.detail.activated:Activité activée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@ropa.detail.activate-error:Activation impossible.`)
       });
     });
   }
@@ -98,16 +104,16 @@ export class RopaDetailComponent implements OnInit {
   archive(a: ProcessingActivityView): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Archiver cette activité ?',
-        message: '« ' + a.name + ' » sera marquée ARCHIVED. La fiche reste consultable pour les contrôles CNIL/EDPB.',
-        confirmLabel: 'Archiver', cancelLabel: 'Annuler', danger: true
+        title: $localize`:@@ropa.detail.archive-confirm-title:Archiver cette activité ?`,
+        message: $localize`:@@ropa.detail.archive-confirm-message:« ${a.name}:name: » sera marquée ARCHIVED. La fiche reste consultable pour les contrôles CNIL/EDPB.`,
+        confirmLabel: $localize`:@@ropa.detail.archive:Archiver`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.archive(a.id).subscribe({
-        next: () => { this.snack.open('Activité archivée.', 'OK', { duration: 2200 }); this.refresh$.next(); },
-        error: err => this.fail(err, 'Archivage impossible.')
+        next: () => { this.snack.open($localize`:@@ropa.detail.archived:Activité archivée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+        error: err => this.fail(err, $localize`:@@ropa.detail.archive-error:Archivage impossible.`)
       });
     });
   }
@@ -115,33 +121,33 @@ export class RopaDetailComponent implements OnInit {
   remove(a: ProcessingActivityView): void {
     // OWASP A04 — backend refuse de supprimer ACTIVE ; on coupe en amont aussi.
     if (a.status === 'ACTIVE') {
-      this.snack.open('Impossible de supprimer une activité ACTIVE — archivez-la d\'abord.', 'OK', { duration: 4000 });
+      this.snack.open($localize`:@@ropa.detail.cannot-delete-active:Impossible de supprimer une activité ACTIVE — archivez-la d'abord.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
     const ref = this.dialog.open(ConfirmDialogComponent, {
       data: {
-        title: 'Supprimer cette activité ?',
-        message: 'Suppression définitive de « ' + a.name + ' ». Cette action est irréversible et ne devrait être utilisée que pour un brouillon créé par erreur.',
-        confirmLabel: 'Supprimer', cancelLabel: 'Annuler', danger: true
+        title: $localize`:@@ropa.detail.delete-confirm-title:Supprimer cette activité ?`,
+        message: $localize`:@@ropa.detail.delete-confirm-message:Suppression définitive de « ${a.name}:name: ». Cette action est irréversible et ne devrait être utilisée que pour un brouillon créé par erreur.`,
+        confirmLabel: $localize`:@@common.delete:Supprimer`, cancelLabel: $localize`:@@common.cancel:Annuler`, danger: true
       }
     });
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
       this.svc.delete(a.id).subscribe({
-        next: () => { this.snack.open('Activité supprimée.', 'OK', { duration: 2200 }); this.router.navigate(['/ropa']); },
-        error: err => this.fail(err, 'Suppression impossible.')
+        next: () => { this.snack.open($localize`:@@ropa.detail.deleted:Activité supprimée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.router.navigate(['/ropa']); },
+        error: err => this.fail(err, $localize`:@@ropa.detail.delete-error:Suppression impossible.`)
       });
     });
   }
 
   basisLabel(b: LawfulBasis): string {
     return ({
-      CONSENT: 'Consentement (Art. 6.1.a)',
-      CONTRACT: 'Exécution d\'un contrat (Art. 6.1.b)',
-      LEGAL_OBLIGATION: 'Obligation légale (Art. 6.1.c)',
-      VITAL_INTERESTS: 'Intérêts vitaux (Art. 6.1.d)',
-      PUBLIC_TASK: 'Mission de service public (Art. 6.1.e)',
-      LEGITIMATE_INTERESTS: 'Intérêt légitime (Art. 6.1.f)'
+      CONSENT: $localize`:@@ropa.basis-art.consent:Consentement (Art. 6.1.a)`,
+      CONTRACT: $localize`:@@ropa.basis-art.contract:Exécution d'un contrat (Art. 6.1.b)`,
+      LEGAL_OBLIGATION: $localize`:@@ropa.basis-art.legal-obligation:Obligation légale (Art. 6.1.c)`,
+      VITAL_INTERESTS: $localize`:@@ropa.basis-art.vital-interests:Intérêts vitaux (Art. 6.1.d)`,
+      PUBLIC_TASK: $localize`:@@ropa.basis-art.public-task:Mission de service public (Art. 6.1.e)`,
+      LEGITIMATE_INTERESTS: $localize`:@@ropa.basis-art.legitimate-interests:Intérêt légitime (Art. 6.1.f)`
     })[b];
   }
   basisBadge(b: LawfulBasis): string  { return 'lb lb-' + b.toLowerCase(); }
