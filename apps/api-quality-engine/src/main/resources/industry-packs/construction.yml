@@ -1,0 +1,221 @@
+pack_id: construction
+version: 1.0.0
+name: BTP & Construction
+sectors: [construction, btp, civil-engineering, building, infrastructure]
+norms:
+  - iso-19650
+  - iso-9001
+  - iso-45001
+  - iso-14001
+kpis:
+  - kpi_id: btp_reserves_levees
+    name: Taux de réserves levées à la réception
+    category: quality-output
+    formula: "COUNT(reserves_levees) / COUNT(reserves_emises) * 100"
+    unit: "%"
+    target: ">= 95"
+    threshold_warning: "80 - 95"
+    threshold_critical: "< 80"
+    data_source: reception_pv
+    refresh_frequency: weekly
+    owner: directeur_travaux
+    applicable_industries: [construction]
+    related_kpis: [btp_delai_levee_reserve]
+    explainability: "Mesure la qualité de finition à la livraison — solde des réserves du PV de réception."
+  - kpi_id: btp_delai_levee_reserve
+    name: Délai moyen de levée de réserve
+    category: efficiency
+    formula: "AVG(date_levee - date_emission) in days"
+    unit: "days"
+    target: "< 30"
+    threshold_warning: "30 - 60"
+    threshold_critical: "> 60"
+    data_source: reserve_register
+    refresh_frequency: weekly
+    owner: conducteur_travaux
+    applicable_industries: [construction]
+    related_kpis: [btp_reserves_levees]
+    explainability: "Délai contractuel de levée des réserves après réception (souvent borné par marché)."
+  - kpi_id: btp_taux_frequence_tf1
+    name: Taux de fréquence des accidents (TF1)
+    category: hse-safety
+    formula: "COUNT(accidents_avec_arret) / SUM(heures_travaillees) * 1000000"
+    unit: "TF1"
+    target: "< 10"
+    threshold_warning: "10 - 25"
+    threshold_critical: "> 25"
+    data_source: hse_incidents
+    refresh_frequency: monthly
+    owner: responsable_hse
+    applicable_industries: [construction]
+    related_kpis: [btp_taux_gravite_tg]
+    explainability: "TF1 — accidents avec arrêt par million d'heures travaillées (ISO 45001 §9.1)."
+  - kpi_id: btp_taux_gravite_tg
+    name: Taux de gravité des accidents (TG)
+    category: hse-safety
+    formula: "SUM(jours_arret) / SUM(heures_travaillees) * 1000"
+    unit: "TG"
+    target: "< 0.5"
+    threshold_warning: "0.5 - 1.0"
+    threshold_critical: "> 1.0"
+    data_source: hse_incidents
+    refresh_frequency: monthly
+    owner: responsable_hse
+    applicable_industries: [construction]
+    related_kpis: [btp_taux_frequence_tf1]
+    explainability: "TG — jours d'arrêt pour 1000 heures travaillées ; mesure la sévérité des accidents."
+  - kpi_id: btp_conformite_ppsps
+    name: Taux de conformité PPSPS
+    category: hse-compliance
+    formula: "COUNT(controles_ppsps_conformes) / COUNT(controles_ppsps) * 100"
+    unit: "%"
+    target: ">= 95"
+    threshold_warning: "85 - 95"
+    threshold_critical: "< 85"
+    data_source: hse_audits
+    refresh_frequency: weekly
+    owner: coordonnateur_sps
+    applicable_industries: [construction]
+    related_kpis: []
+    explainability: "Respect du Plan Particulier de Sécurité et de Protection de la Santé sur chantier."
+  - kpi_id: btp_avancement_bim
+    name: Taux d'avancement de la maquette BIM
+    category: digital-delivery
+    formula: "COUNT(objets_bim_valides_lod) / COUNT(objets_bim_attendus) * 100"
+    unit: "%"
+    target: ">= 90"
+    threshold_warning: "75 - 90"
+    threshold_critical: "< 75"
+    data_source: bim_cde
+    refresh_frequency: weekly
+    owner: bim_manager
+    applicable_industries: [construction]
+    related_kpis: []
+    explainability: "ISO 19650 — niveau de complétude des objets BIM par rapport au LOD/LOIN attendu."
+  - kpi_id: btp_taux_non_conformites_chantier
+    name: Non-conformités chantier ouvertes
+    category: quality-output
+    formula: "COUNT(ncm_open) WHERE site_phase='execution'"
+    unit: "count"
+    target: "< 10"
+    threshold_warning: "10 - 25"
+    threshold_critical: "> 25"
+    data_source: ncm_register
+    refresh_frequency: weekly
+    owner: responsable_qualite
+    applicable_industries: [construction]
+    related_kpis: []
+    explainability: "Suivi des non-conformités d'exécution non encore soldées sur le chantier."
+glossary:
+  - {term: PPSPS, definition: "Plan Particulier de Sécurité et de Protection de la Santé"}
+  - {term: BIM, definition: "Building Information Modeling (modélisation des données du bâtiment)"}
+  - {term: CDE, definition: "Common Data Environment — environnement commun de données (ISO 19650)"}
+  - {term: LOD, definition: "Level of Detail / Development — niveau de détail d'un objet BIM"}
+  - {term: LOIN, definition: "Level of Information Need — niveau de besoin d'information (ISO 19650)"}
+  - {term: PV, definition: "Procès-Verbal (notamment de réception des travaux)"}
+  - {term: SPS, definition: "Sécurité et Protection de la Santé (coordonnateur SPS)"}
+  - {term: OPR, definition: "Opérations Préalables à la Réception"}
+  - {term: DOE, definition: "Dossier des Ouvrages Exécutés"}
+  - {term: TF1, definition: "Taux de Fréquence des accidents avec arrêt"}
+connectors_required:
+  - bim
+  - iot
+  - sap-erp
+  - sharepoint
+ishikawa_templates:
+  - problem_archetype: "Réserves de réception nombreuses (finitions non conformes)"
+    branches:
+      man: ["Compagnons non qualifiés", "Sous-traitant défaillant"]
+      machine: ["Outillage inadapté"]
+      material: ["Matériaux non conformes au CCTP"]
+      method: ["Autocontrôle non réalisé", "Phasage mal coordonné"]
+      measurement: ["OPR bâclées"]
+      environment: ["Intempéries"]
+  - problem_archetype: "Accident du travail avec arrêt sur chantier"
+    branches:
+      man: ["Non-port des EPI", "Compagnon non formé au risque"]
+      machine: ["Engin non vérifié (VGP)"]
+      material: ["Échafaudage non conforme"]
+      method: ["Mode opératoire non suivi", "Co-activité non gérée"]
+      measurement: ["Causerie sécurité absente"]
+      environment: ["Sol instable", "Conditions météo extrêmes"]
+  - problem_archetype: "Non-respect du PPSPS"
+    branches:
+      man: ["Sous-traitant non sensibilisé"]
+      machine: []
+      material: ["Protections collectives manquantes"]
+      method: ["PPSPS non diffusé"]
+      measurement: ["Pas d'inspection commune préalable"]
+      environment: ["Chantier en site occupé"]
+  - problem_archetype: "Maquette BIM incomplète / clashs non résolus"
+    branches:
+      man: ["Modeleur sous-formé"]
+      machine: ["Poste de calcul sous-dimensionné"]
+      material: []
+      method: ["Convention BIM non appliquée", "Pas de revue de coordination"]
+      measurement: ["Détection de clash non automatisée"]
+      environment: ["CDE mal structuré"]
+  - problem_archetype: "Dérive du planning (retard de livraison)"
+    branches:
+      man: ["Effectif insuffisant"]
+      machine: ["Grue indisponible"]
+      material: ["Rupture d'approvisionnement matériaux"]
+      method: ["Ordonnancement défaillant"]
+      measurement: ["Avancement non piloté"]
+      environment: ["Aléas de sol / fouilles archéologiques"]
+  - problem_archetype: "Non-conformité structurelle (béton hors résistance)"
+    branches:
+      man: ["Erreur de formulation"]
+      machine: ["Centrale à béton déréglée"]
+      material: ["Granulats non conformes"]
+      method: ["Cure du béton non respectée"]
+      measurement: ["Éprouvettes non prélevées"]
+      environment: ["Bétonnage par grand froid"]
+  - problem_archetype: "Réclamation client / MOA sur la qualité d'ouvrage"
+    branches:
+      man: []
+      machine: []
+      material: ["Désordre lié à un produit défectueux"]
+      method: ["Levée de réserve incomplète"]
+      measurement: []
+      environment: []
+  - problem_archetype: "DOE remis incomplet à la livraison"
+    branches:
+      man: ["Sous-traitant ne fournit pas ses fiches"]
+      machine: []
+      material: []
+      method: ["Collecte documentaire tardive"]
+      measurement: ["Checklist DOE non tenue"]
+      environment: []
+poka_yoke_library:
+  - id: poka-yoke-btp-001
+    name: Détection de clash BIM bloquante avant validation IFC
+    description: "Le CDE refuse la validation d'une maquette tant que des clashs critiques subsistent"
+    sector_fit: [construction]
+  - id: poka-yoke-btp-002
+    name: Contrôle d'accès chantier par badge avec vérification habilitation
+    description: "Le tourniquet ne s'ouvre que si l'habilitation et la formation sécurité sont à jour"
+    sector_fit: [construction, energy]
+  - id: poka-yoke-btp-003
+    name: Détrompeur géométrique de coffrage
+    description: "Coffrages avec repères asymétriques empêchant un montage à l'envers"
+    sector_fit: [construction]
+  - id: poka-yoke-btp-004
+    name: Vision IA détection EPI manquant en zone à risque
+    description: "Caméra YOLOv8 détectant l'absence de casque/harnais et déclenchant une alerte"
+    sector_fit: [construction, manufacturing, energy]
+training_paths:
+  - role: conducteur_travaux
+    modules: [iso-9001-chantier, gestion-reserves, pilotage-planning]
+  - role: responsable_hse
+    modules: [iso-45001-intro, ppsps, prevention-chantier]
+  - role: bim_manager
+    modules: [iso-19650-intro, bim-coordination, cde-management]
+documents_templates:
+  - /standards/templates/iso-19650/bim-execution-plan.md
+  - /standards/templates/iso-45001/ppsps.md
+  - /standards/templates/iso-9001/plan-controle-chantier.md
+processes_templates:
+  - /industry-packs/processes/construction/levee-reserves.bpmn
+  - /industry-packs/processes/construction/bim-coordination.bpmn
+  - /industry-packs/processes/construction/inspection-securite.bpmn

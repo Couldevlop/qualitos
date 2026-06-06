@@ -1,0 +1,218 @@
+pack_id: retail
+version: 1.0.0
+name: Retail & Distribution
+sectors: [retail, distribution, e-commerce, grocery, specialty-store]
+norms:
+  - iso-9001
+  - iso-10002
+kpis:
+  - kpi_id: retail_return_rate
+    name: Taux de retours produits
+    category: product-quality
+    formula: "COUNT(items_returned) / COUNT(items_sold) * 100"
+    unit: "%"
+    target: "< 5"
+    threshold_warning: "5 - 10"
+    threshold_critical: "> 10"
+    data_source: pos_returns
+    refresh_frequency: daily
+    owner: store_manager
+    applicable_industries: [retail]
+    related_kpis: [retail_defective_return_rate]
+    explainability: "Part des articles retournés sur les ventes — proxy de qualité produit et d'adéquation client."
+  - kpi_id: retail_defective_return_rate
+    name: Taux de retours pour défaut produit
+    category: product-quality
+    formula: "COUNT(returns) WHERE reason='defective' / COUNT(items_sold) * 100"
+    unit: "%"
+    target: "< 1"
+    threshold_warning: "1 - 3"
+    threshold_critical: "> 3"
+    data_source: pos_returns
+    refresh_frequency: weekly
+    owner: quality_manager
+    applicable_industries: [retail]
+    related_kpis: [retail_return_rate]
+    explainability: "Isole les retours liés à un défaut qualité (vs convenance) — déclenche NC fournisseur."
+  - kpi_id: retail_nps
+    name: Net Promoter Score (NPS)
+    category: customer-experience
+    formula: "(promoters - detractors) / respondents * 100"
+    unit: "score"
+    target: ">= 40"
+    threshold_warning: "20 - 40"
+    threshold_critical: "< 20"
+    data_source: customer_surveys
+    refresh_frequency: monthly
+    owner: customer_experience_manager
+    applicable_industries: [retail, e-commerce]
+    related_kpis: []
+    explainability: "Mesure de la recommandation client — indicateur fidélité et qualité de service."
+  - kpi_id: retail_store_audit_score
+    name: Score de conformité audit magasin
+    category: compliance-audit
+    formula: "AVG(checklist_items_compliant) / AVG(checklist_items_total) * 100"
+    unit: "%"
+    target: ">= 90"
+    threshold_warning: "80 - 90"
+    threshold_critical: "< 80"
+    data_source: store_audits
+    refresh_frequency: per-audit
+    owner: regional_manager
+    applicable_industries: [retail]
+    related_kpis: []
+    explainability: "Score d'audit magasin (merchandising, hygiène, sécurité, étiquetage prix)."
+  - kpi_id: retail_stockout_rate
+    name: Taux de rupture en rayon (OSA)
+    category: supply-chain
+    formula: "COUNT(skus_out_of_shelf) / COUNT(skus_referenced) * 100"
+    unit: "%"
+    target: "< 3"
+    threshold_warning: "3 - 7"
+    threshold_critical: "> 7"
+    data_source: inventory_iot
+    refresh_frequency: realtime
+    owner: supply_chain_manager
+    applicable_industries: [retail, grocery]
+    related_kpis: []
+    explainability: "On-Shelf Availability — part des références en rupture en rayon ; impacte ventes et NPS."
+  - kpi_id: retail_complaint_resolution_time
+    name: Délai moyen de résolution des réclamations
+    category: complaints
+    formula: "AVG(closed_at - created_at) in days"
+    unit: "days"
+    target: "< 5"
+    threshold_warning: "5 - 10"
+    threshold_critical: "> 10"
+    data_source: complaint_register
+    refresh_frequency: weekly
+    owner: customer_service_manager
+    applicable_industries: [retail, e-commerce]
+    related_kpis: []
+    explainability: "ISO 10002 — délai de traitement des réclamations clients de bout en bout."
+  - kpi_id: retail_perishable_waste_rate
+    name: Taux de démarque produits périssables
+    category: cost-of-quality
+    formula: "COUNT(perishables_discarded) / COUNT(perishables_received) * 100"
+    unit: "%"
+    target: "< 4"
+    threshold_warning: "4 - 8"
+    threshold_critical: "> 8"
+    data_source: inventory_iot
+    refresh_frequency: daily
+    owner: fresh_department_manager
+    applicable_industries: [retail, grocery]
+    related_kpis: []
+    explainability: "Pertes sur produits frais (DLC dépassée, rupture chaîne du froid) — coût de non-qualité."
+glossary:
+  - {term: NPS, definition: "Net Promoter Score — score de recommandation client"}
+  - {term: OSA, definition: "On-Shelf Availability — disponibilité en rayon"}
+  - {term: SKU, definition: "Stock Keeping Unit — unité de gestion de stock (référence)"}
+  - {term: POS, definition: "Point Of Sale — terminal de point de vente (caisse)"}
+  - {term: DLC, definition: "Date Limite de Consommation"}
+  - {term: CSAT, definition: "Customer Satisfaction Score"}
+  - {term: RFM, definition: "Recency, Frequency, Monetary — segmentation client"}
+  - {term: Démarque, definition: "Pertes de stock (connue : casse/DLC ; inconnue : vol/erreur)"}
+  - {term: Planogramme, definition: "Plan d'implantation des produits en rayon"}
+connectors_required:
+  - pos
+  - iot
+  - sap-erp
+  - sms-gateway
+ishikawa_templates:
+  - problem_archetype: "Taux de retours produit anormalement élevé"
+    branches:
+      man: ["Conseil vente inadapté"]
+      machine: []
+      material: ["Lot fournisseur défectueux"]
+      method: ["Description produit erronée (e-commerce)"]
+      measurement: ["Contrôle réception insuffisant"]
+      environment: ["Stockage inadapté en réserve"]
+  - problem_archetype: "NPS en baisse"
+    branches:
+      man: ["Personnel en sous-effectif", "Accueil peu avenant"]
+      machine: ["Caisses en panne / files d'attente"]
+      material: ["Ruptures fréquentes"]
+      method: ["Parcours client peu fluide"]
+      measurement: ["Feedback client non exploité"]
+      environment: ["Magasin mal entretenu"]
+  - problem_archetype: "Rupture en rayon (OSA dégradée)"
+    branches:
+      man: ["Réassort tardif"]
+      machine: ["Lecteur étagère HS"]
+      material: []
+      method: ["Réappro mal paramétrée"]
+      measurement: ["Stock théorique faux (démarque inconnue)"]
+      environment: ["Pic de demande imprévu"]
+  - problem_archetype: "Non-conformité à l'audit magasin"
+    branches:
+      man: ["Équipe non formée standards"]
+      machine: []
+      material: ["Étiquetage prix erroné"]
+      method: ["Planogramme non respecté"]
+      measurement: ["Autocontrôle non réalisé"]
+      environment: ["Hygiène insuffisante"]
+  - problem_archetype: "Rupture de la chaîne du froid en magasin"
+    branches:
+      man: ["Porte de meuble froid laissée ouverte"]
+      machine: ["Groupe froid défaillant"]
+      material: []
+      method: ["Relevé T° non effectué"]
+      measurement: ["Sonde T° en dérive"]
+      environment: ["Forte chaleur extérieure"]
+  - problem_archetype: "Réclamation client traitée hors délai"
+    branches:
+      man: ["SAV débordé"]
+      machine: ["Outil de ticketing lent"]
+      material: []
+      method: ["Procédure d'escalade absente"]
+      measurement: ["Pas de KPI SLA suivi"]
+      environment: ["Pic saisonnier (soldes)"]
+  - problem_archetype: "Démarque produits frais excessive"
+    branches:
+      man: ["Gestion des commandes inadaptée"]
+      machine: []
+      material: ["Produits reçus proches DLC"]
+      method: ["Rotation FIFO non appliquée"]
+      measurement: ["Suivi DLC non automatisé"]
+      environment: ["Affluence surestimée"]
+  - problem_archetype: "Erreur de prix en caisse (écart étiquette/POS)"
+    branches:
+      man: []
+      machine: ["POS désynchronisé"]
+      material: []
+      method: ["Mise à jour prix non propagée"]
+      measurement: []
+      environment: []
+poka_yoke_library:
+  - id: poka-yoke-retail-001
+    name: Alerte automatique de rupture rayon (capteur de poids)
+    description: "Capteur d'étagère déclenchant un ordre de réassort dès le seuil bas atteint"
+    sector_fit: [retail, grocery]
+  - id: poka-yoke-retail-002
+    name: Blocage de vente d'un produit rappelé en caisse
+    description: "Le POS refuse le scan d'un SKU sous procédure de rappel"
+    sector_fit: [retail, grocery]
+  - id: poka-yoke-retail-003
+    name: Alerte automatique DLC à J-2 en rayon frais
+    description: "Notification mobile aux équipes pour démarque/rotation des produits proches DLC"
+    sector_fit: [retail, grocery]
+  - id: poka-yoke-retail-004
+    name: Synchronisation prix étiquette ↔ POS bloquante
+    description: "Toute mise à jour de prix met à jour simultanément l'étiquette électronique et le POS"
+    sector_fit: [retail]
+training_paths:
+  - role: store_manager
+    modules: [iso-9001-retail, audit-magasin, gestion-stocks]
+  - role: sales_associate
+    modules: [customer-service-excellence, merchandising, hygiene-securite]
+  - role: customer_service_manager
+    modules: [iso-10002-reclamations, gestion-retours, nps-management]
+documents_templates:
+  - /standards/templates/iso-9001/procedure-audit-magasin.md
+  - /standards/templates/iso-10002/procedure-reclamations.md
+  - /standards/templates/iso-9001/procedure-gestion-retours.md
+processes_templates:
+  - /industry-packs/processes/retail/audit-magasin.bpmn
+  - /industry-packs/processes/retail/gestion-retours.bpmn
+  - /industry-packs/processes/retail/traitement-reclamation.bpmn

@@ -1,0 +1,206 @@
+pack_id: public
+version: 1.0.0
+name: Public Sector & Administration
+sectors: [public, administration, government, local-authority]
+norms:
+  - iso-9001
+  - marianne
+  - iso-14001
+kpis:
+  - kpi_id: pub_user_satisfaction
+    name: Taux de satisfaction usager
+    category: customer-experience
+    formula: "AVG(satisfaction_score) on user_survey"
+    unit: "/10"
+    target: ">= 7.5"
+    threshold_warning: "6.5 - 7.5"
+    threshold_critical: "< 6.5"
+    data_source: user_surveys
+    refresh_frequency: quarterly
+    owner: service_director
+    applicable_industries: [public]
+    related_kpis: []
+    explainability: "Engagement Marianne — mesure de la satisfaction des usagers du service public."
+  - kpi_id: pub_response_time_15d
+    name: Taux de réponse aux courriers ≤ 15 jours
+    category: service-quality
+    formula: "COUNT(responses_within_15d) / COUNT(courriers_received) * 100"
+    unit: "%"
+    target: ">= 90"
+    threshold_warning: "70 - 90"
+    threshold_critical: "< 70"
+    data_source: mail_handling
+    refresh_frequency: monthly
+    owner: secretariat_manager
+    applicable_industries: [public]
+    related_kpis: []
+    explainability: "Engagement Marianne — réponse aux courriers sous délai de 15 jours."
+  - kpi_id: pub_rgaa_accessibility_score
+    name: RGAA Accessibility Score
+    category: accessibility
+    formula: "AVG(rgaa_criteria_compliant) over website_pages * 100"
+    unit: "%"
+    target: ">= 75"
+    threshold_warning: "50 - 75"
+    threshold_critical: "< 50"
+    data_source: rgaa_audits
+    refresh_frequency: annual
+    owner: digital_officer
+    applicable_industries: [public, education]
+    related_kpis: []
+    explainability: "RGAA 4.1 — obligation légale d'accessibilité des services publics numériques."
+  - kpi_id: pub_dossier_processing_time
+    name: Délai moyen de traitement de dossier usager
+    category: service-quality
+    formula: "AVG(closed_at - created_at) in days"
+    unit: "days"
+    target: "< 21"
+    threshold_warning: "21 - 30"
+    threshold_critical: "> 30"
+    data_source: dossier_events
+    refresh_frequency: monthly
+    owner: service_director
+    applicable_industries: [public]
+    related_kpis: []
+    explainability: "Délai de service public — engagement de qualité d'accueil et de traitement."
+  - kpi_id: pub_marianne_claim_response
+    name: Délai de réponse aux réclamations Marianne (≤30j)
+    category: complaints
+    formula: "COUNT(claim_responses_within_30d) / COUNT(claims_received) * 100"
+    unit: "%"
+    target: ">= 95"
+    threshold_warning: "80 - 95"
+    threshold_critical: "< 80"
+    data_source: claim_register
+    refresh_frequency: monthly
+    owner: quality_manager
+    applicable_industries: [public]
+    related_kpis: []
+    explainability: "Marianne — engagement de réponse aux réclamations sous 30 jours maximum."
+  - kpi_id: pub_training_completion_civil_servants
+    name: Taux de complétion de formation des agents
+    category: training
+    formula: "COUNT(trainings_completed) / COUNT(trainings_assigned) * 100"
+    unit: "%"
+    target: ">= 90"
+    threshold_warning: "75 - 90"
+    threshold_critical: "< 75"
+    data_source: training_records
+    refresh_frequency: quarterly
+    owner: hr_manager
+    applicable_industries: [public, education]
+    related_kpis: []
+    explainability: "Formation continue obligatoire de la fonction publique — taux de complétion."
+glossary:
+  - {term: Marianne, definition: "Référentiel d'engagements de qualité de l'accueil et du service public (France)"}
+  - {term: RGAA, definition: "Référentiel Général d'Amélioration de l'Accessibilité"}
+  - {term: WCAG, definition: "Web Content Accessibility Guidelines (W3C)"}
+  - {term: DITP, definition: "Direction Interministérielle de la Transformation Publique"}
+  - {term: RPS, definition: "Risques Psychosociaux"}
+  - {term: DUERP, definition: "Document Unique d'Évaluation des Risques Professionnels"}
+  - {term: ANSSI, definition: "Agence nationale de la sécurité des systèmes d'information"}
+  - {term: DGAFP, definition: "Direction générale de l'administration et de la fonction publique"}
+connectors_required:
+  - sap-erp
+  - sharepoint
+  - ged-alfresco
+  - sms-gateway
+ishikawa_templates:
+  - problem_archetype: "Réclamation Marianne traitée hors délai 30j"
+    branches:
+      man: ["Agent surchargé"]
+      machine: ["Outil GRC lent"]
+      material: ["Dossier incomplet de l'usager"]
+      method: ["Procédure d'escalade absente"]
+      measurement: ["Pas d'alerte d'échéance"]
+      environment: ["Pic d'activité saisonnier"]
+  - problem_archetype: "Site web non conforme RGAA 4.1"
+    branches:
+      man: ["Webmaster non formé"]
+      machine: []
+      material: ["Composants UI non accessibles"]
+      method: ["Tests d'accessibilité absents"]
+      measurement: ["Pas d'audit Axe / Lighthouse"]
+      environment: []
+  - problem_archetype: "Insatisfaction usager au guichet"
+    branches:
+      man: ["Formation à l'accueil insuffisante"]
+      machine: ["File d'attente mal gérée"]
+      material: ["Documents pré-remplis manquants"]
+      method: ["Pas de prise de RDV en ligne"]
+      measurement: ["Pas de mesure NPS"]
+      environment: ["Local exigu / bruyant"]
+  - problem_archetype: "Délai d'instruction de dossier dépassé (30j)"
+    branches:
+      man: ["Manque d'instructeurs"]
+      machine: ["Système legacy lent"]
+      material: ["Pièces complémentaires manquantes"]
+      method: ["Workflow non optimisé"]
+      measurement: ["Pas de pilotage de la charge"]
+      environment: []
+  - problem_archetype: "Fuite de données personnelles des usagers (RGPD)"
+    branches:
+      man: ["Erreur humaine d'envoi"]
+      machine: ["Faille applicative"]
+      material: []
+      method: ["Pas de chiffrement email"]
+      measurement: ["Pas de DLP"]
+      environment: ["Phishing ciblé"]
+  - problem_archetype: "Audit Marianne — non-conformité d'engagement"
+    branches:
+      man: ["Engagement des élus faible"]
+      machine: []
+      material: []
+      method: ["Revue de direction sautée"]
+      measurement: ["Engagements de service non suivis"]
+      environment: ["Changement de mandature"]
+  - problem_archetype: "Plainte sociale d'un agent (RPS)"
+    branches:
+      man: ["Management défaillant"]
+      machine: []
+      material: []
+      method: ["Pas de DUERP RPS à jour"]
+      measurement: ["Pas de baromètre social"]
+      environment: ["Restructuration"]
+  - problem_archetype: "Décision administrative annulée par le TA"
+    branches:
+      man: ["Instruction juridique fragile"]
+      machine: []
+      material: []
+      method: ["Motivation de la décision insuffisante"]
+      measurement: []
+      environment: []
+poka_yoke_library:
+  - id: poka-yoke-pub-001
+    name: Validation accessibilité automatique avant publication
+    description: "Le pipeline CI/CD bloque la publication si le score Axe est < 95"
+    sector_fit: [public, education]
+  - id: poka-yoke-pub-002
+    name: Alerte d'échéance de dossier à J-3
+    description: "Notification automatique à l'agent et au manager si un dossier approche de l'échéance"
+    sector_fit: [public, banking]
+  - id: poka-yoke-pub-003
+    name: Double validation des décisions à impact élevé
+    description: "Workflow imposant une double signature pour les décisions importantes"
+    sector_fit: [public, banking]
+  - id: poka-yoke-pub-004
+    name: Chiffrement obligatoire des pièces jointes externes
+    description: "La passerelle sortante impose le chiffrement des PJ contenant des données personnelles"
+    sector_fit: [public, banking, healthcare]
+training_paths:
+  - role: agent_accueil
+    modules: [marianne-fundamentals, customer-service-excellence, rgpd-basics]
+  - role: instructeur_dossiers
+    modules: [marianne-deep, workflow-efficiency, lean-public]
+  - role: digital_officer
+    modules: [rgaa-fundamentals, wcag-2-2, dxp-public]
+  - role: quality_manager_public
+    modules: [marianne-implementation, audit-public, public-service-quality]
+documents_templates:
+  - /standards/templates/iso-9001/manuel-qualite.md
+  - /standards/templates/marianne/charte-marianne.md
+  - /standards/templates/rgaa/schema-accessibilite.md
+processes_templates:
+  - /industry-packs/processes/public/claim-handling.bpmn
+  - /industry-packs/processes/public/dossier-instruction.bpmn
+  - /industry-packs/processes/public/satisfaction-survey.bpmn

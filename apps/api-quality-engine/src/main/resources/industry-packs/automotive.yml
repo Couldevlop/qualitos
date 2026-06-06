@@ -1,0 +1,225 @@
+pack_id: automotive
+version: 1.0.0
+name: Automotive (Tier 1 / Tier 2 / OEM suppliers)
+sectors: [automotive, manufacturing, tier-1, tier-2]
+norms:
+  - iatf-16949
+  - vda-6-3
+  - iso-9001
+  - iso-14001
+  - iso-45001
+kpis:
+  - kpi_id: auto_first_pass_yield
+    name: First Pass Yield (FPY)
+    category: quality-output
+    formula: "SUM(units_passed_first_inspection) / SUM(units_produced) * 100"
+    unit: "%"
+    target: ">= 99.0"
+    threshold_warning: "97.0 - 99.0"
+    threshold_critical: "< 97.0"
+    data_source: production_inspection_events
+    refresh_frequency: hourly
+    owner: quality_manager
+    applicable_industries: [automotive, manufacturing]
+    related_kpis: [auto_scrap_rate, auto_rework_rate]
+    explainability: "Indicateur OEM standard, aligné IATF 16949 §9.1 et CSR Renault/Stellantis."
+  - kpi_id: auto_scrap_rate
+    name: Taux de rebuts (scrap)
+    category: cost-of-quality
+    formula: "SUM(scrap_quantity_units) / SUM(units_produced) * 100"
+    unit: "%"
+    target: "< 0.5"
+    threshold_warning: "0.5 - 1.5"
+    threshold_critical: "> 1.5"
+    data_source: production_events
+    refresh_frequency: realtime
+    owner: production_manager
+    applicable_industries: [automotive]
+    related_kpis: [auto_first_pass_yield]
+    explainability: "Contribue au COQ — suivi par OEM (Renault PIR, Stellantis MPM)."
+  - kpi_id: auto_customer_reject_ppm
+    name: Customer Reject Rate (PPM)
+    category: customer-quality
+    formula: "SUM(customer_rejected_parts) / SUM(parts_delivered) * 1000000"
+    unit: "PPM"
+    target: "< 50"
+    threshold_warning: "50 - 200"
+    threshold_critical: "> 200"
+    data_source: capa_customer
+    refresh_frequency: daily
+    owner: quality_director
+    applicable_industries: [automotive]
+    related_kpis: []
+    explainability: "Indicateur OEM clé — cibles strictes : Toyota < 10 PPM, Renault < 50, Stellantis < 100."
+  - kpi_id: auto_ppap_on_time
+    name: PPAP On-Time Submission
+    category: project-execution
+    formula: "COUNT(ppap_submitted_on_or_before_due_date) / COUNT(ppap_due) * 100"
+    unit: "%"
+    target: ">= 95"
+    threshold_warning: "80 - 95"
+    threshold_critical: "< 80"
+    data_source: ppap_submissions
+    refresh_frequency: weekly
+    owner: project_manager
+    applicable_industries: [automotive]
+    related_kpis: []
+    explainability: "Mesure la maîtrise du processus APQP/PPAP §8.3."
+  - kpi_id: auto_8d_cycle_time
+    name: 8D Cycle Time (D0 → D8)
+    category: capa
+    formula: "AVG(d8_completed_at - d0_opened_at) in days"
+    unit: "days"
+    target: "<= 60"
+    threshold_warning: "60 - 90"
+    threshold_critical: "> 90"
+    data_source: capa_events
+    refresh_frequency: daily
+    owner: quality_manager
+    applicable_industries: [automotive]
+    related_kpis: []
+    explainability: "Aligné IATF §10.2.3 — délai standard OEM de résolution 8D de 60 jours."
+  - kpi_id: auto_cpk_critical
+    name: Cpk caractéristiques critiques
+    category: process-capability
+    formula: "MIN(Cpk) over special_characteristics WHERE designator='critical'"
+    unit: "ratio"
+    target: ">= 1.67"
+    threshold_warning: "1.33 - 1.67"
+    threshold_critical: "< 1.33"
+    data_source: spc_records
+    refresh_frequency: shift
+    owner: spc_engineer
+    applicable_industries: [automotive]
+    related_kpis: []
+    explainability: "Caractéristiques sécurité/critiques : Cpk ≥ 1.67 (Toyota/BMW exigent ≥ 2)."
+  - kpi_id: auto_vda63_process_audit_score
+    name: VDA 6.3 Process Audit Score
+    category: compliance-audit
+    formula: "AVG(vda63_compliance_degree) over process_audits * 100"
+    unit: "%"
+    target: ">= 90"
+    threshold_warning: "80 - 90"
+    threshold_critical: "< 80"
+    data_source: process_audits
+    refresh_frequency: per-audit
+    owner: quality_manager
+    applicable_industries: [automotive]
+    related_kpis: []
+    explainability: "Degré de conformité VDA 6.3 — < 90 % déclasse le fournisseur (A/B/C) chez les OEM allemands."
+glossary:
+  - {term: APQP, definition: "Advanced Product Quality Planning — méthode AIAG en 5 phases (P0–P5)"}
+  - {term: PPAP, definition: "Production Part Approval Process — niveaux 1 à 5 selon exigence OEM"}
+  - {term: MSA, definition: "Measurement System Analysis — R&R, biais, linéarité, stabilité"}
+  - {term: CSR, definition: "Customer Specific Requirements — exigences spécifiques OEM"}
+  - {term: VDA 6.3, definition: "Audit de processus des constructeurs allemands (VDA QMC)"}
+  - {term: 8D, definition: "8 Disciplines — méthode de résolution de problèmes"}
+  - {term: Cpk, definition: "Process Capability Index, tient compte du décentrage"}
+  - {term: SPC, definition: "Statistical Process Control — maîtrise statistique des procédés"}
+connectors_required:
+  - opc-ua
+  - mqtt
+  - sparkplug-b
+  - sap-erp
+  - mes-generic
+ishikawa_templates:
+  - problem_archetype: "Défaut dimensionnel sur pièce usinée"
+    branches:
+      man: ["Formation opérateur insuffisante", "Rotation des équipes (3x8)"]
+      machine: ["Usure outil", "Dérive thermique machine", "Vibrations broche"]
+      material: ["Variabilité du lot matière", "Mauvais traitement thermique"]
+      method: ["Plan de contrôle incomplet", "Setup mal validé"]
+      measurement: ["Étalonnage périmé", "GR&R > 30%"]
+      environment: ["T° atelier non maîtrisée", "Hygrométrie élevée"]
+  - problem_archetype: "Non-conformité PPAP refusée par le client"
+    branches:
+      man: ["Compétence de l'ingénieur projet"]
+      machine: ["Capabilité Cpk insuffisante"]
+      material: ["COA fournisseur non conforme"]
+      method: ["FMEA incomplète", "Plan de contrôle obsolète"]
+      measurement: ["MSA non réalisée"]
+      environment: ["Pression du délai client"]
+  - problem_archetype: "Pièce contrefaite détectée"
+    branches:
+      man: ["Vigilance Achats insuffisante"]
+      machine: []
+      material: ["Source non autorisée", "Certificat falsifié"]
+      method: ["Procédure d'approvisionnement non respectée"]
+      measurement: ["Pas de test contre-marquage (XRF)"]
+      environment: ["Pénurie composant (force la tentation)"]
+  - problem_archetype: "FOD critique en montage final"
+    branches:
+      man: ["Discipline FOD insuffisante"]
+      machine: ["Outil non tracké"]
+      material: []
+      method: ["Tool count manquant"]
+      measurement: ["Inspection finale incomplète"]
+      environment: ["Encombrement zone de montage"]
+  - problem_archetype: "Réclamation client OEM majeure (NCM)"
+    branches:
+      man: []
+      machine: ["Drift du process non détecté"]
+      material: []
+      method: ["8D non démarré dans les 24h"]
+      measurement: ["Manque de SPC live"]
+      environment: []
+  - problem_archetype: "Dérive du Cpk sous le seuil 1.33"
+    branches:
+      man: []
+      machine: ["Maintenance préventive sautée"]
+      material: ["Changement de lot non documenté"]
+      method: []
+      measurement: ["Plan de mesure inadapté"]
+      environment: []
+  - problem_archetype: "Plan de contrôle non respecté en série"
+    branches:
+      man: ["Pression de cadence"]
+      machine: []
+      material: []
+      method: ["Plan de contrôle non visible au poste"]
+      measurement: []
+      environment: []
+  - problem_archetype: "Caractéristique spéciale non identifiée en DFMEA"
+    branches:
+      man: ["Équipe DFMEA incomplète"]
+      machine: []
+      material: []
+      method: ["Manque de référentiel sécurité"]
+      measurement: []
+      environment: []
+poka_yoke_library:
+  - id: poka-yoke-auto-001
+    name: Détrompeur mécanique anti-inversion
+    description: "Forme asymétrique sur connecteur évitant le montage à l'envers"
+    sector_fit: [automotive, aerospace]
+  - id: poka-yoke-auto-002
+    name: Capteur de présence outillage (Andon)
+    description: "Capteur inductif validant la présence de l'outil avant le cycle"
+    sector_fit: [automotive, manufacturing]
+  - id: poka-yoke-auto-003
+    name: Tool count automatique (RFID)
+    description: "Lecteur RFID en sortie de zone comptant les outils sortis vs entrés"
+    sector_fit: [automotive, aerospace]
+  - id: poka-yoke-auto-004
+    name: Vision IA contrôle du couple de serrage
+    description: "Caméra + couple-mètre connecté validant chaque vis"
+    sector_fit: [automotive, aerospace]
+  - id: poka-yoke-auto-005
+    name: Verrouillage cycle si MSA expirée
+    description: "Bloque le démarrage du cycle si l'étalonnage capteur est au-delà de l'échéance"
+    sector_fit: [automotive, manufacturing, pharma]
+training_paths:
+  - role: quality_engineer
+    modules: [iatf-16949-intro, apqp-fundamentals, msa-blackbelt, ppap-submission]
+  - role: production_supervisor
+    modules: [iatf-16949-awareness, control-plan-deployment, 5s-shopfloor]
+  - role: capa_owner
+    modules: [8d-methodology, root-cause-analysis, customer-complaints]
+documents_templates:
+  - /standards/templates/iatf-16949/manuel-qualite-iatf.md
+  - /standards/templates/iatf-16949/procedure-apqp.md
+  - /standards/templates/iatf-16949/dossier-ppap-niveau3.md
+processes_templates:
+  - /industry-packs/processes/automotive/apqp-5-phases.bpmn
+  - /industry-packs/processes/automotive/ppap-workflow.bpmn
+  - /industry-packs/processes/automotive/8d-resolution.bpmn

@@ -1,0 +1,219 @@
+pack_id: education
+version: 1.0.0
+name: Éducation & EdTech
+sectors: [education, edtech, training, vocational, higher-education]
+norms:
+  - iso-21001
+  - qualiopi
+  - iso-9001
+kpis:
+  - kpi_id: edu_learner_satisfaction
+    name: Satisfaction des apprenants
+    category: learner-experience
+    formula: "AVG(satisfaction_score) on end_of_course_survey"
+    unit: "/10"
+    target: ">= 8.0"
+    threshold_warning: "7.0 - 8.0"
+    threshold_critical: "< 7.0"
+    data_source: course_surveys
+    refresh_frequency: per-session
+    owner: pedagogical_director
+    applicable_industries: [education]
+    related_kpis: [edu_nps]
+    explainability: "ISO 21001 §9.1.2 / Qualiopi indicateur 11 — satisfaction recueillie en fin de formation."
+  - kpi_id: edu_completion_rate
+    name: Taux de complétion des parcours
+    category: pedagogical-performance
+    formula: "COUNT(learners_completed) / COUNT(learners_enrolled) * 100"
+    unit: "%"
+    target: ">= 85"
+    threshold_warning: "70 - 85"
+    threshold_critical: "< 70"
+    data_source: lms_records
+    refresh_frequency: weekly
+    owner: pedagogical_director
+    applicable_industries: [education, edtech]
+    related_kpis: [edu_dropout_rate]
+    explainability: "Part des apprenants ayant achevé le parcours sur les inscrits — indicateur clé EdTech."
+  - kpi_id: edu_dropout_rate
+    name: Taux d'abandon
+    category: pedagogical-performance
+    formula: "COUNT(learners_dropped) / COUNT(learners_enrolled) * 100"
+    unit: "%"
+    target: "< 10"
+    threshold_warning: "10 - 20"
+    threshold_critical: "> 20"
+    data_source: lms_records
+    refresh_frequency: weekly
+    owner: pedagogical_director
+    applicable_industries: [education, edtech]
+    related_kpis: [edu_completion_rate]
+    explainability: "Qualiopi indicateur 9 — suivi des abandons en cours de prestation."
+  - kpi_id: edu_employability_rate
+    name: Taux d'employabilité / d'insertion
+    category: outcomes
+    formula: "COUNT(learners_employed_within_6m) / COUNT(graduates) * 100"
+    unit: "%"
+    target: ">= 70"
+    threshold_warning: "55 - 70"
+    threshold_critical: "< 55"
+    data_source: alumni_tracking
+    refresh_frequency: quarterly
+    owner: placement_officer
+    applicable_industries: [education]
+    related_kpis: []
+    explainability: "Qualiopi indicateur 3 — insertion professionnelle des apprenants à 6 mois."
+  - kpi_id: edu_complaint_count
+    name: Réclamations apprenants traitées hors délai
+    category: complaints
+    formula: "COUNT(complaints_overdue) WHERE date >= NOW() - INTERVAL 90 DAY"
+    unit: "count"
+    target: "0"
+    threshold_warning: "1 - 3"
+    threshold_critical: "> 3"
+    data_source: complaint_register
+    refresh_frequency: monthly
+    owner: quality_manager
+    applicable_industries: [education]
+    related_kpis: []
+    explainability: "Qualiopi indicateur 31 — traitement des réclamations et aléas dans les délais annoncés."
+  - kpi_id: edu_pass_rate
+    name: Taux de réussite aux certifications
+    category: pedagogical-performance
+    formula: "COUNT(learners_certified) / COUNT(learners_examined) * 100"
+    unit: "%"
+    target: ">= 80"
+    threshold_warning: "65 - 80"
+    threshold_critical: "< 65"
+    data_source: exam_results
+    refresh_frequency: per-session
+    owner: pedagogical_director
+    applicable_industries: [education]
+    related_kpis: []
+    explainability: "Qualiopi indicateur 5 — taux d'obtention des certifications préparées."
+  - kpi_id: edu_trainer_qualification
+    name: Taux de formateurs qualifiés à jour
+    category: competency
+    formula: "COUNT(trainers_with_valid_credentials) / COUNT(active_trainers) * 100"
+    unit: "%"
+    target: "100"
+    threshold_warning: "90 - 100"
+    threshold_critical: "< 90"
+    data_source: hr_records
+    refresh_frequency: quarterly
+    owner: hr_manager
+    applicable_industries: [education]
+    related_kpis: []
+    explainability: "Qualiopi indicateur 21 — qualification et développement continu des formateurs."
+glossary:
+  - {term: Qualiopi, definition: "Certification qualité des organismes de formation (France, RNQ)"}
+  - {term: RNQ, definition: "Référentiel National Qualité (base de Qualiopi)"}
+  - {term: LMS, definition: "Learning Management System (plateforme d'apprentissage)"}
+  - {term: SCORM, definition: "Sharable Content Object Reference Model (standard e-learning)"}
+  - {term: xAPI, definition: "Experience API (Tin Can) — traçage d'expériences d'apprentissage"}
+  - {term: LOM, definition: "Learning Outcome Measurement — mesure des acquis"}
+  - {term: NPS, definition: "Net Promoter Score"}
+  - {term: OPCO, definition: "Opérateur de Compétences (financement de la formation)"}
+  - {term: CPF, definition: "Compte Personnel de Formation"}
+connectors_required:
+  - lms-scorm
+  - xapi
+  - sharepoint
+  - sms-gateway
+ishikawa_templates:
+  - problem_archetype: "Taux d'abandon élevé sur un parcours"
+    branches:
+      man: ["Formateur peu engageant", "Tuteur peu disponible"]
+      machine: ["Plateforme LMS instable"]
+      material: ["Supports pédagogiques inadaptés"]
+      method: ["Rythme inadapté", "Pas de suivi individualisé"]
+      measurement: ["Décrochage non détecté tôt"]
+      environment: ["Charge professionnelle de l'apprenant"]
+  - problem_archetype: "Faible satisfaction apprenant"
+    branches:
+      man: ["Pédagogie peu interactive"]
+      machine: ["Outils numériques peu ergonomiques"]
+      material: ["Contenu obsolète"]
+      method: ["Objectifs pédagogiques flous"]
+      measurement: ["Évaluation non alignée"]
+      environment: ["Salle / conditions d'apprentissage médiocres"]
+  - problem_archetype: "Faible taux de réussite à la certification"
+    branches:
+      man: ["Prérequis non vérifiés"]
+      machine: []
+      material: ["Banque d'exercices insuffisante"]
+      method: ["Préparation à l'examen lacunaire"]
+      measurement: ["Pas d'évaluation blanche"]
+      environment: ["Stress le jour de l'examen"]
+  - problem_archetype: "Non-conformité à l'audit Qualiopi"
+    branches:
+      man: ["Référent qualité non dédié"]
+      machine: []
+      material: ["Preuves indicateurs manquantes"]
+      method: ["Processus qualité non formalisé"]
+      measurement: ["Indicateurs non suivis"]
+      environment: ["Changement de version du RNQ"]
+  - problem_archetype: "Réclamation apprenant non traitée dans les délais"
+    branches:
+      man: ["Référent réclamation absent"]
+      machine: ["Outil de ticketing absent"]
+      material: []
+      method: ["Procédure de réclamation non diffusée"]
+      measurement: ["Pas d'alerte d'échéance"]
+      environment: []
+  - problem_archetype: "Faible employabilité des diplômés"
+    branches:
+      man: ["Réseau entreprises faible"]
+      machine: []
+      material: []
+      method: ["Programme déconnecté du marché"]
+      measurement: ["Suivi des alumni inexistant"]
+      environment: ["Conjoncture du marché de l'emploi"]
+  - problem_archetype: "Formateur non qualifié intervenant"
+    branches:
+      man: ["Recrutement insuffisamment vérifié"]
+      machine: []
+      material: []
+      method: ["Procédure d'habilitation absente"]
+      measurement: ["Plan de développement non suivi"]
+      environment: []
+  - problem_archetype: "Accessibilité numérique des contenus insuffisante"
+    branches:
+      man: ["Concepteur non formé accessibilité"]
+      machine: []
+      material: ["Vidéos non sous-titrées"]
+      method: ["Pas de revue RGAA"]
+      measurement: ["Pas de test lecteur d'écran"]
+      environment: []
+poka_yoke_library:
+  - id: poka-yoke-edu-001
+    name: Vérification automatique des prérequis à l'inscription
+    description: "Le LMS bloque l'inscription si les prérequis du parcours ne sont pas satisfaits"
+    sector_fit: [education, edtech]
+  - id: poka-yoke-edu-002
+    name: Alerte de décrochage automatique
+    description: "Notification au tuteur si un apprenant est inactif au-delà d'un seuil (xAPI)"
+    sector_fit: [education, edtech]
+  - id: poka-yoke-edu-003
+    name: Verrouillage du certificat tant que les modules ne sont pas complétés
+    description: "Le certificat n'est généré qu'après validation de 100% des modules obligatoires"
+    sector_fit: [education, edtech]
+  - id: poka-yoke-edu-004
+    name: Contrôle qualité automatique des contenus SCORM
+    description: "Pipeline refusant la publication d'un module SCORM non conforme (méta, accessibilité)"
+    sector_fit: [education, edtech]
+training_paths:
+  - role: pedagogical_director
+    modules: [iso-21001-intro, qualiopi-rnq, ingenierie-pedagogique]
+  - role: trainer
+    modules: [pedagogie-active, evaluation-acquis, accessibilite-contenus]
+  - role: quality_manager_edu
+    modules: [qualiopi-audit, gestion-reclamations, suivi-indicateurs]
+documents_templates:
+  - /standards/templates/qualiopi/procedure-positionnement.md
+  - /standards/templates/qualiopi/livret-accueil-apprenant.md
+  - /standards/templates/iso-21001/manuel-organisme-educatif.md
+processes_templates:
+  - /industry-packs/processes/education/positionnement-apprenant.bpmn
+  - /industry-packs/processes/education/traitement-reclamation.bpmn
+  - /industry-packs/processes/education/evaluation-satisfaction.bpmn
