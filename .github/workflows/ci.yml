@@ -136,9 +136,16 @@ jobs:
           # Échoue le pipeline si une CVE >= 8.0 (haute/critique) est détectée — §11.1 OWASP A06.
           # --nvdApiKey est requis depuis le changement de quotas NVD en 2024.
           # https://nvd.nist.gov/developers/request-an-api-key
+          # --disableNodeAudit : l'analyseur Node Audit (API npm audit) rejette les
+          # locks contenant des ALIAS npm (string-width-cjs, strip-ansi-cjs… introduits
+          # par l'arbre transitif de bpmn-js) -> « Invalid payload submitted to Node Audit
+          # API » -> échec du job. L'API npm audit est par ailleurs dépréciée (auth requise).
+          # La couverture JS reste assurée par RetireJS (--enableRetired) + le scan d'image
+          # Trivy (web) + NVD. §11.1 OWASP A06.
           args: >-
             --failOnCVSS 8
             --enableRetired
+            --disableNodeAudit
             --nvdApiKey ${{ secrets.NVD_API_KEY }}
             --suppression .dependency-check-suppressions.xml
 
