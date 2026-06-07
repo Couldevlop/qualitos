@@ -17,7 +17,8 @@ import {
   NcStatus,
   ResolveNcRequest,
   StartAnalysisNcRequest,
-  UpdateNcRequest
+  UpdateNcRequest,
+  VisionAnalysis
 } from './nc.types';
 
 export interface NcListFilters {
@@ -204,6 +205,23 @@ export class NcService {
     return this.http.post<NcPhoto>(`${this.endpoint}/${ncId}/photos`, form);
   }
 
+  // ---- analyse Vision 5S par IA (§3.2/§1.4, ONLINE-ONLY) ---------------------
+  // Détection CV des non-conformités 5S sur photo. Contrat engine figé :
+  // POST /api/v1/vision/5s/analyze, multipart champ 'image', JWT requis.
+  // Pas de file offline : un binaire ne se sérialise pas dans la file existante
+  // et l'inférence est serveur-only. L'UI désactive le bouton hors-ligne.
+
+  /** Analyse une photo (multipart, champ 'image'). 200 → score 5S + findings. */
+  analyzePhotoVision(file: File): Observable<VisionAnalysis> {
+    if (environment.useMockApi) {
+      return of(this.mockVision(file)).pipe(delay(450));
+    }
+    const form = new FormData();
+    form.append('image', file, file.name);
+    return this.http.post<VisionAnalysis>(
+      `${environment.apiBaseUrl}/api/v1/vision/5s/analyze`, form);
+  }
+
   /** Supprime une photo. 204 → void. */
   deletePhoto(ncId: string, photoId: string): Observable<void> {
     if (environment.useMockApi) {
@@ -277,6 +295,44 @@ export class NcService {
 
   private mockPhotos(ncId: string): NcPhoto[] {
     return [...this.mockPhotoStore(ncId)];
+  }
+
+  /**
+   * Analyse vision simulée DÉTERMINISTE : dérivée du nom + de la taille du
+   * fichier, donc stable pour un même fichier (parité avec le hash réel).
+   */
+  private mockVision(file: File): VisionAnalysis {
+    const seed = (file.name.length * 31 + file.size) % 100;
+    const pin = (n: number): number => Math.max(0, Math.min(100, n));
+    const score = {
+      seiri: pin(58 + (seed % 40)),
+      seiton: pin(62 + (seed % 33)),
+      seiso: pin(70 + (seed % 25)),
+      seiketsu: pin(66 + (seed % 30)),
+      shitsuke: pin(74 + (seed % 22))
+    };
+    const overall = Math.round(
+      (score.seiri + score.seiton + score.seiso + score.seiketsu + score.shitsuke) / 5);
+    return {
+      imageSha256: 'mock-' + (seed.toString(16)).padStart(2, '0') + '-' + file.size,
+      width: 1280,
+      height: 720,
+      score: { ...score, overall },
+      findings: [
+        {
+          pillar: 'SEIRI', description: 'Objets non identifiés dans la zone de passage.',
+          severity: 'MEDIUM', confidence: 0.5 + (seed % 40) / 100, bbox: [120, 80, 240, 180]
+        },
+        {
+          pillar: 'SEITON', description: 'Emplacement outil non matérialisé (étiquette absente).',
+          severity: 'LOW', confidence: 0.4 + (seed % 30) / 100, bbox: [640, 300, 160, 120]
+        },
+        {
+          pillar: 'SEISO', description: 'Trace de salissure au sol près du poste.',
+          severity: 'HIGH', confidence: 0.6 + (seed % 25) / 100, bbox: null
+        }
+      ]
+    };
   }
 
   private mockPage(filters: NcListFilters): NcPage {

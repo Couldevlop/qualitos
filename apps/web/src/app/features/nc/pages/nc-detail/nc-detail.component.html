@@ -209,6 +209,119 @@
         </mat-card-content>
       </mat-card>
 
+      <!-- Analyse visuelle (IA) — détection CV des non-conformités 5S (online-only). -->
+      <mat-card class="vision-card">
+        <mat-card-header class="vision-header">
+          <div class="vision-title-block">
+            <mat-card-title i18n="@@nc.vision.title">Analyse visuelle (IA)</mat-card-title>
+            <p class="vision-subtitle" i18n="@@nc.vision.subtitle">
+              Détecte automatiquement les non-conformités 5S sur une photo (vision par ordinateur).
+            </p>
+          </div>
+
+          <div class="vision-actions">
+            <button mat-stroked-button type="button"
+                    *ngIf="(visionResult$ | async) && !(visionAnalyzing$ | async)"
+                    (click)="clearVision()"
+                    i18n-matTooltip="@@nc.vision.clear-tooltip" matTooltip="Effacer le résultat">
+              <mat-icon>close</mat-icon> <span i18n="@@nc.vision.clear">Effacer</span>
+            </button>
+            <button mat-flat-button color="primary" type="button"
+                    class="analyze-btn"
+                    (click)="triggerVisionPicker(visionInput)"
+                    [disabled]="(visionAnalyzing$ | async) || (visionUnavailable$ | async) || !(online$ | async)"
+                    [matTooltip]="(online$ | async) ? null : visionOfflineTooltip"
+                    matTooltipPosition="above">
+              <mat-spinner *ngIf="visionAnalyzing$ | async; else analyzeIcon" diameter="18"></mat-spinner>
+              <ng-template #analyzeIcon><mat-icon>image_search</mat-icon></ng-template>
+              <span i18n="@@nc.vision.analyze">Analyser une photo</span>
+            </button>
+            <input #visionInput type="file" accept="image/*" capture="environment"
+                   class="visually-hidden" (change)="onVisionFileSelected($event)"
+                   aria-hidden="true" tabindex="-1" />
+          </div>
+        </mat-card-header>
+
+        <mat-card-content>
+
+          <!-- Service vision désactivé sur l'environnement : message doux. -->
+          <div class="vision-unavailable" *ngIf="visionUnavailable$ | async">
+            <mat-icon>visibility_off</mat-icon>
+            <span i18n="@@nc.vision.unavailable">Analyse vision désactivée sur cet environnement.</span>
+          </div>
+
+          <ng-container *ngIf="!(visionUnavailable$ | async)">
+
+            <!-- En cours d'analyse -->
+            <div class="state-row" *ngIf="visionAnalyzing$ | async">
+              <mat-progress-spinner mode="indeterminate" diameter="28"></mat-progress-spinner>
+              <span i18n="@@nc.vision.analyzing">Analyse de l'image en cours…</span>
+            </div>
+
+            <ng-container *ngIf="(visionResult$ | async) as vision">
+              <ng-container *ngIf="!(visionAnalyzing$ | async)">
+
+                <!-- Score 5S : 5 piliers + global, jauges sobres -->
+                <div class="vision-scores">
+                  <div class="score-overall">
+                    <span class="score-overall-value"
+                          [class]="visionScoreClass(vision.score.overall)">{{ vision.score.overall }}</span>
+                    <span class="score-overall-label" i18n="@@nc.vision.score-overall">Score 5S global</span>
+                  </div>
+
+                  <ul class="score-bars">
+                    <li *ngFor="let p of visionPillars">
+                      <span class="bar-label">{{ p.label }}</span>
+                      <span class="bar-track">
+                        <span class="bar-fill" [class]="visionScoreClass(vision.score[p.key])"
+                              [style.width.%]="vision.score[p.key]"></span>
+                      </span>
+                      <span class="bar-value">{{ vision.score[p.key] }}</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Findings -->
+                <div class="vision-findings" *ngIf="vision.findings.length > 0; else noFindings">
+                  <h3 class="findings-title" i18n="@@nc.vision.findings-title">Constats détectés</h3>
+                  <ul class="findings-list">
+                    <li class="finding" *ngFor="let f of vision.findings">
+                      <span class="finding-pillar">{{ f.pillar }}</span>
+                      <span class="finding-desc">{{ f.description }}</span>
+                      <span [class]="visionSeverityClass(f.severity)">{{ f.severity }}</span>
+                      <span class="finding-conf"
+                            i18n-matTooltip="@@nc.vision.confidence-tooltip"
+                            matTooltip="Confiance du modèle">{{ visionConfidencePct(f.confidence) }}%</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <ng-template #noFindings>
+                  <div class="vision-empty good">
+                    <mat-icon>verified</mat-icon>
+                    <p i18n="@@nc.vision.no-findings">Aucune non-conformité 5S détectée sur cette image.</p>
+                  </div>
+                </ng-template>
+              </ng-container>
+            </ng-container>
+
+            <!-- État initial : invite -->
+            <div class="vision-empty"
+                 *ngIf="!(visionResult$ | async) && !(visionAnalyzing$ | async)">
+              <mat-icon>insights</mat-icon>
+              <p i18n="@@nc.vision.intro">Analysez une photo terrain pour obtenir un score 5S et la liste des non-conformités détectées par l'IA.</p>
+            </div>
+
+            <!-- Hors-ligne : explicite l'indisponibilité. -->
+            <p class="vision-offline-note" *ngIf="!(online$ | async)"
+               i18n="@@nc.vision.offline-note">
+              Hors-ligne : l'analyse visuelle est disponible uniquement en ligne.
+            </p>
+          </ng-container>
+
+        </mat-card-content>
+      </mat-card>
+
     </ng-container>
   </ng-container>
 
