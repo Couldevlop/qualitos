@@ -1,0 +1,64 @@
+<div class="qos-page editor-page">
+  <header class="editor-toolbar">
+    <button mat-icon-button type="button" (click)="back()"
+            matTooltip="Retour à la liste" i18n-matTooltip="@@workflow.editor.back-tooltip"
+            aria-label="Retour" i18n-aria-label="@@workflow.editor.back-aria">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <div class="title-block">
+      <span class="eyebrow" i18n="@@workflow.editor.eyebrow">Designer de workflow · BPMN 2.0</span>
+      <mat-form-field appearance="outline" class="name-field">
+        <mat-label i18n="@@workflow.editor.name-label">Nom du workflow</mat-label>
+        <input matInput [(ngModel)]="name" [disabled]="readonly"
+               maxlength="255" required />
+      </mat-form-field>
+    </div>
+
+    <div class="spacer"></div>
+
+    <span [class]="'wf-badge wf-' + status.toLowerCase()" *ngIf="!isNew">{{ status }}</span>
+    <span class="version" *ngIf="!isNew" i18n="@@workflow.editor.version">v{{ version }}</span>
+
+    <button mat-stroked-button type="button"
+            *ngIf="!isNew && status === 'DRAFT'"
+            (click)="publish()">
+      <mat-icon>publish</mat-icon>
+      <span i18n="@@workflow.editor.publish">Publier</span>
+    </button>
+
+    <button mat-flat-button color="primary" type="button"
+            [disabled]="readonly || saving"
+            (click)="save()">
+      <mat-icon>save</mat-icon>
+      <span i18n="@@workflow.editor.save">Enregistrer</span>
+    </button>
+  </header>
+
+  <mat-form-field appearance="outline" class="desc-field">
+    <mat-label i18n="@@workflow.editor.description-label">Description (optionnel)</mat-label>
+    <input matInput [(ngModel)]="description" [disabled]="readonly" maxlength="2000" />
+  </mat-form-field>
+
+  <div class="state-row" *ngIf="loading">
+    <mat-progress-spinner mode="indeterminate" diameter="36"></mat-progress-spinner>
+    <span i18n="@@common.loading">Chargement…</span>
+  </div>
+
+  <div class="state-row error" *ngIf="errorMessage">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <div class="readonly-banner" *ngIf="readonly" i18n="@@workflow.editor.readonly">
+    Ce workflow est {{ status }} : il est figé en lecture seule. Dupliquez-le pour le modifier.
+  </div>
+
+  <!-- Conteneur du canvas bpmn-js : la palette drag&drop s'injecte ici. -->
+  <div class="canvas-shell" *ngIf="!loading && !errorMessage">
+    <div #canvas class="bpmn-canvas" data-testid="bpmn-canvas"></div>
+    <div class="canvas-loading" *ngIf="!modelerReady" i18n="@@workflow.editor.canvas-loading">
+      Initialisation de l'éditeur BPMN…
+    </div>
+  </div>
+</div>

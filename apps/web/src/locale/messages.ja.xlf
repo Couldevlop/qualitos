@@ -2600,6 +2600,10 @@
         <source>Cercles</source>
         <target state="translated">QCサークル</target>
       </trans-unit>
+      <trans-unit id="nav.workflow-designer" datatype="html">
+        <source>Designer de workflow</source>
+        <target state="translated">ワークフローデザイナー</target>
+      </trans-unit>
       <trans-unit id="nav.qualite-operationnelle" datatype="html">
         <source>Qualité opérationnelle</source>
         <target state="translated">オペレーション品質</target>
@@ -13074,6 +13078,118 @@ Inde (centre de service)</source>
       <trans-unit id="consents.withdraw.error" datatype="html">
         <source>Retrait impossible.</source>
         <target state="translated">撤回できません。</target>
+      </trans-unit>
+      <trans-unit id="workflow.list.title" datatype="html">
+        <source>Designer de workflow</source>
+        <target state="translated">ワークフローデザイナー</target>
+      </trans-unit>
+      <trans-unit id="workflow.list.subtitle" datatype="html">
+        <source>Concevez vos processus qualité en BPMN 2.0, sans code : glisser-déposer, versioning et publication.</source>
+        <target state="translated">BPMN 2.0 で品質プロセスをノーコード設計：ドラッグ＆ドロップ、バージョン管理、公開。</target>
+      </trans-unit>
+      <trans-unit id="workflow.list.new" datatype="html">
+        <source>Nouveau workflow</source>
+        <target state="translated">新規ワークフロー</target>
+      </trans-unit>
+      <trans-unit id="workflow.list.version" datatype="html">
+        <source>Version <x id="INTERPOLATION"/></source>
+        <target state="translated">バージョン <x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="workflow.list.publish" datatype="html">
+        <source>Publier</source>
+        <target state="translated">公開</target>
+      </trans-unit>
+      <trans-unit id="workflow.list.archive" datatype="html">
+        <source>Archiver</source>
+        <target state="translated">アーカイブ</target>
+      </trans-unit>
+      <trans-unit id="workflow.list.empty" datatype="html">
+        <source>Aucun workflow pour ce filtre. Cliquez sur Nouveau workflow pour démarrer.</source>
+        <target state="translated">この絞り込みに該当するワークフローはありません。新規ワークフローをクリックして開始してください。</target>
+      </trans-unit>
+      <trans-unit id="workflow.list.published" datatype="html">
+        <source>Workflow publié.</source>
+        <target state="translated">ワークフローを公開しました。</target>
+      </trans-unit>
+      <trans-unit id="workflow.list.publish-error" datatype="html">
+        <source>Publication impossible.</source>
+        <target state="translated">公開できません。</target>
+      </trans-unit>
+      <trans-unit id="workflow.list.archived" datatype="html">
+        <source>Workflow archivé.</source>
+        <target state="translated">ワークフローをアーカイブしました。</target>
+      </trans-unit>
+      <trans-unit id="workflow.list.archive-error" datatype="html">
+        <source>Archivage impossible.</source>
+        <target state="translated">アーカイブできません。</target>
+      </trans-unit>
+      <trans-unit id="workflow.editor.untitled" datatype="html">
+        <source>Nouveau workflow</source>
+        <target state="translated">新規ワークフロー</target>
+      </trans-unit>
+      <trans-unit id="workflow.editor.eyebrow" datatype="html">
+        <source>Designer de workflow · BPMN 2.0</source>
+        <target state="translated">ワークフローデザイナー · BPMN 2.0</target>
+      </trans-unit>
+      <trans-unit id="workflow.editor.name-label" datatype="html">
+        <source>Nom du workflow</source>
+        <target state="translated">ワークフロー名</target>
+      </trans-unit>
+      <trans-unit id="workflow.editor.description-label" datatype="html">
+        <source>Description (optionnel)</source>
+        <target state="translated">説明（任意）</target>
+      </trans-unit>
+      <trans-unit id="workflow.editor.version" datatype="html">
+        <source>v<x id="INTERPOLATION"/></source>
+        <target state="translated">v<x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="workflow.editor.publish" datatype="html">
+        <source>Publier</source>
+        <target state="translated">公開</target>
+      </trans-unit>
+      <trans-unit id="workflow.editor.save" datatype="html">
+        <source>Enregistrer</source>
+        <target state="translated">保存</target>
+      </trans-unit>
+      <trans-unit id="workflow.editor.back-tooltip" datatype="html">
+        <source>Retour à la liste</source>
+        <target state="translated">一覧へ戻る</target>
+      </trans-unit>
+      <trans-unit id="workflow.editor.back-aria" datatype="html">
+        <source>Retour</source>
+        <target state="translated">戻る</target>
+      </trans-unit>
+      <trans-unit id="workflow.editor.readonly" datatype="html">
+        <source>Ce workflow est <x id="INTERPOLATION"/> : il est figé en lecture seule. Dupliquez-le pour le modifier.</source>
+        <target state="translated">このワークフローは <x id="INTERPOLATION"/> です：読み取り専用。編集するには複製してください。</target>
+      </trans-unit>
+      <trans-unit id="workflow.editor.canvas-loading" datatype="html">
+        <source>Initialisation de l'éditeur BPMN…</source>
+        <target state="translated">BPMN エディターを初期化中…</target>
+      </trans-unit>
+      <trans-unit id="workflow.editor.saved" datatype="html">
+        <source>Workflow enregistré.</source>
+        <target state="translated">ワークフローを保存しました。</target>
+      </trans-unit>
+      <trans-unit id="workflow.editor.save-error" datatype="html">
+        <source>Enregistrement impossible.</source>
+        <target state="translated">保存できません。</target>
+      </trans-unit>
+      <trans-unit id="workflow.editor.published" datatype="html">
+        <source>Workflow publié.</source>
+        <target state="translated">ワークフローを公開しました。</target>
+      </trans-unit>
+      <trans-unit id="workflow.editor.publish-error" datatype="html">
+        <source>Publication impossible.</source>
+        <target state="translated">公開できません。</target>
+      </trans-unit>
+      <trans-unit id="workflow.editor.load-error" datatype="html">
+        <source>Workflow introuvable.</source>
+        <target state="translated">ワークフローが見つかりません。</target>
+      </trans-unit>
+      <trans-unit id="workflow.editor.canvas-error" datatype="html">
+        <source>Impossible de charger l'éditeur de diagramme.</source>
+        <target state="translated">ダイアグラムエディターを読み込めません。</target>
       </trans-unit>
     </body>
   </file>
