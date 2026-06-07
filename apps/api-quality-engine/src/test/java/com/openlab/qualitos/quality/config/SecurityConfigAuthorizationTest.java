@@ -12,6 +12,8 @@ import com.openlab.qualitos.quality.industry.IndustryPackController;
 import com.openlab.qualitos.quality.industry.IndustryPackService;
 import com.openlab.qualitos.quality.tenantmodules.application.ModuleActivationService;
 import com.openlab.qualitos.quality.tenantmodules.web.ModuleActivationController;
+import com.openlab.qualitos.quality.workflow.WorkflowController;
+import com.openlab.qualitos.quality.workflow.WorkflowService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -26,9 +28,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.not;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -44,7 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Tag("web")
 @WebMvcTest(controllers = {
         IndustryPackController.class, ApiKeyController.class, AnchoringController.class,
-        ModuleActivationController.class, CapaController.class})
+        ModuleActivationController.class, CapaController.class, WorkflowController.class})
 @Import(SecurityConfig.class)
 class SecurityConfigAuthorizationTest {
 
@@ -57,6 +62,7 @@ class SecurityConfigAuthorizationTest {
     @MockitoBean AnchorVerificationService anchorVerificationService;
     @MockitoBean ModuleActivationService moduleActivationService;
     @MockitoBean CapaService capaService;
+    @MockitoBean WorkflowService workflowService;
 
     @BeforeEach
     void ctx() { TenantContext.setTenantId(UUID.randomUUID().toString()); }
@@ -180,5 +186,52 @@ class SecurityConfigAuthorizationTest {
         mockMvc.perform(post("/api/v1/capa/cases").with(csrf())
                         .contentType("application/json").content("{}"))
                 .andExpect(status().isBadRequest());
+    }
+
+    // --- Designer de workflow BPMN (§5.4) : édition réservée aux rôles qualité ---
+
+    @Test @WithMockUser(roles = "USER")
+    void workflowCreate_plainUser_403() throws Exception {
+        // L'édition de processus n'est PAS une écriture terrain : refusée au user simple.
+        mockMvc.perform(post("/api/v1/workflow/definitions").with(csrf())
+                        .contentType("application/json").content("{}"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void workflowCreate_qualityManager_allowed() throws Exception {
+        // Manager qualité : autorisé (pas de 403 ; corps invalide → 400 prouve le passage auth).
+        mockMvc.perform(post("/api/v1/workflow/definitions").with(csrf())
+                        .contentType("application/json").content("{}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test @WithMockUser(roles = "ADMIN_TENANT")
+    void workflowCreate_adminTenant_allowed() throws Exception {
+        mockMvc.perform(post("/api/v1/workflow/definitions").with(csrf())
+                        .contentType("application/json").content("{}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test @WithMockUser(roles = "USER")
+    void workflowUpdate_plainUser_403() throws Exception {
+        mockMvc.perform(put("/api/v1/workflow/definitions/{id}", UUID.randomUUID()).with(csrf())
+                        .contentType("application/json").content("{}"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test @WithMockUser(roles = "USER")
+    void workflowDelete_plainUser_403() throws Exception {
+        // Couvert par la règle DELETE générique /api/v1/** (manager qualité ou plus).
+        mockMvc.perform(delete("/api/v1/workflow/definitions/{id}", UUID.randomUUID()).with(csrf()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test @WithMockUser
+    void workflowList_authenticated_allowed() throws Exception {
+        // Lecture : ouverte à tout authentifié (pas de 403). Le service mocké renvoie null
+        // (page) ; on vérifie seulement l'absence de 403 d'autorisation.
+        mockMvc.perform(get("/api/v1/workflow/definitions"))
+                .andExpect(status().is(not(org.springframework.http.HttpStatus.FORBIDDEN.value())));
     }
 }

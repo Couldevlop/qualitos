@@ -63,6 +63,15 @@ const routes: Routes = [
         loadChildren: () => import('./features/spc/spc.module').then(m => m.SpcModule)
       },
       {
+        // Designer de workflow BPMN no-code (§5.4). Lazy : la lib bpmn-js (lourde)
+        // n'est chargée que via import() dynamique DANS le composant éditeur, donc
+        // jamais embarquée dans le bundle initial ni dans ce chunk de feature tant
+        // que l'éditeur n'est pas ouvert.
+        path: 'workflow-designer',
+        loadChildren: () =>
+          import('./features/workflow-designer/workflow-designer.module').then(m => m.WorkflowDesignerModule)
+      },
+      {
         path: 'documents',
         loadChildren: () => import('./features/documents/documents.module').then(m => m.DocumentsModule)
       },

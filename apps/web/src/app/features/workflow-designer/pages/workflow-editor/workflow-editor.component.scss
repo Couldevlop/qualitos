@@ -1,0 +1,55 @@
+.editor-page { display: flex; flex-direction: column; height: calc(100vh - 120px); }
+
+.editor-toolbar {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap;
+  .spacer { flex: 1 1 auto; }
+}
+.title-block { display: flex; flex-direction: column; min-width: 280px; }
+.eyebrow {
+  font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--qos-text-muted, var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.55)));
+  margin-bottom: 2px;
+}
+.name-field { width: 320px; }
+.desc-field { width: 100%; max-width: 640px; margin-bottom: 8px; }
+
+.version {
+  font-size: 12px; font-family: 'IBM Plex Mono', monospace;
+  color: var(--qos-text-muted, var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.55)));
+}
+
+.wf-badge {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 12px; font-weight: 600;
+}
+.wf-draft     { background: #fff8e1; color: #ff6f00; }
+.wf-published { background: #e8f5e9; color: #1b5e20; }
+.wf-archived  { background: #eceff1; color: #37474f; }
+
+.state-row { display: flex; align-items: center; gap: 12px; padding: 16px 0; }
+.state-row.error { color: var(--mat-sys-error, #b3261e); }
+
+.readonly-banner {
+  padding: 10px 14px; border-radius: 10px; margin-bottom: 8px;
+  background: #eceff1; color: #37474f; font-size: 13px;
+}
+
+.canvas-shell {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 420px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--qos-border, var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.10)));
+  background:
+    var(--qos-surface-1, var(--mat-sys-surface, #fff))
+    repeating-linear-gradient(
+      0deg, transparent, transparent 23px,
+      rgba(0, 0, 0, 0.035) 23px, rgba(0, 0, 0, 0.035) 24px);
+}
+.bpmn-canvas { position: absolute; inset: 0; }
+.canvas-loading {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  color: var(--qos-text-muted, var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.55)));
+  font-size: 14px; pointer-events: none;
+}

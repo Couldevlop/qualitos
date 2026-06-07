@@ -1,0 +1,71 @@
+<div class="qos-page">
+  <header class="page-header">
+    <div>
+      <h1 i18n="@@workflow.list.title">Designer de workflow</h1>
+      <p i18n="@@workflow.list.subtitle">Concevez vos processus qualité en BPMN 2.0, sans code : glisser-déposer, versioning et publication.</p>
+    </div>
+    <button mat-flat-button color="primary" type="button" (click)="createNew()">
+      <mat-icon>add</mat-icon>
+      <span i18n="@@workflow.list.new">Nouveau workflow</span>
+    </button>
+  </header>
+
+  <mat-card class="filter-card">
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label i18n="@@common.filter-by-status">Filtrer par statut</mat-label>
+      <mat-select [formControl]="statusFilter">
+        <mat-option [value]="''" i18n="@@common.all">Tous</mat-option>
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-card>
+
+  <div class="state-row" *ngIf="loading$ | async">
+    <mat-progress-spinner mode="indeterminate" diameter="36"></mat-progress-spinner>
+    <span i18n="@@common.loading">Chargement…</span>
+  </div>
+
+  <div class="state-row error" *ngIf="error$ | async as err">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ err }}</span>
+  </div>
+
+  <ng-container *ngIf="(loading$ | async) === false">
+    <div class="cards-grid" *ngIf="(workflows$ | async) as workflows">
+      <article class="wf-card" *ngFor="let wf of workflows"
+               (click)="open(wf)" (keydown.enter)="open(wf)"
+               tabindex="0" role="button"
+               [attr.aria-label]="'Ouvrir ' + wf.name">
+        <div class="wf-card-head">
+          <mat-icon class="wf-card-icon">account_tree</mat-icon>
+          <span [class]="statusBadgeClass(wf.status)">{{ wf.status }}</span>
+        </div>
+        <h2 class="wf-card-title">{{ wf.name }}</h2>
+        <p class="wf-card-desc" *ngIf="wf.description">{{ wf.description }}</p>
+        <div class="wf-card-meta">
+          <span i18n="@@workflow.list.version">Version {{ wf.version }}</span>
+          <span class="dot">·</span>
+          <span>{{ wf.updatedAt | date:'short' }}</span>
+        </div>
+        <div class="wf-card-actions">
+          <button mat-stroked-button type="button"
+                  *ngIf="wf.status === 'DRAFT'"
+                  (click)="publish(wf, $event)">
+            <mat-icon>publish</mat-icon>
+            <span i18n="@@workflow.list.publish">Publier</span>
+          </button>
+          <button mat-stroked-button type="button"
+                  *ngIf="wf.status !== 'ARCHIVED'"
+                  (click)="archive(wf, $event)">
+            <mat-icon>archive</mat-icon>
+            <span i18n="@@workflow.list.archive">Archiver</span>
+          </button>
+        </div>
+      </article>
+
+      <p class="empty" *ngIf="workflows.length === 0" i18n="@@workflow.list.empty">
+        Aucun workflow pour ce filtre. Cliquez sur Nouveau workflow pour démarrer.
+      </p>
+    </div>
+  </ng-container>
+</div>

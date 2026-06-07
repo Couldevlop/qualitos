@@ -29,6 +29,7 @@
     "@angular/service-worker": "^18.2.0",
     "angular-gridster2": "^18.0.0",
     "angular-oauth2-oidc": "^17.0.2",
+    "bpmn-js": "^17.11.1",
     "echarts": "^5.5.1",
     "ngx-echarts": "^18.0.0",
     "rxjs": "~7.8.0",
