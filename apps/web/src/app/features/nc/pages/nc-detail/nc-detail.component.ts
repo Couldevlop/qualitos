@@ -3,13 +3,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
-import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
+import { catchError, finalize, shareReplay, switchMap, tap } from 'rxjs/operators';
 
+import { deferredView } from '../../../../core/rx/deferred-view';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
+import { ConnectivityService } from '../../../../core/offline/connectivity.service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { NcService } from '../../nc.service';
-import { NcResponse, NcSeverity, NcStatus } from '../../nc.types';
+import { NcPhoto, NcResponse, NcSeverity, NcStatus } from '../../nc.types';
 import {
   NcResolveDialogComponent,
   NcResolveDialogData
@@ -28,9 +30,24 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 export class NcDetailComponent implements OnInit {
 
   nc$!: Observable<NcResponse | null>;
-  loading$ = new BehaviorSubject<boolean>(false);
-  error$ = new BehaviorSubject<string | null>(null);
+  private readonly loadingState$ = new BehaviorSubject<boolean>(false);
+  readonly loading$ = deferredView(this.loadingState$);
+  private readonly errorState$ = new BehaviorSubject<string | null>(null);
+  readonly error$ = deferredView(this.errorState$);
   acting$ = new BehaviorSubject<boolean>(false);
+
+  // --- photos (upload binaire, online-only) ---------------------------------
+  photos$ = new BehaviorSubject<NcPhoto[]>([]);
+  photosLoading$ = new BehaviorSubject<boolean>(false);
+  uploading$ = new BehaviorSubject<boolean>(false);
+  /** Bascule à true quand le backend renvoie 503 type 'storage-disabled'. */
+  storageDisabled$ = new BehaviorSubject<boolean>(false);
+  /** id de la photo en cours de suppression (désactive sa vignette). */
+  deletingId$ = new BehaviorSubject<string | null>(null);
+  /** État réseau pour désactiver le bouton d'ajout hors-ligne. */
+  online$ = this.connectivity.online$;
+  /** Tooltip du bouton d'ajout quand hors-ligne (interpolation non marquable i18n). */
+  readonly photosOfflineTooltip = $localize`:@@nc.photos.offline-tooltip:Photos disponibles en ligne uniquement`;
 
   private ncId = '';
   private readonly reload$ = new Subject<void>();
@@ -42,7 +59,8 @@ export class NcDetailComponent implements OnInit {
     private readonly svc: NcService,
     private readonly auth: AuthService,
     private readonly snack: MatSnackBar,
-    private readonly dialog: MatDialog
+    private readonly dialog: MatDialog,
+    private readonly connectivity: ConnectivityService
   ) {}
 
   ngOnInit(): void {
@@ -54,18 +72,130 @@ export class NcDetailComponent implements OnInit {
     }
     this.ncId = raw;
     this.nc$ = this.reload$.pipe(
-      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
+      tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
       switchMap(() => this.svc.getNc(this.ncId).pipe(
         catchError(err => {
           // eslint-disable-next-line no-console
           console.warn('[nc-detail] getNc failed', err?.status, err?.error?.title);
-          this.error$.next(safeErrorMessage(err, $localize`:@@nc.detail.not-found:Non-conformité introuvable.`));
+          this.errorState$.next(safeErrorMessage(err, $localize`:@@nc.detail.not-found:Non-conformité introuvable.`));
           return of(null);
         }),
-        finalize(() => this.loading$.next(false))
-      ))
+        finalize(() => this.loadingState$.next(false))
+      )),
+      shareReplay({ bufferSize: 1, refCount: true })
     );
     this.reload$.next();
+    this.loadPhotos();
+  }
+
+  // --- photos -----------------------------------------------------------------
+
+  loadPhotos(): void {
+    queueMicrotask(() => this.photosLoading$.next(true));
+    this.svc.listPhotos(this.ncId)
+      .pipe(finalize(() => this.photosLoading$.next(false)))
+      .subscribe({
+        next: photos => { this.photos$.next(photos); this.storageDisabled$.next(false); },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[nc-detail] listPhotos failed', err?.status, err?.error?.type);
+          if (this.isStorageDisabled(err)) { this.storageDisabled$.next(true); return; }
+          // Échec non bloquant : la fiche reste utilisable, les photos juste absentes.
+        }
+      });
+  }
+
+  /** Déclenche l'<input type="file"> masqué (caméra / galerie). */
+  triggerFilePicker(input: HTMLInputElement): void {
+    if (this.uploading$.value) return;
+    input.click();
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files && input.files[0];
+    // Réinitialise l'input pour autoriser la re-sélection du même fichier.
+    input.value = '';
+    if (!file) return;
+    this.uploadPhoto(file);
+  }
+
+  private uploadPhoto(file: File): void {
+    this.uploading$.next(true);
+    this.svc.uploadPhoto(this.ncId, file)
+      .pipe(finalize(() => this.uploading$.next(false)))
+      .subscribe({
+        next: photo => {
+          this.photos$.next([photo, ...this.photos$.value]);
+          this.storageDisabled$.next(false);
+          this.snack.open(
+            $localize`:@@nc.photos.upload-success:Photo ajoutée.`,
+            $localize`:@@common.ok:OK`, { duration: 2000 });
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[nc-detail] uploadPhoto failed', err?.status, err?.error?.type);
+          if (this.isStorageDisabled(err)) { this.storageDisabled$.next(true); return; }
+          const msg =
+            err?.status === 413 || err?.status === 400
+              ? $localize`:@@nc.photos.upload-rejected:Fichier refusé — image (JPEG, PNG, WebP, HEIC) de 10 Mo maximum.`
+              : err?.status === 409
+              ? $localize`:@@nc.photos.upload-closed:Impossible d'ajouter une photo à une non-conformité clôturée ou annulée.`
+              : safeErrorMessage(err, $localize`:@@nc.photos.upload-error:Échec de l'ajout de la photo.`);
+          this.snack.open(msg, 'OK', { duration: 4000 });
+        }
+      });
+  }
+
+  deletePhoto(photo: NcPhoto): void {
+    if (this.deletingId$.value) return;
+    this.dialog.open(ConfirmDialogComponent, {
+      data: <ConfirmDialogData>{
+        title: $localize`:@@nc.photos.delete-confirm-title:Supprimer cette photo ?`,
+        message: $localize`:@@nc.photos.delete-confirm-message:La photo sera définitivement supprimée du stockage. Cette action est irréversible.`,
+        confirmLabel: $localize`:@@common.delete:Supprimer`,
+        destructive: true
+      },
+      autoFocus: false,
+      restoreFocus: true
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.deletingId$.next(photo.id);
+      this.svc.deletePhoto(this.ncId, photo.id)
+        .pipe(finalize(() => this.deletingId$.next(null)))
+        .subscribe({
+          next: () => {
+            this.photos$.next(this.photos$.value.filter(p => p.id !== photo.id));
+            this.snack.open(
+              $localize`:@@nc.photos.delete-success:Photo supprimée.`,
+              $localize`:@@common.ok:OK`, { duration: 2000 });
+          },
+          error: err => {
+            // eslint-disable-next-line no-console
+            console.warn('[nc-detail] deletePhoto failed', err?.status, err?.error?.type);
+            this.snack.open(
+              safeErrorMessage(err, $localize`:@@nc.photos.delete-error:Échec de la suppression de la photo.`),
+              'OK', { duration: 4000 });
+          }
+        });
+    });
+  }
+
+  /**
+   * 503 + ProblemDetail dont le type contient 'storage-disabled' → message UX
+   * dédié, pas une erreur brute. Le backend émet le type en URI complète
+   * (https://qualitos.io/errors/storage-disabled) — détection par inclusion.
+   */
+  private isStorageDisabled(err: unknown): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const e = err as any;
+    const type = e?.error?.type;
+    return e?.status === 503 && typeof type === 'string' && type.includes('storage-disabled');
+  }
+
+  /** Le bouton d'ajout est masqué dès que la NC est en état terminal. */
+  canAddPhoto(status: NcStatus): boolean {
+    return !this.isTerminal(status);
   }
 
   goBack(): void {

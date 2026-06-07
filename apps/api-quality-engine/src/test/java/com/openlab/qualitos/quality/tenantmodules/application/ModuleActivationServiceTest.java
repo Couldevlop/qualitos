@@ -34,6 +34,7 @@ class ModuleActivationServiceTest {
     @Mock ModuleActivationRepository repo;
     @Mock TenantProvider tenantProvider;
     @Mock TenantTierProvider tierProvider;
+    @Mock ActorProvider actorProvider;
     @Mock ModuleActivationEventPublisher events;
     ModuleActivationService service;
 
@@ -46,8 +47,11 @@ class ModuleActivationServiceTest {
 
     @BeforeEach
     void setup() {
-        service = new ModuleActivationService(repo, tenantProvider, tierProvider, events, CLOCK);
+        service = new ModuleActivationService(
+                repo, tenantProvider, tierProvider, actorProvider, events, CLOCK);
         when(tenantProvider.requireTenantId()).thenReturn(TENANT);
+        // H2 : l'acteur provient du JWT (ActorProvider), plus du corps de requête.
+        when(actorProvider.requireActorId()).thenReturn(ACTOR);
     }
 
     @Test
@@ -67,7 +71,7 @@ class ModuleActivationServiceTest {
             return a;
         });
         ModuleActivationDto.ActivationView v = service.startTrial(
-                new ModuleActivationDto.StartTrialRequest("pdca", FUTURE, ACTOR));
+                new ModuleActivationDto.StartTrialRequest("pdca", FUTURE));
         assertThat(v.status()).isEqualTo(ActivationStatus.TRIAL);
         verify(events).publish(any(), eq(ModuleActivationEventPublisher.Action.TRIAL_STARTED));
     }
@@ -75,7 +79,7 @@ class ModuleActivationServiceTest {
     @Test
     void startTrial_unknownModule_rejected() {
         assertThatThrownBy(() -> service.startTrial(
-                new ModuleActivationDto.StartTrialRequest("not-a-module", FUTURE, ACTOR)))
+                new ModuleActivationDto.StartTrialRequest("not-a-module", FUTURE)))
                 .isInstanceOf(ModuleActivationStateException.class);
     }
 
@@ -85,7 +89,7 @@ class ModuleActivationServiceTest {
         when(tierProvider.currentTier(TENANT)).thenReturn(BillingTier.FREE);
         when(repo.findOpenByTenantIdAndCode(TENANT, "blockchain")).thenReturn(Optional.empty());
         assertThatThrownBy(() -> service.activate(
-                new ModuleActivationDto.ActivateRequest("blockchain", FUTURE, ACTOR)))
+                new ModuleActivationDto.ActivateRequest("blockchain", FUTURE)))
                 .isInstanceOf(ModuleActivationStateException.class)
                 .hasMessageContaining("tier");
     }
@@ -96,7 +100,7 @@ class ModuleActivationServiceTest {
         when(repo.findOpenByTenantIdAndCode(TENANT, "kpi"))
                 .thenReturn(Optional.of(mockActive("kpi")));
         assertThatThrownBy(() -> service.activate(
-                new ModuleActivationDto.ActivateRequest("kpi", FUTURE, ACTOR)))
+                new ModuleActivationDto.ActivateRequest("kpi", FUTURE)))
                 .isInstanceOf(ModuleActivationStateException.class)
                 .hasMessageContaining("already");
     }
@@ -108,7 +112,7 @@ class ModuleActivationServiceTest {
         when(repo.findOpenByTenantIdAndCode(TENANT, "risk")).thenReturn(Optional.empty());
         when(repo.findOpenByTenantIdAndCode(TENANT, "capa")).thenReturn(Optional.empty());
         assertThatThrownBy(() -> service.activate(
-                new ModuleActivationDto.ActivateRequest("risk", FUTURE, ACTOR)))
+                new ModuleActivationDto.ActivateRequest("risk", FUTURE)))
                 .isInstanceOf(ModuleActivationStateException.class)
                 .hasMessageContaining("dependency");
     }
@@ -123,7 +127,7 @@ class ModuleActivationServiceTest {
             ModuleActivation a = inv.getArgument(0); a.assignId(ID); return a;
         });
         ModuleActivationDto.ActivationView v = service.activate(
-                new ModuleActivationDto.ActivateRequest("risk", FUTURE, ACTOR));
+                new ModuleActivationDto.ActivateRequest("risk", FUTURE));
         assertThat(v.status()).isEqualTo(ActivationStatus.ACTIVE);
     }
 
@@ -132,7 +136,7 @@ class ModuleActivationServiceTest {
         ModuleActivation a = mockActive("pdca"); a.assignId(ID);
         when(repo.findById(ID)).thenReturn(Optional.of(a));
         assertThatThrownBy(() -> service.disable(ID,
-                new ModuleActivationDto.DisableRequest(ACTOR)))
+                new ModuleActivationDto.DisableRequest()))
                 .isInstanceOf(ModuleActivationStateException.class)
                 .hasMessageContaining("core");
     }
@@ -149,7 +153,7 @@ class ModuleActivationServiceTest {
         when(repo.findEnabledByTenantId(TENANT))
                 .thenReturn(List.of(mockActive("supplier"))); // supplier depends on audit+capa, mais pas risk → OK
         when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
-        service.disable(risk.getId(), new ModuleActivationDto.DisableRequest(ACTOR));
+        service.disable(risk.getId(), new ModuleActivationDto.DisableRequest());
         assertThat(risk.getStatus()).isEqualTo(ActivationStatus.DISABLED);
     }
 
@@ -166,7 +170,7 @@ class ModuleActivationServiceTest {
         when(repo.findById(ID)).thenReturn(Optional.of(a));
         when(repo.findEnabledByTenantId(TENANT)).thenReturn(List.of()); // personne ne dépend de training
         when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
-        service.disable(ID, new ModuleActivationDto.DisableRequest(ACTOR));
+        service.disable(ID, new ModuleActivationDto.DisableRequest());
         assertThat(a.getStatus()).isEqualTo(ActivationStatus.DISABLED);
     }
 
@@ -220,7 +224,7 @@ class ModuleActivationServiceTest {
         when(repo.findById(ID)).thenReturn(Optional.of(trial));
         when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
         service.convertTrial(ID,
-                new ModuleActivationDto.ConvertTrialRequest(FUTURE.plusSeconds(86400), ACTOR));
+                new ModuleActivationDto.ConvertTrialRequest(FUTURE.plusSeconds(86400)));
         verify(events).publish(any(), eq(ModuleActivationEventPublisher.Action.ACTIVATED));
     }
 
@@ -230,8 +234,8 @@ class ModuleActivationServiceTest {
         when(repo.findById(ID)).thenReturn(Optional.of(a));
         when(repo.findOpenByTenantIdAndCode(any(), any())).thenReturn(Optional.empty());
         when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
-        service.suspend(ID, new ModuleActivationDto.SuspendRequest(ACTOR));
-        service.resume(ID, new ModuleActivationDto.ResumeRequest(ACTOR));
+        service.suspend(ID, new ModuleActivationDto.SuspendRequest());
+        service.resume(ID, new ModuleActivationDto.ResumeRequest());
         verify(events).publish(any(), eq(ModuleActivationEventPublisher.Action.SUSPENDED));
         verify(events).publish(any(), eq(ModuleActivationEventPublisher.Action.RESUMED));
     }

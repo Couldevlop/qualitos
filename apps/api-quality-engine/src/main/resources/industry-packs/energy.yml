@@ -1,0 +1,209 @@
+pack_id: energy
+version: 1.0.0
+name: Énergie & Utilities
+sectors: [energy, utilities, power, water, oil-gas, renewables]
+norms:
+  - iso-50001
+  - iso-55001
+  - nis2
+  - cis-controls
+  - iso-9001
+  - iso-45001
+kpis:
+  - kpi_id: energy_enpi_performance
+    name: Indicateur de Performance Énergétique (EnPI)
+    category: energy-performance
+    formula: "energy_consumption_kwh / production_output_unit"
+    unit: "kWh/unit"
+    target: "trend down"
+    threshold_warning: "+5% vs baseline"
+    threshold_critical: "+10% vs baseline"
+    data_source: energy_meters
+    refresh_frequency: daily
+    owner: energy_manager
+    applicable_industries: [energy, utilities]
+    related_kpis: [energy_baseline_deviation]
+    explainability: "EnPI ISO 50001 §6.4 — consommation rapportée à l'activité vs ligne de base (EnB)."
+  - kpi_id: energy_baseline_deviation
+    name: Écart à la ligne de base énergétique (EnB)
+    category: energy-performance
+    formula: "(actual_consumption - baseline_consumption) / baseline_consumption * 100"
+    unit: "%"
+    target: "<= 0"
+    threshold_warning: "0 - 5"
+    threshold_critical: "> 5"
+    data_source: energy_meters
+    refresh_frequency: monthly
+    owner: energy_manager
+    applicable_industries: [energy, utilities]
+    related_kpis: [energy_enpi_performance]
+    explainability: "Mesure la dérive de consommation par rapport à la baseline ajustée du climat/activité."
+  - kpi_id: energy_asset_availability
+    name: Disponibilité des actifs critiques
+    category: asset-management
+    formula: "SUM(uptime_hours) / SUM(scheduled_hours) * 100"
+    unit: "%"
+    target: ">= 99.0"
+    threshold_warning: "97.0 - 99.0"
+    threshold_critical: "< 97.0"
+    data_source: scada
+    refresh_frequency: realtime
+    owner: asset_manager
+    applicable_industries: [energy, utilities]
+    related_kpis: [energy_mtbf]
+    explainability: "ISO 55001 — taux de disponibilité des actifs critiques (production/distribution)."
+  - kpi_id: energy_mtbf
+    name: MTBF des équipements critiques
+    category: reliability
+    formula: "SUM(operating_hours) / COUNT(failures)"
+    unit: "hours"
+    target: ">= 8760"
+    threshold_warning: "4380 - 8760"
+    threshold_critical: "< 4380"
+    data_source: cmms
+    refresh_frequency: monthly
+    owner: maintenance_manager
+    applicable_industries: [energy, utilities]
+    related_kpis: [energy_asset_availability]
+    explainability: "Mean Time Between Failures — temps moyen entre deux défaillances d'un actif critique."
+  - kpi_id: energy_critical_incidents
+    name: Incidents critiques sur infrastructure
+    category: hse-security
+    formula: "COUNT(incidents) WHERE severity='critical' AND date >= NOW() - INTERVAL 30 DAY"
+    unit: "count"
+    target: "0"
+    threshold_warning: "1 - 2"
+    threshold_critical: "> 2"
+    data_source: incidents
+    refresh_frequency: per-event
+    owner: operations_director
+    applicable_industries: [energy, utilities]
+    related_kpis: []
+    explainability: "Incidents critiques (coupure, fuite, cyber) — NIS 2 impose notification sous 24h pour les OSE."
+  - kpi_id: energy_nis2_notification_sla
+    name: NIS 2 — Notification d'incident sous 24h
+    category: cyber-compliance
+    formula: "COUNT(incidents_notified_within_24h) / COUNT(significant_incidents) * 100"
+    unit: "%"
+    target: "100"
+    threshold_warning: "below 100"
+    threshold_critical: "any miss"
+    data_source: cyber_incidents
+    refresh_frequency: per-event
+    owner: ciso
+    applicable_industries: [energy, utilities]
+    related_kpis: []
+    explainability: "NIS 2 Art. 23 — alerte précoce sous 24h pour tout incident significatif (entité essentielle)."
+glossary:
+  - {term: EnPI, definition: "Energy Performance Indicator — indicateur de performance énergétique"}
+  - {term: EnB, definition: "Energy Baseline — ligne de base énergétique de référence (ISO 50001)"}
+  - {term: SEU, definition: "Significant Energy Use — usage énergétique significatif"}
+  - {term: SCADA, definition: "Supervisory Control and Data Acquisition"}
+  - {term: MTBF, definition: "Mean Time Between Failures"}
+  - {term: OSE, definition: "Opérateur de Services Essentiels (NIS / NIS 2)"}
+  - {term: CMMS, definition: "Computerized Maintenance Management System (GMAO)"}
+  - {term: RUL, definition: "Remaining Useful Life — durée de vie résiduelle d'un actif"}
+  - {term: NERC CIP, definition: "Critical Infrastructure Protection (réseaux électriques)"}
+connectors_required:
+  - scada
+  - iot
+  - mqtt
+  - opc-ua
+  - cmms-maximo
+ishikawa_templates:
+  - problem_archetype: "Dérive de la performance énergétique (EnPI dégradé)"
+    branches:
+      man: ["Conduite non optimisée", "Sensibilisation énergie faible"]
+      machine: ["Équipement vétuste", "Calorifugeage dégradé"]
+      material: []
+      method: ["Plan de comptage incomplet", "Pas de revue énergétique"]
+      measurement: ["Compteurs non étalonnés"]
+      environment: ["Conditions climatiques extrêmes"]
+  - problem_archetype: "Indisponibilité d'un actif critique de production"
+    branches:
+      man: ["Maintenance corrective tardive"]
+      machine: ["Roulement défaillant", "Transformateur en surchauffe"]
+      material: ["Pièce de rechange manquante"]
+      method: ["Maintenance préventive sautée"]
+      measurement: ["Capteur de vibration en panne"]
+      environment: ["Foudre / surtension réseau"]
+  - problem_archetype: "Incident de cybersécurité sur système SCADA (NIS 2)"
+    branches:
+      man: ["Phishing opérateur"]
+      machine: ["Automate non patché"]
+      material: []
+      method: ["Segmentation IT/OT insuffisante"]
+      measurement: ["Pas de monitoring OT"]
+      environment: ["Acteur étatique"]
+  - problem_archetype: "Coupure de fourniture non planifiée"
+    branches:
+      man: ["Erreur de manœuvre"]
+      machine: ["Défaut sur ligne / poste"]
+      material: []
+      method: ["Plan de délestage inadapté"]
+      measurement: ["Télémesure défaillante"]
+      environment: ["Tempête / chute d'arbre"]
+  - problem_archetype: "Dépassement de seuil d'émissions environnementales"
+    branches:
+      man: []
+      machine: ["Système de traitement saturé"]
+      material: ["Combustible hors spécification"]
+      method: ["Conduite de combustion non optimale"]
+      measurement: ["Analyseur de fumées en dérive"]
+      environment: ["Inversion thermique"]
+  - problem_archetype: "Fuite sur réseau de distribution (eau / gaz)"
+    branches:
+      man: []
+      machine: ["Vanne défectueuse"]
+      material: ["Canalisation corrodée"]
+      method: ["Plan d'inspection insuffisant"]
+      measurement: ["Détection de fuite tardive"]
+      environment: ["Mouvement de terrain"]
+  - problem_archetype: "Non-conformité à l'audit ISO 50001"
+    branches:
+      man: ["Équipe énergie non dédiée"]
+      machine: []
+      material: []
+      method: ["Objectifs énergétiques non SMART"]
+      measurement: ["EnPI non revus"]
+      environment: []
+  - problem_archetype: "Défaillance prématurée d'un actif (RUL surestimée)"
+    branches:
+      man: []
+      machine: ["Conditions d'exploitation sévères"]
+      material: ["Lubrifiant inadapté"]
+      method: ["Stratégie de maintenance inadaptée"]
+      measurement: ["Modèle prédictif RUL non recalibré"]
+      environment: []
+poka_yoke_library:
+  - id: poka-yoke-energy-001
+    name: Verrouillage/condamnation (LOTO) avant intervention
+    description: "Procédure de consignation imposant un cadenassage avant toute intervention électrique"
+    sector_fit: [energy, utilities, manufacturing]
+  - id: poka-yoke-energy-002
+    name: Seuil d'alarme automatique sur dérive EnPI
+    description: "Alerte temps réel si la consommation dépasse la baseline ajustée de plus de X%"
+    sector_fit: [energy, utilities]
+  - id: poka-yoke-energy-003
+    name: Segmentation IT/OT avec diode de données
+    description: "Diode unidirectionnelle empêchant tout flux entrant vers le réseau SCADA"
+    sector_fit: [energy, utilities]
+  - id: poka-yoke-energy-004
+    name: Arrêt automatique sur dépassement de seuil critique capteur
+    description: "L'automate déclenche un arrêt de sécurité si un paramètre critique sort des limites"
+    sector_fit: [energy, utilities, manufacturing]
+training_paths:
+  - role: energy_manager
+    modules: [iso-50001-intro, revue-energetique, enpi-design]
+  - role: asset_manager
+    modules: [iso-55001-intro, maintenance-predictive, criticite-actifs]
+  - role: ot_security_engineer
+    modules: [nis2-fundamentals, ot-security, cis-controls]
+documents_templates:
+  - /standards/templates/iso-50001/politique-energetique.md
+  - /standards/templates/iso-55001/plan-gestion-actifs.md
+  - /standards/templates/nis2/plan-gestion-incidents.md
+processes_templates:
+  - /industry-packs/processes/energy/revue-energetique.bpmn
+  - /industry-packs/processes/energy/maintenance-predictive.bpmn
+  - /industry-packs/processes/energy/nis2-incident.bpmn

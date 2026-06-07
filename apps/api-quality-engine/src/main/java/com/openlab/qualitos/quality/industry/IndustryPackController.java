@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/industry-packs")
@@ -37,10 +36,10 @@ public class IndustryPackController {
     }
 
     @DeleteMapping("/{code}/activate")
-    public IndustryPackDto.ActivationResponse deactivate(
-            @PathVariable String code,
-            @RequestParam UUID deactivatedBy) {
-        return service.deactivate(code, deactivatedBy);
+    public IndustryPackDto.ActivationResponse deactivate(@PathVariable String code) {
+        // H2 (OWASP A01) : l'acteur de la désactivation est dérivé du JWT côté service,
+        // plus du paramètre de requête falsifiable 'deactivatedBy' (retiré).
+        return service.deactivate(code);
     }
 
     @GetMapping("/my")

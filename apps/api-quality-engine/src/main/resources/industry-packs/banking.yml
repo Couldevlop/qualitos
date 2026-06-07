@@ -1,0 +1,229 @@
+pack_id: banking
+version: 1.0.0
+name: Banking & Finance (Regulated)
+sectors: [banking, finance, insurance, asset_management, fintech]
+norms:
+  - dora
+  - bale-iii
+  - solvabilite-ii
+  - mifid-ii
+  - lcb-ft
+  - iso-27001
+  - iso-22301
+  - iso-9001
+kpis:
+  - kpi_id: bank_dora_incident_notification_sla
+    name: DORA Incident Notification SLA (≤4h)
+    category: compliance-regulatory
+    formula: "COUNT(major_incidents_notified_within_4h) / COUNT(major_incidents_classified) * 100"
+    unit: "%"
+    target: "100"
+    threshold_warning: "below 100"
+    threshold_critical: "any miss"
+    data_source: incidents
+    refresh_frequency: per-event
+    owner: compliance_officer
+    applicable_industries: [banking, finance]
+    related_kpis: []
+    explainability: "DORA Art. 19 — délai 4h après classification d'un incident TIC majeur."
+  - kpi_id: bank_operational_losses_basel
+    name: Operational Losses (Basel L1-L7)
+    category: risk-operational
+    formula: "SUM(loss_amount_eur) WHERE event_date >= start_of_year"
+    unit: "EUR"
+    target: "< budget"
+    threshold_warning: "80% budget"
+    threshold_critical: "100% budget"
+    data_source: op_loss_events
+    refresh_frequency: monthly
+    owner: orm_manager
+    applicable_industries: [banking, insurance]
+    related_kpis: [bank_rcsa_kri_breaches]
+    explainability: "Pertes ORM Bâle III (catégories d'événements L1 à L7)."
+  - kpi_id: bank_rcsa_kri_breaches
+    name: RCSA KRI Breaches / month
+    category: risk-operational
+    formula: "COUNT(kri_breaches) WHERE date >= NOW() - INTERVAL 30 DAY"
+    unit: "count"
+    target: "< 5"
+    threshold_warning: "5 - 15"
+    threshold_critical: "> 15"
+    data_source: rcsa_events
+    refresh_frequency: weekly
+    owner: orm_manager
+    applicable_industries: [banking]
+    related_kpis: [bank_operational_losses_basel]
+    explainability: "Dépassements des Key Risk Indicators issus de la cartographie RCSA."
+  - kpi_id: bank_aml_false_positive_rate
+    name: AML/LCB-FT False Positive Rate
+    category: compliance-aml
+    formula: "COUNT(alerts_closed_false) / COUNT(alerts_total) * 100"
+    unit: "%"
+    target: "< 90"
+    threshold_warning: "90 - 95"
+    threshold_critical: "> 95"
+    data_source: aml_alerts
+    refresh_frequency: weekly
+    owner: aml_officer
+    applicable_industries: [banking, fintech]
+    related_kpis: []
+    explainability: "Trop de faux positifs = scénarios LCB-FT non tunés ; > 95 % impose une revue."
+  - kpi_id: bank_tlpt_coverage
+    name: TLPT Programme Coverage
+    category: cyber-resilience
+    formula: "COUNT(critical_systems_tlpt_within_3y) / COUNT(critical_systems) * 100"
+    unit: "%"
+    target: "100"
+    threshold_warning: "below 100"
+    threshold_critical: "any miss in 3 years"
+    data_source: tlpt_records
+    refresh_frequency: annual
+    owner: ciso
+    applicable_industries: [banking, finance]
+    related_kpis: []
+    explainability: "DORA Art. 26 — tests d'intrusion fondés sur la menace obligatoires ≤ 3 ans."
+  - kpi_id: bank_third_party_contracts_dora_ready
+    name: Third Party Contracts DORA-Ready
+    category: vendor-management
+    formula: "COUNT(contracts_dora_compliant) / COUNT(contracts_active) * 100"
+    unit: "%"
+    target: "100"
+    threshold_warning: "below 100"
+    threshold_critical: "below 95"
+    data_source: vendor_contracts
+    refresh_frequency: monthly
+    owner: procurement_lead
+    applicable_industries: [banking, finance]
+    related_kpis: []
+    explainability: "DORA Art. 30 — clauses contractuelles obligatoires pour les tiers TIC."
+  - kpi_id: bank_complaint_response_sla
+    name: Délai de réponse réclamation client (réglementaire)
+    category: complaints
+    formula: "COUNT(complaints_responded_within_sla) / COUNT(complaints_received) * 100"
+    unit: "%"
+    target: ">= 95"
+    threshold_warning: "85 - 95"
+    threshold_critical: "< 85"
+    data_source: complaints
+    refresh_frequency: monthly
+    owner: customer_relations_manager
+    applicable_industries: [banking, insurance, fintech]
+    related_kpis: []
+    explainability: "Traitement des réclamations sous délai ACPR/AMF (réponse 2 mois max, accusé 10j)."
+glossary:
+  - {term: DORA, definition: "Digital Operational Resilience Act (UE 2022/2554)"}
+  - {term: ORM, definition: "Operational Risk Management (Bâle)"}
+  - {term: RCSA, definition: "Risk and Control Self-Assessment"}
+  - {term: KRI, definition: "Key Risk Indicator"}
+  - {term: LCB-FT, definition: "Lutte Contre le Blanchiment et le Financement du Terrorisme"}
+  - {term: MiFID II, definition: "Markets in Financial Instruments Directive II"}
+  - {term: TLPT, definition: "Threat-Led Penetration Testing (DORA)"}
+  - {term: ACPR, definition: "Autorité de Contrôle Prudentiel et de Résolution (France)"}
+  - {term: ESMA, definition: "European Securities and Markets Authority"}
+  - {term: EIOPA, definition: "European Insurance and Occupational Pensions Authority"}
+  - {term: SCR, definition: "Solvency Capital Requirement (Solvabilité II)"}
+  - {term: SOC, definition: "Security Operations Center"}
+connectors_required:
+  - sap-erp
+  - servicenow-itsm
+  - swift-mq
+  - opc-ua
+ishikawa_templates:
+  - problem_archetype: "Incident DORA majeur non notifié dans les 4h"
+    branches:
+      man: ["Compliance officer absent"]
+      machine: ["Outil notification down"]
+      material: []
+      method: ["Procédure escalade ambiguë"]
+      measurement: ["Classification tardive"]
+      environment: ["Incident hors heures ouvrées"]
+  - problem_archetype: "Faux positifs AML/LCB-FT > 95%"
+    branches:
+      man: ["Analystes saturés"]
+      machine: ["Règles de scénario trop larges"]
+      material: ["Données clients incomplètes"]
+      method: ["Pas de tuning ML des scénarios"]
+      measurement: ["Pas de KPI de précision"]
+      environment: ["Changement réglementaire récent"]
+  - problem_archetype: "Échec test continuité TIC (RTO non atteint)"
+    branches:
+      man: ["Équipe runbook non formée"]
+      machine: ["Bande passante backup insuffisante"]
+      material: []
+      method: ["Procédure failover obsolète"]
+      measurement: ["Pas de test mensuel"]
+      environment: []
+  - problem_archetype: "Contrat fournisseur TIC non DORA-ready"
+    branches:
+      man: ["Achats non sensibilisés DORA"]
+      machine: []
+      material: []
+      method: ["Procédure achat non révisée"]
+      measurement: ["Pas d'inventaire des contrats"]
+      environment: []
+  - problem_archetype: "Cyberattaque ransomware sur datacenter primaire"
+    branches:
+      man: ["Phishing humain"]
+      machine: ["Patch management déficient"]
+      material: []
+      method: ["Segmentation réseau insuffisante"]
+      measurement: ["EDR mal monitoré"]
+      environment: ["Acteur étatique sophistiqué"]
+  - problem_archetype: "Erreur de réconciliation comptable significative"
+    branches:
+      man: []
+      machine: ["Interface batch en échec"]
+      material: ["Données fournisseur erronées"]
+      method: ["Contrôle 4-yeux non systématique"]
+      measurement: []
+      environment: []
+  - problem_archetype: "Plainte client traitée hors délai réglementaire"
+    branches:
+      man: ["Service client saturé"]
+      machine: []
+      material: []
+      method: ["Workflow de priorisation défaillant"]
+      measurement: ["KPI SLA non suivi"]
+      environment: []
+  - problem_archetype: "Tests TLPT révèlent une vulnérabilité critique"
+    branches:
+      man: []
+      machine: []
+      material: []
+      method: ["SDLC sécurité immature"]
+      measurement: ["SAST/DAST non systématiques"]
+      environment: []
+poka_yoke_library:
+  - id: poka-yoke-bank-001
+    name: 4-eyes obligatoire transactions > seuil
+    description: "Workflow de validation obligatoire à 2 approbateurs pour les transactions matérielles"
+    sector_fit: [banking, finance, insurance]
+  - id: poka-yoke-bank-002
+    name: Geo-velocity check temps réel
+    description: "Refus d'authentification si la dernière session est > 500 km en < 1h"
+    sector_fit: [banking, fintech]
+  - id: poka-yoke-bank-003
+    name: 2FA obligatoire opérations sensibles
+    description: "TOTP / WebAuthn sur transferts, créations de compte et changements de paramètres"
+    sector_fit: [banking, fintech, insurance]
+  - id: poka-yoke-bank-004
+    name: Notification DORA automatisée
+    description: "Le système ouvre une case régulateur (ESA) dès la classification d'un incident majeur"
+    sector_fit: [banking, finance]
+training_paths:
+  - role: compliance_officer
+    modules: [dora-fundamentals, lcb-ft-6e-dir, mifid-ii, breach-notification]
+  - role: orm_manager
+    modules: [basel-iii-iv, rcsa-execution, kri-design]
+  - role: it_security_engineer
+    modules: [iso-27001-controls, dora-tlpt, secure-sdlc]
+  - role: customer_service_agent
+    modules: [complaint-handling, kyc-renewals]
+documents_templates:
+  - /standards/templates/dora/cadre-gestion-risque-tic.md
+  - /standards/templates/dora/registre-tiers-tic.md
+  - /standards/templates/dora/procedure-incidents-tic.md
+processes_templates:
+  - /industry-packs/processes/banking/dora-incident-notification.bpmn
+  - /industry-packs/processes/banking/rcsa-quarterly.bpmn
+  - /industry-packs/processes/banking/aml-alert-handling.bpmn

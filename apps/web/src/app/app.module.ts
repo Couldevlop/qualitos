@@ -1,5 +1,6 @@
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { MatIconRegistry } from '@angular/material/icon';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -41,4 +42,12 @@ import { MainShellModule } from './layout/main-shell/main-shell.module';
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule {
+  constructor(iconRegistry: MatIconRegistry) {
+    // index.html ne charge QUE Material Symbols Outlined ; sans cette config,
+    // <mat-icon>add</mat-icon> cherche la police 'material-icons' absente et
+    // rend la ligature en texte brut (Inter) tronqué → libellés de boutons
+    // décalés. Aligne MatIcon sur la police effectivement chargée.
+    iconRegistry.setDefaultFontSetClass('material-symbols-outlined');
+  }
+}

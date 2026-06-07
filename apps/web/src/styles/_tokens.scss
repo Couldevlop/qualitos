@@ -1,5 +1,8 @@
 /* QualitOS — Design tokens.
- * Sobre / corporate. Palette neutre profonde + accent bleu.
+ * Premium « clair & aéré » — direction Linear / Vercel / Notion (light) / Stripe.
+ * Principes : beaucoup de blanc, bordures 1px ultra-subtiles, ombres quasi nulles,
+ * rayons 10-12px, accent bleu profond et sobre. Le contraste vient des filets
+ * fins + ombres minimales, jamais de fonds gris lourds.
  * Tous les tokens passent par des CSS custom properties pour permettre
  * le switch light/dark instantané via :root.qos-theme-{light,dark}.
  */
@@ -7,28 +10,33 @@
 /* ============================================================
  * 1. Palette de base (raw colors, ne pas utiliser directement
  *    dans les composants — passer par les tokens sémantiques).
+ *    Neutres « slate froid » affinés : gamme claire plus douce,
+ *    bordures très claires, ardoises profondes pour le dark.
  * ============================================================ */
 $qos-neutral-0:    #ffffff;
-$qos-neutral-50:   #f8fafc;
-$qos-neutral-100:  #f1f5f9;
-$qos-neutral-200:  #e2e8f0;
-$qos-neutral-300:  #cbd5e1;
-$qos-neutral-400:  #94a3b8;
-$qos-neutral-500:  #64748b;
-$qos-neutral-600:  #475569;
-$qos-neutral-700:  #334155;
-$qos-neutral-800:  #1e293b;
-$qos-neutral-900:  #0f172a;
-$qos-neutral-950:  #020617;
+$qos-neutral-25:   #fcfcfd;  /* app background quasi-blanc */
+$qos-neutral-50:   #f9fafb;
+$qos-neutral-100:  #f3f4f6;
+$qos-neutral-150:  #eceef2;  /* bordure ultra-subtile */
+$qos-neutral-200:  #e3e6eb;
+$qos-neutral-300:  #d2d6dd;
+$qos-neutral-400:  #9aa3b2;
+$qos-neutral-500:  #6b7382;
+$qos-neutral-600:  #4b5563;
+$qos-neutral-700:  #374151;
+$qos-neutral-800:  #1f2733;
+$qos-neutral-900:  #111827;
+$qos-neutral-950:  #0a0f1a;
 
-$qos-accent-50:    #eff6ff;
-$qos-accent-100:   #dbeafe;
-$qos-accent-200:   #bfdbfe;
-$qos-accent-400:   #60a5fa;
-$qos-accent-500:   #3b82f6;
-$qos-accent-600:   #2563eb;
-$qos-accent-700:   #1d4ed8;
-$qos-accent-900:   #1e3a8a;
+/* Accent — bleu profond et sobre (moins criard que le bleu vif). */
+$qos-accent-50:    #eef4ff;
+$qos-accent-100:   #dbe7fe;
+$qos-accent-200:   #c2d6fd;
+$qos-accent-400:   #5a8df0;
+$qos-accent-500:   #3b76e0;
+$qos-accent-600:   #2563d6;  /* action primaire */
+$qos-accent-700:   #1d50b8;
+$qos-accent-900:   #173a86;
 
 $qos-success-50:   #ecfdf5;
 $qos-success-500:  #10b981;
@@ -50,28 +58,30 @@ $qos-danger-700:   #b91c1c;
  * ============================================================ */
 :root,
 :root.qos-theme-light {
-  /* Surfaces */
-  --qos-bg-app:        #{$qos-neutral-50};
+  /* Surfaces — app quasi-blanc, surfaces élevées blanc pur. */
+  --qos-bg-app:        #{$qos-neutral-25};
   --qos-bg-elevated:   #{$qos-neutral-0};
-  --qos-bg-sunken:     #{$qos-neutral-100};
-  --qos-bg-hover:      rgba(15, 23, 42, 0.04);
-  --qos-bg-pressed:    rgba(15, 23, 42, 0.08);
-  --qos-bg-overlay:    rgba(15, 23, 42, 0.45);
+  --qos-bg-sunken:     #{$qos-neutral-50};
+  --qos-bg-subtle:     rgba(17, 24, 39, 0.025);  /* survol ligne table */
+  --qos-bg-hover:      rgba(17, 24, 39, 0.04);
+  --qos-bg-pressed:    rgba(17, 24, 39, 0.07);
+  --qos-bg-overlay:    rgba(17, 24, 39, 0.40);
 
-  /* Sidebar (légèrement contrastée vs app) */
-  --qos-bg-sidebar:    #{$qos-neutral-900};
-  --qos-fg-sidebar:    rgba(248, 250, 252, 0.78);
-  --qos-fg-sidebar-active: #{$qos-neutral-0};
-  --qos-bg-sidebar-hover:  rgba(255, 255, 255, 0.06);
-  --qos-bg-sidebar-active: rgba(59, 130, 246, 0.16);
+  /* Sidebar — claire & épurée (style Linear/Vercel light). */
+  --qos-bg-sidebar:        #{$qos-neutral-50};
+  --qos-fg-sidebar:        #{$qos-neutral-600};
+  --qos-fg-sidebar-active:  #{$qos-accent-700};
+  --qos-bg-sidebar-hover:   rgba(17, 24, 39, 0.045);
+  --qos-bg-sidebar-active:  rgba(37, 99, 214, 0.09);
+  --qos-border-sidebar:     #{$qos-neutral-150};
 
-  /* Borders */
-  --qos-border-subtle:  #{$qos-neutral-200};
-  --qos-border-default: #{$qos-neutral-300};
-  --qos-border-strong:  #{$qos-neutral-400};
+  /* Borders — filets 1px ultra-subtils (≈ slate 8-10 %). */
+  --qos-border-subtle:  #{$qos-neutral-150};
+  --qos-border-default: #{$qos-neutral-200};
+  --qos-border-strong:  #{$qos-neutral-300};
   --qos-border-focus:   #{$qos-accent-500};
 
-  /* Texte */
+  /* Texte — hiérarchie nette pour l'air. */
   --qos-fg-primary:     #{$qos-neutral-900};
   --qos-fg-secondary:   #{$qos-neutral-600};
   --qos-fg-tertiary:    #{$qos-neutral-500};
@@ -79,7 +89,7 @@ $qos-danger-700:   #b91c1c;
   --qos-fg-inverse:     #{$qos-neutral-0};
   --qos-fg-link:        #{$qos-accent-700};
 
-  /* Accent (primary action) */
+  /* Accent (primary action) — bleu profond sobre. */
   --qos-accent-fg:      #{$qos-neutral-0};
   --qos-accent-bg:      #{$qos-accent-600};
   --qos-accent-bg-hover:    #{$qos-accent-700};
@@ -94,12 +104,13 @@ $qos-danger-700:   #b91c1c;
   --qos-danger-bg-soft:  #{$qos-danger-50};
   --qos-danger-fg:       #{$qos-danger-700};
 
-  /* Ombres (légères, neutres) */
-  --qos-shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
-  --qos-shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
-  --qos-shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
-  --qos-shadow-lg: 0 12px 24px -6px rgba(15, 23, 42, 0.12), 0 4px 8px -2px rgba(15, 23, 42, 0.06);
-  --qos-ring-focus: 0 0 0 3px rgba(59, 130, 246, 0.32);
+  /* Ombres — style Linear : 1px border + ombre quasi nulle.
+   * xs/sm presque invisibles, md/lg douces et diffuses (jamais de noir dur). */
+  --qos-shadow-xs: 0 1px 2px 0 rgba(17, 24, 39, 0.035);
+  --qos-shadow-sm: 0 1px 2px 0 rgba(17, 24, 39, 0.05), 0 1px 1px -1px rgba(17, 24, 39, 0.03);
+  --qos-shadow-md: 0 6px 16px -6px rgba(17, 24, 39, 0.10), 0 2px 6px -3px rgba(17, 24, 39, 0.05);
+  --qos-shadow-lg: 0 18px 40px -12px rgba(17, 24, 39, 0.14), 0 6px 14px -6px rgba(17, 24, 39, 0.07);
+  --qos-ring-focus: 0 0 0 3px rgba(37, 99, 214, 0.22);
 
   /* Graphes (séries cohérentes light) */
   --qos-chart-1: #{$qos-accent-600};
@@ -108,44 +119,48 @@ $qos-danger-700:   #b91c1c;
   --qos-chart-4: #{$qos-danger-600};
   --qos-chart-5: #8b5cf6;
   --qos-chart-6: #06b6d4;
-  --qos-chart-grid:  #{$qos-neutral-200};
-  --qos-chart-axis:  #{$qos-neutral-500};
+  --qos-chart-grid:  #{$qos-neutral-150};
+  --qos-chart-axis:  #{$qos-neutral-400};
 }
 
 /* ============================================================
  * 3. Tokens sémantiques — DARK.
  * ============================================================ */
 :root.qos-theme-dark {
-  --qos-bg-app:        #{$qos-neutral-950};
-  --qos-bg-elevated:   #{$qos-neutral-900};
-  --qos-bg-sunken:     #020617;
-  --qos-bg-hover:      rgba(248, 250, 252, 0.06);
-  --qos-bg-pressed:    rgba(248, 250, 252, 0.10);
-  --qos-bg-overlay:    rgba(2, 6, 23, 0.65);
+  /* Surfaces ardoise profondes, mêmes principes : filets fins + ombres douces. */
+  --qos-bg-app:        #0c111b;
+  --qos-bg-elevated:   #141b27;
+  --qos-bg-sunken:     #0a0f18;
+  --qos-bg-subtle:     rgba(255, 255, 255, 0.025);
+  --qos-bg-hover:      rgba(255, 255, 255, 0.055);
+  --qos-bg-pressed:    rgba(255, 255, 255, 0.09);
+  --qos-bg-overlay:    rgba(5, 9, 16, 0.62);
 
-  --qos-bg-sidebar:    #060c1a;
-  --qos-fg-sidebar:    rgba(226, 232, 240, 0.74);
-  --qos-fg-sidebar-active: #{$qos-neutral-0};
-  --qos-bg-sidebar-hover:  rgba(255, 255, 255, 0.04);
-  --qos-bg-sidebar-active: rgba(96, 165, 250, 0.18);
+  /* Sidebar — ardoise légèrement distincte de l'app, item actif bleu doux. */
+  --qos-bg-sidebar:        #0f1521;
+  --qos-fg-sidebar:        #{$qos-neutral-400};
+  --qos-fg-sidebar-active:  #cfddf7;
+  --qos-bg-sidebar-hover:   rgba(255, 255, 255, 0.045);
+  --qos-bg-sidebar-active:  rgba(90, 141, 240, 0.18);
+  --qos-border-sidebar:     #1d2533;
 
-  --qos-border-subtle:  #1f2a3d;
-  --qos-border-default: #283449;
-  --qos-border-strong:  #{$qos-neutral-700};
+  --qos-border-subtle:  #1c2433;
+  --qos-border-default: #27303f;
+  --qos-border-strong:  #3a4555;
   --qos-border-focus:   #{$qos-accent-400};
 
-  --qos-fg-primary:     #{$qos-neutral-50};
-  --qos-fg-secondary:   #{$qos-neutral-300};
-  --qos-fg-tertiary:    #{$qos-neutral-400};
-  --qos-fg-disabled:    #{$qos-neutral-600};
+  --qos-fg-primary:     #f3f5f9;
+  --qos-fg-secondary:   #aeb6c4;
+  --qos-fg-tertiary:    #7d8696;
+  --qos-fg-disabled:    #565f70;
   --qos-fg-inverse:     #{$qos-neutral-900};
-  --qos-fg-link:        #{$qos-accent-400};
+  --qos-fg-link:        #8fb3f5;
 
-  --qos-accent-fg:      #{$qos-neutral-0};
+  --qos-accent-fg:      #ffffff;
   --qos-accent-bg:      #{$qos-accent-500};
   --qos-accent-bg-hover:    #{$qos-accent-400};
-  --qos-accent-bg-soft:     rgba(59, 130, 246, 0.16);
-  --qos-accent-fg-soft:     #{$qos-accent-200};
+  --qos-accent-bg-soft:     rgba(90, 141, 240, 0.18);
+  --qos-accent-fg-soft:     #aecbff;
 
   --qos-success-bg-soft: rgba(16, 185, 129, 0.16);
   --qos-success-fg:      #6ee7b7;
@@ -154,11 +169,12 @@ $qos-danger-700:   #b91c1c;
   --qos-danger-bg-soft:  rgba(239, 68, 68, 0.16);
   --qos-danger-fg:       #fca5a5;
 
-  --qos-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.36);
-  --qos-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.44), 0 1px 2px -1px rgba(0, 0, 0, 0.28);
-  --qos-shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.48), 0 2px 4px -1px rgba(0, 0, 0, 0.32);
-  --qos-shadow-lg: 0 16px 32px -8px rgba(0, 0, 0, 0.56), 0 6px 12px -4px rgba(0, 0, 0, 0.36);
-  --qos-ring-focus: 0 0 0 3px rgba(96, 165, 250, 0.40);
+  /* Ombres dark — diffuses et douces, jamais de noir dur. */
+  --qos-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.30);
+  --qos-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.38), 0 1px 1px -1px rgba(0, 0, 0, 0.24);
+  --qos-shadow-md: 0 8px 20px -8px rgba(0, 0, 0, 0.52), 0 2px 6px -3px rgba(0, 0, 0, 0.34);
+  --qos-shadow-lg: 0 22px 44px -14px rgba(0, 0, 0, 0.60), 0 8px 16px -8px rgba(0, 0, 0, 0.40);
+  --qos-ring-focus: 0 0 0 3px rgba(90, 141, 240, 0.40);
 
   --qos-chart-1: #{$qos-accent-400};
   --qos-chart-2: #34d399;
@@ -166,8 +182,8 @@ $qos-danger-700:   #b91c1c;
   --qos-chart-4: #f87171;
   --qos-chart-5: #a78bfa;
   --qos-chart-6: #22d3ee;
-  --qos-chart-grid:  #1f2a3d;
-  --qos-chart-axis:  #{$qos-neutral-500};
+  --qos-chart-grid:  #1c2433;
+  --qos-chart-axis:  #7d8696;
 }
 
 /* ============================================================
@@ -213,11 +229,11 @@ $qos-danger-700:   #b91c1c;
   --qos-space-12: 48px;
   --qos-space-16: 64px;
 
-  /* Rayons */
-  --qos-radius-xs:  4px;
-  --qos-radius-sm:  6px;
-  --qos-radius-md:  8px;
-  --qos-radius-lg:  12px;
+  /* Rayons — famille 10-12px (cartes/dialogs/inputs/boutons). */
+  --qos-radius-xs:  5px;
+  --qos-radius-sm:  7px;
+  --qos-radius-md:  10px;  /* boutons, inputs, icon-buttons */
+  --qos-radius-lg:  12px;  /* cartes, panels, dialogs */
   --qos-radius-xl:  16px;
   --qos-radius-pill: 999px;
 

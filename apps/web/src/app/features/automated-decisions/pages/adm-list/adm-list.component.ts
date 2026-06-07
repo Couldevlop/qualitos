@@ -4,8 +4,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { catchError, debounceTime, startWith, switchMap, tap } from 'rxjs/operators';
+import { catchError, debounceTime, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 
+import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { AdmService } from '../../adm.service';
 import { AdmStatus, AdmType, AdmView, TYPE_LABEL } from '../../adm.types';
@@ -24,8 +25,10 @@ export class AdmListComponent implements OnInit {
   readonly typeLabel = TYPE_LABEL;
 
   rows$!: Observable<AdmView[]>;
-  loading$ = new BehaviorSubject<boolean>(false);
-  error$   = new BehaviorSubject<string | null>(null);
+  private readonly loadingState$ = new BehaviorSubject<boolean>(false);
+  readonly loading$ = deferredView(this.loadingState$);
+  private readonly errorState$ = new BehaviorSubject<string | null>(null);
+  readonly error$ = deferredView(this.errorState$);
 
   readonly columns = ['reference', 'name', 'type', 'status', 'updatedAt'];
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
@@ -42,14 +45,15 @@ export class AdmListComponent implements OnInit {
       this.statusCtrl.valueChanges.pipe(startWith(this.statusCtrl.value), debounceTime(120)),
       this.refresh$
     ]).pipe(
-      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
+      tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
       switchMap(([status]) => this.svc.list(status || undefined).pipe(
         catchError(err => {
-          this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
+          this.errorState$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
           return of([] as AdmView[]);
         }),
-        tap(() => this.loading$.next(false))
-      ))
+        tap(() => this.loadingState$.next(false))
+      )),
+      shareReplay({ bufferSize: 1, refCount: true })
     );
   }
 

@@ -1,0 +1,207 @@
+pack_id: aerospace
+version: 1.0.0
+name: Aerospace, Space & Defense
+sectors: [aerospace, space, defense]
+norms:
+  - as9100
+  - as9110
+  - nadcap
+  - iso-9001
+  - iso-14001
+  - iso-45001
+kpis:
+  - kpi_id: aero_escape_rate_ppm
+    name: Escape Rate (PPM)
+    category: customer-quality
+    formula: "SUM(defects_at_customer) / SUM(parts_delivered) * 1000000"
+    unit: "PPM"
+    target: "< 10"
+    threshold_warning: "10 - 50"
+    threshold_critical: "> 50"
+    data_source: capa_customer
+    refresh_frequency: weekly
+    owner: quality_director
+    applicable_industries: [aerospace]
+    related_kpis: []
+    explainability: "KPI Airbus/Boeing aligné AS9100D §10.2.1.1 — cible escape rate Tier 1 < 10 PPM."
+  - kpi_id: aero_fai_pass_rate
+    name: First Article Inspection (FAI) Pass Rate
+    category: project-execution
+    formula: "COUNT(fai_passed_first_submission) / COUNT(fai_submitted) * 100"
+    unit: "%"
+    target: ">= 90"
+    threshold_warning: "75 - 90"
+    threshold_critical: "< 75"
+    data_source: fai_records
+    refresh_frequency: monthly
+    owner: engineering_lead
+    applicable_industries: [aerospace]
+    related_kpis: []
+    explainability: "Mesure la conformité de la première inspection d'article selon AS9102 §8.5.1.3."
+  - kpi_id: aero_fod_findings
+    name: Findings FOD par mois
+    category: compliance-audit
+    formula: "COUNT(fod_findings) WHERE date >= NOW() - INTERVAL 30 DAY"
+    unit: "count"
+    target: "0"
+    threshold_warning: "1 - 3"
+    threshold_critical: "> 3"
+    data_source: audit_5s_findings
+    refresh_frequency: daily
+    owner: fod_manager
+    applicable_industries: [aerospace]
+    related_kpis: []
+    explainability: "Programme FOD AS9100D §8.1.4 — tolérance zéro pour les zones critiques."
+  - kpi_id: aero_supplier_otd
+    name: Supplier On-Time Delivery
+    category: supply-chain
+    formula: "COUNT(po_lines_delivered_on_or_before_due) / COUNT(po_lines_delivered) * 100"
+    unit: "%"
+    target: ">= 98"
+    threshold_warning: "92 - 98"
+    threshold_critical: "< 92"
+    data_source: supplier_deliveries
+    refresh_frequency: weekly
+    owner: supply_chain_manager
+    applicable_industries: [aerospace, defense]
+    related_kpis: []
+    explainability: "Livraison à l'heure des lignes de commande — exigence Airbus/Safran/Dassault."
+  - kpi_id: aero_counterfeit_block_rate
+    name: Counterfeit Parts Block Rate
+    category: risk
+    formula: "COUNT(suspected_counterfeit_intercepted) / COUNT(receiving_inspections) * 100"
+    unit: "%"
+    target: "tracking only (escalate >0)"
+    threshold_warning: "any > 0"
+    threshold_critical: "any in critical part"
+    data_source: receiving_inspections
+    refresh_frequency: realtime
+    owner: quality_director
+    applicable_industries: [aerospace, defense]
+    related_kpis: []
+    explainability: "AS9100D §8.1.2 — tout cas escalade direction + autorité réglementaire."
+  - kpi_id: aero_nadcap_audits_passed
+    name: NADCAP Special Process Audit Pass Rate
+    category: compliance-audit
+    formula: "COUNT(nadcap_audits_passed) / COUNT(nadcap_audits_executed) * 100"
+    unit: "%"
+    target: "100"
+    threshold_warning: "below 100"
+    threshold_critical: "fail"
+    data_source: audit_external
+    refresh_frequency: per-audit
+    owner: special_process_owner
+    applicable_industries: [aerospace, defense]
+    related_kpis: []
+    explainability: "Validation des procédés spéciaux NADCAP — exigence AS9100D §8.5.1.2."
+glossary:
+  - {term: FAI, definition: "First Article Inspection — AS9102 Rev B"}
+  - {term: FOD, definition: "Foreign Object Debris"}
+  - {term: NADCAP, definition: "National Aerospace and Defense Contractors Accreditation Program"}
+  - {term: MRO, definition: "Maintenance, Repair & Overhaul (AS9110)"}
+  - {term: OCM, definition: "Original Component Manufacturer"}
+  - {term: OASIS, definition: "Online Aerospace Supplier Information System (IAQG)"}
+  - {term: PDR, definition: "Preliminary Design Review"}
+  - {term: CDR, definition: "Critical Design Review"}
+connectors_required:
+  - sap-erp
+  - mes-generic
+  - plm-windchill
+  - opc-ua
+ishikawa_templates:
+  - problem_archetype: "Détection d'une pièce contrefaite à la réception"
+    branches:
+      man: ["Acheteur non formé counterfeit"]
+      machine: []
+      material: ["Source secondaire non validée", "Crise composants — pression alternative"]
+      method: ["Procédure d'approvisionnement court-circuitée"]
+      measurement: ["Pas de XRF / inspection contre-marquage"]
+      environment: ["Marché gris actif"]
+  - problem_archetype: "Échec FAI — refus client"
+    branches:
+      man: []
+      machine: []
+      material: []
+      method: ["Documentation AS9102 incomplète"]
+      measurement: ["Tolérances non vérifiées"]
+      environment: ["Pression du délai de vol"]
+  - problem_archetype: "FOD critique trouvé dans une cellule fermée"
+    branches:
+      man: ["Discipline FOD insuffisante"]
+      machine: ["Outil non tethered"]
+      material: []
+      method: ["Tool count non systématique"]
+      measurement: ["Endoscopie absente"]
+      environment: ["Encombrement zone critique"]
+  - problem_archetype: "Procédé spécial sortant des tolérances (soudure)"
+    branches:
+      man: ["Soudeur non certifié à jour"]
+      machine: ["Paramètres machine en dérive"]
+      material: ["Métal d'apport hors spécifications"]
+      method: ["Procédure WPS non suivie"]
+      measurement: ["Re-qualification expirée"]
+      environment: ["Atmosphère — gaz de protection contaminé"]
+  - problem_archetype: "Configuration produit divergente entre as-built et as-designed"
+    branches:
+      man: []
+      machine: []
+      material: []
+      method: ["Configuration management lâche"]
+      measurement: ["Pas de revue de configuration"]
+      environment: []
+  - problem_archetype: "Non-conformité sécurité produit identifiée tardivement"
+    branches:
+      man: ["Sensibilisation safety insuffisante"]
+      machine: []
+      material: []
+      method: ["FMEA orientée safety non mise à jour"]
+      measurement: ["Indicateurs sécurité non monitorés"]
+      environment: []
+  - problem_archetype: "Échec audit OASIS / surveillance IAQG"
+    branches:
+      man: []
+      machine: []
+      material: []
+      method: ["Action corrective d'audit précédent non close"]
+      measurement: ["Pas de revue OASIS périodique"]
+      environment: []
+  - problem_archetype: "Délai de livraison Airbus / Safran dépassé"
+    branches:
+      man: []
+      machine: ["Capacité machine saturée"]
+      material: ["Rupture matière sur source unique"]
+      method: ["Pas de plan de contingence (§6.1.2.3)"]
+      measurement: []
+      environment: []
+poka_yoke_library:
+  - id: poka-yoke-aero-001
+    name: Tool tethering obligatoire en altitude
+    description: "Lanyards sur tous les outils en zone de montage en altitude"
+    sector_fit: [aerospace, space]
+  - id: poka-yoke-aero-002
+    name: Shadow board avec compteur photoélectrique
+    description: "Détection immédiate d'un outil manquant par cellule photoélectrique"
+    sector_fit: [aerospace, defense, manufacturing]
+  - id: poka-yoke-aero-003
+    name: Vision IA détection FOD pré-fermeture cellule
+    description: "Caméra YOLOv8 fine-tunée détectant les corps étrangers avant fermeture"
+    sector_fit: [aerospace, space]
+  - id: poka-yoke-aero-004
+    name: Verrouillage cellule procédé spécial si NADCAP expirée
+    description: "Le système refuse le démarrage si la certification opérateur ou la re-qualification NADCAP est expirée"
+    sector_fit: [aerospace, defense]
+training_paths:
+  - role: quality_engineer_aero
+    modules: [as9100-intro, fai-as9102, fod-prevention, counterfeit-awareness]
+  - role: assembler
+    modules: [fod-awareness, tool-control, configuration-mgmt]
+  - role: supplier_quality_engineer
+    modules: [as9100-supplier-mgmt, nadcap-fundamentals, counterfeit-detection]
+documents_templates:
+  - /standards/templates/as9100/manuel-qualite-as9100.md
+  - /standards/templates/as9100/procedure-fod.md
+  - /standards/templates/as9100/template-fai-as9102.md
+processes_templates:
+  - /industry-packs/processes/aerospace/fai-as9102.bpmn
+  - /industry-packs/processes/aerospace/fod-audit.bpmn
+  - /industry-packs/processes/aerospace/configuration-mgmt.bpmn

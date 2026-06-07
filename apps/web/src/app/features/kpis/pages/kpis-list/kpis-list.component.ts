@@ -4,8 +4,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
-import { catchError, finalize, map, startWith, switchMap, tap } from 'rxjs/operators';
+import { catchError, finalize, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 
+import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { KpisService } from '../../kpis.service';
 import { KpiDirection, KpiResponse, KpiStatus } from '../../kpis.types';
@@ -37,8 +38,10 @@ export class KpisListComponent implements OnInit {
   // Démarre à `true` : c'est vrai au premier rendu (chargement initial en cours) et
   // cela évite NG0100 (le `tap` du flux remet `true` → aucun changement détecté dans
   // le même cycle de détection). Repasse à `false` via `finalize`.
-  loading$ = new BehaviorSubject<boolean>(true);
-  error$   = new BehaviorSubject<string | null>(null);
+  private readonly loadingState$ = new BehaviorSubject<boolean>(true);
+  readonly loading$ = deferredView(this.loadingState$);
+  private readonly errorState$ = new BehaviorSubject<string | null>(null);
+  readonly error$ = deferredView(this.errorState$);
 
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
   private readonly page$    = new BehaviorSubject<{ index: number; size: number }>({ index: 0, size: 20 });
@@ -56,23 +59,24 @@ export class KpisListComponent implements OnInit {
       this.page$,
       this.refresh$
     ]).pipe(
-      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
+      tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
       switchMap(([status, category, p]) =>
         this.svc.list(p.index, p.size, status || undefined, category?.trim() || undefined).pipe(
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[kpis-list] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
+            this.errorState$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return of(null);
           }),
-          finalize(() => this.loading$.next(false))
+          finalize(() => this.loadingState$.next(false))
         )
       ),
       map(page => {
         if (!page) return [];
         this.totalElements = page.totalElements;
         return page.content;
-      })
+      }),
+      shareReplay({ bufferSize: 1, refCount: true })
     );
   }
 

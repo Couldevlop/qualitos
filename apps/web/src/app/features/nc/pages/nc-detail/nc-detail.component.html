@@ -123,16 +123,89 @@
         </mat-card-content>
       </mat-card>
 
-      <mat-card class="photos-card" *ngIf="photoList(n.photoUrls).length > 0">
-        <mat-card-header>
+      <mat-card class="photos-card">
+        <mat-card-header class="photos-header">
           <mat-card-title i18n="@@nc.detail.photos">Photos</mat-card-title>
+
+          <ng-container *ngIf="canAddPhoto(n.status)">
+            <!-- Bouton d'ajout : caméra mobile (capture) ou galerie. Online-only. -->
+            <button mat-flat-button color="primary" type="button"
+                    class="add-photo-btn"
+                    (click)="triggerFilePicker(fileInput)"
+                    [disabled]="(uploading$ | async) || (storageDisabled$ | async) || !(online$ | async)"
+                    [matTooltip]="(online$ | async)
+                      ? null
+                      : photosOfflineTooltip"
+                    matTooltipPosition="above">
+              <mat-spinner *ngIf="uploading$ | async; else addIcon" diameter="18"></mat-spinner>
+              <ng-template #addIcon><mat-icon>add_a_photo</mat-icon></ng-template>
+              <span i18n="@@nc.photos.add">Ajouter une photo</span>
+            </button>
+            <input #fileInput type="file" accept="image/*" capture="environment"
+                   class="visually-hidden" (change)="onFileSelected($event)"
+                   aria-hidden="true" tabindex="-1" />
+          </ng-container>
         </mat-card-header>
+
         <mat-card-content>
-          <ul class="photo-list">
-            <li *ngFor="let url of photoList(n.photoUrls)">
-              <a [href]="url" target="_blank" rel="noopener noreferrer">{{ url }}</a>
-            </li>
-          </ul>
+
+          <!-- Stockage non configuré sur l'environnement : message doux. -->
+          <div class="storage-disabled" *ngIf="storageDisabled$ | async">
+            <mat-icon>cloud_off</mat-icon>
+            <span i18n="@@nc.photos.storage-disabled">Stockage de photos non configuré sur cet environnement.</span>
+          </div>
+
+          <ng-container *ngIf="!(storageDisabled$ | async)">
+
+            <div class="state-row" *ngIf="photosLoading$ | async">
+              <mat-progress-spinner mode="indeterminate" diameter="28"></mat-progress-spinner>
+              <span i18n="@@common.loading">Chargement…</span>
+            </div>
+
+            <ng-container *ngIf="(photos$ | async) as photos">
+              <!-- Grille de vignettes -->
+              <div class="photo-grid" *ngIf="photos.length > 0">
+                <figure class="photo-thumb" *ngFor="let p of photos">
+                  <a [href]="p.url" target="_blank" rel="noopener noreferrer"
+                     [attr.aria-label]="p.originalFilename">
+                    <img [src]="p.url" [alt]="p.originalFilename" loading="lazy" />
+                  </a>
+                  <button mat-icon-button class="delete-thumb" type="button"
+                          (click)="deletePhoto(p)"
+                          [disabled]="(deletingId$ | async) === p.id"
+                          i18n-matTooltip="@@nc.photos.delete-tooltip"
+                          matTooltip="Supprimer la photo">
+                    <mat-spinner *ngIf="(deletingId$ | async) === p.id; else delIcon" diameter="18"></mat-spinner>
+                    <ng-template #delIcon><mat-icon>delete</mat-icon></ng-template>
+                  </button>
+                </figure>
+              </div>
+
+              <!-- État vide sobre -->
+              <div class="photos-empty"
+                   *ngIf="photos.length === 0 && !(photosLoading$ | async)">
+                <mat-icon>photo_library</mat-icon>
+                <p i18n="@@nc.photos.empty">Aucune photo. Ajoutez une vue terrain depuis la caméra ou la galerie.</p>
+              </div>
+            </ng-container>
+
+            <!-- Hors-ligne : explicite pourquoi l'ajout est indisponible. -->
+            <p class="photos-offline-note" *ngIf="canAddPhoto(n.status) && !(online$ | async)"
+               i18n="@@nc.photos.offline-note">
+              Hors-ligne : l'ajout de photos est disponible uniquement en ligne.
+            </p>
+          </ng-container>
+
+          <!-- Fallback : URLs texte historiques (saisie libre / offline / legacy). -->
+          <div class="legacy-urls" *ngIf="photoList(n.photoUrls).length > 0">
+            <span class="info-label" i18n="@@nc.photos.legacy-subtitle">URLs renseignées (sans envoi de fichier)</span>
+            <ul class="photo-list">
+              <li *ngFor="let url of photoList(n.photoUrls)">
+                <a [href]="url" target="_blank" rel="noopener noreferrer">{{ url }}</a>
+              </li>
+            </ul>
+          </div>
+
         </mat-card-content>
       </mat-card>
 

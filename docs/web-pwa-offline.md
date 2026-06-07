@@ -73,5 +73,17 @@ saisie terrain ──offline──▶ OfflineQueueService ──▶ IndexedDB (q
 ## Limites connues / suite
 - Icônes = placeholder monogramme « Q » (générées) — à remplacer par le logo DS.
 - Couverture offline : flux 5S terrain (create + score), audits terrain
-  (réponse checklist + constat) et non-conformités terrain (déclaration). L'upload
-  binaire des photos (saisie d'URLs pour l'instant) viendra ensuite.
+  (réponse checklist + constat) et non-conformités terrain (déclaration).
+- **Upload binaire des photos NC : online-only (décision assumée).** La section
+  « Photos » du détail NC (`NcService.uploadPhoto` / `listPhotos` / `deletePhoto`)
+  envoie le fichier en multipart vers le stockage objet et **ne bascule pas dans
+  la file d'attente hors-ligne**. Justification : un binaire (jusqu'à 10 Mo)
+  sérialisé dans IndexedDB de la file alourdirait le quota du poste, compliquerait
+  le rejeu (re-construction du `FormData`, ré-encodage) et brouillerait les labels
+  non-PII de la file. En conséquence, hors-ligne le bouton « Ajouter une photo »
+  est **désactivé** avec un tooltip explicite (`nc.photos.offline-tooltip`) et une
+  note sous la grille (`nc.photos.offline-note`). La déclaration de la NC elle-même
+  reste, elle, disponible hors-ligne ; les photos s'ajoutent au retour du réseau.
+  Les `photoUrls` texte (saisie libre / legacy) restent affichées en repli. Si le
+  stockage objet n'est pas configuré (back renvoie `503 type=storage-disabled`),
+  l'UI affiche un message doux au lieu d'une erreur brute.

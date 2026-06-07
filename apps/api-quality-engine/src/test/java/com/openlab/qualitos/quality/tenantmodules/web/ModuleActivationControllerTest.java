@@ -77,7 +77,7 @@ class ModuleActivationControllerTest {
     void startTrial_201() throws Exception {
         when(service.startTrial(any())).thenReturn(view(ActivationStatus.TRIAL));
         ModuleActivationWebDto.StartTrialRequest req =
-                new ModuleActivationWebDto.StartTrialRequest("kpi", FUTURE, ACTOR);
+                new ModuleActivationWebDto.StartTrialRequest("kpi", FUTURE);
         mockMvc.perform(post("/api/v1/tenant-modules/activations/trial").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
@@ -86,18 +86,32 @@ class ModuleActivationControllerTest {
 
     @Test @WithMockUser
     void startTrial_invalidCode_400() throws Exception {
-        String body = "{\"moduleCode\":\"BAD\",\"trialEndsAt\":\"" + FUTURE
-                + "\",\"actor\":\"" + ACTOR + "\"}";
+        // H2 : un "actor" dans le corps est ignoré (jamais lu) ; ici on vérifie la
+        // validation du moduleCode invariante de cette suppression.
+        String body = "{\"moduleCode\":\"BAD\",\"trialEndsAt\":\"" + FUTURE + "\"}";
         mockMvc.perform(post("/api/v1/tenant-modules/activations/trial").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().isBadRequest());
     }
 
     @Test @WithMockUser
+    void startTrial_actorInBodyIsIgnored_201() throws Exception {
+        // H2 : même si le client envoie un "actor" falsifié dans le corps, la requête
+        // reste valide (la propriété inconnue est tolérée) et l'acteur réel est dérivé
+        // du JWT côté service — jamais de ce champ.
+        when(service.startTrial(any())).thenReturn(view(ActivationStatus.TRIAL));
+        String body = "{\"moduleCode\":\"kpi\",\"trialEndsAt\":\"" + FUTURE
+                + "\",\"actor\":\"" + UUID.randomUUID() + "\"}";
+        mockMvc.perform(post("/api/v1/tenant-modules/activations/trial").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isCreated());
+    }
+
+    @Test @WithMockUser
     void activate_201() throws Exception {
         when(service.activate(any())).thenReturn(view(ActivationStatus.ACTIVE));
         ModuleActivationWebDto.ActivateRequest req =
-                new ModuleActivationWebDto.ActivateRequest("kpi", FUTURE, ACTOR);
+                new ModuleActivationWebDto.ActivateRequest("kpi", FUTURE);
         mockMvc.perform(post("/api/v1/tenant-modules/activations").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
@@ -109,7 +123,7 @@ class ModuleActivationControllerTest {
         when(service.activate(any()))
                 .thenThrow(new ModuleActivationStateException("tier insufficient"));
         ModuleActivationWebDto.ActivateRequest req =
-                new ModuleActivationWebDto.ActivateRequest("blockchain", FUTURE, ACTOR);
+                new ModuleActivationWebDto.ActivateRequest("blockchain", FUTURE);
         mockMvc.perform(post("/api/v1/tenant-modules/activations").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
@@ -121,50 +135,36 @@ class ModuleActivationControllerTest {
         when(service.convertTrial(eq(ID), any())).thenReturn(view(ActivationStatus.ACTIVE));
         mockMvc.perform(post("/api/v1/tenant-modules/activations/{id}/convert", ID).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"expiresAt\":\"" + FUTURE + "\",\"actor\":\"" + ACTOR + "\"}"))
+                        .content("{\"expiresAt\":\"" + FUTURE + "\"}"))
                 .andExpect(status().isOk());
     }
 
     @Test @WithMockUser
     void suspend_200() throws Exception {
+        // H2 : plus de corps de requête (l'acteur vient du JWT).
         when(service.suspend(eq(ID), any())).thenReturn(view(ActivationStatus.SUSPENDED));
-        mockMvc.perform(post("/api/v1/tenant-modules/activations/{id}/suspend", ID).with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"actor\":\"" + ACTOR + "\"}"))
+        mockMvc.perform(post("/api/v1/tenant-modules/activations/{id}/suspend", ID).with(csrf()))
                 .andExpect(status().isOk());
     }
 
     @Test @WithMockUser
     void resume_200() throws Exception {
         when(service.resume(eq(ID), any())).thenReturn(view(ActivationStatus.ACTIVE));
-        mockMvc.perform(post("/api/v1/tenant-modules/activations/{id}/resume", ID).with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"actor\":\"" + ACTOR + "\"}"))
+        mockMvc.perform(post("/api/v1/tenant-modules/activations/{id}/resume", ID).with(csrf()))
                 .andExpect(status().isOk());
     }
 
     @Test @WithMockUser
     void disable_200() throws Exception {
         when(service.disable(eq(ID), any())).thenReturn(view(ActivationStatus.DISABLED));
-        mockMvc.perform(post("/api/v1/tenant-modules/activations/{id}/disable", ID).with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"actor\":\"" + ACTOR + "\"}"))
+        mockMvc.perform(post("/api/v1/tenant-modules/activations/{id}/disable", ID).with(csrf()))
                 .andExpect(status().isOk());
-    }
-
-    @Test @WithMockUser
-    void disable_missingActor_400() throws Exception {
-        mockMvc.perform(post("/api/v1/tenant-modules/activations/{id}/disable", ID).with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON).content("{}"))
-                .andExpect(status().isBadRequest());
     }
 
     @Test @WithMockUser
     void expire_200() throws Exception {
         when(service.expire(eq(ID), any())).thenReturn(view(ActivationStatus.EXPIRED));
-        mockMvc.perform(post("/api/v1/tenant-modules/activations/{id}/expire", ID).with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"actor\":\"" + ACTOR + "\"}"))
+        mockMvc.perform(post("/api/v1/tenant-modules/activations/{id}/expire", ID).with(csrf()))
                 .andExpect(status().isOk());
     }
 
@@ -173,7 +173,7 @@ class ModuleActivationControllerTest {
         when(service.changeTier(eq(ID), any())).thenReturn(view(ActivationStatus.ACTIVE));
         mockMvc.perform(post("/api/v1/tenant-modules/activations/{id}/tier", ID).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"newTier\":\"PRO\",\"actor\":\"" + ACTOR + "\"}"))
+                        .content("{\"newTier\":\"PRO\"}"))
                 .andExpect(status().isOk());
     }
 
@@ -182,7 +182,7 @@ class ModuleActivationControllerTest {
         when(service.configure(eq(ID), any())).thenReturn(view(ActivationStatus.ACTIVE));
         mockMvc.perform(post("/api/v1/tenant-modules/activations/{id}/configure", ID).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"configurationJson\":\"{}\",\"actor\":\"" + ACTOR + "\"}"))
+                        .content("{\"configurationJson\":\"{}\"}"))
                 .andExpect(status().isOk());
     }
 

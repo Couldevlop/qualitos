@@ -1,0 +1,220 @@
+pack_id: logistics
+version: 1.0.0
+name: Logistique & Transport
+sectors: [logistics, transport, supply-chain, warehousing, cold-chain]
+norms:
+  - iso-9001
+  - iso-45001
+  - iso-14001
+kpis:
+  - kpi_id: log_otif
+    name: On-Time In-Full (OTIF)
+    category: service-quality
+    formula: "COUNT(orders_delivered_on_time_and_complete) / COUNT(orders_shipped) * 100"
+    unit: "%"
+    target: ">= 98"
+    threshold_warning: "95 - 98"
+    threshold_critical: "< 95"
+    data_source: tms_deliveries
+    refresh_frequency: daily
+    owner: logistics_manager
+    applicable_industries: [logistics, transport]
+    related_kpis: [log_avg_delivery_time]
+    explainability: "Livraisons à l'heure ET complètes sur le total expédié — indicateur clé de service logistique."
+  - kpi_id: log_avg_delivery_time
+    name: Délai moyen de livraison
+    category: efficiency
+    formula: "AVG(delivered_at - shipped_at) in hours"
+    unit: "hours"
+    target: "< 48"
+    threshold_warning: "48 - 72"
+    threshold_critical: "> 72"
+    data_source: tms_deliveries
+    refresh_frequency: daily
+    owner: logistics_manager
+    applicable_industries: [logistics, transport]
+    related_kpis: [log_otif]
+    explainability: "Temps moyen entre expédition et livraison — pilote l'engagement de délai client."
+  - kpi_id: log_damage_rate
+    name: Taux d'avarie / casse
+    category: product-quality
+    formula: "COUNT(shipments_damaged) / COUNT(shipments_total) * 100"
+    unit: "%"
+    target: "< 0.5"
+    threshold_warning: "0.5 - 1.5"
+    threshold_critical: "> 1.5"
+    data_source: claims_register
+    refresh_frequency: weekly
+    owner: warehouse_manager
+    applicable_industries: [logistics, transport]
+    related_kpis: []
+    explainability: "Part des expéditions endommagées (manutention, calage, transport) — coût de non-qualité."
+  - kpi_id: log_cold_chain_compliance
+    name: Conformité de la chaîne du froid
+    category: compliance-quality
+    formula: "COUNT(shipments_without_temp_excursion) / COUNT(cold_chain_shipments) * 100"
+    unit: "%"
+    target: ">= 99.5"
+    threshold_warning: "98 - 99.5"
+    threshold_critical: "< 98"
+    data_source: iot_temp_loggers
+    refresh_frequency: realtime
+    owner: quality_manager
+    applicable_industries: [logistics, cold-chain]
+    related_kpis: []
+    explainability: "Part des expéditions frigorifiques sans excursion de température (suivi IoT bout-en-bout)."
+  - kpi_id: log_road_safety_incidents
+    name: Incidents de sécurité routière / million de km
+    category: hse-safety
+    formula: "COUNT(road_incidents) / SUM(km_driven) * 1000000"
+    unit: "per million km"
+    target: "< 2"
+    threshold_warning: "2 - 5"
+    threshold_critical: "> 5"
+    data_source: fleet_telematics
+    refresh_frequency: monthly
+    owner: fleet_manager
+    applicable_industries: [transport]
+    related_kpis: []
+    explainability: "Taux d'accidents/incidents rapporté à la distance parcourue — sécurité de la flotte (ISO 45001)."
+  - kpi_id: log_inventory_accuracy
+    name: Exactitude des stocks entrepôt
+    category: warehouse-quality
+    formula: "COUNT(skus_count_matches_system) / COUNT(skus_counted) * 100"
+    unit: "%"
+    target: ">= 99"
+    threshold_warning: "97 - 99"
+    threshold_critical: "< 97"
+    data_source: wms_cycle_counts
+    refresh_frequency: weekly
+    owner: warehouse_manager
+    applicable_industries: [logistics, warehousing]
+    related_kpis: []
+    explainability: "Écart entre stock physique et stock système (comptages tournants) — fiabilité du WMS."
+  - kpi_id: log_claim_resolution_time
+    name: Délai de traitement des litiges transport
+    category: complaints
+    formula: "AVG(claim_closed_at - claim_created_at) in days"
+    unit: "days"
+    target: "< 10"
+    threshold_warning: "10 - 20"
+    threshold_critical: "> 20"
+    data_source: claims_register
+    refresh_frequency: weekly
+    owner: customer_service_manager
+    applicable_industries: [logistics, transport]
+    related_kpis: []
+    explainability: "Délai de résolution des litiges (avarie, perte, retard) de bout en bout."
+glossary:
+  - {term: OTIF, definition: "On-Time In-Full — livré à l'heure et complet"}
+  - {term: TMS, definition: "Transport Management System"}
+  - {term: WMS, definition: "Warehouse Management System"}
+  - {term: SKU, definition: "Stock Keeping Unit — référence de gestion de stock"}
+  - {term: Chaîne du froid, definition: "Maintien continu de la température d'un produit thermosensible"}
+  - {term: ELD, definition: "Electronic Logging Device — enregistreur de temps de conduite"}
+  - {term: Cross-docking, definition: "Transit de marchandises sans stockage intermédiaire"}
+  - {term: 3PL, definition: "Third-Party Logistics — prestataire logistique externalisé"}
+  - {term: POD, definition: "Proof Of Delivery — preuve de livraison"}
+connectors_required:
+  - gps
+  - rfid
+  - iot
+  - sap-erp
+  - mqtt
+ishikawa_templates:
+  - problem_archetype: "OTIF dégradé (livraisons en retard ou incomplètes)"
+    branches:
+      man: ["Préparateur en sous-effectif", "Chauffeur retardé"]
+      machine: ["Véhicule en panne", "Convoyeur en arrêt"]
+      material: ["Rupture de stock amont"]
+      method: ["Plan de tournée non optimisé", "Picking erroné"]
+      measurement: ["Suivi temps réel défaillant"]
+      environment: ["Trafic / météo", "Restrictions de circulation"]
+  - problem_archetype: "Avarie / casse à la livraison"
+    branches:
+      man: ["Manutention brutale"]
+      machine: ["Chariot élévateur défaillant"]
+      material: ["Emballage insuffisant", "Calage absent"]
+      method: ["Procédure de chargement non suivie"]
+      measurement: ["Contrôle au chargement absent"]
+      environment: ["Vibrations / chocs en transport"]
+  - problem_archetype: "Excursion de température (rupture chaîne du froid)"
+    branches:
+      man: ["Quai resté ouvert"]
+      machine: ["Groupe frigorifique en panne"]
+      material: ["Caisson isotherme défectueux"]
+      method: ["Pré-refroidissement non réalisé"]
+      measurement: ["Data logger non posé / défaillant"]
+      environment: ["Forte chaleur durant transit"]
+  - problem_archetype: "Accident / incident de sécurité routière"
+    branches:
+      man: ["Fatigue du conducteur", "Excès de vitesse"]
+      machine: ["Freins / pneus défaillants"]
+      material: ["Chargement mal arrimé"]
+      method: ["Temps de conduite non respecté"]
+      measurement: ["Télématique non exploitée"]
+      environment: ["Route verglacée", "Visibilité réduite"]
+  - problem_archetype: "Écart d'inventaire entrepôt important"
+    branches:
+      man: ["Erreur de saisie"]
+      machine: ["Lecteur RFID défaillant"]
+      material: []
+      method: ["Adressage produits non rigoureux"]
+      measurement: ["Comptages tournants insuffisants"]
+      environment: ["Démarque inconnue (vol)"]
+  - problem_archetype: "Erreur de préparation de commande (mauvais article)"
+    branches:
+      man: ["Préparateur non formé"]
+      machine: ["Scanner défaillant"]
+      material: ["Référence visuellement proche"]
+      method: ["Pas de contrôle scan obligatoire"]
+      measurement: ["Pas de double vérification"]
+      environment: ["Picking dense / encombré"]
+  - problem_archetype: "Litige transport traité hors délai"
+    branches:
+      man: ["Service litiges débordé"]
+      machine: []
+      material: ["POD manquante"]
+      method: ["Procédure de réclamation floue"]
+      measurement: ["Pas d'alerte d'échéance"]
+      environment: []
+  - problem_archetype: "Retard d'expédition au quai"
+    branches:
+      man: ["Manque de cariste"]
+      machine: ["Quai indisponible"]
+      material: []
+      method: ["Plan de chargement tardif"]
+      measurement: []
+      environment: ["Affluence transporteurs"]
+poka_yoke_library:
+  - id: poka-yoke-log-001
+    name: Scan obligatoire au picking (contrôle SKU)
+    description: "Le WMS refuse la validation d'une ligne si le SKU scanné ne correspond pas à la commande"
+    sector_fit: [logistics, warehousing, retail]
+  - id: poka-yoke-log-002
+    name: Alerte temps réel d'excursion de température
+    description: "Data logger IoT déclenchant une alerte immédiate dès franchissement du seuil de T°"
+    sector_fit: [logistics, cold-chain, agro]
+  - id: poka-yoke-log-003
+    name: Blocage de départ si arrimage non validé
+    description: "Le départ du véhicule est bloqué tant que le contrôle d'arrimage n'est pas confirmé"
+    sector_fit: [logistics, transport]
+  - id: poka-yoke-log-004
+    name: Détrompeur d'adressage entrepôt (emplacement scanné)
+    description: "Le rangement n'est validé que si l'emplacement scanné correspond à l'adresse système"
+    sector_fit: [logistics, warehousing]
+training_paths:
+  - role: warehouse_manager
+    modules: [iso-9001-logistics, wms-mastery, inventaire-tournant]
+  - role: fleet_manager
+    modules: [iso-45001-transport, securite-routiere, eco-conduite]
+  - role: customer_service_manager
+    modules: [gestion-litiges, otif-pilotage, chaine-du-froid]
+documents_templates:
+  - /standards/templates/iso-9001/procedure-expedition.md
+  - /standards/templates/iso-45001/plan-securite-transport.md
+  - /standards/templates/iso-9001/procedure-chaine-du-froid.md
+processes_templates:
+  - /industry-packs/processes/logistics/preparation-commande.bpmn
+  - /industry-packs/processes/logistics/gestion-litige.bpmn
+  - /industry-packs/processes/logistics/controle-chaine-froid.bpmn

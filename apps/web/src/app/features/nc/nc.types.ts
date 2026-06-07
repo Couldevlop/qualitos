@@ -48,6 +48,22 @@ export interface NcResponse {
 
 export type NcPage = SpringPage<NcResponse>;
 
+/**
+ * Photo binaire attachée à une NC (stockage objet, URL présignée 15 min).
+ * Distincte des `photoUrls` texte (saisie libre / legacy / fallback offline).
+ */
+export interface NcPhoto {
+  id: string;
+  /** URL présignée d'accès (valide ~15 min) renvoyée par GET. */
+  url?: string;
+  /** Clé objet en stockage (présente à la création). */
+  objectKey?: string;
+  contentType: string;
+  sizeBytes: number;
+  originalFilename: string;
+  createdAt: string;
+}
+
 export interface CreateNcRequest {
   title: string;
   description?: string;

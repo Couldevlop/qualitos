@@ -35,3 +35,9 @@ cd apps/web && npx ng build "--configuration=analyze"
 ```
 
 NB : les budgets ne sont vérifiés que par la configuration `production` (CI).
+
+## NG0100 (`ExpressionChangedAfterItHasBeenChecked`)
+
+Les états `loading$` / `error$` des pages list/detail sont exposés via le helper
+`deferredView` (`core/rx/deferred-view.ts`) pour éviter le NG0100 systémique —
+voir [`web-ng0100.md`](./web-ng0100.md). Toute nouvelle page DOIT l'utiliser.

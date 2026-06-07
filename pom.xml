@@ -24,6 +24,10 @@
     <modules>
         <module>libs/industry-commons</module>
         <module>libs/security-commons-crypto</module>
+        <!-- JAR Keycloak SPI (déployé dans /opt/keycloak/providers/) — module sœur,
+             jamais une dépendance des services Spring. Validé par le réacteur
+             (placeholder COPY requis dans les Dockerfiles core/engine/iot). -->
+        <module>libs/keycloak-spi-ldap</module>
         <module>apps/api-core</module>
         <module>apps/api-quality-engine</module>
         <module>apps/api-iot-hub</module>

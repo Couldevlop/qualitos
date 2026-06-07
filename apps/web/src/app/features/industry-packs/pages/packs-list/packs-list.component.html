@@ -1,0 +1,81 @@
+<div class="qos-page">
+  <header class="page-header">
+    <h1 i18n="@@industry-packs.list.title">Packs sectoriels</h1>
+    <p i18n="@@industry-packs.list.subtitle">Activez un pack métier pour pré-charger KPIs, normes, templates Ishikawa et bibliothèque Poka-Yoke adaptés à votre secteur.</p>
+  </header>
+
+  <div class="toolbar">
+    <mat-form-field appearance="outline" class="search">
+      <mat-label i18n="@@industry-packs.list.search">Rechercher un pack</mat-label>
+      <input matInput [(ngModel)]="query" (ngModelChange)="applyFilter()"
+             i18n-placeholder="@@industry-packs.list.search-placeholder"
+             placeholder="Secteur, code, mot-clé…">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div class="state" *ngIf="loading" role="status">
+    <mat-progress-spinner mode="indeterminate" diameter="36"
+      i18n-aria-label="@@common.loading-aria" aria-label="Chargement"></mat-progress-spinner>
+  </div>
+
+  <div class="state error" *ngIf="error && !loading">
+    <p i18n="@@common.error-loading">Erreur lors du chargement.</p>
+    <button mat-stroked-button color="primary" (click)="load()" i18n="@@industry-packs.retry">Réessayer</button>
+  </div>
+
+  <p class="empty" *ngIf="!loading && !error && filtered.length === 0"
+     i18n="@@industry-packs.list.empty">Aucun pack ne correspond à votre recherche.</p>
+
+  <div class="grid" *ngIf="!loading && !error && filtered.length">
+    <mat-card class="pack-card" *ngFor="let v of filtered" (click)="open(v)"
+              tabindex="0" (keyup.enter)="open(v)">
+      <div class="card-head">
+        <div class="title-block">
+          <h2 class="pack-name">{{ v.pack.name }}</h2>
+          <span class="pack-code">{{ v.pack.code }}</span>
+        </div>
+        <span class="badge active" *ngIf="v.active" i18n="@@industry-packs.badge-active">Actif</span>
+      </div>
+
+      <p class="pack-desc" *ngIf="v.pack.description">{{ v.pack.description }}</p>
+
+      <div class="tags" *ngIf="(v.manifest.sectors.length || v.pack.tags.length)">
+        <span class="tag" *ngFor="let s of (v.manifest.sectors.length ? v.manifest.sectors : v.pack.tags)">{{ s }}</span>
+      </div>
+
+      <div class="meta">
+        <span class="meta-item">
+          <span i18n="@@industry-packs.version">Version</span> {{ v.pack.version }}
+        </span>
+      </div>
+
+      <div class="counters" *ngIf="v.manifest.rich">
+        <span class="counter" matTooltip="KPIs" i18n-matTooltip="@@industry-packs.tab-kpis">
+          <mat-icon>monitoring</mat-icon> {{ v.manifest.kpis.length }}</span>
+        <span class="counter" matTooltip="Normes" i18n-matTooltip="@@industry-packs.tab-norms">
+          <mat-icon>workspace_premium</mat-icon> {{ v.manifest.standards.length }}</span>
+        <span class="counter" matTooltip="Templates Ishikawa" i18n-matTooltip="@@industry-packs.tab-ishikawa">
+          <mat-icon>account_tree</mat-icon> {{ v.manifest.ishikawaTemplates.length }}</span>
+        <span class="counter" matTooltip="Poka-Yoke" i18n-matTooltip="@@industry-packs.tab-pokayoke">
+          <mat-icon>verified</mat-icon> {{ v.manifest.pokaYoke.length }}</span>
+      </div>
+      <p class="flat-note" *ngIf="!v.manifest.rich" i18n="@@industry-packs.flat-note">
+        Pack de base — contenu structuré (KPIs détaillés, Ishikawa, Poka-Yoke) à venir.
+      </p>
+
+      <div class="card-actions" *ngIf="canManage">
+        <button mat-flat-button color="primary" *ngIf="!v.active"
+                [disabled]="busy === v.pack.code" (click)="activate(v, $event)">
+          <mat-icon>add_circle</mat-icon>
+          <span i18n="@@industry-packs.activate">Activer</span>
+        </button>
+        <button mat-stroked-button color="warn" *ngIf="v.active"
+                [disabled]="busy === v.pack.code" (click)="deactivate(v, $event)">
+          <mat-icon>do_not_disturb_on</mat-icon>
+          <span i18n="@@industry-packs.deactivate">Désactiver</span>
+        </button>
+      </div>
+    </mat-card>
+  </div>
+</div>

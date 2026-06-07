@@ -4,8 +4,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { catchError, debounceTime, startWith, switchMap, tap } from 'rxjs/operators';
+import { catchError, debounceTime, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 
+import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { CyberIncidentsService } from '../../cyi.service';
 import { CyiSeverity, CyiStatus, CyiType, CyiView, TYPE_LABEL } from '../../cyi.types';
@@ -26,8 +27,10 @@ export class CyiListComponent implements OnInit {
   readonly statuses: CyiStatus[] = ['DETECTED', 'ASSESSING', 'MITIGATED', 'CLOSED', 'REJECTED'];
 
   rows$!: Observable<CyiView[]>;
-  loading$ = new BehaviorSubject<boolean>(false);
-  error$   = new BehaviorSubject<string | null>(null);
+  private readonly loadingState$ = new BehaviorSubject<boolean>(false);
+  readonly loading$ = deferredView(this.loadingState$);
+  private readonly errorState$ = new BehaviorSubject<string | null>(null);
+  readonly error$ = deferredView(this.errorState$);
 
   readonly columns = ['reference', 'title', 'type', 'severity', 'affected', 'status', 'deadlines'];
   readonly typeLabel = TYPE_LABEL;
@@ -47,7 +50,7 @@ export class CyiListComponent implements OnInit {
       this.refresh$
     ]).pipe(
       debounceTime(120),
-      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
+      tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
       switchMap(([mode, status]) => {
         let src$: Observable<CyiView[]>;
         switch (mode) {
@@ -58,16 +61,17 @@ export class CyiListComponent implements OnInit {
         }
         return src$.pipe(
           catchError(err => {
-            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
+            this.errorState$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return of([] as CyiView[]);
           }),
-          tap(() => this.loading$.next(false)),
+          tap(() => this.loadingState$.next(false)),
           switchMap(rows => {
             if (mode !== 'ALL' && status) rows = rows.filter(r => r.status === status);
             return of(rows);
           })
         );
-      })
+      }),
+      shareReplay({ bufferSize: 1, refCount: true })
     );
   }
 

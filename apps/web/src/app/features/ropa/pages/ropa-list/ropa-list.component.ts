@@ -3,8 +3,9 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
-import { catchError, finalize, startWith, switchMap, tap } from 'rxjs/operators';
+import { catchError, finalize, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 
+import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { RopaService } from '../../ropa.service';
 import {
@@ -28,8 +29,10 @@ export class RopaListComponent implements OnInit {
   readonly statusFilter = new FormControl<ProcessingActivityStatus | ''>('ACTIVE');
 
   activities$!: Observable<ProcessingActivityView[]>;
-  loading$ = new BehaviorSubject<boolean>(false);
-  error$   = new BehaviorSubject<string | null>(null);
+  private readonly loadingState$ = new BehaviorSubject<boolean>(false);
+  readonly loading$ = deferredView(this.loadingState$);
+  private readonly errorState$ = new BehaviorSubject<string | null>(null);
+  readonly error$ = deferredView(this.errorState$);
 
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
 
@@ -44,18 +47,19 @@ export class RopaListComponent implements OnInit {
       this.statusFilter.valueChanges.pipe(startWith(this.statusFilter.value)),
       this.refresh$
     ]).pipe(
-      tap(() => { this.error$.next(null); queueMicrotask(() => this.loading$.next(true)); }),
+      tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
       switchMap(([status]) =>
         this.svc.list(status || undefined).pipe(
           catchError(err => {
             // eslint-disable-next-line no-console
             console.warn('[ropa-list] failed', err?.status, err?.error?.title);
-            this.error$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
+            this.errorState$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
             return of([] as ProcessingActivityView[]);
           }),
-          finalize(() => this.loading$.next(false))
+          finalize(() => this.loadingState$.next(false))
         )
-      )
+      ),
+      shareReplay({ bufferSize: 1, refCount: true })
     );
   }
 

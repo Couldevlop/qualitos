@@ -6,12 +6,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.Instant;
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,16 +31,27 @@ class IndustryPackServiceTest {
 
     @Mock IndustryPackRepository packRepo;
     @Mock TenantIndustryPackActivationRepository activationRepo;
+    @Mock IndustryPackProvisioningService provisioningService;
     @InjectMocks IndustryPackService service;
 
     static final UUID TENANT = UUID.randomUUID();
     static final UUID USER = UUID.randomUUID();
 
     @BeforeEach
-    void setup() { TenantContext.setTenantId(TENANT.toString()); }
+    void setup() {
+        TenantContext.setTenantId(TENANT.toString());
+        // H2 : l'acteur est désormais dérivé du JWT (sub) — on simule un principal
+        // authentifié dont le name == USER (UUID).
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(
+                        USER.toString(), "n/a", AuthorityUtils.NO_AUTHORITIES));
+    }
 
     @AfterEach
-    void tearDown() { TenantContext.clear(); }
+    void tearDown() {
+        TenantContext.clear();
+        SecurityContextHolder.clearContext();
+    }
 
     @Test
     void listAll_paginates() {
@@ -69,11 +83,44 @@ class IndustryPackServiceTest {
             a.setId(UUID.randomUUID());
             return a;
         });
+        when(provisioningService.provision(eq(TENANT), eq(USER), any()))
+                .thenReturn(new IndustryPackProvisioningService.ProvisioningResult(3, 1, List.of("w")));
         IndustryPackDto.ActivationResponse out = service.activate("manufacturing",
-                new IndustryPackDto.ActivateRequest(USER, "{\"override\":1}"));
+                new IndustryPackDto.ActivateRequest("{\"override\":1}"));
         assertThat(out.status()).isEqualTo(ActivationStatus.ACTIVE);
         assertThat(out.tenantId()).isEqualTo(TENANT);
+        // H2 : l'acteur enregistré est le sub du JWT, pas un champ de body.
         assertThat(out.activatedBy()).isEqualTo(USER);
+        // Bilan de provisionnement injecté dans la réponse (additif).
+        assertThat(out.provisioning()).isNotNull();
+        assertThat(out.provisioning().kpisCreated()).isEqualTo(3);
+        assertThat(out.provisioning().kpisSkipped()).isEqualTo(1);
+    }
+
+    @Test
+    void activate_alreadyActive_skipsProvisioning() {
+        when(packRepo.findByCode("it-itsm")).thenReturn(Optional.of(pack("it-itsm")));
+        when(activationRepo.findByTenantIdAndPackCodeAndStatus(TENANT, "it-itsm", ActivationStatus.ACTIVE))
+                .thenReturn(Optional.of(activation("it-itsm", ActivationStatus.ACTIVE)));
+
+        IndustryPackDto.ActivationResponse out = service.activate("it-itsm",
+                new IndustryPackDto.ActivateRequest(null));
+
+        assertThat(out.provisioning()).isNull();
+        verify(provisioningService, never()).provision(any(), any(), any());
+    }
+
+    @Test
+    void deactivate_doesNotProvisionOrDelete() {
+        TenantIndustryPackActivation a = activation("manufacturing", ActivationStatus.ACTIVE);
+        when(activationRepo.findByTenantIdAndPackCodeAndStatus(TENANT, "manufacturing", ActivationStatus.ACTIVE))
+                .thenReturn(Optional.of(a));
+        when(activationRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        IndustryPackDto.ActivationResponse out = service.deactivate("manufacturing");
+
+        assertThat(out.provisioning()).isNull();
+        verify(provisioningService, never()).provision(any(), any(), any());
     }
 
     @Test
@@ -84,7 +131,7 @@ class IndustryPackServiceTest {
                 .thenReturn(Optional.of(existing));
 
         IndustryPackDto.ActivationResponse out = service.activate("it-itsm",
-                new IndustryPackDto.ActivateRequest(USER, null));
+                new IndustryPackDto.ActivateRequest(null));
 
         assertThat(out.id()).isEqualTo(existing.getId());
         verify(activationRepo, never()).save(any());
@@ -94,7 +141,7 @@ class IndustryPackServiceTest {
     void activate_packNotInCatalog_throws() {
         when(packRepo.findByCode("ghost")).thenReturn(Optional.empty());
         assertThatThrownBy(() -> service.activate("ghost",
-                new IndustryPackDto.ActivateRequest(USER, null)))
+                new IndustryPackDto.ActivateRequest(null)))
                 .isInstanceOf(IndustryPackNotFoundException.class);
         verify(activationRepo, never()).save(any());
     }
@@ -103,7 +150,7 @@ class IndustryPackServiceTest {
     void activate_withoutTenant_throws() {
         TenantContext.clear();
         assertThatThrownBy(() -> service.activate("manufacturing",
-                new IndustryPackDto.ActivateRequest(USER, null)))
+                new IndustryPackDto.ActivateRequest(null)))
                 .isInstanceOf(MissingTenantContextException.class);
     }
 
@@ -114,9 +161,10 @@ class IndustryPackServiceTest {
                 .thenReturn(Optional.of(a));
         when(activationRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        IndustryPackDto.ActivationResponse out = service.deactivate("manufacturing", USER);
+        IndustryPackDto.ActivationResponse out = service.deactivate("manufacturing");
 
         assertThat(out.status()).isEqualTo(ActivationStatus.DEACTIVATED);
+        // H2 : l'acteur de la désactivation est le sub du JWT.
         assertThat(out.deactivatedBy()).isEqualTo(USER);
         assertThat(out.deactivatedAt()).isNotNull();
     }
@@ -125,7 +173,7 @@ class IndustryPackServiceTest {
     void deactivate_noActiveActivation_throws() {
         when(activationRepo.findByTenantIdAndPackCodeAndStatus(TENANT, "manufacturing", ActivationStatus.ACTIVE))
                 .thenReturn(Optional.empty());
-        assertThatThrownBy(() -> service.deactivate("manufacturing", USER))
+        assertThatThrownBy(() -> service.deactivate("manufacturing"))
                 .isInstanceOf(IndustryPackNotFoundException.class);
     }
 

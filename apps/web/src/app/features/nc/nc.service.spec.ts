@@ -197,4 +197,73 @@ describe('NcService (offline-first, API réelle)', () => {
       updatedAt: '', capaCaseId: 'capa-1'
     });
   });
+
+  // --- photos (upload binaire, online-only) ---------------------------------
+
+  it('listPhotos appelle GET .../photos et renvoie les métadonnées', (done) => {
+    service.listPhotos('a1').subscribe(photos => {
+      expect(photos.length).toBe(1);
+      expect(photos[0].url).toBe('https://store/presigned/p1');
+      done();
+    });
+    const req = httpMock.expectOne(`${endpoint}/a1/photos`);
+    expect(req.request.method).toBe('GET');
+    req.flush([
+      { id: 'p1', url: 'https://store/presigned/p1', contentType: 'image/jpeg',
+        sizeBytes: 1234, originalFilename: 'champ.jpg', createdAt: '2026-06-06T00:00:00Z' }
+    ]);
+  });
+
+  it('uploadPhoto envoie un multipart avec le champ \'file\'', (done) => {
+    const file = new File([new Uint8Array([1, 2, 3])], 'photo.png', { type: 'image/png' });
+    service.uploadPhoto('a1', file).subscribe(photo => {
+      expect(photo.id).toBe('p9');
+      done();
+    });
+    const req = httpMock.expectOne(`${endpoint}/a1/photos`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body instanceof FormData).toBeTrue();
+    const body = req.request.body as FormData;
+    const sent = body.get('file');
+    expect(sent instanceof File).toBeTrue();
+    expect((sent as File).name).toBe('photo.png');
+    req.flush({
+      id: 'p9', objectKey: 'tenant/a1/p9.png', contentType: 'image/png',
+      sizeBytes: 3, originalFilename: 'photo.png', createdAt: '2026-06-06T00:00:00Z'
+    }, { status: 201, statusText: 'Created' });
+  });
+
+  it('uploadPhoto propage proprement le 503 storage-disabled', (done) => {
+    const file = new File([new Uint8Array([1])], 'p.webp', { type: 'image/webp' });
+    service.uploadPhoto('a1', file).subscribe({
+      next: () => done.fail('ne devrait pas réussir'),
+      error: err => {
+        expect(err.status).toBe(503);
+        expect(err.error?.type).toContain('storage-disabled');
+        done();
+      }
+    });
+    const req = httpMock.expectOne(`${endpoint}/a1/photos`);
+    req.flush({ type: 'https://qualitos.io/errors/storage-disabled' }, { status: 503, statusText: 'Service Unavailable' });
+  });
+
+  it('uploadPhoto propage proprement le 409 (NC clôturée/annulée)', (done) => {
+    const file = new File([new Uint8Array([1])], 'p.jpg', { type: 'image/jpeg' });
+    service.uploadPhoto('a1', file).subscribe({
+      next: () => done.fail('ne devrait pas réussir'),
+      error: err => {
+        expect(err.status).toBe(409);
+        done();
+      }
+    });
+    const req = httpMock.expectOne(`${endpoint}/a1/photos`);
+    req.flush({ title: 'Conflict' }, { status: 409, statusText: 'Conflict' });
+  });
+
+  it('deletePhoto appelle DELETE .../photos/{id} et renvoie 204', (done) => {
+    service.deletePhoto('a1', 'p1').subscribe(() => done());
+    const req = httpMock.expectOne(`${endpoint}/a1/photos/p1`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null, { status: 204, statusText: 'No Content' });
+  });
 });

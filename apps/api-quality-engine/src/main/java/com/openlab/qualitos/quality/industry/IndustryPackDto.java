@@ -1,7 +1,5 @@
 package com.openlab.qualitos.quality.industry;
 
-import jakarta.validation.constraints.NotNull;
-
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -25,8 +23,12 @@ public final class IndustryPackDto {
             Instant updatedAt
     ) {}
 
+    /**
+     * H2 (OWASP A01) : {@code activatedBy} N'EST PLUS un champ entrant. L'acteur de
+     * l'activation est dérivé côté serveur du {@code sub} du JWT (cf. service), jamais
+     * du body falsifiable. Le DTO ne porte plus que la configuration métier.
+     */
     public record ActivateRequest(
-            @NotNull UUID activatedBy,
             /** Overrides JSON optionnels (KPIs custom, glossaire) — passé en string. */
             String configOverridesJson
     ) {}
@@ -39,6 +41,21 @@ public final class IndustryPackDto {
             UUID activatedBy,
             Instant activatedAt,
             Instant deactivatedAt,
-            UUID deactivatedBy
+            UUID deactivatedBy,
+            // Provisionnement Phase 2 (ADR 0019) — champs ADDITIFS, rétro-compatibles.
+            // Nuls pour les réponses qui ne provisionnent pas (désactivation, etc.).
+            Provisioning provisioning
+    ) {}
+
+    /**
+     * Bilan du provisionnement de contenu à l'activation (Phase 2, KPIs uniquement).
+     * {@code kpisCreated} : KPIs riches matérialisés en KpiDefinition du tenant ;
+     * {@code kpisSkipped} : KPIs ignorés (déjà présents / sans kpi_id / échec) ;
+     * {@code warnings} : messages non bloquants (collisions, mapping, manifeste illisible).
+     */
+    public record Provisioning(
+            int kpisCreated,
+            int kpisSkipped,
+            List<String> warnings
     ) {}
 }

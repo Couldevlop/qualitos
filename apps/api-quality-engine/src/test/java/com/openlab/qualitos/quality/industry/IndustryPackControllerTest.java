@@ -72,28 +72,33 @@ class IndustryPackControllerTest {
     void activate_returns200() throws Exception {
         when(service.activate(eq("manufacturing"), any()))
                 .thenReturn(actResp(ActivationStatus.ACTIVE));
-        IndustryPackDto.ActivateRequest req = new IndustryPackDto.ActivateRequest(USER, null);
+        // H2 : plus de champ 'activatedBy' dans le body — l'acteur vient du JWT.
+        IndustryPackDto.ActivateRequest req = new IndustryPackDto.ActivateRequest(null);
         mockMvc.perform(post("/api/v1/industry-packs/{code}/activate", "manufacturing").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("ACTIVE"));
+                .andExpect(jsonPath("$.status").value("ACTIVE"))
+                .andExpect(jsonPath("$.provisioning.kpisCreated").value(2))
+                .andExpect(jsonPath("$.provisioning.kpisSkipped").value(0));
     }
 
     @Test @WithMockUser
-    void activate_missingActivatedBy_returns400() throws Exception {
-        // @NotNull sur activatedBy : un body vide ⇒ 400
+    void activate_emptyBody_returns200() throws Exception {
+        // H2 : 'activatedBy' retiré → un body vide est désormais valide (acteur = JWT).
+        when(service.activate(eq("manufacturing"), any()))
+                .thenReturn(actResp(ActivationStatus.ACTIVE));
         mockMvc.perform(post("/api/v1/industry-packs/{code}/activate", "manufacturing").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON).content("{}"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk());
     }
 
     @Test @WithMockUser
     void deactivate_returns200() throws Exception {
-        when(service.deactivate(eq("manufacturing"), eq(USER)))
+        // H2 : plus de paramètre 'deactivatedBy' — l'acteur vient du JWT.
+        when(service.deactivate(eq("manufacturing")))
                 .thenReturn(actResp(ActivationStatus.DEACTIVATED));
         mockMvc.perform(delete("/api/v1/industry-packs/{code}/activate", "manufacturing")
-                        .param("deactivatedBy", USER.toString())
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("DEACTIVATED"));
@@ -123,9 +128,12 @@ class IndustryPackControllerTest {
     }
 
     private IndustryPackDto.ActivationResponse actResp(ActivationStatus status) {
+        IndustryPackDto.Provisioning provisioning = status == ActivationStatus.ACTIVE
+                ? new IndustryPackDto.Provisioning(2, 0, List.of()) : null;
         return new IndustryPackDto.ActivationResponse(
                 ACT, TENANT, "manufacturing", status, USER, Instant.now(),
                 status == ActivationStatus.DEACTIVATED ? Instant.now() : null,
-                status == ActivationStatus.DEACTIVATED ? USER : null);
+                status == ActivationStatus.DEACTIVATED ? USER : null,
+                provisioning);
     }
 }
