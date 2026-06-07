@@ -37,6 +37,10 @@ import com.openlab.qualitos.quality.ai.guard.AiPromptTooLargeException;
 import com.openlab.qualitos.quality.ai.guard.AiQuotaExceededException;
 import com.openlab.qualitos.quality.ai.guard.AiRateLimitExceededException;
 import com.openlab.qualitos.quality.aigateway.AiGatewayException;
+import com.openlab.qualitos.quality.visiongateway.VisionGatewayException;
+import com.openlab.qualitos.quality.visiongateway.VisionImageTooLargeException;
+import com.openlab.qualitos.quality.visiongateway.VisionImageValidationException;
+import com.openlab.qualitos.quality.visiongateway.VisionUnavailableException;
 import com.openlab.qualitos.quality.standards.StandardNotFoundException;
 import com.openlab.qualitos.quality.standards.TenantStandardNotFoundException;
 import com.openlab.qualitos.quality.industry.IndustryPackNotFoundException;
@@ -465,6 +469,44 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/ai-gateway-unavailable"));
         problem.setTitle("AI Gateway Unavailable");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    // --- Passerelle Vision 5S (ai-vision-5s, §3.2) ---
+
+    @ExceptionHandler(VisionUnavailableException.class)
+    public ProblemDetail handleVisionUnavailable(VisionUnavailableException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/vision-unavailable"));
+        problem.setTitle("Vision Service Unavailable");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(VisionGatewayException.class)
+    public ProblemDetail handleVisionGateway(VisionGatewayException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/vision-gateway-error"));
+        problem.setTitle("Vision Gateway Error");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(VisionImageValidationException.class)
+    public ProblemDetail handleVisionImageValidation(VisionImageValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/vision-image-invalid"));
+        problem.setTitle("Invalid Vision Image");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(VisionImageTooLargeException.class)
+    public ProblemDetail handleVisionImageTooLarge(VisionImageTooLargeException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/vision-image-too-large"));
+        problem.setTitle("Vision Image Too Large");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

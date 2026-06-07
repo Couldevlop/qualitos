@@ -87,3 +87,12 @@ saisie terrain ──offline──▶ OfflineQueueService ──▶ IndexedDB (q
   Les `photoUrls` texte (saisie libre / legacy) restent affichées en repli. Si le
   stockage objet n'est pas configuré (back renvoie `503 type=storage-disabled`),
   l'UI affiche un message doux au lieu d'une erreur brute.
+- **Analyse Vision 5S par IA : online-only (décision assumée).** Le panneau
+  « Analyse visuelle (IA) » du détail NC (`NcService.analyzePhotoVision` →
+  `POST /api/v1/vision/5s/analyze`, multipart champ `image`) envoie la photo au
+  service de vision par ordinateur et **ne bascule pas dans la file hors-ligne**
+  (inférence serveur-only, binaire non sérialisé). Hors-ligne, le bouton
+  « Analyser une photo » est désactivé (tooltip `nc.vision.offline-tooltip` +
+  note `nc.vision.offline-note`). Si le service est coupé sur l'environnement
+  (`503 type=vision-unavailable`), l'UI affiche « Analyse vision désactivée sur
+  cet environnement » ; 400/413/502 sont traités par snackbar.

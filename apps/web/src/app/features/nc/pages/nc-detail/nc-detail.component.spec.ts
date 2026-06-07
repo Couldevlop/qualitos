@@ -12,7 +12,7 @@ import { UiModule } from '../../../../shared/ui/ui.module';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ConnectivityService } from '../../../../core/offline/connectivity.service';
 import { NcService } from '../../nc.service';
-import { NcPhoto, NcResponse } from '../../nc.types';
+import { NcPhoto, NcResponse, VisionAnalysis } from '../../nc.types';
 import { NcDetailComponent } from './nc-detail.component';
 
 function buildNc(overrides: Partial<NcResponse> = {}): NcResponse {
@@ -54,7 +54,7 @@ describe('NcDetailComponent — section photos', () => {
 
   beforeEach(async () => {
     svc = jasmine.createSpyObj<NcService>('NcService', [
-      'getNc', 'listPhotos', 'uploadPhoto', 'deletePhoto'
+      'getNc', 'listPhotos', 'uploadPhoto', 'deletePhoto', 'analyzePhotoVision'
     ]);
     connectivity = new FakeConnectivity();
 
@@ -183,5 +183,100 @@ describe('NcDetailComponent — section photos', () => {
     component.deletePhoto(PHOTO);
     expect(svc.deletePhoto).not.toHaveBeenCalled();
     expect(component.photos$.value.length).toBe(1);
+  });
+
+  // --- analyse Vision 5S par IA ---------------------------------------------
+
+  const VISION: VisionAnalysis = {
+    imageSha256: 'abc', width: 1280, height: 720,
+    score: { seiri: 70, seiton: 85, seiso: 55, seiketsu: 90, shitsuke: 65, overall: 73 },
+    findings: [
+      { pillar: 'SEIRI', description: 'Encombrement zone passage', severity: 'HIGH', confidence: 0.91, bbox: [1, 2, 3, 4] },
+      { pillar: 'SEISO', description: 'Salissure au sol', severity: 'MEDIUM', confidence: 0.6, bbox: null }
+    ]
+  };
+
+  function vfile(): File {
+    return new File([new Uint8Array([1])], 'zone.png', { type: 'image/png' });
+  }
+
+  it('affiche l’invite initiale tant qu’aucune analyse n’a tourné', () => {
+    setup(buildNc(), []);
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.querySelector('.vision-card')).toBeTruthy();
+    expect(el.querySelector('.vision-scores')).toBeNull();
+  });
+
+  it('analyse réussie : rend le score 5S (5 piliers + global) et les findings', () => {
+    setup(buildNc(), []);
+    svc.analyzePhotoVision.and.returnValue(of(VISION));
+    component.onVisionFileSelected({ target: { files: [vfile()], value: '' } } as unknown as Event);
+    fixture.detectChanges();
+
+    expect(svc.analyzePhotoVision).toHaveBeenCalled();
+    const el: HTMLElement = fixture.nativeElement;
+    // score global
+    expect(el.querySelector('.score-overall-value')?.textContent?.trim()).toBe('73');
+    // 5 barres de piliers
+    expect(el.querySelectorAll('.score-bars li').length).toBe(5);
+    // 2 findings
+    const findings = el.querySelectorAll('.finding');
+    expect(findings.length).toBe(2);
+    expect(findings[0].querySelector('.finding-pillar')?.textContent?.trim()).toBe('SEIRI');
+    expect(findings[0].querySelector('.finding-conf')?.textContent?.trim()).toBe('91%');
+  });
+
+  it('503 vision-unavailable : état doux dédié, pas de snackbar brute', () => {
+    setup(buildNc(), []);
+    const snack = TestBed.inject(MatSnackBar);
+    const snackSpy = spyOn(snack, 'open');
+    svc.analyzePhotoVision.and.returnValue(throwError(() =>
+      new HttpErrorResponse({ status: 503, error: { type: 'https://qualitos.io/errors/vision-unavailable' } })));
+    component.onVisionFileSelected({ target: { files: [vfile()], value: '' } } as unknown as Event);
+    fixture.detectChanges();
+
+    expect(component.visionUnavailable$.value).toBeTrue();
+    expect(snackSpy).not.toHaveBeenCalled();
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.querySelector('.vision-unavailable')).toBeTruthy();
+    expect((el.querySelector('.analyze-btn') as HTMLButtonElement).disabled).toBeTrue();
+  });
+
+  it('413 : snackbar d’erreur, pas d’état unavailable', () => {
+    setup(buildNc(), []);
+    const snack = TestBed.inject(MatSnackBar);
+    const snackSpy = spyOn(snack, 'open');
+    svc.analyzePhotoVision.and.returnValue(throwError(() =>
+      new HttpErrorResponse({ status: 413 })));
+    component.onVisionFileSelected({ target: { files: [vfile()], value: '' } } as unknown as Event);
+    expect(component.visionUnavailable$.value).toBeFalse();
+    expect(snackSpy).toHaveBeenCalled();
+  });
+
+  it('désactive le bouton d’analyse hors-ligne', () => {
+    setup(buildNc(), []);
+    connectivity.online$.next(false);
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement;
+    expect((el.querySelector('.analyze-btn') as HTMLButtonElement).disabled).toBeTrue();
+    expect(el.querySelector('.vision-offline-note')).toBeTruthy();
+  });
+
+  it('clearVision efface le résultat affiché', () => {
+    setup(buildNc(), []);
+    svc.analyzePhotoVision.and.returnValue(of(VISION));
+    component.onVisionFileSelected({ target: { files: [vfile()], value: '' } } as unknown as Event);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.vision-scores')).toBeTruthy();
+    component.clearVision();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.vision-scores')).toBeNull();
+  });
+
+  it('visionScoreClass mappe les paliers (good/warn/bad)', () => {
+    setup(buildNc(), []);
+    expect(component.visionScoreClass(85)).toBe('score-good');
+    expect(component.visionScoreClass(70)).toBe('score-warn');
+    expect(component.visionScoreClass(40)).toBe('score-bad');
   });
 });

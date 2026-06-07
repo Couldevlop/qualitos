@@ -93,6 +93,52 @@ export interface ResolveNcRequest {
   resolutionNote: string;
 }
 
+// --- Analyse Vision 5S par IA (§3.2 / §1.4) ----------------------------------
+// Surface la détection CV des non-conformités sur photo. Contrat backend figé :
+// POST /api/v1/vision/5s/analyze (multipart, champ 'image'), réponse camelCase.
+
+/** Pilier 5S porté par un finding de vision (enum backend, affiché brut/i18n). */
+export type VisionPillar =
+  | 'SEIRI'
+  | 'SEITON'
+  | 'SEISO'
+  | 'SEIKETSU'
+  | 'SHITSUKE';
+
+/** Sévérité d'un finding vision (enum backend). */
+export type VisionSeverity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+
+/** Scores 5S calculés par le modèle (0-100 par pilier + global). */
+export interface VisionScore {
+  seiri: number;
+  seiton: number;
+  seiso: number;
+  seiketsu: number;
+  shitsuke: number;
+  overall: number;
+}
+
+/** Non-conformité 5S détectée sur la photo. */
+export interface VisionFinding {
+  pillar: VisionPillar;
+  description: string;
+  /** Chaîne libre côté backend (LOW/MEDIUM/HIGH/CRITICAL le plus souvent). */
+  severity: string;
+  /** Confiance du modèle, 0.0 → 1.0. */
+  confidence: number;
+  /** Boîte englobante [x, y, w, h] en pixels, ou null si non localisée. */
+  bbox: number[] | null;
+}
+
+/** Réponse complète de l'analyse vision 5S. */
+export interface VisionAnalysis {
+  imageSha256: string;
+  width: number;
+  height: number;
+  score: VisionScore;
+  findings: VisionFinding[];
+}
+
 export interface StartAnalysisNcRequest {
   rootCause?: string;
 }

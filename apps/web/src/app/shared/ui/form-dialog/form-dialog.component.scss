@@ -3,13 +3,13 @@
 }
 
 .qfd-subtitle {
-  margin: 0 0 var(--qos-space-4, 16px);
-  color: var(--qos-fg-secondary, #475569);
-  font-size: 0.9rem;
-  line-height: 1.45;
+  margin: 0 0 var(--qos-space-4);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+  line-height: var(--qos-lh-normal);
 }
 
 /* Aligne le spinner avec le libellé du bouton de validation. */
 .mat-mdc-dialog-actions button mat-progress-spinner {
-  margin-right: 8px;
+  margin-right: var(--qos-space-2);
 }

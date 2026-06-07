@@ -7834,6 +7834,98 @@ declared income
         <source>URLs renseignées (sans envoi de fichier)</source>
         <target state="translated">Entered URLs (without file upload)</target>
       </trans-unit>
+      <trans-unit id="nc.vision.title" datatype="html">
+        <source>Analyse visuelle (IA)</source>
+        <target state="translated">Visual analysis (AI)</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.subtitle" datatype="html">
+        <source>Détecte automatiquement les non-conformités 5S sur une photo (vision par ordinateur).</source>
+        <target state="translated">Automatically detects 5S non-conformances on a photo (computer vision).</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.analyze" datatype="html">
+        <source>Analyser une photo</source>
+        <target state="translated">Analyze a photo</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.analyzing" datatype="html">
+        <source>Analyse de l'image en cours…</source>
+        <target state="translated">Analyzing the image…</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.clear" datatype="html">
+        <source>Effacer</source>
+        <target state="translated">Clear</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.clear-tooltip" datatype="html">
+        <source>Effacer le résultat</source>
+        <target state="translated">Clear the result</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.intro" datatype="html">
+        <source>Analysez une photo terrain pour obtenir un score 5S et la liste des non-conformités détectées par l'IA.</source>
+        <target state="translated">Analyze a field photo to get a 5S score and the list of non-conformances detected by the AI.</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.unavailable" datatype="html">
+        <source>Analyse vision désactivée sur cet environnement.</source>
+        <target state="translated">Vision analysis is disabled on this environment.</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.offline-tooltip" datatype="html">
+        <source>Analyse disponible en ligne uniquement</source>
+        <target state="translated">Analysis available online only</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.offline-note" datatype="html">
+        <source>Hors-ligne : l'analyse visuelle est disponible uniquement en ligne.</source>
+        <target state="translated">Offline: visual analysis is available online only.</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.error" datatype="html">
+        <source>Échec de l'analyse vision.</source>
+        <target state="translated">Vision analysis failed.</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.image-invalid" datatype="html">
+        <source>Image invalide — formats acceptés : JPEG, PNG, WebP.</source>
+        <target state="translated">Invalid image — accepted formats: JPEG, PNG, WebP.</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.too-large" datatype="html">
+        <source>Image trop volumineuse pour l'analyse vision.</source>
+        <target state="translated">Image too large for vision analysis.</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.gateway-error" datatype="html">
+        <source>Le service d'analyse vision est momentanément indisponible.</source>
+        <target state="translated">The vision analysis service is temporarily unavailable.</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.score-overall" datatype="html">
+        <source>Score 5S global</source>
+        <target state="translated">Overall 5S score</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.findings-title" datatype="html">
+        <source>Constats détectés</source>
+        <target state="translated">Detected findings</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.no-findings" datatype="html">
+        <source>Aucune non-conformité 5S détectée sur cette image.</source>
+        <target state="translated">No 5S non-conformance detected on this image.</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.confidence-tooltip" datatype="html">
+        <source>Confiance du modèle</source>
+        <target state="translated">Model confidence</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.pillar.seiri" datatype="html">
+        <source>Seiri (Trier)</source>
+        <target state="translated">Seiri (Sort)</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.pillar.seiton" datatype="html">
+        <source>Seiton (Ranger)</source>
+        <target state="translated">Seiton (Set in order)</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.pillar.seiso" datatype="html">
+        <source>Seiso (Nettoyer)</source>
+        <target state="translated">Seiso (Shine)</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.pillar.seiketsu" datatype="html">
+        <source>Seiketsu (Standardiser)</source>
+        <target state="translated">Seiketsu (Standardize)</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.pillar.shitsuke" datatype="html">
+        <source>Shitsuke (Maintenir)</source>
+        <target state="translated">Shitsuke (Sustain)</target>
+      </trans-unit>
       <trans-unit id="nc.resolve.title" datatype="html">
         <source>Résoudre la non-conformité</source>
         <target state="translated">Resolve the non-conformance</target>

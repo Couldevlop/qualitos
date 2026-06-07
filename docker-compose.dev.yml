@@ -322,6 +322,52 @@ services:
     networks: [qualitos]
 
   # -------------------------------------------------------------------------
+  # ai-vision-5s — service de vision par ordinateur pour le scoring 5S (CLAUDE.md
+  # §3.2 / §1.4 / §12). FastAPI distroless. Endpoints POST /v1/vision/5s/analyze
+  # (score + findings) et /score (score seul). Backend ONNX (YOLOv8 exporté) avec
+  # FALLBACK transparent vers le stub déterministe quand aucun modèle n'est fourni.
+  #
+  # Démarré uniquement avec le profil compose 'vision' (off par défaut, comme
+  # fabric/kafka/observability) :
+  #   docker compose -f docker-compose.dev.yml --profile vision up -d ai-vision-5s
+  #
+  # Auth dev : AUTH_BYPASS=true synthétise un TenantContext (pas de Keycloak requis).
+  # En prod (Dockerfile : APP_PROFILE=prod, AUTH_BYPASS=false) la route exige un JWT
+  # Bearer validé contre KEYCLOAK_JWKS_URI — main() refuse de booter si AUTH_BYPASS=true
+  # avec APP_PROFILE=prod.
+  #
+  # Mode stub vs ONNX : VISION5S_ONNX_MODEL_PATH vide => stub déterministe.
+  # Déposer un modèle YOLOv8 exporté ONNX et pointer VISION5S_ONNX_MODEL_PATH
+  # dessus pour activer l'inférence réelle (voir docs/runbooks/vision-5s.md).
+  # Le conteneur écoute en interne sur 8090 ; publié sur l'hôte en 8086 pour
+  # éviter le conflit avec blockchain-service (profil 'fabric', hôte 8090).
+  # -------------------------------------------------------------------------
+
+  ai-vision-5s:
+    build:
+      context: apps/ai-vision-5s
+      dockerfile: Dockerfile
+    container_name: qualitos-ai-vision-5s
+    profiles: ["vision"]
+    environment:
+      LOG_LEVEL: INFO
+      # Dev only : bypass de la validation JWT (synthèse d'un TenantContext).
+      # NE JAMAIS activer en prod — refusé au boot si APP_PROFILE=prod (auth.py).
+      APP_PROFILE: dev
+      AUTH_BYPASS: "true"
+      # Vide = backend stub déterministe. Monter un modèle YOLOv8 ONNX et
+      # renseigner ce chemin (+ volume) pour l'inférence réelle.
+      VISION5S_ONNX_MODEL_PATH: ${VISION5S_ONNX_MODEL_PATH:-}
+      VISION5S_ONNX_INPUT_SIZE: ${VISION5S_ONNX_INPUT_SIZE:-224}
+      # Validation JWT en prod (ignorés tant que AUTH_BYPASS=true) :
+      KEYCLOAK_JWKS_URI: http://keycloak:8080/realms/qualitos/protocol/openid-connect/certs
+      KEYCLOAK_ISSUER: http://keycloak:8080/realms/qualitos
+      KEYCLOAK_AUDIENCE: api-ai-vision-5s
+    ports:
+      - "8086:8090"
+    networks: [qualitos]
+
+  # -------------------------------------------------------------------------
   # P5 — Qdrant vector store (collection-per-tenant for RAG).
   # -------------------------------------------------------------------------
 

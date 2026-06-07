@@ -7833,6 +7833,98 @@ historique 12 mois</source>
         <source>URLs renseignées (sans envoi de fichier)</source>
         <target state="translated">入力されたURL（ファイルアップロードなし）</target>
       </trans-unit>
+      <trans-unit id="nc.vision.title" datatype="html">
+        <source>Analyse visuelle (IA)</source>
+        <target state="translated">画像解析（AI）</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.subtitle" datatype="html">
+        <source>Détecte automatiquement les non-conformités 5S sur une photo (vision par ordinateur).</source>
+        <target state="translated">写真上の5S不適合を自動検出します（コンピュータービジョン）。</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.analyze" datatype="html">
+        <source>Analyser une photo</source>
+        <target state="translated">写真を解析</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.analyzing" datatype="html">
+        <source>Analyse de l'image en cours…</source>
+        <target state="translated">画像を解析中…</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.clear" datatype="html">
+        <source>Effacer</source>
+        <target state="translated">クリア</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.clear-tooltip" datatype="html">
+        <source>Effacer le résultat</source>
+        <target state="translated">結果をクリア</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.intro" datatype="html">
+        <source>Analysez une photo terrain pour obtenir un score 5S et la liste des non-conformités détectées par l'IA.</source>
+        <target state="translated">現場写真を解析して、5SスコアとAIが検出した不適合の一覧を取得します。</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.unavailable" datatype="html">
+        <source>Analyse vision désactivée sur cet environnement.</source>
+        <target state="translated">この環境では画像解析が無効です。</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.offline-tooltip" datatype="html">
+        <source>Analyse disponible en ligne uniquement</source>
+        <target state="translated">解析はオンラインでのみ利用可能</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.offline-note" datatype="html">
+        <source>Hors-ligne : l'analyse visuelle est disponible uniquement en ligne.</source>
+        <target state="translated">オフライン：画像解析はオンライン時のみ利用できます。</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.error" datatype="html">
+        <source>Échec de l'analyse vision.</source>
+        <target state="translated">画像解析に失敗しました。</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.image-invalid" datatype="html">
+        <source>Image invalide — formats acceptés : JPEG, PNG, WebP.</source>
+        <target state="translated">無効な画像 — 対応形式：JPEG、PNG、WebP。</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.too-large" datatype="html">
+        <source>Image trop volumineuse pour l'analyse vision.</source>
+        <target state="translated">画像が大きすぎて解析できません。</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.gateway-error" datatype="html">
+        <source>Le service d'analyse vision est momentanément indisponible.</source>
+        <target state="translated">画像解析サービスは一時的に利用できません。</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.score-overall" datatype="html">
+        <source>Score 5S global</source>
+        <target state="translated">5S総合スコア</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.findings-title" datatype="html">
+        <source>Constats détectés</source>
+        <target state="translated">検出された所見</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.no-findings" datatype="html">
+        <source>Aucune non-conformité 5S détectée sur cette image.</source>
+        <target state="translated">この画像で5S不適合は検出されませんでした。</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.confidence-tooltip" datatype="html">
+        <source>Confiance du modèle</source>
+        <target state="translated">モデルの信頼度</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.pillar.seiri" datatype="html">
+        <source>Seiri (Trier)</source>
+        <target state="translated">整理（Seiri）</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.pillar.seiton" datatype="html">
+        <source>Seiton (Ranger)</source>
+        <target state="translated">整頓（Seiton）</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.pillar.seiso" datatype="html">
+        <source>Seiso (Nettoyer)</source>
+        <target state="translated">清掃（Seiso）</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.pillar.seiketsu" datatype="html">
+        <source>Seiketsu (Standardiser)</source>
+        <target state="translated">清潔（Seiketsu）</target>
+      </trans-unit>
+      <trans-unit id="nc.vision.pillar.shitsuke" datatype="html">
+        <source>Shitsuke (Maintenir)</source>
+        <target state="translated">躾（Shitsuke）</target>
+      </trans-unit>
       <trans-unit id="nc.resolve.title" datatype="html">
         <source>Résoudre la non-conformité</source>
         <target state="translated">不適合を解決</target>

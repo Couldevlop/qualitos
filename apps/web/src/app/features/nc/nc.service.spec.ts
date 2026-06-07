@@ -93,6 +93,23 @@ describe('NcService (mock mode)', () => {
       done();
     });
   });
+
+  it('analyzePhotoVision renvoie un résultat simulé déterministe', (done) => {
+    const file = new File([new Uint8Array([1, 2, 3])], 'atelier.jpg', { type: 'image/jpeg' });
+    service.analyzePhotoVision(file).subscribe(a1 => {
+      expect(a1.score.overall).toBeGreaterThanOrEqual(0);
+      expect(a1.score.overall).toBeLessThanOrEqual(100);
+      expect(a1.findings.length).toBeGreaterThan(0);
+      expect(a1.findings[0].pillar).toBe('SEIRI');
+      // déterminisme : même fichier → même score global
+      service.analyzePhotoVision(
+        new File([new Uint8Array([1, 2, 3])], 'atelier.jpg', { type: 'image/jpeg' })
+      ).subscribe(a2 => {
+        expect(a2.score.overall).toBe(a1.score.overall);
+        done();
+      });
+    });
+  });
 });
 
 describe('NcService (offline-first, API réelle)', () => {
@@ -265,5 +282,73 @@ describe('NcService (offline-first, API réelle)', () => {
     const req = httpMock.expectOne(`${endpoint}/a1/photos/p1`);
     expect(req.request.method).toBe('DELETE');
     req.flush(null, { status: 204, statusText: 'No Content' });
+  });
+
+  // --- analyse Vision 5S par IA (online-only, multipart 'image') -------------
+
+  const visionEndpoint = `${environment.apiBaseUrl}/api/v1/vision/5s/analyze`;
+
+  it('analyzePhotoVision POST multipart champ \'image\' + mappe la réponse', (done) => {
+    const file = new File([new Uint8Array([1, 2, 3])], 'zone.jpg', { type: 'image/jpeg' });
+    service.analyzePhotoVision(file).subscribe(result => {
+      expect(result.imageSha256).toBe('abc123');
+      expect(result.width).toBe(1280);
+      expect(result.score.overall).toBe(78);
+      expect(result.findings.length).toBe(1);
+      expect(result.findings[0].pillar).toBe('SEIRI');
+      expect(result.findings[0].bbox).toEqual([10, 20, 30, 40]);
+      done();
+    });
+    const req = httpMock.expectOne(visionEndpoint);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body instanceof FormData).toBeTrue();
+    const body = req.request.body as FormData;
+    const sent = body.get('image');
+    expect(sent instanceof File).toBeTrue();
+    expect((sent as File).name).toBe('zone.jpg');
+    req.flush({
+      imageSha256: 'abc123', width: 1280, height: 720,
+      score: { seiri: 70, seiton: 80, seiso: 90, seiketsu: 75, shitsuke: 75, overall: 78 },
+      findings: [
+        { pillar: 'SEIRI', description: 'Encombrement', severity: 'HIGH', confidence: 0.91, bbox: [10, 20, 30, 40] }
+      ]
+    });
+  });
+
+  it('analyzePhotoVision propage proprement le 503 vision-unavailable', (done) => {
+    const file = new File([new Uint8Array([1])], 'z.png', { type: 'image/png' });
+    service.analyzePhotoVision(file).subscribe({
+      next: () => done.fail('ne devrait pas réussir'),
+      error: err => {
+        expect(err.status).toBe(503);
+        expect(err.error?.type).toContain('vision-unavailable');
+        done();
+      }
+    });
+    const req = httpMock.expectOne(visionEndpoint);
+    req.flush({ type: 'https://qualitos.io/errors/vision-unavailable' },
+      { status: 503, statusText: 'Service Unavailable' });
+  });
+
+  it('analyzePhotoVision propage le 400 (vision-image-invalid)', (done) => {
+    const file = new File([new Uint8Array([1])], 'z.txt', { type: 'text/plain' });
+    service.analyzePhotoVision(file).subscribe({
+      next: () => done.fail('ne devrait pas réussir'),
+      error: err => { expect(err.status).toBe(400); done(); }
+    });
+    const req = httpMock.expectOne(visionEndpoint);
+    req.flush({ type: 'https://qualitos.io/errors/vision-image-invalid' },
+      { status: 400, statusText: 'Bad Request' });
+  });
+
+  it('analyzePhotoVision propage le 413 (vision-image-too-large)', (done) => {
+    const file = new File([new Uint8Array([1])], 'huge.jpg', { type: 'image/jpeg' });
+    service.analyzePhotoVision(file).subscribe({
+      next: () => done.fail('ne devrait pas réussir'),
+      error: err => { expect(err.status).toBe(413); done(); }
+    });
+    const req = httpMock.expectOne(visionEndpoint);
+    req.flush({ type: 'https://qualitos.io/errors/vision-image-too-large' },
+      { status: 413, statusText: 'Payload Too Large' });
   });
 });

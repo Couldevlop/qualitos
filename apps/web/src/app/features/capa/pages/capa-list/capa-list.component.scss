@@ -1,46 +1,27 @@
-.page-header {
-  display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 16px;
-  h1 { margin: 0 0 4px; font-size: 24px; font-weight: 600; }
-  p  { margin: 0; color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); }
-}
-.filter-card { padding: 16px; margin-bottom: 16px; }
-.status-filter { width: 220px; }
-.state-row { display: flex; align-items: center; gap: 12px; padding: 24px 0; }
-.table-card { padding: 0; overflow: hidden; }
-.t { width: 100%; }
-.cell {
-  display: flex; flex-direction: column;
-  strong { font-weight: 600; }
-  small  { color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); font-size: 12px; }
-}
-.badge {
-  display: inline-block; padding: 2px 10px; border-radius: 12px;
-  font-size: 12px; font-weight: 600;
-  background: var(--mat-sys-secondary-container, rgba(0, 0, 0, 0.08));
-}
-.badge-open        { background: #e3f2fd; color: #0d47a1; }
-.badge-in_progress { background: #fff8e1; color: #ff6f00; }
-.badge-resolved    { background: #f3e5f5; color: #4a148c; }
-.badge-closed      { background: #e8f5e9; color: #1b5e20; }
-.badge-rejected    { background: #fbe9e7; color: #b71c1c; }
-.crit {
-  display: inline-block; padding: 2px 10px; border-radius: 4px;
-  font-size: 12px; font-weight: 700; text-transform: uppercase;
-}
-.crit-low      { background: #e8f5e9; color: #1b5e20; }
-.crit-medium   { background: #fff8e1; color: #ff8f00; }
-.crit-high     { background: #ffe0b2; color: #e65100; }
-.crit-critical { background: #ffcdd2; color: #b71c1c; }
-.empty { padding: 32px; text-align: center; color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); }
+/* Scaffold de page : .qos-page, .page-header, .filter-card, .table-card,
+ * .state-row, .empty, .clickable-row, .badge*, .crit* sont stylés globalement
+ * (styles.scss) via les tokens --qos-*. On ne déclare ici que les
+ * spécificités locales et les teintes sémantiques par statut/criticité. */
 
-.clickable-row {
-  cursor: pointer;
-  transition: background-color 120ms ease;
+.status-filter { width: 220px; }
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  strong { font-weight: var(--qos-fw-semibold); color: var(--qos-fg-primary); }
+  small  { color: var(--qos-fg-tertiary); font-size: var(--qos-fs-xs); }
 }
-.clickable-row:hover {
-  background: var(--mat-sys-surface-container-low, rgba(0, 0, 0, 0.04));
-}
-.clickable-row:focus-visible {
-  outline: 2px solid var(--mat-sys-primary, #1976d2);
-  outline-offset: -2px;
-}
+
+/* Statuts CAPA — fonds doux dérivés des tokens sémantiques. */
+.badge-open        { background: var(--qos-accent-bg-soft);  color: var(--qos-accent-fg-soft); border-color: transparent; }
+.badge-in_progress { background: var(--qos-warn-bg-soft);    color: var(--qos-warn-fg);        border-color: transparent; }
+.badge-resolved    { background: var(--qos-accent-bg-soft);  color: var(--qos-accent-fg-soft); border-color: transparent; }
+.badge-closed      { background: var(--qos-success-bg-soft); color: var(--qos-success-fg);     border-color: transparent; }
+.badge-rejected    { background: var(--qos-danger-bg-soft);  color: var(--qos-danger-fg);      border-color: transparent; }
+
+/* Criticité — palette sévérité douce. */
+.crit-low      { background: var(--qos-success-bg-soft); color: var(--qos-success-fg); }
+.crit-medium   { background: var(--qos-warn-bg-soft);    color: var(--qos-warn-fg); }
+.crit-high     { background: var(--qos-warn-bg-soft);    color: var(--qos-warn-fg); }
+.crit-critical { background: var(--qos-danger-bg-soft);  color: var(--qos-danger-fg); }

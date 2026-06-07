@@ -11,7 +11,7 @@ import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConnectivityService } from '../../../../core/offline/connectivity.service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { NcService } from '../../nc.service';
-import { NcPhoto, NcResponse, NcSeverity, NcStatus } from '../../nc.types';
+import { NcPhoto, NcResponse, NcSeverity, NcStatus, VisionAnalysis, VisionScore } from '../../nc.types';
 import {
   NcResolveDialogComponent,
   NcResolveDialogData
@@ -48,6 +48,24 @@ export class NcDetailComponent implements OnInit {
   online$ = this.connectivity.online$;
   /** Tooltip du bouton d'ajout quand hors-ligne (interpolation non marquable i18n). */
   readonly photosOfflineTooltip = $localize`:@@nc.photos.offline-tooltip:Photos disponibles en ligne uniquement`;
+
+  // --- analyse Vision 5S par IA (online-only) -------------------------------
+  /** Résultat de la dernière analyse vision (null tant qu'aucune n'a tourné). */
+  visionResult$ = new BehaviorSubject<VisionAnalysis | null>(null);
+  /** true pendant l'inférence (spinner). */
+  visionAnalyzing$ = new BehaviorSubject<boolean>(false);
+  /** Bascule à true sur 503 vision-unavailable → état UI doux dédié. */
+  visionUnavailable$ = new BehaviorSubject<boolean>(false);
+  /** Tooltip du bouton d'analyse quand hors-ligne. */
+  readonly visionOfflineTooltip = $localize`:@@nc.vision.offline-tooltip:Analyse disponible en ligne uniquement`;
+  /** Ordre d'affichage des 5 piliers (clé du score + label localisé). */
+  readonly visionPillars: { key: keyof VisionScore; label: string }[] = [
+    { key: 'seiri', label: $localize`:@@nc.vision.pillar.seiri:Seiri (Trier)` },
+    { key: 'seiton', label: $localize`:@@nc.vision.pillar.seiton:Seiton (Ranger)` },
+    { key: 'seiso', label: $localize`:@@nc.vision.pillar.seiso:Seiso (Nettoyer)` },
+    { key: 'seiketsu', label: $localize`:@@nc.vision.pillar.seiketsu:Seiketsu (Standardiser)` },
+    { key: 'shitsuke', label: $localize`:@@nc.vision.pillar.shitsuke:Shitsuke (Maintenir)` }
+  ];
 
   private ncId = '';
   private readonly reload$ = new Subject<void>();
@@ -145,6 +163,82 @@ export class NcDetailComponent implements OnInit {
           this.snack.open(msg, 'OK', { duration: 4000 });
         }
       });
+  }
+
+  // --- analyse Vision 5S par IA ---------------------------------------------
+
+  /** Déclenche l'<input type="file"> masqué dédié à l'analyse vision. */
+  triggerVisionPicker(input: HTMLInputElement): void {
+    if (this.visionAnalyzing$.value) return;
+    input.click();
+  }
+
+  onVisionFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files && input.files[0];
+    // Réinitialise pour autoriser la re-sélection du même fichier.
+    input.value = '';
+    if (!file) return;
+    this.analyzeVision(file);
+  }
+
+  private analyzeVision(file: File): void {
+    this.visionAnalyzing$.next(true);
+    this.svc.analyzePhotoVision(file)
+      .pipe(finalize(() => this.visionAnalyzing$.next(false)))
+      .subscribe({
+        next: result => {
+          this.visionResult$.next(result);
+          this.visionUnavailable$.next(false);
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[nc-detail] analyzePhotoVision failed', err?.status, err?.error?.type);
+          if (this.isVisionUnavailable(err)) { this.visionUnavailable$.next(true); return; }
+          const msg =
+            err?.status === 413
+              ? $localize`:@@nc.vision.too-large:Image trop volumineuse pour l'analyse vision.`
+              : err?.status === 400
+              ? $localize`:@@nc.vision.image-invalid:Image invalide — formats acceptés : JPEG, PNG, WebP.`
+              : err?.status === 502
+              ? $localize`:@@nc.vision.gateway-error:Le service d'analyse vision est momentanément indisponible.`
+              : safeErrorMessage(err, $localize`:@@nc.vision.error:Échec de l'analyse vision.`);
+          this.snack.open(msg, $localize`:@@common.ok:OK`, { duration: 4000 });
+        }
+      });
+  }
+
+  /** Réinitialise le panneau (efface le dernier résultat). */
+  clearVision(): void {
+    this.visionResult$.next(null);
+  }
+
+  /**
+   * 503 + ProblemDetail dont le type contient 'vision-unavailable' → service
+   * coupé sur cet environnement, message UX doux plutôt qu'erreur brute.
+   */
+  private isVisionUnavailable(err: unknown): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const e = err as any;
+    const type = e?.error?.type;
+    return e?.status === 503 && typeof type === 'string' && type.includes('vision-unavailable');
+  }
+
+  /** Classe de jauge selon le score (vert/orange/rouge), sobre. */
+  visionScoreClass(value: number): string {
+    if (value >= 80) return 'score-good';
+    if (value >= 60) return 'score-warn';
+    return 'score-bad';
+  }
+
+  /** Confiance d'un finding en pourcentage entier. */
+  visionConfidencePct(confidence: number): number {
+    return Math.round(confidence * 100);
+  }
+
+  /** Classe de pastille de sévérité d'un finding (insensible à la casse). */
+  visionSeverityClass(severity: string): string {
+    return 'vsev vsev-' + (severity || 'unknown').toLowerCase();
   }
 
   deletePhoto(photo: NcPhoto): void {
