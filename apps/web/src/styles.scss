@@ -93,11 +93,98 @@ mat-icon.material-symbols-outlined {
   justify-content: center;
 }
 
-/* Dans les boutons M3, l'icône suit la taille prévue par MDC (18px) pour
- * rester sur la même ligne de base que le texte. */
-.mat-mdc-button-base mat-icon.material-symbols-outlined {
+/* ------------------------------------------------------------
+ * Alignement icône ↔ libellé dans les boutons (FIX RACINE).
+ *
+ * CAUSE EXACTE du « texte décalé » :
+ *   - Material donne à <mat-icon> une boîte de 24×24 (width/height/font-size:24px)
+ *     alors que la police Material Symbols rend le glyphe à 18px dans les boutons.
+ *     La boîte de 24px est donc plus haute/large que le glyphe : le glyphe se
+ *     positionne sur sa baseline tandis que le libellé du bouton suit la sienne,
+ *     d'où un décalage vertical optique. De plus MDC espace l'icône via des
+ *     marges (margin-right/-left) asymétriques au lieu d'un gap homogène.
+ *
+ * FIX :
+ *   1. Le conteneur du bouton centre verticalement son contenu (align-items:center).
+ *   2. <mat-icon> devient une boîte carrée 1em alignée sur la taille du glyphe
+ *      (18px), centrée en inline-flex, vertical-align:middle, line-height:1 —
+ *      glyphe et libellé partagent ainsi le même centre vertical.
+ *   3. L'espacement icône↔libellé est porté par un `gap` cohérent sur le bouton,
+ *      et les marges MDC héritées sont neutralisées (sinon double espacement).
+ * ------------------------------------------------------------ */
+.mat-mdc-button-base {
+  .mdc-button__label,
+  .mat-mdc-button-touch-target { line-height: 1; }
+}
+
+/* Conteneur cliquable des boutons texte/flat/stroked : centrage + gap propre. */
+.mat-mdc-button .mat-mdc-button-persistent-ripple ~ .mdc-button__label,
+.mat-mdc-button,
+.mat-mdc-outlined-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-raised-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mat-mdc-button > .mat-icon,
+.mat-mdc-outlined-button > .mat-icon,
+.mat-mdc-unelevated-button > .mat-icon,
+.mat-mdc-raised-button > .mat-icon {
+  /* gap icône↔libellé homogène, on supprime les marges MDC asymétriques. */
+  margin-right: var(--qos-space-2);
+  margin-left: 0;
+}
+
+.mat-mdc-button-base mat-icon.material-symbols-outlined,
+.mat-mdc-button-base .mat-icon {
+  width: 1em;
+  height: 1em;
   font-size: 18px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  overflow: visible;            /* le glyphe 18px n'est pas rogné par la boîte 1em */
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 18;
+}
+
+/* Icon-buttons : glyphe seul, parfaitement centré dans la cible tactile. */
+.mat-mdc-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon.material-symbols-outlined,
+  .mat-icon {
+    margin: 0;
+    width: 1em;
+    height: 1em;
+    font-size: 22px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    overflow: visible;
+  }
+}
+
+/* Icônes dans menus, chips, snackbar : même centrage que les boutons. */
+.mat-mdc-menu-item .mat-icon,
+.mat-mdc-chip .mat-icon,
+.mat-mdc-snack-bar-label .mat-icon {
+  width: 1em;
+  height: 1em;
+  font-size: 20px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  overflow: visible;
 }
 
 /* ============================================================
@@ -201,7 +288,53 @@ mat-icon.material-symbols-outlined {
 /* ---- Chips : rayon pill, fond doux. ---- */
 .mat-mdc-chip {
   --mdc-chip-container-shape-radius: var(--qos-radius-pill);
+  --mdc-chip-outline-color: var(--qos-border-subtle);
+  --mdc-chip-label-text-color: var(--qos-fg-secondary);
 }
+
+/* ---- Tooltip : sobre, sombre, rayon doux. ---- */
+.mat-mdc-tooltip {
+  --mdc-plain-tooltip-container-color: var(--qos-fg-primary);
+  --mdc-plain-tooltip-supporting-text-color: var(--qos-bg-elevated);
+  --mdc-plain-tooltip-container-shape: var(--qos-radius-sm);
+  --mdc-plain-tooltip-supporting-text-size: var(--qos-fs-xs);
+  letter-spacing: 0;
+}
+
+/* ---- Snackbar : rayon, ombre douce, accents sémantiques via panelClass. ---- */
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-shape: var(--qos-radius-md);
+  --mdc-snackbar-container-color: var(--qos-fg-primary);
+  --mdc-snackbar-supporting-text-color: var(--qos-bg-elevated);
+  .mdc-snackbar__surface { box-shadow: var(--qos-shadow-lg) !important; }
+
+  &.qos-snack-success { --mdc-snackbar-container-color: var(--qos-success-600); }
+  &.qos-snack-warn    { --mdc-snackbar-container-color: var(--qos-warn-600); }
+  &.qos-snack-danger  { --mdc-snackbar-container-color: var(--qos-danger-600); }
+}
+
+/* ---- Spinner / progress : teinte accent par défaut. ---- */
+.mat-mdc-progress-spinner,
+.mat-mdc-progress-bar {
+  --mdc-circular-progress-active-indicator-color: var(--qos-accent-bg);
+  --mdc-linear-progress-active-indicator-color: var(--qos-accent-bg);
+  --mdc-linear-progress-track-color: var(--qos-bg-sunken);
+}
+
+/* ---- Paginator : boutons aérés, libellés sobres. ---- */
+.mat-mdc-paginator {
+  --mat-paginator-container-text-color: var(--qos-fg-secondary);
+  border-top: 1px solid var(--qos-border-subtle);
+  .mat-mdc-paginator-container { min-height: 52px; padding: 0 var(--qos-space-4); }
+}
+
+/* ---- Slide toggle / checkbox / radio : accent profond cohérent. ---- */
+.mat-mdc-slide-toggle { --mdc-switch-selected-track-color: var(--qos-accent-bg); }
+.mat-mdc-checkbox {
+  --mdc-checkbox-selected-icon-color: var(--qos-accent-bg);
+  --mdc-checkbox-selected-hover-icon-color: var(--qos-accent-bg-hover);
+}
+.mat-mdc-radio-button { --mdc-radio-selected-icon-color: var(--qos-accent-bg); }
 
 /* ============================================================
  * Layout helpers.
@@ -370,4 +503,184 @@ mat-icon.material-symbols-outlined {
 /* Dernière ligne sans filet (le conteneur .table-wrap porte déjà la bordure). */
 .mat-mdc-row:last-of-type .mat-mdc-cell {
   border-bottom: none;
+}
+
+/* ============================================================
+ * SCAFFOLD DE PAGE COHÉRENT — classes globales héritées par toutes
+ * les features (legacy : .page-header, .filter-card, .table-card,
+ * .state-row, .empty, .clickable-row, .badge*, .crit*).
+ *
+ * Objectif : une expérience uniforme de bout en bout sans réécrire
+ * chaque feature. Tout est piloté par les tokens --qos-* (light/dark),
+ * pas de couleur/rayon/ombre en dur. Les SCSS de page qui ne
+ * redéfinissent que la structure héritent automatiquement du rythme
+ * et des couleurs premium ci-dessous.
+ * ============================================================ */
+
+/* .qos-page contient déjà padding + max-width ; on garantit la pile verticale. */
+.qos-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-6);
+}
+
+/* En-tête de page legacy : titre + sous-titre à gauche, actions à droite. */
+.qos-page > .page-header,
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--qos-space-6);
+  flex-wrap: wrap;
+  margin: 0;
+  padding-bottom: var(--qos-space-5);
+  border-bottom: 1px solid var(--qos-border-subtle);
+
+  h1 {
+    margin: 0 0 var(--qos-space-1);
+    font-size: var(--qos-fs-2xl);
+    font-weight: var(--qos-fw-semibold);
+    letter-spacing: -0.02em;
+    line-height: var(--qos-lh-tight);
+    color: var(--qos-fg-primary);
+  }
+
+  p {
+    margin: 0;
+    color: var(--qos-fg-secondary);
+    font-size: var(--qos-fs-md);
+    line-height: var(--qos-lh-normal);
+    max-width: 70ch;
+  }
+
+  /* Zone d'actions : les boutons/menus à droite restent groupés et alignés. */
+  > button,
+  > a,
+  > .qos-row-2,
+  > .qos-row-3,
+  > [class*='actions'] {
+    flex-shrink: 0;
+  }
+}
+
+/* Carte de filtres — surface élevée discrète, champs aérés. */
+.filter-card {
+  padding: var(--qos-space-4) var(--qos-space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-4);
+  flex-wrap: wrap;
+
+  /* Champs de filtre compacts : on masque la réserve de message d'aide
+   * (subscript) pour garder une barre de filtres alignée sur une ligne. */
+  .mat-mdc-form-field-subscript-wrapper { display: none; }
+}
+
+/* Carte de tableau — pas de padding, le tableau remplit, coins arrondis nets. */
+.table-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* ---- États : loading / empty / error premium et réutilisables ---- */
+.state-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--qos-space-3);
+  padding: var(--qos-space-12) var(--qos-space-6);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+}
+
+/* État vide — icône douce + titre + sous-texte + CTA (primitive premium). */
+.empty,
+.qos-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--qos-space-2);
+  padding: var(--qos-space-12) var(--qos-space-6);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+  line-height: var(--qos-lh-normal);
+}
+.qos-empty__icon {
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--qos-radius-pill);
+  background: var(--qos-bg-sunken);
+  color: var(--qos-fg-tertiary);
+  margin-bottom: var(--qos-space-2);
+  .material-symbols-outlined { font-size: 26px; }
+}
+.qos-empty__title {
+  font-size: var(--qos-fs-md);
+  font-weight: var(--qos-fw-semibold);
+  color: var(--qos-fg-primary);
+}
+.qos-empty__hint { color: var(--qos-fg-tertiary); max-width: 44ch; }
+.qos-empty__cta { margin-top: var(--qos-space-3); }
+
+/* État erreur sémantique avec action de réessai. */
+.qos-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--qos-space-2);
+  padding: var(--qos-space-10) var(--qos-space-6);
+  color: var(--qos-danger-fg);
+  .material-symbols-outlined { font-size: 28px; }
+}
+
+/* Lignes de tableau cliquables — feedback + focus accessible élégant. */
+.clickable-row {
+  cursor: pointer;
+  transition: background-color var(--qos-motion-fast);
+
+  &:hover { background: var(--qos-bg-subtle); }
+  &:active { background: var(--qos-bg-hover); }
+  &:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--qos-border-focus);
+    border-radius: var(--qos-radius-xs);
+  }
+}
+
+/* ---- Badges de statut génériques (cohérence inter-modules) ---- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border-radius: var(--qos-radius-pill);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-semibold);
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  background: var(--qos-bg-sunken);
+  color: var(--qos-fg-secondary);
+  border-color: var(--qos-border-subtle);
+}
+
+/* ---- Criticité (sévérité) — palette sémantique douce et lisible ---- */
+.crit {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: var(--qos-radius-pill);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-semibold);
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  white-space: nowrap;
 }

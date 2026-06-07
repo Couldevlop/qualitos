@@ -46,8 +46,66 @@ item actif = fond bleu doux (`--qos-bg-sidebar-active`) + texte bleu (`--qos-fg-
 - `apps/web/src/app/layout/main-shell/` — shell (sidebar claire + topbar blanche).
 - `apps/web/src/app/shared/ui/**` — primitives (page-header, panel, kpi-card, status-pill, form/confirm-dialog).
 
+## Scaffold de page cohérent
+
+Toutes les pages partagent le même rythme **sans réécriture par feature** : les classes
+récurrentes sont stylées **globalement** dans `styles.scss` via les tokens (light/dark).
+
+| Classe          | Rôle                                                                       |
+| --------------- | -------------------------------------------------------------------------- |
+| `.qos-page`     | Conteneur de page : padding généreux, `max-width: 1440px`, pile `gap: 24px`.|
+| `.page-header`  | Titre (`h1`, 24px/600) + sous-titre (`p`, secondaire) à gauche, **actions à droite**, filet bas. |
+| `.filter-card`  | Barre de filtres : surface élevée, champs alignés et aérés.                |
+| `.table-card`   | Carte de tableau sans padding (le `mat-table` remplit), coins arrondis nets.|
+| `.clickable-row`| Ligne cliquable : hover subtil + `:focus-visible` (anneau interne accent). |
+
+> Une page qui ne déclare que la **structure** hérite automatiquement des couleurs/espacements premium.
+> Les SCSS de page ne doivent plus redéfinir couleurs/rayons en dur — seulement les teintes sémantiques par statut.
+
+## États (loading / empty / error)
+
+Primitives réutilisables, soignées, pilotées par tokens :
+
+- **Loading** : `.state-row` — spinner accent centré + message secondaire, padding aéré.
+- **Empty** : `.qos-empty` (ou `.empty` legacy) — `.qos-empty__icon` (pastille douce) + `.qos-empty__title` + `.qos-empty__hint` + `.qos-empty__cta`.
+- **Error** : `.qos-error` — ton sémantique danger + icône, prévu pour un bouton de réessai.
+
+Le `qos-panel` embarque déjà un **shimmer** de chargement ; `qos-kpi-card` des **skeletons**.
+
+## Badges & sévérité (cohérence inter-modules)
+
+- `.badge` — pastille statut neutre par défaut (fond sunken, filet subtil). Décliner avec des
+  variantes locales qui ne changent **que** la teinte via `--qos-{success,warn,danger,accent}-bg-soft`/`-fg`.
+- `.crit` — sévérité (LOW/MEDIUM/HIGH/CRITICAL), pill majuscule ; teintes douces sémantiques.
+- Pour les nouveaux écrans : préférer la primitive `<qos-status-pill [tone]>` (`neutral|accent|success|warn|danger`).
+
+## Règle boutons / icônes (FIX racine du « texte décalé »)
+
+**Cause :** Material donne à `<mat-icon>` une boîte **24×24** alors que la police Material Symbols
+rend le glyphe à **18px** dans les boutons → le glyphe se cale sur sa baseline pendant que le
+libellé suit la sienne (décalage vertical optique), et MDC espace l'icône par des **marges
+asymétriques** au lieu d'un gap homogène.
+
+**Fix (global, `styles.scss`) :**
+
+1. Le conteneur du bouton centre son contenu : `display:inline-flex; align-items:center; justify-content:center`.
+2. `mat-icon` dans un bouton = boîte **1em** alignée sur le glyphe : `width/height:1em; font-size:18px; line-height:1; display:inline-flex; align-items/justify-content:center; vertical-align:middle; overflow:visible`.
+3. Espacement icône↔libellé via un **gap cohérent** (`margin-right: var(--qos-space-2)`, `margin-left:0`) — les marges MDC héritées sont neutralisées.
+4. `mat-icon-button` : icône seule **centrée** (glyphe 22px, marges nulles). Mêmes règles pour les icônes de `mat-menu`, chips, snackbar.
+
+Couvre les 4 cas sans régression : flat+icône+texte, stroked+icône+texte, icon-button seul, bouton texte seul.
+
+## Micro-interactions
+
+- Transitions via tokens `--qos-motion-fast|base` (et `0ms` sous `prefers-reduced-motion`).
+- Hover de carte/KPI : élévation douce (`shadow-xs → shadow-md`, `translateY(-1px)`).
+- Lignes de table cliquables : feedback hover/active + `:focus-visible` (anneau interne accent).
+- Material harmonisé : tooltip sobre sombre, snackbar à rayon + variantes `qos-snack-{success,warn,danger}`,
+  paginator filet haut, spinner/progress/checkbox/radio/slide-toggle en **accent profond**.
+
 ## Accessibilité (WCAG 2.2 AA)
 
 - Texte primaire `#111827` sur blanc ≈ 16:1 ; secondaire `#4b5563` ≈ 7:1 ; tertiaire `#6b7382` ≈ 4.8:1 — tous ≥ 4.5:1.
 - Accent `#2563d6` sur blanc ≈ 5.0:1 (texte/lien OK) ; `--qos-fg-link`/`--qos-accent-fg-soft` = `#1d50b8` (plus contrasté).
 - Focus toujours visible via `--qos-ring-focus` (anneau 3px) sur `:focus-visible`.
+- Cibles tactiles ≥ 24px (icon-buttons 36px+, lignes de table 52px).

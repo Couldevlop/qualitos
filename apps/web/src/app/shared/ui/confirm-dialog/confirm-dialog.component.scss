@@ -1,10 +1,10 @@
 .message {
   margin: 0;
-  min-width: 360px;
+  min-width: 320px;
   max-width: 520px;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--mat-sys-on-surface, rgba(0, 0, 0, 0.87));
+  font-size: var(--qos-fs-base);
+  line-height: var(--qos-lh-normal);
+  color: var(--qos-fg-secondary);
 }
 
-mat-dialog-actions { gap: 8px; }
+mat-dialog-actions { gap: var(--qos-space-2); }
