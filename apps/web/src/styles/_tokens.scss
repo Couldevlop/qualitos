@@ -68,12 +68,15 @@ $qos-danger-700:   #b91c1c;
   --qos-bg-overlay:    rgba(17, 24, 39, 0.40);
 
   /* Sidebar — claire & épurée (style Linear/Vercel light). */
-  --qos-bg-sidebar:        #{$qos-neutral-50};
-  --qos-fg-sidebar:        #{$qos-neutral-600};
-  --qos-fg-sidebar-active:  #{$qos-accent-700};
-  --qos-bg-sidebar-hover:   rgba(17, 24, 39, 0.045);
-  --qos-bg-sidebar-active:  rgba(37, 99, 214, 0.09);
-  --qos-border-sidebar:     #{$qos-neutral-150};
+  /* Sidebar bleu marine (préférence utilisateur) — panneau sombre contrasté
+     sur contenu clair & aéré ; signature professionnelle. Les libellés internes
+     consomment ces tokens (jamais fg-primary/tertiary) pour rester lisibles. */
+  --qos-bg-sidebar:        #0e1f43;
+  --qos-fg-sidebar:        rgba(205, 219, 247, 0.66);
+  --qos-fg-sidebar-active:  #ffffff;
+  --qos-bg-sidebar-hover:   rgba(255, 255, 255, 0.07);
+  --qos-bg-sidebar-active:  rgba(91, 141, 240, 0.22);
+  --qos-border-sidebar:     #1b2d54;
 
   /* Borders — filets 1px ultra-subtils (≈ slate 8-10 %). */
   --qos-border-subtle:  #{$qos-neutral-150};

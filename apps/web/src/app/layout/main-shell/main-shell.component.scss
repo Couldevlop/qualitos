@@ -72,12 +72,12 @@
     strong {
       font-size: var(--qos-fs-md);
       font-weight: var(--qos-fw-semibold);
-      color: var(--qos-fg-primary);
+      color: var(--qos-fg-sidebar-active);
       letter-spacing: -0.01em;
     }
     small {
       font-size: 11px;
-      color: var(--qos-fg-tertiary);
+      color: var(--qos-fg-sidebar);
       letter-spacing: 0.02em;
     }
   }
@@ -96,7 +96,7 @@
     font-weight: var(--qos-fw-semibold);
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--qos-fg-tertiary);
+    color: var(--qos-fg-sidebar);
     padding: var(--qos-space-3) var(--qos-space-3) var(--qos-space-1);
   }
 
@@ -119,13 +119,13 @@
 
     &:hover {
       background: var(--qos-bg-sidebar-hover);
-      .qos-sidebar__section-chevron { color: var(--qos-fg-secondary); }
+      .qos-sidebar__section-chevron { color: var(--qos-fg-sidebar-active); }
     }
   }
 
   &__section-chevron {
     font-size: 16px;
-    color: var(--qos-fg-tertiary);
+    color: var(--qos-fg-sidebar);
     transform: rotate(-90deg); /* replié → chevron vers la droite */
     transition: transform var(--qos-motion-fast), color var(--qos-motion-fast);
 
@@ -158,7 +158,7 @@
 
     &:hover {
       background: var(--qos-bg-sidebar-hover);
-      color: var(--qos-fg-primary);
+      color: var(--qos-fg-sidebar-active);
     }
 
     &--active {
@@ -205,7 +205,7 @@
     appearance: none;
     background: transparent;
     border: none;
-    color: var(--qos-fg-tertiary);
+    color: var(--qos-fg-sidebar);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -215,7 +215,7 @@
     font-size: var(--qos-fs-xs);
     transition: background var(--qos-motion-fast), color var(--qos-motion-fast);
 
-    &:hover { background: var(--qos-bg-sidebar-hover); color: var(--qos-fg-primary); }
+    &:hover { background: var(--qos-bg-sidebar-hover); color: var(--qos-fg-sidebar-active); }
     .material-symbols-outlined { font-size: 16px; }
   }
 }
