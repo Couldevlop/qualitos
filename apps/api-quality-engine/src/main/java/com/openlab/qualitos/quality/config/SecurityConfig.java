@@ -127,6 +127,20 @@ public class SecurityConfig {
                 // Configuration des webhooks sortants : Admin Tenant / Super Admin.
                 .requestMatchers("/api/v1/webhooks/**").hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
 
+                // Connecteur EHR / HL7 FHIR (§13.3) : gestion des connexions + sync = action
+                // d'intégration sensible (secrets, import de signaux patient-safety).
+                // Réservé Admin / Admin Tenant / Super Admin.
+                .requestMatchers("/api/v1/ehr/**").hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
+
+                // Connecteur ERP (SAP / Oracle Fusion / Dynamics, §13.3) : connexions + sync =
+                // administration d'intégration tenant (manipule des credentials chiffrés et
+                // importe fournisseurs/KPIs). Réservé Admin / Admin Tenant / Super Admin.
+                .requestMatchers("/api/v1/erp/**").hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
+
+                // Configuration des connecteurs de communication (Teams/Slack/Mattermost) :
+                // intégration sortante = administration. Admin Tenant / Super Admin.
+                .requestMatchers("/api/v1/comm/**").hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
+
                 // Marketplace de packs normatifs (§8.11) : publication/retrait = administration
                 // plateforme. Réservé Admin Tenant / Super Admin (la lecture du catalogue passe
                 // par GET, gardé ci-dessous au niveau méthode pour rester consultable).
@@ -136,6 +150,16 @@ public class SecurityConfig {
                     .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
                 .requestMatchers(org.springframework.http.HttpMethod.PATCH, "/api/v1/marketplace/**")
                     .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
+
+                // Designer de workflow BPMN no-code (§5.4) : l'édition de processus
+                // (création / mise à jour / publication / archivage) est une action de
+                // pilotage qualité → Admin / Admin Tenant / Super Admin / Manager Qualité.
+                // La lecture (GET) reste ouverte aux authentifiés ; la suppression (DELETE)
+                // est couverte par la règle DELETE générique plus bas (mêmes rôles).
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/workflow/**")
+                    .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN", "QUALITY_MANAGER")
+                .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/v1/workflow/**")
+                    .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN", "QUALITY_MANAGER")
 
                 // Déclenchement d'un batch d'ancrage blockchain : Admin + Manager Qualité
                 // (action d'intégrité légitime côté pilotage qualité). La vérification (GET)
