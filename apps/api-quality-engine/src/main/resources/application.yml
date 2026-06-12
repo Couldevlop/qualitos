@@ -162,9 +162,23 @@ qualitos:
     base-url: ${VISION_BASE_URL:http://localhost:8086}
     connect-timeout-ms: ${VISION_CONNECT_TIMEOUT_MS:5000}
     read-timeout-ms: ${VISION_READ_TIMEOUT_MS:30000}
-    # En-tête X-Dev-Claims pour l'auth interne dev (ai-vision-5s avec QOS_DEV_AUTH=1).
-    # À passer à false en prod, où l'auth interne est portée par un jeton OIDC.
-    dev-claims: ${VISION_DEV_CLAIMS:true}
+    # Mode d'auth interne vers ai-vision-5s (ADR 0021) :
+    #   dev-claims (défaut) : en-tête X-Dev-Claims — dev local uniquement (ai-vision-5s
+    #                         avec AUTH_BYPASS=true n'exige de toute façon aucun en-tête).
+    #   bearer              : jeton OIDC client_credentials Keycloak (aud=api-ai-vision-5s)
+    #                         + en-tête X-Tenant-Id — OBLIGATOIRE en prod. Échec d'obtention
+    #                         du jeton → 503 vision-unavailable (fail-closed, pas de repli).
+    #   none                : aucun en-tête (réseau de confiance/mTLS mesh, déconseillé).
+    auth: ${VISION_AUTH:dev-claims}
+    # Client de service Keycloak (mode bearer uniquement). Le secret arrive par env/Vault,
+    # jamais en clair dans le repo (§18.2-3) ; jamais journalisé (§22-9).
+    token-uri: ${VISION_TOKEN_URI:}
+    client-id: ${VISION_CLIENT_ID:api-quality-engine-vision}
+    client-secret: ${VISION_CLIENT_SECRET:}
+    scope: ${VISION_SCOPE:}
+    token-refresh-margin-s: ${VISION_TOKEN_REFRESH_MARGIN_S:30}
+    token-connect-timeout-ms: ${VISION_TOKEN_CONNECT_TIMEOUT_MS:3000}
+    token-read-timeout-ms: ${VISION_TOKEN_READ_TIMEOUT_MS:5000}
   blockchain:
     # Client vers blockchain-service (actif sous le profil "fabric" ; ADR 0012 Phase B).
     service-url: ${BLOCKCHAIN_SERVICE_URL:http://localhost:8090}

@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Test;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -17,13 +19,34 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /**
  * Teste le vrai {@link VisionGatewayClient} contre un serveur HTTP local (JDK), sans
  * dépendance ni refactor : couvre succès → mapping DTO, flag OFF → 503, réponse vide →
- * 502, erreur HTTP en aval → 503, tenant manquant. Même schéma que {@code AiGatewayClientTest}.
+ * 502, erreur HTTP en aval → 503, tenant manquant, et les trois modes d'auth interne
+ * (dev-claims / bearer / none, ADR 0021). Même schéma que {@code AiGatewayClientTest}.
  */
 class VisionGatewayClientTest {
 
     private HttpServer server;
     private int port;
     private static final UUID TENANT = UUID.randomUUID();
+
+    /** Provider jamais sollicité (modes none/dev-claims) — échoue si appelé par erreur. */
+    private static ServiceTokenProvider unusedTokenProvider() {
+        return new ServiceTokenProvider("", "", "", "", 30, 1000, 1000) {
+            @Override
+            public String getToken() {
+                throw new AssertionError("getToken() ne doit pas être appelé dans ce mode");
+            }
+        };
+    }
+
+    /** Provider stub renvoyant un jeton fixe (mode bearer). */
+    private static ServiceTokenProvider fixedTokenProvider(String token) {
+        return new ServiceTokenProvider("", "", "", "", 30, 1000, 1000) {
+            @Override
+            public String getToken() {
+                return token;
+            }
+        };
+    }
 
     @BeforeEach
     void setUp() throws Exception {
@@ -39,9 +62,17 @@ class VisionGatewayClientTest {
         TenantContext.clear();
     }
 
-    /** Enregistre une réponse canned et renvoie un client ACTIVÉ pointé sur le serveur. */
-    private VisionGatewayClient enabledClientReturning(int status, String body) {
+    private static final String OK_BODY =
+            "{\"image_sha256\":\"z\",\"width\":2,\"height\":2,"
+                    + "\"score\":{\"seiri\":0,\"seiton\":0,\"seiso\":0,\"seiketsu\":0,"
+                    + "\"shitsuke\":0,\"overall\":0},\"findings\":[]}";
+
+    /** Enregistre une réponse canned, capture les en-têtes reçus dans {@code seenHeaders}. */
+    private void respondWith(int status, String body, Map<String, String> seenHeaders) {
         server.createContext("/", exchange -> {
+            if (seenHeaders != null) {
+                exchange.getRequestHeaders().forEach((k, v) -> seenHeaders.put(k, v.get(0)));
+            }
             byte[] b = body.getBytes(StandardCharsets.UTF_8);
             exchange.getResponseHeaders().add("Content-Type", "application/json");
             exchange.sendResponseHeaders(status, b.length == 0 ? -1 : b.length);
@@ -50,7 +81,13 @@ class VisionGatewayClientTest {
             }
             exchange.close();
         });
-        return new VisionGatewayClient(true, "http://localhost:" + port, 2000, 5000, true);
+    }
+
+    /** Enregistre une réponse canned et renvoie un client ACTIVÉ pointé sur le serveur. */
+    private VisionGatewayClient enabledClientReturning(int status, String body) {
+        respondWith(status, body, null);
+        return new VisionGatewayClient(true, "http://localhost:" + port, 2000, 5000,
+                "dev-claims", unusedTokenProvider());
     }
 
     private static byte[] png() {
@@ -91,7 +128,8 @@ class VisionGatewayClientTest {
 
     @Test
     void analyze_flagOff_throwsUnavailable() {
-        VisionGatewayClient c = new VisionGatewayClient(false, "http://localhost:" + port, 2000, 5000, true);
+        VisionGatewayClient c = new VisionGatewayClient(false, "http://localhost:" + port, 2000, 5000,
+                "dev-claims", unusedTokenProvider());
         assertThatThrownBy(() -> c.analyze("image/png", "x.png", png()))
                 .isInstanceOf(VisionUnavailableException.class);
     }
@@ -120,26 +158,69 @@ class VisionGatewayClientTest {
     @Test
     void analyze_missingTenant_throws() {
         TenantContext.clear();
-        VisionGatewayClient c = new VisionGatewayClient(true, "http://localhost:" + port, 2000, 5000, true);
+        VisionGatewayClient c = new VisionGatewayClient(true, "http://localhost:" + port, 2000, 5000,
+                "dev-claims", unusedTokenProvider());
         assertThatThrownBy(() -> c.analyze("image/png", "x.png", png()))
                 .isInstanceOf(MissingTenantContextException.class);
     }
 
+    // --- Modes d'auth interne (ADR 0021) ---
+
     @Test
-    void analyze_devClaimsDisabled_stillSucceeds() {
-        // Sans X-Dev-Claims : en prod l'auth interne est OIDC ; le client ne doit pas casser.
-        server.createContext("/", exchange -> {
-            byte[] b = ("{\"image_sha256\":\"z\",\"width\":2,\"height\":2,"
-                    + "\"score\":{\"seiri\":0,\"seiton\":0,\"seiso\":0,\"seiketsu\":0,"
-                    + "\"shitsuke\":0,\"overall\":0},\"findings\":[]}").getBytes(StandardCharsets.UTF_8);
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
-            exchange.sendResponseHeaders(200, b.length);
-            exchange.getResponseBody().write(b);
-            exchange.close();
-        });
-        VisionGatewayClient c = new VisionGatewayClient(true, "http://localhost:" + port, 2000, 5000, false);
+    void analyze_devClaimsMode_sendsDevClaimsHeaderWithTenant() {
+        Map<String, String> seen = new ConcurrentHashMap<>();
+        respondWith(200, OK_BODY, seen);
+        VisionGatewayClient c = new VisionGatewayClient(true, "http://localhost:" + port, 2000, 5000,
+                "dev-claims", unusedTokenProvider());
+        c.analyze("image/png", "x.png", png());
+        assertThat(seen.get("X-dev-claims")).contains("\"tid\":\"" + TENANT + "\"");
+        assertThat(seen).doesNotContainKey("Authorization");
+    }
+
+    @Test
+    void analyze_noneMode_sendsNoAuthHeaders() {
+        Map<String, String> seen = new ConcurrentHashMap<>();
+        respondWith(200, OK_BODY, seen);
+        VisionGatewayClient c = new VisionGatewayClient(true, "http://localhost:" + port, 2000, 5000,
+                "none", unusedTokenProvider());
         VisionDto.VisionAnalysis r = c.analyze("image/png", "x.png", png());
         assertThat(r.imageSha256()).isEqualTo("z");
         assertThat(r.findings()).isEmpty();
+        assertThat(seen).doesNotContainKey("Authorization");
+        assertThat(seen).doesNotContainKey("X-dev-claims");
+    }
+
+    @Test
+    void analyze_bearerMode_sendsAuthorizationAndTenantHeader() {
+        Map<String, String> seen = new ConcurrentHashMap<>();
+        respondWith(200, OK_BODY, seen);
+        VisionGatewayClient c = new VisionGatewayClient(true, "http://localhost:" + port, 2000, 5000,
+                "bearer", fixedTokenProvider("jeton-de-service"));
+        c.analyze("image/png", "x.png", png());
+        assertThat(seen.get("Authorization")).isEqualTo("Bearer jeton-de-service");
+        assertThat(seen.get("X-tenant-id")).isEqualTo(TENANT.toString());
+        assertThat(seen).doesNotContainKey("X-dev-claims");
+    }
+
+    @Test
+    void analyze_bearerMode_tokenFailure_failsClosedWithoutCallingService() {
+        // Provider RÉEL avec config vide → VisionUnavailableException (503), AVANT tout
+        // appel réseau au service vision : pas de repli silencieux vers dev-claims.
+        Map<String, String> seen = new ConcurrentHashMap<>();
+        respondWith(200, OK_BODY, seen);
+        VisionGatewayClient c = new VisionGatewayClient(true, "http://localhost:" + port, 2000, 5000,
+                "bearer", new ServiceTokenProvider("", "", "", "", 30, 1000, 1000));
+        assertThatThrownBy(() -> c.analyze("image/png", "x.png", png()))
+                .isInstanceOf(VisionUnavailableException.class)
+                .hasMessageContaining("incomplète");
+        assertThat(seen).isEmpty();
+    }
+
+    @Test
+    void constructor_unknownAuthMode_failsFast() {
+        assertThatThrownBy(() -> new VisionGatewayClient(true, "http://localhost:" + port, 2000, 5000,
+                "magic", unusedTokenProvider()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("qualitos.vision.auth");
     }
 }
