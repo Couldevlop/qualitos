@@ -363,6 +363,10 @@ services:
       KEYCLOAK_JWKS_URI: http://keycloak:8080/realms/qualitos/protocol/openid-connect/certs
       KEYCLOAK_ISSUER: http://keycloak:8080/realms/qualitos
       KEYCLOAK_AUDIENCE: api-ai-vision-5s
+      # Clients de service (azp) autorisés à porter le tenant via X-Tenant-Id en
+      # mode Bearer (ADR 0021). Vide = en-tête jamais accepté. En prod :
+      # TRUSTED_SERVICE_AZP: api-quality-engine-vision
+      TRUSTED_SERVICE_AZP: ""
     ports:
       - "8086:8090"
     networks: [qualitos]

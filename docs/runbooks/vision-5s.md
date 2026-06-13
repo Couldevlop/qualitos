@@ -52,7 +52,7 @@ Set-Location D:\OPENLAB\qualitOs\apps\ai-vision-5s
 C:\Python312\python.exe -m pytest -p no:cacheprovider -o addopts=""
 ```
 
-Référence : **31 tests** verts (domaine, application, image-safety, onnx-backend, routes).
+Référence : **43 tests** verts (domaine, application, image-safety, onnx-backend, routes, auth).
 
 ---
 
@@ -97,7 +97,7 @@ ai-vision-5s:
 
 ---
 
-## 3. Auth (dev)
+## 3. Auth
 
 L'auth est gérée dans `app/infrastructure/auth.py` :
 
@@ -115,6 +115,88 @@ L'auth est gérée dans `app/infrastructure/auth.py` :
 Garde-fou : `assert_production_safe()` (appelé au boot) **refuse de démarrer** si
 `AUTH_BYPASS=true` et `APP_PROFILE=prod`. Le Dockerfile fixe `APP_PROFILE=prod`,
 `AUTH_BYPASS=false`.
+
+### 3.1 Tenant en mode Bearer — appels de service (ADR 0021)
+
+Un jeton **client_credentials** (service, ex. api-quality-engine) ne porte pas de
+tenant par requête. Résolution du tenant côté service (`_resolve_tenant_id`) :
+
+1. claim `tenant_id` du token (token utilisateur) — **gagne toujours** ;
+2. sinon, l'en-tête **`X-Tenant-Id`** est accepté **uniquement** si l'`azp` du token
+   (client id Keycloak) figure dans `TRUSTED_SERVICE_AZP` (liste CSV, **vide par
+   défaut** = en-tête jamais accepté) ;
+3. sinon → `401` (fail-closed).
+
+L'en-tête reste protégé par la signature du Bearer : sans jeton valide d'un client
+de confiance, impossible d'usurper un tenant.
+
+---
+
+## 3bis. Auth prod — appel engine → ai-vision-5s (Bearer service token)
+
+Côté `api-quality-engine`, la passerelle `VisionGatewayClient` a trois modes
+(`qualitos.vision.auth` / env `VISION_AUTH`) :
+
+| Mode | Comportement | Usage |
+| --- | --- | --- |
+| `dev-claims` (défaut) | en-tête `X-Dev-Claims` (ignoré par ai-vision-5s en `AUTH_BYPASS`) | dev local uniquement |
+| `bearer` | `Authorization: Bearer <token client_credentials>` + `X-Tenant-Id: <tenant du JWT utilisateur>` | **OBLIGATOIRE en prod** |
+| `none` | aucun en-tête | réseau de confiance/mTLS mesh, déconseillé |
+
+Le jeton est obtenu par `ServiceTokenProvider` (POST client_credentials au token
+endpoint Keycloak, cache jusqu'à `expires_in - marge`, thread-safe, timeouts courts,
+jamais de secret/jeton dans les logs). **Échec d'obtention du jeton → 503
+`vision-unavailable` (fail-closed, aucun repli dev-claims).**
+
+### Client Keycloak à provisionner (prod)
+
+1. Créer un client **confidentiel** `api-quality-engine-vision` dans le realm
+   `qualitos` : *Client authentication* ON, *Service accounts roles* ON
+   (client_credentials), aucun flow navigateur.
+2. Ajouter un **Audience mapper** (hardcoded) qui injecte `api-ai-vision-5s` dans
+   `aud` du token de service (sinon ai-vision-5s rejette en 401).
+3. Récupérer le secret (onglet *Credentials*) et le provisionner via Vault/ESO —
+   jamais en clair (§18.2-3).
+
+### Variables d'environnement
+
+Côté **api-quality-engine** :
+
+```bash
+VISION_ENABLED=true
+VISION_BASE_URL=http://ai-vision-5s:8090
+VISION_AUTH=bearer
+VISION_TOKEN_URI=https://keycloak.example.com/realms/qualitos/protocol/openid-connect/token
+VISION_CLIENT_ID=api-quality-engine-vision
+VISION_CLIENT_SECRET=<via Vault/ESO>
+# Optionnels :
+VISION_SCOPE=                       # si un scope déclenche l'audience mapper
+VISION_TOKEN_REFRESH_MARGIN_S=30    # marge avant expiration pour rafraîchir
+VISION_TOKEN_CONNECT_TIMEOUT_MS=3000
+VISION_TOKEN_READ_TIMEOUT_MS=5000
+```
+
+Côté **ai-vision-5s** :
+
+```bash
+APP_PROFILE=prod
+AUTH_BYPASS=false
+KEYCLOAK_JWKS_URI=https://keycloak.example.com/realms/qualitos/protocol/openid-connect/certs
+KEYCLOAK_ISSUER=https://keycloak.example.com/realms/qualitos
+KEYCLOAK_AUDIENCE=api-ai-vision-5s
+# Autorise le client de service de l'engine à porter le tenant via X-Tenant-Id :
+TRUSTED_SERVICE_AZP=api-quality-engine-vision
+```
+
+### Vérification rapide
+
+```bash
+TOKEN=$(curl -s -d 'grant_type=client_credentials' \
+  -d 'client_id=api-quality-engine-vision' -d "client_secret=$SECRET" \
+  https://keycloak.example.com/realms/qualitos/protocol/openid-connect/token | jq -r .access_token)
+curl -s -H "Authorization: Bearer $TOKEN" -H "X-Tenant-Id: <uuid-tenant>" \
+  -F image=@photo.jpg https://ai-vision-5s.internal/v1/vision/5s/score
+```
 
 ---
 
@@ -176,14 +258,17 @@ Scoring léger, sans findings :
 
 - `400` image vide / > 10 Mo / MIME non supporté / non décodable (image-safety).
 - `400` validation de requête (form-data manquant).
-- `401` (prod uniquement) Bearer absent / token invalide / claim `tenant_id` absente.
+- `401` (prod uniquement) Bearer absent / token invalide / tenant irrésolvable
+  (claim `tenant_id` absente et `X-Tenant-Id` absent ou `azp` non listé dans
+  `TRUSTED_SERVICE_AZP`).
 - `429` dépassement du rate limit.
 
 ---
 
 ## 5. Intégration engine
 
-L'`api-quality-engine` (Java, câblé par un autre chantier) consomme `/analyze` lors
-d'un audit 5S terrain : l'image remontée alimente le score 5S et génère des findings
-(→ NC / plan d'action). Le contrat ci-dessus (score + findings) est stable entre les
-modes stub et ONNX.
+L'`api-quality-engine` (Java) consomme `/analyze` lors d'un audit 5S terrain :
+l'image remontée alimente le score 5S et génère des findings (→ NC / plan d'action).
+Le contrat ci-dessus (score + findings) est stable entre les modes stub et ONNX.
+L'auth interne de cet appel est décrite en §3bis (dev-claims en dev, **bearer en
+prod**, ADR 0021).

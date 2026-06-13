@@ -23,6 +23,9 @@ supersession).
 | [0016](./0016-iot-breach-to-capa.md) | Détection seuil IoT → ouverture CAPA | Accepté |
 | [0017](./0017-ai-guardrails-llm-dos.md) | Garde-fous chemin LLM (OWASP LLM04 — Model DoS) | Accepté |
 | [0018](./0018-spc-anomaly-detection.md) | Détection d'anomalies SPC (règles de Nelson) dans ai-service | Accepté |
+| [0019](./0019-industry-packs-schema-canonique.md) | Industry Packs : schéma canonique des packs sectoriels | Accepté |
+| [0020](./0020-role-authorization-matrix.md) | Matrice d'autorisation par rôles (§16) | Accepté |
+| [0021](./0021-vision-bearer-service-token.md) | Jeton de service Bearer client_credentials engine → ai-vision-5s (tenant via X-Tenant-Id, azp de confiance) | Accepté |
 
 ## Statuts possibles
 

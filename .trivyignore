@@ -18,3 +18,13 @@ CVE-2026-41254
 # exposition indirecte limitée (urllib). Fix 3.11.2-6+deb12u7 publié, rebuild
 # distroless attendu. Revue : 2026-06-18
 CVE-2025-13836
+
+# distroless/java21-debian12 + distroless/python3-debian12 (TOUTES les images :
+# api-core, api-quality-engine, api-iot-hub, blockchain-service, ai-service,
+# ai-vision-5s) — libssl3 de la base debian12 partagée.
+# OpenSSL PKCS7_verify() — Heap Use-After-Free. Nos services n'appellent PAS
+# PKCS7_verify : crypto Java via BCJSSE/Bouncy Castle (pas libssl système),
+# Python via httpx/ssl (TLS, pas la voie PKCS#7) → exposition pratique nulle.
+# Installé 3.0.19-1~deb12u2, fix 3.0.20-1~deb12u2 publié côté Debian ; rebuild
+# distroless attendu (cadence ~2 sem). Revue : 2026-06-27
+CVE-2026-45447

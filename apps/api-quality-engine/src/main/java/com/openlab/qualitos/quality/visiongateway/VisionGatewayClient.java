@@ -5,6 +5,7 @@ import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
@@ -23,10 +24,19 @@ import java.util.UUID;
  * {@code AiGatewayClient} : le SPA appelle api-quality-engine (JWT utilisateur validé) ;
  * api-quality-engine relaie l'image vers ai-vision-5s en {@code multipart/form-data}.
  *
- * <p>Auth (même schéma que la passerelle IA, ADR 0014) : en dev, en-tête
- * {@code X-Dev-Claims} (JSON {@code {sub,tid,roles}}) — le tenant provient du
- * {@link TenantContext} (JWT, JAMAIS du body, règle 18.2 #2). En prod : jeton OIDC
- * client_credentials (à brancher au niveau de la passerelle, comme pour ai-service).
+ * <p>Auth interne, mode configurable {@code qualitos.vision.auth} (ADR 0021) :
+ * <ul>
+ *   <li>{@code dev-claims} (défaut, dev uniquement) : en-tête {@code X-Dev-Claims}
+ *       (JSON {@code {sub,tid,roles}}) — ai-vision-5s avec {@code AUTH_BYPASS=true}
+ *       n'exige de toute façon aucun en-tête ;</li>
+ *   <li>{@code bearer} (OBLIGATOIRE en prod) : jeton OIDC client_credentials obtenu via
+ *       {@link ServiceTokenProvider} ({@code aud=api-ai-vision-5s}) + en-tête
+ *       {@code X-Tenant-Id} (accepté côté service uniquement pour un {@code azp} de
+ *       confiance). Échec d'obtention du jeton → fail-closed 503, pas de repli dev ;</li>
+ *   <li>{@code none} : aucun en-tête (réseau de confiance/mTLS mesh, déconseillé).</li>
+ * </ul>
+ * Dans tous les modes, le tenant provient du {@link TenantContext} (JWT, JAMAIS du body,
+ * règle 18.2 #2).
  *
  * <p>Le drapeau {@code qualitos.vision.enabled} est OFF par défaut : quand il est à
  * false, le client ne tente aucun appel réseau et lève {@link VisionUnavailableException}
@@ -35,22 +45,41 @@ import java.util.UUID;
 @Component
 public class VisionGatewayClient {
 
+    /** Mode d'auth interne vers ai-vision-5s (propriété {@code qualitos.vision.auth}). */
+    enum AuthMode {
+        NONE, DEV_CLAIMS, BEARER;
+
+        /** Parse stricte : une valeur inconnue doit faire échouer le boot (pas de magie). */
+        static AuthMode parse(String raw) {
+            return switch (raw == null ? "" : raw.trim().toLowerCase()) {
+                case "none" -> NONE;
+                case "dev-claims" -> DEV_CLAIMS;
+                case "bearer" -> BEARER;
+                default -> throw new IllegalArgumentException(
+                        "qualitos.vision.auth invalide : '" + raw + "' (attendu : none | dev-claims | bearer)");
+            };
+        }
+    }
+
     /** Sujet de service (déterministe) porté dans X-Dev-Claims pour l'appel interne. */
     private static final UUID SERVICE_SUBJECT = UUID.fromString("0000000a-0000-0000-0000-000000000a02");
 
     private final RestClient client;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final boolean enabled;
-    private final boolean devClaimsEnabled;
+    private final AuthMode authMode;
+    private final ServiceTokenProvider serviceTokenProvider;
 
     public VisionGatewayClient(
             @Value("${qualitos.vision.enabled:false}") boolean enabled,
             @Value("${qualitos.vision.base-url:http://localhost:8086}") String baseUrl,
             @Value("${qualitos.vision.connect-timeout-ms:5000}") int connectTimeoutMs,
             @Value("${qualitos.vision.read-timeout-ms:30000}") int readTimeoutMs,
-            @Value("${qualitos.vision.dev-claims:true}") boolean devClaimsEnabled) {
+            @Value("${qualitos.vision.auth:dev-claims}") String authMode,
+            ServiceTokenProvider serviceTokenProvider) {
         this.enabled = enabled;
-        this.devClaimsEnabled = devClaimsEnabled;
+        this.authMode = AuthMode.parse(authMode);
+        this.serviceTokenProvider = serviceTokenProvider;
         SimpleClientHttpRequestFactory rf = new SimpleClientHttpRequestFactory();
         rf.setConnectTimeout(connectTimeoutMs);
         rf.setReadTimeout(readTimeoutMs);
@@ -79,8 +108,16 @@ public class VisionGatewayClient {
         RestClient.RequestBodySpec spec = client.post()
                 .uri("/v1/vision/5s/analyze")
                 .contentType(MediaType.MULTIPART_FORM_DATA);
-        if (devClaimsEnabled) {
-            spec = spec.header("X-Dev-Claims", devClaims(tenantId));
+        switch (authMode) {
+            case DEV_CLAIMS -> spec = spec.header("X-Dev-Claims", devClaims(tenantId));
+            // Jeton de service client_credentials + tenant par en-tête (le token de service
+            // ne porte pas de tenant par requête ; ai-vision-5s n'accepte X-Tenant-Id que
+            // d'un azp de confiance, cf. ADR 0021). getToken() échoue en
+            // VisionUnavailableException → fail-closed 503 AVANT tout appel réseau.
+            case BEARER -> spec = spec
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + serviceTokenProvider.getToken())
+                    .header("X-Tenant-Id", tenantId.toString());
+            case NONE -> { /* aucun en-tête : auth déléguée au réseau (mTLS mesh) */ }
         }
         try {
             Map<String, Object> resp = spec
