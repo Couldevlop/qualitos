@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.erpconnector;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,7 @@ public class SapOdataClient extends AbstractErpRestClient {
     private final String suppliersPath;
     private final String productionKpisPath;
 
+    @Autowired
     public SapOdataClient(
             @Value("${qualitos.erp.sap.connect-timeout-ms:5000}") int connectTimeoutMs,
             @Value("${qualitos.erp.sap.read-timeout-ms:30000}") int readTimeoutMs,
