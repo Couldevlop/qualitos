@@ -44,9 +44,16 @@
         <!-- Overrides de versions gérées par Spring Boot (§18.2.1) : Boot 3.5.14
              gère tomcat 10.1.54 / netty 4.1.132, un cran sous les correctifs des
              CVE 2026-41293/43512/43515 (tomcat, dont bypass d'auth CRITICAL) et
-             2026-42583/42584/42587 (netty). À RETIRER quand Boot les rattrape. -->
+             2026-42583/42584/42587 (netty). À RETIRER quand Boot les rattrape.
+             netty 4.1.135.Final : corrige en plus CVE-2026-44249 (netty-handler,
+             bypass de règle de sous-réseau IPv6 par masquage incorrect) et
+             CVE-2026-45416 — détectées sur app.jar de api-quality-engine/api-iot-hub. -->
         <tomcat.version>10.1.55</tomcat.version>
-        <netty.version>4.1.133.Final</netty.version>
+        <netty.version>4.1.135.Final</netty.version>
+        <!-- Boot 3.5.14 gère spring-kafka 3.3.15 — CVE-2026-41731 (trusted-package
+             trop large dans les header mappers) corrigée en 3.3.16 (on reste sur la
+             ligne 3.3.x, pas de bump majeur 4.0.x). À retirer quand Boot rattrape. -->
+        <spring-kafka.version>3.3.16</spring-kafka.version>
         <!-- Dependency versions -->
         <mapstruct.version>1.6.3</mapstruct.version>
         <jjwt.version>0.12.6</jjwt.version>
