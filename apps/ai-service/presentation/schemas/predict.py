@@ -13,6 +13,9 @@ class KpiForecastRequest(BaseModel):
     target: float
     horizon: int = Field(default=6, ge=1, le=60)
     direction: str = Field(default="at_least", pattern="^(at_least|at_most)$")
+    # Période saisonnière optionnelle (ex. 7=hebdo, 12=mensuel). Utilisée si la série
+    # couvre ≥ 2 périodes, sinon Holt linéaire. None = pas de saisonnalité.
+    seasonal_period: int | None = Field(default=None, ge=2, le=365)
 
 
 class KpiForecastPointResponse(BaseModel):
@@ -33,6 +36,8 @@ class KpiForecastResponse(BaseModel):
     direction: str
     probability: float
     confidence: str
+    model: str
+    seasonal_period: int
     points: list[KpiForecastPointResponse]
 
     @classmethod
@@ -41,6 +46,7 @@ class KpiForecastResponse(BaseModel):
             n=f.n, slope=f.slope, intercept=f.intercept, residual_sigma=f.residual_sigma,
             r2=f.r2, horizon=f.horizon, target=f.target, direction=f.direction,
             probability=f.probability, confidence=f.confidence,
+            model=f.model, seasonal_period=f.seasonal_period,
             points=[KpiForecastPointResponse(step=p.step, value=p.value, low=p.low, high=p.high)
                     for p in f.points],
         )

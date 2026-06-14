@@ -25,11 +25,16 @@ class KpiForecastUseCase:
         *,
         horizon: int = 6,
         direction: str = "at_least",
+        seasonal_period: int | None = None,
     ) -> KpiForecast:
-        result = forecasting.forecast(values, target, horizon=horizon, direction=direction)
+        result = forecasting.forecast(
+            values, target, horizon=horizon, direction=direction,
+            seasonal_period=seasonal_period,
+        )
         logger.info(
-            "KPI forecast tenant=%s n=%d horizon=%d p=%.2f confidence=%s",
-            tenant.tenant_id, result.n, result.horizon, result.probability, result.confidence,
+            "KPI forecast tenant=%s n=%d horizon=%d model=%s p=%.2f confidence=%s",
+            tenant.tenant_id, result.n, result.horizon, result.model,
+            result.probability, result.confidence,
         )
         return result
 

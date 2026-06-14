@@ -58,3 +58,44 @@ class TestForecastValidation:
     def test_probability_bounded(self):
         result = forecasting.forecast([1, 2, 3, 4, 5, 6], target=-1000)
         assert 0.0 <= result.probability <= 1.0
+
+
+class TestHoltWinters:
+    def test_default_model_is_holt_linear(self):
+        result = forecasting.forecast([10, 12, 14, 16, 18, 20], target=30)
+        assert result.model == "holt_linear"
+        assert result.seasonal_period == 0
+
+    def test_linear_series_exactly_reproduced(self):
+        # Holt reproduit exactement une droite : tendance et prévision restent exactes.
+        values = list(range(10))  # 0..9, pente 1
+        r = forecasting.forecast(values, target=20, horizon=5, direction="at_least")
+        assert r.slope == pytest.approx(1.0, abs=1e-9)
+        assert r.points[-1].value == pytest.approx(14.0, abs=1e-6)  # 9 + 5*1
+
+    def test_seasonal_period_engages_holt_winters(self):
+        # Série saisonnière additive (période 4) sur tendance douce, 4 cycles.
+        base = [10.0, 14.0, 9.0, 13.0]
+        values = [base[i % 4] + 0.5 * i for i in range(16)]
+        r = forecasting.forecast(values, target=30, horizon=4, seasonal_period=4)
+        assert r.model == "holt_winters_additive"
+        assert r.seasonal_period == 4
+        assert len(r.points) == 4
+        # La saisonnalité réapparaît : les 4 pas projetés ne sont pas monotones.
+        vals = [p.value for p in r.points]
+        assert max(vals) - min(vals) > 1.0
+
+    def test_seasonal_period_ignored_when_series_too_short(self):
+        # Moins de 2 périodes → retombe sur Holt linéaire (pas de saisonnalité fiable).
+        r = forecasting.forecast([1, 2, 3, 4, 5], target=10, seasonal_period=4)
+        assert r.model == "holt_linear"
+        assert r.seasonal_period == 0
+
+    def test_seasonal_forecast_recovers_pattern(self):
+        # Saisonnalité pure (pas de tendance) : le creux/pic du cycle est restitué.
+        cycle = [0.0, 5.0, 0.0, -5.0]
+        values = cycle * 5  # 20 points, période 4
+        r = forecasting.forecast(values, target=100, horizon=4, seasonal_period=4)
+        vals = [p.value for p in r.points]
+        # Le motif projeté garde une amplitude proche du cycle d'origine.
+        assert max(vals) - min(vals) > 5.0

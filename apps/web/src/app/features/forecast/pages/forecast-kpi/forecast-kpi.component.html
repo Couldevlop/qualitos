@@ -1,0 +1,122 @@
+<div class="qos-page">
+  <qos-page-header
+    eyebrow="KPI · Prédictif"
+    i18n-title="@@forecast.kpi.title"
+    title="Prévision KPI"
+    i18n-subtitle="@@forecast.kpi.subtitle"
+    subtitle="Projection par lissage exponentiel Holt-Winters (niveau, tendance, saisonnalité) et probabilité d'atteindre la cible — calculée par l'IA.">
+  </qos-page-header>
+
+  <div class="forecast-grid">
+    <!-- Saisie -->
+    <qos-panel i18n-title="@@forecast.kpi.series-panel" title="Série & cible" icon="timeline" class="forecast-input">
+      <form [formGroup]="form" (ngSubmit)="run()">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label i18n="@@forecast.kpi.measures-label">Mesures (séparées par virgule, espace ou retour ligne)</mat-label>
+          <textarea matInput rows="5" formControlName="valuesText"
+                    placeholder="62, 63, 61, 64, 66, …"></textarea>
+        </mat-form-field>
+
+        <div class="opts-row">
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@forecast.kpi.target-label">Cible</mat-label>
+            <input matInput type="number" formControlName="target" placeholder="90">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@forecast.kpi.horizon-label">Horizon (périodes)</mat-label>
+            <input matInput type="number" formControlName="horizon" min="1" max="60">
+          </mat-form-field>
+        </div>
+
+        <div class="opts-row">
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@forecast.kpi.direction-label">Sens</mat-label>
+            <mat-select formControlName="direction">
+              <mat-option value="at_least" i18n="@@forecast.kpi.dir-at-least">atteindre au moins</mat-option>
+              <mat-option value="at_most" i18n="@@forecast.kpi.dir-at-most">atteindre au plus</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@forecast.kpi.seasonal-label">Période saisonnière</mat-label>
+            <input matInput type="number" formControlName="seasonalPeriod" placeholder="auto" min="2" max="365">
+            <mat-hint i18n="@@forecast.kpi.seasonal-hint">Optionnel (ex. 7, 12) — sinon Holt linéaire</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="loading || form.invalid">
+            <mat-icon>trending_up</mat-icon>
+            <span *ngIf="!loading" i18n="@@forecast.kpi.run">Prévoir</span>
+            <span *ngIf="loading" i18n="@@forecast.kpi.running">Calcul…</span>
+          </button>
+          <button mat-button type="button" (click)="loadExample()" [disabled]="loading">
+            <mat-icon>science</mat-icon> <span i18n="@@forecast.kpi.example">Exemple</span>
+          </button>
+        </div>
+      </form>
+
+      <p class="error" *ngIf="error" role="alert">{{ error }}</p>
+    </qos-panel>
+
+    <!-- Aide -->
+    <qos-panel i18n-title="@@forecast.kpi.help-panel" title="Comment ça marche" icon="help_outline" class="forecast-input">
+      <p class="help" i18n="@@forecast.kpi.help-body">
+        Le modèle Holt-Winters lisse le niveau et la tendance de la série, et, si une période
+        saisonnière est fournie, sa composante saisonnière. La probabilité estime la chance
+        d'atteindre la cible à l'horizon, compte tenu de l'incertitude (intervalle à 95 %).
+      </p>
+    </qos-panel>
+  </div>
+
+  <!-- Verdict (cartes) -->
+  <div class="kpi-col" *ngIf="result as r">
+    <qos-kpi-card
+      i18n-label="@@forecast.kpi.card-probability"
+      label="Probabilité d'atteinte"
+      [value]="probabilityPct(r.probability)"
+      [state]="probabilityState(r.probability)"
+      icon="target"
+      [description]="directionLabel(r.direction) + ' ' + r.target + ' à H+' + r.horizon">
+    </qos-kpi-card>
+    <qos-kpi-card
+      i18n-label="@@forecast.kpi.card-confidence"
+      label="Confiance"
+      [value]="r.confidence"
+      [state]="confidenceState(r.confidence)"
+      icon="verified"
+      [description]="r.n + ' points · R² ' + (r.r2 | number:'1.0-2')">
+    </qos-kpi-card>
+    <qos-kpi-card
+      i18n-label="@@forecast.kpi.card-model"
+      label="Modèle"
+      [value]="modelLabel(r.model, r.seasonalPeriod)"
+      state="neutral" icon="insights"
+      [description]="'tendance ' + (r.slope | number:'1.0-3') + ' / période'">
+    </qos-kpi-card>
+  </div>
+
+  <!-- Graphe prévision -->
+  <qos-panel i18n-title="@@forecast.kpi.chart-panel" title="Historique & prévision" icon="show_chart" *ngIf="chartOption">
+    <qos-echart [option]="chartOption" [height]="380"></qos-echart>
+  </qos-panel>
+
+  <!-- Détail des points projetés -->
+  <qos-panel i18n-title="@@forecast.kpi.table-panel" title="Points projetés" icon="table_rows" *ngIf="result as r">
+    <table class="forecast-table">
+      <thead>
+        <tr>
+          <th i18n="@@forecast.kpi.col-step">Horizon</th>
+          <th i18n="@@forecast.kpi.col-value">Prévision</th>
+          <th i18n="@@forecast.kpi.col-interval">Intervalle 95 %</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of r.points">
+          <td class="nowrap">H+{{ p.step }}</td>
+          <td class="val">{{ p.value | number:'1.0-2' }}</td>
+          <td>{{ p.low | number:'1.0-2' }} … {{ p.high | number:'1.0-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </qos-panel>
+</div>

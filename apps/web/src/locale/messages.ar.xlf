@@ -2928,6 +2928,158 @@
         <source>ITSM</source>
         <target state="translated">ITSM</target>
       </trans-unit>
+      <trans-unit id="nav.forecast" datatype="html">
+        <source>Prévision KPI</source>
+        <target state="translated">التنبؤ بمؤشرات الأداء</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.title" datatype="html">
+        <source>Prévision KPI</source>
+        <target state="translated">التنبؤ بمؤشرات الأداء</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.subtitle" datatype="html">
+        <source>Projection par lissage exponentiel Holt-Winters (niveau, tendance, saisonnalité) et probabilité d'atteindre la cible — calculée par l'IA.</source>
+        <target state="translated">إسقاط عبر التنعيم الأسي Holt-Winters (المستوى، الاتجاه، الموسمية) واحتمال بلوغ الهدف — محسوب بالذكاء الاصطناعي.</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.series-panel" datatype="html">
+        <source>Série &amp; cible</source>
+        <target state="translated">السلسلة والهدف</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.measures-label" datatype="html">
+        <source>Mesures (séparées par virgule, espace ou retour ligne)</source>
+        <target state="translated">القياسات (مفصولة بفاصلة أو مسافة أو سطر جديد)</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.target-label" datatype="html">
+        <source>Cible</source>
+        <target state="translated">الهدف</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.horizon-label" datatype="html">
+        <source>Horizon (périodes)</source>
+        <target state="translated">الأفق (الفترات)</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.direction-label" datatype="html">
+        <source>Sens</source>
+        <target state="translated">الاتجاه</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.dir-at-least" datatype="html">
+        <source>atteindre au moins</source>
+        <target state="translated">بلوغ ما لا يقل عن</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.dir-at-most" datatype="html">
+        <source>atteindre au plus</source>
+        <target state="translated">بلوغ ما لا يزيد عن</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.seasonal-label" datatype="html">
+        <source>Période saisonnière</source>
+        <target state="translated">الفترة الموسمية</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.seasonal-hint" datatype="html">
+        <source>Optionnel (ex. 7, 12) — sinon Holt linéaire</source>
+        <target state="translated">اختياري (مثل 7، 12) — وإلا فهولت الخطي</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.run" datatype="html">
+        <source>Prévoir</source>
+        <target state="translated">تنبّأ</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.running" datatype="html">
+        <source>Calcul…</source>
+        <target state="translated">جارٍ الحساب…</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.example" datatype="html">
+        <source>Exemple</source>
+        <target state="translated">مثال</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.help-panel" datatype="html">
+        <source>Comment ça marche</source>
+        <target state="translated">كيف يعمل</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.help-body" datatype="html">
+        <source>Le modèle Holt-Winters lisse le niveau et la tendance de la série, et, si une période saisonnière est fournie, sa composante saisonnière. La probabilité estime la chance d'atteindre la cible à l'horizon, compte tenu de l'incertitude (intervalle à 95 %).</source>
+        <target state="translated">يقوم نموذج Holt-Winters بتنعيم مستوى السلسلة واتجاهها، وكذلك مكوّنها الموسمي عند توفير فترة موسمية. يقدّر الاحتمال فرصة بلوغ الهدف عند الأفق مع مراعاة عدم اليقين (فاصل 95٪).</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.card-probability" datatype="html">
+        <source>Probabilité d'atteinte</source>
+        <target state="translated">احتمال البلوغ</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.card-confidence" datatype="html">
+        <source>Confiance</source>
+        <target state="translated">الثقة</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.card-model" datatype="html">
+        <source>Modèle</source>
+        <target state="translated">النموذج</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.model-holt" datatype="html">
+        <source>Holt (niveau + tendance)</source>
+        <target state="translated">هولت (المستوى + الاتجاه)</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.model-hw" datatype="html">
+        <source>Holt-Winters (saisonnier)</source>
+        <target state="translated">هولت-وينترز (موسمي)</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.chart-panel" datatype="html">
+        <source>Historique &amp; prévision</source>
+        <target state="translated">السجل والتنبؤ</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.table-panel" datatype="html">
+        <source>Points projetés</source>
+        <target state="translated">النقاط المتوقعة</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.col-step" datatype="html">
+        <source>Horizon</source>
+        <target state="translated">الأفق</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.col-value" datatype="html">
+        <source>Prévision</source>
+        <target state="translated">التنبؤ</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.col-interval" datatype="html">
+        <source>Intervalle 95 %</source>
+        <target state="translated">فاصل 95٪</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-min-points" datatype="html">
+        <source>Saisissez au moins 4 mesures numériques.</source>
+        <target state="translated">أدخل 4 قياسات رقمية على الأقل.</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-target" datatype="html">
+        <source>Indiquez une valeur cible.</source>
+        <target state="translated">حدّد قيمة هدف.</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-seasonal" datatype="html">
+        <source>La période saisonnière doit être comprise entre 2 et 365.</source>
+        <target state="translated">يجب أن تكون الفترة الموسمية بين 2 و365.</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">تعذّر الوصول إلى الخادم (engine على 8082؟).</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-invalid" datatype="html">
+        <source>Requête invalide (≥ 4 mesures, horizon 1–60, cible requise).</source>
+        <target state="translated">طلب غير صالح (≥ 4 قياسات، الأفق 1–60، الهدف مطلوب).</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-too-large" datatype="html">
+        <source>Série trop volumineuse (garde-fou IA).</source>
+        <target state="translated">السلسلة كبيرة جدًا (حاجز أمان الذكاء الاصطناعي).</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-unprocessable" datatype="html">
+        <source>Série insuffisante pour une prévision fiable.</source>
+        <target state="translated">السلسلة غير كافية لتنبؤ موثوق.</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">تم تجاوز معدّل/حصة الذكاء الاصطناعي لهذا المستأجر — أعد المحاولة لاحقًا.</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-gateway" datatype="html">
+        <source>Passerelle IA indisponible (ai-service injoignable).</source>
+        <target state="translated">بوابة الذكاء الاصطناعي غير متاحة (ai-service غير قابل للوصول).</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-unavailable" datatype="html">
+        <source>Service IA momentanément indisponible (disjoncteur ouvert).</source>
+        <target state="translated">خدمة الذكاء الاصطناعي غير متاحة مؤقتًا (قاطع الدائرة مفتوح).</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-generic" datatype="html">
+        <source>Échec de la prévision (HTTP <x id="status"/>).</source>
+        <target state="translated">فشل التنبؤ (HTTP <x id="status"/>).</target>
+      </trans-unit>
       <trans-unit id="dpia.create.hint" datatype="html">
         <source>L'Art. 35 RGPD impose une DPIA pour les traitements présentant un</source>
         <target state="translated">تفرض المادة 35 من اللائحة العامة لحماية البيانات إجراء تقييم لأثر حماية البيانات (DPIA) لعمليات المعالجة التي تنطوي على</target>

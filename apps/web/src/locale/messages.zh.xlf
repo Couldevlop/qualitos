@@ -2928,6 +2928,158 @@
         <source>ITSM</source>
         <target state="translated">ITSM</target>
       </trans-unit>
+      <trans-unit id="nav.forecast" datatype="html">
+        <source>Prévision KPI</source>
+        <target state="translated">KPI预测</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.title" datatype="html">
+        <source>Prévision KPI</source>
+        <target state="translated">KPI预测</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.subtitle" datatype="html">
+        <source>Projection par lissage exponentiel Holt-Winters (niveau, tendance, saisonnalité) et probabilité d'atteindre la cible — calculée par l'IA.</source>
+        <target state="translated">通过 Holt-Winters 指数平滑（水平、趋势、季节性）进行预测，并计算达到目标的概率 — 由AI计算。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.series-panel" datatype="html">
+        <source>Série &amp; cible</source>
+        <target state="translated">序列与目标</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.measures-label" datatype="html">
+        <source>Mesures (séparées par virgule, espace ou retour ligne)</source>
+        <target state="translated">测量值（用逗号、空格或换行分隔）</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.target-label" datatype="html">
+        <source>Cible</source>
+        <target state="translated">目标</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.horizon-label" datatype="html">
+        <source>Horizon (périodes)</source>
+        <target state="translated">预测期（期数）</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.direction-label" datatype="html">
+        <source>Sens</source>
+        <target state="translated">方向</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.dir-at-least" datatype="html">
+        <source>atteindre au moins</source>
+        <target state="translated">至少达到</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.dir-at-most" datatype="html">
+        <source>atteindre au plus</source>
+        <target state="translated">至多达到</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.seasonal-label" datatype="html">
+        <source>Période saisonnière</source>
+        <target state="translated">季节周期</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.seasonal-hint" datatype="html">
+        <source>Optionnel (ex. 7, 12) — sinon Holt linéaire</source>
+        <target state="translated">可选（如 7、12）— 否则使用线性 Holt</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.run" datatype="html">
+        <source>Prévoir</source>
+        <target state="translated">预测</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.running" datatype="html">
+        <source>Calcul…</source>
+        <target state="translated">计算中…</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.example" datatype="html">
+        <source>Exemple</source>
+        <target state="translated">示例</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.help-panel" datatype="html">
+        <source>Comment ça marche</source>
+        <target state="translated">工作原理</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.help-body" datatype="html">
+        <source>Le modèle Holt-Winters lisse le niveau et la tendance de la série, et, si une période saisonnière est fournie, sa composante saisonnière. La probabilité estime la chance d'atteindre la cible à l'horizon, compte tenu de l'incertitude (intervalle à 95 %).</source>
+        <target state="translated">Holt-Winters 模型平滑序列的水平和趋势，若提供季节周期则平滑其季节成分。在考虑不确定性（95% 区间）的情况下，概率估计在预测期末达到目标的可能性。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.card-probability" datatype="html">
+        <source>Probabilité d'atteinte</source>
+        <target state="translated">达到概率</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.card-confidence" datatype="html">
+        <source>Confiance</source>
+        <target state="translated">置信度</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.card-model" datatype="html">
+        <source>Modèle</source>
+        <target state="translated">模型</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.model-holt" datatype="html">
+        <source>Holt (niveau + tendance)</source>
+        <target state="translated">Holt（水平+趋势）</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.model-hw" datatype="html">
+        <source>Holt-Winters (saisonnier)</source>
+        <target state="translated">Holt-Winters（季节性）</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.chart-panel" datatype="html">
+        <source>Historique &amp; prévision</source>
+        <target state="translated">历史与预测</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.table-panel" datatype="html">
+        <source>Points projetés</source>
+        <target state="translated">预测点</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.col-step" datatype="html">
+        <source>Horizon</source>
+        <target state="translated">期</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.col-value" datatype="html">
+        <source>Prévision</source>
+        <target state="translated">预测</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.col-interval" datatype="html">
+        <source>Intervalle 95 %</source>
+        <target state="translated">95% 区间</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-min-points" datatype="html">
+        <source>Saisissez au moins 4 mesures numériques.</source>
+        <target state="translated">请至少输入 4 个数值测量。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-target" datatype="html">
+        <source>Indiquez une valeur cible.</source>
+        <target state="translated">请提供目标值。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-seasonal" datatype="html">
+        <source>La période saisonnière doit être comprise entre 2 et 365.</source>
+        <target state="translated">季节周期必须在 2 到 365 之间。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">无法连接后端（engine 在 8082？）。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-invalid" datatype="html">
+        <source>Requête invalide (≥ 4 mesures, horizon 1–60, cible requise).</source>
+        <target state="translated">请求无效（≥ 4 个测量，预测期 1–60，目标必填）。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-too-large" datatype="html">
+        <source>Série trop volumineuse (garde-fou IA).</source>
+        <target state="translated">序列过大（AI 防护）。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-unprocessable" datatype="html">
+        <source>Série insuffisante pour une prévision fiable.</source>
+        <target state="translated">序列不足以进行可靠预测。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">该租户的 AI 速率/配额已超出 — 请稍后重试。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-gateway" datatype="html">
+        <source>Passerelle IA indisponible (ai-service injoignable).</source>
+        <target state="translated">AI 网关不可用（无法连接 ai-service）。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-unavailable" datatype="html">
+        <source>Service IA momentanément indisponible (disjoncteur ouvert).</source>
+        <target state="translated">AI 服务暂时不可用（断路器已打开）。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-generic" datatype="html">
+        <source>Échec de la prévision (HTTP <x id="status"/>).</source>
+        <target state="translated">预测失败（HTTP <x id="status"/>）。</target>
+      </trans-unit>
       <trans-unit id="dpia.create.hint" datatype="html">
         <source>L'Art. 35 RGPD impose une DPIA pour les traitements présentant un</source>
         <target state="translated">GDPR 第 35 条要求对存在以下风险的处理活动进行 DPIA</target>
