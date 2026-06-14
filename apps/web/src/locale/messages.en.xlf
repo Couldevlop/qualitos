@@ -2928,6 +2928,158 @@
         <source>ITSM</source>
         <target state="translated">ITSM</target>
       </trans-unit>
+      <trans-unit id="nav.forecast" datatype="html">
+        <source>Prévision KPI</source>
+        <target state="translated">KPI forecast</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.title" datatype="html">
+        <source>Prévision KPI</source>
+        <target state="translated">KPI forecast</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.subtitle" datatype="html">
+        <source>Projection par lissage exponentiel Holt-Winters (niveau, tendance, saisonnalité) et probabilité d'atteindre la cible — calculée par l'IA.</source>
+        <target state="translated">Projection via Holt-Winters exponential smoothing (level, trend, seasonality) and probability of reaching the target — computed by AI.</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.series-panel" datatype="html">
+        <source>Série &amp; cible</source>
+        <target state="translated">Series &amp; target</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.measures-label" datatype="html">
+        <source>Mesures (séparées par virgule, espace ou retour ligne)</source>
+        <target state="translated">Measurements (separated by comma, space or line break)</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.target-label" datatype="html">
+        <source>Cible</source>
+        <target state="translated">Target</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.horizon-label" datatype="html">
+        <source>Horizon (périodes)</source>
+        <target state="translated">Horizon (periods)</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.direction-label" datatype="html">
+        <source>Sens</source>
+        <target state="translated">Direction</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.dir-at-least" datatype="html">
+        <source>atteindre au moins</source>
+        <target state="translated">reach at least</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.dir-at-most" datatype="html">
+        <source>atteindre au plus</source>
+        <target state="translated">reach at most</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.seasonal-label" datatype="html">
+        <source>Période saisonnière</source>
+        <target state="translated">Seasonal period</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.seasonal-hint" datatype="html">
+        <source>Optionnel (ex. 7, 12) — sinon Holt linéaire</source>
+        <target state="translated">Optional (e.g. 7, 12) — otherwise linear Holt</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.run" datatype="html">
+        <source>Prévoir</source>
+        <target state="translated">Forecast</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.running" datatype="html">
+        <source>Calcul…</source>
+        <target state="translated">Computing…</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.example" datatype="html">
+        <source>Exemple</source>
+        <target state="translated">Example</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.help-panel" datatype="html">
+        <source>Comment ça marche</source>
+        <target state="translated">How it works</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.help-body" datatype="html">
+        <source>Le modèle Holt-Winters lisse le niveau et la tendance de la série, et, si une période saisonnière est fournie, sa composante saisonnière. La probabilité estime la chance d'atteindre la cible à l'horizon, compte tenu de l'incertitude (intervalle à 95 %).</source>
+        <target state="translated">The Holt-Winters model smooths the series level and trend, plus its seasonal component when a seasonal period is provided. The probability estimates the chance of reaching the target at the horizon, given uncertainty (95 % interval).</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.card-probability" datatype="html">
+        <source>Probabilité d'atteinte</source>
+        <target state="translated">Probability of reaching</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.card-confidence" datatype="html">
+        <source>Confiance</source>
+        <target state="translated">Confidence</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.card-model" datatype="html">
+        <source>Modèle</source>
+        <target state="translated">Model</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.model-holt" datatype="html">
+        <source>Holt (niveau + tendance)</source>
+        <target state="translated">Holt (level + trend)</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.model-hw" datatype="html">
+        <source>Holt-Winters (saisonnier)</source>
+        <target state="translated">Holt-Winters (seasonal)</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.chart-panel" datatype="html">
+        <source>Historique &amp; prévision</source>
+        <target state="translated">History &amp; forecast</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.table-panel" datatype="html">
+        <source>Points projetés</source>
+        <target state="translated">Projected points</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.col-step" datatype="html">
+        <source>Horizon</source>
+        <target state="translated">Horizon</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.col-value" datatype="html">
+        <source>Prévision</source>
+        <target state="translated">Forecast</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.col-interval" datatype="html">
+        <source>Intervalle 95 %</source>
+        <target state="translated">95 % interval</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-min-points" datatype="html">
+        <source>Saisissez au moins 4 mesures numériques.</source>
+        <target state="translated">Enter at least 4 numeric measurements.</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-target" datatype="html">
+        <source>Indiquez une valeur cible.</source>
+        <target state="translated">Provide a target value.</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-seasonal" datatype="html">
+        <source>La période saisonnière doit être comprise entre 2 et 365.</source>
+        <target state="translated">The seasonal period must be between 2 and 365.</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">Backend unreachable (engine on 8082?).</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-invalid" datatype="html">
+        <source>Requête invalide (≥ 4 mesures, horizon 1–60, cible requise).</source>
+        <target state="translated">Invalid request (≥ 4 measurements, horizon 1–60, target required).</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-too-large" datatype="html">
+        <source>Série trop volumineuse (garde-fou IA).</source>
+        <target state="translated">Series too large (AI guardrail).</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-unprocessable" datatype="html">
+        <source>Série insuffisante pour une prévision fiable.</source>
+        <target state="translated">Series insufficient for a reliable forecast.</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">AI rate/quota exceeded for this tenant — try again later.</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-gateway" datatype="html">
+        <source>Passerelle IA indisponible (ai-service injoignable).</source>
+        <target state="translated">AI gateway unavailable (ai-service unreachable).</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-unavailable" datatype="html">
+        <source>Service IA momentanément indisponible (disjoncteur ouvert).</source>
+        <target state="translated">AI service temporarily unavailable (circuit breaker open).</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-generic" datatype="html">
+        <source>Échec de la prévision (HTTP <x id="status"/>).</source>
+        <target state="translated">Forecast failed (HTTP <x id="status"/>).</target>
+      </trans-unit>
       <trans-unit id="dpia.create.hint" datatype="html">
         <source>L'Art. 35 RGPD impose une DPIA pour les traitements présentant un</source>
         <target state="translated">GDPR Art. 35 mandates a DPIA for processing operations presenting a</target>

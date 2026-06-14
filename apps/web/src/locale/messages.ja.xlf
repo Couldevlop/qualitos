@@ -2928,6 +2928,158 @@
         <source>ITSM</source>
         <target state="translated">ITSM</target>
       </trans-unit>
+      <trans-unit id="nav.forecast" datatype="html">
+        <source>Prévision KPI</source>
+        <target state="translated">KPI予測</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.title" datatype="html">
+        <source>Prévision KPI</source>
+        <target state="translated">KPI予測</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.subtitle" datatype="html">
+        <source>Projection par lissage exponentiel Holt-Winters (niveau, tendance, saisonnalité) et probabilité d'atteindre la cible — calculée par l'IA.</source>
+        <target state="translated">Holt-Winters指数平滑（水準・トレンド・季節性）による予測と目標到達確率をAIが算出。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.series-panel" datatype="html">
+        <source>Série &amp; cible</source>
+        <target state="translated">系列と目標</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.measures-label" datatype="html">
+        <source>Mesures (séparées par virgule, espace ou retour ligne)</source>
+        <target state="translated">測定値（カンマ・スペース・改行で区切る）</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.target-label" datatype="html">
+        <source>Cible</source>
+        <target state="translated">目標</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.horizon-label" datatype="html">
+        <source>Horizon (périodes)</source>
+        <target state="translated">予測期間（期）</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.direction-label" datatype="html">
+        <source>Sens</source>
+        <target state="translated">方向</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.dir-at-least" datatype="html">
+        <source>atteindre au moins</source>
+        <target state="translated">少なくとも到達</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.dir-at-most" datatype="html">
+        <source>atteindre au plus</source>
+        <target state="translated">多くても到達</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.seasonal-label" datatype="html">
+        <source>Période saisonnière</source>
+        <target state="translated">季節周期</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.seasonal-hint" datatype="html">
+        <source>Optionnel (ex. 7, 12) — sinon Holt linéaire</source>
+        <target state="translated">任意（例: 7, 12）— 指定しない場合は線形Holt</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.run" datatype="html">
+        <source>Prévoir</source>
+        <target state="translated">予測</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.running" datatype="html">
+        <source>Calcul…</source>
+        <target state="translated">計算中…</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.example" datatype="html">
+        <source>Exemple</source>
+        <target state="translated">例</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.help-panel" datatype="html">
+        <source>Comment ça marche</source>
+        <target state="translated">仕組み</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.help-body" datatype="html">
+        <source>Le modèle Holt-Winters lisse le niveau et la tendance de la série, et, si une période saisonnière est fournie, sa composante saisonnière. La probabilité estime la chance d'atteindre la cible à l'horizon, compte tenu de l'incertitude (intervalle à 95 %).</source>
+        <target state="translated">Holt-Winters モデルは系列の水準とトレンドを平滑化し、季節周期が指定されればその季節成分も平滑化します。確率は不確実性（95%区間）を考慮して、期末に目標へ到達する可能性を推定します。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.card-probability" datatype="html">
+        <source>Probabilité d'atteinte</source>
+        <target state="translated">到達確率</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.card-confidence" datatype="html">
+        <source>Confiance</source>
+        <target state="translated">信頼度</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.card-model" datatype="html">
+        <source>Modèle</source>
+        <target state="translated">モデル</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.model-holt" datatype="html">
+        <source>Holt (niveau + tendance)</source>
+        <target state="translated">Holt（水準+トレンド）</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.model-hw" datatype="html">
+        <source>Holt-Winters (saisonnier)</source>
+        <target state="translated">Holt-Winters（季節性）</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.chart-panel" datatype="html">
+        <source>Historique &amp; prévision</source>
+        <target state="translated">履歴と予測</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.table-panel" datatype="html">
+        <source>Points projetés</source>
+        <target state="translated">予測点</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.col-step" datatype="html">
+        <source>Horizon</source>
+        <target state="translated">期</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.col-value" datatype="html">
+        <source>Prévision</source>
+        <target state="translated">予測</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.col-interval" datatype="html">
+        <source>Intervalle 95 %</source>
+        <target state="translated">95%区間</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-min-points" datatype="html">
+        <source>Saisissez au moins 4 mesures numériques.</source>
+        <target state="translated">少なくとも4つの数値測定を入力してください。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-target" datatype="html">
+        <source>Indiquez une valeur cible.</source>
+        <target state="translated">目標値を指定してください。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-seasonal" datatype="html">
+        <source>La période saisonnière doit être comprise entre 2 et 365.</source>
+        <target state="translated">季節周期は2〜365の範囲でなければなりません。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">バックエンドに到達できません（engine は 8082？）。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-invalid" datatype="html">
+        <source>Requête invalide (≥ 4 mesures, horizon 1–60, cible requise).</source>
+        <target state="translated">無効なリクエスト（測定 ≥ 4、予測期間 1–60、目標必須）。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-too-large" datatype="html">
+        <source>Série trop volumineuse (garde-fou IA).</source>
+        <target state="translated">系列が大きすぎます（AIガードレール）。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-unprocessable" datatype="html">
+        <source>Série insuffisante pour une prévision fiable.</source>
+        <target state="translated">信頼できる予測には系列が不十分です。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">このテナントのAIレート/クォータを超過しました — 後で再試行してください。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-gateway" datatype="html">
+        <source>Passerelle IA indisponible (ai-service injoignable).</source>
+        <target state="translated">AIゲートウェイが利用できません（ai-service に到達不可）。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-unavailable" datatype="html">
+        <source>Service IA momentanément indisponible (disjoncteur ouvert).</source>
+        <target state="translated">AIサービスは一時的に利用できません（サーキットブレーカー作動中）。</target>
+      </trans-unit>
+      <trans-unit id="forecast.kpi.err-generic" datatype="html">
+        <source>Échec de la prévision (HTTP <x id="status"/>).</source>
+        <target state="translated">予測に失敗しました（HTTP <x id="status"/>）。</target>
+      </trans-unit>
       <trans-unit id="dpia.create.hint" datatype="html">
         <source>L'Art. 35 RGPD impose une DPIA pour les traitements présentant un</source>
         <target state="translated">GDPR第35条は、次のリスクを伴う処理についてDPIAの実施を義務付けています</target>
