@@ -228,6 +228,64 @@ public class AiGatewayClient {
         }
     }
 
+    /**
+     * Relaie une série de mesures KPI vers la prévision de {@code ai-service} (§6.5, §12.1 :
+     * lissage exponentiel Holt-Winters, NumPy). Renvoie la réponse JSON brute (mappée par la
+     * couche application). Le tenant provient du {@link TenantContext} (JWT), jamais du body.
+     *
+     * <p>Comme pour le SPC/anomaly, le calcul est statistique (pas un LLM) mais passe par le
+     * même garde-fou ({@link AiGuard}, op « forecast ») : cloisonnement débit/quota par tenant
+     * (OWASP LLM04, cohérence des chemins sortants).
+     *
+     * @param values         série chronologique (≥ 4 points)
+     * @param target         valeur cible à atteindre
+     * @param horizon        nombre de périodes à projeter (1..60)
+     * @param direction      {@code at_least} ou {@code at_most}
+     * @param seasonalPeriod période saisonnière (optionnelle ; null = pas de saisonnalité)
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> forecastKpi(
+            List<Double> values, Double target, Integer horizon, String direction,
+            Integer seasonalPeriod) {
+        if (!TenantContext.hasTenant()) {
+            throw new MissingTenantContextException();
+        }
+        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        // Map.of refuse les valeurs null → construire la map en tenant compte des optionnels.
+        Map<String, Object> body = new HashMap<>();
+        body.put("values", values);
+        body.put("target", target);
+        if (horizon != null) {
+            body.put("horizon", horizon);
+        }
+        if (direction != null) {
+            body.put("direction", direction);
+        }
+        if (seasonalPeriod != null) {
+            body.put("seasonal_period", seasonalPeriod);
+        }
+        AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "forecast",
+                values == null ? 0 : values.size());
+        guard.check(ctx);
+        try {
+            Map<String, Object> resp = client.post()
+                    .uri("/v1/ai/predict/kpi")
+                    .header("X-Dev-Claims", devClaims)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(body)
+                    .retrieve()
+                    .body(Map.class);
+            if (resp == null) {
+                throw new AiGatewayException("Réponse vide de la passerelle IA (forecast)");
+            }
+            guard.recordSuccess(ctx.tenantId());
+            return resp;
+        } catch (RestClientException e) {
+            guard.recordFailure(ctx.tenantId());
+            throw new AiGatewayException("Passerelle IA indisponible (forecast) : " + e.getMessage(), e);
+        }
+    }
+
     private String devClaims(UUID tenantId) {
         try {
             return objectMapper.writeValueAsString(Map.of(

@@ -32,15 +32,19 @@ class KpiForecastPoint:
 @dataclass(frozen=True)
 class KpiForecast:
     n: int
-    slope: float               # trend per period (explainability)
-    intercept: float
+    slope: float               # tendance finale (b) — explicabilité ; pour Holt = composante de tendance
+    intercept: float           # niveau final (l) à la dernière observation
     residual_sigma: float
-    r2: float                  # goodness of fit of the trend (0..1)
+    r2: float                  # qualité d'ajustement en échantillon (one-step), 0..1
     horizon: int
     target: float
     direction: str             # "at_least" | "at_most"
-    probability: float         # P(target reached at the horizon), 0..1
-    confidence: str            # "low" | "medium" | "high" (data quantity + fit)
+    probability: float         # P(cible atteinte à l'horizon), 0..1
+    confidence: str            # "low" | "medium" | "high" (quantité de données + ajustement)
+    # Modèle effectivement appliqué (explicabilité §12.3) :
+    # "holt_winters_additive" (niveau+tendance+saisonnalité) ou "holt_linear" (niveau+tendance).
+    model: str = "holt_linear"
+    seasonal_period: int = 0   # période saisonnière retenue (0 = aucune)
     points: list[KpiForecastPoint] = field(default_factory=list)
 
 

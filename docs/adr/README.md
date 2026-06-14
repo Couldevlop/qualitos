@@ -27,6 +27,7 @@ supersession).
 | [0020](./0020-role-authorization-matrix.md) | Matrice d'autorisation par rôles (§16) | Accepté |
 | [0021](./0021-vision-bearer-service-token.md) | Jeton de service Bearer client_credentials engine → ai-vision-5s (tenant via X-Tenant-Id, azp de confiance) | Accepté |
 | [0022](./0022-unsupervised-anomaly-detection.md) | Détection d'anomalies non-supervisée multivariée (Isolation Forest + reconstruction ACP) | Accepté |
+| [0023](./0023-kpi-forecasting-holt-winters.md) | Prévision KPI par lissage exponentiel Holt-Winters (NumPy pur) | Accepté |
 
 ## Statuts possibles
 

@@ -197,4 +197,46 @@ class AiGatewayClientTest {
         assertThatThrownBy(() -> c.detectAnomaly(List.of(List.of(1.0)), null, null, null))
                 .isInstanceOf(MissingTenantContextException.class);
     }
+
+    @Test
+    void forecastKpi_success_returnsRawMap() {
+        AiGatewayClient c = clientReturning(200,
+                "{\"n\":10,\"slope\":2.0,\"intercept\":28.0,\"model\":\"holt_linear\","
+                        + "\"seasonal_period\":0,\"probability\":0.97,\"confidence\":\"high\",\"points\":[]}");
+        Map<String, Object> resp = c.forecastKpi(
+                List.of(10.0, 12.0, 14.0, 16.0), 35.0, 6, "at_least", null);
+        assertThat(resp).containsKey("points");
+        assertThat(resp.get("model")).isEqualTo("holt_linear");
+    }
+
+    @Test
+    void forecastKpi_passesSeasonalPeriod() {
+        AiGatewayClient c = clientReturning(200,
+                "{\"model\":\"holt_winters_additive\",\"seasonal_period\":4,\"points\":[]}");
+        Map<String, Object> resp = c.forecastKpi(
+                List.of(10.0, 14.0, 9.0, 13.0, 11.0, 15.0, 10.0, 14.0), 30.0, 4, "at_most", 4);
+        assertThat(resp.get("seasonal_period")).isEqualTo(4);
+    }
+
+    @Test
+    void forecastKpi_emptyBody_throws() {
+        AiGatewayClient c = clientReturning(200, "");
+        assertThatThrownBy(() -> c.forecastKpi(List.of(1.0, 2.0, 3.0, 4.0), 10.0, null, null, null))
+                .isInstanceOf(AiGatewayException.class);
+    }
+
+    @Test
+    void forecastKpi_serverError_throws() {
+        AiGatewayClient c = clientReturning(500, "boom");
+        assertThatThrownBy(() -> c.forecastKpi(List.of(1.0, 2.0, 3.0, 4.0), 10.0, 6, "at_least", null))
+                .isInstanceOf(AiGatewayException.class);
+    }
+
+    @Test
+    void forecastKpi_missingTenant_throws() {
+        TenantContext.clear();
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
+        assertThatThrownBy(() -> c.forecastKpi(List.of(1.0, 2.0, 3.0, 4.0), 10.0, null, null, null))
+                .isInstanceOf(MissingTenantContextException.class);
+    }
 }

@@ -36,6 +36,7 @@ async def forecast_kpi(
         result = _container.kpi_forecast().execute(
             payload.values, payload.target, user.tenant,
             horizon=payload.horizon, direction=payload.direction,
+            seasonal_period=payload.seasonal_period,
         )
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
