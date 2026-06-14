@@ -172,6 +172,62 @@ public class AiGatewayClient {
         }
     }
 
+    /**
+     * Relaie une matrice multivariée vers la détection d'anomalies non-supervisée de
+     * {@code ai-service} (§3.4, §12.1 : Isolation Forest ou reconstruction par ACP,
+     * NumPy). Renvoie la réponse JSON brute (mappée par la couche application). Le tenant
+     * provient du {@link TenantContext} (JWT), jamais du body.
+     *
+     * <p>Comme pour le SPC, l'analyse est statistique (pas un LLM) mais passe par le même
+     * garde-fou ({@link AiGuard}, op « anomaly ») : cloisonnement débit/quota par tenant
+     * sur la passerelle (OWASP LLM04, cohérence des chemins sortants).
+     *
+     * @param samples       matrice échantillons × features
+     * @param method        {@code isolation_forest} ou {@code reconstruction}
+     * @param contamination fraction d'anomalies attendue (0, 0.5]
+     * @param threshold     seuil explicite sur le score (optionnel ; sinon quantile)
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> detectAnomaly(
+            List<List<Double>> samples, String method, Double contamination, Double threshold) {
+        if (!TenantContext.hasTenant()) {
+            throw new MissingTenantContextException();
+        }
+        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        // Map.of refuse les valeurs null → construire la map en tenant compte des optionnels.
+        Map<String, Object> body = new HashMap<>();
+        body.put("samples", samples);
+        if (method != null) {
+            body.put("method", method);
+        }
+        if (contamination != null) {
+            body.put("contamination", contamination);
+        }
+        if (threshold != null) {
+            body.put("threshold", threshold);
+        }
+        AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "anomaly",
+                samples == null ? 0 : samples.size());
+        guard.check(ctx);
+        try {
+            Map<String, Object> resp = client.post()
+                    .uri("/v1/ai/anomaly/detect")
+                    .header("X-Dev-Claims", devClaims)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(body)
+                    .retrieve()
+                    .body(Map.class);
+            if (resp == null) {
+                throw new AiGatewayException("Réponse vide de la passerelle IA (anomaly)");
+            }
+            guard.recordSuccess(ctx.tenantId());
+            return resp;
+        } catch (RestClientException e) {
+            guard.recordFailure(ctx.tenantId());
+            throw new AiGatewayException("Passerelle IA indisponible (anomaly) : " + e.getMessage(), e);
+        }
+    }
+
     private String devClaims(UUID tenantId) {
         try {
             return objectMapper.writeValueAsString(Map.of(

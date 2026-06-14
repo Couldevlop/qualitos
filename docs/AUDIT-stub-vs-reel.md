@@ -31,7 +31,7 @@
 | **Edge Gateway K3s (§9.5)** | ABSENT | aucun artefact (ni Helm, ni manifests, ni code edge, ni ONNX/TFLite) |
 | **Prédiction LSTM/Prophet/TFT (§12)** | ABSENT | aucun import |
 | **Anomalies SPC / Nelson rules (§3.4, §12.1)** | ~~ABSENT~~ → **RÉEL (branché engine)** | ✅ ADR 0018 : `domain/service/spc_rules.py` (limites I-chart MR̄/d2 + 8 règles Nelson, NumPy), use case `SpcDetectUseCase`, endpoint `POST /v1/ai/spc/analyze` ; 19 tests. **Branché côté engine (2026-06-01)** : `AiGatewayClient.detectSpc` (garde-fou LLM04 réutilisé) + `spc/SpcController`+`SpcService`+`SpcDto` (`POST /api/v1/ai/spc/analyze`), 6 tests ; E2E vérifié (NELSON_1/2 détectées). |
-| **Anomalies ML (Isolation Forest/Autoencoder)** | ABSENT | aucun import (le SPC ci-dessus couvre la détection règle/statistique ; ML non-supervisé reste à faire) |
+| **Anomalies ML (Isolation Forest/Autoencoder)** | ~~ABSENT~~ → **RÉEL (branché engine)** | ✅ ADR 0022 : détection non-supervisée **multivariée** (matrice échantillons × features), NumPy pur. `domain/service/isolation_forest.py` (Isolation Forest fidèle à Liu-Ting-Zhou 2008 : iTrees, `E[h(x)]`, score `2^(-E[h(x)]/c(n))`, déterministe seedé) + `domain/service/reconstruction.py` (auto-encodeur **linéaire** par ACP/SVD, erreur de reconstruction L2 + feature dominante). Use case `AnomalyDetectUseCase`, endpoint `POST /v1/ai/anomaly/detect` ; couverture nouveaux modules ≈ 98 %. **Branché côté engine** : `AiGatewayClient.detectAnomaly` (garde-fou LLM04, op « anomaly ») + `anomaly/AnomalyController`+`AnomalyService`+`AnomalyDto` (`POST /api/v1/ai/anomaly/detect`), tests verts (`verify` JaCoCo OK). Reste : UI, dérivation auto IoT/`kpi_measurements`, ouverture CAPA sur anomalie. |
 | **Clustering NC (HDBSCAN)** | ABSENT | aucun import |
 | **Explicabilité SHAP/LIME** | ABSENT | aucun import |
 | **NLP audits / sentiment (BERT/Whisper)** | ABSENT | aucun import transformers/whisper |
@@ -55,7 +55,7 @@
 5. ~~**Connecteurs protocoles IoT**~~ → ✅ **MQTT + OPC-UA livrés** (Paho v5, Milo 0.6.16 ; tenant depuis le registre device). Reste : HL7 FHIR / LoRaWAN.
 
 **P2 — capacités ML annoncées absentes**
-6. **IA prédictive** : ⏳ **Entamé** (2026-05-31, ADR 0018) — détection d'anomalies **SPC réelle** (8 règles Nelson + limites de contrôle, `POST /v1/ai/spc/analyze`, 19 tests). ✅ **SPC branché côté engine** (2026-06-01) : `AiGatewayClient.detectSpc` + `spc/SpcController` (`POST /api/v1/ai/spc/analyze`, 6 tests, E2E OK). Reste : prédiction KPI (LSTM/Prophet) et anomalies ML non-supervisées (Isolation Forest/autoencoder) ; UI SPC + dérivation auto depuis `kpi_measurements`.
+6. **IA prédictive** : ⏳ **Entamé** (2026-05-31, ADR 0018) — détection d'anomalies **SPC réelle** (8 règles Nelson + limites de contrôle, `POST /v1/ai/spc/analyze`, 19 tests). ✅ **SPC branché côté engine** (2026-06-01) : `AiGatewayClient.detectSpc` + `spc/SpcController` (`POST /api/v1/ai/spc/analyze`, 6 tests, E2E OK). ✅ **Anomalies ML non-supervisées multivariées branchées** (2026-06-13, ADR 0022) : Isolation Forest + reconstruction ACP (NumPy pur, déterministe), `POST /v1/ai/anomaly/detect` + `anomaly/AnomalyController` (`POST /api/v1/ai/anomaly/detect`), `AiGatewayClient.detectAnomaly`. Reste : prédiction KPI (LSTM/Prophet) ; UI SPC + anomalies ; dérivation auto depuis `kpi_measurements`/IoT.
 7. **Federated learning** : laisser en opt-in mais ne pas survendre.
 
 **P3 — hygiène**

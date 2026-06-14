@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from application.usecase import (
+    AnomalyDetectUseCase,
     CompleteTextUseCase,
     FederatedTrainRoundUseCase,
     KpiForecastUseCase,
@@ -138,6 +139,10 @@ class Container:
     def spc_detect(self) -> SpcDetectUseCase:
         # Pure compute (no external adapters): the use case wraps the domain service.
         return SpcDetectUseCase()
+
+    def anomaly_detect(self) -> AnomalyDetectUseCase:
+        # Calcul pur NumPy (Isolation Forest / reconstruction ACP), aucun adaptateur.
+        return AnomalyDetectUseCase()
 
     # ---- prédictif (§6.5) : calcul pur, aucun adaptateur externe ------------------
 

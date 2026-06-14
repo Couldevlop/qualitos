@@ -26,6 +26,7 @@ supersession).
 | [0019](./0019-industry-packs-schema-canonique.md) | Industry Packs : schéma canonique des packs sectoriels | Accepté |
 | [0020](./0020-role-authorization-matrix.md) | Matrice d'autorisation par rôles (§16) | Accepté |
 | [0021](./0021-vision-bearer-service-token.md) | Jeton de service Bearer client_credentials engine → ai-vision-5s (tenant via X-Tenant-Id, azp de confiance) | Accepté |
+| [0022](./0022-unsupervised-anomaly-detection.md) | Détection d'anomalies non-supervisée multivariée (Isolation Forest + reconstruction ACP) | Accepté |
 
 ## Statuts possibles
 

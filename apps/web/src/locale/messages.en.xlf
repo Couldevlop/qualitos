@@ -2344,6 +2344,178 @@
         <source>Lier</source>
         <target state="translated">Link</target>
       </trans-unit>
+      <trans-unit id="nav.anomaly" datatype="html">
+        <source>Anomalies IA</source>
+        <target state="translated">AI anomalies</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.title" datatype="html">
+        <source>Détection d'anomalies non-supervisée</source>
+        <target state="translated">Unsupervised anomaly detection</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.subtitle" datatype="html">
+        <source>Détection multivariée par Isolation Forest ou reconstruction (ACP), calculée par l'IA — au-delà des règles SPC univariées.</source>
+        <target state="translated">Multivariate detection via Isolation Forest or reconstruction (PCA), computed by AI — beyond univariate SPC rules.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.matrix-panel" datatype="html">
+        <source>Matrice de données</source>
+        <target state="translated">Data matrix</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.matrix-label" datatype="html">
+        <source>Échantillons (une ligne par échantillon, features séparées par virgule ou espace)</source>
+        <target state="translated">Samples (one row per sample, features separated by comma or space)</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.method-label" datatype="html">
+        <source>Méthode</source>
+        <target state="translated">Method</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.method-iforest" datatype="html">
+        <source>Isolation Forest</source>
+        <target state="translated">Isolation Forest</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.method-reconstruction" datatype="html">
+        <source>Reconstruction (ACP)</source>
+        <target state="translated">Reconstruction (PCA)</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.contamination-label" datatype="html">
+        <source>Contamination</source>
+        <target state="translated">Contamination</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.contamination-hint" datatype="html">
+        <source>Fraction d'anomalies attendue ∈ ]0 ; 0,5]</source>
+        <target state="translated">Expected anomaly fraction ∈ (0, 0.5]</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.threshold-label" datatype="html">
+        <source>Seuil explicite</source>
+        <target state="translated">Explicit threshold</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.threshold-hint" datatype="html">
+        <source>Optionnel — sinon quantile de contamination</source>
+        <target state="translated">Optional — otherwise contamination quantile</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.detect" datatype="html">
+        <source>Détecter les anomalies</source>
+        <target state="translated">Detect anomalies</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.detecting" datatype="html">
+        <source>Détection…</source>
+        <target state="translated">Detecting…</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.example" datatype="html">
+        <source>Exemple</source>
+        <target state="translated">Example</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.help-panel" datatype="html">
+        <source>Quelle méthode ?</source>
+        <target state="translated">Which method?</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.help-iforest" datatype="html">
+        <source>— isole les points rares par partitions aléatoires. Robuste, sans hypothèse de distribution.</source>
+        <target state="translated">— isolates rare points via random partitions. Robust, with no distribution assumption.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.help-reconstruction" datatype="html">
+        <source>— erreur de reconstruction sur les axes principaux (auto-encodeur linéaire). Indique la feature la plus en cause.</source>
+        <target state="translated">— reconstruction error on principal axes (linear autoencoder). Highlights the most contributing feature.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.card-anomalies" datatype="html">
+        <source>Anomalies détectées</source>
+        <target state="translated">Anomalies detected</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.card-method" datatype="html">
+        <source>Méthode</source>
+        <target state="translated">Method</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.card-threshold" datatype="html">
+        <source>Seuil appliqué</source>
+        <target state="translated">Applied threshold</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.card-threshold-desc" datatype="html">
+        <source>Score au-delà duquel un échantillon est marqué anormal</source>
+        <target state="translated">Score above which a sample is flagged as anomalous</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.chart-panel" datatype="html">
+        <source>Scores d'anomalie</source>
+        <target state="translated">Anomaly scores</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.axis-sample" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">Sample</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.axis-score" datatype="html">
+        <source>Score</source>
+        <target state="translated">Score</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.threshold-mark" datatype="html">
+        <source>Seuil</source>
+        <target state="translated">Threshold</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.table-panel" datatype="html">
+        <source>Anomalies détectées</source>
+        <target state="translated">Anomalies detected</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.no-anomaly" datatype="html">
+        <source>Aucune anomalie au seuil retenu : les échantillons sont homogènes 🎉</source>
+        <target state="translated">No anomaly at the chosen threshold: the samples are homogeneous 🎉</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.col-sample" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">Sample</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.col-score" datatype="html">
+        <source>Score</source>
+        <target state="translated">Score</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.col-top-feature" datatype="html">
+        <source>Feature dominante</source>
+        <target state="translated">Top feature</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.feature-prefix" datatype="html">
+        <source>Feature</source>
+        <target state="translated">Feature</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-no-data" datatype="html">
+        <source>Saisissez au moins un échantillon (une ligne de nombres).</source>
+        <target state="translated">Enter at least one sample (a row of numbers).</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-ragged" datatype="html">
+        <source>Toutes les lignes doivent avoir le même nombre de features (≥ 1).</source>
+        <target state="translated">All rows must have the same number of features (≥ 1).</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-numbers" datatype="html">
+        <source>La matrice ne doit contenir que des nombres.</source>
+        <target state="translated">The matrix must contain only numbers.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-contamination" datatype="html">
+        <source>La contamination doit être dans l'intervalle ]0 ; 0,5].</source>
+        <target state="translated">Contamination must be within (0, 0.5].</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">Backend unreachable (engine on 8082?).</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-invalid" datatype="html">
+        <source>Matrice invalide (1 à 50000 échantillons, contamination ∈ ]0 ; 0,5]).</source>
+        <target state="translated">Invalid matrix (1 to 50000 samples, contamination ∈ (0, 0.5]).</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-too-large" datatype="html">
+        <source>Matrice trop volumineuse (garde-fou IA).</source>
+        <target state="translated">Matrix too large (AI guardrail).</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">AI rate/quota exceeded for this tenant — try again later.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-gateway" datatype="html">
+        <source>Passerelle IA indisponible (ai-service injoignable).</source>
+        <target state="translated">AI gateway unavailable (ai-service unreachable).</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-unavailable" datatype="html">
+        <source>Service IA momentanément indisponible (disjoncteur ouvert).</source>
+        <target state="translated">AI service temporarily unavailable (circuit breaker open).</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-generic" datatype="html">
+        <source>Échec de la détection (HTTP <x id="status"/>).</source>
+        <target state="translated">Detection failed (HTTP <x id="status"/>).</target>
+      </trans-unit>
       <trans-unit id="common.ok" datatype="html">
         <source>OK</source>
         <target state="translated">OK</target>
