@@ -1,0 +1,124 @@
+<div class="qos-page">
+  <qos-page-header
+    eyebrow="DMAIC · Control"
+    i18n-title="@@anomaly.detect.title"
+    title="Détection d'anomalies non-supervisée"
+    i18n-subtitle="@@anomaly.detect.subtitle"
+    subtitle="Détection multivariée par Isolation Forest ou reconstruction (ACP), calculée par l'IA — au-delà des règles SPC univariées.">
+  </qos-page-header>
+
+  <div class="anomaly-grid">
+    <!-- Saisie -->
+    <qos-panel i18n-title="@@anomaly.detect.matrix-panel" title="Matrice de données" icon="grid_on" class="anomaly-input">
+      <form [formGroup]="form" (ngSubmit)="detect()">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label i18n="@@anomaly.detect.matrix-label">Échantillons (une ligne par échantillon, features séparées par virgule ou espace)</mat-label>
+          <textarea matInput rows="8" formControlName="matrixText"
+                    placeholder="1.0, 2.0&#10;2.0, 4.1&#10;…"></textarea>
+        </mat-form-field>
+
+        <div class="opts-row">
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@anomaly.detect.method-label">Méthode</mat-label>
+            <mat-select formControlName="method">
+              <mat-option value="isolation_forest" i18n="@@anomaly.detect.method-iforest">Isolation Forest</mat-option>
+              <mat-option value="reconstruction" i18n="@@anomaly.detect.method-reconstruction">Reconstruction (ACP)</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@anomaly.detect.contamination-label">Contamination</mat-label>
+            <input matInput type="number" formControlName="contamination" min="0.0001" max="0.5" step="0.05">
+            <mat-hint i18n="@@anomaly.detect.contamination-hint">Fraction d'anomalies attendue ∈ ]0 ; 0,5]</mat-hint>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@anomaly.detect.threshold-label">Seuil explicite</mat-label>
+            <input matInput type="number" formControlName="threshold" placeholder="auto">
+            <mat-hint i18n="@@anomaly.detect.threshold-hint">Optionnel — sinon quantile de contamination</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="loading || form.invalid">
+            <mat-icon>bubble_chart</mat-icon>
+            <span *ngIf="!loading" i18n="@@anomaly.detect.detect">Détecter les anomalies</span>
+            <span *ngIf="loading" i18n="@@anomaly.detect.detecting">Détection…</span>
+          </button>
+          <button mat-button type="button" (click)="loadExample()" [disabled]="loading">
+            <mat-icon>science</mat-icon> <span i18n="@@anomaly.detect.example">Exemple</span>
+          </button>
+        </div>
+      </form>
+
+      <p class="error" *ngIf="error" role="alert">{{ error }}</p>
+    </qos-panel>
+
+    <!-- Aide méthode -->
+    <qos-panel i18n-title="@@anomaly.detect.help-panel" title="Quelle méthode ?" icon="help_outline" class="anomaly-input">
+      <ul class="help-list">
+        <li>
+          <strong i18n="@@anomaly.detect.method-iforest">Isolation Forest</strong>
+          <span i18n="@@anomaly.detect.help-iforest">— isole les points rares par partitions aléatoires. Robuste, sans hypothèse de distribution.</span>
+        </li>
+        <li>
+          <strong i18n="@@anomaly.detect.method-reconstruction">Reconstruction (ACP)</strong>
+          <span i18n="@@anomaly.detect.help-reconstruction">— erreur de reconstruction sur les axes principaux (auto-encodeur linéaire). Indique la feature la plus en cause.</span>
+        </li>
+      </ul>
+    </qos-panel>
+  </div>
+
+  <!-- Verdict (cartes) -->
+  <div class="kpi-col" *ngIf="result as r">
+    <qos-kpi-card
+      i18n-label="@@anomaly.detect.card-anomalies"
+      label="Anomalies détectées"
+      [value]="r.anomalyCount + ' / ' + r.n"
+      [state]="r.hasAnomalies ? 'bad' : 'good'"
+      [icon]="r.hasAnomalies ? 'error' : 'verified'"
+      [description]="r.nFeatures + ' feature(s) par échantillon'">
+    </qos-kpi-card>
+    <qos-kpi-card
+      i18n-label="@@anomaly.detect.card-method"
+      label="Méthode"
+      [value]="methodLabel(r.method)"
+      state="neutral" icon="tune"
+      [description]="'Contamination ' + (r.contamination | number:'1.0-3')">
+    </qos-kpi-card>
+    <qos-kpi-card
+      i18n-label="@@anomaly.detect.card-threshold"
+      label="Seuil appliqué"
+      [value]="r.threshold | number:'1.0-3'"
+      state="neutral" icon="straighten"
+      i18n-description="@@anomaly.detect.card-threshold-desc"
+      description="Score au-delà duquel un échantillon est marqué anormal">
+    </qos-kpi-card>
+  </div>
+
+  <!-- Graphe des scores -->
+  <qos-panel i18n-title="@@anomaly.detect.chart-panel" title="Scores d'anomalie" icon="bar_chart" *ngIf="chartOption">
+    <qos-echart [option]="chartOption" [height]="360"></qos-echart>
+  </qos-panel>
+
+  <!-- Table des anomalies -->
+  <qos-panel i18n-title="@@anomaly.detect.table-panel" title="Anomalies détectées" icon="priority_high" *ngIf="result as r">
+    <p class="empty" *ngIf="!r.hasAnomalies" i18n="@@anomaly.detect.no-anomaly">
+      Aucune anomalie au seuil retenu : les échantillons sont homogènes 🎉
+    </p>
+    <table class="anomaly-table" *ngIf="r.hasAnomalies">
+      <thead>
+        <tr>
+          <th i18n="@@anomaly.detect.col-sample">Échantillon</th>
+          <th i18n="@@anomaly.detect.col-score">Score</th>
+          <th i18n="@@anomaly.detect.col-top-feature">Feature dominante</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of anomalies(r)">
+          <td class="nowrap"><span class="pt-chip">#{{ p.index + 1 }}</span></td>
+          <td class="score">{{ p.score | number:'1.0-3' }}</td>
+          <td>{{ topFeatureLabel(p) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </qos-panel>
+</div>

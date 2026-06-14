@@ -2344,6 +2344,178 @@
         <source>Lier</source>
         <target state="translated">关联</target>
       </trans-unit>
+      <trans-unit id="nav.anomaly" datatype="html">
+        <source>Anomalies IA</source>
+        <target state="translated">AI异常检测</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.title" datatype="html">
+        <source>Détection d'anomalies non-supervisée</source>
+        <target state="translated">无监督异常检测</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.subtitle" datatype="html">
+        <source>Détection multivariée par Isolation Forest ou reconstruction (ACP), calculée par l'IA — au-delà des règles SPC univariées.</source>
+        <target state="translated">通过 Isolation Forest 或重构（PCA）进行多变量检测，由AI计算 — 超越单变量SPC规则。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.matrix-panel" datatype="html">
+        <source>Matrice de données</source>
+        <target state="translated">数据矩阵</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.matrix-label" datatype="html">
+        <source>Échantillons (une ligne par échantillon, features séparées par virgule ou espace)</source>
+        <target state="translated">样本（每行一个样本，特征用逗号或空格分隔）</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.method-label" datatype="html">
+        <source>Méthode</source>
+        <target state="translated">方法</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.method-iforest" datatype="html">
+        <source>Isolation Forest</source>
+        <target state="translated">Isolation Forest</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.method-reconstruction" datatype="html">
+        <source>Reconstruction (ACP)</source>
+        <target state="translated">重构（PCA）</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.contamination-label" datatype="html">
+        <source>Contamination</source>
+        <target state="translated">污染率</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.contamination-hint" datatype="html">
+        <source>Fraction d'anomalies attendue ∈ ]0 ; 0,5]</source>
+        <target state="translated">预期异常比例 ∈ (0, 0.5]</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.threshold-label" datatype="html">
+        <source>Seuil explicite</source>
+        <target state="translated">显式阈值</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.threshold-hint" datatype="html">
+        <source>Optionnel — sinon quantile de contamination</source>
+        <target state="translated">可选 — 否则使用污染率分位数</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.detect" datatype="html">
+        <source>Détecter les anomalies</source>
+        <target state="translated">检测异常</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.detecting" datatype="html">
+        <source>Détection…</source>
+        <target state="translated">检测中…</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.example" datatype="html">
+        <source>Exemple</source>
+        <target state="translated">示例</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.help-panel" datatype="html">
+        <source>Quelle méthode ?</source>
+        <target state="translated">选择哪种方法？</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.help-iforest" datatype="html">
+        <source>— isole les points rares par partitions aléatoires. Robuste, sans hypothèse de distribution.</source>
+        <target state="translated">— 通过随机划分隔离稀有点。稳健，无分布假设。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.help-reconstruction" datatype="html">
+        <source>— erreur de reconstruction sur les axes principaux (auto-encodeur linéaire). Indique la feature la plus en cause.</source>
+        <target state="translated">— 主成分轴上的重构误差（线性自编码器）。指出贡献最大的特征。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.card-anomalies" datatype="html">
+        <source>Anomalies détectées</source>
+        <target state="translated">检测到的异常</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.card-method" datatype="html">
+        <source>Méthode</source>
+        <target state="translated">方法</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.card-threshold" datatype="html">
+        <source>Seuil appliqué</source>
+        <target state="translated">应用阈值</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.card-threshold-desc" datatype="html">
+        <source>Score au-delà duquel un échantillon est marqué anormal</source>
+        <target state="translated">超过该分数的样本被标记为异常</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.chart-panel" datatype="html">
+        <source>Scores d'anomalie</source>
+        <target state="translated">异常分数</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.axis-sample" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">样本</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.axis-score" datatype="html">
+        <source>Score</source>
+        <target state="translated">分数</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.threshold-mark" datatype="html">
+        <source>Seuil</source>
+        <target state="translated">阈值</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.table-panel" datatype="html">
+        <source>Anomalies détectées</source>
+        <target state="translated">检测到的异常</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.no-anomaly" datatype="html">
+        <source>Aucune anomalie au seuil retenu : les échantillons sont homogènes 🎉</source>
+        <target state="translated">在所选阈值下无异常：样本是同质的 🎉</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.col-sample" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">样本</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.col-score" datatype="html">
+        <source>Score</source>
+        <target state="translated">分数</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.col-top-feature" datatype="html">
+        <source>Feature dominante</source>
+        <target state="translated">主要特征</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.feature-prefix" datatype="html">
+        <source>Feature</source>
+        <target state="translated">特征</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-no-data" datatype="html">
+        <source>Saisissez au moins un échantillon (une ligne de nombres).</source>
+        <target state="translated">请至少输入一个样本（一行数字）。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-ragged" datatype="html">
+        <source>Toutes les lignes doivent avoir le même nombre de features (≥ 1).</source>
+        <target state="translated">所有行必须具有相同数量的特征（≥ 1）。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-numbers" datatype="html">
+        <source>La matrice ne doit contenir que des nombres.</source>
+        <target state="translated">矩阵只能包含数字。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-contamination" datatype="html">
+        <source>La contamination doit être dans l'intervalle ]0 ; 0,5].</source>
+        <target state="translated">污染率必须在 (0, 0.5] 范围内。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">无法连接后端（engine 在 8082？）。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-invalid" datatype="html">
+        <source>Matrice invalide (1 à 50000 échantillons, contamination ∈ ]0 ; 0,5]).</source>
+        <target state="translated">矩阵无效（1 至 50000 个样本，污染率 ∈ (0, 0.5]）。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-too-large" datatype="html">
+        <source>Matrice trop volumineuse (garde-fou IA).</source>
+        <target state="translated">矩阵过大（AI 防护）。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">该租户的 AI 速率/配额已超出 — 请稍后重试。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-gateway" datatype="html">
+        <source>Passerelle IA indisponible (ai-service injoignable).</source>
+        <target state="translated">AI 网关不可用（无法连接 ai-service）。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-unavailable" datatype="html">
+        <source>Service IA momentanément indisponible (disjoncteur ouvert).</source>
+        <target state="translated">AI 服务暂时不可用（断路器已打开）。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-generic" datatype="html">
+        <source>Échec de la détection (HTTP <x id="status"/>).</source>
+        <target state="translated">检测失败（HTTP <x id="status"/>）。</target>
+      </trans-unit>
       <trans-unit id="common.ok" datatype="html">
         <source>OK</source>
         <target state="translated">确定</target>

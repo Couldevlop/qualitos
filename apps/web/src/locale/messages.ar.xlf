@@ -2344,6 +2344,178 @@
         <source>Lier</source>
         <target state="translated">ربط</target>
       </trans-unit>
+      <trans-unit id="nav.anomaly" datatype="html">
+        <source>Anomalies IA</source>
+        <target state="translated">الحالات الشاذة بالذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.title" datatype="html">
+        <source>Détection d'anomalies non-supervisée</source>
+        <target state="translated">كشف الحالات الشاذة دون إشراف</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.subtitle" datatype="html">
+        <source>Détection multivariée par Isolation Forest ou reconstruction (ACP), calculée par l'IA — au-delà des règles SPC univariées.</source>
+        <target state="translated">كشف متعدد المتغيرات عبر Isolation Forest أو إعادة البناء (ACP)، محسوب بالذكاء الاصطناعي — يتجاوز قواعد SPC أحادية المتغير.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.matrix-panel" datatype="html">
+        <source>Matrice de données</source>
+        <target state="translated">مصفوفة البيانات</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.matrix-label" datatype="html">
+        <source>Échantillons (une ligne par échantillon, features séparées par virgule ou espace)</source>
+        <target state="translated">العينات (سطر لكل عينة، الميزات مفصولة بفاصلة أو مسافة)</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.method-label" datatype="html">
+        <source>Méthode</source>
+        <target state="translated">الطريقة</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.method-iforest" datatype="html">
+        <source>Isolation Forest</source>
+        <target state="translated">Isolation Forest</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.method-reconstruction" datatype="html">
+        <source>Reconstruction (ACP)</source>
+        <target state="translated">إعادة البناء (ACP)</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.contamination-label" datatype="html">
+        <source>Contamination</source>
+        <target state="translated">نسبة التلوث</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.contamination-hint" datatype="html">
+        <source>Fraction d'anomalies attendue ∈ ]0 ; 0,5]</source>
+        <target state="translated">نسبة الشذوذ المتوقعة ∈ ]0 ؛ 0.5]</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.threshold-label" datatype="html">
+        <source>Seuil explicite</source>
+        <target state="translated">عتبة صريحة</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.threshold-hint" datatype="html">
+        <source>Optionnel — sinon quantile de contamination</source>
+        <target state="translated">اختياري — وإلا فكمّي نسبة التلوث</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.detect" datatype="html">
+        <source>Détecter les anomalies</source>
+        <target state="translated">كشف الحالات الشاذة</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.detecting" datatype="html">
+        <source>Détection…</source>
+        <target state="translated">جارٍ الكشف…</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.example" datatype="html">
+        <source>Exemple</source>
+        <target state="translated">مثال</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.help-panel" datatype="html">
+        <source>Quelle méthode ?</source>
+        <target state="translated">أيّ طريقة؟</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.help-iforest" datatype="html">
+        <source>— isole les points rares par partitions aléatoires. Robuste, sans hypothèse de distribution.</source>
+        <target state="translated">— يعزل النقاط النادرة عبر تقسيمات عشوائية. متين، دون افتراض توزيع.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.help-reconstruction" datatype="html">
+        <source>— erreur de reconstruction sur les axes principaux (auto-encodeur linéaire). Indique la feature la plus en cause.</source>
+        <target state="translated">— خطأ إعادة البناء على المحاور الرئيسية (مُرمِّز ذاتي خطي). يُبرز الميزة الأكثر تأثيرًا.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.card-anomalies" datatype="html">
+        <source>Anomalies détectées</source>
+        <target state="translated">الحالات الشاذة المكتشفة</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.card-method" datatype="html">
+        <source>Méthode</source>
+        <target state="translated">الطريقة</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.card-threshold" datatype="html">
+        <source>Seuil appliqué</source>
+        <target state="translated">العتبة المطبقة</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.card-threshold-desc" datatype="html">
+        <source>Score au-delà duquel un échantillon est marqué anormal</source>
+        <target state="translated">الدرجة التي تُعَدّ العينة شاذة فوقها</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.chart-panel" datatype="html">
+        <source>Scores d'anomalie</source>
+        <target state="translated">درجات الشذوذ</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.axis-sample" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">العينة</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.axis-score" datatype="html">
+        <source>Score</source>
+        <target state="translated">الدرجة</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.threshold-mark" datatype="html">
+        <source>Seuil</source>
+        <target state="translated">العتبة</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.table-panel" datatype="html">
+        <source>Anomalies détectées</source>
+        <target state="translated">الحالات الشاذة المكتشفة</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.no-anomaly" datatype="html">
+        <source>Aucune anomalie au seuil retenu : les échantillons sont homogènes 🎉</source>
+        <target state="translated">لا توجد حالات شاذة عند العتبة المختارة: العينات متجانسة 🎉</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.col-sample" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">العينة</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.col-score" datatype="html">
+        <source>Score</source>
+        <target state="translated">الدرجة</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.col-top-feature" datatype="html">
+        <source>Feature dominante</source>
+        <target state="translated">الميزة الأبرز</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.feature-prefix" datatype="html">
+        <source>Feature</source>
+        <target state="translated">الميزة</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-no-data" datatype="html">
+        <source>Saisissez au moins un échantillon (une ligne de nombres).</source>
+        <target state="translated">أدخل عينة واحدة على الأقل (سطر من الأرقام).</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-ragged" datatype="html">
+        <source>Toutes les lignes doivent avoir le même nombre de features (≥ 1).</source>
+        <target state="translated">يجب أن تحتوي جميع الأسطر على العدد نفسه من الميزات (≥ 1).</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-numbers" datatype="html">
+        <source>La matrice ne doit contenir que des nombres.</source>
+        <target state="translated">يجب أن تحتوي المصفوفة على أرقام فقط.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-contamination" datatype="html">
+        <source>La contamination doit être dans l'intervalle ]0 ; 0,5].</source>
+        <target state="translated">يجب أن تكون نسبة التلوث ضمن ]0 ؛ 0.5].</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">تعذّر الوصول إلى الخادم (engine على 8082؟).</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-invalid" datatype="html">
+        <source>Matrice invalide (1 à 50000 échantillons, contamination ∈ ]0 ; 0,5]).</source>
+        <target state="translated">مصفوفة غير صالحة (من 1 إلى 50000 عينة، نسبة التلوث ∈ ]0 ؛ 0.5]).</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-too-large" datatype="html">
+        <source>Matrice trop volumineuse (garde-fou IA).</source>
+        <target state="translated">المصفوفة كبيرة جدًا (حاجز أمان الذكاء الاصطناعي).</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">تم تجاوز معدّل/حصة الذكاء الاصطناعي لهذا المستأجر — أعد المحاولة لاحقًا.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-gateway" datatype="html">
+        <source>Passerelle IA indisponible (ai-service injoignable).</source>
+        <target state="translated">بوابة الذكاء الاصطناعي غير متاحة (ai-service غير قابل للوصول).</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-unavailable" datatype="html">
+        <source>Service IA momentanément indisponible (disjoncteur ouvert).</source>
+        <target state="translated">خدمة الذكاء الاصطناعي غير متاحة مؤقتًا (قاطع الدائرة مفتوح).</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-generic" datatype="html">
+        <source>Échec de la détection (HTTP <x id="status"/>).</source>
+        <target state="translated">فشل الكشف (HTTP <x id="status"/>).</target>
+      </trans-unit>
       <trans-unit id="common.ok" datatype="html">
         <source>OK</source>
         <target state="translated">حسناً</target>

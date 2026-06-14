@@ -2344,6 +2344,178 @@
         <source>Lier</source>
         <target state="translated">関連付け</target>
       </trans-unit>
+      <trans-unit id="nav.anomaly" datatype="html">
+        <source>Anomalies IA</source>
+        <target state="translated">AI異常検出</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.title" datatype="html">
+        <source>Détection d'anomalies non-supervisée</source>
+        <target state="translated">教師なし異常検出</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.subtitle" datatype="html">
+        <source>Détection multivariée par Isolation Forest ou reconstruction (ACP), calculée par l'IA — au-delà des règles SPC univariées.</source>
+        <target state="translated">Isolation Forest または再構成（PCA）による多変量検出をAIが算出 — 単変量SPCルールを超える検出。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.matrix-panel" datatype="html">
+        <source>Matrice de données</source>
+        <target state="translated">データ行列</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.matrix-label" datatype="html">
+        <source>Échantillons (une ligne par échantillon, features séparées par virgule ou espace)</source>
+        <target state="translated">サンプル（1行 = 1サンプル、特徴量はカンマまたはスペースで区切る）</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.method-label" datatype="html">
+        <source>Méthode</source>
+        <target state="translated">手法</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.method-iforest" datatype="html">
+        <source>Isolation Forest</source>
+        <target state="translated">Isolation Forest</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.method-reconstruction" datatype="html">
+        <source>Reconstruction (ACP)</source>
+        <target state="translated">再構成（PCA）</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.contamination-label" datatype="html">
+        <source>Contamination</source>
+        <target state="translated">汚染率</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.contamination-hint" datatype="html">
+        <source>Fraction d'anomalies attendue ∈ ]0 ; 0,5]</source>
+        <target state="translated">想定異常割合 ∈ (0, 0.5]</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.threshold-label" datatype="html">
+        <source>Seuil explicite</source>
+        <target state="translated">明示しきい値</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.threshold-hint" datatype="html">
+        <source>Optionnel — sinon quantile de contamination</source>
+        <target state="translated">任意 — 指定しない場合は汚染率の分位点</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.detect" datatype="html">
+        <source>Détecter les anomalies</source>
+        <target state="translated">異常を検出</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.detecting" datatype="html">
+        <source>Détection…</source>
+        <target state="translated">検出中…</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.example" datatype="html">
+        <source>Exemple</source>
+        <target state="translated">例</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.help-panel" datatype="html">
+        <source>Quelle méthode ?</source>
+        <target state="translated">どの手法？</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.help-iforest" datatype="html">
+        <source>— isole les points rares par partitions aléatoires. Robuste, sans hypothèse de distribution.</source>
+        <target state="translated">— ランダム分割で稀な点を分離。分布を仮定せず頑健。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.help-reconstruction" datatype="html">
+        <source>— erreur de reconstruction sur les axes principaux (auto-encodeur linéaire). Indique la feature la plus en cause.</source>
+        <target state="translated">— 主成分軸上の再構成誤差（線形オートエンコーダ）。最も寄与する特徴量を示す。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.card-anomalies" datatype="html">
+        <source>Anomalies détectées</source>
+        <target state="translated">検出された異常</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.card-method" datatype="html">
+        <source>Méthode</source>
+        <target state="translated">手法</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.card-threshold" datatype="html">
+        <source>Seuil appliqué</source>
+        <target state="translated">適用しきい値</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.card-threshold-desc" datatype="html">
+        <source>Score au-delà duquel un échantillon est marqué anormal</source>
+        <target state="translated">これを超えるとサンプルが異常と判定されるスコア</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.chart-panel" datatype="html">
+        <source>Scores d'anomalie</source>
+        <target state="translated">異常スコア</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.axis-sample" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">サンプル</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.axis-score" datatype="html">
+        <source>Score</source>
+        <target state="translated">スコア</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.threshold-mark" datatype="html">
+        <source>Seuil</source>
+        <target state="translated">しきい値</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.table-panel" datatype="html">
+        <source>Anomalies détectées</source>
+        <target state="translated">検出された異常</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.no-anomaly" datatype="html">
+        <source>Aucune anomalie au seuil retenu : les échantillons sont homogènes 🎉</source>
+        <target state="translated">選択したしきい値で異常なし：サンプルは均質です 🎉</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.col-sample" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">サンプル</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.col-score" datatype="html">
+        <source>Score</source>
+        <target state="translated">スコア</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.col-top-feature" datatype="html">
+        <source>Feature dominante</source>
+        <target state="translated">主要特徴量</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.feature-prefix" datatype="html">
+        <source>Feature</source>
+        <target state="translated">特徴量</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-no-data" datatype="html">
+        <source>Saisissez au moins un échantillon (une ligne de nombres).</source>
+        <target state="translated">少なくとも1つのサンプル（数値の行）を入力してください。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-ragged" datatype="html">
+        <source>Toutes les lignes doivent avoir le même nombre de features (≥ 1).</source>
+        <target state="translated">すべての行は同じ数の特徴量（≥ 1）を持つ必要があります。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-numbers" datatype="html">
+        <source>La matrice ne doit contenir que des nombres.</source>
+        <target state="translated">行列には数値のみを含めてください。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-contamination" datatype="html">
+        <source>La contamination doit être dans l'intervalle ]0 ; 0,5].</source>
+        <target state="translated">汚染率は (0, 0.5] の範囲でなければなりません。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">バックエンドに到達できません（engine は 8082？）。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-invalid" datatype="html">
+        <source>Matrice invalide (1 à 50000 échantillons, contamination ∈ ]0 ; 0,5]).</source>
+        <target state="translated">無効な行列（1〜50000サンプル、汚染率 ∈ (0, 0.5]）。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-too-large" datatype="html">
+        <source>Matrice trop volumineuse (garde-fou IA).</source>
+        <target state="translated">行列が大きすぎます（AIガードレール）。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">このテナントのAIレート/クォータを超過しました — 後で再試行してください。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-gateway" datatype="html">
+        <source>Passerelle IA indisponible (ai-service injoignable).</source>
+        <target state="translated">AIゲートウェイが利用できません（ai-service に到達不可）。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-unavailable" datatype="html">
+        <source>Service IA momentanément indisponible (disjoncteur ouvert).</source>
+        <target state="translated">AIサービスは一時的に利用できません（サーキットブレーカー作動中）。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-generic" datatype="html">
+        <source>Échec de la détection (HTTP <x id="status"/>).</source>
+        <target state="translated">検出に失敗しました（HTTP <x id="status"/>）。</target>
+      </trans-unit>
       <trans-unit id="common.ok" datatype="html">
         <source>OK</source>
         <target state="translated">OK</target>
