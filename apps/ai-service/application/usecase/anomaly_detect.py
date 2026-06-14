@@ -19,7 +19,6 @@ import numpy as np
 
 from domain.model.anomaly import (
     METHOD_ISOLATION_FOREST,
-    METHOD_RECONSTRUCTION,
     SUPPORTED_METHODS,
     AnomalyPoint,
     AnomalyResult,
