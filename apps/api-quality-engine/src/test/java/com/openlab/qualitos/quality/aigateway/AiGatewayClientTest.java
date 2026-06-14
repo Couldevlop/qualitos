@@ -164,4 +164,37 @@ class AiGatewayClientTest {
         assertThatThrownBy(() -> c.detectSpc(List.of(1.0), null, null))
                 .isInstanceOf(MissingTenantContextException.class);
     }
+
+    @Test
+    void detectAnomaly_success_returnsRawMap() {
+        AiGatewayClient c = clientReturning(200,
+                "{\"n\":3,\"n_features\":2,\"method\":\"isolation_forest\","
+                        + "\"anomaly_count\":1,\"has_anomalies\":true,\"points\":[]}");
+        Map<String, Object> resp = c.detectAnomaly(
+                List.of(List.of(1.0, 2.0), List.of(50.0, -50.0)), "isolation_forest", 0.1, null);
+        assertThat(resp).containsKey("points");
+        assertThat(resp.get("has_anomalies")).isEqualTo(true);
+    }
+
+    @Test
+    void detectAnomaly_emptyBody_throws() {
+        AiGatewayClient c = clientReturning(200, "");
+        assertThatThrownBy(() -> c.detectAnomaly(List.of(List.of(1.0)), null, null, null))
+                .isInstanceOf(AiGatewayException.class);
+    }
+
+    @Test
+    void detectAnomaly_serverError_throws() {
+        AiGatewayClient c = clientReturning(500, "boom");
+        assertThatThrownBy(() -> c.detectAnomaly(List.of(List.of(1.0)), "reconstruction", 0.2, 0.7))
+                .isInstanceOf(AiGatewayException.class);
+    }
+
+    @Test
+    void detectAnomaly_missingTenant_throws() {
+        TenantContext.clear();
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
+        assertThatThrownBy(() -> c.detectAnomaly(List.of(List.of(1.0)), null, null, null))
+                .isInstanceOf(MissingTenantContextException.class);
+    }
 }
