@@ -239,4 +239,36 @@ class AiGatewayClientTest {
         assertThatThrownBy(() -> c.forecastKpi(List.of(1.0, 2.0, 3.0, 4.0), 10.0, null, null, null))
                 .isInstanceOf(MissingTenantContextException.class);
     }
+
+    @Test
+    void clusterNc_success_returnsRawMap() {
+        AiGatewayClient c = clientReturning(200,
+                "{\"n\":5,\"clustered_ratio\":0.8,\"method\":\"dbscan\",\"clusters\":[],\"noise_indices\":[4]}");
+        Map<String, Object> resp = c.clusterNc(
+                List.of("fuite huile presse", "fuite huile presse ligne"), null, null);
+        assertThat(resp.get("method")).isEqualTo("dbscan");
+        assertThat(resp).containsKey("noise_indices");
+    }
+
+    @Test
+    void clusterNc_passesThresholdAndMinSamples() {
+        AiGatewayClient c = clientReturning(200, "{\"method\":\"dbscan\",\"clusters\":[]}");
+        Map<String, Object> resp = c.clusterNc(List.of("a b", "a c"), 0.5, 3);
+        assertThat(resp).containsKey("clusters");
+    }
+
+    @Test
+    void clusterNc_serverError_throws() {
+        AiGatewayClient c = clientReturning(500, "boom");
+        assertThatThrownBy(() -> c.clusterNc(List.of("a b", "a c"), null, null))
+                .isInstanceOf(AiGatewayException.class);
+    }
+
+    @Test
+    void clusterNc_missingTenant_throws() {
+        TenantContext.clear();
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
+        assertThatThrownBy(() -> c.clusterNc(List.of("a b", "a c"), null, null))
+                .isInstanceOf(MissingTenantContextException.class);
+    }
 }

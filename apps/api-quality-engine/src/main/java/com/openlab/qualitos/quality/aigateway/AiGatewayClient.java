@@ -286,6 +286,52 @@ public class AiGatewayClient {
         }
     }
 
+    /**
+     * Relaie une liste de textes de non-conformités vers le clustering de {@code ai-service}
+     * (§4.3, §12.1 : TF-IDF + DBSCAN densité, NumPy). Renvoie la réponse JSON brute (mappée
+     * par la couche application). Le tenant provient du {@link TenantContext} (JWT), jamais du
+     * body. Même garde-fou ({@link AiGuard}, op « nccluster ») que les autres chemins IA.
+     *
+     * @param texts      textes de NC (≥ 2)
+     * @param threshold  similarité cosinus minimale du voisinage (optionnel)
+     * @param minSamples taille minimale du voisinage d'un point-cœur (optionnel)
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> clusterNc(List<String> texts, Double threshold, Integer minSamples) {
+        if (!TenantContext.hasTenant()) {
+            throw new MissingTenantContextException();
+        }
+        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        Map<String, Object> body = new HashMap<>();
+        body.put("texts", texts);
+        if (threshold != null) {
+            body.put("threshold", threshold);
+        }
+        if (minSamples != null) {
+            body.put("min_samples", minSamples);
+        }
+        AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "nccluster",
+                texts == null ? 0 : texts.size());
+        guard.check(ctx);
+        try {
+            Map<String, Object> resp = client.post()
+                    .uri("/v1/ai/predict/nc-clusters")
+                    .header("X-Dev-Claims", devClaims)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(body)
+                    .retrieve()
+                    .body(Map.class);
+            if (resp == null) {
+                throw new AiGatewayException("Réponse vide de la passerelle IA (nccluster)");
+            }
+            guard.recordSuccess(ctx.tenantId());
+            return resp;
+        } catch (RestClientException e) {
+            guard.recordFailure(ctx.tenantId());
+            throw new AiGatewayException("Passerelle IA indisponible (nccluster) : " + e.getMessage(), e);
+        }
+    }
+
     private String devClaims(UUID tenantId) {
         try {
             return objectMapper.writeValueAsString(Map.of(

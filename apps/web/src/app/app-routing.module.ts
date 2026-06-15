@@ -71,6 +71,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/forecast/forecast.module').then(m => m.ForecastModule)
       },
       {
+        path: 'nc-clusters',
+        loadChildren: () => import('./features/nc-cluster/nc-cluster.module').then(m => m.NcClusterModule)
+      },
+      {
         // Designer de workflow BPMN no-code (§5.4). Lazy : la lib bpmn-js (lourde)
         // n'est chargée que via import() dynamique DANS le composant éditeur, donc
         // jamais embarquée dans le bundle initial ni dans ce chunk de feature tant

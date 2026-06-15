@@ -86,6 +86,8 @@ class SupplierRiskResponse(BaseModel):
 class NcClusterRequest(BaseModel):
     texts: list[str] = Field(..., min_length=2, max_length=2000)
     threshold: float = Field(default=0.35, gt=0.0, lt=1.0)
+    # Taille minimale du voisinage d'un point-cœur DBSCAN (densité).
+    min_samples: int = Field(default=2, ge=2, le=100)
 
 
 class NcClusterResponse(BaseModel):
@@ -98,13 +100,14 @@ class NcClusterResponse(BaseModel):
 class NcClusteringResponse(BaseModel):
     n: int
     clustered_ratio: float
+    method: str
     clusters: list[NcClusterResponse]
     noise_indices: list[int]
 
     @classmethod
     def from_domain(cls, r: NcClusteringResult) -> "NcClusteringResponse":
         return cls(
-            n=r.n, clustered_ratio=round(r.clustered_ratio, 3),
+            n=r.n, clustered_ratio=round(r.clustered_ratio, 3), method=r.method,
             clusters=[NcClusterResponse(cluster_id=c.cluster_id, indices=c.indices,
                                         size=c.size, top_terms=c.top_terms)
                       for c in r.clusters],
