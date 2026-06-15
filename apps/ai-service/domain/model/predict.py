@@ -82,6 +82,8 @@ class NcClusteringResult:
     n: int
     clusters: list[NcCluster] = field(default_factory=list)
     noise_indices: list[int] = field(default_factory=list)
+    # Algorithme appliqué (explicabilité §12.3) : "dbscan" (densité) en v1.
+    method: str = "dbscan"
 
     @property
     def clustered_ratio(self) -> float:

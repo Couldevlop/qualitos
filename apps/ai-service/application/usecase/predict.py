@@ -55,11 +55,13 @@ class NcClusterUseCase:
     """Textes de NC → clusters de similarité (patterns récurrents)."""
 
     def execute(
-        self, texts: list[str], tenant: TenantContext, *, threshold: float = 0.35
+        self, texts: list[str], tenant: TenantContext, *,
+        threshold: float = 0.35, min_samples: int = 2,
     ) -> NcClusteringResult:
-        result = nc_clustering.cluster(texts, threshold=threshold)
+        result = nc_clustering.cluster(texts, threshold=threshold, min_samples=min_samples)
         logger.info(
-            "NC clustering tenant=%s n=%d clusters=%d noise=%d",
-            tenant.tenant_id, result.n, len(result.clusters), len(result.noise_indices),
+            "NC clustering tenant=%s n=%d method=%s clusters=%d noise=%d",
+            tenant.tenant_id, result.n, result.method,
+            len(result.clusters), len(result.noise_indices),
         )
         return result

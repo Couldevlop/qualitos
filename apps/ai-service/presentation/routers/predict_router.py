@@ -70,7 +70,8 @@ async def nc_clusters(
 ) -> NcClusteringResponse:
     try:
         result = _container.nc_cluster().execute(
-            payload.texts, user.tenant, threshold=payload.threshold,
+            payload.texts, user.tenant,
+            threshold=payload.threshold, min_samples=payload.min_samples,
         )
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc

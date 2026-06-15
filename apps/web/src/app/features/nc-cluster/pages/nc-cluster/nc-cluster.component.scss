@@ -1,0 +1,142 @@
+:host {
+  display: block;
+}
+
+.qos-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 8px 4px;
+}
+
+.nc-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.9fr);
+  gap: 20px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.full {
+  width: 100%;
+}
+
+.opts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+
+  mat-icon {
+    margin-right: 6px;
+  }
+}
+
+.error {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(220, 38, 38, 0.08);
+  color: #b91c1c;
+  font-size: 0.88rem;
+}
+
+.kpi-col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  align-content: start;
+}
+
+.empty {
+  color: var(--qos-fg-secondary, #475569);
+  font-size: 0.92rem;
+}
+
+.clusters {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cluster-card {
+  border: 1px solid var(--qos-border-subtle, #e2e8f0);
+  border-radius: var(--qos-radius-md, 10px);
+  padding: 12px 14px;
+  background: var(--qos-bg-subtle, rgba(37, 99, 235, 0.04));
+}
+
+.cluster-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.cluster-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #1d4ed8;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.cluster-size {
+  font-weight: 600;
+  color: var(--qos-fg-primary, #0f172a);
+  font-size: 0.85rem;
+}
+
+.terms {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.term-chip {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.members {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.88rem;
+  color: var(--qos-fg-secondary, #334155);
+
+  li {
+    margin-bottom: 4px;
+  }
+
+  &.noise {
+    color: #92400e;
+  }
+}
+
+.hidden {
+  display: none;
+}

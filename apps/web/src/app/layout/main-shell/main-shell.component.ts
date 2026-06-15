@@ -63,6 +63,7 @@ export class MainShellComponent implements OnInit {
         { label: $localize`:@@nav.spc:SPC`,      route: '/spc',      icon: 'show_chart' },
         { label: $localize`:@@nav.anomaly:Anomalies IA`, route: '/anomaly', icon: 'bubble_chart' },
         { label: $localize`:@@nav.forecast:Prévision KPI`, route: '/forecast', icon: 'trending_up' },
+        { label: $localize`:@@nav.nc-clusters:Clustering NC`, route: '/nc-clusters', icon: 'hub' },
         { label: $localize`:@@nav.cercles:Cercles`,  route: '/circles',  icon: 'groups' },
         { label: $localize`:@@nav.workflow-designer:Designer de workflow`, route: '/workflow-designer', icon: 'account_tree' }
       ]

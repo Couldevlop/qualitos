@@ -1,0 +1,96 @@
+<div class="qos-page">
+  <qos-page-header
+    eyebrow="NC · Patterns"
+    i18n-title="@@nccluster.title"
+    title="Clustering de non-conformités"
+    i18n-subtitle="@@nccluster.subtitle"
+    subtitle="Regroupement par densité (TF-IDF + DBSCAN) pour révéler les patterns récurrents de NC — calculé par l'IA.">
+  </qos-page-header>
+
+  <div class="nc-grid">
+    <!-- Saisie -->
+    <qos-panel i18n-title="@@nccluster.input-panel" title="Non-conformités" icon="report_problem" class="nc-input">
+      <form [formGroup]="form" (ngSubmit)="run()">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label i18n="@@nccluster.texts-label">Une non-conformité par ligne</mat-label>
+          <textarea matInput rows="8" formControlName="textsText"
+                    placeholder="Fuite d'huile presse ligne 2&#10;Étiquette manquante carton&#10;…"></textarea>
+        </mat-form-field>
+
+        <div class="opts-row">
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@nccluster.threshold-label">Similarité minimale</mat-label>
+            <input matInput type="number" formControlName="threshold" min="0.01" max="0.99" step="0.05">
+            <mat-hint i18n="@@nccluster.threshold-hint">0–1 : plus haut = clusters plus stricts</mat-hint>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@nccluster.min-samples-label">Densité min (min_samples)</mat-label>
+            <input matInput type="number" formControlName="minSamples" min="2" max="100">
+            <mat-hint i18n="@@nccluster.min-samples-hint">Taille mini du voisinage d'un point-cœur</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="loading || form.invalid">
+            <mat-icon>hub</mat-icon>
+            <span *ngIf="!loading" i18n="@@nccluster.run">Regrouper</span>
+            <span *ngIf="loading" i18n="@@nccluster.running">Regroupement…</span>
+          </button>
+          <button mat-button type="button" (click)="loadExample()" [disabled]="loading">
+            <mat-icon>science</mat-icon> <span i18n="@@nccluster.example">Exemple</span>
+          </button>
+        </div>
+      </form>
+
+      <p class="error" *ngIf="error" role="alert">{{ error }}</p>
+    </qos-panel>
+
+    <!-- Verdict -->
+    <div class="kpi-col" *ngIf="result as r">
+      <qos-kpi-card
+        i18n-label="@@nccluster.card-clusters"
+        label="Patterns détectés"
+        [value]="r.clusters.length"
+        [state]="r.clusters.length ? 'good' : 'neutral'"
+        icon="hub"
+        [description]="r.n + ' NC analysées'">
+      </qos-kpi-card>
+      <qos-kpi-card
+        i18n-label="@@nccluster.card-ratio"
+        label="Taux regroupé"
+        [value]="clusteredPct(r.clusteredRatio)"
+        state="neutral" icon="donut_large"
+        [description]="r.noiseIndices.length + ' NC isolées (bruit)'">
+      </qos-kpi-card>
+    </div>
+  </div>
+
+  <!-- Clusters -->
+  <qos-panel i18n-title="@@nccluster.clusters-panel" title="Clusters" icon="workspaces" *ngIf="result as r">
+    <p class="empty" *ngIf="r.clusters.length === 0" i18n="@@nccluster.no-cluster">
+      Aucun pattern récurrent : chaque NC est singulière au seuil retenu.
+    </p>
+    <div class="clusters">
+      <div class="cluster-card" *ngFor="let c of r.clusters">
+        <div class="cluster-head">
+          <span class="cluster-badge">#{{ c.clusterId + 1 }}</span>
+          <span class="cluster-size">{{ c.size }} <span i18n="@@nccluster.nc-count">NC</span></span>
+          <span class="terms">
+            <span class="term-chip" *ngFor="let t of c.topTerms">{{ t }}</span>
+          </span>
+        </div>
+        <ul class="members">
+          <li *ngFor="let m of membersOf(c)">{{ m }}</li>
+        </ul>
+      </div>
+    </div>
+  </qos-panel>
+
+  <!-- Bruit -->
+  <qos-panel i18n-title="@@nccluster.noise-panel" title="NC isolées (bruit)" icon="scatter_plot"
+             *ngIf="result as r" [class.hidden]="r.noiseIndices.length === 0">
+    <ul class="members noise" *ngIf="r.noiseIndices.length">
+      <li *ngFor="let m of noiseTexts(r)">{{ m }}</li>
+    </ul>
+  </qos-panel>
+</div>

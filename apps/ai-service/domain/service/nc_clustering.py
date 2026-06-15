@@ -1,15 +1,23 @@
-"""Pure NC clustering — TF-IDF + similarité cosinus + composantes connexes.
+"""Clustering de non-conformités — TF-IDF + **DBSCAN** (densité, NumPy pur).
 
-Détecte les groupes de non-conformités similaires (patterns invisibles à l'œil
-— §1.4, §6.5) sans dépendance lourde : NumPy seul, déterministe, explicable
-(top-termes par cluster). Un HDBSCAN sur embeddings BGE-M3 pourra remplacer
-cette V1 derrière le même contrat quand le GPU sera disponible.
+Détecte les groupes de NC similaires (patterns invisibles à l'œil — §1.4, §6.5,
+§12.1) sans dépendance lourde : NumPy seul, déterministe, explicable (top-termes
+par cluster). DBSCAN (Ester et al., KDD 1996) remplace le simple regroupement par
+composantes connexes : il introduit la **densité** (points-cœur ayant ≥
+``min_samples`` voisins) et distingue proprement clusters denses et **bruit**, là où
+les composantes connexes fusionnaient par simple chaînage.
+
+HDBSCAN (densité variable, hiérarchique) sur embeddings BGE-M3 pourra remplacer
+cette v1 derrière le **même contrat** ``NcClusteringResult`` quand un budget GPU
+existera (même logique que les modèles NLQ / ADR 0014 §7.3).
 
 Algorithme :
 1. Tokenisation (minuscules, désaccentuation, stop-words FR/EN minimaux).
-2. Matrice TF-IDF (lissage standard), normalisation L2.
-3. Similarité cosinus ; arête si ≥ ``threshold`` (défaut 0.35).
-4. Clusters = composantes connexes de taille ≥ 2 (union-find) ; le reste = bruit.
+2. Matrice TF-IDF (lissage standard), normalisation L2 → similarité cosinus = produit.
+3. Voisinage ε : ``sim(i, j) ≥ threshold`` (distance cosinus ≤ 1 − threshold).
+4. DBSCAN : points-cœur (≥ ``min_samples`` voisins, soi inclus) → expansion par
+   atteignabilité de densité ; le reste = bruit. Parcours en ordre d'indice
+   (déterministe).
 """
 from __future__ import annotations
 
@@ -29,13 +37,17 @@ _STOPWORDS = frozenset(
 )
 
 
-def cluster(texts: list[str], *, threshold: float = 0.35) -> NcClusteringResult:
-    """Regroupe les textes similaires. Liste vide → résultat vide.
+def cluster(texts: list[str], *, threshold: float = 0.35, min_samples: int = 2) -> NcClusteringResult:
+    """Regroupe les textes similaires par densité (DBSCAN). Liste vide → résultat vide.
 
-    :raises ValueError: trop de textes ou seuil hors (0, 1).
+    :param threshold: similarité cosinus minimale pour un voisinage (ε = 1 − threshold).
+    :param min_samples: taille minimale du voisinage (soi inclus) d'un point-cœur.
+    :raises ValueError: trop de textes, seuil hors (0, 1) ou min_samples < 2.
     """
     if not 0.0 < threshold < 1.0:
         raise ValueError("threshold must be within (0, 1)")
+    if min_samples < 2:
+        raise ValueError("min_samples must be >= 2")
     if len(texts) > _MAX_TEXTS:
         raise ValueError(f"too many texts (max {_MAX_TEXTS})")
     n = len(texts)
@@ -50,7 +62,86 @@ def cluster(texts: list[str], *, threshold: float = 0.35) -> NcClusteringResult:
     if not vocab:
         return NcClusteringResult(n=n, noise_indices=list(range(n)))
 
-    # TF-IDF lissé + normalisation L2.
+    tfidf = _tfidf_matrix(docs, vocab, n)
+    sim = tfidf @ tfidf.T  # cosinus (vecteurs L2-normalisés)
+
+    labels = _dbscan(sim, threshold, min_samples)
+
+    return _assemble(labels, tfidf, vocab, n)
+
+
+# --- DBSCAN sur matrice de similarité ---------------------------------------------
+
+
+def _dbscan(sim: np.ndarray, threshold: float, min_samples: int) -> np.ndarray:
+    """Étiquette chaque point : −1 = bruit, ≥ 0 = identifiant de cluster.
+
+    Voisinage ε = {j : sim[i, j] ≥ threshold} (inclut i). Point-cœur si |voisinage|
+    ≥ min_samples. Parcours en ordre d'indice → déterministe.
+    """
+    n = sim.shape[0]
+    # neighbors[i] = indices j (≠ rien d'exclu) au-dessus du seuil, i inclus.
+    neighbors = [np.flatnonzero(sim[i] >= threshold) for i in range(n)]
+    is_core = np.array([nb.size >= min_samples for nb in neighbors])
+
+    labels = np.full(n, -1, dtype=int)
+    visited = np.zeros(n, dtype=bool)
+    cluster_id = 0
+
+    for i in range(n):
+        if visited[i] or not is_core[i]:
+            continue
+        # Nouveau cluster : expansion par atteignabilité de densité (BFS déterministe).
+        labels[i] = cluster_id
+        visited[i] = True
+        queue = [int(j) for j in neighbors[i]]
+        head = 0
+        while head < len(queue):
+            j = queue[head]
+            head += 1
+            if labels[j] == -1:
+                labels[j] = cluster_id  # point de bordure rattaché
+            if visited[j]:
+                continue
+            visited[j] = True
+            if is_core[j]:
+                for k in neighbors[j]:
+                    queue.append(int(k))
+        cluster_id += 1
+
+    return labels
+
+
+def _assemble(labels: np.ndarray, tfidf: np.ndarray, vocab: dict[str, int], n: int
+              ) -> NcClusteringResult:
+    """Construit le résultat : clusters triés (taille décroissante) + bruit + top-termes."""
+    inv_vocab = {v: k for k, v in vocab.items()}
+    groups: dict[int, list[int]] = {}
+    noise: list[int] = []
+    for i in range(n):
+        lbl = int(labels[i])
+        if lbl < 0:
+            noise.append(i)
+        else:
+            groups.setdefault(lbl, []).append(i)
+
+    clusters: list[NcCluster] = []
+    cluster_id = 0
+    for members in sorted(groups.values(), key=lambda m: (-len(m), m[0])):
+        centroid = tfidf[members].mean(axis=0)
+        top = [inv_vocab[k] for k in np.argsort(-centroid)[:5] if centroid[k] > 0]
+        clusters.append(NcCluster(cluster_id=cluster_id, indices=sorted(members),
+                                  size=len(members), top_terms=top))
+        cluster_id += 1
+
+    return NcClusteringResult(n=n, clusters=clusters, noise_indices=sorted(noise))
+
+
+# --- Vectorisation TF-IDF ---------------------------------------------------------
+
+
+def _tfidf_matrix(docs: list[list[str]], vocab: dict[str, int], n: int) -> np.ndarray:
+    """TF-IDF lissé + normalisation L2 (vecteurs lignes)."""
     tf = np.zeros((n, len(vocab)), dtype=float)
     for i, tokens in enumerate(docs):
         for tok in tokens:
@@ -62,45 +153,7 @@ def cluster(texts: list[str], *, threshold: float = 0.35) -> NcClusteringResult:
     tfidf = tf * idf
     norms = np.linalg.norm(tfidf, axis=1, keepdims=True)
     norms[norms == 0] = 1.0
-    tfidf /= norms
-
-    sim = tfidf @ tfidf.T
-
-    # Union-find sur les paires au-dessus du seuil.
-    parent = list(range(n))
-
-    def find(x: int) -> int:
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-
-    for i in range(n):
-        for j in range(i + 1, n):
-            if sim[i, j] >= threshold:
-                ri, rj = find(i), find(j)
-                if ri != rj:
-                    parent[rj] = ri
-
-    groups: dict[int, list[int]] = {}
-    for i in range(n):
-        groups.setdefault(find(i), []).append(i)
-
-    clusters: list[NcCluster] = []
-    noise: list[int] = []
-    inv_vocab = {v: k for k, v in vocab.items()}
-    cluster_id = 0
-    for members in sorted(groups.values(), key=lambda m: (-len(m), m[0])):
-        if len(members) < 2:
-            noise.extend(members)
-            continue
-        centroid = tfidf[members].mean(axis=0)
-        top = [inv_vocab[k] for k in np.argsort(-centroid)[:5] if centroid[k] > 0]
-        clusters.append(NcCluster(cluster_id=cluster_id, indices=sorted(members),
-                                  size=len(members), top_terms=top))
-        cluster_id += 1
-
-    return NcClusteringResult(n=n, clusters=clusters, noise_indices=sorted(noise))
+    return tfidf / norms
 
 
 def _tokenize(text: str) -> list[str]:

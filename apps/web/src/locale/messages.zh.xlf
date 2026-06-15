@@ -8282,6 +8282,110 @@ historique 12 mois</source>
         <source>Non-conformité résolue.</source>
         <target state="translated">不合格项已解决。</target>
       </trans-unit>
+      <trans-unit id="nav.nc-clusters" datatype="html">
+        <source>Clustering NC</source>
+        <target state="translated">不符合项聚类</target>
+      </trans-unit>
+      <trans-unit id="nccluster.title" datatype="html">
+        <source>Clustering de non-conformités</source>
+        <target state="translated">不符合项聚类</target>
+      </trans-unit>
+      <trans-unit id="nccluster.subtitle" datatype="html">
+        <source>Regroupement par densité (TF-IDF + DBSCAN) pour révéler les patterns récurrents de NC — calculé par l'IA.</source>
+        <target state="translated">基于密度的分组（TF-IDF + DBSCAN）以揭示不符合项的重复模式 — 由AI计算。</target>
+      </trans-unit>
+      <trans-unit id="nccluster.input-panel" datatype="html">
+        <source>Non-conformités</source>
+        <target state="translated">不符合项</target>
+      </trans-unit>
+      <trans-unit id="nccluster.texts-label" datatype="html">
+        <source>Une non-conformité par ligne</source>
+        <target state="translated">每行一个不符合项</target>
+      </trans-unit>
+      <trans-unit id="nccluster.threshold-label" datatype="html">
+        <source>Similarité minimale</source>
+        <target state="translated">最小相似度</target>
+      </trans-unit>
+      <trans-unit id="nccluster.threshold-hint" datatype="html">
+        <source>0–1 : plus haut = clusters plus stricts</source>
+        <target state="translated">0–1：越高聚类越严格</target>
+      </trans-unit>
+      <trans-unit id="nccluster.min-samples-label" datatype="html">
+        <source>Densité min (min_samples)</source>
+        <target state="translated">最小密度 (min_samples)</target>
+      </trans-unit>
+      <trans-unit id="nccluster.min-samples-hint" datatype="html">
+        <source>Taille mini du voisinage d'un point-cœur</source>
+        <target state="translated">核心点的最小邻域大小</target>
+      </trans-unit>
+      <trans-unit id="nccluster.run" datatype="html">
+        <source>Regrouper</source>
+        <target state="translated">聚类</target>
+      </trans-unit>
+      <trans-unit id="nccluster.running" datatype="html">
+        <source>Regroupement…</source>
+        <target state="translated">聚类中…</target>
+      </trans-unit>
+      <trans-unit id="nccluster.example" datatype="html">
+        <source>Exemple</source>
+        <target state="translated">示例</target>
+      </trans-unit>
+      <trans-unit id="nccluster.card-clusters" datatype="html">
+        <source>Patterns détectés</source>
+        <target state="translated">检测到的模式</target>
+      </trans-unit>
+      <trans-unit id="nccluster.card-ratio" datatype="html">
+        <source>Taux regroupé</source>
+        <target state="translated">聚类比例</target>
+      </trans-unit>
+      <trans-unit id="nccluster.clusters-panel" datatype="html">
+        <source>Clusters</source>
+        <target state="translated">聚类</target>
+      </trans-unit>
+      <trans-unit id="nccluster.no-cluster" datatype="html">
+        <source>Aucun pattern récurrent : chaque NC est singulière au seuil retenu.</source>
+        <target state="translated">无重复模式：在所选阈值下每个不符合项都是独立的。</target>
+      </trans-unit>
+      <trans-unit id="nccluster.nc-count" datatype="html">
+        <source>NC</source>
+        <target state="translated">项</target>
+      </trans-unit>
+      <trans-unit id="nccluster.noise-panel" datatype="html">
+        <source>NC isolées (bruit)</source>
+        <target state="translated">孤立不符合项（噪声）</target>
+      </trans-unit>
+      <trans-unit id="nccluster.err-min-texts" datatype="html">
+        <source>Saisissez au moins 2 non-conformités (une par ligne).</source>
+        <target state="translated">请至少输入 2 个不符合项（每行一个）。</target>
+      </trans-unit>
+      <trans-unit id="nccluster.err-backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">无法连接后端（engine 在 8082？）。</target>
+      </trans-unit>
+      <trans-unit id="nccluster.err-invalid" datatype="html">
+        <source>Requête invalide (2 à 2000 NC attendues).</source>
+        <target state="translated">请求无效（应为 2 到 2000 个不符合项）。</target>
+      </trans-unit>
+      <trans-unit id="nccluster.err-too-large" datatype="html">
+        <source>Liste trop volumineuse (garde-fou IA).</source>
+        <target state="translated">列表过大（AI 防护）。</target>
+      </trans-unit>
+      <trans-unit id="nccluster.err-quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">该租户的 AI 速率/配额已超出 — 请稍后重试。</target>
+      </trans-unit>
+      <trans-unit id="nccluster.err-gateway" datatype="html">
+        <source>Passerelle IA indisponible (ai-service injoignable).</source>
+        <target state="translated">AI 网关不可用（无法连接 ai-service）。</target>
+      </trans-unit>
+      <trans-unit id="nccluster.err-unavailable" datatype="html">
+        <source>Service IA momentanément indisponible (disjoncteur ouvert).</source>
+        <target state="translated">AI 服务暂时不可用（断路器已打开）。</target>
+      </trans-unit>
+      <trans-unit id="nccluster.err-generic" datatype="html">
+        <source>Échec du clustering (HTTP <x id="status"/>).</source>
+        <target state="translated">聚类失败（HTTP <x id="status"/>）。</target>
+      </trans-unit>
       <trans-unit id="offline.queue.title" datatype="html">
         <source>File d'attente offline</source>
         <target state="translated">离线队列</target>

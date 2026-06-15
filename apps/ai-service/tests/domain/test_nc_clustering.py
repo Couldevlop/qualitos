@@ -69,3 +69,34 @@ class TestNcClustering:
         a = nc_clustering.cluster(texts)
         b = nc_clustering.cluster(texts)
         assert a == b
+
+
+class TestDbscanDensity:
+    def test_method_is_dbscan(self):
+        result = nc_clustering.cluster(["fuite huile presse", "fuite huile presse ligne"])
+        assert result.method == "dbscan"
+
+    def test_min_samples_requires_denser_neighborhood(self):
+        # Deux textes similaires : cluster avec min_samples=2, mais bruit avec min_samples=3
+        # (chaque point n'a qu'un voisin → pas assez dense pour être un point-cœur).
+        texts = ["fuite huile presse hydraulique", "fuite huile presse hydraulique ligne"]
+        loose = nc_clustering.cluster(texts, min_samples=2)
+        assert len(loose.clusters) == 1
+        strict = nc_clustering.cluster(texts, min_samples=3)
+        assert strict.clusters == []
+        assert sorted(strict.noise_indices) == [0, 1]
+
+    def test_dense_core_forms_cluster_with_border(self):
+        # 3 textes quasi identiques (cœur dense) → un seul cluster même à min_samples=3.
+        texts = [
+            "fuite huile presse hydraulique ligne 2",
+            "fuite huile presse hydraulique ligne 3",
+            "fuite huile presse hydraulique ligne 4",
+        ]
+        result = nc_clustering.cluster(texts, min_samples=3)
+        assert len(result.clusters) == 1
+        assert result.clusters[0].size == 3
+
+    def test_min_samples_validation(self):
+        with pytest.raises(ValueError, match="min_samples"):
+            nc_clustering.cluster(["a b", "a b"], min_samples=1)
