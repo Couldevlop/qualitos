@@ -1,6 +1,7 @@
 package com.openlab.qualitos.iot.presentation.dto;
 
 import com.openlab.qualitos.iot.domain.model.TelemetryPoint;
+import com.openlab.qualitos.iot.domain.model.TelemetryRollup;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -45,6 +46,21 @@ public final class TelemetryDtos {
     public static TelemetryResponse from(TelemetryPoint p) {
       return new TelemetryResponse(
           p.id(), p.deviceId(), p.metric(), p.value(), p.unit(), p.recordedAt());
+    }
+  }
+
+  /** Un bucket agrégé (avg/min/max/count) d'une métrique sur une tranche temporelle (§9.3). */
+  public record RollupBucketResponse(
+      Instant bucketStart,
+      String metric,
+      double avg,
+      double min,
+      double max,
+      long count
+  ) {
+    public static RollupBucketResponse from(TelemetryRollup r) {
+      return new RollupBucketResponse(
+          r.bucketStart(), r.metric(), r.avg(), r.min(), r.max(), r.count());
     }
   }
 }

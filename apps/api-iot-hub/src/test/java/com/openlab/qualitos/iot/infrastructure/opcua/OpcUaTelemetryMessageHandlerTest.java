@@ -283,5 +283,9 @@ class OpcUaTelemetryMessageHandlerTest {
       return saved;
     }
     @Override public long countByTenant(UUID t) { return saved.size(); }
+    @Override public java.util.List<com.openlab.qualitos.iot.domain.model.TelemetryRollup> rollupByDevice(
+        UUID t, UUID d, String metric, com.openlab.qualitos.iot.domain.model.RollupBucket bucket, int limit) {
+      return java.util.List.of();
+    }
   }
 }
