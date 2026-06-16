@@ -17,13 +17,16 @@ public class TrainingController {
     private final SkillService skillService;
     private final TrainingPathService pathService;
     private final TrainingEnrollmentService enrollmentService;
+    private final GamificationService gamificationService;
 
     public TrainingController(SkillService skillService,
                               TrainingPathService pathService,
-                              TrainingEnrollmentService enrollmentService) {
+                              TrainingEnrollmentService enrollmentService,
+                              GamificationService gamificationService) {
         this.skillService = skillService;
         this.pathService = pathService;
         this.enrollmentService = enrollmentService;
+        this.gamificationService = gamificationService;
     }
 
     // ---- Skills ----
@@ -181,5 +184,20 @@ public class TrainingController {
     @GetMapping("/certificates/{code}")
     public TrainingDto.CertificateVerification verifyCertificate(@PathVariable String code) {
         return enrollmentService.verifyCertificate(code);
+    }
+
+    // ---- Gamification (CLAUDE.md §19.3 — Yellow → Black Belt) ----
+
+    /** Progression de gamification de l'utilisateur courant (tenant + sub du JWT). */
+    @GetMapping("/progress/me")
+    public GamificationDto.LearnerProgressResponse myProgress() {
+        return gamificationService.myProgress();
+    }
+
+    /** Marque un parcours/quiz terminé → recalcule points, ceinture, badges. */
+    @PostMapping("/progress/complete")
+    public GamificationDto.LearnerProgressResponse completeLearning(
+            @Valid @RequestBody GamificationDto.CompleteLearningRequest req) {
+        return gamificationService.complete(req);
     }
 }

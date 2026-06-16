@@ -110,6 +110,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/training/training.module').then(m => m.TrainingModule)
       },
       {
+        path: 'learning',
+        loadChildren: () => import('./features/training/learning.module').then(m => m.LearningModule)
+      },
+      {
         path: 'changes',
         loadChildren: () => import('./features/changes/changes.module').then(m => m.ChangesModule)
       },

@@ -1,0 +1,93 @@
+<section class="learning-home">
+  <header class="head">
+    <div>
+      <h1 i18n="@@learning.title">Mon apprentissage</h1>
+      <p i18n="@@learning.subtitle">Votre progression qualité — ceinture, points et badges (CLAUDE.md §19.3).</p>
+    </div>
+  </header>
+
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+
+  <ng-container *ngIf="progress$ | async as p">
+
+    <!-- Carte ceinture + points -->
+    <div class="cards">
+      <div class="card belt-card">
+        <span class="card-label" i18n="@@learning.current-belt">Ceinture actuelle</span>
+        <span [class]="beltClass(p.beltLevel)">{{ p.beltLevel }}</span>
+        <div class="belt-track" aria-hidden="true">
+          <span *ngFor="let b of allBelts"
+                [class]="'belt-step belt-step-' + b.toLowerCase()"
+                [class.reached]="beltReached(p.beltLevel, b)"
+                [attr.title]="b">{{ b.charAt(0) }}</span>
+        </div>
+        <span *ngIf="p.pointsToNextBelt > 0" class="next-hint">
+          <ng-container i18n="@@learning.points-to-next">Encore</ng-container>
+          <strong>&nbsp;{{ p.pointsToNextBelt }}&nbsp;</strong>
+          <ng-container i18n="@@learning.points-to-next-suffix">points pour la ceinture suivante.</ng-container>
+        </span>
+        <span *ngIf="p.pointsToNextBelt === 0" class="next-hint max"
+              i18n="@@learning.max-belt">Palier maximal atteint — bravo !</span>
+      </div>
+
+      <div class="card stat-card">
+        <span class="stat-value">{{ p.points }}</span>
+        <span class="stat-label" i18n="@@learning.points">Points</span>
+      </div>
+      <div class="card stat-card">
+        <span class="stat-value">{{ p.completedCount }}</span>
+        <span class="stat-label" i18n="@@learning.completed">Parcours terminés</span>
+      </div>
+      <div class="card stat-card">
+        <span class="stat-value">{{ p.bestScore != null ? p.bestScore : '—' }}</span>
+        <span class="stat-label" i18n="@@learning.best-score">Meilleur score</span>
+      </div>
+    </div>
+
+    <!-- Badges -->
+    <div class="section">
+      <h2 i18n="@@learning.badges">Badges obtenus</h2>
+      <div *ngIf="p.badges.length > 0; else noBadges" class="badges">
+        <span *ngFor="let b of p.badges" [class]="badgeChipClass(b)">
+          <mat-icon>military_tech</mat-icon>{{ b }}
+        </span>
+      </div>
+      <ng-template #noBadges>
+        <p class="dim" i18n="@@learning.no-badges">Aucun badge pour l'instant — terminez un parcours pour démarrer.</p>
+      </ng-template>
+    </div>
+
+    <!-- Parcours actifs -->
+    <div class="section">
+      <h2 i18n="@@learning.active-paths">Parcours disponibles</h2>
+      <div class="table-wrap mat-elevation-z1">
+        <table mat-table [dataSource]="(activePaths$ | async) ?? []">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef i18n="@@common.name">Nom</th>
+            <td mat-cell *matCellDef="let path">
+              <strong>{{ path.name }}</strong>
+              <small *ngIf="path.targetRole" class="dim">{{ path.targetRole }}</small>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="duration">
+            <th mat-header-cell *matHeaderCellDef i18n="@@learning.col-duration">Durée</th>
+            <td mat-cell *matCellDef="let path">{{ path.durationHours }} h</td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let path" class="actions">
+              <button mat-stroked-button color="primary"
+                      [disabled]="completing" (click)="markComplete(path)">
+                <mat-icon>check_circle</mat-icon>
+                <span i18n="@@learning.mark-complete">Marquer comme terminé</span>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="['name', 'duration', 'actions']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['name', 'duration', 'actions']"></tr>
+        </table>
+      </div>
+    </div>
+
+  </ng-container>
+</section>

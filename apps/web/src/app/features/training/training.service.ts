@@ -7,8 +7,11 @@ import { environment } from '../../../environments/environment';
 import {
   AssessCompetencyRequest,
   AttachSkillRequirementRequest,
+  Badge,
+  BeltLevel,
   CompetencyMatrix,
   CompetencyResponse,
+  CompleteLearningRequest,
   CompleteRequest,
   CreatePathRequest,
   CreateSkillRequest,
@@ -16,6 +19,7 @@ import {
   EnrollmentPage,
   EnrollmentResponse,
   EnrollmentStatus,
+  LearnerProgressResponse,
   PathPage,
   PathResponse,
   ProgressUpdateRequest,
@@ -362,6 +366,95 @@ export class TrainingService {
       return of(this.mockEnrollments[0]).pipe(delay(120));
     }
     return this.http.post<EnrollmentResponse>(`${this.endpoint}/enrollments/${id}/cancel`, {});
+  }
+
+  // ---------- Gamification (CLAUDE.md §19.3) ----------
+
+  /** Seuils de ceinture — alignés sur le domaine engine (BeltLevel). */
+  private static readonly BELT_THRESHOLDS: { belt: BeltLevel; min: number }[] = [
+    { belt: 'WHITE', min: 0 },
+    { belt: 'YELLOW', min: 100 },
+    { belt: 'GREEN', min: 300 },
+    { belt: 'BLACK', min: 700 }
+  ];
+  private static readonly BASE_POINTS = 50;
+  private static readonly PASS_THRESHOLD = 60;
+
+  private mockProgress: LearnerProgressResponse = this.seedProgress();
+
+  myProgress(): Observable<LearnerProgressResponse> {
+    if (environment.useMockApi) {
+      return of({ ...this.mockProgress, badges: [...this.mockProgress.badges] }).pipe(delay(120));
+    }
+    return this.http.get<LearnerProgressResponse>(`${this.endpoint}/progress/me`);
+  }
+
+  completeLearning(input: CompleteLearningRequest): Observable<LearnerProgressResponse> {
+    if (environment.useMockApi) {
+      this.mockProgress = this.recomputeMockProgress(this.mockProgress, input.score);
+      return of({ ...this.mockProgress, badges: [...this.mockProgress.badges] }).pipe(delay(150));
+    }
+    return this.http.post<LearnerProgressResponse>(`${this.endpoint}/progress/complete`, input);
+  }
+
+  /** Réplique les règles pures du domaine engine pour le mode mock. */
+  private recomputeMockProgress(p: LearnerProgressResponse, score: number): LearnerProgressResponse {
+    const gained = score >= TrainingService.PASS_THRESHOLD
+      ? TrainingService.BASE_POINTS + Math.floor(score / 2)
+      : 0;
+    const points = p.points + gained;
+    const completedCount = gained > 0 ? p.completedCount + 1 : p.completedCount;
+    const bestScore = p.bestScore == null ? score : Math.max(p.bestScore, score);
+    const belt = this.beltFromPoints(points);
+    return {
+      ...p,
+      points,
+      completedCount,
+      bestScore,
+      beltLevel: belt,
+      pointsToNextBelt: this.pointsToNext(points),
+      badges: this.evaluateBadges(completedCount, bestScore, belt),
+      updatedAt: new Date().toISOString()
+    };
+  }
+
+  private beltFromPoints(points: number): BeltLevel {
+    let belt: BeltLevel = 'WHITE';
+    for (const t of TrainingService.BELT_THRESHOLDS) {
+      if (points >= t.min) belt = t.belt;
+    }
+    return belt;
+  }
+
+  private pointsToNext(points: number): number {
+    const ts = TrainingService.BELT_THRESHOLDS;
+    for (const t of ts) {
+      if (points < t.min) return t.min - Math.max(0, points);
+    }
+    return 0;
+  }
+
+  private evaluateBadges(completed: number, best: number | undefined, belt: BeltLevel): Badge[] {
+    const badges: Badge[] = [];
+    if (completed >= 1) badges.push('FIRST_STEPS');
+    if (completed >= 5) badges.push('DEDICATED_LEARNER');
+    if (completed >= 10) badges.push('QUALITY_CHAMPION');
+    if (best != null && best >= 100) badges.push('PERFECTIONIST');
+    if (belt === 'YELLOW' || belt === 'GREEN' || belt === 'BLACK') badges.push('YELLOW_BELT');
+    if (belt === 'GREEN' || belt === 'BLACK') badges.push('GREEN_BELT');
+    if (belt === 'BLACK') badges.push('BLACK_BELT');
+    return badges;
+  }
+
+  private seedProgress(): LearnerProgressResponse {
+    const now = new Date().toISOString();
+    return {
+      userId: 'demo-user', tenantId: 'demo-tenant',
+      points: 160, completedCount: 2, bestScore: 88,
+      beltLevel: 'YELLOW', pointsToNextBelt: 140,
+      badges: ['FIRST_STEPS', 'YELLOW_BELT'],
+      createdAt: now, updatedAt: now
+    };
   }
 
   // ---------- Seeds ----------

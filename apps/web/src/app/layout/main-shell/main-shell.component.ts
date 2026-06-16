@@ -87,7 +87,8 @@ export class MainShellComponent implements OnInit {
       label: $localize`:@@nav.fournisseurs-competences:Fournisseurs & compétences`,
       items: [
         { label: $localize`:@@nav.fournisseurs:Fournisseurs`, route: '/suppliers', icon: 'local_shipping' },
-        { label: $localize`:@@nav.formation:Formation`,    route: '/training',  icon: 'school' }
+        { label: $localize`:@@nav.formation:Formation`,    route: '/training',  icon: 'school' },
+        { label: $localize`:@@nav.mon-apprentissage:Mon apprentissage`, route: '/learning', icon: 'military_tech' }
       ]
     },
     {

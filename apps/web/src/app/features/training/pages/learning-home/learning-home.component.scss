@@ -1,0 +1,66 @@
+.learning-home { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+.head h1 { margin: 0 0 4px; font-size: 22px; }
+.head p  { margin: 0; color: rgba(0,0,0,0.6); font-size: 13px; }
+
+.banner { padding: 10px 14px; border-radius: 8px; font-size: 13px; }
+.banner-error { background: #fbe9e7; color: #b71c1c; }
+
+.cards { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 16px; }
+@media (max-width: 900px) { .cards { grid-template-columns: 1fr 1fr; } }
+
+.card {
+  background: var(--qos-bg-elevated, #fff);
+  border: 1px solid var(--qos-border-subtle, #e0e0e0);
+  border-radius: var(--qos-radius-lg, 14px);
+  padding: 18px 20px; display: flex; flex-direction: column; gap: 8px;
+}
+
+.card-label, .stat-label { font-size: 12px; color: rgba(0,0,0,0.55); letter-spacing: 0.02em; }
+.stat-card { align-items: center; justify-content: center; text-align: center; }
+.stat-value { font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.belt {
+  display: inline-block; align-self: flex-start; padding: 4px 14px; border-radius: 14px;
+  font-size: 13px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+  border: 2px solid;
+}
+.belt-white  { background: #fafafa; color: #424242; border-color: #bdbdbd; }
+.belt-yellow { background: #fffde7; color: #f9a825; border-color: #fbc02d; }
+.belt-green  { background: #e8f5e9; color: #2e7d32; border-color: #43a047; }
+.belt-black  { background: #263238; color: #fff;    border-color: #000;    }
+
+.belt-track { display: flex; gap: 6px; margin-top: 4px; }
+.belt-step {
+  width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; background: #f0f0f0; color: #9e9e9e; border: 2px solid #e0e0e0;
+}
+.belt-step.reached.belt-step-white  { background: #eeeeee; color: #424242; border-color: #bdbdbd; }
+.belt-step.reached.belt-step-yellow { background: #fbc02d; color: #5d4037; border-color: #f9a825; }
+.belt-step.reached.belt-step-green  { background: #43a047; color: #fff;    border-color: #2e7d32; }
+.belt-step.reached.belt-step-black  { background: #263238; color: #fff;    border-color: #000;    }
+
+.next-hint { font-size: 12px; color: rgba(0,0,0,0.6); }
+.next-hint.max { color: #2e7d32; font-weight: 600; }
+
+.section h2 { margin: 0 0 10px; font-size: 16px; }
+
+.badges { display: flex; flex-wrap: wrap; gap: 10px; }
+.badge-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: 18px; font-size: 12px; font-weight: 700;
+  background: #ede7f6; color: #4527a0;
+}
+.badge-chip mat-icon { font-size: 18px; width: 18px; height: 18px; }
+.badge-yellow-belt { background: #fffde7; color: #f9a825; }
+.badge-green-belt  { background: #e8f5e9; color: #2e7d32; }
+.badge-black-belt  { background: #263238; color: #fff; }
+.badge-perfectionist { background: #fff3e0; color: #e65100; }
+
+.table-wrap {
+  background: var(--qos-bg-elevated, #fff);
+  border: 1px solid var(--qos-border-subtle, #e0e0e0);
+  border-radius: var(--qos-radius-lg, 14px); overflow: hidden;
+}
+table { width: 100%; }
+.dim { color: rgba(0,0,0,0.55); font-size: 12px; display: block; margin-top: 2px; }
+.actions { white-space: nowrap; text-align: right; }

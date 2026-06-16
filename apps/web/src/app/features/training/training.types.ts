@@ -160,3 +160,34 @@ export type EnrollmentPage = SpringPage<EnrollmentResponse>;
 export interface EnrollRequest { userId: string; pathId: string; }
 export interface ProgressUpdateRequest { progressPct: number; }
 export interface CompleteRequest { finalScore: number; }
+
+// --- Gamification (CLAUDE.md §19.3 — Yellow → Black Belt) ---
+
+export type BeltLevel = 'WHITE' | 'YELLOW' | 'GREEN' | 'BLACK';
+
+export type Badge =
+  | 'FIRST_STEPS'
+  | 'DEDICATED_LEARNER'
+  | 'QUALITY_CHAMPION'
+  | 'PERFECTIONIST'
+  | 'YELLOW_BELT'
+  | 'GREEN_BELT'
+  | 'BLACK_BELT';
+
+export interface LearnerProgressResponse {
+  userId: string;
+  tenantId: string;
+  points: number;
+  completedCount: number;
+  bestScore?: number;
+  beltLevel: BeltLevel;
+  pointsToNextBelt: number;
+  badges: Badge[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CompleteLearningRequest {
+  itemCode: string;
+  score: number;
+}

@@ -35,6 +35,7 @@ class TrainingControllerTest {
     @MockitoBean SkillService skillService;
     @MockitoBean TrainingPathService pathService;
     @MockitoBean TrainingEnrollmentService enrollmentService;
+    @MockitoBean GamificationService gamificationService;
     ObjectMapper om;
 
     static final UUID TENANT = UUID.randomUUID();
@@ -302,6 +303,43 @@ class TrainingControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    // --- gamification (§19.3) ---
+
+    @Test @WithMockUser
+    void myProgress_returns200() throws Exception {
+        when(gamificationService.myProgress()).thenReturn(progressResp());
+        mockMvc.perform(get("/api/v1/training/progress/me"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.beltLevel").value("YELLOW"))
+                .andExpect(jsonPath("$.points").value(160));
+    }
+
+    @Test @WithMockUser
+    void completeLearning_returns200() throws Exception {
+        when(gamificationService.complete(any())).thenReturn(progressResp());
+        mockMvc.perform(post("/api/v1/training/progress/complete").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"itemCode\":\"yellow-belt-quality\",\"score\":80}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.badges[0]").value("FIRST_STEPS"));
+    }
+
+    @Test @WithMockUser
+    void completeLearning_scoreOutOfRange_400() throws Exception {
+        mockMvc.perform(post("/api/v1/training/progress/complete").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"itemCode\":\"x\",\"score\":150}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test @WithMockUser
+    void completeLearning_missingItemCode_400() throws Exception {
+        mockMvc.perform(post("/api/v1/training/progress/complete").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"score\":80}"))
+                .andExpect(status().isBadRequest());
+    }
+
     // --- factories ---
 
     private TrainingDto.SkillResponse skillResp() {
@@ -330,6 +368,13 @@ class TrainingControllerTest {
         return new TrainingDto.EnrollmentResponse(
                 ENR, TENANT, USER, PATH, EnrollmentStatus.ENROLLED, 0, null,
                 LocalDate.parse("2026-05-15"), null, null, null, null,
+                Instant.now(), Instant.now());
+    }
+
+    private GamificationDto.LearnerProgressResponse progressResp() {
+        return new GamificationDto.LearnerProgressResponse(
+                USER, TENANT, 160, 2, 88, BeltLevel.YELLOW, 140,
+                List.of(Badge.FIRST_STEPS, Badge.YELLOW_BELT),
                 Instant.now(), Instant.now());
     }
 }

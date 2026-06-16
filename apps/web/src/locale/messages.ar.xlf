@@ -13780,6 +13780,78 @@ Inde (centre de service)</source>
         <source>Retrait impossible.</source>
         <target state="translated">تعذّر السحب.</target>
       </trans-unit>
+      <trans-unit id="nav.mon-apprentissage" datatype="html">
+        <source>Mon apprentissage</source>
+        <target state="translated">تعلّمي</target>
+      </trans-unit>
+      <trans-unit id="learning.title" datatype="html">
+        <source>Mon apprentissage</source>
+        <target state="translated">تعلّمي</target>
+      </trans-unit>
+      <trans-unit id="learning.subtitle" datatype="html">
+        <source>Votre progression qualité — ceinture, points et badges (CLAUDE.md §19.3).</source>
+        <target state="translated">تقدّمك في الجودة — الحزام والنقاط والشارات (CLAUDE.md §19.3).</target>
+      </trans-unit>
+      <trans-unit id="learning.error-loading" datatype="html">
+        <source>Erreur de chargement de votre progression.</source>
+        <target state="translated">تعذّر تحميل تقدّمك.</target>
+      </trans-unit>
+      <trans-unit id="learning.current-belt" datatype="html">
+        <source>Ceinture actuelle</source>
+        <target state="translated">الحزام الحالي</target>
+      </trans-unit>
+      <trans-unit id="learning.points-to-next" datatype="html">
+        <source>Encore</source>
+        <target state="translated">لا يزال</target>
+      </trans-unit>
+      <trans-unit id="learning.points-to-next-suffix" datatype="html">
+        <source>points pour la ceinture suivante.</source>
+        <target state="translated">نقطة للحزام التالي.</target>
+      </trans-unit>
+      <trans-unit id="learning.max-belt" datatype="html">
+        <source>Palier maximal atteint — bravo !</source>
+        <target state="translated">بلغت أعلى مستوى — تهانينا!</target>
+      </trans-unit>
+      <trans-unit id="learning.points" datatype="html">
+        <source>Points</source>
+        <target state="translated">النقاط</target>
+      </trans-unit>
+      <trans-unit id="learning.completed" datatype="html">
+        <source>Parcours terminés</source>
+        <target state="translated">المسارات المكتملة</target>
+      </trans-unit>
+      <trans-unit id="learning.best-score" datatype="html">
+        <source>Meilleur score</source>
+        <target state="translated">أفضل نتيجة</target>
+      </trans-unit>
+      <trans-unit id="learning.badges" datatype="html">
+        <source>Badges obtenus</source>
+        <target state="translated">الشارات المكتسبة</target>
+      </trans-unit>
+      <trans-unit id="learning.no-badges" datatype="html">
+        <source>Aucun badge pour l'instant — terminez un parcours pour démarrer.</source>
+        <target state="translated">لا توجد شارات بعد — أكمل مساراً للبدء.</target>
+      </trans-unit>
+      <trans-unit id="learning.active-paths" datatype="html">
+        <source>Parcours disponibles</source>
+        <target state="translated">المسارات المتاحة</target>
+      </trans-unit>
+      <trans-unit id="learning.col-duration" datatype="html">
+        <source>Durée</source>
+        <target state="translated">المدّة</target>
+      </trans-unit>
+      <trans-unit id="learning.mark-complete" datatype="html">
+        <source>Marquer comme terminé</source>
+        <target state="translated">وضع علامة كمكتمل</target>
+      </trans-unit>
+      <trans-unit id="learning.completed-toast" datatype="html">
+        <source>Parcours marqué comme terminé. Progression mise à jour.</source>
+        <target state="translated">تمّ وضع علامة على المسار كمكتمل. تمّ تحديث التقدّم.</target>
+      </trans-unit>
+      <trans-unit id="learning.complete-error" datatype="html">
+        <source>Échec de l'enregistrement.</source>
+        <target state="translated">فشل الحفظ.</target>
+      </trans-unit>
       <trans-unit id="nav.tv-mode" datatype="html">
         <source>Mode TV / Salle qualité</source>
         <target state="translated">وضع التلفزيون / قاعة الجودة</target>
