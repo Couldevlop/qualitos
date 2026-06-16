@@ -6,11 +6,13 @@ import com.openlab.qualitos.iot.domain.model.ThresholdBreachEvent;
 import com.openlab.qualitos.iot.domain.port.DeviceRepository;
 import com.openlab.qualitos.iot.domain.port.NonConformancePublisher;
 import com.openlab.qualitos.iot.domain.port.TelemetryRepository;
+import com.openlab.qualitos.iot.domain.service.DeviceShadow;
 import com.openlab.qualitos.iot.domain.service.StreamRuleEngine;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -50,6 +52,10 @@ public final class IngestTelemetryUseCase {
     TelemetryPoint saved = telemetryRepo.save(point);
     deviceRepo.touchLastSeen(tenantId, device.id(), saved.recordedAt());
 
+    // Device Shadow (§9.6) : reflète la dernière valeur rapportée par métrique.
+    deviceRepo.updateTwin(tenantId, device.id(), DeviceShadow.mergeReported(
+        device.twin(), saved.metric(), saved.value(), saved.unit(), saved.recordedAt()));
+
     for (ThresholdBreachEvent breach : ruleEngine.evaluate(saved)) {
       publisher.notifyBreach(breach);
     }
@@ -78,6 +84,13 @@ public final class IngestTelemetryUseCase {
     if (!saved.isEmpty()) {
       deviceRepo.touchLastSeen(tenantId, device.id(),
           saved.get(saved.size() - 1).recordedAt());
+      // Device Shadow : fusionne toutes les mesures du lot (dernière valeur par métrique),
+      // puis une seule écriture du twin.
+      Map<String, Object> twin = device.twin();
+      for (TelemetryPoint p : saved) {
+        twin = DeviceShadow.mergeReported(twin, p.metric(), p.value(), p.unit(), p.recordedAt());
+      }
+      deviceRepo.updateTwin(tenantId, device.id(), twin);
     }
     for (TelemetryPoint p : saved) {
       for (ThresholdBreachEvent breach : ruleEngine.evaluate(p)) {

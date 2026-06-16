@@ -26,4 +26,10 @@ public interface DeviceRepository {
   List<Device> findAllByTenant(UUID tenantId);
   void touchLastSeen(UUID tenantId, UUID deviceId, java.time.Instant when);
   long countByTenant(UUID tenantId);
+
+  /**
+   * Persiste UNIQUEMENT le twin / Device Shadow d'un équipement (§9.6), sans toucher aux
+   * autres champs. Tenant-scoped (OWASP A01 — pas d'IDOR). No-op si l'équipement est absent.
+   */
+  void updateTwin(UUID tenantId, UUID deviceId, java.util.Map<String, Object> twin);
 }
