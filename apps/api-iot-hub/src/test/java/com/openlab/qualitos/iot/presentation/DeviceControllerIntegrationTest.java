@@ -27,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -181,6 +182,51 @@ class DeviceControllerIntegrationTest {
             .content(objectMapper.writeValueAsString(batch)))
         .andExpect(status().isAccepted())
         .andExpect(jsonPath("$.length()").value(3));
+  }
+
+  @Test
+  void deviceShadowRoundTripAndReportedState() throws Exception {
+    UUID tenant = UUID.randomUUID();
+    var reg = jwt().jwt(b -> b.claim("tenant_id", tenant.toString()))
+        .authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_TENANT_ADMIN"));
+
+    // Register with an initial twin (desired setpoint) → JSON round-trip must persist it.
+    DeviceDtos.RegisterDeviceRequest body = new DeviceDtos.RegisterDeviceRequest(
+        "FRIDGE-1", "Pharma fridge", DeviceType.SENSOR_TEMPERATURE, Protocol.MQTT,
+        null, null, null, null, null, null,
+        java.util.Map.of("desired", java.util.Map.of("setpoint", 4.0)));
+    MvcResult result = mvc().perform(post("/api/v1/iot/devices").with(reg)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(body)))
+        .andExpect(status().isCreated()).andReturn();
+    DeviceDtos.DeviceResponse dev = objectMapper.readValue(
+        result.getResponse().getContentAsByteArray(), DeviceDtos.DeviceResponse.class);
+
+    // Twin rehydrated from JSON (not empty) — the documented stub is fixed.
+    mvc().perform(get("/api/v1/iot/devices/" + dev.id() + "/shadow").with(reg))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.desired.setpoint").value(4.0));
+
+    // Ingest telemetry → the reported face of the shadow reflects the last value.
+    var ingestBody = new TelemetryDtos.IngestRequest(dev.id(), "temperature", 8.7, "degC", null);
+    mvc().perform(post("/api/v1/iot/telemetry").with(reg)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(ingestBody)))
+        .andExpect(status().isAccepted());
+
+    mvc().perform(get("/api/v1/iot/devices/" + dev.id() + "/shadow").with(reg))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.reported.temperature.value").value(8.7))
+        .andExpect(jsonPath("$.reported.temperature.unit").value("degC"))
+        .andExpect(jsonPath("$.desired.setpoint").value(4.0));  // preserved
+
+    // PATCH desired updates only the desired face.
+    mvc().perform(patch("/api/v1/iot/devices/" + dev.id() + "/shadow/desired").with(reg)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"setpoint\":2.0}"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.desired.setpoint").value(2.0))
+        .andExpect(jsonPath("$.reported.temperature.value").value(8.7));  // reported untouched
   }
 
   @Test

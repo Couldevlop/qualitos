@@ -32,7 +32,7 @@ Pondéré par l'importance des axes de la vision CLAUDE.md.
 | Prod-readiness (§14) | ~80 % | chaos/perf |
 | Frontend (§15) | ~85 % | couverture tests composants |
 | **IA (§12)** | **~80 %** | reste : BERT/Whisper pleins (GPU), vision 5S (modèle entraîné), LSTM/Prophet, HDBSCAN — anomalies/forecast/clustering DBSCAN/SHAP/NLP lexical livrés |
-| **IoT (§9)** | **~50 %** | LoRaWAN/Sparkplug, Digital Twin réel, inférence Edge, TimescaleDB actif |
+| **IoT (§9)** | **~58 %** | reste : LoRaWAN/Sparkplug, inférence Edge, TimescaleDB actif — Digital Twin/Shadow livré |
 | **Dashboards (§7)** | **~55 %** | builder drag&drop, NLQ→graphe, time-travel, mode TV |
 | **Doc & formation (§19)** | **~35 %** | Wiki utilisateur, LMS/gamification |
 

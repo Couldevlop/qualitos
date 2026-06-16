@@ -1,5 +1,7 @@
 package com.openlab.qualitos.iot.infrastructure.persistence;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openlab.qualitos.iot.domain.model.Device;
 import com.openlab.qualitos.iot.domain.port.DeviceRepository;
 import org.springframework.stereotype.Component;
@@ -15,10 +17,14 @@ import java.util.UUID;
 @Component
 public class JpaDeviceRepository implements DeviceRepository {
 
-  private final DeviceJpaRepository jpa;
+  private static final TypeReference<Map<String, Object>> TWIN_TYPE = new TypeReference<>() {};
 
-  public JpaDeviceRepository(DeviceJpaRepository jpa) {
+  private final DeviceJpaRepository jpa;
+  private final ObjectMapper objectMapper;
+
+  public JpaDeviceRepository(DeviceJpaRepository jpa, ObjectMapper objectMapper) {
     this.jpa = jpa;
+    this.objectMapper = objectMapper;
   }
 
   @Override
@@ -65,6 +71,16 @@ public class JpaDeviceRepository implements DeviceRepository {
     return jpa.countByTenantId(tenantId);
   }
 
+  @Override
+  @Transactional
+  public void updateTwin(UUID tenantId, UUID deviceId, Map<String, Object> twin) {
+    // Tenant-scoped (OWASP A01) : ne met à jour que si l'équipement appartient au tenant.
+    jpa.findByTenantIdAndId(tenantId, deviceId).ifPresent(e -> {
+      e.setTwinJson(writeTwin(twin));
+      jpa.save(e);
+    });
+  }
+
   // ---- mappers --------------------------------------------------------
 
   private DeviceEntity toEntity(Device d) {
@@ -81,7 +97,7 @@ public class JpaDeviceRepository implements DeviceRepository {
     e.setWorkCenter(d.workCenter());
     e.setEquipment(d.equipment());
     e.setCertFingerprintSha256(d.certFingerprintSha256());
-    e.setTwinJson(d.twin().isEmpty() ? null : d.twin().toString());
+    e.setTwinJson(writeTwin(d.twin()));
     e.setProvisionedAt(d.provisionedAt());
     e.setLastSeenAt(d.lastSeenAt());
     return e;
@@ -93,7 +109,31 @@ public class JpaDeviceRepository implements DeviceRepository {
         e.getType(), e.getProtocol(),
         e.getEnterprise(), e.getSite(), e.getArea(), e.getWorkCenter(), e.getEquipment(),
         e.getCertFingerprintSha256(),
-        Map.of(), // twin re-hydrated empty in V1 — JSON parsing is left for P4 (StandardsHub also stores JSON)
+        readTwin(e.getTwinJson()),  // round-trip JSON réel (§9.6 Device Shadow)
         e.getProvisionedAt(), e.getLastSeenAt());
+  }
+
+  /** Sérialise le twin en JSON (null si vide, pour ne pas stocker « {} »). */
+  private String writeTwin(Map<String, Object> twin) {
+    if (twin == null || twin.isEmpty()) {
+      return null;
+    }
+    try {
+      return objectMapper.writeValueAsString(twin);
+    } catch (com.fasterxml.jackson.core.JsonProcessingException ex) {
+      throw new IllegalStateException("twin serialization failed", ex);
+    }
+  }
+
+  /** Désérialise le twin JSON en carte (vide si null/illisible — défensif). */
+  private Map<String, Object> readTwin(String json) {
+    if (json == null || json.isBlank()) {
+      return Map.of();
+    }
+    try {
+      return objectMapper.readValue(json, TWIN_TYPE);
+    } catch (com.fasterxml.jackson.core.JsonProcessingException ex) {
+      return Map.of();
+    }
   }
 }

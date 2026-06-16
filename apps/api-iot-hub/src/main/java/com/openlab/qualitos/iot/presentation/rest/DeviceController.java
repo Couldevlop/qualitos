@@ -5,6 +5,7 @@ import com.openlab.qualitos.iot.application.usecase.RegisterDeviceUseCase;
 import com.openlab.qualitos.iot.domain.model.Device;
 import com.openlab.qualitos.iot.domain.model.TelemetryPoint;
 import com.openlab.qualitos.iot.domain.port.DeviceRepository;
+import com.openlab.qualitos.iot.domain.service.DeviceShadow;
 import com.openlab.qualitos.iot.infrastructure.config.TenantContext;
 import com.openlab.qualitos.iot.presentation.dto.DeviceDtos;
 import com.openlab.qualitos.iot.presentation.dto.TelemetryDtos;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -68,6 +70,32 @@ public class DeviceController {
     return deviceRepository.findById(tenantId, id)
         .map(DeviceDtos.DeviceResponse::from)
         .map(ResponseEntity::ok)
+        .orElseGet(() -> ResponseEntity.notFound().build());
+  }
+
+  /** Device Shadow / Digital Twin (§9.6) : état reported + desired de l'équipement. */
+  @GetMapping("/devices/{id}/shadow")
+  @PreAuthorize("isAuthenticated()")
+  public ResponseEntity<Map<String, Object>> shadow(@PathVariable UUID id) {
+    UUID tenantId = TenantContext.requireTenantId();
+    return deviceRepository.findById(tenantId, id)
+        .map(Device::twin)
+        .map(ResponseEntity::ok)
+        .orElseGet(() -> ResponseEntity.notFound().build());
+  }
+
+  /** Met à jour la face « desired » (consigne) du twin. Tenant dérivé du JWT (A01). */
+  @PatchMapping("/devices/{id}/shadow/desired")
+  @PreAuthorize("hasAnyRole('TENANT_ADMIN','QUALITY_MANAGER','SUPER_ADMIN')")
+  public ResponseEntity<Map<String, Object>> setDesired(
+      @PathVariable UUID id, @RequestBody Map<String, Object> desired) {
+    UUID tenantId = TenantContext.requireTenantId();
+    return deviceRepository.findById(tenantId, id)
+        .map(device -> {
+          Map<String, Object> twin = DeviceShadow.setDesired(device.twin(), desired);
+          deviceRepository.updateTwin(tenantId, id, twin);
+          return ResponseEntity.ok(twin);
+        })
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
