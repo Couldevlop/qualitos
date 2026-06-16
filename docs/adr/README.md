@@ -32,6 +32,7 @@ supersession).
 | [0025](./0025-complaint-nlp-lexical.md) | NLP réclamations : sentiment lexical + classification (sans dépendance lourde) | Accepté |
 | [0026](./0026-iot-lorawan-connector.md) | Connecteur d'ingestion LoRaWAN (TTN/ChirpStack), webhook décodé, tenant fail-closed | Accepté |
 | [0027](./0027-iot-sparkplug-and-timescale-rollups.md) | Connecteur Sparkplug B (JSON) + rollups télémétrie & continuous aggregate TimescaleDB | Accepté |
+| [0028](./0028-iot-modbus-connector.md) | Connecteur d'ingestion Modbus TCP/RTU (lecture structurée par la passerelle Edge), tenant fail-closed | Accepté |
 
 ## Statuts possibles
 

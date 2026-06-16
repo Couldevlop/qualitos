@@ -13780,6 +13780,154 @@ Inde (centre de service)</source>
         <source>Retrait impossible.</source>
         <target state="translated">تعذّر السحب.</target>
       </trans-unit>
+      <trans-unit id="nav.storyboard" datatype="html">
+        <source>Storyboard IA</source>
+        <target state="translated">سرد الذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="storyboard.title" datatype="html">
+        <source>Storyboard IA</source>
+        <target state="translated">سرد الذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="storyboard.subtitle" datatype="html">
+        <source>L'IA rédige un récit narratif autour de vos indicateurs (KPIs, tendances, alertes) pour une revue de direction — elle commente uniquement les chiffres fournis.</source>
+        <target state="translated">يكتب الذكاء الاصطناعي سردًا حول مؤشراتك (مؤشرات الأداء، الاتجاهات، التنبيهات) لمراجعة الإدارة — ويعلّق فقط على الأرقام المقدمة.</target>
+      </trans-unit>
+      <trans-unit id="storyboard.input-panel" datatype="html">
+        <source>Indicateurs &amp; période</source>
+        <target state="translated">المؤشرات والفترة</target>
+      </trans-unit>
+      <trans-unit id="storyboard.period-label" datatype="html">
+        <source>Période</source>
+        <target state="translated">الفترة</target>
+      </trans-unit>
+      <trans-unit id="storyboard.period-hint" datatype="html">
+        <source>Ex. « Mai 2026 », « T1 2026 »</source>
+        <target state="translated">مثل «مايو 2026»، «الربع الأول 2026»</target>
+      </trans-unit>
+      <trans-unit id="storyboard.context-label" datatype="html">
+        <source>Contexte (optionnel)</source>
+        <target state="translated">السياق (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="storyboard.context-hint" datatype="html">
+        <source>Ex. « Site de Lyon, atelier mécanique »</source>
+        <target state="translated">مثل «موقع ليون، ورشة ميكانيكية»</target>
+      </trans-unit>
+      <trans-unit id="storyboard.indicators-label" datatype="html">
+        <source>Indicateurs</source>
+        <target state="translated">المؤشرات</target>
+      </trans-unit>
+      <trans-unit id="storyboard.col-label" datatype="html">
+        <source>Libellé</source>
+        <target state="translated">التسمية</target>
+      </trans-unit>
+      <trans-unit id="storyboard.col-value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">القيمة</target>
+      </trans-unit>
+      <trans-unit id="storyboard.col-unit" datatype="html">
+        <source>Unité</source>
+        <target state="translated">الوحدة</target>
+      </trans-unit>
+      <trans-unit id="storyboard.col-trend" datatype="html">
+        <source>Tendance</source>
+        <target state="translated">الاتجاه</target>
+      </trans-unit>
+      <trans-unit id="storyboard.col-target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">الهدف</target>
+      </trans-unit>
+      <trans-unit id="storyboard.ph-label" datatype="html">
+        <source>Taux de NC</source>
+        <target state="translated">معدل عدم المطابقة</target>
+      </trans-unit>
+      <trans-unit id="storyboard.ph-value" datatype="html">
+        <source>1,8</source>
+        <target state="translated">1.8</target>
+      </trans-unit>
+      <trans-unit id="storyboard.ph-unit" datatype="html">
+        <source>%</source>
+        <target state="translated">٪</target>
+      </trans-unit>
+      <trans-unit id="storyboard.ph-trend" datatype="html">
+        <source>-12 %</source>
+        <target state="translated">-12٪</target>
+      </trans-unit>
+      <trans-unit id="storyboard.ph-target" datatype="html">
+        <source>&lt; 2</source>
+        <target state="translated">&lt; 2</target>
+      </trans-unit>
+      <trans-unit id="storyboard.add-row" datatype="html">
+        <source>Ajouter un indicateur</source>
+        <target state="translated">إضافة مؤشر</target>
+      </trans-unit>
+      <trans-unit id="storyboard.remove-row" datatype="html">
+        <source>Retirer</source>
+        <target state="translated">إزالة</target>
+      </trans-unit>
+      <trans-unit id="storyboard.generate" datatype="html">
+        <source>Générer le récit</source>
+        <target state="translated">إنشاء السرد</target>
+      </trans-unit>
+      <trans-unit id="storyboard.generating" datatype="html">
+        <source>Rédaction…</source>
+        <target state="translated">جارٍ الكتابة…</target>
+      </trans-unit>
+      <trans-unit id="storyboard.example" datatype="html">
+        <source>Exemple</source>
+        <target state="translated">مثال</target>
+      </trans-unit>
+      <trans-unit id="storyboard.result-panel" datatype="html">
+        <source>Récit</source>
+        <target state="translated">السرد</target>
+      </trans-unit>
+      <trans-unit id="storyboard.sources-panel" datatype="html">
+        <source>Chiffres source</source>
+        <target state="translated">الأرقام المصدر</target>
+      </trans-unit>
+      <trans-unit id="storyboard.provider" datatype="html">
+        <source>Généré par</source>
+        <target state="translated">تم الإنشاء بواسطة</target>
+      </trans-unit>
+      <trans-unit id="storyboard.disclaimer" datatype="html">
+        <source>Récit généré par IA, à valider par un humain. Aucune décision ne doit reposer sur ce texte sans vérification des chiffres source.</source>
+        <target state="translated">سرد منشأ بالذكاء الاصطناعي، يجب التحقق منه بشريًا. لا ينبغي أن يستند أي قرار إلى هذا النص دون مراجعة الأرقام المصدر.</target>
+      </trans-unit>
+      <trans-unit id="storyboard.err-period" datatype="html">
+        <source>Indiquez une période.</source>
+        <target state="translated">حدّد فترة.</target>
+      </trans-unit>
+      <trans-unit id="storyboard.err-points" datatype="html">
+        <source>Saisissez au moins un indicateur (libellé + valeur).</source>
+        <target state="translated">أدخل مؤشرًا واحدًا على الأقل (التسمية + القيمة).</target>
+      </trans-unit>
+      <trans-unit id="storyboard.err-backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">تعذّر الوصول إلى الخادم (engine على 8082؟).</target>
+      </trans-unit>
+      <trans-unit id="storyboard.err-invalid" datatype="html">
+        <source>Requête invalide (période + au moins un indicateur libellé/valeur).</source>
+        <target state="translated">طلب غير صالح (الفترة + مؤشر واحد على الأقل بتسمية/قيمة).</target>
+      </trans-unit>
+      <trans-unit id="storyboard.err-too-large" datatype="html">
+        <source>Trop d'indicateurs (garde-fou IA).</source>
+        <target state="translated">عدد كبير جدًا من المؤشرات (حاجز أمان الذكاء الاصطناعي).</target>
+      </trans-unit>
+      <trans-unit id="storyboard.err-quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">تم تجاوز معدّل/حصة الذكاء الاصطناعي لهذا المستأجر — أعد المحاولة لاحقًا.</target>
+      </trans-unit>
+      <trans-unit id="storyboard.err-gateway" datatype="html">
+        <source>Passerelle IA indisponible (ai-service injoignable).</source>
+        <target state="translated">بوابة الذكاء الاصطناعي غير متاحة (ai-service غير قابل للوصول).</target>
+      </trans-unit>
+      <trans-unit id="storyboard.err-unavailable" datatype="html">
+        <source>Service IA momentanément indisponible (disjoncteur ouvert).</source>
+        <target state="translated">خدمة الذكاء الاصطناعي غير متاحة مؤقتًا (قاطع الدائرة مفتوح).</target>
+      </trans-unit>
+      <trans-unit id="storyboard.err-generic" datatype="html">
+        <source>Échec de la génération (HTTP <x id="status"/>).</source>
+        <target state="translated">فشل الإنشاء (HTTP <x id="status"/>).</target>
+      </trans-unit>
       <trans-unit id="nav.mon-apprentissage" datatype="html">
         <source>Mon apprentissage</source>
         <target state="translated">تعلّمي</target>

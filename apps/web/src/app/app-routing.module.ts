@@ -76,6 +76,11 @@ const routes: Routes = [
         loadChildren: () => import('./features/forecast/forecast.module').then(m => m.ForecastModule)
       },
       {
+        // Storyboard IA (§7.4) : récit narratif autour des KPIs, par la passerelle IA (LLM04).
+        path: 'storyboard',
+        loadChildren: () => import('./features/storyboard/storyboard.module').then(m => m.StoryboardModule)
+      },
+      {
         path: 'nc-clusters',
         loadChildren: () => import('./features/nc-cluster/nc-cluster.module').then(m => m.NcClusterModule)
       },

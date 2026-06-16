@@ -52,7 +52,8 @@ export class MainShellComponent implements OnInit {
         { label: $localize`:@@nav.tv-mode:Mode TV / Salle qualité`, route: '/tv', icon: 'tv' },
         { label: $localize`:@@nav.indicateurs-kpi:Indicateurs (KPI)`, route: '/kpis',            icon: 'monitoring' },
         { label: $localize`:@@nav.assistant-ia:Assistant IA`,    route: '/nlq',               icon: 'forum' },
-        { label: $localize`:@@nav.nlq-explore:Exploration NLQ`,  route: '/nlq-explore',       icon: 'query_stats' }
+        { label: $localize`:@@nav.nlq-explore:Exploration NLQ`,  route: '/nlq-explore',       icon: 'query_stats' },
+        { label: $localize`:@@nav.storyboard:Storyboard IA`,     route: '/storyboard',        icon: 'auto_stories' }
       ]
     },
     {

@@ -17,9 +17,11 @@
 | Tests (front specs + suites Python) | 59 + 27 |
 | Capacités IA/IoT/blockchain « RÉEL » (audit stub-vs-réel) | 20 |
 
-## Taux de réalisation : ~75 % (≈ 90 % rapporté à un MVP commercialisable)
+## Taux de réalisation : ~85 % (≈ 95 % rapporté à un MVP commercialisable)
 
-Pondéré par l'importance des axes de la vision CLAUDE.md.
+> Màj 2026-06-16 (après 3 lots de chantiers parallèles : IA, IoT, Dashboards, Formation, Doc).
+> Pondéré par l'importance des axes de la vision CLAUDE.md. Le reliquat est essentiellement
+> **GPU / infra réelle / contenu externe** (non livrable en CI sans stub — donc non fait par principe).
 
 | Axe | Réalisation | Reste à faire |
 |---|---|---|
@@ -32,9 +34,9 @@ Pondéré par l'importance des axes de la vision CLAUDE.md.
 | Prod-readiness (§14) | ~80 % | chaos/perf |
 | Frontend (§15) | ~85 % | couverture tests composants |
 | **IA (§12)** | **~80 %** | reste : BERT/Whisper pleins (GPU), vision 5S (modèle entraîné), LSTM/Prophet, HDBSCAN — anomalies/forecast/clustering DBSCAN/SHAP/NLP lexical livrés |
-| **IoT (§9)** | **~58 %** | reste : LoRaWAN/Sparkplug, inférence Edge, TimescaleDB actif — Digital Twin/Shadow livré |
-| **Dashboards (§7)** | **~55 %** | builder drag&drop, NLQ→graphe, time-travel, mode TV |
-| **Doc & formation (§19)** | **~60 %** | LMS/gamification, vidéos, doc par secteur ; espace Wiki utilisateur par rôle/module livré (`docs/wiki/`) |
+| **IoT (§9)** | **~72 %** | reste : inférence Edge (GPU/ONNX), vrai cluster TimescaleDB, DICOM/Modbus-fil — livrés : Digital Twin/Shadow, **LoRaWAN, Sparkplug B, Modbus**, rollups + continuous aggregate TimescaleDB |
+| **Dashboards (§7)** | **~70 %** | reste : builder drag&drop avancé (`/dashboard-builder` existe), time-travel, cross-filtering — livrés : **NLQ→graphe, Mode TV, Storyboards IA** |
+| **Doc & formation (§19)** | **~70 %** | LMS/gamification, vidéos ; espace Wiki utilisateur par rôle/module **et par secteur** livré (`docs/wiki/`, dont `docs/wiki/secteurs/` : 14 guides) |
 
 ## Capacités IA — état (post chantiers du 13-14 juin)
 
@@ -45,7 +47,8 @@ Pondéré par l'importance des axes de la vision CLAUDE.md.
 | Anomalies non-supervisées (Isolation Forest + reconstruction ACP) | RÉEL (ADR 0022) |
 | Prévision KPI (Holt-Winters) | RÉEL (ADR 0023) |
 | Scoring fournisseur (logistique pondéré) | RÉEL |
-| Clustering NC | placeholder TF-IDF (→ cible HDBSCAN) |
+| Clustering NC (TF-IDF + DBSCAN densité) | RÉEL (commit 5d7045e ; HDBSCAN GPU = futur) |
+| Storyboards IA (récit LLM des KPIs) | RÉEL (§7.4, commit 7518b10) |
 | Explicabilité SHAP (Kernel SHAP) | RÉEL (ADR 0024) |
 | NLP réclamations (sentiment + classification, lexical) | RÉEL (ADR 0025) |
 | NLP plein BERT / transcription Whisper | ABSENT (lot GPU) |
@@ -66,8 +69,15 @@ Ordre d'attaque retenu (du plus self-contained au plus lourd) :
    (Super Admin, Admin Tenant, Directeur/Manager Qualité, Auditeur+Externe, Utilisateur),
    16 pages de modules (5 méthodes + NC/CAPA/Audits + SPC/anomalies/prévision/clustering NC/
    NLP réclamations/explicabilité SHAP + Standards Hub + Packs sectoriels), et une FAQ de
-   15 questions. Reste pour atteindre 100 % de l'axe : LMS/gamification (§19.3), vidéos
-   courtes, et guides par secteur.
+   15 questions.
+7. ~~**Guides par secteur (§19.1.B)** — doc utilisateur sectorielle.~~ **LIVRÉ** —
+   `docs/wiki/secteurs/` : index (catalogue + activation déclarative d'un Industry Pack) +
+   **14 guides sectoriels** alignés sur les 14 Industry Packs réels (industrie, santé, pharma,
+   banque, IT/ITSM, agro, aéro/défense, auto, BTP, énergie, public, éducation, retail, logistique).
+   Chaque guide : enjeux qualité, normes (Standards Hub), KPIs clés (cohérents avec les YAML des
+   packs et CLAUDE.md §6.3), modules recommandés (routes réelles `/spc`, `/anomaly`…), connecteurs
+   IoT typiques et exemple de parcours. Reste pour atteindre 100 % de l'axe : LMS/gamification
+   (§19.3) et vidéos courtes.
 
 > Note : certains items (vision 5S modèle entraîné, LSTM/Prophet, BERT/Whisper pleins)
 > exigent un budget GPU/données ; ils restent branchables derrière les mêmes contrats
