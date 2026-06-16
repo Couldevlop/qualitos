@@ -8526,6 +8526,138 @@ historique 12 mois</source>
         <source>Échec du clustering (HTTP <x id="status"/>).</source>
         <target state="translated">聚类失败（HTTP <x id="status"/>）。</target>
       </trans-unit>
+      <trans-unit id="nav.nlq-explore" datatype="html">
+        <source>Exploration NLQ</source>
+        <target state="translated">NLQ 探索</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.title" datatype="html">
+        <source>Exploration en langage naturel</source>
+        <target state="translated">自然语言探索</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.subtitle" datatype="html">
+        <source>Posez une question sur vos données qualité — l'IA la traduit en requête sûre (text-to-SQL) et génère un graphique.</source>
+        <target state="translated">就您的质量数据提问 — AI 会将其转换为安全查询（text-to-SQL）并生成图表。</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.question-panel" datatype="html">
+        <source>Question</source>
+        <target state="translated">问题</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.question-label" datatype="html">
+        <source>Question en langage naturel</source>
+        <target state="translated">自然语言提问</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.question-placeholder" datatype="html">
+        <source>Combien de CAPA par statut ?</source>
+        <target state="translated">按状态统计有多少 CAPA？</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.run" datatype="html">
+        <source>Interroger</source>
+        <target state="translated">查询</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.running" datatype="html">
+        <source>Analyse…</source>
+        <target state="translated">分析中…</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.examples-label" datatype="html">
+        <source>Exemples :</source>
+        <target state="translated">示例：</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.example-1" datatype="html">
+        <source>Combien de CAPA par statut ?</source>
+        <target state="translated">按状态统计有多少 CAPA？</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.example-2" datatype="html">
+        <source>Nombre de diagrammes Ishikawa par statut</source>
+        <target state="translated">按状态统计石川图数量</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.example-3" datatype="html">
+        <source>Combien de CAPA par criticité ?</source>
+        <target state="translated">按严重程度统计有多少 CAPA？</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.example-4" datatype="html">
+        <source>Nombre de fournisseurs par statut</source>
+        <target state="translated">按状态统计供应商数量</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.card-rows" datatype="html">
+        <source>Lignes</source>
+        <target state="translated">行数</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.card-confidence" datatype="html">
+        <source>Confiance</source>
+        <target state="translated">置信度</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.tenant-filtered" datatype="html">
+        <source>Filtré par tenant</source>
+        <target state="translated">已按租户过滤</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.tenant-unfiltered" datatype="html">
+        <source>Tenant non filtré</source>
+        <target state="translated">未按租户过滤</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.chart-panel" datatype="html">
+        <source>Graphique</source>
+        <target state="translated">图表</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.chart-type-label" datatype="html">
+        <source>Type :</source>
+        <target state="translated">类型：</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.chart-bar" datatype="html">
+        <source>Barres</source>
+        <target state="translated">柱状</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.chart-line" datatype="html">
+        <source>Lignes</source>
+        <target state="translated">折线</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.not-graphable" datatype="html">
+        <source>Ce résultat n'est pas représentable en graphique (aucune colonne numérique exploitable) — voir le tableau ci-dessous.</source>
+        <target state="translated">此结果无法生成图表（没有可用的数值列）——请参见下表。</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.table-panel" datatype="html">
+        <source>Résultats</source>
+        <target state="translated">结果</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.no-row" datatype="html">
+        <source>Aucune ligne ne correspond à cette question.</source>
+        <target state="translated">没有与此问题匹配的行。</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.sql-panel" datatype="html">
+        <source>Explicabilité</source>
+        <target state="translated">可解释性</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.show-sql" datatype="html">
+        <source>Voir le SQL généré</source>
+        <target state="translated">查看生成的 SQL</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.hide-sql" datatype="html">
+        <source>Masquer le SQL</source>
+        <target state="translated">隐藏 SQL</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.err-backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">后端不可达（引擎在 8082？）。</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.err-untranslatable" datatype="html">
+        <source>La question n'a pas pu être traduite en requête sûre. Reformule-la plus simplement.</source>
+        <target state="translated">无法将该问题转换为安全查询。请用更简单的方式重新表述。</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.err-too-large" datatype="html">
+        <source>Question trop volumineuse (garde-fou IA).</source>
+        <target state="translated">问题过大（AI 防护）。</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.err-quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">该租户的 AI 速率/配额已超出 — 请稍后重试。</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.err-unavailable" datatype="html">
+        <source>L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessaie dans un instant.</source>
+        <target state="translated">AI 助手暂时不可用（模型加载中？）。请稍后重试。</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.err-generic" datatype="html">
+        <source>Une erreur est survenue lors du traitement de la question (HTTP <x id="status"/>).</source>
+        <target state="translated">处理问题时发生错误（HTTP <x id="status"/>）。</target>
+      </trans-unit>
       <trans-unit id="offline.queue.title" datatype="html">
         <source>File d'attente offline</source>
         <target state="translated">离线队列</target>

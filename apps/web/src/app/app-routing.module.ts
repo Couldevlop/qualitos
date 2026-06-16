@@ -125,6 +125,11 @@ const routes: Routes = [
         loadChildren: () => import('./features/nlq/nlq.module').then(m => m.NlqModule)
       },
       {
+        path: 'nlq-explore',
+        loadChildren: () =>
+          import('./features/nlq-explore/nlq-explore.module').then(m => m.NlqExploreModule)
+      },
+      {
         path: 'ropa',
         loadChildren: () => import('./features/ropa/ropa.module').then(m => m.RopaModule)
       },

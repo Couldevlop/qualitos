@@ -50,7 +50,8 @@ export class MainShellComponent implements OnInit {
         { label: $localize`:@@nav.accueil:Accueil`,         route: '/home',              icon: 'home' },
         { label: $localize`:@@nav.mes-dashboards:Mes dashboards`,  route: '/dashboard-builder', icon: 'dashboard_customize' },
         { label: $localize`:@@nav.indicateurs-kpi:Indicateurs (KPI)`, route: '/kpis',            icon: 'monitoring' },
-        { label: $localize`:@@nav.assistant-ia:Assistant IA`,    route: '/nlq',               icon: 'forum' }
+        { label: $localize`:@@nav.assistant-ia:Assistant IA`,    route: '/nlq',               icon: 'forum' },
+        { label: $localize`:@@nav.nlq-explore:Exploration NLQ`,  route: '/nlq-explore',       icon: 'query_stats' }
       ]
     },
     {

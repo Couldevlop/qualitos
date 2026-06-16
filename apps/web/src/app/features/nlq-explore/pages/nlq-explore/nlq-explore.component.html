@@ -1,0 +1,112 @@
+<div class="qos-page">
+  <qos-page-header
+    eyebrow="NLQ · §7.3"
+    i18n-title="@@nlq-explore.title"
+    title="Exploration en langage naturel"
+    i18n-subtitle="@@nlq-explore.subtitle"
+    subtitle="Posez une question sur vos données qualité — l'IA la traduit en requête sûre (text-to-SQL) et génère un graphique.">
+  </qos-page-header>
+
+  <!-- Saisie de la question -->
+  <qos-panel i18n-title="@@nlq-explore.question-panel" title="Question" icon="forum">
+    <form [formGroup]="form" (ngSubmit)="ask()">
+      <mat-form-field appearance="outline" class="full">
+        <mat-label i18n="@@nlq-explore.question-label">Question en langage naturel</mat-label>
+        <input matInput formControlName="question" maxlength="500"
+               placeholder="Combien de CAPA par statut ?"
+               i18n-placeholder="@@nlq-explore.question-placeholder">
+      </mat-form-field>
+
+      <div class="actions">
+        <button mat-raised-button color="primary" type="submit" [disabled]="loading || form.invalid">
+          <mat-icon>insights</mat-icon>
+          <span *ngIf="!loading" i18n="@@nlq-explore.run">Interroger</span>
+          <span *ngIf="loading" i18n="@@nlq-explore.running">Analyse…</span>
+        </button>
+      </div>
+
+      <div class="examples">
+        <span class="examples-label" i18n="@@nlq-explore.examples-label">Exemples :</span>
+        <button mat-stroked-button type="button" class="example-chip"
+                *ngFor="let ex of examples" (click)="ask(ex)" [disabled]="loading">{{ ex }}</button>
+      </div>
+    </form>
+
+    <p class="error" *ngIf="error" role="alert">{{ error }}</p>
+  </qos-panel>
+
+  <ng-container *ngIf="result as r">
+    <!-- Récit + métadonnées de confiance / sécurité -->
+    <div class="meta-row">
+      <qos-kpi-card
+        i18n-label="@@nlq-explore.card-rows"
+        label="Lignes"
+        [value]="r.rowCount"
+        state="neutral" icon="table_rows"
+        [description]="r.tablesUsed.join(', ')">
+      </qos-kpi-card>
+      <qos-kpi-card
+        i18n-label="@@nlq-explore.card-confidence"
+        label="Confiance"
+        [value]="confidencePct() + ' %'"
+        [state]="confidenceClass() === 'ok' ? 'good' : confidenceClass() === 'warn' ? 'warn' : 'bad'"
+        icon="verified"
+        [description]="tenantFilterLabel()">
+      </qos-kpi-card>
+    </div>
+
+    <p class="narrative" *ngIf="r.narrative">{{ r.narrative }}</p>
+
+    <!-- Graphique généré -->
+    <qos-panel i18n-title="@@nlq-explore.chart-panel" title="Graphique" icon="bar_chart" *ngIf="plan.graphable">
+      <div class="chart-toolbar">
+        <span class="toolbar-label" i18n="@@nlq-explore.chart-type-label">Type :</span>
+        <button type="button" class="type-btn" [class.active]="chartType === 'bar'"
+                (click)="selectChartType('bar')">
+          <mat-icon>bar_chart</mat-icon>
+          <span i18n="@@nlq-explore.chart-bar">Barres</span>
+        </button>
+        <button type="button" class="type-btn" [class.active]="chartType === 'line'"
+                (click)="selectChartType('line')">
+          <mat-icon>show_chart</mat-icon>
+          <span i18n="@@nlq-explore.chart-line">Lignes</span>
+        </button>
+      </div>
+      <qos-echart *ngIf="chartOption" [option]="chartOption" [height]="360"></qos-echart>
+    </qos-panel>
+
+    <p class="not-graphable" *ngIf="!plan.graphable && r.rowCount > 0" i18n="@@nlq-explore.not-graphable">
+      Ce résultat n'est pas représentable en graphique (aucune colonne numérique exploitable) — voir le tableau ci-dessous.
+    </p>
+
+    <!-- Tableau des lignes -->
+    <qos-panel i18n-title="@@nlq-explore.table-panel" title="Résultats" icon="table_chart">
+      <p class="empty" *ngIf="r.rowCount === 0" i18n="@@nlq-explore.no-row">
+        Aucune ligne ne correspond à cette question.
+      </p>
+      <div class="table-scroll" *ngIf="r.rowCount > 0">
+        <table class="nlq-table">
+          <thead>
+            <tr>
+              <th *ngFor="let col of columns()">{{ col }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of r.rows">
+              <td *ngFor="let col of columns()">{{ cell(row[col]) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </qos-panel>
+
+    <!-- SQL généré (transparence / explicabilité §12.3) -->
+    <qos-panel i18n-title="@@nlq-explore.sql-panel" title="Explicabilité" icon="code">
+      <button mat-button type="button" class="sql-toggle" (click)="showSql = !showSql">
+        <mat-icon>{{ showSql ? 'visibility_off' : 'visibility' }}</mat-icon>
+        <span>{{ sqlToggleLabel() }}</span>
+      </button>
+      <pre class="sql" *ngIf="showSql">{{ r.sql }}</pre>
+    </qos-panel>
+  </ng-container>
+</div>
