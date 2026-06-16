@@ -114,3 +114,31 @@ def test_rejects_empty_rows():
         body = {"samples": [[], []]}
         r = client.post("/v1/ai/anomaly/detect", json=body, headers=_dev_header())
         assert r.status_code == 422
+
+
+def test_explain_requires_auth():
+    with TestClient(create_app()) as client:
+        r = client.post("/v1/ai/anomaly/explain", json={"samples": [[1.0, 2.0]], "index": 0})
+        assert r.status_code == 401
+
+
+def test_explain_attributes_outlier_score_to_features():
+    with TestClient(create_app()) as client:
+        body = {"samples": _cloud_with_outlier(), "index": 30, "seed": 1}
+        r = client.post("/v1/ai/anomaly/explain", json=body, headers=_dev_header())
+        assert r.status_code == 200, r.text
+        data = r.json()
+        assert data["index"] == 30 and data["method"] == "isolation_forest"
+        assert len(data["contributions"]) == 2
+        # Efficacité de Shapley : Σ contributions = score − base_value.
+        total = sum(c["contribution"] for c in data["contributions"])
+        assert abs(total - (data["score"] - data["base_value"])) < 1e-4
+        # L'aberrant doit avoir un score supérieur à la base (anormal).
+        assert data["score"] > data["base_value"]
+
+
+def test_explain_rejects_out_of_range_index():
+    with TestClient(create_app()) as client:
+        body = {"samples": [[1.0, 2.0], [3.0, 4.0]], "index": 5}
+        r = client.post("/v1/ai/anomaly/explain", json=body, headers=_dev_header())
+        assert r.status_code == 422

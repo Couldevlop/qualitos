@@ -27,4 +27,9 @@ public class AnomalyController {
     public AnomalyDto.DetectResponse detect(@Valid @RequestBody AnomalyDto.DetectRequest request) {
         return anomalyService.detect(request);
     }
+
+    @PostMapping("/explain")
+    public AnomalyDto.ExplainResponse explain(@Valid @RequestBody AnomalyDto.ExplainRequest request) {
+        return anomalyService.explain(request);
+    }
 }

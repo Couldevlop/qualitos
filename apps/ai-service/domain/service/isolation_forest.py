@@ -99,17 +99,43 @@ def _build_tree(
     return node
 
 
-def score_samples(
+class IsolationForest:
+    """Forêt d'isolation entraînée — sépare l'entraînement du scoring.
+
+    Permet de scorer des points ARBITRAIRES contre un modèle FIXE (indispensable à
+    l'explicabilité Kernel SHAP, qui évalue des points synthétiques). Immuable après
+    construction.
+    """
+
+    __slots__ = ("_trees", "_norm")
+
+    def __init__(self, trees: list, norm: float) -> None:
+        self._trees = trees
+        self._norm = norm
+
+    def score(self, points: np.ndarray) -> np.ndarray:
+        """Score d'anomalie ``s(x) ∈ [0, 1]`` de chaque ligne de ``points``."""
+        p = np.asarray(points, dtype=float)
+        if p.ndim == 1:
+            p = p.reshape(1, -1)
+        if self._norm <= 0.0:
+            return np.full(p.shape[0], 0.5, dtype=float)
+        out = np.empty(p.shape[0], dtype=float)
+        for i in range(p.shape[0]):
+            avg_path = sum(_path_length(p[i], t, 0) for t in self._trees) / len(self._trees)
+            out[i] = math.pow(2.0, -avg_path / self._norm)
+        return out
+
+
+def build_forest(
     samples: np.ndarray,
     *,
     n_trees: int = _DEFAULT_N_TREES,
     sample_size: int = _DEFAULT_SAMPLE_SIZE,
     seed: int = 42,
-) -> np.ndarray:
-    """Calcule le score d'anomalie ``s(x) ∈ [0, 1]`` de chaque échantillon.
+) -> IsolationForest:
+    """Construit une forêt d'isolation à partir de ``samples`` (fit unique).
 
-    :param samples: matrice (n_échantillons × n_features), float.
-    :returns: vecteur des scores (croissant avec l'anormalité).
     :raises ValueError: matrice vide ou paramètres invalides.
     """
     x = np.asarray(samples, dtype=float)
@@ -122,26 +148,36 @@ def score_samples(
 
     n = x.shape[0]
     rng = np.random.default_rng(seed)
-
     effective_sample = min(sample_size, n)
     # Hauteur limite = profondeur moyenne attendue (article original).
     height_limit = max(1, int(math.ceil(math.log2(max(effective_sample, 2)))))
 
-    # E[h(x)] : longueur de chemin moyenne sur la forêt.
-    path_sums = np.zeros(n, dtype=float)
+    trees = []
     for _ in range(n_trees):
         if effective_sample < n:
             idx = rng.choice(n, size=effective_sample, replace=False)
             subsample = x[idx]
         else:
             subsample = x
-        tree = _build_tree(subsample, 0, height_limit, rng)
-        for i in range(n):
-            path_sums[i] += _path_length(x[i], tree, 0)
+        trees.append(_build_tree(subsample, 0, height_limit, rng))
+    return IsolationForest(trees, _c(effective_sample))
 
-    avg_path = path_sums / n_trees
-    norm = _c(effective_sample)
-    if norm <= 0.0:
-        # Sous-échantillon dégénéré (1 point) : aucune isolation possible.
-        return np.full(n, 0.5, dtype=float)
-    return np.power(2.0, -avg_path / norm)
+
+def score_samples(
+    samples: np.ndarray,
+    *,
+    n_trees: int = _DEFAULT_N_TREES,
+    sample_size: int = _DEFAULT_SAMPLE_SIZE,
+    seed: int = 42,
+) -> np.ndarray:
+    """Calcule le score d'anomalie ``s(x) ∈ [0, 1]`` de chaque échantillon.
+
+    Conserve l'API historique : construit la forêt depuis ``samples`` et score
+    ``samples`` (équivalent à ``build_forest(samples).score(samples)``).
+
+    :param samples: matrice (n_échantillons × n_features), float.
+    :returns: vecteur des scores (croissant avec l'anormalité).
+    :raises ValueError: matrice vide ou paramètres invalides.
+    """
+    forest = build_forest(samples, n_trees=n_trees, sample_size=sample_size, seed=seed)
+    return forest.score(np.asarray(samples, dtype=float))

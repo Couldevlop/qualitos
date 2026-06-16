@@ -46,7 +46,7 @@ Pondéré par l'importance des axes de la vision CLAUDE.md.
 | Prévision KPI (Holt-Winters) | RÉEL (ADR 0023) |
 | Scoring fournisseur (logistique pondéré) | RÉEL |
 | Clustering NC | placeholder TF-IDF (→ cible HDBSCAN) |
-| Explicabilité SHAP/LIME | ABSENT |
+| Explicabilité SHAP (Kernel SHAP) | RÉEL (ADR 0024) |
 | NLP audits / sentiment (BERT/Whisper) | ABSENT |
 | Vision 5S (YOLOv8) | backend ONNX réel, **modèle non fourni** |
 | Federated learning | scaffold |

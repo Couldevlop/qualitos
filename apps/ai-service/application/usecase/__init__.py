@@ -5,10 +5,11 @@ from .nlq_ask import NlqAskUseCase, NlqAskRequest
 from .federated_train_round import FederatedTrainRoundUseCase
 from .predict import KpiForecastUseCase, NcClusterUseCase, SupplierRiskUseCase
 from .spc_detect import SpcDetectUseCase
-from .anomaly_detect import AnomalyDetectUseCase
+from .anomaly_detect import AnomalyDetectUseCase, AnomalyExplainUseCase
 
 __all__ = [
     "AnomalyDetectUseCase",
+    "AnomalyExplainUseCase",
     "KpiForecastUseCase",
     "NcClusterUseCase",
     "SupplierRiskUseCase",

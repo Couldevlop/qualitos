@@ -56,3 +56,28 @@ class AnomalyResult:
     @property
     def has_anomalies(self) -> bool:
         return self.anomaly_count > 0
+
+
+@dataclass(frozen=True, slots=True)
+class FeatureContribution:
+    """Attribution Shapley d'une feature au score d'anomalie (explicabilité §12.3).
+
+    ``contribution`` est signée : positive = pousse vers l'anormalité, négative =
+    vers la normalité. La somme des contributions = ``score`` − ``base_value``
+    (propriété d'efficacité de Shapley).
+    """
+
+    feature: int
+    value: float
+    contribution: float
+
+
+@dataclass(frozen=True, slots=True)
+class AnomalyExplanation:
+    """Explication Kernel SHAP du score d'anomalie d'un échantillon."""
+
+    index: int
+    method: str
+    score: float
+    base_value: float           # E[score] sur l'arrière-plan
+    contributions: list[FeatureContribution] = field(default_factory=list)

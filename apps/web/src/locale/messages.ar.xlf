@@ -2472,6 +2472,38 @@
         <source>Feature</source>
         <target state="translated">الميزة</target>
       </trans-unit>
+      <trans-unit id="anomaly.detect.col-explain" datatype="html">
+        <source>Explication</source>
+        <target state="translated">التفسير</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-btn" datatype="html">
+        <source>Pourquoi ?</source>
+        <target state="translated">لماذا؟</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-panel" datatype="html">
+        <source>Explication (SHAP)</source>
+        <target state="translated">التفسير (SHAP)</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-loading" datatype="html">
+        <source>Calcul des contributions…</source>
+        <target state="translated">جارٍ حساب المساهمات…</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-intro" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">العينة</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-score" datatype="html">
+        <source>score</source>
+        <target state="translated">الدرجة</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-base" datatype="html">
+        <source>base</source>
+        <target state="translated">الأساس</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-legend" datatype="html">
+        <source>Barres rouges = features qui rendent l'échantillon anormal ; bleues = vers la normale.</source>
+        <target state="translated">الأشرطة الحمراء = الميزات التي تجعل العينة شاذة؛ الزرقاء = نحو الطبيعي.</target>
+      </trans-unit>
       <trans-unit id="anomaly.detect.err-no-data" datatype="html">
         <source>Saisissez au moins un échantillon (une ligne de nombres).</source>
         <target state="translated">أدخل عينة واحدة على الأقل (سطر من الأرقام).</target>

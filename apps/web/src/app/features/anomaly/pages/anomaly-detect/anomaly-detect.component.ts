@@ -4,7 +4,12 @@ import { FormBuilder, Validators } from '@angular/forms';
 import type { EChartsCoreOption } from 'echarts/core';
 
 import { AnomalyService } from '../../anomaly.service';
-import { AnomalyDetectResponse, AnomalyMethod, AnomalyPoint } from '../../anomaly.types';
+import {
+  AnomalyDetectResponse,
+  AnomalyExplainResponse,
+  AnomalyMethod,
+  AnomalyPoint
+} from '../../anomaly.types';
 
 /**
  * Détection d'anomalies non-supervisée multivariée (§3.4, §12.1) : l'utilisateur
@@ -49,6 +54,13 @@ export class AnomalyDetectComponent {
   result: AnomalyDetectResponse | null = null;
   error: string | null = null;
   chartOption: EChartsCoreOption | null = null;
+
+  /** Matrice saisie (conservée pour expliquer un échantillon précis). */
+  private matrix: number[][] = [];
+  /** Explication SHAP en cours / affichée. */
+  explanation: AnomalyExplainResponse | null = null;
+  explainChartOption: EChartsCoreOption | null = null;
+  explainingIndex: number | null = null;
 
   constructor(private readonly fb: FormBuilder, private readonly anomaly: AnomalyService) {}
 
@@ -100,10 +112,14 @@ export class AnomalyDetectComponent {
     }
     const threshold = this.form.value.threshold;
 
+    this.matrix = matrix;
     this.loading = true;
     this.error = null;
     this.result = null;
     this.chartOption = null;
+    this.explanation = null;
+    this.explainChartOption = null;
+    this.explainingIndex = null;
 
     this.anomaly.detect({
       samples: matrix,
@@ -139,6 +155,50 @@ export class AnomalyDetectComponent {
     return p.topFeature == null
       ? '—'
       : $localize`:@@anomaly.detect.feature-prefix:Feature` + ` #${p.topFeature + 1}`;
+  }
+
+  /** Demande l'explication SHAP du score d'anomalie de l'échantillon `index`. */
+  explain(index: number): void {
+    if (this.explainingIndex === index && this.explanation) {
+      return;
+    }
+    this.explainingIndex = index;
+    this.explanation = null;
+    this.explainChartOption = null;
+    this.anomaly.explain({ samples: this.matrix, index }).subscribe({
+      next: res => {
+        this.explanation = res;
+        this.explainChartOption = this.buildExplainChart(res);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.explainingIndex = null;
+        this.error = this.messageFor(err);
+      }
+    });
+  }
+
+  private buildExplainChart(res: AnomalyExplainResponse): EChartsCoreOption {
+    const pushColor = '#DC2626';   // pousse vers l'anormalité (contribution > 0)
+    const pullColor = '#2563EB';   // pousse vers la normalité (contribution < 0)
+    // Trié par contribution croissante pour un affichage barres horizontales lisible.
+    const sorted = [...res.contributions].sort((a, b) => a.contribution - b.contribution);
+    return {
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+      grid: { left: 90, right: 24, top: 16, bottom: 28 },
+      xAxis: { type: 'value', name: 'Contribution' },
+      yAxis: {
+        type: 'category',
+        data: sorted.map(c => `Feature #${c.feature + 1}`)
+      },
+      series: [{
+        type: 'bar',
+        data: sorted.map(c => ({
+          value: c.contribution,
+          itemStyle: { color: c.contribution >= 0 ? pushColor : pullColor }
+        })),
+        barMaxWidth: 22
+      }]
+    };
   }
 
   private buildChart(res: AnomalyDetectResponse): EChartsCoreOption {

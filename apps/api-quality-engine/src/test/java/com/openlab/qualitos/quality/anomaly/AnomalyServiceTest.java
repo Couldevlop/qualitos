@@ -84,4 +84,35 @@ class AnomalyServiceTest {
         assertThat(cont.getValue()).isEqualTo(0.2);
         assertThat(thr.getValue()).isEqualTo(0.7);
     }
+
+    @Test
+    void explain_mapsGatewayResponse() {
+        when(ai.explainAnomaly(any(), eq(2))).thenReturn(Map.of(
+                "index", 2,
+                "method", "isolation_forest",
+                "score", 0.82,
+                "base_value", 0.50,
+                "contributions", List.of(
+                        Map.of("feature", 0, "value", 50.0, "contribution", 0.20),
+                        Map.of("feature", 1, "value", -50.0, "contribution", 0.12))));
+
+        AnomalyDto.ExplainResponse r = service.explain(new AnomalyDto.ExplainRequest(
+                List.of(List.of(1.0, 2.0), List.of(1.1, 2.1), List.of(50.0, -50.0)), 2));
+
+        assertThat(r.index()).isEqualTo(2);
+        assertThat(r.method()).isEqualTo("isolation_forest");
+        assertThat(r.score()).isEqualTo(0.82);
+        assertThat(r.baseValue()).isEqualTo(0.50);
+        assertThat(r.contributions()).hasSize(2);
+        assertThat(r.contributions().get(0).contribution()).isEqualTo(0.20);
+    }
+
+    @Test
+    void explain_toleratesMissingFields() {
+        when(ai.explainAnomaly(any(), any())).thenReturn(Map.of("contributions", "nope"));
+        AnomalyDto.ExplainResponse r = service.explain(new AnomalyDto.ExplainRequest(
+                List.of(List.of(1.0), List.of(2.0)), 0));
+        assertThat(r.method()).isEmpty();
+        assertThat(r.contributions()).isEmpty();
+    }
 }

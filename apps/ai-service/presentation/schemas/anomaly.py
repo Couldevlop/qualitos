@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field, model_validator
 
-from domain.model.anomaly import SUPPORTED_METHODS, AnomalyResult
+from domain.model.anomaly import SUPPORTED_METHODS, AnomalyExplanation, AnomalyResult
 
 # Bornes alignées sur le use case (anti-DoS, OWASP LLM04).
 _MAX_SAMPLES = 50_000
@@ -38,6 +38,53 @@ class AnomalyDetectRequest(BaseModel):
         if any(len(row) != width for row in self.samples):
             raise ValueError("all sample rows must have the same length")
         return self
+
+
+class AnomalyExplainRequest(BaseModel):
+    # Matrice échantillons × features + index de l'échantillon à expliquer.
+    samples: list[list[float]] = Field(..., min_length=1, max_length=_MAX_SAMPLES)
+    index: int = Field(..., ge=0)
+    seed: int = Field(default=42, ge=0)
+    n_trees: int = Field(default=100, ge=1, le=1000)
+    sample_size: int = Field(default=256, ge=1, le=_MAX_SAMPLES)
+
+    @model_validator(mode="after")
+    def _validate(self) -> "AnomalyExplainRequest":
+        width = len(self.samples[0])
+        if width == 0:
+            raise ValueError("sample rows must have at least one feature")
+        if width > _MAX_FEATURES:
+            raise ValueError(f"too many features (max {_MAX_FEATURES})")
+        if any(len(row) != width for row in self.samples):
+            raise ValueError("all sample rows must have the same length")
+        if self.index >= len(self.samples):
+            raise ValueError("index out of range")
+        return self
+
+
+class FeatureContributionResponse(BaseModel):
+    feature: int
+    value: float
+    contribution: float
+
+
+class AnomalyExplainResponse(BaseModel):
+    index: int
+    method: str
+    score: float
+    base_value: float
+    contributions: list[FeatureContributionResponse]
+
+    @classmethod
+    def from_domain(cls, e: AnomalyExplanation) -> "AnomalyExplainResponse":
+        return cls(
+            index=e.index, method=e.method, score=e.score, base_value=e.base_value,
+            contributions=[
+                FeatureContributionResponse(
+                    feature=c.feature, value=c.value, contribution=c.contribution)
+                for c in e.contributions
+            ],
+        )
 
 
 class AnomalyPointResponse(BaseModel):

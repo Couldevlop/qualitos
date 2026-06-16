@@ -31,7 +31,31 @@ public class AnomalyService {
         return toResponse(resp);
     }
 
+    public AnomalyDto.ExplainResponse explain(AnomalyDto.ExplainRequest request) {
+        Map<String, Object> resp = ai.explainAnomaly(request.samples(), request.index());
+        return toExplain(resp);
+    }
+
     // ---- mapping réponse ai-service ----
+
+    private AnomalyDto.ExplainResponse toExplain(Map<String, Object> resp) {
+        return new AnomalyDto.ExplainResponse(
+                intVal(resp.get("index")),
+                str(resp.get("method")),
+                dbl(resp.get("score")),
+                dbl(resp.get("base_value")),
+                contributions(resp.get("contributions")));
+    }
+
+    private List<AnomalyDto.Contribution> contributions(Object o) {
+        if (!(o instanceof List<?> l)) {
+            return List.of();
+        }
+        return l.stream().map(this::asMap).map(c -> new AnomalyDto.Contribution(
+                intVal(c.get("feature")),
+                dbl(c.get("value")),
+                dbl(c.get("contribution")))).toList();
+    }
 
     private AnomalyDto.DetectResponse toResponse(Map<String, Object> resp) {
         return new AnomalyDto.DetectResponse(

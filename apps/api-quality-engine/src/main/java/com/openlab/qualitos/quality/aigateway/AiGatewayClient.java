@@ -287,6 +287,46 @@ public class AiGatewayClient {
     }
 
     /**
+     * Relaie une demande d'explication d'anomalie vers {@code ai-service} (§12.3 :
+     * Kernel SHAP attribuant le score d'Isolation Forest aux features, NumPy). Renvoie la
+     * réponse JSON brute (mappée par la couche application). Tenant via {@link TenantContext}
+     * (JWT), jamais du body. Même garde-fou ({@link AiGuard}, op « anomaly-explain »).
+     *
+     * @param samples matrice échantillons × features
+     * @param index   index (0-based) de l'échantillon à expliquer
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> explainAnomaly(List<List<Double>> samples, Integer index) {
+        if (!TenantContext.hasTenant()) {
+            throw new MissingTenantContextException();
+        }
+        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        Map<String, Object> body = new HashMap<>();
+        body.put("samples", samples);
+        body.put("index", index);
+        AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "anomaly-explain",
+                samples == null ? 0 : samples.size());
+        guard.check(ctx);
+        try {
+            Map<String, Object> resp = client.post()
+                    .uri("/v1/ai/anomaly/explain")
+                    .header("X-Dev-Claims", devClaims)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(body)
+                    .retrieve()
+                    .body(Map.class);
+            if (resp == null) {
+                throw new AiGatewayException("Réponse vide de la passerelle IA (anomaly-explain)");
+            }
+            guard.recordSuccess(ctx.tenantId());
+            return resp;
+        } catch (RestClientException e) {
+            guard.recordFailure(ctx.tenantId());
+            throw new AiGatewayException("Passerelle IA indisponible (anomaly-explain) : " + e.getMessage(), e);
+        }
+    }
+
+    /**
      * Relaie une liste de textes de non-conformités vers le clustering de {@code ai-service}
      * (§4.3, §12.1 : TF-IDF + DBSCAN densité, NumPy). Renvoie la réponse JSON brute (mappée
      * par la couche application). Le tenant provient du {@link TenantContext} (JWT), jamais du
