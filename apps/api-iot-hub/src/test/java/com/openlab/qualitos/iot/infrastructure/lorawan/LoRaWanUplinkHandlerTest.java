@@ -267,6 +267,14 @@ class LoRaWanUplinkHandlerTest {
     }
     @Override public void touchLastSeen(UUID t, UUID id, Instant when) { }
     @Override public long countByTenant(UUID t) { return findAllByTenant(t).size(); }
+    @Override public void updateTwin(UUID t, UUID id, Map<String, Object> twin) {
+      Device d = byId.get(id);
+      if (d != null && d.tenantId().equals(t)) {
+        byId.put(id, new Device(d.id(), d.tenantId(), d.code(), d.name(), d.type(), d.protocol(),
+            d.enterprise(), d.site(), d.area(), d.workCenter(), d.equipment(),
+            d.certFingerprintSha256(), twin, d.provisionedAt(), d.lastSeenAt()));
+      }
+    }
   }
 
   static class RecordingTelemetryRepo implements TelemetryRepository {
