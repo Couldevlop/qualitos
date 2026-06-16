@@ -3,7 +3,12 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { AnomalyDetectRequest, AnomalyDetectResponse } from './anomaly.types';
+import {
+  AnomalyDetectRequest,
+  AnomalyDetectResponse,
+  AnomalyExplainRequest,
+  AnomalyExplainResponse
+} from './anomaly.types';
 
 /**
  * Service de détection d'anomalies (§12.1) : relaie la matrice vers l'engine
@@ -21,5 +26,11 @@ export class AnomalyService {
 
   detect(req: AnomalyDetectRequest): Observable<AnomalyDetectResponse> {
     return this.http.post<AnomalyDetectResponse>(this.endpoint, req);
+  }
+
+  /** Explique le score d'anomalie d'un échantillon (Kernel SHAP). */
+  explain(req: AnomalyExplainRequest): Observable<AnomalyExplainResponse> {
+    return this.http.post<AnomalyExplainResponse>(
+      this.endpoint.replace('/detect', '/explain'), req);
   }
 }

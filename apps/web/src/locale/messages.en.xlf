@@ -2472,6 +2472,38 @@
         <source>Feature</source>
         <target state="translated">Feature</target>
       </trans-unit>
+      <trans-unit id="anomaly.detect.col-explain" datatype="html">
+        <source>Explication</source>
+        <target state="translated">Explanation</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-btn" datatype="html">
+        <source>Pourquoi ?</source>
+        <target state="translated">Why?</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-panel" datatype="html">
+        <source>Explication (SHAP)</source>
+        <target state="translated">Explanation (SHAP)</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-loading" datatype="html">
+        <source>Calcul des contributions…</source>
+        <target state="translated">Computing contributions…</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-intro" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">Sample</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-score" datatype="html">
+        <source>score</source>
+        <target state="translated">score</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-base" datatype="html">
+        <source>base</source>
+        <target state="translated">base</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-legend" datatype="html">
+        <source>Barres rouges = features qui rendent l'échantillon anormal ; bleues = vers la normale.</source>
+        <target state="translated">Red bars = features making the sample anomalous; blue = toward normal.</target>
+      </trans-unit>
       <trans-unit id="anomaly.detect.err-no-data" datatype="html">
         <source>Saisissez au moins un échantillon (une ligne de nombres).</source>
         <target state="translated">Enter at least one sample (a row of numbers).</target>

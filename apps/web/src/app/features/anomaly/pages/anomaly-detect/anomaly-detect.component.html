@@ -110,6 +110,7 @@
           <th i18n="@@anomaly.detect.col-sample">Échantillon</th>
           <th i18n="@@anomaly.detect.col-score">Score</th>
           <th i18n="@@anomaly.detect.col-top-feature">Feature dominante</th>
+          <th i18n="@@anomaly.detect.col-explain">Explication</th>
         </tr>
       </thead>
       <tbody>
@@ -117,8 +118,36 @@
           <td class="nowrap"><span class="pt-chip">#{{ p.index + 1 }}</span></td>
           <td class="score">{{ p.score | number:'1.0-3' }}</td>
           <td>{{ topFeatureLabel(p) }}</td>
+          <td>
+            <button mat-button color="primary" type="button" (click)="explain(p.index)"
+                    [disabled]="explainingIndex === p.index && !explanation">
+              <mat-icon>psychology</mat-icon>
+              <span i18n="@@anomaly.detect.explain-btn">Pourquoi ?</span>
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
+  </qos-panel>
+
+  <!-- Explication SHAP de l'échantillon sélectionné -->
+  <qos-panel i18n-title="@@anomaly.detect.explain-panel" title="Explication (SHAP)" icon="psychology"
+             *ngIf="explainingIndex !== null">
+    <p class="explain-loading" *ngIf="!explanation" i18n="@@anomaly.detect.explain-loading">
+      Calcul des contributions…
+    </p>
+    <ng-container *ngIf="explanation as e">
+      <p class="explain-head">
+        <span i18n="@@anomaly.detect.explain-intro">Échantillon</span>
+        <strong>#{{ e.index + 1 }}</strong> —
+        <span i18n="@@anomaly.detect.explain-score">score</span>
+        <strong>{{ e.score | number:'1.0-3' }}</strong>
+        (<span i18n="@@anomaly.detect.explain-base">base</span> {{ e.baseValue | number:'1.0-3' }}).
+        <span i18n="@@anomaly.detect.explain-legend">
+          Barres rouges = features qui rendent l'échantillon anormal ; bleues = vers la normale.
+        </span>
+      </p>
+      <qos-echart *ngIf="explainChartOption" [option]="explainChartOption" [height]="280"></qos-echart>
+    </ng-container>
   </qos-panel>
 </div>

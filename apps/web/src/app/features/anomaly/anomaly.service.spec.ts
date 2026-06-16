@@ -65,4 +65,20 @@ describe('AnomalyService', () => {
     req.flush('unavailable', { status: 503, statusText: 'Service Unavailable' });
     expect(err.status).toBe(503);
   });
+
+  it('POST l\'explication vers /ai/anomaly/explain avec l\'index', () => {
+    const explainUrl = `${environment.apiBaseUrl}/api/v1/ai/anomaly/explain`;
+    let res: any;
+    service.explain({ samples: [[1, 2], [50, -50]], index: 1 }).subscribe(r => (res = r));
+    const req = httpMock.expectOne(explainUrl);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body.index).toBe(1);
+    expect(req.request.body.tenantId).toBeUndefined();
+    req.flush({
+      index: 1, method: 'isolation_forest', score: 0.82, baseValue: 0.5,
+      contributions: [{ feature: 0, value: 50, contribution: 0.2 }]
+    });
+    expect(res.method).toBe('isolation_forest');
+    expect(res.contributions[0].contribution).toBe(0.2);
+  });
 });

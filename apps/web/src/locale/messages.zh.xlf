@@ -2472,6 +2472,38 @@
         <source>Feature</source>
         <target state="translated">特征</target>
       </trans-unit>
+      <trans-unit id="anomaly.detect.col-explain" datatype="html">
+        <source>Explication</source>
+        <target state="translated">解释</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-btn" datatype="html">
+        <source>Pourquoi ?</source>
+        <target state="translated">为什么？</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-panel" datatype="html">
+        <source>Explication (SHAP)</source>
+        <target state="translated">解释（SHAP）</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-loading" datatype="html">
+        <source>Calcul des contributions…</source>
+        <target state="translated">正在计算贡献度…</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-intro" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">样本</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-score" datatype="html">
+        <source>score</source>
+        <target state="translated">分数</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-base" datatype="html">
+        <source>base</source>
+        <target state="translated">基准</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.explain-legend" datatype="html">
+        <source>Barres rouges = features qui rendent l'échantillon anormal ; bleues = vers la normale.</source>
+        <target state="translated">红色条 = 使样本异常的特征；蓝色 = 趋向正常。</target>
+      </trans-unit>
       <trans-unit id="anomaly.detect.err-no-data" datatype="html">
         <source>Saisissez au moins un échantillon (une ligne de nombres).</source>
         <target state="translated">请至少输入一个样本（一行数字）。</target>

@@ -28,6 +28,7 @@ supersession).
 | [0021](./0021-vision-bearer-service-token.md) | Jeton de service Bearer client_credentials engine → ai-vision-5s (tenant via X-Tenant-Id, azp de confiance) | Accepté |
 | [0022](./0022-unsupervised-anomaly-detection.md) | Détection d'anomalies non-supervisée multivariée (Isolation Forest + reconstruction ACP) | Accepté |
 | [0023](./0023-kpi-forecasting-holt-winters.md) | Prévision KPI par lissage exponentiel Holt-Winters (NumPy pur) | Accepté |
+| [0024](./0024-shap-explainability.md) | Explicabilité par Kernel SHAP (NumPy pur) — anomalies | Accepté |
 
 ## Statuts possibles
 

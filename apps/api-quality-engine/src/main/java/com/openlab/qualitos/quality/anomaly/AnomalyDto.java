@@ -2,7 +2,9 @@ package com.openlab.qualitos.quality.anomaly;
 
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
@@ -52,5 +54,30 @@ public final class AnomalyDto {
             int anomalyCount,
             boolean hasAnomalies,
             List<Point> points
+    ) {}
+
+    /**
+     * Requête d'explication (§12.3) : matrice + index de l'échantillon dont on veut
+     * l'attribution du score d'anomalie par feature (Kernel SHAP côté ai-service).
+     */
+    public record ExplainRequest(
+            @NotEmpty @Size(max = 50000) List<List<Double>> samples,
+            @NotNull @Min(0) Integer index
+    ) {}
+
+    /** Contribution Shapley signée d'une feature (positive = pousse vers l'anormalité). */
+    public record Contribution(
+            int feature,
+            double value,
+            double contribution
+    ) {}
+
+    /** Explication : score, valeur de base (E[score] fond), contributions par feature. */
+    public record ExplainResponse(
+            int index,
+            String method,
+            double score,
+            double baseValue,
+            List<Contribution> contributions
     ) {}
 }

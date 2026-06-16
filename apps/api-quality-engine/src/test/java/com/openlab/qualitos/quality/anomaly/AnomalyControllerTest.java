@@ -75,4 +75,31 @@ class AnomalyControllerTest {
                                 "samples", List.of(List.of(1.0, 2.0))))))
                 .andExpect(status().isBadGateway());
     }
+
+    @Test @WithMockUser
+    void explain_returns200_withContributions() throws Exception {
+        when(anomalyService.explain(any())).thenReturn(new AnomalyDto.ExplainResponse(
+                2, "isolation_forest", 0.82, 0.50,
+                List.of(new AnomalyDto.Contribution(0, 50.0, 0.20),
+                        new AnomalyDto.Contribution(1, -50.0, 0.12))));
+
+        mockMvc.perform(post("/api/v1/ai/anomaly/explain").with(csrf())
+                        .contentType("application/json")
+                        .content(om.writeValueAsString(Map.of(
+                                "samples", List.of(List.of(1.0, 2.0), List.of(50.0, -50.0)),
+                                "index", 1))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.method").value("isolation_forest"))
+                .andExpect(jsonPath("$.score").value(0.82))
+                .andExpect(jsonPath("$.contributions[0].contribution").value(0.20));
+    }
+
+    @Test @WithMockUser
+    void explain_missingIndex_returns400() throws Exception {
+        mockMvc.perform(post("/api/v1/ai/anomaly/explain").with(csrf())
+                        .contentType("application/json")
+                        .content(om.writeValueAsString(Map.of(
+                                "samples", List.of(List.of(1.0, 2.0), List.of(3.0, 4.0))))))
+                .andExpect(status().isBadRequest());
+    }
 }

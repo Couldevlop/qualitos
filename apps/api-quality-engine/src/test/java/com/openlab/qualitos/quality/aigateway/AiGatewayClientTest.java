@@ -271,4 +271,30 @@ class AiGatewayClientTest {
         assertThatThrownBy(() -> c.clusterNc(List.of("a b", "a c"), null, null))
                 .isInstanceOf(MissingTenantContextException.class);
     }
+
+    @Test
+    void explainAnomaly_success_returnsRawMap() {
+        AiGatewayClient c = clientReturning(200,
+                "{\"index\":2,\"method\":\"isolation_forest\",\"score\":0.82,\"base_value\":0.5,"
+                        + "\"contributions\":[{\"feature\":0,\"value\":50.0,\"contribution\":0.2}]}");
+        Map<String, Object> resp = c.explainAnomaly(
+                List.of(List.of(1.0, 2.0), List.of(50.0, -50.0)), 1);
+        assertThat(resp.get("method")).isEqualTo("isolation_forest");
+        assertThat(resp).containsKey("contributions");
+    }
+
+    @Test
+    void explainAnomaly_serverError_throws() {
+        AiGatewayClient c = clientReturning(500, "boom");
+        assertThatThrownBy(() -> c.explainAnomaly(List.of(List.of(1.0, 2.0)), 0))
+                .isInstanceOf(AiGatewayException.class);
+    }
+
+    @Test
+    void explainAnomaly_missingTenant_throws() {
+        TenantContext.clear();
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
+        assertThatThrownBy(() -> c.explainAnomaly(List.of(List.of(1.0, 2.0)), 0))
+                .isInstanceOf(MissingTenantContextException.class);
+    }
 }

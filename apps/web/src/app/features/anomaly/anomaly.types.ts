@@ -38,3 +38,23 @@ export interface AnomalyDetectResponse {
   hasAnomalies: boolean;
   points: AnomalyPoint[];
 }
+
+export interface AnomalyExplainRequest {
+  samples: number[][];
+  index: number;
+}
+
+/** Attribution Shapley signée d'une feature (positive = pousse vers l'anormalité). */
+export interface FeatureContribution {
+  feature: number;
+  value: number;
+  contribution: number;
+}
+
+export interface AnomalyExplainResponse {
+  index: number;
+  method: string;
+  score: number;
+  baseValue: number;       // E[score] sur l'arrière-plan
+  contributions: FeatureContribution[];
+}
