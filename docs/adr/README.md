@@ -30,6 +30,7 @@ supersession).
 | [0023](./0023-kpi-forecasting-holt-winters.md) | Prévision KPI par lissage exponentiel Holt-Winters (NumPy pur) | Accepté |
 | [0024](./0024-shap-explainability.md) | Explicabilité par Kernel SHAP (NumPy pur) — anomalies | Accepté |
 | [0025](./0025-complaint-nlp-lexical.md) | NLP réclamations : sentiment lexical + classification (sans dépendance lourde) | Accepté |
+| [0026](./0026-iot-lorawan-connector.md) | Connecteur d'ingestion LoRaWAN (TTN/ChirpStack), webhook décodé, tenant fail-closed | Accepté |
 
 ## Statuts possibles
 
