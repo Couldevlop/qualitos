@@ -2,7 +2,9 @@ package com.openlab.qualitos.iot.presentation.rest;
 
 import com.openlab.qualitos.iot.application.usecase.IngestTelemetryUseCase;
 import com.openlab.qualitos.iot.application.usecase.RegisterDeviceUseCase;
+import com.openlab.qualitos.iot.application.usecase.RollupTelemetryUseCase;
 import com.openlab.qualitos.iot.domain.model.Device;
+import com.openlab.qualitos.iot.domain.model.RollupBucket;
 import com.openlab.qualitos.iot.domain.model.TelemetryPoint;
 import com.openlab.qualitos.iot.domain.port.DeviceRepository;
 import com.openlab.qualitos.iot.domain.service.DeviceShadow;
@@ -30,14 +32,17 @@ public class DeviceController {
 
   private final RegisterDeviceUseCase registerUseCase;
   private final IngestTelemetryUseCase ingestUseCase;
+  private final RollupTelemetryUseCase rollupUseCase;
   private final DeviceRepository deviceRepository;
 
   public DeviceController(
       RegisterDeviceUseCase registerUseCase,
       IngestTelemetryUseCase ingestUseCase,
+      RollupTelemetryUseCase rollupUseCase,
       DeviceRepository deviceRepository) {
     this.registerUseCase = registerUseCase;
     this.ingestUseCase = ingestUseCase;
+    this.rollupUseCase = rollupUseCase;
     this.deviceRepository = deviceRepository;
   }
 
@@ -124,5 +129,26 @@ public class DeviceController {
         .toList();
     return ingestUseCase.ingestBatch(tenantId, req.deviceId(), points).stream()
         .map(TelemetryDtos.TelemetryResponse::from).toList();
+  }
+
+  /**
+   * Rollups time-series d'un équipement (CLAUDE.md §9.3, §6.4) : avg/min/max/count par
+   * tranche ({@code bucket}=hour|day|minute) pour une {@code metric} donnée.
+   *
+   * <p>OWASP A01 : tenant dérivé du JWT ({@link TenantContext}) ; le device est résolu
+   * tenant-scopé (404 si autre tenant). Un {@code bucket} hors allow-list → 400.
+   */
+  @GetMapping("/devices/{id}/telemetry/rollup")
+  @PreAuthorize("isAuthenticated()")
+  public List<TelemetryDtos.RollupBucketResponse> rollup(
+      @PathVariable UUID id,
+      @RequestParam String metric,
+      @RequestParam(defaultValue = "hour") String bucket,
+      @RequestParam(required = false) Integer limit) {
+    UUID tenantId = TenantContext.requireTenantId();
+    RollupBucket parsed = RollupBucket.fromString(bucket); // bad value → IllegalArgument → 400
+    return rollupUseCase.rollup(tenantId, id, metric, parsed, limit).stream()
+        .map(TelemetryDtos.RollupBucketResponse::from)
+        .toList();
   }
 }

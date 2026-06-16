@@ -13780,6 +13780,186 @@ Inde (centre de service)</source>
         <source>Retrait impossible.</source>
         <target state="translated">تعذّر السحب.</target>
       </trans-unit>
+      <trans-unit id="nav.mon-apprentissage" datatype="html">
+        <source>Mon apprentissage</source>
+        <target state="translated">تعلّمي</target>
+      </trans-unit>
+      <trans-unit id="learning.title" datatype="html">
+        <source>Mon apprentissage</source>
+        <target state="translated">تعلّمي</target>
+      </trans-unit>
+      <trans-unit id="learning.subtitle" datatype="html">
+        <source>Votre progression qualité — ceinture, points et badges (CLAUDE.md §19.3).</source>
+        <target state="translated">تقدّمك في الجودة — الحزام والنقاط والشارات (CLAUDE.md §19.3).</target>
+      </trans-unit>
+      <trans-unit id="learning.error-loading" datatype="html">
+        <source>Erreur de chargement de votre progression.</source>
+        <target state="translated">تعذّر تحميل تقدّمك.</target>
+      </trans-unit>
+      <trans-unit id="learning.current-belt" datatype="html">
+        <source>Ceinture actuelle</source>
+        <target state="translated">الحزام الحالي</target>
+      </trans-unit>
+      <trans-unit id="learning.points-to-next" datatype="html">
+        <source>Encore</source>
+        <target state="translated">لا يزال</target>
+      </trans-unit>
+      <trans-unit id="learning.points-to-next-suffix" datatype="html">
+        <source>points pour la ceinture suivante.</source>
+        <target state="translated">نقطة للحزام التالي.</target>
+      </trans-unit>
+      <trans-unit id="learning.max-belt" datatype="html">
+        <source>Palier maximal atteint — bravo !</source>
+        <target state="translated">بلغت أعلى مستوى — تهانينا!</target>
+      </trans-unit>
+      <trans-unit id="learning.points" datatype="html">
+        <source>Points</source>
+        <target state="translated">النقاط</target>
+      </trans-unit>
+      <trans-unit id="learning.completed" datatype="html">
+        <source>Parcours terminés</source>
+        <target state="translated">المسارات المكتملة</target>
+      </trans-unit>
+      <trans-unit id="learning.best-score" datatype="html">
+        <source>Meilleur score</source>
+        <target state="translated">أفضل نتيجة</target>
+      </trans-unit>
+      <trans-unit id="learning.badges" datatype="html">
+        <source>Badges obtenus</source>
+        <target state="translated">الشارات المكتسبة</target>
+      </trans-unit>
+      <trans-unit id="learning.no-badges" datatype="html">
+        <source>Aucun badge pour l'instant — terminez un parcours pour démarrer.</source>
+        <target state="translated">لا توجد شارات بعد — أكمل مساراً للبدء.</target>
+      </trans-unit>
+      <trans-unit id="learning.active-paths" datatype="html">
+        <source>Parcours disponibles</source>
+        <target state="translated">المسارات المتاحة</target>
+      </trans-unit>
+      <trans-unit id="learning.col-duration" datatype="html">
+        <source>Durée</source>
+        <target state="translated">المدّة</target>
+      </trans-unit>
+      <trans-unit id="learning.mark-complete" datatype="html">
+        <source>Marquer comme terminé</source>
+        <target state="translated">وضع علامة كمكتمل</target>
+      </trans-unit>
+      <trans-unit id="learning.completed-toast" datatype="html">
+        <source>Parcours marqué comme terminé. Progression mise à jour.</source>
+        <target state="translated">تمّ وضع علامة على المسار كمكتمل. تمّ تحديث التقدّم.</target>
+      </trans-unit>
+      <trans-unit id="learning.complete-error" datatype="html">
+        <source>Échec de l'enregistrement.</source>
+        <target state="translated">فشل الحفظ.</target>
+      </trans-unit>
+      <trans-unit id="nav.tv-mode" datatype="html">
+        <source>Mode TV / Salle qualité</source>
+        <target state="translated">وضع التلفزيون / قاعة الجودة</target>
+      </trans-unit>
+      <trans-unit id="tv.brand" datatype="html">
+        <source>QualitOS · Salle qualité</source>
+        <target state="translated">QualitOS · قاعة الجودة</target>
+      </trans-unit>
+      <trans-unit id="tv.toolbar.aria" datatype="html">
+        <source>Commandes Mode TV</source>
+        <target state="translated">عناصر تحكم وضع التلفزيون</target>
+      </trans-unit>
+      <trans-unit id="tv.interval.label" datatype="html">
+        <source>Intervalle</source>
+        <target state="translated">الفاصل</target>
+      </trans-unit>
+      <trans-unit id="tv.interval.aria" datatype="html">
+        <source>Intervalle de rotation</source>
+        <target state="translated">فاصل التدوير</target>
+      </trans-unit>
+      <trans-unit id="tv.progress.aria" datatype="html">
+        <source>Avancement de la slide</source>
+        <target state="translated">تقدّم الشريحة</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.play" datatype="html">
+        <source>Reprendre la rotation</source>
+        <target state="translated">استئناف التدوير</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.pause" datatype="html">
+        <source>Mettre en pause</source>
+        <target state="translated">إيقاف مؤقت</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.prev" datatype="html">
+        <source>Slide précédente</source>
+        <target state="translated">الشريحة السابقة</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.next" datatype="html">
+        <source>Slide suivante</source>
+        <target state="translated">الشريحة التالية</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.fullscreen" datatype="html">
+        <source>Basculer en plein écran</source>
+        <target state="translated">تبديل ملء الشاشة</target>
+      </trans-unit>
+      <trans-unit id="tv.loading" datatype="html">
+        <source>Chargement des indicateurs…</source>
+        <target state="translated">جارٍ تحميل المؤشرات…</target>
+      </trans-unit>
+      <trans-unit id="tv.error" datatype="html">
+        <source>Impossible de charger les indicateurs. Réessayez.</source>
+        <target state="translated">تعذّر تحميل المؤشرات. أعد المحاولة.</target>
+      </trans-unit>
+      <trans-unit id="tv.retry" datatype="html">
+        <source>Réessayer</source>
+        <target state="translated">إعادة المحاولة</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.kpis.title" datatype="html">
+        <source>Indicateurs stratégiques</source>
+        <target state="translated">المؤشرات الاستراتيجية</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.kpis.subtitle" datatype="html">
+        <source>Performance qualité — cible vs réalisé</source>
+        <target state="translated">أداء الجودة — الهدف مقابل المحقّق</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.risks.title" datatype="html">
+        <source>Risques critiques</source>
+        <target state="translated">المخاطر الحرجة</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.risks.subtitle" datatype="html">
+        <source>Actions prioritaires à traiter</source>
+        <target state="translated">إجراءات ذات أولوية للمعالجة</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.predictions.title" datatype="html">
+        <source>Prévisions IA</source>
+        <target state="translated">تنبؤات الذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.predictions.subtitle" datatype="html">
+        <source>Anticipations explicables sur les prochaines semaines</source>
+        <target state="translated">توقعات قابلة للتفسير للأسابيع المقبلة</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.trend.title" datatype="html">
+        <source>Tendance qualité — 12 mois</source>
+        <target state="translated">اتجاه الجودة — 12 شهرًا</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.trend.subtitle" datatype="html">
+        <source>Évolution de la performance globale</source>
+        <target state="translated">تطوّر الأداء الإجمالي</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.empty.title" datatype="html">
+        <source>Aucune donnée à afficher</source>
+        <target state="translated">لا توجد بيانات للعرض</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.empty.subtitle" datatype="html">
+        <source>Les indicateurs apparaîtront ici dès qu'ils seront disponibles.</source>
+        <target state="translated">ستظهر المؤشرات هنا بمجرد توفّرها.</target>
+      </trans-unit>
+      <trans-unit id="tv.trend.series" datatype="html">
+        <source>Qualité globale</source>
+        <target state="translated">الجودة الإجمالية</target>
+      </trans-unit>
+      <trans-unit id="tv.trend.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">الهدف</target>
+      </trans-unit>
+      <trans-unit id="tv.card.confidence" datatype="html">
+        <source>Confiance <x id="INTERPOLATION"/> %</source>
+        <target state="translated">الثقة <x id="INTERPOLATION"/> %</target>
+      </trans-unit>
       <trans-unit id="workflow.list.title" datatype="html">
         <source>Designer de workflow</source>
         <target state="translated">مصمّم سير العمل</target>

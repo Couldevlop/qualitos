@@ -165,6 +165,10 @@ class IngestTelemetryUseCaseTest {
       return all.stream().filter(p -> p.tenantId().equals(t) && p.deviceId().equals(d)).toList();
     }
     @Override public long countByTenant(UUID t) { return all.stream().filter(p -> p.tenantId().equals(t)).count(); }
+    @Override public java.util.List<com.openlab.qualitos.iot.domain.model.TelemetryRollup> rollupByDevice(
+        UUID t, UUID d, String metric, com.openlab.qualitos.iot.domain.model.RollupBucket bucket, int limit) {
+      return java.util.List.of();
+    }
   }
 
   static class RecordingPublisher implements NonConformancePublisher {

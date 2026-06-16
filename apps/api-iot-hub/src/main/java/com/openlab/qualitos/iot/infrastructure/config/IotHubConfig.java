@@ -2,6 +2,7 @@ package com.openlab.qualitos.iot.infrastructure.config;
 
 import com.openlab.qualitos.iot.application.usecase.IngestTelemetryUseCase;
 import com.openlab.qualitos.iot.application.usecase.RegisterDeviceUseCase;
+import com.openlab.qualitos.iot.application.usecase.RollupTelemetryUseCase;
 import com.openlab.qualitos.iot.domain.port.DeviceRepository;
 import com.openlab.qualitos.iot.domain.port.NonConformancePublisher;
 import com.openlab.qualitos.iot.domain.port.TelemetryRepository;
@@ -34,6 +35,12 @@ public class IotHubConfig {
       StreamRuleEngine engine,
       NonConformancePublisher publisher) {
     return new IngestTelemetryUseCase(deviceRepository, telemetryRepository, engine, publisher);
+  }
+
+  @Bean
+  public RollupTelemetryUseCase rollupTelemetryUseCase(
+      DeviceRepository deviceRepository, TelemetryRepository telemetryRepository) {
+    return new RollupTelemetryUseCase(deviceRepository, telemetryRepository);
   }
 
   @Bean

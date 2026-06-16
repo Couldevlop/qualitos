@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -227,6 +228,71 @@ class DeviceControllerIntegrationTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.desired.setpoint").value(2.0))
         .andExpect(jsonPath("$.reported.temperature.value").value(8.7));  // reported untouched
+  }
+
+  @Test
+  void telemetryRollupAggregatesByHourBucket() throws Exception {
+    UUID tenant = UUID.randomUUID();
+    var reg = jwt().jwt(b -> b.claim("tenant_id", tenant.toString()))
+        .authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_TENANT_ADMIN"));
+
+    DeviceDtos.RegisterDeviceRequest body = new DeviceDtos.RegisterDeviceRequest(
+        "ROLLUP-1", "Sensor", DeviceType.SENSOR_TEMPERATURE, Protocol.MQTT,
+        null, null, null, null, null, null, null);
+    MvcResult result = mvc().perform(post("/api/v1/iot/devices").with(reg)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(body)))
+        .andExpect(status().isCreated()).andReturn();
+    UUID deviceId = objectMapper.readValue(
+        result.getResponse().getContentAsByteArray(), DeviceDtos.DeviceResponse.class).id();
+
+    // Deux points dans la tranche 10h (avg=6, min=4, max=8), un point dans la tranche 11h.
+    ingest(reg, deviceId, "temp", 4.0, "2026-06-12T10:05:00Z");
+    ingest(reg, deviceId, "temp", 8.0, "2026-06-12T10:55:00Z");
+    ingest(reg, deviceId, "temp", 5.0, "2026-06-12T11:30:00Z");
+    // Une autre métrique ne doit PAS polluer le rollup de "temp".
+    ingest(reg, deviceId, "pressure", 99.0, "2026-06-12T10:10:00Z");
+
+    mvc().perform(get("/api/v1/iot/devices/" + deviceId + "/telemetry/rollup")
+            .param("metric", "temp").param("bucket", "hour").with(reg))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(2))
+        // tri DESC : le bucket 11h en premier.
+        .andExpect(jsonPath("$[0].count").value(1))
+        .andExpect(jsonPath("$[0].avg").value(5.0))
+        .andExpect(jsonPath("$[1].count").value(2))
+        .andExpect(jsonPath("$[1].avg").value(6.0))
+        .andExpect(jsonPath("$[1].min").value(4.0))
+        .andExpect(jsonPath("$[1].max").value(8.0));
+  }
+
+  @Test
+  void rollupUnknownDeviceIs404() throws Exception {
+    UUID tenant = UUID.randomUUID();
+    mvc().perform(get("/api/v1/iot/devices/" + UUID.randomUUID() + "/telemetry/rollup")
+            .param("metric", "temp")
+            .with(jwt().jwt(b -> b.claim("tenant_id", tenant.toString()))))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void rollupBadBucketIs400() throws Exception {
+    UUID tenant = UUID.randomUUID();
+    mvc().perform(get("/api/v1/iot/devices/" + UUID.randomUUID() + "/telemetry/rollup")
+            .param("metric", "temp").param("bucket", "fortnight")
+            .with(jwt().jwt(b -> b.claim("tenant_id", tenant.toString()))))
+        .andExpect(status().isBadRequest());
+  }
+
+  private void ingest(
+      org.springframework.test.web.servlet.request.RequestPostProcessor reg,
+      UUID deviceId, String metric, double value, String recordedAtIso) throws Exception {
+    var ingestBody = new TelemetryDtos.IngestRequest(
+        deviceId, metric, value, "C", Instant.parse(recordedAtIso));
+    mvc().perform(post("/api/v1/iot/telemetry").with(reg)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(ingestBody)))
+        .andExpect(status().isAccepted());
   }
 
   @Test

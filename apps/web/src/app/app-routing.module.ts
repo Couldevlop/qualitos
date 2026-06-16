@@ -18,6 +18,11 @@ const routes: Routes = [
         loadChildren: () => import('./features/dashboard/dashboard.module').then(m => m.DashboardModule)
       },
       {
+        // Mode TV / Salle qualité (§7.3) — affichage mural rotatif des KPIs.
+        path: 'tv',
+        loadChildren: () => import('./features/tv-mode/tv-mode.module').then(m => m.TvModeModule)
+      },
+      {
         path: 'pdca',
         loadChildren: () => import('./features/pdca/pdca.module').then(m => m.PdcaModule)
       },
@@ -103,6 +108,10 @@ const routes: Routes = [
       {
         path: 'training',
         loadChildren: () => import('./features/training/training.module').then(m => m.TrainingModule)
+      },
+      {
+        path: 'learning',
+        loadChildren: () => import('./features/training/learning.module').then(m => m.LearningModule)
       },
       {
         path: 'changes',

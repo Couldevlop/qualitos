@@ -49,6 +49,7 @@ export class MainShellComponent implements OnInit {
         { label: $localize`:@@nav.tableau-de-bord:Tableau de bord`, route: '/dashboard',         icon: 'dashboard' },
         { label: $localize`:@@nav.accueil:Accueil`,         route: '/home',              icon: 'home' },
         { label: $localize`:@@nav.mes-dashboards:Mes dashboards`,  route: '/dashboard-builder', icon: 'dashboard_customize' },
+        { label: $localize`:@@nav.tv-mode:Mode TV / Salle qualité`, route: '/tv', icon: 'tv' },
         { label: $localize`:@@nav.indicateurs-kpi:Indicateurs (KPI)`, route: '/kpis',            icon: 'monitoring' },
         { label: $localize`:@@nav.assistant-ia:Assistant IA`,    route: '/nlq',               icon: 'forum' },
         { label: $localize`:@@nav.nlq-explore:Exploration NLQ`,  route: '/nlq-explore',       icon: 'query_stats' }
@@ -86,7 +87,8 @@ export class MainShellComponent implements OnInit {
       label: $localize`:@@nav.fournisseurs-competences:Fournisseurs & compétences`,
       items: [
         { label: $localize`:@@nav.fournisseurs:Fournisseurs`, route: '/suppliers', icon: 'local_shipping' },
-        { label: $localize`:@@nav.formation:Formation`,    route: '/training',  icon: 'school' }
+        { label: $localize`:@@nav.formation:Formation`,    route: '/training',  icon: 'school' },
+        { label: $localize`:@@nav.mon-apprentissage:Mon apprentissage`, route: '/learning', icon: 'military_tech' }
       ]
     },
     {

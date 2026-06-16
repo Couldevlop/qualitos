@@ -47,6 +47,13 @@ qualitos:
     fhir:
       enabled: ${IOT_FHIR_ENABLED:true}
       max-bundle-entries: ${IOT_FHIR_MAX_BUNDLE_ENTRIES:200}
+    # Ingestion Sparkplug B (CLAUDE.md §9.4 — modèle de données industriel sur MQTT).
+    # Désactivé par défaut (comme MQTT) : aucune surface tant que le flag n'est pas
+    # activé. La passerelle Edge pousse un payload NDATA/DDATA déjà décodé en JSON sur
+    # POST /api/v1/iot/sparkplug. Le décodage protobuf brut (Eclipse Tahu) est délégué.
+    sparkplug:
+      enabled: ${IOT_SPARKPLUG_ENABLED:false}
+      max-metrics: ${IOT_SPARKPLUG_MAX_METRICS:500}
     quality-engine:
       base-url: ${QUALITY_ENGINE_BASE_URL:http://api-quality-engine:8082}
       # OWASP A10 SSRF: egress allow-list, comma-separated hosts
