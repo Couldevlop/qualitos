@@ -12,6 +12,7 @@ from typing import Any
 from application.usecase import (
     AnomalyDetectUseCase,
     AnomalyExplainUseCase,
+    ComplaintAnalyzeUseCase,
     CompleteTextUseCase,
     FederatedTrainRoundUseCase,
     KpiForecastUseCase,
@@ -144,6 +145,10 @@ class Container:
     def anomaly_explain(self) -> AnomalyExplainUseCase:
         # Calcul pur (Kernel SHAP sur la forêt d'isolation) : aucun adaptateur externe.
         return AnomalyExplainUseCase()
+
+    def complaint_analyze(self) -> ComplaintAnalyzeUseCase:
+        # Calcul pur (sentiment lexical + classification) : aucun adaptateur externe.
+        return ComplaintAnalyzeUseCase()
 
     def anomaly_detect(self) -> AnomalyDetectUseCase:
         # Calcul pur NumPy (Isolation Forest / reconstruction ACP), aucun adaptateur.

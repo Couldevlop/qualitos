@@ -31,7 +31,7 @@ Pondéré par l'importance des axes de la vision CLAUDE.md.
 | Sécurité (§11) | ~80 % | DAST/pentest, durcissement prod |
 | Prod-readiness (§14) | ~80 % | chaos/perf |
 | Frontend (§15) | ~85 % | couverture tests composants |
-| **IA (§12)** | **~65 %** | SHAP/LIME, NLP (BERT/Whisper), clustering HDBSCAN, vision 5S (modèle réel), LSTM/Prophet |
+| **IA (§12)** | **~80 %** | reste : BERT/Whisper pleins (GPU), vision 5S (modèle entraîné), LSTM/Prophet, HDBSCAN — anomalies/forecast/clustering DBSCAN/SHAP/NLP lexical livrés |
 | **IoT (§9)** | **~50 %** | LoRaWAN/Sparkplug, Digital Twin réel, inférence Edge, TimescaleDB actif |
 | **Dashboards (§7)** | **~55 %** | builder drag&drop, NLQ→graphe, time-travel, mode TV |
 | **Doc & formation (§19)** | **~35 %** | Wiki utilisateur, LMS/gamification |
@@ -47,7 +47,8 @@ Pondéré par l'importance des axes de la vision CLAUDE.md.
 | Scoring fournisseur (logistique pondéré) | RÉEL |
 | Clustering NC | placeholder TF-IDF (→ cible HDBSCAN) |
 | Explicabilité SHAP (Kernel SHAP) | RÉEL (ADR 0024) |
-| NLP audits / sentiment (BERT/Whisper) | ABSENT |
+| NLP réclamations (sentiment + classification, lexical) | RÉEL (ADR 0025) |
+| NLP plein BERT / transcription Whisper | ABSENT (lot GPU) |
 | Vision 5S (YOLOv8) | backend ONNX réel, **modèle non fourni** |
 | Federated learning | scaffold |
 

@@ -297,4 +297,37 @@ class AiGatewayClientTest {
         assertThatThrownBy(() -> c.explainAnomaly(List.of(List.of(1.0, 2.0)), 0))
                 .isInstanceOf(MissingTenantContextException.class);
     }
+
+    @Test
+    void analyzeComplaints_success_returnsRawMap() {
+        AiGatewayClient c = clientReturning(200,
+                "{\"n\":1,\"critical_count\":1,\"insights\":[{\"index\":0,\"category\":\"securite\","
+                        + "\"critical\":true}]}");
+        Map<String, Object> resp = c.analyzeComplaints(List.of("dangereux rappel urgent"), null);
+        assertThat(resp.get("critical_count")).isEqualTo(1);
+        assertThat(resp).containsKey("insights");
+    }
+
+    @Test
+    void analyzeComplaints_passesCategories() {
+        AiGatewayClient c = clientReturning(200, "{\"n\":1,\"insights\":[]}");
+        Map<String, Object> resp = c.analyzeComplaints(
+                List.of("chambre sale"), java.util.Map.of("hygiene", List.of("sale")));
+        assertThat(resp).containsKey("insights");
+    }
+
+    @Test
+    void analyzeComplaints_serverError_throws() {
+        AiGatewayClient c = clientReturning(500, "boom");
+        assertThatThrownBy(() -> c.analyzeComplaints(List.of("test"), null))
+                .isInstanceOf(AiGatewayException.class);
+    }
+
+    @Test
+    void analyzeComplaints_missingTenant_throws() {
+        TenantContext.clear();
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
+        assertThatThrownBy(() -> c.analyzeComplaints(List.of("test"), null))
+                .isInstanceOf(MissingTenantContextException.class);
+    }
 }

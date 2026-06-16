@@ -6,10 +6,12 @@ from .federated_train_round import FederatedTrainRoundUseCase
 from .predict import KpiForecastUseCase, NcClusterUseCase, SupplierRiskUseCase
 from .spc_detect import SpcDetectUseCase
 from .anomaly_detect import AnomalyDetectUseCase, AnomalyExplainUseCase
+from .complaint_analyze import ComplaintAnalyzeUseCase
 
 __all__ = [
     "AnomalyDetectUseCase",
     "AnomalyExplainUseCase",
+    "ComplaintAnalyzeUseCase",
     "KpiForecastUseCase",
     "NcClusterUseCase",
     "SupplierRiskUseCase",
