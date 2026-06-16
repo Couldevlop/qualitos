@@ -8526,6 +8526,138 @@ historial de 12 meses</target>
         <source>Échec du clustering (HTTP <x id="status"/>).</source>
         <target state="translated">Fallo de la agrupación (HTTP <x id="status"/>).</target>
       </trans-unit>
+      <trans-unit id="nav.nlq-explore" datatype="html">
+        <source>Exploration NLQ</source>
+        <target state="translated">Explorador NLQ</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.title" datatype="html">
+        <source>Exploration en langage naturel</source>
+        <target state="translated">Exploración en lenguaje natural</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.subtitle" datatype="html">
+        <source>Posez une question sur vos données qualité — l'IA la traduit en requête sûre (text-to-SQL) et génère un graphique.</source>
+        <target state="translated">Haz una pregunta sobre tus datos de calidad: la IA la traduce en una consulta segura (text-to-SQL) y genera un gráfico.</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.question-panel" datatype="html">
+        <source>Question</source>
+        <target state="translated">Pregunta</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.question-label" datatype="html">
+        <source>Question en langage naturel</source>
+        <target state="translated">Pregunta en lenguaje natural</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.question-placeholder" datatype="html">
+        <source>Combien de CAPA par statut ?</source>
+        <target state="translated">¿Cuántas CAPA por estado?</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.run" datatype="html">
+        <source>Interroger</source>
+        <target state="translated">Consultar</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.running" datatype="html">
+        <source>Analyse…</source>
+        <target state="translated">Analizando…</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.examples-label" datatype="html">
+        <source>Exemples :</source>
+        <target state="translated">Ejemplos:</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.example-1" datatype="html">
+        <source>Combien de CAPA par statut ?</source>
+        <target state="translated">¿Cuántas CAPA por estado?</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.example-2" datatype="html">
+        <source>Nombre de diagrammes Ishikawa par statut</source>
+        <target state="translated">Número de diagramas de Ishikawa por estado</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.example-3" datatype="html">
+        <source>Combien de CAPA par criticité ?</source>
+        <target state="translated">¿Cuántas CAPA por criticidad?</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.example-4" datatype="html">
+        <source>Nombre de fournisseurs par statut</source>
+        <target state="translated">Número de proveedores por estado</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.card-rows" datatype="html">
+        <source>Lignes</source>
+        <target state="translated">Filas</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.card-confidence" datatype="html">
+        <source>Confiance</source>
+        <target state="translated">Confianza</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.tenant-filtered" datatype="html">
+        <source>Filtré par tenant</source>
+        <target state="translated">Filtrado por inquilino</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.tenant-unfiltered" datatype="html">
+        <source>Tenant non filtré</source>
+        <target state="translated">Inquilino no filtrado</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.chart-panel" datatype="html">
+        <source>Graphique</source>
+        <target state="translated">Gráfico</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.chart-type-label" datatype="html">
+        <source>Type :</source>
+        <target state="translated">Tipo:</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.chart-bar" datatype="html">
+        <source>Barres</source>
+        <target state="translated">Barras</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.chart-line" datatype="html">
+        <source>Lignes</source>
+        <target state="translated">Líneas</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.not-graphable" datatype="html">
+        <source>Ce résultat n'est pas représentable en graphique (aucune colonne numérique exploitable) — voir le tableau ci-dessous.</source>
+        <target state="translated">Este resultado no se puede graficar (ninguna columna numérica utilizable): vea la tabla a continuación.</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.table-panel" datatype="html">
+        <source>Résultats</source>
+        <target state="translated">Resultados</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.no-row" datatype="html">
+        <source>Aucune ligne ne correspond à cette question.</source>
+        <target state="translated">Ninguna fila coincide con esta pregunta.</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.sql-panel" datatype="html">
+        <source>Explicabilité</source>
+        <target state="translated">Explicabilidad</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.show-sql" datatype="html">
+        <source>Voir le SQL généré</source>
+        <target state="translated">Ver el SQL generado</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.hide-sql" datatype="html">
+        <source>Masquer le SQL</source>
+        <target state="translated">Ocultar el SQL</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.err-backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">Backend inaccesible (¿motor en 8082?).</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.err-untranslatable" datatype="html">
+        <source>La question n'a pas pu être traduite en requête sûre. Reformule-la plus simplement.</source>
+        <target state="translated">La pregunta no se pudo traducir en una consulta segura. Reformúlela de forma más sencilla.</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.err-too-large" datatype="html">
+        <source>Question trop volumineuse (garde-fou IA).</source>
+        <target state="translated">Pregunta demasiado extensa (protección de IA).</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.err-quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">Tasa/cuota de IA superada para este inquilino: inténtelo más tarde.</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.err-unavailable" datatype="html">
+        <source>L'assistant IA est momentanément indisponible (modèle en cours de chargement ?). Réessaie dans un instant.</source>
+        <target state="translated">El asistente de IA no está disponible por el momento (¿cargando el modelo?). Inténtelo de nuevo en breve.</target>
+      </trans-unit>
+      <trans-unit id="nlq-explore.err-generic" datatype="html">
+        <source>Une erreur est survenue lors du traitement de la question (HTTP <x id="status"/>).</source>
+        <target state="translated">Se produjo un error al procesar la pregunta (HTTP <x id="status"/>).</target>
+      </trans-unit>
       <trans-unit id="offline.queue.title" datatype="html">
         <source>File d'attente offline</source>
         <target state="translated">Cola sin conexión</target>
