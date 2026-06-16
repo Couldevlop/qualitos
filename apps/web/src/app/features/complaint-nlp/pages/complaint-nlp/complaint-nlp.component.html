@@ -1,0 +1,74 @@
+<div class="qos-page">
+  <qos-page-header
+    eyebrow="VoC · NLP"
+    i18n-title="@@complaintnlp.title"
+    title="Analyse des réclamations (NLP)"
+    i18n-subtitle="@@complaintnlp.subtitle"
+    subtitle="Sentiment, catégorie et criticité de chaque réclamation — détection des cas critiques par l'IA.">
+  </qos-page-header>
+
+  <div class="nlp-grid">
+    <qos-panel i18n-title="@@complaintnlp.input-panel" title="Réclamations" icon="forum" class="nlp-input">
+      <form [formGroup]="form" (ngSubmit)="run()">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label i18n="@@complaintnlp.texts-label">Une réclamation par ligne</mat-label>
+          <textarea matInput rows="8" formControlName="textsText"
+                    placeholder="Produit cassé à la réception&#10;Livraison en retard&#10;…"></textarea>
+        </mat-form-field>
+        <div class="actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="loading || form.invalid">
+            <mat-icon>sentiment_satisfied</mat-icon>
+            <span *ngIf="!loading" i18n="@@complaintnlp.run">Analyser</span>
+            <span *ngIf="loading" i18n="@@complaintnlp.running">Analyse…</span>
+          </button>
+          <button mat-button type="button" (click)="loadExample()" [disabled]="loading">
+            <mat-icon>science</mat-icon> <span i18n="@@complaintnlp.example">Exemple</span>
+          </button>
+        </div>
+      </form>
+      <p class="error" *ngIf="error" role="alert">{{ error }}</p>
+    </qos-panel>
+
+    <div class="kpi-col" *ngIf="result as r">
+      <qos-kpi-card
+        i18n-label="@@complaintnlp.card-critical"
+        label="Réclamations critiques"
+        [value]="r.criticalCount + ' / ' + r.n"
+        [state]="r.criticalCount ? 'bad' : 'good'"
+        [icon]="r.criticalCount ? 'priority_high' : 'verified'"
+        i18n-description="@@complaintnlp.card-critical-desc"
+        description="Sécurité, juridique ou sentiment très négatif">
+      </qos-kpi-card>
+    </div>
+  </div>
+
+  <qos-panel i18n-title="@@complaintnlp.results-panel" title="Analyse par réclamation" icon="rate_review" *ngIf="result as r">
+    <table class="nlp-table">
+      <thead>
+        <tr>
+          <th i18n="@@complaintnlp.col-complaint">Réclamation</th>
+          <th i18n="@@complaintnlp.col-sentiment">Sentiment</th>
+          <th i18n="@@complaintnlp.col-category">Catégorie</th>
+          <th i18n="@@complaintnlp.col-critical">Critique</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let i of sorted(r)" [class.row-critical]="i.critical">
+          <td class="text">{{ textOf(i) }}</td>
+          <td>
+            <span class="sent" [ngClass]="sentimentClass(i.sentimentLabel)">
+              {{ sentimentLabel(i.sentimentLabel) }}
+            </span>
+            <span class="score">{{ i.sentiment | number:'1.0-2' }}</span>
+          </td>
+          <td><span class="cat-chip">{{ i.category }}</span></td>
+          <td>
+            <mat-icon *ngIf="i.critical" class="crit-icon" aria-hidden="false"
+                      i18n-aria-label="@@complaintnlp.critical-aria" aria-label="Critique">priority_high</mat-icon>
+            <span *ngIf="!i.critical" class="dash">—</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </qos-panel>
+</div>

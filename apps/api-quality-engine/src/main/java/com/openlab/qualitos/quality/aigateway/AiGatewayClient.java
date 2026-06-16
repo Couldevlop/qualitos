@@ -372,6 +372,49 @@ public class AiGatewayClient {
         }
     }
 
+    /**
+     * Relaie un lot de réclamations vers l'analyse NLP de {@code ai-service} (§4.9, §12.1 :
+     * sentiment lexical + classification + criticité). Renvoie la réponse JSON brute (mappée
+     * par la couche application). Tenant via {@link TenantContext} (JWT), jamais du body. Même
+     * garde-fou ({@link AiGuard}, op « complaint-nlp »).
+     *
+     * @param texts      réclamations à analyser
+     * @param categories taxonomie optionnelle {catégorie: [termes-graines]} (null = défaut)
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> analyzeComplaints(
+            List<String> texts, Map<String, List<String>> categories) {
+        if (!TenantContext.hasTenant()) {
+            throw new MissingTenantContextException();
+        }
+        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        Map<String, Object> body = new HashMap<>();
+        body.put("texts", texts);
+        if (categories != null) {
+            body.put("categories", categories);
+        }
+        AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "complaint-nlp",
+                texts == null ? 0 : texts.size());
+        guard.check(ctx);
+        try {
+            Map<String, Object> resp = client.post()
+                    .uri("/v1/ai/complaints/analyze")
+                    .header("X-Dev-Claims", devClaims)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(body)
+                    .retrieve()
+                    .body(Map.class);
+            if (resp == null) {
+                throw new AiGatewayException("Réponse vide de la passerelle IA (complaint-nlp)");
+            }
+            guard.recordSuccess(ctx.tenantId());
+            return resp;
+        } catch (RestClientException e) {
+            guard.recordFailure(ctx.tenantId());
+            throw new AiGatewayException("Passerelle IA indisponible (complaint-nlp) : " + e.getMessage(), e);
+        }
+    }
+
     private String devClaims(UUID tenantId) {
         try {
             return objectMapper.writeValueAsString(Map.of(

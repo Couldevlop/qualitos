@@ -2548,6 +2548,114 @@
         <source>Échec de la détection (HTTP <x id="status"/>).</source>
         <target state="translated">فشل الكشف (HTTP <x id="status"/>).</target>
       </trans-unit>
+      <trans-unit id="nav.complaints-nlp" datatype="html">
+        <source>Réclamations IA</source>
+        <target state="translated">الشكاوى بالذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.title" datatype="html">
+        <source>Analyse des réclamations (NLP)</source>
+        <target state="translated">تحليل الشكاوى (NLP)</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.subtitle" datatype="html">
+        <source>Sentiment, catégorie et criticité de chaque réclamation — détection des cas critiques par l'IA.</source>
+        <target state="translated">المشاعر والفئة والأهمية لكل شكوى — يكشف الذكاء الاصطناعي الحالات الحرجة.</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.input-panel" datatype="html">
+        <source>Réclamations</source>
+        <target state="translated">الشكاوى</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.texts-label" datatype="html">
+        <source>Une réclamation par ligne</source>
+        <target state="translated">شكوى واحدة لكل سطر</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.run" datatype="html">
+        <source>Analyser</source>
+        <target state="translated">تحليل</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.running" datatype="html">
+        <source>Analyse…</source>
+        <target state="translated">جارٍ التحليل…</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.example" datatype="html">
+        <source>Exemple</source>
+        <target state="translated">مثال</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.card-critical" datatype="html">
+        <source>Réclamations critiques</source>
+        <target state="translated">الشكاوى الحرجة</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.card-critical-desc" datatype="html">
+        <source>Sécurité, juridique ou sentiment très négatif</source>
+        <target state="translated">السلامة أو القانون أو مشاعر سلبية جدًا</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.results-panel" datatype="html">
+        <source>Analyse par réclamation</source>
+        <target state="translated">تحليل لكل شكوى</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.col-complaint" datatype="html">
+        <source>Réclamation</source>
+        <target state="translated">الشكوى</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.col-sentiment" datatype="html">
+        <source>Sentiment</source>
+        <target state="translated">المشاعر</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.col-category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">الفئة</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.col-critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">حرجة</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.critical-aria" datatype="html">
+        <source>Critique</source>
+        <target state="translated">حرجة</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.sent-negative" datatype="html">
+        <source>Négatif</source>
+        <target state="translated">سلبي</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.sent-positive" datatype="html">
+        <source>Positif</source>
+        <target state="translated">إيجابي</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.sent-neutral" datatype="html">
+        <source>Neutre</source>
+        <target state="translated">محايد</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.err-min" datatype="html">
+        <source>Saisissez au moins une réclamation (une par ligne).</source>
+        <target state="translated">أدخل شكوى واحدة على الأقل (واحدة لكل سطر).</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.err-backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">تعذّر الوصول إلى الخادم (engine على 8082؟).</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.err-invalid" datatype="html">
+        <source>Requête invalide (1 à 2000 réclamations).</source>
+        <target state="translated">طلب غير صالح (من 1 إلى 2000 شكوى).</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.err-too-large" datatype="html">
+        <source>Lot trop volumineux (garde-fou IA).</source>
+        <target state="translated">الدفعة كبيرة جدًا (حاجز أمان الذكاء الاصطناعي).</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.err-quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">تم تجاوز معدّل/حصة الذكاء الاصطناعي لهذا المستأجر — أعد المحاولة لاحقًا.</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.err-gateway" datatype="html">
+        <source>Passerelle IA indisponible (ai-service injoignable).</source>
+        <target state="translated">بوابة الذكاء الاصطناعي غير متاحة (ai-service غير قابل للوصول).</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.err-unavailable" datatype="html">
+        <source>Service IA momentanément indisponible (disjoncteur ouvert).</source>
+        <target state="translated">خدمة الذكاء الاصطناعي غير متاحة مؤقتًا (قاطع الدائرة مفتوح).</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.err-generic" datatype="html">
+        <source>Échec de l'analyse (HTTP <x id="status"/>).</source>
+        <target state="translated">فشل التحليل (HTTP <x id="status"/>).</target>
+      </trans-unit>
       <trans-unit id="common.ok" datatype="html">
         <source>OK</source>
         <target state="translated">حسناً</target>

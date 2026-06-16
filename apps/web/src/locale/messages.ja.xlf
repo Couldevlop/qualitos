@@ -2548,6 +2548,114 @@
         <source>Échec de la détection (HTTP <x id="status"/>).</source>
         <target state="translated">検出に失敗しました（HTTP <x id="status"/>）。</target>
       </trans-unit>
+      <trans-unit id="nav.complaints-nlp" datatype="html">
+        <source>Réclamations IA</source>
+        <target state="translated">AIクレーム</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.title" datatype="html">
+        <source>Analyse des réclamations (NLP)</source>
+        <target state="translated">クレーム分析（NLP）</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.subtitle" datatype="html">
+        <source>Sentiment, catégorie et criticité de chaque réclamation — détection des cas critiques par l'IA.</source>
+        <target state="translated">各クレームの感情・カテゴリ・重大度 — 重要案件をAIが検出。</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.input-panel" datatype="html">
+        <source>Réclamations</source>
+        <target state="translated">クレーム</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.texts-label" datatype="html">
+        <source>Une réclamation par ligne</source>
+        <target state="translated">1行に1件のクレーム</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.run" datatype="html">
+        <source>Analyser</source>
+        <target state="translated">分析</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.running" datatype="html">
+        <source>Analyse…</source>
+        <target state="translated">分析中…</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.example" datatype="html">
+        <source>Exemple</source>
+        <target state="translated">例</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.card-critical" datatype="html">
+        <source>Réclamations critiques</source>
+        <target state="translated">重大クレーム</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.card-critical-desc" datatype="html">
+        <source>Sécurité, juridique ou sentiment très négatif</source>
+        <target state="translated">安全・法務または非常に否定的な感情</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.results-panel" datatype="html">
+        <source>Analyse par réclamation</source>
+        <target state="translated">クレームごとの分析</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.col-complaint" datatype="html">
+        <source>Réclamation</source>
+        <target state="translated">クレーム</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.col-sentiment" datatype="html">
+        <source>Sentiment</source>
+        <target state="translated">感情</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.col-category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">カテゴリ</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.col-critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">重大</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.critical-aria" datatype="html">
+        <source>Critique</source>
+        <target state="translated">重大</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.sent-negative" datatype="html">
+        <source>Négatif</source>
+        <target state="translated">否定的</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.sent-positive" datatype="html">
+        <source>Positif</source>
+        <target state="translated">肯定的</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.sent-neutral" datatype="html">
+        <source>Neutre</source>
+        <target state="translated">中立</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.err-min" datatype="html">
+        <source>Saisissez au moins une réclamation (une par ligne).</source>
+        <target state="translated">少なくとも1件のクレームを入力してください（1行に1件）。</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.err-backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">バックエンドに到達できません（engine は 8082？）。</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.err-invalid" datatype="html">
+        <source>Requête invalide (1 à 2000 réclamations).</source>
+        <target state="translated">無効なリクエスト（1〜2000件）。</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.err-too-large" datatype="html">
+        <source>Lot trop volumineux (garde-fou IA).</source>
+        <target state="translated">バッチが大きすぎます（AIガードレール）。</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.err-quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">このテナントのAIレート/クォータを超過しました — 後で再試行してください。</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.err-gateway" datatype="html">
+        <source>Passerelle IA indisponible (ai-service injoignable).</source>
+        <target state="translated">AIゲートウェイが利用できません（ai-service に到達不可）。</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.err-unavailable" datatype="html">
+        <source>Service IA momentanément indisponible (disjoncteur ouvert).</source>
+        <target state="translated">AIサービスは一時的に利用できません（サーキットブレーカー作動中）。</target>
+      </trans-unit>
+      <trans-unit id="complaintnlp.err-generic" datatype="html">
+        <source>Échec de l'analyse (HTTP <x id="status"/>).</source>
+        <target state="translated">分析に失敗しました（HTTP <x id="status"/>）。</target>
+      </trans-unit>
       <trans-unit id="common.ok" datatype="html">
         <source>OK</source>
         <target state="translated">OK</target>
