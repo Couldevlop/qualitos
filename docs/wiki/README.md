@@ -65,14 +65,27 @@ la page de votre rôle :
 
 ---
 
-## 3. Questions fréquentes
+## 3. Naviguer par secteur d'activité
+
+Chaque secteur dispose d'un **guide dédié** (enjeux qualité, normes, KPIs clés, modules recommandés,
+connecteurs IoT, exemple de parcours), aligné sur les **14 Industry Packs** livrés :
+
+- [Index des secteurs et activation d'un pack](secteurs/README.md)
+- Industrie / Manufacturing · Santé / Hôpital · Pharma / MedTech · Banque / Finance · IT / ITSM ·
+  Agro-alimentaire · Aéronautique / Défense · Automobile · BTP / Construction · Énergie / Utilities ·
+  Secteur public · Éducation · Retail / Distribution · Logistique / Transport
+  (voir l'[index des secteurs](secteurs/README.md)).
+
+---
+
+## 4. Questions fréquentes
 
 Consultez la [FAQ](faq.md) pour les 15 questions les plus courantes (connexion, langues,
 mode hors-ligne, signature, partage de rapports, etc.).
 
 ---
 
-## 4. Glossaire qualité (l'essentiel)
+## 5. Glossaire qualité (l'essentiel)
 
 | Terme | Définition courte |
 |---|---|

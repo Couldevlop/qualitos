@@ -34,7 +34,7 @@ Pondéré par l'importance des axes de la vision CLAUDE.md.
 | **IA (§12)** | **~80 %** | reste : BERT/Whisper pleins (GPU), vision 5S (modèle entraîné), LSTM/Prophet, HDBSCAN — anomalies/forecast/clustering DBSCAN/SHAP/NLP lexical livrés |
 | **IoT (§9)** | **~58 %** | reste : LoRaWAN/Sparkplug, inférence Edge, TimescaleDB actif — Digital Twin/Shadow livré |
 | **Dashboards (§7)** | **~55 %** | builder drag&drop, NLQ→graphe, time-travel, mode TV |
-| **Doc & formation (§19)** | **~60 %** | LMS/gamification, vidéos, doc par secteur ; espace Wiki utilisateur par rôle/module livré (`docs/wiki/`) |
+| **Doc & formation (§19)** | **~70 %** | LMS/gamification, vidéos ; espace Wiki utilisateur par rôle/module **et par secteur** livré (`docs/wiki/`, dont `docs/wiki/secteurs/` : 14 guides) |
 
 ## Capacités IA — état (post chantiers du 13-14 juin)
 
@@ -66,8 +66,15 @@ Ordre d'attaque retenu (du plus self-contained au plus lourd) :
    (Super Admin, Admin Tenant, Directeur/Manager Qualité, Auditeur+Externe, Utilisateur),
    16 pages de modules (5 méthodes + NC/CAPA/Audits + SPC/anomalies/prévision/clustering NC/
    NLP réclamations/explicabilité SHAP + Standards Hub + Packs sectoriels), et une FAQ de
-   15 questions. Reste pour atteindre 100 % de l'axe : LMS/gamification (§19.3), vidéos
-   courtes, et guides par secteur.
+   15 questions.
+7. ~~**Guides par secteur (§19.1.B)** — doc utilisateur sectorielle.~~ **LIVRÉ** —
+   `docs/wiki/secteurs/` : index (catalogue + activation déclarative d'un Industry Pack) +
+   **14 guides sectoriels** alignés sur les 14 Industry Packs réels (industrie, santé, pharma,
+   banque, IT/ITSM, agro, aéro/défense, auto, BTP, énergie, public, éducation, retail, logistique).
+   Chaque guide : enjeux qualité, normes (Standards Hub), KPIs clés (cohérents avec les YAML des
+   packs et CLAUDE.md §6.3), modules recommandés (routes réelles `/spc`, `/anomaly`…), connecteurs
+   IoT typiques et exemple de parcours. Reste pour atteindre 100 % de l'axe : LMS/gamification
+   (§19.3) et vidéos courtes.
 
 > Note : certains items (vision 5S modèle entraîné, LSTM/Prophet, BERT/Whisper pleins)
 > exigent un budget GPU/données ; ils restent branchables derrière les mêmes contrats
