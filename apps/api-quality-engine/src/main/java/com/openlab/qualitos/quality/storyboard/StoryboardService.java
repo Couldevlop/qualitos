@@ -18,7 +18,9 @@ import java.util.List;
  * la réponse (explicabilité §12.3). Le tenant provient du JWT (via {@code TenantContext} dans
  * {@link AiGatewayClient}), jamais du body (règle 18.2 #2).
  */
-@Service
+// Nom de bean explicite : évite la collision avec quality.standards.StoryboardService
+// (même nom simple de classe → nom de bean auto identique → ConflictingBeanDefinition au boot).
+@Service("aiStoryboardService")
 public class StoryboardService {
 
     /** Plafond de génération : un récit court (3 à 6 phrases) tient largement. */
