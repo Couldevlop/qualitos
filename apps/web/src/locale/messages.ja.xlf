@@ -13779,6 +13779,154 @@ Inde (centre de service)</source>
         <source>Retrait impossible.</source>
         <target state="translated">撤回できません。</target>
       </trans-unit>
+      <trans-unit id="nav.storyboard" datatype="html">
+        <source>Storyboard IA</source>
+        <target state="translated">AIストーリーボード</target>
+      </trans-unit>
+      <trans-unit id="storyboard.title" datatype="html">
+        <source>Storyboard IA</source>
+        <target state="translated">AIストーリーボード</target>
+      </trans-unit>
+      <trans-unit id="storyboard.subtitle" datatype="html">
+        <source>L'IA rédige un récit narratif autour de vos indicateurs (KPIs, tendances, alertes) pour une revue de direction — elle commente uniquement les chiffres fournis.</source>
+        <target state="translated">AIが指標（KPI・トレンド・アラート）に基づく記述をマネジメントレビュー向けに作成します — 提供された数値のみにコメントします。</target>
+      </trans-unit>
+      <trans-unit id="storyboard.input-panel" datatype="html">
+        <source>Indicateurs &amp; période</source>
+        <target state="translated">指標と期間</target>
+      </trans-unit>
+      <trans-unit id="storyboard.period-label" datatype="html">
+        <source>Période</source>
+        <target state="translated">期間</target>
+      </trans-unit>
+      <trans-unit id="storyboard.period-hint" datatype="html">
+        <source>Ex. « Mai 2026 », « T1 2026 »</source>
+        <target state="translated">例：「2026年5月」「2026年第1四半期」</target>
+      </trans-unit>
+      <trans-unit id="storyboard.context-label" datatype="html">
+        <source>Contexte (optionnel)</source>
+        <target state="translated">コンテキスト（任意）</target>
+      </trans-unit>
+      <trans-unit id="storyboard.context-hint" datatype="html">
+        <source>Ex. « Site de Lyon, atelier mécanique »</source>
+        <target state="translated">例：「リヨン拠点、機械工場」</target>
+      </trans-unit>
+      <trans-unit id="storyboard.indicators-label" datatype="html">
+        <source>Indicateurs</source>
+        <target state="translated">指標</target>
+      </trans-unit>
+      <trans-unit id="storyboard.col-label" datatype="html">
+        <source>Libellé</source>
+        <target state="translated">ラベル</target>
+      </trans-unit>
+      <trans-unit id="storyboard.col-value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">値</target>
+      </trans-unit>
+      <trans-unit id="storyboard.col-unit" datatype="html">
+        <source>Unité</source>
+        <target state="translated">単位</target>
+      </trans-unit>
+      <trans-unit id="storyboard.col-trend" datatype="html">
+        <source>Tendance</source>
+        <target state="translated">トレンド</target>
+      </trans-unit>
+      <trans-unit id="storyboard.col-target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">目標</target>
+      </trans-unit>
+      <trans-unit id="storyboard.ph-label" datatype="html">
+        <source>Taux de NC</source>
+        <target state="translated">NC率</target>
+      </trans-unit>
+      <trans-unit id="storyboard.ph-value" datatype="html">
+        <source>1,8</source>
+        <target state="translated">1.8</target>
+      </trans-unit>
+      <trans-unit id="storyboard.ph-unit" datatype="html">
+        <source>%</source>
+        <target state="translated">%</target>
+      </trans-unit>
+      <trans-unit id="storyboard.ph-trend" datatype="html">
+        <source>-12 %</source>
+        <target state="translated">-12%</target>
+      </trans-unit>
+      <trans-unit id="storyboard.ph-target" datatype="html">
+        <source>&lt; 2</source>
+        <target state="translated">&lt; 2</target>
+      </trans-unit>
+      <trans-unit id="storyboard.add-row" datatype="html">
+        <source>Ajouter un indicateur</source>
+        <target state="translated">指標を追加</target>
+      </trans-unit>
+      <trans-unit id="storyboard.remove-row" datatype="html">
+        <source>Retirer</source>
+        <target state="translated">削除</target>
+      </trans-unit>
+      <trans-unit id="storyboard.generate" datatype="html">
+        <source>Générer le récit</source>
+        <target state="translated">記述を生成</target>
+      </trans-unit>
+      <trans-unit id="storyboard.generating" datatype="html">
+        <source>Rédaction…</source>
+        <target state="translated">作成中…</target>
+      </trans-unit>
+      <trans-unit id="storyboard.example" datatype="html">
+        <source>Exemple</source>
+        <target state="translated">例</target>
+      </trans-unit>
+      <trans-unit id="storyboard.result-panel" datatype="html">
+        <source>Récit</source>
+        <target state="translated">記述</target>
+      </trans-unit>
+      <trans-unit id="storyboard.sources-panel" datatype="html">
+        <source>Chiffres source</source>
+        <target state="translated">元データ</target>
+      </trans-unit>
+      <trans-unit id="storyboard.provider" datatype="html">
+        <source>Généré par</source>
+        <target state="translated">生成元</target>
+      </trans-unit>
+      <trans-unit id="storyboard.disclaimer" datatype="html">
+        <source>Récit généré par IA, à valider par un humain. Aucune décision ne doit reposer sur ce texte sans vérification des chiffres source.</source>
+        <target state="translated">AIが生成した記述です。人間による検証が必要です。元データを確認せずにこの文章だけで判断しないでください。</target>
+      </trans-unit>
+      <trans-unit id="storyboard.err-period" datatype="html">
+        <source>Indiquez une période.</source>
+        <target state="translated">期間を指定してください。</target>
+      </trans-unit>
+      <trans-unit id="storyboard.err-points" datatype="html">
+        <source>Saisissez au moins un indicateur (libellé + valeur).</source>
+        <target state="translated">少なくとも1つの指標（ラベル＋値）を入力してください。</target>
+      </trans-unit>
+      <trans-unit id="storyboard.err-backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">バックエンドに到達できません（engine は 8082？）。</target>
+      </trans-unit>
+      <trans-unit id="storyboard.err-invalid" datatype="html">
+        <source>Requête invalide (période + au moins un indicateur libellé/valeur).</source>
+        <target state="translated">無効なリクエスト（期間＋ラベル/値付きの指標が1つ以上）。</target>
+      </trans-unit>
+      <trans-unit id="storyboard.err-too-large" datatype="html">
+        <source>Trop d'indicateurs (garde-fou IA).</source>
+        <target state="translated">指標が多すぎます（AIガードレール）。</target>
+      </trans-unit>
+      <trans-unit id="storyboard.err-quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">このテナントのAIレート/クォータを超過しました — 後で再試行してください。</target>
+      </trans-unit>
+      <trans-unit id="storyboard.err-gateway" datatype="html">
+        <source>Passerelle IA indisponible (ai-service injoignable).</source>
+        <target state="translated">AIゲートウェイが利用できません（ai-service に到達不可）。</target>
+      </trans-unit>
+      <trans-unit id="storyboard.err-unavailable" datatype="html">
+        <source>Service IA momentanément indisponible (disjoncteur ouvert).</source>
+        <target state="translated">AIサービスは一時的に利用できません（サーキットブレーカー作動中）。</target>
+      </trans-unit>
+      <trans-unit id="storyboard.err-generic" datatype="html">
+        <source>Échec de la génération (HTTP <x id="status"/>).</source>
+        <target state="translated">生成に失敗しました（HTTP <x id="status"/>）。</target>
+      </trans-unit>
       <trans-unit id="nav.mon-apprentissage" datatype="html">
         <source>Mon apprentissage</source>
         <target state="translated">私の学習</target>

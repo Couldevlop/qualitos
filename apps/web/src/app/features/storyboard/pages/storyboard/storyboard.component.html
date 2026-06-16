@@ -1,0 +1,114 @@
+<div class="qos-page">
+  <qos-page-header
+    eyebrow="Pilotage · IA narrative"
+    i18n-title="@@storyboard.title"
+    title="Storyboard IA"
+    i18n-subtitle="@@storyboard.subtitle"
+    subtitle="L'IA rédige un récit narratif autour de vos indicateurs (KPIs, tendances, alertes) pour une revue de direction — elle commente uniquement les chiffres fournis.">
+  </qos-page-header>
+
+  <qos-panel i18n-title="@@storyboard.input-panel" title="Indicateurs & période" icon="insights">
+    <form [formGroup]="form" (ngSubmit)="run()">
+      <div class="opts-row">
+        <mat-form-field appearance="outline">
+          <mat-label i18n="@@storyboard.period-label">Période</mat-label>
+          <input matInput formControlName="period" placeholder="Mai 2026">
+          <mat-hint i18n="@@storyboard.period-hint">Ex. « Mai 2026 », « T1 2026 »</mat-hint>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label i18n="@@storyboard.context-label">Contexte (optionnel)</mat-label>
+          <input matInput formControlName="context" placeholder="Site de Lyon, atelier mécanique">
+          <mat-hint i18n="@@storyboard.context-hint">Ex. « Site de Lyon, atelier mécanique »</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <h3 class="rows-title" i18n="@@storyboard.indicators-label">Indicateurs</h3>
+
+      <div class="rows" formArrayName="points">
+        <div class="row-head">
+          <span i18n="@@storyboard.col-label">Libellé</span>
+          <span i18n="@@storyboard.col-value">Valeur</span>
+          <span i18n="@@storyboard.col-unit">Unité</span>
+          <span i18n="@@storyboard.col-trend">Tendance</span>
+          <span i18n="@@storyboard.col-target">Cible</span>
+          <span></span>
+        </div>
+
+        <div class="ind-row" *ngFor="let p of points.controls; let i = index" [formGroupName]="i">
+          <mat-form-field appearance="outline" class="dense">
+            <input matInput formControlName="label" i18n-placeholder="@@storyboard.ph-label" placeholder="Taux de NC">
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="dense">
+            <input matInput formControlName="value" i18n-placeholder="@@storyboard.ph-value" placeholder="1,8">
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="dense">
+            <input matInput formControlName="unit" i18n-placeholder="@@storyboard.ph-unit" placeholder="%">
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="dense">
+            <input matInput formControlName="trend" i18n-placeholder="@@storyboard.ph-trend" placeholder="-12 %">
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="dense">
+            <input matInput formControlName="target" i18n-placeholder="@@storyboard.ph-target" placeholder="< 2">
+          </mat-form-field>
+          <button mat-icon-button type="button" class="rm" (click)="removeRow(i)"
+                  [disabled]="points.length <= 1"
+                  i18n-aria-label="@@storyboard.remove-row" aria-label="Retirer">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button mat-button type="button" (click)="addRow()" [disabled]="loading">
+          <mat-icon>add</mat-icon> <span i18n="@@storyboard.add-row">Ajouter un indicateur</span>
+        </button>
+        <span class="spacer"></span>
+        <button mat-button type="button" (click)="loadExample()" [disabled]="loading">
+          <mat-icon>science</mat-icon> <span i18n="@@storyboard.example">Exemple</span>
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="loading || form.invalid">
+          <mat-icon>auto_stories</mat-icon>
+          <span *ngIf="!loading" i18n="@@storyboard.generate">Générer le récit</span>
+          <span *ngIf="loading" i18n="@@storyboard.generating">Rédaction…</span>
+        </button>
+      </div>
+
+      <p class="error" *ngIf="error" role="alert">{{ error }}</p>
+    </form>
+  </qos-panel>
+
+  <!-- Récit IA -->
+  <qos-panel i18n-title="@@storyboard.result-panel" title="Récit" icon="auto_stories" *ngIf="result as r">
+    <p class="provider">
+      <mat-icon>smart_toy</mat-icon>
+      <span i18n="@@storyboard.provider">Généré par</span> {{ r.provider || 'IA' }} · {{ r.period }}
+    </p>
+    <p class="narrative">{{ r.narrative }}</p>
+    <p class="disclaimer" role="note" i18n="@@storyboard.disclaimer">
+      Récit généré par IA, à valider par un humain. Aucune décision ne doit reposer sur ce texte
+      sans vérification des chiffres source.
+    </p>
+  </qos-panel>
+
+  <!-- Rappel des chiffres source (explicabilité) -->
+  <qos-panel i18n-title="@@storyboard.sources-panel" title="Chiffres source" icon="table_rows" *ngIf="result as r">
+    <table class="src-table">
+      <thead>
+        <tr>
+          <th i18n="@@storyboard.col-label">Libellé</th>
+          <th i18n="@@storyboard.col-value">Valeur</th>
+          <th i18n="@@storyboard.col-trend">Tendance</th>
+          <th i18n="@@storyboard.col-target">Cible</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of r.sources">
+          <td>{{ s.label }}</td>
+          <td class="val">{{ s.value }}<span class="unit" *ngIf="s.unit"> {{ s.unit }}</span></td>
+          <td>{{ s.trend || '—' }}</td>
+          <td>{{ s.target || '—' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </qos-panel>
+</div>
