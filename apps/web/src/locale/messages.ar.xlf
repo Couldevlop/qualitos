@@ -13780,6 +13780,114 @@ Inde (centre de service)</source>
         <source>Retrait impossible.</source>
         <target state="translated">تعذّر السحب.</target>
       </trans-unit>
+      <trans-unit id="nav.tv-mode" datatype="html">
+        <source>Mode TV / Salle qualité</source>
+        <target state="translated">وضع التلفزيون / قاعة الجودة</target>
+      </trans-unit>
+      <trans-unit id="tv.brand" datatype="html">
+        <source>QualitOS · Salle qualité</source>
+        <target state="translated">QualitOS · قاعة الجودة</target>
+      </trans-unit>
+      <trans-unit id="tv.toolbar.aria" datatype="html">
+        <source>Commandes Mode TV</source>
+        <target state="translated">عناصر تحكم وضع التلفزيون</target>
+      </trans-unit>
+      <trans-unit id="tv.interval.label" datatype="html">
+        <source>Intervalle</source>
+        <target state="translated">الفاصل</target>
+      </trans-unit>
+      <trans-unit id="tv.interval.aria" datatype="html">
+        <source>Intervalle de rotation</source>
+        <target state="translated">فاصل التدوير</target>
+      </trans-unit>
+      <trans-unit id="tv.progress.aria" datatype="html">
+        <source>Avancement de la slide</source>
+        <target state="translated">تقدّم الشريحة</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.play" datatype="html">
+        <source>Reprendre la rotation</source>
+        <target state="translated">استئناف التدوير</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.pause" datatype="html">
+        <source>Mettre en pause</source>
+        <target state="translated">إيقاف مؤقت</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.prev" datatype="html">
+        <source>Slide précédente</source>
+        <target state="translated">الشريحة السابقة</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.next" datatype="html">
+        <source>Slide suivante</source>
+        <target state="translated">الشريحة التالية</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.fullscreen" datatype="html">
+        <source>Basculer en plein écran</source>
+        <target state="translated">تبديل ملء الشاشة</target>
+      </trans-unit>
+      <trans-unit id="tv.loading" datatype="html">
+        <source>Chargement des indicateurs…</source>
+        <target state="translated">جارٍ تحميل المؤشرات…</target>
+      </trans-unit>
+      <trans-unit id="tv.error" datatype="html">
+        <source>Impossible de charger les indicateurs. Réessayez.</source>
+        <target state="translated">تعذّر تحميل المؤشرات. أعد المحاولة.</target>
+      </trans-unit>
+      <trans-unit id="tv.retry" datatype="html">
+        <source>Réessayer</source>
+        <target state="translated">إعادة المحاولة</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.kpis.title" datatype="html">
+        <source>Indicateurs stratégiques</source>
+        <target state="translated">المؤشرات الاستراتيجية</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.kpis.subtitle" datatype="html">
+        <source>Performance qualité — cible vs réalisé</source>
+        <target state="translated">أداء الجودة — الهدف مقابل المحقّق</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.risks.title" datatype="html">
+        <source>Risques critiques</source>
+        <target state="translated">المخاطر الحرجة</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.risks.subtitle" datatype="html">
+        <source>Actions prioritaires à traiter</source>
+        <target state="translated">إجراءات ذات أولوية للمعالجة</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.predictions.title" datatype="html">
+        <source>Prévisions IA</source>
+        <target state="translated">تنبؤات الذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.predictions.subtitle" datatype="html">
+        <source>Anticipations explicables sur les prochaines semaines</source>
+        <target state="translated">توقعات قابلة للتفسير للأسابيع المقبلة</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.trend.title" datatype="html">
+        <source>Tendance qualité — 12 mois</source>
+        <target state="translated">اتجاه الجودة — 12 شهرًا</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.trend.subtitle" datatype="html">
+        <source>Évolution de la performance globale</source>
+        <target state="translated">تطوّر الأداء الإجمالي</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.empty.title" datatype="html">
+        <source>Aucune donnée à afficher</source>
+        <target state="translated">لا توجد بيانات للعرض</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.empty.subtitle" datatype="html">
+        <source>Les indicateurs apparaîtront ici dès qu'ils seront disponibles.</source>
+        <target state="translated">ستظهر المؤشرات هنا بمجرد توفّرها.</target>
+      </trans-unit>
+      <trans-unit id="tv.trend.series" datatype="html">
+        <source>Qualité globale</source>
+        <target state="translated">الجودة الإجمالية</target>
+      </trans-unit>
+      <trans-unit id="tv.trend.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">الهدف</target>
+      </trans-unit>
+      <trans-unit id="tv.card.confidence" datatype="html">
+        <source>Confiance <x id="INTERPOLATION"/> %</source>
+        <target state="translated">الثقة <x id="INTERPOLATION"/> %</target>
+      </trans-unit>
       <trans-unit id="workflow.list.title" datatype="html">
         <source>Designer de workflow</source>
         <target state="translated">مصمّم سير العمل</target>

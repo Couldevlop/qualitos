@@ -1,0 +1,135 @@
+<div class="tv" [class.tv--fullscreen]="fullscreen">
+
+  <!-- Bandeau supérieur : titre de la slide + horloge + état rotation -->
+  <header class="tv__bar">
+    <div class="tv__brand">
+      <span class="material-symbols-outlined tv__brand-icon" aria-hidden="true">tv</span>
+      <span class="tv__brand-text" i18n="@@tv.brand">QualitOS · Salle qualité</span>
+    </div>
+
+    <div class="tv__controls" role="toolbar" aria-label="Commandes Mode TV" i18n-aria-label="@@tv.toolbar.aria">
+      <button type="button" class="tv__btn" (click)="prev()"
+              [attr.aria-label]="prevLabel" [disabled]="slides.length < 2">
+        <span class="material-symbols-outlined" aria-hidden="true">chevron_left</span>
+      </button>
+
+      <button type="button" class="tv__btn" (click)="togglePlay()"
+              [attr.aria-label]="playing ? pauseLabel : playLabel">
+        <span class="material-symbols-outlined" aria-hidden="true">{{ playing ? 'pause' : 'play_arrow' }}</span>
+      </button>
+
+      <button type="button" class="tv__btn" (click)="next()"
+              [attr.aria-label]="nextLabel" [disabled]="slides.length < 2">
+        <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+      </button>
+
+      <label class="tv__interval">
+        <span class="tv__interval-label" i18n="@@tv.interval.label">Intervalle</span>
+        <select class="tv__select" [value]="intervalSec"
+                (change)="setInterval(+$any($event.target).value)"
+                aria-label="Intervalle de rotation" i18n-aria-label="@@tv.interval.aria">
+          <option *ngFor="let s of intervals" [value]="s">{{ s }} s</option>
+        </select>
+      </label>
+
+      <button type="button" class="tv__btn" (click)="toggleFullscreen()"
+              [attr.aria-label]="fullscreenLabel">
+        <span class="material-symbols-outlined" aria-hidden="true">
+          {{ fullscreen ? 'fullscreen_exit' : 'fullscreen' }}
+        </span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Barre de progression de la slide courante -->
+  <div class="tv__progress" *ngIf="!loading && !error && slides.length > 1"
+       role="progressbar" aria-label="Avancement de la slide" i18n-aria-label="@@tv.progress.aria"
+       [attr.aria-valuenow]="progress" aria-valuemin="0" aria-valuemax="100">
+    <span class="tv__progress-fill" [style.width.%]="progress"></span>
+  </div>
+
+  <!-- Chargement -->
+  <div class="tv__state" *ngIf="loading">
+    <mat-spinner diameter="56"></mat-spinner>
+    <p i18n="@@tv.loading">Chargement des indicateurs…</p>
+  </div>
+
+  <!-- Erreur -->
+  <div class="tv__state tv__state--error" *ngIf="error" role="alert">
+    <span class="material-symbols-outlined tv__state-icon" aria-hidden="true">error</span>
+    <p>{{ error }}</p>
+    <button type="button" class="tv__retry" (click)="load()" i18n="@@tv.retry">Réessayer</button>
+  </div>
+
+  <!-- Scène : slide courante -->
+  <main class="tv__stage" *ngIf="!loading && !error && current as slide">
+
+    <div class="tv__heading">
+      <h1 class="tv__title">{{ slide.title }}</h1>
+      <p class="tv__subtitle">{{ slide.subtitle }}</p>
+    </div>
+
+    <!-- Slide KPIs -->
+    <section class="tv__kpis" *ngIf="slide.kind === 'kpis'">
+      <qos-kpi-card
+        *ngFor="let k of slide.kpis; trackBy: trackById"
+        size="lg"
+        [label]="k.label"
+        [value]="k.value"
+        [unit]="k.unit"
+        [trend]="k.trend"
+        [target]="k.target"
+        [state]="k.state"
+        [icon]="k.icon"
+        [trendInvertedIsGood]="!!k.trendInvertedIsGood">
+      </qos-kpi-card>
+    </section>
+
+    <!-- Slide Tendance -->
+    <section class="tv__trend" *ngIf="slide.kind === 'trend'">
+      <qos-echart [option]="slide.option" [height]="520"></qos-echart>
+    </section>
+
+    <!-- Slide Risques -->
+    <section class="tv__list" *ngIf="slide.kind === 'risks'">
+      <article class="tv__row" *ngFor="let r of slide.risks; trackBy: trackById">
+        <qos-status-pill [tone]="severityTone(r.severity)" [label]="r.severity"></qos-status-pill>
+        <div class="tv__row-main">
+          <span class="tv__row-title">{{ r.title }}</span>
+          <span class="tv__row-meta">{{ r.source }}<ng-container *ngIf="r.owner"> · {{ r.owner }}</ng-container></span>
+        </div>
+        <span class="tv__row-due" *ngIf="r.due">{{ r.due }}</span>
+      </article>
+    </section>
+
+    <!-- Slide Prévisions IA -->
+    <section class="tv__cards" *ngIf="slide.kind === 'predictions'">
+      <article class="tv__card tv__card--{{ p.state }}"
+               *ngFor="let p of slide.predictions; trackBy: trackById">
+        <span class="material-symbols-outlined tv__card-icon" aria-hidden="true">{{ predictionIcon(p.kind) }}</span>
+        <span class="tv__card-title">{{ p.title }}</span>
+        <span class="tv__card-detail">{{ p.detail }}</span>
+        <span class="tv__card-foot">
+          <span class="tv__card-conf" i18n="@@tv.card.confidence">Confiance {{ confidencePct(p.confidence) }} %</span>
+          <span class="tv__card-horizon">{{ p.horizon }}</span>
+        </span>
+      </article>
+    </section>
+
+    <!-- Slide vide / repli -->
+    <section class="tv__empty" *ngIf="slide.kind === 'empty'">
+      <span class="material-symbols-outlined tv__empty-icon" aria-hidden="true">insights</span>
+    </section>
+  </main>
+
+  <!-- Pied : indicateurs de slides (puces cliquables) -->
+  <footer class="tv__dots" *ngIf="!loading && !error && slides.length > 1">
+    <button type="button"
+            *ngFor="let s of slides; let i = index; trackBy: trackBySlide"
+            class="tv__dot" [class.tv__dot--active]="i === index"
+            (click)="goTo(i)"
+            [attr.aria-label]="s.title"
+            [attr.aria-current]="i === index ? 'true' : null">
+    </button>
+  </footer>
+</div>

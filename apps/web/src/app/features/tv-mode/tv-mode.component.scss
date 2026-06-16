@@ -1,0 +1,309 @@
+/* Mode TV / Salle qualité (§7.3).
+ * Thème mural sombre, contraste fort, gros chiffres lisibles à distance.
+ * Indépendant du thème clair/sombre de l'app : un écran mural reste sombre. */
+
+:host {
+  --tv-bg: #0b1220;
+  --tv-bg-elev: #131c2e;
+  --tv-border: rgba(148, 163, 184, 0.22);
+  --tv-fg: #f1f5f9;
+  --tv-fg-dim: #94a3b8;
+  --tv-accent: #38bdf8;
+  --tv-good: #34d399;
+  --tv-warn: #fbbf24;
+  --tv-bad: #f87171;
+
+  display: block;
+  height: 100%;
+}
+
+.tv {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 5rem);
+  background: radial-gradient(120% 120% at 50% 0%, #16233c 0%, var(--tv-bg) 60%);
+  color: var(--tv-fg);
+  border-radius: 16px;
+  overflow: hidden;
+  padding: clamp(1rem, 2vw, 2rem);
+  gap: clamp(0.75rem, 1.5vw, 1.5rem);
+
+  &--fullscreen {
+    border-radius: 0;
+    min-height: 100vh;
+  }
+}
+
+/* ---- Bandeau de commandes ---- */
+.tv__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.tv__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-size: clamp(1rem, 1.4vw, 1.35rem);
+}
+
+.tv__brand-icon { color: var(--tv-accent); font-size: 1.8em; }
+
+.tv__controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tv__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 12px;
+  border: 1px solid var(--tv-border);
+  background: var(--tv-bg-elev);
+  color: var(--tv-fg);
+  cursor: pointer;
+  transition: background 120ms ease, transform 120ms ease;
+
+  &:hover:not(:disabled) { background: #1c2940; transform: translateY(-1px); }
+  &:disabled { opacity: 0.4; cursor: default; }
+  &:focus-visible { outline: 2px solid var(--tv-accent); outline-offset: 2px; }
+
+  .material-symbols-outlined { font-size: 1.5rem; }
+}
+
+.tv__interval {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.95rem;
+  color: var(--tv-fg-dim);
+}
+
+.tv__select {
+  background: var(--tv-bg-elev);
+  color: var(--tv-fg);
+  border: 1px solid var(--tv-border);
+  border-radius: 10px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+
+  &:focus-visible { outline: 2px solid var(--tv-accent); outline-offset: 2px; }
+}
+
+/* ---- Barre de progression ---- */
+.tv__progress {
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.18);
+  overflow: hidden;
+}
+
+.tv__progress-fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--tv-accent), var(--tv-good));
+  transition: width 100ms linear;
+}
+
+/* ---- États (loading / error) ---- */
+.tv__state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 1.25rem;
+  color: var(--tv-fg-dim);
+}
+
+.tv__state-icon { font-size: 3rem; color: var(--tv-bad); }
+.tv__state--error { color: var(--tv-fg); }
+
+.tv__retry {
+  margin-top: 0.5rem;
+  padding: 0.6rem 1.4rem;
+  border-radius: 10px;
+  border: 1px solid var(--tv-accent);
+  background: transparent;
+  color: var(--tv-accent);
+  font-size: 1rem;
+  cursor: pointer;
+
+  &:hover { background: rgba(56, 189, 248, 0.12); }
+}
+
+/* ---- Scène ---- */
+.tv__stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 2vw, 2rem);
+  min-height: 0;
+}
+
+.tv__heading { text-align: center; }
+
+.tv__title {
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  font-size: clamp(1.8rem, 3.4vw, 3rem);
+  line-height: 1.1;
+}
+
+.tv__subtitle {
+  margin: 0.35rem 0 0;
+  color: var(--tv-fg-dim);
+  font-size: clamp(1rem, 1.6vw, 1.5rem);
+}
+
+/* ---- Slide KPIs : grille de grosses cartes ---- */
+.tv__kpis {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(clamp(220px, 22vw, 340px), 1fr));
+  gap: clamp(0.75rem, 1.5vw, 1.5rem);
+  align-content: center;
+
+  /* On force un fond clair lisible sur les cartes KPI du design system. */
+  ::ng-deep qos-kpi-card { color-scheme: light; }
+}
+
+/* ---- Slide tendance ---- */
+.tv__trend {
+  flex: 1;
+  display: flex;
+  background: var(--tv-bg-elev);
+  border: 1px solid var(--tv-border);
+  border-radius: 16px;
+  padding: 1rem;
+
+  qos-echart { flex: 1; display: block; }
+}
+
+/* ---- Slide risques (liste) ---- */
+.tv__list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 1vw, 1rem);
+  justify-content: center;
+}
+
+.tv__row {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 1.5vw, 1.5rem);
+  background: var(--tv-bg-elev);
+  border: 1px solid var(--tv-border);
+  border-radius: 14px;
+  padding: clamp(0.85rem, 1.6vw, 1.4rem) clamp(1rem, 2vw, 1.75rem);
+}
+
+.tv__row-main { flex: 1; display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
+
+.tv__row-title {
+  font-weight: 700;
+  font-size: clamp(1.1rem, 1.8vw, 1.6rem);
+}
+
+.tv__row-meta {
+  color: var(--tv-fg-dim);
+  font-size: clamp(0.9rem, 1.2vw, 1.15rem);
+}
+
+.tv__row-due {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--tv-warn);
+  font-size: clamp(1rem, 1.4vw, 1.3rem);
+}
+
+/* ---- Slide prévisions IA (cartes) ---- */
+.tv__cards {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(clamp(260px, 26vw, 420px), 1fr));
+  gap: clamp(0.75rem, 1.5vw, 1.5rem);
+  align-content: center;
+}
+
+.tv__card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  background: var(--tv-bg-elev);
+  border: 1px solid var(--tv-border);
+  border-left: 6px solid var(--tv-fg-dim);
+  border-radius: 16px;
+  padding: clamp(1rem, 1.8vw, 1.6rem);
+
+  &--good { border-left-color: var(--tv-good); }
+  &--warn { border-left-color: var(--tv-warn); }
+  &--bad  { border-left-color: var(--tv-bad); }
+}
+
+.tv__card-icon { font-size: 2rem; color: var(--tv-accent); }
+.tv__card-title { font-weight: 700; font-size: clamp(1.1rem, 1.7vw, 1.5rem); }
+.tv__card-detail { color: var(--tv-fg-dim); font-size: clamp(0.95rem, 1.3vw, 1.2rem); }
+
+.tv__card-foot {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+}
+
+.tv__card-conf { font-weight: 700; }
+.tv__card-horizon { color: var(--tv-fg-dim); }
+
+/* ---- Slide vide ---- */
+.tv__empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tv__empty-icon { font-size: 6rem; color: var(--tv-fg-dim); opacity: 0.5; }
+
+/* ---- Puces de slides ---- */
+.tv__dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.tv__dot {
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 999px;
+  border: none;
+  background: rgba(148, 163, 184, 0.4);
+  cursor: pointer;
+  padding: 0;
+  transition: background 120ms ease, transform 120ms ease;
+
+  &--active { background: var(--tv-accent); transform: scale(1.25); }
+  &:focus-visible { outline: 2px solid var(--tv-accent); outline-offset: 2px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tv__progress-fill,
+  .tv__btn,
+  .tv__dot { transition: none; }
+}

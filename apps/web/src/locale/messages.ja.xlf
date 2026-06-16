@@ -13779,6 +13779,114 @@ Inde (centre de service)</source>
         <source>Retrait impossible.</source>
         <target state="translated">撤回できません。</target>
       </trans-unit>
+      <trans-unit id="nav.tv-mode" datatype="html">
+        <source>Mode TV / Salle qualité</source>
+        <target state="translated">TVモード／品質ルーム</target>
+      </trans-unit>
+      <trans-unit id="tv.brand" datatype="html">
+        <source>QualitOS · Salle qualité</source>
+        <target state="translated">QualitOS · 品質ルーム</target>
+      </trans-unit>
+      <trans-unit id="tv.toolbar.aria" datatype="html">
+        <source>Commandes Mode TV</source>
+        <target state="translated">TVモードのコントロール</target>
+      </trans-unit>
+      <trans-unit id="tv.interval.label" datatype="html">
+        <source>Intervalle</source>
+        <target state="translated">間隔</target>
+      </trans-unit>
+      <trans-unit id="tv.interval.aria" datatype="html">
+        <source>Intervalle de rotation</source>
+        <target state="translated">ローテーション間隔</target>
+      </trans-unit>
+      <trans-unit id="tv.progress.aria" datatype="html">
+        <source>Avancement de la slide</source>
+        <target state="translated">スライドの進行状況</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.play" datatype="html">
+        <source>Reprendre la rotation</source>
+        <target state="translated">ローテーションを再開</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.pause" datatype="html">
+        <source>Mettre en pause</source>
+        <target state="translated">一時停止</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.prev" datatype="html">
+        <source>Slide précédente</source>
+        <target state="translated">前のスライド</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.next" datatype="html">
+        <source>Slide suivante</source>
+        <target state="translated">次のスライド</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.fullscreen" datatype="html">
+        <source>Basculer en plein écran</source>
+        <target state="translated">全画面を切り替え</target>
+      </trans-unit>
+      <trans-unit id="tv.loading" datatype="html">
+        <source>Chargement des indicateurs…</source>
+        <target state="translated">指標を読み込み中…</target>
+      </trans-unit>
+      <trans-unit id="tv.error" datatype="html">
+        <source>Impossible de charger les indicateurs. Réessayez.</source>
+        <target state="translated">指標を読み込めません。再試行してください。</target>
+      </trans-unit>
+      <trans-unit id="tv.retry" datatype="html">
+        <source>Réessayer</source>
+        <target state="translated">再試行</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.kpis.title" datatype="html">
+        <source>Indicateurs stratégiques</source>
+        <target state="translated">戦略指標</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.kpis.subtitle" datatype="html">
+        <source>Performance qualité — cible vs réalisé</source>
+        <target state="translated">品質パフォーマンス — 目標と実績</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.risks.title" datatype="html">
+        <source>Risques critiques</source>
+        <target state="translated">重大リスク</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.risks.subtitle" datatype="html">
+        <source>Actions prioritaires à traiter</source>
+        <target state="translated">優先的に対応すべきアクション</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.predictions.title" datatype="html">
+        <source>Prévisions IA</source>
+        <target state="translated">AI予測</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.predictions.subtitle" datatype="html">
+        <source>Anticipations explicables sur les prochaines semaines</source>
+        <target state="translated">今後数週間の説明可能な予測</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.trend.title" datatype="html">
+        <source>Tendance qualité — 12 mois</source>
+        <target state="translated">品質トレンド — 12か月</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.trend.subtitle" datatype="html">
+        <source>Évolution de la performance globale</source>
+        <target state="translated">全体パフォーマンスの推移</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.empty.title" datatype="html">
+        <source>Aucune donnée à afficher</source>
+        <target state="translated">表示するデータがありません</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.empty.subtitle" datatype="html">
+        <source>Les indicateurs apparaîtront ici dès qu'ils seront disponibles.</source>
+        <target state="translated">指標は利用可能になり次第ここに表示されます。</target>
+      </trans-unit>
+      <trans-unit id="tv.trend.series" datatype="html">
+        <source>Qualité globale</source>
+        <target state="translated">全体品質</target>
+      </trans-unit>
+      <trans-unit id="tv.trend.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">目標</target>
+      </trans-unit>
+      <trans-unit id="tv.card.confidence" datatype="html">
+        <source>Confiance <x id="INTERPOLATION"/> %</source>
+        <target state="translated">信頼度 <x id="INTERPOLATION"/> %</target>
+      </trans-unit>
       <trans-unit id="workflow.list.title" datatype="html">
         <source>Designer de workflow</source>
         <target state="translated">ワークフローデザイナー</target>

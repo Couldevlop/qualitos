@@ -13780,6 +13780,114 @@ Inde (centre de service)</source>
         <source>Retrait impossible.</source>
         <target state="translated">撤回失败。</target>
       </trans-unit>
+      <trans-unit id="nav.tv-mode" datatype="html">
+        <source>Mode TV / Salle qualité</source>
+        <target state="translated">电视模式 / 质量室</target>
+      </trans-unit>
+      <trans-unit id="tv.brand" datatype="html">
+        <source>QualitOS · Salle qualité</source>
+        <target state="translated">QualitOS · 质量室</target>
+      </trans-unit>
+      <trans-unit id="tv.toolbar.aria" datatype="html">
+        <source>Commandes Mode TV</source>
+        <target state="translated">电视模式控制</target>
+      </trans-unit>
+      <trans-unit id="tv.interval.label" datatype="html">
+        <source>Intervalle</source>
+        <target state="translated">间隔</target>
+      </trans-unit>
+      <trans-unit id="tv.interval.aria" datatype="html">
+        <source>Intervalle de rotation</source>
+        <target state="translated">轮播间隔</target>
+      </trans-unit>
+      <trans-unit id="tv.progress.aria" datatype="html">
+        <source>Avancement de la slide</source>
+        <target state="translated">幻灯片进度</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.play" datatype="html">
+        <source>Reprendre la rotation</source>
+        <target state="translated">恢复轮播</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.pause" datatype="html">
+        <source>Mettre en pause</source>
+        <target state="translated">暂停</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.prev" datatype="html">
+        <source>Slide précédente</source>
+        <target state="translated">上一张幻灯片</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.next" datatype="html">
+        <source>Slide suivante</source>
+        <target state="translated">下一张幻灯片</target>
+      </trans-unit>
+      <trans-unit id="tv.a11y.fullscreen" datatype="html">
+        <source>Basculer en plein écran</source>
+        <target state="translated">切换全屏</target>
+      </trans-unit>
+      <trans-unit id="tv.loading" datatype="html">
+        <source>Chargement des indicateurs…</source>
+        <target state="translated">正在加载指标…</target>
+      </trans-unit>
+      <trans-unit id="tv.error" datatype="html">
+        <source>Impossible de charger les indicateurs. Réessayez.</source>
+        <target state="translated">无法加载指标。请重试。</target>
+      </trans-unit>
+      <trans-unit id="tv.retry" datatype="html">
+        <source>Réessayer</source>
+        <target state="translated">重试</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.kpis.title" datatype="html">
+        <source>Indicateurs stratégiques</source>
+        <target state="translated">战略指标</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.kpis.subtitle" datatype="html">
+        <source>Performance qualité — cible vs réalisé</source>
+        <target state="translated">质量绩效 — 目标与实际</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.risks.title" datatype="html">
+        <source>Risques critiques</source>
+        <target state="translated">关键风险</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.risks.subtitle" datatype="html">
+        <source>Actions prioritaires à traiter</source>
+        <target state="translated">需优先处理的行动</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.predictions.title" datatype="html">
+        <source>Prévisions IA</source>
+        <target state="translated">AI 预测</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.predictions.subtitle" datatype="html">
+        <source>Anticipations explicables sur les prochaines semaines</source>
+        <target state="translated">对未来数周的可解释预测</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.trend.title" datatype="html">
+        <source>Tendance qualité — 12 mois</source>
+        <target state="translated">质量趋势 — 12 个月</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.trend.subtitle" datatype="html">
+        <source>Évolution de la performance globale</source>
+        <target state="translated">整体绩效的演变</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.empty.title" datatype="html">
+        <source>Aucune donnée à afficher</source>
+        <target state="translated">没有可显示的数据</target>
+      </trans-unit>
+      <trans-unit id="tv.slide.empty.subtitle" datatype="html">
+        <source>Les indicateurs apparaîtront ici dès qu'ils seront disponibles.</source>
+        <target state="translated">指标可用后将显示在此处。</target>
+      </trans-unit>
+      <trans-unit id="tv.trend.series" datatype="html">
+        <source>Qualité globale</source>
+        <target state="translated">整体质量</target>
+      </trans-unit>
+      <trans-unit id="tv.trend.target" datatype="html">
+        <source>Cible</source>
+        <target state="translated">目标</target>
+      </trans-unit>
+      <trans-unit id="tv.card.confidence" datatype="html">
+        <source>Confiance <x id="INTERPOLATION"/> %</source>
+        <target state="translated">置信度 <x id="INTERPOLATION"/> %</target>
+      </trans-unit>
       <trans-unit id="workflow.list.title" datatype="html">
         <source>Designer de workflow</source>
         <target state="translated">工作流设计器</target>
