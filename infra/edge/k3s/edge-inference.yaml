@@ -1,0 +1,99 @@
+# Inférence locale de l'Edge Gateway — Deployment K3s (multi-arch ARM64/x86, §9.5).
+#
+# Rôle : consomme la télémétrie du broker local (mosquitto), exécute l'inférence
+# au plus près du capteur (modèle ONNX si fourni, sinon repli déterministe à
+# seuils), et met en file STORE-AND-FORWARD les anomalies vers le IoT Hub. Aucune
+# connexion ENTRANTE (§9.8 — zero-trust) ; seul le bridge mosquitto sort en mTLS.
+#
+# Le modèle ONNX réel n'est PAS livré dans le repo : monter un volume modèle et
+# pointer EDGE_ONNX_MODEL_PATH dessus active l'inférence réelle ; sinon le repli
+# déterministe protège la ligne (cf. runbook docs/runbooks/edge-inference.md).
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: edge-inference-buffer
+  namespace: qualitos-edge
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      # File de rejeu store-and-forward (événements d'anomalie) — léger.
+      storage: 512Mi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: edge-inference-config
+  namespace: qualitos-edge
+data:
+  # Chemin du modèle ONNX DANS le pod. Vide / fichier absent => repli
+  # déterministe à seuils (transparent, journalisé au démarrage).
+  EDGE_ONNX_MODEL_PATH: "/models/anomaly.onnx"
+  EDGE_ONNX_ANOMALY_THRESHOLD: "0.5"
+  # Persistance de la file store-and-forward (monté sur le PVC).
+  EDGE_BUFFER_PATH: "/var/lib/edge-inference/queue.jsonl"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edge-inference
+  namespace: qualitos-edge
+  labels:
+    app.kubernetes.io/name: edge-inference
+    app.kubernetes.io/part-of: qualitos-edge
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate   # PVC RWO — pas de rolling sur un nœud edge unique.
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: edge-inference
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: edge-inference
+        app.kubernetes.io/part-of: qualitos-edge
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532          # nonroot de l'image distroless
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      automountServiceAccountToken: false
+      containers:
+        - name: edge-inference
+          # Image multi-arch construite via buildx (cf. infra/edge/inference/Dockerfile).
+          # Pour activer l'inférence ONNX réelle : build --build-arg WITH_ONNX=true.
+          image: qualitos/edge-inference:0.1.0
+          envFrom:
+            - configMapRef:
+                name: edge-inference-config
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true     # rootfs en lecture seule (§9.8)
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: buffer
+              mountPath: /var/lib/edge-inference
+            - name: model
+              mountPath: /models
+              readOnly: true
+          resources:
+            # Footprint compatible appliance 512 Mo (§9.5). Relever les limites
+            # si le modèle ONNX est volumineux.
+            requests: { cpu: 50m, memory: 96Mi }
+            limits: { cpu: "1", memory: 512Mi }
+      volumes:
+        - name: buffer
+          persistentVolumeClaim:
+            claimName: edge-inference-buffer
+        - name: model
+          # Le modèle ONNX est fourni hors-repo (ConfigMap binaire, Secret, ou
+          # volume hostPath provisionné par GitOps). Vide => repli déterministe.
+          emptyDir: {}
+# NB volontaire : PAS de Service exposé. Le composant ne reçoit aucune connexion
+# entrante (§9.8) — il consomme le broker local en sortant et pousse via la file.

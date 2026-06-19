@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "edge-inference"
+version = "0.1.0"
+description = "QualitOS Edge Inference — store-and-forward + ONNX-or-fallback anomaly detection at the Edge Gateway (CLAUDE.md §9.5)."
+requires-python = ">=3.11"
+# Core has ZERO runtime dependencies — pure stdlib. The store-and-forward buffer,
+# the deterministic fallback and the file store all run on a bare Python.
+
+[project.optional-dependencies]
+# Real ONNX Runtime inference backend. Optional: without it the component falls
+# back to the deterministic threshold backend (lazy/guarded imports in
+# edge_inference.infrastructure.onnx_backend).
+onnx = [
+    "onnxruntime==1.19.2",
+    "numpy>=1.26,<2",
+]
+dev = [
+    "pytest>=8.3",
+    "pytest-cov>=5.0",
+    "ruff>=0.6",
+]
+
+[tool.setuptools.packages.find]
+include = ["edge_inference*"]
+
+[tool.pytest.ini_options]
+# NB: coverage flags are intentionally NOT in addopts so a bare
+# `python -m pytest` works on a machine without pytest-cov. Run coverage via:
+#   python -m pytest --cov=edge_inference --cov-report=term-missing
+testpaths = ["tests"]
+
+[tool.coverage.report]
+# Pure parts (domain + file store) must stay near-fully covered. The ONNX path is
+# exercised via mocks; lazy import guards are excluded as no-cover.
+fail_under = 90
+show_missing = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
