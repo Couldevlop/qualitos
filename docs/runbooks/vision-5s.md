@@ -52,7 +52,14 @@ Set-Location D:\OPENLAB\qualitOs\apps\ai-vision-5s
 C:\Python312\python.exe -m pytest -p no:cacheprovider -o addopts=""
 ```
 
-Référence : **43 tests** verts (domaine, application, image-safety, onnx-backend, routes, auth).
+Référence : **49 tests** verts (domaine, application, image-safety, onnx-backend
+*mocké*, onnx-backend **réel sur modèle jouet committé**, routes, auth).
+
+> Les 6 tests de `tests/infrastructure/test_onnx_real_model.py` chargent le vrai
+> `.onnx` committé via une session `onnxruntime` réelle. Ils sont **skippés
+> automatiquement** (`pytest.importorskip`) si `onnxruntime`/`onnx` ne sont pas
+> installés — installer l'extra `.[onnx]` pour les exécuter. Dans un env sans le
+> runtime, le décompte tombe à 43 (6 skipped).
 
 ---
 
@@ -70,17 +77,77 @@ et **journalisée** (`backend.factory selected=stub|onnx ...`) :
 
 Le fallback est **transparent** : aucune rupture d'API, le service boote toujours.
 
-### Activer l'inférence ONNX réelle
+### 2.1 Contrat ONNX (entrée / sortie)
 
-1. Exporter le modèle YOLOv8 fine-tuné 5S au format ONNX.
-   Contrat modèle (V1, cf. `app/infrastructure/onnx_backend.py`) :
-   - entrée : tenseur RGB unique, **NCHW float32**, normalisé 0..1, redimensionné à
-     `VISION5S_ONNX_INPUT_SIZE` (défaut **224**) ;
-   - sortie : vecteur **1×5** de scores par pilier (Seiri, Seiton, Seiso, Seiketsu,
-     Shitsuke) dans 0..1, clampés puis mis à l'échelle 0..100.
-2. Déposer le `.onnx` accessible au conteneur (volume monté) ou au process local.
-3. Installer le runtime : `pip install ".[onnx]"` (onnxruntime + numpy).
-4. Renseigner `VISION5S_ONNX_MODEL_PATH` (+ `VISION5S_ONNX_INPUT_SIZE` si ≠ 224).
+Le backend `OnnxInferenceBackend` (cf. `app/infrastructure/onnx_backend.py`)
+impose le contrat suivant à **tout** modèle, jouet ou réel :
+
+| | Nom tensor | Type | Forme | Sémantique |
+| --- | --- | --- | --- | --- |
+| **Entrée** | (1er input du graphe) | `float32` | `[1, 3, H, W]` (NCHW) | image RGB unique, normalisée **0..1**, redimensionnée à `VISION5S_ONNX_INPUT_SIZE` (défaut **224**) |
+| **Sortie** | (1er output) | `float32` | `[1, 5]` (≥ 5 valeurs) | scores par pilier (Seiri, Seiton, Seiso, Seiketsu, Shitsuke) dans **0..1** |
+
+Le backend **clampe** la sortie à 0..1 (NaN → 0) puis la met à l'échelle
+**0..100** (domaine `FiveSScore`). Un finding est émis par pilier < 60
+(`critical` si < 45, sinon `warning`). Une sortie < 5 valeurs lève
+`OnnxBackendUnavailable` (→ fallback stub).
+
+### 2.2 Modèle jouet committé (chemin réel exercé en test)
+
+Un **petit modèle ONNX jouet** est versionné : `apps/ai-vision-5s/models/vision5s-toy.onnx`
+(~368 octets). Il est généré de façon reproductible par
+`scripts/export_5s_model.py` et respecte le contrat ci-dessus :
+
+```
+input [1,3,H,W] -> GlobalAveragePool -> Flatten -> MatMul(W[3,5]) + B[5] -> Sigmoid -> [1,5]
+```
+
+C.-à-d. les 5 scores sont une fonction déterministe (poids fixes, pas d'aléa) de
+la **moyenne R/G/B** de l'image. **Ce n'est PAS un modèle de qualité** : il sert
+uniquement à exercer le **vrai chemin d'inférence ONNX** (chargement d'un `.onnx`
+réel + session `onnxruntime` réelle) dans les tests
+(`tests/infrastructure/test_onnx_real_model.py`), sans GPU ni gros poids. Les
+tests vérifient que la sortie est bien formée, déterministe, dépendante de
+l'image, et **distincte** du stub (heuristique SHA-256).
+
+Régénérer le `.onnx` jouet :
+
+```powershell
+$env:TMP='D:\tmp'; $env:TEMP='D:\tmp'
+Set-Location D:\OPENLAB\qualitOs\apps\ai-vision-5s
+C:\Python312\python.exe -m pip install ".[onnx-export]"   # onnx + numpy
+C:\Python312\python.exe scripts/export_5s_model.py        # -> models/vision5s-toy.onnx
+```
+
+### 2.3 Fournir un modèle de PRODUCTION (YOLOv8 fine-tuné)
+
+Le modèle de prod est un **YOLOv8 fine-tuné sur des labels 5S** (CLAUDE.md §3.2,
+§12.1). Le modèle jouet ci-dessus est à **remplacer**. Pipeline (dataset **non
+fourni**) :
+
+1. **Collecter & labelliser** des photos de poste de travail par pilier :
+   encombrement (Seiri), outils mal rangés (Seiton), saleté (Seiso), marquages
+   manquants/effacés (Seiketsu), preuve d'audit manquante (Shitsuke) — bounding
+   boxes pour les détections + tête de score par pilier.
+2. **Entraîner** avec Ultralytics YOLOv8 (ou backbone CV + tête de régression
+   5 logits) :
+   ```bash
+   yolo detect train data=5s.yaml model=yolov8n.pt imgsz=224 epochs=100
+   ```
+3. **Exporter en ONNX** en conservant le contrat §2.1 (entrée NCHW float32 0..1,
+   sortie 1×5 scores 0..1 — ajouter une petite tête d'adaptation si la sortie
+   native du détecteur diffère) :
+   ```bash
+   yolo export model=best.pt format=onnx imgsz=224 opset=17
+   ```
+4. **Valider** le graphe exporté contre le contrat (cf. tests §2.2 + ce runbook),
+   puis livrer le `.onnx` et le **monter en prod**.
+
+### 2.4 Monter le modèle en prod
+
+1. Déposer le `.onnx` accessible au conteneur (volume monté) ou au process local.
+2. Installer le runtime : `pip install ".[onnx]"` (onnxruntime + numpy).
+3. Renseigner `VISION5S_ONNX_MODEL_PATH` (+ `VISION5S_ONNX_INPUT_SIZE` si ≠ 224).
 
 En compose, ajouter un volume + l'env :
 
@@ -92,8 +159,11 @@ ai-vision-5s:
     - ./infra/models/vision5s-yolov8.onnx:/models/vision5s-yolov8.onnx:ro
 ```
 
-> Aucun modèle entraîné n'est versionné dans le repo. La voie ONNX réelle est
-> couverte par les tests en mockant `onnxruntime.InferenceSession`.
+> Seul un modèle **jouet** est versionné (pour le test du chemin réel) ; **aucun
+> modèle entraîné de production** n'est dans le repo. La voie ONNX réelle est
+> couverte (a) par mock de `onnxruntime.InferenceSession`
+> (`test_onnx_backend.py`) et (b) par chargement/exécution du `.onnx` jouet réel
+> (`test_onnx_real_model.py`).
 
 ---
 

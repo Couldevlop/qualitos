@@ -16,6 +16,13 @@ onnx = [
     "onnxruntime==1.19.2",
     "numpy>=1.26,<2",
 ]
+# Building/exporting the 5S ONNX graph (scripts/export_5s_model.py) additionally
+# needs the `onnx` package (graph authoring + checker). It is NOT required to run
+# inference (onnxruntime alone loads the committed .onnx).
+onnx-export = [
+    "onnx==1.17.0",
+    "numpy>=1.26,<2",
+]
 
 [tool.pytest.ini_options]
 addopts = "-q --strict-markers --cov=app --cov-report=term-missing --cov-fail-under=85"
