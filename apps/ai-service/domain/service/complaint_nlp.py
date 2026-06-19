@@ -67,13 +67,29 @@ _CRITICAL_MARKERS = frozenset(
 _CRITICAL_SENTIMENT = -0.6  # en deçà, la réclamation est jugée critique
 
 
-def analyze(texts: list[str], *, categories: dict[str, list[str]] | None = None
-            ) -> ComplaintAnalysis:
+# Backends de sentiment. ``lexical`` = défaut réel (ci-dessous) ; ``bert`` =
+# backend lourd opt-in, import paresseux (ADR 0031).
+_BACKENDS = ("lexical", "bert")
+
+
+def analyze(texts: list[str], *, categories: dict[str, list[str]] | None = None,
+            backend: str = "lexical") -> ComplaintAnalysis:
     """Analyse une liste de réclamations : sentiment, catégorie, criticité par item.
 
     :param categories: taxonomie {catégorie: [termes-graines]} ; défaut si None.
-    :raises ValueError: liste vide ou trop volumineuse.
+    :param backend: moteur de sentiment — ``lexical`` (défaut, réel, pur) | ``bert``
+        (lourd, opt-in, extra ml ; sinon :class:`MlBackendUnavailableError`).
+        La classification et la criticité restent identiques dans les deux cas.
+    :raises ValueError: liste vide, trop volumineuse ou backend invalide.
+    :raises MlBackendUnavailableError: ``bert`` sélectionné mais lib absente.
     """
+    if backend not in _BACKENDS:
+        raise ValueError(f"backend must be one of {_BACKENDS}")
+    if backend == "bert":
+        from domain.service.ml_backends import sentiment_bert
+        return sentiment_bert.analyze(texts, categories=categories)
+
+    # --- défaut : sentiment lexical (réel, sans dépendance lourde) -----------------
     if not texts:
         raise ValueError("texts must be a non-empty list")
     if len(texts) > 2000:

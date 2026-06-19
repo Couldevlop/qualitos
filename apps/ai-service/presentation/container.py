@@ -21,6 +21,7 @@ from application.usecase import (
     RagQueryUseCase,
     SpcDetectUseCase,
     SupplierRiskUseCase,
+    TranscribeUseCase,
 )
 from domain.model.completion import ProviderName
 from domain.port.ai_provider import AIProvider
@@ -164,3 +165,7 @@ class Container:
 
     def nc_cluster(self) -> NcClusterUseCase:
         return NcClusterUseCase()
+
+    def transcribe(self) -> TranscribeUseCase:
+        # Backend Whisper opt-in (import paresseux ; extra ml). 501 si indisponible.
+        return TranscribeUseCase()

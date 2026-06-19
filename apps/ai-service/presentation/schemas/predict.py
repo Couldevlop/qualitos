@@ -16,6 +16,9 @@ class KpiForecastRequest(BaseModel):
     # Période saisonnière optionnelle (ex. 7=hebdo, 12=mensuel). Utilisée si la série
     # couvre ≥ 2 périodes, sinon Holt linéaire. None = pas de saisonnalité.
     seasonal_period: int | None = Field(default=None, ge=2, le=365)
+    # Backend de prévision : holt_winters (défaut, réel) | prophet | lstm (lourds,
+    # opt-in extra ml ; 422 si la lib n'est pas installée — ADR 0031).
+    model: str = Field(default="holt_winters", pattern="^(holt_winters|prophet|lstm)$")
 
 
 class KpiForecastPointResponse(BaseModel):
@@ -88,6 +91,9 @@ class NcClusterRequest(BaseModel):
     threshold: float = Field(default=0.35, gt=0.0, lt=1.0)
     # Taille minimale du voisinage d'un point-cœur DBSCAN (densité).
     min_samples: int = Field(default=2, ge=2, le=100)
+    # Algorithme : dbscan (défaut, réel) | hdbscan (lourd, opt-in extra ml ; 422 si
+    # la lib n'est pas installée — ADR 0031).
+    method: str = Field(default="dbscan", pattern="^(dbscan|hdbscan)$")
 
 
 class NcClusterResponse(BaseModel):

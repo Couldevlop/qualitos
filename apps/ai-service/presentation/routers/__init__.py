@@ -8,6 +8,7 @@ from .predict_router import router as predict_router
 from .spc_router import router as spc_router
 from .anomaly_router import router as anomaly_router
 from .complaint_router import router as complaint_router
+from .transcription_router import router as transcription_router
 
 __all__ = [
     "anomaly_router",
@@ -19,4 +20,5 @@ __all__ = [
     "federated_router",
     "health_router",
     "spc_router",
+    "transcription_router",
 ]

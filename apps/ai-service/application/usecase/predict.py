@@ -26,10 +26,11 @@ class KpiForecastUseCase:
         horizon: int = 6,
         direction: str = "at_least",
         seasonal_period: int | None = None,
+        model: str = "holt_winters",
     ) -> KpiForecast:
         result = forecasting.forecast(
             values, target, horizon=horizon, direction=direction,
-            seasonal_period=seasonal_period,
+            seasonal_period=seasonal_period, model=model,
         )
         logger.info(
             "KPI forecast tenant=%s n=%d horizon=%d model=%s p=%.2f confidence=%s",
@@ -56,9 +57,11 @@ class NcClusterUseCase:
 
     def execute(
         self, texts: list[str], tenant: TenantContext, *,
-        threshold: float = 0.35, min_samples: int = 2,
+        threshold: float = 0.35, min_samples: int = 2, method: str = "dbscan",
     ) -> NcClusteringResult:
-        result = nc_clustering.cluster(texts, threshold=threshold, min_samples=min_samples)
+        result = nc_clustering.cluster(
+            texts, threshold=threshold, min_samples=min_samples, method=method,
+        )
         logger.info(
             "NC clustering tenant=%s n=%d method=%s clusters=%d noise=%d",
             tenant.tenant_id, result.n, result.method,

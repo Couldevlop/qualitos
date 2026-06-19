@@ -36,6 +36,11 @@ _Z95 = 1.959963984540054
 _GRID = (0.1, 0.3, 0.5, 0.7, 0.9)
 
 
+# Backends de prévision disponibles. ``holt_winters`` = défaut réel (ci-dessous) ;
+# ``prophet``/``lstm`` = backends lourds opt-in, import paresseux (ADR 0031).
+_BACKENDS = ("holt_winters", "prophet", "lstm")
+
+
 def forecast(
     values: list[float],
     target: float,
@@ -43,13 +48,34 @@ def forecast(
     horizon: int = 6,
     direction: str = "at_least",
     seasonal_period: int | None = None,
+    model: str = "holt_winters",
 ) -> KpiForecast:
     """Prévoit la série et la probabilité d'atteindre ``target``.
 
     :param seasonal_period: période saisonnière (ex. 7, 12). Utilisée seulement si
         ``2 ≤ period`` et la série couvre au moins 2 périodes ; sinon Holt linéaire.
-    :raises ValueError: série trop courte, horizon ou direction invalides.
+    :param model: backend de prévision — ``holt_winters`` (défaut, réel, NumPy pur)
+        | ``prophet`` | ``lstm`` (lourds, opt-in, extra ml ; sinon
+        :class:`MlBackendUnavailableError`).
+    :raises ValueError: série trop courte, horizon/direction/model invalides.
+    :raises MlBackendUnavailableError: backend lourd sélectionné mais lib absente.
     """
+    if model not in _BACKENDS:
+        raise ValueError(f"model must be one of {_BACKENDS}")
+    if model == "prophet":
+        from domain.service.ml_backends import forecast_prophet
+        return forecast_prophet.forecast(
+            values, target, horizon=horizon, direction=direction,
+            seasonal_period=seasonal_period,
+        )
+    if model == "lstm":
+        from domain.service.ml_backends import forecast_lstm
+        return forecast_lstm.forecast(
+            values, target, horizon=horizon, direction=direction,
+            seasonal_period=seasonal_period,
+        )
+
+    # --- défaut : Holt / Holt-Winters (réel, sans dépendance lourde) --------------
     if direction not in ("at_least", "at_most"):
         raise ValueError("direction must be 'at_least' or 'at_most'")
     if horizon < 1 or horizon > 60:

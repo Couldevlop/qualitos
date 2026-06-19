@@ -35,6 +35,7 @@ supersession).
 | [0028](./0028-iot-modbus-connector.md) | Connecteur d'ingestion Modbus TCP/RTU (lecture structurée par la passerelle Edge), tenant fail-closed | Accepté |
 | [0029](./0029-vision-5s-toy-onnx-real-path.md) | Modèle ONNX jouet committé + script d'export → vrai chemin d'inférence Vision 5S exercé en test (modèle de prod à fournir) | Accepté |
 | [0030](./0030-edge-inference-store-and-forward.md) | Inférence Edge : store-and-forward + ONNX-ou-repli déterministe (logique pure testée ; modèle/runtime à fournir) | Accepté |
+| [0031](./0031-pluggable-ml-backends-opt-in.md) | Backends ML lourds enfichables opt-in (Prophet/LSTM/HDBSCAN/BERT/Whisper) : défaut léger réel intact, import paresseux, extra `ml` ; indisponible → 422/501 | Accepté |
 
 ## Statuts possibles
 

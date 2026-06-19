@@ -7,11 +7,13 @@ from .predict import KpiForecastUseCase, NcClusterUseCase, SupplierRiskUseCase
 from .spc_detect import SpcDetectUseCase
 from .anomaly_detect import AnomalyDetectUseCase, AnomalyExplainUseCase
 from .complaint_analyze import ComplaintAnalyzeUseCase
+from .transcribe import TranscribeUseCase
 
 __all__ = [
     "AnomalyDetectUseCase",
     "AnomalyExplainUseCase",
     "ComplaintAnalyzeUseCase",
+    "TranscribeUseCase",
     "KpiForecastUseCase",
     "NcClusterUseCase",
     "SupplierRiskUseCase",
