@@ -95,7 +95,23 @@ Vague C (N3) : 3.1 DAST ∥ 3.2 perf ∥ 3.3 chaos ∥ 3.4 couverture front
 Gain estimé : Vague A ≈ +3 pts (différenciateurs), Vague B ≈ +3 pts, Vague C ≈ +2 pts → **~95 %**.
 Le solde (~5 %) bascule à 100 % uniquement avec les enablers du Niveau 4.
 
-## Définition de « fait » (rappel, §20)
+## Définition de « fait » — RENFORCÉE (s'applique à CHAQUE étape, pas seulement à l'item)
 
-Chaque item : code complet et fonctionnel (zéro stub), Clean Architecture, OWASP (tenant via JWT, `@PreAuthorize`,
-validation), tests + couverture ≥ 85 %, CI verte, ADR si décision structurante, **sans signature Claude**.
+Une étape n'est **pas terminée** — et on **ne passe pas** à la suivante — tant que TOUS ces critères ne sont pas
+réunis et **vérifiés** :
+
+1. **Code complet et fonctionnel** : zéro stub / TODO / placeholder, tout câblé bout-en-bout.
+2. **Clean / hexagonal architecture** : domain pur (sans framework) / application / infrastructure / presentation ;
+   contrats d'architecture vérifiés (import-linter côté Python, dépendances respectées côté Java).
+3. **OWASP** : `tenant_id` issu du **JWT** (jamais du body, §18.2 #2), `@PreAuthorize`, validation des entrées,
+   pas de PII en clair dans les logs, échappement de sortie.
+4. **Testable unitairement** : chaque unité de logique a ses tests unitaires.
+5. **Golden test** : un test de référence (chemin doré / golden-master) qui fige le comportement attendu de bout
+   en bout de l'étape, **avant de passer à l'étape suivante**.
+6. **Couverture ≥ 98 %** (lignes) sur le code de l'étape — pas 85 %.
+7. **Validation séquentielle** : l'étape est verte (tests + golden + couverture 98 %) **avant** d'entamer la
+   suivante. Pas de dette de test reportée.
+8. CI verte, ADR si décision structurante, Conventional Commits FR, **sans aucune signature Claude**.
+
+> Conséquence pratique : on avance **étape par étape**, chacune auto-prouvée. Un lot parallèle reste possible
+> mais chaque agent applique ce DoD à 98 % + golden test sur SON périmètre avant rendu.
