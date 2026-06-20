@@ -39,107 +39,73 @@ export class MainShellComponent implements OnInit {
 
   private static readonly COLLAPSED_KEY = 'qos.nav.collapsed';
 
-  // Architecture d'information par domaine (Qualité vs Gouvernance/Conformité GRC),
-  // inspirée des leaders QMS (MasterControl, ETQ, Veeva, Qualio). Les 3 blocs de
-  // conformité sont repliables pour éviter la surcharge cognitive (règle 7±2).
+  // Refonte navigation (Travail 1) — 6 groupes lisibles inspirés des leaders QMS
+  // (MasterControl, ETQ, Veeva, Qualio). Objectif : pas de scroll pour l'usage
+  // courant, charge cognitive maîtrisée (règle 7±2 par groupe), et la masse
+  // GRC (19 routes) repliée derrière une seule entrée → page hub /compliance.
+  // Les groupes sont repliables, l'état est persisté en localStorage.
   readonly sections: NavSection[] = [
     {
       label: $localize`:@@nav.pilotage:Pilotage`,
       items: [
+        { label: $localize`:@@nav.accueil:Accueil`,                route: '/home',              icon: 'home' },
         { label: $localize`:@@nav.tableau-de-bord:Tableau de bord`, route: '/dashboard',         icon: 'dashboard' },
-        { label: $localize`:@@nav.accueil:Accueil`,         route: '/home',              icon: 'home' },
-        { label: $localize`:@@nav.mes-dashboards:Mes dashboards`,  route: '/dashboard-builder', icon: 'dashboard_customize' },
-        { label: $localize`:@@nav.tv-mode:Mode TV / Salle qualité`, route: '/tv', icon: 'tv' },
-        { label: $localize`:@@nav.indicateurs-kpi:Indicateurs (KPI)`, route: '/kpis',            icon: 'monitoring' },
-        { label: $localize`:@@nav.assistant-ia:Assistant IA`,    route: '/nlq',               icon: 'forum' },
-        { label: $localize`:@@nav.nlq-explore:Exploration NLQ`,  route: '/nlq-explore',       icon: 'query_stats' },
-        { label: $localize`:@@nav.storyboard:Storyboard IA`,     route: '/storyboard',        icon: 'auto_stories' }
+        { label: $localize`:@@nav.mes-dashboards:Mes dashboards`,   route: '/dashboard-builder', icon: 'dashboard_customize' },
+        { label: $localize`:@@nav.tv-mode:Mode TV / Salle qualité`, route: '/tv',                icon: 'tv' },
+        { label: $localize`:@@nav.indicateurs-kpi:Indicateurs (KPI)`, route: '/kpis',            icon: 'monitoring' }
       ]
     },
     {
       label: $localize`:@@nav.methodes-qualite:Méthodes qualité`,
       items: [
-        { label: $localize`:@@nav.pdca:PDCA`,     route: '/pdca',     icon: 'autorenew' },
+        { label: $localize`:@@nav.pdca:PDCA`,         route: '/pdca',     icon: 'autorenew' },
         { label: $localize`:@@nav.ishikawa:Ishikawa`, route: '/ishikawa', icon: 'account_tree' },
-        { label: $localize`:@@nav.5s:5S`,       route: '/fives',    icon: 'check_circle' },
-        { label: $localize`:@@nav.dmaic:DMAIC`,    route: '/dmaic',    icon: 'analytics' },
-        { label: $localize`:@@nav.spc:SPC`,      route: '/spc',      icon: 'show_chart' },
-        { label: $localize`:@@nav.anomaly:Anomalies IA`, route: '/anomaly', icon: 'bubble_chart' },
-        { label: $localize`:@@nav.forecast:Prévision KPI`, route: '/forecast', icon: 'trending_up' },
-        { label: $localize`:@@nav.nc-clusters:Clustering NC`, route: '/nc-clusters', icon: 'hub' },
+        { label: $localize`:@@nav.5s:5S`,             route: '/fives',    icon: 'check_circle' },
+        { label: $localize`:@@nav.dmaic:DMAIC`,       route: '/dmaic',    icon: 'analytics' },
+        { label: $localize`:@@nav.cercles:Cercles`,   route: '/circles',  icon: 'groups' },
+        { label: $localize`:@@nav.workflow-designer:Designer de workflow`, route: '/workflow-designer', icon: 'schema' }
+      ]
+    },
+    {
+      label: $localize`:@@nav.analyses-ia:Analyses IA`,
+      items: [
+        { label: $localize`:@@nav.spc:SPC`,                       route: '/spc',            icon: 'show_chart' },
+        { label: $localize`:@@nav.anomaly:Anomalies IA`,          route: '/anomaly',        icon: 'bubble_chart' },
+        { label: $localize`:@@nav.forecast:Prévision KPI`,        route: '/forecast',       icon: 'trending_up' },
+        { label: $localize`:@@nav.nc-clusters:Clustering NC`,     route: '/nc-clusters',    icon: 'hub' },
         { label: $localize`:@@nav.complaints-nlp:Réclamations IA`, route: '/complaints-nlp', icon: 'rate_review' },
-        { label: $localize`:@@nav.cercles:Cercles`,  route: '/circles',  icon: 'groups' },
-        { label: $localize`:@@nav.workflow-designer:Designer de workflow`, route: '/workflow-designer', icon: 'account_tree' }
+        { label: $localize`:@@nav.assistant-ia:Assistant IA`,     route: '/nlq',            icon: 'forum' },
+        { label: $localize`:@@nav.nlq-explore:Exploration NLQ`,   route: '/nlq-explore',    icon: 'query_stats' },
+        { label: $localize`:@@nav.storyboard:Storyboard IA`,      route: '/storyboard',     icon: 'auto_stories' }
       ]
     },
     {
-      label: $localize`:@@nav.qualite-operationnelle:Qualité opérationnelle`,
+      label: $localize`:@@nav.operations:Opérations`,
       items: [
-        { label: $localize`:@@nav.non-conformites:Non-conformités`, route: '/nc', icon: 'report_problem' },
-        { label: $localize`:@@nav.capa:CAPA`,          route: '/capa',      icon: 'engineering' },
-        { label: $localize`:@@nav.audits:Audits`,        route: '/audits',    icon: 'fact_check' },
-        { label: $localize`:@@nav.risques-fmea:Risques (FMEA)`, route: '/fmea',     icon: 'warning' },
-        { label: $localize`:@@nav.documents:Documents`,     route: '/documents', icon: 'description' },
-        { label: $localize`:@@nav.changements:Changements`,   route: '/changes',   icon: 'change_circle' },
-        { label: $localize`:@@nav.ehs:EHS`,           route: '/ehs',       icon: 'health_and_safety' }
+        { label: $localize`:@@nav.non-conformites:Non-conformités`, route: '/nc',        icon: 'report_problem' },
+        { label: $localize`:@@nav.capa:CAPA`,                       route: '/capa',      icon: 'engineering' },
+        { label: $localize`:@@nav.audits:Audits`,                   route: '/audits',    icon: 'fact_check' },
+        { label: $localize`:@@nav.risques-fmea:Risques (FMEA)`,     route: '/fmea',      icon: 'warning' },
+        { label: $localize`:@@nav.documents:Documents`,             route: '/documents', icon: 'description' },
+        { label: $localize`:@@nav.changements:Changements`,         route: '/changes',   icon: 'change_circle' },
+        { label: $localize`:@@nav.ehs:EHS`,                         route: '/ehs',       icon: 'health_and_safety' }
       ]
     },
     {
-      label: $localize`:@@nav.fournisseurs-competences:Fournisseurs & compétences`,
+      label: $localize`:@@nav.referentiels:Référentiels`,
       items: [
-        { label: $localize`:@@nav.fournisseurs:Fournisseurs`, route: '/suppliers', icon: 'local_shipping' },
-        { label: $localize`:@@nav.formation:Formation`,    route: '/training',  icon: 'school' },
-        { label: $localize`:@@nav.mon-apprentissage:Mon apprentissage`, route: '/learning', icon: 'military_tech' }
+        { label: $localize`:@@nav.standards-hub:Standards Hub`,     route: '/standards',      icon: 'workspace_premium' },
+        { label: $localize`:@@nav.packs-sectoriels:Packs sectoriels`, route: '/industry-packs', icon: 'category' },
+        { label: $localize`:@@nav.fournisseurs:Fournisseurs`,      route: '/suppliers',      icon: 'local_shipping' },
+        { label: $localize`:@@nav.formation:Formation`,            route: '/training',       icon: 'school' },
+        { label: $localize`:@@nav.mon-apprentissage:Mon apprentissage`, route: '/learning',  icon: 'military_tech' },
+        { label: $localize`:@@nav.integrations:Intégrations`,      route: '/itsm',           icon: 'hub' }
       ]
     },
     {
-      label: $localize`:@@nav.normes-certification:Normes & certification`,
+      label: $localize`:@@nav.conformite-grc:Conformité (GRC)`,
       items: [
-        { label: $localize`:@@nav.standards-hub:Standards Hub`, route: '/standards', icon: 'workspace_premium' },
-        { label: $localize`:@@nav.packs-sectoriels:Packs sectoriels`, route: '/industry-packs', icon: 'category' }
-      ]
-    },
-    {
-      label: $localize`:@@nav.conformite-ia-ai-act:Conformité — IA (AI Act)`,
-      collapsible: true,
-      items: [
-        { label: $localize`:@@nav.qms:QMS`,        route: '/ai-qms',        icon: 'memory' },
-        { label: $localize`:@@nav.conformite:Conformité`, route: '/ai-conformity', icon: 'verified_user' },
-        { label: $localize`:@@nav.incidents:Incidents`,  route: '/ai-incidents',  icon: 'warning' },
-        { label: $localize`:@@nav.eudb:EUDB`,       route: '/ai-eudb',       icon: 'storage' },
-        { label: $localize`:@@nav.fria:FRIA`,       route: '/fria',          icon: 'balance' },
-        { label: $localize`:@@nav.pmm:PMM`,        route: '/ai-pmm',        icon: 'monitoring' }
-      ]
-    },
-    {
-      label: $localize`:@@nav.conformite-donnees-rgpd:Conformité — Données (RGPD)`,
-      collapsible: true,
-      items: [
-        { label: $localize`:@@nav.registre-ropa:Registre (RoPA)`,   route: '/ropa',                 icon: 'shield' },
-        { label: $localize`:@@nav.consentements:Consentements`,     route: '/consents',             icon: 'how_to_reg' },
-        { label: $localize`:@@nav.demandes-dsar:Demandes (DSAR)`,   route: '/subject-requests',     icon: 'gavel' },
-        { label: $localize`:@@nav.mentions:Mentions`,          route: '/privacy-notices',      icon: 'article' },
-        { label: $localize`:@@nav.dpia:DPIA`,              route: '/dpia',                 icon: 'assessment' },
-        { label: $localize`:@@nav.dpo:DPO`,               route: '/dpo-appointments',     icon: 'badge' },
-        { label: $localize`:@@nav.retention:Rétention`,         route: '/retention',            icon: 'auto_delete' },
-        { label: $localize`:@@nav.transferts:Transferts`,        route: '/cross-border',         icon: 'public' },
-        { label: $localize`:@@nav.sous-traitants-dpa:Sous-traitants (DPA)`, route: '/processor-agreements', icon: 'handshake' },
-        { label: $localize`:@@nav.violations:Violations`,        route: '/breaches',             icon: 'privacy_tip' },
-        { label: $localize`:@@nav.decisions-auto:Décisions auto.`,   route: '/automated-decisions',  icon: 'account_tree' }
-      ]
-    },
-    {
-      label: $localize`:@@nav.conformite-cyber-nis-2:Conformité — Cyber (NIS 2)`,
-      collapsible: true,
-      items: [
-        { label: $localize`:@@nav.mesures:Mesures`,         route: '/nis2-measures',  icon: 'rule' },
-        { label: $localize`:@@nav.incidents-cyber:Incidents cyber`, route: '/cyber-incidents', icon: 'shield' }
-      ]
-    },
-    {
-      label: $localize`:@@nav.integrations:Intégrations`,
-      items: [
-        { label: $localize`:@@nav.itsm:ITSM`, route: '/itsm', icon: 'hub' }
+        { label: $localize`:@@nav.conformite-hub:Conformité`, route: '/compliance', icon: 'verified_user' }
       ]
     }
   ];

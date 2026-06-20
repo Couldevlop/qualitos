@@ -85,19 +85,23 @@
   &__nav {
     flex: 1 1 auto;
     overflow-y: auto;
-    padding: var(--qos-space-3) var(--qos-space-2);
+    padding: var(--qos-space-4) var(--qos-space-3);
     display: flex;
     flex-direction: column;
-    gap: var(--qos-space-1);
+    gap: var(--qos-space-4);
   }
+
+  /* Chaque groupe respire : un filet d'en-tête discret + ses items. */
+  &__group { display: flex; flex-direction: column; gap: var(--qos-space-1); }
 
   &__section-label {
     font-size: 10px;
     font-weight: var(--qos-fw-semibold);
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--qos-fg-sidebar);
-    padding: var(--qos-space-3) var(--qos-space-3) var(--qos-space-1);
+    opacity: 0.72;
+    padding: var(--qos-space-1) var(--qos-space-3) var(--qos-space-2);
   }
 
   /* En-tête de section repliable (groupes de conformité GRC). */

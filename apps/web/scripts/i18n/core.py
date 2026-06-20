@@ -105,4 +105,10 @@ TRANSLATIONS = {
     'nav.incidents-cyber': ('Incidents cyber', 'Cyber incidents', 'Incidentes ciber', 'الحوادث السيبرانية', 'サイバーインシデント', '网络事件'),
     'nav.integrations': ('Intégrations', 'Integrations', 'Integraciones', 'التكاملات', '連携', '集成'),
     'nav.itsm': ('ITSM', 'ITSM', 'ITSM', 'ITSM', 'ITSM', 'ITSM'),
+    # --- Refonte navigation : 6 groupes (Travail 1) ---
+    'nav.analyses-ia': ('Analyses IA', 'AI analytics', 'Análisis IA', 'تحليلات الذكاء الاصطناعي', 'AI分析', 'AI 分析'),
+    'nav.operations': ('Opérations', 'Operations', 'Operaciones', 'العمليات', 'オペレーション', '运营'),
+    'nav.referentiels': ('Référentiels', 'Reference data', 'Referenciales', 'المرجعيات', 'リファレンス', '参照库'),
+    'nav.conformite-grc': ('Conformité (GRC)', 'Compliance (GRC)', 'Cumplimiento (GRC)', 'الامتثال (GRC)', 'コンプライアンス（GRC）', '合规（GRC）'),
+    'nav.conformite-hub': ('Conformité', 'Compliance', 'Cumplimiento', 'الامتثال', 'コンプライアンス', '合规'),
 }
