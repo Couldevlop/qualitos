@@ -36,6 +36,7 @@ supersession).
 | [0029](./0029-vision-5s-toy-onnx-real-path.md) | Modèle ONNX jouet committé + script d'export → vrai chemin d'inférence Vision 5S exercé en test (modèle de prod à fournir) | Accepté |
 | [0030](./0030-edge-inference-store-and-forward.md) | Inférence Edge : store-and-forward + ONNX-ou-repli déterministe (logique pure testée ; modèle/runtime à fournir) | Accepté |
 | [0031](./0031-pluggable-ml-backends-opt-in.md) | Backends ML lourds enfichables opt-in (Prophet/LSTM/HDBSCAN/BERT/Whisper) : défaut léger réel intact, import paresseux, extra `ml` ; indisponible → 422/501 | Accepté |
+| [0032](./0032-generation-doc-normatif-ia.md) | Standards Hub : génération assistée IA de documents normatifs + workflow de validation humaine (§8.8) | Accepté |
 
 ## Statuts possibles
 
