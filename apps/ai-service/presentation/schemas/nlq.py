@@ -6,11 +6,12 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from domain.model.completion import ProviderName
+from presentation.provider_defaults import DEFAULT_PROVIDER
 
 
 class NlqRequestSchema(BaseModel):
     question: str = Field(..., min_length=1, max_length=1000)
-    provider: ProviderName = ProviderName.OLLAMA
+    provider: ProviderName = DEFAULT_PROVIDER
     max_rows: int = Field(default=500, ge=1, le=10_000)
 
 

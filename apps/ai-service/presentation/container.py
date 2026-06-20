@@ -82,7 +82,11 @@ class Container:
                 timeout_s=float(os.environ.get("OLLAMA_TIMEOUT_S", "120")),
             ),
             ProviderName.ANTHROPIC: AnthropicProvider(),
-            ProviderName.MISTRAL: MistralProvider(),
+            # Modèle Mistral configurable par env (défaut mistral-large-latest) ; la clé
+            # MISTRAL_API_KEY est lue par le provider lui-même (jamais committée, §18.2 #3).
+            ProviderName.MISTRAL: MistralProvider(
+                model=os.environ.get("MISTRAL_MODEL", "mistral-large-latest"),
+            ),
         }
         pii_filter = o.get("pii_filter") or PresidioPiiFilter()
         injection_filter = o.get("injection_filter") or HeuristicInjectionFilter()
