@@ -10,6 +10,7 @@ os.environ["QOS_DEV_AUTH"] = "true"
 from fastapi.testclient import TestClient  # noqa: E402
 
 from application.usecase.generate_norm_doc import GenerateNormDocUseCase  # noqa: E402
+from application.usecase.mock_audit import MockAuditUseCase  # noqa: E402
 from domain.model.completion import (  # noqa: E402
     CompletionRequest,
     CompletionResponse,
@@ -59,6 +60,29 @@ class _DownProvider(AIProvider):
         raise ProviderUnavailableError("ollama down")
 
 
+_AUDIT_JSON = (
+    '{"questions": ['
+    '{"clause_code": "8.1", "question": "Comment maîtrisez-vous la production ?"}'
+    '], "findings": ['
+    '{"clause_code": "8.1", "finding": "Aucune preuve fournie."}'
+    "]}"
+)
+
+
+class _AuditProvider(AIProvider):
+    def name(self) -> ProviderName:
+        return ProviderName.OLLAMA
+
+    def complete(self, request: CompletionRequest) -> CompletionResponse:
+        return CompletionResponse(
+            text=_AUDIT_JSON,
+            provider=ProviderName.OLLAMA,
+            confidence=Confidence(0.6, "heuristic"),
+            tokens_used=20,
+            latency_ms=5,
+        )
+
+
 def _patch_container(provider: AIProvider | None = None):
     providers = {ProviderName.OLLAMA: provider or _EchoProvider()}
     pii = HeuristicPiiFilter()
@@ -71,7 +95,54 @@ def _patch_container(provider: AIProvider | None = None):
         def generate_norm_doc(self):
             return GenerateNormDocUseCase(providers, pii, inj, audit)
 
+        def mock_audit(self):
+            return MockAuditUseCase(providers, pii, inj, audit)
+
     sr._container = _Fake()  # type: ignore[attr-defined]
+
+
+def _patch_audit_container(provider: AIProvider | None = None):
+    providers = {ProviderName.OLLAMA: provider or _AuditProvider()}
+    pii = HeuristicPiiFilter()
+    inj = HeuristicInjectionFilter()
+    audit = JsonPromptAuditLogger()
+
+    sr = importlib.import_module("presentation.routers.standards_router")
+
+    class _Fake:
+        def mock_audit(self):
+            return MockAuditUseCase(providers, pii, inj, audit)
+
+    sr._container = _Fake()  # type: ignore[attr-defined]
+
+
+def _audit_payload(**overrides):
+    body = {
+        "standard_code": "iso-9001",
+        "standard_name": "ISO 9001:2015",
+        "industry": "manufacturing",
+        "clauses": [
+            {
+                "clause_code": "8.1",
+                "title": "Maîtrise opérationnelle",
+                "obligation": "must",
+                "risk": "critical",
+                "total_requirements": 4,
+                "covered_requirements": 0,
+            },
+            {
+                "clause_code": "4.1",
+                "title": "Contexte",
+                "obligation": "should",
+                "risk": "low",
+                "total_requirements": 2,
+                "covered_requirements": 2,
+            },
+        ],
+        "provider": "ollama",
+    }
+    body.update(overrides)
+    return body
 
 
 def _payload(**overrides):
@@ -179,5 +250,108 @@ def test_injection_in_guidance_returns_422():
             "/v1/ai/standards/generate-document",
             json=payload,
             headers=_dev_header(),
+        )
+        assert r.status_code == 422
+
+
+# ===== mock-audit endpoint (§8.4 onglet 7) ===================================
+
+
+def test_mock_audit_happy_path():
+    _patch_audit_container()
+    app = create_app()
+    with TestClient(app) as client:
+        r = client.post(
+            "/v1/ai/standards/mock-audit",
+            json=_audit_payload(),
+            headers=_dev_header(),
+        )
+        assert r.status_code == 200, r.text
+        body = r.json()
+        assert body["standard_code"] == "iso-9001"
+        # Question LLM projetée sur la clause connue 8.1.
+        assert body["question_count"] == 1
+        assert body["questions"][0]["clause_code"] == "8.1"
+        # Gap analysis : 8.1 majeur (MUST/critical/0 preuve), 4.1 observation.
+        assert body["major_count"] == 1
+        assert body["observation_count"] == 1
+        by_code = {g["clause_code"]: g for g in body["gaps"]}
+        assert by_code["8.1"]["criticality"] == "major"
+        assert by_code["8.1"]["finding"] == "Aucune preuve fournie."
+        assert body["provider"] == "ollama"
+
+
+def test_mock_audit_unauthenticated_is_rejected():
+    _patch_audit_container()
+    app = create_app()
+    with TestClient(app) as client:
+        r = client.post("/v1/ai/standards/mock-audit", json=_audit_payload())
+        assert r.status_code == 401
+
+
+def test_mock_audit_empty_clauses_rejected_by_schema():
+    _patch_audit_container()
+    app = create_app()
+    with TestClient(app) as client:
+        r = client.post(
+            "/v1/ai/standards/mock-audit",
+            json=_audit_payload(clauses=[]),
+            headers=_dev_header(),
+        )
+        assert r.status_code == 422
+
+
+def test_mock_audit_unknown_obligation_returns_422():
+    _patch_audit_container()
+    app = create_app()
+    payload = _audit_payload(
+        clauses=[
+            {
+                "clause_code": "8.1",
+                "title": "X",
+                "obligation": "compulsory",  # invalide
+                "risk": "high",
+                "total_requirements": 1,
+                "covered_requirements": 0,
+            }
+        ]
+    )
+    with TestClient(app) as client:
+        r = client.post(
+            "/v1/ai/standards/mock-audit", json=payload, headers=_dev_header()
+        )
+        assert r.status_code == 422
+
+
+def test_mock_audit_provider_unavailable_returns_503():
+    _patch_audit_container(_DownProvider())
+    app = create_app()
+    with TestClient(app) as client:
+        r = client.post(
+            "/v1/ai/standards/mock-audit",
+            json=_audit_payload(),
+            headers=_dev_header(),
+        )
+        assert r.status_code == 503
+
+
+def test_mock_audit_covered_exceeds_total_returns_422():
+    _patch_audit_container()
+    app = create_app()
+    payload = _audit_payload(
+        clauses=[
+            {
+                "clause_code": "8.1",
+                "title": "X",
+                "obligation": "must",
+                "risk": "high",
+                "total_requirements": 1,
+                "covered_requirements": 5,  # > total → domaine rejette
+            }
+        ]
+    )
+    with TestClient(app) as client:
+        r = client.post(
+            "/v1/ai/standards/mock-audit", json=payload, headers=_dev_header()
         )
         assert r.status_code == 422

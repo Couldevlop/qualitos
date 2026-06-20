@@ -17,6 +17,7 @@ from application.usecase import (
     FederatedTrainRoundUseCase,
     GenerateNormDocUseCase,
     KpiForecastUseCase,
+    MockAuditUseCase,
     NcClusterUseCase,
     NlqAskUseCase,
     RagQueryUseCase,
@@ -82,7 +83,11 @@ class Container:
                 timeout_s=float(os.environ.get("OLLAMA_TIMEOUT_S", "120")),
             ),
             ProviderName.ANTHROPIC: AnthropicProvider(),
-            ProviderName.MISTRAL: MistralProvider(),
+            # Modèle Mistral configurable par env (défaut mistral-large-latest) ; la clé
+            # MISTRAL_API_KEY est lue par le provider lui-même (jamais committée, §18.2 #3).
+            ProviderName.MISTRAL: MistralProvider(
+                model=os.environ.get("MISTRAL_MODEL", "mistral-large-latest"),
+            ),
         }
         pii_filter = o.get("pii_filter") or PresidioPiiFilter()
         injection_filter = o.get("injection_filter") or HeuristicInjectionFilter()
@@ -120,6 +125,13 @@ class Container:
     def generate_norm_doc(self) -> GenerateNormDocUseCase:
         # Génération de document normatif multi-sections (Standards Hub §8.8).
         return GenerateNormDocUseCase(
+            self.providers, self.pii_filter, self.injection_filter, self.audit_logger
+        )
+
+    def mock_audit(self) -> MockAuditUseCase:
+        # Audit blanc IA (Standards Hub §8.4 onglet 7) : questions ciblées +
+        # gap analysis, mêmes garde-fous LLM que la génération de documents.
+        return MockAuditUseCase(
             self.providers, self.pii_filter, self.injection_filter, self.audit_logger
         )
 

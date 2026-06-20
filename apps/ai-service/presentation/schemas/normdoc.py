@@ -4,6 +4,7 @@ from __future__ import annotations
 from pydantic import BaseModel, Field
 
 from domain.model.completion import ProviderName
+from presentation.provider_defaults import DEFAULT_PROVIDER
 from domain.model.normdoc import NormDocDraft
 
 
@@ -28,7 +29,7 @@ class GenerateNormDocRequestSchema(BaseModel):
     standard_name: str = Field(..., min_length=1, max_length=500)
     tenant_profile: TenantProfileSchema
     sections: list[SectionSpecSchema] = Field(..., min_length=1, max_length=40)
-    provider: ProviderName = ProviderName.OLLAMA
+    provider: ProviderName = DEFAULT_PROVIDER
     max_tokens_per_section: int = Field(default=512, ge=64, le=4096)
     temperature: float = Field(default=0.2, ge=0.0, le=2.0)
 
