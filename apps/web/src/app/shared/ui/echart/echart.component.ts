@@ -1,6 +1,6 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, ElementRef,
-  Input, NgZone, OnChanges, OnDestroy, SimpleChanges, ViewChild
+  AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter,
+  Input, NgZone, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild
 } from '@angular/core';
 import type { EChartsCoreOption, ECharts } from 'echarts/core';
 import { Subscription } from 'rxjs';
@@ -62,6 +62,13 @@ export class EchartComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() loading = false;
   @Input() autoResize = true;
 
+  /**
+   * Émet la catégorie (libellé de l'axe / nom de série) du point cliqué.
+   * Utilisé par le cross-filtering des dashboards (§7.3) : un clic propage un
+   * filtre partagé à tous les widgets de la page.
+   */
+  @Output() pointSelected = new EventEmitter<EchartPointSelection>();
+
   @ViewChild('host', { static: true }) host!: ElementRef<HTMLDivElement>;
 
   private chart: ECharts | null = null;
@@ -78,6 +85,7 @@ export class EchartComponent implements AfterViewInit, OnChanges, OnDestroy {
       this.zone.runOutsideAngular(() => {
         this.chart = core.init(this.host.nativeElement);
         this.attachResize();
+        this.attachClick();
         this.themeSub = this.themeSvc.mode().subscribe(mode => {
           this.currentMode = mode;
           this.render();
@@ -102,6 +110,26 @@ export class EchartComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (!this.autoResize || !this.chart) return;
     this.observer = new ResizeObserver(() => this.chart?.resize());
     this.observer.observe(this.host.nativeElement);
+  }
+
+  /**
+   * Relaie les clics sur un point de données vers {@link pointSelected}, en
+   * réentrant dans la zone Angular (le chart est initialisé hors-zone pour la
+   * perf). Le payload est volontairement minimal et typé.
+   */
+  private attachClick(): void {
+    if (!this.chart) return;
+    this.chart.on('click', (params: EchartsClickParams) => {
+      const category = typeof params.name === 'string' && params.name.length > 0
+        ? params.name
+        : (params.seriesName ?? '');
+      if (!category) return;
+      this.zone.run(() => this.pointSelected.emit({
+        category,
+        seriesName: params.seriesName,
+        value: params.value
+      }));
+    });
   }
 
   private render(): void {
@@ -184,6 +212,21 @@ export class EchartComponent implements AfterViewInit, OnChanges, OnDestroy {
       ]
     };
   }
+}
+
+/** Sélection émise au clic sur un point/segment/barre d'un graphique. */
+export interface EchartPointSelection {
+  /** Catégorie de l'axe (ou nom de la série si pas de catégorie). */
+  category: string;
+  seriesName?: string;
+  value?: unknown;
+}
+
+/** Sous-ensemble typé des params de clic ECharts qui nous intéressent. */
+interface EchartsClickParams {
+  name?: string;
+  seriesName?: string;
+  value?: unknown;
 }
 
 interface ChartTokens {

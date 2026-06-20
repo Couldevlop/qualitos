@@ -27,6 +27,22 @@
           [attr.aria-selected]="selectedPeriod === p"
           (click)="selectedPeriod = p">{{ p }}</button>
       </div>
+      <div class="qos-timetravel" role="group" aria-label="Voyage dans le temps" i18n-aria-label="@@dashboard.tt.aria">
+        <span class="material-symbols-outlined qos-timetravel__icon" aria-hidden="true">history</span>
+        <label class="qos-timetravel__label" for="ttDate" i18n="@@dashboard.tt.label">État au</label>
+        <input
+          id="ttDate"
+          type="date"
+          class="qos-timetravel__input"
+          [(ngModel)]="timeTravelDate"
+          (change)="applyTimeTravel()">
+        <button
+          type="button"
+          class="qos-btn qos-btn--ghost qos-btn--sm"
+          *ngIf="(snapshot$ | async) || timeTravelDate"
+          (click)="clearTimeTravel()"
+          i18n="@@dashboard.tt.clear">Présent</button>
+      </div>
       <button type="button" class="qos-btn qos-btn--ghost">
         <span class="material-symbols-outlined" aria-hidden="true">download</span>
         <span i18n="@@dashboard.exec.export">Exporter</span>
@@ -37,6 +53,46 @@
       </button>
     </ng-container>
   </qos-page-header>
+
+  <!-- Bandeau time-travel (état as-of réel depuis le backend) -->
+  <section
+    class="qos-tt-banner"
+    *ngIf="(timeTravelLoading$ | async) || (timeTravelError$ | async) || (snapshot$ | async) as _state"
+    aria-live="polite">
+    <ng-container *ngIf="timeTravelLoading$ | async">
+      <span class="material-symbols-outlined qos-spin" aria-hidden="true">progress_activity</span>
+      <span i18n="@@dashboard.tt.loading">Récupération de l'état historique…</span>
+    </ng-container>
+
+    <ng-container *ngIf="timeTravelError$ | async as err">
+      <span class="material-symbols-outlined qos-tt-banner__err-icon" aria-hidden="true">error</span>
+      <span class="qos-tt-banner__err">{{ err }}</span>
+    </ng-container>
+
+    <ng-container *ngIf="(snapshot$ | async) as snap">
+      <div class="qos-tt-banner__head">
+        <span class="material-symbols-outlined" aria-hidden="true">history</span>
+        <strong i18n="@@dashboard.tt.viewing">État du tableau de bord au</strong>
+        <span class="qos-mono">{{ snap.asOf | date:'mediumDate' }}</span>
+      </div>
+
+      <p class="qos-tt-banner__empty" *ngIf="snap.empty" i18n="@@dashboard.tt.empty">
+        Aucune mesure de KPI disponible à cette date.
+      </p>
+
+      <div class="qos-tt-grid" *ngIf="!snap.empty">
+        <div class="qos-tt-kpi" *ngFor="let k of snap.kpis; trackBy: trackByKpi"
+             [class.qos-tt-kpi--absent]="!k.present">
+          <span class="qos-tt-kpi__name">{{ k.name }}</span>
+          <span class="qos-tt-kpi__value qos-mono" *ngIf="k.present">
+            {{ k.value }}<span class="qos-tt-kpi__unit" *ngIf="k.unit"> {{ k.unit }}</span>
+          </span>
+          <span class="qos-tt-kpi__value qos-tt-kpi__value--na" *ngIf="!k.present"
+                i18n="@@dashboard.tt.na">n/d</span>
+        </div>
+      </div>
+    </ng-container>
+  </section>
 
   <!-- KPI grid -->
   <section class="qos-dashboard__kpis" aria-label="Indicateurs stratégiques" i18n-aria-label="@@dashboard.exec.kpis-aria">
@@ -54,6 +110,18 @@
     </qos-kpi-card>
   </section>
 
+  <!-- Bandeau cross-filter actif (partagé entre widgets) -->
+  <div class="qos-xfilter" *ngIf="(filter$ | async) as f" role="status">
+    <span class="material-symbols-outlined" aria-hidden="true">filter_alt</span>
+    <span i18n="@@dashboard.xf.active">Filtre croisé actif :</span>
+    <strong class="qos-xfilter__value">{{ f.label }}</strong>
+    <button type="button" class="qos-xfilter__clear" (click)="clearFilter()"
+            aria-label="Annuler le filtre" i18n-aria-label="@@dashboard.xf.clear-aria">
+      <span class="material-symbols-outlined" aria-hidden="true">close</span>
+      <span i18n="@@dashboard.xf.clear">Effacer</span>
+    </button>
+  </div>
+
   <!-- Tendance qualité (full width) + Pareto (sidekick) -->
   <section class="qos-dashboard__row qos-dashboard__row--7-5">
     <qos-panel
@@ -64,13 +132,58 @@
         <qos-status-pill label="Live · OK" i18n-label="@@dashboard.exec.live-ok" tone="success"></qos-status-pill>
       </ng-container>
       <qos-echart [option]="(trendOption$ | async) ?? null" [height]="280"></qos-echart>
+
+      <details class="qos-annot-disclosure">
+        <summary>
+          <span class="material-symbols-outlined" aria-hidden="true">forum</span>
+          <span i18n="@@dashboard.annot.section">Annotations</span>
+        </summary>
+        <qos-annotations-panel [chartKey]="chartKeys.trend"></qos-annotations-panel>
+      </details>
     </qos-panel>
 
     <qos-panel
       title="Pareto des défauts" i18n-title="@@dashboard.exec.pareto-title"
-      subtitle="Catégories 6M sur 30 jours" i18n-subtitle="@@dashboard.exec.pareto-subtitle"
+      subtitle="Cliquer une catégorie pour filtrer et explorer" i18n-subtitle="@@dashboard.exec.pareto-subtitle-2"
       icon="bar_chart">
-      <qos-echart [option]="(paretoOption$ | async) ?? null" [height]="280"></qos-echart>
+      <ng-container qosActions>
+        <qos-status-pill label="Cross-filter" i18n-label="@@dashboard.xf.pill" icon="touch_app" tone="accent"></qos-status-pill>
+      </ng-container>
+      <qos-echart
+        [option]="(paretoOption$ | async) ?? null"
+        [height]="280"
+        (pointSelected)="onParetoSelect($event)"></qos-echart>
+
+      <!-- Drill-down niveau 2 : sous-causes de la catégorie sélectionnée -->
+      <div class="qos-drill" *ngIf="(drilldown$ | async) as sub">
+        <div class="qos-drill__crumb">
+          <button type="button" class="qos-drill__back" (click)="clearFilter()">
+            <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+            <span i18n="@@dashboard.drill.back">Toutes les catégories</span>
+          </button>
+          <span class="material-symbols-outlined qos-drill__sep" aria-hidden="true">chevron_right</span>
+          <strong>{{ (filter$ | async)?.label }}</strong>
+        </div>
+        <ul class="qos-drill__list">
+          <li class="qos-drill__row" *ngFor="let s of sub">
+            <span class="qos-drill__label">{{ s.category }}</span>
+            <span class="qos-drill__count qos-mono">{{ s.count }}</span>
+          </li>
+          <li class="qos-drill__empty" *ngIf="sub.length === 0" i18n="@@dashboard.drill.empty">
+            Pas de détail disponible pour cette catégorie.
+          </li>
+        </ul>
+      </div>
+
+      <details class="qos-annot-disclosure">
+        <summary>
+          <span class="material-symbols-outlined" aria-hidden="true">forum</span>
+          <span i18n="@@dashboard.annot.section">Annotations</span>
+        </summary>
+        <qos-annotations-panel
+          [chartKey]="chartKeys.pareto"
+          [anchorLabel]="paretoAnchor(filter$ | async)"></qos-annotations-panel>
+      </details>
     </qos-panel>
   </section>
 

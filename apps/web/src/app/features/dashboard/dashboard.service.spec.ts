@@ -55,4 +55,15 @@ describe('DashboardService', () => {
       done();
     });
   });
+
+  it('drill-down returns subcategories for a known 6M category', () => {
+    const sub = service.getDefectSubcategoriesSync('Machine');
+    expect(sub.length).toBeGreaterThan(0);
+    expect(sub[0].category).toBeTruthy();
+    expect(sub[0].count).toBeGreaterThan(0);
+  });
+
+  it('drill-down returns empty array for an unknown category', () => {
+    expect(service.getDefectSubcategoriesSync('Inconnu')).toEqual([]);
+  });
 });
