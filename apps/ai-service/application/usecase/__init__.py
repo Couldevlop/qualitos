@@ -13,8 +13,16 @@ from .generate_norm_doc import (
     GenerateNormDocRequest,
     GenerateNormDocResult,
 )
+from .mock_audit import (
+    MockAuditUseCase,
+    MockAuditUseCaseRequest,
+    MockAuditUseCaseResult,
+)
 
 __all__ = [
+    "MockAuditUseCase",
+    "MockAuditUseCaseRequest",
+    "MockAuditUseCaseResult",
     "AnomalyDetectUseCase",
     "AnomalyExplainUseCase",
     "ComplaintAnalyzeUseCase",

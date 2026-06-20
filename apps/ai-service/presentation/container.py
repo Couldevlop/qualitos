@@ -17,6 +17,7 @@ from application.usecase import (
     FederatedTrainRoundUseCase,
     GenerateNormDocUseCase,
     KpiForecastUseCase,
+    MockAuditUseCase,
     NcClusterUseCase,
     NlqAskUseCase,
     RagQueryUseCase,
@@ -124,6 +125,13 @@ class Container:
     def generate_norm_doc(self) -> GenerateNormDocUseCase:
         # Génération de document normatif multi-sections (Standards Hub §8.8).
         return GenerateNormDocUseCase(
+            self.providers, self.pii_filter, self.injection_filter, self.audit_logger
+        )
+
+    def mock_audit(self) -> MockAuditUseCase:
+        # Audit blanc IA (Standards Hub §8.4 onglet 7) : questions ciblées +
+        # gap analysis, mêmes garde-fous LLM que la génération de documents.
+        return MockAuditUseCase(
             self.providers, self.pii_filter, self.injection_filter, self.audit_logger
         )
 
