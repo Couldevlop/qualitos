@@ -2656,122 +2656,6 @@
         <source>Échec de l'analyse (HTTP <x id="status"/>).</source>
         <target state="translated">فشل التحليل (HTTP <x id="status"/>).</target>
       </trans-unit>
-      <trans-unit id="compliance.hub.eyebrow" datatype="html">
-        <source>Gouvernance, risque &amp; conformité</source>
-        <target state="translated">الحوكمة والمخاطر والامتثال</target>
-      </trans-unit>
-      <trans-unit id="compliance.hub.title" datatype="html">
-        <source>Conformité</source>
-        <target state="translated">الامتثال</target>
-      </trans-unit>
-      <trans-unit id="compliance.hub.subtitle" datatype="html">
-        <source>Pilotez l'IA Act, le RGPD et NIS 2 depuis un point d'entrée unique. Chaque domaine ouvre ses registres et procédures dédiés.</source>
-        <target state="translated">أدر قانون الذكاء الاصطناعي واللائحة العامة لحماية البيانات وNIS 2 من نقطة دخول واحدة. يفتح كل مجال سجلاته وإجراءاته المخصصة.</target>
-      </trans-unit>
-      <trans-unit id="compliance.hub.views-label" datatype="html">
-        <source>Registres &amp; procédures</source>
-        <target state="translated">السجلات والإجراءات</target>
-      </trans-unit>
-      <trans-unit id="compliance.ai.title" datatype="html">
-        <source>IA Act</source>
-        <target state="translated">قانون الذكاء الاصطناعي</target>
-      </trans-unit>
-      <trans-unit id="compliance.ai.desc" datatype="html">
-        <source>Système qualité IA, conformité, incidents, base UE et surveillance post-marché du règlement européen sur l’IA.</source>
-        <target state="translated">نظام جودة الذكاء الاصطناعي والمطابقة والحوادث وقاعدة بيانات الاتحاد الأوروبي والمراقبة بعد التسويق بموجب لائحة الاتحاد الأوروبي للذكاء الاصطناعي.</target>
-      </trans-unit>
-      <trans-unit id="compliance.ai.qms" datatype="html">
-        <source>Système qualité IA (QMS)</source>
-        <target state="translated">نظام جودة الذكاء الاصطناعي (QMS)</target>
-      </trans-unit>
-      <trans-unit id="compliance.ai.conformity" datatype="html">
-        <source>Conformité</source>
-        <target state="translated">المطابقة</target>
-      </trans-unit>
-      <trans-unit id="compliance.ai.incidents" datatype="html">
-        <source>Incidents IA</source>
-        <target state="translated">حوادث الذكاء الاصطناعي</target>
-      </trans-unit>
-      <trans-unit id="compliance.ai.eudb" datatype="html">
-        <source>Base de données UE</source>
-        <target state="translated">قاعدة بيانات الاتحاد الأوروبي</target>
-      </trans-unit>
-      <trans-unit id="compliance.ai.fria" datatype="html">
-        <source>Analyse d’impact (FRIA)</source>
-        <target state="translated">تقييم الأثر (FRIA)</target>
-      </trans-unit>
-      <trans-unit id="compliance.ai.pmm" datatype="html">
-        <source>Surveillance post-marché (PMM)</source>
-        <target state="translated">المراقبة بعد التسويق (PMM)</target>
-      </trans-unit>
-      <trans-unit id="compliance.gdpr.title" datatype="html">
-        <source>RGPD</source>
-        <target state="translated">اللائحة العامة لحماية البيانات</target>
-      </trans-unit>
-      <trans-unit id="compliance.gdpr.desc" datatype="html">
-        <source>Registre des traitements, consentements, droits des personnes, analyses d’impact et gestion des violations.</source>
-        <target state="translated">سجل المعالجة والموافقات وحقوق الأفراد وتقييمات الأثر وإدارة الانتهاكات.</target>
-      </trans-unit>
-      <trans-unit id="compliance.gdpr.ropa" datatype="html">
-        <source>Registre (RoPA)</source>
-        <target state="translated">السجل (RoPA)</target>
-      </trans-unit>
-      <trans-unit id="compliance.gdpr.consents" datatype="html">
-        <source>Consentements</source>
-        <target state="translated">الموافقات</target>
-      </trans-unit>
-      <trans-unit id="compliance.gdpr.subject-requests" datatype="html">
-        <source>Demandes (DSAR)</source>
-        <target state="translated">الطلبات (DSAR)</target>
-      </trans-unit>
-      <trans-unit id="compliance.gdpr.notices" datatype="html">
-        <source>Mentions d’information</source>
-        <target state="translated">إشعارات الخصوصية</target>
-      </trans-unit>
-      <trans-unit id="compliance.gdpr.dpia" datatype="html">
-        <source>Analyses d’impact (DPIA)</source>
-        <target state="translated">تقييمات الأثر (DPIA)</target>
-      </trans-unit>
-      <trans-unit id="compliance.gdpr.dpo" datatype="html">
-        <source>Désignations DPO</source>
-        <target state="translated">تعيينات مسؤول حماية البيانات</target>
-      </trans-unit>
-      <trans-unit id="compliance.gdpr.retention" datatype="html">
-        <source>Rétention</source>
-        <target state="translated">الاحتفاظ</target>
-      </trans-unit>
-      <trans-unit id="compliance.gdpr.cross-border" datatype="html">
-        <source>Transferts hors UE</source>
-        <target state="translated">عمليات النقل عبر الحدود</target>
-      </trans-unit>
-      <trans-unit id="compliance.gdpr.processor-agreements" datatype="html">
-        <source>Sous-traitants (DPA)</source>
-        <target state="translated">المعالجون (DPA)</target>
-      </trans-unit>
-      <trans-unit id="compliance.gdpr.breaches" datatype="html">
-        <source>Violations de données</source>
-        <target state="translated">انتهاكات البيانات</target>
-      </trans-unit>
-      <trans-unit id="compliance.gdpr.automated-decisions" datatype="html">
-        <source>Décisions automatisées</source>
-        <target state="translated">القرارات الآلية</target>
-      </trans-unit>
-      <trans-unit id="compliance.nis2.title" datatype="html">
-        <source>NIS 2</source>
-        <target state="translated">NIS 2</target>
-      </trans-unit>
-      <trans-unit id="compliance.nis2.desc" datatype="html">
-        <source>Mesures de cybersécurité et déclaration des incidents au titre de la directive NIS 2.</source>
-        <target state="translated">تدابير الأمن السيبراني والإبلاغ عن الحوادث بموجب توجيه NIS 2.</target>
-      </trans-unit>
-      <trans-unit id="compliance.nis2.measures" datatype="html">
-        <source>Mesures de cybersécurité</source>
-        <target state="translated">تدابير الأمن السيبراني</target>
-      </trans-unit>
-      <trans-unit id="compliance.nis2.incidents" datatype="html">
-        <source>Incidents cyber</source>
-        <target state="translated">الحوادث السيبرانية</target>
-      </trans-unit>
       <trans-unit id="common.ok" datatype="html">
         <source>OK</source>
         <target state="translated">حسناً</target>
@@ -3184,25 +3068,101 @@
         <source>ITSM</source>
         <target state="translated">ITSM</target>
       </trans-unit>
-      <trans-unit id="nav.analyses-ia" datatype="html">
-        <source>Analyses IA</source>
-        <target state="translated">تحليلات الذكاء الاصطناعي</target>
+      <trans-unit id="dashboard.tt.aria" datatype="html">
+        <source>Voyage dans le temps</source>
+        <target state="translated">السفر عبر الزمن</target>
       </trans-unit>
-      <trans-unit id="nav.operations" datatype="html">
-        <source>Opérations</source>
-        <target state="translated">العمليات</target>
+      <trans-unit id="dashboard.tt.label" datatype="html">
+        <source>État au</source>
+        <target state="translated">الحالة بتاريخ</target>
       </trans-unit>
-      <trans-unit id="nav.referentiels" datatype="html">
-        <source>Référentiels</source>
-        <target state="translated">المرجعيات</target>
+      <trans-unit id="dashboard.tt.clear" datatype="html">
+        <source>Présent</source>
+        <target state="translated">الآن</target>
       </trans-unit>
-      <trans-unit id="nav.conformite-grc" datatype="html">
-        <source>Conformité (GRC)</source>
-        <target state="translated">الامتثال (GRC)</target>
+      <trans-unit id="dashboard.tt.loading" datatype="html">
+        <source>Récupération de l'état historique…</source>
+        <target state="translated">جارٍ استرجاع الحالة التاريخية…</target>
       </trans-unit>
-      <trans-unit id="nav.conformite-hub" datatype="html">
-        <source>Conformité</source>
-        <target state="translated">الامتثال</target>
+      <trans-unit id="dashboard.tt.viewing" datatype="html">
+        <source>État du tableau de bord au</source>
+        <target state="translated">حالة لوحة المعلومات بتاريخ</target>
+      </trans-unit>
+      <trans-unit id="dashboard.tt.empty" datatype="html">
+        <source>Aucune mesure de KPI disponible à cette date.</source>
+        <target state="translated">لا توجد قياسات لمؤشرات الأداء في هذا التاريخ.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.tt.na" datatype="html">
+        <source>n/d</source>
+        <target state="translated">غ/م</target>
+      </trans-unit>
+      <trans-unit id="dashboard.tt.error" datatype="html">
+        <source>Impossible de récupérer l'état à cette date.</source>
+        <target state="translated">تعذّر استرجاع الحالة في هذا التاريخ.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.xf.active" datatype="html">
+        <source>Filtre croisé actif :</source>
+        <target state="translated">مرشّح متقاطع نشط:</target>
+      </trans-unit>
+      <trans-unit id="dashboard.xf.clear" datatype="html">
+        <source>Effacer</source>
+        <target state="translated">مسح</target>
+      </trans-unit>
+      <trans-unit id="dashboard.xf.clear-aria" datatype="html">
+        <source>Annuler le filtre</source>
+        <target state="translated">إلغاء المرشّح</target>
+      </trans-unit>
+      <trans-unit id="dashboard.xf.pill" datatype="html">
+        <source>Cross-filter</source>
+        <target state="translated">مرشّح متقاطع</target>
+      </trans-unit>
+      <trans-unit id="dashboard.exec.pareto-subtitle-2" datatype="html">
+        <source>Cliquer une catégorie pour filtrer et explorer</source>
+        <target state="translated">انقر على فئة للتصفية والاستكشاف</target>
+      </trans-unit>
+      <trans-unit id="dashboard.drill.back" datatype="html">
+        <source>Toutes les catégories</source>
+        <target state="translated">كل الفئات</target>
+      </trans-unit>
+      <trans-unit id="dashboard.drill.empty" datatype="html">
+        <source>Pas de détail disponible pour cette catégorie.</source>
+        <target state="translated">لا توجد تفاصيل متاحة لهذه الفئة.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.section" datatype="html">
+        <source>Annotations</source>
+        <target state="translated">التعليقات التوضيحية</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.placeholder" datatype="html">
+        <source>Ajouter une annotation…</source>
+        <target state="translated">إضافة تعليق…</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.input-aria" datatype="html">
+        <source>Nouvelle annotation</source>
+        <target state="translated">تعليق جديد</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.add" datatype="html">
+        <source>Annoter</source>
+        <target state="translated">تعليق</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.empty" datatype="html">
+        <source>Aucune annotation pour ce graphique.</source>
+        <target state="translated">لا توجد تعليقات على هذا الرسم البياني.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.delete-aria" datatype="html">
+        <source>Supprimer l'annotation</source>
+        <target state="translated">حذف التعليق</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.load-error" datatype="html">
+        <source>Impossible de charger les annotations.</source>
+        <target state="translated">تعذّر تحميل التعليقات.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.save-error" datatype="html">
+        <source>Échec de l'enregistrement.</source>
+        <target state="translated">فشل الحفظ.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.delete-error" datatype="html">
+        <source>Suppression refusée.</source>
+        <target state="translated">تم رفض الحذف.</target>
       </trans-unit>
       <trans-unit id="nav.forecast" datatype="html">
         <source>Prévision KPI</source>
@@ -9027,86 +8987,6 @@ historique 12 mois</source>
       <trans-unit id="home.welcome.title" datatype="html">
         <source>One platform. Five methods. Every industry.</source>
         <target state="translated">One platform. Five methods. Every industry.</target>
-      </trans-unit>
-      <trans-unit id="home.hero.eyebrow" datatype="html">
-        <source>Plateforme qualité totale</source>
-        <target state="translated">منصة الجودة الشاملة</target>
-      </trans-unit>
-      <trans-unit id="home.hero.cta-dashboard" datatype="html">
-        <source>Ouvrir le tableau de bord</source>
-        <target state="translated">فتح لوحة المعلومات</target>
-      </trans-unit>
-      <trans-unit id="home.hero.cta-standards" datatype="html">
-        <source>Standards Hub</source>
-        <target state="translated">مركز المعايير</target>
-      </trans-unit>
-      <trans-unit id="home.methods.title" datatype="html">
-        <source>Les 5 méthodes</source>
-        <target state="translated">الأساليب الخمسة</target>
-      </trans-unit>
-      <trans-unit id="home.methods.subtitle" datatype="html">
-        <source>Un référentiel commun, cinq portes d’entrée.</source>
-        <target state="translated">مرجع موحَّد، خمس نقاط دخول.</target>
-      </trans-unit>
-      <trans-unit id="home.kpis.title" datatype="html">
-        <source>Indicateurs clés</source>
-        <target state="translated">المؤشرات الرئيسية</target>
-      </trans-unit>
-      <trans-unit id="home.kpis.subtitle" datatype="html">
-        <source>Vue d’ensemble — détail dans le tableau de bord.</source>
-        <target state="translated">نظرة عامة — التفاصيل في لوحة المعلومات.</target>
-      </trans-unit>
-      <trans-unit id="home.kpi.open-pdca" datatype="html">
-        <source>Cycles PDCA en cours</source>
-        <target state="translated">دورات PDCA الجارية</target>
-      </trans-unit>
-      <trans-unit id="home.kpi.open-nc" datatype="html">
-        <source>Non-conformités ouvertes</source>
-        <target state="translated">حالات عدم المطابقة المفتوحة</target>
-      </trans-unit>
-      <trans-unit id="home.kpi.fives-score" datatype="html">
-        <source>Score 5S moyen</source>
-        <target state="translated">متوسط درجة 5S</target>
-      </trans-unit>
-      <trans-unit id="home.kpi.audits-planned" datatype="html">
-        <source>Audits planifiés</source>
-        <target state="translated">عمليات التدقيق المخططة</target>
-      </trans-unit>
-      <trans-unit id="home.kpi.illustrative" datatype="html">
-        <source>Valeurs indicatives</source>
-        <target state="translated">قيم إرشادية</target>
-      </trans-unit>
-      <trans-unit id="home.kpi.trend-up" datatype="html">
-        <source>en hausse</source>
-        <target state="translated">في ارتفاع</target>
-      </trans-unit>
-      <trans-unit id="home.kpi.trend-down" datatype="html">
-        <source>en baisse</source>
-        <target state="translated">في انخفاض</target>
-      </trans-unit>
-      <trans-unit id="home.actions.title" datatype="html">
-        <source>Actions rapides</source>
-        <target state="translated">إجراءات سريعة</target>
-      </trans-unit>
-      <trans-unit id="home.actions.new-pdca" datatype="html">
-        <source>Créer un cycle PDCA</source>
-        <target state="translated">إنشاء دورة PDCA</target>
-      </trans-unit>
-      <trans-unit id="home.actions.new-audit" datatype="html">
-        <source>Lancer un audit 5S</source>
-        <target state="translated">بدء تدقيق 5S</target>
-      </trans-unit>
-      <trans-unit id="home.actions.new-nc" datatype="html">
-        <source>Déclarer une NC</source>
-        <target state="translated">الإبلاغ عن عدم مطابقة</target>
-      </trans-unit>
-      <trans-unit id="home.actions.new-ishikawa" datatype="html">
-        <source>Analyser une cause (Ishikawa)</source>
-        <target state="translated">تحليل سبب (إيشيكاوا)</target>
-      </trans-unit>
-      <trans-unit id="home.activity.title" datatype="html">
-        <source>Activité récente</source>
-        <target state="translated">النشاط الأخير</target>
       </trans-unit>
       <trans-unit id="itsm.detail.already-known-suffix" datatype="html">
         <source>déjà connus.</source>
