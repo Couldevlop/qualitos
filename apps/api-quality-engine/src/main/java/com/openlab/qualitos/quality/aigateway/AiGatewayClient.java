@@ -415,6 +415,45 @@ public class AiGatewayClient {
         }
     }
 
+    /**
+     * Relaie une demande d'audit blanc vers {@code ai-service} (Standards Hub §8.4
+     * onglet 7) : l'IA génère 30-100 questions ciblées sur les clauses à risque et
+     * confronte chaque clause aux preuves disponibles (gap analysis). Renvoie la
+     * réponse JSON brute (mappée par la couche application). Le tenant provient du
+     * {@link TenantContext} (JWT), jamais du body (§18.2 #2/#4). Même garde-fou
+     * ({@link AiGuard}, op « mock-audit ») que les autres chemins IA.
+     *
+     * @param body corps de requête pré-construit (norme + clauses à risque) ; le
+     *             nombre de clauses sert d'unité de débit pour le garde-fou
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> mockAudit(Map<String, Object> body, int clauseCount) {
+        if (!TenantContext.hasTenant()) {
+            throw new MissingTenantContextException();
+        }
+        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "mock-audit",
+                clauseCount);
+        guard.check(ctx);
+        try {
+            Map<String, Object> resp = client.post()
+                    .uri("/v1/ai/standards/mock-audit")
+                    .header("X-Dev-Claims", devClaims)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(body)
+                    .retrieve()
+                    .body(Map.class);
+            if (resp == null) {
+                throw new AiGatewayException("Réponse vide de la passerelle IA (mock-audit)");
+            }
+            guard.recordSuccess(ctx.tenantId());
+            return resp;
+        } catch (RestClientException e) {
+            guard.recordFailure(ctx.tenantId());
+            throw new AiGatewayException("Passerelle IA indisponible (mock-audit) : " + e.getMessage(), e);
+        }
+    }
+
     private String devClaims(UUID tenantId) {
         try {
             return objectMapper.writeValueAsString(Map.of(

@@ -330,4 +330,37 @@ class AiGatewayClientTest {
         assertThatThrownBy(() -> c.analyzeComplaints(List.of("test"), null))
                 .isInstanceOf(MissingTenantContextException.class);
     }
+
+    @Test
+    void mockAudit_success_returnsRawMap() {
+        AiGatewayClient c = clientReturning(200,
+                "{\"standard_code\":\"iso-9001\",\"questions\":[],\"gaps\":[],\"readiness\":25.0,"
+                        + "\"provider\":\"ollama\"}");
+        Map<String, Object> resp = c.mockAudit(
+                Map.of("standard_code", "iso-9001", "clauses", List.of()), 1);
+        assertThat(resp).containsEntry("standard_code", "iso-9001");
+        assertThat(resp.get("readiness")).isEqualTo(25.0);
+    }
+
+    @Test
+    void mockAudit_emptyBody_throws() {
+        AiGatewayClient c = clientReturning(200, "");
+        assertThatThrownBy(() -> c.mockAudit(Map.of("standard_code", "iso-9001"), 1))
+                .isInstanceOf(AiGatewayException.class);
+    }
+
+    @Test
+    void mockAudit_serverError_throws() {
+        AiGatewayClient c = clientReturning(503, "down");
+        assertThatThrownBy(() -> c.mockAudit(Map.of("standard_code", "iso-9001"), 1))
+                .isInstanceOf(AiGatewayException.class);
+    }
+
+    @Test
+    void mockAudit_missingTenant_throws() {
+        TenantContext.clear();
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
+        assertThatThrownBy(() -> c.mockAudit(Map.of("standard_code", "iso-9001"), 1))
+                .isInstanceOf(MissingTenantContextException.class);
+    }
 }
