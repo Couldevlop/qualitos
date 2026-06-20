@@ -1,14 +1,12 @@
 <div class="qos-page">
-  <header class="page-header">
-    <div>
-      <h1 i18n="@@fives.list.title">Audits 5S</h1>
-      <p i18n="@@fives.list.subtitle">Seiri · Seiton · Seiso · Seiketsu · Shitsuke — score pondéré 0-100.</p>
-    </div>
-    <button mat-flat-button color="primary" type="button" (click)="openCreate()">
+  <qos-page-header
+    title="Audits 5S" i18n-title="@@fives.list.title"
+    subtitle="Seiri · Seiton · Seiso · Seiketsu · Shitsuke — score pondéré 0-100." i18n-subtitle="@@fives.list.subtitle">
+    <button qosActions mat-flat-button color="primary" type="button" (click)="openCreate()">
       <mat-icon>add</mat-icon>
       <span i18n="@@fives.list.new-audit">Nouvel audit</span>
     </button>
-  </header>
+  </qos-page-header>
 
   <mat-card class="filter-card">
     <mat-form-field appearance="outline" class="status-filter">

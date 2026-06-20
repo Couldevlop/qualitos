@@ -1,15 +1,13 @@
 <div class="qos-page">
 
-  <header class="page-header">
-    <div>
-      <h1 i18n="@@pdca.list.title">Cycles PDCA</h1>
-      <p i18n="@@pdca.list.subtitle">Roue de Deming : Plan → Do → Check → Act.</p>
-    </div>
-    <button mat-flat-button color="primary" type="button" (click)="openCreate()">
+  <qos-page-header
+    title="Cycles PDCA" i18n-title="@@pdca.list.title"
+    subtitle="Roue de Deming : Plan → Do → Check → Act." i18n-subtitle="@@pdca.list.subtitle">
+    <button qosActions mat-flat-button color="primary" type="button" (click)="openCreate()">
       <mat-icon>add</mat-icon>
       <span i18n="@@pdca.list.new-cycle">Nouveau cycle</span>
     </button>
-  </header>
+  </qos-page-header>
 
   <mat-card class="filter-card">
     <mat-form-field appearance="outline" class="status-filter">

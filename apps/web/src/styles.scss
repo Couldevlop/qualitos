@@ -684,3 +684,77 @@ mat-icon.material-symbols-outlined {
   text-transform: uppercase;
   white-space: nowrap;
 }
+
+/* ============================================================
+ * Carte statistique premium réutilisable (.qos-stat).
+ * Valeur + libellé + pastille d'icône à accent sémantique + tendance.
+ * Utilisée par l'accueil, les dashboards et les vues de pilotage.
+ * Tout via tokens (light/dark), aucune couleur en dur.
+ * ============================================================ */
+.qos-stat {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    'icon value'
+    'icon label'
+    'trend trend';
+  align-items: center;
+  column-gap: var(--qos-space-4);
+  row-gap: 2px;
+  padding: var(--qos-space-5);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  box-shadow: var(--qos-shadow-xs);
+  transition: box-shadow var(--qos-motion-base), border-color var(--qos-motion-base);
+
+  &:hover { box-shadow: var(--qos-shadow-sm); border-color: var(--qos-border-default); }
+
+  &__icon {
+    grid-area: icon;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--qos-radius-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* Accent par défaut = accent plateforme ; surchargé par data-tone. */
+    background: var(--qos-accent-bg-soft);
+    color: var(--qos-accent-bg);
+    .mat-icon, .material-symbols-outlined { font-size: 24px; }
+
+    &[data-tone='success'] { background: var(--qos-success-bg-soft); color: var(--qos-success-fg); }
+    &[data-tone='warn']    { background: var(--qos-warn-bg-soft);    color: var(--qos-warn-fg); }
+    &[data-tone='danger']  { background: var(--qos-danger-bg-soft);  color: var(--qos-danger-fg); }
+  }
+
+  &__value {
+    grid-area: value;
+    font-size: var(--qos-fs-2xl);
+    font-weight: var(--qos-fw-bold);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--qos-fg-primary);
+  }
+
+  &__label {
+    grid-area: label;
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-secondary);
+  }
+
+  &__trend {
+    grid-area: trend;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: var(--qos-space-2);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-success-fg);
+
+    .mat-icon, .material-symbols-outlined { font-size: 16px; }
+
+    &--down { color: var(--qos-danger-fg); }
+  }
+}

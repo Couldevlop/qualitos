@@ -5,6 +5,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
 import { SharedModule } from '../../../../shared/shared.module';
+import { UiModule } from '../../../../shared/ui/ui.module';
 import { NcListComponent } from './nc-list.component';
 
 describe('NcListComponent', () => {
@@ -14,7 +15,7 @@ describe('NcListComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [NcListComponent],
-      imports: [SharedModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),

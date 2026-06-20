@@ -1,14 +1,12 @@
 <div class="qos-page">
-  <header class="page-header">
-    <div>
-      <h1 i18n="@@nc.list.title">Non-conformités</h1>
-      <p i18n="@@nc.list.subtitle">Saisie terrain, analyse de cause racine, résolution et escalade CAPA — traçables de bout en bout.</p>
-    </div>
-    <button mat-flat-button color="primary" type="button" (click)="openCreate()">
+  <qos-page-header
+    title="Non-conformités" i18n-title="@@nc.list.title"
+    subtitle="Saisie terrain, analyse de cause racine, résolution et escalade CAPA — traçables de bout en bout." i18n-subtitle="@@nc.list.subtitle">
+    <button qosActions mat-flat-button color="primary" type="button" (click)="openCreate()">
       <mat-icon>add</mat-icon>
       <span i18n="@@nc.list.new-nc">Déclarer une NC</span>
     </button>
-  </header>
+  </qos-page-header>
 
   <mat-card class="filter-card">
     <mat-form-field appearance="outline" class="filter-field">
