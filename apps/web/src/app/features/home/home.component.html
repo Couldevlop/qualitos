@@ -1,25 +1,88 @@
-<div class="qos-page">
-  <header class="hero">
-    <h1 i18n="@@home.welcome.title">One platform. Five methods. Every industry.</h1>
-    <p i18n="@@home.welcome.subtitle">QualitOS agrège les méthodes fondamentales de la qualité totale dans un référentiel unique,
-       augmenté par l'IA et certifié par blockchain.</p>
-  </header>
+<div class="qos-page home">
 
-  <section class="methods">
-    <mat-card *ngFor="let m of methods" class="method-card" [class.disabled]="!m.available">
-      <mat-card-header>
-        <mat-icon mat-card-avatar>{{ m.icon }}</mat-icon>
-        <mat-card-title>{{ m.title }}</mat-card-title>
-        <mat-card-subtitle>{{ m.description }}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-actions>
-        <a mat-button color="primary" *ngIf="m.available && m.route" [routerLink]="m.route" i18n="@@common.open">Ouvrir</a>
-        <span class="soon" *ngIf="!m.available" i18n="@@home.welcome.soon">Bientôt</span>
-      </mat-card-actions>
-    </mat-card>
+  <!-- Hero premium : slogan mis en scène + accès directs. -->
+  <section class="home-hero">
+    <span class="home-hero__eyebrow">{{ heroEyebrow }}</span>
+    <h1 class="home-hero__title">{{ heroTitle }}</h1>
+    <p class="home-hero__subtitle">{{ heroSubtitle }}</p>
+    <div class="home-hero__actions">
+      <a mat-flat-button color="primary" routerLink="/dashboard">
+        <mat-icon>dashboard</mat-icon>
+        <span i18n="@@home.hero.cta-dashboard">Ouvrir le tableau de bord</span>
+      </a>
+      <a mat-stroked-button routerLink="/standards">
+        <mat-icon>workspace_premium</mat-icon>
+        <span i18n="@@home.hero.cta-standards">Standards Hub</span>
+      </a>
+    </div>
   </section>
 
-  <section class="home-activity">
-    <qos-activity-feed-widget [limit]="8"></qos-activity-feed-widget>
+  <!-- KPI clés — cartes statistiques avec accent et tendance. -->
+  <section class="home-section" aria-labelledby="home-kpis-title">
+    <header class="home-section__head">
+      <div>
+        <h2 id="home-kpis-title" i18n="@@home.kpis.title">Indicateurs clés</h2>
+        <p i18n="@@home.kpis.subtitle">Vue d’ensemble — détail dans le tableau de bord.</p>
+      </div>
+      <span class="home-section__note" i18n="@@home.kpi.illustrative">Valeurs indicatives</span>
+    </header>
+
+    <div class="home-stats">
+      <article class="qos-stat" *ngFor="let s of stats; trackBy: trackByLabel">
+        <span class="qos-stat__icon" [attr.data-tone]="s.tone">
+          <mat-icon>{{ s.icon }}</mat-icon>
+        </span>
+        <span class="qos-stat__value">{{ s.value }}</span>
+        <span class="qos-stat__label">{{ s.label }}</span>
+        <span class="qos-stat__trend" *ngIf="s.trend"
+              [class.qos-stat__trend--down]="s.trend.dir === 'down'">
+          <mat-icon aria-hidden="true">{{ s.trend.dir === 'up' ? 'trending_up' : 'trending_down' }}</mat-icon>
+          {{ s.trend.label }}
+        </span>
+      </article>
+    </div>
   </section>
+
+  <!-- Les 5 méthodes — cartes cliquables. -->
+  <section class="home-section" aria-labelledby="home-methods-title">
+    <header class="home-section__head">
+      <div>
+        <h2 id="home-methods-title" i18n="@@home.methods.title">Les 5 méthodes</h2>
+        <p i18n="@@home.methods.subtitle">Un référentiel commun, cinq portes d’entrée.</p>
+      </div>
+    </header>
+
+    <div class="home-methods">
+      <a class="home-method" *ngFor="let m of methods; trackBy: trackByTitle"
+         [routerLink]="m.route" [attr.aria-label]="m.title">
+        <span class="home-method__icon"><mat-icon>{{ m.icon }}</mat-icon></span>
+        <span class="home-method__title">{{ m.title }}</span>
+        <span class="home-method__desc">{{ m.description }}</span>
+      </a>
+    </div>
+  </section>
+
+  <div class="home-split">
+    <!-- Actions rapides. -->
+    <section class="home-section" aria-labelledby="home-actions-title">
+      <header class="home-section__head">
+        <div><h2 id="home-actions-title" i18n="@@home.actions.title">Actions rapides</h2></div>
+      </header>
+      <div class="home-actions">
+        <a class="home-action" *ngFor="let a of quickActions; trackBy: trackByRoute" [routerLink]="a.route">
+          <span class="home-action__icon"><mat-icon>{{ a.icon }}</mat-icon></span>
+          <span class="home-action__label">{{ a.label }}</span>
+          <mat-icon class="home-action__go" aria-hidden="true">chevron_right</mat-icon>
+        </a>
+      </div>
+    </section>
+
+    <!-- Activité récente. -->
+    <section class="home-section" aria-labelledby="home-activity-title">
+      <header class="home-section__head">
+        <div><h2 id="home-activity-title" i18n="@@home.activity.title">Activité récente</h2></div>
+      </header>
+      <qos-activity-feed-widget [limit]="8"></qos-activity-feed-widget>
+    </section>
+  </div>
 </div>

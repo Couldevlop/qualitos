@@ -12,8 +12,9 @@
     </div>
 
     <nav class="qos-sidebar__nav">
-      <ng-container *ngFor="let section of sections">
-        <!-- En-tête de section : bouton repliable (GRC) ou simple libellé -->
+      <div class="qos-sidebar__group" *ngFor="let section of sections" role="group"
+           [attr.aria-label]="section.label">
+        <!-- En-tête de section : bouton repliable ou simple libellé -->
         <ng-container *ngIf="!collapsed">
           <button
             *ngIf="section.collapsible; else staticLabel"
@@ -51,7 +52,7 @@
             </a>
           </li>
         </ul>
-      </ng-container>
+      </div>
     </nav>
 
     <div class="qos-sidebar__footer">

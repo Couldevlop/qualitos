@@ -23,10 +23,11 @@ class ComplaintAnalyzeUseCase:
         tenant: TenantContext,
         *,
         categories: dict[str, list[str]] | None = None,
+        backend: str = "lexical",
     ) -> ComplaintAnalysis:
-        result = complaint_nlp.analyze(texts, categories=categories)
+        result = complaint_nlp.analyze(texts, categories=categories, backend=backend)
         logger.info(
-            "Complaint NLP tenant=%s n=%d critical=%d",
-            tenant.tenant_id, result.n, result.critical_count,
+            "Complaint NLP tenant=%s n=%d critical=%d backend=%s",
+            tenant.tenant_id, result.n, result.critical_count, backend,
         )
         return result

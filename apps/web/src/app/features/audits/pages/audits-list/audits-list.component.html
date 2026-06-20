@@ -1,14 +1,12 @@
 <div class="qos-page">
-  <header class="page-header">
-    <div>
-      <h1 i18n="@@audits.list.title">Audits</h1>
-      <p i18n="@@audits.list.subtitle">Audits internes, externes, fournisseurs, LPA, certification, surveillance.</p>
-    </div>
-    <button mat-flat-button color="primary" type="button" (click)="openCreate()">
+  <qos-page-header
+    title="Audits" i18n-title="@@audits.list.title"
+    subtitle="Audits internes, externes, fournisseurs, LPA, certification, surveillance." i18n-subtitle="@@audits.list.subtitle">
+    <button qosActions mat-flat-button color="primary" type="button" (click)="openCreate()">
       <mat-icon>add</mat-icon>
       <span i18n="@@audits.list.new-plan">Nouveau plan d'audit</span>
     </button>
-  </header>
+  </qos-page-header>
 
   <mat-card class="filter-card">
     <mat-form-field appearance="outline" class="status-filter">

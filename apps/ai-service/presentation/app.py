@@ -18,6 +18,8 @@ from presentation.routers import (
     predict_router,
     rag_router,
     spc_router,
+    transcription_router,
+    standards_router,
 )
 
 logging.basicConfig(
@@ -50,6 +52,8 @@ def create_app() -> FastAPI:
     app.include_router(predict_router)
     app.include_router(anomaly_router)
     app.include_router(complaint_router)
+    app.include_router(transcription_router)
+    app.include_router(standards_router)
 
     @app.exception_handler(DomainError)
     async def _domain_error_handler(_: Request, exc: DomainError) -> JSONResponse:

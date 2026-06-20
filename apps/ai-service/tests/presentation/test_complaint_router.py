@@ -1,11 +1,13 @@
 """Tests router de l'analyse NLP des réclamations."""
 from __future__ import annotations
 
+import importlib.util
 import json
 import os
 
 os.environ["QOS_DEV_AUTH"] = "true"
 
+import pytest  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
 
 from presentation.app import create_app  # noqa: E402
@@ -53,3 +55,29 @@ def test_rejects_empty():
     with TestClient(create_app()) as client:
         r = client.post("/v1/ai/complaints/analyze", json={"texts": []}, headers=_hdr())
         assert r.status_code == 422
+
+
+# ---- backend BERT opt-in (ADR 0031) ---------------------------------------------
+
+def test_default_backend_is_lexical():
+    with TestClient(create_app()) as client:
+        r = client.post("/v1/ai/complaints/analyze",
+                        json={"texts": ["produit cassé"]}, headers=_hdr())
+        assert r.status_code == 200, r.text
+
+
+def test_rejects_unknown_backend():
+    with TestClient(create_app()) as client:
+        r = client.post("/v1/ai/complaints/analyze",
+                        json={"texts": ["x"], "backend": "gpt"}, headers=_hdr())
+        assert r.status_code == 422  # rejeté par le pattern du schéma
+
+
+@pytest.mark.skipif(importlib.util.find_spec("transformers") is not None,
+                    reason="transformers installé")
+def test_bert_backend_unavailable_is_422():
+    with TestClient(create_app()) as client:
+        r = client.post("/v1/ai/complaints/analyze",
+                        json={"texts": ["produit cassé"], "backend": "bert"}, headers=_hdr())
+        assert r.status_code == 422, r.text
+        assert "extra ml" in r.json()["detail"]

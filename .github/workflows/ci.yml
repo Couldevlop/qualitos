@@ -388,6 +388,7 @@ jobs:
             "sqlglot>=25.5" \
             "numpy>=1.26" \
             "pyjwt[crypto]>=2.9" \
+            "python-multipart>=0.0.12" \
             "slowapi>=0.1.9" \
             "qdrant-client>=1.11" \
             "psycopg[binary]>=3.2" \

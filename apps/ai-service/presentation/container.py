@@ -15,12 +15,14 @@ from application.usecase import (
     ComplaintAnalyzeUseCase,
     CompleteTextUseCase,
     FederatedTrainRoundUseCase,
+    GenerateNormDocUseCase,
     KpiForecastUseCase,
     NcClusterUseCase,
     NlqAskUseCase,
     RagQueryUseCase,
     SpcDetectUseCase,
     SupplierRiskUseCase,
+    TranscribeUseCase,
 )
 from domain.model.completion import ProviderName
 from domain.port.ai_provider import AIProvider
@@ -115,6 +117,12 @@ class Container:
             self.providers, self.pii_filter, self.injection_filter, self.audit_logger
         )
 
+    def generate_norm_doc(self) -> GenerateNormDocUseCase:
+        # Génération de document normatif multi-sections (Standards Hub §8.8).
+        return GenerateNormDocUseCase(
+            self.providers, self.pii_filter, self.injection_filter, self.audit_logger
+        )
+
     def rag_query(self) -> RagQueryUseCase:
         return RagQueryUseCase(
             self.vector_store,
@@ -164,3 +172,7 @@ class Container:
 
     def nc_cluster(self) -> NcClusterUseCase:
         return NcClusterUseCase()
+
+    def transcribe(self) -> TranscribeUseCase:
+        # Backend Whisper opt-in (import paresseux ; extra ml). 501 si indisponible.
+        return TranscribeUseCase()

@@ -17,8 +17,10 @@
 | Tests (front specs + suites Python) | 59 + 27 |
 | Capacités IA/IoT/blockchain « RÉEL » (audit stub-vs-réel) | 20 |
 
-## Taux de réalisation : ~85 % (≈ 95 % rapporté à un MVP commercialisable)
+## Taux de réalisation : ~87 % (≈ 96 % rapporté à un MVP commercialisable)
 
+> Màj 2026-06-19 (lot GPU/scaffold intégré, CI verte `3efbd94` : Vision ONNX vrai chemin ADR 0029,
+> Edge inference store-and-forward ADR 0030, backends ML lourds opt-in Prophet/LSTM/HDBSCAN/BERT/Whisper ADR 0031).
 > Màj 2026-06-16 (après 3 lots de chantiers parallèles : IA, IoT, Dashboards, Formation, Doc).
 > Pondéré par l'importance des axes de la vision CLAUDE.md. Le reliquat est essentiellement
 > **GPU / infra réelle / contenu externe** (non livrable en CI sans stub — donc non fait par principe).
@@ -33,8 +35,8 @@
 | Sécurité (§11) | ~80 % | DAST/pentest, durcissement prod |
 | Prod-readiness (§14) | ~80 % | chaos/perf |
 | Frontend (§15) | ~85 % | couverture tests composants |
-| **IA (§12)** | **~80 %** | reste : BERT/Whisper pleins (GPU), vision 5S (modèle entraîné), LSTM/Prophet, HDBSCAN — anomalies/forecast/clustering DBSCAN/SHAP/NLP lexical livrés |
-| **IoT (§9)** | **~72 %** | reste : inférence Edge (GPU/ONNX), vrai cluster TimescaleDB, DICOM/Modbus-fil — livrés : Digital Twin/Shadow, **LoRaWAN, Sparkplug B, Modbus**, rollups + continuous aggregate TimescaleDB |
+| **IA (§12)** | **~85 %** | reste : **modèles entraînés réels** (YOLOv8 5S, GPU pour BERT/Whisper/LSTM/Prophet/HDBSCAN) — la **plomberie est complète** : Vision chemin ONNX réel exercé (ADR 0029), backends lourds **opt-in câblés** import paresseux/extra `ml` (ADR 0031, défaut léger réel intact, 422/501 si absent) ; anomalies/forecast/clustering DBSCAN/SHAP/NLP lexical pleinement livrés |
+| **IoT (§9)** | **~80 %** | reste : **runtime Edge long-running** (souscription MQTT→orchestrateur) + modèle ONNX réel, vrai cluster TimescaleDB, DICOM — livrés : Digital Twin/Shadow, LoRaWAN, Sparkplug B, Modbus, rollups + continuous aggregate TimescaleDB, **composant inférence Edge store-and-forward + ONNX/repli (ADR 0030, 37 tests)** |
 | **Dashboards (§7)** | **~70 %** | reste : builder drag&drop avancé (`/dashboard-builder` existe), time-travel, cross-filtering — livrés : **NLQ→graphe, Mode TV, Storyboards IA** |
 | **Doc & formation (§19)** | **~70 %** | LMS/gamification, vidéos ; espace Wiki utilisateur par rôle/module **et par secteur** livré (`docs/wiki/`, dont `docs/wiki/secteurs/` : 14 guides) |
 

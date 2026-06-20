@@ -5,6 +5,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 
 import { SharedModule } from '../../../../shared/shared.module';
+import { UiModule } from '../../../../shared/ui/ui.module';
 import { PdcaListComponent } from './pdca-list.component';
 
 describe('PdcaListComponent', () => {
@@ -14,7 +15,7 @@ describe('PdcaListComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [PdcaListComponent],
-      imports: [SharedModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),

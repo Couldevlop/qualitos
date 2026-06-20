@@ -1,0 +1,188 @@
+:host { display: block; }
+
+/* Grille de tuiles premium — 1 à 3 colonnes selon la largeur. */
+.grc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--qos-space-5);
+  align-items: start;
+}
+
+/* ------------------------------------------------------------------ *
+ * Carte de domaine GRC — accent de couleur par domaine via data-attr.
+ * ------------------------------------------------------------------ */
+.grc-card {
+  /* Accent par défaut = accent plateforme ; surchargé par domaine ci-dessous. */
+  --grc-accent: var(--qos-accent-bg);
+  --grc-accent-soft: var(--qos-accent-bg-soft);
+
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-xl);
+  box-shadow: var(--qos-shadow-xs);
+  overflow: hidden;
+  transition:
+    box-shadow var(--qos-motion-base),
+    border-color var(--qos-motion-base),
+    transform var(--qos-motion-base);
+
+  &:hover {
+    box-shadow: var(--qos-shadow-md);
+    border-color: var(--qos-border-default);
+    transform: translateY(-2px);
+  }
+
+  &--expanded {
+    border-color: var(--grc-accent);
+    box-shadow: var(--qos-shadow-md);
+  }
+
+  /* Liseré d'accent en haut de carte. */
+  &::before {
+    content: '';
+    display: block;
+    height: 3px;
+    background: var(--grc-accent);
+  }
+
+  &[data-domain='ai'] {
+    --grc-accent: var(--qos-accent-bg);
+    --grc-accent-soft: var(--qos-accent-bg-soft);
+  }
+  &[data-domain='gdpr'] {
+    --grc-accent: var(--qos-success-fg);
+    --grc-accent-soft: var(--qos-success-bg-soft);
+  }
+  &[data-domain='nis2'] {
+    --grc-accent: var(--qos-warn-fg);
+    --grc-accent-soft: var(--qos-warn-bg-soft);
+  }
+}
+
+/* En-tête cliquable de la tuile. */
+.grc-card__head {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: var(--qos-space-4);
+  width: 100%;
+  appearance: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: start;
+  padding: var(--qos-space-5) var(--qos-space-5);
+  transition: background var(--qos-motion-fast);
+
+  &:hover { background: var(--qos-bg-subtle); }
+}
+
+.grc-card__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--qos-radius-lg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--grc-accent-soft);
+  color: var(--grc-accent);
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.grc-card__head-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-1);
+  min-width: 0;
+}
+
+.grc-card__title {
+  font-size: var(--qos-fs-lg);
+  font-weight: var(--qos-fw-semibold);
+  letter-spacing: -0.01em;
+  color: var(--qos-fg-primary);
+}
+
+.grc-card__desc {
+  font-size: var(--qos-fs-sm);
+  color: var(--qos-fg-secondary);
+  line-height: var(--qos-lh-normal);
+}
+
+.grc-card__count {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: var(--qos-fs-xl);
+  font-weight: var(--qos-fw-semibold);
+  color: var(--qos-fg-primary);
+  line-height: 1.1;
+  white-space: nowrap;
+
+  small {
+    font-size: 10px;
+    font-weight: var(--qos-fw-medium);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--qos-fg-tertiary);
+  }
+
+  /* Compteur masqué sur les très petites cartes pour garder la lisibilité. */
+  @media (max-width: 380px) { display: none; }
+}
+
+.grc-card__chevron {
+  font-size: 22px;
+  color: var(--qos-fg-tertiary);
+  transition: transform var(--qos-motion-fast), color var(--qos-motion-fast);
+
+  &--open { transform: rotate(180deg); color: var(--grc-accent); }
+}
+
+/* Liste des sous-vues — apparait quand la tuile est dépliée. */
+.grc-card__views {
+  list-style: none;
+  margin: 0;
+  padding: 0 var(--qos-space-3) var(--qos-space-3);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-top: 1px solid var(--qos-border-subtle);
+}
+
+.grc-view {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-3);
+  padding: var(--qos-space-3) var(--qos-space-3);
+  border-radius: var(--qos-radius-md);
+  color: var(--qos-fg-secondary);
+  text-decoration: none;
+  transition: background var(--qos-motion-fast), color var(--qos-motion-fast);
+
+  &:hover {
+    background: var(--qos-bg-subtle);
+    color: var(--qos-fg-primary);
+    .grc-view__go { transform: translateX(2px); color: var(--grc-accent); }
+  }
+
+  &__icon {
+    font-size: 18px;
+    color: var(--grc-accent);
+    flex-shrink: 0;
+  }
+
+  &__label {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: var(--qos-fs-sm);
+    font-weight: var(--qos-fw-medium);
+  }
+
+  &__go {
+    font-size: 18px;
+    color: var(--qos-fg-disabled);
+    transition: transform var(--qos-motion-fast), color var(--qos-motion-fast);
+  }
+}

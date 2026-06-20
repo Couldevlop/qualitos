@@ -10,6 +10,9 @@ class ComplaintAnalyzeRequest(BaseModel):
     texts: list[str] = Field(..., min_length=1, max_length=2000)
     # Taxonomie optionnelle {catégorie: [termes-graines]} ; défaut si absente.
     categories: dict[str, list[str]] | None = None
+    # Moteur de sentiment : lexical (défaut, réel) | bert (lourd, opt-in extra ml ;
+    # 422 si la lib n'est pas installée — ADR 0031).
+    backend: str = Field(default="lexical", pattern="^(lexical|bert)$")
 
 
 class ComplaintInsightResponse(BaseModel):

@@ -8,6 +8,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException
 
 from domain.model.tenant import UserContext
+from domain.service.ml_backends import MlBackendUnavailableError
 from presentation.container import Container
 from presentation.schemas.predict import (
     KpiForecastRequest,
@@ -36,9 +37,10 @@ async def forecast_kpi(
         result = _container.kpi_forecast().execute(
             payload.values, payload.target, user.tenant,
             horizon=payload.horizon, direction=payload.direction,
-            seasonal_period=payload.seasonal_period,
+            seasonal_period=payload.seasonal_period, model=payload.model,
         )
-    except ValueError as exc:
+    except (ValueError, MlBackendUnavailableError) as exc:
+        # Backend lourd indisponible (extra ml absent) ou entrée invalide → 422 clair.
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     return KpiForecastResponse.from_domain(result)
 
@@ -72,7 +74,9 @@ async def nc_clusters(
         result = _container.nc_cluster().execute(
             payload.texts, user.tenant,
             threshold=payload.threshold, min_samples=payload.min_samples,
+            method=payload.method,
         )
-    except ValueError as exc:
+    except (ValueError, MlBackendUnavailableError) as exc:
+        # Backend lourd indisponible (extra ml absent) ou entrée invalide → 422 clair.
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     return NcClusteringResponse.from_domain(result)

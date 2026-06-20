@@ -55,8 +55,21 @@ mosquitto_pub -h <ip-edge> -u sensor1 -P *** -t qualitos/FRIDGE-01/temperature \
 #   (cleansession false + persistence true).
 ```
 
+## Inférence locale (livrée)
+
+- Composant `edge-inference` : détection d'anomalies au plus près du capteur
+  (modèle ONNX si fourni, sinon repli déterministe à seuils) + store-and-forward
+  applicatif des événements d'anomalie. Code : `../inference/` ; manifeste :
+  `edge-inference.yaml` ; runbook : `docs/runbooks/edge-inference.md` ; décision :
+  ADR 0029.
+
+```bash
+kubectl apply -f edge-inference.yaml
+```
+
 ## Étapes suivantes (backlog Edge)
 
-- Inférence locale ONNX/TFLite (détection d'anomalies au plus près du capteur).
+- Modèle ONNX réel + runtime long-running (souscription MQTT → orchestrateur).
+- TFLite derrière le même `InferenceBackend` Protocol (§9.5).
 - OTA GitOps (ArgoCD edge) + firmware signé Cosign.
 - Auto-discovery OPC-UA/mDNS et provisioning X.509 par QR code (§9.6).

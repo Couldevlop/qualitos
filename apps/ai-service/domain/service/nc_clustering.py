@@ -37,13 +37,29 @@ _STOPWORDS = frozenset(
 )
 
 
-def cluster(texts: list[str], *, threshold: float = 0.35, min_samples: int = 2) -> NcClusteringResult:
-    """Regroupe les textes similaires par densité (DBSCAN). Liste vide → résultat vide.
+# Méthodes de clustering. ``dbscan`` = défaut réel (ci-dessous) ; ``hdbscan`` =
+# backend lourd opt-in, import paresseux (ADR 0031).
+_METHODS = ("dbscan", "hdbscan")
+
+
+def cluster(texts: list[str], *, threshold: float = 0.35, min_samples: int = 2,
+            method: str = "dbscan") -> NcClusteringResult:
+    """Regroupe les textes similaires par densité. Liste vide → résultat vide.
 
     :param threshold: similarité cosinus minimale pour un voisinage (ε = 1 − threshold).
     :param min_samples: taille minimale du voisinage (soi inclus) d'un point-cœur.
-    :raises ValueError: trop de textes, seuil hors (0, 1) ou min_samples < 2.
+    :param method: ``dbscan`` (défaut, réel, NumPy pur) | ``hdbscan`` (lourd, opt-in,
+        extra ml ; sinon :class:`MlBackendUnavailableError`).
+    :raises ValueError: trop de textes, seuil hors (0, 1), min_samples < 2 ou method invalide.
+    :raises MlBackendUnavailableError: ``hdbscan`` sélectionné mais lib absente.
     """
+    if method not in _METHODS:
+        raise ValueError(f"method must be one of {_METHODS}")
+    if method == "hdbscan":
+        from domain.service.ml_backends import cluster_hdbscan
+        return cluster_hdbscan.cluster(texts, min_samples=min_samples)
+
+    # --- défaut : DBSCAN (réel, sans dépendance lourde) ---------------------------
     if not 0.0 < threshold < 1.0:
         raise ValueError("threshold must be within (0, 1)")
     if min_samples < 2:
