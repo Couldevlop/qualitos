@@ -15,6 +15,7 @@ from application.usecase import (
     ComplaintAnalyzeUseCase,
     CompleteTextUseCase,
     FederatedTrainRoundUseCase,
+    GenerateNormDocUseCase,
     KpiForecastUseCase,
     NcClusterUseCase,
     NlqAskUseCase,
@@ -113,6 +114,12 @@ class Container:
 
     def complete_text(self) -> CompleteTextUseCase:
         return CompleteTextUseCase(
+            self.providers, self.pii_filter, self.injection_filter, self.audit_logger
+        )
+
+    def generate_norm_doc(self) -> GenerateNormDocUseCase:
+        # Génération de document normatif multi-sections (Standards Hub §8.8).
+        return GenerateNormDocUseCase(
             self.providers, self.pii_filter, self.injection_filter, self.audit_logger
         )
 

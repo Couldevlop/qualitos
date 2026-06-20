@@ -8,12 +8,20 @@ from .spc_detect import SpcDetectUseCase
 from .anomaly_detect import AnomalyDetectUseCase, AnomalyExplainUseCase
 from .complaint_analyze import ComplaintAnalyzeUseCase
 from .transcribe import TranscribeUseCase
+from .generate_norm_doc import (
+    GenerateNormDocUseCase,
+    GenerateNormDocRequest,
+    GenerateNormDocResult,
+)
 
 __all__ = [
     "AnomalyDetectUseCase",
     "AnomalyExplainUseCase",
     "ComplaintAnalyzeUseCase",
     "TranscribeUseCase",
+    "GenerateNormDocUseCase",
+    "GenerateNormDocRequest",
+    "GenerateNormDocResult",
     "KpiForecastUseCase",
     "NcClusterUseCase",
     "SupplierRiskUseCase",

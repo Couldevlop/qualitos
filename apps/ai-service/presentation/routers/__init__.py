@@ -9,6 +9,7 @@ from .spc_router import router as spc_router
 from .anomaly_router import router as anomaly_router
 from .complaint_router import router as complaint_router
 from .transcription_router import router as transcription_router
+from .standards_router import router as standards_router
 
 __all__ = [
     "anomaly_router",
@@ -21,4 +22,5 @@ __all__ = [
     "health_router",
     "spc_router",
     "transcription_router",
+    "standards_router",
 ]
