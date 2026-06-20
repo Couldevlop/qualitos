@@ -1,0 +1,50 @@
+<div class="qos-page">
+  <qos-page-header
+    [eyebrow]="eyebrowLabel"
+    [title]="titleLabel"
+    [subtitle]="subtitleLabel">
+  </qos-page-header>
+
+  <section class="grc-grid" aria-label="Domaines de conformité" i18n-aria-label="@@compliance.hub.title">
+    <article
+      *ngFor="let domain of domains; trackBy: trackByKey"
+      class="grc-card"
+      [class.grc-card--expanded]="isExpanded(domain.key)"
+      [attr.data-domain]="domain.key">
+
+      <button
+        type="button"
+        class="grc-card__head"
+        (click)="toggle(domain.key)"
+        [attr.aria-expanded]="isExpanded(domain.key)"
+        [attr.aria-controls]="'grc-views-' + domain.key">
+        <span class="grc-card__icon material-symbols-outlined" aria-hidden="true">{{ domain.icon }}</span>
+        <span class="grc-card__head-text">
+          <span class="grc-card__title">{{ domain.title }}</span>
+          <span class="grc-card__desc">{{ domain.description }}</span>
+        </span>
+        <span class="grc-card__count">
+          {{ domain.views.length }}
+          <small i18n="@@compliance.hub.views-label">Registres &amp; procédures</small>
+        </span>
+        <span
+          class="grc-card__chevron material-symbols-outlined"
+          [class.grc-card__chevron--open]="isExpanded(domain.key)"
+          aria-hidden="true">expand_more</span>
+      </button>
+
+      <ul
+        class="grc-card__views"
+        [id]="'grc-views-' + domain.key"
+        *ngIf="isExpanded(domain.key)">
+        <li *ngFor="let view of domain.views; trackBy: trackByRoute">
+          <a [routerLink]="view.route" class="grc-view">
+            <span class="grc-view__icon material-symbols-outlined" aria-hidden="true">{{ view.icon }}</span>
+            <span class="grc-view__label">{{ view.label }}</span>
+            <span class="grc-view__go material-symbols-outlined" aria-hidden="true">chevron_right</span>
+          </a>
+        </li>
+      </ul>
+    </article>
+  </section>
+</div>

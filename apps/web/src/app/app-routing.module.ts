@@ -220,6 +220,13 @@ const routes: Routes = [
         loadChildren: () => import('./features/automated-decisions/automated-decisions.module').then(m => m.AutomatedDecisionsModule)
       },
       {
+        // Hub Conformité (GRC) — point d'entrée unique vers les 19 routes
+        // IA Act / RGPD / NIS 2 (Travail 2). Les routes profondes restent
+        // déclarées individuellement ci-dessus et donc directement accessibles.
+        path: 'compliance',
+        loadChildren: () => import('./features/compliance/compliance.module').then(m => m.ComplianceModule)
+      },
+      {
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)
