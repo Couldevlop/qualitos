@@ -82,7 +82,11 @@ class Container:
                 # Timeout large : l'inférence CPU + chargement à froid du modèle dépasse 30 s.
                 timeout_s=float(os.environ.get("OLLAMA_TIMEOUT_S", "120")),
             ),
-            ProviderName.ANTHROPIC: AnthropicProvider(),
+            # Modèle Anthropic configurable par env (symétrie avec Ollama/Mistral) ;
+            # la clé ANTHROPIC_API_KEY est lue par le provider lui-même (§18.2 #3).
+            ProviderName.ANTHROPIC: AnthropicProvider(
+                model=os.environ.get("ANTHROPIC_MODEL", "claude-opus-4-7"),
+            ),
             # Modèle Mistral configurable par env (défaut mistral-large-latest) ; la clé
             # MISTRAL_API_KEY est lue par le provider lui-même (jamais committée, §18.2 #3).
             ProviderName.MISTRAL: MistralProvider(
