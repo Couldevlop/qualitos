@@ -3204,6 +3204,102 @@
         <source>Conformité</source>
         <target state="translated">コンプライアンス</target>
       </trans-unit>
+      <trans-unit id="dashboard.tt.aria" datatype="html">
+        <source>Voyage dans le temps</source>
+        <target state="translated">タイムトラベル</target>
+      </trans-unit>
+      <trans-unit id="dashboard.tt.label" datatype="html">
+        <source>État au</source>
+        <target state="translated">時点の状態</target>
+      </trans-unit>
+      <trans-unit id="dashboard.tt.clear" datatype="html">
+        <source>Présent</source>
+        <target state="translated">現在</target>
+      </trans-unit>
+      <trans-unit id="dashboard.tt.loading" datatype="html">
+        <source>Récupération de l'état historique…</source>
+        <target state="translated">過去の状態を取得中…</target>
+      </trans-unit>
+      <trans-unit id="dashboard.tt.viewing" datatype="html">
+        <source>État du tableau de bord au</source>
+        <target state="translated">ダッシュボードの状態（時点）</target>
+      </trans-unit>
+      <trans-unit id="dashboard.tt.empty" datatype="html">
+        <source>Aucune mesure de KPI disponible à cette date.</source>
+        <target state="translated">この日付に利用可能なKPI測定値はありません。</target>
+      </trans-unit>
+      <trans-unit id="dashboard.tt.na" datatype="html">
+        <source>n/d</source>
+        <target state="translated">該当なし</target>
+      </trans-unit>
+      <trans-unit id="dashboard.tt.error" datatype="html">
+        <source>Impossible de récupérer l'état à cette date.</source>
+        <target state="translated">この日付の状態を取得できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="dashboard.xf.active" datatype="html">
+        <source>Filtre croisé actif :</source>
+        <target state="translated">クロスフィルター有効:</target>
+      </trans-unit>
+      <trans-unit id="dashboard.xf.clear" datatype="html">
+        <source>Effacer</source>
+        <target state="translated">クリア</target>
+      </trans-unit>
+      <trans-unit id="dashboard.xf.clear-aria" datatype="html">
+        <source>Annuler le filtre</source>
+        <target state="translated">フィルターを解除</target>
+      </trans-unit>
+      <trans-unit id="dashboard.xf.pill" datatype="html">
+        <source>Cross-filter</source>
+        <target state="translated">クロスフィルター</target>
+      </trans-unit>
+      <trans-unit id="dashboard.exec.pareto-subtitle-2" datatype="html">
+        <source>Cliquer une catégorie pour filtrer et explorer</source>
+        <target state="translated">カテゴリをクリックして絞り込み・分析</target>
+      </trans-unit>
+      <trans-unit id="dashboard.drill.back" datatype="html">
+        <source>Toutes les catégories</source>
+        <target state="translated">すべてのカテゴリ</target>
+      </trans-unit>
+      <trans-unit id="dashboard.drill.empty" datatype="html">
+        <source>Pas de détail disponible pour cette catégorie.</source>
+        <target state="translated">このカテゴリの詳細はありません。</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.section" datatype="html">
+        <source>Annotations</source>
+        <target state="translated">注釈</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.placeholder" datatype="html">
+        <source>Ajouter une annotation…</source>
+        <target state="translated">注釈を追加…</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.input-aria" datatype="html">
+        <source>Nouvelle annotation</source>
+        <target state="translated">新しい注釈</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.add" datatype="html">
+        <source>Annoter</source>
+        <target state="translated">注釈する</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.empty" datatype="html">
+        <source>Aucune annotation pour ce graphique.</source>
+        <target state="translated">このグラフに注釈はありません。</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.delete-aria" datatype="html">
+        <source>Supprimer l'annotation</source>
+        <target state="translated">注釈を削除</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.load-error" datatype="html">
+        <source>Impossible de charger les annotations.</source>
+        <target state="translated">注釈を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.save-error" datatype="html">
+        <source>Échec de l'enregistrement.</source>
+        <target state="translated">保存に失敗しました。</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.delete-error" datatype="html">
+        <source>Suppression refusée.</source>
+        <target state="translated">削除が拒否されました。</target>
+      </trans-unit>
       <trans-unit id="nav.forecast" datatype="html">
         <source>Prévision KPI</source>
         <target state="translated">KPI予測</target>

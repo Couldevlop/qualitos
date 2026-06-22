@@ -1485,6 +1485,26 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(com.openlab.qualitos.quality.dashboards.annotations.domain.DashboardAnnotationNotFoundException.class)
+    public ProblemDetail handleAnnotationNotFound(
+            com.openlab.qualitos.quality.dashboards.annotations.domain.DashboardAnnotationNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/dashboard-annotation-not-found"));
+        problem.setTitle("Dashboard Annotation Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(com.openlab.qualitos.quality.dashboards.annotations.domain.DashboardAnnotationForbiddenException.class)
+    public ProblemDetail handleAnnotationForbidden(
+            com.openlab.qualitos.quality.dashboards.annotations.domain.DashboardAnnotationForbiddenException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/dashboard-annotation-forbidden"));
+        problem.setTitle("Dashboard Annotation Forbidden");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     @ExceptionHandler(MarketplacePackNotFoundException.class)
     public ProblemDetail handleMpNotFound(MarketplacePackNotFoundException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());

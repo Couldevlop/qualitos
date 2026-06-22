@@ -90,6 +90,47 @@ export class DashboardService {
     ]).pipe(delay(120));
   }
 
+  /**
+   * Drill-down niveau 2 : sous-causes d'une catégorie 6M de défaut.
+   * Synchrone (données du référentiel local) — alimente la vue détail quand
+   * une catégorie est sélectionnée par cross-filtering (§7.3).
+   */
+  getDefectSubcategoriesSync(category: string): DefectByCategory[] {
+    const map: Record<string, DefectByCategory[]> = {
+      'Matière': [
+        { category: 'Lot fournisseur hors spéc.', count: 18 },
+        { category: 'Stockage / humidité', count: 14 },
+        { category: 'Mélange / dosage', count: 10 }
+      ],
+      'Méthode': [
+        { category: 'Gamme obsolète', count: 13 },
+        { category: 'Réglage opérateur', count: 11 },
+        { category: 'Instruction manquante', count: 7 }
+      ],
+      'Main d\'œuvre': [
+        { category: 'Formation insuffisante', count: 12 },
+        { category: 'Erreur de saisie', count: 9 },
+        { category: 'Fatigue / 3x8', count: 6 }
+      ],
+      'Machine': [
+        { category: 'Usure outil', count: 9 },
+        { category: 'Dérive capteur', count: 6 },
+        { category: 'Maintenance en retard', count: 4 }
+      ],
+      'Milieu': [
+        { category: 'Température atelier', count: 7 },
+        { category: 'Poussière / propreté', count: 5 },
+        { category: 'Vibrations', count: 2 }
+      ],
+      'Mesure': [
+        { category: 'Calibration expirée', count: 5 },
+        { category: 'Méthode de contrôle', count: 3 },
+        { category: 'Incertitude élevée', count: 1 }
+      ]
+    };
+    return map[category] ?? [];
+  }
+
   /** Heatmap conformité — score 0..100 par clause de norme. */
   getComplianceHeatmap(): Observable<ComplianceHeatCell[]> {
     const norms = ['ISO 9001', 'ISO 27001', 'ISO 14001', 'IATF 16949', 'AI Act'];

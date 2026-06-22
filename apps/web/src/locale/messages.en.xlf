@@ -3204,6 +3204,102 @@
         <source>Conformité</source>
         <target state="translated">Compliance</target>
       </trans-unit>
+      <trans-unit id="dashboard.tt.aria" datatype="html">
+        <source>Voyage dans le temps</source>
+        <target state="translated">Time travel</target>
+      </trans-unit>
+      <trans-unit id="dashboard.tt.label" datatype="html">
+        <source>État au</source>
+        <target state="translated">State as of</target>
+      </trans-unit>
+      <trans-unit id="dashboard.tt.clear" datatype="html">
+        <source>Présent</source>
+        <target state="translated">Now</target>
+      </trans-unit>
+      <trans-unit id="dashboard.tt.loading" datatype="html">
+        <source>Récupération de l'état historique…</source>
+        <target state="translated">Loading historical state…</target>
+      </trans-unit>
+      <trans-unit id="dashboard.tt.viewing" datatype="html">
+        <source>État du tableau de bord au</source>
+        <target state="translated">Dashboard state as of</target>
+      </trans-unit>
+      <trans-unit id="dashboard.tt.empty" datatype="html">
+        <source>Aucune mesure de KPI disponible à cette date.</source>
+        <target state="translated">No KPI measurement available at this date.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.tt.na" datatype="html">
+        <source>n/d</source>
+        <target state="translated">n/a</target>
+      </trans-unit>
+      <trans-unit id="dashboard.tt.error" datatype="html">
+        <source>Impossible de récupérer l'état à cette date.</source>
+        <target state="translated">Could not retrieve the state at this date.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.xf.active" datatype="html">
+        <source>Filtre croisé actif :</source>
+        <target state="translated">Active cross-filter:</target>
+      </trans-unit>
+      <trans-unit id="dashboard.xf.clear" datatype="html">
+        <source>Effacer</source>
+        <target state="translated">Clear</target>
+      </trans-unit>
+      <trans-unit id="dashboard.xf.clear-aria" datatype="html">
+        <source>Annuler le filtre</source>
+        <target state="translated">Clear filter</target>
+      </trans-unit>
+      <trans-unit id="dashboard.xf.pill" datatype="html">
+        <source>Cross-filter</source>
+        <target state="translated">Cross-filter</target>
+      </trans-unit>
+      <trans-unit id="dashboard.exec.pareto-subtitle-2" datatype="html">
+        <source>Cliquer une catégorie pour filtrer et explorer</source>
+        <target state="translated">Click a category to filter and explore</target>
+      </trans-unit>
+      <trans-unit id="dashboard.drill.back" datatype="html">
+        <source>Toutes les catégories</source>
+        <target state="translated">All categories</target>
+      </trans-unit>
+      <trans-unit id="dashboard.drill.empty" datatype="html">
+        <source>Pas de détail disponible pour cette catégorie.</source>
+        <target state="translated">No detail available for this category.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.section" datatype="html">
+        <source>Annotations</source>
+        <target state="translated">Annotations</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.placeholder" datatype="html">
+        <source>Ajouter une annotation…</source>
+        <target state="translated">Add an annotation…</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.input-aria" datatype="html">
+        <source>Nouvelle annotation</source>
+        <target state="translated">New annotation</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.add" datatype="html">
+        <source>Annoter</source>
+        <target state="translated">Annotate</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.empty" datatype="html">
+        <source>Aucune annotation pour ce graphique.</source>
+        <target state="translated">No annotation on this chart.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.delete-aria" datatype="html">
+        <source>Supprimer l'annotation</source>
+        <target state="translated">Delete annotation</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.load-error" datatype="html">
+        <source>Impossible de charger les annotations.</source>
+        <target state="translated">Could not load annotations.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.save-error" datatype="html">
+        <source>Échec de l'enregistrement.</source>
+        <target state="translated">Failed to save.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.annot.delete-error" datatype="html">
+        <source>Suppression refusée.</source>
+        <target state="translated">Deletion refused.</target>
+      </trans-unit>
       <trans-unit id="nav.forecast" datatype="html">
         <source>Prévision KPI</source>
         <target state="translated">KPI forecast</target>

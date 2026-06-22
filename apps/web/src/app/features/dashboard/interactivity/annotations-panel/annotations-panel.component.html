@@ -1,0 +1,60 @@
+<div class="qos-annot">
+
+  <div class="qos-annot__compose">
+    <textarea
+      class="qos-annot__input"
+      [(ngModel)]="draft"
+      [maxlength]="maxLength"
+      rows="2"
+      placeholder="Ajouter une annotation…"
+      i18n-placeholder="@@dashboard.annot.placeholder"
+      aria-label="Nouvelle annotation"
+      i18n-aria-label="@@dashboard.annot.input-aria"></textarea>
+    <div class="qos-annot__compose-actions">
+      <span class="qos-annot__anchor" *ngIf="anchorLabel">
+        <span class="material-symbols-outlined" aria-hidden="true">my_location</span>
+        {{ anchorLabel }}
+      </span>
+      <button
+        type="button"
+        class="qos-btn qos-btn--primary qos-btn--sm"
+        [disabled]="!draft.trim() || (submitting$ | async)"
+        (click)="add()">
+        <span class="material-symbols-outlined" aria-hidden="true">add_comment</span>
+        <span i18n="@@dashboard.annot.add">Annoter</span>
+      </button>
+    </div>
+  </div>
+
+  <p class="qos-annot__error" *ngIf="error$ | async as err" role="alert">{{ err }}</p>
+
+  <div class="qos-annot__list" *ngIf="!(loading$ | async); else loadingTpl">
+    <p class="qos-annot__empty" *ngIf="(annotations$ | async)?.length === 0"
+       i18n="@@dashboard.annot.empty">Aucune annotation pour ce graphique.</p>
+
+    <article class="qos-annot__item" *ngFor="let a of (annotations$ | async); trackBy: trackById">
+      <div class="qos-annot__item-head">
+        <span class="qos-annot__avatar" aria-hidden="true">
+          <span class="material-symbols-outlined">person</span>
+        </span>
+        <span class="qos-annot__meta qos-mono">{{ a.createdAt | date:'short' }}</span>
+        <span class="qos-annot__chip" *ngIf="a.anchorLabel">{{ a.anchorLabel }}</span>
+        <button
+          *ngIf="a.deletable"
+          type="button"
+          class="qos-annot__delete"
+          (click)="remove(a)"
+          aria-label="Supprimer l'annotation"
+          i18n-aria-label="@@dashboard.annot.delete-aria">
+          <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+        </button>
+      </div>
+      <p class="qos-annot__body">{{ a.body }}</p>
+    </article>
+  </div>
+
+  <ng-template #loadingTpl>
+    <div class="qos-annot__loading" i18n="@@common.loading">Chargement…</div>
+  </ng-template>
+
+</div>

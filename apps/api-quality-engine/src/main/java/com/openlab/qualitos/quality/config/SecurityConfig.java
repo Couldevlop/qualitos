@@ -185,6 +185,13 @@ public class SecurityConfig {
                     .authenticated()
                 .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/audit/**")
                     .authenticated()
+                // Annotations collaboratives de dashboard (§7.3) : la suppression est
+                // gouvernée au niveau use-case (auteur OU admin tenant). On laisse donc
+                // passer tout authentifié ici pour ne pas verrouiller l'auteur "user"
+                // simple de supprimer SON propre commentaire (l'autorisation fine 403
+                // est appliquée dans DashboardAnnotationService).
+                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/dashboards/annotations/**")
+                    .authenticated()
                 // Suppression générique de ressource qualité : Manager Qualité ou plus.
                 .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/**")
                     .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN", "QUALITY_MANAGER")

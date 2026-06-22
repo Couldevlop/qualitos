@@ -38,6 +38,8 @@ supersession).
 | [0031](./0031-pluggable-ml-backends-opt-in.md) | Backends ML lourds enfichables opt-in (Prophet/LSTM/HDBSCAN/BERT/Whisper) : défaut léger réel intact, import paresseux, extra `ml` ; indisponible → 422/501 | Accepté |
 | [0032](./0032-generation-doc-normatif-ia.md) | Standards Hub : génération assistée IA de documents normatifs + workflow de validation humaine (§8.8) | Accepté |
 | [0033](./0033-audit-blanc-ia-avance.md) | Standards Hub : audit blanc IA avancé — 30-100 questions ciblées sur les clauses à risque, gap analysis confrontée aux preuves réelles + plan de remédiation auto (§8.4 onglet 7) | Accepté |
+| [0034](./0034-dashboards-interactivite.md) | Interactivité premium des dashboards (cross-filtering, drill-down, annotations collaboratives) | Accepté |
+| [0035](./0035-dashboards-time-travel.md) | Time-travel des dashboards (état as-of réel des KPIs) | Accepté |
 
 ## Statuts possibles
 
