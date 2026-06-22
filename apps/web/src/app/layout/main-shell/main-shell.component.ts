@@ -95,6 +95,7 @@ export class MainShellComponent implements OnInit {
       label: $localize`:@@nav.referentiels:Référentiels`,
       items: [
         { label: $localize`:@@nav.standards-hub:Standards Hub`,     route: '/standards',      icon: 'workspace_premium' },
+        { label: $localize`:@@nav.doc-gen-ia:Génération doc IA`,    route: '/standards-doc-gen', icon: 'auto_awesome' },
         { label: $localize`:@@nav.packs-sectoriels:Packs sectoriels`, route: '/industry-packs', icon: 'category' },
         { label: $localize`:@@nav.fournisseurs:Fournisseurs`,      route: '/suppliers',      icon: 'local_shipping' },
         { label: $localize`:@@nav.formation:Formation`,            route: '/training',       icon: 'school' },
