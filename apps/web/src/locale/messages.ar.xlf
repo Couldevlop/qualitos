@@ -4,6 +4,194 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="fr" target-language="ar" datatype="plaintext" original="ng2.template">
     <body>
+      <trans-unit id="nav.academy" datatype="html">
+        <source>Academy</source>
+        <target state="translated">الأكاديمية</target>
+      </trans-unit>
+      <trans-unit id="academy.home.title" datatype="html">
+        <source>QualitOS Academy</source>
+        <target state="translated">أكاديمية QualitOS</target>
+      </trans-unit>
+      <trans-unit id="academy.home.subtitle" datatype="html">
+        <source>Montez en compétence : parcours par rôle et secteur, quiz notés, badges et ceintures qualité, certificats signés et vérifiables.</source>
+        <target state="translated">طوّر مهاراتك: مسارات حسب الدور والقطاع، اختبارات مُقيَّمة، شارات وأحزمة الجودة، شهادات موقّعة وقابلة للتحقق.</target>
+      </trans-unit>
+      <trans-unit id="academy.tab.catalog" datatype="html">
+        <source>Catalogue</source>
+        <target state="translated">الكتالوج</target>
+      </trans-unit>
+      <trans-unit id="academy.tab.myCourses" datatype="html">
+        <source>Mes formations</source>
+        <target state="translated">دوراتي</target>
+      </trans-unit>
+      <trans-unit id="academy.tab.leaderboard" datatype="html">
+        <source>Classement</source>
+        <target state="translated">لوحة الصدارة</target>
+      </trans-unit>
+      <trans-unit id="academy.catalog.empty" datatype="html">
+        <source>Aucun cours publié pour le moment.</source>
+        <target state="translated">لا توجد دورات منشورة حتى الآن.</target>
+      </trans-unit>
+      <trans-unit id="academy.points.short" datatype="html">
+        <source>pts</source>
+        <target state="translated">نقطة</target>
+      </trans-unit>
+      <trans-unit id="academy.passing" datatype="html">
+        <source>Réussite</source>
+        <target state="translated">النجاح</target>
+      </trans-unit>
+      <trans-unit id="academy.action.enroll" datatype="html">
+        <source>S'inscrire</source>
+        <target state="translated">التسجيل</target>
+      </trans-unit>
+      <trans-unit id="academy.action.enrolled" datatype="html">
+        <source>Inscrit</source>
+        <target state="translated">مُسجَّل</target>
+      </trans-unit>
+      <trans-unit id="academy.myCourses.empty" datatype="html">
+        <source>Vous n'êtes inscrit à aucun cours. Choisissez-en un dans le catalogue.</source>
+        <target state="translated">لست مُسجَّلاً في أي دورة. اختر واحدة من الكتالوج.</target>
+      </trans-unit>
+      <trans-unit id="academy.score" datatype="html">
+        <source>Score : <x id="INTERPOLATION"/>%</source>
+        <target state="translated">النتيجة: <x id="INTERPOLATION"/>%</target>
+      </trans-unit>
+      <trans-unit id="academy.leaderboard.empty" datatype="html">
+        <source>Le classement est encore vide. Complétez un cours pour y figurer.</source>
+        <target state="translated">لوحة الصدارة لا تزال فارغة. أكمل دورة لتظهر فيها.</target>
+      </trans-unit>
+      <trans-unit id="academy.lb.rank" datatype="html">
+        <source>#</source>
+        <target state="translated">#</target>
+      </trans-unit>
+      <trans-unit id="academy.lb.learner" datatype="html">
+        <source>Apprenant</source>
+        <target state="translated">المتعلِّم</target>
+      </trans-unit>
+      <trans-unit id="academy.lb.belt" datatype="html">
+        <source>Ceinture</source>
+        <target state="translated">الحزام</target>
+      </trans-unit>
+      <trans-unit id="academy.lb.points" datatype="html">
+        <source>Points</source>
+        <target state="translated">النقاط</target>
+      </trans-unit>
+      <trans-unit id="academy.lb.completed" datatype="html">
+        <source>Complétions</source>
+        <target state="translated">الإكمالات</target>
+      </trans-unit>
+      <trans-unit id="academy.lb.badges" datatype="html">
+        <source>Badges</source>
+        <target state="translated">الشارات</target>
+      </trans-unit>
+      <trans-unit id="academy.player.back" datatype="html">
+        <source>Retour à l'Academy</source>
+        <target state="translated">العودة إلى الأكاديمية</target>
+      </trans-unit>
+      <trans-unit id="academy.player.completed" datatype="html">
+        <source>Cours terminé — score <x id="INTERPOLATION"/>% !</source>
+        <target state="translated">اكتملت الدورة — النتيجة <x id="INTERPOLATION"/>%!</target>
+      </trans-unit>
+      <trans-unit id="academy.player.viewCert" datatype="html">
+        <source>Voir mon certificat</source>
+        <target state="translated">عرض شهادتي</target>
+      </trans-unit>
+      <trans-unit id="academy.lesson.markDone" datatype="html">
+        <source>Marquer comme vue</source>
+        <target state="translated">تعليم كمُشاهَد</target>
+      </trans-unit>
+      <trans-unit id="academy.lesson.openMedia" datatype="html">
+        <source>Ouvrir le média</source>
+        <target state="translated">فتح الوسائط</target>
+      </trans-unit>
+      <trans-unit id="academy.quiz.threshold" datatype="html">
+        <source>seuil <x id="INTERPOLATION"/>%</source>
+        <target state="translated">الحد <x id="INTERPOLATION"/>%</target>
+      </trans-unit>
+      <trans-unit id="academy.quiz.submit" datatype="html">
+        <source>Soumettre le quiz</source>
+        <target state="translated">إرسال الاختبار</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.back" datatype="html">
+        <source>Academy</source>
+        <target state="translated">الأكاديمية</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.copyLink" datatype="html">
+        <source>Copier le lien de vérification</source>
+        <target state="translated">نسخ رابط التحقق</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.print" datatype="html">
+        <source>Imprimer / PDF</source>
+        <target state="translated">طباعة / PDF</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.proofTitle" datatype="html">
+        <source>Preuve d'intégrité</source>
+        <target state="translated">إثبات السلامة</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.code" datatype="html">
+        <source>Code de vérification</source>
+        <target state="translated">رمز التحقق</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.sha" datatype="html">
+        <source>Empreinte SHA-256</source>
+        <target state="translated">بصمة SHA-256</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.anchor" datatype="html">
+        <source>Ancrage blockchain</source>
+        <target state="translated">التثبيت على البلوكشين</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.verifyUrl" datatype="html">
+        <source>Lien public</source>
+        <target state="translated">الرابط العام</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.note" datatype="html">
+        <source>Ce certificat est signé (Ed25519 + ML-DSA-65) et son empreinte ancrée en blockchain. Toute personne peut le vérifier via le lien public ci-dessus.</source>
+        <target state="translated">هذه الشهادة موقّعة (Ed25519 + ML-DSA-65) وبصمتها مثبَّتة على البلوكشين. يمكن لأي شخص التحقق منها عبر الرابط العام أعلاه.</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.copied" datatype="html">
+        <source>Lien de vérification copié.</source>
+        <target state="translated">تم نسخ رابط التحقق.</target>
+      </trans-unit>
+      <trans-unit id="academy.quiz.passed" datatype="html">
+        <source>Quiz réussi (<x id="score"/>%) !</source>
+        <target state="translated">تم اجتياز الاختبار (<x id="score"/>%)!</target>
+      </trans-unit>
+      <trans-unit id="academy.quiz.failed" datatype="html">
+        <source>Quiz échoué (<x id="score"/>%). Réessayez.</source>
+        <target state="translated">فشل الاختبار (<x id="score"/>%). حاول مرة أخرى.</target>
+      </trans-unit>
+      <trans-unit id="academy.error.outline" datatype="html">
+        <source>Impossible de charger le cours.</source>
+        <target state="translated">تعذّر تحميل الدورة.</target>
+      </trans-unit>
+      <trans-unit id="academy.error.enrollment" datatype="html">
+        <source>Inscription introuvable.</source>
+        <target state="translated">لم يُعثَر على التسجيل.</target>
+      </trans-unit>
+      <trans-unit id="academy.error.lesson" datatype="html">
+        <source>Échec de la validation de la leçon.</source>
+        <target state="translated">فشل التحقق من إكمال الدرس.</target>
+      </trans-unit>
+      <trans-unit id="academy.error.quiz" datatype="html">
+        <source>Échec de la soumission du quiz.</source>
+        <target state="translated">فشل إرسال الاختبار.</target>
+      </trans-unit>
+      <trans-unit id="academy.error.cert" datatype="html">
+        <source>Certificat indisponible.</source>
+        <target state="translated">الشهادة غير متاحة.</target>
+      </trans-unit>
+      <trans-unit id="academy.error.courses" datatype="html">
+        <source>Impossible de charger le catalogue.</source>
+        <target state="translated">تعذّر تحميل الكتالوج.</target>
+      </trans-unit>
+      <trans-unit id="academy.error.alreadyEnrolled" datatype="html">
+        <source>Vous êtes déjà inscrit à ce cours.</source>
+        <target state="translated">أنت مُسجَّل بالفعل في هذه الدورة.</target>
+      </trans-unit>
+      <trans-unit id="academy.error.enroll" datatype="html">
+        <source>L'inscription a échoué.</source>
+        <target state="translated">فشل التسجيل.</target>
+      </trans-unit>
       <trans-unit id="ai-conformity.certify.certificate-number" datatype="html">
         <source>Numéro de certificat</source>
         <target state="translated">رقم الشهادة</target>
@@ -3204,6 +3392,246 @@
         <source>Conformité</source>
         <target state="translated">الامتثال</target>
       </trans-unit>
+      <trans-unit id="dbb.editor.back" datatype="html">
+        <source>Retour à la liste</source>
+        <target state="translated">العودة إلى القائمة</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.name" datatype="html">
+        <source>Nom du tableau de bord</source>
+        <target state="translated">اسم لوحة المعلومات</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.newName" datatype="html">
+        <source>Nouveau tableau de bord</source>
+        <target state="translated">لوحة معلومات جديدة</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.shared" datatype="html">
+        <source>Partagé</source>
+        <target state="translated">مُشارَك</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.private" datatype="html">
+        <source>Privé</source>
+        <target state="translated">خاص</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.save" datatype="html">
+        <source>Enregistrer</source>
+        <target state="translated">حفظ</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.saving" datatype="html">
+        <source>Enregistrement…</source>
+        <target state="translated">جارٍ الحفظ…</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.notFound" datatype="html">
+        <source>Tableau de bord introuvable</source>
+        <target state="translated">لم يُعثَر على لوحة المعلومات</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.added" datatype="html">
+        <source>Widget ajouté</source>
+        <target state="translated">تمت إضافة الأداة</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.saved" datatype="html">
+        <source>Tableau de bord enregistré</source>
+        <target state="translated">تم حفظ لوحة المعلومات</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.saveFailed" datatype="html">
+        <source>Échec de l'enregistrement</source>
+        <target state="translated">فشل الحفظ</target>
+      </trans-unit>
+      <trans-unit id="dbb.palette.aria" datatype="html">
+        <source>Palette de widgets</source>
+        <target state="translated">لوحة الأدوات</target>
+      </trans-unit>
+      <trans-unit id="dbb.palette.label" datatype="html">
+        <source>Glisser un widget</source>
+        <target state="translated">اسحب أداة</target>
+      </trans-unit>
+      <trans-unit id="dbb.grid.aria" datatype="html">
+        <source>Grille du tableau de bord</source>
+        <target state="translated">شبكة لوحة المعلومات</target>
+      </trans-unit>
+      <trans-unit id="dbb.item.move" datatype="html">
+        <source>Déplacer</source>
+        <target state="translated">نقل</target>
+      </trans-unit>
+      <trans-unit id="dbb.item.config" datatype="html">
+        <source>Configurer</source>
+        <target state="translated">تكوين</target>
+      </trans-unit>
+      <trans-unit id="dbb.item.remove" datatype="html">
+        <source>Supprimer</source>
+        <target state="translated">إزالة</target>
+      </trans-unit>
+      <trans-unit id="dbb.empty.hint" datatype="html">
+        <source>Votre tableau de bord est vide. Glissez un widget depuis la palette, ou cliquez dessus pour l'ajouter.</source>
+        <target state="translated">لوحة معلوماتك فارغة. اسحب أداة من اللوحة، أو انقر عليها لإضافتها.</target>
+      </trans-unit>
+      <trans-unit id="dbb.narrative.empty" datatype="html">
+        <source>Récit IA : aucun élément pour l'instant — branchez une source pour générer un storyboard.</source>
+        <target state="translated">سرد الذكاء الاصطناعي: لا شيء بعد — اربط مصدراً لإنشاء قصة مصوّرة.</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.aria.label" datatype="html">
+        <source>Panneau de configuration du widget</source>
+        <target state="translated">لوحة تكوين الأداة</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.title" datatype="html">
+        <source>Configurer le widget</source>
+        <target state="translated">تكوين الأداة</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.close" datatype="html">
+        <source>Fermer le panneau</source>
+        <target state="translated">إغلاق اللوحة</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.widgetTitle" datatype="html">
+        <source>Titre</source>
+        <target state="translated">العنوان</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.source" datatype="html">
+        <source>Source KPI</source>
+        <target state="translated">مصدر مؤشر الأداء</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.label" datatype="html">
+        <source>Libellé affiché</source>
+        <target state="translated">التسمية المعروضة</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.unit" datatype="html">
+        <source>Unité</source>
+        <target state="translated">الوحدة</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.threshold" datatype="html">
+        <source>Seuil</source>
+        <target state="translated">العتبة</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.text" datatype="html">
+        <source>Texte du récit</source>
+        <target state="translated">نص السرد</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.remove" datatype="html">
+        <source>Supprimer</source>
+        <target state="translated">إزالة</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.done" datatype="html">
+        <source>Terminé</source>
+        <target state="translated">تم</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.kpi" datatype="html">
+        <source>Indicateur KPI</source>
+        <target state="translated">مؤشر الأداء KPI</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.kpi.desc" datatype="html">
+        <source>Valeur unique avec tendance et seuil</source>
+        <target state="translated">قيمة واحدة مع الاتجاه والعتبة</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.line" datatype="html">
+        <source>Courbe</source>
+        <target state="translated">منحنى</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.line.desc" datatype="html">
+        <source>Tendance temporelle (ECharts)</source>
+        <target state="translated">الاتجاه الزمني (ECharts)</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.bar" datatype="html">
+        <source>Histogramme</source>
+        <target state="translated">مخطط أعمدة</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.bar.desc" datatype="html">
+        <source>Comparaison par catégorie</source>
+        <target state="translated">مقارنة حسب الفئة</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.pie" datatype="html">
+        <source>Camembert</source>
+        <target state="translated">مخطط دائري</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.pie.desc" datatype="html">
+        <source>Répartition proportionnelle</source>
+        <target state="translated">توزيع نسبي</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.gauge" datatype="html">
+        <source>Jauge</source>
+        <target state="translated">مقياس</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.gauge.desc" datatype="html">
+        <source>Atteinte d'une cible</source>
+        <target state="translated">مدى تحقيق الهدف</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.control" datatype="html">
+        <source>Carte de contrôle</source>
+        <target state="translated">مخطط التحكم</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.control.desc" datatype="html">
+        <source>SPC avec limites UCL/LCL</source>
+        <target state="translated">التحكم الإحصائي مع حدود UCL/LCL</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.table" datatype="html">
+        <source>Tableau</source>
+        <target state="translated">جدول</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.table.desc" datatype="html">
+        <source>Liste dense de valeurs</source>
+        <target state="translated">قائمة كثيفة من القيم</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.heatmap" datatype="html">
+        <source>Heatmap</source>
+        <target state="translated">خريطة حرارية</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.heatmap.desc" datatype="html">
+        <source>Matrice de conformité</source>
+        <target state="translated">مصفوفة الامتثال</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.narrative" datatype="html">
+        <source>Récit IA</source>
+        <target state="translated">سرد بالذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.narrative.desc" datatype="html">
+        <source>Texte / storyboard généré</source>
+        <target state="translated">نص / قصة مصوّرة مُولّدة</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.capa" datatype="html">
+        <source>Délai moyen de clôture CAPA</source>
+        <target state="translated">متوسط زمن إغلاق الإجراء التصحيحي/الوقائي</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.recurrence" datatype="html">
+        <source>Taux de récidive CAPA</source>
+        <target state="translated">معدل تكرار الإجراء التصحيحي/الوقائي</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.ncrate" datatype="html">
+        <source>Taux de non-conformités</source>
+        <target state="translated">معدل عدم المطابقة</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.dpmo" datatype="html">
+        <source>DPMO</source>
+        <target state="translated">DPMO</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.fpy" datatype="html">
+        <source>First Pass Yield</source>
+        <target state="translated">النجاح من المحاولة الأولى (FPY)</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.coq" datatype="html">
+        <source>Coût d'obtention de la qualité</source>
+        <target state="translated">تكلفة الجودة</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.pdca" datatype="html">
+        <source>Avancement cycles PDCA</source>
+        <target state="translated">تقدّم دورات PDCA</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.fives" datatype="html">
+        <source>Score 5S moyen</source>
+        <target state="translated">متوسط نتيجة 5S</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.cpk" datatype="html">
+        <source>Capabilité Cpk</source>
+        <target state="translated">قدرة العملية Cpk</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.alignment" datatype="html">
+        <source>Taux d'alignement normatif</source>
+        <target state="translated">معدل المواءمة المعيارية</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.audit" datatype="html">
+        <source>Audits réalisés vs planifiés</source>
+        <target state="translated">التدقيقات المُنجَزة مقابل المُخطَّطة</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.supplier" datatype="html">
+        <source>Score qualité fournisseurs</source>
+        <target state="translated">نتيجة جودة المورّدين</target>
+      </trans-unit>
       <trans-unit id="dashboard.tt.aria" datatype="html">
         <source>Voyage dans le temps</source>
         <target state="translated">السفر عبر الزمن</target>
@@ -3299,6 +3727,362 @@
       <trans-unit id="dashboard.annot.delete-error" datatype="html">
         <source>Suppression refusée.</source>
         <target state="translated">تم رفض الحذف.</target>
+      </trans-unit>
+      <trans-unit id="nav.doc-gen-ia" datatype="html">
+        <source>Génération doc IA</source>
+        <target state="translated">إنشاء الوثائق بالذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="docgen.title" datatype="html">
+        <source>Génération documentaire IA</source>
+        <target state="translated">إنشاء الوثائق بالذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="docgen.subtitle" datatype="html">
+        <source>Générez en lot un dossier documentaire complet (Manuel Qualité, Politique, procédures) pré-rempli par l'IA à partir du contexte de votre organisation. Chaque pièce passe par une validation humaine avant signature et ancrage.</source>
+        <target state="translated">أنشئ دفعةً ملفّاً وثائقياً كاملاً (دليل الجودة، السياسة، الإجراءات) مملوءاً مسبقاً بالذكاء الاصطناعي من سياق مؤسستك. تمرّ كل وثيقة بتحقّق بشري قبل التوقيع والتثبيت.</target>
+      </trans-unit>
+      <trans-unit id="docgen.config.title" datatype="html">
+        <source>Nouvelle génération</source>
+        <target state="translated">إنشاء جديد</target>
+      </trans-unit>
+      <trans-unit id="docgen.config.standard" datatype="html">
+        <source>Norme visée</source>
+        <target state="translated">المعيار المستهدف</target>
+      </trans-unit>
+      <trans-unit id="docgen.config.loading-standards" datatype="html">
+        <source>Chargement du catalogue…</source>
+        <target state="translated">جارٍ تحميل الكتالوج…</target>
+      </trans-unit>
+      <trans-unit id="docgen.config.org" datatype="html">
+        <source>Organisation</source>
+        <target state="translated">المؤسسة</target>
+      </trans-unit>
+      <trans-unit id="docgen.config.industry" datatype="html">
+        <source>Secteur</source>
+        <target state="translated">القطاع</target>
+      </trans-unit>
+      <trans-unit id="docgen.config.size" datatype="html">
+        <source>Taille</source>
+        <target state="translated">الحجم</target>
+      </trans-unit>
+      <trans-unit id="docgen.config.language" datatype="html">
+        <source>Langue de rédaction</source>
+        <target state="translated">لغة التحرير</target>
+      </trans-unit>
+      <trans-unit id="docgen.config.start" datatype="html">
+        <source>Générer le dossier</source>
+        <target state="translated">إنشاء الملف</target>
+      </trans-unit>
+      <trans-unit id="docgen.lang.fr" datatype="html">
+        <source>Français</source>
+        <target state="translated">الفرنسية</target>
+      </trans-unit>
+      <trans-unit id="docgen.lang.en" datatype="html">
+        <source>Anglais</source>
+        <target state="translated">الإنجليزية</target>
+      </trans-unit>
+      <trans-unit id="docgen.lang.es" datatype="html">
+        <source>Espagnol</source>
+        <target state="translated">الإسبانية</target>
+      </trans-unit>
+      <trans-unit id="docgen.lang.de" datatype="html">
+        <source>Allemand</source>
+        <target state="translated">الألمانية</target>
+      </trans-unit>
+      <trans-unit id="docgen.pieces.title" datatype="html">
+        <source>Pièces à générer</source>
+        <target state="translated">الوثائق المطلوب إنشاؤها</target>
+      </trans-unit>
+      <trans-unit id="docgen.pieces.sections" datatype="html">
+        <source><x id="INTERPOLATION"/> section(s)</source>
+        <target state="translated"><x id="INTERPOLATION"/> قسم/أقسام</target>
+      </trans-unit>
+      <trans-unit id="docgen.selection.all" datatype="html">
+        <source>Plan complet (toutes les pièces)</source>
+        <target state="translated">الخطة الكاملة (جميع الوثائق)</target>
+      </trans-unit>
+      <trans-unit id="docgen.selection.count" datatype="html">
+        <source><x id="count"/> pièce(s) sélectionnée(s)</source>
+        <target state="translated">تم تحديد <x id="count"/> وثيقة</target>
+      </trans-unit>
+      <trans-unit id="docgen.active.title" datatype="html">
+        <source>Dossier en cours</source>
+        <target state="translated">الملف قيد الإنجاز</target>
+      </trans-unit>
+      <trans-unit id="docgen.progress" datatype="html">
+        <source><x id="INTERPOLATION"/> / <x id="INTERPOLATION_1"/> générées</source>
+        <target state="translated">تم إنشاء <x id="INTERPOLATION"/> / <x id="INTERPOLATION_1"/></target>
+      </trans-unit>
+      <trans-unit id="docgen.doc.reuse" datatype="html">
+        <source>réutilisation possible</source>
+        <target state="translated">إمكانية إعادة الاستخدام</target>
+      </trans-unit>
+      <trans-unit id="docgen.doc.review" datatype="html">
+        <source>Réviser</source>
+        <target state="translated">مراجعة</target>
+      </trans-unit>
+      <trans-unit id="docgen.action.retry" datatype="html">
+        <source>Relancer les pièces en échec</source>
+        <target state="translated">إعادة محاولة الوثائق الفاشلة</target>
+      </trans-unit>
+      <trans-unit id="docgen.sealed.title" datatype="html">
+        <source>Dossier finalisé, signé et ancré</source>
+        <target state="translated">الملف منجَز وموقَّع ومثبَّت</target>
+      </trans-unit>
+      <trans-unit id="docgen.sealed.anchor" datatype="html">
+        <source>Ancrage</source>
+        <target state="translated">التثبيت</target>
+      </trans-unit>
+      <trans-unit id="docgen.finalize.note" datatype="html">
+        <source>Toutes les pièces doivent être approuvées (validation humaine) avant la finalisation.</source>
+        <target state="translated">يجب اعتماد جميع الوثائق (تحقّق بشري) قبل الإنهاء.</target>
+      </trans-unit>
+      <trans-unit id="docgen.finalize.signature" datatype="html">
+        <source>Signature du responsable</source>
+        <target state="translated">توقيع المسؤول</target>
+      </trans-unit>
+      <trans-unit id="docgen.finalize.notes" datatype="html">
+        <source>Notes (facultatif)</source>
+        <target state="translated">ملاحظات (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="docgen.finalize.submit" datatype="html">
+        <source>Finaliser, signer et ancrer</source>
+        <target state="translated">الإنهاء والتوقيع والتثبيت</target>
+      </trans-unit>
+      <trans-unit id="docgen.history.title" datatype="html">
+        <source>Mes dossiers documentaires</source>
+        <target state="translated">ملفّاتي الوثائقية</target>
+      </trans-unit>
+      <trans-unit id="docgen.history.empty" datatype="html">
+        <source>Aucun dossier généré pour l'instant.</source>
+        <target state="translated">لم يُنشَأ أي ملف بعد.</target>
+      </trans-unit>
+      <trans-unit id="docgen.col.standard" datatype="html">
+        <source>Norme</source>
+        <target state="translated">المعيار</target>
+      </trans-unit>
+      <trans-unit id="docgen.col.org" datatype="html">
+        <source>Organisation</source>
+        <target state="translated">المؤسسة</target>
+      </trans-unit>
+      <trans-unit id="docgen.col.progress" datatype="html">
+        <source>Progression</source>
+        <target state="translated">التقدّم</target>
+      </trans-unit>
+      <trans-unit id="docgen.col.status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">الحالة</target>
+      </trans-unit>
+      <trans-unit id="docgen.kind.manual" datatype="html">
+        <source>Manuel</source>
+        <target state="translated">الدليل</target>
+      </trans-unit>
+      <trans-unit id="docgen.kind.policy" datatype="html">
+        <source>Politique</source>
+        <target state="translated">السياسة</target>
+      </trans-unit>
+      <trans-unit id="docgen.kind.procedure" datatype="html">
+        <source>Procédure</source>
+        <target state="translated">الإجراء</target>
+      </trans-unit>
+      <trans-unit id="docgen.docstatus.pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">قيد الانتظار</target>
+      </trans-unit>
+      <trans-unit id="docgen.docstatus.generating" datatype="html">
+        <source>Génération…</source>
+        <target state="translated">جارٍ الإنشاء…</target>
+      </trans-unit>
+      <trans-unit id="docgen.docstatus.generated" datatype="html">
+        <source>Brouillon généré</source>
+        <target state="translated">تم إنشاء المسوّدة</target>
+      </trans-unit>
+      <trans-unit id="docgen.docstatus.failed" datatype="html">
+        <source>Échec</source>
+        <target state="translated">فشل</target>
+      </trans-unit>
+      <trans-unit id="docgen.docstatus.reused" datatype="html">
+        <source>Réutilisable</source>
+        <target state="translated">قابل لإعادة الاستخدام</target>
+      </trans-unit>
+      <trans-unit id="docgen.status.inprogress" datatype="html">
+        <source>Génération en cours</source>
+        <target state="translated">الإنشاء قيد التنفيذ</target>
+      </trans-unit>
+      <trans-unit id="docgen.status.generated" datatype="html">
+        <source>Généré — à valider</source>
+        <target state="translated">تم الإنشاء — بانتظار التحقّق</target>
+      </trans-unit>
+      <trans-unit id="docgen.status.finalized" datatype="html">
+        <source>Finalisé</source>
+        <target state="translated">منجَز</target>
+      </trans-unit>
+      <trans-unit id="docgen.toast.generated" datatype="html">
+        <source>Dossier généré : <x id="n"/> pièce(s) en brouillon.</source>
+        <target state="translated">تم إنشاء الملف: <x id="n"/> وثيقة كمسوّدة.</target>
+      </trans-unit>
+      <trans-unit id="docgen.toast.finalized" datatype="html">
+        <source>Dossier finalisé, signé et ancré.</source>
+        <target state="translated">تم إنجاز الملف وتوقيعه وتثبيته.</target>
+      </trans-unit>
+      <trans-unit id="docgen.toast.close" datatype="html">
+        <source>Fermer</source>
+        <target state="translated">إغلاق</target>
+      </trans-unit>
+      <trans-unit id="docgen.err.backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">تعذّر الوصول إلى الخلفية (المحرّك على 8082؟).</target>
+      </trans-unit>
+      <trans-unit id="docgen.err.invalid" datatype="html">
+        <source>Requête invalide (norme + organisation requises).</source>
+        <target state="translated">طلب غير صالح (المعيار والمؤسسة مطلوبان).</target>
+      </trans-unit>
+      <trans-unit id="docgen.err.forbidden" datatype="html">
+        <source>Droits insuffisants pour cette action.</source>
+        <target state="translated">صلاحيات غير كافية لهذا الإجراء.</target>
+      </trans-unit>
+      <trans-unit id="docgen.err.notfound" datatype="html">
+        <source>Norme ou dossier introuvable.</source>
+        <target state="translated">لم يُعثَر على المعيار أو الملف.</target>
+      </trans-unit>
+      <trans-unit id="docgen.err.conflict" datatype="html">
+        <source>Action impossible dans l'état actuel du dossier.</source>
+        <target state="translated">الإجراء غير ممكن في الحالة الراهنة للملف.</target>
+      </trans-unit>
+      <trans-unit id="docgen.err.unprocessable" datatype="html">
+        <source>Génération IA impossible pour cette requête.</source>
+        <target state="translated">تعذّر الإنشاء بالذكاء الاصطناعي لهذا الطلب.</target>
+      </trans-unit>
+      <trans-unit id="docgen.err.quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">تم تجاوز معدّل/حصة الذكاء الاصطناعي لهذا المستأجر — أعد المحاولة لاحقاً.</target>
+      </trans-unit>
+      <trans-unit id="docgen.err.unavailable" datatype="html">
+        <source>Service IA momentanément indisponible.</source>
+        <target state="translated">خدمة الذكاء الاصطناعي غير متاحة مؤقتاً.</target>
+      </trans-unit>
+      <trans-unit id="docgen.err.generic" datatype="html">
+        <source>Échec de l'opération (HTTP <x id="status"/>).</source>
+        <target state="translated">فشلت العملية (HTTP <x id="status"/>).</target>
+      </trans-unit>
+      <trans-unit id="docreview.title" datatype="html">
+        <source>Revue d'un document généré</source>
+        <target state="translated">مراجعة وثيقة مُنشأة</target>
+      </trans-unit>
+      <trans-unit id="docreview.subtitle" datatype="html">
+        <source>Relisez le brouillon rédigé par l'IA, soumettez-le à validation, puis approuvez-le (signature humaine) ou rejetez-le. Aucune publication sans validation humaine.</source>
+        <target state="translated">راجع المسوّدة التي كتبها الذكاء الاصطناعي، أرسلها للتحقّق، ثم اعتمدها (توقيع بشري) أو ارفضها. لا نشر دون تحقّق بشري.</target>
+      </trans-unit>
+      <trans-unit id="docreview.lastreject" datatype="html">
+        <source>Dernier rejet :</source>
+        <target state="translated">آخر رفض:</target>
+      </trans-unit>
+      <trans-unit id="docreview.clauses" datatype="html">
+        <source>Clauses</source>
+        <target state="translated">البنود</target>
+      </trans-unit>
+      <trans-unit id="docreview.action.submit" datatype="html">
+        <source>Soumettre à validation</source>
+        <target state="translated">إرسال للتحقّق</target>
+      </trans-unit>
+      <trans-unit id="docreview.approve.note" datatype="html">
+        <source>L'approbation appose une signature humaine. L'approbateur doit différer du soumetteur.</source>
+        <target state="translated">يضع الاعتماد توقيعاً بشرياً. يجب أن يختلف المُعتمِد عن المُقدِّم.</target>
+      </trans-unit>
+      <trans-unit id="docreview.approve.signature" datatype="html">
+        <source>Signature</source>
+        <target state="translated">التوقيع</target>
+      </trans-unit>
+      <trans-unit id="docreview.approve.notes" datatype="html">
+        <source>Notes (facultatif)</source>
+        <target state="translated">ملاحظات (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="docreview.action.approve" datatype="html">
+        <source>Approuver &amp; signer</source>
+        <target state="translated">الاعتماد والتوقيع</target>
+      </trans-unit>
+      <trans-unit id="docreview.action.reject-toggle" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">رفض</target>
+      </trans-unit>
+      <trans-unit id="docreview.reject.reason" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">سبب الرفض</target>
+      </trans-unit>
+      <trans-unit id="docreview.action.reject" datatype="html">
+        <source>Confirmer le rejet</source>
+        <target state="translated">تأكيد الرفض</target>
+      </trans-unit>
+      <trans-unit id="docreview.approved" datatype="html">
+        <source>Pièce approuvée et signée — prête pour la finalisation du dossier.</source>
+        <target state="translated">تم اعتماد الوثيقة وتوقيعها — جاهزة لإنهاء الملف.</target>
+      </trans-unit>
+      <trans-unit id="docreview.kind.manual" datatype="html">
+        <source>Manuel Qualité</source>
+        <target state="translated">دليل الجودة</target>
+      </trans-unit>
+      <trans-unit id="docreview.kind.policy" datatype="html">
+        <source>Politique Qualité</source>
+        <target state="translated">سياسة الجودة</target>
+      </trans-unit>
+      <trans-unit id="docreview.kind.procedure" datatype="html">
+        <source>Procédure documentée</source>
+        <target state="translated">إجراء موثَّق</target>
+      </trans-unit>
+      <trans-unit id="docreview.status.draft" datatype="html">
+        <source>Brouillon IA</source>
+        <target state="translated">مسوّدة الذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="docreview.status.review" datatype="html">
+        <source>En validation</source>
+        <target state="translated">قيد التحقّق</target>
+      </trans-unit>
+      <trans-unit id="docreview.status.approved" datatype="html">
+        <source>Approuvé</source>
+        <target state="translated">معتمَد</target>
+      </trans-unit>
+      <trans-unit id="docreview.status.rejected" datatype="html">
+        <source>Rejeté</source>
+        <target state="translated">مرفوض</target>
+      </trans-unit>
+      <trans-unit id="docreview.toast.submitted" datatype="html">
+        <source>Pièce soumise à validation.</source>
+        <target state="translated">تم إرسال الوثيقة للتحقّق.</target>
+      </trans-unit>
+      <trans-unit id="docreview.toast.approved" datatype="html">
+        <source>Pièce approuvée et signée.</source>
+        <target state="translated">تم اعتماد الوثيقة وتوقيعها.</target>
+      </trans-unit>
+      <trans-unit id="docreview.toast.rejected" datatype="html">
+        <source>Pièce rejetée — revenue en brouillon.</source>
+        <target state="translated">تم رفض الوثيقة — أُعيدت إلى المسوّدة.</target>
+      </trans-unit>
+      <trans-unit id="docreview.toast.close" datatype="html">
+        <source>Fermer</source>
+        <target state="translated">إغلاق</target>
+      </trans-unit>
+      <trans-unit id="docreview.err.backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">تعذّر الوصول إلى الخلفية (المحرّك على 8082؟).</target>
+      </trans-unit>
+      <trans-unit id="docreview.err.invalid" datatype="html">
+        <source>Requête invalide (signature/motif requis).</source>
+        <target state="translated">طلب غير صالح (التوقيع/السبب مطلوب).</target>
+      </trans-unit>
+      <trans-unit id="docreview.err.forbidden" datatype="html">
+        <source>Droits insuffisants (approbation réservée au Directeur Qualité).</source>
+        <target state="translated">صلاحيات غير كافية (الاعتماد محصور بمدير الجودة).</target>
+      </trans-unit>
+      <trans-unit id="docreview.err.notfound" datatype="html">
+        <source>Pièce introuvable.</source>
+        <target state="translated">لم يُعثَر على الوثيقة.</target>
+      </trans-unit>
+      <trans-unit id="docreview.err.conflict" datatype="html">
+        <source>Transition impossible (séparation des tâches, état invalide).</source>
+        <target state="translated">الانتقال غير ممكن (فصل المهام، حالة غير صالحة).</target>
+      </trans-unit>
+      <trans-unit id="docreview.err.generic" datatype="html">
+        <source>Échec de l'opération (HTTP <x id="status"/>).</source>
+        <target state="translated">فشلت العملية (HTTP <x id="status"/>).</target>
       </trans-unit>
       <trans-unit id="nav.forecast" datatype="html">
         <source>Prévision KPI</source>

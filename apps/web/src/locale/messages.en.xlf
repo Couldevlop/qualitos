@@ -4,6 +4,194 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="fr" target-language="en" datatype="plaintext" original="ng2.template">
     <body>
+      <trans-unit id="nav.academy" datatype="html">
+        <source>Academy</source>
+        <target state="translated">Academy</target>
+      </trans-unit>
+      <trans-unit id="academy.home.title" datatype="html">
+        <source>QualitOS Academy</source>
+        <target state="translated">QualitOS Academy</target>
+      </trans-unit>
+      <trans-unit id="academy.home.subtitle" datatype="html">
+        <source>Montez en compétence : parcours par rôle et secteur, quiz notés, badges et ceintures qualité, certificats signés et vérifiables.</source>
+        <target state="translated">Build your skills: role- and industry-based paths, graded quizzes, quality badges and belts, signed and verifiable certificates.</target>
+      </trans-unit>
+      <trans-unit id="academy.tab.catalog" datatype="html">
+        <source>Catalogue</source>
+        <target state="translated">Catalog</target>
+      </trans-unit>
+      <trans-unit id="academy.tab.myCourses" datatype="html">
+        <source>Mes formations</source>
+        <target state="translated">My courses</target>
+      </trans-unit>
+      <trans-unit id="academy.tab.leaderboard" datatype="html">
+        <source>Classement</source>
+        <target state="translated">Leaderboard</target>
+      </trans-unit>
+      <trans-unit id="academy.catalog.empty" datatype="html">
+        <source>Aucun cours publié pour le moment.</source>
+        <target state="translated">No course published yet.</target>
+      </trans-unit>
+      <trans-unit id="academy.points.short" datatype="html">
+        <source>pts</source>
+        <target state="translated">pts</target>
+      </trans-unit>
+      <trans-unit id="academy.passing" datatype="html">
+        <source>Réussite</source>
+        <target state="translated">Pass</target>
+      </trans-unit>
+      <trans-unit id="academy.action.enroll" datatype="html">
+        <source>S'inscrire</source>
+        <target state="translated">Enroll</target>
+      </trans-unit>
+      <trans-unit id="academy.action.enrolled" datatype="html">
+        <source>Inscrit</source>
+        <target state="translated">Enrolled</target>
+      </trans-unit>
+      <trans-unit id="academy.myCourses.empty" datatype="html">
+        <source>Vous n'êtes inscrit à aucun cours. Choisissez-en un dans le catalogue.</source>
+        <target state="translated">You are not enrolled in any course. Pick one from the catalog.</target>
+      </trans-unit>
+      <trans-unit id="academy.score" datatype="html">
+        <source>Score : <x id="INTERPOLATION"/>%</source>
+        <target state="translated">Score: <x id="INTERPOLATION"/>%</target>
+      </trans-unit>
+      <trans-unit id="academy.leaderboard.empty" datatype="html">
+        <source>Le classement est encore vide. Complétez un cours pour y figurer.</source>
+        <target state="translated">The leaderboard is still empty. Complete a course to appear on it.</target>
+      </trans-unit>
+      <trans-unit id="academy.lb.rank" datatype="html">
+        <source>#</source>
+        <target state="translated">#</target>
+      </trans-unit>
+      <trans-unit id="academy.lb.learner" datatype="html">
+        <source>Apprenant</source>
+        <target state="translated">Learner</target>
+      </trans-unit>
+      <trans-unit id="academy.lb.belt" datatype="html">
+        <source>Ceinture</source>
+        <target state="translated">Belt</target>
+      </trans-unit>
+      <trans-unit id="academy.lb.points" datatype="html">
+        <source>Points</source>
+        <target state="translated">Points</target>
+      </trans-unit>
+      <trans-unit id="academy.lb.completed" datatype="html">
+        <source>Complétions</source>
+        <target state="translated">Completions</target>
+      </trans-unit>
+      <trans-unit id="academy.lb.badges" datatype="html">
+        <source>Badges</source>
+        <target state="translated">Badges</target>
+      </trans-unit>
+      <trans-unit id="academy.player.back" datatype="html">
+        <source>Retour à l'Academy</source>
+        <target state="translated">Back to Academy</target>
+      </trans-unit>
+      <trans-unit id="academy.player.completed" datatype="html">
+        <source>Cours terminé — score <x id="INTERPOLATION"/>% !</source>
+        <target state="translated">Course completed — score <x id="INTERPOLATION"/>%!</target>
+      </trans-unit>
+      <trans-unit id="academy.player.viewCert" datatype="html">
+        <source>Voir mon certificat</source>
+        <target state="translated">View my certificate</target>
+      </trans-unit>
+      <trans-unit id="academy.lesson.markDone" datatype="html">
+        <source>Marquer comme vue</source>
+        <target state="translated">Mark as viewed</target>
+      </trans-unit>
+      <trans-unit id="academy.lesson.openMedia" datatype="html">
+        <source>Ouvrir le média</source>
+        <target state="translated">Open media</target>
+      </trans-unit>
+      <trans-unit id="academy.quiz.threshold" datatype="html">
+        <source>seuil <x id="INTERPOLATION"/>%</source>
+        <target state="translated">threshold <x id="INTERPOLATION"/>%</target>
+      </trans-unit>
+      <trans-unit id="academy.quiz.submit" datatype="html">
+        <source>Soumettre le quiz</source>
+        <target state="translated">Submit quiz</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.back" datatype="html">
+        <source>Academy</source>
+        <target state="translated">Academy</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.copyLink" datatype="html">
+        <source>Copier le lien de vérification</source>
+        <target state="translated">Copy verification link</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.print" datatype="html">
+        <source>Imprimer / PDF</source>
+        <target state="translated">Print / PDF</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.proofTitle" datatype="html">
+        <source>Preuve d'intégrité</source>
+        <target state="translated">Integrity proof</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.code" datatype="html">
+        <source>Code de vérification</source>
+        <target state="translated">Verification code</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.sha" datatype="html">
+        <source>Empreinte SHA-256</source>
+        <target state="translated">SHA-256 fingerprint</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.anchor" datatype="html">
+        <source>Ancrage blockchain</source>
+        <target state="translated">Blockchain anchoring</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.verifyUrl" datatype="html">
+        <source>Lien public</source>
+        <target state="translated">Public link</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.note" datatype="html">
+        <source>Ce certificat est signé (Ed25519 + ML-DSA-65) et son empreinte ancrée en blockchain. Toute personne peut le vérifier via le lien public ci-dessus.</source>
+        <target state="translated">This certificate is signed (Ed25519 + ML-DSA-65) and its fingerprint is anchored on the blockchain. Anyone can verify it via the public link above.</target>
+      </trans-unit>
+      <trans-unit id="academy.cert.copied" datatype="html">
+        <source>Lien de vérification copié.</source>
+        <target state="translated">Verification link copied.</target>
+      </trans-unit>
+      <trans-unit id="academy.quiz.passed" datatype="html">
+        <source>Quiz réussi (<x id="score"/>%) !</source>
+        <target state="translated">Quiz passed (<x id="score"/>%)!</target>
+      </trans-unit>
+      <trans-unit id="academy.quiz.failed" datatype="html">
+        <source>Quiz échoué (<x id="score"/>%). Réessayez.</source>
+        <target state="translated">Quiz failed (<x id="score"/>%). Try again.</target>
+      </trans-unit>
+      <trans-unit id="academy.error.outline" datatype="html">
+        <source>Impossible de charger le cours.</source>
+        <target state="translated">Unable to load the course.</target>
+      </trans-unit>
+      <trans-unit id="academy.error.enrollment" datatype="html">
+        <source>Inscription introuvable.</source>
+        <target state="translated">Enrollment not found.</target>
+      </trans-unit>
+      <trans-unit id="academy.error.lesson" datatype="html">
+        <source>Échec de la validation de la leçon.</source>
+        <target state="translated">Failed to mark the lesson as completed.</target>
+      </trans-unit>
+      <trans-unit id="academy.error.quiz" datatype="html">
+        <source>Échec de la soumission du quiz.</source>
+        <target state="translated">Failed to submit the quiz.</target>
+      </trans-unit>
+      <trans-unit id="academy.error.cert" datatype="html">
+        <source>Certificat indisponible.</source>
+        <target state="translated">Certificate unavailable.</target>
+      </trans-unit>
+      <trans-unit id="academy.error.courses" datatype="html">
+        <source>Impossible de charger le catalogue.</source>
+        <target state="translated">Unable to load the catalog.</target>
+      </trans-unit>
+      <trans-unit id="academy.error.alreadyEnrolled" datatype="html">
+        <source>Vous êtes déjà inscrit à ce cours.</source>
+        <target state="translated">You are already enrolled in this course.</target>
+      </trans-unit>
+      <trans-unit id="academy.error.enroll" datatype="html">
+        <source>L'inscription a échoué.</source>
+        <target state="translated">Enrollment failed.</target>
+      </trans-unit>
       <trans-unit id="ai-conformity.certify.certificate-number" datatype="html">
         <source>Numéro de certificat</source>
         <target state="translated">Certificate number</target>
@@ -3204,6 +3392,246 @@
         <source>Conformité</source>
         <target state="translated">Compliance</target>
       </trans-unit>
+      <trans-unit id="dbb.editor.back" datatype="html">
+        <source>Retour à la liste</source>
+        <target state="translated">Back to list</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.name" datatype="html">
+        <source>Nom du tableau de bord</source>
+        <target state="translated">Dashboard name</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.newName" datatype="html">
+        <source>Nouveau tableau de bord</source>
+        <target state="translated">New dashboard</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.shared" datatype="html">
+        <source>Partagé</source>
+        <target state="translated">Shared</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.private" datatype="html">
+        <source>Privé</source>
+        <target state="translated">Private</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.save" datatype="html">
+        <source>Enregistrer</source>
+        <target state="translated">Save</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.saving" datatype="html">
+        <source>Enregistrement…</source>
+        <target state="translated">Saving…</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.notFound" datatype="html">
+        <source>Tableau de bord introuvable</source>
+        <target state="translated">Dashboard not found</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.added" datatype="html">
+        <source>Widget ajouté</source>
+        <target state="translated">Widget added</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.saved" datatype="html">
+        <source>Tableau de bord enregistré</source>
+        <target state="translated">Dashboard saved</target>
+      </trans-unit>
+      <trans-unit id="dbb.editor.saveFailed" datatype="html">
+        <source>Échec de l'enregistrement</source>
+        <target state="translated">Save failed</target>
+      </trans-unit>
+      <trans-unit id="dbb.palette.aria" datatype="html">
+        <source>Palette de widgets</source>
+        <target state="translated">Widget palette</target>
+      </trans-unit>
+      <trans-unit id="dbb.palette.label" datatype="html">
+        <source>Glisser un widget</source>
+        <target state="translated">Drag a widget</target>
+      </trans-unit>
+      <trans-unit id="dbb.grid.aria" datatype="html">
+        <source>Grille du tableau de bord</source>
+        <target state="translated">Dashboard grid</target>
+      </trans-unit>
+      <trans-unit id="dbb.item.move" datatype="html">
+        <source>Déplacer</source>
+        <target state="translated">Move</target>
+      </trans-unit>
+      <trans-unit id="dbb.item.config" datatype="html">
+        <source>Configurer</source>
+        <target state="translated">Configure</target>
+      </trans-unit>
+      <trans-unit id="dbb.item.remove" datatype="html">
+        <source>Supprimer</source>
+        <target state="translated">Remove</target>
+      </trans-unit>
+      <trans-unit id="dbb.empty.hint" datatype="html">
+        <source>Votre tableau de bord est vide. Glissez un widget depuis la palette, ou cliquez dessus pour l'ajouter.</source>
+        <target state="translated">Your dashboard is empty. Drag a widget from the palette, or click it to add it.</target>
+      </trans-unit>
+      <trans-unit id="dbb.narrative.empty" datatype="html">
+        <source>Récit IA : aucun élément pour l'instant — branchez une source pour générer un storyboard.</source>
+        <target state="translated">AI narrative: nothing yet — connect a source to generate a storyboard.</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.aria.label" datatype="html">
+        <source>Panneau de configuration du widget</source>
+        <target state="translated">Widget configuration panel</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.title" datatype="html">
+        <source>Configurer le widget</source>
+        <target state="translated">Configure widget</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.close" datatype="html">
+        <source>Fermer le panneau</source>
+        <target state="translated">Close panel</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.widgetTitle" datatype="html">
+        <source>Titre</source>
+        <target state="translated">Title</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.source" datatype="html">
+        <source>Source KPI</source>
+        <target state="translated">KPI source</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.label" datatype="html">
+        <source>Libellé affiché</source>
+        <target state="translated">Displayed label</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.unit" datatype="html">
+        <source>Unité</source>
+        <target state="translated">Unit</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.threshold" datatype="html">
+        <source>Seuil</source>
+        <target state="translated">Threshold</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.text" datatype="html">
+        <source>Texte du récit</source>
+        <target state="translated">Narrative text</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.remove" datatype="html">
+        <source>Supprimer</source>
+        <target state="translated">Remove</target>
+      </trans-unit>
+      <trans-unit id="dbb.config.done" datatype="html">
+        <source>Terminé</source>
+        <target state="translated">Done</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.kpi" datatype="html">
+        <source>Indicateur KPI</source>
+        <target state="translated">KPI indicator</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.kpi.desc" datatype="html">
+        <source>Valeur unique avec tendance et seuil</source>
+        <target state="translated">Single value with trend and threshold</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.line" datatype="html">
+        <source>Courbe</source>
+        <target state="translated">Line chart</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.line.desc" datatype="html">
+        <source>Tendance temporelle (ECharts)</source>
+        <target state="translated">Time trend (ECharts)</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.bar" datatype="html">
+        <source>Histogramme</source>
+        <target state="translated">Bar chart</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.bar.desc" datatype="html">
+        <source>Comparaison par catégorie</source>
+        <target state="translated">Comparison by category</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.pie" datatype="html">
+        <source>Camembert</source>
+        <target state="translated">Pie chart</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.pie.desc" datatype="html">
+        <source>Répartition proportionnelle</source>
+        <target state="translated">Proportional breakdown</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.gauge" datatype="html">
+        <source>Jauge</source>
+        <target state="translated">Gauge</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.gauge.desc" datatype="html">
+        <source>Atteinte d'une cible</source>
+        <target state="translated">Target attainment</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.control" datatype="html">
+        <source>Carte de contrôle</source>
+        <target state="translated">Control chart</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.control.desc" datatype="html">
+        <source>SPC avec limites UCL/LCL</source>
+        <target state="translated">SPC with UCL/LCL limits</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.table" datatype="html">
+        <source>Tableau</source>
+        <target state="translated">Table</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.table.desc" datatype="html">
+        <source>Liste dense de valeurs</source>
+        <target state="translated">Dense list of values</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.heatmap" datatype="html">
+        <source>Heatmap</source>
+        <target state="translated">Heatmap</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.heatmap.desc" datatype="html">
+        <source>Matrice de conformité</source>
+        <target state="translated">Compliance matrix</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.narrative" datatype="html">
+        <source>Récit IA</source>
+        <target state="translated">AI narrative</target>
+      </trans-unit>
+      <trans-unit id="dbb.widget.narrative.desc" datatype="html">
+        <source>Texte / storyboard généré</source>
+        <target state="translated">Generated text / storyboard</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.capa" datatype="html">
+        <source>Délai moyen de clôture CAPA</source>
+        <target state="translated">Average CAPA closure time</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.recurrence" datatype="html">
+        <source>Taux de récidive CAPA</source>
+        <target state="translated">CAPA recurrence rate</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.ncrate" datatype="html">
+        <source>Taux de non-conformités</source>
+        <target state="translated">Nonconformity rate</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.dpmo" datatype="html">
+        <source>DPMO</source>
+        <target state="translated">DPMO</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.fpy" datatype="html">
+        <source>First Pass Yield</source>
+        <target state="translated">First Pass Yield</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.coq" datatype="html">
+        <source>Coût d'obtention de la qualité</source>
+        <target state="translated">Cost of quality</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.pdca" datatype="html">
+        <source>Avancement cycles PDCA</source>
+        <target state="translated">PDCA cycle progress</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.fives" datatype="html">
+        <source>Score 5S moyen</source>
+        <target state="translated">Average 5S score</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.cpk" datatype="html">
+        <source>Capabilité Cpk</source>
+        <target state="translated">Cpk capability</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.alignment" datatype="html">
+        <source>Taux d'alignement normatif</source>
+        <target state="translated">Standards alignment rate</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.audit" datatype="html">
+        <source>Audits réalisés vs planifiés</source>
+        <target state="translated">Audits completed vs planned</target>
+      </trans-unit>
+      <trans-unit id="dbb.kpi.supplier" datatype="html">
+        <source>Score qualité fournisseurs</source>
+        <target state="translated">Supplier quality score</target>
+      </trans-unit>
       <trans-unit id="dashboard.tt.aria" datatype="html">
         <source>Voyage dans le temps</source>
         <target state="translated">Time travel</target>
@@ -3299,6 +3727,362 @@
       <trans-unit id="dashboard.annot.delete-error" datatype="html">
         <source>Suppression refusée.</source>
         <target state="translated">Deletion refused.</target>
+      </trans-unit>
+      <trans-unit id="nav.doc-gen-ia" datatype="html">
+        <source>Génération doc IA</source>
+        <target state="translated">AI doc generation</target>
+      </trans-unit>
+      <trans-unit id="docgen.title" datatype="html">
+        <source>Génération documentaire IA</source>
+        <target state="translated">AI document generation</target>
+      </trans-unit>
+      <trans-unit id="docgen.subtitle" datatype="html">
+        <source>Générez en lot un dossier documentaire complet (Manuel Qualité, Politique, procédures) pré-rempli par l'IA à partir du contexte de votre organisation. Chaque pièce passe par une validation humaine avant signature et ancrage.</source>
+        <target state="translated">Generate a complete documentation set (Quality Manual, Policy, procedures) in batch, pre-filled by AI from your organization context. Each item goes through human validation before signing and anchoring.</target>
+      </trans-unit>
+      <trans-unit id="docgen.config.title" datatype="html">
+        <source>Nouvelle génération</source>
+        <target state="translated">New generation</target>
+      </trans-unit>
+      <trans-unit id="docgen.config.standard" datatype="html">
+        <source>Norme visée</source>
+        <target state="translated">Target standard</target>
+      </trans-unit>
+      <trans-unit id="docgen.config.loading-standards" datatype="html">
+        <source>Chargement du catalogue…</source>
+        <target state="translated">Loading catalog…</target>
+      </trans-unit>
+      <trans-unit id="docgen.config.org" datatype="html">
+        <source>Organisation</source>
+        <target state="translated">Organization</target>
+      </trans-unit>
+      <trans-unit id="docgen.config.industry" datatype="html">
+        <source>Secteur</source>
+        <target state="translated">Industry</target>
+      </trans-unit>
+      <trans-unit id="docgen.config.size" datatype="html">
+        <source>Taille</source>
+        <target state="translated">Size</target>
+      </trans-unit>
+      <trans-unit id="docgen.config.language" datatype="html">
+        <source>Langue de rédaction</source>
+        <target state="translated">Drafting language</target>
+      </trans-unit>
+      <trans-unit id="docgen.config.start" datatype="html">
+        <source>Générer le dossier</source>
+        <target state="translated">Generate the set</target>
+      </trans-unit>
+      <trans-unit id="docgen.lang.fr" datatype="html">
+        <source>Français</source>
+        <target state="translated">French</target>
+      </trans-unit>
+      <trans-unit id="docgen.lang.en" datatype="html">
+        <source>Anglais</source>
+        <target state="translated">English</target>
+      </trans-unit>
+      <trans-unit id="docgen.lang.es" datatype="html">
+        <source>Espagnol</source>
+        <target state="translated">Spanish</target>
+      </trans-unit>
+      <trans-unit id="docgen.lang.de" datatype="html">
+        <source>Allemand</source>
+        <target state="translated">German</target>
+      </trans-unit>
+      <trans-unit id="docgen.pieces.title" datatype="html">
+        <source>Pièces à générer</source>
+        <target state="translated">Items to generate</target>
+      </trans-unit>
+      <trans-unit id="docgen.pieces.sections" datatype="html">
+        <source><x id="INTERPOLATION"/> section(s)</source>
+        <target state="translated"><x id="INTERPOLATION"/> section(s)</target>
+      </trans-unit>
+      <trans-unit id="docgen.selection.all" datatype="html">
+        <source>Plan complet (toutes les pièces)</source>
+        <target state="translated">Full plan (all items)</target>
+      </trans-unit>
+      <trans-unit id="docgen.selection.count" datatype="html">
+        <source><x id="count"/> pièce(s) sélectionnée(s)</source>
+        <target state="translated"><x id="count"/> item(s) selected</target>
+      </trans-unit>
+      <trans-unit id="docgen.active.title" datatype="html">
+        <source>Dossier en cours</source>
+        <target state="translated">Set in progress</target>
+      </trans-unit>
+      <trans-unit id="docgen.progress" datatype="html">
+        <source><x id="INTERPOLATION"/> / <x id="INTERPOLATION_1"/> générées</source>
+        <target state="translated"><x id="INTERPOLATION"/> / <x id="INTERPOLATION_1"/> generated</target>
+      </trans-unit>
+      <trans-unit id="docgen.doc.reuse" datatype="html">
+        <source>réutilisation possible</source>
+        <target state="translated">reuse possible</target>
+      </trans-unit>
+      <trans-unit id="docgen.doc.review" datatype="html">
+        <source>Réviser</source>
+        <target state="translated">Review</target>
+      </trans-unit>
+      <trans-unit id="docgen.action.retry" datatype="html">
+        <source>Relancer les pièces en échec</source>
+        <target state="translated">Retry failed items</target>
+      </trans-unit>
+      <trans-unit id="docgen.sealed.title" datatype="html">
+        <source>Dossier finalisé, signé et ancré</source>
+        <target state="translated">Set finalized, signed and anchored</target>
+      </trans-unit>
+      <trans-unit id="docgen.sealed.anchor" datatype="html">
+        <source>Ancrage</source>
+        <target state="translated">Anchor</target>
+      </trans-unit>
+      <trans-unit id="docgen.finalize.note" datatype="html">
+        <source>Toutes les pièces doivent être approuvées (validation humaine) avant la finalisation.</source>
+        <target state="translated">All items must be approved (human validation) before finalization.</target>
+      </trans-unit>
+      <trans-unit id="docgen.finalize.signature" datatype="html">
+        <source>Signature du responsable</source>
+        <target state="translated">Responsible signature</target>
+      </trans-unit>
+      <trans-unit id="docgen.finalize.notes" datatype="html">
+        <source>Notes (facultatif)</source>
+        <target state="translated">Notes (optional)</target>
+      </trans-unit>
+      <trans-unit id="docgen.finalize.submit" datatype="html">
+        <source>Finaliser, signer et ancrer</source>
+        <target state="translated">Finalize, sign and anchor</target>
+      </trans-unit>
+      <trans-unit id="docgen.history.title" datatype="html">
+        <source>Mes dossiers documentaires</source>
+        <target state="translated">My documentation sets</target>
+      </trans-unit>
+      <trans-unit id="docgen.history.empty" datatype="html">
+        <source>Aucun dossier généré pour l'instant.</source>
+        <target state="translated">No set generated yet.</target>
+      </trans-unit>
+      <trans-unit id="docgen.col.standard" datatype="html">
+        <source>Norme</source>
+        <target state="translated">Standard</target>
+      </trans-unit>
+      <trans-unit id="docgen.col.org" datatype="html">
+        <source>Organisation</source>
+        <target state="translated">Organization</target>
+      </trans-unit>
+      <trans-unit id="docgen.col.progress" datatype="html">
+        <source>Progression</source>
+        <target state="translated">Progress</target>
+      </trans-unit>
+      <trans-unit id="docgen.col.status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">Status</target>
+      </trans-unit>
+      <trans-unit id="docgen.kind.manual" datatype="html">
+        <source>Manuel</source>
+        <target state="translated">Manual</target>
+      </trans-unit>
+      <trans-unit id="docgen.kind.policy" datatype="html">
+        <source>Politique</source>
+        <target state="translated">Policy</target>
+      </trans-unit>
+      <trans-unit id="docgen.kind.procedure" datatype="html">
+        <source>Procédure</source>
+        <target state="translated">Procedure</target>
+      </trans-unit>
+      <trans-unit id="docgen.docstatus.pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">Pending</target>
+      </trans-unit>
+      <trans-unit id="docgen.docstatus.generating" datatype="html">
+        <source>Génération…</source>
+        <target state="translated">Generating…</target>
+      </trans-unit>
+      <trans-unit id="docgen.docstatus.generated" datatype="html">
+        <source>Brouillon généré</source>
+        <target state="translated">Draft generated</target>
+      </trans-unit>
+      <trans-unit id="docgen.docstatus.failed" datatype="html">
+        <source>Échec</source>
+        <target state="translated">Failed</target>
+      </trans-unit>
+      <trans-unit id="docgen.docstatus.reused" datatype="html">
+        <source>Réutilisable</source>
+        <target state="translated">Reusable</target>
+      </trans-unit>
+      <trans-unit id="docgen.status.inprogress" datatype="html">
+        <source>Génération en cours</source>
+        <target state="translated">Generation in progress</target>
+      </trans-unit>
+      <trans-unit id="docgen.status.generated" datatype="html">
+        <source>Généré — à valider</source>
+        <target state="translated">Generated — to validate</target>
+      </trans-unit>
+      <trans-unit id="docgen.status.finalized" datatype="html">
+        <source>Finalisé</source>
+        <target state="translated">Finalized</target>
+      </trans-unit>
+      <trans-unit id="docgen.toast.generated" datatype="html">
+        <source>Dossier généré : <x id="n"/> pièce(s) en brouillon.</source>
+        <target state="translated">Set generated: <x id="n"/> draft item(s).</target>
+      </trans-unit>
+      <trans-unit id="docgen.toast.finalized" datatype="html">
+        <source>Dossier finalisé, signé et ancré.</source>
+        <target state="translated">Set finalized, signed and anchored.</target>
+      </trans-unit>
+      <trans-unit id="docgen.toast.close" datatype="html">
+        <source>Fermer</source>
+        <target state="translated">Close</target>
+      </trans-unit>
+      <trans-unit id="docgen.err.backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">Backend unreachable (engine on 8082?).</target>
+      </trans-unit>
+      <trans-unit id="docgen.err.invalid" datatype="html">
+        <source>Requête invalide (norme + organisation requises).</source>
+        <target state="translated">Invalid request (standard + organization required).</target>
+      </trans-unit>
+      <trans-unit id="docgen.err.forbidden" datatype="html">
+        <source>Droits insuffisants pour cette action.</source>
+        <target state="translated">Insufficient rights for this action.</target>
+      </trans-unit>
+      <trans-unit id="docgen.err.notfound" datatype="html">
+        <source>Norme ou dossier introuvable.</source>
+        <target state="translated">Standard or set not found.</target>
+      </trans-unit>
+      <trans-unit id="docgen.err.conflict" datatype="html">
+        <source>Action impossible dans l'état actuel du dossier.</source>
+        <target state="translated">Action not possible in the current set state.</target>
+      </trans-unit>
+      <trans-unit id="docgen.err.unprocessable" datatype="html">
+        <source>Génération IA impossible pour cette requête.</source>
+        <target state="translated">AI generation not possible for this request.</target>
+      </trans-unit>
+      <trans-unit id="docgen.err.quota" datatype="html">
+        <source>Débit/quota IA dépassé pour ce tenant — réessayez plus tard.</source>
+        <target state="translated">AI rate/quota exceeded for this tenant — try again later.</target>
+      </trans-unit>
+      <trans-unit id="docgen.err.unavailable" datatype="html">
+        <source>Service IA momentanément indisponible.</source>
+        <target state="translated">AI service temporarily unavailable.</target>
+      </trans-unit>
+      <trans-unit id="docgen.err.generic" datatype="html">
+        <source>Échec de l'opération (HTTP <x id="status"/>).</source>
+        <target state="translated">Operation failed (HTTP <x id="status"/>).</target>
+      </trans-unit>
+      <trans-unit id="docreview.title" datatype="html">
+        <source>Revue d'un document généré</source>
+        <target state="translated">Review of a generated document</target>
+      </trans-unit>
+      <trans-unit id="docreview.subtitle" datatype="html">
+        <source>Relisez le brouillon rédigé par l'IA, soumettez-le à validation, puis approuvez-le (signature humaine) ou rejetez-le. Aucune publication sans validation humaine.</source>
+        <target state="translated">Review the draft written by the AI, submit it for validation, then approve it (human signature) or reject it. No publication without human validation.</target>
+      </trans-unit>
+      <trans-unit id="docreview.lastreject" datatype="html">
+        <source>Dernier rejet :</source>
+        <target state="translated">Last rejection:</target>
+      </trans-unit>
+      <trans-unit id="docreview.clauses" datatype="html">
+        <source>Clauses</source>
+        <target state="translated">Clauses</target>
+      </trans-unit>
+      <trans-unit id="docreview.action.submit" datatype="html">
+        <source>Soumettre à validation</source>
+        <target state="translated">Submit for validation</target>
+      </trans-unit>
+      <trans-unit id="docreview.approve.note" datatype="html">
+        <source>L'approbation appose une signature humaine. L'approbateur doit différer du soumetteur.</source>
+        <target state="translated">Approval affixes a human signature. The approver must differ from the submitter.</target>
+      </trans-unit>
+      <trans-unit id="docreview.approve.signature" datatype="html">
+        <source>Signature</source>
+        <target state="translated">Signature</target>
+      </trans-unit>
+      <trans-unit id="docreview.approve.notes" datatype="html">
+        <source>Notes (facultatif)</source>
+        <target state="translated">Notes (optional)</target>
+      </trans-unit>
+      <trans-unit id="docreview.action.approve" datatype="html">
+        <source>Approuver &amp; signer</source>
+        <target state="translated">Approve &amp; sign</target>
+      </trans-unit>
+      <trans-unit id="docreview.action.reject-toggle" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">Reject</target>
+      </trans-unit>
+      <trans-unit id="docreview.reject.reason" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">Rejection reason</target>
+      </trans-unit>
+      <trans-unit id="docreview.action.reject" datatype="html">
+        <source>Confirmer le rejet</source>
+        <target state="translated">Confirm rejection</target>
+      </trans-unit>
+      <trans-unit id="docreview.approved" datatype="html">
+        <source>Pièce approuvée et signée — prête pour la finalisation du dossier.</source>
+        <target state="translated">Item approved and signed — ready for set finalization.</target>
+      </trans-unit>
+      <trans-unit id="docreview.kind.manual" datatype="html">
+        <source>Manuel Qualité</source>
+        <target state="translated">Quality Manual</target>
+      </trans-unit>
+      <trans-unit id="docreview.kind.policy" datatype="html">
+        <source>Politique Qualité</source>
+        <target state="translated">Quality Policy</target>
+      </trans-unit>
+      <trans-unit id="docreview.kind.procedure" datatype="html">
+        <source>Procédure documentée</source>
+        <target state="translated">Documented procedure</target>
+      </trans-unit>
+      <trans-unit id="docreview.status.draft" datatype="html">
+        <source>Brouillon IA</source>
+        <target state="translated">AI draft</target>
+      </trans-unit>
+      <trans-unit id="docreview.status.review" datatype="html">
+        <source>En validation</source>
+        <target state="translated">In validation</target>
+      </trans-unit>
+      <trans-unit id="docreview.status.approved" datatype="html">
+        <source>Approuvé</source>
+        <target state="translated">Approved</target>
+      </trans-unit>
+      <trans-unit id="docreview.status.rejected" datatype="html">
+        <source>Rejeté</source>
+        <target state="translated">Rejected</target>
+      </trans-unit>
+      <trans-unit id="docreview.toast.submitted" datatype="html">
+        <source>Pièce soumise à validation.</source>
+        <target state="translated">Item submitted for validation.</target>
+      </trans-unit>
+      <trans-unit id="docreview.toast.approved" datatype="html">
+        <source>Pièce approuvée et signée.</source>
+        <target state="translated">Item approved and signed.</target>
+      </trans-unit>
+      <trans-unit id="docreview.toast.rejected" datatype="html">
+        <source>Pièce rejetée — revenue en brouillon.</source>
+        <target state="translated">Item rejected — back to draft.</target>
+      </trans-unit>
+      <trans-unit id="docreview.toast.close" datatype="html">
+        <source>Fermer</source>
+        <target state="translated">Close</target>
+      </trans-unit>
+      <trans-unit id="docreview.err.backend" datatype="html">
+        <source>Backend injoignable (engine sur 8082 ?).</source>
+        <target state="translated">Backend unreachable (engine on 8082?).</target>
+      </trans-unit>
+      <trans-unit id="docreview.err.invalid" datatype="html">
+        <source>Requête invalide (signature/motif requis).</source>
+        <target state="translated">Invalid request (signature/reason required).</target>
+      </trans-unit>
+      <trans-unit id="docreview.err.forbidden" datatype="html">
+        <source>Droits insuffisants (approbation réservée au Directeur Qualité).</source>
+        <target state="translated">Insufficient rights (approval reserved for the Quality Director).</target>
+      </trans-unit>
+      <trans-unit id="docreview.err.notfound" datatype="html">
+        <source>Pièce introuvable.</source>
+        <target state="translated">Item not found.</target>
+      </trans-unit>
+      <trans-unit id="docreview.err.conflict" datatype="html">
+        <source>Transition impossible (séparation des tâches, état invalide).</source>
+        <target state="translated">Transition not possible (separation of duties, invalid state).</target>
+      </trans-unit>
+      <trans-unit id="docreview.err.generic" datatype="html">
+        <source>Échec de l'opération (HTTP <x id="status"/>).</source>
+        <target state="translated">Operation failed (HTTP <x id="status"/>).</target>
       </trans-unit>
       <trans-unit id="nav.forecast" datatype="html">
         <source>Prévision KPI</source>

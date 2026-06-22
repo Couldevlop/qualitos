@@ -1,0 +1,62 @@
+<aside class="config-panel" *ngIf="widget" role="dialog"
+       [attr.aria-label]="configLabel">
+  <header class="config-head">
+    <h2 i18n="@@dbb.config.title">Configurer le widget</h2>
+    <button mat-icon-button (click)="close()"
+            aria-label="Fermer le panneau" i18n-aria-label="@@dbb.config.close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <div class="config-body">
+    <mat-form-field appearance="outline" class="full">
+      <mat-label i18n="@@dbb.config.widgetTitle">Titre</mat-label>
+      <input matInput [(ngModel)]="title" (ngModelChange)="apply()"
+             maxlength="80" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full" *ngIf="isDataDriven">
+      <mat-label i18n="@@dbb.config.source">Source KPI</mat-label>
+      <mat-select [(ngModel)]="kpiId" (ngModelChange)="onKpiSelected($event)">
+        <mat-option *ngFor="let k of kpiOptions" [value]="k.id">
+          {{ k.label }}<span *ngIf="k.unit" class="opt-unit"> ({{ k.unit }})</span>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <ng-container *ngIf="isKpi">
+      <mat-form-field appearance="outline" class="full">
+        <mat-label i18n="@@dbb.config.label">Libellé affiché</mat-label>
+        <input matInput [(ngModel)]="kpiLabel" (ngModelChange)="apply()" maxlength="60" />
+      </mat-form-field>
+
+      <div class="row">
+        <mat-form-field appearance="outline">
+          <mat-label i18n="@@dbb.config.unit">Unité</mat-label>
+          <input matInput [(ngModel)]="unit" (ngModelChange)="apply()" maxlength="8" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label i18n="@@dbb.config.threshold">Seuil</mat-label>
+          <input matInput type="number" [(ngModel)]="threshold" (ngModelChange)="apply()" />
+        </mat-form-field>
+      </div>
+    </ng-container>
+
+    <mat-form-field appearance="outline" class="full" *ngIf="isNarrative">
+      <mat-label i18n="@@dbb.config.text">Texte du récit</mat-label>
+      <textarea matInput rows="5" [(ngModel)]="text" (ngModelChange)="apply()"
+                maxlength="2000"></textarea>
+    </mat-form-field>
+  </div>
+
+  <footer class="config-foot">
+    <button mat-stroked-button color="warn" (click)="remove()">
+      <mat-icon>delete_outline</mat-icon>
+      <span i18n="@@dbb.config.remove">Supprimer</span>
+    </button>
+    <button mat-flat-button color="primary" (click)="close()">
+      <span i18n="@@dbb.config.done">Terminé</span>
+    </button>
+  </footer>
+</aside>

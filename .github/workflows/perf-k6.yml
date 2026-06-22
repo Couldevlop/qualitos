@@ -1,0 +1,189 @@
+name: Perf (k6 SLO)
+
+# Tests de performance k6 avec budgets SLO bloquants (CLAUDE.md §14.3 / §2.1) :
+#   http_req_duration p(95) < 300 ms · p(99) < 800 ms · http_req_failed < 1 %.
+# Le job démarre la stack dev (Postgres + Keycloak + api-quality-engine) via
+# docker-compose.dev.yml, mint un token de démo, exécute k6 (grafana/k6) et
+# publie le résumé JSON. k6 sort en code != 0 si un SLO est dépassé → job ROUGE.
+#
+# Déclenché sur push/PR vers main/develop UNIQUEMENT quand le périmètre perf ou
+# le moteur changent (chemin filtré), plus un déclenchement manuel avec profil
+# de charge paramétrable. Sur les forks (pas de Docker buildkit garanti), le job
+# reste exécutable car il ne dépend d'aucun secret.
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'apps/api-quality-engine/**'
+      - '.github/workflows/perf-k6.yml'
+      - 'docker-compose.dev.yml'
+      - 'infra/keycloak/**'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'apps/api-quality-engine/**'
+      - '.github/workflows/perf-k6.yml'
+      - 'docker-compose.dev.yml'
+      - 'infra/keycloak/**'
+  workflow_dispatch:
+    inputs:
+      vus:
+        description: 'Virtual users (charge)'
+        required: false
+        default: '10'
+      duration:
+        description: 'Durée du palier (ex. 30s, 1m)'
+        required: false
+        default: '30s'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  k6-slo:
+    name: k6 hot-paths (gate SLO)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      BASE_URL: http://localhost:8082
+      KEYCLOAK_URL: http://localhost:8080
+      KEYCLOAK_REALM: qualitos
+      KEYCLOAK_CLIENT_ID: qualitos-web
+      # Credentials de DÉMO (réf. infra/keycloak/realm-export.json) — publiques,
+      # allowlistées gitleaks. En staging réel, fournir via secrets repo :
+      #   K6_USERNAME: ${{ secrets.PERF_USERNAME }}
+      #   K6_PASSWORD: ${{ secrets.PERF_PASSWORD }}
+      K6_USERNAME: demo
+      K6_PASSWORD: demo
+      VUS: ${{ github.event.inputs.vus || '10' }}
+      DURATION: ${{ github.event.inputs.duration || '30s' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ----------------------------------------------------------------------
+      # Démarrage de la stack dev minimale requise pour les chemins chauds :
+      # postgres (5434), keycloak (8080), api-quality-engine (8082).
+      # On NE démarre PAS web/ai-service/qdrant/ollama (inutiles ici, plus lents
+      # à builder). `--build` compile l'image de l'engine depuis le Dockerfile.
+      # ----------------------------------------------------------------------
+      - name: Start dev stack (postgres + keycloak + engine)
+        run: |
+          docker compose -f docker-compose.dev.yml up -d --build \
+            postgres keycloak api-quality-engine
+
+      # ----------------------------------------------------------------------
+      # Attente active de la disponibilité (health) — pas de sleep arbitraire.
+      # Keycloak doit avoir importé le realm ; l'engine doit répondre UP.
+      # ----------------------------------------------------------------------
+      - name: Wait for Keycloak realm
+        run: |
+          echo "Attente de Keycloak (realm qualitos)…"
+          for i in $(seq 1 60); do
+            if curl -fsS "http://localhost:8080/realms/qualitos" >/dev/null 2>&1; then
+              echo "Keycloak prêt (tentative $i)."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::Keycloak n'est pas devenu disponible à temps."
+          docker compose -f docker-compose.dev.yml logs keycloak | tail -100
+          exit 1
+
+      - name: Wait for api-quality-engine health
+        run: |
+          echo "Attente de api-quality-engine (/actuator/health)…"
+          for i in $(seq 1 60); do
+            status=$(curl -fsS "http://localhost:8082/actuator/health" 2>/dev/null | grep -o '"status":"UP"' || true)
+            if [ -n "$status" ]; then
+              echo "Engine UP (tentative $i)."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::api-quality-engine n'est pas devenu UP à temps."
+          docker compose -f docker-compose.dev.yml logs api-quality-engine | tail -150
+          exit 1
+
+      # ----------------------------------------------------------------------
+      # Pré-vol : on vérifie que le password grant fonctionne AVANT de lancer k6
+      # (échec plus lisible, pas un mur d'erreurs k6). Le token n'est ni loggué
+      # ni exporté — on ne teste que le status HTTP (§18.2.3).
+      # ----------------------------------------------------------------------
+      - name: Preflight — mint demo token
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' \
+            -X POST "${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token" \
+            -H 'Content-Type: application/x-www-form-urlencoded' \
+            -d "grant_type=password&client_id=${KEYCLOAK_CLIENT_ID}&username=${K6_USERNAME}&password=${K6_PASSWORD}&scope=openid")
+          echo "Token endpoint HTTP status: $code"
+          if [ "$code" != "200" ]; then
+            echo "::error::Le mint du token de démo a échoué (status $code)."
+            exit 1
+          fi
+
+      # ----------------------------------------------------------------------
+      # Exécution k6 (image officielle grafana/k6) sur le réseau de l'hôte
+      # (les services compose exposent leurs ports sur localhost du runner).
+      # --summary-export produit un JSON archivable. Le code de sortie de k6
+      # propage l'échec des thresholds → ce step (et le job) échoue si SLO KO.
+      # ----------------------------------------------------------------------
+      - name: Run k6 hot-paths (gate SLO bloquant)
+        run: |
+          docker run --rm --network=host \
+            -v "${{ github.workspace }}/apps/api-quality-engine/perf:/perf" \
+            -e BASE_URL="${BASE_URL}" \
+            -e KEYCLOAK_URL="${KEYCLOAK_URL}" \
+            -e KEYCLOAK_REALM="${KEYCLOAK_REALM}" \
+            -e KEYCLOAK_CLIENT_ID="${KEYCLOAK_CLIENT_ID}" \
+            -e K6_USERNAME="${K6_USERNAME}" \
+            -e K6_PASSWORD="${K6_PASSWORD}" \
+            -e VUS="${VUS}" \
+            -e DURATION="${DURATION}" \
+            grafana/k6:latest run \
+              --summary-export=/perf/summary-hot-paths.json \
+              /perf/hot-paths.js
+
+      - name: Run k6 standards drill-down (gate SLO bloquant)
+        run: |
+          docker run --rm --network=host \
+            -v "${{ github.workspace }}/apps/api-quality-engine/perf:/perf" \
+            -e BASE_URL="${BASE_URL}" \
+            -e KEYCLOAK_URL="${KEYCLOAK_URL}" \
+            -e KEYCLOAK_REALM="${KEYCLOAK_REALM}" \
+            -e KEYCLOAK_CLIENT_ID="${KEYCLOAK_CLIENT_ID}" \
+            -e K6_USERNAME="${K6_USERNAME}" \
+            -e K6_PASSWORD="${K6_PASSWORD}" \
+            -e VUS="${VUS}" \
+            -e DURATION="${DURATION}" \
+            grafana/k6:latest run \
+              --summary-export=/perf/summary-standards.json \
+              /perf/standards-drilldown.js
+
+      - name: Upload k6 summaries
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-summaries
+          path: apps/api-quality-engine/perf/summary-*.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Dump engine logs (on failure)
+        if: failure()
+        run: |
+          echo "============ api-quality-engine logs ============"
+          docker compose -f docker-compose.dev.yml logs api-quality-engine | tail -200
+          echo "============ keycloak logs ============"
+          docker compose -f docker-compose.dev.yml logs keycloak | tail -80
+
+      - name: Tear down stack
+        if: always()
+        run: docker compose -f docker-compose.dev.yml down -v

@@ -12,6 +12,9 @@ paths = [
   # 'qualitos') — jamais utilisés hors du poste de dev. 2026-06-06.
   '''docker-compose\.dev\.yml''',
   '''docker-compose\.lite\.yml''',
+  # Stack DAST éphémère : mêmes identifiants DEV locaux (qualitos/qualitos),
+  # base jetable en tmpfs, jamais hors CI/poste de dev. 2026-06-22 (ADR 0039).
+  '''docker-compose\.dast\.yml''',
   # Modèle sans valeurs.
   '''\.env\.example''',
 ]

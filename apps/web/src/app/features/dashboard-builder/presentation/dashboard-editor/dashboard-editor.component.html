@@ -1,12 +1,13 @@
-<div class="editor-shell" *ngIf="!loading; else loadingTpl">
+<div class="editor-shell" *ngIf="!loading && layout; else loadingTpl">
   <header class="editor-header">
     <div class="title-row">
-      <button mat-icon-button (click)="back()" aria-label="Back to list">
+      <button mat-icon-button (click)="back()"
+              aria-label="Retour à la liste" i18n-aria-label="@@dbb.editor.back">
         <mat-icon>arrow_back</mat-icon>
       </button>
 
       <mat-form-field appearance="outline" class="name-field">
-        <mat-label>Dashboard name</mat-label>
+        <mat-label i18n="@@dbb.editor.name">Nom du tableau de bord</mat-label>
         <input matInput [value]="layout.name"
                (input)="onNameChange($any($event.target).value)"
                maxlength="120" required />
@@ -16,56 +17,90 @@
               [class.shared-active]="layout.shared"
               (click)="onSharedChange(!layout.shared)">
         <mat-icon>{{ layout.shared ? 'group' : 'lock' }}</mat-icon>
-        {{ layout.shared ? 'Shared' : 'Private' }}
+        <span *ngIf="layout.shared" i18n="@@dbb.editor.shared">Partagé</span>
+        <span *ngIf="!layout.shared" i18n="@@dbb.editor.private">Privé</span>
       </button>
 
       <span class="spacer"></span>
 
       <button mat-flat-button color="primary"
-              [disabled]="saving" (click)="save()"
-              class="save-btn">
+              [disabled]="saving" (click)="save()" class="save-btn">
         <mat-icon *ngIf="!saving">save</mat-icon>
         <mat-progress-spinner *ngIf="saving" diameter="18" mode="indeterminate"></mat-progress-spinner>
-        {{ saving ? 'Saving…' : 'Save' }}
-      </button>
-    </div>
-
-    <div class="palette" role="toolbar" aria-label="Widget palette">
-      <span class="palette-label">Add widget</span>
-      <button *ngFor="let t of availableTypes" mat-stroked-button
-              (click)="addWidget(t)"
-              [matTooltip]="'Add ' + t + ' widget'"
-              [attr.aria-label]="'Add ' + t + ' widget'">
-        <mat-icon>{{
-          t === 'kpi' ? 'speed' :
-          t === 'line' ? 'show_chart' :
-          t === 'bar' ? 'bar_chart' :
-          t === 'pie' ? 'pie_chart' :
-          t === 'gauge' ? 'gauge' :
-          t === 'table' ? 'table_chart' :
-          t === 'heatmap' ? 'grid_on' :
-          'auto_awesome'
-        }}</mat-icon>
-        {{ t }}
+        <span *ngIf="!saving" i18n="@@dbb.editor.save">Enregistrer</span>
+        <span *ngIf="saving" i18n="@@dbb.editor.saving">Enregistrement…</span>
       </button>
     </div>
   </header>
 
-  <section class="grid" aria-label="Dashboard widgets">
-    <div *ngFor="let w of layout.widgets; trackBy: trackById" class="grid-cell">
-      <qos-widget-host [widget]="w"></qos-widget-host>
-      <button mat-icon-button class="remove-btn"
-              (click)="removeWidget(w.id)"
-              [matTooltip]="'Remove ' + w.title">
-        <mat-icon>close</mat-icon>
+  <div class="editor-body">
+    <!-- Palette de widgets (drag &amp; drop §7.3) -->
+    <aside class="palette" role="toolbar"
+           aria-label="Palette de widgets" i18n-aria-label="@@dbb.palette.aria">
+      <span class="palette-label" i18n="@@dbb.palette.label">Glisser un widget</span>
+      <button *ngFor="let e of palette; trackBy: trackByEntry"
+              class="palette-item"
+              draggable="true"
+              (dragstart)="onPaletteDragStart($event, e)"
+              (dragend)="onPaletteDragEnd()"
+              (click)="addWidget(e.type)"
+              [matTooltip]="e.description"
+              [attr.aria-label]="e.label">
+        <mat-icon>{{ e.icon }}</mat-icon>
+        <span class="palette-item-label">{{ e.label }}</span>
       </button>
-    </div>
+    </aside>
 
-    <div class="empty-state" *ngIf="layout.widgets.length === 0">
-      <mat-icon>dashboard_customize</mat-icon>
-      <p>Your dashboard is empty. Pick a widget above to begin.</p>
-    </div>
-  </section>
+    <!-- Grille interactive -->
+    <section class="grid-region"
+             aria-label="Zone de composition du tableau de bord"
+             i18n-aria-label="@@dbb.grid.aria">
+      <gridster [options]="options" class="qos-gridster">
+        <gridster-item *ngFor="let item of items; trackBy: trackByItem"
+                       [item]="item"
+                       class="grid-item"
+                       [class.selected]="selected?.id === item.widget.id">
+          <div class="item-toolbar">
+            <button mat-icon-button class="drag-handle"
+                    [attr.aria-label]="'Déplacer ' + item.widget.title"
+                    matTooltip="Déplacer" i18n-matTooltip="@@dbb.item.move">
+              <mat-icon>drag_indicator</mat-icon>
+            </button>
+            <span class="item-spacer"></span>
+            <button mat-icon-button (click)="select(item)"
+                    [attr.aria-label]="'Configurer ' + item.widget.title"
+                    matTooltip="Configurer" i18n-matTooltip="@@dbb.item.config">
+              <mat-icon>tune</mat-icon>
+            </button>
+            <button mat-icon-button (click)="removeWidget(item.widget.id)"
+                    [attr.aria-label]="'Supprimer ' + item.widget.title"
+                    matTooltip="Supprimer" i18n-matTooltip="@@dbb.item.remove">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+          <qos-widget-host class="item-content"
+                           [widget]="item.widget"
+                           [editing]="true"></qos-widget-host>
+        </gridster-item>
+      </gridster>
+
+      <div class="empty-state" *ngIf="items.length === 0">
+        <mat-icon>dashboard_customize</mat-icon>
+        <p i18n="@@dbb.empty.hint">
+          Votre tableau de bord est vide. Glissez un widget depuis la palette,
+          ou cliquez dessus pour l'ajouter.
+        </p>
+      </div>
+    </section>
+
+    <!-- Panneau de configuration -->
+    <qos-widget-config-panel class="config-region"
+                             *ngIf="selected"
+                             [widget]="selected"
+                             (widgetChange)="onWidgetConfigured($event)"
+                             (removed)="removeWidget($event)"
+                             (closed)="closeConfig()"></qos-widget-config-panel>
+  </div>
 </div>
 
 <ng-template #loadingTpl>

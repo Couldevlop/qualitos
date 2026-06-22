@@ -1,39 +1,57 @@
 /**
- * Widget host — renders a Widget based on its type.
- * Each chart is an ECharts placeholder so the dashboard remains usable
- * without ngx-echarts installed; once `npm install ngx-echarts echarts`
- * runs, replace the placeholder with a real <div echarts ...> binding.
+ * Widget host — rend un Widget selon son type.
+ * Les graphiques utilisent le composant partagé <qos-echart> (ngx-echarts /
+ * echarts déjà installés). Les widgets kpi / narrative ont un rendu dédié.
  */
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import type { EChartsCoreOption } from 'echarts/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { DashboardBuilderService } from '../../application/dashboard-builder.service';
+import { WidgetRenderService } from '../../application/widget-render.service';
 import { Widget } from '../../domain/dashboard.model';
-
-type EChartOption = Record<string, unknown>;
+import { EchartPointSelection } from '../../../../shared/ui/echart/echart.component';
 
 @Component({
   selector: 'qos-widget-host',
   templateUrl: './widget-host.component.html',
   styleUrls: ['./widget-host.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false
 })
-export class WidgetHostComponent implements OnInit, OnDestroy {
+export class WidgetHostComponent implements OnInit, OnChanges, OnDestroy {
   @Input() widget!: Widget;
+  /** Mode édition : affiche les poignées et désactive l'interaction graphique. */
+  @Input() editing = false;
 
-  echartsOptions: EChartOption | null = null;
+  /** Émet quand un point est cliqué (cross-filtering §7.3). */
+  @Output() pointSelected = new EventEmitter<EchartPointSelection>();
+
+  echartsOptions: EChartsCoreOption | null = null;
   kpiValue: number | string = '—';
   kpiTrend: number | null = null;
+  kpiBreached = false;
   narrative = '';
+
   private readonly destroy$ = new Subject<void>();
 
-  constructor(private readonly svc: DashboardBuilderService) {}
+  constructor(
+    private readonly svc: DashboardBuilderService,
+    private readonly render: WidgetRenderService,
+    private readonly cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.computeView();
     this.svc.onFilter()
       .pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.computeView());
+      .subscribe(() => { this.computeView(); this.cdr.markForCheck(); });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['widget']) {
+      this.computeView();
+    }
   }
 
   ngOnDestroy(): void {
@@ -41,33 +59,37 @@ export class WidgetHostComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  /**
-   * Stub view computation — in production this would call the AI service
-   * (RAG / NLQ) or the quality-engine KPI endpoint to retrieve the data.
-   */
-  private computeView(): void {
-    switch (this.widget.type) {
-      case 'kpi':
-        this.kpiValue = 27;
-        this.kpiTrend = -4;
-        break;
-      case 'narrative':
-        this.narrative = (this.widget.config['text'] as string)
-          ?? 'AI storyboard: no insights yet — connect data to populate.';
-        break;
-      default:
-        this.echartsOptions = this.placeholderOption();
-    }
+  /** True pour les types rendus via ECharts (vs kpi/narrative). */
+  get isChart(): boolean {
+    return this.widget.type !== 'kpi' && this.widget.type !== 'narrative';
   }
 
-  private placeholderOption(): EChartOption {
-    return {
-      title: { text: this.widget.title, left: 'center', textStyle: { fontSize: 14 } },
-      tooltip: {},
-      xAxis: { type: 'category', data: ['Q1', 'Q2', 'Q3', 'Q4'] },
-      yAxis: { type: 'value' },
-      series: [{ type: this.widget.type === 'pie' ? 'pie' : 'bar', data: [12, 18, 9, 21] }]
-    };
+  onPoint(sel: EchartPointSelection): void {
+    if (this.editing) return;
+    this.pointSelected.emit(sel);
+  }
+
+  private computeView(): void {
+    switch (this.widget.type) {
+      case 'kpi': {
+        const value = this.render.kpiValue(this.widget);
+        const unit = this.widget.config.unit ?? '';
+        this.kpiValue = unit ? `${value}${unit === '%' || unit === '/5' ? '' : ' '}${unit}` : value;
+        this.kpiTrend = this.render.kpiTrend(this.widget);
+        const threshold = this.widget.config.threshold;
+        this.kpiBreached = typeof threshold === 'number' && value > threshold;
+        this.echartsOptions = null;
+        break;
+      }
+      case 'narrative':
+        this.narrative = (this.widget.config.text && this.widget.config.text.trim().length > 0)
+          ? this.widget.config.text
+          : $localize`:@@dbb.narrative.empty:Récit IA : aucun élément pour l'instant — branchez une source pour générer un storyboard.`;
+        this.echartsOptions = null;
+        break;
+      default:
+        this.echartsOptions = this.render.optionFor(this.widget);
+    }
   }
 
   trendClass(): string {

@@ -1,0 +1,216 @@
+<div class="qos-page">
+  <qos-page-header
+    eyebrow="Standards Hub · IA"
+    i18n-title="@@docgen.title"
+    title="Génération documentaire IA"
+    i18n-subtitle="@@docgen.subtitle"
+    subtitle="Générez en lot un dossier documentaire complet (Manuel Qualité, Politique, procédures) pré-rempli par l'IA à partir du contexte de votre organisation. Chaque pièce passe par une validation humaine avant signature et ancrage.">
+  </qos-page-header>
+
+  <div class="docgen-error" *ngIf="error" role="alert">
+    <mat-icon aria-hidden="true">error_outline</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <div class="docgen-grid">
+    <!-- Colonne gauche : configuration de la génération -->
+    <qos-panel i18n-title="@@docgen.config.title" title="Nouvelle génération" icon="auto_awesome"
+               class="docgen-config" [loading]="generating">
+      <form [formGroup]="form" (ngSubmit)="start()">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label i18n="@@docgen.config.standard">Norme visée</mat-label>
+          <mat-select formControlName="standardId">
+            <mat-option *ngFor="let s of standards" [value]="s.id">
+              {{ s.code }} — {{ s.fullName }}
+            </mat-option>
+          </mat-select>
+          <mat-hint *ngIf="loadingStandards" i18n="@@docgen.config.loading-standards">
+            Chargement du catalogue…
+          </mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label i18n="@@docgen.config.org">Organisation</mat-label>
+          <input matInput formControlName="organizationName" maxlength="500"
+                 placeholder="ACME Industrie">
+        </mat-form-field>
+
+        <div class="opts-row">
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@docgen.config.industry">Secteur</mat-label>
+            <input matInput formControlName="industry" placeholder="manufacturing">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@docgen.config.size">Taille</mat-label>
+            <input matInput formControlName="size" placeholder="PME">
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label i18n="@@docgen.config.language">Langue de rédaction</mat-label>
+          <mat-select formControlName="language">
+            <mat-option value="fr" i18n="@@docgen.lang.fr">Français</mat-option>
+            <mat-option value="en" i18n="@@docgen.lang.en">Anglais</mat-option>
+            <mat-option value="es" i18n="@@docgen.lang.es">Espagnol</mat-option>
+            <mat-option value="de" i18n="@@docgen.lang.de">Allemand</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="docgen-pieces">
+          <div class="docgen-pieces-head">
+            <span i18n="@@docgen.pieces.title">Pièces à générer</span>
+            <small>{{ selectionLabel() }}</small>
+          </div>
+          <mat-progress-spinner *ngIf="loadingCatalog" mode="indeterminate" diameter="22">
+          </mat-progress-spinner>
+          <div class="docgen-piece" *ngFor="let p of catalog"
+               [class.is-selected]="isSelected(p.key)"
+               (click)="toggleKey(p.key)" (keyup.enter)="toggleKey(p.key)"
+               tabindex="0" role="checkbox" [attr.aria-checked]="isSelected(p.key)">
+            <mat-checkbox [checked]="isSelected(p.key)" (click)="$event.preventDefault()"
+                          [attr.aria-label]="p.label"></mat-checkbox>
+            <div class="docgen-piece-info">
+              <span class="docgen-piece-label">{{ p.label }}</span>
+              <span class="docgen-piece-meta">{{ kindLabel(p.kind) }} ·
+                <ng-container i18n="@@docgen.pieces.sections">{{ p.sectionCount }} section(s)</ng-container>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <button mat-flat-button color="primary" type="submit" class="docgen-go"
+                [disabled]="generating">
+          <mat-icon aria-hidden="true">auto_awesome</mat-icon>
+          <span i18n="@@docgen.config.start">Générer le dossier</span>
+        </button>
+      </form>
+    </qos-panel>
+
+    <!-- Colonne droite : dossier actif + suivi -->
+    <div class="docgen-result">
+      <qos-panel *ngIf="active as d" i18n-title="@@docgen.active.title" title="Dossier en cours"
+                 icon="folder_special">
+        <div qosActions>
+          <qos-status-pill [label]="dossierStatusLabel(d.status)"
+                           [tone]="dossierStatusTone(d.status)"></qos-status-pill>
+        </div>
+
+        <div class="docgen-summary">
+          <div class="docgen-meta">
+            <strong>{{ d.standardCode }}</strong> · {{ d.organizationName }}
+            <span class="docgen-provider" *ngIf="d.aiProvider">· {{ d.aiProvider }}</span>
+          </div>
+          <div class="docgen-progress">
+            <mat-progress-bar mode="determinate" [value]="d.progressPercent"></mat-progress-bar>
+            <span class="docgen-progress-label">
+              <ng-container i18n="@@docgen.progress">{{ d.generatedCount }} / {{ d.totalCount }} générées</ng-container>
+              · {{ d.progressPercent }} %
+            </span>
+          </div>
+        </div>
+
+        <ul class="docgen-doclist">
+          <li *ngFor="let doc of d.documents" class="docgen-doc">
+            <div class="docgen-doc-main">
+              <span class="docgen-doc-label">{{ doc.label }}</span>
+              <span class="docgen-doc-sub">{{ kindLabel(doc.kind) }}
+                <ng-container *ngIf="doc.reuseSuggestedNormDocId">
+                  · <span class="docgen-reuse" i18n="@@docgen.doc.reuse">réutilisation possible</span>
+                </ng-container>
+              </span>
+              <span class="docgen-doc-fail" *ngIf="doc.failureReason">{{ doc.failureReason }}</span>
+            </div>
+            <qos-status-pill [label]="docStatusLabel(doc.status)"
+                             [tone]="docStatusTone(doc.status)"></qos-status-pill>
+            <a *ngIf="doc.normDocId" mat-stroked-button class="docgen-doc-link"
+               [routerLink]="['/standards-doc-gen/documents', doc.normDocId]"
+               i18n="@@docgen.doc.review">Réviser</a>
+          </li>
+        </ul>
+
+        <div class="docgen-actions">
+          <button mat-stroked-button (click)="retry()"
+                  *ngIf="hasFailures(d) && d.status !== 'FINALISE'" [disabled]="retrying">
+            <mat-icon aria-hidden="true">refresh</mat-icon>
+            <span i18n="@@docgen.action.retry">Relancer les pièces en échec</span>
+          </button>
+        </div>
+
+        <!-- Finalisation : exige toutes les pièces approuvées (validation humaine) -->
+        <div class="docgen-finalize" *ngIf="d.status === 'FINALISE'; else finalizeBlock">
+          <div class="docgen-sealed">
+            <mat-icon aria-hidden="true">verified</mat-icon>
+            <div>
+              <strong i18n="@@docgen.sealed.title">Dossier finalisé, signé et ancré</strong>
+              <div class="docgen-sealed-hash" *ngIf="d.integritySha256">
+                SHA-256 : <code>{{ d.integritySha256 }}</code>
+              </div>
+              <div class="docgen-sealed-anchor" *ngIf="d.anchorTxRef">
+                <span i18n="@@docgen.sealed.anchor">Ancrage</span> : <code>{{ d.anchorTxRef }}</code>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-template #finalizeBlock>
+          <form [formGroup]="finalizeForm" (ngSubmit)="finalize()" class="docgen-finalize-form"
+                *ngIf="canFinalize(d)">
+            <p class="docgen-finalize-note" i18n="@@docgen.finalize.note">
+              Toutes les pièces doivent être approuvées (validation humaine) avant la finalisation.
+            </p>
+            <mat-form-field appearance="outline" class="full">
+              <mat-label i18n="@@docgen.finalize.signature">Signature du responsable</mat-label>
+              <input matInput formControlName="signature" maxlength="2000">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full">
+              <mat-label i18n="@@docgen.finalize.notes">Notes (facultatif)</mat-label>
+              <input matInput formControlName="notes">
+            </mat-form-field>
+            <button mat-flat-button color="primary" type="submit" [disabled]="finalizing">
+              <mat-icon aria-hidden="true">verified</mat-icon>
+              <span i18n="@@docgen.finalize.submit">Finaliser, signer et ancrer</span>
+            </button>
+          </form>
+        </ng-template>
+      </qos-panel>
+
+      <!-- Historique des dossiers -->
+      <qos-panel i18n-title="@@docgen.history.title" title="Mes dossiers documentaires" icon="history">
+        <p class="docgen-empty" *ngIf="dossiers.length === 0" i18n="@@docgen.history.empty">
+          Aucun dossier généré pour l'instant.
+        </p>
+        <table mat-table [dataSource]="dossiers" *ngIf="dossiers.length > 0" class="docgen-table">
+          <ng-container matColumnDef="standard">
+            <th mat-header-cell *matHeaderCellDef i18n="@@docgen.col.standard">Norme</th>
+            <td mat-cell *matCellDef="let d">{{ d.standardCode }}</td>
+          </ng-container>
+          <ng-container matColumnDef="org">
+            <th mat-header-cell *matHeaderCellDef i18n="@@docgen.col.org">Organisation</th>
+            <td mat-cell *matCellDef="let d">{{ d.organizationName }}</td>
+          </ng-container>
+          <ng-container matColumnDef="progress">
+            <th mat-header-cell *matHeaderCellDef i18n="@@docgen.col.progress">Progression</th>
+            <td mat-cell *matCellDef="let d">{{ d.generatedCount }} / {{ d.totalCount }}</td>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef i18n="@@docgen.col.status">Statut</th>
+            <td mat-cell *matCellDef="let d">
+              <qos-status-pill [label]="dossierStatusLabel(d.status)"
+                               [tone]="dossierStatusTone(d.status)"></qos-status-pill>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let d">
+              <button mat-icon-button (click)="open(d)"
+                      [attr.aria-label]="'Ouvrir ' + d.standardCode">
+                <mat-icon>open_in_new</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="cols"></tr>
+          <tr mat-row *matRowDef="let row; columns: cols"></tr>
+        </table>
+      </qos-panel>
+    </div>
+  </div>
+</div>

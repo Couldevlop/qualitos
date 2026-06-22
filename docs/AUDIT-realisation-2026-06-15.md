@@ -17,8 +17,19 @@
 | Tests (front specs + suites Python) | 59 + 27 |
 | Capacités IA/IoT/blockchain « RÉEL » (audit stub-vs-réel) | 20 |
 
-## Taux de réalisation : ~87 % (≈ 96 % rapporté à un MVP commercialisable)
+## Taux de réalisation : ~92 % (≈ 98 % rapporté à un MVP commercialisable)
 
+> Màj 2026-06-22 bis (2ᵉ lot prod-readiness intégré sur `develop`, vérifié : **DAST OWASP ZAP en CI**
+> ADR 0039 (`c76ca85`, run ZAP réel 59 PASS/0 FAIL), **perf k6 + budgets SLO bloquants en CI** ADR 0040
+> (`79b3c4b`, gate p95<300/p99<800 fonctionnel), **couverture front +14 specs cœur** (`5b9d811`, suite Karma
+> 683 verte). Reste pour le « 100 % faisable en CI » : marketplace normatif (§8.11), chaos engineering (§14),
+> export PDF dashboard, pentest manuel. Le reliquat dur reste GPU/données/infra réelle (cf. lignes IA/IoT).
+> Màj 2026-06-22 (lot « vers 100 % » — 3 agents parallèles intégrés sur `develop`, vérifiés bout-en-bout :
+> **Dashboard builder drag&drop avancé** gridster2 (ADR 0038, commit `510b54a`, 69 specs builder + 531 suite front),
+> **Génération doc IA multi-documents** Standards Hub §8.8 (ADR 0037, commit `d880cb9`, dossier en lot + finalisation
+> signée/ancrée, 408 tests standards + context-loads), **Academy LMS-light + gamification** §19.3 (ADR 0036, commit
+> `c0b8d95`, e-learning + quiz notés + certificats ML-DSA/blockchain + SCORM/xAPI, `mvn verify` 4035 tests + gate JaCoCo).
+> Reliquat CI restant : DAST/perf en CI (§11/§14), couverture tests composants front (§15), marketplace normatif (§8.11).
 > Màj 2026-06-19 (lot GPU/scaffold intégré, CI verte `3efbd94` : Vision ONNX vrai chemin ADR 0029,
 > Edge inference store-and-forward ADR 0030, backends ML lourds opt-in Prophet/LSTM/HDBSCAN/BERT/Whisper ADR 0031).
 > Màj 2026-06-16 (après 3 lots de chantiers parallèles : IA, IoT, Dashboards, Formation, Doc).
@@ -29,16 +40,16 @@
 |---|---|---|
 | 5 méthodes (§3) | ~95 % | — (complet + golden seed) |
 | Modules transverses (§4) | ~90 % | profondeur de quelques workflows |
-| Standards Hub (§8) | ~85 % | audit blanc IA avancé, génération doc IA, marketplace |
+| Standards Hub (§8) | ~92 % | ~~audit blanc IA avancé~~ (ADR 0033), ~~génération doc IA~~ (ADR 0037, multi-docs en lot, livré 2026-06-22) ; reste : marketplace (§8.11) |
 | Industry Packs (§5) | ~85 % | profondeur sectorielle |
 | Pilier confiance (§11) | ~95 % | bc-fips (bloqué upstream) |
-| Sécurité (§11) | ~80 % | DAST/pentest, durcissement prod |
-| Prod-readiness (§14) | ~80 % | chaos/perf |
-| Frontend (§15) | ~85 % | couverture tests composants |
+| Sécurité (§11) | ~90 % | ~~DAST~~ (OWASP ZAP en CI, ADR 0039, 2026-06-22) ; reste : pentest manuel |
+| Prod-readiness (§14) | ~90 % | ~~perf~~ (k6 + budgets SLO bloquants en CI, ADR 0040, 2026-06-22) ; reste : chaos engineering |
+| Frontend (§15) | ~90 % | couverture composants renforcée (+14 specs cœur, suite 683 verte, 2026-06-22) ; reste : seuil global ≥85 % généralisé |
 | **IA (§12)** | **~85 %** | reste : **modèles entraînés réels** (YOLOv8 5S, GPU pour BERT/Whisper/LSTM/Prophet/HDBSCAN) — la **plomberie est complète** : Vision chemin ONNX réel exercé (ADR 0029), backends lourds **opt-in câblés** import paresseux/extra `ml` (ADR 0031, défaut léger réel intact, 422/501 si absent) ; anomalies/forecast/clustering DBSCAN/SHAP/NLP lexical pleinement livrés |
 | **IoT (§9)** | **~80 %** | reste : **runtime Edge long-running** (souscription MQTT→orchestrateur) + modèle ONNX réel, vrai cluster TimescaleDB, DICOM — livrés : Digital Twin/Shadow, LoRaWAN, Sparkplug B, Modbus, rollups + continuous aggregate TimescaleDB, **composant inférence Edge store-and-forward + ONNX/repli (ADR 0030, 37 tests)** |
-| **Dashboards (§7)** | **~85 %** | livrés : **NLQ→graphe, Mode TV, Storyboards IA, cross-filtering + drill-down + annotations collaboratives persistées (ADR 0034), time-travel as-of réel (ADR 0035)** — reste : builder drag&drop avancé (`/dashboard-builder` existe) |
-| **Doc & formation (§19)** | **~70 %** | LMS/gamification, vidéos ; espace Wiki utilisateur par rôle/module **et par secteur** livré (`docs/wiki/`, dont `docs/wiki/secteurs/` : 14 guides) |
+| **Dashboards (§7)** | **~95 %** | livrés : **NLQ→graphe, Mode TV, Storyboards IA, cross-filtering + drill-down + annotations collaboratives persistées (ADR 0034), time-travel as-of réel (ADR 0035), builder drag&drop avancé gridster2 + palette + 9 widgets + config (ADR 0038, 2026-06-22)** — reste : export PDF signé du dashboard |
+| **Doc & formation (§19)** | **~88 %** | livrés : espace Wiki utilisateur par rôle/module **et par secteur** (`docs/wiki/`, 14 guides), **Academy LMS-light + gamification : cours/quiz notés/badges/ceintures Yellow→Black + certificats ML-DSA/blockchain + SCORM/xAPI (ADR 0036, 2026-06-22)** — reste : vidéos courtes, simulateurs Ishikawa |
 
 ## Capacités IA — état (post chantiers du 13-14 juin)
 

@@ -1,4 +1,4 @@
-/* Premium "feels above MasterControl/ETQ/Qualio" styling. */
+/* Widget premium — "feels above MasterControl/ETQ/Qualio". */
 :host {
   display: block;
   height: 100%;
@@ -6,97 +6,112 @@
 
 .widget-card {
   height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   border-radius: 14px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--qos-border-subtle, rgba(15, 23, 42, 0.08));
   box-shadow:
     0 1px 2px rgba(15, 23, 42, 0.04),
     0 8px 24px rgba(15, 23, 42, 0.04);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.96));
-  transition:
-    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 220ms ease,
-    border-color 220ms ease;
-  display: flex;
-  flex-direction: column;
+    linear-gradient(180deg, var(--qos-bg-elevated, #ffffff), rgba(248, 250, 252, 0.96));
+  overflow: hidden;
 }
 
-.widget-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(59, 130, 246, 0.4);
-  box-shadow:
-    0 1px 3px rgba(15, 23, 42, 0.05),
-    0 14px 36px rgba(15, 23, 42, 0.08);
-}
-
-mat-card-header {
+.widget-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 18px 4px;
   gap: 12px;
+  padding: 12px 16px 8px;
 }
 
 .widget-title {
-  font-family: 'Inter', system-ui, sans-serif;
-  font-size: 0.95rem;
+  font-family: var(--qos-font-sans, 'Inter', system-ui, sans-serif);
+  font-size: 0.92rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: #0f172a;
-  margin: 0;
+  color: var(--qos-fg-primary, #0f172a);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .widget-type {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.65rem;
+  flex: none;
+  font-family: var(--qos-font-mono, 'IBM Plex Mono', monospace);
+  font-size: 0.6rem;
   letter-spacing: 0.08em;
-  color: #64748b;
+  color: var(--qos-fg-secondary, #64748b);
   padding: 2px 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--qos-border-subtle, #e2e8f0);
   border-radius: 999px;
-  background: #f8fafc;
+  background: var(--qos-bg-subtle, #f8fafc);
 }
 
 .widget-body {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 18px 18px;
-}
-
-.kpi-block {
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
+  padding: 4px 16px 14px;
+}
+
+/* Le chart remplit toute la hauteur restante de la cellule gridster. */
+.widget-chart {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: block;
+}
+
+.widget-chart ::ng-deep .qos-echart {
+  height: 100% !important;
+  min-height: 120px;
+}
+
+/* --- KPI --- */
+.kpi-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .kpi-value {
-  font-family: 'Inter', system-ui, sans-serif;
-  font-size: 3rem;
+  font-family: var(--qos-font-sans, 'Inter', system-ui, sans-serif);
+  font-size: clamp(1.8rem, 4vw, 3rem);
   font-weight: 700;
   letter-spacing: -0.04em;
-  color: #0f172a;
+  color: var(--qos-fg-primary, #0f172a);
   line-height: 1;
+}
+
+.kpi-value.kpi-breached {
+  color: #b91c1c;
 }
 
 .kpi-meta {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   width: 100%;
   margin-top: 10px;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
 
 .kpi-label {
-  color: #475569;
+  color: var(--qos-fg-secondary, #475569);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .trend {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.75rem;
+  flex: none;
+  font-family: var(--qos-font-mono, 'IBM Plex Mono', monospace);
+  font-size: 0.72rem;
   padding: 2px 8px;
   border-radius: 999px;
 }
@@ -111,56 +126,23 @@ mat-card-header {
   color: #047857;
 }
 
+/* --- Narrative --- */
 .narrative-block {
+  flex: 1;
   display: flex;
-  gap: 14px;
+  gap: 12px;
   align-items: flex-start;
-  width: 100%;
+  overflow: auto;
 }
 
 .narrative-icon {
+  flex: none;
   color: #6366f1;
 }
 
 .narrative-text {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   line-height: 1.55;
-  color: #334155;
-}
-
-.chart-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background:
-    repeating-linear-gradient(135deg,
-      rgba(99, 102, 241, 0.04),
-      rgba(99, 102, 241, 0.04) 8px,
-      transparent 8px,
-      transparent 16px);
-  border: 1px dashed rgba(99, 102, 241, 0.35);
-  border-radius: 10px;
-  min-height: 140px;
-}
-
-.chart-skeleton {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  color: #475569;
-}
-
-.chart-skeleton span {
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: #0f172a;
-}
-
-.chart-skeleton small {
-  font-size: 0.75rem;
-  color: #64748b;
+  color: var(--qos-fg-secondary, #334155);
 }

@@ -1,0 +1,129 @@
+<div class="academy-page">
+  <header class="page-header">
+    <div class="title-row">
+      <mat-icon class="hero-icon">school</mat-icon>
+      <div>
+        <h1 i18n="@@academy.home.title">QualitOS Academy</h1>
+        <p class="subtitle" i18n="@@academy.home.subtitle">
+          Montez en compétence : parcours par rôle et secteur, quiz notés, badges et ceintures qualité,
+          certificats signés et vérifiables.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <mat-tab-group animationDuration="200ms" class="academy-tabs">
+    <!-- ===== Catalogue ===== -->
+    <mat-tab i18n-label="@@academy.tab.catalog" label="Catalogue">
+      <div class="tab-body">
+        <div *ngIf="loadingCourses" class="loading">
+          <mat-progress-spinner mode="indeterminate" diameter="36"></mat-progress-spinner>
+        </div>
+
+        <div *ngIf="!loadingCourses && courses.length === 0" class="empty" i18n="@@academy.catalog.empty">
+          Aucun cours publié pour le moment.
+        </div>
+
+        <div class="course-grid" *ngIf="!loadingCourses">
+          <article class="course-card" *ngFor="let c of courses; trackBy: trackById">
+            <div class="course-card-head">
+              <span class="course-code">{{ c.code }}</span>
+              <span class="course-points">
+                <mat-icon>military_tech</mat-icon>{{ c.pointsReward }} <ng-container i18n="@@academy.points.short">pts</ng-container>
+              </span>
+            </div>
+            <h3 class="course-title">{{ c.title }}</h3>
+            <p class="course-desc">{{ c.description }}</p>
+            <div class="course-meta">
+              <span *ngIf="c.targetRole" class="chip">
+                <mat-icon>badge</mat-icon>{{ c.targetRole }}
+              </span>
+              <span *ngIf="c.industrySector" class="chip">
+                <mat-icon>factory</mat-icon>{{ c.industrySector }}
+              </span>
+              <span class="chip">
+                <mat-icon>check_circle</mat-icon><ng-container i18n="@@academy.passing">Réussite</ng-container> {{ c.passingScore }}%
+              </span>
+            </div>
+            <div class="course-actions">
+              <button mat-flat-button color="primary"
+                      *ngIf="!isEnrolled(c.id)"
+                      [disabled]="enrollingId === c.id"
+                      (click)="enroll(c)" i18n="@@academy.action.enroll">
+                S'inscrire
+              </button>
+              <button mat-stroked-button
+                      *ngIf="isEnrolled(c.id)"
+                      disabled i18n="@@academy.action.enrolled">
+                Inscrit
+              </button>
+            </div>
+          </article>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- ===== Mes formations ===== -->
+    <mat-tab i18n-label="@@academy.tab.myCourses" label="Mes formations">
+      <div class="tab-body">
+        <div *ngIf="loadingEnrollments" class="loading">
+          <mat-progress-spinner mode="indeterminate" diameter="36"></mat-progress-spinner>
+        </div>
+        <div *ngIf="!loadingEnrollments && enrollments.length === 0" class="empty" i18n="@@academy.myCourses.empty">
+          Vous n'êtes inscrit à aucun cours. Choisissez-en un dans le catalogue.
+        </div>
+        <div class="enrollment-list" *ngIf="!loadingEnrollments">
+          <article class="enrollment-card" *ngFor="let e of enrollments; trackBy: trackById"
+                   (click)="openEnrollment(e)">
+            <div class="enr-status status-{{ e.status.toLowerCase() }}">{{ e.status }}</div>
+            <div class="enr-body">
+              <mat-progress-bar mode="determinate" [value]="e.progressPct"></mat-progress-bar>
+              <div class="enr-meta">
+                <span>{{ e.progressPct }}%</span>
+                <span *ngIf="e.finalScore != null" i18n="@@academy.score">Score : {{ e.finalScore }}%</span>
+              </div>
+            </div>
+            <mat-icon class="enr-chevron">chevron_right</mat-icon>
+          </article>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- ===== Classement ===== -->
+    <mat-tab i18n-label="@@academy.tab.leaderboard" label="Classement">
+      <div class="tab-body">
+        <div *ngIf="loadingLeaderboard" class="loading">
+          <mat-progress-spinner mode="indeterminate" diameter="36"></mat-progress-spinner>
+        </div>
+        <div *ngIf="!loadingLeaderboard && leaderboard && leaderboard.entries.length === 0"
+             class="empty" i18n="@@academy.leaderboard.empty">
+          Le classement est encore vide. Complétez un cours pour y figurer.
+        </div>
+        <table class="leaderboard" *ngIf="!loadingLeaderboard && leaderboard && leaderboard.entries.length > 0">
+          <thead>
+            <tr>
+              <th i18n="@@academy.lb.rank">#</th>
+              <th i18n="@@academy.lb.learner">Apprenant</th>
+              <th i18n="@@academy.lb.belt">Ceinture</th>
+              <th i18n="@@academy.lb.points">Points</th>
+              <th i18n="@@academy.lb.completed">Complétions</th>
+              <th i18n="@@academy.lb.badges">Badges</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of leaderboard.entries">
+              <td class="rank">{{ row.rank }}</td>
+              <td class="learner">{{ row.userId }}</td>
+              <td><span [class]="beltClass(row.beltLevel)">{{ row.beltLevel }}</span></td>
+              <td class="points">{{ row.points }}</td>
+              <td>{{ row.completedCount }}</td>
+              <td class="badges">
+                <mat-icon *ngFor="let b of row.badges" [matTooltip]="b">workspace_premium</mat-icon>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

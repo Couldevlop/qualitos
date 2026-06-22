@@ -40,6 +40,11 @@ supersession).
 | [0033](./0033-audit-blanc-ia-avance.md) | Standards Hub : audit blanc IA avancé — 30-100 questions ciblées sur les clauses à risque, gap analysis confrontée aux preuves réelles + plan de remédiation auto (§8.4 onglet 7) | Accepté |
 | [0034](./0034-dashboards-interactivite.md) | Interactivité premium des dashboards (cross-filtering, drill-down, annotations collaboratives) | Accepté |
 | [0035](./0035-dashboards-time-travel.md) | Time-travel des dashboards (état as-of réel des KPIs) | Accepté |
+| [0036](./0036-lms-academy-gamification.md) | Academy LMS-light + gamification (cours e-learning, quiz notés, badges/ceintures, certificats ML-DSA/blockchain, SCORM/xAPI, §19.3) | Accepté |
+| [0037](./0037-generation-doc-ia-multi.md) | Standards Hub : génération documentaire IA multi-documents en lot (Manuel Qualité + procédures, §8.8) | Accepté |
+| [0038](./0038-dashboard-builder-dragdrop.md) | Builder de dashboard drag&drop avancé (gridster2, palette de widgets, §7.3) | Accepté |
+| [0039](./0039-dast-owasp-zap-ci.md) | DAST OWASP ZAP en CI (baseline + API scan OpenAPI, seuils HIGH/MEDIUM, §11/§14.2) | Accepté |
+| [0040](./0040-perf-k6-slo-ci.md) | Tests de performance k6 avec budgets SLO bloquants en CI (chemins chauds api-quality-engine, §14.3) | Accepté |
 
 ## Statuts possibles
 

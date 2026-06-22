@@ -1,0 +1,90 @@
+<div class="player-page">
+  <button mat-button class="back" (click)="router.navigate(['/academy'])">
+    <mat-icon>arrow_back</mat-icon>
+    <span i18n="@@academy.player.back">Retour à l'Academy</span>
+  </button>
+
+  <div *ngIf="loading" class="loading">
+    <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+  </div>
+
+  <ng-container *ngIf="!loading && outline && enrollment">
+    <header class="course-header">
+      <h1>{{ outline.course.title }}</h1>
+      <p class="desc">{{ outline.course.description }}</p>
+      <div class="progress-block">
+        <mat-progress-bar mode="determinate" [value]="enrollment.progressPct"></mat-progress-bar>
+        <span class="progress-label">{{ enrollment.progressPct }}%</span>
+      </div>
+
+      <div class="completed-banner" *ngIf="completed">
+        <mat-icon>verified</mat-icon>
+        <span i18n="@@academy.player.completed">Cours terminé — score {{ enrollment.finalScore }}% !</span>
+        <button mat-flat-button color="primary" (click)="viewCertificate()" i18n="@@academy.player.viewCert">
+          Voir mon certificat
+        </button>
+      </div>
+    </header>
+
+    <section class="module" *ngFor="let mo of outline.modules">
+      <h2 class="module-title">{{ mo.module.title }}</h2>
+      <p class="module-summary" *ngIf="mo.module.summary">{{ mo.module.summary }}</p>
+
+      <!-- Leçons -->
+      <ul class="lesson-list">
+        <li class="lesson" *ngFor="let l of mo.lessons">
+          <div class="lesson-head">
+            <mat-icon class="lesson-type">{{ l.contentType === 'VIDEO' ? 'play_circle' : (l.contentType === 'SIMULATION' ? 'extension' : 'article') }}</mat-icon>
+            <span class="lesson-title">{{ l.title }}</span>
+            <span class="lesson-duration" *ngIf="l.durationMinutes > 0">{{ l.durationMinutes }} min</span>
+            <button mat-button color="primary" class="lesson-done"
+                    [disabled]="busy || doneLessons.has(l.id)"
+                    (click)="completeLesson(l.id)">
+              <mat-icon>{{ doneLessons.has(l.id) ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+              <span i18n="@@academy.lesson.markDone">Marquer comme vue</span>
+            </button>
+          </div>
+          <div class="lesson-body" *ngIf="l.body">{{ l.body }}</div>
+          <a class="lesson-media" *ngIf="l.mediaUrl" [href]="l.mediaUrl" target="_blank" rel="noopener">
+            <mat-icon>open_in_new</mat-icon>
+            <span i18n="@@academy.lesson.openMedia">Ouvrir le média</span>
+          </a>
+        </li>
+      </ul>
+
+      <!-- Quiz -->
+      <div class="quiz" *ngIf="mo.quiz as quiz">
+        <h3 class="quiz-title">
+          <mat-icon>quiz</mat-icon>{{ quiz.title }}
+          <span class="quiz-threshold" i18n="@@academy.quiz.threshold">seuil {{ quiz.passScore }}%</span>
+        </h3>
+
+        <div class="question" *ngFor="let q of quiz.questions; let qi = index">
+          <p class="question-stem">{{ qi + 1 }}. {{ q.stem }}</p>
+          <div class="options">
+            <button type="button" class="option"
+                    *ngFor="let opt of q.options; let oi = index"
+                    [class.selected]="isSelected(quiz.id, qi, oi)"
+                    (click)="select(quiz.id, qi, oi)">
+              <mat-icon>{{ isSelected(quiz.id, qi, oi) ? 'radio_button_checked' : 'radio_button_unchecked' }}</mat-icon>
+              <span>{{ opt }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="quiz-actions">
+          <button mat-flat-button color="primary"
+                  [disabled]="busy || !canSubmit(quiz)"
+                  (click)="submitQuiz(quiz)" i18n="@@academy.quiz.submit">
+            Soumettre le quiz
+          </button>
+          <span class="quiz-result" *ngIf="results[quiz.id] as r"
+                [class.passed]="r.passed" [class.failed]="!r.passed">
+            <mat-icon>{{ r.passed ? 'check_circle' : 'cancel' }}</mat-icon>
+            {{ r.score }}%
+          </span>
+        </div>
+      </div>
+    </section>
+  </ng-container>
+</div>
