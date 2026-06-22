@@ -758,3 +758,27 @@ mat-icon.material-symbols-outlined {
     &--down { color: var(--qos-danger-fg); }
   }
 }
+
+/* ============================================================
+ * Dashboard builder (§7.3) — grille angular-gridster2.
+ * Aspect premium des indicateurs de drop / preview (styles globaux car
+ * gridster injecte ses éléments hors de la portée du composant).
+ * ============================================================ */
+gridster.qos-gridster {
+  .gridster-column,
+  .gridster-row {
+    border-color: rgba(99, 102, 241, 0.16) !important;
+  }
+
+  gridster-preview {
+    background: rgba(99, 102, 241, 0.12) !important;
+    border: 1.5px dashed rgba(99, 102, 241, 0.55) !important;
+    border-radius: 14px;
+  }
+
+  gridster-item.gridster-item-moving,
+  gridster-item.gridster-item-resizing {
+    box-shadow: 0 18px 44px rgba(15, 23, 42, 0.18) !important;
+    z-index: 4;
+  }
+}

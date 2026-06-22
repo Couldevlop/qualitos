@@ -5,20 +5,23 @@
 }
 
 .editor-shell {
-  max-width: 1480px;
-  margin: 0 auto;
-  padding: 24px 28px 64px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: calc(100vh - 64px);
+  padding: 20px 24px 28px;
+  box-sizing: border-box;
 }
 
 .editor-header {
-  background: white;
+  background: var(--qos-bg-elevated, #ffffff);
   border-radius: 16px;
-  padding: 18px 22px;
+  padding: 14px 20px;
   box-shadow:
     0 1px 2px rgba(15, 23, 42, 0.05),
     0 18px 40px rgba(15, 23, 42, 0.06);
   border: 1px solid rgba(15, 23, 42, 0.05);
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 }
 
 .title-row {
@@ -32,12 +35,17 @@
   max-width: 480px;
 }
 
+/* Évite que le mat-form-field "outline" pousse le header (champ sans hint). */
+.name-field ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
 .spacer { flex: 1; }
 
 .shared-active {
   border-color: #6366f1 !important;
   color: #4f46e5 !important;
-  background: rgba(99, 102, 241, 0.05) !important;
+  background: rgba(99, 102, 241, 0.06) !important;
 }
 
 .save-btn {
@@ -48,85 +56,202 @@
   letter-spacing: -0.005em;
 }
 
+/* ============================================================
+ * Layout principal : palette | grille | config.
+ * ============================================================ */
+
+.editor-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr);
+  gap: 16px;
+  min-height: 0;
+}
+
+.editor-body:has(.config-region) {
+  grid-template-columns: 168px minmax(0, 1fr) 320px;
+}
+
+/* ---- Palette ---- */
 .palette {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 8px;
-  align-items: center;
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px dashed rgba(15, 23, 42, 0.08);
+  padding: 14px;
+  background: var(--qos-bg-elevated, #ffffff);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 16px;
+  align-self: start;
+  position: sticky;
+  top: 12px;
 }
 
 .palette-label {
-  font-size: 0.78rem;
-  color: #64748b;
-  margin-right: 4px;
-  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--qos-fg-secondary, #64748b);
+  font-family: var(--qos-font-mono, 'IBM Plex Mono', monospace);
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  margin-bottom: 2px;
 }
 
-.palette button {
-  text-transform: lowercase;
+.palette-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 10px;
+  background: var(--qos-bg-subtle, #f8fafc);
+  color: var(--qos-fg-primary, #0f172a);
+  font: inherit;
+  font-size: 0.82rem;
   font-weight: 500;
-  border-radius: 999px !important;
+  text-align: left;
+  cursor: grab;
+  transition:
+    transform 140ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 18px;
-  align-items: stretch;
+.palette-item:hover {
+  transform: translateY(-1px);
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
 }
 
-.grid-cell {
+.palette-item:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+.palette-item:active {
+  cursor: grabbing;
+}
+
+.palette-item mat-icon {
+  flex: none;
+  color: #6366f1;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.palette-item-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- Grille ---- */
+.grid-region {
   position: relative;
-  min-height: 200px;
+  min-width: 0;
 }
 
-.remove-btn {
+.qos-gridster {
+  background: transparent;
+  border-radius: 14px;
+  min-height: 480px;
+}
+
+.grid-item {
+  border-radius: 14px;
+  overflow: hidden;
+  transition: box-shadow 200ms ease, outline-color 160ms ease;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.grid-item.selected {
+  outline-color: #6366f1;
+}
+
+.item-toolbar {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 4px;
   opacity: 0;
-  transition: opacity 160ms ease;
-  background: rgba(255, 255, 255, 0.95) !important;
-  width: 28px !important;
-  height: 28px !important;
-  line-height: 28px !important;
+  transition: opacity 150ms ease;
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(248, 250, 252, 0));
 }
 
-.grid-cell:hover .remove-btn,
-.grid-cell:focus-within .remove-btn {
+.grid-item:hover .item-toolbar,
+.grid-item:focus-within .item-toolbar,
+.grid-item.selected .item-toolbar {
   opacity: 1;
 }
 
-.remove-btn mat-icon {
-  font-size: 16px;
-  width: 16px;
-  height: 16px;
+.item-spacer { flex: 1; }
+
+.item-toolbar button {
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+}
+
+.item-toolbar mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #475569;
+}
+
+.drag-handle {
+  cursor: grab;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.item-content {
+  display: block;
+  height: 100%;
 }
 
 .empty-state {
-  grid-column: 1 / -1;
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 64px;
+  padding: 48px;
   text-align: center;
-  color: #64748b;
-  border: 1px dashed rgba(15, 23, 42, 0.12);
+  color: var(--qos-fg-secondary, #64748b);
+  border: 1px dashed rgba(15, 23, 42, 0.14);
   border-radius: 18px;
+  pointer-events: none;
 }
 
 .empty-state mat-icon {
-  font-size: 36px;
-  width: 36px;
-  height: 36px;
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
   color: #94a3b8;
+}
+
+/* ---- Config ---- */
+.config-region {
+  display: block;
+  align-self: start;
+  position: sticky;
+  top: 12px;
+  height: calc(100vh - 160px);
+  background: var(--qos-bg-elevated, #ffffff);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 16px;
+  overflow: hidden;
 }
 
 .loading {
@@ -134,4 +259,27 @@
   align-items: center;
   justify-content: center;
   min-height: 50vh;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 960px) {
+  .editor-body,
+  .editor-body:has(.config-region) {
+    grid-template-columns: 1fr;
+  }
+
+  .palette {
+    flex-direction: row;
+    flex-wrap: wrap;
+    position: static;
+  }
+
+  .palette-item {
+    width: auto;
+  }
+
+  .config-region {
+    position: static;
+    height: auto;
+  }
 }

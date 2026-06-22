@@ -9,15 +9,41 @@ export type WidgetType =
   | 'bar'
   | 'pie'
   | 'gauge'
+  | 'control-chart'
   | 'table'
   | 'heatmap'
   | 'narrative';
 
+/**
+ * Position d'un widget dans la grille gridster (unités de grille, pas pixels).
+ * Mutable : angular-gridster2 met à jour x/y/cols/rows en place lors d'un
+ * drag/resize. La couche éditeur reconstruit ensuite un {@link Widget} immuable
+ * pour la persistance.
+ */
 export interface WidgetPosition {
-  readonly x: number;
-  readonly y: number;
-  readonly cols: number;
-  readonly rows: number;
+  x: number;
+  y: number;
+  cols: number;
+  rows: number;
+}
+
+/**
+ * Configuration d'un widget. Champs optionnels typés pour le panneau de
+ * configuration ; `extra` reste ouvert pour des réglages spécifiques.
+ */
+export interface WidgetConfig {
+  /** Référence KPI du catalogue (widgets kpi / charts data-driven). */
+  kpiId?: string;
+  /** Libellé court affiché sous la valeur KPI. */
+  kpiLabel?: string;
+  /** Seuil de bascule d'état (warn/critical) pour un widget KPI. */
+  threshold?: number;
+  /** Unité affichée à côté de la valeur KPI (%, j, ppm…). */
+  unit?: string;
+  /** Texte markdown/narratif pour un widget narrative. */
+  text?: string;
+  /** Palette de couleurs ou option d'affichage libre. */
+  [extra: string]: unknown;
 }
 
 export interface Widget {
@@ -26,7 +52,7 @@ export interface Widget {
   readonly title: string;
   readonly position: WidgetPosition;
   /** Widget-specific config (data source, ECharts option, KPI ref...). */
-  readonly config: Record<string, unknown>;
+  readonly config: WidgetConfig;
 }
 
 export interface DashboardLayout {
@@ -45,4 +71,30 @@ export interface CrossFilter {
   readonly sourceWidgetId: string;
   readonly field: string;
   readonly value: string | number | null;
+}
+
+/**
+ * Définition d'un type de widget dans la palette (drag &amp; drop §7.3).
+ * Métadonnées d'affichage + gabarit par défaut (taille + config initiale).
+ */
+export interface WidgetCatalogEntry {
+  readonly type: WidgetType;
+  /** Libellé i18n affiché dans la palette. */
+  readonly label: string;
+  /** Icône Material. */
+  readonly icon: string;
+  /** Courte description i18n (tooltip / aide). */
+  readonly description: string;
+  /** Taille initiale lors de l'ajout (unités de grille). */
+  readonly defaultCols: number;
+  readonly defaultRows: number;
+  /** Config initiale appliquée au nouveau widget. */
+  readonly defaultConfig: WidgetConfig;
+}
+
+/** Option de catalogue KPI proposée dans le panneau de configuration. */
+export interface KpiOption {
+  readonly id: string;
+  readonly label: string;
+  readonly unit: string;
 }
