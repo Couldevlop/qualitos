@@ -304,6 +304,14 @@ services:
       OLLAMA_MODEL: qwen2.5-coder:3b
       OLLAMA_BASE_URL: http://ollama:11434
       OLLAMA_TIMEOUT_S: "240"
+      # Provider LLM par défaut quand la requête n'en précise pas (ollama | mistral |
+      # anthropic). Défaut ollama (local, souverain). Pour basculer toute l'IA texte :
+      # poser AI_DEFAULT_PROVIDER=mistral|anthropic dans .env + la clé correspondante.
+      # provider_defaults.py retombe sur ollama si la valeur est inconnue/absente.
+      AI_DEFAULT_PROVIDER: ${AI_DEFAULT_PROVIDER:-ollama}
+      # Modèles des providers hébergés (configurables sans toucher au code).
+      MISTRAL_MODEL: ${MISTRAL_MODEL:-mistral-large-latest}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-opus-4-7}
       KEYCLOAK_ISSUER: http://keycloak:8080/realms/qualitos
       KEYCLOAK_AUDIENCE: qualitos-ai
       QDRANT_URL: http://qdrant:6333
