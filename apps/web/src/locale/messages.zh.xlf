@@ -2656,6 +2656,122 @@
         <source>Échec de l'analyse (HTTP <x id="status"/>).</source>
         <target state="translated">分析失败（HTTP <x id="status"/>）。</target>
       </trans-unit>
+      <trans-unit id="compliance.hub.eyebrow" datatype="html">
+        <source>Gouvernance, risque &amp; conformité</source>
+        <target state="translated">治理、风险与合规</target>
+      </trans-unit>
+      <trans-unit id="compliance.hub.title" datatype="html">
+        <source>Conformité</source>
+        <target state="translated">合规</target>
+      </trans-unit>
+      <trans-unit id="compliance.hub.subtitle" datatype="html">
+        <source>Pilotez l'IA Act, le RGPD et NIS 2 depuis un point d'entrée unique. Chaque domaine ouvre ses registres et procédures dédiés.</source>
+        <target state="translated">从单一入口管理《AI 法案》、GDPR 和 NIS 2。每个领域均可打开其专属登记簿与流程。</target>
+      </trans-unit>
+      <trans-unit id="compliance.hub.views-label" datatype="html">
+        <source>Registres &amp; procédures</source>
+        <target state="translated">登记簿与流程</target>
+      </trans-unit>
+      <trans-unit id="compliance.ai.title" datatype="html">
+        <source>IA Act</source>
+        <target state="translated">AI 法案</target>
+      </trans-unit>
+      <trans-unit id="compliance.ai.desc" datatype="html">
+        <source>Système qualité IA, conformité, incidents, base UE et surveillance post-marché du règlement européen sur l’IA.</source>
+        <target state="translated">欧盟 AI 法规下的 AI 质量体系、合规、事件、欧盟数据库及上市后监测。</target>
+      </trans-unit>
+      <trans-unit id="compliance.ai.qms" datatype="html">
+        <source>Système qualité IA (QMS)</source>
+        <target state="translated">AI 质量体系（QMS）</target>
+      </trans-unit>
+      <trans-unit id="compliance.ai.conformity" datatype="html">
+        <source>Conformité</source>
+        <target state="translated">符合性</target>
+      </trans-unit>
+      <trans-unit id="compliance.ai.incidents" datatype="html">
+        <source>Incidents IA</source>
+        <target state="translated">AI 事件</target>
+      </trans-unit>
+      <trans-unit id="compliance.ai.eudb" datatype="html">
+        <source>Base de données UE</source>
+        <target state="translated">欧盟数据库</target>
+      </trans-unit>
+      <trans-unit id="compliance.ai.fria" datatype="html">
+        <source>Analyse d’impact (FRIA)</source>
+        <target state="translated">影响评估（FRIA）</target>
+      </trans-unit>
+      <trans-unit id="compliance.ai.pmm" datatype="html">
+        <source>Surveillance post-marché (PMM)</source>
+        <target state="translated">上市后监测（PMM）</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.title" datatype="html">
+        <source>RGPD</source>
+        <target state="translated">GDPR</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.desc" datatype="html">
+        <source>Registre des traitements, consentements, droits des personnes, analyses d’impact et gestion des violations.</source>
+        <target state="translated">处理记录、同意、数据主体权利、影响评估及泄露管理。</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.ropa" datatype="html">
+        <source>Registre (RoPA)</source>
+        <target state="translated">记录（RoPA）</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.consents" datatype="html">
+        <source>Consentements</source>
+        <target state="translated">同意管理</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.subject-requests" datatype="html">
+        <source>Demandes (DSAR)</source>
+        <target state="translated">请求（DSAR）</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.notices" datatype="html">
+        <source>Mentions d’information</source>
+        <target state="translated">隐私声明</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.dpia" datatype="html">
+        <source>Analyses d’impact (DPIA)</source>
+        <target state="translated">影响评估（DPIA）</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.dpo" datatype="html">
+        <source>Désignations DPO</source>
+        <target state="translated">DPO 任命</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.retention" datatype="html">
+        <source>Rétention</source>
+        <target state="translated">保留</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.cross-border" datatype="html">
+        <source>Transferts hors UE</source>
+        <target state="translated">跨境传输</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.processor-agreements" datatype="html">
+        <source>Sous-traitants (DPA)</source>
+        <target state="translated">处理方（DPA）</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.breaches" datatype="html">
+        <source>Violations de données</source>
+        <target state="translated">数据泄露</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.automated-decisions" datatype="html">
+        <source>Décisions automatisées</source>
+        <target state="translated">自动化决策</target>
+      </trans-unit>
+      <trans-unit id="compliance.nis2.title" datatype="html">
+        <source>NIS 2</source>
+        <target state="translated">NIS 2</target>
+      </trans-unit>
+      <trans-unit id="compliance.nis2.desc" datatype="html">
+        <source>Mesures de cybersécurité et déclaration des incidents au titre de la directive NIS 2.</source>
+        <target state="translated">NIS 2 指令下的网络安全措施与事件报告。</target>
+      </trans-unit>
+      <trans-unit id="compliance.nis2.measures" datatype="html">
+        <source>Mesures de cybersécurité</source>
+        <target state="translated">网络安全措施</target>
+      </trans-unit>
+      <trans-unit id="compliance.nis2.incidents" datatype="html">
+        <source>Incidents cyber</source>
+        <target state="translated">网络事件</target>
+      </trans-unit>
       <trans-unit id="common.ok" datatype="html">
         <source>OK</source>
         <target state="translated">确定</target>
@@ -3067,6 +3183,26 @@
       <trans-unit id="nav.itsm" datatype="html">
         <source>ITSM</source>
         <target state="translated">ITSM</target>
+      </trans-unit>
+      <trans-unit id="nav.analyses-ia" datatype="html">
+        <source>Analyses IA</source>
+        <target state="translated">AI 分析</target>
+      </trans-unit>
+      <trans-unit id="nav.operations" datatype="html">
+        <source>Opérations</source>
+        <target state="translated">运营</target>
+      </trans-unit>
+      <trans-unit id="nav.referentiels" datatype="html">
+        <source>Référentiels</source>
+        <target state="translated">参照库</target>
+      </trans-unit>
+      <trans-unit id="nav.conformite-grc" datatype="html">
+        <source>Conformité (GRC)</source>
+        <target state="translated">合规（GRC）</target>
+      </trans-unit>
+      <trans-unit id="nav.conformite-hub" datatype="html">
+        <source>Conformité</source>
+        <target state="translated">合规</target>
       </trans-unit>
       <trans-unit id="dashboard.tt.aria" datatype="html">
         <source>Voyage dans le temps</source>
@@ -8987,6 +9123,86 @@ historique 12 mois</source>
       <trans-unit id="home.welcome.title" datatype="html">
         <source>One platform. Five methods. Every industry.</source>
         <target state="translated">One platform. Five methods. Every industry.</target>
+      </trans-unit>
+      <trans-unit id="home.hero.eyebrow" datatype="html">
+        <source>Plateforme qualité totale</source>
+        <target state="translated">全面质量平台</target>
+      </trans-unit>
+      <trans-unit id="home.hero.cta-dashboard" datatype="html">
+        <source>Ouvrir le tableau de bord</source>
+        <target state="translated">打开仪表盘</target>
+      </trans-unit>
+      <trans-unit id="home.hero.cta-standards" datatype="html">
+        <source>Standards Hub</source>
+        <target state="translated">标准中心</target>
+      </trans-unit>
+      <trans-unit id="home.methods.title" datatype="html">
+        <source>Les 5 méthodes</source>
+        <target state="translated">五大方法</target>
+      </trans-unit>
+      <trans-unit id="home.methods.subtitle" datatype="html">
+        <source>Un référentiel commun, cinq portes d’entrée.</source>
+        <target state="translated">统一的库，五个入口。</target>
+      </trans-unit>
+      <trans-unit id="home.kpis.title" datatype="html">
+        <source>Indicateurs clés</source>
+        <target state="translated">关键指标</target>
+      </trans-unit>
+      <trans-unit id="home.kpis.subtitle" datatype="html">
+        <source>Vue d’ensemble — détail dans le tableau de bord.</source>
+        <target state="translated">概览 — 详情见仪表盘。</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.open-pdca" datatype="html">
+        <source>Cycles PDCA en cours</source>
+        <target state="translated">进行中的 PDCA 循环</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.open-nc" datatype="html">
+        <source>Non-conformités ouvertes</source>
+        <target state="translated">未结不合格项</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.fives-score" datatype="html">
+        <source>Score 5S moyen</source>
+        <target state="translated">平均 5S 得分</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.audits-planned" datatype="html">
+        <source>Audits planifiés</source>
+        <target state="translated">已计划审核</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.illustrative" datatype="html">
+        <source>Valeurs indicatives</source>
+        <target state="translated">示意值</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.trend-up" datatype="html">
+        <source>en hausse</source>
+        <target state="translated">上升</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.trend-down" datatype="html">
+        <source>en baisse</source>
+        <target state="translated">下降</target>
+      </trans-unit>
+      <trans-unit id="home.actions.title" datatype="html">
+        <source>Actions rapides</source>
+        <target state="translated">快捷操作</target>
+      </trans-unit>
+      <trans-unit id="home.actions.new-pdca" datatype="html">
+        <source>Créer un cycle PDCA</source>
+        <target state="translated">创建 PDCA 循环</target>
+      </trans-unit>
+      <trans-unit id="home.actions.new-audit" datatype="html">
+        <source>Lancer un audit 5S</source>
+        <target state="translated">启动 5S 审核</target>
+      </trans-unit>
+      <trans-unit id="home.actions.new-nc" datatype="html">
+        <source>Déclarer une NC</source>
+        <target state="translated">报告不合格项</target>
+      </trans-unit>
+      <trans-unit id="home.actions.new-ishikawa" datatype="html">
+        <source>Analyser une cause (Ishikawa)</source>
+        <target state="translated">分析原因（鱼骨图）</target>
+      </trans-unit>
+      <trans-unit id="home.activity.title" datatype="html">
+        <source>Activité récente</source>
+        <target state="translated">最近活动</target>
       </trans-unit>
       <trans-unit id="itsm.detail.already-known-suffix" datatype="html">
         <source>déjà connus.</source>

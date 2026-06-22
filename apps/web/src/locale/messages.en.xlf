@@ -2656,6 +2656,122 @@
         <source>Échec de l'analyse (HTTP <x id="status"/>).</source>
         <target state="translated">Analysis failed (HTTP <x id="status"/>).</target>
       </trans-unit>
+      <trans-unit id="compliance.hub.eyebrow" datatype="html">
+        <source>Gouvernance, risque &amp; conformité</source>
+        <target state="translated">Governance, risk &amp; compliance</target>
+      </trans-unit>
+      <trans-unit id="compliance.hub.title" datatype="html">
+        <source>Conformité</source>
+        <target state="translated">Compliance</target>
+      </trans-unit>
+      <trans-unit id="compliance.hub.subtitle" datatype="html">
+        <source>Pilotez l'IA Act, le RGPD et NIS 2 depuis un point d'entrée unique. Chaque domaine ouvre ses registres et procédures dédiés.</source>
+        <target state="translated">Steer the AI Act, GDPR and NIS 2 from a single entry point. Each domain opens its dedicated registers and procedures.</target>
+      </trans-unit>
+      <trans-unit id="compliance.hub.views-label" datatype="html">
+        <source>Registres &amp; procédures</source>
+        <target state="translated">Registers &amp; procedures</target>
+      </trans-unit>
+      <trans-unit id="compliance.ai.title" datatype="html">
+        <source>IA Act</source>
+        <target state="translated">AI Act</target>
+      </trans-unit>
+      <trans-unit id="compliance.ai.desc" datatype="html">
+        <source>Système qualité IA, conformité, incidents, base UE et surveillance post-marché du règlement européen sur l’IA.</source>
+        <target state="translated">AI quality system, conformity, incidents, EU database and post-market monitoring under the EU AI regulation.</target>
+      </trans-unit>
+      <trans-unit id="compliance.ai.qms" datatype="html">
+        <source>Système qualité IA (QMS)</source>
+        <target state="translated">AI quality system (QMS)</target>
+      </trans-unit>
+      <trans-unit id="compliance.ai.conformity" datatype="html">
+        <source>Conformité</source>
+        <target state="translated">Conformity</target>
+      </trans-unit>
+      <trans-unit id="compliance.ai.incidents" datatype="html">
+        <source>Incidents IA</source>
+        <target state="translated">AI incidents</target>
+      </trans-unit>
+      <trans-unit id="compliance.ai.eudb" datatype="html">
+        <source>Base de données UE</source>
+        <target state="translated">EU database</target>
+      </trans-unit>
+      <trans-unit id="compliance.ai.fria" datatype="html">
+        <source>Analyse d’impact (FRIA)</source>
+        <target state="translated">Impact assessment (FRIA)</target>
+      </trans-unit>
+      <trans-unit id="compliance.ai.pmm" datatype="html">
+        <source>Surveillance post-marché (PMM)</source>
+        <target state="translated">Post-market monitoring (PMM)</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.title" datatype="html">
+        <source>RGPD</source>
+        <target state="translated">GDPR</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.desc" datatype="html">
+        <source>Registre des traitements, consentements, droits des personnes, analyses d’impact et gestion des violations.</source>
+        <target state="translated">Records of processing, consents, data-subject rights, impact assessments and breach management.</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.ropa" datatype="html">
+        <source>Registre (RoPA)</source>
+        <target state="translated">Register (RoPA)</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.consents" datatype="html">
+        <source>Consentements</source>
+        <target state="translated">Consents</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.subject-requests" datatype="html">
+        <source>Demandes (DSAR)</source>
+        <target state="translated">Requests (DSAR)</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.notices" datatype="html">
+        <source>Mentions d’information</source>
+        <target state="translated">Privacy notices</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.dpia" datatype="html">
+        <source>Analyses d’impact (DPIA)</source>
+        <target state="translated">Impact assessments (DPIA)</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.dpo" datatype="html">
+        <source>Désignations DPO</source>
+        <target state="translated">DPO appointments</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.retention" datatype="html">
+        <source>Rétention</source>
+        <target state="translated">Retention</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.cross-border" datatype="html">
+        <source>Transferts hors UE</source>
+        <target state="translated">Cross-border transfers</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.processor-agreements" datatype="html">
+        <source>Sous-traitants (DPA)</source>
+        <target state="translated">Processors (DPA)</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.breaches" datatype="html">
+        <source>Violations de données</source>
+        <target state="translated">Data breaches</target>
+      </trans-unit>
+      <trans-unit id="compliance.gdpr.automated-decisions" datatype="html">
+        <source>Décisions automatisées</source>
+        <target state="translated">Automated decisions</target>
+      </trans-unit>
+      <trans-unit id="compliance.nis2.title" datatype="html">
+        <source>NIS 2</source>
+        <target state="translated">NIS 2</target>
+      </trans-unit>
+      <trans-unit id="compliance.nis2.desc" datatype="html">
+        <source>Mesures de cybersécurité et déclaration des incidents au titre de la directive NIS 2.</source>
+        <target state="translated">Cybersecurity measures and incident reporting under the NIS 2 directive.</target>
+      </trans-unit>
+      <trans-unit id="compliance.nis2.measures" datatype="html">
+        <source>Mesures de cybersécurité</source>
+        <target state="translated">Cybersecurity measures</target>
+      </trans-unit>
+      <trans-unit id="compliance.nis2.incidents" datatype="html">
+        <source>Incidents cyber</source>
+        <target state="translated">Cyber incidents</target>
+      </trans-unit>
       <trans-unit id="common.ok" datatype="html">
         <source>OK</source>
         <target state="translated">OK</target>
@@ -3067,6 +3183,26 @@
       <trans-unit id="nav.itsm" datatype="html">
         <source>ITSM</source>
         <target state="translated">ITSM</target>
+      </trans-unit>
+      <trans-unit id="nav.analyses-ia" datatype="html">
+        <source>Analyses IA</source>
+        <target state="translated">AI analytics</target>
+      </trans-unit>
+      <trans-unit id="nav.operations" datatype="html">
+        <source>Opérations</source>
+        <target state="translated">Operations</target>
+      </trans-unit>
+      <trans-unit id="nav.referentiels" datatype="html">
+        <source>Référentiels</source>
+        <target state="translated">Reference data</target>
+      </trans-unit>
+      <trans-unit id="nav.conformite-grc" datatype="html">
+        <source>Conformité (GRC)</source>
+        <target state="translated">Compliance (GRC)</target>
+      </trans-unit>
+      <trans-unit id="nav.conformite-hub" datatype="html">
+        <source>Conformité</source>
+        <target state="translated">Compliance</target>
       </trans-unit>
       <trans-unit id="dashboard.tt.aria" datatype="html">
         <source>Voyage dans le temps</source>
@@ -8987,6 +9123,86 @@ declared income
       <trans-unit id="home.welcome.title" datatype="html">
         <source>One platform. Five methods. Every industry.</source>
         <target state="translated">One platform. Five methods. Every industry.</target>
+      </trans-unit>
+      <trans-unit id="home.hero.eyebrow" datatype="html">
+        <source>Plateforme qualité totale</source>
+        <target state="translated">Total quality platform</target>
+      </trans-unit>
+      <trans-unit id="home.hero.cta-dashboard" datatype="html">
+        <source>Ouvrir le tableau de bord</source>
+        <target state="translated">Open dashboard</target>
+      </trans-unit>
+      <trans-unit id="home.hero.cta-standards" datatype="html">
+        <source>Standards Hub</source>
+        <target state="translated">Standards Hub</target>
+      </trans-unit>
+      <trans-unit id="home.methods.title" datatype="html">
+        <source>Les 5 méthodes</source>
+        <target state="translated">The 5 methods</target>
+      </trans-unit>
+      <trans-unit id="home.methods.subtitle" datatype="html">
+        <source>Un référentiel commun, cinq portes d’entrée.</source>
+        <target state="translated">One shared repository, five entry points.</target>
+      </trans-unit>
+      <trans-unit id="home.kpis.title" datatype="html">
+        <source>Indicateurs clés</source>
+        <target state="translated">Key indicators</target>
+      </trans-unit>
+      <trans-unit id="home.kpis.subtitle" datatype="html">
+        <source>Vue d’ensemble — détail dans le tableau de bord.</source>
+        <target state="translated">Overview — details in the dashboard.</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.open-pdca" datatype="html">
+        <source>Cycles PDCA en cours</source>
+        <target state="translated">PDCA cycles in progress</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.open-nc" datatype="html">
+        <source>Non-conformités ouvertes</source>
+        <target state="translated">Open non-conformances</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.fives-score" datatype="html">
+        <source>Score 5S moyen</source>
+        <target state="translated">Average 5S score</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.audits-planned" datatype="html">
+        <source>Audits planifiés</source>
+        <target state="translated">Planned audits</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.illustrative" datatype="html">
+        <source>Valeurs indicatives</source>
+        <target state="translated">Illustrative values</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.trend-up" datatype="html">
+        <source>en hausse</source>
+        <target state="translated">trending up</target>
+      </trans-unit>
+      <trans-unit id="home.kpi.trend-down" datatype="html">
+        <source>en baisse</source>
+        <target state="translated">trending down</target>
+      </trans-unit>
+      <trans-unit id="home.actions.title" datatype="html">
+        <source>Actions rapides</source>
+        <target state="translated">Quick actions</target>
+      </trans-unit>
+      <trans-unit id="home.actions.new-pdca" datatype="html">
+        <source>Créer un cycle PDCA</source>
+        <target state="translated">Create a PDCA cycle</target>
+      </trans-unit>
+      <trans-unit id="home.actions.new-audit" datatype="html">
+        <source>Lancer un audit 5S</source>
+        <target state="translated">Start a 5S audit</target>
+      </trans-unit>
+      <trans-unit id="home.actions.new-nc" datatype="html">
+        <source>Déclarer une NC</source>
+        <target state="translated">Report a non-conformance</target>
+      </trans-unit>
+      <trans-unit id="home.actions.new-ishikawa" datatype="html">
+        <source>Analyser une cause (Ishikawa)</source>
+        <target state="translated">Analyse a cause (Ishikawa)</target>
+      </trans-unit>
+      <trans-unit id="home.activity.title" datatype="html">
+        <source>Activité récente</source>
+        <target state="translated">Recent activity</target>
       </trans-unit>
       <trans-unit id="itsm.detail.already-known-suffix" datatype="html">
         <source>déjà connus.</source>
