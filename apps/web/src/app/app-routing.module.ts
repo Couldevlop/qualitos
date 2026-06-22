@@ -125,6 +125,12 @@ const routes: Routes = [
         loadChildren: () => import('./features/training/learning.module').then(m => m.LearningModule)
       },
       {
+        // Academy LMS-light + gamification (§19.3) : cours e-learning, quiz notés,
+        // badges/ceintures, certificats signés ML-DSA + ancrés blockchain.
+        path: 'academy',
+        loadChildren: () => import('./features/academy/academy.module').then(m => m.AcademyModule)
+      },
+      {
         path: 'changes',
         loadChildren: () => import('./features/changes/changes.module').then(m => m.ChangesModule)
       },

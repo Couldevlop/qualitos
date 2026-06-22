@@ -1,0 +1,43 @@
+<div class="cert-page">
+  <div class="toolbar no-print">
+    <button mat-button (click)="router.navigate(['/academy'])">
+      <mat-icon>arrow_back</mat-icon>
+      <span i18n="@@academy.cert.back">Academy</span>
+    </button>
+    <span class="spacer"></span>
+    <button mat-stroked-button (click)="copyVerifyUrl()" [disabled]="!certificate">
+      <mat-icon>link</mat-icon>
+      <span i18n="@@academy.cert.copyLink">Copier le lien de vérification</span>
+    </button>
+    <button mat-flat-button color="primary" (click)="print()" [disabled]="!certificate">
+      <mat-icon>print</mat-icon>
+      <span i18n="@@academy.cert.print">Imprimer / PDF</span>
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+  </div>
+
+  <ng-container *ngIf="!loading && certificate">
+    <div class="cert-render" [innerHTML]="safeHtml"></div>
+
+    <div class="cert-proof no-print">
+      <h3 i18n="@@academy.cert.proofTitle">Preuve d'intégrité</h3>
+      <dl>
+        <dt i18n="@@academy.cert.code">Code de vérification</dt>
+        <dd class="mono">{{ certificate.code }}</dd>
+        <dt i18n="@@academy.cert.sha">Empreinte SHA-256</dt>
+        <dd class="mono">{{ certificate.sha256 }}</dd>
+        <dt i18n="@@academy.cert.anchor">Ancrage blockchain</dt>
+        <dd class="mono">{{ certificate.anchorTxRef || '—' }}</dd>
+        <dt i18n="@@academy.cert.verifyUrl">Lien public</dt>
+        <dd class="mono">{{ certificate.verifyUrl }}</dd>
+      </dl>
+      <p class="note" i18n="@@academy.cert.note">
+        Ce certificat est signé (Ed25519 + ML-DSA-65) et son empreinte ancrée en blockchain.
+        Toute personne peut le vérifier via le lien public ci-dessus.
+      </p>
+    </div>
+  </ng-container>
+</div>

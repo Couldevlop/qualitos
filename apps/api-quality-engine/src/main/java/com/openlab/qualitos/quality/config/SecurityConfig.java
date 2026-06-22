@@ -95,6 +95,12 @@ public class SecurityConfig {
                 .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
+                // Vérification publique d'un certificat de formation par QR (§19.3) :
+                // l'autorité est le code (UUID non devinable), aucune donnée perso interne
+                // n'est exposée et la signature ML-DSA est revalidée. Lecture seule.
+                .requestMatchers(org.springframework.http.HttpMethod.GET,
+                        "/api/v1/academy/public/certificates/*/verify").permitAll()
+
                 // --- H1 (OWASP A01) : durcissement des endpoints SENSIBLES ---
                 // On cible les actions d'ADMINISTRATION (plateforme/tenant), d'INTÉGRITÉ
                 // et les SUPPRESSIONS, sans casser l'accès qualité courant : les écritures
