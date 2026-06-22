@@ -45,6 +45,7 @@ supersession).
 | [0038](./0038-dashboard-builder-dragdrop.md) | Builder de dashboard drag&drop avancé (gridster2, palette de widgets, §7.3) | Accepté |
 | [0039](./0039-dast-owasp-zap-ci.md) | DAST OWASP ZAP en CI (baseline + API scan OpenAPI, seuils HIGH/MEDIUM, §11/§14.2) | Accepté |
 | [0040](./0040-perf-k6-slo-ci.md) | Tests de performance k6 avec budgets SLO bloquants en CI (chemins chauds api-quality-engine, §14.3) | Accepté |
+| [0041](./0041-marketplace-packs-normatifs.md) | Marketplace de packs normatifs (soumission partenaire → modération éditeur → publication → installation tenant, §8.11) | Accepté |
 | [0042](./0042-chaos-engineering.md) | Chaos Engineering (Chaos Mesh) — expériences PodChaos/NetworkChaos/StressChaos/IOChaos + runbook, CI manuelle (§14.3) | Accepté |
 | [0043](./0043-export-pdf-dashboard-signe.md) | Export PDF d'un dashboard, signé ML-DSA + ancré blockchain (QR de vérification, §7.3/§7.4) | Accepté |
 

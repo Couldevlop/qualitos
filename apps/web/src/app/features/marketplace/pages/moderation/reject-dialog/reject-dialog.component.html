@@ -1,0 +1,15 @@
+<h2 mat-dialog-title i18n="@@marketplace.reject.title">Rejeter le pack</h2>
+<mat-dialog-content>
+  <p class="hint" i18n="@@marketplace.reject.hint">Indiquez au partenaire le motif du rejet (visible côté éditeur).</p>
+  <mat-form-field appearance="outline" class="reason-field">
+    <mat-label i18n="@@marketplace.reject.reason-label">Motif du rejet</mat-label>
+    <textarea matInput rows="4" [(ngModel)]="reason" maxlength="2000"
+              i18n-placeholder="@@marketplace.reject.reason-placeholder"
+              placeholder="Ex : manifeste incomplet, normes non couvertes…"></textarea>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()" i18n="@@common.cancel">Annuler</button>
+  <button mat-flat-button color="warn" [disabled]="!reason.trim()" (click)="confirm()"
+          i18n="@@marketplace.reject.confirm">Rejeter</button>
+</mat-dialog-actions>

@@ -156,6 +156,16 @@ public class SecurityConfig {
                 // Marketplace de packs normatifs (§8.11) : publication/retrait = administration
                 // plateforme. Réservé Admin Tenant / Super Admin (la lecture du catalogue passe
                 // par GET, gardé ci-dessous au niveau méthode pour rester consultable).
+                //
+                // CARVE-OUT soumission partenaire : la SOUMISSION d'un pack (POST sur la racine
+                // exacte des packs) est ouverte au rôle PARTNER (éditeur partenaire) EN PLUS des
+                // admins. L'affinage de l'état et l'acteur restent gérés par @PreAuthorize +
+                // ports d'acteur (use-case). Ce matcher PLUS SPÉCIFIQUE précède la règle
+                // générique ci-dessous (premier match gagne). La validation / publication
+                // (take-review, publish, reject, deprecate) reste réservée Super Admin via
+                // @PreAuthorize sur le contrôleur.
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/marketplace/packs")
+                    .hasAnyRole("PARTNER", "ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
                 .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/marketplace/**")
                     .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
                 .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/v1/marketplace/**")

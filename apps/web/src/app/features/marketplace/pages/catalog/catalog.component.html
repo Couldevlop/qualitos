@@ -1,0 +1,83 @@
+<div class="qos-page">
+  <header class="page-header">
+    <h1 i18n="@@marketplace.catalog.title">Marketplace de packs normatifs</h1>
+    <p i18n="@@marketplace.catalog.subtitle">Installez des packs sectoriels et normatifs publiés par nos partenaires — référentiels, documents et processus prêts à l'emploi, validés par l'éditeur.</p>
+  </header>
+
+  <div class="toolbar">
+    <mat-form-field appearance="outline" class="search">
+      <mat-label i18n="@@marketplace.catalog.search">Rechercher un pack</mat-label>
+      <input matInput [(ngModel)]="query" (ngModelChange)="applyFilter()"
+             i18n-placeholder="@@marketplace.catalog.search-placeholder"
+             placeholder="Norme, secteur, éditeur, mot-clé…">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+    <a class="submit-link" mat-stroked-button color="primary" routerLink="/marketplace/submit">
+      <mat-icon>publish</mat-icon>
+      <span i18n="@@marketplace.catalog.submit-link">Proposer un pack</span>
+    </a>
+  </div>
+
+  <div class="state" *ngIf="loading" role="status">
+    <mat-progress-spinner mode="indeterminate" diameter="36"
+      i18n-aria-label="@@common.loading-aria" aria-label="Chargement"></mat-progress-spinner>
+  </div>
+
+  <div class="state error" *ngIf="error && !loading">
+    <p i18n="@@common.error-loading">Erreur lors du chargement.</p>
+    <button mat-stroked-button color="primary" (click)="load()" i18n="@@marketplace.retry">Réessayer</button>
+  </div>
+
+  <p class="empty" *ngIf="!loading && !error && filtered.length === 0"
+     i18n="@@marketplace.catalog.empty">Aucun pack publié ne correspond à votre recherche.</p>
+
+  <div class="grid" *ngIf="!loading && !error && filtered.length">
+    <mat-card class="pack-card" *ngFor="let e of filtered" tabindex="0">
+      <div class="card-head">
+        <div class="title-block">
+          <h2 class="pack-title">{{ e.pack.title }}</h2>
+          <span class="pack-meta">{{ e.pack.publisher }} · v{{ e.pack.version }}</span>
+        </div>
+        <span class="badge installed" *ngIf="e.installation" i18n="@@marketplace.badge-installed">Installé</span>
+      </div>
+
+      <p class="pack-desc" *ngIf="e.pack.description">{{ e.pack.description }}</p>
+
+      <div class="norms" *ngIf="e.pack.norms.length">
+        <span class="norm" *ngFor="let n of e.pack.norms">{{ n }}</span>
+      </div>
+
+      <div class="rating" *ngIf="e.pack.ratingCount > 0" [attr.aria-label]="e.pack.ratingAvg">
+        <mat-icon *ngFor="let s of stars(e)" class="star" [class.filled]="s === 1">star</mat-icon>
+        <span class="rating-count">({{ e.pack.ratingCount }})</span>
+      </div>
+
+      <div class="footer">
+        <span class="price">{{ priceLabel(e) }}</span>
+        <span class="sector">{{ e.pack.sector }}</span>
+      </div>
+
+      <div class="card-actions" *ngIf="canManage">
+        <button mat-flat-button color="primary" *ngIf="!e.installation"
+                [disabled]="busy === e.pack.id" (click)="install(e, $event)">
+          <mat-icon>download</mat-icon>
+          <span i18n="@@marketplace.install">Installer</span>
+        </button>
+        <button mat-stroked-button color="warn" *ngIf="e.installation"
+                [disabled]="busy === e.pack.id" (click)="uninstall(e, $event)">
+          <mat-icon>delete_outline</mat-icon>
+          <span i18n="@@marketplace.uninstall">Désinstaller</span>
+        </button>
+      </div>
+
+      <div class="rate-row" *ngIf="e.installation">
+        <span class="rate-label" i18n="@@marketplace.rate-label">Noter :</span>
+        <button class="rate-star" *ngFor="let i of [1,2,3,4,5]" type="button"
+                [disabled]="busy === e.pack.id" (click)="rate(e, i, $event)"
+                [attr.aria-label]="i">
+          <mat-icon>star_border</mat-icon>
+        </button>
+      </div>
+    </mat-card>
+  </div>
+</div>

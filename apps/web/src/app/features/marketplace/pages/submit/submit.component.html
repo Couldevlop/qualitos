@@ -1,0 +1,85 @@
+<div class="qos-page">
+  <header class="page-header">
+    <h1 i18n="@@marketplace.submit.title">Proposer un pack normatif</h1>
+    <p i18n="@@marketplace.submit.subtitle">Soumettez un pack sectoriel ou normatif. Il sera instruit puis validé par l'éditeur avant publication au catalogue.</p>
+  </header>
+
+  <form class="form-card" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="grid">
+      <mat-form-field appearance="outline">
+        <mat-label i18n="@@marketplace.submit.packId">Identifiant du pack</mat-label>
+        <input matInput formControlName="packId" placeholder="iso-13485-startup">
+        <mat-error i18n="@@marketplace.submit.packId-error">Format attendu : minuscules, chiffres, - ou _</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label i18n="@@marketplace.submit.version">Version</mat-label>
+        <input matInput formControlName="version" placeholder="1.0">
+        <mat-error i18n="@@marketplace.submit.version-error">Format attendu : X.Y ou X.Y.Z</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label i18n="@@marketplace.submit.publisher">Éditeur / partenaire</mat-label>
+        <input matInput formControlName="publisher">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label i18n="@@marketplace.submit.sector">Secteur</mat-label>
+        <input matInput formControlName="sector" placeholder="healthcare">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="span-2">
+        <mat-label i18n="@@marketplace.submit.titleField">Titre du pack</mat-label>
+        <input matInput formControlName="title">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="span-2">
+        <mat-label i18n="@@marketplace.submit.description">Description</mat-label>
+        <textarea matInput rows="2" formControlName="description"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="span-2">
+        <mat-label i18n="@@marketplace.submit.norms">Normes couvertes (séparées par des virgules)</mat-label>
+        <input matInput formControlName="norms" placeholder="iso-13485, iso-14971">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label i18n="@@marketplace.submit.price">Prix (centimes)</mat-label>
+        <input matInput type="number" min="0" formControlName="priceCents">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label i18n="@@marketplace.submit.currency">Devise</mat-label>
+        <mat-select formControlName="currency">
+          <mat-option *ngFor="let c of currencies" [value]="c">{{ c }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="span-2">
+        <mat-label i18n="@@marketplace.submit.manifestUrl">URL du manifeste (https:// ou oci://)</mat-label>
+        <input matInput formControlName="manifestUrl" placeholder="https://packs.example.com/pack-1.0.zip">
+        <mat-error i18n="@@marketplace.submit.manifestUrl-error">URL https:// ou oci:// requise</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="span-2">
+        <mat-label i18n="@@marketplace.submit.manifestJson">Manifeste (JSON inline)</mat-label>
+        <textarea matInput rows="6" formControlName="manifestJson"
+                  placeholder='{"name":"...","version":"1.0","norms":["iso-13485"]}'></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="span-2">
+        <mat-label i18n="@@marketplace.submit.signature">Signature partenaire (hash)</mat-label>
+        <input matInput formControlName="signatureHash">
+        <mat-error i18n="@@marketplace.submit.signature-error">16 à 128 caractères requis</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-actions">
+      <a mat-button routerLink="/marketplace" i18n="@@common.cancel">Annuler</a>
+      <button mat-flat-button color="primary" type="submit" [disabled]="submitting">
+        <mat-icon>publish</mat-icon>
+        <span i18n="@@marketplace.submit.action">Soumettre</span>
+      </button>
+    </div>
+  </form>
+</div>

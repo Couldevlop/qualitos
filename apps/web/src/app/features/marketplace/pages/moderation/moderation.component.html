@@ -1,0 +1,61 @@
+<div class="qos-page">
+  <header class="page-header">
+    <h1 i18n="@@marketplace.mod.title">Modération des packs</h1>
+    <p i18n="@@marketplace.mod.subtitle">File d'instruction des packs soumis par les partenaires. Aucun pack n'est publié sans validation humaine.</p>
+  </header>
+
+  <div class="state" *ngIf="loading" role="status">
+    <mat-progress-spinner mode="indeterminate" diameter="36"
+      i18n-aria-label="@@common.loading-aria" aria-label="Chargement"></mat-progress-spinner>
+  </div>
+
+  <div class="state error" *ngIf="error && !loading">
+    <p i18n="@@common.error-loading">Erreur lors du chargement.</p>
+    <button mat-stroked-button color="primary" (click)="load()" i18n="@@marketplace.retry">Réessayer</button>
+  </div>
+
+  <p class="empty" *ngIf="!loading && !error && packs.length === 0"
+     i18n="@@marketplace.mod.empty">Aucun pack en attente d'instruction.</p>
+
+  <div class="list" *ngIf="!loading && !error && packs.length">
+    <mat-card class="mod-card" *ngFor="let p of packs">
+      <div class="mod-head">
+        <div class="title-block">
+          <h2 class="pack-title">{{ p.title }}</h2>
+          <span class="pack-meta">{{ p.publisher }} · {{ p.packId }} v{{ p.version }}</span>
+        </div>
+        <span class="status" [class.submitted]="p.status === 'SUBMITTED'"
+              [class.review]="p.status === 'IN_REVIEW'">{{ p.status }}</span>
+      </div>
+
+      <p class="pack-desc" *ngIf="p.description">{{ p.description }}</p>
+
+      <div class="norms" *ngIf="p.norms.length">
+        <span class="norm" *ngFor="let n of p.norms">{{ n }}</span>
+      </div>
+
+      <div class="manifest-row">
+        <span class="lbl" i18n="@@marketplace.mod.manifest">Manifeste :</span>
+        <a [href]="p.manifestUrl" target="_blank" rel="noopener noreferrer" class="manifest-url">{{ p.manifestUrl }}</a>
+      </div>
+
+      <div class="mod-actions">
+        <button mat-stroked-button color="primary" *ngIf="p.status === 'SUBMITTED'"
+                [disabled]="busy === p.id" (click)="takeForReview(p)">
+          <mat-icon>rate_review</mat-icon>
+          <span i18n="@@marketplace.mod.take-review">Prendre en revue</span>
+        </button>
+        <button mat-flat-button color="primary" *ngIf="p.status === 'IN_REVIEW'"
+                [disabled]="busy === p.id" (click)="publish(p)">
+          <mat-icon>verified</mat-icon>
+          <span i18n="@@marketplace.mod.publish">Publier</span>
+        </button>
+        <button mat-stroked-button color="warn"
+                [disabled]="busy === p.id" (click)="reject(p)">
+          <mat-icon>block</mat-icon>
+          <span i18n="@@marketplace.mod.reject">Rejeter</span>
+        </button>
+      </div>
+    </mat-card>
+  </div>
+</div>

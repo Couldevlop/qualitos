@@ -62,6 +62,13 @@ const routes: Routes = [
           import('./features/industry-packs/industry-packs.module').then(m => m.IndustryPacksModule)
       },
       {
+        // Marketplace de packs normatifs (§8.11) : catalogue, soumission partenaire,
+        // modération éditeur, installation par tenant.
+        path: 'marketplace',
+        loadChildren: () =>
+          import('./features/marketplace/marketplace.module').then(m => m.MarketplaceModule)
+      },
+      {
         path: 'circles',
         loadChildren: () => import('./features/circles/circles.module').then(m => m.CirclesModule)
       },
