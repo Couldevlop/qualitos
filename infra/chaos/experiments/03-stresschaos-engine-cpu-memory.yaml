@@ -1,0 +1,50 @@
+# =============================================================================
+# Expérience Chaos #03 — StressChaos : pression CPU + mémoire sur api-quality-engine.
+# CLAUDE.md §14.3, §2.1 (SLO sous contrainte), §10.2 (HPA / resources).
+#
+# HYPOTHÈSE DE RÉSILIENCE (steady-state) :
+#   api-quality-engine a des limites CPU="2" / mémoire 1536Mi
+#   (infra/k8s/qualitos/values.yaml services.api-quality-engine.resources).
+#   Sous une pression de 2 workers CPU + 256 Mo alloués sur UNE réplique, le
+#   service doit rester disponible (la 2e réplique absorbe), les probes tenir,
+#   et — si l'autoscaling est activé (HPA, infra/k8s/qualitos/templates/hpa.yaml)
+#   — un scale-out peut se déclencher au-delà de 70 % CPU.
+#
+# CRITÈRE DE RÉUSSITE :
+#   - La réplique stressée ne dépasse PAS sa limite mémoire au point d'être
+#     OOMKilled (256 Mo << limite 1536Mi) → pas de redémarrage.
+#   - p95 peut monter mais le taux 5xx reste < 5 % (alerte ApiErrorRateHigh).
+#   - Retour à la normale en < 1 min après l'arrêt de la faute.
+#
+# SCOPE : `mode: one` sur api-quality-engine, namespace qualitos.
+#
+# EXÉCUTION : cluster + Chaos Mesh requis (docs/runbooks/chaos-engineering.md).
+# =============================================================================
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: quality-engine-cpu-memory-stress
+  namespace: qualitos
+  labels:
+    app.kubernetes.io/part-of: qualitos
+    chaos.qualitos.io/experiment: stresschaos-engine-cpu-memory
+  annotations:
+    chaos.qualitos.io/hypothesis: >-
+      Une pression CPU+mémoire sur une réplique api-quality-engine n'entraîne
+      ni OOMKill ni indisponibilité ; la 2e réplique tient le trafic, retour
+      nominal sous 1 minute.
+spec:
+  mode: one
+  selector:
+    namespaces:
+      - qualitos
+    labelSelectors:
+      app.kubernetes.io/name: api-quality-engine
+  stressors:
+    cpu:
+      workers: 2
+      load: 80
+    memory:
+      workers: 1
+      size: "256MB"
+  duration: "120s"

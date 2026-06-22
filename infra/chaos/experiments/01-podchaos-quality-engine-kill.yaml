@@ -1,0 +1,45 @@
+# =============================================================================
+# Expérience Chaos #01 — PodChaos : kill d'un pod api-quality-engine.
+# CLAUDE.md §14.3 (Chaos Mesh), §2.1 (SLO 99,95 %, RTO < 1 h, RPO < 5 min).
+#
+# HYPOTHÈSE DE RÉSILIENCE (steady-state) :
+#   api-quality-engine tourne avec replicas=2 (infra/k8s/qualitos/values.yaml,
+#   bloc services.api-quality-engine). La perte d'UNE réplique ne doit PAS rompre
+#   le service : le Service K8s route vers la réplique survivante, la readinessProbe
+#   `/actuator/health/readiness` écarte le pod tué, et le Deployment en recrée un.
+#
+# CRITÈRE DE RÉUSSITE :
+#   - Aucune erreur 5xx visible côté Ingress pendant la faute (taux 5xx < 5 %,
+#     cf. alerte ApiErrorRateHigh — docs/runbooks/observability.md).
+#   - Le Deployment revient à 2/2 pods Ready en < 2 min (RTO local << 1 h).
+#   - p95 latence reste < 300 ms (SLO §20) — panel « Latence p95 » Grafana.
+#
+# SCOPE : namespace `qualitos`, label `app.kubernetes.io/name=api-quality-engine`
+#   (= matchLabels du Deployment, voir infra/k8s/qualitos/templates/deployment.yaml).
+#   `mode: one` → une seule réplique ciblée, l'autre absorbe le trafic.
+#
+# EXÉCUTION : requiert un cluster + Chaos Mesh installé (voir
+#   docs/runbooks/chaos-engineering.md). NE s'exécute PAS dans la CI normale.
+# =============================================================================
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: quality-engine-pod-kill
+  namespace: qualitos
+  labels:
+    app.kubernetes.io/part-of: qualitos
+    chaos.qualitos.io/experiment: podchaos-quality-engine-kill
+  annotations:
+    chaos.qualitos.io/hypothesis: >-
+      La perte d'une réplique api-quality-engine ne dégrade pas le service ;
+      retour à 2/2 Ready en moins de 2 minutes, sans 5xx ni dépassement du SLO p95.
+spec:
+  action: pod-kill
+  mode: one
+  selector:
+    namespaces:
+      - qualitos
+    labelSelectors:
+      app.kubernetes.io/name: api-quality-engine
+  # Délai de grâce 0 = kill brutal (test du pire cas : crash non gracieux).
+  gracePeriod: 0

@@ -1,0 +1,108 @@
+# =============================================================================
+# Workflow Chaos Mesh — « Resilience Game Day » QualitOS.
+# CLAUDE.md §14.3 (Chaos Mesh), §2.1 (SLO/RTO/RPO).
+#
+# Enchaîne séquentiellement les fautes pour valider la résilience bout-en-bout
+# du chemin critique (engine ← DB ← IA), avec un délai d'observation entre
+# chaque étape pour laisser les SLO se rétablir et permettre l'analyse Grafana.
+#
+# ORDRE :
+#   1. pod-kill engine        (perte de réplique → reprise)
+#   2. (pause d'observation 60 s)
+#   3. latence engine→Postgres (dégradation gracieuse DB)
+#   4. (pause d'observation 60 s)
+#   5. stress CPU+mémoire engine (pression ressources)
+#
+# CRITÈRE GLOBAL : à la fin du workflow, le service est revenu à l'état nominal
+#   (2/2 pods Ready, p95 < 300 ms, 5xx < 5 %) — vérifié via Grafana/Prometheus
+#   (docs/runbooks/observability.md). Le workflow s'auto-termine.
+#
+# EXÉCUTION : cluster + Chaos Mesh requis (docs/runbooks/chaos-engineering.md).
+#   kubectl apply -f infra/chaos/workflows/resilience-gameday.yaml
+# =============================================================================
+apiVersion: chaos-mesh.org/v1alpha1
+kind: Workflow
+metadata:
+  name: resilience-gameday
+  namespace: qualitos
+  labels:
+    app.kubernetes.io/part-of: qualitos
+    chaos.qualitos.io/experiment: workflow-resilience-gameday
+spec:
+  entry: gameday-sequence
+  templates:
+    # ---- Orchestration séquentielle ----------------------------------------
+    - name: gameday-sequence
+      templateType: Serial
+      deadline: "15m"
+      children:
+        - step-pod-kill
+        - observe-1
+        - step-db-latency
+        - observe-2
+        - step-stress
+
+    # ---- Étape 1 : kill d'une réplique engine -------------------------------
+    - name: step-pod-kill
+      templateType: PodChaos
+      deadline: "60s"
+      podChaos:
+        action: pod-kill
+        mode: one
+        selector:
+          namespaces:
+            - qualitos
+          labelSelectors:
+            app.kubernetes.io/name: api-quality-engine
+
+    # ---- Pause d'observation (laisse les SLO se rétablir) -------------------
+    - name: observe-1
+      templateType: Suspend
+      deadline: "60s"
+
+    # ---- Étape 2 : latence + perte engine → Postgres ------------------------
+    - name: step-db-latency
+      templateType: NetworkChaos
+      deadline: "120s"
+      networkChaos:
+        action: delay
+        mode: all
+        direction: to
+        selector:
+          namespaces:
+            - qualitos
+          labelSelectors:
+            app.kubernetes.io/name: api-quality-engine
+        externalTargets:
+          - postgres.qualitos.svc.cluster.local
+        delay:
+          latency: "300ms"
+          jitter: "50ms"
+          correlation: "50"
+        loss:
+          loss: "10"
+          correlation: "25"
+
+    # ---- Pause d'observation -----------------------------------------------
+    - name: observe-2
+      templateType: Suspend
+      deadline: "60s"
+
+    # ---- Étape 3 : stress CPU + mémoire engine ------------------------------
+    - name: step-stress
+      templateType: StressChaos
+      deadline: "120s"
+      stressChaos:
+        mode: one
+        selector:
+          namespaces:
+            - qualitos
+          labelSelectors:
+            app.kubernetes.io/name: api-quality-engine
+        stressors:
+          cpu:
+            workers: 2
+            load: 80
+          memory:
+            workers: 1
+            size: "256MB"

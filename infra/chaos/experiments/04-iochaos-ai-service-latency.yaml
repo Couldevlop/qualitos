@@ -1,0 +1,54 @@
+# =============================================================================
+# Expérience Chaos #04 (OPTIONNELLE) — IOChaos : latence I/O disque sur ai-service.
+# CLAUDE.md §14.3, §2.1.
+#
+# HYPOTHÈSE DE RÉSILIENCE (steady-state) :
+#   ai-service (FastAPI, healthPath /health, infra/k8s/qualitos/values.yaml
+#   services.ai-service) lit/écrit des fichiers temporaires (modèles ONNX,
+#   buffers). Une latence I/O de 100 ms sur /tmp doit ralentir l'inférence MAIS
+#   l'API doit rester saine (`/health` répond), et le quality-engine appelant
+#   (AI_SERVICE_URL) doit appliquer son timeout sans cascader (cf. garde-fous
+#   IA, ADR 0017 / circuit breaker AiGatewayClient).
+#
+# CRITÈRE DE RÉUSSITE :
+#   - `/health` reste OK → pas de redémarrage de ai-service.
+#   - Les appels IA lents sont coupés par le timeout/disjoncteur côté engine,
+#     pas par un crash ; le reste de la plateforme (PDCA, 5S…) reste nominal.
+#
+# SCOPE : pods `app.kubernetes.io/name=ai-service`, namespace qualitos, sur le
+#   volumePath /tmp (emptyDir inscriptible, cf. deployment.yaml volumeMounts —
+#   note : seuls les services Spring Boot montent /tmp dans le chart actuel ;
+#   pour ai-service, adapter volumePath au montage réel si différent).
+#
+# REMARQUE : IOChaos requiert que le conteneur cible ait un système de fichiers
+#   inscriptible au chemin visé. À activer seulement si ai-service expose un
+#   volume inscriptible (sinon l'injection est inerte).
+#
+# EXÉCUTION : cluster + Chaos Mesh requis (docs/runbooks/chaos-engineering.md).
+# =============================================================================
+apiVersion: chaos-mesh.org/v1alpha1
+kind: IOChaos
+metadata:
+  name: ai-service-io-latency
+  namespace: qualitos
+  labels:
+    app.kubernetes.io/part-of: qualitos
+    chaos.qualitos.io/experiment: iochaos-ai-service-latency
+  annotations:
+    chaos.qualitos.io/hypothesis: >-
+      Une latence I/O sur ai-service ralentit l'inférence sans rendre l'API
+      indisponible ; les appels lents sont coupés par le disjoncteur côté
+      quality-engine, le reste de la plateforme reste nominal.
+spec:
+  action: latency
+  mode: one
+  selector:
+    namespaces:
+      - qualitos
+    labelSelectors:
+      app.kubernetes.io/name: ai-service
+  volumePath: /tmp
+  path: "/tmp/**/*"
+  delay: "100ms"
+  percent: 50
+  duration: "120s"

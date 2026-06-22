@@ -1,0 +1,66 @@
+# =============================================================================
+# Expérience Chaos #02 — NetworkChaos : latence/perte engine → PostgreSQL.
+# CLAUDE.md §14.3, §2.1 (dégradation gracieuse), §10.2 (observabilité).
+#
+# HYPOTHÈSE DE RÉSILIENCE (steady-state) :
+#   api-quality-engine joint PostgreSQL via DB_URL
+#   jdbc:postgresql://postgres.qualitos.svc.cluster.local:5432/qualitos_quality
+#   (infra/k8s/qualitos/values.yaml). Le pool Hikari et les timeouts JDBC doivent
+#   absorber une latence injectée de 300 ms (+/-50 ms) et 10 % de perte de paquets
+#   SANS faire tomber la liveness probe (le pod NE redémarre PAS en boucle) :
+#   dégradation gracieuse = latence applicative augmente mais le service répond.
+#
+# CRITÈRE DE RÉUSSITE :
+#   - Aucun CrashLoopBackOff : la livenessProbe `/actuator/health/liveness`
+#     reste OK (les requêtes liveness ne touchent pas la base).
+#   - Les requêtes échouées sont bornées et journalisées (pas de cascade) ;
+#     la saturation du pool Hikari est visible dans le panel « Pool JDBC Hikari »
+#     (docs/runbooks/observability.md) — c'est le signal attendu, pas un échec.
+#   - Après arrêt de la faute : retour à p95 < 300 ms en < 1 min.
+#
+# SCOPE : pods `app.kubernetes.io/name=api-quality-engine` du namespace qualitos,
+#   direction `to` = trafic SORTANT vers les pods qui exposent le service Postgres.
+#   externalTargets cible l'hôte Postgres lorsqu'il est HORS cluster (managé) ;
+#   target.selector cible un Postgres déployé dans le namespace (chart dédié).
+#   On fournit les deux variantes (la non-pertinente est inerte si la cible
+#   n'existe pas). Le Postgres applicatif est documenté comme externalService
+#   (values.yaml externalServices.postgresHost).
+#
+# EXÉCUTION : cluster + Chaos Mesh requis (docs/runbooks/chaos-engineering.md).
+# =============================================================================
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: quality-engine-postgres-latency
+  namespace: qualitos
+  labels:
+    app.kubernetes.io/part-of: qualitos
+    chaos.qualitos.io/experiment: networkchaos-engine-postgres-latency
+  annotations:
+    chaos.qualitos.io/hypothesis: >-
+      Une latence de 300 ms et 10 % de perte vers PostgreSQL dégradent
+      gracieusement api-quality-engine sans CrashLoopBackOff ; retour nominal
+      sous 1 minute après l'arrêt de la faute.
+spec:
+  action: delay
+  mode: all
+  direction: to
+  selector:
+    namespaces:
+      - qualitos
+    labelSelectors:
+      app.kubernetes.io/name: api-quality-engine
+  # Cible le trafic vers l'hôte PostgreSQL managé (hors cluster).
+  # cf. values.yaml externalServices.postgresHost.
+  externalTargets:
+    - postgres.qualitos.svc.cluster.local
+  delay:
+    latency: "300ms"
+    correlation: "50"
+    jitter: "50ms"
+  # Perte additionnelle de paquets pour stresser les retransmissions TCP.
+  loss:
+    loss: "10"
+    correlation: "25"
+  # Durée bornée : l'expérience s'auto-termine et restaure le réseau.
+  duration: "120s"

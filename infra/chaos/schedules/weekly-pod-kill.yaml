@@ -1,0 +1,34 @@
+# =============================================================================
+# Schedule Chaos Mesh — injection récurrente (OPTIONNELLE, staging uniquement).
+# CLAUDE.md §14.3.
+#
+# Exécute le pod-kill engine chaque lundi 03:00 (heure du cluster) pour vérifier
+# en continu que la résilience ne régresse pas (chaos « as code », non bloquant).
+# À RÉSERVER À UN ENVIRONNEMENT DE STAGING — jamais en production sans garde-fou.
+#
+# `concurrencyPolicy: Forbid` empêche le chevauchement d'expériences.
+# `historyLimit` borne les objets conservés.
+#
+# EXÉCUTION : cluster + Chaos Mesh requis (docs/runbooks/chaos-engineering.md).
+# =============================================================================
+apiVersion: chaos-mesh.org/v1alpha1
+kind: Schedule
+metadata:
+  name: weekly-quality-engine-pod-kill
+  namespace: qualitos
+  labels:
+    app.kubernetes.io/part-of: qualitos
+    chaos.qualitos.io/experiment: schedule-weekly-pod-kill
+spec:
+  schedule: "0 3 * * 1"
+  concurrencyPolicy: Forbid
+  historyLimit: 5
+  type: PodChaos
+  podChaos:
+    action: pod-kill
+    mode: one
+    selector:
+      namespaces:
+        - qualitos
+      labelSelectors:
+        app.kubernetes.io/name: api-quality-engine
