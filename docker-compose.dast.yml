@@ -1,0 +1,79 @@
+# QualitOS — stack MINIMALE pour le scan DAST OWASP ZAP (CLAUDE.md §11 / §14.2 / §14.3).
+#
+# Périmètre réduit au strict nécessaire pour exposer la surface HTTP de
+# api-quality-engine à ZAP : Postgres (Flyway au boot) + l'engine. Keycloak
+# n'est PAS démarré : la validation JWT (jwk-set-uri) est PARESSEUSE — l'engine
+# boote et répond /actuator/health=UP sans IdP joignable. Un scan ZAP NON
+# AUTHENTIFIÉ frappe la surface publique (actuator exposé, /v3/api-docs,
+# /swagger-ui) et reçoit 401 sur les routes protégées : c'est le baseline DAST.
+#
+# Usage CI :   docker-compose -f docker-compose.dast.yml up -d --build
+# Usage local : voir docs/runbooks/dast-owasp-zap.md (ports décalés pour ne pas
+#               entrer en conflit avec docker-compose.dev.yml).
+#
+# Ports : volontairement DIFFÉRENTS du compose dev (8092 vs 8082, 55432 vs 5434)
+# pour pouvoir tourner EN PARALLÈLE de la stack dev sur un poste développeur.
+
+services:
+
+  postgres-dast:
+    image: postgres:17-alpine
+    container_name: qualitos-postgres-dast
+    environment:
+      POSTGRES_USER: qualitos
+      POSTGRES_PASSWORD: qualitos
+      # Seule la base de l'engine est requise pour le DAST.
+      POSTGRES_MULTIPLE_DATABASES: qualitos_quality
+    volumes:
+      - ./infra/postgres/init-multiple-databases.sh:/docker-entrypoint-initdb.d/init-multiple-databases.sh:ro
+    ports:
+      # 55432 (hôte) → 5432 (conteneur) : évite 5432 (pg natif Windows) ET 5434
+      # (compose dev). Tmpfs : pas de volume nommé, base éphémère (jetable après scan).
+      - "55432:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U qualitos -d qualitos_quality"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks: [qualitos-dast]
+
+  api-quality-engine-dast:
+    build:
+      context: .
+      dockerfile: apps/api-quality-engine/Dockerfile
+    container_name: qualitos-api-quality-engine-dast
+    environment:
+      DB_URL: jdbc:postgresql://postgres-dast:5432/qualitos_quality
+      DB_USER: qualitos
+      DB_PASSWORD: qualitos
+      # Pas de Keycloak joignable : jwk-set-uri pointe vers une URL non résolue,
+      # mais elle n'est lue qu'à la PREMIÈRE validation d'un token (lazy). Le boot
+      # et /actuator/health ne dépendent pas de l'IdP. Les routes protégées
+      # renvoient donc 401 (token absent) — exactement ce qu'on veut auditer.
+      KEYCLOAK_URL: http://keycloak-absent:8080
+      KEYCLOAK_REALM: qualitos
+      SPRING_PROFILES_ACTIVE: dev
+    ports:
+      # 8092 (hôte) → 8082 (conteneur) : 8082 est pris par la stack dev.
+      - "8092:8082"
+    depends_on:
+      postgres-dast:
+        condition: service_healthy
+    healthcheck:
+      # L'image distroless n'a ni curl ni wget : on sonde le port en TCP via le
+      # /dev/tcp de bash… absent aussi. On s'appuie donc sur le wait-for côté
+      # workflow (boucle curl depuis le runner). Ce healthcheck reste informatif :
+      # il teste la JVM via le process (toujours "starting" → on ne s'en sert pas
+      # comme gate, le workflow attend /actuator/health en HTTP depuis l'hôte).
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 10s
+      timeout: 3s
+      retries: 1
+      start_period: 5s
+    networks: [qualitos-dast]
+
+networks:
+  qualitos-dast:
+    driver: bridge

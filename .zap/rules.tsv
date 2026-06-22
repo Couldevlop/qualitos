@@ -1,0 +1,44 @@
+# QualitOS — règles OWASP ZAP pour le scan DAST en CI (CLAUDE.md §11 / §14.2).
+#
+# Format (TSV, séparé par des TABULATIONS — PAS des espaces) :
+#   <pluginId>	<seuil>	<action>	[# commentaire]
+# Colonnes lues par zap-baseline.py / zap-api-scan.py :
+#   - pluginId : identifiant numérique de l'alerte ZAP (https://www.zaproxy.org/docs/alerts/)
+#   - action   : IGNORE | WARN | FAIL
+#
+# Politique de seuil (§14.2, DoD §20 « DAST : 0 critique, 0 haute ») :
+#   - Le job échoue (-l FAIL côté CLI) sur toute alerte de RISQUE HIGH non ignorée.
+#   - Les alertes MEDIUM/LOW sont rapportées en WARN (visibles, non bloquantes)
+#     tant qu'elles ne sont pas promues FAIL ci-dessous.
+#
+# GESTION DES FAUX POSITIFS
+#   Chaque entrée IGNORE doit être MOTIVÉE et DATÉE. Un faux positif se traite ici
+#   (et NON en désactivant le scan). Pour lever un doute : reproduire en local
+#   (docs/runbooks/dast-owasp-zap.md), confirmer le caractère bénin, puis ignorer
+#   avec justification. Réévaluer à chaque montée de version de ZAP.
+
+# --- Faux positifs assumés sur la surface API/actuator non authentifiée ---------
+
+# 10096  Timestamp Disclosure : springdoc/actuator exposent des epochs (uptime,
+#        build time) — informationnel, pas un secret. WARN suffit.
+10096	IGNORE	# 2026-06-22 timestamps actuator/openapi non sensibles
+
+# 10027  Information Disclosure - Suspicious Comments : déclenché par les exemples
+#        et descriptions de /v3/api-docs (mots « TODO », « query »…). Doc OpenAPI,
+#        pas de fuite réelle.
+10027	IGNORE	# 2026-06-22 commentaires dans la spec OpenAPI, bénins
+
+# 10049  Non-Storable / Storable Content (cache) : le baseline le lève sur l'API
+#        JSON ; la politique de cache HTTP de l'API n'est pas une vuln. WARN→IGNORE.
+10049	IGNORE	# 2026-06-22 sémantique de cache API, hors périmètre DAST bloquant
+
+# --- Alertes que l'on veut voir REMONTER comme bloquantes même en MEDIUM --------
+
+# 90004  Insufficient Site Isolation Against Spectre (COOP/COEP). Le front règle
+#        ses en-têtes via nginx ; côté API on accepte WARN (pas de contenu HTML
+#        sensible servi). Laissé en WARN (défaut) — documenté ici pour traçabilité.
+
+# 10038  CSP header non positionné : sur une API JSON pure, la CSP a peu d'effet
+#        (pas de rendu HTML), MAIS le swagger-ui SERT du HTML. On garde WARN par
+#        défaut ; durcir en FAIL une fois le hardening des en-têtes API tranché
+#        (suivi : threat model api-quality-engine).

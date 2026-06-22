@@ -74,6 +74,11 @@ apps/web/coverage/
 **/jacoco.exec
 **/jacoco/
 
+# DAST OWASP ZAP — rapports générés en local (cf. docs/runbooks/dast-owasp-zap.md)
+zap-baseline-report.*
+zap-api-scan-report.*
+dast-stack.log
+
 # Build output
 **/build/
 
@@ -104,3 +109,6 @@ karma.log
 hs_err_pid*.log
 replay_pid*.log
 karma.zip
+
+# Identifiants locaux de dev — NE JAMAIS committer
+.credentials-local.md

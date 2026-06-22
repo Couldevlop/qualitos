@@ -509,3 +509,107 @@ jobs:
           name: playwright-report
           path: apps/web/playwright-report/
           retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # DAST (OWASP ZAP) — §14.2 « DAST (OWASP ZAP) », §14.3, DoD §20.
+  #
+  # Démarre une stack MINIMALE éphémère (Postgres + api-quality-engine, sans
+  # Keycloak — cf. docker-compose.dast.yml), attend /actuator/health=UP, puis
+  # lance deux scans ZAP :
+  #   1. BASELINE (passif, spider léger) sur la racine HTTP de l'engine.
+  #   2. API SCAN (actif, ciblé) sur la spec OpenAPI /v3/api-docs.
+  # Seuil d'échec : FAIL sur HIGH (option -l côté action), WARN sur MEDIUM. Les
+  # faux positifs sont gérés dans .zap/rules.tsv (motivés + datés).
+  #
+  # 100 % autonome : aucune dépendance à un secret repo (images publiques
+  # zaproxy/* + ghcr.io/zaproxy/action-*). S'exécute sur les push main/develop
+  # ET sur les PR internes (pas les forks : pas de Docker build lourd inutile et
+  # cohérent avec image-scan). Voir docs/runbooks/dast-owasp-zap.md.
+  # ---------------------------------------------------------------------------
+  dast-zap:
+    name: DAST (OWASP ZAP)
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    # Pas sur les forks (build Docker de l'engine = lourd, et le scan n'apporte
+    # rien sur une PR externe avant revue). Push main/develop + PR du repo.
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build & start DAST stack (Postgres + api-quality-engine)
+        run: |
+          docker compose -f docker-compose.dast.yml up -d --build
+
+      - name: Wait for engine health (/actuator/health = UP)
+        run: |
+          set -euo pipefail
+          echo "Attente du démarrage de api-quality-engine (max 5 min)…"
+          for i in $(seq 1 60); do
+            body="$(curl -fsS http://localhost:8092/actuator/health 2>/dev/null || true)"
+            if echo "$body" | grep -q '"status":"UP"'; then
+              echo "Engine UP après ${i} tentatives."
+              echo "$body"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::Engine non disponible après 5 min — dump des logs :"
+          docker compose -f docker-compose.dast.yml logs --no-color api-quality-engine-dast | tail -200
+          exit 1
+
+      - name: Smoke OpenAPI endpoint (/v3/api-docs)
+        run: |
+          set -euo pipefail
+          code="$(curl -s -o /tmp/openapi.json -w '%{http_code}' http://localhost:8092/v3/api-docs)"
+          echo "GET /v3/api-docs -> HTTP $code ($(wc -c < /tmp/openapi.json) octets)"
+          test "$code" = "200"
+
+      # --- Scan 1 : BASELINE (passif) sur la racine HTTP ----------------------
+      # allow_issue_writing=false : pas de création d'issue GitHub (évite la perm
+      # issues:write et le bruit ; le rapport part en artefact). -I (cmd_options)
+      # NON utilisé : on VEUT que le job échoue sur HIGH (fail_action par défaut).
+      - name: ZAP Baseline scan
+        uses: zaproxy/action-baseline@v0.14.0
+        with:
+          target: 'http://localhost:8092'
+          rules_file_name: '.zap/rules.tsv'
+          # -l FAIL : niveau minimal qui FAIT ÉCHOUER le scan = WARN par défaut ;
+          # on remonte à FAIL pour ne bloquer que sur HIGH (les MEDIUM restent
+          # rapportés en WARN dans le HTML/MD). -j : spider AJAX léger désactivé
+          # (API JSON, pas de DOM). -m 3 : 3 min de spider max.
+          cmd_options: '-l FAIL -m 3 -z "-config api.disablekey=true"'
+          allow_issue_writing: false
+          fail_action: true
+          artifact_name: zap-baseline-report
+
+      # --- Scan 2 : API SCAN (actif, ciblé OpenAPI) ---------------------------
+      - name: ZAP API scan (OpenAPI /v3/api-docs)
+        uses: zaproxy/action-api-scan@v0.9.0
+        with:
+          target: 'http://localhost:8092/v3/api-docs'
+          format: openapi
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: '-l FAIL'
+          allow_issue_writing: false
+          fail_action: true
+          artifact_name: zap-api-scan-report
+
+      - name: Tear down DAST stack
+        if: always()
+        run: |
+          docker compose -f docker-compose.dast.yml logs --no-color > dast-stack.log 2>&1 || true
+          docker compose -f docker-compose.dast.yml down -v || true
+
+      - name: Upload DAST stack log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dast-stack-log
+          path: dast-stack.log
+          if-no-files-found: warn
+          retention-days: 7
