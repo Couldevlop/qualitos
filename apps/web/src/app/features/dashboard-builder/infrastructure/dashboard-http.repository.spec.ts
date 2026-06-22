@@ -58,4 +58,35 @@ describe('DashboardHttpRepository', () => {
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
   });
+
+  it('exportPdf POSTs widgets and parses blob + integrity headers', () => {
+    repo.exportPdf('d1', [{ title: 'K', type: 'kpi', dataLines: ['x'] }]).subscribe(res => {
+      expect(res.fileName).toBe('dashboard-exec.pdf');
+      expect(res.verificationCode).toBe('abcDEF012345_-xy');
+      expect(res.sha256).toBe('a'.repeat(64));
+      expect(res.anchorRef).toBe('tx-1');
+      expect(res.blob.type).toBe('application/pdf');
+    });
+    const req = http.expectOne(`${base}/d1/export/pdf`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.responseType).toBe('blob');
+    expect(req.request.body.widgets[0].title).toBe('K');
+    req.flush(new Blob(['%PDF'], { type: 'application/pdf' }), {
+      headers: {
+        'Content-Disposition': 'attachment; filename="dashboard-exec.pdf"',
+        'X-Export-Verification-Code': 'abcDEF012345_-xy',
+        'X-Export-Sha256': 'a'.repeat(64),
+        'X-Export-Anchor-Ref': 'tx-1'
+      }
+    });
+  });
+
+  it('exportPdf falls back to a default file name when no disposition header', () => {
+    repo.exportPdf('d2', []).subscribe(res => {
+      expect(res.fileName).toBe('dashboard-d2.pdf');
+      expect(res.verificationCode).toBe('');
+    });
+    const req = http.expectOne(`${base}/d2/export/pdf`);
+    req.flush(new Blob(['%PDF'], { type: 'application/pdf' }));
+  });
 });

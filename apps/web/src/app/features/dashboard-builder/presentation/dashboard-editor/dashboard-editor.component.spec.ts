@@ -7,7 +7,7 @@ import { of, throwError } from 'rxjs';
 
 import { DashboardBuilderModule } from '../../dashboard-builder.module';
 import { DashboardBuilderService } from '../../application/dashboard-builder.service';
-import { DashboardLayout, Widget } from '../../domain/dashboard.model';
+import { DashboardExportResult, DashboardLayout, Widget } from '../../domain/dashboard.model';
 import { DashboardEditorComponent } from './dashboard-editor.component';
 
 class FakeService {
@@ -203,5 +203,66 @@ describe('DashboardEditorComponent', () => {
     (component.options.itemChangeCallback as Function)();
     expect(component.layout.widgets[0].position.x).toBe(5);
     expect(component.layout.widgets[0].position.y).toBe(4);
+  });
+});
+
+describe('DashboardEditorComponent (export PDF signé §7.4)', () => {
+  let component: DashboardEditorComponent;
+  let svc: jasmine.SpyObj<DashboardBuilderService>;
+  let snack: jasmine.SpyObj<{ open: (m: string, a?: string, c?: unknown) => void }>;
+
+  const exportResult: DashboardExportResult = {
+    blob: new Blob(['%PDF'], { type: 'application/pdf' }),
+    fileName: 'dashboard-exec.pdf',
+    verificationCode: 'abcDEF012345_-xy',
+    sha256: 'a'.repeat(64),
+    anchorRef: 'tx-1'
+  };
+
+  beforeEach(() => {
+    svc = jasmine.createSpyObj('DashboardBuilderService', ['get', 'exportPdf']);
+    snack = jasmine.createSpyObj('MatSnackBar', ['open']);
+    // Construction directe : route/router/catalog non sollicités par l'export.
+    component = new DashboardEditorComponent(
+      svc as never,
+      { entries: () => [] } as never,                    // WidgetCatalogService
+      { paramMap: of(convertToParamMap({})) } as never,  // ActivatedRoute
+      { navigate: () => {} } as never,                   // Router
+      snack as never);
+    component.layout = { id: 'd1', name: 'Exec', shared: false, widgets: [] };
+    component.isNew = false;
+  });
+
+  it('télécharge le PDF signé et affiche le code de vérification', () => {
+    svc.exportPdf.and.returnValue(of(exportResult));
+    const clickSpy = jasmine.createSpy('click');
+    spyOn(document, 'createElement').and.returnValue({ click: clickSpy } as never);
+    spyOn(URL, 'createObjectURL').and.returnValue('blob:x');
+    spyOn(URL, 'revokeObjectURL');
+
+    component.exportPdf();
+
+    expect(svc.exportPdf).toHaveBeenCalledWith(component.layout);
+    expect(clickSpy).toHaveBeenCalled();
+    expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:x');
+    expect(component.exporting).toBeFalse();
+    expect(snack.open).toHaveBeenCalledWith(
+      jasmine.stringMatching(/abcDEF012345_-xy/), 'OK', jasmine.anything());
+  });
+
+  it('refuse d\'exporter un dashboard non enregistré', () => {
+    component.layout = { name: 'New', shared: false, widgets: [] };
+    component.exportPdf();
+    expect(svc.exportPdf).not.toHaveBeenCalled();
+    expect(snack.open).toHaveBeenCalledWith(
+      jasmine.stringMatching(/Enregistrez/), 'OK', jasmine.anything());
+  });
+
+  it('affiche une erreur et coupe le spinner en cas d\'échec', () => {
+    svc.exportPdf.and.returnValue(throwError(() => new Error('boom')));
+    component.exportPdf();
+    expect(component.exporting).toBeFalse();
+    expect(snack.open).toHaveBeenCalledWith(
+      jasmine.stringMatching(/chec/), 'OK', jasmine.anything());
   });
 });

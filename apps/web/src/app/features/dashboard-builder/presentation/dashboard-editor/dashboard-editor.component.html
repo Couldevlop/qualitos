@@ -23,6 +23,19 @@
 
       <span class="spacer"></span>
 
+      <button mat-stroked-button color="primary"
+              class="export-btn"
+              [disabled]="exporting || isNew || !layout.id"
+              (click)="exportPdf()"
+              matTooltip="Exporter en PDF signé (ML-DSA + ancrage blockchain)"
+              i18n-matTooltip="@@dashboardExportPdfTooltip"
+              aria-label="Exporter en PDF signé"
+              i18n-aria-label="@@dashboardExportPdfAria">
+        <mat-icon *ngIf="!exporting">picture_as_pdf</mat-icon>
+        <mat-progress-spinner *ngIf="exporting" diameter="18" mode="indeterminate"></mat-progress-spinner>
+        <span i18n="@@dashboardExportPdfLabel">Exporter en PDF (signé)</span>
+      </button>
+
       <button mat-flat-button color="primary"
               [disabled]="saving" (click)="save()" class="save-btn">
         <mat-icon *ngIf="!saving">save</mat-icon>

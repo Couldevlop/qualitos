@@ -7,7 +7,12 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 
-import { DashboardLayout, Widget } from '../domain/dashboard.model';
+import {
+  DashboardExportResult,
+  DashboardLayout,
+  ExportWidgetSnapshot,
+  Widget
+} from '../domain/dashboard.model';
 import { DashboardLayoutRepository } from '../domain/dashboard-layout.repository';
 import { environment } from '../../../../environments/environment';
 
@@ -63,6 +68,28 @@ export class DashboardHttpRepository implements DashboardLayoutRepository {
 
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  exportPdf(id: string, widgets: ReadonlyArray<ExportWidgetSnapshot>): Observable<DashboardExportResult> {
+    return this.http.post(`${this.baseUrl}/${id}/export/pdf`, { widgets },
+      { observe: 'response', responseType: 'blob' }).pipe(
+      map(resp => ({
+        blob: resp.body ?? new Blob([], { type: 'application/pdf' }),
+        fileName: this.fileNameFromDisposition(resp.headers.get('Content-Disposition'))
+          ?? `dashboard-${id}.pdf`,
+        verificationCode: resp.headers.get('X-Export-Verification-Code') ?? '',
+        sha256: resp.headers.get('X-Export-Sha256') ?? '',
+        anchorRef: resp.headers.get('X-Export-Anchor-Ref') ?? ''
+      }))
+    );
+  }
+
+  private fileNameFromDisposition(value: string | null): string | null {
+    if (!value) {
+      return null;
+    }
+    const match = /filename="?([^"]+)"?/.exec(value);
+    return match ? match[1] : null;
   }
 
   private toDomain(p: DashboardLayoutPayload): DashboardLayout {
