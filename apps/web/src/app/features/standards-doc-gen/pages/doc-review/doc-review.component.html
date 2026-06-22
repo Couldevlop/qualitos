@@ -1,0 +1,96 @@
+<div class="qos-page">
+  <qos-page-header
+    eyebrow="Standards Hub · Validation"
+    i18n-title="@@docreview.title"
+    title="Revue d'un document généré"
+    i18n-subtitle="@@docreview.subtitle"
+    subtitle="Relisez le brouillon rédigé par l'IA, soumettez-le à validation, puis approuvez-le (signature humaine) ou rejetez-le. Aucune publication sans validation humaine.">
+  </qos-page-header>
+
+  <div class="docreview-error" *ngIf="error" role="alert">
+    <mat-icon aria-hidden="true">error_outline</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <mat-progress-spinner *ngIf="loading" mode="indeterminate" diameter="32" class="docreview-spinner">
+  </mat-progress-spinner>
+
+  <ng-container *ngIf="doc as d">
+    <qos-panel [title]="d.title" icon="description">
+      <div qosActions>
+        <qos-status-pill [label]="statusLabel(d.status)" [tone]="statusTone(d.status)">
+        </qos-status-pill>
+      </div>
+
+      <div class="docreview-meta">
+        <span>{{ kindLabel(d.kind) }}</span>
+        <span>· {{ d.standardCode }}</span>
+        <span *ngIf="d.aiProvider">· {{ d.aiProvider }}</span>
+      </div>
+
+      <div class="docreview-reject" *ngIf="d.rejectionReason">
+        <mat-icon aria-hidden="true">report</mat-icon>
+        <span><strong i18n="@@docreview.lastreject">Dernier rejet :</strong> {{ d.rejectionReason }}</span>
+      </div>
+
+      <section class="docreview-section" *ngFor="let s of d.sections">
+        <h3>{{ s.title }}</h3>
+        <p class="docreview-clauses" *ngIf="s.clauses.length > 0">
+          <ng-container i18n="@@docreview.clauses">Clauses</ng-container> : {{ s.clauses.join(', ') }}
+        </p>
+        <pre class="docreview-body">{{ s.bodyMarkdown }}</pre>
+      </section>
+
+      <!-- Actions selon l'état -->
+      <div class="docreview-actions">
+        <button mat-flat-button color="primary" (click)="submit()"
+                *ngIf="d.status === 'BROUILLON_IA'" [disabled]="acting">
+          <mat-icon aria-hidden="true">send</mat-icon>
+          <span i18n="@@docreview.action.submit">Soumettre à validation</span>
+        </button>
+      </div>
+
+      <form [formGroup]="approveForm" (ngSubmit)="approve()" class="docreview-approve"
+            *ngIf="d.status === 'EN_VALIDATION'">
+        <p class="docreview-note" i18n="@@docreview.approve.note">
+          L'approbation appose une signature humaine. L'approbateur doit différer du soumetteur.
+        </p>
+        <mat-form-field appearance="outline" class="full">
+          <mat-label i18n="@@docreview.approve.signature">Signature</mat-label>
+          <input matInput formControlName="signature" maxlength="2000">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full">
+          <mat-label i18n="@@docreview.approve.notes">Notes (facultatif)</mat-label>
+          <input matInput formControlName="notes">
+        </mat-form-field>
+        <div class="docreview-approve-buttons">
+          <button mat-flat-button color="primary" type="submit" [disabled]="acting">
+            <mat-icon aria-hidden="true">verified</mat-icon>
+            <span i18n="@@docreview.action.approve">Approuver & signer</span>
+          </button>
+          <button mat-stroked-button type="button" (click)="showReject = !showReject"
+                  [disabled]="acting">
+            <mat-icon aria-hidden="true">block</mat-icon>
+            <span i18n="@@docreview.action.reject-toggle">Rejeter</span>
+          </button>
+        </div>
+      </form>
+
+      <form [formGroup]="rejectForm" (ngSubmit)="reject()" class="docreview-rejectform"
+            *ngIf="d.status === 'EN_VALIDATION' && showReject">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label i18n="@@docreview.reject.reason">Motif du rejet</mat-label>
+          <input matInput formControlName="reason" maxlength="2000">
+        </mat-form-field>
+        <button mat-flat-button color="warn" type="submit" [disabled]="acting">
+          <span i18n="@@docreview.action.reject">Confirmer le rejet</span>
+        </button>
+      </form>
+
+      <div class="docreview-approved" *ngIf="d.status === 'APPROUVE'">
+        <mat-icon aria-hidden="true">verified</mat-icon>
+        <span i18n="@@docreview.approved">Pièce approuvée et signée — prête pour la finalisation du dossier.</span>
+      </div>
+    </qos-panel>
+  </ng-container>
+</div>

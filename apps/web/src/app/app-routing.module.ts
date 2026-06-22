@@ -51,6 +51,12 @@ const routes: Routes = [
         loadChildren: () => import('./features/standards/standards.module').then(m => m.StandardsModule)
       },
       {
+        path: 'standards-doc-gen',
+        loadChildren: () =>
+          import('./features/standards-doc-gen/standards-doc-gen.module')
+            .then(m => m.StandardsDocGenModule)
+      },
+      {
         path: 'industry-packs',
         loadChildren: () =>
           import('./features/industry-packs/industry-packs.module').then(m => m.IndustryPacksModule)
