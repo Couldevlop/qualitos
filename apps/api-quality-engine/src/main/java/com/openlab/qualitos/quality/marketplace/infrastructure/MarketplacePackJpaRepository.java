@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.marketplace.infrastructure;
 
+import com.openlab.qualitos.quality.marketplace.domain.MarketplacePackStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,9 +14,20 @@ public interface MarketplacePackJpaRepository extends JpaRepository<MarketplaceP
 
     @Query("""
         SELECT p FROM MarketplacePackJpaEntity p
-        WHERE p.verified = true
+        WHERE p.status = com.openlab.qualitos.quality.marketplace.domain.MarketplacePackStatus.PUBLISHED
           AND (:sector IS NULL OR p.sector = :sector)
-        ORDER BY p.updatedAt DESC
+        ORDER BY p.ratingAvg DESC, p.updatedAt DESC
         """)
-    List<MarketplacePackJpaEntity> findVerified(@Param("sector") String sector);
+    List<MarketplacePackJpaEntity> findPublished(@Param("sector") String sector);
+
+    List<MarketplacePackJpaEntity> findByStatusOrderBySubmittedAtAsc(MarketplacePackStatus status);
+
+    @Query("""
+        SELECT p FROM MarketplacePackJpaEntity p
+        WHERE p.status IN (
+            com.openlab.qualitos.quality.marketplace.domain.MarketplacePackStatus.SUBMITTED,
+            com.openlab.qualitos.quality.marketplace.domain.MarketplacePackStatus.IN_REVIEW)
+        ORDER BY p.submittedAt ASC
+        """)
+    List<MarketplacePackJpaEntity> findModerationQueue();
 }

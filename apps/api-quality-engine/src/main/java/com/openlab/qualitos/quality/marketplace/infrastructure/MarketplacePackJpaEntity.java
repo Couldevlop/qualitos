@@ -1,6 +1,10 @@
 package com.openlab.qualitos.quality.marketplace.infrastructure;
 
+import com.openlab.qualitos.quality.marketplace.domain.MarketplacePackStatus;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+
+import java.sql.Types;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -30,26 +34,50 @@ public class MarketplacePackJpaEntity {
     @Column(name = "sector", nullable = false, length = 80)
     private String sector;
 
+    @Column(name = "norms_csv", length = 1000)
+    private String normsCsv;
+
     @Column(name = "price_cents", nullable = false)
     private int priceCents;
 
     @Column(name = "currency", nullable = false, length = 8)
     private String currency;
 
-    @Column(name = "verified", nullable = false)
-    private boolean verified;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 16)
+    private MarketplacePackStatus status;
 
-    @Column(name = "verified_by")
-    private UUID verifiedBy;
+    @Column(name = "submitted_by", nullable = false, updatable = false)
+    private UUID submittedBy;
 
-    @Column(name = "verified_at")
-    private Instant verifiedAt;
+    @Column(name = "submitted_at", nullable = false, updatable = false)
+    private Instant submittedAt;
+
+    @Column(name = "reviewed_by")
+    private UUID reviewedBy;
+
+    @Column(name = "reviewed_at")
+    private Instant reviewedAt;
+
+    @Column(name = "review_notes", length = 2000)
+    private String reviewNotes;
 
     @Column(name = "signature_hash", length = 128)
     private String signatureHash;
 
     @Column(name = "manifest_url", nullable = false, length = 2000)
     private String manifestUrl;
+
+    // TEXT côté DB (cf. AuditEvent.payloadJson) — éviter le mapping @Lob→oid.
+    @Column(name = "manifest_json", columnDefinition = "TEXT")
+    @JdbcTypeCode(Types.LONGVARCHAR)
+    private String manifestJson;
+
+    @Column(name = "rating_avg", nullable = false)
+    private double ratingAvg;
+
+    @Column(name = "rating_count", nullable = false)
+    private int ratingCount;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
@@ -71,20 +99,34 @@ public class MarketplacePackJpaEntity {
     public void setDescription(String description) { this.description = description; }
     public String getSector() { return sector; }
     public void setSector(String sector) { this.sector = sector; }
+    public String getNormsCsv() { return normsCsv; }
+    public void setNormsCsv(String normsCsv) { this.normsCsv = normsCsv; }
     public int getPriceCents() { return priceCents; }
     public void setPriceCents(int priceCents) { this.priceCents = priceCents; }
     public String getCurrency() { return currency; }
     public void setCurrency(String currency) { this.currency = currency; }
-    public boolean isVerified() { return verified; }
-    public void setVerified(boolean verified) { this.verified = verified; }
-    public UUID getVerifiedBy() { return verifiedBy; }
-    public void setVerifiedBy(UUID verifiedBy) { this.verifiedBy = verifiedBy; }
-    public Instant getVerifiedAt() { return verifiedAt; }
-    public void setVerifiedAt(Instant verifiedAt) { this.verifiedAt = verifiedAt; }
+    public MarketplacePackStatus getStatus() { return status; }
+    public void setStatus(MarketplacePackStatus status) { this.status = status; }
+    public UUID getSubmittedBy() { return submittedBy; }
+    public void setSubmittedBy(UUID submittedBy) { this.submittedBy = submittedBy; }
+    public Instant getSubmittedAt() { return submittedAt; }
+    public void setSubmittedAt(Instant submittedAt) { this.submittedAt = submittedAt; }
+    public UUID getReviewedBy() { return reviewedBy; }
+    public void setReviewedBy(UUID reviewedBy) { this.reviewedBy = reviewedBy; }
+    public Instant getReviewedAt() { return reviewedAt; }
+    public void setReviewedAt(Instant reviewedAt) { this.reviewedAt = reviewedAt; }
+    public String getReviewNotes() { return reviewNotes; }
+    public void setReviewNotes(String reviewNotes) { this.reviewNotes = reviewNotes; }
     public String getSignatureHash() { return signatureHash; }
     public void setSignatureHash(String signatureHash) { this.signatureHash = signatureHash; }
     public String getManifestUrl() { return manifestUrl; }
     public void setManifestUrl(String manifestUrl) { this.manifestUrl = manifestUrl; }
+    public String getManifestJson() { return manifestJson; }
+    public void setManifestJson(String manifestJson) { this.manifestJson = manifestJson; }
+    public double getRatingAvg() { return ratingAvg; }
+    public void setRatingAvg(double ratingAvg) { this.ratingAvg = ratingAvg; }
+    public int getRatingCount() { return ratingCount; }
+    public void setRatingCount(int ratingCount) { this.ratingCount = ratingCount; }
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }

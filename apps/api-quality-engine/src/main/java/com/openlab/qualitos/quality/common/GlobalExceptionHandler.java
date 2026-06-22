@@ -129,6 +129,7 @@ import com.openlab.qualitos.quality.pdca.PdcaStepNotFoundException;
 import com.openlab.qualitos.quality.pdca.PdcaStateException;
 import com.openlab.qualitos.quality.dashboards.domain.DashboardLayoutNotFoundException;
 import com.openlab.qualitos.quality.dashboards.domain.DashboardLayoutStateException;
+import com.openlab.qualitos.quality.marketplace.domain.MarketplaceInstallationNotFoundException;
 import com.openlab.qualitos.quality.marketplace.domain.MarketplacePackNotFoundException;
 import com.openlab.qualitos.quality.marketplace.domain.MarketplacePackStateException;
 import com.openlab.qualitos.quality.notifications.domain.NotificationNotFoundException;
@@ -1528,6 +1529,15 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/marketplace-pack-invalid-state"));
         problem.setTitle("Invalid Marketplace Pack State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(MarketplaceInstallationNotFoundException.class)
+    public ProblemDetail handleMpInstallNotFound(MarketplaceInstallationNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/marketplace-installation-not-found"));
+        problem.setTitle("Marketplace Installation Not Found");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

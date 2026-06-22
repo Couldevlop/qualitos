@@ -27,9 +27,9 @@ describe('MainShellComponent (navigation model)', () => {
 
   it('orders the six groups as designed', () => {
     const labels = component.sections.map(s => s.items.length);
-    // Pilotage(5), Méthodes(6), Analyses IA(8), Opérations(7), Référentiels(8), GRC(1)
-    // Référentiels = 8 : + Génération doc IA (standards-doc-gen) + Academy (LMS).
-    expect(labels).toEqual([5, 6, 8, 7, 8, 1]);
+    // Pilotage(5), Méthodes(6), Analyses IA(8), Opérations(7), Référentiels(9), GRC(1)
+    // Référentiels = 9 : + Génération doc IA + Academy (LMS) + Marketplace (§8.11).
+    expect(labels).toEqual([5, 6, 8, 7, 9, 1]);
   });
 
   it('collapses the entire GRC mass into a single /compliance entry', () => {

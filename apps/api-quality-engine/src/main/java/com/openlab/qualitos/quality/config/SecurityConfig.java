@@ -47,7 +47,8 @@ public class SecurityConfig {
         cfg.setAllowedOrigins(Arrays.asList(allowedOriginsCsv.split(",")));
         cfg.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
         cfg.setAllowedHeaders(List.of("Authorization","Content-Type","Accept","X-Requested-With","X-Tenant-Id","X-Correlation-Id"));
-        cfg.setExposedHeaders(List.of("Location","X-Correlation-Id"));
+        cfg.setExposedHeaders(List.of("Location","X-Correlation-Id",
+                "Content-Disposition","X-Export-Verification-Code","X-Export-Sha256","X-Export-Anchor-Ref"));
         cfg.setAllowCredentials(true);
         cfg.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -100,6 +101,11 @@ public class SecurityConfig {
                 // n'est exposée et la signature ML-DSA est revalidée. Lecture seule.
                 .requestMatchers(org.springframework.http.HttpMethod.GET,
                         "/api/v1/academy/public/certificates/*/verify").permitAll()
+                // Vérification PUBLIQUE d'un export PDF de dashboard signé (§7.4 — QR code) :
+                // pas de JWT, pas de tenant — le code opaque EST l'autorité. Ne renvoie que
+                // des faits d'intégrité (booléen + empreinte), jamais de données tenant.
+                .requestMatchers(org.springframework.http.HttpMethod.GET,
+                        "/api/v1/dashboards/public/exports/*/verify").permitAll()
 
                 // --- H1 (OWASP A01) : durcissement des endpoints SENSIBLES ---
                 // On cible les actions d'ADMINISTRATION (plateforme/tenant), d'INTÉGRITÉ
@@ -150,6 +156,16 @@ public class SecurityConfig {
                 // Marketplace de packs normatifs (§8.11) : publication/retrait = administration
                 // plateforme. Réservé Admin Tenant / Super Admin (la lecture du catalogue passe
                 // par GET, gardé ci-dessous au niveau méthode pour rester consultable).
+                //
+                // CARVE-OUT soumission partenaire : la SOUMISSION d'un pack (POST sur la racine
+                // exacte des packs) est ouverte au rôle PARTNER (éditeur partenaire) EN PLUS des
+                // admins. L'affinage de l'état et l'acteur restent gérés par @PreAuthorize +
+                // ports d'acteur (use-case). Ce matcher PLUS SPÉCIFIQUE précède la règle
+                // générique ci-dessous (premier match gagne). La validation / publication
+                // (take-review, publish, reject, deprecate) reste réservée Super Admin via
+                // @PreAuthorize sur le contrôleur.
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/marketplace/packs")
+                    .hasAnyRole("PARTNER", "ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
                 .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/marketplace/**")
                     .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
                 .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/v1/marketplace/**")

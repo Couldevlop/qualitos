@@ -41,6 +41,35 @@ class HexagonalArchitectureTest {
             .because("Application layer (dashboards) must depend on ports only.");
 
     @ArchTest
+    static final ArchRule export_domain_has_no_framework_deps =
+        noClasses()
+            .that().resideInAPackage("..dashboards.export.domain..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                "..dashboards.export.infrastructure..",
+                "..dashboards.export.web..",
+                "org.springframework..",
+                "jakarta.persistence..",
+                "jakarta.validation..",
+                "org.hibernate..",
+                "org.apache.pdfbox..",
+                "com.google.zxing..")
+            .because("Domain (dashboard export) must stay framework-free for hexagonal arch.");
+
+    @ArchTest
+    static final ArchRule export_application_has_no_framework_deps =
+        noClasses()
+            .that().resideInAPackage("..dashboards.export.application..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                "..dashboards.export.infrastructure..",
+                "..dashboards.export.web..",
+                "org.springframework..",
+                "jakarta.persistence..",
+                "org.hibernate..",
+                "org.apache.pdfbox..",
+                "com.google.zxing..")
+            .because("Application layer (dashboard export) must depend on ports only.");
+
+    @ArchTest
     static final ArchRule p5_marketplace_domain_has_no_framework_deps =
         noClasses()
             .that().resideInAPackage("..marketplace.domain..")

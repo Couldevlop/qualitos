@@ -7,7 +7,9 @@ import { Observable, Subject } from 'rxjs';
 
 import {
   CrossFilter,
+  DashboardExportResult,
   DashboardLayout,
+  ExportWidgetSnapshot,
   Widget
 } from '../domain/dashboard.model';
 import { DashboardLayoutRepository } from '../domain/dashboard-layout.repository';
@@ -42,6 +44,38 @@ export class DashboardBuilderService {
 
   delete(id: string): Observable<void> {
     return this.repo.delete(id);
+  }
+
+  /**
+   * Export the given dashboard as a signed (ML-DSA) + blockchain-anchored PDF
+   * with a verification QR code (§7.3/§7.4). Widget snapshots are built from the
+   * current layout so the exported PDF mirrors what's on screen.
+   */
+  exportPdf(layout: DashboardLayout): Observable<DashboardExportResult> {
+    if (!layout.id) {
+      throw new Error('dashboard must be saved before export');
+    }
+    return this.repo.exportPdf(layout.id, this.toExportSnapshots(layout));
+  }
+
+  /** Builds printable, human-readable snapshots from the layout's widgets. */
+  toExportSnapshots(layout: DashboardLayout): ExportWidgetSnapshot[] {
+    return layout.widgets.map(w => ({
+      title: w.title,
+      type: w.type,
+      dataLines: Object.entries(w.config ?? {})
+        .map(([k, v]) => `${k}: ${this.formatValue(v)}`)
+    }));
+  }
+
+  private formatValue(value: unknown): string {
+    if (value === null || value === undefined) {
+      return '-';
+    }
+    if (typeof value === 'object') {
+      return JSON.stringify(value);
+    }
+    return String(value);
   }
 
   /** Emit a cross-filter to all subscribed widgets. */

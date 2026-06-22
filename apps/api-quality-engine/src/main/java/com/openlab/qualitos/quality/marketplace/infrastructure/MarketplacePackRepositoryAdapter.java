@@ -2,6 +2,7 @@ package com.openlab.qualitos.quality.marketplace.infrastructure;
 
 import com.openlab.qualitos.quality.marketplace.domain.MarketplacePack;
 import com.openlab.qualitos.quality.marketplace.domain.MarketplacePackRepository;
+import com.openlab.qualitos.quality.marketplace.domain.MarketplacePackStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -41,8 +42,22 @@ public class MarketplacePackRepositoryAdapter implements MarketplacePackReposito
     }
 
     @Override
-    public List<MarketplacePack> findVerified(String sectorFilter) {
-        return jpa.findVerified(sectorFilter).stream()
+    public List<MarketplacePack> findPublished(String sectorFilter) {
+        return jpa.findPublished(sectorFilter).stream()
+                .map(MarketplacePackMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<MarketplacePack> findByStatus(MarketplacePackStatus status) {
+        return jpa.findByStatusOrderBySubmittedAtAsc(status).stream()
+                .map(MarketplacePackMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<MarketplacePack> findModerationQueue() {
+        return jpa.findModerationQueue().stream()
                 .map(MarketplacePackMapper::toDomain)
                 .toList();
     }

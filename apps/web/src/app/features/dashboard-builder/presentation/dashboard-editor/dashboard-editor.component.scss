@@ -72,6 +72,23 @@
   grid-template-columns: 168px minmax(0, 1fr) 320px;
 }
 
+/* ---- Bouton export PDF signé (§7.4) ---- */
+.export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+
+  &:disabled {
+    opacity: 0.55;
+  }
+
+  mat-icon {
+    color: #4f46e5;
+  }
+}
+
 /* ---- Palette ---- */
 .palette {
   display: flex;

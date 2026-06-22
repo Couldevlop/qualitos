@@ -47,6 +47,7 @@ export class DashboardEditorComponent implements OnInit, OnDestroy {
   layout!: DashboardLayout;
   loading = false;
   saving = false;
+  exporting = false;
   isNew = true;
 
   /** Items affichés dans la grille (vue mutable synchronisée avec gridster). */
@@ -266,6 +267,39 @@ export class DashboardEditorComponent implements OnInit, OnDestroy {
           $localize`:@@dbb.editor.saveFailed:Échec de l'enregistrement`, 'OK', { duration: 3500 });
       }
     });
+  }
+
+  /**
+   * Export the current dashboard as a signed (ML-DSA) + blockchain-anchored PDF
+   * with a verification QR code (§7.3/§7.4), then trigger a browser download.
+   */
+  exportPdf(): void {
+    if (!this.layout.id) {
+      this.snack.open('Enregistrez le tableau de bord avant de l\'exporter.', 'OK', { duration: 3500 });
+      return;
+    }
+    this.exporting = true;
+    this.svc.exportPdf(this.layout).subscribe({
+      next: result => {
+        this.triggerDownload(result.blob, result.fileName);
+        this.exporting = false;
+        this.snack.open(
+          `PDF signé exporté (code ${result.verificationCode}).`, 'OK', { duration: 4000 });
+      },
+      error: () => {
+        this.exporting = false;
+        this.snack.open('Échec de l\'export PDF.', 'OK', { duration: 3500 });
+      }
+    });
+  }
+
+  private triggerDownload(blob: Blob, fileName: string): void {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   back(): void {

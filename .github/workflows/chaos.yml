@@ -1,0 +1,101 @@
+name: Chaos Engineering
+
+# CLAUDE.md §14.3 (Chaos Mesh). Ce workflow est MANUEL/OPTIONNEL :
+# il NE tourne PAS sur push/pull_request → le chaos ne bloque jamais la CI
+# normale (CLAUDE.md §14.2). Par défaut il se limite à la VALIDATION syntaxique
+# des manifests (sans cluster, toujours sûre). L'exécution réelle d'expériences
+# requiert un cluster + Chaos Mesh et reste documentée (runbook), non activée.
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "validate (sans cluster) | run-on-ephemeral (kind + Chaos Mesh, expérimental)"
+        type: choice
+        default: validate
+        options:
+          - validate
+          - run-on-ephemeral
+
+permissions:
+  contents: read
+
+concurrency:
+  group: chaos-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Toujours sûr : valide YAML + structure CRD + cohérence selectors/infra/k8s.
+  # ---------------------------------------------------------------------------
+  validate:
+    name: Valider les manifests Chaos Mesh
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Installer PyYAML
+        run: pip install --quiet pyyaml
+
+      - name: Valider infra/chaos
+        run: python infra/chaos/validate.py
+
+  # ---------------------------------------------------------------------------
+  # EXPÉRIMENTAL / OPTIONNEL — exécuté seulement si l'opérateur choisit
+  # explicitement « run-on-ephemeral ». Monte un cluster kind éphémère, installe
+  # Chaos Mesh, déploie le chart et lance UNE expérience non destructive.
+  # Documenté pour montrer le « comment » ; à n'utiliser que sur un runner dédié.
+  # ---------------------------------------------------------------------------
+  run-on-ephemeral:
+    name: Exécuter sur cluster éphémère (kind)
+    if: ${{ github.event.inputs.action == 'run-on-ephemeral' }}
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Créer un cluster kind
+        uses: helm/kind-action@v1
+        with:
+          cluster_name: qualitos-chaos
+
+      - name: Installer Chaos Mesh (Helm)
+        run: |
+          helm repo add chaos-mesh https://charts.chaos-mesh.org
+          helm repo update
+          kubectl create namespace chaos-mesh
+          helm upgrade --install chaos-mesh chaos-mesh/chaos-mesh \
+            -n chaos-mesh \
+            --set chaosDaemon.runtime=containerd \
+            --set chaosDaemon.socketPath=/run/containerd/containerd.sock \
+            --wait
+          kubectl get pods -n chaos-mesh
+
+      - name: Déployer QualitOS (chart Helm)
+        run: |
+          kubectl create namespace qualitos
+          # NOTE : les images doivent être disponibles pour le cluster kind
+          # (kind load docker-image …) — étape spécifique à l'environnement,
+          # non câblée ici. Voir docs/runbooks/chaos-engineering.md §0.
+          helm upgrade --install qualitos infra/k8s/qualitos -n qualitos --wait || \
+            echo "::warning::déploiement applicatif non finalisé (images à charger) — voir runbook"
+
+      - name: Lancer l'expérience pod-kill (dry-run serveur si app absente)
+        run: |
+          kubectl apply --dry-run=server -f infra/chaos/experiments/ || true
+          echo "::notice::injection réelle à activer manuellement (kubectl apply -f infra/chaos/experiments/01-...)"
+
+      - name: Nettoyage (recover Chaos Mesh)
+        if: always()
+        run: |
+          kubectl delete podchaos,networkchaos,stresschaos,iochaos,workflow,schedule \
+            --all -n qualitos --ignore-not-found=true || true

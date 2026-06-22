@@ -98,3 +98,19 @@ export interface KpiOption {
   readonly label: string;
   readonly unit: string;
 }
+
+/** A widget snapshot sent to the signed-PDF export endpoint (§7.4). */
+export interface ExportWidgetSnapshot {
+  readonly title: string;
+  readonly type: string;
+  readonly dataLines: ReadonlyArray<string>;
+}
+
+/** Result of a signed PDF export: the blob plus integrity metadata from headers. */
+export interface DashboardExportResult {
+  readonly blob: Blob;
+  readonly fileName: string;
+  readonly verificationCode: string;
+  readonly sha256: string;
+  readonly anchorRef: string;
+}
