@@ -501,6 +501,12 @@ REAL_RESULTS = {
     "TC-5S-003": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-5S-003_offline.png — /offline-queue accessible (vérif partielle PWA)."),
     "TC-5S-004": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-5S-004_vision-ui.png — Vision CV câblée sur l'audit 5S (UI détail + endpoint backend POST /fives/audits/{id}/vision, 20+9 tests). Service ai-vision absent en test → 503 propre géré par l'UI."),
     "TC-5S-005": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-5S-005_heatmap.png — Heatmap zone × mois implémentée (qos-echart, agrégation score moyen)."),
+    # Lot 3 (23/06) — domaine Ishikawa
+    "TC-ISHI-001": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-ISHI-001_liste.png — 4 diagrammes, 1 appel API, 0 scintillement."),
+    "TC-ISHI-002": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-ISHI-002_editeur.png — 7 branches (7M) + ajout de cause persisté."),
+    "TC-ISHI-003": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-ISHI-003_ia.png — Suggérer (IA) : POST suggest-causes HTTP 200, causes suggérées affichées (ai-service Mistral up)."),
+    "TC-ISHI-004": ("Bloqué", "QA-Auto (Playwright)", "23/06", "Pas de bouton « Convertir en PDCA » dans l'UI détail Ishikawa (écart vs CLAUDE §3.6) — voir ANO-008."),
+    "TC-ISHI-005": ("Passé", "QA-Auto (Playwright)", "23/06", "Action 5-Pourquoi (sous-causes) présente dans le détail."),
 }
 
 rows = []
@@ -537,6 +543,11 @@ EXEC_LOG = [
     ("23/06/2026", "Lot 2", "TC-5S-005", "Bloqué", "Pas de heatmap par zone dans la feature 5S (table seule). Écart vs CLAUDE §3.2 — consigné en ANO-007.", "—"),
     ("23/06/2026", "Correctif ANO-007", "TC-5S-005", "Passé", "Heatmap zone × mois implémentée (qos-echart, score moyen) dans la liste 5S. Smoke : carte + graphe rendus.", "TC-5S-005_heatmap.png"),
     ("23/06/2026", "Correctif ANO-007", "TC-5S-004", "Passé", "Vision CV câblée sur l'audit 5S : UI détail (upload + score piliers + findings) + endpoint backend POST /fives/audits/{id}/vision (validateur image mutualisé). 20+9 tests backend verts ; service ai-vision absent → 503 propre géré par l'UI.", "TC-5S-004_vision-ui.png"),
+    ("23/06/2026", "Lot 3", "TC-ISHI-001", "Passé", "Liste des diagrammes Ishikawa : 4 diagrammes, 1 appel API, 0 scintillement.", "TC-ISHI-001_liste.png"),
+    ("23/06/2026", "Lot 3", "TC-ISHI-002", "Passé", "Éditeur : 7 branches (7M) affichées ; ajout d'une cause persisté via le dialog.", "TC-ISHI-002_editeur.png"),
+    ("23/06/2026", "Lot 3", "TC-ISHI-003", "Passé", "Suggestion IA : POST /ishikawa/diagrams/{id}/suggest-causes → HTTP 200, causes proposées affichées (ai-service Mistral up). 1er run faux négatif (sélecteur Playwright cassé), re-testé OK.", "TC-ISHI-003_ia.png"),
+    ("23/06/2026", "Lot 3", "TC-ISHI-004", "Bloqué", "Pas de bouton « Convertir en PDCA » dans l'UI détail. Écart vs CLAUDE §3.6 (référentiel commun) — consigné en ANO-008.", "—"),
+    ("23/06/2026", "Lot 3", "TC-ISHI-005", "Passé", "Couplage 5-Pourquoi : ajout de sous-causes disponible dans le détail.", "—"),
 ]
 
 # =====================================================================
@@ -878,6 +889,8 @@ anomalies = [
      "Re-optimisation gridster2 -> reloads -> écrans vides intermittents.","Redémarrage ng serve à cache propre (dev only).","22/06"),
     ("ANO-007","Heatmap 5S par zone + Vision CV absentes de l'UI","5S","Mineure","Résolu","TC-5S-005 / TC-5S-004",
      "CLAUDE §3.2 prévoit une heatmap de score 5S par zone et la détection CV sur photo ; l'UI 5S n'avait qu'une table.","Implémenté le 23/06 : heatmap zone×mois (qos-echart) dans la liste 5S ; Vision CV sur l'audit (UI détail + endpoint backend POST /fives/audits/{id}/vision, validateur image mutualisé, 6 langues). 20+9 tests backend verts, build front OK.","23/06"),
+    ("ANO-008","Conversion Ishikawa → PDCA absente de l'UI","Ishikawa","Mineure","Ouvert","TC-ISHI-004",
+     "CLAUDE §3.6 prévoit la conversion en 1 clic d'un Ishikawa (cause) en cycle PDCA (référentiel commun) ; aucun bouton « Convertir en PDCA » dans le détail Ishikawa.","À implémenter (feature) — backlog.","23/06"),
 ]
 ri = hrow+1
 SEV = {"Critique":RED,"Majeure":AMBER,"Mineure":BLUE}
