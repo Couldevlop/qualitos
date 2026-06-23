@@ -528,6 +528,11 @@ REAL_RESULTS = {
     "TC-CAPA-002": ("Passé", "QA-Auto (Playwright)", "23/06", "Résolu via ANO-011 (avancement d'action → DONE). Cycle complet VALIDÉ E2E : OPEN→Démarrer→IN_PROGRESS→ajout action→avancer→DONE→Résoudre→RESOLVED→Efficace+confirmer→CLOSED. CI verte (frontend build+Karma, backend, E2E smoke)."),
     "TC-CAPA-003": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-CAPA-003_ia.png — Suggérer (IA) : POST suggest-actions HTTP 200 (ai-service Mistral)."),
     "TC-CAPA-004": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-CAPA-004_kpi.png — KPI « Délai moyen clôture CAPA » présent sur le dashboard."),
+    # Lot 8 (24/06) — Audits
+    "TC-AUD-001": ("Passé", "QA-Auto (Playwright)", "24/06", "TC-AUD-001_liste.png — liste des plans d'audit, 1 appel API, 0 scintillement."),
+    "TC-AUD-002": ("Passé", "QA-Auto (Playwright)", "24/06", "TC-AUD-002_execution.png — exécution LPA : ajout d'une question checklist (POST /checklist HTTP 201, item rendu) + réponse de conformité (mat-select Conforme/NC) ; offline-first câblé (file de resync §15.2-15.3)."),
+    "TC-AUD-003": ("Bloqué", "QA-Auto (Playwright)", "24/06", "Aucune génération de rapport d'audit par LLM : completePlan stocke un reportSummary manuel, aucun appel AiGateway (ni front ni backend). Écart vs CLAUDE §1.4/§4.4 — voir ANO-012."),
+    "TC-AUD-004": ("Passé", "QA-Auto (Playwright)", "24/06", "TC-AUD-004_detail.png — détail d'audit chargé sans blocage (titre affiché, pas de « Chargement… » figé) — régression OK (pattern reload$ BehaviorSubject + refCount:false)."),
 }
 
 rows = []
@@ -587,6 +592,10 @@ EXEC_LOG = [
     ("23/06/2026", "Lot 7", "TC-CAPA-002", "Bloqué", "Démarrage OK (OPEN→IN_PROGRESS) ; résolution exige ≥1 action DONE (ISO 9001), mais l'UI n'offre pas d'avancement d'action→DONE (table lecture seule). Backend PATCH actions/{id} prêt. Consigné ANO-011.", "TC-CAPA-002_workflow.png"),
     ("23/06/2026", "Lot 7", "TC-CAPA-003", "Passé", "Suggestion IA d'actions : POST /capa/cases/{id}/suggest-actions HTTP 200 (ai-service Mistral).", "TC-CAPA-003_ia.png"),
     ("23/06/2026", "Lot 7", "TC-CAPA-004", "Passé", "KPI « Délai moyen clôture CAPA » affiché sur le dashboard.", "TC-CAPA-004_kpi.png"),
+    ("24/06/2026", "Lot 8", "TC-AUD-001", "Passé", "Liste des plans d'audit : 1 appel API, 0 scintillement.", "TC-AUD-001_liste.png"),
+    ("24/06/2026", "Lot 8", "TC-AUD-002", "Passé", "Exécution LPA : ajout question checklist (POST /checklist HTTP 201, item rendu) + réponse de conformité (mat-select) ; offline-first câblé.", "TC-AUD-002_execution.png"),
+    ("24/06/2026", "Lot 8", "TC-AUD-003", "Bloqué", "Rapport d'audit généré par LLM absent (completePlan = reportSummary manuel, pas d'AiGateway, ni front ni back). Écart CLAUDE §1.4/§4.4. Consigné ANO-012.", "—"),
+    ("24/06/2026", "Lot 8", "TC-AUD-004", "Passé", "Détail d'audit chargé sans blocage (régression) : titre visible, pas de spinner figé.", "TC-AUD-004_detail.png"),
 ]
 
 # =====================================================================
@@ -932,6 +941,8 @@ anomalies = [
      "CLAUDE §3.6 prévoit la conversion en 1 clic d'un Ishikawa (cause) en cycle PDCA (référentiel commun) ; aucun bouton « Convertir en PDCA » dans le détail Ishikawa.","Implémenté le 23/06 : endpoint POST /ishikawa/diagrams/{id}/convert-to-pdca (tenant-scopé, cause optionnelle, réutilise PdcaService) + bouton détail qui navigue vers le cycle créé + i18n 6 langues. Tests : IshikawaServiceTest +4, IshikawaControllerTest +2.","23/06"),
     ("ANO-009","Cycle de vie des propositions de cercle absent de l'UI","Cercles","Mineure","Résolu","TC-CERCLE-003",
      "Le backend (CircleController) expose review/approve/reject/implement/impact sur les propositions (CLAUDE §3.3), mais l'UI ne proposait que la création + l'affichage du statut.","Implémenté le 23/06 (agent parallèle) : 5 méthodes service + boutons conditionnés par statut + dialogs reject (motif) et impact (mesure) ; i18n 6 langues. Build front + 41+58 tests circle verts.","23/06"),
+    ("ANO-012","Rapport d'audit généré par LLM absent","Audits","Mineure","Ouvert","TC-AUD-003",
+     "CLAUDE §1.4/§4.4 prévoit un rapport d'audit final généré par LLM (« en 30 secondes, avec citations »). Or completePlan se contente d'un reportSummary saisi manuellement — aucun appel AiGateway, ni au front ni au backend.","À implémenter : endpoint LLM de génération de rapport à partir des findings + checklist (réutiliser le pattern AiGatewayClient, cf. ANO-010), + bouton « Générer le rapport (IA) » dans le détail.","24/06"),
     ("ANO-011","Avancement des actions CAPA (→ DONE) absent de l'UI","CAPA","Mineure","Résolu","TC-CAPA-002",
      "La résolution d'un CAPA exige ≥1 action DONE (CapaService, ISO 9001 §10.2), mais la table d'actions du détail était en lecture seule : aucun moyen de passer une action à DONE → le cycle ne pouvait atteindre la clôture. Le backend expose pourtant PATCH /cases/{id}/actions/{actionId}.","Implémenté le 23/06 : service updateAction + colonne « Avancement » (Démarrer/Terminer → PENDING→IN_PROGRESS→DONE) dans le détail + i18n 6 langues + spec. Le titre est renvoyé (requis backend). tsc 0 erreur, i18n --check OK ; build/Karma en CI.","23/06"),
     ("ANO-010","Compte-rendu de réunion auto-généré (LLM) absent","Cercles","Majeure","Résolu","TC-CERCLE-004",
