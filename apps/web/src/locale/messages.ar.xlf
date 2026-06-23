@@ -13058,6 +13058,30 @@ historique 12 mois</source>
         <source>Complétée</source>
         <target state="translated">مكتملة</target>
       </trans-unit>
+      <trans-unit id="capa.detail.col-advance" datatype="html">
+        <source>Avancement</source>
+        <target state="translated">التقدم</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-start" datatype="html">
+        <source>Démarrer</source>
+        <target state="translated">بدء</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-complete" datatype="html">
+        <source>Terminer</source>
+        <target state="translated">إكمال</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-advanced" datatype="html">
+        <source>Action mise à jour.</source>
+        <target state="translated">تم تحديث الإجراء.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-advance-error" datatype="html">
+        <source>Mise à jour de l'action impossible.</source>
+        <target state="translated">تعذّر تحديث الإجراء.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-done-tooltip" datatype="html">
+        <source>Action terminée</source>
+        <target state="translated">اكتمل الإجراء</target>
+      </trans-unit>
       <trans-unit id="capa.detail.col-due-date" datatype="html">
         <source>Échéance</source>
         <target state="translated">تاريخ الاستحقاق</target>

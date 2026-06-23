@@ -13057,6 +13057,30 @@ historique 12 mois</source>
         <source>Complétée</source>
         <target state="translated">完了</target>
       </trans-unit>
+      <trans-unit id="capa.detail.col-advance" datatype="html">
+        <source>Avancement</source>
+        <target state="translated">進捗</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-start" datatype="html">
+        <source>Démarrer</source>
+        <target state="translated">開始</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-complete" datatype="html">
+        <source>Terminer</source>
+        <target state="translated">完了</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-advanced" datatype="html">
+        <source>Action mise à jour.</source>
+        <target state="translated">アクションを更新しました。</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-advance-error" datatype="html">
+        <source>Mise à jour de l'action impossible.</source>
+        <target state="translated">アクションを更新できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-done-tooltip" datatype="html">
+        <source>Action terminée</source>
+        <target state="translated">アクション完了</target>
+      </trans-unit>
       <trans-unit id="capa.detail.col-due-date" datatype="html">
         <source>Échéance</source>
         <target state="translated">期限</target>

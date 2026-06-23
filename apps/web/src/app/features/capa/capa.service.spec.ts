@@ -61,6 +61,16 @@ describe('CapaService (mock mode)', () => {
     });
   });
 
+  it('updateAction advances an action to DONE and stamps completedAt (ANO-011)', (done) => {
+    service.addAction('capa-1', { title: 'Recalibrer' }).subscribe(a => {
+      service.updateAction('capa-1', a.id, { title: a.title, status: 'DONE' }).subscribe(updated => {
+        expect(updated.status).toBe('DONE');
+        expect(updated.completedAt).toBeTruthy();
+        done();
+      });
+    });
+  });
+
   it('suggests AI actions', (done) => {
     service.suggestActions('capa-1').subscribe(actions => {
       expect(actions.length).toBeGreaterThan(0);

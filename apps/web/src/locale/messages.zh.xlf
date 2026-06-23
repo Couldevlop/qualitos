@@ -13058,6 +13058,30 @@ historique 12 mois</source>
         <source>Complétée</source>
         <target state="translated">已完成</target>
       </trans-unit>
+      <trans-unit id="capa.detail.col-advance" datatype="html">
+        <source>Avancement</source>
+        <target state="translated">进度</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-start" datatype="html">
+        <source>Démarrer</source>
+        <target state="translated">开始</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-complete" datatype="html">
+        <source>Terminer</source>
+        <target state="translated">完成</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-advanced" datatype="html">
+        <source>Action mise à jour.</source>
+        <target state="translated">措施已更新。</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-advance-error" datatype="html">
+        <source>Mise à jour de l'action impossible.</source>
+        <target state="translated">无法更新措施。</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-done-tooltip" datatype="html">
+        <source>Action terminée</source>
+        <target state="translated">措施已完成</target>
+      </trans-unit>
       <trans-unit id="capa.detail.col-due-date" datatype="html">
         <source>Échéance</source>
         <target state="translated">截止日期</target>
