@@ -74,11 +74,10 @@ public class JpaDeviceRepository implements DeviceRepository {
   @Override
   @Transactional
   public void updateTwin(UUID tenantId, UUID deviceId, Map<String, Object> twin) {
-    // Tenant-scoped (OWASP A01) : ne met à jour que si l'équipement appartient au tenant.
-    jpa.findByTenantIdAndId(tenantId, deviceId).ifPresent(e -> {
-      e.setTwinJson(writeTwin(twin));
-      jpa.save(e);
-    });
+    // Tenant-scoped (OWASP A01) : le WHERE filtre par tenant + id. UPDATE en masse
+    // (pas de load-modify-save) pour éviter le contrôle « expected 1 row » qui levait
+    // une StaleStateException empoisonnant la session lors d'ingestions multi-métriques.
+    jpa.updateTwinJson(tenantId, deviceId, writeTwin(twin));
   }
 
   // ---- mappers --------------------------------------------------------
