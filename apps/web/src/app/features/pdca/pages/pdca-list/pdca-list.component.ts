@@ -35,10 +35,12 @@ export class PdcaListComponent implements OnInit {
   totalElements = 0;
 
   cycles$!: Observable<PdcaCycleResponse[]>;
-  // Init à true : on charge dès l'init, et cela évite le NG0100
-  // (ExpressionChangedAfterItHasBeenChecked) quand le tap() passe false→true
-  // dans le même cycle de détection (même correctif que kpis-list).
-  private readonly loadingState$ = new BehaviorSubject<boolean>(true);
+  // Init à FALSE : la table (gated par *ngIf="loading===false") doit pouvoir se
+  // monter pour abonner cycles$ et déclencher le chargement. Init à true créait un
+  // DEADLOCK (table jamais montée → API jamais appelée → finalize jamais exécuté →
+  // spinner éternel). Le NG0100 est déjà évité par deferredView (émission différée
+  // en macrotâche, hors du cycle de détection courant).
+  private readonly loadingState$ = new BehaviorSubject<boolean>(false);
   readonly loading$ = deferredView(this.loadingState$);
   private readonly errorState$ = new BehaviorSubject<string | null>(null);
   readonly error$ = deferredView(this.errorState$);
@@ -79,7 +81,13 @@ export class PdcaListComponent implements OnInit {
         this.totalElements = page.totalElements;
         return page.content;
       }),
-      shareReplay({ bufferSize: 1, refCount: true })
+      // refCount:false — la table est masquée par *ngIf="loading===false" pendant
+      // le chargement, ce qui désabonne l'unique consommateur de ce flux. Avec
+      // refCount:true, ce désabonnement détruisait la source → finalize() remettait
+      // loading=false → la table se remontait → re-souscription → tap loading=true…
+      // BOUCLE INFINIE (API rappelée des centaines de fois, spinner qui scintille).
+      // refCount:false garde la source chaude : l'appel se termine une seule fois.
+      shareReplay({ bufferSize: 1, refCount: false })
     );
   }
 

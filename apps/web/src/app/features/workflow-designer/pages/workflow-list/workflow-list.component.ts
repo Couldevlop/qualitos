@@ -53,7 +53,7 @@ export class WorkflowListComponent implements OnInit {
         )
       ),
       map(page => Array.isArray(page) ? [] : page.content),
-      shareReplay({ bufferSize: 1, refCount: true })
+      shareReplay({ bufferSize: 1, refCount: false }) // refCount:false : evite la boucle de teardown quand *ngIf loading masque la table
     );
   }
 

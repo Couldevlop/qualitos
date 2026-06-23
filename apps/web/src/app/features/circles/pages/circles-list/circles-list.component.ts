@@ -68,7 +68,7 @@ export class CirclesListComponent implements OnInit {
         this.totalElements = page.totalElements;
         return page.content;
       }),
-      shareReplay({ bufferSize: 1, refCount: true })
+      shareReplay({ bufferSize: 1, refCount: false }) // refCount:false : evite la boucle de teardown quand *ngIf loading masque la table
     );
   }
 
