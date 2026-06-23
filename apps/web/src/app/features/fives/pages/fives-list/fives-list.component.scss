@@ -39,3 +39,20 @@
   outline: 2px solid var(--mat-sys-primary, #1976d2);
   outline-offset: -2px;
 }
+
+/* Heatmap des scores 5S par zone (§3.2) */
+.heatmap-card {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+
+    mat-icon { color: var(--qos-fg-secondary, #475569); }
+    h3 { margin: 0; font-size: 0.95rem; font-weight: 600; }
+  }
+  .empty { color: var(--qos-fg-secondary, #64748b); font-style: italic; margin: 8px 0; }
+}

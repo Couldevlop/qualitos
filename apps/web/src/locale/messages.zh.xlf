@@ -8154,6 +8154,58 @@ historique 12 mois</source>
         <source>Erreur lors de la mise à jour.</source>
         <target state="translated">更新时出错。</target>
       </trans-unit>
+      <trans-unit id="fives.heatmap.title" datatype="html">
+        <source>Scores 5S par zone</source>
+        <target state="translated">按区域的5S评分</target>
+      </trans-unit>
+      <trans-unit id="fives.heatmap.empty" datatype="html">
+        <source>Pas encore assez d'audits notés pour afficher la heatmap par zone.</source>
+        <target state="translated">评分审核数量不足，暂无法按区域显示热力图。</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.title" datatype="html">
+        <source>Analyse visuelle (Vision IA)</source>
+        <target state="translated">视觉分析（AI视觉）</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.subtitle" datatype="html">
+        <source>Détecte automatiquement les non-conformités 5S (encombrement, EPI, étiquetage) sur une photo de la zone.</source>
+        <target state="translated">自动从区域照片中检测5S不符合项（杂乱、个人防护装备、标签）。</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.analyze" datatype="html">
+        <source>Analyser une photo</source>
+        <target state="translated">分析照片</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.clear" datatype="html">
+        <source>Effacer</source>
+        <target state="translated">清除</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.overall" datatype="html">
+        <source>Global</source>
+        <target state="translated">总体</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.findings" datatype="html">
+        <source>Non-conformités détectées</source>
+        <target state="translated">检测到的不符合项</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.no-findings" datatype="html">
+        <source>Aucune non-conformité détectée sur cette photo.</source>
+        <target state="translated">该照片未检测到不符合项。</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.err-invalid" datatype="html">
+        <source>Image invalide (format non supporté).</source>
+        <target state="translated">图像无效（不支持的格式）。</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.err-too-large" datatype="html">
+        <source>Image trop volumineuse (10 Mo max).</source>
+        <target state="translated">图像过大（最大10 MB）。</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.err-unavailable" datatype="html">
+        <source>Le service d'analyse vision est momentanément indisponible.</source>
+        <target state="translated">视觉分析服务暂时不可用。</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.err-generic" datatype="html">
+        <source>Échec de l'analyse vision.</source>
+        <target state="translated">视觉分析失败。</target>
+      </trans-unit>
       <trans-unit id="ishikawa.list.title" datatype="html">
         <source>Diagrammes Ishikawa</source>
         <target state="translated">鱼骨图</target>

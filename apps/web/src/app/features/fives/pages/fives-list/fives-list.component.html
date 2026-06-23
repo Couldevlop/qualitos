@@ -8,6 +8,18 @@
     </button>
   </qos-page-header>
 
+  <mat-card class="heatmap-card">
+    <div class="card-head">
+      <mat-icon>grid_on</mat-icon>
+      <h3 i18n="@@fives.heatmap.title">Scores 5S par zone</h3>
+    </div>
+    <qos-echart *ngIf="(heatmapOption$ | async) as opt; else noHeat"
+                [option]="opt" [height]="260"></qos-echart>
+    <ng-template #noHeat>
+      <p class="empty" i18n="@@fives.heatmap.empty">Pas encore assez d'audits notés pour afficher la heatmap par zone.</p>
+    </ng-template>
+  </mat-card>
+
   <mat-card class="filter-card">
     <mat-form-field appearance="outline" class="status-filter">
       <mat-label i18n="@@common.filter-by-status">Filtrer par statut</mat-label>

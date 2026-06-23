@@ -10,7 +10,7 @@ import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { FivesService } from '../../fives.service';
-import { FiveSAuditResponse, FiveSAuditStatus, FiveSPillar } from '../../fives.types';
+import { FiveSAuditResponse, FiveSAuditStatus, FiveSPillar, VisionAnalysis } from '../../fives.types';
 import {
   FivesEditDialogComponent,
   FivesEditDialogData
@@ -52,6 +52,11 @@ export class FivesDetailComponent implements OnInit {
   /** Per-pillar score form (one FormGroup per pillar). */
   forms: Record<FiveSPillar, FormGroup> = {} as Record<FiveSPillar, FormGroup>;
   saving: Record<FiveSPillar, boolean> = {} as Record<FiveSPillar, boolean>;
+
+  /** Analyse Vision CV (§3.2) : état + dernier résultat. */
+  readonly visionAnalyzing$ = new BehaviorSubject<boolean>(false);
+  visionResult: VisionAnalysis | null = null;
+  visionError: string | null = null;
 
   private auditId = '';
   private readonly reload$ = new BehaviorSubject<void>(undefined);
@@ -214,6 +219,58 @@ export class FivesDetailComponent implements OnInit {
         );
       }
     });
+  }
+
+  // ---- Analyse Vision CV (YOLOv8) d'une photo de zone (§3.2) -----------------
+
+  /** Ouvre le sélecteur de fichier (déclenché par le bouton « Analyser une photo »). */
+  triggerVisionPicker(input: HTMLInputElement): void {
+    if (this.visionAnalyzing$.value) return;
+    input.click();
+  }
+
+  /** Sur sélection d'un fichier image : lance l'analyse vision. */
+  onVisionFile(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = ''; // permet de re-sélectionner le même fichier
+    if (file) this.analyzeVisionPhoto(file);
+  }
+
+  private analyzeVisionPhoto(file: File): void {
+    this.visionError = null;
+    this.visionAnalyzing$.next(true);
+    this.fives.analyzeAuditPhoto(this.auditId, file)
+      .pipe(finalize(() => this.visionAnalyzing$.next(false)))
+      .subscribe({
+        next: result => { this.visionResult = result; },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[fives-detail] vision analyze failed', err?.status, err?.error?.title);
+          this.visionResult = null;
+          this.visionError = this.visionErrorMessage(err?.status);
+        }
+      });
+  }
+
+  /** Efface le dernier résultat de vision. */
+  clearVision(): void {
+    this.visionResult = null;
+    this.visionError = null;
+  }
+
+  private visionErrorMessage(status?: number): string {
+    switch (status) {
+      case 400: return $localize`:@@fives.vision.err-invalid:Image invalide (format non supporté).`;
+      case 413: return $localize`:@@fives.vision.err-too-large:Image trop volumineuse (10 Mo max).`;
+      case 503: return $localize`:@@fives.vision.err-unavailable:Le service d'analyse vision est momentanément indisponible.`;
+      default:  return $localize`:@@fives.vision.err-generic:Échec de l'analyse vision.`;
+    }
+  }
+
+  /** Classe de badge selon la sévérité d'un finding. */
+  findingSeverityClass(severity: string): string {
+    return 'badge badge-' + (severity || '').toLowerCase();
   }
 
   isTerminal(status: FiveSAuditStatus): boolean {

@@ -13,7 +13,8 @@ import {
   FiveSItemResponse,
   FiveSPage,
   ScorePillarRequest,
-  UpdateFiveSAuditRequest
+  UpdateFiveSAuditRequest,
+  VisionAnalysis
 } from './fives.types';
 
 @Injectable({ providedIn: 'root' })
@@ -44,6 +45,36 @@ export class FivesService {
       return of(found ?? this.mockStore[0]).pipe(delay(120));
     }
     return this.http.get<FiveSAuditResponse>(`${this.endpoint}/${id}`);
+  }
+
+  /**
+   * Analyse Vision CV (YOLOv8) d'une photo de zone pour un audit 5S (§3.2).
+   * Multipart champ 'image' → POST /api/v1/fives/audits/{id}/vision. ONLINE-only
+   * (inférence serveur) : un binaire ne se sérialise pas dans la file offline.
+   * 200 → score 5S par pilier + findings ; 503 → service indisponible (géré côté UI).
+   */
+  analyzeAuditPhoto(auditId: string, file: File): Observable<VisionAnalysis> {
+    if (environment.useMockApi) {
+      return of(this.mockVision(file)).pipe(delay(450));
+    }
+    const form = new FormData();
+    form.append('image', file, file.name);
+    return this.http.post<VisionAnalysis>(`${this.endpoint}/${auditId}/vision`, form);
+  }
+
+  /** Analyse vision simulée DÉTERMINISTE (dérivée du nom + taille) pour le mode mock. */
+  private mockVision(file: File): VisionAnalysis {
+    const seed = (file.name.length * 7 + (file.size % 97)) % 40;
+    const s = (base: number) => Math.min(100, 55 + base + seed);
+    return {
+      imageSha256: 'mock-' + file.size.toString(16),
+      width: 1280, height: 720,
+      score: { seiri: s(10), seiton: s(5), seiso: s(0), seiketsu: s(8), shitsuke: s(3), overall: s(5) },
+      findings: [
+        { pillar: 'SEITON', description: 'Encombrement détecté dans la zone de passage', severity: 'MEDIUM', confidence: 0.82, bbox: [120, 80, 200, 160] },
+        { pillar: 'SEIRI', description: 'Objet non identifié hors emplacement', severity: 'LOW', confidence: 0.64, bbox: null }
+      ]
+    };
   }
 
   createAudit(input: CreateFiveSAuditRequest): Observable<FiveSAuditResponse> {
