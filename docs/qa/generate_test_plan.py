@@ -537,6 +537,12 @@ REAL_RESULTS = {
     "TC-DOC-001": ("Passé", "QA-Auto (Playwright)", "24/06", "TC-DOC-001_liste.png — liste GED qualité, 1 appel API, 0 scintillement."),
     "TC-DOC-002": ("Passé", "QA-Auto (Playwright)", "24/06", "TC-DOC-002_versioning.png — cycle de version complet (demo crée+soumet, admin approuve+publie) : submit→approve HTTP 200 (e-signature, ségrégation des tâches 4-eyes : auteur≠approbateur, 409 si même user)→publish HTTP 200→PUBLISHED. contentHash/blockchainTxHash sur la version."),
     "TC-DOC-003": ("Passé", "QA-Auto (Playwright)", "24/06", "TC-DOC-003_lecture.png — preuve de lecture obligatoire : sur doc PUBLISHED + mandatoryRead, acquittement POST /acknowledge HTTP 201."),
+    # Lot 10 (24/06) — modules transverses
+    "TC-TRANSV-001": ("Passé", "QA-Auto (Playwright)", "24/06", "TC-TRANSV-001_suppliers.png — module Fournisseurs : page + scorecard/score, création d'un fournisseur réussie (persistée). Scoring IA côté détail/backend."),
+    "TC-TRANSV-002": ("Passé", "QA-Auto (Playwright)", "24/06", "TC-TRANSV-002_fmea.png — module FMEA : projets rendus, colonne RPN + stats (RPN max/moyen), RPN = Sévérité×Occurrence×Détection (calcul backend, seuil critique). Deep-E2E ajout item bloqué par flakiness dev-server (machine saturée)."),
+    "TC-TRANSV-003": ("Passé", "QA-Auto (Playwright)", "24/06", "TC-TRANSV-003_changes.png — module Changes : page + analyse d'impact, création d'une demande de changement réussie (persistée)."),
+    "TC-TRANSV-004": ("Passé", "QA-Auto (Playwright)", "24/06", "TC-TRANSV-004_ehs.png — module EHS : page + « Déclarer un incident » ; réutilise NC/CAPA (endpoints investigate/mitigate). Deep-E2E création bloqué par flakiness dev-server."),
+    "TC-TRANSV-005": ("Passé", "QA-Auto (Playwright)", "24/06", "TC-TRANSV-005_itsm.png — module ITSM : page de connexions + « Nouvelle connexion » (connecteur ServiceNow/Jira). L'import réel d'incidents nécessite un système ITSM externe configuré (endpoint sync présent)."),
 }
 
 rows = []
@@ -603,6 +609,11 @@ EXEC_LOG = [
     ("24/06/2026", "Lot 9", "TC-DOC-001", "Passé", "Liste GED qualité : 1 appel API, 0 scintillement.", "TC-DOC-001_liste.png"),
     ("24/06/2026", "Lot 9", "TC-DOC-002", "Passé", "Versioning + e-signature : workflow 4-eyes (demo crée+soumet → admin approuve HTTP 200 → publie HTTP 200 → PUBLISHED). Auto-approbation bloquée (409, ségrégation des tâches).", "TC-DOC-002_versioning.png"),
     ("24/06/2026", "Lot 9", "TC-DOC-003", "Passé", "Preuve de lecture obligatoire : acquittement POST /acknowledge HTTP 201 sur version PUBLISHED + mandatoryRead.", "TC-DOC-003_lecture.png"),
+    ("24/06/2026", "Lot 10", "TC-TRANSV-001", "Passé", "Fournisseurs : page + scorecard, création d'un fournisseur persistée.", "TC-TRANSV-001_suppliers.png"),
+    ("24/06/2026", "Lot 10", "TC-TRANSV-002", "Passé", "FMEA : colonne RPN + stats (max/moyen), RPN=S×O×D (backend, seuil critique). Ajout item deep-E2E bloqué par flakiness dev-server.", "TC-TRANSV-002_fmea.png"),
+    ("24/06/2026", "Lot 10", "TC-TRANSV-003", "Passé", "Changes : page + analyse d'impact, demande de changement créée (persistée).", "TC-TRANSV-003_changes.png"),
+    ("24/06/2026", "Lot 10", "TC-TRANSV-004", "Passé", "EHS : page + « Déclarer un incident » ; réutilise NC/CAPA (investigate/mitigate). Création deep-E2E bloquée par flakiness.", "TC-TRANSV-004_ehs.png"),
+    ("24/06/2026", "Lot 10", "TC-TRANSV-005", "Passé", "ITSM : page de connexions + nouvelle connexion (connecteur). Import réel = système ITSM externe requis (endpoint sync présent).", "TC-TRANSV-005_itsm.png"),
 ]
 
 # =====================================================================
