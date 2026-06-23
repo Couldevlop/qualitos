@@ -512,6 +512,11 @@ REAL_RESULTS = {
     "TC-DMAIC-002": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-DMAIC-002_workflow.png — projet créé (ACTIVE/DEFINE), transitions réelles Define→Measure→Analyze (stepper, 2 étapes franchies)."),
     "TC-DMAIC-003": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-DMAIC-003_capability.png — capabilité calculée et affichée : Cp 3.55, Cpk 3.46, σ, niveau σ 10.38 (12 mesures + limites de spec)."),
     "TC-DMAIC-004": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-DMAIC-004_pokayoke.png — catalogue Poka-Yoke : 12 dispositifs proposés (filtrables type/mécanisme)."),
+    # Lot 5 (23/06) — domaine Cercles de Qualité
+    "TC-CERCLE-001": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-CERCLE-001_liste.png — liste des cercles, 1 appel API, 0 scintillement."),
+    "TC-CERCLE-002": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-CERCLE-002_membre.png — cercle créé + ajout d'un membre avec rôle."),
+    "TC-CERCLE-003": ("Bloqué", "QA-Auto (Playwright)", "23/06", "Proposition créée mais aucune action de cycle de vie dans l'UI (review/approve/implement/impact) — le backend les expose pourtant → écart UI, voir ANO-009."),
+    "TC-CERCLE-004": ("Bloqué", "QA-Auto (Playwright)", "23/06", "Aucune génération de compte-rendu IA (Whisper + LLM) ni dans l'UI ni au backend — feature non implémentée, voir ANO-010."),
 }
 
 rows = []
@@ -558,6 +563,10 @@ EXEC_LOG = [
     ("23/06/2026", "Lot 4", "TC-DMAIC-002", "Passé", "Workflow 5 phases : projet créé ACTIVE/DEFINE, transitions réelles Define→Measure→Analyze via « Avancer » (stepper mis à jour).", "TC-DMAIC-002_workflow.png"),
     ("23/06/2026", "Lot 4", "TC-DMAIC-003", "Passé", "Capabilité SPC : limites de spec + 12 mesures → Cp 3.55 / Cpk 3.46 / σ / niveau σ calculés et affichés.", "TC-DMAIC-003_capability.png"),
     ("23/06/2026", "Lot 4", "TC-DMAIC-004", "Passé", "Poka-Yoke : catalogue de 12 dispositifs (filtrables type/mécanisme) dans le dialog d'assignation. Faux négatif initial (options mat-select hors DOM tant que fermé), re-testé OK.", "TC-DMAIC-004_pokayoke.png"),
+    ("23/06/2026", "Lot 5", "TC-CERCLE-001", "Passé", "Liste des cercles : 1 appel API, 0 scintillement.", "TC-CERCLE-001_liste.png"),
+    ("23/06/2026", "Lot 5", "TC-CERCLE-002", "Passé", "Création d'un cercle + ajout d'un membre avec rôle (dialog membre).", "TC-CERCLE-002_membre.png"),
+    ("23/06/2026", "Lot 5", "TC-CERCLE-003", "Bloqué", "Proposition créée et affichée (statut PROPOSED), mais aucune action de cycle de vie dans l'UI. Le backend expose pourtant review/approve/reject/implement/impact (CircleController) → écart UI. Consigné ANO-009.", "TC-CERCLE-003_proposition.png"),
+    ("23/06/2026", "Lot 5", "TC-CERCLE-004", "Bloqué", "Compte-rendu auto-généré (Whisper + LLM) absent de l'UI et du backend (meetings = planification seule). Feature non implémentée. Consigné ANO-010.", "—"),
 ]
 
 # =====================================================================
@@ -901,6 +910,10 @@ anomalies = [
      "CLAUDE §3.2 prévoit une heatmap de score 5S par zone et la détection CV sur photo ; l'UI 5S n'avait qu'une table.","Implémenté le 23/06 : heatmap zone×mois (qos-echart) dans la liste 5S ; Vision CV sur l'audit (UI détail + endpoint backend POST /fives/audits/{id}/vision, validateur image mutualisé, 6 langues). 20+9 tests backend verts, build front OK.","23/06"),
     ("ANO-008","Conversion Ishikawa → PDCA absente de l'UI","Ishikawa","Mineure","Résolu","TC-ISHI-004",
      "CLAUDE §3.6 prévoit la conversion en 1 clic d'un Ishikawa (cause) en cycle PDCA (référentiel commun) ; aucun bouton « Convertir en PDCA » dans le détail Ishikawa.","Implémenté le 23/06 : endpoint POST /ishikawa/diagrams/{id}/convert-to-pdca (tenant-scopé, cause optionnelle, réutilise PdcaService) + bouton détail qui navigue vers le cycle créé + i18n 6 langues. Tests : IshikawaServiceTest +4, IshikawaControllerTest +2.","23/06"),
+    ("ANO-009","Cycle de vie des propositions de cercle absent de l'UI","Cercles","Mineure","Ouvert","TC-CERCLE-003",
+     "Le backend (CircleController) expose review/approve/reject/implement/impact sur les propositions (CLAUDE §3.3 : statut, validation, mise en œuvre, mesure d'impact), mais l'UI ne propose que la création + l'affichage du statut.","À implémenter côté front (backend prêt) : boutons d'action + saisie de la mesure d'impact.","23/06"),
+    ("ANO-010","Compte-rendu de réunion auto-généré (Whisper + LLM) absent","Cercles","Majeure","Ouvert","TC-CERCLE-004",
+     "CLAUDE §3.3 prévoit des comptes-rendus auto-générés (transcription Whisper + résumé LLM) ; ni l'UI ni le backend ne le proposent (meetings = planification seule).","Feature lourde (upload audio + transcription + LLM) — backlog, à cadrer.","23/06"),
 ]
 ri = hrow+1
 SEV = {"Critique":RED,"Majeure":AMBER,"Mineure":BLUE}
