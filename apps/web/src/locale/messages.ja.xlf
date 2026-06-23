@@ -3632,6 +3632,18 @@
         <source>Score qualité fournisseurs</source>
         <target state="translated">サプライヤー品質スコア</target>
       </trans-unit>
+      <trans-unit id="dashboardExportPdfLabel" datatype="html">
+        <source>Exporter en PDF (signé)</source>
+        <target state="translated">PDFにエクスポート（署名付き）</target>
+      </trans-unit>
+      <trans-unit id="dashboardExportPdfTooltip" datatype="html">
+        <source>Exporter en PDF signé (ML-DSA + ancrage blockchain)</source>
+        <target state="translated">署名付きPDFにエクスポート（ML-DSA＋ブロックチェーン記録）</target>
+      </trans-unit>
+      <trans-unit id="dashboardExportPdfAria" datatype="html">
+        <source>Exporter en PDF signé</source>
+        <target state="translated">署名付きPDFにエクスポート</target>
+      </trans-unit>
       <trans-unit id="dashboard.tt.aria" datatype="html">
         <source>Voyage dans le temps</source>
         <target state="translated">タイムトラベル</target>
@@ -7540,6 +7552,242 @@ historique 12 mois</source>
       <trans-unit id="industry-packs.glossary-empty" datatype="html">
         <source>Aucun glossaire dans ce pack.</source>
         <target state="translated">このパックに用語集はありません。</target>
+      </trans-unit>
+      <trans-unit id="nav.marketplace" datatype="html">
+        <source>Marketplace</source>
+        <target state="translated">マーケットプレイス</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.title" datatype="html">
+        <source>Marketplace de packs normatifs</source>
+        <target state="translated">規格パックのマーケットプレイス</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.subtitle" datatype="html">
+        <source>Installez des packs sectoriels et normatifs publiés par nos partenaires — référentiels, documents et processus prêts à l'emploi, validés par l'éditeur.</source>
+        <target state="translated">パートナーが公開する業界・規格パックをインストール — すぐに使える参照体系・文書・プロセスを発行元が検証済み。</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.search" datatype="html">
+        <source>Rechercher un pack</source>
+        <target state="translated">パックを検索</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.search-placeholder" datatype="html">
+        <source>Norme, secteur, éditeur, mot-clé…</source>
+        <target state="translated">規格、業界、発行元、キーワード…</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.submit-link" datatype="html">
+        <source>Proposer un pack</source>
+        <target state="translated">パックを提案</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.empty" datatype="html">
+        <source>Aucun pack publié ne correspond à votre recherche.</source>
+        <target state="translated">検索に一致する公開済みパックはありません。</target>
+      </trans-unit>
+      <trans-unit id="marketplace.badge-installed" datatype="html">
+        <source>Installé</source>
+        <target state="translated">インストール済み</target>
+      </trans-unit>
+      <trans-unit id="marketplace.free" datatype="html">
+        <source>Gratuit</source>
+        <target state="translated">無料</target>
+      </trans-unit>
+      <trans-unit id="marketplace.rate-label" datatype="html">
+        <source>Noter :</source>
+        <target state="translated">評価：</target>
+      </trans-unit>
+      <trans-unit id="marketplace.retry" datatype="html">
+        <source>Réessayer</source>
+        <target state="translated">再試行</target>
+      </trans-unit>
+      <trans-unit id="marketplace.install" datatype="html">
+        <source>Installer</source>
+        <target state="translated">インストール</target>
+      </trans-unit>
+      <trans-unit id="marketplace.installed" datatype="html">
+        <source>Pack installé</source>
+        <target state="translated">パックをインストールしました</target>
+      </trans-unit>
+      <trans-unit id="marketplace.install-error" datatype="html">
+        <source>Échec de l'installation</source>
+        <target state="translated">インストールに失敗しました</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstall" datatype="html">
+        <source>Désinstaller</source>
+        <target state="translated">アンインストール</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstall-title" datatype="html">
+        <source>Désinstaller le pack ?</source>
+        <target state="translated">パックをアンインストールしますか？</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstall-message" datatype="html">
+        <source>Le pack sera désinstallé pour ce tenant. Vous pourrez le réinstaller depuis le catalogue.</source>
+        <target state="translated">このテナントでパックがアンインストールされます。カタログから再インストールできます。</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstalled" datatype="html">
+        <source>Pack désinstallé</source>
+        <target state="translated">パックをアンインストールしました</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstall-error" datatype="html">
+        <source>Échec de la désinstallation</source>
+        <target state="translated">アンインストールに失敗しました</target>
+      </trans-unit>
+      <trans-unit id="marketplace.rated" datatype="html">
+        <source>Merci pour votre note</source>
+        <target state="translated">評価ありがとうございます</target>
+      </trans-unit>
+      <trans-unit id="marketplace.rate-error" datatype="html">
+        <source>Notation impossible (installez d'abord le pack)</source>
+        <target state="translated">評価できません（先にパックをインストールしてください）</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.title" datatype="html">
+        <source>Modération des packs</source>
+        <target state="translated">パックのモデレーション</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.subtitle" datatype="html">
+        <source>File d'instruction des packs soumis par les partenaires. Aucun pack n'est publié sans validation humaine.</source>
+        <target state="translated">パートナーが提出したパックの審査キュー。人による検証なしにパックは公開されません。</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.empty" datatype="html">
+        <source>Aucun pack en attente d'instruction.</source>
+        <target state="translated">審査待ちのパックはありません。</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.manifest" datatype="html">
+        <source>Manifeste :</source>
+        <target state="translated">マニフェスト：</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.take-review" datatype="html">
+        <source>Prendre en revue</source>
+        <target state="translated">レビューを開始</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.taken" datatype="html">
+        <source>Pack pris en revue</source>
+        <target state="translated">パックをレビュー対象にしました</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.publish" datatype="html">
+        <source>Publier</source>
+        <target state="translated">公開</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.published" datatype="html">
+        <source>Pack publié au catalogue</source>
+        <target state="translated">パックをカタログに公開しました</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.reject" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">却下</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.rejected" datatype="html">
+        <source>Pack rejeté</source>
+        <target state="translated">パックを却下しました</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.deprecated" datatype="html">
+        <source>Pack déprécié</source>
+        <target state="translated">パックを非推奨にしました</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.error" datatype="html">
+        <source>Action impossible dans cet état</source>
+        <target state="translated">この状態では操作できません</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.title" datatype="html">
+        <source>Rejeter le pack</source>
+        <target state="translated">パックを却下</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.hint" datatype="html">
+        <source>Indiquez au partenaire le motif du rejet (visible côté éditeur).</source>
+        <target state="translated">却下の理由をパートナーに伝えます（発行元に表示されます）。</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.reason-label" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">却下理由</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.reason-placeholder" datatype="html">
+        <source>Ex : manifeste incomplet, normes non couvertes…</source>
+        <target state="translated">例：マニフェスト不備、規格の未対応…</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.confirm" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">却下</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.title" datatype="html">
+        <source>Proposer un pack normatif</source>
+        <target state="translated">規格パックを提案</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.subtitle" datatype="html">
+        <source>Soumettez un pack sectoriel ou normatif. Il sera instruit puis validé par l'éditeur avant publication au catalogue.</source>
+        <target state="translated">業界または規格パックを提出します。発行元による審査・検証を経てカタログに公開されます。</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.packId" datatype="html">
+        <source>Identifiant du pack</source>
+        <target state="translated">パック識別子</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.packId-error" datatype="html">
+        <source>Format attendu : minuscules, chiffres, - ou _</source>
+        <target state="translated">想定形式：小文字、数字、- または _</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.version" datatype="html">
+        <source>Version</source>
+        <target state="translated">バージョン</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.version-error" datatype="html">
+        <source>Format attendu : X.Y ou X.Y.Z</source>
+        <target state="translated">想定形式：X.Y または X.Y.Z</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.publisher" datatype="html">
+        <source>Éditeur / partenaire</source>
+        <target state="translated">発行元 / パートナー</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.sector" datatype="html">
+        <source>Secteur</source>
+        <target state="translated">業界</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.titleField" datatype="html">
+        <source>Titre du pack</source>
+        <target state="translated">パックのタイトル</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.description" datatype="html">
+        <source>Description</source>
+        <target state="translated">説明</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.norms" datatype="html">
+        <source>Normes couvertes (séparées par des virgules)</source>
+        <target state="translated">対象規格（カンマ区切り）</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.price" datatype="html">
+        <source>Prix (centimes)</source>
+        <target state="translated">価格（セント）</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.currency" datatype="html">
+        <source>Devise</source>
+        <target state="translated">通貨</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.manifestUrl" datatype="html">
+        <source>URL du manifeste (https:// ou oci://)</source>
+        <target state="translated">マニフェストURL（https:// または oci://）</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.manifestUrl-error" datatype="html">
+        <source>URL https:// ou oci:// requise</source>
+        <target state="translated">https:// または oci:// のURLが必要です</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.manifestJson" datatype="html">
+        <source>Manifeste (JSON inline)</source>
+        <target state="translated">マニフェスト（インラインJSON）</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.signature" datatype="html">
+        <source>Signature partenaire (hash)</source>
+        <target state="translated">パートナー署名（ハッシュ）</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.signature-error" datatype="html">
+        <source>16 à 128 caractères requis</source>
+        <target state="translated">16～128文字が必要です</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.action" datatype="html">
+        <source>Soumettre</source>
+        <target state="translated">提出</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.success" datatype="html">
+        <source>Pack soumis — en attente de validation de l'éditeur</source>
+        <target state="translated">パックを提出しました — 発行元の検証待ち</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.error" datatype="html">
+        <source>Échec de la soumission (manifeste ou doublon)</source>
+        <target state="translated">提出に失敗しました（マニフェストまたは重複）</target>
       </trans-unit>
       <trans-unit id="pdca.list.title" datatype="html">
         <source>Cycles PDCA</source>

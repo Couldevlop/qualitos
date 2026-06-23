@@ -3632,6 +3632,18 @@
         <source>Score qualité fournisseurs</source>
         <target state="translated">نتيجة جودة المورّدين</target>
       </trans-unit>
+      <trans-unit id="dashboardExportPdfLabel" datatype="html">
+        <source>Exporter en PDF (signé)</source>
+        <target state="translated">تصدير إلى PDF (موقَّع)</target>
+      </trans-unit>
+      <trans-unit id="dashboardExportPdfTooltip" datatype="html">
+        <source>Exporter en PDF signé (ML-DSA + ancrage blockchain)</source>
+        <target state="translated">تصدير إلى PDF موقَّع (ML-DSA + ترسيخ في البلوكشين)</target>
+      </trans-unit>
+      <trans-unit id="dashboardExportPdfAria" datatype="html">
+        <source>Exporter en PDF signé</source>
+        <target state="translated">تصدير إلى PDF موقَّع</target>
+      </trans-unit>
       <trans-unit id="dashboard.tt.aria" datatype="html">
         <source>Voyage dans le temps</source>
         <target state="translated">السفر عبر الزمن</target>
@@ -7541,6 +7553,242 @@ historique 12 mois</source>
       <trans-unit id="industry-packs.glossary-empty" datatype="html">
         <source>Aucun glossaire dans ce pack.</source>
         <target state="translated">لا يوجد مسرد في هذه الحزمة.</target>
+      </trans-unit>
+      <trans-unit id="nav.marketplace" datatype="html">
+        <source>Marketplace</source>
+        <target state="translated">المتجر</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.title" datatype="html">
+        <source>Marketplace de packs normatifs</source>
+        <target state="translated">متجر حِزَم المعايير</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.subtitle" datatype="html">
+        <source>Installez des packs sectoriels et normatifs publiés par nos partenaires — référentiels, documents et processus prêts à l'emploi, validés par l'éditeur.</source>
+        <target state="translated">ثبِّت حِزَماً قطاعية ومعيارية ينشرها شركاؤنا — مرجعيات ووثائق وعمليات جاهزة للاستخدام ومُعتمدة من الناشر.</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.search" datatype="html">
+        <source>Rechercher un pack</source>
+        <target state="translated">البحث عن حزمة</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.search-placeholder" datatype="html">
+        <source>Norme, secteur, éditeur, mot-clé…</source>
+        <target state="translated">معيار، قطاع، ناشر، كلمة مفتاحية…</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.submit-link" datatype="html">
+        <source>Proposer un pack</source>
+        <target state="translated">اقتراح حزمة</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.empty" datatype="html">
+        <source>Aucun pack publié ne correspond à votre recherche.</source>
+        <target state="translated">لا توجد حزمة منشورة تطابق بحثك.</target>
+      </trans-unit>
+      <trans-unit id="marketplace.badge-installed" datatype="html">
+        <source>Installé</source>
+        <target state="translated">مُثبَّت</target>
+      </trans-unit>
+      <trans-unit id="marketplace.free" datatype="html">
+        <source>Gratuit</source>
+        <target state="translated">مجاني</target>
+      </trans-unit>
+      <trans-unit id="marketplace.rate-label" datatype="html">
+        <source>Noter :</source>
+        <target state="translated">قيِّم:</target>
+      </trans-unit>
+      <trans-unit id="marketplace.retry" datatype="html">
+        <source>Réessayer</source>
+        <target state="translated">إعادة المحاولة</target>
+      </trans-unit>
+      <trans-unit id="marketplace.install" datatype="html">
+        <source>Installer</source>
+        <target state="translated">تثبيت</target>
+      </trans-unit>
+      <trans-unit id="marketplace.installed" datatype="html">
+        <source>Pack installé</source>
+        <target state="translated">تم تثبيت الحزمة</target>
+      </trans-unit>
+      <trans-unit id="marketplace.install-error" datatype="html">
+        <source>Échec de l'installation</source>
+        <target state="translated">فشل التثبيت</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstall" datatype="html">
+        <source>Désinstaller</source>
+        <target state="translated">إلغاء التثبيت</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstall-title" datatype="html">
+        <source>Désinstaller le pack ?</source>
+        <target state="translated">إلغاء تثبيت الحزمة؟</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstall-message" datatype="html">
+        <source>Le pack sera désinstallé pour ce tenant. Vous pourrez le réinstaller depuis le catalogue.</source>
+        <target state="translated">سيُلغى تثبيت الحزمة لهذا المستأجر. يمكنك إعادة تثبيتها من الكتالوج.</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstalled" datatype="html">
+        <source>Pack désinstallé</source>
+        <target state="translated">تم إلغاء تثبيت الحزمة</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstall-error" datatype="html">
+        <source>Échec de la désinstallation</source>
+        <target state="translated">فشل إلغاء التثبيت</target>
+      </trans-unit>
+      <trans-unit id="marketplace.rated" datatype="html">
+        <source>Merci pour votre note</source>
+        <target state="translated">شكراً على تقييمك</target>
+      </trans-unit>
+      <trans-unit id="marketplace.rate-error" datatype="html">
+        <source>Notation impossible (installez d'abord le pack)</source>
+        <target state="translated">التقييم غير ممكن (ثبِّت الحزمة أولاً)</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.title" datatype="html">
+        <source>Modération des packs</source>
+        <target state="translated">الإشراف على الحِزَم</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.subtitle" datatype="html">
+        <source>File d'instruction des packs soumis par les partenaires. Aucun pack n'est publié sans validation humaine.</source>
+        <target state="translated">قائمة فحص الحِزَم المُقدَّمة من الشركاء. لا تُنشَر أي حزمة دون اعتماد بشري.</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.empty" datatype="html">
+        <source>Aucun pack en attente d'instruction.</source>
+        <target state="translated">لا توجد حزمة في انتظار الفحص.</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.manifest" datatype="html">
+        <source>Manifeste :</source>
+        <target state="translated">البيان:</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.take-review" datatype="html">
+        <source>Prendre en revue</source>
+        <target state="translated">أخذ للمراجعة</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.taken" datatype="html">
+        <source>Pack pris en revue</source>
+        <target state="translated">تم أخذ الحزمة للمراجعة</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.publish" datatype="html">
+        <source>Publier</source>
+        <target state="translated">نشر</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.published" datatype="html">
+        <source>Pack publié au catalogue</source>
+        <target state="translated">تم نشر الحزمة في الكتالوج</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.reject" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">رفض</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.rejected" datatype="html">
+        <source>Pack rejeté</source>
+        <target state="translated">تم رفض الحزمة</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.deprecated" datatype="html">
+        <source>Pack déprécié</source>
+        <target state="translated">تم إهمال الحزمة</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.error" datatype="html">
+        <source>Action impossible dans cet état</source>
+        <target state="translated">الإجراء غير ممكن في هذه الحالة</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.title" datatype="html">
+        <source>Rejeter le pack</source>
+        <target state="translated">رفض الحزمة</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.hint" datatype="html">
+        <source>Indiquez au partenaire le motif du rejet (visible côté éditeur).</source>
+        <target state="translated">بيِّن للشريك سبب الرفض (مرئي لدى الناشر).</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.reason-label" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">سبب الرفض</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.reason-placeholder" datatype="html">
+        <source>Ex : manifeste incomplet, normes non couvertes…</source>
+        <target state="translated">مثال: بيان غير مكتمل، معايير غير مغطّاة…</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.confirm" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">رفض</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.title" datatype="html">
+        <source>Proposer un pack normatif</source>
+        <target state="translated">اقتراح حزمة معيارية</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.subtitle" datatype="html">
+        <source>Soumettez un pack sectoriel ou normatif. Il sera instruit puis validé par l'éditeur avant publication au catalogue.</source>
+        <target state="translated">قدِّم حزمة قطاعية أو معيارية. ستُفحَص ثم يعتمدها الناشر قبل نشرها في الكتالوج.</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.packId" datatype="html">
+        <source>Identifiant du pack</source>
+        <target state="translated">معرّف الحزمة</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.packId-error" datatype="html">
+        <source>Format attendu : minuscules, chiffres, - ou _</source>
+        <target state="translated">الصيغة المتوقَّعة: أحرف صغيرة وأرقام و- أو _</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.version" datatype="html">
+        <source>Version</source>
+        <target state="translated">الإصدار</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.version-error" datatype="html">
+        <source>Format attendu : X.Y ou X.Y.Z</source>
+        <target state="translated">الصيغة المتوقَّعة: X.Y أو X.Y.Z</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.publisher" datatype="html">
+        <source>Éditeur / partenaire</source>
+        <target state="translated">الناشر / الشريك</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.sector" datatype="html">
+        <source>Secteur</source>
+        <target state="translated">القطاع</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.titleField" datatype="html">
+        <source>Titre du pack</source>
+        <target state="translated">عنوان الحزمة</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.description" datatype="html">
+        <source>Description</source>
+        <target state="translated">الوصف</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.norms" datatype="html">
+        <source>Normes couvertes (séparées par des virgules)</source>
+        <target state="translated">المعايير المغطّاة (مفصولة بفواصل)</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.price" datatype="html">
+        <source>Prix (centimes)</source>
+        <target state="translated">السعر (سنتات)</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.currency" datatype="html">
+        <source>Devise</source>
+        <target state="translated">العملة</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.manifestUrl" datatype="html">
+        <source>URL du manifeste (https:// ou oci://)</source>
+        <target state="translated">رابط البيان (https:// أو oci://)</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.manifestUrl-error" datatype="html">
+        <source>URL https:// ou oci:// requise</source>
+        <target state="translated">مطلوب رابط https:// أو oci://</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.manifestJson" datatype="html">
+        <source>Manifeste (JSON inline)</source>
+        <target state="translated">البيان (JSON مضمَّن)</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.signature" datatype="html">
+        <source>Signature partenaire (hash)</source>
+        <target state="translated">توقيع الشريك (التجزئة)</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.signature-error" datatype="html">
+        <source>16 à 128 caractères requis</source>
+        <target state="translated">مطلوب من 16 إلى 128 حرفاً</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.action" datatype="html">
+        <source>Soumettre</source>
+        <target state="translated">إرسال</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.success" datatype="html">
+        <source>Pack soumis — en attente de validation de l'éditeur</source>
+        <target state="translated">تم إرسال الحزمة — في انتظار اعتماد الناشر</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.error" datatype="html">
+        <source>Échec de la soumission (manifeste ou doublon)</source>
+        <target state="translated">فشل الإرسال (بيان أو نسخة مكرّرة)</target>
       </trans-unit>
       <trans-unit id="pdca.list.title" datatype="html">
         <source>Cycles PDCA</source>

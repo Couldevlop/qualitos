@@ -3632,6 +3632,18 @@
         <source>Score qualité fournisseurs</source>
         <target state="translated">Puntuación de calidad de proveedores</target>
       </trans-unit>
+      <trans-unit id="dashboardExportPdfLabel" datatype="html">
+        <source>Exporter en PDF (signé)</source>
+        <target state="translated">Exportar a PDF (firmado)</target>
+      </trans-unit>
+      <trans-unit id="dashboardExportPdfTooltip" datatype="html">
+        <source>Exporter en PDF signé (ML-DSA + ancrage blockchain)</source>
+        <target state="translated">Exportar a PDF firmado (ML-DSA + anclaje blockchain)</target>
+      </trans-unit>
+      <trans-unit id="dashboardExportPdfAria" datatype="html">
+        <source>Exporter en PDF signé</source>
+        <target state="translated">Exportar a PDF firmado</target>
+      </trans-unit>
       <trans-unit id="dashboard.tt.aria" datatype="html">
         <source>Voyage dans le temps</source>
         <target state="translated">Viaje en el tiempo</target>
@@ -7541,6 +7553,242 @@ historial de 12 meses</target>
       <trans-unit id="industry-packs.glossary-empty" datatype="html">
         <source>Aucun glossaire dans ce pack.</source>
         <target state="translated">Ningún glosario en este pack.</target>
+      </trans-unit>
+      <trans-unit id="nav.marketplace" datatype="html">
+        <source>Marketplace</source>
+        <target state="translated">Marketplace</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.title" datatype="html">
+        <source>Marketplace de packs normatifs</source>
+        <target state="translated">Marketplace de paquetes normativos</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.subtitle" datatype="html">
+        <source>Installez des packs sectoriels et normatifs publiés par nos partenaires — référentiels, documents et processus prêts à l'emploi, validés par l'éditeur.</source>
+        <target state="translated">Instale paquetes sectoriales y normativos publicados por nuestros socios — referenciales, documentos y procesos listos para usar, validados por el editor.</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.search" datatype="html">
+        <source>Rechercher un pack</source>
+        <target state="translated">Buscar un paquete</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.search-placeholder" datatype="html">
+        <source>Norme, secteur, éditeur, mot-clé…</source>
+        <target state="translated">Norma, sector, editor, palabra clave…</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.submit-link" datatype="html">
+        <source>Proposer un pack</source>
+        <target state="translated">Proponer un paquete</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.empty" datatype="html">
+        <source>Aucun pack publié ne correspond à votre recherche.</source>
+        <target state="translated">Ningún paquete publicado coincide con su búsqueda.</target>
+      </trans-unit>
+      <trans-unit id="marketplace.badge-installed" datatype="html">
+        <source>Installé</source>
+        <target state="translated">Instalado</target>
+      </trans-unit>
+      <trans-unit id="marketplace.free" datatype="html">
+        <source>Gratuit</source>
+        <target state="translated">Gratis</target>
+      </trans-unit>
+      <trans-unit id="marketplace.rate-label" datatype="html">
+        <source>Noter :</source>
+        <target state="translated">Valorar:</target>
+      </trans-unit>
+      <trans-unit id="marketplace.retry" datatype="html">
+        <source>Réessayer</source>
+        <target state="translated">Reintentar</target>
+      </trans-unit>
+      <trans-unit id="marketplace.install" datatype="html">
+        <source>Installer</source>
+        <target state="translated">Instalar</target>
+      </trans-unit>
+      <trans-unit id="marketplace.installed" datatype="html">
+        <source>Pack installé</source>
+        <target state="translated">Paquete instalado</target>
+      </trans-unit>
+      <trans-unit id="marketplace.install-error" datatype="html">
+        <source>Échec de l'installation</source>
+        <target state="translated">Error en la instalación</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstall" datatype="html">
+        <source>Désinstaller</source>
+        <target state="translated">Desinstalar</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstall-title" datatype="html">
+        <source>Désinstaller le pack ?</source>
+        <target state="translated">¿Desinstalar el paquete?</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstall-message" datatype="html">
+        <source>Le pack sera désinstallé pour ce tenant. Vous pourrez le réinstaller depuis le catalogue.</source>
+        <target state="translated">El paquete se desinstalará para este inquilino. Podrá reinstalarlo desde el catálogo.</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstalled" datatype="html">
+        <source>Pack désinstallé</source>
+        <target state="translated">Paquete desinstalado</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstall-error" datatype="html">
+        <source>Échec de la désinstallation</source>
+        <target state="translated">Error en la desinstalación</target>
+      </trans-unit>
+      <trans-unit id="marketplace.rated" datatype="html">
+        <source>Merci pour votre note</source>
+        <target state="translated">Gracias por su valoración</target>
+      </trans-unit>
+      <trans-unit id="marketplace.rate-error" datatype="html">
+        <source>Notation impossible (installez d'abord le pack)</source>
+        <target state="translated">No se puede valorar (instale primero el paquete)</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.title" datatype="html">
+        <source>Modération des packs</source>
+        <target state="translated">Moderación de paquetes</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.subtitle" datatype="html">
+        <source>File d'instruction des packs soumis par les partenaires. Aucun pack n'est publié sans validation humaine.</source>
+        <target state="translated">Cola de instrucción de paquetes enviados por los socios. Ningún paquete se publica sin validación humana.</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.empty" datatype="html">
+        <source>Aucun pack en attente d'instruction.</source>
+        <target state="translated">Ningún paquete pendiente de instrucción.</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.manifest" datatype="html">
+        <source>Manifeste :</source>
+        <target state="translated">Manifiesto:</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.take-review" datatype="html">
+        <source>Prendre en revue</source>
+        <target state="translated">Tomar para revisión</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.taken" datatype="html">
+        <source>Pack pris en revue</source>
+        <target state="translated">Paquete en revisión</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.publish" datatype="html">
+        <source>Publier</source>
+        <target state="translated">Publicar</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.published" datatype="html">
+        <source>Pack publié au catalogue</source>
+        <target state="translated">Paquete publicado en el catálogo</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.reject" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">Rechazar</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.rejected" datatype="html">
+        <source>Pack rejeté</source>
+        <target state="translated">Paquete rechazado</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.deprecated" datatype="html">
+        <source>Pack déprécié</source>
+        <target state="translated">Paquete obsoleto</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.error" datatype="html">
+        <source>Action impossible dans cet état</source>
+        <target state="translated">Acción imposible en este estado</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.title" datatype="html">
+        <source>Rejeter le pack</source>
+        <target state="translated">Rechazar el paquete</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.hint" datatype="html">
+        <source>Indiquez au partenaire le motif du rejet (visible côté éditeur).</source>
+        <target state="translated">Indique al socio el motivo del rechazo (visible para el editor).</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.reason-label" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">Motivo del rechazo</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.reason-placeholder" datatype="html">
+        <source>Ex : manifeste incomplet, normes non couvertes…</source>
+        <target state="translated">Ej.: manifiesto incompleto, normas no cubiertas…</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.confirm" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">Rechazar</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.title" datatype="html">
+        <source>Proposer un pack normatif</source>
+        <target state="translated">Proponer un paquete normativo</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.subtitle" datatype="html">
+        <source>Soumettez un pack sectoriel ou normatif. Il sera instruit puis validé par l'éditeur avant publication au catalogue.</source>
+        <target state="translated">Envíe un paquete sectorial o normativo. Será instruido y validado por el editor antes de su publicación en el catálogo.</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.packId" datatype="html">
+        <source>Identifiant du pack</source>
+        <target state="translated">Identificador del paquete</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.packId-error" datatype="html">
+        <source>Format attendu : minuscules, chiffres, - ou _</source>
+        <target state="translated">Formato esperado: minúsculas, dígitos, - o _</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.version" datatype="html">
+        <source>Version</source>
+        <target state="translated">Versión</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.version-error" datatype="html">
+        <source>Format attendu : X.Y ou X.Y.Z</source>
+        <target state="translated">Formato esperado: X.Y o X.Y.Z</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.publisher" datatype="html">
+        <source>Éditeur / partenaire</source>
+        <target state="translated">Editor / socio</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.sector" datatype="html">
+        <source>Secteur</source>
+        <target state="translated">Sector</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.titleField" datatype="html">
+        <source>Titre du pack</source>
+        <target state="translated">Título del paquete</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.description" datatype="html">
+        <source>Description</source>
+        <target state="translated">Descripción</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.norms" datatype="html">
+        <source>Normes couvertes (séparées par des virgules)</source>
+        <target state="translated">Normas cubiertas (separadas por comas)</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.price" datatype="html">
+        <source>Prix (centimes)</source>
+        <target state="translated">Precio (céntimos)</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.currency" datatype="html">
+        <source>Devise</source>
+        <target state="translated">Moneda</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.manifestUrl" datatype="html">
+        <source>URL du manifeste (https:// ou oci://)</source>
+        <target state="translated">URL del manifiesto (https:// u oci://)</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.manifestUrl-error" datatype="html">
+        <source>URL https:// ou oci:// requise</source>
+        <target state="translated">Se requiere URL https:// u oci://</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.manifestJson" datatype="html">
+        <source>Manifeste (JSON inline)</source>
+        <target state="translated">Manifiesto (JSON en línea)</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.signature" datatype="html">
+        <source>Signature partenaire (hash)</source>
+        <target state="translated">Firma del socio (hash)</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.signature-error" datatype="html">
+        <source>16 à 128 caractères requis</source>
+        <target state="translated">Se requieren de 16 a 128 caracteres</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.action" datatype="html">
+        <source>Soumettre</source>
+        <target state="translated">Enviar</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.success" datatype="html">
+        <source>Pack soumis — en attente de validation de l'éditeur</source>
+        <target state="translated">Paquete enviado — pendiente de validación del editor</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.error" datatype="html">
+        <source>Échec de la soumission (manifeste ou doublon)</source>
+        <target state="translated">Error en el envío (manifiesto o duplicado)</target>
       </trans-unit>
       <trans-unit id="pdca.list.title" datatype="html">
         <source>Cycles PDCA</source>
