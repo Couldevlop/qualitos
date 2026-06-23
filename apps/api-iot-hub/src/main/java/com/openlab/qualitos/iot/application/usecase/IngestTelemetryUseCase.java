@@ -8,6 +8,8 @@ import com.openlab.qualitos.iot.domain.port.NonConformancePublisher;
 import com.openlab.qualitos.iot.domain.port.TelemetryRepository;
 import com.openlab.qualitos.iot.domain.service.DeviceShadow;
 import com.openlab.qualitos.iot.domain.service.StreamRuleEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -22,6 +24,8 @@ import java.util.UUID;
  * <p>OWASP A03: device existence is verified per-tenant (no IDOR — A01).
  */
 public final class IngestTelemetryUseCase {
+
+  private static final Logger LOG = LoggerFactory.getLogger(IngestTelemetryUseCase.class);
 
   private final DeviceRepository deviceRepo;
   private final TelemetryRepository telemetryRepo;
@@ -49,15 +53,26 @@ public final class IngestTelemetryUseCase {
     TelemetryPoint point = new TelemetryPoint(
         UUID.randomUUID(), tenantId, device.id(), metric, value, unit,
         recordedAt == null ? Instant.now() : recordedAt);
+    // Persistance de la mesure = ingestion proprement dite (aucun @Transactional
+    // englobant : ce save commit immédiatement dans sa propre transaction).
     TelemetryPoint saved = telemetryRepo.save(point);
-    deviceRepo.touchLastSeen(tenantId, device.id(), saved.recordedAt());
 
-    // Device Shadow (§9.6) : reflète la dernière valeur rapportée par métrique.
-    deviceRepo.updateTwin(tenantId, device.id(), DeviceShadow.mergeReported(
-        device.twin(), saved.metric(), saved.value(), saved.unit(), saved.recordedAt()));
-
-    for (ThresholdBreachEvent breach : ruleEngine.evaluate(saved)) {
-      publisher.notifyBreach(breach);
+    // Effets secondaires « best-effort » : last-seen, Device Shadow (§9.6) et règles
+    // d'alerte (qui notifient le quality-engine via un appel egress). Un hoquet ici
+    // — engine indisponible, listener en échec, contention sur la ligne device sous
+    // charge CI — ne doit JAMAIS faire perdre/sous-compter une mesure DÉJÀ persistée
+    // (sinon une métrique valide remonte à tort comme « dropped »). La mesure est
+    // déjà committée : on journalise et on poursuit.
+    try {
+      deviceRepo.touchLastSeen(tenantId, device.id(), saved.recordedAt());
+      deviceRepo.updateTwin(tenantId, device.id(), DeviceShadow.mergeReported(
+          device.twin(), saved.metric(), saved.value(), saved.unit(), saved.recordedAt()));
+      for (ThresholdBreachEvent breach : ruleEngine.evaluate(saved)) {
+        publisher.notifyBreach(breach);
+      }
+    } catch (RuntimeException ex) {
+      LOG.warn("Telemetry side-effects failed after persistence (device={} metric={}): {}",
+          device.id(), metric, ex.getMessage());
     }
     return saved;
   }
