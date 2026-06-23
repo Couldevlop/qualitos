@@ -35,7 +35,7 @@ export class PdcaDetailComponent implements OnInit {
   acting$ = new BehaviorSubject<boolean>(false);
 
   private cycleId = '';
-  private readonly reload$ = new Subject<void>();
+  private readonly reload$ = new BehaviorSubject<void>(undefined);
 
   constructor(
     private readonly route: ActivatedRoute,

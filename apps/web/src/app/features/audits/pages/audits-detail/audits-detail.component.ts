@@ -50,7 +50,7 @@ export class AuditsDetailComponent implements OnInit {
   acting$ = new BehaviorSubject<boolean>(false);
 
   private planId = '';
-  private readonly reload$ = new Subject<void>();
+  private readonly reload$ = new BehaviorSubject<void>(undefined);
   private isMockId(s: string): boolean { return /^a-?[a-z0-9-]+$/i.test(s) && /^a[0-9-]/i.test(s); }
 
   constructor(
@@ -80,7 +80,7 @@ export class AuditsDetailComponent implements OnInit {
         }),
         finalize(() => this.loadingState$.next(false))
       )),
-      shareReplay({ bufferSize: 1, refCount: true })
+      shareReplay({ bufferSize: 1, refCount: false }) // refCount:false : gated sur loading, evite la boucle teardown
     );
     this.reload$.next();
   }

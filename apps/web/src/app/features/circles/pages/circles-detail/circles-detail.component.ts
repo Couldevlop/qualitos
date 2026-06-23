@@ -51,7 +51,7 @@ export class CirclesDetailComponent implements OnInit {
   acting$ = new BehaviorSubject<boolean>(false);
 
   private circleId = '';
-  private readonly reload$ = new Subject<void>();
+  private readonly reload$ = new BehaviorSubject<void>(undefined);
   private isMockId(s: string): boolean { return /^c[0-9-]/.test(s); }
 
   constructor(
