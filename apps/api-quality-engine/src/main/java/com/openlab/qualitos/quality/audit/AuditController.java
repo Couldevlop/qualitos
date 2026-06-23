@@ -52,6 +52,12 @@ public class AuditController {
     @PatchMapping("/plans/{id}/cancel")
     public AuditDto.PlanResponse cancel(@PathVariable UUID id) { return service.cancelPlan(id); }
 
+    // Génération du rapport d'audit par LLM (§1.4/§4.4) — POST : appel LLM (effet de bord).
+    @PostMapping("/plans/{id}/report/generate")
+    public AuditDto.PlanResponse generateReport(@PathVariable UUID id) {
+        return service.generateReport(id);
+    }
+
     @DeleteMapping("/plans/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) { service.deletePlan(id); }

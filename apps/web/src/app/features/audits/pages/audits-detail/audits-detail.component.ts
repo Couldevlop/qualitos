@@ -48,6 +48,7 @@ export class AuditsDetailComponent implements OnInit {
   private readonly errorState$ = new BehaviorSubject<string | null>(null);
   readonly error$ = deferredView(this.errorState$);
   acting$ = new BehaviorSubject<boolean>(false);
+  generating = false;
 
   private planId = '';
   private readonly reload$ = new BehaviorSubject<void>(undefined);
@@ -183,6 +184,35 @@ export class AuditsDetailComponent implements OnInit {
   start(): void { this.transition('start'); }
   complete(): void { this.transition('complete'); }
   cancel(): void { this.transition('cancel'); }
+
+  /** Libellé du bouton selon qu'un rapport existe déjà. */
+  reportButtonLabel(hasSummary: boolean): string {
+    return hasSummary
+      ? $localize`:@@audits.detail.regenerate-report:Régénérer le rapport (IA)`
+      : $localize`:@@audits.detail.generate-report:Générer le rapport (IA)`;
+  }
+
+  /** Génère le rapport d'audit par LLM (ANO-012, §1.4/§4.4) et recharge le détail. */
+  generateReport(): void {
+    if (this.generating) return;
+    this.generating = true;
+    this.audits.generateReport(this.planId)
+      .pipe(finalize(() => (this.generating = false)))
+      .subscribe({
+        next: () => {
+          this.snack.open($localize`:@@audits.detail.report-generated:Rapport d'audit généré.`, $localize`:@@common.ok:OK`, { duration: 2500 });
+          this.reload$.next();
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[audits-detail] generateReport failed', err?.status, err?.error?.title);
+          this.snack.open(
+            safeErrorMessage(err, $localize`:@@audits.detail.report-error:Génération du rapport indisponible (service IA).`),
+            $localize`:@@common.close:Fermer`, { duration: 4000 }
+          );
+        }
+      });
+  }
 
   private transition(action: 'start' | 'complete' | 'cancel'): void {
     if (this.acting$.value) return;

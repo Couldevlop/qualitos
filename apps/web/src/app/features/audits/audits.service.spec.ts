@@ -91,6 +91,14 @@ describe('AuditsService (mock mode)', () => {
     });
   });
 
+  it('generateReport fills the report summary via LLM (ANO-012)', (done) => {
+    service.generateReport('a1').subscribe(p => {
+      expect(p.reportSummary).toBeTruthy();
+      expect(p.reportSummary!.length).toBeGreaterThan(10);
+      done();
+    });
+  });
+
   it('addFinding attaches a finding to the plan', (done) => {
     service.addFinding('a1', { type: 'MINOR_NC', description: 'Étiquette manquante', raisedBy: 'u' }).subscribe(f => {
       expect(f.planId).toBe('a1');

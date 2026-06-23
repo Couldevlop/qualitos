@@ -121,6 +121,20 @@ class AuditControllerTest {
     }
 
     @Test @WithMockUser
+    void generateReport_returns200() throws Exception {
+        when(service.generateReport(PLAN)).thenReturn(planResp(AuditStatus.IN_PROGRESS));
+        mockMvc.perform(post("/api/v1/audits/plans/{id}/report/generate", PLAN).with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test @WithMockUser
+    void generateReport_unknownPlan_returns404() throws Exception {
+        when(service.generateReport(PLAN)).thenThrow(new AuditPlanNotFoundException(PLAN));
+        mockMvc.perform(post("/api/v1/audits/plans/{id}/report/generate", PLAN).with(csrf()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test @WithMockUser
     void start_invalid_returns409() throws Exception {
         when(service.startPlan(PLAN)).thenThrow(new AuditStateException("nope"));
         mockMvc.perform(patch("/api/v1/audits/plans/{id}/start", PLAN).with(csrf()))

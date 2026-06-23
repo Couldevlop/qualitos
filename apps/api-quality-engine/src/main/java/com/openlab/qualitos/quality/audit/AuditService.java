@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.audit;
 
+import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
+import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.data.domain.Page;
@@ -14,16 +16,81 @@ import java.util.UUID;
 @Transactional
 public class AuditService {
 
+    /** Borne de génération du rapport d'audit (texte plus long qu'une suggestion). */
+    private static final int REPORT_MAX_TOKENS = 700;
+
     private final AuditPlanRepository planRepository;
     private final AuditChecklistItemRepository checklistRepository;
     private final AuditFindingRepository findingRepository;
+    private final AiGatewayClient ai;
 
     public AuditService(AuditPlanRepository planRepository,
                         AuditChecklistItemRepository checklistRepository,
-                        AuditFindingRepository findingRepository) {
+                        AuditFindingRepository findingRepository,
+                        AiGatewayClient ai) {
         this.planRepository = planRepository;
         this.checklistRepository = checklistRepository;
         this.findingRepository = findingRepository;
+        this.ai = ai;
+    }
+
+    /**
+     * Génère le rapport d'audit final par LLM (CLAUDE.md §1.4/§4.4) à partir du
+     * périmètre, de la norme, des réponses de checklist et des constats. Tenant-scopé
+     * (loadPlan). Le résumé généré est persisté dans {@code reportSummary}. Un service
+     * IA indisponible remonte une {@code AiGatewayException} (mappée 502/503).
+     */
+    public AuditDto.PlanResponse generateReport(UUID id) {
+        AuditPlan p = loadPlan(id);
+
+        String systemPrompt = """
+                Tu es un auditeur qualité senior (QualitOS §1.4/§4.4). À partir des
+                éléments d'un audit (périmètre, norme, réponses de checklist, constats),
+                rédige un RAPPORT D'AUDIT synthétique et professionnel en français :
+                contexte, points conformes, non-conformités (majeures/mineures) avec la
+                clause concernée, puis une conclusion avec recommandations. Texte clair
+                de 5 à 12 phrases, sans markdown ni listes à puces.
+                """;
+
+        StringBuilder ctx = new StringBuilder();
+        ctx.append("Titre : ").append(p.getTitle()).append('\n');
+        if (p.getStandard() != null) {
+            ctx.append("Norme visée : ").append(p.getStandard()).append('\n');
+        }
+        if (p.getScope() != null) {
+            ctx.append("Périmètre : ").append(p.getScope()).append('\n');
+        }
+        ctx.append("\nRéponses de checklist :\n");
+        if (p.getChecklist().isEmpty()) {
+            ctx.append("(aucune)\n");
+        }
+        for (AuditChecklistItem i : p.getChecklist()) {
+            String verdict = i.getConformant() == null ? "non évalué"
+                    : (Boolean.TRUE.equals(i.getConformant()) ? "Conforme" : "NON CONFORME");
+            ctx.append("- [").append(verdict).append("] ").append(i.getQuestion());
+            if (i.getClauseRef() != null) {
+                ctx.append(" (clause ").append(i.getClauseRef()).append(')');
+            }
+            if (i.getResponse() != null && !i.getResponse().isBlank()) {
+                ctx.append(" — ").append(i.getResponse());
+            }
+            ctx.append('\n');
+        }
+        ctx.append("\nConstats :\n");
+        if (p.getFindings().isEmpty()) {
+            ctx.append("(aucun)\n");
+        }
+        for (AuditFinding f : p.getFindings()) {
+            ctx.append("- [").append(f.getType()).append("] ").append(f.getDescription());
+            if (f.getClauseRef() != null) {
+                ctx.append(" (clause ").append(f.getClauseRef()).append(')');
+            }
+            ctx.append('\n');
+        }
+
+        AiCompletionResult result = ai.complete(systemPrompt, ctx.toString(), REPORT_MAX_TOKENS);
+        p.setReportSummary(result.text().trim());
+        return toResponse(planRepository.save(p));
     }
 
     // --- plans ---

@@ -224,6 +224,20 @@ export class AuditsService {
     );
   }
 
+  /**
+   * Génère le rapport d'audit par LLM (§1.4/§4.4) à partir de la checklist + constats.
+   * POST /plans/{id}/report/generate. 200 → plan avec reportSummary renseigné.
+   */
+  generateReport(id: string): Observable<AuditPlanResponse> {
+    if (environment.useMockApi) {
+      const plan = this.mockStore.find(p => p.id === id) ?? this.mockStore[0];
+      plan.reportSummary = 'Rapport simulé : périmètre couvert, 1 non-conformité mineure (clause 7.5). Recommandation : mettre à jour la procédure documentée.';
+      plan.updatedAt = new Date().toISOString();
+      return of(plan).pipe(delay(500));
+    }
+    return this.http.post<AuditPlanResponse>(`${this.endpoint}/${id}/report/generate`, {});
+  }
+
   cancelPlan(id: string): Observable<AuditPlanResponse> {
     return this.transition(id, 'CANCELLED', 'cancel');
   }

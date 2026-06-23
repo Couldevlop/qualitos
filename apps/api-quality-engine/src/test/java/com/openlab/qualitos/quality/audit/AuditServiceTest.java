@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.audit;
 
+import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
+import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.junit.jupiter.api.AfterEach;
@@ -22,6 +24,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +33,7 @@ class AuditServiceTest {
     @Mock AuditPlanRepository planRepo;
     @Mock AuditChecklistItemRepository checklistRepo;
     @Mock AuditFindingRepository findingRepo;
+    @Mock AiGatewayClient ai;
     @InjectMocks AuditService service;
 
     static final UUID TENANT = UUID.randomUUID();
@@ -513,6 +517,30 @@ class AuditServiceTest {
     }
 
     // --- helpers ---
+    // --- generateReport (ANO-012, §1.4/§4.4) ---
+    @Test
+    void generateReport_callsLlmAndPersistsSummary() {
+        AuditPlan p = plan(TENANT, AuditStatus.IN_PROGRESS);
+        when(planRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
+        when(ai.complete(any(), any(), anyInt()))
+                .thenReturn(new AiCompletionResult("Rapport : 1 NC mineure sur la clause 7.5.", "mistral", 120, 40));
+        when(planRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        AuditDto.PlanResponse r = service.generateReport(p.getId());
+
+        assertThat(r.reportSummary()).contains("NC mineure");
+        verify(ai).complete(any(), any(), anyInt());
+    }
+
+    @Test
+    void generateReport_unknownPlan_throws() {
+        UUID id = UUID.randomUUID();
+        when(planRepo.findByIdAndTenantId(id, TENANT)).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> service.generateReport(id))
+                .isInstanceOf(AuditPlanNotFoundException.class);
+        verifyNoInteractions(ai);
+    }
+
     private AuditPlan plan(UUID tenant, AuditStatus status) {
         AuditPlan p = new AuditPlan();
         p.setId(UUID.randomUUID());
