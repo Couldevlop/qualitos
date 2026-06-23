@@ -523,6 +523,11 @@ REAL_RESULTS = {
     "TC-NC-003": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-NC-003_clustering.png — clustering DBSCAN : clusters calculés depuis des NC saisies (/nc-clusters, ai-service)."),
     "TC-NC-004": ("Passé", "QA-Auto (Playwright)", "23/06", "Carte Vision câblée dans le détail NC ; analyse → 503 propre géré (service ai-vision non déployé)."),
     "TC-NC-005": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-NC-005_escalade.png — NC escaladée en CAPA (lien CAPA affiché) — référentiel commun §3.6."),
+    # Lot 7 (23/06) — CAPA
+    "TC-CAPA-001": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-CAPA-001_liste.png — liste des dossiers CAPA, 1 appel API, 0 scintillement."),
+    "TC-CAPA-002": ("Bloqué", "QA-Auto (Playwright)", "23/06", "Démarrage OK (OPEN→IN_PROGRESS) mais clôture IMPOSSIBLE via l'UI : la résolution exige ≥1 action DONE (règle ISO 9001 §10.2 correcte), or la table d'actions est en lecture seule (aucun avancement action→DONE). Backend PATCH /cases/{id}/actions/{actionId} (champ status) prêt → écart UI, voir ANO-011."),
+    "TC-CAPA-003": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-CAPA-003_ia.png — Suggérer (IA) : POST suggest-actions HTTP 200 (ai-service Mistral)."),
+    "TC-CAPA-004": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-CAPA-004_kpi.png — KPI « Délai moyen clôture CAPA » présent sur le dashboard."),
 }
 
 rows = []
@@ -578,6 +583,10 @@ EXEC_LOG = [
     ("23/06/2026", "Lot 6", "TC-NC-003", "Passé", "Clustering DBSCAN : regroupement de NC similaires saisies (/nc-clusters → ai-service).", "TC-NC-003_clustering.png"),
     ("23/06/2026", "Lot 6", "TC-NC-004", "Passé", "Analyse Vision d'une photo de NC : carte câblée ; 503 propre géré (ai-vision non déployé en test).", "—"),
     ("23/06/2026", "Lot 6", "TC-NC-005", "Passé", "Intégration NC → CAPA : escalade créant une CAPA liée (lien affiché).", "TC-NC-005_escalade.png"),
+    ("23/06/2026", "Lot 7", "TC-CAPA-001", "Passé", "Liste des dossiers CAPA : 1 appel API, 0 scintillement.", "TC-CAPA-001_liste.png"),
+    ("23/06/2026", "Lot 7", "TC-CAPA-002", "Bloqué", "Démarrage OK (OPEN→IN_PROGRESS) ; résolution exige ≥1 action DONE (ISO 9001), mais l'UI n'offre pas d'avancement d'action→DONE (table lecture seule). Backend PATCH actions/{id} prêt. Consigné ANO-011.", "TC-CAPA-002_workflow.png"),
+    ("23/06/2026", "Lot 7", "TC-CAPA-003", "Passé", "Suggestion IA d'actions : POST /capa/cases/{id}/suggest-actions HTTP 200 (ai-service Mistral).", "TC-CAPA-003_ia.png"),
+    ("23/06/2026", "Lot 7", "TC-CAPA-004", "Passé", "KPI « Délai moyen clôture CAPA » affiché sur le dashboard.", "TC-CAPA-004_kpi.png"),
 ]
 
 # =====================================================================
@@ -923,6 +932,8 @@ anomalies = [
      "CLAUDE §3.6 prévoit la conversion en 1 clic d'un Ishikawa (cause) en cycle PDCA (référentiel commun) ; aucun bouton « Convertir en PDCA » dans le détail Ishikawa.","Implémenté le 23/06 : endpoint POST /ishikawa/diagrams/{id}/convert-to-pdca (tenant-scopé, cause optionnelle, réutilise PdcaService) + bouton détail qui navigue vers le cycle créé + i18n 6 langues. Tests : IshikawaServiceTest +4, IshikawaControllerTest +2.","23/06"),
     ("ANO-009","Cycle de vie des propositions de cercle absent de l'UI","Cercles","Mineure","Résolu","TC-CERCLE-003",
      "Le backend (CircleController) expose review/approve/reject/implement/impact sur les propositions (CLAUDE §3.3), mais l'UI ne proposait que la création + l'affichage du statut.","Implémenté le 23/06 (agent parallèle) : 5 méthodes service + boutons conditionnés par statut + dialogs reject (motif) et impact (mesure) ; i18n 6 langues. Build front + 41+58 tests circle verts.","23/06"),
+    ("ANO-011","Avancement des actions CAPA (→ DONE) absent de l'UI","CAPA","Mineure","Ouvert","TC-CAPA-002",
+     "La résolution d'un CAPA exige ≥1 action DONE (CapaService, ISO 9001 §10.2), mais la table d'actions du détail est en lecture seule : aucun moyen de passer une action à DONE → le cycle ne peut atteindre la clôture. Le backend expose pourtant PATCH /cases/{id}/actions/{actionId} (champ status).","À implémenter côté front (backend prêt) : avancement du statut d'action (PENDING→IN_PROGRESS→DONE).","23/06"),
     ("ANO-010","Compte-rendu de réunion auto-généré (LLM) absent","Cercles","Majeure","Résolu","TC-CERCLE-004",
      "CLAUDE §3.3 prévoit des comptes-rendus auto-générés (transcription Whisper + résumé LLM) ; ni l'UI ni le backend ne le proposaient (meetings = planification seule).","Implémenté le 23/06 (agent parallèle, ADR 0044) : endpoint POST /circles/{id}/meetings/{mid}/minutes/generate via AiGateway (résumé+décisions+actions), persistance (migration V97), UI dédiée. Transcription Whisper audio→texte documentée en étape future.","23/06"),
 ]
