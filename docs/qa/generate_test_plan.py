@@ -507,6 +507,11 @@ REAL_RESULTS = {
     "TC-ISHI-003": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-ISHI-003_ia.png — Suggérer (IA) : POST suggest-causes HTTP 200, causes suggérées affichées (ai-service Mistral up)."),
     "TC-ISHI-004": ("Passé", "QA-Auto (Playwright)", "23/06", "Conversion Ishikawa→PDCA implémentée : bouton « Convertir en PDCA » + endpoint POST /ishikawa/diagrams/{id}/convert-to-pdca (tenant-scopé, cause optionnelle). 42+23 tests backend verts."),
     "TC-ISHI-005": ("Passé", "QA-Auto (Playwright)", "23/06", "Action 5-Pourquoi (sous-causes) présente dans le détail."),
+    # Lot 4 (23/06) — domaine DMAIC + Poka-Yoke
+    "TC-DMAIC-001": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-DMAIC-001_liste.png — liste des projets, 1 appel API, 0 scintillement."),
+    "TC-DMAIC-002": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-DMAIC-002_workflow.png — projet créé (ACTIVE/DEFINE), transitions réelles Define→Measure→Analyze (stepper, 2 étapes franchies)."),
+    "TC-DMAIC-003": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-DMAIC-003_capability.png — capabilité calculée et affichée : Cp 3.55, Cpk 3.46, σ, niveau σ 10.38 (12 mesures + limites de spec)."),
+    "TC-DMAIC-004": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-DMAIC-004_pokayoke.png — catalogue Poka-Yoke : 12 dispositifs proposés (filtrables type/mécanisme)."),
 }
 
 rows = []
@@ -549,6 +554,10 @@ EXEC_LOG = [
     ("23/06/2026", "Lot 3", "TC-ISHI-004", "Bloqué", "Pas de bouton « Convertir en PDCA » dans l'UI détail. Écart vs CLAUDE §3.6 (référentiel commun) — consigné en ANO-008.", "—"),
     ("23/06/2026", "Lot 3", "TC-ISHI-005", "Passé", "Couplage 5-Pourquoi : ajout de sous-causes disponible dans le détail.", "—"),
     ("23/06/2026", "Correctif ANO-008", "TC-ISHI-004", "Passé", "Conversion Ishikawa→PDCA : bouton « Convertir en PDCA » (détail) + endpoint backend POST /ishikawa/diagrams/{id}/convert-to-pdca (tenant-scopé, cause optionnelle, réutilise PdcaService). i18n 6 langues. 42+23 tests backend verts.", "TC-ISHI-004_convert.png"),
+    ("23/06/2026", "Lot 4", "TC-DMAIC-001", "Passé", "Liste des projets DMAIC : 1 appel API, 0 scintillement.", "TC-DMAIC-001_liste.png"),
+    ("23/06/2026", "Lot 4", "TC-DMAIC-002", "Passé", "Workflow 5 phases : projet créé ACTIVE/DEFINE, transitions réelles Define→Measure→Analyze via « Avancer » (stepper mis à jour).", "TC-DMAIC-002_workflow.png"),
+    ("23/06/2026", "Lot 4", "TC-DMAIC-003", "Passé", "Capabilité SPC : limites de spec + 12 mesures → Cp 3.55 / Cpk 3.46 / σ / niveau σ calculés et affichés.", "TC-DMAIC-003_capability.png"),
+    ("23/06/2026", "Lot 4", "TC-DMAIC-004", "Passé", "Poka-Yoke : catalogue de 12 dispositifs (filtrables type/mécanisme) dans le dialog d'assignation. Faux négatif initial (options mat-select hors DOM tant que fermé), re-testé OK.", "TC-DMAIC-004_pokayoke.png"),
 ]
 
 # =====================================================================
