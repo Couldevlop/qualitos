@@ -13,7 +13,7 @@ import {
   CapaEditDialogComponent,
   CapaEditDialogData
 } from '../capa-edit-dialog/capa-edit-dialog.component';
-import { CapaCaseResponse, CapaCriticity, CapaStatus, SuggestedAction } from '../../capa.types';
+import { CapaActionResponse, CapaActionStatus, CapaCaseResponse, CapaCriticity, CapaStatus, SuggestedAction } from '../../capa.types';
 import {
   CapaActionDialogComponent,
   CapaActionDialogData
@@ -29,7 +29,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 })
 export class CapaDetailComponent implements OnInit {
 
-  readonly actionColumns = ['title', 'status', 'dueDate', 'completedAt'];
+  readonly actionColumns = ['title', 'status', 'dueDate', 'completedAt', 'advance'];
 
   readonly notFoundLabel = $localize`:@@capa.detail.not-found:Cas introuvable`;
   readonly analysingLabel = $localize`:@@capa.detail.analysing:Analyse…`;
@@ -164,6 +164,55 @@ export class CapaDetailComponent implements OnInit {
           $localize`:@@common.close:Fermer`, { duration: 4000 });
       }
     });
+  }
+
+  // ---- Avancement du statut des actions (ANO-011, §4.2 / ISO 9001 §10.2) ----
+
+  private static readonly ACTION_FLOW: Record<CapaActionStatus, CapaActionStatus | null> = {
+    PENDING: 'IN_PROGRESS',
+    IN_PROGRESS: 'DONE',
+    DONE: null
+  };
+
+  /** Statut suivant d'une action (null si déjà DONE). */
+  nextActionStatus(s: CapaActionStatus): CapaActionStatus | null {
+    return CapaDetailComponent.ACTION_FLOW[s];
+  }
+
+  /** Une action est avançable si elle n'est pas DONE et que la CAPA n'est pas terminale. */
+  canAdvanceAction(a: CapaActionResponse, caseStatus: CapaStatus): boolean {
+    return a.status !== 'DONE' && !this.isTerminal(caseStatus) && !this.acting$.value;
+  }
+
+  /** Libellé du bouton selon le prochain statut. */
+  advanceActionLabel(s: CapaActionStatus): string {
+    return s === 'PENDING'
+      ? $localize`:@@capa.detail.action-start:Démarrer`
+      : $localize`:@@capa.detail.action-complete:Terminer`;
+  }
+
+  /** Fait avancer une action vers son statut suivant (le titre est renvoyé — requis backend). */
+  advanceAction(a: CapaActionResponse): void {
+    const next = this.nextActionStatus(a.status);
+    if (!next || this.acting$.value) {
+      return;
+    }
+    this.acting$.next(true);
+    this.capa.updateAction(this.caseId, a.id, { title: a.title, status: next })
+      .pipe(finalize(() => this.acting$.next(false)))
+      .subscribe({
+        next: () => {
+          this.snack.open($localize`:@@capa.detail.action-advanced:Action mise à jour.`, $localize`:@@common.ok:OK`, { duration: 2000 });
+          this.reload$.next();
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[capa-detail] advanceAction failed', err?.status, err?.error?.title);
+          this.snack.open(
+            safeErrorMessage(err, $localize`:@@capa.detail.action-advance-error:Mise à jour de l'action impossible.`),
+            $localize`:@@common.close:Fermer`, { duration: 4000 });
+        }
+      });
   }
 
   addSuggestion(s: SuggestedAction): void {

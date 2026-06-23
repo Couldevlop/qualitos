@@ -128,3 +128,6 @@
 .crit-medium   { background: #fff3e0; color: #e65100; }
 .crit-high     { background: #fbe9e7; color: #b71c1c; }
 .crit-critical { background: #b71c1c; color: #fff; }
+
+/* ANO-011 — avancement des actions */
+.actions-table .action-done { color: var(--qos-success, #16a34a); vertical-align: middle; }

@@ -49,10 +49,21 @@ export interface CreateCapaCaseRequest {
   dueDate?: string;
 }
 
+export type CapaActionStatus = 'PENDING' | 'IN_PROGRESS' | 'DONE';
+
 export interface CreateCapaActionRequest {
   title: string;
   description?: string;
-  status?: 'PENDING' | 'IN_PROGRESS' | 'DONE';
+  status?: CapaActionStatus;
+  assigneeId?: string;
+  dueDate?: string;
+}
+
+/** Mise à jour d'une action (le titre est requis côté backend). §4.2 */
+export interface UpdateCapaActionRequest {
+  title: string;
+  status?: CapaActionStatus;
+  description?: string;
   assigneeId?: string;
   dueDate?: string;
 }

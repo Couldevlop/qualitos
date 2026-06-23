@@ -12,6 +12,7 @@ import {
   CreateCapaActionRequest,
   CreateCapaCaseRequest,
   SuggestedAction,
+  UpdateCapaActionRequest,
   UpdateCapaCaseRequest
 } from './capa.types';
 
@@ -110,6 +111,26 @@ export class CapaService {
       return of(action).pipe(delay(120));
     }
     return this.http.post<CapaActionResponse>(`${this.endpoint}/${caseId}/actions`, input);
+  }
+
+  /**
+   * Met à jour une action (avancement de statut PENDING→IN_PROGRESS→DONE). Le titre
+   * est requis par le backend (ActionRequest @NotBlank) — l'appelant le renvoie.
+   * §4.2 — débloque la résolution du CAPA (≥1 action DONE).
+   */
+  updateAction(caseId: string, actionId: string, input: UpdateCapaActionRequest): Observable<CapaActionResponse> {
+    if (environment.useMockApi) {
+      const c = this.mockStore.find(x => x.id === caseId);
+      const a = c?.actions.find(x => x.id === actionId);
+      if (a) {
+        if (input.status !== undefined) a.status = input.status;
+        if (input.title !== undefined) a.title = input.title;
+        if (input.status === 'DONE') a.completedAt = new Date().toISOString();
+        if (c) c.updatedAt = new Date().toISOString();
+      }
+      return of(a ?? { id: actionId, capaId: caseId, title: input.title, status: input.status ?? 'PENDING' }).pipe(delay(120));
+    }
+    return this.http.patch<CapaActionResponse>(`${this.endpoint}/${caseId}/actions/${actionId}`, input);
   }
 
   /** Suggestions d'actions correctives/préventives par l'IA (via api-quality-engine → ai-service). §4.2 */

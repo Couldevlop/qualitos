@@ -184,6 +184,20 @@
               <th mat-header-cell *matHeaderCellDef i18n="@@capa.detail.col-completed">Complétée</th>
               <td mat-cell *matCellDef="let a">{{ a.completedAt ? (a.completedAt | date:'short') : '—' }}</td>
             </ng-container>
+            <ng-container matColumnDef="advance">
+              <th mat-header-cell *matHeaderCellDef i18n="@@capa.detail.col-advance">Avancement</th>
+              <td mat-cell *matCellDef="let a">
+                <button mat-stroked-button color="primary" type="button"
+                        *ngIf="a.status !== 'DONE'"
+                        [disabled]="!canAdvanceAction(a, c.status)"
+                        (click)="advanceAction(a)">
+                  <mat-icon>{{ a.status === 'PENDING' ? 'play_arrow' : 'check' }}</mat-icon>
+                  <span>{{ advanceActionLabel(a.status) }}</span>
+                </button>
+                <mat-icon *ngIf="a.status === 'DONE'" class="action-done" aria-hidden="true"
+                          i18n-matTooltip="@@capa.detail.action-done-tooltip" matTooltip="Action terminée">check_circle</mat-icon>
+              </td>
+            </ng-container>
             <tr mat-header-row *matHeaderRowDef="actionColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: actionColumns;"></tr>
           </table>
