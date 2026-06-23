@@ -3632,6 +3632,18 @@
         <source>Score qualité fournisseurs</source>
         <target state="translated">供应商质量评分</target>
       </trans-unit>
+      <trans-unit id="dashboardExportPdfLabel" datatype="html">
+        <source>Exporter en PDF (signé)</source>
+        <target state="translated">导出为 PDF（已签名）</target>
+      </trans-unit>
+      <trans-unit id="dashboardExportPdfTooltip" datatype="html">
+        <source>Exporter en PDF signé (ML-DSA + ancrage blockchain)</source>
+        <target state="translated">导出为已签名 PDF（ML-DSA + 区块链锚定）</target>
+      </trans-unit>
+      <trans-unit id="dashboardExportPdfAria" datatype="html">
+        <source>Exporter en PDF signé</source>
+        <target state="translated">导出为已签名 PDF</target>
+      </trans-unit>
       <trans-unit id="dashboard.tt.aria" datatype="html">
         <source>Voyage dans le temps</source>
         <target state="translated">时间回溯</target>
@@ -7541,6 +7553,242 @@ historique 12 mois</source>
       <trans-unit id="industry-packs.glossary-empty" datatype="html">
         <source>Aucun glossaire dans ce pack.</source>
         <target state="translated">此行业包没有术语表。</target>
+      </trans-unit>
+      <trans-unit id="nav.marketplace" datatype="html">
+        <source>Marketplace</source>
+        <target state="translated">应用市场</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.title" datatype="html">
+        <source>Marketplace de packs normatifs</source>
+        <target state="translated">规范包应用市场</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.subtitle" datatype="html">
+        <source>Installez des packs sectoriels et normatifs publiés par nos partenaires — référentiels, documents et processus prêts à l'emploi, validés par l'éditeur.</source>
+        <target state="translated">安装由合作伙伴发布的行业与规范包——参考体系、文档和流程开箱即用，并经发布方验证。</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.search" datatype="html">
+        <source>Rechercher un pack</source>
+        <target state="translated">搜索包</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.search-placeholder" datatype="html">
+        <source>Norme, secteur, éditeur, mot-clé…</source>
+        <target state="translated">规范、行业、发布方、关键词…</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.submit-link" datatype="html">
+        <source>Proposer un pack</source>
+        <target state="translated">提交包</target>
+      </trans-unit>
+      <trans-unit id="marketplace.catalog.empty" datatype="html">
+        <source>Aucun pack publié ne correspond à votre recherche.</source>
+        <target state="translated">没有已发布的包与您的搜索匹配。</target>
+      </trans-unit>
+      <trans-unit id="marketplace.badge-installed" datatype="html">
+        <source>Installé</source>
+        <target state="translated">已安装</target>
+      </trans-unit>
+      <trans-unit id="marketplace.free" datatype="html">
+        <source>Gratuit</source>
+        <target state="translated">免费</target>
+      </trans-unit>
+      <trans-unit id="marketplace.rate-label" datatype="html">
+        <source>Noter :</source>
+        <target state="translated">评分：</target>
+      </trans-unit>
+      <trans-unit id="marketplace.retry" datatype="html">
+        <source>Réessayer</source>
+        <target state="translated">重试</target>
+      </trans-unit>
+      <trans-unit id="marketplace.install" datatype="html">
+        <source>Installer</source>
+        <target state="translated">安装</target>
+      </trans-unit>
+      <trans-unit id="marketplace.installed" datatype="html">
+        <source>Pack installé</source>
+        <target state="translated">已安装包</target>
+      </trans-unit>
+      <trans-unit id="marketplace.install-error" datatype="html">
+        <source>Échec de l'installation</source>
+        <target state="translated">安装失败</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstall" datatype="html">
+        <source>Désinstaller</source>
+        <target state="translated">卸载</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstall-title" datatype="html">
+        <source>Désinstaller le pack ?</source>
+        <target state="translated">卸载该包？</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstall-message" datatype="html">
+        <source>Le pack sera désinstallé pour ce tenant. Vous pourrez le réinstaller depuis le catalogue.</source>
+        <target state="translated">该包将为此租户卸载。您可以从目录重新安装。</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstalled" datatype="html">
+        <source>Pack désinstallé</source>
+        <target state="translated">已卸载包</target>
+      </trans-unit>
+      <trans-unit id="marketplace.uninstall-error" datatype="html">
+        <source>Échec de la désinstallation</source>
+        <target state="translated">卸载失败</target>
+      </trans-unit>
+      <trans-unit id="marketplace.rated" datatype="html">
+        <source>Merci pour votre note</source>
+        <target state="translated">感谢您的评分</target>
+      </trans-unit>
+      <trans-unit id="marketplace.rate-error" datatype="html">
+        <source>Notation impossible (installez d'abord le pack)</source>
+        <target state="translated">无法评分（请先安装该包）</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.title" datatype="html">
+        <source>Modération des packs</source>
+        <target state="translated">包审核</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.subtitle" datatype="html">
+        <source>File d'instruction des packs soumis par les partenaires. Aucun pack n'est publié sans validation humaine.</source>
+        <target state="translated">合作伙伴提交包的审查队列。任何包未经人工验证不会发布。</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.empty" datatype="html">
+        <source>Aucun pack en attente d'instruction.</source>
+        <target state="translated">没有待审查的包。</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.manifest" datatype="html">
+        <source>Manifeste :</source>
+        <target state="translated">清单：</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.take-review" datatype="html">
+        <source>Prendre en revue</source>
+        <target state="translated">开始审查</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.taken" datatype="html">
+        <source>Pack pris en revue</source>
+        <target state="translated">已开始审查包</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.publish" datatype="html">
+        <source>Publier</source>
+        <target state="translated">发布</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.published" datatype="html">
+        <source>Pack publié au catalogue</source>
+        <target state="translated">已将包发布到目录</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.reject" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">驳回</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.rejected" datatype="html">
+        <source>Pack rejeté</source>
+        <target state="translated">已驳回包</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.deprecated" datatype="html">
+        <source>Pack déprécié</source>
+        <target state="translated">已弃用包</target>
+      </trans-unit>
+      <trans-unit id="marketplace.mod.error" datatype="html">
+        <source>Action impossible dans cet état</source>
+        <target state="translated">此状态下无法执行该操作</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.title" datatype="html">
+        <source>Rejeter le pack</source>
+        <target state="translated">驳回该包</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.hint" datatype="html">
+        <source>Indiquez au partenaire le motif du rejet (visible côté éditeur).</source>
+        <target state="translated">向合作伙伴说明驳回原因（发布方可见）。</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.reason-label" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">驳回原因</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.reason-placeholder" datatype="html">
+        <source>Ex : manifeste incomplet, normes non couvertes…</source>
+        <target state="translated">例如：清单不完整、规范未覆盖…</target>
+      </trans-unit>
+      <trans-unit id="marketplace.reject.confirm" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">驳回</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.title" datatype="html">
+        <source>Proposer un pack normatif</source>
+        <target state="translated">提交规范包</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.subtitle" datatype="html">
+        <source>Soumettez un pack sectoriel ou normatif. Il sera instruit puis validé par l'éditeur avant publication au catalogue.</source>
+        <target state="translated">提交行业或规范包。将先经审查再由发布方验证，然后发布到目录。</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.packId" datatype="html">
+        <source>Identifiant du pack</source>
+        <target state="translated">包标识符</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.packId-error" datatype="html">
+        <source>Format attendu : minuscules, chiffres, - ou _</source>
+        <target state="translated">期望格式：小写字母、数字、- 或 _</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.version" datatype="html">
+        <source>Version</source>
+        <target state="translated">版本</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.version-error" datatype="html">
+        <source>Format attendu : X.Y ou X.Y.Z</source>
+        <target state="translated">期望格式：X.Y 或 X.Y.Z</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.publisher" datatype="html">
+        <source>Éditeur / partenaire</source>
+        <target state="translated">发布方 / 合作伙伴</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.sector" datatype="html">
+        <source>Secteur</source>
+        <target state="translated">行业</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.titleField" datatype="html">
+        <source>Titre du pack</source>
+        <target state="translated">包标题</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.description" datatype="html">
+        <source>Description</source>
+        <target state="translated">描述</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.norms" datatype="html">
+        <source>Normes couvertes (séparées par des virgules)</source>
+        <target state="translated">覆盖的规范（用逗号分隔）</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.price" datatype="html">
+        <source>Prix (centimes)</source>
+        <target state="translated">价格（分）</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.currency" datatype="html">
+        <source>Devise</source>
+        <target state="translated">币种</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.manifestUrl" datatype="html">
+        <source>URL du manifeste (https:// ou oci://)</source>
+        <target state="translated">清单 URL（https:// 或 oci://）</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.manifestUrl-error" datatype="html">
+        <source>URL https:// ou oci:// requise</source>
+        <target state="translated">需要 https:// 或 oci:// URL</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.manifestJson" datatype="html">
+        <source>Manifeste (JSON inline)</source>
+        <target state="translated">清单（内联 JSON）</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.signature" datatype="html">
+        <source>Signature partenaire (hash)</source>
+        <target state="translated">合作伙伴签名（哈希）</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.signature-error" datatype="html">
+        <source>16 à 128 caractères requis</source>
+        <target state="translated">需要 16 至 128 个字符</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.action" datatype="html">
+        <source>Soumettre</source>
+        <target state="translated">提交</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.success" datatype="html">
+        <source>Pack soumis — en attente de validation de l'éditeur</source>
+        <target state="translated">已提交包——等待发布方验证</target>
+      </trans-unit>
+      <trans-unit id="marketplace.submit.error" datatype="html">
+        <source>Échec de la soumission (manifeste ou doublon)</source>
+        <target state="translated">提交失败（清单或重复）</target>
       </trans-unit>
       <trans-unit id="pdca.list.title" datatype="html">
         <source>Cycles PDCA</source>
