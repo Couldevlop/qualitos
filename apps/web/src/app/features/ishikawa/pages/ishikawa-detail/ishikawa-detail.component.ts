@@ -60,7 +60,7 @@ export class IshikawaDetailComponent implements OnInit {
   addingKey: string | null = null;
 
   private diagramId = '';
-  private readonly reload$ = new Subject<void>();
+  private readonly reload$ = new BehaviorSubject<void>(undefined);
 
   private readonly CATEGORY_LABELS: Record<CauseCategory, string> = {
     METHODS: 'Méthodes', MANPOWER: 'Main-d\'œuvre', MACHINES: 'Machines',

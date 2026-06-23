@@ -54,7 +54,7 @@ export class FivesDetailComponent implements OnInit {
   saving: Record<FiveSPillar, boolean> = {} as Record<FiveSPillar, boolean>;
 
   private auditId = '';
-  private readonly reload$ = new Subject<void>();
+  private readonly reload$ = new BehaviorSubject<void>(undefined);
   private isMockId(s: string): boolean { return /^5s-/.test(s); }
 
   constructor(

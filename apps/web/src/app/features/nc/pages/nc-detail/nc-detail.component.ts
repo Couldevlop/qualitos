@@ -68,7 +68,7 @@ export class NcDetailComponent implements OnInit {
   ];
 
   private ncId = '';
-  private readonly reload$ = new Subject<void>();
+  private readonly reload$ = new BehaviorSubject<void>(undefined);
   private isMockId(s: string): boolean { return /^nc-/.test(s); }
 
   constructor(
