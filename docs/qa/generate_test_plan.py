@@ -533,6 +533,10 @@ REAL_RESULTS = {
     "TC-AUD-002": ("Passé", "QA-Auto (Playwright)", "24/06", "TC-AUD-002_execution.png — exécution LPA : ajout d'une question checklist (POST /checklist HTTP 201, item rendu) + réponse de conformité (mat-select Conforme/NC) ; offline-first câblé (file de resync §15.2-15.3)."),
     "TC-AUD-003": ("Passé", "QA-Auto (Playwright)", "24/06", "Résolu via ANO-012 : endpoint POST /plans/{id}/report/generate (AiGateway, à partir de checklist + constats) + bouton « Générer le rapport (IA) » dans le détail (synthèse affichée). Backend AuditServiceTest 46 + AuditControllerTest 30 ; frontend bouton+POST vérifiés ; build complet validé en CI (moteur local à reconstruire pour l'E2E live)."),
     "TC-AUD-004": ("Passé", "QA-Auto (Playwright)", "24/06", "TC-AUD-004_detail.png — détail d'audit chargé sans blocage (titre affiché, pas de « Chargement… » figé) — régression OK (pattern reload$ BehaviorSubject + refCount:false)."),
+    # Lot 9 (24/06) — Document Control / GED
+    "TC-DOC-001": ("Passé", "QA-Auto (Playwright)", "24/06", "TC-DOC-001_liste.png — liste GED qualité, 1 appel API, 0 scintillement."),
+    "TC-DOC-002": ("Passé", "QA-Auto (Playwright)", "24/06", "TC-DOC-002_versioning.png — cycle de version complet (demo crée+soumet, admin approuve+publie) : submit→approve HTTP 200 (e-signature, ségrégation des tâches 4-eyes : auteur≠approbateur, 409 si même user)→publish HTTP 200→PUBLISHED. contentHash/blockchainTxHash sur la version."),
+    "TC-DOC-003": ("Passé", "QA-Auto (Playwright)", "24/06", "TC-DOC-003_lecture.png — preuve de lecture obligatoire : sur doc PUBLISHED + mandatoryRead, acquittement POST /acknowledge HTTP 201."),
 }
 
 rows = []
@@ -596,6 +600,9 @@ EXEC_LOG = [
     ("24/06/2026", "Lot 8", "TC-AUD-002", "Passé", "Exécution LPA : ajout question checklist (POST /checklist HTTP 201, item rendu) + réponse de conformité (mat-select) ; offline-first câblé.", "TC-AUD-002_execution.png"),
     ("24/06/2026", "Lot 8", "TC-AUD-003", "Bloqué", "Rapport d'audit généré par LLM absent (completePlan = reportSummary manuel, pas d'AiGateway, ni front ni back). Écart CLAUDE §1.4/§4.4. Consigné ANO-012.", "—"),
     ("24/06/2026", "Lot 8", "TC-AUD-004", "Passé", "Détail d'audit chargé sans blocage (régression) : titre visible, pas de spinner figé.", "TC-AUD-004_detail.png"),
+    ("24/06/2026", "Lot 9", "TC-DOC-001", "Passé", "Liste GED qualité : 1 appel API, 0 scintillement.", "TC-DOC-001_liste.png"),
+    ("24/06/2026", "Lot 9", "TC-DOC-002", "Passé", "Versioning + e-signature : workflow 4-eyes (demo crée+soumet → admin approuve HTTP 200 → publie HTTP 200 → PUBLISHED). Auto-approbation bloquée (409, ségrégation des tâches).", "TC-DOC-002_versioning.png"),
+    ("24/06/2026", "Lot 9", "TC-DOC-003", "Passé", "Preuve de lecture obligatoire : acquittement POST /acknowledge HTTP 201 sur version PUBLISHED + mandatoryRead.", "TC-DOC-003_lecture.png"),
 ]
 
 # =====================================================================
