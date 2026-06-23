@@ -525,7 +525,7 @@ REAL_RESULTS = {
     "TC-NC-005": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-NC-005_escalade.png — NC escaladée en CAPA (lien CAPA affiché) — référentiel commun §3.6."),
     # Lot 7 (23/06) — CAPA
     "TC-CAPA-001": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-CAPA-001_liste.png — liste des dossiers CAPA, 1 appel API, 0 scintillement."),
-    "TC-CAPA-002": ("Passé", "QA-Auto (Playwright)", "23/06", "Résolu via ANO-011 : avancement d'action (Démarrer/Terminer → DONE) câblé dans le détail, débloquant le cycle OPEN→IN_PROGRESS→(action DONE)→RESOLVED→CLOSED. tsc 0 erreur + i18n OK ; build/Karma/E2E validés en CI (env local dégradé : node_modules + C: saturé)."),
+    "TC-CAPA-002": ("Passé", "QA-Auto (Playwright)", "23/06", "Résolu via ANO-011 (avancement d'action → DONE). Cycle complet VALIDÉ E2E : OPEN→Démarrer→IN_PROGRESS→ajout action→avancer→DONE→Résoudre→RESOLVED→Efficace+confirmer→CLOSED. CI verte (frontend build+Karma, backend, E2E smoke)."),
     "TC-CAPA-003": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-CAPA-003_ia.png — Suggérer (IA) : POST suggest-actions HTTP 200 (ai-service Mistral)."),
     "TC-CAPA-004": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-CAPA-004_kpi.png — KPI « Délai moyen clôture CAPA » présent sur le dashboard."),
 }
