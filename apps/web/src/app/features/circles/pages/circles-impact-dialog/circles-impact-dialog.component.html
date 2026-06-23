@@ -1,0 +1,27 @@
+<qos-form-dialog
+  i18n-title="@@circles.impact.title"
+  title="Mesurer l'impact"
+  i18n-subtitle="@@circles.impact.subtitle"
+  subtitle="Décrivez l'impact mesuré depuis l'implémentation de la proposition."
+  [formGroup]="form"
+  [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@circles.impact.submit"
+  submitLabel="Enregistrer l'impact"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <p class="proposal-name">
+    <mat-icon class="proposal-icon">emoji_objects</mat-icon>
+    <span>{{ data.proposalTitle }}</span>
+  </p>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@circles.impact.note-label">Note d'impact</mat-label>
+    <textarea matInput formControlName="impactNote" rows="5" required
+              i18n-placeholder="@@circles.impact.note-placeholder"
+              placeholder="Ex. : Réduction des NC de 15%, gain de 30 min/jour, satisfaction opérateurs +2 points…"></textarea>
+    <mat-error *ngIf="form.get('impactNote')?.errors?.['required']" i18n="@@circles.impact.note-required">La note d'impact est requise.</mat-error>
+    <mat-error *ngIf="form.get('impactNote')?.errors?.['minlength']" i18n="@@circles.impact.note-min">5 caractères minimum.</mat-error>
+  </mat-form-field>
+
+</qos-form-dialog>

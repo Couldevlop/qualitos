@@ -12,6 +12,8 @@ import { CirclesMeetingDialogComponent } from './pages/circles-meeting-dialog/ci
 import { CirclesMemberDialogComponent } from './pages/circles-member-dialog/circles-member-dialog.component';
 import { CirclesProposalDialogComponent } from './pages/circles-proposal-dialog/circles-proposal-dialog.component';
 import { CirclesMinutesDialogComponent } from './pages/circles-minutes-dialog/circles-minutes-dialog.component';
+import { CirclesRejectDialogComponent } from './pages/circles-reject-dialog/circles-reject-dialog.component';
+import { CirclesImpactDialogComponent } from './pages/circles-impact-dialog/circles-impact-dialog.component';
 
 const routes: Routes = [
   { path: '', component: CirclesListComponent },
@@ -27,7 +29,9 @@ const routes: Routes = [
     CirclesEditDialogComponent,
     CirclesMeetingDialogComponent,
     CirclesProposalDialogComponent,
-    CirclesMinutesDialogComponent
+    CirclesMinutesDialogComponent,
+    CirclesRejectDialogComponent,
+    CirclesImpactDialogComponent
   ],
   imports: [SharedModule, UiModule, FormsModule, RouterModule.forChild(routes)]
 })

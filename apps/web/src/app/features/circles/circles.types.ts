@@ -2,6 +2,20 @@ import { SpringPage } from '../pdca/pdca.types';
 
 export type CircleStatus = 'ACTIVE' | 'PAUSED' | 'ARCHIVED';
 export type CircleRole = 'FACILITATOR' | 'SECRETARY' | 'MEMBER';
+export type ProposalStatus = 'PROPOSED' | 'UNDER_REVIEW' | 'APPROVED' | 'REJECTED' | 'IMPLEMENTED' | 'MEASURED';
+
+export interface RejectProposalRequest {
+  validatedBy: string;
+  reason: string;
+}
+
+export interface ApproveProposalRequest {
+  validatedBy: string;
+}
+
+export interface RecordImpactRequest {
+  impactNote: string;
+}
 
 export interface CircleResponse {
   id: string;

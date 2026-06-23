@@ -9374,6 +9374,110 @@ historique 12 mois</source>
         <source>Compte-rendu IA</source>
         <target state="translated">AI纪要</target>
       </trans-unit>
+      <trans-unit id="circles.detail.proposal-actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">操作</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.review-tooltip" datatype="html">
+        <source>Examiner la proposition</source>
+        <target state="translated">审查提案</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.approve-tooltip" datatype="html">
+        <source>Approuver la proposition</source>
+        <target state="translated">批准提案</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.reject-tooltip" datatype="html">
+        <source>Rejeter la proposition</source>
+        <target state="translated">拒绝提案</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.implement-tooltip" datatype="html">
+        <source>Marquer comme implémentée</source>
+        <target state="translated">标记为已实施</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.impact-tooltip" datatype="html">
+        <source>Mesurer l'impact</source>
+        <target state="translated">测量影响</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.reviewed" datatype="html">
+        <source>Proposition en cours d'examen.</source>
+        <target state="translated">提案正在审查中。</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.approved" datatype="html">
+        <source>Proposition approuvée.</source>
+        <target state="translated">已批准提案。</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.rejected" datatype="html">
+        <source>Proposition rejetée.</source>
+        <target state="translated">已拒绝提案。</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.implemented" datatype="html">
+        <source>Proposition marquée comme implémentée.</source>
+        <target state="translated">已将提案标记为已实施。</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.impact-saved" datatype="html">
+        <source>Impact enregistré.</source>
+        <target state="translated">已记录影响。</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.action-error" datatype="html">
+        <source>Erreur lors de l'action.</source>
+        <target state="translated">操作时出错。</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.title" datatype="html">
+        <source>Rejeter la proposition</source>
+        <target state="translated">拒绝提案</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.subtitle" datatype="html">
+        <source>Indiquez le motif du rejet pour informer le proposant.</source>
+        <target state="translated">请提供拒绝原因以通知提案人。</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.submit" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">拒绝</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.reason-label" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">拒绝原因</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.reason-placeholder" datatype="html">
+        <source>Ex. : Budget insuffisant, hors périmètre du cercle, déjà traité…</source>
+        <target state="translated">例：预算不足、超出质量圈范围、已处理过…</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.reason-required" datatype="html">
+        <source>Le motif est requis.</source>
+        <target state="translated">原因为必填项。</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.reason-min" datatype="html">
+        <source>5 caractères minimum.</source>
+        <target state="translated">最少5个字符。</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.title" datatype="html">
+        <source>Mesurer l'impact</source>
+        <target state="translated">测量影响</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.subtitle" datatype="html">
+        <source>Décrivez l'impact mesuré depuis l'implémentation de la proposition.</source>
+        <target state="translated">描述自实施提案以来测量到的影响。</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.submit" datatype="html">
+        <source>Enregistrer l'impact</source>
+        <target state="translated">保存影响</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.note-label" datatype="html">
+        <source>Note d'impact</source>
+        <target state="translated">影响备注</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.note-placeholder" datatype="html">
+        <source>Ex. : Réduction des NC de 15%, gain de 30 min/jour, satisfaction opérateurs +2 points…</source>
+        <target state="translated">例：NC减少15%，每天节省30分钟，操作员满意度+2分…</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.note-required" datatype="html">
+        <source>La note d'impact est requise.</source>
+        <target state="translated">影响备注为必填项。</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.note-min" datatype="html">
+        <source>5 caractères minimum.</source>
+        <target state="translated">最少5个字符。</target>
+      </trans-unit>
       <trans-unit id="spc.analyze.kpi-banner-prefix" datatype="html">
         <source>Analyse du KPI</source>
         <target state="translated">KPI分析</target>

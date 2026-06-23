@@ -9374,6 +9374,110 @@ historial de 12 meses</target>
         <source>Compte-rendu IA</source>
         <target state="translated">Actas IA</target>
       </trans-unit>
+      <trans-unit id="circles.detail.proposal-actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">Acciones</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.review-tooltip" datatype="html">
+        <source>Examiner la proposition</source>
+        <target state="translated">Revisar propuesta</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.approve-tooltip" datatype="html">
+        <source>Approuver la proposition</source>
+        <target state="translated">Aprobar propuesta</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.reject-tooltip" datatype="html">
+        <source>Rejeter la proposition</source>
+        <target state="translated">Rechazar propuesta</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.implement-tooltip" datatype="html">
+        <source>Marquer comme implémentée</source>
+        <target state="translated">Marcar como implementada</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.impact-tooltip" datatype="html">
+        <source>Mesurer l'impact</source>
+        <target state="translated">Medir el impacto</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.reviewed" datatype="html">
+        <source>Proposition en cours d'examen.</source>
+        <target state="translated">Propuesta en revisión.</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.approved" datatype="html">
+        <source>Proposition approuvée.</source>
+        <target state="translated">Propuesta aprobada.</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.rejected" datatype="html">
+        <source>Proposition rejetée.</source>
+        <target state="translated">Propuesta rechazada.</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.implemented" datatype="html">
+        <source>Proposition marquée comme implémentée.</source>
+        <target state="translated">Propuesta marcada como implementada.</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.impact-saved" datatype="html">
+        <source>Impact enregistré.</source>
+        <target state="translated">Impacto registrado.</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.action-error" datatype="html">
+        <source>Erreur lors de l'action.</source>
+        <target state="translated">Error durante la acción.</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.title" datatype="html">
+        <source>Rejeter la proposition</source>
+        <target state="translated">Rechazar propuesta</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.subtitle" datatype="html">
+        <source>Indiquez le motif du rejet pour informer le proposant.</source>
+        <target state="translated">Indique el motivo del rechazo para informar al proponente.</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.submit" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">Rechazar</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.reason-label" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">Motivo de rechazo</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.reason-placeholder" datatype="html">
+        <source>Ex. : Budget insuffisant, hors périmètre du cercle, déjà traité…</source>
+        <target state="translated">Ej.: Presupuesto insuficiente, fuera del ámbito del círculo, ya tratado…</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.reason-required" datatype="html">
+        <source>Le motif est requis.</source>
+        <target state="translated">El motivo es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.reason-min" datatype="html">
+        <source>5 caractères minimum.</source>
+        <target state="translated">Mínimo 5 caracteres.</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.title" datatype="html">
+        <source>Mesurer l'impact</source>
+        <target state="translated">Medir el impacto</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.subtitle" datatype="html">
+        <source>Décrivez l'impact mesuré depuis l'implémentation de la proposition.</source>
+        <target state="translated">Describa el impacto medido desde la implementación de la propuesta.</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.submit" datatype="html">
+        <source>Enregistrer l'impact</source>
+        <target state="translated">Guardar impacto</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.note-label" datatype="html">
+        <source>Note d'impact</source>
+        <target state="translated">Nota de impacto</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.note-placeholder" datatype="html">
+        <source>Ex. : Réduction des NC de 15%, gain de 30 min/jour, satisfaction opérateurs +2 points…</source>
+        <target state="translated">Ej.: Reducción de NC en un 15%, ahorro de 30 min/día, satisfacción operadores +2 puntos…</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.note-required" datatype="html">
+        <source>La note d'impact est requise.</source>
+        <target state="translated">La nota de impacto es obligatoria.</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.note-min" datatype="html">
+        <source>5 caractères minimum.</source>
+        <target state="translated">Mínimo 5 caracteres.</target>
+      </trans-unit>
       <trans-unit id="spc.analyze.kpi-banner-prefix" datatype="html">
         <source>Analyse du KPI</source>
         <target state="translated">Análisis del KPI</target>
