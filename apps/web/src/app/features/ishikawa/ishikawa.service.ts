@@ -5,6 +5,7 @@ import { delay } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
 import {
+  ConvertedPdcaCycle,
   CreateIshikawaCauseRequest,
   CreateIshikawaDiagramRequest,
   IshikawaCauseResponse,
@@ -41,6 +42,23 @@ export class IshikawaService {
       return of(found ?? this.mockStore[0]).pipe(delay(150));
     }
     return this.http.get<IshikawaDiagramResponse>(`${this.endpoint}/${id}`);
+  }
+
+  /**
+   * Convertit le diagramme (et, optionnellement, une cause-racine ciblée) en cycle
+   * PDCA (§3.6 — référentiel commun). 201 → le cycle créé (id pour navigation).
+   */
+  convertToPdca(diagramId: string, causeId?: string): Observable<ConvertedPdcaCycle> {
+    if (environment.useMockApi) {
+      return of(<ConvertedPdcaCycle>{
+        id: 'pdca-' + Math.random().toString(36).slice(2, 9), title: 'PDCA (mock)', status: 'PLAN'
+      }).pipe(delay(250));
+    }
+    let params = new HttpParams();
+    if (causeId) {
+      params = params.set('causeId', causeId);
+    }
+    return this.http.post<ConvertedPdcaCycle>(`${this.endpoint}/${diagramId}/convert-to-pdca`, {}, { params });
   }
 
   createDiagram(input: CreateIshikawaDiagramRequest): Observable<IshikawaDiagramResponse> {

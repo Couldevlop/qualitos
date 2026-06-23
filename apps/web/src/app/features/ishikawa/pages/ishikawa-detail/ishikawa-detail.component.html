@@ -29,6 +29,12 @@
           <mat-icon aria-hidden="true">auto_awesome</mat-icon>
           {{ suggesting ? 'Analyse…' : 'Suggérer (IA)' }}
         </button>
+        <button mat-stroked-button color="primary" (click)="convertToPdca(d)" [disabled]="converting"
+                [attr.aria-busy]="converting"
+                i18n-matTooltip="@@ishikawa.detail.convert-tooltip" matTooltip="Créer un cycle PDCA à partir de ce diagramme">
+          <mat-icon aria-hidden="true">sync_alt</mat-icon>
+          <span i18n="@@ishikawa.detail.convert-pdca">Convertir en PDCA</span>
+        </button>
         <button mat-flat-button color="primary" (click)="openAddCause(d)">
           <mat-icon>add</mat-icon> <span i18n="@@ishikawa.detail.add-cause">Ajouter une cause</span>
         </button>

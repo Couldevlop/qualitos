@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.ishikawa;
 
+import com.openlab.qualitos.quality.pdca.PdcaDto;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -63,6 +64,16 @@ public class IshikawaController {
     @PostMapping("/diagrams/{id}/suggest-causes")
     public java.util.List<IshikawaDto.SuggestedCause> suggestCauses(@PathVariable UUID id) {
         return ishikawaService.suggestCauses(id);
+    }
+
+    // Conversion en cycle PDCA (§3.6 — référentiel commun). causeId optionnel :
+    // si fourni, la cause-racine ciblée est référencée dans le cycle créé.
+    @PostMapping("/diagrams/{id}/convert-to-pdca")
+    @ResponseStatus(HttpStatus.CREATED)
+    public PdcaDto.CycleResponse convertToPdca(
+            @PathVariable UUID id,
+            @RequestParam(required = false) UUID causeId) {
+        return ishikawaService.convertToPdca(id, causeId);
     }
 
     @PatchMapping("/diagrams/{id}/causes/{causeId}")

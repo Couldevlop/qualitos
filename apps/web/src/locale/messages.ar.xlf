@@ -8258,6 +8258,22 @@ historique 12 mois</source>
         <source>Ajouter une cause</source>
         <target state="translated">إضافة سبب</target>
       </trans-unit>
+      <trans-unit id="ishikawa.detail.convert-pdca" datatype="html">
+        <source>Convertir en PDCA</source>
+        <target state="translated">التحويل إلى PDCA</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.convert-tooltip" datatype="html">
+        <source>Créer un cycle PDCA à partir de ce diagramme</source>
+        <target state="translated">إنشاء دورة PDCA من هذا المخطط</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.convert-success" datatype="html">
+        <source>Cycle PDCA créé à partir de ce diagramme.</source>
+        <target state="translated">تم إنشاء دورة PDCA من هذا المخطط.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.convert-error" datatype="html">
+        <source>Échec de la conversion en PDCA.</source>
+        <target state="translated">فشل التحويل إلى PDCA.</target>
+      </trans-unit>
       <trans-unit id="ishikawa.detail.mode" datatype="html">
         <source>Mode</source>
         <target state="translated">النمط</target>

@@ -4,6 +4,7 @@ import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
 import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
+import com.openlab.qualitos.quality.pdca.PdcaDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,9 @@ class IshikawaServiceTest {
 
     @Mock
     private AiGatewayClient ai;
+
+    @Mock
+    private com.openlab.qualitos.quality.pdca.PdcaService pdcaService;
 
     @InjectMocks
     private IshikawaService ishikawaService;
@@ -695,6 +699,65 @@ class IshikawaServiceTest {
     }
 
     // --- helpers ---
+
+    // --- convertToPdca (§3.6 référentiel commun) ---
+
+    @Test
+    void convertToPdca_buildsCycleFromDiagramAndCause() {
+        IshikawaDiagram diagram = buildDiagram(TENANT_ID, IshikawaStatus.DRAFT, IshikawaMode.SIX_M);
+        IshikawaCause cause = buildCause(diagram, CauseCategory.METHODS);
+        when(diagramRepository.findByIdAndTenantId(diagram.getId(), TENANT_ID))
+                .thenReturn(Optional.of(diagram));
+        when(causeRepository.findByIdAndDiagramId(cause.getId(), diagram.getId()))
+                .thenReturn(Optional.of(cause));
+
+        ishikawaService.convertToPdca(diagram.getId(), cause.getId());
+
+        org.mockito.ArgumentCaptor<PdcaDto.CreateCycleRequest> cap =
+                org.mockito.ArgumentCaptor.forClass(PdcaDto.CreateCycleRequest.class);
+        verify(pdcaService).createCycle(cap.capture());
+        assertThat(cap.getValue().title()).isEqualTo("PDCA — Problème test");
+        assertThat(cap.getValue().description())
+                .contains("Problème test").contains("Cause-racine ciblée").contains("Cause test");
+        assertThat(cap.getValue().ownerId()).isEqualTo(OWNER_ID);
+    }
+
+    @Test
+    void convertToPdca_withoutCause_omitsCauseLine() {
+        IshikawaDiagram diagram = buildDiagram(TENANT_ID, IshikawaStatus.DRAFT, IshikawaMode.SIX_M);
+        when(diagramRepository.findByIdAndTenantId(diagram.getId(), TENANT_ID))
+                .thenReturn(Optional.of(diagram));
+
+        ishikawaService.convertToPdca(diagram.getId(), null);
+
+        org.mockito.ArgumentCaptor<PdcaDto.CreateCycleRequest> cap =
+                org.mockito.ArgumentCaptor.forClass(PdcaDto.CreateCycleRequest.class);
+        verify(pdcaService).createCycle(cap.capture());
+        assertThat(cap.getValue().description()).doesNotContain("Cause-racine ciblée");
+        verifyNoInteractions(causeRepository);
+    }
+
+    @Test
+    void convertToPdca_unknownDiagram_throwsAndDoesNotCreate() {
+        UUID id = UUID.randomUUID();
+        when(diagramRepository.findByIdAndTenantId(id, TENANT_ID)).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> ishikawaService.convertToPdca(id, null))
+                .isInstanceOf(IshikawaDiagramNotFoundException.class);
+        verifyNoInteractions(pdcaService);
+    }
+
+    @Test
+    void convertToPdca_unknownCause_throws() {
+        IshikawaDiagram diagram = buildDiagram(TENANT_ID, IshikawaStatus.DRAFT, IshikawaMode.SIX_M);
+        UUID causeId = UUID.randomUUID();
+        when(diagramRepository.findByIdAndTenantId(diagram.getId(), TENANT_ID))
+                .thenReturn(Optional.of(diagram));
+        when(causeRepository.findByIdAndDiagramId(causeId, diagram.getId()))
+                .thenReturn(Optional.empty());
+        assertThatThrownBy(() -> ishikawaService.convertToPdca(diagram.getId(), causeId))
+                .isInstanceOf(IshikawaCauseNotFoundException.class);
+        verifyNoInteractions(pdcaService);
+    }
 
     private IshikawaDiagram buildDiagram(UUID tenantId, IshikawaStatus status, IshikawaMode mode) {
         IshikawaDiagram diagram = new IshikawaDiagram();

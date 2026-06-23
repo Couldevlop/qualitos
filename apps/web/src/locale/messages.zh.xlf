@@ -8258,6 +8258,22 @@ historique 12 mois</source>
         <source>Ajouter une cause</source>
         <target state="translated">添加原因</target>
       </trans-unit>
+      <trans-unit id="ishikawa.detail.convert-pdca" datatype="html">
+        <source>Convertir en PDCA</source>
+        <target state="translated">转换为PDCA</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.convert-tooltip" datatype="html">
+        <source>Créer un cycle PDCA à partir de ce diagramme</source>
+        <target state="translated">根据此图创建PDCA循环</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.convert-success" datatype="html">
+        <source>Cycle PDCA créé à partir de ce diagramme.</source>
+        <target state="translated">已根据此图创建PDCA循环。</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.convert-error" datatype="html">
+        <source>Échec de la conversion en PDCA.</source>
+        <target state="translated">转换为PDCA失败。</target>
+      </trans-unit>
       <trans-unit id="ishikawa.detail.mode" datatype="html">
         <source>Mode</source>
         <target state="translated">模式</target>

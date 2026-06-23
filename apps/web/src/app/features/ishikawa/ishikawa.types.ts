@@ -61,3 +61,10 @@ export interface UpdateIshikawaDiagramRequest {
   mode?: IshikawaMode;
   status?: IshikawaStatus;
 }
+
+/** Cycle PDCA créé par conversion d'un Ishikawa (§3.6). Champs utiles à la navigation. */
+export interface ConvertedPdcaCycle {
+  id: string;
+  title: string;
+  status: string;
+}
