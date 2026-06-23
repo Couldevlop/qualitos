@@ -21,11 +21,24 @@ import {
   CirclesProposalDialogComponent,
   CirclesProposalDialogData
 } from '../circles-proposal-dialog/circles-proposal-dialog.component';
-import { CircleResponse, CircleStatus } from '../../circles.types';
+import { ApproveProposalRequest, CircleProposalResponse, CircleResponse, CircleStatus } from '../../circles.types';
 import {
   CirclesMemberDialogComponent,
   CirclesMemberDialogData
 } from '../circles-member-dialog/circles-member-dialog.component';
+import {
+  CirclesMinutesDialogComponent,
+  CirclesMinutesDialogData
+} from '../circles-minutes-dialog/circles-minutes-dialog.component';
+import {
+  CirclesRejectDialogComponent,
+  CirclesRejectDialogData
+} from '../circles-reject-dialog/circles-reject-dialog.component';
+import {
+  CirclesImpactDialogComponent,
+  CirclesImpactDialogData
+} from '../circles-impact-dialog/circles-impact-dialog.component';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -40,8 +53,8 @@ export class CirclesDetailComponent implements OnInit {
   readonly circleNotFoundLabel = $localize`:@@circles.detail.not-found:Cercle introuvable`;
 
   readonly memberColumns = ['role', 'userId', 'joinedAt'];
-  readonly meetingColumns = ['title', 'scheduledAt', 'status', 'location'];
-  readonly proposalColumns = ['title', 'status', 'proposedBy'];
+  readonly meetingColumns = ['title', 'scheduledAt', 'status', 'location', 'aiMinutes'];
+  readonly proposalColumns = ['title', 'status', 'proposedBy', 'actions'];
 
   circle$!: Observable<CircleResponse | null>;
   private readonly loadingState$ = new BehaviorSubject<boolean>(false);
@@ -59,7 +72,8 @@ export class CirclesDetailComponent implements OnInit {
     private readonly router: Router,
     private readonly circles: CirclesService,
     private readonly dialog: MatDialog,
-    private readonly snack: MatSnackBar
+    private readonly snack: MatSnackBar,
+    private readonly auth: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -159,6 +173,17 @@ export class CirclesDetailComponent implements OnInit {
     return 'meeting-badge meeting-' + status.toLowerCase();
   }
 
+  openGenerateMinutes(meetingId: string, meetingTitle: string): void {
+    const data: CirclesMinutesDialogData = { circleId: this.circleId, meetingId, meetingTitle };
+    this.dialog
+      .open(CirclesMinutesDialogComponent, {
+        data, autoFocus: 'first-tabbable', restoreFocus: true,
+        panelClass: 'qos-dialog-panel', minWidth: '560px'
+      })
+      .afterClosed()
+      .subscribe();
+  }
+
   openAddMember(): void {
     const data: CirclesMemberDialogData = { circleId: this.circleId };
     this.dialog
@@ -171,6 +196,99 @@ export class CirclesDetailComponent implements OnInit {
       .afterClosed()
       .subscribe(member => {
         if (member) this.reload$.next();
+      });
+  }
+
+  canReview(status: string): boolean { return status === 'PROPOSED'; }
+  canApprove(status: string): boolean { return status === 'PROPOSED' || status === 'UNDER_REVIEW'; }
+  canReject(status: string): boolean { return status === 'PROPOSED' || status === 'UNDER_REVIEW'; }
+  canImplement(status: string): boolean { return status === 'APPROVED'; }
+  canRecordImpact(status: string): boolean { return status === 'IMPLEMENTED'; }
+
+  reviewProposal(proposalId: string): void {
+    this.circles.reviewProposal(this.circleId, proposalId).subscribe({
+      next: () => {
+        this.snack.open($localize`:@@circles.proposal.reviewed:Proposition en cours d'examen.`, $localize`:@@common.ok:OK`, { duration: 2000 });
+        this.reload$.next();
+      },
+      error: err => {
+        // eslint-disable-next-line no-console
+        console.warn('[circles-detail] reviewProposal failed', err?.status);
+        this.snack.open(safeErrorMessage(err, $localize`:@@circles.proposal.action-error:Erreur lors de l'action.`), 'OK', { duration: 4000 });
+      }
+    });
+  }
+
+  approveProposal(proposalId: string): void {
+    const validatedBy = this.auth.snapshot()?.userId ?? '';
+    const body: ApproveProposalRequest = { validatedBy };
+    this.circles.approveProposal(this.circleId, proposalId, body).subscribe({
+      next: () => {
+        this.snack.open($localize`:@@circles.proposal.approved:Proposition approuvée.`, $localize`:@@common.ok:OK`, { duration: 2000 });
+        this.reload$.next();
+      },
+      error: err => {
+        // eslint-disable-next-line no-console
+        console.warn('[circles-detail] approveProposal failed', err?.status);
+        this.snack.open(safeErrorMessage(err, $localize`:@@circles.proposal.action-error:Erreur lors de l'action.`), 'OK', { duration: 4000 });
+      }
+    });
+  }
+
+  openRejectProposal(p: CircleProposalResponse): void {
+    const data: CirclesRejectDialogData = { proposalTitle: p.title };
+    this.dialog
+      .open(CirclesRejectDialogComponent, { data, autoFocus: 'first-tabbable', restoreFocus: true, panelClass: 'qos-dialog-panel' })
+      .afterClosed()
+      .subscribe(reason => {
+        if (!reason) return;
+        const validatedBy = this.auth.snapshot()?.userId ?? '';
+        this.circles.rejectProposal(this.circleId, p.id, { validatedBy, reason }).subscribe({
+          next: () => {
+            this.snack.open($localize`:@@circles.proposal.rejected:Proposition rejetée.`, $localize`:@@common.ok:OK`, { duration: 2000 });
+            this.reload$.next();
+          },
+          error: err => {
+            // eslint-disable-next-line no-console
+            console.warn('[circles-detail] rejectProposal failed', err?.status);
+            this.snack.open(safeErrorMessage(err, $localize`:@@circles.proposal.action-error:Erreur lors de l'action.`), 'OK', { duration: 4000 });
+          }
+        });
+      });
+  }
+
+  implementProposal(proposalId: string): void {
+    this.circles.implementProposal(this.circleId, proposalId).subscribe({
+      next: () => {
+        this.snack.open($localize`:@@circles.proposal.implemented:Proposition marquée comme implémentée.`, $localize`:@@common.ok:OK`, { duration: 2000 });
+        this.reload$.next();
+      },
+      error: err => {
+        // eslint-disable-next-line no-console
+        console.warn('[circles-detail] implementProposal failed', err?.status);
+        this.snack.open(safeErrorMessage(err, $localize`:@@circles.proposal.action-error:Erreur lors de l'action.`), 'OK', { duration: 4000 });
+      }
+    });
+  }
+
+  openRecordImpact(p: CircleProposalResponse): void {
+    const data: CirclesImpactDialogData = { proposalTitle: p.title };
+    this.dialog
+      .open(CirclesImpactDialogComponent, { data, autoFocus: 'first-tabbable', restoreFocus: true, panelClass: 'qos-dialog-panel' })
+      .afterClosed()
+      .subscribe(req => {
+        if (!req) return;
+        this.circles.recordImpact(this.circleId, p.id, req).subscribe({
+          next: () => {
+            this.snack.open($localize`:@@circles.proposal.impact-saved:Impact enregistré.`, $localize`:@@common.ok:OK`, { duration: 2000 });
+            this.reload$.next();
+          },
+          error: err => {
+            // eslint-disable-next-line no-console
+            console.warn('[circles-detail] recordImpact failed', err?.status);
+            this.snack.open(safeErrorMessage(err, $localize`:@@circles.proposal.action-error:Erreur lors de l'action.`), 'OK', { duration: 4000 });
+          }
+        });
       });
   }
 

@@ -1,36 +1,54 @@
 package com.openlab.qualitos.quality.circle;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
+import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
 @Transactional
 public class CircleService {
 
+    private static final Logger log = LoggerFactory.getLogger(CircleService.class);
+
     /** Bornes 5-10 membres recommandées par les méthodologies qualité (CLAUDE.md §3.3). */
     static final int MIN_RECOMMENDED_MEMBERS = 5;
     static final int MAX_MEMBERS = 10;
+
+    private static final int MINUTES_MAX_TOKENS = 800;
 
     private final QualityCircleRepository circleRepository;
     private final CircleMemberRepository memberRepository;
     private final CircleMeetingRepository meetingRepository;
     private final CircleProposalRepository proposalRepository;
+    private final AiGatewayClient ai;
+    private final ObjectMapper objectMapper;
 
     public CircleService(QualityCircleRepository circleRepository,
                          CircleMemberRepository memberRepository,
                          CircleMeetingRepository meetingRepository,
-                         CircleProposalRepository proposalRepository) {
+                         CircleProposalRepository proposalRepository,
+                         AiGatewayClient ai,
+                         ObjectMapper objectMapper) {
         this.circleRepository = circleRepository;
         this.memberRepository = memberRepository;
         this.meetingRepository = meetingRepository;
         this.proposalRepository = proposalRepository;
+        this.ai = ai;
+        this.objectMapper = objectMapper;
     }
 
     // ===== Circles =====
@@ -310,6 +328,75 @@ public class CircleService {
         proposalRepository.delete(p);
     }
 
+    // ===== Minutes LLM (ANO-010) =====
+
+    public CircleDto.MeetingMinutes generateMinutes(UUID circleId, UUID meetingId,
+                                                    CircleDto.GenerateMinutesRequest req) {
+        loadCircle(circleId);
+        CircleMeeting meeting = loadMeeting(circleId, meetingId);
+
+        String systemPrompt = """
+                Tu es un assistant qualité expert en méthode Cercle de Qualité (§3.3 QualitOS).
+                À partir du transcript d'une réunion, génère un compte-rendu structuré en JSON.
+                Réponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni après, de la forme :
+                {
+                  "summary": "Résumé synthétique de la réunion en 3-5 phrases",
+                  "decisions": ["Décision 1", "Décision 2"],
+                  "actions": [
+                    {"label": "Action 1", "suggestedAssignee": "Prénom Nom ou rôle suggéré"},
+                    {"label": "Action 2", "suggestedAssignee": ""}
+                  ]
+                }
+                Si aucune décision : tableau vide. Si aucune action : tableau vide.
+                Les champs sont dans la langue du transcript.
+                """;
+        String userPrompt = "Transcript de la réunion :\n\n" + req.transcript();
+
+        AiCompletionResult result = ai.complete(systemPrompt, userPrompt, MINUTES_MAX_TOKENS);
+        String rawText = result.text();
+
+        try {
+            String jsonText = rawText;
+            int start = rawText.indexOf('{');
+            int end = rawText.lastIndexOf('}');
+            if (start >= 0 && end > start) {
+                jsonText = rawText.substring(start, end + 1);
+            }
+            @SuppressWarnings("unchecked")
+            Map<String, Object> parsed = objectMapper.readValue(jsonText, Map.class);
+
+            String summary = parsed.getOrDefault("summary", "").toString();
+
+            @SuppressWarnings("unchecked")
+            List<String> decisions = parsed.containsKey("decisions")
+                    ? (List<String>) parsed.get("decisions")
+                    : new ArrayList<>();
+
+            @SuppressWarnings("unchecked")
+            List<Map<String, String>> rawActions = parsed.containsKey("actions")
+                    ? (List<Map<String, String>>) parsed.get("actions")
+                    : new ArrayList<>();
+
+            List<CircleDto.ExtractedAction> actions = rawActions.stream()
+                    .map(a -> new CircleDto.ExtractedAction(
+                            a.getOrDefault("label", ""),
+                            a.getOrDefault("suggestedAssignee", "")))
+                    .toList();
+
+            meeting.setMinutesSummary(summary);
+            meeting.setMinutesJson(rawText);
+            meetingRepository.save(meeting);
+
+            return new CircleDto.MeetingMinutes(summary, decisions, actions);
+        } catch (Exception e) {
+            log.warn("[ANO-010] LLM JSON parsing failed for meeting {}, storing raw text", meetingId, e);
+            meeting.setMinutesSummary(rawText);
+            meeting.setMinutesJson(null);
+            meetingRepository.save(meeting);
+            return new CircleDto.MeetingMinutes(rawText, new ArrayList<>(), new ArrayList<>());
+        }
+    }
+
     // ===== helpers =====
 
     private void checkSingletonRole(QualityCircle c, CircleRole role, UUID excludeMemberId) {
@@ -365,7 +452,8 @@ public class CircleService {
                 m.getId(), m.getCircle().getId(), m.getTitle(), m.getAgenda(),
                 m.getScheduledAt(), m.getDurationMinutes(), m.getLocation(),
                 m.getStatus(), m.getMinutes(), m.getHeldAt(),
-                m.getCreatedAt(), m.getUpdatedAt());
+                m.getCreatedAt(), m.getUpdatedAt(),
+                m.getMinutesSummary(), m.getMinutesJson());
     }
 
     private CircleDto.ProposalResponse toProposalResponse(CircleProposal p) {

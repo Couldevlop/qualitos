@@ -1,0 +1,66 @@
+<h2 mat-dialog-title i18n="@@circles.minutes.title">Compte-rendu de réunion (IA)</h2>
+
+<mat-dialog-content>
+  <p class="meeting-label">
+    <strong i18n="@@circles.minutes.meeting-label">Réunion :</strong> {{ data.meetingTitle }}
+  </p>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label i18n="@@circles.minutes.transcript-label">Transcript de la réunion</mat-label>
+    <textarea matInput
+              [(ngModel)]="transcript"
+              rows="8"
+              i18n-placeholder="@@circles.minutes.transcript-placeholder"
+              placeholder="Collez le texte brut de la réunion ici…"
+              i18n-aria-label="@@circles.minutes.transcript-aria"
+              aria-label="Transcript de la réunion">
+    </textarea>
+    <mat-hint i18n="@@circles.minutes.transcript-hint">Collez le texte de la réunion. L'IA générera un résumé, les décisions et les actions.</mat-hint>
+  </mat-form-field>
+
+  <div class="generating-row" *ngIf="generating$ | async">
+    <mat-progress-spinner mode="indeterminate" diameter="24"></mat-progress-spinner>
+    <span i18n="@@circles.minutes.generating">Génération en cours…</span>
+  </div>
+
+  <div class="error-row" *ngIf="error">
+    <mat-icon color="warn">error_outline</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <div class="minutes-result" *ngIf="minutes">
+    <mat-card class="result-card">
+      <mat-card-content>
+        <h3 i18n="@@circles.minutes.summary-title">Résumé</h3>
+        <p class="summary-text">{{ minutes.summary }}</p>
+
+        <ng-container *ngIf="minutes.decisions?.length">
+          <h3 i18n="@@circles.minutes.decisions-title">Décisions</h3>
+          <ul class="decisions-list">
+            <li *ngFor="let d of minutes.decisions">{{ d }}</li>
+          </ul>
+        </ng-container>
+
+        <ng-container *ngIf="minutes.actions?.length">
+          <h3 i18n="@@circles.minutes.actions-title">Actions</h3>
+          <ul class="actions-list">
+            <li *ngFor="let a of minutes.actions">
+              <strong>{{ a.label }}</strong>
+              <span class="assignee" *ngIf="a.suggestedAssignee"> — {{ a.suggestedAssignee }}</span>
+            </li>
+          </ul>
+        </ng-container>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button type="button" (click)="close()" i18n="@@common.close">Fermer</button>
+  <button mat-flat-button color="primary" type="button"
+          [disabled]="!transcript.trim() || (generating$ | async)"
+          (click)="generate()">
+    <mat-icon>auto_awesome</mat-icon>
+    <span i18n="@@circles.minutes.generate-btn">Générer le compte-rendu (IA)</span>
+  </button>
+</mat-dialog-actions>

@@ -9322,6 +9322,162 @@ historique 12 mois</source>
         <source>Erreur lors de l'enregistrement.</source>
         <target state="translated">حدث خطأ أثناء الحفظ.</target>
       </trans-unit>
+      <trans-unit id="circles.minutes.title" datatype="html">
+        <source>Compte-rendu de réunion (IA)</source>
+        <target state="translated">محضر الاجتماع (ذكاء اصطناعي)</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.meeting-label" datatype="html">
+        <source>Réunion :</source>
+        <target state="translated">الاجتماع:</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-label" datatype="html">
+        <source>Transcript de la réunion</source>
+        <target state="translated">نص الاجتماع</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-placeholder" datatype="html">
+        <source>Collez le texte brut de la réunion ici…</source>
+        <target state="translated">الصق نص الاجتماع الخام هنا…</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-aria" datatype="html">
+        <source>Transcript de la réunion</source>
+        <target state="translated">نص الاجتماع</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-hint" datatype="html">
+        <source>Collez le texte de la réunion. L'IA générera un résumé, les décisions et les actions.</source>
+        <target state="translated">الصق نص الاجتماع. سيولّد الذكاء الاصطناعي ملخصاً وقرارات وإجراءات.</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.generating" datatype="html">
+        <source>Génération en cours…</source>
+        <target state="translated">جارٍ التوليد…</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.generate-error" datatype="html">
+        <source>Erreur lors de la génération du compte-rendu.</source>
+        <target state="translated">خطأ أثناء توليد محضر الاجتماع.</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.summary-title" datatype="html">
+        <source>Résumé</source>
+        <target state="translated">الملخص</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.decisions-title" datatype="html">
+        <source>Décisions</source>
+        <target state="translated">القرارات</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.actions-title" datatype="html">
+        <source>Actions</source>
+        <target state="translated">الإجراءات</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.generate-btn" datatype="html">
+        <source>Générer le compte-rendu (IA)</source>
+        <target state="translated">توليد المحضر (ذكاء اصطناعي)</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.open-btn" datatype="html">
+        <source>Compte-rendu IA</source>
+        <target state="translated">محضر ذكاء اصطناعي</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.proposal-actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">الإجراءات</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.review-tooltip" datatype="html">
+        <source>Examiner la proposition</source>
+        <target state="translated">فحص المقترح</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.approve-tooltip" datatype="html">
+        <source>Approuver la proposition</source>
+        <target state="translated">اعتماد المقترح</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.reject-tooltip" datatype="html">
+        <source>Rejeter la proposition</source>
+        <target state="translated">رفض المقترح</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.implement-tooltip" datatype="html">
+        <source>Marquer comme implémentée</source>
+        <target state="translated">تحديد كمُنفَّذة</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.impact-tooltip" datatype="html">
+        <source>Mesurer l'impact</source>
+        <target state="translated">قياس الأثر</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.reviewed" datatype="html">
+        <source>Proposition en cours d'examen.</source>
+        <target state="translated">المقترح قيد الفحص.</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.approved" datatype="html">
+        <source>Proposition approuvée.</source>
+        <target state="translated">تم اعتماد المقترح.</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.rejected" datatype="html">
+        <source>Proposition rejetée.</source>
+        <target state="translated">تم رفض المقترح.</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.implemented" datatype="html">
+        <source>Proposition marquée comme implémentée.</source>
+        <target state="translated">تم تحديد المقترح كمُنفَّذة.</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.impact-saved" datatype="html">
+        <source>Impact enregistré.</source>
+        <target state="translated">تم حفظ الأثر.</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.action-error" datatype="html">
+        <source>Erreur lors de l'action.</source>
+        <target state="translated">حدث خطأ أثناء الإجراء.</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.title" datatype="html">
+        <source>Rejeter la proposition</source>
+        <target state="translated">رفض المقترح</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.subtitle" datatype="html">
+        <source>Indiquez le motif du rejet pour informer le proposant.</source>
+        <target state="translated">اذكر سبب الرفض لإبلاغ مُقدِّم المقترح.</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.submit" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">رفض</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.reason-label" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">سبب الرفض</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.reason-placeholder" datatype="html">
+        <source>Ex. : Budget insuffisant, hors périmètre du cercle, déjà traité…</source>
+        <target state="translated">مثال: ميزانية غير كافية، خارج نطاق الحلقة، تمت معالجته بالفعل…</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.reason-required" datatype="html">
+        <source>Le motif est requis.</source>
+        <target state="translated">السبب مطلوب.</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.reason-min" datatype="html">
+        <source>5 caractères minimum.</source>
+        <target state="translated">5 أحرف على الأقل.</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.title" datatype="html">
+        <source>Mesurer l'impact</source>
+        <target state="translated">قياس الأثر</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.subtitle" datatype="html">
+        <source>Décrivez l'impact mesuré depuis l'implémentation de la proposition.</source>
+        <target state="translated">صِف الأثر المُقاس منذ تنفيذ المقترح.</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.submit" datatype="html">
+        <source>Enregistrer l'impact</source>
+        <target state="translated">حفظ الأثر</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.note-label" datatype="html">
+        <source>Note d'impact</source>
+        <target state="translated">ملاحظة الأثر</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.note-placeholder" datatype="html">
+        <source>Ex. : Réduction des NC de 15%, gain de 30 min/jour, satisfaction opérateurs +2 points…</source>
+        <target state="translated">مثال: تقليل NC بنسبة 15٪، توفير 30 دقيقة يوميًا، رضا المشغلين +2 نقطة…</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.note-required" datatype="html">
+        <source>La note d'impact est requise.</source>
+        <target state="translated">ملاحظة الأثر مطلوبة.</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.note-min" datatype="html">
+        <source>5 caractères minimum.</source>
+        <target state="translated">5 أحرف على الأقل.</target>
+      </trans-unit>
       <trans-unit id="spc.analyze.kpi-banner-prefix" datatype="html">
         <source>Analyse du KPI</source>
         <target state="translated">تحليل مؤشر الأداء</target>

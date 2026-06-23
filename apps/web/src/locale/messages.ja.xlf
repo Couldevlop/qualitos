@@ -9321,6 +9321,162 @@ historique 12 mois</source>
         <source>Erreur lors de l'enregistrement.</source>
         <target state="translated">保存中にエラーが発生しました。</target>
       </trans-unit>
+      <trans-unit id="circles.minutes.title" datatype="html">
+        <source>Compte-rendu de réunion (IA)</source>
+        <target state="translated">会議議事録（AI）</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.meeting-label" datatype="html">
+        <source>Réunion :</source>
+        <target state="translated">会議：</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-label" datatype="html">
+        <source>Transcript de la réunion</source>
+        <target state="translated">会議トランスクリプト</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-placeholder" datatype="html">
+        <source>Collez le texte brut de la réunion ici…</source>
+        <target state="translated">会議の生テキストをここに貼り付けてください…</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-aria" datatype="html">
+        <source>Transcript de la réunion</source>
+        <target state="translated">会議トランスクリプト</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-hint" datatype="html">
+        <source>Collez le texte de la réunion. L'IA générera un résumé, les décisions et les actions.</source>
+        <target state="translated">会議テキストを貼り付けてください。AIが要約、決定事項、アクションを生成します。</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.generating" datatype="html">
+        <source>Génération en cours…</source>
+        <target state="translated">生成中…</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.generate-error" datatype="html">
+        <source>Erreur lors de la génération du compte-rendu.</source>
+        <target state="translated">議事録の生成中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.summary-title" datatype="html">
+        <source>Résumé</source>
+        <target state="translated">要約</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.decisions-title" datatype="html">
+        <source>Décisions</source>
+        <target state="translated">決定事項</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.actions-title" datatype="html">
+        <source>Actions</source>
+        <target state="translated">アクション</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.generate-btn" datatype="html">
+        <source>Générer le compte-rendu (IA)</source>
+        <target state="translated">議事録を生成（AI）</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.open-btn" datatype="html">
+        <source>Compte-rendu IA</source>
+        <target state="translated">AI議事録</target>
+      </trans-unit>
+      <trans-unit id="circles.detail.proposal-actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">アクション</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.review-tooltip" datatype="html">
+        <source>Examiner la proposition</source>
+        <target state="translated">提案を審査する</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.approve-tooltip" datatype="html">
+        <source>Approuver la proposition</source>
+        <target state="translated">提案を承認する</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.reject-tooltip" datatype="html">
+        <source>Rejeter la proposition</source>
+        <target state="translated">提案を却下する</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.implement-tooltip" datatype="html">
+        <source>Marquer comme implémentée</source>
+        <target state="translated">実施済みとしてマーク</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.impact-tooltip" datatype="html">
+        <source>Mesurer l'impact</source>
+        <target state="translated">インパクトを測定する</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.reviewed" datatype="html">
+        <source>Proposition en cours d'examen.</source>
+        <target state="translated">提案を審査中にしました。</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.approved" datatype="html">
+        <source>Proposition approuvée.</source>
+        <target state="translated">提案を承認しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.rejected" datatype="html">
+        <source>Proposition rejetée.</source>
+        <target state="translated">提案を却下しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.implemented" datatype="html">
+        <source>Proposition marquée comme implémentée.</source>
+        <target state="translated">提案を実施済みとしてマークしました。</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.impact-saved" datatype="html">
+        <source>Impact enregistré.</source>
+        <target state="translated">インパクトを記録しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.proposal.action-error" datatype="html">
+        <source>Erreur lors de l'action.</source>
+        <target state="translated">アクション中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.title" datatype="html">
+        <source>Rejeter la proposition</source>
+        <target state="translated">提案を却下する</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.subtitle" datatype="html">
+        <source>Indiquez le motif du rejet pour informer le proposant.</source>
+        <target state="translated">提案者に通知するために却下理由を入力してください。</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.submit" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">却下する</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.reason-label" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">却下理由</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.reason-placeholder" datatype="html">
+        <source>Ex. : Budget insuffisant, hors périmètre du cercle, déjà traité…</source>
+        <target state="translated">例：予算不足、サークルの範囲外、すでに対応済み…</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.reason-required" datatype="html">
+        <source>Le motif est requis.</source>
+        <target state="translated">理由は必須です。</target>
+      </trans-unit>
+      <trans-unit id="circles.reject.reason-min" datatype="html">
+        <source>5 caractères minimum.</source>
+        <target state="translated">最低5文字が必要です。</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.title" datatype="html">
+        <source>Mesurer l'impact</source>
+        <target state="translated">インパクトを測定する</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.subtitle" datatype="html">
+        <source>Décrivez l'impact mesuré depuis l'implémentation de la proposition.</source>
+        <target state="translated">提案の実施以来測定されたインパクトを記述してください。</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.submit" datatype="html">
+        <source>Enregistrer l'impact</source>
+        <target state="translated">インパクトを保存する</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.note-label" datatype="html">
+        <source>Note d'impact</source>
+        <target state="translated">インパクトメモ</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.note-placeholder" datatype="html">
+        <source>Ex. : Réduction des NC de 15%, gain de 30 min/jour, satisfaction opérateurs +2 points…</source>
+        <target state="translated">例：NC 15%削減、1日30分節約、オペレーター満足度+2ポイント…</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.note-required" datatype="html">
+        <source>La note d'impact est requise.</source>
+        <target state="translated">インパクトメモは必須です。</target>
+      </trans-unit>
+      <trans-unit id="circles.impact.note-min" datatype="html">
+        <source>5 caractères minimum.</source>
+        <target state="translated">最低5文字が必要です。</target>
+      </trans-unit>
       <trans-unit id="spc.analyze.kpi-banner-prefix" datatype="html">
         <source>Analyse du KPI</source>
         <target state="translated">KPI分析</target>

@@ -97,6 +97,14 @@ public class CircleController {
         return service.cancelMeeting(id, mid);
     }
 
+    /** ANO-010 — génère un compte-rendu structuré par LLM à partir d'un transcript textuel. */
+    @PostMapping("/{id}/meetings/{mid}/minutes/generate")
+    @ResponseStatus(HttpStatus.OK)
+    public CircleDto.MeetingMinutes generateMinutes(@PathVariable UUID id, @PathVariable UUID mid,
+                                                    @Valid @RequestBody CircleDto.GenerateMinutesRequest req) {
+        return service.generateMinutes(id, mid, req);
+    }
+
     // proposals
     @PostMapping("/{id}/proposals")
     @ResponseStatus(HttpStatus.CREATED)

@@ -76,4 +76,96 @@ describe('CirclesService (mock mode)', () => {
       });
     });
   });
+
+  it('generateMinutes returns structured mock minutes', (done) => {
+    service.generateMinutes('circle-id', 'meeting-id', { transcript: 'Du texte de réunion.' }).subscribe(m => {
+      expect(m.summary).toBeTruthy();
+      expect(Array.isArray(m.decisions)).toBeTrue();
+      expect(Array.isArray(m.actions)).toBeTrue();
+      done();
+    });
+  });
+
+  it('generateMinutes mock actions have label and suggestedAssignee', (done) => {
+    service.generateMinutes('c1', 'mt1', { transcript: 'Texte' }).subscribe(m => {
+      expect(m.actions.length).toBeGreaterThan(0);
+      expect(m.actions[0].label).toBeTruthy();
+      expect(m.actions[0].suggestedAssignee).toBeDefined();
+      done();
+    });
+  });
+
+  it('reviewProposal transitions proposal to UNDER_REVIEW', (done) => {
+    service.createCircle({ name: 'Circle-review', topic: 't' }).subscribe(c => {
+      service.addProposal(c.id, { title: 'Prop', proposedBy: 'u' }).subscribe(p => {
+        service.reviewProposal(c.id, p.id).subscribe(reviewed => {
+          expect(reviewed.status).toBe('UNDER_REVIEW');
+          done();
+        });
+      });
+    });
+  });
+
+  it('approveProposal transitions proposal to APPROVED', (done) => {
+    service.createCircle({ name: 'Circle-approve', topic: 't' }).subscribe(c => {
+      service.addProposal(c.id, { title: 'Prop', proposedBy: 'u' }).subscribe(p => {
+        service.approveProposal(c.id, p.id, { validatedBy: 'user-uuid' }).subscribe(approved => {
+          expect(approved.status).toBe('APPROVED');
+          done();
+        });
+      });
+    });
+  });
+
+  it('rejectProposal transitions proposal to REJECTED with reason', (done) => {
+    service.createCircle({ name: 'Circle-reject', topic: 't' }).subscribe(c => {
+      service.addProposal(c.id, { title: 'Prop', proposedBy: 'u' }).subscribe(p => {
+        service.rejectProposal(c.id, p.id, { validatedBy: 'user-uuid', reason: 'Budget insuffisant' }).subscribe(rejected => {
+          expect(rejected.status).toBe('REJECTED');
+          expect((rejected as any)['rejectionReason']).toBe('Budget insuffisant');
+          done();
+        });
+      });
+    });
+  });
+
+  it('implementProposal transitions proposal to IMPLEMENTED', (done) => {
+    service.createCircle({ name: 'Circle-implement', topic: 't' }).subscribe(c => {
+      service.addProposal(c.id, { title: 'Prop', proposedBy: 'u' }).subscribe(p => {
+        service.implementProposal(c.id, p.id).subscribe(implemented => {
+          expect(implemented.status).toBe('IMPLEMENTED');
+          done();
+        });
+      });
+    });
+  });
+
+  it('recordImpact transitions proposal to MEASURED with impactNote', (done) => {
+    service.createCircle({ name: 'Circle-impact', topic: 't' }).subscribe(c => {
+      service.addProposal(c.id, { title: 'Prop', proposedBy: 'u' }).subscribe(p => {
+        service.recordImpact(c.id, p.id, { impactNote: 'Réduction NC 15%' }).subscribe(measured => {
+          expect(measured.status).toBe('MEASURED');
+          expect((measured as any)['impactNote']).toBe('Réduction NC 15%');
+          done();
+        });
+      });
+    });
+  });
+
+  it('lifecycle chain PROPOSED→UNDER_REVIEW→APPROVED→IMPLEMENTED→MEASURED', (done) => {
+    service.createCircle({ name: 'Chain', topic: 't' }).subscribe(c => {
+      service.addProposal(c.id, { title: 'Chain prop', proposedBy: 'u' }).subscribe(p => {
+        service.reviewProposal(c.id, p.id).subscribe(() => {
+          service.approveProposal(c.id, p.id, { validatedBy: 'uid' }).subscribe(() => {
+            service.implementProposal(c.id, p.id).subscribe(() => {
+              service.recordImpact(c.id, p.id, { impactNote: 'done' }).subscribe(final => {
+                expect(final.status).toBe('MEASURED');
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 });

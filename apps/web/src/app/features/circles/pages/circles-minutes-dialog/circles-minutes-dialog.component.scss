@@ -1,0 +1,43 @@
+.full-width { width: 100%; }
+
+.meeting-label { margin-bottom: 16px; color: var(--qos-text-secondary); }
+
+.generating-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+  color: var(--qos-text-secondary);
+}
+
+.error-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--mat-warn);
+  margin: 8px 0;
+}
+
+.minutes-result { margin-top: 20px; }
+
+.result-card { background: var(--qos-surface-raised, #f8f9fa); }
+
+.summary-text { line-height: 1.6; margin-bottom: 12px; }
+
+.decisions-list, .actions-list {
+  padding-left: 20px;
+  margin: 4px 0 16px;
+
+  li { margin-bottom: 4px; line-height: 1.5; }
+}
+
+.assignee { color: var(--qos-text-secondary); font-size: 0.875rem; }
+
+h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--qos-text-secondary);
+  margin: 12px 0 6px;
+}

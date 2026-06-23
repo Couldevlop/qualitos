@@ -1,0 +1,27 @@
+<qos-form-dialog
+  i18n-title="@@circles.reject.title"
+  title="Rejeter la proposition"
+  i18n-subtitle="@@circles.reject.subtitle"
+  subtitle="Indiquez le motif du rejet pour informer le proposant."
+  [formGroup]="form"
+  [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@circles.reject.submit"
+  submitLabel="Rejeter"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <p class="proposal-name">
+    <mat-icon class="proposal-icon">lightbulb</mat-icon>
+    <span>{{ data.proposalTitle }}</span>
+  </p>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@circles.reject.reason-label">Motif du rejet</mat-label>
+    <textarea matInput formControlName="reason" rows="4" required
+              i18n-placeholder="@@circles.reject.reason-placeholder"
+              placeholder="Ex. : Budget insuffisant, hors périmètre du cercle, déjà traité…"></textarea>
+    <mat-error *ngIf="form.get('reason')?.errors?.['required']" i18n="@@circles.reject.reason-required">Le motif est requis.</mat-error>
+    <mat-error *ngIf="form.get('reason')?.errors?.['minlength']" i18n="@@circles.reject.reason-min">5 caractères minimum.</mat-error>
+  </mat-form-field>
+
+</qos-form-dialog>

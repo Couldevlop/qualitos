@@ -50,6 +50,14 @@ public class CircleMeeting {
     @Column(name = "held_at")
     private Instant heldAt;
 
+    /** Résumé LLM du transcript (ANO-010). */
+    @Column(name = "minutes_summary", columnDefinition = "TEXT")
+    private String minutesSummary;
+
+    /** JSON structuré brut retourné par le LLM (résumé + décisions + actions). */
+    @Column(name = "minutes_json", columnDefinition = "TEXT")
+    private String minutesJson;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 

@@ -151,6 +151,16 @@
               <th mat-header-cell *matHeaderCellDef i18n="@@circles.detail.location">Lieu</th>
               <td mat-cell *matCellDef="let m">{{ m.location || '—' }}</td>
             </ng-container>
+            <ng-container matColumnDef="aiMinutes">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let m">
+                <button mat-icon-button color="primary"
+                        (click)="openGenerateMinutes(m.id, m.title)"
+                        i18n-matTooltip="@@circles.minutes.open-btn" matTooltip="Compte-rendu IA">
+                  <mat-icon>auto_awesome</mat-icon>
+                </button>
+              </td>
+            </ng-container>
             <tr mat-header-row *matHeaderRowDef="meetingColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: meetingColumns;"></tr>
           </table>
@@ -186,6 +196,54 @@
             <ng-container matColumnDef="proposedBy">
               <th mat-header-cell *matHeaderCellDef i18n="@@circles.detail.proposed-by">Proposé par</th>
               <td mat-cell *matCellDef="let p" class="mono">{{ p.proposedBy || '—' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef i18n="@@circles.detail.proposal-actions">Actions</th>
+              <td mat-cell *matCellDef="let p">
+                <div class="proposal-actions">
+                  <button mat-icon-button color="primary"
+                          *ngIf="canReview(p.status)"
+                          (click)="reviewProposal(p.id)"
+                          i18n-matTooltip="@@circles.proposal.review-tooltip"
+                          matTooltip="Examiner">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                  <button mat-icon-button color="primary"
+                          *ngIf="canApprove(p.status)"
+                          (click)="approveProposal(p.id)"
+                          i18n-matTooltip="@@circles.proposal.approve-tooltip"
+                          matTooltip="Approuver">
+                    <mat-icon>check_circle</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn"
+                          *ngIf="canReject(p.status)"
+                          (click)="openRejectProposal(p)"
+                          i18n-matTooltip="@@circles.proposal.reject-tooltip"
+                          matTooltip="Rejeter">
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                  <button mat-icon-button color="accent"
+                          *ngIf="canImplement(p.status)"
+                          (click)="implementProposal(p.id)"
+                          i18n-matTooltip="@@circles.proposal.implement-tooltip"
+                          matTooltip="Implémenter">
+                    <mat-icon>build</mat-icon>
+                  </button>
+                  <button mat-icon-button
+                          *ngIf="canRecordImpact(p.status)"
+                          (click)="openRecordImpact(p)"
+                          i18n-matTooltip="@@circles.proposal.impact-tooltip"
+                          matTooltip="Mesurer l'impact">
+                    <mat-icon>trending_up</mat-icon>
+                  </button>
+                  <span *ngIf="p.status === 'REJECTED'" class="rejection-reason" [matTooltip]="p.rejectionReason">
+                    <mat-icon class="icon-sm">info</mat-icon>
+                  </span>
+                  <span *ngIf="p.status === 'MEASURED'" class="impact-note" [matTooltip]="p.impactNote">
+                    <mat-icon class="icon-sm">bar_chart</mat-icon>
+                  </span>
+                </div>
+              </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="proposalColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: proposalColumns;"></tr>

@@ -1,13 +1,14 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { delay, map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
 import {
   AddMeetingRequest,
   AddMemberRequest,
   AddProposalRequest,
+  ApproveProposalRequest,
   CircleMeetingResponse,
   CircleMemberResponse,
   CircleProposalResponse,
@@ -15,6 +16,10 @@ import {
   CircleStatus,
   CirclesPage,
   CreateCircleRequest,
+  GenerateMinutesRequest,
+  MeetingMinutes,
+  RecordImpactRequest,
+  RejectProposalRequest,
   UpdateCircleRequest
 } from './circles.types';
 
@@ -149,6 +154,67 @@ export class CirclesService {
     return this.http.post<CircleMemberResponse>(`${this.endpoint}/${circleId}/members`, input);
   }
 
+  generateMinutes(circleId: string, meetingId: string, req: GenerateMinutesRequest): Observable<MeetingMinutes> {
+    if (environment.useMockApi) {
+      return of({
+        summary: `Compte-rendu simulé de la réunion « ${meetingId.slice(0, 8)} ». Discussions productives. Trois axes d'amélioration identifiés.`,
+        decisions: ["Adoption du plan d'action qualité", 'Revue mensuelle des indicateurs'],
+        actions: [
+          { label: 'Mettre à jour la procédure P-001', suggestedAssignee: 'Animateur' },
+          { label: 'Former les nouveaux membres', suggestedAssignee: 'Secrétaire' }
+        ]
+      } as MeetingMinutes).pipe(delay(800));
+    }
+    return this.http.post<MeetingMinutes>(
+      `${this.endpoint}/${circleId}/meetings/${meetingId}/minutes/generate`, req
+    );
+  }
+
+  reviewProposal(circleId: string, proposalId: string): Observable<CircleProposalResponse> {
+    if (environment.useMockApi) return this.mockProposalTransition(circleId, proposalId, 'UNDER_REVIEW');
+    return this.http.patch<CircleProposalResponse>(`${this.endpoint}/${circleId}/proposals/${proposalId}/review`, {});
+  }
+
+  approveProposal(circleId: string, proposalId: string, body: ApproveProposalRequest): Observable<CircleProposalResponse> {
+    if (environment.useMockApi) return this.mockProposalTransition(circleId, proposalId, 'APPROVED');
+    return this.http.patch<CircleProposalResponse>(`${this.endpoint}/${circleId}/proposals/${proposalId}/approve`, body);
+  }
+
+  rejectProposal(circleId: string, proposalId: string, body: RejectProposalRequest): Observable<CircleProposalResponse> {
+    if (environment.useMockApi) return this.mockProposalTransition(circleId, proposalId, 'REJECTED', { rejectionReason: body.reason });
+    return this.http.patch<CircleProposalResponse>(`${this.endpoint}/${circleId}/proposals/${proposalId}/reject`, body);
+  }
+
+  implementProposal(circleId: string, proposalId: string): Observable<CircleProposalResponse> {
+    if (environment.useMockApi) return this.mockProposalTransition(circleId, proposalId, 'IMPLEMENTED');
+    return this.http.patch<CircleProposalResponse>(`${this.endpoint}/${circleId}/proposals/${proposalId}/implement`, {});
+  }
+
+  recordImpact(circleId: string, proposalId: string, body: RecordImpactRequest): Observable<CircleProposalResponse> {
+    if (environment.useMockApi) return this.mockProposalTransition(circleId, proposalId, 'MEASURED', { impactNote: body.impactNote });
+    return this.http.patch<CircleProposalResponse>(`${this.endpoint}/${circleId}/proposals/${proposalId}/impact`, body);
+  }
+
+  private mockProposalTransition(
+    circleId: string, proposalId: string, newStatus: string,
+    extra: Partial<CircleProposalResponse> = {}
+  ): Observable<CircleProposalResponse> {
+    const c = this.mockStore.find(x => x.id === circleId);
+    const now = new Date().toISOString();
+    if (c) {
+      const p = c.proposals.find(x => x.id === proposalId) as CircleProposalResponse | undefined;
+      if (p) {
+        p.status = newStatus;
+        p.updatedAt = now;
+        Object.assign(p, extra);
+        c.updatedAt = now;
+        return of({ ...p }).pipe(delay(120));
+      }
+    }
+    const fallback: CircleProposalResponse = { id: proposalId, circleId, title: '', status: newStatus, ...extra, createdAt: now, updatedAt: now };
+    return of(fallback).pipe(delay(120));
+  }
+
   pauseCircle(id: string): Observable<CircleResponse> {
     return this.transition(id, 'PAUSED', 'pause');
   }
@@ -199,8 +265,11 @@ export class CirclesService {
           { id: 'mt1', title: 'Réunion mensuelle Avril', status: 'HELD', scheduledAt: now }
         ],
         proposals: [
-          { id: 'p1', title: 'Ajout poka-yoke positionnement pièce', status: 'APPROVED' },
-          { id: 'p2', title: 'Maintenance préventive cobot-3', status: 'MEASURED' }
+          { id: 'p1', title: 'Ajout poka-yoke positionnement pièce', status: 'PROPOSED', description: 'Idée soumise par l\'équipe' },
+          { id: 'p2', title: 'Optimisation réglage machine', status: 'UNDER_REVIEW' },
+          { id: 'p3', title: 'Maintenance préventive cobot-3', status: 'APPROVED' },
+          { id: 'p4', title: 'Réduction cycle nettoyage', status: 'IMPLEMENTED' },
+          { id: 'p5', title: 'Formation opérateurs tri sélectif', status: 'MEASURED' }
         ]
       },
       {

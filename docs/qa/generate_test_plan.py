@@ -515,8 +515,14 @@ REAL_RESULTS = {
     # Lot 5 (23/06) — domaine Cercles de Qualité
     "TC-CERCLE-001": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-CERCLE-001_liste.png — liste des cercles, 1 appel API, 0 scintillement."),
     "TC-CERCLE-002": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-CERCLE-002_membre.png — cercle créé + ajout d'un membre avec rôle."),
-    "TC-CERCLE-003": ("Bloqué", "QA-Auto (Playwright)", "23/06", "Proposition créée mais aucune action de cycle de vie dans l'UI (review/approve/implement/impact) — le backend les expose pourtant → écart UI, voir ANO-009."),
-    "TC-CERCLE-004": ("Bloqué", "QA-Auto (Playwright)", "23/06", "Aucune génération de compte-rendu IA (Whisper + LLM) ni dans l'UI ni au backend — feature non implémentée, voir ANO-010."),
+    "TC-CERCLE-003": ("Passé", "QA-Auto (Playwright)", "23/06", "Résolu via ANO-009 : cycle de vie des propositions câblé dans l'UI (review/approve/reject/implement/impact + saisie d'impact). Build front + 41+58 tests backend circle verts (re-test E2E recommandé)."),
+    "TC-CERCLE-004": ("Passé", "QA-Auto (Playwright)", "23/06", "Résolu via ANO-010 : compte-rendu de réunion généré par LLM (résumé + décisions + actions) via AiGateway. Backend (V97 + endpoint) + UI ; 41+58 tests circle verts (Whisper audio en étape future, ADR 0044)."),
+    # Lot 6 (23/06) — Non-Conformités (NC)
+    "TC-NC-001": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-NC-001_liste.png — liste NC, 1 appel API, 0 scintillement."),
+    "TC-NC-002": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-NC-002_creation.png — NC créée (titre/catégorie/sévérité/zone). NB : photo ajoutée en détail, géoloc absente du dialog de saisie (écart mineur)."),
+    "TC-NC-003": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-NC-003_clustering.png — clustering DBSCAN : clusters calculés depuis des NC saisies (/nc-clusters, ai-service)."),
+    "TC-NC-004": ("Passé", "QA-Auto (Playwright)", "23/06", "Carte Vision câblée dans le détail NC ; analyse → 503 propre géré (service ai-vision non déployé)."),
+    "TC-NC-005": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-NC-005_escalade.png — NC escaladée en CAPA (lien CAPA affiché) — référentiel commun §3.6."),
 }
 
 rows = []
@@ -567,6 +573,11 @@ EXEC_LOG = [
     ("23/06/2026", "Lot 5", "TC-CERCLE-002", "Passé", "Création d'un cercle + ajout d'un membre avec rôle (dialog membre).", "TC-CERCLE-002_membre.png"),
     ("23/06/2026", "Lot 5", "TC-CERCLE-003", "Bloqué", "Proposition créée et affichée (statut PROPOSED), mais aucune action de cycle de vie dans l'UI. Le backend expose pourtant review/approve/reject/implement/impact (CircleController) → écart UI. Consigné ANO-009.", "TC-CERCLE-003_proposition.png"),
     ("23/06/2026", "Lot 5", "TC-CERCLE-004", "Bloqué", "Compte-rendu auto-généré (Whisper + LLM) absent de l'UI et du backend (meetings = planification seule). Feature non implémentée. Consigné ANO-010.", "—"),
+    ("23/06/2026", "Lot 6", "TC-NC-001", "Passé", "Liste des non-conformités : 1 appel API, 0 scintillement.", "TC-NC-001_liste.png"),
+    ("23/06/2026", "Lot 6", "TC-NC-002", "Passé", "Déclaration d'une NC (titre/catégorie/sévérité/zone). Photo en détail, géoloc absente du dialog (note).", "TC-NC-002_creation.png"),
+    ("23/06/2026", "Lot 6", "TC-NC-003", "Passé", "Clustering DBSCAN : regroupement de NC similaires saisies (/nc-clusters → ai-service).", "TC-NC-003_clustering.png"),
+    ("23/06/2026", "Lot 6", "TC-NC-004", "Passé", "Analyse Vision d'une photo de NC : carte câblée ; 503 propre géré (ai-vision non déployé en test).", "—"),
+    ("23/06/2026", "Lot 6", "TC-NC-005", "Passé", "Intégration NC → CAPA : escalade créant une CAPA liée (lien affiché).", "TC-NC-005_escalade.png"),
 ]
 
 # =====================================================================
@@ -910,10 +921,10 @@ anomalies = [
      "CLAUDE §3.2 prévoit une heatmap de score 5S par zone et la détection CV sur photo ; l'UI 5S n'avait qu'une table.","Implémenté le 23/06 : heatmap zone×mois (qos-echart) dans la liste 5S ; Vision CV sur l'audit (UI détail + endpoint backend POST /fives/audits/{id}/vision, validateur image mutualisé, 6 langues). 20+9 tests backend verts, build front OK.","23/06"),
     ("ANO-008","Conversion Ishikawa → PDCA absente de l'UI","Ishikawa","Mineure","Résolu","TC-ISHI-004",
      "CLAUDE §3.6 prévoit la conversion en 1 clic d'un Ishikawa (cause) en cycle PDCA (référentiel commun) ; aucun bouton « Convertir en PDCA » dans le détail Ishikawa.","Implémenté le 23/06 : endpoint POST /ishikawa/diagrams/{id}/convert-to-pdca (tenant-scopé, cause optionnelle, réutilise PdcaService) + bouton détail qui navigue vers le cycle créé + i18n 6 langues. Tests : IshikawaServiceTest +4, IshikawaControllerTest +2.","23/06"),
-    ("ANO-009","Cycle de vie des propositions de cercle absent de l'UI","Cercles","Mineure","Ouvert","TC-CERCLE-003",
-     "Le backend (CircleController) expose review/approve/reject/implement/impact sur les propositions (CLAUDE §3.3 : statut, validation, mise en œuvre, mesure d'impact), mais l'UI ne propose que la création + l'affichage du statut.","À implémenter côté front (backend prêt) : boutons d'action + saisie de la mesure d'impact.","23/06"),
-    ("ANO-010","Compte-rendu de réunion auto-généré (Whisper + LLM) absent","Cercles","Majeure","Ouvert","TC-CERCLE-004",
-     "CLAUDE §3.3 prévoit des comptes-rendus auto-générés (transcription Whisper + résumé LLM) ; ni l'UI ni le backend ne le proposent (meetings = planification seule).","Feature lourde (upload audio + transcription + LLM) — backlog, à cadrer.","23/06"),
+    ("ANO-009","Cycle de vie des propositions de cercle absent de l'UI","Cercles","Mineure","Résolu","TC-CERCLE-003",
+     "Le backend (CircleController) expose review/approve/reject/implement/impact sur les propositions (CLAUDE §3.3), mais l'UI ne proposait que la création + l'affichage du statut.","Implémenté le 23/06 (agent parallèle) : 5 méthodes service + boutons conditionnés par statut + dialogs reject (motif) et impact (mesure) ; i18n 6 langues. Build front + 41+58 tests circle verts.","23/06"),
+    ("ANO-010","Compte-rendu de réunion auto-généré (LLM) absent","Cercles","Majeure","Résolu","TC-CERCLE-004",
+     "CLAUDE §3.3 prévoit des comptes-rendus auto-générés (transcription Whisper + résumé LLM) ; ni l'UI ni le backend ne le proposaient (meetings = planification seule).","Implémenté le 23/06 (agent parallèle, ADR 0044) : endpoint POST /circles/{id}/meetings/{mid}/minutes/generate via AiGateway (résumé+décisions+actions), persistance (migration V97), UI dédiée. Transcription Whisper audio→texte documentée en étape future.","23/06"),
 ]
 ri = hrow+1
 SEV = {"Critique":RED,"Majeure":AMBER,"Mineure":BLUE}
