@@ -570,21 +570,21 @@ jobs:
           test "$code" = "200"
 
       # --- Scan 1 : BASELINE (passif) sur la racine HTTP ----------------------
-      # allow_issue_writing=false : pas de création d'issue GitHub (évite la perm
-      # issues:write et le bruit ; le rapport part en artefact). -I (cmd_options)
-      # NON utilisé : on VEUT que le job échoue sur HIGH (fail_action par défaut).
+      # fail_action:false — l'action zaproxy échoue sur TOUTE alerte (WARN/MEDIUM
+      # compris), ce qui n'est PAS la politique voulue (§14.2 / DoD §20 : bloquer
+      # sur HIGH/critique uniquement). On laisse donc les scans produire leurs
+      # rapports JSON sans faire échouer le job ; l'étape « gate » plus bas n'échoue
+      # QUE sur une alerte de risque HIGH (riskcode=3). allow_issue_writing=false :
+      # pas de création d'issue GitHub (évite la perm issues:write et le bruit).
       - name: ZAP Baseline scan
         uses: zaproxy/action-baseline@v0.14.0
         with:
           target: 'http://localhost:8092'
           rules_file_name: '.zap/rules.tsv'
-          # -l FAIL : niveau minimal qui FAIT ÉCHOUER le scan = WARN par défaut ;
-          # on remonte à FAIL pour ne bloquer que sur HIGH (les MEDIUM restent
-          # rapportés en WARN dans le HTML/MD). -j : spider AJAX léger désactivé
-          # (API JSON, pas de DOM). -m 3 : 3 min de spider max.
-          cmd_options: '-l FAIL -m 3 -z "-config api.disablekey=true"'
+          # -J : rapport JSON exploité par l'étape gate. -m 3 : 3 min de spider max.
+          cmd_options: '-J zap-baseline.json -m 3 -z "-config api.disablekey=true"'
           allow_issue_writing: false
-          fail_action: true
+          fail_action: false
           artifact_name: zap-baseline-report
 
       # --- Scan 2 : API SCAN (actif, ciblé OpenAPI) ---------------------------
@@ -594,10 +594,31 @@ jobs:
           target: 'http://localhost:8092/v3/api-docs'
           format: openapi
           rules_file_name: '.zap/rules.tsv'
-          cmd_options: '-l FAIL'
+          cmd_options: '-J zap-apiscan.json'
           allow_issue_writing: false
-          fail_action: true
+          fail_action: false
           artifact_name: zap-api-scan-report
+
+      # --- Gate : échec UNIQUEMENT sur alerte de risque HIGH (riskcode=3) ------
+      # Politique §14.2 : bloque sur HIGH/critique, laisse passer MEDIUM/LOW (WARN),
+      # visibles dans les artefacts. Robuste : pas besoin de connaître à l'avance
+      # les IDs des alertes MEDIUM/LOW (sinon il faudrait les IGNORE une à une dans
+      # .zap/rules.tsv). jq parcourt récursivement les rapports JSON des 2 scans.
+      - name: Gate — échec seulement sur alerte HIGH
+        run: |
+          set -euo pipefail
+          high=0
+          for f in zap-baseline.json zap-apiscan.json; do
+            [ -f "$f" ] || { echo "(rapport $f absent)"; continue; }
+            n="$(jq '[.. | objects | select(.riskcode? == "3")] | length' "$f" 2>/dev/null || echo 0)"
+            echo "$f : ${n} alerte(s) HIGH"
+            high=$((high + n))
+          done
+          if [ "$high" -gt 0 ]; then
+            echo "::error::${high} alerte(s) ZAP de risque HIGH détectée(s) — voir les artefacts zap-*-report."
+            exit 1
+          fi
+          echo "Aucune alerte HIGH. Les WARN/MEDIUM sont rapportés (non bloquants)."
 
       - name: Tear down DAST stack
         if: always()
