@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
+import com.openlab.qualitos.quality.visiongateway.VisionDto;
+import com.openlab.qualitos.quality.visiongateway.VisionGatewayClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,6 +36,7 @@ class FiveSControllerTest {
 
     @Autowired MockMvc mockMvc;
     @MockitoBean FiveSService service;
+    @MockitoBean VisionGatewayClient visionGateway;
 
     ObjectMapper om;
     static final UUID AUDIT = UUID.randomUUID();
@@ -188,6 +192,49 @@ class FiveSControllerTest {
                         .content(om.writeValueAsString(new FiveSDto.CreateAuditRequest(
                                 "Z", null, AUDITOR, null))))
                 .andExpect(status().isForbidden());
+    }
+
+    // ---- Analyse Vision CV sur audit 5S (§3.2) --------------------------------
+
+    /** PNG minimal valide (magic bytes) pour traverser la validation d'image. */
+    private static MockMultipartFile pngPart() {
+        byte[] png = new byte[]{
+                (byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x01, 0x02, 0x03};
+        return new MockMultipartFile("image", "zone.png", "image/png", png);
+    }
+
+    @Test @WithMockUser
+    void vision_validImage_returns200() throws Exception {
+        when(service.findById(AUDIT)).thenReturn(resp(FiveSAuditStatus.IN_PROGRESS));
+        VisionDto.VisionAnalysis analysis = new VisionDto.VisionAnalysis(
+                "sha", 1280, 720,
+                new VisionDto.VisionScore(80, 75, 90, 85, 70, 80),
+                List.of(new VisionDto.VisionFinding("SEITON", "Encombrement", "MEDIUM", 0.82, List.of(1, 2, 3, 4))));
+        when(visionGateway.analyze(any(), any(), any())).thenReturn(analysis);
+
+        mockMvc.perform(multipart("/api/v1/fives/audits/{id}/vision", AUDIT).file(pngPart()).with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.score.overall").value(80))
+                .andExpect(jsonPath("$.findings[0].pillar").value("SEITON"));
+    }
+
+    @Test @WithMockUser
+    void vision_unknownAudit_returns404() throws Exception {
+        when(service.findById(AUDIT)).thenThrow(new FiveSAuditNotFoundException(AUDIT));
+        mockMvc.perform(multipart("/api/v1/fives/audits/{id}/vision", AUDIT).file(pngPart()).with(csrf()))
+                .andExpect(status().isNotFound());
+        verify(visionGateway, never()).analyze(any(), any(), any());
+    }
+
+    @Test @WithMockUser
+    void vision_invalidImage_returns400() throws Exception {
+        when(service.findById(AUDIT)).thenReturn(resp(FiveSAuditStatus.IN_PROGRESS));
+        // Content-type déclaré image/png mais contenu texte → magic bytes KO → 400.
+        MockMultipartFile bogus = new MockMultipartFile(
+                "image", "fake.png", "image/png", "not an image".getBytes());
+        mockMvc.perform(multipart("/api/v1/fives/audits/{id}/vision", AUDIT).file(bogus).with(csrf()))
+                .andExpect(status().isBadRequest());
+        verify(visionGateway, never()).analyze(any(), any(), any());
     }
 
     private FiveSDto.AuditResponse resp(FiveSAuditStatus s) {

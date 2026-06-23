@@ -8154,6 +8154,58 @@ historique 12 mois</source>
         <source>Erreur lors de la mise à jour.</source>
         <target state="translated">خطأ أثناء التحديث.</target>
       </trans-unit>
+      <trans-unit id="fives.heatmap.title" datatype="html">
+        <source>Scores 5S par zone</source>
+        <target state="translated">درجات 5S حسب المنطقة</target>
+      </trans-unit>
+      <trans-unit id="fives.heatmap.empty" datatype="html">
+        <source>Pas encore assez d'audits notés pour afficher la heatmap par zone.</source>
+        <target state="translated">لا توجد تدقيقات مُقيّمة كافية بعد لعرض خريطة حرارية حسب المنطقة.</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.title" datatype="html">
+        <source>Analyse visuelle (Vision IA)</source>
+        <target state="translated">تحليل بصري (رؤية الذكاء الاصطناعي)</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.subtitle" datatype="html">
+        <source>Détecte automatiquement les non-conformités 5S (encombrement, EPI, étiquetage) sur une photo de la zone.</source>
+        <target state="translated">يكتشف تلقائيًا حالات عدم المطابقة 5S (الفوضى، معدات الوقاية، الوسم) في صورة للمنطقة.</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.analyze" datatype="html">
+        <source>Analyser une photo</source>
+        <target state="translated">تحليل صورة</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.clear" datatype="html">
+        <source>Effacer</source>
+        <target state="translated">مسح</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.overall" datatype="html">
+        <source>Global</source>
+        <target state="translated">إجمالي</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.findings" datatype="html">
+        <source>Non-conformités détectées</source>
+        <target state="translated">حالات عدم المطابقة المكتشفة</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.no-findings" datatype="html">
+        <source>Aucune non-conformité détectée sur cette photo.</source>
+        <target state="translated">لم يتم اكتشاف أي حالة عدم مطابقة في هذه الصورة.</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.err-invalid" datatype="html">
+        <source>Image invalide (format non supporté).</source>
+        <target state="translated">صورة غير صالحة (تنسيق غير مدعوم).</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.err-too-large" datatype="html">
+        <source>Image trop volumineuse (10 Mo max).</source>
+        <target state="translated">الصورة كبيرة جدًا (10 ميغابايت كحد أقصى).</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.err-unavailable" datatype="html">
+        <source>Le service d'analyse vision est momentanément indisponible.</source>
+        <target state="translated">خدمة تحليل الرؤية غير متاحة مؤقتًا.</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.err-generic" datatype="html">
+        <source>Échec de l'analyse vision.</source>
+        <target state="translated">فشل تحليل الرؤية.</target>
+      </trans-unit>
       <trans-unit id="ishikawa.list.title" datatype="html">
         <source>Diagrammes Ishikawa</source>
         <target state="translated">مخططات إيشيكاوا</target>

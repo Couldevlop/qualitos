@@ -123,3 +123,38 @@
 .badge-in_progress  { background: #fff3e0; color: #e65100; }
 .badge-completed    { background: #e8f5e9; color: #1b5e20; }
 .badge-cancelled    { background: #fbe9e7; color: #b71c1c; }
+
+/* Analyse Vision CV (§3.2) */
+.vision-section { margin-top: 16px; }
+.vision-card {
+  .vision-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 8px 0 4px; }
+  .vision-error {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--qos-danger, #dc2626); margin: 8px 0;
+    mat-icon { font-size: 20px; height: 20px; width: 20px; }
+  }
+  .vision-result { margin-top: 12px; }
+  .vision-scores {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;
+    .vscore {
+      display: flex; flex-direction: column; align-items: center;
+      min-width: 64px; padding: 8px 10px; border-radius: 8px;
+      background: var(--qos-bg-subtle, #f1f5f9);
+      .vscore-pillar { font-size: 0.72rem; color: var(--qos-fg-secondary, #64748b); }
+      .vscore-val { font-size: 1.1rem; font-weight: 700; }
+      &.vscore-overall { background: var(--qos-chart-1, #2563eb); color: #fff;
+        .vscore-pillar { color: rgba(255,255,255,0.85); } }
+    }
+  }
+  h4 { margin: 8px 0 6px; font-size: 0.9rem; }
+  .vision-findings {
+    list-style: none; padding: 0; margin: 0;
+    li {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 0; border-bottom: 1px solid var(--qos-border-subtle, #e2e8f0);
+      .finding-desc { flex: 1; color: var(--qos-fg-primary, #0f172a); }
+      .finding-conf { font-variant-numeric: tabular-nums; color: var(--qos-fg-secondary, #64748b); }
+    }
+  }
+  .empty { color: var(--qos-fg-secondary, #64748b); font-style: italic; }
+}

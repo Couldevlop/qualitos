@@ -126,6 +126,67 @@
         </mat-card>
       </section>
 
+      <!-- Analyse Vision CV (YOLOv8) d'une photo de zone (§3.2) -->
+      <section class="vision-section">
+        <mat-card class="vision-card">
+          <mat-card-header>
+            <mat-card-title i18n="@@fives.vision.title">Analyse visuelle (Vision IA)</mat-card-title>
+            <mat-card-subtitle i18n="@@fives.vision.subtitle">
+              Détecte automatiquement les non-conformités 5S (encombrement, EPI, étiquetage) sur une photo de la zone.
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <input #visionInput type="file" accept="image/png,image/jpeg,image/webp" hidden
+                   (change)="onVisionFile($event)">
+            <div class="vision-actions">
+              <button mat-flat-button color="primary" type="button"
+                      (click)="triggerVisionPicker(visionInput)"
+                      [disabled]="visionAnalyzing$ | async">
+                <mat-progress-spinner *ngIf="visionAnalyzing$ | async; else camIcon"
+                                      mode="indeterminate" diameter="18"></mat-progress-spinner>
+                <ng-template #camIcon><mat-icon>photo_camera</mat-icon></ng-template>
+                <span i18n="@@fives.vision.analyze">Analyser une photo</span>
+              </button>
+              <button mat-stroked-button type="button" *ngIf="visionResult" (click)="clearVision()">
+                <mat-icon>close</mat-icon>
+                <span i18n="@@fives.vision.clear">Effacer</span>
+              </button>
+            </div>
+
+            <p class="vision-error" *ngIf="visionError">
+              <mat-icon>error_outline</mat-icon> {{ visionError }}
+            </p>
+
+            <div class="vision-result" *ngIf="visionResult as v">
+              <div class="vision-scores">
+                <div class="vscore"><span class="vscore-pillar">Seiri</span><span class="vscore-val">{{ v.score.seiri }}</span></div>
+                <div class="vscore"><span class="vscore-pillar">Seiton</span><span class="vscore-val">{{ v.score.seiton }}</span></div>
+                <div class="vscore"><span class="vscore-pillar">Seiso</span><span class="vscore-val">{{ v.score.seiso }}</span></div>
+                <div class="vscore"><span class="vscore-pillar">Seiketsu</span><span class="vscore-val">{{ v.score.seiketsu }}</span></div>
+                <div class="vscore"><span class="vscore-pillar">Shitsuke</span><span class="vscore-val">{{ v.score.shitsuke }}</span></div>
+                <div class="vscore vscore-overall">
+                  <span class="vscore-pillar" i18n="@@fives.vision.overall">Global</span>
+                  <span class="vscore-val">{{ v.score.overall }}/100</span>
+                </div>
+              </div>
+
+              <h4 i18n="@@fives.vision.findings">Non-conformités détectées</h4>
+              <p class="empty" *ngIf="v.findings.length === 0" i18n="@@fives.vision.no-findings">
+                Aucune non-conformité détectée sur cette photo.
+              </p>
+              <ul class="vision-findings" *ngIf="v.findings.length > 0">
+                <li *ngFor="let f of v.findings">
+                  <span [class]="findingSeverityClass(f.severity)">{{ f.severity }}</span>
+                  <strong>{{ f.pillar }}</strong>
+                  <span class="finding-desc">{{ f.description }}</span>
+                  <span class="finding-conf">{{ (f.confidence * 100) | number:'1.0-0' }}%</span>
+                </li>
+              </ul>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </section>
+
     </ng-container>
   </ng-container>
 

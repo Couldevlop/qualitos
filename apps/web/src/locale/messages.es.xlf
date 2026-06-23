@@ -8154,6 +8154,58 @@ historial de 12 meses</target>
         <source>Erreur lors de la mise à jour.</source>
         <target state="translated">Error al actualizar.</target>
       </trans-unit>
+      <trans-unit id="fives.heatmap.title" datatype="html">
+        <source>Scores 5S par zone</source>
+        <target state="translated">Puntuaciones 5S por zona</target>
+      </trans-unit>
+      <trans-unit id="fives.heatmap.empty" datatype="html">
+        <source>Pas encore assez d'audits notés pour afficher la heatmap par zone.</source>
+        <target state="translated">Aún no hay suficientes auditorías puntuadas para mostrar el mapa de calor por zona.</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.title" datatype="html">
+        <source>Analyse visuelle (Vision IA)</source>
+        <target state="translated">Análisis visual (Visión IA)</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.subtitle" datatype="html">
+        <source>Détecte automatiquement les non-conformités 5S (encombrement, EPI, étiquetage) sur une photo de la zone.</source>
+        <target state="translated">Detecta automáticamente las no conformidades 5S (desorden, EPI, etiquetado) en una foto de la zona.</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.analyze" datatype="html">
+        <source>Analyser une photo</source>
+        <target state="translated">Analizar una foto</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.clear" datatype="html">
+        <source>Effacer</source>
+        <target state="translated">Borrar</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.overall" datatype="html">
+        <source>Global</source>
+        <target state="translated">Global</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.findings" datatype="html">
+        <source>Non-conformités détectées</source>
+        <target state="translated">No conformidades detectadas</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.no-findings" datatype="html">
+        <source>Aucune non-conformité détectée sur cette photo.</source>
+        <target state="translated">No se detectó ninguna no conformidad en esta foto.</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.err-invalid" datatype="html">
+        <source>Image invalide (format non supporté).</source>
+        <target state="translated">Imagen no válida (formato no admitido).</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.err-too-large" datatype="html">
+        <source>Image trop volumineuse (10 Mo max).</source>
+        <target state="translated">Imagen demasiado grande (10 MB máx).</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.err-unavailable" datatype="html">
+        <source>Le service d'analyse vision est momentanément indisponible.</source>
+        <target state="translated">El servicio de análisis visual no está disponible temporalmente.</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.err-generic" datatype="html">
+        <source>Échec de l'analyse vision.</source>
+        <target state="translated">Error en el análisis visual.</target>
+      </trans-unit>
       <trans-unit id="ishikawa.list.title" datatype="html">
         <source>Diagrammes Ishikawa</source>
         <target state="translated">Diagramas de Ishikawa</target>

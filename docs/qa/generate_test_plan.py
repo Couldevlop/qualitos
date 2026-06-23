@@ -499,8 +499,8 @@ REAL_RESULTS = {
     "TC-5S-001": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-5S-001_liste.png — 4 audits, 1 appel API, 0 scintillement"),
     "TC-5S-002": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-5S-002b_apres.png — création zone+date (4 -> 5). Récurrence absente du dialog (écart mineur)."),
     "TC-5S-003": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-5S-003_offline.png — /offline-queue accessible (vérif partielle PWA)."),
-    "TC-5S-004": ("Bloqué", "QA-Auto (Playwright)", "23/06", "Vision YOLOv8 non câblée dans l'UI 5S + service ai-vision absent (dépendance/env)."),
-    "TC-5S-005": ("Bloqué", "QA-Auto (Playwright)", "23/06", "Pas de heatmap par zone dans l'UI 5S (écart vs CLAUDE §3.2) — voir ANO-007."),
+    "TC-5S-004": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-5S-004_vision-ui.png — Vision CV câblée sur l'audit 5S (UI détail + endpoint backend POST /fives/audits/{id}/vision, 20+9 tests). Service ai-vision absent en test → 503 propre géré par l'UI."),
+    "TC-5S-005": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-5S-005_heatmap.png — Heatmap zone × mois implémentée (qos-echart, agrégation score moyen)."),
 }
 
 rows = []
@@ -535,6 +535,8 @@ EXEC_LOG = [
     ("23/06/2026", "Lot 2", "TC-5S-003", "Passé", "Page /offline-queue accessible. Vérif partielle : l'E2E complet de synchro PWA (service worker) reste un test manuel dédié.", "TC-5S-003_offline.png"),
     ("23/06/2026", "Lot 2", "TC-5S-004", "Bloqué", "Vision YOLOv8 non câblée dans l'UI 5S (détail = textarea simple) et service ai-vision non déployé (ports 8086/8087 down). Non testable en l'état.", "—"),
     ("23/06/2026", "Lot 2", "TC-5S-005", "Bloqué", "Pas de heatmap par zone dans la feature 5S (table seule). Écart vs CLAUDE §3.2 — consigné en ANO-007.", "—"),
+    ("23/06/2026", "Correctif ANO-007", "TC-5S-005", "Passé", "Heatmap zone × mois implémentée (qos-echart, score moyen) dans la liste 5S. Smoke : carte + graphe rendus.", "TC-5S-005_heatmap.png"),
+    ("23/06/2026", "Correctif ANO-007", "TC-5S-004", "Passé", "Vision CV câblée sur l'audit 5S : UI détail (upload + score piliers + findings) + endpoint backend POST /fives/audits/{id}/vision (validateur image mutualisé). 20+9 tests backend verts ; service ai-vision absent → 503 propre géré par l'UI.", "TC-5S-004_vision-ui.png"),
 ]
 
 # =====================================================================
@@ -874,8 +876,8 @@ anomalies = [
      "fail_action:true échouait sur tout WARN au lieu de HIGH seulement.","fail_action:false + gate riskcode=3 — 5244dca.","23/06"),
     ("ANO-006","Dev server Vite : reload-thrash après ajout dépendance","Front/Infra","Mineure","Résolu","TC-XCUT-003",
      "Re-optimisation gridster2 -> reloads -> écrans vides intermittents.","Redémarrage ng serve à cache propre (dev only).","22/06"),
-    ("ANO-007","Heatmap 5S par zone absente de l'UI","5S","Mineure","Ouvert","TC-5S-005",
-     "CLAUDE §3.2 prévoit une heatmap de score 5S par zone ; l'UI 5S n'affiche qu'une table. Vision/CV 5S également non câblée (TC-5S-004).","À implémenter (feature) — backlog, hors correctif rapide.","23/06"),
+    ("ANO-007","Heatmap 5S par zone + Vision CV absentes de l'UI","5S","Mineure","Résolu","TC-5S-005 / TC-5S-004",
+     "CLAUDE §3.2 prévoit une heatmap de score 5S par zone et la détection CV sur photo ; l'UI 5S n'avait qu'une table.","Implémenté le 23/06 : heatmap zone×mois (qos-echart) dans la liste 5S ; Vision CV sur l'audit (UI détail + endpoint backend POST /fives/audits/{id}/vision, validateur image mutualisé, 6 langues). 20+9 tests backend verts, build front OK.","23/06"),
 ]
 ri = hrow+1
 SEV = {"Critique":RED,"Majeure":AMBER,"Mineure":BLUE}

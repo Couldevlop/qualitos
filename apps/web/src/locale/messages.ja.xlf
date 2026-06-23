@@ -8153,6 +8153,58 @@ historique 12 mois</source>
         <source>Erreur lors de la mise à jour.</source>
         <target state="translated">更新中にエラーが発生しました。</target>
       </trans-unit>
+      <trans-unit id="fives.heatmap.title" datatype="html">
+        <source>Scores 5S par zone</source>
+        <target state="translated">ゾーン別5Sスコア</target>
+      </trans-unit>
+      <trans-unit id="fives.heatmap.empty" datatype="html">
+        <source>Pas encore assez d'audits notés pour afficher la heatmap par zone.</source>
+        <target state="translated">ゾーン別ヒートマップを表示するには採点済み監査が不足しています。</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.title" datatype="html">
+        <source>Analyse visuelle (Vision IA)</source>
+        <target state="translated">画像解析（AIビジョン）</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.subtitle" datatype="html">
+        <source>Détecte automatiquement les non-conformités 5S (encombrement, EPI, étiquetage) sur une photo de la zone.</source>
+        <target state="translated">ゾーンの写真から5S不適合（乱雑、PPE、ラベル表示）を自動検出します。</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.analyze" datatype="html">
+        <source>Analyser une photo</source>
+        <target state="translated">写真を解析</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.clear" datatype="html">
+        <source>Effacer</source>
+        <target state="translated">クリア</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.overall" datatype="html">
+        <source>Global</source>
+        <target state="translated">総合</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.findings" datatype="html">
+        <source>Non-conformités détectées</source>
+        <target state="translated">検出された不適合</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.no-findings" datatype="html">
+        <source>Aucune non-conformité détectée sur cette photo.</source>
+        <target state="translated">この写真では不適合は検出されませんでした。</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.err-invalid" datatype="html">
+        <source>Image invalide (format non supporté).</source>
+        <target state="translated">無効な画像（未対応の形式）。</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.err-too-large" datatype="html">
+        <source>Image trop volumineuse (10 Mo max).</source>
+        <target state="translated">画像が大きすぎます（最大10MB）。</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.err-unavailable" datatype="html">
+        <source>Le service d'analyse vision est momentanément indisponible.</source>
+        <target state="translated">画像解析サービスは一時的に利用できません。</target>
+      </trans-unit>
+      <trans-unit id="fives.vision.err-generic" datatype="html">
+        <source>Échec de l'analyse vision.</source>
+        <target state="translated">画像解析に失敗しました。</target>
+      </trans-unit>
       <trans-unit id="ishikawa.list.title" datatype="html">
         <source>Diagrammes Ishikawa</source>
         <target state="translated">特性要因図</target>
