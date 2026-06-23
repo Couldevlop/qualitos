@@ -569,53 +569,41 @@ jobs:
           echo "GET /v3/api-docs -> HTTP $code ($(wc -c < /tmp/openapi.json) octets)"
           test "$code" = "200"
 
-      # --- Scan 1 : BASELINE (passif) sur la racine HTTP ----------------------
-      # fail_action:false — l'action zaproxy échoue sur TOUTE alerte (WARN/MEDIUM
-      # compris), ce qui n'est PAS la politique voulue (§14.2 / DoD §20 : bloquer
-      # sur HIGH/critique uniquement). On laisse donc les scans produire leurs
-      # rapports JSON sans faire échouer le job ; l'étape « gate » plus bas n'échoue
-      # QUE sur une alerte de risque HIGH (riskcode=3). allow_issue_writing=false :
-      # pas de création d'issue GitHub (évite la perm issues:write et le bruit).
-      - name: ZAP Baseline scan
-        uses: zaproxy/action-baseline@v0.14.0
-        with:
-          target: 'http://localhost:8092'
-          rules_file_name: '.zap/rules.tsv'
-          # -J : rapport JSON exploité par l'étape gate. -m 3 : 3 min de spider max.
-          cmd_options: '-J zap-baseline.json -m 3 -z "-config api.disablekey=true"'
-          allow_issue_writing: false
-          fail_action: false
-          artifact_name: zap-baseline-report
-
-      # --- Scan 2 : API SCAN (actif, ciblé OpenAPI) ---------------------------
+      # --- Scan API (actif, ciblé OpenAPI) -----------------------------------
+      # On ne scanne QUE l'API via sa spec OpenAPI : la racine HTTP renvoie 401
+      # (auth requise) — un baseline/spider y est inutile et échoue (« spider error
+      # 401 expected 200 »). fail_action:false car l'action zaproxy échoue sinon sur
+      # TOUTE alerte (WARN/MEDIUM compris), ce qui n'est PAS la politique voulue
+      # (§14.2 / DoD §20 : bloquer sur HIGH/critique uniquement) ; l'étape « gate »
+      # plus bas n'échoue QUE sur riskcode=3 (HIGH). NE PAS surcharger -J : l'action
+      # écrit son rapport par défaut (report_json.json) et le relit ensuite ; un nom
+      # custom casse l'action (« report_json.json does not exist »).
+      # allow_issue_writing:false : pas de création d'issue GitHub.
       - name: ZAP API scan (OpenAPI /v3/api-docs)
         uses: zaproxy/action-api-scan@v0.9.0
         with:
           target: 'http://localhost:8092/v3/api-docs'
           format: openapi
           rules_file_name: '.zap/rules.tsv'
-          cmd_options: '-J zap-apiscan.json'
           allow_issue_writing: false
           fail_action: false
           artifact_name: zap-api-scan-report
 
       # --- Gate : échec UNIQUEMENT sur alerte de risque HIGH (riskcode=3) ------
       # Politique §14.2 : bloque sur HIGH/critique, laisse passer MEDIUM/LOW (WARN),
-      # visibles dans les artefacts. Robuste : pas besoin de connaître à l'avance
-      # les IDs des alertes MEDIUM/LOW (sinon il faudrait les IGNORE une à une dans
-      # .zap/rules.tsv). jq parcourt récursivement les rapports JSON des 2 scans.
+      # visibles dans l'artefact. jq parcourt récursivement le rapport JSON ZAP.
       - name: Gate — échec seulement sur alerte HIGH
         run: |
           set -euo pipefail
-          high=0
-          for f in zap-baseline.json zap-apiscan.json; do
-            [ -f "$f" ] || { echo "(rapport $f absent)"; continue; }
-            n="$(jq '[.. | objects | select(.riskcode? == "3")] | length' "$f" 2>/dev/null || echo 0)"
-            echo "$f : ${n} alerte(s) HIGH"
-            high=$((high + n))
-          done
+          f="$(find . -maxdepth 3 -name 'report_json.json' 2>/dev/null | head -1)"
+          if [ -z "$f" ]; then
+            echo "::warning::Rapport ZAP report_json.json introuvable — gate HIGH non évaluable (voir l'artefact zap-api-scan-report)."
+            exit 0
+          fi
+          high="$(jq '[.. | objects | select(.riskcode? == "3")] | length' "$f" 2>/dev/null || echo 0)"
+          echo "Rapport : $f — alertes ZAP de risque HIGH : ${high}"
           if [ "$high" -gt 0 ]; then
-            echo "::error::${high} alerte(s) ZAP de risque HIGH détectée(s) — voir les artefacts zap-*-report."
+            echo "::error::${high} alerte(s) ZAP de risque HIGH détectée(s) — voir l'artefact zap-api-scan-report."
             exit 1
           fi
           echo "Aucune alerte HIGH. Les WARN/MEDIUM sont rapportés (non bloquants)."
