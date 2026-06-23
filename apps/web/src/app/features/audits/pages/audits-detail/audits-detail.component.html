@@ -92,6 +92,17 @@
           <p class="description summary" *ngIf="p.reportSummary">
             <strong i18n="@@audits.detail.summary-label">Synthèse :</strong> {{ p.reportSummary }}
           </p>
+          <div class="report-actions">
+            <button mat-stroked-button color="primary" type="button"
+                    (click)="generateReport()" [disabled]="generating || (acting$ | async)"
+                    [attr.aria-busy]="generating"
+                    i18n-matTooltip="@@audits.detail.generate-report-tooltip"
+                    matTooltip="Générer une synthèse d'audit par IA à partir de la checklist et des constats">
+              <mat-progress-spinner *ngIf="generating; else genIcon" mode="indeterminate" diameter="18"></mat-progress-spinner>
+              <ng-template #genIcon><mat-icon aria-hidden="true">auto_awesome</mat-icon></ng-template>
+              <span>{{ reportButtonLabel(!!p.reportSummary) }}</span>
+            </button>
+          </div>
         </mat-card-content>
       </mat-card>
 

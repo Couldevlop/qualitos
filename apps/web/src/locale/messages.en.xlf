@@ -12734,6 +12734,26 @@ declared income
         <source>Synthèse :</source>
         <target state="translated">Summary:</target>
       </trans-unit>
+      <trans-unit id="audits.detail.generate-report" datatype="html">
+        <source>Générer le rapport (IA)</source>
+        <target state="translated">Generate report (AI)</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.regenerate-report" datatype="html">
+        <source>Régénérer le rapport (IA)</source>
+        <target state="translated">Regenerate report (AI)</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.generate-report-tooltip" datatype="html">
+        <source>Générer une synthèse d'audit par IA à partir de la checklist et des constats</source>
+        <target state="translated">Generate an AI audit summary from the checklist and findings</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.report-generated" datatype="html">
+        <source>Rapport d'audit généré.</source>
+        <target state="translated">Audit report generated.</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.report-error" datatype="html">
+        <source>Génération du rapport indisponible (service IA).</source>
+        <target state="translated">Report generation unavailable (AI service).</target>
+      </trans-unit>
       <trans-unit id="audits.detail.transition-error" datatype="html">
         <source>Erreur lors de la transition.</source>
         <target state="translated">Error during transition.</target>
