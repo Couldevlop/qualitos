@@ -4,6 +4,8 @@ import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
 import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
+import com.openlab.qualitos.quality.pdca.PdcaDto;
+import com.openlab.qualitos.quality.pdca.PdcaService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,16 +34,22 @@ public class IshikawaService {
     /** Séparateurs catégorie/cause (espacés d'abord pour ne pas casser « Main-d'œuvre »). */
     private static final String[] SEPARATORS = { " | ", " - ", " – ", " — ", " : ", "|", ":" };
 
+    /** Longueur max du titre d'un cycle PDCA (colonne VARCHAR(255)). */
+    private static final int PDCA_TITLE_MAX = 255;
+
     private final IshikawaDiagramRepository diagramRepository;
     private final IshikawaCauseRepository causeRepository;
     private final AiGatewayClient ai;
+    private final PdcaService pdcaService;
 
     public IshikawaService(IshikawaDiagramRepository diagramRepository,
                            IshikawaCauseRepository causeRepository,
-                           AiGatewayClient ai) {
+                           AiGatewayClient ai,
+                           PdcaService pdcaService) {
         this.diagramRepository = diagramRepository;
         this.causeRepository = causeRepository;
         this.ai = ai;
+        this.pdcaService = pdcaService;
     }
 
     @Transactional(readOnly = true)
@@ -59,6 +67,44 @@ public class IshikawaService {
         IshikawaDiagram diagram = diagramRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IshikawaDiagramNotFoundException(id));
         return toDiagramResponse(diagram);
+    }
+
+    /**
+     * Convertit un diagramme Ishikawa (et, optionnellement, une cause ciblée) en un
+     * cycle PDCA (CLAUDE.md §3.6 — référentiel commun : une cause-racine devient un
+     * plan d'action). Tenant-scopé (404 si le diagramme/la cause n'appartient pas au
+     * tenant). Le cycle hérite de l'owner du diagramme ; son titre/description
+     * référencent le problème et la cause d'origine pour la traçabilité.
+     */
+    public PdcaDto.CycleResponse convertToPdca(UUID diagramId, UUID causeId) {
+        UUID tenantId = requireTenantId();
+        IshikawaDiagram diagram = diagramRepository.findByIdAndTenantId(diagramId, tenantId)
+                .orElseThrow(() -> new IshikawaDiagramNotFoundException(diagramId));
+
+        IshikawaCause cause = null;
+        if (causeId != null) {
+            // findByIdAndDiagramId garantit l'appartenance au diagramme (lui-même tenant-scopé).
+            cause = causeRepository.findByIdAndDiagramId(causeId, diagramId)
+                    .orElseThrow(() -> new IshikawaCauseNotFoundException(causeId));
+        }
+
+        String problem = diagram.getProblemStatement();
+        String title = truncate("PDCA — " + problem, PDCA_TITLE_MAX);
+        StringBuilder desc = new StringBuilder()
+                .append("Issu du diagramme Ishikawa « ").append(problem).append(" ».");
+        if (cause != null) {
+            desc.append(" Cause-racine ciblée [").append(cause.getCategory()).append("] : ")
+                    .append(cause.getLabel()).append('.');
+        }
+        return pdcaService.createCycle(
+                new PdcaDto.CreateCycleRequest(title, desc.toString(), diagram.getOwnerId()));
+    }
+
+    private static String truncate(String s, int max) {
+        if (s == null) {
+            return null;
+        }
+        return s.length() <= max ? s : s.substring(0, max - 1) + "…";
     }
 
     public IshikawaDto.DiagramResponse createDiagram(IshikawaDto.CreateDiagramRequest request) {

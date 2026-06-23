@@ -58,6 +58,7 @@ export class IshikawaDetailComponent implements OnInit {
   suggestions: SuggestedCause[] = [];
   suggesting = false;
   addingKey: string | null = null;
+  converting = false;
 
   private diagramId = '';
   private readonly reload$ = new BehaviorSubject<void>(undefined);
@@ -197,6 +198,34 @@ export class IshikawaDetailComponent implements OnInit {
   }
 
   // ---- Suggestion de causes par l'IA (§3.5) ----
+
+  /**
+   * Convertit le diagramme en cycle PDCA (§3.6 — référentiel commun) et navigue vers
+   * le cycle créé. Une cause-racine peut être ciblée (optionnel).
+   */
+  convertToPdca(d: IshikawaDiagramResponse, causeId?: string): void {
+    if (this.converting) {
+      return;
+    }
+    this.converting = true;
+    this.ishikawa.convertToPdca(d.id, causeId)
+      .pipe(finalize(() => (this.converting = false)))
+      .subscribe({
+        next: cycle => {
+          this.snack.open(
+            $localize`:@@ishikawa.detail.convert-success:Cycle PDCA créé à partir de ce diagramme.`,
+            $localize`:@@common.ok:OK`, { duration: 2500 });
+          this.router.navigate(['/pdca', cycle.id]);
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[ishikawa-detail] convertToPdca failed', err?.status);
+          this.snack.open(
+            safeErrorMessage(err, $localize`:@@ishikawa.detail.convert-error:Échec de la conversion en PDCA.`),
+            'Fermer', { duration: 4000 });
+        }
+      });
+  }
 
   suggestCauses(d: IshikawaDiagramResponse): void {
     this.suggesting = true;

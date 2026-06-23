@@ -8258,6 +8258,22 @@ declared income
         <source>Ajouter une cause</source>
         <target state="translated">Add a cause</target>
       </trans-unit>
+      <trans-unit id="ishikawa.detail.convert-pdca" datatype="html">
+        <source>Convertir en PDCA</source>
+        <target state="translated">Convert to PDCA</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.convert-tooltip" datatype="html">
+        <source>Créer un cycle PDCA à partir de ce diagramme</source>
+        <target state="translated">Create a PDCA cycle from this diagram</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.convert-success" datatype="html">
+        <source>Cycle PDCA créé à partir de ce diagramme.</source>
+        <target state="translated">PDCA cycle created from this diagram.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.convert-error" datatype="html">
+        <source>Échec de la conversion en PDCA.</source>
+        <target state="translated">Failed to convert to PDCA.</target>
+      </trans-unit>
       <trans-unit id="ishikawa.detail.mode" datatype="html">
         <source>Mode</source>
         <target state="translated">Mode</target>
