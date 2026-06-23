@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { delay, map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
 import {
@@ -15,6 +15,8 @@ import {
   CircleStatus,
   CirclesPage,
   CreateCircleRequest,
+  GenerateMinutesRequest,
+  MeetingMinutes,
   UpdateCircleRequest
 } from './circles.types';
 
@@ -147,6 +149,22 @@ export class CirclesService {
       return of(member).pipe(delay(120));
     }
     return this.http.post<CircleMemberResponse>(`${this.endpoint}/${circleId}/members`, input);
+  }
+
+  generateMinutes(circleId: string, meetingId: string, req: GenerateMinutesRequest): Observable<MeetingMinutes> {
+    if (environment.useMockApi) {
+      return of({
+        summary: `Compte-rendu simulé de la réunion « ${meetingId.slice(0, 8)} ». Discussions productives. Trois axes d'amélioration identifiés.`,
+        decisions: ["Adoption du plan d'action qualité", 'Revue mensuelle des indicateurs'],
+        actions: [
+          { label: 'Mettre à jour la procédure P-001', suggestedAssignee: 'Animateur' },
+          { label: 'Former les nouveaux membres', suggestedAssignee: 'Secrétaire' }
+        ]
+      } as MeetingMinutes).pipe(delay(800));
+    }
+    return this.http.post<MeetingMinutes>(
+      `${this.endpoint}/${circleId}/meetings/${meetingId}/minutes/generate`, req
+    );
   }
 
   pauseCircle(id: string): Observable<CircleResponse> {

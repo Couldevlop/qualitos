@@ -71,6 +71,23 @@ export interface CircleMeetingResponse {
   heldAt?: string;
   createdAt?: string;
   updatedAt?: string;
+  minutesSummary?: string;
+  minutesJson?: string;
+}
+
+export interface ExtractedAction {
+  label: string;
+  suggestedAssignee: string;
+}
+
+export interface MeetingMinutes {
+  summary: string;
+  decisions: string[];
+  actions: ExtractedAction[];
+}
+
+export interface GenerateMinutesRequest {
+  transcript: string;
 }
 
 export interface CircleProposalResponse {

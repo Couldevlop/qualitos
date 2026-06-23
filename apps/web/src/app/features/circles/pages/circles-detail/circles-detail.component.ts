@@ -26,6 +26,10 @@ import {
   CirclesMemberDialogComponent,
   CirclesMemberDialogData
 } from '../circles-member-dialog/circles-member-dialog.component';
+import {
+  CirclesMinutesDialogComponent,
+  CirclesMinutesDialogData
+} from '../circles-minutes-dialog/circles-minutes-dialog.component';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -40,7 +44,7 @@ export class CirclesDetailComponent implements OnInit {
   readonly circleNotFoundLabel = $localize`:@@circles.detail.not-found:Cercle introuvable`;
 
   readonly memberColumns = ['role', 'userId', 'joinedAt'];
-  readonly meetingColumns = ['title', 'scheduledAt', 'status', 'location'];
+  readonly meetingColumns = ['title', 'scheduledAt', 'status', 'location', 'aiMinutes'];
   readonly proposalColumns = ['title', 'status', 'proposedBy'];
 
   circle$!: Observable<CircleResponse | null>;
@@ -157,6 +161,17 @@ export class CirclesDetailComponent implements OnInit {
 
   meetingBadge(status: string): string {
     return 'meeting-badge meeting-' + status.toLowerCase();
+  }
+
+  openGenerateMinutes(meetingId: string, meetingTitle: string): void {
+    const data: CirclesMinutesDialogData = { circleId: this.circleId, meetingId, meetingTitle };
+    this.dialog
+      .open(CirclesMinutesDialogComponent, {
+        data, autoFocus: 'first-tabbable', restoreFocus: true,
+        panelClass: 'qos-dialog-panel', minWidth: '560px'
+      })
+      .afterClosed()
+      .subscribe();
   }
 
   openAddMember(): void {

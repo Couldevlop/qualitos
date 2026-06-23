@@ -341,6 +341,44 @@ class CircleControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    // --- generateMinutes (ANO-010) ---
+
+    @Test @WithMockUser
+    void generateMinutes_returns200() throws Exception {
+        CircleDto.MeetingMinutes minutes = new CircleDto.MeetingMinutes(
+                "Résumé de la réunion.", List.of("Décision 1"),
+                List.of(new CircleDto.ExtractedAction("Action 1", "Animateur")));
+        when(service.generateMinutes(eq(CIRCLE), eq(MEETING), any())).thenReturn(minutes);
+        mockMvc.perform(post("/api/v1/circles/{id}/meetings/{mid}/minutes/generate", CIRCLE, MEETING)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"transcript\":\"Discussion qualité produit X. Décision : revoir le processus.\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.summary").value("Résumé de la réunion."))
+                .andExpect(jsonPath("$.decisions[0]").value("Décision 1"))
+                .andExpect(jsonPath("$.actions[0].label").value("Action 1"));
+    }
+
+    @Test @WithMockUser
+    void generateMinutes_emptyTranscript_returns400() throws Exception {
+        mockMvc.perform(post("/api/v1/circles/{id}/meetings/{mid}/minutes/generate", CIRCLE, MEETING)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"transcript\":\"\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test @WithMockUser
+    void generateMinutes_meetingNotFound_returns404() throws Exception {
+        when(service.generateMinutes(eq(CIRCLE), eq(MEETING), any()))
+                .thenThrow(new CircleMeetingNotFoundException(MEETING));
+        mockMvc.perform(post("/api/v1/circles/{id}/meetings/{mid}/minutes/generate", CIRCLE, MEETING)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"transcript\":\"transcript texte\"}"))
+                .andExpect(status().isNotFound());
+    }
+
     @Test @WithMockUser
     void create_missingTenant_returns403() throws Exception {
         when(service.create(any())).thenThrow(new MissingTenantContextException());
@@ -363,7 +401,7 @@ class CircleControllerTest {
     private CircleDto.MeetingResponse meetingResp(MeetingStatus status) {
         return new CircleDto.MeetingResponse(
                 MEETING, CIRCLE, "R", null, Instant.now(), 60, null,
-                status, null, null, Instant.now(), Instant.now());
+                status, null, null, Instant.now(), Instant.now(), null, null);
     }
 
     private CircleDto.ProposalResponse proposalResp(ProposalStatus status) {

@@ -9322,6 +9322,58 @@ historial de 12 meses</target>
         <source>Erreur lors de l'enregistrement.</source>
         <target state="translated">Error al guardar.</target>
       </trans-unit>
+      <trans-unit id="circles.minutes.title" datatype="html">
+        <source>Compte-rendu de réunion (IA)</source>
+        <target state="translated">Actas de reunión (IA)</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.meeting-label" datatype="html">
+        <source>Réunion :</source>
+        <target state="translated">Reunión:</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-label" datatype="html">
+        <source>Transcript de la réunion</source>
+        <target state="translated">Transcripción de la reunión</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-placeholder" datatype="html">
+        <source>Collez le texte brut de la réunion ici…</source>
+        <target state="translated">Pegue el texto bruto de la reunión aquí…</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-aria" datatype="html">
+        <source>Transcript de la réunion</source>
+        <target state="translated">Transcripción de la reunión</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-hint" datatype="html">
+        <source>Collez le texte de la réunion. L'IA générera un résumé, les décisions et les actions.</source>
+        <target state="translated">Pegue el texto de la reunión. La IA generará un resumen, decisiones y acciones.</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.generating" datatype="html">
+        <source>Génération en cours…</source>
+        <target state="translated">Generando…</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.generate-error" datatype="html">
+        <source>Erreur lors de la génération du compte-rendu.</source>
+        <target state="translated">Error al generar las actas.</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.summary-title" datatype="html">
+        <source>Résumé</source>
+        <target state="translated">Resumen</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.decisions-title" datatype="html">
+        <source>Décisions</source>
+        <target state="translated">Decisiones</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.actions-title" datatype="html">
+        <source>Actions</source>
+        <target state="translated">Acciones</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.generate-btn" datatype="html">
+        <source>Générer le compte-rendu (IA)</source>
+        <target state="translated">Generar actas (IA)</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.open-btn" datatype="html">
+        <source>Compte-rendu IA</source>
+        <target state="translated">Actas IA</target>
+      </trans-unit>
       <trans-unit id="spc.analyze.kpi-banner-prefix" datatype="html">
         <source>Analyse du KPI</source>
         <target state="translated">Análisis del KPI</target>

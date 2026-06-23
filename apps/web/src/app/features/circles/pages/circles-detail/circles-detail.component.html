@@ -151,6 +151,16 @@
               <th mat-header-cell *matHeaderCellDef i18n="@@circles.detail.location">Lieu</th>
               <td mat-cell *matCellDef="let m">{{ m.location || '—' }}</td>
             </ng-container>
+            <ng-container matColumnDef="aiMinutes">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let m">
+                <button mat-icon-button color="primary"
+                        (click)="openGenerateMinutes(m.id, m.title)"
+                        i18n-matTooltip="@@circles.minutes.open-btn" matTooltip="Compte-rendu IA">
+                  <mat-icon>auto_awesome</mat-icon>
+                </button>
+              </td>
+            </ng-container>
             <tr mat-header-row *matHeaderRowDef="meetingColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: meetingColumns;"></tr>
           </table>

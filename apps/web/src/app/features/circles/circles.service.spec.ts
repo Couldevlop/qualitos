@@ -76,4 +76,22 @@ describe('CirclesService (mock mode)', () => {
       });
     });
   });
+
+  it('generateMinutes returns structured mock minutes', (done) => {
+    service.generateMinutes('circle-id', 'meeting-id', { transcript: 'Du texte de réunion.' }).subscribe(m => {
+      expect(m.summary).toBeTruthy();
+      expect(Array.isArray(m.decisions)).toBeTrue();
+      expect(Array.isArray(m.actions)).toBeTrue();
+      done();
+    });
+  });
+
+  it('generateMinutes mock actions have label and suggestedAssignee', (done) => {
+    service.generateMinutes('c1', 'mt1', { transcript: 'Texte' }).subscribe(m => {
+      expect(m.actions.length).toBeGreaterThan(0);
+      expect(m.actions[0].label).toBeTruthy();
+      expect(m.actions[0].suggestedAssignee).toBeDefined();
+      done();
+    });
+  });
 });

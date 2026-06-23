@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
@@ -10,6 +11,7 @@ import { CirclesListComponent } from './pages/circles-list/circles-list.componen
 import { CirclesMeetingDialogComponent } from './pages/circles-meeting-dialog/circles-meeting-dialog.component';
 import { CirclesMemberDialogComponent } from './pages/circles-member-dialog/circles-member-dialog.component';
 import { CirclesProposalDialogComponent } from './pages/circles-proposal-dialog/circles-proposal-dialog.component';
+import { CirclesMinutesDialogComponent } from './pages/circles-minutes-dialog/circles-minutes-dialog.component';
 
 const routes: Routes = [
   { path: '', component: CirclesListComponent },
@@ -24,8 +26,9 @@ const routes: Routes = [
     CirclesMemberDialogComponent,
     CirclesEditDialogComponent,
     CirclesMeetingDialogComponent,
-    CirclesProposalDialogComponent
+    CirclesProposalDialogComponent,
+    CirclesMinutesDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, FormsModule, RouterModule.forChild(routes)]
 })
 export class CirclesModule {}

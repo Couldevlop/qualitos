@@ -1,5 +1,8 @@
 package com.openlab.qualitos.quality.circle;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
+import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.junit.jupiter.api.AfterEach;
@@ -21,6 +24,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +35,8 @@ class CircleServiceTest {
     @Mock CircleMemberRepository memberRepo;
     @Mock CircleMeetingRepository meetingRepo;
     @Mock CircleProposalRepository proposalRepo;
+    @Mock AiGatewayClient aiGatewayClient;
+    @Mock ObjectMapper objectMapper;
     @InjectMocks CircleService service;
 
     static final UUID TENANT = UUID.randomUUID();
@@ -627,6 +634,70 @@ class CircleServiceTest {
         when(proposalRepo.findByIdAndCircleId(pid, c.getId())).thenReturn(Optional.empty());
         assertThatThrownBy(() -> service.deleteProposal(c.getId(), pid))
                 .isInstanceOf(CircleProposalNotFoundException.class);
+    }
+
+    // --- generateMinutes (ANO-010) ---
+
+    @Test
+    void generateMinutes_success_parsesJson() throws Exception {
+        QualityCircle c = circle(CircleStatus.ACTIVE);
+        CircleMeeting m = meeting(c, MeetingStatus.HELD);
+        when(circleRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(meetingRepo.findByIdAndCircleId(m.getId(), c.getId())).thenReturn(Optional.of(m));
+        when(meetingRepo.save(m)).thenReturn(m);
+
+        String json = "{\"summary\":\"Réunion OK\",\"decisions\":[\"D1\"],\"actions\":[{\"label\":\"A1\",\"suggestedAssignee\":\"Animateur\"}]}";
+        AiCompletionResult result = new AiCompletionResult(json, "mock", 50, 100);
+        when(aiGatewayClient.complete(anyString(), anyString(), anyInt())).thenReturn(result);
+        when(objectMapper.readValue(anyString(), eq(java.util.Map.class)))
+                .thenReturn(java.util.Map.of(
+                        "summary", "Réunion OK",
+                        "decisions", java.util.List.of("D1"),
+                        "actions", java.util.List.of(java.util.Map.of("label", "A1", "suggestedAssignee", "Animateur"))));
+
+        CircleDto.MeetingMinutes minutes = service.generateMinutes(c.getId(), m.getId(),
+                new CircleDto.GenerateMinutesRequest("Transcript de test"));
+
+        assertThat(minutes.summary()).isEqualTo("Réunion OK");
+        assertThat(minutes.decisions()).containsExactly("D1");
+        assertThat(minutes.actions()).hasSize(1);
+        assertThat(minutes.actions().get(0).label()).isEqualTo("A1");
+        verify(meetingRepo).save(m);
+    }
+
+    @Test
+    void generateMinutes_meetingNotFound_throws() {
+        QualityCircle c = circle(CircleStatus.ACTIVE);
+        UUID missingMid = UUID.randomUUID();
+        when(circleRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(meetingRepo.findByIdAndCircleId(missingMid, c.getId())).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.generateMinutes(c.getId(), missingMid,
+                new CircleDto.GenerateMinutesRequest("text")))
+                .isInstanceOf(CircleMeetingNotFoundException.class);
+    }
+
+    @Test
+    void generateMinutes_llmMalformedJson_fallbackToRawText() throws Exception {
+        QualityCircle c = circle(CircleStatus.ACTIVE);
+        CircleMeeting m = meeting(c, MeetingStatus.HELD);
+        when(circleRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(meetingRepo.findByIdAndCircleId(m.getId(), c.getId())).thenReturn(Optional.of(m));
+        when(meetingRepo.save(m)).thenReturn(m);
+
+        String rawText = "texte non structuré sans JSON valide";
+        AiCompletionResult result = new AiCompletionResult(rawText, "mock", 20, 80);
+        when(aiGatewayClient.complete(anyString(), anyString(), anyInt())).thenReturn(result);
+        when(objectMapper.readValue(anyString(), eq(java.util.Map.class)))
+                .thenThrow(new com.fasterxml.jackson.core.JsonParseException(null, "invalid"));
+
+        CircleDto.MeetingMinutes minutes = service.generateMinutes(c.getId(), m.getId(),
+                new CircleDto.GenerateMinutesRequest("texte brut"));
+
+        assertThat(minutes.summary()).isEqualTo(rawText);
+        assertThat(minutes.decisions()).isEmpty();
+        assertThat(minutes.actions()).isEmpty();
+        verify(meetingRepo).save(m);
     }
 
     // --- helpers ---

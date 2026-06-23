@@ -9321,6 +9321,58 @@ historique 12 mois</source>
         <source>Erreur lors de l'enregistrement.</source>
         <target state="translated">保存中にエラーが発生しました。</target>
       </trans-unit>
+      <trans-unit id="circles.minutes.title" datatype="html">
+        <source>Compte-rendu de réunion (IA)</source>
+        <target state="translated">会議議事録（AI）</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.meeting-label" datatype="html">
+        <source>Réunion :</source>
+        <target state="translated">会議：</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-label" datatype="html">
+        <source>Transcript de la réunion</source>
+        <target state="translated">会議トランスクリプト</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-placeholder" datatype="html">
+        <source>Collez le texte brut de la réunion ici…</source>
+        <target state="translated">会議の生テキストをここに貼り付けてください…</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-aria" datatype="html">
+        <source>Transcript de la réunion</source>
+        <target state="translated">会議トランスクリプト</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-hint" datatype="html">
+        <source>Collez le texte de la réunion. L'IA générera un résumé, les décisions et les actions.</source>
+        <target state="translated">会議テキストを貼り付けてください。AIが要約、決定事項、アクションを生成します。</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.generating" datatype="html">
+        <source>Génération en cours…</source>
+        <target state="translated">生成中…</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.generate-error" datatype="html">
+        <source>Erreur lors de la génération du compte-rendu.</source>
+        <target state="translated">議事録の生成中にエラーが発生しました。</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.summary-title" datatype="html">
+        <source>Résumé</source>
+        <target state="translated">要約</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.decisions-title" datatype="html">
+        <source>Décisions</source>
+        <target state="translated">決定事項</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.actions-title" datatype="html">
+        <source>Actions</source>
+        <target state="translated">アクション</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.generate-btn" datatype="html">
+        <source>Générer le compte-rendu (IA)</source>
+        <target state="translated">議事録を生成（AI）</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.open-btn" datatype="html">
+        <source>Compte-rendu IA</source>
+        <target state="translated">AI議事録</target>
+      </trans-unit>
       <trans-unit id="spc.analyze.kpi-banner-prefix" datatype="html">
         <source>Analyse du KPI</source>
         <target state="translated">KPI分析</target>

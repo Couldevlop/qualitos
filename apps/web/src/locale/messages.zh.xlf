@@ -9322,6 +9322,58 @@ historique 12 mois</source>
         <source>Erreur lors de l'enregistrement.</source>
         <target state="translated">保存时出错。</target>
       </trans-unit>
+      <trans-unit id="circles.minutes.title" datatype="html">
+        <source>Compte-rendu de réunion (IA)</source>
+        <target state="translated">会议纪要（AI）</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.meeting-label" datatype="html">
+        <source>Réunion :</source>
+        <target state="translated">会议：</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-label" datatype="html">
+        <source>Transcript de la réunion</source>
+        <target state="translated">会议记录文本</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-placeholder" datatype="html">
+        <source>Collez le texte brut de la réunion ici…</source>
+        <target state="translated">在此粘贴会议原始文本…</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-aria" datatype="html">
+        <source>Transcript de la réunion</source>
+        <target state="translated">会议记录文本</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcript-hint" datatype="html">
+        <source>Collez le texte de la réunion. L'IA générera un résumé, les décisions et les actions.</source>
+        <target state="translated">粘贴会议文本，AI将生成摘要、决策和行动项。</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.generating" datatype="html">
+        <source>Génération en cours…</source>
+        <target state="translated">生成中…</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.generate-error" datatype="html">
+        <source>Erreur lors de la génération du compte-rendu.</source>
+        <target state="translated">生成会议纪要时出错。</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.summary-title" datatype="html">
+        <source>Résumé</source>
+        <target state="translated">摘要</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.decisions-title" datatype="html">
+        <source>Décisions</source>
+        <target state="translated">决议</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.actions-title" datatype="html">
+        <source>Actions</source>
+        <target state="translated">行动项</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.generate-btn" datatype="html">
+        <source>Générer le compte-rendu (IA)</source>
+        <target state="translated">生成纪要（AI）</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.open-btn" datatype="html">
+        <source>Compte-rendu IA</source>
+        <target state="translated">AI纪要</target>
+      </trans-unit>
       <trans-unit id="spc.analyze.kpi-banner-prefix" datatype="html">
         <source>Analyse du KPI</source>
         <target state="translated">KPI分析</target>

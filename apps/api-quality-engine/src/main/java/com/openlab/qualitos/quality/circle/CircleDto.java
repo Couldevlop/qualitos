@@ -66,6 +66,19 @@ public final class CircleDto {
 
     public record ImpactRequest(@NotBlank String impactNote) {}
 
+    /** Requête pour générer un compte-rendu LLM à partir d'un transcript (ANO-010). */
+    public record GenerateMinutesRequest(@NotBlank String transcript) {}
+
+    /** Action extraite par le LLM depuis le transcript de réunion. */
+    public record ExtractedAction(String label, String suggestedAssignee) {}
+
+    /** Compte-rendu structuré généré par LLM (§3.3 QualitOS). */
+    public record MeetingMinutes(
+            String summary,
+            List<String> decisions,
+            List<ExtractedAction> actions
+    ) {}
+
     public record CircleResponse(
             UUID id,
             UUID tenantId,
@@ -88,7 +101,8 @@ public final class CircleDto {
             UUID id, UUID circleId, String title, String agenda,
             Instant scheduledAt, Integer durationMinutes, String location,
             MeetingStatus status, String minutes, Instant heldAt,
-            Instant createdAt, Instant updatedAt) {}
+            Instant createdAt, Instant updatedAt,
+            String minutesSummary, String minutesJson) {}
 
     public record ProposalResponse(
             UUID id, UUID circleId, UUID meetingId, String title, String description,
