@@ -495,6 +495,12 @@ REAL_RESULTS = {
     "TC-PDCA-003": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-PDCA-003b_apres.png — cycle créé (6 -> 7)"),
     "TC-PDCA-004": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-PDCA-004_detail.png — détail chargé, pas de 'Chargement…'"),
     "TC-PDCA-005": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-PDCA-005_apres.png — avancement DO->CHECK, PATCH 200"),
+    # Lot 2 (23/06) — domaine 5S
+    "TC-5S-001": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-5S-001_liste.png — 4 audits, 1 appel API, 0 scintillement"),
+    "TC-5S-002": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-5S-002b_apres.png — création zone+date (4 -> 5). Récurrence absente du dialog (écart mineur)."),
+    "TC-5S-003": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-5S-003_offline.png — /offline-queue accessible (vérif partielle PWA)."),
+    "TC-5S-004": ("Bloqué", "QA-Auto (Playwright)", "23/06", "Vision YOLOv8 non câblée dans l'UI 5S + service ai-vision absent (dépendance/env)."),
+    "TC-5S-005": ("Bloqué", "QA-Auto (Playwright)", "23/06", "Pas de heatmap par zone dans l'UI 5S (écart vs CLAUDE §3.2) — voir ANO-007."),
 }
 
 rows = []
@@ -524,6 +530,11 @@ EXEC_LOG = [
     ("23/06/2026", "Lot 1", "TC-PDCA-003", "Passé", "Création d'un cycle (titre + description) : liste passée de 6 à 7, cycle visible.", "TC-PDCA-003b_apres.png"),
     ("23/06/2026", "Lot 1", "TC-PDCA-004", "Passé", "Détail ouvert : titre + actions affichés, pas de 'Chargement…' figé (non-régression ANO-003).", "TC-PDCA-004_detail.png"),
     ("23/06/2026", "Lot 1", "TC-PDCA-005", "Passé", "Avancement de phase via l'UI : DO -> CHECK, PATCH /cycles/{id}/advance = 200. Faux négatif initial du script corrigé (cycle terminal + sélecteur de badge).", "TC-PDCA-005_apres.png"),
+    ("23/06/2026", "Lot 2", "TC-5S-001", "Passé", "Liste des audits 5S : 4 audits, 1 appel API, 0 scintillement (non-régression).", "TC-5S-001_liste.png"),
+    ("23/06/2026", "Lot 2", "TC-5S-002", "Passé", "Création d'un audit (zone + date) : 4 -> 5. Le dialog n'a pas de champ 'récurrence' (écart mineur vs scénario).", "TC-5S-002b_apres.png"),
+    ("23/06/2026", "Lot 2", "TC-5S-003", "Passé", "Page /offline-queue accessible. Vérif partielle : l'E2E complet de synchro PWA (service worker) reste un test manuel dédié.", "TC-5S-003_offline.png"),
+    ("23/06/2026", "Lot 2", "TC-5S-004", "Bloqué", "Vision YOLOv8 non câblée dans l'UI 5S (détail = textarea simple) et service ai-vision non déployé (ports 8086/8087 down). Non testable en l'état.", "—"),
+    ("23/06/2026", "Lot 2", "TC-5S-005", "Bloqué", "Pas de heatmap par zone dans la feature 5S (table seule). Écart vs CLAUDE §3.2 — consigné en ANO-007.", "—"),
 ]
 
 # =====================================================================
@@ -863,6 +874,8 @@ anomalies = [
      "fail_action:true échouait sur tout WARN au lieu de HIGH seulement.","fail_action:false + gate riskcode=3 — 5244dca.","23/06"),
     ("ANO-006","Dev server Vite : reload-thrash après ajout dépendance","Front/Infra","Mineure","Résolu","TC-XCUT-003",
      "Re-optimisation gridster2 -> reloads -> écrans vides intermittents.","Redémarrage ng serve à cache propre (dev only).","22/06"),
+    ("ANO-007","Heatmap 5S par zone absente de l'UI","5S","Mineure","Ouvert","TC-5S-005",
+     "CLAUDE §3.2 prévoit une heatmap de score 5S par zone ; l'UI 5S n'affiche qu'une table. Vision/CV 5S également non câblée (TC-5S-004).","À implémenter (feature) — backlog, hors correctif rapide.","23/06"),
 ]
 ri = hrow+1
 SEV = {"Critique":RED,"Majeure":AMBER,"Mineure":BLUE}
