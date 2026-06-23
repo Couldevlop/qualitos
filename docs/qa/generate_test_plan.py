@@ -484,29 +484,47 @@ domain("IoT & Edge (backend)", "IOT", [
 ])
 
 # =====================================================================
-# 2) APLATISSEMENT + AFFECTATION STATUTS/EXÉCUTION (déterministe)
+# 2) APLATISSEMENT + RÉSULTATS D'EXÉCUTION RÉELS
 # =====================================================================
-# Distribution déterministe pour peupler les graphiques (campagne en cours).
-STATUS_CYCLE = (["Passé"]*6 + ["Échoué"] + ["Bloqué"] + ["Non exécuté"]*2 + ["En cours"])
-TESTERS = ["A. Benali", "S. Diallo", "M. Fontaine", "L. Tremblay", "R. Costa"]
+# Résultats RÉELS d'exécution (campagne en cours). Chaque clé = ID de cas ;
+# valeur = (statut, testeur, date JJ/MM, évidence). Les cas non listés sont
+# "Non exécuté". Lot 1 (23/06) : 5 premiers cas PDCA exécutés via Playwright/Chrome.
+REAL_RESULTS = {
+    "TC-PDCA-001": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-PDCA-001_liste.png — 6 lignes, 1 appel API, 0 scintillement"),
+    "TC-PDCA-002": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-PDCA-002_filtre.png — filtre PLAN -> 1 ligne"),
+    "TC-PDCA-003": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-PDCA-003b_apres.png — cycle créé (6 -> 7)"),
+    "TC-PDCA-004": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-PDCA-004_detail.png — détail chargé, pas de 'Chargement…'"),
+    "TC-PDCA-005": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-PDCA-005_apres.png — avancement DO->CHECK, PATCH 200"),
+}
 
 rows = []
-i = 0
 for dname, dcode, cases in DOMAINS:
     for n, cc in enumerate(cases, start=1):
         tcid = f"TC-{dcode}-{n:03d}"
-        status = STATUS_CYCLE[i % len(STATUS_CYCLE)]
-        tester = TESTERS[i % len(TESTERS)] if status not in ("Non exécuté",) else ""
-        autom = "Oui" if cc["typ"] in ("Fonctionnel", "Sécurité", "Performance", "API", "Régression") and (i % 3 != 0) else "Non"
+        rr = REAL_RESULTS.get(tcid)
+        if rr:
+            status, tester, _exd, evid = rr
+        else:
+            status, tester, evid = "Non exécuté", "", ""
+        autom = "Oui" if cc["typ"] in ("Fonctionnel", "Sécurité", "Performance", "API", "Régression") else "Non"
         rows.append({
             "id": tcid, "domain": dname, "sub": cc["sub"], "title": cc["title"],
             "typ": cc["typ"], "prio": cc["prio"], "pre": cc["pre"],
             "steps": cc["steps"], "expected": cc["expected"], "role": cc["role"],
             "autom": autom, "status": status, "tester": tester, "req": cc["req"],
+            "evid": evid,
         })
-        i += 1
 
 TOTAL = len(rows)
+
+# Journal d'exécution réel (date, cas, résultat, observé, évidence)
+EXEC_LOG = [
+    ("23/06/2026", "Lot 1", "TC-PDCA-001", "Passé", "Liste affichée : 6 cycles, 1 seul appel API GET, spinner 0/14, 0 toggle (non-régression ANO-002).", "TC-PDCA-001_liste.png"),
+    ("23/06/2026", "Lot 1", "TC-PDCA-002", "Passé", "Filtre statut 'PLAN' appliqué : 1 ligne (≤ 6). Liste correctement filtrée.", "TC-PDCA-002_filtre.png"),
+    ("23/06/2026", "Lot 1", "TC-PDCA-003", "Passé", "Création d'un cycle (titre + description) : liste passée de 6 à 7, cycle visible.", "TC-PDCA-003b_apres.png"),
+    ("23/06/2026", "Lot 1", "TC-PDCA-004", "Passé", "Détail ouvert : titre + actions affichés, pas de 'Chargement…' figé (non-régression ANO-003).", "TC-PDCA-004_detail.png"),
+    ("23/06/2026", "Lot 1", "TC-PDCA-005", "Passé", "Avancement de phase via l'UI : DO -> CHECK, PATCH /cycles/{id}/advance = 200. Faux négatif initial du script corrigé (cycle terminal + sélecteur de badge).", "TC-PDCA-005_apres.png"),
+]
 
 # =====================================================================
 # 3) WORKBOOK
@@ -605,8 +623,8 @@ for k, v in blocks:
 ws = wb.create_sheet("Cas de test")
 headers = ["ID", "Domaine", "Sous-module", "Scénario de test", "Type", "Priorité",
            "Préconditions", "Étapes", "Résultat attendu", "Rôle", "Automatisable",
-           "Statut", "Testé par", "Exigence"]
-widths = [13, 24, 16, 34, 13, 11, 26, 40, 42, 16, 12, 13, 14, 14]
+           "Statut", "Testé par", "Exigence", "Évidence / Observé"]
+widths = [13, 24, 16, 34, 13, 11, 26, 40, 42, 16, 12, 13, 16, 14, 40]
 for ci, w in enumerate(widths, start=1):
     ws.column_dimensions[get_column_letter(ci)].width = w
 ws.append(headers)
@@ -616,7 +634,7 @@ for rrow in rows:
     ws.append([
         rrow["id"], rrow["domain"], rrow["sub"], rrow["title"], rrow["typ"], rrow["prio"],
         rrow["pre"], rrow["steps"], rrow["expected"], rrow["role"], rrow["autom"],
-        rrow["status"], rrow["tester"], rrow["req"],
+        rrow["status"], rrow["tester"], rrow["req"], rrow["evid"],
     ])
 for ri in range(2, TOTAL + 2):
     for ci in range(1, len(headers) + 1):
@@ -750,59 +768,55 @@ banner(ws, "Suivi & évolution de la campagne", "Courbes d'avancement (burn-up) 
 for col in "ABCDEFGHIJ": ws.column_dimensions[col].width = 13
 ws.column_dimensions["A"].width = 12
 
-# Build a realistic S-curve over N working days
+# Suivi RÉEL : cible planifiée (objectif) vs avancement réel + anomalies.
+# La campagne démarre aujourd'hui (Lot 1 = 5 cas PDCA). Les jours futurs sont
+# vides côté réel (la courbe s'arrête à l'avancement du jour) ; la cible est une
+# trajectoire planifiée linéaire vers la couverture totale sur N jours ouvrés.
 N = 15
-start = date.today() - timedelta(days=N+2)
-hdr = ["Jour", "Planifiés (cumul)", "Exécutés (cumul)", "Passés (cumul)",
-       "Échoués (cumul)", "Anomalies ouvertes (cumul)", "Anomalies résolues (cumul)"]
+hdr = ["Jour", "Cible exécutés (objectif)", "Réel exécutés (cumul)",
+       "Réel passés (cumul)", "Anomalies ouvertes (cumul)", "Anomalies résolues (cumul)"]
 hrow = 4
 for ci, h in enumerate(hdr, start=1):
     ws.cell(row=hrow, column=ci, value=h)
 style_header(ws, hrow, len(hdr))
-# generate cumulative numbers converging to current snapshot
-exec_final = executed
-pass_final = passed
-fail_final = failed
-def ramp(total, k, n, curve=1.6):
-    # S-curve-ish cumulative
-    import math
-    x = (k)/(n)
-    val = total * (x**curve) / (x**curve + (1-x)**curve) if 0 < x < 1 else (0 if k==0 else total)
-    return int(round(val))
-defects_total = failed + blocked + 6  # incl. quelques anomalies UX/perf
-defects_resolved_final = defects_total - 3
-for k in range(N+1):
-    d = start + timedelta(days=k)
-    planned = TOTAL  # périmètre figé
-    ex = ramp(exec_final, k, N)
-    pa = ramp(pass_final, k, N)
-    fa = ramp(fail_final, k, N)
-    op = ramp(defects_total, k, N, curve=1.3)
-    re = ramp(defects_resolved_final, k, N, curve=2.0)
-    re = min(re, op)
-    ws.append([d.strftime("%d/%m"), planned, ex, pa, fa, op, re])
+# Anomalies de stabilisation (pré-recette) déjà toutes corrigées : 6 ouvertes / 6 résolues.
+ANO_OPEN = 6
+ANO_RESOLVED = 6
+for k in range(N):
+    d = date.today() + timedelta(days=k)
+    target = int(round(TOTAL * (k + 1) / N))      # trajectoire planifiée -> 100% à JN
+    real_exec = executed if k == 0 else None        # réel renseigné au fil de l'eau
+    real_pass = passed if k == 0 else None
+    ws.append([f"J{k+1:02d} ({d.strftime('%d/%m')})", target, real_exec, real_pass,
+               ANO_OPEN, ANO_RESOLVED])
 first_data = hrow + 1
-last_data = hrow + N + 1
-for ri in range(first_data, last_data+1):
-    for ci in range(1, len(hdr)+1):
+last_data = hrow + N
+for ri in range(first_data, last_data + 1):
+    for ci in range(1, len(hdr) + 1):
         ws.cell(row=ri, column=ci).border = BORDER
         ws.cell(row=ri, column=ci).alignment = Alignment(horizontal="center")
         ws.cell(row=ri, column=ci).font = font(10)
 
-# Burn-up line chart : planifiés / exécutés / passés
-line = LineChart(); line.title = "Avancement de la campagne (burn-up)"
-line.height = 9.5; line.width = 19; line.y_axis.title = "Cas (cumulés)"; line.x_axis.title = "Jour"
+# Burn-up : cible planifiée vs réel exécutés / réel passés
+line = LineChart(); line.title = "Avancement de la campagne (cible vs réel)"
+line.height = 9.5; line.width = 19; line.y_axis.title = "Cas de test (cumulés)"; line.x_axis.title = "Jour"
 data = Reference(ws, min_col=2, max_col=4, min_row=hrow, max_row=last_data)
 cats = Reference(ws, min_col=1, min_row=first_data, max_row=last_data)
 line.add_data(data, titles_from_data=True); line.set_categories(cats)
-ws.add_chart(line, "A23")
+ws.add_chart(line, "A22")
 
-# Defect trend
+# Tendance des anomalies (ouvertes vs résolues)
 line2 = LineChart(); line2.title = "Tendance des anomalies (ouvertes vs résolues)"
 line2.height = 9.5; line2.width = 19; line2.y_axis.title = "Anomalies (cumulées)"; line2.x_axis.title = "Jour"
-data2 = Reference(ws, min_col=6, max_col=7, min_row=hrow, max_row=last_data)
+data2 = Reference(ws, min_col=5, max_col=6, min_row=hrow, max_row=last_data)
 line2.add_data(data2, titles_from_data=True); line2.set_categories(cats)
-ws.add_chart(line2, "A43")
+ws.add_chart(line2, "A42")
+
+# Note de lecture
+ws.cell(row=last_data + 2, column=1,
+        value="Lecture : la « cible » est la trajectoire planifiée (100% à J15). Le « réel » "
+              "est renseigné au fil de l'exécution (Lot 1 = 5 cas PDCA, tous Passés). "
+              "Les 6 anomalies de stabilisation pré-recette sont toutes résolues (0 ouverte).").font = font(9, italic=True, color=GREY)
 
 # ---- Sheet 6 : Matrice de traçabilité ----------------------------------------
 ws = wb.create_sheet("Traçabilité")
@@ -862,6 +876,29 @@ for a in anomalies:
     ws.cell(row=ri, column=5).fill = fill(GREEN if a[4]=="Résolu" else AMBER); ws.cell(row=ri, column=5).font = font(10, True, WHITE)
     ws.cell(row=ri, column=5).alignment = Alignment(horizontal="center", vertical="center")
     ri += 1
+
+# ---- Sheet 8 : Journal d'exécution -------------------------------------------
+ws = wb.create_sheet("Journal d'exécution")
+ws.sheet_view.showGridLines = False
+banner(ws, "Journal d'exécution", "Trace horodatée des cas exécutés (au fil de l'eau)")
+hh = ["Date", "Lot", "Cas de test", "Résultat", "Observé", "Évidence"]
+widths = [13, 10, 14, 12, 70, 28]
+for ci, w in enumerate(widths, start=1): ws.column_dimensions[get_column_letter(ci)].width = w
+hrow = 4
+for ci, h in enumerate(hh, start=1): ws.cell(row=hrow, column=ci, value=h)
+style_header(ws, hrow, len(hh))
+ri = hrow + 1
+for e in EXEC_LOG:
+    for ci, val in enumerate(e, start=1):
+        cell = ws.cell(row=ri, column=ci, value=val)
+        cell.border = BORDER; cell.font = font(10)
+        cell.alignment = Alignment(vertical="top", wrap_text=True)
+    rc = ws.cell(row=ri, column=4)
+    rc.fill = fill(STATUS_COLORS.get(e[3], GREY)); rc.font = font(10, True, WHITE)
+    rc.alignment = Alignment(horizontal="center", vertical="center")
+    ri += 1
+ws.cell(row=ri + 1, column=1,
+        value=f"Lot 1 ({EXEC_LOG[0][0]}) : 5/5 cas Passés. Captures d'écran dans docs/qa/evidence/.").font = font(10, True, GREEN)
 
 # ---- save ---------------------------------------------------------------------
 out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "QualitOS_Dossier_de_Test_QA.xlsx")
