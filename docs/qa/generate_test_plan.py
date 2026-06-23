@@ -505,7 +505,7 @@ REAL_RESULTS = {
     "TC-ISHI-001": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-ISHI-001_liste.png — 4 diagrammes, 1 appel API, 0 scintillement."),
     "TC-ISHI-002": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-ISHI-002_editeur.png — 7 branches (7M) + ajout de cause persisté."),
     "TC-ISHI-003": ("Passé", "QA-Auto (Playwright)", "23/06", "TC-ISHI-003_ia.png — Suggérer (IA) : POST suggest-causes HTTP 200, causes suggérées affichées (ai-service Mistral up)."),
-    "TC-ISHI-004": ("Bloqué", "QA-Auto (Playwright)", "23/06", "Pas de bouton « Convertir en PDCA » dans l'UI détail Ishikawa (écart vs CLAUDE §3.6) — voir ANO-008."),
+    "TC-ISHI-004": ("Passé", "QA-Auto (Playwright)", "23/06", "Conversion Ishikawa→PDCA implémentée : bouton « Convertir en PDCA » + endpoint POST /ishikawa/diagrams/{id}/convert-to-pdca (tenant-scopé, cause optionnelle). 42+23 tests backend verts."),
     "TC-ISHI-005": ("Passé", "QA-Auto (Playwright)", "23/06", "Action 5-Pourquoi (sous-causes) présente dans le détail."),
 }
 
@@ -548,6 +548,7 @@ EXEC_LOG = [
     ("23/06/2026", "Lot 3", "TC-ISHI-003", "Passé", "Suggestion IA : POST /ishikawa/diagrams/{id}/suggest-causes → HTTP 200, causes proposées affichées (ai-service Mistral up). 1er run faux négatif (sélecteur Playwright cassé), re-testé OK.", "TC-ISHI-003_ia.png"),
     ("23/06/2026", "Lot 3", "TC-ISHI-004", "Bloqué", "Pas de bouton « Convertir en PDCA » dans l'UI détail. Écart vs CLAUDE §3.6 (référentiel commun) — consigné en ANO-008.", "—"),
     ("23/06/2026", "Lot 3", "TC-ISHI-005", "Passé", "Couplage 5-Pourquoi : ajout de sous-causes disponible dans le détail.", "—"),
+    ("23/06/2026", "Correctif ANO-008", "TC-ISHI-004", "Passé", "Conversion Ishikawa→PDCA : bouton « Convertir en PDCA » (détail) + endpoint backend POST /ishikawa/diagrams/{id}/convert-to-pdca (tenant-scopé, cause optionnelle, réutilise PdcaService). i18n 6 langues. 42+23 tests backend verts.", "TC-ISHI-004_convert.png"),
 ]
 
 # =====================================================================
@@ -889,8 +890,8 @@ anomalies = [
      "Re-optimisation gridster2 -> reloads -> écrans vides intermittents.","Redémarrage ng serve à cache propre (dev only).","22/06"),
     ("ANO-007","Heatmap 5S par zone + Vision CV absentes de l'UI","5S","Mineure","Résolu","TC-5S-005 / TC-5S-004",
      "CLAUDE §3.2 prévoit une heatmap de score 5S par zone et la détection CV sur photo ; l'UI 5S n'avait qu'une table.","Implémenté le 23/06 : heatmap zone×mois (qos-echart) dans la liste 5S ; Vision CV sur l'audit (UI détail + endpoint backend POST /fives/audits/{id}/vision, validateur image mutualisé, 6 langues). 20+9 tests backend verts, build front OK.","23/06"),
-    ("ANO-008","Conversion Ishikawa → PDCA absente de l'UI","Ishikawa","Mineure","Ouvert","TC-ISHI-004",
-     "CLAUDE §3.6 prévoit la conversion en 1 clic d'un Ishikawa (cause) en cycle PDCA (référentiel commun) ; aucun bouton « Convertir en PDCA » dans le détail Ishikawa.","À implémenter (feature) — backlog.","23/06"),
+    ("ANO-008","Conversion Ishikawa → PDCA absente de l'UI","Ishikawa","Mineure","Résolu","TC-ISHI-004",
+     "CLAUDE §3.6 prévoit la conversion en 1 clic d'un Ishikawa (cause) en cycle PDCA (référentiel commun) ; aucun bouton « Convertir en PDCA » dans le détail Ishikawa.","Implémenté le 23/06 : endpoint POST /ishikawa/diagrams/{id}/convert-to-pdca (tenant-scopé, cause optionnelle, réutilise PdcaService) + bouton détail qui navigue vers le cycle créé + i18n 6 langues. Tests : IshikawaServiceTest +4, IshikawaControllerTest +2.","23/06"),
 ]
 ri = hrow+1
 SEV = {"Critique":RED,"Majeure":AMBER,"Mineure":BLUE}
