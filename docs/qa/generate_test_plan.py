@@ -543,6 +543,13 @@ REAL_RESULTS = {
     "TC-TRANSV-003": ("Passé", "QA-Auto (Playwright)", "24/06", "TC-TRANSV-003_changes.png — module Changes : page + analyse d'impact, création d'une demande de changement réussie (persistée)."),
     "TC-TRANSV-004": ("Passé", "QA-Auto (Playwright)", "24/06", "TC-TRANSV-004_ehs.png — module EHS : page + « Déclarer un incident » ; réutilise NC/CAPA (endpoints investigate/mitigate). Deep-E2E création bloqué par flakiness dev-server."),
     "TC-TRANSV-005": ("Passé", "QA-Auto (Playwright)", "24/06", "TC-TRANSV-005_itsm.png — module ITSM : page de connexions + « Nouvelle connexion » (connecteur ServiceNow/Jira). L'import réel d'incidents nécessite un système ITSM externe configuré (endpoint sync présent)."),
+    # Lot 11 (24/06) — Standards Hub
+    "TC-STD-001": ("Passé", "API+Playwright", "24/06", "GET /api/v1/standards → totalElements=60 (iso-9001 en tête). Catalogue complet."),
+    "TC-STD-002": ("Passé", "API+Playwright", "24/06", "TC-STD-002_fiche.png — fiche adoption (route /standards/adoptions/:id) : 9 onglets (Exigences, Bibliothèque doc, Cartographie processus, Roadmap, Audit blanc, Mes preuves, Certification à blanc, Veille normative, Dossier) + KPI alignement."),
+    "TC-STD-003": ("Passé", "API directe (engine)", "24/06", "GET /adoptions/{id}/alignment → overallScore 88,1 % (score d'alignement IA ; rapport par clause)."),
+    "TC-STD-004": ("Passé", "API directe (engine)", "24/06", "GET /adoptions/{id}/audit-blanc → readinessScore 92,5 % + 5 écarts/questions (audit blanc IA avancé)."),
+    "TC-STD-005": ("Passé", "API directe (engine)", "24/06", "POST /adoptions/{id}/dossier → HTTP 200 (génération du dossier de certification)."),
+    "TC-STD-006": ("Passé", "API directe (engine)", "24/06", "GET .../document-templates/<..%2F..%2Fwin.ini>/download → HTTP 400. Garde anti-path-traversal effective (path.contains('..') rejeté)."),
 }
 
 rows = []
@@ -614,6 +621,12 @@ EXEC_LOG = [
     ("24/06/2026", "Lot 10", "TC-TRANSV-003", "Passé", "Changes : page + analyse d'impact, demande de changement créée (persistée).", "TC-TRANSV-003_changes.png"),
     ("24/06/2026", "Lot 10", "TC-TRANSV-004", "Passé", "EHS : page + « Déclarer un incident » ; réutilise NC/CAPA (investigate/mitigate). Création deep-E2E bloquée par flakiness.", "TC-TRANSV-004_ehs.png"),
     ("24/06/2026", "Lot 10", "TC-TRANSV-005", "Passé", "ITSM : page de connexions + nouvelle connexion (connecteur). Import réel = système ITSM externe requis (endpoint sync présent).", "TC-TRANSV-005_itsm.png"),
+    ("24/06/2026", "Lot 11", "TC-STD-001", "Passé", "Catalogue : GET /api/v1/standards totalElements=60.", "—"),
+    ("24/06/2026", "Lot 11", "TC-STD-002", "Passé", "Fiche adoption : 9 onglets + KPI alignement (route /standards/adoptions/:id).", "TC-STD-002_fiche.png"),
+    ("24/06/2026", "Lot 11", "TC-STD-003", "Passé", "Alignement IA : overallScore 88,1 % (par clause).", "—"),
+    ("24/06/2026", "Lot 11", "TC-STD-004", "Passé", "Audit blanc IA : readinessScore 92,5 % + 5 écarts.", "—"),
+    ("24/06/2026", "Lot 11", "TC-STD-005", "Passé", "Dossier de certification : POST /adoptions/{id}/dossier HTTP 200.", "—"),
+    ("24/06/2026", "Lot 11", "TC-STD-006", "Passé", "Anti-path-traversal : download avec ..%2F → HTTP 400 (garde effective).", "—"),
 ]
 
 # =====================================================================
