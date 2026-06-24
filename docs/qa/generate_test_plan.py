@@ -561,6 +561,15 @@ REAL_RESULTS = {
     "TC-MKT-003": ("Passé", "API directe (engine)", "24/06", "Soumission partenaire + scan manifest : POST /marketplace/packs (admin, manifestJson inline + signatureHash) HTTP 201 → statut SUBMITTED."),
     "TC-MKT-004": ("Passé", "API directe (engine)", "24/06", "Modération éditeur (super_admin) : GET /moderation/queue 200 → POST /{id}/take-review 200 → POST /{id}/publish 200 (PUBLISHED). Reject/deprecate aussi exposés."),
     "TC-MKT-005": ("Passé", "API directe (engine)", "24/06", "Installation tenant : POST /marketplace/packs/{id}/install (admin) HTTP 201 sur le pack publié."),
+    # Lot 14 (24/06) — Dashboards & Pilotage
+    "TC-DASH-001": ("Passé", "Playwright", "24/06", "TC-DASH-001_executif.png — dashboard exécutif rendu : tuiles KPI + 6 graphiques, 0 erreur. (Endpoint backend /kpis/executive = V2 ; rendu SPA.)"),
+    "TC-DASH-002": ("Passé", "Playwright", "24/06", "Cross-filtering : graphique Pareto présent sur le dashboard ; interactivité (clic→filtre) câblée (DashboardInteractivityGoldenPathTest)."),
+    "TC-DASH-003": ("Passé", "API directe (engine)", "24/06", "Time-travel : GET /dashboards/time-travel/kpis?asOf=2026-06-01 HTTP 200 (snapshot à une date passée, event-sourcing)."),
+    "TC-DASH-004": ("Passé", "API directe (engine)", "24/06", "Builder : POST /dashboards/custom HTTP 201 — APRÈS correction d'ANO-013 (jsonb + signature_hash). Persistance du layout signée."),
+    "TC-DASH-005": ("Passé", "API directe (engine)", "24/06", "Export PDF : POST /dashboards/custom/{id}/export/pdf HTTP 200, %PDF (3243 octets), signé + code de vérif (QR)."),
+    "TC-DASH-006": ("Passé", "API directe (public)", "24/06", "Vérification publique (sans auth) : GET /dashboards/public/exports/{code}/verify → {valid:true, sha256Hex, anchorTxRef (ancrage), dashboardName}."),
+    "TC-DASH-007": ("Passé", "Playwright", "24/06", "Mode TV : commande/élément mode mural présent sur le dashboard (rotation auto)."),
+    "TC-DASH-008": ("Passé", "API directe (engine)", "24/06", "Catalogue KPI : GET /kpis — définitions explicites (code, name, unit, targetValue, thresholdWarning/Critical, ownerUserId). 6 KPIs (provisionnés pack aero)."),
 }
 
 rows = []
@@ -647,6 +656,14 @@ EXEC_LOG = [
     ("24/06/2026", "Lot 13", "TC-MKT-003", "Passé", "Soumission + scan manifest (admin) : POST /marketplace/packs 201 SUBMITTED.", "—"),
     ("24/06/2026", "Lot 13", "TC-MKT-004", "Passé", "Modération (super_admin) : queue → take-review → publish (200).", "—"),
     ("24/06/2026", "Lot 13", "TC-MKT-005", "Passé", "Installation tenant (admin) : POST /{id}/install 201.", "—"),
+    ("24/06/2026", "Lot 14", "TC-DASH-001", "Passé", "Dashboard exécutif : tuiles KPI + 6 charts rendus.", "TC-DASH-001_executif.png"),
+    ("24/06/2026", "Lot 14", "TC-DASH-002", "Passé", "Cross-filtering : Pareto présent + interactivité câblée.", "—"),
+    ("24/06/2026", "Lot 14", "TC-DASH-003", "Passé", "Time-travel : GET /dashboards/time-travel/kpis?asOf= HTTP 200.", "—"),
+    ("24/06/2026", "Lot 14", "TC-DASH-004", "Passé", "Builder : POST /dashboards/custom 201 après fix ANO-013 (jsonb + signature_hash).", "—"),
+    ("24/06/2026", "Lot 14", "TC-DASH-005", "Passé", "Export PDF signé : HTTP 200, %PDF + code de vérif.", "—"),
+    ("24/06/2026", "Lot 14", "TC-DASH-006", "Passé", "Vérif publique (sans auth) : valid:true + sha256 + ancrage.", "—"),
+    ("24/06/2026", "Lot 14", "TC-DASH-007", "Passé", "Mode TV : commande mode mural présente.", "—"),
+    ("24/06/2026", "Lot 14", "TC-DASH-008", "Passé", "Catalogue KPI : définitions explicites (unit/target/seuils/owner).", "—"),
 ]
 
 # =====================================================================
@@ -992,6 +1009,8 @@ anomalies = [
      "CLAUDE §3.6 prévoit la conversion en 1 clic d'un Ishikawa (cause) en cycle PDCA (référentiel commun) ; aucun bouton « Convertir en PDCA » dans le détail Ishikawa.","Implémenté le 23/06 : endpoint POST /ishikawa/diagrams/{id}/convert-to-pdca (tenant-scopé, cause optionnelle, réutilise PdcaService) + bouton détail qui navigue vers le cycle créé + i18n 6 langues. Tests : IshikawaServiceTest +4, IshikawaControllerTest +2.","23/06"),
     ("ANO-009","Cycle de vie des propositions de cercle absent de l'UI","Cercles","Mineure","Résolu","TC-CERCLE-003",
      "Le backend (CircleController) expose review/approve/reject/implement/impact sur les propositions (CLAUDE §3.3), mais l'UI ne proposait que la création + l'affichage du statut.","Implémenté le 23/06 (agent parallèle) : 5 méthodes service + boutons conditionnés par statut + dialogs reject (motif) et impact (mesure) ; i18n 6 langues. Build front + 41+58 tests circle verts.","23/06"),
+    ("ANO-013","Sauvegarde de dashboard personnalisé cassée sur PostgreSQL","Dashboards","Majeure","Résolu","TC-DASH-004",
+     "POST /api/v1/dashboards/custom renvoyait 500 puis 409 sur PG réel (testé seulement en mock in-memory) : (1) layout_json jsonb sans @JdbcTypeCode(JSON) → bind VARCHAR ; (2) signature_hash VARCHAR(128) trop court pour la signature hybride Ed25519+ML-DSA-65 (~4,5 Ko) → troncation 22001.","Corrigé le 24/06 (recette live, moteur rebuild) : @JdbcTypeCode(SqlTypes.JSON) sur layoutJson + migration V98 ALTER signature_hash TYPE TEXT. Validé : create 201, export PDF 200 (signé), vérif publique OK. Gap : pas de test d'intégration PG pour le layout (à ajouter).","24/06"),
     ("ANO-012","Rapport d'audit généré par LLM absent","Audits","Mineure","Résolu","TC-AUD-003",
      "CLAUDE §1.4/§4.4 prévoit un rapport d'audit final généré par LLM. Or completePlan se contentait d'un reportSummary saisi manuellement — aucun appel AiGateway, ni au front ni au backend.","Implémenté le 24/06 : AuditService.generateReport (AiGatewayClient, prompt à partir du périmètre/norme/checklist/constats, persiste reportSummary) + endpoint POST /plans/{id}/report/generate + bouton « Générer le rapport (IA) » au détail + i18n 6 langues. Tests : AuditServiceTest +2, AuditControllerTest +2. Build/Karma en CI.","24/06"),
     ("ANO-011","Avancement des actions CAPA (→ DONE) absent de l'UI","CAPA","Mineure","Résolu","TC-CAPA-002",
