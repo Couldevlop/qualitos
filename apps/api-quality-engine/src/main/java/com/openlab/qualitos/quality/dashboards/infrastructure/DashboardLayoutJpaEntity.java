@@ -1,6 +1,8 @@
 package com.openlab.qualitos.quality.dashboards.infrastructure;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -24,13 +26,17 @@ public class DashboardLayoutJpaEntity {
     @Column(name = "description", length = 2000)
     private String description;
 
+    // jsonb : sans @JdbcTypeCode(JSON), Hibernate 6 bind un VARCHAR → PG rejette
+    // (« column layout_json is of type jsonb but expression is of type character varying »).
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "layout_json", nullable = false, columnDefinition = "jsonb")
     private String layoutJson;
 
     @Column(name = "shared", nullable = false)
     private boolean shared;
 
-    @Column(name = "signature_hash", length = 128)
+    // Stocke la signature hybride Ed25519+ML-DSA-65 complète (~4,5 Ko) → TEXT, pas VARCHAR(128).
+    @Column(name = "signature_hash", columnDefinition = "text")
     private String signatureHash;
 
     @Column(name = "version", nullable = false)
