@@ -550,6 +550,11 @@ REAL_RESULTS = {
     "TC-STD-004": ("Passé", "API directe (engine)", "24/06", "GET /adoptions/{id}/audit-blanc → readinessScore 92,5 % + 5 écarts/questions (audit blanc IA avancé)."),
     "TC-STD-005": ("Passé", "API directe (engine)", "24/06", "POST /adoptions/{id}/dossier → HTTP 200 (génération du dossier de certification)."),
     "TC-STD-006": ("Passé", "API directe (engine)", "24/06", "GET .../document-templates/<..%2F..%2Fwin.ini>/download → HTTP 400. Garde anti-path-traversal effective (path.contains('..') rejeté)."),
+    # Lot 12 (24/06) — Génération documentaire IA multi-docs (§8.8)
+    "TC-DOCGEN-001": ("Passé", "Tests backend", "24/06", "Génération en lot : DocumentationDossierTest.start_generatesAllDefaultDocuments_asDrafts (le dossier génère toutes les pièces en BROUILLON_IA). Moteur live stale → validé par tests (exit 0)."),
+    "TC-DOCGEN-002": ("Passé", "Tests backend", "24/06", "Validation humaine par pièce : NormDocServiceTest (19) — submit→approve (signature obligatoire + ségrégation des tâches : approve_enforcesSegregationOfDuties, approve_requiresSignature) / reject."),
+    "TC-DOCGEN-003": ("Passé", "Tests backend", "24/06", "Scellement : DossierServiceTest/DocumentationDossierTest.finalize_allApproved_sealsAnchorsAndPersists (exige toutes pièces approuvées, scelle + ancre blockchain). finalize_noGeneratedDocument_rejected."),
+    "TC-DOCGEN-004": ("Passé", "Tests backend", "24/06", "Résilience : start_aiFailureOnOneDoc_marksFailed_othersSucceed (une panne IA sur une pièce n'échoue pas le lot) + retry_regeneratesFailedDocuments + refreshStatus_someFailed_stillGenere."),
 }
 
 rows = []
@@ -627,6 +632,10 @@ EXEC_LOG = [
     ("24/06/2026", "Lot 11", "TC-STD-004", "Passé", "Audit blanc IA : readinessScore 92,5 % + 5 écarts.", "—"),
     ("24/06/2026", "Lot 11", "TC-STD-005", "Passé", "Dossier de certification : POST /adoptions/{id}/dossier HTTP 200.", "—"),
     ("24/06/2026", "Lot 11", "TC-STD-006", "Passé", "Anti-path-traversal : download avec ..%2F → HTTP 400 (garde effective).", "—"),
+    ("24/06/2026", "Lot 12", "TC-DOCGEN-001", "Passé", "Génération en lot validée par DocumentationDossierTest.start_generatesAllDefaultDocuments_asDrafts. Moteur live stale (404) → tests backend.", "—"),
+    ("24/06/2026", "Lot 12", "TC-DOCGEN-002", "Passé", "Validation humaine par pièce : NormDocServiceTest (approve+signature+ségrégation / reject).", "—"),
+    ("24/06/2026", "Lot 12", "TC-DOCGEN-003", "Passé", "Scellement : finalize_allApproved_sealsAnchorsAndPersists (signature + ancrage).", "—"),
+    ("24/06/2026", "Lot 12", "TC-DOCGEN-004", "Passé", "Résilience : start_aiFailureOnOneDoc_marksFailed_othersSucceed + retry_regeneratesFailedDocuments.", "—"),
 ]
 
 # =====================================================================
