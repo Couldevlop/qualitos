@@ -555,6 +555,12 @@ REAL_RESULTS = {
     "TC-DOCGEN-002": ("Passé", "Tests backend", "24/06", "Validation humaine par pièce : NormDocServiceTest (19) — submit→approve (signature obligatoire + ségrégation des tâches : approve_enforcesSegregationOfDuties, approve_requiresSignature) / reject."),
     "TC-DOCGEN-003": ("Passé", "Tests backend", "24/06", "Scellement : DossierServiceTest/DocumentationDossierTest.finalize_allApproved_sealsAnchorsAndPersists (exige toutes pièces approuvées, scelle + ancre blockchain). finalize_noGeneratedDocument_rejected."),
     "TC-DOCGEN-004": ("Passé", "Tests backend", "24/06", "Résilience : start_aiFailureOnOneDoc_marksFailed_othersSucceed (une panne IA sur une pièce n'échoue pas le lot) + retry_regeneratesFailedDocuments + refreshStatus_someFailed_stillGenere."),
+    # Lot 13 (24/06) — Industry Packs & Marketplace (moteur rebuild)
+    "TC-MKT-001": ("Passé", "API directe (engine)", "24/06", "Activation déclarative d'un Industry Pack : POST /industry-packs/aerospace/activate (admin) HTTP 200 → ACTIVE + 6 KPIs provisionnés. Authz correcte : demo (quality_manager) → 403, admin (admin_tenant) → 200. 14 packs disponibles."),
+    "TC-MKT-002": ("Passé", "API directe (engine)", "24/06", "Catalogue public : GET /marketplace/packs filtré PUBLISHED — 1 pack publié visible après modération (0 avant)."),
+    "TC-MKT-003": ("Passé", "API directe (engine)", "24/06", "Soumission partenaire + scan manifest : POST /marketplace/packs (admin, manifestJson inline + signatureHash) HTTP 201 → statut SUBMITTED."),
+    "TC-MKT-004": ("Passé", "API directe (engine)", "24/06", "Modération éditeur (super_admin) : GET /moderation/queue 200 → POST /{id}/take-review 200 → POST /{id}/publish 200 (PUBLISHED). Reject/deprecate aussi exposés."),
+    "TC-MKT-005": ("Passé", "API directe (engine)", "24/06", "Installation tenant : POST /marketplace/packs/{id}/install (admin) HTTP 201 sur le pack publié."),
 }
 
 rows = []
@@ -636,6 +642,11 @@ EXEC_LOG = [
     ("24/06/2026", "Lot 12", "TC-DOCGEN-002", "Passé", "Validation humaine par pièce : NormDocServiceTest (approve+signature+ségrégation / reject).", "—"),
     ("24/06/2026", "Lot 12", "TC-DOCGEN-003", "Passé", "Scellement : finalize_allApproved_sealsAnchorsAndPersists (signature + ancrage).", "—"),
     ("24/06/2026", "Lot 12", "TC-DOCGEN-004", "Passé", "Résilience : start_aiFailureOnOneDoc_marksFailed_othersSucceed + retry_regeneratesFailedDocuments.", "—"),
+    ("24/06/2026", "Lot 13", "TC-MKT-001", "Passé", "Activer Industry Pack (admin) : aerospace ACTIVE + 6 KPIs provisionnés. demo→403 (authz).", "—"),
+    ("24/06/2026", "Lot 13", "TC-MKT-002", "Passé", "Catalogue public : 1 pack PUBLISHED visible après modération.", "—"),
+    ("24/06/2026", "Lot 13", "TC-MKT-003", "Passé", "Soumission + scan manifest (admin) : POST /marketplace/packs 201 SUBMITTED.", "—"),
+    ("24/06/2026", "Lot 13", "TC-MKT-004", "Passé", "Modération (super_admin) : queue → take-review → publish (200).", "—"),
+    ("24/06/2026", "Lot 13", "TC-MKT-005", "Passé", "Installation tenant (admin) : POST /{id}/install 201.", "—"),
 ]
 
 # =====================================================================
