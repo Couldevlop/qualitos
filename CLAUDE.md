@@ -17,81 +17,9 @@
 
 ---
 
-## 1. Benchmark concurrentiel (état du marché 2026)
+## 1. Benchmark concurrentiel & différenciation
 
-### 1.1 Panorama des leaders
-
-| Plateforme                            | Positionnement                        | Forces clés                                                                                              | Faiblesses observées (avis utilisateurs G2 / Capterra / Gartner)                                                                                                                                                                            |
-| ------------------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **MasterControl Quality Excellence**  | Leader Life Sciences / FDA            | Document control puissant, validation pré-livrée, conformité 21 CFR Part 11, modules CAPA/audits matures | Très cher, courbe d'apprentissage abrupte, déconnecté du shop-floor (pas d'IoT/MES), implémentation longue, complexité élevée, "feels like forced upsell" sur la nouvelle plateforme                                                        |
-| **ETQ Reliance (Octave)**             | Configurabilité enterprise (40+ apps) | Designer no-code drag & drop, modules out-of-the-box, mobile, customisation profonde                     | Pricing par licence opaque qui augmente, support client jugé décevant ("system limitation"), pas d'autosave, cumbersome pour démarrer, fonctionnalités payantes qui étaient gratuites, peu d'IA réelle, difficulté pour utilisateurs non-IT |
-| **Siemens QMS (Opcenter / Polarion)** | Industrie / aéronautique              | APQP/PPAP, FMEA, SPC, MSA, intégration PLM                                                               | Lourd, écosystème Siemens-centric, peu accessible aux PME, coût élevé                                                                                                                                                                       |
-| **Qualio**                            | Life Sciences agile                   | Setup rapide, UX moderne, ISO/FDA en quelques semaines                                                   | Centré documentation, ne couvre pas la fabrication, peu d'IA, modules limités                                                                                                                                                               |
-| **Greenlight Guru**                   | Dispositifs médicaux                  | Spécialisation MedTech, ISO 13485 natif                                                                  | Mono-secteur, peu adapté hors médical                                                                                                                                                                                                       |
-| **QT9 QMS**                           | PME tous secteurs                     | 25+ modules inclus, tarif par licence concurrente, validé out-of-the-box                                 | UI vieillissante, reporting complexe, templating difficile à apprendre                                                                                                                                                                      |
-| **TrackWise Digital (Honeywell)**     | Enterprise régulé                     | Configuration point-and-click, intégration shop-floor, scale élevé                                       | Cher, écosystème propriétaire                                                                                                                                                                                                               |
-| **Intellect QMS AI**                  | PME/ETI avec IA                       | IA pour automatisation, FDA/ISO/GDPR                                                                     | IA limitée à de l'automatisation simple, RAG/LLM peu avancés                                                                                                                                                                                |
-| **ComplianceQuest**                   | Salesforce-native                     | Intégration native Salesforce, EHS + qualité                                                             | Verrouillage Salesforce, coût total élevé                                                                                                                                                                                                   |
-| **Qualityze**                         | Cloud "all-in-one"                    | Centralisation NC/CAPA/audits, IA marketing                                                              | Faible profondeur sectorielle                                                                                                                                                                                                               |
-| **AlisQI**                            | SPC + EHS no-code                     | Implémentation autonome, no-code, modulaire                                                              | Périmètre limité (pas de cercle qualité, pas de DMAIC complet)                                                                                                                                                                              |
-| **EASE**                              | Audits Gemba mobiles                  | Audits terrain, layered process audits, mobile                                                           | Audit-only, pas de couverture qualité totale                                                                                                                                                                                                |
-| **GoAudits**                          | Audits checklists                     | Templates customisables, mobile                                                                          | Audit-only, pas de méthodologie qualité                                                                                                                                                                                                     |
-| **SafetyCulture (iAuditor)**          | Audits/inspections terrain            | UX mobile excellente, photos annotées                                                                    | **Crée des silos de données**, pas de lien avec les machines/CMMS                                                                                                                                                                           |
-| **Fabrico**                           | Quality+Maintenance unifiés           | Computer Vision, OEE, lien quality↔maintenance                                                           | Mono-secteur (manufacturing), pas de méthodologie qualité formalisée                                                                                                                                                                        |
-| **SAP Cloud ERP / Oracle PLM**        | ERP avec module qualité               | Intégration ERP profonde                                                                                 | Module qualité accessoire, pas spécialiste, ergonomie ERP héritée                                                                                                                                                                           |
-| **Wrike / Monday + plugins qualité**  | Project mgmt avec usage qualité       | Souplesse, collaboration                                                                                 | Pas de moteur qualité, pas de référentiel normes, IA générique                                                                                                                                                                              |
-
-### 1.2 Synthèse des **faiblesses récurrentes** du marché
-
-À partir de 1 500+ avis Gartner / G2 / Capterra / TrustRadius / SoftwareAdvice, on extrait sept faiblesses systémiques :
-
-1. **Silos de données** : la qualité vit séparément de l'IoT/MES/ERP/CMMS/ITSM. La cause-racine d'un défaut (vibration machine, charge serveur) est invisible depuis le QMS.
-2. **Sectorisation** : un outil pour MedTech, un autre pour l'auto, un autre pour l'IT. Aucun n'embrasse réellement _tous_ les domaines.
-3. **Mono-méthode** : un outil fait du CAPA/document control, mais pas le PDCA, le 5S terrain, l'Ishikawa collaboratif et le DMAIC analytique avec la même cohérence.
-4. **Pricing opaque et croissant** : les fonctionnalités basculent en premium, les coûts explosent à l'échelle.
-5. **IA superficielle** : l'IA est souvent un "co-pilote" de rédaction (Auto-fill, Draft) plutôt qu'un moteur prédictif et explicatif.
-6. **Implémentation lourde** : 6 à 18 mois pour MasterControl/ETQ. La validation et la formation explosent les budgets.
-7. **Support et UX vieillissants** : "outdated UI", "logs out too quickly", "no autosave", "training materials limited", déconnexion intempestive, pas de mode hors-ligne robuste.
-
-### 1.3 Stratégie QualitOS — capitalisation sur les forces, neutralisation des faiblesses
-
-Pour chaque faiblesse identifiée, QualitOS apporte une **réponse architecturale** (pas juste marketing) :
-
-| Faiblesse marché      | Réponse QualitOS                                                        | Mécanisme technique                                                                                           |
-| --------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Silos de données      | **Référentiel commun** Problèmes→Causes→Actions→KPIs→Preuves→Normes     | Modèle de domaine unique, event sourcing Kafka, connecteurs IoT/MES/ERP/ITSM/EHR natifs                       |
-| Sectorisation         | **Domain Adapter Layer** : packs sectoriels activables                  | Configuration déclarative YAML + plugins Java (SPI) pour chaque secteur                                       |
-| Mono-méthode          | **5 méthodes natives + données partagées**                              | Une cause d'Ishikawa devient un problème de cycle PDCA en 1 clic ; un audit 5S déclenche un Cercle de Qualité |
-| Pricing opaque        | **Tarification transparente par module + concurrent licensing**         | Activation/désactivation atomique par tenant, billing usage-based en option                                   |
-| IA superficielle      | **IA bout-en-bout, prédictive, explicable**                             | Voir section 12 (LLM + RAG + ML classique + CV + NLP + UEBA)                                                  |
-| Implémentation lourde | **MVP en 3 semaines, pré-configurations sectorielles**                  | Templates by industry, validation packs livrés (IQ/OQ/PQ pour Life Sciences)                                  |
-| UX vieillissante      | **Angular 18 + Material 3 + design system premium + offline-first PWA** | Mobile-first, dark mode, WCAG 2.2 AA, INP < 200 ms                                                            |
-
-### 1.4 Fonctionnalités "best-of-breed" extraites du marché et améliorées par l'IA
-
-QualitOS prend les **meilleures idées** des leaders et les pousse plus loin :
-
-| Fonctionnalité concurrente        | Leader connu       | Version QualitOS améliorée par IA                                                                                                                        |
-| --------------------------------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Document control + 21 CFR Part 11 | MasterControl      | + **détection automatique** par LLM des incohérences entre documents, suggestion de mise à jour transverse quand une procédure change                    |
-| Drag & drop workflow designer     | ETQ Reliance       | + **génération de workflow** par description en langage naturel ("Je veux un processus CAPA en 4 étapes avec validation manager")                        |
-| Validation pré-livrée             | MasterControl      | + **validation packs auto-générés** par l'IA selon le secteur du tenant                                                                                  |
-| Layered Process Audits mobiles    | EASE               | + **CV YOLOv8** qui détecte automatiquement les non-conformités sur photo (encombrement 5S, EPI manquant, étiquette absente)                             |
-| Photos annotées sur défauts       | SafetyCulture      | + **classification automatique** du type de défaut, suggestion de cause-racine probable, lien vers cas similaires historiques                            |
-| OEE + qualité unifiés             | Fabrico            | + **prédiction LSTM** de la dérive de qualité à partir des données IoT, alertes pré-incident                                                             |
-| FMEA / risk management            | Siemens            | + **scoring de risque dynamique** réévalué par l'IA à chaque nouvelle donnée, pas seulement lors d'une revue annuelle                                    |
-| CAPA workflow                     | tous               | + **suggestion automatique de causes-racines** (RAG sur historique tenant + corpus public) et **recommandation d'actions** basée sur l'efficacité passée |
-| Gemba walks                       | Lean tools         | + **transcription Whisper** + **résumé LLM** + extraction automatique d'actions avec assignation                                                         |
-| Audit reporting                   | tous               | + **génération de rapport final en 30 secondes** par LLM avec citations vers preuves blockchain                                                          |
-| Training management               | tous               | + **personnalisation IA** des parcours selon les rôles, simulateurs interactifs, certificats blockchain vérifiables                                      |
-| Supplier quality management       | ETQ, MasterControl | + **scoring automatique des fournisseurs**, prédiction de risque, alertes proactives                                                                     |
-| Non-conformance management        | tous               | + **clustering automatique** des NC similaires pour détecter des patterns invisibles à l'œil humain                                                      |
-| Statistical Process Control (SPC) | Siemens, AlisQI    | + **détection d'anomalies multivariées** (autoencoders) en plus des règles WECO/Nelson classiques                                                        |
-| Référentiels normes               | rare et limité     | + **moteur d'alignement automatique** : l'IA mappe vos pratiques aux exigences ISO/IATF/etc. en continu                                                  |
-
-### 1.5 Promesse de différenciation
-
-> **"Tout ce que MasterControl fait en compliance + tout ce que ETQ fait en configurabilité + tout ce que Fabrico fait en shop-floor + tout ce que Lean offre en méthodologie — dans une seule plateforme, multi-secteurs, IA-native, à un coût 3 à 5 × inférieur."**
+> 📄 Section déplacée vers [`docs/VISION.md`](docs/VISION.md) pour alléger `CLAUDE.md` (chargé à chaque session). Contenu : panorama des leaders (MasterControl, ETQ, Siemens, Qualio, Fabrico…), 7 faiblesses récurrentes du marché, stratégie de neutralisation, fonctionnalités best-of-breed augmentées par l'IA, promesse de différenciation.
 
 ---
 
@@ -1541,23 +1469,7 @@ Quand tu génères du code ou de la documentation pour ce projet, **respecte ces
 
 ## 23. Conclusion
 
-Le marché des QMS est dominé par des plateformes **mono-secteur, mono-méthode, vieillissantes, chères, fermées et déconnectées du terrain**. QualitOS attaque chaque faiblesse :
-
-- **Mono-secteur** → **Industry Packs** pour 14 secteurs livrés.
-- **Mono-méthode** → **5 méthodes natives** + référentiel commun.
-- **Faible couverture normative** → **Module Standards Hub** : 60+ normes documentées avec roadmap de certification, modèles de documents, processus types, audit blanc IA.
-- **Déconnecté du terrain** → **Module IoT & Edge Connectivity** : universalité multi-protocoles (OPC-UA, MQTT, HL7 FHIR, LoRaWAN, ISOBUS…), Edge Gateway K3s, IA embarquée locale.
-- **Vieillissant** → **Angular 18 + Material 3 + PWA offline**.
-- **Cher** → **modèle modulaire transparent**, MVP en 3 semaines.
-- **Fermé** → **OpenAPI + webhooks + 15 connecteurs natifs**.
-- **Sans IA réelle** → **IA bout-en-bout, prédictive, explicable**.
-- **Sans intégrité forte** → **blockchain + post-quantique**.
-
-> **QualitOS = (MasterControl ∪ ETQ ∪ Fabrico ∪ Lean BoK ∪ AssurX ∪ Greenlight Guru) × IA × Multi-secteur × IoT-natif × Standards Hub ÷ 5 (coût) ÷ 6 (time-to-value).**
-
-QualitOS n'est pas un QMS. C'est **le système d'exploitation universel de la qualité totale** : il agrège les méthodes (PDCA, 5S, Cercle, DMAIC, Ishikawa), les modules transverses (CAPA, NC, Audit, Document Control, Risk, Supplier, Training…), les normes (60+ référentiels avec dossier de certification clé en main), les capteurs (IoT multi-domaines), l'IA (prédictive et explicable), et la confiance (blockchain + post-quantique) dans une seule plateforme.
-
-Les choix techniques sont arrêtés. La roadmap est tranchée. Les invariants sont gravés. _Maintenant, on construit._
+> 📄 Synthèse stratégique et positionnement détaillés dans [`docs/VISION.md`](docs/VISION.md). En une phrase : QualitOS = un QMS **multi-méthodes** (PDCA, 5S, Cercle, DMAIC, Ishikawa) + modules transverses + **Standards Hub** (60+ normes) + **IoT multi-domaines** + **IA prédictive/explicable** + **blockchain/post-quantique**, multi-secteurs, à coût et time-to-value réduits. _Les choix techniques sont arrêtés. La roadmap est tranchée. Les invariants sont gravés. Maintenant, on construit._
 
 ---
 
