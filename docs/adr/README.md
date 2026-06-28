@@ -48,6 +48,8 @@ supersession).
 | [0041](./0041-marketplace-packs-normatifs.md) | Marketplace de packs normatifs (soumission partenaire → modération éditeur → publication → installation tenant, §8.11) | Accepté |
 | [0042](./0042-chaos-engineering.md) | Chaos Engineering (Chaos Mesh) — expériences PodChaos/NetworkChaos/StressChaos/IOChaos + runbook, CI manuelle (§14.3) | Accepté |
 | [0043](./0043-export-pdf-dashboard-signe.md) | Export PDF d'un dashboard, signé ML-DSA + ancré blockchain (QR de vérification, §7.3/§7.4) | Accepté |
+| [0044](./0044-compte-rendu-cercle-llm.md) | Génération de compte-rendu de réunion Cercle de Qualité par LLM (§3.3) | Accepté |
+| [0045](./0045-complaint-sentiment-camembert-fr.md) | Sentiment réclamations : DistilCamemBERT FR prouvé, modèle configurable (`COMPLAINT_BERT_MODEL`), golden test opt-in (§4.9/§12.1) | Accepté |
 
 ## Statuts possibles
 
