@@ -11402,6 +11402,14 @@ declared income
         <source>Erreur de chargement des inscriptions.</source>
         <target state="translated">Error loading enrollments.</target>
       </trans-unit>
+      <trans-unit id="training.enroll.start-error" datatype="html">
+        <source>Impossible de démarrer cette formation.</source>
+        <target state="translated">Cannot start this training.</target>
+      </trans-unit>
+      <trans-unit id="training.enroll.cancel-error" datatype="html">
+        <source>Impossible d'annuler cette inscription.</source>
+        <target state="translated">Cannot cancel this enrollment.</target>
+      </trans-unit>
       <trans-unit id="changes.approver.added" datatype="html">
         <source>Approbateur ajouté.</source>
         <target state="translated">Approver added.</target>
