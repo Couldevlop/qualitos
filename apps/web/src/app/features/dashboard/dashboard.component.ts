@@ -87,7 +87,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.filter$ = this.crossFilter.filter$;
 
     const trend$   = this.svc.getQualityTrend().pipe(shareReplay(1));
-    const defects$ = this.svc.getDefectsByCategory().pipe(shareReplay(1));
+    // catchError → []: défaut sûr partagé par les deux consommateurs (la
+    // souscription ci-dessous ET le pareto). Sans lui, un échec remontait en
+    // erreur non gérée et cassait le widget Pareto.
+    const defects$ = this.svc.getDefectsByCategory().pipe(
+      catchError(() => of([] as DefectByCategory[])),
+      shareReplay(1)
+    );
     const heat$    = this.svc.getComplianceHeatmap().pipe(shareReplay(1));
 
     defects$.pipe(takeUntil(this.destroy$)).subscribe(d => (this.defects = d));

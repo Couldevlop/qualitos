@@ -192,10 +192,18 @@ export class TrainingHomeComponent implements OnInit {
   openPath(p: PathResponse): void { this.router.navigate(['/training/paths', p.id]); }
 
   startEnrollment(e: EnrollmentResponse): void {
-    this.svc.startEnrollment(e.id).subscribe(() => this.refreshEnrolls$.next());
+    this.svc.startEnrollment(e.id).subscribe({
+      next: () => this.refreshEnrolls$.next(),
+      error: () => this.errorState$.next(
+        $localize`:@@training.enroll.start-error:Impossible de démarrer cette formation.`)
+    });
   }
   cancelEnrollment(e: EnrollmentResponse): void {
-    this.svc.cancelEnrollment(e.id).subscribe(() => this.refreshEnrolls$.next());
+    this.svc.cancelEnrollment(e.id).subscribe({
+      next: () => this.refreshEnrolls$.next(),
+      error: () => this.errorState$.next(
+        $localize`:@@training.enroll.cancel-error:Impossible d'annuler cette inscription.`)
+    });
   }
 
   pathName(pathId: string): string { return this.pathLookup[pathId]?.code ?? pathId.slice(0, 8); }

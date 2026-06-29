@@ -137,10 +137,12 @@ export class ForecastKpiComponent {
     // Prévision : raccordée au dernier point d'historique pour une ligne continue.
     const fc: (number | null)[] = Array(n - 1).fill(null);
     fc.push(this.history[n - 1]);
-    res.points.forEach(p => fc.push(p.value));
+    // Garde défensive : un contrat partiel (points absents) ne casse pas le rendu.
+    const points = res.points ?? [];
+    points.forEach(p => fc.push(p.value));
     const low: (number | null)[] = Array(n).fill(null);
     const high: (number | null)[] = Array(n).fill(null);
-    res.points.forEach(p => { low.push(p.low); high.push(p.high); });
+    points.forEach(p => { low.push(p.low); high.push(p.high); });
 
     return {
       tooltip: { trigger: 'axis' },
@@ -159,12 +161,12 @@ export class ForecastKpiComponent {
           areaStyle: { color: 'rgba(37, 99, 235, 0.12)' }, silent: true },
         { name: 'Prévision', type: 'line', data: fc, symbol: 'circle', symbolSize: 6,
           lineStyle: { width: 2, type: 'dashed', color: '#7C3AED' }, itemStyle: { color: '#7C3AED' },
-          markLine: {
+          ...(res.target != null ? { markLine: {
             symbol: 'none',
             data: [{ yAxis: res.target, name: 'Cible',
               lineStyle: { color: '#059669' },
               label: { formatter: `Cible ${res.target}`, color: '#059669', position: 'end' } }]
-          } }
+          } } : {}) }
       ]
     };
   }
