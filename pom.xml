@@ -54,6 +54,10 @@
              trop large dans les header mappers) corrigée en 3.3.16 (on reste sur la
              ligne 3.3.x, pas de bump majeur 4.0.x). À retirer quand Boot rattrape. -->
         <spring-kafka.version>3.3.16</spring-kafka.version>
+        <!-- Boot 3.5.14 gère jackson-bom 2.21.2 — CVE-2026-54512/54513 (HIGH,
+             contournement de sécurité dans le data-binding) corrigées en 2.21.4
+             (ligne 2.21.x, pas de bump majeur 3.x). À retirer quand Boot rattrape. -->
+        <jackson-bom.version>2.21.4</jackson-bom.version>
         <!-- Dependency versions -->
         <mapstruct.version>1.6.3</mapstruct.version>
         <jjwt.version>0.12.6</jjwt.version>
