@@ -4,7 +4,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { FormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, provideRouter } from '@angular/router';
-import { of } from 'rxjs';
+import { Subject, of } from 'rxjs';
 
 import { SharedModule } from '../../../../shared/shared.module';
 import { WorkflowDesignerService } from '../../workflow-designer.service';
@@ -84,6 +84,26 @@ describe('WorkflowEditorComponent (bpmn-js mocked)', () => {
     expect(FakeModeler.lastInstance).toBeTruthy();
     expect(FakeModeler.lastInstance?.imported).toContain('bpmn:definitions');
     flush(); // drain any leftover async timers
+  }));
+
+  it('reopen (edit mode, async load): initialise le modeler quand le canvas apparaît', fakeAsync(() => {
+    // Régression : à la réouverture, la définition arrive de façon ASYNCHRONE,
+    // donc loading repasse à false APRÈS ngAfterViewInit. Le canvas (gaté par
+    // *ngIf="!loading") n'est pas monté lors du 1er tryInit. Sans le setter
+    // ViewChild, le modeler ne s'initialisait jamais (ni canvas ni palette).
+    const def = definition('w9', 'DRAFT');
+    const { fixture, svc } = setup('w9', def);
+    const gate = new Subject<WorkflowDefinition>();
+    svc.get.and.returnValue(gate.asObservable());
+    fixture.detectChanges();            // ngOnInit (get en attente) + ngAfterViewInit ; canvas absent
+    expect(FakeModeler.lastInstance).toBeNull();
+    gate.next(def); gate.complete();    // la définition arrive → loading=false
+    fixture.detectChanges();            // le canvas *ngIf monte → setter ViewChild → tryInit
+    tick();                             // résout loadModelerCtor + importXML
+    fixture.detectChanges();
+    expect(FakeModeler.lastInstance).toBeTruthy();
+    expect(FakeModeler.lastInstance?.imported).toContain('loaded');
+    flush();
   }));
 
   it('edit mode: loads the definition from the service', () => {

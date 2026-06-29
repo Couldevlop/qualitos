@@ -46,7 +46,25 @@ export type BpmnModelerCtor = new (opts: { container: HTMLElement }) => BpmnMode
 })
 export class WorkflowEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @ViewChild('canvas', { static: false }) canvasRef?: ElementRef<HTMLElement>;
+  private canvasEl?: ElementRef<HTMLElement>;
+
+  /**
+   * Setter ViewChild : déclenche l'init dès que le {@code <div #canvas>} entre
+   * dans le DOM. INDISPENSABLE car le canvas est gaté par
+   * {@code *ngIf="!loading && !errorMessage"} : à la RÉOUVERTURE d'un workflow
+   * existant, {@code loading} passe à false dans le callback async de
+   * {@code svc.get()} — donc APRÈS {@code ngAfterViewInit}. Le canvas n'existe
+   * pas encore quand {@code ngAfterViewInit} appelle {@code tryInit()} ; sans ce
+   * setter, le modeler ne s'initialisait JAMAIS (ni canvas ni palette à la
+   * réouverture). Le setter rattrape l'apparition tardive du canvas.
+   */
+  @ViewChild('canvas')
+  set canvas(ref: ElementRef<HTMLElement> | undefined) {
+    this.canvasEl = ref;
+    if (ref) {
+      this.tryInit();
+    }
+  }
 
   id: string | null = null;
   isNew = false;
@@ -162,8 +180,8 @@ export class WorkflowEditorComponent implements OnInit, AfterViewInit, OnDestroy
 
   /** Initialise le modeler une fois le canvas dispo et le XML chargé. */
   private tryInit(): void {
-    if (this.modelerReady || this.loading || !this.canvasRef || !this.pendingXml) return;
-    void this.initModeler(this.canvasRef.nativeElement, this.pendingXml);
+    if (this.modelerReady || this.loading || !this.canvasEl || !this.pendingXml) return;
+    void this.initModeler(this.canvasEl.nativeElement, this.pendingXml);
   }
 
   private async initModeler(container: HTMLElement, xml: string): Promise<void> {
