@@ -3,6 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed } from '@angular/core/testing';
 
 import { DashboardHttpRepository } from './dashboard-http.repository';
+import { DashboardLayout } from '../domain/dashboard.model';
 import { environment } from '../../../../environments/environment';
 
 describe('DashboardHttpRepository', () => {
@@ -33,6 +34,36 @@ describe('DashboardHttpRepository', () => {
       layoutJson: JSON.stringify({ widgets: [{ id: 'w1', type: 'kpi', title: 'k', position: {x:0,y:0,cols:2,rows:2}, config: {} }, { id: 'w2', type: 'bar', title: 'b', position: {x:0,y:0,cols:2,rows:2}, config: {} }] }),
       shared: false, version: 1
     }]);
+  });
+
+  it('get normalizes widgets with a missing/partial position and drops invalid entries', () => {
+    // Garde-fou contre des layout_json legacy/corrompus (cf. ANO-013) : sans
+    // normalisation, un widget sans `position` faisait planter l'éditeur
+    // (TypeError: Cannot read properties of undefined (reading 'x')).
+    let loaded: DashboardLayout | undefined;
+    repo.get('legacy').subscribe(l => (loaded = l));
+    const req = http.expectOne(`${base}/legacy`);
+    expect(req.request.method).toBe('GET');
+    req.flush({
+      id: 'legacy', tenantId: 't', userId: 'u', name: 'L',
+      layoutJson: JSON.stringify({ widgets: [
+        { id: 'ok', type: 'kpi', title: 'k', position: { x: 1, y: 2, cols: 4, rows: 3 }, config: {} },
+        { id: 'noPos', type: 'bar', title: 'b', config: {} },
+        { id: 'partial', type: 'pie', title: 'p', position: { x: 5 }, config: {} },
+        null, 42, { foo: 'bar' }
+      ] }),
+      shared: false, version: 1
+    });
+    // Chaque widget rendu a une position numérique complète…
+    expect(loaded!.widgets.every(w =>
+      !!w.position &&
+      [w.position.x, w.position.y, w.position.cols, w.position.rows].every(n => typeof n === 'number')
+    )).toBeTrue();
+    // …les champs manquants prennent des défauts sûrs…
+    expect(loaded!.widgets.find(w => w.id === 'noPos')!.position).toEqual({ x: 0, y: 0, cols: 3, rows: 2 });
+    expect(loaded!.widgets.find(w => w.id === 'partial')!.position).toEqual({ x: 5, y: 0, cols: 3, rows: 2 });
+    // …et les entrées non conformes (sans id/type) sont écartées.
+    expect(loaded!.widgets.map(w => w.id).sort()).toEqual(['noPos', 'ok', 'partial']);
   });
 
   it('save POSTs SaveRequest body without tenantId', () => {

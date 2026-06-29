@@ -96,7 +96,17 @@ export class DashboardHttpRepository implements DashboardLayoutRepository {
     let widgets: Widget[] = [];
     try {
       const parsed = JSON.parse(p.layoutJson);
-      widgets = Array.isArray(parsed?.widgets) ? parsed.widgets : [];
+      const raw: unknown[] = Array.isArray(parsed?.widgets) ? parsed.widgets : [];
+      // Anti-corruption : un layout_json legacy/corrompu (cf. ANO-013) peut
+      // contenir un widget sans `position` → l'éditeur gridster plantait
+      // (Cannot read properties of undefined (reading 'x')). On normalise ici,
+      // à la frontière, et on écarte les entrées non conformes.
+      widgets = raw
+        .filter((w): w is Record<string, unknown> =>
+          !!w && typeof w === 'object' &&
+          typeof (w as Record<string, unknown>)['id'] === 'string' &&
+          typeof (w as Record<string, unknown>)['type'] === 'string')
+        .map(w => this.sanitizeWidget(w));
     } catch {
       widgets = [];
     }
@@ -110,6 +120,27 @@ export class DashboardHttpRepository implements DashboardLayoutRepository {
       shared: p.shared,
       signatureHash: p.signatureHash,
       version: p.version
+    };
+  }
+
+  /** Normalise un widget brut du JSON persisté vers le modèle domaine (positions sûres). */
+  private sanitizeWidget(w: Record<string, unknown>): Widget {
+    const pos = (w['position'] && typeof w['position'] === 'object'
+      ? w['position'] : {}) as Record<string, unknown>;
+    const num = (v: unknown, d: number): number =>
+      typeof v === 'number' && Number.isFinite(v) ? v : d;
+    return {
+      id: w['id'] as string,
+      type: w['type'] as Widget['type'],
+      title: typeof w['title'] === 'string' ? (w['title'] as string) : '',
+      position: {
+        x: num(pos['x'], 0),
+        y: num(pos['y'], 0),
+        cols: num(pos['cols'], 3),
+        rows: num(pos['rows'], 2)
+      },
+      config: (w['config'] && typeof w['config'] === 'object'
+        ? w['config'] : {}) as Widget['config']
     };
   }
 
