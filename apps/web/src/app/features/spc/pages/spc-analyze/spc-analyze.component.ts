@@ -159,7 +159,9 @@ export class SpcAnalyzeComponent implements OnInit {
   /** Indices (0-based) impliqués dans au moins une violation → points hors-contrôle. */
   private outOfControlIndices(res: SpcAnalyzeResponse): Set<number> {
     const s = new Set<number>();
-    res.violations.forEach(v => v.pointIndices.forEach(i => s.add(i)));
+    // Garde défensive : un contrat partiel (violations/limits absents) ne doit
+    // pas faire planter le rendu ECharts.
+    (res.violations ?? []).forEach(v => (v.pointIndices ?? []).forEach(i => s.add(i)));
     return s;
   }
 
@@ -172,6 +174,18 @@ export class SpcAnalyzeComponent implements OnInit {
       .map((v, i) => [i, v] as [number, number])
       .filter(([i]) => ooc.has(i));
     const L = res.limits;
+    // markLine seulement si les limites sont présentes (contrat complet).
+    const markLine = L ? {
+      symbol: 'none' as const,
+      data: [
+        { yAxis: L.ucl, name: 'UCL', lineStyle: { color: '#DC2626', type: 'dashed' as const },
+          label: { formatter: `UCL ${L.ucl.toFixed(2)}`, color: '#DC2626', position: 'end' as const } },
+        { yAxis: L.centerLine, name: 'CL', lineStyle: { color: '#059669' },
+          label: { formatter: `CL ${L.centerLine.toFixed(2)}`, color: '#059669', position: 'end' as const } },
+        { yAxis: L.lcl, name: 'LCL', lineStyle: { color: '#DC2626', type: 'dashed' as const },
+          label: { formatter: `LCL ${L.lcl.toFixed(2)}`, color: '#DC2626', position: 'end' as const } }
+      ]
+    } : undefined;
     return {
       tooltip: { trigger: 'axis' },
       legend: { data: ['Mesures', 'Hors-contrôle'], top: 0 },
@@ -186,17 +200,7 @@ export class SpcAnalyzeComponent implements OnInit {
           symbolSize: 6,
           data: values,
           lineStyle: { width: 2 },
-          markLine: {
-            symbol: 'none',
-            data: [
-              { yAxis: L.ucl, name: 'UCL', lineStyle: { color: '#DC2626', type: 'dashed' },
-                label: { formatter: `UCL ${L.ucl.toFixed(2)}`, color: '#DC2626', position: 'end' } },
-              { yAxis: L.centerLine, name: 'CL', lineStyle: { color: '#059669' },
-                label: { formatter: `CL ${L.centerLine.toFixed(2)}`, color: '#059669', position: 'end' } },
-              { yAxis: L.lcl, name: 'LCL', lineStyle: { color: '#DC2626', type: 'dashed' },
-                label: { formatter: `LCL ${L.lcl.toFixed(2)}`, color: '#DC2626', position: 'end' } }
-            ]
-          }
+          ...(markLine ? { markLine } : {})
         },
         {
           name: 'Hors-contrôle',

@@ -141,7 +141,7 @@ export class AnomalyDetectComponent {
 
   /** Échantillons marqués anormaux (pour la table), triés par score décroissant. */
   anomalies(res: AnomalyDetectResponse): AnomalyPoint[] {
-    return res.points.filter(p => p.isAnomaly).sort((a, b) => b.score - a.score);
+    return (res.points ?? []).filter(p => p.isAnomaly).sort((a, b) => b.score - a.score);
   }
 
   methodLabel(method: AnomalyMethod): string {
@@ -181,7 +181,7 @@ export class AnomalyDetectComponent {
     const pushColor = '#DC2626';   // pousse vers l'anormalité (contribution > 0)
     const pullColor = '#2563EB';   // pousse vers la normalité (contribution < 0)
     // Trié par contribution croissante pour un affichage barres horizontales lisible.
-    const sorted = [...res.contributions].sort((a, b) => a.contribution - b.contribution);
+    const sorted = [...(res.contributions ?? [])].sort((a, b) => a.contribution - b.contribution);
     return {
       tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
       grid: { left: 90, right: 24, top: 16, bottom: 28 },
@@ -204,11 +204,12 @@ export class AnomalyDetectComponent {
   private buildChart(res: AnomalyDetectResponse): EChartsCoreOption {
     const normalColor = '#2563EB';
     const anomalyColor = '#DC2626';
-    const data = res.points.map(p => ({
+    const points = res.points ?? [];
+    const data = points.map(p => ({
       value: p.score,
       itemStyle: { color: p.isAnomaly ? anomalyColor : normalColor }
     }));
-    const categories = res.points.map(p => `${p.index + 1}`);
+    const categories = points.map(p => `${p.index + 1}`);
     return {
       tooltip: { trigger: 'axis' },
       grid: { left: 48, right: 24, top: 28, bottom: 40 },
@@ -229,20 +230,21 @@ export class AnomalyDetectComponent {
           type: 'bar',
           data,
           barMaxWidth: 26,
-          markLine: {
-            symbol: 'none',
+          // markLine du seuil seulement si présent (contrat complet).
+          ...(res.threshold != null ? { markLine: {
+            symbol: 'none' as const,
             data: [
               {
                 yAxis: res.threshold,
-                lineStyle: { color: anomalyColor, type: 'dashed' },
+                lineStyle: { color: anomalyColor, type: 'dashed' as const },
                 label: {
                   formatter: $localize`:@@anomaly.detect.threshold-mark:Seuil` + ` ${res.threshold.toFixed(3)}`,
                   color: anomalyColor,
-                  position: 'end'
+                  position: 'end' as const
                 }
               }
             ]
-          }
+          } } : {})
         }
       ]
     };

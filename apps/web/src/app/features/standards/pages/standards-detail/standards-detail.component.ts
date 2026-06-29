@@ -81,10 +81,25 @@ export class StandardsDetailComponent implements OnInit {
     this.svc.getAdoption(this.adoptionId).subscribe({
       next: a => {
         this.adoption = a;
-        this.svc.getStandardDetail(a.standardId).subscribe(s => this.standard = s);
-        this.svc.listDocumentTemplates(a.standardId).subscribe(d => this.docTemplates = d);
-        this.svc.listProcessTemplates(a.standardId).subscribe(p => this.processTemplates = p);
-        this.svc.listRevisions(a.standardId).subscribe(r => this.revisions = r);
+        // Chaque sous-chargement porte son propre `error` arm : sans lui, un échec
+        // (notamment un 504 sur les rapports adossés à l'IA) remontait en erreur
+        // non gérée (console) et figeait la section. On dégrade en silence (warn).
+        this.svc.getStandardDetail(a.standardId).subscribe({
+          next: s => this.standard = s,
+          error: e => console.warn('[standards-detail] getStandardDetail failed', e?.status)
+        });
+        this.svc.listDocumentTemplates(a.standardId).subscribe({
+          next: d => this.docTemplates = d,
+          error: e => console.warn('[standards-detail] listDocumentTemplates failed', e?.status)
+        });
+        this.svc.listProcessTemplates(a.standardId).subscribe({
+          next: p => this.processTemplates = p,
+          error: e => console.warn('[standards-detail] listProcessTemplates failed', e?.status)
+        });
+        this.svc.listRevisions(a.standardId).subscribe({
+          next: r => this.revisions = r,
+          error: e => console.warn('[standards-detail] listRevisions failed', e?.status)
+        });
         this.loadReports();
         this.loading = false;
       },
@@ -93,10 +108,25 @@ export class StandardsDetailComponent implements OnInit {
   }
 
   private loadReports(): void {
-    this.svc.getAlignment(this.adoptionId).subscribe(r => this.alignment = r);
-    this.svc.getRoadmap(this.adoptionId).subscribe(r => this.roadmap = r);
-    this.svc.getAuditBlanc(this.adoptionId).subscribe(r => this.audit = r);
-    this.svc.listEvidence(this.adoptionId).subscribe(r => this.evidence = r);
+    // getAlignment/getAuditBlanc sont adossés à l'IA (Ollama) → potentiellement
+    // lents/504 à froid : chaque subscribe a un `error` arm pour ne jamais laisser
+    // remonter une erreur non gérée (cf. recette : 504 → erreur console).
+    this.svc.getAlignment(this.adoptionId).subscribe({
+      next: r => this.alignment = r,
+      error: e => console.warn('[standards-detail] getAlignment failed', e?.status)
+    });
+    this.svc.getRoadmap(this.adoptionId).subscribe({
+      next: r => this.roadmap = r,
+      error: e => console.warn('[standards-detail] getRoadmap failed', e?.status)
+    });
+    this.svc.getAuditBlanc(this.adoptionId).subscribe({
+      next: r => this.audit = r,
+      error: e => console.warn('[standards-detail] getAuditBlanc failed', e?.status)
+    });
+    this.svc.listEvidence(this.adoptionId).subscribe({
+      next: r => this.evidence = r,
+      error: e => console.warn('[standards-detail] listEvidence failed', e?.status)
+    });
   }
 
   /** Ensemble des IDs d'exigences couvertes par au moins une preuve (vue Exigences). */
@@ -111,7 +141,10 @@ export class StandardsDetailComponent implements OnInit {
     this.svc.updateStage(this.adoptionId, stage.id, { status }).subscribe({
       next: () => {
         this.snack.open($localize`:@@standards.detail.stage-updated:Étape ${stage.stepNumber}:step: → ${status}:status:`, $localize`:@@common.ok:OK`, { duration: 2000 });
-        this.svc.getRoadmap(this.adoptionId).subscribe(r => this.roadmap = r);
+        this.svc.getRoadmap(this.adoptionId).subscribe({
+          next: r => this.roadmap = r,
+          error: e => console.warn('[standards-detail] getRoadmap reload failed', e?.status)
+        });
       },
       error: () => this.snack.open($localize`:@@standards.detail.stage-update-error:Échec de la mise à jour`, $localize`:@@common.close:Fermer`, { duration: 3000 })
     });
