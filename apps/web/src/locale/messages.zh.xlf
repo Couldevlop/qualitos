@@ -11402,6 +11402,14 @@ historique 12 mois</source>
         <source>Erreur de chargement des inscriptions.</source>
         <target state="translated">加载报名出错。</target>
       </trans-unit>
+      <trans-unit id="training.enroll.start-error" datatype="html">
+        <source>Impossible de démarrer cette formation.</source>
+        <target state="translated">无法开始此培训。</target>
+      </trans-unit>
+      <trans-unit id="training.enroll.cancel-error" datatype="html">
+        <source>Impossible d'annuler cette inscription.</source>
+        <target state="translated">无法取消此报名。</target>
+      </trans-unit>
       <trans-unit id="changes.approver.added" datatype="html">
         <source>Approbateur ajouté.</source>
         <target state="translated">已添加审批人。</target>

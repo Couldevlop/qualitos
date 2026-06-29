@@ -304,4 +304,6 @@ TRANSLATIONS = {
     'training.home.paths-error': ('Erreur de chargement des parcours.', 'Error loading paths.', 'Error al cargar los itinerarios.', 'خطأ أثناء تحميل المسارات.', 'コースの読み込みエラー。', '加载学习路径出错。'),
     'training.home.skills-error': ('Erreur de chargement des compétences.', 'Error loading skills.', 'Error al cargar las competencias.', 'خطأ أثناء تحميل الكفاءات.', 'スキルの読み込みエラー。', '加载能力出错。'),
     'training.home.enrollments-error': ('Erreur de chargement des inscriptions.', 'Error loading enrollments.', 'Error al cargar las inscripciones.', 'خطأ أثناء تحميل التسجيلات.', '登録の読み込みエラー。', '加载报名出错。'),
+    'training.enroll.start-error': ('Impossible de démarrer cette formation.', 'Cannot start this training.', 'No se puede iniciar esta formación.', 'تعذّر بدء هذا التدريب.', 'この研修を開始できません。', '无法开始此培训。'),
+    'training.enroll.cancel-error': ("Impossible d'annuler cette inscription.", 'Cannot cancel this enrollment.', 'No se puede cancelar esta inscripción.', 'تعذّر إلغاء هذا التسجيل.', 'この登録を取り消せません。', '无法取消此报名。'),
 }

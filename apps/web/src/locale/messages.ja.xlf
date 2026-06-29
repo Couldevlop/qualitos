@@ -11401,6 +11401,14 @@ historique 12 mois</source>
         <source>Erreur de chargement des inscriptions.</source>
         <target state="translated">登録の読み込みエラー。</target>
       </trans-unit>
+      <trans-unit id="training.enroll.start-error" datatype="html">
+        <source>Impossible de démarrer cette formation.</source>
+        <target state="translated">この研修を開始できません。</target>
+      </trans-unit>
+      <trans-unit id="training.enroll.cancel-error" datatype="html">
+        <source>Impossible d'annuler cette inscription.</source>
+        <target state="translated">この登録を取り消せません。</target>
+      </trans-unit>
       <trans-unit id="changes.approver.added" datatype="html">
         <source>Approbateur ajouté.</source>
         <target state="translated">承認者を追加しました。</target>

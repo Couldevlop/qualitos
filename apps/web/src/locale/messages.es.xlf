@@ -11402,6 +11402,14 @@ historial de 12 meses</target>
         <source>Erreur de chargement des inscriptions.</source>
         <target state="translated">Error al cargar las inscripciones.</target>
       </trans-unit>
+      <trans-unit id="training.enroll.start-error" datatype="html">
+        <source>Impossible de démarrer cette formation.</source>
+        <target state="translated">No se puede iniciar esta formación.</target>
+      </trans-unit>
+      <trans-unit id="training.enroll.cancel-error" datatype="html">
+        <source>Impossible d'annuler cette inscription.</source>
+        <target state="translated">No se puede cancelar esta inscripción.</target>
+      </trans-unit>
       <trans-unit id="changes.approver.added" datatype="html">
         <source>Approbateur ajouté.</source>
         <target state="translated">Aprobador añadido.</target>
