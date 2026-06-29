@@ -29,6 +29,7 @@ RUN python -m pip install --no-cache-dir --upgrade pip \
  && python -m pip install --no-cache-dir --target=/deps \
     "fastapi>=0.115" \
     "uvicorn[standard]>=0.32" \
+    "python-multipart>=0.0.12" \
     "pydantic>=2.9" \
     "httpx>=0.27" \
     "sqlglot>=25.5" \
