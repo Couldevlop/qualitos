@@ -104,6 +104,13 @@ export interface GenerateMinutesRequest {
   transcript: string;
 }
 
+/** Transcription d'un enregistrement de réunion (§3.3, Whisper via la passerelle IA). */
+export interface MeetingTranscript {
+  text: string;
+  language: string | null;
+  durationMs: number;
+}
+
 export interface CircleProposalResponse {
   id: string;
   circleId?: string;

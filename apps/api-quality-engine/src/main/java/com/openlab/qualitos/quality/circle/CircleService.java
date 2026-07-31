@@ -3,6 +3,7 @@ package com.openlab.qualitos.quality.circle;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
 import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
+import com.openlab.qualitos.quality.aigateway.AiTranscriptionResult;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.slf4j.Logger;
@@ -11,6 +12,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -326,6 +330,49 @@ public class CircleService {
                     "Implemented or measured proposals cannot be deleted (audit trail)");
         }
         proposalRepository.delete(p);
+    }
+
+    // ===== Transcription audio (§3.3) =====
+
+    /**
+     * Plafond de taille de l'enregistrement accepté (anti-DoS, OWASP LLM04). Aligné sur
+     * la limite d'ai-service : refuser ici évite de transporter inutilement le fichier.
+     */
+    static final long MAX_AUDIO_BYTES = 25L * 1024 * 1024;
+
+    /**
+     * Transcrit l'enregistrement d'une réunion via la passerelle IA (Whisper).
+     *
+     * <p>La capacité existait côté {@code ai-service} mais n'était appelée par personne :
+     * l'animateur devait coller le transcript à la main, alors que §3.3 promet des
+     * comptes-rendus auto-générés. Le texte produit n'est pas persisté ici — il est
+     * renvoyé pour relecture, puis soumis à {@link #generateMinutes} si l'animateur le
+     * valide (l'IA propose, l'humain décide).
+     *
+     * @throws CircleStateException fichier absent, vide ou trop volumineux
+     */
+    public CircleDto.MeetingTranscript transcribeMeeting(UUID circleId, UUID meetingId,
+                                                         MultipartFile file, String language) {
+        loadCircle(circleId);
+        loadMeeting(circleId, meetingId);
+
+        if (file == null || file.isEmpty()) {
+            throw new CircleStateException("Aucun fichier audio fourni");
+        }
+        if (file.getSize() > MAX_AUDIO_BYTES) {
+            throw new CircleStateException(
+                    "Fichier audio trop volumineux (max " + (MAX_AUDIO_BYTES / (1024 * 1024)) + " Mo)");
+        }
+
+        byte[] audio;
+        try {
+            audio = file.getBytes();
+        } catch (IOException e) {
+            throw new CircleStateException("Lecture du fichier audio impossible");
+        }
+
+        AiTranscriptionResult result = ai.transcribe(file.getOriginalFilename(), audio, language);
+        return new CircleDto.MeetingTranscript(result.text(), result.language(), result.durationMs());
     }
 
     // ===== Minutes LLM (ANO-010) =====

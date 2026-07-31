@@ -9346,6 +9346,26 @@ historique 12 mois</source>
         <source>Collez le texte de la réunion. L'IA générera un résumé, les décisions et les actions.</source>
         <target state="translated">الصق نص الاجتماع. سيولّد الذكاء الاصطناعي ملخصاً وقرارات وإجراءات.</target>
       </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-action" datatype="html">
+        <source>Importer un enregistrement</source>
+        <target state="translated">استيراد تسجيل</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-aria" datatype="html">
+        <source>Importer un enregistrement audio de la réunion</source>
+        <target state="translated">استيراد تسجيل صوتي للاجتماع</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-hint" datatype="html">
+        <source>L'audio est transcrit puis relu par vos soins avant génération.</source>
+        <target state="translated">يُفرَّغ الصوت نصيًا ثم تراجعه بنفسك قبل التوليد.</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribing" datatype="html">
+        <source>Transcription en cours…</source>
+        <target state="translated">جارٍ التفريغ النصي…</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-error" datatype="html">
+        <source>Transcription audio indisponible.</source>
+        <target state="translated">التفريغ النصي للصوت غير متاح.</target>
+      </trans-unit>
       <trans-unit id="circles.minutes.generating" datatype="html">
         <source>Génération en cours…</source>
         <target state="translated">جارٍ التوليد…</target>

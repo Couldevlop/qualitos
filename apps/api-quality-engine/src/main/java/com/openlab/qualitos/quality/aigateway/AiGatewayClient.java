@@ -6,9 +6,12 @@ import com.openlab.qualitos.quality.ai.guard.AiGuard;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
@@ -451,6 +454,69 @@ public class AiGatewayClient {
         } catch (RestClientException e) {
             guard.recordFailure(ctx.tenantId());
             throw new AiGatewayException("Passerelle IA indisponible (mock-audit) : " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Transcrit un fichier audio en texte via {@code POST /v1/ai/transcribe} (Whisper,
+     * champ multipart {@code file}).
+     *
+     * <p>Cas d'usage : compte-rendu de Cercle de Qualité (§3.3). Jusqu'ici l'animateur
+     * devait coller le texte de la réunion à la main — la capacité existait côté
+     * ai-service mais n'était appelée par personne.
+     *
+     * <p>Le backend Whisper est opt-in côté ai-service : s'il n'est pas installé, la
+     * passerelle répond 501 et l'appel remonte en {@link AiGatewayException} plutôt que
+     * de fabriquer un faux texte.
+     *
+     * @param filename nom d'origine, utile au serveur pour déduire le format
+     * @param language code langue optionnel (« fr », « en »…) ; {@code null} = détection
+     */
+    @SuppressWarnings("unchecked")
+    public AiTranscriptionResult transcribe(String filename, byte[] audio, String language) {
+        if (!TenantContext.hasTenant()) {
+            throw new MissingTenantContextException();
+        }
+        if (audio == null || audio.length == 0) {
+            throw new AiGatewayException("Fichier audio vide");
+        }
+        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        // La taille de l'audio sert de coût pour le quota (garde-fou LLM04) : une heure
+        // d'enregistrement ne doit pas passer pour un appel aussi léger qu'un prompt.
+        AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "transcribe", audio.length);
+        guard.check(ctx);
+
+        ByteArrayResource resource = new ByteArrayResource(audio) {
+            @Override
+            public String getFilename() {
+                return filename == null || filename.isBlank() ? "audio" : filename;
+            }
+        };
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("file", resource);
+
+        String uri = (language == null || language.isBlank())
+                ? "/v1/ai/transcribe"
+                : "/v1/ai/transcribe?language=" + language;
+        try {
+            Map<String, Object> resp = client.post()
+                    .uri(uri)
+                    .header("X-Dev-Claims", devClaims)
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .body(body)
+                    .retrieve()
+                    .body(Map.class);
+            if (resp == null || resp.get("text") == null) {
+                throw new AiGatewayException("Réponse vide de la passerelle IA (transcribe)");
+            }
+            guard.recordSuccess(ctx.tenantId());
+            return new AiTranscriptionResult(
+                    String.valueOf(resp.get("text")),
+                    resp.get("language") == null ? null : String.valueOf(resp.get("language")),
+                    intValue(resp.get("duration_ms")));
+        } catch (RestClientException e) {
+            guard.recordFailure(ctx.tenantId());
+            throw new AiGatewayException("Passerelle IA indisponible (transcribe) : " + e.getMessage(), e);
         }
     }
 

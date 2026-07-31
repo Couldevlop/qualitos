@@ -9346,6 +9346,26 @@ historique 12 mois</source>
         <source>Collez le texte de la réunion. L'IA générera un résumé, les décisions et les actions.</source>
         <target state="translated">粘贴会议文本，AI将生成摘要、决策和行动项。</target>
       </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-action" datatype="html">
+        <source>Importer un enregistrement</source>
+        <target state="translated">导入录音</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-aria" datatype="html">
+        <source>Importer un enregistrement audio de la réunion</source>
+        <target state="translated">导入会议录音</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-hint" datatype="html">
+        <source>L'audio est transcrit puis relu par vos soins avant génération.</source>
+        <target state="translated">音频将被转写，由您审阅后再生成。</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribing" datatype="html">
+        <source>Transcription en cours…</source>
+        <target state="translated">正在转写…</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-error" datatype="html">
+        <source>Transcription audio indisponible.</source>
+        <target state="translated">音频转写不可用。</target>
+      </trans-unit>
       <trans-unit id="circles.minutes.generating" datatype="html">
         <source>Génération en cours…</source>
         <target state="translated">生成中…</target>

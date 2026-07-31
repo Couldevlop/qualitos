@@ -9346,6 +9346,26 @@ declared income
         <source>Collez le texte de la réunion. L'IA générera un résumé, les décisions et les actions.</source>
         <target state="translated">Paste the meeting text. AI will generate a summary, decisions and actions.</target>
       </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-action" datatype="html">
+        <source>Importer un enregistrement</source>
+        <target state="translated">Import a recording</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-aria" datatype="html">
+        <source>Importer un enregistrement audio de la réunion</source>
+        <target state="translated">Import an audio recording of the meeting</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-hint" datatype="html">
+        <source>L'audio est transcrit puis relu par vos soins avant génération.</source>
+        <target state="translated">The audio is transcribed, then reviewed by you before generation.</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribing" datatype="html">
+        <source>Transcription en cours…</source>
+        <target state="translated">Transcribing…</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-error" datatype="html">
+        <source>Transcription audio indisponible.</source>
+        <target state="translated">Audio transcription unavailable.</target>
+      </trans-unit>
       <trans-unit id="circles.minutes.generating" datatype="html">
         <source>Génération en cours…</source>
         <target state="translated">Generating…</target>

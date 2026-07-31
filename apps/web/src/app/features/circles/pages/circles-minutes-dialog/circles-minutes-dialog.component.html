@@ -5,6 +5,26 @@
     <strong i18n="@@circles.minutes.meeting-label">Réunion :</strong> {{ data.meetingTitle }}
   </p>
 
+  <!-- §3.3 : la transcription automatique évite la saisie manuelle du transcript. -->
+  <div class="audio-row">
+    <button mat-stroked-button type="button"
+            [disabled]="(transcribing$ | async) || (generating$ | async)"
+            (click)="audioInput.click()">
+      <mat-icon>mic</mat-icon>
+      <span i18n="@@circles.minutes.transcribe-action">Importer un enregistrement</span>
+    </button>
+    <input #audioInput type="file" hidden accept="audio/*"
+           (change)="onAudioSelected($event)"
+           i18n-aria-label="@@circles.minutes.transcribe-aria"
+           aria-label="Importer un enregistrement audio de la réunion">
+    <span class="audio-hint" i18n="@@circles.minutes.transcribe-hint">L'audio est transcrit puis relu par vos soins avant génération.</span>
+  </div>
+
+  <div class="generating-row" *ngIf="transcribing$ | async">
+    <mat-progress-spinner mode="indeterminate" diameter="24"></mat-progress-spinner>
+    <span i18n="@@circles.minutes.transcribing">Transcription en cours…</span>
+  </div>
+
   <mat-form-field appearance="outline" class="full-width">
     <mat-label i18n="@@circles.minutes.transcript-label">Transcript de la réunion</mat-label>
     <textarea matInput

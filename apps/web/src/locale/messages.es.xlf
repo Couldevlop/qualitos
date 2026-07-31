@@ -9346,6 +9346,26 @@ historial de 12 meses</target>
         <source>Collez le texte de la réunion. L'IA générera un résumé, les décisions et les actions.</source>
         <target state="translated">Pegue el texto de la reunión. La IA generará un resumen, decisiones y acciones.</target>
       </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-action" datatype="html">
+        <source>Importer un enregistrement</source>
+        <target state="translated">Importar una grabación</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-aria" datatype="html">
+        <source>Importer un enregistrement audio de la réunion</source>
+        <target state="translated">Importar una grabación de audio de la reunión</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-hint" datatype="html">
+        <source>L'audio est transcrit puis relu par vos soins avant génération.</source>
+        <target state="translated">El audio se transcribe y usted lo revisa antes de generar.</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribing" datatype="html">
+        <source>Transcription en cours…</source>
+        <target state="translated">Transcribiendo…</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-error" datatype="html">
+        <source>Transcription audio indisponible.</source>
+        <target state="translated">Transcripción de audio no disponible.</target>
+      </trans-unit>
       <trans-unit id="circles.minutes.generating" datatype="html">
         <source>Génération en cours…</source>
         <target state="translated">Generando…</target>

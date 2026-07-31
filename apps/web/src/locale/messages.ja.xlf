@@ -9345,6 +9345,26 @@ historique 12 mois</source>
         <source>Collez le texte de la réunion. L'IA générera un résumé, les décisions et les actions.</source>
         <target state="translated">会議テキストを貼り付けてください。AIが要約、決定事項、アクションを生成します。</target>
       </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-action" datatype="html">
+        <source>Importer un enregistrement</source>
+        <target state="translated">録音を取り込む</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-aria" datatype="html">
+        <source>Importer un enregistrement audio de la réunion</source>
+        <target state="translated">会議の録音音声を取り込む</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-hint" datatype="html">
+        <source>L'audio est transcrit puis relu par vos soins avant génération.</source>
+        <target state="translated">音声を文字起こしし、生成前にご自身で確認します。</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribing" datatype="html">
+        <source>Transcription en cours…</source>
+        <target state="translated">文字起こし中…</target>
+      </trans-unit>
+      <trans-unit id="circles.minutes.transcribe-error" datatype="html">
+        <source>Transcription audio indisponible.</source>
+        <target state="translated">音声の文字起こしを利用できません。</target>
+      </trans-unit>
       <trans-unit id="circles.minutes.generating" datatype="html">
         <source>Génération en cours…</source>
         <target state="translated">生成中…</target>

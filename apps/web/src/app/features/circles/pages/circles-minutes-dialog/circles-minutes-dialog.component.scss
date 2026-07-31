@@ -41,3 +41,18 @@ h3 {
   color: var(--qos-text-secondary);
   margin: 12px 0 6px;
 }
+
+/* Import d'un enregistrement audio (§3.3) : action secondaire, posée au-dessus du
+   champ transcript qu'elle pré-remplit. */
+.audio-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.audio-hint {
+  color: var(--qos-text-secondary);
+  font-size: 0.8125rem;
+}
