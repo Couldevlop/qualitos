@@ -29,6 +29,32 @@
   background: var(--qos-bg-app);
 }
 
+.qos-shell__footer {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--qos-space-2);
+  padding: var(--qos-space-3) var(--qos-space-5);
+  background: var(--qos-bg-app);
+  border-top: 1px solid var(--qos-border-subtle, var(--qos-border-sidebar));
+  font-size: var(--qos-fs-xs, 0.75rem);
+  color: var(--qos-fg-muted, #64748b);
+
+  &-copy { font-weight: var(--qos-fw-medium, 500); }
+
+  &-sep { opacity: 0.5; }
+
+  &-link {
+    color: var(--qos-accent-bg, #2563eb);
+    text-decoration: none;
+    font-weight: var(--qos-fw-medium, 500);
+
+    &:hover,
+    &:focus-visible { text-decoration: underline; }
+  }
+}
+
 /* ============================================================
  * Sidebar.
  * ============================================================ */

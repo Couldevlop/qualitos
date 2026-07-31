@@ -30,6 +30,9 @@ export class MainShellComponent implements OnInit {
   user$!: Observable<AuthUser | null>;
   collapsed = false;
 
+  /** Année courante pour la signature de pied de page (éditeur de la plateforme). */
+  readonly currentYear = new Date().getFullYear();
+
   /** Libellés a11y du bouton repli (binding dynamique → $localize côté TS). */
   readonly expandNavLabel = $localize`:@@shell.expand-nav.aria:Déplier la navigation`;
   readonly collapseNavLabel = $localize`:@@shell.collapse-nav.aria:Replier la navigation`;
