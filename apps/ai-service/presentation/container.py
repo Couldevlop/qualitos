@@ -85,7 +85,7 @@ class Container:
             # Modèle Anthropic configurable par env (symétrie avec Ollama/Mistral) ;
             # la clé ANTHROPIC_API_KEY est lue par le provider lui-même (§18.2 #3).
             ProviderName.ANTHROPIC: AnthropicProvider(
-                model=os.environ.get("ANTHROPIC_MODEL", "claude-opus-4-7"),
+                model=os.environ.get("ANTHROPIC_MODEL", "claude-opus-5"),
             ),
             # Modèle Mistral configurable par env (défaut mistral-large-latest) ; la clé
             # MISTRAL_API_KEY est lue par le provider lui-même (jamais committée, §18.2 #3).

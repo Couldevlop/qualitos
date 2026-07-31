@@ -37,7 +37,19 @@ RUN apk upgrade --no-cache
 
 # Copie les 6 sous-dossiers de locale (fr/ en/ es/ ar/ ja/ zh/).
 COPY --from=build /workspace/dist/qualitos-web/browser /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# La conf nginx est un TEMPLATE : l'entrypoint officiel de l'image nginx applique
+# envsubst sur /etc/nginx/templates/*.template au démarrage et écrit le résultat
+# dans /etc/nginx/conf.d/. `NGINX_ENVSUBST_FILTER` restreint la substitution aux
+# variables préfixées QOS_ — sans ce filtre, envsubst dévorerait aussi les
+# variables nginx du fichier ($http_accept_language, $qos_locale, $is_args$args…).
+COPY nginx.conf /etc/nginx/templates/default.conf.template
+ENV NGINX_ENVSUBST_FILTER="^QOS_"
+
+# Origines autorisées par la CSP (connect-src). Valeur par défaut = stack locale
+# docker-compose. En production, surcharger cette variable d'environnement avec les
+# URLs publiques (API + Keycloak) — aucun rebuild d'image nécessaire.
+ENV QOS_CONNECT_SRC="'self' http://localhost:8080 http://localhost:8181 http://localhost:8082"
 
 EXPOSE 80
 # La racine `/` répond désormais 302 vers /<locale>/ (négociation Accept-Language).
