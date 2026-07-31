@@ -79,6 +79,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // Les données du dashboard viennent d'une agrégation serveur mise en cache par le
+    // service ; sans ce rappel, un retour sur la page réafficherait l'instantané de la
+    // visite précédente. L'appel précède les abonnements : une seule requête part.
+    this.svc.refresh();
+
     this.kpis$        = this.svc.getExecutiveKpis().pipe(shareReplay(1));
     this.alignments$  = this.svc.getAlignmentBars().pipe(shareReplay(1));
     this.topRisks$    = this.svc.getTopRisks().pipe(shareReplay(1));

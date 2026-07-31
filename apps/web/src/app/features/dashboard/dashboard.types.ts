@@ -1,5 +1,68 @@
 export type KpiState = 'good' | 'warn' | 'bad' | 'neutral';
 
+// ---------------------------------------------------------------------------
+// Contrat de `GET /api/v1/dashboards/executive` (agrégat serveur, §7.1).
+// Les types ci-dessous décrivent la charge utile brute ; le service les projette
+// ensuite sur les modèles de vue (KpiCard, TopRisk…) consommés par la page.
+// ---------------------------------------------------------------------------
+
+export type KpiHealth = 'OK' | 'WARNING' | 'CRITICAL' | 'UNKNOWN';
+export type KpiDirection = 'HIGHER_IS_BETTER' | 'LOWER_IS_BETTER';
+
+export interface ExecutiveKpiCardResponse {
+  kpiId: string;
+  code: string;
+  name: string;
+  description: string | null;
+  category: string | null;
+  unit: string | null;
+  direction: KpiDirection;
+  value: number | null;
+  targetValue: number | null;
+  trendDelta: number | null;
+  health: KpiHealth;
+  latestPeriodStart: string | null;
+  latestPeriodEnd: string | null;
+}
+
+export interface TrendPointResponse {
+  periodStart: string | null;
+  value: number | null;
+  targetValue: number | null;
+  health: KpiHealth;
+}
+
+export interface DefectByCategoryResponse { category: string; count: number; }
+
+export interface TopRiskResponse {
+  id: string;
+  title: string;
+  source: string;
+  severity: string;
+  rpn: number | null;
+  dueDate: string | null;
+}
+
+export interface SectionScoreResponse { sectionCode: string; score: number; }
+
+export interface AlignmentBarResponse {
+  adoptionId: string;
+  standardCode: string;
+  standardName: string;
+  score: number;
+  status: string;
+  sections: SectionScoreResponse[];
+}
+
+export interface ExecutiveDashboardResponse {
+  kpis: ExecutiveKpiCardResponse[];
+  qualityTrend: TrendPointResponse[];
+  defectsByCategory: DefectByCategoryResponse[];
+  topRisks: TopRiskResponse[];
+  alignment: AlignmentBarResponse[];
+  generatedAt: string;
+}
+
 export interface KpiCard {
   id: string;
   label: string;

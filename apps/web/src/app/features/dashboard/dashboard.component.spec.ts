@@ -1,4 +1,8 @@
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+
+import { environment } from '../../../environments/environment';
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 
@@ -20,6 +24,10 @@ describe('DashboardComponent', () => {
     TestBed.configureTestingModule({
       declarations: [DashboardComponent],
       providers: [
+        // DashboardService interroge désormais l'agrégat exécutif du serveur
+        // (`/api/v1/dashboards/executive`) au lieu de renvoyer des constantes.
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
         DashboardService,
         CrossFilterService,
         { provide: TimeTravelService, useValue: timeTravel }
@@ -37,6 +45,14 @@ describe('DashboardComponent', () => {
       expect(Array.isArray(kpis)).toBeTrue();
       done();
     });
+    // Le dashboard s'alimente désormais d'une agrégation serveur : sans réponse
+    // servie, aucune valeur n'est émise (c'est le comportement attendu).
+    TestBed.inject(HttpTestingController)
+      .expectOne(`${environment.apiBaseUrl}/api/v1/dashboards/executive`)
+      .flush({
+        kpis: [], qualityTrend: [], defectsByCategory: [], topRisks: [],
+        alignment: [], generatedAt: '2026-05-15T00:00:00Z'
+      });
   });
 
   it('maps alignment scores to a tone', () => {
