@@ -1,0 +1,199 @@
+/* Connecteurs tiers (§13.3) — un écran, trois familles.
+   Les trois onglets partagent strictement la même grammaire visuelle (intro +
+   action primaire, compte rendu, tuiles, tableau, état vide) : c'est ce qui rend
+   la bascule d'un onglet à l'autre gratuite pour l'œil.
+   Tokens réellement déclarés dans styles/_tokens.scss (--qos-fg-*, --qos-bg-*,
+   --qos-*-bg-soft) pour rester juste en thème sombre comme en thème clair. */
+
+.connectors { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+
+.head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.head__text { min-width: 0; }
+.head h1 { margin: 0 0 4px; font-size: 22px; }
+.head p  { margin: 0; color: var(--qos-fg-secondary); font-size: 13px; max-width: 76ch; }
+
+/* Compteur porté par l'étiquette d'onglet : dit où regarder avant même d'ouvrir. */
+.connectors__tabs ::ng-deep .mat-mdc-tab .mdc-tab__content { gap: 8px; }
+
+.tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: var(--qos-radius-pill);
+  background: var(--qos-bg-sunken);
+  border: 1px solid var(--qos-border-subtle);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.tab-body { padding: 20px 0 4px; display: flex; flex-direction: column; gap: 16px; }
+
+.tab-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.tab-head__intro {
+  margin: 0;
+  color: var(--qos-fg-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 72ch;
+}
+
+/* Compte rendu de la dernière action : reste visible tant qu'on ne l'écarte pas,
+   parce qu'une synchronisation se lit après coup, pas pendant. */
+.outcome {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 8px 12px 16px;
+  border-radius: var(--qos-radius-md);
+  border-left: 3px solid var(--qos-border-default);
+  background: var(--qos-bg-sunken);
+}
+
+.outcome[data-tone='success'] { border-left-color: var(--qos-success-fg); background: var(--qos-success-bg-soft); }
+.outcome[data-tone='warn']    { border-left-color: var(--qos-warn-fg);    background: var(--qos-warn-bg-soft); }
+.outcome[data-tone='danger']  { border-left-color: var(--qos-danger-fg);  background: var(--qos-danger-bg-soft); }
+
+.outcome__text {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  font-size: 13px;
+  min-width: 0;
+}
+
+.outcome__ko { color: var(--qos-danger-fg); }
+.outcome__time { color: var(--qos-fg-secondary); font-size: 12px; }
+
+.metrics { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.metric { display: inline-flex; align-items: baseline; gap: 5px; color: var(--qos-fg-secondary); }
+.metric b { font-size: 15px; color: var(--qos-fg-primary); }
+
+.banner { padding: 10px 14px; border-radius: var(--qos-radius-md); font-size: 13px; }
+.banner--error { background: var(--qos-danger-bg-soft); color: var(--qos-danger-fg); }
+.banner--info  { background: var(--qos-accent-bg-soft); color: var(--qos-accent-fg-soft); }
+
+.tiles { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.tile {
+  flex: 1 1 150px;
+  min-width: 150px;
+  padding: 14px 16px;
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-left: 3px solid var(--qos-border-default);
+  border-radius: var(--qos-radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tile__value { font-size: 24px; font-weight: 600; line-height: 1.1; }
+.tile__label { font-size: 12px; color: var(--qos-fg-secondary); }
+
+.tile[data-tone='success'] { border-left-color: var(--qos-success-fg); }
+.tile[data-tone='danger']  { border-left-color: var(--qos-danger-fg); }
+
+.panel {
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  overflow: hidden;
+}
+
+/* Les URL d'intégration sont longues : le défilement horizontal reste confiné au
+   tableau, jamais à la page. */
+.table-wrap { overflow-x: auto; }
+
+.cell-stack { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.cell-stack__title { font-weight: 600; }
+.cell-stack__sub { font-size: 12px; color: var(--qos-fg-secondary); }
+
+.cell-stack__url {
+  font-family: 'IBM Plex Mono', 'Fira Code', monospace;
+  font-size: 11px;
+  color: var(--qos-fg-secondary);
+  max-width: 40ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dim { color: var(--qos-fg-secondary); font-size: 12px; }
+
+/* Rappel visuel que le secret existe mais n'est pas consultable. */
+.secret-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--qos-fg-secondary);
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: var(--qos-radius-pill);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: var(--qos-bg-sunken);
+  color: var(--qos-fg-secondary);
+}
+
+.badge[data-tone='success'] { background: var(--qos-success-bg-soft); color: var(--qos-success-fg); }
+.badge[data-tone='warn']    { background: var(--qos-warn-bg-soft);    color: var(--qos-warn-fg); }
+.badge[data-tone='danger']  { background: var(--qos-danger-bg-soft);  color: var(--qos-danger-fg); }
+
+.failures {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--qos-danger-fg);
+}
+
+.row-actions { display: flex; gap: 2px; align-items: center; }
+
+/* Une connexion à l'arrêt reste lisible mais cesse de capter le regard. */
+.row--off { opacity: 0.64; }
+
+.empty {
+  padding: 44px 24px;
+  text-align: center;
+  color: var(--qos-fg-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: var(--qos-bg-elevated);
+  border: 1px dashed var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+}
+
+.empty mat-icon { font-size: 34px; width: 34px; height: 34px; opacity: 0.5; }
+.empty p { margin: 0; font-size: 13px; max-width: 52ch; line-height: 1.5; }
+
+@media (max-width: 860px) {
+  .connectors { padding: 16px; }
+  .head { flex-direction: column; align-items: stretch; }
+  .tab-head { flex-direction: column; align-items: stretch; }
+  .cell-stack__url { max-width: 24ch; }
+  .outcome { flex-direction: row; }
+}

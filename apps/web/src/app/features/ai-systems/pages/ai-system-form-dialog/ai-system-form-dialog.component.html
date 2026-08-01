@@ -1,0 +1,192 @@
+<h2 mat-dialog-title>
+  <span *ngIf="!editing" i18n="@@ai-systems.form.create-title">Déclarer un système d'IA</span>
+  <span *ngIf="editing" i18n="@@ai-systems.form.edit-title">Modifier le brouillon</span>
+</h2>
+
+<mat-dialog-content>
+  <form class="sys-form" [formGroup]="form" (ngSubmit)="submit()">
+
+    <div *ngIf="error" class="sys-form__error" role="alert">{{ error }}</div>
+
+    <h3 class="sys-form__section" i18n="@@ai-systems.form.section-identity">Identification</h3>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@ai-systems.form.reference">Référence</mat-label>
+      <input matInput formControlName="reference" maxlength="64" autocomplete="off"
+             spellcheck="false" placeholder="AISYS-TRIAGE-URGENCES" />
+      <mat-hint *ngIf="!editing" i18n="@@ai-systems.form.reference-hint">
+        Majuscules, chiffres, tiret et souligné. Définitive : elle identifie le système
+        dans la base de données UE et les rapports d'audit.
+      </mat-hint>
+      <mat-hint *ngIf="editing" i18n="@@ai-systems.form.reference-locked">
+        Référence non modifiable après création.
+      </mat-hint>
+      <mat-error *ngIf="form.controls.reference.hasError('required')"
+                 i18n="@@common.required-field">Champ obligatoire</mat-error>
+      <mat-error *ngIf="form.controls.reference.hasError('pattern')"
+                 i18n="@@ai-systems.form.reference-invalid">
+        Format attendu : une majuscule puis 1 à 63 caractères parmi A-Z, 0-9, « - » et « _ ».
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@common.name">Nom</mat-label>
+      <input matInput formControlName="name" maxlength="250" autocomplete="off" />
+      <mat-error *ngIf="form.controls.name.hasError('required')"
+                 i18n="@@common.required-field">Champ obligatoire</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@ai-systems.form.intended-purpose">Finalité prévue</mat-label>
+      <textarea matInput formControlName="intendedPurpose" rows="3" maxlength="4000"></textarea>
+      <mat-hint i18n="@@ai-systems.form.intended-purpose-hint">
+        Usage réel du système, population concernée, décisions qu'il influence.
+      </mat-hint>
+      <mat-error *ngIf="form.controls.intendedPurpose.hasError('required')"
+                 i18n="@@common.required-field">Champ obligatoire</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@common.description">Description</mat-label>
+      <textarea matInput formControlName="description" rows="2" maxlength="4000"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@ai-systems.form.provider">Fournisseur</mat-label>
+      <input matInput formControlName="providerName" maxlength="250" autocomplete="off" />
+      <mat-hint i18n="@@ai-systems.form.provider-hint">
+        Éditeur du système lorsqu'il est acquis auprès d'un tiers.
+      </mat-hint>
+    </mat-form-field>
+
+    <h3 class="sys-form__section" i18n="@@ai-systems.form.section-classification">
+      Classification et rôle
+    </h3>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@ai-systems.form.risk">Niveau de risque</mat-label>
+      <mat-select formControlName="riskClassification">
+        <mat-option *ngFor="let r of risks" [value]="r">{{ riskLabel(r) }}</mat-option>
+      </mat-select>
+      <mat-hint>{{ riskBasis(currentRisk()) }}</mat-hint>
+    </mat-form-field>
+
+    <p class="sys-form__alert" *ngIf="prohibited()" role="alert"
+       i18n="@@ai-systems.form.prohibited-warning">
+      Pratique interdite (Art. 5) : la fiche pourra être conservée comme trace de la
+      décision, mais le système ne pourra jamais être enregistré ni mis en service.
+    </p>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@ai-systems.form.role">Rôle de l'organisation</mat-label>
+      <mat-select formControlName="role">
+        <mat-option *ngFor="let r of roles" [value]="r">{{ roleLabel(r) }}</mat-option>
+      </mat-select>
+      <mat-hint i18n="@@ai-systems.form.role-hint">
+        Art. 3 : fournisseur, déployeur, importateur ou distributeur.
+      </mat-hint>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="generalPurpose" class="sys-form__check">
+      <span i18n="@@ai-systems.form.gpai">Modèle d'IA à usage général (GPAI)</span>
+    </mat-checkbox>
+
+    <div class="sys-form__requirements" *ngIf="requirements().length">
+      <p class="sys-form__requirements-title" i18n="@@ai-systems.form.requirements-title">
+        Prérequis à la mise en service pour cette classification
+      </p>
+      <ul>
+        <li *ngFor="let r of requirements(); trackBy: trackByKey"
+            [class.ok]="r.satisfied">
+          <mat-icon inline>{{ r.satisfied ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+          <span>{{ r.label }}</span>
+        </li>
+      </ul>
+      <p class="sys-form__requirements-note" i18n="@@ai-systems.form.requirements-note">
+        La fiche n'est plus modifiable une fois enregistrée : complétez ces éléments
+        maintenant, sinon le système devra être retiré et redéclaré.
+      </p>
+    </div>
+
+    <h3 class="sys-form__section" i18n="@@ai-systems.form.section-conformity">
+      Conformité et garde-fous
+    </h3>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@ai-systems.form.evidence-url">Preuve d'évaluation de conformité (URL)</mat-label>
+      <input matInput formControlName="conformityAssessmentEvidenceUrl" maxlength="1024"
+             inputmode="url" autocomplete="off" spellcheck="false"
+             placeholder="https://exemple.tld/dossier-conformite" />
+      <mat-error *ngIf="form.controls.conformityAssessmentEvidenceUrl.hasError('pattern')"
+                 i18n="@@ai-systems.form.url-invalid">URL http(s) attendue, sans espace.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@ai-systems.form.ce-marking">Numéro de marquage CE</mat-label>
+      <input matInput formControlName="ceMarkingNumber" maxlength="250" autocomplete="off" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@ai-systems.form.human-oversight">Supervision humaine</mat-label>
+      <textarea matInput formControlName="humanOversightDescription" rows="2" maxlength="4000"></textarea>
+      <mat-hint i18n="@@ai-systems.form.human-oversight-hint">
+        Art. 14 : qui peut interrompre le système, sur quels signaux, avec quelle formation.
+      </mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@ai-systems.form.transparency">Mesures de transparence</mat-label>
+      <textarea matInput formControlName="transparencyMeasures" rows="2" maxlength="4000"></textarea>
+      <mat-hint i18n="@@ai-systems.form.transparency-hint">
+        Art. 13 et 50 : comment la personne concernée sait qu'elle interagit avec une IA.
+      </mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@ai-systems.form.data-governance">Gouvernance des données</mat-label>
+      <textarea matInput formControlName="dataGovernanceNotes" rows="2" maxlength="4000"></textarea>
+    </mat-form-field>
+
+    <h3 class="sys-form__section" i18n="@@ai-systems.form.section-links">Rattachements RGPD</h3>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@ai-systems.form.dpia">AIPD rattachée (UUID)</mat-label>
+      <input matInput formControlName="linkedDpiaId" autocomplete="off" spellcheck="false" />
+      <mat-error *ngIf="form.controls.linkedDpiaId.hasError('pattern')"
+                 i18n="@@ai-systems.form.uuid-invalid">Identifiant UUID attendu.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@ai-systems.form.processing-activities">
+        Traitements du registre (UUID, un par ligne)
+      </mat-label>
+      <textarea matInput formControlName="linkedProcessingActivityIds" rows="2"
+                spellcheck="false"></textarea>
+      <mat-error *ngIf="form.controls.linkedProcessingActivityIds.hasError('uuidList')"
+                 i18n="@@ai-systems.form.uuid-list-invalid">
+        Un des identifiants saisis n'est pas un UUID.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@ai-systems.form.automated-decisions">
+        Décisions automatisées (UUID, un par ligne)
+      </mat-label>
+      <textarea matInput formControlName="linkedAutomatedDecisionIds" rows="2"
+                spellcheck="false"></textarea>
+      <mat-error *ngIf="form.controls.linkedAutomatedDecisionIds.hasError('uuidList')"
+                 i18n="@@ai-systems.form.uuid-list-invalid">
+        Un des identifiants saisis n'est pas un UUID.
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()" [disabled]="submitting"
+          i18n="@@common.cancel">Annuler</button>
+  <button mat-flat-button color="primary" type="button" (click)="submit()" [disabled]="submitting">
+    <span *ngIf="!editing" i18n="@@ai-systems.form.submit-create">Créer le brouillon</span>
+    <span *ngIf="editing" i18n="@@common.save">Enregistrer</span>
+  </button>
+</mat-dialog-actions>

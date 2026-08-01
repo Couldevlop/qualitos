@@ -50,7 +50,9 @@ export class CapaDetailComponent implements OnInit {
 
   private caseId = '';
   private readonly reload$ = new BehaviorSubject<void>(undefined);
-  private isMockId(s: string): boolean { return /^capa-/.test(s); }
+  // Ancré des DEUX côtés et jeu de caractères restreint : un simple préfixe
+  // laissait passer « capa-1/../../secrets » (traversée de chemin — OWASP A03).
+  private isMockId(s: string): boolean { return /^capa-[a-z0-9-]{1,64}$/i.test(s); }
 
   constructor(
     private readonly route: ActivatedRoute,

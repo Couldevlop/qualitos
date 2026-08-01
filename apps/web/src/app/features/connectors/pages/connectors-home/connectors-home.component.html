@@ -1,0 +1,596 @@
+<section class="connectors">
+
+  <header class="head">
+    <div class="head__text">
+      <h1 i18n="@@connectors.title">Connecteurs tiers</h1>
+      <p i18n="@@connectors.subtitle">
+        Branchez QualitOS sur vos ERP, vos dossiers patients FHIR et vos outils de
+        conversation. Les secrets sont chiffrés au repos et ne sont jamais réaffichés :
+        pour en changer, saisissez-en un nouveau.
+      </p>
+    </div>
+  </header>
+
+  <mat-tab-group animationDuration="200ms" class="connectors__tabs">
+
+    <!-- ======================= ERP ======================= -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon aria-hidden="true">inventory_2</mat-icon>
+        <span i18n="@@connectors.tab-erp">ERP</span>
+        <span class="tab-count" *ngIf="erp$ | async as v">{{ v.total }}</span>
+      </ng-template>
+
+      <div class="tab-body">
+        <div class="tab-head">
+          <p class="tab-head__intro" i18n="@@connectors.erp.intro">
+            Importe les fournisseurs et les indicateurs de production depuis SAP,
+            Oracle Fusion ou Dynamics. La synchronisation est manuelle et déclenchée
+            depuis cet écran.
+          </p>
+          <button mat-flat-button color="primary" type="button" (click)="createErp()">
+            <mat-icon aria-hidden="true">add</mat-icon>
+            <span i18n="@@connectors.erp.new">Nouvelle connexion ERP</span>
+          </button>
+        </div>
+
+        <div class="outcome" *ngIf="erpOutcome as o" [attr.data-tone]="erpOutcomeTone(o)" role="status">
+          <div class="outcome__text">
+            <strong>{{ o.connectionName }}</strong>
+            <span *ngIf="o.report.errorMessage; else erpCounts" class="outcome__ko"
+                  i18n="@@connectors.erp.sync-failed">Synchronisation interrompue — vérifiez l'URL et le secret.</span>
+            <ng-template #erpCounts>
+              <span class="metrics">
+                <span class="metric">
+                  <b>{{ o.report.suppliersImported }}</b>
+                  <span i18n="@@connectors.erp.metric-suppliers">fournisseurs importés</span>
+                </span>
+                <span class="metric">
+                  <b>{{ o.report.suppliersIgnored }}</b>
+                  <span i18n="@@connectors.erp.metric-suppliers-ignored">fournisseurs ignorés</span>
+                </span>
+                <span class="metric">
+                  <b>{{ o.report.kpisImported }}</b>
+                  <span i18n="@@connectors.erp.metric-kpis">mesures KPI écrites</span>
+                </span>
+                <span class="metric">
+                  <b>{{ o.report.kpisIgnored }}</b>
+                  <span i18n="@@connectors.erp.metric-kpis-ignored">mesures sans KPI connu</span>
+                </span>
+              </span>
+            </ng-template>
+            <span class="outcome__time">{{ o.report.ranAt | date:'short' }}</span>
+          </div>
+          <button mat-icon-button type="button" (click)="dismissErpOutcome()"
+                  matTooltip="Masquer ce compte rendu"
+                  i18n-matTooltip="@@connectors.dismiss-outcome"
+                  aria-label="Masquer ce compte rendu"
+                  i18n-aria-label="@@connectors.dismiss-outcome">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <div *ngIf="erpError$ | async as err" class="banner banner--error" role="alert">{{ err }}</div>
+        <div *ngIf="erpLoading$ | async" class="banner banner--info" role="status"
+             i18n="@@common.loading">Chargement…</div>
+
+        <ng-container *ngIf="erp$ | async as view">
+
+          <div class="tiles" *ngIf="view.complete && view.total > 0">
+            <div class="tile" data-tone="neutral">
+              <span class="tile__value">{{ view.total }}</span>
+              <span class="tile__label" i18n="@@connectors.tile-total">Connexions</span>
+            </div>
+            <div class="tile" data-tone="success">
+              <span class="tile__value">{{ view.activeCount }}</span>
+              <span class="tile__label" i18n="@@connectors.tile-active">Actives</span>
+            </div>
+            <div class="tile" data-tone="neutral">
+              <span class="tile__value">{{ view.disabledCount }}</span>
+              <span class="tile__label" i18n="@@connectors.tile-inactive">Inactives</span>
+            </div>
+            <div class="tile" data-tone="danger">
+              <span class="tile__value">{{ view.failingCount }}</span>
+              <span class="tile__label" i18n="@@connectors.tile-failing">En échec</span>
+            </div>
+          </div>
+
+          <div class="panel" *ngIf="view.rows.length">
+            <div class="table-wrap">
+              <table mat-table [dataSource]="view.rows" [trackBy]="trackById">
+
+                <ng-container matColumnDef="name">
+                  <th mat-header-cell *matHeaderCellDef i18n="@@common.name">Nom</th>
+                  <td mat-cell *matCellDef="let row">
+                    <div class="cell-stack">
+                      <span class="cell-stack__title">{{ row.name }}</span>
+                      <span class="cell-stack__sub">{{ erpProvider(row) }}</span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="endpoint">
+                  <th mat-header-cell *matHeaderCellDef i18n="@@connectors.col-endpoint">Point d'entrée</th>
+                  <td mat-cell *matCellDef="let row">
+                    <div class="cell-stack">
+                      <code class="cell-stack__url" [matTooltip]="row.baseUrl">{{ row.baseUrl }}</code>
+                      <span class="dim" *ngIf="row.username">{{ row.username }}</span>
+                      <span class="dim" *ngIf="row.externalScope">{{ row.externalScope }}</span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
+                  <td mat-cell *matCellDef="let row">
+                    <span class="badge" [attr.data-tone]="statusTone(row.status)">
+                      {{ statusLabel(row.status) }}
+                    </span>
+                    <span class="failures" *ngIf="isFailing(row)"
+                          matTooltip="Désactivation automatique à 10 échecs consécutifs"
+                          i18n-matTooltip="@@connectors.failures-tooltip">
+                      <mat-icon inline aria-hidden="true">error_outline</mat-icon>{{ row.consecutiveFailures }}
+                    </span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="sync">
+                  <th mat-header-cell *matHeaderCellDef i18n="@@connectors.col-last-sync">Dernière synchronisation</th>
+                  <td mat-cell *matCellDef="let row">
+                    <div class="cell-stack">
+                      <span *ngIf="row.lastSyncAt; else neverSynced">{{ row.lastSyncAt | date:'short' }}</span>
+                      <ng-template #neverSynced>
+                        <span class="dim" i18n="@@connectors.never-synced">Jamais synchronisée</span>
+                      </ng-template>
+                      <span class="dim" *ngIf="row.lastSuccessAt">
+                        <span i18n="@@connectors.last-success">Dernier succès</span>
+                        {{ row.lastSuccessAt | date:'short' }}
+                      </span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef i18n="@@common.actions">Actions</th>
+                  <td mat-cell *matCellDef="let row">
+                    <div class="row-actions">
+                      <button mat-icon-button type="button" *ngIf="canSync(row)" (click)="syncErp(row)"
+                              [disabled]="pendingId === row.id"
+                              matTooltip="Synchroniser maintenant"
+                              i18n-matTooltip="@@connectors.action-sync"
+                              aria-label="Synchroniser maintenant"
+                              i18n-aria-label="@@connectors.action-sync">
+                        <mat-icon>sync</mat-icon>
+                      </button>
+                      <button mat-icon-button type="button" (click)="toggleErpStatus(row)"
+                              [disabled]="pendingId === row.id"
+                              [matTooltip]="isActive(row) ? disableTooltip : enableTooltip"
+                              [attr.aria-label]="isActive(row) ? disableTooltip : enableTooltip">
+                        <mat-icon>{{ isActive(row) ? 'pause_circle' : 'play_circle' }}</mat-icon>
+                      </button>
+                      <button mat-icon-button type="button" (click)="editErp(row)"
+                              [disabled]="pendingId === row.id"
+                              matTooltip="Modifier" i18n-matTooltip="@@common.edit"
+                              aria-label="Modifier" i18n-aria-label="@@common.edit">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-icon-button type="button" color="warn" (click)="removeErp(row)"
+                              [disabled]="pendingId === row.id"
+                              matTooltip="Supprimer" i18n-matTooltip="@@common.delete"
+                              aria-label="Supprimer" i18n-aria-label="@@common.delete">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="erpColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: erpColumns"
+                    [class.row--off]="!isActive(row)"></tr>
+              </table>
+            </div>
+
+            <mat-paginator [length]="view.total"
+                           [pageIndex]="erpPageIndex"
+                           [pageSize]="erpPageSize"
+                           [pageSizeOptions]="pageSizes"
+                           (page)="onErpPage($event)"></mat-paginator>
+          </div>
+
+          <div class="empty" *ngIf="!view.rows.length && (erpLoading$ | async) === false">
+            <mat-icon aria-hidden="true">inventory_2</mat-icon>
+            <p i18n="@@connectors.erp.empty">
+              Aucune connexion ERP. Ajoutez-en une pour alimenter vos fournisseurs et vos
+              indicateurs de production depuis le système de gestion.
+            </p>
+            <button mat-stroked-button type="button" (click)="createErp()"
+                    i18n="@@connectors.erp.new">Nouvelle connexion ERP</button>
+          </div>
+        </ng-container>
+      </div>
+    </mat-tab>
+
+    <!-- ======================= EHR / FHIR ======================= -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon aria-hidden="true">health_and_safety</mat-icon>
+        <span i18n="@@connectors.tab-ehr">Dossier patient (FHIR)</span>
+        <span class="tab-count" *ngIf="ehr$ | async as v">{{ v.total }}</span>
+      </ng-template>
+
+      <div class="tab-body">
+        <div class="tab-head">
+          <p class="tab-head__intro" i18n="@@connectors.ehr.intro">
+            Récupère les évènements indésirables d'un serveur HL7 FHIR R4 ou R5.
+            L'import est incrémental depuis le dernier succès et ne conserve aucune
+            donnée patient.
+          </p>
+          <button mat-flat-button color="primary" type="button" (click)="createEhr()">
+            <mat-icon aria-hidden="true">add</mat-icon>
+            <span i18n="@@connectors.ehr.new">Nouvelle connexion FHIR</span>
+          </button>
+        </div>
+
+        <div class="outcome" *ngIf="ehrOutcome as o" [attr.data-tone]="ehrOutcomeTone(o)" role="status">
+          <div class="outcome__text">
+            <strong>{{ o.connectionName }}</strong>
+            <span *ngIf="o.report.errorMessage; else ehrCounts" class="outcome__ko"
+                  i18n="@@connectors.ehr.sync-failed">Import interrompu — vérifiez l'URL et l'authentification.</span>
+            <ng-template #ehrCounts>
+              <span class="metrics">
+                <span class="metric">
+                  <b>{{ o.report.totalFetched }}</b>
+                  <span i18n="@@connectors.ehr.metric-fetched">ressources lues</span>
+                </span>
+                <span class="metric">
+                  <b>{{ o.report.created }}</b>
+                  <span i18n="@@connectors.ehr.metric-created">importées</span>
+                </span>
+                <span class="metric">
+                  <b>{{ o.report.skipped }}</b>
+                  <span i18n="@@connectors.ehr.metric-skipped">déjà connues</span>
+                </span>
+                <span class="metric">
+                  <b>{{ o.report.errors }}</b>
+                  <span i18n="@@connectors.ehr.metric-errors">en erreur</span>
+                </span>
+              </span>
+            </ng-template>
+            <span class="outcome__time">{{ o.report.ranAt | date:'short' }}</span>
+          </div>
+          <button mat-icon-button type="button" (click)="dismissEhrOutcome()"
+                  matTooltip="Masquer ce compte rendu"
+                  i18n-matTooltip="@@connectors.dismiss-outcome"
+                  aria-label="Masquer ce compte rendu"
+                  i18n-aria-label="@@connectors.dismiss-outcome">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <div *ngIf="ehrError$ | async as err" class="banner banner--error" role="alert">{{ err }}</div>
+        <div *ngIf="ehrLoading$ | async" class="banner banner--info" role="status"
+             i18n="@@common.loading">Chargement…</div>
+
+        <ng-container *ngIf="ehr$ | async as view">
+
+          <div class="tiles" *ngIf="view.complete && view.total > 0">
+            <div class="tile" data-tone="neutral">
+              <span class="tile__value">{{ view.total }}</span>
+              <span class="tile__label" i18n="@@connectors.tile-total">Connexions</span>
+            </div>
+            <div class="tile" data-tone="success">
+              <span class="tile__value">{{ view.activeCount }}</span>
+              <span class="tile__label" i18n="@@connectors.tile-active">Actives</span>
+            </div>
+            <div class="tile" data-tone="neutral">
+              <span class="tile__value">{{ view.disabledCount }}</span>
+              <span class="tile__label" i18n="@@connectors.tile-inactive">Inactives</span>
+            </div>
+            <div class="tile" data-tone="danger">
+              <span class="tile__value">{{ view.failingCount }}</span>
+              <span class="tile__label" i18n="@@connectors.tile-failing">En échec</span>
+            </div>
+          </div>
+
+          <div class="panel" *ngIf="view.rows.length">
+            <div class="table-wrap">
+              <table mat-table [dataSource]="view.rows" [trackBy]="trackById">
+
+                <ng-container matColumnDef="name">
+                  <th mat-header-cell *matHeaderCellDef i18n="@@common.name">Nom</th>
+                  <td mat-cell *matCellDef="let row">
+                    <div class="cell-stack">
+                      <span class="cell-stack__title">{{ row.name }}</span>
+                      <span class="cell-stack__sub">{{ ehrProvider(row) }}</span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="endpoint">
+                  <th mat-header-cell *matHeaderCellDef i18n="@@connectors.col-endpoint">Point d'entrée</th>
+                  <td mat-cell *matCellDef="let row">
+                    <div class="cell-stack">
+                      <code class="cell-stack__url" [matTooltip]="row.fhirBaseUrl">{{ row.fhirBaseUrl }}</code>
+                      <span class="dim">{{ ehrAuth(row) }}</span>
+                      <span class="dim" *ngIf="row.resourceCategory">{{ row.resourceCategory }}</span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
+                  <td mat-cell *matCellDef="let row">
+                    <span class="badge" [attr.data-tone]="statusTone(row.status)">
+                      {{ statusLabel(row.status) }}
+                    </span>
+                    <span class="failures" *ngIf="isFailing(row)"
+                          matTooltip="Désactivation automatique à 10 échecs consécutifs"
+                          i18n-matTooltip="@@connectors.failures-tooltip">
+                      <mat-icon inline aria-hidden="true">error_outline</mat-icon>{{ row.consecutiveFailures }}
+                    </span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="sync">
+                  <th mat-header-cell *matHeaderCellDef i18n="@@connectors.col-last-sync">Dernière synchronisation</th>
+                  <td mat-cell *matCellDef="let row">
+                    <div class="cell-stack">
+                      <span *ngIf="row.lastSyncAt; else ehrNeverSynced">{{ row.lastSyncAt | date:'short' }}</span>
+                      <ng-template #ehrNeverSynced>
+                        <span class="dim" i18n="@@connectors.never-synced">Jamais synchronisée</span>
+                      </ng-template>
+                      <span class="dim" *ngIf="row.lastSuccessAt">
+                        <span i18n="@@connectors.last-success">Dernier succès</span>
+                        {{ row.lastSuccessAt | date:'short' }}
+                      </span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef i18n="@@common.actions">Actions</th>
+                  <td mat-cell *matCellDef="let row">
+                    <div class="row-actions">
+                      <button mat-icon-button type="button" *ngIf="canSync(row)" (click)="syncEhr(row)"
+                              [disabled]="pendingId === row.id"
+                              matTooltip="Synchroniser maintenant"
+                              i18n-matTooltip="@@connectors.action-sync"
+                              aria-label="Synchroniser maintenant"
+                              i18n-aria-label="@@connectors.action-sync">
+                        <mat-icon>sync</mat-icon>
+                      </button>
+                      <button mat-icon-button type="button" (click)="toggleEhrStatus(row)"
+                              [disabled]="pendingId === row.id"
+                              [matTooltip]="isActive(row) ? disableTooltip : enableTooltip"
+                              [attr.aria-label]="isActive(row) ? disableTooltip : enableTooltip">
+                        <mat-icon>{{ isActive(row) ? 'pause_circle' : 'play_circle' }}</mat-icon>
+                      </button>
+                      <button mat-icon-button type="button" (click)="editEhr(row)"
+                              [disabled]="pendingId === row.id"
+                              matTooltip="Modifier" i18n-matTooltip="@@common.edit"
+                              aria-label="Modifier" i18n-aria-label="@@common.edit">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-icon-button type="button" color="warn" (click)="removeEhr(row)"
+                              [disabled]="pendingId === row.id"
+                              matTooltip="Supprimer" i18n-matTooltip="@@common.delete"
+                              aria-label="Supprimer" i18n-aria-label="@@common.delete">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="ehrColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: ehrColumns"
+                    [class.row--off]="!isActive(row)"></tr>
+              </table>
+            </div>
+
+            <mat-paginator [length]="view.total"
+                           [pageIndex]="ehrPageIndex"
+                           [pageSize]="ehrPageSize"
+                           [pageSizeOptions]="pageSizes"
+                           (page)="onEhrPage($event)"></mat-paginator>
+          </div>
+
+          <div class="empty" *ngIf="!view.rows.length && (ehrLoading$ | async) === false">
+            <mat-icon aria-hidden="true">health_and_safety</mat-icon>
+            <p i18n="@@connectors.ehr.empty">
+              Aucune connexion FHIR. Ajoutez-en une pour remonter automatiquement les
+              évènements indésirables du dossier patient dans vos non-conformités.
+            </p>
+            <button mat-stroked-button type="button" (click)="createEhr()"
+                    i18n="@@connectors.ehr.new">Nouvelle connexion FHIR</button>
+          </div>
+        </ng-container>
+      </div>
+    </mat-tab>
+
+    <!-- ======================= Communication ======================= -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon aria-hidden="true">forum</mat-icon>
+        <span i18n="@@connectors.tab-comm">Communication</span>
+        <span class="tab-count" *ngIf="comm$ | async as v">{{ v.total }}</span>
+      </ng-template>
+
+      <div class="tab-body">
+        <div class="tab-head">
+          <p class="tab-head__intro" i18n="@@connectors.comm.intro">
+            Pousse les alertes qualité vers Teams, Slack ou Mattermost via un webhook
+            entrant. L'URL du webhook est un secret : elle n'est jamais réaffichée, mais
+            un envoi de test permet de vérifier qu'elle fonctionne toujours.
+          </p>
+          <button mat-flat-button color="primary" type="button" (click)="createComm()">
+            <mat-icon aria-hidden="true">add</mat-icon>
+            <span i18n="@@connectors.comm.new">Nouvelle destination</span>
+          </button>
+        </div>
+
+        <div class="outcome" *ngIf="commOutcome as o" [attr.data-tone]="commOutcomeTone(o)" role="status">
+          <div class="outcome__text">
+            <strong>{{ o.connectionName }}</strong>
+            <span *ngIf="o.result.success" i18n="@@connectors.comm.test-ok">
+              Message de test reçu par le salon.
+            </span>
+            <span *ngIf="!o.result.success" class="outcome__ko" i18n="@@connectors.comm.test-ko">
+              Le salon n'a pas accepté le message — l'URL du webhook a probablement été révoquée.
+            </span>
+          </div>
+          <button mat-icon-button type="button" (click)="dismissCommOutcome()"
+                  matTooltip="Masquer ce compte rendu"
+                  i18n-matTooltip="@@connectors.dismiss-outcome"
+                  aria-label="Masquer ce compte rendu"
+                  i18n-aria-label="@@connectors.dismiss-outcome">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <div *ngIf="commError$ | async as err" class="banner banner--error" role="alert">{{ err }}</div>
+        <div *ngIf="commLoading$ | async" class="banner banner--info" role="status"
+             i18n="@@common.loading">Chargement…</div>
+
+        <ng-container *ngIf="comm$ | async as view">
+
+          <div class="tiles" *ngIf="view.complete && view.total > 0">
+            <div class="tile" data-tone="neutral">
+              <span class="tile__value">{{ view.total }}</span>
+              <span class="tile__label" i18n="@@connectors.tile-destinations">Destinations</span>
+            </div>
+            <div class="tile" data-tone="success">
+              <span class="tile__value">{{ view.activeCount }}</span>
+              <span class="tile__label" i18n="@@connectors.tile-active">Actives</span>
+            </div>
+            <div class="tile" data-tone="neutral">
+              <span class="tile__value">{{ view.disabledCount }}</span>
+              <span class="tile__label" i18n="@@connectors.tile-inactive">Inactives</span>
+            </div>
+            <div class="tile" data-tone="danger">
+              <span class="tile__value">{{ view.failingCount }}</span>
+              <span class="tile__label" i18n="@@connectors.tile-failing">En échec</span>
+            </div>
+          </div>
+
+          <div class="panel" *ngIf="view.rows.length">
+            <div class="table-wrap">
+              <table mat-table [dataSource]="view.rows" [trackBy]="trackById">
+
+                <ng-container matColumnDef="name">
+                  <th mat-header-cell *matHeaderCellDef i18n="@@common.name">Nom</th>
+                  <td mat-cell *matCellDef="let row">
+                    <div class="cell-stack">
+                      <span class="cell-stack__title">{{ row.name }}</span>
+                      <span class="cell-stack__sub">{{ commProvider(row) }}</span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="channel">
+                  <th mat-header-cell *matHeaderCellDef i18n="@@connectors.comm.col-channel">Salon</th>
+                  <td mat-cell *matCellDef="let row">
+                    <div class="cell-stack">
+                      <span *ngIf="row.channel; else noChannel">{{ row.channel }}</span>
+                      <ng-template #noChannel>
+                        <span class="dim" i18n="@@connectors.comm.no-channel">Non précisé</span>
+                      </ng-template>
+                      <span class="secret-hint">
+                        <mat-icon inline aria-hidden="true">lock</mat-icon>
+                        <span i18n="@@connectors.comm.webhook-hidden">Webhook masqué</span>
+                      </span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
+                  <td mat-cell *matCellDef="let row">
+                    <span class="badge" [attr.data-tone]="statusTone(row.status)">
+                      {{ statusLabel(row.status) }}
+                    </span>
+                    <span class="failures" *ngIf="isFailing(row)"
+                          matTooltip="Désactivation automatique à 10 échecs consécutifs"
+                          i18n-matTooltip="@@connectors.failures-tooltip">
+                      <mat-icon inline aria-hidden="true">error_outline</mat-icon>{{ row.consecutiveFailures }}
+                    </span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="activity">
+                  <th mat-header-cell *matHeaderCellDef i18n="@@connectors.comm.col-activity">Dernière notification</th>
+                  <td mat-cell *matCellDef="let row">
+                    <div class="cell-stack">
+                      <span *ngIf="row.lastNotifiedAt; else neverNotified">{{ row.lastNotifiedAt | date:'short' }}</span>
+                      <ng-template #neverNotified>
+                        <span class="dim" i18n="@@connectors.comm.never-notified">Jamais sollicitée</span>
+                      </ng-template>
+                      <span class="dim" *ngIf="row.lastSuccessAt">
+                        <span i18n="@@connectors.last-success">Dernier succès</span>
+                        {{ row.lastSuccessAt | date:'short' }}
+                      </span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef i18n="@@common.actions">Actions</th>
+                  <td mat-cell *matCellDef="let row">
+                    <div class="row-actions">
+                      <button mat-icon-button type="button" *ngIf="canSync(row)" (click)="testComm(row)"
+                              [disabled]="pendingId === row.id"
+                              matTooltip="Envoyer un message de test"
+                              i18n-matTooltip="@@connectors.comm.action-test"
+                              aria-label="Envoyer un message de test"
+                              i18n-aria-label="@@connectors.comm.action-test">
+                        <mat-icon>send</mat-icon>
+                      </button>
+                      <button mat-icon-button type="button" (click)="toggleCommStatus(row)"
+                              [disabled]="pendingId === row.id"
+                              [matTooltip]="isActive(row) ? disableTooltip : enableTooltip"
+                              [attr.aria-label]="isActive(row) ? disableTooltip : enableTooltip">
+                        <mat-icon>{{ isActive(row) ? 'pause_circle' : 'play_circle' }}</mat-icon>
+                      </button>
+                      <button mat-icon-button type="button" (click)="editComm(row)"
+                              [disabled]="pendingId === row.id"
+                              matTooltip="Modifier" i18n-matTooltip="@@common.edit"
+                              aria-label="Modifier" i18n-aria-label="@@common.edit">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-icon-button type="button" color="warn" (click)="removeComm(row)"
+                              [disabled]="pendingId === row.id"
+                              matTooltip="Supprimer" i18n-matTooltip="@@common.delete"
+                              aria-label="Supprimer" i18n-aria-label="@@common.delete">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="commColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: commColumns"
+                    [class.row--off]="!isActive(row)"></tr>
+              </table>
+            </div>
+
+            <mat-paginator [length]="view.total"
+                           [pageIndex]="commPageIndex"
+                           [pageSize]="commPageSize"
+                           [pageSizeOptions]="pageSizes"
+                           (page)="onCommPage($event)"></mat-paginator>
+          </div>
+
+          <div class="empty" *ngIf="!view.rows.length && (commLoading$ | async) === false">
+            <mat-icon aria-hidden="true">forum</mat-icon>
+            <p i18n="@@connectors.comm.empty">
+              Aucune destination. Ajoutez-en une pour que les alertes qualité arrivent
+              là où vos équipes travaillent déjà.
+            </p>
+            <button mat-stroked-button type="button" (click)="createComm()"
+                    i18n="@@connectors.comm.new">Nouvelle destination</button>
+          </div>
+        </ng-container>
+      </div>
+    </mat-tab>
+
+  </mat-tab-group>
+</section>

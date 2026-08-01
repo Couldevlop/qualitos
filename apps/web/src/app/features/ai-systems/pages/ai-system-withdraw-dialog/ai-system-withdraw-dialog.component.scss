@@ -1,0 +1,32 @@
+/* Abandon d'un système : conséquence d'abord, saisie ensuite. */
+
+.wd-form { display: flex; flex-direction: column; min-width: min(480px, 78vw); }
+.wd-form mat-form-field { width: 100%; }
+
+.wd-form__lead {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--qos-fg-secondary);
+  max-width: 56ch;
+}
+
+.wd-form__ref {
+  display: inline-block;
+  margin-left: 6px;
+  font-family: var(--qos-font-mono);
+  font-size: 12px;
+  color: var(--qos-fg-primary);
+}
+
+.wd-form__error {
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-danger-bg-soft);
+  color: var(--qos-danger-fg);
+  font-size: 13px;
+}
+
+@media (max-width: 600px) {
+  .wd-form { min-width: 0; }
+}

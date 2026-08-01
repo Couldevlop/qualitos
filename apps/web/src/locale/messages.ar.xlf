@@ -5668,6 +5668,2174 @@
         <source>Les politiques définies ici sont enregistrées, mais elles ne sont pas encore appliquées aux appels entrants : la consommation affichée reste donc à zéro.</source>
         <target state="translated">تُحفظ السياسات المعرَّفة هنا، لكنها لا تُطبَّق بعد على الطلبات الواردة، لذا يبقى الاستهلاك المعروض صفرًا.</target>
       </trans-unit>
+      <trans-unit id="nav.iot" datatype="html">
+        <source>Parc IoT</source>
+        <target state="translated">أسطول إنترنت الأشياء</target>
+      </trans-unit>
+      <trans-unit id="iot.health.live" datatype="html">
+        <source>En ligne</source>
+        <target state="translated">متصل</target>
+      </trans-unit>
+      <trans-unit id="iot.health.aging" datatype="html">
+        <source>Signal vieillissant</source>
+        <target state="translated">إشارة قديمة</target>
+      </trans-unit>
+      <trans-unit id="iot.health.silent" datatype="html">
+        <source>Muet</source>
+        <target state="translated">صامت</target>
+      </trans-unit>
+      <trans-unit id="iot.health.never" datatype="html">
+        <source>Jamais vu</source>
+        <target state="translated">لم يُرَ قط</target>
+      </trans-unit>
+      <trans-unit id="iot.health.inactive" datatype="html">
+        <source>Hors surveillance</source>
+        <target state="translated">خارج المراقبة</target>
+      </trans-unit>
+      <trans-unit id="iot.status.provisioned" datatype="html">
+        <source>Provisionné</source>
+        <target state="translated">مُهيّأ</target>
+      </trans-unit>
+      <trans-unit id="iot.status.active" datatype="html">
+        <source>En service</source>
+        <target state="translated">قيد الخدمة</target>
+      </trans-unit>
+      <trans-unit id="iot.status.suspended" datatype="html">
+        <source>Suspendu</source>
+        <target state="translated">معلّق</target>
+      </trans-unit>
+      <trans-unit id="iot.status.decommissioned" datatype="html">
+        <source>Décommissionné</source>
+        <target state="translated">مُوقَف نهائيًا</target>
+      </trans-unit>
+      <trans-unit id="iot.type.plc" datatype="html">
+        <source>Automate (PLC)</source>
+        <target state="translated">متحكم منطقي (PLC)</target>
+      </trans-unit>
+      <trans-unit id="iot.type.temperature" datatype="html">
+        <source>Sonde de température</source>
+        <target state="translated">مجس حرارة</target>
+      </trans-unit>
+      <trans-unit id="iot.type.vibration" datatype="html">
+        <source>Capteur de vibration</source>
+        <target state="translated">مستشعر اهتزاز</target>
+      </trans-unit>
+      <trans-unit id="iot.type.pressure" datatype="html">
+        <source>Capteur de pression</source>
+        <target state="translated">مستشعر ضغط</target>
+      </trans-unit>
+      <trans-unit id="iot.type.humidity" datatype="html">
+        <source>Capteur d'humidité</source>
+        <target state="translated">مستشعر رطوبة</target>
+      </trans-unit>
+      <trans-unit id="iot.type.generic" datatype="html">
+        <source>Capteur générique</source>
+        <target state="translated">مستشعر عام</target>
+      </trans-unit>
+      <trans-unit id="iot.type.camera" datatype="html">
+        <source>Caméra</source>
+        <target state="translated">كاميرا</target>
+      </trans-unit>
+      <trans-unit id="iot.type.biomed" datatype="html">
+        <source>Dispositif biomédical</source>
+        <target state="translated">جهاز طبي حيوي</target>
+      </trans-unit>
+      <trans-unit id="iot.type.agro" datatype="html">
+        <source>Station agro</source>
+        <target state="translated">محطة زراعية</target>
+      </trans-unit>
+      <trans-unit id="iot.type.bms" datatype="html">
+        <source>GTB / bâtiment</source>
+        <target state="translated">نظام إدارة المباني</target>
+      </trans-unit>
+      <trans-unit id="iot.type.gateway" datatype="html">
+        <source>Passerelle Edge</source>
+        <target state="translated">بوابة طرفية</target>
+      </trans-unit>
+      <trans-unit id="iot.type.unknown" datatype="html">
+        <source>Non renseigné</source>
+        <target state="translated">غير محدد</target>
+      </trans-unit>
+      <trans-unit id="iot.protocol.manual" datatype="html">
+        <source>Relevé manuel</source>
+        <target state="translated">قراءة يدوية</target>
+      </trans-unit>
+      <trans-unit id="iot.criticity.low" datatype="html">
+        <source>Faible</source>
+        <target state="translated">منخفضة</target>
+      </trans-unit>
+      <trans-unit id="iot.criticity.medium" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">متوسطة</target>
+      </trans-unit>
+      <trans-unit id="iot.criticity.high" datatype="html">
+        <source>Élevée</source>
+        <target state="translated">عالية</target>
+      </trans-unit>
+      <trans-unit id="iot.criticity.critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">حرجة</target>
+      </trans-unit>
+      <trans-unit id="iot.age.never" datatype="html">
+        <source>Jamais</source>
+        <target state="translated">أبدًا</target>
+      </trans-unit>
+      <trans-unit id="iot.age.now" datatype="html">
+        <source>À l'instant</source>
+        <target state="translated">الآن</target>
+      </trans-unit>
+      <trans-unit id="iot.unit.minutes" datatype="html">
+        <source>min</source>
+        <target state="translated">د</target>
+      </trans-unit>
+      <trans-unit id="iot.unit.hours" datatype="html">
+        <source>h</source>
+        <target state="translated">س</target>
+      </trans-unit>
+      <trans-unit id="iot.unit.days" datatype="html">
+        <source>j</source>
+        <target state="translated">ي</target>
+      </trans-unit>
+      <trans-unit id="iot.silence.15min" datatype="html">
+        <source>15 minutes</source>
+        <target state="translated">15 دقيقة</target>
+      </trans-unit>
+      <trans-unit id="iot.silence.1h" datatype="html">
+        <source>1 heure</source>
+        <target state="translated">ساعة واحدة</target>
+      </trans-unit>
+      <trans-unit id="iot.silence.6h" datatype="html">
+        <source>6 heures</source>
+        <target state="translated">6 ساعات</target>
+      </trans-unit>
+      <trans-unit id="iot.silence.24h" datatype="html">
+        <source>24 heures</source>
+        <target state="translated">24 ساعة</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.title" datatype="html">
+        <source>Parc IoT et télémétrie</source>
+        <target state="translated">أسطول إنترنت الأشياء والقياس عن بُعد</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.subtitle" datatype="html">
+        <source>Équipements connectés du tenant et fraîcheur de leur dernier signal. Un capteur muet ne déclenche plus aucune détection de dérive : il remonte en tête de liste.</source>
+        <target state="translated">الأجهزة المتصلة الخاصة بالمستأجر ومدى حداثة آخر إشارة لها. المستشعر الصامت لم يعد يطلق أي كشف عن الانحراف، لذلك يظهر في أعلى القائمة.</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.new" datatype="html">
+        <source>Nouvel équipement</source>
+        <target state="translated">جهاز جديد</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.scope-note" datatype="html">
+        <source>Compteurs de santé calculés sur les équipements en service du tenant.</source>
+        <target state="translated">تُحتسب مؤشرات الحالة على الأجهزة قيد الخدمة لدى المستأجر.</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.scope-truncated" datatype="html">
+        <source>Compteurs de santé calculés sur un échantillon des équipements en service : le tenant en compte davantage que ce qu'une page serveur peut renvoyer.</source>
+        <target state="translated">تُحتسب مؤشرات الحالة على عيّنة من الأجهزة قيد الخدمة: لدى المستأجر عدد أكبر مما يمكن أن تعيده صفحة واحدة من الخادم.</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.silence" datatype="html">
+        <source>Seuil de silence</source>
+        <target state="translated">عتبة الصمت</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.filter-note" datatype="html">
+        <source>Le serveur n'applique qu'un seul critère de filtrage : choisir un statut remet le type à « tous », et inversement.</source>
+        <target state="translated">يطبّق الخادم معيار تصفية واحدًا فقط: اختيار حالة يعيد النوع إلى «الكل»، والعكس صحيح.</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.tile-listed" datatype="html">
+        <source>Équipements listés</source>
+        <target state="translated">الأجهزة المعروضة</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.tile-live" datatype="html">
+        <source>En ligne</source>
+        <target state="translated">متصل</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.tile-aging" datatype="html">
+        <source>Signal vieillissant</source>
+        <target state="translated">إشارة قديمة</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.tile-silent" datatype="html">
+        <source>Capteurs muets</source>
+        <target state="translated">مستشعرات صامتة</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.tile-never" datatype="html">
+        <source>Jamais vus</source>
+        <target state="translated">لم تُرَ قط</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.load-error" datatype="html">
+        <source>Impossible de charger le parc d'équipements.</source>
+        <target state="translated">تعذّر تحميل أسطول الأجهزة.</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.created" datatype="html">
+        <source>Équipement enregistré.</source>
+        <target state="translated">تم تسجيل الجهاز.</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.action-error" datatype="html">
+        <source>La transition d'état a été refusée.</source>
+        <target state="translated">تم رفض تغيير الحالة.</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.open" datatype="html">
+        <source>Ouvrir la fiche</source>
+        <target state="translated">فتح البطاقة</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.empty" datatype="html">
+        <source>Aucun équipement pour ce filtre. Enregistrez un capteur, une passerelle ou un automate pour commencer à recevoir sa télémétrie.</source>
+        <target state="translated">لا يوجد جهاز مطابق لهذا الفلتر. سجّل مستشعرًا أو بوابة أو متحكمًا لبدء استقبال بياناته.</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.paginator-aria" datatype="html">
+        <source>Pagination des équipements</source>
+        <target state="translated">ترقيم صفحات الأجهزة</target>
+      </trans-unit>
+      <trans-unit id="iot.col-device" datatype="html">
+        <source>Équipement</source>
+        <target state="translated">الجهاز</target>
+      </trans-unit>
+      <trans-unit id="iot.col-health" datatype="html">
+        <source>Dernier signal</source>
+        <target state="translated">آخر إشارة</target>
+      </trans-unit>
+      <trans-unit id="iot.col-protocol" datatype="html">
+        <source>Protocole</source>
+        <target state="translated">البروتوكول</target>
+      </trans-unit>
+      <trans-unit id="iot.col-location" datatype="html">
+        <source>Emplacement</source>
+        <target state="translated">الموقع</target>
+      </trans-unit>
+      <trans-unit id="iot.col-telemetry" datatype="html">
+        <source>Mesures</source>
+        <target state="translated">القياسات</target>
+      </trans-unit>
+      <trans-unit id="iot.action.activate" datatype="html">
+        <source>Mettre en service</source>
+        <target state="translated">تشغيل الجهاز</target>
+      </trans-unit>
+      <trans-unit id="iot.action.suspend" datatype="html">
+        <source>Suspendre</source>
+        <target state="translated">تعليق</target>
+      </trans-unit>
+      <trans-unit id="iot.action.decommission" datatype="html">
+        <source>Décommissionner</source>
+        <target state="translated">إيقاف نهائي</target>
+      </trans-unit>
+      <trans-unit id="iot.device-dialog.create-title" datatype="html">
+        <source>Nouvel équipement IoT</source>
+        <target state="translated">جهاز إنترنت أشياء جديد</target>
+      </trans-unit>
+      <trans-unit id="iot.device-dialog.edit-title" datatype="html">
+        <source>Modifier l'équipement</source>
+        <target state="translated">تعديل الجهاز</target>
+      </trans-unit>
+      <trans-unit id="iot.device-dialog.code" datatype="html">
+        <source>Code</source>
+        <target state="translated">الرمز</target>
+      </trans-unit>
+      <trans-unit id="iot.device-dialog.code-hint" datatype="html">
+        <source>Lettres, chiffres, point, tiret ou souligné — 120 caractères maximum.</source>
+        <target state="translated">أحرف وأرقام ونقطة وشرطة أو شرطة سفلية — 120 حرفًا كحد أقصى.</target>
+      </trans-unit>
+      <trans-unit id="iot.device-dialog.code-locked" datatype="html">
+        <source>Le code est figé après l'enregistrement.</source>
+        <target state="translated">يصبح الرمز ثابتًا بعد التسجيل.</target>
+      </trans-unit>
+      <trans-unit id="iot.device-dialog.name" datatype="html">
+        <source>Désignation</source>
+        <target state="translated">التسمية</target>
+      </trans-unit>
+      <trans-unit id="iot.device-dialog.provisioned-hint" datatype="html">
+        <source>L'équipement est créé à l'état « provisionné » : il faut le mettre en service pour que le serveur accepte sa télémétrie.</source>
+        <target state="translated">يُنشأ الجهاز بحالة «مُهيّأ»: يجب تشغيله كي يقبل الخادم بياناته.</target>
+      </trans-unit>
+      <trans-unit id="iot.save-error" datatype="html">
+        <source>Erreur lors de l'enregistrement.</source>
+        <target state="translated">حدث خطأ أثناء الحفظ.</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry-dialog.title" datatype="html">
+        <source>Relever une mesure</source>
+        <target state="translated">تسجيل قياس</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry-dialog.known" datatype="html">
+        <source>Déjà relevées</source>
+        <target state="translated">مسجّلة سابقًا</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry-dialog.value-required" datatype="html">
+        <source>Renseignez au moins une valeur, numérique ou textuelle.</source>
+        <target state="translated">أدخل قيمة واحدة على الأقل، رقمية أو نصية.</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry-dialog.recorded-hint" datatype="html">
+        <source>Laissez vide pour horodater à la réception.</source>
+        <target state="translated">اتركه فارغًا ليُسجَّل الوقت عند الاستلام.</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry-dialog.threshold-hint" datatype="html">
+        <source>Une valeur numérique hors des seuils configurés ouvre automatiquement une CAPA, et un cycle PDCA si le seuil le prévoit.</source>
+        <target state="translated">أي قيمة رقمية خارج العتبات المحددة تفتح تلقائيًا إجراءً تصحيحيًا (CAPA)، ودورة PDCA إذا نصّت العتبة على ذلك.</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry-dialog.error" datatype="html">
+        <source>La mesure a été refusée par le serveur.</source>
+        <target state="translated">رفض الخادم القياس.</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.metric" datatype="html">
+        <source>Métrique</source>
+        <target state="translated">المقياس</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">القيمة</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.value-numeric" datatype="html">
+        <source>Valeur numérique</source>
+        <target state="translated">قيمة رقمية</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.value-text" datatype="html">
+        <source>Valeur textuelle</source>
+        <target state="translated">قيمة نصية</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.unit" datatype="html">
+        <source>Unité</source>
+        <target state="translated">الوحدة</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.recorded-at" datatype="html">
+        <source>Horodatage de la mesure</source>
+        <target state="translated">توقيت القياس</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.source" datatype="html">
+        <source>Source</source>
+        <target state="translated">المصدر</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.create-title" datatype="html">
+        <source>Nouveau seuil de surveillance</source>
+        <target state="translated">عتبة مراقبة جديدة</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.edit-title" datatype="html">
+        <source>Modifier le seuil</source>
+        <target state="translated">تعديل العتبة</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.bounds-required" datatype="html">
+        <source>Renseignez au moins une borne, basse ou haute.</source>
+        <target state="translated">أدخل حدًّا واحدًا على الأقل، أدنى أو أقصى.</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.bounds-inverted" datatype="html">
+        <source>La borne basse doit être inférieure ou égale à la borne haute.</source>
+        <target state="translated">يجب أن يكون الحد الأدنى أصغر من الحد الأقصى أو مساويًا له.</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.fmea-hint" datatype="html">
+        <source>Identifiant d'une fiche FMEA du tenant, rappelé dans la CAPA générée. Facultatif.</source>
+        <target state="translated">معرّف بطاقة FMEA لدى المستأجر، يُذكر في إجراء CAPA المُولَّد. اختياري.</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.fmea-invalid" datatype="html">
+        <source>Identifiant invalide : un UUID est attendu.</source>
+        <target state="translated">معرّف غير صالح: المتوقع هو UUID.</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.enabled-label" datatype="html">
+        <source>Seuil actif</source>
+        <target state="translated">العتبة مفعّلة</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.enabled-hint" datatype="html">
+        <source>Un seuil inactif reste enregistré mais n'est plus évalué à l'ingestion.</source>
+        <target state="translated">العتبة غير المفعّلة تبقى محفوظة لكنها لا تُقيَّم عند استقبال القياسات.</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.pdca-label" datatype="html">
+        <source>Ouvrir aussi un cycle PDCA</source>
+        <target state="translated">فتح دورة PDCA أيضًا</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.pdca-hint" datatype="html">
+        <source>En plus de la CAPA, un cycle d'amélioration est créé et référencé dans la CAPA.</source>
+        <target state="translated">بالإضافة إلى إجراء CAPA، تُنشأ دورة تحسين يُشار إليها داخل CAPA.</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.error" datatype="html">
+        <source>Le seuil a été refusé par le serveur.</source>
+        <target state="translated">رفض الخادم العتبة.</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.min" datatype="html">
+        <source>Borne basse</source>
+        <target state="translated">الحد الأدنى</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.max" datatype="html">
+        <source>Borne haute</source>
+        <target state="translated">الحد الأقصى</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.bounds" datatype="html">
+        <source>Bornes</source>
+        <target state="translated">الحدود</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.criticity" datatype="html">
+        <source>Criticité de la CAPA générée</source>
+        <target state="translated">درجة خطورة إجراء CAPA المُولَّد</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.fmea" datatype="html">
+        <source>Fiche FMEA liée</source>
+        <target state="translated">بطاقة FMEA المرتبطة</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.pdca" datatype="html">
+        <source>Cycle PDCA</source>
+        <target state="translated">دورة PDCA</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.scope" datatype="html">
+        <source>Portée</source>
+        <target state="translated">النطاق</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.scope-device" datatype="html">
+        <source>Cet équipement</source>
+        <target state="translated">هذا الجهاز</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.scope-tenant" datatype="html">
+        <source>Tous les équipements du tenant</source>
+        <target state="translated">جميع أجهزة المستأجر</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.enabled" datatype="html">
+        <source>Actif</source>
+        <target state="translated">مفعّل</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.disabled" datatype="html">
+        <source>Inactif</source>
+        <target state="translated">غير مفعّل</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.back" datatype="html">
+        <source>Retour au parc IoT</source>
+        <target state="translated">العودة إلى أسطول إنترنت الأشياء</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.load-error" datatype="html">
+        <source>Équipement introuvable.</source>
+        <target state="translated">الجهاز غير موجود.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.add-telemetry" datatype="html">
+        <source>Relever une mesure</source>
+        <target state="translated">تسجيل قياس</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.decommissioned-note" datatype="html">
+        <source>Équipement décommissionné : l'historique reste consultable, plus aucune mesure ni modification n'est acceptée.</source>
+        <target state="translated">جهاز مُوقَف نهائيًا: يبقى السجل متاحًا، ولا يُقبل أي قياس أو تعديل.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.last-signal" datatype="html">
+        <source>Dernier signal</source>
+        <target state="translated">آخر إشارة</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.never-emitted" datatype="html">
+        <source>Aucune mesure reçue à ce jour</source>
+        <target state="translated">لم يُستلم أي قياس حتى الآن</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.total-measures" datatype="html">
+        <source>Mesures ingérées</source>
+        <target state="translated">القياسات المستلمة</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.metrics-count" datatype="html">
+        <source>Métriques suivies</source>
+        <target state="translated">المقاييس المتابَعة</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.thresholds-count" datatype="html">
+        <source>Seuils applicables</source>
+        <target state="translated">العتبات المطبَّقة</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.silence-rule" datatype="html">
+        <source>Un équipement en service est déclaré muet après une heure sans signal ; la mention « signal vieillissant » apparaît dès trente minutes.</source>
+        <target state="translated">يُعتبر الجهاز قيد الخدمة صامتًا بعد ساعة دون إشارة؛ وتظهر عبارة «إشارة قديمة» ابتداءً من ثلاثين دقيقة.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.telemetry-title" datatype="html">
+        <source>Télémétrie</source>
+        <target state="translated">القياس عن بُعد</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.window" datatype="html">
+        <source>Fenêtre</source>
+        <target state="translated">النافذة الزمنية</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.chart-error" datatype="html">
+        <source>Impossible de charger la fenêtre de mesures.</source>
+        <target state="translated">تعذّر تحميل نافذة القياسات.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.recent-note" datatype="html">
+        <source>Cent dernières mesures de l'équipement, toutes métriques confondues. Total ingéré :</source>
+        <target state="translated">آخر مئة قياس للجهاز، لجميع المقاييس مجتمعة. الإجمالي المستلم:</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.window-truncated" datatype="html">
+        <source>Début de fenêtre seulement — points affichés puis mesures de la fenêtre :</source>
+        <target state="translated">بداية النافذة فقط — النقاط المعروضة ثم قياسات النافذة:</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.window-complete" datatype="html">
+        <source>Mesures de la fenêtre :</source>
+        <target state="translated">قياسات النافذة:</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.telemetry-empty" datatype="html">
+        <source>Aucune mesure reçue. Relevez une valeur manuellement ou branchez le capteur sur son protocole d'ingestion.</source>
+        <target state="translated">لم يُستلم أي قياس. سجّل قيمة يدويًا أو اربط المستشعر ببروتوكول الاستقبال الخاص به.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.thresholds-title" datatype="html">
+        <source>Seuils de surveillance</source>
+        <target state="translated">عتبات المراقبة</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.threshold-add" datatype="html">
+        <source>Nouveau seuil</source>
+        <target state="translated">عتبة جديدة</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.threshold-explain" datatype="html">
+        <source>Le franchissement d'un seuil actif ouvre une CAPA à l'ingestion de la mesure, et un cycle PDCA si le seuil le prévoit.</source>
+        <target state="translated">تجاوز عتبة مفعّلة يفتح إجراء CAPA عند استقبال القياس، ودورة PDCA إذا نصّت العتبة على ذلك.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.thresholds-empty" datatype="html">
+        <source>Aucun seuil : les mesures de cet équipement sont enregistrées mais aucune dérive n'ouvrira de CAPA automatiquement.</source>
+        <target state="translated">لا توجد عتبات: تُسجَّل قياسات هذا الجهاز لكن لن يفتح أي انحراف إجراء CAPA تلقائيًا.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.threshold-global" datatype="html">
+        <source>Géré globalement</source>
+        <target state="translated">يُدار على المستوى العام</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.suspend-title" datatype="html">
+        <source>Suspendre l'équipement ?</source>
+        <target state="translated">هل تريد تعليق الجهاز؟</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.suspend-message" datatype="html">
+        <source>Le serveur cessera d'accepter sa télémétrie : aucune dérive ne sera plus détectée tant qu'il n'est pas remis en service.</source>
+        <target state="translated">سيتوقف الخادم عن قبول بياناته: لن يُكتشف أي انحراف إلى أن يُعاد تشغيله.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.decommission-title" datatype="html">
+        <source>Décommissionner l'équipement ?</source>
+        <target state="translated">هل تريد إيقاف الجهاز نهائيًا؟</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.decommission-message" datatype="html">
+        <source>L'état « décommissionné » est définitif : aucune remise en service, aucune nouvelle mesure. L'historique reste consultable.</source>
+        <target state="translated">حالة «مُوقَف نهائيًا» نهائية: لا إعادة تشغيل ولا قياسات جديدة. يبقى السجل متاحًا للاطلاع.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.delete-title" datatype="html">
+        <source>Supprimer l'équipement ?</source>
+        <target state="translated">هل تريد حذف الجهاز؟</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.delete-message" datatype="html">
+        <source>Suppression définitive de l'équipement du registre. Les mesures déjà ingérées ne sont plus rattachées à aucun capteur.</source>
+        <target state="translated">حذف نهائي للجهاز من السجل. لن تبقى القياسات المستلمة مرتبطة بأي مستشعر.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.deleted" datatype="html">
+        <source>Équipement supprimé.</source>
+        <target state="translated">تم حذف الجهاز.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.delete-failed" datatype="html">
+        <source>Suppression impossible.</source>
+        <target state="translated">تعذّر الحذف.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.threshold-delete-title" datatype="html">
+        <source>Supprimer ce seuil ?</source>
+        <target state="translated">هل تريد حذف هذه العتبة؟</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.threshold-delete-message" datatype="html">
+        <source>Les dépassements de cette métrique n'ouvriront plus de CAPA automatiquement.</source>
+        <target state="translated">لن تؤدي تجاوزات هذا المقياس إلى فتح إجراء CAPA تلقائيًا بعد الآن.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.threshold-deleted" datatype="html">
+        <source>Seuil supprimé.</source>
+        <target state="translated">تم حذف العتبة.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.status-changed" datatype="html">
+        <source>Statut mis à jour.</source>
+        <target state="translated">تم تحديث الحالة.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.status-failed" datatype="html">
+        <source>Changement de statut refusé.</source>
+        <target state="translated">تم رفض تغيير الحالة.</target>
+      </trans-unit>
+      <trans-unit id="iot.window.recent" datatype="html">
+        <source>Dernières mesures</source>
+        <target state="translated">أحدث القياسات</target>
+      </trans-unit>
+      <trans-unit id="iot.window.h24" datatype="html">
+        <source>24 heures</source>
+        <target state="translated">24 ساعة</target>
+      </trans-unit>
+      <trans-unit id="iot.window.d7" datatype="html">
+        <source>7 jours</source>
+        <target state="translated">7 أيام</target>
+      </trans-unit>
+      <trans-unit id="iot.window.d30" datatype="html">
+        <source>30 jours</source>
+        <target state="translated">30 يومًا</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.title" datatype="html">
+        <source>Registre des systèmes d'IA</source>
+        <target state="translated">سجل أنظمة الذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.subtitle" datatype="html">
+        <source>Inventaire exigé par l'AI Act (UE 2024/1689). Chaque système est classé par niveau de risque : c'est cette classification qui détermine les obligations d'évaluation de conformité, de supervision humaine et de transparence.</source>
+        <target state="translated">جرد يفرضه قانون الذكاء الاصطناعي (الاتحاد الأوروبي 2024/1689). يُصنَّف كل نظام حسب مستوى المخاطر: وهذا التصنيف هو الذي يحدد التزامات تقييم المطابقة والإشراف البشري والشفافية.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.new" datatype="html">
+        <source>Déclarer un système</source>
+        <target state="translated">الإعلان عن نظام</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.filter-risk" datatype="html">
+        <source>Niveau de risque</source>
+        <target state="translated">مستوى المخاطر</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.search-placeholder" datatype="html">
+        <source>Référence, nom, fournisseur, finalité</source>
+        <target state="translated">المرجع، الاسم، المورّد، الغرض</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.reset-filters" datatype="html">
+        <source>Réinitialiser</source>
+        <target state="translated">إعادة تعيين</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.load-error" datatype="html">
+        <source>Impossible de charger le registre des systèmes d'IA.</source>
+        <target state="translated">تعذّر تحميل سجل أنظمة الذكاء الاصطناعي.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.col-system" datatype="html">
+        <source>Système</source>
+        <target state="translated">النظام</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.col-risk" datatype="html">
+        <source>Classification</source>
+        <target state="translated">التصنيف</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.col-role" datatype="html">
+        <source>Rôle</source>
+        <target state="translated">الدور</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.col-provider" datatype="html">
+        <source>Fournisseur</source>
+        <target state="translated">المورّد</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.gpai" datatype="html">
+        <source>Modèle à usage général (GPAI)</source>
+        <target state="translated">نموذج للأغراض العامة (GPAI)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.attention" datatype="html">
+        <source>Décision requise : pratique interdite ou mise en service bloquée.</source>
+        <target state="translated">يلزم اتخاذ قرار: ممارسة محظورة أو تشغيل معطّل.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.empty" datatype="html">
+        <source>Aucun système d'IA n'est encore déclaré. Le registre est le point de départ du module AI Act : évaluations de conformité, incidents, FRIA et suivi post-marché s'y rattachent.</source>
+        <target state="translated">لم يُعلن بعد عن أي نظام ذكاء اصطناعي. السجل هو نقطة انطلاق وحدة قانون الذكاء الاصطناعي: تقييمات المطابقة والحوادث وتقييم الأثر على الحقوق الأساسية ومراقبة ما بعد الطرح ترتبط جميعها به.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.no-match" datatype="html">
+        <source>Aucun système ne correspond à ces critères.</source>
+        <target state="translated">لا يوجد نظام يطابق هذه المعايير.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.all" datatype="html">
+        <source>Systèmes recensés</source>
+        <target state="translated">الأنظمة المسجّلة</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.all-hint" datatype="html">
+        <source>Tout le registre du tenant</source>
+        <target state="translated">سجل المستأجر بالكامل</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.prohibited" datatype="html">
+        <source>Risque inacceptable</source>
+        <target state="translated">مخاطر غير مقبولة</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.prohibited-hint" datatype="html">
+        <source>Interdits de mise sur le marché (Art. 5)</source>
+        <target state="translated">محظور طرحها في السوق (المادة 5)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.high" datatype="html">
+        <source>Haut risque</source>
+        <target state="translated">مخاطر عالية</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.high-hint" datatype="html">
+        <source>Obligations renforcées (Annexe III)</source>
+        <target state="translated">التزامات معززة (الملحق الثالث)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.draft" datatype="html">
+        <source>Brouillons</source>
+        <target state="translated">المسودات</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.draft-hint" datatype="html">
+        <source>Fiches encore modifiables</source>
+        <target state="translated">بطاقات ما زالت قابلة للتعديل</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.in-use" datatype="html">
+        <source>En service</source>
+        <target state="translated">قيد الاستخدام</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.in-use-hint" datatype="html">
+        <source>Systèmes réellement exploités</source>
+        <target state="translated">أنظمة قيد التشغيل فعلياً</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.risk.unacceptable" datatype="html">
+        <source>Risque inacceptable</source>
+        <target state="translated">مخاطر غير مقبولة</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.risk.high" datatype="html">
+        <source>Haut risque</source>
+        <target state="translated">مخاطر عالية</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.risk.limited" datatype="html">
+        <source>Risque limité</source>
+        <target state="translated">مخاطر محدودة</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.risk.minimal" datatype="html">
+        <source>Risque minimal</source>
+        <target state="translated">مخاطر ضئيلة</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.risk-basis.unacceptable" datatype="html">
+        <source>Pratique interdite — AI Act Art. 5</source>
+        <target state="translated">ممارسة محظورة — المادة 5 من قانون الذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.risk-basis.high" datatype="html">
+        <source>Annexe III — évaluation de conformité, supervision humaine, transparence</source>
+        <target state="translated">الملحق الثالث — تقييم المطابقة، الإشراف البشري، الشفافية</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.risk-basis.limited" datatype="html">
+        <source>Art. 50 — obligation d'informer l'utilisateur qu'il interagit avec une IA</source>
+        <target state="translated">المادة 50 — الالتزام بإبلاغ المستخدم بأنه يتفاعل مع ذكاء اصطناعي</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.risk-basis.minimal" datatype="html">
+        <source>Usage libre — aucune obligation spécifique</source>
+        <target state="translated">استخدام حر — لا التزام محدد</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.status.draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">مسودة</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.status.registered" datatype="html">
+        <source>Enregistré</source>
+        <target state="translated">مُسجَّل</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.status.in-use" datatype="html">
+        <source>En service</source>
+        <target state="translated">قيد الاستخدام</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.status.decommissioned" datatype="html">
+        <source>Retiré du service</source>
+        <target state="translated">مُوقَف عن الخدمة</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.status.withdrawn" datatype="html">
+        <source>Abandonné</source>
+        <target state="translated">مسحوب</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.role.provider" datatype="html">
+        <source>Fournisseur</source>
+        <target state="translated">المورّد</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.role.deployer" datatype="html">
+        <source>Déployeur</source>
+        <target state="translated">المُشغِّل</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.role.importer" datatype="html">
+        <source>Importateur</source>
+        <target state="translated">المستورد</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.role.distributor" datatype="html">
+        <source>Distributeur</source>
+        <target state="translated">الموزّع</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.requirement.conformity-evidence" datatype="html">
+        <source>Preuve d'évaluation de conformité (Art. 43)</source>
+        <target state="translated">دليل تقييم المطابقة (المادة 43)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.requirement.human-oversight" datatype="html">
+        <source>Description de la supervision humaine (Art. 14)</source>
+        <target state="translated">وصف الإشراف البشري (المادة 14)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.requirement.transparency" datatype="html">
+        <source>Mesures de transparence (Art. 13 et 50)</source>
+        <target state="translated">تدابير الشفافية (المادتان 13 و50)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.back" datatype="html">
+        <source>Registre des systèmes d'IA</source>
+        <target state="translated">سجل أنظمة الذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.gpai" datatype="html">
+        <source>GPAI</source>
+        <target state="translated">GPAI</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.register" datatype="html">
+        <source>Enregistrer</source>
+        <target state="translated">تسجيل</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.put-in-use" datatype="html">
+        <source>Mettre en service</source>
+        <target state="translated">بدء التشغيل</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.decommission" datatype="html">
+        <source>Retirer du service</source>
+        <target state="translated">إيقاف عن الخدمة</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.withdraw" datatype="html">
+        <source>Abandonner</source>
+        <target state="translated">سحب</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.prohibited" datatype="html">
+        <source>Pratique interdite par l'article 5 de l'AI Act. Ce système ne peut être ni enregistré ni mis en service ; la fiche n'est conservée que comme trace de la décision.</source>
+        <target state="translated">ممارسة محظورة بموجب المادة 5 من قانون الذكاء الاصطناعي. لا يمكن تسجيل هذا النظام ولا تشغيله؛ ولا تُحفظ البطاقة إلا كأثر للقرار.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.stuck" datatype="html">
+        <source>Mise en service impossible : des obligations restent à documenter alors que la fiche, enregistrée, n'est plus modifiable. Le seul chemin est l'abandon puis une nouvelle déclaration complète.</source>
+        <target state="translated">التشغيل غير ممكن: ما زالت هناك التزامات غير موثقة بينما لم تعد البطاقة المسجلة قابلة للتعديل. السبيل الوحيد هو سحبها ثم تقديم إعلان جديد كامل.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.purpose" datatype="html">
+        <source>Finalité et périmètre</source>
+        <target state="translated">الغرض والنطاق</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.role" datatype="html">
+        <source>Rôle</source>
+        <target state="translated">الدور</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.internal" datatype="html">
+        <source>Interne</source>
+        <target state="translated">داخلي</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.gpai-th" datatype="html">
+        <source>Usage général</source>
+        <target state="translated">الاستخدام العام</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.yes" datatype="html">
+        <source>Oui</source>
+        <target state="translated">نعم</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.no" datatype="html">
+        <source>Non</source>
+        <target state="translated">لا</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.classification" datatype="html">
+        <source>Classification et obligations</source>
+        <target state="translated">التصنيف والالتزامات</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.no-requirement" datatype="html">
+        <source>Aucune obligation spécifique n'est attachée à cette classification.</source>
+        <target state="translated">لا يرتبط أي التزام محدد بهذا التصنيف.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.conformity" datatype="html">
+        <source>Conformité</source>
+        <target state="translated">المطابقة</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.evidence" datatype="html">
+        <source>Preuve d'évaluation</source>
+        <target state="translated">دليل التقييم</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.safeguards" datatype="html">
+        <source>Garde-fous</source>
+        <target state="translated">الضمانات</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.not-documented" datatype="html">
+        <source>Non documenté.</source>
+        <target state="translated">غير موثّق.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.links" datatype="html">
+        <source>Rattachements RGPD</source>
+        <target state="translated">الروابط مع اللائحة العامة لحماية البيانات</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.dpia" datatype="html">
+        <source>AIPD</source>
+        <target state="translated">تقييم أثر حماية البيانات</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.processing" datatype="html">
+        <source>Traitements</source>
+        <target state="translated">أنشطة المعالجة</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.decisions" datatype="html">
+        <source>Décisions automatisées</source>
+        <target state="translated">القرارات الآلية</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.trace" datatype="html">
+        <source>Trace</source>
+        <target state="translated">أثر التدقيق</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.created-by" datatype="html">
+        <source>Déclaré par</source>
+        <target state="translated">أعلنه</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.effective-from" datatype="html">
+        <source>En service depuis</source>
+        <target state="translated">قيد الاستخدام منذ</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.effective-to" datatype="html">
+        <source>Fin d'exploitation</source>
+        <target state="translated">نهاية التشغيل</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.withdrawal-reason" datatype="html">
+        <source>Motif d'abandon</source>
+        <target state="translated">سبب السحب</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.not-found" datatype="html">
+        <source>Ce système d'IA est introuvable.</source>
+        <target state="translated">تعذر العثور على نظام الذكاء الاصطناعي هذا.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.action-failed" datatype="html">
+        <source>L'opération sur le système a échoué.</source>
+        <target state="translated">فشلت العملية على النظام.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.updated" datatype="html">
+        <source>Fiche mise à jour.</source>
+        <target state="translated">تم تحديث البطاقة.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.register-title" datatype="html">
+        <source>Enregistrer ce système ?</source>
+        <target state="translated">هل تريد تسجيل هذا النظام؟</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.register-message" datatype="html">
+        <source>La fiche devient définitive : ses informations ne seront plus modifiables.</source>
+        <target state="translated">تصبح البطاقة نهائية: لن يمكن تعديل معلوماتها بعد الآن.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.register-incomplete" datatype="html">
+        <source>Des obligations ne sont pas encore documentées. Après enregistrement la fiche devient définitive : le système ne pourra plus être mis en service, seulement abandonné.</source>
+        <target state="translated">لم تُوثَّق بعض الالتزامات بعد. بعد التسجيل تصبح البطاقة نهائية: لن يمكن تشغيل النظام، بل سحبه فقط.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.registered" datatype="html">
+        <source>Système enregistré.</source>
+        <target state="translated">تم تسجيل النظام.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.put-in-use-title" datatype="html">
+        <source>Déclarer ce système en service ?</source>
+        <target state="translated">هل تريد إعلان هذا النظام قيد الاستخدام؟</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.put-in-use-message" datatype="html">
+        <source>La date de mise en service sera horodatée et le système entrera dans le périmètre de surveillance post-marché.</source>
+        <target state="translated">سيتم توقيت تاريخ بدء التشغيل زمنياً وسيدخل النظام في نطاق مراقبة ما بعد الطرح في السوق.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.in-use" datatype="html">
+        <source>Système déclaré en service.</source>
+        <target state="translated">تم إعلان النظام قيد الاستخدام.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.decommission-title" datatype="html">
+        <source>Retirer ce système du service ?</source>
+        <target state="translated">هل تريد إيقاف هذا النظام عن الخدمة؟</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.decommission-message" datatype="html">
+        <source>La fiche restera consultable comme archive, avec sa date de fin d'exploitation.</source>
+        <target state="translated">ستبقى البطاقة متاحة للاطلاع كأرشيف، مع تاريخ انتهاء التشغيل.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.decommissioned" datatype="html">
+        <source>Système retiré du service.</source>
+        <target state="translated">تم إيقاف النظام عن الخدمة.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.withdrawn" datatype="html">
+        <source>Système abandonné.</source>
+        <target state="translated">تم سحب النظام.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.delete-title" datatype="html">
+        <source>Supprimer ce brouillon ?</source>
+        <target state="translated">هل تريد حذف هذه المسودة؟</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.delete-message" datatype="html">
+        <source>Suppression définitive. Seuls les brouillons peuvent être supprimés : les autres états sont conservés pour l'audit.</source>
+        <target state="translated">حذف نهائي. لا يمكن حذف سوى المسودات: تُحفظ الحالات الأخرى لأغراض التدقيق.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.deleted" datatype="html">
+        <source>Brouillon supprimé.</source>
+        <target state="translated">تم حذف المسودة.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.create-title" datatype="html">
+        <source>Déclarer un système d'IA</source>
+        <target state="translated">الإعلان عن نظام ذكاء اصطناعي</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.edit-title" datatype="html">
+        <source>Modifier le brouillon</source>
+        <target state="translated">تعديل المسودة</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.section-identity" datatype="html">
+        <source>Identification</source>
+        <target state="translated">التعريف</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">المرجع</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.reference-hint" datatype="html">
+        <source>Majuscules, chiffres, tiret et souligné. Définitive : elle identifie le système dans la base de données UE et les rapports d'audit.</source>
+        <target state="translated">أحرف كبيرة وأرقام وشرطة وشرطة سفلية. نهائي: يعرّف النظام في قاعدة بيانات الاتحاد الأوروبي وفي تقارير التدقيق.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.reference-locked" datatype="html">
+        <source>Référence non modifiable après création.</source>
+        <target state="translated">لا يمكن تعديل المرجع بعد الإنشاء.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.reference-invalid" datatype="html">
+        <source>Format attendu : une majuscule puis 1 à 63 caractères parmi A-Z, 0-9, « - » et « _ ».</source>
+        <target state="translated">الصيغة المتوقعة: حرف كبير ثم من 1 إلى 63 حرفاً من A-Z و0-9 و«-» و«_».</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.intended-purpose" datatype="html">
+        <source>Finalité prévue</source>
+        <target state="translated">الغرض المقصود</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.intended-purpose-hint" datatype="html">
+        <source>Usage réel du système, population concernée, décisions qu'il influence.</source>
+        <target state="translated">الاستخدام الفعلي للنظام، والفئات المعنية، والقرارات التي يؤثر فيها.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.provider" datatype="html">
+        <source>Fournisseur</source>
+        <target state="translated">المورّد</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.provider-hint" datatype="html">
+        <source>Éditeur du système lorsqu'il est acquis auprès d'un tiers.</source>
+        <target state="translated">الجهة المطوّرة للنظام عند اقتنائه من طرف ثالث.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.section-classification" datatype="html">
+        <source>Classification et rôle</source>
+        <target state="translated">التصنيف والدور</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.risk" datatype="html">
+        <source>Niveau de risque</source>
+        <target state="translated">مستوى المخاطر</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.prohibited-warning" datatype="html">
+        <source>Pratique interdite (Art. 5) : la fiche pourra être conservée comme trace de la décision, mais le système ne pourra jamais être enregistré ni mis en service.</source>
+        <target state="translated">ممارسة محظورة (المادة 5): يمكن حفظ البطاقة كأثر للقرار، لكن لا يمكن أبداً تسجيل النظام أو تشغيله.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.role" datatype="html">
+        <source>Rôle de l'organisation</source>
+        <target state="translated">دور المؤسسة</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.role-hint" datatype="html">
+        <source>Art. 3 : fournisseur, déployeur, importateur ou distributeur.</source>
+        <target state="translated">المادة 3: المورّد أو المُشغِّل أو المستورد أو الموزّع.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.gpai" datatype="html">
+        <source>Modèle d'IA à usage général (GPAI)</source>
+        <target state="translated">نموذج ذكاء اصطناعي للأغراض العامة (GPAI)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.requirements-title" datatype="html">
+        <source>Prérequis à la mise en service pour cette classification</source>
+        <target state="translated">المتطلبات المسبقة للتشغيل بالنسبة لهذا التصنيف</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.requirements-note" datatype="html">
+        <source>La fiche n'est plus modifiable une fois enregistrée : complétez ces éléments maintenant, sinon le système devra être retiré et redéclaré.</source>
+        <target state="translated">لا يمكن تعديل البطاقة بعد تسجيلها: أكمل هذه العناصر الآن، وإلا وجب سحب النظام وإعادة الإعلان عنه.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.section-conformity" datatype="html">
+        <source>Conformité et garde-fous</source>
+        <target state="translated">المطابقة والضمانات</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.evidence-url" datatype="html">
+        <source>Preuve d'évaluation de conformité (URL)</source>
+        <target state="translated">دليل تقييم المطابقة (رابط)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.url-invalid" datatype="html">
+        <source>URL http(s) attendue, sans espace.</source>
+        <target state="translated">يُتوقع رابط http(s) بدون مسافات.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.ce-marking" datatype="html">
+        <source>Numéro de marquage CE</source>
+        <target state="translated">رقم علامة CE</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.human-oversight" datatype="html">
+        <source>Supervision humaine</source>
+        <target state="translated">الإشراف البشري</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.human-oversight-hint" datatype="html">
+        <source>Art. 14 : qui peut interrompre le système, sur quels signaux, avec quelle formation.</source>
+        <target state="translated">المادة 14: من يمكنه إيقاف النظام، وبناءً على أي مؤشرات، وبأي تدريب.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.transparency" datatype="html">
+        <source>Mesures de transparence</source>
+        <target state="translated">تدابير الشفافية</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.transparency-hint" datatype="html">
+        <source>Art. 13 et 50 : comment la personne concernée sait qu'elle interagit avec une IA.</source>
+        <target state="translated">المادتان 13 و50: كيف يعرف الشخص المعني أنه يتفاعل مع ذكاء اصطناعي.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.data-governance" datatype="html">
+        <source>Gouvernance des données</source>
+        <target state="translated">حوكمة البيانات</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.section-links" datatype="html">
+        <source>Rattachements RGPD</source>
+        <target state="translated">الروابط مع اللائحة العامة لحماية البيانات</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.dpia" datatype="html">
+        <source>AIPD rattachée (UUID)</source>
+        <target state="translated">تقييم أثر حماية البيانات المرتبط (UUID)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.uuid-invalid" datatype="html">
+        <source>Identifiant UUID attendu.</source>
+        <target state="translated">يُتوقع معرّف UUID.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.processing-activities" datatype="html">
+        <source>Traitements du registre (UUID, un par ligne)</source>
+        <target state="translated">أنشطة المعالجة من السجل (UUID، واحد في كل سطر)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.automated-decisions" datatype="html">
+        <source>Décisions automatisées (UUID, un par ligne)</source>
+        <target state="translated">القرارات الآلية (UUID، واحد في كل سطر)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.uuid-list-invalid" datatype="html">
+        <source>Un des identifiants saisis n'est pas un UUID.</source>
+        <target state="translated">أحد المعرّفات المُدخلة ليس UUID.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.invalid" datatype="html">
+        <source>Corrigez les champs signalés avant d'enregistrer.</source>
+        <target state="translated">صحّح الحقول المحددة قبل الحفظ.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.submit-create" datatype="html">
+        <source>Créer le brouillon</source>
+        <target state="translated">إنشاء المسودة</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.withdraw.title" datatype="html">
+        <source>Abandonner ce système d'IA ?</source>
+        <target state="translated">هل تريد سحب نظام الذكاء الاصطناعي هذا؟</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.withdraw.lead" datatype="html">
+        <source>L'abandon est définitif : la fiche est conservée en lecture seule comme preuve de la décision, mais le système ne pourra plus être enregistré ni mis en service.</source>
+        <target state="translated">السحب نهائي: تُحفظ البطاقة للقراءة فقط كدليل على القرار، لكن لن يمكن بعد الآن تسجيل النظام أو تشغيله.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.withdraw.reason" datatype="html">
+        <source>Motif de l'abandon</source>
+        <target state="translated">سبب السحب</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.withdraw.reason-hint" datatype="html">
+        <source>Sera présenté tel quel lors d'un contrôle : soyez factuel.</source>
+        <target state="translated">سيُعرض كما هو أثناء التفتيش: كن واقعياً.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.withdraw.confirm" datatype="html">
+        <source>Abandonner le système</source>
+        <target state="translated">سحب النظام</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.withdraw.failed" datatype="html">
+        <source>L'abandon du système a échoué.</source>
+        <target state="translated">فشل سحب النظام.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.eyebrow" datatype="html">
+        <source>Standards Hub</source>
+        <target state="translated">مركز المعايير</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.title" datatype="html">
+        <source>Système intégré, audit blanc IA et preuves ancrées</source>
+        <target state="translated">نظام متكامل، وتدقيق تجريبي بالذكاء الاصطناعي، وأدلة مُرسَّخة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.subtitle" datatype="html">
+        <source>Trois leviers d'un même dossier de certification : mutualiser les exigences entre normes, se faire auditer par l'IA avant l'auditeur, et prouver que rien n'a bougé depuis.</source>
+        <target state="translated">ثلاث روافع لملف اعتماد واحد: مشاركة المتطلبات بين المعايير، والخضوع لتدقيق الذكاء الاصطناعي قبل المدقّق، وإثبات أن شيئًا لم يتغيّر منذ ذلك الحين.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tab.coverage" datatype="html">
+        <source>Co-couverture multi-normes</source>
+        <target state="translated">التغطية المشتركة متعددة المعايير</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tab.audit" datatype="html">
+        <source>Audit blanc IA</source>
+        <target state="translated">تدقيق تجريبي بالذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tab.anchor" datatype="html">
+        <source>Ancrage &amp; preuves</source>
+        <target state="translated">الترسيخ والأدلة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.loading" datatype="html">
+        <source>Chargement…</source>
+        <target state="translated">جارٍ التحميل…</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.retry" datatype="html">
+        <source>Réessayer</source>
+        <target state="translated">إعادة المحاولة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">إجراءات</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.scope-title" datatype="html">
+        <source>Périmètre comparé</source>
+        <target state="translated">النطاق المقارَن</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.scope-subtitle" datatype="html">
+        <source>Sans sélection explicite, les normes adoptées par votre organisation sont comparées entre elles.</source>
+        <target state="translated">في غياب اختيار صريح، تُقارَن المعايير التي اعتمدتها مؤسستك فيما بينها.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.select-label" datatype="html">
+        <source>Normes à comparer</source>
+        <target state="translated">المعايير المراد مقارنتها</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.select-aria" datatype="html">
+        <source>Normes à inclure dans la matrice de co-couverture</source>
+        <target state="translated">المعايير المراد إدراجها في مصفوفة التغطية المشتركة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.reset" datatype="html">
+        <source>Revenir aux normes adoptées</source>
+        <target state="translated">العودة إلى المعايير المعتمدة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.refresh" datatype="html">
+        <source>Actualiser</source>
+        <target state="translated">تحديث</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.shared-only" datatype="html">
+        <source>Clauses mutualisables uniquement</source>
+        <target state="translated">البنود القابلة للمشاركة فقط</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.matrix-title" datatype="html">
+        <source>Matrice de co-couverture</source>
+        <target state="translated">مصفوفة التغطية المشتركة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.matrix-subtitle" datatype="html">
+        <source>Une ligne par clause source, une colonne par norme. Une cellule remplie signifie qu'une preuve produite pour la clause vaut aussi pour la norme de la colonne.</source>
+        <target state="translated">صفّ لكل بند مصدر، وعمود لكل معيار. الخلية الممتلئة تعني أن الدليل المُنتج للبند صالح أيضًا لمعيار ذلك العمود.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.caption" datatype="html">
+        <source>Clauses sources en ligne, normes comparées en colonne, codes des clauses couvertes en cellule.</source>
+        <target state="translated">بنود المصدر في الصفوف، والمعايير المقارَنة في الأعمدة، ورموز البنود المغطّاة في الخلايا.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.col-source" datatype="html">
+        <source>Clause source</source>
+        <target state="translated">بند المصدر</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.col-shared" datatype="html">
+        <source>Mutualisation</source>
+        <target state="translated">المشاركة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.shared-count" datatype="html">
+        <source>&lt;x id="count"/&gt; norme(s)</source>
+        <target state="translated">&lt;x id="count"/&gt; معيار (معايير)</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.specific" datatype="html">
+        <source>Spécifique</source>
+        <target state="translated">خاص بالمعيار</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.empty" datatype="html">
+        <source>Aucun lien de couverture n'est enregistré entre ces normes.</source>
+        <target state="translated">لا توجد أي روابط تغطية مسجّلة بين هذه المعايير.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.empty-single" datatype="html">
+        <source>Une seule norme dans le périmètre : ajoutez-en au moins une seconde pour faire apparaître les exigences communes.</source>
+        <target state="translated">معيار واحد فقط في النطاق: أضف معيارًا ثانيًا على الأقل لإظهار المتطلبات المشتركة.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.empty-filtered" datatype="html">
+        <source>Aucune clause n'est mutualisable sur ce périmètre : les liens existants sont seulement partiels ou informatifs.</source>
+        <target state="translated">لا يوجد بند قابل للمشاركة ضمن هذا النطاق: الروابط الموجودة جزئية أو إعلامية فقط.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.show-all" datatype="html">
+        <source>Afficher tous les liens</source>
+        <target state="translated">عرض جميع الروابط</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.error" datatype="html">
+        <source>Impossible de charger la matrice de co-couverture.</source>
+        <target state="translated">تعذّر تحميل مصفوفة التغطية المشتركة.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.relation.equivalent" datatype="html">
+        <source>Équivalente</source>
+        <target state="translated">مكافئ</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.relation.covers" datatype="html">
+        <source>Couvre</source>
+        <target state="translated">يغطّي</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.relation.related" datatype="html">
+        <source>Liée</source>
+        <target state="translated">ذات صلة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.relation.references" datatype="html">
+        <source>Cite</source>
+        <target state="translated">يشير إلى</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tile.standards" datatype="html">
+        <source>Normes comparées</source>
+        <target state="translated">المعايير المقارَنة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tile.clauses" datatype="html">
+        <source>Clauses sources reliées</source>
+        <target state="translated">بنود المصدر المرتبطة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tile.clauses-hint" datatype="html">
+        <source>Clauses possédant au moins un lien vers une autre norme du périmètre.</source>
+        <target state="translated">البنود التي لها رابط واحد على الأقل مع معيار آخر ضمن النطاق.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tile.shared" datatype="html">
+        <source>Clauses mutualisables</source>
+        <target state="translated">البنود القابلة للمشاركة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tile.shared-hint" datatype="html">
+        <source>Clauses dont la preuve vaut pour au moins une autre norme (lien « Équivalente » ou « Couvre »).</source>
+        <target state="translated">البنود التي يصلح دليلها لمعيار آخر واحد على الأقل (رابط «مكافئ» أو «يغطّي»).</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tile.reuse" datatype="html">
+        <source>Taux de mutualisation</source>
+        <target state="translated">معدّل المشاركة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tile.reuse-hint" datatype="html">
+        <source>Part des paires (clause × norme) déjà couvertes par une preuve existante.</source>
+        <target state="translated">نسبة الأزواج (بند × معيار) المغطّاة فعلًا بدليل قائم.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tile.mappings" datatype="html">
+        <source>Liens de couverture</source>
+        <target state="translated">روابط التغطية</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tile.mappings-hint" datatype="html">
+        <source>Nombre total de correspondances clause à clause dans le périmètre.</source>
+        <target state="translated">إجمالي عدد التطابقات من بند إلى بند ضمن النطاق.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.distinction-title" datatype="html">
+        <source>Deux audits blancs coexistent — ils ne font pas double emploi</source>
+        <target state="translated">يتعايش تدقيقان تجريبيان — وهما ليسا تكرارًا لبعضهما</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.rules-lead" datatype="html">
+        <source>Audit blanc « règles », sur la fiche de la norme</source>
+        <target state="translated">التدقيق التجريبي «القائم على القواعد»، في بطاقة المعيار</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.rules-body" datatype="html">
+        <source>calcul déterministe et instantané du taux de couverture des exigences par les preuves rattachées. Rien n'est conservé : c'est une photo à l'instant T.</source>
+        <target state="translated">حساب حتمي وفوري لنسبة تغطية المتطلبات بالأدلة المرتبطة. لا يُحفظ أي شيء: إنها لقطة لحظية.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.ia-lead" datatype="html">
+        <source>Audit blanc IA, ci-dessous</source>
+        <target state="translated">التدقيق التجريبي بالذكاء الاصطناعي، أدناه</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.ia-body" datatype="html">
+        <source>le modèle génère 30 à 100 questions d'auditeur ciblées sur les clauses à risque, rédige les constats et produit un plan de remédiation. Chaque exécution est persistée, datée, attribuée à son auteur et relisible à l'identique.</source>
+        <target state="translated">يولّد النموذج من 30 إلى 100 سؤال تدقيق موجّهة إلى البنود عالية المخاطر، ويحرّر الملاحظات وينتج خطة معالجة. يُحفظ كل تنفيذ ويُؤرَّخ ويُنسب إلى صاحبه ويمكن قراءته لاحقًا كما هو.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.open-rules" datatype="html">
+        <source>Ouvrir l'audit blanc « règles »</source>
+        <target state="translated">فتح التدقيق التجريبي «القائم على القواعد»</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.run-title" datatype="html">
+        <source>Lancer un audit blanc IA</source>
+        <target state="translated">تشغيل تدقيق تجريبي بالذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.run-subtitle" datatype="html">
+        <source>La simulation porte sur les clauses réellement chargées pour la norme adoptée et sur l'état de preuve de votre tenant.</source>
+        <target state="translated">تستند المحاكاة إلى البنود المحمّلة فعليًا للمعيار المعتمد وإلى حالة الأدلة لدى المستأجر.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.adoption-label" datatype="html">
+        <source>Norme adoptée</source>
+        <target state="translated">المعيار المعتمد</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.adoption-aria" datatype="html">
+        <source>Norme adoptée sur laquelle porte l'audit blanc IA</source>
+        <target state="translated">المعيار المعتمد الذي يشمله التدقيق التجريبي بالذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.run" datatype="html">
+        <source>Lancer l'audit blanc IA</source>
+        <target state="translated">تشغيل التدقيق التجريبي بالذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.running" datatype="html">
+        <source>Audit en cours…</source>
+        <target state="translated">التدقيق قيد التنفيذ…</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.running-hint" datatype="html">
+        <source>Génération des questions et des constats par le modèle — l'opération peut durer plusieurs dizaines de secondes.</source>
+        <target state="translated">يقوم النموذج بتوليد الأسئلة والملاحظات — قد تستغرق العملية عشرات الثواني.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.refresh" datatype="html">
+        <source>Actualiser l'historique</source>
+        <target state="translated">تحديث السجل</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.no-right" datatype="html">
+        <source>Votre rôle ne permet pas de déclencher un audit blanc IA. L'historique reste consultable.</source>
+        <target state="translated">لا يسمح دورك بتشغيل تدقيق تجريبي بالذكاء الاصطناعي. يبقى السجل متاحًا للاطلاع.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.history-title" datatype="html">
+        <source>Historique des exécutions</source>
+        <target state="translated">سجل عمليات التنفيذ</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.history-subtitle" datatype="html">
+        <source>Chaque exécution est conservée telle quelle : c'est ce qui permet de mesurer les progrès d'un audit blanc au suivant.</source>
+        <target state="translated">يُحفظ كل تنفيذ كما هو: وهذا ما يتيح قياس التقدّم من تدقيق تجريبي إلى الذي يليه.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.col-date" datatype="html">
+        <source>Exécuté le</source>
+        <target state="translated">نُفِّذ في</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.col-readiness" datatype="html">
+        <source>Préparation</source>
+        <target state="translated">الجاهزية</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.col-findings" datatype="html">
+        <source>Écarts</source>
+        <target state="translated">الفجوات</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.col-questions" datatype="html">
+        <source>Questions</source>
+        <target state="translated">الأسئلة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.col-provider" datatype="html">
+        <source>Moteur</source>
+        <target state="translated">المحرّك</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.major" datatype="html">
+        <source>majeures</source>
+        <target state="translated">كبرى</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.minor" datatype="html">
+        <source>mineures</source>
+        <target state="translated">صغرى</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.observation" datatype="html">
+        <source>observations</source>
+        <target state="translated">ملاحظات</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.open-report" datatype="html">
+        <source>Ouvrir le rapport</source>
+        <target state="translated">فتح التقرير</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.empty" datatype="html">
+        <source>Aucun audit blanc IA n'a encore été exécuté sur cette norme.</source>
+        <target state="translated">لم يُنفَّذ بعد أي تدقيق تجريبي بالذكاء الاصطناعي على هذا المعيار.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.no-adoption" datatype="html">
+        <source>Aucune norme n'est adoptée : adoptez une norme dans le Standards Hub pour pouvoir simuler un audit.</source>
+        <target state="translated">لا يوجد معيار معتمد: اعتمد معيارًا في مركز المعايير لتتمكن من محاكاة تدقيق.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.error-adoptions" datatype="html">
+        <source>Impossible de charger les normes adoptées.</source>
+        <target state="translated">تعذّر تحميل المعايير المعتمدة.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.error-history" datatype="html">
+        <source>Impossible de charger l'historique des audits blancs IA.</source>
+        <target state="translated">تعذّر تحميل سجل التدقيقات التجريبية بالذكاء الاصطناعي.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.error-run" datatype="html">
+        <source>L'audit blanc IA n'a pas pu être exécuté.</source>
+        <target state="translated">تعذّر تنفيذ التدقيق التجريبي بالذكاء الاصطناعي.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.error-no-clause" datatype="html">
+        <source>Cette norme adoptée n'expose aucune clause exploitable : chargez son référentiel avant de lancer un audit blanc IA.</source>
+        <target state="translated">لا يعرض هذا المعيار المعتمد أي بند قابل للاستخدام: حمّل مرجعه قبل تشغيل تدقيق تجريبي بالذكاء الاصطناعي.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.criticality.major" datatype="html">
+        <source>NC majeure</source>
+        <target state="translated">عدم مطابقة كبرى</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.criticality.minor" datatype="html">
+        <source>NC mineure</source>
+        <target state="translated">عدم مطابقة صغرى</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.criticality.observation" datatype="html">
+        <source>Observation</source>
+        <target state="translated">ملاحظة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.run-title" datatype="html">
+        <source>Déclencher un lot d'ancrage</source>
+        <target state="translated">تشغيل دفعة ترسيخ</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.run-subtitle" datatype="html">
+        <source>Les événements d'audit non encore ancrés sont regroupés, leur racine Merkle est calculée puis soumise à la blockchain.</source>
+        <target state="translated">تُجمَّع أحداث التدقيق غير المُرسَّخة بعد، ويُحسب جذر ميركل الخاص بها ثم يُرسل إلى سلسلة الكتل.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.batch-label" datatype="html">
+        <source>Taille du lot</source>
+        <target state="translated">حجم الدفعة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.batch-invalid" datatype="html">
+        <source>La taille du lot doit être un entier compris entre 1 et 1000 — le serveur refuse toute valeur hors de ces bornes.</source>
+        <target state="translated">يجب أن يكون حجم الدفعة عددًا صحيحًا بين 1 و1000 — يرفض الخادم أي قيمة خارج هذه الحدود.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.run" datatype="html">
+        <source>Ancrer le lot</source>
+        <target state="translated">ترسيخ الدفعة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.running" datatype="html">
+        <source>Ancrage…</source>
+        <target state="translated">جارٍ الترسيخ…</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.no-right" datatype="html">
+        <source>Votre rôle ne permet pas de déclencher un ancrage. La vérification d'une preuve reste ouverte ci-contre.</source>
+        <target state="translated">لا يسمح دورك بتشغيل عملية ترسيخ. يبقى التحقق من دليل متاحًا في الجهة المقابلة.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.res-count" datatype="html">
+        <source>Événements ancrés</source>
+        <target state="translated">الأحداث المُرسَّخة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.res-range" datatype="html">
+        <source>Séquences</source>
+        <target state="translated">التسلسلات</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.res-root" datatype="html">
+        <source>Racine Merkle</source>
+        <target state="translated">جذر ميركل</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.res-tx" datatype="html">
+        <source>Référence de transaction</source>
+        <target state="translated">مرجع المعاملة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.res-at" datatype="html">
+        <source>Horodatage</source>
+        <target state="translated">الطابع الزمني</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.res-empty" datatype="html">
+        <source>Aucun événement n'était en attente d'ancrage : la chaîne est déjà à jour.</source>
+        <target state="translated">لا يوجد أي حدث بانتظار الترسيخ: السلسلة محدّثة بالفعل.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.verify-title" datatype="html">
+        <source>Vérifier une preuve</source>
+        <target state="translated">التحقق من دليل</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.verify-subtitle" datatype="html">
+        <source>Recalcule la racine Merkle du lot de l'événement et contrôle la signature hybride du reçu.</source>
+        <target state="translated">يعيد حساب جذر ميركل لدفعة الحدث ويتحقق من التوقيع الهجين للإيصال.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.hash-label" datatype="html">
+        <source>Hash d'intégrité</source>
+        <target state="translated">بصمة السلامة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.hash-placeholder" datatype="html">
+        <source>64 caractères hexadécimaux</source>
+        <target state="translated">64 حرفًا سداسيًا عشريًا</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.hash-invalid" datatype="html">
+        <source>Un hash d'intégrité est un SHA-256 hexadécimal de 64 caractères. Reprenez-le depuis la liste des événements ci-dessous.</source>
+        <target state="translated">بصمة السلامة هي SHA-256 سداسي عشري من 64 حرفًا. انسخها من قائمة الأحداث أدناه.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.verify" datatype="html">
+        <source>Vérifier</source>
+        <target state="translated">تحقّق</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.verifying" datatype="html">
+        <source>Vérification…</source>
+        <target state="translated">جارٍ التحقق…</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.status-verified" datatype="html">
+        <source>Intégrité confirmée</source>
+        <target state="translated">تم تأكيد السلامة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.status-tampered" datatype="html">
+        <source>Altération détectée</source>
+        <target state="translated">تم اكتشاف تلاعب</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.status-not-anchored" datatype="html">
+        <source>Pas encore ancré</source>
+        <target state="translated">لم يُرسَّخ بعد</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.events-title" datatype="html">
+        <source>Derniers événements du journal d'audit</source>
+        <target state="translated">أحدث أحداث سجل التدقيق</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.events-subtitle" datatype="html">
+        <source>Les vingt événements les plus récents de votre tenant, avec leur état d'ancrage.</source>
+        <target state="translated">أحدث عشرين حدثًا للمستأجر، مع حالة الترسيخ لكل منها.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.events-refresh" datatype="html">
+        <source>Actualiser</source>
+        <target state="translated">تحديث</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.col-seq" datatype="html">
+        <source>Seq.</source>
+        <target state="translated">التسلسل</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.col-when" datatype="html">
+        <source>Survenu le</source>
+        <target state="translated">وقع في</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.col-action" datatype="html">
+        <source>Action</source>
+        <target state="translated">الإجراء</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.col-hash" datatype="html">
+        <source>Hash d'intégrité</source>
+        <target state="translated">بصمة السلامة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.col-anchored" datatype="html">
+        <source>Ancré</source>
+        <target state="translated">مُرسَّخ</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.anchored" datatype="html">
+        <source>Ancré</source>
+        <target state="translated">مُرسَّخ</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">قيد الانتظار</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.verify-row-aria" datatype="html">
+        <source>Vérifier l'intégrité de cet événement</source>
+        <target state="translated">التحقق من سلامة هذا الحدث</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.verify-row-tip" datatype="html">
+        <source>Vérifier l'intégrité de cet événement</source>
+        <target state="translated">التحقق من سلامة هذا الحدث</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.events-empty" datatype="html">
+        <source>Le journal d'audit de votre tenant est vide pour l'instant.</source>
+        <target state="translated">سجل التدقيق الخاص بالمستأجر فارغ حاليًا.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.error-events" datatype="html">
+        <source>Impossible de charger les derniers événements d'audit.</source>
+        <target state="translated">تعذّر تحميل أحدث أحداث التدقيق.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.error-run" datatype="html">
+        <source>Le lot d'ancrage n'a pas pu être déclenché.</source>
+        <target state="translated">تعذّر تشغيل دفعة الترسيخ.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.error-verify" datatype="html">
+        <source>La vérification d'intégrité a échoué.</source>
+        <target state="translated">فشل التحقق من السلامة.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.eyebrow" datatype="html">
+        <source>Audit blanc IA</source>
+        <target state="translated">تدقيق تجريبي بالذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.title-fallback" datatype="html">
+        <source>Rapport d'audit blanc IA</source>
+        <target state="translated">تقرير التدقيق التجريبي بالذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.subtitle" datatype="html">
+        <source>Simulation d'audit de certification produite par le modèle, conservée telle quelle : questions posées, constats et plan de remédiation.</source>
+        <target state="translated">محاكاة تدقيق الشهادة التي أنتجها النموذج، محفوظة كما هي: الأسئلة المطروحة والملاحظات وخطة المعالجة.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.back" datatype="html">
+        <source>Retour aux audits blancs</source>
+        <target state="translated">العودة إلى التدقيقات التجريبية</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.summary-title" datatype="html">
+        <source>Synthèse</source>
+        <target state="translated">الملخص</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.readiness" datatype="html">
+        <source>Niveau de préparation</source>
+        <target state="translated">مستوى الجاهزية</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.readiness-aria" datatype="html">
+        <source>Niveau de préparation à la certification</source>
+        <target state="translated">مستوى الجاهزية للحصول على الشهادة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.fact-major" datatype="html">
+        <source>NC majeures</source>
+        <target state="translated">حالات عدم مطابقة كبرى</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.fact-minor" datatype="html">
+        <source>NC mineures</source>
+        <target state="translated">حالات عدم مطابقة صغرى</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.fact-observation" datatype="html">
+        <source>Observations</source>
+        <target state="translated">ملاحظات</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.fact-questions" datatype="html">
+        <source>Questions posées</source>
+        <target state="translated">الأسئلة المطروحة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.fact-provider" datatype="html">
+        <source>Moteur</source>
+        <target state="translated">المحرّك</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.fact-date" datatype="html">
+        <source>Exécuté le</source>
+        <target state="translated">نُفِّذ في</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.human-decides" datatype="html">
+        <source>Ces constats sont des suggestions du modèle appuyées sur l'état de preuve de votre tenant. Ils ne valent pas décision : la levée d'un écart reste soumise à validation humaine.</source>
+        <target state="translated">هذه الملاحظات اقتراحات من النموذج تستند إلى حالة الأدلة لدى المستأجر. وهي ليست قرارًا: يظل إغلاق أي فجوة خاضعًا لمصادقة بشرية.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.gaps-title" datatype="html">
+        <source>Analyse des écarts</source>
+        <target state="translated">تحليل الفجوات</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.gaps-subtitle" datatype="html">
+        <source>Une entrée par clause auditée, avec la couverture réelle des exigences et le constat rédigé par le modèle.</source>
+        <target state="translated">مدخل لكل بند جرى تدقيقه، مع التغطية الفعلية للمتطلبات والملاحظة التي حرّرها النموذج.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.filter-aria" datatype="html">
+        <source>Filtrer les écarts par criticité</source>
+        <target state="translated">تصفية الفجوات حسب درجة الخطورة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.filter-all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">الكل</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.requirements-covered" datatype="html">
+        <source>exigences couvertes</source>
+        <target state="translated">متطلبات مغطّاة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.coverage-aria" datatype="html">
+        <source>Couverture des exigences de la clause &lt;x id="clause"/&gt;</source>
+        <target state="translated">تغطية متطلبات البند &lt;x id="clause"/&gt;</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.targeted-questions" datatype="html">
+        <source>questions ciblées</source>
+        <target state="translated">أسئلة موجّهة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.gaps-filtered-empty" datatype="html">
+        <source>Aucun écart de cette criticité dans ce rapport.</source>
+        <target state="translated">لا توجد فجوة بهذه الدرجة من الخطورة في هذا التقرير.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.gaps-empty" datatype="html">
+        <source>Le modèle n'a relevé aucun écart sur les clauses auditées.</source>
+        <target state="translated">لم يرصد النموذج أي فجوة في البنود التي جرى تدقيقها.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.plan-title" datatype="html">
+        <source>Plan de remédiation</source>
+        <target state="translated">خطة المعالجة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.plan-subtitle" datatype="html">
+        <source>Une action par écart majeur ou mineur, orientée vers le module QualitOS qui produira la preuve manquante. Les observations n'en génèrent pas.</source>
+        <target state="translated">إجراء واحد لكل فجوة كبرى أو صغرى، موجَّه إلى وحدة QualitOS التي ستنتج الدليل الناقص. أما الملاحظات فلا تولّد إجراءات.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.col-clause" datatype="html">
+        <source>Clause</source>
+        <target state="translated">البند</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.col-criticality" datatype="html">
+        <source>Criticité</source>
+        <target state="translated">درجة الخطورة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.col-priority" datatype="html">
+        <source>Priorité</source>
+        <target state="translated">الأولوية</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.col-module" datatype="html">
+        <source>Module visé</source>
+        <target state="translated">الوحدة المستهدفة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.col-action" datatype="html">
+        <source>Action</source>
+        <target state="translated">الإجراء</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.plan-empty" datatype="html">
+        <source>Aucune action requise : le rapport ne contient que des observations.</source>
+        <target state="translated">لا حاجة إلى أي إجراء: يحتوي التقرير على ملاحظات فقط.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.questions-title" datatype="html">
+        <source>Questionnaire d'audit</source>
+        <target state="translated">استبيان التدقيق</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.questions-subtitle" datatype="html">
+        <source>L'intégralité des questions posées par le modèle, dans l'ordre où elles ont été générées.</source>
+        <target state="translated">جميع الأسئلة التي طرحها النموذج، بالترتيب الذي وُلِّدت به.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.questions-empty" datatype="html">
+        <source>Ce rapport ne contient aucune question.</source>
+        <target state="translated">لا يحتوي هذا التقرير على أي سؤال.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.error" datatype="html">
+        <source>Ce rapport d'audit blanc IA est introuvable.</source>
+        <target state="translated">تعذّر العثور على تقرير التدقيق التجريبي بالذكاء الاصطناعي هذا.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.error-params" datatype="html">
+        <source>Rapport introuvable : lien incomplet.</source>
+        <target state="translated">التقرير غير موجود: الرابط غير مكتمل.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.priority.high" datatype="html">
+        <source>Haute</source>
+        <target state="translated">عالية</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.priority.medium" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">متوسطة</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.priority.low" datatype="html">
+        <source>Basse</source>
+        <target state="translated">منخفضة</target>
+      </trans-unit>
+      <trans-unit id="nav.connecteurs" datatype="html">
+        <source>Connecteurs</source>
+        <target state="translated">الموصّلات</target>
+      </trans-unit>
+      <trans-unit id="connectors.title" datatype="html">
+        <source>Connecteurs tiers</source>
+        <target state="translated">موصّلات الأنظمة الخارجية</target>
+      </trans-unit>
+      <trans-unit id="connectors.subtitle" datatype="html">
+        <source>Branchez QualitOS sur vos ERP, vos dossiers patients FHIR et vos outils de conversation. Les secrets sont chiffrés au repos et ne sont jamais réaffichés : pour en changer, saisissez-en un nouveau.</source>
+        <target state="translated">اربط QualitOS بأنظمة تخطيط الموارد لديك، وسجلات المرضى بمعيار FHIR، وأدوات المحادثة. تُشفَّر الأسرار عند التخزين ولا تُعرض مرة أخرى: لتغييرها، أدخل قيمة جديدة.</target>
+      </trans-unit>
+      <trans-unit id="connectors.tab-erp" datatype="html">
+        <source>ERP</source>
+        <target state="translated">تخطيط الموارد (ERP)</target>
+      </trans-unit>
+      <trans-unit id="connectors.tab-ehr" datatype="html">
+        <source>Dossier patient (FHIR)</source>
+        <target state="translated">سجل المريض (FHIR)</target>
+      </trans-unit>
+      <trans-unit id="connectors.tab-comm" datatype="html">
+        <source>Communication</source>
+        <target state="translated">التواصل</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.intro" datatype="html">
+        <source>Importe les fournisseurs et les indicateurs de production depuis SAP, Oracle Fusion ou Dynamics. La synchronisation est manuelle et déclenchée depuis cet écran.</source>
+        <target state="translated">يستورد المورّدين ومؤشرات الإنتاج من SAP أو Oracle Fusion أو Dynamics. المزامنة يدوية وتُطلَق من هذه الشاشة.</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.new" datatype="html">
+        <source>Nouvelle connexion ERP</source>
+        <target state="translated">اتصال ERP جديد</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.sync-failed" datatype="html">
+        <source>Synchronisation interrompue — vérifiez l'URL et le secret.</source>
+        <target state="translated">توقفت المزامنة — تحقّق من العنوان والسرّ.</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.metric-suppliers" datatype="html">
+        <source>fournisseurs importés</source>
+        <target state="translated">مورّدون مستوردون</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.metric-suppliers-ignored" datatype="html">
+        <source>fournisseurs ignorés</source>
+        <target state="translated">مورّدون متجاهَلون</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.metric-kpis" datatype="html">
+        <source>mesures KPI écrites</source>
+        <target state="translated">قياسات مؤشرات مكتوبة</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.metric-kpis-ignored" datatype="html">
+        <source>mesures sans KPI connu</source>
+        <target state="translated">قياسات بلا مؤشر معروف</target>
+      </trans-unit>
+      <trans-unit id="connectors.dismiss-outcome" datatype="html">
+        <source>Masquer ce compte rendu</source>
+        <target state="translated">إخفاء هذا التقرير</target>
+      </trans-unit>
+      <trans-unit id="connectors.tile-total" datatype="html">
+        <source>Connexions</source>
+        <target state="translated">الاتصالات</target>
+      </trans-unit>
+      <trans-unit id="connectors.tile-active" datatype="html">
+        <source>Actives</source>
+        <target state="translated">نشطة</target>
+      </trans-unit>
+      <trans-unit id="connectors.tile-inactive" datatype="html">
+        <source>Inactives</source>
+        <target state="translated">غير نشطة</target>
+      </trans-unit>
+      <trans-unit id="connectors.tile-failing" datatype="html">
+        <source>En échec</source>
+        <target state="translated">متعثّرة</target>
+      </trans-unit>
+      <trans-unit id="connectors.tile-destinations" datatype="html">
+        <source>Destinations</source>
+        <target state="translated">الوجهات</target>
+      </trans-unit>
+      <trans-unit id="connectors.col-endpoint" datatype="html">
+        <source>Point d'entrée</source>
+        <target state="translated">نقطة الاتصال</target>
+      </trans-unit>
+      <trans-unit id="connectors.col-last-sync" datatype="html">
+        <source>Dernière synchronisation</source>
+        <target state="translated">آخر مزامنة</target>
+      </trans-unit>
+      <trans-unit id="connectors.never-synced" datatype="html">
+        <source>Jamais synchronisée</source>
+        <target state="translated">لم تتم مزامنتها قط</target>
+      </trans-unit>
+      <trans-unit id="connectors.last-success" datatype="html">
+        <source>Dernier succès</source>
+        <target state="translated">آخر نجاح</target>
+      </trans-unit>
+      <trans-unit id="connectors.failures-tooltip" datatype="html">
+        <source>Désactivation automatique à 10 échecs consécutifs</source>
+        <target state="translated">تعطيل تلقائي بعد 10 إخفاقات متتالية</target>
+      </trans-unit>
+      <trans-unit id="connectors.action-sync" datatype="html">
+        <source>Synchroniser maintenant</source>
+        <target state="translated">المزامنة الآن</target>
+      </trans-unit>
+      <trans-unit id="connectors.action-disable" datatype="html">
+        <source>Désactiver la connexion</source>
+        <target state="translated">تعطيل الاتصال</target>
+      </trans-unit>
+      <trans-unit id="connectors.action-enable" datatype="html">
+        <source>Réactiver la connexion</source>
+        <target state="translated">إعادة تفعيل الاتصال</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.empty" datatype="html">
+        <source>Aucune connexion ERP. Ajoutez-en une pour alimenter vos fournisseurs et vos indicateurs de production depuis le système de gestion.</source>
+        <target state="translated">لا توجد اتصالات ERP. أضف اتصالاً لتغذية بيانات المورّدين ومؤشرات الإنتاج من نظام الإدارة.</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.intro" datatype="html">
+        <source>Récupère les évènements indésirables d'un serveur HL7 FHIR R4 ou R5. L'import est incrémental depuis le dernier succès et ne conserve aucune donnée patient.</source>
+        <target state="translated">يجلب الأحداث الضائرة من خادم HL7 FHIR بإصدار R4 أو R5. الاستيراد تراكمي منذ آخر نجاح ولا يحتفظ بأي بيانات مرضى.</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.new" datatype="html">
+        <source>Nouvelle connexion FHIR</source>
+        <target state="translated">اتصال FHIR جديد</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.sync-failed" datatype="html">
+        <source>Import interrompu — vérifiez l'URL et l'authentification.</source>
+        <target state="translated">توقف الاستيراد — تحقّق من العنوان وطريقة المصادقة.</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.metric-fetched" datatype="html">
+        <source>ressources lues</source>
+        <target state="translated">موارد مقروءة</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.metric-created" datatype="html">
+        <source>importées</source>
+        <target state="translated">مستوردة</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.metric-skipped" datatype="html">
+        <source>déjà connues</source>
+        <target state="translated">معروفة مسبقاً</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.metric-errors" datatype="html">
+        <source>en erreur</source>
+        <target state="translated">بها أخطاء</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.empty" datatype="html">
+        <source>Aucune connexion FHIR. Ajoutez-en une pour remonter automatiquement les évènements indésirables du dossier patient dans vos non-conformités.</source>
+        <target state="translated">لا توجد اتصالات FHIR. أضف اتصالاً لنقل الأحداث الضائرة من سجل المريض تلقائياً إلى حالات عدم المطابقة.</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.intro" datatype="html">
+        <source>Pousse les alertes qualité vers Teams, Slack ou Mattermost via un webhook entrant. L'URL du webhook est un secret : elle n'est jamais réaffichée, mais un envoi de test permet de vérifier qu'elle fonctionne toujours.</source>
+        <target state="translated">يرسل تنبيهات الجودة إلى Teams أو Slack أو Mattermost عبر Webhook وارد. عنوان الـ Webhook سرّ لا يُعرض مرة أخرى، لكن رسالة اختبار تتيح التأكد من أنه ما زال يعمل.</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.new" datatype="html">
+        <source>Nouvelle destination</source>
+        <target state="translated">وجهة جديدة</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.test-ok" datatype="html">
+        <source>Message de test reçu par le salon.</source>
+        <target state="translated">استلمت القناة رسالة الاختبار.</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.test-ko" datatype="html">
+        <source>Le salon n'a pas accepté le message — l'URL du webhook a probablement été révoquée.</source>
+        <target state="translated">لم تقبل القناة الرسالة — على الأرجح أُلغي عنوان الـ Webhook.</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.col-channel" datatype="html">
+        <source>Salon</source>
+        <target state="translated">القناة</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.no-channel" datatype="html">
+        <source>Non précisé</source>
+        <target state="translated">غير محدّدة</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.webhook-hidden" datatype="html">
+        <source>Webhook masqué</source>
+        <target state="translated">الـ Webhook مخفي</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.col-activity" datatype="html">
+        <source>Dernière notification</source>
+        <target state="translated">آخر إشعار</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.never-notified" datatype="html">
+        <source>Jamais sollicitée</source>
+        <target state="translated">لم تُستخدم قط</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.action-test" datatype="html">
+        <source>Envoyer un message de test</source>
+        <target state="translated">إرسال رسالة اختبار</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.empty" datatype="html">
+        <source>Aucune destination. Ajoutez-en une pour que les alertes qualité arrivent là où vos équipes travaillent déjà.</source>
+        <target state="translated">لا توجد وجهات. أضف وجهة لتصل تنبيهات الجودة إلى فرقك حيث تعمل بالفعل.</target>
+      </trans-unit>
+      <trans-unit id="connectors.status-active" datatype="html">
+        <source>Active</source>
+        <target state="translated">نشطة</target>
+      </trans-unit>
+      <trans-unit id="connectors.status-disabled" datatype="html">
+        <source>Désactivée</source>
+        <target state="translated">معطّلة</target>
+      </trans-unit>
+      <trans-unit id="connectors.status-disabled-on-errors" datatype="html">
+        <source>Désactivée sur erreurs</source>
+        <target state="translated">معطّلة بسبب الأخطاء</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.load-error" datatype="html">
+        <source>Impossible de charger les connexions ERP.</source>
+        <target state="translated">تعذّر تحميل اتصالات ERP.</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.load-error" datatype="html">
+        <source>Impossible de charger les connexions FHIR.</source>
+        <target state="translated">تعذّر تحميل اتصالات FHIR.</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.load-error" datatype="html">
+        <source>Impossible de charger les destinations de notification.</source>
+        <target state="translated">تعذّر تحميل وجهات الإشعارات.</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.sync-error" datatype="html">
+        <source>La synchronisation ERP a échoué.</source>
+        <target state="translated">فشلت مزامنة ERP.</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.sync-error" datatype="html">
+        <source>La synchronisation FHIR a échoué.</source>
+        <target state="translated">فشلت مزامنة FHIR.</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.test-error" datatype="html">
+        <source>L'envoi du message de test a échoué.</source>
+        <target state="translated">فشل إرسال رسالة الاختبار.</target>
+      </trans-unit>
+      <trans-unit id="connectors.created" datatype="html">
+        <source>Connexion enregistrée.</source>
+        <target state="translated">تم حفظ الاتصال.</target>
+      </trans-unit>
+      <trans-unit id="connectors.updated" datatype="html">
+        <source>Connexion mise à jour.</source>
+        <target state="translated">تم تحديث الاتصال.</target>
+      </trans-unit>
+      <trans-unit id="connectors.deleted" datatype="html">
+        <source>Connexion supprimée.</source>
+        <target state="translated">تم حذف الاتصال.</target>
+      </trans-unit>
+      <trans-unit id="connectors.enabled" datatype="html">
+        <source>Connexion réactivée.</source>
+        <target state="translated">أُعيد تفعيل الاتصال.</target>
+      </trans-unit>
+      <trans-unit id="connectors.disabled" datatype="html">
+        <source>Connexion désactivée.</source>
+        <target state="translated">تم تعطيل الاتصال.</target>
+      </trans-unit>
+      <trans-unit id="connectors.delete-title" datatype="html">
+        <source>Supprimer cette connexion ?</source>
+        <target state="translated">هل تريد حذف هذا الاتصال؟</target>
+      </trans-unit>
+      <trans-unit id="connectors.delete-message" datatype="html">
+        <source>Le secret associé est détruit et les échanges avec ce système cessent immédiatement. Cette action est irréversible.</source>
+        <target state="translated">سيُتلَف السرّ المرتبط وتتوقف التبادلات مع هذا النظام فوراً. لا يمكن التراجع عن هذا الإجراء.</target>
+      </trans-unit>
+      <trans-unit id="connectors.provider" datatype="html">
+        <source>Fournisseur</source>
+        <target state="translated">المزوّد</target>
+      </trans-unit>
+      <trans-unit id="connectors.provider-immutable" datatype="html">
+        <source>Le fournisseur ne change pas après création.</source>
+        <target state="translated">لا يمكن تغيير المزوّد بعد الإنشاء.</target>
+      </trans-unit>
+      <trans-unit id="connectors.username" datatype="html">
+        <source>Compte de service</source>
+        <target state="translated">حساب الخدمة</target>
+      </trans-unit>
+      <trans-unit id="connectors.https-required" datatype="html">
+        <source>L'URL doit commencer par https://</source>
+        <target state="translated">يجب أن يبدأ العنوان بـ https://</target>
+      </trans-unit>
+      <trans-unit id="connectors.secret-label" datatype="html">
+        <source>Secret / jeton d'API</source>
+        <target state="translated">السرّ / رمز الـ API</target>
+      </trans-unit>
+      <trans-unit id="connectors.secret-rotate-label" datatype="html">
+        <source>Nouveau secret (vide = inchangé)</source>
+        <target state="translated">سرّ جديد (اتركه فارغاً للإبقاء)</target>
+      </trans-unit>
+      <trans-unit id="connectors.secret-hide" datatype="html">
+        <source>Masquer le secret</source>
+        <target state="translated">إخفاء السرّ</target>
+      </trans-unit>
+      <trans-unit id="connectors.secret-show" datatype="html">
+        <source>Afficher le secret</source>
+        <target state="translated">إظهار السرّ</target>
+      </trans-unit>
+      <trans-unit id="connectors.secret-hint" datatype="html">
+        <source>Chiffré au repos, jamais renvoyé par l'API — même à vous.</source>
+        <target state="translated">مشفّر عند التخزين ولا تعيده الواجهة أبداً — ولا حتى لك.</target>
+      </trans-unit>
+      <trans-unit id="connectors.secret-minlength" datatype="html">
+        <source>Minimum 4 caractères.</source>
+        <target state="translated">4 أحرف على الأقل.</target>
+      </trans-unit>
+      <trans-unit id="connectors.status-hint" datatype="html">
+        <source>« Désactivée sur erreurs » est posé automatiquement après 10 échecs consécutifs ; repasser en « Active » remet ce compteur à zéro.</source>
+        <target state="translated">تُضبط الحالة «معطّلة بسبب الأخطاء» تلقائياً بعد 10 إخفاقات متتالية؛ والعودة إلى «نشطة» تُصفّر هذا العدّاد.</target>
+      </trans-unit>
+      <trans-unit id="connectors.save-error" datatype="html">
+        <source>L'enregistrement de la connexion a échoué.</source>
+        <target state="translated">فشل حفظ الاتصال.</target>
+      </trans-unit>
+      <trans-unit id="connectors.no-session" datatype="html">
+        <source>Session expirée — reconnectez-vous pour créer une connexion.</source>
+        <target state="translated">انتهت الجلسة — سجّل الدخول مجدداً لإنشاء اتصال.</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.dialog-create-title" datatype="html">
+        <source>Nouvelle connexion ERP</source>
+        <target state="translated">اتصال ERP جديد</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.dialog-edit-title" datatype="html">
+        <source>Modifier la connexion ERP</source>
+        <target state="translated">تعديل اتصال ERP</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.name-placeholder" datatype="html">
+        <source>ERP production — achats</source>
+        <target state="translated">ERP الإنتاج — المشتريات</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.base-url" datatype="html">
+        <source>URL de base de l'API</source>
+        <target state="translated">العنوان الأساسي لواجهة الـ API</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.scope" datatype="html">
+        <source>Périmètre externe</source>
+        <target state="translated">النطاق الخارجي</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.scope-placeholder" datatype="html">
+        <source>Usine A, société 1000</source>
+        <target state="translated">المصنع أ، الشركة 1000</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.scope-hint" datatype="html">
+        <source>Restreint les fournisseurs et indicateurs importés.</source>
+        <target state="translated">يحصر المورّدين والمؤشرات التي يتم استيرادها.</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.dialog-create-title" datatype="html">
+        <source>Nouvelle connexion FHIR</source>
+        <target state="translated">اتصال FHIR جديد</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.dialog-edit-title" datatype="html">
+        <source>Modifier la connexion FHIR</source>
+        <target state="translated">تعديل اتصال FHIR</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.name-placeholder" datatype="html">
+        <source>Dossier patient — site principal</source>
+        <target state="translated">سجل المريض — الموقع الرئيسي</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.version" datatype="html">
+        <source>Version FHIR</source>
+        <target state="translated">إصدار FHIR</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.base-url" datatype="html">
+        <source>URL de base du serveur FHIR</source>
+        <target state="translated">العنوان الأساسي لخادم FHIR</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.auth-mode" datatype="html">
+        <source>Authentification</source>
+        <target state="translated">المصادقة</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.auth-basic" datatype="html">
+        <source>Basic (utilisateur + secret)</source>
+        <target state="translated">Basic (مستخدم + سرّ)</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.auth-bearer" datatype="html">
+        <source>Bearer (OAuth2 / SMART-on-FHIR)</source>
+        <target state="translated">Bearer (OAuth2 / SMART-on-FHIR)</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.token-label" datatype="html">
+        <source>Jeton porteur</source>
+        <target state="translated">رمز Bearer</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.token-rotate-label" datatype="html">
+        <source>Nouveau jeton (vide = inchangé)</source>
+        <target state="translated">رمز جديد (اتركه فارغاً للإبقاء)</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.resource-category" datatype="html">
+        <source>Catégorie de ressources</source>
+        <target state="translated">فئة الموارد</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.resource-category-placeholder" datatype="html">
+        <source>AdverseEvent</source>
+        <target state="translated">AdverseEvent</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.resource-category-hint" datatype="html">
+        <source>Classe les évènements importés côté qualité. Aucune donnée patient n'est stockée.</source>
+        <target state="translated">يصنّف الأحداث المستوردة على مستوى الجودة. لا تُخزَّن أي بيانات مرضى.</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.dialog-create-title" datatype="html">
+        <source>Nouvelle destination de notification</source>
+        <target state="translated">وجهة إشعار جديدة</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.dialog-edit-title" datatype="html">
+        <source>Modifier la destination</source>
+        <target state="translated">تعديل الوجهة</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.name-placeholder" datatype="html">
+        <source>Alertes qualité — cellule HSE</source>
+        <target state="translated">تنبيهات الجودة — فريق الصحة والسلامة</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.webhook-label" datatype="html">
+        <source>URL du webhook entrant</source>
+        <target state="translated">عنوان الـ Webhook الوارد</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.webhook-rotate-label" datatype="html">
+        <source>Nouvelle URL de webhook (vide = inchangée)</source>
+        <target state="translated">عنوان Webhook جديد (اتركه فارغاً للإبقاء)</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.webhook-hide" datatype="html">
+        <source>Masquer l'URL du webhook</source>
+        <target state="translated">إخفاء عنوان الـ Webhook</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.webhook-show" datatype="html">
+        <source>Afficher l'URL du webhook</source>
+        <target state="translated">إظهار عنوان الـ Webhook</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.webhook-minlength" datatype="html">
+        <source>Minimum 8 caractères.</source>
+        <target state="translated">8 أحرف على الأقل.</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.webhook-note" datatype="html">
+        <source>Cette URL contient un jeton : elle est traitée comme un secret, chiffrée au repos et jamais réaffichée. Pour la remplacer, saisissez-en une nouvelle.</source>
+        <target state="translated">يحتوي هذا العنوان على رمز: يُعامَل كسرّ، ويُشفَّر عند التخزين ولا يُعرض مرة أخرى. لاستبداله، أدخل عنواناً جديداً.</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.channel" datatype="html">
+        <source>Salon</source>
+        <target state="translated">القناة</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.channel-hint" datatype="html">
+        <source>Sert au repérage dans la liste ; la destination réelle est celle du webhook.</source>
+        <target state="translated">يُستخدم للتعرّف على الوجهة في القائمة؛ أما الوجهة الفعلية فهي وجهة الـ Webhook.</target>
+      </trans-unit>
+      <trans-unit id="nav.standards-ims" datatype="html">
+        <source>Co-couverture IMS</source>
+        <target state="translated">التغطية المشتركة IMS</target>
+      </trans-unit>
+      <trans-unit id="nav.ai-systems" datatype="html">
+        <source>Systèmes d'IA</source>
+        <target state="translated">أنظمة الذكاء الاصطناعي</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-connectors" datatype="html">
+        <source>Connecteurs</source>
+        <target state="translated">الموصّلات</target>
+      </trans-unit>
+      <trans-unit id="compliance.ai.systems" datatype="html">
+        <source>Registre des systèmes d'IA</source>
+        <target state="translated">سجل أنظمة الذكاء الاصطناعي</target>
+      </trans-unit>
       <trans-unit id="nav.pilotage" datatype="html">
         <source>Pilotage</source>
         <target state="translated">القيادة</target>

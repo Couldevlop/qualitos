@@ -71,8 +71,10 @@ export class IshikawaDetailComponent implements OnInit {
 
   // For accepting either a UUID or the demo mock-store ids ("ish-1" …) so
   // the page works both against the real backend AND useMockApi=true.
+  // Ancré des DEUX côtés et jeu de caractères restreint : un simple préfixe
+  // laissait passer « ish-1/../../secrets » (traversée de chemin — OWASP A03).
   private isMockId(s: string): boolean {
-    return /^ish-/.test(s);
+    return /^ish-[a-z0-9-]{1,64}$/i.test(s);
   }
 
   constructor(

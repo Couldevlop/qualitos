@@ -19,6 +19,11 @@ export interface KpisDialogData { kpi?: KpiResponse; }
 })
 export class KpisDialogComponent {
 
+  /** Champs texte nettoyés avant validation puis avant envoi. */
+  private static readonly TEXT_CONTROLS = [
+    'code', 'name', 'description', 'category', 'unit', 'applicableIndustriesCsv'
+  ] as const;
+
   submitting = false;
   readonly isEdit: boolean;
   readonly form;
@@ -74,7 +79,25 @@ export class KpisDialogComponent {
     });
   }
 
+  /**
+   * Nettoie les champs texte AVANT la validation.
+   *
+   * Sans cela, un code collé avec une espace parasite (« dpmo ») échoue le motif
+   * serveur alors que la valeur réellement envoyée est trimée : l'utilisateur
+   * voit une erreur incompréhensible sur une saisie qui aurait été acceptée.
+   */
+  private trimTextFields(): void {
+    for (const key of KpisDialogComponent.TEXT_CONTROLS) {
+      const ctrl = this.form.controls[key];
+      const value = ctrl.value;
+      if (typeof value === 'string' && value !== value.trim()) {
+        ctrl.setValue(value.trim(), { emitEvent: false });
+      }
+    }
+  }
+
   submit(): void {
+    this.trimTextFields();
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     // Cross-field sanity (A04 — refuse logically broken threshold combinations)
     const v = this.form.getRawValue();

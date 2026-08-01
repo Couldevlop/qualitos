@@ -1,0 +1,314 @@
+<section class="iot-detail">
+
+  <a class="back" routerLink="/iot">
+    <mat-icon inline>arrow_back</mat-icon>
+    <span i18n="@@iot.detail.back">Retour au parc IoT</span>
+  </a>
+
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
+
+  <ng-container *ngIf="detail$ | async as d">
+
+    <header class="head">
+      <div class="head__id">
+        <h1>{{ d.device.name }}</h1>
+        <div class="head__meta">
+          <code>{{ d.device.code }}</code>
+          <span class="qos-badge" [attr.data-tone]="statusTone(d.device.status)">
+            {{ statusLabel(d.device.status) }}
+          </span>
+          <span class="qos-badge" [attr.data-tone]="healthTone(d.health)">
+            {{ healthLabel(d.health) }}
+          </span>
+        </div>
+        <dl class="specs">
+          <div>
+            <dt i18n="@@common.type">Type</dt>
+            <dd>{{ typeLabel(d.device.deviceType) }}</dd>
+          </div>
+          <div>
+            <dt i18n="@@iot.col-protocol">Protocole</dt>
+            <dd>{{ protocolLabel(d.device.protocol) }}</dd>
+          </div>
+          <div *ngIf="d.device.location">
+            <dt i18n="@@iot.col-location">Emplacement</dt>
+            <dd>{{ d.device.location }}</dd>
+          </div>
+          <div>
+            <dt i18n="@@common.created-at">Créé le</dt>
+            <dd>{{ d.device.createdAt | date:'mediumDate' }}</dd>
+          </div>
+        </dl>
+        <p class="description" *ngIf="d.device.description">{{ d.device.description }}</p>
+      </div>
+
+      <div class="head__actions">
+        <button mat-flat-button color="primary" *ngIf="canIngest(d)"
+                [disabled]="pending" (click)="addTelemetry(d)">
+          <mat-icon>sensors</mat-icon>
+          <span i18n="@@iot.detail.add-telemetry">Relever une mesure</span>
+        </button>
+
+        <button mat-stroked-button *ngIf="!isDecommissioned(d)"
+                [disabled]="pending" (click)="edit(d)">
+          <mat-icon>edit</mat-icon>
+          <span i18n="@@common.edit">Modifier</span>
+        </button>
+
+        <button mat-stroked-button *ngIf="canActivate(d)"
+                [disabled]="pending" (click)="activate(d)">
+          <mat-icon>play_circle</mat-icon>
+          <span i18n="@@iot.action.activate">Mettre en service</span>
+        </button>
+
+        <button mat-stroked-button *ngIf="canSuspend(d)"
+                [disabled]="pending" (click)="suspend(d)">
+          <mat-icon>pause_circle</mat-icon>
+          <span i18n="@@iot.action.suspend">Suspendre</span>
+        </button>
+
+        <button mat-stroked-button *ngIf="!isDecommissioned(d)"
+                [disabled]="pending" (click)="decommission(d)">
+          <mat-icon>archive</mat-icon>
+          <span i18n="@@iot.action.decommission">Décommissionner</span>
+        </button>
+
+        <button mat-button color="warn" *ngIf="canRemove(d)"
+                [disabled]="pending" (click)="remove(d)">
+          <mat-icon>delete</mat-icon>
+          <span i18n="@@common.delete">Supprimer</span>
+        </button>
+      </div>
+    </header>
+
+    <p class="note" *ngIf="isDecommissioned(d)" i18n="@@iot.detail.decommissioned-note">
+      Équipement décommissionné : l'historique reste consultable, plus aucune mesure ni
+      modification n'est acceptée.
+    </p>
+
+    <!-- Santé d'abord : c'est l'information qui décide s'il faut agir. -->
+    <div class="tiles">
+      <div class="tile" [attr.data-tone]="healthTone(d.health)">
+        <span class="tile__label" i18n="@@iot.detail.last-signal">Dernier signal</span>
+        <span class="tile__value">{{ ageLabel(d.ageMs) }}</span>
+        <span class="tile__detail" *ngIf="d.device.lastSeenAt">
+          {{ d.device.lastSeenAt | date:'medium' }}
+        </span>
+        <span class="tile__detail dim" *ngIf="!d.device.lastSeenAt"
+              i18n="@@iot.detail.never-emitted">Aucune mesure reçue à ce jour</span>
+      </div>
+
+      <div class="tile">
+        <span class="tile__label" i18n="@@iot.detail.total-measures">Mesures ingérées</span>
+        <span class="tile__value">{{ d.device.telemetryCount }}</span>
+      </div>
+
+      <div class="tile">
+        <span class="tile__label" i18n="@@iot.detail.metrics-count">Métriques suivies</span>
+        <span class="tile__value">{{ d.metrics.length }}</span>
+      </div>
+
+      <div class="tile">
+        <span class="tile__label" i18n="@@iot.detail.thresholds-count">Seuils applicables</span>
+        <span class="tile__value">{{ d.thresholds.length }}</span>
+      </div>
+    </div>
+
+    <p class="note" i18n="@@iot.detail.silence-rule">
+      Un équipement en service est déclaré muet après une heure sans signal ; la mention
+      « signal vieillissant » apparaît dès trente minutes.
+    </p>
+
+    <!-- Télémétrie -->
+    <section class="panel">
+      <div class="panel__head">
+        <h2 i18n="@@iot.detail.telemetry-title">Télémétrie</h2>
+        <div class="panel__actions" *ngIf="chart$ | async as c">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="picker">
+            <mat-label i18n="@@iot.telemetry.metric">Métrique</mat-label>
+            <mat-select [value]="c.metric" (selectionChange)="onMetricChange($event.value)">
+              <mat-option *ngFor="let m of c.metrics" [value]="m">{{ m }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="picker">
+            <mat-label i18n="@@iot.detail.window">Fenêtre</mat-label>
+            <mat-select [value]="c.window" (selectionChange)="onWindowChange($event.value)">
+              <mat-option *ngFor="let w of windows" [value]="w">{{ windowLabel(w) }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div *ngIf="chartError$ | async as cerr" class="banner banner-error" role="alert">
+        {{ cerr }}
+      </div>
+
+      <ng-container *ngIf="chart$ | async as c; else noTelemetry">
+        <qos-echart [option]="c.option" [height]="300"
+                    [loading]="(chartLoading$ | async) ?? false"></qos-echart>
+
+        <p class="chart-note" *ngIf="c.window === 'RECENT'">
+          <span i18n="@@iot.detail.recent-note">
+            Cent dernières mesures de l'équipement, toutes métriques confondues. Total ingéré :
+          </span>
+          {{ c.total }}
+        </p>
+        <p class="chart-note" *ngIf="c.window !== 'RECENT' && c.truncated">
+          <span i18n="@@iot.detail.window-truncated">
+            Début de fenêtre seulement — points affichés puis mesures de la fenêtre :
+          </span>
+          {{ c.points.length }} / {{ c.total }}
+        </p>
+        <p class="chart-note" *ngIf="c.window !== 'RECENT' && !c.truncated">
+          <span i18n="@@iot.detail.window-complete">Mesures de la fenêtre :</span>
+          {{ c.points.length }}
+        </p>
+      </ng-container>
+
+      <ng-template #noTelemetry>
+        <p class="empty" i18n="@@iot.detail.telemetry-empty">
+          Aucune mesure reçue. Relevez une valeur manuellement ou branchez le capteur sur
+          son protocole d'ingestion.
+        </p>
+      </ng-template>
+
+      <div class="table-wrap" *ngIf="d.telemetry.length">
+        <table mat-table [dataSource]="d.telemetry" [trackBy]="trackTelemetry">
+          <ng-container matColumnDef="recordedAt">
+            <th mat-header-cell *matHeaderCellDef i18n="@@iot.telemetry.recorded-at">
+              Horodatage de la mesure
+            </th>
+            <td mat-cell *matCellDef="let e">{{ e.recordedAt | date:'medium' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="metric">
+            <th mat-header-cell *matHeaderCellDef i18n="@@iot.telemetry.metric">Métrique</th>
+            <td mat-cell *matCellDef="let e"><code>{{ e.metric }}</code></td>
+          </ng-container>
+
+          <ng-container matColumnDef="value">
+            <th mat-header-cell *matHeaderCellDef i18n="@@iot.telemetry.value">Valeur</th>
+            <td mat-cell *matCellDef="let e" class="numeric">{{ valueLabel(e) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="unit">
+            <th mat-header-cell *matHeaderCellDef i18n="@@iot.telemetry.unit">Unité</th>
+            <td mat-cell *matCellDef="let e">
+              <span *ngIf="e.unit">{{ e.unit }}</span>
+              <span class="dim" *ngIf="!e.unit">—</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="source">
+            <th mat-header-cell *matHeaderCellDef i18n="@@iot.telemetry.source">Source</th>
+            <td mat-cell *matCellDef="let e">{{ protocolLabel(e.source) }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="telemetryColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: telemetryColumns"></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- Seuils de surveillance -->
+    <section class="panel">
+      <div class="panel__head">
+        <h2 i18n="@@iot.detail.thresholds-title">Seuils de surveillance</h2>
+        <div class="panel__actions">
+          <button mat-stroked-button *ngIf="!isDecommissioned(d)"
+                  [disabled]="pending" (click)="addThreshold(d)">
+            <mat-icon>add</mat-icon>
+            <span i18n="@@iot.detail.threshold-add">Nouveau seuil</span>
+          </button>
+        </div>
+      </div>
+
+      <p class="note" i18n="@@iot.detail.threshold-explain">
+        Le franchissement d'un seuil actif ouvre une CAPA à l'ingestion de la mesure, et un
+        cycle PDCA si le seuil le prévoit.
+      </p>
+
+      <div class="table-wrap">
+        <table mat-table [dataSource]="d.thresholds" [trackBy]="trackThreshold">
+          <ng-container matColumnDef="metric">
+            <th mat-header-cell *matHeaderCellDef i18n="@@iot.telemetry.metric">Métrique</th>
+            <td mat-cell *matCellDef="let t"><code>{{ t.metric }}</code></td>
+          </ng-container>
+
+          <ng-container matColumnDef="bounds">
+            <th mat-header-cell *matHeaderCellDef i18n="@@iot.threshold.bounds">Bornes</th>
+            <td mat-cell *matCellDef="let t" class="numeric">{{ boundsLabel(t) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="criticity">
+            <th mat-header-cell *matHeaderCellDef i18n="@@iot.threshold.criticity">
+              Criticité de la CAPA générée
+            </th>
+            <td mat-cell *matCellDef="let t">
+              <span class="qos-badge" [attr.data-tone]="criticityTone(t.capaCriticity)">
+                {{ criticityLabel(t.capaCriticity) }}
+              </span>
+              <span class="qos-badge pdca" *ngIf="t.openPdcaCycle"
+                    i18n="@@iot.threshold.pdca">Cycle PDCA</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="scope">
+            <th mat-header-cell *matHeaderCellDef i18n="@@iot.threshold.scope">Portée</th>
+            <td mat-cell *matCellDef="let t">
+              <span *ngIf="isDeviceScoped(t)" i18n="@@iot.threshold.scope-device">
+                Cet équipement
+              </span>
+              <span class="dim" *ngIf="!isDeviceScoped(t)" i18n="@@iot.threshold.scope-tenant">
+                Tous les équipements du tenant
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="state">
+            <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
+            <td mat-cell *matCellDef="let t">
+              <span class="qos-badge" data-tone="success" *ngIf="t.enabled"
+                    i18n="@@iot.threshold.enabled">Actif</span>
+              <span class="qos-badge" *ngIf="!t.enabled"
+                    i18n="@@iot.threshold.disabled">Inactif</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef i18n="@@common.actions">Actions</th>
+            <td mat-cell *matCellDef="let t">
+              <div class="row-actions">
+                <button mat-icon-button *ngIf="canEditThreshold(d, t)"
+                        [disabled]="pending" (click)="editThreshold(d, t)"
+                        i18n-aria-label="@@common.edit" aria-label="Modifier">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" *ngIf="canRemoveThreshold(d, t)"
+                        [disabled]="pending" (click)="removeThreshold(t)"
+                        i18n-aria-label="@@common.delete" aria-label="Supprimer">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <span class="dim" *ngIf="!isDeviceScoped(t)"
+                      i18n="@@iot.detail.threshold-global">Géré globalement</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="thresholdColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: thresholdColumns"
+              [class.row--off]="!row.enabled"></tr>
+        </table>
+
+        <p class="empty" *ngIf="d.thresholds.length === 0"
+           i18n="@@iot.detail.thresholds-empty">
+          Aucun seuil : les mesures de cet équipement sont enregistrées mais aucune dérive
+          n'ouvrira de CAPA automatiquement.
+        </p>
+      </div>
+    </section>
+
+  </ng-container>
+</section>

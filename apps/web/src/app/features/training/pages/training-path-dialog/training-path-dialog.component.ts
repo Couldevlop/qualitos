@@ -21,6 +21,9 @@ export interface TrainingPathDialogData {
 })
 export class TrainingPathDialogComponent {
 
+  /** Champs texte nettoyés avant validation puis avant envoi. */
+  private static readonly TEXT_CONTROLS = ['code', 'name', 'description', 'targetRole'] as const;
+
   submitting = false;
   readonly isEdit: boolean;
 
@@ -55,7 +58,25 @@ export class TrainingPathDialogComponent {
     });
   }
 
+  /**
+   * Nettoie les champs texte AVANT la validation.
+   *
+   * Sans cela, un code collé avec une espace parasite échoue le motif serveur
+   * alors que la valeur réellement envoyée est trimée : l'utilisateur voit une
+   * erreur incompréhensible sur une saisie qui aurait été acceptée.
+   */
+  private trimTextFields(): void {
+    for (const key of TrainingPathDialogComponent.TEXT_CONTROLS) {
+      const ctrl = this.form.controls[key];
+      const value = ctrl.value;
+      if (typeof value === 'string' && value !== value.trim()) {
+        ctrl.setValue(value.trim(), { emitEvent: false });
+      }
+    }
+  }
+
   submit(): void {
+    this.trimTextFields();
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     this.submitting = true;
     const v = this.form.getRawValue();

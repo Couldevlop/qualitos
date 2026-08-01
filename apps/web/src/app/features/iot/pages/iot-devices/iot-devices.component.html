@@ -1,0 +1,175 @@
+<section class="iot-devices">
+  <header class="head">
+    <div>
+      <h1 i18n="@@iot.devices.title">Parc IoT et télémétrie</h1>
+      <p i18n="@@iot.devices.subtitle">
+        Équipements connectés du tenant et fraîcheur de leur dernier signal. Un capteur
+        muet ne déclenche plus aucune détection de dérive : il remonte en tête de liste.
+      </p>
+    </div>
+    <div class="head-actions">
+      <button mat-stroked-button (click)="refresh()"
+              i18n-aria-label="@@common.refresh" aria-label="Actualiser">
+        <mat-icon>refresh</mat-icon>
+        <span i18n="@@common.refresh">Actualiser</span>
+      </button>
+      <button mat-flat-button color="primary" (click)="create()">
+        <mat-icon>add</mat-icon>
+        <span i18n="@@iot.devices.new">Nouvel équipement</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="tiles" *ngIf="tiles$ | async as tiles">
+    <div class="tile" *ngFor="let t of tiles" [attr.data-tone]="t.tone">
+      <span class="tile__value">{{ t.value }}</span>
+      <span class="tile__label">{{ t.label }}</span>
+    </div>
+  </div>
+
+  <p class="scope-note" *ngIf="fleet$ | async as f">
+    <ng-container *ngIf="!f.truncated" i18n="@@iot.devices.scope-note">
+      Compteurs de santé calculés sur les équipements en service du tenant.
+    </ng-container>
+    <ng-container *ngIf="f.truncated" i18n="@@iot.devices.scope-truncated">
+      Compteurs de santé calculés sur un échantillon des équipements en service :
+      le tenant en compte davantage que ce qu'une page serveur peut renvoyer.
+    </ng-container>
+  </p>
+
+  <div class="filters">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filter">
+      <mat-label i18n="@@common.status">Statut</mat-label>
+      <mat-select [value]="status" (selectionChange)="onStatusChange($event.value)">
+        <mat-option value="" i18n="@@common.all">Tous</mat-option>
+        <mat-option value="PROVISIONED" i18n="@@iot.status.provisioned">Provisionné</mat-option>
+        <mat-option value="ACTIVE" i18n="@@iot.status.active">En service</mat-option>
+        <mat-option value="SUSPENDED" i18n="@@iot.status.suspended">Suspendu</mat-option>
+        <mat-option value="DECOMMISSIONED" i18n="@@iot.status.decommissioned">Décommissionné</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filter">
+      <mat-label i18n="@@common.type">Type</mat-label>
+      <mat-select [value]="type" (selectionChange)="onTypeChange($event.value)">
+        <mat-option value="" i18n="@@common.all">Tous</mat-option>
+        <mat-option *ngFor="let t of deviceTypes" [value]="t">{{ typeLabel(t) }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filter">
+      <mat-label i18n="@@iot.devices.silence">Seuil de silence</mat-label>
+      <mat-select [value]="silenceMinutes" (selectionChange)="onSilenceChange($event.value)">
+        <mat-option *ngFor="let o of silenceOptions" [value]="o.minutes">{{ o.label }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <p class="filter-note" i18n="@@iot.devices.filter-note">
+    Le serveur n'applique qu'un seul critère de filtrage : choisir un statut remet le
+    type à « tous », et inversement.
+  </p>
+
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
+
+  <div class="table-wrap mat-elevation-z1">
+    <table mat-table [dataSource]="(rows$ | async) ?? []" [trackBy]="trackById">
+
+      <ng-container matColumnDef="device">
+        <th mat-header-cell *matHeaderCellDef i18n="@@iot.col-device">Équipement</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="device-cell">
+            <span class="device-cell__name">{{ row.device.name }}</span>
+            <code class="device-cell__code">{{ row.device.code }}</code>
+            <span class="device-cell__type">{{ typeLabel(row.device.deviceType) }}</span>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="health">
+        <th mat-header-cell *matHeaderCellDef i18n="@@iot.col-health">Dernier signal</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="health-cell">
+            <span class="qos-badge" [attr.data-tone]="healthTone(row.health)">
+              {{ healthLabel(row.health) }}
+            </span>
+            <span class="health-cell__age" [matTooltip]="lastSeenTooltip(row)">
+              {{ ageLabel(row.ageMs) }}
+            </span>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="protocol">
+        <th mat-header-cell *matHeaderCellDef i18n="@@iot.col-protocol">Protocole</th>
+        <td mat-cell *matCellDef="let row">{{ protocolLabel(row.device.protocol) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="location">
+        <th mat-header-cell *matHeaderCellDef i18n="@@iot.col-location">Emplacement</th>
+        <td mat-cell *matCellDef="let row">
+          <span *ngIf="row.device.location">{{ row.device.location }}</span>
+          <span class="dim" *ngIf="!row.device.location">—</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="telemetry">
+        <th mat-header-cell *matHeaderCellDef i18n="@@iot.col-telemetry">Mesures</th>
+        <td mat-cell *matCellDef="let row">{{ row.device.telemetryCount }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="qos-badge" [attr.data-tone]="statusTone(row.device.status)">
+            {{ statusLabel(row.device.status) }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.actions">Actions</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="row-actions">
+            <!-- Une seule transition est valide à la fois : on n'affiche que celle-là. -->
+            <button mat-stroked-button *ngIf="canActivate(row)"
+                    [disabled]="pendingDeviceId === row.device.id"
+                    (click)="activate(row)">
+              <mat-icon>play_circle</mat-icon>
+              <span i18n="@@iot.action.activate">Mettre en service</span>
+            </button>
+            <button mat-stroked-button *ngIf="canSuspend(row)"
+                    [disabled]="pendingDeviceId === row.device.id"
+                    (click)="suspend(row)">
+              <mat-icon>pause_circle</mat-icon>
+              <span i18n="@@iot.action.suspend">Suspendre</span>
+            </button>
+            <a mat-button color="primary" [routerLink]="['/iot', row.device.id]"
+               i18n="@@iot.devices.open">Ouvrir la fiche</a>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"
+          [class.row--silent]="row.health === 'SILENT' || row.health === 'NEVER_SEEN'"
+          [class.row--inactive]="row.health === 'INACTIVE'"></tr>
+    </table>
+
+    <p class="empty" *ngIf="(rows$ | async)?.length === 0 && (loading$ | async) === false"
+       i18n="@@iot.devices.empty">
+      Aucun équipement pour ce filtre. Enregistrez un capteur, une passerelle ou un
+      automate pour commencer à recevoir sa télémétrie.
+    </p>
+
+    <mat-paginator *ngIf="total$ | async as total"
+                   [length]="total"
+                   [pageIndex]="pageIndex"
+                   [pageSize]="pageSize"
+                   [pageSizeOptions]="[10, 25, 50]"
+                   (page)="onPage($event)"
+                   i18n-aria-label="@@iot.devices.paginator-aria"
+                   aria-label="Pagination des équipements"></mat-paginator>
+  </div>
+</section>

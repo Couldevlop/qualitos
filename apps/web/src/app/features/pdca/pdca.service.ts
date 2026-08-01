@@ -21,6 +21,18 @@ export class PdcaService {
 
   constructor(private readonly http: HttpClient) {}
 
+  /**
+   * Copie défensive d'un cycle du store de démonstration.
+   *
+   * Sans elle, le mock rend l'objet VIVANT du store : l'appelant reçoit une
+   * référence qui change sous ses pieds à chaque écriture (impossible de
+   * comparer un avant/après, et n'importe quel consommateur peut corrompre le
+   * store). Un vrai backend rend toujours un instantané — le mock doit s'aligner.
+   */
+  private snapshotCycle(cycle: PdcaCycleResponse): PdcaCycleResponse {
+    return { ...cycle, steps: cycle.steps.map(s => ({ ...s })) };
+  }
+
   listCycles(page = 0, size = 20, status?: string): Observable<SpringPage<PdcaCycleResponse>> {
     if (environment.useMockApi) {
       return of(this.mockPage(status)).pipe(delay(200));
@@ -35,7 +47,7 @@ export class PdcaService {
   getCycle(id: string): Observable<PdcaCycleResponse> {
     if (environment.useMockApi) {
       const cycle = this.mockStore.find(c => c.id === id);
-      return of(cycle ?? this.mockStore[0]).pipe(delay(150));
+      return of(this.snapshotCycle(cycle ?? this.mockStore[0])).pipe(delay(150));
     }
     return this.http.get<PdcaCycleResponse>(`${this.endpoint}/${id}`);
   }
@@ -79,9 +91,9 @@ export class PdcaService {
             cycle.completedAt = cycle.updatedAt;
           }
         }
-        return of(cycle).pipe(delay(150));
+        return of(this.snapshotCycle(cycle)).pipe(delay(150));
       }
-      return of(this.mockStore[0]).pipe(delay(150));
+      return of(this.snapshotCycle(this.mockStore[0])).pipe(delay(150));
     }
     return this.http.patch<PdcaCycleResponse>(`${this.endpoint}/${cycleId}/advance`, {});
   }
@@ -92,9 +104,9 @@ export class PdcaService {
       if (cycle) {
         cycle.status = 'CANCELLED';
         cycle.updatedAt = new Date().toISOString();
-        return of(cycle).pipe(delay(150));
+        return of(this.snapshotCycle(cycle)).pipe(delay(150));
       }
-      return of(this.mockStore[0]).pipe(delay(150));
+      return of(this.snapshotCycle(this.mockStore[0])).pipe(delay(150));
     }
     return this.http.patch<PdcaCycleResponse>(`${this.endpoint}/${cycleId}/cancel`, {});
   }
@@ -114,13 +126,14 @@ export class PdcaService {
         steps: []
       };
       this.mockStore.unshift(cycle);
-      return of(cycle).pipe(delay(200));
+      return of(this.snapshotCycle(cycle)).pipe(delay(200));
     }
     return this.http.post<PdcaCycleResponse>(this.endpoint, input);
   }
 
   private mockPage(status?: string): SpringPage<PdcaCycleResponse> {
-    const filtered = status ? this.mockStore.filter(c => c.status === status) : this.mockStore;
+    const filtered = (status ? this.mockStore.filter(c => c.status === status) : this.mockStore)
+      .map(c => this.snapshotCycle(c));
     return {
       content: filtered,
       totalElements: filtered.length,

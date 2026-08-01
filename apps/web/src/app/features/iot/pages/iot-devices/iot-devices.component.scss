@@ -1,0 +1,94 @@
+/* Parc IoT — vue de flotte (§9).
+   Conventions des écrans de liste : padding 24, en-tête titre + sous-titre, tuiles
+   de synthèse, bandeaux d'état, table encadrée. */
+
+.iot-devices { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+
+.head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.head h1 { margin: 0 0 4px; font-size: 22px; }
+.head p  { margin: 0; color: var(--qos-text-secondary); font-size: 13px; max-width: 68ch; }
+.head-actions { display: flex; gap: 8px; flex: 0 0 auto; flex-wrap: wrap; }
+
+.tiles { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.tile {
+  flex: 1 1 160px;
+  min-width: 150px;
+  padding: 14px 16px;
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-left: 3px solid var(--qos-border);
+  border-radius: var(--qos-radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tile__value { font-size: 24px; font-weight: 600; line-height: 1.1; }
+.tile__label { font-size: 12px; color: var(--qos-text-secondary); }
+
+.tile[data-tone='success'] { border-left-color: var(--qos-success-fg); }
+.tile[data-tone='warn']    { border-left-color: var(--qos-warn-fg); }
+.tile[data-tone='danger']  { border-left-color: var(--qos-danger-fg); }
+
+/* Notes de périmètre et de filtrage : elles cadrent la lecture des chiffres,
+   elles ne doivent pas concurrencer les tuiles. */
+.scope-note,
+.filter-note { margin: 0; font-size: 12px; color: var(--qos-text-secondary); max-width: 80ch; }
+
+.filters { display: flex; gap: 12px; flex-wrap: wrap; }
+.filter { width: 220px; }
+
+.banner { padding: 10px 14px; border-radius: 8px; font-size: 13px; }
+.banner-error { background: #fbe9e7; color: #b71c1c; }
+.banner-info  { background: #e3f2fd; color: #0d47a1; }
+
+.table-wrap {
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  overflow-x: auto;
+}
+
+.device-cell { display: flex; flex-direction: column; gap: 2px; }
+.device-cell__name { font-weight: 600; }
+.device-cell__code {
+  font-family: 'IBM Plex Mono', 'Fira Code', monospace;
+  font-size: 11px;
+  color: var(--qos-text-secondary);
+}
+.device-cell__type { font-size: 11px; color: var(--qos-text-secondary); }
+
+.health-cell { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; }
+/* L'âge est chiffré : la police tabulaire évite que la colonne « danse » au refresh. */
+.health-cell__age {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--qos-text-secondary);
+}
+
+.dim { color: var(--qos-text-secondary); font-size: 12px; }
+
+.qos-badge {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  background: var(--qos-bg-subtle); color: var(--qos-text-secondary);
+}
+.qos-badge[data-tone='success'] { background: #e8f5e9; color: #1b5e20; }
+.qos-badge[data-tone='warn']    { background: #fff8e1; color: #8d6e00; }
+.qos-badge[data-tone='danger']  { background: #fbe9e7; color: #b71c1c; }
+
+.row-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+/* Un capteur muet doit se voir sans lire : bord rouge sur toute la ligne. */
+.row--silent td:first-child { box-shadow: inset 3px 0 0 0 var(--qos-danger-fg); }
+/* Hors service : la fraîcheur n'a pas de sens, on atténue sans masquer. */
+.row--inactive { opacity: 0.6; }
+
+.empty { padding: 24px; text-align: center; color: var(--qos-text-secondary); font-size: 13px; }
+
+@media (max-width: 720px) {
+  .iot-devices { padding: 16px; }
+  .head { flex-direction: column; }
+  .filter { width: 100%; }
+}

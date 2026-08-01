@@ -68,11 +68,14 @@ describe('MainShellComponent (navigation model)', () => {
 
   it('orders the six groups as designed', () => {
     const labels = component.sections.map(s => s.items.length);
-    // Pilotage(5), Méthodes(6), Analyses IA(8), Opérations(9), Référentiels(9),
-    // GRC(1), Administration(5).
-    // Opérations = 9 : + Réclamations (§4.9) + Calibration (§4.10).
-    // Administration = 5 : modules, clés d'API, webhooks, quotas, journal d'audit.
-    expect(labels).toEqual([5, 6, 8, 9, 9, 1, 5]);
+    // Pilotage(5), Méthodes(6), Analyses IA(8), Opérations(10), Référentiels(10),
+    // GRC(1), Administration(6).
+    // Opérations = 10 : + Réclamations (§4.9), Calibration (§4.10), Parc IoT (§9).
+    // Référentiels = 10 : + Co-couverture IMS (§8.9).
+    // GRC reste à 1 : le registre des systèmes d'IA rejoint la page hub /compliance,
+    // pas la barre latérale — c'est tout l'objet de ce regroupement.
+    // Administration = 6 : + Connecteurs tiers (§13.3).
+    expect(labels).toEqual([5, 6, 8, 10, 10, 1, 6]);
   });
 
   it('collapses the entire GRC mass into a single /compliance entry', () => {

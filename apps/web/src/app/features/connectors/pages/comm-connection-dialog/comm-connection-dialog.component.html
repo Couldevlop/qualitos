@@ -1,0 +1,77 @@
+<qos-form-dialog
+  [title]="title"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  [submitLabel]="submitLabel"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <div class="conn-form">
+
+    <p class="conn-form__error" *ngIf="errorMessage" role="alert">{{ errorMessage }}</p>
+
+    <div class="conn-form__row">
+      <mat-form-field appearance="outline" class="conn-form__grow">
+        <mat-label i18n="@@common.name">Nom</mat-label>
+        <input matInput formControlName="name" maxlength="120" required
+               placeholder="Alertes qualité — cellule HSE"
+               i18n-placeholder="@@connectors.comm.name-placeholder">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="conn-form__provider">
+        <mat-label i18n="@@connectors.provider">Fournisseur</mat-label>
+        <mat-select formControlName="provider" required>
+          <mat-option *ngFor="let p of providers" [value]="p.value">{{ p.label }}</mat-option>
+        </mat-select>
+        <mat-hint *ngIf="editing" i18n="@@connectors.provider-immutable">
+          Le fournisseur ne change pas après création.
+        </mat-hint>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ webhookLabel }}</mat-label>
+      <input matInput formControlName="webhookUrl"
+             [type]="showWebhook ? 'text' : 'password'"
+             maxlength="1024" autocomplete="new-password" spellcheck="false"
+             [required]="!editing">
+      <button mat-icon-button matSuffix type="button" (click)="toggleWebhook()"
+              [attr.aria-label]="webhookToggleLabel" [matTooltip]="webhookToggleLabel">
+        <mat-icon>{{ showWebhook ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      <mat-hint>{{ selectedUrlExample }}</mat-hint>
+      <mat-error *ngIf="form.controls.webhookUrl.hasError('pattern')"
+                 i18n="@@connectors.https-required">
+        L'URL doit commencer par https://
+      </mat-error>
+      <mat-error *ngIf="form.controls.webhookUrl.hasError('minlength')"
+                 i18n="@@connectors.comm.webhook-minlength">Minimum 8 caractères.</mat-error>
+    </mat-form-field>
+
+    <p class="conn-form__note" i18n="@@connectors.comm.webhook-note">
+      Cette URL contient un jeton : elle est traitée comme un secret, chiffrée au repos
+      et jamais réaffichée. Pour la remplacer, saisissez-en une nouvelle.
+    </p>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@connectors.comm.channel">Salon</mat-label>
+      <input matInput formControlName="channel" maxlength="200" placeholder="#qualite-alertes">
+      <mat-hint i18n="@@connectors.comm.channel-hint">
+        Sert au repérage dans la liste ; la destination réelle est celle du webhook.
+      </mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" *ngIf="editing">
+      <mat-label i18n="@@common.status">Statut</mat-label>
+      <mat-select formControlName="status">
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ statusLabel(s) }}</mat-option>
+      </mat-select>
+      <mat-hint i18n="@@connectors.status-hint">
+        « Désactivée sur erreurs » est posé automatiquement après 10 échecs consécutifs ;
+        repasser en « Active » remet ce compteur à zéro.
+      </mat-hint>
+    </mat-form-field>
+
+  </div>
+</qos-form-dialog>

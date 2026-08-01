@@ -25,20 +25,21 @@ module.exports = function (config) {
       // réelle mesurée, ce qui interdit toute régression dès aujourd'hui. Ils sont
       // remontés à chaque lot de tests ajouté, jusqu'à la cible de 99 %.
       //
-      //   Mesure du 2026-08-01 : statements 64,91 % · branches 56,16 %
-      //                          lines 67,58 %      · functions 70,36 %
-      //   (+7,7 pts après l'intégration des 6 écrans construits en multi-agents,
-      //    livrés avec 415 specs.)
-      //   Cible §14.4 : 85 / 75 — cible projet : 99.
+      //   Mesure du 2026-08-01 : statements 84,54 % · branches 76,95 %
+      //                          lines 86,11 %      · functions 87,10 %
+      //   (+19,6 pts après l'intégration de la vague 2 — 4 écrans (IoT, connecteurs,
+      //    registre des systèmes d'IA, compléments Standards Hub) et 339 specs.)
+      //   Cible §14.4 : 85 / 75 — ATTEINTE sur les branches, à 0,5 pt sur les
+      //   statements. Cible projet : 99.
       //
       // `emitWarning: false` = la suite sort en échec si un seuil n'est pas atteint.
       check: {
         emitWarning: false,
         global: {
-          statements: 64,
-          lines: 67,
-          branches: 55,
-          functions: 70
+          statements: 84,
+          lines: 86,
+          branches: 76,
+          functions: 87
         }
       }
     },

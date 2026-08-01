@@ -1,0 +1,98 @@
+<qos-form-dialog
+  [title]="title"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  [submitLabel]="submitLabel"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <div class="conn-form">
+
+    <p class="conn-form__error" *ngIf="errorMessage" role="alert">{{ errorMessage }}</p>
+
+    <div class="conn-form__row">
+      <mat-form-field appearance="outline" class="conn-form__grow">
+        <mat-label i18n="@@common.name">Nom</mat-label>
+        <input matInput formControlName="name" maxlength="120" required
+               placeholder="Dossier patient — site principal"
+               i18n-placeholder="@@connectors.ehr.name-placeholder">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="conn-form__provider">
+        <mat-label i18n="@@connectors.ehr.version">Version FHIR</mat-label>
+        <mat-select formControlName="provider" required>
+          <mat-option *ngFor="let p of providers" [value]="p.value">{{ p.label }}</mat-option>
+        </mat-select>
+        <mat-hint *ngIf="editing" i18n="@@connectors.provider-immutable">
+          Le fournisseur ne change pas après création.
+        </mat-hint>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@connectors.ehr.base-url">URL de base du serveur FHIR</mat-label>
+      <input matInput formControlName="fhirBaseUrl" maxlength="512" required
+             autocomplete="off" spellcheck="false"
+             placeholder="https://fhir.hopital.example/R5">
+      <mat-error *ngIf="form.controls.fhirBaseUrl.hasError('pattern')"
+                 i18n="@@connectors.https-required">
+        L'URL doit commencer par https://
+      </mat-error>
+    </mat-form-field>
+
+    <div class="conn-form__row">
+      <mat-form-field appearance="outline" class="conn-form__grow">
+        <mat-label i18n="@@connectors.ehr.auth-mode">Authentification</mat-label>
+        <mat-select formControlName="authMode" required>
+          <mat-option *ngFor="let m of authModes" [value]="m">{{ authModeLabel(m) }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="conn-form__grow" *ngIf="usernameRelevant">
+        <mat-label i18n="@@connectors.username">Compte de service</mat-label>
+        <input matInput formControlName="username" maxlength="200"
+               autocomplete="off" placeholder="qualitos-fhir">
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ secretLabel }}</mat-label>
+      <input matInput formControlName="secret"
+             [type]="showSecret ? 'text' : 'password'"
+             maxlength="1024" autocomplete="new-password" spellcheck="false"
+             [required]="!editing">
+      <button mat-icon-button matSuffix type="button" (click)="toggleSecret()"
+              [attr.aria-label]="secretToggleLabel" [matTooltip]="secretToggleLabel">
+        <mat-icon>{{ showSecret ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      <mat-hint i18n="@@connectors.secret-hint">
+        Chiffré au repos, jamais renvoyé par l'API — même à vous.
+      </mat-hint>
+      <mat-error *ngIf="form.controls.secret.hasError('minlength')"
+                 i18n="@@connectors.secret-minlength">Minimum 4 caractères.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@connectors.ehr.resource-category">Catégorie de ressources</mat-label>
+      <input matInput formControlName="resourceCategory" maxlength="120"
+             placeholder="AdverseEvent"
+             i18n-placeholder="@@connectors.ehr.resource-category-placeholder">
+      <mat-hint i18n="@@connectors.ehr.resource-category-hint">
+        Classe les évènements importés côté qualité. Aucune donnée patient n'est stockée.
+      </mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" *ngIf="editing">
+      <mat-label i18n="@@common.status">Statut</mat-label>
+      <mat-select formControlName="status">
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ statusLabel(s) }}</mat-option>
+      </mat-select>
+      <mat-hint i18n="@@connectors.status-hint">
+        « Désactivée sur erreurs » est posé automatiquement après 10 échecs consécutifs ;
+        repasser en « Active » remet ce compteur à zéro.
+      </mat-hint>
+    </mat-form-field>
+
+  </div>
+</qos-form-dialog>

@@ -5668,6 +5668,2174 @@
         <source>Les politiques définies ici sont enregistrées, mais elles ne sont pas encore appliquées aux appels entrants : la consommation affichée reste donc à zéro.</source>
         <target state="translated">The policies defined here are saved, but they are not yet enforced on incoming calls, so the usage shown stays at zero.</target>
       </trans-unit>
+      <trans-unit id="nav.iot" datatype="html">
+        <source>Parc IoT</source>
+        <target state="translated">IoT fleet</target>
+      </trans-unit>
+      <trans-unit id="iot.health.live" datatype="html">
+        <source>En ligne</source>
+        <target state="translated">Online</target>
+      </trans-unit>
+      <trans-unit id="iot.health.aging" datatype="html">
+        <source>Signal vieillissant</source>
+        <target state="translated">Ageing signal</target>
+      </trans-unit>
+      <trans-unit id="iot.health.silent" datatype="html">
+        <source>Muet</source>
+        <target state="translated">Silent</target>
+      </trans-unit>
+      <trans-unit id="iot.health.never" datatype="html">
+        <source>Jamais vu</source>
+        <target state="translated">Never seen</target>
+      </trans-unit>
+      <trans-unit id="iot.health.inactive" datatype="html">
+        <source>Hors surveillance</source>
+        <target state="translated">Not monitored</target>
+      </trans-unit>
+      <trans-unit id="iot.status.provisioned" datatype="html">
+        <source>Provisionné</source>
+        <target state="translated">Provisioned</target>
+      </trans-unit>
+      <trans-unit id="iot.status.active" datatype="html">
+        <source>En service</source>
+        <target state="translated">In service</target>
+      </trans-unit>
+      <trans-unit id="iot.status.suspended" datatype="html">
+        <source>Suspendu</source>
+        <target state="translated">Suspended</target>
+      </trans-unit>
+      <trans-unit id="iot.status.decommissioned" datatype="html">
+        <source>Décommissionné</source>
+        <target state="translated">Decommissioned</target>
+      </trans-unit>
+      <trans-unit id="iot.type.plc" datatype="html">
+        <source>Automate (PLC)</source>
+        <target state="translated">PLC controller</target>
+      </trans-unit>
+      <trans-unit id="iot.type.temperature" datatype="html">
+        <source>Sonde de température</source>
+        <target state="translated">Temperature probe</target>
+      </trans-unit>
+      <trans-unit id="iot.type.vibration" datatype="html">
+        <source>Capteur de vibration</source>
+        <target state="translated">Vibration sensor</target>
+      </trans-unit>
+      <trans-unit id="iot.type.pressure" datatype="html">
+        <source>Capteur de pression</source>
+        <target state="translated">Pressure sensor</target>
+      </trans-unit>
+      <trans-unit id="iot.type.humidity" datatype="html">
+        <source>Capteur d'humidité</source>
+        <target state="translated">Humidity sensor</target>
+      </trans-unit>
+      <trans-unit id="iot.type.generic" datatype="html">
+        <source>Capteur générique</source>
+        <target state="translated">Generic sensor</target>
+      </trans-unit>
+      <trans-unit id="iot.type.camera" datatype="html">
+        <source>Caméra</source>
+        <target state="translated">Camera</target>
+      </trans-unit>
+      <trans-unit id="iot.type.biomed" datatype="html">
+        <source>Dispositif biomédical</source>
+        <target state="translated">Biomedical device</target>
+      </trans-unit>
+      <trans-unit id="iot.type.agro" datatype="html">
+        <source>Station agro</source>
+        <target state="translated">Agricultural station</target>
+      </trans-unit>
+      <trans-unit id="iot.type.bms" datatype="html">
+        <source>GTB / bâtiment</source>
+        <target state="translated">Building management (BMS)</target>
+      </trans-unit>
+      <trans-unit id="iot.type.gateway" datatype="html">
+        <source>Passerelle Edge</source>
+        <target state="translated">Edge gateway</target>
+      </trans-unit>
+      <trans-unit id="iot.type.unknown" datatype="html">
+        <source>Non renseigné</source>
+        <target state="translated">Unspecified</target>
+      </trans-unit>
+      <trans-unit id="iot.protocol.manual" datatype="html">
+        <source>Relevé manuel</source>
+        <target state="translated">Manual reading</target>
+      </trans-unit>
+      <trans-unit id="iot.criticity.low" datatype="html">
+        <source>Faible</source>
+        <target state="translated">Low</target>
+      </trans-unit>
+      <trans-unit id="iot.criticity.medium" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">Medium</target>
+      </trans-unit>
+      <trans-unit id="iot.criticity.high" datatype="html">
+        <source>Élevée</source>
+        <target state="translated">High</target>
+      </trans-unit>
+      <trans-unit id="iot.criticity.critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">Critical</target>
+      </trans-unit>
+      <trans-unit id="iot.age.never" datatype="html">
+        <source>Jamais</source>
+        <target state="translated">Never</target>
+      </trans-unit>
+      <trans-unit id="iot.age.now" datatype="html">
+        <source>À l'instant</source>
+        <target state="translated">Just now</target>
+      </trans-unit>
+      <trans-unit id="iot.unit.minutes" datatype="html">
+        <source>min</source>
+        <target state="translated">min</target>
+      </trans-unit>
+      <trans-unit id="iot.unit.hours" datatype="html">
+        <source>h</source>
+        <target state="translated">h</target>
+      </trans-unit>
+      <trans-unit id="iot.unit.days" datatype="html">
+        <source>j</source>
+        <target state="translated">d</target>
+      </trans-unit>
+      <trans-unit id="iot.silence.15min" datatype="html">
+        <source>15 minutes</source>
+        <target state="translated">15 minutes</target>
+      </trans-unit>
+      <trans-unit id="iot.silence.1h" datatype="html">
+        <source>1 heure</source>
+        <target state="translated">1 hour</target>
+      </trans-unit>
+      <trans-unit id="iot.silence.6h" datatype="html">
+        <source>6 heures</source>
+        <target state="translated">6 hours</target>
+      </trans-unit>
+      <trans-unit id="iot.silence.24h" datatype="html">
+        <source>24 heures</source>
+        <target state="translated">24 hours</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.title" datatype="html">
+        <source>Parc IoT et télémétrie</source>
+        <target state="translated">IoT fleet and telemetry</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.subtitle" datatype="html">
+        <source>Équipements connectés du tenant et fraîcheur de leur dernier signal. Un capteur muet ne déclenche plus aucune détection de dérive : il remonte en tête de liste.</source>
+        <target state="translated">Connected devices of the tenant and how recent their last signal is. A silent sensor no longer triggers any drift detection: it is moved to the top of the list.</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.new" datatype="html">
+        <source>Nouvel équipement</source>
+        <target state="translated">New device</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.scope-note" datatype="html">
+        <source>Compteurs de santé calculés sur les équipements en service du tenant.</source>
+        <target state="translated">Health counters computed over the tenant's in-service devices.</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.scope-truncated" datatype="html">
+        <source>Compteurs de santé calculés sur un échantillon des équipements en service : le tenant en compte davantage que ce qu'une page serveur peut renvoyer.</source>
+        <target state="translated">Health counters computed over a sample of in-service devices: the tenant has more of them than a single server page can return.</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.silence" datatype="html">
+        <source>Seuil de silence</source>
+        <target state="translated">Silence threshold</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.filter-note" datatype="html">
+        <source>Le serveur n'applique qu'un seul critère de filtrage : choisir un statut remet le type à « tous », et inversement.</source>
+        <target state="translated">The server applies only one filter criterion: choosing a status resets the type to "all", and vice versa.</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.tile-listed" datatype="html">
+        <source>Équipements listés</source>
+        <target state="translated">Listed devices</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.tile-live" datatype="html">
+        <source>En ligne</source>
+        <target state="translated">Online</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.tile-aging" datatype="html">
+        <source>Signal vieillissant</source>
+        <target state="translated">Ageing signal</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.tile-silent" datatype="html">
+        <source>Capteurs muets</source>
+        <target state="translated">Silent sensors</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.tile-never" datatype="html">
+        <source>Jamais vus</source>
+        <target state="translated">Never seen</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.load-error" datatype="html">
+        <source>Impossible de charger le parc d'équipements.</source>
+        <target state="translated">Unable to load the device fleet.</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.created" datatype="html">
+        <source>Équipement enregistré.</source>
+        <target state="translated">Device registered.</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.action-error" datatype="html">
+        <source>La transition d'état a été refusée.</source>
+        <target state="translated">The state transition was rejected.</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.open" datatype="html">
+        <source>Ouvrir la fiche</source>
+        <target state="translated">Open record</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.empty" datatype="html">
+        <source>Aucun équipement pour ce filtre. Enregistrez un capteur, une passerelle ou un automate pour commencer à recevoir sa télémétrie.</source>
+        <target state="translated">No device matches this filter. Register a sensor, a gateway or a controller to start receiving its telemetry.</target>
+      </trans-unit>
+      <trans-unit id="iot.devices.paginator-aria" datatype="html">
+        <source>Pagination des équipements</source>
+        <target state="translated">Device pagination</target>
+      </trans-unit>
+      <trans-unit id="iot.col-device" datatype="html">
+        <source>Équipement</source>
+        <target state="translated">Device</target>
+      </trans-unit>
+      <trans-unit id="iot.col-health" datatype="html">
+        <source>Dernier signal</source>
+        <target state="translated">Last signal</target>
+      </trans-unit>
+      <trans-unit id="iot.col-protocol" datatype="html">
+        <source>Protocole</source>
+        <target state="translated">Protocol</target>
+      </trans-unit>
+      <trans-unit id="iot.col-location" datatype="html">
+        <source>Emplacement</source>
+        <target state="translated">Location</target>
+      </trans-unit>
+      <trans-unit id="iot.col-telemetry" datatype="html">
+        <source>Mesures</source>
+        <target state="translated">Measurements</target>
+      </trans-unit>
+      <trans-unit id="iot.action.activate" datatype="html">
+        <source>Mettre en service</source>
+        <target state="translated">Put in service</target>
+      </trans-unit>
+      <trans-unit id="iot.action.suspend" datatype="html">
+        <source>Suspendre</source>
+        <target state="translated">Suspend</target>
+      </trans-unit>
+      <trans-unit id="iot.action.decommission" datatype="html">
+        <source>Décommissionner</source>
+        <target state="translated">Decommission</target>
+      </trans-unit>
+      <trans-unit id="iot.device-dialog.create-title" datatype="html">
+        <source>Nouvel équipement IoT</source>
+        <target state="translated">New IoT device</target>
+      </trans-unit>
+      <trans-unit id="iot.device-dialog.edit-title" datatype="html">
+        <source>Modifier l'équipement</source>
+        <target state="translated">Edit device</target>
+      </trans-unit>
+      <trans-unit id="iot.device-dialog.code" datatype="html">
+        <source>Code</source>
+        <target state="translated">Code</target>
+      </trans-unit>
+      <trans-unit id="iot.device-dialog.code-hint" datatype="html">
+        <source>Lettres, chiffres, point, tiret ou souligné — 120 caractères maximum.</source>
+        <target state="translated">Letters, digits, dot, hyphen or underscore — 120 characters maximum.</target>
+      </trans-unit>
+      <trans-unit id="iot.device-dialog.code-locked" datatype="html">
+        <source>Le code est figé après l'enregistrement.</source>
+        <target state="translated">The code is frozen once the device is registered.</target>
+      </trans-unit>
+      <trans-unit id="iot.device-dialog.name" datatype="html">
+        <source>Désignation</source>
+        <target state="translated">Name</target>
+      </trans-unit>
+      <trans-unit id="iot.device-dialog.provisioned-hint" datatype="html">
+        <source>L'équipement est créé à l'état « provisionné » : il faut le mettre en service pour que le serveur accepte sa télémétrie.</source>
+        <target state="translated">The device is created in the "provisioned" state: put it in service for the server to accept its telemetry.</target>
+      </trans-unit>
+      <trans-unit id="iot.save-error" datatype="html">
+        <source>Erreur lors de l'enregistrement.</source>
+        <target state="translated">Error while saving.</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry-dialog.title" datatype="html">
+        <source>Relever une mesure</source>
+        <target state="translated">Record a measurement</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry-dialog.known" datatype="html">
+        <source>Déjà relevées</source>
+        <target state="translated">Already recorded</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry-dialog.value-required" datatype="html">
+        <source>Renseignez au moins une valeur, numérique ou textuelle.</source>
+        <target state="translated">Enter at least one value, numeric or text.</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry-dialog.recorded-hint" datatype="html">
+        <source>Laissez vide pour horodater à la réception.</source>
+        <target state="translated">Leave empty to timestamp on reception.</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry-dialog.threshold-hint" datatype="html">
+        <source>Une valeur numérique hors des seuils configurés ouvre automatiquement une CAPA, et un cycle PDCA si le seuil le prévoit.</source>
+        <target state="translated">A numeric value outside the configured thresholds automatically opens a CAPA, and a PDCA cycle if the threshold says so.</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry-dialog.error" datatype="html">
+        <source>La mesure a été refusée par le serveur.</source>
+        <target state="translated">The measurement was rejected by the server.</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.metric" datatype="html">
+        <source>Métrique</source>
+        <target state="translated">Metric</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">Value</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.value-numeric" datatype="html">
+        <source>Valeur numérique</source>
+        <target state="translated">Numeric value</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.value-text" datatype="html">
+        <source>Valeur textuelle</source>
+        <target state="translated">Text value</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.unit" datatype="html">
+        <source>Unité</source>
+        <target state="translated">Unit</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.recorded-at" datatype="html">
+        <source>Horodatage de la mesure</source>
+        <target state="translated">Measurement timestamp</target>
+      </trans-unit>
+      <trans-unit id="iot.telemetry.source" datatype="html">
+        <source>Source</source>
+        <target state="translated">Source</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.create-title" datatype="html">
+        <source>Nouveau seuil de surveillance</source>
+        <target state="translated">New monitoring threshold</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.edit-title" datatype="html">
+        <source>Modifier le seuil</source>
+        <target state="translated">Edit threshold</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.bounds-required" datatype="html">
+        <source>Renseignez au moins une borne, basse ou haute.</source>
+        <target state="translated">Enter at least one bound, lower or upper.</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.bounds-inverted" datatype="html">
+        <source>La borne basse doit être inférieure ou égale à la borne haute.</source>
+        <target state="translated">The lower bound must be less than or equal to the upper bound.</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.fmea-hint" datatype="html">
+        <source>Identifiant d'une fiche FMEA du tenant, rappelé dans la CAPA générée. Facultatif.</source>
+        <target state="translated">Identifier of a tenant FMEA item, quoted in the generated CAPA. Optional.</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.fmea-invalid" datatype="html">
+        <source>Identifiant invalide : un UUID est attendu.</source>
+        <target state="translated">Invalid identifier: a UUID is expected.</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.enabled-label" datatype="html">
+        <source>Seuil actif</source>
+        <target state="translated">Threshold active</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.enabled-hint" datatype="html">
+        <source>Un seuil inactif reste enregistré mais n'est plus évalué à l'ingestion.</source>
+        <target state="translated">An inactive threshold stays recorded but is no longer evaluated on ingestion.</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.pdca-label" datatype="html">
+        <source>Ouvrir aussi un cycle PDCA</source>
+        <target state="translated">Also open a PDCA cycle</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.pdca-hint" datatype="html">
+        <source>En plus de la CAPA, un cycle d'amélioration est créé et référencé dans la CAPA.</source>
+        <target state="translated">In addition to the CAPA, an improvement cycle is created and referenced in the CAPA.</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold-dialog.error" datatype="html">
+        <source>Le seuil a été refusé par le serveur.</source>
+        <target state="translated">The threshold was rejected by the server.</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.min" datatype="html">
+        <source>Borne basse</source>
+        <target state="translated">Lower bound</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.max" datatype="html">
+        <source>Borne haute</source>
+        <target state="translated">Upper bound</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.bounds" datatype="html">
+        <source>Bornes</source>
+        <target state="translated">Bounds</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.criticity" datatype="html">
+        <source>Criticité de la CAPA générée</source>
+        <target state="translated">Criticality of the generated CAPA</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.fmea" datatype="html">
+        <source>Fiche FMEA liée</source>
+        <target state="translated">Linked FMEA item</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.pdca" datatype="html">
+        <source>Cycle PDCA</source>
+        <target state="translated">PDCA cycle</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.scope" datatype="html">
+        <source>Portée</source>
+        <target state="translated">Scope</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.scope-device" datatype="html">
+        <source>Cet équipement</source>
+        <target state="translated">This device</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.scope-tenant" datatype="html">
+        <source>Tous les équipements du tenant</source>
+        <target state="translated">All devices of the tenant</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.enabled" datatype="html">
+        <source>Actif</source>
+        <target state="translated">Active</target>
+      </trans-unit>
+      <trans-unit id="iot.threshold.disabled" datatype="html">
+        <source>Inactif</source>
+        <target state="translated">Inactive</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.back" datatype="html">
+        <source>Retour au parc IoT</source>
+        <target state="translated">Back to the IoT fleet</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.load-error" datatype="html">
+        <source>Équipement introuvable.</source>
+        <target state="translated">Device not found.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.add-telemetry" datatype="html">
+        <source>Relever une mesure</source>
+        <target state="translated">Record a measurement</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.decommissioned-note" datatype="html">
+        <source>Équipement décommissionné : l'historique reste consultable, plus aucune mesure ni modification n'est acceptée.</source>
+        <target state="translated">Decommissioned device: history remains available, no further measurement or change is accepted.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.last-signal" datatype="html">
+        <source>Dernier signal</source>
+        <target state="translated">Last signal</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.never-emitted" datatype="html">
+        <source>Aucune mesure reçue à ce jour</source>
+        <target state="translated">No measurement received so far</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.total-measures" datatype="html">
+        <source>Mesures ingérées</source>
+        <target state="translated">Ingested measurements</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.metrics-count" datatype="html">
+        <source>Métriques suivies</source>
+        <target state="translated">Tracked metrics</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.thresholds-count" datatype="html">
+        <source>Seuils applicables</source>
+        <target state="translated">Applicable thresholds</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.silence-rule" datatype="html">
+        <source>Un équipement en service est déclaré muet après une heure sans signal ; la mention « signal vieillissant » apparaît dès trente minutes.</source>
+        <target state="translated">An in-service device is declared silent after one hour without a signal; the "ageing signal" mention appears from thirty minutes.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.telemetry-title" datatype="html">
+        <source>Télémétrie</source>
+        <target state="translated">Telemetry</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.window" datatype="html">
+        <source>Fenêtre</source>
+        <target state="translated">Window</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.chart-error" datatype="html">
+        <source>Impossible de charger la fenêtre de mesures.</source>
+        <target state="translated">Unable to load the measurement window.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.recent-note" datatype="html">
+        <source>Cent dernières mesures de l'équipement, toutes métriques confondues. Total ingéré :</source>
+        <target state="translated">Last hundred measurements of the device, all metrics combined. Total ingested:</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.window-truncated" datatype="html">
+        <source>Début de fenêtre seulement — points affichés puis mesures de la fenêtre :</source>
+        <target state="translated">Start of the window only — points displayed then measurements in the window:</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.window-complete" datatype="html">
+        <source>Mesures de la fenêtre :</source>
+        <target state="translated">Measurements in the window:</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.telemetry-empty" datatype="html">
+        <source>Aucune mesure reçue. Relevez une valeur manuellement ou branchez le capteur sur son protocole d'ingestion.</source>
+        <target state="translated">No measurement received. Record a value manually or connect the sensor to its ingestion protocol.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.thresholds-title" datatype="html">
+        <source>Seuils de surveillance</source>
+        <target state="translated">Monitoring thresholds</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.threshold-add" datatype="html">
+        <source>Nouveau seuil</source>
+        <target state="translated">New threshold</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.threshold-explain" datatype="html">
+        <source>Le franchissement d'un seuil actif ouvre une CAPA à l'ingestion de la mesure, et un cycle PDCA si le seuil le prévoit.</source>
+        <target state="translated">Crossing an active threshold opens a CAPA when the measurement is ingested, and a PDCA cycle if the threshold says so.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.thresholds-empty" datatype="html">
+        <source>Aucun seuil : les mesures de cet équipement sont enregistrées mais aucune dérive n'ouvrira de CAPA automatiquement.</source>
+        <target state="translated">No threshold: this device's measurements are recorded but no drift will open a CAPA automatically.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.threshold-global" datatype="html">
+        <source>Géré globalement</source>
+        <target state="translated">Managed globally</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.suspend-title" datatype="html">
+        <source>Suspendre l'équipement ?</source>
+        <target state="translated">Suspend the device?</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.suspend-message" datatype="html">
+        <source>Le serveur cessera d'accepter sa télémétrie : aucune dérive ne sera plus détectée tant qu'il n'est pas remis en service.</source>
+        <target state="translated">The server will stop accepting its telemetry: no drift will be detected until it is put back in service.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.decommission-title" datatype="html">
+        <source>Décommissionner l'équipement ?</source>
+        <target state="translated">Decommission the device?</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.decommission-message" datatype="html">
+        <source>L'état « décommissionné » est définitif : aucune remise en service, aucune nouvelle mesure. L'historique reste consultable.</source>
+        <target state="translated">The "decommissioned" state is final: no return to service, no new measurement. History remains available.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.delete-title" datatype="html">
+        <source>Supprimer l'équipement ?</source>
+        <target state="translated">Delete the device?</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.delete-message" datatype="html">
+        <source>Suppression définitive de l'équipement du registre. Les mesures déjà ingérées ne sont plus rattachées à aucun capteur.</source>
+        <target state="translated">Permanent removal of the device from the registry. Measurements already ingested are no longer attached to any sensor.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.deleted" datatype="html">
+        <source>Équipement supprimé.</source>
+        <target state="translated">Device deleted.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.delete-failed" datatype="html">
+        <source>Suppression impossible.</source>
+        <target state="translated">Deletion failed.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.threshold-delete-title" datatype="html">
+        <source>Supprimer ce seuil ?</source>
+        <target state="translated">Delete this threshold?</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.threshold-delete-message" datatype="html">
+        <source>Les dépassements de cette métrique n'ouvriront plus de CAPA automatiquement.</source>
+        <target state="translated">Breaches of this metric will no longer open a CAPA automatically.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.threshold-deleted" datatype="html">
+        <source>Seuil supprimé.</source>
+        <target state="translated">Threshold deleted.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.status-changed" datatype="html">
+        <source>Statut mis à jour.</source>
+        <target state="translated">Status updated.</target>
+      </trans-unit>
+      <trans-unit id="iot.detail.status-failed" datatype="html">
+        <source>Changement de statut refusé.</source>
+        <target state="translated">Status change rejected.</target>
+      </trans-unit>
+      <trans-unit id="iot.window.recent" datatype="html">
+        <source>Dernières mesures</source>
+        <target state="translated">Latest measurements</target>
+      </trans-unit>
+      <trans-unit id="iot.window.h24" datatype="html">
+        <source>24 heures</source>
+        <target state="translated">24 hours</target>
+      </trans-unit>
+      <trans-unit id="iot.window.d7" datatype="html">
+        <source>7 jours</source>
+        <target state="translated">7 days</target>
+      </trans-unit>
+      <trans-unit id="iot.window.d30" datatype="html">
+        <source>30 jours</source>
+        <target state="translated">30 days</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.title" datatype="html">
+        <source>Registre des systèmes d'IA</source>
+        <target state="translated">AI system register</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.subtitle" datatype="html">
+        <source>Inventaire exigé par l'AI Act (UE 2024/1689). Chaque système est classé par niveau de risque : c'est cette classification qui détermine les obligations d'évaluation de conformité, de supervision humaine et de transparence.</source>
+        <target state="translated">Inventory required by the AI Act (EU 2024/1689). Each system is classified by risk level: that classification determines the obligations for conformity assessment, human oversight and transparency.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.new" datatype="html">
+        <source>Déclarer un système</source>
+        <target state="translated">Declare a system</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.filter-risk" datatype="html">
+        <source>Niveau de risque</source>
+        <target state="translated">Risk level</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.search-placeholder" datatype="html">
+        <source>Référence, nom, fournisseur, finalité</source>
+        <target state="translated">Reference, name, provider, purpose</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.reset-filters" datatype="html">
+        <source>Réinitialiser</source>
+        <target state="translated">Reset</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.load-error" datatype="html">
+        <source>Impossible de charger le registre des systèmes d'IA.</source>
+        <target state="translated">The AI system register could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.col-system" datatype="html">
+        <source>Système</source>
+        <target state="translated">System</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.col-risk" datatype="html">
+        <source>Classification</source>
+        <target state="translated">Classification</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.col-role" datatype="html">
+        <source>Rôle</source>
+        <target state="translated">Role</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.col-provider" datatype="html">
+        <source>Fournisseur</source>
+        <target state="translated">Provider</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.gpai" datatype="html">
+        <source>Modèle à usage général (GPAI)</source>
+        <target state="translated">General-purpose model (GPAI)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.attention" datatype="html">
+        <source>Décision requise : pratique interdite ou mise en service bloquée.</source>
+        <target state="translated">Decision required: prohibited practice or blocked entry into use.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.empty" datatype="html">
+        <source>Aucun système d'IA n'est encore déclaré. Le registre est le point de départ du module AI Act : évaluations de conformité, incidents, FRIA et suivi post-marché s'y rattachent.</source>
+        <target state="translated">No AI system has been declared yet. The register is the starting point of the AI Act module: conformity assessments, incidents, FRIA and post-market monitoring all attach to it.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.list.no-match" datatype="html">
+        <source>Aucun système ne correspond à ces critères.</source>
+        <target state="translated">No system matches these criteria.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.all" datatype="html">
+        <source>Systèmes recensés</source>
+        <target state="translated">Systems recorded</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.all-hint" datatype="html">
+        <source>Tout le registre du tenant</source>
+        <target state="translated">The tenant's whole register</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.prohibited" datatype="html">
+        <source>Risque inacceptable</source>
+        <target state="translated">Unacceptable risk</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.prohibited-hint" datatype="html">
+        <source>Interdits de mise sur le marché (Art. 5)</source>
+        <target state="translated">Barred from the market (Art. 5)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.high" datatype="html">
+        <source>Haut risque</source>
+        <target state="translated">High risk</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.high-hint" datatype="html">
+        <source>Obligations renforcées (Annexe III)</source>
+        <target state="translated">Strengthened obligations (Annex III)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.draft" datatype="html">
+        <source>Brouillons</source>
+        <target state="translated">Drafts</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.draft-hint" datatype="html">
+        <source>Fiches encore modifiables</source>
+        <target state="translated">Records still editable</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.in-use" datatype="html">
+        <source>En service</source>
+        <target state="translated">In use</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.tile.in-use-hint" datatype="html">
+        <source>Systèmes réellement exploités</source>
+        <target state="translated">Systems actually operated</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.risk.unacceptable" datatype="html">
+        <source>Risque inacceptable</source>
+        <target state="translated">Unacceptable risk</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.risk.high" datatype="html">
+        <source>Haut risque</source>
+        <target state="translated">High risk</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.risk.limited" datatype="html">
+        <source>Risque limité</source>
+        <target state="translated">Limited risk</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.risk.minimal" datatype="html">
+        <source>Risque minimal</source>
+        <target state="translated">Minimal risk</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.risk-basis.unacceptable" datatype="html">
+        <source>Pratique interdite — AI Act Art. 5</source>
+        <target state="translated">Prohibited practice — AI Act Art. 5</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.risk-basis.high" datatype="html">
+        <source>Annexe III — évaluation de conformité, supervision humaine, transparence</source>
+        <target state="translated">Annex III — conformity assessment, human oversight, transparency</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.risk-basis.limited" datatype="html">
+        <source>Art. 50 — obligation d'informer l'utilisateur qu'il interagit avec une IA</source>
+        <target state="translated">Art. 50 — duty to inform the user that they are interacting with an AI</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.risk-basis.minimal" datatype="html">
+        <source>Usage libre — aucune obligation spécifique</source>
+        <target state="translated">Free use — no specific obligation</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.status.draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">Draft</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.status.registered" datatype="html">
+        <source>Enregistré</source>
+        <target state="translated">Registered</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.status.in-use" datatype="html">
+        <source>En service</source>
+        <target state="translated">In use</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.status.decommissioned" datatype="html">
+        <source>Retiré du service</source>
+        <target state="translated">Decommissioned</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.status.withdrawn" datatype="html">
+        <source>Abandonné</source>
+        <target state="translated">Withdrawn</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.role.provider" datatype="html">
+        <source>Fournisseur</source>
+        <target state="translated">Provider</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.role.deployer" datatype="html">
+        <source>Déployeur</source>
+        <target state="translated">Deployer</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.role.importer" datatype="html">
+        <source>Importateur</source>
+        <target state="translated">Importer</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.role.distributor" datatype="html">
+        <source>Distributeur</source>
+        <target state="translated">Distributor</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.requirement.conformity-evidence" datatype="html">
+        <source>Preuve d'évaluation de conformité (Art. 43)</source>
+        <target state="translated">Conformity assessment evidence (Art. 43)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.requirement.human-oversight" datatype="html">
+        <source>Description de la supervision humaine (Art. 14)</source>
+        <target state="translated">Description of human oversight (Art. 14)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.requirement.transparency" datatype="html">
+        <source>Mesures de transparence (Art. 13 et 50)</source>
+        <target state="translated">Transparency measures (Art. 13 and 50)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.back" datatype="html">
+        <source>Registre des systèmes d'IA</source>
+        <target state="translated">AI system register</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.gpai" datatype="html">
+        <source>GPAI</source>
+        <target state="translated">GPAI</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.register" datatype="html">
+        <source>Enregistrer</source>
+        <target state="translated">Register</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.put-in-use" datatype="html">
+        <source>Mettre en service</source>
+        <target state="translated">Put into use</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.decommission" datatype="html">
+        <source>Retirer du service</source>
+        <target state="translated">Decommission</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.withdraw" datatype="html">
+        <source>Abandonner</source>
+        <target state="translated">Withdraw</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.prohibited" datatype="html">
+        <source>Pratique interdite par l'article 5 de l'AI Act. Ce système ne peut être ni enregistré ni mis en service ; la fiche n'est conservée que comme trace de la décision.</source>
+        <target state="translated">Practice prohibited by Article 5 of the AI Act. This system can neither be registered nor put into use; the record is kept only as evidence of the decision.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.stuck" datatype="html">
+        <source>Mise en service impossible : des obligations restent à documenter alors que la fiche, enregistrée, n'est plus modifiable. Le seul chemin est l'abandon puis une nouvelle déclaration complète.</source>
+        <target state="translated">Entry into use is impossible: obligations remain undocumented while the registered record can no longer be edited. The only way forward is to withdraw it and file a new, complete declaration.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.purpose" datatype="html">
+        <source>Finalité et périmètre</source>
+        <target state="translated">Purpose and scope</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.role" datatype="html">
+        <source>Rôle</source>
+        <target state="translated">Role</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.internal" datatype="html">
+        <source>Interne</source>
+        <target state="translated">Internal</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.gpai-th" datatype="html">
+        <source>Usage général</source>
+        <target state="translated">General purpose</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.yes" datatype="html">
+        <source>Oui</source>
+        <target state="translated">Yes</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.no" datatype="html">
+        <source>Non</source>
+        <target state="translated">No</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.classification" datatype="html">
+        <source>Classification et obligations</source>
+        <target state="translated">Classification and obligations</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.no-requirement" datatype="html">
+        <source>Aucune obligation spécifique n'est attachée à cette classification.</source>
+        <target state="translated">No specific obligation applies to this classification.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.conformity" datatype="html">
+        <source>Conformité</source>
+        <target state="translated">Conformity</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.evidence" datatype="html">
+        <source>Preuve d'évaluation</source>
+        <target state="translated">Assessment evidence</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.safeguards" datatype="html">
+        <source>Garde-fous</source>
+        <target state="translated">Safeguards</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.not-documented" datatype="html">
+        <source>Non documenté.</source>
+        <target state="translated">Not documented.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.links" datatype="html">
+        <source>Rattachements RGPD</source>
+        <target state="translated">GDPR links</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.dpia" datatype="html">
+        <source>AIPD</source>
+        <target state="translated">DPIA</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.processing" datatype="html">
+        <source>Traitements</source>
+        <target state="translated">Processing activities</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.decisions" datatype="html">
+        <source>Décisions automatisées</source>
+        <target state="translated">Automated decisions</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.trace" datatype="html">
+        <source>Trace</source>
+        <target state="translated">Audit trail</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.created-by" datatype="html">
+        <source>Déclaré par</source>
+        <target state="translated">Declared by</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.effective-from" datatype="html">
+        <source>En service depuis</source>
+        <target state="translated">In use since</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.effective-to" datatype="html">
+        <source>Fin d'exploitation</source>
+        <target state="translated">End of operation</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.withdrawal-reason" datatype="html">
+        <source>Motif d'abandon</source>
+        <target state="translated">Withdrawal reason</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.not-found" datatype="html">
+        <source>Ce système d'IA est introuvable.</source>
+        <target state="translated">This AI system cannot be found.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.action-failed" datatype="html">
+        <source>L'opération sur le système a échoué.</source>
+        <target state="translated">The operation on the system failed.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.updated" datatype="html">
+        <source>Fiche mise à jour.</source>
+        <target state="translated">Record updated.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.register-title" datatype="html">
+        <source>Enregistrer ce système ?</source>
+        <target state="translated">Register this system?</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.register-message" datatype="html">
+        <source>La fiche devient définitive : ses informations ne seront plus modifiables.</source>
+        <target state="translated">The record becomes final: its information will no longer be editable.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.register-incomplete" datatype="html">
+        <source>Des obligations ne sont pas encore documentées. Après enregistrement la fiche devient définitive : le système ne pourra plus être mis en service, seulement abandonné.</source>
+        <target state="translated">Some obligations are not documented yet. Once registered the record becomes final: the system will no longer be able to be put into use, only withdrawn.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.registered" datatype="html">
+        <source>Système enregistré.</source>
+        <target state="translated">System registered.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.put-in-use-title" datatype="html">
+        <source>Déclarer ce système en service ?</source>
+        <target state="translated">Declare this system in use?</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.put-in-use-message" datatype="html">
+        <source>La date de mise en service sera horodatée et le système entrera dans le périmètre de surveillance post-marché.</source>
+        <target state="translated">The entry-into-use date will be timestamped and the system will enter the scope of post-market monitoring.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.in-use" datatype="html">
+        <source>Système déclaré en service.</source>
+        <target state="translated">System declared in use.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.decommission-title" datatype="html">
+        <source>Retirer ce système du service ?</source>
+        <target state="translated">Decommission this system?</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.decommission-message" datatype="html">
+        <source>La fiche restera consultable comme archive, avec sa date de fin d'exploitation.</source>
+        <target state="translated">The record will remain viewable as an archive, together with its end-of-operation date.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.decommissioned" datatype="html">
+        <source>Système retiré du service.</source>
+        <target state="translated">System decommissioned.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.withdrawn" datatype="html">
+        <source>Système abandonné.</source>
+        <target state="translated">System withdrawn.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.delete-title" datatype="html">
+        <source>Supprimer ce brouillon ?</source>
+        <target state="translated">Delete this draft?</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.delete-message" datatype="html">
+        <source>Suppression définitive. Seuls les brouillons peuvent être supprimés : les autres états sont conservés pour l'audit.</source>
+        <target state="translated">Permanent deletion. Only drafts can be deleted: the other states are kept for audit.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.detail.deleted" datatype="html">
+        <source>Brouillon supprimé.</source>
+        <target state="translated">Draft deleted.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.create-title" datatype="html">
+        <source>Déclarer un système d'IA</source>
+        <target state="translated">Declare an AI system</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.edit-title" datatype="html">
+        <source>Modifier le brouillon</source>
+        <target state="translated">Edit the draft</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.section-identity" datatype="html">
+        <source>Identification</source>
+        <target state="translated">Identification</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">Reference</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.reference-hint" datatype="html">
+        <source>Majuscules, chiffres, tiret et souligné. Définitive : elle identifie le système dans la base de données UE et les rapports d'audit.</source>
+        <target state="translated">Capitals, digits, hyphen and underscore. Final: it identifies the system in the EU database and in audit reports.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.reference-locked" datatype="html">
+        <source>Référence non modifiable après création.</source>
+        <target state="translated">The reference cannot be changed after creation.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.reference-invalid" datatype="html">
+        <source>Format attendu : une majuscule puis 1 à 63 caractères parmi A-Z, 0-9, « - » et « _ ».</source>
+        <target state="translated">Expected format: one capital letter then 1 to 63 characters among A-Z, 0-9, "-" and "_".</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.intended-purpose" datatype="html">
+        <source>Finalité prévue</source>
+        <target state="translated">Intended purpose</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.intended-purpose-hint" datatype="html">
+        <source>Usage réel du système, population concernée, décisions qu'il influence.</source>
+        <target state="translated">Actual use of the system, people concerned, decisions it influences.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.provider" datatype="html">
+        <source>Fournisseur</source>
+        <target state="translated">Provider</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.provider-hint" datatype="html">
+        <source>Éditeur du système lorsqu'il est acquis auprès d'un tiers.</source>
+        <target state="translated">Vendor of the system when it is acquired from a third party.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.section-classification" datatype="html">
+        <source>Classification et rôle</source>
+        <target state="translated">Classification and role</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.risk" datatype="html">
+        <source>Niveau de risque</source>
+        <target state="translated">Risk level</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.prohibited-warning" datatype="html">
+        <source>Pratique interdite (Art. 5) : la fiche pourra être conservée comme trace de la décision, mais le système ne pourra jamais être enregistré ni mis en service.</source>
+        <target state="translated">Prohibited practice (Art. 5): the record may be kept as evidence of the decision, but the system can never be registered or put into use.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.role" datatype="html">
+        <source>Rôle de l'organisation</source>
+        <target state="translated">Role of the organisation</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.role-hint" datatype="html">
+        <source>Art. 3 : fournisseur, déployeur, importateur ou distributeur.</source>
+        <target state="translated">Art. 3: provider, deployer, importer or distributor.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.gpai" datatype="html">
+        <source>Modèle d'IA à usage général (GPAI)</source>
+        <target state="translated">General-purpose AI model (GPAI)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.requirements-title" datatype="html">
+        <source>Prérequis à la mise en service pour cette classification</source>
+        <target state="translated">Prerequisites for entry into use for this classification</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.requirements-note" datatype="html">
+        <source>La fiche n'est plus modifiable une fois enregistrée : complétez ces éléments maintenant, sinon le système devra être retiré et redéclaré.</source>
+        <target state="translated">The record can no longer be edited once registered: complete these items now, otherwise the system will have to be withdrawn and declared again.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.section-conformity" datatype="html">
+        <source>Conformité et garde-fous</source>
+        <target state="translated">Conformity and safeguards</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.evidence-url" datatype="html">
+        <source>Preuve d'évaluation de conformité (URL)</source>
+        <target state="translated">Conformity assessment evidence (URL)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.url-invalid" datatype="html">
+        <source>URL http(s) attendue, sans espace.</source>
+        <target state="translated">An http(s) URL without spaces is expected.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.ce-marking" datatype="html">
+        <source>Numéro de marquage CE</source>
+        <target state="translated">CE marking number</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.human-oversight" datatype="html">
+        <source>Supervision humaine</source>
+        <target state="translated">Human oversight</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.human-oversight-hint" datatype="html">
+        <source>Art. 14 : qui peut interrompre le système, sur quels signaux, avec quelle formation.</source>
+        <target state="translated">Art. 14: who can stop the system, on which signals, with what training.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.transparency" datatype="html">
+        <source>Mesures de transparence</source>
+        <target state="translated">Transparency measures</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.transparency-hint" datatype="html">
+        <source>Art. 13 et 50 : comment la personne concernée sait qu'elle interagit avec une IA.</source>
+        <target state="translated">Art. 13 and 50: how the person concerned knows they are interacting with an AI.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.data-governance" datatype="html">
+        <source>Gouvernance des données</source>
+        <target state="translated">Data governance</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.section-links" datatype="html">
+        <source>Rattachements RGPD</source>
+        <target state="translated">GDPR links</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.dpia" datatype="html">
+        <source>AIPD rattachée (UUID)</source>
+        <target state="translated">Linked DPIA (UUID)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.uuid-invalid" datatype="html">
+        <source>Identifiant UUID attendu.</source>
+        <target state="translated">A UUID identifier is expected.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.processing-activities" datatype="html">
+        <source>Traitements du registre (UUID, un par ligne)</source>
+        <target state="translated">Processing activities from the register (UUID, one per line)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.automated-decisions" datatype="html">
+        <source>Décisions automatisées (UUID, un par ligne)</source>
+        <target state="translated">Automated decisions (UUID, one per line)</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.uuid-list-invalid" datatype="html">
+        <source>Un des identifiants saisis n'est pas un UUID.</source>
+        <target state="translated">One of the identifiers entered is not a UUID.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.invalid" datatype="html">
+        <source>Corrigez les champs signalés avant d'enregistrer.</source>
+        <target state="translated">Correct the highlighted fields before saving.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.form.submit-create" datatype="html">
+        <source>Créer le brouillon</source>
+        <target state="translated">Create the draft</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.withdraw.title" datatype="html">
+        <source>Abandonner ce système d'IA ?</source>
+        <target state="translated">Withdraw this AI system?</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.withdraw.lead" datatype="html">
+        <source>L'abandon est définitif : la fiche est conservée en lecture seule comme preuve de la décision, mais le système ne pourra plus être enregistré ni mis en service.</source>
+        <target state="translated">Withdrawal is final: the record is kept read-only as evidence of the decision, but the system can no longer be registered or put into use.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.withdraw.reason" datatype="html">
+        <source>Motif de l'abandon</source>
+        <target state="translated">Reason for withdrawal</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.withdraw.reason-hint" datatype="html">
+        <source>Sera présenté tel quel lors d'un contrôle : soyez factuel.</source>
+        <target state="translated">Will be shown as-is during an inspection: keep it factual.</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.withdraw.confirm" datatype="html">
+        <source>Abandonner le système</source>
+        <target state="translated">Withdraw the system</target>
+      </trans-unit>
+      <trans-unit id="ai-systems.withdraw.failed" datatype="html">
+        <source>L'abandon du système a échoué.</source>
+        <target state="translated">Withdrawing the system failed.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.eyebrow" datatype="html">
+        <source>Standards Hub</source>
+        <target state="translated">Standards Hub</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.title" datatype="html">
+        <source>Système intégré, audit blanc IA et preuves ancrées</source>
+        <target state="translated">Integrated system, AI mock audit and anchored evidence</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.subtitle" datatype="html">
+        <source>Trois leviers d'un même dossier de certification : mutualiser les exigences entre normes, se faire auditer par l'IA avant l'auditeur, et prouver que rien n'a bougé depuis.</source>
+        <target state="translated">Three levers of one and the same certification file: share requirements across standards, be audited by the AI before the auditor, and prove nothing has changed since.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tab.coverage" datatype="html">
+        <source>Co-couverture multi-normes</source>
+        <target state="translated">Multi-standard co-coverage</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tab.audit" datatype="html">
+        <source>Audit blanc IA</source>
+        <target state="translated">AI mock audit</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tab.anchor" datatype="html">
+        <source>Ancrage &amp; preuves</source>
+        <target state="translated">Anchoring &amp; evidence</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.loading" datatype="html">
+        <source>Chargement…</source>
+        <target state="translated">Loading…</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.retry" datatype="html">
+        <source>Réessayer</source>
+        <target state="translated">Retry</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">Actions</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.scope-title" datatype="html">
+        <source>Périmètre comparé</source>
+        <target state="translated">Compared scope</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.scope-subtitle" datatype="html">
+        <source>Sans sélection explicite, les normes adoptées par votre organisation sont comparées entre elles.</source>
+        <target state="translated">With no explicit selection, the standards adopted by your organisation are compared with each other.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.select-label" datatype="html">
+        <source>Normes à comparer</source>
+        <target state="translated">Standards to compare</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.select-aria" datatype="html">
+        <source>Normes à inclure dans la matrice de co-couverture</source>
+        <target state="translated">Standards to include in the co-coverage matrix</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.reset" datatype="html">
+        <source>Revenir aux normes adoptées</source>
+        <target state="translated">Back to the adopted standards</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.refresh" datatype="html">
+        <source>Actualiser</source>
+        <target state="translated">Refresh</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.shared-only" datatype="html">
+        <source>Clauses mutualisables uniquement</source>
+        <target state="translated">Shareable clauses only</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.matrix-title" datatype="html">
+        <source>Matrice de co-couverture</source>
+        <target state="translated">Co-coverage matrix</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.matrix-subtitle" datatype="html">
+        <source>Une ligne par clause source, une colonne par norme. Une cellule remplie signifie qu'une preuve produite pour la clause vaut aussi pour la norme de la colonne.</source>
+        <target state="translated">One row per source clause, one column per standard. A filled cell means that evidence produced for the clause also counts for the standard in that column.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.caption" datatype="html">
+        <source>Clauses sources en ligne, normes comparées en colonne, codes des clauses couvertes en cellule.</source>
+        <target state="translated">Source clauses in rows, compared standards in columns, covered clause codes in cells.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.col-source" datatype="html">
+        <source>Clause source</source>
+        <target state="translated">Source clause</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.col-shared" datatype="html">
+        <source>Mutualisation</source>
+        <target state="translated">Shared coverage</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.shared-count" datatype="html">
+        <source>&lt;x id="count"/&gt; norme(s)</source>
+        <target state="translated">&lt;x id="count"/&gt; standard(s)</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.specific" datatype="html">
+        <source>Spécifique</source>
+        <target state="translated">Standard-specific</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.empty" datatype="html">
+        <source>Aucun lien de couverture n'est enregistré entre ces normes.</source>
+        <target state="translated">No coverage link is recorded between these standards.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.empty-single" datatype="html">
+        <source>Une seule norme dans le périmètre : ajoutez-en au moins une seconde pour faire apparaître les exigences communes.</source>
+        <target state="translated">Only one standard in scope: add at least a second one to reveal the shared requirements.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.empty-filtered" datatype="html">
+        <source>Aucune clause n'est mutualisable sur ce périmètre : les liens existants sont seulement partiels ou informatifs.</source>
+        <target state="translated">No clause can be shared within this scope: the existing links are only partial or informative.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.show-all" datatype="html">
+        <source>Afficher tous les liens</source>
+        <target state="translated">Show all links</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.coverage.error" datatype="html">
+        <source>Impossible de charger la matrice de co-couverture.</source>
+        <target state="translated">The co-coverage matrix could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.relation.equivalent" datatype="html">
+        <source>Équivalente</source>
+        <target state="translated">Equivalent</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.relation.covers" datatype="html">
+        <source>Couvre</source>
+        <target state="translated">Covers</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.relation.related" datatype="html">
+        <source>Liée</source>
+        <target state="translated">Related</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.relation.references" datatype="html">
+        <source>Cite</source>
+        <target state="translated">References</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tile.standards" datatype="html">
+        <source>Normes comparées</source>
+        <target state="translated">Standards compared</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tile.clauses" datatype="html">
+        <source>Clauses sources reliées</source>
+        <target state="translated">Linked source clauses</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tile.clauses-hint" datatype="html">
+        <source>Clauses possédant au moins un lien vers une autre norme du périmètre.</source>
+        <target state="translated">Clauses with at least one link to another standard in scope.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tile.shared" datatype="html">
+        <source>Clauses mutualisables</source>
+        <target state="translated">Shareable clauses</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tile.shared-hint" datatype="html">
+        <source>Clauses dont la preuve vaut pour au moins une autre norme (lien « Équivalente » ou « Couvre »).</source>
+        <target state="translated">Clauses whose evidence counts for at least one other standard ("Equivalent" or "Covers" link).</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tile.reuse" datatype="html">
+        <source>Taux de mutualisation</source>
+        <target state="translated">Shared coverage rate</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tile.reuse-hint" datatype="html">
+        <source>Part des paires (clause × norme) déjà couvertes par une preuve existante.</source>
+        <target state="translated">Share of (clause × standard) pairs already covered by existing evidence.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tile.mappings" datatype="html">
+        <source>Liens de couverture</source>
+        <target state="translated">Coverage links</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.tile.mappings-hint" datatype="html">
+        <source>Nombre total de correspondances clause à clause dans le périmètre.</source>
+        <target state="translated">Total number of clause-to-clause mappings within scope.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.distinction-title" datatype="html">
+        <source>Deux audits blancs coexistent — ils ne font pas double emploi</source>
+        <target state="translated">Two mock audits coexist — they are not redundant</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.rules-lead" datatype="html">
+        <source>Audit blanc « règles », sur la fiche de la norme</source>
+        <target state="translated">Rules-based mock audit, on the standard's page</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.rules-body" datatype="html">
+        <source>calcul déterministe et instantané du taux de couverture des exigences par les preuves rattachées. Rien n'est conservé : c'est une photo à l'instant T.</source>
+        <target state="translated">a deterministic, instant computation of how far the requirements are covered by the linked evidence. Nothing is kept: it is a snapshot.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.ia-lead" datatype="html">
+        <source>Audit blanc IA, ci-dessous</source>
+        <target state="translated">AI mock audit, below</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.ia-body" datatype="html">
+        <source>le modèle génère 30 à 100 questions d'auditeur ciblées sur les clauses à risque, rédige les constats et produit un plan de remédiation. Chaque exécution est persistée, datée, attribuée à son auteur et relisible à l'identique.</source>
+        <target state="translated">the model generates 30 to 100 auditor questions targeting at-risk clauses, writes the findings and produces a remediation plan. Every run is persisted, dated, attributed to its author and can be reread identically.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.open-rules" datatype="html">
+        <source>Ouvrir l'audit blanc « règles »</source>
+        <target state="translated">Open the rules-based mock audit</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.run-title" datatype="html">
+        <source>Lancer un audit blanc IA</source>
+        <target state="translated">Run an AI mock audit</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.run-subtitle" datatype="html">
+        <source>La simulation porte sur les clauses réellement chargées pour la norme adoptée et sur l'état de preuve de votre tenant.</source>
+        <target state="translated">The simulation covers the clauses actually loaded for the adopted standard and the evidence status of your tenant.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.adoption-label" datatype="html">
+        <source>Norme adoptée</source>
+        <target state="translated">Adopted standard</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.adoption-aria" datatype="html">
+        <source>Norme adoptée sur laquelle porte l'audit blanc IA</source>
+        <target state="translated">Adopted standard the AI mock audit applies to</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.run" datatype="html">
+        <source>Lancer l'audit blanc IA</source>
+        <target state="translated">Run the AI mock audit</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.running" datatype="html">
+        <source>Audit en cours…</source>
+        <target state="translated">Audit running…</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.running-hint" datatype="html">
+        <source>Génération des questions et des constats par le modèle — l'opération peut durer plusieurs dizaines de secondes.</source>
+        <target state="translated">The model is generating the questions and findings — this can take several tens of seconds.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.refresh" datatype="html">
+        <source>Actualiser l'historique</source>
+        <target state="translated">Refresh the history</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.no-right" datatype="html">
+        <source>Votre rôle ne permet pas de déclencher un audit blanc IA. L'historique reste consultable.</source>
+        <target state="translated">Your role does not allow triggering an AI mock audit. The history remains readable.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.history-title" datatype="html">
+        <source>Historique des exécutions</source>
+        <target state="translated">Run history</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.history-subtitle" datatype="html">
+        <source>Chaque exécution est conservée telle quelle : c'est ce qui permet de mesurer les progrès d'un audit blanc au suivant.</source>
+        <target state="translated">Every run is kept as is: that is what makes progress measurable from one mock audit to the next.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.col-date" datatype="html">
+        <source>Exécuté le</source>
+        <target state="translated">Run on</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.col-readiness" datatype="html">
+        <source>Préparation</source>
+        <target state="translated">Readiness</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.col-findings" datatype="html">
+        <source>Écarts</source>
+        <target state="translated">Findings</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.col-questions" datatype="html">
+        <source>Questions</source>
+        <target state="translated">Questions</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.col-provider" datatype="html">
+        <source>Moteur</source>
+        <target state="translated">Engine</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.major" datatype="html">
+        <source>majeures</source>
+        <target state="translated">major</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.minor" datatype="html">
+        <source>mineures</source>
+        <target state="translated">minor</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.observation" datatype="html">
+        <source>observations</source>
+        <target state="translated">observations</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.open-report" datatype="html">
+        <source>Ouvrir le rapport</source>
+        <target state="translated">Open the report</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.empty" datatype="html">
+        <source>Aucun audit blanc IA n'a encore été exécuté sur cette norme.</source>
+        <target state="translated">No AI mock audit has been run on this standard yet.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.no-adoption" datatype="html">
+        <source>Aucune norme n'est adoptée : adoptez une norme dans le Standards Hub pour pouvoir simuler un audit.</source>
+        <target state="translated">No standard is adopted: adopt one in the Standards Hub to be able to simulate an audit.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.error-adoptions" datatype="html">
+        <source>Impossible de charger les normes adoptées.</source>
+        <target state="translated">The adopted standards could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.error-history" datatype="html">
+        <source>Impossible de charger l'historique des audits blancs IA.</source>
+        <target state="translated">The AI mock audit history could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.error-run" datatype="html">
+        <source>L'audit blanc IA n'a pas pu être exécuté.</source>
+        <target state="translated">The AI mock audit could not be run.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.audit.error-no-clause" datatype="html">
+        <source>Cette norme adoptée n'expose aucune clause exploitable : chargez son référentiel avant de lancer un audit blanc IA.</source>
+        <target state="translated">This adopted standard exposes no usable clause: load its reference framework before running an AI mock audit.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.criticality.major" datatype="html">
+        <source>NC majeure</source>
+        <target state="translated">Major nonconformity</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.criticality.minor" datatype="html">
+        <source>NC mineure</source>
+        <target state="translated">Minor nonconformity</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.criticality.observation" datatype="html">
+        <source>Observation</source>
+        <target state="translated">Observation</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.run-title" datatype="html">
+        <source>Déclencher un lot d'ancrage</source>
+        <target state="translated">Trigger an anchoring batch</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.run-subtitle" datatype="html">
+        <source>Les événements d'audit non encore ancrés sont regroupés, leur racine Merkle est calculée puis soumise à la blockchain.</source>
+        <target state="translated">Audit events not yet anchored are grouped, their Merkle root is computed and then submitted to the blockchain.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.batch-label" datatype="html">
+        <source>Taille du lot</source>
+        <target state="translated">Batch size</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.batch-invalid" datatype="html">
+        <source>La taille du lot doit être un entier compris entre 1 et 1000 — le serveur refuse toute valeur hors de ces bornes.</source>
+        <target state="translated">The batch size must be a whole number between 1 and 1000 — the server rejects any value outside these bounds.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.run" datatype="html">
+        <source>Ancrer le lot</source>
+        <target state="translated">Anchor the batch</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.running" datatype="html">
+        <source>Ancrage…</source>
+        <target state="translated">Anchoring…</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.no-right" datatype="html">
+        <source>Votre rôle ne permet pas de déclencher un ancrage. La vérification d'une preuve reste ouverte ci-contre.</source>
+        <target state="translated">Your role does not allow triggering an anchoring run. Verifying an evidence item remains available opposite.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.res-count" datatype="html">
+        <source>Événements ancrés</source>
+        <target state="translated">Anchored events</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.res-range" datatype="html">
+        <source>Séquences</source>
+        <target state="translated">Sequences</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.res-root" datatype="html">
+        <source>Racine Merkle</source>
+        <target state="translated">Merkle root</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.res-tx" datatype="html">
+        <source>Référence de transaction</source>
+        <target state="translated">Transaction reference</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.res-at" datatype="html">
+        <source>Horodatage</source>
+        <target state="translated">Timestamp</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.res-empty" datatype="html">
+        <source>Aucun événement n'était en attente d'ancrage : la chaîne est déjà à jour.</source>
+        <target state="translated">No event was waiting to be anchored: the chain is already up to date.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.verify-title" datatype="html">
+        <source>Vérifier une preuve</source>
+        <target state="translated">Verify an evidence item</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.verify-subtitle" datatype="html">
+        <source>Recalcule la racine Merkle du lot de l'événement et contrôle la signature hybride du reçu.</source>
+        <target state="translated">Recomputes the Merkle root of the event's batch and checks the hybrid signature of the receipt.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.hash-label" datatype="html">
+        <source>Hash d'intégrité</source>
+        <target state="translated">Integrity hash</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.hash-placeholder" datatype="html">
+        <source>64 caractères hexadécimaux</source>
+        <target state="translated">64 hexadecimal characters</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.hash-invalid" datatype="html">
+        <source>Un hash d'intégrité est un SHA-256 hexadécimal de 64 caractères. Reprenez-le depuis la liste des événements ci-dessous.</source>
+        <target state="translated">An integrity hash is a 64-character hexadecimal SHA-256. Copy it from the event list below.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.verify" datatype="html">
+        <source>Vérifier</source>
+        <target state="translated">Verify</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.verifying" datatype="html">
+        <source>Vérification…</source>
+        <target state="translated">Verifying…</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.status-verified" datatype="html">
+        <source>Intégrité confirmée</source>
+        <target state="translated">Integrity confirmed</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.status-tampered" datatype="html">
+        <source>Altération détectée</source>
+        <target state="translated">Tampering detected</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.status-not-anchored" datatype="html">
+        <source>Pas encore ancré</source>
+        <target state="translated">Not anchored yet</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.events-title" datatype="html">
+        <source>Derniers événements du journal d'audit</source>
+        <target state="translated">Latest audit log events</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.events-subtitle" datatype="html">
+        <source>Les vingt événements les plus récents de votre tenant, avec leur état d'ancrage.</source>
+        <target state="translated">The twenty most recent events of your tenant, with their anchoring status.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.events-refresh" datatype="html">
+        <source>Actualiser</source>
+        <target state="translated">Refresh</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.col-seq" datatype="html">
+        <source>Seq.</source>
+        <target state="translated">Seq.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.col-when" datatype="html">
+        <source>Survenu le</source>
+        <target state="translated">Occurred on</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.col-action" datatype="html">
+        <source>Action</source>
+        <target state="translated">Action</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.col-hash" datatype="html">
+        <source>Hash d'intégrité</source>
+        <target state="translated">Integrity hash</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.col-anchored" datatype="html">
+        <source>Ancré</source>
+        <target state="translated">Anchored</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.anchored" datatype="html">
+        <source>Ancré</source>
+        <target state="translated">Anchored</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">Pending</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.verify-row-aria" datatype="html">
+        <source>Vérifier l'intégrité de cet événement</source>
+        <target state="translated">Verify the integrity of this event</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.verify-row-tip" datatype="html">
+        <source>Vérifier l'intégrité de cet événement</source>
+        <target state="translated">Verify the integrity of this event</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.events-empty" datatype="html">
+        <source>Le journal d'audit de votre tenant est vide pour l'instant.</source>
+        <target state="translated">Your tenant's audit log is empty for now.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.error-events" datatype="html">
+        <source>Impossible de charger les derniers événements d'audit.</source>
+        <target state="translated">The latest audit events could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.error-run" datatype="html">
+        <source>Le lot d'ancrage n'a pas pu être déclenché.</source>
+        <target state="translated">The anchoring batch could not be triggered.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.anchor.error-verify" datatype="html">
+        <source>La vérification d'intégrité a échoué.</source>
+        <target state="translated">The integrity check failed.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.eyebrow" datatype="html">
+        <source>Audit blanc IA</source>
+        <target state="translated">AI mock audit</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.title-fallback" datatype="html">
+        <source>Rapport d'audit blanc IA</source>
+        <target state="translated">AI mock audit report</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.subtitle" datatype="html">
+        <source>Simulation d'audit de certification produite par le modèle, conservée telle quelle : questions posées, constats et plan de remédiation.</source>
+        <target state="translated">Certification audit simulation produced by the model and kept as is: questions asked, findings and remediation plan.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.back" datatype="html">
+        <source>Retour aux audits blancs</source>
+        <target state="translated">Back to mock audits</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.summary-title" datatype="html">
+        <source>Synthèse</source>
+        <target state="translated">Summary</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.readiness" datatype="html">
+        <source>Niveau de préparation</source>
+        <target state="translated">Readiness level</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.readiness-aria" datatype="html">
+        <source>Niveau de préparation à la certification</source>
+        <target state="translated">Readiness level for certification</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.fact-major" datatype="html">
+        <source>NC majeures</source>
+        <target state="translated">Major nonconformities</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.fact-minor" datatype="html">
+        <source>NC mineures</source>
+        <target state="translated">Minor nonconformities</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.fact-observation" datatype="html">
+        <source>Observations</source>
+        <target state="translated">Observations</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.fact-questions" datatype="html">
+        <source>Questions posées</source>
+        <target state="translated">Questions asked</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.fact-provider" datatype="html">
+        <source>Moteur</source>
+        <target state="translated">Engine</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.fact-date" datatype="html">
+        <source>Exécuté le</source>
+        <target state="translated">Run on</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.human-decides" datatype="html">
+        <source>Ces constats sont des suggestions du modèle appuyées sur l'état de preuve de votre tenant. Ils ne valent pas décision : la levée d'un écart reste soumise à validation humaine.</source>
+        <target state="translated">These findings are suggestions from the model, based on your tenant's evidence status. They are not decisions: closing a gap still requires human validation.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.gaps-title" datatype="html">
+        <source>Analyse des écarts</source>
+        <target state="translated">Gap analysis</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.gaps-subtitle" datatype="html">
+        <source>Une entrée par clause auditée, avec la couverture réelle des exigences et le constat rédigé par le modèle.</source>
+        <target state="translated">One entry per audited clause, with the real requirement coverage and the finding written by the model.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.filter-aria" datatype="html">
+        <source>Filtrer les écarts par criticité</source>
+        <target state="translated">Filter findings by criticality</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.filter-all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">All</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.requirements-covered" datatype="html">
+        <source>exigences couvertes</source>
+        <target state="translated">requirements covered</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.coverage-aria" datatype="html">
+        <source>Couverture des exigences de la clause &lt;x id="clause"/&gt;</source>
+        <target state="translated">Requirement coverage for clause &lt;x id="clause"/&gt;</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.targeted-questions" datatype="html">
+        <source>questions ciblées</source>
+        <target state="translated">targeted questions</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.gaps-filtered-empty" datatype="html">
+        <source>Aucun écart de cette criticité dans ce rapport.</source>
+        <target state="translated">No finding of this criticality in this report.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.gaps-empty" datatype="html">
+        <source>Le modèle n'a relevé aucun écart sur les clauses auditées.</source>
+        <target state="translated">The model found no gap on the audited clauses.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.plan-title" datatype="html">
+        <source>Plan de remédiation</source>
+        <target state="translated">Remediation plan</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.plan-subtitle" datatype="html">
+        <source>Une action par écart majeur ou mineur, orientée vers le module QualitOS qui produira la preuve manquante. Les observations n'en génèrent pas.</source>
+        <target state="translated">One action per major or minor finding, pointing to the QualitOS module that will produce the missing evidence. Observations generate none.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.col-clause" datatype="html">
+        <source>Clause</source>
+        <target state="translated">Clause</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.col-criticality" datatype="html">
+        <source>Criticité</source>
+        <target state="translated">Criticality</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.col-priority" datatype="html">
+        <source>Priorité</source>
+        <target state="translated">Priority</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.col-module" datatype="html">
+        <source>Module visé</source>
+        <target state="translated">Target module</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.col-action" datatype="html">
+        <source>Action</source>
+        <target state="translated">Action</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.plan-empty" datatype="html">
+        <source>Aucune action requise : le rapport ne contient que des observations.</source>
+        <target state="translated">No action required: the report contains observations only.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.questions-title" datatype="html">
+        <source>Questionnaire d'audit</source>
+        <target state="translated">Audit questionnaire</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.questions-subtitle" datatype="html">
+        <source>L'intégralité des questions posées par le modèle, dans l'ordre où elles ont été générées.</source>
+        <target state="translated">All the questions asked by the model, in the order they were generated.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.questions-empty" datatype="html">
+        <source>Ce rapport ne contient aucune question.</source>
+        <target state="translated">This report contains no question.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.error" datatype="html">
+        <source>Ce rapport d'audit blanc IA est introuvable.</source>
+        <target state="translated">This AI mock audit report cannot be found.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.report.error-params" datatype="html">
+        <source>Rapport introuvable : lien incomplet.</source>
+        <target state="translated">Report not found: incomplete link.</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.priority.high" datatype="html">
+        <source>Haute</source>
+        <target state="translated">High</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.priority.medium" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">Medium</target>
+      </trans-unit>
+      <trans-unit id="standards-extras.priority.low" datatype="html">
+        <source>Basse</source>
+        <target state="translated">Low</target>
+      </trans-unit>
+      <trans-unit id="nav.connecteurs" datatype="html">
+        <source>Connecteurs</source>
+        <target state="translated">Connectors</target>
+      </trans-unit>
+      <trans-unit id="connectors.title" datatype="html">
+        <source>Connecteurs tiers</source>
+        <target state="translated">Third-party connectors</target>
+      </trans-unit>
+      <trans-unit id="connectors.subtitle" datatype="html">
+        <source>Branchez QualitOS sur vos ERP, vos dossiers patients FHIR et vos outils de conversation. Les secrets sont chiffrés au repos et ne sont jamais réaffichés : pour en changer, saisissez-en un nouveau.</source>
+        <target state="translated">Connect QualitOS to your ERP systems, FHIR patient records and chat tools. Secrets are encrypted at rest and never shown again: to change one, enter a new value.</target>
+      </trans-unit>
+      <trans-unit id="connectors.tab-erp" datatype="html">
+        <source>ERP</source>
+        <target state="translated">ERP</target>
+      </trans-unit>
+      <trans-unit id="connectors.tab-ehr" datatype="html">
+        <source>Dossier patient (FHIR)</source>
+        <target state="translated">Patient records (FHIR)</target>
+      </trans-unit>
+      <trans-unit id="connectors.tab-comm" datatype="html">
+        <source>Communication</source>
+        <target state="translated">Communication</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.intro" datatype="html">
+        <source>Importe les fournisseurs et les indicateurs de production depuis SAP, Oracle Fusion ou Dynamics. La synchronisation est manuelle et déclenchée depuis cet écran.</source>
+        <target state="translated">Imports suppliers and production indicators from SAP, Oracle Fusion or Dynamics. Synchronisation is manual and triggered from this screen.</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.new" datatype="html">
+        <source>Nouvelle connexion ERP</source>
+        <target state="translated">New ERP connection</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.sync-failed" datatype="html">
+        <source>Synchronisation interrompue — vérifiez l'URL et le secret.</source>
+        <target state="translated">Synchronisation interrupted — check the URL and the secret.</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.metric-suppliers" datatype="html">
+        <source>fournisseurs importés</source>
+        <target state="translated">suppliers imported</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.metric-suppliers-ignored" datatype="html">
+        <source>fournisseurs ignorés</source>
+        <target state="translated">suppliers skipped</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.metric-kpis" datatype="html">
+        <source>mesures KPI écrites</source>
+        <target state="translated">KPI measurements written</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.metric-kpis-ignored" datatype="html">
+        <source>mesures sans KPI connu</source>
+        <target state="translated">measurements with no known KPI</target>
+      </trans-unit>
+      <trans-unit id="connectors.dismiss-outcome" datatype="html">
+        <source>Masquer ce compte rendu</source>
+        <target state="translated">Hide this report</target>
+      </trans-unit>
+      <trans-unit id="connectors.tile-total" datatype="html">
+        <source>Connexions</source>
+        <target state="translated">Connections</target>
+      </trans-unit>
+      <trans-unit id="connectors.tile-active" datatype="html">
+        <source>Actives</source>
+        <target state="translated">Active</target>
+      </trans-unit>
+      <trans-unit id="connectors.tile-inactive" datatype="html">
+        <source>Inactives</source>
+        <target state="translated">Inactive</target>
+      </trans-unit>
+      <trans-unit id="connectors.tile-failing" datatype="html">
+        <source>En échec</source>
+        <target state="translated">Failing</target>
+      </trans-unit>
+      <trans-unit id="connectors.tile-destinations" datatype="html">
+        <source>Destinations</source>
+        <target state="translated">Destinations</target>
+      </trans-unit>
+      <trans-unit id="connectors.col-endpoint" datatype="html">
+        <source>Point d'entrée</source>
+        <target state="translated">Endpoint</target>
+      </trans-unit>
+      <trans-unit id="connectors.col-last-sync" datatype="html">
+        <source>Dernière synchronisation</source>
+        <target state="translated">Last synchronisation</target>
+      </trans-unit>
+      <trans-unit id="connectors.never-synced" datatype="html">
+        <source>Jamais synchronisée</source>
+        <target state="translated">Never synchronised</target>
+      </trans-unit>
+      <trans-unit id="connectors.last-success" datatype="html">
+        <source>Dernier succès</source>
+        <target state="translated">Last success</target>
+      </trans-unit>
+      <trans-unit id="connectors.failures-tooltip" datatype="html">
+        <source>Désactivation automatique à 10 échecs consécutifs</source>
+        <target state="translated">Automatically disabled after 10 consecutive failures</target>
+      </trans-unit>
+      <trans-unit id="connectors.action-sync" datatype="html">
+        <source>Synchroniser maintenant</source>
+        <target state="translated">Synchronise now</target>
+      </trans-unit>
+      <trans-unit id="connectors.action-disable" datatype="html">
+        <source>Désactiver la connexion</source>
+        <target state="translated">Disable the connection</target>
+      </trans-unit>
+      <trans-unit id="connectors.action-enable" datatype="html">
+        <source>Réactiver la connexion</source>
+        <target state="translated">Re-enable the connection</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.empty" datatype="html">
+        <source>Aucune connexion ERP. Ajoutez-en une pour alimenter vos fournisseurs et vos indicateurs de production depuis le système de gestion.</source>
+        <target state="translated">No ERP connection. Add one to feed your suppliers and production indicators from the management system.</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.intro" datatype="html">
+        <source>Récupère les évènements indésirables d'un serveur HL7 FHIR R4 ou R5. L'import est incrémental depuis le dernier succès et ne conserve aucune donnée patient.</source>
+        <target state="translated">Retrieves adverse events from an HL7 FHIR R4 or R5 server. The import is incremental since the last success and keeps no patient data.</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.new" datatype="html">
+        <source>Nouvelle connexion FHIR</source>
+        <target state="translated">New FHIR connection</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.sync-failed" datatype="html">
+        <source>Import interrompu — vérifiez l'URL et l'authentification.</source>
+        <target state="translated">Import interrupted — check the URL and the authentication.</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.metric-fetched" datatype="html">
+        <source>ressources lues</source>
+        <target state="translated">resources read</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.metric-created" datatype="html">
+        <source>importées</source>
+        <target state="translated">imported</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.metric-skipped" datatype="html">
+        <source>déjà connues</source>
+        <target state="translated">already known</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.metric-errors" datatype="html">
+        <source>en erreur</source>
+        <target state="translated">in error</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.empty" datatype="html">
+        <source>Aucune connexion FHIR. Ajoutez-en une pour remonter automatiquement les évènements indésirables du dossier patient dans vos non-conformités.</source>
+        <target state="translated">No FHIR connection. Add one to automatically raise adverse events from the patient record into your non-conformities.</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.intro" datatype="html">
+        <source>Pousse les alertes qualité vers Teams, Slack ou Mattermost via un webhook entrant. L'URL du webhook est un secret : elle n'est jamais réaffichée, mais un envoi de test permet de vérifier qu'elle fonctionne toujours.</source>
+        <target state="translated">Pushes quality alerts to Teams, Slack or Mattermost through an incoming webhook. The webhook URL is a secret: it is never shown again, but a test message lets you check that it still works.</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.new" datatype="html">
+        <source>Nouvelle destination</source>
+        <target state="translated">New destination</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.test-ok" datatype="html">
+        <source>Message de test reçu par le salon.</source>
+        <target state="translated">Test message received by the channel.</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.test-ko" datatype="html">
+        <source>Le salon n'a pas accepté le message — l'URL du webhook a probablement été révoquée.</source>
+        <target state="translated">The channel rejected the message — the webhook URL has probably been revoked.</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.col-channel" datatype="html">
+        <source>Salon</source>
+        <target state="translated">Channel</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.no-channel" datatype="html">
+        <source>Non précisé</source>
+        <target state="translated">Not specified</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.webhook-hidden" datatype="html">
+        <source>Webhook masqué</source>
+        <target state="translated">Webhook hidden</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.col-activity" datatype="html">
+        <source>Dernière notification</source>
+        <target state="translated">Last notification</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.never-notified" datatype="html">
+        <source>Jamais sollicitée</source>
+        <target state="translated">Never used</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.action-test" datatype="html">
+        <source>Envoyer un message de test</source>
+        <target state="translated">Send a test message</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.empty" datatype="html">
+        <source>Aucune destination. Ajoutez-en une pour que les alertes qualité arrivent là où vos équipes travaillent déjà.</source>
+        <target state="translated">No destination. Add one so quality alerts reach your teams where they already work.</target>
+      </trans-unit>
+      <trans-unit id="connectors.status-active" datatype="html">
+        <source>Active</source>
+        <target state="translated">Active</target>
+      </trans-unit>
+      <trans-unit id="connectors.status-disabled" datatype="html">
+        <source>Désactivée</source>
+        <target state="translated">Disabled</target>
+      </trans-unit>
+      <trans-unit id="connectors.status-disabled-on-errors" datatype="html">
+        <source>Désactivée sur erreurs</source>
+        <target state="translated">Disabled on errors</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.load-error" datatype="html">
+        <source>Impossible de charger les connexions ERP.</source>
+        <target state="translated">Unable to load the ERP connections.</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.load-error" datatype="html">
+        <source>Impossible de charger les connexions FHIR.</source>
+        <target state="translated">Unable to load the FHIR connections.</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.load-error" datatype="html">
+        <source>Impossible de charger les destinations de notification.</source>
+        <target state="translated">Unable to load the notification destinations.</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.sync-error" datatype="html">
+        <source>La synchronisation ERP a échoué.</source>
+        <target state="translated">The ERP synchronisation failed.</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.sync-error" datatype="html">
+        <source>La synchronisation FHIR a échoué.</source>
+        <target state="translated">The FHIR synchronisation failed.</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.test-error" datatype="html">
+        <source>L'envoi du message de test a échoué.</source>
+        <target state="translated">Sending the test message failed.</target>
+      </trans-unit>
+      <trans-unit id="connectors.created" datatype="html">
+        <source>Connexion enregistrée.</source>
+        <target state="translated">Connection saved.</target>
+      </trans-unit>
+      <trans-unit id="connectors.updated" datatype="html">
+        <source>Connexion mise à jour.</source>
+        <target state="translated">Connection updated.</target>
+      </trans-unit>
+      <trans-unit id="connectors.deleted" datatype="html">
+        <source>Connexion supprimée.</source>
+        <target state="translated">Connection deleted.</target>
+      </trans-unit>
+      <trans-unit id="connectors.enabled" datatype="html">
+        <source>Connexion réactivée.</source>
+        <target state="translated">Connection re-enabled.</target>
+      </trans-unit>
+      <trans-unit id="connectors.disabled" datatype="html">
+        <source>Connexion désactivée.</source>
+        <target state="translated">Connection disabled.</target>
+      </trans-unit>
+      <trans-unit id="connectors.delete-title" datatype="html">
+        <source>Supprimer cette connexion ?</source>
+        <target state="translated">Delete this connection?</target>
+      </trans-unit>
+      <trans-unit id="connectors.delete-message" datatype="html">
+        <source>Le secret associé est détruit et les échanges avec ce système cessent immédiatement. Cette action est irréversible.</source>
+        <target state="translated">The associated secret is destroyed and exchanges with this system stop immediately. This action cannot be undone.</target>
+      </trans-unit>
+      <trans-unit id="connectors.provider" datatype="html">
+        <source>Fournisseur</source>
+        <target state="translated">Provider</target>
+      </trans-unit>
+      <trans-unit id="connectors.provider-immutable" datatype="html">
+        <source>Le fournisseur ne change pas après création.</source>
+        <target state="translated">The provider cannot be changed after creation.</target>
+      </trans-unit>
+      <trans-unit id="connectors.username" datatype="html">
+        <source>Compte de service</source>
+        <target state="translated">Service account</target>
+      </trans-unit>
+      <trans-unit id="connectors.https-required" datatype="html">
+        <source>L'URL doit commencer par https://</source>
+        <target state="translated">The URL must start with https://</target>
+      </trans-unit>
+      <trans-unit id="connectors.secret-label" datatype="html">
+        <source>Secret / jeton d'API</source>
+        <target state="translated">Secret / API token</target>
+      </trans-unit>
+      <trans-unit id="connectors.secret-rotate-label" datatype="html">
+        <source>Nouveau secret (vide = inchangé)</source>
+        <target state="translated">New secret (leave empty to keep)</target>
+      </trans-unit>
+      <trans-unit id="connectors.secret-hide" datatype="html">
+        <source>Masquer le secret</source>
+        <target state="translated">Hide the secret</target>
+      </trans-unit>
+      <trans-unit id="connectors.secret-show" datatype="html">
+        <source>Afficher le secret</source>
+        <target state="translated">Show the secret</target>
+      </trans-unit>
+      <trans-unit id="connectors.secret-hint" datatype="html">
+        <source>Chiffré au repos, jamais renvoyé par l'API — même à vous.</source>
+        <target state="translated">Encrypted at rest, never returned by the API — not even to you.</target>
+      </trans-unit>
+      <trans-unit id="connectors.secret-minlength" datatype="html">
+        <source>Minimum 4 caractères.</source>
+        <target state="translated">At least 4 characters.</target>
+      </trans-unit>
+      <trans-unit id="connectors.status-hint" datatype="html">
+        <source>« Désactivée sur erreurs » est posé automatiquement après 10 échecs consécutifs ; repasser en « Active » remet ce compteur à zéro.</source>
+        <target state="translated">“Disabled on errors” is set automatically after 10 consecutive failures; switching back to “Active” resets that counter.</target>
+      </trans-unit>
+      <trans-unit id="connectors.save-error" datatype="html">
+        <source>L'enregistrement de la connexion a échoué.</source>
+        <target state="translated">Saving the connection failed.</target>
+      </trans-unit>
+      <trans-unit id="connectors.no-session" datatype="html">
+        <source>Session expirée — reconnectez-vous pour créer une connexion.</source>
+        <target state="translated">Session expired — sign in again to create a connection.</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.dialog-create-title" datatype="html">
+        <source>Nouvelle connexion ERP</source>
+        <target state="translated">New ERP connection</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.dialog-edit-title" datatype="html">
+        <source>Modifier la connexion ERP</source>
+        <target state="translated">Edit the ERP connection</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.name-placeholder" datatype="html">
+        <source>ERP production — achats</source>
+        <target state="translated">Production ERP — purchasing</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.base-url" datatype="html">
+        <source>URL de base de l'API</source>
+        <target state="translated">API base URL</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.scope" datatype="html">
+        <source>Périmètre externe</source>
+        <target state="translated">External scope</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.scope-placeholder" datatype="html">
+        <source>Usine A, société 1000</source>
+        <target state="translated">Plant A, company 1000</target>
+      </trans-unit>
+      <trans-unit id="connectors.erp.scope-hint" datatype="html">
+        <source>Restreint les fournisseurs et indicateurs importés.</source>
+        <target state="translated">Restricts which suppliers and indicators are imported.</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.dialog-create-title" datatype="html">
+        <source>Nouvelle connexion FHIR</source>
+        <target state="translated">New FHIR connection</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.dialog-edit-title" datatype="html">
+        <source>Modifier la connexion FHIR</source>
+        <target state="translated">Edit the FHIR connection</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.name-placeholder" datatype="html">
+        <source>Dossier patient — site principal</source>
+        <target state="translated">Patient records — main site</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.version" datatype="html">
+        <source>Version FHIR</source>
+        <target state="translated">FHIR version</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.base-url" datatype="html">
+        <source>URL de base du serveur FHIR</source>
+        <target state="translated">FHIR server base URL</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.auth-mode" datatype="html">
+        <source>Authentification</source>
+        <target state="translated">Authentication</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.auth-basic" datatype="html">
+        <source>Basic (utilisateur + secret)</source>
+        <target state="translated">Basic (user + secret)</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.auth-bearer" datatype="html">
+        <source>Bearer (OAuth2 / SMART-on-FHIR)</source>
+        <target state="translated">Bearer (OAuth2 / SMART-on-FHIR)</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.token-label" datatype="html">
+        <source>Jeton porteur</source>
+        <target state="translated">Bearer token</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.token-rotate-label" datatype="html">
+        <source>Nouveau jeton (vide = inchangé)</source>
+        <target state="translated">New token (leave empty to keep)</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.resource-category" datatype="html">
+        <source>Catégorie de ressources</source>
+        <target state="translated">Resource category</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.resource-category-placeholder" datatype="html">
+        <source>AdverseEvent</source>
+        <target state="translated">AdverseEvent</target>
+      </trans-unit>
+      <trans-unit id="connectors.ehr.resource-category-hint" datatype="html">
+        <source>Classe les évènements importés côté qualité. Aucune donnée patient n'est stockée.</source>
+        <target state="translated">Classifies the imported events on the quality side. No patient data is stored.</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.dialog-create-title" datatype="html">
+        <source>Nouvelle destination de notification</source>
+        <target state="translated">New notification destination</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.dialog-edit-title" datatype="html">
+        <source>Modifier la destination</source>
+        <target state="translated">Edit the destination</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.name-placeholder" datatype="html">
+        <source>Alertes qualité — cellule HSE</source>
+        <target state="translated">Quality alerts — HSE team</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.webhook-label" datatype="html">
+        <source>URL du webhook entrant</source>
+        <target state="translated">Incoming webhook URL</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.webhook-rotate-label" datatype="html">
+        <source>Nouvelle URL de webhook (vide = inchangée)</source>
+        <target state="translated">New webhook URL (leave empty to keep)</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.webhook-hide" datatype="html">
+        <source>Masquer l'URL du webhook</source>
+        <target state="translated">Hide the webhook URL</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.webhook-show" datatype="html">
+        <source>Afficher l'URL du webhook</source>
+        <target state="translated">Show the webhook URL</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.webhook-minlength" datatype="html">
+        <source>Minimum 8 caractères.</source>
+        <target state="translated">At least 8 characters.</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.webhook-note" datatype="html">
+        <source>Cette URL contient un jeton : elle est traitée comme un secret, chiffrée au repos et jamais réaffichée. Pour la remplacer, saisissez-en une nouvelle.</source>
+        <target state="translated">This URL contains a token: it is handled as a secret, encrypted at rest and never shown again. To replace it, enter a new one.</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.channel" datatype="html">
+        <source>Salon</source>
+        <target state="translated">Channel</target>
+      </trans-unit>
+      <trans-unit id="connectors.comm.channel-hint" datatype="html">
+        <source>Sert au repérage dans la liste ; la destination réelle est celle du webhook.</source>
+        <target state="translated">Used to identify the destination in the list; the real target is the one behind the webhook.</target>
+      </trans-unit>
+      <trans-unit id="nav.standards-ims" datatype="html">
+        <source>Co-couverture IMS</source>
+        <target state="translated">IMS co-coverage</target>
+      </trans-unit>
+      <trans-unit id="nav.ai-systems" datatype="html">
+        <source>Systèmes d'IA</source>
+        <target state="translated">AI systems</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-connectors" datatype="html">
+        <source>Connecteurs</source>
+        <target state="translated">Connectors</target>
+      </trans-unit>
+      <trans-unit id="compliance.ai.systems" datatype="html">
+        <source>Registre des systèmes d'IA</source>
+        <target state="translated">AI systems register</target>
+      </trans-unit>
       <trans-unit id="nav.pilotage" datatype="html">
         <source>Pilotage</source>
         <target state="translated">Steering</target>

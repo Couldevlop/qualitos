@@ -34,7 +34,23 @@ export class CyiLinkBreachDialogComponent {
     @Inject(MAT_DIALOG_DATA) public readonly data: CyiLinkBreachDialogData
   ) {}
 
+  /**
+   * Nettoie l'identifiant AVANT la validation.
+   *
+   * Un UUID collé depuis un rapport arrive presque toujours entouré d'espaces :
+   * sans ce nettoyage il échoue le motif alors que la valeur envoyée est trimée,
+   * et l'utilisateur voit « identifiant invalide » sur un identifiant valide.
+   */
+  private trimBreachId(): void {
+    const ctrl = this.form.controls.breachId;
+    const value = ctrl.value;
+    if (typeof value === 'string' && value !== value.trim()) {
+      ctrl.setValue(value.trim(), { emitEvent: false });
+    }
+  }
+
   submit(): void {
+    this.trimBreachId();
     if (this.form.invalid || this.submitting) { this.form.markAllAsTouched(); return; }
     this.submitting = true;
     this.svc.linkBreach(this.data.id, { breachId: this.form.getRawValue().breachId.trim() })

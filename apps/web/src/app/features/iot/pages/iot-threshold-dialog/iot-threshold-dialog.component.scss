@@ -1,0 +1,14 @@
+/* Seuil de surveillance : bornes côte à côte (elles se lisent ensemble),
+   conséquences qualité (criticité, FMEA, PDCA) en dessous. */
+.full { width: 100%; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; }
+.col { flex: 1 1 180px; min-width: 0; }
+
+.known { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: -4px 0 8px; }
+.known__label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
+                color: var(--qos-text-secondary); }
+.known__chip { font-family: 'IBM Plex Mono', 'Fira Code', monospace; font-size: 12px; }
+
+.toggle { margin: 4px 0 2px; }
+.hint { margin: 0 0 8px; font-size: 12px; color: var(--qos-text-secondary); max-width: 60ch; }
+.hint.error { color: #b71c1c; }

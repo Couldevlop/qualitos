@@ -1,0 +1,160 @@
+<section class="ai-systems">
+
+  <header class="head">
+    <div class="head__text">
+      <h1 i18n="@@ai-systems.list.title">Registre des systèmes d'IA</h1>
+      <p i18n="@@ai-systems.list.subtitle">
+        Inventaire exigé par l'AI Act (UE 2024/1689). Chaque système est classé par niveau
+        de risque : c'est cette classification qui détermine les obligations d'évaluation
+        de conformité, de supervision humaine et de transparence.
+      </p>
+    </div>
+    <div class="head__actions">
+      <button mat-icon-button type="button" (click)="refresh()"
+              i18n-aria-label="@@common.refresh" aria-label="Actualiser"
+              i18n-matTooltip="@@common.refresh" matTooltip="Actualiser">
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <button mat-flat-button color="primary" type="button" (click)="create()">
+        <mat-icon>add</mat-icon>
+        <span i18n="@@ai-systems.list.new">Déclarer un système</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="tiles" *ngIf="tiles$ | async as tiles">
+    <button type="button" class="tile" *ngFor="let t of tiles"
+            [attr.data-tone]="t.tone" [class.tile--active]="t.active"
+            [attr.aria-pressed]="t.active" (click)="applyTile(t.key)">
+      <span class="tile__value">{{ t.value }}</span>
+      <span class="tile__label">{{ t.label }}</span>
+      <span class="tile__hint">{{ t.hint }}</span>
+    </button>
+  </div>
+
+  <div class="filters">
+    <mat-form-field appearance="outline" class="filters__field">
+      <mat-label i18n="@@ai-systems.list.filter-risk">Niveau de risque</mat-label>
+      <mat-select [formControl]="riskFilter">
+        <mat-option value="" i18n="@@common.all">Tous</mat-option>
+        <mat-option *ngFor="let r of risks" [value]="r">{{ riskLabel(r) }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filters__field">
+      <mat-label i18n="@@common.status">Statut</mat-label>
+      <mat-select [formControl]="statusFilter">
+        <mat-option value="" i18n="@@common.all">Tous</mat-option>
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ statusLabel(s) }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filters__field filters__field--search">
+      <mat-label i18n="@@common.search">Rechercher</mat-label>
+      <input matInput type="search" [formControl]="search" autocomplete="off"
+             i18n-placeholder="@@ai-systems.list.search-placeholder"
+             placeholder="Référence, nom, fournisseur, finalité" />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <button mat-stroked-button type="button" *ngIf="hasFilters()" (click)="resetFilters()">
+      <mat-icon>filter_alt_off</mat-icon>
+      <span i18n="@@ai-systems.list.reset-filters">Réinitialiser</span>
+    </button>
+  </div>
+
+  <div *ngIf="error$ | async as err" class="banner banner--error" role="alert">{{ err }}</div>
+  <div *ngIf="loading$ | async" class="banner banner--info" i18n="@@common.loading">Chargement…</div>
+
+  <div class="panel">
+    <div class="table-wrap">
+      <table mat-table [dataSource]="(rows$ | async) ?? []" [trackBy]="trackById">
+
+        <ng-container matColumnDef="reference">
+          <th mat-header-cell *matHeaderCellDef i18n="@@ai-systems.list.col-system">Système</th>
+          <td mat-cell *matCellDef="let s">
+            <div class="system-cell">
+              <a class="system-cell__name" [routerLink]="['/ai-systems', s.id]">{{ s.name }}</a>
+              <code class="system-cell__ref">{{ s.reference }}</code>
+              <span class="system-cell__gpai" *ngIf="s.generalPurpose"
+                    i18n="@@ai-systems.list.gpai">Modèle à usage général (GPAI)</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="risk">
+          <th mat-header-cell *matHeaderCellDef i18n="@@ai-systems.list.col-risk">Classification</th>
+          <td mat-cell *matCellDef="let s">
+            <div class="risk-cell">
+              <span class="badge" [attr.data-tone]="riskTone(s.riskClassification)">
+                {{ riskLabel(s.riskClassification) }}
+              </span>
+              <span class="risk-cell__basis">{{ riskBasis(s.riskClassification) }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef i18n="@@ai-systems.list.col-role">Rôle</th>
+          <td mat-cell *matCellDef="let s">{{ roleLabel(s.role) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
+          <td mat-cell *matCellDef="let s">
+            <span class="badge" [attr.data-tone]="statusTone(s.status)">{{ statusLabel(s.status) }}</span>
+            <mat-icon class="attention" *ngIf="needsAttention(s)"
+                      i18n-matTooltip="@@ai-systems.list.attention"
+                      matTooltip="Décision requise : pratique interdite ou mise en service bloquée."
+                      i18n-aria-label="@@ai-systems.list.attention"
+                      aria-label="Décision requise : pratique interdite ou mise en service bloquée.">
+              priority_high
+            </mat-icon>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="provider">
+          <th mat-header-cell *matHeaderCellDef i18n="@@ai-systems.list.col-provider">Fournisseur</th>
+          <td mat-cell *matCellDef="let s">
+            <span *ngIf="s.providerName">{{ s.providerName }}</span>
+            <span class="dim" *ngIf="!s.providerName">—</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="updated">
+          <th mat-header-cell *matHeaderCellDef i18n="@@common.last-updated">Dernière MAJ</th>
+          <td mat-cell *matCellDef="let s">{{ s.updatedAt | date:'short' }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+
+    <ng-container *ngIf="(rows$ | async)?.length === 0 && (loading$ | async) === false">
+      <div class="empty" *ngIf="empty$ | async; else noMatch">
+        <mat-icon>inventory_2</mat-icon>
+        <p i18n="@@ai-systems.list.empty">
+          Aucun système d'IA n'est encore déclaré. Le registre est le point de départ du
+          module AI Act : évaluations de conformité, incidents, FRIA et suivi post-marché
+          s'y rattachent.
+        </p>
+        <button mat-flat-button color="primary" type="button" (click)="create()">
+          <mat-icon>add</mat-icon>
+          <span i18n="@@ai-systems.list.new">Déclarer un système</span>
+        </button>
+      </div>
+      <ng-template #noMatch>
+        <div class="empty">
+          <mat-icon>search_off</mat-icon>
+          <p i18n="@@ai-systems.list.no-match">Aucun système ne correspond à ces critères.</p>
+          <button mat-stroked-button type="button" (click)="resetFilters()">
+            <mat-icon>filter_alt_off</mat-icon>
+            <span i18n="@@ai-systems.list.reset-filters">Réinitialiser</span>
+          </button>
+        </div>
+      </ng-template>
+    </ng-container>
+  </div>
+
+</section>

@@ -106,6 +106,7 @@ export class MainShellComponent implements OnInit {
         { label: $localize`:@@nav.capa:CAPA`,                       route: '/capa',      icon: 'engineering' },
         { label: $localize`:@@nav.reclamations:Réclamations`,       route: '/complaints', icon: 'support_agent' },
         { label: $localize`:@@nav.calibration:Calibration`,         route: '/calibration', icon: 'straighten' },
+        { label: $localize`:@@nav.iot:Parc IoT`,                    route: '/iot',        icon: 'sensors' },
         { label: $localize`:@@nav.audits:Audits`,                   route: '/audits',    icon: 'fact_check' },
         { label: $localize`:@@nav.risques-fmea:Risques (FMEA)`,     route: '/fmea',      icon: 'warning' },
         { label: $localize`:@@nav.documents:Documents`,             route: '/documents', icon: 'description' },
@@ -117,6 +118,7 @@ export class MainShellComponent implements OnInit {
       label: $localize`:@@nav.referentiels:Référentiels`,
       items: [
         { label: $localize`:@@nav.standards-hub:Standards Hub`,     route: '/standards',      icon: 'workspace_premium' },
+        { label: $localize`:@@nav.standards-ims:Co-couverture IMS`, route: '/standards-ims',  icon: 'grid_view' },
         { label: $localize`:@@nav.doc-gen-ia:Génération doc IA`,    route: '/standards-doc-gen', icon: 'auto_awesome' },
         { label: $localize`:@@nav.packs-sectoriels:Packs sectoriels`, route: '/industry-packs', icon: 'category' },
         { label: $localize`:@@nav.marketplace:Marketplace`,         route: '/marketplace',    icon: 'storefront' },
@@ -130,6 +132,9 @@ export class MainShellComponent implements OnInit {
     {
       label: $localize`:@@nav.conformite-grc:Conformité (GRC)`,
       items: [
+        // Une seule entrée, à dessein : la masse GRC (20 routes) est repliée derrière
+        // la page hub /compliance. Y ajouter une entrée de plus ferait revenir le
+        // problème que ce regroupement a précisément résolu.
         { label: $localize`:@@nav.conformite-hub:Conformité`, route: '/compliance', icon: 'verified_user' }
       ]
     },
@@ -164,6 +169,12 @@ export class MainShellComponent implements OnInit {
           label: $localize`:@@nav.admin-audit-log:Journal d'audit`,
           route: '/admin/audit-log',
           icon: 'receipt_long',
+          roles: ADMIN_ROLES
+        },
+        {
+          label: $localize`:@@nav.admin-connectors:Connecteurs`,
+          route: '/connectors',
+          icon: 'cable',
           roles: ADMIN_ROLES
         }
       ]

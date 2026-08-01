@@ -56,6 +56,32 @@ const routes: Routes = [
           import('./features/calibration/calibration.module').then(m => m.CalibrationModule)
       },
       {
+        // Parc IoT & télémétrie (§9).
+        path: 'iot',
+        loadChildren: () => import('./features/iot/iot.module').then(m => m.IotModule)
+      },
+      {
+        // Registre des systèmes d'IA (AI Act) — socle référencé par /ai-qms,
+        // /ai-conformity, /ai-incidents, /ai-eudb, /fria et /ai-pmm.
+        path: 'ai-systems',
+        loadChildren: () =>
+          import('./features/ai-systems/ai-systems.module').then(m => m.AiSystemsModule)
+      },
+      {
+        // Connecteurs tiers ERP / EHR / Communication (§13.3).
+        path: 'connectors',
+        loadChildren: () =>
+          import('./features/connectors/connectors.module').then(m => m.ConnectorsModule)
+      },
+      {
+        // Compléments Standards Hub : matrice de co-couverture IMS (§8.9),
+        // audit blanc IA (§8.4) et ancrage blockchain (§11.3).
+        path: 'standards-ims',
+        loadChildren: () =>
+          import('./features/standards-extras/standards-extras.module')
+            .then(m => m.StandardsExtrasModule)
+      },
+      {
         path: 'audits',
         loadChildren: () => import('./features/audits/audits.module').then(m => m.AuditsModule)
       },

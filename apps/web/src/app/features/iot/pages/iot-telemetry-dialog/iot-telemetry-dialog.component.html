@@ -1,0 +1,68 @@
+<qos-form-dialog
+  [title]="title"
+  [subtitle]="data.deviceName"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitIcon="sensors"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@iot.telemetry.metric">Métrique</mat-label>
+    <input matInput formControlName="metric" maxlength="100" required
+           placeholder="Ex. : temperature">
+  </mat-form-field>
+
+  <div class="known" *ngIf="data.knownMetrics.length">
+    <span class="known__label" i18n="@@iot.telemetry-dialog.known">Déjà relevées</span>
+    <button type="button" mat-stroked-button class="known__chip"
+            *ngFor="let m of data.knownMetrics" (click)="useMetric(m)">{{ m }}</button>
+  </div>
+
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@iot.telemetry.value-numeric">Valeur numérique</mat-label>
+      <input matInput type="number" step="any" formControlName="valueNumeric">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@iot.telemetry.unit">Unité</mat-label>
+      <input matInput formControlName="unit" maxlength="32" placeholder="Ex. : °C">
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@iot.telemetry.value-text">Valeur textuelle</mat-label>
+    <input matInput formControlName="valueText" maxlength="500"
+           placeholder="Ex. : ALARME_PORTE_OUVERTE">
+  </mat-form-field>
+
+  <p class="hint error" *ngIf="form.hasError('valueRequired')"
+     i18n="@@iot.telemetry-dialog.value-required">
+    Renseignez au moins une valeur, numérique ou textuelle.
+  </p>
+
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@iot.telemetry.recorded-at">Horodatage de la mesure</mat-label>
+      <input matInput type="datetime-local" formControlName="recordedAt">
+      <mat-hint i18n="@@iot.telemetry-dialog.recorded-hint">
+        Laissez vide pour horodater à la réception.
+      </mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@iot.telemetry.source">Source</mat-label>
+      <mat-select formControlName="source">
+        <mat-option *ngFor="let p of protocols" [value]="p">{{ protocolLabel(p) }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <p class="hint" i18n="@@iot.telemetry-dialog.threshold-hint">
+    Une valeur numérique hors des seuils configurés ouvre automatiquement une CAPA,
+    et un cycle PDCA si le seuil le prévoit.
+  </p>
+
+</qos-form-dialog>

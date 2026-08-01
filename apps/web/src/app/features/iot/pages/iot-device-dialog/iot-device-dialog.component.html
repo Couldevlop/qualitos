@@ -1,0 +1,62 @@
+<qos-form-dialog
+  [title]="title"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  [submitLabel]="submitLabel"
+  submitIcon="check"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@iot.device-dialog.code">Code</mat-label>
+      <input matInput formControlName="code" maxlength="120" required
+             placeholder="Ex. : FRIGO-PHARMA-01">
+      <mat-hint *ngIf="!isEdit" i18n="@@iot.device-dialog.code-hint">
+        Lettres, chiffres, point, tiret ou souligné — 120 caractères maximum.
+      </mat-hint>
+      <mat-hint *ngIf="isEdit" i18n="@@iot.device-dialog.code-locked">
+        Le code est figé après l'enregistrement.
+      </mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@iot.device-dialog.name">Désignation</mat-label>
+      <input matInput formControlName="name" maxlength="200" required>
+    </mat-form-field>
+  </div>
+
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@common.type">Type</mat-label>
+      <mat-select formControlName="deviceType" required>
+        <mat-option *ngFor="let t of deviceTypes" [value]="t">{{ typeLabel(t) }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@iot.col-protocol">Protocole</mat-label>
+      <mat-select formControlName="protocol" required>
+        <mat-option *ngFor="let p of protocols" [value]="p">{{ protocolLabel(p) }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@iot.col-location">Emplacement</mat-label>
+    <input matInput formControlName="location" maxlength="500"
+           placeholder="Ex. : Pharmacie — réserve froide">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@common.description">Description</mat-label>
+    <textarea matInput formControlName="description" maxlength="1000" rows="3"></textarea>
+  </mat-form-field>
+
+  <p class="hint" *ngIf="!isEdit" i18n="@@iot.device-dialog.provisioned-hint">
+    L'équipement est créé à l'état « provisionné » : il faut le mettre en service pour
+    que le serveur accepte sa télémétrie.
+  </p>
+
+</qos-form-dialog>
