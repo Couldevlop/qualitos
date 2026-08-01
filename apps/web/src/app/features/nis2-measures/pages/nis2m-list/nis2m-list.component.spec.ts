@@ -61,9 +61,17 @@ describe('Nis2mListComponent', () => {
    * `debounceTime(120)` en amont, `deferredView` (asyncScheduler) en aval : on
    * laisse s'écouler du temps réel, la fenêtre d'anti-rebond n'étant pas
    * simulable sans figer aussi les macrotâches de `deferredView`.
+   *
+   * L'attente doit couvrir l'anti-rebond ET la détection de changements qui
+   * suit. À 200 ms la marge n'était que de 80 ms : suffisante sur une machine au
+   * repos, dépassée dès que la suite complète tourne — l'ancienne erreur restait
+   * alors affichée et le test échouait par intermittence. 400 ms laissent une
+   * marge de plus de trois fois la fenêtre d'anti-rebond.
    */
+  const SETTLE_MS = 400;
+
   async function settle(): Promise<void> {
-    await new Promise<void>(resolve => setTimeout(resolve, 200));
+    await new Promise<void>(resolve => setTimeout(resolve, SETTLE_MS));
     fixture.detectChanges();
   }
 

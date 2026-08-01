@@ -25,10 +25,10 @@ module.exports = function (config) {
       // réelle mesurée, ce qui interdit toute régression dès aujourd'hui. Ils sont
       // remontés à chaque lot de tests ajouté, jusqu'à la cible de 99 %.
       //
-      //   Mesure du 2026-08-01 : statements 89,74 % · branches 82,24 %
-      //                          lines 90,55 %      · functions 91,17 %
-      //   (+5,2 pts après la reprise des specs de 9 services GRC / AI Act, qui
-      //    n'étaient couverts qu'en surface — chemins heureux uniquement.)
+      //   Mesure du 2026-08-01 : statements 91,37 % · branches 84,27 %
+      //                          lines 91,91 %      · functions 92,41 %
+      //   (+6,8 pts après la reprise des specs de 12 services GRC / AI Act /
+      //    métier, qui n'étaient couverts qu'en surface — chemins heureux.)
       //   Cible §14.4 : 85 / 75 — DÉPASSÉE sur les quatre axes.
       //   Cible projet : 99.
       //
@@ -36,10 +36,10 @@ module.exports = function (config) {
       check: {
         emitWarning: false,
         global: {
-          statements: 89,
-          lines: 90,
-          branches: 82,
-          functions: 91
+          statements: 91,
+          lines: 91,
+          branches: 84,
+          functions: 92
         }
       }
     },
