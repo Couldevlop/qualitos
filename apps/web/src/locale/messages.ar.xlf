@@ -3148,6 +3148,26 @@
         <source>Basculer la navigation</source>
         <target state="translated">تبديل التنقل</target>
       </trans-unit>
+      <trans-unit id="shell.notifications.title" datatype="html">
+        <source>Notifications</source>
+        <target state="translated">الإشعارات</target>
+      </trans-unit>
+      <trans-unit id="shell.notifications.mark-all" datatype="html">
+        <source>Tout marquer comme lu</source>
+        <target state="translated">تعليم الكل كمقروء</target>
+      </trans-unit>
+      <trans-unit id="shell.notifications.empty" datatype="html">
+        <source>Aucune notification.</source>
+        <target state="translated">لا توجد إشعارات.</target>
+      </trans-unit>
+      <trans-unit id="shell.user.offline-queue" datatype="html">
+        <source>File de synchronisation</source>
+        <target state="translated">قائمة المزامنة</target>
+      </trans-unit>
+      <trans-unit id="shell.user.logout" datatype="html">
+        <source>Se déconnecter</source>
+        <target state="translated">تسجيل الخروج</target>
+      </trans-unit>
       <trans-unit id="shell.notifications.aria" datatype="html">
         <source>Notifications</source>
         <target state="translated">الإشعارات</target>

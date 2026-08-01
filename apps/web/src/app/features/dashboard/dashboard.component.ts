@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
-import { catchError, map, shareReplay, takeUntil } from 'rxjs/operators';
+import { catchError, map, shareReplay, take, takeUntil } from 'rxjs/operators';
 import type { EChartsCoreOption } from 'echarts/core';
 
 import { EchartPointSelection } from '../../shared/ui/echart/echart.component';
@@ -75,8 +76,53 @@ export class DashboardComponent implements OnInit, OnDestroy {
   constructor(
     private readonly svc: DashboardService,
     private readonly crossFilter: CrossFilterService,
-    private readonly timeTravel: TimeTravelService
+    private readonly timeTravel: TimeTravelService,
+    private readonly router: Router
   ) {}
+
+  // ---- Actions de l'en-tête (boutons auparavant inertes) --------------------
+
+  /**
+   * Exporte les KPIs affichés en CSV.
+   *
+   * Volontairement côté client : les valeurs sont déjà chargées, l'export doit rester
+   * disponible même hors ligne (§15.2), et cela évite un aller-retour serveur pour
+   * reformater ce que l'utilisateur a sous les yeux. Le séparateur `;` et le BOM UTF-8
+   * garantissent l'ouverture directe dans Excel en locale française.
+   */
+  exportKpisCsv(): void {
+    this.kpis$.pipe(take(1)).subscribe(kpis => {
+      const header = ['Indicateur', 'Valeur', 'Unité', 'Cible', 'Variation', 'État'];
+      const rows = kpis.map(k => [
+        k.label, String(k.value), k.unit ?? '', k.target ?? '', k.trend ?? '', k.state
+      ]);
+      const csv = [header, ...rows]
+        .map(cells => cells.map(c => `"${String(c).replace(/"/g, '""')}"`).join(';'))
+        .join('\r\n');
+
+      const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `qualitos-kpis-${new Date().toISOString().slice(0, 10)}.csv`;
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  /**
+   * Ouvre le générateur de récit narratif (§7.4), qui produit le rapport commenté à
+   * partir de ces mêmes indicateurs.
+   */
+  newReport(): void {
+    void this.router.navigate(['/storyboard']);
+  }
+
+  /** Ouvre la ressource à l'origine du risque (item FMEA ou dossier CAPA). */
+  openRisk(risk: TopRisk): void {
+    const route = risk.sourceType === 'CAPA' ? '/capa' : '/fmea';
+    void this.router.navigate([route, risk.id]);
+  }
 
   ngOnInit(): void {
     // Les données du dashboard viennent d'une agrégation serveur mise en cache par le

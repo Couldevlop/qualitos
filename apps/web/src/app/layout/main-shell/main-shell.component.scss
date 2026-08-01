@@ -443,3 +443,130 @@
   min-width: 14px;
   text-align: center;
 }
+
+/* ---------------------------------------------------------------------------
+   Notifications + compte utilisateur (barre supérieure).
+   Ces deux boutons étaient inertes ; ils ouvrent désormais un menu.
+   --------------------------------------------------------------------------- */
+
+/* Pastille chiffrée : remplace le point décoratif, et porte l'information. */
+.qos-topbar__badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--qos-danger-fg);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+  border: 2px solid var(--qos-bg-elevated);
+  box-sizing: content-box;
+}
+
+.qos-topbar__badge--wide { min-width: 20px; }
+
+/* Le panneau est large et scrollable : une notification tient sur 3 lignes. */
+::ng-deep .qos-notifications-panel.mat-mdc-menu-panel {
+  max-width: 380px;
+  min-width: 340px;
+  max-height: 60vh;
+}
+
+::ng-deep .qos-notifications__head,
+::ng-deep .qos-user__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--qos-border);
+}
+
+::ng-deep .qos-notifications__title {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+::ng-deep .qos-notifications__state {
+  padding: 20px 16px;
+  color: var(--qos-text-secondary);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+/* Une notification non lue est signalée par un liseré, pas par une couleur de
+   fond agressive : le panneau reste lisible même avec 10 entrées. */
+::ng-deep .qos-notification.mat-mdc-menu-item {
+  height: auto;
+  min-height: 0;
+  padding: 10px 16px;
+  align-items: flex-start;
+  border-left: 3px solid transparent;
+  white-space: normal;
+}
+
+::ng-deep .qos-notification--unread {
+  border-left-color: var(--qos-accent-fg);
+  background: var(--qos-bg-subtle);
+}
+
+::ng-deep .qos-notification__icon {
+  margin-right: 12px;
+  font-size: 20px;
+  line-height: 20px;
+  flex: 0 0 auto;
+}
+
+::ng-deep .qos-notification__icon[data-type='SUCCESS'] { color: var(--qos-success-fg); }
+::ng-deep .qos-notification__icon[data-type='WARNING'] { color: var(--qos-warn-fg); }
+::ng-deep .qos-notification__icon[data-type='ALERT']   { color: var(--qos-danger-fg); }
+::ng-deep .qos-notification__icon[data-type='INFO']    { color: var(--qos-accent-fg); }
+
+::ng-deep .qos-notification__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+::ng-deep .qos-notification__title {
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.35;
+}
+
+::ng-deep .qos-notification__body {
+  font-size: 0.8125rem;
+  color: var(--qos-text-secondary);
+  line-height: 1.35;
+  /* Deux lignes maximum : au-delà, l'utilisateur ouvre la ressource. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+::ng-deep .qos-notification__date {
+  font-size: 0.75rem;
+  color: var(--qos-text-tertiary, var(--qos-text-secondary));
+}
+
+::ng-deep .qos-user-panel.mat-mdc-menu-panel { min-width: 240px; }
+
+::ng-deep .qos-user__head {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+::ng-deep .qos-user__name { font-weight: 600; font-size: 0.875rem; }
+
+::ng-deep .qos-user__roles {
+  font-size: 0.75rem;
+  color: var(--qos-text-secondary);
+}

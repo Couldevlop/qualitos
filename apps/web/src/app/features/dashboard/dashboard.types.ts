@@ -91,7 +91,10 @@ export interface ComplianceHeatCell { norm: string; clause: string; score: numbe
 export interface TopRisk {
   id: string;
   title: string;
+  /** Libellé affiché (ex. « FMEA · RPN 240 »). */
   source: string;
+  /** Origine machine, pour router vers la ressource au clic. */
+  sourceType: 'FMEA' | 'CAPA';
   severity: 'critical' | 'high' | 'medium';
   due?: string;
   owner?: string;

@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { AuthService, AuthUser } from '../../core/auth/auth.service';
+import { NotificationView } from '../../core/notifications/notification.types';
+import { NotificationsService } from '../../core/notifications/notifications.service';
 import { ConnectivityService } from '../../core/offline/connectivity.service';
 import { OfflineQueueService } from '../../core/offline/offline-queue.service';
 
@@ -120,17 +123,79 @@ export class MainShellComponent implements OnInit {
   online$!: Observable<boolean>;
   pendingSync$!: Observable<number>;
 
+  /** Notifications in-app : pastille de non-lues + contenu du menu de la cloche. */
+  unreadCount$!: Observable<number>;
+  notifications: NotificationView[] = [];
+  notificationsLoading = false;
+
   constructor(
     private readonly auth: AuthService,
     private readonly connectivity: ConnectivityService,
-    private readonly offlineQueue: OfflineQueueService
+    private readonly offlineQueue: OfflineQueueService,
+    private readonly notificationsService: NotificationsService,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
     this.user$ = this.auth.user();
     this.online$ = this.connectivity.online$;
     this.pendingSync$ = this.offlineQueue.pendingCount$;
+    this.unreadCount$ = this.notificationsService.unread$;
     this.restoreCollapsedSections();
+    // Pastille alimentée dès l'ouverture de l'application : la liste complète n'est
+    // chargée qu'à l'ouverture du menu (appel léger au démarrage).
+    this.notificationsService.refreshUnreadCount();
+  }
+
+  // ---- Notifications --------------------------------------------------------
+
+  /** Charge les dernières notifications à l'ouverture du menu de la cloche. */
+  openNotifications(): void {
+    this.notificationsLoading = true;
+    this.notificationsService.recent().subscribe({
+      next: list => {
+        this.notifications = list;
+        this.notificationsLoading = false;
+      },
+      error: () => { this.notificationsLoading = false; }
+    });
+  }
+
+  /**
+   * Ouvre la ressource concernée et marque la notification comme lue.
+   * Une notification sans lien reste cliquable : elle est simplement marquée lue.
+   */
+  onNotificationClick(notification: NotificationView): void {
+    if (!notification.read) {
+      this.notificationsService.markRead(notification.id).subscribe(() => {
+        notification.read = true;
+      });
+    }
+    if (notification.link) {
+      void this.router.navigateByUrl(notification.link);
+    }
+  }
+
+  markAllNotificationsRead(): void {
+    this.notificationsService.markAllRead().subscribe(() => {
+      this.notifications = this.notifications.map(n => ({ ...n, read: true }));
+    });
+  }
+
+  /** Icône Material correspondant à la nature de la notification. */
+  notificationIcon(type: NotificationView['type']): string {
+    switch (type) {
+      case 'SUCCESS': return 'check_circle';
+      case 'WARNING': return 'warning';
+      case 'ALERT': return 'error';
+      default: return 'info';
+    }
+  }
+
+  // ---- Compte utilisateur ---------------------------------------------------
+
+  logout(): void {
+    this.auth.logout();
   }
 
   toggle(): void { this.collapsed = !this.collapsed; }

@@ -1,16 +1,56 @@
-import { of } from 'rxjs';
+import { Router } from '@angular/router';
+import { Observable, of } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
+import { NotificationView } from '../../core/notifications/notification.types';
+import { NotificationsService } from '../../core/notifications/notifications.service';
 import { ConnectivityService } from '../../core/offline/connectivity.service';
 import { OfflineQueueService } from '../../core/offline/offline-queue.service';
 import { MainShellComponent } from './main-shell.component';
 
+/** Dépendances observables du shell, exposées aux tests qui les inspectent. */
+interface ShellHarness {
+  component: MainShellComponent;
+  notifications: jasmine.SpyObj<NotificationsService>;
+  router: jasmine.SpyObj<Router>;
+  auth: jasmine.SpyObj<AuthService>;
+}
+
+function notification(overrides: Partial<NotificationView> = {}): NotificationView {
+  return {
+    id: 'n1', type: 'INFO', title: 'Nouvelle CAPA', body: 'Assignée ce matin',
+    link: '/capa/abc', read: false, createdAt: '2026-05-15T08:00:00Z', readAt: null,
+    ...overrides
+  };
+}
+
 /** Construit le composant avec des dépendances stub (test de logique pure). */
-function make(): MainShellComponent {
-  const auth = { user: () => of(null) } as unknown as AuthService;
+function harness(): ShellHarness {
+  const auth = jasmine.createSpyObj<AuthService>('AuthService', ['user', 'logout']);
+  auth.user.and.returnValue(of(null));
+
   const connectivity = { online$: of(true) } as unknown as ConnectivityService;
   const offline = { pendingCount$: of(0) } as unknown as OfflineQueueService;
-  return new MainShellComponent(auth, connectivity, offline);
+
+  const notifications = jasmine.createSpyObj<NotificationsService>(
+    'NotificationsService',
+    ['recent', 'refreshUnreadCount', 'markRead', 'markAllRead'],
+    { unread$: of(0) });
+  notifications.recent.and.returnValue(of([]));
+  notifications.markRead.and.returnValue(of(null));
+  notifications.markAllRead.and.returnValue(of(0));
+
+  const router = jasmine.createSpyObj<Router>('Router', ['navigateByUrl']);
+  router.navigateByUrl.and.returnValue(Promise.resolve(true));
+
+  return {
+    component: new MainShellComponent(auth, connectivity, offline, notifications, router),
+    notifications, router, auth
+  };
+}
+
+function make(): MainShellComponent {
+  return harness().component;
 }
 
 describe('MainShellComponent (navigation model)', () => {
@@ -90,5 +130,95 @@ describe('MainShellComponent (navigation model)', () => {
     expect(component.collapsed).toBeFalse();
     component.toggle();
     expect(component.collapsed).toBeTrue();
+  });
+});
+
+/**
+ * La cloche de notifications et le bouton de compte étaient deux boutons inertes :
+ * aucun menu, aucune action. Ces tests verrouillent leur comportement.
+ */
+describe('MainShellComponent (notifications et compte)', () => {
+
+  it('demande le compteur de non-lues dès le démarrage, sans charger la liste', () => {
+    const h = harness();
+    h.component.ngOnInit();
+
+    expect(h.notifications.refreshUnreadCount).toHaveBeenCalledTimes(1);
+    expect(h.notifications.recent).not.toHaveBeenCalled();
+  });
+
+  it('charge les notifications à l’ouverture du menu', () => {
+    const h = harness();
+    h.notifications.recent.and.returnValue(of([notification()]));
+
+    h.component.openNotifications();
+
+    expect(h.component.notifications.length).toBe(1);
+    expect(h.component.notificationsLoading).toBeFalse();
+  });
+
+  it('sort de l’état de chargement même si le service échoue', () => {
+    const h = harness();
+    h.notifications.recent.and.returnValue(
+      new Observable<NotificationView[]>(sub => sub.error(new Error('boom'))));
+
+    h.component.openNotifications();
+
+    expect(h.component.notificationsLoading).toBeFalse();
+  });
+
+  it('marque comme lue et ouvre la ressource liée', () => {
+    const h = harness();
+    const n = notification();
+
+    h.component.onNotificationClick(n);
+
+    expect(h.notifications.markRead).toHaveBeenCalledWith('n1');
+    expect(n.read).toBeTrue();
+    expect(h.router.navigateByUrl).toHaveBeenCalledWith('/capa/abc');
+  });
+
+  it('ne remarque pas comme lue une notification déjà lue', () => {
+    const h = harness();
+
+    h.component.onNotificationClick(notification({ read: true }));
+
+    expect(h.notifications.markRead).not.toHaveBeenCalled();
+    expect(h.router.navigateByUrl).toHaveBeenCalled();
+  });
+
+  it('reste cliquable sans lien : la notification est simplement marquée lue', () => {
+    const h = harness();
+
+    h.component.onNotificationClick(notification({ link: null }));
+
+    expect(h.notifications.markRead).toHaveBeenCalled();
+    expect(h.router.navigateByUrl).not.toHaveBeenCalled();
+  });
+
+  it('marque tout comme lu et rafraîchit l’affichage', () => {
+    const h = harness();
+    h.notifications.recent.and.returnValue(of([notification(), notification({ id: 'n2' })]));
+    h.component.openNotifications();
+
+    h.component.markAllNotificationsRead();
+
+    expect(h.component.notifications.every(n => n.read)).toBeTrue();
+  });
+
+  it('associe une icône à chaque nature de notification', () => {
+    const c = make();
+    expect(c.notificationIcon('SUCCESS')).toBe('check_circle');
+    expect(c.notificationIcon('WARNING')).toBe('warning');
+    expect(c.notificationIcon('ALERT')).toBe('error');
+    expect(c.notificationIcon('INFO')).toBe('info');
+  });
+
+  it('déconnecte l’utilisateur depuis le menu de compte', () => {
+    const h = harness();
+
+    h.component.logout();
+
+    expect(h.auth.logout).toHaveBeenCalledTimes(1);
   });
 });

@@ -43,11 +43,11 @@
           (click)="clearTimeTravel()"
           i18n="@@dashboard.tt.clear">Présent</button>
       </div>
-      <button type="button" class="qos-btn qos-btn--ghost">
+      <button type="button" class="qos-btn qos-btn--ghost" (click)="exportKpisCsv()">
         <span class="material-symbols-outlined" aria-hidden="true">download</span>
         <span i18n="@@dashboard.exec.export">Exporter</span>
       </button>
-      <button type="button" class="qos-btn qos-btn--primary">
+      <button type="button" class="qos-btn qos-btn--primary" (click)="newReport()">
         <span class="material-symbols-outlined" aria-hidden="true">add</span>
         <span i18n="@@dashboard.exec.new-report">Nouveau rapport</span>
       </button>
@@ -230,7 +230,8 @@
               </span>
             </div>
           </div>
-          <button type="button" class="qos-risks__action" aria-label="Ouvrir" i18n-aria-label="@@common.open">
+          <button type="button" class="qos-risks__action" (click)="openRisk(r)"
+                  aria-label="Ouvrir" i18n-aria-label="@@common.open">
             <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
           </button>
         </li>

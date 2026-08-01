@@ -92,6 +92,7 @@ export class DashboardService {
       id: r.id,
       title: r.title,
       source: r.rpn != null ? `FMEA · RPN ${r.rpn}` : r.source,
+      sourceType: r.source === 'CAPA' ? 'CAPA' : 'FMEA',
       severity: toSeverity(r.severity),
       due: r.dueDate ?? undefined
     }))));

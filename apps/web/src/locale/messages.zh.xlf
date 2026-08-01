@@ -3148,6 +3148,26 @@
         <source>Basculer la navigation</source>
         <target state="translated">切换导航</target>
       </trans-unit>
+      <trans-unit id="shell.notifications.title" datatype="html">
+        <source>Notifications</source>
+        <target state="translated">通知</target>
+      </trans-unit>
+      <trans-unit id="shell.notifications.mark-all" datatype="html">
+        <source>Tout marquer comme lu</source>
+        <target state="translated">全部标为已读</target>
+      </trans-unit>
+      <trans-unit id="shell.notifications.empty" datatype="html">
+        <source>Aucune notification.</source>
+        <target state="translated">暂无通知。</target>
+      </trans-unit>
+      <trans-unit id="shell.user.offline-queue" datatype="html">
+        <source>File de synchronisation</source>
+        <target state="translated">同步队列</target>
+      </trans-unit>
+      <trans-unit id="shell.user.logout" datatype="html">
+        <source>Se déconnecter</source>
+        <target state="translated">退出登录</target>
+      </trans-unit>
       <trans-unit id="shell.notifications.aria" datatype="html">
         <source>Notifications</source>
         <target state="translated">通知</target>
