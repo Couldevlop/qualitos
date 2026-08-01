@@ -25,21 +25,23 @@ module.exports = function (config) {
       // réelle mesurée, ce qui interdit toute régression dès aujourd'hui. Ils sont
       // remontés à chaque lot de tests ajouté, jusqu'à la cible de 99 %.
       //
-      //   Mesure du 2026-08-01 : statements 91,37 % · branches 84,27 %
-      //                          lines 91,91 %      · functions 92,41 %
-      //   (+6,8 pts après la reprise des specs de 12 services GRC / AI Act /
+      //   Mesure du 2026-08-01 : statements 93,85 % · branches 86,82 %
+      //                          lines 94,36 %      · functions 93,74 %
+      //   (+9,3 pts après la reprise des specs de 20 services GRC / AI Act /
       //    métier, qui n'étaient couverts qu'en surface — chemins heureux.)
       //   Cible §14.4 : 85 / 75 — DÉPASSÉE sur les quatre axes.
-      //   Cible projet : 99.
+      //   Cible projet : 99. Reste à couvrir : composants lourds (ims-hub,
+      //   connectors-home, doc-gen) et derniers services GRC (ropa, transfers,
+      //   subject-requests).
       //
       // `emitWarning: false` = la suite sort en échec si un seuil n'est pas atteint.
       check: {
         emitWarning: false,
         global: {
-          statements: 91,
-          lines: 91,
-          branches: 84,
-          functions: 92
+          statements: 93,
+          lines: 94,
+          branches: 86,
+          functions: 93
         }
       }
     },
