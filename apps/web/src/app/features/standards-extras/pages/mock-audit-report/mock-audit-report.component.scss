@@ -1,0 +1,156 @@
+/* Rapport d'audit blanc IA (§8.4 onglet 7).
+   Document de lecture : longueur de ligne maîtrisée, hiérarchie criticité →
+   constat → questions. Couleurs et rythme viennent des tokens globaux. */
+
+.audit-report { padding-bottom: var(--qos-space-8, 32px); }
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+.banner-error { background: var(--qos-danger-bg-soft); color: var(--qos-danger-fg); }
+.banner-info  { background: var(--qos-accent-bg-soft); color: var(--qos-accent-fg-soft); }
+
+.empty {
+  padding: 28px 16px;
+  text-align: center;
+  color: var(--qos-fg-secondary);
+  font-size: 13px;
+}
+
+.hint { margin: 16px 0 0; font-size: 12px; color: var(--qos-fg-secondary); max-width: 78ch; }
+.strong { font-weight: 600; }
+.strong.danger { color: var(--qos-danger-fg); }
+.strong.warn   { color: var(--qos-warn-fg); }
+.mono { font-family: 'IBM Plex Mono', 'Fira Code', monospace; font-size: 12px; }
+
+/* ---- Synthèse ------------------------------------------------------------- */
+
+.summary {
+  display: grid;
+  gap: var(--qos-space-6, 24px);
+  grid-template-columns: minmax(240px, 320px) 1fr;
+  align-items: start;
+}
+
+.summary__readiness { display: flex; flex-direction: column; gap: 8px; }
+.summary__label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--qos-fg-secondary);
+}
+
+.summary__facts {
+  margin: 0;
+  display: grid;
+  gap: 12px 24px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+
+  dt { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em;
+       color: var(--qos-fg-secondary); }
+  dd { margin: 2px 0 0; font-size: 18px; }
+}
+
+/* ---- Filtres de criticité ------------------------------------------------- */
+
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+/* L'état sélectionné doit se voir sans dépendre du seul focus clavier. */
+.filters .active {
+  background: var(--qos-accent-bg-soft);
+  border-color: var(--qos-accent-bg);
+  color: var(--qos-accent-fg-soft);
+  font-weight: 600;
+}
+
+/* ---- Écarts --------------------------------------------------------------- */
+
+.gaps { display: flex; flex-direction: column; gap: 12px; }
+
+.gap {
+  padding: 16px 18px;
+  border: 1px solid var(--qos-border-subtle);
+  border-left: 3px solid var(--qos-border-default);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+}
+.gap[data-criticality='MAJOR'] { border-left-color: var(--qos-danger-fg); }
+.gap[data-criticality='MINOR'] { border-left-color: var(--qos-warn-fg); }
+
+.gap__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.gap__title { display: flex; align-items: baseline; gap: 10px; min-width: 0; flex-wrap: wrap; }
+.gap__title h3 { margin: 0; font-size: 15px; font-weight: 600; line-height: 1.35; }
+
+.gap__coverage { margin-top: 12px; display: flex; flex-direction: column; gap: 4px; }
+.gap__coverage-label { font-size: 12px; color: var(--qos-fg-secondary); }
+
+.gap__finding {
+  margin: 12px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  max-width: 84ch;
+}
+
+/* ---- Questions ------------------------------------------------------------ */
+
+.questions {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  li {
+    padding: 10px 12px;
+    border-left: 2px solid var(--qos-border-default);
+    background: var(--qos-bg-sunken);
+    border-radius: 0 8px 8px 0;
+  }
+
+  .question { margin: 0; font-size: 13px; font-weight: 500; line-height: 1.5; max-width: 84ch; }
+  .rationale { margin: 4px 0 0; font-size: 12px; color: var(--qos-fg-secondary);
+               line-height: 1.5; max-width: 84ch; }
+}
+
+.questions--full { max-height: 620px; overflow-y: auto; }
+
+/* ---- Plan de remédiation -------------------------------------------------- */
+
+.table-wrap { overflow-x: auto; }
+
+.data {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th, td { padding: 10px 12px; text-align: left; vertical-align: top;
+           border-bottom: 1px solid var(--qos-border-subtle); }
+
+  thead th {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--qos-fg-secondary);
+    white-space: nowrap;
+  }
+
+  tbody tr:hover { background: var(--qos-bg-subtle); }
+}
+
+.action-text { line-height: 1.55; min-width: 280px; }
+
+@media (max-width: 860px) {
+  .summary { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,16 @@
+{
+  "_comment": [
+    "Configuration RUNTIME de la SPA (chargée avant le bootstrap Angular, cf. src/main.ts).",
+    "Elle surcharge les valeurs compilees dans src/environments/. Objectif : livrer UNE image",
+    "docker deployable sur n'importe quel domaine (SaaS, on-premise, cluster dedie) sans rebuild.",
+    "En deploiement, monter ce fichier en volume ou le remplacer dans l'image.",
+    "Toute cle absente ou vide retombe silencieusement sur la valeur compilee."
+  ],
+  "apiBaseUrl": "",
+  "keycloak": {
+    "issuer": "",
+    "clientId": "",
+    "redirectUri": "",
+    "scope": ""
+  }
+}

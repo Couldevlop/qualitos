@@ -19,14 +19,21 @@ import pytest
 
 from domain.service import complaint_nlp
 
-_HAS_BERT = (
-    importlib.util.find_spec("transformers") is not None
-    and importlib.util.find_spec("torch") is not None
+#: `sentencepiece` fait partie du garde-fou : DistilCamemBERT utilise un
+#: tokenizer SentencePiece, et cette dépendance ne vient pas avec `transformers`.
+#: Sans elle, une installation partielle passait le garde-fou et le test
+#: « opt-in » ÉCHOUAIT au lieu d'être ignoré. L'erreur remontée était de surcroît
+#: trompeuse — `transformers` se rabat sur l'extracteur tiktoken, qui ne sait pas
+#: lire un modèle SentencePiece et réclame `tiktoken` : la dépendance annoncée
+#: n'était pas celle qui manquait.
+_HAS_BERT = all(
+    importlib.util.find_spec(module) is not None
+    for module in ("transformers", "torch", "sentencepiece")
 )
 
 pytestmark = pytest.mark.skipif(
     not _HAS_BERT,
-    reason="extra ml (torch+transformers) absent : chemin BERT non exécuté (skippé en CI)",
+    reason="extra ml (torch+transformers+sentencepiece) absent : chemin BERT non exécuté (skippé en CI)",
 )
 
 _NEG = "Le produit est arrivé cassé et le service après-vente est inacceptable."

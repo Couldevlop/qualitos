@@ -43,6 +43,45 @@ const routes: Routes = [
         loadChildren: () => import('./features/capa/capa.module').then(m => m.CapaModule)
       },
       {
+        // Réclamations clients / Voice of Customer (§4.9). À ne pas confondre avec
+        // `/complaints-nlp`, qui est l'analyse IA d'un lot de réclamations.
+        path: 'complaints',
+        loadChildren: () =>
+          import('./features/complaints/complaints.module').then(m => m.ComplaintsModule)
+      },
+      {
+        // Calibration & gestion des équipements (§4.10).
+        path: 'calibration',
+        loadChildren: () =>
+          import('./features/calibration/calibration.module').then(m => m.CalibrationModule)
+      },
+      {
+        // Parc IoT & télémétrie (§9).
+        path: 'iot',
+        loadChildren: () => import('./features/iot/iot.module').then(m => m.IotModule)
+      },
+      {
+        // Registre des systèmes d'IA (AI Act) — socle référencé par /ai-qms,
+        // /ai-conformity, /ai-incidents, /ai-eudb, /fria et /ai-pmm.
+        path: 'ai-systems',
+        loadChildren: () =>
+          import('./features/ai-systems/ai-systems.module').then(m => m.AiSystemsModule)
+      },
+      {
+        // Connecteurs tiers ERP / EHR / Communication (§13.3).
+        path: 'connectors',
+        loadChildren: () =>
+          import('./features/connectors/connectors.module').then(m => m.ConnectorsModule)
+      },
+      {
+        // Compléments Standards Hub : matrice de co-couverture IMS (§8.9),
+        // audit blanc IA (§8.4) et ancrage blockchain (§11.3).
+        path: 'standards-ims',
+        loadChildren: () =>
+          import('./features/standards-extras/standards-extras.module')
+            .then(m => m.StandardsExtrasModule)
+      },
+      {
         path: 'audits',
         loadChildren: () => import('./features/audits/audits.module').then(m => m.AuditsModule)
       },
@@ -249,6 +288,12 @@ const routes: Routes = [
         path: 'dashboard-builder',
         loadChildren: () =>
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)
+      },
+      {
+        // Console d'administration du tenant (§10.4, §16) : activation des modules,
+        // et à terme les autres surfaces d'administration déjà exposées par l'API.
+        path: 'admin',
+        loadChildren: () => import('./features/admin/admin.module').then(m => m.AdminModule)
       },
       {
         // File d'attente offline (§15.2-15.3) — accessible depuis le chip de

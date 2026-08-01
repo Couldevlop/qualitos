@@ -1,0 +1,102 @@
+<h2 mat-dialog-title>
+  <span *ngIf="!editing" i18n="@@admin.webhooks.form-create-title">Nouvel abonnement webhook</span>
+  <span *ngIf="editing" i18n="@@admin.webhooks.form-edit-title">Modifier l'abonnement</span>
+</h2>
+
+<mat-dialog-content>
+  <form class="wh-form" [formGroup]="form" (ngSubmit)="submit()">
+
+    <div *ngIf="error" class="wh-form__error" role="alert">{{ error }}</div>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@common.name">Nom</mat-label>
+      <input matInput formControlName="name" maxlength="255" autocomplete="off"
+             placeholder="ERP production" />
+      <mat-hint i18n="@@admin.webhooks.form-name-hint">Sert à identifier le consommateur dans les journaux.</mat-hint>
+      <mat-error *ngIf="form.controls.name.hasError('required')"
+                 i18n="@@common.required-field">Champ obligatoire</mat-error>
+      <mat-error *ngIf="form.controls.name.hasError('maxlength')"
+                 i18n="@@common.maxlength-255">255 caractères maximum.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@admin.webhooks.form-endpoint">URL de destination</mat-label>
+      <input matInput formControlName="endpointUrl" maxlength="2048" autocomplete="off"
+             inputmode="url" placeholder="https://exemple.tld/hooks/qualitos" />
+      <mat-hint i18n="@@admin.webhooks.form-endpoint-hint">
+        Point d'entrée HTTPS appelé en POST, signé HMAC-SHA256.
+      </mat-hint>
+      <mat-error *ngIf="form.controls.endpointUrl.hasError('required')"
+                 i18n="@@common.required-field">Champ obligatoire</mat-error>
+      <mat-error *ngIf="form.controls.endpointUrl.hasError('pattern')"
+                 i18n="@@admin.webhooks.form-endpoint-invalid">URL http(s) attendue.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@admin.webhooks.form-events">Évènements souscrits</mat-label>
+      <mat-select formControlName="eventTypes" multiple>
+        <mat-optgroup *ngFor="let g of groups" [label]="groupLabel(g.domain)">
+          <mat-option *ngFor="let t of g.types" [value]="t">{{ t }}</mat-option>
+        </mat-optgroup>
+      </mat-select>
+      <mat-hint i18n="@@admin.webhooks.form-events-hint">
+        Seuls ces évènements déclencheront un appel sortant.
+      </mat-hint>
+      <mat-error *ngIf="form.controls.eventTypes.hasError('required')"
+                 i18n="@@admin.webhooks.form-events-required">Sélectionnez au moins un évènement.</mat-error>
+    </mat-form-field>
+
+    <p class="wh-form__warn" *ngIf="droppedEventTypes.length" role="status">
+      <span i18n="@@admin.webhooks.form-dropped-events">
+        Évènements inconnus retirés à l'enregistrement :
+      </span>
+      <code>{{ droppedEventTypes.join(', ') }}</code>
+    </p>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@admin.webhooks.form-max-retries">Tentatives de renvoi</mat-label>
+      <input matInput type="number" formControlName="maxRetries" min="0" max="10" />
+      <mat-hint i18n="@@admin.webhooks.form-max-retries-hint">
+        0 à 10 renvois après le premier envoi, avec temporisation croissante.
+      </mat-hint>
+      <mat-error *ngIf="form.controls.maxRetries.hasError('required')"
+                 i18n="@@common.required-field">Champ obligatoire</mat-error>
+      <mat-error *ngIf="form.controls.maxRetries.hasError('min') || form.controls.maxRetries.hasError('max')"
+                 i18n="@@admin.webhooks.form-max-retries-range">Valeur attendue entre 0 et 10.</mat-error>
+    </mat-form-field>
+
+    <ng-container *ngIf="!editing">
+      <mat-form-field appearance="outline">
+        <mat-label i18n="@@admin.webhooks.form-secret">Secret HMAC</mat-label>
+        <input matInput formControlName="secret" maxlength="128" autocomplete="off" spellcheck="false" />
+        <button mat-icon-button matSuffix type="button" (click)="regenerateSecret()"
+                i18n-aria-label="@@admin.webhooks.form-regenerate-aria"
+                aria-label="Générer un nouveau secret"
+                matTooltip="Générer un nouveau secret"
+                i18n-matTooltip="@@admin.webhooks.form-regenerate-aria">
+          <mat-icon>autorenew</mat-icon>
+        </button>
+        <mat-hint i18n="@@admin.webhooks.form-secret-hint">
+          Généré aléatoirement (256 bits). Il ne sera affiché qu'une seule fois, juste après la création.
+        </mat-hint>
+        <mat-error *ngIf="form.controls.secret.hasError('required')"
+                   i18n="@@common.required-field">Champ obligatoire</mat-error>
+        <mat-error *ngIf="form.controls.secret.hasError('minlength') || form.controls.secret.hasError('maxlength')"
+                   i18n="@@admin.webhooks.form-secret-range">Entre 16 et 128 caractères.</mat-error>
+      </mat-form-field>
+    </ng-container>
+
+    <p class="wh-form__note" *ngIf="editing" i18n="@@admin.webhooks.form-secret-readonly">
+      Le secret n'est pas modifiable ici : utilisez l'action « Renouveler le secret » depuis la liste.
+    </p>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()" [disabled]="submitting"
+          i18n="@@common.cancel">Annuler</button>
+  <button mat-flat-button color="primary" type="button" (click)="submit()" [disabled]="submitting">
+    <span *ngIf="!editing" i18n="@@common.create">Créer</span>
+    <span *ngIf="editing" i18n="@@common.save">Enregistrer</span>
+  </button>
+</mat-dialog-actions>

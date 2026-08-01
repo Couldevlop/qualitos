@@ -1,0 +1,61 @@
+/* Diagnostic d'une livraison : faits d'abord (grille dense), corps bruts ensuite
+   (scrollables, jamais tronqués — un payload coupé ne sert à rien pour un diagnostic). */
+
+.dlv-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px 20px;
+  margin: 0 0 20px;
+  min-width: min(600px, 78vw);
+}
+
+.dlv-facts__item { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+
+.dlv-facts dt {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--qos-fg-secondary);
+}
+
+.dlv-facts dd { margin: 0; font-size: 13px; word-break: break-all; }
+
+.dlv-facts code,
+.dlv-facts__id { font-family: 'IBM Plex Mono', 'Fira Code', monospace; font-size: 12px; }
+
+.dlv-block { margin-top: 16px; }
+
+.dlv-block h3 {
+  margin: 0 0 6px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--qos-fg-secondary);
+}
+
+.dlv-pre {
+  margin: 0;
+  padding: 12px 14px;
+  max-height: 240px;
+  overflow: auto;
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-sunken);
+  font-family: 'IBM Plex Mono', 'Fira Code', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.dlv-pre--error {
+  background: var(--qos-danger-bg-soft);
+  color: var(--qos-danger-fg);
+  border-color: transparent;
+}
+
+.dim { color: var(--qos-fg-secondary); font-size: 12px; }
+
+@media (max-width: 600px) {
+  .dlv-facts { min-width: 0; }
+}

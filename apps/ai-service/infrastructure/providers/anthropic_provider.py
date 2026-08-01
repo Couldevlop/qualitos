@@ -30,7 +30,7 @@ class AnthropicProvider(AIProviderBase):
         self,
         api_key: str | None = None,
         base_url: str = _DEFAULT_URL,
-        model: str = "claude-opus-4-7",
+        model: str = "claude-opus-5",
         timeout_s: float = _DEFAULT_TIMEOUT_S,
         client: httpx.Client | None = None,
     ) -> None:

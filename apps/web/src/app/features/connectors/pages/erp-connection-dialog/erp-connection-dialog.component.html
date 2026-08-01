@@ -1,0 +1,93 @@
+<qos-form-dialog
+  [title]="title"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  [submitLabel]="submitLabel"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <div class="conn-form">
+
+    <p class="conn-form__error" *ngIf="errorMessage" role="alert">{{ errorMessage }}</p>
+
+    <div class="conn-form__row">
+      <mat-form-field appearance="outline" class="conn-form__grow">
+        <mat-label i18n="@@common.name">Nom</mat-label>
+        <input matInput formControlName="name" maxlength="120" required
+               placeholder="ERP production — achats"
+               i18n-placeholder="@@connectors.erp.name-placeholder">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="conn-form__provider">
+        <mat-label i18n="@@connectors.provider">Fournisseur</mat-label>
+        <mat-select formControlName="provider" required>
+          <mat-option *ngFor="let p of providers" [value]="p.value">
+            {{ p.label }} <span class="conn-form__hint-inline">— {{ p.hint }}</span>
+          </mat-option>
+        </mat-select>
+        <mat-hint *ngIf="editing" i18n="@@connectors.provider-immutable">
+          Le fournisseur ne change pas après création.
+        </mat-hint>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@connectors.erp.base-url">URL de base de l'API</mat-label>
+      <input matInput formControlName="baseUrl" maxlength="512" required
+             autocomplete="off" spellcheck="false"
+             placeholder="https://erp.example.com/sap/opu/odata">
+      <mat-error *ngIf="form.controls.baseUrl.hasError('pattern')"
+                 i18n="@@connectors.https-required">
+        L'URL doit commencer par https://
+      </mat-error>
+    </mat-form-field>
+
+    <div class="conn-form__row">
+      <mat-form-field appearance="outline" class="conn-form__grow">
+        <mat-label i18n="@@connectors.username">Compte de service</mat-label>
+        <input matInput formControlName="username" maxlength="200"
+               autocomplete="off" placeholder="qualitos-integration">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="conn-form__grow">
+        <mat-label i18n="@@connectors.erp.scope">Périmètre externe</mat-label>
+        <input matInput formControlName="externalScope" maxlength="200"
+               placeholder="Usine A, société 1000"
+               i18n-placeholder="@@connectors.erp.scope-placeholder">
+        <mat-hint i18n="@@connectors.erp.scope-hint">
+          Restreint les fournisseurs et indicateurs importés.
+        </mat-hint>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ secretLabel }}</mat-label>
+      <input matInput formControlName="secret"
+             [type]="showSecret ? 'text' : 'password'"
+             maxlength="1024" autocomplete="new-password" spellcheck="false"
+             [required]="!editing">
+      <button mat-icon-button matSuffix type="button" (click)="toggleSecret()"
+              [attr.aria-label]="secretToggleLabel" [matTooltip]="secretToggleLabel">
+        <mat-icon>{{ showSecret ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      <mat-hint i18n="@@connectors.secret-hint">
+        Chiffré au repos, jamais renvoyé par l'API — même à vous.
+      </mat-hint>
+      <mat-error *ngIf="form.controls.secret.hasError('minlength')"
+                 i18n="@@connectors.secret-minlength">Minimum 4 caractères.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" *ngIf="editing">
+      <mat-label i18n="@@common.status">Statut</mat-label>
+      <mat-select formControlName="status">
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ statusLabel(s) }}</mat-option>
+      </mat-select>
+      <mat-hint i18n="@@connectors.status-hint">
+        « Désactivée sur erreurs » est posé automatiquement après 10 échecs consécutifs ;
+        repasser en « Active » remet ce compteur à zéro.
+      </mat-hint>
+    </mat-form-field>
+
+  </div>
+</qos-form-dialog>

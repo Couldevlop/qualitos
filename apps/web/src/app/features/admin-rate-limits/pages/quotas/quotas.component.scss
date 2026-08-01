@@ -1,0 +1,152 @@
+/* Console d'administration — quotas et limites d'API (§13.1).
+   Reprend les conventions des autres écrans d'administration (padding 24, en-tête
+   titre + sous-titre, tuiles de synthèse, bandeaux d'état, table encadrée). */
+
+.rate-limits { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+
+.head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.head h1 { margin: 0 0 4px; font-size: 22px; }
+.head p  { margin: 0; color: var(--qos-text-secondary); font-size: 13px; max-width: 68ch; }
+
+.head__aside { display: flex; align-items: center; gap: 12px; flex: 0 0 auto; }
+.measured { font-size: 12px; color: var(--qos-text-secondary); white-space: nowrap; }
+
+/* Bandeau de synthèse : combien de quotas, combien tirent sur la corde. */
+.tiles { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.tile {
+  flex: 1 1 140px;
+  min-width: 140px;
+  padding: 14px 16px;
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-left: 3px solid var(--qos-border);
+  border-radius: var(--qos-radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tile__value { font-size: 24px; font-weight: 600; line-height: 1.1; }
+.tile__label { font-size: 12px; color: var(--qos-text-secondary); }
+
+.tile[data-tone='success'] { border-left-color: var(--qos-success-fg); }
+.tile[data-tone='warn']    { border-left-color: var(--qos-warn-fg); }
+.tile[data-tone='danger']  { border-left-color: var(--qos-danger-fg); }
+
+.banner { padding: 10px 14px; border-radius: 8px; font-size: 13px; }
+.banner-error { background: #fbe9e7; color: #b71c1c; }
+.banner-info  { background: #e3f2fd; color: #0d47a1; }
+
+/* Le tableau porte la lecture, le formulaire l'accompagne : il ne prend pas la moitié
+   de l'écran mais reste visible pendant qu'on lit les jauges. */
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+
+.table-wrap {
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  overflow-x: auto;
+}
+
+.scope {
+  font-family: 'IBM Plex Mono', 'Fira Code', monospace;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.window-cell { display: flex; flex-direction: column; gap: 2px; }
+.window-cell__value { font-weight: 600; }
+.window-cell__quota { font-size: 11px; color: var(--qos-text-secondary); }
+
+.reset { font-size: 12px; white-space: nowrap; }
+.dim { color: var(--qos-text-secondary); font-size: 12px; }
+
+/* Jauge de consommation : c'est l'information centrale de l'écran, elle doit se lire
+   sans compter — chiffres, barre, ET libellé (la couleur seule ne suffit pas, WCAG 1.4.1). */
+.meter { display: flex; flex-direction: column; gap: 4px; min-width: 190px; padding: 6px 0; }
+.meter__head { display: flex; align-items: baseline; gap: 4px; font-size: 13px; }
+.meter__used { font-weight: 700; font-variant-numeric: tabular-nums; }
+.meter__limit { color: var(--qos-text-secondary); font-variant-numeric: tabular-nums; }
+.meter__pct { margin-left: auto; font-size: 11px; color: var(--qos-text-secondary); }
+
+.meter__track {
+  position: relative;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--qos-bg-subtle);
+  overflow: hidden;
+}
+
+.meter__fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--qos-success-fg);
+  transition: width 180ms ease-out;
+}
+
+.meter__track[data-level='idle']     .meter__fill { background: var(--qos-border); }
+.meter__track[data-level='warning']  .meter__fill { background: var(--qos-warn-fg); }
+.meter__track[data-level='critical'] .meter__fill { background: var(--qos-danger-fg); }
+.meter__track[data-level='exceeded'] .meter__fill { background: var(--qos-danger-fg); }
+
+.qos-badge {
+  align-self: flex-start;
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  background: var(--qos-bg-subtle); color: var(--qos-text-secondary);
+}
+.qos-badge[data-tone='success'] { background: #e8f5e9; color: #1b5e20; }
+.qos-badge[data-tone='warn']    { background: #fff8e1; color: #8d6e00; }
+.qos-badge[data-tone='danger']  { background: #fbe9e7; color: #b71c1c; }
+
+.row-actions { display: flex; gap: 2px; align-items: center; }
+
+/* Un quota suspendu ne protège rien : la ligne recule. Un quota tendu avance. */
+.row--off { opacity: 0.62; }
+.row--hot td { background: rgba(183, 28, 28, 0.04); }
+
+.empty {
+  padding: 32px 24px; text-align: center; color: var(--qos-text-secondary);
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.empty mat-icon { font-size: 32px; width: 32px; height: 32px; opacity: 0.5; }
+.empty p { margin: 0; font-size: 13px; }
+.empty__hint { max-width: 42ch; opacity: 0.85; }
+
+/* Formulaire de création / édition. */
+.form-panel {
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  padding: 18px;
+  position: sticky;
+  top: 16px;
+}
+.form-panel h2 { margin: 0 0 12px; font-size: 15px; }
+.form-panel form { display: flex; flex-direction: column; }
+
+.field { width: 100%; }
+
+.presets { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 14px; }
+.presets__label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
+                  color: var(--qos-text-secondary); width: 100%; }
+.presets__btn { min-width: 0; padding: 0 12px; }
+.presets__btn--on { border-color: var(--qos-primary, #1565c0); font-weight: 700; }
+
+.enabled-box { margin-bottom: 2px; }
+.hint { margin: 0 0 14px; font-size: 11px; color: var(--qos-text-secondary); }
+
+.form-actions { display: flex; gap: 8px; align-items: center; }
+
+@media (max-width: 1100px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .form-panel { position: static; }
+}
+
+@media (max-width: 720px) {
+  .rate-limits { padding: 16px; }
+  .head { flex-direction: column; }
+  .head__aside { align-self: stretch; justify-content: space-between; }
+}

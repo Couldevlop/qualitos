@@ -8,6 +8,9 @@ import { ComplianceHubComponent } from './compliance-hub.component';
 
 /** Toutes les routes GRC qui DOIVENT rester atteignables depuis le hub. */
 const EXPECTED_ROUTES = [
+  // Le registre des systèmes ouvre le domaine IA : c'est le socle auquel se
+  // rattachent toutes les autres vues du règlement européen sur l'IA.
+  '/ai-systems',
   '/ai-qms', '/ai-conformity', '/ai-incidents', '/ai-eudb', '/fria', '/ai-pmm',
   '/ropa', '/consents', '/subject-requests', '/privacy-notices', '/dpia',
   '/dpo-appointments', '/retention', '/cross-border', '/processor-agreements',
@@ -35,7 +38,7 @@ describe('ComplianceHubComponent', () => {
     expect(component.domains.map(d => d.key)).toEqual(['ai', 'gdpr', 'nis2']);
   });
 
-  it('covers ALL 19 GRC routes across the domain tiles (no route dropped)', () => {
+  it('covers ALL 20 GRC routes across the domain tiles (no route dropped)', () => {
     const routes = component.domains.flatMap(d => d.views.map(v => v.route));
     expect(routes.length).toBe(EXPECTED_ROUTES.length);
     EXPECTED_ROUTES.forEach(r => expect(routes).withContext(r).toContain(r));
@@ -79,6 +82,6 @@ describe('ComplianceHubComponent', () => {
 
   it('provides stable trackBy keys', () => {
     expect(component.trackByKey(0, component.domains[0])).toBe('ai');
-    expect(component.trackByRoute(0, component.domains[0].views[0])).toBe('/ai-qms');
+    expect(component.trackByRoute(0, component.domains[0].views[0])).toBe('/ai-systems');
   });
 });

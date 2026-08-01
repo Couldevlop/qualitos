@@ -43,6 +43,13 @@ public class RateLimitPolicyRepositoryAdapter implements RateLimitPolicyReposito
 
     @Override
     @Transactional(readOnly = true)
+    public Optional<RateLimitPolicy> findAnyByScope(UUID tenantId, String scope) {
+        return jpa.findByTenantIdAndScope(tenantId, scope)
+                .map(RateLimitPolicyRepositoryAdapter::toDomain);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Optional<RateLimitPolicy> findEnabled(UUID tenantId, String scope) {
         return jpa.findByTenantIdAndScopeAndEnabledTrue(tenantId, scope)
                 .map(RateLimitPolicyRepositoryAdapter::toDomain);

@@ -1,201 +1,192 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, map, shareReplay, switchMap } from 'rxjs/operators';
 
+import { environment } from '../../../environments/environment';
 import {
   AiPrediction, AlignmentBar, ComplianceHeatCell, DefectByCategory,
-  KpiCard, QualityTrendPoint, TopRisk
+  ExecutiveDashboardResponse, KpiCard, KpiState, QualityTrendPoint, TopRisk
 } from './dashboard.types';
 
 /**
- * Service du dashboard exécutif.
+ * Service du dashboard exécutif (§7.1).
  *
- * Pour le MVP, les KPIs sont mockés (le pipeline KPI engine + Kafka Streams
- * arrive en V2). API cible : `/api/v1/kpis/executive`.
+ * Il consomme `GET /api/v1/dashboards/executive`, qui agrège côté serveur les données
+ * RÉELLES du tenant : catalogue KPI et ses mesures, non-conformités ouvertes, items
+ * FMEA à RPN élevé, CAPA critiques en retard et scores d'alignement normatif.
+ *
+ * Historique : cette page était intégralement alimentée par des constantes codées en
+ * dur (aucun appel HTTP), ce qui affichait des chiffres fictifs sur la vue de direction
+ * et contredisait l'invariant §18.2 #8 — « aucun KPI affiché sans définition explicite ».
+ * Les cartes proviennent désormais du catalogue KPI, donc chacune porte sa formule, sa
+ * cible, ses seuils et son propriétaire.
+ *
+ * Un seul aller-retour alimente toutes les sections : la requête est partagée entre les
+ * différents flux exposés ci-dessous, et rejouée à chaque appel de {@link refresh}.
  */
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
 
+  private readonly endpoint = `${environment.apiBaseUrl}/api/v1/dashboards/executive`;
+
+  /** Déclencheur de (re)chargement — `refresh()` relance l'unique requête. */
+  private readonly reload$ = new BehaviorSubject<void>(undefined);
+
+  /**
+   * Requête partagée. `refCount: false` : les sections du dashboard s'abonnent à des
+   * instants légèrement différents (certaines sont derrière un `*ngIf`) ; avec
+   * `refCount: true`, un abonnement tardif relancerait un appel HTTP complet.
+   */
+  private readonly overview$: Observable<ExecutiveDashboardResponse> = this.reload$.pipe(
+    switchMap(() => this.http.get<ExecutiveDashboardResponse>(this.endpoint).pipe(
+      // Dégradation propre : la page reste affichable (sections vides) si l'API
+      // est indisponible, plutôt que de laisser des spinners tourner sans fin.
+      catchError(() => of(EMPTY_DASHBOARD))
+    )),
+    shareReplay({ bufferSize: 1, refCount: false })
+  );
+
+  constructor(private readonly http: HttpClient) {}
+
+  /** Relance l'agrégation (bouton « rafraîchir », retour sur la page). */
+  refresh(): void {
+    this.reload$.next();
+  }
+
   getExecutiveKpis(): Observable<KpiCard[]> {
-    const data: KpiCard[] = [
-      {
-        id: 'coq', label: 'Coût d\'obtention qualité',
-        value: 2.8, unit: '% CA', target: 3.2, trend: -0.4,
-        description: 'Prévention + détection + défaillances',
-        icon: 'paid', state: 'good', trendInvertedIsGood: true
-      },
-      {
-        id: 'fpy', label: 'First Pass Yield',
-        value: 94.2, unit: '%', target: 95, trend: 2.1,
-        description: 'Réussite en premier passage sur 30j',
-        icon: 'verified', state: 'good'
-      },
-      {
-        id: 'nc', label: 'Non-conformités ouvertes',
-        value: 127, unit: '', target: 100, trend: -12,
-        description: 'Sur les 30 derniers jours',
-        icon: 'warning', state: 'good', trendInvertedIsGood: true
-      },
-      {
-        id: 'capa', label: 'Délai moyen clôture CAPA',
-        value: 22, unit: 'jours', target: 30, trend: -4.3,
-        description: 'Actions critiques + hautes',
-        icon: 'engineering', state: 'good', trendInvertedIsGood: true
-      },
-      {
-        id: 'cpk', label: 'Cp / Cpk procédés clés',
-        value: '1.42', unit: '', target: 1.33, trend: 0.08,
-        description: 'Capabilité moyenne 12 processus',
-        icon: 'analytics', state: 'good'
-      },
-      {
-        id: 'audits', label: 'Audits réalisés vs planifiés',
-        value: 87, unit: '%', target: 90, trend: 5,
-        description: 'Année en cours',
-        icon: 'fact_check', state: 'warn'
-      },
-      {
-        id: 'iso9001', label: 'Alignement ISO 9001',
-        value: 76, unit: '%', target: 90, trend: 3.2,
-        description: 'Couverture des exigences obligatoires',
-        icon: 'workspace_premium', state: 'warn'
-      },
-      {
-        id: 'aiact', label: 'AI Act readiness',
-        value: 68, unit: '%', target: 100, trend: 8.5,
-        description: 'Systèmes HIGH risk documentés',
-        icon: 'smart_toy', state: 'warn'
-      }
-    ];
-    return of(data).pipe(delay(120));
+    return this.overview$.pipe(map(d => d.kpis.map(toKpiCard)));
   }
 
   getQualityTrend(): Observable<QualityTrendPoint[]> {
-    const labels = ['Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov',
-                    'Déc', 'Janv', 'Févr', 'Mars', 'Avr', 'Mai'];
-    const values = [88.4, 89.1, 90.2, 89.7, 91.5, 92.0,
-                    92.8, 93.1, 93.4, 93.6, 93.8, 94.2];
-    return of(labels.map((m, i) => ({ month: m, value: values[i], target: 95 })))
-      .pipe(delay(120));
+    return this.overview$.pipe(map(d => d.qualityTrend.map(p => ({
+      month: formatPeriod(p.periodStart),
+      value: p.value ?? 0,
+      target: p.targetValue ?? 0
+    }))));
   }
 
   getDefectsByCategory(): Observable<DefectByCategory[]> {
-    return of([
-      { category: 'Matière',    count: 42 },
-      { category: 'Méthode',    count: 31 },
-      { category: 'Main d\'œuvre', count: 27 },
-      { category: 'Machine',    count: 19 },
-      { category: 'Milieu',     count: 14 },
-      { category: 'Mesure',     count: 9  }
-    ]).pipe(delay(120));
+    return this.overview$.pipe(map(d => d.defectsByCategory.map(x => ({
+      category: x.category,
+      count: x.count
+    }))));
   }
 
   /**
-   * Drill-down niveau 2 : sous-causes d'une catégorie 6M de défaut.
-   * Synchrone (données du référentiel local) — alimente la vue détail quand
-   * une catégorie est sélectionnée par cross-filtering (§7.3).
+   * Heatmap de conformité : une ligne par norme adoptée, une colonne par section de la
+   * norme. Les scores viennent du moteur d'alignement du Standards Hub (§8.7).
    */
-  getDefectSubcategoriesSync(category: string): DefectByCategory[] {
-    const map: Record<string, DefectByCategory[]> = {
-      'Matière': [
-        { category: 'Lot fournisseur hors spéc.', count: 18 },
-        { category: 'Stockage / humidité', count: 14 },
-        { category: 'Mélange / dosage', count: 10 }
-      ],
-      'Méthode': [
-        { category: 'Gamme obsolète', count: 13 },
-        { category: 'Réglage opérateur', count: 11 },
-        { category: 'Instruction manquante', count: 7 }
-      ],
-      'Main d\'œuvre': [
-        { category: 'Formation insuffisante', count: 12 },
-        { category: 'Erreur de saisie', count: 9 },
-        { category: 'Fatigue / 3x8', count: 6 }
-      ],
-      'Machine': [
-        { category: 'Usure outil', count: 9 },
-        { category: 'Dérive capteur', count: 6 },
-        { category: 'Maintenance en retard', count: 4 }
-      ],
-      'Milieu': [
-        { category: 'Température atelier', count: 7 },
-        { category: 'Poussière / propreté', count: 5 },
-        { category: 'Vibrations', count: 2 }
-      ],
-      'Mesure': [
-        { category: 'Calibration expirée', count: 5 },
-        { category: 'Méthode de contrôle', count: 3 },
-        { category: 'Incertitude élevée', count: 1 }
-      ]
-    };
-    return map[category] ?? [];
-  }
-
-  /** Heatmap conformité — score 0..100 par clause de norme. */
   getComplianceHeatmap(): Observable<ComplianceHeatCell[]> {
-    const norms = ['ISO 9001', 'ISO 27001', 'ISO 14001', 'IATF 16949', 'AI Act'];
-    const clauses = ['§4', '§5', '§6', '§7', '§8', '§9', '§10'];
-    const seed = [
-      [88, 92, 78, 84, 71, 65, 70],
-      [62, 58, 72, 80, 55, 60, 65],
-      [70, 75, 68, 78, 82, 60, 72],
-      [85, 80, 72, 88, 90, 75, 70],
-      [45, 55, 62, 70, 50, 68, 72]
-    ];
-    const cells: ComplianceHeatCell[] = [];
-    norms.forEach((norm, i) =>
-      clauses.forEach((cl, j) => cells.push({ norm, clause: cl, score: seed[i][j] })));
-    return of(cells).pipe(delay(120));
+    return this.overview$.pipe(map(d => d.alignment.flatMap(bar =>
+      (bar.sections ?? []).map(section => ({
+        norm: bar.standardCode,
+        clause: `§${section.sectionCode}`,
+        score: Math.round(section.score)
+      }))
+    )));
   }
 
   getTopRisks(): Observable<TopRisk[]> {
-    return of<TopRisk[]>([
-      { id: 'r1', title: 'Dérive SPC ligne d\'extrusion B',
-        source: 'IoT Hub · Sigma déviation', severity: 'critical',
-        due: '2026-05-19', owner: 'Atelier 3' },
-      { id: 'r2', title: 'Audit ISO 27001 en retard',
-        source: 'Standards Hub', severity: 'high',
-        due: '2026-05-22', owner: 'RSSI' },
-      { id: 'r3', title: 'CAPA récidive — fournisseur Alpha',
-        source: 'Supplier Quality', severity: 'high',
-        due: '2026-05-25', owner: 'Achats' },
-      { id: 'r4', title: 'FRIA manquante — système RH (HIGH risk)',
-        source: 'AI Act · Art. 27', severity: 'critical',
-        due: '2026-05-30', owner: 'DPO' },
-      { id: 'r5', title: 'Calibration multimètre M-2241 expirée',
-        source: 'Calibration', severity: 'medium',
-        due: '2026-05-21', owner: 'Métrologie' }
-    ]).pipe(delay(120));
+    return this.overview$.pipe(map(d => d.topRisks.map(r => ({
+      id: r.id,
+      title: r.title,
+      source: r.rpn != null ? `FMEA · RPN ${r.rpn}` : r.source,
+      sourceType: r.source === 'CAPA' ? 'CAPA' : 'FMEA',
+      severity: toSeverity(r.severity),
+      due: r.dueDate ?? undefined
+    }))));
   }
 
+  /**
+   * Prédictions IA (§6.5). Aucune prédiction n'est fabriquée ici : les modèles réels
+   * sont exposés par leurs propres pages (`/forecast` pour la prévision KPI,
+   * `/anomaly` pour la détection d'anomalies, `/spc` pour la dérive). Tant que
+   * l'agrégat exécutif ne les embarque pas, cette section reste vide — une absence
+   * assumée plutôt que des chiffres inventés.
+   */
   getAiPredictions(): Observable<AiPrediction[]> {
-    return of<AiPrediction[]>([
-      { id: 'p1', kind: 'drift',
-        title: 'Sortie limites SPC — ligne B',
-        detail: 'Probabilité 87 % d\'excursion 2σ sur la prochaine semaine.',
-        confidence: 0.87, horizon: '7 jours', state: 'bad' },
-      { id: 'p2', kind: 'objective',
-        title: 'Objectif FPY atteint',
-        detail: 'Probabilité 92 % d\'atteindre 95 % de FPY au 30 juin.',
-        confidence: 0.92, horizon: '45 jours', state: 'good' },
-      { id: 'p3', kind: 'supplier',
-        title: 'Risque fournisseur Beta',
-        detail: 'Hausse du risque NC matière (modèle XGBoost).',
-        confidence: 0.71, horizon: '30 jours', state: 'warn' },
-      { id: 'p4', kind: 'complaint',
-        title: 'Cluster réclamations cosmétique',
-        detail: 'NLP détecte un pattern émergent sur la finition (n=14).',
-        confidence: 0.68, horizon: '14 jours', state: 'warn' }
-    ]).pipe(delay(120));
+    return of([]);
   }
 
   getAlignmentBars(): Observable<AlignmentBar[]> {
-    return of<AlignmentBar[]>([
-      { standardCode: 'iso-9001',   standardName: 'ISO 9001:2015',       score: 76, status: 'IN_PROGRESS' },
-      { standardCode: 'iso-27001',  standardName: 'ISO/IEC 27001:2022',  score: 62, status: 'IN_PROGRESS' },
-      { standardCode: 'iso-14001',  standardName: 'ISO 14001:2015',      score: 71, status: 'IN_PROGRESS' },
-      { standardCode: 'iatf-16949', standardName: 'IATF 16949:2016',     score: 80, status: 'IN_PROGRESS' },
-      { standardCode: 'ai-act',     standardName: 'EU AI Act 2024/1689', score: 58, status: 'PLANNING'    }
-    ]).pipe(delay(120));
+    return this.overview$.pipe(map(d => d.alignment.map(b => ({
+      standardCode: b.standardCode,
+      standardName: b.standardName,
+      score: Math.round(b.score),
+      status: b.status
+    }))));
   }
+
+  /**
+   * Drill-down niveau 2 (§7.3). Le référentiel NC ne modélise pas de sous-catégorie :
+   * il n'y a donc rien de réel à afficher sous une catégorie 6M. La liste est vide tant
+   * que le modèle ne porte pas cette dimension.
+   */
+  getDefectSubcategoriesSync(_category: string): DefectByCategory[] {
+    return [];
+  }
+}
+
+/** Réponse neutre utilisée quand l'API est indisponible. */
+const EMPTY_DASHBOARD: ExecutiveDashboardResponse = {
+  kpis: [], qualityTrend: [], defectsByCategory: [], topRisks: [], alignment: [],
+  generatedAt: ''
+};
+
+/** Correspondance santé serveur → état visuel de la carte. */
+function toState(health: string): KpiState {
+  switch (health) {
+    case 'OK': return 'good';
+    case 'WARNING': return 'warn';
+    case 'CRITICAL': return 'bad';
+    default: return 'neutral';
+  }
+}
+
+function toSeverity(severity: string): TopRisk['severity'] {
+  switch (severity) {
+    case 'CRITICAL': return 'critical';
+    case 'HIGH': return 'high';
+    default: return 'medium';
+  }
+}
+
+/**
+ * Icône de la carte, déduite de la catégorie du KPI. Le catalogue ne porte pas d'icône
+ * (c'est une préoccupation de présentation, pas de définition d'indicateur).
+ */
+function iconFor(category: string | null): string {
+  switch ((category ?? '').toLowerCase()) {
+    case 'capa-actions': return 'engineering';
+    case 'compliance': return 'workspace_premium';
+    case 'audit': return 'fact_check';
+    case 'supplier': return 'local_shipping';
+    case 'risk': return 'warning';
+    case 'cost': return 'paid';
+    default: return 'monitoring';
+  }
+}
+
+function toKpiCard(k: ExecutiveDashboardResponse['kpis'][number]): KpiCard {
+  return {
+    id: k.kpiId,
+    label: k.name,
+    // Une carte sans mesure reste affichée : c'est une information en soi (le KPI est
+    // défini mais pas encore mesuré), et la masquer ferait mentir le catalogue.
+    value: k.value ?? '—',
+    unit: k.unit ?? '',
+    trend: k.trendDelta ?? undefined,
+    target: k.targetValue ?? undefined,
+    description: k.description ?? '',
+    icon: iconFor(k.category),
+    state: toState(k.health),
+    trendInvertedIsGood: k.direction === 'LOWER_IS_BETTER'
+  };
+}
+
+/** Libellé d'axe : `2026-05` — court, trié naturellement, indépendant de la locale. */
+function formatPeriod(iso: string | null): string {
+  if (!iso) return '';
+  return iso.slice(0, 7);
 }

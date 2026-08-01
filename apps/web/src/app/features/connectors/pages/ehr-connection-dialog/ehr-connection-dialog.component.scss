@@ -1,0 +1,32 @@
+/* Formulaire de connexion FHIR — même gabarit que les deux autres connecteurs :
+   passer d'un onglet à l'autre ne doit demander aucun réapprentissage. URL, secret
+   et catégorie restent pleine largeur, ce sont des valeurs longues qu'on relit. */
+
+.conn-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: min(600px, 78vw);
+  padding-top: 4px;
+}
+
+.conn-form mat-form-field { width: 100%; }
+
+.conn-form__row { display: flex; gap: 12px; align-items: flex-start; }
+.conn-form__grow { flex: 1 1 0; min-width: 0; }
+.conn-form__provider { flex: 0 1 240px; min-width: 0; }
+
+.conn-form__error {
+  padding: 10px 14px;
+  margin: 0 0 12px;
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-danger-bg-soft);
+  color: var(--qos-danger-fg);
+  font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  .conn-form { min-width: 0; }
+  .conn-form__row { flex-direction: column; gap: 0; }
+  .conn-form__provider { flex: 1 1 auto; width: 100%; }
+}

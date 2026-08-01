@@ -1,0 +1,43 @@
+/* Formulaire d'abonnement webhook — une colonne : chaque champ est une décision
+   distincte (destination, périmètre d'évènements, résilience, secret). */
+
+.wh-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: min(560px, 78vw);
+  padding-top: 4px;
+}
+
+.wh-form mat-form-field { width: 100%; }
+
+.wh-form__error {
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-danger-bg-soft);
+  color: var(--qos-danger-fg);
+  font-size: 13px;
+}
+
+/* Avertissement non bloquant : l'enregistrement va retirer des données existantes. */
+.wh-form__warn {
+  margin: -4px 0 12px;
+  font-size: 12px;
+  color: var(--qos-warn-fg);
+}
+
+.wh-form__warn code {
+  font-family: 'IBM Plex Mono', 'Fira Code', monospace;
+  word-break: break-all;
+}
+
+.wh-form__note {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--qos-fg-secondary);
+}
+
+@media (max-width: 600px) {
+  .wh-form { min-width: 0; }
+}

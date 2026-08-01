@@ -1,0 +1,79 @@
+<qos-form-dialog
+  [title]="title"
+  [subtitle]="data.deviceName"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  [submitLabel]="submitLabel"
+  submitIcon="check"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@iot.telemetry.metric">Métrique</mat-label>
+    <input matInput formControlName="metric" maxlength="100" required
+           placeholder="Ex. : temperature">
+  </mat-form-field>
+
+  <div class="known" *ngIf="data.knownMetrics.length">
+    <span class="known__label" i18n="@@iot.telemetry-dialog.known">Déjà relevées</span>
+    <button type="button" mat-stroked-button class="known__chip"
+            *ngFor="let m of data.knownMetrics" (click)="useMetric(m)">{{ m }}</button>
+  </div>
+
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@iot.threshold.min">Borne basse</mat-label>
+      <input matInput type="number" step="any" formControlName="minValue">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@iot.threshold.max">Borne haute</mat-label>
+      <input matInput type="number" step="any" formControlName="maxValue">
+    </mat-form-field>
+  </div>
+
+  <p class="hint error" *ngIf="form.hasError('boundsRequired')"
+     i18n="@@iot.threshold-dialog.bounds-required">
+    Renseignez au moins une borne, basse ou haute.
+  </p>
+  <p class="hint error" *ngIf="form.hasError('boundsInverted')"
+     i18n="@@iot.threshold-dialog.bounds-inverted">
+    La borne basse doit être inférieure ou égale à la borne haute.
+  </p>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@iot.threshold.criticity">Criticité de la CAPA générée</mat-label>
+    <mat-select formControlName="capaCriticity" required>
+      <mat-option *ngFor="let c of criticities" [value]="c">{{ criticityLabel(c) }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@iot.threshold.fmea">Fiche FMEA liée</mat-label>
+    <input matInput formControlName="fmeaItemId"
+           placeholder="00000000-0000-0000-0000-000000000000">
+    <mat-hint i18n="@@iot.threshold-dialog.fmea-hint">
+      Identifiant d'une fiche FMEA du tenant, rappelé dans la CAPA générée. Facultatif.
+    </mat-hint>
+    <mat-error *ngIf="form.controls.fmeaItemId.hasError('pattern')"
+               i18n="@@iot.threshold-dialog.fmea-invalid">
+      Identifiant invalide : un UUID est attendu.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-checkbox formControlName="enabled" class="toggle">
+    <span i18n="@@iot.threshold-dialog.enabled-label">Seuil actif</span>
+  </mat-checkbox>
+  <p class="hint" i18n="@@iot.threshold-dialog.enabled-hint">
+    Un seuil inactif reste enregistré mais n'est plus évalué à l'ingestion.
+  </p>
+
+  <mat-checkbox formControlName="openPdcaCycle" class="toggle">
+    <span i18n="@@iot.threshold-dialog.pdca-label">Ouvrir aussi un cycle PDCA</span>
+  </mat-checkbox>
+  <p class="hint" i18n="@@iot.threshold-dialog.pdca-hint">
+    En plus de la CAPA, un cycle d'amélioration est créé et référencé dans la CAPA.
+  </p>
+
+</qos-form-dialog>

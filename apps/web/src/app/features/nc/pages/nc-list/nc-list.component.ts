@@ -43,7 +43,9 @@ export class NcListComponent implements OnInit {
   private readonly errorState$ = new BehaviorSubject<string | null>(null);
   readonly error$ = deferredView(this.errorState$);
 
-  private readonly refresh$ = new BehaviorSubject<void>(undefined);
+  // `page$` amorce à lui seul le combineLatest et rejoue à chaque rechargement
+  // voulu : un second sujet « refresh » ferait partir DEUX requêtes pour une
+  // déclaration (course entre les deux réponses, la plus ancienne pouvant gagner).
   private readonly page$ = new BehaviorSubject<{ index: number; size: number }>({ index: 0, size: 20 });
 
   constructor(
@@ -57,8 +59,7 @@ export class NcListComponent implements OnInit {
       this.statusFilter.valueChanges.pipe(startWith(this.statusFilter.value)),
       this.severityFilter.valueChanges.pipe(startWith(this.severityFilter.value)),
       this.categoryFilter.valueChanges.pipe(startWith(this.categoryFilter.value)),
-      this.page$,
-      this.refresh$
+      this.page$
     ]).pipe(
       tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
       switchMap(([status, severity, category, p]) =>
@@ -101,7 +102,6 @@ export class NcListComponent implements OnInit {
       if (created) {
         this.pageIndex = 0;
         this.page$.next({ index: 0, size: this.pageSize });
-        this.refresh$.next();
       }
     });
   }

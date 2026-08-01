@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
-import { Subject } from 'rxjs';
+import { Subject, firstValueFrom } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { ConnectivityService } from '../../core/offline/connectivity.service';
@@ -92,6 +92,72 @@ describe('NcService (mock mode)', () => {
       expect(n.capaCaseId).toBeTruthy();
       done();
     });
+  });
+
+  it('retombe sur la première NC quand l\'identifiant est inconnu (démo sans backend)', async () => {
+    const n = await firstValueFrom(service.getNc('inexistante'));
+    expect(n.id).toBe('nc-1');
+  });
+
+  it('renvoie une page vide quand aucun filtre ne matche', async () => {
+    const page = await firstValueFrom(service.listNcs(0, 50, { status: 'CLOSED' }));
+    expect(page.content).toEqual([]);
+    expect(page.totalElements).toBe(0);
+  });
+
+  it('updateNc ne modifie que les champs fournis et rafraîchit updatedAt', async () => {
+    const before = await firstValueFrom(service.getNc('nc-2'));
+    const updated = await firstValueFrom(
+      service.updateNc('nc-2', { title: 'Fuite hydraulique presse 4 — reprise', zone: 'Atelier 2' }));
+
+    expect(updated.title).toBe('Fuite hydraulique presse 4 — reprise');
+    expect(updated.zone).toBe('Atelier 2');
+    // les champs absents de la requête restent inchangés
+    expect(updated.severity).toBe(before.severity);
+    expect(updated.description).toBe(before.description);
+    expect(updated.status).toBe(before.status);
+    expect(updated.updatedAt).toBeTruthy();
+  });
+
+  it('updateNc sur un identifiant inconnu ne crée rien et retombe sur la première NC', async () => {
+    const n = await firstValueFrom(service.updateNc('inexistante', { title: 'X' }));
+    expect(n.id).toBe('nc-1');
+    expect(n.title).not.toBe('X');
+  });
+
+  it('defineAction fait passer la NC en ACTION_DEFINED', async () => {
+    const n = await firstValueFrom(service.defineAction('nc-1'));
+    expect(n.status).toBe('ACTION_DEFINED');
+  });
+
+  it('close horodate la clôture, cancel marque l\'abandon', async () => {
+    const closed = await firstValueFrom(service.close('nc-1'));
+    expect(closed.status).toBe('CLOSED');
+    expect(closed.closedAt).toBeTruthy();
+
+    const cancelled = await firstValueFrom(service.cancel('nc-2'));
+    expect(cancelled.status).toBe('CANCELLED');
+  });
+
+  it('les photos simulées sont cloisonnées par NC (ajout, lecture, suppression)', async () => {
+    const file = new File([new Uint8Array([1, 2])], 'poste.jpg', { type: 'image/jpeg' });
+    const photo = await firstValueFrom(service.uploadPhoto('nc-1', file));
+    expect(photo.originalFilename).toBe('poste.jpg');
+    expect(photo.sizeBytes).toBe(2);
+
+    expect((await firstValueFrom(service.listPhotos('nc-1'))).length).toBe(1);
+    // une autre NC ne voit pas la photo de la première
+    expect(await firstValueFrom(service.listPhotos('nc-2'))).toEqual([]);
+
+    await firstValueFrom(service.deletePhoto('nc-1', photo.id));
+    expect(await firstValueFrom(service.listPhotos('nc-1'))).toEqual([]);
+  });
+
+  it('la suppression d\'une photo inconnue est sans effet (pas d\'erreur)', async () => {
+    const file = new File([new Uint8Array([1])], 'a.png', { type: 'image/png' });
+    await firstValueFrom(service.uploadPhoto('nc-1', file));
+    await firstValueFrom(service.deletePhoto('nc-1', 'photo-absente'));
+    expect((await firstValueFrom(service.listPhotos('nc-1'))).length).toBe(1);
   });
 
   it('analyzePhotoVision renvoie un résultat simulé déterministe', (done) => {
@@ -213,6 +279,109 @@ describe('NcService (offline-first, API réelle)', () => {
       severity: 'MAJOR', status: 'ACTION_DEFINED', detectedAt: '', createdAt: '',
       updatedAt: '', capaCaseId: 'capa-1'
     });
+  });
+
+  it('listNcs pagine et n\'envoie que les filtres renseignés', () => {
+    service.listNcs(3, 25, { severity: 'CRITICAL' }).subscribe();
+    const req = httpMock.expectOne(r => r.url === endpoint);
+    expect(req.request.method).toBe('GET');
+    expect(req.request.params.get('page')).toBe('3');
+    expect(req.request.params.get('size')).toBe('25');
+    expect(req.request.params.get('severity')).toBe('CRITICAL');
+    expect(req.request.params.has('status')).toBeFalse();
+    expect(req.request.params.has('category')).toBeFalse();
+    req.flush({ content: [], totalElements: 0, totalPages: 0, number: 3, size: 25 });
+  });
+
+  it('listNcs transmet les trois filtres combinés', () => {
+    service.listNcs(0, 20, { status: 'OPEN', severity: 'MAJOR', category: 'SAFETY' }).subscribe();
+    const req = httpMock.expectOne(r => r.url === endpoint);
+    expect(req.request.params.get('status')).toBe('OPEN');
+    expect(req.request.params.get('severity')).toBe('MAJOR');
+    expect(req.request.params.get('category')).toBe('SAFETY');
+    req.flush({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 20 });
+  });
+
+  it('listNcs propage le 403 (module non activé / droits insuffisants)', (done) => {
+    service.listNcs().subscribe({
+      next: () => done.fail('ne devrait pas réussir'),
+      error: err => { expect(err.status).toBe(403); done(); }
+    });
+    httpMock.expectOne(r => r.url === endpoint)
+      .flush({ title: 'Forbidden' }, { status: 403, statusText: 'Forbidden' });
+  });
+
+  it('getNc lit la fiche par identifiant', (done) => {
+    service.getNc('a1').subscribe(n => { expect(n.id).toBe('a1'); done(); });
+    const req = httpMock.expectOne(`${endpoint}/a1`);
+    expect(req.request.method).toBe('GET');
+    req.flush({
+      id: 'a1', reference: 'NC-2026-1', title: 't', category: 'PROCESS',
+      severity: 'MAJOR', status: 'OPEN', detectedAt: '', createdAt: '', updatedAt: ''
+    });
+  });
+
+  it('updateNc envoie un PUT avec les seuls champs modifiés', (done) => {
+    service.updateNc('a1', { title: 'Corrigé', zone: 'Zone B' }).subscribe(() => done());
+    const req = httpMock.expectOne(`${endpoint}/a1`);
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.body).toEqual({ title: 'Corrigé', zone: 'Zone B' });
+    req.flush({
+      id: 'a1', reference: 'NC-2026-1', title: 'Corrigé', category: 'PROCESS',
+      severity: 'MAJOR', status: 'OPEN', detectedAt: '', createdAt: '', updatedAt: ''
+    });
+  });
+
+  it('resolve envoie la note de résolution', (done) => {
+    service.resolve('a1', { resolutionNote: 'Joint remplacé.' }).subscribe(n => {
+      expect(n.status).toBe('RESOLVED');
+      done();
+    });
+    const req = httpMock.expectOne(`${endpoint}/a1/resolve`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ resolutionNote: 'Joint remplacé.' });
+    req.flush({
+      id: 'a1', reference: 'NC-2026-1', title: 't', category: 'PROCESS',
+      severity: 'MAJOR', status: 'RESOLVED', detectedAt: '', createdAt: '', updatedAt: ''
+    });
+  });
+
+  it('close et cancel postent sur leurs sous-ressources avec un corps vide', (done) => {
+    service.close('a1').subscribe();
+    const closeReq = httpMock.expectOne(`${endpoint}/a1/close`);
+    expect(closeReq.request.method).toBe('POST');
+    expect(closeReq.request.body).toEqual({});
+    closeReq.flush({
+      id: 'a1', reference: 'NC-2026-1', title: 't', category: 'PROCESS',
+      severity: 'MAJOR', status: 'CLOSED', detectedAt: '', createdAt: '', updatedAt: ''
+    });
+
+    service.cancel('a1').subscribe(n => { expect(n.status).toBe('CANCELLED'); done(); });
+    const cancelReq = httpMock.expectOne(`${endpoint}/a1/cancel`);
+    expect(cancelReq.request.body).toEqual({});
+    cancelReq.flush({
+      id: 'a1', reference: 'NC-2026-1', title: 't', category: 'PROCESS',
+      severity: 'MAJOR', status: 'CANCELLED', detectedAt: '', createdAt: '', updatedAt: ''
+    });
+  });
+
+  it('defineAction poste sur define-action et propage le 409 (transition interdite)', (done) => {
+    service.defineAction('a1').subscribe({
+      next: () => done.fail('la transition ne devrait pas aboutir'),
+      error: err => { expect(err.status).toBe(409); done(); }
+    });
+    const req = httpMock.expectOne(`${endpoint}/a1/define-action`);
+    expect(req.request.method).toBe('POST');
+    req.flush({ title: 'Conflict' }, { status: 409, statusText: 'Conflict' });
+  });
+
+  it('une transition hors-ligne échoue au lieu d\'être mise en file (workflow online-only)', (done) => {
+    connectivity.online = false;
+    service.close('a1').subscribe({
+      next: () => done.fail('ne devrait pas réussir hors-ligne'),
+      error: err => { expect(err.status).toBe(0); done(); }
+    });
+    httpMock.expectOne(`${endpoint}/a1/close`).error(new ProgressEvent('error'), { status: 0 });
   });
 
   // --- photos (upload binaire, online-only) ---------------------------------

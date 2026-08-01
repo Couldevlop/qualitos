@@ -45,6 +45,9 @@ export class ComplianceHubComponent {
       description: $localize`:@@compliance.ai.desc:Système qualité IA, conformité, incidents, base UE et surveillance post-marché du règlement européen sur l’IA.`,
       icon: 'smart_toy',
       views: [
+        // Le registre des systèmes est le SOCLE du module : toutes les autres vues
+        // ci-dessous se rattachent à un système déclaré ici. Il ouvre donc la liste.
+        { label: $localize`:@@compliance.ai.systems:Registre des systèmes d'IA`, route: '/ai-systems', icon: 'smart_toy' },
         { label: $localize`:@@compliance.ai.qms:Système qualité IA (QMS)`, route: '/ai-qms', icon: 'memory' },
         { label: $localize`:@@compliance.ai.conformity:Conformité`, route: '/ai-conformity', icon: 'verified_user' },
         { label: $localize`:@@compliance.ai.incidents:Incidents IA`, route: '/ai-incidents', icon: 'warning' },

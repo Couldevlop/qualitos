@@ -1,0 +1,37 @@
+/* Formulaire de connexion ERP — deux colonnes uniquement là où les champs vont
+   par paire (nom/fournisseur, compte/périmètre) ; URL et secret restent pleine
+   largeur car ce sont des valeurs longues qu'on relit caractère par caractère. */
+
+.conn-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: min(600px, 78vw);
+  padding-top: 4px;
+}
+
+.conn-form mat-form-field { width: 100%; }
+
+.conn-form__row { display: flex; gap: 12px; align-items: flex-start; }
+.conn-form__grow { flex: 1 1 0; min-width: 0; }
+.conn-form__provider { flex: 0 1 240px; min-width: 0; }
+
+.conn-form__hint-inline {
+  color: var(--qos-fg-secondary);
+  font-size: 12px;
+}
+
+.conn-form__error {
+  padding: 10px 14px;
+  margin: 0 0 12px;
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-danger-bg-soft);
+  color: var(--qos-danger-fg);
+  font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  .conn-form { min-width: 0; }
+  .conn-form__row { flex-direction: column; gap: 0; }
+  .conn-form__provider { flex: 1 1 auto; width: 100%; }
+}

@@ -5,7 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -103,6 +105,24 @@ public class CircleController {
     public CircleDto.MeetingMinutes generateMinutes(@PathVariable UUID id, @PathVariable UUID mid,
                                                     @Valid @RequestBody CircleDto.GenerateMinutesRequest req) {
         return service.generateMinutes(id, mid, req);
+    }
+
+    /**
+     * §3.3 — transcrit l'enregistrement audio d'une réunion (Whisper via la passerelle IA).
+     *
+     * <p>Complète {@code /minutes/generate} : jusqu'ici l'animateur devait saisir le
+     * transcript à la main. Le texte renvoyé est destiné à être relu puis soumis à la
+     * génération de compte-rendu — l'humain reste dans la boucle (§12.3).
+     */
+    @PostMapping(value = "/{id}/meetings/{mid}/minutes/transcribe",
+                 consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public CircleDto.MeetingTranscript transcribeMinutes(
+            @PathVariable UUID id,
+            @PathVariable UUID mid,
+            @RequestPart("file") MultipartFile file,
+            @RequestParam(value = "language", required = false) String language) {
+        return service.transcribeMeeting(id, mid, file, language);
     }
 
     // proposals

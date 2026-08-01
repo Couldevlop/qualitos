@@ -12,7 +12,7 @@
     </div>
 
     <nav class="qos-sidebar__nav">
-      <div class="qos-sidebar__group" *ngFor="let section of sections" role="group"
+      <div class="qos-sidebar__group" *ngFor="let section of (visibleSections$ | async) ?? []" role="group"
            [attr.aria-label]="section.label">
         <!-- En-tête de section : bouton repliable ou simple libellé -->
         <ng-container *ngIf="!collapsed">
@@ -118,19 +118,75 @@
         <qos-theme-toggle></qos-theme-toggle>
 
         <button type="button" class="qos-topbar__icon-btn"
+                [matMenuTriggerFor]="notificationsMenu"
+                (menuOpened)="openNotifications()"
                 aria-label="Notifications" i18n-aria-label="@@shell.notifications.aria">
           <span class="material-symbols-outlined" aria-hidden="true">notifications</span>
-          <span class="qos-topbar__dot" aria-hidden="true"></span>
+          <span class="qos-topbar__badge"
+                *ngIf="(unreadCount$ | async) as unread"
+                [class.qos-topbar__badge--wide]="unread > 9">{{ unread > 9 ? '9+' : unread }}</span>
         </button>
 
+        <mat-menu #notificationsMenu="matMenu" class="qos-notifications-panel" xPosition="before">
+          <div class="qos-notifications__head" (click)="$event.stopPropagation()">
+            <span class="qos-notifications__title" i18n="@@shell.notifications.title">Notifications</span>
+            <button mat-button type="button"
+                    *ngIf="notifications.length"
+                    (click)="markAllNotificationsRead(); $event.stopPropagation()"
+                    i18n="@@shell.notifications.mark-all">Tout marquer comme lu</button>
+          </div>
+
+          <div class="qos-notifications__state" *ngIf="notificationsLoading"
+               i18n="@@common.loading">Chargement…</div>
+
+          <div class="qos-notifications__state"
+               *ngIf="!notificationsLoading && !notifications.length"
+               i18n="@@shell.notifications.empty">Aucune notification.</div>
+
+          <button mat-menu-item type="button"
+                  *ngFor="let n of notifications"
+                  class="qos-notification"
+                  [class.qos-notification--unread]="!n.read"
+                  (click)="onNotificationClick(n)">
+            <span class="material-symbols-outlined qos-notification__icon"
+                  [attr.data-type]="n.type" aria-hidden="true">{{ notificationIcon(n.type) }}</span>
+            <span class="qos-notification__text">
+              <span class="qos-notification__title">{{ n.title }}</span>
+              <span class="qos-notification__body" *ngIf="n.body">{{ n.body }}</span>
+              <span class="qos-notification__date">{{ n.createdAt | date:'short' }}</span>
+            </span>
+          </button>
+        </mat-menu>
+
         <ng-container *ngIf="user$ | async as user">
-          <button type="button" class="qos-topbar__user" [attr.aria-label]="'Profil ' + user.displayName">
+          <button type="button" class="qos-topbar__user"
+                  [matMenuTriggerFor]="userMenu"
+                  [attr.aria-label]="'Profil ' + user.displayName">
             <span class="qos-topbar__avatar">{{ initials(user.displayName) }}</span>
             <span class="qos-topbar__user-name">{{ user.displayName }}</span>
             <span class="material-symbols-outlined qos-topbar__user-caret" aria-hidden="true">
               expand_more
             </span>
           </button>
+
+          <mat-menu #userMenu="matMenu" class="qos-user-panel" xPosition="before">
+            <div class="qos-user__head" (click)="$event.stopPropagation()">
+              <span class="qos-user__name">{{ user.displayName }}</span>
+              <span class="qos-user__roles">{{ user.roles.join(' · ') }}</span>
+            </div>
+            <a mat-menu-item routerLink="/learning">
+              <span class="material-symbols-outlined" aria-hidden="true">military_tech</span>
+              <span i18n="@@nav.mon-apprentissage">Mon apprentissage</span>
+            </a>
+            <a mat-menu-item routerLink="/offline-queue">
+              <span class="material-symbols-outlined" aria-hidden="true">cloud_sync</span>
+              <span i18n="@@shell.user.offline-queue">File de synchronisation</span>
+            </a>
+            <button mat-menu-item type="button" (click)="logout()">
+              <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+              <span i18n="@@shell.user.logout">Se déconnecter</span>
+            </button>
+          </mat-menu>
         </ng-container>
       </div>
     </header>
@@ -138,5 +194,13 @@
     <main class="qos-shell__content">
       <router-outlet></router-outlet>
     </main>
+
+    <footer class="qos-shell__footer">
+      <span class="qos-shell__footer-copy">© {{ currentYear }} Openlab Consulting</span>
+      <span class="qos-shell__footer-sep" aria-hidden="true">·</span>
+      <a class="qos-shell__footer-link"
+         href="https://www.openlabconsulting.com"
+         target="_blank" rel="noopener noreferrer">www.openlabconsulting.com</a>
+    </footer>
   </div>
 </div>

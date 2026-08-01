@@ -1,0 +1,20 @@
+/* Saisie de calibration : date + verdict en tête (ce qui décide de la suite),
+   traçabilité et mesures ensuite. */
+.full { width: 100%; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; }
+.col { flex: 1 1 220px; min-width: 0; }
+
+.by-me { margin: 0 0 8px; }
+
+.warn {
+  margin: 0 0 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  background: #fbe9e7;
+  color: #b71c1c;
+}
+
+@media (max-width: 600px) {
+  .row { flex-direction: column; gap: 0; }
+}

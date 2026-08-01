@@ -1,0 +1,324 @@
+<section class="calibration-detail">
+
+  <a class="back" routerLink="/calibration">
+    <mat-icon inline>arrow_back</mat-icon>
+    <span i18n="@@calibration.detail.back">Retour aux équipements</span>
+  </a>
+
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
+
+  <ng-container *ngIf="detail$ | async as d">
+
+    <header class="head">
+      <div class="head__id">
+        <h1>{{ d.equipment.name }}</h1>
+        <div class="head__meta">
+          <code>{{ d.equipment.code }}</code>
+          <span class="qos-badge" [attr.data-tone]="statusTone(d.equipment.status)">
+            {{ statusLabel(d.equipment.status) }}
+          </span>
+          <span class="qos-badge" data-tone="danger" *ngIf="d.equipment.critical"
+                i18n="@@calibration.critical">Critique</span>
+        </div>
+        <dl class="specs">
+          <div *ngIf="d.equipment.manufacturer">
+            <dt i18n="@@calibration.manufacturer">Fabricant</dt>
+            <dd>{{ d.equipment.manufacturer }}</dd>
+          </div>
+          <div *ngIf="d.equipment.model">
+            <dt i18n="@@calibration.model">Modèle</dt>
+            <dd>{{ d.equipment.model }}</dd>
+          </div>
+          <div *ngIf="d.equipment.serialNumber">
+            <dt i18n="@@calibration.serial">N° de série</dt>
+            <dd>{{ d.equipment.serialNumber }}</dd>
+          </div>
+          <div *ngIf="d.equipment.location">
+            <dt i18n="@@calibration.col-location">Emplacement</dt>
+            <dd>{{ d.equipment.location }}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="head__actions">
+        <button mat-stroked-button *ngIf="!isRetired(d)" [disabled]="pending" (click)="edit(d)">
+          <mat-icon>edit</mat-icon>
+          <span i18n="@@common.edit">Modifier</span>
+        </button>
+
+        <button mat-stroked-button *ngIf="d.equipment.status === 'ACTIVE'"
+                [disabled]="pending" (click)="outOfService(d)">
+          <mat-icon>pause_circle</mat-icon>
+          <span i18n="@@calibration.detail.set-out-of-service">Mettre hors service</span>
+        </button>
+
+        <button mat-flat-button color="primary" *ngIf="d.equipment.status === 'OUT_OF_SERVICE'"
+                [disabled]="pending || !canReturnToService(d)"
+                [matTooltip]="canReturnToService(d) ? '' : blockedReturnHint"
+                (click)="returnToService(d)">
+          <mat-icon>play_circle</mat-icon>
+          <span i18n="@@calibration.detail.return-to-service">Remettre en service</span>
+        </button>
+
+        <button mat-stroked-button *ngIf="!isRetired(d)" [disabled]="pending" (click)="retire(d)">
+          <mat-icon>archive</mat-icon>
+          <span i18n="@@calibration.detail.retire">Réformer</span>
+        </button>
+
+        <button mat-button color="warn" *ngIf="canDelete" [disabled]="pending" (click)="remove(d)">
+          <mat-icon>delete</mat-icon>
+          <span i18n="@@common.delete">Supprimer</span>
+        </button>
+      </div>
+    </header>
+
+    <p class="retired-note" *ngIf="isRetired(d)" i18n="@@calibration.detail.retired-note">
+      Instrument réformé : l'historique reste consultable, aucune modification n'est plus possible.
+    </p>
+
+    <!-- Synthèse : l'échéance d'abord, c'est l'information critique du module. -->
+    <div class="tiles">
+      <div class="tile" [attr.data-tone]="d.summary.overdue ? 'danger' : 'neutral'">
+        <span class="tile__label" i18n="@@calibration.detail.next-due">Prochaine calibration</span>
+        <span class="tile__value" *ngIf="d.summary.nextDueOn">
+          {{ d.summary.nextDueOn | date:'mediumDate' }}
+        </span>
+        <span class="tile__value dim" *ngIf="!d.summary.nextDueOn">—</span>
+        <span class="qos-badge" data-tone="danger" *ngIf="d.summary.overdue"
+              i18n="@@calibration.due.overdue">En retard</span>
+      </div>
+
+      <div class="tile">
+        <span class="tile__label" i18n="@@calibration.detail.last-calibrated">Dernière calibration</span>
+        <span class="tile__value" *ngIf="d.summary.lastCalibratedOn">
+          {{ d.summary.lastCalibratedOn | date:'mediumDate' }}
+        </span>
+        <span class="tile__value dim" *ngIf="!d.summary.lastCalibratedOn">—</span>
+        <span class="qos-badge" [attr.data-tone]="resultTone(d.summary.lastResult)"
+              *ngIf="d.summary.lastResult">{{ resultLabel(d.summary.lastResult) }}</span>
+      </div>
+
+      <div class="tile">
+        <span class="tile__label" i18n="@@calibration.detail.records-breakdown">Enregistrements</span>
+        <span class="tile__value">{{ d.records.length }}</span>
+        <span class="tile__detail">
+          <span class="qos-badge" data-tone="success">{{ d.summary.passRecords }}</span>
+          <span class="qos-badge" data-tone="warn">{{ d.summary.conditionalRecords }}</span>
+          <span class="qos-badge" data-tone="danger">{{ d.summary.failRecords }}</span>
+        </span>
+      </div>
+
+      <div class="tile">
+        <span class="tile__label" i18n="@@calibration.detail.msa-breakdown">Études MSA</span>
+        <span class="tile__value">{{ d.msa.length }}</span>
+        <span class="tile__detail">
+          <span class="qos-badge" data-tone="success">{{ d.summary.msaPass }}</span>
+          <span class="qos-badge" data-tone="danger">{{ d.summary.msaFail }}</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Plan de calibration -->
+    <section class="panel">
+      <div class="panel__head">
+        <h2 i18n="@@calibration.detail.plan-title">Plan de calibration</h2>
+        <div class="panel__actions">
+          <button mat-stroked-button *ngIf="!isRetired(d)" [disabled]="pending" (click)="editPlan(d)">
+            <mat-icon>{{ d.plan ? 'edit_calendar' : 'event_available' }}</mat-icon>
+            <span *ngIf="d.plan" i18n="@@calibration.detail.plan-edit">Modifier le plan</span>
+            <span *ngIf="!d.plan" i18n="@@calibration.detail.plan-create">Définir un plan</span>
+          </button>
+          <button mat-button color="warn" *ngIf="canDeletePlan(d)"
+                  [disabled]="pending" (click)="removePlan(d)">
+            <mat-icon>delete</mat-icon>
+            <span i18n="@@calibration.detail.plan-delete">Supprimer le plan</span>
+          </button>
+        </div>
+      </div>
+
+      <dl class="plan" *ngIf="d.plan as p; else noPlan">
+        <div>
+          <dt i18n="@@calibration.plan.frequency">Périodicité</dt>
+          <dd i18n="@@calibration.plan.frequency-value">{{ p.frequencyMonths }} mois</dd>
+        </div>
+        <div>
+          <dt i18n="@@calibration.plan.next-due">Prochaine échéance</dt>
+          <dd>
+            <span *ngIf="p.nextDueOn">{{ p.nextDueOn | date:'mediumDate' }}</span>
+            <span class="dim" *ngIf="!p.nextDueOn">—</span>
+            <span class="qos-badge" data-tone="danger" *ngIf="p.overdue"
+                  i18n="@@calibration.due.overdue">En retard</span>
+          </dd>
+        </div>
+        <div>
+          <dt i18n="@@calibration.plan.last-calibrated">Dernière calibration</dt>
+          <dd>
+            <span *ngIf="p.lastCalibratedOn">{{ p.lastCalibratedOn | date:'mediumDate' }}</span>
+            <span class="dim" *ngIf="!p.lastCalibratedOn">—</span>
+          </dd>
+        </div>
+        <div *ngIf="p.procedureReference">
+          <dt i18n="@@calibration.plan.procedure">Procédure</dt>
+          <dd>{{ p.procedureReference }}</dd>
+        </div>
+        <div *ngIf="p.tolerance">
+          <dt i18n="@@calibration.plan.tolerance">Tolérance</dt>
+          <dd>{{ p.tolerance }}</dd>
+        </div>
+        <div *ngIf="p.accreditationRef">
+          <dt i18n="@@calibration.plan.accreditation">Accréditation</dt>
+          <dd>{{ p.accreditationRef }}</dd>
+        </div>
+      </dl>
+
+      <ng-template #noPlan>
+        <p class="empty" i18n="@@calibration.detail.plan-empty">
+          Aucun plan configuré : cet instrument n'a pas d'échéance de calibration suivie.
+        </p>
+      </ng-template>
+    </section>
+
+    <!-- Enregistrements de calibration -->
+    <section class="panel">
+      <div class="panel__head">
+        <h2 i18n="@@calibration.detail.records-title">Enregistrements de calibration</h2>
+        <div class="panel__actions">
+          <button mat-flat-button color="primary" *ngIf="canRecord(d)"
+                  [disabled]="pending" (click)="addRecord(d)">
+            <mat-icon>add</mat-icon>
+            <span i18n="@@calibration.detail.record-add">Enregistrer une calibration</span>
+          </button>
+          <span class="dim" *ngIf="!canRecord(d) && !isRetired(d)"
+                i18n="@@calibration.detail.record-blocked">
+            Remettez l'instrument en service pour saisir une calibration.
+          </span>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table mat-table [dataSource]="d.records">
+          <ng-container matColumnDef="performedOn">
+            <th mat-header-cell *matHeaderCellDef i18n="@@calibration.record.performed-on">Date</th>
+            <td mat-cell *matCellDef="let r">{{ r.performedOn | date:'mediumDate' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="result">
+            <th mat-header-cell *matHeaderCellDef i18n="@@calibration.record.result">Résultat</th>
+            <td mat-cell *matCellDef="let r">
+              <span class="qos-badge" [attr.data-tone]="resultTone(r.result)">
+                {{ resultLabel(r.result) }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="performedBy">
+            <th mat-header-cell *matHeaderCellDef i18n="@@calibration.record.performed-by">Réalisée par</th>
+            <td mat-cell *matCellDef="let r">
+              <span *ngIf="r.performedByOrg">{{ r.performedByOrg }}</span>
+              <span class="dim" *ngIf="!r.performedByOrg && r.performedByUserId"
+                    i18n="@@calibration.record.internal">Interne</span>
+              <span class="dim" *ngIf="!r.performedByOrg && !r.performedByUserId">—</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="certificate">
+            <th mat-header-cell *matHeaderCellDef i18n="@@calibration.record.certificate">Certificat</th>
+            <td mat-cell *matCellDef="let r">
+              <span *ngIf="r.certificateReference">{{ r.certificateReference }}</span>
+              <span class="dim" *ngIf="!r.certificateReference">—</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="nextDueOverride">
+            <th mat-header-cell *matHeaderCellDef i18n="@@calibration.record.next-due-override">Échéance forcée</th>
+            <td mat-cell *matCellDef="let r">
+              <span *ngIf="r.nextDueOverride">{{ r.nextDueOverride | date:'mediumDate' }}</span>
+              <span class="dim" *ngIf="!r.nextDueOverride">—</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="measurements">
+            <th mat-header-cell *matHeaderCellDef i18n="@@calibration.record.measurements">Mesures</th>
+            <td mat-cell *matCellDef="let r">
+              <span class="measurements" *ngIf="r.measurements">{{ r.measurements }}</span>
+              <span class="dim" *ngIf="!r.measurements">—</span>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="recordColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: recordColumns"></tr>
+        </table>
+
+        <p class="empty" *ngIf="d.records.length === 0" i18n="@@calibration.detail.records-empty">
+          Aucune calibration enregistrée pour cet instrument.
+        </p>
+      </div>
+    </section>
+
+    <!-- Études MSA -->
+    <section class="panel">
+      <div class="panel__head">
+        <h2 i18n="@@calibration.detail.msa-title">Études MSA</h2>
+        <div class="panel__actions">
+          <button mat-stroked-button *ngIf="!isRetired(d)" [disabled]="pending" (click)="addMsa(d)">
+            <mat-icon>add</mat-icon>
+            <span i18n="@@calibration.detail.msa-add">Ajouter une étude</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table mat-table [dataSource]="d.msa">
+          <ng-container matColumnDef="performedOn">
+            <th mat-header-cell *matHeaderCellDef i18n="@@calibration.record.performed-on">Date</th>
+            <td mat-cell *matCellDef="let m">{{ m.performedOn | date:'mediumDate' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef i18n="@@calibration.msa.type">Type</th>
+            <td mat-cell *matCellDef="let m">{{ msaTypeLabel(m.type) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="studyValue">
+            <th mat-header-cell *matHeaderCellDef i18n="@@calibration.msa.value">Valeur</th>
+            <td mat-cell *matCellDef="let m">{{ m.studyValue }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="threshold">
+            <th mat-header-cell *matHeaderCellDef i18n="@@calibration.msa.threshold">Seuil</th>
+            <td mat-cell *matCellDef="let m">
+              <span *ngIf="m.passingThreshold !== null">{{ m.passingThreshold }}</span>
+              <span class="dim" *ngIf="m.passingThreshold === null">—</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="result">
+            <th mat-header-cell *matHeaderCellDef i18n="@@calibration.record.result">Résultat</th>
+            <td mat-cell *matCellDef="let m">
+              <span class="qos-badge" [attr.data-tone]="msaResultTone(m.result)">
+                {{ msaResultLabel(m.result) }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="notes">
+            <th mat-header-cell *matHeaderCellDef i18n="@@calibration.msa.notes">Commentaire</th>
+            <td mat-cell *matCellDef="let m">
+              <span class="measurements" *ngIf="m.notes">{{ m.notes }}</span>
+              <span class="dim" *ngIf="!m.notes">—</span>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="msaColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: msaColumns"></tr>
+        </table>
+
+        <p class="empty" *ngIf="d.msa.length === 0" i18n="@@calibration.detail.msa-empty">
+          Aucune étude MSA (R&amp;R, biais, linéarité, stabilité) pour cet instrument.
+        </p>
+      </div>
+    </section>
+
+  </ng-container>
+</section>

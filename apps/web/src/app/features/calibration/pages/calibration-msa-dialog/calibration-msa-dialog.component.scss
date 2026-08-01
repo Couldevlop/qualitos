@@ -1,0 +1,8 @@
+/* Étude MSA : type + date, puis valeur mesurée face à son seuil (elles se comparent). */
+.full { width: 100%; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; }
+.col { flex: 1 1 220px; min-width: 0; }
+
+@media (max-width: 600px) {
+  .row { flex-direction: column; gap: 0; }
+}

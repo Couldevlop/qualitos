@@ -1,0 +1,488 @@
+<div class="qos-page ims-hub">
+
+  <qos-page-header
+    eyebrow="Standards Hub" i18n-eyebrow="@@standards-extras.eyebrow"
+    title="Système intégré, audit blanc IA et preuves ancrées"
+    i18n-title="@@standards-extras.title"
+    subtitle="Trois leviers d'un même dossier de certification : mutualiser les exigences entre normes, se faire auditer par l'IA avant l'auditeur, et prouver que rien n'a bougé depuis."
+    i18n-subtitle="@@standards-extras.subtitle">
+  </qos-page-header>
+
+  <mat-tab-group class="hub-tabs" animationDuration="120ms">
+
+    <!-- ===================================================================
+         Onglet 1 — Matrice de co-couverture (§8.9)
+         =================================================================== -->
+    <mat-tab label="Co-couverture multi-normes" i18n-label="@@standards-extras.tab.coverage">
+      <div class="tab-body">
+
+        <qos-panel icon="layers"
+                   title="Périmètre comparé"
+                   i18n-title="@@standards-extras.coverage.scope-title"
+                   subtitle="Sans sélection explicite, les normes adoptées par votre organisation sont comparées entre elles."
+                   i18n-subtitle="@@standards-extras.coverage.scope-subtitle">
+          <div class="toolbar">
+            <mat-form-field appearance="outline" class="scope-select" subscriptSizing="dynamic">
+              <mat-label i18n="@@standards-extras.coverage.select-label">Normes à comparer</mat-label>
+              <mat-select multiple [formControl]="codesControl" (closed)="onStandardsClosed()"
+                          i18n-aria-label="@@standards-extras.coverage.select-aria"
+                          aria-label="Normes à inclure dans la matrice de co-couverture">
+                <mat-option *ngFor="let s of standards; trackBy: trackByStandard" [value]="s.code">
+                  {{ s.code }} — {{ s.fullName }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <button mat-stroked-button type="button" *ngIf="codesControl.value.length"
+                    (click)="clearStandards()">
+              <mat-icon aria-hidden="true">backspace</mat-icon>
+              <span i18n="@@standards-extras.coverage.reset">Revenir aux normes adoptées</span>
+            </button>
+
+            <button mat-stroked-button type="button" (click)="loadCoverage()"
+                    [disabled]="(coverageLoading$ | async) === true">
+              <mat-icon aria-hidden="true">refresh</mat-icon>
+              <span i18n="@@standards-extras.coverage.refresh">Actualiser</span>
+            </button>
+
+            <span class="qos-spacer"></span>
+
+            <mat-checkbox [checked]="sharedOnly" (change)="toggleSharedOnly($event.checked)">
+              <span i18n="@@standards-extras.coverage.shared-only">Clauses mutualisables uniquement</span>
+            </mat-checkbox>
+          </div>
+        </qos-panel>
+
+        <div class="tiles" *ngIf="tiles.length">
+          <div class="tile" *ngFor="let t of tiles; trackBy: trackByTile"
+               [attr.data-tone]="t.tone" [matTooltip]="t.hint">
+            <span class="tile__value">{{ t.value }}</span>
+            <span class="tile__label">{{ t.label }}</span>
+          </div>
+        </div>
+
+        <qos-panel icon="grid_on"
+                   title="Matrice de co-couverture"
+                   i18n-title="@@standards-extras.coverage.matrix-title"
+                   subtitle="Une ligne par clause source, une colonne par norme. Une cellule remplie signifie qu'une preuve produite pour la clause vaut aussi pour la norme de la colonne."
+                   i18n-subtitle="@@standards-extras.coverage.matrix-subtitle">
+
+          <div class="banner banner-error" *ngIf="coverageError$ | async as err" role="alert">
+            <span>{{ err }}</span>
+            <button mat-stroked-button type="button" (click)="loadCoverage()"
+                    i18n="@@standards-extras.retry">Réessayer</button>
+          </div>
+
+          <div class="banner banner-info" *ngIf="coverageLoading$ | async" role="status"
+               i18n="@@standards-extras.loading">Chargement…</div>
+
+          <div class="matrix-wrap" *ngIf="coverage as c">
+            <table class="matrix" *ngIf="visibleRows.length">
+              <caption class="visually-hidden" i18n="@@standards-extras.coverage.caption">
+                Clauses sources en ligne, normes comparées en colonne, codes des clauses couvertes en cellule.
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col" class="col-source" i18n="@@standards-extras.coverage.col-source">Clause source</th>
+                  <th scope="col" class="col-target" *ngFor="let code of c.columns; trackBy: trackByCode">
+                    {{ code }}
+                  </th>
+                  <th scope="col" class="col-shared" i18n="@@standards-extras.coverage.col-shared">Mutualisation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of visibleRows; trackBy: trackByRow"
+                    [class.row--shared]="row.sharedCount > 0">
+                  <th scope="row" class="src">
+                    <span class="src__standard">{{ row.sourceStandardCode }}</span>
+                    <span class="src__clause">{{ row.sourceClauseCode }}</span>
+                  </th>
+
+                  <td *ngFor="let cell of row.cells; trackBy: trackByCell"
+                      [class.cell--self]="cell.self" [class.cell--shared]="cell.shared">
+                    <span class="cell-self" *ngIf="cell.self" aria-hidden="true">◦</span>
+                    <ng-container *ngIf="!cell.self">
+                      <span class="cov" *ngFor="let cov of cell.coverages"
+                            [attr.data-tone]="relationTone(cov.relation)"
+                            [matTooltip]="coverageTooltip(cell.targetStandardCode, cov.clauseCode,
+                                                          cov.relation, cov.confidence)">
+                        {{ cov.clauseCode }}
+                      </span>
+                      <span class="cell-empty" *ngIf="!cell.coverages.length" aria-hidden="true">—</span>
+                    </ng-container>
+                  </td>
+
+                  <td class="shared-count">
+                    <qos-status-pill *ngIf="row.sharedCount > 0"
+                                     [label]="sharedLabel(row)" tone="success"></qos-status-pill>
+                    <span class="dim" *ngIf="row.sharedCount === 0"
+                          i18n="@@standards-extras.coverage.specific">Spécifique</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <p class="empty" *ngIf="!visibleRows.length && singleStandard"
+               i18n="@@standards-extras.coverage.empty-single">
+              Une seule norme dans le périmètre : ajoutez-en au moins une seconde pour faire
+              apparaître les exigences communes.
+            </p>
+
+            <p class="empty" *ngIf="!visibleRows.length && !singleStandard && sharedOnly && c.rows.length">
+              <span i18n="@@standards-extras.coverage.empty-filtered">
+                Aucune clause n'est mutualisable sur ce périmètre : les liens existants sont
+                seulement partiels ou informatifs.
+              </span>
+              <button mat-stroked-button type="button" (click)="toggleSharedOnly(false)"
+                      i18n="@@standards-extras.coverage.show-all">Afficher tous les liens</button>
+            </p>
+
+            <p class="empty" *ngIf="!visibleRows.length && !singleStandard && !c.rows.length"
+               i18n="@@standards-extras.coverage.empty">
+              Aucun lien de couverture n'est enregistré entre ces normes.
+            </p>
+          </div>
+        </qos-panel>
+      </div>
+    </mat-tab>
+
+    <!-- ===================================================================
+         Onglet 2 — Audit blanc IA (§8.4 onglet 7)
+         =================================================================== -->
+    <mat-tab label="Audit blanc IA" i18n-label="@@standards-extras.tab.audit">
+      <div class="tab-body">
+
+        <div class="callout" role="note">
+          <mat-icon aria-hidden="true">info</mat-icon>
+          <div class="callout__body">
+            <p class="callout__title" i18n="@@standards-extras.audit.distinction-title">
+              Deux audits blancs coexistent — ils ne font pas double emploi
+            </p>
+            <ul>
+              <li>
+                <span class="lead" i18n="@@standards-extras.audit.rules-lead">Audit blanc « règles », sur la fiche de la norme</span>
+                <span i18n="@@standards-extras.audit.rules-body">calcul déterministe et instantané du taux de couverture des exigences par les preuves rattachées. Rien n'est conservé : c'est une photo à l'instant T.</span>
+              </li>
+              <li>
+                <span class="lead" i18n="@@standards-extras.audit.ia-lead">Audit blanc IA, ci-dessous</span>
+                <span i18n="@@standards-extras.audit.ia-body">le modèle génère 30 à 100 questions d'auditeur ciblées sur les clauses à risque, rédige les constats et produit un plan de remédiation. Chaque exécution est persistée, datée, attribuée à son auteur et relisible à l'identique.</span>
+              </li>
+            </ul>
+            <a mat-stroked-button *ngIf="selectedAdoption as adoption"
+               [routerLink]="['/standards', 'adoptions', adoption.id]">
+              <mat-icon aria-hidden="true">rule</mat-icon>
+              <span i18n="@@standards-extras.audit.open-rules">Ouvrir l'audit blanc « règles »</span>
+            </a>
+          </div>
+        </div>
+
+        <qos-panel icon="smart_toy"
+                   title="Lancer un audit blanc IA"
+                   i18n-title="@@standards-extras.audit.run-title"
+                   subtitle="La simulation porte sur les clauses réellement chargées pour la norme adoptée et sur l'état de preuve de votre tenant."
+                   i18n-subtitle="@@standards-extras.audit.run-subtitle">
+          <div class="toolbar">
+            <mat-form-field appearance="outline" class="adoption-select" subscriptSizing="dynamic">
+              <mat-label i18n="@@standards-extras.audit.adoption-label">Norme adoptée</mat-label>
+              <mat-select [formControl]="adoptionControl" (selectionChange)="loadHistory()"
+                          i18n-aria-label="@@standards-extras.audit.adoption-aria"
+                          aria-label="Norme adoptée sur laquelle porte l'audit blanc IA">
+                <mat-option *ngFor="let a of adoptions; trackBy: trackByAdoption" [value]="a.id">
+                  {{ a.standardCode }} — {{ a.standardName }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <button mat-flat-button color="primary" type="button"
+                    *ngIf="canRunAudit && adoptionControl.value"
+                    [disabled]="running" (click)="runAudit()">
+              <mat-icon aria-hidden="true">play_arrow</mat-icon>
+              <span *ngIf="!running" i18n="@@standards-extras.audit.run">Lancer l'audit blanc IA</span>
+              <span *ngIf="running" i18n="@@standards-extras.audit.running">Audit en cours…</span>
+            </button>
+
+            <button mat-stroked-button type="button" *ngIf="adoptionControl.value"
+                    [disabled]="(auditLoading$ | async) === true" (click)="loadHistory()">
+              <mat-icon aria-hidden="true">refresh</mat-icon>
+              <span i18n="@@standards-extras.audit.refresh">Actualiser l'historique</span>
+            </button>
+          </div>
+
+          <p class="hint" *ngIf="!canRunAudit" i18n="@@standards-extras.audit.no-right">
+            Votre rôle ne permet pas de déclencher un audit blanc IA. L'historique reste consultable.
+          </p>
+
+          <p class="hint" *ngIf="running" role="status" i18n="@@standards-extras.audit.running-hint">
+            Génération des questions et des constats par le modèle — l'opération peut durer
+            plusieurs dizaines de secondes.
+          </p>
+        </qos-panel>
+
+        <qos-panel icon="history"
+                   title="Historique des exécutions"
+                   i18n-title="@@standards-extras.audit.history-title"
+                   subtitle="Chaque exécution est conservée telle quelle : c'est ce qui permet de mesurer les progrès d'un audit blanc au suivant."
+                   i18n-subtitle="@@standards-extras.audit.history-subtitle">
+
+          <div class="banner banner-error" *ngIf="auditError$ | async as err" role="alert">
+            <span>{{ err }}</span>
+            <button mat-stroked-button type="button" (click)="loadHistory()"
+                    i18n="@@standards-extras.retry">Réessayer</button>
+          </div>
+
+          <div class="banner banner-info" *ngIf="auditLoading$ | async" role="status"
+               i18n="@@standards-extras.loading">Chargement…</div>
+
+          <div class="table-wrap" *ngIf="history.length">
+            <table class="data">
+              <thead>
+                <tr>
+                  <th scope="col" i18n="@@standards-extras.audit.col-date">Exécuté le</th>
+                  <th scope="col" i18n="@@standards-extras.audit.col-readiness">Préparation</th>
+                  <th scope="col" i18n="@@standards-extras.audit.col-findings">Écarts</th>
+                  <th scope="col" i18n="@@standards-extras.audit.col-questions">Questions</th>
+                  <th scope="col" i18n="@@standards-extras.audit.col-provider">Moteur</th>
+                  <th scope="col" i18n="@@standards-extras.actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let run of history; trackBy: trackByReport">
+                  <td>
+                    <span class="strong">{{ run.createdAt | date:'short' }}</span>
+                    <span class="dim">{{ run.standardCode }}</span>
+                  </td>
+                  <td class="readiness">
+                    <qos-status-pill [label]="readinessLabel(run.readiness)"
+                                     [tone]="readinessTone(run.readiness)"></qos-status-pill>
+                  </td>
+                  <td class="findings">
+                    <span class="chip chip--danger">
+                      {{ run.majorCount }}&nbsp;<span i18n="@@standards-extras.audit.major">majeures</span>
+                    </span>
+                    <span class="chip chip--warn">
+                      {{ run.minorCount }}&nbsp;<span i18n="@@standards-extras.audit.minor">mineures</span>
+                    </span>
+                    <span class="chip">
+                      {{ run.observationCount }}&nbsp;<span i18n="@@standards-extras.audit.observation">observations</span>
+                    </span>
+                  </td>
+                  <td>{{ run.questionCount }}</td>
+                  <td><code class="mono">{{ run.aiProvider }}</code></td>
+                  <td>
+                    <button mat-stroked-button type="button" (click)="openReport(run)">
+                      <mat-icon aria-hidden="true">open_in_new</mat-icon>
+                      <span i18n="@@standards-extras.audit.open-report">Ouvrir le rapport</span>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="empty" *ngIf="!history.length && (auditLoading$ | async) === false
+                                  && !(auditError$ | async) && adoptionControl.value"
+             i18n="@@standards-extras.audit.empty">
+            Aucun audit blanc IA n'a encore été exécuté sur cette norme.
+          </p>
+
+          <p class="empty" *ngIf="!adoptionControl.value && (auditLoading$ | async) === false"
+             i18n="@@standards-extras.audit.no-adoption">
+            Aucune norme n'est adoptée : adoptez une norme dans le Standards Hub pour pouvoir
+            simuler un audit.
+          </p>
+        </qos-panel>
+      </div>
+    </mat-tab>
+
+    <!-- ===================================================================
+         Onglet 3 — Ancrage blockchain & vérification de preuve (§11.3)
+         =================================================================== -->
+    <mat-tab label="Ancrage &amp; preuves" i18n-label="@@standards-extras.tab.anchor">
+      <div class="tab-body">
+
+        <div class="banner banner-error" *ngIf="anchorError$ | async as err" role="alert">
+          <span>{{ err }}</span>
+          <button mat-stroked-button type="button" (click)="loadEvents()"
+                  i18n="@@standards-extras.retry">Réessayer</button>
+        </div>
+
+        <div class="two-cols">
+
+          <qos-panel icon="link"
+                     title="Déclencher un lot d'ancrage"
+                     i18n-title="@@standards-extras.anchor.run-title"
+                     subtitle="Les événements d'audit non encore ancrés sont regroupés, leur racine Merkle est calculée puis soumise à la blockchain."
+                     i18n-subtitle="@@standards-extras.anchor.run-subtitle">
+
+            <div class="toolbar" *ngIf="canAnchor">
+              <mat-form-field appearance="outline" class="batch-field" subscriptSizing="dynamic">
+                <mat-label i18n="@@standards-extras.anchor.batch-label">Taille du lot</mat-label>
+                <input matInput type="number" [formControl]="batchControl"
+                       [min]="batchMin" [max]="batchMax">
+                <mat-hint>{{ batchMin }} – {{ batchMax }}</mat-hint>
+              </mat-form-field>
+
+              <button mat-flat-button color="primary" type="button"
+                      [disabled]="anchoring || batchControl.invalid" (click)="runAnchoring()">
+                <mat-icon aria-hidden="true">anchor</mat-icon>
+                <span *ngIf="!anchoring" i18n="@@standards-extras.anchor.run">Ancrer le lot</span>
+                <span *ngIf="anchoring" i18n="@@standards-extras.anchor.running">Ancrage…</span>
+              </button>
+            </div>
+
+            <p class="hint error" *ngIf="canAnchor && batchControl.invalid && batchControl.touched"
+               i18n="@@standards-extras.anchor.batch-invalid">
+              La taille du lot doit être un entier compris entre 1 et 1000 — le serveur refuse
+              toute valeur hors de ces bornes.
+            </p>
+
+            <p class="hint" *ngIf="!canAnchor" i18n="@@standards-extras.anchor.no-right">
+              Votre rôle ne permet pas de déclencher un ancrage. La vérification d'une preuve
+              reste ouverte ci-contre.
+            </p>
+
+            <div class="result-block" *ngIf="batchResult as r">
+              <dl class="result" *ngIf="r.batchSize > 0">
+                <div>
+                  <dt i18n="@@standards-extras.anchor.res-count">Événements ancrés</dt>
+                  <dd class="strong">{{ r.batchSize }}</dd>
+                </div>
+                <div>
+                  <dt i18n="@@standards-extras.anchor.res-range">Séquences</dt>
+                  <dd>{{ r.firstSequenceNo }} → {{ r.lastSequenceNo }}</dd>
+                </div>
+                <div>
+                  <dt i18n="@@standards-extras.anchor.res-root">Racine Merkle</dt>
+                  <dd><code class="mono break">{{ r.merkleRoot }}</code></dd>
+                </div>
+                <div>
+                  <dt i18n="@@standards-extras.anchor.res-tx">Référence de transaction</dt>
+                  <dd><code class="mono break">{{ r.blockchainTxRef }}</code></dd>
+                </div>
+                <div>
+                  <dt i18n="@@standards-extras.anchor.res-at">Horodatage</dt>
+                  <dd>{{ r.anchoredAt | date:'medium' }}</dd>
+                </div>
+              </dl>
+              <p class="empty" *ngIf="r.batchSize === 0"
+                 i18n="@@standards-extras.anchor.res-empty">
+                Aucun événement n'était en attente d'ancrage : la chaîne est déjà à jour.
+              </p>
+            </div>
+          </qos-panel>
+
+          <qos-panel icon="verified"
+                     title="Vérifier une preuve"
+                     i18n-title="@@standards-extras.anchor.verify-title"
+                     subtitle="Recalcule la racine Merkle du lot de l'événement et contrôle la signature hybride du reçu."
+                     i18n-subtitle="@@standards-extras.anchor.verify-subtitle">
+
+            <div class="toolbar">
+              <mat-form-field appearance="outline" class="hash-field" subscriptSizing="dynamic">
+                <mat-label i18n="@@standards-extras.anchor.hash-label">Hash d'intégrité</mat-label>
+                <input matInput [formControl]="hashControl" spellcheck="false" autocomplete="off"
+                       placeholder="64 caractères hexadécimaux"
+                       i18n-placeholder="@@standards-extras.anchor.hash-placeholder">
+              </mat-form-field>
+
+              <button mat-flat-button color="primary" type="button"
+                      [disabled]="verifying || hashControl.invalid" (click)="verifyHash()">
+                <mat-icon aria-hidden="true">search</mat-icon>
+                <span *ngIf="!verifying" i18n="@@standards-extras.anchor.verify">Vérifier</span>
+                <span *ngIf="verifying" i18n="@@standards-extras.anchor.verifying">Vérification…</span>
+              </button>
+            </div>
+
+            <p class="hint error" *ngIf="hashControl.invalid && hashControl.touched"
+               i18n="@@standards-extras.anchor.hash-invalid">
+              Un hash d'intégrité est un SHA-256 hexadécimal de 64 caractères. Reprenez-le depuis
+              la liste des événements ci-dessous.
+            </p>
+
+            <div class="verdict" *ngIf="verification as v" [attr.data-status]="v.status">
+              <qos-status-pill [label]="anchorStatusLabel(v.status)"
+                               [tone]="anchorStatusTone(v.status)"></qos-status-pill>
+              <p class="verdict__detail">{{ v.detail }}</p>
+              <dl class="result" *ngIf="v.txRef || v.merkleRoot">
+                <div *ngIf="v.merkleRoot">
+                  <dt i18n="@@standards-extras.anchor.res-root">Racine Merkle</dt>
+                  <dd><code class="mono break">{{ v.merkleRoot }}</code></dd>
+                </div>
+                <div *ngIf="v.txRef">
+                  <dt i18n="@@standards-extras.anchor.res-tx">Référence de transaction</dt>
+                  <dd><code class="mono break">{{ v.txRef }}</code></dd>
+                </div>
+              </dl>
+            </div>
+          </qos-panel>
+        </div>
+
+        <qos-panel icon="receipt_long"
+                   title="Derniers événements du journal d'audit"
+                   i18n-title="@@standards-extras.anchor.events-title"
+                   subtitle="Les vingt événements les plus récents de votre tenant, avec leur état d'ancrage."
+                   i18n-subtitle="@@standards-extras.anchor.events-subtitle">
+          <div qosActions>
+            <button mat-stroked-button type="button" (click)="loadEvents()"
+                    [disabled]="(eventsLoading$ | async) === true">
+              <mat-icon aria-hidden="true">refresh</mat-icon>
+              <span i18n="@@standards-extras.anchor.events-refresh">Actualiser</span>
+            </button>
+          </div>
+
+          <div class="banner banner-info" *ngIf="eventsLoading$ | async" role="status"
+               i18n="@@standards-extras.loading">Chargement…</div>
+
+          <div class="table-wrap" *ngIf="events.length">
+            <table class="data">
+              <thead>
+                <tr>
+                  <th scope="col" i18n="@@standards-extras.anchor.col-seq">Seq.</th>
+                  <th scope="col" i18n="@@standards-extras.anchor.col-when">Survenu le</th>
+                  <th scope="col" i18n="@@standards-extras.anchor.col-action">Action</th>
+                  <th scope="col" i18n="@@standards-extras.anchor.col-hash">Hash d'intégrité</th>
+                  <th scope="col" i18n="@@standards-extras.anchor.col-anchored">Ancré</th>
+                  <th scope="col" i18n="@@standards-extras.actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let e of events; trackBy: trackByEvent">
+                  <td class="mono">{{ e.sequenceNo }}</td>
+                  <td>{{ e.occurredAt | date:'short' }}</td>
+                  <td>
+                    <span class="strong">{{ e.action }}</span>
+                    <span class="dim">{{ e.resourceType }}</span>
+                  </td>
+                  <td><code class="mono truncate" [matTooltip]="e.integrityHash">{{ e.integrityHash }}</code></td>
+                  <td>
+                    <qos-status-pill *ngIf="e.blockchainTxRef" tone="success"
+                                     label="Ancré" i18n-label="@@standards-extras.anchor.anchored">
+                    </qos-status-pill>
+                    <span class="dim" *ngIf="!e.blockchainTxRef"
+                          i18n="@@standards-extras.anchor.pending">En attente</span>
+                  </td>
+                  <td>
+                    <button mat-icon-button type="button" (click)="verifyEvent(e)"
+                            [disabled]="verifying"
+                            i18n-aria-label="@@standards-extras.anchor.verify-row-aria"
+                            aria-label="Vérifier l'intégrité de cet événement"
+                            matTooltip="Vérifier l'intégrité de cet événement"
+                            i18n-matTooltip="@@standards-extras.anchor.verify-row-tip">
+                      <mat-icon>fact_check</mat-icon>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="empty" *ngIf="!events.length && (eventsLoading$ | async) === false"
+             i18n="@@standards-extras.anchor.events-empty">
+            Le journal d'audit de votre tenant est vide pour l'instant.
+          </p>
+        </qos-panel>
+      </div>
+    </mat-tab>
+
+  </mat-tab-group>
+</div>

@@ -23,6 +23,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -108,7 +110,7 @@ class RateLimitServiceTest {
 
     @Test
     void upsert_createsThenUpdates() {
-        when(policies.findEnabled(eq(TENANT), eq("x"))).thenReturn(Optional.empty());
+        when(policies.findAnyByScope(eq(TENANT), eq("x"))).thenReturn(Optional.empty());
         when(policies.save(any())).thenAnswer(inv -> {
             RateLimitPolicy p = inv.getArgument(0); p.assignId(ID); return p;
         });
@@ -121,7 +123,7 @@ class RateLimitServiceTest {
     @Test
     void upsert_existing_updatesInPlace() {
         RateLimitPolicy existing = policy(60, 100); existing.assignId(ID);
-        when(policies.findEnabled(eq(TENANT), eq("x"))).thenReturn(Optional.of(existing));
+        when(policies.findAnyByScope(eq(TENANT), eq("x"))).thenReturn(Optional.of(existing));
         when(policies.save(any())).thenAnswer(inv -> inv.getArgument(0));
         RateLimitDto.PolicyView v = service.upsert(
                 new RateLimitDto.UpsertPolicyRequest("x", 120, 200, false));
@@ -155,5 +157,25 @@ class RateLimitServiceTest {
 
     private RateLimitPolicy policy(int win, int max) {
         return RateLimitPolicy.create(TENANT, "x", win, max, NOW);
+    }
+
+    @Test
+    void upsert_retrouveUnePolitiqueSuspendueAuLieuDenCreerUneSeconde() {
+        // La contrainte d'unicité (tenant_id, scope) interdit une seconde ligne :
+        // chercher uniquement parmi les politiques ACTIVES faisait tomber la
+        // réactivation dans la branche « création » → INSERT → 409, ce qui rendait
+        // la suspension irréversible depuis l'interface.
+        RateLimitPolicy suspendue = policy(60, 100);
+        suspendue.update(60, 100, false, NOW);
+        when(policies.findAnyByScope(TENANT, "x")).thenReturn(Optional.of(suspendue));
+        when(policies.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        service.upsert(new RateLimitDto.UpsertPolicyRequest("x", 60, 100, true));
+
+        // C'est bien l'instance EXISTANTE qui est sauvegardée (mise à jour), et non
+        // une nouvelle : c'est précisément l'insertion d'une seconde ligne qui
+        // violait la contrainte d'unicité et remontait en 409.
+        verify(policies).save(same(suspendue));
+        assertThat(suspendue.isEnabled()).isTrue();
     }
 }

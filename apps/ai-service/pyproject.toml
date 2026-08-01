@@ -37,6 +37,11 @@ ml = [
     "FlagEmbedding>=1.2.10",
     "torch>=2.5",
     "transformers>=4.45",
+    # Tokenizer de DistilCamemBERT (ADR 0045). `transformers` ne l'embarque pas :
+    # sans lui, le chargement se rabat sur l'extracteur tiktoken, qui ne sait pas
+    # lire un modèle SentencePiece et réclame une dépendance qui n'est pas la
+    # bonne — diagnostic trompeur pour qui installe l'extra.
+    "sentencepiece>=0.2",
     "flwr>=1.10",
     "opacus>=1.5",
     # Backends ML lourds opt-in, importés paresseusement (ADR 0031) :

@@ -79,7 +79,12 @@ public class RateLimitService {
     public RateLimitDto.PolicyView upsert(RateLimitDto.UpsertPolicyRequest req) {
         UUID tenantId = tenantProvider.requireTenantId();
         Instant now = Instant.now(clock);
-        Optional<RateLimitPolicy> existing = policies.findEnabled(tenantId, req.scope());
+        // findAnyByScope, et non findEnabled : une politique SUSPENDUE existe toujours
+        // en base et occupe la contrainte d'unicité (tenant_id, scope). La chercher
+        // uniquement parmi les actives faisait tomber la mise à jour dans la branche
+        // « création » → INSERT → violation de contrainte → 409, rendant la
+        // réactivation d'un quota suspendu impossible depuis l'interface.
+        Optional<RateLimitPolicy> existing = policies.findAnyByScope(tenantId, req.scope());
         RateLimitPolicy p;
         if (existing.isPresent()) {
             p = existing.get();

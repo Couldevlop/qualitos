@@ -1,0 +1,214 @@
+<div class="qos-page audit-report">
+
+  <qos-page-header
+    eyebrow="Audit blanc IA" i18n-eyebrow="@@standards-extras.report.eyebrow"
+    [title]="report ? report.standardCode + ' — ' + report.standardName : reportFallbackTitle"
+    subtitle="Simulation d'audit de certification produite par le modèle, conservée telle quelle : questions posées, constats et plan de remédiation."
+    i18n-subtitle="@@standards-extras.report.subtitle">
+    <div qosActions>
+      <a mat-stroked-button [routerLink]="['../../..']">
+        <mat-icon aria-hidden="true">arrow_back</mat-icon>
+        <span i18n="@@standards-extras.report.back">Retour aux audits blancs</span>
+      </a>
+    </div>
+  </qos-page-header>
+
+  <div class="banner banner-error" *ngIf="error$ | async as err" role="alert">
+    <span>{{ err }}</span>
+    <button mat-stroked-button type="button" (click)="load()"
+            i18n="@@standards-extras.retry">Réessayer</button>
+  </div>
+
+  <div class="banner banner-info" *ngIf="loading$ | async" role="status"
+       i18n="@@standards-extras.loading">Chargement…</div>
+
+  <ng-container *ngIf="report as r">
+
+    <!-- Synthèse -->
+    <qos-panel icon="insights"
+               title="Synthèse"
+               i18n-title="@@standards-extras.report.summary-title">
+      <div class="summary">
+        <div class="summary__readiness">
+          <span class="summary__label" i18n="@@standards-extras.report.readiness">Niveau de préparation</span>
+          <qos-status-pill [label]="readinessLabel(r.readiness)"
+                           [tone]="readinessTone(r.readiness)"></qos-status-pill>
+          <mat-progress-bar mode="determinate" [value]="r.readiness"
+                            i18n-aria-label="@@standards-extras.report.readiness-aria"
+                            aria-label="Niveau de préparation à la certification"></mat-progress-bar>
+        </div>
+
+        <dl class="summary__facts">
+          <div>
+            <dt i18n="@@standards-extras.report.fact-major">NC majeures</dt>
+            <dd class="strong danger">{{ r.majorCount }}</dd>
+          </div>
+          <div>
+            <dt i18n="@@standards-extras.report.fact-minor">NC mineures</dt>
+            <dd class="strong warn">{{ r.minorCount }}</dd>
+          </div>
+          <div>
+            <dt i18n="@@standards-extras.report.fact-observation">Observations</dt>
+            <dd class="strong">{{ r.observationCount }}</dd>
+          </div>
+          <div>
+            <dt i18n="@@standards-extras.report.fact-questions">Questions posées</dt>
+            <dd class="strong">{{ r.questionCount }}</dd>
+          </div>
+          <div>
+            <dt i18n="@@standards-extras.report.fact-provider">Moteur</dt>
+            <dd><code class="mono">{{ r.aiProvider }}</code></dd>
+          </div>
+          <div>
+            <dt i18n="@@standards-extras.report.fact-date">Exécuté le</dt>
+            <dd>{{ r.createdAt | date:'medium' }}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <p class="hint" i18n="@@standards-extras.report.human-decides">
+        Ces constats sont des suggestions du modèle appuyées sur l'état de preuve de votre
+        tenant. Ils ne valent pas décision : la levée d'un écart reste soumise à validation humaine.
+      </p>
+    </qos-panel>
+
+    <!-- Gap analysis -->
+    <qos-panel icon="rule"
+               title="Analyse des écarts"
+               i18n-title="@@standards-extras.report.gaps-title"
+               subtitle="Une entrée par clause auditée, avec la couverture réelle des exigences et le constat rédigé par le modèle."
+               i18n-subtitle="@@standards-extras.report.gaps-subtitle">
+      <div qosActions>
+        <div class="filters" role="group"
+             i18n-aria-label="@@standards-extras.report.filter-aria"
+             aria-label="Filtrer les écarts par criticité">
+          <button mat-stroked-button type="button" [class.active]="filter === 'ALL'"
+                  (click)="setFilter('ALL')">
+            <span i18n="@@standards-extras.report.filter-all">Tous</span>&nbsp;({{ countFor('ALL') }})
+          </button>
+          <button mat-stroked-button type="button" *ngIf="countFor('MAJOR')"
+                  [class.active]="filter === 'MAJOR'" (click)="setFilter('MAJOR')">
+            <span i18n="@@standards-extras.criticality.major">NC majeure</span>&nbsp;({{ countFor('MAJOR') }})
+          </button>
+          <button mat-stroked-button type="button" *ngIf="countFor('MINOR')"
+                  [class.active]="filter === 'MINOR'" (click)="setFilter('MINOR')">
+            <span i18n="@@standards-extras.criticality.minor">NC mineure</span>&nbsp;({{ countFor('MINOR') }})
+          </button>
+          <button mat-stroked-button type="button" *ngIf="countFor('OBSERVATION')"
+                  [class.active]="filter === 'OBSERVATION'" (click)="setFilter('OBSERVATION')">
+            <span i18n="@@standards-extras.criticality.observation">Observation</span>&nbsp;({{ countFor('OBSERVATION') }})
+          </button>
+        </div>
+      </div>
+
+      <div class="gaps" *ngIf="visibleGaps.length">
+        <article class="gap" *ngFor="let gap of visibleGaps; trackBy: trackByGap"
+                 [attr.data-criticality]="gap.criticality">
+          <header class="gap__head">
+            <div class="gap__title">
+              <code class="mono">{{ gap.clauseCode }}</code>
+              <h3>{{ gap.title }}</h3>
+            </div>
+            <qos-status-pill [label]="criticalityLabel(gap.criticality)"
+                             [tone]="criticalityTone(gap.criticality)"></qos-status-pill>
+          </header>
+
+          <div class="gap__coverage">
+            <mat-progress-bar mode="determinate" [value]="coveragePercent(gap)"
+                              [attr.aria-label]="coverageAria(gap)"></mat-progress-bar>
+            <span class="gap__coverage-label">
+              {{ gap.coveredRequirements }} / {{ gap.totalRequirements }}
+              <span i18n="@@standards-extras.report.requirements-covered">exigences couvertes</span>
+              ({{ coveragePercent(gap) }} %)
+            </span>
+          </div>
+
+          <p class="gap__finding">{{ gap.finding }}</p>
+
+          <button mat-button type="button" *ngIf="gap.questions.length" (click)="toggleGap(gap)"
+                  [attr.aria-expanded]="isExpanded(gap)">
+            <mat-icon aria-hidden="true">{{ isExpanded(gap) ? 'expand_less' : 'expand_more' }}</mat-icon>
+            <span>{{ gap.questions.length }}</span>&nbsp;<span
+              i18n="@@standards-extras.report.targeted-questions">questions ciblées</span>
+          </button>
+
+          <ul class="questions" *ngIf="isExpanded(gap)">
+            <li *ngFor="let q of gap.questions; trackBy: trackByQuestion">
+              <p class="question">{{ q.question }}</p>
+              <p class="rationale">{{ q.rationale }}</p>
+            </li>
+          </ul>
+        </article>
+      </div>
+
+      <p class="empty" *ngIf="!visibleGaps.length && r.gaps.length"
+         i18n="@@standards-extras.report.gaps-filtered-empty">
+        Aucun écart de cette criticité dans ce rapport.
+      </p>
+
+      <p class="empty" *ngIf="!r.gaps.length" i18n="@@standards-extras.report.gaps-empty">
+        Le modèle n'a relevé aucun écart sur les clauses auditées.
+      </p>
+    </qos-panel>
+
+    <!-- Plan de remédiation -->
+    <qos-panel icon="checklist"
+               title="Plan de remédiation"
+               i18n-title="@@standards-extras.report.plan-title"
+               subtitle="Une action par écart majeur ou mineur, orientée vers le module QualitOS qui produira la preuve manquante. Les observations n'en génèrent pas."
+               i18n-subtitle="@@standards-extras.report.plan-subtitle">
+
+      <div class="table-wrap" *ngIf="r.remediationPlan.length">
+        <table class="data">
+          <thead>
+            <tr>
+              <th scope="col" i18n="@@standards-extras.report.col-clause">Clause</th>
+              <th scope="col" i18n="@@standards-extras.report.col-criticality">Criticité</th>
+              <th scope="col" i18n="@@standards-extras.report.col-priority">Priorité</th>
+              <th scope="col" i18n="@@standards-extras.report.col-module">Module visé</th>
+              <th scope="col" i18n="@@standards-extras.report.col-action">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of r.remediationPlan; trackBy: trackByAction">
+              <td><code class="mono">{{ a.clauseCode }}</code></td>
+              <td>
+                <qos-status-pill [label]="criticalityLabel(a.criticality)"
+                                 [tone]="criticalityTone(a.criticality)"></qos-status-pill>
+              </td>
+              <td>{{ priorityLabel(a.priority) }}</td>
+              <td><code class="mono">{{ a.targetModule }}</code></td>
+              <td class="action-text">{{ a.action }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="empty" *ngIf="!r.remediationPlan.length"
+         i18n="@@standards-extras.report.plan-empty">
+        Aucune action requise : le rapport ne contient que des observations.
+      </p>
+    </qos-panel>
+
+    <!-- Questionnaire complet -->
+    <qos-panel icon="quiz"
+               title="Questionnaire d'audit"
+               i18n-title="@@standards-extras.report.questions-title"
+               subtitle="L'intégralité des questions posées par le modèle, dans l'ordre où elles ont été générées."
+               i18n-subtitle="@@standards-extras.report.questions-subtitle">
+
+      <ul class="questions questions--full" *ngIf="r.questions.length">
+        <li *ngFor="let q of r.questions; trackBy: trackByQuestion">
+          <code class="mono">{{ q.clauseCode }}</code>
+          <p class="question">{{ q.question }}</p>
+          <p class="rationale">{{ q.rationale }}</p>
+        </li>
+      </ul>
+
+      <p class="empty" *ngIf="!r.questions.length"
+         i18n="@@standards-extras.report.questions-empty">
+        Ce rapport ne contient aucune question.
+      </p>
+    </qos-panel>
+  </ng-container>
+</div>

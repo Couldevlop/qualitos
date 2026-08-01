@@ -1,4 +1,9 @@
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { Router } from '@angular/router';
+
+import { environment } from '../../../environments/environment';
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 
@@ -13,16 +18,24 @@ describe('DashboardComponent', () => {
   let component: DashboardComponent;
   let crossFilter: CrossFilterService;
   let timeTravel: jasmine.SpyObj<TimeTravelService>;
+  let router: jasmine.SpyObj<Router>;
 
   beforeEach(() => {
     timeTravel = jasmine.createSpyObj<TimeTravelService>('TimeTravelService', ['kpisAsOf']);
+    router = jasmine.createSpyObj<Router>('Router', ['navigate']);
+    router.navigate.and.returnValue(Promise.resolve(true));
 
     TestBed.configureTestingModule({
       declarations: [DashboardComponent],
       providers: [
+        // DashboardService interroge désormais l'agrégat exécutif du serveur
+        // (`/api/v1/dashboards/executive`) au lieu de renvoyer des constantes.
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
         DashboardService,
         CrossFilterService,
-        { provide: TimeTravelService, useValue: timeTravel }
+        { provide: TimeTravelService, useValue: timeTravel },
+        { provide: Router, useValue: router }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -37,6 +50,14 @@ describe('DashboardComponent', () => {
       expect(Array.isArray(kpis)).toBeTrue();
       done();
     });
+    // Le dashboard s'alimente désormais d'une agrégation serveur : sans réponse
+    // servie, aucune valeur n'est émise (c'est le comportement attendu).
+    TestBed.inject(HttpTestingController)
+      .expectOne(`${environment.apiBaseUrl}/api/v1/dashboards/executive`)
+      .flush({
+        kpis: [], qualityTrend: [], defectsByCategory: [], topRisks: [],
+        alignment: [], generatedAt: '2026-05-15T00:00:00Z'
+      });
   });
 
   it('maps alignment scores to a tone', () => {
@@ -121,5 +142,57 @@ describe('DashboardComponent', () => {
     crossFilter.apply({ dimension: 'category', value: 'Machine', label: 'Machine' });
     component.ngOnDestroy();
     expect(crossFilter.snapshot()).toBeNull();
+  });
+
+  // --- Actions de l'en-tête : ces trois boutons ne faisaient rien -------------
+
+  it('ouvre le générateur de récit narratif depuis « Nouveau rapport »', () => {
+    component.newReport();
+    expect(router.navigate).toHaveBeenCalledWith(['/storyboard']);
+  });
+
+  it('ouvre l’item FMEA à l’origine d’un risque', () => {
+    component.openRisk({
+      id: 'r1', title: 'Rupture', source: 'FMEA · RPN 240',
+      sourceType: 'FMEA', severity: 'critical'
+    });
+    expect(router.navigate).toHaveBeenCalledWith(['/fmea', 'r1']);
+  });
+
+  it('ouvre le dossier CAPA à l’origine d’un risque', () => {
+    component.openRisk({
+      id: 'c9', title: 'CAPA en retard', source: 'CAPA',
+      sourceType: 'CAPA', severity: 'high'
+    });
+    expect(router.navigate).toHaveBeenCalledWith(['/capa', 'c9']);
+  });
+
+  it('exporte les KPIs affichés en CSV', () => {
+    const created = document.createElement('a');
+    const clickSpy = spyOn(created, 'click');
+    spyOn(document, 'createElement').and.returnValue(created);
+    spyOn(URL, 'createObjectURL').and.returnValue('blob:fake');
+    const revokeSpy = spyOn(URL, 'revokeObjectURL');
+
+    TestBed.inject(HttpTestingController)
+      .expectOne(`${environment.apiBaseUrl}/api/v1/dashboards/executive`)
+      .flush({
+        kpis: [{
+          kpiId: 'k1', code: 'FPY', name: 'First Pass Yield', description: null,
+          category: 'quality', unit: '%', direction: 'HIGHER_IS_BETTER',
+          value: 94.2, targetValue: 95, trendDelta: 2.1, health: 'WARNING',
+          latestPeriodStart: null, latestPeriodEnd: null
+        }],
+        qualityTrend: [], defectsByCategory: [], topRisks: [], alignment: [],
+        generatedAt: '2026-05-15T00:00:00Z'
+      });
+
+    component.exportKpisCsv();
+
+    expect(clickSpy).toHaveBeenCalled();
+    // Le nom de fichier porte la date du jour, pas un identifiant opaque.
+    expect(created.download).toMatch(/^qualitos-kpis-\d{4}-\d{2}-\d{2}\.csv$/);
+    // L'URL temporaire est libérée : pas de fuite mémoire à chaque export.
+    expect(revokeSpy).toHaveBeenCalledWith('blob:fake');
   });
 });

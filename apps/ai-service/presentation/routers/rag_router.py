@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException
 
+from application.usecase.rag_ingest import SourceDocument, UnlicensedSourceError
 from application.usecase.rag_query import RagQueryRequest
 from domain.model.errors import (
     PromptInjectionError,
@@ -12,6 +13,8 @@ from domain.model.tenant import UserContext
 from presentation.container import Container
 from presentation.schemas.rag import (
     RagDocumentSchema,
+    RagIngestRequestSchema,
+    RagIngestResponseSchema,
     RagQueryRequestSchema,
     RagQueryResponseSchema,
 )
@@ -54,4 +57,44 @@ async def query(
         confidence=result.confidence.value,
         confidence_method=result.confidence.method,
         explanation=result.rag.explanation,
+    )
+
+
+@router.post(
+    "/ingest",
+    response_model=RagIngestResponseSchema,
+    summary="Index real tenant documents into the tenant's corpus",
+)
+async def ingest(
+    payload: RagIngestRequestSchema,
+    user: UserContext = Depends(current_user),
+) -> RagIngestResponseSchema:
+    """Index documents the tenant already owns.
+
+    The collection is derived from the JWT tenant, never from the payload
+    (§18.2 #2) — a caller cannot write into another tenant's corpus.
+    """
+    try:
+        sources = [
+            SourceDocument(
+                source_id=s.source_id,
+                title=s.title,
+                content=s.content,
+                origin=s.origin,
+                licence=s.licence,
+                version=s.version,
+                url=s.url,
+            )
+            for s in payload.sources
+        ]
+    except UnlicensedSourceError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    result = _container.rag_ingest().execute(user, sources)
+    return RagIngestResponseSchema(
+        documents_read=result.documents_read,
+        fragments_indexed=result.fragments_indexed,
+        skipped_empty=result.skipped_empty,
     )

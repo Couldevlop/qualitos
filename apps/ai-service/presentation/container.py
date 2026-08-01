@@ -20,6 +20,7 @@ from application.usecase import (
     MockAuditUseCase,
     NcClusterUseCase,
     NlqAskUseCase,
+    RagIngestUseCase,
     RagQueryUseCase,
     SpcDetectUseCase,
     SupplierRiskUseCase,
@@ -85,7 +86,7 @@ class Container:
             # Modèle Anthropic configurable par env (symétrie avec Ollama/Mistral) ;
             # la clé ANTHROPIC_API_KEY est lue par le provider lui-même (§18.2 #3).
             ProviderName.ANTHROPIC: AnthropicProvider(
-                model=os.environ.get("ANTHROPIC_MODEL", "claude-opus-4-7"),
+                model=os.environ.get("ANTHROPIC_MODEL", "claude-opus-5"),
             ),
             # Modèle Mistral configurable par env (défaut mistral-large-latest) ; la clé
             # MISTRAL_API_KEY est lue par le provider lui-même (jamais committée, §18.2 #3).
@@ -138,6 +139,11 @@ class Container:
         return MockAuditUseCase(
             self.providers, self.pii_filter, self.injection_filter, self.audit_logger
         )
+
+    def rag_ingest(self) -> RagIngestUseCase:
+        # Alimentation du corpus (ADR 0046) : documents réels du tenant, chaque
+        # fragment portant son origine et sa licence.
+        return RagIngestUseCase(self.vector_store, self.embedder, self.pii_filter)
 
     def rag_query(self) -> RagQueryUseCase:
         return RagQueryUseCase(

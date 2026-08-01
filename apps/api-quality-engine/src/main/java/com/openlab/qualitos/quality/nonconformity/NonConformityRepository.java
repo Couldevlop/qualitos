@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,4 +37,12 @@ public interface NonConformityRepository extends JpaRepository<NonConformity, UU
 
     /** Numérotation séquentielle annuelle, par tenant. */
     long countByTenantIdAndReferenceStartingWith(UUID tenantId, String prefix);
+
+    /**
+     * Nombre de NC d'une catégorie qui ne sont PAS dans un statut terminal — alimente la
+     * répartition des défauts du dashboard exécutif (§7.1). Un compte en base évite de
+     * charger les entités juste pour les dénombrer.
+     */
+    long countByTenantIdAndCategoryAndStatusNotIn(
+            UUID tenantId, NcCategory category, Collection<NcStatus> excludedStatuses);
 }

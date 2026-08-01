@@ -1,0 +1,70 @@
+<qos-form-dialog
+  title="Émettre une clé d'API"
+  i18n-title="@@admin.api-keys.create-title"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  submitLabel="Émettre la clé"
+  i18n-submitLabel="@@admin.api-keys.create-submit"
+  submitIcon="vpn_key"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <p class="hint" i18n="@@admin.api-keys.create-hint">
+    Le secret ne sera affiché <strong>qu'une seule fois</strong>, juste après l'émission :
+    le serveur n'en conserve qu'une empreinte et ne pourra jamais vous le redonner.
+    Préparez l'endroit où vous allez le stocker avant de valider.
+  </p>
+
+  <div class="banner banner-error" role="alert" *ngIf="error">{{ error }}</div>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@admin.api-keys.name-label">Nom de la clé</mat-label>
+    <input matInput formControlName="name" required autocomplete="off" spellcheck="false"
+           [maxlength]="nameMaxLength"
+           placeholder="Intégration ServiceNow — production"
+           i18n-placeholder="@@admin.api-keys.name-placeholder">
+    <mat-hint i18n="@@admin.api-keys.name-hint">
+      À quoi sert cette clé et pour qui : c'est le seul repère lisible en cas de révocation d'urgence.
+    </mat-hint>
+    <mat-error *ngIf="form.controls.name.hasError('required')" i18n="@@admin.api-keys.name-required">
+      Le nom est obligatoire.
+    </mat-error>
+    <mat-error *ngIf="form.controls.name.hasError('maxlength')" i18n="@@admin.api-keys.name-too-long">
+      Le nom dépasse la longueur autorisée.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@admin.api-keys.scopes-label">Portées (optionnelles)</mat-label>
+    <input matInput formControlName="scopes" autocomplete="off" spellcheck="false"
+           placeholder="audits.read capa.write">
+    <mat-hint i18n="@@admin.api-keys.scopes-hint">
+      Séparez par des espaces ou des virgules. Minuscules, chiffres et . _ : - uniquement.
+      Sans portée, la clé n'obtient aucun droit particulier.
+    </mat-hint>
+    <mat-error *ngIf="form.controls.scopes.hasError('scopeFormat')" i18n="@@admin.api-keys.scopes-invalid">
+      Portées au format invalide : {{ form.controls.scopes.getError('scopeFormat') }}
+    </mat-error>
+  </mat-form-field>
+
+  <ul class="scope-preview" *ngIf="previewScopes.length && !form.controls.scopes.hasError('scopeFormat')">
+    <li class="qos-badge" *ngFor="let s of previewScopes">{{ s }}</li>
+  </ul>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@admin.api-keys.expires-label">Expire le (optionnel)</mat-label>
+    <input matInput formControlName="expiresAt" type="date" [min]="todayIso">
+    <mat-hint i18n="@@admin.api-keys.expires-hint">
+      La clé reste utilisable toute la journée choisie. Sans date, elle n'expire jamais :
+      prévoyez alors une rotation régulière.
+    </mat-hint>
+    <mat-error *ngIf="form.controls.expiresAt.hasError('pastDate')" i18n="@@admin.api-keys.expires-past">
+      L'échéance doit être postérieure à aujourd'hui.
+    </mat-error>
+    <mat-error *ngIf="form.controls.expiresAt.hasError('dateFormat')" i18n="@@admin.api-keys.expires-format">
+      Date illisible.
+    </mat-error>
+  </mat-form-field>
+
+</qos-form-dialog>

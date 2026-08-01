@@ -1,0 +1,66 @@
+<h2 mat-dialog-title>
+  <mat-icon aria-hidden="true">vpn_key</mat-icon>
+  <span *ngIf="!data.rotated" i18n="@@admin.api-keys.reveal-title">Clé d'API émise</span>
+  <span *ngIf="data.rotated" i18n="@@admin.api-keys.reveal-title-rotated">Nouvelle clé d'API émise</span>
+</h2>
+
+<mat-dialog-content>
+  <div class="warn" role="alert">
+    <mat-icon aria-hidden="true">warning</mat-icon>
+    <p i18n="@@admin.api-keys.reveal-warning">
+      Copiez ce secret maintenant. Il ne sera <strong>plus jamais affiché</strong> :
+      le serveur n'en garde qu'une empreinte. Si vous le perdez, il faudra émettre une
+      nouvelle clé.
+    </p>
+  </div>
+
+  <p class="rotated-note" *ngIf="data.rotated" i18n="@@admin.api-keys.reveal-rotated-note">
+    L'ancienne clé a été révoquée : les appels qui l'utilisent encore vont échouer tant
+    que ce nouveau secret n'est pas déployé.
+  </p>
+
+  <label class="field-label" for="qos-api-key-secret" i18n="@@admin.api-keys.reveal-secret-label">
+    Secret complet
+  </label>
+  <div class="secret">
+    <code id="qos-api-key-secret" class="secret__value">{{ plaintext }}</code>
+    <button mat-flat-button color="primary" type="button" class="secret__copy"
+            (click)="copy()"
+            aria-label="Copier le secret dans le presse-papiers"
+            i18n-aria-label="@@admin.api-keys.reveal-copy-aria">
+      <mat-icon aria-hidden="true">{{ copied ? 'check' : 'content_copy' }}</mat-icon>
+      <span *ngIf="!copied" i18n="@@admin.api-keys.reveal-copy">Copier</span>
+      <span *ngIf="copied" i18n="@@admin.api-keys.reveal-copied">Copié</span>
+    </button>
+  </div>
+
+  <p class="copy-failed" role="alert" *ngIf="copyFailed" i18n="@@admin.api-keys.reveal-copy-failed">
+    Le navigateur a refusé l'accès au presse-papiers. Sélectionnez le secret ci-dessus
+    et copiez-le manuellement avant de fermer.
+  </p>
+
+  <dl class="meta">
+    <dt i18n="@@admin.api-keys.reveal-name">Nom</dt>
+    <dd>{{ data.issued.view.name }}</dd>
+
+    <dt i18n="@@admin.api-keys.reveal-prefix">Préfixe public</dt>
+    <dd><code>{{ data.issued.view.prefix }}</code></dd>
+
+    <dt i18n="@@admin.api-keys.reveal-scopes">Portées</dt>
+    <dd>
+      <span class="qos-badge" *ngFor="let s of data.issued.view.scopes">{{ s }}</span>
+      <span class="dim" *ngIf="!data.issued.view.scopes.length" i18n="@@admin.api-keys.no-scopes">Aucune</span>
+    </dd>
+
+    <dt i18n="@@admin.api-keys.reveal-expires">Expire le</dt>
+    <dd>
+      <span *ngIf="data.issued.view.expiresAt as e">{{ e | date:'medium' }}</span>
+      <span class="dim" *ngIf="!data.issued.view.expiresAt" i18n="@@admin.api-keys.no-expiry">Sans échéance</span>
+    </dd>
+  </dl>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-flat-button color="primary" type="button" (click)="close()"
+          i18n="@@admin.api-keys.reveal-done">J'ai copié la clé</button>
+</mat-dialog-actions>

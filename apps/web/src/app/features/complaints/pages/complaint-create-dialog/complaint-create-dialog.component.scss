@@ -1,0 +1,28 @@
+/* Saisie d'une réclamation : formulaire dense mais lisible, deux colonnes sur
+   desktop, une seule dès que la largeur manque (le dialog est utilisé aussi
+   depuis une tablette au comptoir SAV). */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--qos-space-2) var(--qos-space-4);
+  min-width: 560px;
+}
+
+.full { grid-column: 1 / -1; }
+
+.blocked {
+  margin: 0 0 var(--qos-space-3);
+  padding: var(--qos-space-3) var(--qos-space-4);
+  background: var(--qos-danger-bg-soft);
+  color: var(--qos-danger-fg);
+  border-left: 3px solid var(--qos-danger-fg);
+  border-radius: var(--qos-radius-md);
+  font-size: var(--qos-fs-sm);
+  line-height: var(--qos-lh-normal);
+}
+
+@media (max-width: 700px) {
+  .grid { grid-template-columns: 1fr; min-width: 0; }
+  .full { grid-column: auto; }
+}

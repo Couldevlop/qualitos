@@ -54,7 +54,8 @@ export class AdmService {
       if (this.mockStore.some(r => r.reference === req.reference)) {
         return throwError(() => this.err(409, 'Référence déjà utilisée.'));
       }
-      this.checkArt22Invariants(req);
+      const violation = this.art22Violation(req);
+      if (violation) return throwError(() => violation);
       const now = new Date().toISOString();
       const r: AdmView = {
         id: this.uuid(),
@@ -88,7 +89,8 @@ export class AdmService {
       const r = this.mockStore.find(x => x.id === id);
       if (!r) return throwError(() => this.err(404, 'Décision automatisée introuvable.'));
       if (r.status === 'ARCHIVED') return throwError(() => this.err(409, 'Archive — édition impossible.'));
-      this.checkArt22Invariants(req);
+      const violation = this.art22Violation(req);
+      if (violation) return throwError(() => violation);
       r.name = req.name;
       r.description = req.description ?? null;
       r.decisionType = req.decisionType;
@@ -112,7 +114,8 @@ export class AdmService {
       const r = this.mockStore.find(x => x.id === id);
       if (!r) return throwError(() => this.err(404, 'Décision automatisée introuvable.'));
       if (r.status !== 'DRAFT') return throwError(() => this.err(409, 'Activation possible uniquement depuis DRAFT.'));
-      this.checkArt22Invariants(r);
+      const violation = this.art22Violation(r);
+      if (violation) return throwError(() => violation);
       const now = new Date().toISOString();
       r.status = 'ACTIVE';
       r.effectiveFrom = now;
@@ -160,17 +163,28 @@ export class AdmService {
     return this.http.delete<void>(`${this.endpoint}/${id}`);
   }
 
-  private checkArt22Invariants(r: { decisionType: string;
-                                     art22LawfulBasis?: string | null;
-                                     humanReviewMechanism?: string | null }): void {
+  /**
+   * Contrôle des garanties de l'article 22, rendu sous forme de VALEUR.
+   *
+   * Ce contrôle levait auparavant une exception synchrone, là où toutes les
+   * autres erreurs du service passent par `throwError`. L'appelant écrit contre
+   * le contrat Observable — `create(...).pipe(finalize(...)).subscribe({error})` —
+   * si bien que l'exception traversait `submit()` avant que `finalize` ne soit
+   * installé : le dialogue restait bloqué sur son indicateur de chargement, sans
+   * jamais afficher le motif du refus. Un chemin d'erreur uniforme l'évite.
+   */
+  private art22Violation(r: { decisionType: string;
+                              art22LawfulBasis?: string | null;
+                              humanReviewMechanism?: string | null }) {
     if (r.decisionType === 'AUTOMATED_DECISION_WITH_LEGAL_EFFECT') {
       if (!r.art22LawfulBasis) {
-        throw this.err(422, 'Art. 22.2 — base légale obligatoire pour une décision automatisée à effet juridique.');
+        return this.err(422, 'Art. 22.2 — base légale obligatoire pour une décision automatisée à effet juridique.');
       }
       if (!r.humanReviewMechanism?.trim()) {
-        throw this.err(422, 'Art. 22.3 — mécanisme de révision humaine obligatoire.');
+        return this.err(422, 'Art. 22.3 — mécanisme de révision humaine obligatoire.');
       }
     }
+    return null;
   }
 
   private err(status: number, title: string) {

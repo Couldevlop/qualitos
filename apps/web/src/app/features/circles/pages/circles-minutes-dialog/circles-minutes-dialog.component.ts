@@ -24,6 +24,8 @@ export class CirclesMinutesDialogComponent {
   transcript = '';
   minutes: MeetingMinutes | null = null;
   readonly generating$ = new BehaviorSubject<boolean>(false);
+  /** Transcription audio en cours (§3.3) — désactive les deux actions du dialogue. */
+  readonly transcribing$ = new BehaviorSubject<boolean>(false);
   error: string | null = null;
 
   constructor(
@@ -44,6 +46,36 @@ export class CirclesMinutesDialogComponent {
         error: err => {
           this.error = safeErrorMessage(err,
             $localize`:@@circles.minutes.generate-error:Erreur lors de la génération du compte-rendu.`);
+        }
+      });
+  }
+
+  /**
+   * Transcrit l'enregistrement choisi et pré-remplit le champ transcript (§3.3).
+   * Le texte n'est jamais soumis automatiquement à la génération : l'animateur le relit
+   * et déclenche lui-même le compte-rendu (l'IA propose, l'humain décide, §12.3).
+   */
+  onAudioSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    // Réinitialise la valeur : sans cela, re-sélectionner le même fichier n'émet rien.
+    input.value = '';
+    if (!file || this.transcribing$.value) return;
+
+    this.error = null;
+    this.transcribing$.next(true);
+    this.circles.transcribeMeeting(this.data.circleId, this.data.meetingId, file)
+      .pipe(finalize(() => this.transcribing$.next(false)))
+      .subscribe({
+        next: result => {
+          // Concatène si l'animateur a déjà saisi du texte, plutôt que de l'écraser.
+          this.transcript = this.transcript.trim()
+            ? `${this.transcript.trim()}\n${result.text}`
+            : result.text;
+        },
+        error: err => {
+          this.error = safeErrorMessage(err,
+            $localize`:@@circles.minutes.transcribe-error:Transcription audio indisponible.`);
         }
       });
   }

@@ -1,0 +1,329 @@
+<section class="wh-admin">
+
+  <header class="head">
+    <div class="head__text">
+      <h1 i18n="@@admin.webhooks.title">Webhooks sortants</h1>
+      <p i18n="@@admin.webhooks.subtitle">
+        Poussez les évènements qualité vers vos systèmes tiers. Chaque appel est signé
+        HMAC-SHA256 avec le secret de l'abonnement. Une livraison en échec se rejoue
+        depuis cet écran : il n'y a pas encore de renvoi automatique.
+      </p>
+    </div>
+    <button mat-flat-button color="primary" type="button" (click)="create()">
+      <mat-icon>add</mat-icon>
+      <span i18n="@@admin.webhooks.new">Nouvel abonnement</span>
+    </button>
+  </header>
+
+  <!-- ================= Plan configuration : les abonnements ================= -->
+  <ng-container *ngIf="subscriptions$ | async as view">
+
+    <div class="tiles" *ngIf="view.complete && view.total > 0">
+      <div class="tile" data-tone="neutral">
+        <span class="tile__value">{{ view.total }}</span>
+        <span class="tile__label" i18n="@@admin.webhooks.tile-total">Abonnements</span>
+      </div>
+      <div class="tile" data-tone="success">
+        <span class="tile__value">{{ view.activeCount }}</span>
+        <span class="tile__label" i18n="@@admin.webhooks.tile-active">Actifs</span>
+      </div>
+      <div class="tile" data-tone="warn">
+        <span class="tile__value">{{ view.pausedCount }}</span>
+        <span class="tile__label" i18n="@@admin.webhooks.tile-paused">En pause</span>
+      </div>
+      <div class="tile" data-tone="danger">
+        <span class="tile__value">{{ view.disabledCount }}</span>
+        <span class="tile__label" i18n="@@admin.webhooks.tile-disabled">Désactivés sur erreurs</span>
+      </div>
+      <div class="tile" data-tone="warn">
+        <span class="tile__value">{{ view.failingCount }}</span>
+        <span class="tile__label" i18n="@@admin.webhooks.tile-failing">En échec consécutif</span>
+      </div>
+    </div>
+
+    <div *ngIf="subsError$ | async as err" class="banner banner--error" role="alert">{{ err }}</div>
+    <div *ngIf="subsLoading$ | async" class="banner banner--info" role="status"
+         i18n="@@common.loading">Chargement…</div>
+
+    <div class="panel">
+      <div class="table-wrap">
+        <table mat-table [dataSource]="view.rows" [trackBy]="trackBySubscription">
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef i18n="@@admin.webhooks.col-destination">Destination</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="sub-cell">
+                <span class="sub-cell__name">{{ row.name }}</span>
+                <code class="sub-cell__url">{{ row.endpointUrl }}</code>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="events">
+            <th mat-header-cell *matHeaderCellDef i18n="@@admin.webhooks.col-events">Évènements</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="events" [matTooltip]="row.eventTypes.join(', ')">
+                <code class="events__chip" *ngFor="let e of row.eventTypes.slice(0, 3)">{{ e }}</code>
+                <span class="events__more" *ngIf="row.eventTypes.length > 3">
+                  +{{ row.eventTypes.length - 3 }}
+                </span>
+                <span class="dim" *ngIf="!row.eventTypes.length"
+                      i18n="@@admin.webhooks.no-events">Aucun</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="badge" [attr.data-tone]="statusTone(row.status)">
+                {{ statusLabel(row.status) }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="health">
+            <th mat-header-cell *matHeaderCellDef i18n="@@admin.webhooks.col-health">Santé</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="health">
+                <span class="health__failures" [class.health__failures--ko]="isFailing(row)">
+                  <span i18n="@@admin.webhooks.consecutive-failures">Échecs consécutifs</span>
+                  <strong>{{ row.consecutiveFailures }}</strong>
+                </span>
+                <span class="dim" *ngIf="row.lastSuccessAt as d">
+                  <span i18n="@@admin.webhooks.last-success">Dernier succès</span>
+                  {{ d | date:'short' }}
+                </span>
+                <span class="dim" *ngIf="!row.lastSuccessAt"
+                      i18n="@@admin.webhooks.never-succeeded">Jamais livré avec succès</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef i18n="@@common.actions">Actions</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="row-actions">
+                <button mat-icon-button type="button" (click)="test(row)"
+                        [disabled]="pendingSubscriptionId === row.id"
+                        matTooltip="Envoyer un ping de test"
+                        i18n-matTooltip="@@admin.webhooks.action-test"
+                        aria-label="Envoyer un ping de test"
+                        i18n-aria-label="@@admin.webhooks.action-test">
+                  <mat-icon>send</mat-icon>
+                </button>
+
+                <button mat-icon-button type="button" *ngIf="!canResume(row)" (click)="pause(row)"
+                        [disabled]="pendingSubscriptionId === row.id"
+                        matTooltip="Mettre en pause"
+                        i18n-matTooltip="@@admin.webhooks.action-pause"
+                        aria-label="Mettre en pause"
+                        i18n-aria-label="@@admin.webhooks.action-pause">
+                  <mat-icon>pause_circle</mat-icon>
+                </button>
+
+                <button mat-icon-button type="button" *ngIf="canResume(row)" (click)="resume(row)"
+                        [disabled]="pendingSubscriptionId === row.id"
+                        matTooltip="Réactiver"
+                        i18n-matTooltip="@@admin.webhooks.action-resume"
+                        aria-label="Réactiver"
+                        i18n-aria-label="@@admin.webhooks.action-resume">
+                  <mat-icon>play_circle</mat-icon>
+                </button>
+
+                <button mat-icon-button type="button" (click)="showDeliveriesFor(row)"
+                        matTooltip="Voir les livraisons"
+                        i18n-matTooltip="@@admin.webhooks.action-deliveries"
+                        aria-label="Voir les livraisons"
+                        i18n-aria-label="@@admin.webhooks.action-deliveries">
+                  <mat-icon>receipt_long</mat-icon>
+                </button>
+
+                <button mat-icon-button type="button" (click)="edit(row)"
+                        [disabled]="pendingSubscriptionId === row.id"
+                        matTooltip="Modifier"
+                        i18n-matTooltip="@@common.edit"
+                        aria-label="Modifier"
+                        i18n-aria-label="@@common.edit">
+                  <mat-icon>edit</mat-icon>
+                </button>
+
+                <button mat-icon-button type="button" (click)="rotateSecret(row)"
+                        [disabled]="pendingSubscriptionId === row.id"
+                        matTooltip="Renouveler le secret"
+                        i18n-matTooltip="@@admin.webhooks.action-rotate"
+                        aria-label="Renouveler le secret"
+                        i18n-aria-label="@@admin.webhooks.action-rotate">
+                  <mat-icon>key</mat-icon>
+                </button>
+
+                <button mat-icon-button type="button" color="warn" (click)="remove(row)"
+                        [disabled]="pendingSubscriptionId === row.id"
+                        matTooltip="Supprimer"
+                        i18n-matTooltip="@@common.delete"
+                        aria-label="Supprimer"
+                        i18n-aria-label="@@common.delete">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="subscriptionColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: subscriptionColumns"
+              [class.row--off]="row.status !== 'ACTIVE'"></tr>
+        </table>
+      </div>
+
+      <div class="empty" *ngIf="!view.rows.length && (subsLoading$ | async) === false">
+        <mat-icon>webhook</mat-icon>
+        <p i18n="@@admin.webhooks.empty">
+          Aucun abonnement. Créez-en un pour pousser vos évènements qualité vers un système tiers.
+        </p>
+        <button mat-stroked-button type="button" (click)="create()"
+                i18n="@@admin.webhooks.new">Nouvel abonnement</button>
+      </div>
+
+      <mat-paginator *ngIf="view.rows.length"
+                     [length]="view.total"
+                     [pageIndex]="subsPageIndex"
+                     [pageSize]="subsPageSize"
+                     [pageSizeOptions]="subscriptionPageSizes"
+                     (page)="onSubscriptionsPage($event)"></mat-paginator>
+    </div>
+  </ng-container>
+
+  <!-- ================= Plan exploitation : les livraisons ================= -->
+  <div class="panel panel--deliveries">
+    <div class="panel__head">
+      <div>
+        <h2 i18n="@@admin.webhooks.deliveries-title">Livraisons</h2>
+        <p i18n="@@admin.webhooks.deliveries-subtitle">
+          Historique des appels sortants. Une livraison en échec peut être rejouée manuellement.
+        </p>
+      </div>
+
+      <div class="filters">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filters__field">
+          <mat-label i18n="@@admin.webhooks.filter-subscription">Abonnement</mat-label>
+          <mat-select [value]="deliveryQuery.subscriptionId"
+                      (selectionChange)="onSubscriptionFilterChange($event.value)">
+            <mat-option [value]="null" i18n="@@common.all">Tous</mat-option>
+            <mat-option *ngFor="let s of subscriptionOptions" [value]="s.id">{{ s.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filters__field">
+          <mat-label i18n="@@common.filter-by-status">Filtrer par statut</mat-label>
+          <mat-select [value]="deliveryQuery.status" [disabled]="statusFilterDisabled"
+                      (selectionChange)="onStatusFilterChange($event.value)">
+            <mat-option *ngFor="let o of deliveryStatusOptions" [value]="o.value">{{ o.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <p class="filters__hint" *ngIf="statusFilterDisabled" i18n="@@admin.webhooks.filter-exclusive">
+      Le filtre par statut est indisponible tant qu'un abonnement est sélectionné : le serveur
+      applique l'un ou l'autre, jamais les deux.
+    </p>
+
+    <div *ngIf="deliveriesError$ | async as err" class="banner banner--error" role="alert">{{ err }}</div>
+    <div *ngIf="deliveriesLoading$ | async" class="banner banner--info" role="status"
+         i18n="@@common.loading">Chargement…</div>
+
+    <ng-container *ngIf="deliveries$ | async as page">
+      <div class="table-wrap">
+        <table mat-table [dataSource]="page.content" [trackBy]="trackByDelivery">
+
+          <ng-container matColumnDef="event">
+            <th mat-header-cell *matHeaderCellDef i18n="@@admin.webhooks.delivery-event">Évènement</th>
+            <td mat-cell *matCellDef="let row">
+              <code class="events__chip">{{ row.eventType }}</code>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="subscription">
+            <th mat-header-cell *matHeaderCellDef i18n="@@admin.webhooks.delivery-subscription">Abonnement</th>
+            <td mat-cell *matCellDef="let row">
+              <span *ngIf="subscriptionName(row.subscriptionId) as n">{{ n }}</span>
+              <code class="dim" *ngIf="!subscriptionName(row.subscriptionId)">{{ row.subscriptionId }}</code>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="badge" [attr.data-tone]="deliveryStatusTone(row.status)">
+                {{ deliveryStatusLabel(row.status) }}
+              </span>
+              <span class="dim code-hint" *ngIf="row.responseStatusCode !== null">
+                HTTP {{ row.responseStatusCode }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="attempts">
+            <th mat-header-cell *matHeaderCellDef i18n="@@admin.webhooks.delivery-attempts">Tentatives</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="attempts">
+                <strong>{{ row.attemptCount }}</strong>
+                <span class="dim" *ngIf="row.nextRetryAt as d">
+                  <span i18n="@@admin.webhooks.next-retry">Renvoi possible dès</span>
+                  {{ d | date:'short' }}
+                </span>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="lastAttempt">
+            <th mat-header-cell *matHeaderCellDef i18n="@@admin.webhooks.delivery-last-attempt">Dernière tentative</th>
+            <td mat-cell *matCellDef="let row">
+              <span *ngIf="row.lastAttemptAt as d">{{ d | date:'short' }}</span>
+              <span class="dim" *ngIf="!row.lastAttemptAt">—</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef i18n="@@common.actions">Actions</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="row-actions">
+                <button mat-icon-button type="button" (click)="openDelivery(row)"
+                        matTooltip="Voir le détail"
+                        i18n-matTooltip="@@admin.webhooks.action-inspect"
+                        aria-label="Voir le détail"
+                        i18n-aria-label="@@admin.webhooks.action-inspect">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button mat-icon-button type="button" *ngIf="canRetry(row)" (click)="retry(row)"
+                        [disabled]="pendingDeliveryId === row.id"
+                        matTooltip="Rejouer la livraison"
+                        i18n-matTooltip="@@admin.webhooks.action-retry"
+                        aria-label="Rejouer la livraison"
+                        i18n-aria-label="@@admin.webhooks.action-retry">
+                  <mat-icon>replay</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="deliveryColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: deliveryColumns"></tr>
+        </table>
+      </div>
+
+      <p class="empty empty--compact"
+         *ngIf="!page.content.length && (deliveriesLoading$ | async) === false"
+         i18n="@@admin.webhooks.deliveries-empty">
+        Aucune livraison pour ces critères.
+      </p>
+
+      <mat-paginator *ngIf="page.content.length"
+                     [length]="page.totalElements"
+                     [pageIndex]="deliveryQuery.page"
+                     [pageSize]="deliveryQuery.size"
+                     [pageSizeOptions]="deliveryPageSizes"
+                     (page)="onDeliveryPage($event)"></mat-paginator>
+    </ng-container>
+  </div>
+</section>

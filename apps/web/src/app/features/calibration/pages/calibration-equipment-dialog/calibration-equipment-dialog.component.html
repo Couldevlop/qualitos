@@ -1,0 +1,62 @@
+<qos-form-dialog
+  [title]="title"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  [submitLabel]="submitLabel"
+  submitIcon="check"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@calibration.equipment.code">Code</mat-label>
+      <input matInput formControlName="code" maxlength="120" required
+             placeholder="Ex. : CAL-PIED-001">
+      <mat-hint *ngIf="!isEdit" i18n="@@calibration.equipment.code-hint">
+        Lettres, chiffres, point, tiret ou souligné — 2 à 120 caractères.
+      </mat-hint>
+      <mat-hint *ngIf="isEdit" i18n="@@calibration.equipment.code-locked">
+        Le code est figé après la création.
+      </mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@calibration.equipment.name">Désignation</mat-label>
+      <input matInput formControlName="name" maxlength="250" required>
+    </mat-form-field>
+  </div>
+
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@calibration.manufacturer">Fabricant</mat-label>
+      <input matInput formControlName="manufacturer" maxlength="200">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@calibration.model">Modèle</mat-label>
+      <input matInput formControlName="model" maxlength="200">
+    </mat-form-field>
+  </div>
+
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@calibration.serial">N° de série</mat-label>
+      <input matInput formControlName="serialNumber" maxlength="200">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@calibration.col-location">Emplacement</mat-label>
+      <input matInput formControlName="location" maxlength="500">
+    </mat-form-field>
+  </div>
+
+  <mat-checkbox formControlName="critical" class="critical-box">
+    <span i18n="@@calibration.equipment.critical-label">Instrument critique</span>
+  </mat-checkbox>
+  <p class="hint" i18n="@@calibration.equipment.critical-hint">
+    Une calibration non conforme met automatiquement l'instrument hors service, et la
+    remise en service exige une calibration conforme.
+  </p>
+
+</qos-form-dialog>

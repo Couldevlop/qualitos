@@ -17,5 +17,12 @@ public interface ApiKeyRepository {
     List<ApiKey> findAllByTenantId(UUID tenantId);
 
     /** Clés actives dont l'expiration est passée (scheduler). */
-    List<ApiKey> findExpirable(Instant now, int limit);
+    /**
+     * Clés actives dont l'échéance est dépassée, POUR UN TENANT DONNÉ.
+     *
+     * <p>Le tenant est un paramètre obligatoire, pas une commodité : sans lui, un
+     * administrateur de tenant déclenchant le balayage ferait expirer les clés des
+     * autres tenants (violation §18.2 #2 / OWASP A01).
+     */
+    List<ApiKey> findExpirable(UUID tenantId, Instant now, int limit);
 }

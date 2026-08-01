@@ -28,6 +28,13 @@ public interface FmeaItemRepository extends JpaRepository<FmeaItem, UUID> {
     @Query("select coalesce(max(i.rpn), 0) from FmeaItem i where i.projectId = :projectId")
     int maxRpn(UUID projectId);
 
+    /**
+     * Items les plus risqués du tenant, tous projets confondus — alimente les « risques
+     * majeurs » du dashboard exécutif (§7.1). Le filtre sur le RPN évite de remonter du
+     * bruit quand un tenant n'a que des risques faibles.
+     */
+    List<FmeaItem> findTop10ByTenantIdAndRpnGreaterThanEqualOrderByRpnDesc(UUID tenantId, int minRpn);
+
     long countByProjectId(UUID projectId);
 
     void deleteByProjectId(UUID projectId);

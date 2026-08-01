@@ -18,6 +18,7 @@ import {
   CreateCircleRequest,
   GenerateMinutesRequest,
   MeetingMinutes,
+  MeetingTranscript,
   RecordImpactRequest,
   RejectProposalRequest,
   UpdateCircleRequest
@@ -152,6 +153,21 @@ export class CirclesService {
       return of(member).pipe(delay(120));
     }
     return this.http.post<CircleMemberResponse>(`${this.endpoint}/${circleId}/members`, input);
+  }
+
+  /**
+   * §3.3 — transcrit un enregistrement de réunion (Whisper, via l'engine puis la
+   * passerelle IA). Le texte obtenu alimente le champ transcript, que l'animateur relit
+   * avant de lancer la génération du compte-rendu.
+   */
+  transcribeMeeting(circleId: string, meetingId: string, file: File,
+                    language?: string): Observable<MeetingTranscript> {
+    const form = new FormData();
+    form.append('file', file, file.name);
+    const url = `${this.endpoint}/${circleId}/meetings/${meetingId}/minutes/transcribe`
+      + (language ? `?language=${encodeURIComponent(language)}` : '');
+    // Pas de Content-Type explicite : le navigateur doit poser la frontière multipart.
+    return this.http.post<MeetingTranscript>(url, form);
   }
 
   generateMinutes(circleId: string, meetingId: string, req: GenerateMinutesRequest): Observable<MeetingMinutes> {

@@ -65,7 +65,9 @@ export class CirclesDetailComponent implements OnInit {
 
   private circleId = '';
   private readonly reload$ = new BehaviorSubject<void>(undefined);
-  private isMockId(s: string): boolean { return /^c[0-9-]/.test(s); }
+  // Ancré des DEUX côtés et jeu de caractères restreint : un simple préfixe
+  // laissait passer « c1/../../secrets » (traversée de chemin — OWASP A03).
+  private isMockId(s: string): boolean { return /^c[0-9-][a-z0-9-]{0,63}$/i.test(s); }
 
   constructor(
     private readonly route: ActivatedRoute,

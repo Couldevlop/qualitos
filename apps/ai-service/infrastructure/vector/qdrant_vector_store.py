@@ -41,11 +41,16 @@ class QdrantVectorStore(VectorStore):
             except Exception:
                 self._client = None
 
-    def upsert(self, tenant_id: UUID, documents: list[RagDocument]) -> int:
+    def upsert(
+        self,
+        tenant_id: UUID,
+        documents: list[RagDocument],
+        embeddings: list[list[float]],
+    ) -> int:
+        if len(documents) != len(embeddings):
+            raise ValueError("documents/embeddings length mismatch")
         if self._client is None:
-            return self._fallback.upsert(tenant_id, documents)
-        # Pragmatic: store payload + return count. Embedding is computed by
-        # the caller and supplied via metadata['embedding'] (json string).
+            return self._fallback.upsert(tenant_id, documents, embeddings)
         from qdrant_client.http.models import (  # type: ignore[import-not-found]
             Distance,
             PointStruct,
@@ -61,15 +66,15 @@ class QdrantVectorStore(VectorStore):
         points = [
             PointStruct(
                 id=d.document_id,
-                vector=[float(x) for x in d.metadata.get("embedding", "").split(",") if x],
+                vector=[float(x) for x in vector],
                 payload={
                     "content": d.content,
                     "tenant_id": str(d.tenant_id),
                     "indexed_at": d.indexed_at.isoformat(),
-                    **{k: v for k, v in d.metadata.items() if k != "embedding"},
+                    **d.metadata,
                 },
             )
-            for d in documents
+            for d, vector in zip(documents, embeddings)
         ]
         self._client.upsert(collection_name=coll, points=points)  # type: ignore[union-attr]
         return len(points)

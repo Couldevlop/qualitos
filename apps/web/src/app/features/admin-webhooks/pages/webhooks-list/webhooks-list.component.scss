@@ -1,0 +1,153 @@
+/* Console d'administration — webhooks sortants (§13.2).
+   Deux plans empilés : configuration (abonnements) puis exploitation (livraisons).
+   Les tokens utilisés sont ceux réellement déclarés dans styles/_tokens.scss
+   (--qos-fg-*, --qos-bg-*, --qos-*-bg-soft) pour rester juste en thème sombre. */
+
+.wh-admin { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+
+.head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.head__text { min-width: 0; }
+.head h1 { margin: 0 0 4px; font-size: 22px; }
+.head p  { margin: 0; color: var(--qos-fg-secondary); font-size: 13px; max-width: 72ch; }
+
+/* Bandeau de synthèse : l'état du parc d'abonnements se lit d'un coup d'œil. */
+.tiles { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.tile {
+  flex: 1 1 150px;
+  min-width: 150px;
+  padding: 14px 16px;
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-left: 3px solid var(--qos-border-default);
+  border-radius: var(--qos-radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tile__value { font-size: 24px; font-weight: 600; line-height: 1.1; }
+.tile__label { font-size: 12px; color: var(--qos-fg-secondary); }
+
+.tile[data-tone='success'] { border-left-color: var(--qos-success-fg); }
+.tile[data-tone='warn']    { border-left-color: var(--qos-warn-fg); }
+.tile[data-tone='danger']  { border-left-color: var(--qos-danger-fg); }
+
+.banner { padding: 10px 14px; border-radius: var(--qos-radius-md); font-size: 13px; }
+.banner--error { background: var(--qos-danger-bg-soft); color: var(--qos-danger-fg); }
+.banner--info  { background: var(--qos-accent-bg-soft); color: var(--qos-accent-fg-soft); }
+
+.panel {
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  overflow: hidden;
+}
+
+.panel--deliveries { margin-top: 8px; }
+
+.panel__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px 12px;
+  flex-wrap: wrap;
+}
+
+.panel__head h2 { margin: 0 0 4px; font-size: 16px; }
+.panel__head p  { margin: 0; color: var(--qos-fg-secondary); font-size: 12px; max-width: 62ch; }
+
+.filters { display: flex; gap: 12px; flex-wrap: wrap; }
+.filters__field { min-width: 190px; }
+
+.filters__hint {
+  margin: 0 20px 12px;
+  font-size: 12px;
+  color: var(--qos-warn-fg);
+}
+
+/* Les tableaux peuvent être larges (URL + chips d'évènements) : le défilement
+   horizontal reste confiné au tableau, jamais à la page. */
+.table-wrap { overflow-x: auto; }
+
+.sub-cell { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.sub-cell__name { font-weight: 600; }
+.sub-cell__url {
+  font-family: 'IBM Plex Mono', 'Fira Code', monospace;
+  font-size: 11px;
+  color: var(--qos-fg-secondary);
+  max-width: 42ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.events { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; max-width: 34ch; }
+
+.events__chip {
+  font-family: 'IBM Plex Mono', 'Fira Code', monospace;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: var(--qos-radius-xs);
+  background: var(--qos-bg-sunken);
+  border: 1px solid var(--qos-border-subtle);
+  white-space: nowrap;
+}
+
+.events__more { font-size: 11px; font-weight: 600; color: var(--qos-fg-secondary); }
+
+.health { display: flex; flex-direction: column; gap: 2px; font-size: 12px; }
+.health__failures { display: flex; gap: 6px; align-items: baseline; color: var(--qos-fg-secondary); }
+.health__failures strong { color: var(--qos-fg-primary); }
+.health__failures--ko strong { color: var(--qos-danger-fg); }
+
+.attempts { display: flex; flex-direction: column; gap: 2px; font-size: 12px; }
+
+.dim { color: var(--qos-fg-secondary); font-size: 12px; }
+.code-hint { margin-left: 8px; }
+
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: var(--qos-radius-pill);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: var(--qos-bg-sunken);
+  color: var(--qos-fg-secondary);
+}
+
+.badge[data-tone='success'] { background: var(--qos-success-bg-soft); color: var(--qos-success-fg); }
+.badge[data-tone='warn']    { background: var(--qos-warn-bg-soft);    color: var(--qos-warn-fg); }
+.badge[data-tone='danger']  { background: var(--qos-danger-bg-soft);  color: var(--qos-danger-fg); }
+
+.row-actions { display: flex; gap: 2px; align-items: center; }
+
+/* Un abonnement qui ne reçoit plus rien doit se distinguer sans disparaître. */
+.row--off { opacity: 0.64; }
+
+.empty {
+  padding: 40px 24px;
+  text-align: center;
+  color: var(--qos-fg-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.empty mat-icon { font-size: 34px; width: 34px; height: 34px; opacity: 0.5; }
+.empty p { margin: 0; font-size: 13px; max-width: 46ch; }
+.empty--compact { padding: 28px 24px; display: block; font-size: 13px; }
+
+@media (max-width: 860px) {
+  .wh-admin { padding: 16px; }
+  .head { flex-direction: column; align-items: stretch; }
+  .panel__head { flex-direction: column; }
+  .filters { width: 100%; }
+  .filters__field { flex: 1 1 160px; min-width: 0; }
+  .sub-cell__url { max-width: 26ch; }
+}

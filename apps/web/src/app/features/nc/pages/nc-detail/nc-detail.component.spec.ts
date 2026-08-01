@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject, of, throwError } from 'rxjs';
+import { BehaviorSubject, Subject, of, throwError } from 'rxjs';
 
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -12,7 +12,7 @@ import { UiModule } from '../../../../shared/ui/ui.module';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ConnectivityService } from '../../../../core/offline/connectivity.service';
 import { NcService } from '../../nc.service';
-import { NcPhoto, NcResponse, VisionAnalysis } from '../../nc.types';
+import { NcPhoto, NcResponse, NcStatus, VisionAnalysis } from '../../nc.types';
 import { NcDetailComponent } from './nc-detail.component';
 
 function buildNc(overrides: Partial<NcResponse> = {}): NcResponse {
@@ -278,5 +278,356 @@ describe('NcDetailComponent — section photos', () => {
     expect(component.visionScoreClass(85)).toBe('score-good');
     expect(component.visionScoreClass(70)).toBe('score-warn');
     expect(component.visionScoreClass(40)).toBe('score-bad');
+  });
+
+  it('visionConfidencePct arrondit la confiance du modèle en pourcentage', () => {
+    setup(buildNc(), []);
+    expect(component.visionConfidencePct(0.914)).toBe(91);
+    expect(component.visionConfidencePct(0.915)).toBe(92);
+    expect(component.visionConfidencePct(1)).toBe(100);
+  });
+
+  it('visionSeverityClass reste défini même si le backend renvoie une sévérité vide', () => {
+    setup(buildNc(), []);
+    expect(component.visionSeverityClass('HIGH')).toBe('vsev vsev-high');
+    expect(component.visionSeverityClass('')).toBe('vsev vsev-unknown');
+  });
+
+  it('un échec de photos non lié au stockage laisse la fiche utilisable', () => {
+    svc.getNc.and.returnValue(of(buildNc()));
+    svc.listPhotos.and.returnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
+    fixture = TestBed.createComponent(NcDetailComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(component.storageDisabled$.value).toBeFalse();
+    expect(component.photos$.value).toEqual([]);
+    expect(fixture.nativeElement.querySelector('.storage-disabled')).toBeNull();
+  });
+
+  it('ne téléverse rien quand la sélection de fichier est annulée', () => {
+    setup(buildNc(), []);
+    component.onFileSelected({ target: { files: null, value: 'x' } } as unknown as Event);
+    expect(svc.uploadPhoto).not.toHaveBeenCalled();
+  });
+
+  it('n\'ouvre pas le sélecteur de fichier pendant un téléversement', () => {
+    setup(buildNc(), []);
+    const input = { click: jasmine.createSpy('click') } as unknown as HTMLInputElement;
+    component.uploading$.next(true);
+    component.triggerFilePicker(input);
+    expect(input.click).not.toHaveBeenCalled();
+
+    component.uploading$.next(false);
+    component.triggerFilePicker(input);
+    expect(input.click).toHaveBeenCalled();
+  });
+
+  it('n\'ouvre pas le sélecteur d\'analyse pendant une inférence', () => {
+    setup(buildNc(), []);
+    const input = { click: jasmine.createSpy('click') } as unknown as HTMLInputElement;
+    component.visionAnalyzing$.next(true);
+    component.triggerVisionPicker(input);
+    expect(input.click).not.toHaveBeenCalled();
+  });
+
+  it('ne lance aucune analyse quand la sélection d\'image est annulée', () => {
+    setup(buildNc(), []);
+    component.onVisionFileSelected({ target: { files: [], value: 'x' } } as unknown as Event);
+    expect(svc.analyzePhotoVision).not.toHaveBeenCalled();
+  });
+
+  it('explique un refus de fichier (413/400) et un ajout sur NC clôturée (409)', () => {
+    setup(buildNc(), []);
+    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
+    const file = new File([new Uint8Array([1])], 'x.png', { type: 'image/png' });
+
+    svc.uploadPhoto.and.returnValue(throwError(() => new HttpErrorResponse({ status: 413 })));
+    component.onFileSelected({ target: { files: [file], value: '' } } as unknown as Event);
+    expect(snackSpy.calls.mostRecent().args[0]).toContain('10 Mo maximum');
+
+    svc.uploadPhoto.and.returnValue(throwError(() => new HttpErrorResponse({ status: 409 })));
+    component.onFileSelected({ target: { files: [file], value: '' } } as unknown as Event);
+    expect(snackSpy.calls.mostRecent().args[0]).toContain('clôturée ou annulée');
+    expect(component.uploading$.value).toBeFalse();
+  });
+
+  it('ne lance pas deux suppressions de photo en parallèle', () => {
+    setup(buildNc(), [PHOTO]);
+    const dialog = TestBed.inject(MatDialog);
+    const openSpy = spyOn(dialog, 'open');
+    component.deletingId$.next('p1');
+    component.deletePhoto(PHOTO);
+    expect(openSpy).not.toHaveBeenCalled();
+  });
+
+  it('signale l\'échec de suppression sans retirer la vignette', () => {
+    setup(buildNc(), [PHOTO]);
+    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
+    spyOn(TestBed.inject(MatDialog), 'open').and.returnValue({ afterClosed: () => of(true) } as never);
+    svc.deletePhoto.and.returnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
+
+    component.deletePhoto(PHOTO);
+
+    expect(component.photos$.value.length).toBe(1);
+    expect(component.deletingId$.value).toBeNull();
+    expect(snackSpy).toHaveBeenCalledWith(
+      'Erreur serveur — réessayez dans un instant.', 'OK', { duration: 4000 });
+  });
+});
+
+/**
+ * Le workflow NC (§4.3) n'autorise qu'une transition par état : ces gardes
+ * évitent d'exposer une action que le serveur refuserait, et empêchent le
+ * double envoi d'une transition déjà en vol.
+ */
+describe('NcDetailComponent — workflow et escalade CAPA', () => {
+  let fixture: ComponentFixture<NcDetailComponent>;
+  let component: NcDetailComponent;
+  let svc: jasmine.SpyObj<NcService>;
+  let router: Router;
+  let routeId: string;
+  let currentUser: { userId: string } | null;
+
+  const UUID = '22222222-2222-2222-2222-222222222222';
+
+  function setup(nc: NcResponse = buildNc()): void {
+    svc.getNc.and.returnValue(of(nc));
+    fixture = TestBed.createComponent(NcDetailComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    svc.getNc.calls.reset();   // les rechargements se comptent à partir d'ici
+  }
+
+  function confirmWith(answer: boolean): jasmine.Spy {
+    return spyOn(TestBed.inject(MatDialog), 'open')
+      .and.returnValue({ afterClosed: () => of(answer) } as never);
+  }
+
+  beforeEach(async () => {
+    routeId = UUID;
+    currentUser = { userId: 'u1' };
+    svc = jasmine.createSpyObj<NcService>('NcService', [
+      'getNc', 'listPhotos', 'startAnalysis', 'defineAction', 'close', 'cancel',
+      'escalateToCapa', 'uploadPhoto', 'deletePhoto', 'analyzePhotoVision'
+    ]);
+    svc.listPhotos.and.returnValue(of([]));
+
+    await TestBed.configureTestingModule({
+      declarations: [NcDetailComponent],
+      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      providers: [
+        { provide: NcService, useValue: svc },
+        { provide: ConnectivityService, useValue: new FakeConnectivity() },
+        { provide: AuthService, useValue: { snapshot: () => currentUser } },
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => routeId } } } }
+      ]
+    }).compileComponents();
+
+    router = TestBed.inject(Router);
+    spyOn(router, 'navigate').and.resolveTo(true);
+  });
+
+  it('refuse un identifiant malformé et renvoie vers la liste sans appeler l\'API', () => {
+    routeId = 'nc-1/../../secrets';
+    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
+    fixture = TestBed.createComponent(NcDetailComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(svc.getNc).not.toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith(['/nc']);
+    expect(snackSpy).toHaveBeenCalled();
+  });
+
+  it('accepte un identifiant de démonstration nc-… pour rester utilisable sans backend', () => {
+    routeId = 'nc-42';
+    svc.getNc.and.returnValue(of(buildNc({ id: 'nc-42' })));
+    fixture = TestBed.createComponent(NcDetailComponent);
+    fixture.detectChanges();
+
+    expect(svc.getNc).toHaveBeenCalledWith('nc-42');
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  it('démarre l\'analyse, confirme et recharge la fiche', () => {
+    setup();
+    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
+    svc.startAnalysis.and.returnValue(of(buildNc({ status: 'UNDER_ANALYSIS' })));
+
+    component.startAnalysis();
+
+    expect(svc.startAnalysis).toHaveBeenCalledWith(UUID);
+    expect(snackSpy).toHaveBeenCalled();
+    expect(svc.getNc).toHaveBeenCalledTimes(1);
+    expect(component.acting$.value).toBeFalse();
+  });
+
+  it('route chaque action vers sa transition serveur', () => {
+    setup();
+    svc.defineAction.and.returnValue(of(buildNc({ status: 'ACTION_DEFINED' })));
+    component.defineAction();
+    expect(svc.defineAction).toHaveBeenCalledWith(UUID);
+
+    svc.close.and.returnValue(of(buildNc({ status: 'CLOSED' })));
+    component.close();
+    expect(svc.close).toHaveBeenCalledWith(UUID);
+  });
+
+  it('ignore une seconde transition tant que la première est en vol', () => {
+    setup();
+    svc.startAnalysis.and.returnValue(new Subject<NcResponse>());
+
+    component.startAnalysis();
+    component.startAnalysis();
+
+    expect(svc.startAnalysis).toHaveBeenCalledTimes(1);
+    expect(component.acting$.value).toBeTrue();
+  });
+
+  it('signale un refus de transition sans recharger ni exposer le détail serveur', () => {
+    setup();
+    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
+    svc.close.and.returnValue(throwError(() => new HttpErrorResponse({
+      status: 409, error: { detail: 'IllegalStateException: NC not RESOLVED' }
+    })));
+
+    component.close();
+
+    expect(snackSpy).toHaveBeenCalledWith(
+      'État incompatible — rechargez la page.', 'OK', { duration: 4000 });
+    expect(svc.getNc).not.toHaveBeenCalled();
+    expect(component.acting$.value).toBeFalse();
+  });
+
+  it('demande confirmation avant d\'annuler la non-conformité', () => {
+    setup();
+    confirmWith(true);
+    svc.cancel.and.returnValue(of(buildNc({ status: 'CANCELLED' })));
+
+    component.cancel();
+
+    expect(svc.cancel).toHaveBeenCalledWith(UUID);
+    expect(svc.getNc).toHaveBeenCalledTimes(1);
+  });
+
+  it('n\'annule rien quand la confirmation est refusée', () => {
+    setup();
+    confirmWith(false);
+    component.cancel();
+    expect(svc.cancel).not.toHaveBeenCalled();
+  });
+
+  it('escalade en CAPA avec le pilote issu de la session', () => {
+    setup();
+    confirmWith(true);
+    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
+    svc.escalateToCapa.and.returnValue(of(buildNc({ capaCaseId: 'capa-1' })));
+
+    component.escalateToCapa();
+
+    expect(svc.escalateToCapa).toHaveBeenCalledWith(UUID, { ownerId: 'u1' });
+    expect(snackSpy).toHaveBeenCalled();
+    expect(svc.getNc).toHaveBeenCalledTimes(1);
+  });
+
+  it('refuse l\'escalade sans session plutôt que de créer une CAPA sans pilote', () => {
+    setup();
+    currentUser = null;
+    const openSpy = confirmWith(true);
+    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
+
+    component.escalateToCapa();
+
+    expect(openSpy).not.toHaveBeenCalled();
+    expect(svc.escalateToCapa).not.toHaveBeenCalled();
+    expect(snackSpy).toHaveBeenCalled();
+  });
+
+  it('n\'escalade pas quand la confirmation est refusée', () => {
+    setup();
+    confirmWith(false);
+    component.escalateToCapa();
+    expect(svc.escalateToCapa).not.toHaveBeenCalled();
+  });
+
+  it('signale l\'échec d\'escalade et réarme les actions', () => {
+    setup();
+    confirmWith(true);
+    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
+    svc.escalateToCapa.and.returnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
+
+    component.escalateToCapa();
+
+    expect(snackSpy).toHaveBeenCalledWith(
+      'Erreur serveur — réessayez dans un instant.', 'OK', { duration: 4000 });
+    expect(component.acting$.value).toBeFalse();
+    expect(svc.getNc).not.toHaveBeenCalled();
+  });
+
+  it('ouvre le dialogue de résolution sur la NC courante et recharge après résolution', () => {
+    setup();
+    const openSpy = spyOn(TestBed.inject(MatDialog), 'open')
+      .and.returnValue({ afterClosed: () => of(buildNc({ status: 'RESOLVED' })) } as never);
+
+    component.openResolve(buildNc({ id: UUID, reference: 'NC-2026-1001' }));
+
+    expect(openSpy.calls.mostRecent().args[1]?.data)
+      .toEqual({ ncId: UUID, reference: 'NC-2026-1001' });
+    expect(svc.getNc).toHaveBeenCalledTimes(1);
+  });
+
+  it('ne recharge pas la fiche quand la résolution est abandonnée', () => {
+    setup();
+    spyOn(TestBed.inject(MatDialog), 'open')
+      .and.returnValue({ afterClosed: () => of(undefined) } as never);
+
+    component.openResolve(buildNc());
+
+    expect(svc.getNc).not.toHaveBeenCalled();
+  });
+
+  it('n\'autorise qu\'une seule transition par état du workflow', () => {
+    setup();
+    const statuses: NcStatus[] =
+      ['OPEN', 'UNDER_ANALYSIS', 'ACTION_DEFINED', 'RESOLVED', 'CLOSED', 'CANCELLED'];
+    const allowed = statuses.map(s => [
+      component.canStartAnalysis(s), component.canDefineAction(s),
+      component.canResolve(s), component.canClose(s)
+    ].filter(Boolean).length);
+
+    expect(allowed).toEqual([1, 1, 1, 1, 0, 0]);
+    expect(component.canStartAnalysis('OPEN')).toBeTrue();
+    expect(component.canDefineAction('UNDER_ANALYSIS')).toBeTrue();
+    expect(component.canResolve('ACTION_DEFINED')).toBeTrue();
+    expect(component.canClose('RESOLVED')).toBeTrue();
+  });
+
+  it('interdit annulation et escalade sur une NC déjà close ou annulée', () => {
+    setup();
+    expect(component.canCancel('OPEN')).toBeTrue();
+    expect(component.canEscalate('RESOLVED')).toBeTrue();
+    expect(component.canCancel('CLOSED')).toBeFalse();
+    expect(component.canEscalate('CANCELLED')).toBeFalse();
+  });
+
+  it('découpe les URLs de photos saisies ligne à ligne, sans blanc ni ligne vide', () => {
+    setup();
+    expect(component.photoList('  https://a/1.jpg \r\n\n  https://a/2.jpg  \n'))
+      .toEqual(['https://a/1.jpg', 'https://a/2.jpg']);
+    expect(component.photoList('')).toEqual([]);
+    expect(component.photoList(undefined)).toEqual([]);
+  });
+
+  it('dérive les classes de badge du statut et de la sévérité', () => {
+    setup();
+    expect(component.statusBadgeClass('ACTION_DEFINED')).toBe('badge badge-action_defined');
+    expect(component.severityBadgeClass('MINOR')).toBe('sev sev-minor');
+  });
+
+  it('revient à la liste des non-conformités', () => {
+    setup();
+    component.goBack();
+    expect(router.navigate).toHaveBeenCalledWith(['/nc']);
   });
 });

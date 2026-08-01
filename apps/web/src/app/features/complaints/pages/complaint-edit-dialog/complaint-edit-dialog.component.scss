@@ -1,0 +1,15 @@
+/* Même gabarit que la saisie : deux colonnes, repliées en une sur petit écran. */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--qos-space-2) var(--qos-space-4);
+  min-width: 560px;
+}
+
+.full { grid-column: 1 / -1; }
+
+@media (max-width: 700px) {
+  .grid { grid-template-columns: 1fr; min-width: 0; }
+  .full { grid-column: auto; }
+}

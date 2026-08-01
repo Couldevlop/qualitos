@@ -97,16 +97,67 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run Semgrep
-        uses: semgrep/semgrep-action@v1
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
         with:
-          config: >-
-            p/security-audit
-            p/owasp-top-ten
-            p/java
-            p/secrets
-        # Pas de SARIF push automatique tant que GitHub Advanced Security n'est pas activé.
+          python-version: '3.12'
+
+      - name: Install Semgrep
+        run: pip install --quiet semgrep==1.145.0
+
+      # Passe COMPLÈTE, informative : toutes sévérités, ne bloque pas. Sert de
+      # rapport de fond (INFO/WARNING) sans transformer chaque nit en échec de CI.
+      - name: Semgrep — rapport complet (non bloquant)
         continue-on-error: true
+        run: |
+          semgrep scan --config p/security-audit --config p/owasp-top-ten \
+                       --config p/java --config p/secrets --metrics=off
+
+      # Passe BLOQUANTE, limitée à la sévérité ERROR. Historiquement tout Semgrep
+      # était en continue-on-error : aucune découverte de sécurité n'arrêtait la CI,
+      # ce qui vidait la règle §18.2 de sa substance. Les findings ERROR sont les
+      # vulnérabilités à forte confiance — elles doivent bloquer.
+      - name: Semgrep — findings ERROR (bloquant)
+        run: |
+          semgrep scan --config p/security-audit --config p/owasp-top-ten \
+                       --config p/java --config p/secrets \
+                       --severity ERROR --error --metrics=off
+
+  # ---------------------------------------------------------------------------
+  # SCA sans clé d'API : Trivy analyse les manifestes de dépendances du dépôt
+  # (pom.xml, package-lock.json, pyproject/requirements) avec sa propre base de
+  # vulnérabilités. Contrairement à OWASP Dependency-Check ci-dessous, il ne
+  # dépend pas de la NVD ni d'un NVD_API_KEY — il peut donc être BLOQUANT et
+  # tourner sur chaque PR, ce qui fait enfin appliquer la règle §18.2 #1
+  # (« aucune dépendance avec CVE Critique/Haute ne franchit la CI »).
+  # Le scan d'IMAGE Trivy (job image-scan) reste complémentaire : il couvre l'OS
+  # des conteneurs, pas les dépendances applicatives à l'état source.
+  # ---------------------------------------------------------------------------
+  sca-trivy-deps:
+    name: SCA (Trivy — dépendances)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Trivy filesystem scan (fail on CRITICAL/HIGH)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: '1'
+          format: table
+          trivyignores: .trivyignore
+        env:
+          # Mêmes miroirs que le scan d'image : ghcr.io rate-limite les pulls
+          # anonymes de la base Trivy quand plusieurs jobs démarrent ensemble.
+          TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db:2,ghcr.io/aquasecurity/trivy-db:2
+          TRIVY_JAVA_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-java-db:1,ghcr.io/aquasecurity/trivy-java-db:1
 
   sca-owasp:
     name: SCA (OWASP Dependency-Check)

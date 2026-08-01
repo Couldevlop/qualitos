@@ -65,7 +65,11 @@ services:
     volumes:
       - ./infra/keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
     ports:
-      - "8080:8080"
+      # Port hôte paramétrable : 8080 est très disputé (autres projets, proxies
+      # locaux). Si le démarrage échoue sur « port is already allocated », poser
+      # KEYCLOAK_PORT=8081 (ou autre) dans .env — penser à répercuter la valeur
+      # dans environment.ts / assets/config.json côté web, qui pointent l'issuer.
+      - "${KEYCLOAK_PORT:-8080}:8080"
     depends_on:
       postgres:
         condition: service_healthy
@@ -310,8 +314,15 @@ services:
       # provider_defaults.py retombe sur ollama si la valeur est inconnue/absente.
       AI_DEFAULT_PROVIDER: ${AI_DEFAULT_PROVIDER:-ollama}
       # Modèles des providers hébergés (configurables sans toucher au code).
+      # SOUVERAINETÉ : le défaut de la plateforme reste `ollama` (inférence locale,
+      # aucune donnée qui sort du périmètre). Mistral (UE) est l'option hébergée
+      # souveraine ; Anthropic n'est proposé que pour les tenants non contraints et
+      # reste désactivé tant que AI_DEFAULT_PROVIDER ne le désigne pas explicitement.
       MISTRAL_MODEL: ${MISTRAL_MODEL:-mistral-large-latest}
-      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-opus-4-7}
+      # claude-opus-4-7 était la génération précédente ; l'identifiant courant est
+      # claude-opus-5. Corrigé pour éviter un défaut périmé le jour où un tenant
+      # non souverain active ce provider.
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-opus-5}
       KEYCLOAK_ISSUER: http://keycloak:8080/realms/qualitos
       KEYCLOAK_AUDIENCE: qualitos-ai
       QDRANT_URL: http://qdrant:6333
@@ -461,6 +472,15 @@ services:
       context: apps/web
       dockerfile: Dockerfile
     container_name: qualitos-web
+    environment:
+      # Origines autorisées par la CSP (connect-src), injectées dans nginx.conf au
+      # démarrage (envsubst). Doit lister l'API et Keycloak tels que le NAVIGATEUR
+      # les joint — donc les ports publiés côté hôte, pas les noms de service.
+      QOS_CONNECT_SRC: >-
+        'self'
+        http://localhost:${KEYCLOAK_PORT:-8080}
+        http://localhost:8181
+        http://localhost:8082
     ports:
       - "4200:80"
     depends_on:

@@ -1,5 +1,8 @@
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
+import { environment } from '../../../environments/environment';
 import { DashboardService } from '../dashboard/dashboard.service';
 import {
   AiPrediction, KpiCard, QualityTrendPoint, TopRisk
@@ -19,7 +22,7 @@ const LABELS: TvSlideLabels = {
 const KPI: KpiCard = {
   id: 'k', label: 'l', value: 1, unit: '%', description: 'd', icon: 'i', state: 'good'
 };
-const RISK: TopRisk = { id: 'r', title: 't', source: 's', severity: 'high' };
+const RISK: TopRisk = { id: 'r', title: 't', source: 's', sourceType: 'FMEA', severity: 'high' };
 const PRED: AiPrediction = {
   id: 'p', kind: 'drift', title: 't', detail: 'd', confidence: 0.8, horizon: '7j', state: 'bad'
 };
@@ -30,7 +33,12 @@ describe('TvModeService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [TvModeService, DashboardService]
+      providers: [
+        // DashboardService interroge désormais l'agrégat exécutif du serveur.
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+        TvModeService, DashboardService
+      ]
     });
     service = TestBed.inject(TvModeService);
   });
@@ -63,10 +71,41 @@ describe('TvModeService', () => {
   it('buildSlides agrège les données réelles du DashboardService', (done) => {
     service.buildSlides(LABELS).subscribe(slides => {
       expect(slides.length).toBeGreaterThan(0);
-      // Le dashboard fournit KPIs + risques + prédictions + tendance.
       expect(slides.some(s => s.kind === 'kpis')).toBeTrue();
       expect(slides.some(s => s.kind === 'empty')).toBeFalse();
       done();
     });
+
+    // Le Mode TV projette ce que sert l'agrégat exécutif : plus aucune donnée de
+    // démonstration ne circule ici (c'était le cas tant que DashboardService
+    // renvoyait des constantes).
+    TestBed.inject(HttpTestingController)
+      .expectOne(`${environment.apiBaseUrl}/api/v1/dashboards/executive`)
+      .flush({
+        kpis: [{
+          kpiId: 'k1', code: 'FPY', name: 'First Pass Yield', description: null,
+          category: 'quality', unit: '%', direction: 'HIGHER_IS_BETTER',
+          value: 94.2, targetValue: 95, trendDelta: 2.1, health: 'OK',
+          latestPeriodStart: null, latestPeriodEnd: null
+        }],
+        qualityTrend: [], defectsByCategory: [], topRisks: [], alignment: [],
+        generatedAt: '2026-05-15T00:00:00Z'
+      });
+  });
+
+  it('affiche une slide « aucune donnée » pour un tenant sans indicateur', (done) => {
+    service.buildSlides(LABELS).subscribe(slides => {
+      // Un mur d'écran vide serait pire qu'un message : on dégrade explicitement.
+      expect(slides.length).toBe(1);
+      expect(slides[0].kind).toBe('empty');
+      done();
+    });
+
+    TestBed.inject(HttpTestingController)
+      .expectOne(`${environment.apiBaseUrl}/api/v1/dashboards/executive`)
+      .flush({
+        kpis: [], qualityTrend: [], defectsByCategory: [], topRisks: [],
+        alignment: [], generatedAt: '2026-05-15T00:00:00Z'
+      });
   });
 });

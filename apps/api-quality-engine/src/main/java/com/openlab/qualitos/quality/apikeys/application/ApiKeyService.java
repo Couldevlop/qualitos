@@ -72,6 +72,15 @@ public class ApiKeyService {
         return new ApiKeyDto.IssuedKey(ApiKeyDto.View.of(saved), m.plaintextRepresentation());
     }
 
+    /**
+     * Rotation = révocation de l'ancienne clé + émission d'une nouvelle.
+     *
+     * <p>{@code @Transactional} est INDISPENSABLE : l'émission peut échouer (une clé
+     * dont l'échéance est déjà passée refuse d'être réémise), et sans transaction
+     * englobante la révocation était déjà commitée — l'intégration perdait sa clé
+     * sans en recevoir de nouvelle.
+     */
+    @org.springframework.transaction.annotation.Transactional
     public ApiKeyDto.IssuedKey rotate(UUID id, ApiKeyDto.RotateRequest req) {
         ApiKey k = loadForTenant(id);
         Instant now = Instant.now(clock);
@@ -142,10 +151,18 @@ public class ApiKeyService {
     }
 
     /** Scheduler : passe en EXPIRED les clés actives échues. */
+    /**
+     * Fait basculer en EXPIRED les clés échues DU TENANT COURANT.
+     *
+     * <p>Le balayage était global : n'importe quel administrateur de tenant pouvait
+     * faire expirer les clés des autres tenants, coupant leur production. Le tenant
+     * provient désormais du JWT (§18.2 #2), comme partout ailleurs.
+     */
     public int expireDue(int limit) {
+        UUID tenantId = tenantProvider.requireTenantId();
         Instant now = Instant.now(clock);
         int expired = 0;
-        for (ApiKey k : repo.findExpirable(now, Math.max(1, Math.min(limit, 500)))) {
+        for (ApiKey k : repo.findExpirable(tenantId, now, Math.max(1, Math.min(limit, 500)))) {
             if (k.expireIfDue(now)) {
                 repo.save(k);
                 events.publish(k, ApiKeyEventPublisher.Action.EXPIRED);

@@ -1,0 +1,97 @@
+/* Affichage unique du secret : tout l'écran doit converger vers « copier maintenant ».
+   D'où l'avertissement en tête, le secret en très gros mono, et une seule action. */
+
+:host { display: block; min-width: 540px; max-width: 720px; }
+
+h2[mat-dialog-title] { display: flex; align-items: center; gap: 8px; }
+
+.warn {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border-left: 4px solid #b71c1c;
+  background: #fbe9e7;
+  color: #7f1d1d;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+.warn p { margin: 0; font-size: 13px; line-height: 1.45; }
+.warn mat-icon { flex: 0 0 auto; }
+
+.rotated-note {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--qos-text-secondary);
+}
+
+.field-label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--qos-text-secondary);
+  margin-bottom: 6px;
+}
+
+.secret {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+/* `user-select: all` : un clic suffit à tout sélectionner si le presse-papiers est
+   refusé par le navigateur. `break-all` parce qu'un secret n'a pas d'espace. */
+.secret__value {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 12px 14px;
+  background: var(--qos-bg-subtle, #eceff1);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg, 8px);
+  font-family: 'IBM Plex Mono', 'Fira Code', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  word-break: break-all;
+  user-select: all;
+}
+
+.secret__copy { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; }
+
+.copy-failed {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: #b71c1c;
+  line-height: 1.45;
+}
+
+.meta {
+  display: grid;
+  grid-template-columns: minmax(120px, auto) 1fr;
+  gap: 6px 16px;
+  margin: 0;
+  font-size: 13px;
+}
+.meta dt { color: var(--qos-text-secondary); font-size: 12px; }
+.meta dd { margin: 0; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+
+.qos-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--qos-bg-subtle, #eceff1);
+  color: var(--qos-text-secondary, #546e7a);
+  font-family: 'IBM Plex Mono', 'Fira Code', monospace;
+}
+
+.dim { color: var(--qos-text-secondary); font-size: 12px; }
+
+@media (max-width: 620px) {
+  :host { min-width: 0; }
+  .secret { flex-direction: column; }
+  .meta { grid-template-columns: 1fr; }
+}

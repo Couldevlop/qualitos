@@ -1,0 +1,271 @@
+<ng-container *ngIf="system$ | async as s; else fallback">
+  <section class="sys-detail">
+
+    <header class="head">
+      <div class="head__meta">
+        <a class="back" routerLink="/ai-systems">
+          <mat-icon>arrow_back</mat-icon>
+          <span i18n="@@ai-systems.detail.back">Registre des systèmes d'IA</span>
+        </a>
+        <h1>{{ s.name }}</h1>
+        <div class="head__badges">
+          <code class="ref">{{ s.reference }}</code>
+          <span class="badge" [attr.data-tone]="riskTone(s.riskClassification)">
+            {{ riskLabel(s.riskClassification) }}
+          </span>
+          <span class="badge" [attr.data-tone]="statusTone(s.status)">{{ statusLabel(s.status) }}</span>
+          <span class="badge" *ngIf="s.generalPurpose" i18n="@@ai-systems.detail.gpai">GPAI</span>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button mat-stroked-button type="button" *ngIf="canEdit(s)" [disabled]="pending"
+                (click)="edit(s)">
+          <mat-icon>edit</mat-icon>
+          <span i18n="@@common.edit">Modifier</span>
+        </button>
+        <button mat-flat-button color="primary" type="button" *ngIf="canRegister(s)"
+                [disabled]="pending" (click)="register(s)">
+          <mat-icon>how_to_reg</mat-icon>
+          <span i18n="@@ai-systems.detail.register">Enregistrer</span>
+        </button>
+        <button mat-flat-button color="primary" type="button" *ngIf="canPutInUse(s)"
+                [disabled]="pending" (click)="putInUse(s)">
+          <mat-icon>play_arrow</mat-icon>
+          <span i18n="@@ai-systems.detail.put-in-use">Mettre en service</span>
+        </button>
+        <button mat-stroked-button type="button" *ngIf="canDecommission(s)"
+                [disabled]="pending" (click)="decommission(s)">
+          <mat-icon>power_settings_new</mat-icon>
+          <span i18n="@@ai-systems.detail.decommission">Retirer du service</span>
+        </button>
+        <button mat-stroked-button color="warn" type="button" *ngIf="canWithdraw(s)"
+                [disabled]="pending" (click)="withdraw(s)">
+          <mat-icon>block</mat-icon>
+          <span i18n="@@ai-systems.detail.withdraw">Abandonner</span>
+        </button>
+        <button mat-button color="warn" type="button" *ngIf="canDelete(s)"
+                [disabled]="pending" (click)="remove(s)">
+          <mat-icon>delete</mat-icon>
+          <span i18n="@@common.delete">Supprimer</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="banner banner--danger" role="alert" *ngIf="isProhibited(s)">
+      <mat-icon>gpp_bad</mat-icon>
+      <p i18n="@@ai-systems.detail.prohibited">
+        Pratique interdite par l'article 5 de l'AI Act. Ce système ne peut être ni
+        enregistré ni mis en service ; la fiche n'est conservée que comme trace de la
+        décision.
+      </p>
+    </div>
+
+    <div class="banner banner--warn" role="alert" *ngIf="isStuck(s)">
+      <mat-icon>report_problem</mat-icon>
+      <p i18n="@@ai-systems.detail.stuck">
+        Mise en service impossible : des obligations restent à documenter alors que la
+        fiche, enregistrée, n'est plus modifiable. Le seul chemin est l'abandon puis une
+        nouvelle déclaration complète.
+      </p>
+    </div>
+
+    <div class="grid">
+
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title i18n="@@ai-systems.detail.purpose">Finalité et périmètre</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="text">{{ s.intendedPurpose }}</p>
+          <p class="text" *ngIf="s.description">{{ s.description }}</p>
+          <table class="kv">
+            <tr>
+              <th i18n="@@ai-systems.detail.role">Rôle</th>
+              <td>{{ roleLabel(s.role) }}</td>
+            </tr>
+            <tr>
+              <th i18n="@@ai-systems.form.provider">Fournisseur</th>
+              <td>
+                <span *ngIf="s.providerName">{{ s.providerName }}</span>
+                <span class="dim" *ngIf="!s.providerName" i18n="@@ai-systems.detail.internal">Interne</span>
+              </td>
+            </tr>
+            <tr>
+              <th i18n="@@ai-systems.detail.gpai-th">Usage général</th>
+              <td>
+                <span *ngIf="s.generalPurpose" i18n="@@ai-systems.detail.yes">Oui</span>
+                <span class="dim" *ngIf="!s.generalPurpose" i18n="@@ai-systems.detail.no">Non</span>
+              </td>
+            </tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="card--classification">
+        <mat-card-header>
+          <mat-card-title i18n="@@ai-systems.detail.classification">Classification et obligations</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="risk-line">
+            <span class="badge" [attr.data-tone]="riskTone(s.riskClassification)">
+              {{ riskLabel(s.riskClassification) }}
+            </span>
+          </p>
+          <p class="dim">{{ riskBasis(s.riskClassification) }}</p>
+
+          <ul class="requirements" *ngIf="requirements(s).length; else noRequirement">
+            <li *ngFor="let r of requirements(s); trackBy: trackByKey" [class.ok]="r.satisfied">
+              <mat-icon inline>{{ r.satisfied ? 'check_circle' : 'cancel' }}</mat-icon>
+              <span>{{ r.label }}</span>
+            </li>
+          </ul>
+          <ng-template #noRequirement>
+            <p class="dim" i18n="@@ai-systems.detail.no-requirement">
+              Aucune obligation spécifique n'est attachée à cette classification.
+            </p>
+          </ng-template>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title i18n="@@ai-systems.detail.conformity">Conformité</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr>
+              <th i18n="@@ai-systems.detail.evidence">Preuve d'évaluation</th>
+              <td>
+                <a *ngIf="s.conformityAssessmentEvidenceUrl"
+                   [href]="s.conformityAssessmentEvidenceUrl" target="_blank" rel="noopener noreferrer">
+                  {{ s.conformityAssessmentEvidenceUrl }}
+                </a>
+                <span class="dim" *ngIf="!s.conformityAssessmentEvidenceUrl">—</span>
+              </td>
+            </tr>
+            <tr>
+              <th i18n="@@ai-systems.form.ce-marking">Numéro de marquage CE</th>
+              <td>
+                <code *ngIf="s.ceMarkingNumber">{{ s.ceMarkingNumber }}</code>
+                <span class="dim" *ngIf="!s.ceMarkingNumber">—</span>
+              </td>
+            </tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title i18n="@@ai-systems.detail.safeguards">Garde-fous</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <h4 i18n="@@ai-systems.form.human-oversight">Supervision humaine</h4>
+          <p class="text" *ngIf="s.humanOversightDescription">{{ s.humanOversightDescription }}</p>
+          <p class="dim" *ngIf="!s.humanOversightDescription"
+             i18n="@@ai-systems.detail.not-documented">Non documenté.</p>
+
+          <h4 i18n="@@ai-systems.form.transparency">Mesures de transparence</h4>
+          <p class="text" *ngIf="s.transparencyMeasures">{{ s.transparencyMeasures }}</p>
+          <p class="dim" *ngIf="!s.transparencyMeasures"
+             i18n="@@ai-systems.detail.not-documented">Non documenté.</p>
+
+          <h4 i18n="@@ai-systems.form.data-governance">Gouvernance des données</h4>
+          <p class="text" *ngIf="s.dataGovernanceNotes">{{ s.dataGovernanceNotes }}</p>
+          <p class="dim" *ngIf="!s.dataGovernanceNotes"
+             i18n="@@ai-systems.detail.not-documented">Non documenté.</p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title i18n="@@ai-systems.detail.links">Rattachements RGPD</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr>
+              <th i18n="@@ai-systems.detail.dpia">AIPD</th>
+              <td>
+                <a *ngIf="s.linkedDpiaId" [routerLink]="['/dpia', s.linkedDpiaId]">
+                  <code>{{ s.linkedDpiaId }}</code>
+                </a>
+                <span class="dim" *ngIf="!s.linkedDpiaId">—</span>
+              </td>
+            </tr>
+            <tr>
+              <th i18n="@@ai-systems.detail.processing">Traitements</th>
+              <td>
+                <ul class="links" *ngIf="s.linkedProcessingActivityIds.length; else noProcessing">
+                  <li *ngFor="let id of s.linkedProcessingActivityIds; trackBy: trackByValue">
+                    <a [routerLink]="['/ropa', id]"><code>{{ id }}</code></a>
+                  </li>
+                </ul>
+                <ng-template #noProcessing><span class="dim">—</span></ng-template>
+              </td>
+            </tr>
+            <tr>
+              <th i18n="@@ai-systems.detail.decisions">Décisions automatisées</th>
+              <td>
+                <ul class="links" *ngIf="s.linkedAutomatedDecisionIds.length; else noDecision">
+                  <li *ngFor="let id of s.linkedAutomatedDecisionIds; trackBy: trackByValue">
+                    <a [routerLink]="['/automated-decisions', id]"><code>{{ id }}</code></a>
+                  </li>
+                </ul>
+                <ng-template #noDecision><span class="dim">—</span></ng-template>
+              </td>
+            </tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title i18n="@@ai-systems.detail.trace">Trace</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr>
+              <th i18n="@@ai-systems.detail.created-by">Déclaré par</th>
+              <td><code>{{ s.createdByUserId }}</code></td>
+            </tr>
+            <tr>
+              <th i18n="@@common.created-at">Créé le</th>
+              <td>{{ s.createdAt | date:'medium' }}</td>
+            </tr>
+            <tr *ngIf="s.effectiveFrom">
+              <th i18n="@@ai-systems.detail.effective-from">En service depuis</th>
+              <td>{{ s.effectiveFrom | date:'medium' }}</td>
+            </tr>
+            <tr *ngIf="s.effectiveTo">
+              <th i18n="@@ai-systems.detail.effective-to">Fin d'exploitation</th>
+              <td>{{ s.effectiveTo | date:'medium' }}</td>
+            </tr>
+            <tr>
+              <th i18n="@@common.last-updated">Dernière MAJ</th>
+              <td>{{ s.updatedAt | date:'medium' }}</td>
+            </tr>
+          </table>
+          <div class="withdrawal" *ngIf="s.withdrawalReason">
+            <h4 i18n="@@ai-systems.detail.withdrawal-reason">Motif d'abandon</h4>
+            <p class="text">{{ s.withdrawalReason }}</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+    </div>
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="sys-detail sys-detail--fallback">
+    <a class="back" routerLink="/ai-systems">
+      <mat-icon>arrow_back</mat-icon>
+      <span i18n="@@ai-systems.detail.back">Registre des systèmes d'IA</span>
+    </a>
+    <div *ngIf="loading$ | async" class="banner banner--info" i18n="@@common.loading">Chargement…</div>
+    <div *ngIf="error$ | async as err" class="banner banner--danger" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ err }}</p>
+    </div>
+  </section>
+</ng-template>

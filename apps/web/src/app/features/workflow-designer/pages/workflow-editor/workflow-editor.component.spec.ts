@@ -66,6 +66,13 @@ function definition(id: string, status: WorkflowDefinition['status']): WorkflowD
 }
 
 describe('WorkflowEditorComponent (bpmn-js mocked)', () => {
+  // `lastInstance` est un statique partagé. Le remettre à zéro en afterEach ne suffit
+  // pas : une initialisation asynchrone du modeler laissée en suspens par un spec peut
+  // se résoudre APRÈS son afterEach et polluer le suivant. Comme Jasmine randomise
+  // l'ordre des specs, le test « le modeler n'est pas encore initialisé » échouait donc
+  // par intermittence — c'est ce qui se produisait sous instrumentation de couverture.
+  // Le reset en beforeEach garantit un état propre quel que soit l'ordre.
+  beforeEach(() => { FakeModeler.lastInstance = null; });
   afterEach(() => { FakeModeler.lastInstance = null; });
 
   it('new mode: starts as new with an empty diagram, no backend get', () => {

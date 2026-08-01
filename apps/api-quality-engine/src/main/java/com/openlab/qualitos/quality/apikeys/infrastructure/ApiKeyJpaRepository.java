@@ -18,10 +18,13 @@ public interface ApiKeyJpaRepository extends JpaRepository<ApiKeyJpaEntity, UUID
 
     @Query("""
             select k from ApiKeyJpaEntity k
-            where k.status = 'ACTIVE'
+            where k.tenantId = :tenantId
+              and k.status = 'ACTIVE'
               and k.expiresAt is not null
               and k.expiresAt <= :now
             order by k.expiresAt asc
             """)
-    List<ApiKeyJpaEntity> findExpirable(@Param("now") Instant now, Pageable pageable);
+    List<ApiKeyJpaEntity> findExpirable(@Param("tenantId") UUID tenantId,
+                                        @Param("now") Instant now,
+                                        Pageable pageable);
 }

@@ -1,0 +1,185 @@
+/* Journal d'audit (§11.5).
+   Reprend les conventions des écrans d'administration : padding 24, en-tête titre +
+   sous-titre, bandeaux d'état, table encadrée. Colonne latérale pour l'intégrité et le
+   détail, qui replie sous le tableau en dessous de 1100 px. */
+
+.audit-log { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+
+.head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.head h1 { margin: 0 0 4px; font-size: 22px; }
+.head p  { margin: 0; color: var(--qos-text-secondary); font-size: 13px; max-width: 68ch; }
+
+/* Grille fluide : les six critères tiennent sur une ligne en grand écran et se
+   réorganisent seuls, sans media query par palier. */
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  padding: 16px;
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+}
+
+.filters__actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.criterion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 12px;
+  color: var(--qos-text-secondary);
+}
+
+.banner { padding: 10px 14px; border-radius: 8px; font-size: 13px; }
+.banner-error { background: #fbe9e7; color: #b71c1c; }
+.banner-info  { background: #e3f2fd; color: #0d47a1; }
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 16px;
+  align-items: start;
+}
+
+.table-wrap {
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  overflow-x: auto;
+}
+
+.seq {
+  font-family: 'IBM Plex Mono', 'Fira Code', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--qos-text-secondary);
+}
+
+.when { display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+
+.actor { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.action-cell { display: flex; flex-direction: column; gap: 2px; }
+.action-cell__name { font-weight: 600; }
+.action-cell__summary {
+  font-size: 12px;
+  color: var(--qos-text-secondary);
+  max-width: 44ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.resource { display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+
+.integrity { display: flex; align-items: center; gap: 6px; }
+.anchored { color: var(--qos-success-fg); }
+
+.mono {
+  font-family: 'IBM Plex Mono', 'Fira Code', monospace;
+  font-size: 11px;
+  color: var(--qos-text-secondary);
+}
+
+.wrap { overflow-wrap: anywhere; white-space: normal; }
+
+.dim { color: var(--qos-text-secondary); font-size: 12px; }
+
+.qos-badge {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  background: var(--qos-bg-subtle); color: var(--qos-text-secondary);
+}
+.qos-badge[data-tone='accent'] { background: #e3f2fd; color: #0d47a1; }
+.qos-badge--accent             { background: #e3f2fd; color: #0d47a1; }
+
+/* La ligne ouverte dans le panneau de détail reste repérable pendant la lecture. */
+.row--selected { background: var(--qos-bg-subtle); }
+
+.empty { padding: 24px; text-align: center; color: var(--qos-text-secondary); font-size: 13px; }
+
+.side { display: flex; flex-direction: column; gap: 16px; }
+
+.panel {
+  padding: 16px;
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.panel h2 { margin: 0; font-size: 15px; }
+.panel h3 { margin: 4px 0 0; font-size: 13px; color: var(--qos-text-secondary); }
+.panel__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.panel__hint { margin: 0; font-size: 12px; color: var(--qos-text-secondary); }
+.panel__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.seq-fields { display: flex; gap: 8px; }
+.seq-fields mat-form-field { flex: 1 1 0; min-width: 0; }
+
+.verdict {
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 3px solid var(--qos-border);
+  background: var(--qos-bg-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.verdict[data-valid='true']  { border-left-color: var(--qos-success-fg); }
+.verdict[data-valid='false'] { border-left-color: var(--qos-danger-fg); }
+.verdict__head { display: flex; align-items: center; gap: 6px; font-size: 14px; }
+.verdict p { margin: 0; }
+
+.breaks { margin: 0; padding-left: 18px; font-size: 12px; display: flex; flex-direction: column; gap: 4px; }
+
+/* Liste de faits : libellé court à gauche, valeur à droite, sans tableau. */
+.fields {
+  display: grid;
+  grid-template-columns: minmax(90px, auto) minmax(0, 1fr);
+  gap: 6px 12px;
+  margin: 0;
+  font-size: 13px;
+}
+.fields dt { color: var(--qos-text-secondary); font-size: 12px; }
+.fields dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+
+.payload {
+  margin: 0;
+  padding: 10px;
+  background: var(--qos-bg-subtle);
+  border-radius: 8px;
+  font-family: 'IBM Plex Mono', 'Fira Code', monospace;
+  font-size: 11px;
+  max-height: 260px;
+  overflow: auto;
+}
+
+/* Entête de la colonne d'actions : nécessaire aux lecteurs d'écran, inutile à l'œil. */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 1100px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 720px) {
+  .audit-log { padding: 16px; }
+  .head { flex-direction: column; }
+}

@@ -72,6 +72,17 @@ public final class CircleDto {
     /** Action extraite par le LLM depuis le transcript de réunion. */
     public record ExtractedAction(String label, String suggestedAssignee) {}
 
+    /**
+     * Transcription d'un enregistrement de réunion (§3.3). Renvoyée telle quelle à
+     * l'animateur, qui la relit avant de lancer la génération du compte-rendu :
+     * l'IA propose, l'humain décide (§12.3).
+     */
+    public record MeetingTranscript(
+            String text,
+            String language,
+            int durationMs
+    ) {}
+
     /** Compte-rendu structuré généré par LLM (§3.3 QualitOS). */
     public record MeetingMinutes(
             String summary,
