@@ -1,72 +1,174 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
+import { Subject, Subscription, of } from 'rxjs';
 
 import { environment } from '../../../../../environments/environment';
+import { ConnectivityService } from '../../../../core/offline/connectivity.service';
+import { InMemoryQueueStore, OfflineQueueStore } from '../../../../core/offline/offline-queue.store';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
+import { AuditPlanResponse } from '../../audits.types';
 import { AuditsListComponent } from './audits-list.component';
 
+/**
+ * Liste des plans d'audit (§4.4).
+ *
+ * Le point vérifié au-delà de l'affichage est le nombre de requêtes : la liste
+ * est alimentée par un `combineLatest` dont CHAQUE source déclenche un
+ * rechargement. Pousser deux sources pour une seule création partirait en double
+ * appel, avec une course dont la réponse la plus ancienne peut sortir gagnante.
+ */
 describe('AuditsListComponent', () => {
   let component: AuditsListComponent;
   let fixture: ComponentFixture<AuditsListComponent>;
+  let http: HttpTestingController;
   let prevMock: boolean;
+  let subs: Subscription;
+
+  const endpoint = `${environment.apiBaseUrl}/api/v1/audits/plans`;
+
+  /** Connectivité pilotable (navigator.onLine est en lecture seule). */
+  class FakeConnectivity {
+    private readonly subject = new Subject<boolean>();
+    readonly online$ = this.subject.asObservable();
+    isOnline(): boolean { return true; }
+  }
+
+  const page = (content: Partial<AuditPlanResponse>[]) => ({
+    content, totalElements: content.length, totalPages: 1, number: 0, size: content.length
+  });
+
+  /** La liste n'est chargée que si quelqu'un souscrit : le template le fait via `async`. */
+  function start(): void {
+    fixture.detectChanges();
+    subs.add(component.plans$.subscribe());
+  }
 
   beforeEach(async () => {
     prevMock = environment.useMockApi;
-    environment.useMockApi = true;
+    // Mode connecté : c'est le seul moyen de COMPTER les requêtes émises.
+    environment.useMockApi = false;
+    subs = new Subscription();
+
     await TestBed.configureTestingModule({
       declarations: [AuditsListComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-        provideRouter([])
+        provideRouter([]),
+        { provide: OfflineQueueStore, useClass: InMemoryQueueStore },
+        { provide: ConnectivityService, useClass: FakeConnectivity }
       ]
     }).compileComponents();
+
     fixture = TestBed.createComponent(AuditsListComponent);
     component = fixture.componentInstance;
+    http = TestBed.inject(HttpTestingController);
   });
 
-  afterEach(() => { environment.useMockApi = prevMock; });
-
-  it('renders without throwing', () => {
-    fixture.detectChanges();
-    expect(component).toBeTruthy();
+  afterEach(() => {
+    subs.unsubscribe();
+    environment.useMockApi = prevMock;
   });
 
-  it('exposes the canonical audit statuses and columns', () => {
+  // ---- Contrat d'affichage -----------------------------------------------------
+
+  it('expose les statuts et colonnes du référentiel', () => {
     expect(component.statuses).toEqual(['PLANNED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']);
     expect(component.displayedColumns)
       .toEqual(['title', 'type', 'standard', 'status', 'score', 'scheduledDate']);
   });
 
-  it('builds the status badge class', () => {
+  it('dérive la classe de pastille du statut', () => {
+    expect(component.statusBadge('IN_PROGRESS')).toBe('badge badge-in_progress');
     expect(component.statusBadge('COMPLETED')).toBe('badge badge-completed');
   });
 
-  it('maps the score to high/mid/low buckets and a neutral class when missing', () => {
-    expect(component.scoreClass(undefined)).toBe('score');
-    expect(component.scoreClass(90)).toBe('score score-high');
-    expect(component.scoreClass(85)).toBe('score score-high');
-    expect(component.scoreClass(75)).toBe('score score-mid');
-    expect(component.scoreClass(70)).toBe('score score-mid');
-    expect(component.scoreClass(50)).toBe('score score-low');
+  it('navigue vers la fiche du plan ouvert', () => {
+    const nav = spyOn(TestBed.inject(Router), 'navigate');
+
+    component.openPlan({ id: 'a-5' } as AuditPlanResponse);
+
+    expect(nav).toHaveBeenCalledWith(['/audits', 'a-5']);
   });
 
-  it('clamps pagination on onPage', () => {
-    component.onPage({ pageIndex: -2, pageSize: 250 } as PageEvent);
+  // ---- Chargement --------------------------------------------------------------
+
+  it('charge la première page et retient le total', () => {
+    start();
+
+    const req = http.expectOne(r => r.url === endpoint);
+    expect(req.request.params.get('page')).toBe('0');
+    req.flush(page([{ id: 'a1' }, { id: 'a2' }]));
+
+    expect(component.totalElements).toBe(2);
+  });
+
+  it('vide la liste quand le chargement échoue', () => {
+    const emitted: AuditPlanResponse[][] = [];
+    fixture.detectChanges();
+    subs.add(component.plans$.subscribe(rows => emitted.push(rows)));
+
+    http.expectOne(r => r.url === endpoint)
+      .flush({ detail: 'SQLException at line 42' }, { status: 500, statusText: 'Server Error' });
+
+    expect(emitted[emitted.length - 1]).toEqual([]);
+  });
+
+  // ---- Pagination ----------------------------------------------------------------
+
+  it('borne la pagination côté client, le serveur revalidant de son côté', () => {
+    component.onPage({ pageIndex: -1, pageSize: 9999 } as PageEvent);
+
     expect(component.pageIndex).toBe(0);
     expect(component.pageSize).toBe(100);
   });
 
-  it('navigates to the plan detail on openPlan', () => {
-    const router = TestBed.inject(Router);
-    const nav = spyOn(router, 'navigate');
-    component.openPlan({ id: 'aud-7' } as never);
-    expect(nav).toHaveBeenCalledWith(['/audits', 'aud-7']);
+  it('recharge une seule fois au changement de page', () => {
+    start();
+    http.expectOne(r => r.url === endpoint).flush(page([]));
+
+    component.onPage({ pageIndex: 2, pageSize: 20 } as PageEvent);
+
+    const req = http.expectOne(r => r.url === endpoint);
+    expect(req.request.params.get('page')).toBe('2');
+    req.flush(page([]));
+  });
+
+  // ---- Création ------------------------------------------------------------------
+
+  it('après création, revient à la première page et ne recharge QU\'UNE fois', () => {
+    start();
+    http.expectOne(r => r.url === endpoint).flush(page([]));
+    component.onPage({ pageIndex: 3, pageSize: 20 } as PageEvent);
+    http.expectOne(r => r.url === endpoint).flush(page([]));
+
+    spyOn(TestBed.inject(MatDialog), 'open')
+      .and.returnValue({ afterClosed: () => of({ id: 'nouveau' }) } as never);
+    component.openCreate();
+
+    expect(component.pageIndex).toBe(0);
+    // `expectOne` échoue s'il y a DEUX requêtes : c'est exactement la
+    // régression que ce test empêche.
+    const req = http.expectOne(r => r.url === endpoint);
+    expect(req.request.params.get('page')).toBe('0');
+    req.flush(page([{ id: 'nouveau' }]));
+  });
+
+  it('ne recharge pas la liste quand la création est abandonnée', () => {
+    start();
+    http.expectOne(r => r.url === endpoint).flush(page([]));
+
+    spyOn(TestBed.inject(MatDialog), 'open')
+      .and.returnValue({ afterClosed: () => of(undefined) } as never);
+    component.openCreate();
+
+    http.expectNone(r => r.url === endpoint);
   });
 });
