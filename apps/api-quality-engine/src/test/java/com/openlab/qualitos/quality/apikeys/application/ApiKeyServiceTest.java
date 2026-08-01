@@ -26,6 +26,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -193,18 +195,30 @@ class ApiKeyServiceTest {
         ApiKey k = new ApiKey(ID, TENANT, "x", "pfx12345", "h",
                 Set.of(), ApiKeyStatus.ACTIVE,
                 NOW.minusSeconds(120), ACTOR, NOW.minusSeconds(1), null, null, null);
-        when(repo.findExpirable(eq(NOW), eq(200))).thenReturn(List.of(k));
+        when(repo.findExpirable(eq(TENANT), eq(NOW), eq(200))).thenReturn(List.of(k));
         assertThat(service.expireDue(200)).isEqualTo(1);
         verify(events).publish(any(), eq(ApiKeyEventPublisher.Action.EXPIRED));
     }
 
     @Test
     void expireDue_clampsLimit() {
-        when(repo.findExpirable(any(), eq(500))).thenReturn(List.of());
+        when(repo.findExpirable(any(), any(), anyInt())).thenReturn(List.of());
         service.expireDue(9999);
-        verify(repo).findExpirable(eq(NOW), eq(500));
+        verify(repo).findExpirable(eq(TENANT), eq(NOW), eq(500));
         service.expireDue(0);
-        verify(repo).findExpirable(eq(NOW), eq(1));
+        verify(repo).findExpirable(eq(TENANT), eq(NOW), eq(1));
+    }
+
+    @Test
+    void expireDue_neDeborrdePasSurUnAutreTenant() {
+        // Le balayage était global : un admin du tenant A faisait expirer les clés des
+        // autres tenants. Le tenant courant doit désormais borner la requête.
+        when(repo.findExpirable(any(), any(), anyInt())).thenReturn(List.of());
+
+        service.expireDue(200);
+
+        verify(repo).findExpirable(eq(TENANT), any(), anyInt());
+        verify(repo, never()).findExpirable(isNull(), any(), anyInt());
     }
 
     // ---- list / get ----

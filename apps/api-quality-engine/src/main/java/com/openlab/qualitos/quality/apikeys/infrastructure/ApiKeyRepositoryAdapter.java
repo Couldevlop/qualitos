@@ -49,8 +49,8 @@ public class ApiKeyRepositoryAdapter implements ApiKeyRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ApiKey> findExpirable(Instant now, int limit) {
-        return jpa.findExpirable(now, PageRequest.of(0, limit))
+    public List<ApiKey> findExpirable(UUID tenantId, Instant now, int limit) {
+        return jpa.findExpirable(tenantId, now, PageRequest.of(0, limit))
                 .stream().map(ApiKeyMapper::toDomain).toList();
     }
 }
