@@ -25,18 +25,18 @@ module.exports = function (config) {
       // réelle mesurée, ce qui interdit toute régression dès aujourd'hui. Ils sont
       // remontés à chaque lot de tests ajouté, jusqu'à la cible de 99 %.
       //
-      //   Mesure du 2026-07-31 : statements 56,71 % · branches 48,13 %
-      //                          lines 59,68 %      · functions 61,61 %
+      //   Mesure du 2026-08-01 : statements 57,17 % · branches 48,56 %
+      //                          lines 60,09 %      · functions 62,48 %
       //   Cible §14.4 : 85 / 75 — cible projet : 99.
       //
       // `emitWarning: false` = la suite sort en échec si un seuil n'est pas atteint.
       check: {
         emitWarning: false,
         global: {
-          statements: 56,
-          lines: 59,
-          branches: 47,
-          functions: 61
+          statements: 57,
+          lines: 60,
+          branches: 48,
+          functions: 62
         }
       }
     },
