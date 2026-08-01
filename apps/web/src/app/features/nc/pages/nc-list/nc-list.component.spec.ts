@@ -223,7 +223,7 @@ describe('NcListComponent — chargement, filtres et pagination', () => {
     req.flush(page([]));
   });
 
-  it('publie un message d\'erreur sûr et n\'émet aucune liste quand le chargement échoue', fakeAsync(() => {
+  it('publie un message d\'erreur sûr et vide la liste quand le chargement échoue', fakeAsync(() => {
     start();
     const seen: (string | null)[] = [];
     component.error$.subscribe(m => seen.push(m));
@@ -233,7 +233,12 @@ describe('NcListComponent — chargement, filtres et pagination', () => {
         { status: 500, statusText: 'Server Error' });
     tick();
 
-    expect(emitted.length).toBe(0);                 // aucune liste vide trompeuse
+    // La liste est vidée plutôt que laissée en l'état : ne rien émettre
+    // laissait les lignes PRÉCÉDENTES à l'écran, périmées, sous la bannière
+    // d'erreur. Le gabarit masque par ailleurs la table tant qu'une erreur est
+    // affichée, donc aucune mention « aucun résultat » ne vient tromper.
+    expect(emitted[emitted.length - 1]).toEqual([]);
+    expect(component.totalElements).toBe(0);
     const last = seen[seen.length - 1];
     expect(last).toBe('Erreur serveur — réessayez dans un instant.');
     expect(last).not.toContain('PSQL');             // OWASP A09 : pas de détail technique

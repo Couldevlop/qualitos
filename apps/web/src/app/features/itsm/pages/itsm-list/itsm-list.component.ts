@@ -2,17 +2,20 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, finalize, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ItsmService } from '../../itsm.service';
-import { ConnectionResponse, ConnectionStatus, ItsmProvider } from '../../itsm.types';
+import { ConnectionPage, ConnectionResponse, ConnectionStatus, ItsmProvider } from '../../itsm.types';
 import { ItsmConnectionDialogComponent } from '../itsm-connection-dialog/itsm-connection-dialog.component';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 const MAX_PAGE_SIZE = 100;
+
+/** Page vide emise quand le chargement echoue : vide la table et remet le compteur a zero. */
+const EMPTY_PAGE = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 };
 
 @Component({
   selector: 'qos-itsm-list',
@@ -54,14 +57,16 @@ export class ItsmListComponent implements OnInit {
               // eslint-disable-next-line no-console
               console.warn('[itsm-list] failed', err?.status, err?.error?.title);
               this.errorState$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
-              return [];
+              // `return []` renverrait un observable VIDE : RxJS convertit le
+              // tableau en source, donc la liste n'emettrait RIEN et la table
+              // garderait les lignes precedentes sous la banniere d'erreur.
+              return of(EMPTY_PAGE as unknown as ConnectionPage);
             }),
             finalize(() => this.loadingState$.next(false))
           )
         )
       )),
       map(page => {
-        if (Array.isArray(page)) return [];
         this.totalElements = page.totalElements;
         return page.content;
       }),

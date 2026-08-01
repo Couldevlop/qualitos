@@ -35,7 +35,7 @@
     <span i18n="@@common.loading">Chargement…</span>
   </div>
 
-  <mat-card class="table-card" *ngIf="(loading$ | async) === false">
+  <mat-card class="table-card" *ngIf="(loading$ | async) === false && (error$ | async) === null">
     <table mat-table [dataSource]="(audits$ | async) ?? []" class="t">
       <ng-container matColumnDef="zone">
         <th mat-header-cell *matHeaderCellDef i18n="@@common.zone">Zone</th>
