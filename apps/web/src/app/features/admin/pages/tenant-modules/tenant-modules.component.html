@@ -1,0 +1,154 @@
+<section class="admin-modules">
+  <header class="head">
+    <div>
+      <h1 i18n="@@admin.modules.title">Modules du tenant</h1>
+      <p i18n="@@admin.modules.subtitle">
+        Activez uniquement les modules dont votre organisation a besoin. La désactivation
+        est immédiate et réversible ; les modules cœur restent toujours actifs.
+      </p>
+    </div>
+    <div class="tenant-tier" *ngIf="summary$ | async as s">
+      <span class="tenant-tier__label" i18n="@@admin.modules.tenant-tier">Palier du tenant</span>
+      <span class="qos-badge qos-badge--accent">{{ s.tenantTier }}</span>
+    </div>
+  </header>
+
+  <div class="tiles" *ngIf="tiles$ | async as tiles">
+    <div class="tile" *ngFor="let t of tiles" [attr.data-tone]="t.tone">
+      <span class="tile__value">{{ t.value }}</span>
+      <span class="tile__label">{{ t.label }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
+
+  <div class="table-wrap mat-elevation-z1">
+    <table mat-table [dataSource]="(rows$ | async) ?? []" [trackBy]="trackByCode">
+
+      <ng-container matColumnDef="module">
+        <th mat-header-cell *matHeaderCellDef i18n="@@admin.modules.col-module">Module</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="module-cell">
+            <span class="module-cell__name">{{ row.entry.name }}</span>
+            <code class="module-cell__code">{{ row.entry.code }}</code>
+            <span class="module-cell__deps" *ngIf="row.entry.dependencies.length">
+              <span i18n="@@admin.modules.depends-on">Dépend de</span>
+              {{ row.entry.dependencies.join(', ') }}
+            </span>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef i18n="@@admin.modules.col-category">Catégorie</th>
+        <td mat-cell *matCellDef="let row">{{ row.entry.category }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="qos-badge" [attr.data-tone]="statusTone(status(row))" *ngIf="status(row) as st">
+            {{ st }}
+          </span>
+          <span class="dim" *ngIf="!status(row)" i18n="@@admin.modules.not-activated">Non activé</span>
+          <span class="lock" *ngIf="isLocked(row)"
+                matTooltip="Module cœur : toujours actif"
+                i18n-matTooltip="@@admin.modules.core-tooltip">
+            <mat-icon inline>lock</mat-icon>
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="tier">
+        <th mat-header-cell *matHeaderCellDef i18n="@@admin.modules.col-tier">Palier</th>
+        <td mat-cell *matCellDef="let row">
+          <ng-container *ngIf="row.activation; else minimumTier">
+            <mat-form-field appearance="outline" class="tier-select" subscriptSizing="dynamic">
+              <mat-select [value]="row.activation.billingTier"
+                          [disabled]="isLocked(row) || pendingModuleCode === row.entry.code"
+                          (selectionChange)="changeTier(row, $event.value)"
+                          i18n-aria-label="@@admin.modules.tier-aria"
+                          aria-label="Palier de facturation du module">
+                <mat-option value="FREE">FREE</mat-option>
+                <mat-option value="STANDARD">STANDARD</mat-option>
+                <mat-option value="PRO">PRO</mat-option>
+                <mat-option value="ENTERPRISE">ENTERPRISE</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </ng-container>
+          <ng-template #minimumTier>
+            <span class="dim">
+              <span i18n="@@admin.modules.min-tier">Minimum</span> {{ row.entry.minimumTier }}
+            </span>
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="validity">
+        <th mat-header-cell *matHeaderCellDef i18n="@@admin.modules.col-validity">Échéance</th>
+        <td mat-cell *matCellDef="let row">
+          <span *ngIf="validityDate(row) as d">{{ d | date:'mediumDate' }}</span>
+          <span class="dim" *ngIf="!validityDate(row)">—</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.actions">Actions</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="row-actions" *ngIf="!isLocked(row)">
+
+            <!-- Jamais activé : activer, ou tester 30 jours. -->
+            <ng-container *ngIf="!row.activation">
+              <button mat-flat-button color="primary"
+                      [disabled]="pendingModuleCode === row.entry.code
+                                  || !tierSufficient(row, (summary$ | async)?.tenantTier)"
+                      (click)="activate(row)"
+                      i18n="@@admin.modules.activate">Activer</button>
+              <button mat-stroked-button
+                      [disabled]="pendingModuleCode === row.entry.code"
+                      (click)="startTrial(row)"
+                      i18n="@@admin.modules.trial">Essai 30 j</button>
+            </ng-container>
+
+            <ng-container *ngIf="row.activation as a">
+              <button mat-flat-button color="primary" *ngIf="a.status === 'TRIAL'"
+                      [disabled]="pendingModuleCode === row.entry.code"
+                      (click)="convertTrial(row)"
+                      i18n="@@admin.modules.convert">Convertir</button>
+
+              <button mat-stroked-button *ngIf="a.status === 'ACTIVE' || a.status === 'TRIAL'"
+                      [disabled]="pendingModuleCode === row.entry.code"
+                      (click)="suspend(row)"
+                      i18n="@@admin.modules.suspend">Suspendre</button>
+
+              <button mat-stroked-button *ngIf="a.status === 'SUSPENDED'"
+                      [disabled]="pendingModuleCode === row.entry.code"
+                      (click)="resume(row)"
+                      i18n="@@admin.modules.resume">Reprendre</button>
+
+              <button mat-stroked-button *ngIf="a.status === 'EXPIRED' || a.status === 'DISABLED'"
+                      [disabled]="pendingModuleCode === row.entry.code"
+                      (click)="activate(row)"
+                      i18n="@@admin.modules.reactivate">Réactiver</button>
+
+              <button mat-button color="warn" *ngIf="a.status !== 'DISABLED'"
+                      [disabled]="pendingModuleCode === row.entry.code"
+                      (click)="disable(row)"
+                      i18n="@@admin.modules.disable">Désactiver</button>
+            </ng-container>
+          </div>
+
+          <span class="dim" *ngIf="isLocked(row)" i18n="@@admin.modules.always-on">Toujours actif</span>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"
+          [class.row--off]="!isOpen(row) && !isLocked(row)"></tr>
+    </table>
+
+    <p class="empty" *ngIf="(rows$ | async)?.length === 0 && (loading$ | async) === false"
+       i18n="@@admin.modules.empty">Aucun module au catalogue.</p>
+  </div>
+</section>

@@ -3184,6 +3184,126 @@
         <source>Replier la navigation</source>
         <target state="translated">Plegar la navegación</target>
       </trans-unit>
+      <trans-unit id="nav.administration" datatype="html">
+        <source>Administration</source>
+        <target state="translated">Administración</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-modules" datatype="html">
+        <source>Modules du tenant</source>
+        <target state="translated">Módulos del inquilino</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.title" datatype="html">
+        <source>Modules du tenant</source>
+        <target state="translated">Módulos del inquilino</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.subtitle" datatype="html">
+        <source>Activez uniquement les modules dont votre organisation a besoin. La désactivation est immédiate et réversible ; les modules cœur restent toujours actifs.</source>
+        <target state="translated">Active solo los módulos que su organización necesita. La desactivación es inmediata y reversible; los módulos básicos siempre permanecen activos.</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tenant-tier" datatype="html">
+        <source>Palier du tenant</source>
+        <target state="translated">Nivel del inquilino</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.col-module" datatype="html">
+        <source>Module</source>
+        <target state="translated">Módulo</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.col-category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">Categoría</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.col-tier" datatype="html">
+        <source>Palier</source>
+        <target state="translated">Nivel</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.col-validity" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">Vencimiento</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.depends-on" datatype="html">
+        <source>Dépend de</source>
+        <target state="translated">Depende de</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.not-activated" datatype="html">
+        <source>Non activé</source>
+        <target state="translated">No activado</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.core-tooltip" datatype="html">
+        <source>Module cœur : toujours actif</source>
+        <target state="translated">Módulo básico: siempre activo</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.min-tier" datatype="html">
+        <source>Minimum</source>
+        <target state="translated">Mínimo</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tier-aria" datatype="html">
+        <source>Palier de facturation du module</source>
+        <target state="translated">Nivel de facturación del módulo</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.activate" datatype="html">
+        <source>Activer</source>
+        <target state="translated">Activar</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.trial" datatype="html">
+        <source>Essai 30 j</source>
+        <target state="translated">Prueba 30 días</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.convert" datatype="html">
+        <source>Convertir</source>
+        <target state="translated">Convertir</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.suspend" datatype="html">
+        <source>Suspendre</source>
+        <target state="translated">Suspender</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.resume" datatype="html">
+        <source>Reprendre</source>
+        <target state="translated">Reanudar</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.reactivate" datatype="html">
+        <source>Réactiver</source>
+        <target state="translated">Reactivar</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.disable" datatype="html">
+        <source>Désactiver</source>
+        <target state="translated">Desactivar</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.always-on" datatype="html">
+        <source>Toujours actif</source>
+        <target state="translated">Siempre activo</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.empty" datatype="html">
+        <source>Aucun module au catalogue.</source>
+        <target state="translated">No hay módulos en el catálogo.</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.load-error" datatype="html">
+        <source>Impossible de charger les modules.</source>
+        <target state="translated">No se pudieron cargar los módulos.</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.action-error" datatype="html">
+        <source>L'opération sur le module a échoué.</source>
+        <target state="translated">La operación sobre el módulo falló.</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tile-enabled" datatype="html">
+        <source>Modules actifs</source>
+        <target state="translated">Módulos activos</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tile-trial" datatype="html">
+        <source>En essai</source>
+        <target state="translated">En prueba</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tile-suspended" datatype="html">
+        <source>Suspendus</source>
+        <target state="translated">Suspendidos</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tile-expired" datatype="html">
+        <source>Expirés</source>
+        <target state="translated">Vencidos</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tile-total" datatype="html">
+        <source>Total activations</source>
+        <target state="translated">Activaciones totales</target>
+      </trans-unit>
       <trans-unit id="nav.pilotage" datatype="html">
         <source>Pilotage</source>
         <target state="translated">Pilotaje</target>

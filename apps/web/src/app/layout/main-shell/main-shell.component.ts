@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { AuthService, AuthUser } from '../../core/auth/auth.service';
 import { NotificationView } from '../../core/notifications/notification.types';
@@ -13,6 +14,13 @@ export interface NavItem {
   route: string;
   icon: string;
   badge?: string;
+  /**
+   * Rôles autorisés à voir l'entrée. Absent = visible par tous.
+   * Ce filtrage est un confort d'interface : l'autorisation réelle reste appliquée
+   * par le serveur (§16). Afficher un lien qui mène systématiquement à un 403 est une
+   * mauvaise expérience, pas une faille.
+   */
+  roles?: string[];
 }
 
 export interface NavSection {
@@ -21,6 +29,12 @@ export interface NavSection {
   /** Section repliable (groupes de conformité GRC), repliée par défaut. */
   collapsible?: boolean;
 }
+
+/**
+ * Rôles habilités à l'administration du tenant (§16). Le serveur reste l'autorité :
+ * cette liste ne sert qu'à ne pas afficher un lien qui mènerait à un 403.
+ */
+const ADMIN_ROLES = ['ADMIN', 'ADMIN_TENANT', 'SUPER_ADMIN'];
 
 @Component({
   selector: 'qos-main-shell',
@@ -116,8 +130,25 @@ export class MainShellComponent implements OnInit {
       items: [
         { label: $localize`:@@nav.conformite-hub:Conformité`, route: '/compliance', icon: 'verified_user' }
       ]
+    },
+    {
+      label: $localize`:@@nav.administration:Administration`,
+      items: [
+        {
+          label: $localize`:@@nav.admin-modules:Modules du tenant`,
+          route: '/admin/modules',
+          icon: 'tune',
+          roles: ADMIN_ROLES
+        }
+      ]
     }
   ];
+
+  /**
+   * Sections filtrées selon les rôles de l'utilisateur. Une section dont toutes les
+   * entrées sont masquées disparaît entièrement — pas de titre de groupe orphelin.
+   */
+  visibleSections$!: Observable<NavSection[]>;
 
   /** État réseau + file offline (§15.2-15.3) — chip de synchro dans la topbar. */
   online$!: Observable<boolean>;
@@ -138,6 +169,9 @@ export class MainShellComponent implements OnInit {
 
   ngOnInit(): void {
     this.user$ = this.auth.user();
+    this.visibleSections$ = this.user$.pipe(
+      map(user => this.filterSections(user?.roles ?? []))
+    );
     this.online$ = this.connectivity.online$;
     this.pendingSync$ = this.offlineQueue.pendingCount$;
     this.unreadCount$ = this.notificationsService.unread$;
@@ -196,6 +230,24 @@ export class MainShellComponent implements OnInit {
 
   logout(): void {
     this.auth.logout();
+  }
+
+  /**
+   * Retient les entrées visibles pour ces rôles, puis élimine les sections vides.
+   * La comparaison ignore un éventuel préfixe `ROLE_` : Keycloak le pose, pas nous.
+   */
+  filterSections(roles: string[]): NavSection[] {
+    // Normaliser AVANT de retirer le préfixe : Keycloak peut émettre `role_admin`
+    // en minuscules, auquel cas un strip sensible à la casse laisserait passer le
+    // préfixe et ferait échouer la comparaison.
+    const owned = new Set(roles.map(r => r.toUpperCase().replace(/^ROLE_/, '')));
+    return this.sections
+      .map(section => ({
+        ...section,
+        items: section.items.filter(item =>
+          !item.roles || item.roles.some(r => owned.has(r)))
+      }))
+      .filter(section => section.items.length > 0);
   }
 
   toggle(): void { this.collapsed = !this.collapsed; }

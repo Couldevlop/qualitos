@@ -3184,6 +3184,126 @@
         <source>Replier la navigation</source>
         <target state="translated">ナビゲーションを折りたたむ</target>
       </trans-unit>
+      <trans-unit id="nav.administration" datatype="html">
+        <source>Administration</source>
+        <target state="translated">管理</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-modules" datatype="html">
+        <source>Modules du tenant</source>
+        <target state="translated">テナントのモジュール</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.title" datatype="html">
+        <source>Modules du tenant</source>
+        <target state="translated">テナントのモジュール</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.subtitle" datatype="html">
+        <source>Activez uniquement les modules dont votre organisation a besoin. La désactivation est immédiate et réversible ; les modules cœur restent toujours actifs.</source>
+        <target state="translated">組織に必要なモジュールだけを有効にします。無効化は即時に反映され、元に戻せます。コアモジュールは常に有効です。</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tenant-tier" datatype="html">
+        <source>Palier du tenant</source>
+        <target state="translated">テナントのプラン</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.col-module" datatype="html">
+        <source>Module</source>
+        <target state="translated">モジュール</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.col-category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">カテゴリ</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.col-tier" datatype="html">
+        <source>Palier</source>
+        <target state="translated">プラン</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.col-validity" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">期限</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.depends-on" datatype="html">
+        <source>Dépend de</source>
+        <target state="translated">依存</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.not-activated" datatype="html">
+        <source>Non activé</source>
+        <target state="translated">未有効化</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.core-tooltip" datatype="html">
+        <source>Module cœur : toujours actif</source>
+        <target state="translated">コアモジュール: 常に有効</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.min-tier" datatype="html">
+        <source>Minimum</source>
+        <target state="translated">最低</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tier-aria" datatype="html">
+        <source>Palier de facturation du module</source>
+        <target state="translated">モジュールの課金プラン</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.activate" datatype="html">
+        <source>Activer</source>
+        <target state="translated">有効化</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.trial" datatype="html">
+        <source>Essai 30 j</source>
+        <target state="translated">30日間の試用</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.convert" datatype="html">
+        <source>Convertir</source>
+        <target state="translated">本契約に変更</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.suspend" datatype="html">
+        <source>Suspendre</source>
+        <target state="translated">一時停止</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.resume" datatype="html">
+        <source>Reprendre</source>
+        <target state="translated">再開</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.reactivate" datatype="html">
+        <source>Réactiver</source>
+        <target state="translated">再有効化</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.disable" datatype="html">
+        <source>Désactiver</source>
+        <target state="translated">無効化</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.always-on" datatype="html">
+        <source>Toujours actif</source>
+        <target state="translated">常に有効</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.empty" datatype="html">
+        <source>Aucun module au catalogue.</source>
+        <target state="translated">カタログにモジュールがありません。</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.load-error" datatype="html">
+        <source>Impossible de charger les modules.</source>
+        <target state="translated">モジュールを読み込めません。</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.action-error" datatype="html">
+        <source>L'opération sur le module a échoué.</source>
+        <target state="translated">モジュールの操作に失敗しました。</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tile-enabled" datatype="html">
+        <source>Modules actifs</source>
+        <target state="translated">有効なモジュール</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tile-trial" datatype="html">
+        <source>En essai</source>
+        <target state="translated">試用中</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tile-suspended" datatype="html">
+        <source>Suspendus</source>
+        <target state="translated">一時停止中</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tile-expired" datatype="html">
+        <source>Expirés</source>
+        <target state="translated">期限切れ</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tile-total" datatype="html">
+        <source>Total activations</source>
+        <target state="translated">有効化の合計</target>
+      </trans-unit>
       <trans-unit id="nav.pilotage" datatype="html">
         <source>Pilotage</source>
         <target state="translated">ダッシュボード</target>

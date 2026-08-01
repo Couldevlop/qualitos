@@ -61,19 +61,20 @@ describe('MainShellComponent (navigation model)', () => {
     component = make();
   });
 
-  it('exposes exactly six navigation groups', () => {
-    expect(component.sections.length).toBe(6);
+  it('exposes exactly seven navigation groups', () => {
+    // Le septième groupe est l'Administration, réservée aux rôles d'administration.
+    expect(component.sections.length).toBe(7);
   });
 
   it('orders the six groups as designed', () => {
     const labels = component.sections.map(s => s.items.length);
-    // Pilotage(5), Méthodes(6), Analyses IA(8), Opérations(7), Référentiels(9), GRC(1)
-    // Référentiels = 9 : + Génération doc IA + Academy (LMS) + Marketplace (§8.11).
-    expect(labels).toEqual([5, 6, 8, 7, 9, 1]);
+    // Pilotage(5), Méthodes(6), Analyses IA(8), Opérations(7), Référentiels(9),
+    // GRC(1), Administration(1).
+    expect(labels).toEqual([5, 6, 8, 7, 9, 1, 1]);
   });
 
   it('collapses the entire GRC mass into a single /compliance entry', () => {
-    const grc = component.sections[component.sections.length - 1];
+    const grc = component.sections[5];
     expect(grc.items.length).toBe(1);
     expect(grc.items[0].route).toBe('/compliance');
   });
@@ -220,5 +221,42 @@ describe('MainShellComponent (notifications et compte)', () => {
     h.component.logout();
 
     expect(h.auth.logout).toHaveBeenCalledTimes(1);
+  });
+});
+
+/**
+ * Filtrage par rôle : afficher un lien d'administration à un utilisateur qui n'y a pas
+ * droit lui promet un 403. Le serveur reste l'autorité, ceci n'est qu'un confort.
+ */
+describe('MainShellComponent (visibilité par rôle)', () => {
+
+  it('masque l’administration pour un utilisateur sans rôle d’admin', () => {
+    const sections = make().filterSections(['USER', 'AUDITOR']);
+    const routes = sections.flatMap(s => s.items.map(i => i.route));
+    expect(routes).not.toContain('/admin/modules');
+  });
+
+  it('supprime la section entière plutôt que d’afficher un titre orphelin', () => {
+    const sections = make().filterSections(['USER']);
+    expect(sections.length).toBe(6);
+  });
+
+  it('affiche l’administration pour un admin de tenant', () => {
+    const sections = make().filterSections(['ADMIN_TENANT']);
+    const routes = sections.flatMap(s => s.items.map(i => i.route));
+    expect(routes).toContain('/admin/modules');
+  });
+
+  it('accepte le préfixe ROLE_ posé par Keycloak', () => {
+    const sections = make().filterSections(['role_super_admin']);
+    const routes = sections.flatMap(s => s.items.map(i => i.route));
+    expect(routes).toContain('/admin/modules');
+  });
+
+  it('laisse passer toutes les entrées non gardées', () => {
+    const sections = make().filterSections([]);
+    const routes = sections.flatMap(s => s.items.map(i => i.route));
+    expect(routes).toContain('/pdca');
+    expect(routes).toContain('/compliance');
   });
 });

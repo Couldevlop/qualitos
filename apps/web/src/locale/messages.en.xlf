@@ -3184,6 +3184,126 @@
         <source>Replier la navigation</source>
         <target state="translated">Collapse navigation</target>
       </trans-unit>
+      <trans-unit id="nav.administration" datatype="html">
+        <source>Administration</source>
+        <target state="translated">Administration</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-modules" datatype="html">
+        <source>Modules du tenant</source>
+        <target state="translated">Tenant modules</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.title" datatype="html">
+        <source>Modules du tenant</source>
+        <target state="translated">Tenant modules</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.subtitle" datatype="html">
+        <source>Activez uniquement les modules dont votre organisation a besoin. La désactivation est immédiate et réversible ; les modules cœur restent toujours actifs.</source>
+        <target state="translated">Enable only the modules your organisation needs. Disabling takes effect immediately and is reversible; core modules always stay on.</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tenant-tier" datatype="html">
+        <source>Palier du tenant</source>
+        <target state="translated">Tenant tier</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.col-module" datatype="html">
+        <source>Module</source>
+        <target state="translated">Module</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.col-category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">Category</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.col-tier" datatype="html">
+        <source>Palier</source>
+        <target state="translated">Tier</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.col-validity" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">Expiry</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.depends-on" datatype="html">
+        <source>Dépend de</source>
+        <target state="translated">Depends on</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.not-activated" datatype="html">
+        <source>Non activé</source>
+        <target state="translated">Not activated</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.core-tooltip" datatype="html">
+        <source>Module cœur : toujours actif</source>
+        <target state="translated">Core module: always on</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.min-tier" datatype="html">
+        <source>Minimum</source>
+        <target state="translated">Minimum</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tier-aria" datatype="html">
+        <source>Palier de facturation du module</source>
+        <target state="translated">Module billing tier</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.activate" datatype="html">
+        <source>Activer</source>
+        <target state="translated">Activate</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.trial" datatype="html">
+        <source>Essai 30 j</source>
+        <target state="translated">30-day trial</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.convert" datatype="html">
+        <source>Convertir</source>
+        <target state="translated">Convert</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.suspend" datatype="html">
+        <source>Suspendre</source>
+        <target state="translated">Suspend</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.resume" datatype="html">
+        <source>Reprendre</source>
+        <target state="translated">Resume</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.reactivate" datatype="html">
+        <source>Réactiver</source>
+        <target state="translated">Reactivate</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.disable" datatype="html">
+        <source>Désactiver</source>
+        <target state="translated">Disable</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.always-on" datatype="html">
+        <source>Toujours actif</source>
+        <target state="translated">Always on</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.empty" datatype="html">
+        <source>Aucun module au catalogue.</source>
+        <target state="translated">No modules in the catalogue.</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.load-error" datatype="html">
+        <source>Impossible de charger les modules.</source>
+        <target state="translated">Unable to load modules.</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.action-error" datatype="html">
+        <source>L'opération sur le module a échoué.</source>
+        <target state="translated">The module operation failed.</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tile-enabled" datatype="html">
+        <source>Modules actifs</source>
+        <target state="translated">Enabled modules</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tile-trial" datatype="html">
+        <source>En essai</source>
+        <target state="translated">On trial</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tile-suspended" datatype="html">
+        <source>Suspendus</source>
+        <target state="translated">Suspended</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tile-expired" datatype="html">
+        <source>Expirés</source>
+        <target state="translated">Expired</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.tile-total" datatype="html">
+        <source>Total activations</source>
+        <target state="translated">Total activations</target>
+      </trans-unit>
       <trans-unit id="nav.pilotage" datatype="html">
         <source>Pilotage</source>
         <target state="translated">Steering</target>

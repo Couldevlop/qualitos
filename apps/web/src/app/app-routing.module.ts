@@ -251,6 +251,12 @@ const routes: Routes = [
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)
       },
       {
+        // Console d'administration du tenant (§10.4, §16) : activation des modules,
+        // et à terme les autres surfaces d'administration déjà exposées par l'API.
+        path: 'admin',
+        loadChildren: () => import('./features/admin/admin.module').then(m => m.AdminModule)
+      },
+      {
         // File d'attente offline (§15.2-15.3) — accessible depuis le chip de
         // synchro de la topbar ; pas d'entrée de nav dédiée (page utilitaire).
         path: 'offline-queue',

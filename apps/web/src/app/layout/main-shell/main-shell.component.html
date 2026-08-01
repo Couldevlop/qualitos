@@ -12,7 +12,7 @@
     </div>
 
     <nav class="qos-sidebar__nav">
-      <div class="qos-sidebar__group" *ngFor="let section of sections" role="group"
+      <div class="qos-sidebar__group" *ngFor="let section of (visibleSections$ | async) ?? []" role="group"
            [attr.aria-label]="section.label">
         <!-- En-tête de section : bouton repliable ou simple libellé -->
         <ng-container *ngIf="!collapsed">
