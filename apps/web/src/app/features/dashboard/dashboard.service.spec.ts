@@ -204,4 +204,129 @@ describe('DashboardService', () => {
     service.refresh();
     http.expectOne(endpoint).flush({ ...payload, kpis: [] });
   });
+
+  // ---- Traductions serveur → présentation ------------------------------------
+
+  /** Fabrique un KPI ne différant du modèle que par la santé et la catégorie. */
+  function kpiWith(health: string, category: string | null) {
+    return {
+      ...payload.kpis[0], kpiId: `k-${health}-${category}`, health, category
+    } as ExecutiveDashboardResponse['kpis'][number];
+  }
+
+  it('traduit chaque santé serveur en état visuel, l\'inconnu restant neutre', (done) => {
+    service.getExecutiveKpis().subscribe(cards => {
+      expect(cards.map(c => c.state)).toEqual(['good', 'warn', 'bad', 'neutral', 'neutral']);
+      done();
+    });
+
+    flush({
+      ...payload,
+      kpis: [
+        kpiWith('OK', 'quality'),
+        kpiWith('WARNING', 'quality'),
+        kpiWith('CRITICAL', 'quality'),
+        kpiWith('UNKNOWN', 'quality'),
+        // Une santé que le serveur ajouterait demain ne doit pas être colorée
+        // au hasard : neutre par défaut vaut mieux qu'un vert usurpé.
+        kpiWith('SOMETHING_NEW', 'quality')
+      ]
+    });
+  });
+
+  it('déduit l\'icône de la catégorie du KPI, avec un repli générique', (done) => {
+    service.getExecutiveKpis().subscribe(cards => {
+      expect(cards.map(c => c.icon)).toEqual([
+        'engineering', 'workspace_premium', 'fact_check',
+        'local_shipping', 'warning', 'paid', 'monitoring', 'monitoring'
+      ]);
+      done();
+    });
+
+    flush({
+      ...payload,
+      kpis: [
+        kpiWith('OK', 'capa-actions'),
+        kpiWith('OK', 'compliance'),
+        kpiWith('OK', 'audit'),
+        kpiWith('OK', 'supplier'),
+        kpiWith('OK', 'risk'),
+        kpiWith('OK', 'cost'),
+        kpiWith('OK', 'catégorie-inconnue'),
+        // Le catalogue ne porte pas d'icône : une catégorie absente doit rester
+        // affichable, pas casser la carte.
+        kpiWith('OK', null)
+      ]
+    });
+  });
+
+  it('normalise la casse de la catégorie avant de choisir l\'icône', (done) => {
+    service.getExecutiveKpis().subscribe(cards => {
+      expect(cards[0].icon).toBe('paid');
+      done();
+    });
+
+    flush({ ...payload, kpis: [kpiWith('OK', 'COST')] });
+  });
+
+  it('gradue la sévérité des risques, l\'inconnue restant moyenne', (done) => {
+    service.getTopRisks().subscribe(risks => {
+      expect(risks.map(r => r.severity)).toEqual(['critical', 'high', 'medium', 'medium']);
+      done();
+    });
+
+    flush({
+      ...payload,
+      topRisks: [
+        { id: 'r1', title: 'A', source: 'FMEA', severity: 'CRITICAL', rpn: 240, dueDate: null },
+        { id: 'r2', title: 'B', source: 'FMEA', severity: 'HIGH', rpn: null, dueDate: null },
+        { id: 'r3', title: 'C', source: 'FMEA', severity: 'MEDIUM', rpn: null, dueDate: null },
+        // Une sévérité inattendue ne doit pas être promue « critique » par
+        // accident : le repli est le niveau intermédiaire.
+        { id: 'r4', title: 'D', source: 'FMEA', severity: 'INCONNUE', rpn: null, dueDate: null }
+      ]
+    });
+  });
+
+  it('ne range en CAPA que ce qui vient réellement des CAPA', (done) => {
+    service.getTopRisks().subscribe(risks => {
+      expect(risks.map(r => r.sourceType)).toEqual(['CAPA', 'FMEA']);
+      done();
+    });
+
+    flush({
+      ...payload,
+      topRisks: [
+        { id: 'r1', title: 'A', source: 'CAPA', severity: 'HIGH', rpn: null, dueDate: null },
+        { id: 'r2', title: 'B', source: 'AUTRE', severity: 'HIGH', rpn: null, dueDate: null }
+      ]
+    });
+  });
+
+  it('tolère une norme dépourvue de sections dans la heatmap', (done) => {
+    service.getComplianceHeatmap().subscribe(cells => {
+      // Une norme adoptée dont le référentiel n'est pas encore chargé ne doit
+      // pas faire disparaître les autres lignes de la heatmap.
+      expect(cells.map(c => c.norm)).toEqual(['iso-9001']);
+      done();
+    });
+
+    // Le contrat déclare `sections` obligatoire : la garde `?? []` du service
+    // protège contre un serveur qui ne le respecterait pas. Éprouver cette
+    // garde suppose donc de sortir volontairement du type — c'est tout l'objet
+    // du test, et le cast le dit explicitement.
+    flush({
+      ...payload,
+      alignment: [
+        {
+          adoptionId: 'a1', standardCode: 'iso-9001', standardName: 'ISO 9001',
+          score: 70, status: 'IN_PROGRESS', sections: [{ sectionCode: '4', score: 88 }]
+        },
+        {
+          adoptionId: 'a2', standardCode: 'iso-14001', standardName: 'ISO 14001',
+          score: 0, status: 'PLANNED'
+        }
+      ] as unknown as ExecutiveDashboardResponse['alignment']
+    });
+  });
 });
