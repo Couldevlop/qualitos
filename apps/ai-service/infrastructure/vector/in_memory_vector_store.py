@@ -1,4 +1,4 @@
-﻿"""In-memory VectorStore used by tests."""
+"""In-memory VectorStore — dev/test fallback and demo mode."""
 from __future__ import annotations
 
 import math
@@ -17,13 +17,25 @@ class InMemoryVectorStore(VectorStore):
     def seed(self, tenant_id: UUID, doc: RagDocument, embedding: list[float]) -> None:
         self._docs.setdefault(tenant_id, []).append((doc, embedding))
 
-    def upsert(self, tenant_id: UUID, documents: list[RagDocument]) -> int:
-        # Tests inject embeddings separately via seed().
-        # In normal use, the use-case would compute embeddings first and
-        # call seed() from the application layer; this adapter still works.
+    def upsert(
+        self,
+        tenant_id: UUID,
+        documents: list[RagDocument],
+        embeddings: list[list[float]],
+    ) -> int:
+        if len(documents) != len(embeddings):
+            raise ValueError("documents/embeddings length mismatch")
         bucket = self._docs.setdefault(tenant_id, [])
-        for d in documents:
-            bucket.append((d, [0.0]))
+        # Re-indexing a document replaces it rather than adding a duplicate:
+        # a published procedure that gets a new version must not stay
+        # retrievable under its old wording.
+        by_id = {d.document_id: i for i, (d, _) in enumerate(bucket)}
+        for doc, vector in zip(documents, embeddings):
+            existing = by_id.get(doc.document_id)
+            if existing is None:
+                bucket.append((doc, vector))
+            else:
+                bucket[existing] = (doc, vector)
         return len(documents)
 
     def search(

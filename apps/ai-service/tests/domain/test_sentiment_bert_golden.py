@@ -19,14 +19,19 @@ import pytest
 
 from domain.service import complaint_nlp
 
-_HAS_BERT = (
-    importlib.util.find_spec("transformers") is not None
-    and importlib.util.find_spec("torch") is not None
+#: `tiktoken` fait partie du garde-fou : le tokenizer du modèle en dépend, mais
+#: il ne vient pas avec `transformers`. Sans lui, une installation partielle
+#: passait le test « opt-in » et le faisait ÉCHOUER au lieu de l'ignorer —
+#: quatre rouges parasites sur toute machine de développement, sur un chemin
+#: que personne n'avait demandé à exécuter.
+_HAS_BERT = all(
+    importlib.util.find_spec(module) is not None
+    for module in ("transformers", "torch", "tiktoken")
 )
 
 pytestmark = pytest.mark.skipif(
     not _HAS_BERT,
-    reason="extra ml (torch+transformers) absent : chemin BERT non exécuté (skippé en CI)",
+    reason="extra ml (torch+transformers+tiktoken) absent : chemin BERT non exécuté (skippé en CI)",
 )
 
 _NEG = "Le produit est arrivé cassé et le service après-vente est inacceptable."

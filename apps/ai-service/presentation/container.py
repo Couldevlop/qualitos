@@ -20,6 +20,7 @@ from application.usecase import (
     MockAuditUseCase,
     NcClusterUseCase,
     NlqAskUseCase,
+    RagIngestUseCase,
     RagQueryUseCase,
     SpcDetectUseCase,
     SupplierRiskUseCase,
@@ -138,6 +139,11 @@ class Container:
         return MockAuditUseCase(
             self.providers, self.pii_filter, self.injection_filter, self.audit_logger
         )
+
+    def rag_ingest(self) -> RagIngestUseCase:
+        # Alimentation du corpus (ADR 0046) : documents réels du tenant, chaque
+        # fragment portant son origine et sa licence.
+        return RagIngestUseCase(self.vector_store, self.embedder, self.pii_filter)
 
     def rag_query(self) -> RagQueryUseCase:
         return RagQueryUseCase(
