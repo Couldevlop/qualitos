@@ -1,0 +1,9 @@
+/* Plan de calibration : périodicité et échéance côte à côte (elles se lisent ensemble),
+   références documentaires en pleine largeur. */
+.full { width: 100%; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; }
+.col { flex: 1 1 220px; min-width: 0; }
+
+@media (max-width: 600px) {
+  .row { flex-direction: column; gap: 0; }
+}

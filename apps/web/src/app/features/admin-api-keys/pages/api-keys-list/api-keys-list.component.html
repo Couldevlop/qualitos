@@ -1,0 +1,205 @@
+<section class="admin-api-keys">
+  <header class="head">
+    <div class="head__text">
+      <h1 i18n="@@admin.api-keys.title">Clés d'API</h1>
+      <p i18n="@@admin.api-keys.subtitle">
+        Chaque intégration doit avoir sa propre clé, avec ses portées et son échéance.
+        Le secret n'est affiché qu'à l'émission ; en cas de doute, révoquez et réémettez.
+      </p>
+    </div>
+
+    <div class="head__actions">
+      <button mat-icon-button type="button" (click)="refresh()"
+              [disabled]="(loading$ | async) === true"
+              aria-label="Actualiser la liste des clés"
+              i18n-aria-label="@@admin.api-keys.refresh-aria"
+              matTooltip="Actualiser" i18n-matTooltip="@@admin.api-keys.refresh">
+        <mat-icon>refresh</mat-icon>
+      </button>
+
+      <button mat-stroked-button type="button" (click)="expireDue()"
+              [disabled]="maintenanceRunning"
+              matTooltip="Passe en « expirée » toute clé active dont l'échéance est dépassée"
+              i18n-matTooltip="@@admin.api-keys.expire-due-tooltip">
+        <mat-icon aria-hidden="true">event_busy</mat-icon>
+        <span i18n="@@admin.api-keys.expire-due">Traiter les clés échues</span>
+      </button>
+
+      <button mat-flat-button color="primary" type="button" (click)="create()">
+        <mat-icon aria-hidden="true">add</mat-icon>
+        <span i18n="@@admin.api-keys.create">Émettre une clé</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="tiles" *ngIf="tiles$ | async as tiles">
+    <div class="tile" *ngFor="let t of tiles" [attr.data-tone]="t.tone">
+      <span class="tile__value">{{ t.value }}</span>
+      <span class="tile__label">{{ t.label }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@admin.api-keys.loading">Chargement…</div>
+
+  <div class="content">
+    <div class="table-wrap mat-elevation-z1">
+      <table mat-table [dataSource]="(keys$ | async) ?? []" [trackBy]="trackById">
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef i18n="@@admin.api-keys.col-name">Clé</th>
+          <td mat-cell *matCellDef="let key">
+            <div class="key-cell">
+              <span class="key-cell__name">{{ key.name }}</span>
+              <code class="key-cell__prefix">qos_{{ key.prefix }}_…</code>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="scopes">
+          <th mat-header-cell *matHeaderCellDef i18n="@@admin.api-keys.col-scopes">Portées</th>
+          <td mat-cell *matCellDef="let key">
+            <span class="qos-badge qos-badge--scope" *ngFor="let s of key.scopes">{{ s }}</span>
+            <span class="dim" *ngIf="!key.scopes.length" i18n="@@admin.api-keys.no-scopes">Aucune</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef i18n="@@admin.api-keys.col-status">Statut</th>
+          <td mat-cell *matCellDef="let key">
+            <span class="qos-badge" [attr.data-tone]="statusTone(key.status)">{{ key.status }}</span>
+            <span class="qos-badge qos-badge--soon" *ngIf="isExpiringSoon(key)"
+                  matTooltip="Échéance dans moins de 30 jours"
+                  i18n-matTooltip="@@admin.api-keys.expiring-soon-tooltip"
+                  i18n="@@admin.api-keys.expiring-soon">Bientôt</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="created">
+          <th mat-header-cell *matHeaderCellDef i18n="@@admin.api-keys.col-created">Créée le</th>
+          <td mat-cell *matCellDef="let key">{{ key.createdAt | date:'mediumDate' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="lastUsed">
+          <th mat-header-cell *matHeaderCellDef i18n="@@admin.api-keys.col-last-used">Dernier usage</th>
+          <td mat-cell *matCellDef="let key">
+            <span *ngIf="key.lastUsedAt as d">{{ d | date:'short' }}</span>
+            <span class="dim" *ngIf="!key.lastUsedAt" i18n="@@admin.api-keys.never-used">Jamais</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="expiry">
+          <th mat-header-cell *matHeaderCellDef i18n="@@admin.api-keys.col-expiry">Échéance</th>
+          <td mat-cell *matCellDef="let key">
+            <span *ngIf="key.expiresAt as d">{{ d | date:'mediumDate' }}</span>
+            <span class="dim" *ngIf="!key.expiresAt" i18n="@@admin.api-keys.no-expiry">Sans échéance</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef i18n="@@admin.api-keys.col-actions">Actions</th>
+          <td mat-cell *matCellDef="let key">
+            <div class="row-actions">
+              <button mat-icon-button type="button" (click)="select(key)"
+                      [class.is-selected]="selectedId === key.id"
+                      aria-label="Voir le détail de la clé"
+                      i18n-aria-label="@@admin.api-keys.detail-aria"
+                      matTooltip="Détail" i18n-matTooltip="@@admin.api-keys.detail">
+                <mat-icon>info_outline</mat-icon>
+              </button>
+
+              <button mat-stroked-button type="button" *ngIf="canRotate(key)"
+                      [disabled]="pendingKeyId === key.id"
+                      (click)="rotate(key)"
+                      i18n="@@admin.api-keys.rotate">Faire tourner</button>
+
+              <button mat-button color="warn" type="button" *ngIf="canRevoke(key)"
+                      [disabled]="pendingKeyId === key.id"
+                      (click)="revoke(key)"
+                      i18n="@@admin.api-keys.revoke">Révoquer</button>
+
+              <span class="dim" *ngIf="!canRotate(key) && !canRevoke(key)"
+                    i18n="@@admin.api-keys.no-action">Aucune action possible</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let key; columns: displayedColumns"
+            [class.row--closed]="key.status !== 'ACTIVE'"
+            [class.row--selected]="selectedId === key.id"></tr>
+      </table>
+
+      <div class="empty" *ngIf="(keys$ | async)?.length === 0 && (loading$ | async) === false">
+        <mat-icon aria-hidden="true">key_off</mat-icon>
+        <p i18n="@@admin.api-keys.empty">
+          Aucune clé d'API pour ce tenant. Émettez-en une pour ouvrir l'accès programmatique.
+        </p>
+        <button mat-flat-button color="primary" type="button" (click)="create()"
+                i18n="@@admin.api-keys.create">Émettre une clé</button>
+      </div>
+    </div>
+
+    <aside class="detail" *ngIf="selectedId">
+      <div class="detail__head">
+        <h2 i18n="@@admin.api-keys.detail-title">Détail de la clé</h2>
+        <button mat-icon-button type="button" (click)="clearSelection()"
+                aria-label="Fermer le détail"
+                i18n-aria-label="@@admin.api-keys.detail-close-aria">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <p class="banner banner-info" *ngIf="detailLoading$ | async"
+         i18n="@@admin.api-keys.loading">Chargement…</p>
+      <p class="banner banner-error" role="alert" *ngIf="detailError">{{ detailError }}</p>
+
+      <dl class="detail__grid" *ngIf="detail$ | async as d">
+        <dt i18n="@@admin.api-keys.detail-name">Nom</dt>
+        <dd>{{ d.name }}</dd>
+
+        <dt i18n="@@admin.api-keys.detail-prefix">Préfixe public</dt>
+        <dd><code>{{ d.prefix }}</code></dd>
+
+        <dt i18n="@@admin.api-keys.detail-status">Statut</dt>
+        <dd><span class="qos-badge" [attr.data-tone]="statusTone(d.status)">{{ d.status }}</span></dd>
+
+        <dt i18n="@@admin.api-keys.detail-scopes">Portées</dt>
+        <dd>
+          <span class="qos-badge qos-badge--scope" *ngFor="let s of d.scopes">{{ s }}</span>
+          <span class="dim" *ngIf="!d.scopes.length" i18n="@@admin.api-keys.no-scopes">Aucune</span>
+        </dd>
+
+        <dt i18n="@@admin.api-keys.detail-created">Créée le</dt>
+        <dd>{{ d.createdAt | date:'medium' }}</dd>
+
+        <dt i18n="@@admin.api-keys.detail-created-by">Créée par</dt>
+        <dd><code>{{ d.createdBy }}</code></dd>
+
+        <dt i18n="@@admin.api-keys.detail-expiry">Échéance</dt>
+        <dd>
+          <span *ngIf="d.expiresAt as e">{{ e | date:'medium' }}</span>
+          <span class="dim" *ngIf="!d.expiresAt" i18n="@@admin.api-keys.no-expiry">Sans échéance</span>
+        </dd>
+
+        <dt i18n="@@admin.api-keys.detail-last-used">Dernier usage</dt>
+        <dd>
+          <span *ngIf="d.lastUsedAt as l">{{ l | date:'medium' }}</span>
+          <span class="dim" *ngIf="!d.lastUsedAt" i18n="@@admin.api-keys.never-used">Jamais</span>
+        </dd>
+
+        <ng-container *ngIf="d.revokedAt">
+          <dt i18n="@@admin.api-keys.detail-revoked">Révoquée le</dt>
+          <dd>{{ d.revokedAt | date:'medium' }}</dd>
+
+          <dt i18n="@@admin.api-keys.detail-revoked-by">Révoquée par</dt>
+          <dd><code>{{ d.revokedBy }}</code></dd>
+        </ng-container>
+      </dl>
+
+      <p class="detail__note" i18n="@@admin.api-keys.detail-no-secret">
+        Le secret n'apparaît nulle part ici : le serveur n'en conserve qu'une empreinte.
+      </p>
+    </aside>
+  </div>
+</section>

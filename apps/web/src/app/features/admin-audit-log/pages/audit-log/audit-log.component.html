@@ -1,0 +1,291 @@
+<section class="audit-log">
+
+  <header class="head">
+    <div>
+      <h1 i18n="@@admin.audit.title">Journal d'audit</h1>
+      <p i18n="@@admin.audit.subtitle">
+        Toute action sensible est journalisée puis chaînée par empreinte. Le registre est
+        en écriture seule : il se consulte et se vérifie, il ne se corrige pas.
+      </p>
+    </div>
+    <span class="qos-badge qos-badge--accent" i18n="@@admin.audit.append-only">Registre inaltérable</span>
+  </header>
+
+  <!-- Filtres : le serveur n'en applique qu'un seul, l'aide en dessous le dit. -->
+  <form class="filters" [formGroup]="filterForm" (ngSubmit)="apply()">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@admin.audit.filter-action">Action</mat-label>
+      <input matInput formControlName="action" placeholder="capa.closed" autocomplete="off">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@admin.audit.filter-resource-type">Type de ressource</mat-label>
+      <input matInput formControlName="resourceType" placeholder="capa-case" autocomplete="off">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@admin.audit.filter-resource-id">Identifiant de ressource</mat-label>
+      <input matInput formControlName="resourceId" autocomplete="off">
+      <mat-error *ngIf="filterForm.controls.resourceId.hasError('pattern')"
+                 i18n="@@admin.audit.uuid-error">Identifiant attendu au format UUID.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@admin.audit.filter-actor">Acteur (utilisateur)</mat-label>
+      <input matInput formControlName="actorUserId" autocomplete="off">
+      <mat-error *ngIf="filterForm.controls.actorUserId.hasError('pattern')"
+                 i18n="@@admin.audit.uuid-error">Identifiant attendu au format UUID.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@admin.audit.filter-from">Depuis</mat-label>
+      <input matInput type="datetime-local" formControlName="from">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label i18n="@@admin.audit.filter-to">Jusqu'à</mat-label>
+      <input matInput type="datetime-local" formControlName="to">
+    </mat-form-field>
+
+    <div class="filters__actions">
+      <button mat-flat-button color="primary" type="submit" i18n="@@admin.audit.apply">Filtrer</button>
+      <button mat-stroked-button type="button" [disabled]="!hasFilter" (click)="reset()"
+              i18n="@@admin.audit.reset">Réinitialiser</button>
+    </div>
+  </form>
+
+  <p class="criterion" *ngIf="criterion$ | async as criterion">
+    <mat-icon inline>info</mat-icon>
+    <span>{{ criterionLabel(criterion) }}</span>
+  </p>
+
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
+
+  <div class="layout">
+
+    <div class="table-wrap mat-elevation-z1">
+      <table mat-table [dataSource]="(events$ | async) ?? []" [trackBy]="trackBySeq">
+
+        <ng-container matColumnDef="seq">
+          <th mat-header-cell *matHeaderCellDef i18n="@@admin.audit.col-seq">N°</th>
+          <td mat-cell *matCellDef="let e"><span class="seq">#{{ e.sequenceNo }}</span></td>
+        </ng-container>
+
+        <ng-container matColumnDef="occurredAt">
+          <th mat-header-cell *matHeaderCellDef i18n="@@admin.audit.col-when">Survenu le</th>
+          <td mat-cell *matCellDef="let e">
+            <div class="when">
+              <span>{{ e.occurredAt | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+              <span class="dim" *ngIf="e.recordedAt !== e.occurredAt">
+                <span i18n="@@admin.audit.recorded-at">Enregistré</span>
+                {{ e.recordedAt | date:'HH:mm:ss' }}
+              </span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actor">
+          <th mat-header-cell *matHeaderCellDef i18n="@@admin.audit.col-actor">Acteur</th>
+          <td mat-cell *matCellDef="let e">
+            <div class="actor">
+              <span class="qos-badge" [attr.data-tone]="actorTone(e.actorType)">{{ e.actorType }}</span>
+              <code class="mono" *ngIf="e.actorUserId">{{ e.actorUserId }}</code>
+              <span class="dim" *ngIf="!e.actorUserId" i18n="@@admin.audit.no-actor">Non attribué</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef i18n="@@admin.audit.col-action">Action</th>
+          <td mat-cell *matCellDef="let e">
+            <div class="action-cell">
+              <span class="action-cell__name">{{ e.action }}</span>
+              <span class="action-cell__summary" *ngIf="e.summary">{{ e.summary }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="resource">
+          <th mat-header-cell *matHeaderCellDef i18n="@@admin.audit.col-resource">Ressource</th>
+          <td mat-cell *matCellDef="let e">
+            <div class="resource">
+              <span>{{ e.resourceType }}</span>
+              <code class="mono" *ngIf="e.resourceId">{{ e.resourceId }}</code>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="integrity">
+          <th mat-header-cell *matHeaderCellDef i18n="@@admin.audit.col-integrity">Intégrité</th>
+          <td mat-cell *matCellDef="let e">
+            <div class="integrity">
+              <code class="mono" [matTooltip]="e.integrityHash">{{ shortHash(e.integrityHash) }}</code>
+              <mat-icon inline class="anchored" *ngIf="isAnchored(e)"
+                        [matTooltip]="e.blockchainTxRef"
+                        i18n-aria-label="@@admin.audit.anchored-aria"
+                        aria-label="Événement ancré en blockchain">link</mat-icon>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="detail">
+          <th mat-header-cell *matHeaderCellDef>
+            <span class="sr-only" i18n="@@common.actions">Actions</span>
+          </th>
+          <td mat-cell *matCellDef="let e">
+            <button mat-icon-button type="button" (click)="openDetail(e)"
+                    i18n-aria-label="@@admin.audit.detail-aria"
+                    aria-label="Afficher le détail de l'événement">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let e; columns: displayedColumns"
+            [class.row--selected]="isSelected(e)"></tr>
+      </table>
+
+      <p class="empty" *ngIf="(events$ | async)?.length === 0 && (loading$ | async) === false"
+         i18n="@@admin.audit.empty">Aucun événement ne correspond à ces critères.</p>
+
+      <mat-paginator [length]="(total$ | async) ?? 0"
+                     [pageIndex]="pageIndex"
+                     [pageSize]="pageSize"
+                     [pageSizeOptions]="pageSizeOptions"
+                     (page)="onPage($event)"
+                     i18n-aria-label="@@admin.audit.paginator-aria"
+                     aria-label="Pagination du journal d'audit"></mat-paginator>
+    </div>
+
+    <aside class="side">
+
+      <!-- Vérification d'intégrité : lecture seule, elle ne réécrit rien. -->
+      <section class="panel" [formGroup]="verifyForm">
+        <h2 i18n="@@admin.audit.verify-title">Intégrité de la chaîne</h2>
+        <p class="panel__hint" i18n="@@admin.audit.verify-hint">
+          Recalcule les empreintes d'une plage de numéros et contrôle leur chaînage.
+          Toute rupture révèle une altération ou un événement manquant.
+        </p>
+
+        <div class="seq-fields">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label i18n="@@admin.audit.verify-from">Du n°</mat-label>
+            <input matInput type="number" min="1" formControlName="fromSeq">
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label i18n="@@admin.audit.verify-to">Au n°</mat-label>
+            <input matInput type="number" min="1" formControlName="toSeq">
+          </mat-form-field>
+        </div>
+
+        <div class="panel__actions">
+          <button mat-flat-button color="primary" type="button"
+                  [disabled]="verifying" (click)="verify()"
+                  i18n="@@admin.audit.verify">Vérifier</button>
+          <button mat-stroked-button type="button" *ngIf="range$ | async as range"
+                  [disabled]="verifying" (click)="verifyVisible(range)"
+                  i18n="@@admin.audit.verify-visible">Sur la page affichée</button>
+        </div>
+
+        <p class="dim" *ngIf="verifying" i18n="@@admin.audit.verify-running">Vérification en cours…</p>
+        <div class="banner banner-error" role="alert" *ngIf="verifyError">{{ verifyError }}</div>
+
+        <div class="verdict" *ngIf="verifyResult as v" [attr.data-valid]="v.valid">
+          <div class="verdict__head">
+            <mat-icon inline>{{ v.valid ? 'verified' : 'gpp_maybe' }}</mat-icon>
+            <strong *ngIf="v.valid" i18n="@@admin.audit.verdict-ok">Chaîne intègre</strong>
+            <strong *ngIf="!v.valid" i18n="@@admin.audit.verdict-ko">Chaîne rompue</strong>
+          </div>
+          <p class="dim">
+            <span i18n="@@admin.audit.verdict-count">Événements vérifiés</span>
+            : {{ v.verifiedCount }} (#{{ v.fromSequenceNo }} → #{{ v.toSequenceNo }})
+          </p>
+          <ul class="breaks" *ngIf="v.breaks.length">
+            <li *ngFor="let b of v.breaks; trackBy: trackByBreak">
+              <span class="seq">#{{ b.sequenceNo }}</span> {{ b.reason }}
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Détail : ouvert à la demande, jamais éditable. -->
+      <section class="panel" *ngIf="detail as e">
+        <div class="panel__head">
+          <h2 i18n="@@admin.audit.detail-title">Détail de l'événement</h2>
+          <button mat-icon-button type="button" (click)="closeDetail()"
+                  i18n-aria-label="@@admin.audit.close-detail-aria"
+                  aria-label="Fermer le détail">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <p class="dim" *ngIf="detailLoading" i18n="@@common.loading">Chargement…</p>
+        <div class="banner banner-error" role="alert" *ngIf="detailError">{{ detailError }}</div>
+
+        <dl class="fields">
+          <dt i18n="@@admin.audit.col-seq">N°</dt>
+          <dd><span class="seq">#{{ e.sequenceNo }}</span></dd>
+
+          <dt i18n="@@admin.audit.col-action">Action</dt>
+          <dd>{{ e.action }}</dd>
+
+          <dt i18n="@@admin.audit.col-resource">Ressource</dt>
+          <dd>{{ e.resourceType }}<span *ngIf="e.resourceId"> · <code class="mono">{{ e.resourceId }}</code></span></dd>
+
+          <dt i18n="@@admin.audit.col-when">Survenu le</dt>
+          <dd>{{ e.occurredAt | date:'dd/MM/yyyy HH:mm:ss' }}</dd>
+
+          <dt i18n="@@admin.audit.recorded-at">Enregistré</dt>
+          <dd>{{ e.recordedAt | date:'dd/MM/yyyy HH:mm:ss' }}</dd>
+
+          <dt i18n="@@admin.audit.col-actor">Acteur</dt>
+          <dd>
+            {{ e.actorType }}
+            <code class="mono" *ngIf="e.actorUserId">{{ e.actorUserId }}</code>
+          </dd>
+
+          <ng-container *ngIf="e.summary">
+            <dt i18n="@@admin.audit.field-summary">Résumé</dt>
+            <dd>{{ e.summary }}</dd>
+          </ng-container>
+
+          <ng-container *ngIf="e.ipAddress">
+            <dt i18n="@@admin.audit.field-ip">Adresse IP</dt>
+            <dd><code class="mono">{{ e.ipAddress }}</code></dd>
+          </ng-container>
+
+          <ng-container *ngIf="e.userAgent">
+            <dt i18n="@@admin.audit.field-agent">Agent</dt>
+            <dd class="wrap">{{ e.userAgent }}</dd>
+          </ng-container>
+
+          <dt i18n="@@admin.audit.field-hash">Empreinte</dt>
+          <dd><code class="mono wrap">{{ e.integrityHash }}</code></dd>
+
+          <dt i18n="@@admin.audit.field-previous">Empreinte précédente</dt>
+          <dd>
+            <code class="mono wrap" *ngIf="e.previousHash">{{ e.previousHash }}</code>
+            <span class="dim" *ngIf="!e.previousHash" i18n="@@admin.audit.chain-origin">
+              Premier événement du registre
+            </span>
+          </dd>
+
+          <dt i18n="@@admin.audit.field-anchor">Ancrage blockchain</dt>
+          <dd>
+            <code class="mono wrap" *ngIf="e.blockchainTxRef">{{ e.blockchainTxRef }}</code>
+            <span class="dim" *ngIf="!e.blockchainTxRef" i18n="@@admin.audit.not-anchored">
+              Pas encore ancré
+            </span>
+          </dd>
+        </dl>
+
+        <ng-container *ngIf="e.payloadJson">
+          <h3 i18n="@@admin.audit.field-payload">Charge utile</h3>
+          <pre class="payload">{{ prettyPayload(e.payloadJson) }}</pre>
+        </ng-container>
+      </section>
+    </aside>
+  </div>
+</section>

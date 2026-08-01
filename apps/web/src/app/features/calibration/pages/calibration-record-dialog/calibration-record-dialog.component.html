@@ -1,0 +1,64 @@
+<qos-form-dialog
+  i18n-title="@@calibration.record.title"
+  title="Enregistrer une calibration"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.save"
+  submitLabel="Enregistrer"
+  submitIcon="check"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@calibration.record.performed-on-full">Date de la calibration</mat-label>
+      <input matInput formControlName="performedOn" type="date" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@calibration.record.result">Résultat</mat-label>
+      <mat-select formControlName="result" required>
+        <mat-option *ngFor="let r of results" [value]="r.value">{{ r.label }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <p class="warn" *ngIf="failWarning" role="alert" i18n="@@calibration.record.fail-warning">
+    Instrument critique : un résultat non conforme le met immédiatement hors service.
+  </p>
+
+  <mat-checkbox formControlName="performedByMe" class="by-me">
+    <span i18n="@@calibration.record.by-me">J'ai réalisé cette calibration</span>
+  </mat-checkbox>
+
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@calibration.record.org">Organisme</mat-label>
+      <input matInput formControlName="performedByOrg" maxlength="250"
+             placeholder="Ex. : laboratoire accrédité COFRAC">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@calibration.record.certificate-ref">Référence du certificat</mat-label>
+      <input matInput formControlName="certificateReference" maxlength="250">
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@calibration.record.measurements-taken">Mesures relevées</mat-label>
+    <textarea matInput formControlName="measurements" rows="4" maxlength="4000"></textarea>
+    <mat-hint i18n="@@calibration.record.measurements-hint">
+      Points de contrôle, écarts constatés, conditions d'essai.
+    </mat-hint>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@calibration.record.next-due-override-optional">Échéance forcée (optionnelle)</mat-label>
+    <input matInput formControlName="nextDueOverride" type="date">
+    <mat-hint i18n="@@calibration.record.next-due-override-hint">
+      Laissez vide pour dériver l'échéance de la périodicité du plan.
+    </mat-hint>
+  </mat-form-field>
+
+</qos-form-dialog>

@@ -1,0 +1,30 @@
+/* Dialogue à un seul champ : largeur confortable pour un UUID complet, sans
+   étirer la fenêtre quand le champ est une simple note. */
+
+:host { display: block; min-width: 480px; }
+
+.full { width: 100%; }
+.score { width: 220px; }
+
+.self { margin-bottom: var(--qos-space-2); }
+
+.scale {
+  margin: 0;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-xs);
+}
+
+.warn {
+  margin: 0 0 var(--qos-space-3);
+  padding: var(--qos-space-3) var(--qos-space-4);
+  background: var(--qos-danger-bg-soft);
+  color: var(--qos-danger-fg);
+  border-left: 3px solid var(--qos-danger-fg);
+  border-radius: var(--qos-radius-md);
+  font-size: var(--qos-fs-sm);
+  line-height: var(--qos-lh-normal);
+}
+
+@media (max-width: 560px) {
+  :host { min-width: 0; }
+}

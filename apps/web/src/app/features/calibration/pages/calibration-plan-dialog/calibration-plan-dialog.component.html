@@ -1,0 +1,49 @@
+<qos-form-dialog
+  [title]="title"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.save"
+  submitLabel="Enregistrer"
+  submitIcon="event_available"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <div class="row">
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@calibration.plan.frequency">Périodicité</mat-label>
+      <input matInput formControlName="frequencyMonths" type="number" min="1" max="120" required>
+      <span matTextSuffix i18n="@@calibration.plan.months">mois</span>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="col">
+      <mat-label i18n="@@calibration.plan.first-due">Échéance initiale</mat-label>
+      <input matInput formControlName="firstDueOn" type="date" required>
+      <mat-hint *ngIf="isEdit" i18n="@@calibration.plan.first-due-locked-hint">
+        Sans effet ici : l'échéance est recalculée à chaque enregistrement de calibration.
+      </mat-hint>
+      <mat-hint *ngIf="!isEdit" i18n="@@calibration.plan.first-due-hint">
+        Date de la première calibration attendue, avant tout enregistrement.
+      </mat-hint>
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@calibration.plan.procedure-ref">Procédure de référence</mat-label>
+    <input matInput formControlName="procedureReference" maxlength="500"
+           placeholder="Ex. : MO-CAL-014 rév. C">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@calibration.plan.tolerance">Tolérance</mat-label>
+    <input matInput formControlName="tolerance" maxlength="500"
+           placeholder="Ex. : ± 0,02 mm sur toute l'étendue">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@calibration.plan.accreditation-ref">Référence d'accréditation</mat-label>
+    <input matInput formControlName="accreditationRef" maxlength="250"
+           placeholder="Ex. : COFRAC 2-1234">
+  </mat-form-field>
+
+</qos-form-dialog>

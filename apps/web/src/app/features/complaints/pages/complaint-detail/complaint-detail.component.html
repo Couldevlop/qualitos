@@ -1,0 +1,276 @@
+<ng-container *ngIf="detail$ | async as d; else fallback">
+  <section class="qos-page complaint-detail" *ngIf="d.complaint as c">
+
+    <header class="head">
+      <div class="meta">
+        <a routerLink="/complaints" class="back">
+          <mat-icon aria-hidden="true">arrow_back</mat-icon>
+          <span i18n="@@complaints.detail.back">Réclamations clients</span>
+        </a>
+        <h1>
+          <code>{{ c.code }}</code>
+          <span class="subject">{{ c.subject }}</span>
+        </h1>
+        <div class="meta-row">
+          <span class="badge" [attr.data-tone]="statusTone(c.status)">{{ statusLabel[c.status] }}</span>
+          <span class="badge" [attr.data-tone]="severityTone(c.severity)">{{ severityLabel[c.severity] }}</span>
+          <span class="pill">{{ categoryLabel[c.category] }}</span>
+          <span class="pill">{{ channelLabel[c.channel] }}</span>
+          <span class="pill pill--score" *ngIf="c.satisfactionScore !== null"
+                [attr.data-tone]="satisfactionTone(c.satisfactionScore)">
+            <span i18n="@@complaints.detail.satisfaction-short">Satisfaction</span>
+            <strong>{{ c.satisfactionScore }}/10</strong>
+          </span>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button mat-flat-button color="primary" type="button" *ngIf="canRespond(c)"
+                [disabled]="pending" (click)="respond(c)">
+          <mat-icon aria-hidden="true">send</mat-icon>
+          <span i18n="@@complaints.detail.respond">Répondre</span>
+        </button>
+
+        <button mat-stroked-button type="button" *ngIf="canAssign(c)"
+                [disabled]="pending" (click)="runAction(c, 'ASSIGN')">
+          <mat-icon aria-hidden="true">person_add</mat-icon>
+          <span i18n="@@complaints.detail.assign">Assigner</span>
+        </button>
+
+        <button mat-flat-button color="primary" type="button" *ngIf="canResolve(c)"
+                [disabled]="pending" (click)="runAction(c, 'RESOLVE')">
+          <mat-icon aria-hidden="true">task_alt</mat-icon>
+          <span i18n="@@complaints.detail.resolve">Résoudre</span>
+        </button>
+
+        <button mat-flat-button color="primary" type="button" *ngIf="canClose(c)"
+                [disabled]="pending" (click)="close(c)">
+          <mat-icon aria-hidden="true">archive</mat-icon>
+          <span i18n="@@complaints.detail.close">Clôturer</span>
+        </button>
+
+        <button mat-stroked-button type="button" *ngIf="canRate(c)"
+                [disabled]="pending" (click)="runAction(c, 'SATISFACTION')">
+          <mat-icon aria-hidden="true">sentiment_satisfied</mat-icon>
+          <span i18n="@@complaints.detail.rate">Satisfaction</span>
+        </button>
+
+        <button mat-stroked-button type="button" *ngIf="canReopen(c)"
+                [disabled]="pending" (click)="reopen(c)">
+          <mat-icon aria-hidden="true">restart_alt</mat-icon>
+          <span i18n="@@complaints.detail.reopen">Rouvrir</span>
+        </button>
+
+        <button mat-stroked-button type="button" *ngIf="canEdit(c)"
+                [disabled]="pending" (click)="edit(c)">
+          <mat-icon aria-hidden="true">edit</mat-icon>
+          <span i18n="@@common.edit">Modifier</span>
+        </button>
+
+        <button mat-stroked-button color="warn" type="button" *ngIf="canReject(c)"
+                [disabled]="pending" (click)="runAction(c, 'REJECT')">
+          <mat-icon aria-hidden="true">block</mat-icon>
+          <span i18n="@@complaints.detail.reject">Rejeter</span>
+        </button>
+
+        <button mat-stroked-button color="warn" type="button" *ngIf="canDelete(c)"
+                [disabled]="pending" (click)="remove(c)">
+          <mat-icon aria-hidden="true">delete</mat-icon>
+          <span i18n="@@common.delete">Supprimer</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="banner banner-warn" *ngIf="awaitingResponse(c)" role="status">
+      <mat-icon aria-hidden="true">outgoing_mail</mat-icon>
+      <span i18n="@@complaints.detail.awaiting-response">
+        Aucune réponse n'a encore été adressée au client : la résolution reste bloquée
+        tant qu'un message non interne n'a pas été envoyé.
+      </span>
+    </div>
+
+    <div class="grid">
+      <mat-card class="span-2" *ngIf="c.description">
+        <mat-card-header><mat-card-title i18n="@@common.description">Description</mat-card-title></mat-card-header>
+        <mat-card-content><p class="text">{{ c.description }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card class="span-2 danger-card" *ngIf="c.status === 'REJECTED' && c.rejectionReason">
+        <mat-card-header>
+          <mat-card-title i18n="@@complaints.detail.rejection-reason">Motif du rejet</mat-card-title>
+        </mat-card-header>
+        <mat-card-content><p class="text">{{ c.rejectionReason }}</p></mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header><mat-card-title i18n="@@complaints.detail.customer">Client</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr>
+              <th i18n="@@common.name">Nom</th>
+              <td>
+                <span *ngIf="c.customerName">{{ c.customerName }}</span>
+                <span class="dim" *ngIf="!c.customerName" i18n="@@complaints.list.anonymous">Client non identifié</span>
+              </td>
+            </tr>
+            <tr>
+              <th i18n="@@complaints.create.customer-email">E-mail du client</th>
+              <td>
+                <a *ngIf="c.customerEmail" [href]="'mailto:' + c.customerEmail">{{ c.customerEmail }}</a>
+                <span class="dim" *ngIf="!c.customerEmail">—</span>
+              </td>
+            </tr>
+            <tr>
+              <th i18n="@@complaints.create.customer-external-id">Référence client externe</th>
+              <td>
+                <code *ngIf="c.customerExternalId">{{ c.customerExternalId }}</code>
+                <span class="dim" *ngIf="!c.customerExternalId">—</span>
+              </td>
+            </tr>
+            <tr>
+              <th i18n="@@complaints.list.col-channel">Canal</th>
+              <td>{{ channelLabel[c.channel] }}</td>
+            </tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header><mat-card-title i18n="@@complaints.detail.handling">Traitement</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv">
+            <tr>
+              <th i18n="@@complaints.detail.assignee">Assignée à</th>
+              <td>
+                <code *ngIf="c.assignedToUserId">{{ c.assignedToUserId }}</code>
+                <span class="dim" *ngIf="!c.assignedToUserId" i18n="@@complaints.detail.unassigned">Non assignée</span>
+              </td>
+            </tr>
+            <tr>
+              <th i18n="@@complaints.detail.supplier">Fournisseur</th>
+              <td>
+                <a *ngIf="c.supplierId" [routerLink]="['/suppliers', c.supplierId]">
+                  <mat-icon aria-hidden="true">local_shipping</mat-icon>
+                  <span i18n="@@complaints.detail.open-supplier">Voir la fiche fournisseur</span>
+                </a>
+                <span class="dim" *ngIf="!c.supplierId">—</span>
+              </td>
+            </tr>
+            <tr>
+              <th i18n="@@complaints.detail.capa">Dossier CAPA</th>
+              <td>
+                <a *ngIf="c.capaCaseId" [routerLink]="['/capa', c.capaCaseId]">
+                  <mat-icon aria-hidden="true">engineering</mat-icon>
+                  <span i18n="@@complaints.detail.open-capa">Ouvrir le CAPA lié</span>
+                </a>
+                <span class="dim" *ngIf="!c.capaCaseId">—</span>
+              </td>
+            </tr>
+            <tr>
+              <th i18n="@@complaints.detail.satisfaction">Satisfaction</th>
+              <td>
+                <span *ngIf="c.satisfactionScore !== null">{{ c.satisfactionScore }}/10</span>
+                <span class="dim" *ngIf="c.satisfactionScore === null"
+                      i18n="@@complaints.detail.no-satisfaction">Non mesurée</span>
+              </td>
+            </tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="span-2">
+        <mat-card-header><mat-card-title i18n="@@complaints.detail.timeline">Chronologie</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <table class="kv kv--wide">
+            <tr>
+              <th i18n="@@complaints.list.col-received">Reçue le</th>
+              <td>{{ c.receivedAt ? (c.receivedAt | date:'medium') : '—' }}</td>
+            </tr>
+            <tr>
+              <th i18n="@@complaints.detail.first-response">Première réponse</th>
+              <td>{{ c.firstResponseAt ? (c.firstResponseAt | date:'medium') : '—' }}</td>
+            </tr>
+            <tr>
+              <th i18n="@@complaints.detail.resolved-at">Résolue le</th>
+              <td>{{ c.resolvedAt ? (c.resolvedAt | date:'medium') : '—' }}</td>
+            </tr>
+            <tr>
+              <th i18n="@@complaints.detail.closed-at">Clôturée le</th>
+              <td>{{ c.closedAt ? (c.closedAt | date:'medium') : '—' }}</td>
+            </tr>
+            <tr>
+              <th i18n="@@common.created-at">Créé le</th>
+              <td>{{ c.createdAt ? (c.createdAt | date:'medium') : '—' }} · <code>{{ c.createdBy }}</code></td>
+            </tr>
+            <tr>
+              <th i18n="@@common.last-updated">Dernière MAJ</th>
+              <td>{{ c.updatedAt ? (c.updatedAt | date:'medium') : '—' }}</td>
+            </tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="span-2">
+        <mat-card-header>
+          <mat-card-title i18n="@@complaints.detail.thread">Fil de messages</mat-card-title>
+          <mat-card-subtitle i18n="@@complaints.detail.thread-subtitle">
+            Messages adressés au client et notes internes de l'équipe, dans l'ordre chronologique.
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <ul class="thread" *ngIf="d.responses.length">
+            <li class="msg" *ngFor="let r of d.responses; trackBy: trackByEntry"
+                [class.msg--internal]="r.internalNote">
+              <div class="msg__head">
+                <span class="msg__kind" *ngIf="r.internalNote" i18n="@@complaints.detail.internal-note">Note interne</span>
+                <span class="msg__kind msg__kind--out" *ngIf="!r.internalNote"
+                      i18n="@@complaints.detail.customer-message">Message au client</span>
+                <span class="msg__channel">{{ channelLabel[r.channel] }}</span>
+                <span class="msg__date">{{ r.sentAt ? (r.sentAt | date:'short') : '—' }}</span>
+                <span class="qos-spacer"></span>
+                <button mat-icon-button type="button" *ngIf="canDeleteNote(r)"
+                        [disabled]="pending" (click)="deleteResponse(c, r)"
+                        i18n-aria-label="@@complaints.detail.delete-note-aria"
+                        aria-label="Supprimer cette note interne">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+              <p class="msg__body">{{ r.body }}</p>
+              <p class="msg__author"><code>{{ r.authorUserId }}</code></p>
+            </li>
+          </ul>
+
+          <div class="qos-empty" *ngIf="!d.responses.length">
+            <span class="qos-empty__icon"><mat-icon aria-hidden="true">forum</mat-icon></span>
+            <span class="qos-empty__title" i18n="@@complaints.detail.thread-empty">Aucun message pour l'instant.</span>
+            <span class="qos-empty__hint" i18n="@@complaints.detail.thread-empty-hint">
+              La première réponse envoyée au client débloque la résolution du dossier.
+            </span>
+            <button class="qos-empty__cta" mat-flat-button color="primary" type="button"
+                    *ngIf="canRespond(c)" [disabled]="pending" (click)="respond(c)">
+              <mat-icon aria-hidden="true">send</mat-icon>
+              <span i18n="@@complaints.detail.respond">Répondre</span>
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </section>
+</ng-container>
+
+<ng-template #fallback>
+  <section class="qos-page complaint-detail">
+    <a routerLink="/complaints" class="back">
+      <mat-icon aria-hidden="true">arrow_back</mat-icon>
+      <span i18n="@@complaints.detail.back">Réclamations clients</span>
+    </a>
+    <div class="state-row" *ngIf="loading$ | async">
+      <mat-progress-spinner mode="indeterminate" diameter="28"></mat-progress-spinner>
+      <span i18n="@@common.loading">Chargement…</span>
+    </div>
+    <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">
+      <mat-icon aria-hidden="true">error</mat-icon>
+      <span>{{ err }}</span>
+    </div>
+  </section>
+</ng-template>

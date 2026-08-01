@@ -1,0 +1,132 @@
+<section class="calibration-list">
+  <header class="head">
+    <div>
+      <h1 i18n="@@calibration.list.title">Calibration et équipements</h1>
+      <p i18n="@@calibration.list.subtitle">
+        Parc d'instruments, plans de calibration et enregistrements. Les échéances
+        dépassées ou proches sont remontées en tête de liste.
+      </p>
+    </div>
+    <div class="head-actions">
+      <button mat-stroked-button (click)="refresh()"
+              i18n-aria-label="@@common.refresh" aria-label="Actualiser">
+        <mat-icon>refresh</mat-icon>
+        <span i18n="@@common.refresh">Actualiser</span>
+      </button>
+      <button mat-flat-button color="primary" (click)="create()">
+        <mat-icon>add</mat-icon>
+        <span i18n="@@calibration.list.new">Nouvel équipement</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="tiles" *ngIf="tiles$ | async as tiles">
+    <div class="tile" *ngFor="let t of tiles" [attr.data-tone]="t.tone">
+      <span class="tile__value">{{ t.value }}</span>
+      <span class="tile__label">{{ t.label }}</span>
+    </div>
+  </div>
+
+  <div class="filters">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filter">
+      <mat-label i18n="@@common.status">Statut</mat-label>
+      <mat-select [value]="status" (selectionChange)="onStatusChange($event.value)">
+        <mat-option value="" i18n="@@calibration.list.status-all">Tous</mat-option>
+        <mat-option value="ACTIVE" i18n="@@calibration.status.active">En service</mat-option>
+        <mat-option value="OUT_OF_SERVICE" i18n="@@calibration.status.out-of-service">Hors service</mat-option>
+        <mat-option value="RETIRED" i18n="@@calibration.status.retired">Réformé</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filter">
+      <mat-label i18n="@@calibration.list.horizon">Horizon d'échéance</mat-label>
+      <mat-select [value]="horizonDays" (selectionChange)="onHorizonChange($event.value)">
+        <mat-option *ngFor="let h of horizons" [value]="h">
+          <span i18n="@@calibration.list.horizon-days">{{ h }} jours</span>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
+
+  <div class="table-wrap mat-elevation-z1">
+    <table mat-table [dataSource]="(rows$ | async) ?? []" [trackBy]="trackById">
+
+      <ng-container matColumnDef="equipment">
+        <th mat-header-cell *matHeaderCellDef i18n="@@calibration.col-equipment">Équipement</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="equipment-cell">
+            <span class="equipment-cell__name">{{ row.equipment.name }}</span>
+            <code class="equipment-cell__code">{{ row.equipment.code }}</code>
+            <span class="critical" *ngIf="row.equipment.critical"
+                  matTooltip="Instrument critique : une calibration non conforme le met hors service"
+                  i18n-matTooltip="@@calibration.critical-tooltip">
+              <mat-icon inline>priority_high</mat-icon>
+              <span i18n="@@calibration.critical">Critique</span>
+            </span>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="location">
+        <th mat-header-cell *matHeaderCellDef i18n="@@calibration.col-location">Emplacement</th>
+        <td mat-cell *matCellDef="let row">
+          <span *ngIf="row.equipment.location">{{ row.equipment.location }}</span>
+          <span class="dim" *ngIf="!row.equipment.location">—</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="qos-badge" [attr.data-tone]="statusTone(row.equipment.status)">
+            {{ statusLabel(row.equipment.status) }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="due">
+        <th mat-header-cell *matHeaderCellDef i18n="@@calibration.col-due">Prochaine calibration</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="due-cell">
+            <span class="qos-badge" [attr.data-tone]="dueTone(row.due)">{{ dueLabel(row.due) }}</span>
+            <span class="due-cell__date" *ngIf="row.plan?.nextDueOn">
+              {{ row.plan.nextDueOn | date:'mediumDate' }}
+            </span>
+            <span class="dim" *ngIf="!row.plan"
+                  i18n="@@calibration.list.beyond-horizon">Au-delà de l'horizon ou sans plan</span>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.actions">Actions</th>
+        <td mat-cell *matCellDef="let row">
+          <a mat-stroked-button [routerLink]="['/calibration', row.equipment.id]"
+             i18n="@@calibration.list.open">Ouvrir la fiche</a>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"
+          [class.row--overdue]="row.due === 'OVERDUE'"
+          [class.row--retired]="row.equipment.status === 'RETIRED'"></tr>
+    </table>
+
+    <p class="empty" *ngIf="(rows$ | async)?.length === 0 && (loading$ | async) === false"
+       i18n="@@calibration.list.empty">
+      Aucun équipement pour ce filtre. Créez votre premier instrument pour suivre ses calibrations.
+    </p>
+
+    <mat-paginator *ngIf="total$ | async as total"
+                   [length]="total"
+                   [pageIndex]="pageIndex"
+                   [pageSize]="pageSize"
+                   [pageSizeOptions]="[10, 25, 50]"
+                   (page)="onPage($event)"
+                   i18n-aria-label="@@calibration.list.paginator-aria"
+                   aria-label="Pagination des équipements"></mat-paginator>
+  </div>
+</section>

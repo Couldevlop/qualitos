@@ -1,0 +1,69 @@
+<h2 mat-dialog-title i18n="@@admin.webhooks.delivery-title">Détail de la livraison</h2>
+
+<mat-dialog-content>
+  <dl class="dlv-facts">
+    <div class="dlv-facts__item">
+      <dt i18n="@@admin.webhooks.delivery-event">Évènement</dt>
+      <dd><code>{{ data.delivery.eventType }}</code></dd>
+    </div>
+    <div class="dlv-facts__item">
+      <dt i18n="@@admin.webhooks.delivery-subscription">Abonnement</dt>
+      <dd>{{ data.subscriptionName || data.delivery.subscriptionId }}</dd>
+    </div>
+    <div class="dlv-facts__item">
+      <dt i18n="@@common.status">Statut</dt>
+      <dd>{{ data.delivery.status }}</dd>
+    </div>
+    <div class="dlv-facts__item">
+      <dt i18n="@@admin.webhooks.delivery-attempts">Tentatives</dt>
+      <dd>{{ data.delivery.attemptCount }}</dd>
+    </div>
+    <div class="dlv-facts__item">
+      <dt i18n="@@admin.webhooks.delivery-http-code">Code HTTP</dt>
+      <dd>
+        <span *ngIf="data.delivery.responseStatusCode !== null">{{ data.delivery.responseStatusCode }}</span>
+        <span class="dim" *ngIf="data.delivery.responseStatusCode === null">—</span>
+      </dd>
+    </div>
+    <div class="dlv-facts__item">
+      <dt i18n="@@admin.webhooks.delivery-last-attempt">Dernière tentative</dt>
+      <dd>
+        <span *ngIf="data.delivery.lastAttemptAt as d">{{ d | date:'medium' }}</span>
+        <span class="dim" *ngIf="!data.delivery.lastAttemptAt">—</span>
+      </dd>
+    </div>
+    <div class="dlv-facts__item">
+      <dt i18n="@@admin.webhooks.delivery-next-retry">Prochain renvoi</dt>
+      <dd>
+        <span *ngIf="data.delivery.nextRetryAt as d">{{ d | date:'medium' }}</span>
+        <span class="dim" *ngIf="!data.delivery.nextRetryAt">—</span>
+      </dd>
+    </div>
+    <div class="dlv-facts__item">
+      <dt i18n="@@admin.webhooks.delivery-event-id">Identifiant d'évènement</dt>
+      <dd><code class="dlv-facts__id">{{ data.delivery.eventId }}</code></dd>
+    </div>
+  </dl>
+
+  <section class="dlv-block" *ngIf="data.delivery.errorMessage as msg">
+    <h3 i18n="@@admin.webhooks.delivery-error">Erreur remontée</h3>
+    <pre class="dlv-pre dlv-pre--error">{{ msg }}</pre>
+  </section>
+
+  <section class="dlv-block">
+    <h3 i18n="@@admin.webhooks.delivery-response">Réponse du consommateur</h3>
+    <pre class="dlv-pre" *ngIf="data.delivery.responseBody">{{ data.delivery.responseBody }}</pre>
+    <p class="dim" *ngIf="!data.delivery.responseBody"
+       i18n="@@admin.webhooks.delivery-no-response">Aucun corps de réponse enregistré.</p>
+  </section>
+
+  <section class="dlv-block">
+    <h3 i18n="@@admin.webhooks.delivery-payload">Charge utile envoyée</h3>
+    <pre class="dlv-pre">{{ prettyPayload }}</pre>
+  </section>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-flat-button color="primary" type="button" (click)="close()"
+          i18n="@@common.close">Fermer</button>
+</mat-dialog-actions>

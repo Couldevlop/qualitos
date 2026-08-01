@@ -1,0 +1,255 @@
+<section class="rate-limits">
+  <header class="head">
+    <div>
+      <h1 i18n="@@admin.rate-limits.title">Quotas et limites d'API</h1>
+      <p i18n="@@admin.rate-limits.subtitle">
+        Définissez le nombre d'appels autorisés par périmètre et par fenêtre de temps.
+        La jauge lit le compteur réel de la fenêtre en cours.
+      </p>
+    </div>
+    <div class="head__aside">
+      <span class="measured" *ngIf="measuredAt$ | async as at">
+        <span i18n="@@admin.rate-limits.measured-at">Mesuré à</span>
+        {{ at | date:'HH:mm:ss' }}
+      </span>
+      <button mat-stroked-button type="button"
+              [disabled]="(loading$ | async) === true"
+              (click)="refresh()"
+              i18n-aria-label="@@admin.rate-limits.refresh-aria"
+              aria-label="Actualiser la mesure de consommation">
+        <mat-icon>refresh</mat-icon>
+        <span i18n="@@admin.rate-limits.refresh">Actualiser</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="tiles" *ngIf="tiles$ | async as tiles">
+    <div class="tile" *ngFor="let t of tiles" [attr.data-tone]="t.tone">
+      <span class="tile__value">{{ t.value }}</span>
+      <span class="tile__label">{{ t.label }}</span>
+    </div>
+  </div>
+
+  <!-- Honnêteté d'affichage : aucun filtre HTTP n'appelle encore `tryAcquire` côté
+       serveur, donc le compteur reste à zéro même sous forte charge. Tant que
+       l'application effective n'est pas branchée, mieux vaut le dire que laisser
+       croire à une mesure. -->
+  <div class="banner banner-info" i18n="@@admin.rate-limits.not-enforced">
+    Les politiques définies ici sont enregistrées, mais elles ne sont pas encore
+    appliquées aux appels entrants : la consommation affichée reste donc à zéro.
+  </div>
+
+  <div *ngIf="error$ | async as err" class="banner banner-error" role="alert">{{ err }}</div>
+  <div *ngIf="loading$ | async" class="banner banner-info" i18n="@@common.loading">Chargement…</div>
+
+  <div class="layout">
+
+    <div class="table-wrap mat-elevation-z1">
+      <table mat-table [dataSource]="(rows$ | async) ?? []" [trackBy]="trackByPolicy">
+
+        <ng-container matColumnDef="scope">
+          <th mat-header-cell *matHeaderCellDef i18n="@@admin.rate-limits.col-scope">Périmètre</th>
+          <td mat-cell *matCellDef="let row">
+            <code class="scope">{{ row.policy.scope }}</code>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="window">
+          <th mat-header-cell *matHeaderCellDef i18n="@@admin.rate-limits.col-window">Fenêtre</th>
+          <td mat-cell *matCellDef="let row">
+            <div class="window-cell">
+              <span class="window-cell__value">{{ windowLabel(row.policy.windowSeconds) }}</span>
+              <span class="window-cell__quota">
+                {{ row.policy.maxRequests | number }}
+                <span i18n="@@admin.rate-limits.requests">req.</span>
+              </span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="usage">
+          <th mat-header-cell *matHeaderCellDef i18n="@@admin.rate-limits.col-usage">Consommation</th>
+          <td mat-cell *matCellDef="let row">
+            <div class="meter" *ngIf="row.level !== 'unmeasured'; else notMeasured">
+              <div class="meter__head">
+                <span class="meter__used">{{ row.used | number }}</span>
+                <span class="meter__limit">/ {{ row.usage.limit | number }}</span>
+                <span class="meter__pct">{{ percent(row) }} %</span>
+              </div>
+              <div class="meter__track" role="progressbar"
+                   [attr.data-level]="row.level"
+                   [attr.aria-label]="usageAria"
+                   [attr.aria-valuenow]="percent(row)"
+                   aria-valuemin="0" aria-valuemax="100">
+                <span class="meter__fill" [style.width.%]="percent(row)"></span>
+              </div>
+              <span class="qos-badge" [attr.data-tone]="levelTone(row.level)">
+                {{ levelLabel(row.level) }}
+              </span>
+            </div>
+            <ng-template #notMeasured>
+              <span class="dim" i18n="@@admin.rate-limits.not-measured">
+                Non mesuré — limite non appliquée
+              </span>
+            </ng-template>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="reset">
+          <th mat-header-cell *matHeaderCellDef i18n="@@admin.rate-limits.col-reset">Remise à zéro</th>
+          <td mat-cell *matCellDef="let row">
+            <span *ngIf="resetLabel(row) as r" class="reset">
+              <span i18n="@@admin.rate-limits.reset-in">dans</span> {{ r }}
+            </span>
+            <span class="dim" *ngIf="!resetLabel(row)">—</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="state">
+          <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="qos-badge" data-tone="success" *ngIf="row.policy.enabled"
+                  i18n="@@admin.rate-limits.state-enforced">Appliqué</span>
+            <span class="qos-badge" *ngIf="!row.policy.enabled"
+                  i18n="@@admin.rate-limits.state-suspended">Suspendu</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef i18n="@@common.actions">Actions</th>
+          <td mat-cell *matCellDef="let row">
+            <div class="row-actions">
+              <button mat-icon-button type="button"
+                      [disabled]="pendingScope === row.policy.scope"
+                      (click)="edit(row)"
+                      i18n-aria-label="@@admin.rate-limits.edit-aria"
+                      aria-label="Modifier ce quota"
+                      matTooltip="Modifier ce quota"
+                      i18n-matTooltip="@@admin.rate-limits.edit-aria">
+                <mat-icon>edit</mat-icon>
+              </button>
+
+              <!-- Suspendre n'a de sens que sur une limite appliquée, et réciproquement. -->
+              <button mat-icon-button type="button" *ngIf="row.policy.enabled"
+                      [disabled]="pendingScope === row.policy.scope"
+                      (click)="setEnabled(row, false)"
+                      i18n-aria-label="@@admin.rate-limits.suspend-aria"
+                      aria-label="Suspendre ce quota"
+                      matTooltip="Suspendre ce quota"
+                      i18n-matTooltip="@@admin.rate-limits.suspend-aria">
+                <mat-icon>pause_circle</mat-icon>
+              </button>
+
+              <button mat-icon-button type="button" *ngIf="!row.policy.enabled"
+                      [disabled]="pendingScope === row.policy.scope"
+                      (click)="setEnabled(row, true)"
+                      i18n-aria-label="@@admin.rate-limits.resume-aria"
+                      aria-label="Appliquer de nouveau ce quota"
+                      matTooltip="Appliquer de nouveau ce quota"
+                      i18n-matTooltip="@@admin.rate-limits.resume-aria">
+                <mat-icon>play_circle</mat-icon>
+              </button>
+
+              <button mat-icon-button type="button" color="warn"
+                      [disabled]="pendingScope === row.policy.scope"
+                      (click)="remove(row)"
+                      i18n-aria-label="@@admin.rate-limits.delete-aria"
+                      aria-label="Supprimer ce quota"
+                      matTooltip="Supprimer ce quota"
+                      i18n-matTooltip="@@admin.rate-limits.delete-aria">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"
+            [class.row--off]="!row.policy.enabled"
+            [class.row--hot]="row.level === 'critical' || row.level === 'exceeded'"></tr>
+      </table>
+
+      <div class="empty" *ngIf="(rows$ | async)?.length === 0 && (loading$ | async) === false">
+        <mat-icon>speed</mat-icon>
+        <p i18n="@@admin.rate-limits.empty">Aucun quota d'API défini pour ce tenant.</p>
+        <p class="empty__hint" i18n="@@admin.rate-limits.empty-hint">
+          Sans quota, aucun appel n'est plafonné. Définissez un premier périmètre
+          avec le formulaire ci-contre.
+        </p>
+      </div>
+    </div>
+
+    <aside class="form-panel">
+      <h2 *ngIf="!editing" i18n="@@admin.rate-limits.form-new">Nouveau quota</h2>
+      <h2 *ngIf="editing" i18n="@@admin.rate-limits.form-edit">Modifier le quota</h2>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+
+        <mat-form-field appearance="outline" class="field">
+          <mat-label i18n="@@admin.rate-limits.field-scope">Périmètre</mat-label>
+          <input matInput formControlName="scope" autocomplete="off" spellcheck="false"
+                 placeholder="api.documents" (blur)="trimScope()">
+          <mat-hint *ngIf="!editing" i18n="@@admin.rate-limits.hint-scope">
+            Minuscules, chiffres et . _ : - (100 caractères max).
+          </mat-hint>
+          <mat-hint *ngIf="editing" i18n="@@admin.rate-limits.hint-scope-locked">
+            Le périmètre identifie le quota : il ne se renomme pas.
+          </mat-hint>
+          <mat-error *ngIf="form.controls.scope.hasError('required')"
+                     i18n="@@admin.rate-limits.err-required">Champ obligatoire.</mat-error>
+          <mat-error *ngIf="form.controls.scope.hasError('pattern')
+                            || form.controls.scope.hasError('maxlength')"
+                     i18n="@@admin.rate-limits.err-scope">Format de périmètre invalide.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="field">
+          <mat-label i18n="@@admin.rate-limits.field-window">Fenêtre (secondes)</mat-label>
+          <input matInput type="number" formControlName="windowSeconds" min="1" max="86400">
+          <mat-error *ngIf="form.controls.windowSeconds.hasError('required')"
+                     i18n="@@admin.rate-limits.err-required">Champ obligatoire.</mat-error>
+          <mat-error *ngIf="form.controls.windowSeconds.hasError('min')
+                            || form.controls.windowSeconds.hasError('max')"
+                     i18n="@@admin.rate-limits.err-window">
+            Entre 1 seconde et 24 heures (86400 s).
+          </mat-error>
+        </mat-form-field>
+
+        <div class="presets">
+          <span class="presets__label" i18n="@@admin.rate-limits.presets">Fenêtres usuelles</span>
+          <button *ngFor="let p of windowPresets" mat-stroked-button type="button"
+                  class="presets__btn"
+                  [class.presets__btn--on]="form.controls.windowSeconds.value === p"
+                  (click)="applyPreset(p)">{{ windowLabel(p) }}</button>
+        </div>
+
+        <mat-form-field appearance="outline" class="field">
+          <mat-label i18n="@@admin.rate-limits.field-max">Requêtes autorisées</mat-label>
+          <input matInput type="number" formControlName="maxRequests" min="1" max="1000000">
+          <mat-error *ngIf="form.controls.maxRequests.hasError('required')"
+                     i18n="@@admin.rate-limits.err-required">Champ obligatoire.</mat-error>
+          <mat-error *ngIf="form.controls.maxRequests.hasError('min')
+                            || form.controls.maxRequests.hasError('max')"
+                     i18n="@@admin.rate-limits.err-max">
+            Entre 1 et 1 000 000 requêtes par fenêtre.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-checkbox formControlName="enabled" class="enabled-box">
+          <span i18n="@@admin.rate-limits.field-enabled">Appliquer cette limite</span>
+        </mat-checkbox>
+        <p class="hint" i18n="@@admin.rate-limits.enabled-hint">
+          Décoché, le quota reste enregistré mais aucun appel n'est compté ni refusé.
+        </p>
+
+        <div class="form-actions">
+          <button mat-flat-button color="primary" type="submit" [disabled]="saving">
+            <span i18n="@@admin.rate-limits.save">Enregistrer</span>
+          </button>
+          <button mat-button type="button" *ngIf="editing" [disabled]="saving"
+                  (click)="cancelEdit()"
+                  i18n="@@admin.rate-limits.cancel-edit">Annuler</button>
+        </div>
+      </form>
+    </aside>
+  </div>
+</section>

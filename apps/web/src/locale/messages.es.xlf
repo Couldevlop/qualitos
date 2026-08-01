@@ -3304,6 +3304,2370 @@
         <source>Total activations</source>
         <target state="translated">Activaciones totales</target>
       </trans-unit>
+      <trans-unit id="admin.audit.title" datatype="html">
+        <source>Journal d'audit</source>
+        <target state="translated">Registro de auditoría</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.subtitle" datatype="html">
+        <source>Toute action sensible est journalisée puis chaînée par empreinte. Le registre est en écriture seule : il se consulte et se vérifie, il ne se corrige pas.</source>
+        <target state="translated">Toda acción sensible se registra y se encadena mediante huellas. El registro es de solo adición: se consulta y se verifica, no se corrige.</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.append-only" datatype="html">
+        <source>Registre inaltérable</source>
+        <target state="translated">Registro inalterable</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.filter-action" datatype="html">
+        <source>Action</source>
+        <target state="translated">Acción</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.filter-resource-type" datatype="html">
+        <source>Type de ressource</source>
+        <target state="translated">Tipo de recurso</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.filter-resource-id" datatype="html">
+        <source>Identifiant de ressource</source>
+        <target state="translated">Identificador de recurso</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.uuid-error" datatype="html">
+        <source>Identifiant attendu au format UUID.</source>
+        <target state="translated">Se espera un identificador con formato UUID.</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.filter-actor" datatype="html">
+        <source>Acteur (utilisateur)</source>
+        <target state="translated">Actor (usuario)</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.filter-from" datatype="html">
+        <source>Depuis</source>
+        <target state="translated">Desde</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.filter-to" datatype="html">
+        <source>Jusqu'à</source>
+        <target state="translated">Hasta</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.apply" datatype="html">
+        <source>Filtrer</source>
+        <target state="translated">Filtrar</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.reset" datatype="html">
+        <source>Réinitialiser</source>
+        <target state="translated">Restablecer</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.col-seq" datatype="html">
+        <source>N°</source>
+        <target state="translated">N.º</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.col-when" datatype="html">
+        <source>Survenu le</source>
+        <target state="translated">Ocurrido el</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.recorded-at" datatype="html">
+        <source>Enregistré</source>
+        <target state="translated">Registrado</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.col-actor" datatype="html">
+        <source>Acteur</source>
+        <target state="translated">Actor</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.no-actor" datatype="html">
+        <source>Non attribué</source>
+        <target state="translated">Sin atribuir</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.col-action" datatype="html">
+        <source>Action</source>
+        <target state="translated">Acción</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.col-resource" datatype="html">
+        <source>Ressource</source>
+        <target state="translated">Recurso</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.col-integrity" datatype="html">
+        <source>Intégrité</source>
+        <target state="translated">Integridad</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.anchored-aria" datatype="html">
+        <source>Événement ancré en blockchain</source>
+        <target state="translated">Evento anclado en blockchain</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.detail-aria" datatype="html">
+        <source>Afficher le détail de l'événement</source>
+        <target state="translated">Mostrar el detalle del evento</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.empty" datatype="html">
+        <source>Aucun événement ne correspond à ces critères.</source>
+        <target state="translated">Ningún evento coincide con estos criterios.</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.paginator-aria" datatype="html">
+        <source>Pagination du journal d'audit</source>
+        <target state="translated">Paginación del registro de auditoría</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.verify-title" datatype="html">
+        <source>Intégrité de la chaîne</source>
+        <target state="translated">Integridad de la cadena</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.verify-hint" datatype="html">
+        <source>Recalcule les empreintes d'une plage de numéros et contrôle leur chaînage. Toute rupture révèle une altération ou un événement manquant.</source>
+        <target state="translated">Recalcula las huellas de un rango de números y comprueba su encadenamiento. Cualquier ruptura revela una alteración o un evento ausente.</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.verify-from" datatype="html">
+        <source>Du n°</source>
+        <target state="translated">Desde el n.º</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.verify-to" datatype="html">
+        <source>Au n°</source>
+        <target state="translated">Hasta el n.º</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.verify" datatype="html">
+        <source>Vérifier</source>
+        <target state="translated">Verificar</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.verify-visible" datatype="html">
+        <source>Sur la page affichée</source>
+        <target state="translated">En la página mostrada</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.verify-running" datatype="html">
+        <source>Vérification en cours…</source>
+        <target state="translated">Verificando…</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.verdict-ok" datatype="html">
+        <source>Chaîne intègre</source>
+        <target state="translated">Cadena íntegra</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.verdict-ko" datatype="html">
+        <source>Chaîne rompue</source>
+        <target state="translated">Cadena rota</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.verdict-count" datatype="html">
+        <source>Événements vérifiés</source>
+        <target state="translated">Eventos verificados</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.detail-title" datatype="html">
+        <source>Détail de l'événement</source>
+        <target state="translated">Detalle del evento</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.close-detail-aria" datatype="html">
+        <source>Fermer le détail</source>
+        <target state="translated">Cerrar el detalle</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.field-summary" datatype="html">
+        <source>Résumé</source>
+        <target state="translated">Resumen</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.field-ip" datatype="html">
+        <source>Adresse IP</source>
+        <target state="translated">Dirección IP</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.field-agent" datatype="html">
+        <source>Agent</source>
+        <target state="translated">Agente de usuario</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.field-hash" datatype="html">
+        <source>Empreinte</source>
+        <target state="translated">Huella</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.field-previous" datatype="html">
+        <source>Empreinte précédente</source>
+        <target state="translated">Huella anterior</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.chain-origin" datatype="html">
+        <source>Premier événement du registre</source>
+        <target state="translated">Primer evento del registro</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.field-anchor" datatype="html">
+        <source>Ancrage blockchain</source>
+        <target state="translated">Anclaje en blockchain</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.not-anchored" datatype="html">
+        <source>Pas encore ancré</source>
+        <target state="translated">Aún sin anclar</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.field-payload" datatype="html">
+        <source>Charge utile</source>
+        <target state="translated">Carga útil</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.load-error" datatype="html">
+        <source>Impossible de charger le journal d'audit.</source>
+        <target state="translated">No se ha podido cargar el registro de auditoría.</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.criterion-resource" datatype="html">
+        <source>Filtre appliqué : la ressource ciblée. Les autres critères sont ignorés par le serveur.</source>
+        <target state="translated">Filtro aplicado: el recurso seleccionado. El servidor ignora los demás criterios.</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.criterion-action" datatype="html">
+        <source>Filtre appliqué : le type d'action. Les autres critères sont ignorés par le serveur.</source>
+        <target state="translated">Filtro aplicado: el tipo de acción. El servidor ignora los demás criterios.</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.criterion-actor" datatype="html">
+        <source>Filtre appliqué : l'acteur. Les autres critères sont ignorés par le serveur.</source>
+        <target state="translated">Filtro aplicado: el actor. El servidor ignora los demás criterios.</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.criterion-period" datatype="html">
+        <source>Filtre appliqué : la période. Renseignez les deux bornes pour qu'elle soit prise en compte.</source>
+        <target state="translated">Filtro aplicado: el periodo. Indique ambos límites para que se tenga en cuenta.</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.criterion-none" datatype="html">
+        <source>Aucun filtre actif : le journal complet est affiché, du plus récent au plus ancien.</source>
+        <target state="translated">Ningún filtro activo: se muestra el registro completo, del más reciente al más antiguo.</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.detail-error" datatype="html">
+        <source>Impossible de charger le détail de cet événement.</source>
+        <target state="translated">No se ha podido cargar el detalle de este evento.</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.verify-range-invalid" datatype="html">
+        <source>Indiquez une fenêtre de séquences valide (début ≥ 1 et fin ≥ début).</source>
+        <target state="translated">Indique un intervalo de secuencias válido (inicio ≥ 1 y fin ≥ inicio).</target>
+      </trans-unit>
+      <trans-unit id="admin.audit.verify-error" datatype="html">
+        <source>La vérification d'intégrité a échoué.</source>
+        <target state="translated">La verificación de integridad ha fallado.</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.title" datatype="html">
+        <source>Quotas et limites d'API</source>
+        <target state="translated">Cuotas y límites de API</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.subtitle" datatype="html">
+        <source>Plafonnez le nombre d'appels par périmètre et par fenêtre de temps. La jauge montre la consommation réelle de la fenêtre en cours : au-delà du plafond, l'API répond 429 aux appels suivants.</source>
+        <target state="translated">Limite el número de llamadas por ámbito y por ventana de tiempo. El indicador muestra el consumo real de la ventana actual: superado el límite, la API responde 429 a las siguientes llamadas.</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.measured-at" datatype="html">
+        <source>Mesuré à</source>
+        <target state="translated">Medido a las</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.refresh" datatype="html">
+        <source>Actualiser</source>
+        <target state="translated">Actualizar</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.refresh-aria" datatype="html">
+        <source>Actualiser la mesure de consommation</source>
+        <target state="translated">Actualizar la medición de consumo</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.tile-policies" datatype="html">
+        <source>Quotas définis</source>
+        <target state="translated">Cuotas definidas</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.tile-enforced" datatype="html">
+        <source>Appliqués</source>
+        <target state="translated">Aplicadas</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.tile-near" datatype="html">
+        <source>Proches de la limite</source>
+        <target state="translated">Cerca del límite</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.tile-exceeded" datatype="html">
+        <source>Limite atteinte</source>
+        <target state="translated">Límite alcanzado</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.col-scope" datatype="html">
+        <source>Périmètre</source>
+        <target state="translated">Ámbito</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.col-window" datatype="html">
+        <source>Fenêtre</source>
+        <target state="translated">Ventana</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.requests" datatype="html">
+        <source>req.</source>
+        <target state="translated">sol.</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.col-usage" datatype="html">
+        <source>Consommation</source>
+        <target state="translated">Consumo</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.usage-aria" datatype="html">
+        <source>Consommation du quota sur la fenêtre en cours</source>
+        <target state="translated">Consumo de la cuota en la ventana actual</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.not-measured" datatype="html">
+        <source>Non mesuré — limite non appliquée</source>
+        <target state="translated">Sin medir — límite no aplicado</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.col-reset" datatype="html">
+        <source>Remise à zéro</source>
+        <target state="translated">Reinicio</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.reset-in" datatype="html">
+        <source>dans</source>
+        <target state="translated">en</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.state-enforced" datatype="html">
+        <source>Appliqué</source>
+        <target state="translated">Aplicada</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.state-suspended" datatype="html">
+        <source>Suspendu</source>
+        <target state="translated">Suspendida</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.edit-aria" datatype="html">
+        <source>Modifier ce quota</source>
+        <target state="translated">Editar esta cuota</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.suspend-aria" datatype="html">
+        <source>Suspendre ce quota</source>
+        <target state="translated">Suspender esta cuota</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.resume-aria" datatype="html">
+        <source>Appliquer de nouveau ce quota</source>
+        <target state="translated">Volver a aplicar esta cuota</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.delete-aria" datatype="html">
+        <source>Supprimer ce quota</source>
+        <target state="translated">Eliminar esta cuota</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.empty" datatype="html">
+        <source>Aucun quota d'API défini pour ce tenant.</source>
+        <target state="translated">No hay ninguna cuota de API definida para este inquilino.</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.empty-hint" datatype="html">
+        <source>Sans quota, aucun appel n'est plafonné. Définissez un premier périmètre avec le formulaire ci-contre.</source>
+        <target state="translated">Sin cuota, ninguna llamada tiene límite. Defina un primer ámbito con el formulario contiguo.</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.form-new" datatype="html">
+        <source>Nouveau quota</source>
+        <target state="translated">Nueva cuota</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.form-edit" datatype="html">
+        <source>Modifier le quota</source>
+        <target state="translated">Editar cuota</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.field-scope" datatype="html">
+        <source>Périmètre</source>
+        <target state="translated">Ámbito</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.hint-scope" datatype="html">
+        <source>Minuscules, chiffres et . _ : - (100 caractères max).</source>
+        <target state="translated">Minúsculas, dígitos y . _ : - (100 caracteres máx.).</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.hint-scope-locked" datatype="html">
+        <source>Le périmètre identifie le quota : il ne se renomme pas.</source>
+        <target state="translated">El ámbito identifica la cuota: no se puede renombrar.</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.err-required" datatype="html">
+        <source>Champ obligatoire.</source>
+        <target state="translated">Campo obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.err-scope" datatype="html">
+        <source>Format de périmètre invalide.</source>
+        <target state="translated">Formato de ámbito no válido.</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.field-window" datatype="html">
+        <source>Fenêtre (secondes)</source>
+        <target state="translated">Ventana (segundos)</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.err-window" datatype="html">
+        <source>Entre 1 seconde et 24 heures (86400 s).</source>
+        <target state="translated">Entre 1 segundo y 24 horas (86400 s).</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.presets" datatype="html">
+        <source>Fenêtres usuelles</source>
+        <target state="translated">Ventanas habituales</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.field-max" datatype="html">
+        <source>Requêtes autorisées</source>
+        <target state="translated">Solicitudes permitidas</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.err-max" datatype="html">
+        <source>Entre 1 et 1 000 000 requêtes par fenêtre.</source>
+        <target state="translated">Entre 1 y 1 000 000 solicitudes por ventana.</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.field-enabled" datatype="html">
+        <source>Appliquer cette limite</source>
+        <target state="translated">Aplicar este límite</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.enabled-hint" datatype="html">
+        <source>Décoché, le quota reste enregistré mais aucun appel n'est compté ni refusé.</source>
+        <target state="translated">Sin marcar, la cuota se conserva pero no se cuenta ni se rechaza ninguna llamada.</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.save" datatype="html">
+        <source>Enregistrer</source>
+        <target state="translated">Guardar</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.cancel-edit" datatype="html">
+        <source>Annuler</source>
+        <target state="translated">Cancelar</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.load-error" datatype="html">
+        <source>Impossible de charger les quotas d'API.</source>
+        <target state="translated">No se han podido cargar las cuotas de API.</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.save-error" datatype="html">
+        <source>L'enregistrement du quota a échoué.</source>
+        <target state="translated">No se ha podido guardar la cuota.</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.action-error" datatype="html">
+        <source>L'opération sur le quota a échoué.</source>
+        <target state="translated">La operación sobre la cuota ha fallado.</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.delete-title" datatype="html">
+        <source>Supprimer ce quota ?</source>
+        <target state="translated">¿Eliminar esta cuota?</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.delete-message" datatype="html">
+        <source>Le périmètre ne sera plus limité du tout : les appels passeront sans plafond.</source>
+        <target state="translated">El ámbito dejará de estar limitado por completo: las llamadas pasarán sin tope.</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.delete-confirm" datatype="html">
+        <source>Supprimer</source>
+        <target state="translated">Eliminar</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.unit-hour" datatype="html">
+        <source>h</source>
+        <target state="translated">h</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.unit-minute" datatype="html">
+        <source>min</source>
+        <target state="translated">min</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.unit-second" datatype="html">
+        <source>s</source>
+        <target state="translated">s</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.level-exceeded" datatype="html">
+        <source>Limite atteinte</source>
+        <target state="translated">Límite alcanzado</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.level-critical" datatype="html">
+        <source>Proche de la limite</source>
+        <target state="translated">Cerca del límite</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.level-warning" datatype="html">
+        <source>Soutenu</source>
+        <target state="translated">Sostenido</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.level-normal" datatype="html">
+        <source>Normal</source>
+        <target state="translated">Normal</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.level-idle" datatype="html">
+        <source>Inactif</source>
+        <target state="translated">Inactivo</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.level-unmeasured" datatype="html">
+        <source>Non appliqué</source>
+        <target state="translated">No aplicado</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.title" datatype="html">
+        <source>Clés d'API</source>
+        <target state="translated">Claves de API</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.subtitle" datatype="html">
+        <source>Chaque intégration doit avoir sa propre clé, avec ses portées et son échéance. Le secret n'est affiché qu'à l'émission ; en cas de doute, révoquez et réémettez.</source>
+        <target state="translated">Cada integración debe tener su propia clave, con sus alcances y su caducidad. El secreto solo se muestra al emitirla; ante la duda, revoque y vuelva a emitir.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.refresh-aria" datatype="html">
+        <source>Actualiser la liste des clés</source>
+        <target state="translated">Actualizar la lista de claves</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.refresh" datatype="html">
+        <source>Actualiser</source>
+        <target state="translated">Actualizar</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.expire-due-tooltip" datatype="html">
+        <source>Passe en « expirée » toute clé active dont l'échéance est dépassée</source>
+        <target state="translated">Marca como caducada toda clave activa cuya fecha de vencimiento haya pasado</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.expire-due" datatype="html">
+        <source>Traiter les clés échues</source>
+        <target state="translated">Procesar claves vencidas</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.create" datatype="html">
+        <source>Émettre une clé</source>
+        <target state="translated">Emitir una clave</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.loading" datatype="html">
+        <source>Chargement…</source>
+        <target state="translated">Cargando…</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.col-name" datatype="html">
+        <source>Clé</source>
+        <target state="translated">Clave</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.col-scopes" datatype="html">
+        <source>Portées</source>
+        <target state="translated">Alcances</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.no-scopes" datatype="html">
+        <source>Aucune</source>
+        <target state="translated">Ninguno</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.col-status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">Estado</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.expiring-soon-tooltip" datatype="html">
+        <source>Échéance dans moins de 30 jours</source>
+        <target state="translated">Vence en menos de 30 días</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.expiring-soon" datatype="html">
+        <source>Bientôt</source>
+        <target state="translated">Pronto</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.col-created" datatype="html">
+        <source>Créée le</source>
+        <target state="translated">Creada el</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.col-last-used" datatype="html">
+        <source>Dernier usage</source>
+        <target state="translated">Último uso</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.never-used" datatype="html">
+        <source>Jamais</source>
+        <target state="translated">Nunca</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.col-expiry" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">Vencimiento</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.no-expiry" datatype="html">
+        <source>Sans échéance</source>
+        <target state="translated">Sin vencimiento</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.col-actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">Acciones</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.detail-aria" datatype="html">
+        <source>Voir le détail de la clé</source>
+        <target state="translated">Ver el detalle de la clave</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.detail" datatype="html">
+        <source>Détail</source>
+        <target state="translated">Detalle</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.rotate" datatype="html">
+        <source>Faire tourner</source>
+        <target state="translated">Rotar</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.revoke" datatype="html">
+        <source>Révoquer</source>
+        <target state="translated">Revocar</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.no-action" datatype="html">
+        <source>Aucune action possible</source>
+        <target state="translated">Ninguna acción posible</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.empty" datatype="html">
+        <source>Aucune clé d'API pour ce tenant. Émettez-en une pour ouvrir l'accès programmatique.</source>
+        <target state="translated">No hay ninguna clave de API para este inquilino. Emita una para abrir el acceso programático.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.detail-title" datatype="html">
+        <source>Détail de la clé</source>
+        <target state="translated">Detalle de la clave</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.detail-close-aria" datatype="html">
+        <source>Fermer le détail</source>
+        <target state="translated">Cerrar el detalle</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.detail-name" datatype="html">
+        <source>Nom</source>
+        <target state="translated">Nombre</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.detail-prefix" datatype="html">
+        <source>Préfixe public</source>
+        <target state="translated">Prefijo público</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.detail-status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">Estado</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.detail-scopes" datatype="html">
+        <source>Portées</source>
+        <target state="translated">Alcances</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.detail-created" datatype="html">
+        <source>Créée le</source>
+        <target state="translated">Creada el</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.detail-created-by" datatype="html">
+        <source>Créée par</source>
+        <target state="translated">Creada por</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.detail-expiry" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">Vencimiento</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.detail-last-used" datatype="html">
+        <source>Dernier usage</source>
+        <target state="translated">Último uso</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.detail-revoked" datatype="html">
+        <source>Révoquée le</source>
+        <target state="translated">Revocada el</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.detail-revoked-by" datatype="html">
+        <source>Révoquée par</source>
+        <target state="translated">Revocada por</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.detail-no-secret" datatype="html">
+        <source>Le secret n'apparaît nulle part ici : le serveur n'en conserve qu'une empreinte.</source>
+        <target state="translated">El secreto no aparece en ninguna parte aquí: el servidor solo conserva una huella.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.load-error" datatype="html">
+        <source>Impossible de charger les clés d'API.</source>
+        <target state="translated">No se han podido cargar las claves de API.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.detail-error" datatype="html">
+        <source>Impossible de charger le détail de la clé.</source>
+        <target state="translated">No se ha podido cargar el detalle de la clave.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.rotate-confirm-title" datatype="html">
+        <source>Faire tourner cette clé ?</source>
+        <target state="translated">¿Rotar esta clave?</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.rotate-confirm-message" datatype="html">
+        <source>La clé actuelle est révoquée immédiatement et un nouveau secret est émis. Les intégrations qui utilisent encore l'ancienne clé cesseront de fonctionner.</source>
+        <target state="translated">La clave actual se revoca de inmediato y se emite un secreto nuevo. Las integraciones que sigan usando la clave anterior dejarán de funcionar.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.cancel" datatype="html">
+        <source>Annuler</source>
+        <target state="translated">Cancelar</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.rotate-error" datatype="html">
+        <source>La rotation de la clé a échoué.</source>
+        <target state="translated">La rotación de la clave ha fallado.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.revoke-confirm-title" datatype="html">
+        <source>Révoquer cette clé ?</source>
+        <target state="translated">¿Revocar esta clave?</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.revoke-confirm-message" datatype="html">
+        <source>Action irréversible : la clé est rejetée dès la validation et ne peut pas être réactivée. Toute intégration qui l'utilise cessera de fonctionner.</source>
+        <target state="translated">Acción irreversible: la clave se rechaza en cuanto confirme y no podrá reactivarse. Cualquier integración que la use dejará de funcionar.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.revoked" datatype="html">
+        <source>Clé révoquée.</source>
+        <target state="translated">Clave revocada.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.revoke-error" datatype="html">
+        <source>La révocation de la clé a échoué.</source>
+        <target state="translated">La revocación de la clave ha fallado.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.expire-due-done" datatype="html">
+        <source>Clés échues traitées : {$COUNT}</source>
+        <target state="translated">Claves vencidas procesadas: {$COUNT}</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.expire-due-none" datatype="html">
+        <source>Aucune clé échue à traiter.</source>
+        <target state="translated">No hay claves vencidas que procesar.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.expire-due-error" datatype="html">
+        <source>Le traitement des clés échues a échoué.</source>
+        <target state="translated">El procesamiento de las claves vencidas ha fallado.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.tile-active" datatype="html">
+        <source>Clés actives</source>
+        <target state="translated">Claves activas</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.tile-expiring" datatype="html">
+        <source>Expirent bientôt</source>
+        <target state="translated">Caducan pronto</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.tile-expired" datatype="html">
+        <source>Expirées</source>
+        <target state="translated">Caducadas</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.tile-revoked" datatype="html">
+        <source>Révoquées</source>
+        <target state="translated">Revocadas</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.tile-total" datatype="html">
+        <source>Total</source>
+        <target state="translated">Total</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.ok" datatype="html">
+        <source>OK</source>
+        <target state="translated">OK</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.session-expired" datatype="html">
+        <source>Session expirée — reconnectez-vous pour agir sur les clés d'API.</source>
+        <target state="translated">Sesión caducada: vuelva a iniciar sesión para gestionar las claves de API.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.create-title" datatype="html">
+        <source>Émettre une clé d'API</source>
+        <target state="translated">Emitir una clave de API</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.create-submit" datatype="html">
+        <source>Émettre la clé</source>
+        <target state="translated">Emitir la clave</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.create-hint" datatype="html">
+        <source>Le secret ne sera affiché {$START_TAG_STRONG}qu'une seule fois{$CLOSE_TAG_STRONG}, juste après l'émission : le serveur n'en conserve qu'une empreinte et ne pourra jamais vous le redonner. Préparez l'endroit où vous allez le stocker avant de valider.</source>
+        <target state="translated">El secreto se mostrará {$START_TAG_STRONG}una sola vez{$CLOSE_TAG_STRONG}, justo después de la emisión: el servidor solo conserva una huella y nunca podrá devolvérselo. Prepare dónde va a guardarlo antes de confirmar.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.name-label" datatype="html">
+        <source>Nom de la clé</source>
+        <target state="translated">Nombre de la clave</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.name-placeholder" datatype="html">
+        <source>Intégration ServiceNow — production</source>
+        <target state="translated">Integración ServiceNow — producción</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.name-hint" datatype="html">
+        <source>À quoi sert cette clé et pour qui : c'est le seul repère lisible en cas de révocation d'urgence.</source>
+        <target state="translated">Para qué sirve esta clave y quién la usa: es la única referencia legible si hay que revocarla con urgencia.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.name-required" datatype="html">
+        <source>Le nom est obligatoire.</source>
+        <target state="translated">El nombre es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.name-too-long" datatype="html">
+        <source>Le nom dépasse la longueur autorisée.</source>
+        <target state="translated">El nombre supera la longitud permitida.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.scopes-label" datatype="html">
+        <source>Portées (optionnelles)</source>
+        <target state="translated">Alcances (opcionales)</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.scopes-hint" datatype="html">
+        <source>Séparez par des espaces ou des virgules. Minuscules, chiffres et . _ : - uniquement. Sans portée, la clé n'obtient aucun droit particulier.</source>
+        <target state="translated">Sepárelos con espacios o comas. Solo minúsculas, dígitos y . _ : - . Sin alcance, la clave no obtiene ningún derecho concreto.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.scopes-invalid" datatype="html">
+        <source>Portées au format invalide : {$INTERPOLATION}</source>
+        <target state="translated">Alcances con formato no válido: {$INTERPOLATION}</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.expires-label" datatype="html">
+        <source>Expire le (optionnel)</source>
+        <target state="translated">Caduca el (opcional)</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.expires-hint" datatype="html">
+        <source>La clé reste utilisable toute la journée choisie. Sans date, elle n'expire jamais : prévoyez alors une rotation régulière.</source>
+        <target state="translated">La clave sigue siendo utilizable durante todo el día elegido. Sin fecha, no caduca nunca: prevea entonces una rotación periódica.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.expires-past" datatype="html">
+        <source>L'échéance doit être postérieure à aujourd'hui.</source>
+        <target state="translated">La fecha de vencimiento debe ser posterior a hoy.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.expires-format" datatype="html">
+        <source>Date illisible.</source>
+        <target state="translated">Fecha ilegible.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.create-error" datatype="html">
+        <source>Émission de la clé impossible.</source>
+        <target state="translated">No se ha podido emitir la clave.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.reveal-title" datatype="html">
+        <source>Clé d'API émise</source>
+        <target state="translated">Clave de API emitida</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.reveal-title-rotated" datatype="html">
+        <source>Nouvelle clé d'API émise</source>
+        <target state="translated">Nueva clave de API emitida</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.reveal-warning" datatype="html">
+        <source>Copiez ce secret maintenant. Il ne sera {$START_TAG_STRONG}plus jamais affiché{$CLOSE_TAG_STRONG} : le serveur n'en garde qu'une empreinte. Si vous le perdez, il faudra émettre une nouvelle clé.</source>
+        <target state="translated">Copie este secreto ahora. {$START_TAG_STRONG}No volverá a mostrarse{$CLOSE_TAG_STRONG}: el servidor solo conserva una huella. Si lo pierde, tendrá que emitir una clave nueva.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.reveal-rotated-note" datatype="html">
+        <source>L'ancienne clé a été révoquée : les appels qui l'utilisent encore vont échouer tant que ce nouveau secret n'est pas déployé.</source>
+        <target state="translated">La clave anterior ha sido revocada: las llamadas que sigan usándola fallarán hasta que se despliegue este nuevo secreto.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.reveal-secret-label" datatype="html">
+        <source>Secret complet</source>
+        <target state="translated">Secreto completo</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.reveal-copy-aria" datatype="html">
+        <source>Copier le secret dans le presse-papiers</source>
+        <target state="translated">Copiar el secreto al portapapeles</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.reveal-copy" datatype="html">
+        <source>Copier</source>
+        <target state="translated">Copiar</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.reveal-copied" datatype="html">
+        <source>Copié</source>
+        <target state="translated">Copiado</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.reveal-copy-failed" datatype="html">
+        <source>Le navigateur a refusé l'accès au presse-papiers. Sélectionnez le secret ci-dessus et copiez-le manuellement avant de fermer.</source>
+        <target state="translated">El navegador ha denegado el acceso al portapapeles. Seleccione el secreto de arriba y cópielo manualmente antes de cerrar.</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.reveal-name" datatype="html">
+        <source>Nom</source>
+        <target state="translated">Nombre</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.reveal-prefix" datatype="html">
+        <source>Préfixe public</source>
+        <target state="translated">Prefijo público</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.reveal-scopes" datatype="html">
+        <source>Portées</source>
+        <target state="translated">Alcances</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.reveal-expires" datatype="html">
+        <source>Expire le</source>
+        <target state="translated">Caduca el</target>
+      </trans-unit>
+      <trans-unit id="admin.api-keys.reveal-done" datatype="html">
+        <source>J'ai copié la clé</source>
+        <target state="translated">He copiado la clave</target>
+      </trans-unit>
+      <trans-unit id="calibration.list.title" datatype="html">
+        <source>Calibration et équipements</source>
+        <target state="translated">Calibración y equipos</target>
+      </trans-unit>
+      <trans-unit id="calibration.list.subtitle" datatype="html">
+        <source>Parc d'instruments, plans de calibration et enregistrements. Les échéances dépassées ou proches sont remontées en tête de liste.</source>
+        <target state="translated">Parque de instrumentos, planes de calibración y registros. Los vencimientos superados o próximos se muestran al principio de la lista.</target>
+      </trans-unit>
+      <trans-unit id="calibration.list.new" datatype="html">
+        <source>Nouvel équipement</source>
+        <target state="translated">Nuevo equipo</target>
+      </trans-unit>
+      <trans-unit id="calibration.list.status-all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">Todos</target>
+      </trans-unit>
+      <trans-unit id="calibration.list.horizon" datatype="html">
+        <source>Horizon d'échéance</source>
+        <target state="translated">Horizonte de vencimiento</target>
+      </trans-unit>
+      <trans-unit id="calibration.list.horizon-days" datatype="html">
+        <source>{$INTERPOLATION} jours</source>
+        <target state="translated">{$INTERPOLATION} días</target>
+      </trans-unit>
+      <trans-unit id="calibration.list.tile-total" datatype="html">
+        <source>Équipements</source>
+        <target state="translated">Equipos</target>
+      </trans-unit>
+      <trans-unit id="calibration.list.tile-overdue" datatype="html">
+        <source>Calibrations en retard</source>
+        <target state="translated">Calibraciones vencidas</target>
+      </trans-unit>
+      <trans-unit id="calibration.list.tile-due-soon" datatype="html">
+        <source>Échéances dans l'horizon</source>
+        <target state="translated">Vencimientos en el horizonte</target>
+      </trans-unit>
+      <trans-unit id="calibration.list.beyond-horizon" datatype="html">
+        <source>Au-delà de l'horizon ou sans plan</source>
+        <target state="translated">Fuera del horizonte o sin plan</target>
+      </trans-unit>
+      <trans-unit id="calibration.list.open" datatype="html">
+        <source>Ouvrir la fiche</source>
+        <target state="translated">Abrir ficha</target>
+      </trans-unit>
+      <trans-unit id="calibration.list.empty" datatype="html">
+        <source>Aucun équipement pour ce filtre. Créez votre premier instrument pour suivre ses calibrations.</source>
+        <target state="translated">Ningún equipo coincide con este filtro. Cree su primer instrumento para seguir sus calibraciones.</target>
+      </trans-unit>
+      <trans-unit id="calibration.list.paginator-aria" datatype="html">
+        <source>Pagination des équipements</source>
+        <target state="translated">Paginación de equipos</target>
+      </trans-unit>
+      <trans-unit id="calibration.list.load-error" datatype="html">
+        <source>Impossible de charger les équipements.</source>
+        <target state="translated">No se han podido cargar los equipos.</target>
+      </trans-unit>
+      <trans-unit id="calibration.list.created" datatype="html">
+        <source>Équipement créé.</source>
+        <target state="translated">Equipo creado.</target>
+      </trans-unit>
+      <trans-unit id="calibration.col-equipment" datatype="html">
+        <source>Équipement</source>
+        <target state="translated">Equipo</target>
+      </trans-unit>
+      <trans-unit id="calibration.col-location" datatype="html">
+        <source>Emplacement</source>
+        <target state="translated">Ubicación</target>
+      </trans-unit>
+      <trans-unit id="calibration.col-due" datatype="html">
+        <source>Prochaine calibration</source>
+        <target state="translated">Próxima calibración</target>
+      </trans-unit>
+      <trans-unit id="calibration.critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">Crítico</target>
+      </trans-unit>
+      <trans-unit id="calibration.critical-tooltip" datatype="html">
+        <source>Instrument critique : une calibration non conforme le met hors service</source>
+        <target state="translated">Instrumento crítico: una calibración no conforme lo pone fuera de servicio</target>
+      </trans-unit>
+      <trans-unit id="calibration.manufacturer" datatype="html">
+        <source>Fabricant</source>
+        <target state="translated">Fabricante</target>
+      </trans-unit>
+      <trans-unit id="calibration.model" datatype="html">
+        <source>Modèle</source>
+        <target state="translated">Modelo</target>
+      </trans-unit>
+      <trans-unit id="calibration.serial" datatype="html">
+        <source>N° de série</source>
+        <target state="translated">N.º de serie</target>
+      </trans-unit>
+      <trans-unit id="calibration.save-error" datatype="html">
+        <source>Erreur lors de l'enregistrement.</source>
+        <target state="translated">Error al guardar.</target>
+      </trans-unit>
+      <trans-unit id="calibration.status.active" datatype="html">
+        <source>En service</source>
+        <target state="translated">En servicio</target>
+      </trans-unit>
+      <trans-unit id="calibration.status.out-of-service" datatype="html">
+        <source>Hors service</source>
+        <target state="translated">Fuera de servicio</target>
+      </trans-unit>
+      <trans-unit id="calibration.status.retired" datatype="html">
+        <source>Réformé</source>
+        <target state="translated">Retirado</target>
+      </trans-unit>
+      <trans-unit id="calibration.due.overdue" datatype="html">
+        <source>En retard</source>
+        <target state="translated">Vencida</target>
+      </trans-unit>
+      <trans-unit id="calibration.due.soon" datatype="html">
+        <source>Échéance proche</source>
+        <target state="translated">Vence pronto</target>
+      </trans-unit>
+      <trans-unit id="calibration.due.ok" datatype="html">
+        <source>À jour</source>
+        <target state="translated">Al día</target>
+      </trans-unit>
+      <trans-unit id="calibration.result.pass" datatype="html">
+        <source>Conforme</source>
+        <target state="translated">Conforme</target>
+      </trans-unit>
+      <trans-unit id="calibration.result.conditional" datatype="html">
+        <source>Conforme sous condition</source>
+        <target state="translated">Conforme con condiciones</target>
+      </trans-unit>
+      <trans-unit id="calibration.result.fail" datatype="html">
+        <source>Non conforme</source>
+        <target state="translated">No conforme</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.back" datatype="html">
+        <source>Retour aux équipements</source>
+        <target state="translated">Volver a los equipos</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.load-error" datatype="html">
+        <source>Équipement introuvable.</source>
+        <target state="translated">Equipo no encontrado.</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.retired-note" datatype="html">
+        <source>Instrument réformé : l'historique reste consultable, aucune modification n'est plus possible.</source>
+        <target state="translated">Instrumento retirado: el historial sigue disponible, ya no se admite ninguna modificación.</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.set-out-of-service" datatype="html">
+        <source>Mettre hors service</source>
+        <target state="translated">Poner fuera de servicio</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.out-title" datatype="html">
+        <source>Mettre l'équipement hors service ?</source>
+        <target state="translated">¿Poner el equipo fuera de servicio?</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.out-message" datatype="html">
+        <source>Aucun enregistrement de calibration ne pourra plus être saisi tant que l'instrument n'est pas remis en service.</source>
+        <target state="translated">No se podrá registrar ninguna calibración hasta que el instrumento vuelva a estar en servicio.</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.return-to-service" datatype="html">
+        <source>Remettre en service</source>
+        <target state="translated">Volver a poner en servicio</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.return-blocked" datatype="html">
+        <source>Instrument critique : une calibration conforme est exigée avant la remise en service.</source>
+        <target state="translated">Instrumento crítico: se exige una calibración conforme antes de volver a ponerlo en servicio.</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.retire" datatype="html">
+        <source>Réformer</source>
+        <target state="translated">Retirar</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.retire-title" datatype="html">
+        <source>Réformer l'équipement ?</source>
+        <target state="translated">¿Retirar el equipo?</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.retire-message" datatype="html">
+        <source>L'état « réformé » est définitif : plus aucune modification, ni plan, ni enregistrement, ni étude MSA.</source>
+        <target state="translated">El estado «retirado» es definitivo: no se admiten más modificaciones, planes, registros ni estudios MSA.</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.status-changed" datatype="html">
+        <source>Statut mis à jour.</source>
+        <target state="translated">Estado actualizado.</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.status-failed" datatype="html">
+        <source>Changement de statut refusé.</source>
+        <target state="translated">Cambio de estado rechazado.</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.delete-title" datatype="html">
+        <source>Supprimer l'équipement ?</source>
+        <target state="translated">¿Eliminar el equipo?</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.delete-message" datatype="html">
+        <source>Suppression définitive de l'instrument et de tout son historique : plan, enregistrements de calibration et études MSA.</source>
+        <target state="translated">Eliminación definitiva del instrumento y de todo su historial: plan, registros de calibración y estudios MSA.</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.deleted" datatype="html">
+        <source>Équipement supprimé.</source>
+        <target state="translated">Equipo eliminado.</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.delete-failed" datatype="html">
+        <source>Suppression impossible.</source>
+        <target state="translated">No se ha podido eliminar.</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.next-due" datatype="html">
+        <source>Prochaine calibration</source>
+        <target state="translated">Próxima calibración</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.last-calibrated" datatype="html">
+        <source>Dernière calibration</source>
+        <target state="translated">Última calibración</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.records-breakdown" datatype="html">
+        <source>Enregistrements</source>
+        <target state="translated">Registros</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.msa-breakdown" datatype="html">
+        <source>Études MSA</source>
+        <target state="translated">Estudios MSA</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.plan-title" datatype="html">
+        <source>Plan de calibration</source>
+        <target state="translated">Plan de calibración</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.plan-edit" datatype="html">
+        <source>Modifier le plan</source>
+        <target state="translated">Modificar el plan</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.plan-create" datatype="html">
+        <source>Définir un plan</source>
+        <target state="translated">Definir un plan</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.plan-delete" datatype="html">
+        <source>Supprimer le plan</source>
+        <target state="translated">Eliminar el plan</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.delete-plan-title" datatype="html">
+        <source>Supprimer le plan de calibration ?</source>
+        <target state="translated">¿Eliminar el plan de calibración?</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.delete-plan-message" datatype="html">
+        <source>L'instrument ne sera plus suivi : aucune échéance ne sera calculée à partir des prochains enregistrements.</source>
+        <target state="translated">El instrumento dejará de seguirse: no se calculará ningún vencimiento a partir de los próximos registros.</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.plan-deleted" datatype="html">
+        <source>Plan supprimé.</source>
+        <target state="translated">Plan eliminado.</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.plan-empty" datatype="html">
+        <source>Aucun plan configuré : cet instrument n'a pas d'échéance de calibration suivie.</source>
+        <target state="translated">Ningún plan configurado: este instrumento no tiene vencimiento de calibración controlado.</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.records-title" datatype="html">
+        <source>Enregistrements de calibration</source>
+        <target state="translated">Registros de calibración</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.record-add" datatype="html">
+        <source>Enregistrer une calibration</source>
+        <target state="translated">Registrar una calibración</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.record-blocked" datatype="html">
+        <source>Remettez l'instrument en service pour saisir une calibration.</source>
+        <target state="translated">Vuelva a poner el instrumento en servicio para registrar una calibración.</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.records-empty" datatype="html">
+        <source>Aucune calibration enregistrée pour cet instrument.</source>
+        <target state="translated">Ninguna calibración registrada para este instrumento.</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.msa-title" datatype="html">
+        <source>Études MSA</source>
+        <target state="translated">Estudios MSA</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.msa-add" datatype="html">
+        <source>Ajouter une étude</source>
+        <target state="translated">Añadir un estudio</target>
+      </trans-unit>
+      <trans-unit id="calibration.detail.msa-empty" datatype="html">
+        <source>Aucune étude MSA (R&amp;R, biais, linéarité, stabilité) pour cet instrument.</source>
+        <target state="translated">Ningún estudio MSA (R&amp;R, sesgo, linealidad, estabilidad) para este instrumento.</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.frequency" datatype="html">
+        <source>Périodicité</source>
+        <target state="translated">Periodicidad</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.frequency-value" datatype="html">
+        <source>{$INTERPOLATION} mois</source>
+        <target state="translated">{$INTERPOLATION} meses</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.months" datatype="html">
+        <source>mois</source>
+        <target state="translated">meses</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.next-due" datatype="html">
+        <source>Prochaine échéance</source>
+        <target state="translated">Próximo vencimiento</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.last-calibrated" datatype="html">
+        <source>Dernière calibration</source>
+        <target state="translated">Última calibración</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.procedure" datatype="html">
+        <source>Procédure</source>
+        <target state="translated">Procedimiento</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.procedure-ref" datatype="html">
+        <source>Procédure de référence</source>
+        <target state="translated">Procedimiento de referencia</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.tolerance" datatype="html">
+        <source>Tolérance</source>
+        <target state="translated">Tolerancia</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.accreditation" datatype="html">
+        <source>Accréditation</source>
+        <target state="translated">Acreditación</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.accreditation-ref" datatype="html">
+        <source>Référence d'accréditation</source>
+        <target state="translated">Referencia de acreditación</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.first-due" datatype="html">
+        <source>Échéance initiale</source>
+        <target state="translated">Vencimiento inicial</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.first-due-hint" datatype="html">
+        <source>Date de la première calibration attendue, avant tout enregistrement.</source>
+        <target state="translated">Fecha de la primera calibración prevista, antes de cualquier registro.</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.first-due-locked-hint" datatype="html">
+        <source>Sans effet ici : l'échéance est recalculée à chaque enregistrement de calibration.</source>
+        <target state="translated">Sin efecto aquí: el vencimiento se recalcula con cada registro de calibración.</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.create-title" datatype="html">
+        <source>Définir le plan de calibration</source>
+        <target state="translated">Definir el plan de calibración</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.edit-title" datatype="html">
+        <source>Modifier le plan de calibration</source>
+        <target state="translated">Modificar el plan de calibración</target>
+      </trans-unit>
+      <trans-unit id="calibration.plan.saved" datatype="html">
+        <source>Plan enregistré.</source>
+        <target state="translated">Plan guardado.</target>
+      </trans-unit>
+      <trans-unit id="calibration.equipment.create-title" datatype="html">
+        <source>Nouvel équipement</source>
+        <target state="translated">Nuevo equipo</target>
+      </trans-unit>
+      <trans-unit id="calibration.equipment.edit-title" datatype="html">
+        <source>Modifier l'équipement</source>
+        <target state="translated">Modificar el equipo</target>
+      </trans-unit>
+      <trans-unit id="calibration.equipment.code" datatype="html">
+        <source>Code</source>
+        <target state="translated">Código</target>
+      </trans-unit>
+      <trans-unit id="calibration.equipment.code-hint" datatype="html">
+        <source>Lettres, chiffres, point, tiret ou souligné — 2 à 120 caractères.</source>
+        <target state="translated">Letras, cifras, punto, guion o guion bajo — de 2 a 120 caracteres.</target>
+      </trans-unit>
+      <trans-unit id="calibration.equipment.code-locked" datatype="html">
+        <source>Le code est figé après la création.</source>
+        <target state="translated">El código queda fijado tras la creación.</target>
+      </trans-unit>
+      <trans-unit id="calibration.equipment.name" datatype="html">
+        <source>Désignation</source>
+        <target state="translated">Denominación</target>
+      </trans-unit>
+      <trans-unit id="calibration.equipment.critical-label" datatype="html">
+        <source>Instrument critique</source>
+        <target state="translated">Instrumento crítico</target>
+      </trans-unit>
+      <trans-unit id="calibration.equipment.critical-hint" datatype="html">
+        <source>Une calibration non conforme met automatiquement l'instrument hors service, et la remise en service exige une calibration conforme.</source>
+        <target state="translated">Una calibración no conforme pone automáticamente el instrumento fuera de servicio, y volver a ponerlo en servicio exige una calibración conforme.</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.title" datatype="html">
+        <source>Enregistrer une calibration</source>
+        <target state="translated">Registrar una calibración</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.performed-on" datatype="html">
+        <source>Date</source>
+        <target state="translated">Fecha</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.performed-on-full" datatype="html">
+        <source>Date de la calibration</source>
+        <target state="translated">Fecha de la calibración</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.result" datatype="html">
+        <source>Résultat</source>
+        <target state="translated">Resultado</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.fail-warning" datatype="html">
+        <source>Instrument critique : un résultat non conforme le met immédiatement hors service.</source>
+        <target state="translated">Instrumento crítico: un resultado no conforme lo pone inmediatamente fuera de servicio.</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.by-me" datatype="html">
+        <source>J'ai réalisé cette calibration</source>
+        <target state="translated">He realizado esta calibración</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.org" datatype="html">
+        <source>Organisme</source>
+        <target state="translated">Organismo</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.performed-by" datatype="html">
+        <source>Réalisée par</source>
+        <target state="translated">Realizada por</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.internal" datatype="html">
+        <source>Interne</source>
+        <target state="translated">Interna</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.certificate" datatype="html">
+        <source>Certificat</source>
+        <target state="translated">Certificado</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.certificate-ref" datatype="html">
+        <source>Référence du certificat</source>
+        <target state="translated">Referencia del certificado</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.measurements" datatype="html">
+        <source>Mesures</source>
+        <target state="translated">Mediciones</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.measurements-taken" datatype="html">
+        <source>Mesures relevées</source>
+        <target state="translated">Mediciones registradas</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.measurements-hint" datatype="html">
+        <source>Points de contrôle, écarts constatés, conditions d'essai.</source>
+        <target state="translated">Puntos de control, desviaciones detectadas, condiciones de ensayo.</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.next-due-override" datatype="html">
+        <source>Échéance forcée</source>
+        <target state="translated">Vencimiento forzado</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.next-due-override-optional" datatype="html">
+        <source>Échéance forcée (optionnelle)</source>
+        <target state="translated">Vencimiento forzado (opcional)</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.next-due-override-hint" datatype="html">
+        <source>Laissez vide pour dériver l'échéance de la périodicité du plan.</source>
+        <target state="translated">Déjelo vacío para derivar el vencimiento de la periodicidad del plan.</target>
+      </trans-unit>
+      <trans-unit id="calibration.record.saved" datatype="html">
+        <source>Calibration enregistrée.</source>
+        <target state="translated">Calibración registrada.</target>
+      </trans-unit>
+      <trans-unit id="calibration.msa.title" datatype="html">
+        <source>Nouvelle étude MSA</source>
+        <target state="translated">Nuevo estudio MSA</target>
+      </trans-unit>
+      <trans-unit id="calibration.msa.type" datatype="html">
+        <source>Type</source>
+        <target state="translated">Tipo</target>
+      </trans-unit>
+      <trans-unit id="calibration.msa.type.gage-rr" datatype="html">
+        <source>R&amp;R (répétabilité/reproductibilité)</source>
+        <target state="translated">R&amp;R (repetibilidad/reproducibilidad)</target>
+      </trans-unit>
+      <trans-unit id="calibration.msa.type.bias" datatype="html">
+        <source>Justesse (biais)</source>
+        <target state="translated">Exactitud (sesgo)</target>
+      </trans-unit>
+      <trans-unit id="calibration.msa.type.linearity" datatype="html">
+        <source>Linéarité</source>
+        <target state="translated">Linealidad</target>
+      </trans-unit>
+      <trans-unit id="calibration.msa.type.stability" datatype="html">
+        <source>Stabilité</source>
+        <target state="translated">Estabilidad</target>
+      </trans-unit>
+      <trans-unit id="calibration.msa.value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">Valor</target>
+      </trans-unit>
+      <trans-unit id="calibration.msa.value-label" datatype="html">
+        <source>Valeur de l'étude</source>
+        <target state="translated">Valor del estudio</target>
+      </trans-unit>
+      <trans-unit id="calibration.msa.value-hint" datatype="html">
+        <source>Ex. : % GRR, biais mesuré, pente de linéarité.</source>
+        <target state="translated">Ej.: % GRR, sesgo medido, pendiente de linealidad.</target>
+      </trans-unit>
+      <trans-unit id="calibration.msa.threshold" datatype="html">
+        <source>Seuil</source>
+        <target state="translated">Umbral</target>
+      </trans-unit>
+      <trans-unit id="calibration.msa.threshold-label" datatype="html">
+        <source>Seuil d'acceptation</source>
+        <target state="translated">Umbral de aceptación</target>
+      </trans-unit>
+      <trans-unit id="calibration.msa.result" datatype="html">
+        <source>Conclusion</source>
+        <target state="translated">Conclusión</target>
+      </trans-unit>
+      <trans-unit id="calibration.msa.result.pass" datatype="html">
+        <source>Acceptable</source>
+        <target state="translated">Aceptable</target>
+      </trans-unit>
+      <trans-unit id="calibration.msa.result.marginal" datatype="html">
+        <source>Marginal</source>
+        <target state="translated">Marginal</target>
+      </trans-unit>
+      <trans-unit id="calibration.msa.result.fail" datatype="html">
+        <source>Inacceptable</source>
+        <target state="translated">Inaceptable</target>
+      </trans-unit>
+      <trans-unit id="calibration.msa.notes" datatype="html">
+        <source>Commentaire</source>
+        <target state="translated">Comentario</target>
+      </trans-unit>
+      <trans-unit id="calibration.msa.saved" datatype="html">
+        <source>Étude MSA enregistrée.</source>
+        <target state="translated">Estudio MSA guardado.</target>
+      </trans-unit>
+      <trans-unit id="common.refresh" datatype="html">
+        <source>Actualiser</source>
+        <target state="translated">Actualizar</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.title" datatype="html">
+        <source>Webhooks sortants</source>
+        <target state="translated">Webhooks salientes</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.subtitle" datatype="html">
+        <source>Poussez les évènements qualité vers vos systèmes tiers. Chaque appel est signé HMAC-SHA256 avec le secret de l'abonnement, et rejoué automatiquement en cas d'échec.</source>
+        <target state="translated">Envíe los eventos de calidad a sus sistemas de terceros. Cada llamada se firma con HMAC-SHA256 mediante el secreto de la suscripción y se reintenta automáticamente si falla.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.new" datatype="html">
+        <source>Nouvel abonnement</source>
+        <target state="translated">Nueva suscripción</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.tile-total" datatype="html">
+        <source>Abonnements</source>
+        <target state="translated">Suscripciones</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.tile-active" datatype="html">
+        <source>Actifs</source>
+        <target state="translated">Activas</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.tile-paused" datatype="html">
+        <source>En pause</source>
+        <target state="translated">En pausa</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.tile-disabled" datatype="html">
+        <source>Désactivés sur erreurs</source>
+        <target state="translated">Desactivadas por errores</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.tile-failing" datatype="html">
+        <source>En échec consécutif</source>
+        <target state="translated">Con fallos consecutivos</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.col-destination" datatype="html">
+        <source>Destination</source>
+        <target state="translated">Destino</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.col-events" datatype="html">
+        <source>Évènements</source>
+        <target state="translated">Eventos</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.no-events" datatype="html">
+        <source>Aucun</source>
+        <target state="translated">Ninguno</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.col-health" datatype="html">
+        <source>Santé</source>
+        <target state="translated">Estado de salud</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.consecutive-failures" datatype="html">
+        <source>Échecs consécutifs</source>
+        <target state="translated">Fallos consecutivos</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.last-success" datatype="html">
+        <source>Dernier succès</source>
+        <target state="translated">Último éxito</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.never-succeeded" datatype="html">
+        <source>Jamais livré avec succès</source>
+        <target state="translated">Nunca entregado con éxito</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.action-test" datatype="html">
+        <source>Envoyer un ping de test</source>
+        <target state="translated">Enviar un ping de prueba</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.action-pause" datatype="html">
+        <source>Mettre en pause</source>
+        <target state="translated">Pausar</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.action-resume" datatype="html">
+        <source>Réactiver</source>
+        <target state="translated">Reactivar</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.action-deliveries" datatype="html">
+        <source>Voir les livraisons</source>
+        <target state="translated">Ver las entregas</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.action-rotate" datatype="html">
+        <source>Renouveler le secret</source>
+        <target state="translated">Renovar el secreto</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.empty" datatype="html">
+        <source>Aucun abonnement. Créez-en un pour pousser vos évènements qualité vers un système tiers.</source>
+        <target state="translated">Ninguna suscripción. Cree una para enviar sus eventos de calidad a un sistema de terceros.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.deliveries-title" datatype="html">
+        <source>Livraisons</source>
+        <target state="translated">Entregas</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.deliveries-subtitle" datatype="html">
+        <source>Historique des appels sortants. Une livraison en échec peut être rejouée manuellement.</source>
+        <target state="translated">Historial de las llamadas salientes. Una entrega fallida puede reintentarse manualmente.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.filter-subscription" datatype="html">
+        <source>Abonnement</source>
+        <target state="translated">Suscripción</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.filter-exclusive" datatype="html">
+        <source>Le filtre par statut est indisponible tant qu'un abonnement est sélectionné : le serveur applique l'un ou l'autre, jamais les deux.</source>
+        <target state="translated">El filtro por estado no está disponible mientras haya una suscripción seleccionada: el servidor aplica uno u otro, nunca ambos.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.delivery-event" datatype="html">
+        <source>Évènement</source>
+        <target state="translated">Evento</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.delivery-subscription" datatype="html">
+        <source>Abonnement</source>
+        <target state="translated">Suscripción</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.delivery-attempts" datatype="html">
+        <source>Tentatives</source>
+        <target state="translated">Intentos</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.next-retry" datatype="html">
+        <source>Renvoi</source>
+        <target state="translated">Reenvío</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.delivery-last-attempt" datatype="html">
+        <source>Dernière tentative</source>
+        <target state="translated">Último intento</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.action-inspect" datatype="html">
+        <source>Voir le détail</source>
+        <target state="translated">Ver el detalle</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.action-retry" datatype="html">
+        <source>Rejouer la livraison</source>
+        <target state="translated">Reintentar la entrega</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.deliveries-empty" datatype="html">
+        <source>Aucune livraison pour ces critères.</source>
+        <target state="translated">Ninguna entrega para estos criterios.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.load-error" datatype="html">
+        <source>Impossible de charger les abonnements webhook.</source>
+        <target state="translated">No se pueden cargar las suscripciones de webhook.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.deliveries-load-error" datatype="html">
+        <source>Impossible de charger les livraisons.</source>
+        <target state="translated">No se pueden cargar las entregas.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.delivery-status-failed" datatype="html">
+        <source>Échec</source>
+        <target state="translated">Fallida</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.delivery-status-retrying" datatype="html">
+        <source>Renvoi programmé</source>
+        <target state="translated">Reenvío programado</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.delivery-status-dead" datatype="html">
+        <source>Abandonné</source>
+        <target state="translated">Abandonada</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.delivery-status-pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">Pendiente</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.delivery-status-success" datatype="html">
+        <source>Succès</source>
+        <target state="translated">Éxito</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.paused" datatype="html">
+        <source>Abonnement mis en pause.</source>
+        <target state="translated">Suscripción en pausa.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.resumed" datatype="html">
+        <source>Abonnement réactivé.</source>
+        <target state="translated">Suscripción reactivada.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.test-success" datatype="html">
+        <source>Ping de test accepté par le consommateur.</source>
+        <target state="translated">Ping de prueba aceptado por el consumidor.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.test-failed" datatype="html">
+        <source>Ping de test rejeté — consultez la livraison pour le détail.</source>
+        <target state="translated">Ping de prueba rechazado: consulte la entrega para más detalles.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.test-error" datatype="html">
+        <source>L'envoi du ping de test a échoué.</source>
+        <target state="translated">No se pudo enviar el ping de prueba.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.rotate-title" datatype="html">
+        <source>Renouveler le secret ?</source>
+        <target state="translated">¿Renovar el secreto?</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.rotate-message" datatype="html">
+        <source>Un nouveau secret HMAC sera généré et affiché une seule fois. L'ancien cessera immédiatement d'être valide.</source>
+        <target state="translated">Se generará un nuevo secreto HMAC y se mostrará una sola vez. El anterior dejará de ser válido de inmediato.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.rotate-confirm" datatype="html">
+        <source>Renouveler</source>
+        <target state="translated">Renovar</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.delete-title" datatype="html">
+        <source>Supprimer cet abonnement ?</source>
+        <target state="translated">¿Eliminar esta suscripción?</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.delete-message" datatype="html">
+        <source>Les évènements ne seront plus transmis à cette destination. L'historique de livraison associé n'est plus consultable.</source>
+        <target state="translated">Los eventos dejarán de enviarse a este destino. El historial de entregas asociado ya no podrá consultarse.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.deleted" datatype="html">
+        <source>Abonnement supprimé.</source>
+        <target state="translated">Suscripción eliminada.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.status-active" datatype="html">
+        <source>Actif</source>
+        <target state="translated">Activa</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.status-paused" datatype="html">
+        <source>En pause</source>
+        <target state="translated">En pausa</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.status-disabled" datatype="html">
+        <source>Désactivé sur erreurs</source>
+        <target state="translated">Desactivada por errores</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.retry-success" datatype="html">
+        <source>Livraison rejouée avec succès.</source>
+        <target state="translated">Entrega reintentada con éxito.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.retry-failed" datatype="html">
+        <source>Nouvelle tentative échouée.</source>
+        <target state="translated">El nuevo intento ha fallado.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.retry-error" datatype="html">
+        <source>Le rejeu de la livraison a échoué.</source>
+        <target state="translated">No se pudo reintentar la entrega.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.updated" datatype="html">
+        <source>Abonnement mis à jour.</source>
+        <target state="translated">Suscripción actualizada.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.form-create-title" datatype="html">
+        <source>Nouvel abonnement webhook</source>
+        <target state="translated">Nueva suscripción de webhook</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.form-edit-title" datatype="html">
+        <source>Modifier l'abonnement</source>
+        <target state="translated">Modificar la suscripción</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.form-name-hint" datatype="html">
+        <source>Sert à identifier le consommateur dans les journaux.</source>
+        <target state="translated">Sirve para identificar al consumidor en los registros.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.form-endpoint" datatype="html">
+        <source>URL de destination</source>
+        <target state="translated">URL de destino</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.form-endpoint-hint" datatype="html">
+        <source>Point d'entrée HTTPS appelé en POST, signé HMAC-SHA256.</source>
+        <target state="translated">Punto de entrada HTTPS invocado con POST y firmado con HMAC-SHA256.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.form-endpoint-invalid" datatype="html">
+        <source>URL http(s) attendue.</source>
+        <target state="translated">Se espera una URL http(s).</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.form-events" datatype="html">
+        <source>Évènements souscrits</source>
+        <target state="translated">Eventos suscritos</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.form-events-hint" datatype="html">
+        <source>Seuls ces évènements déclencheront un appel sortant.</source>
+        <target state="translated">Solo estos eventos provocarán una llamada saliente.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.form-events-required" datatype="html">
+        <source>Sélectionnez au moins un évènement.</source>
+        <target state="translated">Seleccione al menos un evento.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.form-dropped-events" datatype="html">
+        <source>Évènements inconnus retirés à l'enregistrement :</source>
+        <target state="translated">Eventos desconocidos que se eliminarán al guardar:</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.form-max-retries" datatype="html">
+        <source>Tentatives de renvoi</source>
+        <target state="translated">Intentos de reenvío</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.form-max-retries-hint" datatype="html">
+        <source>0 à 10 renvois après le premier envoi, avec temporisation croissante.</source>
+        <target state="translated">De 0 a 10 reenvíos tras el primer envío, con espera creciente.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.form-max-retries-range" datatype="html">
+        <source>Valeur attendue entre 0 et 10.</source>
+        <target state="translated">Se espera un valor entre 0 y 10.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.form-secret" datatype="html">
+        <source>Secret HMAC</source>
+        <target state="translated">Secreto HMAC</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.form-regenerate-aria" datatype="html">
+        <source>Générer un nouveau secret</source>
+        <target state="translated">Generar un nuevo secreto</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.form-secret-hint" datatype="html">
+        <source>Généré aléatoirement (256 bits). Il ne sera affiché qu'une seule fois, juste après la création.</source>
+        <target state="translated">Generado aleatoriamente (256 bits). Solo se mostrará una vez, justo después de la creación.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.form-secret-range" datatype="html">
+        <source>Entre 16 et 128 caractères.</source>
+        <target state="translated">Entre 16 y 128 caracteres.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.form-secret-readonly" datatype="html">
+        <source>Le secret n'est pas modifiable ici : utilisez l'action « Renouveler le secret » depuis la liste.</source>
+        <target state="translated">El secreto no se puede modificar aquí: utilice la acción «Renovar el secreto» desde la lista.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.secret-title" datatype="html">
+        <source>Secret HMAC — à copier maintenant</source>
+        <target state="translated">Secreto HMAC: cópielo ahora</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.secret-intro" datatype="html">
+        <source>Abonnement</source>
+        <target state="translated">Suscripción</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.secret-copy-aria" datatype="html">
+        <source>Copier le secret dans le presse-papiers</source>
+        <target state="translated">Copiar el secreto al portapapeles</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.secret-copied" datatype="html">
+        <source>Secret copié dans le presse-papiers.</source>
+        <target state="translated">Secreto copiado al portapapeles.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.secret-copy-failed" datatype="html">
+        <source>Copie automatique impossible : sélectionnez le texte ci-dessus et copiez-le manuellement.</source>
+        <target state="translated">No se puede copiar automáticamente: seleccione el texto anterior y cópielo manualmente.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.secret-warning" datatype="html">
+        <source>Ce secret ne sera plus jamais affiché. Conservez-le côté consommateur : il sert à vérifier la signature HMAC-SHA256 de chaque appel reçu.</source>
+        <target state="translated">Este secreto no volverá a mostrarse. Consérvelo en el lado del consumidor: sirve para verificar la firma HMAC-SHA256 de cada llamada recibida.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.secret-warning-rotated" datatype="html">
+        <source>Ce secret remplace le précédent, qui est désormais invalide. Mettez à jour le consommateur sans attendre, sinon il rejettera les prochains appels.</source>
+        <target state="translated">Este secreto sustituye al anterior, que ya no es válido. Actualice el consumidor de inmediato o rechazará las próximas llamadas.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.delivery-title" datatype="html">
+        <source>Détail de la livraison</source>
+        <target state="translated">Detalle de la entrega</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.delivery-http-code" datatype="html">
+        <source>Code HTTP</source>
+        <target state="translated">Código HTTP</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.delivery-next-retry" datatype="html">
+        <source>Prochain renvoi</source>
+        <target state="translated">Próximo reenvío</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.delivery-event-id" datatype="html">
+        <source>Identifiant d'évènement</source>
+        <target state="translated">Identificador del evento</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.delivery-error" datatype="html">
+        <source>Erreur remontée</source>
+        <target state="translated">Error notificado</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.delivery-response" datatype="html">
+        <source>Réponse du consommateur</source>
+        <target state="translated">Respuesta del consumidor</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.delivery-no-response" datatype="html">
+        <source>Aucun corps de réponse enregistré.</source>
+        <target state="translated">No se ha registrado ningún cuerpo de respuesta.</target>
+      </trans-unit>
+      <trans-unit id="admin.webhooks.delivery-payload" datatype="html">
+        <source>Charge utile envoyée</source>
+        <target state="translated">Carga útil enviada</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.title" datatype="html">
+        <source>Réclamations clients</source>
+        <target state="translated">Reclamaciones de clientes</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.subtitle" datatype="html">
+        <source>Saisie multi-canal, triage, réponses au client et mesure de satisfaction. Chaque réclamation suit un cycle de vie contrôlé jusqu'à sa clôture.</source>
+        <target state="translated">Registro multicanal, triaje, respuestas al cliente y medición de la satisfacción. Cada reclamación sigue un ciclo de vida controlado hasta su cierre.</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.new" datatype="html">
+        <source>Nouvelle réclamation</source>
+        <target state="translated">Nueva reclamación</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.tile-total" datatype="html">
+        <source>Total</source>
+        <target state="translated">Total</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.tile-received" datatype="html">
+        <source>À trier</source>
+        <target state="translated">Por clasificar</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.tile-investigation" datatype="html">
+        <source>En investigation</source>
+        <target state="translated">En investigación</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.tile-responded" datatype="html">
+        <source>Répondues</source>
+        <target state="translated">Respondidas</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.tile-resolved" datatype="html">
+        <source>Résolues</source>
+        <target state="translated">Resueltas</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.tile-closed" datatype="html">
+        <source>Clôturées</source>
+        <target state="translated">Cerradas</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.tile-rejected" datatype="html">
+        <source>Rejetées</source>
+        <target state="translated">Rechazadas</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.by-category" datatype="html">
+        <source>Répartition par catégorie</source>
+        <target state="translated">Distribución por categoría</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.filter-mode" datatype="html">
+        <source>Filtrer par</source>
+        <target state="translated">Filtrar por</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.filter-mode-aria" datatype="html">
+        <source>Critère de filtrage de la liste</source>
+        <target state="translated">Criterio de filtrado de la lista</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.filter-none" datatype="html">
+        <source>Aucun filtre</source>
+        <target state="translated">Sin filtro</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.filter-category" datatype="html">
+        <source>Catégorie</source>
+        <target state="translated">Categoría</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.filter-supplier" datatype="html">
+        <source>Fournisseur</source>
+        <target state="translated">Proveedor</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.supplier-id" datatype="html">
+        <source>Identifiant fournisseur (UUID)</source>
+        <target state="translated">Identificador del proveedor (UUID)</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.supplier-hint" datatype="html">
+        <source>Identifiant incomplet — la liste reste non filtrée.</source>
+        <target state="translated">Identificador incompleto: la lista permanece sin filtrar.</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.clear-filter" datatype="html">
+        <source>Tout afficher</source>
+        <target state="translated">Mostrar todo</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.col-code" datatype="html">
+        <source>Référence</source>
+        <target state="translated">Referencia</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.col-subject" datatype="html">
+        <source>Objet</source>
+        <target state="translated">Asunto</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.col-channel" datatype="html">
+        <source>Canal</source>
+        <target state="translated">Canal</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.col-severity" datatype="html">
+        <source>Gravité</source>
+        <target state="translated">Gravedad</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.col-received" datatype="html">
+        <source>Reçue le</source>
+        <target state="translated">Recibida el</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.anonymous" datatype="html">
+        <source>Client non identifié</source>
+        <target state="translated">Cliente no identificado</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.empty" datatype="html">
+        <source>Aucune réclamation enregistrée.</source>
+        <target state="translated">No hay reclamaciones registradas.</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.empty-filtered" datatype="html">
+        <source>Aucune réclamation pour ce filtre.</source>
+        <target state="translated">No hay reclamaciones para este filtro.</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.empty-hint" datatype="html">
+        <source>Chaque réclamation reçue — e-mail, téléphone, formulaire, import ITSM — se saisit ici, puis se suit jusqu'à la réponse au client et la mesure de satisfaction.</source>
+        <target state="translated">Cada reclamación recibida (correo, teléfono, formulario, importación ITSM) se registra aquí y se sigue hasta la respuesta al cliente y la puntuación de satisfacción.</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.paginator-aria" datatype="html">
+        <source>Pagination des réclamations</source>
+        <target state="translated">Paginación de reclamaciones</target>
+      </trans-unit>
+      <trans-unit id="complaints.list.load-error" datatype="html">
+        <source>Impossible de charger les réclamations.</source>
+        <target state="translated">No se han podido cargar las reclamaciones.</target>
+      </trans-unit>
+      <trans-unit id="complaints.status.received" datatype="html">
+        <source>Reçue</source>
+        <target state="translated">Recibida</target>
+      </trans-unit>
+      <trans-unit id="complaints.status.under-investigation" datatype="html">
+        <source>En investigation</source>
+        <target state="translated">En investigación</target>
+      </trans-unit>
+      <trans-unit id="complaints.status.responded" datatype="html">
+        <source>Répondue</source>
+        <target state="translated">Respondida</target>
+      </trans-unit>
+      <trans-unit id="complaints.status.resolved" datatype="html">
+        <source>Résolue</source>
+        <target state="translated">Resuelta</target>
+      </trans-unit>
+      <trans-unit id="complaints.status.closed" datatype="html">
+        <source>Clôturée</source>
+        <target state="translated">Cerrada</target>
+      </trans-unit>
+      <trans-unit id="complaints.status.rejected" datatype="html">
+        <source>Rejetée</source>
+        <target state="translated">Rechazada</target>
+      </trans-unit>
+      <trans-unit id="complaints.status.reopened" datatype="html">
+        <source>Rouverte</source>
+        <target state="translated">Reabierta</target>
+      </trans-unit>
+      <trans-unit id="complaints.severity.low" datatype="html">
+        <source>Faible</source>
+        <target state="translated">Baja</target>
+      </trans-unit>
+      <trans-unit id="complaints.severity.medium" datatype="html">
+        <source>Moyenne</source>
+        <target state="translated">Media</target>
+      </trans-unit>
+      <trans-unit id="complaints.severity.high" datatype="html">
+        <source>Élevée</source>
+        <target state="translated">Alta</target>
+      </trans-unit>
+      <trans-unit id="complaints.severity.critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">Crítica</target>
+      </trans-unit>
+      <trans-unit id="complaints.category.product" datatype="html">
+        <source>Produit</source>
+        <target state="translated">Producto</target>
+      </trans-unit>
+      <trans-unit id="complaints.category.service" datatype="html">
+        <source>Service</source>
+        <target state="translated">Servicio</target>
+      </trans-unit>
+      <trans-unit id="complaints.category.delivery" datatype="html">
+        <source>Livraison</source>
+        <target state="translated">Entrega</target>
+      </trans-unit>
+      <trans-unit id="complaints.category.billing" datatype="html">
+        <source>Facturation</source>
+        <target state="translated">Facturación</target>
+      </trans-unit>
+      <trans-unit id="complaints.category.quality" datatype="html">
+        <source>Qualité</source>
+        <target state="translated">Calidad</target>
+      </trans-unit>
+      <trans-unit id="complaints.category.safety" datatype="html">
+        <source>Sécurité</source>
+        <target state="translated">Seguridad</target>
+      </trans-unit>
+      <trans-unit id="complaints.category.other" datatype="html">
+        <source>Autre</source>
+        <target state="translated">Otro</target>
+      </trans-unit>
+      <trans-unit id="complaints.channel.email" datatype="html">
+        <source>E-mail</source>
+        <target state="translated">Correo electrónico</target>
+      </trans-unit>
+      <trans-unit id="complaints.channel.phone" datatype="html">
+        <source>Téléphone</source>
+        <target state="translated">Teléfono</target>
+      </trans-unit>
+      <trans-unit id="complaints.channel.web-form" datatype="html">
+        <source>Formulaire web</source>
+        <target state="translated">Formulario web</target>
+      </trans-unit>
+      <trans-unit id="complaints.channel.in-person" datatype="html">
+        <source>En personne</source>
+        <target state="translated">En persona</target>
+      </trans-unit>
+      <trans-unit id="complaints.channel.social" datatype="html">
+        <source>Réseaux sociaux</source>
+        <target state="translated">Redes sociales</target>
+      </trans-unit>
+      <trans-unit id="complaints.channel.itsm-import" datatype="html">
+        <source>Import ITSM</source>
+        <target state="translated">Importación ITSM</target>
+      </trans-unit>
+      <trans-unit id="complaints.channel.api" datatype="html">
+        <source>API</source>
+        <target state="translated">API</target>
+      </trans-unit>
+      <trans-unit id="complaints.channel.postal" datatype="html">
+        <source>Courrier</source>
+        <target state="translated">Correo postal</target>
+      </trans-unit>
+      <trans-unit id="complaints.channel.other" datatype="html">
+        <source>Autre</source>
+        <target state="translated">Otro</target>
+      </trans-unit>
+      <trans-unit id="complaints.create.title" datatype="html">
+        <source>Nouvelle réclamation</source>
+        <target state="translated">Nueva reclamación</target>
+      </trans-unit>
+      <trans-unit id="complaints.create.subtitle" datatype="html">
+        <source>La réclamation est enregistrée en « Reçue » : elle passe en investigation dès qu'elle est assignée.</source>
+        <target state="translated">La reclamación se registra como «Recibida»: pasa a investigación en cuanto se asigna.</target>
+      </trans-unit>
+      <trans-unit id="complaints.create.submit" datatype="html">
+        <source>Enregistrer la réclamation</source>
+        <target state="translated">Guardar la reclamación</target>
+      </trans-unit>
+      <trans-unit id="complaints.create.code" datatype="html">
+        <source>Référence</source>
+        <target state="translated">Referencia</target>
+      </trans-unit>
+      <trans-unit id="complaints.create.code-format" datatype="html">
+        <source>2 à 100 caractères : lettres, chiffres, point, tiret ou souligné.</source>
+        <target state="translated">De 2 a 100 caracteres: letras, dígitos, punto, guion o guion bajo.</target>
+      </trans-unit>
+      <trans-unit id="complaints.create.subject-placeholder" datatype="html">
+        <source>Résumé de la réclamation en une phrase</source>
+        <target state="translated">Resumen de la reclamación en una frase</target>
+      </trans-unit>
+      <trans-unit id="complaints.create.description-placeholder" datatype="html">
+        <source>Faits rapportés par le client, contexte, produit ou service concerné.</source>
+        <target state="translated">Hechos comunicados por el cliente, contexto, producto o servicio afectado.</target>
+      </trans-unit>
+      <trans-unit id="complaints.create.customer-name" datatype="html">
+        <source>Nom du client</source>
+        <target state="translated">Nombre del cliente</target>
+      </trans-unit>
+      <trans-unit id="complaints.create.customer-email" datatype="html">
+        <source>E-mail du client</source>
+        <target state="translated">Correo del cliente</target>
+      </trans-unit>
+      <trans-unit id="complaints.create.email-invalid" datatype="html">
+        <source>Adresse e-mail invalide.</source>
+        <target state="translated">Dirección de correo no válida.</target>
+      </trans-unit>
+      <trans-unit id="complaints.create.customer-external-id" datatype="html">
+        <source>Référence client externe</source>
+        <target state="translated">Referencia externa del cliente</target>
+      </trans-unit>
+      <trans-unit id="complaints.create.customer-external-id-placeholder" datatype="html">
+        <source>N° de compte, ticket ITSM, dossier CRM…</source>
+        <target state="translated">N.º de cuenta, ticket ITSM, ficha CRM…</target>
+      </trans-unit>
+      <trans-unit id="complaints.create.received-at" datatype="html">
+        <source>Reçue le</source>
+        <target state="translated">Recibida el</target>
+      </trans-unit>
+      <trans-unit id="complaints.create.received-at-hint" datatype="html">
+        <source>Vide = horodatage à l'enregistrement.</source>
+        <target state="translated">Vacío = se marca la hora al guardar.</target>
+      </trans-unit>
+      <trans-unit id="complaints.create.supplier" datatype="html">
+        <source>Fournisseur mis en cause (UUID)</source>
+        <target state="translated">Proveedor implicado (UUID)</target>
+      </trans-unit>
+      <trans-unit id="complaints.create.assignee" datatype="html">
+        <source>Assigné à (UUID)</source>
+        <target state="translated">Asignada a (UUID)</target>
+      </trans-unit>
+      <trans-unit id="complaints.create.no-author" datatype="html">
+        <source>Votre session ne porte pas d'identifiant utilisateur exploitable : la création est indisponible. Reconnectez-vous, puis réessayez.</source>
+        <target state="translated">Su sesión no incluye un identificador de usuario utilizable: la creación no está disponible. Vuelva a iniciar sesión e inténtelo de nuevo.</target>
+      </trans-unit>
+      <trans-unit id="complaints.create.success" datatype="html">
+        <source>Réclamation enregistrée.</source>
+        <target state="translated">Reclamación guardada.</target>
+      </trans-unit>
+      <trans-unit id="complaints.create.error" datatype="html">
+        <source>Création impossible — le code est peut-être déjà utilisé.</source>
+        <target state="translated">No se ha podido crear: puede que la referencia ya esté en uso.</target>
+      </trans-unit>
+      <trans-unit id="complaints.edit.title" datatype="html">
+        <source>Modifier la réclamation</source>
+        <target state="translated">Modificar la reclamación</target>
+      </trans-unit>
+      <trans-unit id="complaints.edit.subtitle" datatype="html">
+        <source>Mise à jour partielle : un champ laissé vide reste inchangé côté serveur.</source>
+        <target state="translated">Actualización parcial: un campo vacío permanece sin cambios en el servidor.</target>
+      </trans-unit>
+      <trans-unit id="complaints.edit.success" datatype="html">
+        <source>Réclamation mise à jour.</source>
+        <target state="translated">Reclamación actualizada.</target>
+      </trans-unit>
+      <trans-unit id="complaints.response.title" datatype="html">
+        <source>Ajouter un message</source>
+        <target state="translated">Añadir un mensaje</target>
+      </trans-unit>
+      <trans-unit id="complaints.response.submit" datatype="html">
+        <source>Ajouter au fil</source>
+        <target state="translated">Añadir al hilo</target>
+      </trans-unit>
+      <trans-unit id="complaints.response.body" datatype="html">
+        <source>Message</source>
+        <target state="translated">Mensaje</target>
+      </trans-unit>
+      <trans-unit id="complaints.response.body-placeholder" datatype="html">
+        <source>Réponse apportée au client, ou observation d'analyse pour l'équipe.</source>
+        <target state="translated">Respuesta enviada al cliente u observación de análisis para el equipo.</target>
+      </trans-unit>
+      <trans-unit id="complaints.response.channel" datatype="html">
+        <source>Canal du message</source>
+        <target state="translated">Canal del mensaje</target>
+      </trans-unit>
+      <trans-unit id="complaints.response.internal" datatype="html">
+        <source>Note interne (non envoyée au client)</source>
+        <target state="translated">Nota interna (no se envía al cliente)</target>
+      </trans-unit>
+      <trans-unit id="complaints.response.notice-customer" datatype="html">
+        <source>Message adressé au client : il horodate la première réponse, fait passer la réclamation en « Répondue » et ne pourra plus être supprimé.</source>
+        <target state="translated">Mensaje dirigido al cliente: marca la primera respuesta, pasa la reclamación a «Respondida» y ya no se podrá eliminar.</target>
+      </trans-unit>
+      <trans-unit id="complaints.response.notice-internal" datatype="html">
+        <source>Note interne : invisible pour le client, sans effet sur le statut, supprimable ensuite.</source>
+        <target state="translated">Nota interna: invisible para el cliente, sin efecto en el estado y eliminable después.</target>
+      </trans-unit>
+      <trans-unit id="complaints.response.no-author" datatype="html">
+        <source>Votre session ne porte pas d'identifiant utilisateur exploitable : l'ajout de message est indisponible. Reconnectez-vous, puis réessayez.</source>
+        <target state="translated">Su sesión no incluye un identificador de usuario utilizable: no es posible añadir mensajes. Vuelva a iniciar sesión e inténtelo de nuevo.</target>
+      </trans-unit>
+      <trans-unit id="complaints.response.sent" datatype="html">
+        <source>Réponse enregistrée.</source>
+        <target state="translated">Respuesta guardada.</target>
+      </trans-unit>
+      <trans-unit id="complaints.response.note-added" datatype="html">
+        <source>Note interne ajoutée.</source>
+        <target state="translated">Nota interna añadida.</target>
+      </trans-unit>
+      <trans-unit id="complaints.response.error" datatype="html">
+        <source>Ajout impossible.</source>
+        <target state="translated">No se ha podido añadir.</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.assign-title" datatype="html">
+        <source>Assigner la réclamation</source>
+        <target state="translated">Asignar la reclamación</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.assign-subtitle" datatype="html">
+        <source>Assigner une réclamation encore « Reçue » la fait passer en investigation.</source>
+        <target state="translated">Asignar una reclamación aún «Recibida» la pasa a investigación.</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.assignee-label" datatype="html">
+        <source>Utilisateur assigné (UUID)</source>
+        <target state="translated">Usuario asignado (UUID)</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.assign-self" datatype="html">
+        <source>Me l'assigner</source>
+        <target state="translated">Asignármela</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.assign-submit" datatype="html">
+        <source>Assigner</source>
+        <target state="translated">Asignar</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.assign-success" datatype="html">
+        <source>Réclamation assignée.</source>
+        <target state="translated">Reclamación asignada.</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.reject-title" datatype="html">
+        <source>Rejeter la réclamation</source>
+        <target state="translated">Rechazar la reclamación</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.reject-subtitle" datatype="html">
+        <source>Action terminale : une réclamation rejetée ne peut plus être traitée ni rouverte.</source>
+        <target state="translated">Acción final: una reclamación rechazada ya no puede tratarse ni reabrirse.</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.reason-label" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">Motivo del rechazo</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.reason-placeholder" datatype="html">
+        <source>Hors périmètre, doublon, demande manifestement infondée…</source>
+        <target state="translated">Fuera de alcance, duplicado, solicitud manifiestamente infundada…</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.reject-warning" datatype="html">
+        <source>Le motif est conservé sur le dossier : il justifie le refus de traitement auprès du client et lors d'un audit. Une réclamation rejetée est définitivement close.</source>
+        <target state="translated">El motivo se conserva en el expediente: justifica la negativa ante el cliente y durante una auditoría. Una reclamación rechazada queda cerrada definitivamente.</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.reject-submit" datatype="html">
+        <source>Confirmer le rejet</source>
+        <target state="translated">Confirmar el rechazo</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.reject-success" datatype="html">
+        <source>Réclamation rejetée.</source>
+        <target state="translated">Reclamación rechazada.</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.resolve-title" datatype="html">
+        <source>Résoudre la réclamation</source>
+        <target state="translated">Resolver la reclamación</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.resolve-subtitle" datatype="html">
+        <source>Le dossier CAPA est facultatif ; il relie la réclamation à l'action corrective engagée.</source>
+        <target state="translated">El caso CAPA es opcional; vincula la reclamación con la acción correctiva emprendida.</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.capa-label" datatype="html">
+        <source>Dossier CAPA lié (UUID, facultatif)</source>
+        <target state="translated">Caso CAPA vinculado (UUID, opcional)</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.resolve-submit" datatype="html">
+        <source>Marquer résolue</source>
+        <target state="translated">Marcar como resuelta</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.resolve-success" datatype="html">
+        <source>Réclamation résolue.</source>
+        <target state="translated">Reclamación resuelta.</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.satisfaction-title" datatype="html">
+        <source>Satisfaction du client</source>
+        <target state="translated">Satisfacción del cliente</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.satisfaction-subtitle" datatype="html">
+        <source>Note de 0 à 10 recueillie auprès du client après traitement.</source>
+        <target state="translated">Puntuación de 0 a 10 obtenida del cliente tras el tratamiento.</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.score-label" datatype="html">
+        <source>Note de satisfaction (0 à 10)</source>
+        <target state="translated">Puntuación de satisfacción (0 a 10)</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.score-range" datatype="html">
+        <source>La note doit être comprise entre 0 et 10.</source>
+        <target state="translated">La puntuación debe estar entre 0 y 10.</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.score-scale" datatype="html">
+        <source>0 = client très insatisfait · 10 = client pleinement satisfait.</source>
+        <target state="translated">0 = cliente muy insatisfecho · 10 = cliente plenamente satisfecho.</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.satisfaction-submit" datatype="html">
+        <source>Enregistrer la note</source>
+        <target state="translated">Guardar la puntuación</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.satisfaction-success" datatype="html">
+        <source>Note de satisfaction enregistrée.</source>
+        <target state="translated">Puntuación de satisfacción guardada.</target>
+      </trans-unit>
+      <trans-unit id="complaints.action.error" datatype="html">
+        <source>Action impossible dans l'état actuel.</source>
+        <target state="translated">Acción no posible en el estado actual.</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.back" datatype="html">
+        <source>Réclamations clients</source>
+        <target state="translated">Reclamaciones de clientes</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.respond" datatype="html">
+        <source>Répondre</source>
+        <target state="translated">Responder</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.assign" datatype="html">
+        <source>Assigner</source>
+        <target state="translated">Asignar</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.resolve" datatype="html">
+        <source>Résoudre</source>
+        <target state="translated">Resolver</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.close" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">Cerrar</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.rate" datatype="html">
+        <source>Satisfaction</source>
+        <target state="translated">Satisfacción</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.reopen" datatype="html">
+        <source>Rouvrir</source>
+        <target state="translated">Reabrir</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.reject" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">Rechazar</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.awaiting-response" datatype="html">
+        <source>Aucune réponse n'a encore été adressée au client : la résolution reste bloquée tant qu'un message non interne n'a pas été envoyé.</source>
+        <target state="translated">Todavía no se ha enviado ninguna respuesta al cliente: la resolución permanece bloqueada hasta enviar un mensaje no interno.</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.customer" datatype="html">
+        <source>Client</source>
+        <target state="translated">Cliente</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.handling" datatype="html">
+        <source>Traitement</source>
+        <target state="translated">Tratamiento</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.assignee" datatype="html">
+        <source>Assignée à</source>
+        <target state="translated">Asignada a</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.unassigned" datatype="html">
+        <source>Non assignée</source>
+        <target state="translated">Sin asignar</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.supplier" datatype="html">
+        <source>Fournisseur</source>
+        <target state="translated">Proveedor</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.open-supplier" datatype="html">
+        <source>Voir la fiche fournisseur</source>
+        <target state="translated">Ver la ficha del proveedor</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.capa" datatype="html">
+        <source>Dossier CAPA</source>
+        <target state="translated">Caso CAPA</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.open-capa" datatype="html">
+        <source>Ouvrir le CAPA lié</source>
+        <target state="translated">Abrir el CAPA vinculado</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.satisfaction" datatype="html">
+        <source>Satisfaction</source>
+        <target state="translated">Satisfacción</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.satisfaction-short" datatype="html">
+        <source>Satisfaction</source>
+        <target state="translated">Satisfacción</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.no-satisfaction" datatype="html">
+        <source>Non mesurée</source>
+        <target state="translated">No medida</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.timeline" datatype="html">
+        <source>Chronologie</source>
+        <target state="translated">Cronología</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.first-response" datatype="html">
+        <source>Première réponse</source>
+        <target state="translated">Primera respuesta</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.resolved-at" datatype="html">
+        <source>Résolue le</source>
+        <target state="translated">Resuelta el</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.closed-at" datatype="html">
+        <source>Clôturée le</source>
+        <target state="translated">Cerrada el</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.rejection-reason" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">Motivo del rechazo</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.thread" datatype="html">
+        <source>Fil de messages</source>
+        <target state="translated">Hilo de mensajes</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.thread-subtitle" datatype="html">
+        <source>Messages adressés au client et notes internes de l'équipe, dans l'ordre chronologique.</source>
+        <target state="translated">Mensajes enviados al cliente y notas internas del equipo, en orden cronológico.</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.internal-note" datatype="html">
+        <source>Note interne</source>
+        <target state="translated">Nota interna</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.customer-message" datatype="html">
+        <source>Message au client</source>
+        <target state="translated">Mensaje al cliente</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.thread-empty" datatype="html">
+        <source>Aucun message pour l'instant.</source>
+        <target state="translated">Aún no hay mensajes.</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.thread-empty-hint" datatype="html">
+        <source>La première réponse envoyée au client débloque la résolution du dossier.</source>
+        <target state="translated">La primera respuesta enviada al cliente desbloquea la resolución del expediente.</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.delete-note-aria" datatype="html">
+        <source>Supprimer cette note interne</source>
+        <target state="translated">Eliminar esta nota interna</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.close-title" datatype="html">
+        <source>Clôturer la réclamation ?</source>
+        <target state="translated">¿Cerrar la reclamación?</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.close-message" datatype="html">
+        <source>Le dossier est archivé. Il restera réouvrable si le client revient vers vous.</source>
+        <target state="translated">El expediente se archiva. Podrá reabrirse si el cliente vuelve a contactar.</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.closed" datatype="html">
+        <source>Réclamation clôturée.</source>
+        <target state="translated">Reclamación cerrada.</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.close-failed" datatype="html">
+        <source>Clôture impossible.</source>
+        <target state="translated">No se ha podido cerrar.</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.reopen-title" datatype="html">
+        <source>Rouvrir la réclamation ?</source>
+        <target state="translated">¿Reabrir la reclamación?</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.reopen-message" datatype="html">
+        <source>Le dossier repart en investigation ; les dates de résolution et de clôture sont effacées.</source>
+        <target state="translated">El expediente vuelve a investigación; se borran las fechas de resolución y cierre.</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.reopened" datatype="html">
+        <source>Réclamation rouverte.</source>
+        <target state="translated">Reclamación reabierta.</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.reopen-failed" datatype="html">
+        <source>Réouverture impossible.</source>
+        <target state="translated">No se ha podido reabrir.</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.delete-title" datatype="html">
+        <source>Supprimer la réclamation ?</source>
+        <target state="translated">¿Eliminar la reclamación?</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.delete-message" datatype="html">
+        <source>Suppression définitive du dossier et de son fil de messages.</source>
+        <target state="translated">Eliminación definitiva del expediente y de su hilo de mensajes.</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.deleted" datatype="html">
+        <source>Réclamation supprimée.</source>
+        <target state="translated">Reclamación eliminada.</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.delete-note-title" datatype="html">
+        <source>Supprimer cette note interne ?</source>
+        <target state="translated">¿Eliminar esta nota interna?</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.delete-note-message" datatype="html">
+        <source>Seules les notes internes sont supprimables ; les messages envoyés au client sont immuables.</source>
+        <target state="translated">Solo se pueden eliminar las notas internas; los mensajes enviados al cliente son inmutables.</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.note-deleted" datatype="html">
+        <source>Note interne supprimée.</source>
+        <target state="translated">Nota interna eliminada.</target>
+      </trans-unit>
+      <trans-unit id="complaints.detail.load-error" datatype="html">
+        <source>Réclamation introuvable.</source>
+        <target state="translated">Reclamación no encontrada.</target>
+      </trans-unit>
+      <trans-unit id="complaints.uuid-invalid" datatype="html">
+        <source>Identifiant attendu au format UUID.</source>
+        <target state="translated">Se espera un identificador con formato UUID.</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-api-keys" datatype="html">
+        <source>Clés d'API</source>
+        <target state="translated">Claves de API</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-webhooks" datatype="html">
+        <source>Webhooks</source>
+        <target state="translated">Webhooks</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-quotas" datatype="html">
+        <source>Quotas d'API</source>
+        <target state="translated">Cuotas de API</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-audit-log" datatype="html">
+        <source>Journal d'audit</source>
+        <target state="translated">Registro de auditoría</target>
+      </trans-unit>
+      <trans-unit id="nav.reclamations" datatype="html">
+        <source>Réclamations</source>
+        <target state="translated">Reclamaciones</target>
+      </trans-unit>
+      <trans-unit id="nav.calibration" datatype="html">
+        <source>Calibration</source>
+        <target state="translated">Calibración</target>
+      </trans-unit>
+      <trans-unit id="admin.rate-limits.not-enforced" datatype="html">
+        <source>Les politiques définies ici sont enregistrées, mais elles ne sont pas encore appliquées aux appels entrants : la consommation affichée reste donc à zéro.</source>
+        <target state="translated">Las políticas definidas aquí se guardan, pero aún no se aplican a las llamadas entrantes, por lo que el consumo mostrado permanece en cero.</target>
+      </trans-unit>
       <trans-unit id="nav.pilotage" datatype="html">
         <source>Pilotage</source>
         <target state="translated">Pilotaje</target>

@@ -1,0 +1,39 @@
+/* Un message client est irréversible : l'avertissement doit être lu avant la
+   saisie, il est donc placé au-dessus du champ et change de ton avec la case
+   « note interne ». */
+
+:host { display: block; min-width: 520px; }
+
+.full { width: 100%; }
+.channel { width: 260px; max-width: 100%; }
+
+.notice {
+  margin: 0 0 var(--qos-space-3);
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border-left: 3px solid var(--qos-warn-fg);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-warn-bg-soft);
+  color: var(--qos-warn-fg);
+  font-size: var(--qos-fs-sm);
+  line-height: var(--qos-lh-normal);
+}
+
+.notice--internal {
+  border-left-color: var(--qos-border-default);
+  background: var(--qos-bg-sunken);
+  color: var(--qos-fg-secondary);
+}
+
+.blocked {
+  margin: 0 0 var(--qos-space-3);
+  padding: var(--qos-space-3) var(--qos-space-4);
+  background: var(--qos-danger-bg-soft);
+  color: var(--qos-danger-fg);
+  border-left: 3px solid var(--qos-danger-fg);
+  border-radius: var(--qos-radius-md);
+  font-size: var(--qos-fs-sm);
+}
+
+@media (max-width: 620px) {
+  :host { min-width: 0; }
+}

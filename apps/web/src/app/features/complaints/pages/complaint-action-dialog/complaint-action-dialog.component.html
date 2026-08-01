@@ -1,0 +1,58 @@
+<qos-form-dialog
+  [title]="title"
+  [subtitle]="subtitle"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  [submitLabel]="submitLabel"
+  [submitIcon]="submitIcon"
+  [submitColor]="submitColor"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <p class="warn" *ngIf="mode === 'REJECT'" role="alert" i18n="@@complaints.action.reject-warning">
+    Le motif est conservé sur le dossier : il justifie le refus de traitement auprès du client
+    et lors d'un audit. Une réclamation rejetée est définitivement close.
+  </p>
+
+  <ng-container *ngIf="isTextMode">
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>{{ fieldLabel }}</mat-label>
+
+      <textarea *ngIf="isLongText" matInput formControlName="text" rows="5" maxlength="1000"
+                [required]="fieldRequired"
+                i18n-placeholder="@@complaints.action.reason-placeholder"
+                placeholder="Hors périmètre, doublon, demande manifestement infondée…"></textarea>
+
+      <input *ngIf="!isLongText" matInput formControlName="text" autocomplete="off"
+             [required]="fieldRequired"
+             placeholder="00000000-0000-0000-0000-000000000000">
+
+      <mat-error *ngIf="form.controls.text.hasError('required')" i18n="@@common.required-field">Champ obligatoire</mat-error>
+      <mat-error *ngIf="form.controls.text.hasError('pattern')" i18n="@@complaints.uuid-invalid">
+        Identifiant attendu au format UUID.
+      </mat-error>
+    </mat-form-field>
+
+    <button type="button" mat-stroked-button class="self" *ngIf="canAssignToSelf" (click)="assignToSelf()">
+      <mat-icon aria-hidden="true">person</mat-icon>
+      <span i18n="@@complaints.action.assign-self">Me l'assigner</span>
+    </button>
+  </ng-container>
+
+  <ng-container *ngIf="!isTextMode">
+    <mat-form-field appearance="outline" class="score">
+      <mat-label>{{ fieldLabel }}</mat-label>
+      <input matInput formControlName="score" type="number" min="0" max="10" step="1" required>
+      <mat-error *ngIf="form.controls.score.hasError('required')" i18n="@@common.required-field">Champ obligatoire</mat-error>
+      <mat-error *ngIf="form.controls.score.hasError('min') || form.controls.score.hasError('max')"
+                 i18n="@@complaints.action.score-range">
+        La note doit être comprise entre 0 et 10.
+      </mat-error>
+    </mat-form-field>
+    <p class="scale" i18n="@@complaints.action.score-scale">
+      0 = client très insatisfait · 10 = client pleinement satisfait.
+    </p>
+  </ng-container>
+
+</qos-form-dialog>

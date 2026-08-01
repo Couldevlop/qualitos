@@ -1,0 +1,47 @@
+<qos-form-dialog
+  i18n-title="@@complaints.response.title"
+  title="Ajouter un message"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid || !authorId"
+  i18n-submitLabel="@@complaints.response.submit"
+  submitLabel="Ajouter au fil"
+  submitIcon="send"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <p class="blocked" *ngIf="!authorId" role="alert" i18n="@@complaints.response.no-author">
+    Votre session ne porte pas d'identifiant utilisateur exploitable : l'ajout de message
+    est indisponible. Reconnectez-vous, puis réessayez.
+  </p>
+
+  <p class="notice" [class.notice--internal]="!customerFacing">
+    <span *ngIf="customerFacing" i18n="@@complaints.response.notice-customer">
+      Message adressé au client : il horodate la première réponse, fait passer la réclamation
+      en « Répondue » et ne pourra plus être supprimé.
+    </span>
+    <span *ngIf="!customerFacing" i18n="@@complaints.response.notice-internal">
+      Note interne : invisible pour le client, sans effet sur le statut, supprimable ensuite.
+    </span>
+  </p>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@complaints.response.body">Message</mat-label>
+    <textarea matInput formControlName="body" rows="7" maxlength="4000" required
+              i18n-placeholder="@@complaints.response.body-placeholder"
+              placeholder="Réponse apportée au client, ou observation d'analyse pour l'équipe."></textarea>
+    <mat-error *ngIf="form.controls.body.hasError('required')" i18n="@@common.required-field">Champ obligatoire</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="channel">
+    <mat-label i18n="@@complaints.response.channel">Canal du message</mat-label>
+    <mat-select formControlName="channel" required>
+      <mat-option *ngFor="let c of channels" [value]="c">{{ channelLabel[c] }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-checkbox formControlName="internalNote" i18n="@@complaints.response.internal">
+    Note interne (non envoyée au client)
+  </mat-checkbox>
+
+</qos-form-dialog>

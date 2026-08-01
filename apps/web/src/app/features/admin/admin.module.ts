@@ -14,7 +14,31 @@ import { TenantModulesComponent } from './pages/tenant-modules/tenant-modules.co
  */
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'modules' },
-  { path: 'modules', component: TenantModulesComponent }
+  { path: 'modules', component: TenantModulesComponent },
+  // Les autres surfaces d'administration sont des modules paresseux distincts,
+  // déclarés ICI plutôt qu'à la racine : sans cela, la route `admin` de
+  // app-routing.module.ts capterait `/admin/api-keys` par correspondance de préfixe
+  // et chercherait `api-keys` dans ce module-ci, qui ne le connaît pas.
+  {
+    path: 'api-keys',
+    loadChildren: () => import('../admin-api-keys/admin-api-keys.module')
+      .then(m => m.AdminApiKeysModule)
+  },
+  {
+    path: 'webhooks',
+    loadChildren: () => import('../admin-webhooks/admin-webhooks.module')
+      .then(m => m.AdminWebhooksModule)
+  },
+  {
+    path: 'quotas',
+    loadChildren: () => import('../admin-rate-limits/admin-rate-limits.module')
+      .then(m => m.AdminRateLimitsModule)
+  },
+  {
+    path: 'audit-log',
+    loadChildren: () => import('../admin-audit-log/audit-log.module')
+      .then(m => m.AuditLogModule)
+  }
 ];
 
 @NgModule({

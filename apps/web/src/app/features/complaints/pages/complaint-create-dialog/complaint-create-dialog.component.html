@@ -1,0 +1,111 @@
+<qos-form-dialog
+  i18n-title="@@complaints.create.title"
+  title="Nouvelle réclamation"
+  i18n-subtitle="@@complaints.create.subtitle"
+  subtitle="La réclamation est enregistrée en « Reçue » : elle passe en investigation dès qu'elle est assignée."
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid || !authorId"
+  i18n-submitLabel="@@complaints.create.submit"
+  submitLabel="Enregistrer la réclamation"
+  submitIcon="support_agent"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <p class="blocked" *ngIf="!authorId" role="alert" i18n="@@complaints.create.no-author">
+    Votre session ne porte pas d'identifiant utilisateur exploitable : la création est
+    indisponible. Reconnectez-vous, puis réessayez.
+  </p>
+
+  <div class="grid">
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@complaints.create.code">Référence</mat-label>
+      <input matInput formControlName="code" maxlength="100" required autocomplete="off">
+      <mat-error *ngIf="form.controls.code.hasError('required')" i18n="@@common.required-field">Champ obligatoire</mat-error>
+      <mat-error *ngIf="form.controls.code.hasError('pattern')" i18n="@@complaints.create.code-format">
+        2 à 100 caractères : lettres, chiffres, point, tiret ou souligné.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@complaints.list.col-channel">Canal</mat-label>
+      <mat-select formControlName="channel" required>
+        <mat-option *ngFor="let c of channels" [value]="c">{{ channelLabel[c] }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label i18n="@@complaints.list.col-subject">Objet</mat-label>
+      <input matInput formControlName="subject" maxlength="250" required
+             i18n-placeholder="@@complaints.create.subject-placeholder"
+             placeholder="Résumé de la réclamation en une phrase">
+      <mat-error *ngIf="form.controls.subject.hasError('required')" i18n="@@common.required-field">Champ obligatoire</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label i18n="@@common.description">Description</mat-label>
+      <textarea matInput formControlName="description" rows="4" maxlength="4000"
+                i18n-placeholder="@@complaints.create.description-placeholder"
+                placeholder="Faits rapportés par le client, contexte, produit ou service concerné."></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@complaints.list.col-severity">Gravité</mat-label>
+      <mat-select formControlName="severity" required>
+        <mat-option *ngFor="let s of severities" [value]="s">{{ severityLabel[s] }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@complaints.list.filter-category">Catégorie</mat-label>
+      <mat-select formControlName="category" required>
+        <mat-option *ngFor="let c of categories" [value]="c">{{ categoryLabel[c] }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@complaints.create.customer-name">Nom du client</mat-label>
+      <input matInput formControlName="customerName" maxlength="250" autocomplete="off">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@complaints.create.customer-email">E-mail du client</mat-label>
+      <input matInput formControlName="customerEmail" type="email" maxlength="320" autocomplete="off">
+      <mat-error *ngIf="form.controls.customerEmail.hasError('email')" i18n="@@complaints.create.email-invalid">
+        Adresse e-mail invalide.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@complaints.create.customer-external-id">Référence client externe</mat-label>
+      <input matInput formControlName="customerExternalId" maxlength="200" autocomplete="off"
+             i18n-placeholder="@@complaints.create.customer-external-id-placeholder"
+             placeholder="N° de compte, ticket ITSM, dossier CRM…">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@complaints.create.received-at">Reçue le</mat-label>
+      <input matInput formControlName="receivedAt" type="datetime-local">
+      <mat-hint i18n="@@complaints.create.received-at-hint">Vide = horodatage à l'enregistrement.</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@complaints.create.supplier">Fournisseur mis en cause (UUID)</mat-label>
+      <input matInput formControlName="supplierId" autocomplete="off"
+             placeholder="00000000-0000-0000-0000-000000000000">
+      <mat-error *ngIf="form.controls.supplierId.hasError('pattern')" i18n="@@complaints.uuid-invalid">
+        Identifiant attendu au format UUID.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@complaints.create.assignee">Assigné à (UUID)</mat-label>
+      <input matInput formControlName="assignedToUserId" autocomplete="off"
+             placeholder="00000000-0000-0000-0000-000000000000">
+      <mat-error *ngIf="form.controls.assignedToUserId.hasError('pattern')" i18n="@@complaints.uuid-invalid">
+        Identifiant attendu au format UUID.
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+</qos-form-dialog>

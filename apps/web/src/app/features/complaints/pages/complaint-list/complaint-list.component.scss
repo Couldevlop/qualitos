@@ -1,0 +1,85 @@
+/* Réclamations clients — liste (§4.9).
+   Le scaffold global (.qos-page, .page-header, .filter-card, .table-card,
+   .badge, .qos-empty, .clickable-row) porte déjà le rythme et les couleurs :
+   on ne décrit ici que ce qui est propre à l'écran, en tokens uniquement pour
+   rester correct en thème clair ET sombre. */
+
+/* Les tuiles sont aussi des raccourcis de filtrage : ce sont donc des boutons
+   (accessibles au clavier et annoncés comme pressés), pas des div cliquables. */
+.tiles { display: flex; gap: var(--qos-space-3); flex-wrap: wrap; }
+
+.tile {
+  flex: 1 1 130px;
+  min-width: 130px;
+  padding: var(--qos-space-4) var(--qos-space-5);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-left: 3px solid var(--qos-border-default);
+  border-radius: var(--qos-radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: var(--qos-fg-primary);
+  transition: background-color var(--qos-motion-fast), border-color var(--qos-motion-fast);
+}
+.tile:hover { background: var(--qos-bg-subtle); }
+.tile--active { border-color: var(--qos-border-focus); background: var(--qos-bg-subtle); }
+
+.tile__value { font-size: var(--qos-fs-2xl); font-weight: var(--qos-fw-semibold); line-height: 1.1; }
+.tile__label { font-size: var(--qos-fs-xs); color: var(--qos-fg-secondary); }
+
+.tile[data-tone='info']    { border-left-color: var(--qos-accent-bg); }
+.tile[data-tone='success'] { border-left-color: var(--qos-success-fg); }
+.tile[data-tone='warn']    { border-left-color: var(--qos-warn-fg); }
+.tile[data-tone='danger']  { border-left-color: var(--qos-danger-fg); }
+
+/* Répartition Voice of Customer : lecture immédiate, sans graphique. */
+.shares { display: flex; flex-wrap: wrap; align-items: center; gap: var(--qos-space-2); }
+.shares__title {
+  font-size: var(--qos-fs-xs); text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--qos-fg-secondary); margin-right: var(--qos-space-1);
+}
+.share {
+  display: inline-flex; align-items: baseline; gap: var(--qos-space-2);
+  padding: 3px 10px; border-radius: var(--qos-radius-pill);
+  background: var(--qos-bg-sunken); font-size: var(--qos-fs-xs);
+}
+.share strong { font-weight: var(--qos-fw-bold); }
+.share em { font-style: normal; color: var(--qos-fg-secondary); }
+
+.filter-mode { width: 190px; }
+.filter-supplier { width: 340px; max-width: 100%; }
+.filter-hint { font-size: var(--qos-fs-xs); color: var(--qos-warn-fg); }
+
+.banner {
+  display: flex; align-items: center; gap: var(--qos-space-2);
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border-radius: var(--qos-radius-md);
+  font-size: var(--qos-fs-sm);
+}
+.banner-error { background: var(--qos-danger-bg-soft); color: var(--qos-danger-fg); }
+
+/* Le tableau déborde horizontalement sur petit écran sans pousser la page. */
+.table-wrap { overflow-x: auto; }
+
+.code { font-family: var(--qos-font-mono); font-size: var(--qos-fs-xs); white-space: nowrap; }
+
+.subject-cell { display: flex; flex-direction: column; gap: 2px; }
+.subject-cell__text { font-weight: var(--qos-fw-semibold); }
+.subject-cell__customer { font-size: var(--qos-fs-xs); color: var(--qos-fg-secondary); }
+
+.dim { color: var(--qos-fg-tertiary); }
+
+/* Tons sémantiques des badges (le .badge global est neutre par défaut). */
+.badge[data-tone='info']    { background: var(--qos-accent-bg-soft);  color: var(--qos-accent-fg);  border-color: transparent; }
+.badge[data-tone='success'] { background: var(--qos-success-bg-soft); color: var(--qos-success-fg); border-color: transparent; }
+.badge[data-tone='warn']    { background: var(--qos-warn-bg-soft);    color: var(--qos-warn-fg);    border-color: transparent; }
+.badge[data-tone='danger']  { background: var(--qos-danger-bg-soft);  color: var(--qos-danger-fg);  border-color: transparent; }
+
+@media (max-width: 860px) {
+  .filter-mode, .filter-supplier { width: 100%; }
+}

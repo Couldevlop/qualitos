@@ -104,6 +104,8 @@ export class MainShellComponent implements OnInit {
       items: [
         { label: $localize`:@@nav.non-conformites:Non-conformités`, route: '/nc',        icon: 'report_problem' },
         { label: $localize`:@@nav.capa:CAPA`,                       route: '/capa',      icon: 'engineering' },
+        { label: $localize`:@@nav.reclamations:Réclamations`,       route: '/complaints', icon: 'support_agent' },
+        { label: $localize`:@@nav.calibration:Calibration`,         route: '/calibration', icon: 'straighten' },
         { label: $localize`:@@nav.audits:Audits`,                   route: '/audits',    icon: 'fact_check' },
         { label: $localize`:@@nav.risques-fmea:Risques (FMEA)`,     route: '/fmea',      icon: 'warning' },
         { label: $localize`:@@nav.documents:Documents`,             route: '/documents', icon: 'description' },
@@ -138,6 +140,30 @@ export class MainShellComponent implements OnInit {
           label: $localize`:@@nav.admin-modules:Modules du tenant`,
           route: '/admin/modules',
           icon: 'tune',
+          roles: ADMIN_ROLES
+        },
+        {
+          label: $localize`:@@nav.admin-api-keys:Clés d'API`,
+          route: '/admin/api-keys',
+          icon: 'key',
+          roles: ADMIN_ROLES
+        },
+        {
+          label: $localize`:@@nav.admin-webhooks:Webhooks`,
+          route: '/admin/webhooks',
+          icon: 'webhook',
+          roles: ADMIN_ROLES
+        },
+        {
+          label: $localize`:@@nav.admin-quotas:Quotas d'API`,
+          route: '/admin/quotas',
+          icon: 'speed',
+          roles: ADMIN_ROLES
+        },
+        {
+          label: $localize`:@@nav.admin-audit-log:Journal d'audit`,
+          route: '/admin/audit-log',
+          icon: 'receipt_long',
           roles: ADMIN_ROLES
         }
       ]
