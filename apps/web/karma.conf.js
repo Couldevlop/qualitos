@@ -25,21 +25,21 @@ module.exports = function (config) {
       // réelle mesurée, ce qui interdit toute régression dès aujourd'hui. Ils sont
       // remontés à chaque lot de tests ajouté, jusqu'à la cible de 99 %.
       //
-      //   Mesure du 2026-08-01 : statements 84,54 % · branches 76,95 %
-      //                          lines 86,11 %      · functions 87,10 %
-      //   (+19,6 pts après l'intégration de la vague 2 — 4 écrans (IoT, connecteurs,
-      //    registre des systèmes d'IA, compléments Standards Hub) et 339 specs.)
-      //   Cible §14.4 : 85 / 75 — ATTEINTE sur les branches, à 0,5 pt sur les
-      //   statements. Cible projet : 99.
+      //   Mesure du 2026-08-01 : statements 89,74 % · branches 82,24 %
+      //                          lines 90,55 %      · functions 91,17 %
+      //   (+5,2 pts après la reprise des specs de 9 services GRC / AI Act, qui
+      //    n'étaient couverts qu'en surface — chemins heureux uniquement.)
+      //   Cible §14.4 : 85 / 75 — DÉPASSÉE sur les quatre axes.
+      //   Cible projet : 99.
       //
       // `emitWarning: false` = la suite sort en échec si un seuil n'est pas atteint.
       check: {
         emitWarning: false,
         global: {
-          statements: 84,
-          lines: 86,
-          branches: 76,
-          functions: 87
+          statements: 89,
+          lines: 90,
+          branches: 82,
+          functions: 91
         }
       }
     },
