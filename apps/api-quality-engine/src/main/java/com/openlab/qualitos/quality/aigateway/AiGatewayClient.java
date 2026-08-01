@@ -520,6 +520,50 @@ public class AiGatewayClient {
         }
     }
 
+    /**
+     * Score de risque fournisseur explicable (§4.6, §6.5), via
+     * {@code POST /v1/ai/predict/supplier-risk}.
+     *
+     * <p>Le modèle vivait dans {@code ai-service} sans aucun appelant : la promesse
+     * « scoring de risque fournisseur, prédiction de défaillance, alertes proactives »
+     * n'était donc pas tenue. Le calcul reste entièrement côté modèle ; l'engine se
+     * contente de fournir les caractéristiques mesurées.
+     *
+     * @param features caractéristiques normalisées, dont les noms doivent appartenir à
+     *                 ceux que le modèle connaît — une clé inconnue est rejetée en 422
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> predictSupplierRisk(Map<String, Double> features) {
+        if (!TenantContext.hasTenant()) {
+            throw new MissingTenantContextException();
+        }
+        if (features == null || features.isEmpty()) {
+            throw new AiGatewayException("Aucune caractéristique à scorer");
+        }
+        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "supplier-risk",
+                features.size());
+        guard.check(ctx);
+        try {
+            Map<String, Object> resp = client.post()
+                    .uri("/v1/ai/predict/supplier-risk")
+                    .header("X-Dev-Claims", devClaims)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(Map.of("features", features))
+                    .retrieve()
+                    .body(Map.class);
+            if (resp == null || resp.get("score") == null) {
+                throw new AiGatewayException("Réponse vide de la passerelle IA (supplier-risk)");
+            }
+            guard.recordSuccess(ctx.tenantId());
+            return resp;
+        } catch (RestClientException e) {
+            guard.recordFailure(ctx.tenantId());
+            throw new AiGatewayException(
+                    "Passerelle IA indisponible (supplier-risk) : " + e.getMessage(), e);
+        }
+    }
+
     private String devClaims(UUID tenantId) {
         try {
             return objectMapper.writeValueAsString(Map.of(

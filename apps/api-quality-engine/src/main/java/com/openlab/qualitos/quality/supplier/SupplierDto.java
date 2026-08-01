@@ -10,6 +10,9 @@ import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public final class SupplierDto {
@@ -146,4 +149,50 @@ public final class SupplierDto {
             long expiredCertificates,
             LocalDate lastAuditAt
     ) {}
+
+    /** Facteur explicatif du risque, tel que renvoyé par le modèle (§12.3). */
+    public record RiskDriver(String feature, double value, double weight, double contribution) {}
+
+    /**
+     * Prédiction de risque fournisseur (§4.6, §6.5).
+     *
+     * <p>Non persistée : c'est une lecture à l'instant t. Les caractéristiques envoyées
+     * au modèle sont renvoyées avec le résultat — sans elles le score serait une boîte
+     * noire, ce qu'interdit l'exigence d'explicabilité (§12.3).
+     */
+    public record RiskPrediction(
+            UUID supplierId,
+            double score,
+            String level,
+            Map<String, Double> features,
+            List<RiskDriver> drivers
+    ) {
+        public static RiskPrediction from(UUID supplierId,
+                                          Map<String, Double> features,
+                                          Map<String, Object> response) {
+            double score = asDouble(response.get("score"));
+            String level = String.valueOf(response.getOrDefault("level", "unknown"));
+
+            List<RiskDriver> drivers = new ArrayList<>();
+            if (response.get("drivers") instanceof List<?> list) {
+                for (Object item : list) {
+                    if (!(item instanceof Map<?, ?> m)) continue;
+                    drivers.add(new RiskDriver(
+                            String.valueOf(m.get("feature")),
+                            asDouble(m.get("value")),
+                            asDouble(m.get("weight")),
+                            asDouble(m.get("contribution"))));
+                }
+            }
+            // Le facteur le plus contributeur en tête : c'est ce que l'utilisateur cherche.
+            drivers.sort((a, b) ->
+                    Double.compare(Math.abs(b.contribution()), Math.abs(a.contribution())));
+
+            return new RiskPrediction(supplierId, score, level, features, List.copyOf(drivers));
+        }
+
+        private static double asDouble(Object o) {
+            return o instanceof Number n ? n.doubleValue() : 0d;
+        }
+    }
 }

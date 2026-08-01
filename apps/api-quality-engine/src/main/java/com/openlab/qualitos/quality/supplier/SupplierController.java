@@ -15,7 +15,23 @@ public class SupplierController {
 
     private final SupplierService service;
 
-    public SupplierController(SupplierService service) { this.service = service; }
+    private final SupplierRiskPredictionService riskPrediction;
+
+    public SupplierController(SupplierService service,
+                              SupplierRiskPredictionService riskPrediction) {
+        this.service = service;
+        this.riskPrediction = riskPrediction;
+    }
+
+    /**
+     * Prédiction de risque fournisseur (§4.6, §6.5) — score explicable servi par le
+     * modèle d'{@code ai-service}. Distinct de {@code /statistics}, qui restitue le
+     * score de qualité OBSERVÉ ; ici on anticipe.
+     */
+    @GetMapping("/{id}/risk-prediction")
+    public SupplierDto.RiskPrediction riskPrediction(@PathVariable UUID id) {
+        return riskPrediction.predict(id);
+    }
 
     // ---- Suppliers ----
 
