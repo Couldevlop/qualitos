@@ -43,6 +43,21 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    # Exclusion ModSecurity STRICTEMENT limitée à la configuration runtime de la
+    # SPA. Le cluster active OWASP CRS globalement (ConfigMap du contrôleur), et
+    # CRS 4.22 refuse GET /<locale>/assets/config.json avec un score d'anomalie
+    # de 5. Conséquence en cascade : la SPA ne recevait pas sa configuration,
+    # retombait sur les URL localhost compilées, et la CSP bloquait alors tous
+    # ses appels — aucune page ne fonctionnait.
+    #
+    # L'exclusion ne porte QUE sur ce chemin, et uniquement sur cet ingress :
+    # la règle reste active partout ailleurs, pour cette application comme pour
+    # les autres projets du cluster. La ressource visée est un JSON statique
+    # généré par nginx à partir de variables d'environnement — sans paramètre,
+    # sans corps de requête, sans donnée utilisateur : il n'y a rien à y
+    # protéger, et la levée n'ouvre aucune surface.
+    nginx.ingress.kubernetes.io/modsecurity-snippet: |
+      SecRule REQUEST_URI "@rx ^/[a-z]{2}/assets/config\.json$"         "id:1000100,phase:1,pass,nolog,ctl:ruleEngine=Off"
   host: qualitos.openlabconsulting.com
   tls:
     enabled: true
