@@ -45,6 +45,14 @@ ingress:
 # à mesurer une tenue en charge.
 services:
   web:
+    # Configuration RUNTIME de la SPA. Sans elle, le bundle conserve les URL
+    # localhost compilees dans environment.production.ts et ni la connexion ni
+    # les appels API ne fonctionnent depuis un navigateur.
+    env:
+      QOS_API_BASE_URL: https://preprod.qualitos.openlabconsulting.com
+      QOS_KEYCLOAK_ISSUER: https://preprod.qualitos.openlabconsulting.com/auth/realms/qualitos
+      QOS_KEYCLOAK_CLIENT_ID: qualitos-web
+      QOS_CONNECT_SRC: "'self' https://preprod.qualitos.openlabconsulting.com"
     # Variante non privilégiée de nginx : UID 101, port 8080.
     port: 8080
     runAsUser: 101

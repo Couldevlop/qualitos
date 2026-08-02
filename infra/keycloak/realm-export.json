@@ -26,13 +26,34 @@
   "ssoSessionMaxLifespan": 36000,
   "roles": {
     "realm": [
-      { "name": "super_admin",       "description": "Plateforme — accès total" },
-      { "name": "admin_tenant",      "description": "Admin du tenant" },
-      { "name": "quality_director",  "description": "Directeur Qualité" },
-      { "name": "quality_manager",   "description": "Manager Qualité" },
-      { "name": "auditor",           "description": "Auditeur interne" },
-      { "name": "user",              "description": "Utilisateur standard" },
-      { "name": "external_auditor",  "description": "Auditeur tiers, accès limité dans le temps" }
+      {
+        "name": "super_admin",
+        "description": "Plateforme — accès total"
+      },
+      {
+        "name": "admin_tenant",
+        "description": "Admin du tenant"
+      },
+      {
+        "name": "quality_director",
+        "description": "Directeur Qualité"
+      },
+      {
+        "name": "quality_manager",
+        "description": "Manager Qualité"
+      },
+      {
+        "name": "auditor",
+        "description": "Auditeur interne"
+      },
+      {
+        "name": "user",
+        "description": "Utilisateur standard"
+      },
+      {
+        "name": "external_auditor",
+        "description": "Auditeur tiers, accès limité dans le temps"
+      }
     ]
   },
   "clients": [
@@ -91,13 +112,22 @@
       "enabled": true,
       "emailVerified": true,
       "credentials": [
-        { "type": "password", "value": "superadmin", "temporary": false }
+        {
+          "type": "password",
+          "value": "superadmin",
+          "temporary": false
+        }
       ],
       "attributes": {
-        "tenant_id": ["00000000-0000-0000-0000-000000000099"]
+        "tenant_id": [
+          "00000000-0000-0000-0000-000000000099"
+        ]
       },
       "realmRoles": [
         "super_admin"
+      ],
+      "requiredActions": [
+        "CONFIGURE_TOTP"
       ]
     },
     {
@@ -108,13 +138,22 @@
       "enabled": true,
       "emailVerified": true,
       "credentials": [
-        { "type": "password", "value": "admin", "temporary": false }
+        {
+          "type": "password",
+          "value": "admin",
+          "temporary": false
+        }
       ],
       "attributes": {
-        "tenant_id": ["00000000-0000-0000-0000-000000000099"]
+        "tenant_id": [
+          "00000000-0000-0000-0000-000000000099"
+        ]
       },
       "realmRoles": [
         "admin_tenant"
+      ],
+      "requiredActions": [
+        "CONFIGURE_TOTP"
       ]
     },
     {
@@ -125,15 +164,177 @@
       "enabled": true,
       "emailVerified": true,
       "credentials": [
-        { "type": "password", "value": "demo", "temporary": false }
+        {
+          "type": "password",
+          "value": "demo",
+          "temporary": false
+        }
       ],
       "attributes": {
-        "tenant_id": ["00000000-0000-0000-0000-000000000099"]
+        "tenant_id": [
+          "00000000-0000-0000-0000-000000000099"
+        ]
       },
       "realmRoles": [
         "quality_manager",
         "user"
       ]
+    }
+  ],
+  "authenticationFlows": [
+    {
+      "alias": "browser-mfa",
+      "description": "Connexion navigateur avec second facteur impose aux comptes d'administration (CLAUDE.md SS11.1 A07).",
+      "providerId": "basic-flow",
+      "topLevel": true,
+      "builtIn": false,
+      "authenticationExecutions": [
+        {
+          "requirement": "ALTERNATIVE",
+          "priority": 10,
+          "userSetupAllowed": false,
+          "autheticatorFlow": false,
+          "authenticator": "auth-cookie"
+        },
+        {
+          "requirement": "ALTERNATIVE",
+          "priority": 20,
+          "userSetupAllowed": false,
+          "autheticatorFlow": false,
+          "authenticator": "identity-provider-redirector"
+        },
+        {
+          "requirement": "ALTERNATIVE",
+          "priority": 30,
+          "userSetupAllowed": false,
+          "autheticatorFlow": true,
+          "flowAlias": "browser-mfa-forms"
+        }
+      ]
+    },
+    {
+      "alias": "browser-mfa-forms",
+      "description": "Identifiants puis second facteur conditionnel.",
+      "providerId": "basic-flow",
+      "topLevel": false,
+      "builtIn": false,
+      "authenticationExecutions": [
+        {
+          "requirement": "REQUIRED",
+          "priority": 10,
+          "userSetupAllowed": false,
+          "autheticatorFlow": false,
+          "authenticator": "auth-username-password-form"
+        },
+        {
+          "requirement": "CONDITIONAL",
+          "priority": 20,
+          "userSetupAllowed": false,
+          "autheticatorFlow": true,
+          "flowAlias": "browser-mfa-otp-superadmin"
+        },
+        {
+          "requirement": "CONDITIONAL",
+          "priority": 30,
+          "userSetupAllowed": false,
+          "autheticatorFlow": true,
+          "flowAlias": "browser-mfa-otp-admin"
+        }
+      ]
+    },
+    {
+      "alias": "browser-mfa-otp-superadmin",
+      "description": "OTP obligatoire pour le role super_admin",
+      "providerId": "basic-flow",
+      "topLevel": false,
+      "builtIn": false,
+      "authenticationExecutions": [
+        {
+          "requirement": "REQUIRED",
+          "priority": 10,
+          "userSetupAllowed": false,
+          "autheticatorFlow": false,
+          "authenticator": "conditional-user-role",
+          "authenticatorConfig": "cfg-browser-mfa-otp-superadmin"
+        },
+        {
+          "requirement": "REQUIRED",
+          "priority": 20,
+          "userSetupAllowed": false,
+          "autheticatorFlow": false,
+          "authenticator": "auth-otp-form"
+        }
+      ]
+    },
+    {
+      "alias": "browser-mfa-otp-admin",
+      "description": "OTP obligatoire pour le role admin_tenant",
+      "providerId": "basic-flow",
+      "topLevel": false,
+      "builtIn": false,
+      "authenticationExecutions": [
+        {
+          "requirement": "REQUIRED",
+          "priority": 10,
+          "userSetupAllowed": false,
+          "autheticatorFlow": false,
+          "authenticator": "conditional-user-role",
+          "authenticatorConfig": "cfg-browser-mfa-otp-admin"
+        },
+        {
+          "requirement": "REQUIRED",
+          "priority": 20,
+          "userSetupAllowed": false,
+          "autheticatorFlow": false,
+          "authenticator": "auth-otp-form"
+        }
+      ]
+    }
+  ],
+  "authenticatorConfig": [
+    {
+      "alias": "cfg-browser-mfa-otp-superadmin",
+      "config": {
+        "condUserRole": "super_admin"
+      }
+    },
+    {
+      "alias": "cfg-browser-mfa-otp-admin",
+      "config": {
+        "condUserRole": "admin_tenant"
+      }
+    }
+  ],
+  "browserFlow": "browser-mfa",
+  "otpPolicyType": "totp",
+  "otpPolicyAlgorithm": "HmacSHA1",
+  "otpPolicyDigits": 6,
+  "otpPolicyPeriod": 30,
+  "otpPolicyLookAheadWindow": 1,
+  "otpPolicyCodeReusable": false,
+  "otpSupportedApplications": [
+    "totpAppFreeOTPName",
+    "totpAppGoogleName",
+    "totpAppMicrosoftAuthenticatorName"
+  ],
+  "requiredActions": [
+    {
+      "alias": "CONFIGURE_TOTP",
+      "name": "Configure OTP",
+      "providerId": "CONFIGURE_TOTP",
+      "enabled": true,
+      "defaultAction": false,
+      "priority": 10,
+      "config": {}
+    },
+    {
+      "alias": "UPDATE_PASSWORD",
+      "name": "Update Password",
+      "providerId": "UPDATE_PASSWORD",
+      "enabled": true,
+      "defaultAction": false,
+      "priority": 30,
+      "config": {}
     }
   ]
 }

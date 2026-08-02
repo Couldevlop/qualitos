@@ -6544,6 +6544,10 @@
         <source>Recherche globale</source>
         <target state="translated">全体検索</target>
       </trans-unit>
+      <trans-unit id="shell.brand.tagline" datatype="html">
+        <source>Système d'exploitation qualité</source>
+        <target state="translated">品質オペレーティングシステム</target>
+      </trans-unit>
       <trans-unit id="shell.nav.aria" datatype="html">
         <source>Navigation principale</source>
         <target state="translated">メインナビゲーション</target>

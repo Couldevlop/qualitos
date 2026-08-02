@@ -59,6 +59,11 @@ ENV NGINX_ENVSUBST_FILTER="^QOS_"
 # Origines autorisées par la CSP (connect-src). Valeur par défaut = stack locale
 # docker-compose. En production, surcharger cette variable d'environnement avec les
 # URLs publiques (API + Keycloak) — aucun rebuild d'image nécessaire.
+# Configuration runtime de la SPA (servie en assets/config.json, cf. nginx.conf).
+# Valeurs par défaut = pile docker-compose locale. En déploiement, on surcharge
+# ces trois variables — aucune reconstruction d'image n'est nécessaire.
+ENV QOS_API_BASE_URL="http://localhost:8082"     QOS_KEYCLOAK_ISSUER="http://localhost:8080/realms/qualitos"     QOS_KEYCLOAK_CLIENT_ID="qualitos-web"
+
 ENV QOS_CONNECT_SRC="'self' http://localhost:8080 http://localhost:8181 http://localhost:8082"
 
 EXPOSE 8080
