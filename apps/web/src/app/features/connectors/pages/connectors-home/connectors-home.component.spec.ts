@@ -503,4 +503,173 @@ describe('ConnectorsHomeComponent', () => {
     expect(text).toContain('Webhook masqué');
     expect(text).not.toContain('hooks.');
   }));
+
+  // ---- Les trois familles se comportent-elles pareil ? -------------------------
+
+  it('explique un refus de chargement, famille par famille, sans vider les autres', () => {
+    svc.listEhr.and.returnValue(throwError(() => ({ status: 403 })));
+    fixture.detectChanges();
+
+    // Une famille en échec ne doit pas emporter les deux autres : chaque onglet
+    // a son propre flux et son propre bandeau.
+    expect(component.erpError$).toBeTruthy();
+    let ehrError: string | null = null;
+    component.ehrError$.subscribe(m => (ehrError = m));
+    expect(ehrError).toBeTruthy();
+  });
+
+  it('explique un refus de chargement des destinations de notification', () => {
+    svc.listComm.and.returnValue(throwError(() => ({ status: 500 })));
+    fixture.detectChanges();
+
+    let commError: string | null = null;
+    component.commError$.subscribe(m => (commError = m));
+    expect(commError).toBeTruthy();
+  });
+
+  it('ouvre le formulaire FHIR en création et revient à la première page', () => {
+    fixture.detectChanges();
+    const before = svc.listEhr.calls.count();
+    dialogCloses(ehr());
+
+    component.createEhr();
+
+    expect(svc.listEhr.calls.count()).toBe(before + 1);
+  });
+
+  it('ouvre le formulaire de destination en édition sur la connexion visée', () => {
+    fixture.detectChanges();
+    dialogCloses(comm());
+
+    component.editComm(comm());
+
+    expect(dialog.open).toHaveBeenCalled();
+    const data = (dialog.open.calls.mostRecent().args[1] as { data: { connection: unknown } }).data;
+    expect(data.connection).toEqual(comm());
+  });
+
+  it('n\'ouvre aucun formulaire d\'édition tant qu\'une action est en vol', () => {
+    fixture.detectChanges();
+    component.pendingId = 'e-1';
+    dialog.open.calls.reset();
+
+    component.editErp(erp());
+    component.editEhr(ehr());
+    component.editComm(comm());
+
+    // Éditer pendant une synchronisation ou une suppression ferait travailler
+    // l'utilisateur sur un état qui va changer sous ses yeux.
+    expect(dialog.open).not.toHaveBeenCalled();
+  });
+
+  it('synchronise une connexion FHIR et recharge la famille', () => {
+    svc.syncEhr.and.returnValue(of({ connectionId: 'h-1', imported: 3, updated: 1, failed: 0 } as never));
+    fixture.detectChanges();
+    const before = svc.listEhr.calls.count();
+
+    component.syncEhr(ehr());
+
+    expect(svc.syncEhr).toHaveBeenCalledWith('h-1');
+    expect(component.ehrOutcome).not.toBeNull();
+    expect(svc.listEhr.calls.count()).toBe(before + 1);
+    expect(component.pendingId).toBeNull();
+  });
+
+  it('explique un échec de synchronisation FHIR sans figer l\'écran', () => {
+    svc.syncEhr.and.returnValue(throwError(() => ({ status: 502 })));
+    fixture.detectChanges();
+
+    component.syncEhr(ehr());
+
+    expect(component.ehrOutcome).toBeNull();
+    // L'indicateur doit être libéré, sinon toute action ultérieure resterait
+    // silencieusement ignorée.
+    expect(component.pendingId).toBeNull();
+  });
+
+  it('ne lance pas deux synchronisations FHIR en parallèle', () => {
+    fixture.detectChanges();
+    component.pendingId = 'h-1';
+    svc.syncEhr.calls.reset();
+
+    component.syncEhr(ehr());
+
+    expect(svc.syncEhr).not.toHaveBeenCalled();
+  });
+
+  it('bascule le statut d\'une connexion FHIR et d\'une destination', () => {
+    svc.updateEhr.and.returnValue(of(ehr({ status: 'DISABLED' })));
+    svc.updateComm.and.returnValue(of(comm({ status: 'DISABLED' })));
+    fixture.detectChanges();
+
+    component.toggleEhrStatus(ehr({ status: 'ACTIVE' }));
+    expect(svc.updateEhr).toHaveBeenCalledWith('h-1', { status: 'DISABLED' });
+
+    component.toggleCommStatus(comm({ status: 'DISABLED' }));
+    expect(svc.updateComm).toHaveBeenCalledWith('c-1', { status: 'ACTIVE' });
+  });
+
+  it('supprime une connexion FHIR après confirmation et efface son compte rendu', () => {
+    svc.syncEhr.and.returnValue(of({ connectionId: 'h-1', imported: 1, updated: 0, failed: 0 } as never));
+    svc.deleteEhr.and.returnValue(of(void 0));
+    fixture.detectChanges();
+    component.syncEhr(ehr());
+    expect(component.ehrOutcome).not.toBeNull();
+
+    dialogCloses(true);
+    component.removeEhr(ehr());
+
+    expect(svc.deleteEhr).toHaveBeenCalledWith('h-1');
+    // Laisser le compte rendu d'une connexion supprimée afficherait un résultat
+    // rattaché à une ressource qui n'existe plus.
+    expect(component.ehrOutcome).toBeNull();
+  });
+
+  it('supprime une destination après confirmation et efface son compte rendu', () => {
+    svc.testComm.and.returnValue(of({ connectionId: 'c-1', success: true }));
+    svc.deleteComm.and.returnValue(of(void 0));
+    fixture.detectChanges();
+    component.testComm(comm());
+    expect(component.commOutcome).not.toBeNull();
+
+    dialogCloses(true);
+    component.removeComm(comm());
+
+    expect(svc.deleteComm).toHaveBeenCalledWith('c-1');
+    expect(component.commOutcome).toBeNull();
+  });
+
+  it('explique un échec de suppression sur les deux autres familles', () => {
+    svc.deleteEhr.and.returnValue(throwError(() => ({ status: 409 })));
+    svc.deleteComm.and.returnValue(throwError(() => ({ status: 409 })));
+    fixture.detectChanges();
+
+    dialogCloses(true);
+    component.removeEhr(ehr());
+    expect(component.pendingId).toBeNull();
+
+    dialogCloses(true);
+    component.removeComm(comm());
+    expect(component.pendingId).toBeNull();
+  });
+
+  it('n\'envoie aucun message de test tant qu\'une action est en vol', () => {
+    fixture.detectChanges();
+    component.pendingId = 'c-1';
+    svc.testComm.calls.reset();
+
+    component.testComm(comm());
+
+    expect(svc.testComm).not.toHaveBeenCalled();
+  });
+
+  it('explique un échec d\'envoi du message de test', () => {
+    svc.testComm.and.returnValue(throwError(() => ({ status: 500 })));
+    fixture.detectChanges();
+
+    component.testComm(comm());
+
+    expect(component.commOutcome).toBeNull();
+    expect(component.pendingId).toBeNull();
+  });
 });

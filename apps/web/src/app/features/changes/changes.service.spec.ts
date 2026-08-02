@@ -185,6 +185,82 @@ describe('ChangesService (mode démo hors-ligne)', () => {
       });
     });
   });
+
+  // ---- Replis du mode démo sur identifiant inconnu ---------------------------
+
+  /** Statuts du registre, pour comparer l'état avant et après une opération. */
+  function statuses(then: (s: string[]) => void): void {
+    service.list().subscribe(page => then(page.content.map(c => c.status)));
+  }
+
+  it('ne modifie aucune demande quand la mise à jour vise une clé inconnue', (done) => {
+    service.list().subscribe(before => {
+      const titles = before.content.map(c => c.title);
+      service.update('chg-inexistante', { title: 'usurpé' }).subscribe(() => {
+        service.list().subscribe(after => {
+          // Repli assumé du mode démo : l'appel rend une valeur pour que l'écran
+          // reste utilisable, mais il ne doit RIEN modifier au registre.
+          expect(after.content.map(c => c.title)).toEqual(titles);
+          done();
+        });
+      });
+    });
+  });
+
+  it('ne soumet aucune demande inconnue au circuit d\'approbation', (done) => {
+    statuses(before => {
+      service.submit('chg-inexistante').subscribe(() => {
+        statuses(after => {
+          expect(after).toEqual(before);
+          done();
+        });
+      });
+    });
+  });
+
+  it('n\'annule aucune demande inconnue, ni n\'invente de motif', (done) => {
+    service.list().subscribe(before => {
+      const reasons = before.content.map(c => c.rejectionReason);
+      service.cancel('chg-inexistante', 'motif').subscribe(() => {
+        service.list().subscribe(after => {
+          expect(after.content.map(c => c.rejectionReason)).toEqual(reasons);
+          done();
+        });
+      });
+    });
+  });
+
+  it('n\'enregistre le motif d\'annulation que s\'il est fourni', (done) => {
+    service.list().subscribe(page => {
+      const target = page.content[0];
+      service.cancel(target.id).subscribe(withoutReason => {
+        expect(withoutReason.status).toBe('CANCELLED');
+        // Sans motif transmis, celui déjà consigné ne doit pas être écrasé par
+        // une valeur vide : une annulation motivée reste motivée.
+        expect(withoutReason.rejectionReason).toBe(target.rejectionReason);
+
+        service.cancel(target.id, 'Projet abandonné.').subscribe(withReason => {
+          expect(withReason.rejectionReason).toBe('Projet abandonné.');
+          done();
+        });
+      });
+    });
+  });
+
+  it('ne marque aucune demande inconnue comme mise en œuvre', (done) => {
+    service.list().subscribe(before => {
+      const dates = before.content.map(c => c.implementedAt);
+      service.implement('chg-inexistante', { implementedAt: '2026-07-01' })
+        .subscribe(() => {
+          service.list().subscribe(after => {
+            // Déclarer mise en œuvre une demande qui ne l'est pas romprait la
+            // traçabilité de l'analyse d'impact (§4.8).
+            expect(after.content.map(c => c.implementedAt)).toEqual(dates);
+            done();
+          });
+        });
+    });
+  });
 });
 
 describe('ChangesService (API réelle)', () => {
