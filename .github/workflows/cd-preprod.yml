@@ -95,77 +95,14 @@ jobs:
       - name: Push image
         run: docker push "$IMAGE_PREFIX/${{ matrix.service }}:${{ steps.meta.outputs.tag }}"
 
-  deploy:
-    name: Déploiement préproduction
-    runs-on: ubuntu-latest
-    needs: images
-    timeout-minutes: 30
-    # Sans le secret de connexion, on saute proprement au lieu d'échouer à chaque
-    # push : le dépôt reste utilisable par quelqu'un qui n'a pas accès au cluster.
-    if: github.repository == 'Couldevlop/qualitos'
-    environment:
-      name: preprod
-      url: https://preprod.qualitos.openlabconsulting.com
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-
-      - name: Étiquette d'image
-        id: meta
-        run: echo "tag=main-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
-
-      - name: Vérifier la présence du secret de connexion
-        id: guard
-        run: |
-          if [ -z "${{ secrets.CLUSTER_SSH_KEY }}" ]; then
-            echo "::warning::Secret CLUSTER_SSH_KEY absent — déploiement ignoré."
-            echo "ok=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "ok=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Préparer la clé SSH
-        if: steps.guard.outputs.ok == 'true'
-        run: |
-          mkdir -p ~/.ssh && chmod 700 ~/.ssh
-          printf '%s\n' "${{ secrets.CLUSTER_SSH_KEY }}" > ~/.ssh/id_deploy
-          chmod 600 ~/.ssh/id_deploy
-          # Empreinte epinglee : sans elle, StrictHostKeyChecking=no accepterait
-          # n'importe quel hote se presentant a cette adresse.
-          printf '%s\n' "${{ secrets.CLUSTER_SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
-
-      - name: Transférer les manifestes
-        if: steps.guard.outputs.ok == 'true'
-        run: |
-          # Les fins de ligne sont normalisees a la volee : un script shell en
-          # CRLF echoue sur « bash\r: No such file or directory ».
-          tar -cz infra | ssh -i ~/.ssh/id_deploy -o BatchMode=yes \
-            "${{ secrets.CLUSTER_SSH_USER }}@${{ secrets.CLUSTER_SSH_HOST }}" \
-            'rm -rf /tmp/qos-cd && mkdir -p /tmp/qos-cd && tar -xz -C /tmp/qos-cd \
-             && find /tmp/qos-cd -type f \( -name "*.sh" -o -name "*.yaml" -o -name "*.json" \) \
-                  -exec sed -i "s/\r$//" {} + \
-             && chmod +x /tmp/qos-cd/infra/k8s/deploy.sh /tmp/qos-cd/infra/k8s/deps/render-realm.sh'
-
-      - name: Déployer
-        if: steps.guard.outputs.ok == 'true'
-        run: |
-          ssh -i ~/.ssh/id_deploy -o BatchMode=yes \
-            "${{ secrets.CLUSTER_SSH_USER }}@${{ secrets.CLUSTER_SSH_HOST }}" \
-            "export KUBECONFIG=/etc/rancher/k3s/k3s.yaml && cd /tmp/qos-cd \
-             && ./infra/k8s/deploy.sh preprod '${{ github.event.inputs.image_tag || steps.meta.outputs.tag }}'"
-
-      - name: Vérifier que l'application répond
-        if: steps.guard.outputs.ok == 'true'
-        run: |
-          # Un `helm upgrade --wait` réussi ne prouve que la santé des pods.
-          # On vérifie ici ce que voit réellement un navigateur.
-          for i in $(seq 1 10); do
-            code=$(curl -s -o /dev/null -w '%{http_code}' -L -m 20 \
-              https://preprod.qualitos.openlabconsulting.com/fr/ || true)
-            [ "$code" = "200" ] && echo "application accessible (HTTP $code)" && exit 0
-            sleep 15
-          done
-          echo "::error::L'application ne répond pas après déploiement (dernier code : $code)"
-          exit 1
+# Il n'y a volontairement PAS de job de deploiement ici.
+#
+# Deployer depuis GitHub imposerait d'y stocker une cle d'acces au cluster. Le
+# modele retenu est l'inverse : le cluster TIRE. Un minuteur systemd y surveille
+# la branche `main` et applique lui-meme infra/k8s/deploy.sh — voir
+# infra/k8s/auto-deploy.sh. Aucun secret ne quitte l'infrastructure, et le depot
+# reste utilisable par quiconque sans lui donner prise sur la production.
+#
+# Ce workflow ne fait donc qu'une chose : publier des images scannees, que le
+# cluster viendra chercher. Il n'utilise que le GITHUB_TOKEN fourni
+# automatiquement a chaque execution — rien a stocker.

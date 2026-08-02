@@ -1,0 +1,20 @@
+[Unit]
+Description=QualitOS — déploiement continu tiré depuis le dépôt
+Documentation=file:///var/lib/qualitos/deploy/infra/k8s/auto-deploy.sh
+# Le réseau doit être réellement joignable : le script clone et interroge un
+# registre. `network-online` et non `network`, qui n'attend que la configuration.
+After=network-online.target k3s.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=-/etc/qualitos/deploy.env
+ExecStart=/var/lib/qualitos/deploy/infra/k8s/auto-deploy.sh
+# Le script sait rejouer un déploiement échoué au passage suivant ; on ne le
+# relance donc pas immédiatement, ce qui martèlerait le cluster en cas de panne
+# durable.
+Restart=no
+TimeoutStartSec=1800
+
+[Install]
+WantedBy=multi-user.target

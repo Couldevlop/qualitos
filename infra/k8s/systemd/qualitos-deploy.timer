@@ -1,0 +1,16 @@
+[Unit]
+Description=QualitOS — vérification périodique des nouvelles versions
+
+[Timer]
+# Toutes les deux minutes : assez court pour qu'une arrivée sur `main` se
+# retrouve en préproduction en quelques minutes, assez espacé pour ne pas
+# solliciter le registre inutilement. Le script sort immédiatement quand rien
+# n'a changé, donc un passage à vide ne coûte qu'un `git fetch`.
+OnBootSec=3min
+OnUnitActiveSec=2min
+# Évite que tous les nœuds interrogent le registre à la même seconde.
+RandomizedDelaySec=30s
+AccuracySec=15s
+
+[Install]
+WantedBy=timers.target
