@@ -42,7 +42,18 @@ fi
 cd "$WORKDIR"
 git remote set-url origin "$REPO_URL"
 git fetch --quiet origin "$BRANCH"
-git checkout --quiet -B "$BRANCH" "origin/$BRANCH"
+
+# RÉINITIALISATION DURE, et non un simple checkout. Cette copie est un CACHE, pas
+# un espace de travail : toute modification locale doit être écrasée. Un checkout
+# ordinaire échoue dès qu'un fichier suivi a bougé — ce qui s'est produit après
+# qu'une normalisation de fins de ligne a été appliquée sur place. Le minuteur
+# échouait alors en boucle, toutes les deux minutes, sur « Your local changes
+# would be overwritten », pendant que les images attendaient d'être déployées.
+git checkout --quiet -B "$BRANCH" "origin/$BRANCH" 2>/dev/null || true
+git reset --quiet --hard "origin/$BRANCH"
+# Les fichiers non suivis sont supprimés SAUF l'état de déploiement, qui doit
+# survivre au nettoyage — c'est lui qui évite de redéployer la même version.
+git clean -qfd -e .deployed
 
 SHA="$(git rev-parse --short HEAD)"
 TAG="main-$SHA"
