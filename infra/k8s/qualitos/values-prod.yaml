@@ -117,6 +117,14 @@ services:
       # generation documentaire, NLQ, RAG, audit a blanc — passent par
       # l'inference LOCALE et qu'aucune donnee ne sort du perimetre (SS12.2).
       AI_DEFAULT_PROVIDER: ollama
+      # Validation des jetons de service. SANS ces deux valeurs, l'ai-service
+      # n'a aucun emetteur de reference et refuse TOUT appel en 401 — c'est ce
+      # qui produisait « Passerelle IA indisponible : 401 » sur tous les ecrans
+      # d'IA, alors que l'engine obtenait pourtant un jeton valide.
+      # L'emetteur doit correspondre EXACTEMENT a celui inscrit dans les jetons,
+      # donc l'URL publique sous /auth, et non le service interne.
+      KEYCLOAK_ISSUER: https://qualitos.openlabconsulting.com/auth/realms/qualitos
+      KEYCLOAK_AUDIENCE: qualitos-ai
       QDRANT_URL: http://qdrant.qualitos.svc.cluster.local:6333
       # L'allow-list des hotes IA (garde SSRF, OWASP A10) ne connait que le nom
       # court `ollama` du docker-compose. Sur Kubernetes le service porte un nom
