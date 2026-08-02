@@ -10,7 +10,7 @@
         <!-- Suivre le dernier patch de la ligne 3.5 (règle §18.2.1 : 0 CVE
              Critique/Haute) — 3.5.0 embarquait spring-core 6.2.7 / tomcat 10.1.41 /
              netty 4.1.121, tous porteurs de CVE HIGH/CRITICAL corrigées depuis. -->
-        <version>3.5.14</version>
+        <version>3.5.16</version>
         <relativePath/>
     </parent>
 
@@ -41,23 +41,18 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <!-- Overrides de versions gérées par Spring Boot (§18.2.1) : Boot 3.5.14
-             gère tomcat 10.1.54 / netty 4.1.132, un cran sous les correctifs des
-             CVE 2026-41293/43512/43515 (tomcat, dont bypass d'auth CRITICAL) et
-             2026-42583/42584/42587 (netty). À RETIRER quand Boot les rattrape.
-             netty 4.1.135.Final : corrige en plus CVE-2026-44249 (netty-handler,
-             bypass de règle de sous-réseau IPv6 par masquage incorrect) et
-             CVE-2026-45416 — détectées sur app.jar de api-quality-engine/api-iot-hub. -->
-        <tomcat.version>10.1.55</tomcat.version>
-        <netty.version>4.1.135.Final</netty.version>
-        <!-- Boot 3.5.14 gère spring-kafka 3.3.15 — CVE-2026-41731 (trusted-package
-             trop large dans les header mappers) corrigée en 3.3.16 (on reste sur la
-             ligne 3.3.x, pas de bump majeur 4.0.x). À retirer quand Boot rattrape. -->
-        <spring-kafka.version>3.3.16</spring-kafka.version>
-        <!-- Boot 3.5.14 gère jackson-bom 2.21.2 — CVE-2026-54512/54513 (HIGH,
-             contournement de sécurité dans le data-binding) corrigées en 2.21.4
-             (ligne 2.21.x, pas de bump majeur 3.x). À retirer quand Boot rattrape. -->
-        <jackson-bom.version>2.21.4</jackson-bom.version>
+        <!-- Overrides de versions gérées par Spring Boot (§18.2.1 : 0 CVE
+             Critique/Haute). Boot 3.5.16 a rattrapé tomcat 10.1.55, jackson-bom
+             2.21.4 et spring-kafka 3.3.16 : les surcharges correspondantes ont
+             donc été retirées comme leurs commentaires le prévoyaient. Ne
+             subsistent ici que les lignes où Boot reste en retard.
+
+             netty : Boot 3.5.16 gère 4.1.135.Final, un cran sous les correctifs
+             des CVE 2026-55831/56745 (netty-codec-http, déni de service SPDY),
+             2026-56819 (netty-codec-http2) et 2026-59901 (netty-codec-compression,
+             boucle infinie) — toutes détectées sur app.jar de api-quality-engine
+             et api-iot-hub. À RETIRER quand Boot rattrape. -->
+        <netty.version>4.1.136.Final</netty.version>
         <!-- Dependency versions -->
         <mapstruct.version>1.6.3</mapstruct.version>
         <jjwt.version>0.12.6</jjwt.version>
@@ -72,9 +67,10 @@
              1.84 : corrige CVE-2026-5598 (fuite de clé privée via comparaisons non
              constant-time) — critique pour nos signatures ML-DSA. -->
         <bouncycastle.version>1.84</bouncycastle.version>
-        <!-- Boot 3.5.14 gère pgjdbc 42.7.10 — CVE-2026-42198 corrigée en 42.7.11.
-             À retirer quand Boot rattrape. -->
-        <postgresql.version>42.7.11</postgresql.version>
+        <!-- Boot 3.5.16 gère pgjdbc 42.7.11 — CVE-2026-54291 (client SCAM embarqué
+             par le pilote) corrigée en 42.7.12 ; on prend le dernier patch de la
+             ligne 42.7.x. À retirer quand Boot rattrape. -->
+        <postgresql.version>42.7.13</postgresql.version>
     </properties>
 
     <dependencyManagement>
