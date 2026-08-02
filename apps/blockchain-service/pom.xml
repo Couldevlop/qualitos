@@ -43,6 +43,13 @@
              en 3.25.x → NoClassDefFoundError au démarrage. On force la 4.28.x (compatible
              grpc 1.65.1). -->
         <protobuf-java.version>4.28.3</protobuf-java.version>
+        <!-- fabric-gateway tire Bouncy Castle 1.79, porteur de CVE-2025-14813
+             (CRITICAL). Le pom racine impose déjà 1.84, mais ce module a son
+             PROPRE parent et n'hérite d'aucune de ses surcharges : la version
+             doit donc être répétée ici. C'est exactement le coût de l'autonomie
+             revendiquée par ce module, et la raison pour laquelle ses versions
+             doivent être suivies séparément. -->
+        <bouncycastle.version>1.84</bouncycastle.version>
     </properties>
 
     <dependencies>
@@ -94,6 +101,24 @@
         <dependencies>
             <!-- Importé APRÈS les dépendances pour primer sur le grpc-bom 1.69.0
                  que fabric-gateway importe transitivement. -->
+            <!-- Bouncy Castle aligné : bcpkix et bcutil arrivent aussi en
+                 transitif, les laisser diverger de bcprov provoque des erreurs
+                 de chargement de provider à l'exécution. -->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk18on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcutil-jdk18on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
             <dependency>
                 <groupId>io.grpc</groupId>
                 <artifactId>grpc-bom</artifactId>
