@@ -65,6 +65,10 @@ services:
     # `runAsNonRoot` du chart interdit — le conteneur ne pouvait pas démarrer.
     port: 8080
     runAsUser: 101
+    # L'entrypoint officiel de nginx applique envsubst sur les templates et ECRIT
+    # le resultat dans /etc/nginx/conf.d ; il lui faut aussi ses caches et /tmp.
+    # Avec un rootfs en lecture seule, ces trois chemins doivent etre montes.
+    writableDirs: ["/etc/nginx/conf.d", "/var/cache/nginx", "/tmp"]
     replicas: 2
     healthPath: /
     isSpringBoot: false

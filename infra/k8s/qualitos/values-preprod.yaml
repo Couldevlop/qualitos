@@ -71,6 +71,11 @@ services:
       QOS_DEV_AUTH: "0"
       OLLAMA_BASE_URL: http://ollama.qualitos-preprod.svc.cluster.local:11434
       QDRANT_URL: http://qdrant.qualitos-preprod.svc.cluster.local:6333
+      # L'allow-list des hotes IA (garde SSRF, OWASP A10) ne connait que le nom
+      # court `ollama` du docker-compose. Sur Kubernetes le service porte un nom
+      # pleinement qualifie : sans cette declaration, l'ai-service refuse tout
+      # appel et redemarre en boucle. L'extension est additive.
+      QOS_AI_ALLOWED_HOSTS: ollama.qualitos-preprod.svc.cluster.local
   blockchain-service:
     # Nécessite un réseau Hyperledger Fabric joignable (ADR 0012), absent ici.
     enabled: false

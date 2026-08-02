@@ -93,7 +93,12 @@ public class SecurityConfig {
                 // CORS preflight: doit passer sans token.
                 .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                 // Endpoints publics
-                .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                // /actuator/health/** et non /actuator/health : les sondes Kubernetes interrogent
+                //   les groupes /actuator/health/readiness et /actuator/health/liveness, qui
+                //   sont des SOUS-CHEMINS. Avec le motif exact, elles recevaient 401 et le pod
+                //   ne passait jamais Ready. Le groupe health reste limité aux endpoints exposés
+                //   par management.endpoints (health, info, metrics, prometheus).
+                .requestMatchers("/actuator/health", "/actuator/health/**", "/actuator/info").permitAll()
                 // OpenAPI / Swagger UI (dev)
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 // Gestion des tenants : Super Admin uniquement
