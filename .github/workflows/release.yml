@@ -18,7 +18,11 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_PREFIX: ghcr.io/${{ github.repository_owner }}/qualitos
+  # `github.repository_owner` conserve la casse du compte GitHub (« Couldevlop »),
+  # alors qu'un nom de dépôt d'image DOIT être en minuscules : le build échouait
+  # sur « repository name must be lowercase ». Le défaut n'était jamais apparu
+  # faute de tag de version — ce workflow ne s'était encore jamais exécuté.
+  IMAGE_PREFIX: ghcr.io/couldevlop/qualitos
 
 jobs:
   build:

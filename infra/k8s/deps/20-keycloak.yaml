@@ -50,7 +50,13 @@ spec:
           # ConfigMap produite par render-realm.sh. L'import n'a lieu que si le
           # realm n'existe pas encore : relancer le pod ne réécrase donc pas une
           # configuration modifiée depuis la console.
-          args: ["start", "--optimized=false", "--import-realm"]
+          # Pas de --optimized : ce drapeau n'accepte pas de valeur en Keycloak 25,
+          # et la forme --optimized=false était relayée telle quelle au `kc.sh
+          # build` implicite, qui la rejetait — le conteneur redémarrait en
+          # boucle sur « Unknown option ». Sans le drapeau, Keycloak construit sa
+          # configuration au démarrage : quelques secondes de plus, comportement
+          # correct.
+          args: ["start", "--import-realm"]
           ports:
             - name: http
               containerPort: 8080
