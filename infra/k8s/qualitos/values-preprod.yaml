@@ -114,6 +114,12 @@ services:
       # (260 s), sinon l'engine coupe avant l'ai-service et l'on perd le
       # message d'erreur utile.
       OLLAMA_TIMEOUT_S: "240"
+      # Fournisseur par defaut EXPLICITE. La valeur retombait deja sur ollama
+      # faute de reglage, mais un defaut implicite se deplace sans qu'on le
+      # voie : le poser ici garantit que les cinq capacites LLM — assistant,
+      # generation documentaire, NLQ, RAG, audit a blanc — passent par
+      # l'inference LOCALE et qu'aucune donnee ne sort du perimetre (SS12.2).
+      AI_DEFAULT_PROVIDER: ollama
       QDRANT_URL: http://qdrant.qualitos-preprod.svc.cluster.local:6333
       # L'allow-list des hotes IA (garde SSRF, OWASP A10) ne connait que le nom
       # court `ollama` du docker-compose. Sur Kubernetes le service porte un nom
