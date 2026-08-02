@@ -444,7 +444,7 @@ jobs:
             "qdrant-client>=1.11" \
             "psycopg[binary]>=3.2" \
             "pytest>=8.3" "pytest-cov>=5.0" "pytest-asyncio>=0.24" \
-            "import-linter>=2.0" "ruff>=0.6"
+            "import-linter>=2.0" "ruff>=0.6,<0.7"
 
       - name: Lint (ruff)
         run: python -m ruff check .
