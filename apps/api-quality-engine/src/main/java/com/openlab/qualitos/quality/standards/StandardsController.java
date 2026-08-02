@@ -199,6 +199,10 @@ public class StandardsController {
         if (path.contains("..") || !path.startsWith("standards/templates/")) {
             return ResponseEntity.notFound().build();
         }
+        // Semgrep marque le chemin comme teinté parce qu'il descend d'un @PathVariable ;
+        // en réalité l'appelant ne fournit que des UUID, le chemin vient du référentiel
+        // en base, et les deux gardes ci-dessus le confinent au dossier des modèles.
+        // nosemgrep: java.spring.security.injection.tainted-file-path.tainted-file-path
         ClassPathResource resource = new ClassPathResource(path);
         if (!resource.exists()) {
             return ResponseEntity.notFound().build();

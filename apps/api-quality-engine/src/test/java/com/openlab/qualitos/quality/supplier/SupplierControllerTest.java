@@ -33,6 +33,13 @@ class SupplierControllerTest {
 
     @Autowired MockMvc mockMvc;
     @MockitoBean SupplierService service;
+    /**
+     * Le contrôleur a gagné une seconde dépendance avec la prédiction de risque
+     * fournisseur ; sans ce double, la tranche @WebMvcTest ne peut plus construire
+     * le contexte et TOUS les tests de la classe échouent d'un coup — ce qui masque
+     * la cause réelle derrière vingt erreurs identiques.
+     */
+    @MockitoBean SupplierRiskPredictionService riskPredictionService;
     ObjectMapper om;
 
     static final UUID SUP = UUID.randomUUID();
