@@ -144,6 +144,23 @@ qualitos:
     # relever de concert AI_READ_TIMEOUT_MS et OLLAMA_TIMEOUT_S — aucun code à changer.
     connect-timeout-ms: ${AI_CONNECT_TIMEOUT_MS:5000}
     read-timeout-ms: ${AI_READ_TIMEOUT_MS:260000}
+    # Mode d'authentification des appels engine -> ai-service (ADR 0014).
+    #   dev-claims : en-tete X-Dev-Claims, accepte uniquement si l'ai-service tourne
+    #                avec QOS_DEV_AUTH actif. Defaut, pour ne rien casser en local.
+    #   bearer     : jeton OIDC client_credentials. OBLIGATOIRE des que l'ai-service
+    #                valide reellement les jetons, donc dans tout environnement
+    #                deploye — X-Dev-Claims y est rejete et toutes les fonctions
+    #                d'IA repondent alors 502.
+    # Un mode inconnu fait echouer le demarrage plutot que de retomber sur
+    # dev-claims : une degradation silencieuse rouvrirait la faille que ce mode ferme.
+    auth: ${AI_AUTH_MODE:dev-claims}
+    token-uri: ${AI_TOKEN_URI:}
+    client-id: ${AI_CLIENT_ID:api-quality-engine-ai}
+    client-secret: ${AI_CLIENT_SECRET:}
+    scope: ${AI_SCOPE:}
+    token-refresh-margin-s: ${AI_TOKEN_REFRESH_MARGIN_S:30}
+    token-connect-timeout-ms: ${AI_TOKEN_CONNECT_TIMEOUT_MS:3000}
+    token-read-timeout-ms: ${AI_TOKEN_READ_TIMEOUT_MS:5000}
     # Garde-fous du chemin LLM (OWASP LLM04 — Model DoS), cloisonnés par tenant.
     # Tout est paramétrable par variable d'env, sans toucher au code (§18.2-9).
     guard:

@@ -81,6 +81,14 @@ services:
     replicas: 2
   api-quality-engine:
     replicas: 2
+    # Mode bearer OBLIGATOIRE : l'ai-service valide reellement les jetons, et
+    # rejette X-Dev-Claims. Sans ce reglage, toutes les fonctions d'IA repondent 502.
+    env:
+      AI_AUTH_MODE: bearer
+      AI_TOKEN_URI: https://qualitos.openlabconsulting.com/auth/realms/qualitos/protocol/openid-connect/token
+      AI_CLIENT_ID: api-quality-engine-ai
+    # Second Secret : porte AI_CLIENT_SECRET, renseigne par deploy.sh depuis Keycloak.
+    extraSecretRefs: [qualitos-api-quality-engine-ai]
   api-iot-hub:
     replicas: 1
   ai-service:
