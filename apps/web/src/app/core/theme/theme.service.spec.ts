@@ -1,4 +1,8 @@
 
+// `DOCUMENT` a changé de paquet en Angular 20 : il vient désormais de
+// `@angular/core` et non plus de `@angular/common`. La migration automatique a
+// traité les sources mais pas ce spec, qui utilisait le symbole sans l'importer.
+import { DOCUMENT } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { ThemeService } from './theme.service';

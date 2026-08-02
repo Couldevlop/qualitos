@@ -214,10 +214,10 @@ mat-icon.material-symbols-outlined {
 .mat-mdc-unelevated-button,
 .mat-mdc-raised-button,
 .mat-mdc-icon-button {
-  --mdc-text-button-container-shape: var(--qos-radius-md);
-  --mdc-outlined-button-container-shape: var(--qos-radius-md);
-  --mdc-filled-button-container-shape: var(--qos-radius-md);
-  --mdc-protected-button-container-shape: var(--qos-radius-md);
+  --mat-button-text-container-shape: var(--qos-radius-md);
+  --mat-button-outlined-container-shape: var(--qos-radius-md);
+  --mat-button-filled-container-shape: var(--qos-radius-md);
+  --mat-button-protected-container-shape: var(--qos-radius-md);
   border-radius: var(--qos-radius-md);
   letter-spacing: 0;
   font-weight: var(--qos-fw-medium);
@@ -226,30 +226,30 @@ mat-icon.material-symbols-outlined {
 /* Bouton plein (action primaire) = accent profond, ombre quasi nulle. */
 .mat-mdc-unelevated-button.mat-primary,
 .mat-mdc-raised-button.mat-primary {
-  --mdc-filled-button-container-color: var(--qos-accent-bg);
-  --mdc-filled-button-label-text-color: var(--qos-accent-fg);
-  --mdc-protected-button-container-color: var(--qos-accent-bg);
-  --mdc-protected-button-label-text-color: var(--qos-accent-fg);
+  --mat-button-filled-container-color: var(--qos-accent-bg);
+  --mat-button-filled-label-text-color: var(--qos-accent-fg);
+  --mat-button-protected-container-color: var(--qos-accent-bg);
+  --mat-button-protected-label-text-color: var(--qos-accent-fg);
   box-shadow: var(--qos-shadow-xs) !important;
 
-  &:hover { --mdc-filled-button-container-color: var(--qos-accent-bg-hover); }
+  &:hover { --mat-button-filled-container-color: var(--qos-accent-bg-hover); }
 }
 
 .mat-mdc-outlined-button {
-  --mdc-outlined-button-outline-color: var(--qos-border-default);
-  --mdc-outlined-button-label-text-color: var(--qos-fg-primary);
+  --mat-button-outlined-outline-color: var(--qos-border-default);
+  --mat-button-outlined-label-text-color: var(--qos-fg-primary);
   &:hover { background: var(--qos-bg-hover); }
 }
 
 /* ---- Form fields : outline fin, rayon 10px, focus accent doux. ---- */
 .mat-mdc-form-field {
-  --mdc-outlined-text-field-container-shape: var(--qos-radius-md);
-  --mdc-outlined-text-field-outline-color: var(--qos-border-default);
-  --mdc-outlined-text-field-hover-outline-color: var(--qos-border-strong);
-  --mdc-outlined-text-field-focus-outline-color: var(--qos-accent-bg);
-  --mdc-outlined-text-field-outline-width: 1px;
-  --mdc-outlined-text-field-focus-outline-width: 1.5px;
-  --mdc-outlined-text-field-label-text-color: var(--qos-fg-tertiary);
+  --mat-form-field-outlined-container-shape: var(--qos-radius-md);
+  --mat-form-field-outlined-outline-color: var(--qos-border-default);
+  --mat-form-field-outlined-hover-outline-color: var(--qos-border-strong);
+  --mat-form-field-outlined-focus-outline-color: var(--qos-accent-bg);
+  --mat-form-field-outlined-outline-width: 1px;
+  --mat-form-field-outlined-focus-outline-width: 1.5px;
+  --mat-form-field-outlined-label-text-color: var(--qos-fg-tertiary);
 }
 .mat-mdc-form-field-subscript-wrapper { font-size: var(--qos-fs-xs); }
 
@@ -263,17 +263,17 @@ mat-icon.material-symbols-outlined {
 /* ---- Tabs : indicateur accent profond, libellés sobres. ---- */
 .mat-mdc-tab,
 .mat-mdc-tab-link {
-  --mat-tab-header-active-label-text-color: var(--qos-fg-primary);
-  --mat-tab-header-inactive-label-text-color: var(--qos-fg-tertiary);
-  --mat-tab-header-active-ripple-color: var(--qos-accent-bg-soft);
+  --mat-tab-active-label-text-color: var(--qos-fg-primary);
+  --mat-tab-inactive-label-text-color: var(--qos-fg-tertiary);
+  --mat-tab-active-ripple-color: var(--qos-accent-bg-soft);
   letter-spacing: 0;
   font-weight: var(--qos-fw-medium);
 }
 .mat-mdc-tab-group,
 .mat-mdc-tab-nav-bar {
-  --mdc-tab-indicator-active-indicator-color: var(--qos-accent-bg);
-  --mat-tab-header-active-focus-indicator-color: var(--qos-accent-bg);
-  --mat-tab-header-active-hover-indicator-color: var(--qos-accent-bg);
+  --mat-tab-active-indicator-color: var(--qos-accent-bg);
+  --mat-tab-active-focus-indicator-color: var(--qos-accent-bg);
+  --mat-tab-active-hover-indicator-color: var(--qos-accent-bg);
 }
 
 /* ---- Menus / overlays : rayon 10px, filet + ombre douce. ---- */
@@ -287,38 +287,38 @@ mat-icon.material-symbols-outlined {
 
 /* ---- Chips : rayon pill, fond doux. ---- */
 .mat-mdc-chip {
-  --mdc-chip-container-shape-radius: var(--qos-radius-pill);
-  --mdc-chip-outline-color: var(--qos-border-subtle);
-  --mdc-chip-label-text-color: var(--qos-fg-secondary);
+  --mat-chip-container-shape-radius: var(--qos-radius-pill);
+  --mat-chip-outline-color: var(--qos-border-subtle);
+  --mat-chip-label-text-color: var(--qos-fg-secondary);
 }
 
 /* ---- Tooltip : sobre, sombre, rayon doux. ---- */
 .mat-mdc-tooltip {
-  --mdc-plain-tooltip-container-color: var(--qos-fg-primary);
-  --mdc-plain-tooltip-supporting-text-color: var(--qos-bg-elevated);
-  --mdc-plain-tooltip-container-shape: var(--qos-radius-sm);
-  --mdc-plain-tooltip-supporting-text-size: var(--qos-fs-xs);
+  --mat-tooltip-container-color: var(--qos-fg-primary);
+  --mat-tooltip-supporting-text-color: var(--qos-bg-elevated);
+  --mat-tooltip-container-shape: var(--qos-radius-sm);
+  --mat-tooltip-supporting-text-size: var(--qos-fs-xs);
   letter-spacing: 0;
 }
 
 /* ---- Snackbar : rayon, ombre douce, accents sémantiques via panelClass. ---- */
 .mat-mdc-snack-bar-container {
-  --mdc-snackbar-container-shape: var(--qos-radius-md);
-  --mdc-snackbar-container-color: var(--qos-fg-primary);
-  --mdc-snackbar-supporting-text-color: var(--qos-bg-elevated);
+  --mat-snackbar-container-shape: var(--qos-radius-md);
+  --mat-snackbar-container-color: var(--qos-fg-primary);
+  --mat-snackbar-supporting-text-color: var(--qos-bg-elevated);
   .mdc-snackbar__surface { box-shadow: var(--qos-shadow-lg) !important; }
 
-  &.qos-snack-success { --mdc-snackbar-container-color: var(--qos-success-600); }
-  &.qos-snack-warn    { --mdc-snackbar-container-color: var(--qos-warn-600); }
-  &.qos-snack-danger  { --mdc-snackbar-container-color: var(--qos-danger-600); }
+  &.qos-snack-success { --mat-snackbar-container-color: var(--qos-success-600); }
+  &.qos-snack-warn    { --mat-snackbar-container-color: var(--qos-warn-600); }
+  &.qos-snack-danger  { --mat-snackbar-container-color: var(--qos-danger-600); }
 }
 
 /* ---- Spinner / progress : teinte accent par défaut. ---- */
 .mat-mdc-progress-spinner,
 .mat-mdc-progress-bar {
-  --mdc-circular-progress-active-indicator-color: var(--qos-accent-bg);
-  --mdc-linear-progress-active-indicator-color: var(--qos-accent-bg);
-  --mdc-linear-progress-track-color: var(--qos-bg-sunken);
+  --mat-progress-spinner-active-indicator-color: var(--qos-accent-bg);
+  --mat-progress-bar-active-indicator-color: var(--qos-accent-bg);
+  --mat-progress-bar-track-color: var(--qos-bg-sunken);
 }
 
 /* ---- Paginator : boutons aérés, libellés sobres. ---- */
@@ -329,12 +329,12 @@ mat-icon.material-symbols-outlined {
 }
 
 /* ---- Slide toggle / checkbox / radio : accent profond cohérent. ---- */
-.mat-mdc-slide-toggle { --mdc-switch-selected-track-color: var(--qos-accent-bg); }
+.mat-mdc-slide-toggle { --mat-slide-toggle-selected-track-color: var(--qos-accent-bg); }
 .mat-mdc-checkbox {
-  --mdc-checkbox-selected-icon-color: var(--qos-accent-bg);
-  --mdc-checkbox-selected-hover-icon-color: var(--qos-accent-bg-hover);
+  --mat-checkbox-selected-icon-color: var(--qos-accent-bg);
+  --mat-checkbox-selected-hover-icon-color: var(--qos-accent-bg-hover);
 }
-.mat-mdc-radio-button { --mdc-radio-selected-icon-color: var(--qos-accent-bg); }
+.mat-mdc-radio-button { --mat-radio-selected-icon-color: var(--qos-accent-bg); }
 
 /* ============================================================
  * Layout helpers.
