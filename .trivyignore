@@ -2,81 +2,34 @@
 # CVE Critique/Haute ne franchit la CI ; toute entrée ici doit citer le correctif
 # attendu et une date de revue).
 #
-# Contexte : les images distroless (gcr.io) n'ont pas de gestionnaire de paquets —
-# impossible de patcher nous-mêmes ; on attend le rebuild Google.
-# À la date de revue : re-scanner (docker run aquasec/trivy image <base>) ; si le
-# rebuild est passé, SUPPRIMER l'entrée. Si non, réévaluer et re-time-boxer.
+# HISTORIQUE DU 2026-08-02 — ce fichier comptait six exceptions, dont cinq
+# portaient sur la base gcr.io/distroless/python3-debian12 (krb5, cpython ×3,
+# libssl3). Le re-scan direct des images a montré que l'hypothèse « rebuild amont
+# sous ~2 semaines » ne tenait pas : la base Python accusait deux crans de retard
+# sur cpython et traînait un correctif libssl depuis plus de cinq semaines. Une de
+# ces CVE (CVE-2026-6100, use-after-free de décompression) était de surcroît
+# réellement atteignable via les réponses gzip des fournisseurs LLM — la traiter
+# en exception revenait à accepter un risque, pas à écarter un faux positif.
 #
-# REVUE DU 2026-08-02 — les images de base ont été re-scannées directement ce
-# jour, et TOUTES les entrées ci-dessous sont encore présentes. Constat qu'il faut
-# trancher plutôt que reporter : l'hypothèse « rebuild sous ~2 semaines » écrite
-# ici en juin est démentie. libssl3 attend son correctif depuis plus de cinq
-# semaines et python3.11 accuse maintenant DEUX crans de retard (deb12u6 installé,
-# deb12u8 disponible). La stratégie « attendre Google » ne tient plus pour l'image
-# Python.
-# DETTE OUVERTE : migrer l'ai-service vers une base reconstruite quotidiennement
-# (Chainguard, explicitement autorisée par CLAUDE.md §10.2). Ce n'est pas une
-# retouche de Dockerfile : les wheels compilées du builder bookworm doivent rester
-# ABI-compatibles avec le runtime. À arbitrer avant la prochaine revue.
+# Les trois images Python (ai-service, ai-vision-5s, edge-inference) ont donc été
+# migrées vers une base Chainguard reconstruite quotidiennement. Elles scannent
+# désormais à ZÉRO CVE Critique/Haute, et les cinq exceptions correspondantes ont
+# été SUPPRIMÉES plutôt que reconduites. Il n'en reste qu'une, ci-dessous.
+#
+# Contexte pour l'entrée restante : les images distroless (gcr.io) n'ont pas de
+# gestionnaire de paquets — impossible de patcher nous-mêmes ; on attend le
+# rebuild Google. À la date de revue : re-scanner
+# (docker run aquasec/trivy image <base>) ; si le rebuild est passé, SUPPRIMER
+# l'entrée. Si non, réévaluer — et, comme ci-dessus, envisager le changement de
+# base plutôt qu'une nouvelle reconduction.
 
 # ---------------------------------------------------------------------------
 # distroless/java21-debian12 (api-core, api-quality-engine, api-iot-hub)
 # ---------------------------------------------------------------------------
 # liblcms2 (color management, java.awt) — non utilisé par nos services (pas de
 # traitement d'image côté API). Fix deb12u1 publié, rebuild distroless attendu.
+# Vérifié par scan direct le 2026-08-02 : c'est la SEULE CVE Critique/Haute
+# corrigeable restante sur cette base, dont le rebuild a bien eu lieu par
+# ailleurs (libssl3 y est à jour).
 # Revue : 2026-09-01
 CVE-2026-41254
-
-# ---------------------------------------------------------------------------
-# distroless/python3-debian12 (ai-service) — krb5 1.20.1-2+deb12u4, fix deb12u5
-# ---------------------------------------------------------------------------
-# libgssapi-krb5-2 / libk5crypto3 / libkrb5-3 / libkrb5support0 sont tirés
-# transitivement par la base ; l'ai-service n'authentifie RIEN en Kerberos ni en
-# GSSAPI (OIDC/JWT uniquement). Aucun chemin d'appel n'atteint ce code, et les
-# deux failles sont des dénis de service, pas des exécutions.
-# CVE-2026-40355 : déréférencement de pointeur NULL.
-# CVE-2026-40356 : dépassement d'entier.
-# Revue : 2026-09-01
-CVE-2026-40355
-CVE-2026-40356
-
-# ---------------------------------------------------------------------------
-# distroless/python3-debian12 (ai-service) — cpython 3.11.2-6+deb12u6
-# ---------------------------------------------------------------------------
-# CVE-2025-13836 — http.client, DoS par buffering excessif. L'ai-service sort en
-# httpx ; exposition indirecte limitée (urllib). Fix deb12u7 publié.
-# Revue : 2026-09-01
-CVE-2025-13836
-
-# CVE-2026-4224 — dépassement de pile en parsant un XML à DTD profondément
-# imbriquée. Vérifié le 2026-08-02 : aucun module applicatif de l'ai-service
-# n'importe xml / ElementTree / minidom / lxml — on ne parse que du JSON. Le code
-# vulnérable est présent dans la stdlib mais jamais atteint. Fix deb12u8 publié.
-# Revue : 2026-09-01
-CVE-2026-4224
-
-# CVE-2026-6100 — use-after-free dans la décompression (exécution de code ou
-# divulgation d'information). CELLE-CI N'EST PAS SANS OBJET, et il serait
-# malhonnête de l'écrire : httpx décompresse de façon transparente les réponses
-# gzip/deflate des fournisseurs LLM amont, donc un chemin existe. Le déclenchement
-# suppose un amont hostile ou compromis renvoyant un flux forgé — les fournisseurs
-# sont en liste blanche et joints en TLS. Risque résiduel ASSUMÉ le temps du
-# rebuild, faute de correctif applicable : distroless n'a pas de gestionnaire de
-# paquets. C'est cette entrée, et non les autres, qui motive la dette de migration
-# de base notée en tête de fichier. Fix deb12u8 publié.
-# Revue : 2026-09-01
-CVE-2026-6100
-
-# ---------------------------------------------------------------------------
-# distroless/python3-debian12 (ai-service) — libssl3 de la base debian12.
-# ---------------------------------------------------------------------------
-# OpenSSL PKCS7_verify() — Heap Use-After-Free. Nos services n'appellent PAS
-# PKCS7_verify : crypto Java via BCJSSE/Bouncy Castle (pas libssl système),
-# Python via httpx/ssl (TLS, pas la voie PKCS#7) → exposition pratique nulle.
-# Installé 3.0.19-1~deb12u2, fix 3.0.20-1~deb12u2 publié côté Debian.
-# Le périmètre de cette entrée a RÉTRÉCI : au scan du 2026-08-02, la base
-# java21-debian12 a été rebuildée et ne porte plus que liblcms2 — libssl3 n'y est
-# plus vulnérable. Seule la base python3-debian12 reste en retard, ce qui confirme
-# que c'est bien elle, et elle seule, qui pose problème.
-# Revue : 2026-09-01
-CVE-2026-45447

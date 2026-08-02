@@ -1,13 +1,25 @@
-fastapi==0.115.0
-uvicorn[standard]==0.30.6
-python-multipart==0.0.20
-pydantic==2.9.2
-Pillow==10.4.0
+# Versions figées, remontées le 2026-08-02 lors de la migration de base Python.
+# Les anciens pins traînaient depuis la création du service et portaient des CVE
+# que le SCA remontait à chaque exécution :
+#   - python-jose 3.3.0 → CVE-2024-33663 (CRITICAL, confusion d'algorithme JWT).
+#     C'est cette bibliothèque qui valide les jetons du service : la faille était
+#     sur le chemin d'authentification, pas sur une dépendance dormante.
+#   - Pillow 10.4.0 → treize CVE HIGH sur le décodage d'images, c'est-à-dire
+#     exactement la surface d'attaque du service, qui ne fait que décoder des
+#     images reçues de l'extérieur.
+#   - python-multipart 0.0.20 → CVE-2026-24486 / 42561 / 53539.
+# Toutes les versions ci-dessous ont été vérifiées : elles s'installent en roue
+# binaire sur l'interpréteur du runtime (Python 3.14, base Chainguard).
+fastapi==0.141.1
+uvicorn[standard]==0.52.1
+python-multipart==0.0.32
+pydantic==2.13.4
+Pillow==12.3.0
 python-magic==0.4.27 ; sys_platform != "win32"
 python-magic-bin==0.4.14 ; sys_platform == "win32"
-python-jose[cryptography]==3.3.0
-httpx==0.27.2
-slowapi==0.1.9
+python-jose[cryptography]==3.5.0
+httpx==0.28.1
+slowapi==0.1.10
 
 # --- Optional: real ONNX inference backend ---------------------------------
 # These power `OnnxInferenceBackend`. They are OPTIONAL: when absent, the
