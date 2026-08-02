@@ -50,6 +50,12 @@ case "$ENV" in
   *)       usage ;;
 esac
 
+# Le pipeline de release publie ses images SANS le « v » du tag git
+# (${GITHUB_REF_NAME#v}). On accepte donc les deux ecritures et on normalise :
+# demander « v0.1.1 » pour obtenir un ImagePullBackOff sur un tag inexistant est
+# une perte de temps evitable.
+IMAGE_TAG="${VERSION#v}"
+
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 DEPS="$ROOT/infra/k8s/deps"
 CHART="$ROOT/infra/k8s/qualitos"
@@ -73,7 +79,7 @@ ensure_secret() {
   fi
 }
 
-say "Environnement $ENV — namespace $NS, hôte $HOST, version $VERSION"
+say "Environnement $ENV — namespace $NS, hôte $HOST, images $IMAGE_TAG"
 
 if ! getent hosts "$HOST" >/dev/null 2>&1; then
   echo "  ATTENTION : $HOST ne résout pas depuis cette machine." >&2
@@ -136,7 +142,7 @@ say "6/6 Chart applicatif"
 helm upgrade --install "qualitos-$ENV" "$CHART" \
   --namespace "$NS" \
   --values "$VALUES" \
-  --set "global.imageTag=$VERSION" \
+  --set "global.imageTag=$IMAGE_TAG" \
   --wait --timeout 10m
 
 say "Terminé"
@@ -145,7 +151,7 @@ cat <<EOF
 
 Environnement  : $ENV
 Namespace      : $NS
-Version        : $VERSION
+Version        : $IMAGE_TAG  (tag git $VERSION)
 Application    : https://$HOST
 Keycloak       : https://$HOST/auth
 
