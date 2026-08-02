@@ -261,70 +261,19 @@ jobs:
           google-chrome --version || true
           echo "chrome-path=${{ steps.setup-chrome.outputs.chrome-path }}"
 
-      - name: Detect lockfile state (avant install)
-        id: lockfile
-        shell: bash
-        run: |
-          if git ls-files --error-unmatch apps/web/package-lock.json > /dev/null 2>&1; then
-            echo "tracked=true" >> "$GITHUB_OUTPUT"
-            echo "Lockfile already tracked in git."
-          else
-            echo "tracked=false" >> "$GITHUB_OUTPUT"
-            echo "Lockfile NOT tracked — install will generate it."
-          fi
-
-      - name: Install dependencies
-        # Sortie directe dans le log du step (visible dans l'UI Actions).
-        # Diagnostic prealable (versions + ls) pour eliminer les pistes triviales.
-        run: |
-          echo "==== diag ===="
-          pwd
-          npm --version
-          node --version
-          ls -la
-          test -f package-lock.json && echo "lockfile: present ($(wc -c < package-lock.json) bytes)" || echo "lockfile: ABSENT"
-          echo "==== install ===="
-          # npm install (pas npm ci) : plus permissif, et 'npm ci' fail
-          # mysterieusement en 1s contre le lockfile auto-genere (peer
-          # deps + lockfileVersion 3 ?). Tradeoff : moins deterministe
-          # mais debloque. Cf. tache de suivi #frontend-ci-strict.
-          npm install --no-audit --no-fund --foreground-scripts
-
       # ----------------------------------------------------------------------
-      # Auto-commit du package-lock.json lors du PREMIER run réussi sur develop.
-      # Une fois committé, ce step devient no-op (lockfile.tracked=true).
-      # Cf. CLAUDE.md §14.2 : reproductibilité builds via lockfile committé.
+      # Le verrou npm est COMMITTÉ et fait foi ; la CI ne le régénère plus et ne
+      # pousse plus sur la branche qu'elle teste.
+      #
+      # Le dispositif précédent devait s'exécuter « au premier run seulement »,
+      # mais sa garde était inopérante : le job tourne dans apps/web, si bien que
+      # `git ls-files --error-unmatch apps/web/package-lock.json` cherchait
+      # apps/web/apps/web/package-lock.json et échouait toujours. L'auto-commit
+      # se déclenchait donc à CHAQUE poussée sur develop et main, réécrivant le
+      # verrou à chaque passage — et comme le commit portait [skip ci], l'état
+      # ainsi poussé n'était jamais validé par la CI. C'est ce va-et-vient qui a
+      # fini par produire un verrou que le build d'image refusait.
       # ----------------------------------------------------------------------
-      - name: Commit package-lock.json (first run only)
-        # if: doit etre une expression unique (pas un literal block). Le precedent
-        # `if: |` cassait le parser YAML d'Actions, ce qui produisait un run avec
-        # zero job sur le commit suivant. >- (folded scalar) joint les lignes en
-        # une seule expression evaluable.
-        if: >-
-          steps.lockfile.outputs.tracked == 'false' &&
-          github.event_name == 'push' &&
-          (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main')
-        shell: bash
-        run: |
-          if [ ! -f package-lock.json ]; then
-            echo "No package-lock.json generated, skipping."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package-lock.json
-          if git diff --cached --quiet; then
-            echo "Nothing to commit."
-            exit 0
-          fi
-          BRANCH="${GITHUB_REF#refs/heads/}"
-          # Message single-line (multi-line casserait le block scalar YAML car
-          # les lignes du message ne seraient pas indentees au niveau du script).
-          # [skip ci] dans le message coupe le trigger d'un nouveau run sur ce push.
-          # Anti-loop redondant : aux runs suivants lockfile.tracked=true -> step skip.
-          git commit -m "chore(web): commit CI-generated package-lock.json [skip ci]"
-          git push origin "HEAD:${BRANCH}"
-
       - name: Build (production)
         run: |
           npm run build:prod 2>&1 | tee build.log
@@ -542,7 +491,9 @@ jobs:
           node-version-file: 'apps/web/.nvmrc'
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        # `npm ci` comme partout ailleurs : le job E2E doit s'exécuter contre les
+        # versions exactes livrées, pas contre une résolution recalculée.
+        run: npm ci --no-audit --no-fund
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium

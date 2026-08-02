@@ -2,12 +2,16 @@
 
   <aside class="qos-sidebar" aria-label="Navigation principale" i18n-aria-label="@@shell.nav.aria">
     <div class="qos-sidebar__brand">
-      <span class="qos-sidebar__logo material-symbols-outlined" aria-hidden="true">
-        workspace_premium
-      </span>
+      <!-- Le vrai logo, et non une icone generique de la bibliotheque Material.
+           L'ancienne icone `workspace_premium` posait un second probleme : la
+           police d'icones etant bloquee en production, elle s'affichait sous
+           forme du mot « workspace_premium » en toutes lettres. Une image ne
+           depend d'aucune police. -->
+      <img class="qos-sidebar__logo" src="assets/brand/logo-mark.png"
+           alt="QualitOS" width="36" height="36">
       <div class="qos-sidebar__brand-text" *ngIf="!collapsed">
         <strong>QualitOS</strong>
-        <small>Quality OS</small>
+        <small i18n="@@shell.brand.tagline">Quality Operation System</small>
       </div>
     </div>
 

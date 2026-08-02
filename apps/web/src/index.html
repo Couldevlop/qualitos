@@ -11,9 +11,16 @@
   <meta name="theme-color" content="#1a5fb4">
   <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Material+Symbols+Outlined&display=swap">
+  <!-- Polices EMBARQUEES, plus aucune requete vers Google Fonts. La CSP du
+       cluster impose font-src 'self' : les trois familles etaient bloquees, la
+       typographie retombait sur la police systeme et la police d'ICONES ne se
+       chargeait pas — chaque icone s'affichant alors sous forme de son libelle
+       textuel, ce qui desorganisait le menu et faisait chevaucher les textes.
+       Les embarquer corrige cela sans assouplir aucune regle de securite. -->
+  <!-- Lien simple, PAS de `preload` + `onload` : la CSP impose script-src
+       'self', qui bloque les gestionnaires d'evenements en ligne. La feuille
+       n'aurait jamais ete appliquee et les icones seraient restees en texte. -->
+  <link rel="stylesheet" href="assets/fonts/fonts.css">
   <script>
     // Anti-flash dark : on applique le thème AVANT le rendu Angular.
     (function () {
