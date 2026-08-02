@@ -39,6 +39,20 @@ spec:
       {{- end }}
       securityContext:
         runAsNonRoot: true
+        # UID NUMÉRIQUE indispensable. Nos images déclarent `USER nonroot`, un
+        # NOM ; le kubelet ne sait pas résoudre un nom d'utilisateur dans une
+        # image et refuse alors de démarrer le conteneur avec
+        # « runAsNonRoot and image has non-numeric user » — l'image a beau être
+        # correctement non-root, il ne peut pas le VÉRIFIER. 65532 est l'UID de
+        # `nonroot` aussi bien dans les images distroless (services Java) que
+        # dans les images Chainguard (services Python), ce qui permet une valeur
+        # unique ici.
+        # Surchargeable par service : tous nos conteneurs ne partagent pas le
+        # même UID. Les images Java (distroless) et Python (Chainguard) exposent
+        # `nonroot` en 65532, le frontend nginx non privilégié tourne en 101.
+        runAsUser: {{ $svc.runAsUser | default 65532 }}
+        runAsGroup: {{ $svc.runAsUser | default 65532 }}
+        fsGroup: {{ $svc.runAsUser | default 65532 }}
         seccompProfile:
           type: RuntimeDefault
       containers:

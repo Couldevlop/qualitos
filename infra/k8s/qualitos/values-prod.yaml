@@ -21,10 +21,15 @@
 global:
   imageTag: ""          # posé à l'installation : --set global.imageTag=v0.1.0
   imagePullPolicy: IfNotPresent
-  imagePullSecrets:
-    - name: ghcr
+  # Pas de imagePullSecrets : les paquets GHCR du projet sont publics,
+  # verifie par un tirage anonyme depuis le noeud. En declarer un
+  # inscrirait un jeton dans le cluster sans rien apporter.
   keycloak:
-    url: http://keycloak.qualitos.svc.cluster.local:8080
+    # URL PUBLIQUE : le chart en dérive KEYCLOAK_ISSUER_URI, qui doit
+    # correspondre EXACTEMENT à l'émetteur inscrit dans les jetons. Une URL
+    # interne ici et une publique côté navigateur donneraient deux émetteurs
+    # différents, et toute validation de jeton échouerait en 401.
+    url: https://qualitos.openlabconsulting.com/auth
     realm: qualitos
 
 externalServices:
@@ -45,6 +50,9 @@ ingress:
 
 services:
   web:
+    # Variante non privilégiée de nginx : UID 101, port 8080.
+    port: 8080
+    runAsUser: 101
     replicas: 2
   api-core:
     replicas: 2

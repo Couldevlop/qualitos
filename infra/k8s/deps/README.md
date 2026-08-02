@@ -54,13 +54,28 @@ kubectl -n "$NS" create secret generic qualitos-keycloak \
 export QOS_HOST=preprod.qualitos.openlabconsulting.com
 ./render-realm.sh "$NS"
 
-# 4) Dépendances. Le placeholder d'hôte de Keycloak est substitué à la volée.
+# 4) Dépendances. Le placeholder d'hôte est substitué à la volée.
 kubectl -n "$NS" apply -f 10-postgres.yaml -f 30-qdrant.yaml -f 40-ollama-external.yaml
-sed "s/__KEYCLOAK_HOST__/auth.$QOS_HOST/g" 20-keycloak.yaml | kubectl -n "$NS" apply -f -
+sed "s/__QOS_HOST__/$QOS_HOST/g" 20-keycloak.yaml | kubectl -n "$NS" apply -f -
 
 kubectl -n "$NS" rollout status deploy/postgres --timeout=180s
 kubectl -n "$NS" rollout status deploy/keycloak --timeout=300s
 ```
+
+## Un seul nom d'hôte
+
+Keycloak n'a pas de sous-domaine : il est servi sous **`/auth` du même hôte que
+l'application** (`KC_HTTP_RELATIVE_PATH`). Un seul enregistrement DNS et un seul
+certificat suffisent donc par environnement. L'ingress de Keycloak déclare
+volontairement le chemin sans bloc `tls` : le certificat est demandé par
+l'ingress de l'application et s'applique à toute la connexion TLS, donc à tous
+les chemins de l'hôte.
+
+`global.keycloak.url` des fichiers de valeurs pointe sur cette URL **publique**
+(`https://<hôte>/auth`) et non sur le service interne. Le chart en dérive
+`KEYCLOAK_ISSUER_URI`, qui doit correspondre exactement à l'émetteur inscrit dans
+les jetons : une URL interne côté backend et une URL publique côté navigateur
+donneraient deux émetteurs différents, et toute validation échouerait en 401.
 
 ## Comptes livrés par le realm
 

@@ -60,7 +60,11 @@ services:
   web:
     enabled: true
     image: web
-    port: 80
+    # 8080 et UID 101 : l'image du frontend est la variante NON PRIVILÉGIÉE de
+    # nginx. L'image classique démarrait son maître en root, ce que la politique
+    # `runAsNonRoot` du chart interdit — le conteneur ne pouvait pas démarrer.
+    port: 8080
+    runAsUser: 101
     replicas: 2
     healthPath: /
     isSpringBoot: false

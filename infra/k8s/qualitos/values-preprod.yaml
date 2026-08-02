@@ -12,12 +12,15 @@ global:
   # quelle version tourne. La CI ne publie d'images que sur un tag vX.Y.Z.
   imageTag: ""
   imagePullPolicy: IfNotPresent
-  # Les paquets GHCR sont privés par défaut : sans ce Secret, les pods restent
-  # en ImagePullBackOff. Créé séparément (kubectl create secret docker-registry).
-  imagePullSecrets:
-    - name: ghcr
+  # Pas de imagePullSecrets : les paquets GHCR du projet sont publics,
+  # verifie par un tirage anonyme depuis le noeud. En declarer un
+  # inscrirait un jeton dans le cluster sans rien apporter.
   keycloak:
-    url: http://keycloak.qualitos-preprod.svc.cluster.local:8080
+    # URL PUBLIQUE : le chart en dérive KEYCLOAK_ISSUER_URI, qui doit
+    # correspondre EXACTEMENT à l'émetteur inscrit dans les jetons. Une URL
+    # interne ici et une publique côté navigateur donneraient deux émetteurs
+    # différents, et toute validation de jeton échouerait en 401.
+    url: https://preprod.qualitos.openlabconsulting.com/auth
     realm: qualitos
 
 externalServices:
@@ -42,6 +45,9 @@ ingress:
 # à mesurer une tenue en charge.
 services:
   web:
+    # Variante non privilégiée de nginx : UID 101, port 8080.
+    port: 8080
+    runAsUser: 101
     replicas: 1
   api-core:
     replicas: 1

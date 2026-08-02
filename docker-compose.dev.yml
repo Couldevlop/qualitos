@@ -482,7 +482,10 @@ services:
         http://localhost:8181
         http://localhost:8082
     ports:
-      - "4200:80"
+      # 8080 côté conteneur : l'image du frontend est passée à la variante non
+      # privilégiée de nginx, qui tourne en UID 101 et ne peut pas se lier à un
+      # port inférieur à 1024. Le port exposé au poste de dev reste 4200.
+      - "4200:8080"
     depends_on:
       - api-core
       - api-quality-engine
