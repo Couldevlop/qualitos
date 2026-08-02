@@ -100,6 +100,17 @@ services:
       QOS_ENV: prod
       QOS_DEV_AUTH: "0"
       OLLAMA_BASE_URL: http://ollama.qualitos.svc.cluster.local:11434
+      # Modele SERVI par l'Ollama de l'hote. Sans ce reglage, l'ai-service
+      # retombe sur son defaut `llama3.1:8b`, absent de cette machine : chaque
+      # appel echoue et l'engine le traduit en 502 — c'est la panne observee
+      # sur les ecrans Anomalies et SPC. Lucie-7B est un modele francophone
+      # souverain (OpenLLM-France), coherent avec l'exigence de souverainete.
+      OLLAMA_MODEL: hf.co/OpenLLM-France/Lucie-7B-Instruct-v1.1-gguf:Q4_K_M
+      # Le modele tourne sur CPU : la latence se compte en dizaines de
+      # secondes. Le delai doit rester INFERIEUR au read-timeout de l'engine
+      # (260 s), sinon l'engine coupe avant l'ai-service et l'on perd le
+      # message d'erreur utile.
+      OLLAMA_TIMEOUT_S: "240"
       QDRANT_URL: http://qdrant.qualitos.svc.cluster.local:6333
       # L'allow-list des hotes IA (garde SSRF, OWASP A10) ne connait que le nom
       # court `ollama` du docker-compose. Sur Kubernetes le service porte un nom
