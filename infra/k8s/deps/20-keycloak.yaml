@@ -45,7 +45,12 @@ spec:
       containers:
         - name: keycloak
           image: quay.io/keycloak/keycloak:25.0
-          args: ["start", "--optimized=false"]
+          # --import-realm lit /opt/keycloak/data/import/*.json au démarrage. Le
+          # realm (rôles, clients, comptes de démonstration) est fourni par la
+          # ConfigMap produite par render-realm.sh. L'import n'a lieu que si le
+          # realm n'existe pas encore : relancer le pod ne réécrase donc pas une
+          # configuration modifiée depuis la console.
+          args: ["start", "--optimized=false", "--import-realm"]
           ports:
             - name: http
               containerPort: 8080
@@ -95,9 +100,17 @@ spec:
             initialDelaySeconds: 90
             periodSeconds: 20
             failureThreshold: 6
+          volumeMounts:
+            - name: realm
+              mountPath: /opt/keycloak/data/import
+              readOnly: true
           resources:
             requests: { cpu: 200m, memory: 512Mi }
             limits: { cpu: "1", memory: 1Gi }
+      volumes:
+        - name: realm
+          configMap:
+            name: qualitos-keycloak-realm
 ---
 # Keycloak doit être joignable depuis le NAVIGATEUR (redirection d'authentification),
 # pas seulement depuis les pods : d'où un ingress dédié.

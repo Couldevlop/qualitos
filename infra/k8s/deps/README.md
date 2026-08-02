@@ -46,12 +46,36 @@ kubectl -n "$NS" create secret generic qualitos-keycloak \
   --from-literal=KEYCLOAK_ADMIN=admin \
   --from-literal=KEYCLOAK_ADMIN_PASSWORD="$(openssl rand -base64 24)"
 
-# 3) Dépendances
-kubectl -n "$NS" apply -f 10-postgres.yaml -f 20-keycloak.yaml \
-                        -f 30-qdrant.yaml -f 40-ollama-external.yaml
+# 3) Realm Keycloak (rôles, clients, comptes de démonstration).
+#    À faire AVANT de déployer Keycloak : l'import n'a lieu qu'au premier
+#    démarrage sur une base vide. Le script réécrit les URI de redirection sur le
+#    domaine réel et remplace les mots de passe d'administration ; il les affiche
+#    une seule fois, à consigner immédiatement.
+export QOS_HOST=preprod.qualitos.openlabconsulting.com
+./render-realm.sh "$NS"
+
+# 4) Dépendances. Le placeholder d'hôte de Keycloak est substitué à la volée.
+kubectl -n "$NS" apply -f 10-postgres.yaml -f 30-qdrant.yaml -f 40-ollama-external.yaml
+sed "s/__KEYCLOAK_HOST__/auth.$QOS_HOST/g" 20-keycloak.yaml | kubectl -n "$NS" apply -f -
+
 kubectl -n "$NS" rollout status deploy/postgres --timeout=180s
 kubectl -n "$NS" rollout status deploy/keycloak --timeout=300s
 ```
+
+## Comptes livrés par le realm
+
+| Compte | Rôle | Mot de passe |
+| --- | --- | --- |
+| `superadmin` | `super_admin` | généré au rendu, affiché une fois |
+| `admin` | `admin_tenant` | généré au rendu, affiché une fois |
+| `demo` | `quality_manager`, `user` | `demo` — compte de démonstration assumé |
+
+Le fichier `infra/keycloak/realm-export.json` donne à `superadmin` et `admin` un
+mot de passe égal à leur nom. C'est sans conséquence sur `localhost`, mais ce
+sont des comptes d'administration : sur un domaine public, les laisser tels quels
+reviendrait à publier un accès `super_admin` en clair. `render-realm.sh` les
+remplace donc systématiquement. `demo` est conservé tel quel — c'est sa raison
+d'être, et il ne porte aucun privilège d'administration.
 
 Les Secrets applicatifs référencés par le chart (`qualitos-api-core`,
 `qualitos-api-quality-engine`, `qualitos-api-iot-hub`, `qualitos-ai-service`)
