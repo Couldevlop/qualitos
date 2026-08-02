@@ -219,6 +219,64 @@ describe('KpisService (mock mode)', () => {
       });
     });
   });
+
+  // ---- Replis du mode démo sur identifiant inconnu ---------------------------
+
+  it('retombe sur le premier KPI plutôt que de planter sur une clé inconnue', (done) => {
+    // Repli assumé du mode démo : les écrans restent utilisables sans backend,
+    // quel que soit l'identifiant présent dans l'URL.
+    service.get('kpi-inexistant').subscribe(k => {
+      expect(k).toBeTruthy();
+      expect(k.id).toBeTruthy();
+      done();
+    });
+  });
+
+  it('ne modifie rien quand la mise à jour vise un KPI inconnu', (done) => {
+    service.list().subscribe(before => {
+      const names = before.content.map(k => k.name);
+      service.update('kpi-inexistant', { name: 'usurpé' }).subscribe(() => {
+        service.list().subscribe(after => {
+          expect(after.content.map(k => k.name)).toEqual(names);
+          done();
+        });
+      });
+    });
+  });
+
+  it('ne fait transiter aucun statut quand la cible est inconnue', (done) => {
+    service.list().subscribe(before => {
+      const statuses = before.content.map(k => k.status);
+      service.activate('kpi-inexistant').subscribe(() => {
+        service.list().subscribe(after => {
+          expect(after.content.map(k => k.status)).toEqual(statuses);
+          done();
+        });
+      });
+    });
+  });
+
+  it('ignore la suppression d\'un KPI inconnu', (done) => {
+    service.list().subscribe(before => {
+      const count = before.totalElements;
+      service.delete('kpi-inexistant').subscribe(() => {
+        service.list().subscribe(after => {
+          expect(after.totalElements).toBe(count);
+          done();
+        });
+      });
+    });
+  });
+
+  it('filtre par catégorie, seule ou combinée au statut', (done) => {
+    service.list(0, 50, undefined, 'CAPA').subscribe(byCategory => {
+      expect(byCategory.content.every(k => k.category === 'CAPA')).toBeTrue();
+      service.list(0, 50, 'ACTIVE', 'categorie-absente').subscribe(none => {
+        expect(none.content).toEqual([]);
+        done();
+      });
+    });
+  });
 });
 
 /**

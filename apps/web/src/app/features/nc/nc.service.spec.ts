@@ -176,6 +176,62 @@ describe('NcService (mock mode)', () => {
       });
     });
   });
+
+  // ---- Replis du mode démo sur identifiant inconnu ---------------------------
+
+  /** Statuts du registre avant/après une opération visant une NC inconnue. */
+  function statuses(then: (s: string[]) => void): void {
+    service.listNcs().subscribe(page => then(page.content.map(n => n.status)));
+  }
+
+  it('ne résout aucune NC quand la cible est inconnue', (done) => {
+    statuses(before => {
+      service.resolve('nc-inexistante', { resolutionNote: 'note' }).subscribe(() => {
+        statuses(after => {
+          // Repli assumé du mode démo : l'appel rend une valeur pour que l'écran
+          // reste utilisable, mais il ne doit RIEN modifier au registre.
+          expect(after).toEqual(before);
+          done();
+        });
+      });
+    });
+  });
+
+  it('ne clôt aucune NC quand la cible est inconnue', (done) => {
+    statuses(before => {
+      service.close('nc-inexistante').subscribe(() => {
+        statuses(after => {
+          expect(after).toEqual(before);
+          done();
+        });
+      });
+    });
+  });
+
+  it('n\'annule aucune NC quand la cible est inconnue', (done) => {
+    statuses(before => {
+      service.cancel('nc-inexistante').subscribe(() => {
+        statuses(after => {
+          expect(after).toEqual(before);
+          done();
+        });
+      });
+    });
+  });
+
+  it('n\'escalade en CAPA aucune NC inconnue', (done) => {
+    service.listNcs().subscribe(before => {
+      const linked = before.content.map(n => n.capaCaseId);
+      service.escalateToCapa('nc-inexistante', { severity: 'MAJOR' } as never).subscribe(() => {
+        service.listNcs().subscribe(after => {
+          // Rattacher une CAPA à la mauvaise NC ferait porter une action
+          // corrective sur un défaut qui n'est pas le sien.
+          expect(after.content.map(n => n.capaCaseId)).toEqual(linked);
+          done();
+        });
+      });
+    });
+  });
 });
 
 describe('NcService (offline-first, API réelle)', () => {
