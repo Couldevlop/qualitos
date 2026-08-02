@@ -60,7 +60,17 @@ class AiGatewayClientTest {
             }
             exchange.close();
         });
-        return new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
+        return new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
+    }
+
+    /**
+     * Fournisseur de jeton volontairement INUTILISABLE : ces tests couvrent le mode
+     * dev-claims, dans lequel aucun jeton ne doit être demandé. S'il l'était, la
+     * configuration vide ferait échouer l'appel — exactement le signal voulu, plutôt
+     * qu'un test qui passerait pour de mauvaises raisons.
+     */
+    private AiServiceTokenProvider unusedTokenProvider() {
+        return new AiServiceTokenProvider("", "", "", "", 30, 1000, 1000);
     }
 
     @Test
@@ -98,7 +108,7 @@ class AiGatewayClientTest {
     @Test
     void complete_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
         assertThatThrownBy(() -> c.complete("s", "u", 10))
                 .isInstanceOf(MissingTenantContextException.class);
     }
@@ -129,7 +139,7 @@ class AiGatewayClientTest {
     @Test
     void askNlq_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
         assertThatThrownBy(() -> c.askNlq("q", 10))
                 .isInstanceOf(MissingTenantContextException.class);
     }
@@ -160,7 +170,7 @@ class AiGatewayClientTest {
     @Test
     void detectSpc_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
         assertThatThrownBy(() -> c.detectSpc(List.of(1.0), null, null))
                 .isInstanceOf(MissingTenantContextException.class);
     }
@@ -193,7 +203,7 @@ class AiGatewayClientTest {
     @Test
     void detectAnomaly_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
         assertThatThrownBy(() -> c.detectAnomaly(List.of(List.of(1.0)), null, null, null))
                 .isInstanceOf(MissingTenantContextException.class);
     }
@@ -235,7 +245,7 @@ class AiGatewayClientTest {
     @Test
     void forecastKpi_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
         assertThatThrownBy(() -> c.forecastKpi(List.of(1.0, 2.0, 3.0, 4.0), 10.0, null, null, null))
                 .isInstanceOf(MissingTenantContextException.class);
     }
@@ -267,7 +277,7 @@ class AiGatewayClientTest {
     @Test
     void clusterNc_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
         assertThatThrownBy(() -> c.clusterNc(List.of("a b", "a c"), null, null))
                 .isInstanceOf(MissingTenantContextException.class);
     }
@@ -293,7 +303,7 @@ class AiGatewayClientTest {
     @Test
     void explainAnomaly_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
         assertThatThrownBy(() -> c.explainAnomaly(List.of(List.of(1.0, 2.0)), 0))
                 .isInstanceOf(MissingTenantContextException.class);
     }
@@ -326,7 +336,7 @@ class AiGatewayClientTest {
     @Test
     void analyzeComplaints_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
         assertThatThrownBy(() -> c.analyzeComplaints(List.of("test"), null))
                 .isInstanceOf(MissingTenantContextException.class);
     }
@@ -359,7 +369,7 @@ class AiGatewayClientTest {
     @Test
     void mockAudit_missingTenant_throws() {
         TenantContext.clear();
-        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, newGuard());
+        AiGatewayClient c = new AiGatewayClient("http://localhost:" + port, 2000, 5000, "dev-claims", newGuard(), unusedTokenProvider());
         assertThatThrownBy(() -> c.mockAudit(Map.of("standard_code", "iso-9001"), 1))
                 .isInstanceOf(MissingTenantContextException.class);
     }

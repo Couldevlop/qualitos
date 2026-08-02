@@ -101,6 +101,45 @@
       "bearerOnly": true,
       "publicClient": false,
       "serviceAccountsEnabled": false
+    },
+    {
+      "clientId": "api-quality-engine-ai",
+      "name": "Appels serveur-a-serveur engine -> ai-service",
+      "description": "Client confidentiel client_credentials. Le secret n'est PAS ici : il est genere au deploiement et injecte par variable d'environnement (SS18.2-3).",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "attributes": {
+        "access.token.lifespan": "300"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience-qualitos-ai",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "qualitos-ai",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "qualitos-ai",
+      "name": "ai-service (audience)",
+      "description": "Client bearer-only : represente l'ai-service comme AUDIENCE des jetons de service.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "bearerOnly": true,
+      "publicClient": false,
+      "standardFlowEnabled": false,
+      "serviceAccountsEnabled": false
     }
   ],
   "users": [

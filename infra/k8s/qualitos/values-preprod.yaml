@@ -81,7 +81,17 @@ services:
     env:
       DB_URL: jdbc:postgresql://postgres.qualitos-preprod.svc.cluster.local:5432/qualitos_quality
       AI_SERVICE_URL: http://ai-service.qualitos-preprod.svc.cluster.local:8085
+      # Mode bearer OBLIGATOIRE : l'ai-service valide reellement les jetons ici,
+      # et rejette X-Dev-Claims. Sans ce reglage, toutes les fonctions d'IA
+      # repondent 502 — c'est la panne constatee au premier deploiement.
+      AI_AUTH_MODE: bearer
+      AI_TOKEN_URI: https://preprod.qualitos.openlabconsulting.com/auth/realms/qualitos/protocol/openid-connect/token
+      AI_CLIENT_ID: api-quality-engine-ai
       QUALITOS_KAFKA_ENABLED: "false"
+    # Second Secret : porte AI_CLIENT_SECRET, renseigne par deploy.sh depuis
+    # Keycloak. Separe du premier pour que le secret du client de service ne se
+    # melange pas aux identifiants de base.
+    extraSecretRefs: [qualitos-api-quality-engine-ai]
   api-iot-hub:
     replicas: 1
     env:

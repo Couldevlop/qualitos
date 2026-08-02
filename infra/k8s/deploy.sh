@@ -145,6 +145,40 @@ kubectl -n "$NS" create secret generic qualitos-api-iot-hub \
   --dry-run=client -o yaml | kubectl apply -f - >/dev/null
 echo "  secret qualitos-api-iot-hub : à jour"
 
+# Secret du client de service IA. Il est GÉNÉRÉ PAR KEYCLOAK à l'import du realm ;
+# on le lit ici plutôt que de l'inventer, pour qu'il n'existe qu'à un seul endroit.
+# Sans lui, l'engine ne peut obtenir aucun jeton et toutes les fonctions d'IA
+# répondent 502 — exactement la panne rencontrée au premier déploiement.
+KC_POD="$(kubectl -n "$NS" get pod -l app.kubernetes.io/name=keycloak --field-selector=status.phase=Running -o name | head -1)"
+AI_SECRET=""
+if [ -n "$KC_POD" ]; then
+  KC_ADMIN="$(kubectl -n "$NS" get secret qualitos-keycloak -o jsonpath='{.data.KEYCLOAK_ADMIN}' | base64 -d)"
+  KC_PWD="$(kubectl -n "$NS" get secret qualitos-keycloak -o jsonpath='{.data.KEYCLOAK_ADMIN_PASSWORD}' | base64 -d)"
+  kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh config credentials \
+    --server http://localhost:8080/auth --realm master --user "$KC_ADMIN" --password "$KC_PWD" >/dev/null 2>&1 || true
+  AI_CID="$(kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh get clients -r qualitos \
+    -q clientId=api-quality-engine-ai --fields id --format csv --noquotes 2>/dev/null | tr -d '\r' | head -1)"
+  if [ -n "$AI_CID" ]; then
+    AI_SECRET="$(kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh get "clients/$AI_CID/client-secret" \
+      -r qualitos --fields value --format csv --noquotes 2>/dev/null | tr -d '\r' | head -1)"
+  fi
+fi
+
+if [ -n "$AI_SECRET" ]; then
+  echo "  secret du client IA : récupéré depuis Keycloak"
+else
+  # On NE bascule PAS en dev-claims pour compenser : ce mode laisse n'importe quel
+  # appelant se déclarer porteur de n'importe quel tenant. Mieux vaut une IA
+  # indisponible et un message clair qu'une authentification de façade.
+  echo "  ATTENTION : secret du client IA introuvable — les fonctions d'IA resteront" >&2
+  echo "  indisponibles tant que le realm n'expose pas api-quality-engine-ai." >&2
+fi
+
+kubectl -n "$NS" create secret generic qualitos-api-quality-engine-ai \
+  --from-literal=AI_CLIENT_SECRET="$AI_SECRET" \
+  --dry-run=client -o yaml | kubectl apply -f - >/dev/null
+echo "  secret qualitos-api-quality-engine-ai : à jour"
+
 kubectl -n "$NS" create secret generic qualitos-ai-service \
   --from-literal=NLQ_READONLY_DSN="postgresql://qualitos_nlq_ro:${NLQ_PWD}@postgres:5432/qualitos_quality" \
   --dry-run=client -o yaml | kubectl apply -f - >/dev/null

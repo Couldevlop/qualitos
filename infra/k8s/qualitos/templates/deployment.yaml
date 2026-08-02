@@ -82,11 +82,22 @@ spec:
             - name: {{ $k }}
               value: {{ $v | quote }}
             {{- end }}
-          {{- if $svc.secretRef }}
+          {{- if or $svc.secretRef $svc.extraSecretRefs }}
           envFrom:
             # Secret matérialisé par External Secrets Operator depuis Vault (§18.2.3).
+            {{- if $svc.secretRef }}
             - secretRef:
                 name: {{ $svc.secretRef }}
+            {{- end }}
+            {{- /* Secrets additionnels : permettent de séparer des familles
+                   d'identifiants qui n'ont pas la même origine ni le même cycle de
+                   vie — les mots de passe de base viennent du déploiement, le secret
+                   du client de service vient de Keycloak. Les mélanger obligerait à
+                   régénérer les uns en touchant aux autres. */}}
+            {{- range $svc.extraSecretRefs }}
+            - secretRef:
+                name: {{ . }}
+            {{- end }}
           {{- end }}
           {{- if $svc.isSpringBoot }}
           livenessProbe:

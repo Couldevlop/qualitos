@@ -7,6 +7,7 @@ import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
@@ -36,16 +37,43 @@ public class AiGatewayClient {
     /** Sujet de service (déterministe) porté dans X-Dev-Claims pour l'appel interne. */
     private static final UUID SERVICE_SUBJECT = UUID.fromString("0000000a-0000-0000-0000-000000000a01");
 
+    /**
+     * Mode d'authentification des appels engine → ai-service.
+     *
+     * <p>{@code dev-claims} n'a de sens qu'en développement : l'en-tête déclare le tenant
+     * et les rôles sans preuve, et l'ai-service ne l'accepte que si {@code QOS_DEV_AUTH}
+     * est actif. {@code bearer} est le mode attendu partout ailleurs.
+     */
+    private enum AuthMode { DEV_CLAIMS, BEARER }
+
+    /** Paire en-tête/valeur à poser sur l'appel, selon le mode retenu. */
+    private record AuthHeader(String name, String value) {
+    }
+
     private final RestClient client;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final AiGuard guard;
+    private final AuthMode authMode;
+    private final AiServiceTokenProvider tokenProvider;
 
     public AiGatewayClient(
             @Value("${qualitos.ai.base-url:http://localhost:8085}") String baseUrl,
             @Value("${qualitos.ai.connect-timeout-ms:5000}") int connectTimeoutMs,
             @Value("${qualitos.ai.read-timeout-ms:260000}") int readTimeoutMs,
-            AiGuard guard) {
+            @Value("${qualitos.ai.auth:dev-claims}") String authMode,
+            AiGuard guard,
+            AiServiceTokenProvider tokenProvider) {
         this.guard = guard;
+        this.tokenProvider = tokenProvider;
+        String raw = authMode == null ? "" : authMode.trim().toLowerCase();
+        this.authMode = switch (raw) {
+            case "", "dev-claims" -> AuthMode.DEV_CLAIMS;
+            case "bearer" -> AuthMode.BEARER;
+            // Un mode inconnu ne doit pas se dégrader silencieusement vers dev-claims :
+            // ce serait exactement la faille que ce mode est censé fermer.
+            default -> throw new IllegalArgumentException(
+                    "qualitos.ai.auth invalide : '" + raw + "' (attendu : dev-claims | bearer)");
+        };
         // Timeouts CONFIGURABLES (cf. ADR 0014). Le read-timeout doit rester
         // > OLLAMA_TIMEOUT_S côté ai-service (lui-même > latence du modèle). Pour un
         // modèle plus lent/précis sur CPU (ex. qualitos-sql-lite), relever de concert
@@ -61,7 +89,7 @@ public class AiGatewayClient {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
-        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
         Map<String, Object> body = Map.of(
                 "system_prompt", systemPrompt,
                 "user_prompt", userPrompt,
@@ -74,7 +102,7 @@ public class AiGatewayClient {
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/complete")
-                    .header("X-Dev-Claims", devClaims)
+                    .header(auth.name(), auth.value())
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(body)
                     .retrieve()
@@ -104,7 +132,7 @@ public class AiGatewayClient {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
-        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
         Map<String, Object> body = Map.of("question", question, "max_rows", maxRows);
         AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "nlq",
                 question == null ? 0 : question.length());
@@ -112,7 +140,7 @@ public class AiGatewayClient {
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/nlq/ask")
-                    .header("X-Dev-Claims", devClaims)
+                    .header(auth.name(), auth.value())
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(body)
                     .retrieve()
@@ -143,7 +171,7 @@ public class AiGatewayClient {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
-        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
         // Map.of refuse les valeurs null → construire la map en tenant compte de la baseline.
         Map<String, Object> body = new HashMap<>();
         body.put("values", values);
@@ -159,7 +187,7 @@ public class AiGatewayClient {
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/spc/analyze")
-                    .header("X-Dev-Claims", devClaims)
+                    .header(auth.name(), auth.value())
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(body)
                     .retrieve()
@@ -196,7 +224,7 @@ public class AiGatewayClient {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
-        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
         // Map.of refuse les valeurs null → construire la map en tenant compte des optionnels.
         Map<String, Object> body = new HashMap<>();
         body.put("samples", samples);
@@ -215,7 +243,7 @@ public class AiGatewayClient {
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/anomaly/detect")
-                    .header("X-Dev-Claims", devClaims)
+                    .header(auth.name(), auth.value())
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(body)
                     .retrieve()
@@ -253,7 +281,7 @@ public class AiGatewayClient {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
-        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
         // Map.of refuse les valeurs null → construire la map en tenant compte des optionnels.
         Map<String, Object> body = new HashMap<>();
         body.put("values", values);
@@ -273,7 +301,7 @@ public class AiGatewayClient {
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/predict/kpi")
-                    .header("X-Dev-Claims", devClaims)
+                    .header(auth.name(), auth.value())
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(body)
                     .retrieve()
@@ -303,7 +331,7 @@ public class AiGatewayClient {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
-        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
         Map<String, Object> body = new HashMap<>();
         body.put("samples", samples);
         body.put("index", index);
@@ -313,7 +341,7 @@ public class AiGatewayClient {
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/anomaly/explain")
-                    .header("X-Dev-Claims", devClaims)
+                    .header(auth.name(), auth.value())
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(body)
                     .retrieve()
@@ -344,7 +372,7 @@ public class AiGatewayClient {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
-        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
         Map<String, Object> body = new HashMap<>();
         body.put("texts", texts);
         if (threshold != null) {
@@ -359,7 +387,7 @@ public class AiGatewayClient {
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/predict/nc-clusters")
-                    .header("X-Dev-Claims", devClaims)
+                    .header(auth.name(), auth.value())
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(body)
                     .retrieve()
@@ -390,7 +418,7 @@ public class AiGatewayClient {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
-        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
         Map<String, Object> body = new HashMap<>();
         body.put("texts", texts);
         if (categories != null) {
@@ -402,7 +430,7 @@ public class AiGatewayClient {
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/complaints/analyze")
-                    .header("X-Dev-Claims", devClaims)
+                    .header(auth.name(), auth.value())
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(body)
                     .retrieve()
@@ -434,14 +462,14 @@ public class AiGatewayClient {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
-        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
         AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "mock-audit",
                 clauseCount);
         guard.check(ctx);
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/standards/mock-audit")
-                    .header("X-Dev-Claims", devClaims)
+                    .header(auth.name(), auth.value())
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(body)
                     .retrieve()
@@ -480,7 +508,7 @@ public class AiGatewayClient {
         if (audio == null || audio.length == 0) {
             throw new AiGatewayException("Fichier audio vide");
         }
-        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
         // La taille de l'audio sert de coût pour le quota (garde-fou LLM04) : une heure
         // d'enregistrement ne doit pas passer pour un appel aussi léger qu'un prompt.
         AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "transcribe", audio.length);
@@ -501,7 +529,7 @@ public class AiGatewayClient {
         try {
             Map<String, Object> resp = client.post()
                     .uri(uri)
-                    .header("X-Dev-Claims", devClaims)
+                    .header(auth.name(), auth.value())
                     .contentType(MediaType.MULTIPART_FORM_DATA)
                     .body(body)
                     .retrieve()
@@ -540,14 +568,14 @@ public class AiGatewayClient {
         if (features == null || features.isEmpty()) {
             throw new AiGatewayException("Aucune caractéristique à scorer");
         }
-        String devClaims = devClaims(UUID.fromString(TenantContext.getTenantId()));
+        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
         AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "supplier-risk",
                 features.size());
         guard.check(ctx);
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/predict/supplier-risk")
-                    .header("X-Dev-Claims", devClaims)
+                    .header(auth.name(), auth.value())
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(Map.of("features", features))
                     .retrieve()
@@ -562,6 +590,18 @@ public class AiGatewayClient {
             throw new AiGatewayException(
                     "Passerelle IA indisponible (supplier-risk) : " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * En-tête d'authentification de l'appel, selon le mode configuré. Centralisé ici :
+     * chaque point d'appel posait auparavant {@code X-Dev-Claims} en dur, si bien
+     * qu'aucun n'était utilisable en configuration de production.
+     */
+    private AuthHeader authHeader(UUID tenantId) {
+        return switch (authMode) {
+            case DEV_CLAIMS -> new AuthHeader("X-Dev-Claims", devClaims(tenantId));
+            case BEARER -> new AuthHeader(HttpHeaders.AUTHORIZATION, "Bearer " + tokenProvider.getToken());
+        };
     }
 
     private String devClaims(UUID tenantId) {
