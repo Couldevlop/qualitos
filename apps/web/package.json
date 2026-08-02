@@ -1,6 +1,10 @@
 {
   "name": "qualitos-web",
   "version": "0.1.0",
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0",
+    "npm": ">=10 <12"
+  },
   "description": "QualitOS web frontend (Angular 18 + Material 3)",
   "private": true,
   "scripts": {
