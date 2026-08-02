@@ -17,7 +17,11 @@ global:
   imagePullSecrets:
     - name: ghcr
   keycloak:
-    url: http://keycloak.qualitos-preprod.svc.cluster.local:8080
+    # URL PUBLIQUE : le chart en dérive KEYCLOAK_ISSUER_URI, qui doit
+    # correspondre EXACTEMENT à l'émetteur inscrit dans les jetons. Une URL
+    # interne ici et une publique côté navigateur donneraient deux émetteurs
+    # différents, et toute validation de jeton échouerait en 401.
+    url: https://preprod.qualitos.openlabconsulting.com/auth
     realm: qualitos
 
 externalServices:

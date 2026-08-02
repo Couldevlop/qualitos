@@ -83,8 +83,16 @@ spec:
               value: xforwarded
             - name: KC_HTTP_ENABLED
               value: "true"
+            # URL PUBLIQUE COMPLÈTE, pas un simple nom d'hôte. C'est elle qui
+            # détermine l'émetteur des jetons : avec un nom seul, Keycloak déduit
+            # le schéma et le port de la requête entrante et produisait un
+            # émetteur en http://…:8080, que les backends refusent ensuite.
             - name: KC_HOSTNAME
-              value: __KEYCLOAK_HOST__
+              value: https://__QOS_HOST__
+            # Keycloak est servi sous /auth du MÊME hôte que l'application, pour
+            # n'exiger qu'un seul enregistrement DNS et un seul certificat.
+            - name: KC_HTTP_RELATIVE_PATH
+              value: /auth
             # Expose /health/* et /metrics sur le port 9000, séparé du trafic
             # applicatif — requis depuis Keycloak 25 pour que les sondes
             # répondent sans passer par le port public.
@@ -119,7 +127,8 @@ spec:
             name: qualitos-keycloak-realm
 ---
 # Keycloak doit être joignable depuis le NAVIGATEUR (redirection d'authentification),
-# pas seulement depuis les pods : d'où un ingress dédié.
+# pas seulement depuis les pods. Il est exposé sous /auth de l'hôte applicatif
+# plutôt que sur un sous-domaine : un seul enregistrement DNS, un seul certificat.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -128,18 +137,18 @@ metadata:
     app.kubernetes.io/name: keycloak
     app.kubernetes.io/part-of: qualitos
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: nginx
-  tls:
-    - hosts: [__KEYCLOAK_HOST__]
-      secretName: keycloak-tls
+  # Pas de bloc `tls` ici, volontairement : le certificat de cet hôte est demandé
+  # par l'ingress de l'application, et ingress-nginx l'applique au niveau de la
+  # connexion TLS, donc à tous les chemins de l'hôte. Deux ingress réclamant le
+  # même certificat se disputeraient la même ressource cert-manager.
   rules:
-    - host: __KEYCLOAK_HOST__
+    - host: __QOS_HOST__
       http:
         paths:
-          - path: /
+          - path: /auth
             pathType: Prefix
             backend:
               service:
