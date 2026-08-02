@@ -78,9 +78,16 @@ ENV PYTHONPATH="/app:/deps" \
     QOS_ENV="prod" \
     QOS_LOG_LEVEL="INFO"
 
+# L'utilisateur par défaut de l'image EST déjà nonroot (65532) ; on le déclare
+# malgré tout, pour deux raisons. D'abord parce que le dernier USER explicite du
+# fichier serait sinon le `root` du builder, ce qui est à la fois trompeur à la
+# lecture et signalé comme tel par l'analyse statique. Ensuite parce qu'un
+# changement de défaut en amont ne doit pas pouvoir faire basculer ce conteneur
+# en root sans que rien ne le montre.
+USER nonroot:nonroot
+
 EXPOSE 8085
 
 # L'entrypoint de l'image Chainguard python EST l'interpréteur ; on ne passe que
-# les arguments (pas de shell dans l'image). L'utilisateur par défaut est déjà
-# nonroot (65532) — aucune directive USER n'est nécessaire.
+# les arguments (pas de shell dans l'image).
 CMD ["-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8085"]

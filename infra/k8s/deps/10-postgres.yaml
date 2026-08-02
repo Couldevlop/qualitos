@@ -1,0 +1,151 @@
+# PostgreSQL 17 — instance unique dédiée à QualitOS.
+#
+# Quatre bases : qualitos_core (api-core), qualitos_quality (quality-engine),
+# qualitos_iot (iot-hub) et keycloak. Ce découpage reprend celui du
+# docker-compose de développement, auquel s'ajoute qualitos_iot, attendu par
+# `values.yaml` (IOT_DB_URL) mais absent du compose.
+#
+# Un rôle en LECTURE SEULE (qualitos_nlq_ro) est créé sur qualitos_quality : le
+# NLQ de l'ai-service traduit du langage naturel en SQL et l'exécute. Lui donner
+# le rôle applicatif reviendrait à laisser un modèle écrire dans la base. Le
+# privilège de connexion aux autres bases lui est explicitement retiré.
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-data
+  labels:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/part-of: qualitos
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init
+  labels:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/part-of: qualitos
+data:
+  # Exécuté UNE SEULE FOIS, au tout premier démarrage sur un volume vide
+  # (comportement de docker-entrypoint-initdb.d). Sur un volume déjà initialisé,
+  # ce script est ignoré : toute évolution ultérieure passe par une migration,
+  # pas par une modification de ce fichier.
+  init.sh: |
+    #!/bin/bash
+    set -euo pipefail
+
+    for db in qualitos_core qualitos_quality qualitos_iot keycloak; do
+      echo "Création de la base ${db}…"
+      psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-SQL
+        CREATE DATABASE "${db}";
+        GRANT ALL PRIVILEGES ON DATABASE "${db}" TO "$POSTGRES_USER";
+    SQL
+    done
+
+    echo "Création du rôle lecture seule du NLQ…"
+    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-SQL
+      CREATE ROLE qualitos_nlq_ro LOGIN PASSWORD '${NLQ_RO_PASSWORD}';
+      REVOKE ALL ON DATABASE qualitos_core FROM qualitos_nlq_ro;
+      REVOKE ALL ON DATABASE qualitos_iot  FROM qualitos_nlq_ro;
+      REVOKE ALL ON DATABASE keycloak      FROM qualitos_nlq_ro;
+      GRANT CONNECT ON DATABASE qualitos_quality TO qualitos_nlq_ro;
+    SQL
+
+    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname qualitos_quality <<-SQL
+      GRANT USAGE ON SCHEMA public TO qualitos_nlq_ro;
+      GRANT SELECT ON ALL TABLES IN SCHEMA public TO qualitos_nlq_ro;
+      -- Les tables sont créées par Flyway APRÈS cette initialisation : sans
+      -- privilège par défaut, le rôle ne verrait aucune des tables migrées.
+      ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO qualitos_nlq_ro;
+    SQL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/part-of: qualitos
+spec:
+  selector:
+    app.kubernetes.io/name: postgres
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: postgres
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  labels:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/part-of: qualitos
+spec:
+  replicas: 1
+  strategy:
+    # Un seul volume ReadWriteOnce : deux pods ne peuvent pas coexister. Sans
+    # Recreate, une mise à jour resterait bloquée, le nouveau pod attendant un
+    # volume que l'ancien ne rend pas.
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgres
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: postgres
+        app.kubernetes.io/part-of: qualitos
+    spec:
+      securityContext:
+        fsGroup: 999
+      containers:
+        - name: postgres
+          image: postgres:17-alpine
+          ports:
+            - name: postgres
+              containerPort: 5432
+          envFrom:
+            - secretRef:
+                name: qualitos-postgres
+          env:
+            - name: POSTGRES_DB
+              value: postgres
+            - name: PGDATA
+              # Sous-répertoire imposé : le point de montage d'un volume
+              # local-path n'est pas vide (lost+found selon le système de
+              # fichiers), et initdb refuse un répertoire non vide.
+              value: /var/lib/postgresql/data/pgdata
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+            - name: init
+              mountPath: /docker-entrypoint-initdb.d
+          readinessProbe:
+            exec:
+              command: ["sh", "-c", "pg_isready -U \"$POSTGRES_USER\" -d postgres"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command: ["sh", "-c", "pg_isready -U \"$POSTGRES_USER\" -d postgres"]
+            initialDelaySeconds: 45
+            periodSeconds: 20
+            failureThreshold: 6
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits: { cpu: "1", memory: 1Gi }
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: postgres-data
+        - name: init
+          configMap:
+            name: postgres-init
+            defaultMode: 0755

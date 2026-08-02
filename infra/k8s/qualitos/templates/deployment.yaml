@@ -95,13 +95,12 @@ spec:
               port: http
             initialDelaySeconds: 15
             periodSeconds: 10
+          # Un service non-Spring peut exposer une sonde de PRÉPARATION distincte
+          # de sa sonde de vitalité — l'ai-service a /healthz et /readyz. Sans
+          # `readyPath`, on retombe sur `healthPath`, ce qui reste le comportement
+          # attendu pour un service qui n'en expose qu'une (le frontend).
           readinessProbe:
             httpGet:
-              {{/* Un service non-Spring peut exposer une sonde de PRÉPARATION
-                   distincte de sa sonde de vitalité (l'ai-service a /healthz et
-                   /readyz). Sans `readyPath`, on retombe sur healthPath, ce qui
-                   reste le comportement attendu pour un service qui n'en a qu'une
-                   (le frontend, par exemple). */}}
               path: {{ $svc.readyPath | default $svc.healthPath | default "/health" }}
               port: http
             initialDelaySeconds: 5

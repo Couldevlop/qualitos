@@ -44,6 +44,11 @@ ENV EDGE_BUFFER_PATH=/var/lib/edge-inference/queue.jsonl \
     PYTHONPATH="/app:/deps" \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
+# Déjà l'utilisateur par défaut de l'image ; déclaré explicitement pour que le
+# dernier USER du fichier ne soit pas le `root` du builder, et pour qu'un
+# changement de défaut en amont ne puisse pas faire tourner ce conteneur en root.
+USER nonroot:nonroot
+
 # This image ships the LIBRARY + a self-check entrypoint. The real long-running
 # runtime (MQTT subscriber feeding the orchestrator) is wired per deployment;
 # the default command verifies the package imports and the selected backend.

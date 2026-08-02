@@ -51,8 +51,13 @@ ENV APP_PROFILE=prod \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
+# Déjà l'utilisateur par défaut de l'image ; déclaré explicitement pour que le
+# dernier USER du fichier ne soit pas le `root` du builder, et pour qu'un
+# changement de défaut en amont ne puisse pas faire tourner ce conteneur en root.
+USER nonroot:nonroot
+
 EXPOSE 8090
 
 # L'entrypoint de l'image Chainguard python EST l'interpréteur ; on ne passe que
-# les arguments. L'utilisateur par défaut est déjà nonroot (65532).
+# les arguments.
 CMD ["-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8090"]

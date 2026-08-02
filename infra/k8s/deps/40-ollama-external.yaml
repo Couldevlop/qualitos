@@ -1,0 +1,57 @@
+# Ollama — inférence locale, hébergée SUR L'HÔTE et non dans le cluster.
+#
+# La machine fait déjà tourner un Ollama qui écoute sur 10.42.0.1:11434, adresse
+# de la passerelle du réseau de pods de k3s : les pods l'atteignent donc
+# directement. On publie ici un Service SANS SÉLECTEUR, accompagné de ses
+# Endpoints renseignés à la main, afin que les applications utilisent un nom
+# stable (`ollama.<namespace>.svc.cluster.local`) exactement comme s'il
+# s'agissait d'un service du cluster.
+#
+# Pourquoi ne pas déployer Ollama en pod : les modèles pèsent plusieurs
+# gigaoctets et le disque de la machine est déjà occupé à 80 %. Les dupliquer
+# par environnement saturerait le volume, ce qui a déjà provoqué des incidents
+# sur cet hôte.
+#
+# Point de vigilance : un Service sans sélecteur n'a AUCUN suivi de santé. Si
+# Ollama s'arrête sur l'hôte, les appels échoueront en connexion refusée sans
+# qu'aucun état Kubernetes ne le signale. Et si le CIDR des pods change
+# (réinstallation de k3s), l'adresse ci-dessous doit être corrigée.
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama
+  labels:
+    app.kubernetes.io/name: ollama
+    app.kubernetes.io/part-of: qualitos
+spec:
+  # Pas de `selector` : les Endpoints ci-dessous sont fournis explicitement.
+  ports:
+    - name: http
+      port: 11434
+      targetPort: 11434
+---
+# EndpointSlice et non l'objet Endpoints historique : ce dernier est déprécié
+# depuis Kubernetes 1.33 et ce cluster tourne en 1.35. Le rattachement au Service
+# se fait par l'étiquette `kubernetes.io/service-name`, et non plus par l'égalité
+# des noms.
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: ollama-external
+  labels:
+    kubernetes.io/service-name: ollama
+    app.kubernetes.io/name: ollama
+    app.kubernetes.io/part-of: qualitos
+addressType: IPv4
+ports:
+  - name: http
+    port: 11434
+    protocol: TCP
+endpoints:
+  - addresses:
+      - 10.42.0.1
+    conditions:
+      # Renseigné en dur : aucun contrôleur ne surveille ce point de terminaison,
+      # puisqu'il désigne un processus de l'hôte et non un pod.
+      ready: true

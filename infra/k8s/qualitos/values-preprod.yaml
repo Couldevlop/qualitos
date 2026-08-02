@@ -1,0 +1,73 @@
+# =============================================================================
+# QualitOS — préproduction (namespace qualitos-preprod, cluster k3s mono-nœud).
+# Surcharge values.yaml ; ne redéclare que ce qui diffère.
+#
+#   helm upgrade --install qualitos-preprod infra/k8s/qualitos \
+#     -n qualitos-preprod -f infra/k8s/qualitos/values-preprod.yaml
+# =============================================================================
+
+global:
+  # Le tag est POSÉ À L'INSTALLATION (--set global.imageTag=v0.1.0) et non figé
+  # ici : `latest` sur un registre est une cible mouvante, et l'on veut savoir
+  # quelle version tourne. La CI ne publie d'images que sur un tag vX.Y.Z.
+  imageTag: ""
+  imagePullPolicy: IfNotPresent
+  # Les paquets GHCR sont privés par défaut : sans ce Secret, les pods restent
+  # en ImagePullBackOff. Créé séparément (kubectl create secret docker-registry).
+  imagePullSecrets:
+    - name: ghcr
+  keycloak:
+    url: http://keycloak.qualitos-preprod.svc.cluster.local:8080
+    realm: qualitos
+
+externalServices:
+  postgresHost: postgres.qualitos-preprod.svc.cluster.local
+  qdrantUrl: http://qdrant.qualitos-preprod.svc.cluster.local:6333
+  # Service sans sélecteur pointant vers l'Ollama de l'hôte (cf. infra/k8s/deps).
+  ollamaUrl: http://ollama.qualitos-preprod.svc.cluster.local:11434
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  host: preprod.qualitos.openlabconsulting.com
+  tls:
+    enabled: true
+    secretName: qualitos-preprod-tls
+
+# Un seul réplica partout : la machine héberge déjà six autres projets, et le
+# disque est occupé à 80 %. La préproduction sert à valider un déploiement, pas
+# à mesurer une tenue en charge.
+services:
+  web:
+    replicas: 1
+  api-core:
+    replicas: 1
+    env:
+      DB_URL: jdbc:postgresql://postgres.qualitos-preprod.svc.cluster.local:5432/qualitos_core
+  api-quality-engine:
+    replicas: 1
+    env:
+      DB_URL: jdbc:postgresql://postgres.qualitos-preprod.svc.cluster.local:5432/qualitos_quality
+      AI_SERVICE_URL: http://ai-service.qualitos-preprod.svc.cluster.local:8085
+      QUALITOS_KAFKA_ENABLED: "false"
+  api-iot-hub:
+    replicas: 1
+    env:
+      IOT_DB_URL: jdbc:postgresql://postgres.qualitos-preprod.svc.cluster.local:5432/qualitos_iot
+      QUALITY_ENGINE_BASE_URL: http://api-quality-engine.qualitos-preprod.svc.cluster.local:8082
+  ai-service:
+    replicas: 1
+    env:
+      QOS_ENV: prod
+      QOS_DEV_AUTH: "0"
+      OLLAMA_BASE_URL: http://ollama.qualitos-preprod.svc.cluster.local:11434
+      QDRANT_URL: http://qdrant.qualitos-preprod.svc.cluster.local:6333
+  blockchain-service:
+    # Nécessite un réseau Hyperledger Fabric joignable (ADR 0012), absent ici.
+    enabled: false
+
+autoscaling:
+  enabled: false

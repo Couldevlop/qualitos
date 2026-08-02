@@ -1,0 +1,129 @@
+# Keycloak 25 — fournisseur d'identité (OIDC) de QualitOS.
+#
+# Version alignée sur le docker-compose de développement et sur ce qui tourne
+# déjà ailleurs dans ce cluster, pour ne pas introduire un écart de version
+# entre l'environnement où les realms ont été validés et celui-ci.
+#
+# Démarrage en mode `start` (production) et non `start-dev` : le mode dev
+# désactive la vérification du nom d'hôte et sert en HTTP sans se soucier des
+# en-têtes de proxy, ce qui provoque des boucles de redirection derrière un
+# ingress qui termine le TLS.
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  labels:
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/part-of: qualitos
+spec:
+  selector:
+    app.kubernetes.io/name: keycloak
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  labels:
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/part-of: qualitos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: keycloak
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: keycloak
+        app.kubernetes.io/part-of: qualitos
+    spec:
+      containers:
+        - name: keycloak
+          image: quay.io/keycloak/keycloak:25.0
+          args: ["start", "--optimized=false"]
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: management
+              containerPort: 9000
+          envFrom:
+            - secretRef:
+                name: qualitos-keycloak
+          env:
+            - name: KC_DB
+              value: postgres
+            - name: KC_DB_URL
+              value: jdbc:postgresql://postgres:5432/keycloak
+            - name: KC_DB_USERNAME
+              valueFrom:
+                secretKeyRef: { name: qualitos-postgres, key: POSTGRES_USER }
+            - name: KC_DB_PASSWORD
+              valueFrom:
+                secretKeyRef: { name: qualitos-postgres, key: POSTGRES_PASSWORD }
+            # Le TLS est terminé par l'ingress ; sans ces deux réglages Keycloak
+            # se croit en HTTP et fabrique des URL d'issuer et de redirection en
+            # http://, ce qui casse la découverte OIDC côté navigateur.
+            - name: KC_PROXY_HEADERS
+              value: xforwarded
+            - name: KC_HTTP_ENABLED
+              value: "true"
+            - name: KC_HOSTNAME
+              value: __KEYCLOAK_HOST__
+            # Expose /health/* et /metrics sur le port 9000, séparé du trafic
+            # applicatif — requis depuis Keycloak 25 pour que les sondes
+            # répondent sans passer par le port public.
+            - name: KC_HEALTH_ENABLED
+              value: "true"
+            - name: KC_METRICS_ENABLED
+              value: "true"
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: management
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: management
+            initialDelaySeconds: 90
+            periodSeconds: 20
+            failureThreshold: 6
+          resources:
+            requests: { cpu: 200m, memory: 512Mi }
+            limits: { cpu: "1", memory: 1Gi }
+---
+# Keycloak doit être joignable depuis le NAVIGATEUR (redirection d'authentification),
+# pas seulement depuis les pods : d'où un ingress dédié.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: keycloak
+  labels:
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/part-of: qualitos
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts: [__KEYCLOAK_HOST__]
+      secretName: keycloak-tls
+  rules:
+    - host: __KEYCLOAK_HOST__
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 8080
