@@ -39,7 +39,10 @@ public class SecurityConfig {
             .referrerPolicy(r -> r.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))
             .httpStrictTransportSecurity(hsts -> hsts.maxAgeInSeconds(31536000).includeSubDomains(true)))
         .authorizeHttpRequests(a -> a
-            .requestMatchers(HttpMethod.GET, "/actuator/health", "/actuator/info").permitAll()
+            // Les sondes Kubernetes interrogent /actuator/health/readiness et
+            // /actuator/health/liveness, des SOUS-CHEMINS que le motif exact ne
+            // couvrait pas : elles recevaient 401 et le pod ne passait jamais Ready.
+            .requestMatchers(HttpMethod.GET, "/actuator/health", "/actuator/health/**", "/actuator/info").permitAll()
             .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
             .anyRequest().authenticated())
         .oauth2ResourceServer(o -> o.jwt(j -> {}));

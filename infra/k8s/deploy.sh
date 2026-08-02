@@ -125,13 +125,25 @@ PG_USER="$(kubectl -n "$NS" get secret qualitos-postgres -o jsonpath='{.data.POS
 PG_PWD="$(kubectl -n "$NS" get secret qualitos-postgres -o jsonpath='{.data.POSTGRES_PASSWORD}' | base64 -d)"
 NLQ_PWD="$(kubectl -n "$NS" get secret qualitos-postgres -o jsonpath='{.data.NLQ_RO_PASSWORD}' | base64 -d)"
 
-for svc in api-core api-quality-engine api-iot-hub; do
+for svc in api-core api-quality-engine; do
   kubectl -n "$NS" create secret generic "qualitos-$svc" \
     --from-literal=DB_USER="$PG_USER" \
     --from-literal=DB_PASSWORD="$PG_PWD" \
     --dry-run=client -o yaml | kubectl apply -f - >/dev/null
   echo "  secret qualitos-$svc : à jour"
 done
+
+# api-iot-hub n'utilise PAS les mêmes noms de variables que les deux autres
+# services : IOT_DB_USERNAME / IOT_DB_PASSWORD (cf. son application.yml). Lui
+# fournir DB_USER / DB_PASSWORD ne provoquait aucune erreur visible — le service
+# retombait silencieusement sur ses valeurs par défaut et échouait bien plus loin
+# sur « password authentication failed », ce qui laissait croire à un secret
+# erroné alors que le secret était juste ignoré.
+kubectl -n "$NS" create secret generic qualitos-api-iot-hub \
+  --from-literal=IOT_DB_USERNAME="$PG_USER" \
+  --from-literal=IOT_DB_PASSWORD="$PG_PWD" \
+  --dry-run=client -o yaml | kubectl apply -f - >/dev/null
+echo "  secret qualitos-api-iot-hub : à jour"
 
 kubectl -n "$NS" create secret generic qualitos-ai-service \
   --from-literal=NLQ_READONLY_DSN="postgresql://qualitos_nlq_ro:${NLQ_PWD}@postgres:5432/qualitos_quality" \

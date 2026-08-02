@@ -122,16 +122,27 @@ spec:
           {{- end }}
           resources:
             {{- toYaml ($svc.resources | default dict) | nindent 12 }}
-          {{- if $svc.isSpringBoot }}
+          {{- $writable := $svc.writableDirs | default (ternary (list "/tmp") (list) ($svc.isSpringBoot | default false)) }}
+          {{- if $writable }}
           volumeMounts:
-            # rootfs read-only : /tmp inscriptible requis par la JVM.
-            - name: tmp
-              mountPath: /tmp
+            {{- range $i, $dir := $writable }}
+            - name: writable-{{ $i }}
+              mountPath: {{ $dir }}
+            {{- end }}
           {{- end }}
-      {{- if $svc.isSpringBoot }}
+      {{- if $writable }}
       volumes:
-        - name: tmp
+        {{/* Le rootfs est monté en lecture seule (durcissement OWASP A05). Les
+             quelques répertoires que le conteneur DOIT pouvoir écrire sont
+             déclarés par service : /tmp pour la JVM, et pour nginx la sortie de
+             son entrypoint (envsubst écrit la conf finale) plus ses caches. Sans
+             cette liste, le frontend redémarrait en boucle sur
+             « can't create /etc/nginx/conf.d/default.conf: Read-only file
+             system », un message qui ne pointe pas vers la cause. */}}
+        {{- range $i, $dir := $writable }}
+        - name: writable-{{ $i }}
           emptyDir: {}
+        {{- end }}
       {{- end }}
 {{- end }}
 {{- end }}
