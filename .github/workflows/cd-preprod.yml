@@ -1,0 +1,108 @@
+name: CD préproduction
+
+# Déploiement continu : tout code qui atteint `main` part automatiquement en
+# préproduction, sans intervention.
+#
+# POURQUOI LA PRÉPRODUCTION ET PAS LA PRODUCTION. `main` est la branche
+# d'intégration : y pousser doit produire un environnement observable, pas une
+# mise en production. La promotion en production reste un acte explicite —
+# `./infra/k8s/deploy.sh prod vX.Y.Z` — sur une version DÉJÀ éprouvée ici. C'est
+# ce qui permet de dire, à tout moment, quelle version tourne en production et
+# depuis quand. Pour automatiser aussi la production, il suffit de dupliquer le
+# job `deploy` en visant `prod` ; le script est le même et il est idempotent.
+#
+# Les images sont étiquetées avec le SHA court du commit. Un déploiement continu
+# ne peut pas s'appuyer sur `latest` : deux déploiements successifs seraient
+# indiscernables, et un retour arrière impossible à désigner.
+
+on:
+  push:
+    branches: [main]
+  # Permet de rejouer un déploiement sans nouveau commit (reprise après incident).
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Étiquette d'image à déployer (défaut : construite depuis ce commit)"
+        required: false
+        type: string
+
+concurrency:
+  # Un seul déploiement à la fois : deux `helm upgrade` concurrents sur le même
+  # release se corrompent mutuellement. On ne coupe PAS celui en cours — un
+  # déploiement interrompu laisse le cluster dans un état indéterminé.
+  group: cd-preprod
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+env:
+  IMAGE_PREFIX: ghcr.io/couldevlop/qualitos
+
+jobs:
+  images:
+    name: Images — scan & push (${{ matrix.service }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { service: api-core,           context: ., dockerfile: apps/api-core/Dockerfile }
+          - { service: api-quality-engine, context: ., dockerfile: apps/api-quality-engine/Dockerfile }
+          - { service: api-iot-hub,        context: ., dockerfile: apps/api-iot-hub/Dockerfile }
+          - { service: ai-service,         context: apps/ai-service, dockerfile: apps/ai-service/Dockerfile }
+          - { service: web,                context: apps/web,        dockerfile: apps/web/Dockerfile }
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Étiquette d'image
+        id: meta
+        run: echo "tag=main-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Build image
+        run: >
+          docker build -t "$IMAGE_PREFIX/${{ matrix.service }}:${{ steps.meta.outputs.tag }}"
+          -f ${{ matrix.dockerfile }} ${{ matrix.context }}
+
+      # Règle §18.2.6 : aucun déploiement sans scan vert. Le scan est BLOQUANT,
+      # exactement comme sur la release — un déploiement automatique ne doit pas
+      # être l'occasion de relâcher le contrôle.
+      - name: Trivy scan (bloquant)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ${{ env.IMAGE_PREFIX }}/${{ matrix.service }}:${{ steps.meta.outputs.tag }}
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH
+          trivyignores: .trivyignore
+        env:
+          TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db:2,ghcr.io/aquasecurity/trivy-db:2
+          TRIVY_JAVA_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-java-db:1,ghcr.io/aquasecurity/trivy-java-db:1
+
+      - name: Login GHCR
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image
+        run: docker push "$IMAGE_PREFIX/${{ matrix.service }}:${{ steps.meta.outputs.tag }}"
+
+# Il n'y a volontairement PAS de job de deploiement ici.
+#
+# Deployer depuis GitHub imposerait d'y stocker une cle d'acces au cluster. Le
+# modele retenu est l'inverse : le cluster TIRE. Un minuteur systemd y surveille
+# la branche `main` et applique lui-meme infra/k8s/deploy.sh — voir
+# infra/k8s/auto-deploy.sh. Aucun secret ne quitte l'infrastructure, et le depot
+# reste utilisable par quiconque sans lui donner prise sur la production.
+#
+# Ce workflow ne fait donc qu'une chose : publier des images scannees, que le
+# cluster viendra chercher. Il n'utilise que le GITHUB_TOKEN fourni
+# automatiquement a chaque execution — rien a stocker.

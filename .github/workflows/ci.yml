@@ -274,6 +274,16 @@ jobs:
       # ainsi poussé n'était jamais validé par la CI. C'est ce va-et-vient qui a
       # fini par produire un verrou que le build d'image refusait.
       # ----------------------------------------------------------------------
+      - name: Install dependencies
+        # `npm ci` et non `npm install` : c'est la commande qu'utilise le build
+        # d'image, et la seule qui garantisse une installation identique à celle
+        # livrée. Le verrou est genere avec le npm de node 20 (cf. .nvmrc), donc
+        # `npm ci` passe et l'on obtient le determinisme attendu par §14.2.
+        run: |
+          node --version
+          npm --version
+          npm ci --no-audit --no-fund --foreground-scripts
+
       - name: Build (production)
         run: |
           npm run build:prod 2>&1 | tee build.log
