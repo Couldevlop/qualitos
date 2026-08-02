@@ -1,0 +1,11 @@
+# Normalisation des fins de ligne. Sans cette déclaration, un poste Windows
+# récupère des fichiers en CRLF ; un script shell commençant par `#!/usr/bin/env
+# bash\r` échoue alors avec « bash\r: No such file or directory », et un script
+# embarqué dans un manifeste Kubernetes part en CRLF dans le conteneur.
+* text=auto
+
+*.sh          text eol=lf
+*.yaml        text eol=lf
+*.yml         text eol=lf
+Dockerfile    text eol=lf
+*.bpmn        text eol=lf

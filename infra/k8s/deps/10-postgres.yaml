@@ -40,21 +40,38 @@ data:
     #!/bin/bash
     set -euo pipefail
 
+    # --dbname est EXPLICITE : sans lui, psql se connecte à une base portant le
+    # nom de l'utilisateur. Comme POSTGRES_DB vaut ici `postgres` et non
+    # `qualitos`, cette base n'existe pas et l'initialisation échoue au premier
+    # appel — après qu'initdb a créé le cluster, si bien que le redémarrage
+    # suivant saute l'initialisation et laisse une instance vide sans rien
+    # signaler.
     for db in qualitos_core qualitos_quality qualitos_iot keycloak; do
       echo "Création de la base ${db}…"
-      psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-SQL
+      psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname postgres <<-SQL
         CREATE DATABASE "${db}";
         GRANT ALL PRIVILEGES ON DATABASE "${db}" TO "$POSTGRES_USER";
     SQL
     done
 
     echo "Création du rôle lecture seule du NLQ…"
-    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-SQL
+    # Le retrait doit viser PUBLIC, pas le rôle. PostgreSQL accorde CONNECT à
+    # PUBLIC sur toute base nouvellement créée : révoquer sur le seul rôle ne
+    # retire rien, et le compte du NLQ — qui exécute du SQL produit par un
+    # modèle — pouvait se connecter à qualitos_core, qualitos_iot et keycloak.
+    # On retire donc le droit de PUBLIC puis on le rend explicitement au rôle
+    # applicatif, propriétaire des bases.
+    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname postgres <<-SQL
       CREATE ROLE qualitos_nlq_ro LOGIN PASSWORD '${NLQ_RO_PASSWORD}';
-      REVOKE ALL ON DATABASE qualitos_core FROM qualitos_nlq_ro;
-      REVOKE ALL ON DATABASE qualitos_iot  FROM qualitos_nlq_ro;
-      REVOKE ALL ON DATABASE keycloak      FROM qualitos_nlq_ro;
-      GRANT CONNECT ON DATABASE qualitos_quality TO qualitos_nlq_ro;
+      REVOKE CONNECT ON DATABASE qualitos_core     FROM PUBLIC;
+      REVOKE CONNECT ON DATABASE qualitos_iot      FROM PUBLIC;
+      REVOKE CONNECT ON DATABASE keycloak          FROM PUBLIC;
+      REVOKE CONNECT ON DATABASE qualitos_quality  FROM PUBLIC;
+      GRANT  CONNECT ON DATABASE qualitos_core     TO "$POSTGRES_USER";
+      GRANT  CONNECT ON DATABASE qualitos_iot      TO "$POSTGRES_USER";
+      GRANT  CONNECT ON DATABASE keycloak          TO "$POSTGRES_USER";
+      GRANT  CONNECT ON DATABASE qualitos_quality  TO "$POSTGRES_USER";
+      GRANT  CONNECT ON DATABASE qualitos_quality  TO qualitos_nlq_ro;
     SQL
 
     psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname qualitos_quality <<-SQL
