@@ -506,26 +506,47 @@ describe('ConnectorsHomeComponent', () => {
 
   // ---- Les trois familles se comportent-elles pareil ? -------------------------
 
-  it('explique un refus de chargement, famille par famille, sans vider les autres', () => {
+  it('explique un refus de chargement, famille par famille, sans vider les autres', fakeAsync(() => {
     svc.listEhr.and.returnValue(throwError(() => ({ status: 403 })));
     fixture.detectChanges();
 
+    // Les flux sont paresseux : sans abonnement, aucune requête ne part et
+    // aucune erreur ne peut être observée.
+    let ehrRows: unknown[] = [];
+    let erpRows: unknown[] = [];
+    component.ehr$.subscribe(view => (ehrRows = view.rows));
+    component.erp$.subscribe(view => (erpRows = view.rows));
+
+    let ehrError: string | null = null;
+    let erpError: string | null = null;
+    component.ehrError$.subscribe(m => (ehrError = m));
+    component.erpError$.subscribe(m => (erpError = m));
+    // `deferredView` publie via l'ordonnanceur asynchrone : il faut derouler
+    // le temps avant de lire l'etat.
+    tick();
+
+    expect(ehrError).toBeTruthy();
+    expect(ehrRows).toEqual([]);
     // Une famille en échec ne doit pas emporter les deux autres : chaque onglet
     // a son propre flux et son propre bandeau.
-    expect(component.erpError$).toBeTruthy();
-    let ehrError: string | null = null;
-    component.ehrError$.subscribe(m => (ehrError = m));
-    expect(ehrError).toBeTruthy();
-  });
+    expect(erpError).toBeNull();
+    expect(erpRows.length).toBe(1);
+  }));
 
-  it('explique un refus de chargement des destinations de notification', () => {
+  it('explique un refus de chargement des destinations de notification', fakeAsync(() => {
     svc.listComm.and.returnValue(throwError(() => ({ status: 500 })));
     fixture.detectChanges();
 
+    let commRows: unknown[] = [];
+    component.comm$.subscribe(view => (commRows = view.rows));
+
     let commError: string | null = null;
     component.commError$.subscribe(m => (commError = m));
+    tick();
+
     expect(commError).toBeTruthy();
-  });
+    expect(commRows).toEqual([]);
+  }));
 
   it('ouvre le formulaire FHIR en création et revient à la première page', () => {
     fixture.detectChanges();
@@ -563,7 +584,10 @@ describe('ConnectorsHomeComponent', () => {
   });
 
   it('synchronise une connexion FHIR et recharge la famille', () => {
-    svc.syncEhr.and.returnValue(of({ connectionId: 'h-1', imported: 3, updated: 1, failed: 0 } as never));
+    svc.syncEhr.and.returnValue(of({
+      connectionId: 'h-1', totalFetched: 4, created: 3, skipped: 1, errors: 0,
+      ranAt: '2026-07-01T10:00:00Z', errorMessage: null
+    }));
     fixture.detectChanges();
     const before = svc.listEhr.calls.count();
 
@@ -610,7 +634,10 @@ describe('ConnectorsHomeComponent', () => {
   });
 
   it('supprime une connexion FHIR après confirmation et efface son compte rendu', () => {
-    svc.syncEhr.and.returnValue(of({ connectionId: 'h-1', imported: 1, updated: 0, failed: 0 } as never));
+    svc.syncEhr.and.returnValue(of({
+      connectionId: 'h-1', totalFetched: 1, created: 1, skipped: 0, errors: 0,
+      ranAt: '2026-07-01T10:00:00Z', errorMessage: null
+    }));
     svc.deleteEhr.and.returnValue(of(void 0));
     fixture.detectChanges();
     component.syncEhr(ehr());
@@ -626,7 +653,7 @@ describe('ConnectorsHomeComponent', () => {
   });
 
   it('supprime une destination après confirmation et efface son compte rendu', () => {
-    svc.testComm.and.returnValue(of({ connectionId: 'c-1', success: true }));
+    svc.testComm.and.returnValue(of({ connectionId: 'c-1', success: true, errorMessage: null }));
     svc.deleteComm.and.returnValue(of(void 0));
     fixture.detectChanges();
     component.testComm(comm());
