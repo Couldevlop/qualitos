@@ -31,7 +31,11 @@ dev = [
     "pytest-cov>=5.0",
     "pytest-asyncio>=0.24",
     "import-linter>=2.0",
-    "ruff>=0.6",
+    # Borne HAUTE indispensable : `ruff>=0.6` laissait la CI installer n'importe
+    # quelle version future. Une montée de version a changé les règles par défaut
+    # et fait apparaître 184 erreurs (203 E402, 43 RUF100) sur du code inchangé,
+    # cassant la CI sans qu'aucun commit n'en soit la cause. Un linter se pinne.
+    "ruff>=0.6,<0.7",
 ]
 ml = [
     "FlagEmbedding>=1.2.10",

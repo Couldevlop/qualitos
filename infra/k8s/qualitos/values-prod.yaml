@@ -1,0 +1,73 @@
+# =============================================================================
+# QualitOS — production (namespace qualitos, cluster k3s mono-nœud).
+# Surcharge values.yaml ; ne redéclare que ce qui diffère.
+#
+#   helm upgrade --install qualitos infra/k8s/qualitos \
+#     -n qualitos -f infra/k8s/qualitos/values-prod.yaml \
+#     --set global.imageTag=v0.1.0
+#
+# À N'APPLIQUER QU'APRÈS validation de la préproduction sur le MÊME tag d'image.
+# Promouvoir une version, c'est rejouer ce fichier avec le tag déjà éprouvé, pas
+# reconstruire depuis la branche.
+#
+# LIMITE À CONNAÎTRE : le cluster est mono-nœud. Porter les réplicas à 2 protège
+# d'un plantage de processus et permet une mise à jour sans coupure, mais PAS
+# d'une panne de la machine — il n'y a rien pour reprendre la charge. Tant que
+# c'est le cas, la promesse de disponibilité de CLAUDE.md §2.1 (99,95 %) n'est
+# pas tenue par cette infrastructure, et il serait malhonnête de laisser croire
+# le contraire au seul motif que le namespace s'appelle « prod ».
+# =============================================================================
+
+global:
+  imageTag: ""          # posé à l'installation : --set global.imageTag=v0.1.0
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets:
+    - name: ghcr
+  keycloak:
+    url: http://keycloak.qualitos.svc.cluster.local:8080
+    realm: qualitos
+
+externalServices:
+  postgresHost: postgres.qualitos.svc.cluster.local
+  qdrantUrl: http://qdrant.qualitos.svc.cluster.local:6333
+  ollamaUrl: http://ollama.qualitos.svc.cluster.local:11434
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  host: qualitos.openlabconsulting.com
+  tls:
+    enabled: true
+    secretName: qualitos-tls
+
+services:
+  web:
+    replicas: 2
+  api-core:
+    replicas: 2
+  api-quality-engine:
+    replicas: 2
+  api-iot-hub:
+    replicas: 1
+  ai-service:
+    # Un seul réplica : ce service porte les modèles et le RAG, il est de loin le
+    # plus gourmand en mémoire. Le doubler sur un nœud unique consommerait la
+    # marge sans rien ajouter en tolérance de panne.
+    replicas: 1
+    env:
+      QOS_ENV: prod
+      QOS_DEV_AUTH: "0"
+      OLLAMA_BASE_URL: http://ollama.qualitos.svc.cluster.local:11434
+      QDRANT_URL: http://qdrant.qualitos.svc.cluster.local:6333
+  blockchain-service:
+    # Nécessite un réseau Hyperledger Fabric joignable (ADR 0012), absent ici.
+    enabled: false
+
+autoscaling:
+  # Sans metrics-server actif ni marge sur un nœud unique, un HPA ne ferait
+  # qu'ajouter une source d'instabilité. À réactiver quand le cluster aura
+  # plusieurs nœuds.
+  enabled: false

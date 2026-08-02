@@ -53,6 +53,12 @@ public class JndiLdapClient implements LdapClient {
         return searchOne(config.buildFilter(config.uuidAttribute(), uuid));
     }
 
+    // nosemgrep: java.lang.security.audit.ldap-injection.ldap-injection
+    // Le filtre n'est jamais concaténé à la main : `LdapConfig.buildFilter` passe
+    // systématiquement la valeur par `LdapEscaper.escapeFilterValue` (échappement
+    // RFC 4515). Le seul caractère non échappé ici est le `*` de présence, réinjecté
+    // après coup à partir d'un jeton littéral — aucune donnée externe ne peut le
+    // produire.
     @Override
     public List<LdapUserEntry> searchAll(int firstResult, int maxResults) {
         // Filtre "présence de l'attribut username" = toutes les entrées utilisateur.
@@ -115,6 +121,9 @@ public class JndiLdapClient implements LdapClient {
 
     // ---------------------------------------------------------------------
 
+    // nosemgrep: java.lang.security.audit.ldap-injection.ldap-injection
+    // Filtre construit en amont par `LdapConfig.buildFilter`, qui échappe la valeur
+    // selon la RFC 4515 ; cette méthode ne fait que l'exécuter.
     private Optional<LdapUserEntry> searchOne(String filter) {
         LdapContext ctx = null;
         try {

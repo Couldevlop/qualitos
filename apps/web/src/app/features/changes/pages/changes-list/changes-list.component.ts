@@ -3,22 +3,20 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
 import { catchError, finalize, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ChangesService } from '../../changes.service';
-import {
-  ChangeRequestPriority,
-  ChangeRequestStatus,
-  ChangeRequestType,
-  ChangeResponse
-} from '../../changes.types';
+import { ChangePage, ChangeRequestPriority, ChangeRequestStatus, ChangeRequestType, ChangeResponse } from '../../changes.types';
 import { ChangesCreateDialogComponent } from '../changes-create-dialog/changes-create-dialog.component';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 const MAX_PAGE_SIZE = 100;
+
+/** Page vide emise quand le chargement echoue : vide la table et remet le compteur a zero. */
+const EMPTY_PAGE = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 };
 
 @Component({
   selector: 'qos-changes-list',
@@ -76,13 +74,15 @@ export class ChangesListComponent implements OnInit {
             // eslint-disable-next-line no-console
             console.warn('[changes-list] failed', err?.status, err?.error?.title);
             this.errorState$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
-            return [];
+            // `return []` renverrait un observable VIDE : RxJS convertit le
+            // tableau en source, donc la liste n'emettrait RIEN et la table
+            // garderait les lignes precedentes sous la banniere d'erreur.
+            return of(EMPTY_PAGE as unknown as ChangePage);
           }),
           finalize(() => this.loadingState$.next(false))
         )
       ),
       map(page => {
-        if (Array.isArray(page)) return [];
         this.totalElements = page.totalElements;
         return page.content;
       }),

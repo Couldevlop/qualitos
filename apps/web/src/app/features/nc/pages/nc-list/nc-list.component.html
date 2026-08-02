@@ -44,7 +44,7 @@
     <span>{{ err }}</span>
   </div>
 
-  <mat-card class="table-card" *ngIf="(loading$ | async) === false">
+  <mat-card class="table-card" *ngIf="(loading$ | async) === false && (error$ | async) === null">
     <table mat-table [dataSource]="(ncs$ | async) ?? []" class="t">
       <ng-container matColumnDef="reference">
         <th mat-header-cell *matHeaderCellDef i18n="@@nc.list.col-reference">Référence</th>

@@ -3,6 +3,11 @@
 - **Statut** : Accepté
 - **Date** : 2026-05-26
 - **Owners** : @Couldevlop
+- **Amendé par** : [ADR 0047](./0047-base-python-chainguard.md) — la base n'est
+  plus `gcr.io/distroless/python3-debian12` (non patchable, reconstructions amont
+  en retard) mais Chainguard, reconstruite quotidiennement. Le principe posé ici
+  (pas de venv, `--target=/deps` + `PYTHONPATH`, builder et runtime sur le même
+  interpréteur) reste valable ; seul l'ancrage sur Python 3.11 tombe.
 
 ## Contexte
 

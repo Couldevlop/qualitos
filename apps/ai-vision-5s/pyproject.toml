@@ -12,16 +12,21 @@ requires-python = ">=3.11"
 # Real ONNX Runtime inference backend. Optional: without it the service falls
 # back to the deterministic stub (lazy/guarded imports in
 # app.infrastructure.onnx_backend). Pillow/numpy already ship as core deps.
+# Versions remontées le 2026-08-02 avec la migration de base (Python 3.14) :
+# ni onnxruntime 1.19.2 ni numpy 1.x ne publient de roue pour cette mineure, si
+# bien que l'extra était devenu INSTALLABLE NULLE PART. Le défaut restait invisible
+# tant qu'on ne construisait pas avec l'extra — d'où la correction ici plutôt qu'à
+# la première tentative de build ONNX.
 onnx = [
-    "onnxruntime==1.19.2",
-    "numpy>=1.26,<2",
+    "onnxruntime==1.28.0",
+    "numpy>=2.3,<3",
 ]
 # Building/exporting the 5S ONNX graph (scripts/export_5s_model.py) additionally
 # needs the `onnx` package (graph authoring + checker). It is NOT required to run
 # inference (onnxruntime alone loads the committed .onnx).
 onnx-export = [
-    "onnx==1.17.0",
-    "numpy>=1.26,<2",
+    "onnx==1.22.0",
+    "numpy>=2.3,<3",
 ]
 
 [tool.pytest.ini_options]

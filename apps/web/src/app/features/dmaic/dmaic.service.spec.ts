@@ -276,6 +276,61 @@ describe('DmaicService (mode démo hors-ligne)', () => {
     expect(service.listMeasures('inconnu')).toEqual([]);
     expect(service.listAssignments('inconnu')).toEqual([]);
   });
+
+  // ---- Replis du mode démo sur identifiant inconnu ---------------------------
+
+  it('ne modifie aucun projet quand la mise à jour vise une clé inconnue', (done) => {
+    service.listProjects().subscribe(before => {
+      const titles = before.content.map(p => p.title);
+      service.updateProject('dmaic-inexistant', { title: 'usurpé' }).subscribe(() => {
+        service.listProjects().subscribe(after => {
+          // Repli assumé du mode démo : l'appel rend une valeur pour que l'écran
+          // reste utilisable, mais il ne doit RIEN modifier au registre.
+          expect(after.content.map(p => p.title)).toEqual(titles);
+          done();
+        });
+      });
+    });
+  });
+
+  it('ne fait avancer aucun projet inconnu dans le cycle DMAIC', (done) => {
+    service.listProjects().subscribe(before => {
+      const phases = before.content.map(p => p.phase);
+      service.advance('dmaic-inexistant').subscribe(() => {
+        service.listProjects().subscribe(after => {
+          // Franchir une phase DMAIC sur le mauvais projet ferait sauter une
+          // étape de vérification sur un projet qui ne l'a pas passée.
+          expect(after.content.map(p => p.phase)).toEqual(phases);
+          done();
+        });
+      });
+    });
+  });
+
+  it('ne suspend aucun projet inconnu', (done) => {
+    service.listProjects().subscribe(before => {
+      const statuses = before.content.map(p => p.status);
+      service.hold('dmaic-inexistant').subscribe(() => {
+        service.listProjects().subscribe(after => {
+          expect(after.content.map(p => p.status)).toEqual(statuses);
+          done();
+        });
+      });
+    });
+  });
+
+  it('ne modifie aucun dispositif quand l\'assignation visée est inconnue', (done) => {
+    service.listProjects().subscribe(page => {
+      const projectId = page.content[0].id;
+      const before = service.listAssignments(projectId).map(a => a.status);
+
+      service.updateAssignment(projectId, 'assignation-inconnue', { status: 'VERIFIED' })
+        .subscribe(() => {
+          expect(service.listAssignments(projectId).map(a => a.status)).toEqual(before);
+          done();
+        });
+    });
+  });
 });
 
 describe('DmaicService (API réelle)', () => {

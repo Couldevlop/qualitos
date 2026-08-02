@@ -3,17 +3,20 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
 import { catchError, finalize, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { IshikawaService } from '../../ishikawa.service';
-import { IshikawaDiagramResponse, IshikawaStatus } from '../../ishikawa.types';
+import { IshikawaDiagramResponse, IshikawaPage, IshikawaStatus } from '../../ishikawa.types';
 import { IshikawaCreateDialogComponent } from '../ishikawa-create-dialog/ishikawa-create-dialog.component';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 const MAX_PAGE_SIZE = 100;
+
+/** Page vide emise quand le chargement echoue : vide la table et remet le compteur a zero. */
+const EMPTY_PAGE = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 };
 
 @Component({
   selector: 'qos-ishikawa-list',
@@ -38,7 +41,9 @@ export class IshikawaListComponent implements OnInit {
   private readonly errorState$ = new BehaviorSubject<string | null>(null);
   readonly error$ = deferredView(this.errorState$);
 
-  private readonly refresh$ = new BehaviorSubject<void>(undefined);
+  // `page$` amorce a lui seul le combineLatest et rejoue a chaque rechargement
+  // voulu : un second sujet << refresh >> ferait partir DEUX requetes pour une
+  // creation (course entre les deux reponses, la plus ancienne pouvant gagner).
   private readonly page$ = new BehaviorSubject<{ index: number; size: number }>({ index: 0, size: 20 });
 
   constructor(
@@ -50,8 +55,7 @@ export class IshikawaListComponent implements OnInit {
   ngOnInit(): void {
     this.diagrams$ = combineLatest([
       this.statusFilter.valueChanges.pipe(startWith(this.statusFilter.value)),
-      this.page$,
-      this.refresh$
+      this.page$
     ]).pipe(
       tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
       switchMap(([status, p]) =>
@@ -60,13 +64,16 @@ export class IshikawaListComponent implements OnInit {
             // eslint-disable-next-line no-console
             console.warn('[ishikawa-list] listDiagrams failed', err?.status, err?.error?.title);
             this.errorState$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
-            return [];
+            // `return []` renverrait un observable VIDE : RxJS convertit le tableau
+          // en source, donc la liste n'emettrait RIEN et la table garderait les
+          // lignes precedentes a cote de la banniere d'erreur. On emet une page
+          // vide explicite, ce qui vide la table ET remet le compteur a zero.
+          return of(EMPTY_PAGE as IshikawaPage);
           }),
           finalize(() => this.loadingState$.next(false))
         )
       ),
       map(page => {
-        if (Array.isArray(page)) return [];
         this.totalElements = page.totalElements;
         return page.content;
       }),
@@ -90,7 +97,6 @@ export class IshikawaListComponent implements OnInit {
       if (created) {
         this.pageIndex = 0;
         this.page$.next({ index: 0, size: this.pageSize });
-        this.refresh$.next();
       }
     });
   }

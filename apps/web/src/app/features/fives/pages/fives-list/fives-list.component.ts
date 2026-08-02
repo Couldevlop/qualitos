@@ -10,11 +10,14 @@ import type { EChartsCoreOption } from 'echarts/core';
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { FivesService } from '../../fives.service';
-import { FiveSAuditResponse, FiveSAuditStatus } from '../../fives.types';
+import { FiveSAuditResponse, FiveSAuditStatus, FiveSPage } from '../../fives.types';
 import { FivesCreateDialogComponent } from '../fives-create-dialog/fives-create-dialog.component';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 const MAX_PAGE_SIZE = 100;
+
+/** Page vide emise quand le chargement echoue : vide la table et remet le compteur a zero. */
+const EMPTY_PAGE = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 };
 
 @Component({
   selector: 'qos-fives-list',
@@ -64,13 +67,15 @@ export class FivesListComponent implements OnInit {
             // eslint-disable-next-line no-console
             console.warn('[fives-list] listAudits failed', err?.status, err?.error?.title);
             this.errorState$.next(safeErrorMessage(err, $localize`:@@common.error-loading:Erreur lors du chargement.`));
-            return [];
+            // `return []` renverrait un observable VIDE : RxJS convertit le
+            // tableau en source, donc la liste n'emettrait RIEN et la table
+            // garderait les lignes precedentes sous la banniere d'erreur.
+            return of(EMPTY_PAGE as unknown as FiveSPage);
           }),
           finalize(() => this.loadingState$.next(false))
         )
       ),
       map(page => {
-        if (Array.isArray(page)) return [];
         this.totalElements = page.totalElements;
         return page.content;
       }),

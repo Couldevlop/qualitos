@@ -1,0 +1,25 @@
+# Le Dockerfile fait `COPY . /app`. Sans ce fichier, une construction depuis un
+# poste de dev embarquait le virtualenv complet, les caches et la suite de tests
+# dans l'image de PRODUCTION — plusieurs centaines de Mo, du code de test livré,
+# et surtout un second jeu de dépendances (celui du .venv) que Trivy scanne et
+# qui n'a rien à voir avec ce que le builder a installé. La CI ne le voyait pas
+# (checkout propre), donc l'image locale et l'image CI divergeaient en silence.
+
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.import_linter_cache/
+.coverage
+.coverage.*
+htmlcov/
+*.egg-info/
+
+# Le code de test n'a rien à faire dans l'image de production.
+tests/
+
+# Fichiers d'outillage sans usage à l'exécution.
+Dockerfile
+.dockerignore

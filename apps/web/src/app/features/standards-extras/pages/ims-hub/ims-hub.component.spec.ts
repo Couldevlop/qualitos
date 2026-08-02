@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 
 import { AuthService, AuthUser } from '../../../../core/auth/auth.service';
 import { SharedModule } from '../../../../shared/shared.module';
@@ -265,4 +265,243 @@ describe('ImsHubComponent', () => {
     expect(component.canAnchor).toBeFalse();
     expect(component.canRunAudit).toBeTrue();
   });
+
+  // ---- Résilience aux refus du serveur ----------------------------------------
+
+  it('reste utilisable sur les normes adoptées quand le catalogue est refusé', async () => {
+    // Le sélecteur n'est qu'un confort : son échec ne doit pas emporter la
+    // matrice, qui retombe sur le comportement serveur par défaut.
+    svc.selectableStandards.and.returnValue(throwError(() => ({ status: 403 })));
+    await build();
+    fixture.detectChanges();
+
+    expect(component.standards).toEqual([]);
+    expect(component.coverage).not.toBeNull();
+  });
+
+  it('signale l\'échec de chargement des normes adoptées', async () => {
+    svc.adoptions.and.returnValue(throwError(() => ({ status: 500 })));
+    await build();
+    fixture.detectChanges();
+
+    expect(component.adoptions).toEqual([]);
+    expect(await firstError(component.auditError$)).toContain('Erreur serveur');
+  });
+
+  it('vide l\'historique et l\'explique quand son chargement échoue', async () => {
+    await build();
+    fixture.detectChanges();
+    expect(component.history.length).toBe(1);
+
+    svc.mockAuditHistory.and.returnValue(throwError(() => ({ status: 500 })));
+    component.loadHistory();
+
+    expect(component.history).toEqual([]);
+    expect(await firstError(component.auditError$)).toBeTruthy();
+  });
+
+  it('n\'interroge pas l\'historique sans norme adoptée sélectionnée', async () => {
+    svc.adoptions.and.returnValue(of([]));
+    await build();
+    fixture.detectChanges();
+    svc.mockAuditHistory.calls.reset();
+
+    component.loadHistory();
+
+    expect(svc.mockAuditHistory).not.toHaveBeenCalled();
+    expect(component.history).toEqual([]);
+  });
+
+  it('vide la liste des événements et l\'explique quand elle échoue', async () => {
+    svc.recentAuditEvents.and.returnValue(throwError(() => ({ status: 500 })));
+    await build();
+    fixture.detectChanges();
+
+    expect(component.events).toEqual([]);
+    expect(await firstError(component.anchorError$)).toBeTruthy();
+  });
+
+  it('signale l\'échec du lot d\'ancrage sans effacer le résultat précédent', async () => {
+    await build();
+    fixture.detectChanges();
+    svc.anchorBatch.and.returnValue(throwError(() => ({ status: 503 })));
+
+    component.runAnchoring();
+
+    expect(component.anchoring).toBeFalse();
+    expect(await firstError(component.anchorError$)).toBeTruthy();
+  });
+
+  it('efface la vérification précédente quand une nouvelle échoue', async () => {
+    await build();
+    fixture.detectChanges();
+    component.hashControl.setValue('a'.repeat(64));
+    component.verifyHash();
+    expect(component.verification).not.toBeNull();
+
+    svc.verifyAnchor.and.returnValue(throwError(() => ({ status: 500 })));
+    component.verifyHash();
+
+    // Laisser à l'écran un « intégrité confirmée » périmé après un échec serait
+    // une affirmation d'intégrité non vérifiée.
+    expect(component.verification).toBeNull();
+    expect(await firstError(component.anchorError$)).toBeTruthy();
+  });
+
+  it('n\'exécute pas deux audits en parallèle', async () => {
+    await build();
+    fixture.detectChanges();
+    component.running = true;
+    svc.runMockAudit.calls.reset();
+
+    component.runAudit();
+
+    expect(svc.runMockAudit).not.toHaveBeenCalled();
+  });
+
+  it('n\'exécute pas d\'audit sans norme adoptée sélectionnée', async () => {
+    svc.adoptions.and.returnValue(of([]));
+    await build();
+    fixture.detectChanges();
+    svc.runMockAudit.calls.reset();
+
+    component.runAudit();
+
+    expect(svc.runMockAudit).not.toHaveBeenCalled();
+  });
+
+  it('rend un message générique pour un échec d\'audit qui n\'est pas un conflit', async () => {
+    await build();
+    fixture.detectChanges();
+    svc.runMockAudit.and.returnValue(throwError(() => ({ status: 500 })));
+
+    component.runAudit();
+
+    const message = await firstError(component.auditError$);
+    expect(message).toBeTruthy();
+    expect(message).not.toContain('aucune clause exploitable');
+  });
+
+  // ---- Libellés et tonalités ---------------------------------------------------
+
+  it('nomme et colore chaque relation de couverture', async () => {
+    await build();
+
+    expect(component.relationLabel('EQUIVALENT')).toContain('Équivalente');
+    expect(component.relationLabel('COVERS')).toContain('Couvre');
+    expect(component.relationLabel('RELATED')).toContain('Liée');
+    expect(component.relationLabel('REFERENCES')).toContain('Cite');
+
+    // La tonalité hiérarchise : une équivalence vaut mieux qu'une simple
+    // citation, et l'utilisateur doit le voir sans lire le libellé.
+    expect(component.relationTone('EQUIVALENT')).toBe('success');
+    expect(component.relationTone('COVERS')).toBe('accent');
+    expect(component.relationTone('RELATED')).toBe('warn');
+    expect(component.relationTone('REFERENCES')).toBe('neutral');
+  });
+
+  it('compose une infobulle qui donne la norme, la clause, la relation et la confiance', async () => {
+    await build();
+
+    const tooltip = component.coverageTooltip('iso-14001', '5.2', 'EQUIVALENT', 90);
+
+    expect(tooltip).toContain('iso-14001');
+    expect(tooltip).toContain('5.2');
+    expect(tooltip).toContain('Équivalente');
+    expect(tooltip).toContain('90');
+  });
+
+  it('nomme chaque criticité de constat', async () => {
+    await build();
+
+    expect(component.criticalityLabel('MAJOR')).toContain('majeure');
+    expect(component.criticalityLabel('MINOR')).toContain('mineure');
+    expect(component.criticalityLabel('OBSERVATION')).toContain('Observation');
+  });
+
+  it('gradue la tonalité du taux de préparation par paliers', async () => {
+    await build();
+
+    expect(component.readinessTone(80)).toBe('success');
+    expect(component.readinessTone(79)).toBe('warn');
+    expect(component.readinessTone(50)).toBe('warn');
+    expect(component.readinessTone(49)).toBe('danger');
+    expect(component.readinessLabel(72.4)).toBe('72 %');
+  });
+
+  it('nomme et colore chaque état d\'ancrage', async () => {
+    await build();
+
+    expect(component.anchorStatusLabel('VERIFIED')).toContain('confirmée');
+    expect(component.anchorStatusLabel('TAMPERED')).toContain('Altération');
+    expect(component.anchorStatusLabel('NOT_ANCHORED')).toContain('Pas encore ancré');
+
+    // Une altération détectée doit sauter aux yeux : c'est une preuve corrompue.
+    expect(component.anchorStatusTone('VERIFIED')).toBe('success');
+    expect(component.anchorStatusTone('TAMPERED')).toBe('danger');
+    expect(component.anchorStatusTone('NOT_ANCHORED')).toBe('neutral');
+  });
+
+  it('signale qu\'une seule norme comparée ne peut rien mutualiser', async () => {
+    await build();
+    fixture.detectChanges();
+    expect(component.singleStandard).toBeFalse();
+
+    svc.coverageOverview.and.returnValue(of({
+      ...overview, columns: ['iso-9001']
+    } as CoverageOverview));
+    component.loadCoverage();
+
+    expect(component.singleStandard).toBeTrue();
+  });
+
+  it('donne des clés de suivi stables aux listes rendues', async () => {
+    await build();
+    fixture.detectChanges();
+
+    const row = component.visibleRows[0];
+    expect(component.trackByRow(0, row)).toBe('iso-9001 5.2');
+    expect(component.trackByCell(0, row.cells[0])).toBe('iso-9001');
+    expect(component.trackByCode(0, 'iso-9001')).toBe('iso-9001');
+    expect(component.trackByStandard(0, catalog[0])).toBe('1');
+    expect(component.trackByReport(0, report)).toBe('r1');
+    expect(component.trackByAdoption(0, adoptions[0])).toBe('a1');
+    expect(component.trackByEvent(0, events[0])).toBe('e1');
+    expect(component.trackByTile(0, component.tiles[0])).toBe(component.tiles[0].label);
+  });
+
+  it('expose l\'adoption sélectionnée, et rien quand la sélection ne correspond à aucune', async () => {
+    await build();
+    fixture.detectChanges();
+    expect(component.selectedAdoption?.id).toBe('a1');
+
+    component.adoptionControl.setValue('adoption-inconnue');
+    expect(component.selectedAdoption).toBeNull();
+  });
+
+  it('libelle le compteur de mutualisation d\'une ligne', async () => {
+    await build();
+    fixture.detectChanges();
+
+    expect(component.sharedLabel(component.visibleRows[0])).toContain('1');
+  });
 });
+
+/**
+ * Première valeur non nulle d'un flux d'erreur.
+ *
+ * On ne référence pas l'abonnement depuis son propre rappel : ces flux sont des
+ * `BehaviorSubject`, qui émettent SYNCHRONEMENT à la souscription — la variable
+ * ne serait pas encore initialisée.
+ */
+async function firstError(source: Observable<string | null>): Promise<string | null> {
+  let captured: string | null = null;
+  const sub = source.subscribe(value => {
+    if (value !== null && captured === null) {
+      captured = value;
+    }
+  });
+  await new Promise<void>(resolve => setTimeout(resolve));
+  sub.unsubscribe();
+  return captured;
+}

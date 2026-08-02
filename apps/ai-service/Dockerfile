@@ -1,32 +1,58 @@
 # syntax=docker/dockerfile:1.7
 #
-# Image distroless de l'ai-service alignée sur Python 3.11 (cf. ADR 0013).
-# Le builder DOIT utiliser la même version mineure (3.11) et la même base
-# (Debian bookworm) que le runtime distroless `python3-debian12`, afin que les
-# wheels compilées (pydantic-core, psycopg, spacy…) soient ABI-compatibles.
-# Pas de virtualenv : les dépendances sont installées dans /deps et exécutées
-# par l'interpréteur natif du distroless via PYTHONPATH (évite le lien
-# d'interpréteur cassé sur distroless).
+# Image de l'ai-service sur base Chainguard (cf. ADR 0013, révisé — CLAUDE.md §10.2
+# autorise explicitement « distroless (gcr.io/distroless) OU Chainguard »).
+#
+# POURQUOI CE CHANGEMENT DE BASE. L'image précédente reposait sur
+# gcr.io/distroless/python3-debian12. Cette base n'a pas de gestionnaire de
+# paquets : quand une CVE tombe sur cpython, krb5 ou libssl, nous ne pouvons rien
+# patcher — il faut attendre que Google reconstruise. Au scan du 2026-08-02 elle
+# accusait DEUX crans de retard sur cpython (deb12u6 installé, deb12u8 publié) et
+# traînait un correctif libssl depuis plus de cinq semaines, alors que la base
+# java21 équivalente avait bien été reconstruite. Chaque CVE devenait une
+# exception à motiver dans .trivyignore, dont une (CVE-2026-6100, use-after-free
+# de décompression) était réellement atteignable via les réponses gzip des
+# fournisseurs LLM. Les images Chainguard sont reconstruites quotidiennement :
+# le problème est traité à la racine plutôt que reconduit d'exception en exception.
+#
+# COMPROMIS ASSUMÉ. L'offre gratuite Chainguard ne publie que les étiquettes
+# `latest` / `latest-dev` ; les étiquettes figées par version mineure sont
+# payantes. La version de Python suivra donc l'amont (3.14 au moment de la
+# migration). C'est délibéré : la CI exécute désormais lint et tests DANS
+# `latest-dev`, si bien que l'interpréteur testé est exactement celui livré. Une
+# montée de version amont fera échouer la CI bruyamment au lieu de livrer en
+# silence sur une version jamais testée — c'est précisément le défaut que la
+# migration corrige.
+#
+# Les deux étages partagent la même base, donc la même mineure de Python et la
+# même libc (Wolfi, glibc) : les roues manylinux installées dans /deps restent
+# ABI-compatibles avec le runtime. Pas de virtualenv : les dépendances sont
+# exécutées par l'interpréteur natif via PYTHONPATH.
 
-# -------- build stage (3.11, bookworm — aligné sur le runtime) --------
-FROM python:3.11-slim-bookworm AS builder
+# -------- build stage (mêmes Python et libc que le runtime) --------
+FROM cgr.dev/chainguard/python:latest-dev AS builder
+# Les images Chainguard démarrent en nonroot ; l'étage de construction a besoin
+# d'écrire dans /deps. Cela ne concerne QUE le builder — le runtime plus bas
+# conserve l'utilisateur nonroot par défaut.
+USER root
 WORKDIR /build
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential gcc \
- && rm -rf /var/lib/apt/lists/*
 
 # Dépendances runtime (cf. [project.dependencies] de pyproject.toml). Listées
 # explicitement pour éviter l'ambiguïté du flat-layout setuptools — voir ADR 0013
 # (dette : figer un requirements.txt via pip-compile/uv).
 # NB : presidio-analyzer/anonymizer volontairement EXCLUS de l'image (cf. ADR 0013).
 # Presidio charge un modèle spaCy (en_core_web_lg) qu'il tente d'auto-télécharger au
-# 1er usage via la CLI spaCy → `SystemExit` non rattrapable dans le runtime distroless
-# (pas de pip). Le filtre PII bascule alors proprement sur l'implémentation
-# heuristique (`HeuristicPiiFilter`) — comportement prévu par le code. Réactiver
-# Presidio en prod en EMBARQUANT le modèle spaCy au build (suivi ADR 0013).
+# 1er usage via la CLI spaCy → `SystemExit` non rattrapable dans un runtime sans pip.
+# Le filtre PII bascule alors proprement sur l'implémentation heuristique
+# (`HeuristicPiiFilter`) — comportement prévu par le code. Réactiver Presidio en
+# prod en EMBARQUANT le modèle spaCy au build (suivi ADR 0013).
+#
+# --only-binary=:all: : le runtime n'a ni compilateur ni en-têtes. Sans ce garde-fou,
+# une dépendance sans roue se compilerait silencieusement dans le builder et
+# produirait un binaire qu'on ne saurait pas reconstruire ; on préfère un échec de
+# build explicite. Vérifié : les onze dépendances ont une roue manylinux.
 RUN python -m pip install --no-cache-dir --upgrade pip \
- && python -m pip install --no-cache-dir --target=/deps \
+ && python -m pip install --no-cache-dir --only-binary=:all: --target=/deps \
     "fastapi>=0.115" \
     "uvicorn[standard]>=0.32" \
     "python-multipart>=0.0.12" \
@@ -39,8 +65,8 @@ RUN python -m pip install --no-cache-dir --upgrade pip \
     "qdrant-client>=1.11" \
     "psycopg[binary]>=3.2"
 
-# -------- runtime stage (distroless — surface d'attaque minimale, nonroot) -----
-FROM gcr.io/distroless/python3-debian12:nonroot
+# -------- runtime stage (Chainguard — surface minimale, nonroot, sans shell) ----
+FROM cgr.dev/chainguard/python:latest
 WORKDIR /app
 
 # site-packages tiers + code applicatif.
@@ -52,9 +78,16 @@ ENV PYTHONPATH="/app:/deps" \
     QOS_ENV="prod" \
     QOS_LOG_LEVEL="INFO"
 
+# L'utilisateur par défaut de l'image EST déjà nonroot (65532) ; on le déclare
+# malgré tout, pour deux raisons. D'abord parce que le dernier USER explicite du
+# fichier serait sinon le `root` du builder, ce qui est à la fois trompeur à la
+# lecture et signalé comme tel par l'analyse statique. Ensuite parce qu'un
+# changement de défaut en amont ne doit pas pouvoir faire basculer ce conteneur
+# en root sans que rien ne le montre.
 USER nonroot:nonroot
+
 EXPOSE 8085
 
-# L'entrypoint par défaut de l'image distroless python3 EST l'interpréteur Python ;
-# on ne passe que les arguments (pas de shell dans distroless).
+# L'entrypoint de l'image Chainguard python EST l'interpréteur ; on ne passe que
+# les arguments (pas de shell dans l'image).
 CMD ["-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8085"]

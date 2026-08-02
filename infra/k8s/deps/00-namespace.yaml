@@ -1,0 +1,16 @@
+# Namespace QualitOS. Le placeholder est substitué à l'application
+# (cf. README.md) afin que le même fichier serve la préproduction et la
+# production sans être dupliqué.
+#
+# Aucune étiquette n'est requise pour les NetworkPolicy du chart : la règle
+# intra-namespace s'appuie sur `podSelector: {}`, et la règle qui ouvre au
+# contrôleur d'ingress cible le namespace `ingress-nginx` via
+# `kubernetes.io/metadata.name`, étiquette que Kubernetes pose lui-même sur
+# chaque namespace. `part-of` sert uniquement à retrouver les ressources du
+# projet (kubectl get ns -l app.kubernetes.io/part-of=qualitos).
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: __NAMESPACE__
+  labels:
+    app.kubernetes.io/part-of: qualitos

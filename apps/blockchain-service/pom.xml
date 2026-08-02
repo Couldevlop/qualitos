@@ -14,7 +14,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.0</version>
+        <!-- 3.5.0 embarquait un contournement d'authentification Actuator
+             (CVE-2026-22733) et CVE-2026-22731, corrigés en 3.5.12. Ce module
+             ayant son PROPRE parent, il ne bénéficie d'aucune des surcharges de
+             sécurité de qualitos-parent : ses versions doivent être suivies ici,
+             séparément. -->
+        <version>3.5.16</version>
         <relativePath/>
     </parent>
 
@@ -27,7 +32,12 @@
     <properties>
         <java.version>21</java.version>
         <fabric-gateway.version>1.7.1</fabric-gateway.version>
-        <grpc.version>1.65.1</grpc.version>
+        <!-- Aligné par le BOM (voir dependencyManagement). 1.65.1 traînait
+             CVE-2025-55163 (déni de service HTTP/2 dans le netty embarqué) et
+             était de surcroît PLUS ANCIEN que le grpc-bom 1.69.0 importé par
+             fabric-gateway 1.7.1 : on épinglait donc à la baisse un transport
+             que le SDK attendait plus récent. -->
+        <grpc.version>1.83.1</grpc.version>
         <!-- fabric-gateway 1.7.1 / fabric-protos 0.3.4 sont générés avec protobuf 4.x
              (classe com.google.protobuf.RuntimeVersion). Spring Boot 3.5 gère protobuf-java
              en 3.25.x → NoClassDefFoundError au démarrage. On force la 4.28.x (compatible
@@ -64,11 +74,13 @@
             <artifactId>fabric-gateway</artifactId>
             <version>${fabric-gateway.version}</version>
         </dependency>
-        <!-- Transport gRPC vers le peer (TLS) -->
+        <!-- Transport gRPC vers le peer (TLS). Pas de version ici : elle vient
+             du grpc-bom ci-dessous, pour que TOUS les artefacts gRPC (api, core,
+             protobuf, netty-shaded) restent sur la même version. Les mélanger est
+             la cause classique de NoSuchMethodError au premier appel. -->
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-netty-shaded</artifactId>
-            <version>${grpc.version}</version>
         </dependency>
 
         <dependency>
@@ -77,6 +89,20 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Importé APRÈS les dépendances pour primer sur le grpc-bom 1.69.0
+                 que fabric-gateway importe transitivement. -->
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-bom</artifactId>
+                <version>${grpc.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>

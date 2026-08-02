@@ -14,9 +14,13 @@ requires-python = ">=3.11"
 # Real ONNX Runtime inference backend. Optional: without it the component falls
 # back to the deterministic threshold backend (lazy/guarded imports in
 # edge_inference.infrastructure.onnx_backend).
+# Versions remontées le 2026-08-02 avec la migration de base (Python 3.14) :
+# ni onnxruntime 1.19.2 ni numpy 1.x ne publient de roue pour cette mineure,
+# l'extra était donc devenu insatisfiable. `docker build --build-arg WITH_ONNX=true`
+# aurait échoué ; le build par défaut (WITH_ONNX=false) masquait le problème.
 onnx = [
-    "onnxruntime==1.19.2",
-    "numpy>=1.26,<2",
+    "onnxruntime==1.28.0",
+    "numpy>=2.3,<3",
 ]
 dev = [
     "pytest>=8.3",

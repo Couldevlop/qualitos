@@ -50,6 +50,8 @@ supersession).
 | [0043](./0043-export-pdf-dashboard-signe.md) | Export PDF d'un dashboard, signé ML-DSA + ancré blockchain (QR de vérification, §7.3/§7.4) | Accepté |
 | [0044](./0044-compte-rendu-cercle-llm.md) | Génération de compte-rendu de réunion Cercle de Qualité par LLM (§3.3) | Accepté |
 | [0045](./0045-complaint-sentiment-camembert-fr.md) | Sentiment réclamations : DistilCamemBERT FR prouvé, modèle configurable (`COMPLAINT_BERT_MODEL`), golden test opt-in (§4.9/§12.1) | Accepté |
+| [0046](./0046-corpus-rag-sources-licencees.md) | Corpus RAG : sources retenues sur critère de licence, ingestion refusée hors licence compatible (§8.7/§12.2) | Accepté |
+| [0047](./0047-base-python-chainguard.md) | Bases Python : distroless (gcr.io) remplacé par Chainguard, CI testée dans l'image livrée (§10.2/§18.2.1) | Accepté |
 
 ## Statuts possibles
 

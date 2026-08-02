@@ -29,10 +29,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@d7793b545071e98d581d3bf084a51c3213318a07 # v4
         with:
           distribution: temurin
           java-version: '21'
@@ -48,7 +48,7 @@ jobs:
 
       - name: Upload JaCoCo reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: jacoco-reports
           path: |
@@ -58,7 +58,7 @@ jobs:
 
       - name: Upload Surefire reports
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: surefire-reports
           path: apps/*/target/surefire-reports/
@@ -77,7 +77,7 @@ jobs:
 
     steps:
       - name: Checkout (full history)
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
 
@@ -95,10 +95,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Set up Python 3.12
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.12'
 
@@ -140,10 +140,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Trivy filesystem scan (fail on CRITICAL/HIGH)
-        uses: aquasecurity/trivy-action@v0.36.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           scan-type: fs
           scan-ref: .
@@ -170,7 +170,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       # PAS de setup-java ici : l'action tourne dans son propre conteneur Docker
       # (Java embarqué) et hérite des env du job — un JAVA_HOME pointant vers le
@@ -202,7 +202,7 @@ jobs:
 
       - name: Upload report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: owasp-dc-report
           path: reports/
@@ -222,10 +222,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Setup Node.js 20
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version-file: 'apps/web/.nvmrc'
           # Le cache npm exige un lockfile committé. Tant que apps/web/package-lock.json
@@ -250,7 +250,7 @@ jobs:
 
       - name: Install Chrome (for Karma headless tests)
         id: setup-chrome
-        uses: browser-actions/setup-chrome@v1
+        uses: browser-actions/setup-chrome@c785b87e244131f27c9f19c1a33e2ead956ab7ce # v1
         with:
           chrome-version: stable
 
@@ -337,7 +337,7 @@ jobs:
 
       - name: Upload build.log (always)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: build-log
           path: apps/web/build.log
@@ -357,7 +357,7 @@ jobs:
 
       - name: Upload Karma reports (on failure)
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: karma-reports
           path: |
@@ -376,7 +376,7 @@ jobs:
 
       - name: Upload build artifact
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: web-dist
           path: apps/web/dist/qualitos-web
@@ -387,7 +387,7 @@ jobs:
       # inutile mais reste sans danger (il ré-upload le même fichier).
       - name: Upload package-lock.json (for initial commit)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: web-package-lock
           path: apps/web/package-lock.json
@@ -405,58 +405,55 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
-    defaults:
-      run:
-        working-directory: apps/ai-service
-
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - name: Setup Python 3.11
-        # 3.11 = version du runtime distroless (ADR 0013) — on teste sur la
-        # même mineure que la prod, pas sur celle du poste de dev.
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          cache: pip
-          cache-dependency-path: apps/ai-service/pyproject.toml
-
-      - name: Install dependencies
-        # `pip install .[dev]` est impossible : flat-layout avec plusieurs
-        # packages top-level (setuptools refuse) — cf. ADR 0013. On installe
-        # donc les dépendances explicitement, alignées sur
-        # [project.dependencies] du pyproject.toml. Presidio et l'extra `ml`
-        # sont volontairement exclus (lourds ; le filtre PII bascule sur
-        # HeuristicPiiFilter, comportement prévu — même choix que l'image prod).
+      # Lint, contrats et tests tournent DANS l'image de base du runtime, pas sur
+      # un interpréteur installé par setup-python.
+      #
+      # POURQUOI. Ce job épinglait Python 3.11 « pour tester sur la même mineure
+      # que la prod ». L'intention était juste, mais le lien était déclaratif : il
+      # fallait penser à modifier ce numéro à chaque changement de base. La
+      # migration vers Chainguard rend l'écart mécanique — l'offre gratuite ne
+      # publie que `latest`, la mineure suit l'amont. Un numéro écrit en dur ici
+      # aurait donc recommencé à diverger du runtime en silence, et l'on aurait
+      # validé du code sur un interpréteur qu'on ne livre pas.
+      # En exécutant dans `latest-dev`, l'interpréteur testé EST celui livré, quoi
+      # que fasse l'amont. Une montée de version casse la CI bruyamment — ce qui
+      # est le comportement recherché, pas un inconvénient.
+      - name: Lint + contrats + tests (dans l'image de base du runtime)
+        # `pip install .[dev]` est impossible : flat-layout avec plusieurs packages
+        # top-level (setuptools refuse) — cf. ADR 0013. On installe donc les
+        # dépendances explicitement, alignées sur [project.dependencies].
+        # Presidio et l'extra `ml` sont volontairement exclus (lourds ; le filtre
+        # PII bascule sur HeuristicPiiFilter — même choix que l'image prod).
+        # Le gate de couverture (>= 85 %) vient de [tool.coverage.report].
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install \
-            "fastapi>=0.115" \
-            "uvicorn[standard]>=0.32" \
-            "pydantic>=2.9" \
-            "httpx>=0.27" \
-            "sqlglot>=25.5" \
-            "numpy>=1.26" \
-            "pyjwt[crypto]>=2.9" \
-            "python-multipart>=0.0.12" \
-            "slowapi>=0.1.9" \
-            "qdrant-client>=1.11" \
-            "psycopg[binary]>=3.2" \
-            "pytest>=8.3" "pytest-cov>=5.0" "pytest-asyncio>=0.24" \
-            "import-linter>=2.0" "ruff>=0.6"
-
-      - name: Lint (ruff)
-        run: python -m ruff check .
-
-      - name: Architecture contracts (import-linter)
-        # Vérifie les contrats Clean Architecture du pyproject.toml
-        # (domain sans framework, application sans infra/presentation).
-        run: lint-imports
-
-      - name: Tests + coverage gate (>= 85 %)
-        # Le gate de couverture vient de [tool.coverage.report] fail_under=85.
-        run: python -m pytest
+          docker run --rm --user root --entrypoint /bin/sh \
+            -v "$PWD/apps/ai-service:/src:ro" \
+            cgr.dev/chainguard/python:latest-dev -c '
+              set -eu
+              python -V
+              mkdir -p /w && cd /w && cp -r /src/. . && rm -rf .venv .pytest_cache
+              python -m pip install --quiet --no-cache-dir --only-binary=:all: \
+                "fastapi>=0.115" \
+                "uvicorn[standard]>=0.32" \
+                "pydantic>=2.9" \
+                "httpx>=0.27" \
+                "sqlglot>=25.5" \
+                "numpy>=1.26" \
+                "pyjwt[crypto]>=2.9" \
+                "python-multipart>=0.0.12" \
+                "slowapi>=0.1.9" \
+                "qdrant-client>=1.11" \
+                "psycopg[binary]>=3.2" \
+                "pytest>=8.3" "pytest-cov>=5.0" "pytest-asyncio>=0.24" \
+                "import-linter>=2.0" "ruff>=0.6,<0.7"
+              python -m ruff check .
+              lint-imports
+              python -m pytest -p no:cacheprovider
+            '
 
   # ---------------------------------------------------------------------------
   # Scan d'images conteneur (§14.2 ; règle §18.2.1 : aucune CVE Critique/Haute).
@@ -493,7 +490,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Build image
         run: >
@@ -504,7 +501,7 @@ jobs:
 
       - name: Trivy scan (fail on CRITICAL/HIGH)
         # NB : les tags de cette action sont préfixés 'v' (v0.36.0) — '0.24.0' n'existe pas.
-        uses: aquasecurity/trivy-action@v0.36.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: qualitos/${{ matrix.service }}:ci
           format: table
@@ -537,10 +534,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Setup Node.js 20
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version-file: 'apps/web/.nvmrc'
 
@@ -555,7 +552,7 @@ jobs:
 
       - name: Upload Playwright report
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: playwright-report
           path: apps/web/playwright-report/
@@ -590,7 +587,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Build & start DAST stack (Postgres + api-quality-engine)
         run: |
@@ -631,7 +628,7 @@ jobs:
       # custom casse l'action (« report_json.json does not exist »).
       # allow_issue_writing:false : pas de création d'issue GitHub.
       - name: ZAP API scan (OpenAPI /v3/api-docs)
-        uses: zaproxy/action-api-scan@v0.9.0
+        uses: zaproxy/action-api-scan@77dfa9a647bb0f583e39d4df8531634d6ddd8df4 # v0.9.0
         with:
           target: 'http://localhost:8092/v3/api-docs'
           format: openapi
@@ -667,7 +664,7 @@ jobs:
 
       - name: Upload DAST stack log
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: dast-stack-log
           path: dast-stack.log

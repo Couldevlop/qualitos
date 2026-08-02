@@ -25,7 +25,7 @@
     <span i18n="@@common.loading">Chargement…</span>
   </div>
 
-  <mat-card class="table-card" *ngIf="(loading$ | async) === false">
+  <mat-card class="table-card" *ngIf="(loading$ | async) === false && (error$ | async) === null">
     <table mat-table [dataSource]="(cases$ | async) ?? []" class="t">
       <ng-container matColumnDef="title">
         <th mat-header-cell *matHeaderCellDef i18n="@@common.title">Titre</th>
