@@ -115,7 +115,12 @@ services:
     image: ai-service
     port: 8085
     replicas: 1
-    healthPath: /health
+    # L'ai-service expose /healthz et /readyz (presentation/routers/health_router.py).
+    # Le chart pointait sur /health, qui répond 404 : les sondes n'auraient JAMAIS
+    # abouti et le pod ne serait jamais passé Ready. Constaté en interrogeant
+    # réellement l'image avant déploiement.
+    healthPath: /healthz
+    readyPath: /readyz
     isSpringBoot: false
     secretRef: qualitos-ai-service
     env:
