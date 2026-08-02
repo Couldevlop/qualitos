@@ -87,8 +87,16 @@ spec:
             # détermine l'émetteur des jetons : avec un nom seul, Keycloak déduit
             # le schéma et le port de la requête entrante et produisait un
             # émetteur en http://…:8080, que les backends refusent ensuite.
+            # L'URL DOIT inclure /auth. Avec `https://hôte` seul, Keycloak sert
+            # bien sa découverte sous /auth (grâce à KC_HTTP_RELATIVE_PATH) mais
+            # y annonce un émetteur SANS le préfixe :
+            # https://hôte/realms/qualitos. Les clients suivant la découverte
+            # tombaient alors sur le chemin racine, routé vers le frontend, et la
+            # connexion échouait ; côté serveur, l'émetteur attendu par les APIs
+            # (…/auth/realms/qualitos) ne correspondait pas non plus à celui des
+            # jetons, ce qui aurait rejeté en 401 des jetons pourtant valides.
             - name: KC_HOSTNAME
-              value: https://__QOS_HOST__
+              value: https://__QOS_HOST__/auth
             # Keycloak est servi sous /auth du MÊME hôte que l'application, pour
             # n'exiger qu'un seul enregistrement DNS et un seul certificat.
             - name: KC_HTTP_RELATIVE_PATH
