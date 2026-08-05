@@ -163,6 +163,12 @@ export class MainShellComponent implements OnInit, OnDestroy {
           roles: ADMIN_ROLES
         },
         {
+          label: $localize`:@@nav.admin-team:Équipe & habilitations`,
+          route: '/admin/team',
+          icon: 'group',
+          roles: ADMIN_ROLES
+        },
+        {
           label: $localize`:@@nav.admin-api-keys:Clés d'API`,
           route: '/admin/api-keys',
           icon: 'key',

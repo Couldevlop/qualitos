@@ -74,8 +74,9 @@ describe('MainShellComponent (navigation model)', () => {
     // Référentiels = 10 : + Co-couverture IMS (§8.9).
     // GRC reste à 1 : le registre des systèmes d'IA rejoint la page hub /compliance,
     // pas la barre latérale — c'est tout l'objet de ce regroupement.
-    // Administration = 6 : + Connecteurs tiers (§13.3).
-    expect(labels).toEqual([5, 6, 8, 10, 10, 1, 6]);
+    // Administration = 7 : + Équipe & habilitations (§16) — le tenant habilite
+    // lui-même son équipe qualité, sans passer par l'éditeur de la plateforme.
+    expect(labels).toEqual([5, 6, 8, 10, 10, 1, 7]);
   });
 
   it('collapses the entire GRC mass into a single /compliance entry', () => {

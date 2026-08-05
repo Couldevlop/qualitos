@@ -185,10 +185,23 @@ public class ModuleActivationService {
                 .map(ModuleActivationDto.ActivationView::of).toList();
     }
 
+    /**
+     * Le module est-il utilisable par le tenant courant ?
+     *
+     * <p>Une activation explicite fait foi. À défaut, les modules <b>de base</b> du
+     * catalogue sont acquis d'office : ce sont ceux que l'on refuse par ailleurs de
+     * désactiver (§10.4, « défaut = modules standards »). Sans cette règle, un tenant
+     * fraîchement créé n'avait aucun module actif — pas même ceux qu'il lui est
+     * interdit de couper — et devait activer à la main ce qui lui revient de droit.
+     * Les modules facturés à l'unité, eux, continuent d'exiger une activation.
+     */
     public boolean isEnabled(String moduleCode) {
         UUID tenantId = tenantProvider.requireTenantId();
         return repo.findOpenByTenantIdAndCode(tenantId, moduleCode)
-                .map(ModuleActivation::isEnabled).orElse(false);
+                .map(ModuleActivation::isEnabled)
+                .orElseGet(() -> ModuleCatalog.find(moduleCode)
+                        .map(ModuleCatalogEntry::coreModule)
+                        .orElse(false));
     }
 
     public ModuleActivationDto.TenantModuleSummary summary() {

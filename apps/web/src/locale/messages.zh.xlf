@@ -824,6 +824,10 @@
         <source>Non activé</source>
         <target state="translated">未启用</target>
       </trans-unit>
+      <trans-unit id="admin.modules.included" datatype="html">
+        <source>Inclus</source>
+        <target state="translated">已包含</target>
+      </trans-unit>
       <trans-unit id="admin.modules.reactivate" datatype="html">
         <source>Réactiver</source>
         <target state="translated">重新启用</target>
@@ -20183,6 +20187,102 @@ Inde (centre de service)</source>
       <trans-unit id="storyboard.err-generic" datatype="html">
         <source>Échec de la génération (HTTP <x id="status"/>).</source>
         <target state="translated">生成失败（HTTP <x id="status"/>）。</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-team" datatype="html">
+        <source>Équipe &amp; habilitations</source>
+        <target state="translated">团队与权限</target>
+      </trans-unit>
+      <trans-unit id="admin.team.eyebrow" datatype="html">
+        <source>Administration</source>
+        <target state="translated">管理</target>
+      </trans-unit>
+      <trans-unit id="admin.team.title" datatype="html">
+        <source>Équipe &amp; habilitations</source>
+        <target state="translated">团队与权限</target>
+      </trans-unit>
+      <trans-unit id="admin.team.subtitle" datatype="html">
+        <source>Composez votre équipe qualité : qui accède à la plateforme, et avec quels rôles. L'autorisation est appliquée par le serveur — cet écran ne fait qu'en donner la clé.</source>
+        <target state="translated">组建您的质量团队：谁可以访问平台，以及拥有哪些角色。授权由服务端强制执行，本页面只负责发放钥匙。</target>
+      </trans-unit>
+      <trans-unit id="admin.team.search" datatype="html">
+        <source>Rechercher un membre ou un rôle</source>
+        <target state="translated">搜索成员或角色</target>
+      </trans-unit>
+      <trans-unit id="admin.team.loading" datatype="html">
+        <source>Chargement de l'équipe</source>
+        <target state="translated">正在加载团队</target>
+      </trans-unit>
+      <trans-unit id="admin.team.empty" datatype="html">
+        <source>Aucun membre ne correspond.</source>
+        <target state="translated">没有匹配的成员。</target>
+      </trans-unit>
+      <trans-unit id="admin.team.col-member" datatype="html">
+        <source>Membre</source>
+        <target state="translated">成员</target>
+      </trans-unit>
+      <trans-unit id="admin.team.col-roles" datatype="html">
+        <source>Rôles</source>
+        <target state="translated">角色</target>
+      </trans-unit>
+      <trans-unit id="admin.team.active" datatype="html">
+        <source>Actif</source>
+        <target state="translated">启用</target>
+      </trans-unit>
+      <trans-unit id="admin.team.inactive" datatype="html">
+        <source>Désactivé</source>
+        <target state="translated">已停用</target>
+      </trans-unit>
+      <trans-unit id="admin.team.revoke" datatype="html">
+        <source>Retirer l'accès</source>
+        <target state="translated">撤销访问</target>
+      </trans-unit>
+      <trans-unit id="admin.team.restore" datatype="html">
+        <source>Rétablir l'accès</source>
+        <target state="translated">恢复访问</target>
+      </trans-unit>
+      <trans-unit id="admin.team.load-failed" datatype="html">
+        <source>Impossible de charger l'équipe.</source>
+        <target state="translated">无法加载团队。</target>
+      </trans-unit>
+      <trans-unit id="admin.team.needs-a-role" datatype="html">
+        <source>Un membre doit conserver au moins un rôle.</source>
+        <target state="translated">成员必须至少保留一个角色。</target>
+      </trans-unit>
+      <trans-unit id="admin.team.saved" datatype="html">
+        <source>Habilitations mises à jour.</source>
+        <target state="translated">权限已更新。</target>
+      </trans-unit>
+      <trans-unit id="admin.team.save-failed" datatype="html">
+        <source>Modification refusée.</source>
+        <target state="translated">修改被拒绝。</target>
+      </trans-unit>
+      <trans-unit id="role.admin-tenant" datatype="html">
+        <source>Administrateur du tenant</source>
+        <target state="translated">租户管理员</target>
+      </trans-unit>
+      <trans-unit id="role.quality-director" datatype="html">
+        <source>Directeur qualité</source>
+        <target state="translated">质量总监</target>
+      </trans-unit>
+      <trans-unit id="role.quality-manager" datatype="html">
+        <source>Manager qualité</source>
+        <target state="translated">质量经理</target>
+      </trans-unit>
+      <trans-unit id="role.auditor" datatype="html">
+        <source>Auditeur</source>
+        <target state="translated">审核员</target>
+      </trans-unit>
+      <trans-unit id="role.user" datatype="html">
+        <source>Utilisateur</source>
+        <target state="translated">用户</target>
+      </trans-unit>
+      <trans-unit id="role.external-auditor" datatype="html">
+        <source>Auditeur externe</source>
+        <target state="translated">外部审核员</target>
+      </trans-unit>
+      <trans-unit id="role.super-admin" datatype="html">
+        <source>Super administrateur</source>
+        <target state="translated">超级管理员</target>
       </trans-unit>
       <trans-unit id="nav.mon-apprentissage" datatype="html">
         <source>Mon apprentissage</source>

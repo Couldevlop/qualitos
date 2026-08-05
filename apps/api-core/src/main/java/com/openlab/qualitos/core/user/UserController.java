@@ -16,15 +16,19 @@ import java.util.UUID;
 
 /**
  * REST controller pour la gestion des utilisateurs applicatifs.
- * Accessible aux ADMIN et SUPER_ADMIN.
+ * Accessible aux ADMIN, ADMIN_TENANT et SUPER_ADMIN.
+ *
+ * <p>L'administrateur du tenant en fait partie : habiliter son équipe est sa
+ * fonction même (§16). Sans lui, la moindre arrivée dans une organisation
+ * exigeait une intervention de l'éditeur de la plateforme.
  *
  * <p>Le tenantId n'est JAMAIS accepté depuis le body : il est résolu dans UserService
  * depuis TenantContext (ThreadLocal alimenté par TenantJwtFilter depuis le JWT).
  */
 @RestController
 @RequestMapping("/api/v1/users")
-@PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
-@Tag(name = "Users", description = "User management — Admin only")
+@PreAuthorize("hasAnyRole('ADMIN', 'ADMIN_TENANT', 'SUPER_ADMIN')")
+@Tag(name = "Users", description = "User management — tenant administrators")
 public class UserController {
 
     private final UserService userService;

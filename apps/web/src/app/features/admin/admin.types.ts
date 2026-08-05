@@ -61,3 +61,43 @@ export interface ModuleRow {
   entry: ModuleCatalogEntry;
   activation: ModuleActivation | null;
 }
+
+/**
+ * Membre de l'équipe du tenant (§16). Reflète `UserDto.Response` d'api-core :
+ * le tenant y est déterminé par le JWT, jamais transmis par le client.
+ */
+export interface TenantUser {
+  id: string;
+  tenantId: string;
+  keycloakId: string;
+  email: string;
+  roles: string[];
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Page renvoyée par l'API utilisateurs (pagination Spring Data). */
+export interface TenantUserPage {
+  content: TenantUser[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+}
+
+/**
+ * Rôles du realm Keycloak, dans l'ordre de responsabilité décroissante (§16).
+ * `super_admin` n'y figure pas : il appartient à l'éditeur de la plateforme, et
+ * un administrateur de tenant ne doit pas pouvoir se l'attribuer.
+ */
+export const ASSIGNABLE_ROLES = [
+  'admin_tenant',
+  'quality_director',
+  'quality_manager',
+  'auditor',
+  'user',
+  'external_auditor'
+] as const;
+
+export type AssignableRole = typeof ASSIGNABLE_ROLES[number];

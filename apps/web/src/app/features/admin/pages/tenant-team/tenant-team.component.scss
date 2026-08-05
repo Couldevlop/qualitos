@@ -1,0 +1,106 @@
+.team-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--qos-space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--qos-space-5);
+}
+
+.team-eyebrow {
+  margin: 0 0 var(--qos-space-1);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--qos-accent-bg);
+}
+
+h1 {
+  margin: 0 0 var(--qos-space-2);
+  font-size: var(--qos-fs-2xl);
+  font-weight: var(--qos-fw-semibold);
+  line-height: var(--qos-lh-tight);
+}
+
+.team-sub {
+  margin: 0;
+  max-width: 68ch;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-base);
+  line-height: var(--qos-lh-normal);
+}
+
+.team-search {
+  width: min(420px, 100%);
+  margin-bottom: var(--qos-space-4);
+}
+
+.team-loading,
+.team-empty {
+  display: flex;
+  justify-content: center;
+  padding: var(--qos-space-10) 0;
+  color: var(--qos-fg-tertiary);
+}
+
+.team-table {
+  width: 100%;
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  overflow: hidden;
+}
+
+.team-email {
+  font-weight: var(--qos-fw-medium);
+}
+
+// Les rôles sont des bascules, pas des étiquettes : on les rend cliquables et
+// leur état est porté par `aria-pressed`, lisible au lecteur d'écran.
+.team-roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+  padding: var(--qos-space-2) 0;
+}
+
+.team-role {
+  appearance: none;
+  cursor: pointer;
+  padding: 4px 12px;
+  min-height: 32px;
+  border-radius: var(--qos-radius-pill);
+  border: 1px solid var(--qos-border-default);
+  background: transparent;
+  color: var(--qos-fg-secondary);
+  font: inherit;
+  font-size: var(--qos-fs-sm);
+  transition: background var(--qos-motion-fast),
+              border-color var(--qos-motion-fast),
+              color var(--qos-motion-fast);
+
+  &:hover:not(:disabled) { background: var(--qos-bg-hover); }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--qos-ring-focus);
+  }
+
+  &.is-granted {
+    background: var(--qos-accent-bg-soft);
+    border-color: transparent;
+    color: var(--qos-accent-fg-soft, var(--qos-accent-bg));
+    font-weight: var(--qos-fw-medium);
+  }
+
+  &:disabled { opacity: 0.55; cursor: default; }
+}
+
+tr.is-inactive td {
+  opacity: 0.6;
+}
+
+@media (max-width: 640px) {
+  .team-role { min-height: 40px; }
+}

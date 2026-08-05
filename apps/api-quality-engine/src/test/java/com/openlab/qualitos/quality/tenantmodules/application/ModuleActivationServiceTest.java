@@ -201,6 +201,42 @@ class ModuleActivationServiceTest {
         assertThat(service.isEnabled("kpi")).isFalse();
     }
 
+    /**
+     * Socle acquis d'office. Le catalogue distingue depuis l'origine les modules
+     * « de base » — PDCA, Ishikawa, 5S, CAPA, documents, audits — qu'il est
+     * d'ailleurs interdit de désactiver. Mais sans ligne d'activation, ils
+     * étaient comptés pour éteints : un tenant nouvellement créé n'avait donc
+     * AUCUN module actif, pas même ceux qu'on lui refuse de couper. La promesse
+     * « défaut = modules standards » n'était pas tenue.
+     */
+    @Test
+    void isEnabled_trueForCoreModuleWithoutAnyActivation() {
+        when(repo.findOpenByTenantIdAndCode(TENANT, "pdca")).thenReturn(Optional.empty());
+        assertThat(service.isEnabled("pdca")).isTrue();
+    }
+
+    @Test
+    void isEnabled_coreDefaultAppliesToEveryCoreModule() {
+        for (String code : List.of("pdca", "ishikawa", "fives", "capa", "docs", "audit")) {
+            when(repo.findOpenByTenantIdAndCode(TENANT, code)).thenReturn(Optional.empty());
+            assertThat(service.isEnabled(code)).withFailMessage(code).isTrue();
+        }
+    }
+
+    @Test
+    void isEnabled_optionalModuleStillNeedsAnActivation() {
+        // Le socle est un plancher, pas une ouverture générale : ce qui se
+        // facture à l'unité continue d'exiger une activation explicite.
+        when(repo.findOpenByTenantIdAndCode(TENANT, "iot")).thenReturn(Optional.empty());
+        assertThat(service.isEnabled("iot")).isFalse();
+    }
+
+    @Test
+    void isEnabled_unknownModuleIsNeverEnabled() {
+        when(repo.findOpenByTenantIdAndCode(TENANT, "inexistant")).thenReturn(Optional.empty());
+        assertThat(service.isEnabled("inexistant")).isFalse();
+    }
+
     @Test
     void summary_aggregates() {
         when(tierProvider.currentTier(TENANT)).thenReturn(BillingTier.PRO);
