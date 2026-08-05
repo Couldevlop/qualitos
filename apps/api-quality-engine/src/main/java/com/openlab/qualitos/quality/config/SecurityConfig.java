@@ -135,8 +135,14 @@ public class SecurityConfig {
                     .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
 
                 // Activation des modules tenant (transitions d'abonnement) : Admin Tenant / Super Admin.
+                // Périmètre des modules d'un tenant : SUPER_ADMIN uniquement.
+                // Le socle standard est acquis d'office (modules de base du
+                // catalogue) ; tout le reste relève d'une décision de l'éditeur,
+                // pas du client. ADMIN_TENANT figurait ici et pouvait donc
+                // s'attribuer seul des modules facturés à l'unité. Il conserve la
+                // LECTURE (GET), indispensable pour savoir de quoi il dispose.
                 .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/tenant-modules/**")
-                    .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
+                    .hasRole("SUPER_ADMIN")
 
                 // Clés API (création/révocation) : Admin Tenant / Super Admin.
                 .requestMatchers("/api/v1/api-keys/**").hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")

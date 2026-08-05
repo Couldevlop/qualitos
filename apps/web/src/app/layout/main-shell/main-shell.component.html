@@ -133,6 +133,11 @@
           </a>
         </ng-container>
 
+        <!-- Chaque langue est un build servi sous son propre préfixe : le
+             sélecteur recharge la même page dans l'autre application. Sans lui,
+             on ne pouvait changer de langue qu'en modifiant l'URL à la main. -->
+        <qos-locale-switcher></qos-locale-switcher>
+
         <qos-theme-toggle></qos-theme-toggle>
 
         <button type="button" class="qos-topbar__icon-btn"

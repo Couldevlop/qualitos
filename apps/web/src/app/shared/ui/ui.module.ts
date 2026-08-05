@@ -4,12 +4,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
 
 import { EchartComponent } from './echart/echart.component';
 import { FormDialogComponent } from './form-dialog/form-dialog.component';
 import { KpiCardComponent } from './kpi-card/kpi-card.component';
+import { LocaleSwitcherComponent } from './locale-switcher/locale-switcher.component';
 import { PageHeaderComponent } from './page-header/page-header.component';
 import { PanelComponent } from './panel/panel.component';
 import { StatusPillComponent } from './status-pill/status-pill.component';
@@ -21,6 +23,7 @@ const COMPONENTS = [
   PanelComponent,
   StatusPillComponent,
   ThemeToggleComponent,
+  LocaleSwitcherComponent,
   EchartComponent,
   FormDialogComponent
 ];
@@ -33,7 +36,8 @@ const COMPONENTS = [
   declarations: COMPONENTS,
   imports: [
     CommonModule, RouterModule, ReactiveFormsModule,
-    MatButtonModule, MatDialogModule, MatIconModule, MatProgressSpinnerModule
+    MatButtonModule, MatDialogModule, MatIconModule, MatMenuModule,
+    MatProgressSpinnerModule
   ],
   exports: COMPONENTS
 })

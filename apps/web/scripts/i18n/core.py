@@ -2,6 +2,8 @@
 """Table i18n - domaine core. id: (fr, en, es, ar, ja, zh)."""
 
 TRANSLATIONS = {
+    # Selecteur de langue de la barre superieure.
+    'locale.switch.aria': ('Changer de langue', 'Change language', 'Cambiar de idioma', 'تغيير اللغة', '言語を変更', '切换语言'),
     'common.ok': ('OK', 'OK', 'OK', 'حسناً', 'OK', '确定'),
     'common.confirm': ('Confirmer', 'Confirm', 'Confirmar', 'تأكيد', '確認', '确认'),
     'common.loading': ('Chargement…', 'Loading…', 'Cargando…', 'جارٍ التحميل…', '読み込み中…', '加载中…'),

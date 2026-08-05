@@ -6,6 +6,7 @@ import com.openlab.qualitos.quality.tenantmodules.application.ModuleActivationSe
 import com.openlab.qualitos.quality.tenantmodules.application.TenantProvider;
 import com.openlab.qualitos.quality.tenantmodules.application.TenantTierProvider;
 import com.openlab.qualitos.quality.tenantmodules.domain.ModuleActivationRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,10 +28,16 @@ public class TenantModulesBeanConfiguration {
                 repo, tenantProvider, tierProvider, actorProvider, events, clock);
     }
 
-    /** Tier par défaut FREE tant qu'un module billing concret n'est pas livré. */
+    /**
+     * Palier appliqué à tous les tenants tant qu'un module de facturation ne le
+     * porte pas par tenant. Réglable (défaut FREE) : figé dans le code, il
+     * empêchait même le super administrateur d'ouvrir un module de palier
+     * supérieur, sans autre recours que de recompiler.
+     */
     @Bean
     @ConditionalOnMissingBean(TenantTierProvider.class)
-    public TenantTierProvider defaultTenantTierProvider() {
-        return new TenantTierProvider.FreeByDefault();
+    public TenantTierProvider defaultTenantTierProvider(
+            @Value("${qualitos.modules.default-tier:FREE}") String defaultTier) {
+        return new ConfiguredTenantTierProvider(defaultTier);
     }
 }

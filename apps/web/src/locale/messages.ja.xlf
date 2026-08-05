@@ -824,6 +824,18 @@
         <source>Non activé</source>
         <target state="translated">未有効化</target>
       </trans-unit>
+      <trans-unit id="admin.modules.subtitle-admin" datatype="html">
+        <source>Ouvrez pour ce tenant les modules qui lui reviennent. La désactivation est immédiate et réversible ; les modules du socle restent toujours actifs.</source>
+        <target state="translated">このテナントに割り当てるモジュールを開放します。無効化は即時かつ可逆で、基本モジュールは常に有効です。</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.subtitle-readonly" datatype="html">
+        <source>Voici les modules dont dispose votre organisation. Le socle standard est inclus d'office ; l'ouverture des autres modules relève de l'éditeur de la plateforme — adressez-lui votre demande.</source>
+        <target state="translated">これらが貴組織で利用できるモジュールです。標準の基本セットは既定で含まれます。その他のモジュールの開放はプラットフォーム提供元の判断となりますので、そちらにご依頼ください。</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.editor-only" datatype="html">
+        <source>Sur demande auprès de l'éditeur</source>
+        <target state="translated">提供元への申請が必要</target>
+      </trans-unit>
       <trans-unit id="admin.modules.included" datatype="html">
         <source>Inclus</source>
         <target state="translated">標準搭載</target>
@@ -6367,6 +6379,10 @@
       <trans-unit id="connectors.username" datatype="html">
         <source>Compte de service</source>
         <target state="translated">サービスアカウント</target>
+      </trans-unit>
+      <trans-unit id="locale.switch.aria" datatype="html">
+        <source>Changer de langue</source>
+        <target state="translated">言語を変更</target>
       </trans-unit>
       <trans-unit id="common.ok" datatype="html">
         <source>OK</source>

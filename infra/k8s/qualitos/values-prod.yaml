@@ -84,6 +84,11 @@ services:
     # Mode bearer OBLIGATOIRE : l'ai-service valide reellement les jetons, et
     # rejette X-Dev-Claims. Sans ce reglage, toutes les fonctions d'IA repondent 502.
     env:
+      # Palier applique a tous les tenants tant que la facturation par tenant
+      # n'existe pas. STANDARD ici : le compte de demonstration dispose ainsi du
+      # socle standard, et le super admin peut lui ouvrir le reste. Le socle du
+      # catalogue reste acquis d'office, quel que soit ce reglage.
+      MODULES_DEFAULT_TIER: STANDARD
       AI_AUTH_MODE: bearer
       AI_TOKEN_URI: https://qualitos.openlabconsulting.com/auth/realms/qualitos/protocol/openid-connect/token
       AI_CLIENT_ID: api-quality-engine-ai
