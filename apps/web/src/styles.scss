@@ -339,8 +339,11 @@ mat-icon.material-symbols-outlined {
 /* ============================================================
  * Layout helpers.
  * ============================================================ */
+// Gouttière FLUIDE : une marge de 40 px fixe, confortable sur un écran large,
+// mangeait un cinquième de la largeur d'un téléphone. `clamp` la fait respirer
+// avec la fenêtre, sans palier visible ni point de rupture à maintenir.
 .qos-page {
-  padding: var(--qos-space-8) var(--qos-space-10);
+  padding: clamp(20px, 2.4vw, 32px) clamp(16px, 3.2vw, 40px);
   max-width: 1440px;
   margin: 0 auto;
 }
@@ -356,8 +359,48 @@ mat-icon.material-symbols-outlined {
 .qos-row-3 { display: flex; align-items: center; gap: var(--qos-space-3); }
 .qos-row-4 { display: flex; align-items: center; gap: var(--qos-space-4); }
 
+// Les rangées d'actions et de filtres s'écrasaient faute de pouvoir passer à la
+// ligne : elles y sont désormais autorisées.
+.qos-row-2, .qos-row-3, .qos-row-4 { flex-wrap: wrap; }
+
 .qos-spacer { flex: 1 1 auto; }
 .qos-stretch { flex: 1 1 auto; }
+
+/* ============================================================
+ * Fluidité — règles transverses de mise à l'échelle.
+ *
+ * Ces quelques règles rendent l'ensemble des écrans utilisable en largeur
+ * réduite sans reprendre chaque feuille de style : les contenus larges
+ * (tableaux, images) défilent DANS leur cadre au lieu de pousser la page, et
+ * rien ne déborde horizontalement.
+ * ============================================================ */
+html, body { overflow-x: hidden; }
+
+.qos-page {
+  // Un tableau dense ne rétrécit pas : on lui donne son propre défilement plutôt
+  // que de laisser la page entière glisser sous le doigt.
+  .mat-mdc-table-container,
+  .qos-scroll-x {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  img, svg, video, canvas { max-width: 100%; }
+}
+
+// Grille de cartes qui se réorganise d'elle-même, sans point de rupture à tenir.
+.qos-grid-auto {
+  display: grid;
+  gap: clamp(12px, 1.6vw, 20px);
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+}
+
+@media (max-width: 640px) {
+  // Cible tactile : sous 44 px on vise mal au pouce — et avec des gants
+  // industriels, encore moins (§15.3). Les grandes tailles de titre, elles,
+  // sont déjà fluides au niveau des tokens.
+  .mat-mdc-button-base { min-height: 44px; }
+}
 
 /* ============================================================
  * Scrollbar fine.

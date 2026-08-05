@@ -1,4 +1,7 @@
-:host { display: block; height: 100vh; }
+// 100dvh et non 100vh : sur mobile, `vh` se mesure sur la fenêtre barre d'adresse
+// masquée, si bien qu'une partie du contenu se retrouve sous la barre tant qu'elle
+// est visible. `dvh` suit la hauteur réellement disponible.
+:host { display: block; height: 100dvh; }
 
 /* ============================================================
  * Shell layout — sidebar + main column.
@@ -6,13 +9,64 @@
 .qos-shell {
   display: grid;
   grid-template-columns: var(--qos-sidebar-width) 1fr;
-  height: 100vh;
+  height: 100dvh;
   background: var(--qos-bg-app);
   transition: grid-template-columns var(--qos-motion-base);
 
   &--collapsed {
     grid-template-columns: var(--qos-sidebar-width-collapsed) 1fr;
   }
+}
+
+/* ============================================================
+ * Écran étroit — la barre latérale devient un tiroir superposé.
+ *
+ * Sous 1024 px, une colonne fixe de 248 px prend l'essentiel de la largeur et
+ * ne laisse plus de place au contenu ; la replier laisse encore un rail devant
+ * la page. Le tiroir rend la largeur entière au contenu et n'apparaît que sur
+ * demande. L'animation porte sur `transform` seul : composée par le GPU, elle
+ * ne provoque aucun recalcul de mise en page pendant le glissement.
+ * ============================================================ */
+.qos-shell--compact {
+  grid-template-columns: 1fr;
+
+  .qos-sidebar {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: 60;
+    width: min(84vw, 300px);
+    transform: translateX(-102%);   // 102 % : l'ombre portée ne doit pas dépasser
+    box-shadow: var(--qos-shadow-lg);
+    transition: transform var(--qos-motion-base);
+    will-change: transform;
+  }
+
+  &.qos-shell--nav-open .qos-sidebar {
+    transform: translateX(0);
+  }
+
+  // Le repli n'a plus de sens une fois le tiroir superposé : il rendrait la
+  // navigation illisible sans rien gagner en place.
+  .qos-sidebar__footer { display: none; }
+}
+
+// En écriture de droite à gauche (arabe), le tiroir entre par le bord opposé.
+:host-context([dir='rtl']) .qos-shell--compact .qos-sidebar {
+  transform: translateX(102%);
+}
+
+.qos-shell__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: var(--qos-bg-overlay);
+  animation: qos-scrim-in var(--qos-motion-fast) both;
+}
+
+@keyframes qos-scrim-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .qos-shell__main {
@@ -27,6 +81,10 @@
   min-height: 0;
   overflow-y: auto;
   background: var(--qos-bg-app);
+  // Le défilement s'arrête au bord du contenu au lieu d'entraîner la page
+  // entière, et le mouvement reste continu au doigt sur mobile.
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .qos-shell__footer {

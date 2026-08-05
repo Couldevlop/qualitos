@@ -6545,8 +6545,8 @@
         <target state="translated">全体検索</target>
       </trans-unit>
       <trans-unit id="shell.brand.tagline" datatype="html">
-        <source>Système d'exploitation qualité</source>
-        <target state="translated">品質オペレーティングシステム</target>
+        <source>Quality Operating System</source>
+        <target state="translated">Quality Operating System</target>
       </trans-unit>
       <trans-unit id="shell.nav.aria" datatype="html">
         <source>Navigation principale</source>
@@ -6919,6 +6919,46 @@
       <trans-unit id="dbb.config.done" datatype="html">
         <source>Terminé</source>
         <target state="translated">完了</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.title" datatype="html">
+        <source>Tableaux de bord personnalisés</source>
+        <target state="translated">カスタムダッシュボード</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.subtitle" datatype="html">
+        <source>Composez et partagez vos tableaux de bord : glissez, déposez, enregistrez.</source>
+        <target state="translated">ダッシュボードを作成して共有：ドラッグ、ドロップ、保存。</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.new" datatype="html">
+        <source>Nouveau tableau de bord</source>
+        <target state="translated">新しいダッシュボード</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.shared" datatype="html">
+        <source>Partagé</source>
+        <target state="translated">共有</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.noDesc" datatype="html">
+        <source>Sans description</source>
+        <target state="translated">説明なし</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.widgets" datatype="html">
+        <source>widgets</source>
+        <target state="translated">ウィジェット</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.emptyTitle" datatype="html">
+        <source>Aucun tableau de bord pour le moment</source>
+        <target state="translated">ダッシュボードはまだありません</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.emptyHint" datatype="html">
+        <source>Créez votre premier tableau de bord et épinglez les indicateurs qui comptent pour vous.</source>
+        <target state="translated">最初のダッシュボードを作成し、重要な指標をピン留めしましょう。</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.create" datatype="html">
+        <source>Créer un tableau de bord</source>
+        <target state="translated">ダッシュボードを作成</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.loading" datatype="html">
+        <source>Chargement des tableaux de bord</source>
+        <target state="translated">ダッシュボードを読み込み中</target>
       </trans-unit>
       <trans-unit id="dbb.widget.kpi" datatype="html">
         <source>Indicateur KPI</source>

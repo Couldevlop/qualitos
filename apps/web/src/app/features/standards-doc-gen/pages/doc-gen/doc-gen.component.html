@@ -67,8 +67,18 @@
                [class.is-selected]="isSelected(p.key)"
                (click)="toggleKey(p.key)" (keyup.enter)="toggleKey(p.key)"
                tabindex="0" role="checkbox" [attr.aria-checked]="isSelected(p.key)">
-            <mat-checkbox [checked]="isSelected(p.key)" (click)="$event.preventDefault()"
-                          [attr.aria-label]="p.label"></mat-checkbox>
+            <!-- Case PUREMENT PRÉSENTATIONNELLE : c'est la ligne qui porte le rôle, le
+                 focus, le clavier et l'état (role="checkbox" + aria-checked ci-dessus).
+                 Auparavant la case interceptait le clic et l'annulait par
+                 `preventDefault()` ; l'input natif repassait alors à « décoché » APRÈS
+                 le passage d'Angular, et comme la coche MDC est rendue par le sélecteur
+                 CSS `input:checked`, la case restait vide alors que la pièce était bien
+                 sélectionnée. Neutralisée (pointer-events: none via .docgen-piece-box,
+                 hors tabulation, masquée aux lecteurs d'écran), elle ne fait plus que
+                 refléter l'état, et tous les clics aboutissent au même endroit. -->
+            <mat-checkbox class="docgen-piece-box" [checked]="isSelected(p.key)"
+                          tabindex="-1" aria-hidden="true"
+                          [disableRipple]="true"></mat-checkbox>
             <div class="docgen-piece-info">
               <span class="docgen-piece-label">{{ p.label }}</span>
               <span class="docgen-piece-meta">{{ kindLabel(p.kind) }} ·

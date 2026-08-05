@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -42,10 +42,25 @@ const ADMIN_ROLES = ['ADMIN', 'ADMIN_TENANT', 'SUPER_ADMIN'];
   styleUrls: ['./main-shell.component.scss'],
   standalone: false
 })
-export class MainShellComponent implements OnInit {
+export class MainShellComponent implements OnInit, OnDestroy {
 
   user$!: Observable<AuthUser | null>;
   collapsed = false;
+
+  /**
+   * Navigation en écran étroit. Le shell était une grille à deux colonnes à TOUTES
+   * les largeurs : sur un téléphone la barre latérale occupait les deux tiers de
+   * l'écran, et la replier laissait encore un rail de 64 px devant le contenu.
+   * Sous ce seuil, elle devient un tiroir superposé, fermé par défaut, qui glisse
+   * par translation (donc composée par le GPU, sans recalcul de mise en page).
+   */
+  compact = false;
+  navOpen = false;
+
+  private static readonly COMPACT_QUERY = '(max-width: 1024px)';
+  private compactMedia: MediaQueryList | null = null;
+  private readonly compactListener = (event: MediaQueryListEvent): void =>
+    this.onViewportChange(event.matches);
 
   /** Année courante pour la signature de pied de page (éditeur de la plateforme). */
   readonly currentYear = new Date().getFullYear();
@@ -213,9 +228,29 @@ export class MainShellComponent implements OnInit {
     this.pendingSync$ = this.offlineQueue.pendingCount$;
     this.unreadCount$ = this.notificationsService.unread$;
     this.restoreCollapsedSections();
+    this.watchViewport();
     // Pastille alimentée dès l'ouverture de l'application : la liste complète n'est
     // chargée qu'à l'ouverture du menu (appel léger au démarrage).
     this.notificationsService.refreshUnreadCount();
+  }
+
+  ngOnDestroy(): void {
+    this.compactMedia?.removeEventListener('change', this.compactListener);
+  }
+
+  /**
+   * Suit la largeur disponible par `matchMedia` plutôt que par un écouteur de
+   * `resize` : le navigateur ne notifie qu'aux franchissements du seuil, là où un
+   * `resize` déclencherait des dizaines de passages de détection de changement
+   * pendant un simple redimensionnement.
+   */
+  private watchViewport(): void {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+      return;
+    }
+    this.compactMedia = window.matchMedia(MainShellComponent.COMPACT_QUERY);
+    this.onViewportChange(this.compactMedia.matches);
+    this.compactMedia.addEventListener('change', this.compactListener);
   }
 
   // ---- Notifications --------------------------------------------------------
@@ -287,7 +322,40 @@ export class MainShellComponent implements OnInit {
       .filter(section => section.items.length > 0);
   }
 
-  toggle(): void { this.collapsed = !this.collapsed; }
+  /**
+   * Bouton de navigation de la barre supérieure. Le même geste n'a pas le même
+   * sens selon la place disponible : en écran large il replie le rail, en écran
+   * étroit il ouvre le tiroir — replier un rail déjà superposé n'aurait aucun sens.
+   */
+  toggle(): void {
+    if (this.compact) {
+      this.navOpen = !this.navOpen;
+      return;
+    }
+    this.collapsed = !this.collapsed;
+  }
+
+  /** Ferme le tiroir (voile, Échap, bouton de fermeture). */
+  @HostListener('document:keydown.escape')
+  closeNav(): void { this.navOpen = false; }
+
+  /**
+   * Un lien de navigation vient d'être suivi : en écran étroit le tiroir masque
+   * la page que l'on vient de demander, il doit donc s'effacer.
+   */
+  onNavigate(): void { this.navOpen = false; }
+
+  /**
+   * Bascule entre disposition large et étroite. Appelé au démarrage puis à chaque
+   * changement de largeur. Repasser en large referme le tiroir : laissé ouvert, il
+   * resterait superposé à un contenu qui a désormais toute la place.
+   */
+  onViewportChange(compact: boolean): void {
+    this.compact = compact;
+    if (!compact) {
+      this.navOpen = false;
+    }
+  }
 
   isSectionCollapsed(label: string): boolean {
     return this.collapsedSections.has(label);

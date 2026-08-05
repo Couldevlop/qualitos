@@ -6545,8 +6545,8 @@
         <target state="translated">Búsqueda global</target>
       </trans-unit>
       <trans-unit id="shell.brand.tagline" datatype="html">
-        <source>Système d'exploitation qualité</source>
-        <target state="translated">Sistema de operación de calidad</target>
+        <source>Quality Operating System</source>
+        <target state="translated">Quality Operating System</target>
       </trans-unit>
       <trans-unit id="shell.nav.aria" datatype="html">
         <source>Navigation principale</source>
@@ -6919,6 +6919,46 @@
       <trans-unit id="dbb.config.done" datatype="html">
         <source>Terminé</source>
         <target state="translated">Listo</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.title" datatype="html">
+        <source>Tableaux de bord personnalisés</source>
+        <target state="translated">Tableros personalizados</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.subtitle" datatype="html">
+        <source>Composez et partagez vos tableaux de bord : glissez, déposez, enregistrez.</source>
+        <target state="translated">Componga y comparta sus tableros: arrastre, suelte, guarde.</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.new" datatype="html">
+        <source>Nouveau tableau de bord</source>
+        <target state="translated">Nuevo tablero</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.shared" datatype="html">
+        <source>Partagé</source>
+        <target state="translated">Compartido</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.noDesc" datatype="html">
+        <source>Sans description</source>
+        <target state="translated">Sin descripción</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.widgets" datatype="html">
+        <source>widgets</source>
+        <target state="translated">widgets</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.emptyTitle" datatype="html">
+        <source>Aucun tableau de bord pour le moment</source>
+        <target state="translated">Aún no hay tableros</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.emptyHint" datatype="html">
+        <source>Créez votre premier tableau de bord et épinglez les indicateurs qui comptent pour vous.</source>
+        <target state="translated">Cree su primer tablero y fije los indicadores que le importan.</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.create" datatype="html">
+        <source>Créer un tableau de bord</source>
+        <target state="translated">Crear un tablero</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.loading" datatype="html">
+        <source>Chargement des tableaux de bord</source>
+        <target state="translated">Cargando tableros</target>
       </trans-unit>
       <trans-unit id="dbb.widget.kpi" datatype="html">
         <source>Indicateur KPI</source>

@@ -89,6 +89,73 @@ describe('DocGenComponent', () => {
     expect(component.isSelected('manuel-qualite')).toBeFalse();
   });
 
+  // Le test précédent appelle toggleKey() directement : il passait alors même que
+  // l'écran était inutilisable. Cliquer VRAIMENT sur la case sélectionnait bien la
+  // pièce (le compteur montait) mais la case restait vide : `preventDefault()`
+  // annulait l'état natif de l'input APRÈS la détection de changement, et plus
+  // rien ne le réécrivait. L'utilisateur voyait donc une case qui refuse de se
+  // cocher — d'où « case à cocher inopérante ».
+  it('renders the checkbox as ticked once its document is selected', () => {
+    fixture.detectChanges();
+    const input: HTMLInputElement = fixture.nativeElement
+      .querySelector('.docgen-piece mat-checkbox input');
+
+    input.click();
+    fixture.detectChanges();
+
+    expect(component.isSelected('manuel-qualite')).toBeTrue();
+    expect(input.checked).toBeTrue();
+  });
+
+  it('selects a document when the checkbox itself is clicked', () => {
+    fixture.detectChanges();
+    const checkbox: HTMLElement = fixture.nativeElement
+      .querySelector('.docgen-piece mat-checkbox input');
+
+    checkbox.click();
+    fixture.detectChanges();
+
+    expect(component.isSelected('manuel-qualite')).toBeTrue();
+  });
+
+  it('deselects a document when its checkbox is clicked again', () => {
+    fixture.detectChanges();
+    const checkbox: HTMLElement = fixture.nativeElement
+      .querySelector('.docgen-piece mat-checkbox input');
+
+    checkbox.click();
+    fixture.detectChanges();
+    checkbox.click();
+    fixture.detectChanges();
+
+    expect(component.isSelected('manuel-qualite')).toBeFalse();
+  });
+
+  // La case n'est plus un contrôle : la ligne l'est. Deux contrôles imbriqués
+  // annonçaient deux fois la même chose au lecteur d'écran et ouvraient le
+  // chemin de clic qui désaccordait l'affichage de l'état.
+  it('exposes the checkbox as decorative, the row being the real control', () => {
+    fixture.detectChanges();
+    const checkbox: HTMLElement = fixture.nativeElement
+      .querySelector('.docgen-piece mat-checkbox');
+    const row: HTMLElement = fixture.nativeElement.querySelector('.docgen-piece');
+
+    expect(checkbox.getAttribute('aria-hidden')).toBe('true');
+    expect(row.getAttribute('role')).toBe('checkbox');
+    expect(row.getAttribute('aria-checked')).toBe('false');
+  });
+
+  it('selects a document when the row around the checkbox is clicked', () => {
+    fixture.detectChanges();
+    const row: HTMLElement = fixture.nativeElement
+      .querySelector('.docgen-piece .docgen-piece-label');
+
+    row.click();
+    fixture.detectChanges();
+
+    expect(component.isSelected('manuel-qualite')).toBeTrue();
+  });
+
   it('does not start when the form is invalid', () => {
     fixture.detectChanges();
     component.start();

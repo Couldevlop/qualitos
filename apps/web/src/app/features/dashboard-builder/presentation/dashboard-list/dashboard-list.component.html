@@ -1,12 +1,12 @@
 <section class="list-shell">
   <header class="list-header">
     <div>
-      <h1>Custom dashboards</h1>
-      <p>Compose and share dashboards across your tenant — drag, drop, save.</p>
+      <h1 i18n="@@dbb.list.title">Tableaux de bord personnalisés</h1>
+      <p i18n="@@dbb.list.subtitle">Composez et partagez vos tableaux de bord : glissez, déposez, enregistrez.</p>
     </div>
     <button mat-flat-button color="primary" (click)="create()">
       <mat-icon>add</mat-icon>
-      New dashboard
+      <span i18n="@@dbb.list.new">Nouveau tableau de bord</span>
     </button>
   </header>
 
@@ -16,11 +16,12 @@
         <header class="card-head">
           <mat-icon class="card-icon">dashboard</mat-icon>
           <span class="card-title">{{ l.name }}</span>
-          <span class="card-badge" *ngIf="l.shared">SHARED</span>
+          <span class="card-badge" *ngIf="l.shared" i18n="@@dbb.list.shared">Partagé</span>
         </header>
-        <p class="card-desc">{{ l.description || 'No description' }}</p>
+        <p class="card-desc" *ngIf="l.description">{{ l.description }}</p>
+        <p class="card-desc" *ngIf="!l.description" i18n="@@dbb.list.noDesc">Sans description</p>
         <footer class="card-foot">
-          <span>{{ l.widgets.length }} widget{{ l.widgets.length === 1 ? '' : 's' }}</span>
+          <span>{{ l.widgets.length }}&nbsp;<span i18n="@@dbb.list.widgets">widgets</span></span>
           <span>v{{ l.version }}</span>
         </footer>
       </button>
@@ -29,10 +30,11 @@
     <ng-template #emptyTpl>
       <div class="empty">
         <mat-icon>insights</mat-icon>
-        <h2>No custom dashboards yet</h2>
-        <p>Create your first dashboard and pin the KPIs that matter to your tenant.</p>
+        <h2 i18n="@@dbb.list.emptyTitle">Aucun tableau de bord pour le moment</h2>
+        <p i18n="@@dbb.list.emptyHint">Créez votre premier tableau de bord et épinglez les indicateurs qui comptent pour vous.</p>
         <button mat-flat-button color="primary" (click)="create()">
-          <mat-icon>add</mat-icon>Create dashboard
+          <mat-icon>add</mat-icon>
+          <span i18n="@@dbb.list.create">Créer un tableau de bord</span>
         </button>
       </div>
     </ng-template>
@@ -40,7 +42,9 @@
 
   <ng-template #loadingTpl>
     <div class="loading">
-      <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+      <mat-progress-spinner mode="indeterminate" diameter="40"
+                            aria-label="Chargement des tableaux de bord"
+                            i18n-aria-label="@@dbb.list.loading"></mat-progress-spinner>
     </div>
   </ng-template>
 </section>

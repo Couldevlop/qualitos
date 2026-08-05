@@ -6545,8 +6545,8 @@
         <target state="translated">بحث شامل</target>
       </trans-unit>
       <trans-unit id="shell.brand.tagline" datatype="html">
-        <source>Système d'exploitation qualité</source>
-        <target state="translated">نظام تشغيل الجودة</target>
+        <source>Quality Operating System</source>
+        <target state="translated">Quality Operating System</target>
       </trans-unit>
       <trans-unit id="shell.nav.aria" datatype="html">
         <source>Navigation principale</source>
@@ -6919,6 +6919,46 @@
       <trans-unit id="dbb.config.done" datatype="html">
         <source>Terminé</source>
         <target state="translated">تم</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.title" datatype="html">
+        <source>Tableaux de bord personnalisés</source>
+        <target state="translated">لوحات معلومات مخصّصة</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.subtitle" datatype="html">
+        <source>Composez et partagez vos tableaux de bord : glissez, déposez, enregistrez.</source>
+        <target state="translated">أنشئ لوحات معلوماتك وشاركها: اسحب، أفلِت، احفظ.</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.new" datatype="html">
+        <source>Nouveau tableau de bord</source>
+        <target state="translated">لوحة معلومات جديدة</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.shared" datatype="html">
+        <source>Partagé</source>
+        <target state="translated">مُشارَك</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.noDesc" datatype="html">
+        <source>Sans description</source>
+        <target state="translated">بدون وصف</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.widgets" datatype="html">
+        <source>widgets</source>
+        <target state="translated">أدوات</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.emptyTitle" datatype="html">
+        <source>Aucun tableau de bord pour le moment</source>
+        <target state="translated">لا توجد لوحات معلومات بعد</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.emptyHint" datatype="html">
+        <source>Créez votre premier tableau de bord et épinglez les indicateurs qui comptent pour vous.</source>
+        <target state="translated">أنشئ لوحة معلوماتك الأولى وثبّت المؤشرات التي تهمّك.</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.create" datatype="html">
+        <source>Créer un tableau de bord</source>
+        <target state="translated">إنشاء لوحة معلومات</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.loading" datatype="html">
+        <source>Chargement des tableaux de bord</source>
+        <target state="translated">جارٍ تحميل لوحات المعلومات</target>
       </trans-unit>
       <trans-unit id="dbb.widget.kpi" datatype="html">
         <source>Indicateur KPI</source>

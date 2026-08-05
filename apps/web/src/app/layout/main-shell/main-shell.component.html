@@ -1,6 +1,19 @@
-<div class="qos-shell" [class.qos-shell--collapsed]="collapsed">
+<div class="qos-shell"
+     [class.qos-shell--collapsed]="collapsed"
+     [class.qos-shell--compact]="compact"
+     [class.qos-shell--nav-open]="navOpen">
 
-  <aside class="qos-sidebar" aria-label="Navigation principale" i18n-aria-label="@@shell.nav.aria">
+  <!-- Voile du tiroir : rend la fermeture évidente d'un simple appui à côté, et
+       assombrit le contenu pour désigner sans ambiguïté ce qui est actif. -->
+  <div class="qos-shell__scrim" *ngIf="compact && navOpen"
+       (click)="closeNav()" aria-hidden="true"></div>
+
+  <!-- Tiroir fermé : retiré de la tabulation ET de l'arbre d'accessibilité, sans
+       quoi la tabulation traverserait cinquante liens invisibles avant d'atteindre
+       la page. -->
+  <aside class="qos-sidebar" aria-label="Navigation principale" i18n-aria-label="@@shell.nav.aria"
+         [attr.inert]="compact && !navOpen ? '' : null"
+         [attr.aria-hidden]="compact && !navOpen ? 'true' : null">
     <div class="qos-sidebar__brand">
       <!-- Le vrai logo, et non une icone generique de la bibliotheque Material.
            L'ancienne icone `workspace_premium` posait un second probleme : la
@@ -11,7 +24,7 @@
            alt="QualitOS" width="36" height="36">
       <div class="qos-sidebar__brand-text" *ngIf="!collapsed">
         <strong>QualitOS</strong>
-        <small i18n="@@shell.brand.tagline">Quality Operation System</small>
+        <small i18n="@@shell.brand.tagline">Quality Operating System</small>
       </div>
     </div>
 
@@ -45,6 +58,7 @@
               [routerLink]="item.route"
               routerLinkActive="qos-sidebar__link--active"
               class="qos-sidebar__link"
+              (click)="onNavigate()"
               [title]="collapsed ? item.label : null">
               <span class="qos-sidebar__icon material-symbols-outlined" aria-hidden="true">
                 {{ item.icon }}

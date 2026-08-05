@@ -140,6 +140,72 @@ describe('MainShellComponent (navigation model)', () => {
 });
 
 /**
+ * Navigation sur écran étroit. Le shell était une grille à deux colonnes à TOUTES
+ * les largeurs : sur un téléphone, la barre latérale mangeait les deux tiers de
+ * l'écran, et la repliér laissait encore un rail de 64 px. Sous 1024 px elle
+ * devient un tiroir superposé, fermé par défaut.
+ */
+describe('MainShellComponent (navigation en écran étroit)', () => {
+
+  function compactHarness(compact: boolean): ShellHarness {
+    const h = harness();
+    h.component.onViewportChange(compact);
+    return h;
+  }
+
+  it('garde le tiroir fermé au démarrage', () => {
+    const { component } = compactHarness(true);
+    expect(component.navOpen).toBeFalse();
+  });
+
+  it('ouvre le tiroir au lieu de replier le rail, en écran étroit', () => {
+    const { component } = compactHarness(true);
+
+    component.toggle();
+
+    expect(component.navOpen).toBeTrue();
+    // Le repli du rail n'a aucun sens ici : il ne doit pas être touché.
+    expect(component.collapsed).toBeFalse();
+  });
+
+  it('replie le rail et ne touche pas au tiroir, en écran large', () => {
+    const { component } = compactHarness(false);
+
+    component.toggle();
+
+    expect(component.collapsed).toBeTrue();
+    expect(component.navOpen).toBeFalse();
+  });
+
+  it('referme le tiroir quand on suit un lien de navigation', () => {
+    const { component } = compactHarness(true);
+    component.toggle();
+
+    component.onNavigate();
+
+    expect(component.navOpen).toBeFalse();
+  });
+
+  it('referme le tiroir sur Échap', () => {
+    const { component } = compactHarness(true);
+    component.toggle();
+
+    component.closeNav();
+
+    expect(component.navOpen).toBeFalse();
+  });
+
+  it('referme le tiroir dès que la fenêtre redevient large', () => {
+    const { component } = compactHarness(true);
+    component.toggle();
+
+    component.onViewportChange(false);
+
+    expect(component.navOpen).toBeFalse();
+  });
+});
+
+/**
  * La cloche de notifications et le bouton de compte étaient deux boutons inertes :
  * aucun menu, aucune action. Ces tests verrouillent leur comportement.
  */
