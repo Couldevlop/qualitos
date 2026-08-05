@@ -1,0 +1,92 @@
+<section class="qos-page">
+  <header class="team-head">
+    <div>
+      <p class="team-eyebrow" i18n="@@admin.team.eyebrow">Administration</p>
+      <h1 i18n="@@admin.team.title">Équipe &amp; habilitations</h1>
+      <p class="team-sub" i18n="@@admin.team.subtitle">
+        Composez votre équipe qualité : qui accède à la plateforme, et avec quels rôles.
+        L'autorisation est appliquée par le serveur — cet écran ne fait qu'en donner la clé.
+      </p>
+    </div>
+    <button mat-stroked-button type="button" (click)="reload()" [disabled]="loading">
+      <mat-icon aria-hidden="true">refresh</mat-icon>
+      <span i18n="@@common.refresh">Actualiser</span>
+    </button>
+  </header>
+
+  <mat-form-field appearance="outline" class="team-search" subscriptSizing="dynamic">
+    <mat-icon matPrefix aria-hidden="true">search</mat-icon>
+    <mat-label i18n="@@admin.team.search">Rechercher un membre ou un rôle</mat-label>
+    <!-- Champ non lié à un formulaire : un simple filtre local, sans état à
+         partager. `ngModel` imposerait FormsModule pour rien. -->
+    <input matInput [value]="search" (input)="onSearch($event)" autocomplete="off">
+  </mat-form-field>
+
+  <div class="team-loading" *ngIf="loading">
+    <mat-progress-spinner mode="indeterminate" diameter="32"
+                          aria-label="Chargement de l'équipe"
+                          i18n-aria-label="@@admin.team.loading"></mat-progress-spinner>
+  </div>
+
+  <p class="team-empty" *ngIf="!loading && visibleMembers.length === 0"
+     i18n="@@admin.team.empty">Aucun membre ne correspond.</p>
+
+  <div class="qos-scroll-x" *ngIf="!loading && visibleMembers.length > 0">
+    <table mat-table [dataSource]="visibleMembers" class="team-table">
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef i18n="@@admin.team.col-member">Membre</th>
+        <td mat-cell *matCellDef="let m">
+          <span class="team-email">{{ m.email }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="roles">
+        <th mat-header-cell *matHeaderCellDef i18n="@@admin.team.col-roles">Rôles</th>
+        <td mat-cell *matCellDef="let m">
+          <div class="team-roles">
+            <button *ngFor="let role of assignableRoles"
+                    type="button"
+                    class="team-role"
+                    [class.is-granted]="hasRole(m, role)"
+                    [disabled]="pendingUserId === m.id"
+                    [attr.aria-pressed]="hasRole(m, role)"
+                    (click)="toggleRole(m, role)">
+              {{ roleLabel(role) }}
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
+        <td mat-cell *matCellDef="let m">
+          <span class="qos-badge" [attr.data-tone]="m.active ? 'success' : 'neutral'">
+            <ng-container *ngIf="m.active" i18n="@@admin.team.active">Actif</ng-container>
+            <ng-container *ngIf="!m.active" i18n="@@admin.team.inactive">Désactivé</ng-container>
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef i18n="@@common.actions">Actions</th>
+        <td mat-cell *matCellDef="let m">
+          <button mat-stroked-button type="button"
+                  *ngIf="m.active"
+                  [disabled]="pendingUserId === m.id"
+                  (click)="setActive(m, false)"
+                  i18n="@@admin.team.revoke">Retirer l'accès</button>
+          <button mat-stroked-button type="button"
+                  *ngIf="!m.active"
+                  [disabled]="pendingUserId === m.id"
+                  (click)="setActive(m, true)"
+                  i18n="@@admin.team.restore">Rétablir l'accès</button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns;"
+          [class.is-inactive]="!row.active"></tr>
+    </table>
+  </div>
+</section>

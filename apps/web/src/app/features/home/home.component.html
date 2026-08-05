@@ -1,19 +1,33 @@
 <div class="qos-page home">
 
-  <!-- Hero premium : slogan mis en scène + accès directs. -->
+  <!-- Hero : le slogan de marque en accroche, la proposition de valeur dans la
+       langue du lecteur, et quatre preuves courtes plutôt qu'un bloc de texte. -->
   <section class="home-hero">
-    <span class="home-hero__eyebrow">{{ heroEyebrow }}</span>
-    <h1 class="home-hero__title">{{ heroTitle }}</h1>
-    <p class="home-hero__subtitle">{{ heroSubtitle }}</p>
-    <div class="home-hero__actions">
-      <a mat-flat-button color="primary" routerLink="/dashboard">
-        <mat-icon>dashboard</mat-icon>
-        <span i18n="@@home.hero.cta-dashboard">Ouvrir le tableau de bord</span>
-      </a>
-      <a mat-stroked-button routerLink="/standards">
-        <mat-icon>workspace_premium</mat-icon>
-        <span i18n="@@home.hero.cta-standards">Standards Hub</span>
-      </a>
+    <div class="home-hero__inner">
+      <p class="home-hero__eyebrow">
+        <span class="home-hero__dot" aria-hidden="true"></span>
+        {{ heroEyebrow }}
+      </p>
+      <h1 class="home-hero__title">{{ heroTitle }}</h1>
+      <p class="home-hero__slogan">{{ heroSlogan }}</p>
+      <p class="home-hero__subtitle">{{ heroSubtitle }}</p>
+
+      <div class="home-hero__actions">
+        <a mat-flat-button color="primary" routerLink="/dashboard">
+          <mat-icon>dashboard</mat-icon>
+          <span i18n="@@home.hero.cta-dashboard">Ouvrir le tableau de bord</span>
+        </a>
+        <a mat-stroked-button routerLink="/standards">
+          <mat-icon>workspace_premium</mat-icon>
+          <span i18n="@@home.hero.cta-standards">Standards Hub</span>
+        </a>
+      </div>
+
+      <ul class="home-hero__proofs">
+        <li *ngFor="let p of heroProofs">
+          <mat-icon aria-hidden="true">{{ p.icon }}</mat-icon>{{ p.label }}
+        </li>
+      </ul>
     </div>
   </section>
 
@@ -77,11 +91,9 @@
       </div>
     </section>
 
-    <!-- Activité récente. -->
-    <section class="home-section" aria-labelledby="home-activity-title">
-      <header class="home-section__head">
-        <div><h2 id="home-activity-title" i18n="@@home.activity.title">Activité récente</h2></div>
-      </header>
+    <!-- Activité récente : le composant porte déjà son propre titre. En ajouter
+         un second au-dessus affichait « Activité récente » deux fois de suite. -->
+    <section class="home-section home-section--flush">
       <qos-activity-feed-widget [limit]="8"></qos-activity-feed-widget>
     </section>
   </div>

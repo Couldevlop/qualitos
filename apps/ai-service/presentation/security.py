@@ -32,8 +32,15 @@ async def current_user(
     authorization: str | None = Header(default=None),
     x_dev_claims: str | None = Header(default=None, alias="X-Dev-Claims"),
     x_correlation_id: str | None = Header(default=None, alias="X-Correlation-Id"),
+    x_tenant_id: str | None = Header(default=None, alias="X-Tenant-Id"),
 ) -> UserContext:
-    """Resolve the user from JWT (Keycloak) or X-Dev-Claims in dev mode."""
+    """Resolve the user from JWT (Keycloak) or X-Dev-Claims in dev mode.
+
+    Appels serveur-à-serveur (ADR 0048) : un jeton `client_credentials` ne porte
+    aucun tenant ; l'en-tête `X-Tenant-Id` le fournit, et n'est cru que si l'`azp`
+    du jeton figure dans `TRUSTED_SERVICE_AZP`. La claim de tenant, quand elle
+    existe, l'emporte toujours.
+    """
     corr = x_correlation_id or str(uuid.uuid4())
     kc, dev = _get_validators()
     try:
@@ -45,7 +52,7 @@ async def current_user(
             raise HTTPException(status_code=401, detail="missing Bearer token")
         token = authorization.split(" ", 1)[1]
         assert kc is not None
-        return kc.validate(token, corr)
+        return kc.validate(token, corr, tenant_header=x_tenant_id)
     except CrossTenantAccessError as exc:
         raise HTTPException(status_code=401, detail=str(exc)) from exc
 

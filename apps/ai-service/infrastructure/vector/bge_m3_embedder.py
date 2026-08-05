@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import os
 
+from domain.model.errors import ProviderUnavailableError
 from domain.port.embedder import Embedder
 
 DEFAULT_REVISION = "5617a9f61b028005a4858fdac845db406aefb181"  # placeholder pin
@@ -31,10 +32,20 @@ class BgeM3Embedder(Embedder):
             except Exception:
                 self._model = None
 
+    def is_loaded(self) -> bool:
+        """Le modèle est-il réellement chargé ? Interrogé au démarrage (ADR 0049)."""
+        return self._model is not None
+
     def embed(self, texts: list[str]) -> list[list[float]]:
         if self._model is None:
-            # Deterministic fallback so the service still runs without the model.
-            return DeterministicEmbedder(self.DIMENSION).embed(texts)
+            # Plus de repli silencieux : rendre des vecteurs de hachage laissait
+            # le RAG répondre avec des voisinages arbitraires, sans que rien ne
+            # le signale. Le choix de l'embedder appartient à la configuration
+            # (EMBEDDINGS_PROVIDER), pas à un rattrapage discret.
+            raise ProviderUnavailableError(
+                "Modèle BGE-M3 non chargé : installer l'extra « ml » ou "
+                "configurer EMBEDDINGS_PROVIDER=ollama."
+            )
         out = self._model.encode(texts)["dense_vecs"]  # type: ignore[index]
         return [list(map(float, v)) for v in out]
 

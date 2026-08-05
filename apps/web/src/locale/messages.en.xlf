@@ -824,6 +824,10 @@
         <source>Non activé</source>
         <target state="translated">Not activated</target>
       </trans-unit>
+      <trans-unit id="admin.modules.included" datatype="html">
+        <source>Inclus</source>
+        <target state="translated">Included</target>
+      </trans-unit>
       <trans-unit id="admin.modules.reactivate" datatype="html">
         <source>Réactiver</source>
         <target state="translated">Reactivate</target>
@@ -6545,8 +6549,8 @@
         <target state="translated">Global search</target>
       </trans-unit>
       <trans-unit id="shell.brand.tagline" datatype="html">
-        <source>Système d'exploitation qualité</source>
-        <target state="translated">Quality Operation System</target>
+        <source>Quality Operating System</source>
+        <target state="translated">Quality Operating System</target>
       </trans-unit>
       <trans-unit id="shell.nav.aria" datatype="html">
         <source>Navigation principale</source>
@@ -6919,6 +6923,46 @@
       <trans-unit id="dbb.config.done" datatype="html">
         <source>Terminé</source>
         <target state="translated">Done</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.title" datatype="html">
+        <source>Tableaux de bord personnalisés</source>
+        <target state="translated">Custom dashboards</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.subtitle" datatype="html">
+        <source>Composez et partagez vos tableaux de bord : glissez, déposez, enregistrez.</source>
+        <target state="translated">Compose and share your dashboards: drag, drop, save.</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.new" datatype="html">
+        <source>Nouveau tableau de bord</source>
+        <target state="translated">New dashboard</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.shared" datatype="html">
+        <source>Partagé</source>
+        <target state="translated">Shared</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.noDesc" datatype="html">
+        <source>Sans description</source>
+        <target state="translated">No description</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.widgets" datatype="html">
+        <source>widgets</source>
+        <target state="translated">widgets</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.emptyTitle" datatype="html">
+        <source>Aucun tableau de bord pour le moment</source>
+        <target state="translated">No dashboards yet</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.emptyHint" datatype="html">
+        <source>Créez votre premier tableau de bord et épinglez les indicateurs qui comptent pour vous.</source>
+        <target state="translated">Create your first dashboard and pin the indicators that matter to you.</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.create" datatype="html">
+        <source>Créer un tableau de bord</source>
+        <target state="translated">Create dashboard</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.loading" datatype="html">
+        <source>Chargement des tableaux de bord</source>
+        <target state="translated">Loading dashboards</target>
       </trans-unit>
       <trans-unit id="dbb.widget.kpi" datatype="html">
         <source>Indicateur KPI</source>
@@ -14357,8 +14401,28 @@ declared income
        augmented by AI and certified by blockchain.</target>
       </trans-unit>
       <trans-unit id="home.welcome.title" datatype="html">
+        <source>Cinq méthodes. Un seul référentiel.</source>
+        <target state="translated">Five methods. One single repository.</target>
+      </trans-unit>
+      <trans-unit id="home.hero.slogan" datatype="html">
         <source>One platform. Five methods. Every industry.</source>
         <target state="translated">One platform. Five methods. Every industry.</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-methods" datatype="html">
+        <source>5 méthodes fondamentales</source>
+        <target state="translated">5 fundamental methods</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-standards" datatype="html">
+        <source>60+ normes outillées</source>
+        <target state="translated">60+ standards covered</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-ai" datatype="html">
+        <source>IA explicable</source>
+        <target state="translated">Explainable AI</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-proof" datatype="html">
+        <source>Preuves horodatées</source>
+        <target state="translated">Time-stamped evidence</target>
       </trans-unit>
       <trans-unit id="home.hero.eyebrow" datatype="html">
         <source>Plateforme qualité totale</source>
@@ -20143,6 +20207,102 @@ India (service centre)</target>
       <trans-unit id="storyboard.err-generic" datatype="html">
         <source>Échec de la génération (HTTP <x id="status"/>).</source>
         <target state="translated">Generation failed (HTTP <x id="status"/>).</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-team" datatype="html">
+        <source>Équipe &amp; habilitations</source>
+        <target state="translated">Team &amp; permissions</target>
+      </trans-unit>
+      <trans-unit id="admin.team.eyebrow" datatype="html">
+        <source>Administration</source>
+        <target state="translated">Administration</target>
+      </trans-unit>
+      <trans-unit id="admin.team.title" datatype="html">
+        <source>Équipe &amp; habilitations</source>
+        <target state="translated">Team &amp; permissions</target>
+      </trans-unit>
+      <trans-unit id="admin.team.subtitle" datatype="html">
+        <source>Composez votre équipe qualité : qui accède à la plateforme, et avec quels rôles. L'autorisation est appliquée par le serveur — cet écran ne fait qu'en donner la clé.</source>
+        <target state="translated">Build your quality team: who reaches the platform, and with which roles. Authorisation is enforced by the server — this screen only hands out the key.</target>
+      </trans-unit>
+      <trans-unit id="admin.team.search" datatype="html">
+        <source>Rechercher un membre ou un rôle</source>
+        <target state="translated">Search a member or a role</target>
+      </trans-unit>
+      <trans-unit id="admin.team.loading" datatype="html">
+        <source>Chargement de l'équipe</source>
+        <target state="translated">Loading the team</target>
+      </trans-unit>
+      <trans-unit id="admin.team.empty" datatype="html">
+        <source>Aucun membre ne correspond.</source>
+        <target state="translated">No member matches.</target>
+      </trans-unit>
+      <trans-unit id="admin.team.col-member" datatype="html">
+        <source>Membre</source>
+        <target state="translated">Member</target>
+      </trans-unit>
+      <trans-unit id="admin.team.col-roles" datatype="html">
+        <source>Rôles</source>
+        <target state="translated">Roles</target>
+      </trans-unit>
+      <trans-unit id="admin.team.active" datatype="html">
+        <source>Actif</source>
+        <target state="translated">Active</target>
+      </trans-unit>
+      <trans-unit id="admin.team.inactive" datatype="html">
+        <source>Désactivé</source>
+        <target state="translated">Deactivated</target>
+      </trans-unit>
+      <trans-unit id="admin.team.revoke" datatype="html">
+        <source>Retirer l'accès</source>
+        <target state="translated">Revoke access</target>
+      </trans-unit>
+      <trans-unit id="admin.team.restore" datatype="html">
+        <source>Rétablir l'accès</source>
+        <target state="translated">Restore access</target>
+      </trans-unit>
+      <trans-unit id="admin.team.load-failed" datatype="html">
+        <source>Impossible de charger l'équipe.</source>
+        <target state="translated">Could not load the team.</target>
+      </trans-unit>
+      <trans-unit id="admin.team.needs-a-role" datatype="html">
+        <source>Un membre doit conserver au moins un rôle.</source>
+        <target state="translated">A member must keep at least one role.</target>
+      </trans-unit>
+      <trans-unit id="admin.team.saved" datatype="html">
+        <source>Habilitations mises à jour.</source>
+        <target state="translated">Permissions updated.</target>
+      </trans-unit>
+      <trans-unit id="admin.team.save-failed" datatype="html">
+        <source>Modification refusée.</source>
+        <target state="translated">Change refused.</target>
+      </trans-unit>
+      <trans-unit id="role.admin-tenant" datatype="html">
+        <source>Administrateur du tenant</source>
+        <target state="translated">Tenant administrator</target>
+      </trans-unit>
+      <trans-unit id="role.quality-director" datatype="html">
+        <source>Directeur qualité</source>
+        <target state="translated">Quality director</target>
+      </trans-unit>
+      <trans-unit id="role.quality-manager" datatype="html">
+        <source>Manager qualité</source>
+        <target state="translated">Quality manager</target>
+      </trans-unit>
+      <trans-unit id="role.auditor" datatype="html">
+        <source>Auditeur</source>
+        <target state="translated">Auditor</target>
+      </trans-unit>
+      <trans-unit id="role.user" datatype="html">
+        <source>Utilisateur</source>
+        <target state="translated">User</target>
+      </trans-unit>
+      <trans-unit id="role.external-auditor" datatype="html">
+        <source>Auditeur externe</source>
+        <target state="translated">External auditor</target>
+      </trans-unit>
+      <trans-unit id="role.super-admin" datatype="html">
+        <source>Super administrateur</source>
+        <target state="translated">Super administrator</target>
       </trans-unit>
       <trans-unit id="nav.mon-apprentissage" datatype="html">
         <source>Mon apprentissage</source>

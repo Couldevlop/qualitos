@@ -50,7 +50,12 @@ TRANSLATIONS = {
     # Baseline de la marque. Traduite plutot que laissee en anglais : elle
     # decrit le produit, elle n'est pas le nom de marque (« QualitOS », lui,
     # reste invariant).
-    "shell.brand.tagline": ("Système d'exploitation qualité", 'Quality Operation System', 'Sistema de operación de calidad', 'نظام تشغيل الجودة', '品質オペレーティングシステム', '质量运营系统'),
+    # Signature de marque : elle fait partie du bloc-logo et reste donc identique
+    # dans toutes les langues, comme le nom du produit lui-même. Deux corrections
+    # ici : la faute « Operation » pour « Operating », et la colonne française qui
+    # ne disait pas la même chose que le gabarit — l'écart était invisible puisque
+    # la correspondance se fait par identifiant.
+    "shell.brand.tagline": ('Quality Operating System', 'Quality Operating System', 'Quality Operating System', 'Quality Operating System', 'Quality Operating System', 'Quality Operating System'),
     'shell.nav.aria': ('Navigation principale', 'Main navigation', 'Navegación principal', 'التنقل الرئيسي', 'メインナビゲーション', '主导航'),
     'shell.toggle-nav.aria': ('Basculer la navigation', 'Toggle navigation', 'Alternar la navegación', 'تبديل التنقل', 'ナビゲーションの切り替え', '切换导航'),
     'shell.notifications.aria': ('Notifications', 'Notifications', 'Notificaciones', 'الإشعارات', '通知', '通知'),

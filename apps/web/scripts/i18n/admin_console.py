@@ -166,6 +166,7 @@ TRANSLATIONS = {
     'admin.modules.load-error': ('Impossible de charger les modules.', 'Unable to load modules.', 'No se pudieron cargar los módulos.', 'تعذّر تحميل الوحدات.', 'モジュールを読み込めません。', '无法加载模块。'),
     'admin.modules.min-tier': ('Minimum', 'Minimum', 'Mínimo', 'الحد الأدنى', '最低', '最低'),
     'admin.modules.not-activated': ('Non activé', 'Not activated', 'No activado', 'غير مفعّل', '未有効化', '未启用'),
+    'admin.modules.included': ('Inclus', 'Included', 'Incluido', 'مُضمَّن', '標準搭載', '已包含'),
     'admin.modules.reactivate': ('Réactiver', 'Reactivate', 'Reactivar', 'إعادة التفعيل', '再有効化', '重新启用'),
     'admin.modules.resume': ('Reprendre', 'Resume', 'Reanudar', 'استئناف', '再開', '恢复'),
     'admin.modules.subtitle': ('Activez uniquement les modules dont votre organisation a besoin. La désactivation est immédiate et réversible ; les modules cœur restent toujours actifs.', 'Enable only the modules your organisation needs. Disabling takes effect immediately and is reversible; core modules always stay on.', 'Active solo los módulos que su organización necesita. La desactivación es inmediata y reversible; los módulos básicos siempre permanecen activos.', 'فعِّل الوحدات التي تحتاجها مؤسستك فقط. التعطيل فوري وقابل للتراجع؛ وتبقى الوحدات الأساسية مفعّلة دائمًا.', '組織に必要なモジュールだけを有効にします。無効化は即時に反映され、元に戻せます。コアモジュールは常に有効です。', '仅启用贵组织所需的模块。停用即时生效且可撤销；核心模块始终保持启用。'),

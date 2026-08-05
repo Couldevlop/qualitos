@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
 import { TenantModulesComponent } from './pages/tenant-modules/tenant-modules.component';
+import { TenantTeamComponent } from './pages/tenant-team/tenant-team.component';
 
 /**
  * Console d'administration du tenant.
@@ -15,6 +16,7 @@ import { TenantModulesComponent } from './pages/tenant-modules/tenant-modules.co
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'modules' },
   { path: 'modules', component: TenantModulesComponent },
+  { path: 'team', component: TenantTeamComponent },
   // Les autres surfaces d'administration sont des modules paresseux distincts,
   // déclarés ICI plutôt qu'à la racine : sans cela, la route `admin` de
   // app-routing.module.ts capterait `/admin/api-keys` par correspondance de préfixe
@@ -42,7 +44,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [TenantModulesComponent],
+  declarations: [TenantModulesComponent, TenantTeamComponent],
   imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class AdminModule {}

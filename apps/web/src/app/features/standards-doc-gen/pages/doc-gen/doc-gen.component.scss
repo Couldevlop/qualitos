@@ -88,6 +88,13 @@
   }
 }
 
+// La case ne fait que refléter l'état : c'est la ligne qui reçoit le clic, le
+// focus et le clavier. Sans cela, un clic sur la case suivait un second chemin
+// et l'état natif de l'input finissait désaccordé de l'état affiché.
+.docgen-piece-box {
+  pointer-events: none;
+}
+
 .docgen-piece-info {
   display: flex;
   flex-direction: column;

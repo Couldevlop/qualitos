@@ -5,19 +5,47 @@
 /* ------------------------------------------------------------------ *
  * Hero — slogan mis en scène, beaucoup d'espace blanc.
  * ------------------------------------------------------------------ */
+// Le héros n'était que du texte posé sur le fond de l'application : rien ne le
+// distinguait des sections suivantes, et la page s'ouvrait sans point d'entrée
+// visuel. Il devient une surface à part entière — dégradé très doux, halo
+// d'accent, filet fin — obtenue entièrement en CSS : aucune image à charger,
+// et le rendu suit le thème clair comme sombre sans seconde version.
 .home-hero {
-  display: flex;
-  flex-direction: column;
-  gap: var(--qos-space-4);
-  padding: var(--qos-space-6) 0 var(--qos-space-2);
-  max-width: 76ch;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-xl);
+  background:
+    radial-gradient(120% 140% at 88% -10%, var(--qos-accent-bg-soft) 0%, transparent 58%),
+    linear-gradient(180deg, var(--qos-bg-elevated) 0%, var(--qos-bg-sunken) 100%);
+  box-shadow: var(--qos-shadow-xs);
+
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--qos-space-3);
+    padding: clamp(24px, 4vw, 48px) clamp(20px, 4vw, 56px);
+    max-width: 76ch;
+  }
 
   &__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--qos-space-2);
     font-size: var(--qos-fs-xs);
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-weight: var(--qos-fw-semibold);
-    color: var(--qos-accent-fg-soft);
+    color: var(--qos-accent-bg);
+  }
+
+  // Pastille de vie : discrète, elle signale une plateforme en fonctionnement.
+  &__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--qos-success-500, #10b981);
+    box-shadow: 0 0 0 3px var(--qos-success-bg-soft, rgba(16, 185, 129, 0.16));
   }
 
   &__title {
@@ -26,6 +54,16 @@
     letter-spacing: -0.03em;
     font-weight: var(--qos-fw-bold);
     color: var(--qos-fg-primary);
+    text-wrap: balance;      // évite la ligne orpheline d'un seul mot
+  }
+
+  // Slogan de marque : présent, mais à sa place — au-dessus du contenu, pas à
+  // la place du message adressé au lecteur.
+  &__slogan {
+    font-size: var(--qos-fs-md);
+    font-weight: var(--qos-fw-medium);
+    letter-spacing: 0.01em;
+    color: var(--qos-accent-bg);
   }
 
   &__subtitle {
@@ -40,6 +78,31 @@
     flex-wrap: wrap;
     gap: var(--qos-space-3);
     margin-top: var(--qos-space-2);
+  }
+
+  &__proofs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--qos-space-2) var(--qos-space-4);
+    margin-top: var(--qos-space-4);
+    padding-top: var(--qos-space-4);
+    border-top: 1px solid var(--qos-border-subtle);
+    list-style: none;
+
+    li {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--qos-space-2);
+      font-size: var(--qos-fs-sm);
+      color: var(--qos-fg-secondary);
+    }
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: var(--qos-accent-bg);
+    }
   }
 }
 
@@ -144,23 +207,35 @@
     font-size: var(--qos-fs-sm);
     color: var(--qos-fg-secondary);
     line-height: var(--qos-lh-normal);
+    // « Seiri/Seiton/Seiso/Seiketsu/Shitsuke » est un seul mot pour le navigateur :
+    // sans point de coupure, il débordait de sa carte et se faisait rogner.
+    overflow-wrap: anywhere;
   }
 }
 
 /* ------------------------------------------------------------------ *
  * Bloc deux colonnes : actions rapides + activité.
  * ------------------------------------------------------------------ */
+// `minmax(0, …)` : sans cela, une colonne de grille refuse de descendre sous la
+// largeur de son contenu, et le tableau d'activité poussait la page.
 .home-split {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
   gap: var(--qos-space-6);
+  align-items: start;
 
-  @media (max-width: 900px) { grid-template-columns: 1fr; }
+  @media (max-width: 1100px) { grid-template-columns: 1fr; }
 }
 
+// La section « Activité » n'a plus d'en-tête propre : son composant en porte un.
+.home-section--flush { gap: 0; }
+
+// Les actions rapides formaient une colonne étroite de quatre lignes, face à une
+// colonne de droite presque vide. Sur deux colonnes, le bloc respire et l'espace
+// perdu disparaît.
 .home-actions {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
   gap: var(--qos-space-2);
 }
 

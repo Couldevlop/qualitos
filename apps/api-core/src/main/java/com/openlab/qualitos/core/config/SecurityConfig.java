@@ -103,8 +103,14 @@ public class SecurityConfig {
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 // Gestion des tenants : Super Admin uniquement
                 .requestMatchers("/api/v1/tenants/**").hasRole("SUPER_ADMIN")
-                // Gestion des utilisateurs : Admin + Super Admin
-                .requestMatchers("/api/v1/users/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                // Gestion des utilisateurs : Admin + Super Admin + Admin DU TENANT.
+                // ADMIN_TENANT était absent : un administrateur de tenant ne pouvait
+                // ni voir son équipe ni lui attribuer un rôle, alors que c'est
+                // précisément sa fonction (§16). Il fallait donc passer par l'éditeur
+                // de la plateforme pour habiliter le moindre arrivant. La portée reste
+                // celle de l'organisation : le service lit le tenant dans le JWT.
+                .requestMatchers("/api/v1/users/**")
+                    .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
                 // Tout le reste nécessite une authentification
                 .anyRequest().authenticated()
             )

@@ -57,6 +57,55 @@ from infrastructure.vector import (
     InMemoryVectorStore,
     QdrantVectorStore,
 )
+from infrastructure.vector.bge_m3_embedder import DeterministicEmbedder
+from infrastructure.vector.ollama_embedder import OllamaEmbedder
+
+
+def build_embedder() -> Embedder:
+    """Choisit l'adaptateur d'embeddings du RAG (ADR 0049).
+
+    Trois voies, TOUJOURS explicites :
+
+    * ``ollama`` — le calcul est délégué au serveur Ollama déjà déployé, qui sert
+      BGE-M3 sans que l'image embarque torch ;
+    * ``local`` — le modèle est chargé dans le processus (nécessite l'extra
+      ``ml``), pour un déploiement sans serveur d'inférence séparé ;
+    * ``deterministic`` — vecteurs de hachage, pour le développement et les tests
+      uniquement : ils ne portent AUCUN sens sémantique.
+
+    Le point important est ce qui n'existe plus : le repli silencieux. L'image de
+    production n'ayant pas ``FlagEmbedding``, l'adaptateur BGE-M3 rendait
+    jusqu'ici un embedder de hachage sans le dire, et le RAG répondait avec des
+    voisinages arbitraires — une réponse fausse et sûre d'elle, sur le module
+    dont toute la valeur tient à citer ses sources.
+    """
+    choice = (os.environ.get("EMBEDDINGS_PROVIDER") or "").strip().lower()
+    if not choice:
+        # Un serveur d'inférence configuré signale un environnement déployé.
+        choice = "ollama" if os.environ.get("OLLAMA_BASE_URL") else ""
+    if not choice:
+        raise RuntimeError(
+            "Embeddings non configurées : renseigner EMBEDDINGS_PROVIDER "
+            "(ollama | local | deterministic) ou OLLAMA_BASE_URL."
+        )
+    if choice == "ollama":
+        return OllamaEmbedder()
+    if choice == "local":
+        embedder = BgeM3Embedder()
+        if not embedder.is_loaded():
+            raise RuntimeError(
+                "EMBEDDINGS_PROVIDER=local mais le modèle BGE-M3 n'a pas pu être "
+                "chargé : installer l'extra « ml », ou basculer sur ollama."
+            )
+        return embedder
+    if choice == "deterministic":
+        # Même dimension qu'en production : une dimension différente rendrait la
+        # collection vectorielle incompatible d'un environnement à l'autre.
+        return DeterministicEmbedder(BgeM3Embedder.DIMENSION)
+    raise ValueError(
+        f"EMBEDDINGS_PROVIDER inconnu : « {choice} » "
+        "(attendu : ollama | local | deterministic)"
+    )
 
 
 @dataclass(slots=True)
@@ -101,7 +150,7 @@ class Container:
         vector_store: VectorStore = o.get("vector_store") or (
             QdrantVectorStore() if os.environ.get("QDRANT_URL") else InMemoryVectorStore()
         )
-        embedder = o.get("embedder") or BgeM3Embedder()
+        embedder = o.get("embedder") or build_embedder()
         sql_validator: SqlValidator = o.get("sql_validator") or SqlglotValidator()
         sql_executor: ReadOnlySqlExecutor = o.get("sql_executor") or (
             JdbcReadOnlyExecutor()

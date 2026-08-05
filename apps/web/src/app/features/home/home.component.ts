@@ -41,7 +41,21 @@ interface QuickAction {
 export class HomeComponent {
 
   readonly heroEyebrow = $localize`:@@home.hero.eyebrow:Plateforme qualité totale`;
-  readonly heroTitle = $localize`:@@home.welcome.title:One platform. Five methods. Every industry.`;
+  readonly heroTitle = $localize`:@@home.welcome.title:Cinq méthodes. Un seul référentiel.`;
+
+  /** Slogan de marque — inchangé dans toutes les langues, comme un nom propre. */
+  readonly heroSlogan = $localize`:@@home.hero.slogan:One platform. Five methods. Every industry.`;
+
+  /**
+   * Quatre preuves courtes plutôt qu'un paragraphe : ce que la plateforme tient,
+   * lisible d'un coup d'œil, sans promesse invérifiable.
+   */
+  readonly heroProofs = [
+    { icon: 'hub', label: $localize`:@@home.hero.proof-methods:5 méthodes fondamentales` },
+    { icon: 'verified', label: $localize`:@@home.hero.proof-standards:60+ normes outillées` },
+    { icon: 'psychology', label: $localize`:@@home.hero.proof-ai:IA explicable` },
+    { icon: 'lock_clock', label: $localize`:@@home.hero.proof-proof:Preuves horodatées` }
+  ];
   readonly heroSubtitle = $localize`:@@home.welcome.subtitle:QualitOS agrège les méthodes fondamentales de la qualité totale dans un référentiel unique, augmenté par l'IA et certifié par blockchain.`;
 
   readonly methods: MethodCard[] = [

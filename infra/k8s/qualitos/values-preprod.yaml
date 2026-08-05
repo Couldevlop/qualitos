@@ -128,6 +128,21 @@ services:
       # donc l'URL publique sous /auth, et non le service interne.
       KEYCLOAK_ISSUER: https://preprod.qualitos.openlabconsulting.com/auth/realms/qualitos
       KEYCLOAK_AUDIENCE: qualitos-ai
+      # Clients de service autorises a porter le tenant via X-Tenant-Id (ADR 0048).
+      # Un jeton client_credentials represente une machine : il ne porte AUCUN
+      # tenant. Sans cette liste, l'ai-service refuse tout appel de l'engine en
+      # 401 — meme avec un jeton parfaitement valide. La restriction sur l'`azp`
+      # est ce qui empeche n'importe quel porteur de jeton de se declarer d'un
+      # tenant qui n'est pas le sien. Doit correspondre a AI_CLIENT_ID cote engine.
+      TRUSTED_SERVICE_AZP: api-quality-engine-ai
+      # Embeddings du RAG (ADR 0049) : le calcul est delegue au serveur Ollama
+      # deja deploye, qui sert BGE-M3 sans que l'image embarque torch. Le modele
+      # doit etre tire une fois sur la machine : `ollama pull bge-m3`. Sans ce
+      # reglage explicite, l'ai-service REFUSE de demarrer plutot que de retomber
+      # sur des vecteurs de hachage : le RAG repondait alors avec des voisinages
+      # arbitraires, sans que rien ne le signale.
+      EMBEDDINGS_PROVIDER: ollama
+      EMBEDDINGS_MODEL: bge-m3
       QDRANT_URL: http://qdrant.qualitos-preprod.svc.cluster.local:6333
       # L'allow-list des hotes IA (garde SSRF, OWASP A10) ne connait que le nom
       # court `ollama` du docker-compose. Sur Kubernetes le service porte un nom

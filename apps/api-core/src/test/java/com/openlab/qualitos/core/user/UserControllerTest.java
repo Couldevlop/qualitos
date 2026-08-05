@@ -72,6 +72,69 @@ class UserControllerTest {
         return jwt().authorities(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
+    /** Administrateur DU TENANT — §16 : il gère les utilisateurs de son organisation. */
+    private SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor tenantAdminJwt() {
+        return jwt().authorities(new SimpleGrantedAuthority("ROLE_ADMIN_TENANT"));
+    }
+
+    /**
+     * Habilitation de l'équipe par le tenant lui-même (§16). L'API utilisateurs
+     * n'était ouverte qu'à ADMIN et SUPER_ADMIN : un administrateur de tenant ne
+     * pouvait donc ni voir sa propre équipe, ni lui donner un rôle — il fallait
+     * passer par l'éditeur de la plateforme pour le moindre arrivant. Le service
+     * lit déjà le tenant dans le JWT : la portée reste celle de l'organisation.
+     */
+    @Nested
+    @DisplayName("Habilitations gérées par l'administrateur du tenant")
+    class TenantAdminManagesItsTeam {
+
+        @Test
+        @DisplayName("liste l'équipe de son tenant")
+        void listsItsOwnTeam() throws Exception {
+            given(userService.findAll(any(Pageable.class)))
+                    .willReturn(new PageImpl<>(List.of(sampleResponse())));
+
+            mockMvc.perform(get("/api/v1/users").with(tenantAdminJwt()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content[0].email").value("alice@acme.com"));
+        }
+
+        @Test
+        @DisplayName("attribue un rôle à un membre de son équipe")
+        void grantsARoleToATeamMember() throws Exception {
+            given(userService.update(eq(USER_ID), any(UserDto.UpdateRequest.class)))
+                    .willReturn(sampleResponse());
+
+            mockMvc.perform(put("/api/v1/users/{id}", USER_ID)
+                            .with(tenantAdminJwt())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(
+                                    new UserDto.UpdateRequest(Set.of("QUALITY_MANAGER"), true))))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("retire l'accès d'un membre")
+        void deactivatesATeamMember() throws Exception {
+            doNothing().when(userService).deactivate(USER_ID);
+
+            mockMvc.perform(delete("/api/v1/users/{id}", USER_ID).with(tenantAdminJwt()))
+                    .andExpect(status().isNoContent());
+        }
+
+        @Test
+        @DisplayName("un simple utilisateur reste refusé")
+        void plainUserStillRefused() throws Exception {
+            // L'ouverture porte sur le rôle d'administration du tenant, pas sur tous.
+            mockMvc.perform(put("/api/v1/users/{id}", USER_ID)
+                            .with(userJwt())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(
+                                    new UserDto.UpdateRequest(Set.of("ADMIN"), true))))
+                    .andExpect(status().isForbidden());
+        }
+    }
+
     @Nested
     @DisplayName("GET /api/v1/users")
     class ListUsers {

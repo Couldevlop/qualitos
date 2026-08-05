@@ -824,6 +824,10 @@
         <source>Non activé</source>
         <target state="translated">غير مفعّل</target>
       </trans-unit>
+      <trans-unit id="admin.modules.included" datatype="html">
+        <source>Inclus</source>
+        <target state="translated">مُضمَّن</target>
+      </trans-unit>
       <trans-unit id="admin.modules.reactivate" datatype="html">
         <source>Réactiver</source>
         <target state="translated">إعادة التفعيل</target>
@@ -6545,8 +6549,8 @@
         <target state="translated">بحث شامل</target>
       </trans-unit>
       <trans-unit id="shell.brand.tagline" datatype="html">
-        <source>Système d'exploitation qualité</source>
-        <target state="translated">نظام تشغيل الجودة</target>
+        <source>Quality Operating System</source>
+        <target state="translated">Quality Operating System</target>
       </trans-unit>
       <trans-unit id="shell.nav.aria" datatype="html">
         <source>Navigation principale</source>
@@ -6919,6 +6923,46 @@
       <trans-unit id="dbb.config.done" datatype="html">
         <source>Terminé</source>
         <target state="translated">تم</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.title" datatype="html">
+        <source>Tableaux de bord personnalisés</source>
+        <target state="translated">لوحات معلومات مخصّصة</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.subtitle" datatype="html">
+        <source>Composez et partagez vos tableaux de bord : glissez, déposez, enregistrez.</source>
+        <target state="translated">أنشئ لوحات معلوماتك وشاركها: اسحب، أفلِت، احفظ.</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.new" datatype="html">
+        <source>Nouveau tableau de bord</source>
+        <target state="translated">لوحة معلومات جديدة</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.shared" datatype="html">
+        <source>Partagé</source>
+        <target state="translated">مُشارَك</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.noDesc" datatype="html">
+        <source>Sans description</source>
+        <target state="translated">بدون وصف</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.widgets" datatype="html">
+        <source>widgets</source>
+        <target state="translated">أدوات</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.emptyTitle" datatype="html">
+        <source>Aucun tableau de bord pour le moment</source>
+        <target state="translated">لا توجد لوحات معلومات بعد</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.emptyHint" datatype="html">
+        <source>Créez votre premier tableau de bord et épinglez les indicateurs qui comptent pour vous.</source>
+        <target state="translated">أنشئ لوحة معلوماتك الأولى وثبّت المؤشرات التي تهمّك.</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.create" datatype="html">
+        <source>Créer un tableau de bord</source>
+        <target state="translated">إنشاء لوحة معلومات</target>
+      </trans-unit>
+      <trans-unit id="dbb.list.loading" datatype="html">
+        <source>Chargement des tableaux de bord</source>
+        <target state="translated">جارٍ تحميل لوحات المعلومات</target>
       </trans-unit>
       <trans-unit id="dbb.widget.kpi" datatype="html">
         <source>Indicateur KPI</source>
@@ -14357,8 +14401,28 @@ historique 12 mois</source>
        مدعوم بالذكاء الاصطناعي وموثَّق عبر البلوك تشين.</target>
       </trans-unit>
       <trans-unit id="home.welcome.title" datatype="html">
+        <source>Cinq méthodes. Un seul référentiel.</source>
+        <target state="translated">خمس منهجيات. مرجع واحد.</target>
+      </trans-unit>
+      <trans-unit id="home.hero.slogan" datatype="html">
         <source>One platform. Five methods. Every industry.</source>
         <target state="translated">One platform. Five methods. Every industry.</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-methods" datatype="html">
+        <source>5 méthodes fondamentales</source>
+        <target state="translated">5 منهجيات أساسية</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-standards" datatype="html">
+        <source>60+ normes outillées</source>
+        <target state="translated">أكثر من 60 معياراً</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-ai" datatype="html">
+        <source>IA explicable</source>
+        <target state="translated">ذكاء اصطناعي قابل للتفسير</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-proof" datatype="html">
+        <source>Preuves horodatées</source>
+        <target state="translated">أدلة موقّتة</target>
       </trans-unit>
       <trans-unit id="home.hero.eyebrow" datatype="html">
         <source>Plateforme qualité totale</source>
@@ -20143,6 +20207,102 @@ Inde (centre de service)</source>
       <trans-unit id="storyboard.err-generic" datatype="html">
         <source>Échec de la génération (HTTP <x id="status"/>).</source>
         <target state="translated">فشل الإنشاء (HTTP <x id="status"/>).</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-team" datatype="html">
+        <source>Équipe &amp; habilitations</source>
+        <target state="translated">الفريق والصلاحيات</target>
+      </trans-unit>
+      <trans-unit id="admin.team.eyebrow" datatype="html">
+        <source>Administration</source>
+        <target state="translated">الإدارة</target>
+      </trans-unit>
+      <trans-unit id="admin.team.title" datatype="html">
+        <source>Équipe &amp; habilitations</source>
+        <target state="translated">الفريق والصلاحيات</target>
+      </trans-unit>
+      <trans-unit id="admin.team.subtitle" datatype="html">
+        <source>Composez votre équipe qualité : qui accède à la plateforme, et avec quels rôles. L'autorisation est appliquée par le serveur — cet écran ne fait qu'en donner la clé.</source>
+        <target state="translated">كوّن فريق الجودة لديك: من يصل إلى المنصة، وبأي أدوار. التفويض يطبّقه الخادم — هذه الشاشة تمنح المفتاح فحسب.</target>
+      </trans-unit>
+      <trans-unit id="admin.team.search" datatype="html">
+        <source>Rechercher un membre ou un rôle</source>
+        <target state="translated">ابحث عن عضو أو دور</target>
+      </trans-unit>
+      <trans-unit id="admin.team.loading" datatype="html">
+        <source>Chargement de l'équipe</source>
+        <target state="translated">جارٍ تحميل الفريق</target>
+      </trans-unit>
+      <trans-unit id="admin.team.empty" datatype="html">
+        <source>Aucun membre ne correspond.</source>
+        <target state="translated">لا يوجد عضو مطابق.</target>
+      </trans-unit>
+      <trans-unit id="admin.team.col-member" datatype="html">
+        <source>Membre</source>
+        <target state="translated">العضو</target>
+      </trans-unit>
+      <trans-unit id="admin.team.col-roles" datatype="html">
+        <source>Rôles</source>
+        <target state="translated">الأدوار</target>
+      </trans-unit>
+      <trans-unit id="admin.team.active" datatype="html">
+        <source>Actif</source>
+        <target state="translated">نشط</target>
+      </trans-unit>
+      <trans-unit id="admin.team.inactive" datatype="html">
+        <source>Désactivé</source>
+        <target state="translated">مُعطَّل</target>
+      </trans-unit>
+      <trans-unit id="admin.team.revoke" datatype="html">
+        <source>Retirer l'accès</source>
+        <target state="translated">سحب الوصول</target>
+      </trans-unit>
+      <trans-unit id="admin.team.restore" datatype="html">
+        <source>Rétablir l'accès</source>
+        <target state="translated">استعادة الوصول</target>
+      </trans-unit>
+      <trans-unit id="admin.team.load-failed" datatype="html">
+        <source>Impossible de charger l'équipe.</source>
+        <target state="translated">تعذّر تحميل الفريق.</target>
+      </trans-unit>
+      <trans-unit id="admin.team.needs-a-role" datatype="html">
+        <source>Un membre doit conserver au moins un rôle.</source>
+        <target state="translated">يجب أن يحتفظ العضو بدور واحد على الأقل.</target>
+      </trans-unit>
+      <trans-unit id="admin.team.saved" datatype="html">
+        <source>Habilitations mises à jour.</source>
+        <target state="translated">تم تحديث الصلاحيات.</target>
+      </trans-unit>
+      <trans-unit id="admin.team.save-failed" datatype="html">
+        <source>Modification refusée.</source>
+        <target state="translated">تم رفض التعديل.</target>
+      </trans-unit>
+      <trans-unit id="role.admin-tenant" datatype="html">
+        <source>Administrateur du tenant</source>
+        <target state="translated">مسؤول المستأجر</target>
+      </trans-unit>
+      <trans-unit id="role.quality-director" datatype="html">
+        <source>Directeur qualité</source>
+        <target state="translated">مدير الجودة</target>
+      </trans-unit>
+      <trans-unit id="role.quality-manager" datatype="html">
+        <source>Manager qualité</source>
+        <target state="translated">مدير جودة</target>
+      </trans-unit>
+      <trans-unit id="role.auditor" datatype="html">
+        <source>Auditeur</source>
+        <target state="translated">مدقّق</target>
+      </trans-unit>
+      <trans-unit id="role.user" datatype="html">
+        <source>Utilisateur</source>
+        <target state="translated">مستخدم</target>
+      </trans-unit>
+      <trans-unit id="role.external-auditor" datatype="html">
+        <source>Auditeur externe</source>
+        <target state="translated">مدقّق خارجي</target>
+      </trans-unit>
+      <trans-unit id="role.super-admin" datatype="html">
+        <source>Super administrateur</source>
+        <target state="translated">المسؤول الأعلى</target>
       </trans-unit>
       <trans-unit id="nav.mon-apprentissage" datatype="html">
         <source>Mon apprentissage</source>

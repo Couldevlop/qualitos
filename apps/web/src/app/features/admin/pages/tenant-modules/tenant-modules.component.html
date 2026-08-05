@@ -51,7 +51,14 @@
           <span class="qos-badge" [attr.data-tone]="statusTone(status(row))" *ngIf="status(row) as st">
             {{ st }}
           </span>
-          <span class="dim" *ngIf="!status(row)" i18n="@@admin.modules.not-activated">Non activé</span>
+          <!-- Un module du socle sans ligne d'activation n'est pas « non activé » :
+               il est acquis d'office, et l'on refuse d'ailleurs de le désactiver.
+               Afficher « Non activé » revenait à annoncer l'inverse de la vérité. -->
+          <span class="qos-badge" data-tone="success"
+                *ngIf="!status(row) && isLocked(row)"
+                i18n="@@admin.modules.included">Inclus</span>
+          <span class="dim" *ngIf="!status(row) && !isLocked(row)"
+                i18n="@@admin.modules.not-activated">Non activé</span>
           <span class="lock" *ngIf="isLocked(row)"
                 matTooltip="Module cœur : toujours actif"
                 i18n-matTooltip="@@admin.modules.core-tooltip">

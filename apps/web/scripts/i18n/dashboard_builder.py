@@ -38,6 +38,18 @@ TRANSLATIONS = {
     'dbb.config.remove': ('Supprimer', 'Remove', 'Quitar', 'إزالة', '削除', '移除'),
     'dbb.config.done': ('Terminé', 'Done', 'Listo', 'تم', '完了', '完成'),
 
+    # Liste des tableaux de bord
+    'dbb.list.title': ('Tableaux de bord personnalisés', 'Custom dashboards', 'Tableros personalizados', 'لوحات معلومات مخصّصة', 'カスタムダッシュボード', '自定义仪表板'),
+    'dbb.list.subtitle': ('Composez et partagez vos tableaux de bord : glissez, déposez, enregistrez.', 'Compose and share your dashboards: drag, drop, save.', 'Componga y comparta sus tableros: arrastre, suelte, guarde.', 'أنشئ لوحات معلوماتك وشاركها: اسحب، أفلِت، احفظ.', 'ダッシュボードを作成して共有：ドラッグ、ドロップ、保存。', '创建并共享仪表板：拖动、放置、保存。'),
+    'dbb.list.new': ('Nouveau tableau de bord', 'New dashboard', 'Nuevo tablero', 'لوحة معلومات جديدة', '新しいダッシュボード', '新建仪表板'),
+    'dbb.list.shared': ('Partagé', 'Shared', 'Compartido', 'مُشارَك', '共有', '已共享'),
+    'dbb.list.noDesc': ('Sans description', 'No description', 'Sin descripción', 'بدون وصف', '説明なし', '无描述'),
+    'dbb.list.widgets': ('widgets', 'widgets', 'widgets', 'أدوات', 'ウィジェット', '个小部件'),
+    'dbb.list.emptyTitle': ('Aucun tableau de bord pour le moment', 'No dashboards yet', 'Aún no hay tableros', 'لا توجد لوحات معلومات بعد', 'ダッシュボードはまだありません', '暂无仪表板'),
+    'dbb.list.emptyHint': ('Créez votre premier tableau de bord et épinglez les indicateurs qui comptent pour vous.', 'Create your first dashboard and pin the indicators that matter to you.', 'Cree su primer tablero y fije los indicadores que le importan.', 'أنشئ لوحة معلوماتك الأولى وثبّت المؤشرات التي تهمّك.', '最初のダッシュボードを作成し、重要な指標をピン留めしましょう。', '创建您的第一个仪表板，并固定您关注的指标。'),
+    'dbb.list.create': ('Créer un tableau de bord', 'Create dashboard', 'Crear un tablero', 'إنشاء لوحة معلومات', 'ダッシュボードを作成', '创建仪表板'),
+    'dbb.list.loading': ('Chargement des tableaux de bord', 'Loading dashboards', 'Cargando tableros', 'جارٍ تحميل لوحات المعلومات', 'ダッシュボードを読み込み中', '正在加载仪表板'),
+
     # Catalogue de widgets
     'dbb.widget.kpi': ('Indicateur KPI', 'KPI indicator', 'Indicador KPI', 'مؤشر الأداء KPI', 'KPI 指標', 'KPI 指标'),
     'dbb.widget.kpi.desc': ('Valeur unique avec tendance et seuil', 'Single value with trend and threshold', 'Valor único con tendencia y umbral', 'قيمة واحدة مع الاتجاه والعتبة', 'トレンドとしきい値付きの単一値', '带趋势和阈值的单一数值'),

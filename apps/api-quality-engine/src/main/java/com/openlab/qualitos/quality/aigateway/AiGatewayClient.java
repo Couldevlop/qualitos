@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * Client serveur-à-serveur vers la passerelle IA {@code ai-service} (CLAUDE.md §12.2,
@@ -29,7 +30,9 @@ import java.util.UUID;
  *
  * <p>Auth (cf. ADR 0014) : en dev, en-tête {@code X-Dev-Claims} (ai-service avec
  * {@code QOS_DEV_AUTH=1}) — le tenant provient du {@link TenantContext} (JWT, jamais du body).
- * En prod : jeton OIDC client_credentials d'audience {@code qualitos-ai}.
+ * En prod : jeton OIDC client_credentials d'audience {@code qualitos-ai}, accompagné de
+ * l'en-tête {@code X-Tenant-Id} (ADR 0048) — un tel jeton représente une machine et ne porte
+ * aucun tenant ; l'ai-service ne croit cet en-tête que d'un {@code azp} de confiance.
  */
 @Component
 public class AiGatewayClient {
@@ -45,10 +48,6 @@ public class AiGatewayClient {
      * est actif. {@code bearer} est le mode attendu partout ailleurs.
      */
     private enum AuthMode { DEV_CLAIMS, BEARER }
-
-    /** Paire en-tête/valeur à poser sur l'appel, selon le mode retenu. */
-    private record AuthHeader(String name, String value) {
-    }
 
     private final RestClient client;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -89,7 +88,7 @@ public class AiGatewayClient {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
-        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
+        Consumer<HttpHeaders> auth = authHeaders(UUID.fromString(TenantContext.getTenantId()));
         Map<String, Object> body = Map.of(
                 "system_prompt", systemPrompt,
                 "user_prompt", userPrompt,
@@ -102,7 +101,7 @@ public class AiGatewayClient {
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/complete")
-                    .header(auth.name(), auth.value())
+                    .headers(auth)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(body)
                     .retrieve()
@@ -132,7 +131,7 @@ public class AiGatewayClient {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
-        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
+        Consumer<HttpHeaders> auth = authHeaders(UUID.fromString(TenantContext.getTenantId()));
         Map<String, Object> body = Map.of("question", question, "max_rows", maxRows);
         AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "nlq",
                 question == null ? 0 : question.length());
@@ -140,7 +139,7 @@ public class AiGatewayClient {
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/nlq/ask")
-                    .header(auth.name(), auth.value())
+                    .headers(auth)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(body)
                     .retrieve()
@@ -171,7 +170,7 @@ public class AiGatewayClient {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
-        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
+        Consumer<HttpHeaders> auth = authHeaders(UUID.fromString(TenantContext.getTenantId()));
         // Map.of refuse les valeurs null → construire la map en tenant compte de la baseline.
         Map<String, Object> body = new HashMap<>();
         body.put("values", values);
@@ -187,7 +186,7 @@ public class AiGatewayClient {
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/spc/analyze")
-                    .header(auth.name(), auth.value())
+                    .headers(auth)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(body)
                     .retrieve()
@@ -224,7 +223,7 @@ public class AiGatewayClient {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
-        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
+        Consumer<HttpHeaders> auth = authHeaders(UUID.fromString(TenantContext.getTenantId()));
         // Map.of refuse les valeurs null → construire la map en tenant compte des optionnels.
         Map<String, Object> body = new HashMap<>();
         body.put("samples", samples);
@@ -243,7 +242,7 @@ public class AiGatewayClient {
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/anomaly/detect")
-                    .header(auth.name(), auth.value())
+                    .headers(auth)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(body)
                     .retrieve()
@@ -281,7 +280,7 @@ public class AiGatewayClient {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
-        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
+        Consumer<HttpHeaders> auth = authHeaders(UUID.fromString(TenantContext.getTenantId()));
         // Map.of refuse les valeurs null → construire la map en tenant compte des optionnels.
         Map<String, Object> body = new HashMap<>();
         body.put("values", values);
@@ -301,7 +300,7 @@ public class AiGatewayClient {
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/predict/kpi")
-                    .header(auth.name(), auth.value())
+                    .headers(auth)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(body)
                     .retrieve()
@@ -331,7 +330,7 @@ public class AiGatewayClient {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
-        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
+        Consumer<HttpHeaders> auth = authHeaders(UUID.fromString(TenantContext.getTenantId()));
         Map<String, Object> body = new HashMap<>();
         body.put("samples", samples);
         body.put("index", index);
@@ -341,7 +340,7 @@ public class AiGatewayClient {
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/anomaly/explain")
-                    .header(auth.name(), auth.value())
+                    .headers(auth)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(body)
                     .retrieve()
@@ -372,7 +371,7 @@ public class AiGatewayClient {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
-        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
+        Consumer<HttpHeaders> auth = authHeaders(UUID.fromString(TenantContext.getTenantId()));
         Map<String, Object> body = new HashMap<>();
         body.put("texts", texts);
         if (threshold != null) {
@@ -387,7 +386,7 @@ public class AiGatewayClient {
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/predict/nc-clusters")
-                    .header(auth.name(), auth.value())
+                    .headers(auth)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(body)
                     .retrieve()
@@ -418,7 +417,7 @@ public class AiGatewayClient {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
-        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
+        Consumer<HttpHeaders> auth = authHeaders(UUID.fromString(TenantContext.getTenantId()));
         Map<String, Object> body = new HashMap<>();
         body.put("texts", texts);
         if (categories != null) {
@@ -430,7 +429,7 @@ public class AiGatewayClient {
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/complaints/analyze")
-                    .header(auth.name(), auth.value())
+                    .headers(auth)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(body)
                     .retrieve()
@@ -462,14 +461,14 @@ public class AiGatewayClient {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
-        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
+        Consumer<HttpHeaders> auth = authHeaders(UUID.fromString(TenantContext.getTenantId()));
         AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "mock-audit",
                 clauseCount);
         guard.check(ctx);
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/standards/mock-audit")
-                    .header(auth.name(), auth.value())
+                    .headers(auth)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(body)
                     .retrieve()
@@ -508,7 +507,7 @@ public class AiGatewayClient {
         if (audio == null || audio.length == 0) {
             throw new AiGatewayException("Fichier audio vide");
         }
-        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
+        Consumer<HttpHeaders> auth = authHeaders(UUID.fromString(TenantContext.getTenantId()));
         // La taille de l'audio sert de coût pour le quota (garde-fou LLM04) : une heure
         // d'enregistrement ne doit pas passer pour un appel aussi léger qu'un prompt.
         AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "transcribe", audio.length);
@@ -529,7 +528,7 @@ public class AiGatewayClient {
         try {
             Map<String, Object> resp = client.post()
                     .uri(uri)
-                    .header(auth.name(), auth.value())
+                    .headers(auth)
                     .contentType(MediaType.MULTIPART_FORM_DATA)
                     .body(body)
                     .retrieve()
@@ -568,14 +567,14 @@ public class AiGatewayClient {
         if (features == null || features.isEmpty()) {
             throw new AiGatewayException("Aucune caractéristique à scorer");
         }
-        AuthHeader auth = authHeader(UUID.fromString(TenantContext.getTenantId()));
+        Consumer<HttpHeaders> auth = authHeaders(UUID.fromString(TenantContext.getTenantId()));
         AiCallContext ctx = new AiCallContext(TenantContext.getTenantId(), "supplier-risk",
                 features.size());
         guard.check(ctx);
         try {
             Map<String, Object> resp = client.post()
                     .uri("/v1/ai/predict/supplier-risk")
-                    .header(auth.name(), auth.value())
+                    .headers(auth)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(Map.of("features", features))
                     .retrieve()
@@ -593,14 +592,31 @@ public class AiGatewayClient {
     }
 
     /**
-     * En-tête d'authentification de l'appel, selon le mode configuré. Centralisé ici :
+     * En-têtes d'authentification de l'appel, selon le mode configuré. Centralisé ici :
      * chaque point d'appel posait auparavant {@code X-Dev-Claims} en dur, si bien
      * qu'aucun n'était utilisable en configuration de production.
+     *
+     * <p>En mode {@code bearer}, le jeton est obtenu <b>avant</b> de rendre la main :
+     * un défaut de configuration doit interrompre l'appel en amont (fail-closed),
+     * jamais au milieu de l'écriture de la requête.
      */
-    private AuthHeader authHeader(UUID tenantId) {
+    private Consumer<HttpHeaders> authHeaders(UUID tenantId) {
         return switch (authMode) {
-            case DEV_CLAIMS -> new AuthHeader("X-Dev-Claims", devClaims(tenantId));
-            case BEARER -> new AuthHeader(HttpHeaders.AUTHORIZATION, "Bearer " + tokenProvider.getToken());
+            case DEV_CLAIMS -> {
+                String claims = devClaims(tenantId);
+                yield headers -> headers.add("X-Dev-Claims", claims);
+            }
+            case BEARER -> {
+                String token = tokenProvider.getToken();
+                yield headers -> {
+                    headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+                    // Un jeton client_credentials représente une machine : il ne porte
+                    // aucun tenant. Le tenant vient donc du TenantContext — donc du JWT
+                    // utilisateur d'origine — et l'ai-service ne croit cet en-tête que
+                    // d'un client de service déclaré de confiance (ADR 0048).
+                    headers.add("X-Tenant-Id", tenantId.toString());
+                };
+            }
         };
     }
 
