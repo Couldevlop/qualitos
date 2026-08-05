@@ -34,7 +34,12 @@ TRANSLATIONS = {
     'home.card.circles-desc': ("Groupes, réunions, propositions, mesure d'impact", "Groups, meetings, proposals, impact measurement", "Grupos, reuniones, propuestas, medición del impacto", "مجموعات واجتماعات ومقترحات وقياس الأثر", "グループ、会議、提案、効果測定", "小组、会议、提案、影响度量"),
     'home.card.circles-title': ('Cercles Qualité', "Quality Circles", "Círculos de Calidad", "حلقات الجودة", "品質サークル", "质量圈"),
     'home.card.dmaic-desc': ('Six Sigma — Define / Measure / Analyze / Improve / Control', "Six Sigma — Define / Measure / Analyze / Improve / Control", "Six Sigma — Definir / Medir / Analizar / Mejorar / Controlar", "Six Sigma — تعريف / قياس / تحليل / تحسين / ضبط", "シックスシグマ — Define / Measure / Analyze / Improve / Control", "六西格玛 — 定义 / 测量 / 分析 / 改进 / 控制"),
-    'home.card.fives-desc': ('Audit terrain Seiri/Seiton/Seiso/Seiketsu/Shitsuke', "On-site audit Seiri/Seiton/Seiso/Seiketsu/Shitsuke", "Auditoría de campo Seiri/Seiton/Seiso/Seiketsu/Shitsuke", "تدقيق ميداني Seiri/Seiton/Seiso/Seiketsu/Shitsuke", "現場監査 整理/整頓/清掃/清潔/躾", "现场审核 整理/整顿/清扫/清洁/素养"),
+    # Barres obliques ESPACEES, comme les cartes PDCA et DMAIC voisines. Collees,
+    # les cinq piliers ne forment qu'un seul mot pour le navigateur : sans point
+    # de coupure, il debordait de sa carte, et forcer la coupure le tranchait au
+    # milieu (« Seiketsu/S / hitsuke »). L'espace apres la barre est un point de
+    # coupure naturel — le mot reste entier.
+    'home.card.fives-desc': ('Audit terrain Seiri / Seiton / Seiso / Seiketsu / Shitsuke', "On-site audit Seiri / Seiton / Seiso / Seiketsu / Shitsuke", "Auditoría de campo Seiri / Seiton / Seiso / Seiketsu / Shitsuke", "تدقيق ميداني Seiri / Seiton / Seiso / Seiketsu / Shitsuke", "現場監査 整理／整頓／清掃／清潔／躾", "现场审核 整理／整顿／清扫／清洁／素养"),
     'home.card.ishikawa-desc': ('Diagramme cause-effet 6M/7M/8M', "Cause-effect diagram 6M/7M/8M", "Diagrama causa-efecto 6M/7M/8M", "مخطط السبب والأثر 6M/7M/8M", "特性要因図 6M/7M/8M", "因果图 6M/7M/8M"),
     'home.card.pdca-desc': ('Roue de Deming — Plan / Do / Check / Act', "Deming cycle — Plan / Do / Check / Act", "Ciclo de Deming — Planificar / Hacer / Verificar / Actuar", "دورة ديمنغ — تخطيط / تنفيذ / فحص / تصرف", "デミングサイクル — Plan / Do / Check / Act", "戴明环 — 计划 / 执行 / 检查 / 处理"),
     'home.card.standards-desc': ('Catalogue normatif + adoption + alignment', "Standards catalogue + adoption + alignment", "Catálogo normativo + adopción + alineación", "كتالوج المعايير + التبنّي + المواءمة", "規格カタログ + 導入 + 適合", "标准目录 + 采纳 + 对齐"),
