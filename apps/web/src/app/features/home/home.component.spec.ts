@@ -55,9 +55,22 @@ describe('HomeComponent', () => {
     expect(routes).toEqual(['/pdca', '/fives', '/nc', '/ishikawa']);
   });
 
-  it('renders a hero with the platform slogan', () => {
+  // Le titre s'adresse au lecteur dans sa langue ; le slogan de marque, lui,
+  // reste identique partout — mais en accroche, pas à la place du message.
+  it('renders the value proposition as the heading', () => {
     const title = (fixture.nativeElement as HTMLElement).querySelector('.home-hero__title');
-    expect(title?.textContent).toContain('One platform');
+    expect(title?.textContent).toContain('méthodes');
+  });
+
+  it('keeps the brand slogan alongside, not instead of, the heading', () => {
+    const slogan = (fixture.nativeElement as HTMLElement).querySelector('.home-hero__slogan');
+    expect(slogan?.textContent).toContain('One platform');
+  });
+
+  it('shows short proofs rather than a wall of promises', () => {
+    const proofs = (fixture.nativeElement as HTMLElement)
+      .querySelectorAll('.home-hero__proofs li');
+    expect(proofs.length).toBe(4);
   });
 
   it('provides stable trackBy helpers', () => {

@@ -14401,8 +14401,28 @@ historique 12 mois</source>
        由 AI 增强并通过区块链认证。</target>
       </trans-unit>
       <trans-unit id="home.welcome.title" datatype="html">
+        <source>Cinq méthodes. Un seul référentiel.</source>
+        <target state="translated">五种方法。一个共同基准。</target>
+      </trans-unit>
+      <trans-unit id="home.hero.slogan" datatype="html">
         <source>One platform. Five methods. Every industry.</source>
         <target state="translated">One platform. Five methods. Every industry.</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-methods" datatype="html">
+        <source>5 méthodes fondamentales</source>
+        <target state="translated">5 种基础方法</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-standards" datatype="html">
+        <source>60+ normes outillées</source>
+        <target state="translated">覆盖 60+ 标准</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-ai" datatype="html">
+        <source>IA explicable</source>
+        <target state="translated">可解释的人工智能</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-proof" datatype="html">
+        <source>Preuves horodatées</source>
+        <target state="translated">带时间戳的证据</target>
       </trans-unit>
       <trans-unit id="home.hero.eyebrow" datatype="html">
         <source>Plateforme qualité totale</source>

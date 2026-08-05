@@ -14401,8 +14401,28 @@ declared income
        augmented by AI and certified by blockchain.</target>
       </trans-unit>
       <trans-unit id="home.welcome.title" datatype="html">
+        <source>Cinq méthodes. Un seul référentiel.</source>
+        <target state="translated">Five methods. One single repository.</target>
+      </trans-unit>
+      <trans-unit id="home.hero.slogan" datatype="html">
         <source>One platform. Five methods. Every industry.</source>
         <target state="translated">One platform. Five methods. Every industry.</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-methods" datatype="html">
+        <source>5 méthodes fondamentales</source>
+        <target state="translated">5 fundamental methods</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-standards" datatype="html">
+        <source>60+ normes outillées</source>
+        <target state="translated">60+ standards covered</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-ai" datatype="html">
+        <source>IA explicable</source>
+        <target state="translated">Explainable AI</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-proof" datatype="html">
+        <source>Preuves horodatées</source>
+        <target state="translated">Time-stamped evidence</target>
       </trans-unit>
       <trans-unit id="home.hero.eyebrow" datatype="html">
         <source>Plateforme qualité totale</source>

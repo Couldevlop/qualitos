@@ -40,7 +40,16 @@ TRANSLATIONS = {
     'home.card.standards-desc': ('Catalogue normatif + adoption + alignment', "Standards catalogue + adoption + alignment", "Catálogo normativo + adopción + alineación", "كتالوج المعايير + التبنّي + المواءمة", "規格カタログ + 導入 + 適合", "标准目录 + 采纳 + 对齐"),
     'home.welcome.soon': ('Bientôt', "Coming soon", "Próximamente", "قريبًا", "近日公開", "即将推出"),
     'home.welcome.subtitle': ("QualitOS agrège les méthodes fondamentales de la qualité totale dans un référentiel unique,\n       augmenté par l'IA et certifié par blockchain.", "QualitOS unifies the fundamental total-quality methods into a single repository,\n       augmented by AI and certified by blockchain.", "QualitOS reúne los métodos fundamentales de la calidad total en un repositorio único,\n       potenciado por la IA y certificado mediante blockchain.", "يجمع QualitOS منهجيات الجودة الشاملة الأساسية في مرجع موحَّد،\n       مدعوم بالذكاء الاصطناعي وموثَّق عبر البلوك تشين.", "QualitOSは、トータルクオリティの基本手法を単一のリポジトリに統合し、\n       AIで強化しブロックチェーンで認証します。", "QualitOS 将全面质量管理的基本方法整合到统一的库中，\n       由 AI 增强并通过区块链认证。"),
-    'home.welcome.title': ('One platform. Five methods. Every industry.', "One platform. Five methods. Every industry.", "One platform. Five methods. Every industry.", "One platform. Five methods. Every industry.", "One platform. Five methods. Every industry.", "One platform. Five methods. Every industry."),
+    # Le slogan de marque reste en anglais, mais il a sa place ailleurs : en
+    # accroche au-dessus du titre. Le titre lui-meme s'adresse au lecteur dans SA
+    # langue — un utilisateur francais lisait jusqu'ici une phrase anglaise en
+    # capitales sur toute la largeur de son ecran d'accueil.
+    'home.welcome.title': ('Cinq méthodes. Un seul référentiel.', 'Five methods. One single repository.', 'Cinco métodos. Un único repositorio.', 'خمس منهجيات. مرجع واحد.', '5つの手法。ひとつの基準。', '五种方法。一个共同基准。'),
+    'home.hero.slogan': ('One platform. Five methods. Every industry.', 'One platform. Five methods. Every industry.', 'One platform. Five methods. Every industry.', 'One platform. Five methods. Every industry.', 'One platform. Five methods. Every industry.', 'One platform. Five methods. Every industry.'),
+    'home.hero.proof-methods': ('5 méthodes fondamentales', '5 fundamental methods', '5 métodos fundamentales', '5 منهجيات أساسية', '5つの基本手法', '5 种基础方法'),
+    'home.hero.proof-standards': ('60+ normes outillées', '60+ standards covered', '60+ normas cubiertas', 'أكثر من 60 معياراً', '60以上の規格に対応', '覆盖 60+ 标准'),
+    'home.hero.proof-ai': ('IA explicable', 'Explainable AI', 'IA explicable', 'ذكاء اصطناعي قابل للتفسير', '説明可能なAI', '可解释的人工智能'),
+    'home.hero.proof-proof': ('Preuves horodatées', 'Time-stamped evidence', 'Pruebas con sello de tiempo', 'أدلة موقّتة', 'タイムスタンプ付きの証跡', '带时间戳的证据'),
     # --- Accueil premium (Travail 3) ---
     'home.hero.eyebrow': ('Plateforme qualité totale', 'Total quality platform', 'Plataforma de calidad total', 'منصة الجودة الشاملة', 'トータルクオリティ・プラットフォーム', '全面质量平台'),
     'home.hero.cta-dashboard': ('Ouvrir le tableau de bord', 'Open dashboard', 'Abrir el panel', 'فتح لوحة المعلومات', 'ダッシュボードを開く', '打开仪表盘'),

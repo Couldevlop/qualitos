@@ -14400,8 +14400,28 @@ historique 12 mois</source>
        AIで強化しブロックチェーンで認証します。</target>
       </trans-unit>
       <trans-unit id="home.welcome.title" datatype="html">
+        <source>Cinq méthodes. Un seul référentiel.</source>
+        <target state="translated">5つの手法。ひとつの基準。</target>
+      </trans-unit>
+      <trans-unit id="home.hero.slogan" datatype="html">
         <source>One platform. Five methods. Every industry.</source>
         <target state="translated">One platform. Five methods. Every industry.</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-methods" datatype="html">
+        <source>5 méthodes fondamentales</source>
+        <target state="translated">5つの基本手法</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-standards" datatype="html">
+        <source>60+ normes outillées</source>
+        <target state="translated">60以上の規格に対応</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-ai" datatype="html">
+        <source>IA explicable</source>
+        <target state="translated">説明可能なAI</target>
+      </trans-unit>
+      <trans-unit id="home.hero.proof-proof" datatype="html">
+        <source>Preuves horodatées</source>
+        <target state="translated">タイムスタンプ付きの証跡</target>
       </trans-unit>
       <trans-unit id="home.hero.eyebrow" datatype="html">
         <source>Plateforme qualité totale</source>
