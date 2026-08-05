@@ -57,7 +57,12 @@ export class MainShellComponent implements OnInit, OnDestroy {
   compact = false;
   navOpen = false;
 
-  private static readonly COMPACT_QUERY = '(max-width: 1024px)';
+  // 900 px, et non 1024 : c'est le seuil que le shell utilisait DÉJÀ pour faire
+  // apparaître le bouton de navigation dans la barre supérieure. En choisir un
+  // autre faisait disparaître la barre latérale sur des fenêtres où elle avait
+  // encore toute sa place — un demi-écran de portable, par exemple — et la
+  // navigation devenait méconnaissable pour qui travaille ainsi.
+  private static readonly COMPACT_QUERY = '(max-width: 900px)';
   private compactMedia: MediaQueryList | null = null;
   private readonly compactListener = (event: MediaQueryListEvent): void =>
     this.onViewportChange(event.matches);

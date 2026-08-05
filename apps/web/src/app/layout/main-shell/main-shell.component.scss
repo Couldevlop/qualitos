@@ -21,7 +21,8 @@
 /* ============================================================
  * Écran étroit — la barre latérale devient un tiroir superposé.
  *
- * Sous 1024 px, une colonne fixe de 248 px prend l'essentiel de la largeur et
+ * Sous 900 px — le seuil que le shell utilisait déjà pour son bouton de
+ * navigation —, une colonne fixe de 248 px prend l'essentiel de la largeur et
  * ne laisse plus de place au contenu ; la replier laisse encore un rail devant
  * la page. Le tiroir rend la largeur entière au contenu et n'apparaît que sur
  * demande. L'animation porte sur `transform` seul : composée par le GPU, elle

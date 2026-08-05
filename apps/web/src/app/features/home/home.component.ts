@@ -63,7 +63,7 @@ export class HomeComponent {
       icon: 'autorenew', route: '/pdca', available: true },
     { title: 'Ishikawa', description: $localize`:@@home.card.ishikawa-desc:Diagramme cause-effet 6M/7M/8M`,
       icon: 'account_tree', route: '/ishikawa', available: true },
-    { title: '5S', description: $localize`:@@home.card.fives-desc:Audit terrain Seiri/Seiton/Seiso/Seiketsu/Shitsuke`,
+    { title: '5S', description: $localize`:@@home.card.fives-desc:Audit terrain Seiri / Seiton / Seiso / Seiketsu / Shitsuke`,
       icon: 'check_circle', route: '/fives', available: true },
     { title: 'DMAIC', description: $localize`:@@home.card.dmaic-desc:Six Sigma — Define / Measure / Analyze / Improve / Control`,
       icon: 'analytics', route: '/dmaic', available: true },

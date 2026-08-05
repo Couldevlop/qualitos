@@ -14375,8 +14375,8 @@ historique 12 mois</source>
         <target state="translated">Six Sigma — تعريف / قياس / تحليل / تحسين / ضبط</target>
       </trans-unit>
       <trans-unit id="home.card.fives-desc" datatype="html">
-        <source>Audit terrain Seiri/Seiton/Seiso/Seiketsu/Shitsuke</source>
-        <target state="translated">تدقيق ميداني Seiri/Seiton/Seiso/Seiketsu/Shitsuke</target>
+        <source>Audit terrain Seiri / Seiton / Seiso / Seiketsu / Shitsuke</source>
+        <target state="translated">تدقيق ميداني Seiri / Seiton / Seiso / Seiketsu / Shitsuke</target>
       </trans-unit>
       <trans-unit id="home.card.ishikawa-desc" datatype="html">
         <source>Diagramme cause-effet 6M/7M/8M</source>

@@ -24,7 +24,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--qos-space-3);
-    padding: clamp(24px, 4vw, 48px) clamp(20px, 4vw, 56px);
+    padding: clamp(20px, 2.8vw, 36px) clamp(20px, 3.2vw, 44px);
     max-width: 76ch;
   }
 
@@ -48,11 +48,16 @@
     box-shadow: 0 0 0 3px var(--qos-success-bg-soft, rgba(16, 185, 129, 0.16));
   }
 
+  // Taille PROPRE au héros, et non l'échelle d'affichage (56 px) : une phrase
+  // courte y pesait bien plus qu'une phrase longue à la même taille, occupait
+  // tout le premier écran et repoussait les indicateurs hors de vue. Le demi-gras
+  // suffit à porter la hiérarchie — le gras plein ajoutait de la masse, pas de
+  // la lisibilité.
   &__title {
-    font-size: var(--qos-fs-display);
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    font-weight: var(--qos-fw-bold);
+    font-size: clamp(26px, 3.2vw, 40px);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    font-weight: var(--qos-fw-semibold);
     color: var(--qos-fg-primary);
     text-wrap: balance;      // évite la ligne orpheline d'un seul mot
   }
@@ -207,9 +212,11 @@
     font-size: var(--qos-fs-sm);
     color: var(--qos-fg-secondary);
     line-height: var(--qos-lh-normal);
-    // « Seiri/Seiton/Seiso/Seiketsu/Shitsuke » est un seul mot pour le navigateur :
-    // sans point de coupure, il débordait de sa carte et se faisait rogner.
-    overflow-wrap: anywhere;
+    // Filet de sécurité pour un terme long isolé. `break-word` et NON `anywhere` :
+    // le second coupait au milieu d'un mot alors qu'un point de coupure existait
+    // plus loin (« Seiketsu/S » puis « hitsuke »). Ici, la coupure forcée n'a lieu
+    // que si le mot ne tient sur aucune ligne à lui seul.
+    overflow-wrap: break-word;
   }
 }
 
