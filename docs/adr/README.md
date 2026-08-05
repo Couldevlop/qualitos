@@ -53,6 +53,7 @@ supersession).
 | [0046](./0046-corpus-rag-sources-licencees.md) | Corpus RAG : sources retenues sur critère de licence, ingestion refusée hors licence compatible (§8.7/§12.2) | Accepté |
 | [0047](./0047-base-python-chainguard.md) | Bases Python : distroless (gcr.io) remplacé par Chainguard, CI testée dans l'image livrée (§10.2/§18.2.1) | Accepté |
 | [0048](./0048-ai-service-tenant-jeton-de-service.md) | Tenant propagé par `X-Tenant-Id` sur engine → ai-service, cru du seul `azp` de confiance (§18.2-2, généralise l'ADR 0021) | Accepté |
+| [0049](./0049-embeddings-rag-servies-par-ollama.md) | Embeddings RAG (BGE-M3) servies par Ollama, choix explicite et fin du repli silencieux sur des vecteurs de hachage (§8.7/§12.2) | Accepté |
 
 ## Statuts possibles
 

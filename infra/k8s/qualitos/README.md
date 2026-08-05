@@ -71,6 +71,14 @@ n'est pas à jour. Ne **jamais** contourner avec `QOS_DEV_AUTH=1` sur un environ
 exposé : l'en-tête déclaratif y devient croyable sans preuve, et n'importe quel pod peut
 alors se prétendre de n'importe quel tenant.
 
+### Embeddings du RAG (ADR 0049)
+
+Le calcul des embeddings est délégué au serveur Ollama. Le modèle doit y être tiré
+une fois : `ollama pull bge-m3`. L'ai-service **refuse de démarrer** sans choix
+explicite (`EMBEDDINGS_PROVIDER`), et répond 503 sur les points RAG si le modèle est
+absent — au lieu de retomber, comme auparavant, sur des vecteurs de hachage qui
+faisaient répondre le RAG avec des voisinages arbitraires sans rien signaler.
+
 ## GitOps
 
 Chart pensé pour ArgoCD (§14.2) : pointer une Application sur

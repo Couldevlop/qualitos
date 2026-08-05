@@ -1,6 +1,7 @@
 """Shared test fixtures."""
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 from uuid import UUID, uuid4
@@ -11,6 +12,12 @@ import pytest
 _AI_SERVICE_ROOT = Path(__file__).resolve().parent.parent
 if str(_AI_SERVICE_ROOT) not in sys.path:
     sys.path.insert(0, str(_AI_SERVICE_ROOT))
+
+# Embeddings du RAG : les tests déclarent explicitement travailler avec des
+# vecteurs de hachage (ADR 0049). Le conteneur refuse désormais de démarrer sans
+# ce choix — c'est voulu : c'est ce silence qui laissait la production indexer
+# avec un embedder de repli sans que personne ne le sache.
+os.environ.setdefault("EMBEDDINGS_PROVIDER", "deterministic")
 
 from domain.model.tenant import TenantContext, UserContext  # noqa: E402
 

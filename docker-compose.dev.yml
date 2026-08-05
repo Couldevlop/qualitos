@@ -330,6 +330,12 @@ services:
       # QOS_DEV_AUTH, où le tenant vient de X-Dev-Claims. Renseigner
       # `api-quality-engine-ai` pour reproduire la configuration de production.
       TRUSTED_SERVICE_AZP: ${TRUSTED_SERVICE_AZP:-}
+      # Embeddings du RAG (ADR 0049). En local, `deterministic` évite d'avoir à
+      # tirer BGE-M3 : les vecteurs sont stables mais N'ONT AUCUN SENS sémantique
+      # — la pertinence des réponses RAG ne se juge donc pas ici. Basculer sur
+      # `ollama` (et `ollama pull bge-m3`) pour tester le RAG pour de vrai.
+      EMBEDDINGS_PROVIDER: ${EMBEDDINGS_PROVIDER:-deterministic}
+      EMBEDDINGS_MODEL: ${EMBEDDINGS_MODEL:-bge-m3}
       QDRANT_URL: http://qdrant:6333
       NLQ_READONLY_DSN: postgresql://qualitos_nlq_ro:nlq_ro_pwd@postgres:5432/qualitos_quality
       # Set these in your local .env (never commit):
