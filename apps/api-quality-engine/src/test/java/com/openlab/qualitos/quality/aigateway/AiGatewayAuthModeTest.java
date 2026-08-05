@@ -37,6 +37,7 @@ class AiGatewayAuthModeTest {
 
     private final AtomicReference<String> devClaimsHeader = new AtomicReference<>();
     private final AtomicReference<String> authorizationHeader = new AtomicReference<>();
+    private final AtomicReference<String> tenantHeader = new AtomicReference<>();
 
     @BeforeEach
     void setUp() throws Exception {
@@ -59,6 +60,7 @@ class AiGatewayAuthModeTest {
         server.createContext("/v1/ai/anomaly/detect", exchange -> {
             devClaimsHeader.set(first(exchange.getRequestHeaders().get("X-Dev-Claims")));
             authorizationHeader.set(first(exchange.getRequestHeaders().get("Authorization")));
+            tenantHeader.set(first(exchange.getRequestHeaders().get("X-Tenant-Id")));
             byte[] b = "{\"anomalies\":[]}".getBytes(StandardCharsets.UTF_8);
             exchange.getResponseHeaders().add("Content-Type", "application/json");
             exchange.sendResponseHeaders(200, b.length);
@@ -99,6 +101,19 @@ class AiGatewayAuthModeTest {
         // Le point essentiel : l'en-tête déclaratif ne doit plus partir du tout.
         // Le laisser en plus du jeton offrirait un chemin de repli exploitable.
         assertThat(devClaimsHeader.get()).isNull();
+    }
+
+    @Test
+    @DisplayName("mode bearer : porte le tenant du JWT utilisateur dans X-Tenant-Id")
+    void modeBearerPorteLeTenant() {
+        // Un jeton client_credentials représente une machine : il ne porte aucun
+        // tenant. Sans cet en-tête, l'ai-service n'a AUCUN moyen de savoir pour qui
+        // il travaille et refuse l'appel — c'est ce qui a mis toutes les fonctions
+        // d'IA hors service en préproduction. Le tenant vient du TenantContext,
+        // donc du JWT utilisateur d'origine, jamais du corps de la requête.
+        client("bearer").detectAnomaly(List.of(List.of(1.0, 2.0)), null, null, null);
+
+        assertThat(tenantHeader.get()).isEqualTo(TENANT.toString());
     }
 
     @Test

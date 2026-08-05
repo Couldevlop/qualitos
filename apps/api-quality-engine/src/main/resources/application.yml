@@ -147,10 +147,13 @@ qualitos:
     # Mode d'authentification des appels engine -> ai-service (ADR 0014).
     #   dev-claims : en-tete X-Dev-Claims, accepte uniquement si l'ai-service tourne
     #                avec QOS_DEV_AUTH actif. Defaut, pour ne rien casser en local.
-    #   bearer     : jeton OIDC client_credentials. OBLIGATOIRE des que l'ai-service
-    #                valide reellement les jetons, donc dans tout environnement
-    #                deploye — X-Dev-Claims y est rejete et toutes les fonctions
-    #                d'IA repondent alors 502.
+    #   bearer     : jeton OIDC client_credentials + en-tete X-Tenant-Id (ADR 0048 :
+    #                un tel jeton represente une machine et ne porte aucun tenant ;
+    #                l'ai-service ne croit cet en-tete que d'un azp declare dans son
+    #                TRUSTED_SERVICE_AZP, qui doit valoir le client-id ci-dessous).
+    #                OBLIGATOIRE des que l'ai-service valide reellement les jetons,
+    #                donc dans tout environnement deploye — X-Dev-Claims y est
+    #                rejete et toutes les fonctions d'IA repondent alors 502.
     # Un mode inconnu fait echouer le demarrage plutot que de retomber sur
     # dev-claims : une degradation silencieuse rouvrirait la faille que ce mode ferme.
     auth: ${AI_AUTH_MODE:dev-claims}

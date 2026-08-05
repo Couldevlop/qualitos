@@ -48,6 +48,29 @@ api-quality-engine).
 - NetworkPolicies default-deny ingress + intra-namespace + ingress-controller.
 - `automountServiceAccountToken: false` partout.
 
+### Appels serveur-à-serveur engine → ai-service (ADR 0048)
+
+En dehors du développement, l'engine appelle l'ai-service avec un jeton de service
+`client_credentials`. Un tel jeton représente une machine : **il ne porte aucun tenant**.
+Le tenant voyage donc dans l'en-tête `X-Tenant-Id`, que l'ai-service ne croit **que** si
+l'`azp` du jeton figure dans sa liste de clients de confiance.
+
+Quatre réglages doivent rester cohérents, faute de quoi **toutes** les fonctions d'IA
+répondent 401 (« Passerelle IA indisponible ») alors que le jeton est valide :
+
+| Service | Réglage | Valeur |
+| --- | --- | --- |
+| api-quality-engine | `AI_AUTH_MODE` | `bearer` |
+| api-quality-engine | `AI_CLIENT_ID` | `api-quality-engine-ai` |
+| ai-service | `KEYCLOAK_ISSUER` / `KEYCLOAK_AUDIENCE` | émetteur **public** exact (sous `/auth`) / `qualitos-ai` |
+| ai-service | `TRUSTED_SERVICE_AZP` | `api-quality-engine-ai` (= `AI_CLIENT_ID`) |
+
+Diagnostic : un 401 dont le détail est `JWT missing 'tid'` signale un `TRUSTED_SERVICE_AZP`
+absent ou divergent ; `missing X-Tenant-Id header for service token` signale un engine qui
+n'est pas à jour. Ne **jamais** contourner avec `QOS_DEV_AUTH=1` sur un environnement
+exposé : l'en-tête déclaratif y devient croyable sans preuve, et n'importe quel pod peut
+alors se prétendre de n'importe quel tenant.
+
 ## GitOps
 
 Chart pensé pour ArgoCD (§14.2) : pointer une Application sur
