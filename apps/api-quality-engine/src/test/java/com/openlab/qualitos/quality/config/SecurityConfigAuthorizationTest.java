@@ -156,11 +156,31 @@ class SecurityConfigAuthorizationTest {
     }
 
     @Test @WithMockUser(roles = "ADMIN_TENANT")
-    void tenantModuleActivate_adminTenant_notForbidden() throws Exception {
+    void tenantModuleActivate_adminTenant_403() throws Exception {
+        // Le périmètre facturé d'un tenant se décide chez l'éditeur, pas chez le
+        // client : l'administrateur du tenant CONSULTE ses modules, il ne s'en
+        // attribue pas. Le laisser activer revenait à lui laisser ouvrir seul des
+        // modules facturés à l'unité.
+        mockMvc.perform(post("/api/v1/tenant-modules/activations").with(csrf())
+                        .contentType("application/json")
+                        .content("{\"moduleCode\":\"kpi\",\"expiresAt\":\"2026-12-31T00:00:00Z\"}"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test @WithMockUser(roles = "SUPER_ADMIN")
+    void tenantModuleActivate_superAdmin_allowed() throws Exception {
         mockMvc.perform(post("/api/v1/tenant-modules/activations").with(csrf())
                         .contentType("application/json")
                         .content("{\"moduleCode\":\"kpi\",\"expiresAt\":\"2026-12-31T00:00:00Z\"}"))
                 .andExpect(status().is(org.springframework.http.HttpStatus.CREATED.value()));
+    }
+
+    @Test @WithMockUser(roles = "ADMIN_TENANT")
+    void tenantModuleCatalog_adminTenant_allowed() throws Exception {
+        // Voir reste indispensable : c'est ainsi que le tenant sait de quoi il
+        // dispose, et ce qu'il peut demander à l'éditeur.
+        mockMvc.perform(get("/api/v1/tenant-modules/catalog"))
+                .andExpect(status().isOk());
     }
 
     // --- Suppression d'une ressource qualité (DELETE) : manager qualité ou plus ---

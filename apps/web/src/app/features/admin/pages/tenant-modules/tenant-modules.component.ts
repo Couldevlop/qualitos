@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { catchError, finalize, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 
+import { AuthService } from '../../../../core/auth/auth.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { deferredView } from '../../../../core/rx/deferred-view';
 import {
@@ -50,9 +51,25 @@ export class TenantModulesComponent implements OnInit {
 
   private readonly reload$ = new Subject<void>();
 
-  constructor(private readonly svc: TenantModulesService) {}
+  /**
+   * Le périmètre facturé d'un tenant se décide chez l'éditeur, pas chez le client :
+   * seul le super administrateur ouvre ou ferme un module. L'administrateur du
+   * tenant CONSULTE — c'est ainsi qu'il sait de quoi il dispose et ce qu'il peut
+   * demander. Afficher des boutons que le serveur refusera en 403 serait promettre
+   * une action qui n'existe pas ; l'autorisation reste appliquée par le serveur,
+   * cette observable ne fait qu'accorder l'écran à la règle.
+   */
+  canManage$!: Observable<boolean>;
+
+  constructor(
+    private readonly svc: TenantModulesService,
+    private readonly auth: AuthService
+  ) {}
 
   ngOnInit(): void {
+    this.canManage$ = this.auth.user().pipe(
+      map(user => (user?.roles ?? []).includes('super_admin'))
+    );
     const overview$ = this.reload$.pipe(
       startWith(undefined),
       tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),

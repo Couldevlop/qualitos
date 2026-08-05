@@ -824,6 +824,18 @@
         <source>Non activé</source>
         <target state="translated">غير مفعّل</target>
       </trans-unit>
+      <trans-unit id="admin.modules.subtitle-admin" datatype="html">
+        <source>Ouvrez pour ce tenant les modules qui lui reviennent. La désactivation est immédiate et réversible ; les modules du socle restent toujours actifs.</source>
+        <target state="translated">افتح لهذا المستأجر الوحدات التي تعود له. الإيقاف فوري وقابل للتراجع؛ وحدات الأساس تبقى مفعّلة دائماً.</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.subtitle-readonly" datatype="html">
+        <source>Voici les modules dont dispose votre organisation. Le socle standard est inclus d'office ; l'ouverture des autres modules relève de l'éditeur de la plateforme — adressez-lui votre demande.</source>
+        <target state="translated">هذه هي الوحدات المتاحة لمؤسستك. الأساس القياسي مُضمَّن تلقائياً؛ أما فتح الوحدات الأخرى فيعود إلى مزوّد المنصة — وجّه طلبك إليه.</target>
+      </trans-unit>
+      <trans-unit id="admin.modules.editor-only" datatype="html">
+        <source>Sur demande auprès de l'éditeur</source>
+        <target state="translated">بطلب من المزوّد</target>
+      </trans-unit>
       <trans-unit id="admin.modules.included" datatype="html">
         <source>Inclus</source>
         <target state="translated">مُضمَّن</target>
@@ -6367,6 +6379,10 @@
       <trans-unit id="connectors.username" datatype="html">
         <source>Compte de service</source>
         <target state="translated">حساب الخدمة</target>
+      </trans-unit>
+      <trans-unit id="locale.switch.aria" datatype="html">
+        <source>Changer de langue</source>
+        <target state="translated">تغيير اللغة</target>
       </trans-unit>
       <trans-unit id="common.ok" datatype="html">
         <source>OK</source>

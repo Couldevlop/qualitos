@@ -136,6 +136,14 @@ qualitos:
     batch-size: ${QUALITOS_KAFKA_BATCH_SIZE:200}
     initial-delay-ms: ${QUALITOS_KAFKA_INITIAL_DELAY_MS:30000}
     fixed-delay-ms: ${QUALITOS_KAFKA_FIXED_DELAY_MS:10000}
+  # Palier de facturation appliqué à tous les tenants, tant qu'un module de
+  # facturation ne le porte pas par tenant. Le socle du catalogue (modules de
+  # base) est acquis d'office quel que soit ce palier ; ce reglage decide de ce
+  # que le SUPER ADMIN peut ouvrir au-dela. Fige a FREE dans le code, il rendait
+  # toute ouverture impossible sans recompiler.
+  modules:
+    default-tier: ${MODULES_DEFAULT_TIER:FREE}
+
   ai:
     base-url: ${AI_SERVICE_URL:http://localhost:8085}
     # Timeouts du client HTTP vers ai-service (ms). Le read-timeout DOIT rester

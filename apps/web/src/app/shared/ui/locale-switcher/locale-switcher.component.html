@@ -1,0 +1,20 @@
+<button type="button"
+        class="qos-locale__trigger"
+        [matMenuTriggerFor]="localeMenu"
+        aria-label="Changer de langue"
+        i18n-aria-label="@@locale.switch.aria">
+  <mat-icon aria-hidden="true">translate</mat-icon>
+  <span class="qos-locale__code">{{ currentCode | uppercase }}</span>
+</button>
+
+<mat-menu #localeMenu="matMenu" xPosition="before" class="qos-locale-panel">
+  <button mat-menu-item type="button"
+          *ngFor="let l of locales"
+          [class.is-current]="l.code === currentCode"
+          [attr.aria-current]="l.code === currentCode ? 'true' : null"
+          (click)="switchTo(l.code)">
+    <span class="qos-locale__label">{{ l.label }}</span>
+    <mat-icon class="qos-locale__check" *ngIf="l.code === currentCode"
+              aria-hidden="true">check</mat-icon>
+  </button>
+</mat-menu>

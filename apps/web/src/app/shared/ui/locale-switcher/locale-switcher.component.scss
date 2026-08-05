@@ -1,0 +1,45 @@
+:host { display: inline-flex; }
+
+// Même gabarit que les autres boutons de la barre supérieure, avec le code de
+// langue en plus : l'icône seule ne dit pas dans quelle langue on se trouve.
+.qos-locale__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 36px;
+  padding: 0 8px;
+  appearance: none;
+  border: none;
+  background: transparent;
+  border-radius: var(--qos-radius-md);
+  color: var(--qos-fg-secondary);
+  cursor: pointer;
+  transition: background var(--qos-motion-fast), color var(--qos-motion-fast);
+
+  &:hover {
+    background: var(--qos-bg-hover);
+    color: var(--qos-fg-primary);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--qos-ring-focus);
+  }
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.qos-locale__code {
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-semibold);
+  letter-spacing: 0.04em;
+}
+
+.qos-locale__check {
+  margin-inline-start: auto;
+  color: var(--qos-accent-bg);
+}
