@@ -1,5 +1,7 @@
 import { Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { NEVER, Observable, of } from 'rxjs';
+
+import { TenantModulesService } from '../../features/admin/tenant-modules.service';
 
 import { AuthService } from '../../core/auth/auth.service';
 import { NotificationView } from '../../core/notifications/notification.types';
@@ -14,6 +16,7 @@ interface ShellHarness {
   notifications: jasmine.SpyObj<NotificationsService>;
   router: jasmine.SpyObj<Router>;
   auth: jasmine.SpyObj<AuthService>;
+  modules: jasmine.SpyObj<TenantModulesService>;
 }
 
 function notification(overrides: Partial<NotificationView> = {}): NotificationView {
@@ -43,9 +46,21 @@ function harness(): ShellHarness {
   const router = jasmine.createSpyObj<Router>('Router', ['navigateByUrl']);
   router.navigateByUrl.and.returnValue(Promise.resolve(true));
 
+  const modules = jasmine.createSpyObj<TenantModulesService>(
+    'TenantModulesService', ['enabledCodes']);
+  // Par défaut, tous les modules du catalogue : les tests de navigation qui ne
+  // parlent pas de modules ne doivent pas voir leurs entrées disparaître.
+  modules.enabledCodes.and.returnValue(of([
+    'pdca', 'ishikawa', 'fives', 'circle', 'dmaic', 'capa', 'docs', 'audit',
+    'risk', 'supplier', 'training', 'change', 'complaints', 'calibration',
+    'ehs', 'standards', 'kpi', 'industry', 'iot', 'auditlog', 'blockchain',
+    'webhooks', 'itsm'
+  ]));
+
   return {
-    component: new MainShellComponent(auth, connectivity, offline, notifications, router),
-    notifications, router, auth
+    component: new MainShellComponent(
+      auth, connectivity, offline, notifications, router, modules),
+    notifications, router, auth, modules
   };
 }
 
@@ -137,6 +152,95 @@ describe('MainShellComponent (navigation model)', () => {
     expect(component.collapsed).toBeFalse();
     component.toggle();
     expect(component.collapsed).toBeTrue();
+  });
+});
+
+/**
+ * Navigation filtrée par les modules du tenant.
+ *
+ * La barre latérale n'était filtrée que par RÔLE : un tenant réduit au socle
+ * voyait donc toutes les entrées — IoT, Standards Hub, marketplace… — et
+ * découvrait le refus en ouvrant l'écran. Montrer une porte fermée n'est pas
+ * une information, c'est une déception.
+ */
+describe('MainShellComponent (navigation filtrée par module)', () => {
+
+  /**
+   * Dernière valeur émise, et non la première : la navigation s'affiche complète
+   * le temps que les modules soient connus, puis se resserre. C'est l'état
+   * stabilisé qui nous intéresse — tout est synchrone ici.
+   */
+  function routesFor(enabled: string[] | null, roles: string[] = []): string[] {
+    const h = harness();
+    h.auth.user.and.returnValue(of({
+      userId: 'u', tenantId: 't', displayName: 'Demo', roles
+    }));
+    h.modules.enabledCodes.and.returnValue(of(enabled ?? []));
+    h.component.ngOnInit();
+
+    let routes: string[] = [];
+    h.component.visibleSections$.subscribe(sections => {
+      routes = sections.flatMap(s => s.items.map(i => i.route));
+    });
+    return routes;
+  }
+
+  it('masque les modules que le tenant n’a pas', () => {
+    const routes = routesFor(['pdca', 'ishikawa', 'fives', 'capa', 'docs', 'audit']);
+
+    expect(routes).toContain('/pdca');
+    expect(routes).not.toContain('/iot');
+    expect(routes).not.toContain('/standards');
+  });
+
+  it('montre un module dès qu’il est ouvert au tenant', () => {
+    const routes = routesFor(['pdca', 'iot']);
+
+    expect(routes).toContain('/iot');
+  });
+
+  it('garde les entrées qui ne dépendent d’aucun module', () => {
+    // L'accueil, le tableau de bord ou la file de synchronisation ne sont pas
+    // des modules facturés : les masquer laisserait une coquille vide.
+    const routes = routesFor([]);
+
+    expect(routes).toContain('/home');
+    expect(routes).toContain('/dashboard');
+  });
+
+  it('ne masque rien tant que la liste des modules n’est pas connue', () => {
+    // Pendant le chargement, mieux vaut une barre complète qu'une barre qui se
+    // vide puis se remplit sous les yeux de l'utilisateur.
+    const h = harness();
+    h.auth.user.and.returnValue(of({
+      userId: 'u', tenantId: 't', displayName: 'Demo', roles: []
+    }));
+    h.modules.enabledCodes.and.returnValue(NEVER);
+    h.component.ngOnInit();
+
+    let routes: string[] = [];
+    h.component.visibleSections$.subscribe(s => {
+      routes = s.flatMap(x => x.items.map(i => i.route));
+    });
+
+    expect(routes).toContain('/iot');
+  });
+
+  it('chaque entrée déclarant un module cite un code du catalogue', () => {
+    // Une faute de frappe dans un code ferait disparaître l'entrée en silence.
+    const known = [
+      'pdca', 'ishikawa', 'fives', 'circle', 'dmaic', 'capa', 'docs', 'audit',
+      'risk', 'supplier', 'training', 'change', 'complaints', 'calibration',
+      'ehs', 'standards', 'kpi', 'industry', 'iot', 'auditlog', 'blockchain',
+      'webhooks', 'itsm'
+    ];
+    const component = make();
+
+    component.sections.flatMap(s => s.items).forEach(item => {
+      if (item.module) {
+        expect(known).withContext(`${item.route} → ${item.module}`).toContain(item.module);
+      }
+    });
   });
 });
 

@@ -31,6 +31,15 @@ export class TenantModulesService {
     return this.http.get<ModuleCatalogEntry[]>(`${this.endpoint}/catalog`);
   }
 
+  /**
+   * Codes des modules dont dispose le tenant : activations ouvertes ET socle du
+   * catalogue, acquis d'office. Sert à la barre de navigation, qui n'était
+   * filtrée que par rôle et montrait donc des modules absents du périmètre.
+   */
+  enabledCodes(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.endpoint}/enabled`);
+  }
+
   /** Synthèse du tenant courant (compteurs + activations). */
   summary(): Observable<TenantModuleSummary> {
     return this.http.get<TenantModuleSummary>(`${this.endpoint}/summary`);

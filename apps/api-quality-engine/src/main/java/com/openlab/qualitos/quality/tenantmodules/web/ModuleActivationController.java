@@ -33,6 +33,13 @@ public class ModuleActivationController {
     @GetMapping("/summary")
     public ModuleActivationDto.TenantModuleSummary summary() { return service.summary(); }
 
+    /**
+     * Codes des modules dont dispose le tenant, en un seul appel — ce qui permet
+     * à l'interface de ne montrer que ce à quoi l'utilisateur a réellement accès.
+     */
+    @GetMapping("/enabled")
+    public List<String> enabledCodes() { return service.enabledModuleCodes(); }
+
     @GetMapping("/enabled/{moduleCode}")
     public java.util.Map<String, Boolean> isEnabled(@PathVariable String moduleCode) {
         return java.util.Map.of("enabled", service.isEnabled(moduleCode));
