@@ -1,6 +1,15 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:iot;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    # UNE BASE PAR CONTEXTE SPRING (`random.uuid`), et non une base nommée pour
+    # toute la JVM. Les classes de test s'exécutent en parallèle (surefire :
+    # `parallel.mode.classes.default=concurrent`) et le schéma est en
+    # `create-drop` : sur une base partagée, le démarrage d'un second contexte
+    # DÉTRUIT et recrée les tables sous les pieds d'un test en cours. C'est
+    # exactement ce qui faisait échouer l'ingestion LoRaWAN et Sparkplug en
+    # intégration continue — « Device not found » sur la deuxième mesure d'un
+    # même message, l'appareil ayant disparu entre les deux écritures — sans
+    # jamais se reproduire en local, où la suite tourne seule.
+    url: jdbc:h2:mem:iot-${random.uuid};MODE=PostgreSQL;DB_CLOSE_DELAY=-1
     username: sa
     password: ''
     driver-class-name: org.h2.Driver
