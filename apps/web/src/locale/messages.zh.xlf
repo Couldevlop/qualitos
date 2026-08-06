@@ -13522,6 +13522,34 @@ historique 12 mois</source>
         <source>Analyse du KPI</source>
         <target state="translated">KPI分析</target>
       </trans-unit>
+      <trans-unit id="nav.non-conformite" datatype="html">
+        <source>Non-conformité</source>
+        <target state="translated">不合格</target>
+      </trans-unit>
+      <trans-unit id="nav.nc-interne" datatype="html">
+        <source>NC interne</source>
+        <target state="translated">内部不合格</target>
+      </trans-unit>
+      <trans-unit id="nav.nc-externe" datatype="html">
+        <source>NC externe</source>
+        <target state="translated">外部不合格</target>
+      </trans-unit>
+      <trans-unit id="nc.list.title-internal" datatype="html">
+        <source>Non-conformités internes</source>
+        <target state="translated">内部不合格</target>
+      </trans-unit>
+      <trans-unit id="nc.list.title-external" datatype="html">
+        <source>Non-conformités externes</source>
+        <target state="translated">外部不合格</target>
+      </trans-unit>
+      <trans-unit id="nc.list.subtitle-internal" datatype="html">
+        <source>Écarts détectés par l'organisation elle-même : autocontrôle, audit interne, revue.</source>
+        <target state="translated">组织自行发现的偏差：自检、内部审核、评审。</target>
+      </trans-unit>
+      <trans-unit id="nc.list.subtitle-external" datatype="html">
+        <source>Écarts signalés du dehors : client, fournisseur, autorité, organisme certificateur.</source>
+        <target state="translated">来自外部的偏差反馈：客户、供应商、监管机构、认证机构。</target>
+      </trans-unit>
       <trans-unit id="nc.list.title" datatype="html">
         <source>Non-conformités</source>
         <target state="translated">不合格项</target>

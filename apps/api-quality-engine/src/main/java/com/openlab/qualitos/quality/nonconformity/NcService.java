@@ -12,6 +12,10 @@ import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import jakarta.persistence.criteria.Predicate;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,29 +39,28 @@ public class NcService {
         this.capaCaseRepository = capaCaseRepository;
     }
 
+    /**
+     * Liste filtrée du tenant courant.
+     *
+     * <p>Une spécification, et non une cascade de branches : à trois filtres il
+     * fallait déjà huit combinaisons écrites à la main, et l'ajout de l'origine
+     * en aurait demandé seize. Chaque critère nul est simplement ignoré.
+     */
     @Transactional(readOnly = true)
     public Page<NcDto.Response> findAll(NcStatus status, NcSeverity severity, NcCategory category,
-                                        Pageable pageable) {
+                                        NcOrigin origin, Pageable pageable) {
         UUID tenantId = requireTenantId();
-        Page<NonConformity> page;
-        if (status != null && severity != null && category != null) {
-            page = repository.findByTenantIdAndStatusAndSeverityAndCategory(tenantId, status, severity, category, pageable);
-        } else if (status != null && severity != null) {
-            page = repository.findByTenantIdAndStatusAndSeverity(tenantId, status, severity, pageable);
-        } else if (status != null && category != null) {
-            page = repository.findByTenantIdAndStatusAndCategory(tenantId, status, category, pageable);
-        } else if (severity != null && category != null) {
-            page = repository.findByTenantIdAndSeverityAndCategory(tenantId, severity, category, pageable);
-        } else if (status != null) {
-            page = repository.findByTenantIdAndStatus(tenantId, status, pageable);
-        } else if (severity != null) {
-            page = repository.findByTenantIdAndSeverity(tenantId, severity, pageable);
-        } else if (category != null) {
-            page = repository.findByTenantIdAndCategory(tenantId, category, pageable);
-        } else {
-            page = repository.findByTenantId(tenantId, pageable);
-        }
-        return page.map(this::toResponse);
+        Specification<NonConformity> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            // Le tenant vient du jeton et n'est jamais optionnel (§18.2 #2).
+            predicates.add(cb.equal(root.get("tenantId"), tenantId));
+            if (status != null)   predicates.add(cb.equal(root.get("status"), status));
+            if (severity != null) predicates.add(cb.equal(root.get("severity"), severity));
+            if (category != null) predicates.add(cb.equal(root.get("category"), category));
+            if (origin != null)   predicates.add(cb.equal(root.get("origin"), origin));
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+        return repository.findAll(spec, pageable).map(this::toResponse);
     }
 
     @Transactional(readOnly = true)
@@ -82,6 +85,7 @@ public class NcService {
         nc.setCategory(request.category());
         nc.setSeverity(request.severity());
         nc.setStatus(NcStatus.OPEN);
+        nc.setOrigin(NcOrigin.orDefault(request.origin()));
         nc.setDetectedAt(request.detectedAt());
         nc.setZone(request.zone());
         nc.setGeoLat(request.geoLat());
@@ -111,6 +115,7 @@ public class NcService {
         if (nc.getStatus() == NcStatus.CLOSED || nc.getStatus() == NcStatus.CANCELLED) {
             throw new NcStateException("Cannot modify a " + nc.getStatus() + " non-conformity");
         }
+        if (request.origin() != null) nc.setOrigin(request.origin());
         if (request.title() != null) nc.setTitle(request.title());
         if (request.description() != null) nc.setDescription(request.description());
         if (request.category() != null) nc.setCategory(request.category());
@@ -239,7 +244,7 @@ public class NcService {
     private NcDto.Response toResponse(NonConformity nc) {
         return new NcDto.Response(
                 nc.getId(), nc.getTenantId(), nc.getReference(), nc.getTitle(), nc.getDescription(),
-                nc.getCategory(), nc.getSeverity(), nc.getStatus(), nc.getDetectedAt(),
+                nc.getCategory(), nc.getSeverity(), nc.getStatus(), nc.getOrigin(), nc.getDetectedAt(),
                 nc.getZone(), nc.getGeoLat(), nc.getGeoLng(), nc.getPhotoUrls(),
                 nc.getReporterId(), nc.getCapaCaseId(), nc.getRootCause(), nc.getResolutionNote(),
                 nc.getResolvedAt(), nc.getClosedAt(), nc.getCreatedAt(), nc.getUpdatedAt());

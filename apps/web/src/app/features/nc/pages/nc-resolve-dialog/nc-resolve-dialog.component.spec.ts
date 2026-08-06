@@ -29,7 +29,7 @@ describe('NcResolveDialogComponent', () => {
 
   const resolved: NcResponse = {
     id: 'a1', reference: 'NC-2026-1001', title: 'Étiquetage manquant',
-    category: 'PROCESS', severity: 'MAJOR', status: 'RESOLVED',
+    category: 'PROCESS', severity: 'MAJOR', status: 'RESOLVED', origin: 'INTERNAL',
     detectedAt: '2026-07-01T00:00:00Z', createdAt: '2026-07-01T00:00:00Z',
     updatedAt: '2026-07-01T00:00:00Z', resolutionNote: 'Étiquettes reposées.'
   };

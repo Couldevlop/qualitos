@@ -6,6 +6,7 @@ import com.openlab.qualitos.quality.itsm.ConnectionStatus;
 import com.openlab.qualitos.quality.itsm.SecretCipher;
 import com.openlab.qualitos.quality.nonconformity.NcCategory;
 import com.openlab.qualitos.quality.nonconformity.NcDto;
+import com.openlab.qualitos.quality.nonconformity.NcOrigin;
 import com.openlab.qualitos.quality.nonconformity.NcService;
 import com.openlab.qualitos.quality.nonconformity.NcSeverity;
 import org.slf4j.Logger;
@@ -222,7 +223,11 @@ public class EhrConnectorService {
                 null,   // geoLng
                 null,   // photoUrls
                 null    // reporterId : import système, pas un acteur humain nominatif
-        );
+        ,
+                // Signal remonté par le dossier patient de l'établissement :
+                // c'est une détection INTERNE, même si elle passe par un système
+                // tiers. Une NC « externe » suppose un signalement venu du dehors.
+                NcOrigin.INTERNAL);
         return ncService.create(req).id();
     }
 

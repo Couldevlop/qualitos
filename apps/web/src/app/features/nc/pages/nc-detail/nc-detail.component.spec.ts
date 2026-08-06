@@ -18,7 +18,7 @@ import { NcDetailComponent } from './nc-detail.component';
 function buildNc(overrides: Partial<NcResponse> = {}): NcResponse {
   return {
     id: 'nc-1', reference: 'NC-2026-1001', title: 'Étiquetage manquant',
-    category: 'PROCESS', severity: 'MAJOR', status: 'OPEN',
+    category: 'PROCESS', severity: 'MAJOR', status: 'OPEN', origin: 'INTERNAL',
     detectedAt: '2026-06-06T00:00:00Z', createdAt: '2026-06-06T00:00:00Z',
     updatedAt: '2026-06-06T00:00:00Z', ...overrides
   };
@@ -98,7 +98,7 @@ describe('NcDetailComponent — section photos', () => {
   });
 
   it('masque le bouton d’ajout quand la NC est CLOSED', () => {
-    setup(buildNc({ status: 'CLOSED', closedAt: '2026-06-06T00:00:00Z' }), []);
+    setup(buildNc({ status: 'CLOSED', origin: 'INTERNAL', closedAt: '2026-06-06T00:00:00Z' }), []);
     const el: HTMLElement = fixture.nativeElement;
     expect(el.querySelector('.add-photo-btn')).toBeNull();
   });

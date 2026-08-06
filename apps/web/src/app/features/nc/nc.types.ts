@@ -11,6 +11,13 @@ export type NcCategory =
 
 export type NcSeverity = 'MINOR' | 'MAJOR' | 'CRITICAL';
 
+/**
+ * D'où vient la non-conformité (§4.3). Une NC détectée par l'organisation
+ * elle-même et une NC signalée du dehors — client, fournisseur, autorité,
+ * certificateur — n'ont ni les mêmes délais ni les mêmes destinataires.
+ */
+export type NcOrigin = 'INTERNAL' | 'EXTERNAL';
+
 export type NcStatus =
   | 'OPEN'
   | 'UNDER_ANALYSIS'
@@ -28,6 +35,7 @@ export interface NcResponse {
   category: NcCategory;
   severity: NcSeverity;
   status: NcStatus;
+  origin: NcOrigin;
   detectedAt: string;
   zone?: string;
   geoLat?: number;
@@ -76,11 +84,14 @@ export interface CreateNcRequest {
   /** URLs des photos, une par ligne. */
   photoUrls?: string;
   reporterId?: string;
+  /** Interne par défaut côté serveur si non précisée. */
+  origin?: NcOrigin;
 }
 
 export interface UpdateNcRequest {
   title?: string;
   description?: string;
+  origin?: NcOrigin;
   category?: NcCategory;
   severity?: NcSeverity;
   zone?: string;

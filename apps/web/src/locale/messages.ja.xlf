@@ -13521,6 +13521,34 @@ historique 12 mois</source>
         <source>Analyse du KPI</source>
         <target state="translated">KPI分析</target>
       </trans-unit>
+      <trans-unit id="nav.non-conformite" datatype="html">
+        <source>Non-conformité</source>
+        <target state="translated">不適合</target>
+      </trans-unit>
+      <trans-unit id="nav.nc-interne" datatype="html">
+        <source>NC interne</source>
+        <target state="translated">内部不適合</target>
+      </trans-unit>
+      <trans-unit id="nav.nc-externe" datatype="html">
+        <source>NC externe</source>
+        <target state="translated">外部不適合</target>
+      </trans-unit>
+      <trans-unit id="nc.list.title-internal" datatype="html">
+        <source>Non-conformités internes</source>
+        <target state="translated">内部不適合</target>
+      </trans-unit>
+      <trans-unit id="nc.list.title-external" datatype="html">
+        <source>Non-conformités externes</source>
+        <target state="translated">外部不適合</target>
+      </trans-unit>
+      <trans-unit id="nc.list.subtitle-internal" datatype="html">
+        <source>Écarts détectés par l'organisation elle-même : autocontrôle, audit interne, revue.</source>
+        <target state="translated">組織が自ら発見した逸脱：自主点検、内部監査、レビュー。</target>
+      </trans-unit>
+      <trans-unit id="nc.list.subtitle-external" datatype="html">
+        <source>Écarts signalés du dehors : client, fournisseur, autorité, organisme certificateur.</source>
+        <target state="translated">外部から報告された逸脱：顧客、サプライヤー、当局、認証機関。</target>
+      </trans-unit>
       <trans-unit id="nc.list.title" datatype="html">
         <source>Non-conformités</source>
         <target state="translated">不適合</target>

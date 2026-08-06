@@ -44,6 +44,15 @@ public class NonConformity {
     @Column(nullable = false, length = 30)
     private NcStatus status;
 
+    /**
+     * Interne (détectée par l'organisation) ou externe (signalée du dehors).
+     * Non nul : une NC sans origine connue est comptée comme interne, jamais
+     * laissée dans un état indéterminé qui fausserait les deux compteurs.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private NcOrigin origin = NcOrigin.INTERNAL;
+
     @Column(name = "detected_at", nullable = false)
     private Instant detectedAt;
 

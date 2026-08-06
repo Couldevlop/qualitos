@@ -13522,6 +13522,34 @@ historial de 12 meses</target>
         <source>Analyse du KPI</source>
         <target state="translated">Análisis del KPI</target>
       </trans-unit>
+      <trans-unit id="nav.non-conformite" datatype="html">
+        <source>Non-conformité</source>
+        <target state="translated">No conformidad</target>
+      </trans-unit>
+      <trans-unit id="nav.nc-interne" datatype="html">
+        <source>NC interne</source>
+        <target state="translated">NC interna</target>
+      </trans-unit>
+      <trans-unit id="nav.nc-externe" datatype="html">
+        <source>NC externe</source>
+        <target state="translated">NC externa</target>
+      </trans-unit>
+      <trans-unit id="nc.list.title-internal" datatype="html">
+        <source>Non-conformités internes</source>
+        <target state="translated">No conformidades internas</target>
+      </trans-unit>
+      <trans-unit id="nc.list.title-external" datatype="html">
+        <source>Non-conformités externes</source>
+        <target state="translated">No conformidades externas</target>
+      </trans-unit>
+      <trans-unit id="nc.list.subtitle-internal" datatype="html">
+        <source>Écarts détectés par l'organisation elle-même : autocontrôle, audit interne, revue.</source>
+        <target state="translated">Desviaciones detectadas por la propia organización: autocontrol, auditoría interna, revisión.</target>
+      </trans-unit>
+      <trans-unit id="nc.list.subtitle-external" datatype="html">
+        <source>Écarts signalés du dehors : client, fournisseur, autorité, organisme certificateur.</source>
+        <target state="translated">Desviaciones reportadas desde fuera: cliente, proveedor, autoridad, organismo certificador.</target>
+      </trans-unit>
       <trans-unit id="nc.list.title" datatype="html">
         <source>Non-conformités</source>
         <target state="translated">No conformidades</target>

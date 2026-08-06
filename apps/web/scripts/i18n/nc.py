@@ -2,6 +2,26 @@
 """Table i18n - feature non-conformités (NC). id: (fr, en, es, ar, ja, zh)."""
 
 TRANSLATIONS = {
+    # Groupe de navigation « Non-conformite » : deux origines, deux entrees.
+    'nav.non-conformite': ('Non-conformité', 'Nonconformity', 'No conformidad', 'عدم المطابقة', '不適合', '不合格'),
+    'nav.nc-interne': ('NC interne', 'Internal NC', 'NC interna', 'عدم مطابقة داخلي', '内部不適合', '内部不合格'),
+    'nav.nc-externe': ('NC externe', 'External NC', 'NC externa', 'عدم مطابقة خارجي', '外部不適合', '外部不合格'),
+    'nc.list.title-internal': ('Non-conformités internes', 'Internal nonconformities', 'No conformidades internas', 'حالات عدم المطابقة الداخلية', '内部不適合', '内部不合格'),
+    'nc.list.title-external': ('Non-conformités externes', 'External nonconformities', 'No conformidades externas', 'حالات عدم المطابقة الخارجية', '外部不適合', '外部不合格'),
+    'nc.list.subtitle-internal': (
+        "Écarts détectés par l'organisation elle-même : autocontrôle, audit interne, revue.",
+        'Gaps found by the organisation itself: self-inspection, internal audit, review.',
+        'Desviaciones detectadas por la propia organización: autocontrol, auditoría interna, revisión.',
+        'انحرافات اكتشفتها المؤسسة بنفسها: الرقابة الذاتية، التدقيق الداخلي، المراجعة.',
+        '組織が自ら発見した逸脱：自主点検、内部監査、レビュー。',
+        '组织自行发现的偏差：自检、内部审核、评审。'),
+    'nc.list.subtitle-external': (
+        "Écarts signalés du dehors : client, fournisseur, autorité, organisme certificateur.",
+        'Gaps reported from outside: customer, supplier, authority, certification body.',
+        'Desviaciones reportadas desde fuera: cliente, proveedor, autoridad, organismo certificador.',
+        'انحرافات وردت من الخارج: العميل، المورّد، الجهة الرقابية، هيئة إصدار الشهادات.',
+        '外部から報告された逸脱：顧客、サプライヤー、当局、認証機関。',
+        '来自外部的偏差反馈：客户、供应商、监管机构、认证机构。'),
     # --- liste ---------------------------------------------------------------
     'nc.list.title': ('Non-conformités', 'Non-conformances', 'No conformidades', 'حالات عدم المطابقة', '不適合', '不合格项'),
     'nc.list.subtitle': ('Saisie terrain, analyse de cause racine, résolution et escalade CAPA — traçables de bout en bout.', 'Field capture, root-cause analysis, resolution and CAPA escalation — traceable end to end.', 'Captura en campo, análisis de causa raíz, resolución y escalado CAPA — trazables de extremo a extremo.', 'تسجيل ميداني، وتحليل السبب الجذري، والحل والتصعيد إلى CAPA — قابلة للتتبّع من البداية إلى النهاية.', '現場での記録、根本原因分析、解決、CAPAへのエスカレーション — 一貫してトレーサブル。', '现场录入、根本原因分析、解决与 CAPA 升级——全程可追溯。'),

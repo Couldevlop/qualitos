@@ -13522,6 +13522,34 @@ historique 12 mois</source>
         <source>Analyse du KPI</source>
         <target state="translated">تحليل مؤشر الأداء</target>
       </trans-unit>
+      <trans-unit id="nav.non-conformite" datatype="html">
+        <source>Non-conformité</source>
+        <target state="translated">عدم المطابقة</target>
+      </trans-unit>
+      <trans-unit id="nav.nc-interne" datatype="html">
+        <source>NC interne</source>
+        <target state="translated">عدم مطابقة داخلي</target>
+      </trans-unit>
+      <trans-unit id="nav.nc-externe" datatype="html">
+        <source>NC externe</source>
+        <target state="translated">عدم مطابقة خارجي</target>
+      </trans-unit>
+      <trans-unit id="nc.list.title-internal" datatype="html">
+        <source>Non-conformités internes</source>
+        <target state="translated">حالات عدم المطابقة الداخلية</target>
+      </trans-unit>
+      <trans-unit id="nc.list.title-external" datatype="html">
+        <source>Non-conformités externes</source>
+        <target state="translated">حالات عدم المطابقة الخارجية</target>
+      </trans-unit>
+      <trans-unit id="nc.list.subtitle-internal" datatype="html">
+        <source>Écarts détectés par l'organisation elle-même : autocontrôle, audit interne, revue.</source>
+        <target state="translated">انحرافات اكتشفتها المؤسسة بنفسها: الرقابة الذاتية، التدقيق الداخلي، المراجعة.</target>
+      </trans-unit>
+      <trans-unit id="nc.list.subtitle-external" datatype="html">
+        <source>Écarts signalés du dehors : client, fournisseur, autorité, organisme certificateur.</source>
+        <target state="translated">انحرافات وردت من الخارج: العميل، المورّد، الجهة الرقابية، هيئة إصدار الشهادات.</target>
+      </trans-unit>
       <trans-unit id="nc.list.title" datatype="html">
         <source>Non-conformités</source>
         <target state="translated">حالات عدم المطابقة</target>

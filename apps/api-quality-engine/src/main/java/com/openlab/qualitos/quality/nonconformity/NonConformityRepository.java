@@ -3,12 +3,14 @@ package com.openlab.qualitos.quality.nonconformity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface NonConformityRepository extends JpaRepository<NonConformity, UUID> {
+public interface NonConformityRepository
+        extends JpaRepository<NonConformity, UUID>, JpaSpecificationExecutor<NonConformity> {
 
     Page<NonConformity> findByTenantId(UUID tenantId, Pageable pageable);
 

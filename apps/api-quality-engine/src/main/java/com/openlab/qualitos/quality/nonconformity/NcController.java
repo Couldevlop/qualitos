@@ -24,8 +24,10 @@ public class NcController {
             @RequestParam(required = false) NcStatus status,
             @RequestParam(required = false) NcSeverity severity,
             @RequestParam(required = false) NcCategory category,
+            /** Interne ou externe. Absent = les deux (§4.3). */
+            @RequestParam(required = false) NcOrigin origin,
             @PageableDefault(size = 20) Pageable pageable) {
-        return service.findAll(status, severity, category, pageable);
+        return service.findAll(status, severity, category, origin, pageable);
     }
 
     @PostMapping
