@@ -12,6 +12,7 @@ import com.openlab.qualitos.quality.tenantmodules.domain.ModuleCatalogEntry;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -202,6 +203,36 @@ public class ModuleActivationService {
                 .orElseGet(() -> ModuleCatalog.find(moduleCode)
                         .map(ModuleCatalogEntry::coreModule)
                         .orElse(false));
+    }
+
+    /**
+     * Codes des modules dont dispose le tenant courant : ceux qu'une activation
+     * ouvre, plus le socle du catalogue, acquis d'office.
+     *
+     * <p>Existe pour que l'interface sache quoi montrer. La barre de navigation
+     * n'était filtrée que par rôle : un tenant réduit au socle voyait toutes les
+     * entrées, y compris des modules qu'il n'a pas — et découvrait le refus en
+     * ouvrant l'écran. Interroger le point unitaire une fois par entrée aurait
+     * produit une vingtaine d'appels au démarrage de l'application.
+     */
+    public List<String> enabledModuleCodes() {
+        UUID tenantId = tenantProvider.requireTenantId();
+        Set<String> enabled = new java.util.LinkedHashSet<>();
+        for (ModuleCatalogEntry entry : ModuleCatalog.all()) {
+            if (entry.coreModule()) {
+                enabled.add(entry.code());
+            }
+        }
+        for (ModuleActivation activation : repo.findAllByTenantId(tenantId)) {
+            if (activation.isEnabled()) {
+                enabled.add(activation.getModuleCode());
+            } else {
+                // Une activation explicitement fermée l'emporte : c'est une
+                // décision, pas une absence.
+                enabled.remove(activation.getModuleCode());
+            }
+        }
+        return List.copyOf(enabled);
     }
 
     public ModuleActivationDto.TenantModuleSummary summary() {

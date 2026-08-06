@@ -203,6 +203,25 @@ class ModuleActivationControllerTest {
                 .andExpect(jsonPath("$.enabled").value(true));
     }
 
+    /**
+     * Codes des modules dont dispose le tenant, en un seul appel.
+     *
+     * <p>L'interface n'avait aucun moyen de savoir quoi montrer : la barre de
+     * navigation n'était filtrée que par rôle, si bien qu'un tenant réduit au
+     * socle voyait quand même toutes les entrées — jusqu'à des modules qu'il
+     * n'a pas. Interroger `enabled/{code}` une fois par entrée aurait produit
+     * une vingtaine d'appels au démarrage.
+     */
+    @Test @WithMockUser
+    void enabledCodes_200() throws Exception {
+        when(service.enabledModuleCodes()).thenReturn(List.of("pdca", "capa", "docs"));
+
+        mockMvc.perform(get("/api/v1/tenant-modules/enabled"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$[0]").value("pdca"));
+    }
+
     @Test @WithMockUser
     void expireDue_200() throws Exception {
         when(service.expireDue(200)).thenReturn(5);
