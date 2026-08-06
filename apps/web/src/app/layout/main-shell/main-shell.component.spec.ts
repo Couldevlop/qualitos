@@ -416,9 +416,11 @@ describe('MainShellComponent (visibilité par rôle)', () => {
   });
 
   it('supprime la section entière plutôt que d’afficher un titre orphelin', () => {
-    // Les 5 entrées d'administration sont toutes gardées : la section disparaît.
+    // Toutes les entrées d'administration sont gardées : la section disparaît, et
+    // il reste les sept autres — Non-conformité comprise depuis qu'elle est
+    // sortie des Opérations.
     const sections = make().filterSections(['USER']);
-    expect(sections.length).toBe(6);
+    expect(sections.length).toBe(7);
     expect(sections.some(s => s.items.some(i => i.route.startsWith('/admin')))).toBeFalse();
   });
 
