@@ -290,6 +290,14 @@ const routes: Routes = [
           import('./features/dashboard-builder/dashboard-builder.module').then(m => m.DashboardBuilderModule)
       },
       {
+        // 5 Pourquoi (§3.5) : analyse rattachée à une non-conformité, sortie des
+        // sous-causes du diagramme Ishikawa où elle n'était pas consultable
+        // pour elle-même.
+        path: 'five-whys',
+        loadChildren: () => import('./features/five-whys/five-whys.module')
+          .then(m => m.FiveWhysModule)
+      },
+      {
         // Console d'administration du tenant (§10.4, §16) : activation des modules,
         // et à terme les autres surfaces d'administration déjà exposées par l'API.
         path: 'admin',

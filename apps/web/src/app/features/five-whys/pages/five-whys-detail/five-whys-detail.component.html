@@ -1,0 +1,110 @@
+<div class="qos-page">
+  <qos-page-header
+    [title]="analysis?.problem || ''"
+    eyebrow="5 Pourquoi" i18n-eyebrow="@@fivewhys.eyebrow"
+    [subtitle]="analysis ? ('Non-conformité ' + analysis.ncReference) : ''">
+    <button qosActions mat-stroked-button type="button" (click)="goBack()">
+      <mat-icon aria-hidden="true">arrow_back</mat-icon>
+      <span i18n="@@common.back">Retour</span>
+    </button>
+  </qos-page-header>
+
+  <div class="state-row" *ngIf="loading" role="status">
+    <mat-progress-spinner mode="indeterminate" diameter="32"
+                          aria-label="Chargement" i18n-aria-label="@@common.loading-aria"></mat-progress-spinner>
+  </div>
+
+  <ng-container *ngIf="analysis as a">
+    <!-- La chaîne : chaque réponse répond au pourquoi de la précédente. -->
+    <ol class="whys">
+      <li class="why" *ngFor="let s of steps; let last = last">
+        <span class="why__rank" aria-hidden="true">{{ s.position }}</span>
+        <div class="why__body">
+          <p class="why__question" i18n="@@fivewhys.why">Pourquoi ?</p>
+
+          <ng-container *ngIf="editingStepId !== s.id; else editing">
+            <p class="why__answer">{{ s.answer }}</p>
+          </ng-container>
+          <ng-template #editing>
+            <textarea class="why__input" rows="2" [value]="editAnswer"
+                      (input)="editAnswer = $any($event.target).value"
+                      (keyup.escape)="cancelEdit()"
+                      aria-label="Réponse au pourquoi"
+                      i18n-aria-label="@@fivewhys.answer-aria"></textarea>
+            <div class="why__edit-actions">
+              <button mat-flat-button color="primary" type="button"
+                      (click)="commitEdit(s.id, s.answer)" i18n="@@common.save">Enregistrer</button>
+              <button mat-button type="button" (click)="cancelEdit()"
+                      i18n="@@common.cancel">Annuler</button>
+            </div>
+          </ng-template>
+        </div>
+
+        <div class="why__actions" *ngIf="editingStepId !== s.id">
+          <button mat-icon-button type="button" (click)="startEdit(s.id, s.answer)"
+                  matTooltip="Corriger cette réponse"
+                  i18n-matTooltip="@@fivewhys.edit-tooltip"
+                  [attr.aria-label]="'Corriger le pourquoi ' + s.position">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <!-- Seul le dernier maillon peut partir : retirer un pourquoi du milieu
+               casserait la chaîne, le suivant ne répondant plus au précédent. -->
+          <button mat-icon-button color="warn" type="button" *ngIf="last"
+                  (click)="removeLastWhy()"
+                  matTooltip="Retirer ce pourquoi"
+                  i18n-matTooltip="@@fivewhys.remove-tooltip"
+                  [attr.aria-label]="'Retirer le pourquoi ' + s.position">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </li>
+    </ol>
+
+    <mat-card class="add-why" *ngIf="canAddWhy">
+      <mat-card-content>
+        <p class="add-why__question">{{ nextQuestion }}</p>
+        <mat-form-field appearance="outline" class="add-why__field" subscriptSizing="dynamic">
+          <mat-label i18n="@@fivewhys.answer-label">Parce que…</mat-label>
+          <textarea matInput rows="2" [value]="newAnswer"
+                    (input)="newAnswer = $any($event.target).value"></textarea>
+        </mat-form-field>
+        <button mat-flat-button color="primary" type="button"
+                [disabled]="!newAnswer.trim() || saving" (click)="addWhy()">
+          <mat-icon aria-hidden="true">add</mat-icon>
+          <span i18n="@@fivewhys.add">Ajouter ce pourquoi</span>
+        </button>
+      </mat-card-content>
+    </mat-card>
+
+    <p class="chain-full" *ngIf="!canAddWhy" i18n="@@fivewhys.chain-full">
+      Sept pourquoi, c'est la limite : au-delà, on n'remonte plus une cause, on
+      énumère des circonstances. Concluez la cause racine, ou reformulez le problème.
+    </p>
+
+    <!-- Conclusion : verrouillée tant que la chaîne est trop courte. -->
+    <mat-card class="root-cause">
+      <mat-card-header>
+        <mat-card-title i18n="@@fivewhys.root-cause-title">Cause racine</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="root-cause__locked" *ngIf="!canConcludeRootCause"
+           i18n="@@fivewhys.root-cause-locked">
+          Conclure avant trois pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.
+        </p>
+
+        <ng-container *ngIf="canConcludeRootCause">
+          <mat-form-field appearance="outline" class="root-cause__field" subscriptSizing="dynamic">
+            <mat-label i18n="@@fivewhys.root-cause-label">Cause racine identifiée</mat-label>
+            <textarea matInput rows="2" [value]="rootCauseDraft"
+                      (input)="rootCauseDraft = $any($event.target).value"></textarea>
+          </mat-form-field>
+          <button mat-flat-button color="primary" type="button"
+                  [disabled]="!rootCauseDraft.trim() || saving" (click)="concludeRootCause()">
+            <mat-icon aria-hidden="true">check</mat-icon>
+            <span i18n="@@fivewhys.conclude">Conclure</span>
+          </button>
+        </ng-container>
+      </mat-card-content>
+    </mat-card>
+  </ng-container>
+</div>

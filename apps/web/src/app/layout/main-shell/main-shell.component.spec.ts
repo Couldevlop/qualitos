@@ -94,7 +94,7 @@ describe('MainShellComponent (navigation model)', () => {
     // lui-même son équipe qualité, sans passer par l'éditeur de la plateforme.
     // Non-conformité(2) s'intercale, et Opérations retombe à 9 : son entrée
     // « Non-conformités » unique est remplacée par les deux entrées du groupe.
-    expect(labels).toEqual([5, 6, 8, 2, 9, 10, 1, 7]);
+    expect(labels).toEqual([5, 6, 8, 3, 9, 10, 1, 7]);
   });
 
   it('collapses the entire GRC mass into a single /compliance entry', () => {
@@ -123,7 +123,7 @@ describe('MainShellComponent (navigation model)', () => {
   it('keeps all core method/operation routes reachable from the sidebar', () => {
     const allRoutes = component.sections.flatMap(s => s.items.map(i => i.route));
     ['/home', '/dashboard', '/pdca', '/ishikawa', '/fives', '/dmaic', '/spc',
-     '/nc/interne', '/nc/externe', '/capa', '/audits', '/standards', '/itsm', '/compliance']
+     '/nc/interne', '/nc/externe', '/five-whys', '/capa', '/audits', '/standards', '/itsm', '/compliance']
       .forEach(r => expect(allRoutes).withContext(r).toContain(r));
   });
 

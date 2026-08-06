@@ -7564,6 +7564,126 @@
         <source>Échec de l'opération (HTTP <x id="status"/>).</source>
         <target state="translated">فشلت العملية (HTTP <x id="status"/>).</target>
       </trans-unit>
+      <trans-unit id="nav.cinq-pourquoi" datatype="html">
+        <source>5 Pourquoi</source>
+        <target state="translated">الأسباب الخمسة</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.list-title" datatype="html">
+        <source>5 Pourquoi</source>
+        <target state="translated">الأسباب الخمسة</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.list-subtitle" datatype="html">
+        <source>Remonter d'un écart constaté à sa cause racine, un pourquoi après l'autre.</source>
+        <target state="translated">التتبّع من انحراف ملاحَظ إلى سببه الجذري، سؤالاً بعد سؤال.</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.list-empty" datatype="html">
+        <source>Aucune analyse pour l'instant. Une analyse se lance depuis une non-conformité.</source>
+        <target state="translated">لا يوجد تحليل بعد. يبدأ التحليل من حالة عدم مطابقة.</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.list-failed" datatype="html">
+        <source>Impossible de charger les analyses.</source>
+        <target state="translated">تعذّر تحميل التحليلات.</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.col-nc" datatype="html">
+        <source>Non-conformité</source>
+        <target state="translated">عدم المطابقة</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.col-problem" datatype="html">
+        <source>Problème</source>
+        <target state="translated">المشكلة</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.col-depth" datatype="html">
+        <source>Pourquoi</source>
+        <target state="translated">الأسباب</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.col-root" datatype="html">
+        <source>Cause racine</source>
+        <target state="translated">السبب الجذري</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.concluded" datatype="html">
+        <source>Conclue</source>
+        <target state="translated">مُستنتَج</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">قيد التنفيذ</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.eyebrow" datatype="html">
+        <source>5 Pourquoi</source>
+        <target state="translated">الأسباب الخمسة</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.why" datatype="html">
+        <source>Pourquoi ?</source>
+        <target state="translated">لماذا؟</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.next-question" datatype="html">
+        <source>Pourquoi ?</source>
+        <target state="translated">لماذا؟</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.answer-label" datatype="html">
+        <source>Parce que…</source>
+        <target state="translated">لأنّ…</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.answer-aria" datatype="html">
+        <source>Réponse au pourquoi</source>
+        <target state="translated">الإجابة على السؤال</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.add" datatype="html">
+        <source>Ajouter ce pourquoi</source>
+        <target state="translated">إضافة هذا السبب</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.edit-tooltip" datatype="html">
+        <source>Corriger cette réponse</source>
+        <target state="translated">تصحيح هذه الإجابة</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.remove-tooltip" datatype="html">
+        <source>Retirer ce pourquoi</source>
+        <target state="translated">إزالة هذا السبب</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.chain-full" datatype="html">
+        <source>Sept pourquoi, c'est la limite : au-delà, on n'remonte plus une cause, on énumère des circonstances. Concluez la cause racine, ou reformulez le problème.</source>
+        <target state="translated">سبعة أسباب هي الحد: بعدها لم تعد تتتبّع سبباً بل تعدّد ظروفاً. استنتج السبب الجذري أو أعد صياغة المشكلة.</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.root-cause-title" datatype="html">
+        <source>Cause racine</source>
+        <target state="translated">السبب الجذري</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.root-cause-label" datatype="html">
+        <source>Cause racine identifiée</source>
+        <target state="translated">السبب الجذري المُحدَّد</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.root-cause-locked" datatype="html">
+        <source>Conclure avant trois pourquoi, c'est nommer un symptôme. Poursuivez la chaîne.</source>
+        <target state="translated">الاستنتاج قبل ثلاثة أسباب هو تسمية عَرَض. واصل السلسلة.</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.conclude" datatype="html">
+        <source>Conclure</source>
+        <target state="translated">استنتاج</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.load-failed" datatype="html">
+        <source>Analyse introuvable.</source>
+        <target state="translated">لم يُعثر على التحليل.</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.add-failed" datatype="html">
+        <source>Ajout du pourquoi refusé.</source>
+        <target state="translated">تم رفض إضافة السبب.</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.update-failed" datatype="html">
+        <source>Modification refusée.</source>
+        <target state="translated">تم رفض التعديل.</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.delete-step-failed" datatype="html">
+        <source>Suppression refusée.</source>
+        <target state="translated">تم رفض الحذف.</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.root-cause-failed" datatype="html">
+        <source>Conclusion refusée.</source>
+        <target state="translated">تم رفض الاستنتاج.</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.answer-required" datatype="html">
+        <source>La réponse au pourquoi est obligatoire.</source>
+        <target state="translated">الإجابة على السؤال إلزامية.</target>
+      </trans-unit>
       <trans-unit id="nav.forecast" datatype="html">
         <source>Prévision KPI</source>
         <target state="translated">التنبؤ بمؤشرات الأداء</target>
