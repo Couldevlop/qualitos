@@ -68,3 +68,38 @@ export interface ConvertedPdcaCycle {
   title: string;
   status: string;
 }
+
+/**
+ * Avancement d'une action décidée devant le diagramme. Trois états seulement :
+ * une décision de réunion se suit d'un coup d'œil. Un cycle plus fin — instruction,
+ * validation, preuve d'efficacité — relève de la CAPA (§3.6).
+ */
+export type IshikawaActionStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';
+
+/** Une action décidée à partir du diagramme : quoi, par qui, décidée quand. */
+export interface IshikawaActionResponse {
+  id: string;
+  diagramId: string;
+  label: string;
+  responsible?: string | null;
+  /** Date de la DÉCISION (réunion, comité), et non une échéance. */
+  decidedOn?: string | null;
+  status: IshikawaActionStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateIshikawaActionRequest {
+  label: string;
+  responsible?: string;
+  decidedOn?: string;
+  status?: IshikawaActionStatus;
+}
+
+/** Édition cellule par cellule : un champ absent signifie « inchangé ». */
+export interface UpdateIshikawaActionRequest {
+  label?: string;
+  responsible?: string;
+  decidedOn?: string;
+  status?: IshikawaActionStatus;
+}

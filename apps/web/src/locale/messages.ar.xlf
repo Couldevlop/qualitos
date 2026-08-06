@@ -11594,6 +11594,90 @@ historique 12 mois</source>
         <source>Dernières mesures</source>
         <target state="translated">أحدث القياسات</target>
       </trans-unit>
+      <trans-unit id="ishikawa.actions.title" datatype="html">
+        <source>Plan d'actions</source>
+        <target state="translated">خطة الإجراءات</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.subtitle" datatype="html">
+        <source>Ce qui a été décidé devant ce diagramme : qui fait quoi, et depuis quand.</source>
+        <target state="translated">ما تقرّر أمام هذا المخطط: من يفعل ماذا، ومنذ متى.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.col-action" datatype="html">
+        <source>Action</source>
+        <target state="translated">الإجراء</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.col-responsible" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">المسؤول</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.col-decided" datatype="html">
+        <source>Date de décision</source>
+        <target state="translated">تاريخ القرار</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.add" datatype="html">
+        <source>Ajouter</source>
+        <target state="translated">إضافة</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.empty" datatype="html">
+        <source>Aucune action décidée pour l'instant.</source>
+        <target state="translated">لم يُتخذ أي إجراء بعد.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.todo" datatype="html">
+        <source>À faire</source>
+        <target state="translated">للتنفيذ</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">قيد التنفيذ</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.done" datatype="html">
+        <source>Fait</source>
+        <target state="translated">منجز</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.edit-tooltip" datatype="html">
+        <source>Modifier l'intitulé</source>
+        <target state="translated">تعديل الصياغة</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.delete-tooltip" datatype="html">
+        <source>Supprimer l'action</source>
+        <target state="translated">حذف الإجراء</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.label-aria" datatype="html">
+        <source>Intitulé de l'action</source>
+        <target state="translated">صياغة الإجراء</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.responsible-aria" datatype="html">
+        <source>Responsable de l'action</source>
+        <target state="translated">مسؤول الإجراء</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.decided-aria" datatype="html">
+        <source>Date de décision</source>
+        <target state="translated">تاريخ القرار</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.status-aria" datatype="html">
+        <source>Statut de l'action</source>
+        <target state="translated">حالة الإجراء</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.label-required" datatype="html">
+        <source>L'intitulé de l'action est obligatoire.</source>
+        <target state="translated">صياغة الإجراء إلزامية.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.load-failed" datatype="html">
+        <source>Impossible de charger le plan d'actions.</source>
+        <target state="translated">تعذّر تحميل خطة الإجراءات.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.add-failed" datatype="html">
+        <source>Ajout de l'action refusé.</source>
+        <target state="translated">تم رفض إضافة الإجراء.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.update-failed" datatype="html">
+        <source>Modification refusée.</source>
+        <target state="translated">تم رفض التعديل.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.delete-failed" datatype="html">
+        <source>Suppression refusée.</source>
+        <target state="translated">تم رفض الحذف.</target>
+      </trans-unit>
       <trans-unit id="nav.marketplace" datatype="html">
         <source>Marketplace</source>
         <target state="translated">المتجر</target>

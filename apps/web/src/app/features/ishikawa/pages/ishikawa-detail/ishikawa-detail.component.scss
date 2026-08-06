@@ -234,3 +234,108 @@
 .badge-in_review  { background: #fff3e0; color: #e65100; }
 .badge-validated  { background: #e8f5e9; color: #1b5e20; }
 .badge-archived   { background: #f3e5f5; color: #4a148c; }
+
+/* ------------------------------------------------------------------ *
+ * Plan d'actions — tableau éditable sur place.
+ * ------------------------------------------------------------------ */
+.actions-card { margin-top: var(--qos-space-6); }
+
+.action-add {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-4);
+
+  &__label { flex: 3 1 260px; }
+  &__who   { flex: 2 1 180px; }
+  &__when  { flex: 1 1 170px; }
+
+  button { min-height: 48px; }
+}
+
+.actions-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--qos-fs-sm);
+
+  th {
+    text-align: start;
+    padding: var(--qos-space-2) var(--qos-space-3);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-secondary);
+    border-bottom: 1px solid var(--qos-border-default);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: var(--qos-space-2) var(--qos-space-3);
+    border-bottom: 1px solid var(--qos-border-subtle);
+    vertical-align: middle;
+  }
+
+  // Une action faite reste lisible mais s'efface visuellement : le regard va
+  // d'abord à ce qui reste à faire.
+  tr.is-done .cell-label__text {
+    color: var(--qos-fg-tertiary);
+    text-decoration: line-through;
+  }
+}
+
+.cell-label {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  min-width: 220px;
+
+  &__text { flex: 1 1 auto; }
+}
+
+// Le bouton d'édition ne s'impose qu'au survol ou au clavier : une colonne
+// hérissée d'icônes fatigue l'œil sur vingt lignes.
+.cell-edit {
+  opacity: 0;
+  transition: opacity var(--qos-motion-fast);
+}
+
+tr:hover .cell-edit,
+.cell-edit:focus-visible { opacity: 1; }
+
+@media (hover: none) {
+  // Au doigt, il n'y a pas de survol : l'icône reste visible.
+  .cell-edit { opacity: 1; }
+}
+
+.cell-input {
+  width: 100%;
+  min-width: 120px;
+  padding: 6px 8px;
+  font: inherit;
+  color: var(--qos-fg-primary);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--qos-radius-sm);
+  transition: border-color var(--qos-motion-fast), background var(--qos-motion-fast);
+
+  &:hover { border-color: var(--qos-border-subtle); }
+
+  &:focus {
+    outline: none;
+    background: var(--qos-bg-elevated);
+    border-color: var(--qos-border-focus);
+    box-shadow: var(--qos-ring-focus);
+  }
+}
+
+.cell-select { min-width: 130px; }
+
+.cell-actions { text-align: end; white-space: nowrap; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

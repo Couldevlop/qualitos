@@ -11594,6 +11594,90 @@ historial de 12 meses</target>
         <source>Dernières mesures</source>
         <target state="translated">Últimas mediciones</target>
       </trans-unit>
+      <trans-unit id="ishikawa.actions.title" datatype="html">
+        <source>Plan d'actions</source>
+        <target state="translated">Plan de acciones</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.subtitle" datatype="html">
+        <source>Ce qui a été décidé devant ce diagramme : qui fait quoi, et depuis quand.</source>
+        <target state="translated">Lo que se decidió ante este diagrama: quién hace qué y desde cuándo.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.col-action" datatype="html">
+        <source>Action</source>
+        <target state="translated">Acción</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.col-responsible" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">Responsable</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.col-decided" datatype="html">
+        <source>Date de décision</source>
+        <target state="translated">Fecha de decisión</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.add" datatype="html">
+        <source>Ajouter</source>
+        <target state="translated">Añadir</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.empty" datatype="html">
+        <source>Aucune action décidée pour l'instant.</source>
+        <target state="translated">Aún no se ha decidido ninguna acción.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.todo" datatype="html">
+        <source>À faire</source>
+        <target state="translated">Por hacer</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">En curso</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.done" datatype="html">
+        <source>Fait</source>
+        <target state="translated">Hecho</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.edit-tooltip" datatype="html">
+        <source>Modifier l'intitulé</source>
+        <target state="translated">Editar el enunciado</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.delete-tooltip" datatype="html">
+        <source>Supprimer l'action</source>
+        <target state="translated">Eliminar la acción</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.label-aria" datatype="html">
+        <source>Intitulé de l'action</source>
+        <target state="translated">Enunciado de la acción</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.responsible-aria" datatype="html">
+        <source>Responsable de l'action</source>
+        <target state="translated">Responsable de la acción</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.decided-aria" datatype="html">
+        <source>Date de décision</source>
+        <target state="translated">Fecha de decisión</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.status-aria" datatype="html">
+        <source>Statut de l'action</source>
+        <target state="translated">Estado de la acción</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.label-required" datatype="html">
+        <source>L'intitulé de l'action est obligatoire.</source>
+        <target state="translated">El enunciado de la acción es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.load-failed" datatype="html">
+        <source>Impossible de charger le plan d'actions.</source>
+        <target state="translated">No se pudo cargar el plan de acciones.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.add-failed" datatype="html">
+        <source>Ajout de l'action refusé.</source>
+        <target state="translated">Se rechazó añadir la acción.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.update-failed" datatype="html">
+        <source>Modification refusée.</source>
+        <target state="translated">Modificación rechazada.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.actions.delete-failed" datatype="html">
+        <source>Suppression refusée.</source>
+        <target state="translated">Eliminación rechazada.</target>
+      </trans-unit>
       <trans-unit id="nav.marketplace" datatype="html">
         <source>Marketplace</source>
         <target state="translated">Marketplace</target>

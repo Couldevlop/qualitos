@@ -6,22 +6,86 @@ import { delay } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {
   ConvertedPdcaCycle,
+  CreateIshikawaActionRequest,
   CreateIshikawaCauseRequest,
   CreateIshikawaDiagramRequest,
+  IshikawaActionResponse,
   IshikawaCauseResponse,
   IshikawaDiagramResponse,
   IshikawaPage,
   IshikawaStatus,
   SuggestedCause,
+  UpdateIshikawaActionRequest,
   UpdateIshikawaDiagramRequest
 } from './ishikawa.types';
 
 @Injectable({ providedIn: 'root' })
 export class IshikawaService {
 
+
+  // ---- Plan d'actions (§3.5) --------------------------------------------------
+
+  /**
+   * Actions décidées à partir d'un diagramme, dans l'ordre où elles l'ont été.
+   * En mode démonstration, le plan est vide : mieux vaut un tableau qui invite à
+   * saisir qu'un jeu d'actions fictives qu'on croirait siennes.
+   */
+  listActions(diagramId: string): Observable<IshikawaActionResponse[]> {
+    if (environment.useMockApi) {
+      return of(this.mockActions.filter(a => a.diagramId === diagramId)).pipe(delay(120));
+    }
+    return this.http.get<IshikawaActionResponse[]>(`${this.root}/diagrams/${diagramId}/actions`);
+  }
+
+  addAction(diagramId: string, input: CreateIshikawaActionRequest)
+      : Observable<IshikawaActionResponse> {
+    if (environment.useMockApi) {
+      const now = new Date().toISOString();
+      const created: IshikawaActionResponse = {
+        id: 'act-' + Math.random().toString(36).slice(2, 9),
+        diagramId,
+        label: input.label,
+        responsible: input.responsible ?? null,
+        decidedOn: input.decidedOn ?? null,
+        status: input.status ?? 'TODO',
+        createdAt: now, updatedAt: now
+      };
+      this.mockActions.push(created);
+      return of(created).pipe(delay(120));
+    }
+    return this.http.post<IshikawaActionResponse>(
+      `${this.root}/diagrams/${diagramId}/actions`, input);
+  }
+
+  /**
+   * PATCH, et non PUT : chaque cellule part seule. Envoyer l'objet entier
+   * écraserait une valeur qu'un collègue vient de changer sur la même ligne.
+   */
+  updateAction(id: string, input: UpdateIshikawaActionRequest)
+      : Observable<IshikawaActionResponse> {
+    if (environment.useMockApi) {
+      const found = this.mockActions.find(a => a.id === id);
+      if (found) Object.assign(found, input, { updatedAt: new Date().toISOString() });
+      return of(found as IshikawaActionResponse).pipe(delay(100));
+    }
+    return this.http.patch<IshikawaActionResponse>(`${this.root}/actions/${id}`, input);
+  }
+
+  deleteAction(id: string): Observable<void> {
+    if (environment.useMockApi) {
+      const i = this.mockActions.findIndex(a => a.id === id);
+      if (i >= 0) this.mockActions.splice(i, 1);
+      return of(undefined).pipe(delay(100));
+    }
+    return this.http.delete<void>(`${this.root}/actions/${id}`);
+  }
+
   private readonly endpoint = `${environment.apiBaseUrl}/api/v1/ishikawa/diagrams`;
+  /** Racine du module : les actions se modifient hors du chemin d'un diagramme. */
+  private readonly root = `${environment.apiBaseUrl}/api/v1/ishikawa`;
 
   private readonly mockStore: IshikawaDiagramResponse[] = this.seedMockDiagrams();
+  private readonly mockActions: IshikawaActionResponse[] = [];
 
   constructor(private readonly http: HttpClient) {}
 

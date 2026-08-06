@@ -136,6 +136,131 @@
         </mat-card>
       </section>
 
+      <!-- Plan d'actions : identifier les causes est un moyen, décider qui fait
+           quoi est la fin. Le tableau se modifie cellule par cellule — on corrige
+           un intitulé sans rouvrir un formulaire. -->
+      <mat-card class="actions-card">
+        <mat-card-header>
+          <mat-card-title i18n="@@ishikawa.actions.title">Plan d'actions</mat-card-title>
+          <mat-card-subtitle i18n="@@ishikawa.actions.subtitle">
+            Ce qui a été décidé devant ce diagramme : qui fait quoi, et depuis quand.
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="action-add">
+            <mat-form-field appearance="outline" class="action-add__label" subscriptSizing="dynamic">
+              <mat-label i18n="@@ishikawa.actions.col-action">Action</mat-label>
+              <input matInput [value]="newActionLabel"
+                     (input)="newActionLabel = $any($event.target).value"
+                     (keyup.enter)="addAction()" maxlength="500">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="action-add__who" subscriptSizing="dynamic">
+              <mat-label i18n="@@ishikawa.actions.col-responsible">Responsable</mat-label>
+              <input matInput [value]="newActionResponsible"
+                     (input)="newActionResponsible = $any($event.target).value"
+                     (keyup.enter)="addAction()" maxlength="255">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="action-add__when" subscriptSizing="dynamic">
+              <mat-label i18n="@@ishikawa.actions.col-decided">Date de décision</mat-label>
+              <input matInput type="date" [value]="newActionDecidedOn"
+                     (input)="newActionDecidedOn = $any($event.target).value">
+            </mat-form-field>
+
+            <button mat-flat-button color="primary" type="button"
+                    [disabled]="!newActionLabel.trim()" (click)="addAction()">
+              <mat-icon aria-hidden="true">add</mat-icon>
+              <span i18n="@@ishikawa.actions.add">Ajouter</span>
+            </button>
+          </div>
+
+          <p class="empty" *ngIf="!actionsLoading && actions.length === 0"
+             i18n="@@ishikawa.actions.empty">
+            Aucune action décidée pour l'instant.
+          </p>
+
+          <div class="qos-scroll-x" *ngIf="actions.length > 0">
+            <table class="actions-table">
+              <thead>
+                <tr>
+                  <th i18n="@@ishikawa.actions.col-action">Action</th>
+                  <th i18n="@@ishikawa.actions.col-responsible">Responsable</th>
+                  <th i18n="@@ishikawa.actions.col-decided">Date de décision</th>
+                  <th i18n="@@common.status">Statut</th>
+                  <th><span class="visually-hidden" i18n="@@common.actions">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let a of actions" [class.is-done]="a.status === 'DONE'">
+                  <!-- Intitulé : affiché, puis éditable sur place. -->
+                  <td class="cell-label">
+                    <ng-container *ngIf="editingId !== a.id; else editing">
+                      <span class="cell-label__text">{{ a.label }}</span>
+                      <button mat-icon-button type="button" class="cell-edit"
+                              (click)="startEdit(a)"
+                              [attr.aria-label]="'Modifier : ' + a.label"
+                              matTooltip="Modifier l'intitulé"
+                              i18n-matTooltip="@@ishikawa.actions.edit-tooltip">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                    </ng-container>
+                    <ng-template #editing>
+                      <input class="cell-input" [value]="editLabel"
+                             (input)="editLabel = $any($event.target).value"
+                             (keyup.enter)="commitEdit(a)"
+                             (keyup.escape)="cancelEdit()"
+                             (blur)="commitEdit(a)"
+                             maxlength="500" autofocus
+                             aria-label="Intitulé de l'action"
+                             i18n-aria-label="@@ishikawa.actions.label-aria">
+                    </ng-template>
+                  </td>
+
+                  <td>
+                    <input class="cell-input" [value]="a.responsible || ''"
+                           (change)="changeResponsible(a, $any($event.target).value)"
+                           maxlength="255"
+                           aria-label="Responsable de l'action"
+                           i18n-aria-label="@@ishikawa.actions.responsible-aria">
+                  </td>
+
+                  <td>
+                    <input class="cell-input" type="date" [value]="a.decidedOn || ''"
+                           (change)="changeDecidedOn(a, $any($event.target).value)"
+                           aria-label="Date de décision"
+                           i18n-aria-label="@@ishikawa.actions.decided-aria">
+                  </td>
+
+                  <td>
+                    <mat-select class="cell-select" [value]="a.status"
+                                [disabled]="pendingActionId === a.id"
+                                (selectionChange)="changeStatus(a, $event.value)"
+                                aria-label="Statut de l'action"
+                                i18n-aria-label="@@ishikawa.actions.status-aria">
+                      <mat-option *ngFor="let s of actionStatuses" [value]="s">
+                        {{ actionStatusLabel(s) }}
+                      </mat-option>
+                    </mat-select>
+                  </td>
+
+                  <td class="cell-actions">
+                    <button mat-icon-button color="warn" type="button"
+                            (click)="deleteAction(a)"
+                            [attr.aria-label]="'Supprimer : ' + a.label"
+                            matTooltip="Supprimer l'action"
+                            i18n-matTooltip="@@ishikawa.actions.delete-tooltip">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
     </ng-container>
   </ng-container>
 

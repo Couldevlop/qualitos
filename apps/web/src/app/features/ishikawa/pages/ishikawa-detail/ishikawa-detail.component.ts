@@ -11,6 +11,8 @@ import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui
 import { IshikawaService } from '../../ishikawa.service';
 import {
   CauseCategory,
+  IshikawaActionResponse,
+  IshikawaActionStatus,
   IshikawaCauseResponse,
   IshikawaDiagramResponse,
   IshikawaStatus,
@@ -60,6 +62,26 @@ export class IshikawaDetailComponent implements OnInit {
   addingKey: string | null = null;
   converting = false;
 
+  // ---- Plan d'actions (§3.5) --------------------------------------------------
+  //
+  // Un diagramme s'arrêtait aux causes : les décisions prises devant lui vivaient
+  // dans un compte rendu, un tableur, une mémoire. Le tableau les ramène là où
+  // elles ont été prises, et se modifie cellule par cellule.
+
+  actions: IshikawaActionResponse[] = [];
+  actionsLoading = false;
+  /** Intitulé de l'action en cours de saisie dans la ligne d'ajout. */
+  newActionLabel = '';
+  newActionResponsible = '';
+  newActionDecidedOn = '';
+  /** Action dont le libellé est en cours d'édition (une seule à la fois). */
+  editingId: string | null = null;
+  editLabel = '';
+  /** Ligne en attente de réponse du serveur : évite le double envoi. */
+  pendingActionId: string | null = null;
+
+  readonly actionStatuses: IshikawaActionStatus[] = ['TODO', 'IN_PROGRESS', 'DONE'];
+
   private diagramId = '';
   private readonly reload$ = new BehaviorSubject<void>(undefined);
 
@@ -107,7 +129,155 @@ export class IshikawaDetailComponent implements OnInit {
       shareReplay({ bufferSize: 1, refCount: true })
     );
     this.reload$.next();
+    this.loadActions();
   }
+
+  // ---- Plan d'actions ---------------------------------------------------------
+
+  private loadActions(): void {
+    this.actionsLoading = true;
+    this.ishikawa.listActions(this.diagramId).subscribe({
+      next: list => { this.actions = list; this.actionsLoading = false; },
+      error: () => {
+        this.actionsLoading = false;
+        this.snack.open(
+          $localize`:@@ishikawa.actions.load-failed:Impossible de charger le plan d'actions.`,
+          $localize`:@@common.ok:OK`, { duration: 4000 });
+      }
+    });
+  }
+
+  addAction(): void {
+    const label = this.newActionLabel.trim();
+    if (!label) {
+      return;   // une ligne muette n'apporte rien au plan
+    }
+    this.ishikawa.addAction(this.diagramId, {
+      label,
+      responsible: this.newActionResponsible.trim() || undefined,
+      decidedOn: this.newActionDecidedOn || undefined
+    }).subscribe({
+      next: created => {
+        this.actions = [...this.actions, created];
+        // On vide la ligne de saisie : sans cela, un second clic recréerait la
+        // même action à l'identique.
+        this.newActionLabel = '';
+        this.newActionResponsible = '';
+        this.newActionDecidedOn = '';
+      },
+      error: () => this.snack.open(
+        $localize`:@@ishikawa.actions.add-failed:Ajout de l'action refusé.`,
+        $localize`:@@common.ok:OK`, { duration: 4000 })
+    });
+  }
+
+  startEdit(action: IshikawaActionResponse): void {
+    this.editingId = action.id;
+    this.editLabel = action.label;
+  }
+
+  cancelEdit(): void {
+    this.editingId = null;
+    this.editLabel = '';
+  }
+
+  /** Valide la cellule : n'envoie que si le texte a réellement changé. */
+  commitEdit(action: IshikawaActionResponse): void {
+    const label = this.editLabel.trim();
+    if (!label) {
+      this.snack.open(
+        $localize`:@@ishikawa.actions.label-required:L'intitulé de l'action est obligatoire.`,
+        $localize`:@@common.ok:OK`, { duration: 4000 });
+      return;
+    }
+    if (label === action.label) {
+      this.cancelEdit();   // un clic à côté ne doit pas produire un appel inutile
+      return;
+    }
+    this.pendingActionId = action.id;
+    this.ishikawa.updateAction(action.id, { label }).subscribe({
+      next: updated => {
+        this.replace(updated);
+        this.pendingActionId = null;
+        this.cancelEdit();
+      },
+      error: () => {
+        this.pendingActionId = null;
+        this.cancelEdit();
+        this.snack.open(
+          $localize`:@@ishikawa.actions.update-failed:Modification refusée.`,
+          $localize`:@@common.ok:OK`, { duration: 4000 });
+      }
+    });
+  }
+
+  changeStatus(action: IshikawaActionResponse, status: IshikawaActionStatus): void {
+    const previous = action.status;
+    action.status = status;   // réponse immédiate à l'œil
+    this.pendingActionId = action.id;
+    this.ishikawa.updateAction(action.id, { status }).subscribe({
+      next: updated => { this.replace(updated); this.pendingActionId = null; },
+      error: () => {
+        // Laisser « fait » à l'écran alors que rien n'est enregistré serait pire
+        // que l'erreur : l'utilisateur croirait son action close.
+        action.status = previous;
+        this.pendingActionId = null;
+        this.snack.open(
+          $localize`:@@ishikawa.actions.update-failed:Modification refusée.`,
+          $localize`:@@common.ok:OK`, { duration: 4000 });
+      }
+    });
+  }
+
+  changeResponsible(action: IshikawaActionResponse, responsible: string): void {
+    const value = responsible.trim();
+    if (value === (action.responsible ?? '')) {
+      return;
+    }
+    this.ishikawa.updateAction(action.id, { responsible: value }).subscribe({
+      next: updated => this.replace(updated),
+      error: () => this.snack.open(
+        $localize`:@@ishikawa.actions.update-failed:Modification refusée.`,
+        $localize`:@@common.ok:OK`, { duration: 4000 })
+    });
+  }
+
+  changeDecidedOn(action: IshikawaActionResponse, value: string): void {
+    // Le champ date natif rend déjà AAAA-MM-JJ : aucune conversion, donc aucun
+    // décalage de fuseau à craindre. Une date effacée ne déclenche rien.
+    if (!value || value === (action.decidedOn ?? '')) {
+      return;
+    }
+    this.ishikawa.updateAction(action.id, { decidedOn: value }).subscribe({
+      next: updated => this.replace(updated),
+      error: () => this.snack.open(
+        $localize`:@@ishikawa.actions.update-failed:Modification refusée.`,
+        $localize`:@@common.ok:OK`, { duration: 4000 })
+    });
+  }
+
+  deleteAction(action: IshikawaActionResponse): void {
+    this.ishikawa.deleteAction(action.id).subscribe({
+      next: () => { this.actions = this.actions.filter(a => a.id !== action.id); },
+      error: () => this.snack.open(
+        $localize`:@@ishikawa.actions.delete-failed:Suppression refusée.`,
+        $localize`:@@common.ok:OK`, { duration: 4000 })
+    });
+  }
+
+  actionStatusLabel(status: IshikawaActionStatus): string {
+    const labels: Record<IshikawaActionStatus, string> = {
+      TODO: $localize`:@@ishikawa.actions.todo:À faire`,
+      IN_PROGRESS: $localize`:@@ishikawa.actions.in-progress:En cours`,
+      DONE: $localize`:@@ishikawa.actions.done:Fait`
+    };
+    return labels[status];
+  }
+
+  private replace(updated: IshikawaActionResponse): void {
+    this.actions = this.actions.map(a => (a.id === updated.id ? updated : a));
+  }
+
 
   goBack(): void {
     this.router.navigate(['/ishikawa']);
