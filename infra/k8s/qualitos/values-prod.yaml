@@ -56,8 +56,19 @@ ingress:
     # généré par nginx à partir de variables d'environnement — sans paramètre,
     # sans corps de requête, sans donnée utilisateur : il n'y a rien à y
     # protéger, et la levée n'ouvre aucune surface.
+    #
+    # Retrait de CRS 911100 (« method is not allowed by policy ») — même raison
+    # qu'en préproduction, où le défaut a été constaté : la liste par défaut de
+    # la règle (GET, HEAD, POST, OPTIONS) décrit une application à formulaires et
+    # refuse en 403, avant toute authentification, les PUT/PATCH/DELETE dont vit
+    # une API REST. La production porte le même pare-feu, donc le même défaut :
+    # elle est corrigée ici plutôt qu'attendue au premier incident.
+    #
+    # La levée rend les verbes lisibles par l'application, rien de plus :
+    # authentification, habilitations et le reste des règles CRS restent en place.
     nginx.ingress.kubernetes.io/modsecurity-snippet: |
       SecRule REQUEST_URI "@rx ^/[a-z]{2}/assets/config\.json$"         "id:1000100,phase:1,pass,nolog,ctl:ruleEngine=Off"
+      SecRuleRemoveById 911100
   host: qualitos.openlabconsulting.com
   tls:
     enabled: true

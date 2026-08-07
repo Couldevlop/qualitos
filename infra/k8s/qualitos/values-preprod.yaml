@@ -48,8 +48,26 @@ ingress:
     # généré par nginx à partir de variables d'environnement — sans paramètre,
     # sans corps de requête, sans donnée utilisateur : il n'y a rien à y
     # protéger, et la levée n'ouvre aucune surface.
+    #
+    # Retrait de CRS 911100 (« method is not allowed by policy »). Sa liste par
+    # défaut — GET, HEAD, POST, OPTIONS — décrit une application à formulaires,
+    # pas une API REST. Résultat mesuré en préproduction : PUT, PATCH et DELETE
+    # étaient refusés en 403 par le pare-feu AVANT toute authentification. La
+    # moitié de la plateforme était donc muette sans que rien ne le signale :
+    # conclure une cause racine (PUT), corriger un plan d'actions champ par champ
+    # (PATCH), retirer une pièce jointe (DELETE) échouaient tous, et l'écran
+    # affichait une erreur générique là où le serveur n'avait jamais été consulté.
+    #
+    # Ce que la levée n'ouvre PAS : les verbes redeviennent simplement lisibles
+    # par l'application, qui décide seule de les accepter. L'authentification
+    # (401), les habilitations (@PreAuthorize, RLS par tenant) et le reste des
+    # règles CRS — injection, traversée de chemin, dépassement de score — restent
+    # intacts. Une méthode autorisée par le WAF n'est pas une méthode autorisée
+    # par l'API : c'est ce que montre la vérification, où DELETE sur un maillon
+    # du milieu ressort en 409 parce que la règle métier le refuse.
     nginx.ingress.kubernetes.io/modsecurity-snippet: |
       SecRule REQUEST_URI "@rx ^/[a-z]{2}/assets/config\.json$"         "id:1000100,phase:1,pass,nolog,ctl:ruleEngine=Off"
+      SecRuleRemoveById 911100
   host: preprod.qualitos.openlabconsulting.com
   tls:
     enabled: true
