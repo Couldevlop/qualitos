@@ -5072,6 +5072,70 @@
         <source>Réformé</source>
         <target state="translated">已报废</target>
       </trans-unit>
+      <trans-unit id="capa.evidence.title" datatype="html">
+        <source>Preuves</source>
+        <target state="translated">证据</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.hint" datatype="html">
+        <source>Ce qui atteste que l'action a produit son effet : relevé, procédure signée, photo. PDF, image, Word ou Excel, 10 Mo par pièce, 10 pièces au maximum.</source>
+        <target state="translated">证明措施确有成效的材料：记录、已签署的程序、照片。PDF、图片、Word 或 Excel，每件 10 MB，最多 10 件。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.add" datatype="html">
+        <source>Joindre une preuve</source>
+        <target state="translated">附加证据</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.added" datatype="html">
+        <source>Preuve ajoutée au dossier.</source>
+        <target state="translated">证据已加入档案。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.empty" datatype="html">
+        <source>Aucune preuve jointe. Un dossier clos sans preuve s'affirme efficace sans le démontrer.</source>
+        <target state="translated">尚未附加证据。没有证据就结案，等于宣称有效却不加证明。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-tooltip" datatype="html">
+        <source>Retirer cette preuve</source>
+        <target state="translated">移除此证据</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-title" datatype="html">
+        <source>Retirer cette preuve ?</source>
+        <target state="translated">移除此证据？</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-message" datatype="html">
+        <source>La pièce sera définitivement retirée du dossier. Un dossier d'audit se justifie par ses preuves : ce retrait est traçable.</source>
+        <target state="translated">该文件将从档案中永久移除。审核档案立于其证据之上：此次移除可追溯。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-error" datatype="html">
+        <source>Échec du retrait de la preuve.</source>
+        <target state="translated">无法移除证据。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.error" datatype="html">
+        <source>Échec de l'ajout de la preuve.</source>
+        <target state="translated">无法添加证据。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.too-large" datatype="html">
+        <source>Pièce trop lourde — 10 Mo au maximum.</source>
+        <target state="translated">文件过大 — 最多 10 MB。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.rejected" datatype="html">
+        <source>Format refusé — PDF, image, Word ou Excel, et le contenu doit correspondre au format annoncé.</source>
+        <target state="translated">格式被拒 — 仅限 PDF、图片、Word 或 Excel，且内容须与所声明的格式一致。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.limit" datatype="html">
+        <source>Le dossier a atteint sa limite de preuves, ou il est clôturé.</source>
+        <target state="translated">档案已达证据数量上限，或已结案。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.locked-closed" datatype="html">
+        <source>Le dossier est clos : ses preuves restent consultables, mais ne changent plus.</source>
+        <target state="translated">档案已结案：其证据仍可查阅，但不再变动。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.locked-full" datatype="html">
+        <source>Dix preuves, c'est la limite : au-delà, un dossier ne se lit plus. Retirez-en une pour en joindre une autre.</source>
+        <target state="translated">十件证据是上限：再多，档案就读不下去了。请先移除一件再添加。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.storage-disabled" datatype="html">
+        <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
+        <target state="translated">本环境的附件存储已停用：无法在此上传或查阅任何证据。</target>
+      </trans-unit>
       <trans-unit id="nav.complaints-nlp" datatype="html">
         <source>Réclamations IA</source>
         <target state="translated">AI投诉</target>

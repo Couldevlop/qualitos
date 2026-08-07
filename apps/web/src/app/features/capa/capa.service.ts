@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 import {
   CapaActionResponse,
   CapaCaseResponse,
+  CapaEvidence,
   CapaPage,
   CapaStatus,
   CreateCapaActionRequest,
@@ -22,6 +23,9 @@ export class CapaService {
   private readonly endpoint = `${environment.apiBaseUrl}/api/v1/capa/cases`;
 
   private readonly mockStore: CapaCaseResponse[] = this.seedMockCases();
+
+  /** Pièces de preuve du mode démonstration, par dossier. */
+  private readonly mockEvidences = new Map<string, CapaEvidence[]>();
 
   constructor(private readonly http: HttpClient) {}
 
@@ -163,6 +167,64 @@ export class CapaService {
       `${this.endpoint}/${id}/effectiveness`,
       { effective }
     );
+  }
+
+  // ---- preuves du dossier (§4.2, ISO 9001 §10.2) ------------------------------
+  // Une CAPA se clôt sur une vérification d'efficacité, et l'efficacité se
+  // prouve. Les pièces se rattachent au dossier, jamais à une action isolée.
+
+  listEvidences(caseId: string): Observable<CapaEvidence[]> {
+    if (environment.useMockApi) {
+      return of([...this.mockEvidenceStore(caseId)]).pipe(delay(120));
+    }
+    return this.http.get<CapaEvidence[]>(`${this.endpoint}/${caseId}/evidences`);
+  }
+
+  /** Dépose une pièce (multipart, champ 'file'). 201 → métadonnées de la pièce. */
+  uploadEvidence(caseId: string, file: File): Observable<CapaEvidence> {
+    if (environment.useMockApi) {
+      // En démonstration, la pièce reste dans l'onglet : l'URL d'objet rend le
+      // fichier réellement consultable, plutôt que de simuler une preuve.
+      const evidence: CapaEvidence = {
+        id: 'evd-' + Math.random().toString(36).slice(2, 9),
+        capaId: caseId,
+        contentType: file.type || 'application/octet-stream',
+        sizeBytes: file.size,
+        originalFilename: file.name,
+        createdAt: new Date().toISOString(),
+        url: URL.createObjectURL(file)
+      };
+      this.mockEvidenceStore(caseId).push(evidence);
+      return of(evidence).pipe(delay(250));
+    }
+    const form = new FormData();
+    form.append('file', file, file.name);
+    return this.http.post<CapaEvidence>(`${this.endpoint}/${caseId}/evidences`, form);
+  }
+
+  deleteEvidence(caseId: string, evidenceId: string): Observable<void> {
+    if (environment.useMockApi) {
+      const store = this.mockEvidenceStore(caseId);
+      const idx = store.findIndex(e => e.id === evidenceId);
+      if (idx >= 0) {
+        // Libère l'URL d'objet : sans cela le binaire reste en mémoire jusqu'au
+        // rechargement de la page.
+        const url = store[idx].url;
+        if (url) URL.revokeObjectURL(url);
+        store.splice(idx, 1);
+      }
+      return of(void 0).pipe(delay(120));
+    }
+    return this.http.delete<void>(`${this.endpoint}/${caseId}/evidences/${evidenceId}`);
+  }
+
+  private mockEvidenceStore(caseId: string): CapaEvidence[] {
+    let store = this.mockEvidences.get(caseId);
+    if (!store) {
+      store = [];
+      this.mockEvidences.set(caseId, store);
+    }
+    return store;
   }
 
   startCase(id: string): Observable<CapaCaseResponse> {

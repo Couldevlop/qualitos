@@ -74,6 +74,25 @@ export interface SuggestedAction {
   description?: string;
 }
 
+/**
+ * Pièce jointe apportée en preuve au dossier (§4.2, ISO 9001 §10.2).
+ *
+ * La preuve se rattache au dossier et non à l'action : c'est le niveau où elle a
+ * valeur d'audit. `url` est une adresse de lecture à durée de vie courte, signée
+ * par le stockage — elle n'est pas stable et ne doit pas être conservée.
+ */
+export interface CapaEvidence {
+  id: string;
+  capaId: string;
+  contentType: string;
+  sizeBytes: number;
+  originalFilename?: string;
+  /** Auteur du dépôt ; absent si le jeton ne portait pas d'identifiant exploitable. */
+  uploadedBy?: string;
+  createdAt: string;
+  url?: string;
+}
+
 export interface UpdateCapaCaseRequest {
   title?: string;
   description?: string;

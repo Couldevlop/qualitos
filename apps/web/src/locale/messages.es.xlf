@@ -5072,6 +5072,70 @@
         <source>Réformé</source>
         <target state="translated">Retirado</target>
       </trans-unit>
+      <trans-unit id="capa.evidence.title" datatype="html">
+        <source>Preuves</source>
+        <target state="translated">Pruebas</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.hint" datatype="html">
+        <source>Ce qui atteste que l'action a produit son effet : relevé, procédure signée, photo. PDF, image, Word ou Excel, 10 Mo par pièce, 10 pièces au maximum.</source>
+        <target state="translated">Lo que acredita que la acción surtió efecto: un registro, un procedimiento firmado, una foto. PDF, imagen, Word o Excel, 10 MB por pieza, 10 piezas como máximo.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.add" datatype="html">
+        <source>Joindre une preuve</source>
+        <target state="translated">Adjuntar una prueba</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.added" datatype="html">
+        <source>Preuve ajoutée au dossier.</source>
+        <target state="translated">Prueba añadida al expediente.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.empty" datatype="html">
+        <source>Aucune preuve jointe. Un dossier clos sans preuve s'affirme efficace sans le démontrer.</source>
+        <target state="translated">Sin pruebas adjuntas. Un expediente cerrado sin pruebas afirma su eficacia sin demostrarla.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-tooltip" datatype="html">
+        <source>Retirer cette preuve</source>
+        <target state="translated">Quitar esta prueba</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-title" datatype="html">
+        <source>Retirer cette preuve ?</source>
+        <target state="translated">¿Quitar esta prueba?</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-message" datatype="html">
+        <source>La pièce sera définitivement retirée du dossier. Un dossier d'audit se justifie par ses preuves : ce retrait est traçable.</source>
+        <target state="translated">La pieza se retirará definitivamente del expediente. Un expediente de auditoría se sostiene por sus pruebas: esta retirada queda trazada.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-error" datatype="html">
+        <source>Échec du retrait de la preuve.</source>
+        <target state="translated">No se pudo quitar la prueba.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.error" datatype="html">
+        <source>Échec de l'ajout de la preuve.</source>
+        <target state="translated">No se pudo añadir la prueba.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.too-large" datatype="html">
+        <source>Pièce trop lourde — 10 Mo au maximum.</source>
+        <target state="translated">Pieza demasiado pesada: 10 MB como máximo.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.rejected" datatype="html">
+        <source>Format refusé — PDF, image, Word ou Excel, et le contenu doit correspondre au format annoncé.</source>
+        <target state="translated">Formato rechazado: PDF, imagen, Word o Excel, y el contenido debe coincidir con el formato declarado.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.limit" datatype="html">
+        <source>Le dossier a atteint sa limite de preuves, ou il est clôturé.</source>
+        <target state="translated">El expediente alcanzó su límite de pruebas, o está cerrado.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.locked-closed" datatype="html">
+        <source>Le dossier est clos : ses preuves restent consultables, mais ne changent plus.</source>
+        <target state="translated">El expediente está cerrado: sus pruebas siguen consultables, pero ya no cambian.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.locked-full" datatype="html">
+        <source>Dix preuves, c'est la limite : au-delà, un dossier ne se lit plus. Retirez-en une pour en joindre une autre.</source>
+        <target state="translated">Diez pruebas es el límite: más allá, un expediente ya no se lee. Quite una para adjuntar otra.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.storage-disabled" datatype="html">
+        <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
+        <target state="translated">El almacenamiento de adjuntos está desactivado en este entorno: no se puede añadir ni leer ninguna prueba.</target>
+      </trans-unit>
       <trans-unit id="nav.complaints-nlp" datatype="html">
         <source>Réclamations IA</source>
         <target state="translated">Reclamaciones IA</target>

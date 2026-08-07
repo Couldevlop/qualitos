@@ -5072,6 +5072,70 @@
         <source>Réformé</source>
         <target state="translated">Retired</target>
       </trans-unit>
+      <trans-unit id="capa.evidence.title" datatype="html">
+        <source>Preuves</source>
+        <target state="translated">Evidence</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.hint" datatype="html">
+        <source>Ce qui atteste que l'action a produit son effet : relevé, procédure signée, photo. PDF, image, Word ou Excel, 10 Mo par pièce, 10 pièces au maximum.</source>
+        <target state="translated">What shows the action worked: a record, a signed procedure, a photo. PDF, image, Word or Excel, 10 MB per file, 10 files at most.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.add" datatype="html">
+        <source>Joindre une preuve</source>
+        <target state="translated">Attach evidence</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.added" datatype="html">
+        <source>Preuve ajoutée au dossier.</source>
+        <target state="translated">Evidence added to the case.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.empty" datatype="html">
+        <source>Aucune preuve jointe. Un dossier clos sans preuve s'affirme efficace sans le démontrer.</source>
+        <target state="translated">No evidence attached. A case closed without evidence claims effectiveness without showing it.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-tooltip" datatype="html">
+        <source>Retirer cette preuve</source>
+        <target state="translated">Remove this evidence</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-title" datatype="html">
+        <source>Retirer cette preuve ?</source>
+        <target state="translated">Remove this evidence?</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-message" datatype="html">
+        <source>La pièce sera définitivement retirée du dossier. Un dossier d'audit se justifie par ses preuves : ce retrait est traçable.</source>
+        <target state="translated">The file will be permanently removed from the case. An audit case stands on its evidence: this removal is traceable.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-error" datatype="html">
+        <source>Échec du retrait de la preuve.</source>
+        <target state="translated">Could not remove the evidence.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.error" datatype="html">
+        <source>Échec de l'ajout de la preuve.</source>
+        <target state="translated">Could not add the evidence.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.too-large" datatype="html">
+        <source>Pièce trop lourde — 10 Mo au maximum.</source>
+        <target state="translated">File too large — 10 MB at most.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.rejected" datatype="html">
+        <source>Format refusé — PDF, image, Word ou Excel, et le contenu doit correspondre au format annoncé.</source>
+        <target state="translated">Format refused — PDF, image, Word or Excel, and the content must match the declared format.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.limit" datatype="html">
+        <source>Le dossier a atteint sa limite de preuves, ou il est clôturé.</source>
+        <target state="translated">The case has reached its evidence limit, or it is closed.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.locked-closed" datatype="html">
+        <source>Le dossier est clos : ses preuves restent consultables, mais ne changent plus.</source>
+        <target state="translated">The case is closed: its evidence stays readable, but no longer changes.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.locked-full" datatype="html">
+        <source>Dix preuves, c'est la limite : au-delà, un dossier ne se lit plus. Retirez-en une pour en joindre une autre.</source>
+        <target state="translated">Ten pieces of evidence is the limit: beyond that, a case cannot be read. Remove one to attach another.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.storage-disabled" datatype="html">
+        <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
+        <target state="translated">Attachment storage is disabled on this environment: no evidence can be added or read here.</target>
+      </trans-unit>
       <trans-unit id="nav.complaints-nlp" datatype="html">
         <source>Réclamations IA</source>
         <target state="translated">AI complaints</target>

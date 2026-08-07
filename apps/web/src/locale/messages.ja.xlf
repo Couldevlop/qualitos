@@ -5072,6 +5072,70 @@
         <source>Réformé</source>
         <target state="translated">廃棄済み</target>
       </trans-unit>
+      <trans-unit id="capa.evidence.title" datatype="html">
+        <source>Preuves</source>
+        <target state="translated">証拠</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.hint" datatype="html">
+        <source>Ce qui atteste que l'action a produit son effet : relevé, procédure signée, photo. PDF, image, Word ou Excel, 10 Mo par pièce, 10 pièces au maximum.</source>
+        <target state="translated">対策が効果を上げたことを示すもの（記録、署名済み手順書、写真）。PDF・画像・Word・Excel、1件10 MBまで、最大10件。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.add" datatype="html">
+        <source>Joindre une preuve</source>
+        <target state="translated">証拠を添付</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.added" datatype="html">
+        <source>Preuve ajoutée au dossier.</source>
+        <target state="translated">証拠をケースに追加しました。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.empty" datatype="html">
+        <source>Aucune preuve jointe. Un dossier clos sans preuve s'affirme efficace sans le démontrer.</source>
+        <target state="translated">証拠が添付されていません。証拠のないまま閉じたケースは、有効性を示さずに主張しているだけです。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-tooltip" datatype="html">
+        <source>Retirer cette preuve</source>
+        <target state="translated">この証拠を削除</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-title" datatype="html">
+        <source>Retirer cette preuve ?</source>
+        <target state="translated">この証拠を削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-message" datatype="html">
+        <source>La pièce sera définitivement retirée du dossier. Un dossier d'audit se justifie par ses preuves : ce retrait est traçable.</source>
+        <target state="translated">ファイルはケースから完全に削除されます。監査ケースは証拠で成り立ちます。この削除は追跡されます。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-error" datatype="html">
+        <source>Échec du retrait de la preuve.</source>
+        <target state="translated">証拠を削除できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.error" datatype="html">
+        <source>Échec de l'ajout de la preuve.</source>
+        <target state="translated">証拠を追加できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.too-large" datatype="html">
+        <source>Pièce trop lourde — 10 Mo au maximum.</source>
+        <target state="translated">ファイルが大きすぎます — 最大10 MB。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.rejected" datatype="html">
+        <source>Format refusé — PDF, image, Word ou Excel, et le contenu doit correspondre au format annoncé.</source>
+        <target state="translated">形式が拒否されました — PDF・画像・Word・Excel、かつ内容が申告された形式と一致する必要があります。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.limit" datatype="html">
+        <source>Le dossier a atteint sa limite de preuves, ou il est clôturé.</source>
+        <target state="translated">ケースは証拠の上限に達したか、既に閉じられています。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.locked-closed" datatype="html">
+        <source>Le dossier est clos : ses preuves restent consultables, mais ne changent plus.</source>
+        <target state="translated">ケースは閉じられています。証拠は閲覧できますが、もう変更されません。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.locked-full" datatype="html">
+        <source>Dix preuves, c'est la limite : au-delà, un dossier ne se lit plus. Retirez-en une pour en joindre une autre.</source>
+        <target state="translated">証拠は10件が限界です。それを超えるとケースは読めなくなります。1件外してから追加してください。</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.storage-disabled" datatype="html">
+        <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
+        <target state="translated">この環境では添付ファイルの保管が無効です。証拠の追加も閲覧もできません。</target>
+      </trans-unit>
       <trans-unit id="nav.complaints-nlp" datatype="html">
         <source>Réclamations IA</source>
         <target state="translated">AIクレーム</target>

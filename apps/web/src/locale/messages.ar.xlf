@@ -5072,6 +5072,70 @@
         <source>Réformé</source>
         <target state="translated">مُستبعَد</target>
       </trans-unit>
+      <trans-unit id="capa.evidence.title" datatype="html">
+        <source>Preuves</source>
+        <target state="translated">الأدلة</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.hint" datatype="html">
+        <source>Ce qui atteste que l'action a produit son effet : relevé, procédure signée, photo. PDF, image, Word ou Excel, 10 Mo par pièce, 10 pièces au maximum.</source>
+        <target state="translated">ما يثبت أن الإجراء أحدث أثره: سجل، إجراء موقّع، صورة. PDF أو صورة أو Word أو Excel، 10 ميغابايت للملف، 10 ملفات كحد أقصى.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.add" datatype="html">
+        <source>Joindre une preuve</source>
+        <target state="translated">إرفاق دليل</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.added" datatype="html">
+        <source>Preuve ajoutée au dossier.</source>
+        <target state="translated">تمت إضافة الدليل إلى الملف.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.empty" datatype="html">
+        <source>Aucune preuve jointe. Un dossier clos sans preuve s'affirme efficace sans le démontrer.</source>
+        <target state="translated">لا توجد أدلة مرفقة. ملف يُغلق بلا دليل يدّعي الفعالية دون أن يبرهن عليها.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-tooltip" datatype="html">
+        <source>Retirer cette preuve</source>
+        <target state="translated">إزالة هذا الدليل</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-title" datatype="html">
+        <source>Retirer cette preuve ?</source>
+        <target state="translated">إزالة هذا الدليل؟</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-message" datatype="html">
+        <source>La pièce sera définitivement retirée du dossier. Un dossier d'audit se justifie par ses preuves : ce retrait est traçable.</source>
+        <target state="translated">ستتم إزالة الملف نهائياً من الحالة. ملف التدقيق يقوم على أدلته: هذه الإزالة قابلة للتتبع.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.remove-error" datatype="html">
+        <source>Échec du retrait de la preuve.</source>
+        <target state="translated">تعذّرت إزالة الدليل.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.error" datatype="html">
+        <source>Échec de l'ajout de la preuve.</source>
+        <target state="translated">تعذّرت إضافة الدليل.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.too-large" datatype="html">
+        <source>Pièce trop lourde — 10 Mo au maximum.</source>
+        <target state="translated">الملف كبير جداً — 10 ميغابايت كحد أقصى.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.rejected" datatype="html">
+        <source>Format refusé — PDF, image, Word ou Excel, et le contenu doit correspondre au format annoncé.</source>
+        <target state="translated">صيغة مرفوضة — PDF أو صورة أو Word أو Excel، ويجب أن يطابق المحتوى الصيغة المعلنة.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.limit" datatype="html">
+        <source>Le dossier a atteint sa limite de preuves, ou il est clôturé.</source>
+        <target state="translated">بلغ الملف حده الأقصى من الأدلة، أو أنه مُغلق.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.locked-closed" datatype="html">
+        <source>Le dossier est clos : ses preuves restent consultables, mais ne changent plus.</source>
+        <target state="translated">الملف مُغلق: تبقى أدلته قابلة للاطّلاع، لكنها لم تعد تتغيّر.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.locked-full" datatype="html">
+        <source>Dix preuves, c'est la limite : au-delà, un dossier ne se lit plus. Retirez-en une pour en joindre une autre.</source>
+        <target state="translated">عشرة أدلة هي الحد: بعدها لا يعود الملف قابلاً للقراءة. أزل واحداً لإرفاق آخر.</target>
+      </trans-unit>
+      <trans-unit id="capa.evidence.storage-disabled" datatype="html">
+        <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
+        <target state="translated">تخزين المرفقات معطّل في هذه البيئة: لا يمكن إيداع أي دليل ولا الاطّلاع عليه.</target>
+      </trans-unit>
       <trans-unit id="nav.complaints-nlp" datatype="html">
         <source>Réclamations IA</source>
         <target state="translated">الشكاوى بالذكاء الاصطناعي</target>

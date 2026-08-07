@@ -13,7 +13,7 @@ import {
   CapaEditDialogComponent,
   CapaEditDialogData
 } from '../capa-edit-dialog/capa-edit-dialog.component';
-import { CapaActionResponse, CapaActionStatus, CapaCaseResponse, CapaCriticity, CapaStatus, SuggestedAction } from '../../capa.types';
+import { CapaActionResponse, CapaActionStatus, CapaCaseResponse, CapaCriticity, CapaEvidence, CapaStatus, SuggestedAction } from '../../capa.types';
 import {
   CapaActionDialogComponent,
   CapaActionDialogData
@@ -47,6 +47,19 @@ export class CapaDetailComponent implements OnInit {
   suggestions: SuggestedAction[] = [];
   suggesting = false;
   addingKey: string | null = null;
+
+  // --- preuves du dossier (§4.2, ISO 9001 §10.2) ------------------------------
+  /** Bornes tenues par le serveur ; l'écran les énonce au lieu de les faire découvrir. */
+  readonly maxEvidences = 10;
+  readonly maxEvidenceBytes = 10 * 1024 * 1024;
+
+  evidences$ = new BehaviorSubject<CapaEvidence[]>([]);
+  evidencesLoading$ = new BehaviorSubject<boolean>(false);
+  uploadingEvidence$ = new BehaviorSubject<boolean>(false);
+  /** Vrai quand le serveur répond 503 : le stockage binaire est coupé sur cet environnement. */
+  evidenceStorageDisabled$ = new BehaviorSubject<boolean>(false);
+  /** Identifiant de la pièce en cours de retrait (désactive sa ligne). */
+  removingEvidenceId$ = new BehaviorSubject<string | null>(null);
 
   private caseId = '';
   private readonly reload$ = new BehaviorSubject<void>(undefined);
@@ -84,6 +97,141 @@ export class CapaDetailComponent implements OnInit {
       shareReplay({ bufferSize: 1, refCount: true })
     );
     this.reload$.next();
+    this.loadEvidences();
+  }
+
+  // --- preuves du dossier ------------------------------------------------------
+
+  /** Chargement non bloquant : la fiche reste utilisable si les preuves manquent. */
+  loadEvidences(): void {
+    queueMicrotask(() => this.evidencesLoading$.next(true));
+    this.capa.listEvidences(this.caseId)
+      .pipe(finalize(() => this.evidencesLoading$.next(false)))
+      .subscribe({
+        next: evidences => {
+          this.evidences$.next(evidences);
+          this.evidenceStorageDisabled$.next(false);
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[capa-detail] listEvidences failed', err?.status, err?.error?.type);
+          if (this.isStorageDisabled(err)) { this.evidenceStorageDisabled$.next(true); }
+        }
+      });
+  }
+
+  triggerEvidencePicker(input: HTMLInputElement): void {
+    if (this.uploadingEvidence$.value) return;
+    input.click();
+  }
+
+  onEvidenceSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files && input.files[0];
+    // Réinitialise pour autoriser la re-sélection du même fichier.
+    input.value = '';
+    if (!file) return;
+    this.uploadEvidence(file);
+  }
+
+  private uploadEvidence(file: File): void {
+    this.uploadingEvidence$.next(true);
+    this.capa.uploadEvidence(this.caseId, file)
+      .pipe(finalize(() => this.uploadingEvidence$.next(false)))
+      .subscribe({
+        next: evidence => {
+          this.evidences$.next([...this.evidences$.value, evidence]);
+          this.evidenceStorageDisabled$.next(false);
+          this.snack.open(
+            $localize`:@@capa.evidence.added:Preuve ajoutée au dossier.`,
+            $localize`:@@common.ok:OK`, { duration: 2000 });
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[capa-detail] uploadEvidence failed', err?.status, err?.error?.type);
+          if (this.isStorageDisabled(err)) { this.evidenceStorageDisabled$.next(true); return; }
+          // Chaque refus a sa raison : les confondre reviendrait à dire « non »
+          // sans dire quoi corriger.
+          const msg =
+            err?.status === 413
+              ? $localize`:@@capa.evidence.too-large:Pièce trop lourde — 10 Mo au maximum.`
+              : err?.status === 400
+              ? $localize`:@@capa.evidence.rejected:Format refusé — PDF, image, Word ou Excel, et le contenu doit correspondre au format annoncé.`
+              : err?.status === 409
+              ? $localize`:@@capa.evidence.limit:Le dossier a atteint sa limite de preuves, ou il est clôturé.`
+              : safeErrorMessage(err, $localize`:@@capa.evidence.error:Échec de l'ajout de la preuve.`);
+          this.snack.open(msg, 'OK', { duration: 5000 });
+        }
+      });
+  }
+
+  removeEvidence(evidence: CapaEvidence): void {
+    if (this.removingEvidenceId$.value) return;
+    this.dialog.open(ConfirmDialogComponent, {
+      data: <ConfirmDialogData>{
+        title: $localize`:@@capa.evidence.remove-title:Retirer cette preuve ?`,
+        message: $localize`:@@capa.evidence.remove-message:La pièce sera définitivement retirée du dossier. Un dossier d'audit se justifie par ses preuves : ce retrait est traçable.`,
+        confirmLabel: $localize`:@@common.delete:Supprimer`,
+        destructive: true
+      },
+      autoFocus: false,
+      restoreFocus: true
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.removingEvidenceId$.next(evidence.id);
+      this.capa.deleteEvidence(this.caseId, evidence.id)
+        .pipe(finalize(() => this.removingEvidenceId$.next(null)))
+        .subscribe({
+          next: () => {
+            this.evidences$.next(this.evidences$.value.filter(e => e.id !== evidence.id));
+          },
+          error: err => {
+            // eslint-disable-next-line no-console
+            console.warn('[capa-detail] deleteEvidence failed', err?.status, err?.error?.type);
+            this.snack.open(
+              safeErrorMessage(err, $localize`:@@capa.evidence.remove-error:Échec du retrait de la preuve.`),
+              'OK', { duration: 4000 });
+          }
+        });
+    });
+  }
+
+  /** Le dépôt se ferme sur un dossier clos ou rejeté, comme pour les actions. */
+  canAddEvidence(status: CapaStatus): boolean {
+    return status !== 'CLOSED' && status !== 'REJECTED'
+        && this.evidences$.value.length < this.maxEvidences;
+  }
+
+  /** Compteur affiché : l'utilisateur voit la borne approcher au lieu de la heurter. */
+  evidenceCountLabel(): string {
+    return this.evidences$.value.length + ' / ' + this.maxEvidences;
+  }
+
+  /** Poids lisible — les octets ne disent rien à personne. */
+  formatSize(bytes: number): string {
+    if (bytes < 1024) return bytes + ' o';
+    if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' Ko';
+    return (bytes / (1024 * 1024)).toFixed(1).replace('.', ',') + ' Mo';
+  }
+
+  /** Icône par famille de document : on reconnaît un PDF d'un tableur d'un coup d'œil. */
+  evidenceIcon(contentType: string): string {
+    if (contentType === 'application/pdf') return 'picture_as_pdf';
+    if (contentType.startsWith('image/')) return 'image';
+    if (contentType.includes('spreadsheet')) return 'table_chart';
+    if (contentType.includes('wordprocessing')) return 'description';
+    return 'attach_file';
+  }
+
+  /**
+   * 503 + ProblemDetail de type 'storage-disabled' → le stockage est coupé sur cet
+   * environnement. Message dédié plutôt qu'une erreur brute qui ferait croire à un bug.
+   */
+  private isStorageDisabled(err: unknown): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const e = err as any;
+    const type = e?.error?.type;
+    return e?.status === 503 && typeof type === 'string' && type.includes('storage-disabled');
   }
 
   goBack(): void {
