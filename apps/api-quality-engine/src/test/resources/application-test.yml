@@ -1,6 +1,11 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;NON_KEYWORDS=VALUE
+    # Une base par contexte Spring : les classes de test tournent en
+    # parallele et le schema est en `create-drop`. Sur une base nommee
+    # partagee, le demarrage d'un second contexte detruit et recree les
+    # tables sous les pieds d'un test en cours (defaut constate sur
+    # api-iot-hub en integration continue, invisible en local).
+    url: jdbc:h2:mem:testdb-${random.uuid};DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;NON_KEYWORDS=VALUE
     username: sa
     password:
     driver-class-name: org.h2.Driver

@@ -10,6 +10,7 @@ import {
   CreateNcRequest,
   EscalateCapaNcRequest,
   NcCategory,
+  NcOrigin,
   NcPage,
   NcPhoto,
   NcResponse,
@@ -25,6 +26,8 @@ export interface NcListFilters {
   status?: NcStatus;
   severity?: NcSeverity;
   category?: NcCategory;
+  /** Interne, externe, ou absent pour les deux. */
+  origin?: NcOrigin;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -48,6 +51,7 @@ export class NcService {
     if (filters.status) params = params.set('status', filters.status);
     if (filters.severity) params = params.set('severity', filters.severity);
     if (filters.category) params = params.set('category', filters.category);
+    if (filters.origin) params = params.set('origin', filters.origin);
     return this.http.get<NcPage>(this.endpoint, { params });
   }
 
@@ -71,6 +75,7 @@ export class NcService {
         category: input.category,
         severity: input.severity,
         status: 'OPEN',
+        origin: input.origin ?? 'INTERNAL',
         detectedAt: input.detectedAt ?? now,
         zone: input.zone,
         geoLat: input.geoLat,
@@ -267,6 +272,9 @@ export class NcService {
         category: input.category,
         severity: input.severity,
         status: 'OPEN' as NcStatus,
+        // Même défaut que le serveur : la réponse optimiste ne doit pas afficher
+        // une origine que l'enregistrement réel contredira.
+        origin: input.origin ?? ('INTERNAL' as NcOrigin),
         detectedAt: input.detectedAt ?? now,
         zone: input.zone,
         geoLat: input.geoLat,
@@ -339,7 +347,8 @@ export class NcService {
     const filtered = this.mockStore.filter(n =>
       (!filters.status || n.status === filters.status) &&
       (!filters.severity || n.severity === filters.severity) &&
-      (!filters.category || n.category === filters.category));
+      (!filters.category || n.category === filters.category) &&
+      (!filters.origin || n.origin === filters.origin));
     return {
       content: filtered, totalElements: filtered.length, totalPages: 1,
       number: 0, size: filtered.length
@@ -353,7 +362,7 @@ export class NcService {
         id: 'nc-1', tenantId: 'demo-tenant', reference: 'NC-2026-1001',
         title: 'Étiquetage lot manquant — ligne 1',
         description: 'Palettes expédiées sans étiquette de traçabilité.',
-        category: 'PROCESS', severity: 'MAJOR', status: 'OPEN',
+        category: 'PROCESS', severity: 'MAJOR', status: 'OPEN', origin: 'INTERNAL',
         detectedAt: now, zone: 'Atelier conditionnement A',
         createdAt: now, updatedAt: now
       },
@@ -361,7 +370,7 @@ export class NcService {
         id: 'nc-2', tenantId: 'demo-tenant', reference: 'NC-2026-1002',
         title: 'Fuite hydraulique presse 4',
         description: 'Risque sécurité opérateur, zone glissante.',
-        category: 'SAFETY', severity: 'CRITICAL', status: 'UNDER_ANALYSIS',
+        category: 'SAFETY', severity: 'CRITICAL', status: 'UNDER_ANALYSIS', origin: 'INTERNAL',
         detectedAt: now, zone: 'Atelier mécanique', geoLat: 48.8566, geoLng: 2.3522,
         rootCause: 'Joint d\'étanchéité usé.',
         createdAt: now, updatedAt: now
@@ -369,7 +378,7 @@ export class NcService {
       {
         id: 'nc-3', tenantId: 'demo-tenant', reference: 'NC-2026-1003',
         title: 'Certificat matière non conforme — fournisseur Acme',
-        category: 'SUPPLIER', severity: 'MINOR', status: 'RESOLVED',
+        category: 'SUPPLIER', severity: 'MINOR', status: 'RESOLVED', origin: 'EXTERNAL',
         detectedAt: now, zone: 'Réception',
         resolutionNote: 'Lot retourné, certificat conforme reçu.', resolvedAt: now,
         createdAt: now, updatedAt: now

@@ -1,0 +1,22 @@
+.state-row { display: flex; justify-content: center; padding: var(--qos-space-8) 0; }
+
+.empty {
+  padding: var(--qos-space-10) 0;
+  text-align: center;
+  color: var(--qos-fg-tertiary);
+}
+
+.fw-table { width: 100%; }
+
+.fw-row {
+  cursor: pointer;
+
+  &:hover { background: var(--qos-bg-subtle); }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: inset var(--qos-ring-focus);
+  }
+}
+
+.dim { color: var(--qos-fg-tertiary); }

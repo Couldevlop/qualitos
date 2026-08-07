@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -81,5 +82,35 @@ public final class IshikawaDto {
             CauseCategory category,
             String label,
             String rationale
+    ) {}
+    // ---- Plan d'actions (§3.5) ------------------------------------------------
+
+    /** Une action décidée devant le diagramme : quoi, par qui, décidée quand. */
+    public record ActionResponse(
+            UUID id,
+            UUID diagramId,
+            String label,
+            String responsible,
+            LocalDate decidedOn,
+            IshikawaActionStatus status,
+            Instant createdAt,
+            Instant updatedAt
+    ) {}
+
+    public record CreateActionRequest(
+            @NotBlank @Size(max = 500) String label,
+            @Size(max = 255) String responsible,
+            /** Date de la DÉCISION (réunion, comité), pas une échéance. */
+            LocalDate decidedOn,
+            /** Absent = « à faire ». */
+            IshikawaActionStatus status
+    ) {}
+
+    /** Modification cellule par cellule : un champ absent signifie « inchangé ». */
+    public record UpdateActionRequest(
+            @Size(max = 500) String label,
+            @Size(max = 255) String responsible,
+            LocalDate decidedOn,
+            IshikawaActionStatus status
     ) {}
 }

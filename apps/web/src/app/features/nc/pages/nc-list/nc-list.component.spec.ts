@@ -73,7 +73,7 @@ describe('NcListComponent — chargement, filtres et pagination', () => {
   function nc(over: Partial<NcResponse> = {}): NcResponse {
     return {
       id: 'a1', reference: 'NC-2026-1001', title: 'Étiquetage manquant',
-      category: 'PROCESS', severity: 'MAJOR', status: 'OPEN',
+      category: 'PROCESS', severity: 'MAJOR', status: 'OPEN', origin: 'INTERNAL',
       detectedAt: '2026-07-01T00:00:00Z', createdAt: '2026-07-01T00:00:00Z',
       updatedAt: '2026-07-01T00:00:00Z', ...over
     };

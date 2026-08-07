@@ -15,9 +15,41 @@ import java.util.UUID;
 public class IshikawaController {
 
     private final IshikawaService ishikawaService;
+    private final IshikawaActionService actionService;
 
-    public IshikawaController(IshikawaService ishikawaService) {
+    public IshikawaController(IshikawaService ishikawaService,
+                              IshikawaActionService actionService) {
         this.ishikawaService = ishikawaService;
+        this.actionService = actionService;
+    }
+
+    // ---- Plan d'actions du diagramme (§3.5) -----------------------------------
+
+    @GetMapping("/diagrams/{diagramId}/actions")
+    public java.util.List<IshikawaDto.ActionResponse> listActions(@PathVariable UUID diagramId) {
+        return actionService.list(diagramId);
+    }
+
+    @PostMapping("/diagrams/{diagramId}/actions")
+    @ResponseStatus(HttpStatus.CREATED)
+    public IshikawaDto.ActionResponse createAction(
+            @PathVariable UUID diagramId,
+            @Valid @RequestBody IshikawaDto.CreateActionRequest request) {
+        return actionService.create(diagramId, request);
+    }
+
+    /** Édition en ligne : un champ absent du corps signifie « inchangé ». */
+    @PatchMapping("/actions/{id}")
+    public IshikawaDto.ActionResponse updateAction(
+            @PathVariable UUID id,
+            @Valid @RequestBody IshikawaDto.UpdateActionRequest request) {
+        return actionService.update(id, request);
+    }
+
+    @DeleteMapping("/actions/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAction(@PathVariable UUID id) {
+        actionService.delete(id);
     }
 
     @GetMapping("/diagrams")

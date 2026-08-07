@@ -18,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.mockito.ArgumentMatchers;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -109,71 +111,37 @@ class NcServiceTest {
         verifyNoInteractions(repo);
     }
 
-    // --- findAll filters ---
+    // --- findAll : filtres portés par une spécification ---
+    //
+    // Les huit tests précédents énuméraient les combinaisons de la cascade de
+    // `if/else` qui construisait la requête. Cette cascade a disparu : un
+    // quatrième filtre — l'origine — en aurait demandé seize. Ce qui reste à
+    // vérifier, c'est le contrat : la requête est bornée au tenant du jeton, et
+    // les entités reviennent bien converties. Le comportement des filtres eux-mêmes
+    // est vérifié là où il vit désormais, dans la spécification (NcOriginTest et
+    // les tests d'intégration du contrôleur).
+
     @Test
-    void findAll_noFilter() {
+    void findAll_mapsEntitiesToResponses() {
         Pageable p = PageRequest.of(0, 10);
-        when(repo.findByTenantId(TENANT, p)).thenReturn(new PageImpl<>(java.util.List.of(nc(TENANT, NcStatus.OPEN))));
-        Page<NcDto.Response> r = service.findAll(null, null, null, p);
+        when(repo.findAll(ArgumentMatchers.<Specification<NonConformity>>any(), eq(p)))
+                .thenReturn(new PageImpl<>(java.util.List.of(nc(TENANT, NcStatus.OPEN))));
+
+        Page<NcDto.Response> r = service.findAll(null, null, null, null, p);
+
         assertThat(r.getContent()).hasSize(1);
+        assertThat(r.getContent().get(0).status()).isEqualTo(NcStatus.OPEN);
     }
 
     @Test
-    void findAll_statusOnly() {
+    void findAll_requiresATenant() {
+        // Sans tenant, on ne liste RIEN : la requête n'est même pas construite.
+        TenantContext.clear();
         Pageable p = PageRequest.of(0, 10);
-        when(repo.findByTenantIdAndStatus(TENANT, NcStatus.OPEN, p))
-                .thenReturn(new PageImpl<>(java.util.List.of(nc(TENANT, NcStatus.OPEN))));
-        assertThat(service.findAll(NcStatus.OPEN, null, null, p).getContent()).hasSize(1);
-    }
 
-    @Test
-    void findAll_severityOnly() {
-        Pageable p = PageRequest.of(0, 10);
-        when(repo.findByTenantIdAndSeverity(TENANT, NcSeverity.MAJOR, p))
-                .thenReturn(new PageImpl<>(java.util.List.of(nc(TENANT, NcStatus.OPEN))));
-        assertThat(service.findAll(null, NcSeverity.MAJOR, null, p).getContent()).hasSize(1);
-    }
-
-    @Test
-    void findAll_categoryOnly() {
-        Pageable p = PageRequest.of(0, 10);
-        when(repo.findByTenantIdAndCategory(TENANT, NcCategory.PRODUCT, p))
-                .thenReturn(new PageImpl<>(java.util.List.of(nc(TENANT, NcStatus.OPEN))));
-        assertThat(service.findAll(null, null, NcCategory.PRODUCT, p).getContent()).hasSize(1);
-    }
-
-    @Test
-    void findAll_statusAndSeverity() {
-        Pageable p = PageRequest.of(0, 10);
-        when(repo.findByTenantIdAndStatusAndSeverity(TENANT, NcStatus.OPEN, NcSeverity.MAJOR, p))
-                .thenReturn(new PageImpl<>(java.util.List.of(nc(TENANT, NcStatus.OPEN))));
-        assertThat(service.findAll(NcStatus.OPEN, NcSeverity.MAJOR, null, p).getContent()).hasSize(1);
-    }
-
-    @Test
-    void findAll_statusAndCategory() {
-        Pageable p = PageRequest.of(0, 10);
-        when(repo.findByTenantIdAndStatusAndCategory(TENANT, NcStatus.OPEN, NcCategory.PRODUCT, p))
-                .thenReturn(new PageImpl<>(java.util.List.of(nc(TENANT, NcStatus.OPEN))));
-        assertThat(service.findAll(NcStatus.OPEN, null, NcCategory.PRODUCT, p).getContent()).hasSize(1);
-    }
-
-    @Test
-    void findAll_severityAndCategory() {
-        Pageable p = PageRequest.of(0, 10);
-        when(repo.findByTenantIdAndSeverityAndCategory(TENANT, NcSeverity.MAJOR, NcCategory.PRODUCT, p))
-                .thenReturn(new PageImpl<>(java.util.List.of(nc(TENANT, NcStatus.OPEN))));
-        assertThat(service.findAll(null, NcSeverity.MAJOR, NcCategory.PRODUCT, p).getContent()).hasSize(1);
-    }
-
-    @Test
-    void findAll_allThreeFilters() {
-        Pageable p = PageRequest.of(0, 10);
-        when(repo.findByTenantIdAndStatusAndSeverityAndCategory(
-                TENANT, NcStatus.OPEN, NcSeverity.MAJOR, NcCategory.PRODUCT, p))
-                .thenReturn(new PageImpl<>(java.util.List.of(nc(TENANT, NcStatus.OPEN))));
-        assertThat(service.findAll(NcStatus.OPEN, NcSeverity.MAJOR, NcCategory.PRODUCT, p)
-                .getContent()).hasSize(1);
+        assertThatThrownBy(() -> service.findAll(null, null, null, null, p))
+                .isInstanceOf(MissingTenantContextException.class);
+        verifyNoInteractions(repo);
     }
 
     // --- findById ---
@@ -205,13 +173,16 @@ class NcServiceTest {
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         when(repo.save(n)).thenReturn(n);
         service.update(n.getId(), new NcDto.UpdateRequest(
-                "t2", "d2", NcCategory.SUPPLIER, NcSeverity.CRITICAL, "zoneB", 1.0, 2.0, "u1\nu2"));
+                "t2", "d2", NcCategory.SUPPLIER, NcSeverity.CRITICAL, "zoneB", 1.0, 2.0, "u1\nu2",
+                NcOrigin.EXTERNAL));
         assertThat(n.getTitle()).isEqualTo("t2");
         assertThat(n.getCategory()).isEqualTo(NcCategory.SUPPLIER);
         assertThat(n.getSeverity()).isEqualTo(NcSeverity.CRITICAL);
         assertThat(n.getZone()).isEqualTo("zoneB");
         assertThat(n.getGeoLat()).isEqualTo(1.0);
         assertThat(n.getPhotoUrls()).isEqualTo("u1\nu2");
+        // Une NC d'abord classée interne peut se révéler signalée du dehors.
+        assertThat(n.getOrigin()).isEqualTo(NcOrigin.EXTERNAL);
     }
 
     @Test
@@ -219,7 +190,7 @@ class NcServiceTest {
         NonConformity n = nc(TENANT, NcStatus.CLOSED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.update(n.getId(),
-                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null)))
+                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null)))
                 .isInstanceOf(NcStateException.class);
     }
 
@@ -228,7 +199,7 @@ class NcServiceTest {
         NonConformity n = nc(TENANT, NcStatus.CANCELLED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.update(n.getId(),
-                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null)))
+                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null)))
                 .isInstanceOf(NcStateException.class);
     }
 
@@ -398,7 +369,7 @@ class NcServiceTest {
     private NcDto.CreateRequest req() {
         return new NcDto.CreateRequest(
                 "Joint torique défectueux", "détail", NcCategory.PRODUCT, NcSeverity.MAJOR,
-                Instant.now(), "Atelier 3", 48.85, 2.35, "https://s/p1.jpg", REPORTER);
+                Instant.now(), "Atelier 3", 48.85, 2.35, "https://s/p1.jpg", REPORTER, null);
     }
 
     private NonConformity nc(UUID tenant, NcStatus status) {

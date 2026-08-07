@@ -128,9 +128,16 @@ export class MainShellComponent implements OnInit, OnDestroy {
       ]
     },
     {
+      label: $localize`:@@nav.non-conformite:Non-conformité`,
+      items: [
+        { label: $localize`:@@nav.nc-interne:NC interne`,  route: '/nc/interne',  icon: 'home_repair_service', module: 'capa' },
+        { label: $localize`:@@nav.nc-externe:NC externe`,  route: '/nc/externe',  icon: 'campaign',            module: 'capa' },
+        { label: $localize`:@@nav.cinq-pourquoi:5 Pourquoi`, route: '/five-whys',  icon: 'psychology_alt',      module: 'capa' }
+      ]
+    },
+    {
       label: $localize`:@@nav.operations:Opérations`,
       items: [
-        { label: $localize`:@@nav.non-conformites:Non-conformités`, route: '/nc',        icon: 'report_problem', module: 'capa' },
         { label: $localize`:@@nav.capa:CAPA`,                       route: '/capa',      icon: 'engineering', module: 'capa' },
         { label: $localize`:@@nav.reclamations:Réclamations`,       route: '/complaints', icon: 'support_agent', module: 'complaints' },
         { label: $localize`:@@nav.calibration:Calibration`,         route: '/calibration', icon: 'straighten', module: 'calibration' },

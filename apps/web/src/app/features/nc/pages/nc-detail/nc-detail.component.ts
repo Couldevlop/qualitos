@@ -10,6 +10,8 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConnectivityService } from '../../../../core/offline/connectivity.service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
+import { FiveWhysService } from '../../../five-whys/five-whys.service';
+import { FiveWhysAnalysis } from '../../../five-whys/five-whys.types';
 import { NcService } from '../../nc.service';
 import { NcPhoto, NcResponse, NcSeverity, NcStatus, VisionAnalysis, VisionScore } from '../../nc.types';
 import {
@@ -67,6 +69,16 @@ export class NcDetailComponent implements OnInit {
     { key: 'shitsuke', label: $localize`:@@nc.vision.pillar.shitsuke:Shitsuke (Maintenir)` }
   ];
 
+  // --- 5 Pourquoi (§3.5) ------------------------------------------------------
+  /**
+   * Analyses des 5 Pourquoi déjà ouvertes sur cette non-conformité. La méthode
+   * PART d'un écart constaté : c'est ici qu'on la déroule, pas depuis un écran
+   * qui ne saurait pas de quoi il parle.
+   */
+  fiveWhys$ = new BehaviorSubject<FiveWhysAnalysis[]>([]);
+  /** true le temps d'ouvrir ou de créer l'analyse (évite le double clic). */
+  fiveWhysBusy$ = new BehaviorSubject<boolean>(false);
+
   private ncId = '';
   private readonly reload$ = new BehaviorSubject<void>(undefined);
   // Ancré des DEUX côtés et jeu de caractères restreint : un simple préfixe
@@ -80,7 +92,8 @@ export class NcDetailComponent implements OnInit {
     private readonly auth: AuthService,
     private readonly snack: MatSnackBar,
     private readonly dialog: MatDialog,
-    private readonly connectivity: ConnectivityService
+    private readonly connectivity: ConnectivityService,
+    private readonly fiveWhys: FiveWhysService
   ) {}
 
   ngOnInit(): void {
@@ -106,6 +119,62 @@ export class NcDetailComponent implements OnInit {
     );
     this.reload$.next();
     this.loadPhotos();
+    this.loadFiveWhys();
+  }
+
+  // --- 5 Pourquoi -------------------------------------------------------------
+
+  /** Chargement non bloquant : la fiche reste utilisable si l'appel échoue. */
+  private loadFiveWhys(): void {
+    this.fiveWhys.listForNc(this.ncId).subscribe({
+      next: analyses => this.fiveWhys$.next(analyses),
+      error: err => {
+        // eslint-disable-next-line no-console
+        console.warn('[nc-detail] listForNc failed', err?.status, err?.error?.title);
+      }
+    });
+  }
+
+  /**
+   * Ouvre l'analyse des 5 Pourquoi de cette non-conformité — et la crée si elle
+   * n'existe pas encore. L'utilisateur n'a pas à savoir laquelle des deux choses
+   * se produit : dans les deux cas il veut la même chose, dérouler la chaîne.
+   *
+   * <p>Une seule analyse est créée par clic ; les analyses déjà ouvertes sont
+   * listées par le serveur de la plus récente à la plus ancienne, on ouvre donc
+   * la première.
+   */
+  openFiveWhys(): void {
+    if (this.fiveWhysBusy$.value) return;
+    const existing = this.fiveWhys$.value;
+    if (existing.length > 0) {
+      this.router.navigate(['/five-whys', existing[0].id]);
+      return;
+    }
+    this.fiveWhysBusy$.next(true);
+    this.fiveWhys.create({ ncId: this.ncId })
+      .pipe(finalize(() => this.fiveWhysBusy$.next(false)))
+      .subscribe({
+        next: analysis => {
+          this.fiveWhys$.next([analysis, ...this.fiveWhys$.value]);
+          this.router.navigate(['/five-whys', analysis.id]);
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[nc-detail] create five-whys failed', err?.status, err?.error?.title);
+          this.snack.open(
+            safeErrorMessage(err, $localize`:@@nc.detail.five-whys-error:Impossible d'ouvrir l'analyse des 5 Pourquoi.`),
+            'OK', { duration: 4000 });
+        }
+      });
+  }
+
+  /**
+   * Sur une NC clôturée ou annulée, on ne lance plus d'analyse — mais on peut
+   * toujours relire celle qui a conclu : c'est elle qui explique la décision.
+   */
+  canOpenFiveWhys(status: NcStatus): boolean {
+    return !this.isTerminal(status) || this.fiveWhys$.value.length > 0;
   }
 
   // --- photos -----------------------------------------------------------------

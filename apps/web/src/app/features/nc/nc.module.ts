@@ -8,8 +8,16 @@ import { NcDetailComponent } from './pages/nc-detail/nc-detail.component';
 import { NcListComponent } from './pages/nc-list/nc-list.component';
 import { NcResolveDialogComponent } from './pages/nc-resolve-dialog/nc-resolve-dialog.component';
 
+// Deux entrées de navigation, un seul écran : l'origine est portée par la ROUTE
+// (§4.3). Un filtre d'écran ferait converger les deux entrées au premier clic sur
+// un menu déroulant. L'entrée historique `/nc` reste, et montre les deux origines.
+//
+// Les chemins nommés viennent AVANT `:id`, sans quoi « interne » serait pris pour
+// l'identifiant d'une non-conformité.
 const routes: Routes = [
   { path: '', component: NcListComponent },
+  { path: 'interne', component: NcListComponent, data: { origin: 'INTERNAL' } },
+  { path: 'externe', component: NcListComponent, data: { origin: 'EXTERNAL' } },
   { path: ':id', component: NcDetailComponent }
 ];
 

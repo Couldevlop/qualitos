@@ -6,6 +6,7 @@ import com.openlab.qualitos.quality.itsm.ConnectionStatus;
 import com.openlab.qualitos.quality.itsm.SecretCipher;
 import com.openlab.qualitos.quality.nonconformity.NcCategory;
 import com.openlab.qualitos.quality.nonconformity.NcDto;
+import com.openlab.qualitos.quality.nonconformity.NcOrigin;
 import com.openlab.qualitos.quality.nonconformity.NcService;
 import com.openlab.qualitos.quality.nonconformity.NcSeverity;
 import com.openlab.qualitos.quality.nonconformity.NcStatus;
@@ -323,7 +324,7 @@ class EhrConnectorServiceTest {
 
     private NcDto.Response ncResponse(UUID id) {
         return new NcDto.Response(id, TENANT, "NC-2026-0001", "t", "d",
-                NcCategory.SAFETY, NcSeverity.CRITICAL, NcStatus.OPEN, Instant.now(),
+                NcCategory.SAFETY, NcSeverity.CRITICAL, NcStatus.OPEN, NcOrigin.INTERNAL, Instant.now(),
                 null, null, null, null, null, null, null, null, null, null,
                 Instant.now(), Instant.now());
     }

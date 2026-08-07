@@ -23,7 +23,9 @@ public final class NcDto {
             @DecimalMin("-90.0") @DecimalMax("90.0") Double geoLat,
             @DecimalMin("-180.0") @DecimalMax("180.0") Double geoLng,
             String photoUrls,
-            UUID reporterId
+            UUID reporterId,
+            /** Interne par défaut : voir {@link NcOrigin#orDefault}. */
+            NcOrigin origin
     ) {}
 
     public record UpdateRequest(
@@ -34,7 +36,8 @@ public final class NcDto {
             @Size(max = 255) String zone,
             @DecimalMin("-90.0") @DecimalMax("90.0") Double geoLat,
             @DecimalMin("-180.0") @DecimalMax("180.0") Double geoLng,
-            String photoUrls
+            String photoUrls,
+            NcOrigin origin
     ) {}
 
     /** Démarrage de l'analyse : la cause racine est optionnelle à ce stade. */
@@ -64,6 +67,7 @@ public final class NcDto {
             NcCategory category,
             NcSeverity severity,
             NcStatus status,
+            NcOrigin origin,
             Instant detectedAt,
             String zone,
             Double geoLat,

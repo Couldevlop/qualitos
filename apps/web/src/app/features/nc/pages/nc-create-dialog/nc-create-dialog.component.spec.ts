@@ -41,7 +41,7 @@ describe('NcCreateDialogComponent', () => {
 
   const created: NcResponse = {
     id: 'srv-1', reference: 'NC-2026-9001', title: 'Étiquetage lot manquant',
-    category: 'PROCESS', severity: 'MAJOR', status: 'OPEN',
+    category: 'PROCESS', severity: 'MAJOR', status: 'OPEN', origin: 'INTERNAL',
     detectedAt: '2026-07-01T00:00:00Z', createdAt: '2026-07-01T00:00:00Z',
     updatedAt: '2026-07-01T00:00:00Z'
   };

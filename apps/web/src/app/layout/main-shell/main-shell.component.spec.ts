@@ -76,9 +76,10 @@ describe('MainShellComponent (navigation model)', () => {
     component = make();
   });
 
-  it('exposes exactly seven navigation groups', () => {
-    // Le septième groupe est l'Administration, réservée aux rôles d'administration.
-    expect(component.sections.length).toBe(7);
+  it('expose huit groupes de navigation', () => {
+    // Le septième est l'Administration ; le huitième, « Non-conformité », sorti
+    // des Opérations pour porter ses deux origines (interne / externe).
+    expect(component.sections.length).toBe(8);
   });
 
   it('orders the six groups as designed', () => {
@@ -91,11 +92,13 @@ describe('MainShellComponent (navigation model)', () => {
     // pas la barre latérale — c'est tout l'objet de ce regroupement.
     // Administration = 7 : + Équipe & habilitations (§16) — le tenant habilite
     // lui-même son équipe qualité, sans passer par l'éditeur de la plateforme.
-    expect(labels).toEqual([5, 6, 8, 10, 10, 1, 7]);
+    // Non-conformité(2) s'intercale, et Opérations retombe à 9 : son entrée
+    // « Non-conformités » unique est remplacée par les deux entrées du groupe.
+    expect(labels).toEqual([5, 6, 8, 3, 9, 10, 1, 7]);
   });
 
   it('collapses the entire GRC mass into a single /compliance entry', () => {
-    const grc = component.sections[5];
+    const grc = component.sections[6];
     expect(grc.items.length).toBe(1);
     expect(grc.items[0].route).toBe('/compliance');
   });
@@ -120,7 +123,7 @@ describe('MainShellComponent (navigation model)', () => {
   it('keeps all core method/operation routes reachable from the sidebar', () => {
     const allRoutes = component.sections.flatMap(s => s.items.map(i => i.route));
     ['/home', '/dashboard', '/pdca', '/ishikawa', '/fives', '/dmaic', '/spc',
-     '/nc', '/capa', '/audits', '/standards', '/itsm', '/compliance']
+     '/nc/interne', '/nc/externe', '/five-whys', '/capa', '/audits', '/standards', '/itsm', '/compliance']
       .forEach(r => expect(allRoutes).withContext(r).toContain(r));
   });
 
@@ -413,9 +416,11 @@ describe('MainShellComponent (visibilité par rôle)', () => {
   });
 
   it('supprime la section entière plutôt que d’afficher un titre orphelin', () => {
-    // Les 5 entrées d'administration sont toutes gardées : la section disparaît.
+    // Toutes les entrées d'administration sont gardées : la section disparaît, et
+    // il reste les sept autres — Non-conformité comprise depuis qu'elle est
+    // sortie des Opérations.
     const sections = make().filterSections(['USER']);
-    expect(sections.length).toBe(6);
+    expect(sections.length).toBe(7);
     expect(sections.some(s => s.items.some(i => i.route.startsWith('/admin')))).toBeFalse();
   });
 

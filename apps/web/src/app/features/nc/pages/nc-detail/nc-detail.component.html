@@ -27,6 +27,16 @@
                 i18n-matTooltip="@@nc.detail.escalate-tooltip" matTooltip="Créer une CAPA liée">
           <mat-icon>engineering</mat-icon> <span i18n="@@nc.detail.escalate">Escalader CAPA</span>
         </button>
+        <!-- L'analyse des 5 Pourquoi part d'un écart constaté : c'est d'ici
+             qu'elle se déroule. Le compteur dit s'il y en a déjà une. -->
+        <button mat-stroked-button class="five-whys-btn" (click)="openFiveWhys()"
+                [disabled]="(fiveWhysBusy$ | async) || !canOpenFiveWhys(n.status)"
+                i18n-matTooltip="@@nc.detail.five-whys-tooltip"
+                matTooltip="Remonter à la cause racine, un pourquoi après l'autre">
+          <mat-icon>account_tree</mat-icon>
+          <span i18n="@@nc.detail.five-whys">5 Pourquoi</span>
+          <span class="fw-count" *ngIf="(fiveWhys$ | async)?.length as fwCount">{{ fwCount }}</span>
+        </button>
         <button mat-stroked-button color="primary" (click)="startAnalysis()"
                 [disabled]="(acting$ | async) || !canStartAnalysis(n.status)"
                 i18n-matTooltip="@@nc.detail.start-analysis-tooltip" matTooltip="Démarrer l'analyse">

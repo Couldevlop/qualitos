@@ -32,6 +32,24 @@
 .actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .actions button { display: inline-flex; align-items: center; gap: 4px; }
 
+/* Compteur d'analyses 5 Pourquoi déjà ouvertes : une pastille discrète, pas un
+   second libellé — elle répond à « y en a-t-il déjà une ? » sans allonger le
+   bouton. */
+.five-whys-btn .fw-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  background: var(--mat-sys-secondary-container, rgba(0, 0, 0, 0.08));
+  color: var(--mat-sys-on-secondary-container, inherit);
+}
+
 .state-row {
   display: flex;
   align-items: center;

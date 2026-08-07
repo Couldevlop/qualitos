@@ -2,14 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
 import { catchError, finalize, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { NcService } from '../../nc.service';
-import { NcCategory, NcPage, NcResponse, NcSeverity, NcStatus } from '../../nc.types';
+import { NcCategory, NcOrigin, NcPage, NcResponse, NcSeverity, NcStatus } from '../../nc.types';
 import { NcCreateDialogComponent } from '../nc-create-dialog/nc-create-dialog.component';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
@@ -51,11 +51,44 @@ export class NcListComponent implements OnInit {
   // déclaration (course entre les deux réponses, la plus ancienne pouvant gagner).
   private readonly page$ = new BehaviorSubject<{ index: number; size: number }>({ index: 0, size: 20 });
 
+  /**
+   * Origine consultée, portée par la ROUTE (`/nc/interne`, `/nc/externe`) et non
+   * par un filtre de l'écran : deux entrées de navigation qui mèneraient au même
+   * endroit dès qu'on touche à un menu déroulant n'auraient aucun sens. Absente
+   * sur l'entrée historique `/nc`, qui continue de tout montrer.
+   */
+  readonly origin: NcOrigin | null = null;
+
   constructor(
     private readonly svc: NcService,
     private readonly dialog: MatDialog,
-    private readonly router: Router
-  ) {}
+    private readonly router: Router,
+    route: ActivatedRoute
+  ) {
+    const declared = route.snapshot.data['origin'];
+    this.origin = declared === 'INTERNAL' || declared === 'EXTERNAL' ? declared : null;
+  }
+
+  /** Titre de l'écran : il doit dire laquelle des deux listes on regarde. */
+  get pageTitle(): string {
+    if (this.origin === 'INTERNAL') {
+      return $localize`:@@nc.list.title-internal:Non-conformités internes`;
+    }
+    if (this.origin === 'EXTERNAL') {
+      return $localize`:@@nc.list.title-external:Non-conformités externes`;
+    }
+    return $localize`:@@nc.list.title:Non-conformités`;
+  }
+
+  get pageSubtitle(): string {
+    if (this.origin === 'INTERNAL') {
+      return $localize`:@@nc.list.subtitle-internal:Écarts détectés par l'organisation elle-même : autocontrôle, audit interne, revue.`;
+    }
+    if (this.origin === 'EXTERNAL') {
+      return $localize`:@@nc.list.subtitle-external:Écarts signalés du dehors : client, fournisseur, autorité, organisme certificateur.`;
+    }
+    return $localize`:@@nc.list.subtitle:Saisie terrain, analyse de cause racine, résolution et escalade CAPA — traçables de bout en bout.`;
+  }
 
   ngOnInit(): void {
     this.ncs$ = combineLatest([
@@ -69,7 +102,8 @@ export class NcListComponent implements OnInit {
         this.svc.listNcs(p.index, p.size, {
           status: status || undefined,
           severity: severity || undefined,
-          category: category || undefined
+          category: category || undefined,
+          origin: this.origin ?? undefined
         }).pipe(
           catchError(err => {
             // eslint-disable-next-line no-console

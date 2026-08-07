@@ -39,6 +39,15 @@ class IshikawaControllerTest {
     @MockitoBean
     private IshikawaService ishikawaService;
 
+    /**
+     * Le contrôleur porte aussi le plan d'actions depuis qu'un diagramme peut
+     * consigner ce qui a été décidé devant lui. Sans cette déclaration, le
+     * contexte de test ne se construit plus du tout — et l'échec ne parle pas du
+     * plan d'actions, il parle d'un contexte qui refuse de démarrer.
+     */
+    @MockitoBean
+    private IshikawaActionService ishikawaActionService;
+
     private ObjectMapper objectMapper;
 
     private static final UUID TENANT_ID = UUID.randomUUID();
