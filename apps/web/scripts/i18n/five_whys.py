@@ -64,4 +64,26 @@ TRANSLATIONS = {
         'La réponse au pourquoi est obligatoire.', 'The answer to the why is required.',
         'La respuesta al porqué es obligatoria.', 'الإجابة على السؤال إلزامية.',
         '「なぜ」への回答は必須です。', '必须回答该问题。'),
+
+    'fivewhys.open-nc': (
+        'Voir la non-conformité', 'View the nonconformity', 'Ver la no conformidad',
+        'عرض حالة عدم المطابقة', '不適合を表示', '查看不合格记录'),
+
+    # Entrée depuis la fiche de non-conformité : la méthode part d'un écart
+    # constaté, c'est donc de là qu'on la déroule.
+    'nc.detail.five-whys': ('5 Pourquoi', '5 Whys', '5 Porqués', 'الأسباب الخمسة', 'なぜなぜ分析', '五问法'),
+    'nc.detail.five-whys-tooltip': (
+        "Remonter à la cause racine, un pourquoi après l'autre",
+        'Trace the root cause, one why at a time',
+        'Remontar a la causa raíz, un porqué tras otro',
+        'التتبّع إلى السبب الجذري، سؤالاً بعد سؤال',
+        '「なぜ」を一つずつ遡って根本原因へ',
+        '一次一个「为什么」，追溯根本原因'),
+    'nc.detail.five-whys-error': (
+        "Impossible d'ouvrir l'analyse des 5 Pourquoi.",
+        'Could not open the 5 Whys analysis.',
+        'No se pudo abrir el análisis de los 5 Porqués.',
+        'تعذّر فتح تحليل الأسباب الخمسة.',
+        'なぜなぜ分析を開けませんでした。',
+        '无法打开五问法分析。'),
 }

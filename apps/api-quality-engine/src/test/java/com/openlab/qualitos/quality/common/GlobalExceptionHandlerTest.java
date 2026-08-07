@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.common;
 
+import com.openlab.qualitos.quality.fivewhys.FiveWhysNotFoundException;
+import com.openlab.qualitos.quality.fivewhys.FiveWhysStateException;
 import com.openlab.qualitos.quality.notifications.domain.NotificationNotFoundException;
 import com.openlab.qualitos.quality.standards.RoadmapStageNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -48,6 +50,25 @@ class GlobalExceptionHandlerTest {
         assertThat(pd.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
         assertThat(pd.getDetail()).contains("category");
         assertThat(pd.getTitle()).isEqualTo("Missing Required Parameter");
+    }
+
+    @Test
+    void fiveWhysNotFound_mapsTo404() {
+        ProblemDetail pd = handler.handleFiveWhysNotFound(
+                new FiveWhysNotFoundException(UUID.randomUUID()));
+        assertThat(pd.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        assertThat(pd.getTitle()).isEqualTo("Five Whys Analysis Not Found");
+    }
+
+    @Test
+    void fiveWhysRuleBroken_mapsTo409_andSaysWhy() {
+        // Une règle de méthode refusée n'est pas une panne : le client doit lire un
+        // conflit d'état, et la raison, pour la corriger sans deviner.
+        ProblemDetail pd = handler.handleFiveWhysState(
+                new FiveWhysStateException("Conclure avant 3 pourquoi, c'est nommer un symptôme"));
+        assertThat(pd.getStatus()).isEqualTo(HttpStatus.CONFLICT.value());
+        assertThat(pd.getTitle()).isEqualTo("Invalid Five Whys State");
+        assertThat(pd.getDetail()).contains("symptôme");
     }
 
     @Test

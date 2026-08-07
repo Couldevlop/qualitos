@@ -7684,6 +7684,22 @@
         <source>La réponse au pourquoi est obligatoire.</source>
         <target state="translated">「なぜ」への回答は必須です。</target>
       </trans-unit>
+      <trans-unit id="fivewhys.open-nc" datatype="html">
+        <source>Voir la non-conformité</source>
+        <target state="translated">不適合を表示</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.five-whys" datatype="html">
+        <source>5 Pourquoi</source>
+        <target state="translated">なぜなぜ分析</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.five-whys-tooltip" datatype="html">
+        <source>Remonter à la cause racine, un pourquoi après l'autre</source>
+        <target state="translated">「なぜ」を一つずつ遡って根本原因へ</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.five-whys-error" datatype="html">
+        <source>Impossible d'ouvrir l'analyse des 5 Pourquoi.</source>
+        <target state="translated">なぜなぜ分析を開けませんでした。</target>
+      </trans-unit>
       <trans-unit id="nav.forecast" datatype="html">
         <source>Prévision KPI</source>
         <target state="translated">KPI予測</target>

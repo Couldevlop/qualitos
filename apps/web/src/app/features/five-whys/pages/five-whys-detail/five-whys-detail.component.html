@@ -7,6 +7,13 @@
       <mat-icon aria-hidden="true">arrow_back</mat-icon>
       <span i18n="@@common.back">Retour</span>
     </button>
+    <!-- L'analyse vient d'un écart constaté : on doit pouvoir y retourner sans
+         repasser par la liste. -->
+    <button qosActions mat-stroked-button type="button" class="open-nc"
+            *ngIf="analysis as a" (click)="openNc()">
+      <mat-icon aria-hidden="true">assignment_late</mat-icon>
+      <span i18n="@@fivewhys.open-nc">Voir la non-conformité</span>
+    </button>
   </qos-page-header>
 
   <div class="state-row" *ngIf="loading" role="status">

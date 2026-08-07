@@ -7684,6 +7684,22 @@
         <source>La réponse au pourquoi est obligatoire.</source>
         <target state="translated">La respuesta al porqué es obligatoria.</target>
       </trans-unit>
+      <trans-unit id="fivewhys.open-nc" datatype="html">
+        <source>Voir la non-conformité</source>
+        <target state="translated">Ver la no conformidad</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.five-whys" datatype="html">
+        <source>5 Pourquoi</source>
+        <target state="translated">5 Porqués</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.five-whys-tooltip" datatype="html">
+        <source>Remonter à la cause racine, un pourquoi après l'autre</source>
+        <target state="translated">Remontar a la causa raíz, un porqué tras otro</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.five-whys-error" datatype="html">
+        <source>Impossible d'ouvrir l'analyse des 5 Pourquoi.</source>
+        <target state="translated">No se pudo abrir el análisis de los 5 Porqués.</target>
+      </trans-unit>
       <trans-unit id="nav.forecast" datatype="html">
         <source>Prévision KPI</source>
         <target state="translated">Previsión de KPI</target>

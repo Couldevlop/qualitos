@@ -7684,6 +7684,22 @@
         <source>La réponse au pourquoi est obligatoire.</source>
         <target state="translated">الإجابة على السؤال إلزامية.</target>
       </trans-unit>
+      <trans-unit id="fivewhys.open-nc" datatype="html">
+        <source>Voir la non-conformité</source>
+        <target state="translated">عرض حالة عدم المطابقة</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.five-whys" datatype="html">
+        <source>5 Pourquoi</source>
+        <target state="translated">الأسباب الخمسة</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.five-whys-tooltip" datatype="html">
+        <source>Remonter à la cause racine, un pourquoi après l'autre</source>
+        <target state="translated">التتبّع إلى السبب الجذري، سؤالاً بعد سؤال</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.five-whys-error" datatype="html">
+        <source>Impossible d'ouvrir l'analyse des 5 Pourquoi.</source>
+        <target state="translated">تعذّر فتح تحليل الأسباب الخمسة.</target>
+      </trans-unit>
       <trans-unit id="nav.forecast" datatype="html">
         <source>Prévision KPI</source>
         <target state="translated">التنبؤ بمؤشرات الأداء</target>

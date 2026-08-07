@@ -23,6 +23,8 @@ import com.openlab.qualitos.quality.docs.DocumentStateException;
 import com.openlab.qualitos.quality.docs.DocumentVersionNotFoundException;
 import com.openlab.qualitos.quality.fives.FiveSAuditNotFoundException;
 import com.openlab.qualitos.quality.fives.FiveSStateException;
+import com.openlab.qualitos.quality.fivewhys.FiveWhysNotFoundException;
+import com.openlab.qualitos.quality.fivewhys.FiveWhysStateException;
 import com.openlab.qualitos.quality.ishikawa.IshikawaCauseNotFoundException;
 import com.openlab.qualitos.quality.ishikawa.IshikawaDiagramNotFoundException;
 import com.openlab.qualitos.quality.ishikawa.IshikawaStateException;
@@ -225,6 +227,28 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/ishikawa-invalid-state"));
         problem.setTitle("Invalid Ishikawa State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(FiveWhysNotFoundException.class)
+    public ProblemDetail handleFiveWhysNotFound(FiveWhysNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/five-whys-not-found"));
+        problem.setTitle("Five Whys Analysis Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(FiveWhysStateException.class)
+    public ProblemDetail handleFiveWhysState(FiveWhysStateException ex) {
+        // Règle de la méthode non tenue (conclusion avant le 3e pourquoi, 8e pourquoi,
+        // retrait d'un maillon du milieu) : c'est un conflit d'état, pas une panne.
+        // Sans ce handler, le refus remontait au catch-all et sortait en 500 : l'écran
+        // affichait « refusé » mais l'API mentait sur la nature du refus.
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/five-whys-invalid-state"));
+        problem.setTitle("Invalid Five Whys State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

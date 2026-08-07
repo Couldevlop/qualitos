@@ -11,9 +11,26 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ConnectivityService } from '../../../../core/offline/connectivity.service';
+import { FiveWhysService } from '../../../five-whys/five-whys.service';
+import { FiveWhysAnalysis } from '../../../five-whys/five-whys.types';
 import { NcService } from '../../nc.service';
 import { NcPhoto, NcResponse, NcStatus, VisionAnalysis } from '../../nc.types';
 import { NcDetailComponent } from './nc-detail.component';
+
+function buildFiveWhys(overrides: Partial<FiveWhysAnalysis> = {}): FiveWhysAnalysis {
+  return {
+    id: 'fw-1', ncId: 'nc-1', ncReference: 'NC-2026-1001',
+    problem: 'Étiquetage manquant', rootCause: null, steps: [],
+    createdAt: '2026-08-06T10:00:00Z', updatedAt: '2026-08-06T10:00:00Z', ...overrides
+  };
+}
+
+/** Aucune analyse ouverte : le cas par défaut des harnais existants. */
+function fiveWhysSpy(existing: FiveWhysAnalysis[] = []): jasmine.SpyObj<FiveWhysService> {
+  const spy = jasmine.createSpyObj<FiveWhysService>('FiveWhysService', ['listForNc', 'create']);
+  spy.listForNc.and.returnValue(of(existing));
+  return spy;
+}
 
 function buildNc(overrides: Partial<NcResponse> = {}): NcResponse {
   return {
@@ -65,6 +82,7 @@ describe('NcDetailComponent — section photos', () => {
         { provide: NcService, useValue: svc },
         { provide: ConnectivityService, useValue: connectivity },
         { provide: AuthService, useValue: { snapshot: () => ({ userId: 'u1' }) } },
+        { provide: FiveWhysService, useValue: fiveWhysSpy() },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: convertToParamMap({ id: 'nc-1' }) } }
@@ -420,6 +438,7 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
         { provide: NcService, useValue: svc },
         { provide: ConnectivityService, useValue: new FakeConnectivity() },
         { provide: AuthService, useValue: { snapshot: () => currentUser } },
+        { provide: FiveWhysService, useValue: fiveWhysSpy() },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => routeId } } } }
       ]
     }).compileComponents();
@@ -629,5 +648,163 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     setup();
     component.goBack();
     expect(router.navigate).toHaveBeenCalledWith(['/nc']);
+  });
+});
+
+/**
+ * Entrée des 5 Pourquoi depuis la fiche de non-conformité.
+ *
+ * <p>La méthode part d'un écart constaté : sans ce point d'entrée, l'écran des
+ * analyses ne pouvait rester que vide — aucun chemin ne permettait d'en ouvrir
+ * une. Ce qui se teste ici, c'est qu'un même geste ouvre l'analyse existante ou
+ * la crée, sans que l'utilisateur ait à savoir laquelle des deux choses arrive,
+ * et qu'une NC clôturée reste relisible sans redevenir modifiable.
+ */
+describe('NcDetailComponent — entrée 5 Pourquoi', () => {
+  let fixture: ComponentFixture<NcDetailComponent>;
+  let component: NcDetailComponent;
+  let svc: jasmine.SpyObj<NcService>;
+  let fiveWhys: jasmine.SpyObj<FiveWhysService>;
+  let router: Router;
+
+  const UUID = '33333333-3333-3333-3333-333333333333';
+
+  function setup(nc: NcResponse = buildNc({ id: UUID })): void {
+    svc.getNc.and.returnValue(of(nc));
+    fixture = TestBed.createComponent(NcDetailComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    (component as unknown as { reload$: { next(v: void): void } }).reload$.next();
+    fixture.detectChanges();
+  }
+
+  function bouton(): HTMLButtonElement | null {
+    return (fixture.nativeElement as HTMLElement).querySelector('button.five-whys-btn');
+  }
+
+  async function configure(existing: FiveWhysAnalysis[]): Promise<void> {
+    fiveWhys = fiveWhysSpy(existing);
+    svc = jasmine.createSpyObj<NcService>('NcService', ['getNc', 'listPhotos']);
+    svc.listPhotos.and.returnValue(of([]));
+
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      declarations: [NcDetailComponent],
+      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      providers: [
+        { provide: NcService, useValue: svc },
+        { provide: ConnectivityService, useValue: new FakeConnectivity() },
+        { provide: AuthService, useValue: { snapshot: () => ({ userId: 'u1' }) } },
+        { provide: FiveWhysService, useValue: fiveWhys },
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap({ id: UUID }) } } }
+      ]
+    }).compileComponents();
+
+    router = TestBed.inject(Router);
+    spyOn(router, 'navigate').and.resolveTo(true);
+  }
+
+  it('interroge les analyses ouvertes sur CETTE non-conformité', async () => {
+    await configure([]);
+    setup();
+
+    expect(fiveWhys.listForNc).toHaveBeenCalledWith(UUID);
+    expect(component.fiveWhys$.value).toEqual([]);
+  });
+
+  it('affiche le nombre d\'analyses déjà ouvertes', async () => {
+    await configure([buildFiveWhys({ id: 'fw-1' }), buildFiveWhys({ id: 'fw-2' })]);
+    setup();
+
+    const compteur = (fixture.nativeElement as HTMLElement).querySelector('.fw-count');
+    expect(compteur?.textContent?.trim()).toBe('2');
+  });
+
+  it('n\'affiche aucun compteur tant qu\'aucune analyse n\'existe', async () => {
+    await configure([]);
+    setup();
+
+    expect((fixture.nativeElement as HTMLElement).querySelector('.fw-count')).toBeNull();
+  });
+
+  it('ouvre l\'analyse la plus récente sans en créer une seconde', async () => {
+    // Le serveur rend les analyses de la plus récente à la plus ancienne.
+    await configure([buildFiveWhys({ id: 'fw-recent' }), buildFiveWhys({ id: 'fw-ancienne' })]);
+    setup();
+
+    component.openFiveWhys();
+
+    expect(fiveWhys.create).not.toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith(['/five-whys', 'fw-recent']);
+  });
+
+  it('crée l\'analyse puis l\'ouvre quand il n\'y en a aucune', async () => {
+    await configure([]);
+    fiveWhys.create.and.returnValue(of(buildFiveWhys({ id: 'fw-neuve' })));
+    setup();
+
+    component.openFiveWhys();
+
+    expect(fiveWhys.create).toHaveBeenCalledWith({ ncId: UUID });
+    expect(router.navigate).toHaveBeenCalledWith(['/five-whys', 'fw-neuve']);
+    // L'analyse créée rejoint la liste : un second clic ne doit pas en créer une autre.
+    expect(component.fiveWhys$.value.map(a => a.id)).toEqual(['fw-neuve']);
+  });
+
+  it('ne crée qu\'une analyse même sur double clic', async () => {
+    await configure([]);
+    const pending = new Subject<FiveWhysAnalysis>();
+    fiveWhys.create.and.returnValue(pending.asObservable());
+    setup();
+
+    component.openFiveWhys();
+    component.openFiveWhys();
+
+    expect(fiveWhys.create).toHaveBeenCalledTimes(1);
+    pending.next(buildFiveWhys({ id: 'fw-neuve' }));
+    pending.complete();
+    expect(component.fiveWhysBusy$.value).toBeFalse();
+  });
+
+  it('signale un refus de création sans bloquer le bouton', async () => {
+    await configure([]);
+    fiveWhys.create.and.returnValue(throwError(() =>
+      new HttpErrorResponse({ status: 409, error: { title: 'Invalid Non-Conformity State' } })));
+    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
+    setup();
+
+    component.openFiveWhys();
+
+    expect(snackSpy).toHaveBeenCalled();
+    expect(component.fiveWhysBusy$.value).toBeFalse();
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  it('ferme l\'entrée sur une NC clôturée sans analyse', async () => {
+    await configure([]);
+    setup(buildNc({ id: UUID, status: 'CLOSED' }));
+
+    expect(component.canOpenFiveWhys('CLOSED')).toBeFalse();
+    expect(bouton()?.disabled).toBeTrue();
+  });
+
+  it('laisse relire l\'analyse d\'une NC clôturée : c\'est elle qui explique la décision', async () => {
+    await configure([buildFiveWhys({ id: 'fw-1', rootCause: 'Presse mal réglée' })]);
+    setup(buildNc({ id: UUID, status: 'CLOSED' }));
+
+    expect(component.canOpenFiveWhys('CLOSED')).toBeTrue();
+
+    component.openFiveWhys();
+
+    expect(router.navigate).toHaveBeenCalledWith(['/five-whys', 'fw-1']);
+  });
+
+  it('laisse la fiche utilisable quand la liste des analyses échoue', async () => {
+    await configure([]);
+    fiveWhys.listForNc.and.returnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
+    setup();
+
+    expect(component.fiveWhys$.value).toEqual([]);
+    expect((fixture.nativeElement as HTMLElement).querySelector('h1')).not.toBeNull();
   });
 });
