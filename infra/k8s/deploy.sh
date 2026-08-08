@@ -15,7 +15,7 @@
 #      l'accès à une base déjà initialisée avec l'ancien mot de passe.
 #   3. realm Keycloak — rendu une seule fois lui aussi, l'import Keycloak n'ayant
 #      lieu qu'au premier démarrage sur une base vide.
-#   4. dépendances d'état (PostgreSQL, Qdrant, Ollama, Keycloak)
+#   4. dépendances d'état (PostgreSQL, Qdrant, MinIO, Ollama, Keycloak)
 #   5. secrets applicatifs, dérivés du secret PostgreSQL
 #   6. chart applicatif, au tag demandé
 #
@@ -99,6 +99,21 @@ ensure_secret qualitos-postgres \
 ensure_secret qualitos-keycloak \
   --from-literal=KEYCLOAK_ADMIN=admin \
   --from-literal=KEYCLOAK_ADMIN_PASSWORD="$(gen)"
+# Identifiants du stockage objet. Même règle que PostgreSQL : générés une seule
+# fois, jamais régénérés — MinIO conserve les siens dans son volume, et les
+# changer ici rendrait le stockage injoignable sans que rien ne l'explique.
+#
+# DEUX comptes, et non un seul. Le compte racine n'administre que MinIO ; celui
+# de l'application ne sait que lire, écrire et supprimer des objets dans le
+# bucket des pièces jointes (politique posée par le Job minio-init). Faire
+# travailler l'engine sous le compte racine reviendrait à lui donner le droit de
+# rendre le bucket public ou de l'effacer — pouvoirs dont il n'a aucun usage, et
+# qu'un engine compromis retournerait contre le dossier d'audit.
+ensure_secret qualitos-minio \
+  --from-literal=MINIO_ROOT_USER=qualitos \
+  --from-literal=MINIO_ROOT_PASSWORD="$(gen)" \
+  --from-literal=STORAGE_S3_ACCESS_KEY=qualitos-engine \
+  --from-literal=STORAGE_S3_SECRET_KEY="$(gen)"
 
 say "3/6 Realm Keycloak"
 if kubectl -n "$NS" get configmap qualitos-keycloak-realm >/dev/null 2>&1; then
@@ -113,9 +128,26 @@ kubectl -n "$NS" apply -f "$DEPS/10-postgres.yaml" \
                        -f "$DEPS/40-ollama-external.yaml"
 sed "s/__QOS_HOST__/$HOST/g" "$DEPS/20-keycloak.yaml" | kubectl -n "$NS" apply -f -
 
+# Le travail d'initialisation du bucket est IMMUABLE une fois créé : le
+# supprimer d'abord est ce qui rend le déploiement rejouable. Sans cela, la
+# deuxième exécution échouerait sur un champ non modifiable, et l'échec
+# porterait sur le bucket alors que rien ne va mal.
+kubectl -n "$NS" delete job minio-init --ignore-not-found >/dev/null
+kubectl -n "$NS" apply -f "$DEPS/50-minio.yaml"
+
 kubectl -n "$NS" rollout status deploy/postgres --timeout=180s
 kubectl -n "$NS" rollout status deploy/qdrant   --timeout=180s
+kubectl -n "$NS" rollout status deploy/minio    --timeout=180s
 kubectl -n "$NS" rollout status deploy/keycloak --timeout=420s
+
+# Le bucket doit exister AVANT que l'engine n'accepte un dépôt : sans lui, la
+# première pièce jointe échouerait sur « NoSuchBucket », longtemps après le
+# déploiement et loin de sa cause.
+if ! kubectl -n "$NS" wait --for=condition=complete job/minio-init --timeout=120s >/dev/null; then
+  echo "  ATTENTION : le bucket de stockage n'a pas pu être créé." >&2
+  echo "  Les pièces jointes (photos de NC, preuves CAPA) échoueront au dépôt." >&2
+  kubectl -n "$NS" logs job/minio-init --tail=20 >&2 || true
+fi
 
 say "5/6 Secrets applicatifs"
 # Les services Spring lisent DB_USER et DB_PASSWORD (cf. application.yml). On les
@@ -178,6 +210,20 @@ kubectl -n "$NS" create secret generic qualitos-api-quality-engine-ai \
   --from-literal=AI_CLIENT_SECRET="$AI_SECRET" \
   --dry-run=client -o yaml | kubectl apply -f - >/dev/null
 echo "  secret qualitos-api-quality-engine-ai : à jour"
+
+# Identifiants du stockage objet, remis à l'engine. Ce sont ceux du compte
+# RESTREINT, jamais ceux du compte racine. Secret SÉPARÉ de celui des bases : les
+# deux familles n'ont ni la même origine ni le même cycle de vie, et les mélanger
+# obligerait à toucher aux mots de passe de base pour faire tourner une clé de
+# stockage. Dérivés du secret MinIO plutôt que ressaisis : deux sources pour le
+# même identifiant finissent toujours par diverger.
+S3_USER="$(kubectl -n "$NS" get secret qualitos-minio -o jsonpath='{.data.STORAGE_S3_ACCESS_KEY}' | base64 -d)"
+S3_PWD="$(kubectl -n "$NS" get secret qualitos-minio -o jsonpath='{.data.STORAGE_S3_SECRET_KEY}' | base64 -d)"
+kubectl -n "$NS" create secret generic qualitos-api-quality-engine-storage \
+  --from-literal=STORAGE_S3_ACCESS_KEY="$S3_USER" \
+  --from-literal=STORAGE_S3_SECRET_KEY="$S3_PWD" \
+  --dry-run=client -o yaml | kubectl apply -f - >/dev/null
+echo "  secret qualitos-api-quality-engine-storage : à jour"
 
 kubectl -n "$NS" create secret generic qualitos-ai-service \
   --from-literal=NLQ_READONLY_DSN="postgresql://qualitos_nlq_ro:${NLQ_PWD}@postgres:5432/qualitos_quality" \

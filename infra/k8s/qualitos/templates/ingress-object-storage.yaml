@@ -1,0 +1,73 @@
+{{- if and .Values.ingress.enabled .Values.objectStorage.enabled }}
+# Route publique de LECTURE des pièces jointes (photos de NC §4.3, preuves CAPA
+# §4.2), servies par MinIO.
+#
+# POURQUOI UN INGRESS SÉPARÉ, et non un chemin de plus sur celui de la
+# plateforme. Les en-têtes de réponse et les restrictions de méthode se
+# déclarent par ressource Ingress, pas par chemin : les poser sur l'ingress
+# principal les appliquerait à l'application entière. Or c'est précisément ici —
+# et nulle part ailleurs — qu'on sert du contenu DÉPOSÉ PAR DES UTILISATEURS,
+# sur l'origine de l'application. Ce contenu doit être servi inerte.
+#
+# CE QUE LA ROUTE N'OUVRE PAS. Le bucket est privé (« mc anonymous set none ») :
+# sans signature valide, MinIO refuse. L'autorisation tient à la signature,
+# valable quinze minutes. Le nom du bucket sert de préfixe de chemin (accès S3
+# « path-style ») ; aucune réécriture n'est appliquée, car la signature couvre le
+# chemin autant que l'hôte — la réécrire produirait un refus de signature. Rien
+# d'autre de MinIO n'est publié : ni la console d'administration (port 9001,
+# absent du Service), ni la racine, donc ni la liste des buckets.
+#
+# Les annotations sont posées EXPLICITEMENT plutôt qu'héritées de l'ingress
+# principal. Deux d'entre elles ne doivent surtout pas l'être : la taille de
+# corps, relevée à 12 Mo pour les dépôts par l'API, alors qu'ici aucun corps ne
+# transite ; et l'émetteur de certificat, car deux ressources revendiquant le
+# même secret TLS se le disputeraient. Le certificat de l'hôte vient de
+# l'ingress principal, et nginx sert les deux sous le même bloc serveur.
+#
+# ModSecurity reste ACTIF sur cette route, sans aucune exclusion. Si une lecture
+# revenait en 403 sans avoir atteint MinIO, c'est ici — et ici seulement — qu'une
+# exclusion ciblée devrait être ajoutée.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: qualitos-object-storage
+  labels:
+    {{- include "qualitos.labels" . | nindent 4 }}
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # Aucun corps ne transite par ici : les dépôts passent par l'API, pas par le
+    # stockage. Une limite basse ferme la porte sans rien gêner.
+    nginx.ingress.kubernetes.io/proxy-body-size: 1k
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      # Lecture seule, refusée au niveau du proxy. MinIO refuserait déjà toute
+      # écriture non signée, mais cette barrière ne dépend d'aucune configuration
+      # du stockage : même un bucket rendu public par erreur resterait impossible
+      # à modifier depuis l'extérieur.
+      limit_except GET HEAD OPTIONS { deny all; }
+
+      # Contenu déposé par des utilisateurs, servi sur l'ORIGINE de
+      # l'application : il doit être inerte. « sandbox » sans jeton retire au
+      # document toute origine, tout script et tout formulaire — un PDF piégé ou
+      # un fichier polyglotte n'exécute rien. « nosniff » interdit au navigateur
+      # de deviner un type autre que celui annoncé, seul type qu'on ait validé
+      # (signature binaire vérifiée au dépôt). « no-referrer » empêche l'URL
+      # présignée — qui EST le jeton d'accès — de fuir par l'en-tête Referer.
+      add_header X-Content-Type-Options "nosniff" always;
+      add_header Content-Security-Policy "sandbox; default-src 'none'" always;
+      add_header Referrer-Policy "no-referrer" always;
+      # Une URL présignée expire : la garder en cache partagé la ferait survivre
+      # à sa propre validité, et exposerait une preuve à qui partage le cache.
+      add_header Cache-Control "private, no-store" always;
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  rules:
+    - host: {{ .Values.ingress.host | quote }}
+      http:
+        paths:
+          - path: /{{ .Values.objectStorage.bucket }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.objectStorage.serviceName }}
+                port: { name: {{ .Values.objectStorage.servicePortName }} }
+{{- end }}

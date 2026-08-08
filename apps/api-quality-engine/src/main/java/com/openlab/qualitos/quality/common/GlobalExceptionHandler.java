@@ -5,6 +5,9 @@ import com.openlab.qualitos.quality.audit.AuditFindingNotFoundException;
 import com.openlab.qualitos.quality.audit.AuditPlanNotFoundException;
 import com.openlab.qualitos.quality.audit.AuditStateException;
 import com.openlab.qualitos.quality.capa.CapaActionNotFoundException;
+import com.openlab.qualitos.quality.capa.CapaEvidenceNotFoundException;
+import com.openlab.qualitos.quality.capa.CapaEvidenceTooLargeException;
+import com.openlab.qualitos.quality.capa.CapaEvidenceValidationException;
 import com.openlab.qualitos.quality.capa.CapaNotFoundException;
 import com.openlab.qualitos.quality.capa.CapaStateException;
 import com.openlab.qualitos.quality.circle.CircleMeetingNotFoundException;
@@ -294,6 +297,33 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/capa-invalid-state"));
         problem.setTitle("Invalid CAPA State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CapaEvidenceNotFoundException.class)
+    public ProblemDetail handleCapaEvidenceNotFound(CapaEvidenceNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/capa-evidence-not-found"));
+        problem.setTitle("CAPA Evidence Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CapaEvidenceValidationException.class)
+    public ProblemDetail handleCapaEvidenceValidation(CapaEvidenceValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/capa-evidence-invalid"));
+        problem.setTitle("Invalid CAPA Evidence");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CapaEvidenceTooLargeException.class)
+    public ProblemDetail handleCapaEvidenceTooLarge(CapaEvidenceTooLargeException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/capa-evidence-too-large"));
+        problem.setTitle("CAPA Evidence Too Large");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

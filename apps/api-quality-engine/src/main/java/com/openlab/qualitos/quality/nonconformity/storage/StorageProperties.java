@@ -16,8 +16,21 @@ public class StorageProperties {
     /** Active l'adaptateur S3 réel. OFF par défaut. */
     private boolean enabled = false;
 
-    /** Endpoint S3/MinIO (ex. http://minio:9000). */
+    /** Endpoint S3/MinIO joignable par le SERVEUR (ex. http://minio:9000). */
     private String endpoint;
+
+    /**
+     * Endpoint joignable par le NAVIGATEUR, utilisé pour signer les URLs de
+     * lecture. Vide par défaut : les deux se confondent en développement.
+     *
+     * <p>En cluster ils diffèrent nécessairement. Le service interne
+     * ({@code http://minio.<ns>.svc.cluster.local:9000}) ne se résout pas depuis
+     * un poste : une URL présignée sur cet hôte serait signée correctement et
+     * pourtant inouvrable — la pire des pannes, puisque le serveur ne voit passer
+     * aucune erreur. La signature couvrant l'hôte, il ne suffit pas de réécrire
+     * l'URL après coup : il faut signer pour l'hôte public dès l'origine.
+     */
+    private String publicEndpoint;
 
     /** Bucket cible. */
     private String bucket;
@@ -36,6 +49,18 @@ public class StorageProperties {
 
     public String getEndpoint() { return endpoint; }
     public void setEndpoint(String endpoint) { this.endpoint = endpoint; }
+
+    public String getPublicEndpoint() { return publicEndpoint; }
+    public void setPublicEndpoint(String publicEndpoint) { this.publicEndpoint = publicEndpoint; }
+
+    /**
+     * Endpoint à utiliser pour signer les lectures : le public s'il est déclaré,
+     * l'interne sinon. Le repli est explicite plutôt que laissé au hasard d'une
+     * variable vide, qui produirait une URI invalide au démarrage.
+     */
+    public String resolvePresignEndpoint() {
+        return publicEndpoint == null || publicEndpoint.isBlank() ? endpoint : publicEndpoint;
+    }
 
     public String getBucket() { return bucket; }
     public void setBucket(String bucket) { this.bucket = bucket; }

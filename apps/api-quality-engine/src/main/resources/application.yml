@@ -221,6 +221,11 @@ qualitos:
     s3:
       enabled: ${STORAGE_S3_ENABLED:false}
       endpoint: ${STORAGE_S3_ENDPOINT:}
+      # Hôte par lequel le NAVIGATEUR atteint le stockage, utilisé pour signer les
+      # URLs de lecture. Vide en local, où les deux se confondent ; en cluster, le
+      # service interne ne se résout pas depuis un poste et une URL signée sur son
+      # nom serait inouvrable sans qu'aucune erreur ne remonte.
+      public-endpoint: ${STORAGE_S3_PUBLIC_ENDPOINT:}
       bucket: ${STORAGE_S3_BUCKET:}
       region: ${STORAGE_S3_REGION:us-east-1}
       access-key: ${STORAGE_S3_ACCESS_KEY:}

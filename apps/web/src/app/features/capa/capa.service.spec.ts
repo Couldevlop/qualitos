@@ -366,3 +366,123 @@ describe('CapaService (API réelle)', () => {
       .flush({ title: 'illegal state' }, { status: 409, statusText: 'Conflict' });
   });
 });
+
+/**
+ * Preuves jointes au dossier (§4.2, ISO 9001 §10.2).
+ *
+ * <p>Le service ne porte aucune des bornes — elles sont tenues par le serveur, qui
+ * seul connaît ce que le dossier contient déjà. Ce qui se teste ici est le
+ * contrat : la bonne route, le bon verbe, et un fichier envoyé en multipart sous
+ * le champ attendu.
+ */
+describe('CapaService — preuves du dossier', () => {
+  let service: CapaService;
+  let http: HttpTestingController;
+  let prevMock: boolean;
+
+  const base = `${environment.apiBaseUrl}/api/v1/capa/cases`;
+
+  const fichier = () => new File(['%PDF-1.7 relevé'], 'releve.pdf', { type: 'application/pdf' });
+
+  describe('en mode connecté', () => {
+    beforeEach(() => {
+      prevMock = environment.useMockApi;
+      environment.useMockApi = false;
+      TestBed.configureTestingModule({
+        providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+      });
+      service = TestBed.inject(CapaService);
+      http = TestBed.inject(HttpTestingController);
+    });
+
+    afterEach(() => {
+      environment.useMockApi = prevMock;
+      http.verify();
+    });
+
+    it('liste les preuves du dossier', () => {
+      service.listEvidences('c1').subscribe();
+
+      const req = http.expectOne(`${base}/c1/evidences`);
+      expect(req.request.method).toBe('GET');
+      req.flush([]);
+    });
+
+    it('dépose la pièce en multipart, sous le champ « file »', () => {
+      service.uploadEvidence('c1', fichier()).subscribe();
+
+      const req = http.expectOne(`${base}/c1/evidences`);
+      expect(req.request.method).toBe('POST');
+      const body = req.request.body as FormData;
+      expect(body instanceof FormData).toBeTrue();
+      expect((body.get('file') as File).name).toBe('releve.pdf');
+      req.flush({});
+    });
+
+    it('retire une pièce par son identifiant', () => {
+      service.deleteEvidence('c1', 'evd-9').subscribe();
+
+      const req = http.expectOne(`${base}/c1/evidences/evd-9`);
+      expect(req.request.method).toBe('DELETE');
+      req.flush(null);
+    });
+
+    it('propage le refus du serveur au lieu de l\'absorber', (done) => {
+      // 409 = borne atteinte ou dossier clos. L'écran doit pouvoir le distinguer
+      // d'un 413 ou d'un 400 : un service qui aplatit les refus lui retire ce moyen.
+      service.uploadEvidence('c1', fichier()).subscribe({
+        next: () => fail('un refus ne doit pas produire de valeur'),
+        error: err => {
+          expect(err.status).toBe(409);
+          done();
+        }
+      });
+      http.expectOne(`${base}/c1/evidences`)
+        .flush({ title: 'limit reached' }, { status: 409, statusText: 'Conflict' });
+    });
+  });
+
+  describe('en mode démonstration', () => {
+    beforeEach(() => {
+      prevMock = environment.useMockApi;
+      environment.useMockApi = true;
+      TestBed.configureTestingModule({
+        providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+      });
+      service = TestBed.inject(CapaService);
+      http = TestBed.inject(HttpTestingController);
+    });
+
+    afterEach(() => {
+      environment.useMockApi = prevMock;
+      // Le mode démonstration ne doit émettre AUCUNE requête réseau.
+      http.verify();
+    });
+
+    it('conserve la pièce dans l\'onglet, réellement consultable', (done) => {
+      service.uploadEvidence('capa-1', fichier()).subscribe(e => {
+        expect(e.originalFilename).toBe('releve.pdf');
+        // L'URL d'objet rend le fichier consultable plutôt que de simuler une preuve.
+        expect(e.url).toContain('blob:');
+        service.listEvidences('capa-1').subscribe(list => {
+          expect(list.map(x => x.id)).toEqual([e.id]);
+          service.deleteEvidence('capa-1', e.id).subscribe(() => {
+            service.listEvidences('capa-1').subscribe(apres => {
+              expect(apres).toEqual([]);
+              done();
+            });
+          });
+        });
+      });
+    });
+
+    it('isole les pièces par dossier', (done) => {
+      service.uploadEvidence('capa-1', fichier()).subscribe(() => {
+        service.listEvidences('capa-2').subscribe(list => {
+          expect(list).toEqual([]);
+          done();
+        });
+      });
+    });
+  });
+});

@@ -207,6 +207,91 @@
         </mat-card-content>
       </mat-card>
 
+      <!-- Preuves du dossier : une CAPA se clôt sur une vérification d'efficacité,
+           et l'efficacité se prouve (ISO 9001 §10.2). -->
+      <mat-card class="evidences-card">
+        <mat-card-header>
+          <mat-card-title i18n="@@capa.evidence.title">Preuves</mat-card-title>
+          <span class="evidence-count" *ngIf="(evidences$ | async)?.length">
+            {{ evidenceCountLabel() }}
+          </span>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="hint" i18n="@@capa.evidence.hint">
+            Ce qui atteste que l'action a produit son effet : relevé, procédure signée,
+            photo. PDF, image, Word ou Excel, 10 Mo par pièce, 10 pièces au maximum.
+          </p>
+
+          <div class="state-row" *ngIf="evidencesLoading$ | async" role="status">
+            <mat-progress-spinner mode="indeterminate" diameter="28"
+                                  aria-label="Chargement" i18n-aria-label="@@common.loading-aria"></mat-progress-spinner>
+          </div>
+
+          <p class="storage-off" *ngIf="evidenceStorageDisabled$ | async"
+             i18n="@@capa.evidence.storage-disabled">
+            Le stockage des pièces jointes est désactivé sur cet environnement : aucune
+            preuve ne peut y être déposée ni relue.
+          </p>
+
+          <ng-container *ngIf="!(evidenceStorageDisabled$ | async)">
+            <ul class="evidence-list" *ngIf="(evidences$ | async)?.length; else noEvidence">
+              <li class="evidence" *ngFor="let e of evidences$ | async"
+                  [class.removing]="(removingEvidenceId$ | async) === e.id">
+                <mat-icon class="evidence__icon" aria-hidden="true">{{ evidenceIcon(e.contentType) }}</mat-icon>
+                <div class="evidence__body">
+                  <a class="evidence__name" *ngIf="e.url; else noLink"
+                     [href]="e.url" target="_blank" rel="noopener noreferrer">
+                    {{ e.originalFilename || e.id }}
+                  </a>
+                  <ng-template #noLink>
+                    <span class="evidence__name">{{ e.originalFilename || e.id }}</span>
+                  </ng-template>
+                  <span class="evidence__meta">
+                    {{ formatSize(e.sizeBytes) }} · {{ e.createdAt | date:'short' }}
+                  </span>
+                </div>
+                <button mat-icon-button color="warn" type="button"
+                        *ngIf="!isTerminal(c.status)"
+                        [disabled]="(removingEvidenceId$ | async) === e.id"
+                        (click)="removeEvidence(e)"
+                        i18n-matTooltip="@@capa.evidence.remove-tooltip" matTooltip="Retirer cette preuve"
+                        [attr.aria-label]="'Retirer la preuve ' + (e.originalFilename || e.id)">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </li>
+            </ul>
+            <ng-template #noEvidence>
+              <p class="empty" *ngIf="!(evidencesLoading$ | async)" i18n="@@capa.evidence.empty">
+                Aucune preuve jointe. Un dossier clos sans preuve s'affirme efficace sans le démontrer.
+              </p>
+            </ng-template>
+
+            <input type="file" class="hidden-file" #evidenceInput
+                   accept="application/pdf,image/jpeg,image/png,image/webp,image/heic,.docx,.xlsx"
+                   (change)="onEvidenceSelected($event)"
+                   aria-hidden="true" tabindex="-1">
+            <button mat-stroked-button color="primary" type="button" class="add-evidence-btn"
+                    *ngIf="canAddEvidence(c.status)"
+                    [disabled]="uploadingEvidence$ | async"
+                    (click)="triggerEvidencePicker(evidenceInput)">
+              <mat-icon aria-hidden="true">attach_file</mat-icon>
+              <span i18n="@@capa.evidence.add">Joindre une preuve</span>
+            </button>
+
+            <!-- La raison du verrou est énoncée, pas découverte au clic. -->
+            <p class="locked" *ngIf="!canAddEvidence(c.status) && isTerminal(c.status)"
+               i18n="@@capa.evidence.locked-closed">
+              Le dossier est clos : ses preuves restent consultables, mais ne changent plus.
+            </p>
+            <p class="locked" *ngIf="!canAddEvidence(c.status) && !isTerminal(c.status)"
+               i18n="@@capa.evidence.locked-full">
+              Dix preuves, c'est la limite : au-delà, un dossier ne se lit plus. Retirez-en une
+              pour en joindre une autre.
+            </p>
+          </ng-container>
+        </mat-card-content>
+      </mat-card>
+
     </ng-container>
   </ng-container>
 

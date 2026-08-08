@@ -1,0 +1,32 @@
+package com.openlab.qualitos.quality.capa;
+
+import java.time.Instant;
+import java.util.UUID;
+
+public final class CapaEvidenceDto {
+
+    private CapaEvidenceDto() {}
+
+    /** Réponse de dépôt (POST) : sans URL présignée, le client relit par le GET. */
+    public record Response(
+            UUID id,
+            UUID capaId,
+            String contentType,
+            long sizeBytes,
+            String originalFilename,
+            UUID uploadedBy,
+            Instant createdAt
+    ) {}
+
+    /** Élément de liste (GET) : porte une URL de lecture à durée de vie courte. */
+    public record ListItem(
+            UUID id,
+            UUID capaId,
+            String contentType,
+            long sizeBytes,
+            String originalFilename,
+            UUID uploadedBy,
+            Instant createdAt,
+            String url
+    ) {}
+}

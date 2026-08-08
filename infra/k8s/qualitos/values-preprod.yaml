@@ -35,6 +35,14 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    # Le proxy plafonne les corps de requête à 1 Mo par défaut. L'API accepte des
+    # pièces jointes jusqu'à 10 Mo (photos de NC, preuves CAPA) : sans ce
+    # relèvement, elles seraient refusées par nginx AVANT d'atteindre
+    # l'application, avec un 413 que rien ne rattacherait à sa cause — la même
+    # panne silencieuse et en amont que la règle 911100 du pare-feu.
+    # 12 Mo, et non 10 : l'enveloppe multipart s'ajoute au fichier. La borne qui
+    # fait foi reste celle de l'application, qui répond un 413 explicite.
+    nginx.ingress.kubernetes.io/proxy-body-size: 12m
     # Exclusion ModSecurity STRICTEMENT limitée à la configuration runtime de la
     # SPA. Le cluster active OWASP CRS globalement (ConfigMap du contrôleur), et
     # CRS 4.22 refuse GET /<locale>/assets/config.json avec un score d'anomalie
@@ -72,6 +80,13 @@ ingress:
   tls:
     enabled: true
     secretName: qualitos-preprod-tls
+
+# Route publique de LECTURE des pièces jointes, vers le MinIO déployé par
+# deploy.sh. Le bucket est privé : seule une URL présignée, valable quinze
+# minutes, ouvre un objet. Sans cette route, les preuves seraient déposées et
+# stockées correctement, mais aucun lien ne les ouvrirait.
+objectStorage:
+  enabled: true
 
 # Un seul réplica partout : la machine héberge déjà six autres projets, et le
 # disque est occupé à 80 %. La préproduction sert à valider un déploiement, pas
@@ -111,10 +126,27 @@ services:
       AI_TOKEN_URI: https://preprod.qualitos.openlabconsulting.com/auth/realms/qualitos/protocol/openid-connect/token
       AI_CLIENT_ID: api-quality-engine-ai
       QUALITOS_KAFKA_ENABLED: "false"
+      # Stockage objet des pièces jointes (photos de NC §4.3, preuves CAPA §4.2).
+      # Tant qu'il est coupé, les deux répondent 503 : l'écran annonce alors que
+      # le stockage est désactivé sur cet environnement — franc, mais muet.
+      #
+      # DEUX endpoints, et ce n'est pas une redondance. Les écritures partent du
+      # POD et visent le service interne. Les lectures sont ouvertes par le
+      # NAVIGATEUR : leur URL présignée doit porter l'hôte public, sans quoi elle
+      # serait signée correctement et pourtant inouvrable, sans qu'aucune erreur
+      # ne remonte côté serveur. La signature couvrant l'hôte, on ne peut pas
+      # corriger l'URL après coup.
+      STORAGE_S3_ENABLED: "true"
+      STORAGE_S3_ENDPOINT: http://minio.qualitos-preprod.svc.cluster.local:9000
+      STORAGE_S3_PUBLIC_ENDPOINT: https://preprod.qualitos.openlabconsulting.com
+      STORAGE_S3_BUCKET: qualitos-evidence
     # Second Secret : porte AI_CLIENT_SECRET, renseigne par deploy.sh depuis
     # Keycloak. Separe du premier pour que le secret du client de service ne se
     # melange pas aux identifiants de base.
-    extraSecretRefs: [qualitos-api-quality-engine-ai]
+    # Troisième Secret : les clés du stockage objet, dérivées du secret MinIO par
+    # deploy.sh. Séparé pour la même raison — faire tourner une clé de stockage
+    # ne doit pas obliger à toucher aux mots de passe de base.
+    extraSecretRefs: [qualitos-api-quality-engine-ai, qualitos-api-quality-engine-storage]
   api-iot-hub:
     replicas: 1
     env:

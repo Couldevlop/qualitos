@@ -131,3 +131,64 @@
 
 /* ANO-011 — avancement des actions */
 .actions-table .action-done { color: var(--qos-success, #16a34a); vertical-align: middle; }
+
+/* --- Preuves du dossier (§4.2, ISO 9001 §10.2) --------------------------------
+   La liste doit se lire d'un coup d'œil : une icône qui dit la nature du
+   document, son nom cliquable, son poids et sa date en retrait. */
+.evidences-card .evidence-count {
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--qos-text-muted, #6b7280);
+}
+
+.evidences-card .hint {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--qos-text-muted, #6b7280);
+}
+
+.evidence-list {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.evidence {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--qos-border, rgba(0, 0, 0, 0.12));
+  border-radius: var(--qos-radius-md, 10px);
+  background: var(--qos-bg-elevated, #fff);
+}
+
+/* La ligne en cours de retrait s'efface : l'action est engagée, pas encore acquise. */
+.evidence.removing { opacity: 0.5; pointer-events: none; }
+
+.evidence__icon { color: var(--qos-text-muted, #6b7280); flex: none; }
+
+.evidence__body { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+
+.evidence__name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.evidence__meta { font-size: 12px; color: var(--qos-text-muted, #6b7280); }
+
+/* L'input natif reste dans le DOM (le bouton le déclenche) mais hors du flux. */
+.hidden-file { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+.evidences-card .storage-off,
+.evidences-card .locked {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--qos-text-muted, #6b7280);
+}

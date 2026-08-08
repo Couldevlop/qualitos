@@ -53,6 +53,22 @@ ingress:
     secretName: qualitos-tls
 
 # -----------------------------------------------------------------------------
+# Stockage objet des pièces jointes (photos de NC §4.3, preuves CAPA §4.2).
+# Le MinIO lui-même est une dépendance d'état (infra/k8s/deps/50-minio.yaml),
+# pas un service du chart : le chart n'a qu'à publier la route de LECTURE.
+#
+# OFF par défaut : un environnement sans stockage répond 503 sur les pièces
+# jointes, et l'écran le dit. Exposer une route vers un service absent
+# produirait un 503 nginx, moins parlant.
+# -----------------------------------------------------------------------------
+objectStorage:
+  enabled: false
+  # Donne aussi son nom au chemin public (accès S3 « path-style »).
+  bucket: qualitos-evidence
+  serviceName: minio
+  servicePortName: s3
+
+# -----------------------------------------------------------------------------
 # Déploiements applicatifs — un bloc = un Deployment + Service générés par les
 # templates. `secretRef` désigne un Secret K8s (créé par ESO) injecté en envFrom.
 # -----------------------------------------------------------------------------
