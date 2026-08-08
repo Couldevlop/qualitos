@@ -29,6 +29,26 @@ class GlobalExceptionHandlerTest {
         assertThat(pd.getDetail()).doesNotContain("does-not-exist");
     }
 
+    /**
+     * Une panne du stockage objet — bucket absent, identifiants refusés, service
+     * injoignable — tombait dans l'attrape-tout et sortait en « erreur interne ».
+     * Ce diagnostic désigne l'application alors que la coupure est ailleurs, et
+     * c'est exactement ce qui s'est produit au premier déploiement réel.
+     */
+    @Test
+    void objectStorageFailure_mapsTo503_withoutLeakingInternals() {
+        ProblemDetail pd = handler.handleObjectStorageFailure(
+                software.amazon.awssdk.services.s3.model.NoSuchBucketException.builder()
+                        .message("The specified bucket does not exist (bucket: qualitos-evidence)")
+                        .build());
+
+        assertThat(pd.getStatus()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE.value());
+        assertThat(pd.getTitle()).isEqualTo("Binary Storage Unavailable");
+        assertThat(pd.getType().toString()).endsWith("/storage-unavailable");
+        // Le détail nomme des ressources internes : il reste au journal.
+        assertThat(pd.getDetail()).doesNotContain("qualitos-evidence");
+    }
+
     @Test
     void roadmapStageNotFound_mapsTo404() {
         ProblemDetail pd = handler.handleRoadmapStageNotFound(

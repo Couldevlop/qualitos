@@ -151,17 +151,32 @@ fichier. La borne qui fait foi reste celle de l'application.
 | `GET /api/v1/nc/{id}/photos` → 200     | `GET /api/v1/capa/cases/{id}/evidences` → 200      |
 | `DELETE /api/v1/nc/{id}/photos/{pid}` → 204 | `DELETE /api/v1/capa/cases/{id}/evidences/{eid}` → 204 |
 
-## À vérifier au premier usage réel sur un cluster
+## Ce que le premier déploiement réel a appris
 
-Deux points ne peuvent pas être éprouvés hors cluster, et se manifesteraient par
-un refus **en amont de l'application** — le diagnostic le plus trompeur :
+**Le travail d'initialisation restait bloqué**, sans que rien ne le signale.
+`mc` écrit sa configuration dans `$HOME/.mc` ; l'image porte un `/root` en
+`dr-xr-x---`, et le conteneur — bien qu'exécuté en root — s'est vu retirer
+**toutes** les capacités, donc `CAP_DAC_OVERRIDE`, précisément ce qui permet à
+root d'ignorer les permissions. D'où `mkdir /root/.mc: permission denied`, en
+boucle. Le durcissement est conservé ; c'est `MC_CONFIG_DIR=/tmp/.mc` qui règle
+le problème. La boucle d'attente est désormais **bornée à vingt essais** : une
+boucle infinie ne distingue pas « pas encore prêt » de « ne le sera jamais ».
 
-1. **Dépôt** : ModSecurity inspecte le corps des requêtes. Si un dépôt revient en
-   403 sans trace applicative, la règle CRS en cause se lit dans les journaux du
-   contrôleur ; l'exclusion se pose sur l'ingress applicatif, ciblée par identifiant.
-2. **Lecture** : une URL présignée porte sa signature en paramètres. Si une
-   lecture revient en 403 sans atteindre MinIO, l'exclusion se pose sur
-   `qualitos-object-storage`, et là seulement.
+**Une panne de stockage sortait en 500.** Le bucket n'existant pas, chaque dépôt
+— photo de NC comme preuve CAPA — répondait « erreur interne », ce qui désigne
+l'application alors que la coupure est ailleurs. Les exceptions du SDK S3 sont
+maintenant traduites en **503** `storage-unavailable`, comme un stockage
+désactivé : pour l'utilisateur c'est la même chose, et l'écran sait déjà le dire.
+
+**ModSecurity ne bloque pas le dépôt** : un `POST` multipart a bien atteint
+l'application (elle a répondu, en 500 puis en 503). Reste à confirmer sur un
+corps proche de 10 Mo, et sur une lecture présignée. En cas de 403 sans trace
+applicative, l'exclusion CRS se pose sur l'ingress applicatif pour le dépôt, et
+sur `qualitos-object-storage` — et là seulement — pour la lecture.
+
+**Le refus d'écriture sur la route publique se présente en 503**, non en 403 :
+le contrôleur sert la page d'erreur par son backend par défaut. Le code est
+trompeur, mais la requête n'atteint jamais MinIO.
 
 ## Production
 

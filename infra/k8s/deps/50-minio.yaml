@@ -145,6 +145,17 @@ spec:
           envFrom:
             - secretRef:
                 name: qualitos-minio
+          env:
+            # mc écrit sa configuration dans $HOME/.mc. Or l'image porte un
+            # /root en dr-xr-x--- : sans le bit d'écriture. Le conteneur tourne
+            # pourtant en root — mais on lui retire TOUTES les capacités, donc
+            # CAP_DAC_OVERRIDE, qui est précisément ce qui permet à root de
+            # passer outre les permissions. Constaté en préproduction : « mkdir
+            # /root/.mc: permission denied », en boucle, pendant que le reste du
+            # déploiement paraissait sain. Le durcissement est conservé ; c'est
+            # le répertoire de configuration qu'on déplace vers /tmp (1777).
+            - name: MC_CONFIG_DIR
+              value: /tmp/.mc
           # `--ignore-existing` rend l'opération rejouable : le déploiement passe
           # plusieurs fois par ici, il ne doit y avoir de bruit qu'à la première.
           command:
@@ -152,8 +163,21 @@ spec:
             - -c
             - |
               set -e
+              # Attente BORNÉE. Une boucle infinie ne distingue pas « pas encore
+              # démarré » de « ne démarrera jamais » : elle a transformé une
+              # erreur permanente et parfaitement lisible en une attente muette
+              # de quarante minutes, pendant laquelle l'application semblait
+              # déployée mais ne pouvait rien stocker. Au bout de vingt essais,
+              # on échoue en montrant la dernière erreur.
+              i=0
               until mc alias set qos http://minio:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"; do
-                echo "minio pas encore joignable, nouvelle tentative dans 3 s"
+                i=$((i + 1))
+                if [ "$i" -ge 20 ]; then
+                  echo "ÉCHEC : minio injoignable ou refus d'authentification après 20 essais (60 s)."
+                  echo "L'erreur ci-dessus est la cause : ce n'est pas un problème de délai."
+                  exit 1
+                fi
+                echo "minio pas encore joignable ($i/20), nouvelle tentative dans 3 s"
                 sleep 3
               done
               mc mb --ignore-existing qos/qualitos-evidence

@@ -43,6 +43,11 @@ metadata:
       # écriture non signée, mais cette barrière ne dépend d'aucune configuration
       # du stockage : même un bucket rendu public par erreur resterait impossible
       # à modifier depuis l'extérieur.
+      #
+      # Le refus se PRÉSENTE en 503, et non en 403 : le contrôleur intercepte la
+      # page d'erreur du refus et la sert par son backend par défaut. Vérifié en
+      # préproduction sur PUT, POST et DELETE. Le code est trompeur — il évoque
+      # un stockage tombé — mais l'écriture, elle, n'atteint jamais MinIO.
       limit_except GET HEAD OPTIONS { deny all; }
 
       # Contenu déposé par des utilisateurs, servi sur l'ORIGINE de
