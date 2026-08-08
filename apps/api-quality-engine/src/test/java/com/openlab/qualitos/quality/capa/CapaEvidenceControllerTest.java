@@ -164,19 +164,19 @@ class CapaEvidenceControllerTest {
     @Test
     @WithMockUser
     void retrait_retourne204() throws Exception {
-        doNothing().when(service).delete(CAPA, EVIDENCE);
+        doNothing().when(service).delete(CAPA, EVIDENCE, null);
 
         mockMvc.perform(delete("/api/v1/capa/cases/{id}/evidences/{evidenceId}", CAPA, EVIDENCE)
                         .with(csrf()))
                 .andExpect(status().isNoContent());
 
-        verify(service).delete(CAPA, EVIDENCE);
+        verify(service).delete(CAPA, EVIDENCE, null);
     }
 
     @Test
     @WithMockUser
     void retrait_dUnePieceInconnue_retourne404() throws Exception {
-        doThrow(new CapaEvidenceNotFoundException(EVIDENCE)).when(service).delete(CAPA, EVIDENCE);
+        doThrow(new CapaEvidenceNotFoundException(EVIDENCE)).when(service).delete(CAPA, EVIDENCE, null);
 
         mockMvc.perform(delete("/api/v1/capa/cases/{id}/evidences/{evidenceId}", CAPA, EVIDENCE)
                         .with(csrf()))
@@ -188,7 +188,7 @@ class CapaEvidenceControllerTest {
     @WithMockUser
     void retrait_surUnDossierClos_retourne409() throws Exception {
         doThrow(new CapaStateException("Cannot change evidence on a CLOSED CAPA"))
-                .when(service).delete(CAPA, EVIDENCE);
+                .when(service).delete(CAPA, EVIDENCE, null);
 
         mockMvc.perform(delete("/api/v1/capa/cases/{id}/evidences/{evidenceId}", CAPA, EVIDENCE)
                         .with(csrf()))

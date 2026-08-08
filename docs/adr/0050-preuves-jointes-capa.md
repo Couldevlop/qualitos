@@ -40,7 +40,12 @@ quand le stockage est coupé. La question n'était donc pas *comment stocker*, m
    est falsifiable. L'extension de la clé d'objet vient du type **validé**, jamais du
    nom de fichier — qui peut porter une traversée de chemin. Le tenant vient du jeton
    (§18.2 #2).
-7. **Ordre d'écriture** : la ligne de métadonnées d'abord, le binaire ensuite. Si le
+7. **Versement et retrait inscrits au journal chaîné du tenant** (§11.5) :
+   `capa.evidence.uploaded` / `capa.evidence.removed`, avec l'auteur, le nom d'origine
+   et le poids — jamais la clé d'objet, qui donnerait un chemin de stockage dans un
+   journal qui s'exporte. Le retrait est la seule opération qui fait disparaître une
+   pièce d'un dossier d'audit : sans trace, le dossier ne dirait plus ce qu'il a porté.
+8. **Ordre d'écriture** : la ligne de métadonnées d'abord, le binaire ensuite. Si le
    `put` échoue, la transaction annule la ligne — aucune métadonnée orpheline. À la
    suppression, l'ordre est inverse pour la même raison. C'est déjà le comportement des
    photos de NC.
@@ -73,10 +78,18 @@ déjà occupé à 77 %.
   quitter la plateforme.
 - ✅ Aucune infrastructure nouvelle : même stockage objet, même adaptateur, mêmes codes
   de refus que les photos de NC. Activer le stockage ranime les deux d'un coup.
-- ⚠ **Le stockage objet doit être activé sur l'environnement** (`STORAGE_S3_ENABLED`).
-  Tant qu'il ne l'est pas, toutes les routes répondent 503 et l'écran l'énonce — la
-  section indique que le stockage est coupé au lieu d'afficher une erreur brute.
-  L'activation en préproduction et en production reste à faire.
+- ✅ Le stockage objet est activé par le déploiement (MinIO en dépendance d'état,
+  identifiants générés dans le cluster, bucket créé, route publique de lecture).
+  Tant qu'il ne l'est pas sur un environnement, toutes les routes répondent 503 et
+  l'écran l'énonce au lieu d'afficher une erreur brute.
+- ⚠ La lecture se fait par URL présignée, servie sur l'ORIGINE de l'application.
+  Le contenu déposé par des utilisateurs y est donc servi inerte
+  (`Content-Security-Policy: sandbox`, `nosniff`, `no-referrer`, `no-store`) et la
+  route est en lecture seule au niveau du proxy. Une URL présignée reste un jeton
+  porteur pendant quinze minutes : qui l'obtient ouvre l'objet.
+- ⚠ Deux endpoints à tenir cohérents (interne pour l'écriture, public pour la
+  signature de lecture) : une URL signée pour l'hôte interne serait valide et
+  pourtant inouvrable, sans erreur côté serveur.
 - ⚠ Un docx/xlsx versé en preuve peut diverger de la version montrée en audit : la
   signature binaire atteste du format, pas de l'immuabilité du contenu.
 - ⚠ La suppression d'une preuve relève de la règle générique DELETE sur `/api/v1/**`
@@ -84,9 +97,12 @@ déjà occupé à 77 %.
 
 ## Tests d'invariant
 
-- `CapaEvidenceServiceTest` (22 cas) : les trois bornes, les signatures binaires par
+- `CapaEvidenceServiceTest` (27 cas) : les trois bornes, les signatures binaires par
   format, le verrou d'état sur dossier clos et rejeté, l'isolation par tenant,
-  l'ordre d'écriture, la neutralisation du nom de fichier.
+  l'ordre d'écriture, la neutralisation du nom de fichier, et l'inscription au
+  journal — y compris l'absence de trace quand le dépôt est refusé.
+- `S3ObjectStorageTest` (4 cas) : l'URL de lecture est signée pour l'hôte PUBLIC,
+  et retombe sur l'hôte interne quand aucun n'est déclaré.
 - `CapaEvidenceControllerTest` (13 cas) : les six codes de refus — 400, 404, 409, 413,
   503 — et le 201 nominal.
 - Front (21 cas) : dépôt multipart sous le champ `file`, liste, retrait, et les trois

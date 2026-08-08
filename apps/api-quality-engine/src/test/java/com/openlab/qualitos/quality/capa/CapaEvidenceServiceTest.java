@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.capa;
 
+import com.openlab.qualitos.quality.auditlog.AuditEventDto;
+import com.openlab.qualitos.quality.auditlog.AuditEventService;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import com.openlab.qualitos.quality.nonconformity.storage.ObjectStorage;
@@ -44,6 +46,7 @@ class CapaEvidenceServiceTest {
     @Mock CapaCaseRepository caseRepo;
     @Mock ObjectProvider<ObjectStorage> storageProvider;
     @Mock ObjectStorage storage;
+    @Mock AuditEventService auditEvents;
 
     private CapaEvidenceService service;
 
@@ -63,7 +66,7 @@ class CapaEvidenceServiceTest {
     void setUp() {
         TenantContext.setTenantId(TENANT.toString());
         lenient().when(storageProvider.getIfAvailable()).thenReturn(storage);
-        service = new CapaEvidenceService(evidenceRepo, caseRepo, storageProvider);
+        service = new CapaEvidenceService(evidenceRepo, caseRepo, storageProvider, auditEvents);
     }
 
     @AfterEach
@@ -247,7 +250,7 @@ class CapaEvidenceServiceTest {
         when(caseRepo.findByIdAndTenantId(CAPA, TENANT))
                 .thenReturn(Optional.of(capa(CapaStatus.REJECTED)));
 
-        assertThatThrownBy(() -> service.delete(CAPA, UUID.randomUUID()))
+        assertThatThrownBy(() -> service.delete(CAPA, UUID.randomUUID(), ACTOR))
                 .isInstanceOf(CapaStateException.class);
         verify(evidenceRepo, never()).delete(any());
     }
@@ -300,7 +303,7 @@ class CapaEvidenceServiceTest {
         when(evidenceRepo.findByIdAndTenantIdAndCapaId(e.getId(), TENANT, CAPA))
                 .thenReturn(Optional.of(e));
 
-        service.delete(CAPA, e.getId());
+        service.delete(CAPA, e.getId(), ACTOR);
 
         var order = org.mockito.Mockito.inOrder(evidenceRepo, storage);
         order.verify(evidenceRepo).delete(e);
@@ -314,9 +317,99 @@ class CapaEvidenceServiceTest {
         when(evidenceRepo.findByIdAndTenantIdAndCapaId(inconnu, TENANT, CAPA))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.delete(CAPA, inconnu))
+        assertThatThrownBy(() -> service.delete(CAPA, inconnu, ACTOR))
                 .isInstanceOf(CapaEvidenceNotFoundException.class);
         verifyNoInteractions(storage);
+    }
+
+    // --- journal d'audit (§11.5) -----------------------------------------------------------
+    // Le retrait d'une preuve est la seule opération qui fait DISPARAÎTRE une pièce
+    // d'un dossier d'audit. Sans trace, le dossier ne dirait plus ce qu'il a porté,
+    // et l'écran promet pourtant à l'utilisateur que ce retrait laisse une marque.
+
+    @Test
+    void inscrit_leVersementAuJournalDuTenant() {
+        openCase();
+        savedEvidenceEchoesInput();
+
+        CapaEvidenceDto.Response res = service.upload(
+                CAPA, "application/pdf", "relevé 3 mois.pdf", PDF, ACTOR);
+
+        ArgumentCaptor<AuditEventDto.RecordEventRequest> req =
+                ArgumentCaptor.forClass(AuditEventDto.RecordEventRequest.class);
+        verify(auditEvents).recordForTenant(eq(TENANT), req.capture());
+        assertThat(req.getValue().action()).isEqualTo("capa.evidence.uploaded");
+        assertThat(req.getValue().resourceType()).isEqualTo("capa_evidence");
+        assertThat(req.getValue().resourceId()).isEqualTo(res.id());
+        assertThat(req.getValue().actorUserId()).isEqualTo(ACTOR);
+        assertThat(req.getValue().payloadJson())
+                .contains("\"contentType\":\"application/pdf\"")
+                .contains("\"sizeBytes\":" + PDF.length)
+                // Le nom d'origine est assaini avant d'être journalisé.
+                .contains("relev__3_mois.pdf")
+                // La clé d'objet n'a rien à faire dans un journal qui s'exporte.
+                .doesNotContain("tenants/");
+    }
+
+    @Test
+    void inscrit_leRetraitAuJournalDuTenant() {
+        openCase();
+        CapaEvidence e = evidence();
+        when(evidenceRepo.findByIdAndTenantIdAndCapaId(e.getId(), TENANT, CAPA))
+                .thenReturn(Optional.of(e));
+
+        service.delete(CAPA, e.getId(), ACTOR);
+
+        ArgumentCaptor<AuditEventDto.RecordEventRequest> req =
+                ArgumentCaptor.forClass(AuditEventDto.RecordEventRequest.class);
+        verify(auditEvents).recordForTenant(eq(TENANT), req.capture());
+        assertThat(req.getValue().action()).isEqualTo("capa.evidence.removed");
+        assertThat(req.getValue().resourceId()).isEqualTo(e.getId());
+        assertThat(req.getValue().actorUserId()).isEqualTo(ACTOR);
+        assertThat(req.getValue().payloadJson()).contains("releve.pdf");
+    }
+
+    @Test
+    void nInscritRien_quandLeDepotEstRefuse() {
+        openCase();
+
+        assertThatThrownBy(() -> service.upload(CAPA, "application/x-msdownload", "vir.exe", PDF, ACTOR))
+                .isInstanceOf(CapaEvidenceValidationException.class);
+
+        verifyNoInteractions(auditEvents);
+    }
+
+    @Test
+    void journalise_sansActeur_quandLeJetonNEnPorteAucun() {
+        openCase();
+        savedEvidenceEchoesInput();
+
+        service.upload(CAPA, "application/pdf", "releve.pdf", PDF, null);
+
+        ArgumentCaptor<AuditEventDto.RecordEventRequest> req =
+                ArgumentCaptor.forClass(AuditEventDto.RecordEventRequest.class);
+        verify(auditEvents).recordForTenant(eq(TENANT), req.capture());
+        // Mieux vaut un acteur système qu'un acteur inventé, qu'un audit
+        // prendrait pour argent comptant.
+        assertThat(req.getValue().actorType()).isEqualTo(com.openlab.qualitos.quality.auditlog.ActorType.SYSTEM);
+        assertThat(req.getValue().actorUserId()).isNull();
+    }
+
+    @Test
+    void echappe_lesGuillemetsDUnNomDeFichierDansLeJournal() {
+        openCase();
+        CapaEvidence e = evidence();
+        // Le nom est assaini à l'entrée ; le journal ne doit pas en dépendre.
+        e.setOriginalFilename("re\"leve\\.pdf");
+        when(evidenceRepo.findByIdAndTenantIdAndCapaId(e.getId(), TENANT, CAPA))
+                .thenReturn(Optional.of(e));
+
+        service.delete(CAPA, e.getId(), ACTOR);
+
+        ArgumentCaptor<AuditEventDto.RecordEventRequest> req =
+                ArgumentCaptor.forClass(AuditEventDto.RecordEventRequest.class);
+        verify(auditEvents).recordForTenant(eq(TENANT), req.capture());
+        assertThat(req.getValue().payloadJson()).contains("re\\\"leve\\\\.pdf");
     }
 
     // --- isolation et disponibilité -------------------------------------------------------

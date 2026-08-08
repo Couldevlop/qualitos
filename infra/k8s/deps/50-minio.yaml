@@ -1,0 +1,198 @@
+# MinIO — stockage objet S3-compatible des pièces jointes (CLAUDE.md §4.2, §4.3).
+#
+# Porte les photos de non-conformité et les preuves des dossiers CAPA. Sans lui,
+# les deux répondent 503 : l'adaptateur S3 n'est pas instancié et l'écran annonce
+# que le stockage est désactivé sur cet environnement.
+#
+# UN SEUL BUCKET pour les deux usages : les clés sont déjà tenantisées et
+# préfixées par domaine (`tenants/{tenant}/nc/…`, `tenants/{tenant}/capa/…`).
+# Deux buckets imposeraient deux jeux d'identifiants et deux routes publiques
+# pour la même politique d'accès.
+#
+# LECTURE PAR URL PRÉSIGNÉE, jamais par accès public : le bucket reste privé, et
+# c'est la signature — valable quinze minutes — qui ouvre l'objet. La route
+# publique est donc exposée sans risque : sans signature valide, MinIO refuse.
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minio-data
+  labels:
+    app.kubernetes.io/name: minio
+    app.kubernetes.io/part-of: qualitos
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: local-path
+  resources:
+    requests:
+      # Volontairement modeste : la plateforme borne déjà ce qu'elle accepte
+      # (10 Mo par pièce, 25 Mo par dossier CAPA), et le disque du nœud est
+      # partagé avec d'autres projets. Une préproduction n'archive pas.
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio
+  labels:
+    app.kubernetes.io/name: minio
+    app.kubernetes.io/part-of: qualitos
+spec:
+  selector:
+    app.kubernetes.io/name: minio
+  ports:
+    - name: s3
+      port: 9000
+      targetPort: s3
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio
+  labels:
+    app.kubernetes.io/name: minio
+    app.kubernetes.io/part-of: qualitos
+spec:
+  replicas: 1
+  strategy:
+    # Volume ReadWriteOnce : deux pods ne peuvent pas le monter simultanément,
+    # même contrainte que Postgres et Qdrant.
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: minio
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: minio
+        app.kubernetes.io/part-of: qualitos
+    spec:
+      containers:
+        - name: minio
+          # Version FIGÉE, comme les autres dépendances : `latest` sur un registre
+          # est une cible mouvante, et l'on veut savoir ce qui tourne.
+          image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+          args: ["server", "/data", "--console-address", ":9001"]
+          ports:
+            - name: s3
+              containerPort: 9000
+            - name: console
+              containerPort: 9001
+          envFrom:
+            # Identifiants générés dans le cluster par deploy.sh, qui ne les en
+            # fait jamais sortir (§18.2.3).
+            - secretRef:
+                name: qualitos-minio
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            # runAsNonRoot n'est PAS forcé ici, contrairement aux services de la
+            # plateforme. Vérifié sur cette version : lancée avec un UID non nul,
+            # elle s'arrête au démarrage sur « Unable to initialize backend: file
+            # access denied », quelles que soient les permissions du volume — y
+            # compris 777 et propriétaire aligné. Les capacités restent toutes
+            # retirées et l'élévation de privilège interdite.
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          readinessProbe:
+            httpGet:
+              path: /minio/health/ready
+              port: s3
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /minio/health/live
+              port: s3
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            failureThreshold: 6
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits: { cpu: 500m, memory: 512Mi }
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: minio-data
+---
+# Création du bucket. MinIO ne le crée pas à la demande et l'adaptateur S3 non
+# plus : sans ce travail, le premier dépôt échouerait sur « NoSuchBucket » — une
+# panne à l'usage, longtemps après le déploiement.
+#
+# Un Job est immuable : deploy.sh le supprime avant de le réappliquer, sinon la
+# deuxième exécution échouerait sur un champ non modifiable.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: minio-init
+  labels:
+    app.kubernetes.io/name: minio-init
+    app.kubernetes.io/part-of: qualitos
+spec:
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: minio-init
+        app.kubernetes.io/part-of: qualitos
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: mc
+          image: minio/mc:RELEASE.2025-08-13T08-35-41Z
+          envFrom:
+            - secretRef:
+                name: qualitos-minio
+          # `--ignore-existing` rend l'opération rejouable : le déploiement passe
+          # plusieurs fois par ici, il ne doit y avoir de bruit qu'à la première.
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              until mc alias set qos http://minio:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"; do
+                echo "minio pas encore joignable, nouvelle tentative dans 3 s"
+                sleep 3
+              done
+              mc mb --ignore-existing qos/qualitos-evidence
+              # Le bucket reste PRIVÉ : la lecture passe exclusivement par une URL
+              # présignée à durée de vie courte. Une politique publique rendrait
+              # toute preuve accessible à qui devine son chemin.
+              mc anonymous set none qos/qualitos-evidence
+
+              # MOINDRE PRIVILÈGE. L'application ne travaille PAS avec le compte
+              # racine : un engine compromis pourrait sinon rendre le bucket
+              # public, créer des comptes, ou effacer le stockage entier. Son
+              # compte à elle ne sait que lire, écrire et supprimer des objets
+              # DANS ce bucket — et pas même les lister, puisque l'inventaire des
+              # pièces vit en base et non dans le stockage. Un porteur de cette
+              # clé ne peut donc pas énumérer les preuves des autres tenants.
+              cat > /tmp/policy.json <<'POLICY'
+              {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
+                    "Resource": ["arn:aws:s3:::qualitos-evidence/*"]
+                  }
+                ]
+              }
+              POLICY
+              mc admin policy create qos qualitos-evidence-rw /tmp/policy.json
+              mc admin user add qos "$STORAGE_S3_ACCESS_KEY" "$STORAGE_S3_SECRET_KEY"
+              # Au deuxième passage, la politique est déjà attachée et la commande
+              # le signale par une erreur. Ce n'en est pas une : le résultat voulu
+              # est atteint. On ne masque que ce cas, la sortie restant visible.
+              mc admin policy attach qos qualitos-evidence-rw --user "$STORAGE_S3_ACCESS_KEY" \
+                || echo "politique déjà attachée, rien à faire"
+              echo "bucket qualitos-evidence prêt, compte applicatif restreint en place"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests: { cpu: 50m, memory: 64Mi }
+            limits: { cpu: 200m, memory: 128Mi }

@@ -26,6 +26,10 @@ import java.time.Duration;
  *
  * <p>Credentials/endpoint/bucket viennent exclusivement de {@link StorageProperties}
  * (variables d'environnement) : aucun secret par défaut en dur (§18.2.3).</p>
+ *
+ * <p>Deux endpoints, et non un seul : les écritures partent du serveur et visent
+ * le service interne ; les lectures présignées sont ouvertes par le navigateur et
+ * doivent donc porter l'hôte public (cf. {@link StorageProperties#resolvePresignEndpoint()}).</p>
  */
 @Component
 @ConditionalOnProperty(prefix = "qualitos.storage.s3", name = "enabled", havingValue = "true")
@@ -41,6 +45,12 @@ public class S3ObjectStorage implements ObjectStorage {
         StaticCredentialsProvider creds = StaticCredentialsProvider.create(
                 AwsBasicCredentials.create(props.getAccessKey(), props.getSecretKey()));
         URI endpoint = URI.create(props.getEndpoint());
+        // L'URL présignée est ouverte par le NAVIGATEUR, pas par le serveur : elle
+        // doit donc être signée pour l'hôte public. Signer pour le service interne
+        // du cluster produirait une URL parfaitement valide et pourtant inouvrable,
+        // sans qu'aucune erreur ne remonte côté serveur. La signature couvrant
+        // l'hôte, on ne peut pas non plus réécrire l'URL après coup.
+        URI presignEndpoint = URI.create(props.resolvePresignEndpoint());
         S3Configuration s3cfg = S3Configuration.builder().pathStyleAccessEnabled(true).build();
 
         this.client = S3Client.builder()
@@ -50,7 +60,7 @@ public class S3ObjectStorage implements ObjectStorage {
                 .serviceConfiguration(s3cfg)
                 .build();
         this.presigner = S3Presigner.builder()
-                .endpointOverride(endpoint)
+                .endpointOverride(presignEndpoint)
                 .region(region)
                 .credentialsProvider(creds)
                 .serviceConfiguration(s3cfg)

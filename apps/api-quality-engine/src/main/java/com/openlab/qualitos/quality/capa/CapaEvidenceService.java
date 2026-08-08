@@ -1,5 +1,8 @@
 package com.openlab.qualitos.quality.capa;
 
+import com.openlab.qualitos.quality.auditlog.ActorType;
+import com.openlab.qualitos.quality.auditlog.AuditEventDto;
+import com.openlab.qualitos.quality.auditlog.AuditEventService;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import com.openlab.qualitos.quality.nonconformity.storage.ObjectStorage;
@@ -71,13 +74,16 @@ public class CapaEvidenceService {
     private final CapaEvidenceRepository evidenceRepository;
     private final CapaCaseRepository caseRepository;
     private final ObjectProvider<ObjectStorage> storageProvider;
+    private final AuditEventService auditEvents;
 
     public CapaEvidenceService(CapaEvidenceRepository evidenceRepository,
                                CapaCaseRepository caseRepository,
-                               ObjectProvider<ObjectStorage> storageProvider) {
+                               ObjectProvider<ObjectStorage> storageProvider,
+                               AuditEventService auditEvents) {
         this.evidenceRepository = evidenceRepository;
         this.caseRepository = caseRepository;
         this.storageProvider = storageProvider;
+        this.auditEvents = auditEvents;
     }
 
     public CapaEvidenceDto.Response upload(UUID capaId, String contentType, String originalFilename,
@@ -133,6 +139,8 @@ public class CapaEvidenceService {
         CapaEvidence saved = evidenceRepository.save(evidence);
 
         storage.put(key, normalizedType, content);
+        trace(tenantId, uploadedBy, "capa.evidence.uploaded", saved,
+                "Preuve versée au dossier CAPA " + capa.getId());
         return toResponse(saved);
     }
 
@@ -146,7 +154,7 @@ public class CapaEvidenceService {
                 .toList();
     }
 
-    public void delete(UUID capaId, UUID evidenceId) {
+    public void delete(UUID capaId, UUID evidenceId, UUID removedBy) {
         UUID tenantId = requireTenantId();
         ObjectStorage storage = requireStorage();
         loadOpenCase(capaId, tenantId);
@@ -159,6 +167,53 @@ public class CapaEvidenceService {
         // dossier reste cohérent plutôt que de pointer vers un objet disparu.
         evidenceRepository.delete(evidence);
         storage.delete(evidence.getObjectKey());
+        // Le retrait est tracé AVANT tout le reste dans l'ordre d'importance :
+        // c'est la seule opération qui fait disparaître une preuve d'un dossier
+        // d'audit. Sans trace, le dossier ne dirait plus ce qu'il a porté, et
+        // l'écran promet à l'utilisateur que ce retrait laisse une marque.
+        trace(tenantId, removedBy, "capa.evidence.removed", evidence,
+                "Preuve retirée du dossier CAPA " + capaId);
+    }
+
+    /**
+     * Inscrit l'opération au journal chaîné du tenant (§11.5). Le nom d'origine
+     * y figure — c'est ce qui permet de dire QUELLE pièce a été versée ou
+     * retirée — mais jamais la clé d'objet : elle donnerait un chemin de
+     * stockage dans un journal qui se relit et s'exporte.
+     */
+    private void trace(UUID tenantId, UUID actor, String action, CapaEvidence evidence, String summary) {
+        auditEvents.recordForTenant(tenantId, new AuditEventDto.RecordEventRequest(
+                null,
+                actor == null ? ActorType.SYSTEM : ActorType.USER,
+                actor,
+                action,
+                "capa_evidence",
+                evidence.getId(),
+                summary,
+                payload(evidence),
+                null,
+                null));
+    }
+
+    /** JSON minimal et construit à la main : trois champs, aucun sérialiseur à convoquer. */
+    private static String payload(CapaEvidence e) {
+        return "{\"capaId\":\"" + e.getCapaId()
+                + "\",\"contentType\":\"" + e.getContentType()
+                + "\",\"sizeBytes\":" + e.getSizeBytes()
+                + ",\"originalFilename\":" + jsonString(e.getOriginalFilename()) + "}";
+    }
+
+    /**
+     * Le nom d'origine est déjà assaini à l'entrée, mais un journal ne doit pas
+     * dépendre d'une hypothèse tenue ailleurs : les guillemets et les
+     * antislashs sont échappés ici aussi, faute de quoi un nom bien choisi
+     * casserait le JSON de la ligne.
+     */
+    private static String jsonString(String value) {
+        if (value == null) {
+            return "null";
+        }
+        return "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
     }
 
     // --- garde-fous ----------------------------------------------------------

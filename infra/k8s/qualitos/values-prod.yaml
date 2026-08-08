@@ -43,6 +43,13 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    # Le proxy plafonne les corps de requête à 1 Mo par défaut. L'API accepte des
+    # pièces jointes jusqu'à 10 Mo (photos de NC, preuves CAPA) : sans ce
+    # relèvement, elles seraient refusées par nginx AVANT d'atteindre
+    # l'application, avec un 413 sans rapport apparent avec sa cause. 12 Mo pour
+    # laisser place à l'enveloppe multipart ; la borne qui fait foi reste celle
+    # de l'application, qui répond un 413 explicite.
+    nginx.ingress.kubernetes.io/proxy-body-size: 12m
     # Exclusion ModSecurity STRICTEMENT limitée à la configuration runtime de la
     # SPA. Le cluster active OWASP CRS globalement (ConfigMap du contrôleur), et
     # CRS 4.22 refuse GET /<locale>/assets/config.json avec un score d'anomalie
@@ -74,6 +81,12 @@ ingress:
     enabled: true
     secretName: qualitos-tls
 
+# Route publique de LECTURE des pièces jointes, vers le MinIO déployé par
+# deploy.sh. Le bucket est privé : seule une URL présignée, valable quinze
+# minutes, ouvre un objet.
+objectStorage:
+  enabled: true
+
 services:
   web:
     # Configuration RUNTIME de la SPA. Sans elle, le bundle conserve les URL
@@ -103,8 +116,18 @@ services:
       AI_AUTH_MODE: bearer
       AI_TOKEN_URI: https://qualitos.openlabconsulting.com/auth/realms/qualitos/protocol/openid-connect/token
       AI_CLIENT_ID: api-quality-engine-ai
+      # Stockage objet des pièces jointes (photos de NC §4.3, preuves CAPA §4.2).
+      # DEUX endpoints : les écritures partent du pod vers le service interne,
+      # les lectures présignées sont ouvertes par le navigateur et doivent donc
+      # porter l'hôte public. Une URL signée sur le nom interne du service serait
+      # valide et pourtant inouvrable, sans erreur côté serveur.
+      STORAGE_S3_ENABLED: "true"
+      STORAGE_S3_ENDPOINT: http://minio.qualitos.svc.cluster.local:9000
+      STORAGE_S3_PUBLIC_ENDPOINT: https://qualitos.openlabconsulting.com
+      STORAGE_S3_BUCKET: qualitos-evidence
     # Second Secret : porte AI_CLIENT_SECRET, renseigne par deploy.sh depuis Keycloak.
-    extraSecretRefs: [qualitos-api-quality-engine-ai]
+    # Troisieme : les cles du stockage objet, derivees du secret MinIO par deploy.sh.
+    extraSecretRefs: [qualitos-api-quality-engine-ai, qualitos-api-quality-engine-storage]
   api-iot-hub:
     replicas: 1
   ai-service:

@@ -130,13 +130,20 @@ services:
       KEYCLOAK_URL: http://keycloak:8080
       KEYCLOAK_REALM: qualitos
       SPRING_PROFILES_ACTIVE: dev
-      # Stockage binaire photos NC (§4.3). OFF par défaut ; passer
-      # STORAGE_S3_ENABLED=true (dans .env ou l'environnement) avec le profil
-      # compose 'storage' actif pour brancher MinIO. Endpoint/bucket/creds = dev
-      # local assumé (allowlistés gitleaks, comme les autres creds du compose).
+      # Stockage binaire des pièces jointes : photos de NC (§4.3) et preuves des
+      # dossiers CAPA (§4.2). OFF par défaut ; passer STORAGE_S3_ENABLED=true
+      # (dans .env ou l'environnement) avec le profil compose 'storage' actif
+      # pour brancher MinIO. Endpoint/bucket/creds = dev local assumé
+      # (allowlistés gitleaks, comme les autres creds du compose).
       STORAGE_S3_ENABLED: ${STORAGE_S3_ENABLED:-false}
       STORAGE_S3_ENDPOINT: http://minio:9000
-      STORAGE_S3_BUCKET: qualitos-nc-photos
+      # Le NAVIGATEUR ne connaît pas le nom de service `minio` : une URL
+      # présignée sur cet hôte serait valide et pourtant inouvrable. La signature
+      # couvrant l'hôte, elle doit être produite pour celui du poste.
+      STORAGE_S3_PUBLIC_ENDPOINT: http://localhost:9000
+      # Un seul bucket pour les deux usages : les clés sont déjà tenantisées et
+      # préfixées par domaine (tenants/{tenant}/nc/…, tenants/{tenant}/capa/…).
+      STORAGE_S3_BUCKET: qualitos-evidence
       STORAGE_S3_REGION: us-east-1
       STORAGE_S3_ACCESS_KEY: qualitos
       STORAGE_S3_SECRET_KEY: qualitos-dev-secret
@@ -150,7 +157,8 @@ services:
     networks: [qualitos]
 
   # -------------------------------------------------------------------------
-  # MinIO — stockage objet S3-compatible (photos de NC, §4.3). Démarré seulement
+  # MinIO — stockage objet S3-compatible (photos de NC §4.3, preuves CAPA §4.2).
+  # Démarré seulement
   # avec le profil compose 'storage' (off par défaut). Creds de DEV LOCAL assumés
   # (qualitos / qualitos-dev-secret) — en prod : S3/MinIO managé via Vault + ESO.
   #   docker compose -f docker-compose.dev.yml --profile storage up -d minio
@@ -188,8 +196,8 @@ services:
     entrypoint: >
       /bin/sh -c "
       mc alias set local http://minio:9000 qualitos qualitos-dev-secret &&
-      mc mb --ignore-existing local/qualitos-nc-photos &&
-      echo 'bucket qualitos-nc-photos ready';
+      mc mb --ignore-existing local/qualitos-evidence &&
+      echo 'bucket qualitos-evidence ready';
       "
     networks: [qualitos]
 

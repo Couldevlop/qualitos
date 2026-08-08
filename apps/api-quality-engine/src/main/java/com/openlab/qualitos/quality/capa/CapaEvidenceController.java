@@ -45,8 +45,9 @@ public class CapaEvidenceController {
 
     @DeleteMapping("/{evidenceId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID id, @PathVariable UUID evidenceId) {
-        service.delete(id, evidenceId);
+    public void delete(@PathVariable UUID id, @PathVariable UUID evidenceId,
+                       @AuthenticationPrincipal Jwt jwt) {
+        service.delete(id, evidenceId, parseActor(jwt));
     }
 
     /**
