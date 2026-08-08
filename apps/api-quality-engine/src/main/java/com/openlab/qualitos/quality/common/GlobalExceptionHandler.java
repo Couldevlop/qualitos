@@ -377,10 +377,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ProblemDetail handleMaxUpload(MaxUploadSizeExceededException ex) {
         // Limite multipart Spring dépassée (1er rempart, avant lecture des octets).
+        // Le libellé est NEUTRE : ce rempart est commun à tous les téléversements.
+        // Il annonçait « Non-Conformity Photo Too Large » sur le dépôt d'une preuve
+        // CAPA — constaté en préproduction — ce qui envoie chercher le défaut dans
+        // le mauvais module.
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
                 HttpStatus.PAYLOAD_TOO_LARGE, "Uploaded file exceeds the maximum allowed size");
-        problem.setType(URI.create("https://qualitos.io/errors/non-conformity-photo-too-large"));
-        problem.setTitle("Non-Conformity Photo Too Large");
+        problem.setType(URI.create("https://qualitos.io/errors/upload-too-large"));
+        problem.setTitle("Uploaded File Too Large");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
