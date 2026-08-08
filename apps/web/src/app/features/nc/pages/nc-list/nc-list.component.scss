@@ -3,7 +3,11 @@
   h1 { margin: 0 0 4px; font-size: 24px; font-weight: 600; }
   p  { margin: 0; color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); }
 }
-.filter-card { padding: 16px; margin-bottom: 16px; display: flex; gap: 16px; flex-wrap: wrap; }
+/* La mise en page de la barre de filtres vient du scaffold global (styles.scss),
+ * jetons d'espacement compris : la redéclarer ici avec des valeurs en dur la
+ * faisait diverger du reste de la plateforme sans rien apporter. Seule reste la
+ * respiration avant le tableau, que le scaffold ne fournit pas. */
+.filter-card { margin-bottom: 16px; }
 .filter-field { width: 220px; }
 .state-row { display: flex; align-items: center; gap: 12px; padding: 24px 0; }
 .state-row.error { color: var(--mat-sys-error, #b3261e); padding: 16px 0; }

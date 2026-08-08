@@ -606,10 +606,24 @@ html, body { overflow-x: hidden; }
   }
 }
 
-/* Carte de filtres — surface élevée discrète, champs aérés. */
-.filter-card {
+/* Carte de filtres — surface élevée discrète, champs aérés.
+ *
+ * La DIRECTION est déclarée, et ce n'est pas une redondance. `mat-card` porte
+ * `display: flex; flex-direction: column` : déclarer `display: flex` sans la
+ * direction laissait donc la colonne du composant intacte, et les filtres se
+ * empilaient les uns sous les autres sur les neuf listes de la plateforme —
+ * une barre de filtres qui occupait un tiers de l'écran avant le premier
+ * résultat. Le sélecteur est composé (`.filter-card.mat-mdc-card`) pour l'emporter
+ * par la spécificité plutôt que par l'ordre des feuilles, qui dépend de l'ordre
+ * d'injection des styles de Material et n'est donc pas une garantie.
+ *
+ * `flex-wrap` conserve la dégradation attendue : sur un écran étroit, les champs
+ * repassent d'eux-mêmes à la ligne au lieu de déborder. */
+.filter-card,
+.filter-card.mat-mdc-card {
   padding: var(--qos-space-4) var(--qos-space-5);
   display: flex;
+  flex-direction: row;
   align-items: center;
   gap: var(--qos-space-4);
   flex-wrap: wrap;
