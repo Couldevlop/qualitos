@@ -147,6 +147,7 @@ import com.openlab.qualitos.quality.nonconformity.storage.StorageDisabledExcepti
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.core.exception.SdkException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -389,6 +390,32 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/storage-disabled"));
         problem.setTitle("Binary Storage Disabled");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * Le stockage objet est configuré mais ne répond pas comme attendu : bucket
+     * absent, identifiants refusés, service injoignable.
+     *
+     * <p>Sans ce gestionnaire, ces pannes tombaient dans l'attrape-tout et
+     * l'API annonçait « erreur interne » — un diagnostic qui désigne
+     * l'application alors que la coupure est ailleurs. Constaté en
+     * préproduction : dépôt de photo de NC et de preuve CAPA en 500 identiques,
+     * pendant que le stockage était bien joignable mais son bucket jamais créé.
+     *
+     * <p>503, comme un stockage désactivé : pour l'utilisateur, c'est la même
+     * chose — les pièces jointes sont indisponibles — et l'écran sait déjà le
+     * dire. Le détail de l'erreur reste au journal, pas dans la réponse : il
+     * nomme des ressources internes.
+     */
+    @ExceptionHandler(SdkException.class)
+    public ProblemDetail handleObjectStorageFailure(SdkException ex) {
+        log.error("Stockage objet en échec : {}", ex.getMessage(), ex);
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE,
+                "Object storage is unavailable");
+        problem.setType(URI.create("https://qualitos.io/errors/storage-unavailable"));
+        problem.setTitle("Binary Storage Unavailable");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
