@@ -30,7 +30,11 @@ export class AnomalyDetectComponent {
     matrixText: ['', [Validators.required]],
     method: ['isolation_forest' as AnomalyMethod, [Validators.required]],
     contamination: [0.1, [Validators.min(0.0001), Validators.max(0.5)]],
-    threshold: [null as number | null]
+    threshold: [null as number | null],
+    // Ce que décrit la matrice. Sans lui, la détection reste un constat sans
+    // objet : on ne saurait pas sur quoi ouvrir une action corrective.
+    subject: ['', [Validators.maxLength(120)]],
+    openCapa: [false]
   });
 
   /**
@@ -111,6 +115,12 @@ export class AnomalyDetectComponent {
       return;
     }
     const threshold = this.form.value.threshold;
+    if (this.form.value.openCapa === true && !(this.form.value.subject ?? '').trim()) {
+      // Le serveur refuserait d'ouvrir un dossier sans sujet, en silence. Le
+      // dire ici évite à l'utilisateur de croire qu'une CAPA a été créée.
+      this.error = $localize`:@@anomaly.detect.err-subject:Indiquez ce que décrit la matrice pour pouvoir ouvrir une CAPA.`;
+      return;
+    }
 
     this.matrix = matrix;
     this.loading = true;
@@ -121,11 +131,16 @@ export class AnomalyDetectComponent {
     this.explainChartOption = null;
     this.explainingIndex = null;
 
+    const subject = (this.form.value.subject ?? '').trim();
+    const openCapa = this.form.value.openCapa === true;
+
     this.anomaly.detect({
       samples: matrix,
       method: this.form.value.method ?? 'isolation_forest',
       contamination,
-      threshold: threshold ?? undefined
+      threshold: threshold ?? undefined,
+      subject: subject || undefined,
+      openCapa: openCapa || undefined
     }).subscribe({
       next: res => {
         this.result = res;

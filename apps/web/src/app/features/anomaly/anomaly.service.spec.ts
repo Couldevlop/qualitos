@@ -18,7 +18,8 @@ describe('AnomalyService', () => {
       { index: 0, score: 0.4, isAnomaly: false, topFeature: null },
       { index: 1, score: 0.45, isAnomaly: false, topFeature: null },
       { index: 2, score: 0.9, isAnomaly: true, topFeature: null }
-    ]
+    ],
+    capaId: null
   };
 
   beforeEach(() => {
@@ -55,6 +56,21 @@ describe('AnomalyService', () => {
     const req = httpMock.expectOne(endpoint);
     expect(req.request.body.threshold).toBe(0.5);
     expect(req.request.body.method).toBe('reconstruction');
+    req.flush(sample);
+  });
+
+  it('transmet le sujet et la demande de CAPA', () => {
+    service.detect({
+      samples: [[1, 2]],
+      subject: 'presse-2 / ligne 3',
+      openCapa: true
+    }).subscribe();
+
+    const req = httpMock.expectOne(endpoint);
+    expect(req.request.body.subject).toBe('presse-2 / ligne 3');
+    expect(req.request.body.openCapa).toBeTrue();
+    // Invariant multi-tenant : le tenant reste dérivé du JWT côté serveur.
+    expect(req.request.body.tenantId).toBeUndefined();
     req.flush(sample);
   });
 

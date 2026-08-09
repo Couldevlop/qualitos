@@ -33,7 +33,16 @@ public final class AnomalyDto {
             @NotEmpty @Size(max = 50000) List<List<Double>> samples,
             String method,
             @DecimalMin(value = "0.0", inclusive = false) @DecimalMax("0.5") Double contamination,
-            Double threshold
+            Double threshold,
+            /**
+             * Ce que décrit la matrice — une ligne de production, un équipement,
+             * un lot. Obligatoire pour ouvrir une CAPA : une action corrective
+             * qui ne dit pas SUR QUOI elle porte n'est pas exploitable, et sert
+             * aussi de clé anti-doublon. Borné et assaini avant tout usage.
+             */
+            @Size(max = 120) String subject,
+            /** Ouvre une CAPA si des anomalies ressortent (ADR 0022). */
+            Boolean openCapa
     ) {}
 
     /** Score d'anomalie d'un échantillon (index 0-based dans la matrice d'entrée). */
@@ -44,7 +53,14 @@ public final class AnomalyDto {
             Integer topFeature
     ) {}
 
-    /** Résultat : scores par point + verdict global + seuil effectif appliqué. */
+    /**
+     * Résultat : scores par point + verdict global + seuil effectif appliqué.
+     *
+     * <p>{@code capaId} porte la CAPA ouverte sur cette détection, ou reste nul :
+     * ouverture non demandée, aucune anomalie, sujet absent, ou dossier déjà
+     * ouvert sur le même sujet. L'écran peut ainsi renvoyer vers l'action
+     * corrective au lieu de laisser le constat sans suite.
+     */
     public record DetectResponse(
             int n,
             int nFeatures,
@@ -53,7 +69,8 @@ public final class AnomalyDto {
             double threshold,
             int anomalyCount,
             boolean hasAnomalies,
-            List<Point> points
+            List<Point> points,
+            java.util.UUID capaId
     ) {}
 
     /**

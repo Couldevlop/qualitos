@@ -51,6 +51,43 @@ TRANSLATIONS = {
 
     'anomaly.detect.err-no-data': ('Saisissez au moins un échantillon (une ligne de nombres).', 'Enter at least one sample (a row of numbers).', 'Introduzca al menos una muestra (una fila de números).', 'أدخل عينة واحدة على الأقل (سطر من الأرقام).', '少なくとも1つのサンプル（数値の行）を入力してください。', '请至少输入一个样本（一行数字）。'),
     'anomaly.detect.err-ragged': ('Toutes les lignes doivent avoir le même nombre de features (≥ 1).', 'All rows must have the same number of features (≥ 1).', 'Todas las filas deben tener el mismo número de características (≥ 1).', 'يجب أن تحتوي جميع الأسطر على العدد نفسه من الميزات (≥ 1).', 'すべての行は同じ数の特徴量（≥ 1）を持つ必要があります。', '所有行必须具有相同数量的特征（≥ 1）。'),
+    'anomaly.detect.subject-label': (
+        'Ce que décrit la matrice', 'What the matrix describes', 'Lo que describe la matriz',
+        'ما تصفه المصفوفة', '行列が表す対象', '该矩阵描述的对象'),
+    'anomaly.detect.subject-hint': (
+        "Ligne, équipement, lot — nécessaire pour ouvrir une CAPA, et sert à ne pas rouvrir "
+        "deux fois le même dossier",
+        'Line, equipment, batch — required to open a CAPA, and used to avoid opening the same '
+        'case twice',
+        'Línea, equipo, lote: necesario para abrir una CAPA y evita reabrir dos veces el mismo '
+        'expediente',
+        'خط أو معدة أو دفعة — لازم لفتح إجراء تصحيحي، ويمنع فتح الملف نفسه مرتين.',
+        'ライン・設備・ロット。CAPA を起票するために必要で、同じ案件の二重起票も防ぎます。',
+        '产线、设备或批次 —— 开立 CAPA 所必需，并用于避免重复开立同一档案'),
+    'anomaly.detect.open-capa': (
+        'Ouvrir une CAPA si des anomalies ressortent',
+        'Open a CAPA if anomalies come out',
+        'Abrir una CAPA si aparecen anomalías',
+        'فتح إجراء تصحيحي إذا ظهرت حالات شاذة',
+        '異常が出た場合に CAPA を起票する',
+        '若出现异常则开立 CAPA'),
+    'anomaly.detect.err-subject': (
+        'Indiquez ce que décrit la matrice pour pouvoir ouvrir une CAPA.',
+        'State what the matrix describes to open a CAPA.',
+        'Indique lo que describe la matriz para poder abrir una CAPA.',
+        'حدّد ما تصفه المصفوفة لتتمكّن من فتح إجراء تصحيحي.',
+        'CAPA を起票するには、行列が表す対象を入力してください。',
+        '请填写该矩阵描述的对象，才能开立 CAPA。'),
+    'anomaly.detect.capa-opened': (
+        'Une CAPA corrective a été ouverte sur ce constat.',
+        'A corrective CAPA was opened on this finding.',
+        'Se abrió una CAPA correctiva sobre esta constatación.',
+        'تم فتح إجراء تصحيحي بناءً على هذه الملاحظة.',
+        'この所見に対して是正 CAPA を起票しました。',
+        '已就此发现开立纠正性 CAPA。'),
+    'anomaly.detect.capa-link': (
+        'Voir le dossier', 'View the case', 'Ver el expediente',
+        'عرض الملف', 'ケースを開く', '查看档案'),
     'anomaly.detect.err-numbers': ('La matrice ne doit contenir que des nombres.', 'The matrix must contain only numbers.', 'La matriz solo debe contener números.', 'يجب أن تحتوي المصفوفة على أرقام فقط.', '行列には数値のみを含めてください。', '矩阵只能包含数字。'),
     'anomaly.detect.err-contamination': ("La contamination doit être dans l'intervalle ]0 ; 0,5].", 'Contamination must be within (0, 0.5].', 'La contaminación debe estar en el intervalo ]0 ; 0,5].', 'يجب أن تكون نسبة التلوث ضمن ]0 ؛ 0.5].', '汚染率は (0, 0.5] の範囲でなければなりません。', '污染率必须在 (0, 0.5] 范围内。'),
 

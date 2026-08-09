@@ -34,7 +34,8 @@ class AnomalyControllerTest {
                 3, 2, "isolation_forest", 0.1, 0.62, 1, true,
                 List.of(
                         new AnomalyDto.Point(0, 0.40, false, null),
-                        new AnomalyDto.Point(2, 0.80, true, 1))));
+                        new AnomalyDto.Point(2, 0.80, true, 1)),
+                null));
 
         mockMvc.perform(post("/api/v1/ai/anomaly/detect").with(csrf())
                         .contentType("application/json")

@@ -116,3 +116,7 @@ karma.zip
 # Binaire compilé du chaincode Go : produit par `go build` dans le répertoire du
 # module, jamais un artefact de source.
 /infra/blockchain/chaincode/*/qualitos-anchor
+
+# Espace de travail des specs de l’assistant — pas un artefact du dépôt.
+# Les décisions qui comptent vivent dans docs/adr/.
+docs/superpowers/
