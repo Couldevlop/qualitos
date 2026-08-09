@@ -95,7 +95,7 @@ class IshikawaControllerTest {
     @WithMockUser
     void createDiagram_validRequest_returns201() throws Exception {
         IshikawaDto.CreateDiagramRequest request = new IshikawaDto.CreateDiagramRequest(
-                "Défauts soudure", "Description", IshikawaMode.SIX_M, OWNER_ID);
+                "Défauts soudure", "Description", IshikawaMode.SIX_M, OWNER_ID, null);
         when(ishikawaService.createDiagram(any())).thenReturn(buildDiagramResponse(IshikawaStatus.DRAFT));
 
         mockMvc.perform(post("/api/v1/ishikawa/diagrams")
@@ -353,7 +353,7 @@ class IshikawaControllerTest {
         when(ishikawaService.createDiagram(any())).thenThrow(new MissingTenantContextException());
 
         IshikawaDto.CreateDiagramRequest request = new IshikawaDto.CreateDiagramRequest(
-                "Pb", null, null, OWNER_ID);
+                "Pb", null, null, OWNER_ID, null);
 
         mockMvc.perform(post("/api/v1/ishikawa/diagrams")
                         .with(csrf())
@@ -395,7 +395,7 @@ class IshikawaControllerTest {
     private IshikawaDto.DiagramResponse buildDiagramResponse(IshikawaStatus status) {
         return new IshikawaDto.DiagramResponse(
                 DIAGRAM_ID, TENANT_ID, "Problème test", "Description",
-                IshikawaMode.SIX_M, status, OWNER_ID,
+                IshikawaMode.SIX_M, status, OWNER_ID, null,
                 Instant.now(), Instant.now(), List.of());
     }
 

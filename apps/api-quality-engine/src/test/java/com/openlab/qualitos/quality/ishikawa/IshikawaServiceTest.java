@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
@@ -222,7 +223,7 @@ class IshikawaServiceTest {
     @Test
     void createDiagram_success_defaultsToSixMAndDraft() {
         IshikawaDto.CreateDiagramRequest request = new IshikawaDto.CreateDiagramRequest(
-                "Défauts soudure ligne 3", "Description", null, OWNER_ID);
+                "Défauts soudure ligne 3", "Description", null, OWNER_ID, null);
 
         IshikawaDiagram saved = buildDiagram(TENANT_ID, IshikawaStatus.DRAFT, IshikawaMode.SIX_M);
         saved.setProblemStatement(request.problemStatement());
@@ -239,7 +240,7 @@ class IshikawaServiceTest {
     @Test
     void createDiagram_withExplicitMode_usesIt() {
         IshikawaDto.CreateDiagramRequest request = new IshikawaDto.CreateDiagramRequest(
-                "Pb", null, IshikawaMode.EIGHT_M, OWNER_ID);
+                "Pb", null, IshikawaMode.EIGHT_M, OWNER_ID, null);
         IshikawaDiagram saved = buildDiagram(TENANT_ID, IshikawaStatus.DRAFT, IshikawaMode.EIGHT_M);
         when(diagramRepository.save(any())).thenReturn(saved);
 
@@ -252,7 +253,7 @@ class IshikawaServiceTest {
     void createDiagram_missingTenant_throws() {
         TenantContext.clear();
         IshikawaDto.CreateDiagramRequest request = new IshikawaDto.CreateDiagramRequest(
-                "Pb", null, null, OWNER_ID);
+                "Pb", null, null, OWNER_ID, null);
 
         assertThatThrownBy(() -> ishikawaService.createDiagram(request))
                 .isInstanceOf(MissingTenantContextException.class);
@@ -782,5 +783,65 @@ class IshikawaServiceTest {
         cause.setCreatedAt(Instant.now());
         cause.setUpdatedAt(Instant.now());
         return cause;
+    }
+
+    // --- rattachement à une non-conformité (§3.5) --------------------------------
+    // La fiche de NC ouvrait déjà une CAPA et une analyse des 5 Pourquoi, mais pas
+    // un Ishikawa : il fallait quitter la fiche et recopier l'énoncé du problème.
+
+    @Test
+    void rattache_leDiagrammeALaNonConformiteDOrigine() {
+        UUID ncId = UUID.randomUUID();
+        when(diagramRepository.save(any(IshikawaDiagram.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        IshikawaDto.DiagramResponse r = ishikawaService.createDiagram(new IshikawaDto.CreateDiagramRequest(
+                "Étiquetage manquant", "Sur le lot 42", IshikawaMode.SIX_M, OWNER_ID, ncId));
+
+        assertThat(r.ncId()).isEqualTo(ncId);
+        ArgumentCaptor<IshikawaDiagram> saved = ArgumentCaptor.forClass(IshikawaDiagram.class);
+        verify(diagramRepository).save(saved.capture());
+        assertThat(saved.getValue().getNcId()).isEqualTo(ncId);
+    }
+
+    @Test
+    void accepte_unDiagrammeSansNonConformite() {
+        when(diagramRepository.save(any(IshikawaDiagram.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        // Un Ishikawa se tient aussi pour lui-même : atelier, revue de processus.
+        IshikawaDto.DiagramResponse r = ishikawaService.createDiagram(new IshikawaDto.CreateDiagramRequest(
+                "Revue du processus achats", null, IshikawaMode.SIX_M, OWNER_ID, null));
+
+        assertThat(r.ncId()).isNull();
+    }
+
+    @Test
+    void liste_lesDiagrammesDUneNonConformiteDuPlusRecentAuPlusAncien() {
+        UUID ncId = UUID.randomUUID();
+        IshikawaDiagram recent = new IshikawaDiagram();
+        recent.setId(UUID.randomUUID());
+        recent.setTenantId(TENANT_ID);
+        recent.setProblemStatement("Étiquetage manquant");
+        recent.setMode(IshikawaMode.SIX_M);
+        recent.setStatus(IshikawaStatus.DRAFT);
+        recent.setOwnerId(OWNER_ID);
+        recent.setNcId(ncId);
+        when(diagramRepository.findByTenantIdAndNcIdOrderByCreatedAtDesc(TENANT_ID, ncId))
+                .thenReturn(List.of(recent));
+
+        List<IshikawaDto.DiagramResponse> r = ishikawaService.findByNc(ncId);
+
+        assertThat(r).hasSize(1);
+        assertThat(r.get(0).ncId()).isEqualTo(ncId);
+    }
+
+    @Test
+    void liste_neSortPasDuTenant() {
+        UUID ncId = UUID.randomUUID();
+        when(diagramRepository.findByTenantIdAndNcIdOrderByCreatedAtDesc(TENANT_ID, ncId))
+                .thenReturn(List.of());
+
+        assertThat(ishikawaService.findByNc(ncId)).isEmpty();
+        // Le tenant vient du contexte, jamais de l'appelant (§18.2 #2).
+        verify(diagramRepository).findByTenantIdAndNcIdOrderByCreatedAtDesc(TENANT_ID, ncId);
     }
 }

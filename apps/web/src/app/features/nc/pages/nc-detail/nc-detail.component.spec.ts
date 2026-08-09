@@ -13,6 +13,8 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { ConnectivityService } from '../../../../core/offline/connectivity.service';
 import { FiveWhysService } from '../../../five-whys/five-whys.service';
 import { FiveWhysAnalysis } from '../../../five-whys/five-whys.types';
+import { IshikawaService } from '../../../ishikawa/ishikawa.service';
+import { IshikawaDiagramResponse } from '../../../ishikawa/ishikawa.types';
 import { NcService } from '../../nc.service';
 import { NcPhoto, NcResponse, NcStatus, VisionAnalysis } from '../../nc.types';
 import { NcDetailComponent } from './nc-detail.component';
@@ -30,6 +32,20 @@ function fiveWhysSpy(existing: FiveWhysAnalysis[] = []): jasmine.SpyObj<FiveWhys
   const spy = jasmine.createSpyObj<FiveWhysService>('FiveWhysService', ['listForNc', 'create']);
   spy.listForNc.and.returnValue(of(existing));
   return spy;
+}
+
+function ishikawaSpy(existing: IshikawaDiagramResponse[] = []): jasmine.SpyObj<IshikawaService> {
+  const spy = jasmine.createSpyObj<IshikawaService>('IshikawaService', ['listForNc', 'createDiagram']);
+  spy.listForNc.and.returnValue(of(existing));
+  return spy;
+}
+
+function buildDiagram(id = 'ish-1'): IshikawaDiagramResponse {
+  return {
+    id, tenantId: 't', problemStatement: 'Étiquetage manquant', mode: 'SIX_M',
+    status: 'DRAFT', ownerId: 'u1', ncId: 'nc-1',
+    createdAt: '2026-06-06T00:00:00Z', updatedAt: '2026-06-06T00:00:00Z', causes: []
+  };
 }
 
 function buildNc(overrides: Partial<NcResponse> = {}): NcResponse {
@@ -83,6 +99,7 @@ describe('NcDetailComponent — section photos', () => {
         { provide: ConnectivityService, useValue: connectivity },
         { provide: AuthService, useValue: { snapshot: () => ({ userId: 'u1' }) } },
         { provide: FiveWhysService, useValue: fiveWhysSpy() },
+        { provide: IshikawaService, useValue: ishikawaSpy() },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: convertToParamMap({ id: 'nc-1' }) } }
@@ -439,6 +456,7 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
         { provide: ConnectivityService, useValue: new FakeConnectivity() },
         { provide: AuthService, useValue: { snapshot: () => currentUser } },
         { provide: FiveWhysService, useValue: fiveWhysSpy() },
+        { provide: IshikawaService, useValue: ishikawaSpy() },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => routeId } } } }
       ]
     }).compileComponents();
@@ -665,6 +683,7 @@ describe('NcDetailComponent — entrée 5 Pourquoi', () => {
   let component: NcDetailComponent;
   let svc: jasmine.SpyObj<NcService>;
   let fiveWhys: jasmine.SpyObj<FiveWhysService>;
+  let ishikawa: jasmine.SpyObj<IshikawaService>;
   let router: Router;
 
   const UUID = '33333333-3333-3333-3333-333333333333';
@@ -684,6 +703,7 @@ describe('NcDetailComponent — entrée 5 Pourquoi', () => {
 
   async function configure(existing: FiveWhysAnalysis[]): Promise<void> {
     fiveWhys = fiveWhysSpy(existing);
+    ishikawa = ishikawaSpy();
     svc = jasmine.createSpyObj<NcService>('NcService', ['getNc', 'listPhotos']);
     svc.listPhotos.and.returnValue(of([]));
 
@@ -696,6 +716,7 @@ describe('NcDetailComponent — entrée 5 Pourquoi', () => {
         { provide: ConnectivityService, useValue: new FakeConnectivity() },
         { provide: AuthService, useValue: { snapshot: () => ({ userId: 'u1' }) } },
         { provide: FiveWhysService, useValue: fiveWhys },
+        { provide: IshikawaService, useValue: ishikawa },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap({ id: UUID }) } } }
       ]
     }).compileComponents();
@@ -808,3 +829,126 @@ describe('NcDetailComponent — entrée 5 Pourquoi', () => {
     expect((fixture.nativeElement as HTMLElement).querySelector('h1')).not.toBeNull();
   });
 });
+
+/**
+ * L'Ishikawa se lançait d'un écran qui ne savait pas de quel écart il parlait :
+ * il fallait quitter la fiche, créer le diagramme à la main et recopier l'énoncé
+ * du problème. Ce qui se teste ici, c'est qu'un même geste ouvre le diagramme
+ * existant ou le crée, en reprenant le contexte de la non-conformité.
+ */
+describe('NcDetailComponent — entrée Ishikawa', () => {
+  let fixture: ComponentFixture<NcDetailComponent>;
+  let component: NcDetailComponent;
+  let svc: jasmine.SpyObj<NcService>;
+  let ishikawa: jasmine.SpyObj<IshikawaService>;
+  let router: Router;
+
+  const UUID = '44444444-4444-4444-4444-444444444444';
+
+  function setup(nc: NcResponse = buildNc({ id: UUID })): void {
+    svc.getNc.and.returnValue(of(nc));
+    fixture = TestBed.createComponent(NcDetailComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    (component as unknown as { reload$: { next(v: void): void } }).reload$.next();
+    fixture.detectChanges();
+  }
+
+  function bouton(): HTMLButtonElement | null {
+    return (fixture.nativeElement as HTMLElement).querySelector('button.ishikawa-btn');
+  }
+
+  async function configure(existing: IshikawaDiagramResponse[]): Promise<void> {
+    ishikawa = ishikawaSpy(existing);
+    svc = jasmine.createSpyObj<NcService>('NcService', ['getNc', 'listPhotos']);
+    svc.listPhotos.and.returnValue(of([]));
+
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      declarations: [NcDetailComponent],
+      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      providers: [
+        { provide: NcService, useValue: svc },
+        { provide: ConnectivityService, useValue: new FakeConnectivity() },
+        { provide: AuthService, useValue: { snapshot: () => ({ userId: 'u1' }) } },
+        { provide: FiveWhysService, useValue: fiveWhysSpy() },
+        { provide: IshikawaService, useValue: ishikawa },
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap({ id: UUID }) } } }
+      ]
+    }).compileComponents();
+
+    router = TestBed.inject(Router);
+    spyOn(router, 'navigate').and.resolveTo(true);
+  }
+
+  it('interroge les diagrammes ouverts sur CETTE non-conformité', async () => {
+    await configure([]);
+    setup();
+
+    expect(ishikawa.listForNc).toHaveBeenCalledWith(UUID);
+  });
+
+  it("le bouton s'affiche sur les deux origines de NC", async () => {
+    await configure([]);
+    setup(buildNc({ id: UUID, origin: 'INTERNAL' }));
+    expect(bouton()).not.toBeNull();
+
+    await configure([]);
+    setup(buildNc({ id: UUID, origin: 'EXTERNAL' }));
+    // L'origine ne change rien à la recherche de causes : un écart reste un écart.
+    expect(bouton()).not.toBeNull();
+  });
+
+  it('crée le diagramme en reprenant le contexte, puis il ouvre le diagramme', async () => {
+    await configure([]);
+    ishikawa.createDiagram.and.returnValue(of(buildDiagram('ish-9')));
+    setup(buildNc({ id: UUID, title: 'Étiquetage manquant', description: 'Sur le lot 42' }));
+
+    component.openIshikawa(buildNc({ id: UUID, title: 'Étiquetage manquant', description: 'Sur le lot 42' }));
+
+    // L'énoncé du problème vient de la NC : personne n'a à le retaper.
+    expect(ishikawa.createDiagram).toHaveBeenCalledWith(jasmine.objectContaining({
+      problemStatement: 'Étiquetage manquant',
+      description: 'Sur le lot 42',
+      ncId: UUID
+    }));
+    expect(router.navigate).toHaveBeenCalledWith(['/ishikawa', 'ish-9']);
+  });
+
+  it('ouvre le diagramme existant au lieu de créer un second', async () => {
+    await configure([buildDiagram('ish-1')]);
+    setup();
+
+    component.openIshikawa(buildNc({ id: UUID }));
+
+    expect(ishikawa.createDiagram).not.toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith(['/ishikawa', 'ish-1']);
+  });
+
+  it('ferme l’entrée sur une NC clôturée sans diagramme', async () => {
+    await configure([]);
+    setup(buildNc({ id: UUID, status: 'CLOSED' }));
+
+    expect(component.canOpenIshikawa('CLOSED')).toBeFalse();
+    expect(bouton()?.disabled).toBeTrue();
+  });
+
+  it('laisse relire le diagramme d’une NC clôturée', async () => {
+    await configure([buildDiagram('ish-1')]);
+    setup(buildNc({ id: UUID, status: 'CLOSED' }));
+
+    expect(component.canOpenIshikawa('CLOSED')).toBeTrue();
+    component.openIshikawa(buildNc({ id: UUID, status: 'CLOSED' }));
+    expect(router.navigate).toHaveBeenCalledWith(['/ishikawa', 'ish-1']);
+  });
+
+  it('laisse la fiche utilisable quand la liste des diagrammes échoue', async () => {
+    await configure([]);
+    ishikawa.listForNc.and.returnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
+    setup();
+
+    expect(component.ishikawa$.value).toEqual([]);
+    expect((fixture.nativeElement as HTMLElement).querySelector('h1')).not.toBeNull();
+  });
+});
+

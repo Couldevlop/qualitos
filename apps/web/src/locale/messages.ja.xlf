@@ -7784,6 +7784,18 @@
         <source>Voir la non-conformité</source>
         <target state="translated">不適合を表示</target>
       </trans-unit>
+      <trans-unit id="nc.detail.ishikawa" datatype="html">
+        <source>Ishikawa</source>
+        <target state="translated">特性要因図</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.ishikawa-tooltip" datatype="html">
+        <source>Chercher les causes par familles, à partir de cet écart</source>
+        <target state="translated">この逸脱を起点に、要因を系統別に洗い出す</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.ishikawa-error" datatype="html">
+        <source>Impossible d'ouvrir le diagramme d'Ishikawa.</source>
+        <target state="translated">特性要因図を開けませんでした。</target>
+      </trans-unit>
       <trans-unit id="nc.detail.five-whys" datatype="html">
         <source>5 Pourquoi</source>
         <target state="translated">なぜなぜ分析</target>

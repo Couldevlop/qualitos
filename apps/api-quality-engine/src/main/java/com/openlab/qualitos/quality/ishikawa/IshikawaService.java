@@ -107,6 +107,18 @@ public class IshikawaService {
         return s.length() <= max ? s : s.substring(0, max - 1) + "…";
     }
 
+    /**
+     * Diagrammes partant d'une non-conformité donnée (§3.5). La fiche de NC s'en
+     * sert pour savoir s'il faut ouvrir l'existant ou en créer un — l'utilisateur
+     * n'a pas à connaître la différence, il veut la même chose dans les deux cas.
+     */
+    @Transactional(readOnly = true)
+    public List<IshikawaDto.DiagramResponse> findByNc(UUID ncId) {
+        UUID tenantId = requireTenantId();
+        return diagramRepository.findByTenantIdAndNcIdOrderByCreatedAtDesc(tenantId, ncId)
+                .stream().map(this::toDiagramResponse).toList();
+    }
+
     public IshikawaDto.DiagramResponse createDiagram(IshikawaDto.CreateDiagramRequest request) {
         UUID tenantId = requireTenantId();
 
@@ -117,6 +129,9 @@ public class IshikawaService {
         diagram.setMode(request.mode() != null ? request.mode() : IshikawaMode.SIX_M);
         diagram.setStatus(IshikawaStatus.DRAFT);
         diagram.setOwnerId(request.ownerId());
+        // Rattachement à l'écart d'origine, s'il y en a un. Posé ici et jamais
+        // ensuite : l'entité le déclare non modifiable.
+        diagram.setNcId(request.ncId());
 
         return toDiagramResponse(diagramRepository.save(diagram));
     }
@@ -423,6 +438,7 @@ public class IshikawaService {
                 diagram.getMode(),
                 diagram.getStatus(),
                 diagram.getOwnerId(),
+                diagram.getNcId(),
                 diagram.getCreatedAt(),
                 diagram.getUpdatedAt(),
                 diagram.getCauses().stream().map(this::toCauseResponse).toList()

@@ -37,6 +37,17 @@
           <span i18n="@@nc.detail.five-whys">5 Pourquoi</span>
           <span class="fw-count" *ngIf="(fiveWhys$ | async)?.length as fwCount">{{ fwCount }}</span>
         </button>
+        <!-- Même raison que les 5 Pourquoi : la recherche de causes part de
+             l'écart constaté, et l'énoncé du problème est repris d'ici plutôt
+             que retapé. Le compteur dit s'il y a déjà un diagramme. -->
+        <button mat-stroked-button class="ishikawa-btn" (click)="openIshikawa(n)"
+                [disabled]="(ishikawaBusy$ | async) || !canOpenIshikawa(n.status)"
+                i18n-matTooltip="@@nc.detail.ishikawa-tooltip"
+                matTooltip="Chercher les causes par familles, à partir de cet écart">
+          <mat-icon>hub</mat-icon>
+          <span i18n="@@nc.detail.ishikawa">Ishikawa</span>
+          <span class="fw-count" *ngIf="(ishikawa$ | async)?.length as ishCount">{{ ishCount }}</span>
+        </button>
         <button mat-stroked-button color="primary" (click)="startAnalysis()"
                 [disabled]="(acting$ | async) || !canStartAnalysis(n.status)"
                 i18n-matTooltip="@@nc.detail.start-analysis-tooltip" matTooltip="Démarrer l'analyse">
