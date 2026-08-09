@@ -4560,6 +4560,14 @@
         <source>Échec de la détection (HTTP <x id="status"/>).</source>
         <target state="translated">Fallo de la detección (HTTP <x id="status"/>).</target>
       </trans-unit>
+      <trans-unit id="app.update.available" datatype="html">
+        <source>Une nouvelle version de QualitOS est disponible.</source>
+        <target state="translated">Hay una nueva versión de QualitOS disponible.</target>
+      </trans-unit>
+      <trans-unit id="app.update.reload" datatype="html">
+        <source>Recharger</source>
+        <target state="translated">Recargar</target>
+      </trans-unit>
       <trans-unit id="calibration.col-due" datatype="html">
         <source>Prochaine calibration</source>
         <target state="translated">Próxima calibración</target>
