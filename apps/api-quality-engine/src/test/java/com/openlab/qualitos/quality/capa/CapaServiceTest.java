@@ -8,6 +8,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -32,6 +33,7 @@ class CapaServiceTest {
     @Mock CapaCaseRepository caseRepo;
     @Mock CapaActionRepository actionRepo;
     @Mock AiGatewayClient ai;
+    @Mock CapaLifecycleJournal journal;
     @InjectMocks CapaService service;
 
     static final UUID TENANT = UUID.randomUUID();
@@ -488,6 +490,104 @@ class CapaServiceTest {
         return new CapaDto.CreateCaseRequest(
                 "Défaut soudure", "desc", CapaType.CORRECTIVE, CapaCriticity.HIGH,
                 CapaSourceType.NON_CONFORMITY, "NC-001", OWNER, null, LocalDate.now().plusDays(30));
+    }
+
+    // --- journal du cycle de vie (§11.5) ---------------------------------------
+    // Le dossier consignait le versement d'une preuve mais pas la décision qui
+    // clôt le cas. Un dossier d'audit qui dit QUI a joint une pièce sans dire QUI
+    // l'a clos raconte l'accessoire et tait l'essentiel.
+
+    @Test
+    void ouverture_estConsignee() {
+        CapaCase saved = capa(TENANT, CapaStatus.OPEN);
+        when(caseRepo.save(any())).thenReturn(saved);
+
+        service.createCase(req());
+
+        verify(journal).record(saved, CapaTransition.OPENED);
+    }
+
+    @Test
+    void demarrage_estConsigne() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(any())).thenReturn(c);
+
+        service.startCase(c.getId());
+
+        verify(journal).record(c, CapaTransition.STARTED);
+    }
+
+    @Test
+    void resolution_estConsignee() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        c.getActions().add(action(c, CapaActionStatus.DONE));
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(any())).thenReturn(c);
+
+        service.resolveCase(c.getId());
+
+        verify(journal).record(c, CapaTransition.RESOLVED);
+    }
+
+    @Test
+    void cloture_surEfficaciteDemontree_estConsignee() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(any())).thenReturn(c);
+
+        service.verifyEffectiveness(c.getId(), new CapaDto.EffectivenessRequest(true));
+
+        verify(journal).record(c, CapaTransition.CLOSED);
+    }
+
+    @Test
+    void efficaciteNonDemontree_estConsigneeCommeTelle() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(any())).thenReturn(c);
+
+        service.verifyEffectiveness(c.getId(), new CapaDto.EffectivenessRequest(false));
+
+        // Le dossier repart en traitement : dire « clos » ici serait faux, et
+        // taire l'événement masquerait une action corrective sans effet.
+        verify(journal).record(c, CapaTransition.EFFECTIVENESS_REJECTED);
+    }
+
+    @Test
+    void rejet_estConsigne() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(any())).thenReturn(c);
+
+        service.rejectCase(c.getId());
+
+        verify(journal).record(c, CapaTransition.REJECTED);
+    }
+
+    @Test
+    void suppression_estConsigneeAvantEffacement() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        service.deleteCase(c.getId());
+
+        // L'ordre compte : après l'effacement, il ne reste rien à décrire.
+        InOrder order = inOrder(journal, caseRepo);
+        order.verify(journal).record(c, CapaTransition.DELETED);
+        order.verify(caseRepo).delete(c);
+    }
+
+    @Test
+    void unRefusNeLaisseAucuneTrace() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.startCase(c.getId()))
+                .isInstanceOf(CapaStateException.class);
+
+        // Une transition refusée n'a pas eu lieu : la consigner mentirait.
+        verifyNoInteractions(journal);
     }
 
     private CapaCase capa(UUID tenant, CapaStatus status) {

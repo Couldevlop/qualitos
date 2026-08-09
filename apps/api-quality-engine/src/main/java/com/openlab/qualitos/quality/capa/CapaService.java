@@ -28,12 +28,18 @@ public class CapaService {
     private final CapaCaseRepository caseRepository;
     private final CapaActionRepository actionRepository;
     private final AiGatewayClient ai;
+    /**
+     * Un seul collaborateur pour tout ce qui se consigne : le service décrit ce
+     * qui arrive au dossier, sans connaître ni le journal d'audit ni les abonnés.
+     */
+    private final CapaLifecycleJournal journal;
 
     public CapaService(CapaCaseRepository caseRepository, CapaActionRepository actionRepository,
-                       AiGatewayClient ai) {
+                       AiGatewayClient ai, CapaLifecycleJournal journal) {
         this.caseRepository = caseRepository;
         this.actionRepository = actionRepository;
         this.ai = ai;
+        this.journal = journal;
     }
 
     @Transactional(readOnly = true)
@@ -64,7 +70,9 @@ public class CapaService {
         c.setRootCauseId(request.rootCauseId());
         c.setDueDate(request.dueDate());
         c.setStatus(CapaStatus.OPEN);
-        return toResponse(caseRepository.save(c));
+        CapaCase saved = caseRepository.save(c);
+        journal.record(saved, CapaTransition.OPENED);
+        return toResponse(saved);
     }
 
     public CapaDto.CaseResponse updateCase(UUID id, CapaDto.UpdateCaseRequest request) {
@@ -78,7 +86,9 @@ public class CapaService {
         if (request.sourceRef() != null) c.setSourceRef(request.sourceRef());
         if (request.rootCauseId() != null) c.setRootCauseId(request.rootCauseId());
         if (request.dueDate() != null) c.setDueDate(request.dueDate());
-        return toResponse(caseRepository.save(c));
+        CapaCase saved = caseRepository.save(c);
+        journal.record(saved, CapaTransition.UPDATED);
+        return toResponse(saved);
     }
 
     public CapaDto.CaseResponse startCase(UUID id) {
@@ -87,7 +97,9 @@ public class CapaService {
             throw new CapaStateException("Only OPEN CAPA can be started");
         }
         c.setStatus(CapaStatus.IN_PROGRESS);
-        return toResponse(caseRepository.save(c));
+        CapaCase saved = caseRepository.save(c);
+        journal.record(saved, CapaTransition.STARTED);
+        return toResponse(saved);
     }
 
     public CapaDto.CaseResponse resolveCase(UUID id) {
@@ -102,7 +114,9 @@ public class CapaService {
         }
         c.setStatus(CapaStatus.RESOLVED);
         c.setResolvedAt(Instant.now());
-        return toResponse(caseRepository.save(c));
+        CapaCase saved = caseRepository.save(c);
+        journal.record(saved, CapaTransition.RESOLVED);
+        return toResponse(saved);
     }
 
     public CapaDto.CaseResponse verifyEffectiveness(UUID id, CapaDto.EffectivenessRequest request) {
@@ -112,14 +126,19 @@ public class CapaService {
         }
         c.setEffectivenessVerified(request.effective());
         c.setEffectivenessVerifiedAt(Instant.now());
-        if (Boolean.TRUE.equals(request.effective())) {
+        boolean effective = Boolean.TRUE.equals(request.effective());
+        if (effective) {
             c.setStatus(CapaStatus.CLOSED);
             c.setClosedAt(Instant.now());
         } else {
             c.setStatus(CapaStatus.IN_PROGRESS);
             c.setResolvedAt(null);
         }
-        return toResponse(caseRepository.save(c));
+        CapaCase saved = caseRepository.save(c);
+        // Une efficacité NON démontrée est un fait au moins aussi important que
+        // la clôture : elle dit que l'action corrective n'a pas produit son effet.
+        journal.record(saved, effective ? CapaTransition.CLOSED : CapaTransition.EFFECTIVENESS_REJECTED);
+        return toResponse(saved);
     }
 
     public CapaDto.CaseResponse rejectCase(UUID id) {
@@ -128,7 +147,9 @@ public class CapaService {
             throw new CapaStateException("Only OPEN or IN_PROGRESS CAPA can be rejected");
         }
         c.setStatus(CapaStatus.REJECTED);
-        return toResponse(caseRepository.save(c));
+        CapaCase saved = caseRepository.save(c);
+        journal.record(saved, CapaTransition.REJECTED);
+        return toResponse(saved);
     }
 
     public void deleteCase(UUID id) {
@@ -136,6 +157,8 @@ public class CapaService {
         if (c.getStatus() == CapaStatus.CLOSED) {
             throw new CapaStateException("Closed CAPA cannot be deleted");
         }
+        // Consigné AVANT l'effacement : après, il ne reste rien à décrire.
+        journal.record(c, CapaTransition.DELETED);
         caseRepository.delete(c);
     }
 
