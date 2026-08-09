@@ -3,6 +3,8 @@ package com.openlab.qualitos.quality.capa;
 import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
 import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
+import com.openlab.qualitos.quality.nonconformity.NcStatus;
+import com.openlab.qualitos.quality.nonconformity.NonConformityRepository;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,14 +35,28 @@ public class CapaService {
      * qui arrive au dossier, sans connaître ni le journal d'audit ni les abonnés.
      */
     private final CapaLifecycleJournal journal;
+    /**
+     * Lecture seule des non-conformités, pour le verrou de clôture : un dossier
+     * ne se referme pas au-dessus d'un écart encore ouvert.
+     */
+    private final NonConformityRepository ncRepository;
 
     public CapaService(CapaCaseRepository caseRepository, CapaActionRepository actionRepository,
-                       AiGatewayClient ai, CapaLifecycleJournal journal) {
+                       AiGatewayClient ai, CapaLifecycleJournal journal,
+                       NonConformityRepository ncRepository) {
         this.caseRepository = caseRepository;
         this.actionRepository = actionRepository;
         this.ai = ai;
         this.journal = journal;
+        this.ncRepository = ncRepository;
     }
+
+    /**
+     * Statuts où une non-conformité est refermée. CANCELLED en fait partie : un
+     * écart annulé n'attend plus rien, contrairement à un écart en cours.
+     */
+    private static final List<NcStatus> NC_SETTLED_STATUSES =
+            List.of(NcStatus.RESOLVED, NcStatus.CLOSED, NcStatus.CANCELLED);
 
     @Transactional(readOnly = true)
     public Page<CapaDto.CaseResponse> findAll(CapaStatus status, Pageable pageable) {
@@ -124,9 +140,21 @@ public class CapaService {
         if (c.getStatus() != CapaStatus.RESOLVED) {
             throw new CapaStateException("Effectiveness check requires status RESOLVED");
         }
+        boolean effective = Boolean.TRUE.equals(request.effective());
+        if (effective) {
+            // Clore une CAPA au-dessus d'un écart encore ouvert reviendrait à
+            // déclarer le problème réglé pendant que le constat, lui, dit le
+            // contraire. Le refus est explicite et chiffré : l'utilisateur sait
+            // combien de non-conformités il lui reste à traiter.
+            long stillOpen = ncRepository.countByTenantIdAndCapaCaseIdAndStatusNotIn(
+                    c.getTenantId(), c.getId(), NC_SETTLED_STATUSES);
+            if (stillOpen > 0) {
+                throw new CapaStateException(stillOpen + " linked non-conformity(ies) are still open: "
+                        + "close them before closing this CAPA");
+            }
+        }
         c.setEffectivenessVerified(request.effective());
         c.setEffectivenessVerifiedAt(Instant.now());
-        boolean effective = Boolean.TRUE.equals(request.effective());
         if (effective) {
             c.setStatus(CapaStatus.CLOSED);
             c.setClosedAt(Instant.now());

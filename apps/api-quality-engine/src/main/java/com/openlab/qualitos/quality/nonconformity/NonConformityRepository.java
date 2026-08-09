@@ -47,4 +47,13 @@ public interface NonConformityRepository
      */
     long countByTenantIdAndCategoryAndStatusNotIn(
             UUID tenantId, NcCategory category, Collection<NcStatus> excludedStatuses);
+
+    /**
+     * Non-conformités rattachées à une CAPA et pas encore refermées.
+     *
+     * <p>Sert au verrou de clôture : un dossier d'action corrective ne se clôt
+     * pas tant que l'écart qui l'a motivé reste ouvert. Compter suffit — l'écran
+     * a besoin du nombre, pas des lignes.
+     */
+    long countByTenantIdAndCapaCaseIdAndStatusNotIn(UUID tenantId, UUID capaCaseId, java.util.Collection<NcStatus> statuses);
 }

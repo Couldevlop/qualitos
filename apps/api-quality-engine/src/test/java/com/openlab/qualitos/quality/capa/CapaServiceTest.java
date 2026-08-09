@@ -34,6 +34,7 @@ class CapaServiceTest {
     @Mock CapaActionRepository actionRepo;
     @Mock AiGatewayClient ai;
     @Mock CapaLifecycleJournal journal;
+    @Mock com.openlab.qualitos.quality.nonconformity.NonConformityRepository ncRepo;
     @InjectMocks CapaService service;
 
     static final UUID TENANT = UUID.randomUUID();
@@ -490,6 +491,57 @@ class CapaServiceTest {
         return new CapaDto.CreateCaseRequest(
                 "Défaut soudure", "desc", CapaType.CORRECTIVE, CapaCriticity.HIGH,
                 CapaSourceType.NON_CONFORMITY, "NC-001", OWNER, null, LocalDate.now().plusDays(30));
+    }
+
+    // --- verrou de clôture sur les non-conformités liées ------------------------
+    // Clore une CAPA au-dessus d'un écart encore ouvert reviendrait à déclarer le
+    // problème réglé pendant que le constat dit le contraire.
+
+    @Test
+    void refuse_deCloreQuandUneNcLieeResteOuverte() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(eq(TENANT), eq(c.getId()), any()))
+                .thenReturn(2L);
+
+        assertThatThrownBy(() -> service.verifyEffectiveness(
+                c.getId(), new CapaDto.EffectivenessRequest(true)))
+                .isInstanceOf(CapaStateException.class)
+                .hasMessageContaining("2");
+
+        // Rien n'a bougé : ni le statut, ni la date de clôture, ni le journal.
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.RESOLVED);
+        assertThat(c.getClosedAt()).isNull();
+        verifyNoInteractions(journal);
+        verify(caseRepo, never()).save(any());
+    }
+
+    @Test
+    void cloture_quandToutesLesNcLieesSontRefermees() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(eq(TENANT), eq(c.getId()), any()))
+                .thenReturn(0L);
+        when(caseRepo.save(any())).thenReturn(c);
+
+        CapaDto.CaseResponse r = service.verifyEffectiveness(
+                c.getId(), new CapaDto.EffectivenessRequest(true));
+
+        assertThat(r.status()).isEqualTo(CapaStatus.CLOSED);
+    }
+
+    @Test
+    void neVerrouillePas_uneEfficaciteNonDemontree() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(any())).thenReturn(c);
+
+        service.verifyEffectiveness(c.getId(), new CapaDto.EffectivenessRequest(false));
+
+        // Le dossier repart en traitement : il ne se referme pas, il n'y a donc
+        // rien à verrouiller — et interroger les NC ici serait un appel pour rien.
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.IN_PROGRESS);
+        verifyNoInteractions(ncRepo);
     }
 
     // --- journal du cycle de vie (§11.5) ---------------------------------------
