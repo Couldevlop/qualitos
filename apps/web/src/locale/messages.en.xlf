@@ -4524,6 +4524,30 @@
         <source>Toutes les lignes doivent avoir le même nombre de features (≥ 1).</source>
         <target state="translated">All rows must have the same number of features (≥ 1).</target>
       </trans-unit>
+      <trans-unit id="anomaly.detect.subject-label" datatype="html">
+        <source>Ce que décrit la matrice</source>
+        <target state="translated">What the matrix describes</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.subject-hint" datatype="html">
+        <source>Ligne, équipement, lot — nécessaire pour ouvrir une CAPA, et sert à ne pas rouvrir deux fois le même dossier</source>
+        <target state="translated">Line, equipment, batch — required to open a CAPA, and used to avoid opening the same case twice</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.open-capa" datatype="html">
+        <source>Ouvrir une CAPA si des anomalies ressortent</source>
+        <target state="translated">Open a CAPA if anomalies come out</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-subject" datatype="html">
+        <source>Indiquez ce que décrit la matrice pour pouvoir ouvrir une CAPA.</source>
+        <target state="translated">State what the matrix describes to open a CAPA.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.capa-opened" datatype="html">
+        <source>Une CAPA corrective a été ouverte sur ce constat.</source>
+        <target state="translated">A corrective CAPA was opened on this finding.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.capa-link" datatype="html">
+        <source>Voir le dossier</source>
+        <target state="translated">View the case</target>
+      </trans-unit>
       <trans-unit id="anomaly.detect.err-numbers" datatype="html">
         <source>La matrice ne doit contenir que des nombres.</source>
         <target state="translated">The matrix must contain only numbers.</target>

@@ -4524,6 +4524,30 @@
         <source>Toutes les lignes doivent avoir le même nombre de features (≥ 1).</source>
         <target state="translated">يجب أن تحتوي جميع الأسطر على العدد نفسه من الميزات (≥ 1).</target>
       </trans-unit>
+      <trans-unit id="anomaly.detect.subject-label" datatype="html">
+        <source>Ce que décrit la matrice</source>
+        <target state="translated">ما تصفه المصفوفة</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.subject-hint" datatype="html">
+        <source>Ligne, équipement, lot — nécessaire pour ouvrir une CAPA, et sert à ne pas rouvrir deux fois le même dossier</source>
+        <target state="translated">خط أو معدة أو دفعة — لازم لفتح إجراء تصحيحي، ويمنع فتح الملف نفسه مرتين.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.open-capa" datatype="html">
+        <source>Ouvrir une CAPA si des anomalies ressortent</source>
+        <target state="translated">فتح إجراء تصحيحي إذا ظهرت حالات شاذة</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-subject" datatype="html">
+        <source>Indiquez ce que décrit la matrice pour pouvoir ouvrir une CAPA.</source>
+        <target state="translated">حدّد ما تصفه المصفوفة لتتمكّن من فتح إجراء تصحيحي.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.capa-opened" datatype="html">
+        <source>Une CAPA corrective a été ouverte sur ce constat.</source>
+        <target state="translated">تم فتح إجراء تصحيحي بناءً على هذه الملاحظة.</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.capa-link" datatype="html">
+        <source>Voir le dossier</source>
+        <target state="translated">عرض الملف</target>
+      </trans-unit>
       <trans-unit id="anomaly.detect.err-numbers" datatype="html">
         <source>La matrice ne doit contenir que des nombres.</source>
         <target state="translated">يجب أن تحتوي المصفوفة على أرقام فقط.</target>

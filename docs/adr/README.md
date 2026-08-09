@@ -55,6 +55,7 @@ supersession).
 | [0048](./0048-ai-service-tenant-jeton-de-service.md) | Tenant propagé par `X-Tenant-Id` sur engine → ai-service, cru du seul `azp` de confiance (§18.2-2, généralise l'ADR 0021) | Accepté |
 | [0049](./0049-embeddings-rag-servies-par-ollama.md) | Embeddings RAG (BGE-M3) servies par Ollama, choix explicite et fin du repli silencieux sur des vecteurs de hachage (§8.7/§12.2) | Accepté |
 | [0050](./0050-preuves-jointes-capa.md) | Preuves jointes au dossier CAPA (et non à l'action), bornées et verrouillées à la clôture, sur le stockage objet des photos de NC (§4.2, ISO 9001 §10.2) | Accepté |
+| [0051](./0051-traces-et-suites-du-dossier-capa.md) | Transitions CAPA consignées au journal (dans la transaction) et annoncées aux abonnés (après validation) ; anomalie détectée pouvant ouvrir une CAPA (§4.2/§11.5/§13.2, solde l'ADR 0022) | Accepté |
 
 ## Statuts possibles
 

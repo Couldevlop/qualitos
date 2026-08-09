@@ -17,6 +17,14 @@ export interface AnomalyDetectRequest {
   contamination?: number;
   /** Seuil explicite sur le score (optionnel) ; sinon quantile de contamination. */
   threshold?: number;
+  /**
+   * Ce que décrit la matrice — une ligne, un équipement, un lot. Exigé pour
+   * ouvrir une CAPA : une action corrective qui ne dit pas sur quoi elle porte
+   * n'est pas exploitable, et ce libellé sert aussi de clé anti-doublon.
+   */
+  subject?: string;
+  /** Ouvre une CAPA corrective si des anomalies ressortent (ADR 0022). */
+  openCapa?: boolean;
 }
 
 /** Score d'anomalie d'un échantillon (index 0-based dans la matrice d'entrée). */
@@ -37,6 +45,11 @@ export interface AnomalyDetectResponse {
   anomalyCount: number;
   hasAnomalies: boolean;
   points: AnomalyPoint[];
+  /**
+   * CAPA ouverte sur cette détection, ou null : ouverture non demandée, aucune
+   * anomalie, sujet absent, ou dossier déjà ouvert sur le même sujet.
+   */
+  capaId: string | null;
 }
 
 export interface AnomalyExplainRequest {

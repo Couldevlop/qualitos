@@ -37,6 +37,19 @@
           </mat-form-field>
         </div>
 
+        <!-- Refermer la boucle : une anomalie constatée peut ouvrir l'action
+             corrective qu'elle appelle, au lieu de rester à l'écran. -->
+        <mat-form-field appearance="outline" class="full">
+          <mat-label i18n="@@anomaly.detect.subject-label">Ce que décrit la matrice</mat-label>
+          <input matInput formControlName="subject" maxlength="120"
+                 placeholder="presse-2 / ligne 3">
+          <mat-hint i18n="@@anomaly.detect.subject-hint">Ligne, équipement, lot — nécessaire pour ouvrir une CAPA, et sert à ne pas rouvrir deux fois le même dossier</mat-hint>
+        </mat-form-field>
+
+        <mat-checkbox formControlName="openCapa" class="capa-check" i18n="@@anomaly.detect.open-capa">
+          Ouvrir une CAPA si des anomalies ressortent
+        </mat-checkbox>
+
         <div class="actions">
           <button mat-raised-button color="primary" type="submit" [disabled]="loading || form.invalid">
             <mat-icon>bubble_chart</mat-icon>
@@ -92,6 +105,14 @@
       i18n-description="@@anomaly.detect.card-threshold-desc"
       description="Score au-delà duquel un échantillon est marqué anormal">
     </qos-kpi-card>
+  </div>
+
+  <!-- Suite donnée au constat. Le lien évite d'avoir à retrouver le dossier
+       à la main dans la liste des CAPA. -->
+  <div class="capa-banner" *ngIf="result?.capaId as capaId">
+    <mat-icon>assignment_late</mat-icon>
+    <span i18n="@@anomaly.detect.capa-opened">Une CAPA corrective a été ouverte sur ce constat.</span>
+    <a class="capa-link" [routerLink]="['/capa', capaId]" i18n="@@anomaly.detect.capa-link">Voir le dossier</a>
   </div>
 
   <!-- Graphe des scores -->

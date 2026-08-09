@@ -4524,6 +4524,30 @@
         <source>Toutes les lignes doivent avoir le même nombre de features (≥ 1).</source>
         <target state="translated">すべての行は同じ数の特徴量（≥ 1）を持つ必要があります。</target>
       </trans-unit>
+      <trans-unit id="anomaly.detect.subject-label" datatype="html">
+        <source>Ce que décrit la matrice</source>
+        <target state="translated">行列が表す対象</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.subject-hint" datatype="html">
+        <source>Ligne, équipement, lot — nécessaire pour ouvrir une CAPA, et sert à ne pas rouvrir deux fois le même dossier</source>
+        <target state="translated">ライン・設備・ロット。CAPA を起票するために必要で、同じ案件の二重起票も防ぎます。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.open-capa" datatype="html">
+        <source>Ouvrir une CAPA si des anomalies ressortent</source>
+        <target state="translated">異常が出た場合に CAPA を起票する</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.err-subject" datatype="html">
+        <source>Indiquez ce que décrit la matrice pour pouvoir ouvrir une CAPA.</source>
+        <target state="translated">CAPA を起票するには、行列が表す対象を入力してください。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.capa-opened" datatype="html">
+        <source>Une CAPA corrective a été ouverte sur ce constat.</source>
+        <target state="translated">この所見に対して是正 CAPA を起票しました。</target>
+      </trans-unit>
+      <trans-unit id="anomaly.detect.capa-link" datatype="html">
+        <source>Voir le dossier</source>
+        <target state="translated">ケースを開く</target>
+      </trans-unit>
       <trans-unit id="anomaly.detect.err-numbers" datatype="html">
         <source>La matrice ne doit contenir que des nombres.</source>
         <target state="translated">行列には数値のみを含めてください。</target>

@@ -124,3 +124,34 @@
   font-size: 0.78rem;
   font-weight: 700;
 }
+
+/* Champ du sujet : pleine largeur, il porte une phrase et non une valeur. */
+.full {
+  width: 100%;
+}
+
+.capa-check {
+  display: block;
+  margin: 4px 0 12px;
+}
+
+/* Suite donnée au constat — aligné sur le bandeau de l'écran SPC, qui traite
+   le même moment : « une action corrective a été ouverte, la voici ». */
+.capa-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--qos-radius-md, 10px);
+  background: var(--qos-bg-subtle, rgba(37, 99, 235, 0.06));
+  border: 1px solid var(--qos-border-subtle, #e2e8f0);
+  font-size: 0.9rem;
+
+  .capa-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    font-weight: 600;
+  }
+}

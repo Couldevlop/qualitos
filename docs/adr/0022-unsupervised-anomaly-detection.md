@@ -76,9 +76,12 @@ Implémenter deux détecteurs non-supervisés multivariés dans `ai-service`, en
   modules ≈ 98 %, suite complète ≥ 85 %. import-linter « 2 kept, 0 broken ».
 - ✅ Engine : `AnomalyService`/`AnomalyController`/`AiGatewayClient.detectAnomaly` +
   tests (mapping tolérant, 200/400/502, garde-fou). `verify` JaCoCo vert.
-- ⚠ Pas d'UI (livrée séparément). Pas de dérivation auto depuis la télémétrie IoT /
-  `kpi_measurements` ni d'ouverture CAPA automatique sur anomalie (réutilisera le schéma
-  SPC→CAPA d'ADR 0016 dans un lot ultérieur).
+- ✅ **Ouverture d'une CAPA sur anomalie — livrée** (2026-08-09, cf. ADR 0051). Le schéma
+  SPC→CAPA est repris : `CapaSourceType.ANOMALY`, `sourceRef = "anomaly:<sujet>"`,
+  anti-doublon par sujet, criticité graduée par la PART d'observations anormales. La
+  boucle détection → action corrective ne s'arrête plus à l'écran.
+- ⚠ Pas de dérivation automatique depuis la télémétrie IoT / `kpi_measurements` : la
+  détection reste déclenchée par un opérateur, sur une matrice qu'il fournit.
 - ⚠ Isolation Forest est O(n_trees · n · hauteur) ; bornes de taille (50 000 × 200) +
   sous-échantillonnage maîtrisent le coût.
 
