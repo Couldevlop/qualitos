@@ -357,7 +357,37 @@ export class CapaService {
         type: 'CORRECTIVE', criticity: 'HIGH', status: 'IN_PROGRESS',
         sourceType: 'NON_CONFORMITY', sourceRef: 'NC-2026-018',
         ownerId: 'demo-user', dueDate: '2026-05-30',
-        createdAt: now, updatedAt: now, actions: []
+        // L'écart d'origine et le plan d'actions sont garnis : un dossier de
+        // démonstration sans action ne montrait jamais le tableau, donc jamais
+        // ce qu'il sait faire. Les dates de décision précèdent délibérément les
+        // échéances — c'est la distinction que la colonne « Date » porte.
+        sourceNonConformity: {
+          id: 'nc-2026-018',
+          reference: 'NC-2026-018',
+          title: 'Cordons de soudure hors tolérance sur la ligne 3'
+        },
+        createdAt: now, updatedAt: now,
+        actions: [
+          {
+            id: 'act-demo-1', capaId: 'capa-1',
+            title: 'Recalibrer la cellule de soudure et revalider les paramètres',
+            status: 'DONE', assigneeName: 'Amina Dridi',
+            decidedOn: '2026-04-14', dueDate: '2026-05-02',
+            completedAt: '2026-04-29T14:20:00Z'
+          },
+          {
+            id: 'act-demo-2', capaId: 'capa-1',
+            title: 'Renforcer le contrôle réception (échantillonnage 100 %)',
+            status: 'IN_PROGRESS', assigneeName: 'Marc Lefèvre',
+            decidedOn: '2026-04-14', dueDate: '2026-05-20'
+          },
+          {
+            id: 'act-demo-3', capaId: 'capa-1',
+            title: 'Former les opérateurs au nouveau critère de contrôle',
+            status: 'PENDING', assigneeName: 'Sofia Marques',
+            decidedOn: '2026-04-28', dueDate: '2026-06-10'
+          }
+        ]
       },
       {
         id: 'capa-2', tenantId: 'demo-tenant',
