@@ -52,6 +52,18 @@ public class IshikawaController {
         actionService.delete(id);
     }
 
+    /**
+     * Diagrammes partant d'une non-conformité. Route DISTINCTE de la liste
+     * paginée : elle répond à une question fermée — « qu'a-t-on déjà ouvert sur
+     * cet écart ? » — dont la réponse tient en quelques éléments. La pagination
+     * n'y apporterait rien, et le même chemin avec ou sans paramètre rendrait le
+     * type de retour dépendant de l'appel.
+     */
+    @GetMapping("/diagrams/by-nc/{ncId}")
+    public java.util.List<IshikawaDto.DiagramResponse> listDiagramsForNc(@PathVariable UUID ncId) {
+        return ishikawaService.findByNc(ncId);
+    }
+
     @GetMapping("/diagrams")
     public Page<IshikawaDto.DiagramResponse> listDiagrams(
             @RequestParam(required = false) IshikawaStatus status,

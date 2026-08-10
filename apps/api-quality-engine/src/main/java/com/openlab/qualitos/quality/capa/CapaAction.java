@@ -37,6 +37,29 @@ public class CapaAction {
     @Column(name = "assignee_id")
     private UUID assigneeId;
 
+    /**
+     * Nom lisible du porteur, figé au moment de la décision.
+     *
+     * <p>Il double {@link #assigneeId} au lieu de le remplacer : l'identifiant
+     * reste ce qui rattache l'action à un compte, le nom est ce qui se lit dans
+     * un dossier d'audit. Le nom est FIGÉ et non résolu à l'affichage — un
+     * dossier doit montrer qui portait l'action au moment où elle a été décidée,
+     * pas ce qu'un annuaire vivant répondrait après un départ (cf. ADR 0052).
+     */
+    @Column(name = "assignee_name", length = 255)
+    private String assigneeName;
+
+    /**
+     * Jour où l'action a été DÉCIDÉE (comité, revue de direction, réunion CAPA).
+     *
+     * <p>Distinct de {@link #createdAt}, qui est la date de saisie dans l'outil.
+     * Les deux coïncident souvent, jamais par construction : une action décidée
+     * en comité et saisie trois semaines plus tard porterait sinon une date qui
+     * ment sur la chronologie du dossier.
+     */
+    @Column(name = "decided_on")
+    private LocalDate decidedOn;
+
     @Column(name = "due_date")
     private LocalDate dueDate;
 

@@ -44,6 +44,7 @@ class CapaEvidenceServiceTest {
 
     @Mock CapaEvidenceRepository evidenceRepo;
     @Mock CapaCaseRepository caseRepo;
+    @Mock CapaActionRepository actionRepo;
     @Mock ObjectProvider<ObjectStorage> storageProvider;
     @Mock ObjectStorage storage;
     @Mock AuditEventService auditEvents;
@@ -66,7 +67,7 @@ class CapaEvidenceServiceTest {
     void setUp() {
         TenantContext.setTenantId(TENANT.toString());
         lenient().when(storageProvider.getIfAvailable()).thenReturn(storage);
-        service = new CapaEvidenceService(evidenceRepo, caseRepo, storageProvider, auditEvents);
+        service = new CapaEvidenceService(evidenceRepo, caseRepo, actionRepo, storageProvider, auditEvents);
     }
 
     @AfterEach
@@ -196,7 +197,7 @@ class CapaEvidenceServiceTest {
     @Test
     void refuse_laOnziemePiece_enDisantPourquoi() {
         openCase();
-        when(evidenceRepo.countByTenantIdAndCapaId(TENANT, CAPA))
+        when(evidenceRepo.countCaseLevel(TENANT, CAPA))
                 .thenReturn((long) CapaEvidenceService.MAX_COUNT);
 
         assertThatThrownBy(() -> service.upload(CAPA, "application/pdf", "onze.pdf", PDF, ACTOR))
@@ -211,7 +212,7 @@ class CapaEvidenceServiceTest {
     @Test
     void refuse_lePoidsCumuleDepasse() {
         openCase();
-        when(evidenceRepo.countByTenantIdAndCapaId(TENANT, CAPA)).thenReturn(2L);
+        when(evidenceRepo.countCaseLevel(TENANT, CAPA)).thenReturn(2L);
         when(evidenceRepo.sumSizeBytes(TENANT, CAPA))
                 .thenReturn(CapaEvidenceService.MAX_TOTAL_BYTES - 1);
 
@@ -225,7 +226,7 @@ class CapaEvidenceServiceTest {
     void accepte_laPieceQuiTientPileDansLePoidsRestant() {
         openCase();
         savedEvidenceEchoesInput();
-        when(evidenceRepo.countByTenantIdAndCapaId(TENANT, CAPA)).thenReturn(1L);
+        when(evidenceRepo.countCaseLevel(TENANT, CAPA)).thenReturn(1L);
         when(evidenceRepo.sumSizeBytes(TENANT, CAPA))
                 .thenReturn(CapaEvidenceService.MAX_TOTAL_BYTES - PDF.length);
 
@@ -260,7 +261,7 @@ class CapaEvidenceServiceTest {
         // La lecture reste ouverte : c'est la preuve qui explique la clôture.
         when(caseRepo.findByIdAndTenantId(CAPA, TENANT))
                 .thenReturn(Optional.of(capa(CapaStatus.CLOSED)));
-        when(evidenceRepo.findByTenantIdAndCapaIdOrderByCreatedAtAsc(TENANT, CAPA))
+        when(evidenceRepo.findCaseLevel(TENANT, CAPA))
                 .thenReturn(List.of(evidence()));
 
         assertThat(service.list(CAPA)).hasSize(1);
@@ -272,7 +273,7 @@ class CapaEvidenceServiceTest {
     void liste_avecUneUrlDeLectureAtemporaire() throws Exception {
         when(caseRepo.findByIdAndTenantId(CAPA, TENANT)).thenReturn(Optional.of(capa(CapaStatus.OPEN)));
         CapaEvidence e = evidence();
-        when(evidenceRepo.findByTenantIdAndCapaIdOrderByCreatedAtAsc(TENANT, CAPA))
+        when(evidenceRepo.findCaseLevel(TENANT, CAPA))
                 .thenReturn(List.of(e));
         when(storage.presignGet(e.getObjectKey(), CapaEvidenceService.PRESIGN_TTL))
                 .thenReturn(java.net.URI.create("https://stockage.example/preuve?signature=abc").toURL());
@@ -287,7 +288,7 @@ class CapaEvidenceServiceTest {
     @Test
     void liste_supporteUnStockageQuiNeSignePas() {
         when(caseRepo.findByIdAndTenantId(CAPA, TENANT)).thenReturn(Optional.of(capa(CapaStatus.OPEN)));
-        when(evidenceRepo.findByTenantIdAndCapaIdOrderByCreatedAtAsc(TENANT, CAPA))
+        when(evidenceRepo.findCaseLevel(TENANT, CAPA))
                 .thenReturn(List.of(evidence()));
         when(storage.presignGet(anyString(), any())).thenReturn(null);
 
@@ -461,6 +462,200 @@ class CapaEvidenceServiceTest {
         assertThat(CapaEvidenceService.magicBytesMatch("image/webp", "RIFF".getBytes())).isFalse();
         assertThat(CapaEvidenceService.magicBytesMatch("image/heic", new byte[] { 1, 2 })).isFalse();
         assertThat(CapaEvidenceService.magicBytesMatch("text/plain", PDF)).isFalse();
+    }
+
+    // --- preuves rattachées à une ACTION (ADR 0052) ------------------------------
+    // Même chemin de dépôt, mêmes bornes, mêmes refus : ce qui se teste ici, c'est
+    // que le second niveau n'affaiblit pas le premier — l'action doit appartenir
+    // au dossier, la cellule du tableau ne porte qu'une pièce, et une pièce du
+    // dossier ne remonte pas dans la colonne des actions (ni l'inverse).
+
+    private CapaAction actionOf(UUID id) {
+        CapaAction a = new CapaAction();
+        a.setId(id);
+        a.setTitle("Réviser le plan de contrôle");
+        return a;
+    }
+
+    private void openCaseWithAction(UUID actionId) {
+        openCase();
+        when(actionRepo.findByIdAndCapaId(actionId, CAPA)).thenReturn(Optional.of(actionOf(actionId)));
+    }
+
+    @Test
+    void depose_unePreuveSurUneAction_sousUneCleQuiLaDesigne() {
+        UUID action = UUID.randomUUID();
+        openCaseWithAction(action);
+        savedEvidenceEchoesInput();
+
+        CapaEvidenceDto.Response res = service.uploadForAction(
+                CAPA, action, "application/pdf", "constat.pdf", PDF, ACTOR);
+
+        assertThat(res.actionId()).isEqualTo(action);
+        ArgumentCaptor<CapaEvidence> saved = ArgumentCaptor.forClass(CapaEvidence.class);
+        verify(evidenceRepo).save(saved.capture());
+        assertThat(saved.getValue().getObjectKey())
+                .startsWith("tenants/" + TENANT + "/capa/" + CAPA + "/actions/" + action + "/")
+                .endsWith(".pdf");
+    }
+
+    @Test
+    void refuse_uneActionQuiNAppartientPasAuDossier() {
+        // Le dossier est déjà filtré par tenant : c'est ce contrôle-ci qui
+        // empêche de coller une preuve à l'action d'un dossier voisin.
+        UUID etrangere = UUID.randomUUID();
+        openCase();
+        when(actionRepo.findByIdAndCapaId(etrangere, CAPA)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.uploadForAction(
+                CAPA, etrangere, "application/pdf", "x.pdf", PDF, ACTOR))
+                .isInstanceOf(CapaActionNotFoundException.class);
+        verify(evidenceRepo, never()).save(any());
+        verifyNoInteractions(storage);
+    }
+
+    @Test
+    void refuse_uneSecondePieceSurLaMemeAction() {
+        UUID action = UUID.randomUUID();
+        openCaseWithAction(action);
+        when(evidenceRepo.countByTenantIdAndActionId(TENANT, action))
+                .thenReturn((long) CapaEvidenceService.MAX_PER_ACTION);
+
+        assertThatThrownBy(() -> service.uploadForAction(
+                CAPA, action, "application/pdf", "seconde.pdf", PDF, ACTOR))
+                .isInstanceOf(CapaStateException.class)
+                .hasMessageContaining("remove it before adding another");
+        // Remplacer se fait en deux gestes qui se consignent tous les deux : un
+        // remplacement silencieux effacerait une pièce d'audit sans trace.
+        verify(evidenceRepo, never()).delete(any());
+    }
+
+    @Test
+    void neConfondPas_lesDeuxCompteurs() {
+        // Dix actions preuve à l'appui ne doivent pas saturer le dossier : les
+        // deux bornes comptent séparément.
+        UUID action = UUID.randomUUID();
+        openCaseWithAction(action);
+        savedEvidenceEchoesInput();
+        lenient().when(evidenceRepo.countCaseLevel(TENANT, CAPA))
+                .thenReturn((long) CapaEvidenceService.MAX_COUNT);
+
+        assertThat(service.uploadForAction(CAPA, action, "application/pdf", "ok.pdf", PDF, ACTOR))
+                .isNotNull();
+    }
+
+    @Test
+    void applique_lePoidsCumuleDuDossier_auxPiecesDActions() {
+        // Le plafond de poids protège le disque, et le disque ne distingue pas
+        // une pièce de dossier d'une pièce d'action.
+        UUID action = UUID.randomUUID();
+        openCaseWithAction(action);
+        when(evidenceRepo.sumSizeBytes(TENANT, CAPA))
+                .thenReturn(CapaEvidenceService.MAX_TOTAL_BYTES - 1);
+
+        assertThatThrownBy(() -> service.uploadForAction(
+                CAPA, action, "application/pdf", "goutte.pdf", PDF, ACTOR))
+                .isInstanceOf(CapaStateException.class)
+                .hasMessageContaining("MB of evidence");
+    }
+
+    @Test
+    void refuse_deVerserSurUneActionDUnDossierClos() {
+        when(caseRepo.findByIdAndTenantId(CAPA, TENANT))
+                .thenReturn(Optional.of(capa(CapaStatus.CLOSED)));
+
+        assertThatThrownBy(() -> service.uploadForAction(
+                CAPA, UUID.randomUUID(), "application/pdf", "tardif.pdf", PDF, ACTOR))
+                .isInstanceOf(CapaStateException.class);
+    }
+
+    @Test
+    void liste_lesPiecesDesActions_avecLeurUrlEtLeurAction() throws Exception {
+        UUID action = UUID.randomUUID();
+        when(caseRepo.findByIdAndTenantId(CAPA, TENANT)).thenReturn(Optional.of(capa(CapaStatus.OPEN)));
+        CapaEvidence e = evidence();
+        e.setActionId(action);
+        when(evidenceRepo.findActionLevel(TENANT, CAPA)).thenReturn(List.of(e));
+        when(storage.presignGet(e.getObjectKey(), CapaEvidenceService.PRESIGN_TTL))
+                .thenReturn(java.net.URI.create("https://stockage.example/p?signature=abc").toURL());
+
+        List<CapaEvidenceDto.ListItem> items = service.listForActions(CAPA);
+
+        assertThat(items).hasSize(1);
+        assertThat(items.get(0).actionId()).isEqualTo(action);
+        assertThat(items.get(0).url()).contains("signature=abc");
+    }
+
+    @Test
+    void listeDuDossier_neRemontePasLesPiecesDActions() {
+        // Sans ce filtre, l'écran montrerait deux fois la même pièce et
+        // laisserait croire à un dossier deux fois mieux étayé qu'il ne l'est.
+        when(caseRepo.findByIdAndTenantId(CAPA, TENANT)).thenReturn(Optional.of(capa(CapaStatus.OPEN)));
+        when(evidenceRepo.findCaseLevel(TENANT, CAPA)).thenReturn(List.of());
+
+        assertThat(service.list(CAPA)).isEmpty();
+        verify(evidenceRepo, never()).findActionLevel(any(), any());
+    }
+
+    @Test
+    void retire_laPieceDUneAction_ligneAvantObjet() {
+        UUID action = UUID.randomUUID();
+        openCaseWithAction(action);
+        CapaEvidence e = evidence();
+        e.setActionId(action);
+        when(evidenceRepo.findByIdAndTenantIdAndCapaId(e.getId(), TENANT, CAPA))
+                .thenReturn(Optional.of(e));
+
+        service.deleteForAction(CAPA, action, e.getId(), ACTOR);
+
+        var order = org.mockito.Mockito.inOrder(evidenceRepo, storage);
+        order.verify(evidenceRepo).delete(e);
+        order.verify(storage).delete(e.getObjectKey());
+    }
+
+    @Test
+    void refuse_deRetirerUnePieceDuDossierParLaRouteDUneAction() {
+        // Passer l'identifiant d'une pièce versée ailleurs ne doit pas la faire
+        // disparaître : le rattachement est vérifié, pas supposé.
+        UUID action = UUID.randomUUID();
+        openCaseWithAction(action);
+        CapaEvidence pieceDuDossier = evidence(); // actionId null
+        when(evidenceRepo.findByIdAndTenantIdAndCapaId(pieceDuDossier.getId(), TENANT, CAPA))
+                .thenReturn(Optional.of(pieceDuDossier));
+
+        assertThatThrownBy(() -> service.deleteForAction(CAPA, action, pieceDuDossier.getId(), ACTOR))
+                .isInstanceOf(CapaEvidenceNotFoundException.class);
+        verify(evidenceRepo, never()).delete(any());
+    }
+
+    @Test
+    void inscrit_lActionVisee_auJournalDuTenant() {
+        UUID action = UUID.randomUUID();
+        openCaseWithAction(action);
+        savedEvidenceEchoesInput();
+
+        service.uploadForAction(CAPA, action, "application/pdf", "constat.pdf", PDF, ACTOR);
+
+        ArgumentCaptor<AuditEventDto.RecordEventRequest> req =
+                ArgumentCaptor.forClass(AuditEventDto.RecordEventRequest.class);
+        verify(auditEvents).recordForTenant(eq(TENANT), req.capture());
+        // Sans l'action, le journal dirait qu'une preuve a quitté le dossier sans
+        // dire laquelle de ses lignes elle étayait.
+        assertThat(req.getValue().payloadJson()).contains("\"actionId\":\"" + action + "\"");
+        assertThat(req.getValue().summary()).contains(action.toString());
+    }
+
+    @Test
+    void journalise_unActionIdNul_pourUnePieceDeDossier() {
+        openCase();
+        savedEvidenceEchoesInput();
+
+        service.upload(CAPA, "application/pdf", "releve.pdf", PDF, ACTOR);
+
+        ArgumentCaptor<AuditEventDto.RecordEventRequest> req =
+                ArgumentCaptor.forClass(AuditEventDto.RecordEventRequest.class);
+        verify(auditEvents).recordForTenant(eq(TENANT), req.capture());
+        assertThat(req.getValue().payloadJson()).contains("\"actionId\":null");
     }
 
     private CapaEvidence evidence() {

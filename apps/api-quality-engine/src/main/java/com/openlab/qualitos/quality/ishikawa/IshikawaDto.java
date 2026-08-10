@@ -21,7 +21,13 @@ public final class IshikawaDto {
             String problemStatement,
             String description,
             IshikawaMode mode,
-            @NotNull(message = "Owner ID is required") UUID ownerId
+            @NotNull(message = "Owner ID is required") UUID ownerId,
+            /**
+             * Non-conformité d'où part le diagramme. Facultative : un Ishikawa
+             * se tient aussi pour lui-même. Le tenant, lui, vient toujours du
+             * jeton — jamais du corps (§18.2 #2).
+             */
+            UUID ncId
     ) {}
 
     public record UpdateDiagramRequest(
@@ -60,6 +66,8 @@ public final class IshikawaDto {
             IshikawaMode mode,
             IshikawaStatus status,
             UUID ownerId,
+            /** Non-conformité d'origine, ou null : le diagramme se tient seul. */
+            UUID ncId,
             Instant createdAt,
             Instant updatedAt,
             List<CauseResponse> causes

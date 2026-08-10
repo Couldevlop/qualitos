@@ -5104,6 +5104,102 @@
         <source>Réformé</source>
         <target state="translated">Retirado</target>
       </trans-unit>
+      <trans-unit id="capa.detail.col-decided-on" datatype="html">
+        <source>Date</source>
+        <target state="translated">Fecha</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.col-assignee" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">Responsable</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.col-nc" datatype="html">
+        <source>Non-conformité</source>
+        <target state="translated">No conformidad</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.col-evidence" datatype="html">
+        <source>Preuve</source>
+        <target state="translated">Prueba</target>
+      </trans-unit>
+      <trans-unit id="capa.action-status.pending" datatype="html">
+        <source>À faire</source>
+        <target state="translated">Por hacer</target>
+      </trans-unit>
+      <trans-unit id="capa.action-status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">En curso</target>
+      </trans-unit>
+      <trans-unit id="capa.action-status.done" datatype="html">
+        <source>Faite</source>
+        <target state="translated">Hecha</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.edit-title-label" datatype="html">
+        <source>Libellé de l'action</source>
+        <target state="translated">Título de la acción</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-updated" datatype="html">
+        <source>Action modifiée.</source>
+        <target state="translated">Acción modificada.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-update-error" datatype="html">
+        <source>Modification impossible.</source>
+        <target state="translated">No se pudo modificar.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.attach" datatype="html">
+        <source>Joindre</source>
+        <target state="translated">Adjuntar</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.added" datatype="html">
+        <source>Preuve jointe à l'action.</source>
+        <target state="translated">Prueba adjuntada a la acción.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.attach-aria" datatype="html">
+        <source>Joindre une preuve à l'action : <x id="title"/></source>
+        <target state="translated">Adjuntar una prueba a la acción: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.remove-aria" datatype="html">
+        <source>Retirer la preuve de l'action : <x id="title"/></source>
+        <target state="translated">Quitar la prueba de la acción: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="capa.detail.edit-action-aria" datatype="html">
+        <source>Modifier l'action : <x id="title"/></source>
+        <target state="translated">Modificar la acción: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.remove-tooltip" datatype="html">
+        <source>Retirer la preuve de cette action</source>
+        <target state="translated">Quitar la prueba de esta acción</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.remove-title" datatype="html">
+        <source>Retirer la preuve de cette action ?</source>
+        <target state="translated">¿Quitar la prueba de esta acción?</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.remove-message" datatype="html">
+        <source>La pièce sera définitivement retirée. Une action déclarée faite sans preuve s'affirme faite sans le démontrer : ce retrait est traçable.</source>
+        <target state="translated">La pieza se retirará definitivamente. Una acción declarada hecha sin prueba afirma su cumplimiento sin demostrarlo: esta retirada queda trazada.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.limit" datatype="html">
+        <source>Cette action porte déjà sa preuve, ou le dossier est clôturé.</source>
+        <target state="translated">Esta acción ya tiene su prueba, o el expediente está cerrado.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.gone" datatype="html">
+        <source>Cette action n'existe plus — recharge la fiche.</source>
+        <target state="translated">Esta acción ya no existe: recarga la ficha.</target>
+      </trans-unit>
+      <trans-unit id="capa.action.decided-on" datatype="html">
+        <source>Date de décision</source>
+        <target state="translated">Fecha de decisión</target>
+      </trans-unit>
+      <trans-unit id="capa.action.decided-on-hint" datatype="html">
+        <source>Le jour où l'action a été décidée (comité, revue), pas celui de sa saisie.</source>
+        <target state="translated">El día en que se decidió la acción (comité, revisión), no el de su registro.</target>
+      </trans-unit>
+      <trans-unit id="capa.action.assignee-name" datatype="html">
+        <source>Responsable (optionnel)</source>
+        <target state="translated">Responsable (opcional)</target>
+      </trans-unit>
+      <trans-unit id="capa.action.assignee-name-placeholder" datatype="html">
+        <source>Ex. : Amina Dridi</source>
+        <target state="translated">Ej.: Amina Dridi</target>
+      </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>
         <target state="translated">Pruebas</target>
@@ -7783,6 +7879,18 @@
       <trans-unit id="fivewhys.open-nc" datatype="html">
         <source>Voir la non-conformité</source>
         <target state="translated">Ver la no conformidad</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.ishikawa" datatype="html">
+        <source>Ishikawa</source>
+        <target state="translated">Ishikawa</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.ishikawa-tooltip" datatype="html">
+        <source>Chercher les causes par familles, à partir de cet écart</source>
+        <target state="translated">Buscar las causas por familias, a partir de esta desviación</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.ishikawa-error" datatype="html">
+        <source>Impossible d'ouvrir le diagramme d'Ishikawa.</source>
+        <target state="translated">No se puede abrir el diagrama de Ishikawa.</target>
       </trans-unit>
       <trans-unit id="nc.detail.five-whys" datatype="html">
         <source>5 Pourquoi</source>

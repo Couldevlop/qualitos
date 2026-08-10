@@ -166,41 +166,179 @@
               </li>
             </ul>
           </div>
-          <table mat-table [dataSource]="c.actions" class="actions-table"
-                 *ngIf="c.actions.length > 0">
+          <!-- Un sélecteur de fichier UNIQUE pour toutes les lignes : un par
+               action multiplierait les nœuds sans rien apporter. L'action visée
+               est mémorisée au clic. -->
+          <input type="file" class="hidden-file" #actionEvidenceInput
+                 accept="application/pdf,image/jpeg,image/png,image/webp,image/heic,.docx,.xlsx"
+                 (change)="onActionEvidenceSelected($event)"
+                 aria-hidden="true" tabindex="-1">
+
+          <div class="actions-table-scroll" *ngIf="c.actions.length > 0">
+          <table mat-table [dataSource]="c.actions" class="actions-table">
             <ng-container matColumnDef="title">
               <th mat-header-cell *matHeaderCellDef i18n="@@capa.detail.col-action">Action</th>
-              <td mat-cell *matCellDef="let a"><strong>{{ a.title }}</strong></td>
+              <td mat-cell *matCellDef="let a">
+                <ng-container *ngIf="!isEditing(a.id); else titleEdit">
+                  <strong>{{ a.title }}</strong>
+                </ng-container>
+                <ng-template #titleEdit>
+                  <div [formGroup]="editForm">
+                    <mat-form-field appearance="outline" class="inline-field inline-field--title"
+                                    subscriptSizing="dynamic">
+                      <mat-label i18n="@@capa.detail.edit-title-label">Libellé de l'action</mat-label>
+                      <input matInput formControlName="title" maxlength="255" required
+                             (keydown)="onEditKeydown($event)"
+                             #inlineTitle>
+                      <mat-error *ngIf="editForm.controls.title.hasError('required')"
+                                 i18n="@@capa.action.title-required">Le titre est requis.</mat-error>
+                    </mat-form-field>
+                  </div>
+                </ng-template>
+              </td>
             </ng-container>
+
+            <!-- Date de la DÉCISION, pas de la saisie : « — » quand l'action est
+                 antérieure à cette colonne, plutôt qu'une date reconstituée. -->
+            <ng-container matColumnDef="decidedOn">
+              <th mat-header-cell *matHeaderCellDef i18n="@@capa.detail.col-decided-on">Date</th>
+              <td mat-cell *matCellDef="let a">{{ a.decidedOn ? (a.decidedOn | date) : '—' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="assignee">
+              <th mat-header-cell *matHeaderCellDef i18n="@@capa.detail.col-assignee">Responsable</th>
+              <td mat-cell *matCellDef="let a">{{ a.assigneeName || '—' }}</td>
+            </ng-container>
+
+            <!-- L'écart d'origine est celui du dossier : toutes les actions en
+                 procèdent, la colonne le rappelle ligne à ligne. -->
+            <ng-container matColumnDef="nonConformity">
+              <th mat-header-cell *matHeaderCellDef i18n="@@capa.detail.col-nc">Non-conformité</th>
+              <td mat-cell *matCellDef="let a">
+                <span class="nc-cell" *ngIf="c.sourceNonConformity as nc; else noNc"
+                      [matTooltip]="nc.reference">
+                  {{ nc.title }}
+                </span>
+                <ng-template #noNc><span class="muted">—</span></ng-template>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="evidence">
+              <th mat-header-cell *matHeaderCellDef i18n="@@capa.detail.col-evidence">Preuve</th>
+              <td mat-cell *matCellDef="let a"
+                  [class.evidence-busy]="(busyEvidenceActionId$ | async) === a.id">
+                <ng-container *ngIf="actionEvidence(a.id) as e; else noActionEvidence">
+                  <a class="action-evidence" *ngIf="e.url; else noActionLink"
+                     [href]="e.url" target="_blank" rel="noopener noreferrer"
+                     [matTooltip]="e.originalFilename || e.id">
+                    <mat-icon aria-hidden="true">{{ evidenceIcon(e.contentType) }}</mat-icon>
+                    <span class="action-evidence__name">{{ e.originalFilename || e.id }}</span>
+                  </a>
+                  <ng-template #noActionLink>
+                    <span class="action-evidence">
+                      <mat-icon aria-hidden="true">{{ evidenceIcon(e.contentType) }}</mat-icon>
+                      <span class="action-evidence__name">{{ e.originalFilename || e.id }}</span>
+                    </span>
+                  </ng-template>
+                  <button mat-icon-button color="warn" type="button" class="evidence-remove"
+                          *ngIf="!isTerminal(c.status)"
+                          [disabled]="(busyEvidenceActionId$ | async) === a.id"
+                          (click)="removeActionEvidence(a.id, e)"
+                          i18n-matTooltip="@@capa.action-evidence.remove-tooltip"
+                          matTooltip="Retirer la preuve de cette action"
+                          [attr.aria-label]="removeEvidenceAria(a.title)">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </ng-container>
+                <ng-template #noActionEvidence>
+                  <button mat-stroked-button type="button" class="attach-btn"
+                          *ngIf="canAttachActionEvidence(a.id, c.status); else noEvidenceMark"
+                          (click)="triggerActionEvidencePicker(actionEvidenceInput, a.id)"
+                          [attr.aria-label]="attachEvidenceAria(a.title)">
+                    <mat-icon aria-hidden="true">attach_file</mat-icon>
+                    <span i18n="@@capa.action-evidence.attach">Joindre</span>
+                  </button>
+                  <ng-template #noEvidenceMark><span class="muted">—</span></ng-template>
+                </ng-template>
+              </td>
+            </ng-container>
+
             <ng-container matColumnDef="status">
               <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
-              <td mat-cell *matCellDef="let a"><span [class]="actionBadge(a.status)">{{ a.status }}</span></td>
+              <td mat-cell *matCellDef="let a">
+                <ng-container *ngIf="!isEditing(a.id); else statusEdit">
+                  <!-- La date de complétion vit dans l'infobulle du badge : une
+                       colonne de plus pour une information qui ne sert qu'une
+                       fois l'action faite repousserait le reste hors de l'écran. -->
+                  <span [class]="actionBadge(a.status)"
+                        [matTooltip]="a.completedAt ? (a.completedAt | date:'medium') : ''">
+                    {{ actionStatusLabel(a.status) }}
+                  </span>
+                </ng-container>
+                <ng-template #statusEdit>
+                  <div [formGroup]="editForm">
+                    <mat-form-field appearance="outline" class="inline-field"
+                                    subscriptSizing="dynamic">
+                      <mat-label i18n="@@common.status">Statut</mat-label>
+                      <mat-select formControlName="status" (keydown)="onEditKeydown($event)">
+                        <mat-option *ngFor="let s of editableStatuses" [value]="s">
+                          {{ actionStatusLabel(s) }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                </ng-template>
+              </td>
             </ng-container>
+
             <ng-container matColumnDef="dueDate">
               <th mat-header-cell *matHeaderCellDef i18n="@@capa.detail.col-due-date">Échéance</th>
               <td mat-cell *matCellDef="let a">{{ a.dueDate ? (a.dueDate | date) : '—' }}</td>
             </ng-container>
-            <ng-container matColumnDef="completedAt">
-              <th mat-header-cell *matHeaderCellDef i18n="@@capa.detail.col-completed">Complétée</th>
-              <td mat-cell *matCellDef="let a">{{ a.completedAt ? (a.completedAt | date:'short') : '—' }}</td>
-            </ng-container>
-            <ng-container matColumnDef="advance">
+
+            <ng-container matColumnDef="rowActions">
               <th mat-header-cell *matHeaderCellDef i18n="@@capa.detail.col-advance">Avancement</th>
               <td mat-cell *matCellDef="let a">
-                <button mat-stroked-button color="primary" type="button"
-                        *ngIf="a.status !== 'DONE'"
-                        [disabled]="!canAdvanceAction(a, c.status)"
-                        (click)="advanceAction(a)">
-                  <mat-icon>{{ a.status === 'PENDING' ? 'play_arrow' : 'check' }}</mat-icon>
-                  <span>{{ advanceActionLabel(a.status) }}</span>
-                </button>
-                <mat-icon *ngIf="a.status === 'DONE'" class="action-done" aria-hidden="true"
-                          i18n-matTooltip="@@capa.detail.action-done-tooltip" matTooltip="Action terminée">check_circle</mat-icon>
+                <div class="row-actions" *ngIf="!isEditing(a.id); else editControls">
+                  <button mat-stroked-button color="primary" type="button"
+                          *ngIf="a.status !== 'DONE'"
+                          [disabled]="!canAdvanceAction(a, c.status)"
+                          (click)="advanceAction(a)">
+                    <mat-icon>{{ a.status === 'PENDING' ? 'play_arrow' : 'check' }}</mat-icon>
+                    <span>{{ advanceActionLabel(a.status) }}</span>
+                  </button>
+                  <mat-icon *ngIf="a.status === 'DONE'" class="action-done" aria-hidden="true"
+                            i18n-matTooltip="@@capa.detail.action-done-tooltip"
+                            matTooltip="Action terminée">check_circle</mat-icon>
+                  <button mat-stroked-button type="button" class="edit-btn"
+                          [disabled]="!canEditAction(c.status)"
+                          (click)="startEdit(a)"
+                          [attr.aria-label]="editActionAria(a.title)">
+                    <mat-icon>edit</mat-icon> <span i18n="@@common.edit">Modifier</span>
+                  </button>
+                </div>
+                <ng-template #editControls>
+                  <div class="row-actions">
+                    <button mat-flat-button color="primary" type="button"
+                            [disabled]="savingEdit || editForm.invalid"
+                            (click)="saveEdit()">
+                      <mat-icon>check</mat-icon> <span i18n="@@common.save">Enregistrer</span>
+                    </button>
+                    <button mat-stroked-button type="button"
+                            [disabled]="savingEdit"
+                            (click)="cancelEdit()">
+                      <mat-icon>close</mat-icon> <span i18n="@@common.cancel">Annuler</span>
+                    </button>
+                  </div>
+                </ng-template>
               </td>
             </ng-container>
+
             <tr mat-header-row *matHeaderRowDef="actionColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: actionColumns;"></tr>
+            <tr mat-row *matRowDef="let row; columns: actionColumns;"
+                [class.row-editing]="isEditing(row.id)"></tr>
           </table>
+          </div>
           <p class="empty" *ngIf="c.actions.length === 0" i18n="@@capa.detail.actions-empty">
             Aucune action. Clique sur <strong>Ajouter une action</strong> pour démarrer.
           </p>

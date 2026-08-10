@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AbstractControl, FormBuilder, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -29,7 +30,14 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 })
 export class CapaDetailComponent implements OnInit {
 
-  readonly actionColumns = ['title', 'status', 'dueDate', 'completedAt', 'advance'];
+  /**
+   * Ordre des colonnes = ordre de lecture d'un auditeur : ce qui a été décidé,
+   * quand, par qui, sur quel écart, avec quelle preuve, et où ça en est.
+   * L'avancement et l'édition partagent la dernière colonne — deux colonnes de
+   * boutons repousseraient le contenu hors de l'écran.
+   */
+  readonly actionColumns = ['title', 'decidedOn', 'assignee', 'nonConformity',
+                            'evidence', 'status', 'dueDate', 'rowActions'];
 
   readonly notFoundLabel = $localize`:@@capa.detail.not-found:Cas introuvable`;
   readonly analysingLabel = $localize`:@@capa.detail.analysing:Analyse…`;
@@ -61,6 +69,55 @@ export class CapaDetailComponent implements OnInit {
   /** Identifiant de la pièce en cours de retrait (désactive sa ligne). */
   removingEvidenceId$ = new BehaviorSubject<string | null>(null);
 
+  // --- preuves d'ACTION (§4.2, ADR 0052) ---------------------------------------
+  /** Une action ne porte qu'UNE pièce : la cellule montre un document, pas une liste. */
+  readonly actionEvidences$ = new BehaviorSubject<Map<string, CapaEvidence>>(new Map());
+  /** Action dont la pièce est en cours de dépôt ou de retrait (verrouille sa cellule). */
+  readonly busyEvidenceActionId$ = new BehaviorSubject<string | null>(null);
+
+  // --- édition en ligne (§4.2) ---------------------------------------------------
+  // Le libellé et le statut se corrigent DANS le tableau. Un dialogue pour
+  // changer deux champs ferait perdre la ligne de vue, et l'utilisateur corrige
+  // justement en comparant aux lignes voisines.
+  editingActionId: string | null = null;
+  savingEdit = false;
+  readonly editForm = this.fb.nonNullable.group({
+    // `required` seul laisse passer une chaîne d'espaces — elle est « non
+    // vide » au sens du validateur. Le serveur la refuse (400) ; l'écran doit
+    // la refuser avant l'aller-retour, sinon l'utilisateur voit une erreur
+    // technique là où il a simplement effacé un champ.
+    title: ['', [Validators.required, CapaDetailComponent.notBlank, Validators.maxLength(255)]],
+    status: <CapaActionStatus>'PENDING'
+  });
+
+  /** Un libellé fait d'espaces n'est pas un libellé. */
+  private static notBlank(control: AbstractControl): ValidationErrors | null {
+    return typeof control.value === 'string' && control.value.trim().length === 0
+      ? { required: true }
+      : null;
+  }
+
+  readonly editableStatuses: CapaActionStatus[] = ['PENDING', 'IN_PROGRESS', 'DONE'];
+
+  /**
+   * Le champ de libellé prend le focus dès l'ouverture de l'édition.
+   *
+   * Sans cela, un utilisateur au clavier active « Modifier » et se retrouve
+   * avec le focus sur un bouton qui a disparu : le point d'insertion repart en
+   * tête de document et la ligne éditée devient introuvable. Le passage par un
+   * setter de ViewChild est nécessaire parce que le champ n'existe pas encore
+   * au moment du clic — il naît du rendu suivant.
+   */
+  private focusTitleOnRender = false;
+
+  @ViewChild('inlineTitle')
+  set inlineTitle(ref: ElementRef<HTMLInputElement> | undefined) {
+    if (ref && this.focusTitleOnRender) {
+      this.focusTitleOnRender = false;
+      ref.nativeElement.focus();
+    }
+  }
+
   private caseId = '';
   private readonly reload$ = new BehaviorSubject<void>(undefined);
   // Ancré des DEUX côtés et jeu de caractères restreint : un simple préfixe
@@ -72,7 +129,8 @@ export class CapaDetailComponent implements OnInit {
     private readonly router: Router,
     private readonly capa: CapaService,
     private readonly dialog: MatDialog,
-    private readonly snack: MatSnackBar
+    private readonly snack: MatSnackBar,
+    private readonly fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
@@ -98,6 +156,7 @@ export class CapaDetailComponent implements OnInit {
     );
     this.reload$.next();
     this.loadEvidences();
+    this.loadActionEvidences();
   }
 
   // --- preuves du dossier ------------------------------------------------------
@@ -234,6 +293,239 @@ export class CapaDetailComponent implements OnInit {
     return e?.status === 503 && typeof type === 'string' && type.includes('storage-disabled');
   }
 
+  // --- preuves rattachées à une action (§4.2, ADR 0052) ------------------------
+
+  /**
+   * Chargement non bloquant, comme les preuves du dossier : le tableau reste
+   * lisible même si le stockage est coupé — la colonne « Preuve » affiche alors
+   * son état plutôt qu'une erreur en travers de la fiche.
+   */
+  loadActionEvidences(): void {
+    this.capa.listActionEvidences(this.caseId).subscribe({
+      next: list => {
+        const byAction = new Map<string, CapaEvidence>();
+        // Le serveur garantit une pièce par action ; on prend malgré tout la
+        // dernière si deux arrivaient, plutôt que d'afficher une cellule vide.
+        list.forEach(e => { if (e.actionId) byAction.set(e.actionId, e); });
+        this.actionEvidences$.next(byAction);
+        // Le drapeau « stockage coupé » n'est PAS remis à faux ici : les deux
+        // listes partagent le même stockage, et cet appel-ci peut aboutir
+        // pendant que l'autre a déjà diagnostiqué la coupure. L'effacer
+        // reviendrait à contredire un diagnostic posé une milliseconde plus tôt.
+      },
+      error: err => {
+        // eslint-disable-next-line no-console
+        console.warn('[capa-detail] listActionEvidences failed', err?.status, err?.error?.type);
+        if (this.isStorageDisabled(err)) { this.evidenceStorageDisabled$.next(true); }
+      }
+    });
+  }
+
+  /** Pièce de cette action, ou undefined — c'est ce que la cellule affiche. */
+  actionEvidence(actionId: string): CapaEvidence | undefined {
+    return this.actionEvidences$.value.get(actionId);
+  }
+
+  /** Le dépôt suit le verrou du dossier : plus rien ne bouge une fois clos ou rejeté. */
+  canAttachActionEvidence(actionId: string, caseStatus: CapaStatus): boolean {
+    return !this.isTerminal(caseStatus)
+        && !this.evidenceStorageDisabled$.value
+        && !this.actionEvidence(actionId)
+        && this.busyEvidenceActionId$.value !== actionId;
+  }
+
+  triggerActionEvidencePicker(input: HTMLInputElement, actionId: string): void {
+    if (this.busyEvidenceActionId$.value) return;
+    // L'input est partagé par toutes les lignes : sans mémoriser l'action visée,
+    // le fichier choisi atterrirait sur la dernière ligne rendue.
+    this.pendingEvidenceActionId = actionId;
+    input.click();
+  }
+
+  onActionEvidenceSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files && input.files[0];
+    input.value = '';
+    const actionId = this.pendingEvidenceActionId;
+    this.pendingEvidenceActionId = null;
+    if (!file || !actionId) return;
+
+    this.busyEvidenceActionId$.next(actionId);
+    this.capa.uploadActionEvidence(this.caseId, actionId, file)
+      .pipe(finalize(() => this.busyEvidenceActionId$.next(null)))
+      .subscribe({
+        next: evidence => {
+          const next = new Map(this.actionEvidences$.value);
+          next.set(actionId, evidence);
+          this.actionEvidences$.next(next);
+          this.snack.open(
+            $localize`:@@capa.action-evidence.added:Preuve jointe à l'action.`,
+            $localize`:@@common.ok:OK`, { duration: 2000 });
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[capa-detail] uploadActionEvidence failed', err?.status, err?.error?.type);
+          if (this.isStorageDisabled(err)) { this.evidenceStorageDisabled$.next(true); return; }
+          this.snack.open(this.evidenceRefusal(err), 'OK', { duration: 5000 });
+        }
+      });
+  }
+
+  removeActionEvidence(actionId: string, evidence: CapaEvidence): void {
+    if (this.busyEvidenceActionId$.value) return;
+    this.dialog.open(ConfirmDialogComponent, {
+      data: <ConfirmDialogData>{
+        title: $localize`:@@capa.action-evidence.remove-title:Retirer la preuve de cette action ?`,
+        message: $localize`:@@capa.action-evidence.remove-message:La pièce sera définitivement retirée. Une action déclarée faite sans preuve s'affirme faite sans le démontrer : ce retrait est traçable.`,
+        confirmLabel: $localize`:@@common.delete:Supprimer`,
+        destructive: true
+      },
+      autoFocus: false,
+      restoreFocus: true
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.busyEvidenceActionId$.next(actionId);
+      this.capa.deleteActionEvidence(this.caseId, actionId, evidence.id)
+        .pipe(finalize(() => this.busyEvidenceActionId$.next(null)))
+        .subscribe({
+          next: () => {
+            const next = new Map(this.actionEvidences$.value);
+            next.delete(actionId);
+            this.actionEvidences$.next(next);
+          },
+          error: err => {
+            // eslint-disable-next-line no-console
+            console.warn('[capa-detail] deleteActionEvidence failed', err?.status, err?.error?.type);
+            this.snack.open(
+              safeErrorMessage(err, $localize`:@@capa.evidence.remove-error:Échec du retrait de la preuve.`),
+              'OK', { duration: 4000 });
+          }
+        });
+    });
+  }
+
+  /**
+   * Traduction des refus de téléversement, partagée par les deux niveaux.
+   * Chaque refus a sa raison : les confondre reviendrait à dire « non » sans
+   * dire quoi corriger.
+   */
+  private evidenceRefusal(err: unknown): string {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const e = err as any;
+    return e?.status === 413
+      ? $localize`:@@capa.evidence.too-large:Pièce trop lourde — 10 Mo au maximum.`
+      : e?.status === 400
+      ? $localize`:@@capa.evidence.rejected:Format refusé — PDF, image, Word ou Excel, et le contenu doit correspondre au format annoncé.`
+      : e?.status === 409
+      ? $localize`:@@capa.action-evidence.limit:Cette action porte déjà sa preuve, ou le dossier est clôturé.`
+      : e?.status === 404
+      ? $localize`:@@capa.action-evidence.gone:Cette action n'existe plus — recharge la fiche.`
+      : safeErrorMessage(err, $localize`:@@capa.evidence.error:Échec de l'ajout de la preuve.`);
+  }
+
+  /** Action visée par le sélecteur de fichier partagé entre toutes les lignes. */
+  private pendingEvidenceActionId: string | null = null;
+
+  // --- édition en ligne du libellé et du statut (§4.2) -------------------------
+
+  /** Une ligne s'édite tant que le dossier vit et qu'aucune autre n'est ouverte. */
+  canEditAction(caseStatus: CapaStatus): boolean {
+    return !this.isTerminal(caseStatus) && !this.savingEdit;
+  }
+
+  isEditing(actionId: string): boolean {
+    return this.editingActionId === actionId;
+  }
+
+  startEdit(a: CapaActionResponse): void {
+    if (this.savingEdit) return;
+    this.editingActionId = a.id;
+    this.editForm.setValue({ title: a.title, status: a.status });
+    this.focusTitleOnRender = true;
+  }
+
+  /** Sortie sans écrire : l'édition en ligne doit toujours être annulable. */
+  cancelEdit(): void {
+    if (this.savingEdit) return;
+    this.editingActionId = null;
+    this.editForm.reset({ title: '', status: 'PENDING' });
+  }
+
+  /**
+   * Échap annule, Entrée enregistre — l'édition se pilote au clavier seul, sans
+   * viser deux boutons à la souris pour corriger un mot.
+   */
+  onEditKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.cancelEdit();
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      this.saveEdit();
+    }
+  }
+
+  saveEdit(): void {
+    if (!this.editingActionId || this.savingEdit) return;
+    if (this.editForm.invalid) {
+      this.editForm.markAllAsTouched();
+      return;
+    }
+    const actionId = this.editingActionId;
+    const { title, status } = this.editForm.getRawValue();
+    this.savingEdit = true;
+    // PATCH partiel : seuls le libellé et le statut partent. La date de
+    // décision et le porteur, absents de la charge utile, restent intacts.
+    this.capa.updateAction(this.caseId, actionId, { title: title.trim(), status })
+      .pipe(finalize(() => (this.savingEdit = false)))
+      .subscribe({
+        next: () => {
+          this.editingActionId = null;
+          this.snack.open($localize`:@@capa.detail.action-updated:Action modifiée.`,
+            $localize`:@@common.ok:OK`, { duration: 2000 });
+          this.reload$.next();
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[capa-detail] saveEdit failed', err?.status, err?.error?.title);
+          // La ligne RESTE en édition : refermer effacerait la saisie que
+          // l'utilisateur doit justement corriger.
+          this.snack.open(
+            safeErrorMessage(err, $localize`:@@capa.detail.action-update-error:Modification impossible.`),
+            $localize`:@@common.close:Fermer`, { duration: 4000 });
+        }
+      });
+  }
+
+  /**
+   * Libellés d'accessibilité des boutons du tableau.
+   *
+   * Une icône seule ou un mot isolé (« Joindre », « × ») ne dit pas SUR QUOI il
+   * agit : au lecteur d'écran, huit lignes rendent huit boutons « Joindre »
+   * indiscernables. Le libellé de l'action est donc repris dans l'étiquette —
+   * et traduit, parce qu'un lecteur d'écran arabe ou japonais lit ce texte.
+   */
+  attachEvidenceAria(title: string): string {
+    return $localize`:@@capa.action-evidence.attach-aria:Joindre une preuve à l'action : ${title}:title:`;
+  }
+
+  removeEvidenceAria(title: string): string {
+    return $localize`:@@capa.action-evidence.remove-aria:Retirer la preuve de l'action : ${title}:title:`;
+  }
+
+  editActionAria(title: string): string {
+    return $localize`:@@capa.detail.edit-action-aria:Modifier l'action : ${title}:title:`;
+  }
+
+  /** Libellé traduit d'un statut, pour la liste déroulante d'édition. */
+  actionStatusLabel(s: CapaActionStatus): string {
+    return s === 'PENDING'
+      ? $localize`:@@capa.action-status.pending:À faire`
+      : s === 'IN_PROGRESS'
+        ? $localize`:@@capa.action-status.in-progress:En cours`
+        : $localize`:@@capa.action-status.done:Faite`;
+  }
+
   goBack(): void {
     this.router.navigate(['/capa']);
   }
@@ -341,14 +633,20 @@ export class CapaDetailComponent implements OnInit {
       : $localize`:@@capa.detail.action-complete:Terminer`;
   }
 
-  /** Fait avancer une action vers son statut suivant (le titre est renvoyé — requis backend). */
+  /**
+   * Fait avancer une action vers son statut suivant.
+   *
+   * Seul le statut part : renvoyer le libellé le réécrirait à l'identique et
+   * écraserait au passage une correction faite entre-temps par quelqu'un
+   * d'autre. Le backend accepte le PATCH partiel.
+   */
   advanceAction(a: CapaActionResponse): void {
     const next = this.nextActionStatus(a.status);
     if (!next || this.acting$.value) {
       return;
     }
     this.acting$.next(true);
-    this.capa.updateAction(this.caseId, a.id, { title: a.title, status: next })
+    this.capa.updateAction(this.caseId, a.id, { status: next })
       .pipe(finalize(() => this.acting$.next(false)))
       .subscribe({
         next: () => {

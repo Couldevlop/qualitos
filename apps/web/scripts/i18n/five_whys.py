@@ -71,6 +71,22 @@ TRANSLATIONS = {
 
     # Entrée depuis la fiche de non-conformité : la méthode part d'un écart
     # constaté, c'est donc de là qu'on la déroule.
+    'nc.detail.ishikawa': (
+        'Ishikawa', 'Ishikawa', 'Ishikawa', 'إيشيكاوا', '特性要因図', '鱼骨图'),
+    'nc.detail.ishikawa-tooltip': (
+        'Chercher les causes par familles, à partir de cet écart',
+        'Search causes by family, starting from this finding',
+        'Buscar las causas por familias, a partir de esta desviación',
+        'البحث عن الأسباب حسب العائلات، انطلاقاً من هذا الانحراف',
+        'この逸脱を起点に、要因を系統別に洗い出す',
+        '以此偏差为起点，按类别查找原因'),
+    'nc.detail.ishikawa-error': (
+        "Impossible d'ouvrir le diagramme d'Ishikawa.",
+        'Cannot open the Ishikawa diagram.',
+        'No se puede abrir el diagrama de Ishikawa.',
+        'تعذّر فتح مخطط إيشيكاوا.',
+        '特性要因図を開けませんでした。',
+        '无法打开鱼骨图。'),
     'nc.detail.five-whys': ('5 Pourquoi', '5 Whys', '5 Porqués', 'الأسباب الخمسة', 'なぜなぜ分析', '五问法'),
     'nc.detail.five-whys-tooltip': (
         "Remonter à la cause racine, un pourquoi après l'autre",

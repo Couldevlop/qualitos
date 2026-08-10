@@ -3,6 +3,8 @@ package com.openlab.qualitos.quality.capa;
 import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
 import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
+import com.openlab.qualitos.quality.nonconformity.NcStatus;
+import com.openlab.qualitos.quality.nonconformity.NonConformityRepository;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -33,14 +36,37 @@ public class CapaService {
      * qui arrive au dossier, sans connaître ni le journal d'audit ni les abonnés.
      */
     private final CapaLifecycleJournal journal;
+    /**
+     * Lecture seule des non-conformités, pour le verrou de clôture : un dossier
+     * ne se referme pas au-dessus d'un écart encore ouvert.
+     */
+    private final NonConformityRepository ncRepository;
+    /**
+     * Lecture seule des preuves : uniquement pour savoir si une action en porte
+     * une avant de la supprimer. Le dépôt lui-même reste l'affaire de
+     * {@link CapaEvidenceService} — ce service-ci ne connaît pas le stockage
+     * objet et n'a pas à le connaître.
+     */
+    private final CapaEvidenceRepository evidenceRepository;
 
     public CapaService(CapaCaseRepository caseRepository, CapaActionRepository actionRepository,
-                       AiGatewayClient ai, CapaLifecycleJournal journal) {
+                       AiGatewayClient ai, CapaLifecycleJournal journal,
+                       NonConformityRepository ncRepository,
+                       CapaEvidenceRepository evidenceRepository) {
         this.caseRepository = caseRepository;
         this.actionRepository = actionRepository;
         this.ai = ai;
         this.journal = journal;
+        this.ncRepository = ncRepository;
+        this.evidenceRepository = evidenceRepository;
     }
+
+    /**
+     * Statuts où une non-conformité est refermée. CANCELLED en fait partie : un
+     * écart annulé n'attend plus rien, contrairement à un écart en cours.
+     */
+    private static final List<NcStatus> NC_SETTLED_STATUSES =
+            List.of(NcStatus.RESOLVED, NcStatus.CLOSED, NcStatus.CANCELLED);
 
     @Transactional(readOnly = true)
     public Page<CapaDto.CaseResponse> findAll(CapaStatus status, Pageable pageable) {
@@ -48,7 +74,7 @@ public class CapaService {
         Page<CapaCase> page = status != null
                 ? caseRepository.findByTenantIdAndStatus(tenantId, status, pageable)
                 : caseRepository.findByTenantId(tenantId, pageable);
-        return page.map(this::toResponse);
+        return page.map(c -> toResponse(c, false));
     }
 
     @Transactional(readOnly = true)
@@ -124,9 +150,21 @@ public class CapaService {
         if (c.getStatus() != CapaStatus.RESOLVED) {
             throw new CapaStateException("Effectiveness check requires status RESOLVED");
         }
+        boolean effective = Boolean.TRUE.equals(request.effective());
+        if (effective) {
+            // Clore une CAPA au-dessus d'un écart encore ouvert reviendrait à
+            // déclarer le problème réglé pendant que le constat, lui, dit le
+            // contraire. Le refus est explicite et chiffré : l'utilisateur sait
+            // combien de non-conformités il lui reste à traiter.
+            long stillOpen = ncRepository.countByTenantIdAndCapaCaseIdAndStatusNotIn(
+                    c.getTenantId(), c.getId(), NC_SETTLED_STATUSES);
+            if (stillOpen > 0) {
+                throw new CapaStateException(stillOpen + " linked non-conformity(ies) are still open: "
+                        + "close them before closing this CAPA");
+            }
+        }
         c.setEffectivenessVerified(request.effective());
         c.setEffectivenessVerifiedAt(Instant.now());
-        boolean effective = Boolean.TRUE.equals(request.effective());
         if (effective) {
             c.setStatus(CapaStatus.CLOSED);
             c.setClosedAt(Instant.now());
@@ -171,10 +209,18 @@ public class CapaService {
         }
         CapaAction a = new CapaAction();
         a.setCapa(c);
-        a.setTitle(request.title());
+        a.setTitle(requireUsableTitle(request.title()));
         a.setDescription(request.description());
         a.setStatus(request.status() != null ? request.status() : CapaActionStatus.PENDING);
         a.setAssigneeId(request.assigneeId());
+        a.setAssigneeName(normalizeName(request.assigneeName()));
+        // La date de décision est SAISIE si l'appelant la donne, sinon DÉDUITE
+        // du jour de l'enregistrement — et cette déduction est faite ici,
+        // explicitement, pas en recyclant createdAt à l'affichage. Une action
+        // décidée en comité et saisie plus tard se corrige par une mise à jour ;
+        // une colonne qui afficherait created_at sous le nom « décidé le »
+        // ne se corrigerait jamais, parce qu'elle mentirait sans le dire.
+        a.setDecidedOn(request.decidedOn() != null ? request.decidedOn() : LocalDate.now());
         a.setDueDate(request.dueDate());
         return toActionResponse(actionRepository.save(a));
     }
@@ -232,9 +278,16 @@ public class CapaService {
         }
         CapaAction a = actionRepository.findByIdAndCapaId(actionId, capaId)
                 .orElseThrow(() -> new CapaActionNotFoundException(actionId));
-        if (request.title() != null) a.setTitle(request.title());
+        // PATCH : un champ absent ne se touche pas. Un champ PRÉSENT, en
+        // revanche, est validé ici — le contrôleur ne peut pas déléguer à
+        // Jakarta sans rendre le titre obligatoire à chaque appel partiel.
+        // Sans ce garde-fou, l'édition en ligne du tableau viderait le libellé
+        // d'une action sur un simple espace.
+        if (request.title() != null) a.setTitle(requireUsableTitle(request.title()));
         if (request.description() != null) a.setDescription(request.description());
         if (request.assigneeId() != null) a.setAssigneeId(request.assigneeId());
+        if (request.assigneeName() != null) a.setAssigneeName(normalizeName(request.assigneeName()));
+        if (request.decidedOn() != null) a.setDecidedOn(request.decidedOn());
         if (request.dueDate() != null) a.setDueDate(request.dueDate());
         if (request.status() != null) {
             a.setStatus(request.status());
@@ -254,10 +307,80 @@ public class CapaService {
         }
         CapaAction a = actionRepository.findByIdAndCapaId(actionId, capaId)
                 .orElseThrow(() -> new CapaActionNotFoundException(actionId));
+        // La contrainte de base efface en cascade la pièce rattachée à l'action,
+        // mais pas le binaire dans le stockage objet — il resterait orphelin,
+        // invisible et facturé. Surtout, une preuve d'audit disparaîtrait sans
+        // que rien ne le consigne. Refus explicite : on retire la preuve
+        // d'abord, ce qui laisse une trace (§11.5), puis l'action.
+        if (evidenceRepository.countByTenantIdAndActionId(c.getTenantId(), actionId) > 0) {
+            throw new CapaStateException(
+                    "This action carries an evidence file: remove it before deleting the action");
+        }
         actionRepository.delete(a);
     }
 
     // --- helpers ---
+
+    /** Borne du libellé, alignée sur la colonne (255) — refusée, jamais tronquée en silence. */
+    private static final int ACTION_TITLE_MAX = 255;
+
+    /**
+     * Un libellé d'action doit rester lisible : ni vide, ni fait d'espaces, ni
+     * plus long que sa colonne. Tronquer serait pire que refuser — l'utilisateur
+     * croirait avoir enregistré ce qu'il a tapé.
+     */
+    private static String requireUsableTitle(String title) {
+        if (title == null || title.isBlank()) {
+            throw new CapaValidationException("Action title must not be blank");
+        }
+        String trimmed = title.strip();
+        if (trimmed.length() > ACTION_TITLE_MAX) {
+            throw new CapaValidationException(
+                    "Action title exceeds " + ACTION_TITLE_MAX + " characters");
+        }
+        return trimmed;
+    }
+
+    /**
+     * Nom du porteur : mis à blanc plutôt que conservé vide, pour que l'écran
+     * ait une seule chose à tester. Une chaîne d'espaces afficherait une colonne
+     * « Responsable » vide sans le repère « — » qui dit qu'elle l'est.
+     */
+    private static String normalizeName(String name) {
+        if (name == null) {
+            return null;
+        }
+        String trimmed = name.strip();
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+        if (trimmed.length() > ACTION_TITLE_MAX) {
+            throw new CapaValidationException(
+                    "Assignee name exceeds " + ACTION_TITLE_MAX + " characters");
+        }
+        return trimmed;
+    }
+
+    /**
+     * Écart d'origine du dossier, s'il y en a un.
+     *
+     * <p>Deux chemins, dans cet ordre : le lien réel porté par la NC
+     * ({@code capa_case_id}, posé à l'escalade), puis à défaut la référence
+     * saisie à la main dans le dossier. Le second n'est qu'un repli — une
+     * référence tapée peut désigner un écart inexistant, auquel cas on ne
+     * montre rien plutôt qu'un nom inventé.
+     */
+    private CapaDto.LinkedNonConformity resolveSourceNc(CapaCase c) {
+        var linked = ncRepository.findFirstByTenantIdAndCapaCaseIdOrderByDetectedAtAsc(
+                c.getTenantId(), c.getId());
+        if (linked.isEmpty() && c.getSourceType() == CapaSourceType.NON_CONFORMITY
+                && c.getSourceRef() != null && !c.getSourceRef().isBlank()) {
+            linked = ncRepository.findByTenantIdAndReference(c.getTenantId(), c.getSourceRef().strip());
+        }
+        return linked
+                .map(nc -> new CapaDto.LinkedNonConformity(nc.getId(), nc.getReference(), nc.getTitle()))
+                .orElse(null);
+    }
 
     private CapaCase loadCase(UUID id) {
         UUID tenantId = requireTenantId();
@@ -273,6 +396,15 @@ public class CapaService {
     }
 
     private CapaDto.CaseResponse toResponse(CapaCase c) {
+        return toResponse(c, true);
+    }
+
+    /**
+     * @param withSourceNc résout l'écart d'origine (une requête de plus par
+     *        dossier). La liste paginée s'en passe : vingt dossiers vaudraient
+     *        vingt requêtes pour une colonne que la liste n'affiche pas.
+     */
+    private CapaDto.CaseResponse toResponse(CapaCase c, boolean withSourceNc) {
         return new CapaDto.CaseResponse(
                 c.getId(), c.getTenantId(), c.getTitle(), c.getDescription(),
                 c.getType(), c.getCriticity(), c.getStatus(),
@@ -281,13 +413,15 @@ public class CapaService {
                 c.getResolvedAt(), c.getClosedAt(),
                 c.getEffectivenessVerified(), c.getEffectivenessVerifiedAt(),
                 c.getCreatedAt(), c.getUpdatedAt(),
-                c.getActions().stream().map(this::toActionResponse).toList());
+                c.getActions().stream().map(this::toActionResponse).toList(),
+                withSourceNc ? resolveSourceNc(c) : null);
     }
 
     private CapaDto.ActionResponse toActionResponse(CapaAction a) {
         return new CapaDto.ActionResponse(
                 a.getId(), a.getCapa().getId(), a.getTitle(), a.getDescription(),
-                a.getStatus(), a.getAssigneeId(), a.getDueDate(), a.getCompletedAt(),
+                a.getStatus(), a.getAssigneeId(), a.getAssigneeName(),
+                a.getDecidedOn(), a.getDueDate(), a.getCompletedAt(),
                 a.getCreatedAt(), a.getUpdatedAt());
     }
 }

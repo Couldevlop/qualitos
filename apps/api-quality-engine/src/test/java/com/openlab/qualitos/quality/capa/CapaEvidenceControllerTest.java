@@ -22,6 +22,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -60,7 +61,7 @@ class CapaEvidenceControllerTest {
     @WithMockUser
     void depot_retourne201() throws Exception {
         when(service.upload(eq(CAPA), eq("application/pdf"), eq("releve.pdf"), any(), any()))
-                .thenReturn(new CapaEvidenceDto.Response(EVIDENCE, CAPA, "application/pdf",
+                .thenReturn(new CapaEvidenceDto.Response(EVIDENCE, CAPA, null, "application/pdf",
                         10L, "releve.pdf", null, Instant.parse("2026-08-07T10:00:00Z")));
 
         mockMvc.perform(multipart("/api/v1/capa/cases/{id}/evidences", CAPA).file(pdf()).with(csrf()))
@@ -139,7 +140,7 @@ class CapaEvidenceControllerTest {
     @WithMockUser
     void liste_retourne200_avecLUrlDeLecture() throws Exception {
         when(service.list(CAPA)).thenReturn(List.of(new CapaEvidenceDto.ListItem(
-                EVIDENCE, CAPA, "application/pdf", 2048L, "releve.pdf", null,
+                EVIDENCE, CAPA, null, "application/pdf", 2048L, "releve.pdf", null,
                 Instant.parse("2026-08-07T10:00:00Z"), "https://stockage.example/x?sig=abc")));
 
         mockMvc.perform(get("/api/v1/capa/cases/{id}/evidences", CAPA))
@@ -193,6 +194,39 @@ class CapaEvidenceControllerTest {
         mockMvc.perform(delete("/api/v1/capa/cases/{id}/evidences/{evidenceId}", CAPA, EVIDENCE)
                         .with(csrf()))
                 .andExpect(status().isConflict());
+    }
+
+    // --- auteur du dépôt ---------------------------------------------------
+    // Une preuve anonyme se défend mal devant un auditeur, mais un auteur
+    // INVENTÉ se défend plus mal encore.
+
+    @Test
+    void depot_avecUnJeton_retientLeSujetCommeAuteur() throws Exception {
+        UUID sujet = UUID.randomUUID();
+        when(service.upload(any(), any(), any(), any(), eq(sujet)))
+                .thenReturn(new CapaEvidenceDto.Response(EVIDENCE, CAPA, null, "application/pdf",
+                        10L, "releve.pdf", sujet, Instant.parse("2026-08-07T10:00:00Z")));
+
+        mockMvc.perform(multipart("/api/v1/capa/cases/{id}/evidences", CAPA).file(pdf())
+                        .with(jwt().jwt(j -> j.subject(sujet.toString())))
+                        .with(csrf()))
+                .andExpect(status().isCreated());
+
+        verify(service).upload(eq(CAPA), any(), any(), any(), eq(sujet));
+    }
+
+    @Test
+    void depot_avecUnSujetQuiNEstPasUnUuid_neFabriquePasDAuteur() throws Exception {
+        when(service.upload(any(), any(), any(), any(), any()))
+                .thenReturn(new CapaEvidenceDto.Response(EVIDENCE, CAPA, null, "application/pdf",
+                        10L, "releve.pdf", null, Instant.parse("2026-08-07T10:00:00Z")));
+
+        mockMvc.perform(multipart("/api/v1/capa/cases/{id}/evidences", CAPA).file(pdf())
+                        .with(jwt().jwt(j -> j.subject("service-account-edge")))
+                        .with(csrf()))
+                .andExpect(status().isCreated());
+
+        verify(service).upload(eq(CAPA), any(), any(), any(), eq(null));
     }
 
     @Test

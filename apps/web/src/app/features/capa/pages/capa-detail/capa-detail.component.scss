@@ -132,6 +132,83 @@
 /* ANO-011 — avancement des actions */
 .actions-table .action-done { color: var(--qos-success, #16a34a); vertical-align: middle; }
 
+/* --- Tableau des actions (ADR 0052) -------------------------------------------
+   Huit colonnes ne tiennent pas sur un portable : le débordement est confié à un
+   conteneur dédié plutôt qu'au corps de page, sinon c'est toute la fiche qui
+   glisse latéralement et l'en-tête sort de l'écran avec elle. */
+.actions-table-scroll {
+  overflow-x: auto;
+  /* Le champ d'édition et son étiquette flottante dépassent la hauteur d'une
+     ligne : sans marge, la première ligne éditée se ferait rogner par le haut. */
+  padding-top: 4px;
+}
+
+.actions-table { min-width: 940px; }
+
+.actions-table td,
+.actions-table th { white-space: nowrap; }
+
+/* Le libellé et l'écart d'origine sont les seuls textes libres : eux respirent
+   et se tronquent proprement, le reste tient en un mot. */
+.actions-table td:first-child,
+.actions-table .nc-cell {
+  white-space: normal;
+  max-width: 280px;
+}
+
+.nc-cell {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 13px;
+}
+
+.muted { color: var(--qos-text-muted, #6b7280); }
+
+/* La ligne en cours d'édition se distingue franchement : sans repère, on corrige
+   la ligne d'à côté. */
+.actions-table tr.row-editing td {
+  background: var(--qos-surface-accent, #f5f3ff);
+}
+
+.row-actions { display: flex; align-items: center; gap: 8px; }
+
+/* Les champs en ligne restent à la hauteur d'une cellule : un mat-form-field
+   par défaut fait deux fois la hauteur d'une ligne de tableau. */
+.inline-field { width: 220px; font-size: 13px; }
+.inline-field--title { width: 320px; }
+
+/* --- Colonne « Preuve » ------------------------------------------------------- */
+.action-evidence {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 180px;
+  vertical-align: middle;
+}
+
+.action-evidence mat-icon {
+  flex: none;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--qos-text-muted, #6b7280);
+}
+
+.action-evidence__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.evidence-remove { vertical-align: middle; }
+
+/* Cellule dont la pièce part ou s'en va : l'action est engagée, pas acquise. */
+.evidence-busy { opacity: 0.5; pointer-events: none; }
+
+.attach-btn { font-size: 13px; }
+
 /* --- Preuves du dossier (§4.2, ISO 9001 §10.2) --------------------------------
    La liste doit se lire d'un coup d'œil : une icône qui dit la nature du
    document, son nom cliquable, son poids et sa date en retrait. */

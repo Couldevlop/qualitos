@@ -26,6 +26,8 @@ export interface IshikawaDiagramResponse {
   mode: IshikawaMode;
   status: IshikawaStatus;
   ownerId: string;
+  /** Non-conformité d'origine, ou null : le diagramme se tient seul. */
+  ncId?: string | null;
   createdAt: string;
   updatedAt: string;
   causes: IshikawaCauseResponse[];
@@ -38,6 +40,11 @@ export interface CreateIshikawaDiagramRequest {
   description?: string;
   mode: IshikawaMode;
   ownerId: string;
+  /**
+   * Non-conformité d'où part le diagramme. Facultative : un Ishikawa se tient
+   * aussi pour lui-même — atelier, revue de processus.
+   */
+  ncId?: string;
 }
 
 export interface CreateIshikawaCauseRequest {

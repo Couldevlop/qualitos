@@ -125,6 +125,18 @@ export class IshikawaService {
     return this.http.post<ConvertedPdcaCycle>(`${this.endpoint}/${diagramId}/convert-to-pdca`, {}, { params });
   }
 
+  /**
+   * Diagrammes partant d'une non-conformité. La fiche de NC s'en sert pour
+   * savoir s'il faut ouvrir l'existant ou en créer un — l'utilisateur veut la
+   * même chose dans les deux cas, voir les causes de son écart.
+   */
+  listForNc(ncId: string): Observable<IshikawaDiagramResponse[]> {
+    if (environment.useMockApi) {
+      return of(this.mockStore.filter(d => d.ncId === ncId)).pipe(delay(120));
+    }
+    return this.http.get<IshikawaDiagramResponse[]>(`${this.endpoint}/by-nc/${ncId}`);
+  }
+
   createDiagram(input: CreateIshikawaDiagramRequest): Observable<IshikawaDiagramResponse> {
     if (environment.useMockApi) {
       const now = new Date().toISOString();
@@ -136,6 +148,7 @@ export class IshikawaService {
         mode: input.mode,
         status: 'DRAFT',
         ownerId: input.ownerId,
+        ncId: input.ncId ?? null,
         createdAt: now,
         updatedAt: now,
         causes: []

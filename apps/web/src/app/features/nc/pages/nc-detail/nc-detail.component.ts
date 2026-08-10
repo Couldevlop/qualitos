@@ -12,6 +12,8 @@ import { ConnectivityService } from '../../../../core/offline/connectivity.servi
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { FiveWhysService } from '../../../five-whys/five-whys.service';
 import { FiveWhysAnalysis } from '../../../five-whys/five-whys.types';
+import { IshikawaService } from '../../../ishikawa/ishikawa.service';
+import { IshikawaDiagramResponse } from '../../../ishikawa/ishikawa.types';
 import { NcService } from '../../nc.service';
 import { NcPhoto, NcResponse, NcSeverity, NcStatus, VisionAnalysis, VisionScore } from '../../nc.types';
 import {
@@ -79,6 +81,15 @@ export class NcDetailComponent implements OnInit {
   /** true le temps d'ouvrir ou de créer l'analyse (évite le double clic). */
   fiveWhysBusy$ = new BehaviorSubject<boolean>(false);
 
+  /**
+   * Diagrammes d'Ishikawa déjà ouverts sur cette non-conformité. Même raison que
+   * pour les 5 Pourquoi : la recherche de causes part de l'écart constaté, et
+   * c'est d'ici qu'on la lance sans avoir à recopier l'énoncé du problème.
+   */
+  ishikawa$ = new BehaviorSubject<IshikawaDiagramResponse[]>([]);
+  /** true le temps d'ouvrir ou de créer le diagramme (évite le double clic). */
+  ishikawaBusy$ = new BehaviorSubject<boolean>(false);
+
   private ncId = '';
   private readonly reload$ = new BehaviorSubject<void>(undefined);
   // Ancré des DEUX côtés et jeu de caractères restreint : un simple préfixe
@@ -93,7 +104,8 @@ export class NcDetailComponent implements OnInit {
     private readonly snack: MatSnackBar,
     private readonly dialog: MatDialog,
     private readonly connectivity: ConnectivityService,
-    private readonly fiveWhys: FiveWhysService
+    private readonly fiveWhys: FiveWhysService,
+    private readonly ishikawa: IshikawaService
   ) {}
 
   ngOnInit(): void {
@@ -120,6 +132,67 @@ export class NcDetailComponent implements OnInit {
     this.reload$.next();
     this.loadPhotos();
     this.loadFiveWhys();
+    this.loadIshikawa();
+  }
+
+  // --- Ishikawa ---------------------------------------------------------------
+
+  /** Chargement non bloquant : la fiche reste utilisable si l'appel échoue. */
+  private loadIshikawa(): void {
+    this.ishikawa.listForNc(this.ncId).subscribe({
+      next: diagrams => this.ishikawa$.next(diagrams),
+      error: err => {
+        // eslint-disable-next-line no-console
+        console.warn('[nc-detail] ishikawa listForNc failed', err?.status, err?.error?.title);
+      }
+    });
+  }
+
+  /**
+   * Ouvre le diagramme d'Ishikawa de cette non-conformité — et le crée s'il
+   * n'existe pas encore, en reprenant l'énoncé du problème depuis la NC plutôt
+   * qu'en demandant de le retaper. L'utilisateur n'a pas à savoir laquelle des
+   * deux choses se produit : il veut voir les causes de son écart.
+   */
+  openIshikawa(nc: NcResponse): void {
+    if (this.ishikawaBusy$.value) return;
+    const existing = this.ishikawa$.value;
+    if (existing.length > 0) {
+      this.router.navigate(['/ishikawa', existing[0].id]);
+      return;
+    }
+    this.ishikawaBusy$.next(true);
+    this.ishikawa.createDiagram({
+      problemStatement: nc.title,
+      description: nc.description,
+      mode: 'SIX_M',
+      // Le porteur par défaut est celui qui ouvre l'analyse : c'est lui qui la
+      // mène, et un diagramme sans porteur n'avance pas.
+      ownerId: this.auth.snapshot()?.userId ?? '',
+      ncId: this.ncId
+    })
+      .pipe(finalize(() => this.ishikawaBusy$.next(false)))
+      .subscribe({
+        next: diagram => {
+          this.ishikawa$.next([diagram, ...this.ishikawa$.value]);
+          this.router.navigate(['/ishikawa', diagram.id]);
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[nc-detail] create ishikawa failed', err?.status, err?.error?.title);
+          this.snack.open(
+            safeErrorMessage(err, $localize`:@@nc.detail.ishikawa-error:Impossible d'ouvrir le diagramme d'Ishikawa.`),
+            'OK', { duration: 4000 });
+        }
+      });
+  }
+
+  /**
+   * Même règle que les 5 Pourquoi : une NC close ne lance plus d'analyse, mais
+   * laisse relire celle qui a conclu — c'est elle qui explique la décision.
+   */
+  canOpenIshikawa(status: NcStatus): boolean {
+    return !this.isTerminal(status) || this.ishikawa$.value.length > 0;
   }
 
   // --- 5 Pourquoi -------------------------------------------------------------

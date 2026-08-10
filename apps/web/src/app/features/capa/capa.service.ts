@@ -27,6 +27,16 @@ export class CapaService {
   /** Pièces de preuve du mode démonstration, par dossier. */
   private readonly mockEvidences = new Map<string, CapaEvidence[]>();
 
+  /**
+   * Pièces d'ACTIONS du mode démonstration, rangées à part.
+   *
+   * Deux réserves distinctes et non un filtre sur une seule : côté serveur les
+   * deux niveaux se lisent par deux routes, et une réserve unique ferait
+   * remonter les pièces d'actions dans le bloc « Preuves » du dossier — le
+   * défaut exact que le filtre serveur existe pour éviter.
+   */
+  private readonly mockActionEvidences = new Map<string, CapaEvidence[]>();
+
   constructor(private readonly http: HttpClient) {}
 
   listCases(page = 0, size = 50, status?: CapaStatus): Observable<CapaPage> {
@@ -106,6 +116,10 @@ export class CapaService {
         title: input.title,
         status: input.status ?? 'PENDING',
         assigneeId: input.assigneeId,
+        assigneeName: input.assigneeName,
+        // Même déduction explicite que côté serveur : à défaut de date saisie,
+        // c'est le jour de l'enregistrement — jamais un champ technique renommé.
+        decidedOn: input.decidedOn ?? new Date().toISOString().slice(0, 10),
         dueDate: input.dueDate
       };
       if (c) {
@@ -118,9 +132,12 @@ export class CapaService {
   }
 
   /**
-   * Met à jour une action (avancement de statut PENDING→IN_PROGRESS→DONE). Le titre
-   * est requis par le backend (ActionRequest @NotBlank) — l'appelant le renvoie.
-   * §4.2 — débloque la résolution du CAPA (≥1 action DONE).
+   * Met à jour une action (§4.2) — avancement de statut, ou édition en ligne du
+   * libellé depuis le tableau.
+   *
+   * C'est un PATCH : seuls les champs envoyés changent. L'appelant n'a donc pas
+   * à renvoyer le libellé pour faire avancer un statut, ce qui évitait
+   * jusqu'ici d'écraser une correction faite entre-temps par quelqu'un d'autre.
    */
   updateAction(caseId: string, actionId: string, input: UpdateCapaActionRequest): Observable<CapaActionResponse> {
     if (environment.useMockApi) {
@@ -129,10 +146,15 @@ export class CapaService {
       if (a) {
         if (input.status !== undefined) a.status = input.status;
         if (input.title !== undefined) a.title = input.title;
+        if (input.assigneeName !== undefined) a.assigneeName = input.assigneeName;
+        if (input.decidedOn !== undefined) a.decidedOn = input.decidedOn;
         if (input.status === 'DONE') a.completedAt = new Date().toISOString();
         if (c) c.updatedAt = new Date().toISOString();
       }
-      return of(a ?? { id: actionId, capaId: caseId, title: input.title, status: input.status ?? 'PENDING' }).pipe(delay(120));
+      return of(a ?? {
+        id: actionId, capaId: caseId, title: input.title ?? '',
+        status: input.status ?? 'PENDING'
+      }).pipe(delay(120));
     }
     return this.http.patch<CapaActionResponse>(`${this.endpoint}/${caseId}/actions/${actionId}`, input);
   }
@@ -218,6 +240,66 @@ export class CapaService {
     return this.http.delete<void>(`${this.endpoint}/${caseId}/evidences/${evidenceId}`);
   }
 
+  // ---- preuves d'ACTION (§4.2, ADR 0052) --------------------------------------
+  // Mêmes bornes et mêmes refus que les preuves de dossier ; ce qui change,
+  // c'est le chemin — et une action ne porte qu'UNE pièce, parce qu'une cellule
+  // de tableau montre un document, pas une liste.
+
+  /** Toutes les pièces d'actions du dossier, en un appel : le tableau les range ensuite. */
+  listActionEvidences(caseId: string): Observable<CapaEvidence[]> {
+    if (environment.useMockApi) {
+      return of([...this.mockActionEvidenceStore(caseId)]).pipe(delay(120));
+    }
+    return this.http.get<CapaEvidence[]>(`${this.endpoint}/${caseId}/action-evidences`);
+  }
+
+  uploadActionEvidence(caseId: string, actionId: string, file: File): Observable<CapaEvidence> {
+    if (environment.useMockApi) {
+      const evidence: CapaEvidence = {
+        id: 'evd-act-' + Math.random().toString(36).slice(2, 9),
+        capaId: caseId,
+        actionId,
+        contentType: file.type || 'application/octet-stream',
+        sizeBytes: file.size,
+        originalFilename: file.name,
+        createdAt: new Date().toISOString(),
+        url: URL.createObjectURL(file)
+      };
+      this.mockActionEvidenceStore(caseId).push(evidence);
+      return of(evidence).pipe(delay(250));
+    }
+    const form = new FormData();
+    form.append('file', file, file.name);
+    return this.http.post<CapaEvidence>(
+      `${this.endpoint}/${caseId}/actions/${actionId}/evidences`, form);
+  }
+
+  deleteActionEvidence(caseId: string, actionId: string, evidenceId: string): Observable<void> {
+    if (environment.useMockApi) {
+      const store = this.mockActionEvidenceStore(caseId);
+      const idx = store.findIndex(e => e.id === evidenceId);
+      if (idx >= 0) {
+        // Libère l'URL d'objet : sans cela le binaire reste en mémoire jusqu'au
+        // rechargement de la page.
+        const url = store[idx].url;
+        if (url) URL.revokeObjectURL(url);
+        store.splice(idx, 1);
+      }
+      return of(void 0).pipe(delay(120));
+    }
+    return this.http.delete<void>(
+      `${this.endpoint}/${caseId}/actions/${actionId}/evidences/${evidenceId}`);
+  }
+
+  private mockActionEvidenceStore(caseId: string): CapaEvidence[] {
+    let store = this.mockActionEvidences.get(caseId);
+    if (!store) {
+      store = [];
+      this.mockActionEvidences.set(caseId, store);
+    }
+    return store;
+  }
+
   private mockEvidenceStore(caseId: string): CapaEvidence[] {
     let store = this.mockEvidences.get(caseId);
     if (!store) {
@@ -275,7 +357,37 @@ export class CapaService {
         type: 'CORRECTIVE', criticity: 'HIGH', status: 'IN_PROGRESS',
         sourceType: 'NON_CONFORMITY', sourceRef: 'NC-2026-018',
         ownerId: 'demo-user', dueDate: '2026-05-30',
-        createdAt: now, updatedAt: now, actions: []
+        // L'écart d'origine et le plan d'actions sont garnis : un dossier de
+        // démonstration sans action ne montrait jamais le tableau, donc jamais
+        // ce qu'il sait faire. Les dates de décision précèdent délibérément les
+        // échéances — c'est la distinction que la colonne « Date » porte.
+        sourceNonConformity: {
+          id: 'nc-2026-018',
+          reference: 'NC-2026-018',
+          title: 'Cordons de soudure hors tolérance sur la ligne 3'
+        },
+        createdAt: now, updatedAt: now,
+        actions: [
+          {
+            id: 'act-demo-1', capaId: 'capa-1',
+            title: 'Recalibrer la cellule de soudure et revalider les paramètres',
+            status: 'DONE', assigneeName: 'Amina Dridi',
+            decidedOn: '2026-04-14', dueDate: '2026-05-02',
+            completedAt: '2026-04-29T14:20:00Z'
+          },
+          {
+            id: 'act-demo-2', capaId: 'capa-1',
+            title: 'Renforcer le contrôle réception (échantillonnage 100 %)',
+            status: 'IN_PROGRESS', assigneeName: 'Marc Lefèvre',
+            decidedOn: '2026-04-14', dueDate: '2026-05-20'
+          },
+          {
+            id: 'act-demo-3', capaId: 'capa-1',
+            title: 'Former les opérateurs au nouveau critère de contrôle',
+            status: 'PENDING', assigneeName: 'Sofia Marques',
+            decidedOn: '2026-04-28', dueDate: '2026-06-10'
+          }
+        ]
       },
       {
         id: 'capa-2', tenantId: 'demo-tenant',

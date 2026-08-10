@@ -83,7 +83,7 @@ class IshikawaGoldenPathTest {
         });
 
         IshikawaDto.DiagramResponse created = service.createDiagram(new IshikawaDto.CreateDiagramRequest(
-                "Taux de rebut élevé en finition", "MVP", IshikawaMode.SIX_M, OWNER));
+                "Taux de rebut élevé en finition", "MVP", IshikawaMode.SIX_M, OWNER, null));
 
         assertThat(created.mode()).isEqualTo(IshikawaMode.SIX_M);
         assertThat(created.status()).isEqualTo(IshikawaStatus.DRAFT);

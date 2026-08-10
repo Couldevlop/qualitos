@@ -41,6 +41,18 @@ public class IshikawaDiagram {
     @Column(name = "owner_id", nullable = false)
     private UUID ownerId;
 
+    /**
+     * Non-conformité d'où part le diagramme, ou {@code null}.
+     *
+     * <p>Facultatif à dessein : un Ishikawa se tient aussi pour lui-même — revue
+     * de processus, atelier de recherche de causes — alors qu'une analyse des
+     * 5 Pourquoi part toujours d'un écart constaté. Fixé à la création et jamais
+     * ensuite : rattacher après coup un raisonnement à un autre constat que
+     * celui qui l'a motivé réécrirait l'histoire.
+     */
+    @Column(name = "nc_id", updatable = false)
+    private UUID ncId;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 

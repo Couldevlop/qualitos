@@ -10,6 +10,7 @@ import com.openlab.qualitos.quality.capa.CapaEvidenceTooLargeException;
 import com.openlab.qualitos.quality.capa.CapaEvidenceValidationException;
 import com.openlab.qualitos.quality.capa.CapaNotFoundException;
 import com.openlab.qualitos.quality.capa.CapaStateException;
+import com.openlab.qualitos.quality.capa.CapaValidationException;
 import com.openlab.qualitos.quality.circle.CircleMeetingNotFoundException;
 import com.openlab.qualitos.quality.dmaic.DmaicProjectNotFoundException;
 import com.openlab.qualitos.quality.dmaic.DmaicStateException;
@@ -298,6 +299,23 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/capa-invalid-state"));
         problem.setTitle("Invalid CAPA State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * Saisie refusée sur un dossier ou une action (400), distincte du conflit
+     * d'état (409). La mise à jour d'une action est un PATCH non validé par
+     * Jakarta — un champ absent doit rester intouché — donc les bornes du
+     * libellé sont tenues par le service, et leur refus doit sortir en 400 :
+     * sans ce gestionnaire il tomberait dans l'attrape-tout et l'API annoncerait
+     * une panne là où l'utilisateur a simplement vidé un champ.
+     */
+    @ExceptionHandler(CapaValidationException.class)
+    public ProblemDetail handleCapaValidation(CapaValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/capa-invalid-input"));
+        problem.setTitle("Invalid CAPA Input");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

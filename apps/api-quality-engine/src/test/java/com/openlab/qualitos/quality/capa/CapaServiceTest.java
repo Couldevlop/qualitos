@@ -34,6 +34,8 @@ class CapaServiceTest {
     @Mock CapaActionRepository actionRepo;
     @Mock AiGatewayClient ai;
     @Mock CapaLifecycleJournal journal;
+    @Mock com.openlab.qualitos.quality.nonconformity.NonConformityRepository ncRepo;
+    @Mock CapaEvidenceRepository evidenceRepo;
     @InjectMocks CapaService service;
 
     static final UUID TENANT = UUID.randomUUID();
@@ -361,7 +363,7 @@ class CapaServiceTest {
             return a;
         });
         CapaDto.ActionRequest req = new CapaDto.ActionRequest(
-                "fix", "desc", null, UUID.randomUUID(), LocalDate.now().plusDays(5));
+                "fix", "desc", null, UUID.randomUUID(), null, null, LocalDate.now().plusDays(5));
         CapaDto.ActionResponse r = service.addAction(c.getId(), req);
         assertThat(r.status()).isEqualTo(CapaActionStatus.PENDING);
     }
@@ -372,7 +374,7 @@ class CapaServiceTest {
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
         CapaDto.ActionRequest req = new CapaDto.ActionRequest(
-                "fix", null, CapaActionStatus.IN_PROGRESS, null, null);
+                "fix", null, CapaActionStatus.IN_PROGRESS, null, null, null, null);
         CapaDto.ActionResponse r = service.addAction(c.getId(), req);
         assertThat(r.status()).isEqualTo(CapaActionStatus.IN_PROGRESS);
     }
@@ -382,7 +384,7 @@ class CapaServiceTest {
         CapaCase c = capa(TENANT, CapaStatus.CLOSED);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         assertThatThrownBy(() -> service.addAction(c.getId(),
-                new CapaDto.ActionRequest("x", null, null, null, null)))
+                new CapaDto.ActionRequest("x", null, null, null, null, null, null)))
                 .isInstanceOf(CapaStateException.class);
     }
 
@@ -396,7 +398,7 @@ class CapaServiceTest {
         when(actionRepo.save(a)).thenReturn(a);
 
         service.updateAction(c.getId(), a.getId(),
-                new CapaDto.ActionRequest("t", null, CapaActionStatus.DONE, null, null));
+                new CapaDto.ActionRequest("t", null, CapaActionStatus.DONE, null, null, null, null));
 
         assertThat(a.getStatus()).isEqualTo(CapaActionStatus.DONE);
         assertThat(a.getCompletedAt()).isNotNull();
@@ -412,7 +414,7 @@ class CapaServiceTest {
         when(actionRepo.save(a)).thenReturn(a);
 
         service.updateAction(c.getId(), a.getId(),
-                new CapaDto.ActionRequest(null, null, CapaActionStatus.IN_PROGRESS, null, null));
+                new CapaDto.ActionRequest(null, null, CapaActionStatus.IN_PROGRESS, null, null, null, null));
 
         assertThat(a.getStatus()).isEqualTo(CapaActionStatus.IN_PROGRESS);
         assertThat(a.getCompletedAt()).isNull();
@@ -429,7 +431,7 @@ class CapaServiceTest {
         UUID assignee = UUID.randomUUID();
         LocalDate due = LocalDate.now().plusDays(3);
         service.updateAction(c.getId(), a.getId(),
-                new CapaDto.ActionRequest("nt", "nd", null, assignee, due));
+                new CapaDto.ActionRequest("nt", "nd", null, assignee, null, null, due));
         assertThat(a.getTitle()).isEqualTo("nt");
         assertThat(a.getDescription()).isEqualTo("nd");
         assertThat(a.getAssigneeId()).isEqualTo(assignee);
@@ -443,7 +445,7 @@ class CapaServiceTest {
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(actionRepo.findByIdAndCapaId(actionId, c.getId())).thenReturn(Optional.empty());
         assertThatThrownBy(() -> service.updateAction(c.getId(), actionId,
-                new CapaDto.ActionRequest("x", null, null, null, null)))
+                new CapaDto.ActionRequest("x", null, null, null, null, null, null)))
                 .isInstanceOf(CapaActionNotFoundException.class);
     }
 
@@ -452,7 +454,7 @@ class CapaServiceTest {
         CapaCase c = capa(TENANT, CapaStatus.CLOSED);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         assertThatThrownBy(() -> service.updateAction(c.getId(), UUID.randomUUID(),
-                new CapaDto.ActionRequest("x", null, null, null, null)))
+                new CapaDto.ActionRequest("x", null, null, null, null, null, null)))
                 .isInstanceOf(CapaStateException.class);
     }
 
@@ -490,6 +492,60 @@ class CapaServiceTest {
         return new CapaDto.CreateCaseRequest(
                 "Défaut soudure", "desc", CapaType.CORRECTIVE, CapaCriticity.HIGH,
                 CapaSourceType.NON_CONFORMITY, "NC-001", OWNER, null, LocalDate.now().plusDays(30));
+    }
+
+    // --- verrou de clôture sur les non-conformités liées ------------------------
+    // Clore une CAPA au-dessus d'un écart encore ouvert reviendrait à déclarer le
+    // problème réglé pendant que le constat dit le contraire.
+
+    @Test
+    void refuse_deCloreQuandUneNcLieeResteOuverte() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(eq(TENANT), eq(c.getId()), any()))
+                .thenReturn(2L);
+
+        assertThatThrownBy(() -> service.verifyEffectiveness(
+                c.getId(), new CapaDto.EffectivenessRequest(true)))
+                .isInstanceOf(CapaStateException.class)
+                .hasMessageContaining("2");
+
+        // Rien n'a bougé : ni le statut, ni la date de clôture, ni le journal.
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.RESOLVED);
+        assertThat(c.getClosedAt()).isNull();
+        verifyNoInteractions(journal);
+        verify(caseRepo, never()).save(any());
+    }
+
+    @Test
+    void cloture_quandToutesLesNcLieesSontRefermees() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(eq(TENANT), eq(c.getId()), any()))
+                .thenReturn(0L);
+        when(caseRepo.save(any())).thenReturn(c);
+
+        CapaDto.CaseResponse r = service.verifyEffectiveness(
+                c.getId(), new CapaDto.EffectivenessRequest(true));
+
+        assertThat(r.status()).isEqualTo(CapaStatus.CLOSED);
+    }
+
+    @Test
+    void neVerrouillePas_uneEfficaciteNonDemontree() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(any())).thenReturn(c);
+
+        service.verifyEffectiveness(c.getId(), new CapaDto.EffectivenessRequest(false));
+
+        // Le dossier repart en traitement : il ne se referme pas, il n'y a donc
+        // rien à verrouiller — et compter les NC ouvertes ici serait un appel
+        // pour rien. La vérification vise le VERROU précisément : depuis l'ADR
+        // 0052 la réponse résout aussi l'écart d'origine pour l'afficher, et
+        // exiger zéro interaction confondrait les deux usages du dépôt.
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.IN_PROGRESS);
+        verify(ncRepo, never()).countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any());
     }
 
     // --- journal du cycle de vie (§11.5) ---------------------------------------
@@ -588,6 +644,246 @@ class CapaServiceTest {
 
         // Une transition refusée n'a pas eu lieu : la consigner mentirait.
         verifyNoInteractions(journal);
+    }
+
+    // --- colonnes du tableau des actions (ADR 0052) ----------------------------
+    // Ce qui se teste ici n'est pas « le champ est-il stocké » — c'est que chaque
+    // colonne dit ce qu'elle prétend dire : la date est celle de la DÉCISION et
+    // non de la saisie, le nom du porteur est celui figé à la décision, et le
+    // libellé ne peut pas être vidé par une édition en ligne.
+
+    @Test
+    void addAction_dateDeDecisionSaisie_estConservee() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        LocalDate comite = LocalDate.of(2026, 3, 12);
+
+        CapaDto.ActionResponse r = service.addAction(c.getId(), new CapaDto.ActionRequest(
+                "Réviser le plan de contrôle", null, null, null, "Amina Dridi", comite, null));
+
+        // Une action décidée en comité le 12 mars et saisie plus tard porte le
+        // 12 mars : c'est toute la raison d'être de la colonne.
+        assertThat(r.decidedOn()).isEqualTo(comite);
+        assertThat(r.assigneeName()).isEqualTo("Amina Dridi");
+    }
+
+    @Test
+    void addAction_sansDateDeDecision_deduitLeJour_maisPasDepuisCreatedAt() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        CapaDto.ActionResponse r = service.addAction(c.getId(),
+                new CapaDto.ActionRequest("x", null, null, null, null, null, null));
+
+        // Déduction EXPLICITE au jour de l'enregistrement, et corrigeable ensuite.
+        // Le champ existe indépendamment de createdAt : l'entité l'a reçu avant
+        // toute persistance, là où createdAt n'est posé qu'au @PrePersist.
+        assertThat(r.decidedOn()).isEqualTo(LocalDate.now());
+        assertThat(r.createdAt()).isNull();
+    }
+
+    @Test
+    void addAction_nomDePorteurVide_estRamèneANull_plutotQueDAfficherDuBlanc() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        CapaDto.ActionResponse r = service.addAction(c.getId(),
+                new CapaDto.ActionRequest("x", null, null, null, "   ", null, null));
+
+        // Sinon la colonne « Responsable » serait vide sans le « — » qui dit
+        // qu'elle l'est : l'écran n'aurait plus qu'une seule chose à tester.
+        assertThat(r.assigneeName()).isNull();
+    }
+
+    @Test
+    void addAction_titreFaitDEspaces_estRefuse() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.addAction(c.getId(),
+                new CapaDto.ActionRequest("   ", null, null, null, null, null, null)))
+                .isInstanceOf(CapaValidationException.class);
+        verify(actionRepo, never()).save(any());
+    }
+
+    @Test
+    void addAction_titreTropLong_estRefuseSansTronquer() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.addAction(c.getId(),
+                new CapaDto.ActionRequest("x".repeat(256), null, null, null, null, null, null)))
+                .isInstanceOf(CapaValidationException.class)
+                .hasMessageContaining("255");
+        // Tronquer serait pire : l'utilisateur croirait avoir enregistré ce
+        // qu'il a tapé.
+        verify(actionRepo, never()).save(any());
+    }
+
+    @Test
+    void updateAction_editionEnLigne_changeLeLibelleEtLeStatut() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        CapaAction a = action(c, CapaActionStatus.PENDING);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        CapaDto.ActionResponse r = service.updateAction(c.getId(), a.getId(),
+                new CapaDto.ActionRequest("  Libellé corrigé  ", null,
+                        CapaActionStatus.IN_PROGRESS, null, null, null, null));
+
+        // Les espaces de bordure d'un champ de tableau viennent du copier-coller,
+        // pas de l'intention : les garder ferait diverger deux libellés identiques.
+        assertThat(r.title()).isEqualTo("Libellé corrigé");
+        assertThat(r.status()).isEqualTo(CapaActionStatus.IN_PROGRESS);
+    }
+
+    @Test
+    void updateAction_libelleVide_estRefuse_etNeVidePasLAction() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        CapaAction a = action(c, CapaActionStatus.PENDING);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+
+        assertThatThrownBy(() -> service.updateAction(c.getId(), a.getId(),
+                new CapaDto.ActionRequest(" ", null, null, null, null, null, null)))
+                .isInstanceOf(CapaValidationException.class);
+
+        // Le PATCH n'est pas validé par Jakarta (un champ absent doit rester
+        // intouché) : sans le garde-fou du service, l'édition en ligne effacerait
+        // le libellé sur un simple espace.
+        assertThat(a.getTitle()).isEqualTo("act");
+        verify(actionRepo, never()).save(any());
+    }
+
+    @Test
+    void updateAction_neTouchePasCeQuiNEstPasEnvoye() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        CapaAction a = action(c, CapaActionStatus.PENDING);
+        a.setAssigneeName("Amina Dridi");
+        a.setDecidedOn(LocalDate.of(2026, 3, 12));
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        service.updateAction(c.getId(), a.getId(), new CapaDto.ActionRequest(
+                null, null, CapaActionStatus.DONE, null, null, null, null));
+
+        assertThat(a.getAssigneeName()).isEqualTo("Amina Dridi");
+        assertThat(a.getDecidedOn()).isEqualTo(LocalDate.of(2026, 3, 12));
+    }
+
+    @Test
+    void deleteAction_refuseDEffacerUneActionQuiPorteUnePreuve() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        CapaAction a = action(c, CapaActionStatus.DONE);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+        when(evidenceRepo.countByTenantIdAndActionId(TENANT, a.getId())).thenReturn(1L);
+
+        assertThatThrownBy(() -> service.deleteAction(c.getId(), a.getId()))
+                .isInstanceOf(CapaStateException.class)
+                .hasMessageContaining("remove it before deleting the action");
+
+        // La cascade de base effacerait la ligne mais laisserait le binaire
+        // orphelin — et surtout, une preuve d'audit disparaîtrait sans trace.
+        verify(actionRepo, never()).delete(any());
+    }
+
+    @Test
+    void deleteAction_effaceUneActionSansPreuve() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        CapaAction a = action(c, CapaActionStatus.PENDING);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+        when(evidenceRepo.countByTenantIdAndActionId(TENANT, a.getId())).thenReturn(0L);
+
+        service.deleteAction(c.getId(), a.getId());
+
+        verify(actionRepo).delete(a);
+    }
+
+    // --- non-conformité d'origine ------------------------------------------------
+
+    @Test
+    void findById_porteLaNonConformiteDOrigine_parSonLienReel() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(ncRepo.findFirstByTenantIdAndCapaCaseIdOrderByDetectedAtAsc(TENANT, c.getId()))
+                .thenReturn(Optional.of(nc("NC-2026-0018", "Étiquetage lot 4471 illisible")));
+
+        CapaDto.CaseResponse r = service.findById(c.getId());
+
+        assertThat(r.sourceNonConformity()).isNotNull();
+        assertThat(r.sourceNonConformity().reference()).isEqualTo("NC-2026-0018");
+        assertThat(r.sourceNonConformity().title()).isEqualTo("Étiquetage lot 4471 illisible");
+    }
+
+    @Test
+    void findById_retombeSurLaReferenceSaisie_quandAucuneNcNePointeVersLeDossier() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        c.setSourceRef(" NC-2026-0018 ");
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(ncRepo.findFirstByTenantIdAndCapaCaseIdOrderByDetectedAtAsc(TENANT, c.getId()))
+                .thenReturn(Optional.empty());
+        when(ncRepo.findByTenantIdAndReference(TENANT, "NC-2026-0018"))
+                .thenReturn(Optional.of(nc("NC-2026-0018", "Étiquetage lot 4471 illisible")));
+
+        assertThat(service.findById(c.getId()).sourceNonConformity().title())
+                .isEqualTo("Étiquetage lot 4471 illisible");
+    }
+
+    @Test
+    void findById_neMontreRien_quandLaReferenceSaisieNeDesigneAucunEcart() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        c.setSourceRef("NC-INEXISTANTE");
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(ncRepo.findFirstByTenantIdAndCapaCaseIdOrderByDetectedAtAsc(TENANT, c.getId()))
+                .thenReturn(Optional.empty());
+        when(ncRepo.findByTenantIdAndReference(TENANT, "NC-INEXISTANTE")).thenReturn(Optional.empty());
+
+        // Une référence tapée à la main peut désigner un écart qui n'existe pas :
+        // ne rien montrer vaut mieux qu'afficher un nom inventé.
+        assertThat(service.findById(c.getId()).sourceNonConformity()).isNull();
+    }
+
+    @Test
+    void findById_neChercheAucunEcart_quandLaSourceNEnEstPasUn() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        c.setSourceType(CapaSourceType.AUDIT);
+        c.setSourceRef("AUD-2026-Q2");
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(ncRepo.findFirstByTenantIdAndCapaCaseIdOrderByDetectedAtAsc(TENANT, c.getId()))
+                .thenReturn(Optional.empty());
+
+        assertThat(service.findById(c.getId()).sourceNonConformity()).isNull();
+        verify(ncRepo, never()).findByTenantIdAndReference(any(), any());
+    }
+
+    @Test
+    void findAll_neResoutAucunEcart_pourNePasFaireUneRequeteParLigne() {
+        Pageable p = PageRequest.of(0, 20);
+        when(caseRepo.findByTenantId(TENANT, p))
+                .thenReturn(new PageImpl<>(List.of(capa(TENANT, CapaStatus.OPEN))));
+
+        Page<CapaDto.CaseResponse> page = service.findAll(null, p);
+
+        assertThat(page.getContent().get(0).sourceNonConformity()).isNull();
+        // Vingt dossiers vaudraient vingt requêtes pour une colonne que la liste
+        // n'affiche même pas.
+        verifyNoInteractions(ncRepo);
+    }
+
+    private com.openlab.qualitos.quality.nonconformity.NonConformity nc(String ref, String title) {
+        var n = new com.openlab.qualitos.quality.nonconformity.NonConformity();
+        n.setId(UUID.randomUUID());
+        n.setTenantId(TENANT);
+        n.setReference(ref);
+        n.setTitle(title);
+        return n;
     }
 
     private CapaCase capa(UUID tenant, CapaStatus status) {

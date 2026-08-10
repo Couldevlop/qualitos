@@ -5104,6 +5104,102 @@
         <source>Réformé</source>
         <target state="translated">廃棄済み</target>
       </trans-unit>
+      <trans-unit id="capa.detail.col-decided-on" datatype="html">
+        <source>Date</source>
+        <target state="translated">日付</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.col-assignee" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">担当者</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.col-nc" datatype="html">
+        <source>Non-conformité</source>
+        <target state="translated">不適合</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.col-evidence" datatype="html">
+        <source>Preuve</source>
+        <target state="translated">証拠</target>
+      </trans-unit>
+      <trans-unit id="capa.action-status.pending" datatype="html">
+        <source>À faire</source>
+        <target state="translated">未着手</target>
+      </trans-unit>
+      <trans-unit id="capa.action-status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">進行中</target>
+      </trans-unit>
+      <trans-unit id="capa.action-status.done" datatype="html">
+        <source>Faite</source>
+        <target state="translated">完了</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.edit-title-label" datatype="html">
+        <source>Libellé de l'action</source>
+        <target state="translated">対策の名称</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-updated" datatype="html">
+        <source>Action modifiée.</source>
+        <target state="translated">対策を更新しました。</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-update-error" datatype="html">
+        <source>Modification impossible.</source>
+        <target state="translated">更新できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.attach" datatype="html">
+        <source>Joindre</source>
+        <target state="translated">添付</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.added" datatype="html">
+        <source>Preuve jointe à l'action.</source>
+        <target state="translated">対策に証拠を添付しました。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.attach-aria" datatype="html">
+        <source>Joindre une preuve à l'action : <x id="title"/></source>
+        <target state="translated">対策に証拠を添付：<x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.remove-aria" datatype="html">
+        <source>Retirer la preuve de l'action : <x id="title"/></source>
+        <target state="translated">対策の証拠を削除：<x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="capa.detail.edit-action-aria" datatype="html">
+        <source>Modifier l'action : <x id="title"/></source>
+        <target state="translated">対策を編集：<x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.remove-tooltip" datatype="html">
+        <source>Retirer la preuve de cette action</source>
+        <target state="translated">この対策の証拠を削除</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.remove-title" datatype="html">
+        <source>Retirer la preuve de cette action ?</source>
+        <target state="translated">この対策の証拠を削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.remove-message" datatype="html">
+        <source>La pièce sera définitivement retirée. Une action déclarée faite sans preuve s'affirme faite sans le démontrer : ce retrait est traçable.</source>
+        <target state="translated">添付ファイルは完全に削除されます。証拠なしに完了とされた対策は、示さずに主張しているだけです。この削除は追跡されます。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.limit" datatype="html">
+        <source>Cette action porte déjà sa preuve, ou le dossier est clôturé.</source>
+        <target state="translated">この対策には既に証拠があるか、ケースが閉じられています。</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.gone" datatype="html">
+        <source>Cette action n'existe plus — recharge la fiche.</source>
+        <target state="translated">この対策はもう存在しません。ページを再読み込みしてください。</target>
+      </trans-unit>
+      <trans-unit id="capa.action.decided-on" datatype="html">
+        <source>Date de décision</source>
+        <target state="translated">決定日</target>
+      </trans-unit>
+      <trans-unit id="capa.action.decided-on-hint" datatype="html">
+        <source>Le jour où l'action a été décidée (comité, revue), pas celui de sa saisie.</source>
+        <target state="translated">対策が決定された日（委員会・レビュー）であり、入力日ではありません。</target>
+      </trans-unit>
+      <trans-unit id="capa.action.assignee-name" datatype="html">
+        <source>Responsable (optionnel)</source>
+        <target state="translated">担当者（任意）</target>
+      </trans-unit>
+      <trans-unit id="capa.action.assignee-name-placeholder" datatype="html">
+        <source>Ex. : Amina Dridi</source>
+        <target state="translated">例：Amina Dridi</target>
+      </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>
         <target state="translated">証拠</target>
@@ -7783,6 +7879,18 @@
       <trans-unit id="fivewhys.open-nc" datatype="html">
         <source>Voir la non-conformité</source>
         <target state="translated">不適合を表示</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.ishikawa" datatype="html">
+        <source>Ishikawa</source>
+        <target state="translated">特性要因図</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.ishikawa-tooltip" datatype="html">
+        <source>Chercher les causes par familles, à partir de cet écart</source>
+        <target state="translated">この逸脱を起点に、要因を系統別に洗い出す</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.ishikawa-error" datatype="html">
+        <source>Impossible d'ouvrir le diagramme d'Ishikawa.</source>
+        <target state="translated">特性要因図を開けませんでした。</target>
       </trans-unit>
       <trans-unit id="nc.detail.five-whys" datatype="html">
         <source>5 Pourquoi</source>
