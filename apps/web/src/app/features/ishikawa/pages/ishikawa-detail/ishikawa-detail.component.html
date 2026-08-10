@@ -117,6 +117,13 @@
         </ul>
       </mat-card>
 
+      <!-- La figure d'abord : des cartes rangent les causes, l'arête montre
+           qu'elles convergent toutes vers un même effet. Les cartes qui suivent
+           restent l'équivalent textuel du dessin — libellés entiers, sous-causes
+           dépliées, commandes — et le seul endroit où l'on agit. -->
+      <qos-ishikawa-fishbone [problem]="d.problemStatement"
+                             [branches]="fishboneBranches(d)"></qos-ishikawa-fishbone>
+
       <section class="branches">
         <mat-card class="branch-card" *ngFor="let b of branches(d)">
           <mat-card-header>

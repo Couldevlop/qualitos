@@ -107,6 +107,18 @@ $qos-danger-700:   #b91c1c;
   --qos-danger-bg-soft:  #{$qos-danger-50};
   --qos-danger-fg:       #{$qos-danger-700};
 
+  /* Rampe « chaîne de causes » — du symptôme constaté à la cause racine.
+   * Sert aux diagrammes de méthode (cascade des 5 Pourquoi) où la PROGRESSION
+   * elle-même porte du sens : on descend du rouge vers le vert.
+   * Le jaune franc du modèle papier tombe à ~1,8:1 sur blanc — illisible, et
+   * sous le 3:1 exigé par WCAG 1.4.11 pour un objet graphique porteur de sens.
+   * On garde donc la progression rouge → orange → ambre → vert, chaque teinte
+   * descendue au niveau qui passe le contraste. */
+  --qos-chain-1: #{$qos-danger-700};
+  --qos-chain-2: #c2410c;
+  --qos-chain-3: #a16207;
+  --qos-chain-4: #{$qos-success-700};
+
   /* Ombres — style Linear : 1px border + ombre quasi nulle.
    * xs/sm presque invisibles, md/lg douces et diffuses (jamais de noir dur). */
   --qos-shadow-xs: 0 1px 2px 0 rgba(17, 24, 39, 0.035);
@@ -171,6 +183,13 @@ $qos-danger-700:   #b91c1c;
   --qos-warn-fg:         #fcd34d;
   --qos-danger-bg-soft:  rgba(239, 68, 68, 0.16);
   --qos-danger-fg:       #fca5a5;
+
+  /* Rampe « chaîne de causes » — dark. Sur ardoise le rapport s'inverse : ce
+   * sont les teintes CLAIRES qui contrastent, d'où la remontée de chaque cran. */
+  --qos-chain-1: #f87171;
+  --qos-chain-2: #fb923c;
+  --qos-chain-3: #fbbf24;
+  --qos-chain-4: #34d399;
 
   /* Ombres dark — diffuses et douces, jamais de noir dur. */
   --qos-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.30);

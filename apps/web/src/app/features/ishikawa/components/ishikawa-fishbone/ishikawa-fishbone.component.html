@@ -1,0 +1,73 @@
+<!--
+  Le défilement horizontal appartient au CONTENEUR : une arête à quatre
+  colonnes dépasse largement un écran de portable, et laisser déborder la page
+  entière rendrait toute la lecture bancale.
+-->
+<div class="fishbone qos-scroll-x" *ngIf="hasDiagram">
+  <svg class="fishbone__svg"
+       [attr.width]="layout.width"
+       [attr.height]="layout.height"
+       [attr.viewBox]="'0 0 ' + layout.width + ' ' + layout.height"
+       preserveAspectRatio="xMinYMin meet"
+       focusable="false"
+       role="img"
+       [attr.aria-labelledby]="titleId + ' ' + descId">
+
+    <title [attr.id]="titleId">{{ diagramTitle }}</title>
+    <desc [attr.id]="descId">{{ diagramDescription }}</desc>
+
+    <defs>
+      <marker [attr.id]="arrowId"
+              markerWidth="11" markerHeight="11" refX="9" refY="5.5"
+              orient="auto" markerUnits="userSpaceOnUse">
+        <path class="fishbone__arrow" d="M0,1 L10,5.5 L0,10 z"></path>
+      </marker>
+    </defs>
+
+    <!-- L'épine : tout converge vers la tête, flèche comprise. -->
+    <line class="fishbone__spine"
+          [attr.x1]="layout.spineX1" [attr.y1]="layout.spineY"
+          [attr.x2]="layout.spineX2" [attr.y2]="layout.spineY"
+          [attr.marker-end]="'url(#' + arrowId + ')'"></line>
+
+    <g *ngFor="let bone of layout.bones; trackBy: trackByKey"
+       [attr.class]="'fishbone__bone side-' + bone.side + (bone.empty ? ' is-empty' : '')">
+
+      <line class="fishbone__bone-line"
+            [attr.x1]="bone.x1" [attr.y1]="bone.y1"
+            [attr.x2]="bone.x2" [attr.y2]="bone.y2"></line>
+
+      <rect class="fishbone__branch-box"
+            [attr.x]="bone.labelBoxX" [attr.y]="bone.labelBoxY"
+            [attr.width]="bone.labelBoxWidth" [attr.height]="bone.labelBoxHeight"
+            rx="10" ry="10"></rect>
+      <text class="fishbone__branch-label"
+            [attr.x]="bone.labelX" [attr.y]="bone.labelY"
+            text-anchor="middle">{{ bone.label }}</text>
+
+      <g *ngFor="let cause of bone.causes; trackBy: trackByKey">
+        <line class="fishbone__tick"
+              [attr.x1]="cause.tickX1" [attr.y1]="cause.tickY"
+              [attr.x2]="cause.tickX2" [attr.y2]="cause.tickY"></line>
+        <text class="fishbone__cause"
+              [attr.x]="cause.textX" [attr.y]="cause.textY"
+              [attr.text-anchor]="cause.anchor">{{ cause.label }}<!--
+            Une cause qui en cache d'autres le dit par un compteur : tracer la
+            hiérarchie sur l'oblique la rendrait illisible dès deux niveaux.
+          --><tspan class="fishbone__sub" *ngIf="cause.descendants > 0"> {{ subCountLabel(cause.descendants) }}</tspan></text>
+      </g>
+    </g>
+
+    <!-- La tête porte l'effet observé : c'est le point d'arrivée du dessin. -->
+    <g class="fishbone__head">
+      <rect class="fishbone__head-box"
+            [attr.x]="layout.head.x" [attr.y]="layout.head.y"
+            [attr.width]="layout.head.width" [attr.height]="layout.head.height"
+            rx="12" ry="12"></rect>
+      <text class="fishbone__head-text"
+            *ngFor="let line of layout.head.lines"
+            [attr.x]="layout.head.textX" [attr.y]="line.y"
+            [attr.text-anchor]="layout.head.anchor">{{ line.text }}</text>
+    </g>
+  </svg>
+</div>

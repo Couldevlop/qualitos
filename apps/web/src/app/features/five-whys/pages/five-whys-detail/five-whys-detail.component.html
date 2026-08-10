@@ -22,6 +22,12 @@
   </div>
 
   <ng-container *ngIf="analysis as a">
+    <!-- La forme AVANT la liste : la méthode dit une descente, et une descente
+         se voit. Le dessin illustre ; la liste qui suit reste l'énoncé complet
+         (texte jamais tronqué) et le seul endroit où l'on agit — c'est aussi
+         l'équivalent textuel du diagramme pour les lecteurs d'écran. -->
+    <qos-five-whys-cascade [steps]="steps" [rootCause]="a.rootCause"></qos-five-whys-cascade>
+
     <!-- La chaîne : chaque réponse répond au pourquoi de la précédente. -->
     <ol class="whys">
       <li class="why" *ngFor="let s of steps; let last = last">

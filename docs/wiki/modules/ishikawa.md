@@ -23,6 +23,22 @@ propose des causes probables par branche, que vous validez ou écartez.
 
 > Les suggestions IA sont une aide à la réflexion : **vous restez décideur** sur les causes retenues.
 
+## Lire l'arête de poisson
+
+La fiche affiche le diagramme sous sa **forme conventionnelle** : la tête porte le problème,
+l'épine y mène, et chaque branche oblique est une catégorie qui l'attaque. C'est cette figure
+qui montre ce qu'une liste ne montre pas — que toutes les familles de causes convergent vers
+un même effet.
+
+Le dessin **illustre** ; les **cartes de branche placées en dessous restent la référence** :
+- elles portent les libellés **entiers** (le dessin peut en abréger un trop long) ;
+- elles déplient la **hiérarchie complète** des sous-causes, que le dessin résume par un
+  compteur (« +3 ») afin de ne pas devenir illisible ;
+- c'est **là que l'on agit** : ajouter, renommer, supprimer une cause.
+
+Le nombre de branches suit le mode retenu (6M, 7M ou 8M) et le tracé s'y adapte seul. En
+arabe, la figure se lit de droite à gauche : la tête passe à gauche.
+
 ## Liens avec les autres modules
 
 - Une cause retenue peut être traitée par un cycle [PDCA](pdca.md) ou un projet [DMAIC](dmaic.md).

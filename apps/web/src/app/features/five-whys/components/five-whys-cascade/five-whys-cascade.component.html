@@ -1,0 +1,64 @@
+<!--
+  Le conteneur porte le défilement horizontal : un escalier de sept marches
+  dépasse la largeur d'un portable, et c'est le DIAGRAMME qui doit défiler,
+  jamais la page (une page qui glisse latéralement casse toute la lecture).
+-->
+<div class="cascade qos-scroll-x" *ngIf="hasDiagram">
+  <svg class="cascade__svg"
+       [attr.width]="layout.width"
+       [attr.height]="layout.height"
+       [attr.viewBox]="'0 0 ' + layout.width + ' ' + layout.height"
+       preserveAspectRatio="xMinYMin meet"
+       focusable="false"
+       role="img"
+       [attr.aria-labelledby]="titleId + ' ' + descId">
+
+    <!-- Nommé et décrit pour le lecteur d'écran ; le détail reste dans la
+         liste qui suit, seule à porter le texte complet et les commandes. -->
+    <title [attr.id]="titleId">{{ diagramTitle }}</title>
+    <desc [attr.id]="descId">{{ diagramDescription }}</desc>
+
+    <defs>
+      <!-- Une pointe par teinte : un `marker` n'hérite pas du trait de la
+           polyligne qui le référence (`context-stroke` reste inégalement
+           supporté), il faut donc le colorer lui-même. -->
+      <marker *ngFor="let t of tones"
+              [attr.id]="arrowIdPrefix + '-' + t"
+              markerWidth="9" markerHeight="9" refX="7" refY="4.5"
+              orient="auto" markerUnits="userSpaceOnUse">
+        <path d="M0,0.5 L8,4.5 L0,8.5 z" [attr.class]="'cascade__arrow tone-' + t"></path>
+      </marker>
+    </defs>
+
+    <!-- Les liaisons d'abord : elles passent SOUS les encarts, ce qui autorise
+         la flèche à viser le centre de la pastille sans la barrer. -->
+    <polyline *ngFor="let link of layout.connectors; trackBy: trackByKey"
+              [attr.points]="link.points"
+              [attr.class]="'cascade__link tone-' + link.tone"
+              [attr.marker-end]="'url(#' + arrowIdPrefix + '-' + link.tone + ')'"></polyline>
+
+    <g *ngFor="let card of layout.cards; trackBy: trackByKey"
+       [attr.class]="'cascade__card tone-' + card.tone + (card.isRoot ? ' is-root' : '')">
+
+      <rect class="cascade__box"
+            [attr.x]="card.x" [attr.y]="card.y"
+            [attr.width]="card.width" [attr.height]="card.height"
+            rx="12" ry="12"></rect>
+
+      <circle class="cascade__badge"
+              [attr.cx]="card.badgeCx" [attr.cy]="card.badgeCy" r="15"></circle>
+      <text class="cascade__rank"
+            [attr.x]="card.badgeCx" [attr.y]="card.badgeCy + 5"
+            text-anchor="middle">{{ card.isRoot ? '✓' : card.position }}</text>
+
+      <text class="cascade__caption"
+            [attr.x]="card.textX" [attr.y]="card.captionY"
+            [attr.text-anchor]="card.anchor">{{ card.isRoot ? rootCaption : caption(card.position) }}</text>
+
+      <text class="cascade__answer"
+            *ngFor="let line of card.lines"
+            [attr.x]="card.textX" [attr.y]="line.y"
+            [attr.text-anchor]="card.anchor">{{ line.text }}</text>
+    </g>
+  </svg>
+</div>

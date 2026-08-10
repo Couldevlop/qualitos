@@ -57,6 +57,8 @@ supersession).
 | [0050](./0050-preuves-jointes-capa.md) | Preuves jointes au dossier CAPA (et non à l'action), bornées et verrouillées à la clôture, sur le stockage objet des photos de NC (§4.2, ISO 9001 §10.2) | Accepté |
 | [0051](./0051-traces-et-suites-du-dossier-capa.md) | Transitions CAPA consignées au journal (dans la transaction) et annoncées aux abonnés (après validation) ; anomalie détectée pouvant ouvrir une CAPA (§4.2/§11.5/§13.2, solde l'ADR 0022) | Accepté |
 | [0052](./0052-tableau-actions-capa.md) | Tableau des actions CAPA lisible en audit : date de décision distincte de la saisie, nom du porteur figé faute d'annuaire nommé, écart d'origine, preuve par action (amende l'ADR 0050), édition en ligne et PATCH réellement partiel (§4.2, ISO 9001 §10.2) | Accepté |
+| [0053](./0053-rappel-echeance-audit-et-brique-courriel.md) | Rappel d'échéance des audits : planning à décompte serveur, marque d'idempotence posée en base par UPDATE conditionnel (multi-répliques), brique courriel optionnelle derrière un port (§4.4) | Accepté |
+| [0054](./0054-diagrammes-de-methode-en-svg-dessine.md) | Diagrammes de méthode (Ishikawa, 5 Pourquoi) dessinés en SVG à géométrie calculée et testée, sans JointJS ni ECharts ; la figure illustre, la liste énonce (remet en cause §3.5/§7.2) | Accepté |
 
 ## Statuts possibles
 

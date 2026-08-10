@@ -6,6 +6,7 @@ import { of, throwError } from 'rxjs';
 
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
+import { FiveWhysCascadeComponent } from '../../components/five-whys-cascade/five-whys-cascade.component';
 import { FiveWhysService } from '../../five-whys.service';
 import { FiveWhysAnalysis, FiveWhysStep } from '../../five-whys.types';
 import { FiveWhysDetailComponent } from './five-whys-detail.component';
@@ -50,7 +51,9 @@ describe('FiveWhysDetailComponent', () => {
 
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
-      declarations: [FiveWhysDetailComponent],
+      // La cascade est déclarée avec l'écran : elle en fait partie, et la
+      // remplacer par un bouchon laisserait passer une régression de tracé.
+      declarations: [FiveWhysDetailComponent, FiveWhysCascadeComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: FiveWhysService, useValue: service },
@@ -319,6 +322,28 @@ describe('FiveWhysDetailComponent', () => {
     expect(component.editingStepId).toBeNull();
     expect(component.editAnswer).toBe('');
     expect(service.updateStep).not.toHaveBeenCalled();
+  });
+
+  // --- la forme, à côté de la liste ---------------------------------------------
+
+  it('donne une forme à la chaîne au lieu de la seule liste', () => {
+    // La méthode dit une descente ; une liste à puces empile des lignes
+    // équivalentes et perd exactement ce que la méthode affirme.
+    setup(analysis([step(1), step(2), step(3)]));
+
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('qos-five-whys-cascade svg')).not.toBeNull();
+    expect(el.querySelectorAll('.cascade__card').length).toBe(3);
+    // La liste reste : elle porte le texte entier et les commandes.
+    expect(el.querySelectorAll('.why').length).toBe(3);
+  });
+
+  it('reporte la cause racine conclue au bout du dessin', () => {
+    setup(analysis([step(1), step(2), step(3)], 'Presse mal réglée'));
+
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelectorAll('.cascade__card').length).toBe(4);
+    expect(el.querySelectorAll('.is-root').length).toBe(1);
   });
 
   it('revient à la liste', () => {

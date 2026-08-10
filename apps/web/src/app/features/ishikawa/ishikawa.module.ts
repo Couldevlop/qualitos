@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
+import { IshikawaFishboneComponent } from './components/ishikawa-fishbone/ishikawa-fishbone.component';
 import { IshikawaCauseDialogComponent } from './pages/ishikawa-cause-dialog/ishikawa-cause-dialog.component';
 import { IshikawaCreateDialogComponent } from './pages/ishikawa-create-dialog/ishikawa-create-dialog.component';
 import { IshikawaDetailComponent } from './pages/ishikawa-detail/ishikawa-detail.component';
@@ -20,7 +21,8 @@ const routes: Routes = [
     IshikawaDetailComponent,
     IshikawaCreateDialogComponent,
     IshikawaCauseDialogComponent,
-    IshikawaEditDialogComponent
+    IshikawaEditDialogComponent,
+    IshikawaFishboneComponent
   ],
   imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })
