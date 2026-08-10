@@ -25,11 +25,16 @@ import java.util.UUID;
  * prouve. Ce service porte les bornes qui rendent le dossier lisible et le verrou
  * qui le rend crédible.
  *
- * <p>Trois bornes, toutes refusées explicitement plutôt que contournées en
- * silence : dix méga-octets par pièce, dix pièces par dossier, vingt-cinq
- * méga-octets au total. Un dossier de preuve se lit ; au-delà, l'auditeur ne
- * trouve plus rien, et supprimer d'office la pièce la plus ancienne pour faire
- * de la place serait indéfendable dans un dossier d'audit.
+ * <p>Deux niveaux de rattachement, mêmes règles (ADR 0050 puis 0052) : la pièce
+ * vaut pour le DOSSIER, ou pour UNE action précise du tableau. Un seul chemin de
+ * dépôt, une seule liste blanche, une seule vérification de signature — ajouter
+ * un second chemin aurait fait deux jeux de bornes à tenir d'accord.
+ *
+ * <p>Les bornes, toutes refusées explicitement plutôt que contournées en
+ * silence : dix méga-octets par pièce, dix pièces au niveau du dossier, UNE par
+ * action, vingt-cinq méga-octets au total. Un dossier de preuve se lit ; au-delà,
+ * l'auditeur ne trouve plus rien, et supprimer d'office la pièce la plus ancienne
+ * pour faire de la place serait indéfendable dans un dossier d'audit.
  *
  * <p>Le verrou d'état suit celui des actions : on verse et on retire tant que le
  * dossier vit, plus rien une fois clos. Un dossier qu'on peut regarnir après coup
@@ -42,8 +47,18 @@ public class CapaEvidenceService {
     /** Plafond par pièce — double rempart avec la limite multipart de Spring. */
     static final long MAX_SIZE_BYTES = 10L * 1024 * 1024;
 
-    /** Nombre de pièces par dossier. */
+    /** Nombre de pièces au niveau du DOSSIER. */
     static final int MAX_COUNT = 10;
+
+    /**
+     * Nombre de pièces par ACTION : une seule.
+     *
+     * <p>La colonne « Preuve » du tableau montre un document, pas une liste ;
+     * deux pièces rendraient la cellule indécidable. Remplacer se fait en deux
+     * gestes — retirer, puis reverser — et les deux se consignent, ce qu'un
+     * remplacement silencieux ne ferait pas.
+     */
+    static final int MAX_PER_ACTION = 1;
 
     /** Poids cumulé par dossier : dix pièces pleines feraient dix fois trop. */
     static final long MAX_TOTAL_BYTES = 25L * 1024 * 1024;
@@ -73,24 +88,51 @@ public class CapaEvidenceService {
 
     private final CapaEvidenceRepository evidenceRepository;
     private final CapaCaseRepository caseRepository;
+    private final CapaActionRepository actionRepository;
     private final ObjectProvider<ObjectStorage> storageProvider;
     private final AuditEventService auditEvents;
 
     public CapaEvidenceService(CapaEvidenceRepository evidenceRepository,
                                CapaCaseRepository caseRepository,
+                               CapaActionRepository actionRepository,
                                ObjectProvider<ObjectStorage> storageProvider,
                                AuditEventService auditEvents) {
         this.evidenceRepository = evidenceRepository;
         this.caseRepository = caseRepository;
+        this.actionRepository = actionRepository;
         this.storageProvider = storageProvider;
         this.auditEvents = auditEvents;
     }
 
+    /** Dépôt d'une pièce au niveau du DOSSIER (ADR 0050). */
     public CapaEvidenceDto.Response upload(UUID capaId, String contentType, String originalFilename,
                                            byte[] content, UUID uploadedBy) {
+        return store(capaId, null, contentType, originalFilename, content, uploadedBy);
+    }
+
+    /**
+     * Dépôt d'une pièce sur UNE action du dossier (ADR 0052).
+     *
+     * <p>L'action est relue dans le dossier passé en paramètre, jamais crue sur
+     * parole : un identifiant d'action d'un AUTRE dossier — ou d'un autre tenant,
+     * puisque le dossier est déjà filtré — rattacherait une preuve à un écart
+     * étranger. C'est un 404, pas un 403 : ne rien dire de l'existence de la
+     * ressource est le comportement attendu (OWASP A01).
+     */
+    public CapaEvidenceDto.Response uploadForAction(UUID capaId, UUID actionId, String contentType,
+                                                    String originalFilename, byte[] content,
+                                                    UUID uploadedBy) {
+        return store(capaId, actionId, contentType, originalFilename, content, uploadedBy);
+    }
+
+    private CapaEvidenceDto.Response store(UUID capaId, UUID actionId, String contentType,
+                                           String originalFilename, byte[] content, UUID uploadedBy) {
         UUID tenantId = requireTenantId();
         ObjectStorage storage = requireStorage();
         CapaCase capa = loadOpenCase(capaId, tenantId);
+        if (actionId != null) {
+            requireAction(capaId, actionId);
+        }
 
         if (content == null || content.length == 0) {
             throw new CapaEvidenceValidationException("Empty evidence upload");
@@ -112,18 +154,30 @@ public class CapaEvidenceService {
                     "File content does not match the declared type '" + normalizedType + "'");
         }
 
-        long already = evidenceRepository.countByTenantIdAndCapaId(tenantId, capaId);
-        if (already >= MAX_COUNT) {
-            throw new CapaStateException("This CAPA already carries its " + MAX_COUNT
-                    + " evidence files: remove one before adding another");
+        // Les deux niveaux comptent séparément : dix pièces au dossier, une par
+        // action. Un compteur commun laisserait dix actions preuve à l'appui
+        // saturer le dossier et interdire d'y verser la moindre pièce d'ensemble.
+        if (actionId == null) {
+            long already = evidenceRepository.countCaseLevel(tenantId, capaId);
+            if (already >= MAX_COUNT) {
+                throw new CapaStateException("This CAPA already carries its " + MAX_COUNT
+                        + " evidence files: remove one before adding another");
+            }
+        } else if (evidenceRepository.countByTenantIdAndActionId(tenantId, actionId) >= MAX_PER_ACTION) {
+            throw new CapaStateException(
+                    "This action already carries its evidence file: remove it before adding another");
         }
+        // Le poids cumulé, lui, reste commun : il protège le disque, et le disque
+        // ne distingue pas une pièce de dossier d'une pièce d'action.
         long total = evidenceRepository.sumSizeBytes(tenantId, capaId);
         if (total + content.length > MAX_TOTAL_BYTES) {
             throw new CapaStateException("Adding this file would exceed the "
                     + (MAX_TOTAL_BYTES / (1024 * 1024)) + " MB of evidence allowed on a CAPA");
         }
 
-        String key = "tenants/" + tenantId + "/capa/" + capa.getId() + "/" + UUID.randomUUID() + "." + ext;
+        String prefix = "tenants/" + tenantId + "/capa/" + capa.getId()
+                + (actionId == null ? "" : "/actions/" + actionId);
+        String key = prefix + "/" + UUID.randomUUID() + "." + ext;
 
         // Métadonnées d'abord, binaire ensuite : si le put échoue, la transaction
         // annule la ligne et rien n'est écrit. L'ordre inverse laisserait un
@@ -131,6 +185,7 @@ public class CapaEvidenceService {
         CapaEvidence evidence = new CapaEvidence();
         evidence.setTenantId(tenantId);
         evidence.setCapaId(capa.getId());
+        evidence.setActionId(actionId);
         evidence.setObjectKey(key);
         evidence.setContentType(normalizedType);
         evidence.setSizeBytes(content.length);
@@ -140,26 +195,70 @@ public class CapaEvidenceService {
 
         storage.put(key, normalizedType, content);
         trace(tenantId, uploadedBy, "capa.evidence.uploaded", saved,
-                "Preuve versée au dossier CAPA " + capa.getId());
+                actionId == null
+                        ? "Preuve versée au dossier CAPA " + capa.getId()
+                        : "Preuve versée à l'action " + actionId + " du dossier CAPA " + capa.getId());
         return toResponse(saved);
     }
 
+    /**
+     * Pièces du DOSSIER uniquement.
+     *
+     * <p>Le filtre est délibéré : sans lui, les pièces d'actions remonteraient
+     * dans la liste du dossier et l'écran les montrerait deux fois — une fois
+     * dans le bloc « Preuves », une fois dans le tableau — en laissant croire
+     * à un dossier deux fois mieux étayé qu'il ne l'est.
+     */
     @Transactional(readOnly = true)
     public List<CapaEvidenceDto.ListItem> list(UUID capaId) {
         UUID tenantId = requireTenantId();
         ObjectStorage storage = requireStorage();
         loadCase(capaId, tenantId); // 404 si le dossier est absent ou d'un autre tenant
-        return evidenceRepository.findByTenantIdAndCapaIdOrderByCreatedAtAsc(tenantId, capaId).stream()
+        return evidenceRepository.findCaseLevel(tenantId, capaId).stream()
                 .map(e -> toListItem(e, storage.presignGet(e.getObjectKey(), PRESIGN_TTL)))
                 .toList();
     }
 
+    /**
+     * Pièces de TOUTES les actions du dossier, en un appel.
+     *
+     * <p>Le tableau les range ensuite par action. Une requête par ligne ferait
+     * autant d'aller-retours que d'actions pour remplir une seule colonne.
+     */
+    @Transactional(readOnly = true)
+    public List<CapaEvidenceDto.ListItem> listForActions(UUID capaId) {
+        UUID tenantId = requireTenantId();
+        ObjectStorage storage = requireStorage();
+        loadCase(capaId, tenantId);
+        return evidenceRepository.findActionLevel(tenantId, capaId).stream()
+                .map(e -> toListItem(e, storage.presignGet(e.getObjectKey(), PRESIGN_TTL)))
+                .toList();
+    }
+
+    /** Retrait d'une pièce du DOSSIER (ADR 0050). */
     public void delete(UUID capaId, UUID evidenceId, UUID removedBy) {
+        remove(capaId, null, evidenceId, removedBy);
+    }
+
+    /**
+     * Retrait d'une pièce d'ACTION (ADR 0052). L'action est vérifiée pour ce
+     * dossier, et la pièce pour cette action : passer l'identifiant d'une pièce
+     * versée ailleurs ne doit pas la faire disparaître d'un dossier voisin.
+     */
+    public void deleteForAction(UUID capaId, UUID actionId, UUID evidenceId, UUID removedBy) {
+        remove(capaId, actionId, evidenceId, removedBy);
+    }
+
+    private void remove(UUID capaId, UUID actionId, UUID evidenceId, UUID removedBy) {
         UUID tenantId = requireTenantId();
         ObjectStorage storage = requireStorage();
         loadOpenCase(capaId, tenantId);
+        if (actionId != null) {
+            requireAction(capaId, actionId);
+        }
         CapaEvidence evidence = evidenceRepository
                 .findByIdAndTenantIdAndCapaId(evidenceId, tenantId, capaId)
+                .filter(e -> java.util.Objects.equals(e.getActionId(), actionId))
                 .orElseThrow(() -> new CapaEvidenceNotFoundException(evidenceId));
 
         // Symétrique du dépôt : la ligne d'abord, l'objet ensuite. Si la
@@ -172,7 +271,9 @@ public class CapaEvidenceService {
         // d'audit. Sans trace, le dossier ne dirait plus ce qu'il a porté, et
         // l'écran promet à l'utilisateur que ce retrait laisse une marque.
         trace(tenantId, removedBy, "capa.evidence.removed", evidence,
-                "Preuve retirée du dossier CAPA " + capaId);
+                actionId == null
+                        ? "Preuve retirée du dossier CAPA " + capaId
+                        : "Preuve retirée de l'action " + actionId + " du dossier CAPA " + capaId);
     }
 
     /**
@@ -195,10 +296,16 @@ public class CapaEvidenceService {
                 null));
     }
 
-    /** JSON minimal et construit à la main : trois champs, aucun sérialiseur à convoquer. */
+    /**
+     * JSON minimal et construit à la main : quatre champs, aucun sérialiseur à
+     * convoquer. L'action visée en fait partie — sans elle, le journal dirait
+     * qu'une preuve a quitté le dossier sans dire laquelle de ses lignes elle
+     * étayait.
+     */
     private static String payload(CapaEvidence e) {
         return "{\"capaId\":\"" + e.getCapaId()
-                + "\",\"contentType\":\"" + e.getContentType()
+                + "\",\"actionId\":" + (e.getActionId() == null ? "null" : "\"" + e.getActionId() + "\"")
+                + ",\"contentType\":\"" + e.getContentType()
                 + "\",\"sizeBytes\":" + e.getSizeBytes()
                 + ",\"originalFilename\":" + jsonString(e.getOriginalFilename()) + "}";
     }
@@ -230,6 +337,16 @@ public class CapaEvidenceService {
             throw new CapaStateException("Cannot change evidence on a " + capa.getStatus() + " CAPA");
         }
         return capa;
+    }
+
+    /**
+     * L'action doit appartenir AU dossier visé. Le dossier a déjà été filtré par
+     * tenant ; c'est donc ce contrôle-ci qui empêche de coller une preuve à une
+     * action d'un autre dossier — ou d'un autre tenant, par ricochet.
+     */
+    private CapaAction requireAction(UUID capaId, UUID actionId) {
+        return actionRepository.findByIdAndCapaId(actionId, capaId)
+                .orElseThrow(() -> new CapaActionNotFoundException(actionId));
     }
 
     private ObjectStorage requireStorage() {
@@ -304,13 +421,13 @@ public class CapaEvidenceService {
 
     private static CapaEvidenceDto.Response toResponse(CapaEvidence e) {
         return new CapaEvidenceDto.Response(
-                e.getId(), e.getCapaId(), e.getContentType(), e.getSizeBytes(),
+                e.getId(), e.getCapaId(), e.getActionId(), e.getContentType(), e.getSizeBytes(),
                 e.getOriginalFilename(), e.getUploadedBy(), e.getCreatedAt());
     }
 
     private static CapaEvidenceDto.ListItem toListItem(CapaEvidence e, URL url) {
         return new CapaEvidenceDto.ListItem(
-                e.getId(), e.getCapaId(), e.getContentType(), e.getSizeBytes(),
+                e.getId(), e.getCapaId(), e.getActionId(), e.getContentType(), e.getSizeBytes(),
                 e.getOriginalFilename(), e.getUploadedBy(), e.getCreatedAt(),
                 url == null ? null : url.toString());
     }

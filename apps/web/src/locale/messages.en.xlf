@@ -5104,6 +5104,102 @@
         <source>Réformé</source>
         <target state="translated">Retired</target>
       </trans-unit>
+      <trans-unit id="capa.detail.col-decided-on" datatype="html">
+        <source>Date</source>
+        <target state="translated">Date</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.col-assignee" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">Owner</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.col-nc" datatype="html">
+        <source>Non-conformité</source>
+        <target state="translated">Non-conformity</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.col-evidence" datatype="html">
+        <source>Preuve</source>
+        <target state="translated">Evidence</target>
+      </trans-unit>
+      <trans-unit id="capa.action-status.pending" datatype="html">
+        <source>À faire</source>
+        <target state="translated">To do</target>
+      </trans-unit>
+      <trans-unit id="capa.action-status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">In progress</target>
+      </trans-unit>
+      <trans-unit id="capa.action-status.done" datatype="html">
+        <source>Faite</source>
+        <target state="translated">Done</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.edit-title-label" datatype="html">
+        <source>Libellé de l'action</source>
+        <target state="translated">Action label</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-updated" datatype="html">
+        <source>Action modifiée.</source>
+        <target state="translated">Action updated.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-update-error" datatype="html">
+        <source>Modification impossible.</source>
+        <target state="translated">Could not update the action.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.attach" datatype="html">
+        <source>Joindre</source>
+        <target state="translated">Attach</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.added" datatype="html">
+        <source>Preuve jointe à l'action.</source>
+        <target state="translated">Evidence attached to the action.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.attach-aria" datatype="html">
+        <source>Joindre une preuve à l'action : <x id="title"/></source>
+        <target state="translated">Attach evidence to the action: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.remove-aria" datatype="html">
+        <source>Retirer la preuve de l'action : <x id="title"/></source>
+        <target state="translated">Remove the action's evidence: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="capa.detail.edit-action-aria" datatype="html">
+        <source>Modifier l'action : <x id="title"/></source>
+        <target state="translated">Edit the action: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.remove-tooltip" datatype="html">
+        <source>Retirer la preuve de cette action</source>
+        <target state="translated">Remove this action's evidence</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.remove-title" datatype="html">
+        <source>Retirer la preuve de cette action ?</source>
+        <target state="translated">Remove this action's evidence?</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.remove-message" datatype="html">
+        <source>La pièce sera définitivement retirée. Une action déclarée faite sans preuve s'affirme faite sans le démontrer : ce retrait est traçable.</source>
+        <target state="translated">The file will be permanently removed. An action declared done without evidence claims completion without showing it: this removal is traceable.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.limit" datatype="html">
+        <source>Cette action porte déjà sa preuve, ou le dossier est clôturé.</source>
+        <target state="translated">This action already carries its evidence, or the case is closed.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.gone" datatype="html">
+        <source>Cette action n'existe plus — recharge la fiche.</source>
+        <target state="translated">This action no longer exists — reload the case.</target>
+      </trans-unit>
+      <trans-unit id="capa.action.decided-on" datatype="html">
+        <source>Date de décision</source>
+        <target state="translated">Decision date</target>
+      </trans-unit>
+      <trans-unit id="capa.action.decided-on-hint" datatype="html">
+        <source>Le jour où l'action a été décidée (comité, revue), pas celui de sa saisie.</source>
+        <target state="translated">The day the action was decided (committee, review), not the day it was entered.</target>
+      </trans-unit>
+      <trans-unit id="capa.action.assignee-name" datatype="html">
+        <source>Responsable (optionnel)</source>
+        <target state="translated">Owner (optional)</target>
+      </trans-unit>
+      <trans-unit id="capa.action.assignee-name-placeholder" datatype="html">
+        <source>Ex. : Amina Dridi</source>
+        <target state="translated">e.g. Amina Dridi</target>
+      </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>
         <target state="translated">Evidence</target>

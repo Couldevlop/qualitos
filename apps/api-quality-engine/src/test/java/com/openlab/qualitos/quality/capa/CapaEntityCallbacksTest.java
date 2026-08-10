@@ -64,6 +64,30 @@ class CapaEntityCallbacksTest {
         assertThat(a.getUpdatedAt()).isAfter(before);
     }
 
+    @Test
+    void actionPrePersist_neTouchePasALaDateDeDecision() throws Exception {
+        // La date de décision n'est PAS dérivée de la persistance : c'est tout
+        // ce qui la distingue de createdAt. Un rappel automatique ici ferait
+        // exactement ce que la colonne existe pour éviter.
+        CapaAction a = new CapaAction();
+        invoke(a, "prePersist");
+        assertThat(a.getDecidedOn()).isNull();
+        assertThat(a.getCreatedAt()).isNotNull();
+    }
+
+    @Test
+    void evidencePrePersist_horodateUneSeuleFois() throws Exception {
+        CapaEvidence e = new CapaEvidence();
+        invoke(e, "prePersist");
+        assertThat(e.getCreatedAt()).isNotNull();
+
+        Instant premier = e.getCreatedAt();
+        invoke(e, "prePersist");
+        // Réhorodater ferait glisser la date d'une pièce d'audit sans que
+        // personne ne l'ait décidé.
+        assertThat(e.getCreatedAt()).isEqualTo(premier);
+    }
+
     private static void invoke(Object t, String m) throws Exception {
         Method method = t.getClass().getDeclaredMethod(m);
         method.setAccessible(true);

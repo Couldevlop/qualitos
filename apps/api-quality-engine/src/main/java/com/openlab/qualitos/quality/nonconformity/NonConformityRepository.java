@@ -56,4 +56,20 @@ public interface NonConformityRepository
      * a besoin du nombre, pas des lignes.
      */
     long countByTenantIdAndCapaCaseIdAndStatusNotIn(UUID tenantId, UUID capaCaseId, java.util.Collection<NcStatus> statuses);
+
+    /**
+     * Écart d'origine d'un dossier CAPA, pour l'afficher par son nom plutôt que
+     * par un identifiant.
+     *
+     * <p>Le lien est porté par la NC (colonne {@code capa_case_id}), pas par le
+     * dossier : c'est l'écart qui s'escalade en CAPA, pas l'inverse. Plusieurs
+     * écarts peuvent pointer vers le même dossier ; on retient le plus ancien,
+     * celui qui l'a motivé — {@code findFirst} plutôt qu'une liste, parce
+     * qu'un tableau montre une origine, pas un inventaire.
+     */
+    java.util.Optional<NonConformity> findFirstByTenantIdAndCapaCaseIdOrderByDetectedAtAsc(
+            UUID tenantId, UUID capaCaseId);
+
+    /** Repli quand aucune NC ne pointe vers le dossier : la référence saisie à la main. */
+    java.util.Optional<NonConformity> findByTenantIdAndReference(UUID tenantId, String reference);
 }

@@ -11,6 +11,11 @@ public final class CapaEvidenceDto {
     public record Response(
             UUID id,
             UUID capaId,
+            // Action visée, ou null quand la pièce vaut pour le dossier entier.
+            // Le champ est TOUJOURS présent dans la charge utile : un client qui
+            // range les preuves par action doit pouvoir distinguer « pièce du
+            // dossier » d'une action qu'il ne connaîtrait pas encore.
+            UUID actionId,
             String contentType,
             long sizeBytes,
             String originalFilename,
@@ -22,6 +27,7 @@ public final class CapaEvidenceDto {
     public record ListItem(
             UUID id,
             UUID capaId,
+            UUID actionId,
             String contentType,
             long sizeBytes,
             String originalFilename,

@@ -39,6 +39,7 @@ class CapaControllerTest {
     static final UUID ACTION = UUID.randomUUID();
     static final UUID TENANT = UUID.randomUUID();
     static final UUID OWNER = UUID.randomUUID();
+    static final UUID NC = UUID.randomUUID();
 
     @BeforeEach
     void setup() {
@@ -191,7 +192,7 @@ class CapaControllerTest {
     @Test @WithMockUser
     void addAction_success() throws Exception {
         when(service.addAction(eq(CAPA), any())).thenReturn(actionResp());
-        CapaDto.ActionRequest req = new CapaDto.ActionRequest("a", null, null, null, null);
+        CapaDto.ActionRequest req = new CapaDto.ActionRequest("a", null, null, null, null, null, null);
         mockMvc.perform(post("/api/v1/capa/cases/{id}/actions", CAPA).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
@@ -227,6 +228,45 @@ class CapaControllerTest {
     }
 
     @Test @WithMockUser
+    void updateAction_editionEnLigne_titreEtStatut_retourne200() throws Exception {
+        // L'édition en ligne du tableau n'envoie que ce qu'elle change.
+        when(service.updateAction(eq(CAPA), eq(ACTION), any())).thenReturn(actionResp());
+        mockMvc.perform(patch("/api/v1/capa/cases/{id}/actions/{aid}", CAPA, ACTION).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Libellé corrigé\",\"status\":\"IN_PROGRESS\"}"))
+                .andExpect(status().isOk());
+    }
+
+    @Test @WithMockUser
+    void updateAction_libelleVide_retourne400_etNon500() throws Exception {
+        // Le PATCH n'est pas validé par Jakarta (un champ absent doit rester
+        // intouché) : le refus vient du service, et doit sortir en 400 — sinon
+        // l'API annoncerait une panne là où l'utilisateur a vidé un champ.
+        when(service.updateAction(eq(CAPA), eq(ACTION), any()))
+                .thenThrow(new CapaValidationException("Action title must not be blank"));
+        mockMvc.perform(patch("/api/v1/capa/cases/{id}/actions/{aid}", CAPA, ACTION).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"   \"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title").value("Invalid CAPA Input"));
+    }
+
+    @Test @WithMockUser
+    void get_exposeLEcartDOrigine_pourLaColonneNonConformite() throws Exception {
+        when(service.findById(CAPA)).thenReturn(new CapaDto.CaseResponse(
+                CAPA, TENANT, "t", null, CapaType.CORRECTIVE, CapaCriticity.HIGH, CapaStatus.OPEN,
+                CapaSourceType.NON_CONFORMITY, "NC-2026-0018", OWNER, null, null,
+                null, null, null, null, Instant.now(), Instant.now(), List.of(),
+                new CapaDto.LinkedNonConformity(NC, "NC-2026-0018", "Étiquetage lot 4471 illisible")));
+
+        mockMvc.perform(get("/api/v1/capa/cases/{id}", CAPA))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.sourceNonConformity.title")
+                        .value("Étiquetage lot 4471 illisible"))
+                .andExpect(jsonPath("$.sourceNonConformity.reference").value("NC-2026-0018"));
+    }
+
+    @Test @WithMockUser
     void deleteAction_success() throws Exception {
         doNothing().when(service).deleteAction(CAPA, ACTION);
         mockMvc.perform(delete("/api/v1/capa/cases/{id}/actions/{aid}", CAPA, ACTION).with(csrf()))
@@ -251,12 +291,12 @@ class CapaControllerTest {
                 CAPA, TENANT, "t", null, CapaType.CORRECTIVE, CapaCriticity.HIGH, s,
                 CapaSourceType.NON_CONFORMITY, null, OWNER, null, null,
                 null, null, null, null,
-                Instant.now(), Instant.now(), List.of());
+                Instant.now(), Instant.now(), List.of(), null);
     }
 
     private CapaDto.ActionResponse actionResp() {
         return new CapaDto.ActionResponse(
                 ACTION, CAPA, "a", null, CapaActionStatus.PENDING,
-                null, null, null, Instant.now(), Instant.now());
+                null, null, null, null, null, Instant.now(), Instant.now());
     }
 }

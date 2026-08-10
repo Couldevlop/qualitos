@@ -5104,6 +5104,102 @@
         <source>Réformé</source>
         <target state="translated">مُستبعَد</target>
       </trans-unit>
+      <trans-unit id="capa.detail.col-decided-on" datatype="html">
+        <source>Date</source>
+        <target state="translated">التاريخ</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.col-assignee" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">المسؤول</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.col-nc" datatype="html">
+        <source>Non-conformité</source>
+        <target state="translated">حالة عدم مطابقة</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.col-evidence" datatype="html">
+        <source>Preuve</source>
+        <target state="translated">الدليل</target>
+      </trans-unit>
+      <trans-unit id="capa.action-status.pending" datatype="html">
+        <source>À faire</source>
+        <target state="translated">قيد الانتظار</target>
+      </trans-unit>
+      <trans-unit id="capa.action-status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">قيد التنفيذ</target>
+      </trans-unit>
+      <trans-unit id="capa.action-status.done" datatype="html">
+        <source>Faite</source>
+        <target state="translated">منجزة</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.edit-title-label" datatype="html">
+        <source>Libellé de l'action</source>
+        <target state="translated">عنوان الإجراء</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-updated" datatype="html">
+        <source>Action modifiée.</source>
+        <target state="translated">تم تعديل الإجراء.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.action-update-error" datatype="html">
+        <source>Modification impossible.</source>
+        <target state="translated">تعذّر التعديل.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.attach" datatype="html">
+        <source>Joindre</source>
+        <target state="translated">إرفاق</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.added" datatype="html">
+        <source>Preuve jointe à l'action.</source>
+        <target state="translated">تم إرفاق الدليل بالإجراء.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.attach-aria" datatype="html">
+        <source>Joindre une preuve à l'action : <x id="title"/></source>
+        <target state="translated">إرفاق دليل بالإجراء: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.remove-aria" datatype="html">
+        <source>Retirer la preuve de l'action : <x id="title"/></source>
+        <target state="translated">إزالة دليل الإجراء: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="capa.detail.edit-action-aria" datatype="html">
+        <source>Modifier l'action : <x id="title"/></source>
+        <target state="translated">تعديل الإجراء: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.remove-tooltip" datatype="html">
+        <source>Retirer la preuve de cette action</source>
+        <target state="translated">إزالة دليل هذا الإجراء</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.remove-title" datatype="html">
+        <source>Retirer la preuve de cette action ?</source>
+        <target state="translated">إزالة دليل هذا الإجراء؟</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.remove-message" datatype="html">
+        <source>La pièce sera définitivement retirée. Une action déclarée faite sans preuve s'affirme faite sans le démontrer : ce retrait est traçable.</source>
+        <target state="translated">ستتم إزالة الملف نهائياً. إجراء يُعلن إنجازه بلا دليل يدّعي الإنجاز دون أن يبرهن عليه: هذه الإزالة قابلة للتتبع.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.limit" datatype="html">
+        <source>Cette action porte déjà sa preuve, ou le dossier est clôturé.</source>
+        <target state="translated">هذا الإجراء يحمل دليله بالفعل، أو أن الملف مُغلق.</target>
+      </trans-unit>
+      <trans-unit id="capa.action-evidence.gone" datatype="html">
+        <source>Cette action n'existe plus — recharge la fiche.</source>
+        <target state="translated">لم يعد هذا الإجراء موجوداً — أعد تحميل الملف.</target>
+      </trans-unit>
+      <trans-unit id="capa.action.decided-on" datatype="html">
+        <source>Date de décision</source>
+        <target state="translated">تاريخ القرار</target>
+      </trans-unit>
+      <trans-unit id="capa.action.decided-on-hint" datatype="html">
+        <source>Le jour où l'action a été décidée (comité, revue), pas celui de sa saisie.</source>
+        <target state="translated">اليوم الذي تقرّر فيه الإجراء (لجنة، مراجعة)، لا يوم إدخاله.</target>
+      </trans-unit>
+      <trans-unit id="capa.action.assignee-name" datatype="html">
+        <source>Responsable (optionnel)</source>
+        <target state="translated">المسؤول (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="capa.action.assignee-name-placeholder" datatype="html">
+        <source>Ex. : Amina Dridi</source>
+        <target state="translated">مثال: أمينة الدريدي</target>
+      </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>
         <target state="translated">الأدلة</target>

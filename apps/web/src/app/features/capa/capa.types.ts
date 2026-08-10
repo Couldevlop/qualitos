@@ -11,8 +11,30 @@ export interface CapaActionResponse {
   title: string;
   status: 'PENDING' | 'IN_PROGRESS' | 'DONE';
   assigneeId?: string;
+  /**
+   * Nom lisible du porteur, figé à la décision (ADR 0052).
+   *
+   * Il double `assigneeId` sans le remplacer : l'identifiant rattache l'action à
+   * un compte, le nom est ce qui se lit dans un dossier d'audit. Absent sur les
+   * actions créées avant cette colonne — l'écran affiche « — » plutôt que de
+   * retomber sur un UUID que personne ne reconnaît.
+   */
+  assigneeName?: string;
+  /**
+   * Jour où l'action a été DÉCIDÉE, distinct de sa date de saisie. Absent sur
+   * les actions antérieures : recopier leur date de création fabriquerait une
+   * décision que l'organisation n'a jamais enregistrée.
+   */
+  decidedOn?: string;
   dueDate?: string;
   completedAt?: string;
+}
+
+/** Écart d'origine du dossier, réduit à ce qu'un tableau doit en montrer. */
+export interface LinkedNonConformity {
+  id: string;
+  reference: string;
+  title: string;
 }
 
 export interface CapaCaseResponse {
@@ -34,6 +56,14 @@ export interface CapaCaseResponse {
   createdAt: string;
   updatedAt: string;
   actions: CapaActionResponse[];
+  /**
+   * Non-conformité dont procède le dossier, donc dont procèdent ses actions.
+   * Portée par le dossier et non répétée sur chaque action : la répéter
+   * laisserait croire qu'elle peut différer d'une ligne à l'autre. Absente sur
+   * la liste paginée, qui ne la résout pas (une requête par ligne pour une
+   * colonne qu'elle n'affiche pas).
+   */
+  sourceNonConformity?: LinkedNonConformity;
 }
 
 export type CapaPage = SpringPage<CapaCaseResponse>;
@@ -56,15 +86,26 @@ export interface CreateCapaActionRequest {
   description?: string;
   status?: CapaActionStatus;
   assigneeId?: string;
+  assigneeName?: string;
+  /** Jour de la décision ; déduit du jour de l'enregistrement s'il est omis. */
+  decidedOn?: string;
   dueDate?: string;
 }
 
-/** Mise à jour d'une action (le titre est requis côté backend). §4.2 */
+/**
+ * Mise à jour partielle d'une action (§4.2).
+ *
+ * Tous les champs sont facultatifs : c'est un PATCH, où l'absence signifie « ne
+ * touche pas ». L'édition en ligne du tableau n'envoie donc que le libellé et le
+ * statut, sans risquer d'effacer la date de décision ou le porteur au passage.
+ */
 export interface UpdateCapaActionRequest {
-  title: string;
+  title?: string;
   status?: CapaActionStatus;
   description?: string;
   assigneeId?: string;
+  assigneeName?: string;
+  decidedOn?: string;
   dueDate?: string;
 }
 
@@ -84,6 +125,12 @@ export interface SuggestedAction {
 export interface CapaEvidence {
   id: string;
   capaId: string;
+  /**
+   * Action visée par la pièce, absente quand elle vaut pour le dossier entier
+   * (ADR 0050 puis 0052). C'est ce champ qui range la pièce dans la colonne
+   * « Preuve » de la bonne ligne du tableau.
+   */
+  actionId?: string;
   contentType: string;
   sizeBytes: number;
   originalFilename?: string;

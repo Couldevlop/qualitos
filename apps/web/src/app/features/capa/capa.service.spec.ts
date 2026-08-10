@@ -293,12 +293,36 @@ describe('CapaService (API réelle)', () => {
     req.flush({ id: 'a1', capaId: 'c1', title: 'Recalibrer', status: 'PENDING' });
   });
 
-  it('renvoie le titre avec le statut lors de l\'avancement d\'une action (@NotBlank côté serveur)', () => {
+  it('met à jour une action en PATCH avec les seuls champs fournis', () => {
     service.updateAction('c1', 'a1', { title: 'Recalibrer', status: 'DONE' }).subscribe();
     const req = http.expectOne(`${base}/c1/actions/a1`);
     expect(req.request.method).toBe('PATCH');
     expect(req.request.body).toEqual({ title: 'Recalibrer', status: 'DONE' });
     req.flush({ id: 'a1', capaId: 'c1', title: 'Recalibrer', status: 'DONE' });
+  });
+
+  it('avance un statut sans renvoyer le libellé (PATCH partiel)', () => {
+    // Renvoyer le libellé à l'identique écraserait une correction faite
+    // entre-temps par quelqu'un d'autre.
+    service.updateAction('c1', 'a1', { status: 'IN_PROGRESS' }).subscribe();
+    const req = http.expectOne(`${base}/c1/actions/a1`);
+    expect(req.request.body).toEqual({ status: 'IN_PROGRESS' });
+    req.flush({ id: 'a1', capaId: 'c1', title: 'Recalibrer', status: 'IN_PROGRESS' });
+  });
+
+  it('transmet la date de décision et le nom du porteur à la création', () => {
+    service.addAction('c1', {
+      title: 'Réviser le plan de contrôle',
+      decidedOn: '2026-03-12',
+      assigneeName: 'Amina Dridi'
+    }).subscribe();
+    const req = http.expectOne(`${base}/c1/actions`);
+    expect(req.request.body).toEqual({
+      title: 'Réviser le plan de contrôle',
+      decidedOn: '2026-03-12',
+      assigneeName: 'Amina Dridi'
+    });
+    req.flush({ id: 'a1', capaId: 'c1', title: 'Réviser le plan de contrôle', status: 'PENDING' });
   });
 
   it('demande les suggestions IA en POST avec un corps vide', (done) => {
@@ -482,6 +506,137 @@ describe('CapaService — preuves du dossier', () => {
           expect(list).toEqual([]);
           done();
         });
+      });
+    });
+  });
+});
+
+/**
+ * Preuves rattachées à UNE action (§4.2, ADR 0052).
+ *
+ * Mêmes bornes et mêmes refus que les preuves de dossier ; ce qui change, c'est
+ * le chemin — et le fait qu'une action ne porte qu'une pièce. Ce qui se teste
+ * ici, c'est que les deux niveaux ne se mélangent jamais : une pièce d'action
+ * ne doit pas remonter dans le bloc « Preuves » du dossier, et inversement.
+ */
+describe('CapaService — preuves d\'action', () => {
+  let service: CapaService;
+  let http: HttpTestingController;
+  let prevMock: boolean;
+
+  const base = `${environment.apiBaseUrl}/api/v1/capa/cases`;
+  const fichier = () => new File(['%PDF-1.7 constat'], 'constat.pdf', { type: 'application/pdf' });
+
+  describe('en mode connecté', () => {
+    beforeEach(() => {
+      prevMock = environment.useMockApi;
+      environment.useMockApi = false;
+      TestBed.configureTestingModule({
+        providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+      });
+      service = TestBed.inject(CapaService);
+      http = TestBed.inject(HttpTestingController);
+    });
+
+    afterEach(() => {
+      environment.useMockApi = prevMock;
+      http.verify();
+    });
+
+    it('lit toutes les pièces d\'actions du dossier en un appel', () => {
+      service.listActionEvidences('c1').subscribe();
+
+      // Une requête par ligne ferait autant d'aller-retours que d'actions.
+      const req = http.expectOne(`${base}/c1/action-evidences`);
+      expect(req.request.method).toBe('GET');
+      req.flush([]);
+    });
+
+    it('dépose la pièce sous la ressource de l\'action, en multipart', () => {
+      service.uploadActionEvidence('c1', 'a1', fichier()).subscribe();
+
+      const req = http.expectOne(`${base}/c1/actions/a1/evidences`);
+      expect(req.request.method).toBe('POST');
+      const body = req.request.body as FormData;
+      expect(body instanceof FormData).toBeTrue();
+      expect((body.get('file') as File).name).toBe('constat.pdf');
+      req.flush({});
+    });
+
+    it('retire la pièce par le chemin de son action', () => {
+      service.deleteActionEvidence('c1', 'a1', 'evd-9').subscribe();
+
+      const req = http.expectOne(`${base}/c1/actions/a1/evidences/evd-9`);
+      expect(req.request.method).toBe('DELETE');
+      req.flush(null);
+    });
+
+    it('propage le refus du serveur au lieu de l\'absorber', (done) => {
+      service.uploadActionEvidence('c1', 'a1', fichier()).subscribe({
+        error: err => {
+          expect(err.status).toBe(409);
+          done();
+        }
+      });
+      http.expectOne(`${base}/c1/actions/a1/evidences`)
+        .flush({ title: 'Invalid CAPA State' }, { status: 409, statusText: 'Conflict' });
+    });
+  });
+
+  describe('en mode démonstration', () => {
+    beforeEach(() => {
+      prevMock = environment.useMockApi;
+      environment.useMockApi = true;
+      TestBed.configureTestingModule({
+        providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+      });
+      service = TestBed.inject(CapaService);
+    });
+
+    afterEach(() => { environment.useMockApi = prevMock; });
+
+    it('ne mélange pas les pièces d\'actions avec celles du dossier', (done) => {
+      service.uploadActionEvidence('capa-1', 'a1', fichier()).subscribe(e => {
+        expect(e.actionId).toBe('a1');
+        service.listActionEvidences('capa-1').subscribe(actions => {
+          expect(actions.map(x => x.id)).toEqual([e.id]);
+          // Le bloc « Preuves » du dossier reste vide : c'est le défaut exact
+          // que le filtre serveur existe pour éviter.
+          service.listEvidences('capa-1').subscribe(dossier => {
+            expect(dossier).toEqual([]);
+            done();
+          });
+        });
+      });
+    });
+
+    it('retire la pièce d\'une action et la libère de la mémoire', (done) => {
+      service.uploadActionEvidence('capa-1', 'a1', fichier()).subscribe(e => {
+        expect(e.url).toContain('blob:');
+        service.deleteActionEvidence('capa-1', 'a1', e.id).subscribe(() => {
+          service.listActionEvidences('capa-1').subscribe(apres => {
+            expect(apres).toEqual([]);
+            done();
+          });
+        });
+      });
+    });
+
+    it('isole les pièces d\'actions par dossier', (done) => {
+      service.uploadActionEvidence('capa-1', 'a1', fichier()).subscribe(() => {
+        service.listActionEvidences('capa-2').subscribe(list => {
+          expect(list).toEqual([]);
+          done();
+        });
+      });
+    });
+
+    it('déduit explicitement la date de décision à la création d\'une action', (done) => {
+      service.addAction('capa-1', { title: 'Réviser le plan de contrôle' }).subscribe(a => {
+        // Déduction assumée, jamais un champ technique renommé : la date est
+        // celle du jour, et reste corrigeable.
+        expect(a.decidedOn).toBe(new Date().toISOString().slice(0, 10));
+        done();
       });
     });
   });

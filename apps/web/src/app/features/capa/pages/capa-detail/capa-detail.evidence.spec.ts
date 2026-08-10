@@ -58,8 +58,13 @@ describe('CapaDetailComponent — preuves du dossier', () => {
 
   beforeEach(async () => {
     capa = jasmine.createSpyObj<CapaService>('CapaService',
-      ['getCase', 'listEvidences', 'uploadEvidence', 'deleteEvidence']);
+      ['getCase', 'listEvidences', 'uploadEvidence', 'deleteEvidence',
+       'listActionEvidences', 'uploadActionEvidence', 'deleteActionEvidence']);
     capa.listEvidences.and.returnValue(of([]));
+    // Les preuves d'actions se chargent aussi à l'ouverture (ADR 0052) : sans
+    // ce doublage, la fiche partirait en erreur avant même d'afficher le bloc
+    // « Preuves » que ce fichier teste.
+    capa.listActionEvidences.and.returnValue(of([]));
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
     dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
     dialog.open.and.returnValue({ afterClosed: () => of(true) } as never);

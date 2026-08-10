@@ -12,8 +12,10 @@ import java.util.UUID;
  * Pièce jointe apportée en preuve à un dossier CAPA (§4.2, ISO 9001 §10.2).
  *
  * <p>Une CAPA se clôt sur une vérification d'efficacité, et l'efficacité se
- * prouve. La preuve se rattache au DOSSIER et non à l'action : c'est le niveau
- * où elle a valeur d'audit.
+ * prouve. Deux niveaux de rattachement coexistent (ADR 0050 puis 0052) : la
+ * pièce vaut pour le DOSSIER — le niveau que désigne la norme — ou pour UNE
+ * action précise, quand c'est cette action qu'il faut justifier ligne à ligne
+ * dans le tableau.
  *
  * <p>Comme pour les photos de non-conformité, seule la métadonnée est persistée
  * ici ; le binaire vit dans le stockage objet, sous une clé tenantisée.
@@ -34,6 +36,18 @@ public class CapaEvidence {
 
     @Column(name = "capa_id", nullable = false, updatable = false)
     private UUID capaId;
+
+    /**
+     * Action visée par la pièce, ou {@code null} quand la pièce vaut pour le
+     * dossier entier (comportement d'origine, ADR 0050).
+     *
+     * <p>Non modifiable après coup : déplacer une preuve d'une action à une
+     * autre reviendrait à réattribuer une pièce dans un dossier d'audit sans
+     * que rien ne le dise. On retire, puis on reverse — et les deux gestes se
+     * consignent (§11.5).
+     */
+    @Column(name = "action_id", updatable = false)
+    private UUID actionId;
 
     /** Clé d'objet : tenants/{tenantId}/capa/{capaId}/{uuid}.{ext}. */
     @Column(name = "object_key", nullable = false, length = 512, updatable = false)

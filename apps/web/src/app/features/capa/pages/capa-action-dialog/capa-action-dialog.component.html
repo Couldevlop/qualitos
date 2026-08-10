@@ -28,6 +28,25 @@
               placeholder="Méthode, ressources nécessaires, critère de fin…"></textarea>
   </mat-form-field>
 
+  <!-- Jour de la DÉCISION, distinct de la date de saisie : c'est ce que la
+       colonne « Date » du tableau affiche (ADR 0052). -->
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@capa.action.decided-on">Date de décision</mat-label>
+    <input matInput formControlName="decidedOn" type="date">
+    <mat-hint i18n="@@capa.action.decided-on-hint">
+      Le jour où l'action a été décidée (comité, revue), pas celui de sa saisie.
+    </mat-hint>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@capa.action.assignee-name">Responsable (optionnel)</mat-label>
+    <input matInput formControlName="assigneeName" maxlength="255"
+           i18n-placeholder="@@capa.action.assignee-name-placeholder"
+           placeholder="Ex. : Amina Dridi">
+    <mat-error *ngIf="form.controls.assigneeName.hasError('maxlength')"
+               i18n="@@common.maxlength-255">255 caractères maximum.</mat-error>
+  </mat-form-field>
+
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@capa.action.due-date">Échéance (optionnel)</mat-label>
     <input matInput formControlName="dueDate" type="date">

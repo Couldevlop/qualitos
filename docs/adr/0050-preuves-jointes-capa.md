@@ -1,6 +1,7 @@
 # ADR 0050 — Les preuves se joignent au dossier CAPA, pas à l'action
 
-- **Statut** : Accepté
+- **Statut** : Accepté, **amendé par [ADR 0052](./0052-tableau-actions-capa.md)** sur le
+  point 1 — la preuve peut aussi viser une action précise, comme ce point le prévoyait.
 - **Date** : 2026-08-07
 - **Owners** : @Couldevlop
 
