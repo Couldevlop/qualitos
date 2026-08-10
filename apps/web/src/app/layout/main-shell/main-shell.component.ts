@@ -143,6 +143,7 @@ export class MainShellComponent implements OnInit, OnDestroy {
         { label: $localize`:@@nav.calibration:Calibration`,         route: '/calibration', icon: 'straighten', module: 'calibration' },
         { label: $localize`:@@nav.iot:Parc IoT`,                    route: '/iot',        icon: 'sensors', module: 'iot' },
         { label: $localize`:@@nav.audits:Audits`,                   route: '/audits',    icon: 'fact_check', module: 'audit' },
+        { label: $localize`:@@nav.audits-planning:Planning audits`, route: '/audits/planning', icon: 'event_available', module: 'audit' },
         { label: $localize`:@@nav.risques-fmea:Risques (FMEA)`,     route: '/fmea',      icon: 'warning', module: 'risk' },
         { label: $localize`:@@nav.documents:Documents`,             route: '/documents', icon: 'description', module: 'docs' },
         { label: $localize`:@@nav.changements:Changements`,         route: '/changes',   icon: 'change_circle', module: 'change' },

@@ -7,6 +7,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -29,6 +30,20 @@ public class AuditController {
     @ResponseStatus(HttpStatus.CREATED)
     public AuditDto.PlanResponse create(@Valid @RequestBody AuditDto.CreatePlanRequest req) {
         return service.createPlan(req);
+    }
+
+    /**
+     * Planning des audits à venir (§4.4) — échéances proches et retards, triés.
+     *
+     * <p>Endpoint distinct de {@code /plans} plutôt qu'un filtre de plus : la liste
+     * pagine et renvoie checklists et constats, dont un planning n'a que faire ; et
+     * le décompte de jours doit venir de l'horloge du SERVEUR, pas de celle du poste.
+     */
+    @GetMapping("/planning")
+    public List<AuditDto.PlanningEntry> planning(
+            @RequestParam(required = false) AuditType type,
+            @RequestParam(required = false) Integer horizonDays) {
+        return service.planning(type, horizonDays);
     }
 
     @GetMapping("/plans/{id}")

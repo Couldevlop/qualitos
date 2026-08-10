@@ -29,6 +29,7 @@ import {
 describe('AuditsService', () => {
 
   const BASE = `${environment.apiBaseUrl}/api/v1/audits/plans`;
+  const PLANNING = `${environment.apiBaseUrl}/api/v1/audits/planning`;
 
   /** Connectivité pilotable (navigator.onLine est en lecture seule). */
   class FakeConnectivity {
@@ -100,6 +101,20 @@ describe('AuditsService', () => {
 
       expect(run(service.listPlans(0, 50, 'PLANNED')).content.map(p => p.id)).toEqual(['a3']);
       expect(run(service.listPlans(0, 50, 'CANCELLED')).content).toEqual([]);
+    }));
+
+    it('produit un planning trié du plus urgent au plus lointain', fakeAsync(() => {
+      const entries = run(service.listPlanning());
+
+      expect(entries.length).toBeGreaterThan(0);
+      const days = entries.map(e => e.daysUntil);
+      expect(days).toEqual([...days].sort((a, b) => a - b));
+      expect(entries[0].overdue).toBeTrue();
+    }));
+
+    it('restreint le planning simulé au type et à l’horizon demandés', fakeAsync(() => {
+      expect(run(service.listPlanning('SUPPLIER')).every(e => e.type === 'SUPPLIER')).toBeTrue();
+      expect(run(service.listPlanning(undefined, 10)).every(e => e.daysUntil <= 10)).toBeTrue();
     }));
 
     it('résout un plan par identifiant, avec repli sur le premier si inconnu', fakeAsync(() => {
@@ -278,6 +293,30 @@ describe('AuditsService', () => {
       expect(filtered.request.params.get('page')).toBe('1');
       expect(filtered.request.params.get('status')).toBe('IN_PROGRESS');
       filtered.flush({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 });
+    });
+
+    it('interroge l’endpoint dédié du planning, jamais la liste paginée', () => {
+      // Endpoint distinct : la liste pagine et charge checklists et constats, dont
+      // un planning n'a que faire — et le décompte doit venir du serveur.
+      service.listPlanning().subscribe();
+      const plain = http.expectOne(r => r.url === PLANNING);
+      expect(plain.request.method).toBe('GET');
+      expect(plain.request.params.has('type')).toBeFalse();
+      expect(plain.request.params.has('horizonDays')).toBeFalse();
+      plain.flush([]);
+
+      service.listPlanning('INTERNAL', 30).subscribe();
+      const filtered = http.expectOne(r => r.url === PLANNING);
+      expect(filtered.request.params.get('type')).toBe('INTERNAL');
+      expect(filtered.request.params.get('horizonDays')).toBe('30');
+      filtered.flush([]);
+    });
+
+    it('transmet le destinataire du rappel tel quel à la création', () => {
+      service.createPlan(planReq({ reminderEmail: 'qualite@exemple.test' })).subscribe();
+      const post = http.expectOne(BASE);
+      expect(post.request.body.reminderEmail).toBe('qualite@exemple.test');
+      post.flush({} as AuditPlanResponse);
     });
 
     it('crée en POST, lit en GET, met à jour en PATCH et supprime en DELETE', () => {

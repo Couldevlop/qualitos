@@ -8,7 +8,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
@@ -16,8 +15,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,13 +35,26 @@ class AuditServiceTest {
     @Mock AuditChecklistItemRepository checklistRepo;
     @Mock AuditFindingRepository findingRepo;
     @Mock AiGatewayClient ai;
-    @InjectMocks AuditService service;
+    AuditService service;
 
     static final UUID TENANT = UUID.randomUUID();
     static final UUID LEAD = UUID.randomUUID();
     static final UUID AUDITEE = UUID.randomUUID();
 
-    @BeforeEach void ctx() { TenantContext.setTenantId(TENANT.toString()); }
+    /**
+     * Horloge FIGÉE : le planning compte des jours d'écart. Avec l'horloge système,
+     * un test lancé à 23 h 59 UTC verrait « J-30 » devenir « J-29 » entre deux
+     * assertions — l'échec le plus coûteux qui soit, puisqu'il ne se reproduit pas.
+     */
+    static final LocalDate TODAY = LocalDate.of(2026, 6, 15);
+    static final Clock FIXED_CLOCK =
+            Clock.fixed(TODAY.atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneOffset.UTC);
+
+    @BeforeEach
+    void ctx() {
+        service = new AuditService(planRepo, checklistRepo, findingRepo, ai, FIXED_CLOCK);
+        TenantContext.setTenantId(TENANT.toString());
+    }
     @AfterEach  void clr() { TenantContext.clear(); }
 
     // --- create ---
@@ -48,7 +62,7 @@ class AuditServiceTest {
     void createPlan_success() {
         AuditDto.CreatePlanRequest req = new AuditDto.CreatePlanRequest(
                 "Audit ISO 9001", "scope", AuditType.INTERNAL, "ISO_9001",
-                LEAD, AUDITEE, LocalDate.now().plusDays(15));
+                LEAD, AUDITEE, LocalDate.now().plusDays(15), "qualite@exemple.test");
         when(planRepo.save(any())).thenAnswer(inv -> {
             AuditPlan p = inv.getArgument(0);
             p.setId(UUID.randomUUID());
@@ -63,7 +77,7 @@ class AuditServiceTest {
     void createPlan_missingTenant_throws() {
         TenantContext.clear();
         AuditDto.CreatePlanRequest req = new AuditDto.CreatePlanRequest(
-                "X", null, AuditType.INTERNAL, null, LEAD, null, null);
+                "X", null, AuditType.INTERNAL, null, LEAD, null, null, null);
         assertThatThrownBy(() -> service.createPlan(req))
                 .isInstanceOf(MissingTenantContextException.class);
     }
@@ -134,7 +148,7 @@ class AuditServiceTest {
         LocalDate when = LocalDate.now().plusDays(7);
         service.updatePlan(p.getId(),
                 new AuditDto.UpdatePlanRequest("T2", "s2", AuditType.LPA, "IATF_16949",
-                        newLead, AUDITEE, when));
+                        newLead, AUDITEE, when, "pilote@exemple.test"));
         assertThat(p.getTitle()).isEqualTo("T2");
         assertThat(p.getType()).isEqualTo(AuditType.LPA);
         assertThat(p.getLeadAuditorId()).isEqualTo(newLead);
@@ -146,7 +160,7 @@ class AuditServiceTest {
         AuditPlan p = plan(TENANT, AuditStatus.COMPLETED);
         when(planRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
         assertThatThrownBy(() -> service.updatePlan(p.getId(),
-                new AuditDto.UpdatePlanRequest("X", null, null, null, null, null, null)))
+                new AuditDto.UpdatePlanRequest("X", null, null, null, null, null, null, null)))
                 .isInstanceOf(AuditStateException.class);
     }
 
@@ -539,6 +553,116 @@ class AuditServiceTest {
         assertThatThrownBy(() -> service.generateReport(id))
                 .isInstanceOf(AuditPlanNotFoundException.class);
         verifyNoInteractions(ai);
+    }
+
+    // --- planning (§4.4) ---
+
+    @Test
+    void planning_noType_usesDefaultHorizonAndComputesDaysUntil() {
+        AuditPlan p = plan(TENANT, AuditStatus.PLANNED);
+        p.setScheduledDate(TODAY.plusDays(30));
+        when(planRepo.findUpcoming(eq(TENANT), eq(AuditStatus.PLANNED),
+                eq(TODAY.plusDays(AuditService.PLANNING_DEFAULT_HORIZON_DAYS)), any(Pageable.class)))
+                .thenReturn(List.of(p));
+
+        List<AuditDto.PlanningEntry> entries = service.planning(null, null);
+
+        assertThat(entries).hasSize(1);
+        assertThat(entries.get(0).daysUntil()).isEqualTo(30);
+        assertThat(entries.get(0).overdue()).isFalse();
+        assertThat(entries.get(0).reminderSent()).isFalse();
+        verify(planRepo, never()).findUpcomingByType(any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void planning_withType_delegatesToTypedQuery() {
+        AuditPlan p = plan(TENANT, AuditStatus.PLANNED);
+        p.setType(AuditType.EXTERNAL);
+        p.setScheduledDate(TODAY.plusDays(5));
+        when(planRepo.findUpcomingByType(eq(TENANT), eq(AuditStatus.PLANNED), eq(AuditType.EXTERNAL),
+                eq(TODAY.plusDays(60)), any(Pageable.class)))
+                .thenReturn(List.of(p));
+
+        List<AuditDto.PlanningEntry> entries = service.planning(AuditType.EXTERNAL, 60);
+
+        assertThat(entries).singleElement()
+                .extracting(AuditDto.PlanningEntry::type).isEqualTo(AuditType.EXTERNAL);
+        verify(planRepo, never()).findUpcoming(any(), any(), any(), any());
+    }
+
+    @Test
+    void planning_pastDueEntry_isFlaggedOverdueWithNegativeCount() {
+        AuditPlan p = plan(TENANT, AuditStatus.PLANNED);
+        p.setScheduledDate(TODAY.minusDays(3));
+        when(planRepo.findUpcoming(any(), any(), any(), any(Pageable.class))).thenReturn(List.of(p));
+
+        AuditDto.PlanningEntry e = service.planning(null, null).get(0);
+
+        assertThat(e.daysUntil()).isEqualTo(-3);
+        assertThat(e.overdue()).isTrue();
+    }
+
+    @Test
+    void planning_alreadyRemindedEntry_reportsIt() {
+        AuditPlan p = plan(TENANT, AuditStatus.PLANNED);
+        p.setScheduledDate(TODAY.plusDays(10));
+        p.setReminderSentAt(Instant.parse("2026-06-01T08:00:00Z"));
+        when(planRepo.findUpcoming(any(), any(), any(), any(Pageable.class))).thenReturn(List.of(p));
+
+        assertThat(service.planning(null, null).get(0).reminderSent()).isTrue();
+    }
+
+    @Test
+    void planning_missingTenant_throws() {
+        TenantContext.clear();
+        assertThatThrownBy(() -> service.planning(null, null))
+                .isInstanceOf(MissingTenantContextException.class);
+    }
+
+    @Test
+    void clampHorizon_absurdValuesFallBackInsteadOfFailing() {
+        // Un planning ne doit pas répondre 400 parce qu'on lui a demandé « 5 ans ».
+        assertThat(AuditService.clampHorizon(null)).isEqualTo(AuditService.PLANNING_DEFAULT_HORIZON_DAYS);
+        assertThat(AuditService.clampHorizon(0)).isEqualTo(AuditService.PLANNING_DEFAULT_HORIZON_DAYS);
+        assertThat(AuditService.clampHorizon(-7)).isEqualTo(AuditService.PLANNING_DEFAULT_HORIZON_DAYS);
+        assertThat(AuditService.clampHorizon(45)).isEqualTo(45);
+        assertThat(AuditService.clampHorizon(99_999)).isEqualTo(AuditService.PLANNING_MAX_HORIZON_DAYS);
+    }
+
+    // --- destinataire du rappel ---
+
+    @Test
+    void createPlan_blankReminderEmail_isStoredAsNull() {
+        when(planRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        service.createPlan(new AuditDto.CreatePlanRequest(
+                "T", null, AuditType.INTERNAL, null, LEAD, null, null, "   "));
+        verify(planRepo).save(argThat(p -> p.getReminderEmail() == null));
+    }
+
+    @Test
+    void updatePlan_emptyReminderEmail_clearsTheRecipient() {
+        AuditPlan p = plan(TENANT, AuditStatus.PLANNED);
+        p.setReminderEmail("ancien@exemple.test");
+        when(planRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
+        when(planRepo.save(p)).thenReturn(p);
+
+        service.updatePlan(p.getId(), new AuditDto.UpdatePlanRequest(
+                null, null, null, null, null, null, null, ""));
+
+        assertThat(p.getReminderEmail()).isNull();
+    }
+
+    @Test
+    void updatePlan_nullReminderEmail_leavesTheRecipientUntouched() {
+        AuditPlan p = plan(TENANT, AuditStatus.PLANNED);
+        p.setReminderEmail("garde@exemple.test");
+        when(planRepo.findByIdAndTenantId(p.getId(), TENANT)).thenReturn(Optional.of(p));
+        when(planRepo.save(p)).thenReturn(p);
+
+        service.updatePlan(p.getId(), new AuditDto.UpdatePlanRequest(
+                "T3", null, null, null, null, null, null, null));
+
+        assertThat(p.getReminderEmail()).isEqualTo("garde@exemple.test");
     }
 
     private AuditPlan plan(UUID tenant, AuditStatus status) {

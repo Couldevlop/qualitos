@@ -4592,6 +4592,102 @@
         <source>Recharger</source>
         <target state="translated">Reload</target>
       </trans-unit>
+      <trans-unit id="nav.audits-planning" datatype="html">
+        <source>Planning audits</source>
+        <target state="translated">Audit schedule</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.title" datatype="html">
+        <source>Planning des audits</source>
+        <target state="translated">Audit schedule</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.subtitle" datatype="html">
+        <source>Les audits à venir, du plus proche au plus lointain. Un rappel part automatiquement 30 jours avant l'échéance.</source>
+        <target state="translated">Upcoming audits, nearest first. A reminder goes out automatically 30 days before the due date.</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.back-to-list" datatype="html">
+        <source>Tous les plans</source>
+        <target state="translated">All plans</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.filter-type" datatype="html">
+        <source>Type d'audit</source>
+        <target state="translated">Audit type</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.filter-horizon" datatype="html">
+        <source>Horizon</source>
+        <target state="translated">Horizon</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.horizon-days" datatype="html">
+        <source><x id="INTERPOLATION"/> jours</source>
+        <target state="translated"><x id="INTERPOLATION"/> days</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.count-overdue" datatype="html">
+        <source><x id="INTERPOLATION"/> en retard</source>
+        <target state="translated"><x id="INTERPOLATION"/> overdue</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.count-approaching" datatype="html">
+        <source><x id="INTERPOLATION"/> à moins de 30 jours</source>
+        <target state="translated"><x id="INTERPOLATION"/> within 30 days</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.col-due" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">Due date</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.col-countdown" datatype="html">
+        <source>Décompte</source>
+        <target state="translated">Countdown</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.col-reminder" datatype="html">
+        <source>Rappel</source>
+        <target state="translated">Reminder</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.today" datatype="html">
+        <source>Aujourd'hui</source>
+        <target state="translated">Today</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.tomorrow" datatype="html">
+        <source>Demain</source>
+        <target state="translated">Tomorrow</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.in-days" datatype="html">
+        <source>Dans <x id="days"/> jours</source>
+        <target state="translated">In <x id="days"/> days</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.late-one" datatype="html">
+        <source>1 jour de retard</source>
+        <target state="translated">1 day overdue</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.late-many" datatype="html">
+        <source><x id="days"/> jours de retard</source>
+        <target state="translated"><x id="days"/> days overdue</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.reminder-sent" datatype="html">
+        <source>Envoyé</source>
+        <target state="translated">Sent</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.reminder-pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">Pending</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.empty" datatype="html">
+        <source>Aucun audit planifié sur cet horizon.</source>
+        <target state="translated">No audit scheduled within this horizon.</target>
+      </trans-unit>
+      <trans-unit id="audits.create.reminder-email" datatype="html">
+        <source>Courriel de rappel (optionnel)</source>
+        <target state="translated">Reminder email (optional)</target>
+      </trans-unit>
+      <trans-unit id="audits.create.reminder-email-placeholder" datatype="html">
+        <source>Ex. : qualite@monentreprise.fr</source>
+        <target state="translated">e.g. quality@mycompany.com</target>
+      </trans-unit>
+      <trans-unit id="audits.create.reminder-email-hint" datatype="html">
+        <source>Un rappel part 30 jours avant l'échéance. Sans adresse, il reste dans l'application.</source>
+        <target state="translated">A reminder goes out 30 days before the due date. Without an address it stays in the app.</target>
+      </trans-unit>
+      <trans-unit id="audits.create.reminder-email-invalid" datatype="html">
+        <source>Adresse de courriel invalide.</source>
+        <target state="translated">Invalid email address.</target>
+      </trans-unit>
       <trans-unit id="calibration.col-due" datatype="html">
         <source>Prochaine calibration</source>
         <target state="translated">Next calibration</target>
@@ -12253,6 +12349,30 @@ declared income
       <trans-unit id="marketplace.submit.error" datatype="html">
         <source>Échec de la soumission (manifeste ou doublon)</source>
         <target state="translated">Submission failed (manifest or duplicate)</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.diagram.title" datatype="html">
+        <source>Cascade des pourquoi</source>
+        <target state="translated">Chain of whys</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.diagram.desc-concluded" datatype="html">
+        <source>Descente de <x id="count"/> pourquoi jusqu'à la cause racine. Le détail de chaque réponse est repris dans la liste qui suit.</source>
+        <target state="translated">A descent of <x id="count"/> whys down to the root cause. Each answer is written out in full in the list below.</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.diagram.desc-open" datatype="html">
+        <source>Descente de <x id="count"/> pourquoi, sans cause racine conclue à ce jour. Le détail de chaque réponse est repris dans la liste qui suit.</source>
+        <target state="translated">A descent of <x id="count"/> whys, with no root cause concluded yet. Each answer is written out in full in the list below.</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.diagram.step" datatype="html">
+        <source>Pourquoi n°<x id="rank"/></source>
+        <target state="translated">Why no. <x id="rank"/></target>
+      </trans-unit>
+      <trans-unit id="ishikawa.diagram.title" datatype="html">
+        <source>Diagramme en arête de poisson</source>
+        <target state="translated">Fishbone diagram</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.diagram.desc" datatype="html">
+        <source>Arête de poisson : <x id="branches"/> familles de causes et <x id="causes"/> causes de premier niveau convergeant vers le problème. Le détail, sous-causes comprises, est repris dans les cartes qui suivent.</source>
+        <target state="translated">Fishbone: <x id="branches"/> cause families and <x id="causes"/> first-level causes converging on the problem. The detail, sub-causes included, is written out in the cards below.</target>
       </trans-unit>
       <trans-unit id="pdca.list.title" datatype="html">
         <source>Cycles PDCA</source>
