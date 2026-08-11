@@ -387,7 +387,7 @@ describe('CapaDetailComponent — tableau des actions', () => {
     expect(document.activeElement).toBe(champ);
   });
 
-  it('n\'envoie que le libellé et le statut — le reste de l\'action est intouché', () => {
+  it('n\'envoie que les champs édités — date de décision et porteur restent intouchés', () => {
     setup();
     capa.updateAction.and.returnValue(of(action()));
 

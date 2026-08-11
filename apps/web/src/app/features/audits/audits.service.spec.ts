@@ -97,9 +97,17 @@ describe('AuditsService', () => {
     // ---- Lectures ----------------------------------------------------------
 
     it('liste les plans pré-chargés et sait les filtrer par statut', fakeAsync(() => {
-      expect(run(service.listPlans()).totalElements).toBe(3);
+      const tous = run(service.listPlans());
+      expect(tous.totalElements).toBe(tous.content.length);
+      expect(tous.totalElements).toBeGreaterThan(0);
 
-      expect(run(service.listPlans(0, 50, 'PLANNED')).content.map(p => p.id)).toEqual(['a3']);
+      // Le filtre est ce qui se vérifie ici : chaque ligne rendue porte bien le
+      // statut demandé, et le nombre de plans du jeu d'essai n'y change rien.
+      const planifies = run(service.listPlans(0, 50, 'PLANNED')).content;
+      expect(planifies.length).toBeGreaterThan(0);
+      expect(planifies.every(p => p.status === 'PLANNED')).toBeTrue();
+      expect(planifies.map(p => p.id)).toContain('a3');
+
       expect(run(service.listPlans(0, 50, 'CANCELLED')).content).toEqual([]);
     }));
 
@@ -151,11 +159,16 @@ describe('AuditsService', () => {
     }));
 
     it('supprime un plan, et ignore une suppression inconnue', fakeAsync(() => {
+      // Compté par rapport à l'état initial plutôt qu'en dur : le jeu d'essai
+      // grandit avec les écrans qu'il doit démontrer, et une constante figée
+      // ferait échouer ce test pour une raison qui ne le concerne pas.
+      const avant = run(service.listPlans()).totalElements;
+
       run(service.deletePlan('a3'));
-      expect(run(service.listPlans()).totalElements).toBe(2);
+      expect(run(service.listPlans()).totalElements).toBe(avant - 1);
 
       run(service.deletePlan('plan-inconnu'));
-      expect(run(service.listPlans()).totalElements).toBe(2);
+      expect(run(service.listPlans()).totalElements).toBe(avant - 1);
     }));
 
     // ---- Constats et checklist ------------------------------------------------
@@ -243,12 +256,15 @@ describe('AuditsService', () => {
     }));
 
     it('laisse le magasin intact quand une transition vise un plan inconnu', fakeAsync(() => {
+      // On compare à l'état AVANT plutôt qu'à une liste écrite en dur : ce qui
+      // est vérifié ici est l'absence d'effet, pas la composition du jeu d'essai.
+      const avant = run(service.listPlans()).content.map(p => p.status);
+
       run(service.startPlan('plan-inconnu'));
       run(service.completePlan('plan-inconnu'));
       run(service.cancelPlan('plan-inconnu'));
 
-      expect(run(service.listPlans()).content.map(p => p.status))
-        .toEqual(['COMPLETED', 'IN_PROGRESS', 'PLANNED']);
+      expect(run(service.listPlans()).content.map(p => p.status)).toEqual(avant);
     }));
 
     it('génère une synthèse de rapport sur le plan', fakeAsync(() => {

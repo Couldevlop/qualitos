@@ -44,8 +44,30 @@ public class SmtpAuditReminderMailer implements AuditReminderMailer {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(from);
         message.setTo(to);
-        message.setSubject(subject);
+        message.setSubject(singleLine(subject));
         message.setText(body);
         sender.send(message);
+    }
+
+    /**
+     * Écrase retours chariot et sauts de ligne du sujet.
+     *
+     * <p>Le sujet porte le titre de l'audit, saisi par un utilisateur. Un en-tête
+     * de courriel se termine par CRLF : y glisser un saut de ligne permettrait
+     * d'en forger d'autres à la suite — un {@code Bcc:} vers un tiers, par
+     * exemple — et le rappel partirait où l'auteur du titre l'aurait décidé.
+     *
+     * <p>Aujourd'hui l'attaque échoue déjà, mais par accident : le préfixe du
+     * sujet contient des accents, ce qui force JavaMail à encoder le sujet
+     * ENTIER en RFC 2047, CRLF compris. Cette protection tient donc à la
+     * typographie d'une chaîne de caractères — que la moindre traduction ou
+     * refonte du libellé ferait disparaître, sans que rien ne le signale. On ne
+     * laisse pas une propriété de sécurité dépendre d'un détail de rédaction.
+     *
+     * <p>Le corps n'a pas besoin du même traitement : il est envoyé comme
+     * contenu, pas comme en-tête, et un saut de ligne y est légitime.
+     */
+    static String singleLine(String subject) {
+        return subject == null ? null : subject.replaceAll("[\\r\\n]+", " ");
     }
 }

@@ -102,4 +102,12 @@ TRANSLATIONS = {
         'Adresse de courriel invalide.', 'Invalid email address.',
         'Dirección de correo no válida.', 'عنوان بريد إلكتروني غير صالح.',
         'メールアドレスが正しくありません。', '邮箱地址无效。'),
+    # --- edition du destinataire du rappel -----------------------------------
+    'audits.edit.reminder-email-hint': (
+        'Videz le champ pour ne plus envoyer de rappel par courriel.',
+        'Clear the field to stop sending email reminders.',
+        'Vacíe el campo para dejar de enviar recordatorios por correo.',
+        'أفرغ الحقل لإيقاف إرسال التذكير بالبريد.',
+        'メール通知を止めるには、この欄を空にしてください。',
+        '清空该字段即可停止发送邮件提醒。'),
 }

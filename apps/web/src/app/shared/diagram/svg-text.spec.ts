@@ -37,6 +37,9 @@ describe('svg-text', () => {
 
       expect(lines.length).toBe(2);
       expect(lines[1].endsWith('…')).toBeTrue();
+      // L'ellipse compte DANS le budget : sans cette assertion, une ligne à
+      // `maxChars + 1` passait, et le glyphe débordait de l'encart.
+      lines.forEach(l => expect(l.length).toBeLessThanOrEqual(10));
     });
 
     it('borne aussi le nombre de lignes quand la coupe vient d\'un mot imprenable', () => {
@@ -44,6 +47,7 @@ describe('svg-text', () => {
 
       expect(lines.length).toBe(2);
       expect(lines[1].endsWith('…')).toBeTrue();
+      lines.forEach(l => expect(l.length).toBeLessThanOrEqual(4));
     });
 
     it('rend une liste vide pour un texte absent — l\'encart n\'aura pas de ligne', () => {

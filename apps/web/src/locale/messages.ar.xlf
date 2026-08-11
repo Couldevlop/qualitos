@@ -4688,6 +4688,10 @@
         <source>Adresse de courriel invalide.</source>
         <target state="translated">عنوان بريد إلكتروني غير صالح.</target>
       </trans-unit>
+      <trans-unit id="audits.edit.reminder-email-hint" datatype="html">
+        <source>Videz le champ pour ne plus envoyer de rappel par courriel.</source>
+        <target state="translated">أفرغ الحقل لإيقاف إرسال التذكير بالبريد.</target>
+      </trans-unit>
       <trans-unit id="calibration.col-due" datatype="html">
         <source>Prochaine calibration</source>
         <target state="translated">المعايرة التالية</target>

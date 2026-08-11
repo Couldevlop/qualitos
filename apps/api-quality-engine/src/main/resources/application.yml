@@ -68,9 +68,14 @@ spring:
         max-page-size: 100
 
   # Courriel — rappel d'échéance des audits (§4.4). Tout par variables d'env, AUCUN
-  # secret en dur (§18.2.3). L'auto-configuration ne crée un JavaMailSender que si
-  # `host` est renseigné : laissé vide (défaut), rien n'est instancié et l'application
-  # démarre exactement comme avant. L'interrupteur fonctionnel est `qualitos.mail.enabled`.
+  # secret en dur (§18.2.3). L'interrupteur fonctionnel est `qualitos.mail.enabled` :
+  # sans lui, l'adaptateur SMTP n'est pas créé et le rappel reste interne.
+  #
+  # ATTENTION : déclarer `host` ci-dessous suffit à faire créer un JavaMailSender,
+  # même vide — `MailSenderAutoConfiguration` teste la PRÉSENCE de la propriété, pas
+  # sa valeur. Ce bean inerte est sans conséquence (personne ne l'utilise tant que
+  # l'adaptateur n'existe pas), à une exception près : son indicateur de santé, qui
+  # est donc désactivé avec la brique (cf. `management.health.mail`).
   mail:
     host: ${MAIL_HOST:}
     port: ${MAIL_PORT:587}
@@ -119,6 +124,22 @@ management:
       show-details: when-authorized
       probes:
         enabled: true
+  health:
+    # Indicateur de santé du courriel, aligné sur l'interrupteur de la brique.
+    #
+    # PIÈGE, découvert par la CI : `spring.mail.host: ${MAIL_HOST:}` définit la
+    # propriété — vide, mais DÉFINIE. Or `MailSenderAutoConfiguration` est
+    # conditionnée à la seule PRÉSENCE de `spring.mail.host`, pas à sa valeur :
+    # un JavaMailSender est donc créé même sans serveur, Boot lui adjoint son
+    # indicateur de santé, et celui-ci fait passer /actuator/health à DOWN sur
+    # une brique volontairement éteinte. En cluster, la sonde de disponibilité
+    # ne serait jamais satisfaite et le pod ne recevrait aucun trafic.
+    #
+    # Lier l'indicateur à `MAIL_ENABLED` rétablit ce que l'on veut dire : tant
+    # que l'envoi est éteint, sa santé n'a pas de sens ; dès qu'il est allumé,
+    # un relais injoignable DOIT se voir.
+    mail:
+      enabled: ${MAIL_ENABLED:false}
   metrics:
     tags:
       application: ${spring.application.name}

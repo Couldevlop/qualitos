@@ -208,6 +208,58 @@ class OrphanObjectSweeperTest {
     }
 
     @Test
+    void successivePasses_advanceThroughTheBucket() {
+        // LE défaut que ce test existe pour interdire : sans curseur de reprise,
+        // chaque passage relit les mêmes `batchSize` premières clés. Un tenant
+        // triant en tête et portant plus d'un lot de preuves VIVANTES masquerait
+        // alors définitivement les orphelins de tous les autres — et le journal
+        // resterait muet, puisqu'il n'y aurait jamais rien à supprimer.
+        putAged("tenants/aaa/capa/c1/vivant-1.pdf", java.time.Duration.ofDays(30));
+        putAged("tenants/aaa/capa/c1/vivant-2.pdf", java.time.Duration.ofDays(30));
+        putAged("tenants/zzz/capa/c9/orphelin.pdf", java.time.Duration.ofDays(30));
+        props.setBatchSize(2);
+        OrphanObjectSweeper sweeper = sweeper(List.of(new FakeOwner(Set.of(
+                "tenants/aaa/capa/c1/vivant-1.pdf", "tenants/aaa/capa/c1/vivant-2.pdf"))));
+
+        // Premier passage : les deux clés vivantes, rien à supprimer.
+        assertThat(sweeper.sweep().deleted()).isZero();
+        assertThat(storage.contains("tenants/zzz/capa/c9/orphelin.pdf")).isTrue();
+
+        // Second passage : la suite du bucket, et l'orphelin tombe.
+        assertThat(sweeper.sweep().deleted()).isEqualTo(1);
+        assertThat(storage.contains("tenants/zzz/capa/c9/orphelin.pdf")).isFalse();
+    }
+
+    @Test
+    void reachingTheEnd_windsBackToTheStart() {
+        // Une page incomplète marque la fin du bucket : le passage suivant doit
+        // repartir du début, sans quoi le balayage s'arrêterait après un tour.
+        putAged("tenants/t1/capa/c1/a.pdf", java.time.Duration.ofDays(30));
+        props.setBatchSize(5);
+        OrphanObjectSweeper sweeper = sweeper(List.of(new FakeOwner(
+                Set.of("tenants/t1/capa/c1/a.pdf"))));
+
+        assertThat(sweeper.sweep().examined()).isEqualTo(1);
+        assertThat(sweeper.sweep().examined()).isEqualTo(1);
+    }
+
+    @Test
+    void undatableObject_isCountedApartAndNeverDeleted() {
+        // Un objet sans date ne vieillira jamais : le compter comme « trop
+        // récent » dissimulerait un stock permanent derrière un compteur qui
+        // suggère l'attente.
+        storage.setNow(null);
+        storage.put("tenants/t1/capa/c1/sans-date.pdf", "application/pdf", new byte[] {1});
+
+        OrphanObjectSweeper.Report report = sweeper(List.of(new FakeOwner(Set.of()))).sweep();
+
+        assertThat(storage.contains("tenants/t1/capa/c1/sans-date.pdf")).isTrue();
+        assertThat(report.undatable()).isEqualTo(1);
+        assertThat(report.tooRecent()).isZero();
+        assertThat(report.deleted()).isZero();
+    }
+
+    @Test
     void ownersAreConsultedOnlyForAgedObjects() {
         // Interroger la base pour un objet trop récent serait une requête perdue :
         // la décision est déjà prise par la date.

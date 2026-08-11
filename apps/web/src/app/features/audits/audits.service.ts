@@ -342,8 +342,13 @@ export class AuditsService {
   private mockPlanning(type?: AuditType, horizonDays?: number): AuditPlanningEntry[] {
     const horizon = horizonDays && horizonDays > 0 ? horizonDays : 90;
     const today = new Date();
-    const offsets: Record<string, number> = { a1: -4, a2: 12, a3: 29 };
+    // Retard, échéance proche, échéance connue : les trois lectures de l'écran.
+    const offsets: Record<string, number> = { a4: -4, a5: 12, a3: 29 };
     return this.mockStore
+      // Le serveur ne planifie que les audits PLANNED. Sans ce filtre, la
+      // démonstration relançait des audits déjà terminés — et promettait un
+      // écran que la production ne montrera jamais.
+      .filter(p => p.status === 'PLANNED')
       .filter(p => !type || p.type === type)
       .map(p => {
         const daysUntil = offsets[p.id] ?? 45;
@@ -353,7 +358,7 @@ export class AuditsService {
           reference: p.reference,
           title: p.title,
           type: p.type,
-          status: 'PLANNED' as AuditStatus,
+          status: p.status,
           standard: p.standard,
           leadAuditorId: p.leadAuditorId,
           scheduledDate: due.toISOString().slice(0, 10),
@@ -384,6 +389,17 @@ export class AuditsService {
         checklist: [], findings: [] },
       { id: 'a3', reference: 'AUD-2026-0003', tenantId: 't', title: 'Pré-audit certification ISO 27001', type: 'CERTIFICATION',
         status: 'PLANNED', standard: 'ISO_27001', leadAuditorId: 'u', scheduledDate: now,
+        createdAt: now, updatedAt: now,
+        checklist: [], findings: [] },
+      // Deux plans supplémentaires, PLANNED : sans eux le planning de
+      // démonstration n'aurait qu'une ligne et ne montrerait ni le retard ni
+      // l'échéance proche — c'est-à-dire rien de ce que l'écran sert à voir.
+      { id: 'a4', reference: 'AUD-2026-0004', tenantId: 't', title: 'Audit interne — atelier presses', type: 'INTERNAL',
+        status: 'PLANNED', standard: 'ISO_9001', leadAuditorId: 'u', scheduledDate: now,
+        createdAt: now, updatedAt: now,
+        checklist: [], findings: [] },
+      { id: 'a5', reference: 'AUD-2026-0005', tenantId: 't', title: 'Audit fournisseur Nordmetal', type: 'SUPPLIER',
+        status: 'PLANNED', leadAuditorId: 'u', scheduledDate: now,
         createdAt: now, updatedAt: now,
         checklist: [], findings: [] }
     ];

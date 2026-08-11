@@ -68,6 +68,41 @@ class SmtpAuditReminderMailerTest {
         assertThat(gate.matchIfMissing()).isFalse();
     }
 
+    // --- injection d'en-têtes par le sujet (OWASP A03) --------------------------
+
+    @Test
+    void subject_neverCarriesALineBreakToTheHeader() {
+        // Le sujet porte le titre de l'audit, saisi par un utilisateur. Un en-tête
+        // se termine par CRLF : un saut de ligne laissé passer permettrait d'en
+        // forger d'autres — un Bcc: vers un tiers — et le rappel partirait où
+        // l'auteur du titre l'aurait décidé.
+        //
+        // Aujourd'hui JavaMail encoderait de toute façon le sujet en RFC 2047, à
+        // cause des accents du préfixe. C'est un accident de rédaction, pas une
+        // garantie : ce test tient la garantie, quelle que soit la typographie.
+        assertThat(SmtpAuditReminderMailer.singleLine("Audit\r\nBcc: tiers@ailleurs.test"))
+                .isEqualTo("Audit Bcc: tiers@ailleurs.test");
+        assertThat(SmtpAuditReminderMailer.singleLine("a\nb\rc")).isEqualTo("a b c");
+    }
+
+    @Test
+    void subject_withoutLineBreak_isLeftIntact() {
+        assertThat(SmtpAuditReminderMailer.singleLine("Audit à préparer : presse 4"))
+                .isEqualTo("Audit à préparer : presse 4");
+        assertThat(SmtpAuditReminderMailer.singleLine(null)).isNull();
+    }
+
+    @Test
+    void send_stripsLineBreaksBeforeHandingTheMessageOver() {
+        SmtpAuditReminderMailer mailer = new SmtpAuditReminderMailer(sender, props("qms@exemple.test"));
+
+        mailer.send("a@b.test", "Audit\r\nBcc: tiers@ailleurs.test", "corps");
+
+        ArgumentCaptor<SimpleMailMessage> sent = ArgumentCaptor.forClass(SimpleMailMessage.class);
+        verify(sender).send(sent.capture());
+        assertThat(sent.getValue().getSubject()).doesNotContain("\r").doesNotContain("\n");
+    }
+
     private AuditMailProperties props(String from) {
         AuditMailProperties p = new AuditMailProperties();
         p.setEnabled(true);

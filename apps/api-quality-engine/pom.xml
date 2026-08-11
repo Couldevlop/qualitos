@@ -51,10 +51,12 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <!-- Courriel de rappel d'échéance d'audit (CLAUDE.md §4.4).
-             INERTE par défaut : l'auto-configuration ne crée un JavaMailSender que si
-             spring.mail.host est renseigné, et l'adaptateur SmtpAuditReminderMailer est
-             lui-même conditionné à qualitos.mail.enabled=true. Sans configuration SMTP,
-             l'application démarre à l'identique et le rappel reste interne. -->
+             INERTE par défaut : l'adaptateur SmtpAuditReminderMailer est conditionné à
+             qualitos.mail.enabled=true, et sans lui personne n'envoie rien. Le
+             JavaMailSender auto-configuré, lui, EST créé (la condition porte sur la
+             présence de spring.mail.host, pas sur sa valeur) : il reste inutilisé, et
+             son indicateur de santé est éteint avec la brique — voir application.yml,
+             où le piège est décrit. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>

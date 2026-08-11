@@ -135,6 +135,15 @@ const HEAD_MAX_CHARS = 26;
 const CAUSE_MAX_CHARS = 22;
 const BRANCH_MAX_CHARS = 17;
 
+/**
+ * Largeur réservée au compteur de sous-causes, en caractères : une espace, un
+ * `+`, puis les chiffres. Le compteur est rendu dans un `tspan` accolé au
+ * libellé ; ne pas le décompter ferait déborder la cause de sa colonne.
+ */
+function countedWidth(descendants: number): number {
+  return 2 + String(descendants).length;
+}
+
 const EMPTY_HEAD: FishboneHeadVm = {
   x: 0, y: 0, width: 0, height: 0, textX: 0, anchor: 'start', lines: []
 };
@@ -239,7 +248,13 @@ export function buildFishboneLayout(
       const tickEnd = px + TICK_LEN;
       return {
         key: cause.id,
-        label: truncateSvgText(cause.label, CAUSE_MAX_CHARS),
+        // Le compteur « +12 » s'écrit APRÈS le libellé, dans le même espace :
+        // il doit donc être réservé dans le budget, sinon une cause à
+        // sous-causes déborde de la largeur exactement de ce que le compteur
+        // occupe — et la dernière colonne passe sous l'encart de tête.
+        label: truncateSvgText(
+            cause.label,
+            CAUSE_MAX_CHARS - (cause.descendants > 0 ? countedWidth(cause.descendants) : 0)),
         descendants: cause.descendants,
         tickX1: mirrorX(px),
         tickX2: mirrorX(tickEnd),

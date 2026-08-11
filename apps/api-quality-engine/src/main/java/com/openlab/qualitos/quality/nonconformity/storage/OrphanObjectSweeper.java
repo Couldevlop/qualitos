@@ -53,6 +53,16 @@ public class OrphanObjectSweeper {
     private final OrphanSweepProperties props;
     private final Clock clock;
 
+    /**
+     * Clé après laquelle reprendre au prochain passage ({@code null} = depuis le
+     * début). En mémoire, à dessein : c'est un curseur de commodité, pas un état
+     * métier. Le perdre au redémarrage fait recommencer le tour du bucket, ce
+     * qui ne coûte que des lectures — alors que le persister imposerait une
+     * table et une coordination entre répliques pour une réconciliation dont
+     * chaque réplique peut fort bien faire son propre tour.
+     */
+    private String cursor;
+
     public OrphanObjectSweeper(ObjectProvider<ObjectStorage> storageProvider,
                                List<StoredObjectOwner> owners,
                                OrphanSweepProperties props,
@@ -86,17 +96,41 @@ public class OrphanObjectSweeper {
         }
 
         Instant cutoff = clock.instant().minus(props.getGracePeriod());
-        List<ObjectStorage.StoredObject> candidates = storage.list(KEY_ROOT, props.getBatchSize());
+        List<ObjectStorage.StoredObject> candidates =
+                storage.list(KEY_ROOT, cursor, props.getBatchSize());
+
+        // Reprise du prochain passage. Une page PLEINE signifie qu'il reste
+        // vraisemblablement des clés au-delà : on repartira après la dernière
+        // examinée. Une page incomplète marque la fin du bucket : on revient au
+        // début, et le tour recommence.
+        //
+        // Sans ce curseur, chaque passage relirait les mêmes `batchSize`
+        // premières clés — les clés sont rendues en ordre croissant — et un
+        // tenant triant en tête avec plus d'un lot de preuves masquerait
+        // définitivement les orphelins de tous les autres.
+        cursor = candidates.size() >= props.getBatchSize()
+                ? candidates.get(candidates.size() - 1).key()
+                : null;
 
         int examined = 0;
         int tooRecent = 0;
+        int undatable = 0;
         int deleted = 0;
         long bytesReclaimed = 0;
         int failures = 0;
 
         for (ObjectStorage.StoredObject object : candidates) {
             examined++;
-            if (object.lastModified() == null || object.lastModified().isAfter(cutoff)) {
+            if (object.lastModified() == null) {
+                // Indatable : on ne supprime pas ce qu'on ne peut pas dater, mais
+                // ce n'est PAS « trop récent » — l'objet ne vieillira jamais et
+                // reviendra à chaque passage. Le compter à part évite qu'un stock
+                // permanent se dissimule dans un compteur qui suggère l'attente.
+                undatable++;
+                log.warn("[orphan-sweep] objet sans date de modification, ignoré : {}", object.key());
+                continue;
+            }
+            if (object.lastModified().isAfter(cutoff)) {
                 // Trop récent : peut-être une pièce dont la transaction n'est pas
                 // encore validée. On la reverra au passage suivant, vieillie.
                 tooRecent++;
@@ -122,12 +156,13 @@ public class OrphanObjectSweeper {
             }
         }
 
-        if (deleted > 0 || failures > 0) {
+        if (deleted > 0 || failures > 0 || undatable > 0) {
             log.info("[orphan-sweep] {} objet(s) examiné(s), {} supprimé(s) ({} octets récupérés), "
-                            + "{} trop récent(s), {} en échec",
-                    examined, deleted, bytesReclaimed, tooRecent, failures);
+                            + "{} trop récent(s), {} sans date, {} en échec ; reprise après {}",
+                    examined, deleted, bytesReclaimed, tooRecent, undatable, failures,
+                    cursor == null ? "(retour au début)" : cursor);
         }
-        return new Report(true, examined, tooRecent, deleted, bytesReclaimed, failures);
+        return new Report(true, examined, tooRecent, undatable, deleted, bytesReclaimed, failures);
     }
 
     /**
@@ -148,11 +183,11 @@ public class OrphanObjectSweeper {
      * Compte rendu d'un passage. {@code ran} distingue « rien à faire » de
      * « balayage éteint » — deux situations que le même zéro confondrait.
      */
-    public record Report(boolean ran, int examined, int tooRecent,
+    public record Report(boolean ran, int examined, int tooRecent, int undatable,
                          int deleted, long bytesReclaimed, int failures) {
 
         static Report disabled() {
-            return new Report(false, 0, 0, 0, 0L, 0);
+            return new Report(false, 0, 0, 0, 0, 0L, 0);
         }
     }
 }

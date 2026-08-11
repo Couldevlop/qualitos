@@ -982,6 +982,40 @@ class CapaServiceTest {
     }
 
     @Test
+    void verifyEffectiveness_actionAddedAfterResolution_blocksClosure() {
+        // Rien n'interdit d'ajouter une action à un dossier RESOLVED. Sans ce
+        // contrôle, le dossier se cloturait au-dessus d'une action jamais menée —
+        // et l'écran, qui annonce l'obstacle, interdisait un geste que l'API
+        // accordait quand même.
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        c.getActions().add(action(c, CapaActionStatus.DONE));
+        c.getActions().add(action(c, CapaActionStatus.PENDING));
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.verifyEffectiveness(c.getId(),
+                new CapaDto.EffectivenessRequest(true)))
+                .isInstanceOf(CapaStateException.class)
+                .hasMessageContaining("not DONE");
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.RESOLVED);
+        verify(caseRepo, never()).save(any());
+    }
+
+    @Test
+    void verifyEffectiveness_pendingAction_stillAllowsAnIneffectiveVerdict() {
+        // Constater l'échec ne clôt rien : l'interdire empêcherait de consigner
+        // que les actions n'ont pas produit leur effet.
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        c.getActions().add(action(c, CapaActionStatus.PENDING));
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.verifyEffectiveness(c.getId(), new CapaDto.EffectivenessRequest(false));
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.IN_PROGRESS);
+    }
+
+    @Test
     void verifyEffectiveness_containmentOnly_isRefused() {
         // Endiguer n'est pas corriger : la cause reste, et le problème reviendra
         // dès la mesure levée. Clore là-dessus inscrirait au registre le contraire

@@ -35,7 +35,7 @@ public interface ObjectStorage {
 
     /**
      * Énumère les objets dont la clé commence par {@code prefix}, au plus
-     * {@code limit}.
+     * {@code limit}, en reprenant STRICTEMENT APRÈS {@code startAfter}.
      *
      * <p>Sert exclusivement au balayage des binaires orphelins : un objet écrit
      * juste avant qu'une transaction n'échoue survit à la ligne qui le
@@ -46,8 +46,16 @@ public interface ObjectStorage {
      * <p>{@code limit} est exigé plutôt que suggéré : un bucket de production
      * compte des dizaines de milliers d'objets, et un balayage sans borne
      * chargerait tout en mémoire pour n'en supprimer, presque toujours, aucun.
+     *
+     * <p>{@code startAfter} ({@code null} = depuis le début) est ce qui rend le
+     * balayage REPRENABLE, et il n'est pas facultatif au sens fonctionnel : les
+     * clés sont rendues en ordre binaire croissant, donc sans reprise, chaque
+     * passage réexaminerait indéfiniment les mêmes {@code limit} premières clés.
+     * Un tenant dont l'identifiant trie en tête et qui porte plus d'un lot de
+     * preuves masquerait alors tous les orphelins des autres — sans que rien ne
+     * le signale, puisqu'il n'y aurait jamais rien à supprimer.
      */
-    List<StoredObject> list(String prefix, int limit);
+    List<StoredObject> list(String prefix, String startAfter, int limit);
 
     /**
      * Un objet vu côté stockage, réduit à ce que le balayage exige.

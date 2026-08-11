@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 import {
   CapaActionResponse,
   CapaCaseResponse,
+  ClosureBlocker,
   CapaEvidence,
   CapaPage,
   CapaStatus,
@@ -51,7 +52,12 @@ export class CapaService {
   getCase(id: string): Observable<CapaCaseResponse> {
     if (environment.useMockApi) {
       const found = this.mockStore.find(c => c.id === id);
-      return of(found ?? this.mockStore[0]).pipe(delay(120));
+      const dossier = found ?? this.mockStore[0];
+      // Les obstacles se CALCULENT à la lecture, exactement comme le serveur les
+      // calcule sur la fiche. Les stocker dans le jeu d'essai les figerait : on
+      // pourrait mener toutes les actions à DONE et le bandeau continuerait
+      // d'annoncer « 2 actions restent à terminer », bouton éteint pour toujours.
+      return of({ ...dossier, closureBlockers: mockClosureBlockers(dossier) }).pipe(delay(120));
     }
     return this.http.get<CapaCaseResponse>(`${this.endpoint}/${id}`);
   }
@@ -401,10 +407,7 @@ export class CapaService {
             status: 'PENDING', actionType: 'PREVENTIVE', assigneeName: 'Sofia Marques',
             decidedOn: '2026-04-28', dueDate: '2026-06-10'
           }
-        ],
-        // Deux actions restent à terminer : la démonstration montre le bandeau
-        // AVANT le clic, qui est tout l'objet de la fonctionnalité.
-        closureBlockers: [{ code: 'ACTIONS_NOT_DONE', count: 2 }]
+        ]
       },
       {
         id: 'capa-2', tenantId: 'demo-tenant',
@@ -412,8 +415,7 @@ export class CapaService {
         type: 'PREVENTIVE', criticity: 'CRITICAL', status: 'OPEN',
         sourceType: 'AUDIT', sourceRef: 'AUD-2026-Q2',
         ownerId: 'demo-user',
-        createdAt: now, updatedAt: now, actions: [],
-        closureBlockers: [{ code: 'NO_ACTION', count: 0 }]
+        createdAt: now, updatedAt: now, actions: []
       },
       {
         id: 'capa-3', tenantId: 'demo-tenant',
@@ -421,11 +423,49 @@ export class CapaService {
         type: 'CORRECTIVE', criticity: 'MEDIUM', status: 'RESOLVED',
         sourceType: 'INTERNAL',
         ownerId: 'demo-user',
-        resolvedAt: now, createdAt: now, updatedAt: now, actions: [],
-        // Rien ne s'oppose à sa clôture : le tableau VIDE le dit, et c'est ce
-        // qui allume le bouton « Efficace — clôturer » dans la démonstration.
-        closureBlockers: []
+        // RESOLVED avec une action faite : état réellement atteignable côté
+        // serveur (`resolveCase` exige au moins une action, toutes DONE), et
+        // seul cas de la démonstration où le bouton de clôture s'allume.
+        resolvedAt: now, createdAt: now, updatedAt: now,
+        actions: [
+          {
+            id: 'act-demo-9', capaId: 'capa-3',
+            title: 'Réviser la procédure et requalifier le cycle',
+            status: 'DONE', actionType: 'CORRECTIVE', assigneeName: 'Léa Bertin',
+            decidedOn: '2026-05-04', completedAt: '2026-05-21T10:00:00Z'
+          }
+        ]
       }
     ];
   }
+}
+
+/**
+ * Reproduit `CapaService.closureBlockers` du serveur pour le mode démonstration.
+ *
+ * Deux sources de vérité finiraient par se contredire à l'écran : ici, la
+ * fonction suit la même règle et le même ORDRE que le serveur — actions
+ * manquantes, puis endiguement seul, puis écarts ouverts — de sorte que la
+ * démonstration montre exactement ce que la production montrera.
+ *
+ * Les non-conformités liées ne sont pas simulées : le magasin de démonstration
+ * n'en porte pas. Leur absence produit une liste plus courte, jamais fausse.
+ */
+function mockClosureBlockers(c: CapaCaseResponse): ClosureBlocker[] {
+  if (c.status === 'CLOSED' || c.status === 'REJECTED') {
+    return [];
+  }
+  const blockers: ClosureBlocker[] = [];
+  if (c.actions.length === 0) {
+    blockers.push({ code: 'NO_ACTION', count: 0 });
+    return blockers;
+  }
+  const notDone = c.actions.filter(a => a.status !== 'DONE').length;
+  if (notDone > 0) {
+    blockers.push({ code: 'ACTIONS_NOT_DONE', count: notDone });
+  }
+  if (c.actions.every(a => a.actionType === 'CONTAINMENT')) {
+    blockers.push({ code: 'CONTAINMENT_ONLY', count: c.actions.length });
+  }
+  return blockers;
 }

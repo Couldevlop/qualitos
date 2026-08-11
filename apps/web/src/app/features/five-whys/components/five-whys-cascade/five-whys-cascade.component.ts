@@ -37,7 +37,11 @@ export class FiveWhysCascadeComponent implements OnChanges {
   /** Chaîne à tracer, dans n'importe quel ordre : le tracé la remet en rang. */
   @Input() steps: readonly FiveWhysStep[] = [];
   /** Cause racine conclue, s'il y en a une : elle ferme la descente. */
-  @Input() rootCause: string | null = null;
+  // `undefined` admis en plus de `null` : le champ est FACULTATIF côté données
+  // (`FiveWhysAnalysis.rootCause?`), et l'écran le passe tel quel. Le refuser
+  // obligerait chaque appelant à écrire `?? null` — une conversion sans objet,
+  // que la couche géométrie ramène de toute façon à la chaîne vide.
+  @Input() rootCause: string | null | undefined = null;
 
   layout: CascadeLayout = { width: 0, height: 0, cards: [], connectors: [] };
 

@@ -80,7 +80,7 @@ public class AuditPlan {
     private String reminderEmail;
 
     /**
-     * Marque d'idempotence du rappel (V106). Posée par un UPDATE conditionnel, elle
+     * Marque d'idempotence du rappel (V105). Posée par un UPDATE conditionnel, elle
      * fait office de verrou entre les répliques : ce n'est pas une trace a posteriori.
      * Setter réduit à la portée du paquet, à dessein : seule la requête atomique du
      * repository doit l'écrire. Un setter public inviterait un appelant à « marquer

@@ -152,6 +152,19 @@ public class CapaService {
         }
         boolean effective = Boolean.TRUE.equals(request.effective());
         if (effective) {
+            // Toutes les actions doivent être faites — y compris celles ajoutées
+            // APRÈS la résolution. `resolveCase` l'a vérifié à son moment, mais
+            // rien n'interdit d'ajouter une action à un dossier RESOLVED, et le
+            // dossier se serait alors clos au-dessus d'une action jamais menée.
+            // C'est aussi ce que la fiche annonce (ACTIONS_NOT_DONE) : une liste
+            // d'obstacles qui n'engage pas le serveur ne vaut rien, et l'écran
+            // interdirait un geste que l'API accorderait.
+            long notDone = c.getActions().stream()
+                    .filter(a -> a.getStatus() != CapaActionStatus.DONE).count();
+            if (notDone > 0) {
+                throw new CapaStateException(notDone + " action(s) are not DONE: "
+                        + "complete them before closing this CAPA");
+            }
             // Un dossier qui n'a fait qu'endiguer n'a rien réglé : les mesures
             // d'endiguement arrêtent l'effet et laissent la cause intacte
             // (ISO 9001 §10.2). Le clore reviendrait à inscrire au registre que

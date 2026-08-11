@@ -45,14 +45,25 @@ public class InMemoryObjectStorage implements ObjectStorage {
         objects.remove(key); // idempotent
     }
 
+    /**
+     * Énumère dans l'ORDRE DES CLÉS, comme S3 — et non dans l'ordre d'insertion.
+     * Sans ce tri, le curseur de reprise du balayeur ne pourrait pas se tester :
+     * « après cette clé » n'a de sens que sur une énumération ordonnée.
+     */
     @Override
-    public List<StoredObject> list(String prefix, int limit) {
+    public List<StoredObject> list(String prefix, String startAfter, int limit) {
         if (limit <= 0) {
             return List.of();
         }
         List<StoredObject> out = new ArrayList<>();
-        for (Map.Entry<String, Stored> e : objects.entrySet()) {
+        List<String> keys = new ArrayList<>(objects.keySet());
+        java.util.Collections.sort(keys);
+        for (String key : keys) {
+            Map.Entry<String, Stored> e = Map.entry(key, objects.get(key));
             if (!e.getKey().startsWith(prefix)) {
+                continue;
+            }
+            if (startAfter != null && e.getKey().compareTo(startAfter) <= 0) {
                 continue;
             }
             out.add(new StoredObject(e.getKey(), e.getValue().lastModified(),

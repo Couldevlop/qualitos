@@ -27,11 +27,18 @@ SET reference = s.generated
 FROM (
     SELECT id,
            'AUD-' || EXTRACT(YEAR FROM created_at)::int || '-' ||
-           LPAD(
+           -- to_char(..., 'FM0000') et non LPAD : LPAD TRONQUE À DROITE au-delà
+           -- de la longueur demandée (lpad('10000', 4, '0') = '1000'). Un tenant
+           -- à plus de 9 999 audits sur une année produirait deux fois la même
+           -- référence, et la contrainte d'unicité posée plus bas ferait échouer
+           -- la migration APRÈS que la colonne soit devenue NOT NULL. Le format
+           -- FM0000 complète à quatre chiffres sans jamais raccourcir — c'est
+           -- exactement ce que fait String.format("%04d") côté service.
+           to_char(
                ROW_NUMBER() OVER (
                    PARTITION BY tenant_id, EXTRACT(YEAR FROM created_at)
                    ORDER BY created_at, id
-               )::text, 4, '0') AS generated
+               ), 'FM0000') AS generated
     FROM audit_plans
 ) s
 WHERE p.id = s.id;

@@ -51,7 +51,7 @@ export function wrapSvgText(text: string, maxChars: number, maxLines: number): s
         current = '';
       }
       if (lines.length >= maxLines) {
-        return withEllipsis(lines, maxLines);
+        return withEllipsis(lines, maxLines, maxChars);
       }
       lines.push(word.slice(0, maxChars));
       word = word.slice(maxChars);
@@ -66,14 +66,14 @@ export function wrapSvgText(text: string, maxChars: number, maxLines: number): s
     current = word;
     if (lines.length >= maxLines) {
       // Il reste du texte (`current`) mais plus de ligne pour l'accueillir.
-      return withEllipsis(lines, maxLines);
+      return withEllipsis(lines, maxLines, maxChars);
     }
   }
 
   if (current) {
     lines.push(current);
   }
-  return lines.length > maxLines ? withEllipsis(lines, maxLines) : lines;
+  return lines.length > maxLines ? withEllipsis(lines, maxLines, maxChars) : lines;
 }
 
 /**
@@ -92,10 +92,19 @@ export function truncateSvgText(text: string, maxChars: number): string {
   return source.slice(0, maxChars - 1).trimEnd() + ELLIPSIS;
 }
 
-/** Coupe la liste à `maxLines` et marque la dernière ligne comme incomplète. */
-function withEllipsis(lines: string[], maxLines: number): string[] {
+/**
+ * Coupe la liste à `maxLines` et marque la dernière ligne comme incomplète.
+ *
+ * L'ellipse compte DANS le budget de largeur, comme dans `truncateSvgText` : on
+ * retire donc un caractère avant de l'ajouter. L'ajouter par-dessus une ligne
+ * déjà pleine rendrait `maxChars + 1` caractères — un glyphe qui mord sur la
+ * marge de l'encart, et une hauteur calculée sur une largeur fausse.
+ */
+function withEllipsis(lines: string[], maxLines: number, maxChars: number): string[] {
   const kept = lines.slice(0, maxLines);
   const last = kept[maxLines - 1];
-  kept[maxLines - 1] = last.endsWith(ELLIPSIS) ? last : last.trimEnd() + ELLIPSIS;
+  kept[maxLines - 1] = last.endsWith(ELLIPSIS)
+    ? last
+    : last.slice(0, Math.max(0, maxChars - 1)).trimEnd() + ELLIPSIS;
   return kept;
 }

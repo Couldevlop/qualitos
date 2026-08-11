@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ValidationErrors, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs/operators';
@@ -10,6 +10,19 @@ import { AuditPlanResponse, AuditType } from '../../audits.types';
 
 export interface AuditsEditDialogData {
   plan: AuditPlanResponse;
+}
+
+/**
+ * Adresse valide, espaces de bordure tolérées — même validateur que le dialogue
+ * de création : `Validators.email` s'applique à la valeur brute, et une adresse
+ * collée depuis un annuaire emporte presque toujours une espace.
+ */
+function trimmedEmail(control: AbstractControl): ValidationErrors | null {
+  const raw = control.value;
+  if (typeof raw !== 'string' || raw.trim() === '') {
+    return null;
+  }
+  return Validators.email({ value: raw.trim() } as AbstractControl);
 }
 
 @Component({
@@ -35,7 +48,11 @@ export class AuditsEditDialogComponent {
     scope: [''],
     type: ['INTERNAL' as AuditType, [Validators.required]],
     standard: ['', [Validators.maxLength(100)]],
-    scheduledDate: ['']
+    scheduledDate: [''],
+    // Le destinataire du rappel doit pouvoir se corriger, et surtout se RETIRER :
+    // le service traite la chaîne vide comme un effacement explicite, et sans ce
+    // champ une adresse saisie de travers à la création restait indéboulonnable.
+    reminderEmail: ['', [trimmedEmail, Validators.maxLength(320)]]
   });
 
   constructor(
@@ -50,7 +67,8 @@ export class AuditsEditDialogComponent {
       scope: data.plan.scope ?? '',
       type: data.plan.type,
       standard: data.plan.standard ?? '',
-      scheduledDate: data.plan.scheduledDate ?? ''
+      scheduledDate: data.plan.scheduledDate ?? '',
+      reminderEmail: data.plan.reminderEmail ?? ''
     });
   }
 
@@ -67,7 +85,11 @@ export class AuditsEditDialogComponent {
         scope: v.scope?.trim() || undefined,
         type: v.type,
         standard: v.standard?.trim() || undefined,
-        scheduledDate: v.scheduledDate || undefined
+        scheduledDate: v.scheduledDate || undefined,
+        // Chaîne vide TRANSMISE, jamais `undefined` : c'est elle qui retire le
+        // destinataire côté serveur. La remplacer par `undefined` signifierait
+        // « ne touche pas » et rendrait l'effacement impossible.
+        reminderEmail: v.reminderEmail?.trim() ?? ''
       })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({

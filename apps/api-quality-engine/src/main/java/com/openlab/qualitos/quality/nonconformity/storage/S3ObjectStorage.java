@@ -115,7 +115,7 @@ public class S3ObjectStorage implements ObjectStorage {
      * à collecter, pour ne pas rapatrier mille clés quand on en veut dix.
      */
     @Override
-    public List<StoredObject> list(String prefix, int limit) {
+    public List<StoredObject> list(String prefix, String startAfter, int limit) {
         if (limit <= 0) {
             return List.of();
         }
@@ -125,6 +125,11 @@ public class S3ObjectStorage implements ObjectStorage {
             ListObjectsV2Request request = ListObjectsV2Request.builder()
                     .bucket(bucket)
                     .prefix(prefix)
+                    // `startAfter` ne vaut que pour la PREMIÈRE page : au-delà,
+                    // c'est le jeton de continuation qui situe la lecture, et S3
+                    // ignore alors startAfter. Le passer quand même serait sans
+                    // effet, mais le retirer explicitement dit où est l'autorité.
+                    .startAfter(continuationToken == null ? startAfter : null)
                     .maxKeys(Math.min(S3_MAX_KEYS_PER_PAGE, limit - out.size()))
                     .continuationToken(continuationToken)
                     .build();

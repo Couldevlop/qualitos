@@ -38,4 +38,14 @@
     <input matInput formControlName="scheduledDate" type="date">
   </mat-form-field>
 
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@audits.create.reminder-email">Courriel de rappel (optionnel)</mat-label>
+    <input matInput formControlName="reminderEmail" type="email" maxlength="320"
+           i18n-placeholder="@@audits.create.reminder-email-placeholder"
+           placeholder="Ex. : qualite@monentreprise.fr">
+    <mat-hint i18n="@@audits.edit.reminder-email-hint">Videz le champ pour ne plus envoyer de rappel par courriel.</mat-hint>
+    <mat-error *ngIf="form.controls.reminderEmail.hasError('email')"
+               i18n="@@audits.create.reminder-email-invalid">Adresse de courriel invalide.</mat-error>
+  </mat-form-field>
+
 </qos-form-dialog>

@@ -55,4 +55,26 @@ class QualityEngineContextLoadsTest {
         assertThat(context.getBean(SapOdataClient.class)).isNotNull();
         assertThat(context.getBean(OracleFusionClient.class)).isNotNull();
     }
+
+    /**
+     * Aucun indicateur de santé « mail » quand la brique courriel est éteinte.
+     *
+     * <p>Régression réelle, arrêtée par le job DAST avant la préproduction :
+     * {@code spring.mail.host: ${MAIL_HOST:}} DÉFINIT la propriété — vide, mais
+     * définie — et {@code MailSenderAutoConfiguration} ne teste que sa présence.
+     * Un {@code JavaMailSender} sans serveur était donc créé, Boot lui adjoignait
+     * son indicateur de santé, et {@code /actuator/health} passait à DOWN sur une
+     * brique volontairement éteinte. En cluster, la sonde de disponibilité n'aurait
+     * jamais été satisfaite : le pod n'aurait reçu aucun trafic, sans que rien dans
+     * l'application ne soit en panne.
+     *
+     * <p>Le test porte sur l'indicateur, pas sur le {@code JavaMailSender} : ce
+     * dernier subsiste sans conséquence tant que personne ne l'utilise, et exiger
+     * son absence figerait un détail d'auto-configuration au lieu de l'effet visé.
+     */
+    @Test
+    void santeDuCourrielEteinteQuandLaBriqueEstEteinte() {
+        assertThat(context.getBeanNamesForType(
+                org.springframework.boot.actuate.mail.MailHealthIndicator.class)).isEmpty();
+    }
 }

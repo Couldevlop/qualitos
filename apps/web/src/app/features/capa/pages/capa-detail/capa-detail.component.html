@@ -223,8 +223,8 @@
               <th mat-header-cell *matHeaderCellDef i18n="@@capa.detail.col-action-type">Nature</th>
               <td mat-cell *matCellDef="let a">
                 <ng-container *ngIf="!isEditing(a.id); else typeEdit">
-                  <span class="action-type" [ngClass]="'action-type--' + a.actionType.toLowerCase()">
-                    {{ actionTypeLabel(a.actionType) }}
+                  <span class="action-type" [ngClass]="'action-type--' + (a.actionType || 'CORRECTIVE').toLowerCase()">
+                    {{ actionTypeLabel(a.actionType || 'CORRECTIVE') }}
                   </span>
                 </ng-container>
                 <ng-template #typeEdit>

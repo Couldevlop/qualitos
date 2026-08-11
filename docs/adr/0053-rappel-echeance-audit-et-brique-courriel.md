@@ -127,8 +127,21 @@ sans ambiguïté partout. Traduire suppose de savoir à qui l'on écrit — c'es
   au changement de date — à faire quand le besoin se manifestera, pas avant.
 - ⚠ **Corps du message non traduit** (cf. Justification). Le traduire suppose de rattacher
   une locale au destinataire.
-- ⚠ **Nouvelle dépendance** `spring-boot-starter-mail`. Inerte tant que `spring.mail.host`
-  est vide (l'auto-configuration ne crée alors aucun `JavaMailSender`).
+- ⚠ **Nouvelle dépendance** `spring-boot-starter-mail`. L'adaptateur SMTP reste inerte
+  tant que `qualitos.mail.enabled=false`.
+
+  *Correction factuelle (2026-08-11, après passage en CI).* La rédaction initiale
+  affirmait ici que l'auto-configuration ne crée un `JavaMailSender` que si
+  `spring.mail.host` est renseigné. C'est faux : `MailSenderAutoConfiguration` est
+  conditionnée à la **présence** de la propriété, et `host: ${MAIL_HOST:}` la définit —
+  vide, mais définie. Un `JavaMailSender` était donc créé sans serveur, Boot lui
+  adjoignait son indicateur de santé, et `/actuator/health` passait **DOWN** sur une
+  brique volontairement éteinte : en cluster, la sonde de disponibilité n'aurait jamais
+  été satisfaite. Le job DAST l'a arrêté avant la préproduction. L'indicateur de santé
+  du courriel est désormais lié au même interrupteur que la brique
+  (`management.health.mail.enabled = ${MAIL_ENABLED:false}`) ; le bean inerte, lui,
+  subsiste sans conséquence puisque rien ne l'utilise. La décision n'est pas modifiée —
+  seule une justification erronée est rectifiée.
 
 ## Tests d'invariant
 

@@ -8,6 +8,10 @@
       <div>
         <h1 *ngIf="plan$ | async as p; else loadingTitle">{{ p?.title || notFoundLabel }}</h1>
         <ng-template #loadingTitle><h1 i18n="@@common.loading">Chargement…</h1></ng-template>
+        <!-- La référence sous le titre : c'est la fiche qu'on a sous les yeux au
+             moment de rédiger la convocation ou le compte rendu, et c'est par
+             elle qu'on désigne l'audit. Deux audits peuvent porter le même titre. -->
+        <p class="reference" *ngIf="(plan$ | async)?.reference as ref">{{ ref }}</p>
         <p class="eyebrow" i18n="@@audits.detail.eyebrow">Plan d'audit · Internal / External / LPA / Certification</p>
       </div>
     </div>
