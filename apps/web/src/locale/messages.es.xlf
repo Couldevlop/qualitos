@@ -5296,6 +5296,70 @@
         <source>Ex. : Amina Dridi</source>
         <target state="translated">Ej.: Amina Dridi</target>
       </trans-unit>
+      <trans-unit id="capa.action-type.containment" datatype="html">
+        <source>Endiguement</source>
+        <target state="translated">Contención</target>
+      </trans-unit>
+      <trans-unit id="capa.action-type.corrective" datatype="html">
+        <source>Corrective</source>
+        <target state="translated">Correctiva</target>
+      </trans-unit>
+      <trans-unit id="capa.action-type.preventive" datatype="html">
+        <source>Préventive</source>
+        <target state="translated">Preventiva</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.col-action-type" datatype="html">
+        <source>Nature</source>
+        <target state="translated">Naturaleza</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.edit-action-type-label" datatype="html">
+        <source>Nature</source>
+        <target state="translated">Naturaleza</target>
+      </trans-unit>
+      <trans-unit id="capa.action.action-type" datatype="html">
+        <source>Nature de l'action</source>
+        <target state="translated">Naturaleza de la acción</target>
+      </trans-unit>
+      <trans-unit id="capa.action.action-type-hint" datatype="html">
+        <source>L'endiguement arrête l'effet (trier un lot, arrêter une ligne) ; la correction supprime la cause.</source>
+        <target state="translated">La contención detiene el efecto (clasificar un lote, parar una línea); la corrección elimina la causa.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.blockers-title" datatype="html">
+        <source>Ce dossier ne peut pas encore être clôturé</source>
+        <target state="translated">Este expediente aún no puede cerrarse</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.no-action" datatype="html">
+        <source>Aucune action n'est enregistrée : il n'y a rien dont vérifier l'efficacité.</source>
+        <target state="translated">No hay ninguna acción registrada: no hay nada cuya eficacia verificar.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.actions-one" datatype="html">
+        <source>1 action reste à terminer.</source>
+        <target state="translated">Queda 1 acción por terminar.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.actions-many" datatype="html">
+        <source><x id="count"/> actions restent à terminer.</source>
+        <target state="translated">Quedan <x id="count"/> acciones por terminar.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.containment-only" datatype="html">
+        <source>Le dossier ne porte que des mesures d'endiguement : elles arrêtent l'effet sans supprimer la cause. Ajoutez une action corrective ou préventive.</source>
+        <target state="translated">El expediente solo contiene medidas de contención: detienen el efecto sin eliminar la causa. Añada una acción correctiva o preventiva.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.nc-one" datatype="html">
+        <source>1 non-conformité liée est encore ouverte.</source>
+        <target state="translated">1 no conformidad vinculada sigue abierta.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.nc-many" datatype="html">
+        <source><x id="count"/> non-conformités liées sont encore ouvertes.</source>
+        <target state="translated"><x id="count"/> no conformidades vinculadas siguen abiertas.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.unknown" datatype="html">
+        <source>Un prérequis de clôture n'est pas satisfait.</source>
+        <target state="translated">No se cumple un requisito de cierre.</target>
+      </trans-unit>
+      <trans-unit id="audits.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">Referencia</target>
+      </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>
         <target state="translated">Pruebas</target>

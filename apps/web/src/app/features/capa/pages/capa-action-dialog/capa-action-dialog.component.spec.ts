@@ -24,7 +24,8 @@ describe('CapaActionDialogComponent', () => {
   const url = `${environment.apiBaseUrl}/api/v1/capa/cases/c1/actions`;
 
   const created: CapaActionResponse = {
-    id: 'a1', capaId: 'c1', title: 'Recalibrer la sonde', status: 'PENDING'
+    id: 'a1', capaId: 'c1', title: 'Recalibrer la sonde', status: 'PENDING',
+    actionType: 'CORRECTIVE'
   };
 
   beforeEach(async () => {

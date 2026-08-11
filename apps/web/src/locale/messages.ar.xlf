@@ -5296,6 +5296,70 @@
         <source>Ex. : Amina Dridi</source>
         <target state="translated">مثال: أمينة الدريدي</target>
       </trans-unit>
+      <trans-unit id="capa.action-type.containment" datatype="html">
+        <source>Endiguement</source>
+        <target state="translated">احتواء</target>
+      </trans-unit>
+      <trans-unit id="capa.action-type.corrective" datatype="html">
+        <source>Corrective</source>
+        <target state="translated">تصحيحي</target>
+      </trans-unit>
+      <trans-unit id="capa.action-type.preventive" datatype="html">
+        <source>Préventive</source>
+        <target state="translated">وقائي</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.col-action-type" datatype="html">
+        <source>Nature</source>
+        <target state="translated">الطبيعة</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.edit-action-type-label" datatype="html">
+        <source>Nature</source>
+        <target state="translated">الطبيعة</target>
+      </trans-unit>
+      <trans-unit id="capa.action.action-type" datatype="html">
+        <source>Nature de l'action</source>
+        <target state="translated">طبيعة الإجراء</target>
+      </trans-unit>
+      <trans-unit id="capa.action.action-type-hint" datatype="html">
+        <source>L'endiguement arrête l'effet (trier un lot, arrêter une ligne) ; la correction supprime la cause.</source>
+        <target state="translated">الاحتواء يوقف الأثر (فرز دفعة، إيقاف خط)؛ أما التصحيح فيزيل السبب.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.blockers-title" datatype="html">
+        <source>Ce dossier ne peut pas encore être clôturé</source>
+        <target state="translated">لا يمكن إغلاق هذا الملف بعد</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.no-action" datatype="html">
+        <source>Aucune action n'est enregistrée : il n'y a rien dont vérifier l'efficacité.</source>
+        <target state="translated">لا يوجد أي إجراء مسجَّل: لا شيء يمكن التحقق من فعاليته.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.actions-one" datatype="html">
+        <source>1 action reste à terminer.</source>
+        <target state="translated">يتبقّى إجراء واحد لإتمامه.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.actions-many" datatype="html">
+        <source><x id="count"/> actions restent à terminer.</source>
+        <target state="translated">يتبقّى <x id="count"/> إجراءات لإتمامها.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.containment-only" datatype="html">
+        <source>Le dossier ne porte que des mesures d'endiguement : elles arrêtent l'effet sans supprimer la cause. Ajoutez une action corrective ou préventive.</source>
+        <target state="translated">لا يتضمّن الملف سوى تدابير احتواء: فهي توقف الأثر دون إزالة السبب. أضف إجراءً تصحيحياً أو وقائياً.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.nc-one" datatype="html">
+        <source>1 non-conformité liée est encore ouverte.</source>
+        <target state="translated">ما زالت حالة عدم مطابقة مرتبطة واحدة مفتوحة.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.nc-many" datatype="html">
+        <source><x id="count"/> non-conformités liées sont encore ouvertes.</source>
+        <target state="translated">ما زالت <x id="count"/> حالات عدم مطابقة مرتبطة مفتوحة.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.unknown" datatype="html">
+        <source>Un prérequis de clôture n'est pas satisfait.</source>
+        <target state="translated">أحد شروط الإغلاق غير مستوفٍ.</target>
+      </trans-unit>
+      <trans-unit id="audits.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">المرجع</target>
+      </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>
         <target state="translated">الأدلة</target>

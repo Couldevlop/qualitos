@@ -34,6 +34,19 @@ public class CapaAction {
     @Column(nullable = false, length = 20)
     private CapaActionStatus status;
 
+    /**
+     * Nature de l'action : endiguement, correction ou prévention.
+     *
+     * <p>Par défaut {@link CapaActionType#CORRECTIVE} — c'est ce que les lignes
+     * antérieures à la colonne étaient implicitement, et le supposer ne prête
+     * pas à conséquence : le seul risque serait de prendre une mesure
+     * d'endiguement pour une correction, et personne n'a jamais pu enregistrer
+     * un endiguement avant que ce type n'existe.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "action_type", nullable = false, length = 20)
+    private CapaActionType actionType = CapaActionType.CORRECTIVE;
+
     @Column(name = "assignee_id")
     private UUID assigneeId;
 

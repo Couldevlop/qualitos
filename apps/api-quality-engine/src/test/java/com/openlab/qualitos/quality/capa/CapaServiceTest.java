@@ -363,7 +363,7 @@ class CapaServiceTest {
             return a;
         });
         CapaDto.ActionRequest req = new CapaDto.ActionRequest(
-                "fix", "desc", null, UUID.randomUUID(), null, null, LocalDate.now().plusDays(5));
+                "fix", "desc", null, null, UUID.randomUUID(), null, null, LocalDate.now().plusDays(5));
         CapaDto.ActionResponse r = service.addAction(c.getId(), req);
         assertThat(r.status()).isEqualTo(CapaActionStatus.PENDING);
     }
@@ -374,7 +374,7 @@ class CapaServiceTest {
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
         CapaDto.ActionRequest req = new CapaDto.ActionRequest(
-                "fix", null, CapaActionStatus.IN_PROGRESS, null, null, null, null);
+                "fix", null, CapaActionStatus.IN_PROGRESS, null, null, null, null, null);
         CapaDto.ActionResponse r = service.addAction(c.getId(), req);
         assertThat(r.status()).isEqualTo(CapaActionStatus.IN_PROGRESS);
     }
@@ -384,7 +384,7 @@ class CapaServiceTest {
         CapaCase c = capa(TENANT, CapaStatus.CLOSED);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         assertThatThrownBy(() -> service.addAction(c.getId(),
-                new CapaDto.ActionRequest("x", null, null, null, null, null, null)))
+                new CapaDto.ActionRequest("x", null, null, null, null, null, null, null)))
                 .isInstanceOf(CapaStateException.class);
     }
 
@@ -398,7 +398,7 @@ class CapaServiceTest {
         when(actionRepo.save(a)).thenReturn(a);
 
         service.updateAction(c.getId(), a.getId(),
-                new CapaDto.ActionRequest("t", null, CapaActionStatus.DONE, null, null, null, null));
+                new CapaDto.ActionRequest("t", null, CapaActionStatus.DONE, null, null, null, null, null));
 
         assertThat(a.getStatus()).isEqualTo(CapaActionStatus.DONE);
         assertThat(a.getCompletedAt()).isNotNull();
@@ -414,7 +414,7 @@ class CapaServiceTest {
         when(actionRepo.save(a)).thenReturn(a);
 
         service.updateAction(c.getId(), a.getId(),
-                new CapaDto.ActionRequest(null, null, CapaActionStatus.IN_PROGRESS, null, null, null, null));
+                new CapaDto.ActionRequest(null, null, CapaActionStatus.IN_PROGRESS, null, null, null, null, null));
 
         assertThat(a.getStatus()).isEqualTo(CapaActionStatus.IN_PROGRESS);
         assertThat(a.getCompletedAt()).isNull();
@@ -431,7 +431,7 @@ class CapaServiceTest {
         UUID assignee = UUID.randomUUID();
         LocalDate due = LocalDate.now().plusDays(3);
         service.updateAction(c.getId(), a.getId(),
-                new CapaDto.ActionRequest("nt", "nd", null, assignee, null, null, due));
+                new CapaDto.ActionRequest("nt", "nd", null, null, assignee, null, null, due));
         assertThat(a.getTitle()).isEqualTo("nt");
         assertThat(a.getDescription()).isEqualTo("nd");
         assertThat(a.getAssigneeId()).isEqualTo(assignee);
@@ -445,7 +445,7 @@ class CapaServiceTest {
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(actionRepo.findByIdAndCapaId(actionId, c.getId())).thenReturn(Optional.empty());
         assertThatThrownBy(() -> service.updateAction(c.getId(), actionId,
-                new CapaDto.ActionRequest("x", null, null, null, null, null, null)))
+                new CapaDto.ActionRequest("x", null, null, null, null, null, null, null)))
                 .isInstanceOf(CapaActionNotFoundException.class);
     }
 
@@ -454,7 +454,7 @@ class CapaServiceTest {
         CapaCase c = capa(TENANT, CapaStatus.CLOSED);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         assertThatThrownBy(() -> service.updateAction(c.getId(), UUID.randomUUID(),
-                new CapaDto.ActionRequest("x", null, null, null, null, null, null)))
+                new CapaDto.ActionRequest("x", null, null, null, null, null, null, null)))
                 .isInstanceOf(CapaStateException.class);
     }
 
@@ -539,13 +539,16 @@ class CapaServiceTest {
 
         service.verifyEffectiveness(c.getId(), new CapaDto.EffectivenessRequest(false));
 
-        // Le dossier repart en traitement : il ne se referme pas, il n'y a donc
-        // rien à verrouiller — et compter les NC ouvertes ici serait un appel
-        // pour rien. La vérification vise le VERROU précisément : depuis l'ADR
-        // 0052 la réponse résout aussi l'écart d'origine pour l'afficher, et
-        // exiger zéro interaction confondrait les deux usages du dépôt.
+        // Le dossier repart en traitement : il ne se referme pas, donc le verrou
+        // ne s'applique pas — et c'est CELA que le test surveille.
+        //
+        // Il ne peut plus le surveiller en exigeant zéro appel au dépôt des NC :
+        // le même décompte sert désormais à ÉNONCER les obstacles restants sur la
+        // fiche renvoyée, ce qui est un usage tout différent du verrou. Compter
+        // les appels confondrait « le verrou s'est appliqué » avec « l'écran sait
+        // quoi afficher ». Le statut, lui, ne dit qu'une chose.
         assertThat(c.getStatus()).isEqualTo(CapaStatus.IN_PROGRESS);
-        verify(ncRepo, never()).countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any());
+        assertThat(c.getClosedAt()).isNull();
     }
 
     // --- journal du cycle de vie (§11.5) ---------------------------------------
@@ -660,7 +663,7 @@ class CapaServiceTest {
         LocalDate comite = LocalDate.of(2026, 3, 12);
 
         CapaDto.ActionResponse r = service.addAction(c.getId(), new CapaDto.ActionRequest(
-                "Réviser le plan de contrôle", null, null, null, "Amina Dridi", comite, null));
+                "Réviser le plan de contrôle", null, null, null, null, "Amina Dridi", comite, null));
 
         // Une action décidée en comité le 12 mars et saisie plus tard porte le
         // 12 mars : c'est toute la raison d'être de la colonne.
@@ -675,7 +678,7 @@ class CapaServiceTest {
         when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         CapaDto.ActionResponse r = service.addAction(c.getId(),
-                new CapaDto.ActionRequest("x", null, null, null, null, null, null));
+                new CapaDto.ActionRequest("x", null, null, null, null, null, null, null));
 
         // Déduction EXPLICITE au jour de l'enregistrement, et corrigeable ensuite.
         // Le champ existe indépendamment de createdAt : l'entité l'a reçu avant
@@ -691,7 +694,7 @@ class CapaServiceTest {
         when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         CapaDto.ActionResponse r = service.addAction(c.getId(),
-                new CapaDto.ActionRequest("x", null, null, null, "   ", null, null));
+                new CapaDto.ActionRequest("x", null, null, null, null, "   ", null, null));
 
         // Sinon la colonne « Responsable » serait vide sans le « — » qui dit
         // qu'elle l'est : l'écran n'aurait plus qu'une seule chose à tester.
@@ -704,7 +707,7 @@ class CapaServiceTest {
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
 
         assertThatThrownBy(() -> service.addAction(c.getId(),
-                new CapaDto.ActionRequest("   ", null, null, null, null, null, null)))
+                new CapaDto.ActionRequest("   ", null, null, null, null, null, null, null)))
                 .isInstanceOf(CapaValidationException.class);
         verify(actionRepo, never()).save(any());
     }
@@ -715,7 +718,7 @@ class CapaServiceTest {
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
 
         assertThatThrownBy(() -> service.addAction(c.getId(),
-                new CapaDto.ActionRequest("x".repeat(256), null, null, null, null, null, null)))
+                new CapaDto.ActionRequest("x".repeat(256), null, null, null, null, null, null, null)))
                 .isInstanceOf(CapaValidationException.class)
                 .hasMessageContaining("255");
         // Tronquer serait pire : l'utilisateur croirait avoir enregistré ce
@@ -733,7 +736,7 @@ class CapaServiceTest {
 
         CapaDto.ActionResponse r = service.updateAction(c.getId(), a.getId(),
                 new CapaDto.ActionRequest("  Libellé corrigé  ", null,
-                        CapaActionStatus.IN_PROGRESS, null, null, null, null));
+                        CapaActionStatus.IN_PROGRESS, null, null, null, null, null));
 
         // Les espaces de bordure d'un champ de tableau viennent du copier-coller,
         // pas de l'intention : les garder ferait diverger deux libellés identiques.
@@ -749,7 +752,7 @@ class CapaServiceTest {
         when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
 
         assertThatThrownBy(() -> service.updateAction(c.getId(), a.getId(),
-                new CapaDto.ActionRequest(" ", null, null, null, null, null, null)))
+                new CapaDto.ActionRequest(" ", null, null, null, null, null, null, null)))
                 .isInstanceOf(CapaValidationException.class);
 
         // Le PATCH n'est pas validé par Jakarta (un champ absent doit rester
@@ -770,7 +773,7 @@ class CapaServiceTest {
         when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         service.updateAction(c.getId(), a.getId(), new CapaDto.ActionRequest(
-                null, null, CapaActionStatus.DONE, null, null, null, null));
+                null, null, CapaActionStatus.DONE, null, null, null, null, null));
 
         assertThat(a.getAssigneeName()).isEqualTo("Amina Dridi");
         assertThat(a.getDecidedOn()).isEqualTo(LocalDate.of(2026, 3, 12));
@@ -902,13 +905,241 @@ class CapaServiceTest {
     }
 
     private CapaAction action(CapaCase c, CapaActionStatus status) {
+        return action(c, status, CapaActionType.CORRECTIVE);
+    }
+
+    private CapaAction action(CapaCase c, CapaActionStatus status, CapaActionType type) {
         CapaAction a = new CapaAction();
         a.setId(UUID.randomUUID());
         a.setCapa(c);
         a.setTitle("act");
         a.setStatus(status);
+        a.setActionType(type);
         a.setCreatedAt(Instant.now());
         a.setUpdatedAt(Instant.now());
         return a;
+    }
+
+    // ============================================================================
+    // Nature des actions : endiguement / correction / prévention (§4.2)
+    // ============================================================================
+
+    @Test
+    void addAction_withoutType_isCorrective() {
+        // C'est ce que « une action de CAPA » veut dire par défaut ; exiger la
+        // qualification à chaque saisie ferait payer tout le monde pour le cas rare.
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        CapaDto.ActionResponse r = service.addAction(c.getId(),
+                new CapaDto.ActionRequest("tri du lot", null, null, null, null, null, null, null));
+
+        assertThat(r.actionType()).isEqualTo(CapaActionType.CORRECTIVE);
+    }
+
+    @Test
+    void addAction_withContainment_keepsIt() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        CapaDto.ActionResponse r = service.addAction(c.getId(), new CapaDto.ActionRequest(
+                "tri du lot suspect", null, null, CapaActionType.CONTAINMENT,
+                null, null, null, null));
+
+        assertThat(r.actionType()).isEqualTo(CapaActionType.CONTAINMENT);
+    }
+
+    @Test
+    void updateAction_absentType_leavesItUntouched() {
+        // PATCH : un champ absent ne se touche pas. Sans ce comportement, corriger
+        // une échéance requalifierait l'action en corrective.
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        CapaAction a = action(c, CapaActionStatus.PENDING, CapaActionType.CONTAINMENT);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+        when(actionRepo.save(a)).thenReturn(a);
+
+        service.updateAction(c.getId(), a.getId(), new CapaDto.ActionRequest(
+                null, null, null, null, null, null, null, LocalDate.now().plusDays(3)));
+
+        assertThat(a.getActionType()).isEqualTo(CapaActionType.CONTAINMENT);
+    }
+
+    @Test
+    void updateAction_newType_requalifiesTheAction() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        CapaAction a = action(c, CapaActionStatus.PENDING, CapaActionType.CONTAINMENT);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(actionRepo.findByIdAndCapaId(a.getId(), c.getId())).thenReturn(Optional.of(a));
+        when(actionRepo.save(a)).thenReturn(a);
+
+        service.updateAction(c.getId(), a.getId(), new CapaDto.ActionRequest(
+                null, null, null, CapaActionType.PREVENTIVE, null, null, null, null));
+
+        assertThat(a.getActionType()).isEqualTo(CapaActionType.PREVENTIVE);
+    }
+
+    @Test
+    void verifyEffectiveness_containmentOnly_isRefused() {
+        // Endiguer n'est pas corriger : la cause reste, et le problème reviendra
+        // dès la mesure levée. Clore là-dessus inscrirait au registre le contraire
+        // de ce qui s'est passé.
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        c.getActions().add(action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT));
+        c.getActions().add(action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT));
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThatThrownBy(() -> service.verifyEffectiveness(c.getId(),
+                new CapaDto.EffectivenessRequest(true)))
+                .isInstanceOf(CapaStateException.class)
+                .hasMessageContaining("containment");
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.RESOLVED);
+        verify(caseRepo, never()).save(any());
+    }
+
+    @Test
+    void verifyEffectiveness_oneCorrectiveAmongContainments_closes() {
+        // Une seule action qui s'attaque à la cause suffit : le dossier n'a pas
+        // QUE contenu, et rien ne justifie d'exiger davantage.
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        c.getActions().add(action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT));
+        c.getActions().add(action(c, CapaActionStatus.DONE, CapaActionType.CORRECTIVE));
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(0L);
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.verifyEffectiveness(c.getId(), new CapaDto.EffectivenessRequest(true));
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.CLOSED);
+    }
+
+    @Test
+    void verifyEffectiveness_containmentOnly_butIneffective_isAllowed() {
+        // Déclarer l'action INEFFICACE ne clôt rien : c'est un constat d'échec, et
+        // le refuser interdirait de consigner que l'endiguement n'a pas suffi.
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        c.getActions().add(action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT));
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.verifyEffectiveness(c.getId(), new CapaDto.EffectivenessRequest(false));
+
+        assertThat(c.getStatus()).isEqualTo(CapaStatus.IN_PROGRESS);
+    }
+
+    @Test
+    void isContainmentOnly_emptyList_isFalse() {
+        // Un dossier sans action a son propre motif ; un allMatch sur une liste
+        // vide répondrait « oui » à une question qui ne se pose pas.
+        assertThat(CapaService.isContainmentOnly(List.of())).isFalse();
+    }
+
+    // ============================================================================
+    // Motifs de blocage, énoncés AVANT le clic (§4.2)
+    // ============================================================================
+
+    @Test
+    void findById_caseWithoutAction_reportsNoActionBlocker() {
+        CapaCase c = capa(TENANT, CapaStatus.OPEN);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(0L);
+
+        assertThat(service.findById(c.getId()).closureBlockers())
+                .extracting(CapaDto.ClosureBlocker::code)
+                .containsExactly(ClosureBlockerCode.NO_ACTION);
+    }
+
+    @Test
+    void findById_pendingActions_areCounted() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        c.getActions().add(action(c, CapaActionStatus.DONE));
+        c.getActions().add(action(c, CapaActionStatus.PENDING));
+        c.getActions().add(action(c, CapaActionStatus.IN_PROGRESS));
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(0L);
+
+        assertThat(service.findById(c.getId()).closureBlockers())
+                .containsExactly(new CapaDto.ClosureBlocker(ClosureBlockerCode.ACTIONS_NOT_DONE, 2));
+    }
+
+    @Test
+    void findById_containmentOnly_isAnnouncedBeforeTheClick() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        c.getActions().add(action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT));
+        c.getActions().add(action(c, CapaActionStatus.DONE, CapaActionType.CONTAINMENT));
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(0L);
+
+        assertThat(service.findById(c.getId()).closureBlockers())
+                .containsExactly(new CapaDto.ClosureBlocker(ClosureBlockerCode.CONTAINMENT_ONLY, 2));
+    }
+
+    @Test
+    void findById_openNonConformities_areCounted() {
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        c.getActions().add(action(c, CapaActionStatus.DONE));
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(3L);
+
+        assertThat(service.findById(c.getId()).closureBlockers())
+                .containsExactly(new CapaDto.ClosureBlocker(ClosureBlockerCode.OPEN_NON_CONFORMITIES, 3));
+    }
+
+    @Test
+    void findById_severalObstacles_areAllListed() {
+        // L'écran doit pouvoir tout dire d'un coup : ne montrer que le premier
+        // obstacle enverrait l'utilisateur en corriger un pour en découvrir un autre.
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        c.getActions().add(action(c, CapaActionStatus.PENDING, CapaActionType.CONTAINMENT));
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(1L);
+
+        assertThat(service.findById(c.getId()).closureBlockers())
+                .extracting(CapaDto.ClosureBlocker::code)
+                .containsExactly(ClosureBlockerCode.ACTIONS_NOT_DONE,
+                        ClosureBlockerCode.CONTAINMENT_ONLY,
+                        ClosureBlockerCode.OPEN_NON_CONFORMITIES);
+    }
+
+    @Test
+    void findById_nothingInTheWay_returnsEmptyRatherThanNull() {
+        // Une liste vide DIT quelque chose : « rien ne s'y oppose ». Un null
+        // obligerait l'écran à distinguer « pas calculé » de « pas d'obstacle ».
+        CapaCase c = capa(TENANT, CapaStatus.RESOLVED);
+        c.getActions().add(action(c, CapaActionStatus.DONE));
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(ncRepo.countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any())).thenReturn(0L);
+
+        assertThat(service.findById(c.getId()).closureBlockers()).isEmpty();
+    }
+
+    @Test
+    void findById_closedCase_announcesNoObstacle() {
+        // Afficher des obstacles sur un dossier terminé donnerait à croire qu'il
+        // reste quelque chose à faire.
+        CapaCase c = capa(TENANT, CapaStatus.CLOSED);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        assertThat(service.findById(c.getId()).closureBlockers()).isEmpty();
+        // Et sans même interroger les non-conformités : la réponse est connue
+        // d'avance, un dossier clos n'attend plus rien. (Le dépôt reste sollicité
+        // par la résolution de l'écart d'origine, qui est un autre usage.)
+        verify(ncRepo, never()).countByTenantIdAndCapaCaseIdAndStatusNotIn(any(), any(), any());
+    }
+
+    @Test
+    void findAll_doesNotComputeBlockers() {
+        // Vingt dossiers vaudraient vingt requêtes pour une information que la
+        // liste n'affiche pas.
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        when(caseRepo.findByTenantId(eq(TENANT), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(c)));
+
+        assertThat(service.findAll(null, PageRequest.of(0, 20)).getContent().get(0).closureBlockers())
+                .isNull();
+        verifyNoInteractions(ncRepo);
     }
 }

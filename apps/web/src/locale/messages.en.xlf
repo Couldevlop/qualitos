@@ -5296,6 +5296,70 @@
         <source>Ex. : Amina Dridi</source>
         <target state="translated">e.g. Amina Dridi</target>
       </trans-unit>
+      <trans-unit id="capa.action-type.containment" datatype="html">
+        <source>Endiguement</source>
+        <target state="translated">Containment</target>
+      </trans-unit>
+      <trans-unit id="capa.action-type.corrective" datatype="html">
+        <source>Corrective</source>
+        <target state="translated">Corrective</target>
+      </trans-unit>
+      <trans-unit id="capa.action-type.preventive" datatype="html">
+        <source>Préventive</source>
+        <target state="translated">Preventive</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.col-action-type" datatype="html">
+        <source>Nature</source>
+        <target state="translated">Kind</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.edit-action-type-label" datatype="html">
+        <source>Nature</source>
+        <target state="translated">Kind</target>
+      </trans-unit>
+      <trans-unit id="capa.action.action-type" datatype="html">
+        <source>Nature de l'action</source>
+        <target state="translated">Kind of action</target>
+      </trans-unit>
+      <trans-unit id="capa.action.action-type-hint" datatype="html">
+        <source>L'endiguement arrête l'effet (trier un lot, arrêter une ligne) ; la correction supprime la cause.</source>
+        <target state="translated">Containment stops the effect (sorting a batch, halting a line); correction removes the cause.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.blockers-title" datatype="html">
+        <source>Ce dossier ne peut pas encore être clôturé</source>
+        <target state="translated">This case cannot be closed yet</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.no-action" datatype="html">
+        <source>Aucune action n'est enregistrée : il n'y a rien dont vérifier l'efficacité.</source>
+        <target state="translated">No action is recorded: there is nothing whose effectiveness could be checked.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.actions-one" datatype="html">
+        <source>1 action reste à terminer.</source>
+        <target state="translated">1 action is still to be completed.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.actions-many" datatype="html">
+        <source><x id="count"/> actions restent à terminer.</source>
+        <target state="translated"><x id="count"/> actions are still to be completed.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.containment-only" datatype="html">
+        <source>Le dossier ne porte que des mesures d'endiguement : elles arrêtent l'effet sans supprimer la cause. Ajoutez une action corrective ou préventive.</source>
+        <target state="translated">The case carries containment measures only: they stop the effect without removing the cause. Add a corrective or preventive action.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.nc-one" datatype="html">
+        <source>1 non-conformité liée est encore ouverte.</source>
+        <target state="translated">1 linked non-conformity is still open.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.nc-many" datatype="html">
+        <source><x id="count"/> non-conformités liées sont encore ouvertes.</source>
+        <target state="translated"><x id="count"/> linked non-conformities are still open.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.unknown" datatype="html">
+        <source>Un prérequis de clôture n'est pas satisfait.</source>
+        <target state="translated">A closing prerequisite is not met.</target>
+      </trans-unit>
+      <trans-unit id="audits.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">Reference</target>
+      </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>
         <target state="translated">Evidence</target>

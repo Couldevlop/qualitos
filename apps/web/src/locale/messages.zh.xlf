@@ -5296,6 +5296,70 @@
         <source>Ex. : Amina Dridi</source>
         <target state="translated">例：Amina Dridi</target>
       </trans-unit>
+      <trans-unit id="capa.action-type.containment" datatype="html">
+        <source>Endiguement</source>
+        <target state="translated">围堵措施</target>
+      </trans-unit>
+      <trans-unit id="capa.action-type.corrective" datatype="html">
+        <source>Corrective</source>
+        <target state="translated">纠正措施</target>
+      </trans-unit>
+      <trans-unit id="capa.action-type.preventive" datatype="html">
+        <source>Préventive</source>
+        <target state="translated">预防措施</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.col-action-type" datatype="html">
+        <source>Nature</source>
+        <target state="translated">类别</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.edit-action-type-label" datatype="html">
+        <source>Nature</source>
+        <target state="translated">类别</target>
+      </trans-unit>
+      <trans-unit id="capa.action.action-type" datatype="html">
+        <source>Nature de l'action</source>
+        <target state="translated">措施类别</target>
+      </trans-unit>
+      <trans-unit id="capa.action.action-type-hint" datatype="html">
+        <source>L'endiguement arrête l'effet (trier un lot, arrêter une ligne) ; la correction supprime la cause.</source>
+        <target state="translated">围堵措施只是止住影响（挑选批次、停线），纠正措施才消除原因。</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.blockers-title" datatype="html">
+        <source>Ce dossier ne peut pas encore être clôturé</source>
+        <target state="translated">该档案尚不能关闭</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.no-action" datatype="html">
+        <source>Aucune action n'est enregistrée : il n'y a rien dont vérifier l'efficacité.</source>
+        <target state="translated">尚未登记任何措施：没有可供验证有效性的对象。</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.actions-one" datatype="html">
+        <source>1 action reste à terminer.</source>
+        <target state="translated">还有 1 项措施未完成。</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.actions-many" datatype="html">
+        <source><x id="count"/> actions restent à terminer.</source>
+        <target state="translated">还有 <x id="count"/> 项措施未完成。</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.containment-only" datatype="html">
+        <source>Le dossier ne porte que des mesures d'endiguement : elles arrêtent l'effet sans supprimer la cause. Ajoutez une action corrective ou préventive.</source>
+        <target state="translated">该档案仅包含围堵措施：它们止住影响但未消除原因。请添加纠正或预防措施。</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.nc-one" datatype="html">
+        <source>1 non-conformité liée est encore ouverte.</source>
+        <target state="translated">仍有 1 项关联不符合项未关闭。</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.nc-many" datatype="html">
+        <source><x id="count"/> non-conformités liées sont encore ouvertes.</source>
+        <target state="translated">仍有 <x id="count"/> 项关联不符合项未关闭。</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.unknown" datatype="html">
+        <source>Un prérequis de clôture n'est pas satisfait.</source>
+        <target state="translated">关闭的某项前提条件未满足。</target>
+      </trans-unit>
+      <trans-unit id="audits.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">编号</target>
+      </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>
         <target state="translated">证据</target>

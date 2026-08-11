@@ -192,7 +192,7 @@ class CapaControllerTest {
     @Test @WithMockUser
     void addAction_success() throws Exception {
         when(service.addAction(eq(CAPA), any())).thenReturn(actionResp());
-        CapaDto.ActionRequest req = new CapaDto.ActionRequest("a", null, null, null, null, null, null);
+        CapaDto.ActionRequest req = new CapaDto.ActionRequest("a", null, null, null, null, null, null, null);
         mockMvc.perform(post("/api/v1/capa/cases/{id}/actions", CAPA).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
@@ -257,7 +257,7 @@ class CapaControllerTest {
                 CAPA, TENANT, "t", null, CapaType.CORRECTIVE, CapaCriticity.HIGH, CapaStatus.OPEN,
                 CapaSourceType.NON_CONFORMITY, "NC-2026-0018", OWNER, null, null,
                 null, null, null, null, Instant.now(), Instant.now(), List.of(),
-                new CapaDto.LinkedNonConformity(NC, "NC-2026-0018", "Étiquetage lot 4471 illisible")));
+                new CapaDto.LinkedNonConformity(NC, "NC-2026-0018", "Étiquetage lot 4471 illisible"), List.of()));
 
         mockMvc.perform(get("/api/v1/capa/cases/{id}", CAPA))
                 .andExpect(status().isOk())
@@ -291,12 +291,12 @@ class CapaControllerTest {
                 CAPA, TENANT, "t", null, CapaType.CORRECTIVE, CapaCriticity.HIGH, s,
                 CapaSourceType.NON_CONFORMITY, null, OWNER, null, null,
                 null, null, null, null,
-                Instant.now(), Instant.now(), List.of(), null);
+                Instant.now(), Instant.now(), List.of(), null, List.of());
     }
 
     private CapaDto.ActionResponse actionResp() {
         return new CapaDto.ActionResponse(
-                ACTION, CAPA, "a", null, CapaActionStatus.PENDING,
+                ACTION, CAPA, "a", null, CapaActionStatus.PENDING, CapaActionType.CORRECTIVE,
                 null, null, null, null, null, Instant.now(), Instant.now());
     }
 }

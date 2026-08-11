@@ -115,6 +115,9 @@ export class CapaService {
         capaId: caseId,
         title: input.title,
         status: input.status ?? 'PENDING',
+        // Même défaut explicite que côté serveur : une action non qualifiée est
+        // corrective, et la démonstration doit dire la même chose que la production.
+        actionType: input.actionType ?? 'CORRECTIVE',
         assigneeId: input.assigneeId,
         assigneeName: input.assigneeName,
         // Même déduction explicite que côté serveur : à défaut de date saisie,
@@ -146,6 +149,7 @@ export class CapaService {
       if (a) {
         if (input.status !== undefined) a.status = input.status;
         if (input.title !== undefined) a.title = input.title;
+        if (input.actionType !== undefined) a.actionType = input.actionType;
         if (input.assigneeName !== undefined) a.assigneeName = input.assigneeName;
         if (input.decidedOn !== undefined) a.decidedOn = input.decidedOn;
         if (input.status === 'DONE') a.completedAt = new Date().toISOString();
@@ -153,7 +157,8 @@ export class CapaService {
       }
       return of(a ?? {
         id: actionId, capaId: caseId, title: input.title ?? '',
-        status: input.status ?? 'PENDING'
+        status: input.status ?? 'PENDING',
+        actionType: input.actionType ?? 'CORRECTIVE'
       }).pipe(delay(120));
     }
     return this.http.patch<CapaActionResponse>(`${this.endpoint}/${caseId}/actions/${actionId}`, input);
@@ -367,27 +372,39 @@ export class CapaService {
           title: 'Cordons de soudure hors tolérance sur la ligne 3'
         },
         createdAt: now, updatedAt: now,
+        // Le jeu de démonstration porte les TROIS natures : sans mesure
+        // d'endiguement, l'écran ne montrerait jamais ce que la colonne distingue.
         actions: [
+          {
+            id: 'act-demo-0', capaId: 'capa-1',
+            title: 'Bloquer et trier les lots soudés depuis le 12 avril',
+            status: 'DONE', actionType: 'CONTAINMENT', assigneeName: 'Karim Benali',
+            decidedOn: '2026-04-13', dueDate: '2026-04-16',
+            completedAt: '2026-04-15T09:10:00Z'
+          },
           {
             id: 'act-demo-1', capaId: 'capa-1',
             title: 'Recalibrer la cellule de soudure et revalider les paramètres',
-            status: 'DONE', assigneeName: 'Amina Dridi',
+            status: 'DONE', actionType: 'CORRECTIVE', assigneeName: 'Amina Dridi',
             decidedOn: '2026-04-14', dueDate: '2026-05-02',
             completedAt: '2026-04-29T14:20:00Z'
           },
           {
             id: 'act-demo-2', capaId: 'capa-1',
             title: 'Renforcer le contrôle réception (échantillonnage 100 %)',
-            status: 'IN_PROGRESS', assigneeName: 'Marc Lefèvre',
+            status: 'IN_PROGRESS', actionType: 'CORRECTIVE', assigneeName: 'Marc Lefèvre',
             decidedOn: '2026-04-14', dueDate: '2026-05-20'
           },
           {
             id: 'act-demo-3', capaId: 'capa-1',
             title: 'Former les opérateurs au nouveau critère de contrôle',
-            status: 'PENDING', assigneeName: 'Sofia Marques',
+            status: 'PENDING', actionType: 'PREVENTIVE', assigneeName: 'Sofia Marques',
             decidedOn: '2026-04-28', dueDate: '2026-06-10'
           }
-        ]
+        ],
+        // Deux actions restent à terminer : la démonstration montre le bandeau
+        // AVANT le clic, qui est tout l'objet de la fonctionnalité.
+        closureBlockers: [{ code: 'ACTIONS_NOT_DONE', count: 2 }]
       },
       {
         id: 'capa-2', tenantId: 'demo-tenant',
@@ -395,7 +412,8 @@ export class CapaService {
         type: 'PREVENTIVE', criticity: 'CRITICAL', status: 'OPEN',
         sourceType: 'AUDIT', sourceRef: 'AUD-2026-Q2',
         ownerId: 'demo-user',
-        createdAt: now, updatedAt: now, actions: []
+        createdAt: now, updatedAt: now, actions: [],
+        closureBlockers: [{ code: 'NO_ACTION', count: 0 }]
       },
       {
         id: 'capa-3', tenantId: 'demo-tenant',
@@ -403,7 +421,10 @@ export class CapaService {
         type: 'CORRECTIVE', criticity: 'MEDIUM', status: 'RESOLVED',
         sourceType: 'INTERNAL',
         ownerId: 'demo-user',
-        resolvedAt: now, createdAt: now, updatedAt: now, actions: []
+        resolvedAt: now, createdAt: now, updatedAt: now, actions: [],
+        // Rien ne s'oppose à sa clôture : le tableau VIDE le dit, et c'est ce
+        // qui allume le bouton « Efficace — clôturer » dans la démonstration.
+        closureBlockers: []
       }
     ];
   }

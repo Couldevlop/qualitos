@@ -14,7 +14,7 @@ import {
   CapaEditDialogComponent,
   CapaEditDialogData
 } from '../capa-edit-dialog/capa-edit-dialog.component';
-import { CapaActionResponse, CapaActionStatus, CapaCaseResponse, CapaCriticity, CapaEvidence, CapaStatus, SuggestedAction } from '../../capa.types';
+import { CapaActionResponse, CapaActionStatus, CapaActionType, CapaCaseResponse, CapaCriticity, CapaEvidence, CapaStatus, ClosureBlocker, SuggestedAction } from '../../capa.types';
 import {
   CapaActionDialogComponent,
   CapaActionDialogData
@@ -36,8 +36,15 @@ export class CapaDetailComponent implements OnInit {
    * L'avancement et l'édition partagent la dernière colonne — deux colonnes de
    * boutons repousseraient le contenu hors de l'écran.
    */
-  readonly actionColumns = ['title', 'decidedOn', 'assignee', 'nonConformity',
+  readonly actionColumns = ['title', 'actionType', 'decidedOn', 'assignee', 'nonConformity',
                             'evidence', 'status', 'dueDate', 'rowActions'];
+
+  /** Natures proposées, dans l'ordre du déroulé réel d'un traitement. */
+  readonly actionTypes: { value: CapaActionType; label: string }[] = [
+    { value: 'CONTAINMENT', label: $localize`:@@capa.action-type.containment:Endiguement` },
+    { value: 'CORRECTIVE',  label: $localize`:@@capa.action-type.corrective:Corrective` },
+    { value: 'PREVENTIVE',  label: $localize`:@@capa.action-type.preventive:Préventive` }
+  ];
 
   readonly notFoundLabel = $localize`:@@capa.detail.not-found:Cas introuvable`;
   readonly analysingLabel = $localize`:@@capa.detail.analysing:Analyse…`;
@@ -87,7 +94,10 @@ export class CapaDetailComponent implements OnInit {
     // la refuser avant l'aller-retour, sinon l'utilisateur voit une erreur
     // technique là où il a simplement effacé un champ.
     title: ['', [Validators.required, CapaDetailComponent.notBlank, Validators.maxLength(255)]],
-    status: <CapaActionStatus>'PENDING'
+    status: <CapaActionStatus>'PENDING',
+    // La nature se corrige en ligne comme le reste : c'est en relisant le tableau
+    // qu'on s'aperçoit qu'une action rangée en « corrective » n'a fait que contenir.
+    actionType: <CapaActionType>'CORRECTIVE'
   });
 
   /** Un libellé fait d'espaces n'est pas un libellé. */
@@ -440,7 +450,14 @@ export class CapaDetailComponent implements OnInit {
   startEdit(a: CapaActionResponse): void {
     if (this.savingEdit) return;
     this.editingActionId = a.id;
-    this.editForm.setValue({ title: a.title, status: a.status });
+    this.editForm.setValue({
+      title: a.title,
+      status: a.status,
+      // Repli sur « corrective » pour les actions antérieures à la colonne :
+      // c'est ce qu'elles sont en base, et laisser le contrôle vide requalifierait
+      // l'action au premier enregistrement.
+      actionType: a.actionType ?? 'CORRECTIVE'
+    });
     this.focusTitleOnRender = true;
   }
 
@@ -448,7 +465,7 @@ export class CapaDetailComponent implements OnInit {
   cancelEdit(): void {
     if (this.savingEdit) return;
     this.editingActionId = null;
-    this.editForm.reset({ title: '', status: 'PENDING' });
+    this.editForm.reset({ title: '', status: 'PENDING', actionType: 'CORRECTIVE' });
   }
 
   /**
@@ -472,11 +489,11 @@ export class CapaDetailComponent implements OnInit {
       return;
     }
     const actionId = this.editingActionId;
-    const { title, status } = this.editForm.getRawValue();
+    const { title, status, actionType } = this.editForm.getRawValue();
     this.savingEdit = true;
-    // PATCH partiel : seuls le libellé et le statut partent. La date de
-    // décision et le porteur, absents de la charge utile, restent intacts.
-    this.capa.updateAction(this.caseId, actionId, { title: title.trim(), status })
+    // PATCH partiel : seuls le libellé, le statut et la nature partent. La date
+    // de décision et le porteur, absents de la charge utile, restent intacts.
+    this.capa.updateAction(this.caseId, actionId, { title: title.trim(), status, actionType })
       .pipe(finalize(() => (this.savingEdit = false)))
       .subscribe({
         next: () => {
@@ -737,6 +754,51 @@ export class CapaDetailComponent implements OnInit {
 
   canVerifyEffectiveness(s: CapaStatus): boolean {
     return s === 'RESOLVED';
+  }
+
+  /** Libellé lisible d'une nature d'action, avec repli sur le code inconnu. */
+  actionTypeLabel(type: CapaActionType): string {
+    return this.actionTypes.find(t => t.value === type)?.label ?? type;
+  }
+
+  /**
+   * Phrase du motif, construite ICI et non reçue du serveur : elle doit se dire
+   * dans la langue de l'utilisateur, et un message serveur ne se traduit pas.
+   */
+  blockerLabel(b: ClosureBlocker): string {
+    switch (b.code) {
+      case 'NO_ACTION':
+        return $localize`:@@capa.blocker.no-action:Aucune action n'est enregistrée : il n'y a rien dont vérifier l'efficacité.`;
+      case 'ACTIONS_NOT_DONE':
+        return b.count === 1
+          ? $localize`:@@capa.blocker.actions-one:1 action reste à terminer.`
+          : $localize`:@@capa.blocker.actions-many:${b.count}:count: actions restent à terminer.`;
+      case 'CONTAINMENT_ONLY':
+        return $localize`:@@capa.blocker.containment-only:Le dossier ne porte que des mesures d'endiguement : elles arrêtent l'effet sans supprimer la cause. Ajoutez une action corrective ou préventive.`;
+      case 'OPEN_NON_CONFORMITIES':
+        return b.count === 1
+          ? $localize`:@@capa.blocker.nc-one:1 non-conformité liée est encore ouverte.`
+          : $localize`:@@capa.blocker.nc-many:${b.count}:count: non-conformités liées sont encore ouvertes.`;
+      default:
+        // Code inconnu (serveur plus récent que l'écran) : mieux vaut une phrase
+        // générique qu'un bouton actif dont on ignore pourquoi il échouera.
+        return $localize`:@@capa.blocker.unknown:Un prérequis de clôture n'est pas satisfait.`;
+    }
+  }
+
+  /** Vrai dès qu'un motif subsiste — c'est ce qui éteint le bouton de clôture. */
+  blocksClosure(c: CapaCaseResponse): boolean {
+    return (c.closureBlockers?.length ?? 0) > 0;
+  }
+
+  /**
+   * Infobulle du bouton éteint. Vide quand rien ne bloque : une infobulle qui
+   * répète le libellé du bouton n'apprend rien et gêne le survol.
+   */
+  closureTooltip(c: CapaCaseResponse): string {
+    return this.blocksClosure(c)
+      ? (c.closureBlockers ?? []).map(b => this.blockerLabel(b)).join(' ')
+      : '';
   }
 
   private transition(action: 'start' | 'resolve' | 'reject'): void {

@@ -97,6 +97,18 @@
           </div>
           <p class="description" *ngIf="c.description">{{ c.description }}</p>
 
+          <!-- Ce qui s'oppose à la clôture, DIT avant le clic. Auparavant, le refus
+               n'arrivait qu'après, sous la forme d'un message serveur en anglais. -->
+          <div class="blockers-block" *ngIf="c.closureBlockers?.length" role="status">
+            <p class="blockers-title">
+              <mat-icon aria-hidden="true">block</mat-icon>
+              <strong i18n="@@capa.detail.blockers-title">Ce dossier ne peut pas encore être clôturé</strong>
+            </p>
+            <ul class="blockers-list">
+              <li *ngFor="let b of c.closureBlockers">{{ blockerLabel(b) }}</li>
+            </ul>
+          </div>
+
           <div class="effectiveness-block" *ngIf="canVerifyEffectiveness(c.status)">
             <p class="effectiveness-prompt">
               <mat-icon>fact_check</mat-icon>
@@ -109,9 +121,15 @@
                       [disabled]="acting$ | async">
                 <mat-icon>cancel</mat-icon> <span i18n="@@capa.detail.not-effective">Non efficace</span>
               </button>
+              <!-- Désactivé tant qu'un obstacle demeure : le bouton promet une
+                   clôture, et un bouton qui promet ce qu'il ne peut pas tenir vaut
+                   moins qu'un bouton éteint dont la liste au-dessus dit pourquoi.
+                   « Non efficace », lui, reste ouvert — constater un échec ne clôt
+                   rien et doit rester possible à tout moment. -->
               <button mat-flat-button color="primary" type="button"
                       (click)="verifyEffectiveness(true)"
-                      [disabled]="acting$ | async">
+                      [disabled]="(acting$ | async) || blocksClosure(c)"
+                      [matTooltip]="closureTooltip(c)">
                 <mat-icon>check_circle</mat-icon> <span i18n="@@capa.detail.effective-close">Efficace — clôturer</span>
               </button>
             </div>
@@ -192,6 +210,30 @@
                              #inlineTitle>
                       <mat-error *ngIf="editForm.controls.title.hasError('required')"
                                  i18n="@@capa.action.title-required">Le titre est requis.</mat-error>
+                    </mat-form-field>
+                  </div>
+                </ng-template>
+              </td>
+            </ng-container>
+
+            <!-- La NATURE de l'action : endiguer n'est pas corriger. Sans cette
+                 colonne, un dossier qui a seulement trié le lot suspect se lit
+                 comme un dossier qui a corrigé la machine. -->
+            <ng-container matColumnDef="actionType">
+              <th mat-header-cell *matHeaderCellDef i18n="@@capa.detail.col-action-type">Nature</th>
+              <td mat-cell *matCellDef="let a">
+                <ng-container *ngIf="!isEditing(a.id); else typeEdit">
+                  <span class="action-type" [ngClass]="'action-type--' + a.actionType.toLowerCase()">
+                    {{ actionTypeLabel(a.actionType) }}
+                  </span>
+                </ng-container>
+                <ng-template #typeEdit>
+                  <div [formGroup]="editForm">
+                    <mat-form-field appearance="outline" class="inline-field" subscriptSizing="dynamic">
+                      <mat-label i18n="@@capa.detail.edit-action-type-label">Nature</mat-label>
+                      <mat-select formControlName="actionType">
+                        <mat-option *ngFor="let t of actionTypes" [value]="t.value">{{ t.label }}</mat-option>
+                      </mat-select>
                     </mat-form-field>
                   </div>
                 </ng-template>

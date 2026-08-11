@@ -49,6 +49,9 @@ public final class CapaDto {
             @NotBlank @Size(max = 255) String title,
             String description,
             CapaActionStatus status,
+            // Nature de l'action. Absente à la création = CORRECTIVE, le cas de
+            // loin le plus fréquent ; absente au PATCH = « ne touche pas ».
+            CapaActionType actionType,
             UUID assigneeId,
             @Size(max = 255) String assigneeName,
             LocalDate decidedOn,
@@ -80,7 +83,28 @@ public final class CapaDto {
             // c'est une propriété du dossier, et la répéter N fois laisserait
             // croire qu'elle peut différer d'une ligne à l'autre. Nulle quand le
             // dossier ne vient pas d'un écart.
-            LinkedNonConformity sourceNonConformity
+            LinkedNonConformity sourceNonConformity,
+            // Ce qui s'oppose encore à la clôture, énuméré à l'avance. Renseigné
+            // sur la FICHE seulement — comme sourceNonConformity, et pour la même
+            // raison : la liste paginée n'en montre rien et le calcul coûterait
+            // une requête par ligne. Jamais nul sur la fiche : une liste vide dit
+            // « rien ne s'y oppose », ce qui est une information.
+            List<ClosureBlocker> closureBlockers
+    ) {}
+
+    /**
+     * Un motif de refus de clôture, énoncé AVANT le clic.
+     *
+     * <p>Un code et un décompte, pas une phrase : la phrase se construit côté
+     * écran, dans la langue de l'utilisateur. Renvoyer un texte tout fait
+     * l'aurait figé en français dans une interface qui parle six langues, et
+     * aurait obligé le navigateur à afficher un message serveur qu'il ne peut
+     * ni traduire ni mettre en forme.
+     */
+    public record ClosureBlocker(
+            ClosureBlockerCode code,
+            /** Nombre d'éléments concernés — actions restantes, écarts ouverts… */
+            long count
     ) {}
 
     /** Écart d'origine, réduit à ce qu'un tableau doit en montrer. */
@@ -96,6 +120,7 @@ public final class CapaDto {
             String title,
             String description,
             CapaActionStatus status,
+            CapaActionType actionType,
             UUID assigneeId,
             String assigneeName,
             LocalDate decidedOn,
