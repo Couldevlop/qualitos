@@ -1,0 +1,103 @@
+/* Arête de poisson (Ishikawa).
+ *
+ * Le design system demande de la sobriété : l'arête reste monochrome — accent
+ * pour ce qui structure (épine, tête, étiquettes de branche), neutres pour ce
+ * qui détaille (obliques, traits d'attache, libellés de cause). Colorer chaque
+ * branche donnerait huit teintes sans signification : le diagramme n'a pas de
+ * série à distinguer, il a une convergence à montrer.
+ *
+ * Toutes les valeurs viennent des jetons `--qos-*`, d'où la bascule
+ * clair/sombre sans une seule règle conditionnelle ici. */
+
+:host {
+  display: block;
+}
+
+.fishbone {
+  /* Le défilement appartient au conteneur, pas à la page. Redéclaré ici plutôt
+     qu'hérité de `.qos-page` : le diagramme doit défiler où qu'on le pose. */
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding: var(--qos-space-2) 0 var(--qos-space-4);
+}
+
+.fishbone__svg {
+  display: block;
+  /* Annule le `max-width: 100%` global sur `svg` : le dessin doit garder sa
+     largeur et laisser le conteneur défiler, pas rétrécir jusqu'à l'illisible. */
+  max-width: none;
+  font-family: inherit;
+}
+
+.fishbone__spine {
+  stroke: var(--qos-accent-bg);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.fishbone__arrow {
+  fill: var(--qos-accent-bg);
+  stroke: none;
+}
+
+.fishbone__bone-line {
+  stroke: var(--qos-border-strong);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.fishbone__branch-box {
+  fill: var(--qos-accent-bg-soft);
+  stroke: var(--qos-accent-bg);
+  stroke-width: 1;
+}
+
+.fishbone__branch-label {
+  fill: var(--qos-accent-fg-soft);
+  font-size: var(--qos-fs-sm);
+  font-weight: var(--qos-fw-semibold);
+}
+
+/* Une branche sans cause n'est pas une erreur : c'est une famille non encore
+   explorée. On l'estompe sans la masquer — la voir vide, c'est voir le trou. */
+.is-empty .fishbone__bone-line,
+.is-empty .fishbone__branch-box {
+  stroke-dasharray: 4 4;
+}
+
+.is-empty .fishbone__branch-box {
+  fill: var(--qos-bg-sunken);
+}
+
+.is-empty .fishbone__branch-label {
+  fill: var(--qos-fg-tertiary);
+}
+
+.fishbone__tick {
+  stroke: var(--qos-border-strong);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.fishbone__cause {
+  fill: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+}
+
+.fishbone__sub {
+  fill: var(--qos-fg-tertiary);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-semibold);
+}
+
+.fishbone__head-box {
+  fill: var(--qos-accent-bg);
+  stroke: var(--qos-accent-bg-hover);
+  stroke-width: 1;
+}
+
+.fishbone__head-text {
+  fill: var(--qos-accent-fg);
+  font-size: var(--qos-fs-base);
+  font-weight: var(--qos-fw-semibold);
+}

@@ -152,6 +152,18 @@ public class CapaService {
         }
         boolean effective = Boolean.TRUE.equals(request.effective());
         if (effective) {
+            // Un dossier qui n'a fait qu'endiguer n'a rien réglé : les mesures
+            // d'endiguement arrêtent l'effet et laissent la cause intacte
+            // (ISO 9001 §10.2). Le clore reviendrait à inscrire au registre que
+            // le problème est traité, alors qu'il reviendra dès la mesure levée.
+            // Le refus ne coûte rien aux dossiers antérieurs : ils portent tous
+            // des actions correctives, ce type n'ayant jamais pu être saisi avant.
+            if (isContainmentOnly(c.getActions())) {
+                throw new CapaStateException(
+                        "This CAPA carries containment actions only: they stop the effect "
+                        + "without removing the cause. Add a corrective or preventive action "
+                        + "before closing it");
+            }
             // Clore une CAPA au-dessus d'un écart encore ouvert reviendrait à
             // déclarer le problème réglé pendant que le constat, lui, dit le
             // contraire. Le refus est explicite et chiffré : l'utilisateur sait
@@ -212,6 +224,10 @@ public class CapaService {
         a.setTitle(requireUsableTitle(request.title()));
         a.setDescription(request.description());
         a.setStatus(request.status() != null ? request.status() : CapaActionStatus.PENDING);
+        // Corrective par défaut : c'est le cas de loin le plus fréquent, et
+        // supposer l'endiguement obligerait à qualifier chaque action pour
+        // écrire ce que tout le monde entend déjà par « action d'une CAPA ».
+        a.setActionType(request.actionType() != null ? request.actionType() : CapaActionType.CORRECTIVE);
         a.setAssigneeId(request.assigneeId());
         a.setAssigneeName(normalizeName(request.assigneeName()));
         // La date de décision est SAISIE si l'appelant la donne, sinon DÉDUITE
@@ -289,6 +305,7 @@ public class CapaService {
         if (request.assigneeName() != null) a.setAssigneeName(normalizeName(request.assigneeName()));
         if (request.decidedOn() != null) a.setDecidedOn(request.decidedOn());
         if (request.dueDate() != null) a.setDueDate(request.dueDate());
+        if (request.actionType() != null) a.setActionType(request.actionType());
         if (request.status() != null) {
             a.setStatus(request.status());
             if (request.status() == CapaActionStatus.DONE && a.getCompletedAt() == null) {
@@ -400,11 +417,12 @@ public class CapaService {
     }
 
     /**
-     * @param withSourceNc résout l'écart d'origine (une requête de plus par
-     *        dossier). La liste paginée s'en passe : vingt dossiers vaudraient
-     *        vingt requêtes pour une colonne que la liste n'affiche pas.
+     * @param detailed résout l'écart d'origine ET les motifs de blocage — soit
+     *        une requête de plus par dossier. La liste paginée s'en passe :
+     *        vingt dossiers vaudraient vingt requêtes pour deux informations
+     *        que la liste n'affiche pas.
      */
-    private CapaDto.CaseResponse toResponse(CapaCase c, boolean withSourceNc) {
+    private CapaDto.CaseResponse toResponse(CapaCase c, boolean detailed) {
         return new CapaDto.CaseResponse(
                 c.getId(), c.getTenantId(), c.getTitle(), c.getDescription(),
                 c.getType(), c.getCriticity(), c.getStatus(),
@@ -414,14 +432,67 @@ public class CapaService {
                 c.getEffectivenessVerified(), c.getEffectivenessVerifiedAt(),
                 c.getCreatedAt(), c.getUpdatedAt(),
                 c.getActions().stream().map(this::toActionResponse).toList(),
-                withSourceNc ? resolveSourceNc(c) : null);
+                detailed ? resolveSourceNc(c) : null,
+                detailed ? closureBlockers(c) : null);
     }
 
     private CapaDto.ActionResponse toActionResponse(CapaAction a) {
         return new CapaDto.ActionResponse(
                 a.getId(), a.getCapa().getId(), a.getTitle(), a.getDescription(),
-                a.getStatus(), a.getAssigneeId(), a.getAssigneeName(),
+                a.getStatus(), a.getActionType(), a.getAssigneeId(), a.getAssigneeName(),
                 a.getDecidedOn(), a.getDueDate(), a.getCompletedAt(),
                 a.getCreatedAt(), a.getUpdatedAt());
+    }
+
+    /**
+     * Énumère ce qui s'oppose encore à la clôture — avant le clic, pas après.
+     *
+     * <p>La liste couvre TOUT le chemin restant, y compris ce qui bloque la
+     * résolution qui précède la clôture : l'utilisateur veut savoir ce qui le
+     * sépare de la fin, pas ce qui bloque l'étape suivante prise isolément.
+     *
+     * <p>Un dossier déjà clos ou rejeté ne renvoie rien : plus rien ne s'y
+     * oppose, et afficher des obstacles sur un dossier terminé donnerait à
+     * croire qu'il faudrait encore agir.
+     */
+    private List<CapaDto.ClosureBlocker> closureBlockers(CapaCase c) {
+        if (c.getStatus() == CapaStatus.CLOSED || c.getStatus() == CapaStatus.REJECTED) {
+            return List.of();
+        }
+        List<CapaDto.ClosureBlocker> blockers = new ArrayList<>();
+        List<CapaAction> actions = c.getActions();
+
+        if (actions.isEmpty()) {
+            blockers.add(new CapaDto.ClosureBlocker(ClosureBlockerCode.NO_ACTION, 0));
+        } else {
+            long notDone = actions.stream().filter(a -> a.getStatus() != CapaActionStatus.DONE).count();
+            if (notDone > 0) {
+                blockers.add(new CapaDto.ClosureBlocker(ClosureBlockerCode.ACTIONS_NOT_DONE, notDone));
+            }
+            if (isContainmentOnly(actions)) {
+                blockers.add(new CapaDto.ClosureBlocker(
+                        ClosureBlockerCode.CONTAINMENT_ONLY, actions.size()));
+            }
+        }
+
+        long stillOpen = ncRepository.countByTenantIdAndCapaCaseIdAndStatusNotIn(
+                c.getTenantId(), c.getId(), NC_SETTLED_STATUSES);
+        if (stillOpen > 0) {
+            blockers.add(new CapaDto.ClosureBlocker(
+                    ClosureBlockerCode.OPEN_NON_CONFORMITIES, stillOpen));
+        }
+        return List.copyOf(blockers);
+    }
+
+    /**
+     * Vrai quand le dossier ne porte QUE des mesures d'endiguement.
+     *
+     * <p>Un dossier sans action ne relève pas de ce cas : il a son propre motif
+     * ({@link ClosureBlockerCode#NO_ACTION}), et un {@code allMatch} sur une
+     * liste vide répondrait « oui » à une question qui ne se pose pas.
+     */
+    static boolean isContainmentOnly(List<CapaAction> actions) {
+        return !actions.isEmpty()
+                && actions.stream().allMatch(a -> a.getActionType() == CapaActionType.CONTAINMENT);
     }
 }

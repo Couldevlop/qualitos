@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
+import { FiveWhysCascadeComponent } from './components/five-whys-cascade/five-whys-cascade.component';
 import { FiveWhysDetailComponent } from './pages/five-whys-detail/five-whys-detail.component';
 import { FiveWhysListComponent } from './pages/five-whys-list/five-whys-list.component';
 
@@ -17,7 +18,7 @@ const routes: Routes = [
  * consultable pour elle-même.
  */
 @NgModule({
-  declarations: [FiveWhysListComponent, FiveWhysDetailComponent],
+  declarations: [FiveWhysListComponent, FiveWhysDetailComponent, FiveWhysCascadeComponent],
   imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })
 export class FiveWhysModule {}

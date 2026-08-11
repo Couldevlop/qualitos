@@ -9,16 +9,21 @@ import { AuditsDetailComponent } from './pages/audits-detail/audits-detail.compo
 import { AuditsEditDialogComponent } from './pages/audits-edit-dialog/audits-edit-dialog.component';
 import { AuditsFindingDialogComponent } from './pages/audits-finding-dialog/audits-finding-dialog.component';
 import { AuditsListComponent } from './pages/audits-list/audits-list.component';
+import { AuditsPlanningComponent } from './pages/audits-planning/audits-planning.component';
 import { AuditsResponseDialogComponent } from './pages/audits-response-dialog/audits-response-dialog.component';
 
 const routes: Routes = [
   { path: '', component: AuditsListComponent },
+  // AVANT ':id', impérativement : une route paramétrée placée plus haut avalerait
+  // « planning » comme identifiant d'audit et le détail afficherait un 404.
+  { path: 'planning', component: AuditsPlanningComponent },
   { path: ':id', component: AuditsDetailComponent }
 ];
 
 @NgModule({
   declarations: [
     AuditsListComponent,
+    AuditsPlanningComponent,
     AuditsDetailComponent,
     AuditsCreateDialogComponent,
     AuditsChecklistDialogComponent,

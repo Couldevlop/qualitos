@@ -266,6 +266,6 @@ class AnomalyServiceTest {
     private CapaDto.CaseResponse caseResponse(UUID id) {
         return new CapaDto.CaseResponse(id, TENANT, "t", "d", CapaType.CORRECTIVE,
                 CapaCriticity.LOW, CapaStatus.OPEN, CapaSourceType.ANOMALY, "anomaly:x",
-                null, null, null, null, null, null, null, null, null, List.of(), null);
+                null, null, null, null, null, null, null, null, null, List.of(), null, List.of());
     }
 }

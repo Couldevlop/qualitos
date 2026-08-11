@@ -67,6 +67,32 @@ spring:
         default-page-size: 20
         max-page-size: 100
 
+  # Courriel — rappel d'échéance des audits (§4.4). Tout par variables d'env, AUCUN
+  # secret en dur (§18.2.3). L'auto-configuration ne crée un JavaMailSender que si
+  # `host` est renseigné : laissé vide (défaut), rien n'est instancié et l'application
+  # démarre exactement comme avant. L'interrupteur fonctionnel est `qualitos.mail.enabled`.
+  mail:
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:true}
+          # STARTTLS exigé, pas seulement proposé : `enable` seul se rabat en clair
+          # si le serveur ne l'annonce pas — les identifiants partiraient alors en
+          # clair sans qu'aucune erreur ne le signale (OWASP A02). `required` fait
+          # échouer l'envoi plutôt que de le dégrader en silence.
+          starttls:
+            enable: ${MAIL_SMTP_STARTTLS:true}
+            required: ${MAIL_SMTP_STARTTLS_REQUIRED:true}
+          # Sans bornes, un relais qui n'acquitte jamais bloque le thread de
+          # l'ordonnanceur indéfiniment : plus aucun rappel ne repart.
+          connectiontimeout: ${MAIL_CONNECT_TIMEOUT_MS:5000}
+          timeout: ${MAIL_READ_TIMEOUT_MS:10000}
+          writetimeout: ${MAIL_WRITE_TIMEOUT_MS:10000}
+
   # Upload multipart — 1er rempart taille pour les photos de NC (§4.3). Aligné sur
   # le plafond applicatif (10 Mo) : au-delà → 413 (MaxUploadSizeExceededException).
   servlet:
@@ -143,6 +169,27 @@ qualitos:
   # toute ouverture impossible sans recompiler.
   modules:
     default-tier: ${MODULES_DEFAULT_TIER:FREE}
+
+  # Brique courriel (§4.4). OFF par défaut, comme le stockage objet et le relais
+  # Kafka : sans activation, l'adaptateur SMTP n'est pas créé et le rappel d'audit
+  # se limite à la notification interne — qui, elle, fonctionne toujours.
+  mail:
+    enabled: ${MAIL_ENABLED:false}
+    # Adresse d'expédition. Obligatoire dès que `enabled=true` : l'absence fait
+    # échouer le DÉMARRAGE, plutôt que le premier envoi un mois plus tard.
+    from: ${MAIL_FROM:}
+
+  # Rappel d'échéance des audits planifiés (§4.4).
+  audit:
+    reminder:
+      # 30 jours : un audit se prépare (convocation, preuves, agendas).
+      days-before: ${AUDIT_REMINDER_DAYS_BEFORE:30}
+      # Plafond d'audits traités par passage — évite qu'un import massif ne se
+      # transforme en rafale de courriels dans la même minute.
+      batch-size: ${AUDIT_REMINDER_BATCH_SIZE:200}
+      # Le rappel se joue à 30 jours, pas à la minute : un balayage horaire suffit.
+      initial-delay-ms: ${AUDIT_REMINDER_INITIAL_DELAY_MS:120000}
+      fixed-delay-ms: ${AUDIT_REMINDER_FIXED_DELAY_MS:3600000}
 
   ai:
     base-url: ${AI_SERVICE_URL:http://localhost:8085}
@@ -230,3 +277,24 @@ qualitos:
       region: ${STORAGE_S3_REGION:us-east-1}
       access-key: ${STORAGE_S3_ACCESS_KEY:}
       secret-key: ${STORAGE_S3_SECRET_KEY:}
+
+    # Balayage des binaires orphelins (§4.3) : un objet écrit juste avant qu'une
+    # transaction n'échoue survit à la ligne qui le désignait, et devient alors
+    # invisible pour l'application — mais toujours facturé.
+    #
+    # OFF PAR DÉFAUT, et ce défaut est le seul défendable : le balayage EFFACE des
+    # octets qu'aucune sauvegarde applicative ne rappellera. À n'allumer qu'après
+    # avoir vérifié que le bucket ne sert qu'à cette plateforme.
+    orphan-sweep:
+      enabled: ${STORAGE_ORPHAN_SWEEP_ENABLED:false}
+      # Âge minimal avant qu'un objet soit tenu pour orphelin. 24 h, pas quelques
+      # minutes : en dessous, on effacerait une pièce entre son dépôt et la
+      # validation de sa transaction. Refusé au démarrage sous 1 h.
+      grace-period: ${STORAGE_ORPHAN_SWEEP_GRACE:PT24H}
+      # Objets examinés par passage — plusieurs petits passages valent mieux qu'un
+      # seul qui énumère le bucket entier.
+      batch-size: ${STORAGE_ORPHAN_SWEEP_BATCH:1000}
+      # Quotidien : un orphelin ne bouge pas, et balayer plus souvent
+      # interrogerait le stockage pour ne rien trouver.
+      initial-delay-ms: ${STORAGE_ORPHAN_SWEEP_INITIAL_DELAY_MS:300000}
+      fixed-delay-ms: ${STORAGE_ORPHAN_SWEEP_FIXED_DELAY_MS:86400000}

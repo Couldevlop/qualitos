@@ -9,7 +9,9 @@ import { OfflineQueueService } from '../../core/offline/offline-queue.service';
 import {
   AddFindingRequest,
   AuditPlanResponse,
+  AuditPlanningEntry,
   AuditStatus,
+  AuditType,
   AuditsPage,
   ChecklistItemResponse,
   ChecklistResponseRequest,
@@ -23,6 +25,7 @@ import {
 export class AuditsService {
 
   private readonly endpoint = `${environment.apiBaseUrl}/api/v1/audits/plans`;
+  private readonly planningEndpoint = `${environment.apiBaseUrl}/api/v1/audits/planning`;
 
   private readonly mockStore: AuditPlanResponse[] = this.seedMockPlans();
 
@@ -39,6 +42,23 @@ export class AuditsService {
     return this.http.get<AuditsPage>(this.endpoint, { params });
   }
 
+  /**
+   * Planning des audits à venir (§4.4) — endpoint dédié, pas la liste paginée.
+   *
+   * Le décompte de jours est calculé par le serveur : le refaire ici le rendrait
+   * dépendant de l'horloge et du fuseau du poste, et « J-30 » cesserait de vouloir
+   * dire la même chose d'un utilisateur à l'autre.
+   */
+  listPlanning(type?: AuditType, horizonDays?: number): Observable<AuditPlanningEntry[]> {
+    if (environment.useMockApi) {
+      return of(this.mockPlanning(type, horizonDays)).pipe(delay(150));
+    }
+    let params = new HttpParams();
+    if (type) params = params.set('type', type);
+    if (horizonDays != null) params = params.set('horizonDays', horizonDays);
+    return this.http.get<AuditPlanningEntry[]>(this.planningEndpoint, { params });
+  }
+
   getPlan(id: string): Observable<AuditPlanResponse> {
     if (environment.useMockApi) {
       const found = this.mockStore.find(p => p.id === id);
@@ -52,6 +72,11 @@ export class AuditsService {
       const now = new Date().toISOString();
       const plan: AuditPlanResponse = {
         id: 'a-' + (this.mockStore.length + 1) + '-' + Math.random().toString(36).slice(2, 7),
+        // Le serveur frappe la référence à la création ; la démonstration doit
+        // continuer la même séquence, sinon l'écran montrerait un audit sans
+        // désignation là où la production en attribue toujours une.
+        reference: 'AUD-' + new Date().getFullYear() + '-'
+          + String(this.mockStore.length + 1).padStart(4, '0'),
         tenantId: 'demo-tenant',
         title: input.title,
         scope: input.scope,
@@ -310,6 +335,37 @@ export class AuditsService {
     return err instanceof HttpErrorResponse && err.status === 0;
   }
 
+  /**
+   * Planning simulé, dérivé du même jeu d'essai que la liste : deux sources de
+   * données de démonstration finiraient par se contredire à l'écran.
+   */
+  private mockPlanning(type?: AuditType, horizonDays?: number): AuditPlanningEntry[] {
+    const horizon = horizonDays && horizonDays > 0 ? horizonDays : 90;
+    const today = new Date();
+    const offsets: Record<string, number> = { a1: -4, a2: 12, a3: 29 };
+    return this.mockStore
+      .filter(p => !type || p.type === type)
+      .map(p => {
+        const daysUntil = offsets[p.id] ?? 45;
+        const due = new Date(today.getTime() + daysUntil * 86_400_000);
+        return {
+          id: p.id,
+          reference: p.reference,
+          title: p.title,
+          type: p.type,
+          status: 'PLANNED' as AuditStatus,
+          standard: p.standard,
+          leadAuditorId: p.leadAuditorId,
+          scheduledDate: due.toISOString().slice(0, 10),
+          daysUntil,
+          overdue: daysUntil < 0,
+          reminderSent: daysUntil <= 30 && daysUntil >= 0
+        };
+      })
+      .filter(e => e.daysUntil <= horizon)
+      .sort((a, b) => a.daysUntil - b.daysUntil);
+  }
+
   private mockPage(status?: AuditStatus): AuditsPage {
     const f = status ? this.mockStore.filter(a => a.status === status) : this.mockStore;
     return { content: f, totalElements: f.length, totalPages: 1, number: 0, size: f.length };
@@ -318,15 +374,15 @@ export class AuditsService {
   private seedMockPlans(): AuditPlanResponse[] {
     const now = new Date().toISOString();
     return [
-      { id: 'a1', tenantId: 't', title: 'Audit interne ISO 9001 §9.2', type: 'INTERNAL',
+      { id: 'a1', reference: 'AUD-2026-0001', tenantId: 't', title: 'Audit interne ISO 9001 §9.2', type: 'INTERNAL',
         status: 'COMPLETED', standard: 'ISO_9001', leadAuditorId: 'u', scheduledDate: now,
         completedAt: now, conformityScore: 92, createdAt: now, updatedAt: now,
         checklist: [], findings: [] },
-      { id: 'a2', tenantId: 't', title: 'Audit fournisseur Acme Forge', type: 'SUPPLIER',
+      { id: 'a2', reference: 'AUD-2026-0002', tenantId: 't', title: 'Audit fournisseur Acme Forge', type: 'SUPPLIER',
         status: 'IN_PROGRESS', leadAuditorId: 'u', scheduledDate: now,
         conformityScore: 65, createdAt: now, updatedAt: now,
         checklist: [], findings: [] },
-      { id: 'a3', tenantId: 't', title: 'Pré-audit certification ISO 27001', type: 'CERTIFICATION',
+      { id: 'a3', reference: 'AUD-2026-0003', tenantId: 't', title: 'Pré-audit certification ISO 27001', type: 'CERTIFICATION',
         status: 'PLANNED', standard: 'ISO_27001', leadAuditorId: 'u', scheduledDate: now,
         createdAt: now, updatedAt: now,
         checklist: [], findings: [] }

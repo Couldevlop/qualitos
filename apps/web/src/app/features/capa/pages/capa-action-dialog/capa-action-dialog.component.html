@@ -28,6 +28,19 @@
               placeholder="Méthode, ressources nécessaires, critère de fin…"></textarea>
   </mat-form-field>
 
+  <!-- Nature de l'action : endiguer n'est pas corriger. Un dossier qui ne porte
+       que des mesures d'endiguement ne pourra pas être clôturé — la cause
+       resterait intacte (ISO 9001 §10.2). -->
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@capa.action.action-type">Nature de l'action</mat-label>
+    <mat-select formControlName="actionType">
+      <mat-option *ngFor="let t of actionTypes" [value]="t.value">{{ t.label }}</mat-option>
+    </mat-select>
+    <mat-hint i18n="@@capa.action.action-type-hint">
+      L'endiguement arrête l'effet (trier un lot, arrêter une ligne) ; la correction supprime la cause.
+    </mat-hint>
+  </mat-form-field>
+
   <!-- Jour de la DÉCISION, distinct de la date de saisie : c'est ce que la
        colonne « Date » du tableau affiche (ADR 0052). -->
   <mat-form-field appearance="outline" class="full">

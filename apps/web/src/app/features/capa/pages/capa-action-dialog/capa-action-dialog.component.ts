@@ -6,7 +6,7 @@ import { finalize } from 'rxjs/operators';
 
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { CapaService } from '../../capa.service';
-import { CapaActionResponse } from '../../capa.types';
+import { CapaActionResponse, CapaActionType } from '../../capa.types';
 
 export interface CapaActionDialogData {
   caseId: string;
@@ -29,9 +29,20 @@ export class CapaActionDialogComponent {
     // courant, mais modifiable : une action décidée en comité et saisie plus
     // tard doit pouvoir porter la date du comité (ADR 0052).
     decidedOn: [CapaActionDialogComponent.today()],
+    // Corrective par défaut : c'est ce qu'on entend par « action d'une CAPA ».
+    // Le choix existe pour dire l'endiguement quand c'en est un — pas pour
+    // obliger chacun à requalifier ce que tout le monde comprend déjà.
+    actionType: <CapaActionType>'CORRECTIVE',
     assigneeName: ['', [Validators.maxLength(255)]],
     dueDate: ['']
   });
+
+  /** Natures proposées, dans l'ordre du déroulé réel d'un traitement. */
+  readonly actionTypes: { value: CapaActionType; label: string }[] = [
+    { value: 'CONTAINMENT', label: $localize`:@@capa.action-type.containment:Endiguement` },
+    { value: 'CORRECTIVE',  label: $localize`:@@capa.action-type.corrective:Corrective` },
+    { value: 'PREVENTIVE',  label: $localize`:@@capa.action-type.preventive:Préventive` }
+  ];
 
   /** Date du jour au format d'un input[type=date], sans dépendance de fuseau serveur. */
   private static today(): string {
@@ -55,12 +66,13 @@ export class CapaActionDialogComponent {
       return;
     }
     this.submitting = true;
-    const { title, description, decidedOn, assigneeName, dueDate } = this.form.getRawValue();
+    const { title, description, decidedOn, actionType, assigneeName, dueDate } = this.form.getRawValue();
     this.capa
       .addAction(this.data.caseId, {
         title: title.trim(),
         description: description?.trim() || undefined,
         decidedOn: decidedOn || undefined,
+        actionType,
         assigneeName: assigneeName?.trim() || undefined,
         dueDate: dueDate || undefined
       })

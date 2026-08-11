@@ -103,6 +103,35 @@ Couvre les 4 cas sans régression : flat+icône+texte, stroked+icône+texte, ico
 - Material harmonisé : tooltip sobre sombre, snackbar à rayon + variantes `qos-snack-{success,warn,danger}`,
   paginator filet haut, spinner/progress/checkbox/radio/slide-toggle en **accent profond**.
 
+## Diagrammes de méthode (SVG dessiné, pas graphe de données)
+
+Un Ishikawa ou une cascade de 5 Pourquoi **n'est pas un graphe de données** : ni axe,
+ni échelle, ni série. On ne les confie donc **pas à ECharts** (réservé aux séries et
+KPIs) — ils se **dessinent en SVG en ligne, géométrie calculée en TypeScript**.
+
+| Où                                                                    | Quoi                                                            |
+| --------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `apps/web/src/app/shared/diagram/svg-text.ts`                         | Repli / troncature de texte (SVG ne replie pas ; la hauteur d'un encart commande la géométrie) |
+| `.../features/five-whys/components/five-whys-cascade/`                | Cascade en escalier — `*.layout.ts` = géométrie pure, testable sans DOM |
+| `.../features/ishikawa/components/ishikawa-fishbone/`                 | Arête de poisson — idem                                          |
+
+Règles communes :
+
+- **Rien n'est dessiné en dur** : la cascade s'adapte de 3 à 7 pourquoi, l'arête aux
+  modes 6M / 7M / 8M. Aucune constante « cinq » ni « six » dans le tracé.
+- **Défilement dans le conteneur** (`overflow-x: auto`), jamais un débordement de page.
+- **RTL** : la géométrie est calculée dans un repère « sens de lecture naturel » puis
+  **miroitée en une passe** (abscisses + ancrage du texte). Pas de branche `if (rtl)`
+  dispersée dans le tracé.
+- **Accessibilité** : `role="img"` + `<title>` + `<desc>` qui disent ce que la figure
+  montre ; le contenu détaillé (texte entier, hiérarchie, commandes) reste dans la
+  **liste ou les cartes** qui accompagnent le dessin — le dessin illustre, il ne
+  remplace pas.
+- **Couleurs par jetons** : rampe `--qos-chain-1..4` (rouge → orange → ambre → vert)
+  pour les progressions « symptôme → cause racine ». Le jaune franc du modèle papier
+  tombe à ~1,8:1 sur blanc (sous le 3:1 de WCAG 1.4.11) : la progression est conservée,
+  les teintes sont descendues au niveau qui passe le contraste.
+
 ## Accessibilité (WCAG 2.2 AA)
 
 - Texte primaire `#111827` sur blanc ≈ 16:1 ; secondaire `#4b5563` ≈ 7:1 ; tertiaire `#6b7382` ≈ 4.8:1 — tous ≥ 4.5:1.

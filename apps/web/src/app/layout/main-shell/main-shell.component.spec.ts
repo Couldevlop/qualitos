@@ -94,7 +94,9 @@ describe('MainShellComponent (navigation model)', () => {
     // lui-même son équipe qualité, sans passer par l'éditeur de la plateforme.
     // Non-conformité(2) s'intercale, et Opérations retombe à 9 : son entrée
     // « Non-conformités » unique est remplacée par les deux entrées du groupe.
-    expect(labels).toEqual([5, 6, 8, 3, 9, 10, 1, 7]);
+    // Opérations passe à 10 : + Planning audits (§4.4) — les échéances à venir
+    // ne se lisent pas dans la liste paginée de tous les plans, tous statuts mêlés.
+    expect(labels).toEqual([5, 6, 8, 3, 10, 10, 1, 7]);
   });
 
   it('collapses the entire GRC mass into a single /compliance entry', () => {

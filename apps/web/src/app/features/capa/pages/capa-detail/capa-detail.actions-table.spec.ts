@@ -37,7 +37,7 @@ describe('CapaDetailComponent — tableau des actions', () => {
 
   const action = (over: Partial<CapaActionResponse> = {}): CapaActionResponse => ({
     id: ACTION_ID, capaId: CASE_ID, title: 'Réviser le plan de contrôle réception',
-    status: 'PENDING', ...over
+    status: 'PENDING', actionType: 'CORRECTIVE', ...over
   });
 
   const dossier = (over: Partial<CapaCaseResponse> = {}): CapaCaseResponse => ({
@@ -70,6 +70,20 @@ describe('CapaDetailComponent — tableau des actions', () => {
     return Array.from((fixture.nativeElement as HTMLElement)
       .querySelectorAll('.actions-table tbody td'))
       .map(td => (td.textContent ?? '').trim());
+  }
+
+  /**
+   * Cellule d'une colonne NOMMÉE de la première ligne.
+   *
+   * Les index positionnels ont coûté une demi-douzaine de faux échecs le jour où
+   * une colonne s'est insérée au milieu du tableau : chaque assertion pointait
+   * alors sa voisine, et le test accusait la colonne qu'il ne testait pas.
+   * Le nom, lui, ne bouge pas quand l'ordre change.
+   */
+  function cellule(colonne: string): string {
+    const index = component.actionColumns.indexOf(colonne);
+    expect(index).withContext(`colonne inconnue : ${colonne}`).toBeGreaterThanOrEqual(0);
+    return cellules()[index];
   }
 
   function fichier(): Event {
@@ -109,13 +123,16 @@ describe('CapaDetailComponent — tableau des actions', () => {
   it('porte les colonnes attendues, dans l\'ordre de lecture d\'un auditeur', () => {
     setup();
 
+    // La NATURE suit immédiatement le libellé : c'est la première question que
+    // pose un auditeur devant une action — a-t-elle contenu, ou corrigé ?
     expect(component.actionColumns).toEqual([
-      'title', 'decidedOn', 'assignee', 'nonConformity',
+      'title', 'actionType', 'decidedOn', 'assignee', 'nonConformity',
       'evidence', 'status', 'dueDate', 'rowActions'
     ]);
     const entetes = Array.from((fixture.nativeElement as HTMLElement)
       .querySelectorAll('.actions-table th')).map(th => (th.textContent ?? '').trim());
     expect(entetes).toContain('Action');
+    expect(entetes).toContain('Nature');
     expect(entetes).toContain('Date');
     expect(entetes).toContain('Responsable');
     expect(entetes).toContain('Non-conformité');
@@ -134,16 +151,16 @@ describe('CapaDetailComponent — tableau des actions', () => {
       })]
     }));
 
-    expect(cellules()[1]).toContain('2026');
-    expect(cellules()[1]).toContain('12');
-    expect(cellules()[1]).not.toContain('avr');
+    expect(cellule('decidedOn')).toContain('2026');
+    expect(cellule('decidedOn')).toContain('12');
+    expect(cellule('decidedOn')).not.toContain('avr');
   });
 
   it('n\'invente pas de date quand l\'action est antérieure à cette colonne', () => {
     setup(dossier({ actions: [action({ decidedOn: undefined })] }));
 
     // Recopier la date de création fabriquerait une décision jamais enregistrée.
-    expect(cellules()[1]).toBe('—');
+    expect(cellule('decidedOn')).toBe('—');
   });
 
   // --- colonne « Responsable » : un nom, jamais un identifiant -------------
@@ -151,14 +168,14 @@ describe('CapaDetailComponent — tableau des actions', () => {
   it('affiche le NOM du porteur', () => {
     setup(dossier({ actions: [action({ assigneeName: 'Amina Dridi', assigneeId: 'u-42' })] }));
 
-    expect(cellules()[2]).toBe('Amina Dridi');
+    expect(cellule('assignee')).toBe('Amina Dridi');
   });
 
   it('ne retombe pas sur l\'identifiant quand le nom manque', () => {
     setup(dossier({ actions: [action({ assigneeId: '9c1f2b7e-0000-4000-8000-000000000000' })] }));
 
     // Un UUID dans une colonne « Responsable » n'apprend rien à personne.
-    expect(cellules()[2]).toBe('—');
+    expect(cellule('assignee')).toBe('—');
     expect(texte()).not.toContain('9c1f2b7e');
   });
 
@@ -171,13 +188,13 @@ describe('CapaDetailComponent — tableau des actions', () => {
       }
     }));
 
-    expect(cellules()[3]).toContain('Étiquetage lot 4471 illisible');
+    expect(cellule('nonConformity')).toContain('Étiquetage lot 4471 illisible');
   });
 
   it('reste muet quand le dossier ne procède d\'aucun écart', () => {
     setup(dossier({ sourceType: 'AUDIT', sourceNonConformity: undefined }));
 
-    expect(cellules()[3]).toBe('—');
+    expect(cellule('nonConformity')).toBe('—');
   });
 
   // --- colonne « Preuve » --------------------------------------------------
@@ -375,11 +392,11 @@ describe('CapaDetailComponent — tableau des actions', () => {
     capa.updateAction.and.returnValue(of(action()));
 
     component.startEdit(action({ assigneeName: 'Amina Dridi', decidedOn: '2026-03-12' }));
-    component.editForm.setValue({ title: '  Libellé corrigé  ', status: 'DONE' });
+    component.editForm.setValue({ title: '  Libellé corrigé  ', status: 'DONE', actionType: 'CORRECTIVE' });
     component.saveEdit();
 
     expect(capa.updateAction).toHaveBeenCalledWith(CASE_ID, ACTION_ID, {
-      title: 'Libellé corrigé', status: 'DONE'
+      title: 'Libellé corrigé', status: 'DONE', actionType: 'CORRECTIVE'
     });
     expect(component.isEditing(ACTION_ID)).toBeFalse();
   });
@@ -388,7 +405,7 @@ describe('CapaDetailComponent — tableau des actions', () => {
     setup();
 
     component.startEdit(action());
-    component.editForm.setValue({ title: '   ', status: 'PENDING' });
+    component.editForm.setValue({ title: '   ', status: 'PENDING', actionType: 'CORRECTIVE' });
     component.saveEdit();
 
     // Required + trim côté formulaire : un espace ne doit pas devenir le
@@ -401,7 +418,7 @@ describe('CapaDetailComponent — tableau des actions', () => {
     setup();
 
     component.startEdit(action());
-    component.editForm.setValue({ title: 'saisie abandonnée', status: 'DONE' });
+    component.editForm.setValue({ title: 'saisie abandonnée', status: 'DONE', actionType: 'CORRECTIVE' });
     component.cancelEdit();
 
     expect(capa.updateAction).not.toHaveBeenCalled();
@@ -445,7 +462,7 @@ describe('CapaDetailComponent — tableau des actions', () => {
     capa.updateAction.and.returnValue(throwError(() => new HttpErrorResponse({ status: 400 })));
 
     component.startEdit(action());
-    component.editForm.setValue({ title: 'Libellé corrigé', status: 'DONE' });
+    component.editForm.setValue({ title: 'Libellé corrigé', status: 'DONE', actionType: 'CORRECTIVE' });
     component.saveEdit();
 
     // Refermer effacerait la saisie que l'utilisateur doit justement corriger.
@@ -480,7 +497,7 @@ describe('CapaDetailComponent — tableau des actions', () => {
 
     // La colonne de statut du TABLEAU : la constante brute reste ailleurs sur
     // la fiche (badge d'état du dossier), ce n'est pas ce qu'on juge ici.
-    expect(cellules()[5]).toBe('En cours');
-    expect(cellules()[5]).not.toContain('IN_PROGRESS');
+    expect(cellule('status')).toBe('En cours');
+    expect(cellule('status')).not.toContain('IN_PROGRESS');
   });
 });

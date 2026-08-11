@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs/operators';
@@ -8,6 +8,25 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { AuditsService } from '../../audits.service';
 import { AuditPlanResponse, AuditType } from '../../audits.types';
+
+/**
+ * Adresse de courriel valide, espaces de bordure tolérées.
+ *
+ * <p>`Validators.email` s'applique à la valeur BRUTE, et le nettoyage n'a lieu
+ * qu'à l'envoi : une adresse collée depuis un annuaire ou un courriel — qui
+ * emporte presque toujours une espace — serait donc refusée alors qu'elle est
+ * juste, avec un message qui accuse l'adresse et non l'espace invisible qui la
+ * suit. On valide ce qui sera réellement envoyé.
+ *
+ * <p>La clé d'erreur reste `email`, celle qu'attend le gabarit.
+ */
+function trimmedEmail(control: AbstractControl): ValidationErrors | null {
+  const raw = control.value;
+  if (typeof raw !== 'string' || raw.trim() === '') {
+    return null;
+  }
+  return Validators.email({ value: raw.trim() } as AbstractControl);
+}
 
 @Component({
   selector: 'qos-audits-create-dialog',
@@ -33,7 +52,11 @@ export class AuditsCreateDialogComponent {
     scope: [''],
     type: ['INTERNAL' as AuditType, [Validators.required]],
     standard: ['', [Validators.maxLength(100)]],
-    scheduledDate: ['']
+    scheduledDate: [''],
+    // Destinataire du rappel à 30 jours. Validation du formulaire en plus de
+    // type="email" : celle du navigateur ne s'applique qu'à la saisie manuelle et
+    // se contourne, celle-ci vaut aussi pour un collage ou un pré-remplissage.
+    reminderEmail: ['', [trimmedEmail, Validators.maxLength(320)]]
   });
 
   constructor(
@@ -63,6 +86,7 @@ export class AuditsCreateDialogComponent {
         type: v.type,
         standard: v.standard?.trim() || undefined,
         scheduledDate: v.scheduledDate || undefined,
+        reminderEmail: v.reminderEmail?.trim() || undefined,
         leadAuditorId
       })
       .pipe(finalize(() => (this.submitting = false)))

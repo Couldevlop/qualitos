@@ -20,6 +20,40 @@ d'efficacité.
 4. **Suivre** l'avancement jusqu'à la clôture.
 5. **Vérifier l'efficacité** avant de clore définitivement.
 
+## La nature de chaque action : endiguer n'est pas corriger
+
+Chaque action porte une **nature**, à choisir à la saisie et corrigible ensuite
+directement dans le tableau :
+
+| Nature | Ce qu'elle fait | Exemples |
+|---|---|---|
+| **Endiguement** | Arrête l'effet **sans** toucher à la cause. Temporaire : on la lève une fois la cause traitée. | Trier le lot suspect, arrêter la ligne, prévenir le client, remettre en conformité l'existant |
+| **Corrective** | Supprime la cause d'un écart **survenu**. | Recalibrer la machine, corriger la procédure, revoir le paramétrage |
+| **Préventive** | Supprime la cause d'un écart qui **n'est pas encore** survenu. | Étendre le contrôle aux lignes voisines, former les équipes |
+
+Sans cette distinction, un dossier où l'on a seulement trié le lot se lirait comme un
+dossier où l'on a corrigé la machine : les deux afficheraient « toutes les actions
+faites ». Le second seul empêche la récidive.
+
+> Les actions saisies **avant** l'arrivée de cette colonne apparaissent comme
+> *correctives* : c'est ce qu'elles étaient, faute d'un moyen de dire l'endiguement.
+
+## Pourquoi un dossier refuse de se clôturer
+
+Quand un dossier ne peut pas encore être clos, l'écran l'annonce **avant** que vous ne
+cliquiez, dans un bandeau au-dessus de la vérification d'efficacité, et le bouton
+« Efficace — clôturer » reste éteint. Quatre motifs possibles, cumulables :
+
+- **Aucune action enregistrée** — il n'y a rien dont vérifier l'efficacité.
+- **Des actions restent à terminer** (le nombre est indiqué).
+- **Le dossier ne porte que des mesures d'endiguement** — elles arrêtent l'effet sans
+  supprimer la cause. Ajoutez une action corrective ou préventive : **une seule suffit**.
+- **Des non-conformités liées sont encore ouvertes** (le nombre est indiqué).
+
+Le bouton **« Non efficace »**, lui, reste toujours accessible : constater que les
+actions n'ont pas produit leur effet ne clôt rien, et doit pouvoir se consigner à tout
+moment. Le dossier repart alors en traitement.
+
 ## Origines d'une CAPA
 
 Une CAPA peut être ouverte manuellement ou déclenchée par un autre module, par exemple :

@@ -8,6 +8,7 @@ import { catchError, finalize, shareReplay, switchMap, tap } from 'rxjs/operator
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
+import { FishboneBranchInput } from '../../components/ishikawa-fishbone/ishikawa-fishbone.layout';
 import { IshikawaService } from '../../ishikawa.service';
 import {
   CauseCategory,
@@ -85,6 +86,13 @@ export class IshikawaDetailComponent implements OnInit {
   private diagramId = '';
   private readonly reload$ = new BehaviorSubject<void>(undefined);
 
+  /** Arbre des branches mémorisé (cf. `branches`), indexé par référence. */
+  private branchCache: {
+    source: IshikawaDiagramResponse;
+    view: BranchView[];
+    bones: FishboneBranchInput[];
+  } | null = null;
+
   private readonly CATEGORY_LABELS: Record<CauseCategory, string> = {
     METHODS: 'Méthodes', MANPOWER: 'Main-d\'œuvre', MACHINES: 'Machines',
     MATERIALS: 'Matières', MEASUREMENTS: 'Mesures', ENVIRONMENT: 'Milieu',
@@ -116,7 +124,10 @@ export class IshikawaDetailComponent implements OnInit {
     }
     this.diagramId = raw;
     this.diagram$ = this.reload$.pipe(
-      tap(() => { this.errorState$.next(null); this.loadingState$.next(true); }),
+      // Le cache de branches est indexé par référence ; on le vide quand même
+      // ici, au cas où le serveur (ou le magasin de démonstration) renverrait
+      // le même objet muté — un dessin figé serait pire qu'un recalcul.
+      tap(() => { this.branchCache = null; this.errorState$.next(null); this.loadingState$.next(true); }),
       switchMap(() => this.ishikawa.getDiagram(this.diagramId).pipe(
         catchError(err => {
           // eslint-disable-next-line no-console
@@ -450,8 +461,36 @@ export class IshikawaDetailComponent implements OnInit {
     return this.CATEGORY_LABELS[c] ?? c;
   }
 
-  /** Group causes by category and build a parent→children tree per branch. */
+  /**
+   * Group causes by category and build a parent→children tree per branch.
+   *
+   * <p>Le résultat est mémorisé sur la RÉFÉRENCE du diagramme : le gabarit
+   * appelle cette méthode à chaque cycle de détection, et depuis que l'arête
+   * de poisson en consomme la sortie, recalculer l'arbre reviendrait à
+   * recalculer aussi tout le tracé (repli de texte compris) à chaque frappe
+   * dans le plan d'actions. Le cache tombe de lui-même au rechargement, qui
+   * ramène un nouvel objet.
+   */
   branches(d: IshikawaDiagramResponse): BranchView[] {
+    if (this.branchCache && this.branchCache.source === d) {
+      return this.branchCache.view;
+    }
+    const view = this.computeBranches(d);
+    this.branchCache = { source: d, view, bones: toFishboneBranches(view) };
+    return view;
+  }
+
+  /**
+   * Les mêmes branches, réduites à ce que le dessin consomme : premier niveau
+   * de causes + nombre de descendants. Le tracé n'a pas besoin de l'arbre
+   * complet — il ne le représente pas (cf. arbitrage dans la couche géométrie).
+   */
+  fishboneBranches(d: IshikawaDiagramResponse): FishboneBranchInput[] {
+    this.branches(d);
+    return this.branchCache!.bones;
+  }
+
+  private computeBranches(d: IshikawaDiagramResponse): BranchView[] {
     const order: { value: CauseCategory; label: string }[] = [
       { value: 'METHODS',      label: 'Méthodes' },
       { value: 'MANPOWER',     label: 'Main-d\'œuvre' },
@@ -495,4 +534,22 @@ export class IshikawaDetailComponent implements OnInit {
     if (score >= 0.4) return 'score score-mid';
     return 'score score-low';
   }
+}
+
+/** Réduit l'arbre de causes à ce que le dessin sait représenter. */
+function toFishboneBranches(view: BranchView[]): FishboneBranchInput[] {
+  return view.map(b => ({
+    key: b.category,
+    label: b.label,
+    causes: b.roots.map(n => ({
+      id: n.cause.id,
+      label: n.cause.label,
+      descendants: countDescendants(n)
+    }))
+  }));
+}
+
+/** Nombre de sous-causes, tous niveaux confondus — le dessin n'en montre que le compte. */
+function countDescendants(node: CauseNode): number {
+  return node.children.reduce((sum, child) => sum + 1 + countDescendants(child), 0);
 }

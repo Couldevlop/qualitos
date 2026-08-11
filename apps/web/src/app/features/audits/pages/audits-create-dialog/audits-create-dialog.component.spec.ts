@@ -114,10 +114,36 @@ describe('AuditsCreateDialogComponent', () => {
       type: 'CERTIFICATION',
       standard: 'ISO_9001',
       scheduledDate: '2026-11-15',
+      // Laissé vide : la clé part à `undefined` comme les autres facultatifs
+      // (cf. « omet les champs facultatifs laissés vides ») et disparaît à la
+      // sérialisation JSON. Le serveur ne voit donc aucun destinataire.
+      reminderEmail: undefined,
       leadAuditorId: 'u1'
     });
     expect(dialogRef.close).toHaveBeenCalledWith(created);
     expect(component.submitting).toBeFalse();
+  });
+
+  it('nettoie le destinataire du rappel comme les autres champs', () => {
+    component.form.patchValue({
+      title: 'Audit', reminderEmail: '  qualite@exemple.test  '
+    });
+
+    component.submit();
+
+    expect(svc.createPlan).toHaveBeenCalledWith(jasmine.objectContaining({
+      reminderEmail: 'qualite@exemple.test'
+    }));
+  });
+
+  it('refuse d\'envoyer une adresse de rappel mal formée', () => {
+    // Le formulaire barre la route AVANT l'appel : une adresse fautive rejetée
+    // par le serveur ne se découvrirait qu'au 400, sans dire quel champ est en cause.
+    component.form.patchValue({ title: 'Audit', reminderEmail: 'pas-une-adresse' });
+
+    component.submit();
+
+    expect(svc.createPlan).not.toHaveBeenCalled();
   });
 
   it('omet les champs facultatifs laissés vides', () => {

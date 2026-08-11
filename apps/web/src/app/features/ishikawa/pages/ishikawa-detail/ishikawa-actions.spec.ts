@@ -7,6 +7,7 @@ import { of, throwError } from 'rxjs';
 
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
+import { IshikawaFishboneComponent } from '../../components/ishikawa-fishbone/ishikawa-fishbone.component';
 import { IshikawaService } from '../../ishikawa.service';
 import { IshikawaActionResponse, IshikawaDiagramResponse } from '../../ishikawa.types';
 import { IshikawaDetailComponent } from './ishikawa-detail.component';
@@ -48,7 +49,9 @@ describe('IshikawaDetailComponent (plan d’actions)', () => {
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
 
     await TestBed.configureTestingModule({
-      declarations: [IshikawaDetailComponent],
+      // L'arête fait partie de l'écran : la déclarer plutôt que la bouchonner,
+      // sans quoi une régression de tracé passerait inaperçue ici.
+      declarations: [IshikawaDetailComponent, IshikawaFishboneComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: IshikawaService, useValue: svc },

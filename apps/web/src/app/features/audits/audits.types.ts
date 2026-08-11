@@ -39,6 +39,8 @@ export interface FindingResponse {
 
 export interface AuditPlanResponse {
   id: string;
+  /** Désignation citable — `AUD-2026-0001`. Immuable une fois attribuée. */
+  reference: string;
   tenantId: string;
   title: string;
   scope?: string;
@@ -52,6 +54,10 @@ export interface AuditPlanResponse {
   completedAt?: string;
   reportSummary?: string;
   conformityScore?: number;
+  /** Destinataire du rappel d'échéance par courriel. Vide = rappel interne seul. */
+  reminderEmail?: string;
+  /** Horodatage du rappel déjà parti. Sert de marque d'idempotence côté serveur. */
+  reminderSentAt?: string;
   createdAt: string;
   updatedAt: string;
   /** Server includes both on GET /plans/{id}. List view may omit them. */
@@ -68,6 +74,28 @@ export interface CreateAuditPlanRequest {
   standard?: string;
   leadAuditorId: string;
   scheduledDate?: string;
+  reminderEmail?: string;
+}
+
+/**
+ * Ligne du planning des audits (§4.4).
+ *
+ * `daysUntil` vient du SERVEUR et n'est pas recalculé ici : le déduire de
+ * l'horloge du poste ferait dépendre « J-30 » du fuseau et de l'heure locale, et
+ * deux utilisateurs verraient deux échéances pour le même audit. Négatif = retard.
+ */
+export interface AuditPlanningEntry {
+  id: string;
+  reference: string;
+  title: string;
+  type: AuditType;
+  status: AuditStatus;
+  standard?: string;
+  leadAuditorId: string;
+  scheduledDate: string;
+  daysUntil: number;
+  overdue: boolean;
+  reminderSent: boolean;
 }
 
 export interface CreateChecklistItemRequest {
@@ -91,6 +119,8 @@ export interface UpdateAuditPlanRequest {
   leadAuditorId?: string;
   auditeeId?: string;
   scheduledDate?: string;
+  /** Chaîne vide = retirer le destinataire ; absent = ne pas y toucher. */
+  reminderEmail?: string;
 }
 
 export interface AddFindingRequest {

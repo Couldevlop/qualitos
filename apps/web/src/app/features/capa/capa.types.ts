@@ -5,11 +5,23 @@ export type CapaCriticity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 export type CapaStatus = 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED' | 'REJECTED';
 export type CapaSourceType = 'NON_CONFORMITY' | 'AUDIT' | 'COMPLAINT' | 'INTERNAL' | 'IOT_ALERT' | 'OTHER';
 
+/**
+ * Nature d'une action (§4.2, ISO 9001 §10.2, 8D étape D3).
+ *
+ * Elle sépare ce qui ARRÊTE L'EFFET de ce qui SUPPRIME LA CAUSE. Sans elle, un
+ * dossier où l'on a trié le lot suspect se lit comme un dossier où l'on a corrigé
+ * la machine : les deux affichent « toutes les actions faites », et le second
+ * seul empêche la récidive.
+ */
+export type CapaActionType = 'CONTAINMENT' | 'CORRECTIVE' | 'PREVENTIVE';
+
 export interface CapaActionResponse {
   id: string;
   capaId: string;
   title: string;
   status: 'PENDING' | 'IN_PROGRESS' | 'DONE';
+  /** Corrective sur toutes les actions antérieures au type : elles ne pouvaient être autre chose. */
+  actionType: CapaActionType;
   assigneeId?: string;
   /**
    * Nom lisible du porteur, figé à la décision (ADR 0052).
@@ -64,7 +76,28 @@ export interface CapaCaseResponse {
    * colonne qu'elle n'affiche pas).
    */
   sourceNonConformity?: LinkedNonConformity;
+  /**
+   * Ce qui s'oppose encore à la clôture, énoncé AVANT le clic.
+   *
+   * Absent sur la liste paginée (non calculé). Sur la fiche il est toujours
+   * présent : un tableau VIDE dit « rien ne s'y oppose », ce qui est une
+   * information — d'où la distinction entre `undefined` et `[]`.
+   */
+  closureBlockers?: ClosureBlocker[];
 }
+
+/** Motif de refus de clôture : un code et un décompte, jamais une phrase serveur. */
+export interface ClosureBlocker {
+  code: ClosureBlockerCode;
+  /** Nombre d'éléments concernés — actions restantes, écarts ouverts… */
+  count: number;
+}
+
+export type ClosureBlockerCode =
+  | 'NO_ACTION'
+  | 'ACTIONS_NOT_DONE'
+  | 'CONTAINMENT_ONLY'
+  | 'OPEN_NON_CONFORMITIES';
 
 export type CapaPage = SpringPage<CapaCaseResponse>;
 
@@ -85,6 +118,8 @@ export interface CreateCapaActionRequest {
   title: string;
   description?: string;
   status?: CapaActionStatus;
+  /** Absent = corrective, le cas de loin le plus fréquent. */
+  actionType?: CapaActionType;
   assigneeId?: string;
   assigneeName?: string;
   /** Jour de la décision ; déduit du jour de l'enregistrement s'il est omis. */
@@ -102,6 +137,7 @@ export interface CreateCapaActionRequest {
 export interface UpdateCapaActionRequest {
   title?: string;
   status?: CapaActionStatus;
+  actionType?: CapaActionType;
   description?: string;
   assigneeId?: string;
   assigneeName?: string;

@@ -4592,6 +4592,102 @@
         <source>Recharger</source>
         <target state="translated">Recargar</target>
       </trans-unit>
+      <trans-unit id="nav.audits-planning" datatype="html">
+        <source>Planning audits</source>
+        <target state="translated">Planificación de auditorías</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.title" datatype="html">
+        <source>Planning des audits</source>
+        <target state="translated">Planificación de auditorías</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.subtitle" datatype="html">
+        <source>Les audits à venir, du plus proche au plus lointain. Un rappel part automatiquement 30 jours avant l'échéance.</source>
+        <target state="translated">Las auditorías previstas, de la más próxima a la más lejana. Un recordatorio se envía automáticamente 30 días antes del vencimiento.</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.back-to-list" datatype="html">
+        <source>Tous les plans</source>
+        <target state="translated">Todos los planes</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.filter-type" datatype="html">
+        <source>Type d'audit</source>
+        <target state="translated">Tipo de auditoría</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.filter-horizon" datatype="html">
+        <source>Horizon</source>
+        <target state="translated">Horizonte</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.horizon-days" datatype="html">
+        <source><x id="INTERPOLATION"/> jours</source>
+        <target state="translated"><x id="INTERPOLATION"/> días</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.count-overdue" datatype="html">
+        <source><x id="INTERPOLATION"/> en retard</source>
+        <target state="translated"><x id="INTERPOLATION"/> atrasadas</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.count-approaching" datatype="html">
+        <source><x id="INTERPOLATION"/> à moins de 30 jours</source>
+        <target state="translated"><x id="INTERPOLATION"/> a menos de 30 días</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.col-due" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">Vencimiento</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.col-countdown" datatype="html">
+        <source>Décompte</source>
+        <target state="translated">Cuenta atrás</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.col-reminder" datatype="html">
+        <source>Rappel</source>
+        <target state="translated">Recordatorio</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.today" datatype="html">
+        <source>Aujourd'hui</source>
+        <target state="translated">Hoy</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.tomorrow" datatype="html">
+        <source>Demain</source>
+        <target state="translated">Mañana</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.in-days" datatype="html">
+        <source>Dans <x id="days"/> jours</source>
+        <target state="translated">En <x id="days"/> días</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.late-one" datatype="html">
+        <source>1 jour de retard</source>
+        <target state="translated">1 día de retraso</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.late-many" datatype="html">
+        <source><x id="days"/> jours de retard</source>
+        <target state="translated"><x id="days"/> días de retraso</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.reminder-sent" datatype="html">
+        <source>Envoyé</source>
+        <target state="translated">Enviado</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.reminder-pending" datatype="html">
+        <source>En attente</source>
+        <target state="translated">Pendiente</target>
+      </trans-unit>
+      <trans-unit id="audits.planning.empty" datatype="html">
+        <source>Aucun audit planifié sur cet horizon.</source>
+        <target state="translated">Ninguna auditoría planificada en este horizonte.</target>
+      </trans-unit>
+      <trans-unit id="audits.create.reminder-email" datatype="html">
+        <source>Courriel de rappel (optionnel)</source>
+        <target state="translated">Correo de recordatorio (opcional)</target>
+      </trans-unit>
+      <trans-unit id="audits.create.reminder-email-placeholder" datatype="html">
+        <source>Ex. : qualite@monentreprise.fr</source>
+        <target state="translated">Ej.: calidad@miempresa.es</target>
+      </trans-unit>
+      <trans-unit id="audits.create.reminder-email-hint" datatype="html">
+        <source>Un rappel part 30 jours avant l'échéance. Sans adresse, il reste dans l'application.</source>
+        <target state="translated">Se envía un recordatorio 30 días antes del vencimiento. Sin dirección, permanece en la aplicación.</target>
+      </trans-unit>
+      <trans-unit id="audits.create.reminder-email-invalid" datatype="html">
+        <source>Adresse de courriel invalide.</source>
+        <target state="translated">Dirección de correo no válida.</target>
+      </trans-unit>
       <trans-unit id="calibration.col-due" datatype="html">
         <source>Prochaine calibration</source>
         <target state="translated">Próxima calibración</target>
@@ -5199,6 +5295,70 @@
       <trans-unit id="capa.action.assignee-name-placeholder" datatype="html">
         <source>Ex. : Amina Dridi</source>
         <target state="translated">Ej.: Amina Dridi</target>
+      </trans-unit>
+      <trans-unit id="capa.action-type.containment" datatype="html">
+        <source>Endiguement</source>
+        <target state="translated">Contención</target>
+      </trans-unit>
+      <trans-unit id="capa.action-type.corrective" datatype="html">
+        <source>Corrective</source>
+        <target state="translated">Correctiva</target>
+      </trans-unit>
+      <trans-unit id="capa.action-type.preventive" datatype="html">
+        <source>Préventive</source>
+        <target state="translated">Preventiva</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.col-action-type" datatype="html">
+        <source>Nature</source>
+        <target state="translated">Naturaleza</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.edit-action-type-label" datatype="html">
+        <source>Nature</source>
+        <target state="translated">Naturaleza</target>
+      </trans-unit>
+      <trans-unit id="capa.action.action-type" datatype="html">
+        <source>Nature de l'action</source>
+        <target state="translated">Naturaleza de la acción</target>
+      </trans-unit>
+      <trans-unit id="capa.action.action-type-hint" datatype="html">
+        <source>L'endiguement arrête l'effet (trier un lot, arrêter une ligne) ; la correction supprime la cause.</source>
+        <target state="translated">La contención detiene el efecto (clasificar un lote, parar una línea); la corrección elimina la causa.</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.blockers-title" datatype="html">
+        <source>Ce dossier ne peut pas encore être clôturé</source>
+        <target state="translated">Este expediente aún no puede cerrarse</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.no-action" datatype="html">
+        <source>Aucune action n'est enregistrée : il n'y a rien dont vérifier l'efficacité.</source>
+        <target state="translated">No hay ninguna acción registrada: no hay nada cuya eficacia verificar.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.actions-one" datatype="html">
+        <source>1 action reste à terminer.</source>
+        <target state="translated">Queda 1 acción por terminar.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.actions-many" datatype="html">
+        <source><x id="count"/> actions restent à terminer.</source>
+        <target state="translated">Quedan <x id="count"/> acciones por terminar.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.containment-only" datatype="html">
+        <source>Le dossier ne porte que des mesures d'endiguement : elles arrêtent l'effet sans supprimer la cause. Ajoutez une action corrective ou préventive.</source>
+        <target state="translated">El expediente solo contiene medidas de contención: detienen el efecto sin eliminar la causa. Añada una acción correctiva o preventiva.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.nc-one" datatype="html">
+        <source>1 non-conformité liée est encore ouverte.</source>
+        <target state="translated">1 no conformidad vinculada sigue abierta.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.nc-many" datatype="html">
+        <source><x id="count"/> non-conformités liées sont encore ouvertes.</source>
+        <target state="translated"><x id="count"/> no conformidades vinculadas siguen abiertas.</target>
+      </trans-unit>
+      <trans-unit id="capa.blocker.unknown" datatype="html">
+        <source>Un prérequis de clôture n'est pas satisfait.</source>
+        <target state="translated">No se cumple un requisito de cierre.</target>
+      </trans-unit>
+      <trans-unit id="audits.col-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">Referencia</target>
       </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>
@@ -12253,6 +12413,30 @@ historial de 12 meses</target>
       <trans-unit id="marketplace.submit.error" datatype="html">
         <source>Échec de la soumission (manifeste ou doublon)</source>
         <target state="translated">Error en el envío (manifiesto o duplicado)</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.diagram.title" datatype="html">
+        <source>Cascade des pourquoi</source>
+        <target state="translated">Cascada de porqués</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.diagram.desc-concluded" datatype="html">
+        <source>Descente de <x id="count"/> pourquoi jusqu'à la cause racine. Le détail de chaque réponse est repris dans la liste qui suit.</source>
+        <target state="translated">Descenso de <x id="count"/> porqués hasta la causa raíz. El detalle de cada respuesta se recoge en la lista siguiente.</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.diagram.desc-open" datatype="html">
+        <source>Descente de <x id="count"/> pourquoi, sans cause racine conclue à ce jour. Le détail de chaque réponse est repris dans la liste qui suit.</source>
+        <target state="translated">Descenso de <x id="count"/> porqués, sin causa raíz concluida por ahora. El detalle de cada respuesta se recoge en la lista siguiente.</target>
+      </trans-unit>
+      <trans-unit id="fivewhys.diagram.step" datatype="html">
+        <source>Pourquoi n°<x id="rank"/></source>
+        <target state="translated">Porqué n.º <x id="rank"/></target>
+      </trans-unit>
+      <trans-unit id="ishikawa.diagram.title" datatype="html">
+        <source>Diagramme en arête de poisson</source>
+        <target state="translated">Diagrama de espina de pescado</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.diagram.desc" datatype="html">
+        <source>Arête de poisson : <x id="branches"/> familles de causes et <x id="causes"/> causes de premier niveau convergeant vers le problème. Le détail, sous-causes comprises, est repris dans les cartes qui suivent.</source>
+        <target state="translated">Espina de pescado: <x id="branches"/> familias de causas y <x id="causes"/> causas de primer nivel que convergen en el problema. El detalle, subcausas incluidas, figura en las tarjetas siguientes.</target>
       </trans-unit>
       <trans-unit id="pdca.list.title" datatype="html">
         <source>Cycles PDCA</source>

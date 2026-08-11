@@ -47,7 +47,8 @@ la page de votre rôle :
 
 - [Non-conformités (NC)](modules/non-conformites.md) · `/nc`
 - [CAPA — Actions correctives & préventives](modules/capa.md) · `/capa`
-- [Audits](modules/audits.md) · `/audits`
+- [5 Pourquoi — Recherche de cause-racine](modules/five-whys.md) · `/five-whys`
+- [Audits](modules/audits.md) · `/audits` — dont le [planning et les rappels d'échéance](modules/audits.md#planning-et-rappels)
 
 ### Capacités IA livrées (explicables)
 

@@ -5,11 +5,16 @@ import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -19,19 +24,35 @@ public class AuditService {
     /** Borne de génération du rapport d'audit (texte plus long qu'une suggestion). */
     private static final int REPORT_MAX_TOKENS = 700;
 
+    /** Horizon par défaut du planning, en jours. Un trimestre : ce qui se prépare. */
+    static final int PLANNING_DEFAULT_HORIZON_DAYS = 90;
+
+    /** Horizon maximal accepté — au-delà, l'appelant demande un export, pas un planning. */
+    static final int PLANNING_MAX_HORIZON_DAYS = 730;
+
+    /**
+     * Plafond de lignes renvoyées. Le planning n'est pas paginé (il se lit d'un
+     * coup d'œil) ; sans plafond, un tenant chargé ferait tomber un millier de
+     * lignes dans le navigateur pour un écran qui en montre trente.
+     */
+    static final int PLANNING_MAX_RESULTS = 200;
+
     private final AuditPlanRepository planRepository;
     private final AuditChecklistItemRepository checklistRepository;
     private final AuditFindingRepository findingRepository;
     private final AiGatewayClient ai;
+    private final Clock clock;
 
     public AuditService(AuditPlanRepository planRepository,
                         AuditChecklistItemRepository checklistRepository,
                         AuditFindingRepository findingRepository,
-                        AiGatewayClient ai) {
+                        AiGatewayClient ai,
+                        Clock clock) {
         this.planRepository = planRepository;
         this.checklistRepository = checklistRepository;
         this.findingRepository = findingRepository;
         this.ai = ai;
+        this.clock = clock;
     }
 
     /**
@@ -114,9 +135,48 @@ public class AuditService {
         return toResponse(loadPlan(id));
     }
 
+    /**
+     * Planning des audits à venir du tenant courant (§4.4), du plus proche au plus
+     * lointain, retards compris.
+     *
+     * <p>{@code horizonDays} est borné des deux côtés plutôt que refusé : un
+     * planning n'a pas à répondre 400 parce qu'on lui a demandé « 5 ans ». Un
+     * horizon nul ou négatif retombe sur le défaut — la seule lecture sensée d'une
+     * demande absurde, et elle ne renvoie jamais un écran vide inexplicable.
+     */
+    @Transactional(readOnly = true)
+    public List<AuditDto.PlanningEntry> planning(AuditType type, Integer horizonDays) {
+        UUID tenantId = requireTenantId();
+        LocalDate today = LocalDate.now(clock);
+        LocalDate horizon = today.plusDays(clampHorizon(horizonDays));
+        Pageable cap = PageRequest.of(0, PLANNING_MAX_RESULTS);
+
+        List<AuditPlan> plans = (type == null)
+                ? planRepository.findUpcoming(tenantId, AuditStatus.PLANNED, horizon, cap)
+                : planRepository.findUpcomingByType(tenantId, AuditStatus.PLANNED, type, horizon, cap);
+
+        return plans.stream().map(p -> toPlanningEntry(p, today)).toList();
+    }
+
+    static int clampHorizon(Integer horizonDays) {
+        if (horizonDays == null || horizonDays <= 0) {
+            return PLANNING_DEFAULT_HORIZON_DAYS;
+        }
+        return Math.min(horizonDays, PLANNING_MAX_HORIZON_DAYS);
+    }
+
+    static AuditDto.PlanningEntry toPlanningEntry(AuditPlan p, LocalDate today) {
+        long daysUntil = ChronoUnit.DAYS.between(today, p.getScheduledDate());
+        return new AuditDto.PlanningEntry(
+                p.getId(), p.getReference(), p.getTitle(), p.getType(), p.getStatus(), p.getStandard(),
+                p.getLeadAuditorId(), p.getScheduledDate(), daysUntil, daysUntil < 0,
+                p.getReminderSentAt() != null);
+    }
+
     public AuditDto.PlanResponse createPlan(AuditDto.CreatePlanRequest req) {
         UUID tenantId = requireTenantId();
         AuditPlan p = new AuditPlan();
+        p.setReference(generateReference(tenantId));
         p.setTenantId(tenantId);
         p.setTitle(req.title());
         p.setScope(req.scope());
@@ -126,6 +186,7 @@ public class AuditService {
         p.setLeadAuditorId(req.leadAuditorId());
         p.setAuditeeId(req.auditeeId());
         p.setScheduledDate(req.scheduledDate());
+        p.setReminderEmail(normalizeEmail(req.reminderEmail()));
         return toResponse(planRepository.save(p));
     }
 
@@ -141,6 +202,10 @@ public class AuditService {
         if (req.leadAuditorId() != null) p.setLeadAuditorId(req.leadAuditorId());
         if (req.auditeeId() != null) p.setAuditeeId(req.auditeeId());
         if (req.scheduledDate() != null) p.setScheduledDate(req.scheduledDate());
+        // Chaîne vide = « retire le destinataire ». Sans ce cas, une adresse posée
+        // par erreur serait indéboulonnable : la convention « null = ne touche pas »
+        // du reste du PATCH ne laisserait aucun moyen de l'effacer.
+        if (req.reminderEmail() != null) p.setReminderEmail(normalizeEmail(req.reminderEmail()));
         return toResponse(planRepository.save(p));
     }
 
@@ -310,6 +375,40 @@ public class AuditService {
                 .orElseThrow(() -> new AuditPlanNotFoundException(id));
     }
 
+    /**
+     * {@code AUD-{année}-{séquence par tenant}}, avec garde anti-collision — même
+     * fabrique que les non-conformités, et volontairement : deux registres qui
+     * numérotent différemment obligeraient chacun à réapprendre à lire l'autre.
+     *
+     * <p>L'année vient de l'horloge INJECTÉE, comme le planning : une référence
+     * frappée le 1er janvier à 00 h 30 doit porter la même année pour tout le
+     * monde, et un test doit pouvoir la fixer.
+     *
+     * <p>La boucle n'est pas une garantie d'unicité — c'est la contrainte
+     * {@code uq_audit_plans_reference} qui l'est. Elle évite seulement de
+     * remonter une erreur de base pour un numéro déjà pris, cas ordinaire quand
+     * deux audits sont créés dans la même seconde.
+     */
+    private String generateReference(UUID tenantId) {
+        String prefix = "AUD-" + LocalDate.now(clock).getYear() + "-";
+        long next = planRepository.countByTenantIdAndReferenceStartingWith(tenantId, prefix) + 1;
+        String reference;
+        do {
+            reference = prefix + String.format("%04d", next);
+            next++;
+        } while (planRepository.existsByTenantIdAndReference(tenantId, reference));
+        return reference;
+    }
+
+    /** Une adresse vide n'est pas une adresse : on la range en {@code null}, pas en "". */
+    private static String normalizeEmail(String raw) {
+        if (raw == null) {
+            return null;
+        }
+        String trimmed = raw.trim();
+        return trimmed.isEmpty() ? null : trimmed;
+    }
+
     private UUID requireTenantId() {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
@@ -336,10 +435,11 @@ public class AuditService {
 
     private AuditDto.PlanResponse toResponse(AuditPlan p) {
         return new AuditDto.PlanResponse(
-                p.getId(), p.getTenantId(), p.getTitle(), p.getScope(),
+                p.getId(), p.getTenantId(), p.getReference(), p.getTitle(), p.getScope(),
                 p.getType(), p.getStatus(), p.getStandard(),
                 p.getLeadAuditorId(), p.getAuditeeId(), p.getScheduledDate(),
                 p.getStartedAt(), p.getCompletedAt(), p.getReportSummary(),
+                p.getReminderEmail(), p.getReminderSentAt(),
                 p.getCreatedAt(), p.getUpdatedAt(),
                 p.getChecklist().stream().map(this::toChecklistResponse).toList(),
                 p.getFindings().stream().map(this::toFindingResponse).toList(),

@@ -278,7 +278,8 @@ describe('CapaDetailComponent — cycle de vie du dossier', () => {
     const suggestion = { title: 'Auditer le fournisseur' };
     capa.suggestActions.and.returnValue(of([suggestion]));
     capa.addAction.and.returnValue(of({
-      id: 'a1', capaId: CASE_ID, title: suggestion.title, status: 'PENDING'
+      id: 'a1', capaId: CASE_ID, title: suggestion.title, status: 'PENDING',
+      actionType: 'CORRECTIVE'
     }));
 
     component.suggestActions();
@@ -357,7 +358,8 @@ describe('CapaDetailComponent — cycle de vie du dossier', () => {
     setup('IN_PROGRESS');
     capa.updateAction.and.returnValue(throwError(() => new HttpErrorResponse({ status: 409 })));
 
-    component.advanceAction({ id: 'a1', capaId: CASE_ID, title: 'x', status: 'PENDING' });
+    component.advanceAction({
+      id: 'a1', capaId: CASE_ID, title: 'x', status: 'PENDING', actionType: 'CORRECTIVE' });
 
     expect(snack.open).toHaveBeenCalled();
     expect(component.acting$.value).toBeFalse();

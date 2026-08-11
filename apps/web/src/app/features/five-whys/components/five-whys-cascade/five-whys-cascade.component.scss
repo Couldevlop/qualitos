@@ -1,0 +1,87 @@
+/* Cascade des 5 Pourquoi.
+ *
+ * Toutes les couleurs viennent des jetons `--qos-*` : le dessin bascule donc
+ * clair/sombre sans aucune règle conditionnelle ici — c'est la définition du
+ * jeton qui change, pas la feuille de style du composant.
+ *
+ * La géométrie (positions, tailles, hauteurs d'encart) n'est PAS ici : elle est
+ * calculée en TypeScript, parce que la hauteur d'un encart dépend du nombre de
+ * lignes de son texte et commande la position de tout ce qui suit. */
+
+:host {
+  display: block;
+}
+
+.cascade {
+  /* Le diagramme peut être plus large que la colonne : c'est LUI qui défile.
+     `qos-scroll-x` (global) pose overflow-x: auto ; `max-width: none` annule
+     ici le `max-width: 100%` global appliqué aux `svg`, qui écraserait le
+     dessin au lieu de le laisser défiler.
+     Le défilement est redéclaré ici et pas seulement hérité de `.qos-page` :
+     un diagramme réutilisé hors d'une page de module doit défiler quand même. */
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding: var(--qos-space-2) 0 var(--qos-space-4);
+
+  /* Rampe symptôme → cause racine. La teinte est portée par le TRAIT et la
+     pastille, jamais par le fond de l'encart : un aplat coloré derrière du
+     texte de 14 px replonge le contraste sous le seuil AA. */
+  .tone-0 { --cascade-tone: var(--qos-chain-1); }
+  .tone-1 { --cascade-tone: var(--qos-chain-2); }
+  .tone-2 { --cascade-tone: var(--qos-chain-3); }
+  .tone-3 { --cascade-tone: var(--qos-chain-4); }
+}
+
+.cascade__svg {
+  display: block;
+  max-width: none;
+  font-family: inherit;
+}
+
+.cascade__box {
+  fill: var(--qos-bg-elevated);
+  stroke: var(--cascade-tone, var(--qos-border-subtle));
+  stroke-width: 1;
+}
+
+/* L'encart terminal est la destination de la descente : il se distingue par un
+   trait plus appuyé, pas par une couleur supplémentaire. */
+.is-root .cascade__box {
+  stroke-width: 2;
+}
+
+.cascade__badge {
+  fill: var(--cascade-tone, var(--qos-fg-tertiary));
+}
+
+.cascade__rank {
+  fill: var(--qos-fg-inverse);
+  font-size: var(--qos-fs-base);
+  font-weight: var(--qos-fw-semibold);
+}
+
+.cascade__caption {
+  fill: var(--qos-fg-tertiary);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-medium);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.cascade__answer {
+  fill: var(--qos-fg-primary);
+  font-size: var(--qos-fs-base);
+}
+
+.cascade__link {
+  fill: none;
+  stroke: var(--cascade-tone, var(--qos-border-strong));
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.cascade__arrow {
+  stroke: none;
+  fill: var(--cascade-tone, var(--qos-border-strong));
+}

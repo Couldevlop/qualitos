@@ -1,0 +1,84 @@
+.filter-card {
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+.type-filter    { width: 240px; }
+.horizon-filter { width: 160px; }
+
+.counters { display: flex; flex-wrap: wrap; gap: 12px; margin-left: auto; }
+.counter {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 14px;
+  font-size: 13px; font-weight: 600;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}
+.counter-overdue { background: #fbe9e7; color: #b71c1c; }
+.counter-due     { background: #fff8e1; color: #ff6f00; }
+
+.state-row { display: flex; align-items: center; gap: 12px; padding: 24px 0; }
+
+.error-banner {
+  padding: 12px 16px; margin-bottom: 16px; border-radius: 8px;
+  background: #fbe9e7; color: #b71c1c; font-weight: 500;
+}
+
+.table-card { padding: 0; overflow: hidden; }
+.t { width: 100%; }
+
+.countdown { font-weight: 600; white-space: nowrap; }
+// Le retard et l'imminence se distinguent aussi par l'INTITULÉ (« 3 jours de
+// retard », « Dans 12 jours ») : la couleur seule ne passe pas WCAG 2.2 AA pour
+// un daltonien, et un planning se lit d'abord en diagonale.
+.countdown-overdue { color: #c62828; }
+.countdown-due     { color: #ef6c00; }
+.countdown-soon    { color: #1565c0; }
+.countdown-later   { color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); }
+
+// Liseré de gauche : repère de balayage, redondant avec le texte, jamais seul
+// porteur de l'information.
+.row-overdue td:first-child { box-shadow: inset 3px 0 0 0 #c62828; }
+.row-due     td:first-child { box-shadow: inset 3px 0 0 0 #ef6c00; }
+
+/* Référence : chasse fixe, comme partout où l'on recopie un identifiant.
+   Une référence lue à voix haute ou recopiée dans un courriel se relit
+   caractère par caractère — la proportionnelle y confond 0/O et 1/l. */
+.reference-cell {
+  font-family: var(--qos-font-mono, 'IBM Plex Mono', monospace);
+  font-size: 13px;
+  white-space: nowrap;
+  color: var(--qos-fg-secondary);
+}
+
+.reminder {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 12px; font-weight: 600;
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+}
+.reminder-sent    { color: #2e7d32; }
+.reminder-pending { color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); font-weight: 500; }
+
+.empty {
+  padding: 32px; text-align: center;
+  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6));
+}
+
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.clickable-row:hover {
+  background: var(--mat-sys-surface-container-low, rgba(0, 0, 0, 0.04));
+}
+.clickable-row:focus-visible {
+  outline: 2px solid var(--mat-sys-primary, #1976d2);
+  outline-offset: -2px;
+}
+
+@media (max-width: 720px) {
+  .counters { margin-left: 0; }
+  .type-filter, .horizon-filter { width: 100%; }
+}

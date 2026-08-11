@@ -49,4 +49,12 @@ public interface CapaEvidenceRepository extends JpaRepository<CapaEvidence, UUID
     Optional<CapaEvidence> findByTenantIdAndActionId(UUID tenantId, UUID actionId);
 
     long countByTenantIdAndActionId(UUID tenantId, UUID actionId);
+
+    /**
+     * Existence par clé d'objet, sans filtre tenant — pour le balayage des
+     * orphelins, qui s'exécute hors requête et donc sans contexte tenant. La
+     * clé porte déjà le tenant dans son chemin, et la question posée ici est
+     * « quelqu'un revendique-t-il cet objet ? », qui ne dépend d'aucun tenant.
+     */
+    boolean existsByObjectKey(String objectKey);
 }

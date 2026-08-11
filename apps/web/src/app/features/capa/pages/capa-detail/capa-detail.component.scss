@@ -105,6 +105,59 @@
   border-left: 4px solid #f9a825;
   border-radius: 8px;
 }
+
+/* Ce qui s'oppose à la clôture. Teintes de danger par jetons, jamais en dur :
+   le bandeau doit rester lisible en thème sombre, où le fond crème du bloc
+   d'efficacité au-dessus s'inverse. */
+.blockers-block {
+  margin-top: 16px;
+  padding: 14px 16px;
+  background: var(--qos-danger-bg-soft);
+  border-left: 4px solid var(--qos-danger-fg);
+  border-radius: 8px;
+}
+.blockers-title {
+  margin: 0 0 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 14px;
+  color: var(--qos-danger-fg);
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+.blockers-list {
+  margin: 0;
+  padding-left: 28px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--qos-fg-primary);
+
+  li + li { margin-top: 4px; }
+}
+
+/* Nature de l'action. L'endiguement se DISTINGUE visuellement : c'est le seul
+   des trois qui ne traite pas la cause, et c'est ce que la colonne existe pour
+   faire voir. Les deux autres restent sobres pour ne pas bruiter le tableau. */
+.action-type {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  background: var(--qos-bg-sunken);
+  color: var(--qos-fg-secondary);
+
+  &--containment {
+    background: var(--qos-warn-bg-soft);
+    color: var(--qos-warn-fg);
+  }
+}
 .effectiveness-prompt {
   margin: 0 0 12px;
   display: flex;

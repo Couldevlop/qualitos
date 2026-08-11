@@ -10,13 +10,18 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 
 import java.net.URI;
 import java.net.URL;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Adaptateur S3 (AWS SDK v2) compatible MinIO. Path-style obligatoire (MinIO ne
@@ -34,6 +39,9 @@ import java.time.Duration;
 @Component
 @ConditionalOnProperty(prefix = "qualitos.storage.s3", name = "enabled", havingValue = "true")
 public class S3ObjectStorage implements ObjectStorage {
+
+    /** Plafond imposé par S3 sur {@code maxKeys} : au-delà, la réponse est tronquée. */
+    private static final int S3_MAX_KEYS_PER_PAGE = 1000;
 
     private final S3Client client;
     private final S3Presigner presigner;
@@ -92,5 +100,45 @@ public class S3ObjectStorage implements ObjectStorage {
     public void delete(String key) {
         // S3 DELETE est idempotent : aucune erreur si la clé n'existe pas.
         client.deleteObject(DeleteObjectRequest.builder().bucket(bucket).key(key).build());
+    }
+
+    /**
+     * ListObjectsV2 paginé, arrêté dès que {@code limit} est atteint.
+     *
+     * <p>La pagination est déroulée à la main plutôt que par le paginateur du
+     * SDK : celui-ci parcourt le bucket entier de façon paresseuse, et une
+     * interruption au milieu laisserait une connexion HTTP ouverte. Ici, on sait
+     * exactement combien de pages on demande, et on s'arrête net.
+     *
+     * <p>{@code maxKeys} est borné à 1000 par S3 ; demander davantage ne renvoie
+     * pas plus. On demande donc le minimum entre ce plafond et ce qu'il reste
+     * à collecter, pour ne pas rapatrier mille clés quand on en veut dix.
+     */
+    @Override
+    public List<StoredObject> list(String prefix, int limit) {
+        if (limit <= 0) {
+            return List.of();
+        }
+        List<StoredObject> out = new ArrayList<>();
+        String continuationToken = null;
+        do {
+            ListObjectsV2Request request = ListObjectsV2Request.builder()
+                    .bucket(bucket)
+                    .prefix(prefix)
+                    .maxKeys(Math.min(S3_MAX_KEYS_PER_PAGE, limit - out.size()))
+                    .continuationToken(continuationToken)
+                    .build();
+            ListObjectsV2Response response = client.listObjectsV2(request);
+            for (S3Object o : response.contents()) {
+                out.add(new StoredObject(o.key(), o.lastModified(), o.size()));
+                if (out.size() >= limit) {
+                    return List.copyOf(out);
+                }
+            }
+            continuationToken = Boolean.TRUE.equals(response.isTruncated())
+                    ? response.nextContinuationToken()
+                    : null;
+        } while (continuationToken != null);
+        return List.copyOf(out);
     }
 }

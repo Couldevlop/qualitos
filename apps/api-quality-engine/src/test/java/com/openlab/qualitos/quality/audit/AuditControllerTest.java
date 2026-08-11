@@ -16,11 +16,13 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -69,7 +71,7 @@ class AuditControllerTest {
     void create_returns201() throws Exception {
         when(service.createPlan(any())).thenReturn(planResp(AuditStatus.PLANNED));
         AuditDto.CreatePlanRequest req = new AuditDto.CreatePlanRequest(
-                "T", null, AuditType.INTERNAL, null, LEAD, null, null);
+                "T", null, AuditType.INTERNAL, null, LEAD, null, null, null);
         mockMvc.perform(post("/api/v1/audits/plans").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
@@ -294,18 +296,63 @@ class AuditControllerTest {
     void create_missingTenant_returns403() throws Exception {
         when(service.createPlan(any())).thenThrow(new MissingTenantContextException());
         AuditDto.CreatePlanRequest req = new AuditDto.CreatePlanRequest(
-                "T", null, AuditType.INTERNAL, null, LEAD, null, null);
+                "T", null, AuditType.INTERNAL, null, LEAD, null, null, null);
         mockMvc.perform(post("/api/v1/audits/plans").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
                 .andExpect(status().isForbidden());
     }
 
+    // --- planning (§4.4) ---
+
+    @Test @WithMockUser
+    void planning_returns200WithDeadlineAndCountdown() throws Exception {
+        when(service.planning(isNull(), isNull())).thenReturn(List.of(planningEntry(30, false)));
+        mockMvc.perform(get("/api/v1/audits/planning"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(PLAN.toString()))
+                .andExpect(jsonPath("$[0].daysUntil").value(30))
+                .andExpect(jsonPath("$[0].overdue").value(false))
+                .andExpect(jsonPath("$[0].scheduledDate").value("2026-07-15"));
+    }
+
+    @Test @WithMockUser
+    void planning_passesTypeAndHorizonThrough() throws Exception {
+        when(service.planning(eq(AuditType.EXTERNAL), eq(60)))
+                .thenReturn(List.of(planningEntry(12, false)));
+        mockMvc.perform(get("/api/v1/audits/planning")
+                        .param("type", "EXTERNAL").param("horizonDays", "60"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].daysUntil").value(12));
+        verify(service).planning(AuditType.EXTERNAL, 60);
+    }
+
+    @Test @WithMockUser
+    void planning_unknownType_returns400ratherThanSilentlyIgnoringTheFilter() throws Exception {
+        // Un filtre inconnu accepté en silence renverrait TOUS les audits, ce qui
+        // se lit comme un résultat valide alors que la demande n'a pas été honorée.
+        mockMvc.perform(get("/api/v1/audits/planning").param("type", "PAS_UN_TYPE"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test @WithMockUser
+    void planning_missingTenant_returns403() throws Exception {
+        when(service.planning(any(), any())).thenThrow(new MissingTenantContextException());
+        mockMvc.perform(get("/api/v1/audits/planning"))
+                .andExpect(status().isForbidden());
+    }
+
     // helpers
+    private AuditDto.PlanningEntry planningEntry(long daysUntil, boolean overdue) {
+        return new AuditDto.PlanningEntry(
+                PLAN, "AUD-2026-0007", "Audit interne", AuditType.INTERNAL, AuditStatus.PLANNED, "ISO_9001",
+                LEAD, LocalDate.of(2026, 7, 15), daysUntil, overdue, false);
+    }
+
     private AuditDto.PlanResponse planResp(AuditStatus s) {
         return new AuditDto.PlanResponse(
-                PLAN, TENANT, "T", null, AuditType.INTERNAL, s, null,
-                LEAD, null, null, null, null, null,
+                PLAN, TENANT, "AUD-2026-0007", "T", null, AuditType.INTERNAL, s, null,
+                LEAD, null, null, null, null, null, null, null,
                 Instant.now(), Instant.now(), List.of(), List.of(), null);
     }
 
