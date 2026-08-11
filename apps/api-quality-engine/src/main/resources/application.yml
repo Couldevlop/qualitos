@@ -277,3 +277,24 @@ qualitos:
       region: ${STORAGE_S3_REGION:us-east-1}
       access-key: ${STORAGE_S3_ACCESS_KEY:}
       secret-key: ${STORAGE_S3_SECRET_KEY:}
+
+    # Balayage des binaires orphelins (§4.3) : un objet écrit juste avant qu'une
+    # transaction n'échoue survit à la ligne qui le désignait, et devient alors
+    # invisible pour l'application — mais toujours facturé.
+    #
+    # OFF PAR DÉFAUT, et ce défaut est le seul défendable : le balayage EFFACE des
+    # octets qu'aucune sauvegarde applicative ne rappellera. À n'allumer qu'après
+    # avoir vérifié que le bucket ne sert qu'à cette plateforme.
+    orphan-sweep:
+      enabled: ${STORAGE_ORPHAN_SWEEP_ENABLED:false}
+      # Âge minimal avant qu'un objet soit tenu pour orphelin. 24 h, pas quelques
+      # minutes : en dessous, on effacerait une pièce entre son dépôt et la
+      # validation de sa transaction. Refusé au démarrage sous 1 h.
+      grace-period: ${STORAGE_ORPHAN_SWEEP_GRACE:PT24H}
+      # Objets examinés par passage — plusieurs petits passages valent mieux qu'un
+      # seul qui énumère le bucket entier.
+      batch-size: ${STORAGE_ORPHAN_SWEEP_BATCH:1000}
+      # Quotidien : un orphelin ne bouge pas, et balayer plus souvent
+      # interrogerait le stockage pour ne rien trouver.
+      initial-delay-ms: ${STORAGE_ORPHAN_SWEEP_INITIAL_DELAY_MS:300000}
+      fixed-delay-ms: ${STORAGE_ORPHAN_SWEEP_FIXED_DELAY_MS:86400000}
