@@ -25,6 +25,16 @@ public class AuditPlan {
     @Column(name = "tenant_id", nullable = false, updatable = false)
     private UUID tenantId;
 
+    /**
+     * Désignation lisible de l'audit — {@code AUD-2026-0001}.
+     *
+     * <p>{@code updatable = false} : une référence citée dans un compte rendu de
+     * revue ou remise à un organisme certificateur ne peut pas changer ensuite.
+     * Ce n'est pas un libellé, c'est une désignation ; le titre, lui, se corrige.
+     */
+    @Column(nullable = false, length = 40, updatable = false)
+    private String reference;
+
     @Column(nullable = false, length = 255)
     private String title;
 

@@ -72,6 +72,11 @@ export class AuditsService {
       const now = new Date().toISOString();
       const plan: AuditPlanResponse = {
         id: 'a-' + (this.mockStore.length + 1) + '-' + Math.random().toString(36).slice(2, 7),
+        // Le serveur frappe la référence à la création ; la démonstration doit
+        // continuer la même séquence, sinon l'écran montrerait un audit sans
+        // désignation là où la production en attribue toujours une.
+        reference: 'AUD-' + new Date().getFullYear() + '-'
+          + String(this.mockStore.length + 1).padStart(4, '0'),
         tenantId: 'demo-tenant',
         title: input.title,
         scope: input.scope,
@@ -345,6 +350,7 @@ export class AuditsService {
         const due = new Date(today.getTime() + daysUntil * 86_400_000);
         return {
           id: p.id,
+          reference: p.reference,
           title: p.title,
           type: p.type,
           status: 'PLANNED' as AuditStatus,
@@ -368,15 +374,15 @@ export class AuditsService {
   private seedMockPlans(): AuditPlanResponse[] {
     const now = new Date().toISOString();
     return [
-      { id: 'a1', tenantId: 't', title: 'Audit interne ISO 9001 §9.2', type: 'INTERNAL',
+      { id: 'a1', reference: 'AUD-2026-0001', tenantId: 't', title: 'Audit interne ISO 9001 §9.2', type: 'INTERNAL',
         status: 'COMPLETED', standard: 'ISO_9001', leadAuditorId: 'u', scheduledDate: now,
         completedAt: now, conformityScore: 92, createdAt: now, updatedAt: now,
         checklist: [], findings: [] },
-      { id: 'a2', tenantId: 't', title: 'Audit fournisseur Acme Forge', type: 'SUPPLIER',
+      { id: 'a2', reference: 'AUD-2026-0002', tenantId: 't', title: 'Audit fournisseur Acme Forge', type: 'SUPPLIER',
         status: 'IN_PROGRESS', leadAuditorId: 'u', scheduledDate: now,
         conformityScore: 65, createdAt: now, updatedAt: now,
         checklist: [], findings: [] },
-      { id: 'a3', tenantId: 't', title: 'Pré-audit certification ISO 27001', type: 'CERTIFICATION',
+      { id: 'a3', reference: 'AUD-2026-0003', tenantId: 't', title: 'Pré-audit certification ISO 27001', type: 'CERTIFICATION',
         status: 'PLANNED', standard: 'ISO_27001', leadAuditorId: 'u', scheduledDate: now,
         createdAt: now, updatedAt: now,
         checklist: [], findings: [] }

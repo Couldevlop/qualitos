@@ -59,6 +59,14 @@
         </td>
       </ng-container>
 
+      <!-- La référence AVANT le titre : c'est par elle qu'on cite l'audit en
+           réunion ou dans un compte rendu, et deux audits peuvent porter le
+           même titre à six mois d'écart. -->
+      <ng-container matColumnDef="reference">
+        <th mat-header-cell *matHeaderCellDef i18n="@@audits.col-reference">Référence</th>
+        <td mat-cell *matCellDef="let e"><span class="reference-cell">{{ e.reference }}</span></td>
+      </ng-container>
+
       <ng-container matColumnDef="title">
         <th mat-header-cell *matHeaderCellDef i18n="@@common.title">Titre</th>
         <td mat-cell *matCellDef="let e"><strong>{{ e.title }}</strong></td>

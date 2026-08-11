@@ -43,6 +43,16 @@
 .row-overdue td:first-child { box-shadow: inset 3px 0 0 0 #c62828; }
 .row-due     td:first-child { box-shadow: inset 3px 0 0 0 #ef6c00; }
 
+/* Référence : chasse fixe, comme partout où l'on recopie un identifiant.
+   Une référence lue à voix haute ou recopiée dans un courriel se relit
+   caractère par caractère — la proportionnelle y confond 0/O et 1/l. */
+.reference-cell {
+  font-family: var(--qos-font-mono, 'IBM Plex Mono', monospace);
+  font-size: 13px;
+  white-space: nowrap;
+  color: var(--qos-fg-secondary);
+}
+
 .reminder {
   display: inline-flex; align-items: center; gap: 4px;
   font-size: 12px; font-weight: 600;

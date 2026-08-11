@@ -23,7 +23,8 @@ const SOON_THRESHOLD_DAYS = 60;
 })
 export class AuditsPlanningComponent implements OnInit {
 
-  readonly displayedColumns = ['scheduledDate', 'countdown', 'title', 'type', 'standard', 'reminder'];
+  readonly displayedColumns = ['scheduledDate', 'countdown', 'reference', 'title',
+                               'type', 'standard', 'reminder'];
 
   /**
    * Le filtre porte sur les six types, mais la demande métier vise « interne /

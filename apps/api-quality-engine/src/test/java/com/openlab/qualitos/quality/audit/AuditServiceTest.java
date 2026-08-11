@@ -652,6 +652,58 @@ class AuditServiceTest {
         assertThat(p.getReminderEmail()).isNull();
     }
 
+    // --- référence citable (§4.4) ---
+
+    @Test
+    void createPlan_stampsAReadableReference() {
+        // Un audit se cite : en revue de direction, dans une convocation, devant un
+        // certificateur. « L'audit 3f2a91c4-… » ne se dit ni ne se recopie.
+        when(planRepo.countByTenantIdAndReferenceStartingWith(TENANT, "AUD-2026-")).thenReturn(0L);
+        when(planRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        AuditDto.PlanResponse r = service.createPlan(new AuditDto.CreatePlanRequest(
+                "Audit interne", null, AuditType.INTERNAL, null, LEAD, null, null, null));
+
+        // L'année vient de l'horloge INJECTÉE : figée à 2026 par FIXED_CLOCK.
+        assertThat(r.reference()).isEqualTo("AUD-2026-0001");
+    }
+
+    @Test
+    void createPlan_continuesTheTenantYearlySequence() {
+        when(planRepo.countByTenantIdAndReferenceStartingWith(TENANT, "AUD-2026-")).thenReturn(41L);
+        when(planRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        assertThat(service.createPlan(new AuditDto.CreatePlanRequest(
+                "T", null, AuditType.INTERNAL, null, LEAD, null, null, null)).reference())
+                .isEqualTo("AUD-2026-0042");
+    }
+
+    @Test
+    void createPlan_skipsAReferenceAlreadyTaken() {
+        // Deux audits créés dans la même seconde tomberaient sur le même numéro.
+        // La boucle n'est pas la garantie d'unicité — la contrainte de base l'est —
+        // mais elle évite de remonter une erreur SQL pour un cas ordinaire.
+        when(planRepo.countByTenantIdAndReferenceStartingWith(TENANT, "AUD-2026-")).thenReturn(0L);
+        when(planRepo.existsByTenantIdAndReference(TENANT, "AUD-2026-0001")).thenReturn(true);
+        when(planRepo.existsByTenantIdAndReference(TENANT, "AUD-2026-0002")).thenReturn(false);
+        when(planRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        assertThat(service.createPlan(new AuditDto.CreatePlanRequest(
+                "T", null, AuditType.INTERNAL, null, LEAD, null, null, null)).reference())
+                .isEqualTo("AUD-2026-0002");
+    }
+
+    @Test
+    void planning_carriesTheReference() {
+        // C'est par elle que la ligne du planning se rattache à un audit nommé.
+        AuditPlan p = plan(TENANT, AuditStatus.PLANNED);
+        p.setReference("AUD-2026-0009");
+        p.setScheduledDate(TODAY.plusDays(4));
+        when(planRepo.findUpcoming(any(), any(), any(), any(Pageable.class))).thenReturn(List.of(p));
+
+        assertThat(service.planning(null, null).get(0).reference()).isEqualTo("AUD-2026-0009");
+    }
+
     @Test
     void updatePlan_nullReminderEmail_leavesTheRecipientUntouched() {
         AuditPlan p = plan(TENANT, AuditStatus.PLANNED);

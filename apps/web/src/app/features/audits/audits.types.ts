@@ -39,6 +39,8 @@ export interface FindingResponse {
 
 export interface AuditPlanResponse {
   id: string;
+  /** Désignation citable — `AUD-2026-0001`. Immuable une fois attribuée. */
+  reference: string;
   tenantId: string;
   title: string;
   scope?: string;
@@ -84,6 +86,7 @@ export interface CreateAuditPlanRequest {
  */
 export interface AuditPlanningEntry {
   id: string;
+  reference: string;
   title: string;
   type: AuditType;
   status: AuditStatus;

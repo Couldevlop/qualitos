@@ -345,13 +345,13 @@ class AuditControllerTest {
     // helpers
     private AuditDto.PlanningEntry planningEntry(long daysUntil, boolean overdue) {
         return new AuditDto.PlanningEntry(
-                PLAN, "Audit interne", AuditType.INTERNAL, AuditStatus.PLANNED, "ISO_9001",
+                PLAN, "AUD-2026-0007", "Audit interne", AuditType.INTERNAL, AuditStatus.PLANNED, "ISO_9001",
                 LEAD, LocalDate.of(2026, 7, 15), daysUntil, overdue, false);
     }
 
     private AuditDto.PlanResponse planResp(AuditStatus s) {
         return new AuditDto.PlanResponse(
-                PLAN, TENANT, "T", null, AuditType.INTERNAL, s, null,
+                PLAN, TENANT, "AUD-2026-0007", "T", null, AuditType.INTERNAL, s, null,
                 LEAD, null, null, null, null, null, null, null,
                 Instant.now(), Instant.now(), List.of(), List.of(), null);
     }

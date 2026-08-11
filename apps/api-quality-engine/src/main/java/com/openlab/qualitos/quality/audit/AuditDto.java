@@ -79,6 +79,8 @@ public final class AuditDto {
     public record PlanResponse(
             UUID id,
             UUID tenantId,
+            /** Désignation citable de l'audit — {@code AUD-2026-0001}. */
+            String reference,
             String title,
             String scope,
             AuditType type,
@@ -111,6 +113,7 @@ public final class AuditDto {
      */
     public record PlanningEntry(
             UUID id,
+            String reference,
             String title,
             AuditType type,
             AuditStatus status,

@@ -168,7 +168,7 @@ public class AuditService {
     static AuditDto.PlanningEntry toPlanningEntry(AuditPlan p, LocalDate today) {
         long daysUntil = ChronoUnit.DAYS.between(today, p.getScheduledDate());
         return new AuditDto.PlanningEntry(
-                p.getId(), p.getTitle(), p.getType(), p.getStatus(), p.getStandard(),
+                p.getId(), p.getReference(), p.getTitle(), p.getType(), p.getStatus(), p.getStandard(),
                 p.getLeadAuditorId(), p.getScheduledDate(), daysUntil, daysUntil < 0,
                 p.getReminderSentAt() != null);
     }
@@ -176,6 +176,7 @@ public class AuditService {
     public AuditDto.PlanResponse createPlan(AuditDto.CreatePlanRequest req) {
         UUID tenantId = requireTenantId();
         AuditPlan p = new AuditPlan();
+        p.setReference(generateReference(tenantId));
         p.setTenantId(tenantId);
         p.setTitle(req.title());
         p.setScope(req.scope());
@@ -374,6 +375,31 @@ public class AuditService {
                 .orElseThrow(() -> new AuditPlanNotFoundException(id));
     }
 
+    /**
+     * {@code AUD-{année}-{séquence par tenant}}, avec garde anti-collision — même
+     * fabrique que les non-conformités, et volontairement : deux registres qui
+     * numérotent différemment obligeraient chacun à réapprendre à lire l'autre.
+     *
+     * <p>L'année vient de l'horloge INJECTÉE, comme le planning : une référence
+     * frappée le 1er janvier à 00 h 30 doit porter la même année pour tout le
+     * monde, et un test doit pouvoir la fixer.
+     *
+     * <p>La boucle n'est pas une garantie d'unicité — c'est la contrainte
+     * {@code uq_audit_plans_reference} qui l'est. Elle évite seulement de
+     * remonter une erreur de base pour un numéro déjà pris, cas ordinaire quand
+     * deux audits sont créés dans la même seconde.
+     */
+    private String generateReference(UUID tenantId) {
+        String prefix = "AUD-" + LocalDate.now(clock).getYear() + "-";
+        long next = planRepository.countByTenantIdAndReferenceStartingWith(tenantId, prefix) + 1;
+        String reference;
+        do {
+            reference = prefix + String.format("%04d", next);
+            next++;
+        } while (planRepository.existsByTenantIdAndReference(tenantId, reference));
+        return reference;
+    }
+
     /** Une adresse vide n'est pas une adresse : on la range en {@code null}, pas en "". */
     private static String normalizeEmail(String raw) {
         if (raw == null) {
@@ -409,7 +435,7 @@ public class AuditService {
 
     private AuditDto.PlanResponse toResponse(AuditPlan p) {
         return new AuditDto.PlanResponse(
-                p.getId(), p.getTenantId(), p.getTitle(), p.getScope(),
+                p.getId(), p.getTenantId(), p.getReference(), p.getTitle(), p.getScope(),
                 p.getType(), p.getStatus(), p.getStandard(),
                 p.getLeadAuditorId(), p.getAuditeeId(), p.getScheduledDate(),
                 p.getStartedAt(), p.getCompletedAt(), p.getReportSummary(),

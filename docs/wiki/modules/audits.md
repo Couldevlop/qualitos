@@ -13,6 +13,10 @@ préparation de certification), de consigner les **constats** (findings) et de p
 1. **Ouvrir** `/audits` : la liste des audits planifiés et réalisés.
 2. **Créer / programmer un audit** : périmètre, référentiel visé, date, et — facultatif —
    l'adresse à prévenir avant l'échéance (voir *Planning et rappels* ci-dessous).
+   L'audit reçoit à sa création une **référence** de la forme `AUD-2026-0001` : c'est
+   par elle qu'on le cite en revue de direction, dans une convocation ou devant un
+   organisme certificateur. Elle est propre à votre organisation, repart à `0001`
+   chaque année, et **ne change jamais** — contrairement au titre, qui se corrige.
 3. **Suivre les échéances** sur `/audits/planning` (menu *Qualité opérationnelle ›
    Planning audits*).
 4. **Conduire l'audit** : parcourir la checklist, consigner les constats et leur criticité.

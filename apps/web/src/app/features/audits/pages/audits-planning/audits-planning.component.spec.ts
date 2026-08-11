@@ -1,6 +1,6 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
@@ -38,6 +38,7 @@ describe('AuditsPlanningComponent', () => {
 
   const entry = (over: Partial<AuditPlanningEntry> = {}): AuditPlanningEntry => ({
     id: 'a1',
+    reference: 'AUD-2026-0001',
     title: 'Audit interne ISO 9001',
     type: 'INTERNAL',
     status: 'PLANNED',
@@ -86,9 +87,26 @@ describe('AuditsPlanningComponent', () => {
   // ---- Contrat d'affichage ------------------------------------------------------
 
   it('affiche les colonnes attendues d’un planning', () => {
+    // La référence précède le titre : c'est par elle qu'on cite l'audit, et deux
+    // audits peuvent porter le même titre à six mois d'écart.
     expect(component.displayedColumns)
-      .toEqual(['scheduledDate', 'countdown', 'title', 'type', 'standard', 'reminder']);
+      .toEqual(['scheduledDate', 'countdown', 'reference', 'title',
+                'type', 'standard', 'reminder']);
   });
+
+  it('montre la référence de chaque audit', fakeAsync(() => {
+    // `fakeAsync` + `tick` sont indispensables ici : l'état de chargement passe
+    // par `deferredView`, qui diffère son émission d'une micro-tâche pour éviter
+    // un NG0100. Sans ce tour d'horloge, le tableau est encore masqué par le
+    // *ngIf de chargement et l'assertion porterait sur un DOM vide.
+    start();
+    http.expectOne(r => r.url === endpoint).flush([entry()]);
+    tick();
+    fixture.detectChanges();
+
+    const cell = (fixture.nativeElement as HTMLElement).querySelector('.reference-cell');
+    expect(cell?.textContent?.trim()).toBe('AUD-2026-0001');
+  }));
 
   it('propose les six types, « Tous » en tête, interne et externe en premier', () => {
     expect(component.types.map(t => t.value))

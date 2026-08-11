@@ -24,6 +24,14 @@ public interface AuditPlanRepository extends JpaRepository<AuditPlan, UUID> {
 
     Optional<AuditPlan> findByIdAndTenantId(UUID id, UUID tenantId);
 
+    // --- référence lisible (§4.4) ---
+
+    /** Garde anti-collision de la référence, adossée à l'unicité (tenant, reference). */
+    boolean existsByTenantIdAndReference(UUID tenantId, String reference);
+
+    /** Rang de départ de la séquence annuelle du tenant — cf. AuditService#generateReference. */
+    long countByTenantIdAndReferenceStartingWith(UUID tenantId, String prefix);
+
     // --- planning (§4.4) : les audits à venir, du plus proche au plus lointain ---
 
     /**
