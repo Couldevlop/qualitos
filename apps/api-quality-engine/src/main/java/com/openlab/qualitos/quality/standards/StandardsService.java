@@ -50,27 +50,28 @@ public class StandardsService {
     @Transactional(readOnly = true)
     public Page<StandardsDto.StandardSummary> listStandards(StandardStatus status, String family,
                                                             Pageable pageable) {
+        UUID tenantId = requireTenantId();
         Page<Standard> page;
         if (status != null) {
-            page = standardRepository.findByStatus(status, pageable);
+            page = standardRepository.findVisibleByStatus(status, tenantId, pageable);
         } else if (family != null) {
-            page = standardRepository.findByFamily(family, pageable);
+            page = standardRepository.findVisibleByFamily(family, tenantId, pageable);
         } else {
-            page = standardRepository.findAll(pageable);
+            page = standardRepository.findVisible(tenantId, pageable);
         }
         return page.map(this::toSummary);
     }
 
     @Transactional(readOnly = true)
     public StandardsDto.StandardDetail getStandard(UUID id) {
-        Standard s = standardRepository.findById(id)
+        Standard s = standardRepository.findVisibleById(id, requireTenantId())
                 .orElseThrow(() -> new StandardNotFoundException(id));
         return toDetail(s);
     }
 
     @Transactional(readOnly = true)
     public StandardsDto.StandardDetail getStandardByCode(String code) {
-        Standard s = standardRepository.findByCode(code)
+        Standard s = standardRepository.findVisibleByCode(code, requireTenantId())
                 .orElseThrow(() -> new StandardNotFoundException(code));
         return toDetail(s);
     }
@@ -509,7 +510,7 @@ public class StandardsService {
                 .orElseThrow(() -> new TenantStandardNotFoundException(id));
     }
 
-    private UUID requireTenantId() {
+    UUID requireTenantId() {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }

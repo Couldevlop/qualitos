@@ -275,7 +275,7 @@ class IndustryPackLoaderTest {
         when(resolver.getResources(any())).thenReturn(new Resource[]{ res });
         when(repo.findByCode("banking")).thenReturn(Optional.empty());
         when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
-        when(standardRepo.findByCode(any())).thenReturn(Optional.of(new Standard()));
+        when(standardRepo.findVisibleByCode(any(), any())).thenReturn(Optional.of(new Standard()));
 
         loader.loadAll();
 
@@ -317,8 +317,8 @@ class IndustryPackLoaderTest {
         when(repo.findByCode("banking")).thenReturn(Optional.empty());
         when(repo.save(any())).thenAnswer(inv -> inv.getArgument(0));
         // 'dora' connu, 'iso-27001' inconnu du catalogue.
-        when(standardRepo.findByCode("dora")).thenReturn(Optional.of(new Standard()));
-        when(standardRepo.findByCode("iso-27001")).thenReturn(Optional.empty());
+        when(standardRepo.findVisibleByCode("dora", null)).thenReturn(Optional.of(new Standard()));
+        when(standardRepo.findVisibleByCode("iso-27001", null)).thenReturn(Optional.empty());
 
         loader.loadAll();
 

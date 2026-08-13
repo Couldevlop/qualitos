@@ -12,8 +12,10 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Entrée du catalogue normatif (référentiel global, partagé entre tous les tenants).
- * Pas de tenant_id : ces données sont "platform-level", maintenues par le super-admin.
+ * Entrée du catalogue normatif. Deux régimes de propriété cohabitent : les normes de
+ * la plateforme (maintenues par le super-admin, {@code ownerTenantId} null, partagées
+ * par tous les tenants) et les référentiels d'un tenant ({@code ownerTenantId} renseigné,
+ * invisibles aux autres). Voir {@link StandardRepository} pour les règles de visibilité.
  */
 @Entity
 @Table(name = "standards")
@@ -26,8 +28,13 @@ public class Standard {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    /** Code stable, ex: "iso-9001", "iso-27001", "iatf-16949". */
-    @Column(nullable = false, unique = true, length = 100)
+    /**
+     * Code stable, ex: "iso-9001", "iso-27001", "iatf-16949" (normes plateforme) ou
+     * "PRO-002" (référentiel d'un tenant). Plus unique globalement : l'unicité réelle
+     * est portée par les deux index partiels de la migration V108, scopée par
+     * {@code ownerTenantId}.
+     */
+    @Column(nullable = false, length = 100)
     private String code;
 
     @Column(name = "full_name", nullable = false, length = 500)
@@ -68,6 +75,22 @@ public class Standard {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private StandardStatus status;
+
+    /**
+     * Propriétaire du référentiel. {@code null} = norme de la plateforme, livrée
+     * par les migrations et lisible par tous les tenants ; renseigné = référentiel
+     * appartenant à ce tenant, et invisible à tous les autres.
+     */
+    @Column(name = "owner_tenant_id")
+    private UUID ownerTenantId;
+
+    /** Document GED dont ce référentiel est né. Jamais modifié après création. */
+    @Column(name = "source_document_id", updatable = false)
+    private UUID sourceDocumentId;
+
+    /** Version publiée de ce document au moment de la création. */
+    @Column(name = "source_document_version", updatable = false)
+    private Integer sourceDocumentVersion;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

@@ -47,46 +47,46 @@ class StandardsServiceTest {
     void listStandards_noFilter() {
         Pageable p = PageRequest.of(0, 10);
         Standard s = std("iso-9001", StandardStatus.PUBLISHED);
-        when(standardRepo.findAll(p)).thenReturn(new PageImpl<>(List.of(s)));
+        when(standardRepo.findVisible(TENANT, p)).thenReturn(new PageImpl<>(List.of(s)));
         Page<StandardsDto.StandardSummary> r = service.listStandards(null, null, p);
         assertThat(r.getContent()).hasSize(1);
-        verify(standardRepo, never()).findByStatus(any(), any());
-        verify(standardRepo, never()).findByFamily(any(), any());
+        verify(standardRepo, never()).findVisibleByStatus(any(), any(), any());
+        verify(standardRepo, never()).findVisibleByFamily(any(), any(), any());
     }
 
     @Test
     void listStandards_byStatus() {
         Pageable p = PageRequest.of(0, 10);
-        when(standardRepo.findByStatus(StandardStatus.DEPRECATED, p))
+        when(standardRepo.findVisibleByStatus(StandardStatus.DEPRECATED, TENANT, p))
                 .thenReturn(new PageImpl<>(List.of(std("old", StandardStatus.DEPRECATED))));
         service.listStandards(StandardStatus.DEPRECATED, null, p);
-        verify(standardRepo).findByStatus(StandardStatus.DEPRECATED, p);
+        verify(standardRepo).findVisibleByStatus(StandardStatus.DEPRECATED, TENANT, p);
     }
 
     @Test
     void listStandards_byFamily() {
         Pageable p = PageRequest.of(0, 10);
-        when(standardRepo.findByFamily("HLS", p))
+        when(standardRepo.findVisibleByFamily("HLS", TENANT, p))
                 .thenReturn(new PageImpl<>(List.of(std("iso-9001", StandardStatus.PUBLISHED))));
         service.listStandards(null, "HLS", p);
-        verify(standardRepo).findByFamily("HLS", p);
+        verify(standardRepo).findVisibleByFamily("HLS", TENANT, p);
     }
 
     @Test
     void listStandards_statusTakesPrecedenceOverFamily() {
         Pageable p = PageRequest.of(0, 10);
-        when(standardRepo.findByStatus(StandardStatus.PUBLISHED, p))
+        when(standardRepo.findVisibleByStatus(StandardStatus.PUBLISHED, TENANT, p))
                 .thenReturn(new PageImpl<>(List.of()));
         service.listStandards(StandardStatus.PUBLISHED, "HLS", p);
-        verify(standardRepo).findByStatus(StandardStatus.PUBLISHED, p);
-        verify(standardRepo, never()).findByFamily(any(), any());
+        verify(standardRepo).findVisibleByStatus(StandardStatus.PUBLISHED, TENANT, p);
+        verify(standardRepo, never()).findVisibleByFamily(any(), any(), any());
     }
 
     // --- catalog: get ---
     @Test
     void getStandard_withFullTree() {
         Standard s = stdWithTree();
-        when(standardRepo.findById(s.getId())).thenReturn(Optional.of(s));
+        when(standardRepo.findVisibleById(s.getId(), TENANT)).thenReturn(Optional.of(s));
         StandardsDto.StandardDetail r = service.getStandard(s.getId());
         assertThat(r.sections()).hasSize(1);
         assertThat(r.sections().get(0).clauses()).hasSize(1);
@@ -96,7 +96,7 @@ class StandardsServiceTest {
     @Test
     void getStandard_notFound() {
         UUID id = UUID.randomUUID();
-        when(standardRepo.findById(id)).thenReturn(Optional.empty());
+        when(standardRepo.findVisibleById(id, TENANT)).thenReturn(Optional.empty());
         assertThatThrownBy(() -> service.getStandard(id))
                 .isInstanceOf(StandardNotFoundException.class);
     }
@@ -104,13 +104,13 @@ class StandardsServiceTest {
     @Test
     void getStandardByCode_found() {
         Standard s = std("iso-9001", StandardStatus.PUBLISHED);
-        when(standardRepo.findByCode("iso-9001")).thenReturn(Optional.of(s));
+        when(standardRepo.findVisibleByCode("iso-9001", TENANT)).thenReturn(Optional.of(s));
         assertThat(service.getStandardByCode("iso-9001").code()).isEqualTo("iso-9001");
     }
 
     @Test
     void getStandardByCode_notFound() {
-        when(standardRepo.findByCode("nope")).thenReturn(Optional.empty());
+        when(standardRepo.findVisibleByCode("nope", TENANT)).thenReturn(Optional.empty());
         assertThatThrownBy(() -> service.getStandardByCode("nope"))
                 .isInstanceOf(StandardNotFoundException.class);
     }
