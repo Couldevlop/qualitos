@@ -75,8 +75,12 @@ describe('StandardsService', () => {
     it('sert un catalogue de démonstration sans appeler le serveur', fakeAsync(() => {
       const page = run(service.listCatalog());
 
-      expect(page.totalElements).toBe(2);
-      expect(page.content.map(s => s.code)).toEqual(['iso-9001', 'iso-27001']);
+      expect(page.totalElements).toBe(3);
+      expect(page.content.map(s => s.code)).toEqual(['iso-9001', 'iso-27001', 'PRO-002']);
+      // La démonstration montre AUSSI un référentiel du tenant : sans lui, le
+      // badge, le filtre et l'édition n'auraient rien à quoi s'appliquer, et la
+      // fonctionnalité serait invisible hors d'un serveur.
+      expect(page.content.filter(s => s.owned).map(s => s.code)).toEqual(['PRO-002']);
     }));
 
     it('sert les adoptions de démonstration sans appeler le serveur', fakeAsync(() => {
@@ -141,6 +145,79 @@ describe('StandardsService', () => {
       expect(paged.request.params.get('page')).toBe('3');
       expect(paged.request.params.get('size')).toBe('10');
       paged.flush({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 });
+    });
+
+    it('crée un référentiel depuis une procédure de la GED', () => {
+      let done = false;
+      service.createProcedureReferential('doc-1').subscribe(() => (done = true));
+
+      const req = http.expectOne(`${BASE}/from-document`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ documentId: 'doc-1' });
+      req.flush(null, { status: 201, statusText: 'Created' });
+
+      expect(done).toBeTrue();
+    });
+
+    it('laisse remonter le refus du serveur sans le traduire', () => {
+      // 409 (référentiel déjà créé) et 422 (procédure non approuvée) ne disent pas
+      // la même chose : c'est à l'écran de choisir le message, pas au service.
+      let status = 0;
+      service.createProcedureReferential('doc-1').subscribe({ error: e => (status = e.status) });
+
+      http.expectOne(`${BASE}/from-document`)
+        .flush({ detail: 'déjà créé' }, { status: 409, statusText: 'Conflict' });
+
+      expect(status).toBe(409);
+    });
+
+    it('supprime un référentiel du tenant', () => {
+      service.deleteProcedureReferential('s-1').subscribe();
+
+      const req = http.expectOne(`${BASE}/s-1`);
+      expect(req.request.method).toBe('DELETE');
+      req.flush(null, { status: 204, statusText: 'No Content' });
+    });
+
+    /**
+     * Les neuf routes d'édition, vérifiées ensemble : ce qui compte ici est que
+     * chaque niveau vise le BON chemin. Une clause postée sous « sections » ou une
+     * exigence sous « clauses » créerait le nœud au mauvais endroit de l'arbre, et
+     * l'écran n'aurait aucun moyen de le signaler.
+     */
+    it('vise le bon chemin pour chaque niveau de l\'arborescence', () => {
+      const section = { code: '1', title: 'Programmation' };
+      const clause = { code: '1.1', title: 'Fréquence' };
+      const requirement = { code: '1.1.1', text: 'Revu chaque année', obligation: 'MUST' as const };
+
+      service.addSection('s1', section).subscribe();
+      expect(http.expectOne(`${BASE}/s1/sections`).request.method).toBe('POST');
+
+      service.updateSection('s1', 'sec1', section).subscribe();
+      expect(http.expectOne(`${BASE}/s1/sections/sec1`).request.method).toBe('PATCH');
+
+      service.deleteSection('s1', 'sec1').subscribe();
+      expect(http.expectOne(`${BASE}/s1/sections/sec1`).request.method).toBe('DELETE');
+
+      service.addClause('s1', 'sec1', clause).subscribe();
+      expect(http.expectOne(`${BASE}/s1/sections/sec1/clauses`).request.method).toBe('POST');
+
+      service.updateClause('s1', 'cl1', clause).subscribe();
+      expect(http.expectOne(`${BASE}/s1/clauses/cl1`).request.method).toBe('PATCH');
+
+      service.deleteClause('s1', 'cl1').subscribe();
+      expect(http.expectOne(`${BASE}/s1/clauses/cl1`).request.method).toBe('DELETE');
+
+      service.addRequirement('s1', 'cl1', requirement).subscribe();
+      expect(http.expectOne(`${BASE}/s1/clauses/cl1/requirements`).request.method).toBe('POST');
+
+      service.updateRequirement('s1', 'r1', requirement).subscribe();
+      expect(http.expectOne(`${BASE}/s1/requirements/r1`).request.method).toBe('PATCH');
+
+      service.deleteRequirement('s1', 'r1').subscribe();
+      expect(http.expectOne(`${BASE}/s1/requirements/r1`).request.method).toBe('DELETE');
+
+      http.match(() => true).forEach(r => r.flush(null, { status: 204, statusText: 'No Content' }));
     });
 
     it('lit le détail d\'une norme', () => {

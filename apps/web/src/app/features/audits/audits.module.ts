@@ -8,6 +8,7 @@ import { AuditsCreateDialogComponent } from './pages/audits-create-dialog/audits
 import { AuditsDetailComponent } from './pages/audits-detail/audits-detail.component';
 import { AuditsEditDialogComponent } from './pages/audits-edit-dialog/audits-edit-dialog.component';
 import { AuditsFindingDialogComponent } from './pages/audits-finding-dialog/audits-finding-dialog.component';
+import { ChecklistFromStandardDialogComponent } from './pages/checklist-from-standard-dialog/checklist-from-standard-dialog.component';
 import { AuditsListComponent } from './pages/audits-list/audits-list.component';
 import { AuditsPlanningComponent } from './pages/audits-planning/audits-planning.component';
 import { AuditsResponseDialogComponent } from './pages/audits-response-dialog/audits-response-dialog.component';
@@ -29,7 +30,8 @@ const routes: Routes = [
     AuditsChecklistDialogComponent,
     AuditsResponseDialogComponent,
     AuditsEditDialogComponent,
-    AuditsFindingDialogComponent
+    AuditsFindingDialogComponent,
+    ChecklistFromStandardDialogComponent
   ],
   imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })

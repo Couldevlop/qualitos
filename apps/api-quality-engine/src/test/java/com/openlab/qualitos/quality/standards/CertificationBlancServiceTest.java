@@ -160,7 +160,7 @@ class CertificationBlancServiceTest {
         lenient().when(standards.getStandard(STD)).thenReturn(new StandardsDto.StandardDetail(
                 STD, "iso-9001", "ISO 9001:2015 — Systèmes de management de la qualité",
                 "ISO", "2015", null, "HLS", "all", "desc", true, 36, null,
-                StandardStatus.PUBLISHED, List.of()));
+                StandardStatus.PUBLISHED, List.of(), false));
     }
 
     private void stubAlignment(List<StandardsDto.SectionAlignment> sections) {

@@ -20715,6 +20715,254 @@ Inde (centre de service)</source>
         <source>Retrait impossible.</source>
         <target state="translated">撤回できません。</target>
       </trans-unit>
+      <trans-unit id="standards.list.scope-label" datatype="html">
+        <source>Afficher</source>
+        <target state="translated">表示</target>
+      </trans-unit>
+      <trans-unit id="standards.list.scope-all" datatype="html">
+        <source>Tout</source>
+        <target state="translated">すべて</target>
+      </trans-unit>
+      <trans-unit id="standards.list.scope-owned" datatype="html">
+        <source>Procédures internes</source>
+        <target state="translated">社内手順</target>
+      </trans-unit>
+      <trans-unit id="standards.list.scope-platform" datatype="html">
+        <source>Normes livrées</source>
+        <target state="translated">提供済みの規格</target>
+      </trans-unit>
+      <trans-unit id="standards.list.create-procedure" datatype="html">
+        <source>Créer depuis une procédure</source>
+        <target state="translated">手順から作成</target>
+      </trans-unit>
+      <trans-unit id="standards.list.owned-badge" datatype="html">
+        <source>Procédure interne</source>
+        <target state="translated">社内手順</target>
+      </trans-unit>
+      <trans-unit id="standards.list.catalog-empty" datatype="html">
+        <source>Aucun référentiel sous ce filtre. Créez-en un depuis une procédure approuvée de votre GED.</source>
+        <target state="translated">この絞り込みに該当する基準はありません。文書管理の承認済み手順から作成してください。</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.title" datatype="html">
+        <source>Créer un référentiel depuis une procédure</source>
+        <target state="translated">手順から基準を作成</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.subtitle" datatype="html">
+        <source>Le référentiel reprend le code, le titre et la version de la procédure. Son arborescence naît vide : vous y saisirez les exigences à auditer.</source>
+        <target state="translated">基準は手順のコード・タイトル・版を引き継ぎます。ツリーは空の状態で作成され、監査する要求事項はご自身で入力します。</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.source" datatype="html">
+        <source>Procédure source</source>
+        <target state="translated">元となる手順</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.source-required" datatype="html">
+        <source>Choisissez la procédure à auditer.</source>
+        <target state="translated">監査する手順を選択してください。</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.none" datatype="html">
+        <source>Aucune procédure approuvée. Publiez d'abord une version de votre procédure dans la GED : auditer contre un brouillon ne prouverait rien.</source>
+        <target state="translated">承認済みの手順がありません。まず文書管理で手順の版を発行してください。草案に対する監査は何も証明しません。</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.created" datatype="html">
+        <source>Référentiel créé — saisissez maintenant ses exigences.</source>
+        <target state="translated">基準を作成しました。次に要求事項を入力してください。</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.conflict" datatype="html">
+        <source>Un référentiel existe déjà pour cette procédure.</source>
+        <target state="translated">この手順にはすでに基準があります。</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.unapproved" datatype="html">
+        <source>Cette procédure doit être approuvée avant de servir de référentiel.</source>
+        <target state="translated">この手順は基準として使う前に承認が必要です。</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.forbidden" datatype="html">
+        <source>Vous n'avez pas les droits pour créer un référentiel.</source>
+        <target state="translated">基準を作成する権限がありません。</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.error" datatype="html">
+        <source>Création impossible pour le moment.</source>
+        <target state="translated">現在作成できません。</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.add-section" datatype="html">
+        <source>Ajouter une section</source>
+        <target state="translated">セクションを追加</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.add-clause" datatype="html">
+        <source>+ clause</source>
+        <target state="translated">+ 箇条</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.add-requirement" datatype="html">
+        <source>+ exigence</source>
+        <target state="translated">+ 要求事項</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.empty" datatype="html">
+        <source>Ce référentiel est vide : saisissez celles de votre procédure que l'audit devra vérifier.</source>
+        <target state="translated">この基準は空です。監査で確認する手順の要求事項を入力してください。</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.subtitle" datatype="html">
+        <source>Le code n'a besoin d'être unique que parmi ses voisins immédiats.</source>
+        <target state="translated">コードは同じ階層の隣接する要素の間でのみ一意であれば十分です。</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.code" datatype="html">
+        <source>Code</source>
+        <target state="translated">コード</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.code-placeholder" datatype="html">
+        <source>Ex. : 1, 1.1, 1.1.1</source>
+        <target state="translated">例：1、1.1、1.1.1</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.code-required" datatype="html">
+        <source>Le code est requis.</source>
+        <target state="translated">コードは必須です。</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.code-maxlength" datatype="html">
+        <source>Code trop long pour ce niveau.</source>
+        <target state="translated">この階層にはコードが長すぎます。</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-required" datatype="html">
+        <source>Le titre est requis.</source>
+        <target state="translated">タイトルは必須です。</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.description" datatype="html">
+        <source>Description (optionnelle)</source>
+        <target state="translated">説明（任意）</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.text" datatype="html">
+        <source>Texte de l'exigence</source>
+        <target state="translated">要求事項の本文</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.text-placeholder" datatype="html">
+        <source>Ce que la procédure impose, tel qu'un auditeur le vérifiera.</source>
+        <target state="translated">監査員が確認する形で、手順が求めていること。</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.text-required" datatype="html">
+        <source>Le texte de l'exigence est requis.</source>
+        <target state="translated">要求事項の本文は必須です。</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.obligation" datatype="html">
+        <source>Obligation</source>
+        <target state="translated">義務レベル</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.risk" datatype="html">
+        <source>Risque si absente</source>
+        <target state="translated">欠如した場合のリスク</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.evidence" datatype="html">
+        <source>Preuve attendue (optionnelle)</source>
+        <target state="translated">期待される証跡（任意）</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.evidence-placeholder" datatype="html">
+        <source>Ex. : programme d'audit signé</source>
+        <target state="translated">例：署名済みの監査プログラム</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.criteria" datatype="html">
+        <source>Critère mesurable (optionnel)</source>
+        <target state="translated">測定可能な基準（任意）</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-new-section" datatype="html">
+        <source>Nouvelle section</source>
+        <target state="translated">新しいセクション</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-edit-section" datatype="html">
+        <source>Modifier la section</source>
+        <target state="translated">セクションを編集</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-new-clause" datatype="html">
+        <source>Nouvelle clause</source>
+        <target state="translated">新しい箇条</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-edit-clause" datatype="html">
+        <source>Modifier la clause</source>
+        <target state="translated">箇条を編集</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-new-requirement" datatype="html">
+        <source>Nouvelle exigence</source>
+        <target state="translated">新しい要求事項</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-edit-requirement" datatype="html">
+        <source>Modifier l'exigence</source>
+        <target state="translated">要求事項を編集</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.confirm-section" datatype="html">
+        <source>Supprimer la section <x id="code"/> et les <x id="count"/> clauses qu'elle contient ?</source>
+        <target state="translated">セクション <x id="code"/> と、そこに含まれる <x id="count"/> 件の箇条を削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.confirm-clause" datatype="html">
+        <source>Supprimer la clause <x id="code"/> et les <x id="count"/> exigences qu'elle contient ?</source>
+        <target state="translated">箇条 <x id="code"/> と、そこに含まれる <x id="count"/> 件の要求事項を削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.confirm-requirement" datatype="html">
+        <source>Supprimer l'exigence <x id="code"/> ?</source>
+        <target state="translated">要求事項 <x id="code"/> を削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.error-conflict" datatype="html">
+        <source>Ce code est déjà pris à ce niveau.</source>
+        <target state="translated">このコードはこの階層で既に使われています。</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.error-platform" datatype="html">
+        <source>Une norme de la plateforme ne se modifie pas.</source>
+        <target state="translated">プラットフォームの規格は変更できません。</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.error-generic" datatype="html">
+        <source>Modification impossible pour le moment.</source>
+        <target state="translated">現在変更できません。</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.from-standard" datatype="html">
+        <source>Générer depuis un référentiel</source>
+        <target state="translated">基準から生成</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.title" datatype="html">
+        <source>Générer la checklist depuis un référentiel</source>
+        <target state="translated">基準からチェックリストを生成</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.subtitle" datatype="html">
+        <source>Chaque exigence du référentiel devient une question. Les questions sont copiées : le référentiel pourra évoluer ensuite sans réécrire cet audit.</source>
+        <target state="translated">基準の各要求事項が質問になります。質問は複製されるため、基準が後で変わってもこの監査は書き換わりません。</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.submit" datatype="html">
+        <source>Générer</source>
+        <target state="translated">生成</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.standard" datatype="html">
+        <source>Référentiel</source>
+        <target state="translated">基準</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.owned" datatype="html">
+        <source>(procédure interne)</source>
+        <target state="translated">（社内手順）</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.standard-required" datatype="html">
+        <source>Choisissez le référentiel à auditer.</source>
+        <target state="translated">監査する基準を選択してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.none" datatype="html">
+        <source>Aucun référentiel disponible. Adoptez une norme du catalogue, ou créez un référentiel depuis une procédure approuvée de votre GED.</source>
+        <target state="translated">利用できる基準がありません。カタログから規格を採用するか、文書管理の承認済み手順から基準を作成してください。</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.created" datatype="html">
+        <source><x id="count"/> questions générées.</source>
+        <target state="translated"><x id="count"/> 件の質問を生成しました。</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.empty" datatype="html">
+        <source>Ce référentiel ne contient encore aucune exigence.</source>
+        <target state="translated">この基準にはまだ要求事項がありません。</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.conflict" datatype="html">
+        <source>La checklist n'est pas vide, ou cet audit n'est plus au stade de la préparation.</source>
+        <target state="translated">チェックリストが空でないか、この監査は準備段階を過ぎています。</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.not-found" datatype="html">
+        <source>Ce référentiel est introuvable.</source>
+        <target state="translated">この基準が見つかりません。</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.error" datatype="html">
+        <source>Génération impossible pour le moment.</source>
+        <target state="translated">現在生成できません。</target>
+      </trans-unit>
+      <trans-unit id="common.none" datatype="html">
+        <source>—</source>
+        <target state="translated">—</target>
+      </trans-unit>
       <trans-unit id="nav.storyboard" datatype="html">
         <source>Storyboard IA</source>
         <target state="translated">AIストーリーボード</target>

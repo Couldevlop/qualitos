@@ -192,6 +192,44 @@ class AuditControllerTest {
     }
 
     @Test @WithMockUser
+    void generateChecklistFromStandard_returns201() throws Exception {
+        UUID standardId = UUID.randomUUID();
+        when(service.generateChecklistFromStandard(PLAN, standardId))
+                .thenReturn(java.util.List.of(itemResp()));
+
+        mockMvc.perform(post("/api/v1/audits/plans/{id}/checklist/from-standard", PLAN).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsString(
+                                new AuditController.GenerateChecklistRequest(standardId))))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$[0].id").exists());
+    }
+
+    /** Sans référentiel, il n'y a rien à générer : la requête est rejetée, pas devinée. */
+    @Test @WithMockUser
+    void generateChecklistFromStandard_missingStandard_returns400() throws Exception {
+        mockMvc.perform(post("/api/v1/audits/plans/{id}/checklist/from-standard", PLAN).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isBadRequest());
+
+        verify(service, never()).generateChecklistFromStandard(any(), any());
+    }
+
+    @Test @WithMockUser
+    void generateChecklistFromStandard_onANonEmptyChecklist_returns409() throws Exception {
+        UUID standardId = UUID.randomUUID();
+        when(service.generateChecklistFromStandard(PLAN, standardId))
+                .thenThrow(new AuditStateException("Checklist is not empty"));
+
+        mockMvc.perform(post("/api/v1/audits/plans/{id}/checklist/from-standard", PLAN).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsString(
+                                new AuditController.GenerateChecklistRequest(standardId))))
+                .andExpect(status().isConflict());
+    }
+
+    @Test @WithMockUser
     void addItem_missingQuestion_returns400() throws Exception {
         mockMvc.perform(post("/api/v1/audits/plans/{id}/checklist", PLAN).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -351,7 +389,7 @@ class AuditControllerTest {
 
     private AuditDto.PlanResponse planResp(AuditStatus s) {
         return new AuditDto.PlanResponse(
-                PLAN, TENANT, "AUD-2026-0007", "T", null, AuditType.INTERNAL, s, null,
+                PLAN, TENANT, "AUD-2026-0007", "T", null, AuditType.INTERNAL, s, null, null,
                 LEAD, null, null, null, null, null, null, null,
                 Instant.now(), Instant.now(), List.of(), List.of(), null);
     }

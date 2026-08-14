@@ -186,6 +186,23 @@ export class AuditsService {
     return this.http.post<ChecklistItemResponse>(`${this.endpoint}/${planId}/checklist`, input);
   }
 
+  /**
+   * Tire la checklist des exigences d'un référentiel du catalogue (§8) — la
+   * procédure interne du tenant comme une norme livrée.
+   *
+   * Aucune branche de démonstration : les questions produites sont la copie du
+   * référentiel réel, et en fabriquer sans lui donnerait un audit qui ne vérifie
+   * rien. Le refus du serveur (409 si la checklist n'est pas vide, 404 si le
+   * référentiel n'est pas visible) remonte tel quel.
+   */
+  generateChecklistFromStandard(
+    planId: string,
+    standardId: string
+  ): Observable<ChecklistItemResponse[]> {
+    return this.http.post<ChecklistItemResponse[]>(
+      `${this.endpoint}/${planId}/checklist/from-standard`, { standardId });
+  }
+
   respondChecklistItem(
     planId: string,
     itemId: string,

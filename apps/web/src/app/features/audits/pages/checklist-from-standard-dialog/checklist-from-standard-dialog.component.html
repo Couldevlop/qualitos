@@ -1,0 +1,34 @@
+<qos-form-dialog
+  i18n-title="@@audits.from-standard.title"
+  title="Générer la checklist depuis un référentiel"
+  i18n-subtitle="@@audits.from-standard.subtitle"
+  subtitle="Chaque exigence du référentiel devient une question. Les questions sont copiées : le référentiel pourra évoluer ensuite sans réécrire cet audit."
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@audits.from-standard.submit"
+  submitLabel="Générer"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <ng-container *ngIf="standards$ | async as standards">
+    <mat-form-field *ngIf="standards.length" appearance="outline" class="full">
+      <mat-label i18n="@@audits.from-standard.standard">Référentiel</mat-label>
+      <mat-select formControlName="standardId" required>
+        <mat-option *ngFor="let s of standards" [value]="s.id">
+          {{ s.code }} — {{ s.fullName }}
+          <span class="owned-hint" *ngIf="s.owned" i18n="@@audits.from-standard.owned">(procédure interne)</span>
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.controls.standardId.hasError('required')"
+                 i18n="@@audits.from-standard.standard-required">
+        Choisissez le référentiel à auditer.
+      </mat-error>
+    </mat-form-field>
+
+    <p *ngIf="!standards.length" class="empty-state" i18n="@@audits.from-standard.none">
+      Aucun référentiel disponible. Adoptez une norme du catalogue, ou créez un référentiel
+      depuis une procédure approuvée de votre GED.
+    </p>
+  </ng-container>
+</qos-form-dialog>

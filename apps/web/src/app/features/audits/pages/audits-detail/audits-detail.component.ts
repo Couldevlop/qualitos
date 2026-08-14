@@ -19,6 +19,10 @@ import {
 } from '../audits-finding-dialog/audits-finding-dialog.component';
 import { AuditPlanResponse, AuditStatus, ChecklistItemResponse } from '../../audits.types';
 import {
+  ChecklistFromStandardDialogComponent,
+  ChecklistFromStandardDialogData
+} from '../checklist-from-standard-dialog/checklist-from-standard-dialog.component';
+import {
   AuditsChecklistDialogComponent,
   AuditsChecklistDialogData
 } from '../audits-checklist-dialog/audits-checklist-dialog.component';
@@ -164,6 +168,32 @@ export class AuditsDetailComponent implements OnInit {
 
   findingBadge(type: string): string {
     return 'finding-badge finding-' + type.toLowerCase().replace('_', '-');
+  }
+
+  /**
+   * Proposé seulement tant que l'audit se PRÉPARE et que sa checklist est vide :
+   * le serveur refuse dans tous les autres cas (409), et offrir le bouton
+   * reviendrait à promettre un geste qui échoue.
+   */
+  canGenerateFromStandard(p: AuditPlanResponse): boolean {
+    return p.status === 'PLANNED' && !(p.checklist?.length);
+  }
+
+  openGenerateFromStandard(): void {
+    const data: ChecklistFromStandardDialogData = { planId: this.planId };
+    this.dialog
+      .open(ChecklistFromStandardDialogComponent, {
+        data,
+        autoFocus: 'first-tabbable',
+        restoreFocus: true,
+        panelClass: 'qos-dialog-panel'
+      })
+      .afterClosed()
+      .subscribe(generated => {
+        // 0 question générée : le référentiel était vide, mais l'audit le vise
+        // désormais — la fiche a donc changé et doit être relue.
+        if (generated !== undefined) this.reload$.next();
+      });
   }
 
   openAddChecklist(): void {

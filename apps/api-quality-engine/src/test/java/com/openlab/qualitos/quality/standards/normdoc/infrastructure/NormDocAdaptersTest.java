@@ -9,6 +9,7 @@ import com.openlab.qualitos.quality.standards.Standard;
 import com.openlab.qualitos.quality.standards.StandardRepository;
 import com.openlab.qualitos.quality.standards.normdoc.application.NormDocEventPublisher;
 import com.openlab.qualitos.quality.standards.normdoc.application.NormDocStandardLookup;
+import com.openlab.qualitos.quality.standards.normdoc.application.NormDocTenantProvider;
 import com.openlab.qualitos.quality.standards.normdoc.domain.NormDocKind;
 import com.openlab.qualitos.quality.standards.normdoc.domain.NormDocSection;
 import com.openlab.qualitos.quality.standards.normdoc.domain.NormativeDocument;
@@ -81,23 +82,31 @@ class NormDocAdaptersTest {
     // ---- Standard lookup ----
 
     @Test
-    void standardLookup_found(@Mock StandardRepository repo) {
+    void standardLookup_found(@Mock StandardRepository repo, @Mock NormDocTenantProvider tenantProvider) {
         Standard s = new Standard();
         s.setId(STD);
         s.setCode("iso-9001");
         s.setFullName("ISO 9001:2015");
-        when(repo.findById(STD)).thenReturn(Optional.of(s));
+        when(tenantProvider.requireTenantId()).thenReturn(TENANT);
+        when(repo.findVisibleById(STD, TENANT)).thenReturn(Optional.of(s));
         Optional<NormDocStandardLookup.StandardRef> ref =
-                new StandardLookupAdapter(repo).findById(STD);
+                new StandardLookupAdapter(repo, tenantProvider).findById(STD);
         assertThat(ref).isPresent();
         assertThat(ref.get().code()).isEqualTo("iso-9001");
         assertThat(ref.get().fullName()).isEqualTo("ISO 9001:2015");
     }
 
+    /**
+     * Couvre aussi le cas d'un référentiel d'un AUTRE tenant : findVisibleById ne le
+     * renvoie pas (filtré en base), l'adaptateur doit donc répercuter l'absence — pas
+     * de fuite du référentiel privé d'un tenant via la génération de document normdoc.
+     */
     @Test
-    void standardLookup_absent(@Mock StandardRepository repo) {
-        when(repo.findById(STD)).thenReturn(Optional.empty());
-        assertThat(new StandardLookupAdapter(repo).findById(STD)).isEmpty();
+    void standardLookup_absent(@Mock StandardRepository repo, @Mock NormDocTenantProvider tenantProvider) {
+        when(tenantProvider.requireTenantId()).thenReturn(TENANT);
+        when(repo.findVisibleById(STD, TENANT)).thenReturn(Optional.empty());
+        assertThat(new StandardLookupAdapter(repo, tenantProvider).findById(STD)).isEmpty();
+        verify(repo).findVisibleById(STD, TENANT);
     }
 
     // ---- Audit publisher ----

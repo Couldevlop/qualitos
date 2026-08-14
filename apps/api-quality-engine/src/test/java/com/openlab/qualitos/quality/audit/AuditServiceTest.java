@@ -34,6 +34,7 @@ class AuditServiceTest {
     @Mock AuditPlanRepository planRepo;
     @Mock AuditChecklistItemRepository checklistRepo;
     @Mock AuditFindingRepository findingRepo;
+    @Mock com.openlab.qualitos.quality.standards.StandardRepository standardRepo;
     @Mock AiGatewayClient ai;
     AuditService service;
 
@@ -52,7 +53,7 @@ class AuditServiceTest {
 
     @BeforeEach
     void ctx() {
-        service = new AuditService(planRepo, checklistRepo, findingRepo, ai, FIXED_CLOCK);
+        service = new AuditService(planRepo, checklistRepo, findingRepo, standardRepo, ai, FIXED_CLOCK);
         TenantContext.setTenantId(TENANT.toString());
     }
     @AfterEach  void clr() { TenantContext.clear(); }

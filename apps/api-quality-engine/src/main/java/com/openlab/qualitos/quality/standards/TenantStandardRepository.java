@@ -16,4 +16,14 @@ public interface TenantStandardRepository extends JpaRepository<TenantStandard, 
     Optional<TenantStandard> findByIdAndTenantId(UUID id, UUID tenantId);
 
     boolean existsByTenantIdAndStandardId(UUID tenantId, UUID standardId);
+
+    /**
+     * Un référentiel encore suivi par un projet de conformité ne se supprime pas.
+     *
+     * <p>Sans tenant volontairement : le référentiel visé appartient déjà au tenant
+     * courant (la suppression passe par {@code findOwnedById}), et une adoption par
+     * un AUTRE tenant — impossible aujourd'hui, mais qu'aucune contrainte de base
+     * n'interdit — doit aussi retenir la suppression plutôt que d'être ignorée.
+     */
+    boolean existsByStandardId(UUID standardId);
 }

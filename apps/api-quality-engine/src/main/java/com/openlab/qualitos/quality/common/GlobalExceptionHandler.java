@@ -47,6 +47,11 @@ import com.openlab.qualitos.quality.visiongateway.VisionGatewayException;
 import com.openlab.qualitos.quality.visiongateway.VisionImageTooLargeException;
 import com.openlab.qualitos.quality.visiongateway.VisionImageValidationException;
 import com.openlab.qualitos.quality.visiongateway.VisionUnavailableException;
+import com.openlab.qualitos.quality.standards.ClauseNotFoundException;
+import com.openlab.qualitos.quality.standards.PlatformStandardWriteException;
+import com.openlab.qualitos.quality.standards.ProcedureSourceException;
+import com.openlab.qualitos.quality.standards.SectionNotFoundException;
+import com.openlab.qualitos.quality.standards.StandardCodeConflictException;
 import com.openlab.qualitos.quality.standards.StandardNotFoundException;
 import com.openlab.qualitos.quality.standards.TenantStandardNotFoundException;
 import com.openlab.qualitos.quality.industry.IndustryPackNotFoundException;
@@ -519,6 +524,56 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/standard-not-found"));
         problem.setTitle("Standard Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ProcedureSourceException.class)
+    public ProblemDetail handleProcedureSource(ProcedureSourceException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/procedure-source"));
+        problem.setTitle("Invalid Procedure Source");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(StandardCodeConflictException.class)
+    public ProblemDetail handleStandardCodeConflict(StandardCodeConflictException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/standard-code-conflict"));
+        problem.setTitle("Standard Code Conflict");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * 403 et non 404 : la norme de la plateforme est visible de tous, son
+     * existence n'est pas un secret — la masquer laisserait croire à une faute de
+     * frappe. Le référentiel d'un AUTRE tenant, lui, reste un 404.
+     */
+    @ExceptionHandler(PlatformStandardWriteException.class)
+    public ProblemDetail handlePlatformStandardWrite(PlatformStandardWriteException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/platform-standard-write"));
+        problem.setTitle("Platform Standard Is Read-Only");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(SectionNotFoundException.class)
+    public ProblemDetail handleSectionNotFound(SectionNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/standard-section-not-found"));
+        problem.setTitle("Standard Section Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ClauseNotFoundException.class)
+    public ProblemDetail handleClauseNotFound(ClauseNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/standard-clause-not-found"));
+        problem.setTitle("Standard Clause Not Found");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

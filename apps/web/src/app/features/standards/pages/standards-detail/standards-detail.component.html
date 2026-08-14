@@ -52,11 +52,48 @@
     <!-- Onglet Exigences -->
     <mat-tab label="Exigences" i18n-label="@@standards.detail.tab-requirements">
       <div class="tab-body" *ngIf="standard as s">
+        <div class="tree-toolbar" *ngIf="s.owned">
+          <button mat-flat-button color="primary" class="add-section-btn" (click)="addSection()">
+            <mat-icon>add</mat-icon>
+            <span i18n="@@standards.tree.add-section">Ajouter une section</span>
+          </button>
+        </div>
+
+        <p class="tree-empty" *ngIf="s.owned && !s.sections.length" i18n="@@standards.tree.empty">
+          Ce référentiel est vide : saisissez celles de votre procédure que l'audit devra vérifier.
+        </p>
+
         <div class="section" *ngFor="let sec of s.sections">
-          <h3>§{{ sec.code }} — {{ sec.title }}</h3>
+          <h3>
+            §{{ sec.code }} — {{ sec.title }}
+            <span class="node-actions" *ngIf="s.owned">
+              <button mat-icon-button class="edit-section-btn" (click)="editSection(sec)"
+                      i18n-aria-label="@@common.edit" aria-label="Modifier">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button class="delete-section-btn" (click)="deleteSection(sec)"
+                      i18n-aria-label="@@common.delete" aria-label="Supprimer">
+                <mat-icon>delete</mat-icon>
+              </button>
+              <button mat-button class="add-clause-btn" (click)="addClause(sec)"
+                      i18n="@@standards.tree.add-clause">+ clause</button>
+            </span>
+          </h3>
           <div class="clause" *ngFor="let cl of sec.clauses">
             <div class="clause-head">
               <strong>{{ cl.code }}</strong> {{ cl.title }}
+              <span class="node-actions" *ngIf="s.owned">
+                <button mat-icon-button class="edit-clause-btn" (click)="editClause(cl)"
+                        i18n-aria-label="@@common.edit" aria-label="Modifier">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button class="delete-clause-btn" (click)="deleteClause(cl)"
+                        i18n-aria-label="@@common.delete" aria-label="Supprimer">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <button mat-button class="add-requirement-btn" (click)="addRequirement(cl)"
+                        i18n="@@standards.tree.add-requirement">+ exigence</button>
+              </span>
             </div>
             <table class="req-table">
               <tr *ngFor="let r of cl.requirements" [class.covered]="coveredRequirementIds.has(r.id)">
@@ -73,6 +110,16 @@
                   <ng-template #notcov>
                     <button mat-button class="cover-btn" (click)="coverRequirement(r.id)" i18n="@@standards.detail.req-add-evidence">+ preuve</button>
                   </ng-template>
+                  <span class="node-actions" *ngIf="s.owned">
+                    <button mat-icon-button class="edit-requirement-btn" (click)="editRequirement(r)"
+                            i18n-aria-label="@@common.edit" aria-label="Modifier">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button class="delete-requirement-btn" (click)="deleteRequirement(r)"
+                            i18n-aria-label="@@common.delete" aria-label="Supprimer">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </span>
                 </td>
               </tr>
             </table>
