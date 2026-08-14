@@ -37,6 +37,7 @@ class ProcedureStandardServiceTest {
     @Mock StandardRepository standards;
     @Mock DocumentRepository documents;
     @Mock DocumentVersionRepository versions;
+    @Mock TenantStandardRepository adoptions;
 
     ProcedureStandardService service;
 
@@ -47,7 +48,7 @@ class ProcedureStandardServiceTest {
     @BeforeEach
     void setUp() {
         TenantContext.setTenantId(TENANT.toString());
-        service = new ProcedureStandardService(standards, documents, versions);
+        service = new ProcedureStandardService(standards, documents, versions, adoptions);
     }
 
     @AfterEach
