@@ -16,6 +16,13 @@ export interface StandardSummary {
   applicableIndustries?: string;
   status: StandardStatus;
   recertificationCycleMonths?: number;
+  /**
+   * Vrai si ce référentiel appartient au tenant (§8) : lui seul peut l'éditer ou
+   * le supprimer. Le serveur expose un booléen et non l'identifiant du
+   * propriétaire — la lecture étant déjà filtrée par tenant, il ne pourrait
+   * désigner que nous.
+   */
+  owned: boolean;
 }
 
 export interface RequirementDetail {
@@ -36,12 +43,40 @@ export interface SectionDetail {
   id: string; code: string; title: string; description?: string;
   orderIndex: number; clauses: ClauseDetail[];
 }
+/**
+ * Saisie d'un nœud de l'arborescence d'un référentiel du tenant (§8).
+ *
+ * Les longueurs maximales sont celles des colonnes côté serveur — 20 pour un
+ * code de section, 30 pour une clause et une exigence : les valider ici évite
+ * un aller-retour pour une erreur que l'écran peut annoncer tout de suite.
+ */
+export interface SectionRequest {
+  code: string;
+  title: string;
+  description?: string;
+}
+export interface ClauseRequest {
+  code: string;
+  title: string;
+  description?: string;
+}
+export interface RequirementRequest {
+  code: string;
+  text: string;
+  obligation: ObligationLevel;
+  evidenceTypes?: string;
+  measurableCriteria?: string;
+  riskIfMissing?: RiskLevel;
+}
+
 export interface StandardDetail {
   id: string; code: string; fullName: string; publisher?: string;
   currentVersion: string; publicationDate?: string; family?: string;
   applicableIndustries?: string; description?: string;
   certificationBodyRequired: boolean; recertificationCycleMonths?: number;
   relatedNormCodes?: string; status: StandardStatus; sections: SectionDetail[];
+  /** Voir {@link StandardSummary.owned}. */
+  owned: boolean;
 }
 
 export interface AdoptionResponse {

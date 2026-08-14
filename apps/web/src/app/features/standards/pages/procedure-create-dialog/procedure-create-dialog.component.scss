@@ -1,0 +1,12 @@
+.full {
+  width: 100%;
+  min-width: 420px;
+}
+
+.empty-state {
+  margin: 0;
+  max-width: 460px;
+  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6));
+  font-size: 13px;
+  line-height: 1.6;
+}
