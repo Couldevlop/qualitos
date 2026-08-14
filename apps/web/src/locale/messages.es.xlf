@@ -21344,6 +21344,254 @@ India (centro de servicio)</target>
         <source>Impossible de charger l'éditeur de diagramme.</source>
         <target state="translated">No se puede cargar el editor de diagramas.</target>
       </trans-unit>
+      <trans-unit id="audits.detail.from-standard" datatype="html">
+        <source>Générer depuis un référentiel</source>
+        <target state="translated">Generar desde un referencial</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.title" datatype="html">
+        <source>Générer la checklist depuis un référentiel</source>
+        <target state="translated">Generar la lista de verificación desde un referencial</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.subtitle" datatype="html">
+        <source>Chaque exigence du référentiel devient une question. Les questions sont copiées : le référentiel pourra évoluer ensuite sans réécrire cet audit.</source>
+        <target state="translated">Cada requisito del referencial se convierte en una pregunta. Las preguntas se copian: el referencial podrá evolucionar después sin reescribir esta auditoría.</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.submit" datatype="html">
+        <source>Générer</source>
+        <target state="translated">Generar</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.standard" datatype="html">
+        <source>Référentiel</source>
+        <target state="translated">Referencial</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.owned" datatype="html">
+        <source>(procédure interne)</source>
+        <target state="translated">(procedimiento interno)</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.standard-required" datatype="html">
+        <source>Choisissez le référentiel à auditer.</source>
+        <target state="translated">Elija el referencial que se va a auditar.</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.none" datatype="html">
+        <source>Aucun référentiel disponible. Adoptez une norme du catalogue, ou créez un référentiel depuis une procédure approuvée de votre GED.</source>
+        <target state="translated">Ningún referencial disponible. Adopte una norma del catálogo o cree un referencial a partir de un procedimiento aprobado de su gestión documental.</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.created" datatype="html">
+        <source><x id="count" equiv-text="items.length"/> questions générées.</source>
+        <target state="translated"><x id="count" equiv-text="items.length"/> preguntas generadas.</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.empty" datatype="html">
+        <source>Ce référentiel ne contient encore aucune exigence.</source>
+        <target state="translated">Este referencial todavía no contiene ningún requisito.</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.conflict" datatype="html">
+        <source>La checklist n&apos;est pas vide, ou cet audit n&apos;est plus au stade de la préparation.</source>
+        <target state="translated">La lista de verificación no está vacía, o esta auditoría ya no está en preparación.</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.not-found" datatype="html">
+        <source>Ce référentiel est introuvable.</source>
+        <target state="translated">No se encuentra este referencial.</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.error" datatype="html">
+        <source>Génération impossible pour le moment.</source>
+        <target state="translated">La generación no es posible por el momento.</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.title" datatype="html">
+        <source>Créer un référentiel depuis une procédure</source>
+        <target state="translated">Crear un referencial a partir de un procedimiento</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.subtitle" datatype="html">
+        <source>Le référentiel reprend le code, le titre et la version de la procédure. Son arborescence naît vide : vous y saisirez les exigences à auditer.</source>
+        <target state="translated">El referencial retoma el código, el título y la versión del procedimiento. Su árbol nace vacío: usted introducirá los requisitos que se van a auditar.</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.source" datatype="html">
+        <source>Procédure source</source>
+        <target state="translated">Procedimiento de origen</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.source-required" datatype="html">
+        <source>Choisissez la procédure à auditer.</source>
+        <target state="translated">Elija el procedimiento que se va a auditar.</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.none" datatype="html">
+        <source>Aucune procédure approuvée. Publiez d&apos;abord une version de votre procédure dans la GED : auditer contre un brouillon ne prouverait rien.</source>
+        <target state="translated">Ningún procedimiento aprobado. Publique primero una versión de su procedimiento en la gestión documental: auditar frente a un borrador no probaría nada.</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.created" datatype="html">
+        <source>Référentiel créé — saisissez maintenant ses exigences.</source>
+        <target state="translated">Referencial creado: introduzca ahora sus requisitos.</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.conflict" datatype="html">
+        <source>Un référentiel existe déjà pour cette procédure.</source>
+        <target state="translated">Ya existe un referencial para este procedimiento.</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.unapproved" datatype="html">
+        <source>Cette procédure doit être approuvée avant de servir de référentiel.</source>
+        <target state="translated">Este procedimiento debe estar aprobado antes de servir como referencial.</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.forbidden" datatype="html">
+        <source>Vous n&apos;avez pas les droits pour créer un référentiel.</source>
+        <target state="translated">No tiene permisos para crear un referencial.</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.error" datatype="html">
+        <source>Création impossible pour le moment.</source>
+        <target state="translated">La creación no es posible por el momento.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.add-section" datatype="html">
+        <source>Ajouter une section</source>
+        <target state="translated">Añadir una sección</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.empty" datatype="html">
+        <source>Ce référentiel est vide : saisissez celles de votre procédure que l&apos;audit devra vérifier.</source>
+        <target state="translated">Este referencial está vacío: introduzca los de su procedimiento que la auditoría deberá verificar.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.add-clause" datatype="html">
+        <source>+ clause</source>
+        <target state="translated">+ cláusula</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.add-requirement" datatype="html">
+        <source>+ exigence</source>
+        <target state="translated">+ requisito</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.confirm-section" datatype="html">
+        <source>Supprimer la section <x id="code" equiv-text="sec.code"/> et les <x id="count" equiv-text="count"/> clauses qu&apos;elle contient ?</source>
+        <target state="translated">¿Eliminar la sección <x id="code" equiv-text="sec.code"/> y las <x id="count" equiv-text="count"/> cláusulas que contiene?</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.confirm-clause" datatype="html">
+        <source>Supprimer la clause <x id="code" equiv-text="cl.code"/> et les <x id="count" equiv-text="count"/> exigences qu&apos;elle contient ?</source>
+        <target state="translated">¿Eliminar la cláusula <x id="code" equiv-text="cl.code"/> y los <x id="count" equiv-text="count"/> requisitos que contiene?</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.confirm-requirement" datatype="html">
+        <source>Supprimer l&apos;exigence <x id="code" equiv-text="r.code"/> ?</source>
+        <target state="translated">¿Eliminar el requisito <x id="code" equiv-text="r.code"/>?</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.error-conflict" datatype="html">
+        <source>Ce code est déjà pris à ce niveau.</source>
+        <target state="translated">Este código ya está ocupado en este nivel.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.error-platform" datatype="html">
+        <source>Une norme de la plateforme ne se modifie pas.</source>
+        <target state="translated">Una norma de la plataforma no se modifica.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.error-generic" datatype="html">
+        <source>Modification impossible pour le moment.</source>
+        <target state="translated">La modificación no es posible por el momento.</target>
+      </trans-unit>
+      <trans-unit id="standards.list.scope-label" datatype="html">
+        <source>Afficher</source>
+        <target state="translated">Mostrar</target>
+      </trans-unit>
+      <trans-unit id="standards.list.scope-all" datatype="html">
+        <source>Tout</source>
+        <target state="translated">Todo</target>
+      </trans-unit>
+      <trans-unit id="standards.list.scope-owned" datatype="html">
+        <source>Procédures internes</source>
+        <target state="translated">Procedimientos internos</target>
+      </trans-unit>
+      <trans-unit id="standards.list.scope-platform" datatype="html">
+        <source>Normes livrées</source>
+        <target state="translated">Normas entregadas</target>
+      </trans-unit>
+      <trans-unit id="standards.list.create-procedure" datatype="html">
+        <source>Créer depuis une procédure</source>
+        <target state="translated">Crear a partir de un procedimiento</target>
+      </trans-unit>
+      <trans-unit id="standards.list.owned-badge" datatype="html">
+        <source>Procédure interne</source>
+        <target state="translated">Procedimiento interno</target>
+      </trans-unit>
+      <trans-unit id="standards.list.catalog-empty" datatype="html">
+        <source>Aucun référentiel sous ce filtre. Créez-en un depuis une procédure approuvée de votre GED.</source>
+        <target state="translated">Ningún referencial con este filtro. Cree uno a partir de un procedimiento aprobado de su gestión documental.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.subtitle" datatype="html">
+        <source>Le code n&apos;a besoin d&apos;être unique que parmi ses voisins immédiats.</source>
+        <target state="translated">El código solo necesita ser único entre sus vecinos inmediatos.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.code" datatype="html">
+        <source>Code</source>
+        <target state="translated">Código</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.code-placeholder" datatype="html">
+        <source>Ex. : 1, 1.1, 1.1.1</source>
+        <target state="translated">Ej.: 1, 1.1, 1.1.1</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.code-required" datatype="html">
+        <source>Le code est requis.</source>
+        <target state="translated">El código es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.code-maxlength" datatype="html">
+        <source>Code trop long pour ce niveau.</source>
+        <target state="translated">Código demasiado largo para este nivel.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-required" datatype="html">
+        <source>Le titre est requis.</source>
+        <target state="translated">El título es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.description" datatype="html">
+        <source>Description (optionnelle)</source>
+        <target state="translated">Descripción (opcional)</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.text" datatype="html">
+        <source>Texte de l&apos;exigence</source>
+        <target state="translated">Texto del requisito</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.text-placeholder" datatype="html">
+        <source>Ce que la procédure impose, tel qu&apos;un auditeur le vérifiera.</source>
+        <target state="translated">Lo que exige el procedimiento, tal como lo verificará un auditor.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.text-required" datatype="html">
+        <source>Le texte de l&apos;exigence est requis.</source>
+        <target state="translated">El texto del requisito es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.obligation" datatype="html">
+        <source>Obligation</source>
+        <target state="translated">Obligación</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.risk" datatype="html">
+        <source>Risque si absente</source>
+        <target state="translated">Riesgo si falta</target>
+      </trans-unit>
+      <trans-unit id="common.none" datatype="html">
+        <source>—</source>
+        <target state="translated">—</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.evidence" datatype="html">
+        <source>Preuve attendue (optionnelle)</source>
+        <target state="translated">Evidencia esperada (opcional)</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.evidence-placeholder" datatype="html">
+        <source>Ex. : programme d&apos;audit signé</source>
+        <target state="translated">Ej.: programa de auditoría firmado</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.criteria" datatype="html">
+        <source>Critère mesurable (optionnel)</source>
+        <target state="translated">Criterio medible (opcional)</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-edit-section" datatype="html">
+        <source>Modifier la section</source>
+        <target state="translated">Modificar la sección</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-new-section" datatype="html">
+        <source>Nouvelle section</source>
+        <target state="translated">Nueva sección</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-edit-clause" datatype="html">
+        <source>Modifier la clause</source>
+        <target state="translated">Modificar la cláusula</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-new-clause" datatype="html">
+        <source>Nouvelle clause</source>
+        <target state="translated">Nueva cláusula</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-edit-requirement" datatype="html">
+        <source>Modifier l&apos;exigence</source>
+        <target state="translated">Modificar el requisito</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-new-requirement" datatype="html">
+        <source>Nouvelle exigence</source>
+        <target state="translated">Nuevo requisito</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
