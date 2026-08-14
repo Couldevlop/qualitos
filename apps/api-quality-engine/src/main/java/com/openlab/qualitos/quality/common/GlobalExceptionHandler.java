@@ -47,6 +47,8 @@ import com.openlab.qualitos.quality.visiongateway.VisionGatewayException;
 import com.openlab.qualitos.quality.visiongateway.VisionImageTooLargeException;
 import com.openlab.qualitos.quality.visiongateway.VisionImageValidationException;
 import com.openlab.qualitos.quality.visiongateway.VisionUnavailableException;
+import com.openlab.qualitos.quality.standards.ProcedureSourceException;
+import com.openlab.qualitos.quality.standards.StandardCodeConflictException;
 import com.openlab.qualitos.quality.standards.StandardNotFoundException;
 import com.openlab.qualitos.quality.standards.TenantStandardNotFoundException;
 import com.openlab.qualitos.quality.industry.IndustryPackNotFoundException;
@@ -519,6 +521,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/standard-not-found"));
         problem.setTitle("Standard Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ProcedureSourceException.class)
+    public ProblemDetail handleProcedureSource(ProcedureSourceException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/procedure-source"));
+        problem.setTitle("Invalid Procedure Source");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(StandardCodeConflictException.class)
+    public ProblemDetail handleStandardCodeConflict(StandardCodeConflictException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/standard-code-conflict"));
+        problem.setTitle("Standard Code Conflict");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

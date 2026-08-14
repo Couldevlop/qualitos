@@ -54,6 +54,37 @@ class StandardsServiceTest {
         verify(standardRepo, never()).findVisibleByFamily(any(), any(), any());
     }
 
+    /**
+     * Le client doit distinguer SON référentiel d'une norme livrée : le badge, le
+     * filtre et surtout les commandes d'édition n'ont de sens que sur le premier.
+     * On expose un booléen et non l'identifiant du propriétaire — la lecture étant
+     * déjà filtrée par tenant, un propriétaire non nul ne peut désigner que le
+     * tenant courant, et son identifiant n'apprendrait rien au client.
+     */
+    @Test
+    void tellsTheClientWhichReferentialsBelongToIt() {
+        Pageable p = PageRequest.of(0, 10);
+        Standard platform = std("iso-9001", StandardStatus.PUBLISHED);   // ownerTenantId null
+        Standard mine = std("PRO-002", StandardStatus.PUBLISHED);
+        mine.setOwnerTenantId(TENANT);
+        when(standardRepo.findVisible(TENANT, p)).thenReturn(new PageImpl<>(List.of(platform, mine)));
+
+        List<StandardsDto.StandardSummary> page =
+                service.listStandards(null, null, p).getContent();
+
+        assertThat(page).extracting(StandardsDto.StandardSummary::owned)
+                .containsExactly(false, true);
+    }
+
+    @Test
+    void tellsTheClientThatADetailedReferentialBelongsToIt() {
+        Standard mine = std("PRO-002", StandardStatus.PUBLISHED);
+        mine.setOwnerTenantId(TENANT);
+        when(standardRepo.findVisibleById(mine.getId(), TENANT)).thenReturn(Optional.of(mine));
+
+        assertThat(service.getStandard(mine.getId()).owned()).isTrue();
+    }
+
     @Test
     void listStandards_byStatus() {
         Pageable p = PageRequest.of(0, 10);

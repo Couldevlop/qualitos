@@ -520,7 +520,8 @@ public class StandardsService {
         return new StandardsDto.StandardSummary(
                 s.getId(), s.getCode(), s.getFullName(), s.getPublisher(),
                 s.getCurrentVersion(), s.getFamily(), s.getApplicableIndustries(),
-                s.getStatus(), s.getRecertificationCycleMonths());
+                s.getStatus(), s.getRecertificationCycleMonths(),
+                s.getOwnerTenantId() != null);
     }
 
     private StandardsDto.StandardDetail toDetail(Standard s) {
@@ -543,7 +544,8 @@ public class StandardsService {
                 s.getCurrentVersion(), s.getPublicationDate(), s.getFamily(),
                 s.getApplicableIndustries(), s.getDescription(),
                 s.isCertificationBodyRequired(), s.getRecertificationCycleMonths(),
-                s.getRelatedNormCodes(), s.getStatus(), sections);
+                s.getRelatedNormCodes(), s.getStatus(), sections,
+                s.getOwnerTenantId() != null);
     }
 
     private StandardsDto.AdoptionResponse toAdoptionResponse(TenantStandard ts) {
