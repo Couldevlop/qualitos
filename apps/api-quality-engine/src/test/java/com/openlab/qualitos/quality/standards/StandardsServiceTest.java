@@ -153,7 +153,7 @@ class StandardsServiceTest {
     @Test
     void adopt_success() {
         Standard s = std("iso-9001", StandardStatus.PUBLISHED);
-        when(standardRepo.findById(s.getId())).thenReturn(Optional.of(s));
+        when(standardRepo.findVisibleById(s.getId(), TENANT)).thenReturn(Optional.of(s));
         when(tenantStandardRepo.existsByTenantIdAndStandardId(TENANT, s.getId())).thenReturn(false);
         when(tenantStandardRepo.save(any())).thenAnswer(inv -> {
             TenantStandard t = inv.getArgument(0);
@@ -181,7 +181,7 @@ class StandardsServiceTest {
     @Test
     void adopt_standardNotFound() {
         UUID id = UUID.randomUUID();
-        when(standardRepo.findById(id)).thenReturn(Optional.empty());
+        when(standardRepo.findVisibleById(id, TENANT)).thenReturn(Optional.empty());
         assertThatThrownBy(() -> service.adopt(new StandardsDto.AdoptRequest(
                 id, null, null, null, null)))
                 .isInstanceOf(StandardNotFoundException.class);
@@ -190,7 +190,7 @@ class StandardsServiceTest {
     @Test
     void adopt_deprecatedStandard_throws() {
         Standard s = std("old", StandardStatus.DEPRECATED);
-        when(standardRepo.findById(s.getId())).thenReturn(Optional.of(s));
+        when(standardRepo.findVisibleById(s.getId(), TENANT)).thenReturn(Optional.of(s));
         assertThatThrownBy(() -> service.adopt(new StandardsDto.AdoptRequest(
                 s.getId(), null, null, null, null)))
                 .isInstanceOf(AdoptionConflictException.class);
@@ -199,7 +199,7 @@ class StandardsServiceTest {
     @Test
     void adopt_alreadyAdopted_throws() {
         Standard s = std("iso-9001", StandardStatus.PUBLISHED);
-        when(standardRepo.findById(s.getId())).thenReturn(Optional.of(s));
+        when(standardRepo.findVisibleById(s.getId(), TENANT)).thenReturn(Optional.of(s));
         when(tenantStandardRepo.existsByTenantIdAndStandardId(TENANT, s.getId())).thenReturn(true);
         assertThatThrownBy(() -> service.adopt(new StandardsDto.AdoptRequest(
                 s.getId(), null, null, null, null)))
@@ -565,7 +565,7 @@ class StandardsServiceTest {
     @Test
     void adopt_generatesNineteenStageRoadmap() {
         Standard s = std("iso-9001", StandardStatus.PUBLISHED);
-        when(standardRepo.findById(s.getId())).thenReturn(Optional.of(s));
+        when(standardRepo.findVisibleById(s.getId(), TENANT)).thenReturn(Optional.of(s));
         when(tenantStandardRepo.existsByTenantIdAndStandardId(TENANT, s.getId())).thenReturn(false);
         when(tenantStandardRepo.save(any())).thenAnswer(inv -> {
             TenantStandard t = inv.getArgument(0);

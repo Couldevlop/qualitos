@@ -94,7 +94,7 @@ public class StandardsService {
 
     public StandardsDto.AdoptionResponse adopt(StandardsDto.AdoptRequest request) {
         UUID tenantId = requireTenantId();
-        Standard s = standardRepository.findById(request.standardId())
+        Standard s = standardRepository.findVisibleById(request.standardId(), tenantId)
                 .orElseThrow(() -> new StandardNotFoundException(request.standardId()));
         if (s.getStatus() != StandardStatus.PUBLISHED) {
             throw new AdoptionConflictException(
@@ -483,9 +483,8 @@ public class StandardsService {
     }
 
     private void requireStandard(UUID standardId) {
-        if (!standardRepository.existsById(standardId)) {
-            throw new StandardNotFoundException(standardId);
-        }
+        standardRepository.findVisibleById(standardId, requireTenantId())
+                .orElseThrow(() -> new StandardNotFoundException(standardId));
     }
 
     private StandardsDto.DocumentTemplateResponse toDocumentTemplateResponse(StandardDocumentTemplate t) {
