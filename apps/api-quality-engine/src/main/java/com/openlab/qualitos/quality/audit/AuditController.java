@@ -1,6 +1,7 @@
 package com.openlab.qualitos.quality.audit;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -76,6 +77,22 @@ public class AuditController {
     @DeleteMapping("/plans/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) { service.deletePlan(id); }
+
+    /**
+     * Tire la checklist des exigences d'un référentiel du catalogue (§8) — la
+     * procédure interne du tenant comme une norme livrée.
+     *
+     * <p>Le référentiel arrive dans le CORPS et non en paramètre de requête : ce
+     * n'est pas un filtre de lecture, c'est ce sur quoi porte l'écriture.
+     */
+    public record GenerateChecklistRequest(@NotNull UUID standardId) {}
+
+    @PostMapping("/plans/{id}/checklist/from-standard")
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<AuditDto.ChecklistItemResponse> generateChecklistFromStandard(
+            @PathVariable UUID id, @Valid @RequestBody GenerateChecklistRequest req) {
+        return service.generateChecklistFromStandard(id, req.standardId());
+    }
 
     // checklist
     @PostMapping("/plans/{id}/checklist")

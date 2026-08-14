@@ -53,6 +53,17 @@ public class AuditPlan {
     @Column(length = 100)
     private String standard;
 
+    /**
+     * Référentiel du catalogue dont la checklist a été tirée (§8). Optionnel, et
+     * distinct du champ texte ci-dessus, qui porte les normes citées librement :
+     * on ne dérive pas des questions d'audit d'une chaîne de caractères.
+     *
+     * <p>Remis à NULL si le référentiel est supprimé (V109) — l'audit garde ses
+     * questions et ses réponses, qui sont des lignes autonomes.
+     */
+    @Column(name = "standard_id")
+    private UUID standardId;
+
     @Column(name = "lead_auditor_id", nullable = false)
     private UUID leadAuditorId;
 
