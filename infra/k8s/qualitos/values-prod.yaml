@@ -76,6 +76,12 @@ ingress:
     nginx.ingress.kubernetes.io/modsecurity-snippet: |
       SecRule REQUEST_URI "@rx ^/[a-z]{2}/assets/config\.json$"         "id:1000100,phase:1,pass,nolog,ctl:ruleEngine=Off"
       SecRuleRemoveById 911100
+    # CSP propre à QualitOS — cf. explication dans values-preprod.yaml. Le défaut
+    # du contrôleur partagé injecte le domaine d'un autre projet et Cloudflare,
+    # inutiles ici ; on réécrit la politique au niveau location sans toucher à la
+    # config commune.
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'";
   host: qualitos.openlabconsulting.com
   tls:
     enabled: true
