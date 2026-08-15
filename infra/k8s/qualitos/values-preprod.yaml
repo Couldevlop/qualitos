@@ -12,9 +12,6 @@ global:
   # quelle version tourne. La CI ne publie d'images que sur un tag vX.Y.Z.
   imageTag: ""
   imagePullPolicy: IfNotPresent
-  # La préproduction cède la place à la production sous contrainte de
-  # ressources : même nœud, même mémoire, même disque.
-  priorityClassName: qualitos-preprod
   # Pas de imagePullSecrets : les paquets GHCR du projet sont publics,
   # verifie par un tirage anonyme depuis le noeud. En declarer un
   # inscrirait un jeton dans le cluster sans rien apporter.

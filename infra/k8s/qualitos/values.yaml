@@ -10,10 +10,6 @@ global:
   imageTag: latest
   imagePullPolicy: IfNotPresent
   imagePullSecrets: []
-  # Classe de priorité des pods. VIDE par défaut : elle n'existe que sur le
-  # cluster où préproduction et production cohabitent. Exiger ici une classe
-  # absente du cluster d'accueil ferait refuser TOUS les pods à l'admission.
-  priorityClassName: ""
   # Profil Spring 'prod' = logs JSON structurés (logback-spring.xml) ;
   # 'tls' (api-core) active le TLS hybride post-quantique (ADR 0015).
   springProfiles: "prod"
