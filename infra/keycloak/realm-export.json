@@ -19,7 +19,7 @@
   "waitIncrementSeconds": 60,
   "quickLoginCheckMilliSeconds": 1000,
   "maxDeltaTimeSeconds": 43200,
-  "failureFactor": 30,
+  "failureFactor": 10,
   "defaultSignatureAlgorithm": "RS256",
   "accessTokenLifespan": 900,
   "ssoSessionIdleTimeout": 1800,
