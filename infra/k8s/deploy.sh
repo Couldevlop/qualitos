@@ -205,6 +205,19 @@ if [ -n "$KC_POD" ]; then
     echo "  ATTENTION : anti-force-brute du realm master non appliqué" >&2
   fi
 
+  # Politique de mot de passe du realm `qualitos`, posée APRÈS l'import et non
+  # dans realm-export.json À DESSEIN : à l'import, Keycloak valide les mots de
+  # passe des comptes déjà présents (dont `demo/demo`) contre la politique et
+  # refuse de démarrer si l'un ne la respecte pas (« invalidPasswordMinUpperCase »).
+  # Appliquée par kcadm, elle ne contraint que les mots de passe FUTURS et laisse
+  # les comptes de démonstration intacts. Idempotent.
+  if kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh update realms/qualitos \
+       -s 'passwordPolicy=length(12) and upperCase(1) and lowerCase(1) and digits(1) and notUsername(undefined)' >/dev/null 2>&1; then
+    echo "  realm qualitos : politique de mot de passe posée"
+  else
+    echo "  ATTENTION : politique de mot de passe du realm qualitos non appliquée" >&2
+  fi
+
   AI_CID="$(kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh get clients -r qualitos \
     -q clientId=api-quality-engine-ai --fields id --format csv --noquotes 2>/dev/null | tr -d '\r' | head -1)"
   if [ -n "$AI_CID" ]; then

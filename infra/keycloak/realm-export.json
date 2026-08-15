@@ -20,7 +20,6 @@
   "quickLoginCheckMilliSeconds": 1000,
   "maxDeltaTimeSeconds": 43200,
   "failureFactor": 10,
-  "passwordPolicy": "length(12) and upperCase(1) and lowerCase(1) and digits(1) and notUsername(undefined)",
   "defaultSignatureAlgorithm": "RS256",
   "accessTokenLifespan": 900,
   "ssoSessionIdleTimeout": 1800,
