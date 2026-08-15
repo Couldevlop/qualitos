@@ -123,17 +123,32 @@ else
 fi
 
 say "4/6 Dépendances d'état"
-kubectl -n "$NS" apply -f "$DEPS/10-postgres.yaml" \
-                       -f "$DEPS/30-qdrant.yaml" \
-                       -f "$DEPS/40-ollama-external.yaml"
-sed "s/__QOS_HOST__/$HOST/g" "$DEPS/20-keycloak.yaml" | kubectl -n "$NS" apply -f -
+
+# Classes de priorité AVANT tout pod qui s'y réfère : un pod nommant une classe
+# inexistante est refusé à l'admission, et l'échec porterait sur le pod alors que
+# c'est la classe qui manque. Objets à portée cluster : pas de `-n`, et les deux
+# environnements les partagent — une hiérarchie n'a de sens que comparée.
+kubectl apply -f "$DEPS/05-priorityclass.yaml"
+
+# La classe de priorité se substitue comme le fait déjà le namespace : les
+# manifestes de dépendances sont communs aux deux environnements, seule la classe
+# change. En production les pods valent 1000, en préproduction 100 : sous
+# contrainte de mémoire sur ce nœud unique, c'est la préproduction qui cède.
+PRIORITY="qualitos-$ENV"
+
+for dep in 10-postgres 30-qdrant 40-ollama-external 60-backup; do
+  sed "s/__PRIORITY_CLASS__/$PRIORITY/g" "$DEPS/$dep.yaml" | kubectl -n "$NS" apply -f -
+done
+sed -e "s/__QOS_HOST__/$HOST/g" \
+    -e "s/__PRIORITY_CLASS__/$PRIORITY/g" \
+    "$DEPS/20-keycloak.yaml" | kubectl -n "$NS" apply -f -
 
 # Le travail d'initialisation du bucket est IMMUABLE une fois créé : le
 # supprimer d'abord est ce qui rend le déploiement rejouable. Sans cela, la
 # deuxième exécution échouerait sur un champ non modifiable, et l'échec
 # porterait sur le bucket alors que rien ne va mal.
 kubectl -n "$NS" delete job minio-init --ignore-not-found >/dev/null
-kubectl -n "$NS" apply -f "$DEPS/50-minio.yaml"
+sed "s/__PRIORITY_CLASS__/$PRIORITY/g" "$DEPS/50-minio.yaml" | kubectl -n "$NS" apply -f -
 
 kubectl -n "$NS" rollout status deploy/postgres --timeout=180s
 kubectl -n "$NS" rollout status deploy/qdrant   --timeout=180s
@@ -229,6 +244,31 @@ kubectl -n "$NS" create secret generic qualitos-ai-service \
   --from-literal=NLQ_READONLY_DSN="postgresql://qualitos_nlq_ro:${NLQ_PWD}@postgres:5432/qualitos_quality" \
   --dry-run=client -o yaml | kubectl apply -f - >/dev/null
 echo "  secret qualitos-ai-service : à jour"
+
+# Vidage de SÛRETÉ, uniquement sur un environnement DÉJÀ installé — à la première
+# installation il n'y a rien à sauver, et le CronJob vient d'être créé.
+#
+# POURQUOI JUSTE AVANT, alors qu'une sauvegarde nocturne existe : les migrations
+# Flyway ne se défont pas. Revenir à une image antérieure la placerait devant un
+# schéma qu'elle ne connaît pas, et le seul retour arrière qui tienne restaure la
+# base. Or restaurer celle de la nuit précédente perdrait tout ce qui a été écrit
+# depuis. Le filet doit dater du saut, pas de la veille.
+#
+# L'échec du vidage n'ARRÊTE PAS le déploiement : refuser de livrer parce qu'une
+# sauvegarde a échoué transformerait une gêne en blocage. Il est signalé, bruyamment.
+if helm status "qualitos-$ENV" -n "$NS" >/dev/null 2>&1; then
+  say "5bis/6 Vidage de sûreté avant mise à jour"
+  kubectl -n "$NS" delete job vidage-avant-deploiement --ignore-not-found >/dev/null
+  if kubectl -n "$NS" create job --from=cronjob/postgres-backup vidage-avant-deploiement >/dev/null 2>&1 &&
+     kubectl -n "$NS" wait --for=condition=complete job/vidage-avant-deploiement --timeout=600s >/dev/null 2>&1; then
+    echo "  vidage pris — un retour arrière reste possible"
+  else
+    echo "  ATTENTION : le vidage de sûreté a échoué." >&2
+    echo "  Le déploiement se poursuit, mais AUCUN retour arrière ne sera" >&2
+    echo "  possible sur la base si cette version se révèle mauvaise." >&2
+    kubectl -n "$NS" logs job/vidage-avant-deploiement --tail=10 >&2 2>/dev/null || true
+  fi
+fi
 
 say "6/6 Chart applicatif"
 helm upgrade --install "qualitos-$ENV" "$CHART" \
