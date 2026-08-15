@@ -123,32 +123,18 @@ else
 fi
 
 say "4/6 Dépendances d'état"
-
-# Classes de priorité AVANT tout pod qui s'y réfère : un pod nommant une classe
-# inexistante est refusé à l'admission, et l'échec porterait sur le pod alors que
-# c'est la classe qui manque. Objets à portée cluster : pas de `-n`, et les deux
-# environnements les partagent — une hiérarchie n'a de sens que comparée.
-kubectl apply -f "$DEPS/05-priorityclass.yaml"
-
-# La classe de priorité se substitue comme le fait déjà le namespace : les
-# manifestes de dépendances sont communs aux deux environnements, seule la classe
-# change. En production les pods valent 1000, en préproduction 100 : sous
-# contrainte de mémoire sur ce nœud unique, c'est la préproduction qui cède.
-PRIORITY="qualitos-$ENV"
-
-for dep in 10-postgres 30-qdrant 40-ollama-external 60-backup; do
-  sed "s/__PRIORITY_CLASS__/$PRIORITY/g" "$DEPS/$dep.yaml" | kubectl -n "$NS" apply -f -
-done
-sed -e "s/__QOS_HOST__/$HOST/g" \
-    -e "s/__PRIORITY_CLASS__/$PRIORITY/g" \
-    "$DEPS/20-keycloak.yaml" | kubectl -n "$NS" apply -f -
+kubectl -n "$NS" apply -f "$DEPS/10-postgres.yaml" \
+                       -f "$DEPS/30-qdrant.yaml" \
+                       -f "$DEPS/40-ollama-external.yaml" \
+                       -f "$DEPS/60-backup.yaml"
+sed "s/__QOS_HOST__/$HOST/g" "$DEPS/20-keycloak.yaml" | kubectl -n "$NS" apply -f -
 
 # Le travail d'initialisation du bucket est IMMUABLE une fois créé : le
 # supprimer d'abord est ce qui rend le déploiement rejouable. Sans cela, la
 # deuxième exécution échouerait sur un champ non modifiable, et l'échec
 # porterait sur le bucket alors que rien ne va mal.
 kubectl -n "$NS" delete job minio-init --ignore-not-found >/dev/null
-sed "s/__PRIORITY_CLASS__/$PRIORITY/g" "$DEPS/50-minio.yaml" | kubectl -n "$NS" apply -f -
+kubectl -n "$NS" apply -f "$DEPS/50-minio.yaml"
 
 kubectl -n "$NS" rollout status deploy/postgres --timeout=180s
 kubectl -n "$NS" rollout status deploy/qdrant   --timeout=180s

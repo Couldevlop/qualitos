@@ -33,12 +33,6 @@ spec:
     spec:
       serviceAccountName: {{ $.Values.serviceAccount.name }}
       automountServiceAccountToken: false
-      {{- with $.Values.global.priorityClassName }}
-      # Ordre d'éviction entre environnements partageant le même nœud. Vide par
-      # défaut : un chart déployé ailleurs ne doit pas exiger une classe qui
-      # n'existe pas sur le cluster d'accueil, sinon aucun pod n'est admis.
-      priorityClassName: {{ . }}
-      {{- end }}
       {{- with $.Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}

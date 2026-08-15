@@ -42,7 +42,6 @@ spec:
         app.kubernetes.io/name: keycloak
         app.kubernetes.io/part-of: qualitos
     spec:
-      priorityClassName: __PRIORITY_CLASS__
       containers:
         - name: keycloak
           image: quay.io/keycloak/keycloak:25.0

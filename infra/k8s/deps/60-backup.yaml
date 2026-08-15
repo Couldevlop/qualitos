@@ -63,7 +63,6 @@ spec:
             app.kubernetes.io/part-of: qualitos
         spec:
           restartPolicy: OnFailure
-          priorityClassName: __PRIORITY_CLASS__
           containers:
             - name: dump
               # MÊME image que le serveur : un pg_dump plus ancien que le serveur
