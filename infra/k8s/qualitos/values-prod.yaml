@@ -21,6 +21,8 @@
 global:
   imageTag: ""          # posé à l'installation : --set global.imageTag=v0.1.0
   imagePullPolicy: IfNotPresent
+  # La production passe devant la préproduction sous contrainte de ressources.
+  priorityClassName: qualitos-prod
   # Pas de imagePullSecrets : les paquets GHCR du projet sont publics,
   # verifie par un tirage anonyme depuis le noeud. En declarer un
   # inscrirait un jeton dans le cluster sans rien apporter.

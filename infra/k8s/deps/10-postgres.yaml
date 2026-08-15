@@ -120,6 +120,10 @@ spec:
         app.kubernetes.io/name: postgres
         app.kubernetes.io/part-of: qualitos
     spec:
+      # Substituée par deploy.sh (qualitos-prod ou qualitos-preprod). La base
+      # porte la priorité la plus utile du lot : la perdre sous contrainte
+      # mémoire arrêterait tout le reste de l'environnement.
+      priorityClassName: __PRIORITY_CLASS__
       securityContext:
         fsGroup: 999
       containers:

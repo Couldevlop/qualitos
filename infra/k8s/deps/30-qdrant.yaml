@@ -58,6 +58,7 @@ spec:
         app.kubernetes.io/name: qdrant
         app.kubernetes.io/part-of: qualitos
     spec:
+      priorityClassName: __PRIORITY_CLASS__
       containers:
         - name: qdrant
           image: qdrant/qdrant:v1.11.0

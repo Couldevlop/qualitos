@@ -67,6 +67,7 @@ spec:
         app.kubernetes.io/name: minio
         app.kubernetes.io/part-of: qualitos
     spec:
+      priorityClassName: __PRIORITY_CLASS__
       containers:
         - name: minio
           # Version FIGÉE, comme les autres dépendances : `latest` sur un registre
@@ -139,6 +140,7 @@ spec:
         app.kubernetes.io/part-of: qualitos
     spec:
       restartPolicy: OnFailure
+      priorityClassName: __PRIORITY_CLASS__
       containers:
         - name: mc
           image: minio/mc:RELEASE.2025-08-13T08-35-41Z
