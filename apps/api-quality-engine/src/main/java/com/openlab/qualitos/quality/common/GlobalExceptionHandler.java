@@ -58,6 +58,8 @@ import com.openlab.qualitos.quality.industry.IndustryPackNotFoundException;
 import com.openlab.qualitos.quality.iot.IotDeviceNotFoundException;
 import com.openlab.qualitos.quality.iot.IotDeviceStateException;
 import com.openlab.qualitos.quality.iot.IotThresholdNotFoundException;
+import com.openlab.qualitos.quality.controlplan.domain.ControlPlanNotFoundException;
+import com.openlab.qualitos.quality.controlplan.domain.ControlPlanStateException;
 import com.openlab.qualitos.quality.risk.FmeaItemNotFoundException;
 import com.openlab.qualitos.quality.risk.FmeaProjectNotFoundException;
 import com.openlab.qualitos.quality.risk.FmeaStateException;
@@ -1726,6 +1728,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/product-code-conflict"));
         problem.setTitle("Product Code Conflict");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ControlPlanNotFoundException.class)
+    public ProblemDetail handleControlPlanNotFound(ControlPlanNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/control-plan-not-found"));
+        problem.setTitle("Control Plan Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ControlPlanStateException.class)
+    public ProblemDetail handleControlPlanState(ControlPlanStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/control-plan-invalid-state"));
+        problem.setTitle("Invalid Control Plan State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
