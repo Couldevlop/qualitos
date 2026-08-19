@@ -25,7 +25,8 @@ public final class FmeaDto {
             @NotNull FmeaType type,
             @Min(1) @Max(1000) Integer criticalRpnThreshold,
             UUID ownerUserId,
-            @NotNull UUID createdBy
+            @NotNull UUID createdBy,
+            UUID productId
     ) {}
 
     public record UpdateProjectRequest(
@@ -45,6 +46,7 @@ public final class FmeaDto {
             FmeaStatus status,
             int criticalRpnThreshold,
             int revision,
+            UUID productId,
             UUID ownerUserId,
             Instant lastReviewedAt,
             UUID createdBy,
@@ -66,7 +68,9 @@ public final class FmeaDto {
             LocalDate actionDueDate,
             @Min(1) @Max(10) Integer resultingSeverity,
             @Min(1) @Max(10) Integer resultingOccurrence,
-            @Min(1) @Max(10) Integer resultingDetection
+            @Min(1) @Max(10) Integer resultingDetection,
+            UUID operationId,
+            CharacteristicClass characteristicClass
     ) {}
 
     public record UpdateItemRequest(
@@ -83,7 +87,9 @@ public final class FmeaDto {
             LocalDate actionDueDate,
             @Min(1) @Max(10) Integer resultingSeverity,
             @Min(1) @Max(10) Integer resultingOccurrence,
-            @Min(1) @Max(10) Integer resultingDetection
+            @Min(1) @Max(10) Integer resultingDetection,
+            UUID operationId,
+            CharacteristicClass characteristicClass
     ) {}
 
     public record ItemResponse(
@@ -107,6 +113,9 @@ public final class FmeaDto {
             Integer resultingOccurrence,
             Integer resultingDetection,
             Integer rpnAfter,
+            UUID operationId,
+            CharacteristicClass characteristicClass,
+            ActionPriority actionPriority,
             boolean critical,
             Instant createdAt,
             Instant updatedAt
