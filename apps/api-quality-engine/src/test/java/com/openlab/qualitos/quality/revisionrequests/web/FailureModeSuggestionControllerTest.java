@@ -4,6 +4,7 @@ import com.openlab.qualitos.quality.common.MethodSecurityTestConfig;
 import com.openlab.qualitos.quality.product.domain.Product;
 import com.openlab.qualitos.quality.product.domain.ProductLookup;
 import com.openlab.qualitos.quality.product.domain.ProductStatus;
+import com.openlab.qualitos.quality.revisionrequests.application.TenantProvider;
 import com.openlab.qualitos.quality.risk.FmeaItem;
 import com.openlab.qualitos.quality.risk.FmeaItemRepository;
 import com.openlab.qualitos.quality.risk.FmeaProject;
@@ -43,6 +44,7 @@ class FailureModeSuggestionControllerTest {
     @MockitoBean ProductLookup products;
     @MockitoBean FmeaProjectRepository projects;
     @MockitoBean FmeaItemRepository items;
+    @MockitoBean(name = "revisionRequestTenantContextProvider") TenantProvider tenants;
 
     static final UUID TENANT = UUID.randomUUID();
     static final UUID PRODUCT = UUID.randomUUID();
@@ -95,6 +97,7 @@ class FailureModeSuggestionControllerTest {
     @Test
     @WithMockUser(roles = "USER")
     void anUnknownProductAnswers404() throws Exception {
+        when(tenants.requireTenantId()).thenReturn(TENANT);
         when(products.findById(PRODUCT)).thenReturn(Optional.empty());
 
         mockMvc.perform(get(URL, PRODUCT).param("text", "Bavure"))
@@ -115,7 +118,20 @@ class FailureModeSuggestionControllerTest {
                 .andExpect(status().is4xxClientError());
     }
 
+    @Test
+    @WithMockUser(roles = "USER")
+    void aProductOfAnotherTenantAnswers404NeverForbidden() throws Exception {
+        when(tenants.requireTenantId()).thenReturn(TENANT);
+        when(products.findById(PRODUCT)).thenReturn(Optional.of(
+                Product.rehydrate(PRODUCT, UUID.randomUUID(), "REF-4471", "Support", null, null,
+                        ProductStatus.ACTIVE, null, null, null, USER, NOW, NOW)));
+
+        mockMvc.perform(get(URL, PRODUCT).param("text", "Bavure"))
+                .andExpect(status().isNotFound());
+    }
+
     private void givenProduct() {
+        when(tenants.requireTenantId()).thenReturn(TENANT);
         when(products.findById(PRODUCT)).thenReturn(Optional.of(
                 Product.rehydrate(PRODUCT, TENANT, "REF-4471", "Support", null, null,
                         ProductStatus.ACTIVE, null, null, null, USER, NOW, NOW)));

@@ -143,4 +143,29 @@ class HexagonalArchitectureTest {
                 "jakarta.persistence..",
                 "org.hibernate..")
             .because("Application layer (control plan) must depend on ports only.");
+
+    @ArchTest
+    static final ArchRule revision_requests_domain_has_no_framework_deps =
+        noClasses()
+            .that().resideInAPackage("..revisionrequests.domain..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                "..revisionrequests.infrastructure..",
+                "..revisionrequests.web..",
+                "org.springframework..",
+                "jakarta.persistence..",
+                "jakarta.validation..",
+                "org.hibernate..")
+            .because("Domain (revision requests) must stay framework-free for hexagonal arch.");
+
+    @ArchTest
+    static final ArchRule revision_requests_application_has_no_framework_deps =
+        noClasses()
+            .that().resideInAPackage("..revisionrequests.application..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                "..revisionrequests.infrastructure..",
+                "..revisionrequests.web..",
+                "org.springframework..",
+                "jakarta.persistence..",
+                "org.hibernate..")
+            .because("Application layer (revision requests) must depend on ports only.");
 }

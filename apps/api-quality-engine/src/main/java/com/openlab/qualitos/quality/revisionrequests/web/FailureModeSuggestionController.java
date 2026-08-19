@@ -1,7 +1,9 @@
 package com.openlab.qualitos.quality.revisionrequests.web;
 
+import com.openlab.qualitos.quality.product.domain.Product;
 import com.openlab.qualitos.quality.product.domain.ProductLookup;
 import com.openlab.qualitos.quality.product.domain.ProductNotFoundException;
+import com.openlab.qualitos.quality.revisionrequests.application.TenantProvider;
 import com.openlab.qualitos.quality.revisionrequests.domain.FailureModeMatcher;
 import com.openlab.qualitos.quality.risk.FmeaItem;
 import com.openlab.qualitos.quality.risk.FmeaItemRepository;
@@ -11,6 +13,7 @@ import com.openlab.qualitos.quality.risk.FmeaStatus;
 import com.openlab.qualitos.quality.risk.FmeaType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,12 +45,15 @@ public class FailureModeSuggestionController {
     private final ProductLookup products;
     private final FmeaProjectRepository projects;
     private final FmeaItemRepository items;
+    private final TenantProvider tenants;
 
-    public FailureModeSuggestionController(ProductLookup products, FmeaProjectRepository projects,
-                                           FmeaItemRepository items) {
+    public FailureModeSuggestionController(
+            ProductLookup products, FmeaProjectRepository projects, FmeaItemRepository items,
+            @Qualifier("revisionRequestTenantContextProvider") TenantProvider tenants) {
         this.products = products;
         this.items = items;
         this.projects = projects;
+        this.tenants = tenants;
     }
 
     @GetMapping
@@ -55,20 +61,30 @@ public class FailureModeSuggestionController {
             @PathVariable UUID productId,
             @RequestParam @NotBlank @Size(max = 2000) String text) {
 
-        UUID tenantId = products.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException(productId))
-                .getTenantId();
+        // Le tenant vient du contexte de sécurité, et l'appartenance du produit est
+        // revérifiée ici même. S'en remettre au filtrage interne de l'adaptateur
+        // ferait dépendre l'étanchéité entre tenants d'un détail d'implémentation
+        // qu'un futur adaptateur pourrait ne pas reproduire.
+        UUID tenantId = tenants.requireTenantId();
+        Product product = products.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
+        if (!tenantId.equals(product.getTenantId())) {
+            // 404 et non 403 : un 403 confirmerait l'existence du produit voisin.
+            throw new ProductNotFoundException(productId);
+        }
 
         return projects.findByTenantIdAndProductId(tenantId, productId).stream()
                 .filter(project -> project.getType() == FmeaType.PROCESS_FMEA)
                 .filter(project -> project.getStatus() == FmeaStatus.ACTIVE)
                 .findFirst()
-                .map(project -> FailureModeMatcher.suggest(text, candidatesOf(project), MAX_SUGGESTIONS))
+                .map(project -> FailureModeMatcher.suggest(text, candidatesOf(project, tenantId),
+                        MAX_SUGGESTIONS))
                 .orElseGet(List::of);
     }
 
-    private List<FailureModeMatcher.Candidate> candidatesOf(FmeaProject project) {
+    private List<FailureModeMatcher.Candidate> candidatesOf(FmeaProject project, UUID tenantId) {
         return items.findByProjectIdOrderBySequenceNoAsc(project.getId()).stream()
+                .filter(item -> tenantId.equals(item.getTenantId()))
                 .map(FailureModeSuggestionController::toCandidate)
                 .toList();
     }

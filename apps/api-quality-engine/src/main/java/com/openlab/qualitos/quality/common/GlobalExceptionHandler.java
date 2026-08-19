@@ -60,6 +60,8 @@ import com.openlab.qualitos.quality.iot.IotDeviceStateException;
 import com.openlab.qualitos.quality.iot.IotThresholdNotFoundException;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanNotFoundException;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanStateException;
+import com.openlab.qualitos.quality.revisionrequests.domain.RevisionRequestNotFoundException;
+import com.openlab.qualitos.quality.revisionrequests.domain.RevisionRequestStateException;
 import com.openlab.qualitos.quality.risk.FmeaItemNotFoundException;
 import com.openlab.qualitos.quality.risk.FmeaProjectNotFoundException;
 import com.openlab.qualitos.quality.risk.FmeaStateException;
@@ -1746,6 +1748,24 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/control-plan-invalid-state"));
         problem.setTitle("Invalid Control Plan State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(RevisionRequestNotFoundException.class)
+    public ProblemDetail handleRevisionRequestNotFound(RevisionRequestNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/revision-request-not-found"));
+        problem.setTitle("Revision Request Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(RevisionRequestStateException.class)
+    public ProblemDetail handleRevisionRequestState(RevisionRequestStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/revision-request-invalid-state"));
+        problem.setTitle("Invalid Revision Request State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
