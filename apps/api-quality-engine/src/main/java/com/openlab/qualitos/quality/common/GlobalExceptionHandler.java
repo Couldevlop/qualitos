@@ -150,6 +150,9 @@ import com.openlab.qualitos.quality.nonconformity.NcPhotoNotFoundException;
 import com.openlab.qualitos.quality.nonconformity.NcPhotoTooLargeException;
 import com.openlab.qualitos.quality.nonconformity.NcPhotoValidationException;
 import com.openlab.qualitos.quality.nonconformity.storage.StorageDisabledException;
+import com.openlab.qualitos.quality.product.domain.ProductNotFoundException;
+import com.openlab.qualitos.quality.product.domain.ProductStateException;
+import com.openlab.qualitos.quality.product.domain.ProductCodeConflictException;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1696,6 +1699,33 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/marketplace-installation-not-found"));
         problem.setTitle("Marketplace Installation Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ProblemDetail handleProductNotFound(ProductNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/product-not-found"));
+        problem.setTitle("Product Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ProductStateException.class)
+    public ProblemDetail handleProductState(ProductStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/product-invalid-state"));
+        problem.setTitle("Invalid Product State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ProductCodeConflictException.class)
+    public ProblemDetail handleProductCodeConflict(ProductCodeConflictException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/product-code-conflict"));
+        problem.setTitle("Product Code Conflict");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
