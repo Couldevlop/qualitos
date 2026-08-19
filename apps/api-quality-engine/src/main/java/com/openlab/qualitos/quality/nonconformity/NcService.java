@@ -9,6 +9,7 @@ import com.openlab.qualitos.quality.capa.CapaType;
 import com.openlab.qualitos.quality.common.CurrentUser;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,10 +34,13 @@ public class NcService {
 
     private final NonConformityRepository repository;
     private final CapaCaseRepository capaCaseRepository;
+    private final ApplicationEventPublisher events;
 
-    public NcService(NonConformityRepository repository, CapaCaseRepository capaCaseRepository) {
+    public NcService(NonConformityRepository repository, CapaCaseRepository capaCaseRepository,
+                     ApplicationEventPublisher events) {
         this.repository = repository;
         this.capaCaseRepository = capaCaseRepository;
+        this.events = events;
     }
 
     /**
@@ -48,7 +52,7 @@ public class NcService {
      */
     @Transactional(readOnly = true)
     public Page<NcDto.Response> findAll(NcStatus status, NcSeverity severity, NcCategory category,
-                                        NcOrigin origin, Pageable pageable) {
+                                        NcOrigin origin, UUID productId, Pageable pageable) {
         UUID tenantId = requireTenantId();
         Specification<NonConformity> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -58,6 +62,9 @@ public class NcService {
             if (severity != null) predicates.add(cb.equal(root.get("severity"), severity));
             if (category != null) predicates.add(cb.equal(root.get("category"), category));
             if (origin != null)   predicates.add(cb.equal(root.get("origin"), origin));
+            // Filtré en base avec le tenant, jamais après coup en Java : trier une
+            // page déjà découpée donnerait des pages incomplètes.
+            if (productId != null) predicates.add(cb.equal(root.get("productId"), productId));
             return cb.and(predicates.toArray(new Predicate[0]));
         };
         return repository.findAll(spec, pageable).map(this::toResponse);
@@ -92,6 +99,8 @@ public class NcService {
         nc.setGeoLng(request.geoLng());
         nc.setPhotoUrls(request.photoUrls());
         nc.setReporterId(reporterId);
+        nc.setProductId(request.productId());
+        nc.setFmeaItemId(request.fmeaItemId());
 
         // BUG #4 — Race sur la génération de référence : deux créations concurrentes
         // peuvent calculer la même référence et violer la contrainte d'unicité
@@ -101,7 +110,9 @@ public class NcService {
         for (int attempt = 0; attempt < REFERENCE_RETRY_ATTEMPTS; attempt++) {
             nc.setReference(generateReference(tenantId));
             try {
-                return toResponse(repository.saveAndFlush(nc));
+                NonConformity saved = repository.saveAndFlush(nc);
+                announceCreation(saved);
+                return toResponse(saved);
             } catch (DataIntegrityViolationException ex) {
                 last = ex;
                 // Référence reprise entre temps : on régénère et on retente.
@@ -110,12 +121,25 @@ public class NcService {
         throw last;
     }
 
+    /**
+     * Annonce la création aux abonnés. L'événement porte le tenant de l'ENTITÉ :
+     * son consommateur s'exécute après le commit, hors du contexte d'exécution
+     * qui l'a produit.
+     */
+    private void announceCreation(NonConformity saved) {
+        events.publishEvent(new NcCreatedEvent(
+                saved.getTenantId(), saved.getId(), saved.getProductId(), saved.getFmeaItemId(),
+                saved.getTitle(), saved.getDescription(), saved.getDetectedAt()));
+    }
+
     public NcDto.Response update(UUID id, NcDto.UpdateRequest request) {
         NonConformity nc = load(id);
         if (nc.getStatus() == NcStatus.CLOSED || nc.getStatus() == NcStatus.CANCELLED) {
             throw new NcStateException("Cannot modify a " + nc.getStatus() + " non-conformity");
         }
         if (request.origin() != null) nc.setOrigin(request.origin());
+        if (request.productId() != null) nc.setProductId(request.productId());
+        if (request.fmeaItemId() != null) nc.setFmeaItemId(request.fmeaItemId());
         if (request.title() != null) nc.setTitle(request.title());
         if (request.description() != null) nc.setDescription(request.description());
         if (request.category() != null) nc.setCategory(request.category());
@@ -246,7 +270,8 @@ public class NcService {
                 nc.getId(), nc.getTenantId(), nc.getReference(), nc.getTitle(), nc.getDescription(),
                 nc.getCategory(), nc.getSeverity(), nc.getStatus(), nc.getOrigin(), nc.getDetectedAt(),
                 nc.getZone(), nc.getGeoLat(), nc.getGeoLng(), nc.getPhotoUrls(),
-                nc.getReporterId(), nc.getCapaCaseId(), nc.getRootCause(), nc.getResolutionNote(),
+                nc.getReporterId(), nc.getProductId(), nc.getFmeaItemId(),
+                nc.getCapaCaseId(), nc.getRootCause(), nc.getResolutionNote(),
                 nc.getResolvedAt(), nc.getClosedAt(), nc.getCreatedAt(), nc.getUpdatedAt());
     }
 }

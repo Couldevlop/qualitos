@@ -25,7 +25,9 @@ public final class NcDto {
             String photoUrls,
             UUID reporterId,
             /** Interne par défaut : voir {@link NcOrigin#orDefault}. */
-            NcOrigin origin
+            NcOrigin origin,
+            UUID productId,
+            UUID fmeaItemId
     ) {}
 
     public record UpdateRequest(
@@ -37,7 +39,9 @@ public final class NcDto {
             @DecimalMin("-90.0") @DecimalMax("90.0") Double geoLat,
             @DecimalMin("-180.0") @DecimalMax("180.0") Double geoLng,
             String photoUrls,
-            NcOrigin origin
+            NcOrigin origin,
+            UUID productId,
+            UUID fmeaItemId
     ) {}
 
     /** Démarrage de l'analyse : la cause racine est optionnelle à ce stade. */
@@ -74,6 +78,8 @@ public final class NcDto {
             Double geoLng,
             String photoUrls,
             UUID reporterId,
+            UUID productId,
+            UUID fmeaItemId,
             UUID capaCaseId,
             String rootCause,
             String resolutionNote,

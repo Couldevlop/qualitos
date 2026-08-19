@@ -48,7 +48,7 @@ class NcControllerTest {
 
     @Test @WithMockUser
     void list_returns200() throws Exception {
-        when(service.findAll(any(), any(), any(), any(), any(Pageable.class)))
+        when(service.findAll(any(), any(), any(), any(), any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(resp(NcStatus.OPEN))));
         mockMvc.perform(get("/api/v1/nc"))
                 .andExpect(status().isOk())
@@ -57,7 +57,7 @@ class NcControllerTest {
 
     @Test @WithMockUser
     void list_withFilters() throws Exception {
-        when(service.findAll(eq(NcStatus.OPEN), eq(NcSeverity.MAJOR), eq(NcCategory.PRODUCT), any(), any(Pageable.class)))
+        when(service.findAll(eq(NcStatus.OPEN), eq(NcSeverity.MAJOR), eq(NcCategory.PRODUCT), any(), any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(resp(NcStatus.OPEN))));
         mockMvc.perform(get("/api/v1/nc")
                         .param("status", "OPEN").param("severity", "MAJOR").param("category", "PRODUCT"))
@@ -70,7 +70,7 @@ class NcControllerTest {
         when(service.create(any())).thenReturn(resp(NcStatus.OPEN));
         NcDto.CreateRequest req = new NcDto.CreateRequest(
                 "t", null, NcCategory.PRODUCT, NcSeverity.MAJOR, Instant.now(),
-                null, null, null, null, REPORTER, null);
+                null, null, null, null, REPORTER, null, null, null);
         mockMvc.perform(post("/api/v1/nc").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
@@ -248,7 +248,7 @@ class NcControllerTest {
         when(service.create(any())).thenThrow(new MissingTenantContextException());
         NcDto.CreateRequest req = new NcDto.CreateRequest(
                 "t", null, NcCategory.PRODUCT, NcSeverity.MAJOR, Instant.now(),
-                null, null, null, null, REPORTER, null);
+                null, null, null, null, REPORTER, null, null, null);
         mockMvc.perform(post("/api/v1/nc").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
@@ -260,7 +260,7 @@ class NcControllerTest {
         return new NcDto.Response(
                 NC, TENANT, "NC-2026-0001", "t", null,
                 NcCategory.PRODUCT, NcSeverity.MAJOR, s, NcOrigin.INTERNAL, Instant.now(),
-                null, null, null, null, REPORTER, null, null, null,
+                null, null, null, null, REPORTER, null, null, null, null, null,
                 null, null, Instant.now(), Instant.now());
     }
 }
