@@ -93,4 +93,29 @@ class HexagonalArchitectureTest {
                 "jakarta.persistence..",
                 "org.hibernate..")
             .because("Application layer (marketplace) must depend on ports only.");
+
+    @ArchTest
+    static final ArchRule product_domain_has_no_framework_deps =
+        noClasses()
+            .that().resideInAPackage("..product.domain..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                "..product.infrastructure..",
+                "..product.web..",
+                "org.springframework..",
+                "jakarta.persistence..",
+                "jakarta.validation..",
+                "org.hibernate..")
+            .because("Domain (product) must stay framework-free for hexagonal arch.");
+
+    @ArchTest
+    static final ArchRule product_application_has_no_framework_deps =
+        noClasses()
+            .that().resideInAPackage("..product.application..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                "..product.infrastructure..",
+                "..product.web..",
+                "org.springframework..",
+                "jakarta.persistence..",
+                "org.hibernate..")
+            .because("Application layer (product) must depend on ports only.");
 }
