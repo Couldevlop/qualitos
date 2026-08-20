@@ -13,6 +13,10 @@ import {
   CapaActionResponse, CapaCaseResponse, CapaEvidence, CapaStatus
 } from '../../capa.types';
 import { CapaDetailComponent } from './capa-detail.component';
+import {
+  CapaRevisionImpactComponent
+} from '../capa-revision-impact/capa-revision-impact.component';
+import { ProductsService } from '../../../products/products.service';
 
 /**
  * Tableau des actions d'une fiche CAPA (§4.2, ADR 0052).
@@ -106,10 +110,13 @@ describe('CapaDetailComponent — tableau des actions', () => {
 
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
-      declarations: [CapaDetailComponent],
+      declarations: [CapaDetailComponent, CapaRevisionImpactComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: CapaService, useValue: capa },
+        // L'encart d'impact vit dans la fiche : sans ce doublon, il irait
+        // chercher un HttpClient que ce banc de test ne fournit pas.
+        { provide: ProductsService, useValue: { revisionRequestsForTrigger: () => of([]) } },
         { provide: MatSnackBar, useValue: snack },
         { provide: MatDialog, useValue: dialog },
         { provide: Router, useValue: jasmine.createSpyObj('Router', ['navigate']) },

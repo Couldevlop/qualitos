@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { MatRadioModule } from '@angular/material/radio';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
@@ -28,6 +29,9 @@ const routes: Routes = [
     NcCreateDialogComponent,
     NcResolveDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  // MatRadioModule n'est pas réexporté par SharedModule : le choix du mode de
+  // défaillance a besoin de boutons radio, un pour chaque suggestion et un pour
+  // « aucun ne correspond ».
+  imports: [SharedModule, UiModule, MatRadioModule, RouterModule.forChild(routes)]
 })
 export class NcModule {}

@@ -472,6 +472,12 @@
         </mat-card-content>
       </mat-card>
 
+      <!--
+        L'encart ne s'affiche que si la cloture de ce dossier a effectivement
+        propose quelque chose : un bloc vide sur chaque fiche n'apprendrait rien.
+      -->
+      <qos-capa-revision-impact [capaId]="c.id"></qos-capa-revision-impact>
+
     </ng-container>
   </ng-container>
 

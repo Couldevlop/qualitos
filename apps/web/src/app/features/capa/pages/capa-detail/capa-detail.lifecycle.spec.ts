@@ -11,6 +11,10 @@ import { UiModule } from '../../../../shared/ui/ui.module';
 import { CapaService } from '../../capa.service';
 import { CapaCaseResponse, CapaStatus } from '../../capa.types';
 import { CapaDetailComponent } from './capa-detail.component';
+import {
+  CapaRevisionImpactComponent
+} from '../capa-revision-impact/capa-revision-impact.component';
+import { ProductsService } from '../../../products/products.service';
 
 /**
  * Cycle de vie du dossier depuis la fiche (§4.2, ISO 9001 §10.2).
@@ -62,10 +66,13 @@ describe('CapaDetailComponent — cycle de vie du dossier', () => {
 
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
-      declarations: [CapaDetailComponent],
+      declarations: [CapaDetailComponent, CapaRevisionImpactComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: CapaService, useValue: capa },
+        // L'encart d'impact vit dans la fiche : sans ce doublon, il irait
+        // chercher un HttpClient que ce banc de test ne fournit pas.
+        { provide: ProductsService, useValue: { revisionRequestsForTrigger: () => of([]) } },
         { provide: MatSnackBar, useValue: snack },
         { provide: MatDialog, useValue: dialog },
         { provide: Router, useValue: router },
