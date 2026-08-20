@@ -29,6 +29,10 @@ public final class ModuleCatalog {
                 ModuleCatalogEntry.of("docs",        "Document control",    "transverse", FREE,      List.of(),                  true),
                 ModuleCatalogEntry.of("audit",       "Audit management",    "transverse", FREE,      List.of(),                  true),
                 ModuleCatalogEntry.of("risk",        "Risk / FMEA",         "transverse", STANDARD,  List.of("capa"),            false),
+                ModuleCatalogEntry.of("product",     "Product referential", "transverse", STANDARD,  List.of(),                  false),
+                // Le control plan depend des deux : sans PFMEA il n'a rien a citer,
+                // sans produit il n'a pas de sujet.
+                ModuleCatalogEntry.of("controlplan", "Control Plan",        "transverse", STANDARD,  List.of("risk", "product"), false),
                 ModuleCatalogEntry.of("supplier",    "Supplier QM",         "transverse", STANDARD,  List.of("capa", "audit"),   false),
                 ModuleCatalogEntry.of("training",    "Training & Competency","transverse", STANDARD, List.of(),                  false),
                 ModuleCatalogEntry.of("change",      "Change management",   "transverse", STANDARD,  List.of("docs"),            false),

@@ -16109,6 +16109,538 @@ historique 12 mois</source>
         <source>Impossible d'annuler cette inscription.</source>
         <target state="translated">この登録を取り消せません。</target>
       </trans-unit>
+      <trans-unit id="nav.produits" datatype="html">
+        <source>Produits</source>
+        <target state="translated">製品</target>
+      </trans-unit>
+      <trans-unit id="common.edit-aria" datatype="html">
+        <source>Modifier</source>
+        <target state="translated">編集</target>
+      </trans-unit>
+      <trans-unit id="common.delete-aria" datatype="html">
+        <source>Supprimer</source>
+        <target state="translated">削除</target>
+      </trans-unit>
+      <trans-unit id="product.list-title" datatype="html">
+        <source>Produits</source>
+        <target state="translated">製品</target>
+      </trans-unit>
+      <trans-unit id="product.list-subtitle" datatype="html">
+        <source>Le sujet du PFMEA et du control plan : ce qu'on fabrique, sa nomenclature et sa gamme.</source>
+        <target state="translated">PFMEA と管理計画書の対象：何を作るか、その部品表と工程順序。</target>
+      </trans-unit>
+      <trans-unit id="product.list-empty" datatype="html">
+        <source>Aucun produit. Créez-en un pour bâtir son PFMEA et son control plan.</source>
+        <target state="translated">製品がありません。PFMEA と管理計画書を作成するには、まず製品を登録してください。</target>
+      </trans-unit>
+      <trans-unit id="product.list-failed" datatype="html">
+        <source>Impossible de charger les produits.</source>
+        <target state="translated">製品を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="product.new" datatype="html">
+        <source>Nouveau produit</source>
+        <target state="translated">新規製品</target>
+      </trans-unit>
+      <trans-unit id="product.filter-status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">ステータス</target>
+      </trans-unit>
+      <trans-unit id="product.filter-all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">すべて</target>
+      </trans-unit>
+      <trans-unit id="product.col-code" datatype="html">
+        <source>Référence</source>
+        <target state="translated">品番</target>
+      </trans-unit>
+      <trans-unit id="product.col-designation" datatype="html">
+        <source>Désignation</source>
+        <target state="translated">品名</target>
+      </trans-unit>
+      <trans-unit id="product.col-family" datatype="html">
+        <source>Famille</source>
+        <target state="translated">製品群</target>
+      </trans-unit>
+      <trans-unit id="product.col-status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">ステータス</target>
+      </trans-unit>
+      <trans-unit id="product.col-revisions" datatype="html">
+        <source>À réviser</source>
+        <target state="translated">要見直し</target>
+      </trans-unit>
+      <trans-unit id="product.edit-aria" datatype="html">
+        <source>Modifier le produit</source>
+        <target state="translated">製品を編集</target>
+      </trans-unit>
+      <trans-unit id="product.detail-failed" datatype="html">
+        <source>Produit introuvable.</source>
+        <target state="translated">製品が見つかりません。</target>
+      </trans-unit>
+      <trans-unit id="product.activate" datatype="html">
+        <source>Activer</source>
+        <target state="translated">有効化</target>
+      </trans-unit>
+      <trans-unit id="product.obsolete" datatype="html">
+        <source>Rendre obsolète</source>
+        <target state="translated">廃止にする</target>
+      </trans-unit>
+      <trans-unit id="product.no-revision" datatype="html">
+        <source>Rien en attente</source>
+        <target state="translated">保留中なし</target>
+      </trans-unit>
+      <trans-unit id="product.tab-summary" datatype="html">
+        <source>Synthèse</source>
+        <target state="translated">概要</target>
+      </trans-unit>
+      <trans-unit id="product.tab-bom" datatype="html">
+        <source>Nomenclature</source>
+        <target state="translated">部品表</target>
+      </trans-unit>
+      <trans-unit id="product.tab-routing" datatype="html">
+        <source>Gamme</source>
+        <target state="translated">工程順序</target>
+      </trans-unit>
+      <trans-unit id="product.tab-pfmea" datatype="html">
+        <source>PFMEA</source>
+        <target state="translated">PFMEA</target>
+      </trans-unit>
+      <trans-unit id="product.tab-control-plan" datatype="html">
+        <source>Control Plan</source>
+        <target state="translated">管理計画書</target>
+      </trans-unit>
+      <trans-unit id="product.tab-nc" datatype="html">
+        <source>NC liées</source>
+        <target state="translated">関連する不適合</target>
+      </trans-unit>
+      <trans-unit id="product.tab-revisions" datatype="html">
+        <source>Révisions proposées</source>
+        <target state="translated">提案された改訂</target>
+      </trans-unit>
+      <trans-unit id="product.bom-empty" datatype="html">
+        <source>Aucun composant déclaré.</source>
+        <target state="translated">構成部品が登録されていません。</target>
+      </trans-unit>
+      <trans-unit id="product.bom-failed" datatype="html">
+        <source>Nomenclature indisponible.</source>
+        <target state="translated">部品表を取得できません。</target>
+      </trans-unit>
+      <trans-unit id="product.routing-empty" datatype="html">
+        <source>Aucune opération. C'est la gamme qui relie le PFMEA au control plan.</source>
+        <target state="translated">工程がありません。PFMEA と管理計画書をつなぐのは工程順序です。</target>
+      </trans-unit>
+      <trans-unit id="product.routing-failed" datatype="html">
+        <source>Gamme indisponible.</source>
+        <target state="translated">工程順序を取得できません。</target>
+      </trans-unit>
+      <trans-unit id="product.component-new" datatype="html">
+        <source>Ajouter un composant</source>
+        <target state="translated">構成部品を追加</target>
+      </trans-unit>
+      <trans-unit id="product.component-edit" datatype="html">
+        <source>Modifier le composant</source>
+        <target state="translated">構成部品を編集</target>
+      </trans-unit>
+      <trans-unit id="product.operation-new" datatype="html">
+        <source>Ajouter une opération</source>
+        <target state="translated">工程を追加</target>
+      </trans-unit>
+      <trans-unit id="product.operation-edit" datatype="html">
+        <source>Modifier l'opération</source>
+        <target state="translated">工程を編集</target>
+      </trans-unit>
+      <trans-unit id="product.operation-conflict" datatype="html">
+        <source>Ce code d'opération existe déjà sur ce produit.</source>
+        <target state="translated">この工程コードはこの製品に既に存在します。</target>
+      </trans-unit>
+      <trans-unit id="product.dialog-new" datatype="html">
+        <source>Nouveau produit</source>
+        <target state="translated">新規製品</target>
+      </trans-unit>
+      <trans-unit id="product.dialog-edit" datatype="html">
+        <source>Modifier le produit</source>
+        <target state="translated">製品を編集</target>
+      </trans-unit>
+      <trans-unit id="product.field-code" datatype="html">
+        <source>Référence</source>
+        <target state="translated">品番</target>
+      </trans-unit>
+      <trans-unit id="product.field-code-hint" datatype="html">
+        <source>Lettres, chiffres, point, tiret ou souligné. Elle ne se modifiera plus.</source>
+        <target state="translated">英数字、ピリオド、ハイフン、アンダースコア。登録後は変更できません。</target>
+      </trans-unit>
+      <trans-unit id="product.field-designation" datatype="html">
+        <source>Désignation</source>
+        <target state="translated">品名</target>
+      </trans-unit>
+      <trans-unit id="product.field-family" datatype="html">
+        <source>Famille</source>
+        <target state="translated">製品群</target>
+      </trans-unit>
+      <trans-unit id="product.field-revision" datatype="html">
+        <source>Indice</source>
+        <target state="translated">改訂記号</target>
+      </trans-unit>
+      <trans-unit id="product.field-customer" datatype="html">
+        <source>Client</source>
+        <target state="translated">顧客</target>
+      </trans-unit>
+      <trans-unit id="product.field-site" datatype="html">
+        <source>Site</source>
+        <target state="translated">拠点</target>
+      </trans-unit>
+      <trans-unit id="product.field-sequence" datatype="html">
+        <source>Rang</source>
+        <target state="translated">順序</target>
+      </trans-unit>
+      <trans-unit id="product.field-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">品番</target>
+      </trans-unit>
+      <trans-unit id="product.field-label" datatype="html">
+        <source>Libellé</source>
+        <target state="translated">名称</target>
+      </trans-unit>
+      <trans-unit id="product.field-quantity" datatype="html">
+        <source>Quantité</source>
+        <target state="translated">数量</target>
+      </trans-unit>
+      <trans-unit id="product.field-unit" datatype="html">
+        <source>Unité</source>
+        <target state="translated">単位</target>
+      </trans-unit>
+      <trans-unit id="product.field-op-code" datatype="html">
+        <source>Code</source>
+        <target state="translated">コード</target>
+      </trans-unit>
+      <trans-unit id="product.field-workstation" datatype="html">
+        <source>Poste</source>
+        <target state="translated">工程設備</target>
+      </trans-unit>
+      <trans-unit id="product.save-failed" datatype="html">
+        <source>Enregistrement impossible.</source>
+        <target state="translated">保存できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="product.delete-failed" datatype="html">
+        <source>Suppression impossible.</source>
+        <target state="translated">削除できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="product.code-conflict" datatype="html">
+        <source>Cette référence est déjà utilisée.</source>
+        <target state="translated">この品番は既に使用されています。</target>
+      </trans-unit>
+      <trans-unit id="product.nc-empty" datatype="html">
+        <source>Aucune non-conformité rattachée à ce produit.</source>
+        <target state="translated">この製品に紐づく不適合はありません。</target>
+      </trans-unit>
+      <trans-unit id="product.nc-failed" datatype="html">
+        <source>Non-conformités indisponibles.</source>
+        <target state="translated">不適合を取得できません。</target>
+      </trans-unit>
+      <trans-unit id="product.nc-unexplained" datatype="html">
+        <source>Défauts que l'analyse n'explique pas</source>
+        <target state="translated">分析で説明できない不具合</target>
+      </trans-unit>
+      <trans-unit id="product.nc-unexplained-hint" datatype="html">
+        <source>Aucun mode de défaillance ne leur est rattaché : soit le PFMEA en ignore un, soit le rattachement reste à faire.</source>
+        <target state="translated">故障モードが紐づいていません。PFMEA に抜けがあるか、紐づけがまだ行われていないかのどちらかです。</target>
+      </trans-unit>
+      <trans-unit id="product.nc-explained" datatype="html">
+        <source>Défauts rattachés à un mode de défaillance</source>
+        <target state="translated">故障モードに紐づいた不具合</target>
+      </trans-unit>
+      <trans-unit id="product.nc-col-ref" datatype="html">
+        <source>Référence</source>
+        <target state="translated">番号</target>
+      </trans-unit>
+      <trans-unit id="product.nc-col-title" datatype="html">
+        <source>Intitulé</source>
+        <target state="translated">件名</target>
+      </trans-unit>
+      <trans-unit id="product.nc-col-severity" datatype="html">
+        <source>Gravité</source>
+        <target state="translated">重大度</target>
+      </trans-unit>
+      <trans-unit id="product.nc-col-detected" datatype="html">
+        <source>Détectée le</source>
+        <target state="translated">検出日</target>
+      </trans-unit>
+      <trans-unit id="pfmea.load-failed" datatype="html">
+        <source>PFMEA indisponible.</source>
+        <target state="translated">PFMEA を取得できません。</target>
+      </trans-unit>
+      <trans-unit id="pfmea.no-project" datatype="html">
+        <source>Aucun PFMEA rattaché à ce produit. Créez-en un depuis le module FMEA, puis rattachez-le.</source>
+        <target state="translated">この製品に紐づく PFMEA がありません。FMEA モジュールで作成してから紐づけてください。</target>
+      </trans-unit>
+      <trans-unit id="pfmea.no-item" datatype="html">
+        <source>Ce PFMEA ne contient encore aucune ligne d'analyse.</source>
+        <target state="translated">この PFMEA にはまだ分析行がありません。</target>
+      </trans-unit>
+      <trans-unit id="pfmea.revision" datatype="html">
+        <source>révision {{ p.revision }}</source>
+        <target state="translated">改訂 {{ p.revision }}</target>
+      </trans-unit>
+      <trans-unit id="pfmea.col-failure-mode" datatype="html">
+        <source>Mode de défaillance</source>
+        <target state="translated">故障モード</target>
+      </trans-unit>
+      <trans-unit id="pfmea.col-sod" datatype="html">
+        <source>S / O / D</source>
+        <target state="translated">S / O / D</target>
+      </trans-unit>
+      <trans-unit id="pfmea.col-rpn" datatype="html">
+        <source>RPN</source>
+        <target state="translated">RPN</target>
+      </trans-unit>
+      <trans-unit id="pfmea.col-ap" datatype="html">
+        <source>Priorité d'action</source>
+        <target state="translated">処置優先度</target>
+      </trans-unit>
+      <trans-unit id="pfmea.not-rated" datatype="html">
+        <source>non cotée</source>
+        <target state="translated">未評価</target>
+      </trans-unit>
+      <trans-unit id="pfmea.col-flag" datatype="html">
+        <source>Révision</source>
+        <target state="translated">改訂</target>
+      </trans-unit>
+      <trans-unit id="pfmea.flag-tooltip" datatype="html">
+        <source>Une révision est proposée sur cette ligne</source>
+        <target state="translated">この行に改訂が提案されています</target>
+      </trans-unit>
+      <trans-unit id="controlplan.load-failed" datatype="html">
+        <source>Control plan indisponible.</source>
+        <target state="translated">管理計画書を取得できません。</target>
+      </trans-unit>
+      <trans-unit id="controlplan.none" datatype="html">
+        <source>Aucun control plan. C'est lui qui traduit le PFMEA en contrôles réellement exécutés au poste.</source>
+        <target state="translated">管理計画書がありません。PFMEA を工程で実際に行う検査へ翻訳するのがこの文書です。</target>
+      </trans-unit>
+      <trans-unit id="controlplan.no-line" datatype="html">
+        <source>Ce plan ne contient encore aucune ligne.</source>
+        <target state="translated">この計画書にはまだ行がありません。</target>
+      </trans-unit>
+      <trans-unit id="controlplan.plans-aria" datatype="html">
+        <source>Plans</source>
+        <target state="translated">計画書</target>
+      </trans-unit>
+      <trans-unit id="controlplan.new" datatype="html">
+        <source>Nouveau brouillon</source>
+        <target state="translated">新規ドラフト</target>
+      </trans-unit>
+      <trans-unit id="controlplan.draft-exists" datatype="html">
+        <source>Un brouillon existe déjà pour cette phase.</source>
+        <target state="translated">この段階のドラフトは既に存在します。</target>
+      </trans-unit>
+      <trans-unit id="controlplan.open-revision" datatype="html">
+        <source>Ouvrir une révision</source>
+        <target state="translated">改訂を開く</target>
+      </trans-unit>
+      <trans-unit id="controlplan.revision-failed" datatype="html">
+        <source>Ouverture de révision impossible.</source>
+        <target state="translated">改訂を開けませんでした。</target>
+      </trans-unit>
+      <trans-unit id="controlplan.approve" datatype="html">
+        <source>Approuver</source>
+        <target state="translated">承認</target>
+      </trans-unit>
+      <trans-unit id="controlplan.approve-failed" datatype="html">
+        <source>Approbation impossible.</source>
+        <target state="translated">承認できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="controlplan.add-line" datatype="html">
+        <source>Ajouter une ligne</source>
+        <target state="translated">行を追加</target>
+      </trans-unit>
+      <trans-unit id="controlplan.line-new" datatype="html">
+        <source>Ajouter une ligne</source>
+        <target state="translated">行を追加</target>
+      </trans-unit>
+      <trans-unit id="controlplan.line-edit" datatype="html">
+        <source>Modifier la ligne</source>
+        <target state="translated">行を編集</target>
+      </trans-unit>
+      <trans-unit id="controlplan.locked" datatype="html">
+        <source>Ce plan est approuvé : ouvrez une révision pour le modifier.</source>
+        <target state="translated">この計画書は承認済みです。変更するには改訂を開いてください。</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-characteristic" datatype="html">
+        <source>Caractéristique</source>
+        <target state="translated">特性</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-spec" datatype="html">
+        <source>Spécification</source>
+        <target state="translated">規格</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-control" datatype="html">
+        <source>Contrôle</source>
+        <target state="translated">管理方法</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-reaction" datatype="html">
+        <source>Plan de réaction</source>
+        <target state="translated">異常時の処置</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-justification" datatype="html">
+        <source>Justification</source>
+        <target state="translated">根拠</target>
+      </trans-unit>
+      <trans-unit id="controlplan.justified" datatype="html">
+        <source>PFMEA</source>
+        <target state="translated">PFMEA</target>
+      </trans-unit>
+      <trans-unit id="controlplan.unjustified" datatype="html">
+        <source>sans justification</source>
+        <target state="translated">根拠なし</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-operation" datatype="html">
+        <source>Opération</source>
+        <target state="translated">工程</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-none" datatype="html">
+        <source>Aucune</source>
+        <target state="translated">なし</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-characteristic" datatype="html">
+        <source>Caractéristique</source>
+        <target state="translated">特性</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-type" datatype="html">
+        <source>Type</source>
+        <target state="translated">種別</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-class" datatype="html">
+        <source>Classement</source>
+        <target state="translated">区分</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-spec" datatype="html">
+        <source>Spécification</source>
+        <target state="translated">規格</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-tol-lower" datatype="html">
+        <source>Tolérance mini</source>
+        <target state="translated">下限公差</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-tol-upper" datatype="html">
+        <source>Tolérance maxi</source>
+        <target state="translated">上限公差</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-machine" datatype="html">
+        <source>Moyen</source>
+        <target state="translated">設備</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-technique" datatype="html">
+        <source>Technique de mesure</source>
+        <target state="translated">測定方法</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-sample-size" datatype="html">
+        <source>Taille d'échantillon</source>
+        <target state="translated">サンプルサイズ</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-frequency" datatype="html">
+        <source>Fréquence</source>
+        <target state="translated">頻度</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-method" datatype="html">
+        <source>Méthode de contrôle</source>
+        <target state="translated">管理方法</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-reaction" datatype="html">
+        <source>Plan de réaction</source>
+        <target state="translated">異常時の処置</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-fmea" datatype="html">
+        <source>Ligne de PFMEA qui justifie ce contrôle</source>
+        <target state="translated">この管理の根拠となる PFMEA の行</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-no-justification" datatype="html">
+        <source>Aucune — ce contrôle n'est justifié par aucune analyse</source>
+        <target state="translated">なし — この管理はいかなる分析にも基づいていません</target>
+      </trans-unit>
+      <trans-unit id="revision.load-failed" datatype="html">
+        <source>Propositions indisponibles.</source>
+        <target state="translated">提案を取得できません。</target>
+      </trans-unit>
+      <trans-unit id="revision.none" datatype="html">
+        <source>Aucune révision proposée. Les non-conformités et les CAPA closes en déposent ici.</source>
+        <target state="translated">提案された改訂はありません。不適合と是正処置の完了がここに提案を残します。</target>
+      </trans-unit>
+      <trans-unit id="revision.accept" datatype="html">
+        <source>Accepter</source>
+        <target state="translated">承認</target>
+      </trans-unit>
+      <trans-unit id="revision.reject" datatype="html">
+        <source>Refuser</source>
+        <target state="translated">却下</target>
+      </trans-unit>
+      <trans-unit id="revision.note" datatype="html">
+        <source>Motif de refus</source>
+        <target state="translated">却下理由</target>
+      </trans-unit>
+      <trans-unit id="revision.note-hint" datatype="html">
+        <source>Un refus sans motif écrit est l'écart que l'auditeur cherche.</source>
+        <target state="translated">理由を書かない却下こそ、監査員が探している指摘です。</target>
+      </trans-unit>
+      <trans-unit id="revision.accept-failed" datatype="html">
+        <source>Acceptation impossible.</source>
+        <target state="translated">承認できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="revision.reject-failed" datatype="html">
+        <source>Refus impossible.</source>
+        <target state="translated">却下できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="revision.already-decided" datatype="html">
+        <source>Cette proposition a déjà été tranchée.</source>
+        <target state="translated">この提案は既に判断済みです。</target>
+      </trans-unit>
+      <trans-unit id="revision.create-pfmea" datatype="html">
+        <source>Créer une ligne de PFMEA</source>
+        <target state="translated">PFMEA の行を作成</target>
+      </trans-unit>
+      <trans-unit id="revision.create-line" datatype="html">
+        <source>Créer une ligne de control plan</source>
+        <target state="translated">管理計画書の行を作成</target>
+      </trans-unit>
+      <trans-unit id="nc.create.product" datatype="html">
+        <source>Produit concerné</source>
+        <target state="translated">対象製品</target>
+      </trans-unit>
+      <trans-unit id="nc.create.no-product" datatype="html">
+        <source>Aucun — cette NC ne vise pas un produit</source>
+        <target state="translated">なし — この不適合は製品を対象としていません</target>
+      </trans-unit>
+      <trans-unit id="nc.create.failure-mode" datatype="html">
+        <source>Mode de défaillance du PFMEA</source>
+        <target state="translated">PFMEA の故障モード</target>
+      </trans-unit>
+      <trans-unit id="nc.create.suggest" datatype="html">
+        <source>Proposer</source>
+        <target state="translated">候補を出す</target>
+      </trans-unit>
+      <trans-unit id="nc.create.matched-terms" datatype="html">
+        <source>termes communs : {{ choice.matchedTerms }}</source>
+        <target state="translated">共通する語：{{ choice.matchedTerms }}</target>
+      </trans-unit>
+      <trans-unit id="nc.create.none-matches" datatype="html">
+        <source>Aucun mode ne correspond</source>
+        <target state="translated">該当する故障モードなし</target>
+      </trans-unit>
+      <trans-unit id="nc.create.none-matches-hint" datatype="html">
+        <source>Un défaut que l'analyse n'avait pas prévu : une ligne de PFMEA sera proposée.</source>
+        <target state="translated">分析が想定していなかった不具合です。PFMEA の行が提案されます。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.no-suggestion" datatype="html">
+        <source>Aucune suggestion pour ce texte. « Aucun mode ne correspond » reste un choix valable.</source>
+        <target state="translated">この文章に対する候補はありません。「該当する故障モードなし」も正当な回答です。</target>
+      </trans-unit>
+      <trans-unit id="capa.impact-title" datatype="html">
+        <source>Impact PFMEA / Control Plan</source>
+        <target state="translated">PFMEA・管理計画書への影響</target>
+      </trans-unit>
+      <trans-unit id="capa.impact-subtitle" datatype="html">
+        <source>Ce que la clôture de ce dossier a proposé de réviser.</source>
+        <target state="translated">この案件の完了が改訂を提案した内容。</target>
+      </trans-unit>
       <trans-unit id="changes.approver.added" datatype="html">
         <source>Approbateur ajouté.</source>
         <target state="translated">承認者を追加しました。</target>

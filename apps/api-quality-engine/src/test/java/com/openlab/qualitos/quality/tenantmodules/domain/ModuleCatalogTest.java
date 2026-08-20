@@ -39,6 +39,16 @@ class ModuleCatalogTest {
     }
 
     @Test
+    void controlPlan_dependsOnBothTheFmeaAndTheProduct() {
+        // Sans PFMEA il n'a rien à citer, sans produit il n'a pas de sujet :
+        // l'activer seul donnerait un écran vide qu'on croirait cassé.
+        assertThat(ModuleCatalog.require("controlplan").dependencies())
+                .containsExactlyInAnyOrder("risk", "product");
+        assertThat(ModuleCatalog.require("product").dependencies()).isEmpty();
+        assertThat(ModuleCatalog.require("product").coreModule()).isFalse();
+    }
+
+    @Test
     void require_unknownCode_throws() {
         assertThatThrownBy(() -> ModuleCatalog.require("not-a-module"))
                 .isInstanceOf(ModuleActivationStateException.class);
