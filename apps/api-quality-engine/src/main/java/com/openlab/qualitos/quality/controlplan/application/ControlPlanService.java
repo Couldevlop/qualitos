@@ -33,16 +33,18 @@ public class ControlPlanService {
     private final ControlPlanRepository repo;
     private final ProductLookup products;
     private final FmeaItemLookup fmeaItems;
+    private final ControlPlanAuditPort audit;
     private final TenantProvider tenants;
     private final ActorProvider actors;
     private final Clock clock;
 
     public ControlPlanService(ControlPlanRepository repo, ProductLookup products,
-                              FmeaItemLookup fmeaItems, TenantProvider tenants,
-                              ActorProvider actors, Clock clock) {
+                              FmeaItemLookup fmeaItems, ControlPlanAuditPort audit,
+                              TenantProvider tenants, ActorProvider actors, Clock clock) {
         this.repo = repo;
         this.products = products;
         this.fmeaItems = fmeaItems;
+        this.audit = audit;
         this.tenants = tenants;
         this.actors = actors;
         this.clock = clock;
@@ -95,6 +97,8 @@ public class ControlPlanService {
         for (ControlPlanLine source : repo.linesOf(active.getId())) {
             repo.saveLine(copyOf(source, saved.getId()));
         }
+        audit.record(saved.getTenantId(), actors.currentUserId(), "controlplan.plan.revision-opened",
+                saved.getId(), "Révision de control plan ouverte", details(saved));
         return ControlPlanDto.View.of(saved);
     }
 
@@ -113,8 +117,14 @@ public class ControlPlanService {
             p.archive();
             repo.save(p);
         });
-        draft.approve(actors.currentUserId(), Instant.now(clock));
-        return ControlPlanDto.View.of(repo.save(draft));
+        UUID actor = actors.currentUserId();
+        draft.approve(actor, Instant.now(clock));
+        ControlPlan approved = repo.save(draft);
+        // Le journal chaîné est ancré par lots : y inscrire l'approbation suffit à
+        // la rendre infalsifiable, sans ancrer chaque document séparément.
+        audit.record(approved.getTenantId(), actor, "controlplan.plan.approved",
+                approved.getId(), "Control plan approuvé", details(approved));
+        return ControlPlanDto.View.of(approved);
     }
 
     public ControlPlanDto.LineView addLine(UUID productId, UUID planId, ControlPlanDto.LineCommand cmd) {
@@ -167,6 +177,20 @@ public class ControlPlanService {
                     "La ligne de PFMEA " + fmeaItemId + " couvre un autre produit");
         }
         return fmeaItemId;
+    }
+
+    /** JSON plat pour la ligne de journal : cinq champs, aucun sérialiseur à convoquer. */
+    private static String details(ControlPlan plan) {
+        return "{\"productId\":\"" + plan.getProductId()
+                + "\",\"phase\":\"" + plan.getPhase()
+                + "\",\"code\":\"" + escape(plan.getCode())
+                + "\",\"revision\":" + plan.getRevision()
+                + ",\"status\":\"" + plan.getStatus() + "\"}";
+    }
+
+    /** Le code du plan est saisi librement : un guillemet casserait la ligne du journal. */
+    private static String escape(String value) {
+        return value == null ? "" : value.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
     private ControlPlanLine copyOf(ControlPlanLine source, UUID targetPlanId) {

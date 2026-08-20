@@ -15,6 +15,7 @@ import com.openlab.qualitos.quality.product.domain.ProductNotFoundException;
 import com.openlab.qualitos.quality.product.domain.ProductStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -42,6 +43,7 @@ class ControlPlanServiceTest {
     ControlPlanRepository repo;
     ProductLookup products;
     FmeaItemLookup fmeaItems;
+    ControlPlanAuditPort audit;
     TenantProvider tenants;
     ActorProvider actors;
     ControlPlanService service;
@@ -51,6 +53,7 @@ class ControlPlanServiceTest {
         repo = mock(ControlPlanRepository.class);
         products = mock(ProductLookup.class);
         fmeaItems = mock(FmeaItemLookup.class);
+        audit = mock(ControlPlanAuditPort.class);
         tenants = mock(TenantProvider.class);
         actors = mock(ActorProvider.class);
         when(tenants.requireTenantId()).thenReturn(TENANT);
@@ -66,7 +69,7 @@ class ControlPlanServiceTest {
             if (l.getId() == null) l.assignId(UUID.randomUUID());
             return l;
         });
-        service = new ControlPlanService(repo, products, fmeaItems, tenants, actors,
+        service = new ControlPlanService(repo, products, fmeaItems, audit, tenants, actors,
                 Clock.fixed(NOW, ZoneOffset.UTC));
     }
 
@@ -347,6 +350,67 @@ class ControlPlanServiceTest {
 
         assertThatThrownBy(() -> service.deleteLine(PRODUCT, PLAN, LINE))
                 .isInstanceOf(ControlPlanNotFoundException.class);
+    }
+
+    @Test
+    void approvingIsWrittenToTheChainedJournalWithTheActorOfTheToken() {
+        // Sans cette inscription, rien n'ancre l'approbation : le journal est ancré
+        // par lots, le document ne l'est pas séparément. Un plan approuvé qui ne
+        // laisserait aucune trace serait un écart en audit de certification.
+        ControlPlan draft = draftPlan();
+        when(repo.findById(PLAN)).thenReturn(Optional.of(draft));
+        when(repo.findActive(TENANT, PRODUCT, ControlPlanPhase.PRODUCTION)).thenReturn(Optional.empty());
+
+        service.approve(PRODUCT, PLAN);
+
+        ArgumentCaptor<String> details = ArgumentCaptor.forClass(String.class);
+        verify(audit).record(eq(TENANT), eq(USER), eq("controlplan.plan.approved"),
+                eq(PLAN), eq("Control plan approuvé"), details.capture());
+        assertThat(details.getValue())
+                .contains("\"productId\":\"" + PRODUCT + "\"")
+                .contains("\"phase\":\"PRODUCTION\"")
+                .contains("\"status\":\"ACTIVE\"");
+    }
+
+    @Test
+    void openingARevisionIsWrittenToTheJournalToo() {
+        // Ouvrir une révision dégèle le document : c'est un fait aussi important
+        // que l'approbation qui l'a figé.
+        ControlPlan active = activePlan();
+        when(repo.findById(PLAN)).thenReturn(Optional.of(active));
+        when(repo.findDraft(TENANT, PRODUCT, ControlPlanPhase.PRODUCTION)).thenReturn(Optional.empty());
+        when(repo.linesOf(PLAN)).thenReturn(List.of());
+
+        service.openRevision(PRODUCT, PLAN);
+
+        verify(audit).record(eq(TENANT), eq(USER), eq("controlplan.plan.revision-opened"),
+                any(), eq("Révision de control plan ouverte"), any());
+    }
+
+    @Test
+    void aRefusedApprovalLeavesNoTraceInTheJournal() {
+        // Le journal consigne des faits, pas des tentatives : y inscrire un refus
+        // technique noierait les décisions réelles.
+        when(repo.findById(PLAN)).thenReturn(Optional.of(activePlan()));
+
+        assertThatThrownBy(() -> service.approve(PRODUCT, PLAN))
+                .isInstanceOf(ControlPlanStateException.class);
+
+        verifyNoInteractions(audit);
+    }
+
+    @Test
+    void aCodeCarryingAQuoteDoesNotBreakTheJournalLine() {
+        ControlPlan draft = ControlPlan.rehydrate(PLAN, TENANT, PRODUCT, ControlPlanPhase.PRODUCTION,
+                "CP \"A\"", 1, ControlPlanStatus.DRAFT, null, null, null, USER, NOW, NOW);
+        when(repo.findById(PLAN)).thenReturn(Optional.of(draft));
+        when(repo.findActive(TENANT, PRODUCT, ControlPlanPhase.PRODUCTION)).thenReturn(Optional.empty());
+
+        service.approve(PRODUCT, PLAN);
+
+        ArgumentCaptor<String> details = ArgumentCaptor.forClass(String.class);
+        verify(audit).record(any(), any(), any(), any(), any(), details.capture());
+        assertThat(details.getValue()).contains("CP \\\"A\\\"");
     }
 
     // ---------- montage ----------
