@@ -128,22 +128,76 @@ produit ni ne consomme est du code mort déguisé en contrat. La rouvrir demande
 de décider comment une cible survit à la recopie des lignes dans une nouvelle
 révision — ce qui n'est pas une question qu'on tranche en passant.
 
+### 8. Le second facteur est exigé au moment de la signature
+
+Approuver un control plan et accepter une proposition de révision passent par
+`StepUpGuard`, qui lit dans le jeton la preuve qu'un second facteur a été
+présenté — `acr` (palier atteint) ou `amr` (méthodes employées). Le contrôle est
+**fail-closed** : sans preuve lisible, 403.
+
+**Pourquoi pas le rôle :** un directeur qualité entré par mot de passe seul porte
+exactement le même rôle qu'un directeur qualité entré par mot de passe et code à
+usage unique. Seul le jeton distingue les deux.
+
+**Pourquoi 403 et non 401 :** la session est valide, c'est sa force qui ne l'est
+pas. Un 401 déclencherait une reconnexion silencieuse qui reproduirait le même
+jeton, sans jamais demander le code.
+
+**Ce que le realm doit fournir** — vérifié sur un Keycloak 25 réel, réponses à
+l'appui :
+
+| Situation | Étapes | `acr` |
+|---|---|---|
+| Connexion ordinaire | mot de passe | `silver` |
+| `acr_values=gold` demandé | mot de passe + code | `gold` |
+
+Le front demande `gold` quand le serveur répond 403 « step-up-required » : le
+code est réclamé au moment de signer, pas à chaque connexion.
+
+**Le piège, mesuré :** un OTP conditionné par le RÔLE ne relève pas l'`acr` — un
+directeur qualité peut présenter un vrai second facteur et obtenir malgré tout un
+jeton `acr=1`. Seul un sous-flux conditionné au PALIER l'inscrit. Et sans
+sous-flux déclarant le palier 1, Keycloak traite une connexion qui ne demande
+aucun palier comme une demande du palier maximal, et impose alors le code à tout
+le monde. Les deux sous-flux vont donc par paire.
+
+`infra/keycloak/apply-step-up.sh` pose tout cela sur un realm déjà en service —
+`--import-realm` ne réécrit pas un realm existant. Il construit un flux neuf à
+côté de l'ancien et bascule le realm dessus : le retour arrière est un champ à
+reposer, et l'ancien flux n'est jamais touché.
+
+### 9. L'approbation entre au journal chaîné
+
+`ControlPlanService` inscrit `controlplan.plan.approved` et
+`controlplan.plan.revision-opened` au journal du tenant, via un port dédié.
+
+**Pourquoi cela suffit à l'ancrage :** le journal est ancré par lots, racine de
+Merkle soumise à la chaîne. Y inscrire l'approbation la rend infalsifiable sans
+ancrer chaque document séparément — et sans multiplier les écritures on-chain.
+
+### 10. Un alias de rôle, parce que le realm et le code ne s'accordaient pas
+
+Le realm nomme le rôle `quality_director` ; les neuf `@PreAuthorize` du code
+qualité écrivent `DIRECTOR_QUALITY`. Un vrai directeur qualité ne correspondait
+donc à aucune règle et se voyait refuser l'approbation — un refus muet, invisible
+des bancs Web qui fabriquent eux-mêmes l'autorité qu'ils testent.
+
+L'alias est posé une fois, dans le convertisseur d'autorités, et vaut dans les
+deux sens. Même esprit que la compatibilité ROLE_ADMIN / ROLE_ADMIN_TENANT déjà
+en place.
+
 ## Ce que ce lot ne tient pas
 
-**L'approbation d'une révision devrait exiger un MFA.** La règle 18.2 §5 le
-demande pour toute action critique, et approuver un control plan en est une.
-Aucun module de l'engine ne sait aujourd'hui vérifier une revendication MFA du
-jeton : l'approbation est protégée par le rôle seul. Mieux vaut une dette nommée
-qu'une case cochée.
+**L'ancrage direct du document reste à faire.** L'approbation est inscrite au
+journal chaîné, lui-même ancré par lots : c'est suffisant pour prouver qu'elle a
+eu lieu et qu'elle n'a pas été réécrite. Ancrer le control plan lui-même — son
+empreinte, indépendamment du journal — n'est pas fait.
 
-**L'ancrage blockchain n'est pas branché** sur l'approbation d'un control plan.
-La décision est inscrite au journal chaîné du tenant, qui est lui-même ancré
-périodiquement ; l'ancrage direct du document reste à faire.
-
-**Les index partiels ne sont pas couverts par les tests.** H2, sur lequel tourne
-la suite, ne les connaît pas. Les quatre index de ce lot se vérifient à la main
-sur le PostgreSQL de la stack, et l'unicité est doublée côté service — les deux
-ceintures, aucune des deux automatisée de bout en bout.
+**Le second facteur repose sur ce que le realm publie.** L'engine lit `acr` et
+`amr` ; un fournisseur d'identité qui ne publierait ni l'un ni l'autre ferait
+répondre 403 à toute approbation. C'est le comportement voulu — refuser plutôt
+que supposer — mais il rend la bascule d'un environnement dépendante du passage
+de `apply-step-up.sh`, qui ne s'exécute pas tout seul au déploiement.
 
 ## Conséquences
 
@@ -157,3 +211,9 @@ ceintures, aucune des deux automatisée de bout en bout.
 - `NcService` publie un `NcCreatedEvent` après commit ; l'écouteur du moteur
   avale ses propres pannes. Une proposition manquée se rattrape à la prochaine
   NC ; une NC perdue ne se resaisit pas.
+- Les index partiels sont désormais **couverts par un test** : `PartialIndexesOnPostgresTest`
+  démarre un PostgreSQL par Testcontainers, y rejoue les 113 migrations, et
+  vérifie que chaque index mord — H2 les accepte sans jamais les appliquer. Le
+  test se saute là où Docker n'est pas disponible, en le disant.
+- `qualitos.security.step-up.enforced` vaut **true** par défaut. Un interrupteur
+  de sécurité dont le défaut est « ouvert » finit par rester ouvert.

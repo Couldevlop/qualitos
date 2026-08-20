@@ -123,5 +123,27 @@ d'argument pour minorer un risque.
 | Lire produits, PFMEA, control plan, propositions | Tout utilisateur authentifié |
 | Créer et modifier un produit, sa nomenclature, sa gamme | Manager qualité et au-dessus |
 | Éditer un brouillon de control plan | Manager qualité et au-dessus |
-| Accepter ou refuser une proposition de révision | Manager qualité et au-dessus |
-| **Approuver un control plan** | **Directeur qualité, Admin tenant, Super admin** |
+| Refuser une proposition de révision | Manager qualité et au-dessus |
+| **Accepter une proposition de révision** | Manager qualité et au-dessus, **+ code à usage unique** |
+| **Approuver un control plan** | Directeur qualité, Admin tenant, Super admin, **+ code à usage unique** |
+
+## Le code à usage unique, et quand il est demandé
+
+Deux gestes engagent l'organisation : **approuver un control plan** (le document
+devient opposable) et **accepter une proposition de révision** (elle écrit dans un
+document approuvé). Les deux exigent que votre session porte la trace d'un second
+facteur — pas seulement le bon rôle.
+
+Concrètement : vous vous connectez normalement, avec votre mot de passe. Au moment
+où vous approuvez, si votre session n'a pas encore présenté de code, l'écran vous
+propose **« Se réauthentifier »** ; vous saisissez votre code, et l'approbation
+repart. Le code reste valable une heure : approuver trois plans à la suite ne le
+redemande pas trois fois.
+
+**Refuser ne demande pas de code** : un refus ne modifie aucun document, il
+consigne une décision. Lui imposer une friction supplémentaire découragerait
+d'écrire les motifs, qui sont précisément ce que l'auditeur vient lire.
+
+Si l'écran répond que le second facteur est indisponible, c'est que le fournisseur
+d'identité de votre environnement n'a pas encore reçu la configuration
+correspondante — voir `infra/keycloak/apply-step-up.sh` côté exploitation.
