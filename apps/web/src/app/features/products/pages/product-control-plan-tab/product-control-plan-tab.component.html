@@ -1,0 +1,127 @@
+<div class="state-row" *ngIf="loading" role="status">
+  <mat-progress-spinner mode="indeterminate" diameter="32"
+                        aria-label="Chargement" i18n-aria-label="@@common.loading-aria"></mat-progress-spinner>
+</div>
+
+<div class="plan-bar">
+  <mat-chip-listbox *ngIf="plans.length > 0" aria-label="Plans" i18n-aria-label="@@controlplan.plans-aria">
+    <mat-chip-option *ngFor="let plan of plans"
+                     [selected]="selected?.plan?.id === plan.id"
+                     (click)="select(plan)">
+      {{ plan.phase }} · r{{ plan.revision }} · {{ plan.status }}
+    </mat-chip-option>
+  </mat-chip-listbox>
+
+  <div class="plan-actions">
+    <button mat-stroked-button [matMenuTriggerFor]="phaseMenu">
+      <mat-icon>add</mat-icon>
+      <span i18n="@@controlplan.new">Nouveau brouillon</span>
+    </button>
+    <mat-menu #phaseMenu="matMenu">
+      <button mat-menu-item *ngFor="let phase of phases" (click)="createDraft(phase)">
+        {{ phase }}
+      </button>
+    </mat-menu>
+
+    <button mat-stroked-button *ngIf="selected?.plan?.status === 'ACTIVE'" (click)="openRevision()">
+      <mat-icon>history_edu</mat-icon>
+      <span i18n="@@controlplan.open-revision">Ouvrir une révision</span>
+    </button>
+
+    <button mat-flat-button color="primary"
+            *ngIf="selected?.plan?.status === 'DRAFT' && canApprove" (click)="approve()">
+      <mat-icon>verified</mat-icon>
+      <span i18n="@@controlplan.approve">Approuver</span>
+    </button>
+  </div>
+</div>
+
+<p class="empty" *ngIf="!loading && plans.length === 0" i18n="@@controlplan.none">
+  Aucun control plan. C'est lui qui traduit le PFMEA en contrôles réellement exécutés au poste.
+</p>
+
+<div *ngIf="selected as detail">
+  <div class="tab-actions">
+    <button mat-stroked-button *ngIf="editable" (click)="addLine()">
+      <mat-icon>add</mat-icon>
+      <span i18n="@@controlplan.add-line">Ajouter une ligne</span>
+    </button>
+  </div>
+
+  <p class="empty" *ngIf="detail.lines.length === 0" i18n="@@controlplan.no-line">
+    Ce plan ne contient encore aucune ligne.
+  </p>
+
+  <div class="qos-scroll-x" *ngIf="detail.lines.length > 0">
+    <table mat-table [dataSource]="detail.lines" class="cp-table">
+
+      <ng-container matColumnDef="sequenceNo">
+        <th mat-header-cell *matHeaderCellDef i18n="@@product.field-sequence">Rang</th>
+        <td mat-cell *matCellDef="let line">{{ line.sequenceNo }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="characteristic">
+        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-characteristic">Caractéristique</th>
+        <td mat-cell *matCellDef="let line">
+          <div>{{ line.characteristicLabel }}</div>
+          <div class="dim">
+            {{ line.characteristicType }}
+            <span *ngIf="line.specialClass && line.specialClass !== 'STANDARD'">
+              · {{ line.specialClass }}
+            </span>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="specification">
+        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-spec">Spécification</th>
+        <td mat-cell *matCellDef="let line">
+          <div>{{ line.specification || '—' }}</div>
+          <div class="dim" *ngIf="line.toleranceLower !== undefined || line.toleranceUpper !== undefined">
+            {{ line.toleranceLower }} … {{ line.toleranceUpper }} {{ line.unit }}
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="control">
+        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-control">Contrôle</th>
+        <td mat-cell *matCellDef="let line">
+          <div>{{ line.controlMethod || '—' }}</div>
+          <div class="dim">{{ line.measurementTechnique }} {{ line.sampleFrequency }}</div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="reaction">
+        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-reaction">Plan de réaction</th>
+        <td mat-cell *matCellDef="let line">{{ line.reactionPlan || '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="justification">
+        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-justification">Justification</th>
+        <td mat-cell *matCellDef="let line">
+          <span class="qos-badge" data-tone="success" *ngIf="line.fmeaItemId"
+                i18n="@@controlplan.justified">PFMEA</span>
+          <span class="qos-badge" data-tone="warning" *ngIf="!line.fmeaItemId"
+                i18n="@@controlplan.unjustified">sans justification</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let line">
+          <button mat-icon-button *ngIf="editable" (click)="editLine(line)"
+                  aria-label="Modifier" i18n-aria-label="@@common.edit-aria">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button *ngIf="editable" (click)="deleteLine(line)"
+                  aria-label="Supprimer" i18n-aria-label="@@common.delete-aria">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+    </table>
+  </div>
+</div>

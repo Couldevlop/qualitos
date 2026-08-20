@@ -1,0 +1,146 @@
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { of } from 'rxjs';
+
+import { AuthService } from '../../../../core/auth/auth.service';
+import { SharedModule } from '../../../../shared/shared.module';
+import { UiModule } from '../../../../shared/ui/ui.module';
+import { ProductsService } from '../../products.service';
+import { ControlPlanLineView, ControlPlanView } from '../../products.types';
+import { ProductControlPlanTabComponent } from './product-control-plan-tab.component';
+
+/**
+ * L'onglet Control Plan.
+ *
+ * <p>Deux points de vigilance : une ligne sans lien vers le PFMEA doit le dire —
+ * un contrôle sans raison d'être coûte du temps au poste sans réduire aucun
+ * risque — et le bouton « Approuver » ne s'affiche pas pour qui n'y a pas droit.
+ * L'autorité reste le serveur ; montrer un bouton qui répondra 403 est seulement
+ * une mauvaise expérience.
+ */
+describe('ProductControlPlanTabComponent', () => {
+
+  const plan = (over: Partial<ControlPlanView> = {}): ControlPlanView => ({
+    id: 'cp-1', productId: 'p-1', phase: 'PRODUCTION', code: 'CP-4471',
+    revision: 1, status: 'DRAFT',
+    createdAt: '2026-08-19T08:00:00Z', updatedAt: '2026-08-19T08:00:00Z', ...over
+  });
+
+  const line = (over: Partial<ControlPlanLineView> = {}): ControlPlanLineView => ({
+    id: 'l-1', sequenceNo: 10, characteristicLabel: 'Diamètre alésage',
+    characteristicType: 'PRODUCT', ...over
+  });
+
+  let fixture: ComponentFixture<ProductControlPlanTabComponent>;
+  let component: ProductControlPlanTabComponent;
+  let service: jasmine.SpyObj<ProductsService>;
+  let auth: jasmine.SpyObj<AuthService>;
+
+  async function setup(roles: string[]): Promise<void> {
+    service = jasmine.createSpyObj<ProductsService>('ProductsService',
+      ['controlPlans', 'controlPlan', 'createControlPlan', 'openRevision',
+        'approveControlPlan', 'deleteLine']);
+    auth = jasmine.createSpyObj<AuthService>('AuthService', ['hasAnyRole']);
+    auth.hasAnyRole.and.callFake((wanted: string[]) =>
+      wanted.some(role => roles.includes(role)));
+
+    await TestBed.configureTestingModule({
+      declarations: [ProductControlPlanTabComponent],
+      imports: [SharedModule, UiModule, MatMenuModule, NoopAnimationsModule],
+      providers: [
+        { provide: ProductsService, useValue: service },
+        { provide: AuthService, useValue: auth },
+        { provide: MatDialog, useValue: { open: () => ({ afterClosed: () => of(null) }) } },
+        { provide: MatSnackBar, useValue: { open: jasmine.createSpy('open') } }
+      ]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(ProductControlPlanTabComponent);
+    component = fixture.componentInstance;
+    component.productId = 'p-1';
+  }
+
+  it('marque « sans justification » une ligne qui ne cite aucune ligne de PFMEA', fakeAsync(async () => {
+    await setup(['QUALITY_MANAGER']);
+    service.controlPlans.and.returnValue(of([plan()]));
+    service.controlPlan.and.returnValue(of({
+      plan: plan(), lines: [line(), line({ id: 'l-2', fmeaItemId: 'i-9' })]
+    }));
+
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+
+    const badges = fixture.nativeElement.querySelectorAll('.qos-badge[data-tone="warning"]');
+    expect(badges.length).toBe(1);
+    expect(badges[0].textContent).toContain('sans justification');
+  }));
+
+  it('cache le bouton d’approbation à un rôle qui n’y a pas droit', fakeAsync(async () => {
+    await setup(['QUALITY_MANAGER']);
+    service.controlPlans.and.returnValue(of([plan()]));
+    service.controlPlan.and.returnValue(of({ plan: plan(), lines: [] }));
+
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+
+    expect(component.canApprove).toBeFalse();
+    expect(fixture.nativeElement.textContent).not.toContain('Approuver');
+  }));
+
+  it('montre le bouton d’approbation au directeur qualité', fakeAsync(async () => {
+    await setup(['DIRECTOR_QUALITY']);
+    service.controlPlans.and.returnValue(of([plan()]));
+    service.controlPlan.and.returnValue(of({ plan: plan(), lines: [] }));
+
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+
+    expect(component.canApprove).toBeTrue();
+    expect(fixture.nativeElement.textContent).toContain('Approuver');
+  }));
+
+  it('ouvre d’abord le brouillon quand il en existe un', fakeAsync(async () => {
+    await setup(['QUALITY_MANAGER']);
+    const active = plan({ id: 'cp-active', status: 'ACTIVE' });
+    const draft = plan({ id: 'cp-draft', status: 'DRAFT', revision: 2 });
+    service.controlPlans.and.returnValue(of([active, draft]));
+    service.controlPlan.and.returnValue(of({ plan: draft, lines: [] }));
+
+    fixture.detectChanges();
+    tick();
+
+    expect(service.controlPlan).toHaveBeenCalledWith('p-1', 'cp-draft');
+  }));
+
+  it('n’autorise l’édition que sur un brouillon', fakeAsync(async () => {
+    await setup(['QUALITY_MANAGER']);
+    service.controlPlans.and.returnValue(of([plan({ status: 'ACTIVE' })]));
+    service.controlPlan.and.returnValue(of({ plan: plan({ status: 'ACTIVE' }), lines: [line()] }));
+
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+
+    expect(component.editable).toBeFalse();
+    expect(fixture.nativeElement.textContent).toContain('Ouvrir une révision');
+  }));
+
+  it('affiche un état vide explicite quand le produit n’a aucun plan', fakeAsync(async () => {
+    await setup(['QUALITY_MANAGER']);
+    service.controlPlans.and.returnValue(of([]));
+
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+
+    expect(component.selected).toBeUndefined();
+    expect(fixture.nativeElement.querySelector('.empty')).toBeTruthy();
+    expect(service.controlPlan).not.toHaveBeenCalled();
+  }));
+});

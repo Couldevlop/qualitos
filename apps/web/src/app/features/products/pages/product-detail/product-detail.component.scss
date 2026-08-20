@@ -1,0 +1,38 @@
+.product-tabs { margin-top: var(--qos-space-4); }
+
+.tab-body { padding: var(--qos-space-6) 0; }
+
+.tab-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--qos-space-4);
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--qos-space-5);
+  margin: 0;
+
+  dt {
+    font-size: var(--qos-text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--qos-fg-tertiary);
+    margin-bottom: var(--qos-space-1);
+  }
+
+  dd { margin: 0; }
+}
+
+.sub-table { width: 100%; }
+
+.empty {
+  padding: var(--qos-space-8) 0;
+  text-align: center;
+  color: var(--qos-fg-tertiary);
+}
+
+.state-row { display: flex; justify-content: center; padding: var(--qos-space-8) 0; }
+
+.dim { color: var(--qos-fg-tertiary); }

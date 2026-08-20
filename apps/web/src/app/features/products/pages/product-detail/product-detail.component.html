@@ -1,0 +1,189 @@
+<div class="qos-page" *ngIf="product as p">
+  <qos-page-header [title]="p.code + ' — ' + p.designation" [subtitle]="p.family || ''">
+    <button mat-stroked-button *ngIf="p.status === 'DRAFT'" (click)="activate()">
+      <mat-icon>check_circle</mat-icon>
+      <span i18n="@@product.activate">Activer</span>
+    </button>
+    <button mat-stroked-button *ngIf="p.status === 'ACTIVE'" (click)="markObsolete()">
+      <mat-icon>archive</mat-icon>
+      <span i18n="@@product.obsolete">Rendre obsolète</span>
+    </button>
+  </qos-page-header>
+
+  <mat-tab-group class="product-tabs" animationDuration="0ms">
+
+    <mat-tab label="Synthèse" i18n-label="@@product.tab-summary">
+      <div class="tab-body">
+        <dl class="summary">
+          <div><dt i18n="@@product.field-code">Référence</dt><dd><code>{{ p.code }}</code></dd></div>
+          <div><dt i18n="@@product.field-designation">Désignation</dt><dd>{{ p.designation }}</dd></div>
+          <div><dt i18n="@@product.field-family">Famille</dt><dd>{{ p.family || '—' }}</dd></div>
+          <div><dt i18n="@@product.field-revision">Indice</dt><dd>{{ p.revisionIndex || '—' }}</dd></div>
+          <div><dt i18n="@@product.field-customer">Client</dt><dd>{{ p.customerLabel || '—' }}</dd></div>
+          <div><dt i18n="@@product.field-site">Site</dt><dd>{{ p.siteLabel || '—' }}</dd></div>
+          <div>
+            <dt i18n="@@product.col-status">Statut</dt>
+            <dd>
+              <span class="qos-badge"
+                    [attr.data-tone]="p.status === 'ACTIVE' ? 'success'
+                                     : p.status === 'OBSOLETE' ? 'neutral' : 'info'">
+                {{ p.status }}
+              </span>
+            </dd>
+          </div>
+          <div>
+            <dt i18n="@@product.col-revisions">À réviser</dt>
+            <dd>
+              <span class="qos-badge" data-tone="warning" *ngIf="pendingRevisions > 0">
+                {{ pendingRevisions }}
+              </span>
+              <span class="dim" *ngIf="pendingRevisions === 0" i18n="@@product.no-revision">
+                Rien en attente
+              </span>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Nomenclature" i18n-label="@@product.tab-bom">
+      <div class="tab-body">
+        <div class="tab-actions">
+          <button mat-stroked-button *ngIf="editable" (click)="addComponent()">
+            <mat-icon>add</mat-icon>
+            <span i18n="@@product.component-new">Ajouter un composant</span>
+          </button>
+        </div>
+
+        <p class="empty" *ngIf="components.length === 0" i18n="@@product.bom-empty">
+          Aucun composant déclaré.
+        </p>
+
+        <div class="qos-scroll-x" *ngIf="components.length > 0">
+          <table mat-table [dataSource]="components" class="sub-table">
+            <ng-container matColumnDef="sequenceNo">
+              <th mat-header-cell *matHeaderCellDef i18n="@@product.field-sequence">Rang</th>
+              <td mat-cell *matCellDef="let c">{{ c.sequenceNo }}</td>
+            </ng-container>
+            <ng-container matColumnDef="reference">
+              <th mat-header-cell *matHeaderCellDef i18n="@@product.field-reference">Référence</th>
+              <td mat-cell *matCellDef="let c"><code>{{ c.reference }}</code></td>
+            </ng-container>
+            <ng-container matColumnDef="label">
+              <th mat-header-cell *matHeaderCellDef i18n="@@product.field-label">Libellé</th>
+              <td mat-cell *matCellDef="let c">{{ c.label || '—' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="quantity">
+              <th mat-header-cell *matHeaderCellDef i18n="@@product.field-quantity">Quantité</th>
+              <td mat-cell *matCellDef="let c">{{ c.quantity }} {{ c.unit }}</td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let c">
+                <button mat-icon-button *ngIf="editable" (click)="editComponent(c)"
+                        aria-label="Modifier" i18n-aria-label="@@common.edit-aria">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button *ngIf="editable" (click)="deleteComponent(c)"
+                        aria-label="Supprimer" i18n-aria-label="@@common.delete-aria">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="componentColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: componentColumns;"></tr>
+          </table>
+        </div>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Gamme" i18n-label="@@product.tab-routing">
+      <div class="tab-body">
+        <div class="tab-actions">
+          <button mat-stroked-button *ngIf="editable" (click)="addOperation()">
+            <mat-icon>add</mat-icon>
+            <span i18n="@@product.operation-new">Ajouter une opération</span>
+          </button>
+        </div>
+
+        <p class="empty" *ngIf="operations.length === 0" i18n="@@product.routing-empty">
+          Aucune opération. C'est la gamme qui relie le PFMEA au control plan.
+        </p>
+
+        <div class="qos-scroll-x" *ngIf="operations.length > 0">
+          <table mat-table [dataSource]="operations" class="sub-table">
+            <ng-container matColumnDef="sequenceNo">
+              <th mat-header-cell *matHeaderCellDef i18n="@@product.field-sequence">Rang</th>
+              <td mat-cell *matCellDef="let o">{{ o.sequenceNo }}</td>
+            </ng-container>
+            <ng-container matColumnDef="code">
+              <th mat-header-cell *matHeaderCellDef i18n="@@product.field-op-code">Code</th>
+              <td mat-cell *matCellDef="let o"><code>{{ o.code }}</code></td>
+            </ng-container>
+            <ng-container matColumnDef="label">
+              <th mat-header-cell *matHeaderCellDef i18n="@@product.field-label">Libellé</th>
+              <td mat-cell *matCellDef="let o">{{ o.label }}</td>
+            </ng-container>
+            <ng-container matColumnDef="workstation">
+              <th mat-header-cell *matHeaderCellDef i18n="@@product.field-workstation">Poste</th>
+              <td mat-cell *matCellDef="let o">{{ o.workstation || '—' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let o">
+                <button mat-icon-button *ngIf="editable" (click)="editOperation(o)"
+                        aria-label="Modifier" i18n-aria-label="@@common.edit-aria">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button *ngIf="editable" (click)="deleteOperation(o)"
+                        aria-label="Supprimer" i18n-aria-label="@@common.delete-aria">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="operationColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: operationColumns;"></tr>
+          </table>
+        </div>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="PFMEA" i18n-label="@@product.tab-pfmea">
+      <ng-template matTabContent>
+        <div class="tab-body">
+          <qos-product-pfmea-tab [productId]="productId"></qos-product-pfmea-tab>
+        </div>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Control Plan" i18n-label="@@product.tab-control-plan">
+      <ng-template matTabContent>
+        <div class="tab-body">
+          <qos-product-control-plan-tab [productId]="productId"></qos-product-control-plan-tab>
+        </div>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="NC liées" i18n-label="@@product.tab-nc">
+      <ng-template matTabContent>
+        <div class="tab-body">
+          <qos-product-nc-tab [productId]="productId"></qos-product-nc-tab>
+        </div>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Révisions proposées" i18n-label="@@product.tab-revisions">
+      <ng-template matTabContent>
+        <div class="tab-body">
+          <qos-revision-requests-panel [productId]="productId"
+                                       (decided)="refreshRevisionCount()"></qos-revision-requests-panel>
+        </div>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</div>
+
+<div class="state-row" *ngIf="loading" role="status">
+  <mat-progress-spinner mode="indeterminate" diameter="32"
+                        aria-label="Chargement" i18n-aria-label="@@common.loading-aria"></mat-progress-spinner>
+</div>

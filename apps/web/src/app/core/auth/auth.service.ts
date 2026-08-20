@@ -45,6 +45,19 @@ export class AuthService {
     return t && t.length > 0 ? t : null;
   }
 
+  /**
+   * Vrai si l'utilisateur porte l'un des rôles demandés.
+   *
+   * <p>La comparaison ignore la casse : Keycloak les rend en minuscules, alors
+   * que le serveur les écrit en majuscules dans ses `@PreAuthorize`. L'autorité
+   * reste le serveur — cette méthode ne sert qu'à ne pas afficher un bouton qui
+   * répondra 403.
+   */
+  hasAnyRole(roles: string[]): boolean {
+    const held = (this.snapshot()?.roles ?? []).map(role => role.toUpperCase());
+    return roles.some(role => held.includes(role.toUpperCase()));
+  }
+
   isAuthenticated(): boolean {
     if (environment.authMode === 'oidc') {
       return this.oauth.hasValidAccessToken();

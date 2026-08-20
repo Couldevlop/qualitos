@@ -1,0 +1,34 @@
+.state-row { display: flex; justify-content: center; padding: var(--qos-space-8) 0; }
+
+.plan-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-4);
+}
+
+.plan-actions {
+  display: flex;
+  gap: var(--qos-space-2);
+}
+
+.tab-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--qos-space-3);
+}
+
+.cp-table { width: 100%; }
+
+.empty {
+  padding: var(--qos-space-8) 0;
+  text-align: center;
+  color: var(--qos-fg-tertiary);
+}
+
+.dim {
+  color: var(--qos-fg-tertiary);
+  font-size: var(--qos-text-xs);
+}
