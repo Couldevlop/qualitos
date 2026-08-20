@@ -1,6 +1,8 @@
 package com.openlab.qualitos.quality.controlplan.web;
 
 import com.openlab.qualitos.quality.common.MethodSecurityTestConfig;
+import com.openlab.qualitos.quality.common.StepUpGuard;
+import com.openlab.qualitos.quality.common.StepUpRequiredException;
 import com.openlab.qualitos.quality.controlplan.application.ControlPlanDto;
 import com.openlab.qualitos.quality.controlplan.application.ControlPlanService;
 import com.openlab.qualitos.quality.controlplan.domain.CharacteristicType;
@@ -26,6 +28,7 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -45,6 +48,13 @@ class ControlPlanControllerTest {
 
     @Autowired MockMvc mockMvc;
     @MockitoBean ControlPlanService service;
+    /**
+     * La garde est doublée ici : ce banc vérifie le partage des rôles et le
+     * mapping HTTP. Ce que la garde lit dans le jeton est vérifié par
+     * {@code StepUpAuthenticationTest} et prouvé bout en bout par
+     * {@code StepUpEndpointTest}.
+     */
+    @MockitoBean StepUpGuard stepUp;
 
     static final UUID PRODUCT = UUID.randomUUID();
     static final UUID PLAN = UUID.randomUUID();
@@ -90,6 +100,38 @@ class ControlPlanControllerTest {
         mockMvc.perform(post("/api/v1/products/{p}/control-plans/{c}/approve", PRODUCT, PLAN).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("CP-4471"));
+
+        verify(stepUp).require("approuver un control plan");
+    }
+
+    @Test
+    @WithMockUser(roles = "DIRECTOR_QUALITY")
+    void approvingWithoutASecondFactorAnswers403AndSaysWhatIsMissing() throws Exception {
+        // Le rôle suffit à ouvrir la porte, pas à signer : le jeton doit porter
+        // la trace d'un second facteur (règle 18.2 §5).
+        doThrow(new StepUpRequiredException("approuver un control plan"))
+                .when(stepUp).require(any());
+
+        mockMvc.perform(post("/api/v1/products/{p}/control-plans/{c}/approve", PRODUCT, PLAN).with(csrf()))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.type").value("https://qualitos.io/errors/step-up-required"))
+                .andExpect(jsonPath("$.action").value("approuver un control plan"));
+
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    @WithMockUser(roles = "QUALITY_MANAGER")
+    void editingALineNeverAsksForASecondFactor() throws Exception {
+        // Exiger le second facteur sur chaque saisie le viderait de son sens :
+        // c'est la signature qui engage, pas la frappe.
+        when(service.addLine(eq(PRODUCT), eq(PLAN), any())).thenReturn(LINE_VIEW);
+
+        mockMvc.perform(post("/api/v1/products/{p}/control-plans/{c}/lines", PRODUCT, PLAN).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content(LINE_BODY))
+                .andExpect(status().isCreated());
+
+        verifyNoInteractions(stepUp);
     }
 
     @Test

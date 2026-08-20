@@ -16634,6 +16634,18 @@ historial de 12 meses</target>
         <source>Aucune suggestion pour ce texte. « Aucun mode ne correspond » reste un choix valable.</source>
         <target state="translated">Ninguna sugerencia para este texto. «Ningún modo coincide» sigue siendo una respuesta válida.</target>
       </trans-unit>
+      <trans-unit id="stepup.required" datatype="html">
+        <source>Cette signature exige votre code à usage unique.</source>
+        <target state="translated">Esta firma exige su código de un solo uso.</target>
+      </trans-unit>
+      <trans-unit id="stepup.reauthenticate" datatype="html">
+        <source>Se réauthentifier</source>
+        <target state="translated">Volver a autenticarse</target>
+      </trans-unit>
+      <trans-unit id="stepup.unavailable" datatype="html">
+        <source>Second facteur indisponible sur cet environnement.</source>
+        <target state="translated">Segundo factor no disponible en este entorno.</target>
+      </trans-unit>
       <trans-unit id="capa.impact-title" datatype="html">
         <source>Impact PFMEA / Control Plan</source>
         <target state="translated">Impacto PFMEA / plan de control</target>

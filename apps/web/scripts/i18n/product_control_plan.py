@@ -159,6 +159,11 @@ TRANSLATIONS = {
     'nc.create.none-matches-hint': ("Un défaut que l'analyse n'avait pas prévu : une ligne de PFMEA sera proposée.", 'A defect the analysis had not foreseen: a PFMEA line will be proposed.', 'Un defecto que el análisis no había previsto: se propondrá una línea de PFMEA.', 'عيب لم يتوقّعه التحليل: سيُقترح إضافة سطر إلى PFMEA.', '分析が想定していなかった不具合です。PFMEA の行が提案されます。', '分析未曾预见的缺陷：系统将建议新增一条 PFMEA 行。'),
     'nc.create.no-suggestion': ("Aucune suggestion pour ce texte. « Aucun mode ne correspond » reste un choix valable.", 'No suggestion for this text. "No failure mode matches" remains a valid answer.', 'Ninguna sugerencia para este texto. «Ningún modo coincide» sigue siendo una respuesta válida.', 'لا توجد اقتراحات لهذا النص. يبقى خيار «لا يطابق أي نمط» صالحًا.', 'この文章に対する候補はありません。「該当する故障モードなし」も正当な回答です。', '针对此文本没有候选项。“没有匹配的失效模式”仍是有效答案。'),
 
+    # --- second facteur -----------------------------------------------
+    'stepup.required': ('Cette signature exige votre code à usage unique.', 'This signature requires your one-time code.', 'Esta firma exige su código de un solo uso.', 'يتطلّب هذا التوقيع رمزك ذا الاستخدام الواحد.', 'この署名にはワンタイムコードが必要です。', '此签名需要您的一次性验证码。'),
+    'stepup.reauthenticate': ('Se réauthentifier', 'Re-authenticate', 'Volver a autenticarse', 'إعادة المصادقة', '再認証する', '重新认证'),
+    'stepup.unavailable': ('Second facteur indisponible sur cet environnement.', 'Second factor unavailable in this environment.', 'Segundo factor no disponible en este entorno.', 'العامل الثاني غير متاح في هذه البيئة.', 'この環境では第二要素を利用できません。', '此环境不支持第二因素。'),
+
     # --- CAPA : impact sur les documents ------------------------------
     'capa.impact-title': ('Impact PFMEA / Control Plan', 'PFMEA / control plan impact', 'Impacto PFMEA / plan de control', 'الأثر على PFMEA وخطة التحكم', 'PFMEA・管理計画書への影響', '对 PFMEA / 控制计划的影响'),
     'capa.impact-subtitle': ('Ce que la clôture de ce dossier a proposé de réviser.', 'What closing this case proposed to revise.', 'Lo que el cierre de este caso propuso revisar.', 'ما اقترحه إغلاق هذا الملف من مراجعات.', 'この案件の完了が改訂を提案した内容。', '本案关闭后提出修订的内容。'),

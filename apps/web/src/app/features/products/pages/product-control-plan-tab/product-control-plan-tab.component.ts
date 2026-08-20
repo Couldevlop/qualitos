@@ -110,7 +110,33 @@ export class ProductControlPlanTabComponent implements OnInit {
     if (!this.selected) return;
     this.service.approveControlPlan(this.productId, this.selected.plan.id).subscribe({
       next: () => this.reload(),
-      error: () => this.fail($localize`:@@controlplan.approve-failed:Approbation impossible.`)
+      error: err => this.isStepUpRequired(err)
+        ? this.askForSecondFactor()
+        : this.fail($localize`:@@controlplan.approve-failed:Approbation impossible.`)
+    });
+  }
+
+  /**
+   * Le serveur refuse la signature tant que le jeton ne porte pas la trace d'un
+   * second facteur. Ce n'est pas une session invalide : inutile de déconnecter,
+   * il suffit de redemander le palier.
+   */
+  private isStepUpRequired(err: unknown): boolean {
+    const problem = err as { status?: number; error?: { type?: string } };
+    return problem?.status === 403
+        && problem?.error?.type === 'https://qualitos.io/errors/step-up-required';
+  }
+
+  private askForSecondFactor(): void {
+    this.loading = false;
+    const snack = this.snack.open(
+      $localize`:@@stepup.required:Cette signature exige votre code à usage unique.`,
+      $localize`:@@stepup.reauthenticate:Se réauthentifier`,
+      { duration: 10000 });
+    snack.onAction().subscribe(() => {
+      if (!this.auth.stepUp(`/products/${this.productId}`)) {
+        this.fail($localize`:@@stepup.unavailable:Second facteur indisponible sur cet environnement.`);
+      }
     });
   }
 

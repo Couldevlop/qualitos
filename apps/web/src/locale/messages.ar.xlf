@@ -16634,6 +16634,18 @@ historique 12 mois</source>
         <source>Aucune suggestion pour ce texte. « Aucun mode ne correspond » reste un choix valable.</source>
         <target state="translated">لا توجد اقتراحات لهذا النص. يبقى خيار «لا يطابق أي نمط» صالحًا.</target>
       </trans-unit>
+      <trans-unit id="stepup.required" datatype="html">
+        <source>Cette signature exige votre code à usage unique.</source>
+        <target state="translated">يتطلّب هذا التوقيع رمزك ذا الاستخدام الواحد.</target>
+      </trans-unit>
+      <trans-unit id="stepup.reauthenticate" datatype="html">
+        <source>Se réauthentifier</source>
+        <target state="translated">إعادة المصادقة</target>
+      </trans-unit>
+      <trans-unit id="stepup.unavailable" datatype="html">
+        <source>Second facteur indisponible sur cet environnement.</source>
+        <target state="translated">العامل الثاني غير متاح في هذه البيئة.</target>
+      </trans-unit>
       <trans-unit id="capa.impact-title" datatype="html">
         <source>Impact PFMEA / Control Plan</source>
         <target state="translated">الأثر على PFMEA وخطة التحكم</target>

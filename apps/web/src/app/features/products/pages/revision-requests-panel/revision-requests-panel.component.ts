@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import { AuthService } from '../../../../core/auth/auth.service';
+
 import { ProductsService } from '../../products.service';
 import { RevisionRequestView } from '../../products.types';
 
@@ -32,6 +34,7 @@ export class RevisionRequestsPanelComponent implements OnInit {
 
   constructor(
     private readonly service: ProductsService,
+    private readonly auth: AuthService,
     private readonly snack: MatSnackBar
   ) {}
 
@@ -59,9 +62,38 @@ export class RevisionRequestsPanelComponent implements OnInit {
     this.deciding = request.id;
     this.service.acceptRevision(request.id).subscribe({
       next: () => this.afterDecision(),
-      error: err => this.fail(err?.status === 409
-        ? $localize`:@@revision.already-decided:Cette proposition a déjà été tranchée.`
-        : $localize`:@@revision.accept-failed:Acceptation impossible.`)
+      error: err => {
+        if (this.isStepUpRequired(err)) {
+          this.askForSecondFactor();
+          return;
+        }
+        this.fail(err?.status === 409
+          ? $localize`:@@revision.already-decided:Cette proposition a déjà été tranchée.`
+          : $localize`:@@revision.accept-failed:Acceptation impossible.`);
+      }
+    });
+  }
+
+  /**
+   * Accepter écrit dans un document approuvé : le serveur exige un second
+   * facteur. La session reste valide — c'est son palier qui ne suffit pas.
+   */
+  private isStepUpRequired(err: unknown): boolean {
+    const problem = err as { status?: number; error?: { type?: string } };
+    return problem?.status === 403
+        && problem?.error?.type === 'https://qualitos.io/errors/step-up-required';
+  }
+
+  private askForSecondFactor(): void {
+    this.deciding = '';
+    const snack = this.snack.open(
+      $localize`:@@stepup.required:Cette signature exige votre code à usage unique.`,
+      $localize`:@@stepup.reauthenticate:Se réauthentifier`,
+      { duration: 10000 });
+    snack.onAction().subscribe(() => {
+      if (!this.auth.stepUp(`/products/${this.productId}`)) {
+        this.fail($localize`:@@stepup.unavailable:Second facteur indisponible sur cet environnement.`);
+      }
     });
   }
 

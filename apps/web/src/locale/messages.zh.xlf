@@ -16634,6 +16634,18 @@ historique 12 mois</source>
         <source>Aucune suggestion pour ce texte. « Aucun mode ne correspond » reste un choix valable.</source>
         <target state="translated">针对此文本没有候选项。“没有匹配的失效模式”仍是有效答案。</target>
       </trans-unit>
+      <trans-unit id="stepup.required" datatype="html">
+        <source>Cette signature exige votre code à usage unique.</source>
+        <target state="translated">此签名需要您的一次性验证码。</target>
+      </trans-unit>
+      <trans-unit id="stepup.reauthenticate" datatype="html">
+        <source>Se réauthentifier</source>
+        <target state="translated">重新认证</target>
+      </trans-unit>
+      <trans-unit id="stepup.unavailable" datatype="html">
+        <source>Second facteur indisponible sur cet environnement.</source>
+        <target state="translated">此环境不支持第二因素。</target>
+      </trans-unit>
       <trans-unit id="capa.impact-title" datatype="html">
         <source>Impact PFMEA / Control Plan</source>
         <target state="translated">对 PFMEA / 控制计划的影响</target>

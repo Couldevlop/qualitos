@@ -1,6 +1,8 @@
 package com.openlab.qualitos.quality.revisionrequests.web;
 
 import com.openlab.qualitos.quality.common.MethodSecurityTestConfig;
+import com.openlab.qualitos.quality.common.StepUpGuard;
+import com.openlab.qualitos.quality.common.StepUpRequiredException;
 import com.openlab.qualitos.quality.revisionrequests.application.RevisionRequestDto;
 import com.openlab.qualitos.quality.revisionrequests.application.RevisionRequestService;
 import com.openlab.qualitos.quality.revisionrequests.domain.RevisionRequestNotFoundException;
@@ -25,6 +27,8 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -44,6 +48,8 @@ class RevisionRequestControllerTest {
 
     @Autowired MockMvc mockMvc;
     @MockitoBean RevisionRequestService service;
+    /** Doublée ici : ce que la garde lit du jeton est vérifié par ses propres tests. */
+    @MockitoBean StepUpGuard stepUp;
 
     static final UUID PRODUCT = UUID.randomUUID();
     static final UUID REQUEST = UUID.randomUUID();
@@ -96,6 +102,8 @@ class RevisionRequestControllerTest {
         mockMvc.perform(post("/api/v1/revision-requests/{id}/accept", REQUEST).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(REQUEST.toString()));
+
+        verify(stepUp).require("accepter une proposition de révision");
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
@@ -105,6 +113,33 @@ class RevisionRequestControllerTest {
                         .content("{\"note\":\"   \"}"))
                 .andExpect(status().isBadRequest());
         verifyNoInteractions(service);
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void acceptingWithoutASecondFactorAnswers403() throws Exception {
+        // Accepter écrit dans un document approuvé : le rôle ne suffit pas.
+        doThrow(new StepUpRequiredException("accepter une proposition de révision"))
+                .when(stepUp).require(any());
+
+        mockMvc.perform(post("/api/v1/revision-requests/{id}/accept", REQUEST).with(csrf()))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.type").value("https://qualitos.io/errors/step-up-required"));
+
+        verifyNoInteractions(service);
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void rejectingNeverAsksForASecondFactor() throws Exception {
+        // Un refus ne modifie aucun document : il consigne une décision. Lui
+        // imposer un second facteur découragerait de motiver les refus.
+        when(service.reject(eq(REQUEST), any())).thenReturn(VIEW);
+
+        mockMvc.perform(post("/api/v1/revision-requests/{id}/reject", REQUEST).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"note\":\"Cotation revue le 12/08\"}"))
+                .andExpect(status().isOk());
+
+        verifyNoInteractions(stepUp);
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")

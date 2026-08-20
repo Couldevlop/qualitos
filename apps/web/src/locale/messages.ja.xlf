@@ -16633,6 +16633,18 @@ historique 12 mois</source>
         <source>Aucune suggestion pour ce texte. « Aucun mode ne correspond » reste un choix valable.</source>
         <target state="translated">この文章に対する候補はありません。「該当する故障モードなし」も正当な回答です。</target>
       </trans-unit>
+      <trans-unit id="stepup.required" datatype="html">
+        <source>Cette signature exige votre code à usage unique.</source>
+        <target state="translated">この署名にはワンタイムコードが必要です。</target>
+      </trans-unit>
+      <trans-unit id="stepup.reauthenticate" datatype="html">
+        <source>Se réauthentifier</source>
+        <target state="translated">再認証する</target>
+      </trans-unit>
+      <trans-unit id="stepup.unavailable" datatype="html">
+        <source>Second facteur indisponible sur cet environnement.</source>
+        <target state="translated">この環境では第二要素を利用できません。</target>
+      </trans-unit>
       <trans-unit id="capa.impact-title" datatype="html">
         <source>Impact PFMEA / Control Plan</source>
         <target state="translated">PFMEA・管理計画書への影響</target>

@@ -1752,6 +1752,21 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    /**
+     * 403 et non 401 : la session est valide, c'est la force de l'authentification
+     * qui ne l'est pas. Un 401 déclencherait une reconnexion silencieuse qui
+     * reproduirait le même jeton, sans jamais demander le second facteur.
+     */
+    @ExceptionHandler(StepUpRequiredException.class)
+    public ProblemDetail handleStepUpRequired(StepUpRequiredException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/step-up-required"));
+        problem.setTitle("Second Factor Required");
+        problem.setProperty("action", ex.getAction());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     @ExceptionHandler(RevisionRequestNotFoundException.class)
     public ProblemDetail handleRevisionRequestNotFound(RevisionRequestNotFoundException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());

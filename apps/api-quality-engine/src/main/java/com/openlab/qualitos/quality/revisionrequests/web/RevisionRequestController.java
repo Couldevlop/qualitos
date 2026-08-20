@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.revisionrequests.web;
 
+import com.openlab.qualitos.quality.common.StepUpGuard;
 import com.openlab.qualitos.quality.revisionrequests.application.RevisionRequestDto;
 import com.openlab.qualitos.quality.revisionrequests.application.RevisionRequestService;
 import jakarta.validation.Valid;
@@ -35,9 +36,11 @@ public class RevisionRequestController {
             "hasAnyRole('QUALITY_MANAGER','DIRECTOR_QUALITY','ADMIN_TENANT','SUPER_ADMIN')";
 
     private final RevisionRequestService service;
+    private final StepUpGuard stepUp;
 
-    public RevisionRequestController(RevisionRequestService service) {
+    public RevisionRequestController(RevisionRequestService service, StepUpGuard stepUp) {
         this.service = service;
+        this.stepUp = stepUp;
     }
 
     @GetMapping("/products/{productId}/revision-requests")
@@ -50,9 +53,15 @@ public class RevisionRequestController {
         return service.forTrigger(triggerRefId);
     }
 
+    /**
+     * Accepter écrit dans un document approuvé — en ouvrant sa révision suivante.
+     * C'est une action critique, elle exige donc un second facteur. Refuser, non :
+     * un refus ne modifie aucun document, il consigne une décision.
+     */
     @PostMapping("/revision-requests/{id}/accept")
     @PreAuthorize(DECIDE_ROLES)
     public RevisionRequestDto.View accept(@PathVariable UUID id) {
+        stepUp.require("accepter une proposition de révision");
         return service.accept(id);
     }
 

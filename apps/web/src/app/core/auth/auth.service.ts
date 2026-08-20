@@ -58,6 +58,24 @@ export class AuthService {
     return roles.some(role => held.includes(role.toUpperCase()));
   }
 
+  /**
+   * Redemande une authentification d'un palier supérieur (second facteur).
+   *
+   * <p>Le serveur repond 403 « step-up-required » sur les actions critiques quand
+   * le jeton ne porte pas la trace d'un second facteur. Ce n'est pas une session
+   * invalide : c'est une session trop faible pour CE geste. On repart donc dans
+   * le flux d'authentification en demandant le palier, plutôt que de déconnecter
+   * l'utilisateur.
+   *
+   * <p>En mode 'dev' il n'y a pas de fournisseur d'identité : la méthode rend
+   * false, et l'appelant se contente d'afficher le refus.
+   */
+  stepUp(returnTo: string = ''): boolean {
+    if (environment.authMode !== 'oidc') return false;
+    this.oauth.initLoginFlow(returnTo, { acr_values: environment.stepUpAcrValue });
+    return true;
+  }
+
   isAuthenticated(): boolean {
     if (environment.authMode === 'oidc') {
       return this.oauth.hasValidAccessToken();

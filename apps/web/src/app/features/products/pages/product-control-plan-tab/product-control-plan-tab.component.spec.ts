@@ -3,7 +3,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { of } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { SharedModule } from '../../../../shared/shared.module';
@@ -38,12 +38,16 @@ describe('ProductControlPlanTabComponent', () => {
   let component: ProductControlPlanTabComponent;
   let service: jasmine.SpyObj<ProductsService>;
   let auth: jasmine.SpyObj<AuthService>;
+  let snack: { open: jasmine.Spy };
+  let action: Subject<void>;
 
   async function setup(roles: string[]): Promise<void> {
     service = jasmine.createSpyObj<ProductsService>('ProductsService',
       ['controlPlans', 'controlPlan', 'createControlPlan', 'openRevision',
         'approveControlPlan', 'deleteLine']);
-    auth = jasmine.createSpyObj<AuthService>('AuthService', ['hasAnyRole']);
+    auth = jasmine.createSpyObj<AuthService>('AuthService', ['hasAnyRole', 'stepUp']);
+    action = new Subject<void>();
+    snack = { open: jasmine.createSpy('open').and.returnValue({ onAction: () => action }) };
     auth.hasAnyRole.and.callFake((wanted: string[]) =>
       wanted.some(role => roles.includes(role)));
 
@@ -54,7 +58,7 @@ describe('ProductControlPlanTabComponent', () => {
         { provide: ProductsService, useValue: service },
         { provide: AuthService, useValue: auth },
         { provide: MatDialog, useValue: { open: () => ({ afterClosed: () => of(null) }) } },
-        { provide: MatSnackBar, useValue: { open: jasmine.createSpy('open') } }
+        { provide: MatSnackBar, useValue: snack }
       ]
     }).compileComponents();
 
@@ -129,6 +133,26 @@ describe('ProductControlPlanTabComponent', () => {
 
     expect(component.editable).toBeFalse();
     expect(fixture.nativeElement.textContent).toContain('Ouvrir une révision');
+  }));
+
+  it('propose une réauthentification quand la signature exige un second facteur', fakeAsync(async () => {
+    // Le serveur refuse la signature, pas la session : on redemande le palier
+    // plutôt que d'afficher « approbation impossible ».
+    await setup(['DIRECTOR_QUALITY']);
+    service.controlPlans.and.returnValue(of([plan()]));
+    service.controlPlan.and.returnValue(of({ plan: plan(), lines: [] }));
+    service.approveControlPlan.and.returnValue(throwError(() => ({
+      status: 403, error: { type: 'https://qualitos.io/errors/step-up-required' }
+    })));
+    auth.stepUp.and.returnValue(true);
+
+    fixture.detectChanges();
+    tick();
+    component.approve();
+    tick();
+    action.next();
+
+    expect(auth.stepUp).toHaveBeenCalledWith('/products/p-1');
   }));
 
   it('affiche un état vide explicite quand le produit n’a aucun plan', fakeAsync(async () => {

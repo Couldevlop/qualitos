@@ -2,8 +2,9 @@ import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testin
 import { FormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { of } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 
+import { AuthService } from '../../../../core/auth/auth.service';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { ProductsService } from '../../products.service';
@@ -31,17 +32,24 @@ describe('RevisionRequestsPanelComponent', () => {
   let fixture: ComponentFixture<RevisionRequestsPanelComponent>;
   let component: RevisionRequestsPanelComponent;
   let service: jasmine.SpyObj<ProductsService>;
+  let auth: jasmine.SpyObj<AuthService>;
+  let snack: { open: jasmine.Spy };
+  let action: Subject<void>;
 
   beforeEach(async () => {
     service = jasmine.createSpyObj<ProductsService>('ProductsService',
       ['revisionRequests', 'acceptRevision', 'rejectRevision']);
+    auth = jasmine.createSpyObj<AuthService>('AuthService', ['stepUp']);
+    action = new Subject<void>();
+    snack = { open: jasmine.createSpy('open').and.returnValue({ onAction: () => action }) };
 
     await TestBed.configureTestingModule({
       declarations: [RevisionRequestsPanelComponent],
       imports: [SharedModule, UiModule, FormsModule, NoopAnimationsModule],
       providers: [
         { provide: ProductsService, useValue: service },
-        { provide: MatSnackBar, useValue: { open: jasmine.createSpy('open') } }
+        { provide: AuthService, useValue: auth },
+        { provide: MatSnackBar, useValue: snack }
       ]
     }).compileComponents();
 
@@ -122,6 +130,25 @@ describe('RevisionRequestsPanelComponent', () => {
       .toContain('control plan');
     expect(component.summary(request())).toBe('occurrence : 4 → 6');
   });
+
+  it('propose une réauthentification plutôt qu’une erreur quand il manque le second facteur', fakeAsync(() => {
+    // 403 « step-up-required » ne dit pas « session invalide » : il dit « cette
+    // session est trop faible pour CE geste ». Déconnecter serait une faute.
+    service.revisionRequests.and.returnValue(of([request()]));
+    service.acceptRevision.and.returnValue(throwError(() => ({
+      status: 403, error: { type: 'https://qualitos.io/errors/step-up-required' }
+    })));
+    auth.stepUp.and.returnValue(true);
+    fixture.detectChanges();
+    tick();
+
+    component.accept(component.requests[0]);
+    tick();
+    action.next();
+
+    expect(auth.stepUp).toHaveBeenCalledWith('/products/p-1');
+    expect(component.deciding).toBe('');
+  }));
 
   it('affiche un état vide explicite plutôt qu’un panneau muet', fakeAsync(() => {
     service.revisionRequests.and.returnValue(of([]));

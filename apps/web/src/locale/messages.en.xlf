@@ -16634,6 +16634,18 @@ declared income
         <source>Aucune suggestion pour ce texte. « Aucun mode ne correspond » reste un choix valable.</source>
         <target state="translated">No suggestion for this text. "No failure mode matches" remains a valid answer.</target>
       </trans-unit>
+      <trans-unit id="stepup.required" datatype="html">
+        <source>Cette signature exige votre code à usage unique.</source>
+        <target state="translated">This signature requires your one-time code.</target>
+      </trans-unit>
+      <trans-unit id="stepup.reauthenticate" datatype="html">
+        <source>Se réauthentifier</source>
+        <target state="translated">Re-authenticate</target>
+      </trans-unit>
+      <trans-unit id="stepup.unavailable" datatype="html">
+        <source>Second facteur indisponible sur cet environnement.</source>
+        <target state="translated">Second factor unavailable in this environment.</target>
+      </trans-unit>
       <trans-unit id="capa.impact-title" datatype="html">
         <source>Impact PFMEA / Control Plan</source>
         <target state="translated">PFMEA / control plan impact</target>

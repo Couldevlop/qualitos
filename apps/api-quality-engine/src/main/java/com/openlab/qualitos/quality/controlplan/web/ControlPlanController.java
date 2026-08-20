@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.controlplan.web;
 
+import com.openlab.qualitos.quality.common.StepUpGuard;
 import com.openlab.qualitos.quality.controlplan.application.ControlPlanDto;
 import com.openlab.qualitos.quality.controlplan.application.ControlPlanService;
 import jakarta.validation.Valid;
@@ -39,9 +40,11 @@ public class ControlPlanController {
             "hasAnyRole('DIRECTOR_QUALITY','ADMIN_TENANT','SUPER_ADMIN')";
 
     private final ControlPlanService service;
+    private final StepUpGuard stepUp;
 
-    public ControlPlanController(ControlPlanService service) {
+    public ControlPlanController(ControlPlanService service, StepUpGuard stepUp) {
         this.service = service;
+        this.stepUp = stepUp;
     }
 
     @GetMapping
@@ -70,9 +73,15 @@ public class ControlPlanController {
         return service.openRevision(productId, planId);
     }
 
+    /**
+     * Approuver rend le document opposable : c'est une action critique au sens de
+     * la règle 18.2 §5, et le rôle seul ne prouve pas qu'un second facteur a été
+     * présenté. Le jeton, lui, le prouve.
+     */
     @PostMapping("/{planId}/approve")
     @PreAuthorize(APPROVE_ROLES)
     public ControlPlanDto.View approve(@PathVariable UUID productId, @PathVariable UUID planId) {
+        stepUp.require("approuver un control plan");
         return service.approve(productId, planId);
     }
 
