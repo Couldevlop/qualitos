@@ -272,19 +272,35 @@ if [ -n "$KC_POD" ]; then
   #
   # Affaiblir le WAF sur `/auth/admin` aurait été l'inverse du bon geste : cette
   # API est publiquement joignable, c'est précisément là qu'on veut un filtre.
+  # Un tunnel oublie par une execution precedente tiendrait le port et ferait
+  # echouer celui-ci sans rien dire de plus qu'« adresse deja utilisee ».
+  pkill -f "port-forward svc/keycloak $STEP_UP_PORT" 2>/dev/null || true
   kubectl -n "$NS" port-forward svc/keycloak "$STEP_UP_PORT:8080" >/dev/null 2>&1 &
   PF_PID=$!
-  # Le tunnel met un instant à s'ouvrir ; sans cette attente, la première requête
-  # part dans le vide et l'échec ressemble à un refus de Keycloak.
-  for _ in 1 2 3 4 5 6 7 8 9 10; do
-    curl -sf -o /dev/null -m 2 \
-      "http://127.0.0.1:$STEP_UP_PORT/auth/realms/master/.well-known/openid-configuration" && break
+
+  # Attente de l'ouverture du tunnel. La forme `curl … && break` est PROSCRITE
+  # ici : sous `set -e`, l'echec du dernier essai fait sortir la boucle en
+  # erreur, et c'est tout le deploiement qui s'arrete — ce qui est arrive, avec
+  # un minuteur repartant en boucle toutes les deux minutes. Un `if` echoue sans
+  # consequence, et `sleep` referme chaque tour sur un succes.
+  TUNNEL_PRET=0
+  for _ in $(seq 1 20); do
+    if curl -sf -o /dev/null -m 2 \
+         "http://127.0.0.1:$STEP_UP_PORT/auth/realms/master/.well-known/openid-configuration"; then
+      TUNNEL_PRET=1
+      break
+    fi
     sleep 1
   done
 
-  if KC_URL="http://127.0.0.1:$STEP_UP_PORT/auth" KC_REALM=qualitos \
-     KC_ADMIN="$KC_ADMIN" KC_ADMIN_PASSWORD="$KC_PWD" \
-     "$ROOT/infra/keycloak/apply-step-up.sh" >"$STEP_UP_LOG" 2>&1; then
+  if [ "$TUNNEL_PRET" = 0 ]; then
+    echo "  ATTENTION : tunnel vers Keycloak non ouvert sur le port $STEP_UP_PORT." >&2
+  fi
+
+  if [ "$TUNNEL_PRET" = 1 ] \
+     && KC_URL="http://127.0.0.1:$STEP_UP_PORT/auth" KC_REALM=qualitos \
+        KC_ADMIN="$KC_ADMIN" KC_ADMIN_PASSWORD="$KC_PWD" \
+        "$ROOT/infra/keycloak/apply-step-up.sh" >"$STEP_UP_LOG" 2>&1; then
     echo "  realm qualitos : authentification par paliers en place"
   else
     echo "  ATTENTION : paliers d'authentification non posés." >&2
@@ -300,6 +316,7 @@ if [ -n "$KC_POD" ]; then
     echo "    KC_ADMIN=... KC_ADMIN_PASSWORD=... infra/keycloak/apply-step-up.sh" >&2
   fi
   kill "$PF_PID" 2>/dev/null || true
+  wait "$PF_PID" 2>/dev/null || true
   rm -f "$STEP_UP_LOG"
 
   AI_CID="$(kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh get clients -r qualitos \
