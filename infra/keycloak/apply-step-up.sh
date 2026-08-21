@@ -203,8 +203,8 @@ def call(method, path, payload=None):
         # en a pas.
         detail = failure.read().decode("utf-8", "replace")[:400]
         raise SystemExit(
-            f"{method} {path} -> HTTP {failure.code} {failure.reason}
-  {detail}")
+            f"{method} {path} -> HTTP {failure.code} {failure.reason}"
+            + chr(10) + "  " + detail)
     return json.loads(body) if body else None
 
 
