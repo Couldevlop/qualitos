@@ -108,7 +108,9 @@ describe('CompetencyMatrixComponent', () => {
     component.onlyAtRisk = true;
     fixture.detectChanges();
 
-    expect(component.rowsOf(grid().groups[0].rows).length).toBe(2);
+    // Une seule des deux lignes porte le drapeau : le filtre doit la garder
+    // seule. Attendre deux revenait a verifier que le filtre ne filtre pas.
+    expect(component.rowsOf(grid().groups[0].rows).length).toBe(1);
     expect(service.competencyMatrix).not.toHaveBeenCalled();
     expect(fixture.nativeElement.textContent).toContain('Gestion des risques');
     expect(fixture.nativeElement.textContent).not.toContain('Planification');
