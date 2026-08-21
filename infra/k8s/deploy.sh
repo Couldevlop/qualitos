@@ -57,6 +57,8 @@ esac
 IMAGE_TAG="${VERSION#v}"
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+# Port local du tunnel vers Keycloak (cf. la configuration des paliers, plus bas).
+STEP_UP_PORT="${STEP_UP_PORT:-18080}"
 DEPS="$ROOT/infra/k8s/deps"
 CHART="$ROOT/infra/k8s/qualitos"
 VALUES="$CHART/values-$ENV.yaml"
@@ -255,7 +257,34 @@ if [ -n "$KC_POD" ]; then
   # le serveur. Un avertissement qui ne porte que le symptôme fait perdre le
   # temps qu'il prétend faire gagner.
   STEP_UP_LOG="$(mktemp)"
-  if KC_URL="https://$HOST/auth" KC_REALM=qualitos      KC_ADMIN="$KC_ADMIN" KC_ADMIN_PASSWORD="$KC_PWD"      "$ROOT/infra/keycloak/apply-step-up.sh" >"$STEP_UP_LOG" 2>&1; then
+
+  # L'API d'administration est jointe par un TUNNEL vers le service, jamais par
+  # l'URL publique. Deux raisons, dont la seconde a coûté un déploiement :
+  #
+  #   1. Les identifiants d'administration n'ont aucune raison de sortir du
+  #      cluster pour y revenir.
+  #   2. L'ingress porte ModSecurity et le Core Rule Set OWASP. Le WAF laisse
+  #      passer les lectures et REFUSE les écritures de l'API d'administration —
+  #      un PUT avec corps JSON revient en 403 au corps vide. Le script échouait
+  #      donc dès sa première écriture, tandis que `kcadm`, qui travaille depuis
+  #      l'intérieur du pod, réussissait les siennes : deux chemins, deux
+  #      verdicts, et un diagnostic qui accusait le jeton.
+  #
+  # Affaiblir le WAF sur `/auth/admin` aurait été l'inverse du bon geste : cette
+  # API est publiquement joignable, c'est précisément là qu'on veut un filtre.
+  kubectl -n "$NS" port-forward svc/keycloak "$STEP_UP_PORT:8080" >/dev/null 2>&1 &
+  PF_PID=$!
+  # Le tunnel met un instant à s'ouvrir ; sans cette attente, la première requête
+  # part dans le vide et l'échec ressemble à un refus de Keycloak.
+  for _ in 1 2 3 4 5 6 7 8 9 10; do
+    curl -sf -o /dev/null -m 2 \
+      "http://127.0.0.1:$STEP_UP_PORT/auth/realms/master/.well-known/openid-configuration" && break
+    sleep 1
+  done
+
+  if KC_URL="http://127.0.0.1:$STEP_UP_PORT/auth" KC_REALM=qualitos \
+     KC_ADMIN="$KC_ADMIN" KC_ADMIN_PASSWORD="$KC_PWD" \
+     "$ROOT/infra/keycloak/apply-step-up.sh" >"$STEP_UP_LOG" 2>&1; then
     echo "  realm qualitos : authentification par paliers en place"
   else
     echo "  ATTENTION : paliers d'authentification non posés." >&2
@@ -264,9 +293,13 @@ if [ -n "$KC_POD" ]; then
     echo "  --- sortie du script (20 dernières lignes) ---" >&2
     tail -20 "$STEP_UP_LOG" | sed 's/^/  | /' >&2
     echo "  --- fin ---" >&2
-    echo "  Reprendre à la main : KC_URL=https://$HOST/auth KC_REALM=qualitos \\" >&2
+    echo "  Reprendre à la main, en passant par un tunnel et non par l'URL" >&2
+    echo "  publique — le WAF de l'ingress refuse les écritures d'administration :" >&2
+    echo "    kubectl -n $NS port-forward svc/keycloak $STEP_UP_PORT:8080 &" >&2
+    echo "    KC_URL=http://127.0.0.1:$STEP_UP_PORT/auth KC_REALM=qualitos \\" >&2
     echo "    KC_ADMIN=... KC_ADMIN_PASSWORD=... infra/keycloak/apply-step-up.sh" >&2
   fi
+  kill "$PF_PID" 2>/dev/null || true
   rm -f "$STEP_UP_LOG"
 
   AI_CID="$(kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh get clients -r qualitos \
