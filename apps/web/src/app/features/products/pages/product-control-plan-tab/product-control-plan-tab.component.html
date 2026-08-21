@@ -41,6 +41,28 @@
 </p>
 
 <div *ngIf="selected as detail">
+  <!--
+    La preuve du document approuvé. Affichée en clair et copiable : un auditeur
+    qui reçoit un PDF veut confronter son empreinte à celle-ci, sans avoir à
+    nous croire sur parole.
+  -->
+  <div class="cp-seal" *ngIf="detail.plan.sealSha256 as seal">
+    <mat-icon aria-hidden="true">verified_user</mat-icon>
+    <div>
+      <p class="cp-seal-title" i18n="@@controlplan.seal-title">
+        Document scellé et ancré
+      </p>
+      <p class="cp-seal-hash">
+        <span i18n="@@controlplan.seal-hash">Empreinte</span>
+        <code>{{ seal }}</code>
+      </p>
+      <p class="cp-seal-hash" *ngIf="detail.plan.anchorTxRef as tx">
+        <span i18n="@@controlplan.seal-tx">Transaction</span>
+        <code>{{ tx }}</code>
+      </p>
+    </div>
+  </div>
+
   <div class="tab-actions">
     <button mat-stroked-button *ngIf="editable" (click)="addLine()">
       <mat-icon>add</mat-icon>

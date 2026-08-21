@@ -27,6 +27,9 @@ public final class ControlPlan {
     private final UUID createdBy;
     private final Instant createdAt;
     private Instant updatedAt;
+    private String sealSha256;
+    private String sealSignature;
+    private String anchorTxRef;
 
     private ControlPlan(UUID tenantId, UUID productId, ControlPlanPhase phase, String code,
                         int revision, UUID createdBy, Instant now) {
@@ -51,7 +54,9 @@ public final class ControlPlan {
                                         ControlPlanPhase phase, String code, int revision,
                                         ControlPlanStatus status, UUID ownerUserId,
                                         UUID approvedBy, Instant approvedAt, UUID createdBy,
-                                        Instant createdAt, Instant updatedAt) {
+                                        Instant createdAt, Instant updatedAt,
+                                        String sealSha256, String sealSignature,
+                                        String anchorTxRef) {
         ControlPlan plan = new ControlPlan(tenantId, productId, phase, code, revision, createdBy, createdAt);
         plan.id = id;
         plan.status = status == null ? ControlPlanStatus.DRAFT : status;
@@ -59,6 +64,9 @@ public final class ControlPlan {
         plan.approvedBy = approvedBy;
         plan.approvedAt = approvedAt;
         plan.updatedAt = updatedAt;
+        plan.sealSha256 = sealSha256;
+        plan.sealSignature = sealSignature;
+        plan.anchorTxRef = anchorTxRef;
         return plan;
     }
 
@@ -88,6 +96,50 @@ public final class ControlPlan {
         this.approvedBy = Objects.requireNonNull(approver, "approver");
         this.approvedAt = Objects.requireNonNull(when, "when");
         this.updatedAt = when;
+    }
+
+    /**
+     * Scelle le document : empreinte de son contenu, signature hybride, et
+     * référence de la transaction qui l'ancre.
+     *
+     * <p>Réservé à un plan EN VIGUEUR : sceller un brouillon figerait une
+     * empreinte que la prochaine modification démentirait, et la preuve
+     * désignerait alors un document qui n'a jamais été appliqué.
+     *
+     * <p>Une seule fois. Un second scellement remplacerait la preuve d'un
+     * document opposable par une autre — ce qui est exactement le geste dont
+     * l'ancrage doit protéger.
+     */
+    public void seal(String sha256, String signature, String anchorTxRef) {
+        if (status != ControlPlanStatus.ACTIVE) {
+            throw new ControlPlanStateException(
+                    "Seul un plan en vigueur se scelle ; celui-ci est " + status);
+        }
+        if (this.sealSha256 != null) {
+            throw new ControlPlanStateException("Le plan " + code + " est déjà scellé");
+        }
+        // Les trois valeurs sont validées AVANT que la première ne soit écrite.
+        // Assigner au fil de l'eau laissait, sur un scellement incomplet, un
+        // document qui se déclarait scellé sans porter ni signature ni ancrage —
+        // une demi-preuve, c'est-à-dire pire que pas de preuve du tout.
+        String hash = requireText(sha256, "sha256");
+        String sig = requireText(signature, "signature");
+        String tx = requireText(anchorTxRef, "anchorTxRef");
+        this.sealSha256 = hash;
+        this.sealSignature = sig;
+        this.anchorTxRef = tx;
+    }
+
+    private static String requireText(String value, String field) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException("Scellement incomplet : " + field);
+        }
+        return value;
+    }
+
+    /** Vrai dès que le document porte son empreinte ancrée. */
+    public boolean isSealed() {
+        return sealSha256 != null;
     }
 
     public void archive() {
@@ -137,4 +189,7 @@ public final class ControlPlan {
     public UUID getCreatedBy() { return createdBy; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
+    public String getSealSha256() { return sealSha256; }
+    public String getSealSignature() { return sealSignature; }
+    public String getAnchorTxRef() { return anchorTxRef; }
 }

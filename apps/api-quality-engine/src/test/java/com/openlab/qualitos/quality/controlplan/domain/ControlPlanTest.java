@@ -118,10 +118,58 @@ class ControlPlanTest {
     }
 
     @Test
+    void aDraftCannotBeSealed() {
+        ControlPlan draft = ControlPlan.create(TENANT, PRODUCT, ControlPlanPhase.PRODUCTION,
+                "CP-1", USER, NOW);
+
+        assertThatThrownBy(() -> draft.seal("0f5a", "sig", "tx-1"))
+                .isInstanceOf(ControlPlanStateException.class)
+                .hasMessageContaining("en vigueur");
+    }
+
+    @Test
+    void anApprovedPlanCarriesItsProof() {
+        ControlPlan plan = ControlPlan.create(TENANT, PRODUCT, ControlPlanPhase.PRODUCTION,
+                "CP-1", USER, NOW);
+        plan.approve(USER, NOW);
+
+        plan.seal("0f5a", "sig", "tx-1");
+
+        assertThat(plan.isSealed()).isTrue();
+        assertThat(plan.getSealSha256()).isEqualTo("0f5a");
+        assertThat(plan.getSealSignature()).isEqualTo("sig");
+        assertThat(plan.getAnchorTxRef()).isEqualTo("tx-1");
+    }
+
+    @Test
+    void aSealedPlanRefusesASecondSeal() {
+        ControlPlan plan = ControlPlan.create(TENANT, PRODUCT, ControlPlanPhase.PRODUCTION,
+                "CP-1", USER, NOW);
+        plan.approve(USER, NOW);
+        plan.seal("0f5a", "sig", "tx-1");
+
+        assertThatThrownBy(() -> plan.seal("autre", "sig", "tx-2"))
+                .isInstanceOf(ControlPlanStateException.class)
+                .hasMessageContaining("déjà scellé");
+    }
+
+    @Test
+    void anIncompleteSealIsRefusedRatherThanStoredHalfWay() {
+        ControlPlan plan = ControlPlan.create(TENANT, PRODUCT, ControlPlanPhase.PRODUCTION,
+                "CP-1", USER, NOW);
+        plan.approve(USER, NOW);
+
+        assertThatThrownBy(() -> plan.seal("0f5a", "  ", "tx-1"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("signature");
+        assertThat(plan.isSealed()).isFalse();
+    }
+
+    @Test
     void aRehydratedPlanKeepsItsStateWithoutReplayingAnyTransition() {
         ControlPlan plan = ControlPlan.rehydrate(UUID.randomUUID(), TENANT, PRODUCT,
                 ControlPlanPhase.PRE_LAUNCH, "CP-9", 3, ControlPlanStatus.ACTIVE, USER,
-                USER, NOW, USER, NOW, NOW);
+                USER, NOW, USER, NOW, NOW, null, null, null);
 
         assertThat(plan.getStatus()).isEqualTo(ControlPlanStatus.ACTIVE);
         assertThat(plan.getRevision()).isEqualTo(3);
@@ -133,7 +181,7 @@ class ControlPlanTest {
     @Test
     void aRehydratedPlanWithoutStatusFallsBackToDraft() {
         ControlPlan plan = ControlPlan.rehydrate(UUID.randomUUID(), TENANT, PRODUCT,
-                ControlPlanPhase.PROTOTYPE, "CP-9", 1, null, null, null, null, USER, NOW, NOW);
+                ControlPlanPhase.PROTOTYPE, "CP-9", 1, null, null, null, null, USER, NOW, NOW, null, null, null);
 
         assertThat(plan.getStatus()).isEqualTo(ControlPlanStatus.DRAFT);
     }

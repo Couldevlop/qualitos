@@ -63,7 +63,7 @@ class ControlPlanControllerTest {
 
     static final ControlPlanDto.View VIEW = new ControlPlanDto.View(
             PLAN, PRODUCT, ControlPlanPhase.PRODUCTION, "CP-4471", 1,
-            ControlPlanStatus.DRAFT, null, null, null, NOW, NOW);
+            ControlPlanStatus.DRAFT, null, null, null, NOW, NOW, null, null);
     static final ControlPlanDto.LineView LINE_VIEW = new ControlPlanDto.LineView(
             LINE, 10, null, "Tour CN 3", "12", "Diamètre", CharacteristicType.PRODUCT,
             null, "Ø 20", null, null, "mm", "Micromètre", 5, "1/h", "Carte X-R",

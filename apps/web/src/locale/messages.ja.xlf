@@ -16461,6 +16461,18 @@ historique 12 mois</source>
         <source>Modifier la ligne</source>
         <target state="translated">行を編集</target>
       </trans-unit>
+      <trans-unit id="controlplan.seal-title" datatype="html">
+        <source>Document scellé et ancré</source>
+        <target state="translated">封印・アンカー済みの文書</target>
+      </trans-unit>
+      <trans-unit id="controlplan.seal-hash" datatype="html">
+        <source>Empreinte</source>
+        <target state="translated">ハッシュ</target>
+      </trans-unit>
+      <trans-unit id="controlplan.seal-tx" datatype="html">
+        <source>Transaction</source>
+        <target state="translated">トランザクション</target>
+      </trans-unit>
       <trans-unit id="controlplan.locked" datatype="html">
         <source>Ce plan est approuvé : ouvrez une révision pour le modifier.</source>
         <target state="translated">この計画書は承認済みです。変更するには改訂を開いてください。</target>

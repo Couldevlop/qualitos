@@ -16462,6 +16462,18 @@ historique 12 mois</source>
         <source>Modifier la ligne</source>
         <target state="translated">编辑行</target>
       </trans-unit>
+      <trans-unit id="controlplan.seal-title" datatype="html">
+        <source>Document scellé et ancré</source>
+        <target state="translated">已封存并上链的文件</target>
+      </trans-unit>
+      <trans-unit id="controlplan.seal-hash" datatype="html">
+        <source>Empreinte</source>
+        <target state="translated">指纹</target>
+      </trans-unit>
+      <trans-unit id="controlplan.seal-tx" datatype="html">
+        <source>Transaction</source>
+        <target state="translated">交易</target>
+      </trans-unit>
       <trans-unit id="controlplan.locked" datatype="html">
         <source>Ce plan est approuvé : ouvrez une révision pour le modifier.</source>
         <target state="translated">该计划已批准：如需修改，请开启修订。</target>

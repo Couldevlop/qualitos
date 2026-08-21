@@ -87,6 +87,13 @@ export interface ControlPlanView {
   approvedAt?: string;
   createdAt: string;
   updatedAt: string;
+  /**
+   * Empreinte du document approuvé et référence de la transaction qui l'ancre.
+   * Absentes tant que le plan est en brouillon : un document qui n'est pas
+   * opposable n'a rien à prouver.
+   */
+  sealSha256?: string;
+  anchorTxRef?: string;
 }
 
 export interface ControlPlanLineView {

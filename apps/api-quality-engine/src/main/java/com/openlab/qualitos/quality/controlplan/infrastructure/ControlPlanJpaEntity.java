@@ -50,6 +50,20 @@ public class ControlPlanJpaEntity {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
+    /**
+     * Empreinte du document scellé, sa signature hybride et la référence de la
+     * transaction qui l'ancre. Nuls tant que le plan n'est pas approuvé : un
+     * brouillon n'a rien d'opposable à prouver.
+     */
+    @Column(name = "seal_sha256", length = 64)
+    private String sealSha256;
+
+    @Column(name = "seal_signature", length = 20000)
+    private String sealSignature;
+
+    @Column(name = "anchor_tx_ref", length = 200)
+    private String anchorTxRef;
+
     public UUID getId() { return id; }
     public void setId(UUID v) { this.id = v; }
     public UUID getTenantId() { return tenantId; }
@@ -76,4 +90,10 @@ public class ControlPlanJpaEntity {
     public void setCreatedAt(Instant v) { this.createdAt = v; }
     public Instant getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(Instant v) { this.updatedAt = v; }
+    public String getSealSha256() { return sealSha256; }
+    public void setSealSha256(String v) { this.sealSha256 = v; }
+    public String getSealSignature() { return sealSignature; }
+    public void setSealSignature(String v) { this.sealSignature = v; }
+    public String getAnchorTxRef() { return anchorTxRef; }
+    public void setAnchorTxRef(String v) { this.anchorTxRef = v; }
 }

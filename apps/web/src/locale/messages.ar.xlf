@@ -16462,6 +16462,18 @@ historique 12 mois</source>
         <source>Modifier la ligne</source>
         <target state="translated">تعديل السطر</target>
       </trans-unit>
+      <trans-unit id="controlplan.seal-title" datatype="html">
+        <source>Document scellé et ancré</source>
+        <target state="translated">مستند مختوم وموثّق</target>
+      </trans-unit>
+      <trans-unit id="controlplan.seal-hash" datatype="html">
+        <source>Empreinte</source>
+        <target state="translated">البصمة</target>
+      </trans-unit>
+      <trans-unit id="controlplan.seal-tx" datatype="html">
+        <source>Transaction</source>
+        <target state="translated">المعاملة</target>
+      </trans-unit>
       <trans-unit id="controlplan.locked" datatype="html">
         <source>Ce plan est approuvé : ouvrez une révision pour le modifier.</source>
         <target state="translated">هذه الخطة معتمدة: افتح مراجعة لتعديلها.</target>

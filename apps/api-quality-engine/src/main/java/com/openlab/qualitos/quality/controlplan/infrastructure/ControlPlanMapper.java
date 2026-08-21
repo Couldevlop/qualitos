@@ -33,6 +33,9 @@ final class ControlPlanMapper {
         e.setCreatedBy(p.getCreatedBy());
         e.setCreatedAt(p.getCreatedAt());
         e.setUpdatedAt(p.getUpdatedAt());
+        e.setSealSha256(p.getSealSha256());
+        e.setSealSignature(p.getSealSignature());
+        e.setAnchorTxRef(p.getAnchorTxRef());
         return e;
     }
 
@@ -42,7 +45,8 @@ final class ControlPlanMapper {
                 ControlPlanPhase.valueOf(e.getPhase()), e.getCode(), e.getRevision(),
                 ControlPlanStatus.valueOf(e.getStatus()), e.getOwnerUserId(),
                 e.getApprovedBy(), e.getApprovedAt(), e.getCreatedBy(),
-                e.getCreatedAt(), e.getUpdatedAt());
+                e.getCreatedAt(), e.getUpdatedAt(),
+                e.getSealSha256(), e.getSealSignature(), e.getAnchorTxRef());
     }
 
     static ControlPlanLineJpaEntity toEntity(ControlPlanLine l, ControlPlanLineJpaEntity target) {

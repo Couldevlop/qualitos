@@ -7,6 +7,7 @@ import com.openlab.qualitos.quality.controlplan.domain.ControlPlanNotFoundExcept
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanPhase;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanRepository;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanStateException;
+import com.openlab.qualitos.quality.controlplan.domain.ControlPlanFingerprint;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanStatus;
 import com.openlab.qualitos.quality.controlplan.domain.FmeaItemLookup;
 import com.openlab.qualitos.quality.product.domain.Product;
@@ -27,6 +28,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 class ControlPlanServiceTest {
@@ -44,6 +47,7 @@ class ControlPlanServiceTest {
     ProductLookup products;
     FmeaItemLookup fmeaItems;
     ControlPlanAuditPort audit;
+    ControlPlanSealPort seals;
     TenantProvider tenants;
     ActorProvider actors;
     ControlPlanService service;
@@ -54,6 +58,9 @@ class ControlPlanServiceTest {
         products = mock(ProductLookup.class);
         fmeaItems = mock(FmeaItemLookup.class);
         audit = mock(ControlPlanAuditPort.class);
+        seals = mock(ControlPlanSealPort.class);
+        when(seals.seal(any(), any()))
+                .thenReturn(new ControlPlanSealPort.Seal("sig-hybride", "tx-0001"));
         tenants = mock(TenantProvider.class);
         actors = mock(ActorProvider.class);
         when(tenants.requireTenantId()).thenReturn(TENANT);
@@ -69,7 +76,7 @@ class ControlPlanServiceTest {
             if (l.getId() == null) l.assignId(UUID.randomUUID());
             return l;
         });
-        service = new ControlPlanService(repo, products, fmeaItems, audit, tenants, actors,
+        service = new ControlPlanService(repo, products, fmeaItems, audit, seals, tenants, actors,
                 Clock.fixed(NOW, ZoneOffset.UTC));
     }
 
@@ -223,7 +230,7 @@ class ControlPlanServiceTest {
     void aPlanOfAnotherTenantIsNotFoundNeverForbidden() {
         ControlPlan foreign = ControlPlan.rehydrate(PLAN, OTHER_TENANT, PRODUCT,
                 ControlPlanPhase.PRODUCTION, "CP-X", 1, ControlPlanStatus.DRAFT,
-                null, null, null, USER, NOW, NOW);
+                null, null, null, USER, NOW, NOW, null, null, null);
         when(repo.findById(PLAN)).thenReturn(Optional.of(foreign));
 
         assertThatThrownBy(() -> service.get(PRODUCT, PLAN))
@@ -234,7 +241,7 @@ class ControlPlanServiceTest {
     void aPlanOfAnotherProductIsNotFoundEvenWithTheRightTenant() {
         ControlPlan elsewhere = ControlPlan.rehydrate(PLAN, TENANT, OTHER_PRODUCT,
                 ControlPlanPhase.PRODUCTION, "CP-X", 1, ControlPlanStatus.DRAFT,
-                null, null, null, USER, NOW, NOW);
+                null, null, null, USER, NOW, NOW, null, null, null);
         when(repo.findById(PLAN)).thenReturn(Optional.of(elsewhere));
 
         assertThatThrownBy(() -> service.get(PRODUCT, PLAN))
@@ -402,7 +409,7 @@ class ControlPlanServiceTest {
     @Test
     void aCodeCarryingAQuoteDoesNotBreakTheJournalLine() {
         ControlPlan draft = ControlPlan.rehydrate(PLAN, TENANT, PRODUCT, ControlPlanPhase.PRODUCTION,
-                "CP \"A\"", 1, ControlPlanStatus.DRAFT, null, null, null, USER, NOW, NOW);
+                "CP \"A\"", 1, ControlPlanStatus.DRAFT, null, null, null, USER, NOW, NOW, null, null, null);
         when(repo.findById(PLAN)).thenReturn(Optional.of(draft));
         when(repo.findActive(TENANT, PRODUCT, ControlPlanPhase.PRODUCTION)).thenReturn(Optional.empty());
 
@@ -411,6 +418,68 @@ class ControlPlanServiceTest {
         ArgumentCaptor<String> details = ArgumentCaptor.forClass(String.class);
         verify(audit).record(any(), any(), any(), any(), any(), details.capture());
         assertThat(details.getValue()).contains("CP \\\"A\\\"");
+    }
+
+    @Test
+    void approvingSealsTheDocumentItselfAndNotJustTheJournalEntry() {
+        ControlPlan draft = draftPlan();
+        when(repo.findById(PLAN)).thenReturn(Optional.of(draft));
+        when(repo.findActive(TENANT, PRODUCT, ControlPlanPhase.PRODUCTION)).thenReturn(Optional.empty());
+        when(repo.linesOf(PLAN)).thenReturn(List.of(line(PLAN)));
+
+        ControlPlanDto.View view = service.approve(PRODUCT, PLAN);
+
+        assertThat(view.sealSha256()).hasSize(64);
+        assertThat(view.anchorTxRef()).isEqualTo("tx-0001");
+        verify(seals).seal(eq(TENANT), argThat(hash -> hash.length() == 64));
+    }
+
+    @Test
+    void whatIsSealedIsTheFingerprintOfThePlanAndItsLines() {
+        ControlPlan draft = draftPlan();
+        when(repo.findById(PLAN)).thenReturn(Optional.of(draft));
+        when(repo.findActive(TENANT, PRODUCT, ControlPlanPhase.PRODUCTION)).thenReturn(Optional.empty());
+        List<ControlPlanLine> lines = List.of(line(PLAN));
+        when(repo.linesOf(PLAN)).thenReturn(lines);
+
+        ControlPlanDto.View view = service.approve(PRODUCT, PLAN);
+
+        // Rejouer le calcul sur le plan rendu doit retrouver l'empreinte signée :
+        // c'est très exactement le geste de l'auditeur qui vérifie lui-même.
+        assertThat(view.sealSha256())
+                .isEqualTo(ControlPlanFingerprint.of(draft, lines));
+    }
+
+    /**
+     * « Aucune action critique sans ancrage » (CLAUDE.md §18.2 #5). Un plan
+     * approuvé mais non scellé serait affiché au poste avec une preuve manquante
+     * que rien ne signalerait : mieux vaut refuser l'approbation.
+     */
+    @Test
+    void anApprovalWhoseAnchoringFailsDoesNotGoThrough() {
+        ControlPlan draft = draftPlan();
+        when(repo.findById(PLAN)).thenReturn(Optional.of(draft));
+        when(repo.findActive(TENANT, PRODUCT, ControlPlanPhase.PRODUCTION)).thenReturn(Optional.empty());
+        when(repo.linesOf(PLAN)).thenReturn(List.of());
+        when(seals.seal(any(), any())).thenThrow(new IllegalStateException("chaîne injoignable"));
+
+        assertThatThrownBy(() -> service.approve(PRODUCT, PLAN))
+                .isInstanceOf(IllegalStateException.class);
+
+        verify(audit, never()).record(any(), any(), eq("controlplan.plan.approved"),
+                any(), any(), any());
+    }
+
+    @Test
+    void openingARevisionSealsNothing() {
+        when(repo.findById(PLAN)).thenReturn(Optional.of(activePlan()));
+        when(repo.findDraft(TENANT, PRODUCT, ControlPlanPhase.PRODUCTION)).thenReturn(Optional.empty());
+        when(repo.linesOf(PLAN)).thenReturn(List.of());
+
+        ControlPlanDto.View next = service.openRevision(PRODUCT, PLAN);
+
+        assertThat(next.sealSha256()).isNull();
+        verify(seals, never()).seal(any(), any());
     }
 
     // ---------- montage ----------
@@ -422,7 +491,7 @@ class ControlPlanServiceTest {
 
     private ControlPlan draftPlan() {
         return ControlPlan.rehydrate(PLAN, TENANT, PRODUCT, ControlPlanPhase.PRODUCTION,
-                "CP-4471", 1, ControlPlanStatus.DRAFT, null, null, null, USER, NOW, NOW);
+                "CP-4471", 1, ControlPlanStatus.DRAFT, null, null, null, USER, NOW, NOW, null, null, null);
     }
 
     private ControlPlan activePlan() {
@@ -431,7 +500,7 @@ class ControlPlanServiceTest {
 
     private ControlPlan activePlan(UUID id) {
         return ControlPlan.rehydrate(id, TENANT, PRODUCT, ControlPlanPhase.PRODUCTION,
-                "CP-4471", 1, ControlPlanStatus.ACTIVE, USER, USER, NOW, USER, NOW, NOW);
+                "CP-4471", 1, ControlPlanStatus.ACTIVE, USER, USER, NOW, USER, NOW, NOW, null, null, null);
     }
 
     private ControlPlanLine line(UUID planId) {

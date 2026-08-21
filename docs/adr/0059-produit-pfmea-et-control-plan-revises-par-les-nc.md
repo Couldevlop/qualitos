@@ -166,14 +166,40 @@ le monde. Les deux sous-flux vont donc par paire.
 côté de l'ancien et bascule le realm dessus : le retour arrière est un champ à
 reposer, et l'ancien flux n'est jamais touché.
 
-### 9. L'approbation entre au journal chaîné
+### 9. Deux preuves à l'approbation : le journal, et le document
 
 `ControlPlanService` inscrit `controlplan.plan.approved` et
-`controlplan.plan.revision-opened` au journal du tenant, via un port dédié.
+`controlplan.plan.revision-opened` au journal du tenant, via un port dédié. Le
+journal est ancré par lots, racine de Merkle soumise à la chaîne : y inscrire
+l'approbation la rend infalsifiable sans multiplier les écritures on-chain.
 
-**Pourquoi cela suffit à l'ancrage :** le journal est ancré par lots, racine de
-Merkle soumise à la chaîne. Y inscrire l'approbation la rend infalsifiable sans
-ancrer chaque document séparément — et sans multiplier les écritures on-chain.
+**Ce que le journal ne dit pas :** il prouve que l'approbation a eu lieu, pas ce
+qui a été approuvé. Les lignes vivent dans une autre table, qu'un accès direct à
+la base modifierait sans laisser de trace au journal.
+
+**Le scellement ferme ce trou.** À l'approbation, `ControlPlanFingerprint` rend
+le SHA-256 du plan ET de ses lignes ; l'empreinte est signée (Ed25519 + ML-DSA-65)
+puis ancrée, et les trois valeurs sont écrites sur le plan. Rejouer le calcul sur
+le document rendu par l'API suffit alors à démontrer qu'il est bien celui qui a
+été signé — c'est le geste de l'auditeur qui vérifie lui-même.
+
+**Ce qui entre dans l'empreinte, et pourquoi ce n'est pas neutre :** l'identité
+du plan, son approbateur, et chaque ligne entière — y compris le lien vers la
+ligne de PFMEA qui la justifie. Pas les identifiants techniques des lignes :
+ouvrir une révision les recopie, et s'ils comptaient, une révision qui ne change
+rien produirait une empreinte différente. Pas la précision d'écriture d'une
+tolérance non plus : `10.0` et `10.00` sont le même nombre, et laisser le pilote
+de base décider de l'empreinte ferait accuser des documents intacts.
+
+**L'échec du scellement fait échouer l'approbation**, transaction comprise
+(§18.2 #5). Un plan approuvé mais non scellé serait affiché au poste et montré à
+l'auditeur avec une preuve manquante que rien ne signalerait. Le scellement
+précède donc l'écriture : une seule écriture, jamais de ligne approuvée sans
+preuve, même transitoirement.
+
+**Les plans approuvés avant cette migration ne sont pas scellés rétroactivement.**
+Sceller après coup certifierait un contenu qu'on n'a pas vu approuver. Ils restent
+couverts par le journal chaîné, et l'absence de scellement se lit telle quelle.
 
 ### 10. Un alias de rôle, parce que le realm et le code ne s'accordaient pas
 
@@ -186,22 +212,51 @@ L'alias est posé une fois, dans le convertisseur d'autorités, et vaut dans les
 deux sens. Même esprit que la compatibilité ROLE_ADMIN / ROLE_ADMIN_TENANT déjà
 en place.
 
-## Ce que ce lot ne tient pas
+### 11. Ce que le realm ne reçoit qu'une fois se pose au déploiement
 
-**L'ancrage direct du document reste à faire.** L'approbation est inscrite au
-journal chaîné, lui-même ancré par lots : c'est suffisant pour prouver qu'elle a
-eu lieu et qu'elle n'a pas été réécrite. Ancrer le control plan lui-même — son
-empreinte, indépendamment du journal — n'est pas fait.
+`--import-realm` n'importe le realm qu'au **premier** démarrage sur une base
+vide. Sur un environnement déjà en service, modifier `realm-export.json` ne
+change donc rien — et rien ne le signale.
+
+`deploy.sh` pose désormais, après démarrage et de façon rejouable, ce que
+l'import ne peut plus poser : l'anti-force-brute du realm master, la politique de
+mot de passe, **l'URI de post-déconnexion du client web**, et **les paliers
+d'authentification** (`apply-step-up.sh`, qui ne reconstruit rien s'il trouve le
+realm déjà en place).
+
+**Pourquoi l'URI de post-déconnexion figure dans cette liste :** c'est un réglage
+distinct des URI de redirection, et Keycloak ne retombe pas dessus. Attribut
+absent = aucune redirection autorisée après déconnexion. Mesuré sur la
+préproduction : la connexion fonctionnait, la déconnexion répondait
+`HTTP 400 — Invalid redirect uri`, et l'utilisateur restait sur une page d'erreur
+Keycloak. Une panne qui n'apparaît qu'en sortant est une panne que personne ne
+teste.
+
+**Pourquoi appeler le script depuis le déploiement plutôt que de le documenter :**
+une bascule d'environnement qui dépend d'une commande qu'il faut penser à taper
+est une bascule qu'on oublie. L'échec n'arrête pas le déploiement — mieux vaut
+une plateforme en ligne dont une action critique est refusée qu'une livraison
+bloquée — mais il est signalé bruyamment, parce que le symptôme (403 à
+l'approbation) n'évoque pas de lui-même sa cause.
+
+## Ce que ce lot ne tient pas
 
 **Le second facteur repose sur ce que le realm publie.** L'engine lit `acr` et
 `amr` ; un fournisseur d'identité qui ne publierait ni l'un ni l'autre ferait
 répondre 403 à toute approbation. C'est le comportement voulu — refuser plutôt
-que supposer — mais il rend la bascule d'un environnement dépendante du passage
-de `apply-step-up.sh`, qui ne s'exécute pas tout seul au déploiement.
+que supposer. La pose est désormais faite par le déploiement (§11), mais un
+environnement dont le fournisseur d'identité n'est pas Keycloak demandera son
+propre équivalent.
+
+**La vérification d'un scellement n'est pas exposée.** L'empreinte et la
+référence de transaction sont rendues par l'API et affichées ; recalculer
+l'empreinte d'un plan et confronter sa signature reste, aujourd'hui, un geste
+manuel. Un point d'API `verify` — comme celui des certificats de formation —
+n'est pas fait.
 
 ## Conséquences
 
-- Migrations `V110` à `V114`.
+- Migrations `V110` à `V115`.
 - Trois modules neufs en Clean Architecture (`product`, `controlplan`,
   `revisionrequests`), couverts par les règles ArchUnit au même titre que
   `dpoappointments` et `marketplace`.
@@ -217,3 +272,7 @@ de `apply-step-up.sh`, qui ne s'exécute pas tout seul au déploiement.
   test se saute là où Docker n'est pas disponible, en le disant.
 - `qualitos.security.step-up.enforced` vaut **true** par défaut. Un interrupteur
   de sécurité dont le défaut est « ouvert » finit par rester ouvert.
+- L'approbation d'un control plan écrit trois colonnes de plus (`seal_sha256`,
+  `seal_signature`, `anchor_tx_ref`) et ne peut plus aboutir si la chaîne est
+  injoignable. C'est le comportement voulu, et il rend l'ancrage indisponible
+  visible au moment où il compte plutôt que le jour de l'audit.

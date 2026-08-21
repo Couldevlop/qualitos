@@ -31,16 +31,25 @@ public final class ControlPlanDto {
             String measurementTechnique, Integer sampleSize, String sampleFrequency,
             String controlMethod, String reactionPlan, UUID fmeaItemId) {}
 
+    /**
+     * Le plan tel qu'il se lit. {@code sealSha256} et {@code anchorTxRef}
+     * accompagnent un plan approuvé : c'est ce qu'un auditeur recopie pour
+     * vérifier lui-même, sans nous croire sur parole.
+     *
+     * <p>La SIGNATURE n'est pas rendue ici. Elle pèse plusieurs kilo-octets sur
+     * chaque ligne d'une liste, et personne ne la vérifie à l'œil : elle se
+     * demande sur le document, pas sur son résumé.
+     */
     public record View(
             UUID id, UUID productId, ControlPlanPhase phase, String code, int revision,
             ControlPlanStatus status, UUID ownerUserId, UUID approvedBy, Instant approvedAt,
-            Instant createdAt, Instant updatedAt) {
+            Instant createdAt, Instant updatedAt, String sealSha256, String anchorTxRef) {
 
         public static View of(ControlPlan p) {
             return new View(
                     p.getId(), p.getProductId(), p.getPhase(), p.getCode(), p.getRevision(),
                     p.getStatus(), p.getOwnerUserId(), p.getApprovedBy(), p.getApprovedAt(),
-                    p.getCreatedAt(), p.getUpdatedAt());
+                    p.getCreatedAt(), p.getUpdatedAt(), p.getSealSha256(), p.getAnchorTxRef());
         }
     }
 

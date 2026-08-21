@@ -57,6 +57,21 @@ Un plan approuvé ne se modifie plus. Pour le faire évoluer : **Ouvrir une rév
 lignes sont recopiées, de sorte que corriger une ligne ne fasse pas perdre les quarante
 autres. L'approbation est réservée à la direction qualité.
 
+À l'approbation, le plan affiche un encart **« Document scellé et ancré »** : une empreinte
+de 64 caractères et une référence de transaction. L'empreinte couvre le plan **et ses
+lignes** — modifier une ligne, une tolérance ou une justification produirait une empreinte
+différente. C'est ce qu'on donne à un auditeur qui demande à vérifier lui-même, plutôt que
+de lui demander de nous croire.
+
+Deux choses à savoir sur cet encart. Il n'apparaît **pas sur un brouillon** : un document
+qui n'est pas applicable n'a rien à prouver. Et les plans approuvés **avant la mise en
+service de cette fonction** n'en portent pas : les sceller après coup certifierait un
+contenu que personne n'a vu approuver. Leur approbation reste tracée au journal.
+
+Si l'approbation échoue en disant que l'ancrage est indisponible, ce n'est pas un défaut
+d'autorisation : la plateforme refuse de rendre opposable un document qu'elle ne saurait pas
+prouver. Le geste se rejoue tel quel une fois le service rétabli.
+
 ### 5. Déclarer une non-conformité en la rattachant
 
 Dans le formulaire de non-conformité, choisir le **produit concerné** fait apparaître la

@@ -1,6 +1,7 @@
 package com.openlab.qualitos.quality.controlplan.application;
 
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlan;
+import com.openlab.qualitos.quality.controlplan.domain.ControlPlanFingerprint;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanLine;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanNotFoundException;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanRepository;
@@ -34,17 +35,20 @@ public class ControlPlanService {
     private final ProductLookup products;
     private final FmeaItemLookup fmeaItems;
     private final ControlPlanAuditPort audit;
+    private final ControlPlanSealPort seals;
     private final TenantProvider tenants;
     private final ActorProvider actors;
     private final Clock clock;
 
     public ControlPlanService(ControlPlanRepository repo, ProductLookup products,
                               FmeaItemLookup fmeaItems, ControlPlanAuditPort audit,
-                              TenantProvider tenants, ActorProvider actors, Clock clock) {
+                              ControlPlanSealPort seals, TenantProvider tenants,
+                              ActorProvider actors, Clock clock) {
         this.repo = repo;
         this.products = products;
         this.fmeaItems = fmeaItems;
         this.audit = audit;
+        this.seals = seals;
         this.tenants = tenants;
         this.actors = actors;
         this.clock = clock;
@@ -119,9 +123,28 @@ public class ControlPlanService {
         });
         UUID actor = actors.currentUserId();
         draft.approve(actor, Instant.now(clock));
+
+        // Deux preuves, et non une seule.
+        //
+        // Le journal chaîné, ancré par lots, prouve que L'APPROBATION a eu lieu et
+        // qu'elle n'a pas été réécrite. Il ne dit rien de CE QUI a été approuvé :
+        // les lignes vivent dans une autre table, qu'un accès direct à la base
+        // pourrait modifier sans laisser de trace au journal.
+        //
+        // Le scellement comble ce trou : empreinte du plan ET de ses lignes,
+        // signée puis ancrée. Rejouer le calcul sur le document rendu par l'API
+        // suffit alors à démontrer qu'il est bien celui qui a été signé.
+        //
+        // L'échec du scellement fait ÉCHOUER l'approbation, transaction comprise :
+        // « aucune action critique sans ancrage » (CLAUDE.md §18.2 #5). Un plan
+        // approuvé mais non scellé serait affiché au poste et montré à l'auditeur
+        // avec une preuve manquante que rien ne signalerait. Le scellement précède
+        // donc l'écriture, qui n'a lieu qu'une fois.
+        String fingerprint = ControlPlanFingerprint.of(draft, repo.linesOf(draft.getId()));
+        ControlPlanSealPort.Seal seal = seals.seal(draft.getTenantId(), fingerprint);
+        draft.seal(fingerprint, seal.signature(), seal.anchorTxRef());
         ControlPlan approved = repo.save(draft);
-        // Le journal chaîné est ancré par lots : y inscrire l'approbation suffit à
-        // la rendre infalsifiable, sans ancrer chaque document séparément.
+
         audit.record(approved.getTenantId(), actor, "controlplan.plan.approved",
                 approved.getId(), "Control plan approuvé", details(approved));
         return ControlPlanDto.View.of(approved);

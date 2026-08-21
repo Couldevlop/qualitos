@@ -48,7 +48,8 @@ class StepUpEndpointTest {
 
     static final ControlPlanDto.View VIEW = new ControlPlanDto.View(
             PLAN, PRODUCT, ControlPlanPhase.PRODUCTION, "CP-4471", 1,
-            ControlPlanStatus.ACTIVE, null, null, NOW, NOW, NOW);
+            ControlPlanStatus.ACTIVE, null, null, NOW, NOW, NOW,
+            "0f5a", "tx-0001");
 
     @Test
     void aQualityDirectorWithoutASecondFactorCannotApprove() throws Exception {

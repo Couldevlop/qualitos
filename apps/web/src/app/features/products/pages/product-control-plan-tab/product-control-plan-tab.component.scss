@@ -32,3 +32,42 @@
   color: var(--qos-fg-tertiary);
   font-size: var(--qos-text-xs);
 }
+
+/*
+  L'encart de preuve. Discret par construction : il rassure quand on le cherche
+  et ne dispute pas la place au tableau des contrôles, qui est ce qu'on vient
+  lire au poste.
+*/
+.cp-seal {
+  display: flex;
+  gap: var(--qos-space-3);
+  align-items: flex-start;
+  padding: var(--qos-space-3) var(--qos-space-4);
+  margin-bottom: var(--qos-space-3);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-subtle);
+
+  mat-icon { color: var(--qos-success, var(--qos-fg-secondary)); }
+}
+
+.cp-seal-title {
+  margin: 0 0 var(--qos-space-1);
+  font-weight: 600;
+}
+
+.cp-seal-hash {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+  margin: 0;
+  font-size: var(--qos-text-xs);
+  color: var(--qos-fg-tertiary);
+
+  code {
+    font-family: var(--qos-font-mono, monospace);
+    /* L'empreinte fait 64 caractères : elle doit pouvoir se couper. */
+    word-break: break-all;
+    user-select: all;
+  }
+}

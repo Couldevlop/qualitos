@@ -155,6 +155,40 @@ describe('ProductControlPlanTabComponent', () => {
     expect(auth.stepUp).toHaveBeenCalledWith('/products/p-1');
   }));
 
+  it('affiche l’empreinte et la transaction d’un plan scellé', fakeAsync(async () => {
+    // Un auditeur qui reçoit le PDF veut confronter son empreinte à celle-ci.
+    // L'afficher en clair est ce qui lui évite de nous croire sur parole.
+    await setup(['QUALITY_MANAGER']);
+    const sealed = plan({
+      status: 'ACTIVE',
+      sealSha256: '0f5a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8',
+      anchorTxRef: 'tx-0001'
+    });
+    service.controlPlans.and.returnValue(of([sealed]));
+    service.controlPlan.and.returnValue(of({ plan: sealed, lines: [line()] }));
+
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+
+    const seal = fixture.nativeElement.querySelector('.cp-seal');
+    expect(seal).toBeTruthy();
+    expect(seal.textContent).toContain('0f5a1b2c');
+    expect(seal.textContent).toContain('tx-0001');
+  }));
+
+  it('ne montre aucune preuve sur un brouillon, qui n’a rien d’opposable', fakeAsync(async () => {
+    await setup(['QUALITY_MANAGER']);
+    service.controlPlans.and.returnValue(of([plan({ status: 'DRAFT' })]));
+    service.controlPlan.and.returnValue(of({ plan: plan({ status: 'DRAFT' }), lines: [line()] }));
+
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.cp-seal')).toBeNull();
+  }));
+
   it('affiche un état vide explicite quand le produit n’a aucun plan', fakeAsync(async () => {
     await setup(['QUALITY_MANAGER']);
     service.controlPlans.and.returnValue(of([]));

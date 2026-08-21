@@ -31,7 +31,7 @@ class ControlPlanMapperTest {
     void aPlanSurvivesTheRoundTrip() {
         ControlPlan source = ControlPlan.rehydrate(PLAN, TENANT, PRODUCT,
                 ControlPlanPhase.PRE_LAUNCH, "CP-4471", 4, ControlPlanStatus.ACTIVE,
-                USER, USER, NOW, USER, NOW, NOW.plusSeconds(60));
+                USER, USER, NOW, USER, NOW, NOW.plusSeconds(60), "0f5a", "sig", "tx-1");
 
         ControlPlan back = ControlPlanMapper.toDomain(ControlPlanMapper.toEntity(source, null));
 
@@ -68,7 +68,7 @@ class ControlPlanMapperTest {
         existing.setId(PLAN);
         ControlPlan source = ControlPlan.rehydrate(PLAN, TENANT, PRODUCT,
                 ControlPlanPhase.PRODUCTION, "CP-2", 2, ControlPlanStatus.DRAFT,
-                null, null, null, USER, NOW, NOW);
+                null, null, null, USER, NOW, NOW, null, null, null);
 
         ControlPlanJpaEntity target = ControlPlanMapper.toEntity(source, existing);
 
