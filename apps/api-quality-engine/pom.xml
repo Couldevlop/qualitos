@@ -162,6 +162,21 @@
             <version>1.3.0</version>
             <scope>test</scope>
         </dependency>
+        <!-- H2 en mode PostgreSQL suffit au comportement applicatif, mais il ignore
+             les index partiels et les contraintes d'exclusion. Les migrations qui
+             en posent ne se vérifient donc que sur un vrai serveur : Testcontainers
+             en démarre un le temps du test, et le test se saute proprement là où
+             Docker n'est pas disponible. -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

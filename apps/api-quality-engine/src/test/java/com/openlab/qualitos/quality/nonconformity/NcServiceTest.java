@@ -36,6 +36,7 @@ class NcServiceTest {
 
     @Mock NonConformityRepository repo;
     @Mock CapaCaseRepository capaRepo;
+    @Mock org.springframework.context.ApplicationEventPublisher events;
     @InjectMocks NcService service;
 
     static final UUID TENANT = UUID.randomUUID();
@@ -127,7 +128,7 @@ class NcServiceTest {
         when(repo.findAll(ArgumentMatchers.<Specification<NonConformity>>any(), eq(p)))
                 .thenReturn(new PageImpl<>(java.util.List.of(nc(TENANT, NcStatus.OPEN))));
 
-        Page<NcDto.Response> r = service.findAll(null, null, null, null, p);
+        Page<NcDto.Response> r = service.findAll(null, null, null, null, null, p);
 
         assertThat(r.getContent()).hasSize(1);
         assertThat(r.getContent().get(0).status()).isEqualTo(NcStatus.OPEN);
@@ -139,7 +140,7 @@ class NcServiceTest {
         TenantContext.clear();
         Pageable p = PageRequest.of(0, 10);
 
-        assertThatThrownBy(() -> service.findAll(null, null, null, null, p))
+        assertThatThrownBy(() -> service.findAll(null, null, null, null, null, p))
                 .isInstanceOf(MissingTenantContextException.class);
         verifyNoInteractions(repo);
     }
@@ -174,7 +175,7 @@ class NcServiceTest {
         when(repo.save(n)).thenReturn(n);
         service.update(n.getId(), new NcDto.UpdateRequest(
                 "t2", "d2", NcCategory.SUPPLIER, NcSeverity.CRITICAL, "zoneB", 1.0, 2.0, "u1\nu2",
-                NcOrigin.EXTERNAL));
+                NcOrigin.EXTERNAL, null, null));
         assertThat(n.getTitle()).isEqualTo("t2");
         assertThat(n.getCategory()).isEqualTo(NcCategory.SUPPLIER);
         assertThat(n.getSeverity()).isEqualTo(NcSeverity.CRITICAL);
@@ -190,7 +191,7 @@ class NcServiceTest {
         NonConformity n = nc(TENANT, NcStatus.CLOSED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.update(n.getId(),
-                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null)))
+                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(NcStateException.class);
     }
 
@@ -199,7 +200,7 @@ class NcServiceTest {
         NonConformity n = nc(TENANT, NcStatus.CANCELLED);
         when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
         assertThatThrownBy(() -> service.update(n.getId(),
-                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null)))
+                new NcDto.UpdateRequest("x", null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(NcStateException.class);
     }
 
@@ -369,7 +370,7 @@ class NcServiceTest {
     private NcDto.CreateRequest req() {
         return new NcDto.CreateRequest(
                 "Joint torique défectueux", "détail", NcCategory.PRODUCT, NcSeverity.MAJOR,
-                Instant.now(), "Atelier 3", 48.85, 2.35, "https://s/p1.jpg", REPORTER, null);
+                Instant.now(), "Atelier 3", 48.85, 2.35, "https://s/p1.jpg", REPORTER, null, null, null);
     }
 
     private NonConformity nc(UUID tenant, NcStatus status) {

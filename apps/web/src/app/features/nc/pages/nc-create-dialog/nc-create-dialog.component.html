@@ -80,4 +80,52 @@
     <mat-hint i18n="@@nc.create.photos-hint">L'envoi de fichiers depuis l'appareil arrivera prochainement.</mat-hint>
   </mat-form-field>
 
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@nc.create.product">Produit concerné</mat-label>
+    <mat-select formControlName="productId" (selectionChange)="refreshSuggestions()">
+      <mat-option value="" i18n="@@nc.create.no-product">Aucun — cette NC ne vise pas un produit</mat-option>
+      <mat-option *ngFor="let product of products" [value]="product.id">
+        {{ product.code }} — {{ product.designation }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!--
+    Le sélecteur de mode de défaillance n'apparaît qu'APRÈS le choix d'un produit :
+    sans produit, la question n'a pas de sens.
+  -->
+  <div class="failure-mode full" *ngIf="productChosen">
+    <div class="failure-mode-head">
+      <span i18n="@@nc.create.failure-mode">Mode de défaillance du PFMEA</span>
+      <button mat-stroked-button type="button" (click)="refreshSuggestions()"
+              [disabled]="suggesting">
+        <mat-icon>search</mat-icon>
+        <span i18n="@@nc.create.suggest">Proposer</span>
+      </button>
+    </div>
+
+    <mat-radio-group formControlName="failureMode" class="failure-mode-options">
+      <mat-radio-button *ngFor="let choice of suggestions" [value]="choice.fmeaItemId">
+        <span class="choice-label">{{ choice.label }}</span>
+        <span class="choice-terms" i18n="@@nc.create.matched-terms">
+          termes communs : {{ choice.matchedTerms }}
+        </span>
+      </mat-radio-button>
+
+      <mat-radio-button [value]="noFailureMode">
+        <span class="choice-label" i18n="@@nc.create.none-matches">
+          Aucun mode ne correspond
+        </span>
+        <span class="choice-terms" i18n="@@nc.create.none-matches-hint">
+          Un défaut que l'analyse n'avait pas prévu : une ligne de PFMEA sera proposée.
+        </span>
+      </mat-radio-button>
+    </mat-radio-group>
+
+    <p class="dim" *ngIf="!suggesting && suggestions.length === 0"
+       i18n="@@nc.create.no-suggestion">
+      Aucune suggestion pour ce texte. « Aucun mode ne correspond » reste un choix valable.
+    </p>
+  </div>
+
 </qos-form-dialog>

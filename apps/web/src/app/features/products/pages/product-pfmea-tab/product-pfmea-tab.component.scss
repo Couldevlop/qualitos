@@ -1,0 +1,25 @@
+.state-row { display: flex; justify-content: center; padding: var(--qos-space-8) 0; }
+
+.empty {
+  padding: var(--qos-space-8) 0;
+  text-align: center;
+  color: var(--qos-fg-tertiary);
+}
+
+.project-line {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-4);
+}
+
+.pfmea-table { width: 100%; }
+
+.flagged { background: var(--qos-bg-subtle); }
+
+.flag { color: var(--qos-warning-fg, var(--qos-fg-secondary)); }
+
+.dim {
+  color: var(--qos-fg-tertiary);
+  font-size: var(--qos-text-xs);
+}

@@ -8,6 +8,9 @@ import { CapaCreateDialogComponent } from './pages/capa-create-dialog/capa-creat
 import { CapaDetailComponent } from './pages/capa-detail/capa-detail.component';
 import { CapaEditDialogComponent } from './pages/capa-edit-dialog/capa-edit-dialog.component';
 import { CapaListComponent } from './pages/capa-list/capa-list.component';
+import {
+  CapaRevisionImpactComponent
+} from './pages/capa-revision-impact/capa-revision-impact.component';
 
 const routes: Routes = [
   { path: '', component: CapaListComponent },
@@ -20,7 +23,8 @@ const routes: Routes = [
     CapaDetailComponent,
     CapaCreateDialogComponent,
     CapaActionDialogComponent,
-    CapaEditDialogComponent
+    CapaEditDialogComponent,
+    CapaRevisionImpactComponent
   ],
   imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })

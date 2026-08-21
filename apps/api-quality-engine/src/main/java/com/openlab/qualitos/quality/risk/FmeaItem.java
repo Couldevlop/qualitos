@@ -86,6 +86,23 @@ public class FmeaItem {
     @Column(name = "rpn_after")
     private Integer rpnAfter;
 
+    /**
+     * Opération de gamme visée. C'est le mot commun entre le PFMEA et le control
+     * plan : sans lui, les deux documents parlent du même poste sans jamais
+     * pouvoir se recouper.
+     */
+    @Column(name = "operation_id")
+    private UUID operationId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "characteristic_class", nullable = false, length = 20)
+    private CharacteristicClass characteristicClass = CharacteristicClass.STANDARD;
+
+    /** Stockée pour trier « top priorités » sans recalculer toute la table. */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "action_priority", length = 8)
+    private ActionPriority actionPriority;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -112,6 +129,11 @@ public class FmeaItem {
      */
     public void recomputeRpn() {
         this.rpn = severity * occurrence * detection;
+        // Un item non encore coté (S=O=D=0) passe ici via @PrePersist : pas d'AP,
+        // pas d'exception. Coter viendra ensuite.
+        this.actionPriority = (severity >= 1 && occurrence >= 1 && detection >= 1)
+                ? ActionPriorityCalculator.of(severity, occurrence, detection)
+                : null;
         if (resultingSeverity != null && resultingOccurrence != null && resultingDetection != null) {
             this.rpnAfter = resultingSeverity * resultingOccurrence * resultingDetection;
         } else {
@@ -180,6 +202,19 @@ public class FmeaItem {
 
     public Integer getRpnAfter() { return rpnAfter; }
     public void setRpnAfter(Integer rpnAfter) { this.rpnAfter = rpnAfter; }
+
+    public UUID getOperationId() { return operationId; }
+    public void setOperationId(UUID operationId) { this.operationId = operationId; }
+
+    public CharacteristicClass getCharacteristicClass() { return characteristicClass; }
+    public void setCharacteristicClass(CharacteristicClass characteristicClass) {
+        this.characteristicClass = characteristicClass == null
+                ? CharacteristicClass.STANDARD
+                : characteristicClass;
+    }
+
+    /** Lecture seule : l'AP se déduit des trois notes, elle ne se saisit pas. */
+    public ActionPriority getActionPriority() { return actionPriority; }
 
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }

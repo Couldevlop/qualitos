@@ -75,7 +75,8 @@
       ],
       "attributes": {
         "pkce.code.challenge.method": "S256",
-        "post.logout.redirect.uris": "http://localhost:4200"
+        "post.logout.redirect.uris": "http://localhost:4200/*",
+        "acr.loa.map": "{\"silver\":1,\"gold\":2}"
       },
       "protocolMappers": [
         {
@@ -259,11 +260,11 @@
       "builtIn": false,
       "authenticationExecutions": [
         {
-          "requirement": "REQUIRED",
+          "requirement": "CONDITIONAL",
           "priority": 10,
           "userSetupAllowed": false,
-          "autheticatorFlow": false,
-          "authenticator": "auth-username-password-form"
+          "autheticatorFlow": true,
+          "flowAlias": "browser-mfa-loa1"
         },
         {
           "requirement": "CONDITIONAL",
@@ -278,6 +279,37 @@
           "userSetupAllowed": false,
           "autheticatorFlow": true,
           "flowAlias": "browser-mfa-otp-admin"
+        },
+        {
+          "requirement": "CONDITIONAL",
+          "priority": 40,
+          "userSetupAllowed": false,
+          "autheticatorFlow": true,
+          "flowAlias": "browser-mfa-otp-loa2"
+        }
+      ]
+    },
+    {
+      "alias": "browser-mfa-loa1",
+      "description": "Mot de passe : palier silver. Le declarer est ce qui empeche Keycloak de traiter toute connexion comme une demande du palier maximal.",
+      "providerId": "basic-flow",
+      "topLevel": false,
+      "builtIn": false,
+      "authenticationExecutions": [
+        {
+          "requirement": "REQUIRED",
+          "priority": 10,
+          "userSetupAllowed": false,
+          "autheticatorFlow": false,
+          "authenticator": "conditional-level-of-authentication",
+          "authenticatorConfig": "cfg-browser-mfa-loa1"
+        },
+        {
+          "requirement": "REQUIRED",
+          "priority": 20,
+          "userSetupAllowed": false,
+          "autheticatorFlow": false,
+          "authenticator": "auth-username-password-form"
         }
       ]
     },
@@ -328,6 +360,30 @@
           "authenticator": "auth-otp-form"
         }
       ]
+    },
+    {
+      "alias": "browser-mfa-otp-loa2",
+      "description": "Code a usage unique exige quand le client demande le palier gold",
+      "providerId": "basic-flow",
+      "topLevel": false,
+      "builtIn": false,
+      "authenticationExecutions": [
+        {
+          "requirement": "REQUIRED",
+          "priority": 10,
+          "userSetupAllowed": false,
+          "autheticatorFlow": false,
+          "authenticator": "conditional-level-of-authentication",
+          "authenticatorConfig": "cfg-browser-mfa-loa2"
+        },
+        {
+          "requirement": "REQUIRED",
+          "priority": 20,
+          "userSetupAllowed": false,
+          "autheticatorFlow": false,
+          "authenticator": "auth-otp-form"
+        }
+      ]
     }
   ],
   "authenticatorConfig": [
@@ -341,6 +397,20 @@
       "alias": "cfg-browser-mfa-otp-admin",
       "config": {
         "condUserRole": "admin_tenant"
+      }
+    },
+    {
+      "alias": "cfg-browser-mfa-loa2",
+      "config": {
+        "loa-condition-level": "2",
+        "loa-max-age": "3600"
+      }
+    },
+    {
+      "alias": "cfg-browser-mfa-loa1",
+      "config": {
+        "loa-condition-level": "1",
+        "loa-max-age": "3600"
       }
     }
   ],
@@ -375,5 +445,8 @@
       "priority": 30,
       "config": {}
     }
-  ]
+  ],
+  "attributes": {
+    "acr.loa.map": "{\"silver\":1,\"gold\":2}"
+  }
 }

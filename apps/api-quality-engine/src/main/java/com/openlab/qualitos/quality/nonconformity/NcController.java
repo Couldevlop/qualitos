@@ -26,8 +26,10 @@ public class NcController {
             @RequestParam(required = false) NcCategory category,
             /** Interne ou externe. Absent = les deux (§4.3). */
             @RequestParam(required = false) NcOrigin origin,
+            /** Les NC d'un produit : l'onglet « NC liées » de sa fiche s'en sert. */
+            @RequestParam(required = false) UUID productId,
             @PageableDefault(size = 20) Pageable pageable) {
-        return service.findAll(status, severity, category, origin, pageable);
+        return service.findAll(status, severity, category, origin, productId, pageable);
     }
 
     @PostMapping

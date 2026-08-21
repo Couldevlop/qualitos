@@ -1,0 +1,110 @@
+<h2 mat-dialog-title>
+  <span *ngIf="!editing" i18n="@@controlplan.line-new">Ajouter une ligne</span>
+  <span *ngIf="editing" i18n="@@controlplan.line-edit">Modifier la ligne</span>
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="line-form">
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@product.field-sequence">Rang</mat-label>
+      <input matInput type="number" formControlName="sequenceNo" min="0">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@controlplan.field-operation">Opération</mat-label>
+      <mat-select formControlName="operationId">
+        <mat-option [value]="null" i18n="@@controlplan.field-none">Aucune</mat-option>
+        <mat-option *ngFor="let op of operations" [value]="op.id">
+          {{ op.code }} — {{ op.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label i18n="@@controlplan.field-characteristic">Caractéristique</mat-label>
+      <input matInput formControlName="characteristicLabel" maxlength="500">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@controlplan.field-type">Type</mat-label>
+      <mat-select formControlName="characteristicType">
+        <mat-option *ngFor="let type of types" [value]="type">{{ type }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@controlplan.field-class">Classement</mat-label>
+      <mat-select formControlName="specialClass">
+        <mat-option *ngFor="let cls of classes" [value]="cls">{{ cls }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label i18n="@@controlplan.field-spec">Spécification</mat-label>
+      <input matInput formControlName="specification" maxlength="500">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@controlplan.field-tol-lower">Tolérance mini</mat-label>
+      <input matInput type="number" formControlName="toleranceLower" step="any">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@controlplan.field-tol-upper">Tolérance maxi</mat-label>
+      <input matInput type="number" formControlName="toleranceUpper" step="any">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@product.field-unit">Unité</mat-label>
+      <input matInput formControlName="unit" maxlength="24">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@controlplan.field-machine">Moyen</mat-label>
+      <input matInput formControlName="machine" maxlength="250">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@controlplan.field-technique">Technique de mesure</mat-label>
+      <input matInput formControlName="measurementTechnique" maxlength="250">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@controlplan.field-sample-size">Taille d'échantillon</mat-label>
+      <input matInput type="number" formControlName="sampleSize" min="1">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@controlplan.field-frequency">Fréquence</mat-label>
+      <input matInput formControlName="sampleFrequency" maxlength="120">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@controlplan.field-method">Méthode de contrôle</mat-label>
+      <input matInput formControlName="controlMethod" maxlength="500">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label i18n="@@controlplan.field-reaction">Plan de réaction</mat-label>
+      <textarea matInput formControlName="reactionPlan" rows="2" maxlength="1000"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label i18n="@@controlplan.field-fmea">Ligne de PFMEA qui justifie ce contrôle</mat-label>
+      <mat-select formControlName="fmeaItemId">
+        <mat-option [value]="null" i18n="@@controlplan.field-no-justification">
+          Aucune — ce contrôle n'est justifié par aucune analyse
+        </mat-option>
+        <mat-option *ngFor="let item of fmeaItems" [value]="item.id">
+          {{ item.sequenceNo }} · {{ item.failureMode }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()" i18n="@@common.cancel">Annuler</button>
+  <button mat-flat-button color="primary" (click)="save()"
+          [disabled]="form.invalid || saving" i18n="@@common.save">Enregistrer</button>
+</mat-dialog-actions>

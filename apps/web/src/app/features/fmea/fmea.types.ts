@@ -9,6 +9,10 @@ export type FmeaType =
   | 'SERVICE_FMEA'
   | 'BOW_TIE';
 
+export type ActionPriority = 'HIGH' | 'MEDIUM' | 'LOW';
+
+export type CharacteristicClass = 'STANDARD' | 'SPECIAL' | 'SAFETY' | 'REGULATORY';
+
 export interface FmeaProjectResponse {
   id: string;
   tenantId: string;
@@ -19,6 +23,8 @@ export interface FmeaProjectResponse {
   status: FmeaStatus;
   criticalRpnThreshold: number;
   revision: number;
+  /** Produit couvert. Absent pour les FMEA système, service et bow-tie. */
+  productId?: string;
   ownerUserId?: string;
   lastReviewedAt?: string;
   createdBy: string;
@@ -66,6 +72,15 @@ export interface FmeaItemResponse {
   resultingOccurrence?: number;
   resultingDetection?: number;
   rpnAfter?: number;
+  /** Opération de gamme visée : le mot commun avec le control plan. */
+  operationId?: string;
+  characteristicClass?: CharacteristicClass;
+  /**
+   * Priorité d'action AIAG-VDA. Elle lit les trois notes séparément là où le RPN
+   * les multiplie — un RPN de 120 peut cacher une défaillance grave comme une
+   * défaillance fréquente et bénigne. Absente tant que l'item n'est pas coté.
+   */
+  actionPriority?: ActionPriority;
   critical: boolean;
   createdAt: string;
   updatedAt: string;

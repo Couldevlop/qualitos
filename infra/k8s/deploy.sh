@@ -218,6 +218,46 @@ if [ -n "$KC_POD" ]; then
     echo "  ATTENTION : politique de mot de passe du realm qualitos non appliquée" >&2
   fi
 
+  # URI de POST-DÉCONNEXION du client web. Posée ICI et pas seulement dans le
+  # realm rendu, parce que l'import Keycloak n'a lieu qu'au TOUT PREMIER
+  # démarrage : un environnement déjà installé ne verrait jamais la correction.
+  #
+  # Ce que l'oubli produisait, mesuré sur la préproduction : la connexion
+  # fonctionne, la déconnexion répond « Invalid redirect uri » (HTTP 400) et
+  # l'utilisateur reste bloqué sur une page d'erreur Keycloak. Le réglage est
+  # DISTINCT des URI de redirection et Keycloak ne retombe pas dessus : attribut
+  # absent = aucune redirection autorisée après déconnexion.
+  WEB_CID="$(kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh get clients -r qualitos     -q clientId=qualitos-web --fields id --format csv --noquotes 2>/dev/null | tr -d '' | head -1)"
+  if [ -n "$WEB_CID" ] && kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh update        "clients/$WEB_CID" -r qualitos        -s "attributes.\"post.logout.redirect.uris\"=https://$HOST/*" >/dev/null 2>&1; then
+    echo "  client qualitos-web : redirection de déconnexion autorisée"
+  else
+    echo "  ATTENTION : URI de post-déconnexion non posée — la déconnexion" >&2
+    echo "  répondra « Invalid redirect uri » et laissera l'utilisateur bloqué." >&2
+  fi
+
+  # Authentification par PALIERS (silver / gold). Sans elle, le jeton ne porte
+  # aucune trace du second facteur et TOUTE approbation de control plan répond
+  # 403 « step-up-required » — le contrôle est fail-closed à dessein (ADR 0059).
+  #
+  # Appelée depuis le déploiement et non laissée à un passage manuel : une
+  # bascule d'environnement qui dépend d'une commande qu'on doit penser à taper
+  # est une bascule qu'on oublie. Le script se sait rejouable et ne reconstruit
+  # rien s'il trouve le realm déjà en place.
+  #
+  # L'échec n'ARRÊTE PAS le déploiement — il vaut mieux une plateforme en ligne
+  # dont une action critique est refusée qu'une livraison bloquée — mais il est
+  # signalé bruyamment, parce que le symptôme (403 à l'approbation) n'évoque pas
+  # de lui-même sa cause.
+  if KC_URL="https://$HOST/auth" KC_REALM=qualitos      KC_ADMIN="$KC_ADMIN" KC_ADMIN_PASSWORD="$KC_PWD"      "$ROOT/infra/keycloak/apply-step-up.sh" >/dev/null 2>&1; then
+    echo "  realm qualitos : authentification par paliers en place"
+  else
+    echo "  ATTENTION : paliers d'authentification non posés." >&2
+    echo "  L'approbation d'un control plan et l'acceptation d'une proposition de" >&2
+    echo "  révision répondront 403 tant que le realm ne publiera pas acr/amr." >&2
+    echo "  Reprendre à la main : KC_URL=https://$HOST/auth KC_REALM=qualitos \\" >&2
+    echo "    KC_ADMIN=... KC_ADMIN_PASSWORD=... infra/keycloak/apply-step-up.sh" >&2
+  fi
+
   AI_CID="$(kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh get clients -r qualitos \
     -q clientId=api-quality-engine-ai --fields id --format csv --noquotes 2>/dev/null | tr -d '\r' | head -1)"
   if [ -n "$AI_CID" ]; then

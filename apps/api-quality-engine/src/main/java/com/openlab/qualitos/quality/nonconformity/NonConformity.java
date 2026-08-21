@@ -73,6 +73,20 @@ public class NonConformity {
     @Column(name = "reporter_id")
     private UUID reporterId;
 
+    /**
+     * Produit concerné, facultatif : une NC de service ou administrative n'en a
+     * pas, et l'exiger empêcherait simplement de la saisir.
+     */
+    @Column(name = "product_id")
+    private UUID productId;
+
+    /**
+     * Mode de défaillance du PFMEA que ce défaut illustre. Son absence est une
+     * information en soi : un défaut que l'analyse n'avait pas prévu.
+     */
+    @Column(name = "fmea_item_id")
+    private UUID fmeaItemId;
+
     /** Lien d'escalade vers la CAPA créée à partir de cette NC. */
     @Column(name = "capa_case_id")
     private UUID capaCaseId;

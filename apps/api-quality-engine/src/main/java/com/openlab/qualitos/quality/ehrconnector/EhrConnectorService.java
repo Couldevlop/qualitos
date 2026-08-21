@@ -227,7 +227,11 @@ public class EhrConnectorService {
                 // Signal remonté par le dossier patient de l'établissement :
                 // c'est une détection INTERNE, même si elle passe par un système
                 // tiers. Une NC « externe » suppose un signalement venu du dehors.
-                NcOrigin.INTERNAL);
+                NcOrigin.INTERNAL,
+                // Un import EHR ne connaît ni référence produit ni mode de
+                // défaillance : le rattachement, s'il a lieu, se fera à la main.
+                null,   // productId
+                null);  // fmeaItemId
         return ncService.create(req).id();
     }
 

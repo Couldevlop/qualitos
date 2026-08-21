@@ -5,6 +5,12 @@ export const environment = {
   useMockApi: false,
   apiBaseUrl: 'http://localhost:8082',
   authMode: 'oidc' as 'dev' | 'oidc',
+  /**
+   * Palier d'authentification demandé quand le serveur exige un second
+   * facteur (403 « step-up-required »). Doit correspondre à la carte
+   * `acr.loa.map` du realm — cf. infra/keycloak/realm-export.json.
+   */
+  stepUpAcrValue: 'gold',
   keycloak: {
     issuer: 'http://localhost:8080/realms/qualitos',
     clientId: 'qualitos-web',

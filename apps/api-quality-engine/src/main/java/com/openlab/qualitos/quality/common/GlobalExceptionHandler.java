@@ -58,6 +58,10 @@ import com.openlab.qualitos.quality.industry.IndustryPackNotFoundException;
 import com.openlab.qualitos.quality.iot.IotDeviceNotFoundException;
 import com.openlab.qualitos.quality.iot.IotDeviceStateException;
 import com.openlab.qualitos.quality.iot.IotThresholdNotFoundException;
+import com.openlab.qualitos.quality.controlplan.domain.ControlPlanNotFoundException;
+import com.openlab.qualitos.quality.controlplan.domain.ControlPlanStateException;
+import com.openlab.qualitos.quality.revisionrequests.domain.RevisionRequestNotFoundException;
+import com.openlab.qualitos.quality.revisionrequests.domain.RevisionRequestStateException;
 import com.openlab.qualitos.quality.risk.FmeaItemNotFoundException;
 import com.openlab.qualitos.quality.risk.FmeaProjectNotFoundException;
 import com.openlab.qualitos.quality.risk.FmeaStateException;
@@ -150,6 +154,9 @@ import com.openlab.qualitos.quality.nonconformity.NcPhotoNotFoundException;
 import com.openlab.qualitos.quality.nonconformity.NcPhotoTooLargeException;
 import com.openlab.qualitos.quality.nonconformity.NcPhotoValidationException;
 import com.openlab.qualitos.quality.nonconformity.storage.StorageDisabledException;
+import com.openlab.qualitos.quality.product.domain.ProductNotFoundException;
+import com.openlab.qualitos.quality.product.domain.ProductStateException;
+import com.openlab.qualitos.quality.product.domain.ProductCodeConflictException;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1696,6 +1703,84 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/marketplace-installation-not-found"));
         problem.setTitle("Marketplace Installation Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ProblemDetail handleProductNotFound(ProductNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/product-not-found"));
+        problem.setTitle("Product Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ProductStateException.class)
+    public ProblemDetail handleProductState(ProductStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/product-invalid-state"));
+        problem.setTitle("Invalid Product State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ProductCodeConflictException.class)
+    public ProblemDetail handleProductCodeConflict(ProductCodeConflictException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/product-code-conflict"));
+        problem.setTitle("Product Code Conflict");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ControlPlanNotFoundException.class)
+    public ProblemDetail handleControlPlanNotFound(ControlPlanNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/control-plan-not-found"));
+        problem.setTitle("Control Plan Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ControlPlanStateException.class)
+    public ProblemDetail handleControlPlanState(ControlPlanStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/control-plan-invalid-state"));
+        problem.setTitle("Invalid Control Plan State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * 403 et non 401 : la session est valide, c'est la force de l'authentification
+     * qui ne l'est pas. Un 401 déclencherait une reconnexion silencieuse qui
+     * reproduirait le même jeton, sans jamais demander le second facteur.
+     */
+    @ExceptionHandler(StepUpRequiredException.class)
+    public ProblemDetail handleStepUpRequired(StepUpRequiredException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/step-up-required"));
+        problem.setTitle("Second Factor Required");
+        problem.setProperty("action", ex.getAction());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(RevisionRequestNotFoundException.class)
+    public ProblemDetail handleRevisionRequestNotFound(RevisionRequestNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/revision-request-not-found"));
+        problem.setTitle("Revision Request Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(RevisionRequestStateException.class)
+    public ProblemDetail handleRevisionRequestState(RevisionRequestStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/revision-request-invalid-state"));
+        problem.setTitle("Invalid Revision Request State");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
