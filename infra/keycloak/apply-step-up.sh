@@ -67,6 +67,25 @@ api() {
     -H "Content-Type: application/json" "$KC_URL/admin/realms/$KC_REALM$path" "$@"
 }
 
+# Meme appel, mais qui ARRETE le script si Keycloak refuse. `api` seul rend la
+# main meme sur un 403 : curl ne traite pas un refus HTTP comme une erreur. La
+# construction du flux se poursuivait donc sur des etapes qui n avaient rien
+# cree, et l echec n apparaissait que bien plus loin, ailleurs.
+api_strict() {
+  local method="$1" path="$2" what="$3"; shift 3
+  local out code
+  out="$(api "$method" "$path" "$@" -w '
+%{http_code}')" || {
+    say "   $what : curl a echoue"; exit 1; }
+  code="$(printf '%s' "$out" | tail -1)"
+  case "$code" in
+    2*) say "   $what (HTTP $code)" ;;
+    *)  say "   $what : REFUSE (HTTP $code)"
+        printf '%s' "$out" | sed '$d' | head -c 400 | sed 's/^/   | /' >&2
+        exit 1 ;;
+  esac
+}
+
 subflow() {  # flux parent, alias, description
   api POST "/authentication/flows/$1/executions/flow" \
     -d "{\"alias\":\"$2\",\"type\":\"basic-flow\",\"description\":\"$3\",\"provider\":\"registration-page-form\"}" \
@@ -109,8 +128,8 @@ fi
 
 # --- 1. La carte des paliers ------------------------------------------------
 say "→ carte des paliers (acr.loa.map)"
-api PUT "" -d "{\"attributes\":{\"acr.loa.map\":\"{\\\"silver\\\":1,\\\"gold\\\":2}\"}}" \
-  -o /dev/null -w '   HTTP %{http_code}\n'
+api_strict PUT "" "carte des paliers" \
+  -d "{\"attributes\":{\"acr.loa.map\":\"{\\\"silver\\\":1,\\\"gold\\\":2}\"}}" -o /dev/null
 
 # --- 2. Le flux neuf --------------------------------------------------------
 # Keycloak supprime un flux par IDENTIFIANT, pas par alias : supprimer par alias
@@ -134,9 +153,9 @@ if [ -n "$FLOW_ID" ]; then
     -w '   ancien flux supprimé (HTTP %{http_code})\n'
 fi
 
-api POST "/authentication/flows" \
+api_strict POST "/authentication/flows" "flux racine" \
   -d "{\"alias\":\"$FLOW\",\"description\":\"Connexion par paliers silver/gold\",\"providerId\":\"basic-flow\",\"topLevel\":true,\"builtIn\":false}" \
-  -o /dev/null -w '   flux racine (HTTP %{http_code})\n'
+  -o /dev/null
 
 # Les descriptions restent en ASCII : elles partent dans un corps JSON envoye
 # par curl, et un accent mal encode par le terminal fait repondre 400.
@@ -163,7 +182,7 @@ execution "$LOA2" "auth-otp-form"
 say "→ exigences, conditions et bascule"
 "$PY" - "$KC_URL" "$KC_REALM" "$TOKEN" "$FLOW" "$FORMS" "$LOA1" "$LOA2" \
         "$OTP_SUPERADMIN" "$OTP_ADMIN" "$MAX_AGE" <<'PYEOF'
-import json, sys, urllib.request
+import json, sys, urllib.error, urllib.request
 
 url, realm, token, flow, forms, loa1, loa2, otp_sa, otp_admin, max_age = sys.argv[1:11]
 base = f"{url}/admin/realms/{realm}"
@@ -174,8 +193,18 @@ def call(method, path, payload=None):
     request = urllib.request.Request(f"{base}{path}", data=data, method=method,
                                      headers={"Authorization": f"Bearer {token}",
                                               "Content-Type": "application/json"})
-    with urllib.request.urlopen(request) as response:
-        body = response.read()
+    try:
+        with urllib.request.urlopen(request) as response:
+            body = response.read()
+    except urllib.error.HTTPError as failure:
+        # Le CORPS de la reponse, et pas seulement le code. Keycloak y met la
+        # raison — droit manquant, execution non modifiable, realm inconnu — et
+        # sans lui un 403 sec envoie chercher un probleme de jeton la ou il n y
+        # en a pas.
+        detail = failure.read().decode("utf-8", "replace")[:400]
+        raise SystemExit(
+            f"{method} {path} -> HTTP {failure.code} {failure.reason}
+  {detail}")
     return json.loads(body) if body else None
 
 
