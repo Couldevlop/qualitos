@@ -13,5 +13,11 @@ public interface UserSkillAssignmentRepository extends JpaRepository<UserSkillAs
 
     List<UserSkillAssignment> findByTenantIdAndUserId(UUID tenantId, UUID userId);
 
+    /**
+     * Toutes les evaluations d'un tenant : elles forment les cellules de la
+     * matrice de competences, et decident de ses colonnes.
+     */
+    List<UserSkillAssignment> findByTenantId(UUID tenantId);
+
     long countByTenantIdAndSkillId(UUID tenantId, UUID skillId);
 }

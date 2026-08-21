@@ -139,6 +139,7 @@ export class MainShellComponent implements OnInit, OnDestroy {
       label: $localize`:@@nav.operations:Opérations`,
       items: [
         { label: $localize`:@@nav.capa:CAPA`,                       route: '/capa',      icon: 'engineering', module: 'capa' },
+        { label: $localize`:@@nav.capa-efficacite:Efficacité CAPA`,   route: '/capa/efficacite', icon: 'insights', module: 'capa' },
         { label: $localize`:@@nav.reclamations:Réclamations`,       route: '/complaints', icon: 'support_agent', module: 'complaints' },
         { label: $localize`:@@nav.calibration:Calibration`,         route: '/calibration', icon: 'straighten', module: 'calibration' },
         { label: $localize`:@@nav.iot:Parc IoT`,                    route: '/iot',        icon: 'sensors', module: 'iot' },
@@ -161,6 +162,7 @@ export class MainShellComponent implements OnInit, OnDestroy {
         { label: $localize`:@@nav.marketplace:Marketplace`,         route: '/marketplace',    icon: 'storefront', module: 'industry' },
         { label: $localize`:@@nav.fournisseurs:Fournisseurs`,      route: '/suppliers',      icon: 'local_shipping', module: 'supplier' },
         { label: $localize`:@@nav.formation:Formation`,            route: '/training',       icon: 'school', module: 'training' },
+        { label: $localize`:@@nav.competences:Matrice de compétences`, route: '/training/competences', icon: 'grid_on', module: 'training' },
         { label: $localize`:@@nav.academy:Academy`,                route: '/academy',        icon: 'cast_for_education', module: 'training' },
         { label: $localize`:@@nav.mon-apprentissage:Mon apprentissage`, route: '/learning',  icon: 'military_tech' },
         { label: $localize`:@@nav.integrations:Intégrations`,      route: '/itsm',           icon: 'hub', module: 'itsm' }

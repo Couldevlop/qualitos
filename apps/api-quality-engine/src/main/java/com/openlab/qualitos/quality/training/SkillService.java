@@ -99,6 +99,12 @@ public class SkillService {
                     return fresh;
                 });
         a.setLevel(req.level());
+        // Le nom n'ecrase pas celui deja connu quand la requete l'omet : une
+        // reevaluation faite par un outil qui ne le transmet pas ne doit pas
+        // vider les en-tetes de la matrice.
+        if (req.userName() != null && !req.userName().isBlank()) {
+            a.setUserName(req.userName().trim());
+        }
         a.setSource(req.source());
         a.setAssessedBy(req.assessedBy());
         a.setAssessedAt(LocalDate.now(clock));

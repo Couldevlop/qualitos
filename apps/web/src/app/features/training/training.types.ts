@@ -191,3 +191,39 @@ export interface CompleteLearningRequest {
   itemCode: string;
   score: number;
 }
+
+/**
+ * La matrice du tenant : competences en lignes groupees, collaborateurs en
+ * colonnes, un niveau a l'intersection.
+ */
+export interface CompetencyGridPerson {
+  userId: string;
+  /** Le nom si on le connait, sinon l'identifiant abrege. */
+  label: string;
+}
+
+export interface CompetencyGridRow {
+  skillId: string;
+  code: string;
+  name: string;
+  /**
+   * Niveaux alignes sur l'ordre des colonnes. `null` la ou la personne n'a
+   * jamais ete evaluee : a ne pas confondre avec le niveau zero, qui est un
+   * constat.
+   */
+  levels: (number | null)[];
+  holders: number;
+  /** Une seule personne detient la competence : un risque d'organisation. */
+  singlePointOfKnowledge: boolean;
+}
+
+export interface CompetencyGridGroup {
+  /** Famille de competences ; absente pour les competences non classees. */
+  category?: string;
+  rows: CompetencyGridRow[];
+}
+
+export interface CompetencyGrid {
+  people: CompetencyGridPerson[];
+  groups: CompetencyGridGroup[];
+}

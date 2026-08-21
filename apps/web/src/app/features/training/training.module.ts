@@ -1,5 +1,11 @@
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RouterModule, Routes } from '@angular/router';
+
+import {
+  CompetencyMatrixComponent
+} from './pages/competency-matrix/competency-matrix.component';
 
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
@@ -12,11 +18,13 @@ import { TrainingSkillDialogComponent } from './pages/training-skill-dialog/trai
 
 const routes: Routes = [
   { path: '', component: TrainingHomeComponent },
+  { path: 'competences', component: CompetencyMatrixComponent },
   { path: 'paths/:id', component: TrainingPathDetailComponent }
 ];
 
 @NgModule({
   declarations: [
+    CompetencyMatrixComponent,
     TrainingHomeComponent,
     TrainingPathDetailComponent,
     TrainingPathDialogComponent,
@@ -24,6 +32,10 @@ const routes: Routes = [
     TrainingEnrollDialogComponent,
     TrainingRequirementDialogComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  // FormsModule et MatSlideToggleModule ne sont re-exportes ni par Shared ni
+  // par Ui : les specs les importent d'elles-memes, seul le build de
+  // production voit l'oubli.
+  imports: [SharedModule, UiModule, FormsModule, MatSlideToggleModule,
+    RouterModule.forChild(routes)]
 })
 export class TrainingModule {}

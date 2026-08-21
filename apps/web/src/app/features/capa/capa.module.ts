@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
@@ -6,6 +7,9 @@ import { UiModule } from '../../shared/ui/ui.module';
 import { CapaActionDialogComponent } from './pages/capa-action-dialog/capa-action-dialog.component';
 import { CapaCreateDialogComponent } from './pages/capa-create-dialog/capa-create-dialog.component';
 import { CapaDetailComponent } from './pages/capa-detail/capa-detail.component';
+import {
+  CapaEffectivenessComponent
+} from './pages/capa-effectiveness/capa-effectiveness.component';
 import { CapaEditDialogComponent } from './pages/capa-edit-dialog/capa-edit-dialog.component';
 import { CapaListComponent } from './pages/capa-list/capa-list.component';
 import {
@@ -14,6 +18,9 @@ import {
 
 const routes: Routes = [
   { path: '', component: CapaListComponent },
+  // AVANT `:id` : place apres, le parametre avalerait « efficacite » et la
+  // page s'ouvrirait sur un dossier introuvable.
+  { path: 'efficacite', component: CapaEffectivenessComponent },
   { path: ':id', component: CapaDetailComponent }
 ];
 
@@ -24,8 +31,11 @@ const routes: Routes = [
     CapaCreateDialogComponent,
     CapaActionDialogComponent,
     CapaEditDialogComponent,
-    CapaRevisionImpactComponent
+    CapaRevisionImpactComponent,
+    CapaEffectivenessComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  // MatButtonToggleModule n'est re-exporte ni par SharedModule ni par UiModule :
+  // les specs l'importent d'elles-memes, seul le build de production le voit.
+  imports: [SharedModule, UiModule, MatButtonToggleModule, RouterModule.forChild(routes)]
 })
 export class CapaModule {}

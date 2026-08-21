@@ -5364,6 +5364,166 @@
         <source>Référence</source>
         <target state="translated">编号</target>
       </trans-unit>
+      <trans-unit id="capa.effectiveness.title" datatype="html">
+        <source>Efficacité des CAPA</source>
+        <target state="translated">CAPA 有效性</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.subtitle" datatype="html">
+        <source>Ce que le terrain dit des dossiers clos, et non ce qu'on avait déclaré à la clôture.</source>
+        <target state="translated">关于已关闭案件，现场给出的事实，而非结案时的声明。</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.window-aria" datatype="html">
+        <source>Fenêtre d'observation</source>
+        <target state="translated">观察窗口</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.months" datatype="html">
+        <source>mois</source>
+        <target state="translated">个月</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.average" datatype="html">
+        <source>Efficacité moyenne</source>
+        <target state="translated">平均有效性</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.average-hint" datatype="html">
+        <source>Sur les seuls dossiers mesurables</source>
+        <target state="translated">仅统计可测量的案件</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.measured" datatype="html">
+        <source>Mesurées</source>
+        <target state="translated">已测量</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.in-observation" datatype="html">
+        <source>En observation</source>
+        <target state="translated">观察中</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.in-observation-hint" datatype="html">
+        <source>Fenêtre non écoulée</source>
+        <target state="translated">观察期尚未结束</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.declared-but-failed" datatype="html">
+        <source>Déclarées efficaces à tort</source>
+        <target state="translated">被错误声明为有效</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.truncated" datatype="html">
+        <source>Le périmètre dépasse la limite de lecture : seuls les dossiers les plus récents sont mesurés. La moyenne ne porte donc pas sur la totalité de l'historique.</source>
+        <target state="translated">范围超出读取上限：仅测量最近的案件，因此平均值并未涵盖全部历史。</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.none" datatype="html">
+        <source>Aucun dossier mesurable. L'efficacité se mesure sur une CAPA close née d'une non-conformité : sans elle, il n'y a pas de récidive à guetter.</source>
+        <target state="translated">没有可测量的案件。有效性基于源自不合格项的已关闭 CAPA 来衡量。</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.col-capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.col-closed" datatype="html">
+        <source>Clôturée le</source>
+        <target state="translated">关闭日期</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.col-recurrence" datatype="html">
+        <source>Récidives</source>
+        <target state="translated">再发生</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.col-rate" datatype="html">
+        <source>Efficacité</source>
+        <target state="translated">有效性</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.col-declared" datatype="html">
+        <source>Déclarée</source>
+        <target state="translated">声明</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.before" datatype="html">
+        <source>avant</source>
+        <target state="translated">之前</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.elapsed" datatype="html">
+        <source>en</source>
+        <target state="translated">历时</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.too-early" datatype="html">
+        <source>Trop tôt pour conclure</source>
+        <target state="translated">尚不能下结论</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.not-measurable" datatype="html">
+        <source>Aucune occurrence antérieure</source>
+        <target state="translated">此前无发生记录</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.declared-yes" datatype="html">
+        <source>Efficace</source>
+        <target state="translated">有效</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.declared-no" datatype="html">
+        <source>Non prononcée</source>
+        <target state="translated">未判定</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.contradicted-aria" datatype="html">
+        <source>Démentie par la mesure</source>
+        <target state="translated">与测量结果相悖</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.approximate" datatype="html">
+        <source>Rapprochement par catégorie — taux indicatif</source>
+        <target state="translated">按类别匹配，比率仅供参考</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.failed" datatype="html">
+        <source>Impossible de charger l'efficacité des CAPA.</source>
+        <target state="translated">无法加载 CAPA 有效性。</target>
+      </trans-unit>
+      <trans-unit id="nav.capa-efficacite" datatype="html">
+        <source>Efficacité CAPA</source>
+        <target state="translated">CAPA 有效性</target>
+      </trans-unit>
+      <trans-unit id="nav.competences" datatype="html">
+        <source>Matrice de compétences</source>
+        <target state="translated">能力矩阵</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.title" datatype="html">
+        <source>Matrice de compétences</source>
+        <target state="translated">能力矩阵</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.subtitle" datatype="html">
+        <source>Qui sait faire quoi. Une ligne dont une seule case est remplie signale une compétence qui ne tient qu'à une personne.</source>
+        <target state="translated">谁会做什么。某行只有一格被填，说明该能力仅由一人掌握。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.only-at-risk" datatype="html">
+        <source>Seulement les compétences à risque</source>
+        <target state="translated">仅显示有风险的能力</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.col-skill" datatype="html">
+        <source>Compétence</source>
+        <target state="translated">能力</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.ungrouped" datatype="html">
+        <source>Sans famille</source>
+        <target state="translated">未分组</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.single-holder" datatype="html">
+        <source>Un seul détenteur</source>
+        <target state="translated">仅一名掌握者</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.unassessed" datatype="html">
+        <source>Non évalué</source>
+        <target state="translated">未评估</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.unassessed-legend" datatype="html">
+        <source>non évalué</source>
+        <target state="translated">未评估</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.legend" datatype="html">
+        <source>Niveaux</source>
+        <target state="translated">等级</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.none" datatype="html">
+        <source>Aucune compétence au catalogue. Créez-en, puis évaluez les collaborateurs : la matrice se construit à partir des évaluations.</source>
+        <target state="translated">目录中暂无能力项。请先创建，再评估人员：矩阵由评估结果构建。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.no-people" datatype="html">
+        <source>Le catalogue existe, mais personne n'a encore été évalué. Les colonnes sont les personnes évaluées — la matrice reste vide tant qu'aucune ne l'est.</source>
+        <target state="translated">目录已存在，但尚无人被评估。列即为已评估的人员。</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.failed" datatype="html">
+        <source>Impossible de charger la matrice de compétences.</source>
+        <target state="translated">无法加载能力矩阵。</target>
+      </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>
         <target state="translated">证据</target>

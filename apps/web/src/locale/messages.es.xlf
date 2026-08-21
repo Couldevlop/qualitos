@@ -5364,6 +5364,166 @@
         <source>Référence</source>
         <target state="translated">Referencia</target>
       </trans-unit>
+      <trans-unit id="capa.effectiveness.title" datatype="html">
+        <source>Efficacité des CAPA</source>
+        <target state="translated">Eficacia de las CAPA</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.subtitle" datatype="html">
+        <source>Ce que le terrain dit des dossiers clos, et non ce qu'on avait déclaré à la clôture.</source>
+        <target state="translated">Lo que dice el terreno sobre los casos cerrados, no lo declarado al cierre.</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.window-aria" datatype="html">
+        <source>Fenêtre d'observation</source>
+        <target state="translated">Ventana de observación</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.months" datatype="html">
+        <source>mois</source>
+        <target state="translated">meses</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.average" datatype="html">
+        <source>Efficacité moyenne</source>
+        <target state="translated">Eficacia media</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.average-hint" datatype="html">
+        <source>Sur les seuls dossiers mesurables</source>
+        <target state="translated">Solo sobre los casos medibles</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.measured" datatype="html">
+        <source>Mesurées</source>
+        <target state="translated">Medidas</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.in-observation" datatype="html">
+        <source>En observation</source>
+        <target state="translated">En observación</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.in-observation-hint" datatype="html">
+        <source>Fenêtre non écoulée</source>
+        <target state="translated">Ventana aún no cumplida</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.declared-but-failed" datatype="html">
+        <source>Déclarées efficaces à tort</source>
+        <target state="translated">Declaradas eficaces por error</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.truncated" datatype="html">
+        <source>Le périmètre dépasse la limite de lecture : seuls les dossiers les plus récents sont mesurés. La moyenne ne porte donc pas sur la totalité de l'historique.</source>
+        <target state="translated">El alcance supera el límite de lectura: solo se miden los casos más recientes, por lo que la media no cubre todo el historial.</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.none" datatype="html">
+        <source>Aucun dossier mesurable. L'efficacité se mesure sur une CAPA close née d'une non-conformité : sans elle, il n'y a pas de récidive à guetter.</source>
+        <target state="translated">Ningún caso medible. La eficacia se mide sobre una CAPA cerrada nacida de una no conformidad: sin ella no hay recurrencia que vigilar.</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.col-capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.col-closed" datatype="html">
+        <source>Clôturée le</source>
+        <target state="translated">Cerrada el</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.col-recurrence" datatype="html">
+        <source>Récidives</source>
+        <target state="translated">Recurrencias</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.col-rate" datatype="html">
+        <source>Efficacité</source>
+        <target state="translated">Eficacia</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.col-declared" datatype="html">
+        <source>Déclarée</source>
+        <target state="translated">Declarada</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.before" datatype="html">
+        <source>avant</source>
+        <target state="translated">antes</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.elapsed" datatype="html">
+        <source>en</source>
+        <target state="translated">en</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.too-early" datatype="html">
+        <source>Trop tôt pour conclure</source>
+        <target state="translated">Demasiado pronto para concluir</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.not-measurable" datatype="html">
+        <source>Aucune occurrence antérieure</source>
+        <target state="translated">Ninguna ocurrencia previa</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.declared-yes" datatype="html">
+        <source>Efficace</source>
+        <target state="translated">Eficaz</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.declared-no" datatype="html">
+        <source>Non prononcée</source>
+        <target state="translated">No pronunciada</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.contradicted-aria" datatype="html">
+        <source>Démentie par la mesure</source>
+        <target state="translated">Desmentida por la medición</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.approximate" datatype="html">
+        <source>Rapprochement par catégorie — taux indicatif</source>
+        <target state="translated">Coincidencia por categoría: tasa indicativa</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.failed" datatype="html">
+        <source>Impossible de charger l'efficacité des CAPA.</source>
+        <target state="translated">No se ha podido cargar la eficacia de las CAPA.</target>
+      </trans-unit>
+      <trans-unit id="nav.capa-efficacite" datatype="html">
+        <source>Efficacité CAPA</source>
+        <target state="translated">Eficacia CAPA</target>
+      </trans-unit>
+      <trans-unit id="nav.competences" datatype="html">
+        <source>Matrice de compétences</source>
+        <target state="translated">Matriz de competencias</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.title" datatype="html">
+        <source>Matrice de compétences</source>
+        <target state="translated">Matriz de competencias</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.subtitle" datatype="html">
+        <source>Qui sait faire quoi. Une ligne dont une seule case est remplie signale une compétence qui ne tient qu'à une personne.</source>
+        <target state="translated">Quién sabe hacer qué. Una fila con una sola casilla señala una competencia que depende de una sola persona.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.only-at-risk" datatype="html">
+        <source>Seulement les compétences à risque</source>
+        <target state="translated">Solo las competencias en riesgo</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.col-skill" datatype="html">
+        <source>Compétence</source>
+        <target state="translated">Competencia</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.ungrouped" datatype="html">
+        <source>Sans famille</source>
+        <target state="translated">Sin familia</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.single-holder" datatype="html">
+        <source>Un seul détenteur</source>
+        <target state="translated">Un solo titular</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.unassessed" datatype="html">
+        <source>Non évalué</source>
+        <target state="translated">No evaluado</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.unassessed-legend" datatype="html">
+        <source>non évalué</source>
+        <target state="translated">no evaluado</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.legend" datatype="html">
+        <source>Niveaux</source>
+        <target state="translated">Niveles</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.none" datatype="html">
+        <source>Aucune compétence au catalogue. Créez-en, puis évaluez les collaborateurs : la matrice se construit à partir des évaluations.</source>
+        <target state="translated">Ninguna competencia en el catálogo. Cree algunas y evalúe a las personas: la matriz se construye a partir de las evaluaciones.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.no-people" datatype="html">
+        <source>Le catalogue existe, mais personne n'a encore été évalué. Les colonnes sont les personnes évaluées — la matrice reste vide tant qu'aucune ne l'est.</source>
+        <target state="translated">El catálogo existe, pero nadie ha sido evaluado todavía. Las columnas son las personas evaluadas: la matriz permanece vacía hasta que haya alguna.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.failed" datatype="html">
+        <source>Impossible de charger la matrice de compétences.</source>
+        <target state="translated">No se ha podido cargar la matriz de competencias.</target>
+      </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>
         <target state="translated">Pruebas</target>

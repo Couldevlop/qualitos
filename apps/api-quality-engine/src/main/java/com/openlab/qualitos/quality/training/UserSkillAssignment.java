@@ -34,6 +34,15 @@ public class UserSkillAssignment {
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 
+    /**
+     * Le nom de la personne, en clair. La plateforme n'a pas d'annuaire : une
+     * matrice dont les colonnes seraient des identifiants techniques ne se
+     * lirait pas. Facultatif — le domaine abrege l'identifiant a defaut, plutot
+     * que de laisser une colonne anonyme.
+     */
+    @Column(name = "user_name", length = 250)
+    private String userName;
+
     @Column(name = "skill_id", nullable = false)
     private UUID skillId;
 
@@ -80,6 +89,8 @@ public class UserSkillAssignment {
     public UUID getTenantId() { return tenantId; }
     public void setTenantId(UUID tenantId) { this.tenantId = tenantId; }
     public UUID getUserId() { return userId; }
+    public String getUserName() { return userName; }
+    public void setUserName(String userName) { this.userName = userName; }
     public void setUserId(UUID userId) { this.userId = userId; }
     public UUID getSkillId() { return skillId; }
     public void setSkillId(UUID skillId) { this.skillId = skillId; }

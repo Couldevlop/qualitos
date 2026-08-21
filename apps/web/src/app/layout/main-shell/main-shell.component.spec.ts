@@ -98,7 +98,7 @@ describe('MainShellComponent (navigation model)', () => {
     // ne se lisent pas dans la liste paginée de tous les plans, tous statuts mêlés.
     // Puis à 11 : + Produits — le référentiel qui donne son sujet au PFMEA et au
     // control plan, posé juste avant l'entrée FMEA qu'il alimente.
-    expect(labels).toEqual([5, 6, 8, 3, 11, 10, 1, 7]);
+    expect(labels).toEqual([5, 6, 8, 3, 12, 11, 1, 7]);
   });
 
   it('collapses the entire GRC mass into a single /compliance entry', () => {

@@ -6,15 +6,15 @@
 
 ## En une phrase
 
-Aucun des six modules maquettés n'existe. Mais le lot Produit / PFMEA / Control
-Plan livré le 21/08 pose des briques que trois d'entre eux réclament, et l'un —
-l'efficacité CAPA — est à moitié construit sans avoir été nommé.
+**Un des six est livré** — l'efficacité CAPA, le 21/08 (ADR 0060). Les cinq
+autres restent à faire, mais le lot Produit / PFMEA / Control Plan leur pose des
+briques réutilisables.
 
 ## L'état, module par module
 
 | Module maquetté | Couverture | Ce qui existe et sert |
 | --- | --- | --- |
-| **Efficacité CAPA** | ~50 % | `CapaCase.effectivenessVerified` et sa date ; `NcHistoryPort.countForProductAndFailureMode(tenant, produit, mode, depuis)` compte les non-conformités sur fenêtre glissante — c'est le calcul même de la « récurrence 6 mois » |
+| **Efficacité CAPA** | **livré** | Mesure sur deux fenêtres de même durée, API `GET /api/v1/capa/effectiveness`, écran `/capa/efficacite` (ADR 0060) |
 | **Boîte à idées** | ~60 % en données | `circle.CircleProposal`, dont le cycle `PROPOSED → UNDER_REVIEW → APPROVED → REJECTED → IMPLEMENTED → MEASURED` recouvre les colonnes de la maquette. Manquent le **vote** et une saisie hors cercle |
 | **Suivi ESG** | ~25 %, épars | `Supplier.score` et `SupplierAuditRecord.score` pour la note fournisseur ; `ehs` porte un type d'incident `ENVIRONMENTAL`. Rien sur le CO₂, les déchets valorisés, ni la pondération d'un score ESG |
 | **Coût de la qualité** | ~10 % | Le catalogue KPI accepte n'importe quelle définition (code, unité, cible, seuils) : le COQ y tiendrait sans schéma neuf. Mais rien ne le décompose en prévention / évaluation / défaillance interne / externe, et le terme n'apparaît que dans un commentaire du pack automobile |
@@ -51,12 +51,12 @@ la même chose — « l'agrégation est dans la donnée, pas dans l'UI »
 
 | Rang | Module | Pourquoi ici |
 | --- | --- | --- |
-| 1 | **Efficacité CAPA** | L'essentiel des données existe ; il manque une définition formelle et une lecture |
-| 2 | Boîte à idées | Enrichit un modèle en place plutôt que d'en créer un |
-| 3 | Coût de la qualité | Modèle simple, mais exige une convention comptable partagée avec le métier |
-| 4 | Suivi ESG | Dépend de sources externes (mesures, facteurs d'émission) qu'il faut d'abord décider |
-| 5 | Continuité d'activité | Modèle métier neuf, adossé à ISO 22301 |
-| 6 | Revue de contrat | Tout est à faire, et c'est le seul qui exige un modèle métier entièrement neuf |
+| ~~1~~ | ~~Efficacité CAPA~~ | **Livré le 2026-08-21** (ADR 0060) |
+| 1 | Boîte à idées | Enrichit un modèle en place plutôt que d'en créer un |
+| 2 | Coût de la qualité | Modèle simple, mais exige une convention comptable partagée avec le métier |
+| 3 | Suivi ESG | Dépend de sources externes (mesures, facteurs d'émission) qu'il faut d'abord décider |
+| 4 | Continuité d'activité | Modèle métier neuf, adossé à ISO 22301 |
+| 5 | Revue de contrat | Tout est à faire, et c'est le seul qui exige un modèle métier entièrement neuf |
 
 ## Ce que ce point ne dit pas
 

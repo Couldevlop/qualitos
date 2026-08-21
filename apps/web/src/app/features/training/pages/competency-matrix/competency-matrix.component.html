@@ -1,0 +1,95 @@
+<div class="qos-page">
+  <header class="page-head">
+    <div>
+      <h1 i18n="@@training.matrix.title">Matrice de compétences</h1>
+      <p class="subtitle" i18n="@@training.matrix.subtitle">
+        Qui sait faire quoi. Une ligne dont une seule case est remplie signale une compétence
+        qui ne tient qu'à une personne.
+      </p>
+    </div>
+
+    <mat-slide-toggle [(ngModel)]="onlyAtRisk" *ngIf="atRiskCount() > 0">
+      <span i18n="@@training.matrix.only-at-risk">Seulement les compétences à risque</span>
+      ({{ atRiskCount() }})
+    </mat-slide-toggle>
+  </header>
+
+  <div class="state-row" *ngIf="loading" role="status">
+    <mat-progress-spinner mode="indeterminate" diameter="32"
+                          aria-label="Chargement" i18n-aria-label="@@common.loading-aria"></mat-progress-spinner>
+  </div>
+
+  <ng-container *ngIf="!loading && grid as g">
+    <p class="empty" *ngIf="g.groups.length === 0" i18n="@@training.matrix.none">
+      Aucune compétence au catalogue. Créez-en, puis évaluez les collaborateurs : la matrice
+      se construit à partir des évaluations.
+    </p>
+
+    <p class="empty" *ngIf="g.groups.length > 0 && g.people.length === 0"
+       i18n="@@training.matrix.no-people">
+      Le catalogue existe, mais personne n'a encore été évalué. Les colonnes sont les personnes
+      évaluées — la matrice reste vide tant qu'aucune ne l'est.
+    </p>
+
+    <div class="qos-scroll-x" *ngIf="g.people.length > 0">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th class="skill-col" i18n="@@training.matrix.col-skill">Compétence</th>
+            <!--
+              Une colonne par personne évaluée. L'ordre est celui du serveur —
+              par libellé — pour que deux captures d'écran se comparent.
+            -->
+            <th *ngFor="let person of g.people" class="person-col" [title]="person.label">
+              {{ person.label }}
+            </th>
+          </tr>
+        </thead>
+
+        <tbody *ngFor="let group of g.groups">
+          <ng-container *ngIf="hasVisibleRows(group.rows)">
+            <tr class="group-row">
+              <th [attr.colspan]="g.people.length + 1">
+                {{ group.category || '' }}
+                <span *ngIf="!group.category" i18n="@@training.matrix.ungrouped">Sans famille</span>
+              </th>
+            </tr>
+
+            <tr *ngFor="let row of rowsOf(group.rows)">
+              <th class="skill-col" scope="row">
+                {{ row.name }}
+                <span class="code">{{ row.code }}</span>
+                <!--
+                  Le signal qui justifie la figure : la compétence ne tient qu'à
+                  une personne. Il est porté par du texte et pas seulement par
+                  une couleur — la couleur seule ne se lit ni au clavier, ni en
+                  daltonisme, ni à l'impression.
+                -->
+                <span class="at-risk" *ngIf="row.singlePointOfKnowledge"
+                      i18n="@@training.matrix.single-holder">Un seul détenteur</span>
+              </th>
+
+              <td *ngFor="let level of row.levels" [class]="cellClass(level)"
+                  [attr.title]="levelLabel(level)">
+                <span *ngIf="level !== null && level !== undefined">{{ level }}</span>
+                <span class="unknown" *ngIf="level === null || level === undefined"
+                      aria-label="Non évalué" i18n-aria-label="@@training.matrix.unassessed">—</span>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="legend" *ngIf="g.people.length > 0">
+      <span i18n="@@training.matrix.legend">Niveaux</span> :
+      <span *ngFor="let name of levelNames; let i = index" class="legend-item">
+        <span [class]="cellClass(i)">{{ i }}</span> {{ name }}
+      </span>
+      <span class="legend-item">
+        <span class="cell-unknown">—</span>
+        <span i18n="@@training.matrix.unassessed-legend">non évalué</span>
+      </span>
+    </p>
+  </ng-container>
+</div>

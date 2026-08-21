@@ -44,6 +44,7 @@ public final class TrainingDto {
 
     public record AssessCompetencyRequest(
             @NotNull UUID userId,
+            @jakarta.validation.constraints.Size(max = 250) String userName,
             @NotNull UUID skillId,
             @Min(0) @Max(4) @NotNull Integer level,
             @NotNull CompetencySource source,

@@ -1,0 +1,143 @@
+.page-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-4);
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--qos-space-5);
+}
+
+.subtitle {
+  margin: var(--qos-space-1) 0 0;
+  max-width: 60ch;
+  color: var(--qos-fg-tertiary);
+}
+
+.matrix {
+  border-collapse: collapse;
+  width: max-content;
+  min-width: 100%;
+
+  th,
+  td {
+    padding: var(--qos-space-2) var(--qos-space-3);
+    border: 1px solid var(--qos-border-subtle);
+    text-align: left;
+  }
+
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--qos-bg-subtle);
+    font-weight: 600;
+  }
+}
+
+/*
+  La colonne des compétences reste visible quand on fait défiler vers la droite :
+  une note sans son intitulé ne veut rien dire, et une matrice large se lit
+  forcément en défilant.
+*/
+.skill-col {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  min-width: 260px;
+  background: var(--qos-bg-default, #fff);
+}
+
+thead .skill-col {
+  z-index: 3;
+}
+
+.person-col {
+  min-width: 110px;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.group-row th {
+  background: var(--qos-bg-subtle);
+  font-weight: 600;
+  color: var(--qos-fg-secondary);
+}
+
+.code {
+  display: block;
+  font-size: var(--qos-text-xs);
+  color: var(--qos-fg-tertiary);
+}
+
+.at-risk {
+  display: inline-block;
+  margin-top: var(--qos-space-1);
+  padding: 0 var(--qos-space-2);
+  border-radius: var(--qos-radius-sm);
+  background: var(--qos-danger, #b3261e);
+  color: #fff;
+  font-size: var(--qos-text-xs);
+}
+
+/*
+  Cinq paliers, du plus clair au plus soutenu. Le niveau zéro — évalué, non
+  acquis — se distingue du non-évalué : l'un est un constat, l'autre une absence
+  de constat, et les confondre accuserait des gens qu'on n'a jamais évalués.
+*/
+td {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.cell-none { background: var(--qos-bg-subtle); color: var(--qos-fg-tertiary); }
+.cell-l1 { background: color-mix(in srgb, var(--qos-accent, #3b6ea5) 12%, transparent); }
+.cell-l2 { background: color-mix(in srgb, var(--qos-accent, #3b6ea5) 26%, transparent); }
+.cell-l3 { background: color-mix(in srgb, var(--qos-accent, #3b6ea5) 42%, transparent); }
+.cell-l4 {
+  background: color-mix(in srgb, var(--qos-accent, #3b6ea5) 60%, transparent);
+  font-weight: 600;
+}
+
+.cell-unknown {
+  color: var(--qos-fg-tertiary);
+}
+
+.unknown {
+  color: var(--qos-fg-tertiary);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-3);
+  align-items: center;
+  margin-top: var(--qos-space-4);
+  font-size: var(--qos-text-xs);
+  color: var(--qos-fg-tertiary);
+}
+
+.legend-item {
+  display: inline-flex;
+  gap: var(--qos-space-1);
+  align-items: center;
+
+  span:first-child {
+    display: inline-flex;
+    width: 22px;
+    height: 22px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--qos-border-subtle);
+    border-radius: var(--qos-radius-sm);
+  }
+}
+
+.empty {
+  padding: var(--qos-space-8) 0;
+  max-width: 70ch;
+  margin: 0 auto;
+  text-align: center;
+  color: var(--qos-fg-tertiary);
+}

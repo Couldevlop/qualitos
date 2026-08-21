@@ -119,6 +119,30 @@ récents d'abord — ceux dont le verdict peut encore bouger.
 moyenne calculée sur une partie du périmètre et présentée comme complète serait un
 mensonge par omission, et cet écran finit en revue de direction.
 
+### 7. La matrice de compétences se lit dans les deux sens
+
+Compétences en lignes groupées par famille, collaborateurs en colonnes, un
+niveau à l'intersection. Une colonne montre ce qu'une personne couvre ; une
+**ligne** montre qui sait faire quoi — et une seule case remplie sur toute une
+rangée signale une compétence qui ne tient qu'à une personne. Ce n'est pas une
+donnée, c'est un risque d'organisation, et la figure le rend visible sans qu'on
+le cherche. L'écran le porte par du **texte**, pas seulement par une couleur :
+une couleur seule ne se lit ni au clavier, ni en daltonisme, ni à l'impression.
+
+**Une case jamais évaluée reste vide.** La confondre avec un niveau zéro
+affirmerait une incompétence que personne n'a constatée, et fausserait toute
+lecture de couverture. La distinction traverse la pile entière — domaine, JSON,
+CSS — et un banc la garde à chaque étage.
+
+**L'échelle affichée est celle qui est stockée**, de zéro à quatre, chacun nommé.
+La trame papier note de un à cinq ; l'afficher supposerait de décaler les valeurs
+enregistrées, c'est-à-dire de montrer autre chose que ce que le serveur détient.
+
+**Le nom de la personne est stocké sur l'évaluation** (`V118`), faute d'annuaire.
+Une réévaluation qui ne le transmet pas ne l'efface pas : un outil tiers ne doit
+pas vider les en-têtes de colonnes. À défaut de nom, l'identifiant est abrégé —
+l'inventer serait pire que l'abréger.
+
 ## Conséquences
 
 - Migrations `V116` (control plan) et `V117` (PFMEA), rejouées sur un PostgreSQL
@@ -130,13 +154,18 @@ mensonge par omission, et cet écran finit en revue de direction.
 - Nouveau point de lecture `GET /api/v1/capa/effectiveness?months=6`, ouvert à
   tout utilisateur authentifié du tenant — il ne révèle rien que la liste des
   CAPA ne révèle déjà.
+- Migration `V118` : le nom de la personne évaluée, et
+  `GET /api/v1/training/competencies/matrix` pour la matrice du tenant, à côté
+  de la lecture par utilisateur qui existait déjà.
+- Deux écrans : `/capa/efficacite` et `/training/competences`, et leurs entrées
+  de navigation. Le catalogue de compétences est borné à 500 lignes : au-delà,
+  ce n'est plus une matrice mais un export.
 
 ## Ce que ce lot ne tient pas
 
-- **L'écran d'efficacité CAPA n'est pas fait.** L'API est complète et testée ;
-  la lecture reste à porter dans l'interface.
-- **La matrice de compétences n'est qu'un domaine.** L'assemblage est écrit et
-  testé (`CompetencyGrid`), mais ni l'API tenant-large ni l'écran n'existent. Le
-  troisième schéma de `docs/5P & Ishikawa.docx` reste donc non reproduit — les
-  deux autres, arête de poisson et cascade des 5 Pourquoi, le sont depuis
-  l'ADR 0054.
+- **Les cinq modules maquettés** (continuité d'activité, revue de contrat, coût
+  de la qualité, boîte à idées, suivi ESG) ne sont pas commencés. Chacun est un
+  module complet ; ils restent séquencés dans
+  `docs/ECART-nouveaux-modules-qms.md`.
+- **« SOP # » reste un texte libre**, pas un lien vers le référentiel de
+  procédures internes (cf. décision 3).
