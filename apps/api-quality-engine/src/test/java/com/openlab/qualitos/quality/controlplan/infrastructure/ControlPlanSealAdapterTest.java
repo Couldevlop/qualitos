@@ -37,8 +37,12 @@ import static org.mockito.Mockito.when;
 class ControlPlanSealAdapterTest {
 
     static final UUID TENANT = UUID.randomUUID();
-    static final String SHA256 =
-            "0f5a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8";
+    /**
+     * Empreinte de banc. Le motif se répète à dessein : une suite hexadécimale
+     * de 64 caractères d'apparence aléatoire fait sonner les détecteurs de
+     * secrets, et une alerte qui se révèle fausse apprend à ignorer les alertes.
+     */
+    static final String SHA256 = "0f5a".repeat(16);
 
     HybridSignatureService signer;
     BlockchainAnchorPort blockchain;

@@ -161,7 +161,9 @@ describe('ProductControlPlanTabComponent', () => {
     await setup(['QUALITY_MANAGER']);
     const sealed = plan({
       status: 'ACTIVE',
-      sealSha256: '0f5a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8',
+      // Motif répété : une suite hexadécimale d'apparence aléatoire fait
+      // sonner les détecteurs de secrets pour rien.
+      sealSha256: '0f5a'.repeat(16),
       anchorTxRef: 'tx-0001'
     });
     service.controlPlans.and.returnValue(of([sealed]));
@@ -173,7 +175,7 @@ describe('ProductControlPlanTabComponent', () => {
 
     const seal = fixture.nativeElement.querySelector('.cp-seal');
     expect(seal).toBeTruthy();
-    expect(seal.textContent).toContain('0f5a1b2c');
+    expect(seal.textContent).toContain('0f5a0f5a');
     expect(seal.textContent).toContain('tx-0001');
   }));
 
