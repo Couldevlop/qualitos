@@ -53,6 +53,19 @@ Chaque ligne peut citer la **ligne de PFMEA qui la justifie**. Celles qui n'en c
 portent la mention « sans justification » : un contrôle sans raison d'être coûte du temps au
 poste sans réduire aucun risque, et c'est exactement ce qu'un auditeur cherche.
 
+Quatre champs méritent une mention, parce qu'ils décident de la valeur du plan :
+
+- La **taille d'échantillon** accepte une règle et pas seulement un nombre : « 100 % », « 5 au
+  réglage puis 1 sur 50 ». Écrire la règle complète évite qu'elle finisse dans la colonne
+  fréquence, où personne ne la cherchera.
+- **Entrée ou sortie** dit ce que le contrôle surveille. Contrôler une sortie constate un
+  défaut déjà fait ; contrôler une entrée l'empêche. Un plan qui n'aligne que des sorties
+  trie, il ne maîtrise pas — et cela se voit d'un coup d'œil dans la colonne.
+- **Qui ou quoi mesure** accepte une personne comme une machine : « opérateur de ligne /
+  capteur automatisé » est une réponse valide.
+- **Lieu d'enregistrement** est la colonne que suit l'auditeur : elle dit où trouver la preuve
+  que le contrôle a bien eu lieu. Sans elle, le plan décrit une intention.
+
 Un plan approuvé ne se modifie plus. Pour le faire évoluer : **Ouvrir une révision** — les
 lignes sont recopiées, de sorte que corriger une ligne ne fasse pas perdre les quarante
 autres. L'approbation est réservée à la direction qualité.

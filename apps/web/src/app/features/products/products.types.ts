@@ -96,6 +96,8 @@ export interface ControlPlanView {
   anchorTxRef?: string;
 }
 
+export type InputOutput = 'INPUT' | 'OUTPUT';
+
 export interface ControlPlanLineView {
   id: string;
   sequenceNo: number;
@@ -110,12 +112,24 @@ export interface ControlPlanLineView {
   toleranceUpper?: number;
   unit?: string;
   measurementTechnique?: string;
-  sampleSize?: number;
+  /**
+   * Texte et non nombre : « 100 % (automatisé) » ou « 5 au réglage puis 1 sur
+   * 50 » sont des tailles d'échantillon parfaitement valides.
+   */
+  sampleSize?: string;
   sampleFrequency?: string;
   controlMethod?: string;
   reactionPlan?: string;
   /** Absent : le contrôle n'est justifié par aucune ligne de PFMEA. */
   fmeaItemId?: string;
+  /** Référence de la procédure appliquée au poste (colonne « SOP # »). */
+  sopReference?: string;
+  /** Entrée surveillée ou sortie constatée. */
+  inputOutput?: InputOutput;
+  /** Qui — ou quoi — mesure : la trame accepte une personne comme une machine. */
+  whoMeasures?: string;
+  /** Où l'enregistrement est conservé : c'est ce que l'auditeur suivra. */
+  recordingLocation?: string;
 }
 
 export interface ControlPlanDetail {
@@ -142,11 +156,19 @@ export interface ControlPlanLineRequest {
   toleranceUpper?: number;
   unit?: string;
   measurementTechnique?: string;
-  sampleSize?: number;
+  /**
+   * Texte et non nombre : « 100 % (automatisé) » ou « 5 au réglage puis 1 sur
+   * 50 » sont des tailles d'échantillon parfaitement valides.
+   */
+  sampleSize?: string;
   sampleFrequency?: string;
   controlMethod?: string;
   reactionPlan?: string;
   fmeaItemId?: string;
+  sopReference?: string;
+  inputOutput?: InputOutput;
+  whoMeasures?: string;
+  recordingLocation?: string;
 }
 
 // ---------- Propositions de révision ----------

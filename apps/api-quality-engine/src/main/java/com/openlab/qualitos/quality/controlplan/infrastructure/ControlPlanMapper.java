@@ -5,6 +5,7 @@ import com.openlab.qualitos.quality.controlplan.domain.ControlPlan;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanLine;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanPhase;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanStatus;
+import com.openlab.qualitos.quality.controlplan.domain.InputOutput;
 import com.openlab.qualitos.quality.risk.CharacteristicClass;
 
 /**
@@ -71,6 +72,10 @@ final class ControlPlanMapper {
         e.setControlMethod(l.getControlMethod());
         e.setReactionPlan(l.getReactionPlan());
         e.setFmeaItemId(l.getFmeaItemId());
+        e.setSopReference(l.getSopReference());
+        e.setInputOutput(l.getInputOutput() == null ? null : l.getInputOutput().name());
+        e.setWhoMeasures(l.getWhoMeasures());
+        e.setRecordingLocation(l.getRecordingLocation());
         return e;
     }
 
@@ -78,11 +83,14 @@ final class ControlPlanMapper {
         ControlPlanLine l = ControlPlanLine.rehydrate(e.getId(), e.getTenantId(), e.getPlanId(),
                 e.getSequenceNo(), e.getCharacteristicLabel(),
                 CharacteristicType.valueOf(e.getCharacteristicType()));
-        l.describe(e.getOperationId(), e.getMachine(), e.getCharacteristicNo(),
+        l.describe(new ControlPlanLine.Details(e.getOperationId(), e.getMachine(),
+                e.getCharacteristicNo(),
                 e.getSpecialClass() == null ? null : CharacteristicClass.valueOf(e.getSpecialClass()),
                 e.getSpecification(), e.getToleranceLower(), e.getToleranceUpper(), e.getUnit(),
                 e.getMeasurementTechnique(), e.getSampleSize(), e.getSampleFrequency(),
-                e.getControlMethod(), e.getReactionPlan());
+                e.getControlMethod(), e.getReactionPlan(), e.getSopReference(),
+                e.getInputOutput() == null ? null : InputOutput.valueOf(e.getInputOutput()),
+                e.getWhoMeasures(), e.getRecordingLocation()));
         l.justifiedBy(e.getFmeaItemId());
         return l;
     }

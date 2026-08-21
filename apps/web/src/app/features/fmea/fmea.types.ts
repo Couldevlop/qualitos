@@ -67,7 +67,12 @@ export interface FmeaItemResponse {
   rpn: number;
   recommendedAction?: string;
   actionOwnerUserId?: string;
+  /** Le responsable en clair : souvent un service, pas une personne. */
+  actionOwnerName?: string;
   actionDueDate?: string;
+  /** Ce qui a réellement été fait — et qui justifie la nouvelle cotation. */
+  actionsTaken?: string;
+  actionsTakenAt?: string;
   resultingSeverity?: number;
   resultingOccurrence?: number;
   resultingDetection?: number;
@@ -99,7 +104,12 @@ export interface CreateFmeaItemRequest {
   detection: number;
   recommendedAction?: string;
   actionOwnerUserId?: string;
+  /** Le responsable en clair : souvent un service, pas une personne. */
+  actionOwnerName?: string;
   actionDueDate?: string;
+  /** Ce qui a réellement été fait — et qui justifie la nouvelle cotation. */
+  actionsTaken?: string;
+  actionsTakenAt?: string;
   resultingSeverity?: number;
   resultingOccurrence?: number;
   resultingDetection?: number;
@@ -116,7 +126,12 @@ export interface UpdateFmeaItemRequest {
   detection?: number;
   recommendedAction?: string;
   actionOwnerUserId?: string;
+  /** Le responsable en clair : souvent un service, pas une personne. */
+  actionOwnerName?: string;
   actionDueDate?: string;
+  /** Ce qui a réellement été fait — et qui justifie la nouvelle cotation. */
+  actionsTaken?: string;
+  actionsTakenAt?: string;
   resultingSeverity?: number;
   resultingOccurrence?: number;
   resultingDetection?: number;

@@ -32,11 +32,15 @@ public final class ControlPlanLine {
     private BigDecimal toleranceUpper;
     private String unit;
     private String measurementTechnique;
-    private Integer sampleSize;
+    private String sampleSize;
     private String sampleFrequency;
     private String controlMethod;
     private String reactionPlan;
     private UUID fmeaItemId;
+    private String sopReference;
+    private InputOutput inputOutput;
+    private String whoMeasures;
+    private String recordingLocation;
 
     private ControlPlanLine(UUID tenantId, UUID planId, int sequenceNo,
                             String characteristicLabel, CharacteristicType characteristicType) {
@@ -69,25 +73,62 @@ public final class ControlPlanLine {
         return trimmed;
     }
 
-    /** Les champs facultatifs, posés d'un bloc — ils se saisissent ensemble à l'écran. */
-    public void describe(UUID operationId, String machine, String characteristicNo,
-                         CharacteristicClass specialClass, String specification,
-                         BigDecimal toleranceLower, BigDecimal toleranceUpper, String unit,
-                         String measurementTechnique, Integer sampleSize, String sampleFrequency,
-                         String controlMethod, String reactionPlan) {
-        this.operationId = operationId;
-        this.machine = machine;
-        this.characteristicNo = characteristicNo;
-        this.specialClass = specialClass == null ? CharacteristicClass.STANDARD : specialClass;
-        this.specification = specification;
-        this.toleranceLower = toleranceLower;
-        this.toleranceUpper = toleranceUpper;
-        this.unit = unit;
-        this.measurementTechnique = measurementTechnique;
-        this.sampleSize = sampleSize;
-        this.sampleFrequency = sampleFrequency;
-        this.controlMethod = controlMethod;
-        this.reactionPlan = reactionPlan;
+    /**
+     * Les champs facultatifs, posés d'un bloc — ils se saisissent ensemble à
+     * l'écran.
+     *
+     * <p>Rassemblés dans un objet plutôt qu'alignés en dix-sept paramètres : au
+     * delà d'une poignée, deux arguments de même type finissent par s'échanger
+     * sans que le compilateur ne bronche, et la tolérance basse se retrouve en
+     * tolérance haute.
+     */
+    public record Details(UUID operationId, String machine, String characteristicNo,
+                          CharacteristicClass specialClass, String specification,
+                          BigDecimal toleranceLower, BigDecimal toleranceUpper, String unit,
+                          String measurementTechnique, String sampleSize, String sampleFrequency,
+                          String controlMethod, String reactionPlan,
+                          String sopReference, InputOutput inputOutput,
+                          String whoMeasures, String recordingLocation) {
+    }
+
+    public void describe(Details details) {
+        Objects.requireNonNull(details, "details");
+        // Les longueurs sont vérifiées ICI et pas seulement à la frontière HTTP.
+        // Le moteur de propositions de révision écrit des lignes sans passer par
+        // le contrôleur : sa validation ne le protège pas. Sans cette garde, une
+        // valeur trop longue partait jusqu'à la base et revenait en erreur
+        // d'intégrité — un 500 là où l'appelant méritait un refus nommé.
+        this.operationId = details.operationId();
+        this.machine = details.machine();
+        this.characteristicNo = details.characteristicNo();
+        this.specialClass = details.specialClass() == null
+                ? CharacteristicClass.STANDARD : details.specialClass();
+        this.specification = details.specification();
+        this.toleranceLower = details.toleranceLower();
+        this.toleranceUpper = details.toleranceUpper();
+        this.unit = details.unit();
+        this.measurementTechnique = bounded(details.measurementTechnique(), 250, "measurementTechnique");
+        this.sampleFrequency = bounded(details.sampleFrequency(), 120, "sampleFrequency");
+        this.controlMethod = details.controlMethod();
+        this.reactionPlan = details.reactionPlan();
+        this.sampleSize = bounded(details.sampleSize(), 120, "sampleSize");
+        this.sopReference = bounded(details.sopReference(), 64, "sopReference");
+        this.inputOutput = details.inputOutput();
+        this.whoMeasures = bounded(details.whoMeasures(), 250, "whoMeasures");
+        this.recordingLocation = bounded(details.recordingLocation(), 250, "recordingLocation");
+    }
+
+    /**
+     * Refuse une valeur plus longue que la colonne qui l'accueillera. Tronquer
+     * silencieusement serait pire : un plan de réaction coupé au milieu se lit
+     * comme une consigne complète.
+     */
+    private static String bounded(String value, int max, String field) {
+        if (value != null && value.length() > max) {
+            throw new IllegalArgumentException(
+                    "Control plan field '" + field + "' exceeds " + max + " characters");
+        }
+        return value;
     }
 
     public void rename(String characteristicLabel, CharacteristicType type, int sequenceNo) {
@@ -116,9 +157,13 @@ public final class ControlPlanLine {
     public BigDecimal getToleranceUpper() { return toleranceUpper; }
     public String getUnit() { return unit; }
     public String getMeasurementTechnique() { return measurementTechnique; }
-    public Integer getSampleSize() { return sampleSize; }
+    public String getSampleSize() { return sampleSize; }
     public String getSampleFrequency() { return sampleFrequency; }
     public String getControlMethod() { return controlMethod; }
     public String getReactionPlan() { return reactionPlan; }
     public UUID getFmeaItemId() { return fmeaItemId; }
+    public String getSopReference() { return sopReference; }
+    public InputOutput getInputOutput() { return inputOutput; }
+    public String getWhoMeasures() { return whoMeasures; }
+    public String getRecordingLocation() { return recordingLocation; }
 }

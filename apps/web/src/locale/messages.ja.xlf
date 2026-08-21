@@ -16473,6 +16473,46 @@ historique 12 mois</source>
         <source>Transaction</source>
         <target state="translated">トランザクション</target>
       </trans-unit>
+      <trans-unit id="controlplan.field-sample-size-hint" datatype="html">
+        <source>Une règle, pas seulement un nombre : « 100 % », « 5 au réglage puis 1 sur 50 ».</source>
+        <target state="translated">数値だけでなく規則も可：「100%」「段取り時5個、以降50個に1個」。</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-sop" datatype="html">
+        <source>Référence de procédure</source>
+        <target state="translated">手順書番号</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-flow" datatype="html">
+        <source>Entrée ou sortie</source>
+        <target state="translated">入力か出力か</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-flow-none" datatype="html">
+        <source>Non précisé</source>
+        <target state="translated">未指定</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-flow-hint" datatype="html">
+        <source>Contrôler une entrée empêche le défaut ; contrôler une sortie le constate.</source>
+        <target state="translated">入力の管理は不良を防ぎ、出力の管理は不良を確認するにとどまります。</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-who" datatype="html">
+        <source>Qui ou quoi mesure</source>
+        <target state="translated">測定者または測定手段</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-recording" datatype="html">
+        <source>Lieu d'enregistrement</source>
+        <target state="translated">記録の保管場所</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-recording-hint" datatype="html">
+        <source>Où l'auditeur ira chercher la preuve que le contrôle a eu lieu.</source>
+        <target state="translated">検査が行われた証拠を監査員が探す場所です。</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-measured-by" datatype="html">
+        <source>Qui mesure</source>
+        <target state="translated">測定者</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-trace" datatype="html">
+        <source>Trace</source>
+        <target state="translated">記録</target>
+      </trans-unit>
       <trans-unit id="controlplan.locked" datatype="html">
         <source>Ce plan est approuvé : ouvrez une révision pour le modifier.</source>
         <target state="translated">この計画書は承認済みです。変更するには改訂を開いてください。</target>
@@ -18900,6 +18940,22 @@ historique 12 mois</source>
       <trans-unit id="fmea.item.recommended-action" datatype="html">
         <source>Action recommandée</source>
         <target state="translated">推奨処置</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.action-owner-name" datatype="html">
+        <source>Responsable de l'action</source>
+        <target state="translated">処置責任者</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.action-owner-name-hint" datatype="html">
+        <source>Une personne ou un service — la trame accepte les deux.</source>
+        <target state="translated">個人でも部署でも構いません。</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.actions-taken" datatype="html">
+        <source>Actions réalisées</source>
+        <target state="translated">実施した処置</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.actions-taken-at" datatype="html">
+        <source>Date de réalisation</source>
+        <target state="translated">実施日</target>
       </trans-unit>
       <trans-unit id="fmea.item.action-due-date" datatype="html">
         <source>Échéance action</source>

@@ -10,6 +10,7 @@ import com.openlab.qualitos.quality.controlplan.domain.ControlPlanNotFoundExcept
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanPhase;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanStateException;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanStatus;
+import com.openlab.qualitos.quality.controlplan.domain.InputOutput;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,8 +67,9 @@ class ControlPlanControllerTest {
             ControlPlanStatus.DRAFT, null, null, null, NOW, NOW, null, null);
     static final ControlPlanDto.LineView LINE_VIEW = new ControlPlanDto.LineView(
             LINE, 10, null, "Tour CN 3", "12", "Diamètre", CharacteristicType.PRODUCT,
-            null, "Ø 20", null, null, "mm", "Micromètre", 5, "1/h", "Carte X-R",
-            "Tri à 100 %", null);
+            null, "Ø 20", null, null, "mm", "Micromètre", "100 % (automatisé)", "1/h",
+            "Carte X-R", "Tri à 100 %", null, "SOP-103", InputOutput.OUTPUT,
+            "Opérateur de ligne", "Journal qualité");
 
     private static final String LINE_BODY = """
             {"sequenceNo":10,"characteristicLabel":"Diamètre","characteristicType":"PRODUCT"}

@@ -131,12 +131,19 @@ describe('ControlPlanLineDialogComponent', () => {
   });
 
   it('reprend la ligne existante en modification', async () => {
-    await setup({ line: line({ specialClass: 'SAFETY', fmeaItemId: 'it-1', sampleSize: 5 }) });
+    await setup({ line: line({ specialClass: 'SAFETY', fmeaItemId: 'it-1',
+      sampleSize: '5 au réglage puis 1 sur 50', sopReference: 'SOP-103',
+      inputOutput: 'OUTPUT', whoMeasures: 'Opérateur', recordingLocation: 'Journal' }) });
 
     expect(component.editing).toBeTrue();
     expect(component.form.get('sequenceNo')!.value).toBe(20);
     expect(component.form.get('specialClass')!.value).toBe('SAFETY');
     expect(component.form.get('fmeaItemId')!.value).toBe('it-1');
+    expect(component.form.get('sampleSize')!.value).toBe('5 au réglage puis 1 sur 50');
+    expect(component.form.get('sopReference')!.value).toBe('SOP-103');
+    expect(component.form.get('inputOutput')!.value).toBe('OUTPUT');
+    expect(component.form.get('whoMeasures')!.value).toBe('Opérateur');
+    expect(component.form.get('recordingLocation')!.value).toBe('Journal');
   });
 
   it('crée la ligne en convertissant les nombres et en omettant les vides', async () => {
@@ -215,6 +222,29 @@ describe('ControlPlanLineDialogComponent', () => {
 
     expect(snack.open.calls.mostRecent().args[0]).toContain('Enregistrement impossible');
     expect(dialogRef.close).not.toHaveBeenCalled();
+  });
+
+  it('transmet les quatre colonnes que la trame AIAG réclame', async () => {
+    await setup();
+    service.addLine.and.returnValue(of(line()));
+
+    component.form.patchValue({
+      characteristicLabel: 'Longueur de coupe',
+      sampleSize: '100 % (automatisé)',
+      sopReference: 'SOP-101',
+      inputOutput: 'OUTPUT',
+      whoMeasures: 'Opérateur / capteur',
+      recordingLocation: 'Production'
+    });
+    component.save();
+
+    const args = service.addLine.calls.mostRecent().args as unknown as
+      [string, string, Record<string, unknown>];
+    expect(args[2]['sampleSize']).toBe('100 % (automatisé)');
+    expect(args[2]['sopReference']).toBe('SOP-101');
+    expect(args[2]['inputOutput']).toBe('OUTPUT');
+    expect(args[2]['whoMeasures']).toBe('Opérateur / capteur');
+    expect(args[2]['recordingLocation']).toBe('Production');
   });
 
   it('ferme sans rien rendre à l’annulation', async () => {

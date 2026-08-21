@@ -71,8 +71,28 @@ public class FmeaItem {
     @Column(name = "action_owner_user_id")
     private UUID actionOwnerUserId;
 
+    /**
+     * Le responsable, en clair. La plateforme n'a pas d'annuaire : un
+     * identifiant seul ne se lit pas, et le PFMEA est un document qu'on imprime
+     * et qu'on montre. Même choix que le nom d'assigné du dossier CAPA.
+     */
+    @Column(name = "action_owner_name", length = 250)
+    private String actionOwnerName;
+
     @Column(name = "action_due_date")
     private LocalDate actionDueDate;
+
+    /**
+     * Ce qui a RÉELLEMENT été fait, par opposition à ce qui était recommandé.
+     * La distinction est le cœur de la colonne « Actions Taken » de la trame :
+     * une action recommandée dit une intention, une action prise dit un fait —
+     * et c'est le fait qui justifie la nouvelle cotation qui suit.
+     */
+    @Column(name = "actions_taken", length = 2000)
+    private String actionsTaken;
+
+    @Column(name = "actions_taken_at")
+    private LocalDate actionsTakenAt;
 
     @Column(name = "resulting_severity")
     private Integer resultingSeverity;
@@ -190,6 +210,15 @@ public class FmeaItem {
 
     public LocalDate getActionDueDate() { return actionDueDate; }
     public void setActionDueDate(LocalDate actionDueDate) { this.actionDueDate = actionDueDate; }
+
+    public String getActionOwnerName() { return actionOwnerName; }
+    public void setActionOwnerName(String actionOwnerName) { this.actionOwnerName = actionOwnerName; }
+
+    public String getActionsTaken() { return actionsTaken; }
+    public void setActionsTaken(String actionsTaken) { this.actionsTaken = actionsTaken; }
+
+    public LocalDate getActionsTakenAt() { return actionsTakenAt; }
+    public void setActionsTakenAt(LocalDate actionsTakenAt) { this.actionsTakenAt = actionsTakenAt; }
 
     public Integer getResultingSeverity() { return resultingSeverity; }
     public void setResultingSeverity(Integer resultingSeverity) { this.resultingSeverity = resultingSeverity; }

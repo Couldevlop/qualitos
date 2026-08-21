@@ -51,9 +51,13 @@ public final class CapaEffectivenessDto {
      * @param declaredButFailed  dossiers déclarés efficaces à la clôture dont la
      *                           mesure dit le contraire. C'est le chiffre qu'un
      *                           auditeur cherchera.
+     * @param truncated          vrai quand le périmètre dépassait la borne de
+     *                           lecture et que les dossiers les plus anciens ont
+     *                           été écartés. Une moyenne partielle présentée
+     *                           comme complète serait un mensonge par omission.
      */
     public record Summary(int windowMonths, int measured, int inObservation, int notMeasurable,
                           Integer averageRatePercent, int aggravated, int declaredButFailed,
-                          List<Row> rows) {
+                          boolean truncated, List<Row> rows) {
     }
 }

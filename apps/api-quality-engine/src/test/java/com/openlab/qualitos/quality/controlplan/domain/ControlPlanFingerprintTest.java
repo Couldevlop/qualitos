@@ -63,11 +63,13 @@ class ControlPlanFingerprintTest {
     @Test
     void aToleranceWrittenWithMoreZeroesIsTheSameTolerance() {
         ControlPlanLine plain = line(10, "Diamètre");
-        plain.describe(null, null, null, null, null, new BigDecimal("10.0"),
-                null, "mm", null, null, null, null, null);
+        plain.describe(new ControlPlanLine.Details(null, null, null, null, null,
+                new BigDecimal("10.0"), null, "mm", null, null, null, null, null,
+                null, null, null, null));
         ControlPlanLine padded = line(10, "Diamètre");
-        padded.describe(null, null, null, null, null, new BigDecimal("10.000"),
-                null, "mm", null, null, null, null, null);
+        padded.describe(new ControlPlanLine.Details(null, null, null, null, null,
+                new BigDecimal("10.000"), null, "mm", null, null, null, null, null,
+                null, null, null, null));
 
         assertThat(ControlPlanFingerprint.of(approvedPlan(), List.of(plain)))
                 .isEqualTo(ControlPlanFingerprint.of(approvedPlan(), List.of(padded)));
@@ -77,8 +79,8 @@ class ControlPlanFingerprintTest {
     void changingAControlChangesTheFingerprint() {
         ControlPlanLine before = line(10, "Diamètre");
         ControlPlanLine after = line(10, "Diamètre");
-        after.describe(null, null, null, null, "Ø 20 ±0,1", null, null, "mm",
-                null, null, null, null, null);
+        after.describe(new ControlPlanLine.Details(null, null, null, null, "Ø 20 ±0,1",
+                null, null, "mm", null, null, null, null, null, null, null, null, null));
 
         assertThat(ControlPlanFingerprint.of(approvedPlan(), List.of(before)))
                 .isNotEqualTo(ControlPlanFingerprint.of(approvedPlan(), List.of(after)));
@@ -140,11 +142,11 @@ class ControlPlanFingerprintTest {
         // `machine` et `characteristicNo` se suivent dans le texte canonique :
         // c'est exactement la paire qu'un séparateur faible laisserait confondre.
         ControlPlanLine split = line(10, "Diamètre");
-        split.describe(null, "Tour", "CN 3", null, null, null, null, null,
-                null, null, null, null, null);
+        split.describe(new ControlPlanLine.Details(null, "Tour", "CN 3", null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null));
         ControlPlanLine joined = line(10, "Diamètre");
-        joined.describe(null, "TourCN 3", "", null, null, null, null, null,
-                null, null, null, null, null);
+        joined.describe(new ControlPlanLine.Details(null, "TourCN 3", "", null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null));
 
         assertThat(ControlPlanFingerprint.of(approvedPlan(), List.of(split)))
                 .isNotEqualTo(ControlPlanFingerprint.of(approvedPlan(), List.of(joined)));

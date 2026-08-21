@@ -104,7 +104,7 @@ class CapaEffectivenessControllerTest {
     @WithMockUser(authorities = "ROLE_USER")
     void anEmptySummaryIsStillAValidAnswer() throws Exception {
         when(service.measure(anyInt())).thenReturn(
-                new CapaEffectivenessDto.Summary(6, 0, 0, 0, null, 0, 0, List.of()));
+                new CapaEffectivenessDto.Summary(6, 0, 0, 0, null, 0, 0, false, List.of()));
 
         mockMvc.perform(get(URL))
                 .andExpect(status().isOk())
@@ -117,6 +117,6 @@ class CapaEffectivenessControllerTest {
                 UUID.randomUUID(), "Dérive dimensionnelle", "MAJOR",
                 Instant.parse("2026-03-12T09:00:00Z"), MeasurementStatus.MEASURED,
                 12, 1, 92, false, 180, 180, Boolean.TRUE, true);
-        return new CapaEffectivenessDto.Summary(6, 1, 0, 0, 71, 0, 0, List.of(row));
+        return new CapaEffectivenessDto.Summary(6, 1, 0, 0, 71, 0, 0, false, List.of(row));
     }
 }

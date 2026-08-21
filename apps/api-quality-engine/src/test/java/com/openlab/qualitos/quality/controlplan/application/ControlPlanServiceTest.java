@@ -9,6 +9,7 @@ import com.openlab.qualitos.quality.controlplan.domain.ControlPlanRepository;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanStateException;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanFingerprint;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanStatus;
+import com.openlab.qualitos.quality.controlplan.domain.InputOutput;
 import com.openlab.qualitos.quality.controlplan.domain.FmeaItemLookup;
 import com.openlab.qualitos.quality.product.domain.Product;
 import com.openlab.qualitos.quality.product.domain.ProductLookup;
@@ -331,7 +332,7 @@ class ControlPlanServiceTest {
         ControlPlanDto.LineView view = service.updateLine(PRODUCT, PLAN, LINE,
                 new ControlPlanDto.LineCommand(20, null, null, null, "Rugosité",
                         CharacteristicType.PROCESS, null, null, null, null, null, null,
-                        null, null, null, null, null));
+                        null, null, null, null, null, null, null, null, null));
 
         assertThat(view.characteristicLabel()).isEqualTo("Rugosité");
         assertThat(view.characteristicType()).isEqualTo(CharacteristicType.PROCESS);
@@ -506,14 +507,16 @@ class ControlPlanServiceTest {
     private ControlPlanLine line(UUID planId) {
         ControlPlanLine l = ControlPlanLine.rehydrate(LINE, TENANT, planId, 10, "Diamètre",
                 CharacteristicType.PRODUCT);
-        l.describe(null, "Tour CN 3", "12", null, "Ø 20", null, null, "mm",
-                "Micromètre", 5, "1/h", "Carte X-R", "Tri à 100 %");
+        l.describe(new ControlPlanLine.Details(null, "Tour CN 3", "12", null, "Ø 20",
+                null, null, "mm", "Micromètre", "5", "1/h", "Carte X-R", "Tri à 100 %",
+                "SOP-103", InputOutput.OUTPUT, "Opérateur", "Journal qualité"));
         return l;
     }
 
     private ControlPlanDto.LineCommand lineCommand(UUID fmeaItemId) {
         return new ControlPlanDto.LineCommand(10, null, "Tour CN 3", "12", "Diamètre",
                 CharacteristicType.PRODUCT, null, "Ø 20", null, null, "mm", "Micromètre",
-                5, "1/h", "Carte X-R", "Tri à 100 %", fmeaItemId);
+                "100 % (automatisé)", "1/h", "Carte X-R", "Tri à 100 %", fmeaItemId,
+                "SOP-103", InputOutput.OUTPUT, "Opérateur de ligne", "Journal qualité");
     }
 }

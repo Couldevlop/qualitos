@@ -31,7 +31,14 @@ export class ProductControlPlanTabComponent implements OnInit {
 
   @Input() productId = '';
 
-  readonly columns = ['sequenceNo', 'characteristic', 'specification', 'control', 'reaction', 'justification', 'actions'];
+  /**
+   * Les colonnes de la trame AIAG, dans l'ordre où elle les lit. « Où » —
+   * procédure et lieu d'enregistrement — vient en dernier avant les
+   * commandes : c'est ce que l'auditeur suit, pas ce que l'opérateur
+   * consulte au poste.
+   */
+  readonly columns = ['sequenceNo', 'characteristic', 'specification', 'control',
+    'measuredBy', 'reaction', 'justification', 'trace', 'actions'];
   readonly phases: ControlPlanPhase[] = ['PROTOTYPE', 'PRE_LAUNCH', 'PRODUCTION'];
 
   plans: ControlPlanView[] = [];

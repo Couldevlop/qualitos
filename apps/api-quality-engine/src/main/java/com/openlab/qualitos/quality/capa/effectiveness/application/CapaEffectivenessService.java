@@ -26,6 +26,20 @@ import java.util.UUID;
  */
 public class CapaEffectivenessService {
 
+    /**
+     * Nombre maximal de dossiers examinés en une lecture.
+     *
+     * <p>Chaque dossier coûte DEUX comptages en base. Sans borne, un tenant aux
+     * dix mille CAPA closes déclencherait vingt mille requêtes sur un simple
+     * GET — une porte ouverte à l'épuisement de ressources, qu'un utilisateur
+     * légitime peut franchir sans le vouloir en cliquant deux fois.
+     *
+     * <p>Les dossiers sont rendus du plus récent au plus ancien : la borne
+     * écarte les plus vieux, c'est-à-dire ceux dont la fenêtre d'observation est
+     * close depuis longtemps et dont le verdict ne bougera plus.
+     */
+    static final int MAX_CASES = 500;
+
     private final ClosedCapaPort closedCapas;
     private final NcOccurrencePort occurrences;
     private final TenantProvider tenants;
@@ -44,8 +58,14 @@ public class CapaEffectivenessService {
         UUID tenantId = tenants.requireTenantId();
         Instant now = Instant.now(clock);
 
+        List<ClosedCapaPort.ClosedCapa> closed = closedCapas.findClosed(tenantId);
+        boolean truncated = closed.size() > MAX_CASES;
+        if (truncated) {
+            closed = closed.subList(0, MAX_CASES);
+        }
+
         List<CapaEffectivenessDto.Row> rows = new ArrayList<>();
-        for (ClosedCapaPort.ClosedCapa capa : closedCapas.findClosed(tenantId)) {
+        for (ClosedCapaPort.ClosedCapa capa : closed) {
             // Sans signature, il n'y a rien à recouper : une CAPA née d'un audit
             // ou d'une décision interne n'a pas de « même problème » à guetter.
             // L'écarter est plus honnête que de lui inventer des récidives.
@@ -61,7 +81,10 @@ public class CapaEffectivenessService {
                 .thenComparing(row -> row.ratePercent() == null ? Integer.MAX_VALUE : row.ratePercent())
                 .thenComparing(CapaEffectivenessDto.Row::closedAt, Comparator.reverseOrder()));
 
-        return summarize(window, rows);
+        // La troncature est DITE, jamais silencieuse : une moyenne calculée sur
+        // une partie du périmètre et présentée comme complète serait un
+        // mensonge par omission, et cet écran finit en revue de direction.
+        return summarize(window, rows, truncated);
     }
 
     private CapaEffectiveness evaluate(UUID tenantId, ClosedCapaPort.ClosedCapa capa,
@@ -81,7 +104,8 @@ public class CapaEffectivenessService {
     }
 
     private CapaEffectivenessDto.Summary summarize(EffectivenessWindow window,
-                                                   List<CapaEffectivenessDto.Row> rows) {
+                                                   List<CapaEffectivenessDto.Row> rows,
+                                                   boolean truncated) {
         int measured = 0;
         int inObservation = 0;
         int notMeasurable = 0;
@@ -108,6 +132,6 @@ public class CapaEffectivenessService {
 
         Integer average = measured == 0 ? null : Math.round((float) sum / measured);
         return new CapaEffectivenessDto.Summary(window.months(), measured, inObservation,
-                notMeasurable, average, aggravated, declaredButFailed, rows);
+                notMeasurable, average, aggravated, declaredButFailed, truncated, rows);
     }
 }

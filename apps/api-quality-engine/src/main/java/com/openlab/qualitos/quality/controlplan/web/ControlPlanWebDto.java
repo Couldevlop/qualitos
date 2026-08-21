@@ -1,6 +1,7 @@
 package com.openlab.qualitos.quality.controlplan.web;
 
 import com.openlab.qualitos.quality.controlplan.domain.CharacteristicType;
+import com.openlab.qualitos.quality.controlplan.domain.InputOutput;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanPhase;
 import com.openlab.qualitos.quality.risk.CharacteristicClass;
 import jakarta.validation.constraints.NotBlank;
@@ -45,9 +46,16 @@ public final class ControlPlanWebDto {
             BigDecimal toleranceUpper,
             @Size(max = 24) String unit,
             @Size(max = 250) String measurementTechnique,
-            @Positive Integer sampleSize,
+            // Texte et non nombre : « 100 % », « 5 au réglage puis 1 sur 50 »
+            // sont des tailles d'échantillon parfaitement valides, et un entier
+            // obligeait à les tronquer ou à les écrire ailleurs.
+            @Size(max = 120) String sampleSize,
             @Size(max = 120) String sampleFrequency,
             @Size(max = 500) String controlMethod,
             @Size(max = 1000) String reactionPlan,
-            UUID fmeaItemId) {}
+            UUID fmeaItemId,
+            @Size(max = 64) String sopReference,
+            InputOutput inputOutput,
+            @Size(max = 250) String whoMeasures,
+            @Size(max = 250) String recordingLocation) {}
 }

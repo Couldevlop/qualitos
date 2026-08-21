@@ -12,6 +12,7 @@ import {
   CharacteristicClass,
   CharacteristicType,
   ControlPlanLineView,
+  InputOutput,
   ProductOperationResponse
 } from '../../products.types';
 
@@ -40,6 +41,7 @@ export class ControlPlanLineDialogComponent implements OnInit {
   readonly editing: boolean;
   readonly types: CharacteristicType[] = ['PRODUCT', 'PROCESS'];
   readonly classes: CharacteristicClass[] = ['STANDARD', 'SPECIAL', 'SAFETY', 'REGULATORY'];
+  readonly flows: InputOutput[] = ['INPUT', 'OUTPUT'];
 
   operations: ProductOperationResponse[] = [];
   fmeaItems: FmeaItemResponse[] = [];
@@ -69,11 +71,15 @@ export class ControlPlanLineDialogComponent implements OnInit {
       toleranceUpper: [line?.toleranceUpper ?? null],
       unit: [line?.unit ?? '', Validators.maxLength(24)],
       measurementTechnique: [line?.measurementTechnique ?? '', Validators.maxLength(250)],
-      sampleSize: [line?.sampleSize ?? null],
+      sampleSize: [line?.sampleSize ?? '', Validators.maxLength(120)],
       sampleFrequency: [line?.sampleFrequency ?? '', Validators.maxLength(120)],
       controlMethod: [line?.controlMethod ?? '', Validators.maxLength(500)],
       reactionPlan: [line?.reactionPlan ?? '', Validators.maxLength(1000)],
-      fmeaItemId: [line?.fmeaItemId ?? null]
+      fmeaItemId: [line?.fmeaItemId ?? null],
+      sopReference: [line?.sopReference ?? '', Validators.maxLength(64)],
+      inputOutput: [line?.inputOutput ?? null],
+      whoMeasures: [line?.whoMeasures ?? '', Validators.maxLength(250)],
+      recordingLocation: [line?.recordingLocation ?? '', Validators.maxLength(250)]
     });
   }
 
@@ -108,11 +114,15 @@ export class ControlPlanLineDialogComponent implements OnInit {
       toleranceUpper: this.numberOrUndefined(value.toleranceUpper),
       unit: value.unit || undefined,
       measurementTechnique: value.measurementTechnique || undefined,
-      sampleSize: this.numberOrUndefined(value.sampleSize),
+      sampleSize: value.sampleSize || undefined,
       sampleFrequency: value.sampleFrequency || undefined,
       controlMethod: value.controlMethod || undefined,
       reactionPlan: value.reactionPlan || undefined,
-      fmeaItemId: value.fmeaItemId || undefined
+      fmeaItemId: value.fmeaItemId || undefined,
+      sopReference: value.sopReference || undefined,
+      inputOutput: value.inputOutput || undefined,
+      whoMeasures: value.whoMeasures || undefined,
+      recordingLocation: value.recordingLocation || undefined
     };
 
     const request = this.editing

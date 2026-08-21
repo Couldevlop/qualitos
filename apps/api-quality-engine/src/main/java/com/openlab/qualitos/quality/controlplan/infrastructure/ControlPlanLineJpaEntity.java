@@ -60,7 +60,7 @@ public class ControlPlanLineJpaEntity {
     private String measurementTechnique;
 
     @Column(name = "sample_size")
-    private Integer sampleSize;
+    private String sampleSize;
 
     @Column(name = "sample_frequency", length = 120)
     private String sampleFrequency;
@@ -73,6 +73,23 @@ public class ControlPlanLineJpaEntity {
 
     @Column(name = "fmea_item_id")
     private UUID fmeaItemId;
+
+    /**
+     * Colonnes de la trame AIAG que le premier lot n'avait pas reprises :
+     * référence de procédure, entrée ou sortie surveillée, qui mesure, et où
+     * l'enregistrement est conservé.
+     */
+    @Column(name = "sop_reference", length = 64)
+    private String sopReference;
+
+    @Column(name = "input_output", length = 10)
+    private String inputOutput;
+
+    @Column(name = "who_measures", length = 250)
+    private String whoMeasures;
+
+    @Column(name = "recording_location", length = 250)
+    private String recordingLocation;
 
     public UUID getId() { return id; }
     public void setId(UUID v) { this.id = v; }
@@ -104,14 +121,22 @@ public class ControlPlanLineJpaEntity {
     public void setUnit(String v) { this.unit = v; }
     public String getMeasurementTechnique() { return measurementTechnique; }
     public void setMeasurementTechnique(String v) { this.measurementTechnique = v; }
-    public Integer getSampleSize() { return sampleSize; }
-    public void setSampleSize(Integer v) { this.sampleSize = v; }
+    public String getSampleSize() { return sampleSize; }
+    public void setSampleSize(String v) { this.sampleSize = v; }
     public String getSampleFrequency() { return sampleFrequency; }
     public void setSampleFrequency(String v) { this.sampleFrequency = v; }
     public String getControlMethod() { return controlMethod; }
     public void setControlMethod(String v) { this.controlMethod = v; }
     public String getReactionPlan() { return reactionPlan; }
     public void setReactionPlan(String v) { this.reactionPlan = v; }
+    public String getSopReference() { return sopReference; }
+    public void setSopReference(String v) { this.sopReference = v; }
+    public String getInputOutput() { return inputOutput; }
+    public void setInputOutput(String v) { this.inputOutput = v; }
+    public String getWhoMeasures() { return whoMeasures; }
+    public void setWhoMeasures(String v) { this.whoMeasures = v; }
+    public String getRecordingLocation() { return recordingLocation; }
+    public void setRecordingLocation(String v) { this.recordingLocation = v; }
     public UUID getFmeaItemId() { return fmeaItemId; }
     public void setFmeaItemId(UUID v) { this.fmeaItemId = v; }
 }

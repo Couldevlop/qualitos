@@ -113,6 +113,14 @@
         </td>
       </ng-container>
 
+      <ng-container matColumnDef="measuredBy">
+        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-measured-by">Qui mesure</th>
+        <td mat-cell *matCellDef="let line">
+          <div>{{ line.whoMeasures || '—' }}</div>
+          <div class="dim">{{ line.sampleSize }}</div>
+        </td>
+      </ng-container>
+
       <ng-container matColumnDef="reaction">
         <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-reaction">Plan de réaction</th>
         <td mat-cell *matCellDef="let line">{{ line.reactionPlan || '—' }}</td>
@@ -125,6 +133,19 @@
                 i18n="@@controlplan.justified">PFMEA</span>
           <span class="qos-badge" data-tone="warning" *ngIf="!line.fmeaItemId"
                 i18n="@@controlplan.unjustified">sans justification</span>
+        </td>
+      </ng-container>
+
+      <!--
+        La trace : d'où vient le contrôle (la procédure) et où sa preuve est
+        conservée. Deux colonnes de la trame réunies sous un seul en-tête,
+        parce qu'elles se lisent ensemble et jamais séparément.
+      -->
+      <ng-container matColumnDef="trace">
+        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-trace">Trace</th>
+        <td mat-cell *matCellDef="let line">
+          <div>{{ line.sopReference || '—' }}</div>
+          <div class="dim">{{ line.recordingLocation }}</div>
         </td>
       </ng-container>
 

@@ -123,6 +123,8 @@ public class ControlPlanController {
                 req.characteristicLabel(), req.characteristicType(), req.specialClass(),
                 req.specification(), req.toleranceLower(), req.toleranceUpper(), req.unit(),
                 req.measurementTechnique(), req.sampleSize(), req.sampleFrequency(),
-                req.controlMethod(), req.reactionPlan(), req.fmeaItemId());
+                req.controlMethod(), req.reactionPlan(), req.fmeaItemId(),
+                req.sopReference(), req.inputOutput(), req.whoMeasures(),
+                req.recordingLocation());
     }
 }

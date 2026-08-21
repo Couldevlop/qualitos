@@ -5,6 +5,7 @@ import com.openlab.qualitos.quality.controlplan.domain.ControlPlan;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanLine;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanPhase;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanStatus;
+import com.openlab.qualitos.quality.controlplan.domain.InputOutput;
 import com.openlab.qualitos.quality.risk.CharacteristicClass;
 import org.junit.jupiter.api.Test;
 
@@ -83,9 +84,11 @@ class ControlPlanMapperTest {
         UUID fmeaItem = UUID.randomUUID();
         ControlPlanLine source = ControlPlanLine.rehydrate(lineId, TENANT, PLAN, 30,
                 "Diamètre alésage", CharacteristicType.PRODUCT);
-        source.describe(operation, "Tour CN 3", "12", CharacteristicClass.SAFETY, "Ø 20 ±0,05",
+        source.describe(new ControlPlanLine.Details(operation, "Tour CN 3", "12",
+                CharacteristicClass.SAFETY, "Ø 20 ±0,05",
                 new BigDecimal("19.950000"), new BigDecimal("20.050000"), "mm",
-                "Micromètre", 5, "1 pièce / heure", "Carte X-R", "Tri à 100 %");
+                "Micromètre", "100 %", "1 pièce / heure", "Carte X-R", "Tri à 100 %",
+                "SOP-103", InputOutput.OUTPUT, "Opérateur", "Journal qualité"));
         source.justifiedBy(fmeaItem);
 
         ControlPlanLine back = ControlPlanMapper.toDomain(ControlPlanMapper.toEntity(source, null));
@@ -105,7 +108,7 @@ class ControlPlanMapperTest {
         assertThat(back.getToleranceUpper()).isEqualByComparingTo("20.05");
         assertThat(back.getUnit()).isEqualTo("mm");
         assertThat(back.getMeasurementTechnique()).isEqualTo("Micromètre");
-        assertThat(back.getSampleSize()).isEqualTo(5);
+        assertThat(back.getSampleSize()).isEqualTo("100 %");
         assertThat(back.getSampleFrequency()).isEqualTo("1 pièce / heure");
         assertThat(back.getControlMethod()).isEqualTo("Carte X-R");
         assertThat(back.getReactionPlan()).isEqualTo("Tri à 100 %");

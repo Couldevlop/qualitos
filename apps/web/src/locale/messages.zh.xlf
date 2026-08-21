@@ -16474,6 +16474,46 @@ historique 12 mois</source>
         <source>Transaction</source>
         <target state="translated">交易</target>
       </trans-unit>
+      <trans-unit id="controlplan.field-sample-size-hint" datatype="html">
+        <source>Une règle, pas seulement un nombre : « 100 % », « 5 au réglage puis 1 sur 50 ».</source>
+        <target state="translated">不只是数字，也可以是规则：“100%”、“调机时5件，之后每50件1件”。</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-sop" datatype="html">
+        <source>Référence de procédure</source>
+        <target state="translated">程序编号</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-flow" datatype="html">
+        <source>Entrée ou sortie</source>
+        <target state="translated">输入或输出</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-flow-none" datatype="html">
+        <source>Non précisé</source>
+        <target state="translated">未指定</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-flow-hint" datatype="html">
+        <source>Contrôler une entrée empêche le défaut ; contrôler une sortie le constate.</source>
+        <target state="translated">控制输入可预防缺陷，控制输出只是发现缺陷。</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-who" datatype="html">
+        <source>Qui ou quoi mesure</source>
+        <target state="translated">由谁或由何测量</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-recording" datatype="html">
+        <source>Lieu d'enregistrement</source>
+        <target state="translated">记录存放位置</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-recording-hint" datatype="html">
+        <source>Où l'auditeur ira chercher la preuve que le contrôle a eu lieu.</source>
+        <target state="translated">审核员将在此查找检验已执行的证据。</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-measured-by" datatype="html">
+        <source>Qui mesure</source>
+        <target state="translated">测量方</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-trace" datatype="html">
+        <source>Trace</source>
+        <target state="translated">追溯</target>
+      </trans-unit>
       <trans-unit id="controlplan.locked" datatype="html">
         <source>Ce plan est approuvé : ouvrez une révision pour le modifier.</source>
         <target state="translated">该计划已批准：如需修改，请开启修订。</target>
@@ -18901,6 +18941,22 @@ historique 12 mois</source>
       <trans-unit id="fmea.item.recommended-action" datatype="html">
         <source>Action recommandée</source>
         <target state="translated">建议措施</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.action-owner-name" datatype="html">
+        <source>Responsable de l'action</source>
+        <target state="translated">措施负责人</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.action-owner-name-hint" datatype="html">
+        <source>Une personne ou un service — la trame accepte les deux.</source>
+        <target state="translated">可填个人或部门，两者皆可。</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.actions-taken" datatype="html">
+        <source>Actions réalisées</source>
+        <target state="translated">已采取的措施</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.actions-taken-at" datatype="html">
+        <source>Date de réalisation</source>
+        <target state="translated">完成日期</target>
       </trans-unit>
       <trans-unit id="fmea.item.action-due-date" datatype="html">
         <source>Échéance action</source>

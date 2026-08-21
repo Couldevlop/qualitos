@@ -271,8 +271,8 @@ class FmeaServiceTest {
         when(itemRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         FmeaDto.ItemResponse out = service.updateItem(PROJ, ITEM, new FmeaDto.UpdateItemRequest(
-                "fn", "fm", "fe", null, null, 9, 9, 9, null, null, null, 2, 2, 2,
-                null, null));
+                "fn", "fm", "fe", null, null, 9, 9, 9, null, null, null, null, null, null,
+                2, 2, 2, null, null));
 
         assertThat(out.rpn()).isEqualTo(729);
         assertThat(out.rpnAfter()).isEqualTo(8);
@@ -288,7 +288,7 @@ class FmeaServiceTest {
         when(itemRepo.findById(ITEM)).thenReturn(Optional.of(i));
         assertThatThrownBy(() -> service.updateItem(PROJ, ITEM,
                 new FmeaDto.UpdateItemRequest(null, null, null, null, null, null, null, null,
-                        null, null, null, null, null, null, null, null)))
+                        null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(FmeaItemNotFoundException.class);
     }
 
@@ -299,7 +299,7 @@ class FmeaServiceTest {
         when(projectRepo.findById(PROJ)).thenReturn(Optional.of(p));
         assertThatThrownBy(() -> service.updateItem(PROJ, ITEM,
                 new FmeaDto.UpdateItemRequest(null, null, null, null, null, null, null, null,
-                        null, null, null, null, null, null, null, null)))
+                        null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(FmeaStateException.class);
     }
 
@@ -380,6 +380,6 @@ class FmeaServiceTest {
     private FmeaDto.CreateItemRequest itemReq(int s, int o, int d) {
         return new FmeaDto.CreateItemRequest(
                 "fn", "fm", "fe", null, null, s, o, d,
-                null, null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null, null, null, null);
     }
 }

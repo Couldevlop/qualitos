@@ -3,6 +3,7 @@ package com.openlab.qualitos.quality.controlplan.application;
 import com.openlab.qualitos.quality.controlplan.domain.CharacteristicType;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlan;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanLine;
+import com.openlab.qualitos.quality.controlplan.domain.InputOutput;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanPhase;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanStatus;
 import com.openlab.qualitos.quality.risk.CharacteristicClass;
@@ -28,8 +29,10 @@ public final class ControlPlanDto {
             String characteristicLabel, CharacteristicType characteristicType,
             CharacteristicClass specialClass, String specification,
             BigDecimal toleranceLower, BigDecimal toleranceUpper, String unit,
-            String measurementTechnique, Integer sampleSize, String sampleFrequency,
-            String controlMethod, String reactionPlan, UUID fmeaItemId) {}
+            String measurementTechnique, String sampleSize, String sampleFrequency,
+            String controlMethod, String reactionPlan, UUID fmeaItemId,
+            String sopReference, InputOutput inputOutput,
+            String whoMeasures, String recordingLocation) {}
 
     /**
      * Le plan tel qu'il se lit. {@code sealSha256} et {@code anchorTxRef}
@@ -58,8 +61,10 @@ public final class ControlPlanDto {
             String characteristicLabel, CharacteristicType characteristicType,
             CharacteristicClass specialClass, String specification,
             BigDecimal toleranceLower, BigDecimal toleranceUpper, String unit,
-            String measurementTechnique, Integer sampleSize, String sampleFrequency,
-            String controlMethod, String reactionPlan, UUID fmeaItemId) {
+            String measurementTechnique, String sampleSize, String sampleFrequency,
+            String controlMethod, String reactionPlan, UUID fmeaItemId,
+            String sopReference, InputOutput inputOutput,
+            String whoMeasures, String recordingLocation) {
 
         public static LineView of(ControlPlanLine l) {
             return new LineView(
@@ -68,7 +73,8 @@ public final class ControlPlanDto {
                     l.getSpecialClass(), l.getSpecification(), l.getToleranceLower(),
                     l.getToleranceUpper(), l.getUnit(), l.getMeasurementTechnique(),
                     l.getSampleSize(), l.getSampleFrequency(), l.getControlMethod(),
-                    l.getReactionPlan(), l.getFmeaItemId());
+                    l.getReactionPlan(), l.getFmeaItemId(), l.getSopReference(),
+                    l.getInputOutput(), l.getWhoMeasures(), l.getRecordingLocation());
         }
     }
 

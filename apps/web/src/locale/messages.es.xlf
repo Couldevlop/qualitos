@@ -16474,6 +16474,46 @@ historial de 12 meses</target>
         <source>Transaction</source>
         <target state="translated">Transacción</target>
       </trans-unit>
+      <trans-unit id="controlplan.field-sample-size-hint" datatype="html">
+        <source>Une règle, pas seulement un nombre : « 100 % », « 5 au réglage puis 1 sur 50 ».</source>
+        <target state="translated">Una regla, no solo un número: «100 %», «5 al ajuste y luego 1 de cada 50».</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-sop" datatype="html">
+        <source>Référence de procédure</source>
+        <target state="translated">Referencia de procedimiento</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-flow" datatype="html">
+        <source>Entrée ou sortie</source>
+        <target state="translated">Entrada o salida</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-flow-none" datatype="html">
+        <source>Non précisé</source>
+        <target state="translated">Sin precisar</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-flow-hint" datatype="html">
+        <source>Contrôler une entrée empêche le défaut ; contrôler une sortie le constate.</source>
+        <target state="translated">Controlar una entrada evita el defecto; controlar una salida lo constata.</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-who" datatype="html">
+        <source>Qui ou quoi mesure</source>
+        <target state="translated">Quién o qué mide</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-recording" datatype="html">
+        <source>Lieu d'enregistrement</source>
+        <target state="translated">Lugar de registro</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-recording-hint" datatype="html">
+        <source>Où l'auditeur ira chercher la preuve que le contrôle a eu lieu.</source>
+        <target state="translated">Donde el auditor buscará la prueba de que el control se realizó.</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-measured-by" datatype="html">
+        <source>Qui mesure</source>
+        <target state="translated">Quién mide</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-trace" datatype="html">
+        <source>Trace</source>
+        <target state="translated">Traza</target>
+      </trans-unit>
       <trans-unit id="controlplan.locked" datatype="html">
         <source>Ce plan est approuvé : ouvrez une révision pour le modifier.</source>
         <target state="translated">Este plan está aprobado: abra una revisión para modificarlo.</target>
@@ -18901,6 +18941,22 @@ historial de 12 meses</target>
       <trans-unit id="fmea.item.recommended-action" datatype="html">
         <source>Action recommandée</source>
         <target state="translated">Acción recomendada</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.action-owner-name" datatype="html">
+        <source>Responsable de l'action</source>
+        <target state="translated">Responsable de la acción</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.action-owner-name-hint" datatype="html">
+        <source>Une personne ou un service — la trame accepte les deux.</source>
+        <target state="translated">Una persona o un departamento: el formulario admite ambos.</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.actions-taken" datatype="html">
+        <source>Actions réalisées</source>
+        <target state="translated">Acciones realizadas</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.actions-taken-at" datatype="html">
+        <source>Date de réalisation</source>
+        <target state="translated">Fecha de realización</target>
       </trans-unit>
       <trans-unit id="fmea.item.action-due-date" datatype="html">
         <source>Échéance action</source>

@@ -61,9 +61,11 @@ class ControlPlanLineTest {
         ControlPlanLine line = ControlPlanLine.create(TENANT, PLAN, 10, "Cote", CharacteristicType.PRODUCT);
         UUID operation = UUID.randomUUID();
 
-        line.describe(operation, "Tour CN 3", "12", null, "Ø 20 ±0,05",
-                new BigDecimal("19.95"), new BigDecimal("20.05"), "mm",
-                "Micromètre", 5, "1 pièce / heure", "Carte X-R", "Tri à 100 %");
+        line.describe(new ControlPlanLine.Details(operation, "Tour CN 3", "12", null,
+                "Ø 20 ±0,05", new BigDecimal("19.95"), new BigDecimal("20.05"), "mm",
+                "Micromètre", "5 au réglage puis 1 sur 50", "1 pièce / heure",
+                "Carte X-R", "Tri à 100 %", "SOP-103", InputOutput.OUTPUT,
+                "Opérateur de ligne", "Journal qualité"));
 
         assertThat(line.getOperationId()).isEqualTo(operation);
         assertThat(line.getMachine()).isEqualTo("Tour CN 3");
@@ -74,7 +76,7 @@ class ControlPlanLineTest {
         assertThat(line.getToleranceUpper()).isEqualByComparingTo("20.05");
         assertThat(line.getUnit()).isEqualTo("mm");
         assertThat(line.getMeasurementTechnique()).isEqualTo("Micromètre");
-        assertThat(line.getSampleSize()).isEqualTo(5);
+        assertThat(line.getSampleSize()).isEqualTo("5 au réglage puis 1 sur 50");
         assertThat(line.getSampleFrequency()).isEqualTo("1 pièce / heure");
         assertThat(line.getControlMethod()).isEqualTo("Carte X-R");
         assertThat(line.getReactionPlan()).isEqualTo("Tri à 100 %");
@@ -85,8 +87,8 @@ class ControlPlanLineTest {
         ControlPlanLine line = ControlPlanLine.create(TENANT, PLAN, 10, "Effort d'arrachement",
                 CharacteristicType.PRODUCT);
 
-        line.describe(null, null, null, CharacteristicClass.SAFETY, null, null, null, null,
-                null, null, null, null, null);
+        line.describe(new ControlPlanLine.Details(null, null, null, CharacteristicClass.SAFETY,
+                null, null, null, null, null, null, null, null, null, null, null, null, null));
 
         assertThat(line.getSpecialClass()).isEqualTo(CharacteristicClass.SAFETY);
     }
@@ -117,6 +119,87 @@ class ControlPlanLineTest {
         assertThat(line.getTenantId()).isEqualTo(TENANT);
         assertThat(line.getSequenceNo()).isEqualTo(30);
         assertThat(line.getFmeaItemId()).isEqualTo(id);
+    }
+
+    @Test
+    void aLineCarriesTheFourColumnsTheAiagFormExpects() {
+        ControlPlanLine line = ControlPlanLine.create(TENANT, PLAN, 10, "Longueur de coupe",
+                CharacteristicType.PRODUCT);
+
+        line.describe(new ControlPlanLine.Details(null, null, null, null, null, null, null, null,
+                null, "100 % (automatisé)", "Chaque fil", null, null,
+                "SOP-101", InputOutput.OUTPUT, "Opérateur / capteur", "Production"));
+
+        assertThat(line.getSopReference()).isEqualTo("SOP-101");
+        assertThat(line.getInputOutput()).isEqualTo(InputOutput.OUTPUT);
+        assertThat(line.getWhoMeasures()).isEqualTo("Opérateur / capteur");
+        assertThat(line.getRecordingLocation()).isEqualTo("Production");
+    }
+
+    /**
+     * « 5 pièces au réglage puis 1 sur 50 » est une taille d'échantillon
+     * parfaitement valide, et aucune ne tient dans un entier. La colonne était
+     * typée nombre : il fallait tronquer la règle, ou l'écrire ailleurs.
+     */
+    @Test
+    void aSampleSizeCanBeARuleAndNotJustANumber() {
+        ControlPlanLine line = ControlPlanLine.create(TENANT, PLAN, 10, "Dénudage",
+                CharacteristicType.PROCESS);
+
+        line.describe(new ControlPlanLine.Details(null, null, null, null, null, null, null, null,
+                null, "5 pièces au réglage, puis 1 sur 50", "Au réglage et toutes les 50 pièces",
+                null, null, null, null, null, null));
+
+        assertThat(line.getSampleSize()).isEqualTo("5 pièces au réglage, puis 1 sur 50");
+    }
+
+    @Test
+    void describingWithoutDetailsIsRefusedRatherThanClearingTheLine() {
+        ControlPlanLine line = ControlPlanLine.create(TENANT, PLAN, 10, "Cote",
+                CharacteristicType.PRODUCT);
+
+        assertThatThrownBy(() -> line.describe(null))
+                .isInstanceOf(NullPointerException.class);
+    }
+
+    /**
+     * La validation de longueur ne vit pas qu'à la frontière HTTP : le moteur de
+     * propositions de révision écrit des lignes sans passer par le contrôleur.
+     * Sans garde ici, une valeur trop longue atteignait la base et revenait en
+     * erreur d'intégrité — un 500 là où l'appelant méritait un refus nommé.
+     */
+    @Test
+    void aFieldLongerThanItsColumnIsRefusedByTheDomainItself() {
+        ControlPlanLine line = ControlPlanLine.create(TENANT, PLAN, 10, "Cote",
+                CharacteristicType.PRODUCT);
+        String trop = "x".repeat(300);
+
+        assertThatThrownBy(() -> line.describe(new ControlPlanLine.Details(null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, trop, null)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("whoMeasures");
+    }
+
+    @Test
+    void aSopReferenceLongerThanItsColumnIsRefused() {
+        ControlPlanLine line = ControlPlanLine.create(TENANT, PLAN, 10, "Cote",
+                CharacteristicType.PRODUCT);
+
+        assertThatThrownBy(() -> line.describe(new ControlPlanLine.Details(null, null, null, null,
+                null, null, null, null, null, null, null, null, null, "S".repeat(65), null, null, null)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("sopReference");
+    }
+
+    @Test
+    void aRuleOfSampleSizeLongerThanItsColumnIsRefused() {
+        ControlPlanLine line = ControlPlanLine.create(TENANT, PLAN, 10, "Cote",
+                CharacteristicType.PRODUCT);
+
+        assertThatThrownBy(() -> line.describe(new ControlPlanLine.Details(null, null, null, null,
+                null, null, null, null, null, "5".repeat(121), null, null, null, null, null, null, null)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("sampleSize");
     }
 
     @Test

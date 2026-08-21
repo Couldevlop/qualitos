@@ -64,6 +64,7 @@ supersession).
 | [0057](./0057-referentiels-appartenant-a-un-tenant.md) | Référentiels appartenant à un tenant : la procédure interne cohabite avec le catalogue normatif sans le contredire (§8) | Accepté |
 | [0058](./0058-exploitation-de-la-production.md) | Ce qu'exploiter la production engage : sauvegardes, secrets, retour arrière, isolation des environnements | Accepté |
 | [0059](./0059-produit-pfmea-et-control-plan-revises-par-les-nc.md) | Produit, PFMEA rattaché et control plan : la NC et la CAPA proposent une révision chiffrée, l'humain tranche et son refus est tracé ; comptage de NC assumé faute de volume produit (§3.4, §4.2, §4.3, §4.5) | Accepté |
+| [0060](./0060-alignement-sur-la-trame-aiag-et-efficacite-capa.md) | PFMEA et control plan alignés sur une trame AIAG réelle — taille d'échantillon en texte, procédure, entrée/sortie, qui mesure, où l'on enregistre, actions réalisées — et efficacité CAPA mesurée sur deux fenêtres de même durée (§3.4, §4.2, §4.5) | Accepté |
 
 ## Statuts possibles
 

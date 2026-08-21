@@ -170,8 +170,8 @@ class FmeaControllerTest {
     void addItem_returns201() throws Exception {
         when(service.addItem(eq(PROJ), any())).thenReturn(itemResp());
         FmeaDto.CreateItemRequest req = new FmeaDto.CreateItemRequest(
-                "fn", "fm", "fe", null, null, 7, 3, 4, null, null, null, null, null, null,
-                null, null);
+                "fn", "fm", "fe", null, null, 7, 3, 4, null, null, "Quality Eng", null,
+                "Lame remplacée le 12/03", null, null, null, null, null, null);
         mockMvc.perform(post("/api/v1/fmea/projects/{projectId}/items", PROJ).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
@@ -236,7 +236,8 @@ class FmeaControllerTest {
                 ITEM, TENANT, PROJ, 1,
                 "fn", "fm", "fe", null, null,
                 7, 3, 4, 84,
-                null, null, null,
+                null, null, "Quality Eng", null,
+                "Lame remplacée le 12/03", null,
                 null, null, null, null,
                 null, CharacteristicClass.STANDARD, ActionPriority.MEDIUM,
                 false,

@@ -213,6 +213,36 @@ class CapaEffectivenessServiceTest {
                 .countBetween(eq(TENANT), any(), any(), any());
     }
 
+    /**
+     * Chaque dossier coûte deux comptages en base : sans borne, un périmètre de
+     * dix mille CAPA closes ferait vingt mille requêtes sur un simple GET. Un
+     * utilisateur légitime peut franchir cette porte sans le vouloir.
+     */
+    @Test
+    void aVastPerimeterIsBoundedRatherThanQueriedWithoutLimit() {
+        ClosedCapaPort.ClosedCapa[] beaucoup = new ClosedCapaPort.ClosedCapa[600];
+        for (int i = 0; i < beaucoup.length; i++) {
+            beaucoup[i] = capa("Dossier " + i, jours(-400), jours(-300));
+        }
+        donne(beaucoup);
+        when(occurrences.countBetween(any(), any(), any(), any())).thenReturn(2, 1);
+
+        CapaEffectivenessDto.Summary summary = service.measure(6);
+
+        assertThat(summary.rows()).hasSize(CapaEffectivenessService.MAX_CASES);
+        assertThat(summary.truncated()).isTrue();
+        verify(occurrences, org.mockito.Mockito.times(2 * CapaEffectivenessService.MAX_CASES))
+                .countBetween(any(), any(), any(), any());
+    }
+
+    @Test
+    void anOrdinaryPerimeterIsNotAnnouncedAsTruncated() {
+        donne(capa("Dérive dimensionnelle", jours(-400), jours(-300)));
+        when(occurrences.countBetween(any(), any(), any(), any())).thenReturn(4, 1);
+
+        assertThat(service.measure(6).truncated()).isFalse();
+    }
+
     @Test
     void anAbsurdWindowIsRefusedBeforeAnyQuery() {
         assertThatThrownBy(() -> service.measure(0))

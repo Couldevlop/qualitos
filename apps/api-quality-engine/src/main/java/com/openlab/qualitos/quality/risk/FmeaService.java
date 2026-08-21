@@ -191,7 +191,10 @@ public class FmeaService {
         i.setDetection(req.detection());
         i.setRecommendedAction(req.recommendedAction());
         i.setActionOwnerUserId(req.actionOwnerUserId());
+        i.setActionOwnerName(req.actionOwnerName());
         i.setActionDueDate(req.actionDueDate());
+        i.setActionsTaken(req.actionsTaken());
+        i.setActionsTakenAt(req.actionsTakenAt());
         i.setResultingSeverity(req.resultingSeverity());
         i.setResultingOccurrence(req.resultingOccurrence());
         i.setResultingDetection(req.resultingDetection());
@@ -221,7 +224,10 @@ public class FmeaService {
         if (req.detection() != null) i.setDetection(req.detection());
         if (req.recommendedAction() != null) i.setRecommendedAction(req.recommendedAction());
         if (req.actionOwnerUserId() != null) i.setActionOwnerUserId(req.actionOwnerUserId());
+        if (req.actionOwnerName() != null) i.setActionOwnerName(req.actionOwnerName());
         if (req.actionDueDate() != null) i.setActionDueDate(req.actionDueDate());
+        if (req.actionsTaken() != null) i.setActionsTaken(req.actionsTaken());
+        if (req.actionsTakenAt() != null) i.setActionsTakenAt(req.actionsTakenAt());
         if (req.resultingSeverity() != null) i.setResultingSeverity(req.resultingSeverity());
         if (req.resultingOccurrence() != null) i.setResultingOccurrence(req.resultingOccurrence());
         if (req.resultingDetection() != null) i.setResultingDetection(req.resultingDetection());
@@ -285,7 +291,8 @@ public class FmeaService {
                 i.getFunction(), i.getFailureMode(), i.getFailureEffect(),
                 i.getFailureCause(), i.getCurrentControls(),
                 i.getSeverity(), i.getOccurrence(), i.getDetection(), i.getRpn(),
-                i.getRecommendedAction(), i.getActionOwnerUserId(), i.getActionDueDate(),
+                i.getRecommendedAction(), i.getActionOwnerUserId(), i.getActionOwnerName(),
+                i.getActionDueDate(), i.getActionsTaken(), i.getActionsTakenAt(),
                 i.getResultingSeverity(), i.getResultingOccurrence(), i.getResultingDetection(),
                 i.getRpnAfter(), i.getOperationId(), i.getCharacteristicClass(),
                 i.getActionPriority(), i.getRpn() >= threshold,

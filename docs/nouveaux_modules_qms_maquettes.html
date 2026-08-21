@@ -1,0 +1,146 @@
+<div style="background:#0f1729;border-radius:12px;padding:16px;font-family:var(--font-sans);">
+<h2 class="sr-only">Maquettes de cinq nouveaux modules pour le logiciel qualité : continuité d'activité, revue de contrat, coût de la qualité, boîte à idées, et suivi ESG.</h2>
+<div id="tabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+<button data-t="bcp" style="font-size:12px;padding:6px 12px;border-radius:6px;border:0.5px solid #2a3552;background:#3d4a8a;color:#dfe3f5;cursor:pointer;">Business continuity</button>
+<button data-t="contract" style="font-size:12px;padding:6px 12px;border-radius:6px;border:0.5px solid #2a3552;background:transparent;color:#8b93ab;cursor:pointer;">Contract review</button>
+<button data-t="coq" style="font-size:12px;padding:6px 12px;border-radius:6px;border:0.5px solid #2a3552;background:transparent;color:#8b93ab;cursor:pointer;">Cost of quality</button>
+<button data-t="capa" style="font-size:12px;padding:6px 12px;border-radius:6px;border:0.5px solid #2a3552;background:transparent;color:#8b93ab;cursor:pointer;">CAPA effectiveness</button>
+<button data-t="kaizen" style="font-size:12px;padding:6px 12px;border-radius:6px;border:0.5px solid #2a3552;background:transparent;color:#8b93ab;cursor:pointer;">Idea box</button>
+<button data-t="esg" style="font-size:12px;padding:6px 12px;border-radius:6px;border:0.5px solid #2a3552;background:transparent;color:#8b93ab;cursor:pointer;">ESG tracking</button>
+</div>
+
+<div id="panel-bcp" class="panel">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+<span style="font-size:15px;color:#e4e7f2;font-weight:500;">Business continuity</span>
+<span style="font-size:12px;background:#3d4a8a;color:#dfe3f5;padding:5px 10px;border-radius:6px;">+ New incident</span>
+</div>
+<div style="display:flex;gap:6px;margin-bottom:10px;">
+<span style="font-size:11px;background:#1b2440;color:#9aa3c2;padding:3px 8px;border-radius:12px;">Active (3)</span>
+<span style="font-size:11px;color:#6b7290;padding:3px 8px;">Resolved</span>
+<span style="font-size:11px;color:#6b7290;padding:3px 8px;">All plans</span>
+</div>
+<div style="background:#161f38;border-radius:8px;overflow:hidden;">
+<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:8px 12px;font-size:11px;color:#6b7290;border-bottom:0.5px solid #2a3552;">
+<span>Incident</span><span>Severity</span><span>Owner</span><span>Status</span>
+</div>
+<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:10px 12px;font-size:12px;color:#c8ccd6;border-bottom:0.5px solid #232d4d;align-items:center;">
+<span>Rupture fournisseur - résine ABS</span><span style="color:#e0997b;">Critique</span><span>M. Alaoui</span><span>Plan actif</span>
+</div>
+<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:10px 12px;font-size:12px;color:#c8ccd6;border-bottom:0.5px solid #232d4d;align-items:center;">
+<span>Panne serveur ERP</span><span style="color:#eac878;">Majeure</span><span>S. Benali</span><span>En cours</span>
+</div>
+<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:10px 12px;font-size:12px;color:#c8ccd6;align-items:center;">
+<span>Coupure électrique site 2</span><span style="color:#9fc4e8;">Mineure</span><span>N. Idrissi</span><span>Surveillance</span>
+</div>
+</div>
+<div style="margin-top:10px;font-size:11px;color:#6b7290;">4 plans de continuité liés · dernière révision il y a 45 jours</div>
+</div>
+
+<div id="panel-contract" class="panel" style="display:none;">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+<span style="font-size:15px;color:#e4e7f2;font-weight:500;">Contract review</span>
+<span style="font-size:12px;background:#3d4a8a;color:#dfe3f5;padding:5px 10px;border-radius:6px;">+ New review</span>
+</div>
+<div style="background:#161f38;border-radius:8px;padding:12px;margin-bottom:10px;">
+<div style="display:flex;justify-content:space-between;font-size:12px;color:#c8ccd6;margin-bottom:8px;">
+<span style="font-weight:500;">Client Renault - Contrat CDS-4471</span>
+<span style="color:#eac878;">2 écarts en attente</span>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;font-size:11px;color:#6b7290;padding:4px 0;">
+<span>Exigence client</span><span>Capacité interne</span><span>Statut</span>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;font-size:12px;color:#c8ccd6;padding:6px 0;border-top:0.5px solid #232d4d;">
+<span>Cpk ≥ 1,67</span><span>Cpk 1,58</span><span style="color:#e0997b;">Écart</span>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;font-size:12px;color:#c8ccd6;padding:6px 0;border-top:0.5px solid #232d4d;">
+<span>Certification IATF 16949</span><span>Conforme</span><span style="color:#9fcf9a;">OK</span>
+</div>
+</div>
+<div style="font-size:11px;color:#6b7290;">12 contrats actifs · 3 avec écarts non résolus</div>
+</div>
+
+<div id="panel-coq" class="panel" style="display:none;">
+<div style="font-size:15px;color:#e4e7f2;font-weight:500;margin-bottom:12px;">Cost of quality</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;">
+<div style="background:#161f38;border-radius:8px;padding:10px;"><div style="font-size:10px;color:#6b7290;">Prévention</div><div style="font-size:16px;color:#9fcf9a;font-weight:500;">42 k€</div></div>
+<div style="background:#161f38;border-radius:8px;padding:10px;"><div style="font-size:10px;color:#6b7290;">Évaluation</div><div style="font-size:16px;color:#9fc4e8;font-weight:500;">67 k€</div></div>
+<div style="background:#161f38;border-radius:8px;padding:10px;"><div style="font-size:10px;color:#6b7290;">Défail. interne</div><div style="font-size:16px;color:#eac878;font-weight:500;">118 k€</div></div>
+<div style="background:#161f38;border-radius:8px;padding:10px;"><div style="font-size:10px;color:#6b7290;">Défail. externe</div><div style="font-size:16px;color:#e0997b;font-weight:500;">89 k€</div></div>
+</div>
+<div style="background:#161f38;border-radius:8px;padding:12px;">
+<div style="font-size:11px;color:#6b7290;margin-bottom:8px;">Répartition par trimestre</div>
+<div style="display:flex;align-items:flex-end;gap:10px;height:70px;">
+<div style="width:20px;background:#3d4a8a;height:40%;border-radius:3px 3px 0 0;"></div>
+<div style="width:20px;background:#3d4a8a;height:55%;border-radius:3px 3px 0 0;"></div>
+<div style="width:20px;background:#3d4a8a;height:48%;border-radius:3px 3px 0 0;"></div>
+<div style="width:20px;background:#e0997b;height:70%;border-radius:3px 3px 0 0;"></div>
+</div>
+<div style="display:flex;gap:10px;margin-top:4px;"><span style="width:20px;font-size:9px;color:#6b7290;text-align:center;">T1</span><span style="width:20px;font-size:9px;color:#6b7290;text-align:center;">T2</span><span style="width:20px;font-size:9px;color:#6b7290;text-align:center;">T3</span><span style="width:20px;font-size:9px;color:#6b7290;text-align:center;">T4</span></div>
+</div>
+</div>
+
+<div id="panel-capa" class="panel" style="display:none;">
+<div style="font-size:15px;color:#e4e7f2;font-weight:500;margin-bottom:12px;">CAPA effectiveness</div>
+<div style="background:#161f38;border-radius:8px;overflow:hidden;">
+<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:8px 12px;font-size:11px;color:#6b7290;border-bottom:0.5px solid #2a3552;">
+<span>CAPA</span><span>Clôturée le</span><span>Récurrence 6 mois</span><span>Efficacité</span>
+</div>
+<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:10px 12px;font-size:12px;color:#c8ccd6;border-bottom:0.5px solid #232d4d;align-items:center;">
+<span>Dérive dimensionnelle pièce 4471</span><span>12/03</span><span style="color:#9fcf9a;">0 occurrence</span><span style="color:#9fcf9a;">92%</span>
+</div>
+<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:10px 12px;font-size:12px;color:#c8ccd6;align-items:center;">
+<span>Erreur étiquetage lot B</span><span>28/01</span><span style="color:#e0997b;">2 occurrences</span><span style="color:#e0997b;">38%</span>
+</div>
+</div>
+<div style="margin-top:10px;font-size:11px;color:#6b7290;">Efficacité moyenne du trimestre : 71%</div>
+</div>
+
+<div id="panel-kaizen" class="panel" style="display:none;">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+<span style="font-size:15px;color:#e4e7f2;font-weight:500;">Idea box</span>
+<span style="font-size:12px;background:#3d4a8a;color:#dfe3f5;padding:5px 10px;border-radius:6px;">+ Submit idea</span>
+</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+<div><div style="font-size:11px;color:#6b7290;margin-bottom:6px;">Soumise (5)</div>
+<div style="background:#161f38;border-radius:6px;padding:8px;font-size:11px;color:#c8ccd6;margin-bottom:6px;">Éclairage LED atelier<br><span style="color:#6b7290;">▲ 8</span></div>
+<div style="background:#161f38;border-radius:6px;padding:8px;font-size:11px;color:#c8ccd6;">Check-list démarrage<br><span style="color:#6b7290;">▲ 5</span></div></div>
+<div><div style="font-size:11px;color:#6b7290;margin-bottom:6px;">À l'étude (3)</div>
+<div style="background:#161f38;border-radius:6px;padding:8px;font-size:11px;color:#c8ccd6;">Bac de tri recyclage<br><span style="color:#6b7290;">▲ 14</span></div></div>
+<div><div style="font-size:11px;color:#6b7290;margin-bottom:6px;">En cours (2)</div>
+<div style="background:#161f38;border-radius:6px;padding:8px;font-size:11px;color:#c8ccd6;">Poste réglage rapide<br><span style="color:#6b7290;">▲ 21</span></div></div>
+<div><div style="font-size:11px;color:#6b7290;margin-bottom:6px;">Réalisée (12)</div>
+<div style="background:#161f38;border-radius:6px;padding:8px;font-size:11px;color:#9fcf9a;">Marquage sol zone stock<br><span style="color:#6b7290;">▲ 9</span></div></div>
+</div>
+</div>
+
+<div id="panel-esg" class="panel" style="display:none;">
+<div style="font-size:15px;color:#e4e7f2;font-weight:500;margin-bottom:12px;">ESG / sustainability</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;">
+<div style="background:#161f38;border-radius:8px;padding:10px;"><div style="font-size:10px;color:#6b7290;">Émissions CO2</div><div style="font-size:16px;color:#c8ccd6;font-weight:500;">-8,2%</div><div style="font-size:10px;color:#9fcf9a;">vs objectif annuel</div></div>
+<div style="background:#161f38;border-radius:8px;padding:10px;"><div style="font-size:10px;color:#6b7290;">Déchets valorisés</div><div style="font-size:16px;color:#c8ccd6;font-weight:500;">73%</div><div style="font-size:10px;color:#eac878;">objectif 80%</div></div>
+<div style="background:#161f38;border-radius:8px;padding:10px;"><div style="font-size:10px;color:#6b7290;">Score ESG fournisseurs</div><div style="font-size:16px;color:#c8ccd6;font-weight:500;">B+</div><div style="font-size:10px;color:#6b7290;">moyenne pondérée</div></div>
+</div>
+<div style="background:#161f38;border-radius:8px;overflow:hidden;">
+<div style="display:grid;grid-template-columns:2fr 1fr 1fr;padding:8px 12px;font-size:11px;color:#6b7290;border-bottom:0.5px solid #2a3552;">
+<span>Fournisseur</span><span>Note ESG</span><span>Dernier audit</span>
+</div>
+<div style="display:grid;grid-template-columns:2fr 1fr 1fr;padding:10px 12px;font-size:12px;color:#c8ccd6;border-bottom:0.5px solid #232d4d;align-items:center;">
+<span>Sofradim SA</span><span style="color:#9fcf9a;">A-</span><span>Jan 2026</span>
+</div>
+<div style="display:grid;grid-template-columns:2fr 1fr 1fr;padding:10px 12px;font-size:12px;color:#c8ccd6;align-items:center;">
+<span>PlastTech Maroc</span><span style="color:#eac878;">C+</span><span>Sep 2025</span>
+</div>
+</div>
+</div>
+
+</div>
+<script>
+document.querySelectorAll('#tabs button').forEach(function(btn){
+btn.addEventListener('click', function(){
+document.querySelectorAll('#tabs button').forEach(function(b){b.style.background='transparent';b.style.color='#8b93ab';});
+btn.style.background='#3d4a8a';btn.style.color='#dfe3f5';
+document.querySelectorAll('.panel').forEach(function(p){p.style.display='none';});
+document.getElementById('panel-'+btn.dataset.t).style.display='block';
+});
+});
+</script>
