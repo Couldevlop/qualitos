@@ -84,17 +84,44 @@ kubectl -n "$NS" create configmap qualitos-keycloak-realm \
   --from-file=qualitos-realm.json="$OUT" \
   --dry-run=client -o yaml | kubectl apply -f -
 
+# Les deux mots de passe générés sont AUSSI déposés dans un secret du namespace.
+#
+# Pourquoi : les afficher une seule fois était une invitation à les perdre, et
+# c'est exactement ce qui est arrivé — la préproduction a tourné des semaines
+# avec deux comptes d'administration dont personne ne connaissait plus le mot de
+# passe, seul `demo` restant utilisable. Keycloak ne stocke que des empreintes :
+# un mot de passe non consigné n'est pas « oublié », il est perdu.
+#
+# `--dry-run=client | apply` seulement si le secret n'existe PAS encore : le
+# rendu du realm peut être rejoué, et réécrire le secret avec des mots de passe
+# fraîchement générés le désaccorderait de ce que Keycloak connaît déjà. Même
+# règle que les secrets d'infrastructure de deploy.sh — générés une fois, jamais
+# régénérés.
+if kubectl -n "$NS" get secret qualitos-realm-accounts >/dev/null 2>&1; then
+  ACCOUNTS_NOTE="secret qualitos-realm-accounts déjà en place, inchangé"
+else
+  kubectl -n "$NS" create secret generic qualitos-realm-accounts     --from-literal=SUPERADMIN_USERNAME=superadmin     --from-literal=SUPERADMIN_PASSWORD="$SUPERADMIN_PWD"     --from-literal=ADMIN_USERNAME=admin     --from-literal=ADMIN_PASSWORD="$ADMIN_PWD" >/dev/null
+  ACCOUNTS_NOTE="secret qualitos-realm-accounts créé"
+fi
+
 cat <<EOF
 
 ConfigMap qualitos-keycloak-realm appliquée dans le namespace ${NS}.
+${ACCOUNTS_NOTE}.
 
 Comptes du realm :
   superadmin / ${SUPERADMIN_PWD}      (super_admin)
   admin      / ${ADMIN_PWD}      (admin_tenant)
   demo       / demo                    (quality_manager, user) — compte de démonstration
 
-Les deux premiers mots de passe ne sont affichés QU'ICI : consignez-les
-maintenant. Ils ne sont écrits dans aucun fichier du dépôt.
+Ces mots de passe ne sont écrits dans AUCUN fichier du dépôt. Pour les relire
+plus tard :
+
+  kubectl -n ${NS} get secret qualitos-realm-accounts     -o jsonpath='{.data.SUPERADMIN_PASSWORD}' | base64 -d
+
+Les deux comptes portent l'action obligatoire CONFIGURE_TOTP : la première
+connexion PAR LE NAVIGATEUR demandera l'enrôlement d'un code à usage unique, et
+le flux « password » leur reste refusé tant qu'il n'est pas fait.
 
 Rappel : le realm n'est importé qu'au PREMIER démarrage de Keycloak sur une base
 vide. Sur une instance déjà initialisée, ce rendu ne change rien — il faut alors
