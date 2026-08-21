@@ -97,6 +97,16 @@ say "Flux de connexion actuel : $CURRENT_FLOW"
 say "Retour arrière : reposer browserFlow sur $SAVED_FLOW"
 say ""
 
+# Rejouable à chaque déploiement : on ne reconstruit le flux que s'il n'est pas
+# déjà en place. Détruire puis rebâtir le flux de connexion à chaque livraison
+# ferait courir, à chaque fois et pour rien, le risque qu'une coupure laisse le
+# realm entre deux états. `STEP_UP_FORCE=1` force la reconstruction quand on veut
+# reprendre une installation douteuse.
+if [ "$CURRENT_FLOW" = "$FLOW" ] && [ "${STEP_UP_FORCE:-0}" != "1" ]; then
+  say "Le realm est déjà sur $FLOW : rien à refaire (STEP_UP_FORCE=1 pour reconstruire)."
+  exit 0
+fi
+
 # --- 1. La carte des paliers ------------------------------------------------
 say "→ carte des paliers (acr.loa.map)"
 api PUT "" -d "{\"attributes\":{\"acr.loa.map\":\"{\\\"silver\\\":1,\\\"gold\\\":2}\"}}" \

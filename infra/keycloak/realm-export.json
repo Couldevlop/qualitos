@@ -75,7 +75,7 @@
       ],
       "attributes": {
         "pkce.code.challenge.method": "S256",
-        "post.logout.redirect.uris": "http://localhost:4200",
+        "post.logout.redirect.uris": "http://localhost:4200/*",
         "acr.loa.map": "{\"silver\":1,\"gold\":2}"
       },
       "protocolMappers": [

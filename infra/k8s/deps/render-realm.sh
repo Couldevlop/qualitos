@@ -53,6 +53,14 @@ for client in realm.get("clients") or []:
         client["webOrigins"] = [origin]
         client["rootUrl"] = origin
         client["baseUrl"] = "/"
+        # L'URI de POST-DÉCONNEXION est un réglage distinct des URI de
+        # redirection, et Keycloak ne retombe PAS sur celles-ci : attribut absent
+        # ou vide = aucune redirection autorisée après déconnexion, et l'écran
+        # « Invalid redirect uri » remplace le retour à l'application. Oublier
+        # cette ligne laissait donc une déconnexion cassée sur tout domaine
+        # exposé — la connexion, elle, fonctionnait, ce qui rendait la panne
+        # d'autant plus tardive à découvrir.
+        client.setdefault("attributes", {})["post.logout.redirect.uris"] = "%s/*" % origin
 
 passwords = {"superadmin": superadmin_pwd, "admin": admin_pwd}
 for user in realm.get("users") or []:
