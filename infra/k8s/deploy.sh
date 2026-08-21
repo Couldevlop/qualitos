@@ -227,7 +227,8 @@ if [ -n "$KC_POD" ]; then
   # l'utilisateur reste bloqué sur une page d'erreur Keycloak. Le réglage est
   # DISTINCT des URI de redirection et Keycloak ne retombe pas dessus : attribut
   # absent = aucune redirection autorisée après déconnexion.
-  WEB_CID="$(kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh get clients -r qualitos     -q clientId=qualitos-web --fields id --format csv --noquotes 2>/dev/null | tr -d '' | head -1)"
+  WEB_CID="$(kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh get clients -r qualitos     -q clientId=qualitos-web --fields id --format csv --noquotes 2>/dev/null | tr -d '
+' | head -1)"
   if [ -n "$WEB_CID" ] && kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh update        "clients/$WEB_CID" -r qualitos        -s "attributes.\"post.logout.redirect.uris\"=https://$HOST/*" >/dev/null 2>&1; then
     echo "  client qualitos-web : redirection de déconnexion autorisée"
   else
@@ -248,15 +249,25 @@ if [ -n "$KC_POD" ]; then
   # dont une action critique est refusée qu'une livraison bloquée — mais il est
   # signalé bruyamment, parce que le symptôme (403 à l'approbation) n'évoque pas
   # de lui-même sa cause.
-  if KC_URL="https://$HOST/auth" KC_REALM=qualitos      KC_ADMIN="$KC_ADMIN" KC_ADMIN_PASSWORD="$KC_PWD"      "$ROOT/infra/keycloak/apply-step-up.sh" >/dev/null 2>&1; then
+  # La sortie est CONSERVÉE et rendue en cas d'échec. Une première version
+  # l'envoyait à /dev/null : le déploiement annonçait « paliers non posés » sans
+  # dire pourquoi, et diagnostiquer demandait de rejouer le script à la main sur
+  # le serveur. Un avertissement qui ne porte que le symptôme fait perdre le
+  # temps qu'il prétend faire gagner.
+  STEP_UP_LOG="$(mktemp)"
+  if KC_URL="https://$HOST/auth" KC_REALM=qualitos      KC_ADMIN="$KC_ADMIN" KC_ADMIN_PASSWORD="$KC_PWD"      "$ROOT/infra/keycloak/apply-step-up.sh" >"$STEP_UP_LOG" 2>&1; then
     echo "  realm qualitos : authentification par paliers en place"
   else
     echo "  ATTENTION : paliers d'authentification non posés." >&2
     echo "  L'approbation d'un control plan et l'acceptation d'une proposition de" >&2
     echo "  révision répondront 403 tant que le realm ne publiera pas acr/amr." >&2
+    echo "  --- sortie du script (20 dernières lignes) ---" >&2
+    tail -20 "$STEP_UP_LOG" | sed 's/^/  | /' >&2
+    echo "  --- fin ---" >&2
     echo "  Reprendre à la main : KC_URL=https://$HOST/auth KC_REALM=qualitos \\" >&2
     echo "    KC_ADMIN=... KC_ADMIN_PASSWORD=... infra/keycloak/apply-step-up.sh" >&2
   fi
+  rm -f "$STEP_UP_LOG"
 
   AI_CID="$(kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh get clients -r qualitos \
     -q clientId=api-quality-engine-ai --fields id --format csv --noquotes 2>/dev/null | tr -d '\r' | head -1)"
