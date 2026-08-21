@@ -37,17 +37,25 @@ describe('ProductsListComponent', () => {
   let fixture: ComponentFixture<ProductsListComponent>;
   let component: ProductsListComponent;
   let service: jasmine.SpyObj<ProductsService>;
+  let dialog: { open: jasmine.Spy };
+  let closed: unknown;
+  let router: { navigate: jasmine.Spy };
+  let snack: { open: jasmine.Spy };
 
   beforeEach(async () => {
     service = jasmine.createSpyObj<ProductsService>('ProductsService', ['list', 'revisionRequests']);
+    closed = null;
+    dialog = { open: jasmine.createSpy('open').and.callFake(() => ({ afterClosed: () => of(closed) })) };
+    router = { navigate: jasmine.createSpy('navigate') };
+    snack = { open: jasmine.createSpy('open') };
     await TestBed.configureTestingModule({
       declarations: [ProductsListComponent],
       imports: [SharedModule, UiModule, FormsModule, NoopAnimationsModule],
       providers: [
         { provide: ProductsService, useValue: service },
-        { provide: MatDialog, useValue: { open: () => ({ afterClosed: () => of(null) }) } },
-        { provide: Router, useValue: { navigate: jasmine.createSpy('navigate') } },
-        { provide: MatSnackBar, useValue: { open: jasmine.createSpy('open') } }
+        { provide: MatDialog, useValue: dialog },
+        { provide: Router, useValue: router },
+        { provide: MatSnackBar, useValue: snack }
       ]
     }).compileComponents();
 
@@ -134,5 +142,70 @@ describe('ProductsListComponent', () => {
     expect(component.rows).toEqual([]);
     expect(service.revisionRequests).not.toHaveBeenCalled();
     expect(fixture.nativeElement.querySelector('.empty')).toBeTruthy();
+  }));
+
+  it('ouvre la fiche du produit qu’on désigne', fakeAsync(() => {
+    service.list.and.returnValue(of([product()]));
+    service.revisionRequests.and.returnValue(of([]));
+    fixture.detectChanges();
+    tick();
+
+    component.open(component.rows[0]);
+
+    expect(router.navigate).toHaveBeenCalledWith(['/products', 'p-1']);
+  }));
+
+  it('ne recharge rien quand la création est abandonnée', fakeAsync(() => {
+    service.list.and.returnValue(of([product()]));
+    service.revisionRequests.and.returnValue(of([]));
+    fixture.detectChanges();
+    tick();
+    service.list.calls.reset();
+
+    component.create();
+    tick();
+
+    expect(dialog.open).toHaveBeenCalled();
+    expect(service.list).not.toHaveBeenCalled();
+  }));
+
+  it('recharge la liste après une création', fakeAsync(() => {
+    service.list.and.returnValue(of([product()]));
+    service.revisionRequests.and.returnValue(of([]));
+    fixture.detectChanges();
+    tick();
+    service.list.calls.reset();
+    closed = product({ id: 'p-2' });
+
+    component.create();
+    tick();
+
+    expect(service.list).toHaveBeenCalledTimes(1);
+  }));
+
+  it('ouvre l’édition sans ouvrir la fiche : le clic ne traverse pas la ligne', fakeAsync(() => {
+    service.list.and.returnValue(of([product()]));
+    service.revisionRequests.and.returnValue(of([]));
+    fixture.detectChanges();
+    tick();
+    const event = new MouseEvent('click');
+    spyOn(event, 'stopPropagation');
+
+    component.edit(component.rows[0], event);
+    tick();
+
+    expect(event.stopPropagation).toHaveBeenCalled();
+    expect(router.navigate).not.toHaveBeenCalled();
+    expect(dialog.open.calls.mostRecent().args[1].data.product.id).toBe('p-1');
+  }));
+
+  it('dit que la liste n’a pas pu être chargée, et cesse de faire patienter', fakeAsync(() => {
+    service.list.and.returnValue(throwError(() => ({ status: 500 })));
+
+    fixture.detectChanges();
+    tick();
+
+    expect(component.loading).toBeFalse();
+    expect(snack.open.calls.mostRecent().args[0]).toContain('Impossible de charger');
   }));
 });

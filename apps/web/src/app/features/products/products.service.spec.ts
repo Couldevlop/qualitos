@@ -146,4 +146,108 @@ describe('ProductsService', () => {
     expect(req.request.params.get('text')).toBe('Bavure sur alésage');
     req.flush([]);
   });
+
+  it('modifie un produit sans toucher à sa référence', () => {
+    service.update(PRODUCT, { designation: 'Support moteur v2' }).subscribe();
+
+    const req = http.expectOne(`${BASE}/${PRODUCT}`);
+    expect(req.request.method).toBe('PUT');
+    expect(Object.keys(req.request.body)).not.toContain('code');
+    expect(Object.keys(req.request.body)).not.toContain('tenantId');
+    req.flush({});
+  });
+
+  it('supprime un produit sur sa route propre', () => {
+    service.remove(PRODUCT).subscribe();
+
+    const req = http.expectOne(`${BASE}/${PRODUCT}`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
+  });
+
+  it('lit la nomenclature sous le produit, jamais à plat', () => {
+    service.components(PRODUCT).subscribe();
+
+    const req = http.expectOne(`${BASE}/${PRODUCT}/components`);
+    expect(req.request.method).toBe('GET');
+    req.flush([]);
+  });
+
+  it('ajoute une ligne de nomenclature sous son produit', () => {
+    service.addComponent(PRODUCT, { sequenceNo: 10, reference: 'VIS-M6' }).subscribe();
+
+    const req = http.expectOne(`${BASE}/${PRODUCT}/components`);
+    expect(req.request.method).toBe('POST');
+    expect(Object.keys(req.request.body)).not.toContain('tenantId');
+    req.flush({});
+  });
+
+  it('supprime une ligne de nomenclature en citant la chaîne complète', () => {
+    service.deleteComponent(PRODUCT, 'c-9').subscribe();
+
+    const req = http.expectOne(`${BASE}/${PRODUCT}/components/c-9`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
+  });
+
+  it('lit la gamme sous le produit', () => {
+    service.operations(PRODUCT).subscribe();
+
+    const req = http.expectOne(`${BASE}/${PRODUCT}/operations`);
+    expect(req.request.method).toBe('GET');
+    req.flush([]);
+  });
+
+  it('ajoute une opération de gamme sous son produit', () => {
+    service.addOperation(PRODUCT, { sequenceNo: 10, code: 'OP10', label: 'Perçage' }).subscribe();
+
+    const req = http.expectOne(`${BASE}/${PRODUCT}/operations`);
+    expect(req.request.method).toBe('POST');
+    req.flush({});
+  });
+
+  it('modifie une opération de gamme sur la route imbriquée complète', () => {
+    service.updateOperation(PRODUCT, 'op-9', {
+      sequenceNo: 20, code: 'OP20', label: 'Ébavurage'
+    }).subscribe();
+
+    const req = http.expectOne(`${BASE}/${PRODUCT}/operations/op-9`);
+    expect(req.request.method).toBe('PUT');
+    req.flush({});
+  });
+
+  it('liste les control plans sous le produit', () => {
+    service.controlPlans(PRODUCT).subscribe();
+
+    const req = http.expectOne(`${BASE}/${PRODUCT}/control-plans`);
+    expect(req.request.method).toBe('GET');
+    req.flush([]);
+  });
+
+  it('crée un brouillon de control plan sous son produit', () => {
+    service.createControlPlan(PRODUCT, { phase: 'PRODUCTION', code: 'CP-4471' }).subscribe();
+
+    const req = http.expectOne(`${BASE}/${PRODUCT}/control-plans`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ phase: 'PRODUCTION', code: 'CP-4471' });
+    req.flush({});
+  });
+
+  it('modifie une ligne de control plan en citant produit, plan et ligne', () => {
+    service.updateLine(PRODUCT, PLAN, 'l-9', {
+      sequenceNo: 10, characteristicLabel: 'Diamètre', characteristicType: 'PRODUCT'
+    }).subscribe();
+
+    const req = http.expectOne(`${BASE}/${PRODUCT}/control-plans/${PLAN}/lines/l-9`);
+    expect(req.request.method).toBe('PUT');
+    req.flush({});
+  });
+
+  it('accepte une proposition sans corps : la décision est dans la route', () => {
+    service.acceptRevision('r-1').subscribe();
+
+    const req = http.expectOne(`${environment.apiBaseUrl}/api/v1/revision-requests/r-1/accept`);
+    expect(req.request.method).toBe('POST');
+    req.flush({});
+  });
 });
