@@ -62,7 +62,11 @@ jobs:
 
       - name: Étiquette d'image
         id: meta
-        run: echo "tag=main-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+        # Longueur FIXE : `--short` seul abrège d'après le nombre d'objets du
+        # dépôt courant, et le clone du cluster n'a pas le même. Les deux côtés
+        # doivent produire la même chaîne, sinon le déploiement tiré cherche une
+        # étiquette qui n'a jamais été publiée.
+        run: echo "tag=main-$(git rev-parse --short=12 HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Build image
         run: >
