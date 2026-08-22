@@ -85,12 +85,26 @@ donneraient deux émetteurs différents, et toute validation échouerait en 401.
 | `admin` | `admin_tenant` | généré au rendu, affiché une fois |
 | `demo` | `quality_manager`, `user` | `demo` — compte de démonstration assumé |
 
-Le fichier `infra/keycloak/realm-export.json` donne à `superadmin` et `admin` un
-mot de passe égal à leur nom. C'est sans conséquence sur `localhost`, mais ce
-sont des comptes d'administration : sur un domaine public, les laisser tels quels
-reviendrait à publier un accès `super_admin` en clair. `render-realm.sh` les
-remplace donc systématiquement. `demo` est conservé tel quel — c'est sa raison
-d'être, et il ne porte aucun privilège d'administration.
+Le fichier `infra/keycloak/realm-export.json` ne contient **plus aucun mot de
+passe d'administration**. `superadmin` et `admin` y portent des placeholders
+(`${QOS_LOCAL_SUPERADMIN_PASSWORD}`, `${QOS_LOCAL_ADMIN_PASSWORD}`) : deux mots
+de passe d'administration en clair dans un dépôt versionné étaient signalés — à
+juste titre — par l'analyse de secrets, quand bien même `render-realm.sh` les
+remplaçait avant toute exposition.
+
+Selon la destination, ces placeholders sont résolus de deux façons :
+
+- **Environnements déployés** : `render-realm.sh` *réécrit* la liste des
+  identifiants avec des mots de passe générés. Les placeholders n'atteignent
+  jamais un realm exposé — le rendu ne dépend pas d'eux, il les écrase.
+- **Poste de développement** : Keycloak les résout à l'import depuis
+  l'environnement, à condition que `-Dkeycloak.import.replace-placeholders=true`
+  soit posé (c'est fait dans `docker-compose.dev.yml`). Les valeurs viennent du
+  `.env` local, non versionné ; voir `.env.example`. Sans elles, le mot de passe
+  posé est inutilisable et la connexion échoue — aucune valeur faible par défaut.
+
+`demo` est conservé tel quel — c'est sa raison d'être, et il ne porte aucun
+privilège d'administration.
 
 Les Secrets applicatifs référencés par le chart (`qualitos-api-core`,
 `qualitos-api-quality-engine`, `qualitos-api-iot-hub`, `qualitos-ai-service`)

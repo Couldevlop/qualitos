@@ -56,6 +56,25 @@ services:
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+      # Le realm versionne ne porte PLUS les mots de passe de `superadmin` et
+      # `admin` : ils y figurent en placeholders, que Keycloak resout a l'import
+      # depuis l'environnement -- mais uniquement si le drapeau ci-dessous est
+      # pose (verifie sur Keycloak 25 : sans lui, le litteral `${...}` devient le
+      # mot de passe). Les valeurs viennent de `.env`, non versionne ; voir
+      # `.env.example`.
+      #
+      # Compose REFUSE de demarrer si ces variables manquent, et c'est le point
+      # important. Deux mauvaises reponses ont ete essayees avant celle-ci :
+      #   - laisser vide : le placeholder resolu a VIDE fait echouer l'import et
+      #     Keycloak s'arrete sur « argument "content" is null » -- panne opaque,
+      #     c'est ce qui a casse le job k6 ;
+      #   - poser une valeur de repli en clair : elle redevient un mot de passe
+      #     `super_admin` publie dans le depot, exactement ce que ce changement
+      #     voulait supprimer.
+      # L'echec franc dit quoi faire, et ne cree aucun identifiant devinable.
+      JAVA_OPTS_APPEND: -Dkeycloak.import.replace-placeholders=true
+      QOS_LOCAL_SUPERADMIN_PASSWORD: ${QOS_LOCAL_SUPERADMIN_PASSWORD:?a definir dans .env (cf. .env.example) - aucun defaut, un mot de passe super_admin ne se devine pas}
+      QOS_LOCAL_ADMIN_PASSWORD: ${QOS_LOCAL_ADMIN_PASSWORD:?a definir dans .env (cf. .env.example) - aucun defaut, un mot de passe admin_tenant ne se devine pas}
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
       KC_DB_USERNAME: qualitos
