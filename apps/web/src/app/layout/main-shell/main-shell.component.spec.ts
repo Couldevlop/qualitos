@@ -98,7 +98,9 @@ describe('MainShellComponent (navigation model)', () => {
     // ne se lisent pas dans la liste paginée de tous les plans, tous statuts mêlés.
     // Puis à 11 : + Produits — le référentiel qui donne son sujet au PFMEA et au
     // control plan, posé juste avant l'entrée FMEA qu'il alimente.
-    expect(labels).toEqual([5, 6, 8, 3, 12, 11, 1, 7]);
+    // Methodes retombe a 5 et Non-conformite a 2 : Ishikawa et les 5 Pourquoi
+    // quittent la barre laterale, on y accede depuis la fiche de NC.
+    expect(labels).toEqual([5, 5, 8, 2, 12, 11, 1, 7]);
   });
 
   it('collapses the entire GRC mass into a single /compliance entry', () => {
@@ -126,9 +128,19 @@ describe('MainShellComponent (navigation model)', () => {
 
   it('keeps all core method/operation routes reachable from the sidebar', () => {
     const allRoutes = component.sections.flatMap(s => s.items.map(i => i.route));
-    ['/home', '/dashboard', '/pdca', '/ishikawa', '/fives', '/dmaic', '/spc',
-     '/nc/interne', '/nc/externe', '/five-whys', '/capa', '/audits', '/standards', '/itsm', '/compliance']
+    ['/home', '/dashboard', '/pdca', '/fives', '/dmaic', '/spc',
+     '/nc/interne', '/nc/externe', '/capa', '/audits', '/standards', '/itsm', '/compliance']
       .forEach(r => expect(allRoutes).withContext(r).toContain(r));
+  });
+
+  it('ne propose plus Ishikawa ni les 5 Pourquoi dans la barre laterale', () => {
+    // Les deux methodes ne partent jamais de rien : elles cherchent la cause
+    // d'un ecart deja constate. On y entre donc par la fiche de non-conformite,
+    // qui les ouvre (ou les cree) sur son propre sujet. Une entree de menu
+    // laissait croire a une analyse hors sol, sans NC rattachee.
+    const allRoutes = component.sections.flatMap(s => s.items.map(i => i.route));
+    expect(allRoutes).not.toContain('/ishikawa');
+    expect(allRoutes).not.toContain('/five-whys');
   });
 
   it('persists collapsed groups to localStorage and restores them', () => {
