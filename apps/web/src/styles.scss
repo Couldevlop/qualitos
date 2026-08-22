@@ -596,13 +596,31 @@ html, body { overflow-x: hidden; }
     max-width: 70ch;
   }
 
-  /* Zone d'actions : les boutons/menus à droite restent groupés et alignés. */
+  /* Zone d'actions : les boutons/menus à droite restent groupés et alignés.
+     Un bouton seul ne doit pas se laisser écraser — d'où `flex-shrink: 0`. */
   > button,
   > a,
   > .qos-row-2,
-  > .qos-row-3,
-  > [class*='actions'] {
+  > .qos-row-3 {
     flex-shrink: 0;
+  }
+
+  /* Un CONTENEUR d'actions, lui, doit pouvoir rétrécir, et c'est l'inverse de
+     la règle ci-dessus. Il portait `flex-shrink: 0` avec les boutons isolés :
+     ne pouvant ni rétrécir ni, du coup, appliquer son propre `flex-wrap`, il
+     sortait simplement de l'écran. Mesuré sur la fiche de non-conformité à
+     1024 px : la barre s'étendait jusqu'à 1457 px, « Résoudre » et « Clôturer »
+     hors cadre — et injoignables, la page ne défilant pas horizontalement.
+     Cette règle-ci gagnait la spécificité (0,3,0) contre le composant (0,2,0),
+     si bien qu'un correctif local restait sans effet.
+
+     `flex-wrap` est posé ici plutôt que laissé à chaque composant : rétrécir
+     sans pouvoir passer à la ligne écraserait les boutons, ce que la règle
+     précédente cherchait précisément à éviter. */
+  > [class*='actions'] {
+    flex-shrink: 1;
+    min-width: 0;
+    flex-wrap: wrap;
   }
 }
 
