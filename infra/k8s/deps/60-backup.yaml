@@ -1,0 +1,138 @@
+# Sauvegarde quotidienne des bases QualitOS.
+#
+# POURQUOI UN VIDAGE LOGIQUE ET NON UNE COPIE DU VOLUME : le volume local-path
+# n'offre ni instantané ni cohérence à chaud. Copier /var/lib/postgresql pendant
+# que le serveur écrit produit une archive qui restaure parfois — c'est-à-dire
+# une archive sur laquelle on ne peut rien promettre. `pg_dump` prend une image
+# cohérente par transaction, quelle que soit la charge.
+#
+# FORMAT `custom` (-Fc) et non SQL brut : il est compressé, et surtout il permet
+# une restauration SÉLECTIVE (une table, un schéma) sans rejouer tout le fichier.
+# Un incident ne demande presque jamais de tout restaurer.
+#
+# Les rôles ne vivent PAS dans une base : `pg_dumpall --globals-only` les sauve à
+# part. Sans eux, une restauration rendrait des tables appartenant à des rôles
+# inexistants — et le compte en lecture seule du NLQ (qualitos_nlq_ro), créé à
+# l'initialisation et jamais migré, disparaîtrait sans que rien ne le signale.
+#
+# LIMITE RECONNUE : ces vidages vivent sur le disque du nœud qu'ils protègent.
+# Ils couvrent l'erreur humaine, la migration ratée et la corruption logique.
+# Ils ne couvrent PAS la perte de la machine. Un envoi vers un stockage distant
+# reste à décider (cf. ADR 0058).
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-backups
+  labels:
+    app.kubernetes.io/name: postgres-backup
+    app.kubernetes.io/part-of: qualitos
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup
+  labels:
+    app.kubernetes.io/name: postgres-backup
+    app.kubernetes.io/part-of: qualitos
+spec:
+  # 02h00 UTC : hors des heures ouvrées des fuseaux servis, et à distance du
+  # renouvellement de certificat de cert-manager.
+  schedule: "0 2 * * *"
+  # Deux vidages simultanés se disputeraient le même volume et la même base pour
+  # produire deux archives du même instant : aucun intérêt, deux fois la charge.
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  # Sans cette borne, un nœud arrêté une nuit lancerait la sauvegarde au réveil,
+  # en pleine journée, pendant la charge.
+  startingDeadlineSeconds: 3600
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: postgres-backup
+            app.kubernetes.io/part-of: qualitos
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: dump
+              # MÊME image que le serveur : un pg_dump plus ancien que le serveur
+              # refuse de s'exécuter. La panne ne se verrait qu'à la première
+              # sauvegarde nocturne, c'est-à-dire trop tard pour s'en étonner.
+              image: postgres:17-alpine
+              envFrom:
+                - secretRef:
+                    name: qualitos-postgres
+              env:
+                - name: PGHOST
+                  value: postgres
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  set -eu
+                  export PGPASSWORD="$POSTGRES_PASSWORD"
+
+                  # ATTENTE EXPLICITE avant le premier échange. Le réseau d'un
+                  # pod n'est pas joignable à l'instant même où son conteneur
+                  # démarre : les toutes premières connexions vers une ClusterIP
+                  # sont refusées le temps que les règles soient posées. Constaté
+                  # ici — deux essais lancés sans délai ont échoué en
+                  # « Connection refused » alors que le serveur était sain, et le
+                  # même travail réussissait dès qu'une seconde s'écoulait avant
+                  # la première commande. Sans cette boucle, la sauvegarde
+                  # nocturne dépendrait de sa reprise pour aboutir, et une
+                  # sauvegarde qui tient par sa reprise finit par ne pas tenir.
+                  essai=0
+                  until pg_isready -h "$PGHOST" -U "$POSTGRES_USER" -q; do
+                    essai=$((essai + 1))
+                    if [ "$essai" -ge 30 ]; then
+                      echo "ECHEC : PostgreSQL injoignable apres 60 secondes"
+                      exit 1
+                    fi
+                    sleep 2
+                  done
+
+                  JOUR="$(date -u +%Y-%m-%d)"
+                  DEST="/backups/$JOUR"
+                  mkdir -p "$DEST"
+
+                  pg_dumpall -U "$POSTGRES_USER" --globals-only > "$DEST/globals.sql"
+
+                  for db in qualitos_core qualitos_quality qualitos_iot keycloak; do
+                    pg_dump -U "$POSTGRES_USER" -d "$db" -Fc -f "$DEST/$db.dump"
+                    # Un fichier vide est un ÉCHEC, pas une base vide : pg_dump
+                    # écrit toujours un en-tête. Sans ce contrôle, une panne
+                    # d'authentification laisserait des archives de zéro octet
+                    # que l'on ne découvrirait qu'au jour de la restauration.
+                    taille=$(wc -c < "$DEST/$db.dump")
+                    if [ "$taille" -le 1024 ]; then
+                      echo "ECHEC : sauvegarde vide pour $db ($taille octets)"
+                      exit 1
+                    fi
+                    echo "$db : $taille octets"
+                  done
+
+                  # Rétention de 14 jours. Le disque du nœud est occupé à 80 % :
+                  # une rétention non bornée le saturerait, et un disque plein
+                  # arrête PostgreSQL — la sauvegarde tuerait ce qu'elle protège.
+                  find /backups -mindepth 1 -maxdepth 1 -type d -mtime +14 -exec rm -rf {} \;
+                  echo "sauvegarde $JOUR terminee"
+              volumeMounts:
+                - name: backups
+                  mountPath: /backups
+              resources:
+                requests: { cpu: 50m, memory: 64Mi }
+                limits: { cpu: "1", memory: 512Mi }
+          volumes:
+            - name: backups
+              persistentVolumeClaim:
+                claimName: postgres-backups

@@ -1,0 +1,25 @@
+<mat-card class="impact-card" *ngIf="visible">
+  <mat-card-header>
+    <mat-card-title i18n="@@capa.impact-title">Impact PFMEA / Control Plan</mat-card-title>
+    <mat-card-subtitle i18n="@@capa.impact-subtitle">
+      Ce que la clôture de ce dossier a proposé de réviser.
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <ul class="impact-list">
+      <li *ngFor="let request of requests">
+        <button type="button" class="impact-link" (click)="open(request)">
+          {{ summary(request) }}
+        </button>
+        <span class="qos-badge"
+              [attr.data-tone]="request.status === 'ACCEPTED' ? 'success'
+                               : request.status === 'REJECTED' ? 'neutral' : 'warning'">
+          {{ request.status }}
+        </span>
+        <div class="rationale">{{ request.rationale }}</div>
+        <div class="note" *ngIf="request.decisionNote">{{ request.decisionNote }}</div>
+      </li>
+    </ul>
+  </mat-card-content>
+</mat-card>

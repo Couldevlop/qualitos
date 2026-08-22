@@ -23,8 +23,9 @@ public class FmeaController {
     public Page<FmeaDto.ProjectResponse> list(
             @RequestParam(required = false) FmeaStatus status,
             @RequestParam(required = false) FmeaType type,
+            @RequestParam(required = false) UUID productId,
             @PageableDefault(size = 50) Pageable pageable) {
-        return service.listProjects(status, type, pageable);
+        return service.listProjects(status, type, productId, pageable);
     }
 
     @PostMapping("/projects")
@@ -45,6 +46,12 @@ public class FmeaController {
     @DeleteMapping("/projects/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) { service.deleteProject(id); }
+
+    @PutMapping("/projects/{id}/product/{productId}")
+    public FmeaDto.ProjectResponse attachProduct(@PathVariable UUID id,
+                                                 @PathVariable UUID productId) {
+        return service.attachProduct(id, productId);
+    }
 
     @PostMapping("/projects/{id}/activate")
     public FmeaDto.ProjectResponse activate(@PathVariable UUID id) { return service.activate(id); }

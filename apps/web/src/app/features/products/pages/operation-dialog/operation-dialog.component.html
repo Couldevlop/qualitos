@@ -1,0 +1,34 @@
+<h2 mat-dialog-title>
+  <span *ngIf="!editing" i18n="@@product.operation-new">Ajouter une opération</span>
+  <span *ngIf="editing" i18n="@@product.operation-edit">Modifier l'opération</span>
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="operation-form">
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@product.field-sequence">Rang</mat-label>
+      <input matInput type="number" formControlName="sequenceNo" min="0">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@product.field-op-code">Code</mat-label>
+      <input matInput formControlName="code" maxlength="32">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label i18n="@@product.field-label">Libellé</mat-label>
+      <input matInput formControlName="label" maxlength="250">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label i18n="@@product.field-workstation">Poste</mat-label>
+      <input matInput formControlName="workstation" maxlength="120">
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()" i18n="@@common.cancel">Annuler</button>
+  <button mat-flat-button color="primary" (click)="save()"
+          [disabled]="form.invalid || saving" i18n="@@common.save">Enregistrer</button>
+</mat-dialog-actions>

@@ -1,0 +1,35 @@
+.filters {
+  display: flex;
+  gap: var(--qos-space-4);
+  margin-bottom: var(--qos-space-4);
+}
+
+.status-filter { min-width: 200px; }
+
+.state-row { display: flex; justify-content: center; padding: var(--qos-space-8) 0; }
+
+.empty {
+  padding: var(--qos-space-10) 0;
+  text-align: center;
+  color: var(--qos-fg-tertiary);
+}
+
+.product-table { width: 100%; }
+
+.product-row {
+  cursor: pointer;
+
+  &:hover { background: var(--qos-bg-subtle); }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: inset var(--qos-ring-focus);
+  }
+
+  &.obsolete {
+    color: var(--qos-fg-tertiary);
+    font-style: italic;
+  }
+}
+
+.dim { color: var(--qos-fg-tertiary); }

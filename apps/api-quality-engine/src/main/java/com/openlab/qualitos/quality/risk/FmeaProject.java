@@ -18,7 +18,8 @@ import java.util.UUID;
                 columnNames = {"tenant_id", "code"}),
         indexes = {
                 @Index(name = "idx_fmea_tenant", columnList = "tenant_id"),
-                @Index(name = "idx_fmea_tenant_status", columnList = "tenant_id, status")
+                @Index(name = "idx_fmea_tenant_status", columnList = "tenant_id, status"),
+                @Index(name = "idx_fmea_projects_product", columnList = "tenant_id, product_id")
         })
 public class FmeaProject {
 
@@ -52,6 +53,13 @@ public class FmeaProject {
 
     @Column(nullable = false)
     private int revision;
+
+    /**
+     * Produit couvert, facultatif : les FMEA système, service et bow-tie n'en
+     * ont pas, et les y forcer n'apporterait rien.
+     */
+    @Column(name = "product_id")
+    private UUID productId;
 
     @Column(name = "owner_user_id")
     private UUID ownerUserId;
@@ -109,6 +117,9 @@ public class FmeaProject {
 
     public int getRevision() { return revision; }
     public void setRevision(int revision) { this.revision = revision; }
+
+    public UUID getProductId() { return productId; }
+    public void setProductId(UUID productId) { this.productId = productId; }
 
     public UUID getOwnerUserId() { return ownerUserId; }
     public void setOwnerUserId(UUID ownerUserId) { this.ownerUserId = ownerUserId; }

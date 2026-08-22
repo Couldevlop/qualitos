@@ -43,6 +43,13 @@ export interface NcResponse {
   /** URLs des photos, une par ligne (chaîne unique côté backend). */
   photoUrls?: string;
   reporterId?: string;
+  /** Produit concerné. Absent pour une NC de service ou administrative. */
+  productId?: string;
+  /**
+   * Mode de défaillance du PFMEA que ce défaut illustre. Son absence est une
+   * information en soi : un défaut que l'analyse n'avait pas prévu.
+   */
+  fmeaItemId?: string;
   capaCaseId?: string;
   rootCause?: string;
   resolutionNote?: string;
@@ -86,6 +93,10 @@ export interface CreateNcRequest {
   reporterId?: string;
   /** Interne par défaut côté serveur si non précisée. */
   origin?: NcOrigin;
+  /** Produit concerné, s'il y en a un. */
+  productId?: string;
+  /** Mode de défaillance du PFMEA que ce défaut illustre, confirmé par l'utilisateur. */
+  fmeaItemId?: string;
 }
 
 export interface UpdateNcRequest {

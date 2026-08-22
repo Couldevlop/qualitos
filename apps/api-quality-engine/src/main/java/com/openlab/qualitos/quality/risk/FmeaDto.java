@@ -25,7 +25,8 @@ public final class FmeaDto {
             @NotNull FmeaType type,
             @Min(1) @Max(1000) Integer criticalRpnThreshold,
             UUID ownerUserId,
-            @NotNull UUID createdBy
+            @NotNull UUID createdBy,
+            UUID productId
     ) {}
 
     public record UpdateProjectRequest(
@@ -45,6 +46,7 @@ public final class FmeaDto {
             FmeaStatus status,
             int criticalRpnThreshold,
             int revision,
+            UUID productId,
             UUID ownerUserId,
             Instant lastReviewedAt,
             UUID createdBy,
@@ -63,10 +65,15 @@ public final class FmeaDto {
             @Min(1) @Max(10) @NotNull Integer detection,
             @Size(max = 1000) String recommendedAction,
             UUID actionOwnerUserId,
+            @Size(max = 250) String actionOwnerName,
             LocalDate actionDueDate,
+            @Size(max = 2000) String actionsTaken,
+            LocalDate actionsTakenAt,
             @Min(1) @Max(10) Integer resultingSeverity,
             @Min(1) @Max(10) Integer resultingOccurrence,
-            @Min(1) @Max(10) Integer resultingDetection
+            @Min(1) @Max(10) Integer resultingDetection,
+            UUID operationId,
+            CharacteristicClass characteristicClass
     ) {}
 
     public record UpdateItemRequest(
@@ -80,10 +87,15 @@ public final class FmeaDto {
             @Min(1) @Max(10) Integer detection,
             @Size(max = 1000) String recommendedAction,
             UUID actionOwnerUserId,
+            @Size(max = 250) String actionOwnerName,
             LocalDate actionDueDate,
+            @Size(max = 2000) String actionsTaken,
+            LocalDate actionsTakenAt,
             @Min(1) @Max(10) Integer resultingSeverity,
             @Min(1) @Max(10) Integer resultingOccurrence,
-            @Min(1) @Max(10) Integer resultingDetection
+            @Min(1) @Max(10) Integer resultingDetection,
+            UUID operationId,
+            CharacteristicClass characteristicClass
     ) {}
 
     public record ItemResponse(
@@ -102,11 +114,17 @@ public final class FmeaDto {
             int rpn,
             String recommendedAction,
             UUID actionOwnerUserId,
+            String actionOwnerName,
             LocalDate actionDueDate,
+            String actionsTaken,
+            LocalDate actionsTakenAt,
             Integer resultingSeverity,
             Integer resultingOccurrence,
             Integer resultingDetection,
             Integer rpnAfter,
+            UUID operationId,
+            CharacteristicClass characteristicClass,
+            ActionPriority actionPriority,
             boolean critical,
             Instant createdAt,
             Instant updatedAt

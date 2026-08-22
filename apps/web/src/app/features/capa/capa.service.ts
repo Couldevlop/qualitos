@@ -15,13 +15,15 @@ import {
   CreateCapaCaseRequest,
   SuggestedAction,
   UpdateCapaActionRequest,
-  UpdateCapaCaseRequest
+  UpdateCapaCaseRequest,
+  CapaEffectivenessSummary
 } from './capa.types';
 
 @Injectable({ providedIn: 'root' })
 export class CapaService {
 
   private readonly endpoint = `${environment.apiBaseUrl}/api/v1/capa/cases`;
+  private readonly effectivenessEndpoint = `${environment.apiBaseUrl}/api/v1/capa/effectiveness`;
 
   private readonly mockStore: CapaCaseResponse[] = this.seedMockCases();
 
@@ -438,6 +440,45 @@ export class CapaService {
       }
     ];
   }
+
+  /**
+   * L'efficacite mesuree des dossiers clos.
+   *
+   * <p>La fenetre est un parametre : six mois est l'usage, mais un procede
+   * lent — traitement thermique, cycle agricole — demande plus long, et un
+   * poste cadence se juge en trois mois.
+   */
+  effectiveness(months = 6): Observable<CapaEffectivenessSummary> {
+    if (environment.useMockApi) {
+      return of(this.mockEffectiveness(months)).pipe(delay(150));
+    }
+    const params = new HttpParams().set('months', months);
+    return this.http.get<CapaEffectivenessSummary>(this.effectivenessEndpoint, { params });
+  }
+
+  private mockEffectiveness(months: number): CapaEffectivenessSummary {
+    const rows = this.mockStore.slice(0, 3).map((c, i) => ({
+      capaId: c.id,
+      title: c.title,
+      criticity: c.criticity,
+      closedAt: c.closedAt ?? c.createdAt,
+      status: (i === 2 ? 'IN_OBSERVATION' : 'MEASURED') as 'IN_OBSERVATION' | 'MEASURED',
+      occurrencesBefore: 4 - i,
+      occurrencesAfter: i,
+      ratePercent: i === 2 ? undefined : 100 - i * 40,
+      aggravated: false,
+      daysObserved: i === 2 ? 60 : months * 30,
+      daysInWindow: months * 30,
+      declaredEffective: i === 1,
+      preciseMatch: i !== 1
+    }));
+    return {
+      windowMonths: months, measured: 2, inObservation: 1, notMeasurable: 0,
+      averageRatePercent: 80, aggravated: 0, declaredButFailed: 0,
+      truncated: false, rows
+    };
+  }
+
 }
 
 /**

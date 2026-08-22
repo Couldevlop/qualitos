@@ -1,0 +1,63 @@
+# Configuration GitGuardian (ggshield) — QualitOS
+#
+# Même règle que `.trivyignore` et `.gitleaks.toml` : par défaut, RIEN n'est
+# écarté. Toute entrée ci-dessous doit dire ce qu'elle écarte, POURQUOI ce n'est
+# pas un secret, et porter une date de revue. Une exception non motivée est une
+# fuite en sursis.
+#
+# PORTÉE — à lire avant de compter dessus. Ce fichier n'est lu que par
+# `ggshield` (analyse locale ou en intégration continue). Les alertes du tableau
+# de bord GitGuardian, elles, viennent de l'application GitHub et ne consultent
+# pas ce fichier : elles se classent dans le tableau de bord. Ce fichier est donc
+# la trace VERSIONNÉE de la décision — celle qui survit au départ de la personne
+# qui a cliqué.
+#
+# Usage local :
+#   ggshield secret scan repo .
+#
+# AUDIT DU 2026-08-21 — alerte sur la PR #114. Les 259 fichiers du diff ont été
+# relus : aucun mot de passe, clé ni jeton en littéral. Les scripts d'infra
+# (apply-step-up.sh, deploy.sh, render-realm.sh) ne manipulent que des variables
+# d'environnement, et `.credentials-local.md` n'a jamais été suivi par git.
+# Trois chaînes avaient l'APPARENCE d'un secret ; la première a été corrigée dans
+# le code plutôt qu'écartée ici, les deux autres figurent ci-dessous.
+#
+#   1. Empreinte factice de 64 caractères hexadécimaux dans les bancs du
+#      scellement de control plan. CORRIGÉE (commit 5428520) : motif répété,
+#      même forme, entropie nulle. Aucune exception nécessaire — quand on peut
+#      supprimer la ressemblance, on la supprime.
+
+version: 2
+
+secret:
+  ignored-paths:
+    # -----------------------------------------------------------------------
+    # 2. Sommes de contrôle Go (`go.sum`)
+    # -----------------------------------------------------------------------
+    # Chaînes base64 de 44 caractères, forme typique d'une clé d'API pour un
+    # détecteur d'entropie. Ce sont des empreintes de modules, PUBLIQUES par
+    # construction : elles proviennent de sum.golang.org et servent précisément
+    # à prouver qu'un module n'a pas été altéré. Les retirer casserait la
+    # vérification ; les remplacer n'a aucun sens.
+    # Revue : sans objet — la nature du fichier ne changera pas.
+    - "infra/blockchain/chaincode/**/go.sum"
+
+    # -----------------------------------------------------------------------
+    # 3. Realm Keycloak de développement
+    # -----------------------------------------------------------------------
+    # `realm-export.json` contient superadmin/superadmin et admin/admin. Ce sont
+    # des comptes de DÉMONSTRATION, et le fichier n'est importé qu'au tout
+    # premier démarrage d'un Keycloak sur une base vide — en pratique, le poste
+    # de développement et la pile docker-compose.
+    #
+    # Sur tout domaine exposé, `infra/k8s/deps/render-realm.sh` REMPLACE ces
+    # mots de passe par des valeurs générées avant publication du realm, et
+    # `infra/k8s/deploy.sh` pose ensuite la politique de mot de passe du realm.
+    # Aucun environnement joignable ne tourne donc avec ces identifiants.
+    #
+    # CE QUE CETTE EXCEPTION COÛTE, et il faut l'avoir en tête : un VRAI secret
+    # ajouté un jour à ce fichier ne serait plus signalé. Le fichier ne doit
+    # donc recevoir que des fixtures de démonstration. Un secret d'un
+    # environnement réel n'a rien à y faire — il vient de Vault (§18.2 #3).
+    # Revue : 2026-11-21
+    - "infra/keycloak/realm-export.json"

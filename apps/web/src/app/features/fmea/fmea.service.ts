@@ -31,12 +31,13 @@ export class FmeaService {
   // ---------- Projects ----------
 
   list(
-    page = 0, size = 50, status?: FmeaStatus, type?: FmeaType
+    page = 0, size = 50, status?: FmeaStatus, type?: FmeaType, productId?: string
   ): Observable<FmeaProjectPage> {
     if (environment.useMockApi) {
       const filtered = this.mockProjects
         .filter(p => !status || p.status === status)
-        .filter(p => !type   || p.type   === type);
+        .filter(p => !type   || p.type   === type)
+        .filter(p => !productId || p.productId === productId);
       return of({
         content: filtered, totalElements: filtered.length,
         totalPages: 1, number: 0, size: filtered.length
@@ -45,6 +46,9 @@ export class FmeaService {
     let params = new HttpParams().set('page', page).set('size', size);
     if (status) params = params.set('status', status);
     if (type)   params = params.set('type',   type);
+    // Le filtre par produit prime côté serveur : c'est lui qui sert l'onglet
+    // PFMEA de la fiche produit.
+    if (productId) params = params.set('productId', productId);
     return this.http.get<FmeaProjectPage>(`${this.endpoint}/projects`, { params });
   }
 
@@ -117,6 +121,17 @@ export class FmeaService {
       return of(this.mockProjects[0]).pipe(delay(120));
     }
     return this.http.post<FmeaProjectResponse>(`${this.endpoint}/projects/${id}/${op}`, {});
+  }
+
+  /** Rattache un produit à un projet FMEA existant. */
+  attachProduct(id: string, productId: string): Observable<FmeaProjectResponse> {
+    if (environment.useMockApi) {
+      const p = this.mockProjects.find(x => x.id === id);
+      if (p) { p.productId = productId; return of(p).pipe(delay(120)); }
+      return of(this.mockProjects[0]).pipe(delay(120));
+    }
+    return this.http.put<FmeaProjectResponse>(
+      `${this.endpoint}/projects/${id}/product/${productId}`, {});
   }
 
   statistics(id: string): Observable<FmeaProjectStatistics> {

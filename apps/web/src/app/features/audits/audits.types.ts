@@ -47,6 +47,12 @@ export interface AuditPlanResponse {
   type: AuditType;
   status: AuditStatus;
   standard?: string;
+  /**
+   * Référentiel du catalogue dont la checklist a été tirée (§8), s'il y en a un.
+   * Distinct de `standard`, texte libre : c'est lui qui dit qu'un référentiel
+   * réel est derrière cet audit.
+   */
+  standardId?: string;
   leadAuditorId: string;
   auditeeId?: string;
   scheduledDate?: string;

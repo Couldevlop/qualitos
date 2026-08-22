@@ -28,6 +28,8 @@ export interface NcListFilters {
   category?: NcCategory;
   /** Interne, externe, ou absent pour les deux. */
   origin?: NcOrigin;
+  /** NC d'un produit donné : sert l'onglet « NC liées » de sa fiche. */
+  productId?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -52,6 +54,7 @@ export class NcService {
     if (filters.severity) params = params.set('severity', filters.severity);
     if (filters.category) params = params.set('category', filters.category);
     if (filters.origin) params = params.set('origin', filters.origin);
+    if (filters.productId) params = params.set('productId', filters.productId);
     return this.http.get<NcPage>(this.endpoint, { params });
   }
 
@@ -348,7 +351,8 @@ export class NcService {
       (!filters.status || n.status === filters.status) &&
       (!filters.severity || n.severity === filters.severity) &&
       (!filters.category || n.category === filters.category) &&
-      (!filters.origin || n.origin === filters.origin));
+      (!filters.origin || n.origin === filters.origin) &&
+      (!filters.productId || n.productId === filters.productId));
     return {
       content: filtered, totalElements: filtered.length, totalPages: 1,
       number: 0, size: filtered.length

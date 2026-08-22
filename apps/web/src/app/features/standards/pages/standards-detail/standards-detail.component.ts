@@ -1,14 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Observable } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/auth.service';
+import {
+  TreeNodeDialogComponent, TreeNodeDialogData, TreeNodeResult
+} from '../tree-node-dialog/tree-node-dialog.component';
 import { StandardsService } from '../../standards.service';
 import {
   AdoptionResponse, AiDraftResponse, AlignmentReport, AuditBlancReport, CertificationBlancReport,
-  DocumentTemplate, DossierResponse, EvidenceResponse, EvidenceType, ProcessTemplate,
-  RoadmapStageResponse, RoadmapSummary, StageStatus, StandardDetail, StandardRevision,
-  StoryboardResponse
+  ClauseDetail, ClauseRequest, DocumentTemplate, DossierResponse, EvidenceResponse, EvidenceType,
+  ProcessTemplate, RequirementDetail, RequirementRequest, RoadmapStageResponse, RoadmapSummary,
+  SectionDetail, SectionRequest, StageStatus, StandardDetail, StandardRevision, StoryboardResponse
 } from '../../standards.types';
 
 @Component({
@@ -68,6 +73,7 @@ export class StandardsDetailComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly svc: StandardsService,
     private readonly auth: AuthService,
+    private readonly dialog: MatDialog,
     private readonly snack: MatSnackBar
   ) {}
 
@@ -148,6 +154,114 @@ export class StandardsDetailComponent implements OnInit {
       },
       error: () => this.snack.open($localize`:@@standards.detail.stage-update-error:Échec de la mise à jour`, $localize`:@@common.close:Fermer`, { duration: 3000 })
     });
+  }
+
+  // ---- Arborescence d'un référentiel du tenant (§8) ----
+
+  /**
+   * Recharge la fiche après chaque écriture au lieu de retoucher l'arbre en
+   * mémoire. Reconstruire côté client ferait diverger l'écran de la base au
+   * premier cas non prévu — ordre d'insertion, code normalisé par le serveur.
+   */
+  private reloadStandard(): void {
+    const standardId = this.standard?.id ?? this.adoption?.standardId;
+    if (!standardId) return;
+    this.svc.getStandardDetail(standardId).subscribe({
+      next: s => this.standard = s,
+      error: e => console.warn('[standards-detail] reload standard failed', e?.status)
+    });
+  }
+
+  addSection(): void {
+    this.editNode({ level: 'SECTION' }, req =>
+      this.svc.addSection(this.standard!.id, req as SectionRequest));
+  }
+
+  editSection(sec: SectionDetail): void {
+    this.editNode({ level: 'SECTION', node: sec }, req =>
+      this.svc.updateSection(this.standard!.id, sec.id, req as SectionRequest));
+  }
+
+  addClause(sec: SectionDetail): void {
+    this.editNode({ level: 'CLAUSE' }, req =>
+      this.svc.addClause(this.standard!.id, sec.id, req as ClauseRequest));
+  }
+
+  editClause(cl: ClauseDetail): void {
+    this.editNode({ level: 'CLAUSE', node: cl }, req =>
+      this.svc.updateClause(this.standard!.id, cl.id, req as ClauseRequest));
+  }
+
+  addRequirement(cl: ClauseDetail): void {
+    this.editNode({ level: 'REQUIREMENT' }, req =>
+      this.svc.addRequirement(this.standard!.id, cl.id, req as RequirementRequest));
+  }
+
+  editRequirement(r: RequirementDetail): void {
+    this.editNode({ level: 'REQUIREMENT', node: r }, req =>
+      this.svc.updateRequirement(this.standard!.id, r.id, req as RequirementRequest));
+  }
+
+  /**
+   * Supprimer une section emporte ses clauses, et une clause ses exigences : on
+   * demande confirmation en DISANT ce qui part, plutôt qu'un « êtes-vous sûr ? »
+   * que personne ne lit.
+   */
+  deleteSection(sec: SectionDetail): void {
+    const count = sec.clauses.length;
+    this.confirmThenWrite(
+      $localize`:@@standards.tree.confirm-section:Supprimer la section ${sec.code}:code: et les ${count}:count: clauses qu'elle contient ?`,
+      () => this.svc.deleteSection(this.standard!.id, sec.id));
+  }
+
+  deleteClause(cl: ClauseDetail): void {
+    const count = cl.requirements.length;
+    this.confirmThenWrite(
+      $localize`:@@standards.tree.confirm-clause:Supprimer la clause ${cl.code}:code: et les ${count}:count: exigences qu'elle contient ?`,
+      () => this.svc.deleteClause(this.standard!.id, cl.id));
+  }
+
+  deleteRequirement(r: RequirementDetail): void {
+    this.confirmThenWrite(
+      $localize`:@@standards.tree.confirm-requirement:Supprimer l'exigence ${r.code}:code: ?`,
+      () => this.svc.deleteRequirement(this.standard!.id, r.id));
+  }
+
+  private editNode(data: TreeNodeDialogData,
+                   write: (req: TreeNodeResult) => Observable<void>): void {
+    this.dialog.open(TreeNodeDialogComponent, { data, autoFocus: 'dialog' })
+      .afterClosed()
+      .subscribe(req => {
+        if (req) this.write(write(req));
+      });
+  }
+
+  private confirmThenWrite(question: string, write: () => Observable<void>): void {
+    if (!confirm(question)) return;
+    this.write(write());
+  }
+
+  private write(call: Observable<void>): void {
+    call.subscribe({
+      next: () => this.reloadStandard(),
+      error: e => this.snack.open(this.treeErrorMessage(e?.status),
+        $localize`:@@common.close:Fermer`, { duration: 4000 })
+    });
+  }
+
+  /**
+   * 409 et 403 appellent deux gestes différents — changer de code, ou renoncer
+   * parce que la norme vient de la plateforme. Les confondre laisserait
+   * l'utilisateur relancer indéfiniment une action qui n'aboutira jamais.
+   */
+  private treeErrorMessage(status: number | undefined): string {
+    if (status === 409) {
+      return $localize`:@@standards.tree.error-conflict:Ce code est déjà pris à ce niveau.`;
+    }
+    if (status === 403) {
+      return $localize`:@@standards.tree.error-platform:Une norme de la plateforme ne se modifie pas.`;
+    }
+    return $localize`:@@standards.tree.error-generic:Modification impossible pour le moment.`;
   }
 
   // ---- Preuves ----

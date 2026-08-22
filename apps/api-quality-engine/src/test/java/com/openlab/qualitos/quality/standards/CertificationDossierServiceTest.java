@@ -112,7 +112,7 @@ class CertificationDossierServiceTest {
         when(standards.getStandard(STD)).thenReturn(new StandardsDto.StandardDetail(
                 STD, "iso-9001", "ISO 9001:2015 — Systèmes de management de la qualité",
                 "ISO", "2015", null, "HLS", "all", "desc", true, 36, null,
-                StandardStatus.PUBLISHED, List.of()));
+                StandardStatus.PUBLISHED, List.of(), false));
         when(standards.getRoadmap(ADOPTION)).thenReturn(new StandardsDto.RoadmapSummary(
                 ADOPTION, 19, 2, 1, 0, 10.5,
                 List.of(new StandardsDto.RoadmapStageResponse(

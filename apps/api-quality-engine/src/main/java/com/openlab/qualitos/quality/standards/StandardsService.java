@@ -50,27 +50,28 @@ public class StandardsService {
     @Transactional(readOnly = true)
     public Page<StandardsDto.StandardSummary> listStandards(StandardStatus status, String family,
                                                             Pageable pageable) {
+        UUID tenantId = requireTenantId();
         Page<Standard> page;
         if (status != null) {
-            page = standardRepository.findByStatus(status, pageable);
+            page = standardRepository.findVisibleByStatus(status, tenantId, pageable);
         } else if (family != null) {
-            page = standardRepository.findByFamily(family, pageable);
+            page = standardRepository.findVisibleByFamily(family, tenantId, pageable);
         } else {
-            page = standardRepository.findAll(pageable);
+            page = standardRepository.findVisible(tenantId, pageable);
         }
         return page.map(this::toSummary);
     }
 
     @Transactional(readOnly = true)
     public StandardsDto.StandardDetail getStandard(UUID id) {
-        Standard s = standardRepository.findById(id)
+        Standard s = standardRepository.findVisibleById(id, requireTenantId())
                 .orElseThrow(() -> new StandardNotFoundException(id));
         return toDetail(s);
     }
 
     @Transactional(readOnly = true)
     public StandardsDto.StandardDetail getStandardByCode(String code) {
-        Standard s = standardRepository.findByCode(code)
+        Standard s = standardRepository.findVisibleByCode(code, requireTenantId())
                 .orElseThrow(() -> new StandardNotFoundException(code));
         return toDetail(s);
     }
@@ -93,7 +94,7 @@ public class StandardsService {
 
     public StandardsDto.AdoptionResponse adopt(StandardsDto.AdoptRequest request) {
         UUID tenantId = requireTenantId();
-        Standard s = standardRepository.findById(request.standardId())
+        Standard s = standardRepository.findVisibleById(request.standardId(), tenantId)
                 .orElseThrow(() -> new StandardNotFoundException(request.standardId()));
         if (s.getStatus() != StandardStatus.PUBLISHED) {
             throw new AdoptionConflictException(
@@ -482,9 +483,8 @@ public class StandardsService {
     }
 
     private void requireStandard(UUID standardId) {
-        if (!standardRepository.existsById(standardId)) {
-            throw new StandardNotFoundException(standardId);
-        }
+        standardRepository.findVisibleById(standardId, requireTenantId())
+                .orElseThrow(() -> new StandardNotFoundException(standardId));
     }
 
     private StandardsDto.DocumentTemplateResponse toDocumentTemplateResponse(StandardDocumentTemplate t) {
@@ -509,7 +509,7 @@ public class StandardsService {
                 .orElseThrow(() -> new TenantStandardNotFoundException(id));
     }
 
-    private UUID requireTenantId() {
+    UUID requireTenantId() {
         if (!TenantContext.hasTenant()) {
             throw new MissingTenantContextException();
         }
@@ -520,7 +520,8 @@ public class StandardsService {
         return new StandardsDto.StandardSummary(
                 s.getId(), s.getCode(), s.getFullName(), s.getPublisher(),
                 s.getCurrentVersion(), s.getFamily(), s.getApplicableIndustries(),
-                s.getStatus(), s.getRecertificationCycleMonths());
+                s.getStatus(), s.getRecertificationCycleMonths(),
+                s.getOwnerTenantId() != null);
     }
 
     private StandardsDto.StandardDetail toDetail(Standard s) {
@@ -543,7 +544,8 @@ public class StandardsService {
                 s.getCurrentVersion(), s.getPublicationDate(), s.getFamily(),
                 s.getApplicableIndustries(), s.getDescription(),
                 s.isCertificationBodyRequired(), s.getRecertificationCycleMonths(),
-                s.getRelatedNormCodes(), s.getStatus(), sections);
+                s.getRelatedNormCodes(), s.getStatus(), sections,
+                s.getOwnerTenantId() != null);
     }
 
     private StandardsDto.AdoptionResponse toAdoptionResponse(TenantStandard ts) {

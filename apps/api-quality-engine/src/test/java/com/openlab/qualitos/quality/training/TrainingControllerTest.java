@@ -99,7 +99,7 @@ class TrainingControllerTest {
     void assess_returnsCompetency() throws Exception {
         when(skillService.assess(any())).thenReturn(competencyResp());
         TrainingDto.AssessCompetencyRequest req = new TrainingDto.AssessCompetencyRequest(
-                USER, SKILL, 3, CompetencySource.TRAINING, null, null);
+                USER, "Anna Dubois", SKILL, 3, CompetencySource.TRAINING, null, null);
         mockMvc.perform(post("/api/v1/training/competencies/assess").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))

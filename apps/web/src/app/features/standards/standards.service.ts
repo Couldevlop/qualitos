@@ -6,9 +6,10 @@ import { delay } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {
   AdoptionResponse, AdoptionsPage, AdoptRequest, AiDraftResponse, AlignmentReport,
-  AuditBlancReport, CertificationBlancReport, DocumentTemplate, DossierResponse,
-  EvidenceResponse, LinkEvidenceRequest, ProcessTemplate, RoadmapSummary, StandardDetail,
-  StandardRevision, StandardSummary, StandardsPage, StoryboardResponse, UpdateStageRequest
+  AuditBlancReport, CertificationBlancReport, ClauseRequest, DocumentTemplate, DossierResponse,
+  EvidenceResponse, LinkEvidenceRequest, ProcessTemplate, RequirementRequest, RoadmapSummary,
+  SectionRequest, StandardDetail, StandardRevision, StandardSummary, StandardsPage,
+  StoryboardResponse, UpdateStageRequest
 } from './standards.types';
 
 @Injectable({ providedIn: 'root' })
@@ -28,6 +29,73 @@ export class StandardsService {
 
   getStandardDetail(id: string): Observable<StandardDetail> {
     return this.http.get<StandardDetail>(`${this.baseEndpoint}/${id}`);
+  }
+
+  /**
+   * Crée un référentiel d'audit à partir d'une procédure approuvée de la GED (§8).
+   * Le serveur en tire le code, le titre et la version ; l'arborescence naît vide.
+   *
+   * Les refus remontent tels quels : 409 (référentiel déjà créé) et 422 (procédure
+   * non approuvée) ne disent pas la même chose, et c'est à l'écran de choisir le
+   * message — pas au service de les aplatir en une erreur unique.
+   */
+  createProcedureReferential(documentId: string): Observable<void> {
+    return this.http.post<void>(`${this.baseEndpoint}/from-document`, { documentId });
+  }
+
+  /**
+   * Supprime un référentiel du tenant avec toute son arborescence. Refusé (409)
+   * tant qu'un projet de conformité le suit.
+   */
+  deleteProcedureReferential(standardId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseEndpoint}/${standardId}`);
+  }
+
+  // ---- Arborescence d'un référentiel du tenant (§8) ----
+  //
+  // Aucune de ces écritures ne rend le nœud créé : le serveur n'attribue son
+  // identifiant qu'à l'écriture en base. L'appelant relit la fiche, ce qui le
+  // garde fidèle à l'ordre et aux codes réellement retenus.
+
+  addSection(standardId: string, req: SectionRequest): Observable<void> {
+    return this.http.post<void>(`${this.baseEndpoint}/${standardId}/sections`, req);
+  }
+
+  updateSection(standardId: string, sectionId: string, req: SectionRequest): Observable<void> {
+    return this.http.patch<void>(`${this.baseEndpoint}/${standardId}/sections/${sectionId}`, req);
+  }
+
+  deleteSection(standardId: string, sectionId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseEndpoint}/${standardId}/sections/${sectionId}`);
+  }
+
+  addClause(standardId: string, sectionId: string, req: ClauseRequest): Observable<void> {
+    return this.http.post<void>(
+      `${this.baseEndpoint}/${standardId}/sections/${sectionId}/clauses`, req);
+  }
+
+  updateClause(standardId: string, clauseId: string, req: ClauseRequest): Observable<void> {
+    return this.http.patch<void>(`${this.baseEndpoint}/${standardId}/clauses/${clauseId}`, req);
+  }
+
+  deleteClause(standardId: string, clauseId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseEndpoint}/${standardId}/clauses/${clauseId}`);
+  }
+
+  addRequirement(standardId: string, clauseId: string, req: RequirementRequest): Observable<void> {
+    return this.http.post<void>(
+      `${this.baseEndpoint}/${standardId}/clauses/${clauseId}/requirements`, req);
+  }
+
+  updateRequirement(standardId: string, requirementId: string,
+                    req: RequirementRequest): Observable<void> {
+    return this.http.patch<void>(
+      `${this.baseEndpoint}/${standardId}/requirements/${requirementId}`, req);
+  }
+
+  deleteRequirement(standardId: string, requirementId: string): Observable<void> {
+    return this.http.delete<void>(
+      `${this.baseEndpoint}/${standardId}/requirements/${requirementId}`);
   }
 
   // ---- Adoptions ----
@@ -135,10 +203,14 @@ export class StandardsService {
     const items: StandardSummary[] = [
       { id: 's1', code: 'iso-9001', fullName: 'ISO 9001:2015 — Management de la qualité',
         publisher: 'ISO', currentVersion: '2015', family: 'HLS', applicableIndustries: 'all',
-        status: 'PUBLISHED', recertificationCycleMonths: 36 },
+        status: 'PUBLISHED', recertificationCycleMonths: 36, owned: false },
       { id: 's2', code: 'iso-27001', fullName: 'ISO/IEC 27001:2022 — Sécurité de l\'information',
         publisher: 'ISO/IEC', currentVersion: '2022', family: 'HLS', applicableIndustries: 'all',
-        status: 'PUBLISHED', recertificationCycleMonths: 36 }
+        status: 'PUBLISHED', recertificationCycleMonths: 36, owned: false },
+      // Un référentiel du tenant, pour que le mode démonstration montre aussi ce
+      // que la fonctionnalité apporte : une procédure interne devenue auditable.
+      { id: 's3', code: 'PRO-002', fullName: 'Procédure d\'audit interne',
+        currentVersion: 'v3', family: 'INTERNAL_PROCEDURE', status: 'PUBLISHED', owned: true }
     ];
     return { content: items, totalElements: items.length, totalPages: 1, number: 0, size: items.length };
   }

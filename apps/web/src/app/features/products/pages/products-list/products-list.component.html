@@ -1,0 +1,88 @@
+<div class="qos-page">
+  <qos-page-header
+    title="Produits" i18n-title="@@product.list-title"
+    subtitle="Le sujet du PFMEA et du control plan : ce qu'on fabrique, sa nomenclature et sa gamme."
+    i18n-subtitle="@@product.list-subtitle">
+    <button mat-flat-button color="primary" (click)="create()">
+      <mat-icon>add</mat-icon>
+      <span i18n="@@product.new">Nouveau produit</span>
+    </button>
+  </qos-page-header>
+
+  <div class="filters">
+    <mat-form-field appearance="outline" class="status-filter">
+      <mat-label i18n="@@product.filter-status">Statut</mat-label>
+      <mat-select [(ngModel)]="statusFilter" name="statusFilter">
+        <mat-option value="" i18n="@@product.filter-all">Tous</mat-option>
+        <mat-option *ngFor="let status of statuses" [value]="status">{{ status }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="state-row" *ngIf="loading" role="status">
+    <mat-progress-spinner mode="indeterminate" diameter="32"
+                          aria-label="Chargement" i18n-aria-label="@@common.loading-aria"></mat-progress-spinner>
+  </div>
+
+  <p class="empty" *ngIf="!loading && visibleRows.length === 0" i18n="@@product.list-empty">
+    Aucun produit. Créez-en un pour bâtir son PFMEA et son control plan.
+  </p>
+
+  <div class="qos-scroll-x" *ngIf="visibleRows.length > 0">
+    <table mat-table [dataSource]="visibleRows" class="product-table">
+
+      <ng-container matColumnDef="code">
+        <th mat-header-cell *matHeaderCellDef i18n="@@product.col-code">Référence</th>
+        <td mat-cell *matCellDef="let row"><code>{{ row.product.code }}</code></td>
+      </ng-container>
+
+      <ng-container matColumnDef="designation">
+        <th mat-header-cell *matHeaderCellDef i18n="@@product.col-designation">Désignation</th>
+        <td mat-cell *matCellDef="let row">{{ row.product.designation }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="family">
+        <th mat-header-cell *matHeaderCellDef i18n="@@product.col-family">Famille</th>
+        <td mat-cell *matCellDef="let row">
+          <span *ngIf="row.product.family">{{ row.product.family }}</span>
+          <span class="dim" *ngIf="!row.product.family">—</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef i18n="@@product.col-status">Statut</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="qos-badge"
+                [attr.data-tone]="row.product.status === 'ACTIVE' ? 'success'
+                                 : row.product.status === 'OBSOLETE' ? 'neutral' : 'info'">
+            {{ row.product.status }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="revisions">
+        <th mat-header-cell *matHeaderCellDef i18n="@@product.col-revisions">À réviser</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="qos-badge" data-tone="warning" *ngIf="row.pendingRevisions > 0">
+            {{ row.pendingRevisions }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-icon-button *ngIf="isEditable(row)" (click)="edit(row, $event)"
+                  aria-label="Modifier le produit" i18n-aria-label="@@product.edit-aria">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns;" class="product-row"
+          [class.obsolete]="row.product.status === 'OBSOLETE'"
+          (click)="open(row)" tabindex="0" (keyup.enter)="open(row)"></tr>
+    </table>
+  </div>
+</div>

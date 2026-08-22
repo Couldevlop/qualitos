@@ -5364,6 +5364,166 @@
         <source>Référence</source>
         <target state="translated">Reference</target>
       </trans-unit>
+      <trans-unit id="capa.effectiveness.title" datatype="html">
+        <source>Efficacité des CAPA</source>
+        <target state="translated">CAPA effectiveness</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.subtitle" datatype="html">
+        <source>Ce que le terrain dit des dossiers clos, et non ce qu'on avait déclaré à la clôture.</source>
+        <target state="translated">What the shop floor says about closed cases — not what was declared at closure.</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.window-aria" datatype="html">
+        <source>Fenêtre d'observation</source>
+        <target state="translated">Observation window</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.months" datatype="html">
+        <source>mois</source>
+        <target state="translated">months</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.average" datatype="html">
+        <source>Efficacité moyenne</source>
+        <target state="translated">Average effectiveness</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.average-hint" datatype="html">
+        <source>Sur les seuls dossiers mesurables</source>
+        <target state="translated">Across measurable cases only</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.measured" datatype="html">
+        <source>Mesurées</source>
+        <target state="translated">Measured</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.in-observation" datatype="html">
+        <source>En observation</source>
+        <target state="translated">Under observation</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.in-observation-hint" datatype="html">
+        <source>Fenêtre non écoulée</source>
+        <target state="translated">Window not yet elapsed</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.declared-but-failed" datatype="html">
+        <source>Déclarées efficaces à tort</source>
+        <target state="translated">Wrongly declared effective</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.truncated" datatype="html">
+        <source>Le périmètre dépasse la limite de lecture : seuls les dossiers les plus récents sont mesurés. La moyenne ne porte donc pas sur la totalité de l'historique.</source>
+        <target state="translated">The scope exceeds the read limit: only the most recent cases are measured, so the average does not cover the whole history.</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.none" datatype="html">
+        <source>Aucun dossier mesurable. L'efficacité se mesure sur une CAPA close née d'une non-conformité : sans elle, il n'y a pas de récidive à guetter.</source>
+        <target state="translated">No measurable case. Effectiveness is measured on a closed CAPA born from a non-conformity: without one, there is no recurrence to watch for.</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.col-capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.col-closed" datatype="html">
+        <source>Clôturée le</source>
+        <target state="translated">Closed on</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.col-recurrence" datatype="html">
+        <source>Récidives</source>
+        <target state="translated">Recurrences</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.col-rate" datatype="html">
+        <source>Efficacité</source>
+        <target state="translated">Effectiveness</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.col-declared" datatype="html">
+        <source>Déclarée</source>
+        <target state="translated">Declared</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.before" datatype="html">
+        <source>avant</source>
+        <target state="translated">before</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.elapsed" datatype="html">
+        <source>en</source>
+        <target state="translated">in</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.too-early" datatype="html">
+        <source>Trop tôt pour conclure</source>
+        <target state="translated">Too early to conclude</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.not-measurable" datatype="html">
+        <source>Aucune occurrence antérieure</source>
+        <target state="translated">No prior occurrence</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.declared-yes" datatype="html">
+        <source>Efficace</source>
+        <target state="translated">Effective</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.declared-no" datatype="html">
+        <source>Non prononcée</source>
+        <target state="translated">Not stated</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.contradicted-aria" datatype="html">
+        <source>Démentie par la mesure</source>
+        <target state="translated">Contradicted by the measurement</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.approximate" datatype="html">
+        <source>Rapprochement par catégorie — taux indicatif</source>
+        <target state="translated">Matched by category — rate is indicative</target>
+      </trans-unit>
+      <trans-unit id="capa.effectiveness.failed" datatype="html">
+        <source>Impossible de charger l'efficacité des CAPA.</source>
+        <target state="translated">Could not load CAPA effectiveness.</target>
+      </trans-unit>
+      <trans-unit id="nav.capa-efficacite" datatype="html">
+        <source>Efficacité CAPA</source>
+        <target state="translated">CAPA effectiveness</target>
+      </trans-unit>
+      <trans-unit id="nav.competences" datatype="html">
+        <source>Matrice de compétences</source>
+        <target state="translated">Competency matrix</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.title" datatype="html">
+        <source>Matrice de compétences</source>
+        <target state="translated">Competency matrix</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.subtitle" datatype="html">
+        <source>Qui sait faire quoi. Une ligne dont une seule case est remplie signale une compétence qui ne tient qu'à une personne.</source>
+        <target state="translated">Who can do what. A row with a single filled cell flags a skill held by one person only.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.only-at-risk" datatype="html">
+        <source>Seulement les compétences à risque</source>
+        <target state="translated">Only skills at risk</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.col-skill" datatype="html">
+        <source>Compétence</source>
+        <target state="translated">Skill</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.ungrouped" datatype="html">
+        <source>Sans famille</source>
+        <target state="translated">Ungrouped</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.single-holder" datatype="html">
+        <source>Un seul détenteur</source>
+        <target state="translated">Single holder</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.unassessed" datatype="html">
+        <source>Non évalué</source>
+        <target state="translated">Not assessed</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.unassessed-legend" datatype="html">
+        <source>non évalué</source>
+        <target state="translated">not assessed</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.legend" datatype="html">
+        <source>Niveaux</source>
+        <target state="translated">Levels</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.none" datatype="html">
+        <source>Aucune compétence au catalogue. Créez-en, puis évaluez les collaborateurs : la matrice se construit à partir des évaluations.</source>
+        <target state="translated">No skill in the catalogue. Create some, then assess people: the matrix is built from the assessments.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.no-people" datatype="html">
+        <source>Le catalogue existe, mais personne n'a encore été évalué. Les colonnes sont les personnes évaluées — la matrice reste vide tant qu'aucune ne l'est.</source>
+        <target state="translated">The catalogue exists, but nobody has been assessed yet. Columns are the assessed people — the matrix stays empty until someone is.</target>
+      </trans-unit>
+      <trans-unit id="training.matrix.failed" datatype="html">
+        <source>Impossible de charger la matrice de compétences.</source>
+        <target state="translated">Could not load the competency matrix.</target>
+      </trans-unit>
       <trans-unit id="capa.evidence.title" datatype="html">
         <source>Preuves</source>
         <target state="translated">Evidence</target>
@@ -16110,6 +16270,602 @@ declared income
         <source>Impossible d'annuler cette inscription.</source>
         <target state="translated">Cannot cancel this enrollment.</target>
       </trans-unit>
+      <trans-unit id="nav.produits" datatype="html">
+        <source>Produits</source>
+        <target state="translated">Products</target>
+      </trans-unit>
+      <trans-unit id="common.edit-aria" datatype="html">
+        <source>Modifier</source>
+        <target state="translated">Edit</target>
+      </trans-unit>
+      <trans-unit id="common.delete-aria" datatype="html">
+        <source>Supprimer</source>
+        <target state="translated">Delete</target>
+      </trans-unit>
+      <trans-unit id="product.list-title" datatype="html">
+        <source>Produits</source>
+        <target state="translated">Products</target>
+      </trans-unit>
+      <trans-unit id="product.list-subtitle" datatype="html">
+        <source>Le sujet du PFMEA et du control plan : ce qu'on fabrique, sa nomenclature et sa gamme.</source>
+        <target state="translated">The subject of the PFMEA and the control plan: what is made, its bill of materials and its routing.</target>
+      </trans-unit>
+      <trans-unit id="product.list-empty" datatype="html">
+        <source>Aucun produit. Créez-en un pour bâtir son PFMEA et son control plan.</source>
+        <target state="translated">No product yet. Create one to build its PFMEA and its control plan.</target>
+      </trans-unit>
+      <trans-unit id="product.list-failed" datatype="html">
+        <source>Impossible de charger les produits.</source>
+        <target state="translated">Products could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="product.new" datatype="html">
+        <source>Nouveau produit</source>
+        <target state="translated">New product</target>
+      </trans-unit>
+      <trans-unit id="product.filter-status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">Status</target>
+      </trans-unit>
+      <trans-unit id="product.filter-all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">All</target>
+      </trans-unit>
+      <trans-unit id="product.col-code" datatype="html">
+        <source>Référence</source>
+        <target state="translated">Reference</target>
+      </trans-unit>
+      <trans-unit id="product.col-designation" datatype="html">
+        <source>Désignation</source>
+        <target state="translated">Designation</target>
+      </trans-unit>
+      <trans-unit id="product.col-family" datatype="html">
+        <source>Famille</source>
+        <target state="translated">Family</target>
+      </trans-unit>
+      <trans-unit id="product.col-status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">Status</target>
+      </trans-unit>
+      <trans-unit id="product.col-revisions" datatype="html">
+        <source>À réviser</source>
+        <target state="translated">To review</target>
+      </trans-unit>
+      <trans-unit id="product.edit-aria" datatype="html">
+        <source>Modifier le produit</source>
+        <target state="translated">Edit the product</target>
+      </trans-unit>
+      <trans-unit id="product.detail-failed" datatype="html">
+        <source>Produit introuvable.</source>
+        <target state="translated">Product not found.</target>
+      </trans-unit>
+      <trans-unit id="product.activate" datatype="html">
+        <source>Activer</source>
+        <target state="translated">Activate</target>
+      </trans-unit>
+      <trans-unit id="product.obsolete" datatype="html">
+        <source>Rendre obsolète</source>
+        <target state="translated">Mark obsolete</target>
+      </trans-unit>
+      <trans-unit id="product.no-revision" datatype="html">
+        <source>Rien en attente</source>
+        <target state="translated">Nothing pending</target>
+      </trans-unit>
+      <trans-unit id="product.tab-summary" datatype="html">
+        <source>Synthèse</source>
+        <target state="translated">Summary</target>
+      </trans-unit>
+      <trans-unit id="product.tab-bom" datatype="html">
+        <source>Nomenclature</source>
+        <target state="translated">Bill of materials</target>
+      </trans-unit>
+      <trans-unit id="product.tab-routing" datatype="html">
+        <source>Gamme</source>
+        <target state="translated">Routing</target>
+      </trans-unit>
+      <trans-unit id="product.tab-pfmea" datatype="html">
+        <source>PFMEA</source>
+        <target state="translated">PFMEA</target>
+      </trans-unit>
+      <trans-unit id="product.tab-control-plan" datatype="html">
+        <source>Control Plan</source>
+        <target state="translated">Control plan</target>
+      </trans-unit>
+      <trans-unit id="product.tab-nc" datatype="html">
+        <source>NC liées</source>
+        <target state="translated">Linked NCs</target>
+      </trans-unit>
+      <trans-unit id="product.tab-revisions" datatype="html">
+        <source>Révisions proposées</source>
+        <target state="translated">Proposed revisions</target>
+      </trans-unit>
+      <trans-unit id="product.bom-empty" datatype="html">
+        <source>Aucun composant déclaré.</source>
+        <target state="translated">No component declared.</target>
+      </trans-unit>
+      <trans-unit id="product.bom-failed" datatype="html">
+        <source>Nomenclature indisponible.</source>
+        <target state="translated">Bill of materials unavailable.</target>
+      </trans-unit>
+      <trans-unit id="product.routing-empty" datatype="html">
+        <source>Aucune opération. C'est la gamme qui relie le PFMEA au control plan.</source>
+        <target state="translated">No operation yet. The routing is what ties the PFMEA to the control plan.</target>
+      </trans-unit>
+      <trans-unit id="product.routing-failed" datatype="html">
+        <source>Gamme indisponible.</source>
+        <target state="translated">Routing unavailable.</target>
+      </trans-unit>
+      <trans-unit id="product.component-new" datatype="html">
+        <source>Ajouter un composant</source>
+        <target state="translated">Add a component</target>
+      </trans-unit>
+      <trans-unit id="product.component-edit" datatype="html">
+        <source>Modifier le composant</source>
+        <target state="translated">Edit the component</target>
+      </trans-unit>
+      <trans-unit id="product.operation-new" datatype="html">
+        <source>Ajouter une opération</source>
+        <target state="translated">Add an operation</target>
+      </trans-unit>
+      <trans-unit id="product.operation-edit" datatype="html">
+        <source>Modifier l'opération</source>
+        <target state="translated">Edit the operation</target>
+      </trans-unit>
+      <trans-unit id="product.operation-conflict" datatype="html">
+        <source>Ce code d'opération existe déjà sur ce produit.</source>
+        <target state="translated">This operation code already exists on this product.</target>
+      </trans-unit>
+      <trans-unit id="product.dialog-new" datatype="html">
+        <source>Nouveau produit</source>
+        <target state="translated">New product</target>
+      </trans-unit>
+      <trans-unit id="product.dialog-edit" datatype="html">
+        <source>Modifier le produit</source>
+        <target state="translated">Edit the product</target>
+      </trans-unit>
+      <trans-unit id="product.field-code" datatype="html">
+        <source>Référence</source>
+        <target state="translated">Reference</target>
+      </trans-unit>
+      <trans-unit id="product.field-code-hint" datatype="html">
+        <source>Lettres, chiffres, point, tiret ou souligné. Elle ne se modifiera plus.</source>
+        <target state="translated">Letters, digits, dot, hyphen or underscore. It cannot be changed afterwards.</target>
+      </trans-unit>
+      <trans-unit id="product.field-designation" datatype="html">
+        <source>Désignation</source>
+        <target state="translated">Designation</target>
+      </trans-unit>
+      <trans-unit id="product.field-family" datatype="html">
+        <source>Famille</source>
+        <target state="translated">Family</target>
+      </trans-unit>
+      <trans-unit id="product.field-revision" datatype="html">
+        <source>Indice</source>
+        <target state="translated">Revision index</target>
+      </trans-unit>
+      <trans-unit id="product.field-customer" datatype="html">
+        <source>Client</source>
+        <target state="translated">Customer</target>
+      </trans-unit>
+      <trans-unit id="product.field-site" datatype="html">
+        <source>Site</source>
+        <target state="translated">Site</target>
+      </trans-unit>
+      <trans-unit id="product.field-sequence" datatype="html">
+        <source>Rang</source>
+        <target state="translated">Rank</target>
+      </trans-unit>
+      <trans-unit id="product.field-reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">Reference</target>
+      </trans-unit>
+      <trans-unit id="product.field-label" datatype="html">
+        <source>Libellé</source>
+        <target state="translated">Label</target>
+      </trans-unit>
+      <trans-unit id="product.field-quantity" datatype="html">
+        <source>Quantité</source>
+        <target state="translated">Quantity</target>
+      </trans-unit>
+      <trans-unit id="product.field-unit" datatype="html">
+        <source>Unité</source>
+        <target state="translated">Unit</target>
+      </trans-unit>
+      <trans-unit id="product.field-op-code" datatype="html">
+        <source>Code</source>
+        <target state="translated">Code</target>
+      </trans-unit>
+      <trans-unit id="product.field-workstation" datatype="html">
+        <source>Poste</source>
+        <target state="translated">Workstation</target>
+      </trans-unit>
+      <trans-unit id="product.save-failed" datatype="html">
+        <source>Enregistrement impossible.</source>
+        <target state="translated">Could not save.</target>
+      </trans-unit>
+      <trans-unit id="product.delete-failed" datatype="html">
+        <source>Suppression impossible.</source>
+        <target state="translated">Could not delete.</target>
+      </trans-unit>
+      <trans-unit id="product.code-conflict" datatype="html">
+        <source>Cette référence est déjà utilisée.</source>
+        <target state="translated">This reference is already in use.</target>
+      </trans-unit>
+      <trans-unit id="product.nc-empty" datatype="html">
+        <source>Aucune non-conformité rattachée à ce produit.</source>
+        <target state="translated">No non-conformity linked to this product.</target>
+      </trans-unit>
+      <trans-unit id="product.nc-failed" datatype="html">
+        <source>Non-conformités indisponibles.</source>
+        <target state="translated">Non-conformities unavailable.</target>
+      </trans-unit>
+      <trans-unit id="product.nc-unexplained" datatype="html">
+        <source>Défauts que l'analyse n'explique pas</source>
+        <target state="translated">Defects the analysis does not explain</target>
+      </trans-unit>
+      <trans-unit id="product.nc-unexplained-hint" datatype="html">
+        <source>Aucun mode de défaillance ne leur est rattaché : soit le PFMEA en ignore un, soit le rattachement reste à faire.</source>
+        <target state="translated">No failure mode is linked to them: either the PFMEA is missing one, or the link has yet to be made.</target>
+      </trans-unit>
+      <trans-unit id="product.nc-explained" datatype="html">
+        <source>Défauts rattachés à un mode de défaillance</source>
+        <target state="translated">Defects linked to a failure mode</target>
+      </trans-unit>
+      <trans-unit id="product.nc-col-ref" datatype="html">
+        <source>Référence</source>
+        <target state="translated">Reference</target>
+      </trans-unit>
+      <trans-unit id="product.nc-col-title" datatype="html">
+        <source>Intitulé</source>
+        <target state="translated">Title</target>
+      </trans-unit>
+      <trans-unit id="product.nc-col-severity" datatype="html">
+        <source>Gravité</source>
+        <target state="translated">Severity</target>
+      </trans-unit>
+      <trans-unit id="product.nc-col-detected" datatype="html">
+        <source>Détectée le</source>
+        <target state="translated">Detected on</target>
+      </trans-unit>
+      <trans-unit id="pfmea.load-failed" datatype="html">
+        <source>PFMEA indisponible.</source>
+        <target state="translated">PFMEA unavailable.</target>
+      </trans-unit>
+      <trans-unit id="pfmea.no-project" datatype="html">
+        <source>Aucun PFMEA rattaché à ce produit. Créez-en un depuis le module FMEA, puis rattachez-le.</source>
+        <target state="translated">No PFMEA linked to this product. Create one in the FMEA module, then link it.</target>
+      </trans-unit>
+      <trans-unit id="pfmea.no-item" datatype="html">
+        <source>Ce PFMEA ne contient encore aucune ligne d'analyse.</source>
+        <target state="translated">This PFMEA contains no analysis line yet.</target>
+      </trans-unit>
+      <trans-unit id="pfmea.revision" datatype="html">
+        <source>révision {{ p.revision }}</source>
+        <target state="translated">revision {{ p.revision }}</target>
+      </trans-unit>
+      <trans-unit id="pfmea.col-failure-mode" datatype="html">
+        <source>Mode de défaillance</source>
+        <target state="translated">Failure mode</target>
+      </trans-unit>
+      <trans-unit id="pfmea.col-sod" datatype="html">
+        <source>S / O / D</source>
+        <target state="translated">S / O / D</target>
+      </trans-unit>
+      <trans-unit id="pfmea.col-rpn" datatype="html">
+        <source>RPN</source>
+        <target state="translated">RPN</target>
+      </trans-unit>
+      <trans-unit id="pfmea.col-ap" datatype="html">
+        <source>Priorité d'action</source>
+        <target state="translated">Action priority</target>
+      </trans-unit>
+      <trans-unit id="pfmea.not-rated" datatype="html">
+        <source>non cotée</source>
+        <target state="translated">not rated</target>
+      </trans-unit>
+      <trans-unit id="pfmea.col-flag" datatype="html">
+        <source>Révision</source>
+        <target state="translated">Revision</target>
+      </trans-unit>
+      <trans-unit id="pfmea.flag-tooltip" datatype="html">
+        <source>Une révision est proposée sur cette ligne</source>
+        <target state="translated">A revision is proposed on this line</target>
+      </trans-unit>
+      <trans-unit id="controlplan.load-failed" datatype="html">
+        <source>Control plan indisponible.</source>
+        <target state="translated">Control plan unavailable.</target>
+      </trans-unit>
+      <trans-unit id="controlplan.none" datatype="html">
+        <source>Aucun control plan. C'est lui qui traduit le PFMEA en contrôles réellement exécutés au poste.</source>
+        <target state="translated">No control plan. It is what turns the PFMEA into checks actually performed at the workstation.</target>
+      </trans-unit>
+      <trans-unit id="controlplan.no-line" datatype="html">
+        <source>Ce plan ne contient encore aucune ligne.</source>
+        <target state="translated">This plan contains no line yet.</target>
+      </trans-unit>
+      <trans-unit id="controlplan.plans-aria" datatype="html">
+        <source>Plans</source>
+        <target state="translated">Plans</target>
+      </trans-unit>
+      <trans-unit id="controlplan.new" datatype="html">
+        <source>Nouveau brouillon</source>
+        <target state="translated">New draft</target>
+      </trans-unit>
+      <trans-unit id="controlplan.draft-exists" datatype="html">
+        <source>Un brouillon existe déjà pour cette phase.</source>
+        <target state="translated">A draft already exists for this phase.</target>
+      </trans-unit>
+      <trans-unit id="controlplan.open-revision" datatype="html">
+        <source>Ouvrir une révision</source>
+        <target state="translated">Open a revision</target>
+      </trans-unit>
+      <trans-unit id="controlplan.revision-failed" datatype="html">
+        <source>Ouverture de révision impossible.</source>
+        <target state="translated">Could not open a revision.</target>
+      </trans-unit>
+      <trans-unit id="controlplan.approve" datatype="html">
+        <source>Approuver</source>
+        <target state="translated">Approve</target>
+      </trans-unit>
+      <trans-unit id="controlplan.approve-failed" datatype="html">
+        <source>Approbation impossible.</source>
+        <target state="translated">Could not approve.</target>
+      </trans-unit>
+      <trans-unit id="controlplan.add-line" datatype="html">
+        <source>Ajouter une ligne</source>
+        <target state="translated">Add a line</target>
+      </trans-unit>
+      <trans-unit id="controlplan.line-new" datatype="html">
+        <source>Ajouter une ligne</source>
+        <target state="translated">Add a line</target>
+      </trans-unit>
+      <trans-unit id="controlplan.line-edit" datatype="html">
+        <source>Modifier la ligne</source>
+        <target state="translated">Edit the line</target>
+      </trans-unit>
+      <trans-unit id="controlplan.seal-title" datatype="html">
+        <source>Document scellé et ancré</source>
+        <target state="translated">Sealed and anchored document</target>
+      </trans-unit>
+      <trans-unit id="controlplan.seal-hash" datatype="html">
+        <source>Empreinte</source>
+        <target state="translated">Fingerprint</target>
+      </trans-unit>
+      <trans-unit id="controlplan.seal-tx" datatype="html">
+        <source>Transaction</source>
+        <target state="translated">Transaction</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-sample-size-hint" datatype="html">
+        <source>Une règle, pas seulement un nombre : « 100 % », « 5 au réglage puis 1 sur 50 ».</source>
+        <target state="translated">A rule, not just a number: "100%", "5 at setup then 1 in 50".</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-sop" datatype="html">
+        <source>Référence de procédure</source>
+        <target state="translated">Procedure reference</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-flow" datatype="html">
+        <source>Entrée ou sortie</source>
+        <target state="translated">Input or output</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-flow-none" datatype="html">
+        <source>Non précisé</source>
+        <target state="translated">Not specified</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-flow-hint" datatype="html">
+        <source>Contrôler une entrée empêche le défaut ; contrôler une sortie le constate.</source>
+        <target state="translated">Checking an input prevents the defect; checking an output records it.</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-who" datatype="html">
+        <source>Qui ou quoi mesure</source>
+        <target state="translated">Who or what measures</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-recording" datatype="html">
+        <source>Lieu d'enregistrement</source>
+        <target state="translated">Recording location</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-recording-hint" datatype="html">
+        <source>Où l'auditeur ira chercher la preuve que le contrôle a eu lieu.</source>
+        <target state="translated">Where the auditor will look for evidence that the check took place.</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-measured-by" datatype="html">
+        <source>Qui mesure</source>
+        <target state="translated">Measured by</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-trace" datatype="html">
+        <source>Trace</source>
+        <target state="translated">Trace</target>
+      </trans-unit>
+      <trans-unit id="controlplan.locked" datatype="html">
+        <source>Ce plan est approuvé : ouvrez une révision pour le modifier.</source>
+        <target state="translated">This plan is approved: open a revision to change it.</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-characteristic" datatype="html">
+        <source>Caractéristique</source>
+        <target state="translated">Characteristic</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-spec" datatype="html">
+        <source>Spécification</source>
+        <target state="translated">Specification</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-control" datatype="html">
+        <source>Contrôle</source>
+        <target state="translated">Control</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-reaction" datatype="html">
+        <source>Plan de réaction</source>
+        <target state="translated">Reaction plan</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-justification" datatype="html">
+        <source>Justification</source>
+        <target state="translated">Justification</target>
+      </trans-unit>
+      <trans-unit id="controlplan.justified" datatype="html">
+        <source>PFMEA</source>
+        <target state="translated">PFMEA</target>
+      </trans-unit>
+      <trans-unit id="controlplan.unjustified" datatype="html">
+        <source>sans justification</source>
+        <target state="translated">unjustified</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-operation" datatype="html">
+        <source>Opération</source>
+        <target state="translated">Operation</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-none" datatype="html">
+        <source>Aucune</source>
+        <target state="translated">None</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-characteristic" datatype="html">
+        <source>Caractéristique</source>
+        <target state="translated">Characteristic</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-type" datatype="html">
+        <source>Type</source>
+        <target state="translated">Type</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-class" datatype="html">
+        <source>Classement</source>
+        <target state="translated">Classification</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-spec" datatype="html">
+        <source>Spécification</source>
+        <target state="translated">Specification</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-tol-lower" datatype="html">
+        <source>Tolérance mini</source>
+        <target state="translated">Lower tolerance</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-tol-upper" datatype="html">
+        <source>Tolérance maxi</source>
+        <target state="translated">Upper tolerance</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-machine" datatype="html">
+        <source>Moyen</source>
+        <target state="translated">Equipment</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-technique" datatype="html">
+        <source>Technique de mesure</source>
+        <target state="translated">Measurement technique</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-sample-size" datatype="html">
+        <source>Taille d'échantillon</source>
+        <target state="translated">Sample size</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-frequency" datatype="html">
+        <source>Fréquence</source>
+        <target state="translated">Frequency</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-method" datatype="html">
+        <source>Méthode de contrôle</source>
+        <target state="translated">Control method</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-reaction" datatype="html">
+        <source>Plan de réaction</source>
+        <target state="translated">Reaction plan</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-fmea" datatype="html">
+        <source>Ligne de PFMEA qui justifie ce contrôle</source>
+        <target state="translated">PFMEA line that justifies this control</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-no-justification" datatype="html">
+        <source>Aucune — ce contrôle n'est justifié par aucune analyse</source>
+        <target state="translated">None — this control is justified by no analysis</target>
+      </trans-unit>
+      <trans-unit id="revision.load-failed" datatype="html">
+        <source>Propositions indisponibles.</source>
+        <target state="translated">Proposals unavailable.</target>
+      </trans-unit>
+      <trans-unit id="revision.none" datatype="html">
+        <source>Aucune révision proposée. Les non-conformités et les CAPA closes en déposent ici.</source>
+        <target state="translated">No revision proposed. Non-conformities and closed CAPAs file theirs here.</target>
+      </trans-unit>
+      <trans-unit id="revision.accept" datatype="html">
+        <source>Accepter</source>
+        <target state="translated">Accept</target>
+      </trans-unit>
+      <trans-unit id="revision.reject" datatype="html">
+        <source>Refuser</source>
+        <target state="translated">Reject</target>
+      </trans-unit>
+      <trans-unit id="revision.note" datatype="html">
+        <source>Motif de refus</source>
+        <target state="translated">Reason for rejection</target>
+      </trans-unit>
+      <trans-unit id="revision.note-hint" datatype="html">
+        <source>Un refus sans motif écrit est l'écart que l'auditeur cherche.</source>
+        <target state="translated">A rejection with no written reason is exactly the finding an auditor looks for.</target>
+      </trans-unit>
+      <trans-unit id="revision.accept-failed" datatype="html">
+        <source>Acceptation impossible.</source>
+        <target state="translated">Could not accept.</target>
+      </trans-unit>
+      <trans-unit id="revision.reject-failed" datatype="html">
+        <source>Refus impossible.</source>
+        <target state="translated">Could not reject.</target>
+      </trans-unit>
+      <trans-unit id="revision.already-decided" datatype="html">
+        <source>Cette proposition a déjà été tranchée.</source>
+        <target state="translated">This proposal has already been decided.</target>
+      </trans-unit>
+      <trans-unit id="revision.create-pfmea" datatype="html">
+        <source>Créer une ligne de PFMEA</source>
+        <target state="translated">Create a PFMEA line</target>
+      </trans-unit>
+      <trans-unit id="revision.create-line" datatype="html">
+        <source>Créer une ligne de control plan</source>
+        <target state="translated">Create a control plan line</target>
+      </trans-unit>
+      <trans-unit id="nc.create.product" datatype="html">
+        <source>Produit concerné</source>
+        <target state="translated">Product concerned</target>
+      </trans-unit>
+      <trans-unit id="nc.create.no-product" datatype="html">
+        <source>Aucun — cette NC ne vise pas un produit</source>
+        <target state="translated">None — this NC does not target a product</target>
+      </trans-unit>
+      <trans-unit id="nc.create.failure-mode" datatype="html">
+        <source>Mode de défaillance du PFMEA</source>
+        <target state="translated">PFMEA failure mode</target>
+      </trans-unit>
+      <trans-unit id="nc.create.suggest" datatype="html">
+        <source>Proposer</source>
+        <target state="translated">Suggest</target>
+      </trans-unit>
+      <trans-unit id="nc.create.matched-terms" datatype="html">
+        <source>termes communs : {{ choice.matchedTerms }}</source>
+        <target state="translated">shared terms: {{ choice.matchedTerms }}</target>
+      </trans-unit>
+      <trans-unit id="nc.create.none-matches" datatype="html">
+        <source>Aucun mode ne correspond</source>
+        <target state="translated">No failure mode matches</target>
+      </trans-unit>
+      <trans-unit id="nc.create.none-matches-hint" datatype="html">
+        <source>Un défaut que l'analyse n'avait pas prévu : une ligne de PFMEA sera proposée.</source>
+        <target state="translated">A defect the analysis had not foreseen: a PFMEA line will be proposed.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.no-suggestion" datatype="html">
+        <source>Aucune suggestion pour ce texte. « Aucun mode ne correspond » reste un choix valable.</source>
+        <target state="translated">No suggestion for this text. "No failure mode matches" remains a valid answer.</target>
+      </trans-unit>
+      <trans-unit id="stepup.required" datatype="html">
+        <source>Cette signature exige votre code à usage unique.</source>
+        <target state="translated">This signature requires your one-time code.</target>
+      </trans-unit>
+      <trans-unit id="stepup.reauthenticate" datatype="html">
+        <source>Se réauthentifier</source>
+        <target state="translated">Re-authenticate</target>
+      </trans-unit>
+      <trans-unit id="stepup.unavailable" datatype="html">
+        <source>Second facteur indisponible sur cet environnement.</source>
+        <target state="translated">Second factor unavailable in this environment.</target>
+      </trans-unit>
+      <trans-unit id="capa.impact-title" datatype="html">
+        <source>Impact PFMEA / Control Plan</source>
+        <target state="translated">PFMEA / control plan impact</target>
+      </trans-unit>
+      <trans-unit id="capa.impact-subtitle" datatype="html">
+        <source>Ce que la clôture de ce dossier a proposé de réviser.</source>
+        <target state="translated">What closing this case proposed to revise.</target>
+      </trans-unit>
       <trans-unit id="changes.approver.added" datatype="html">
         <source>Approbateur ajouté.</source>
         <target state="translated">Approver added.</target>
@@ -18345,6 +19101,22 @@ declared income
       <trans-unit id="fmea.item.recommended-action" datatype="html">
         <source>Action recommandée</source>
         <target state="translated">Recommended action</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.action-owner-name" datatype="html">
+        <source>Responsable de l'action</source>
+        <target state="translated">Action owner</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.action-owner-name-hint" datatype="html">
+        <source>Une personne ou un service — la trame accepte les deux.</source>
+        <target state="translated">A person or a department — the form accepts either.</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.actions-taken" datatype="html">
+        <source>Actions réalisées</source>
+        <target state="translated">Actions taken</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.actions-taken-at" datatype="html">
+        <source>Date de réalisation</source>
+        <target state="translated">Date completed</target>
       </trans-unit>
       <trans-unit id="fmea.item.action-due-date" datatype="html">
         <source>Échéance action</source>
@@ -20715,6 +21487,254 @@ India (service centre)</target>
       <trans-unit id="consents.withdraw.error" datatype="html">
         <source>Retrait impossible.</source>
         <target state="translated">Withdrawal failed.</target>
+      </trans-unit>
+      <trans-unit id="standards.list.scope-label" datatype="html">
+        <source>Afficher</source>
+        <target state="translated">Show</target>
+      </trans-unit>
+      <trans-unit id="standards.list.scope-all" datatype="html">
+        <source>Tout</source>
+        <target state="translated">All</target>
+      </trans-unit>
+      <trans-unit id="standards.list.scope-owned" datatype="html">
+        <source>Procédures internes</source>
+        <target state="translated">Internal procedures</target>
+      </trans-unit>
+      <trans-unit id="standards.list.scope-platform" datatype="html">
+        <source>Normes livrées</source>
+        <target state="translated">Delivered standards</target>
+      </trans-unit>
+      <trans-unit id="standards.list.create-procedure" datatype="html">
+        <source>Créer depuis une procédure</source>
+        <target state="translated">Create from a procedure</target>
+      </trans-unit>
+      <trans-unit id="standards.list.owned-badge" datatype="html">
+        <source>Procédure interne</source>
+        <target state="translated">Internal procedure</target>
+      </trans-unit>
+      <trans-unit id="standards.list.catalog-empty" datatype="html">
+        <source>Aucun référentiel sous ce filtre. Créez-en un depuis une procédure approuvée de votre GED.</source>
+        <target state="translated">No referential under this filter. Create one from an approved procedure in your document control.</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.title" datatype="html">
+        <source>Créer un référentiel depuis une procédure</source>
+        <target state="translated">Create a referential from a procedure</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.subtitle" datatype="html">
+        <source>Le référentiel reprend le code, le titre et la version de la procédure. Son arborescence naît vide : vous y saisirez les exigences à auditer.</source>
+        <target state="translated">The referential takes over the code, title and version of the procedure. Its tree starts empty: you will enter the requirements to audit.</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.source" datatype="html">
+        <source>Procédure source</source>
+        <target state="translated">Source procedure</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.source-required" datatype="html">
+        <source>Choisissez la procédure à auditer.</source>
+        <target state="translated">Choose the procedure to audit.</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.none" datatype="html">
+        <source>Aucune procédure approuvée. Publiez d'abord une version de votre procédure dans la GED : auditer contre un brouillon ne prouverait rien.</source>
+        <target state="translated">No approved procedure. First publish a version of your procedure in document control: auditing against a draft would prove nothing.</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.created" datatype="html">
+        <source>Référentiel créé — saisissez maintenant ses exigences.</source>
+        <target state="translated">Referential created — now enter its requirements.</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.conflict" datatype="html">
+        <source>Un référentiel existe déjà pour cette procédure.</source>
+        <target state="translated">A referential already exists for this procedure.</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.unapproved" datatype="html">
+        <source>Cette procédure doit être approuvée avant de servir de référentiel.</source>
+        <target state="translated">This procedure must be approved before it can serve as a referential.</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.forbidden" datatype="html">
+        <source>Vous n'avez pas les droits pour créer un référentiel.</source>
+        <target state="translated">You are not allowed to create a referential.</target>
+      </trans-unit>
+      <trans-unit id="standards.procedure.error" datatype="html">
+        <source>Création impossible pour le moment.</source>
+        <target state="translated">Creation is not possible at the moment.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.add-section" datatype="html">
+        <source>Ajouter une section</source>
+        <target state="translated">Add a section</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.add-clause" datatype="html">
+        <source>+ clause</source>
+        <target state="translated">+ clause</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.add-requirement" datatype="html">
+        <source>+ exigence</source>
+        <target state="translated">+ requirement</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.empty" datatype="html">
+        <source>Ce référentiel est vide : saisissez celles de votre procédure que l'audit devra vérifier.</source>
+        <target state="translated">This referential is empty: enter those of your procedure that the audit will have to check.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.subtitle" datatype="html">
+        <source>Le code n'a besoin d'être unique que parmi ses voisins immédiats.</source>
+        <target state="translated">The code only needs to be unique among its immediate siblings.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.code" datatype="html">
+        <source>Code</source>
+        <target state="translated">Code</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.code-placeholder" datatype="html">
+        <source>Ex. : 1, 1.1, 1.1.1</source>
+        <target state="translated">e.g.: 1, 1.1, 1.1.1</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.code-required" datatype="html">
+        <source>Le code est requis.</source>
+        <target state="translated">The code is required.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.code-maxlength" datatype="html">
+        <source>Code trop long pour ce niveau.</source>
+        <target state="translated">Code too long for this level.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-required" datatype="html">
+        <source>Le titre est requis.</source>
+        <target state="translated">The title is required.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.description" datatype="html">
+        <source>Description (optionnelle)</source>
+        <target state="translated">Description (optional)</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.text" datatype="html">
+        <source>Texte de l'exigence</source>
+        <target state="translated">Requirement text</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.text-placeholder" datatype="html">
+        <source>Ce que la procédure impose, tel qu'un auditeur le vérifiera.</source>
+        <target state="translated">What the procedure requires, as an auditor will check it.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.text-required" datatype="html">
+        <source>Le texte de l'exigence est requis.</source>
+        <target state="translated">The requirement text is required.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.obligation" datatype="html">
+        <source>Obligation</source>
+        <target state="translated">Obligation</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.risk" datatype="html">
+        <source>Risque si absente</source>
+        <target state="translated">Risk if missing</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.evidence" datatype="html">
+        <source>Preuve attendue (optionnelle)</source>
+        <target state="translated">Expected evidence (optional)</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.evidence-placeholder" datatype="html">
+        <source>Ex. : programme d'audit signé</source>
+        <target state="translated">e.g.: signed audit programme</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.criteria" datatype="html">
+        <source>Critère mesurable (optionnel)</source>
+        <target state="translated">Measurable criterion (optional)</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-new-section" datatype="html">
+        <source>Nouvelle section</source>
+        <target state="translated">New section</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-edit-section" datatype="html">
+        <source>Modifier la section</source>
+        <target state="translated">Edit the section</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-new-clause" datatype="html">
+        <source>Nouvelle clause</source>
+        <target state="translated">New clause</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-edit-clause" datatype="html">
+        <source>Modifier la clause</source>
+        <target state="translated">Edit the clause</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-new-requirement" datatype="html">
+        <source>Nouvelle exigence</source>
+        <target state="translated">New requirement</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.title-edit-requirement" datatype="html">
+        <source>Modifier l'exigence</source>
+        <target state="translated">Edit the requirement</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.confirm-section" datatype="html">
+        <source>Supprimer la section <x id="code"/> et les <x id="count"/> clauses qu'elle contient ?</source>
+        <target state="translated">Delete section <x id="code"/> and the <x id="count"/> clauses it contains?</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.confirm-clause" datatype="html">
+        <source>Supprimer la clause <x id="code"/> et les <x id="count"/> exigences qu'elle contient ?</source>
+        <target state="translated">Delete clause <x id="code"/> and the <x id="count"/> requirements it contains?</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.confirm-requirement" datatype="html">
+        <source>Supprimer l'exigence <x id="code"/> ?</source>
+        <target state="translated">Delete requirement <x id="code"/>?</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.error-conflict" datatype="html">
+        <source>Ce code est déjà pris à ce niveau.</source>
+        <target state="translated">This code is already taken at this level.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.error-platform" datatype="html">
+        <source>Une norme de la plateforme ne se modifie pas.</source>
+        <target state="translated">A platform standard cannot be modified.</target>
+      </trans-unit>
+      <trans-unit id="standards.tree.error-generic" datatype="html">
+        <source>Modification impossible pour le moment.</source>
+        <target state="translated">Modification is not possible at the moment.</target>
+      </trans-unit>
+      <trans-unit id="audits.detail.from-standard" datatype="html">
+        <source>Générer depuis un référentiel</source>
+        <target state="translated">Generate from a referential</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.title" datatype="html">
+        <source>Générer la checklist depuis un référentiel</source>
+        <target state="translated">Generate the checklist from a referential</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.subtitle" datatype="html">
+        <source>Chaque exigence du référentiel devient une question. Les questions sont copiées : le référentiel pourra évoluer ensuite sans réécrire cet audit.</source>
+        <target state="translated">Each requirement of the referential becomes a question. The questions are copied: the referential can evolve later without rewriting this audit.</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.submit" datatype="html">
+        <source>Générer</source>
+        <target state="translated">Generate</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.standard" datatype="html">
+        <source>Référentiel</source>
+        <target state="translated">Referential</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.owned" datatype="html">
+        <source>(procédure interne)</source>
+        <target state="translated">(internal procedure)</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.standard-required" datatype="html">
+        <source>Choisissez le référentiel à auditer.</source>
+        <target state="translated">Choose the referential to audit.</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.none" datatype="html">
+        <source>Aucun référentiel disponible. Adoptez une norme du catalogue, ou créez un référentiel depuis une procédure approuvée de votre GED.</source>
+        <target state="translated">No referential available. Adopt a standard from the catalogue, or create a referential from an approved procedure in your document control.</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.created" datatype="html">
+        <source><x id="count"/> questions générées.</source>
+        <target state="translated"><x id="count"/> questions generated.</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.empty" datatype="html">
+        <source>Ce référentiel ne contient encore aucune exigence.</source>
+        <target state="translated">This referential does not contain any requirement yet.</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.conflict" datatype="html">
+        <source>La checklist n'est pas vide, ou cet audit n'est plus au stade de la préparation.</source>
+        <target state="translated">The checklist is not empty, or this audit is no longer being prepared.</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.not-found" datatype="html">
+        <source>Ce référentiel est introuvable.</source>
+        <target state="translated">This referential cannot be found.</target>
+      </trans-unit>
+      <trans-unit id="audits.from-standard.error" datatype="html">
+        <source>Génération impossible pour le moment.</source>
+        <target state="translated">Generation is not possible at the moment.</target>
+      </trans-unit>
+      <trans-unit id="common.none" datatype="html">
+        <source>—</source>
+        <target state="translated">—</target>
       </trans-unit>
       <trans-unit id="nav.storyboard" datatype="html">
         <source>Storyboard IA</source>

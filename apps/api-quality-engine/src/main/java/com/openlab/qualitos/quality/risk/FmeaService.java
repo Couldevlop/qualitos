@@ -2,6 +2,7 @@ package com.openlab.qualitos.quality.risk;
 
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
+import com.openlab.qualitos.quality.product.domain.ProductLookup;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,10 +29,13 @@ public class FmeaService {
 
     private final FmeaProjectRepository projectRepo;
     private final FmeaItemRepository itemRepo;
+    private final ProductLookup productLookup;
 
-    public FmeaService(FmeaProjectRepository projectRepo, FmeaItemRepository itemRepo) {
+    public FmeaService(FmeaProjectRepository projectRepo, FmeaItemRepository itemRepo,
+                       ProductLookup productLookup) {
         this.projectRepo = projectRepo;
         this.itemRepo = itemRepo;
+        this.productLookup = productLookup;
     }
 
     // ---------- Projects ----------
@@ -53,14 +57,20 @@ public class FmeaService {
         p.setCriticalRpnThreshold(req.criticalRpnThreshold() == null ? 100 : req.criticalRpnThreshold());
         p.setOwnerUserId(req.ownerUserId());
         p.setCreatedBy(req.createdBy());
+        if (req.productId() != null) {
+            requireProductOfTenant(req.productId());
+            p.setProductId(req.productId());
+        }
         return toResponse(projectRepo.save(p));
     }
 
     @Transactional(readOnly = true)
-    public Page<FmeaDto.ProjectResponse> listProjects(FmeaStatus status, FmeaType type, Pageable pageable) {
+    public Page<FmeaDto.ProjectResponse> listProjects(FmeaStatus status, FmeaType type,
+                                                      UUID productId, Pageable pageable) {
         UUID tenantId = requireTenantId();
         Page<FmeaProject> page;
-        if (status != null) page = projectRepo.findByTenantIdAndStatus(tenantId, status, pageable);
+        if (productId != null) page = projectRepo.findByTenantIdAndProductId(tenantId, productId, pageable);
+        else if (status != null) page = projectRepo.findByTenantIdAndStatus(tenantId, status, pageable);
         else if (type != null) page = projectRepo.findByTenantIdAndType(tenantId, type, pageable);
         else page = projectRepo.findByTenantId(tenantId, pageable);
         return page.map(this::toResponse);
@@ -101,6 +111,10 @@ public class FmeaService {
             throw new FmeaStateException("Cannot reactivate an ARCHIVED project");
         }
         if (p.getStatus() == FmeaStatus.ACTIVE) return toResponse(p); // idempotent
+        if (!canActivate(p.getProductId(), p.getType())) {
+            throw new FmeaStateException("Le produit " + p.getProductId() + " porte deja un "
+                    + shortLabel(p.getType()) + " en vigueur ; archiver ou rouvrir celui-ci d'abord");
+        }
         p.setStatus(FmeaStatus.ACTIVE);
         p.setLastReviewedAt(Instant.now());
         return toResponse(projectRepo.save(p));
@@ -127,6 +141,34 @@ public class FmeaService {
         return toResponse(projectRepo.save(p));
     }
 
+    /**
+     * Rattache un produit à un projet existant. Le produit est vérifié avant le
+     * projet : une référence produit fausse est une erreur de saisie, pas une
+     * tentative d'accès, et la signaler d'abord évite un aller-retour.
+     */
+    @Transactional
+    public FmeaDto.ProjectResponse attachProduct(UUID projectId, UUID productId) {
+        requireProductOfTenant(productId);
+        FmeaProject p = loadProjectForTenant(projectId);
+        if (p.getStatus() == FmeaStatus.ARCHIVED) {
+            throw new FmeaStateException("Cannot attach a product to an ARCHIVED project");
+        }
+        p.setProductId(productId);
+        return toResponse(projectRepo.save(p));
+    }
+
+    /**
+     * Vrai si le produit ne porte pas déjà un projet du même type en vigueur.
+     * Un projet sans produit n'est jamais bloqué : la contrainte n'a alors
+     * personne sur qui mordre.
+     */
+    @Transactional(readOnly = true)
+    public boolean canActivate(UUID productId, FmeaType type) {
+        if (productId == null) return true;
+        return !projectRepo.existsByTenantIdAndProductIdAndTypeAndStatus(
+                requireTenantId(), productId, type, FmeaStatus.ACTIVE);
+    }
+
     // ---------- Items ----------
 
     @Transactional
@@ -149,10 +191,15 @@ public class FmeaService {
         i.setDetection(req.detection());
         i.setRecommendedAction(req.recommendedAction());
         i.setActionOwnerUserId(req.actionOwnerUserId());
+        i.setActionOwnerName(req.actionOwnerName());
         i.setActionDueDate(req.actionDueDate());
+        i.setActionsTaken(req.actionsTaken());
+        i.setActionsTakenAt(req.actionsTakenAt());
         i.setResultingSeverity(req.resultingSeverity());
         i.setResultingOccurrence(req.resultingOccurrence());
         i.setResultingDetection(req.resultingDetection());
+        i.setOperationId(req.operationId());
+        i.setCharacteristicClass(req.characteristicClass());
         i.recomputeRpn();
         return toResponse(itemRepo.save(i), p.getCriticalRpnThreshold());
     }
@@ -177,10 +224,15 @@ public class FmeaService {
         if (req.detection() != null) i.setDetection(req.detection());
         if (req.recommendedAction() != null) i.setRecommendedAction(req.recommendedAction());
         if (req.actionOwnerUserId() != null) i.setActionOwnerUserId(req.actionOwnerUserId());
+        if (req.actionOwnerName() != null) i.setActionOwnerName(req.actionOwnerName());
         if (req.actionDueDate() != null) i.setActionDueDate(req.actionDueDate());
+        if (req.actionsTaken() != null) i.setActionsTaken(req.actionsTaken());
+        if (req.actionsTakenAt() != null) i.setActionsTakenAt(req.actionsTakenAt());
         if (req.resultingSeverity() != null) i.setResultingSeverity(req.resultingSeverity());
         if (req.resultingOccurrence() != null) i.setResultingOccurrence(req.resultingOccurrence());
         if (req.resultingDetection() != null) i.setResultingDetection(req.resultingDetection());
+        if (req.operationId() != null) i.setOperationId(req.operationId());
+        if (req.characteristicClass() != null) i.setCharacteristicClass(req.characteristicClass());
         i.recomputeRpn();
         return toResponse(itemRepo.save(i), p.getCriticalRpnThreshold());
     }
@@ -229,7 +281,7 @@ public class FmeaService {
         return new FmeaDto.ProjectResponse(
                 p.getId(), p.getTenantId(), p.getCode(), p.getName(), p.getScope(),
                 p.getType(), p.getStatus(), p.getCriticalRpnThreshold(), p.getRevision(),
-                p.getOwnerUserId(), p.getLastReviewedAt(),
+                p.getProductId(), p.getOwnerUserId(), p.getLastReviewedAt(),
                 p.getCreatedBy(), p.getCreatedAt(), p.getUpdatedAt());
     }
 
@@ -239,10 +291,30 @@ public class FmeaService {
                 i.getFunction(), i.getFailureMode(), i.getFailureEffect(),
                 i.getFailureCause(), i.getCurrentControls(),
                 i.getSeverity(), i.getOccurrence(), i.getDetection(), i.getRpn(),
-                i.getRecommendedAction(), i.getActionOwnerUserId(), i.getActionDueDate(),
+                i.getRecommendedAction(), i.getActionOwnerUserId(), i.getActionOwnerName(),
+                i.getActionDueDate(), i.getActionsTaken(), i.getActionsTakenAt(),
                 i.getResultingSeverity(), i.getResultingOccurrence(), i.getResultingDetection(),
-                i.getRpnAfter(), i.getRpn() >= threshold,
+                i.getRpnAfter(), i.getOperationId(), i.getCharacteristicClass(),
+                i.getActionPriority(), i.getRpn() >= threshold,
                 i.getCreatedAt(), i.getUpdatedAt());
+    }
+
+    /** Le produit doit exister DANS le tenant courant : le lookup filtre déjà dessus. */
+    private void requireProductOfTenant(UUID productId) {
+        if (productLookup.findById(productId).isEmpty()) {
+            throw new FmeaStateException("Unknown product: " + productId);
+        }
+    }
+
+    /** Le sigle qu'emploie un ingénieur qualité, pas le nom de la constante Java. */
+    private static String shortLabel(FmeaType type) {
+        return switch (type) {
+            case PROCESS_FMEA -> "PFMEA";
+            case DESIGN_FMEA -> "DFMEA";
+            case SYSTEM_FMEA -> "SFMEA";
+            case SERVICE_FMEA -> "FMEA service";
+            case BOW_TIE -> "bow-tie";
+        };
     }
 
     private UUID requireTenantId() {

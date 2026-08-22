@@ -55,7 +55,14 @@ git reset --quiet --hard "origin/$BRANCH"
 # survivre au nettoyage — c'est lui qui évite de redéployer la même version.
 git clean -qfd -e .deployed
 
-SHA="$(git rev-parse --short HEAD)"
+# LONGUEUR FIXE, et non `--short` seul. Sans longueur explicite, git choisit
+# l'abréviation d'après le nombre d'objets DU DÉPÔT où il tourne : le runner
+# GitHub a publié `main-23978fd` (7) pendant que ce clone-ci demandait
+# `main-23978fd2` (8). Le minuteur a tourné en boucle sur « images pas encore
+# publiées », sans rien de faux dans ses journaux — il cherchait une étiquette
+# qui n'existerait jamais. Les deux côtés fixent désormais douze caractères :
+# déterministe, et assez long pour rester non ambigu quand le dépôt grossira.
+SHA="$(git rev-parse --short=12 HEAD)"
 TAG="main-$SHA"
 STATE="$WORKDIR/.deployed"
 

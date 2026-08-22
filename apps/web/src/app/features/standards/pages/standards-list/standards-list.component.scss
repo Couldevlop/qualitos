@@ -10,5 +10,38 @@
   background: var(--mat-sys-secondary-container, rgba(0, 0, 0, 0.08));
 }
 .empty { padding: 32px; text-align: center; color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6)); }
+
+.catalog-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+
+  h2 { margin: 0; }
+}
+
+.catalog-tools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.scope-field { width: 200px; }
+
+/* Repère visuel : ces quelques lignes appartiennent au tenant, au milieu de
+   soixante normes livrées qu'il ne peut pas modifier. */
+.owned-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  vertical-align: middle;
+  color: var(--mat-sys-on-tertiary-container, #1b3a2a);
+  background: var(--mat-sys-tertiary-container, #cfe9d9);
+}
 .clickable { cursor: pointer; transition: background .15s; }
 .clickable:hover { background: var(--mat-sys-secondary-container, rgba(57, 73, 171, 0.06)); }

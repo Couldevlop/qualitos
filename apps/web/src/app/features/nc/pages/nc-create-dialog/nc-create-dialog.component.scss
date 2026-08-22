@@ -38,3 +38,38 @@
   mat-icon { font-size: 18px; width: 18px; height: 18px; }
   .coords { font-family: 'IBM Plex Mono', monospace; }
 }
+
+.failure-mode {
+  border: 1px solid var(--qos-border);
+  border-radius: var(--qos-radius-md);
+  padding: var(--qos-space-4);
+  margin-bottom: var(--qos-space-4);
+}
+
+.failure-mode-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-3);
+}
+
+.failure-mode-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-2);
+}
+
+.choice-label { display: block; }
+
+.choice-terms {
+  display: block;
+  font-size: var(--qos-text-xs);
+  color: var(--qos-fg-tertiary);
+}
+
+.dim {
+  margin: var(--qos-space-2) 0 0;
+  color: var(--qos-fg-tertiary);
+  font-size: var(--qos-text-sm);
+}

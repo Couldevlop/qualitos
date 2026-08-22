@@ -52,7 +52,16 @@ describe('HomeComponent', () => {
 
   it('offers quick actions that point to real feature routes', () => {
     const routes = component.quickActions.map(a => a.route);
-    expect(routes).toEqual(['/pdca', '/fives', '/nc', '/ishikawa']);
+    expect(routes).toEqual(['/pdca', '/fives', '/nc']);
+  });
+
+  it("ne propose plus de lancer une analyse de cause depuis l'accueil", () => {
+    // Chercher une cause suppose un ecart constate : on part de la non-conformite,
+    // qui ouvre l'Ishikawa ou les 5 Pourquoi sur son propre sujet. La carte de
+    // methode reste, elle, pour consulter les diagrammes existants.
+    const routes = component.quickActions.map(a => a.route);
+    expect(routes).not.toContain('/ishikawa');
+    expect(routes).not.toContain('/five-whys');
   });
 
   // Le titre s'adresse au lecteur dans sa langue ; le slogan de marque, lui,

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
@@ -143,7 +144,7 @@ class SkillServiceTest {
             return a;
         });
         TrainingDto.CompetencyResponse out = service.assess(new TrainingDto.AssessCompetencyRequest(
-                USER, SKILL, 3, CompetencySource.TRAINING, UUID.randomUUID(), null));
+                USER, "Anna Dubois", SKILL, 3, CompetencySource.TRAINING, UUID.randomUUID(), null));
         assertThat(out.level()).isEqualTo(3);
         assertThat(out.levelName()).isEqualTo(CompetencyLevel.COMPETENT);
         assertThat(out.assessedAt()).isEqualTo(LocalDate.parse("2026-05-15"));
@@ -159,7 +160,7 @@ class SkillServiceTest {
                 .thenReturn(Optional.of(existing));
         when(userSkillRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
         service.assess(new TrainingDto.AssessCompetencyRequest(
-                USER, SKILL, 4, CompetencySource.CERTIFICATION, null, null));
+                USER, null, SKILL, 4, CompetencySource.CERTIFICATION, null, null));
         assertThat(existing.getLevel()).isEqualTo(4);
         assertThat(existing.getSource()).isEqualTo(CompetencySource.CERTIFICATION);
     }
@@ -169,7 +170,7 @@ class SkillServiceTest {
         Skill s = skill(); s.setTenantId(UUID.randomUUID());
         when(skillRepo.findById(SKILL)).thenReturn(Optional.of(s));
         assertThatThrownBy(() -> service.assess(new TrainingDto.AssessCompetencyRequest(
-                USER, SKILL, 2, CompetencySource.SELF, null, null)))
+                USER, null, SKILL, 2, CompetencySource.SELF, null, null)))
                 .isInstanceOf(SkillNotFoundException.class);
     }
 
@@ -193,4 +194,49 @@ class SkillServiceTest {
         s.setCreatedAt(Instant.now()); s.setUpdatedAt(Instant.now());
         return s;
     }
+
+    /**
+     * Le nom rend les colonnes de la matrice lisibles. La plateforme n'ayant
+     * pas d'annuaire, il n'y a pas d'autre source : s'il n'est pas pose ici,
+     * il n'existe nulle part.
+     */
+    @Test
+    void assess_recordsThePersonName() {
+        Skill s = skill();
+        when(skillRepo.findById(SKILL)).thenReturn(Optional.of(s));
+        when(userSkillRepo.findByTenantIdAndUserIdAndSkillId(TENANT, USER, SKILL))
+                .thenReturn(Optional.empty());
+        when(userSkillRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        service.assess(new TrainingDto.AssessCompetencyRequest(
+                USER, "  Anna Dubois  ", SKILL, 3, CompetencySource.TRAINING, null, null));
+
+        ArgumentCaptor<UserSkillAssignment> saved = ArgumentCaptor.forClass(UserSkillAssignment.class);
+        verify(userSkillRepo).save(saved.capture());
+        assertThat(saved.getValue().getUserName()).isEqualTo("Anna Dubois");
+    }
+
+    /**
+     * Une reevaluation faite par un outil qui ne transmet pas le nom ne doit
+     * pas vider l'en-tete de colonne deja connu.
+     */
+    @Test
+    void assess_withoutAName_keepsTheOneAlreadyKnown() {
+        Skill s = skill();
+        UserSkillAssignment existing = new UserSkillAssignment();
+        existing.setTenantId(TENANT);
+        existing.setUserId(USER);
+        existing.setSkillId(SKILL);
+        existing.setUserName("Anna Dubois");
+        when(skillRepo.findById(SKILL)).thenReturn(Optional.of(s));
+        when(userSkillRepo.findByTenantIdAndUserIdAndSkillId(TENANT, USER, SKILL))
+                .thenReturn(Optional.of(existing));
+        when(userSkillRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        service.assess(new TrainingDto.AssessCompetencyRequest(
+                USER, "   ", SKILL, 4, CompetencySource.SELF, null, null));
+
+        assertThat(existing.getUserName()).isEqualTo("Anna Dubois");
+    }
+
 }

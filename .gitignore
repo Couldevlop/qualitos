@@ -120,3 +120,6 @@ karma.zip
 # Espace de travail des specs de l’assistant — pas un artefact du dépôt.
 # Les décisions qui comptent vivent dans docs/adr/.
 docs/superpowers/
+
+# Fichiers de verrouillage Office (Excel/Word ouverts) — jamais versionnés.
+~$*

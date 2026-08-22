@@ -159,6 +159,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/fmea/fmea.module').then(m => m.FmeaModule)
       },
       {
+        path: 'products',
+        loadChildren: () => import('./features/products/products.module').then(m => m.ProductsModule)
+      },
+      {
         path: 'suppliers',
         loadChildren: () => import('./features/suppliers/suppliers.module').then(m => m.SuppliersModule)
       },
