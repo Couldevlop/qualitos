@@ -68,6 +68,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
+      # Les comptes d'administration du realm n'ont plus de mot de passe dans le
+      # depot : `docker-compose.dev.yml` exige les deux variables et refuse de
+      # demarrer sans elles. On en genere donc d'ephemeres, jetees avec le
+      # runner -- k6 ne s'en sert pas, il travaille avec le compte `demo`.
+      - name: Generate ephemeral Keycloak admin passwords
+        run: |
+          {
+            echo "QOS_LOCAL_SUPERADMIN_PASSWORD=$(openssl rand -base64 24)"
+            echo "QOS_LOCAL_ADMIN_PASSWORD=$(openssl rand -base64 24)"
+          } >> .env
+          echo "Deux mots de passe ephemeres ecrits dans .env (non journalises)."
+
       # ----------------------------------------------------------------------
       # Démarrage de la stack dev minimale requise pour les chemins chauds :
       # postgres (5434), keycloak (8080), api-quality-engine (8082).

@@ -154,7 +154,7 @@
       "credentials": [
         {
           "type": "password",
-          "value": "superadmin",
+          "value": "${QOS_LOCAL_SUPERADMIN_PASSWORD}",
           "temporary": false
         }
       ],
@@ -180,7 +180,7 @@
       "credentials": [
         {
           "type": "password",
-          "value": "admin",
+          "value": "${QOS_LOCAL_ADMIN_PASSWORD}",
           "temporary": false
         }
       ],

@@ -43,21 +43,21 @@ secret:
     - "infra/blockchain/chaincode/**/go.sum"
 
     # -----------------------------------------------------------------------
-    # 3. Realm Keycloak de développement
+    # 3. Realm Keycloak — fixture `demo` uniquement (2026-08-22)
     # -----------------------------------------------------------------------
-    # `realm-export.json` contient superadmin/superadmin et admin/admin. Ce sont
-    # des comptes de DÉMONSTRATION, et le fichier n'est importé qu'au tout
-    # premier démarrage d'un Keycloak sur une base vide — en pratique, le poste
-    # de développement et la pile docker-compose.
+    # HISTORIQUE : ce fichier portait `superadmin/superadmin` et `admin/admin`.
+    # L'exception disait vrai — `render-realm.sh` les remplace avant toute
+    # exposition — mais elle demandait de faire confiance à un script pour deux
+    # mots de passe d'ADMINISTRATION lisibles dans le dépôt, et l'analyse de
+    # secrets les signalait à chaque passage. Ils sont désormais SORTIS du
+    # fichier (placeholders résolus à l'import côté poste, réécrits par le rendu
+    # côté déployé) : plus rien à écarter les concernant.
     #
-    # Sur tout domaine exposé, `infra/k8s/deps/render-realm.sh` REMPLACE ces
-    # mots de passe par des valeurs générées avant publication du realm, et
-    # `infra/k8s/deploy.sh` pose ensuite la politique de mot de passe du realm.
-    # Aucun environnement joignable ne tourne donc avec ces identifiants.
+    # Ce qui reste : `demo/demo`, compte de démonstration assumé, sans privilège
+    # d'administration, conservé délibérément (cf. infra/k8s/deps/README.md).
     #
-    # CE QUE CETTE EXCEPTION COÛTE, et il faut l'avoir en tête : un VRAI secret
-    # ajouté un jour à ce fichier ne serait plus signalé. Le fichier ne doit
-    # donc recevoir que des fixtures de démonstration. Un secret d'un
-    # environnement réel n'a rien à y faire — il vient de Vault (§18.2 #3).
+    # CE QUE CETTE EXCEPTION COÛTE : un VRAI secret ajouté un jour à ce fichier
+    # ne serait pas signalé. Il ne doit donc recevoir que des fixtures de
+    # démonstration — un secret d'environnement réel vient de Vault (§18.2 #3).
     # Revue : 2026-11-21
     - "infra/keycloak/realm-export.json"
