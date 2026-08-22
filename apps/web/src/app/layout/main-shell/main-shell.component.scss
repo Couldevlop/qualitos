@@ -375,6 +375,13 @@
   position: relative;
   flex: 1 1 auto;
   max-width: 560px;
+  /* Même piège que la barre d'actions de la fiche de NC : sans `min-width: 0`,
+     un élément flex ne descend jamais sous la largeur intrinsèque de son
+     contenu. La recherche poussait donc le reste de la barre hors de l'écran —
+     mesuré à 390 px : le bouton de compte commençait à 379 px et finissait à
+     445 px, si bien que la déconnexion était injoignable sur téléphone. Le
+     champ se contente désormais de la place restante. */
+  min-width: 0;
 
   &-icon {
     position: absolute;
