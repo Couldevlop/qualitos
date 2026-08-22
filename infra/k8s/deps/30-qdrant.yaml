@@ -58,9 +58,52 @@ spec:
         app.kubernetes.io/name: qdrant
         app.kubernetes.io/part-of: qualitos
     spec:
+      # Qdrant démarre en root par défaut. On l'exécute en non-root 1000 ; fsGroup
+      # rend le volume de stockage inscriptible par ce compte (chown au montage),
+      # sans quoi Qdrant ne pourrait plus écrire ses collections.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      # Le volume a d'abord servi à Qdrant lancé EN ROOT : ses sous-dossiers
+      # appartiennent à root, et fsGroup n'aligne que le groupe, pas le
+      # propriétaire — Qdrant en 1000 ne pouvait plus créer son dossier
+      # Snapshots (« Permission denied »). Cet initContainer bref réaligne la
+      # propriété UNE FOIS ; sur un volume neuf il ne trouve rien à changer. Il
+      # est le SEUL conteneur autorisé à tourner en root ici, strictement pour
+      # cette remise en ordre, capacités réduites au seul CHOWN.
+      initContainers:
+        - name: fix-ownership
+          image: busybox:1.37
+          command: ["sh", "-c", "chown -R 1000:1000 /qdrant/storage"]
+          securityContext:
+            runAsNonRoot: false
+            runAsUser: 0
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+              add: ["CHOWN"]
+          volumeMounts:
+            - name: data
+              mountPath: /qdrant/storage
       containers:
         - name: qdrant
           image: qdrant/qdrant:v1.11.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          # Qdrant écrit ses snapshots dans /qdrant/snapshots par défaut — un
+          # chemin du système de fichiers de l'image, possédé par root et donc
+          # non inscriptible par le compte 1000. On les redirige SOUS le volume
+          # persistant (déjà réaligné par l'initContainer), ce qui a l'avantage
+          # de les rendre durables plutôt que perdus au redémarrage.
+          env:
+            - name: QDRANT__STORAGE__SNAPSHOTS_PATH
+              value: /qdrant/storage/snapshots
           ports:
             - name: http
               containerPort: 6333

@@ -61,6 +61,10 @@ supersession).
 | [0054](./0054-diagrammes-de-methode-en-svg-dessine.md) | Diagrammes de méthode (Ishikawa, 5 Pourquoi) dessinés en SVG à géométrie calculée et testée, sans JointJS ni ECharts ; la figure illustre, la liste énonce (remet en cause §3.5/§7.2) | Accepté |
 | [0055](./0055-nature-des-actions-capa-et-motifs-de-cloture.md) | Nature des actions CAPA (endiguement / corrective / préventive) : un dossier qui n'a fait qu'endiguer ne se clôt pas ; motifs de clôture renvoyés en code + décompte et énoncés avant le clic (§4.2, ISO 9001 §10.2, 8D D3) | Accepté |
 | [0056](./0056-balayage-des-binaires-orphelins.md) | Balayage des binaires orphelins : énumération du stockage, propriétaires déclarés par point d'extension, délai de grâce et suppression OFF par défaut (§4.3) | Accepté |
+| [0057](./0057-referentiels-appartenant-a-un-tenant.md) | Référentiels appartenant à un tenant : la procédure interne cohabite avec le catalogue normatif sans le contredire (§8) | Accepté |
+| [0058](./0058-exploitation-de-la-production.md) | Ce qu'exploiter la production engage : sauvegardes, secrets, retour arrière, isolation des environnements | Accepté |
+| [0059](./0059-produit-pfmea-et-control-plan-revises-par-les-nc.md) | Produit, PFMEA rattaché et control plan : la NC et la CAPA proposent une révision chiffrée, l'humain tranche et son refus est tracé ; comptage de NC assumé faute de volume produit (§3.4, §4.2, §4.3, §4.5) | Accepté |
+| [0060](./0060-alignement-sur-la-trame-aiag-et-efficacite-capa.md) | PFMEA et control plan alignés sur une trame AIAG réelle — taille d'échantillon en texte, procédure, entrée/sortie, qui mesure, où l'on enregistre, actions réalisées — et efficacité CAPA mesurée sur deux fenêtres de même durée (§3.4, §4.2, §4.5) | Accepté |
 
 ## Statuts possibles
 

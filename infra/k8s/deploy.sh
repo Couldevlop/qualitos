@@ -57,6 +57,8 @@ esac
 IMAGE_TAG="${VERSION#v}"
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+# Port local du tunnel vers Keycloak (cf. la configuration des paliers, plus bas).
+STEP_UP_PORT="${STEP_UP_PORT:-18080}"
 DEPS="$ROOT/infra/k8s/deps"
 CHART="$ROOT/infra/k8s/qualitos"
 VALUES="$CHART/values-$ENV.yaml"
@@ -125,7 +127,8 @@ fi
 say "4/6 Dépendances d'état"
 kubectl -n "$NS" apply -f "$DEPS/10-postgres.yaml" \
                        -f "$DEPS/30-qdrant.yaml" \
-                       -f "$DEPS/40-ollama-external.yaml"
+                       -f "$DEPS/40-ollama-external.yaml" \
+                       -f "$DEPS/60-backup.yaml"
 sed "s/__QOS_HOST__/$HOST/g" "$DEPS/20-keycloak.yaml" | kubectl -n "$NS" apply -f -
 
 # Le travail d'initialisation du bucket est IMMUABLE une fois créé : le
@@ -188,6 +191,134 @@ if [ -n "$KC_POD" ]; then
   KC_PWD="$(kubectl -n "$NS" get secret qualitos-keycloak -o jsonpath='{.data.KEYCLOAK_ADMIN_PASSWORD}' | base64 -d)"
   kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh config credentials \
     --server http://localhost:8080/auth --realm master --user "$KC_ADMIN" --password "$KC_PWD" >/dev/null 2>&1 || true
+
+  # Anti-force-brute sur le realm MASTER. La console d'administration est
+  # publiquement joignable sous /auth/admin : sans cette protection, le compte
+  # super-admin peut être martelé sans limite. Le realm master N'EST PAS dans
+  # realm-export.json — Keycloak le crée lui-même, jamais par import — il ne peut
+  # donc être durci qu'ICI, après démarrage. Le realm applicatif `qualitos`, lui,
+  # porte déjà sa protection et sa politique de mot de passe dans realm-export.json.
+  # Idempotent : rejoué à chaque déploiement sans effet de bord.
+  if kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh update realms/master \
+       -s bruteForceProtected=true -s failureFactor=10 \
+       -s waitIncrementSeconds=60 -s maxFailureWaitSeconds=900 >/dev/null 2>&1; then
+    echo "  realm master : anti-force-brute actif"
+  else
+    echo "  ATTENTION : anti-force-brute du realm master non appliqué" >&2
+  fi
+
+  # Politique de mot de passe du realm `qualitos`, posée APRÈS l'import et non
+  # dans realm-export.json À DESSEIN : à l'import, Keycloak valide les mots de
+  # passe des comptes déjà présents (dont `demo/demo`) contre la politique et
+  # refuse de démarrer si l'un ne la respecte pas (« invalidPasswordMinUpperCase »).
+  # Appliquée par kcadm, elle ne contraint que les mots de passe FUTURS et laisse
+  # les comptes de démonstration intacts. Idempotent.
+  if kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh update realms/qualitos \
+       -s 'passwordPolicy=length(12) and upperCase(1) and lowerCase(1) and digits(1) and notUsername(undefined)' >/dev/null 2>&1; then
+    echo "  realm qualitos : politique de mot de passe posée"
+  else
+    echo "  ATTENTION : politique de mot de passe du realm qualitos non appliquée" >&2
+  fi
+
+  # URI de POST-DÉCONNEXION du client web. Posée ICI et pas seulement dans le
+  # realm rendu, parce que l'import Keycloak n'a lieu qu'au TOUT PREMIER
+  # démarrage : un environnement déjà installé ne verrait jamais la correction.
+  #
+  # Ce que l'oubli produisait, mesuré sur la préproduction : la connexion
+  # fonctionne, la déconnexion répond « Invalid redirect uri » (HTTP 400) et
+  # l'utilisateur reste bloqué sur une page d'erreur Keycloak. Le réglage est
+  # DISTINCT des URI de redirection et Keycloak ne retombe pas dessus : attribut
+  # absent = aucune redirection autorisée après déconnexion.
+  WEB_CID="$(kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh get clients -r qualitos     -q clientId=qualitos-web --fields id --format csv --noquotes 2>/dev/null | tr -d '
+' | head -1)"
+  if [ -n "$WEB_CID" ] && kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh update        "clients/$WEB_CID" -r qualitos        -s "attributes.\"post.logout.redirect.uris\"=https://$HOST/*" >/dev/null 2>&1; then
+    echo "  client qualitos-web : redirection de déconnexion autorisée"
+  else
+    echo "  ATTENTION : URI de post-déconnexion non posée — la déconnexion" >&2
+    echo "  répondra « Invalid redirect uri » et laissera l'utilisateur bloqué." >&2
+  fi
+
+  # Authentification par PALIERS (silver / gold). Sans elle, le jeton ne porte
+  # aucune trace du second facteur et TOUTE approbation de control plan répond
+  # 403 « step-up-required » — le contrôle est fail-closed à dessein (ADR 0059).
+  #
+  # Appelée depuis le déploiement et non laissée à un passage manuel : une
+  # bascule d'environnement qui dépend d'une commande qu'on doit penser à taper
+  # est une bascule qu'on oublie. Le script se sait rejouable et ne reconstruit
+  # rien s'il trouve le realm déjà en place.
+  #
+  # L'échec n'ARRÊTE PAS le déploiement — il vaut mieux une plateforme en ligne
+  # dont une action critique est refusée qu'une livraison bloquée — mais il est
+  # signalé bruyamment, parce que le symptôme (403 à l'approbation) n'évoque pas
+  # de lui-même sa cause.
+  # La sortie est CONSERVÉE et rendue en cas d'échec. Une première version
+  # l'envoyait à /dev/null : le déploiement annonçait « paliers non posés » sans
+  # dire pourquoi, et diagnostiquer demandait de rejouer le script à la main sur
+  # le serveur. Un avertissement qui ne porte que le symptôme fait perdre le
+  # temps qu'il prétend faire gagner.
+  STEP_UP_LOG="$(mktemp)"
+
+  # L'API d'administration est jointe par un TUNNEL vers le service, jamais par
+  # l'URL publique. Deux raisons, dont la seconde a coûté un déploiement :
+  #
+  #   1. Les identifiants d'administration n'ont aucune raison de sortir du
+  #      cluster pour y revenir.
+  #   2. L'ingress porte ModSecurity et le Core Rule Set OWASP. Le WAF laisse
+  #      passer les lectures et REFUSE les écritures de l'API d'administration —
+  #      un PUT avec corps JSON revient en 403 au corps vide. Le script échouait
+  #      donc dès sa première écriture, tandis que `kcadm`, qui travaille depuis
+  #      l'intérieur du pod, réussissait les siennes : deux chemins, deux
+  #      verdicts, et un diagnostic qui accusait le jeton.
+  #
+  # Affaiblir le WAF sur `/auth/admin` aurait été l'inverse du bon geste : cette
+  # API est publiquement joignable, c'est précisément là qu'on veut un filtre.
+  # Un tunnel oublie par une execution precedente tiendrait le port et ferait
+  # echouer celui-ci sans rien dire de plus qu'« adresse deja utilisee ».
+  pkill -f "port-forward svc/keycloak $STEP_UP_PORT" 2>/dev/null || true
+  kubectl -n "$NS" port-forward svc/keycloak "$STEP_UP_PORT:8080" >/dev/null 2>&1 &
+  PF_PID=$!
+
+  # Attente de l'ouverture du tunnel. La forme `curl … && break` est PROSCRITE
+  # ici : sous `set -e`, l'echec du dernier essai fait sortir la boucle en
+  # erreur, et c'est tout le deploiement qui s'arrete — ce qui est arrive, avec
+  # un minuteur repartant en boucle toutes les deux minutes. Un `if` echoue sans
+  # consequence, et `sleep` referme chaque tour sur un succes.
+  TUNNEL_PRET=0
+  for _ in $(seq 1 20); do
+    if curl -sf -o /dev/null -m 2 \
+         "http://127.0.0.1:$STEP_UP_PORT/auth/realms/master/.well-known/openid-configuration"; then
+      TUNNEL_PRET=1
+      break
+    fi
+    sleep 1
+  done
+
+  if [ "$TUNNEL_PRET" = 0 ]; then
+    echo "  ATTENTION : tunnel vers Keycloak non ouvert sur le port $STEP_UP_PORT." >&2
+  fi
+
+  if [ "$TUNNEL_PRET" = 1 ] \
+     && KC_URL="http://127.0.0.1:$STEP_UP_PORT/auth" KC_REALM=qualitos \
+        KC_ADMIN="$KC_ADMIN" KC_ADMIN_PASSWORD="$KC_PWD" \
+        "$ROOT/infra/keycloak/apply-step-up.sh" >"$STEP_UP_LOG" 2>&1; then
+    echo "  realm qualitos : authentification par paliers en place"
+  else
+    echo "  ATTENTION : paliers d'authentification non posés." >&2
+    echo "  L'approbation d'un control plan et l'acceptation d'une proposition de" >&2
+    echo "  révision répondront 403 tant que le realm ne publiera pas acr/amr." >&2
+    echo "  --- sortie du script (20 dernières lignes) ---" >&2
+    tail -20 "$STEP_UP_LOG" | sed 's/^/  | /' >&2
+    echo "  --- fin ---" >&2
+    echo "  Reprendre à la main, en passant par un tunnel et non par l'URL" >&2
+    echo "  publique — le WAF de l'ingress refuse les écritures d'administration :" >&2
+    echo "    kubectl -n $NS port-forward svc/keycloak $STEP_UP_PORT:8080 &" >&2
+    echo "    KC_URL=http://127.0.0.1:$STEP_UP_PORT/auth KC_REALM=qualitos \\" >&2
+    echo "    KC_ADMIN=... KC_ADMIN_PASSWORD=... infra/keycloak/apply-step-up.sh" >&2
+  fi
+  kill "$PF_PID" 2>/dev/null || true
+  wait "$PF_PID" 2>/dev/null || true
+  rm -f "$STEP_UP_LOG"
+
   AI_CID="$(kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh get clients -r qualitos \
     -q clientId=api-quality-engine-ai --fields id --format csv --noquotes 2>/dev/null | tr -d '\r' | head -1)"
   if [ -n "$AI_CID" ]; then
@@ -229,6 +360,31 @@ kubectl -n "$NS" create secret generic qualitos-ai-service \
   --from-literal=NLQ_READONLY_DSN="postgresql://qualitos_nlq_ro:${NLQ_PWD}@postgres:5432/qualitos_quality" \
   --dry-run=client -o yaml | kubectl apply -f - >/dev/null
 echo "  secret qualitos-ai-service : à jour"
+
+# Vidage de SÛRETÉ, uniquement sur un environnement DÉJÀ installé — à la première
+# installation il n'y a rien à sauver, et le CronJob vient d'être créé.
+#
+# POURQUOI JUSTE AVANT, alors qu'une sauvegarde nocturne existe : les migrations
+# Flyway ne se défont pas. Revenir à une image antérieure la placerait devant un
+# schéma qu'elle ne connaît pas, et le seul retour arrière qui tienne restaure la
+# base. Or restaurer celle de la nuit précédente perdrait tout ce qui a été écrit
+# depuis. Le filet doit dater du saut, pas de la veille.
+#
+# L'échec du vidage n'ARRÊTE PAS le déploiement : refuser de livrer parce qu'une
+# sauvegarde a échoué transformerait une gêne en blocage. Il est signalé, bruyamment.
+if helm status "qualitos-$ENV" -n "$NS" >/dev/null 2>&1; then
+  say "5bis/6 Vidage de sûreté avant mise à jour"
+  kubectl -n "$NS" delete job vidage-avant-deploiement --ignore-not-found >/dev/null
+  if kubectl -n "$NS" create job --from=cronjob/postgres-backup vidage-avant-deploiement >/dev/null 2>&1 &&
+     kubectl -n "$NS" wait --for=condition=complete job/vidage-avant-deploiement --timeout=600s >/dev/null 2>&1; then
+    echo "  vidage pris — un retour arrière reste possible"
+  else
+    echo "  ATTENTION : le vidage de sûreté a échoué." >&2
+    echo "  Le déploiement se poursuit, mais AUCUN retour arrière ne sera" >&2
+    echo "  possible sur la base si cette version se révèle mauvaise." >&2
+    kubectl -n "$NS" logs job/vidage-avant-deploiement --tail=10 >&2 2>/dev/null || true
+  fi
+fi
 
 say "6/6 Chart applicatif"
 helm upgrade --install "qualitos-$ENV" "$CHART" \

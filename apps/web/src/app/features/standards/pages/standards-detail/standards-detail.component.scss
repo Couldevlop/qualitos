@@ -216,3 +216,32 @@
 .hash { display: flex; align-items: center; gap: 10px; font-size: 13px; margin: 6px 0; }
 .hash span { width: 80px; color: #78909c; font-weight: 600; }
 .hash code { background: #f5f5f7; padding: 4px 8px; border-radius: 4px; word-break: break-all; font-size: 12px; }
+
+/* ---- Édition de l'arborescence d'un référentiel du tenant (§8) ---- */
+
+.tree-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.tree-empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6));
+}
+
+/* Les commandes restent discrètes : l'écran sert d'abord à LIRE le référentiel
+   pendant un audit ; l'éditer est l'exception, pas l'usage courant. */
+.node-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 8px;
+  opacity: 0.55;
+  transition: opacity .15s;
+
+  &:hover, &:focus-within { opacity: 1; }
+
+  .mat-mdc-icon-button { width: 32px; height: 32px; padding: 4px; }
+}

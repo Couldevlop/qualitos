@@ -3,8 +3,9 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatRadioModule } from '@angular/material/radio';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 
 import { environment } from '../../../../../environments/environment';
 import { AuthService, AuthUser } from '../../../../core/auth/auth.service';
@@ -12,6 +13,7 @@ import { ConnectivityService } from '../../../../core/offline/connectivity.servi
 import { InMemoryQueueStore, OfflineQueueStore } from '../../../../core/offline/offline-queue.store';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
+import { ProductsService } from '../../../products/products.service';
 import { NcResponse } from '../../nc.types';
 import { NcCreateDialogComponent } from './nc-create-dialog.component';
 
@@ -56,14 +58,17 @@ describe('NcCreateDialogComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [NcCreateDialogComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, MatRadioModule, NoopAnimationsModule],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         { provide: OfflineQueueStore, useClass: InMemoryQueueStore },
         { provide: ConnectivityService, useValue: connectivity },
         { provide: MatDialogRef, useValue: dialogRef },
-        { provide: AuthService, useValue: { snapshot: () => currentUser } }
+        { provide: AuthService, useValue: { snapshot: () => currentUser } },
+        // Le référentiel produit est une aide à la saisie : ce banc de test
+        // vérifie le formulaire lui-même, pas le catalogue qui l'alimente.
+        { provide: ProductsService, useValue: { list: () => of([]), failureModeSuggestions: () => of([]) } }
       ]
     }).compileComponents();
 

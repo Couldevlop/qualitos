@@ -173,6 +173,23 @@ springdoc:
 
 # Passerelle IA (ai-service) — ADR 0014. Entièrement paramétrable par variables d'env.
 qualitos:
+  security:
+    # Second facteur exigé sur les actions critiques : approuver un control plan,
+    # accepter une proposition de révision (CLAUDE.md §18.2 règle 5).
+    #
+    # Le jeton doit porter la trace du second facteur — « acr » (palier atteint)
+    # ou « amr » (méthodes employées). Le realm livré expose les paliers
+    # `silver` (mot de passe) et `gold` (mot de passe + code) ; le front redemande
+    # `gold` quand le serveur répond 403 « step-up-required ».
+    #
+    # ATTENTION : un realm qui n'expose pas ces paliers fera répondre 403 à toute
+    # approbation. Voir infra/keycloak/apply-step-up.sh pour l'appliquer à un
+    # realm déjà en service — l'import ne réécrit pas un realm existant.
+    step-up:
+      enforced: ${QUALITOS_STEP_UP_ENFORCED:true}
+      accepted-acr: ${QUALITOS_STEP_UP_ACR:2,3,gold,mfa}
+      accepted-amr: ${QUALITOS_STEP_UP_AMR:otp,mfa,hwk,swk,face,fpt,iris}
+
   # Relais Kafka outbox (audit_events → topic). OFF par défaut = aucun changement de
   # comportement (le bean AuditEventKafkaRelay n'est même pas créé). §10.1, §13.2.
   kafka:

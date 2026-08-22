@@ -39,6 +39,9 @@ export class FmeaItemDialogComponent {
 
     recommendedAction: [this.data.item?.recommendedAction ?? '', [Validators.maxLength(1000)]],
     actionDueDate:     [this.data.item?.actionDueDate     ?? ''],
+    actionOwnerName:   [this.data.item?.actionOwnerName   ?? '', [Validators.maxLength(250)]],
+    actionsTaken:      [this.data.item?.actionsTaken      ?? '', [Validators.maxLength(2000)]],
+    actionsTakenAt:    [this.data.item?.actionsTakenAt    ?? ''],
 
     resultingSeverity:   [this.data.item?.resultingSeverity   ?? null as number | null],
     resultingOccurrence: [this.data.item?.resultingOccurrence ?? null as number | null],
@@ -100,6 +103,9 @@ export class FmeaItemDialogComponent {
       severity: v.severity, occurrence: v.occurrence, detection: v.detection,
       recommendedAction: v.recommendedAction?.trim() || undefined,
       actionDueDate: v.actionDueDate || undefined,
+      actionOwnerName: v.actionOwnerName?.trim() || undefined,
+      actionsTaken: v.actionsTaken?.trim() || undefined,
+      actionsTakenAt: v.actionsTakenAt || undefined,
       resultingSeverity:   v.resultingSeverity   ?? undefined,
       resultingOccurrence: v.resultingOccurrence ?? undefined,
       resultingDetection:  v.resultingDetection  ?? undefined

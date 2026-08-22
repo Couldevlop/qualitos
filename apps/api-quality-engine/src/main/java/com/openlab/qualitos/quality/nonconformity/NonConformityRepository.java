@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.time.Instant;
 import java.util.UUID;
 
 public interface NonConformityRepository
@@ -72,4 +73,25 @@ public interface NonConformityRepository
 
     /** Repli quand aucune NC ne pointe vers le dossier : la référence saisie à la main. */
     java.util.Optional<NonConformity> findByTenantIdAndReference(UUID tenantId, String reference);
+
+    /**
+     * Récidives d'un MÊME mode de défaillance sur un produit, entre deux
+     * instants. Sert la mesure d'efficacité des CAPA : c'est le rapprochement
+     * qui a du sens — la même défaillance, sur la même pièce.
+     *
+     * <p>Borne gauche incluse, borne droite EXCLUE : un défaut détecté à
+     * l'instant même où le dossier s'ouvre appartient à la période « avant », et
+     * ne doit pas être compté deux fois.
+     */
+    long countByTenantIdAndProductIdAndFmeaItemIdAndDetectedAtGreaterThanEqualAndDetectedAtLessThan(
+            UUID tenantId, UUID productId, UUID fmeaItemId, Instant from, Instant to);
+
+    /**
+     * Repli quand la non-conformité d'origine n'était rattachée ni à un produit
+     * ni à un mode de défaillance : on compte par catégorie. Beaucoup plus
+     * large — deux défauts « procédé » n'ont aucune raison d'être le même
+     * problème — et l'API le signale comme un rapprochement approché.
+     */
+    long countByTenantIdAndCategoryAndDetectedAtGreaterThanEqualAndDetectedAtLessThan(
+            UUID tenantId, NcCategory category, Instant from, Instant to);
 }

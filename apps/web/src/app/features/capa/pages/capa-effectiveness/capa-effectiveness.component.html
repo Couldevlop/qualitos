@@ -1,0 +1,132 @@
+<div class="qos-page">
+  <header class="page-head">
+    <div>
+      <h1 i18n="@@capa.effectiveness.title">Efficacité des CAPA</h1>
+      <p class="subtitle" i18n="@@capa.effectiveness.subtitle">
+        Ce que le terrain dit des dossiers clos, et non ce qu'on avait déclaré à la clôture.
+      </p>
+    </div>
+
+    <mat-button-toggle-group [value]="months" aria-label="Fenêtre d'observation"
+                             i18n-aria-label="@@capa.effectiveness.window-aria">
+      <mat-button-toggle *ngFor="let w of windows" [value]="w" (click)="changeWindow(w)">
+        {{ w }} <span i18n="@@capa.effectiveness.months">mois</span>
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </header>
+
+  <div class="state-row" *ngIf="loading" role="status">
+    <mat-progress-spinner mode="indeterminate" diameter="32"
+                          aria-label="Chargement" i18n-aria-label="@@common.loading-aria"></mat-progress-spinner>
+  </div>
+
+  <ng-container *ngIf="!loading && summary as s">
+    <!--
+      La synthèse d'abord : ces quatre nombres suffisent à savoir s'il faut
+      regarder le tableau. « Déclarées efficaces à tort » est celui qu'un
+      auditeur demandera, et il est mis en avant à ce titre.
+    -->
+    <div class="cards">
+      <div class="card">
+        <span class="value">{{ s.averageRatePercent !== undefined ? s.averageRatePercent + ' %' : '—' }}</span>
+        <span class="label" i18n="@@capa.effectiveness.average">Efficacité moyenne</span>
+        <span class="hint" i18n="@@capa.effectiveness.average-hint">Sur les seuls dossiers mesurables</span>
+      </div>
+      <div class="card">
+        <span class="value">{{ s.measured }}</span>
+        <span class="label" i18n="@@capa.effectiveness.measured">Mesurées</span>
+      </div>
+      <div class="card">
+        <span class="value">{{ s.inObservation }}</span>
+        <span class="label" i18n="@@capa.effectiveness.in-observation">En observation</span>
+        <span class="hint" i18n="@@capa.effectiveness.in-observation-hint">Fenêtre non écoulée</span>
+      </div>
+      <div class="card" [class.alarm]="s.declaredButFailed > 0">
+        <span class="value">{{ s.declaredButFailed }}</span>
+        <span class="label" i18n="@@capa.effectiveness.declared-but-failed">Déclarées efficaces à tort</span>
+      </div>
+    </div>
+
+    <p class="notice" *ngIf="s.truncated" i18n="@@capa.effectiveness.truncated">
+      Le périmètre dépasse la limite de lecture : seuls les dossiers les plus récents sont mesurés.
+      La moyenne ne porte donc pas sur la totalité de l'historique.
+    </p>
+
+    <p class="empty" *ngIf="s.rows.length === 0" i18n="@@capa.effectiveness.none">
+      Aucun dossier mesurable. L'efficacité se mesure sur une CAPA close née d'une non-conformité :
+      sans elle, il n'y a pas de récidive à guetter.
+    </p>
+
+    <div class="qos-scroll-x" *ngIf="s.rows.length > 0">
+      <table mat-table [dataSource]="s.rows" class="eff-table">
+
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef i18n="@@capa.effectiveness.col-capa">CAPA</th>
+          <td mat-cell *matCellDef="let row">
+            <a [routerLink]="['/capa', row.capaId]">{{ row.title }}</a>
+            <!--
+              Un rapprochement fondé sur la seule catégorie est beaucoup plus
+              large qu'un rapprochement par mode de défaillance : le dire évite
+              de prendre un ordre de grandeur pour une mesure.
+            -->
+            <div class="dim" *ngIf="!row.preciseMatch" i18n="@@capa.effectiveness.approximate">
+              Rapprochement par catégorie — taux indicatif
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="closedAt">
+          <th mat-header-cell *matHeaderCellDef i18n="@@capa.effectiveness.col-closed">Clôturée le</th>
+          <td mat-cell *matCellDef="let row">{{ row.closedAt | date:'dd/MM/yyyy' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="recurrence">
+          <th mat-header-cell *matHeaderCellDef i18n="@@capa.effectiveness.col-recurrence">Récidives</th>
+          <td mat-cell *matCellDef="let row">
+            <ng-container *ngIf="row.status !== 'IN_OBSERVATION'">
+              <span [class.aggravated]="row.aggravated">{{ row.occurrencesAfter }}</span>
+              <span class="dim"> / {{ row.occurrencesBefore }} <span i18n="@@capa.effectiveness.before">avant</span></span>
+            </ng-container>
+            <ng-container *ngIf="row.status === 'IN_OBSERVATION'">
+              {{ row.occurrencesAfter }}
+              <span class="dim">
+                <span i18n="@@capa.effectiveness.elapsed">en</span>
+                {{ observedMonths(row) }}/{{ windowMonths(row) }}
+                <span i18n="@@capa.effectiveness.months">mois</span>
+              </span>
+            </ng-container>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="rate">
+          <th mat-header-cell *matHeaderCellDef i18n="@@capa.effectiveness.col-rate">Efficacité</th>
+          <td mat-cell *matCellDef="let row">
+            <span *ngIf="row.ratePercent !== undefined" [class]="rateClass(row)">{{ row.ratePercent }} %</span>
+            <span class="dim" *ngIf="row.ratePercent === undefined && row.status === 'IN_OBSERVATION'"
+                  i18n="@@capa.effectiveness.too-early">Trop tôt pour conclure</span>
+            <span class="dim" *ngIf="row.ratePercent === undefined && row.status === 'NOT_MEASURABLE'"
+                  i18n="@@capa.effectiveness.not-measurable">Aucune occurrence antérieure</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="declared">
+          <th mat-header-cell *matHeaderCellDef i18n="@@capa.effectiveness.col-declared">Déclarée</th>
+          <td mat-cell *matCellDef="let row">
+            <span *ngIf="row.declaredEffective === true" [class.contradicted]="contradicted(row)">
+              <span i18n="@@capa.effectiveness.declared-yes">Efficace</span>
+              <mat-icon *ngIf="contradicted(row)" class="warn-icon"
+                        aria-label="Démentie par la mesure"
+                        i18n-aria-label="@@capa.effectiveness.contradicted-aria">report_problem</mat-icon>
+            </span>
+            <span class="dim" *ngIf="row.declaredEffective !== true" i18n="@@capa.effectiveness.declared-no">
+              Non prononcée
+            </span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns"></tr>
+      </table>
+    </div>
+  </ng-container>
+</div>

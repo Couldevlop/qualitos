@@ -1,0 +1,54 @@
+<div class="state-row" *ngIf="loading" role="status">
+  <mat-progress-spinner mode="indeterminate" diameter="32"
+                        aria-label="Chargement" i18n-aria-label="@@common.loading-aria"></mat-progress-spinner>
+</div>
+
+<p class="empty" *ngIf="!loading && total === 0" i18n="@@product.nc-empty">
+  Aucune non-conformité rattachée à ce produit.
+</p>
+
+<section *ngIf="unexplained.length > 0" class="block block-warning">
+  <h3 i18n="@@product.nc-unexplained">Défauts que l'analyse n'explique pas</h3>
+  <p class="hint" i18n="@@product.nc-unexplained-hint">
+    Aucun mode de défaillance ne leur est rattaché : soit le PFMEA en ignore un, soit le
+    rattachement reste à faire.
+  </p>
+  <ng-container *ngTemplateOutlet="ncTable; context: { rows: unexplained }"></ng-container>
+</section>
+
+<section *ngIf="explained.length > 0" class="block">
+  <h3 i18n="@@product.nc-explained">Défauts rattachés à un mode de défaillance</h3>
+  <ng-container *ngTemplateOutlet="ncTable; context: { rows: explained }"></ng-container>
+</section>
+
+<ng-template #ncTable let-rows="rows">
+  <div class="qos-scroll-x">
+    <table mat-table [dataSource]="rows" class="nc-table">
+      <ng-container matColumnDef="reference">
+        <th mat-header-cell *matHeaderCellDef i18n="@@product.nc-col-ref">Référence</th>
+        <td mat-cell *matCellDef="let item"><code>{{ item.reference }}</code></td>
+      </ng-container>
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef i18n="@@product.nc-col-title">Intitulé</th>
+        <td mat-cell *matCellDef="let item">{{ item.title }}</td>
+      </ng-container>
+      <ng-container matColumnDef="severity">
+        <th mat-header-cell *matHeaderCellDef i18n="@@product.nc-col-severity">Gravité</th>
+        <td mat-cell *matCellDef="let item">{{ item.severity }}</td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef i18n="@@product.col-status">Statut</th>
+        <td mat-cell *matCellDef="let item">
+          <span class="qos-badge" data-tone="info">{{ item.status }}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="detectedAt">
+        <th mat-header-cell *matHeaderCellDef i18n="@@product.nc-col-detected">Détectée le</th>
+        <td mat-cell *matCellDef="let item">{{ item.detectedAt | date:'shortDate' }}</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns;" class="nc-row"
+          (click)="open(row)" tabindex="0" (keyup.enter)="open(row)"></tr>
+    </table>
+  </div>
+</ng-template>

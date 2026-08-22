@@ -88,8 +88,11 @@ export class HomeComponent {
   readonly quickActions: QuickAction[] = [
     { label: $localize`:@@home.actions.new-pdca:Créer un cycle PDCA`, icon: 'autorenew', route: '/pdca' },
     { label: $localize`:@@home.actions.new-audit:Lancer un audit 5S`, icon: 'check_circle', route: '/fives' },
-    { label: $localize`:@@home.actions.new-nc:Déclarer une NC`, icon: 'report_problem', route: '/nc' },
-    { label: $localize`:@@home.actions.new-ishikawa:Analyser une cause (Ishikawa)`, icon: 'account_tree', route: '/ishikawa' }
+    // Pas d'action « Analyser une cause » ici : une analyse de cause part d'un
+    // écart constaté. On déclare la NC, et c'est sa fiche qui ouvre l'Ishikawa
+    // ou les 5 Pourquoi sur son propre sujet. La carte de méthode ci-dessus
+    // reste, elle, la porte de consultation des diagrammes existants.
+    { label: $localize`:@@home.actions.new-nc:Déclarer une NC`, icon: 'report_problem', route: '/nc' }
   ];
 
   trackByTitle(_index: number, m: MethodCard): string { return m.title; }

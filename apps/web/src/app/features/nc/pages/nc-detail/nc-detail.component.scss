@@ -29,18 +29,37 @@
   letter-spacing: 0.05em;
 }
 
-.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+/* La barre d'actions doit pouvoir RÉTRÉCIR pour que son propre `flex-wrap`
+   serve à quelque chose. Sans `min-width: 0`, un élément flex garde la largeur
+   de son contenu (`min-width: auto`) : la barre débordait de l'en-tête sans
+   jamais passer à la ligne, et les dernières actions — « Résoudre », « Clôturer »
+   — sortaient de l'écran, hors d'atteinte puisque la page ne défile pas
+   horizontalement. Sur mobile, le débordement commençait dès « 5 Pourquoi ».
+   C'est devenu critique depuis que la fiche de NC est la seule porte vers
+   l'analyse de cause. */
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1 1 auto;
+  min-width: 0;
+  justify-content: flex-end;
+}
 .actions button { display: inline-flex; align-items: center; gap: 4px; }
 
-/* Compteur d'analyses 5 Pourquoi déjà ouvertes : une pastille discrète, pas un
-   second libellé — elle répond à « y en a-t-il déjà une ? » sans allonger le
-   bouton. */
-.five-whys-btn .fw-count {
+/* Compteur d'analyses déjà ouvertes — 5 Pourquoi comme Ishikawa : une pastille
+   discrète, pas un second libellé ; elle répond à « y en a-t-il déjà une ? »
+   sans allonger le bouton. La règle était portée par `.five-whys-btn`, si bien
+   que le bouton Ishikawa, qui pose pourtant la même classe, affichait son
+   compte collé au libellé (« Ishikawa1 »). Le sélecteur vaut désormais pour les
+   deux ; l'encapsulation Angular le garde propre à cette fiche. */
+.fw-count {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 18px;
   height: 18px;
+  margin-left: 6px;
   padding: 0 5px;
   border-radius: 9px;
   font-size: 11px;

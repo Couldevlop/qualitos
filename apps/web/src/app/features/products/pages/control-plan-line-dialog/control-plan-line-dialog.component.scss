@@ -1,0 +1,13 @@
+.line-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--qos-space-3) var(--qos-space-4);
+  min-width: min(640px, 80vw);
+}
+
+.span-2 { grid-column: span 2; }
+
+@media (max-width: 640px) {
+  .line-form { grid-template-columns: minmax(0, 1fr); min-width: 0; }
+  .span-2 { grid-column: auto; }
+}

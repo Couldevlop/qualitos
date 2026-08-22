@@ -1,0 +1,75 @@
+<div class="state-row" *ngIf="loading" role="status">
+  <mat-progress-spinner mode="indeterminate" diameter="32"
+                        aria-label="Chargement" i18n-aria-label="@@common.loading-aria"></mat-progress-spinner>
+</div>
+
+<p class="empty" *ngIf="!loading && !project" i18n="@@pfmea.no-project">
+  Aucun PFMEA rattaché à ce produit. Créez-en un depuis le module FMEA, puis rattachez-le.
+</p>
+
+<div *ngIf="project as p">
+  <div class="project-line">
+    <span class="qos-badge" [attr.data-tone]="p.status === 'ACTIVE' ? 'success' : 'info'">
+      {{ p.status }}
+    </span>
+    <code>{{ p.code }}</code>
+    <span>{{ p.name }}</span>
+    <span class="dim" i18n="@@pfmea.revision">révision {{ p.revision }}</span>
+  </div>
+
+  <p class="empty" *ngIf="items.length === 0" i18n="@@pfmea.no-item">
+    Ce PFMEA ne contient encore aucune ligne d'analyse.
+  </p>
+
+  <div class="qos-scroll-x" *ngIf="items.length > 0">
+    <table mat-table [dataSource]="items" class="pfmea-table">
+
+      <ng-container matColumnDef="sequenceNo">
+        <th mat-header-cell *matHeaderCellDef i18n="@@product.field-sequence">Rang</th>
+        <td mat-cell *matCellDef="let item">{{ item.sequenceNo }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="failureMode">
+        <th mat-header-cell *matHeaderCellDef i18n="@@pfmea.col-failure-mode">Mode de défaillance</th>
+        <td mat-cell *matCellDef="let item">
+          <div>{{ item.failureMode || '—' }}</div>
+          <div class="dim">{{ item.failureEffect }}</div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="sod">
+        <th mat-header-cell *matHeaderCellDef i18n="@@pfmea.col-sod">S / O / D</th>
+        <td mat-cell *matCellDef="let item">
+          {{ item.severity }} / {{ item.occurrence }} / {{ item.detection }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="rpn">
+        <th mat-header-cell *matHeaderCellDef i18n="@@pfmea.col-rpn">RPN</th>
+        <td mat-cell *matCellDef="let item">{{ item.rpn }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="ap">
+        <th mat-header-cell *matHeaderCellDef i18n="@@pfmea.col-ap">Priorité d'action</th>
+        <td mat-cell *matCellDef="let item">
+          <span class="qos-badge" [attr.data-tone]="tone(item.actionPriority)"
+                *ngIf="item.actionPriority">{{ item.actionPriority }}</span>
+          <span class="dim" *ngIf="!item.actionPriority" i18n="@@pfmea.not-rated">non cotée</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="flag">
+        <th mat-header-cell *matHeaderCellDef i18n="@@pfmea.col-flag">Révision</th>
+        <td mat-cell *matCellDef="let item">
+          <mat-icon class="flag" *ngIf="isFlagged(item)"
+                    matTooltip="Une révision est proposée sur cette ligne"
+                    i18n-matTooltip="@@pfmea.flag-tooltip">flag</mat-icon>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns;"
+          [class.flagged]="isFlagged(row)"></tr>
+    </table>
+  </div>
+</div>

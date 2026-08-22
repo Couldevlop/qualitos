@@ -52,7 +52,7 @@ describe('DocGenComponent', () => {
     svc.list.and.returnValue(of([dossier]));
     standards.listCatalog.and.returnValue(of({
       content: [{ id: 's1', code: 'iso-9001', fullName: 'ISO 9001:2015',
-        currentVersion: '2015', status: 'PUBLISHED' }],
+        currentVersion: '2015', status: 'PUBLISHED', owned: false }],
       totalElements: 1, totalPages: 1, number: 0, size: 100
     }));
 

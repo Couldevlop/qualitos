@@ -244,12 +244,18 @@ public class IndustryPackLoader implements ApplicationRunner {
     /**
      * Validation référentielle (ADR §4) : chaque norme référencée doit exister dans le
      * catalogue Standards Hub. Référence inconnue ⇒ WARN structuré, pack chargé quand même.
+     *
+     * <p>Le chargement des packs se fait au démarrage, hors de tout contexte tenant : un
+     * pack ne peut référencer que des normes de PLATEFORME (owner_tenant_id NULL), jamais
+     * le référentiel privé d'un tenant. On passe donc {@code null} comme tenant à
+     * {@code findVisibleByCode} — la clause de visibilité ne retient alors que les normes
+     * plateforme, exactement ce qu'on veut valider ici.
      */
     void validateNormReferences(IndustryPackManifest m) {
         if (standardRepo == null || m.getStandards() == null) return;
         for (String normCode : m.getStandards()) {
             if (normCode == null || normCode.isBlank()) continue;
-            if (standardRepo.findByCode(normCode).isEmpty()) {
+            if (standardRepo.findVisibleByCode(normCode, null).isEmpty()) {
                 lastRunUnknownNormCount++;
                 log.warn("Industry pack '{}' references unknown standard '{}' (not in Standards Hub catalogue) — pack loaded anyway",
                         m.getCode(), normCode);

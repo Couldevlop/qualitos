@@ -34,6 +34,13 @@ export function initOidc(oauthService: OAuthService): () => Promise<void> {
       issuer: environment.keycloak.issuer,
       clientId: environment.keycloak.clientId,
       redirectUri: environment.keycloak.redirectUri,
+      // Déclarée explicitement, et pas laissée à la valeur de repli de la
+      // bibliothèque : c'est cette URI que Keycloak confronte à la liste
+      // `post.logout.redirect.uris` du client. Le repli implicite masquait le
+      // lien entre le réglage côté realm et le paramètre envoyé — et la
+      // déconnexion échouait en « Invalid redirect uri » sans que rien, côté
+      // application, ne désigne le coupable.
+      postLogoutRedirectUri: environment.keycloak.redirectUri,
       responseType: 'code',
       scope: environment.keycloak.scope,
       requireHttps: false,                  // dev local (Keycloak en http://)

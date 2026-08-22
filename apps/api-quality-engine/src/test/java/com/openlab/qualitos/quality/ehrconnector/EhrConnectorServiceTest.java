@@ -325,7 +325,7 @@ class EhrConnectorServiceTest {
     private NcDto.Response ncResponse(UUID id) {
         return new NcDto.Response(id, TENANT, "NC-2026-0001", "t", "d",
                 NcCategory.SAFETY, NcSeverity.CRITICAL, NcStatus.OPEN, NcOrigin.INTERNAL, Instant.now(),
-                null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null,
                 Instant.now(), Instant.now());
     }
 }

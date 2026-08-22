@@ -9,6 +9,7 @@ import {
   AttachSkillRequirementRequest,
   Badge,
   BeltLevel,
+  CompetencyGrid,
   CompetencyMatrix,
   CompetencyResponse,
   CompleteLearningRequest,
@@ -131,6 +132,42 @@ export class TrainingService {
       return of({ userId, competencies: this.mockCompetencies[userId] ?? [] }).pipe(delay(100));
     }
     return this.http.get<CompetencyMatrix>(`${this.endpoint}/competencies/users/${userId}`);
+  }
+
+  /**
+   * La matrice de TOUT le tenant, par opposition a `getMatrix`, qui rend les
+   * competences d'une seule personne.
+   */
+  competencyMatrix(): Observable<CompetencyGrid> {
+    if (environment.useMockApi) {
+      return of(this.mockGrid()).pipe(delay(120));
+    }
+    return this.http.get<CompetencyGrid>(`${this.endpoint}/competencies/matrix`);
+  }
+
+  private mockGrid(): CompetencyGrid {
+    return {
+      people: [
+        { userId: 'u-1', label: 'Anna Dubois' },
+        { userId: 'u-2', label: 'Boris Lemaire' },
+        { userId: 'u-3', label: 'Chloe Ferrand' }
+      ],
+      groups: [
+        {
+          category: 'Gestion de projet',
+          rows: [
+            { skillId: 's-1', code: 'PLAN', name: 'Planification', levels: [4, 3, null], holders: 2, singlePointOfKnowledge: false },
+            { skillId: 's-2', code: 'RISK', name: 'Gestion des risques', levels: [3, null, null], holders: 1, singlePointOfKnowledge: true }
+          ]
+        },
+        {
+          category: 'Savoir-etre',
+          rows: [
+            { skillId: 's-3', code: 'LEAD', name: 'Leadership', levels: [null, 4, 2], holders: 2, singlePointOfKnowledge: false }
+          ]
+        }
+      ]
+    };
   }
 
   getGap(userId: string, pathId: string): Observable<RoleGapAnalysis> {

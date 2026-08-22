@@ -1,0 +1,81 @@
+<qos-form-dialog
+  [title]="title"
+  i18n-subtitle="@@standards.tree.subtitle"
+  subtitle="Le code n'a besoin d'être unique que parmi ses voisins immédiats."
+  [formGroup]="form"
+  [submitting]="false"
+  [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.save"
+  submitLabel="Enregistrer"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@standards.tree.code">Code</mat-label>
+    <input matInput formControlName="code" required [maxlength]="codeMaxLength"
+           i18n-placeholder="@@standards.tree.code-placeholder"
+           placeholder="Ex. : 1, 1.1, 1.1.1">
+    <mat-error *ngIf="form.controls.code.hasError('required')" i18n="@@standards.tree.code-required">
+      Le code est requis.
+    </mat-error>
+    <mat-error *ngIf="form.controls.code.hasError('maxlength')" i18n="@@standards.tree.code-maxlength">
+      Code trop long pour ce niveau.
+    </mat-error>
+  </mat-form-field>
+
+  <ng-container *ngIf="!isRequirement">
+    <mat-form-field appearance="outline" class="full">
+      <mat-label i18n="@@common.title">Titre</mat-label>
+      <input matInput formControlName="title" required maxlength="500">
+      <mat-error *ngIf="form.controls.title.hasError('required')" i18n="@@standards.tree.title-required">
+        Le titre est requis.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label i18n="@@standards.tree.description">Description (optionnelle)</mat-label>
+      <textarea matInput formControlName="description" rows="2"></textarea>
+    </mat-form-field>
+  </ng-container>
+
+  <ng-container *ngIf="isRequirement">
+    <mat-form-field appearance="outline" class="full">
+      <mat-label i18n="@@standards.tree.text">Texte de l'exigence</mat-label>
+      <textarea matInput formControlName="text" rows="3" required
+                i18n-placeholder="@@standards.tree.text-placeholder"
+                placeholder="Ce que la procédure impose, tel qu'un auditeur le vérifiera."></textarea>
+      <mat-error *ngIf="form.controls.text.hasError('required')" i18n="@@standards.tree.text-required">
+        Le texte de l'exigence est requis.
+      </mat-error>
+    </mat-form-field>
+
+    <div class="row">
+      <mat-form-field appearance="outline" class="col">
+        <mat-label i18n="@@standards.tree.obligation">Obligation</mat-label>
+        <mat-select formControlName="obligation">
+          <mat-option *ngFor="let o of obligations" [value]="o">{{ o }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="col">
+        <mat-label i18n="@@standards.tree.risk">Risque si absente</mat-label>
+        <mat-select formControlName="riskIfMissing">
+          <mat-option value="" i18n="@@common.none">—</mat-option>
+          <mat-option *ngFor="let r of risks" [value]="r">{{ r }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label i18n="@@standards.tree.evidence">Preuve attendue (optionnelle)</mat-label>
+      <input matInput formControlName="evidenceTypes"
+             i18n-placeholder="@@standards.tree.evidence-placeholder"
+             placeholder="Ex. : programme d'audit signé">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label i18n="@@standards.tree.criteria">Critère mesurable (optionnel)</mat-label>
+      <input matInput formControlName="measurableCriteria">
+    </mat-form-field>
+  </ng-container>
+</qos-form-dialog>

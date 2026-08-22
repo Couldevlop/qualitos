@@ -86,6 +86,12 @@ public final class AuditDto {
             AuditType type,
             AuditStatus status,
             String standard,
+            /**
+             * Référentiel du catalogue dont la checklist a été tirée (§8), s'il y
+             * en a un. Distinct de {@code standard}, texte libre : c'est lui qui
+             * dit à l'écran qu'un référentiel réel est derrière cet audit.
+             */
+            UUID standardId,
             UUID leadAuditorId,
             UUID auditeeId,
             LocalDate scheduledDate,

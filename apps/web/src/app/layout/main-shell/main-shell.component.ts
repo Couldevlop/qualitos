@@ -107,7 +107,6 @@ export class MainShellComponent implements OnInit, OnDestroy {
       label: $localize`:@@nav.methodes-qualite:Méthodes qualité`,
       items: [
         { label: $localize`:@@nav.pdca:PDCA`,         route: '/pdca',     icon: 'autorenew', module: 'pdca' },
-        { label: $localize`:@@nav.ishikawa:Ishikawa`, route: '/ishikawa', icon: 'account_tree', module: 'ishikawa' },
         { label: $localize`:@@nav.5s:5S`,             route: '/fives',    icon: 'check_circle', module: 'fives' },
         { label: $localize`:@@nav.dmaic:DMAIC`,       route: '/dmaic',    icon: 'analytics', module: 'dmaic' },
         { label: $localize`:@@nav.cercles:Cercles`,   route: '/circles',  icon: 'groups', module: 'circle' },
@@ -128,22 +127,27 @@ export class MainShellComponent implements OnInit, OnDestroy {
       ]
     },
     {
+      // Ni Ishikawa ni les 5 Pourquoi n'ont d'entrée ici, et c'est voulu : ces
+      // deux analyses partent d'un écart déjà constaté. On les ouvre depuis la
+      // fiche de non-conformité, qui les crée sur son propre sujet et les
+      // rattache. Une entrée de menu laissait croire à une analyse hors sol.
       label: $localize`:@@nav.non-conformite:Non-conformité`,
       items: [
         { label: $localize`:@@nav.nc-interne:NC interne`,  route: '/nc/interne',  icon: 'home_repair_service', module: 'capa' },
-        { label: $localize`:@@nav.nc-externe:NC externe`,  route: '/nc/externe',  icon: 'campaign',            module: 'capa' },
-        { label: $localize`:@@nav.cinq-pourquoi:5 Pourquoi`, route: '/five-whys',  icon: 'psychology_alt',      module: 'capa' }
+        { label: $localize`:@@nav.nc-externe:NC externe`,  route: '/nc/externe',  icon: 'campaign',            module: 'capa' }
       ]
     },
     {
       label: $localize`:@@nav.operations:Opérations`,
       items: [
         { label: $localize`:@@nav.capa:CAPA`,                       route: '/capa',      icon: 'engineering', module: 'capa' },
+        { label: $localize`:@@nav.capa-efficacite:Efficacité CAPA`,   route: '/capa/efficacite', icon: 'insights', module: 'capa' },
         { label: $localize`:@@nav.reclamations:Réclamations`,       route: '/complaints', icon: 'support_agent', module: 'complaints' },
         { label: $localize`:@@nav.calibration:Calibration`,         route: '/calibration', icon: 'straighten', module: 'calibration' },
         { label: $localize`:@@nav.iot:Parc IoT`,                    route: '/iot',        icon: 'sensors', module: 'iot' },
         { label: $localize`:@@nav.audits:Audits`,                   route: '/audits',    icon: 'fact_check', module: 'audit' },
         { label: $localize`:@@nav.audits-planning:Planning audits`, route: '/audits/planning', icon: 'event_available', module: 'audit' },
+        { label: $localize`:@@nav.produits:Produits`,               route: '/products',  icon: 'inventory_2', module: 'product' },
         { label: $localize`:@@nav.risques-fmea:Risques (FMEA)`,     route: '/fmea',      icon: 'warning', module: 'risk' },
         { label: $localize`:@@nav.documents:Documents`,             route: '/documents', icon: 'description', module: 'docs' },
         { label: $localize`:@@nav.changements:Changements`,         route: '/changes',   icon: 'change_circle', module: 'change' },
@@ -160,6 +164,7 @@ export class MainShellComponent implements OnInit, OnDestroy {
         { label: $localize`:@@nav.marketplace:Marketplace`,         route: '/marketplace',    icon: 'storefront', module: 'industry' },
         { label: $localize`:@@nav.fournisseurs:Fournisseurs`,      route: '/suppliers',      icon: 'local_shipping', module: 'supplier' },
         { label: $localize`:@@nav.formation:Formation`,            route: '/training',       icon: 'school', module: 'training' },
+        { label: $localize`:@@nav.competences:Matrice de compétences`, route: '/training/competences', icon: 'grid_on', module: 'training' },
         { label: $localize`:@@nav.academy:Academy`,                route: '/academy',        icon: 'cast_for_education', module: 'training' },
         { label: $localize`:@@nav.mon-apprentissage:Mon apprentissage`, route: '/learning',  icon: 'military_tech' },
         { label: $localize`:@@nav.integrations:Intégrations`,      route: '/itsm',           icon: 'hub', module: 'itsm' }

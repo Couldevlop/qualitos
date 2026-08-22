@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
@@ -102,5 +103,71 @@ describe('StandardsListComponent', () => {
     component.adopt(summary());
     expect(component.adopting).toBeUndefined();
     expect(snackSpy).toHaveBeenCalled();
+  });
+
+  // ---- Référentiels du tenant (§8) ------------------------------------------
+
+  it('distingue à l\'œil un référentiel maison d\'une norme livrée', () => {
+    // Sans ce repère, un utilisateur croit pouvoir éditer ISO 9001, ou cherche
+    // en vain sa procédure au milieu de soixante normes.
+    svc.listCatalog.and.returnValue(of(page([
+      summary({ id: '1', code: 'iso-9001', fullName: 'ISO 9001', owned: false }),
+      summary({ id: '2', code: 'PRO-002', fullName: 'Audit interne', owned: true })
+    ]) as StandardsPage));
+
+    fixture.detectChanges();
+
+    const el = fixture.nativeElement as HTMLElement;
+    const badges = el.querySelectorAll('.owned-badge');
+    expect(badges.length).toBe(1);
+    expect(badges[0].textContent).toContain('Procédure interne');
+  });
+
+  it('filtre le catalogue sur ce que l\'utilisateur cherche', () => {
+    svc.listCatalog.and.returnValue(of(page([
+      summary({ id: '1', owned: false }),
+      summary({ id: '2', owned: true })
+    ]) as StandardsPage));
+    fixture.detectChanges();
+
+    const seen: StandardSummary[][] = [];
+    component.catalog$.subscribe(c => seen.push(c));
+
+    component.setScope('OWNED');
+    component.setScope('PLATFORM');
+    component.setScope('ALL');
+
+    expect(seen[0].length).toBe(2);
+    expect(seen[1].map(s => s.id)).toEqual(['2']);
+    expect(seen[2].map(s => s.id)).toEqual(['1']);
+    expect(seen[3].length).toBe(2);
+  });
+
+  it('ouvre le choix de la procédure source et recharge après une création', () => {
+    fixture.detectChanges();
+    const dialog = TestBed.inject(MatDialog);
+    const ref = { afterClosed: () => of(true) } as MatDialogRef<unknown>;
+    const open = spyOn(dialog, 'open').and.returnValue(ref as MatDialogRef<unknown, unknown>);
+    svc.listCatalog.calls.reset();
+
+    (fixture.nativeElement as HTMLElement)
+      .querySelector<HTMLButtonElement>('.create-procedure-btn')!.click();
+
+    expect(open).toHaveBeenCalled();
+    // Rechargé, et non reconstruit à la main : le serveur seul connaît le code
+    // et la version que le référentiel a réellement reçus.
+    expect(svc.listCatalog).toHaveBeenCalled();
+  });
+
+  it('ne recharge rien si le choix de la procédure est abandonné', () => {
+    fixture.detectChanges();
+    const dialog = TestBed.inject(MatDialog);
+    spyOn(dialog, 'open').and.returnValue(
+      { afterClosed: () => of(undefined) } as MatDialogRef<unknown, unknown>);
+    svc.listCatalog.calls.reset();
+
+    component.createFromProcedure();
+
+    expect(svc.listCatalog).not.toHaveBeenCalled();
   });
 });

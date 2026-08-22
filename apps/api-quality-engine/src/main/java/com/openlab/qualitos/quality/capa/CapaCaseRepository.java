@@ -19,6 +19,16 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
     Optional<CapaCase> findByIdAndTenantId(UUID id, UUID tenantId);
 
     /**
+     * Les dossiers clos d'un tenant, du plus récent au plus ancien.
+     *
+     * <p>Non paginée à dessein : la mesure d'efficacité les parcourt tous pour
+     * rendre une moyenne, et une moyenne calculée sur une page n'aurait aucun
+     * sens. Le volume est celui des CAPA CLOSES d'un tenant, pas de son
+     * historique complet de non-conformités.
+     */
+    List<CapaCase> findByTenantIdAndStatusOrderByClosedAtDesc(UUID tenantId, CapaStatus status);
+
+    /**
      * Idempotence des CAPA auto-générées (ex. dérive IoT) : vrai si une CAPA
      * non terminale existe déjà pour la même origine. Évite le spam d'une CAPA
      * par mesure tant que la précédente n'est pas clôturée.

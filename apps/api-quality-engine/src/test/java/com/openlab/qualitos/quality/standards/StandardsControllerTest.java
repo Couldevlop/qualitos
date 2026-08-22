@@ -437,13 +437,13 @@ class StandardsControllerTest {
     private StandardsDto.StandardSummary summary() {
         return new StandardsDto.StandardSummary(
                 STD, "iso-9001", "ISO 9001:2015", "ISO", "2015",
-                "HLS", "all", StandardStatus.PUBLISHED, 36);
+                "HLS", "all", StandardStatus.PUBLISHED, 36, false);
     }
 
     private StandardsDto.StandardDetail detail() {
         return new StandardsDto.StandardDetail(
                 STD, "iso-9001", "ISO 9001:2015", "ISO", "2015", null,
-                "HLS", "all", null, true, 36, null, StandardStatus.PUBLISHED, List.of());
+                "HLS", "all", null, true, 36, null, StandardStatus.PUBLISHED, List.of(), false);
     }
 
     private StandardsDto.AdoptionResponse adoptionResp(AdoptionStatus status) {

@@ -184,3 +184,38 @@ export interface UpdateCapaCaseRequest {
   rootCauseId?: string;
   dueDate?: string;
 }
+
+/** Ce que le terrain dit d'une CAPA close, par opposition a ce qu'on avait declare. */
+export type MeasurementStatus = 'NOT_MEASURABLE' | 'IN_OBSERVATION' | 'MEASURED';
+
+export interface CapaEffectivenessRow {
+  capaId: string;
+  title: string;
+  criticity?: string;
+  closedAt: string;
+  status: MeasurementStatus;
+  occurrencesBefore: number;
+  occurrencesAfter: number;
+  /** Absent quand le statut interdit de conclure. */
+  ratePercent?: number;
+  aggravated: boolean;
+  daysObserved: number;
+  daysInWindow: number;
+  /** Ce que le responsable avait coche a la cloture. L'ecart avec la mesure est l'information. */
+  declaredEffective?: boolean;
+  /** Faux quand la recidive se devine a la seule categorie : le taux est alors indicatif. */
+  preciseMatch: boolean;
+}
+
+export interface CapaEffectivenessSummary {
+  windowMonths: number;
+  measured: number;
+  inObservation: number;
+  notMeasurable: number;
+  averageRatePercent?: number;
+  aggravated: number;
+  declaredButFailed: number;
+  /** Le perimetre depassait la borne de lecture : les plus anciens sont ecartes. */
+  truncated: boolean;
+  rows: CapaEffectivenessRow[];
+}

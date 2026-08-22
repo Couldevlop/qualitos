@@ -1,0 +1,33 @@
+<qos-form-dialog
+  i18n-title="@@standards.procedure.title"
+  title="Créer un référentiel depuis une procédure"
+  i18n-subtitle="@@standards.procedure.subtitle"
+  subtitle="Le référentiel reprend le code, le titre et la version de la procédure. Son arborescence naît vide : vous y saisirez les exigences à auditer."
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  i18n-submitLabel="@@common.create"
+  submitLabel="Créer"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <ng-container *ngIf="procedures$ | async as procedures">
+    <mat-form-field *ngIf="procedures.length" appearance="outline" class="full">
+      <mat-label i18n="@@standards.procedure.source">Procédure source</mat-label>
+      <mat-select formControlName="documentId" required>
+        <mat-option *ngFor="let p of procedures" [value]="p.id">
+          {{ p.code }} — {{ p.title }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.controls.documentId.hasError('required')"
+                 i18n="@@standards.procedure.source-required">
+        Choisissez la procédure à auditer.
+      </mat-error>
+    </mat-form-field>
+
+    <p *ngIf="!procedures.length" class="empty-state" i18n="@@standards.procedure.none">
+      Aucune procédure approuvée. Publiez d'abord une version de votre procédure dans la GED :
+      auditer contre un brouillon ne prouverait rien.
+    </p>
+  </ng-container>
+</qos-form-dialog>

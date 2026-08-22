@@ -1,0 +1,22 @@
+.state-row { display: flex; justify-content: center; padding: var(--qos-space-8) 0; }
+
+.empty {
+  padding: var(--qos-space-8) 0;
+  text-align: center;
+  color: var(--qos-fg-tertiary);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: var(--qos-space-4);
+}
+
+.revision-card { height: 100%; }
+
+.rationale {
+  margin: var(--qos-space-2) 0 var(--qos-space-4);
+  color: var(--qos-fg-secondary);
+}
+
+.note { width: 100%; }

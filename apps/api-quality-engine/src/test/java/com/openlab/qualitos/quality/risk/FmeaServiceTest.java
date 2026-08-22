@@ -29,6 +29,7 @@ class FmeaServiceTest {
 
     @Mock FmeaProjectRepository projectRepo;
     @Mock FmeaItemRepository itemRepo;
+    @Mock com.openlab.qualitos.quality.product.domain.ProductLookup productLookup;
     @InjectMocks FmeaService service;
 
     static final UUID TENANT = UUID.randomUUID();
@@ -53,7 +54,7 @@ class FmeaServiceTest {
             return p;
         });
         FmeaDto.ProjectResponse out = service.createProject(new FmeaDto.CreateProjectRequest(
-                "p1", "Process A", null, FmeaType.PROCESS_FMEA, null, null, USER));
+                "p1", "Process A", null, FmeaType.PROCESS_FMEA, null, null, USER, null));
         assertThat(out.criticalRpnThreshold()).isEqualTo(100);
         assertThat(out.revision()).isOne();
         assertThat(out.status()).isEqualTo(FmeaStatus.DRAFT);
@@ -64,7 +65,7 @@ class FmeaServiceTest {
         when(projectRepo.findByTenantIdAndCode(TENANT, "p1")).thenReturn(Optional.empty());
         when(projectRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
         FmeaDto.ProjectResponse out = service.createProject(new FmeaDto.CreateProjectRequest(
-                "p1", "n", null, FmeaType.DESIGN_FMEA, 75, null, USER));
+                "p1", "n", null, FmeaType.DESIGN_FMEA, 75, null, USER, null));
         assertThat(out.criticalRpnThreshold()).isEqualTo(75);
     }
 
@@ -72,7 +73,7 @@ class FmeaServiceTest {
     void createProject_duplicateCode_throws() {
         when(projectRepo.findByTenantIdAndCode(TENANT, "dup")).thenReturn(Optional.of(project()));
         assertThatThrownBy(() -> service.createProject(new FmeaDto.CreateProjectRequest(
-                "dup", "n", null, FmeaType.PROCESS_FMEA, null, null, USER)))
+                "dup", "n", null, FmeaType.PROCESS_FMEA, null, null, USER, null)))
                 .isInstanceOf(FmeaStateException.class);
     }
 
@@ -80,7 +81,7 @@ class FmeaServiceTest {
     void createProject_noTenant_throws() {
         TenantContext.clear();
         assertThatThrownBy(() -> service.createProject(new FmeaDto.CreateProjectRequest(
-                "x", "n", null, FmeaType.PROCESS_FMEA, null, null, USER)))
+                "x", "n", null, FmeaType.PROCESS_FMEA, null, null, USER, null)))
                 .isInstanceOf(MissingTenantContextException.class);
     }
 
@@ -97,15 +98,15 @@ class FmeaServiceTest {
     void list_filterByStatus_orType_orAll() {
         when(projectRepo.findByTenantIdAndStatus(eq(TENANT), eq(FmeaStatus.ACTIVE), any()))
                 .thenReturn(new PageImpl<>(List.of(project())));
-        assertThat(service.listProjects(FmeaStatus.ACTIVE, null, PageRequest.of(0, 10))
+        assertThat(service.listProjects(FmeaStatus.ACTIVE, null, null, PageRequest.of(0, 10))
                 .getTotalElements()).isOne();
         when(projectRepo.findByTenantIdAndType(eq(TENANT), eq(FmeaType.BOW_TIE), any()))
                 .thenReturn(new PageImpl<>(List.of(project())));
-        assertThat(service.listProjects(null, FmeaType.BOW_TIE, PageRequest.of(0, 10))
+        assertThat(service.listProjects(null, FmeaType.BOW_TIE, null, PageRequest.of(0, 10))
                 .getTotalElements()).isOne();
         when(projectRepo.findByTenantId(eq(TENANT), any()))
                 .thenReturn(new PageImpl<>(List.of(project())));
-        assertThat(service.listProjects(null, null, PageRequest.of(0, 10))
+        assertThat(service.listProjects(null, null, null, PageRequest.of(0, 10))
                 .getTotalElements()).isOne();
     }
 
@@ -270,7 +271,8 @@ class FmeaServiceTest {
         when(itemRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         FmeaDto.ItemResponse out = service.updateItem(PROJ, ITEM, new FmeaDto.UpdateItemRequest(
-                "fn", "fm", "fe", null, null, 9, 9, 9, null, null, null, 2, 2, 2));
+                "fn", "fm", "fe", null, null, 9, 9, 9, null, null, null, null, null, null,
+                2, 2, 2, null, null));
 
         assertThat(out.rpn()).isEqualTo(729);
         assertThat(out.rpnAfter()).isEqualTo(8);
@@ -286,7 +288,7 @@ class FmeaServiceTest {
         when(itemRepo.findById(ITEM)).thenReturn(Optional.of(i));
         assertThatThrownBy(() -> service.updateItem(PROJ, ITEM,
                 new FmeaDto.UpdateItemRequest(null, null, null, null, null, null, null, null,
-                        null, null, null, null, null, null)))
+                        null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(FmeaItemNotFoundException.class);
     }
 
@@ -297,7 +299,7 @@ class FmeaServiceTest {
         when(projectRepo.findById(PROJ)).thenReturn(Optional.of(p));
         assertThatThrownBy(() -> service.updateItem(PROJ, ITEM,
                 new FmeaDto.UpdateItemRequest(null, null, null, null, null, null, null, null,
-                        null, null, null, null, null, null)))
+                        null, null, null, null, null, null, null, null, null, null, null)))
                 .isInstanceOf(FmeaStateException.class);
     }
 
@@ -378,6 +380,6 @@ class FmeaServiceTest {
     private FmeaDto.CreateItemRequest itemReq(int s, int o, int d) {
         return new FmeaDto.CreateItemRequest(
                 "fn", "fm", "fe", null, null, s, o, d,
-                null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null, null, null, null);
     }
 }

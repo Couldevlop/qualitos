@@ -113,6 +113,13 @@
       <mat-card class="checklist-card">
         <mat-card-header class="checklist-header">
           <mat-card-title i18n="@@audits.detail.checklist-count">Checklist ({{ p.checklist?.length || 0 }})</mat-card-title>
+          <button mat-stroked-button color="primary" type="button"
+                  class="from-standard-btn"
+                  *ngIf="canGenerateFromStandard(p)"
+                  (click)="openGenerateFromStandard()">
+            <mat-icon>rule</mat-icon>
+            <span i18n="@@audits.detail.from-standard">Générer depuis un référentiel</span>
+          </button>
           <button mat-flat-button color="primary" type="button"
                   (click)="openAddChecklist()"
                   [disabled]="isTerminal(p.status)">

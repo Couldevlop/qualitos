@@ -24,8 +24,10 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -239,6 +241,21 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Alias de rôles : le realm nomme le directeur qualité {@code quality_director},
+     * le code qualité écrit partout {@code DIRECTOR_QUALITY}. Sans cet alias, un
+     * vrai directeur qualité ne correspond à aucune règle et se voit refuser
+     * l'approbation d'un control plan — un refus muet, qu'aucun banc Web ne peut
+     * voir puisqu'ils fabriquent eux-mêmes l'autorité qu'ils testent.
+     *
+     * <p>Posé ici, une fois, plutôt que répété dans neuf {@code @PreAuthorize},
+     * et dans les deux sens pour qu'un jeton émis par l'une ou l'autre convention
+     * ouvre les mêmes portes. Même esprit que la compat ROLE_ADMIN / ROLE_ADMIN_TENANT.
+     */
+    private static final Map<String, String> ROLE_ALIASES = Map.of(
+            "ROLE_QUALITY_DIRECTOR", "ROLE_DIRECTOR_QUALITY",
+            "ROLE_DIRECTOR_QUALITY", "ROLE_QUALITY_DIRECTOR");
+
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
@@ -249,8 +266,15 @@ public class SecurityConfig {
             }
             @SuppressWarnings("unchecked")
             Collection<String> roles = (Collection<String>) realmAccess.get("roles");
-            return roles.stream()
-                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
+            Set<String> authorities = new LinkedHashSet<>();
+            for (String role : roles) {
+                String authority = "ROLE_" + role.toUpperCase();
+                authorities.add(authority);
+                String alias = ROLE_ALIASES.get(authority);
+                if (alias != null) authorities.add(alias);
+            }
+            return authorities.stream()
+                    .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
         });
         return converter;

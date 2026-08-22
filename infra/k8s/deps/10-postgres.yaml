@@ -120,11 +120,25 @@ spec:
         app.kubernetes.io/name: postgres
         app.kubernetes.io/part-of: qualitos
     spec:
+      # NON-ROOT EXPLICITE. L'image démarre son entrypoint en root pour chown le
+      # volume puis bascule sur `postgres` (UID 70) via gosu — le moteur ne tourne
+      # donc jamais en root, mais le PID 1 si. On impose l'UID 70 dès le départ :
+      # l'entrypoint détecte qu'il n'est pas root et saute le chown, PGDATA étant
+      # déjà possédé par 70 (mode 700). fsGroup aligne le groupe du volume sur 70.
       securityContext:
-        fsGroup: 999
+        runAsNonRoot: true
+        runAsUser: 70
+        runAsGroup: 70
+        fsGroup: 70
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: postgres
           image: postgres:17-alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
           ports:
             - name: postgres
               containerPort: 5432

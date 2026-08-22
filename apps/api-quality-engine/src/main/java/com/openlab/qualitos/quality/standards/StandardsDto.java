@@ -23,7 +23,14 @@ public final class StandardsDto {
             String family,
             String applicableIndustries,
             StandardStatus status,
-            Integer recertificationCycleMonths
+            Integer recertificationCycleMonths,
+            /**
+             * Vrai si ce référentiel appartient au tenant courant (§8) : lui seul
+             * peut l'éditer ou le supprimer. La lecture étant filtrée par tenant, un
+             * propriétaire non nul ne peut désigner que le tenant courant — d'où un
+             * booléen plutôt que son identifiant, qui n'a rien à faire ici.
+             */
+            boolean owned
     ) {}
 
     public record StandardDetail(
@@ -40,7 +47,9 @@ public final class StandardsDto {
             Integer recertificationCycleMonths,
             String relatedNormCodes,
             StandardStatus status,
-            List<SectionDetail> sections
+            List<SectionDetail> sections,
+            /** Voir {@link StandardSummary#owned()}. */
+            boolean owned
     ) {}
 
     public record SectionDetail(

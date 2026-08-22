@@ -42,9 +42,22 @@ spec:
         app.kubernetes.io/name: keycloak
         app.kubernetes.io/part-of: qualitos
     spec:
+      # L'image Keycloak tourne DÉJÀ en UID 1000, mais avec le groupe 0 (racine) :
+      # ses répertoires sont accessibles au groupe, pas possédés par root. On rend
+      # le non-root EXPLICITE et refusé de repli — sans forcer runAsGroup, que
+      # l'image attend à 0.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: keycloak
           image: quay.io/keycloak/keycloak:25.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
           # --import-realm lit /opt/keycloak/data/import/*.json au démarrage. Le
           # realm (rôles, clients, comptes de démonstration) est fourni par la
           # ConfigMap produite par render-realm.sh. L'import n'a lieu que si le

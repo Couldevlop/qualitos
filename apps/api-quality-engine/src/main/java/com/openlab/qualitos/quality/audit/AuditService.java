@@ -4,6 +4,13 @@ import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
 import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
+import com.openlab.qualitos.quality.standards.ObligationLevel;
+import com.openlab.qualitos.quality.standards.Standard;
+import com.openlab.qualitos.quality.standards.StandardClause;
+import com.openlab.qualitos.quality.standards.StandardNotFoundException;
+import com.openlab.qualitos.quality.standards.StandardRepository;
+import com.openlab.qualitos.quality.standards.StandardRequirement;
+import com.openlab.qualitos.quality.standards.StandardSection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +21,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,17 +48,20 @@ public class AuditService {
     private final AuditPlanRepository planRepository;
     private final AuditChecklistItemRepository checklistRepository;
     private final AuditFindingRepository findingRepository;
+    private final StandardRepository standardRepository;
     private final AiGatewayClient ai;
     private final Clock clock;
 
     public AuditService(AuditPlanRepository planRepository,
                         AuditChecklistItemRepository checklistRepository,
                         AuditFindingRepository findingRepository,
+                        StandardRepository standardRepository,
                         AiGatewayClient ai,
                         Clock clock) {
         this.planRepository = planRepository;
         this.checklistRepository = checklistRepository;
         this.findingRepository = findingRepository;
+        this.standardRepository = standardRepository;
         this.ai = ai;
         this.clock = clock;
     }
@@ -262,6 +273,85 @@ public class AuditService {
 
     // --- checklist ---
 
+    /**
+     * Tire la checklist d'un audit des exigences d'un référentiel du catalogue (§8).
+     *
+     * <p>Les items produits sont des lignes AUTONOMES, pas des renvois vers les
+     * exigences : une clause corrigée en mars ne doit pas réécrire le rapport de
+     * janvier. C'est une photo du référentiel au moment où l'audit a été préparé,
+     * et c'est cette photo qu'un auditeur externe relira.
+     *
+     * <p>Refusé si la checklist n'est pas vide : deux jeux de questions mêlés, et
+     * plus personne ne sait lequel fait foi. Refusé aussi dès que l'audit a
+     * quitté l'état PLANNED — y verser des dizaines de questions alors qu'il est
+     * en cours reviendrait à changer le sujet de l'examen pendant l'épreuve.
+     */
+    public List<AuditDto.ChecklistItemResponse> generateChecklistFromStandard(UUID planId, UUID standardId) {
+        AuditPlan p = loadPlan(planId);
+        if (p.getStatus() != AuditStatus.PLANNED) {
+            throw new AuditStateException(
+                    "Checklist can only be generated while audit is PLANNED, not " + p.getStatus());
+        }
+        if (!p.getChecklist().isEmpty()) {
+            throw new AuditStateException(
+                    "Checklist is not empty: clear it before generating from a standard");
+        }
+        Standard standard = standardRepository.findVisibleById(standardId, requireTenantId())
+                .orElseThrow(() -> new StandardNotFoundException(standardId));
+
+        List<AuditDto.ChecklistItemResponse> generated = new ArrayList<>();
+        int order = 0;
+        for (StandardSection section : standard.getSections()) {
+            for (StandardClause clause : section.getClauses()) {
+                for (StandardRequirement requirement : clause.getRequirements()) {
+                    AuditChecklistItem item = new AuditChecklistItem();
+                    item.setPlan(p);
+                    item.setQuestion(requirement.getText());
+                    item.setClauseRef(clauseRef(section, clause, requirement));
+                    item.setExpectedEvidence(requirement.getEvidenceTypes());
+                    item.setWeight(weightOf(requirement.getObligation()));
+                    item.setOrderIndex(order++);
+                    generated.add(toChecklistResponse(checklistRepository.save(item)));
+                }
+            }
+        }
+        p.setStandardId(standardId);
+        planRepository.save(p);
+        return generated;
+    }
+
+    /**
+     * Référence citable de l'exigence dans le rapport d'audit.
+     *
+     * <p>PAS une simple concaténation des trois codes : la plupart des
+     * référentiels numérotent en cascade (section « 4 », clause « 4.1 », exigence
+     * « 4.1.1 »), et concaténer produirait « 4.4.1.4.1.1 » — une référence que
+     * personne ne peut rapprocher du texte qu'il a sous les yeux. On n'ajoute donc
+     * un code que s'il ne porte pas déjà celui de son parent, ce qui rend aussi
+     * bien les numérotations en cascade que les numérotations locales
+     * (section « 1 », clause « 1.1 », exigence « 2 » → « 1.1.2 »).
+     */
+    private String clauseRef(StandardSection section, StandardClause clause,
+                             StandardRequirement requirement) {
+        return appendCode(appendCode(section.getCode(), clause.getCode()), requirement.getCode());
+    }
+
+    private String appendCode(String parent, String child) {
+        if (child == null || child.isBlank()) return parent;
+        if (parent == null || parent.isBlank()) return child;
+        return child.startsWith(parent + ".") ? child : parent + "." + child;
+    }
+
+    /**
+     * Une exigence obligatoire pèse plus qu'une recommandation dans le score de
+     * conformité : MUST → 1, SHOULD → 2, MAY → 3, le poids servant de diviseur.
+     */
+    private int weightOf(ObligationLevel obligation) {
+        if (obligation == ObligationLevel.SHOULD) return 2;
+        if (obligation == ObligationLevel.MAY) return 3;
+        return 1;
+    }
+
     public AuditDto.ChecklistItemResponse addChecklistItem(UUID planId, AuditDto.ChecklistItemRequest req) {
         AuditPlan p = loadPlan(planId);
         if (p.getStatus() == AuditStatus.COMPLETED || p.getStatus() == AuditStatus.CANCELLED) {
@@ -436,7 +526,7 @@ public class AuditService {
     private AuditDto.PlanResponse toResponse(AuditPlan p) {
         return new AuditDto.PlanResponse(
                 p.getId(), p.getTenantId(), p.getReference(), p.getTitle(), p.getScope(),
-                p.getType(), p.getStatus(), p.getStandard(),
+                p.getType(), p.getStatus(), p.getStandard(), p.getStandardId(),
                 p.getLeadAuditorId(), p.getAuditeeId(), p.getScheduledDate(),
                 p.getStartedAt(), p.getCompletedAt(), p.getReportSummary(),
                 p.getReminderEmail(), p.getReminderSentAt(),

@@ -374,6 +374,21 @@ describe('AuditsService', () => {
       itemHttp.flush({} as ChecklistItemResponse);
     });
 
+    it('tire la checklist d\'un référentiel, sans simulation de démonstration', () => {
+      // Les questions produites sont la copie d'un référentiel réel : en
+      // fabriquer hors serveur donnerait un audit qui ne vérifie rien.
+      let generated = 0;
+      service.generateChecklistFromStandard('p-1', 's-1')
+        .subscribe(items => (generated = items.length));
+
+      const req = http.expectOne(`${BASE}/p-1/checklist/from-standard`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ standardId: 's-1' });
+      req.flush([{} as ChecklistItemResponse]);
+
+      expect(generated).toBe(1);
+    });
+
     it('enregistre une réponse de checklist en PUT sur son propre chemin', () => {
       service.respondChecklistItem('p-1', 'i-1', { response: 'oui', conformant: true }).subscribe();
 
