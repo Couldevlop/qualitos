@@ -178,6 +178,56 @@ describe('AuthService', () => {
       expect(build().snapshot()!.roles).toEqual([]);
     });
 
+    // ---- Origine des rôles ---------------------------------------------------
+    //
+    // Ces bancs ont laissé passer une panne réelle : ils injectaient `realm_access`
+    // par `getIdentityClaims()`, forme que Keycloak NE PRODUIT PAS — son mapper
+    // « realm roles » n'écrit pas dans l'ID token. Tout utilisateur arrivait donc
+    // sans rôle en production, `superadmin` compris, pendant que le banc restait
+    // vert. On teste désormais la forme réelle : les rôles vivent dans le jeton
+    // d'accès.
+
+    /** Fabrique un JWT non signé — seule la charge utile compte ici. */
+    const jwt = (payload: unknown): string => {
+      const base = btoa(JSON.stringify(payload));
+      return "entete." + base.replace(/[+]/g, "-").replace(/[/]/g, "_") + ".signature";
+    };
+
+    it("lit les rôles dans le jeton d'accès, où Keycloak les met vraiment", () => {
+      // Forme mesurée sur la préproduction : l'ID token porte l'identité, pas les rôles.
+      oauth.getIdentityClaims.and.returnValue({ sub: 'u-9', preferred_username: 'superadmin' });
+      oauth.getAccessToken.and.returnValue(jwt({ realm_access: { roles: ['super_admin'] } }));
+
+      const u = build().snapshot()!;
+
+      expect(u.displayName).toBe('superadmin');
+      expect(u.roles).toEqual(['super_admin']);
+    });
+
+    it("accorde les droits d'administration quand le jeton d'accès porte super_admin", () => {
+      oauth.getIdentityClaims.and.returnValue({ sub: 'u-9' });
+      oauth.getAccessToken.and.returnValue(jwt({ realm_access: { roles: ['super_admin'] } }));
+
+      // C'est ce contrôle qui masquait la section « Administration » et les boutons
+      // de la console des modules.
+      expect(build().hasAnyRole(['SUPER_ADMIN'])).toBeTrue();
+    });
+
+    it("retombe sur l'ID token quand le realm y ajoute le mapper", () => {
+      oauth.getIdentityClaims.and.returnValue({ sub: 'u-1', realm_access: { roles: ['auditor'] } });
+      oauth.getAccessToken.and.returnValue('');
+
+      expect(build().snapshot()!.roles).toEqual(['auditor']);
+    });
+
+    it("n'accorde aucun rôle quand le jeton d'accès est illisible", () => {
+      oauth.getIdentityClaims.and.returnValue({ sub: 'u-1' });
+      oauth.getAccessToken.and.returnValue('pas-un-jwt');
+
+      // Un jeton qu'on ne sait pas lire ne vaut aucun droit — et ne casse rien.
+      expect(build().snapshot()!.roles).toEqual([]);
+    });
+
     it('n\'accorde aucun rôle quand realm_access est présent mais vide', () => {
       oauth.getIdentityClaims.and.returnValue({ sub: 'u-1', realm_access: {} });
 
