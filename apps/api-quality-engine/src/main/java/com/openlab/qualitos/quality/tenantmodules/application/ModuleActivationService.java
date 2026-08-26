@@ -216,7 +216,27 @@ public class ModuleActivationService {
      * produit une vingtaine d'appels au démarrage de l'application.
      */
     public List<String> enabledModuleCodes() {
-        UUID tenantId = tenantProvider.requireTenantId();
+        return List.copyOf(availableModuleCodes(tenantProvider.requireTenantId()));
+    }
+
+    /**
+     * Règle UNIQUE de disponibilité d'un module pour un tenant : le socle du
+     * catalogue, plus les activations ouvertes, moins celles explicitement fermées.
+     *
+     * <p>Elle est extraite ici parce que deux endroits en avaient besoin et en
+     * avaient chacun leur version. {@code enabledModuleCodes()} comptait le socle ;
+     * la garde des dépendances, elle, exigeait une LIGNE d'activation. Or les
+     * modules du socle n'en ont aucune : activer {@code risk}, qui dépend de
+     * {@code capa}, répondait donc 409 « Missing dependency » sur un tenant où
+     * {@code capa} était pourtant bien disponible — et de façon définitive, aucune
+     * manœuvre ne pouvant créer la ligne attendue. Le même piège frappait
+     * {@code supplier}, {@code change}, {@code complaints}, {@code ehs},
+     * {@code standards} et, par ricochet, {@code controlplan}.
+     *
+     * <p>Les deux appelants partagent désormais cette méthode : l'interface ne peut
+     * plus annoncer un module que la garde refuse de considérer.
+     */
+    private Set<String> availableModuleCodes(UUID tenantId) {
         Set<String> enabled = new java.util.LinkedHashSet<>();
         for (ModuleCatalogEntry entry : ModuleCatalog.all()) {
             if (entry.coreModule()) {
@@ -232,7 +252,7 @@ public class ModuleActivationService {
                 enabled.remove(activation.getModuleCode());
             }
         }
-        return List.copyOf(enabled);
+        return enabled;
     }
 
     public ModuleActivationDto.TenantModuleSummary summary() {
@@ -278,10 +298,14 @@ public class ModuleActivationService {
     }
 
     private void ensureDependenciesSatisfied(UUID tenantId, ModuleCatalogEntry entry) {
+        if (entry.dependencies().isEmpty()) {
+            return;
+        }
+        // Une seule lecture pour toutes les dépendances, et la MÊME règle que celle
+        // qui décide ce que l'interface affiche (cf. availableModuleCodes).
+        Set<String> available = availableModuleCodes(tenantId);
         for (String dep : entry.dependencies()) {
-            boolean ok = repo.findOpenByTenantIdAndCode(tenantId, dep)
-                    .map(ModuleActivation::isEnabled).orElse(false);
-            if (!ok) {
+            if (!available.contains(dep)) {
                 throw new ModuleActivationStateException(
                         "Missing dependency for " + entry.code() + ": " + dep + " must be enabled");
             }
