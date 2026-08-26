@@ -105,16 +105,76 @@ class ModuleActivationServiceTest {
                 .hasMessageContaining("already");
     }
 
+    // ---- Dépendances et socle du catalogue -----------------------------------
+    //
+    // Ces bancs couvrent un défaut mesuré en préproduction : la garde des
+    // dépendances exigeait une LIGNE d'activation, alors que les modules du socle
+    // n'en ont aucune. Activer `risk` (qui dépend de `capa`, module du socle)
+    // répondait 409 « Missing dependency » de façon définitive, sur un tenant où
+    // `capa` était pourtant disponible. Le banc d'origine figeait ce comportement
+    // en le prenant pour la règle.
+
     @Test
-    void activate_missingDependency_rejected() {
-        // risk depends on capa
+    void activate_dependanceDuSocleSansLigneDActivation_ok() {
+        // `capa` est un module du socle : aucune activation ne le porte, et c'est normal.
         when(tierProvider.currentTier(TENANT)).thenReturn(BillingTier.STANDARD);
         when(repo.findOpenByTenantIdAndCode(TENANT, "risk")).thenReturn(Optional.empty());
-        when(repo.findOpenByTenantIdAndCode(TENANT, "capa")).thenReturn(Optional.empty());
+        when(repo.findAllByTenantId(TENANT)).thenReturn(List.of());
+        when(repo.save(any())).thenAnswer(inv -> {
+            ModuleActivation a = inv.getArgument(0); a.assignId(ID); return a;
+        });
+
+        ModuleActivationDto.ActivationView v = service.activate(
+                new ModuleActivationDto.ActivateRequest("risk", FUTURE));
+
+        assertThat(v.status()).isEqualTo(ActivationStatus.ACTIVE);
+    }
+
+    @Test
+    void activate_dependanceDuSocleExplicitementFermee_rejected() {
+        // Une activation fermée l'emporte sur l'appartenance au socle : c'est une
+        // décision, pas une absence — et la garde doit la respecter.
+        ModuleActivation capaFermee = mockActive("capa");
+        capaFermee.disable(ACTOR, NOW.plusSeconds(60));
+        when(tierProvider.currentTier(TENANT)).thenReturn(BillingTier.STANDARD);
+        when(repo.findOpenByTenantIdAndCode(TENANT, "risk")).thenReturn(Optional.empty());
+        when(repo.findAllByTenantId(TENANT)).thenReturn(List.of(capaFermee));
+
         assertThatThrownBy(() -> service.activate(
                 new ModuleActivationDto.ActivateRequest("risk", FUTURE)))
                 .isInstanceOf(ModuleActivationStateException.class)
                 .hasMessageContaining("dependency");
+    }
+
+    @Test
+    void activate_dependanceHorsSocleAbsente_rejected() {
+        // `controlplan` dépend de `risk` ET de `product`, aucun des deux n'étant du
+        // socle : sans activation, le refus reste la bonne réponse.
+        when(tierProvider.currentTier(TENANT)).thenReturn(BillingTier.STANDARD);
+        when(repo.findOpenByTenantIdAndCode(TENANT, "controlplan")).thenReturn(Optional.empty());
+        when(repo.findAllByTenantId(TENANT)).thenReturn(List.of());
+
+        assertThatThrownBy(() -> service.activate(
+                new ModuleActivationDto.ActivateRequest("controlplan", FUTURE)))
+                .isInstanceOf(ModuleActivationStateException.class)
+                .hasMessageContaining("dependency");
+    }
+
+    @Test
+    void activate_toutesDependancesOuvertes_ok() {
+        // Le cas nominal du control plan : ses deux dépendances portent une activation active.
+        when(tierProvider.currentTier(TENANT)).thenReturn(BillingTier.STANDARD);
+        when(repo.findOpenByTenantIdAndCode(TENANT, "controlplan")).thenReturn(Optional.empty());
+        when(repo.findAllByTenantId(TENANT))
+                .thenReturn(List.of(mockActive("risk"), mockActive("product")));
+        when(repo.save(any())).thenAnswer(inv -> {
+            ModuleActivation a = inv.getArgument(0); a.assignId(ID); return a;
+        });
+
+        ModuleActivationDto.ActivationView v = service.activate(
+                new ModuleActivationDto.ActivateRequest("controlplan", FUTURE));
+
+        assertThat(v.status()).isEqualTo(ActivationStatus.ACTIVE);
     }
 
     @Test
