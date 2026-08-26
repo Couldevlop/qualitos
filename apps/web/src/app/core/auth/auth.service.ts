@@ -102,13 +102,53 @@ export class AuthService {
     // Mode oidc : on extrait les claims du JWT courant si dispo.
     const claims = this.oauth.getIdentityClaims() as Record<string, unknown> | null;
     if (!claims) return null;
-    const realmAccess = (claims['realm_access'] as { roles?: string[] } | undefined);
     return {
       userId: String(claims['sub'] ?? ''),
       tenantId: String(claims['tenant_id'] ?? ''),
       displayName: String(claims['preferred_username'] ?? claims['name'] ?? 'User'),
-      roles: realmAccess?.roles ?? []
+      roles: this.readRoles(claims)
     };
+  }
+
+  /**
+   * Les rôles se lisent dans le JETON D'ACCÈS, pas dans le jeton d'identité.
+   *
+   * <p>Keycloak ne place pas `realm_access` dans l'ID token : son mapper « realm
+   * roles » n'y écrit rien par défaut. Mesuré sur la préproduction — le jeton
+   * d'accès porte `realm_access.roles`, l'ID token n'a pas la revendication du
+   * tout. Comme cette méthode lisait les claims d'identité, TOUT utilisateur
+   * arrivait avec `roles: []` : la section « Administration » restait invisible
+   * même pour `superadmin`, et la console des modules affichait « Sur demande
+   * auprès de l'éditeur » au lieu de ses boutons. Le nom, lui, s'affichait
+   * correctement — `preferred_username` est bien dans l'ID token — ce qui rendait
+   * la panne trompeuse : le bon compte, et aucun de ses droits.
+   *
+   * <p>Le repli sur l'ID token est conservé pour les realms qui ajoutent le
+   * mapper, et le jeton n'est pas vérifié ici : sa signature est l'affaire du
+   * serveur, qui reste seul juge des autorisations. Ce que l'on décide ici, c'est
+   * uniquement de ne pas montrer un bouton qui répondrait 403.
+   */
+  private readRoles(claims: Record<string, unknown>): string[] {
+    const fromAccess = this.decodeRealmRoles(this.oauth.getAccessToken());
+    if (fromAccess.length > 0) return fromAccess;
+    const realmAccess = (claims['realm_access'] as { roles?: string[] } | undefined);
+    return realmAccess?.roles ?? [];
+  }
+
+  /** Lecture tolérante de la charge utile d'un JWT : un jeton illisible ne vaut aucun rôle. */
+  private decodeRealmRoles(token: string | null | undefined): string[] {
+    if (!token) return [];
+    const parts = token.split('.');
+    if (parts.length < 2) return [];
+    try {
+      const payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      const padded = payload + '='.repeat((4 - (payload.length % 4)) % 4);
+      const decoded = JSON.parse(atob(padded)) as Record<string, unknown>;
+      const realmAccess = decoded['realm_access'] as { roles?: string[] } | undefined;
+      return Array.isArray(realmAccess?.roles) ? realmAccess!.roles! : [];
+    } catch {
+      return [];
+    }
   }
 
   /**
