@@ -66,6 +66,7 @@ supersession).
 | [0059](./0059-produit-pfmea-et-control-plan-revises-par-les-nc.md) | Produit, PFMEA rattaché et control plan : la NC et la CAPA proposent une révision chiffrée, l'humain tranche et son refus est tracé ; comptage de NC assumé faute de volume produit (§3.4, §4.2, §4.3, §4.5) | Accepté |
 | [0060](./0060-alignement-sur-la-trame-aiag-et-efficacite-capa.md) | PFMEA et control plan alignés sur une trame AIAG réelle — taille d'échantillon en texte, procédure, entrée/sortie, qui mesure, où l'on enregistre, actions réalisées — et efficacité CAPA mesurée sur deux fenêtres de même durée (§3.4, §4.2, §4.5) | Accepté |
 | [0061](./0061-preuve-documentaire-par-etape-pdca.md) | La preuve documentaire d'un cycle PDCA se rattache à l'ÉTAPE et non au cycle — une pièce par étape garantie en base, dépôt et retrait consignés, mécanisme de stockage repris des preuves CAPA sans être factorisé (§3.1, §11.5) | Accepté |
+| [0062](./0062-empreintes-calculees-sur-des-horodatages-stockables.md) | Toute empreinte se calcule sur un horodatage ramené à la microseconde : la base arrondit ce que `Instant` exprime à la nanoseconde, et le registre d'audit s'accusait lui-même de falsification sur un journal intact ; les lignes antérieures restent invérifiables, leurs empreintes ne seront pas réécrites (§11.5, §3.4) | Accepté |
 
 ## Statuts possibles
 

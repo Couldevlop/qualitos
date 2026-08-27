@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -335,6 +336,103 @@ class AuditEventServiceTest {
         when(eventRepo.findById(EVT)).thenReturn(Optional.of(e));
         assertThatThrownBy(() -> service.anchor(EVT, new AuditEventDto.AnchorRequest("x")))
                 .isInstanceOf(AuditEventNotFoundException.class);
+    }
+
+    // ---- l'horodatage haché doit survivre à la base ----
+
+    /**
+     * L'empreinte est calculée avant l'écriture, et recalculée après relecture :
+     * elle ne peut donc porter que des valeurs que la base rend à l'identique.
+     * {@code TIMESTAMP WITH TIME ZONE} arrondit à la microseconde ; un instant
+     * plus fin ressort donc différent et l'empreinte n'est plus recalculable —
+     * le registre s'accuse alors lui-même de falsification.
+     */
+    @Test
+    void record_clockTimestampIsTruncatedToTheMicrosecondBeforeHashing() {
+        Clock nanosecondClock = Clock.fixed(
+                Instant.parse("2026-05-15T10:00:00.123456789Z"), ZoneOffset.UTC);
+        service = new AuditEventService(eventRepo, counterRepo, nanosecondClock);
+        when(counterRepo.findById(TENANT)).thenReturn(Optional.empty());
+        when(counterRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(eventRepo.findTopByTenantIdOrderBySequenceNoDesc(TENANT)).thenReturn(Optional.empty());
+        ArgumentCaptor<AuditEvent> cap = ArgumentCaptor.forClass(AuditEvent.class);
+        when(eventRepo.save(cap.capture())).thenAnswer(inv -> {
+            AuditEvent e = inv.getArgument(0);
+            e.setId(EVT); return e;
+        });
+
+        service.record(new AuditEventDto.RecordEventRequest(
+                null, ActorType.USER, USER, "pdca.cycle.created", "pdca-cycle",
+                RES, "Cycle X created", "{\"x\":1}", null, null));
+
+        AuditEvent saved = cap.getValue();
+        assertThat(saved.getOccurredAt())
+                .isEqualTo(Instant.parse("2026-05-15T10:00:00.123456Z"));
+        assertThat(saved.getRecordedAt())
+                .isEqualTo(Instant.parse("2026-05-15T10:00:00.123456Z"));
+    }
+
+    /**
+     * Même exigence pour l'horodatage FOURNI par l'appelant : rien ne l'oblige à
+     * être déjà à la microseconde, et il est haché comme le reste.
+     */
+    @Test
+    void record_callerSuppliedTimestampIsTruncatedToTheMicrosecondBeforeHashing() {
+        when(counterRepo.findById(TENANT)).thenReturn(Optional.empty());
+        when(counterRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(eventRepo.findTopByTenantIdOrderBySequenceNoDesc(TENANT)).thenReturn(Optional.empty());
+        ArgumentCaptor<AuditEvent> cap = ArgumentCaptor.forClass(AuditEvent.class);
+        when(eventRepo.save(cap.capture())).thenAnswer(inv -> {
+            AuditEvent e = inv.getArgument(0);
+            e.setId(EVT); return e;
+        });
+
+        service.record(new AuditEventDto.RecordEventRequest(
+                Instant.parse("2026-05-14T09:00:00.987654321Z"), ActorType.SYSTEM, null,
+                "capa.opened", "capa", RES, "CAPA C-1 opened", null, null, null));
+
+        assertThat(cap.getValue().getOccurredAt())
+                .isEqualTo(Instant.parse("2026-05-14T09:00:00.987654Z"));
+    }
+
+    /**
+     * Le seul contrôle qui compte vraiment : l'empreinte enregistrée doit être
+     * celle que l'on retrouve en rejouant le calcul sur la ligne telle que la
+     * base la rendra — ici simulée par l'arrondi à la microseconde.
+     */
+    @Test
+    void record_storedHashIsRecomputableFromWhatTheDatabaseWillReturn() {
+        Clock nanosecondClock = Clock.fixed(
+                Instant.parse("2026-05-15T10:00:00.999999999Z"), ZoneOffset.UTC);
+        service = new AuditEventService(eventRepo, counterRepo, nanosecondClock);
+        when(counterRepo.findById(TENANT)).thenReturn(Optional.empty());
+        when(counterRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(eventRepo.findTopByTenantIdOrderBySequenceNoDesc(TENANT)).thenReturn(Optional.empty());
+        ArgumentCaptor<AuditEvent> cap = ArgumentCaptor.forClass(AuditEvent.class);
+        when(eventRepo.save(cap.capture())).thenAnswer(inv -> {
+            AuditEvent e = inv.getArgument(0);
+            e.setId(EVT); return e;
+        });
+
+        service.record(new AuditEventDto.RecordEventRequest(
+                null, ActorType.USER, USER, "pdca.cycle.created", "pdca-cycle",
+                RES, "Cycle X created", "{\"x\":1}", null, null));
+
+        AuditEvent saved = cap.getValue();
+        AuditEvent asReadBack = new AuditEvent();
+        asReadBack.setTenantId(saved.getTenantId());
+        asReadBack.setSequenceNo(saved.getSequenceNo());
+        asReadBack.setOccurredAt(saved.getOccurredAt().truncatedTo(ChronoUnit.MICROS));
+        asReadBack.setActorType(saved.getActorType());
+        asReadBack.setActorUserId(saved.getActorUserId());
+        asReadBack.setAction(saved.getAction());
+        asReadBack.setResourceType(saved.getResourceType());
+        asReadBack.setResourceId(saved.getResourceId());
+        asReadBack.setSummary(saved.getSummary());
+        asReadBack.setPayloadJson(saved.getPayloadJson());
+        asReadBack.setPreviousHash(saved.getPreviousHash());
+
+        assertThat(AuditEventHasher.hash(asReadBack)).isEqualTo(saved.getIntegrityHash());
     }
 
     // ---- helpers ----

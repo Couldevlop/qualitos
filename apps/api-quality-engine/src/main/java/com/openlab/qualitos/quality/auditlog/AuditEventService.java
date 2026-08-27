@@ -1,6 +1,7 @@
 package com.openlab.qualitos.quality.auditlog;
 
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
+import com.openlab.qualitos.quality.common.StorableInstant;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -72,7 +73,7 @@ public class AuditEventService {
     }
 
     private AuditEvent recordInternal(UUID tenantId, AuditEventDto.RecordEventRequest req) {
-        Instant now = Instant.now(clock);
+        Instant now = storable(Instant.now(clock));
 
         // 1. Récupère et incrémente le compteur tenant avec verrou.
         AuditEventCounter counter = counterRepo.findById(tenantId)
@@ -89,7 +90,7 @@ public class AuditEventService {
         AuditEvent e = new AuditEvent();
         e.setTenantId(tenantId);
         e.setSequenceNo(nextSeq);
-        e.setOccurredAt(req.occurredAt() != null ? req.occurredAt() : now);
+        e.setOccurredAt(req.occurredAt() != null ? storable(req.occurredAt()) : now);
         e.setRecordedAt(now);
         e.setActorType(req.actorType());
         e.setActorUserId(req.actorUserId());
@@ -103,6 +104,19 @@ public class AuditEventService {
         e.setPreviousHash(previousHash);
         e.setIntegrityHash(AuditEventHasher.hash(e));
         return eventRepo.save(e);
+    }
+
+    /**
+     * L'horodatage entre dans l'empreinte : il ne peut donc porter que ce que la
+     * base rend à l'identique. Sans cette troncature, aucune empreinte n'était
+     * recalculable après relecture et la vérification de chaîne annonçait
+     * « Integrity hash mismatch (tamper) » sur la totalité d'un journal
+     * parfaitement intact. Un registre qui s'accuse lui-même de falsification
+     * ruine la seule mécanique censée fonder la confiance (§11.5). Voir
+     * {@link StorableInstant} pour le détail de la règle.
+     */
+    private static Instant storable(Instant instant) {
+        return StorableInstant.micros(instant);
     }
 
     // ---------- Listing ----------

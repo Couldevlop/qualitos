@@ -22,6 +22,7 @@ import org.mockito.ArgumentCaptor;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -449,6 +450,42 @@ class ControlPlanServiceTest {
         // c'est très exactement le geste de l'auditeur qui vérifie lui-même.
         assertThat(view.sealSha256())
                 .isEqualTo(ControlPlanFingerprint.of(draft, lines));
+    }
+
+    /**
+     * Le banc précédent rejoue le calcul sur l'objet EN MÉMOIRE, celui-là même qui
+     * vient d'être scellé : il ne peut pas voir un champ que la base abîme.
+     *
+     * <p>Or l'empreinte porte l'horodatage d'approbation, et
+     * {@code TIMESTAMP WITH TIME ZONE} arrondit à la microseconde ce que
+     * {@link Instant} exprime à la nanoseconde. Sceller un instant plus fin que
+     * cela produit une preuve que plus personne ne peut recalculer à partir du
+     * plan relu — l'auditeur, lui, ne travaille jamais sur autre chose.
+     *
+     * <p>Le geste vérifié ici est donc le sien : approuver avec une horloge à la
+     * nanoseconde, puis rejouer le calcul sur le plan tel que la base le rendra.
+     */
+    @Test
+    void theSealSurvivesTheRoundTripThroughTheDatabase() {
+        service = new ControlPlanService(repo, products, fmeaItems, audit, seals, tenants, actors,
+                Clock.fixed(Instant.parse("2026-08-19T08:00:00.123456789Z"), ZoneOffset.UTC));
+        ControlPlan draft = draftPlan();
+        when(repo.findById(PLAN)).thenReturn(Optional.of(draft));
+        when(repo.findActive(TENANT, PRODUCT, ControlPlanPhase.PRODUCTION)).thenReturn(Optional.empty());
+        List<ControlPlanLine> lines = List.of(line(PLAN));
+        when(repo.linesOf(PLAN)).thenReturn(lines);
+
+        ControlPlanDto.View view = service.approve(PRODUCT, PLAN);
+
+        ControlPlan asReadBack = ControlPlan.rehydrate(
+                draft.getId(), draft.getTenantId(), draft.getProductId(), draft.getPhase(),
+                draft.getCode(), draft.getRevision(), draft.getStatus(),
+                draft.getOwnerUserId(), draft.getApprovedBy(),
+                draft.getApprovedAt().truncatedTo(ChronoUnit.MICROS),
+                draft.getCreatedBy(), draft.getCreatedAt(), draft.getUpdatedAt(),
+                draft.getSealSha256(), draft.getSealSignature(), draft.getAnchorTxRef());
+
+        assertThat(ControlPlanFingerprint.of(asReadBack, lines)).isEqualTo(view.sealSha256());
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.controlplan.application;
 
+import com.openlab.qualitos.quality.common.StorableInstant;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlan;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanFingerprint;
 import com.openlab.qualitos.quality.controlplan.domain.ControlPlanLine;
@@ -122,7 +123,12 @@ public class ControlPlanService {
             repo.save(p);
         });
         UUID actor = actors.currentUserId();
-        draft.approve(actor, Instant.now(clock));
+        // L'horodatage d'approbation entre dans l'empreinte scellée (cf. plus bas).
+        // Il est donc ramené à ce que la base rend à l'identique : sinon l'empreinte
+        // signée ce jour-là ne serait plus recalculable à partir du plan relu, et la
+        // preuve tomberait en silence, sans que rien ne le signale. Voir
+        // StorableInstant.
+        draft.approve(actor, StorableInstant.micros(Instant.now(clock)));
 
         // Deux preuves, et non une seule.
         //
