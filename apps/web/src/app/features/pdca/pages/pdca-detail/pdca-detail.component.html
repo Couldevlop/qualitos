@@ -85,6 +85,20 @@
         </mat-card-header>
 
         <mat-card-content>
+          <!-- Un sélecteur de fichier UNIQUE pour toutes les lignes : un par
+               étape multiplierait les nœuds sans rien apporter. L'étape visée
+               est mémorisée au clic. -->
+          <input type="file" class="hidden-file" #stepEvidenceInput
+                 accept="application/pdf,image/jpeg,image/png,image/webp,image/heic,.docx,.xlsx"
+                 (change)="onStepEvidenceSelected($event)"
+                 aria-hidden="true" tabindex="-1">
+
+          <p class="storage-off" *ngIf="evidenceStorageDisabled$ | async"
+             i18n="@@pdca.evidence.storage-disabled">
+            Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve
+            ne peut y être déposée ni relue.
+          </p>
+
           <table mat-table [dataSource]="c.steps" class="steps-table"
                  *ngIf="c.steps.length > 0">
             <ng-container matColumnDef="phase">
@@ -108,6 +122,49 @@
               <th mat-header-cell *matHeaderCellDef i18n="@@pdca.detail.col-due-date">Échéance</th>
               <td mat-cell *matCellDef="let s">{{ s.dueDate ? (s.dueDate | date) : '—' }}</td>
             </ng-container>
+            <!-- La preuve de la mise en place d'une action est toujours un
+                 document : la colonne montre ce document, ou le bouton qui
+                 permet de le verser (§3.1, ADR 0061). -->
+            <ng-container matColumnDef="evidence">
+              <th mat-header-cell *matHeaderCellDef i18n="@@pdca.detail.col-evidence">Preuve</th>
+              <td mat-cell *matCellDef="let s"
+                  [class.evidence-busy]="(busyEvidenceStepId$ | async) === s.id">
+                <ng-container *ngIf="stepEvidence(s.id) as e; else noStepEvidence">
+                  <a class="step-evidence" *ngIf="e.url; else noEvidenceLink"
+                     [href]="e.url" target="_blank" rel="noopener noreferrer"
+                     [matTooltip]="e.originalFilename || e.id">
+                    <mat-icon aria-hidden="true">{{ evidenceIcon(e.contentType) }}</mat-icon>
+                    <span class="step-evidence__name">{{ e.originalFilename || e.id }}</span>
+                  </a>
+                  <ng-template #noEvidenceLink>
+                    <span class="step-evidence">
+                      <mat-icon aria-hidden="true">{{ evidenceIcon(e.contentType) }}</mat-icon>
+                      <span class="step-evidence__name">{{ e.originalFilename || e.id }}</span>
+                    </span>
+                  </ng-template>
+                  <button mat-icon-button color="warn" type="button" class="evidence-remove"
+                          *ngIf="!isTerminal(c.status)"
+                          [disabled]="(busyEvidenceStepId$ | async) === s.id"
+                          (click)="removeStepEvidence(s.id, e)"
+                          i18n-matTooltip="@@pdca.evidence.remove-tooltip"
+                          matTooltip="Retirer la preuve de cette étape"
+                          [attr.aria-label]="removeEvidenceAria(s.title)">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </ng-container>
+                <ng-template #noStepEvidence>
+                  <button mat-stroked-button type="button" class="attach-btn"
+                          *ngIf="canAttachStepEvidence(s.id, c.status); else noEvidenceMark"
+                          (click)="triggerStepEvidencePicker(stepEvidenceInput, s.id)"
+                          [attr.aria-label]="attachEvidenceAria(s.title)">
+                    <mat-icon aria-hidden="true">attach_file</mat-icon>
+                    <span i18n="@@pdca.evidence.attach">Joindre</span>
+                  </button>
+                  <ng-template #noEvidenceMark><span class="muted">—</span></ng-template>
+                </ng-template>
+              </td>
+            </ng-container>
+
             <ng-container matColumnDef="updatedAt">
               <th mat-header-cell *matHeaderCellDef i18n="@@pdca.detail.col-updated">MAJ</th>
               <td mat-cell *matCellDef="let s">{{ s.updatedAt | date:'short' }}</td>

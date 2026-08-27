@@ -15062,6 +15062,66 @@ declared income
         <source>Les audits 5S saisis hors connexion apparaîtront ici jusqu'à leur synchronisation.</source>
         <target state="translated">5S audits captured offline will appear here until they are synchronized.</target>
       </trans-unit>
+      <trans-unit id="pdca.detail.col-evidence" datatype="html">
+        <source>Preuve</source>
+        <target state="translated">Evidence</target>
+      </trans-unit>
+      <trans-unit id="pdca.evidence.attach" datatype="html">
+        <source>Joindre</source>
+        <target state="translated">Attach</target>
+      </trans-unit>
+      <trans-unit id="pdca.evidence.added" datatype="html">
+        <source>Preuve jointe à l'étape.</source>
+        <target state="translated">Evidence attached to the step.</target>
+      </trans-unit>
+      <trans-unit id="pdca.evidence.remove-tooltip" datatype="html">
+        <source>Retirer la preuve de cette étape</source>
+        <target state="translated">Remove this step's evidence</target>
+      </trans-unit>
+      <trans-unit id="pdca.evidence.remove-title" datatype="html">
+        <source>Retirer la preuve de cette étape ?</source>
+        <target state="translated">Remove this step's evidence?</target>
+      </trans-unit>
+      <trans-unit id="pdca.evidence.remove-message" datatype="html">
+        <source>La pièce sera définitivement retirée. Une étape déclarée faite sans preuve s'affirme faite sans le démontrer : ce retrait est traçable.</source>
+        <target state="translated">The file will be permanently removed. A step declared done without evidence claims to be done without showing it: this removal is traceable.</target>
+      </trans-unit>
+      <trans-unit id="pdca.evidence.remove-error" datatype="html">
+        <source>Échec du retrait de la preuve.</source>
+        <target state="translated">Could not remove the evidence.</target>
+      </trans-unit>
+      <trans-unit id="pdca.evidence.error" datatype="html">
+        <source>Échec de l'ajout de la preuve.</source>
+        <target state="translated">Could not add the evidence.</target>
+      </trans-unit>
+      <trans-unit id="pdca.evidence.too-large" datatype="html">
+        <source>Pièce trop lourde — 10 Mo au maximum.</source>
+        <target state="translated">File too large — 10 MB at most.</target>
+      </trans-unit>
+      <trans-unit id="pdca.evidence.rejected" datatype="html">
+        <source>Format refusé — PDF, image, Word ou Excel, et le contenu doit correspondre au format annoncé.</source>
+        <target state="translated">Format refused — PDF, image, Word or Excel, and the content must match the declared format.</target>
+      </trans-unit>
+      <trans-unit id="pdca.evidence.limit" datatype="html">
+        <source>Cette étape porte déjà sa preuve, ou le cycle est clos.</source>
+        <target state="translated">This step already carries its evidence, or the cycle is closed.</target>
+      </trans-unit>
+      <trans-unit id="pdca.evidence.gone" datatype="html">
+        <source>Cette étape n'existe plus — recharge la fiche.</source>
+        <target state="translated">This step no longer exists — reload the page.</target>
+      </trans-unit>
+      <trans-unit id="pdca.evidence.storage-disabled" datatype="html">
+        <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
+        <target state="translated">Attachment storage is disabled on this environment: no evidence can be added or read here.</target>
+      </trans-unit>
+      <trans-unit id="pdca.evidence.attach-aria" datatype="html">
+        <source>Joindre une preuve à l'étape : <x id="title"/></source>
+        <target state="translated">Attach evidence to the step: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="pdca.evidence.remove-aria" datatype="html">
+        <source>Retirer la preuve de l'étape : <x id="title"/></source>
+        <target state="translated">Remove the step's evidence: <x id="title"/></target>
+      </trans-unit>
       <trans-unit id="dashboard.exec.alignment-subtitle" datatype="html">
         <source>Couverture des exigences obligatoires par norme</source>
         <target state="translated">Coverage of mandatory requirements by standard</target>

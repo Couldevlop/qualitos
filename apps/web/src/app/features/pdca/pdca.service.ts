@@ -8,6 +8,7 @@ import {
   CreatePdcaCycleRequest,
   CreatePdcaStepRequest,
   PdcaCycleResponse,
+  PdcaStepEvidence,
   PdcaStepResponse,
   SpringPage
 } from './pdca.types';
@@ -18,6 +19,9 @@ export class PdcaService {
   private readonly endpoint = `${environment.apiBaseUrl}/api/v1/pdca/cycles`;
 
   private readonly mockStore: PdcaCycleResponse[] = this.seedMockCycles();
+
+  /** Preuves d'étapes du mode démonstration, rangées par cycle. */
+  private readonly mockStepEvidences = new Map<string, PdcaStepEvidence[]>();
 
   constructor(private readonly http: HttpClient) {}
 
@@ -129,6 +133,71 @@ export class PdcaService {
       return of(this.snapshotCycle(cycle)).pipe(delay(200));
     }
     return this.http.post<PdcaCycleResponse>(this.endpoint, input);
+  }
+
+  // ---- preuves d'ÉTAPE (§3.1, ADR 0061) ---------------------------------------
+  // Une étape déclarée faite sans document ne prouve rien : elle affirme. Ces
+  // trois appels alimentent la colonne « Preuve » du tableau des étapes. Une
+  // étape ne porte qu'UNE pièce, parce qu'une cellule de tableau montre un
+  // document, pas une liste.
+
+  /**
+   * Toutes les pièces d'étapes du cycle, en un appel : le tableau les range
+   * ensuite par étape. Une requête par ligne ferait autant d'allers et retours
+   * que d'étapes pour remplir une seule colonne.
+   */
+  listStepEvidences(cycleId: string): Observable<PdcaStepEvidence[]> {
+    if (environment.useMockApi) {
+      return of([...this.mockStepEvidenceStore(cycleId)]).pipe(delay(120));
+    }
+    return this.http.get<PdcaStepEvidence[]>(`${this.endpoint}/${cycleId}/step-evidences`);
+  }
+
+  uploadStepEvidence(cycleId: string, stepId: string, file: File): Observable<PdcaStepEvidence> {
+    if (environment.useMockApi) {
+      const evidence: PdcaStepEvidence = {
+        id: 'evd-step-' + Math.random().toString(36).slice(2, 9),
+        cycleId,
+        stepId,
+        contentType: file.type || 'application/octet-stream',
+        sizeBytes: file.size,
+        originalFilename: file.name,
+        createdAt: new Date().toISOString(),
+        url: URL.createObjectURL(file)
+      };
+      this.mockStepEvidenceStore(cycleId).push(evidence);
+      return of(evidence).pipe(delay(250));
+    }
+    const form = new FormData();
+    form.append('file', file, file.name);
+    return this.http.post<PdcaStepEvidence>(
+      `${this.endpoint}/${cycleId}/steps/${stepId}/evidences`, form);
+  }
+
+  deleteStepEvidence(cycleId: string, stepId: string, evidenceId: string): Observable<void> {
+    if (environment.useMockApi) {
+      const store = this.mockStepEvidenceStore(cycleId);
+      const idx = store.findIndex(e => e.id === evidenceId);
+      if (idx >= 0) {
+        // Libère l'URL d'objet : sans cela le binaire reste en mémoire jusqu'au
+        // rechargement de la page.
+        const url = store[idx].url;
+        if (url) URL.revokeObjectURL(url);
+        store.splice(idx, 1);
+      }
+      return of(void 0).pipe(delay(120));
+    }
+    return this.http.delete<void>(
+      `${this.endpoint}/${cycleId}/steps/${stepId}/evidences/${evidenceId}`);
+  }
+
+  private mockStepEvidenceStore(cycleId: string): PdcaStepEvidence[] {
+    let store = this.mockStepEvidences.get(cycleId);
+    if (!store) {
+      store = [];
+      this.mockStepEvidences.set(cycleId, store);
+    }
+    return store;
   }
 
   private mockPage(status?: string): SpringPage<PdcaCycleResponse> {
