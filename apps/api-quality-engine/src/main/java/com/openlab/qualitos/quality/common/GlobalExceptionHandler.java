@@ -140,6 +140,9 @@ import com.openlab.qualitos.quality.webhooks.WebhookDeliveryNotFoundException;
 import com.openlab.qualitos.quality.webhooks.WebhookStateException;
 import com.openlab.qualitos.quality.webhooks.WebhookSubscriptionNotFoundException;
 import com.openlab.qualitos.quality.pdca.PdcaCycleNotFoundException;
+import com.openlab.qualitos.quality.pdca.PdcaStepEvidenceNotFoundException;
+import com.openlab.qualitos.quality.pdca.PdcaStepEvidenceTooLargeException;
+import com.openlab.qualitos.quality.pdca.PdcaStepEvidenceValidationException;
 import com.openlab.qualitos.quality.pdca.PdcaStepNotFoundException;
 import com.openlab.qualitos.quality.pdca.PdcaStateException;
 import com.openlab.qualitos.quality.dashboards.domain.DashboardLayoutNotFoundException;
@@ -217,6 +220,39 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/pdca-invalid-transition"));
         problem.setTitle("Invalid PDCA State Transition");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    // --- preuves d'étape PDCA (ADR 0061) -------------------------------------
+    // Types distincts de ceux des preuves CAPA, et non partagés : un client qui
+    // lit le champ « type » du ProblemDetail doit pouvoir dire de quel module
+    // vient le refus sans avoir à recouper l'URL appelée.
+
+    @ExceptionHandler(PdcaStepEvidenceNotFoundException.class)
+    public ProblemDetail handlePdcaStepEvidenceNotFound(PdcaStepEvidenceNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/pdca-step-evidence-not-found"));
+        problem.setTitle("PDCA Step Evidence Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(PdcaStepEvidenceValidationException.class)
+    public ProblemDetail handlePdcaStepEvidenceValidation(PdcaStepEvidenceValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/pdca-step-evidence-invalid"));
+        problem.setTitle("Invalid PDCA Step Evidence");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(PdcaStepEvidenceTooLargeException.class)
+    public ProblemDetail handlePdcaStepEvidenceTooLarge(PdcaStepEvidenceTooLargeException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/pdca-step-evidence-too-large"));
+        problem.setTitle("PDCA Step Evidence Too Large");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

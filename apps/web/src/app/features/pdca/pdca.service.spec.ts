@@ -236,4 +236,119 @@ describe('PdcaService (API réelle)', () => {
     http.expectOne(`${base}/c1/advance`)
       .flush({ title: 'Conflict' }, { status: 409, statusText: 'Conflict' });
   });
+
+  // --- preuves d'étape (§3.1, ADR 0061) ----------------------------------------
+
+  it('lit toutes les preuves d\'un cycle en un appel', (done) => {
+    // Une requête par ligne ferait autant d'allers et retours que d'étapes pour
+    // remplir une seule colonne.
+    service.listStepEvidences('c1').subscribe(list => {
+      expect(list.length).toBe(1);
+      expect(list[0].stepId).toBe('s1');
+      done();
+    });
+    const req = http.expectOne(`${base}/c1/step-evidences`);
+    expect(req.request.method).toBe('GET');
+    req.flush([{
+      id: 'e1', cycleId: 'c1', stepId: 's1', contentType: 'application/pdf',
+      sizeBytes: 12, createdAt: '2026-08-20T09:00:00Z', url: 'https://minio/e1'
+    }]);
+  });
+
+  it('verse la pièce en multipart sous le chemin de son étape', (done) => {
+    const file = new File(['%PDF-1.7'], 'relevé.pdf', { type: 'application/pdf' });
+    service.uploadStepEvidence('c1', 's1', file).subscribe(e => {
+      expect(e.id).toBe('e1');
+      done();
+    });
+    const req = http.expectOne(`${base}/c1/steps/s1/evidences`);
+    expect(req.request.method).toBe('POST');
+    // Multipart et non JSON : le binaire ne passe pas par une charge utile JSON.
+    expect(req.request.body instanceof FormData).toBeTrue();
+    // Le navigateur ré-emballe la pièce quand on la nomme à l'ajout : on compare
+    // ce qui la caractérise, pas l'identité de l'objet.
+    const jointe = (req.request.body as FormData).get('file') as File;
+    expect(jointe.name).toBe('relevé.pdf');
+    expect(jointe.type).toBe('application/pdf');
+    expect(jointe.size).toBe(file.size);
+    req.flush({
+      id: 'e1', cycleId: 'c1', stepId: 's1', contentType: 'application/pdf',
+      sizeBytes: 8, originalFilename: 'relevé.pdf', createdAt: '2026-08-20T09:00:00Z'
+    });
+  });
+
+  it('retire la pièce par son chemin complet cycle / étape / preuve', (done) => {
+    service.deleteStepEvidence('c1', 's1', 'e1').subscribe(() => done());
+    const req = http.expectOne(`${base}/c1/steps/s1/evidences/e1`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null, { status: 204, statusText: 'No Content' });
+  });
+
+  it('propage le 409 quand l\'étape porte déjà sa preuve', (done) => {
+    const file = new File(['%PDF-1.7'], 'x.pdf', { type: 'application/pdf' });
+    service.uploadStepEvidence('c1', 's1', file).subscribe({
+      next: () => done.fail('le dépôt ne devrait pas aboutir'),
+      error: err => {
+        expect(err.status).toBe(409);
+        done();
+      }
+    });
+    http.expectOne(`${base}/c1/steps/s1/evidences`)
+      .flush({ title: 'Invalid PDCA State Transition' }, { status: 409, statusText: 'Conflict' });
+  });
+});
+
+/**
+ * Preuves d'étape en mode démonstration : le magasin doit se comporter comme un
+ * vrai backend — ce qu'on verse se relit, ce qu'on retire disparaît — sinon la
+ * démo montre une colonne qui ment.
+ */
+describe('PdcaService — preuves d\'étape (mode démonstration)', () => {
+  let service: PdcaService;
+  let prevMock: boolean;
+
+  beforeEach(() => {
+    prevMock = environment.useMockApi;
+    environment.useMockApi = true;
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+      ]
+    });
+    service = TestBed.inject(PdcaService);
+  });
+
+  afterEach(() => { environment.useMockApi = prevMock; });
+
+  it('part d\'un cycle sans aucune preuve', async () => {
+    expect(await firstValueFrom(service.listStepEvidences('demo-1'))).toEqual([]);
+  });
+
+  it('relit ce qu\'on vient de verser, puis l\'oublie après retrait', async () => {
+    const file = new File(['%PDF-1.7'], 'constat.pdf', { type: 'application/pdf' });
+
+    const versee = await firstValueFrom(service.uploadStepEvidence('demo-1', 's1', file));
+    expect(versee.stepId).toBe('s1');
+    expect(versee.originalFilename).toBe('constat.pdf');
+    expect(versee.url).toBeTruthy();
+
+    expect((await firstValueFrom(service.listStepEvidences('demo-1'))).length).toBe(1);
+    // Le magasin d'un cycle voisin reste vide : les preuves ne débordent pas.
+    expect(await firstValueFrom(service.listStepEvidences('demo-2'))).toEqual([]);
+
+    await firstValueFrom(service.deleteStepEvidence('demo-1', 's1', versee.id));
+    expect(await firstValueFrom(service.listStepEvidences('demo-1'))).toEqual([]);
+  });
+
+  it('ignore le retrait d\'une pièce inconnue sans casser le magasin', async () => {
+    await firstValueFrom(service.deleteStepEvidence('demo-1', 's1', 'jamais-versee'));
+    expect(await firstValueFrom(service.listStepEvidences('demo-1'))).toEqual([]);
+  });
+
+  it('se rabat sur un type générique quand le navigateur n\'en déclare aucun', async () => {
+    const file = new File(['x'], 'sans-type', { type: '' });
+    const versee = await firstValueFrom(service.uploadStepEvidence('demo-3', 's9', file));
+    expect(versee.contentType).toBe('application/octet-stream');
+  });
 });
