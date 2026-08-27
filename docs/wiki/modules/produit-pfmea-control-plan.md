@@ -76,10 +76,15 @@ lignes** — modifier une ligne, une tolérance ou une justification produirait 
 différente. C'est ce qu'on donne à un auditeur qui demande à vérifier lui-même, plutôt que
 de lui demander de nous croire.
 
-Deux choses à savoir sur cet encart. Il n'apparaît **pas sur un brouillon** : un document
-qui n'est pas applicable n'a rien à prouver. Et les plans approuvés **avant la mise en
+Trois choses à savoir sur cet encart. Il n'apparaît **pas sur un brouillon** : un document
+qui n'est pas applicable n'a rien à prouver. Les plans approuvés **avant la mise en
 service de cette fonction** n'en portent pas : les sceller après coup certifierait un
 contenu que personne n'a vu approuver. Leur approbation reste tracée au journal.
+
+Enfin, les plans scellés **avant le 27 août 2026** portent bien une empreinte, mais elle
+n'est pas rejouable : un défaut d'horodatage la rendait irrécupérable dès l'écriture
+(ADR 0062). Ces plans restent approuvés et applicables ; c'est la démonstration
+d'intégrité qui manque. Ouvrir une révision produit un scellement correct.
 
 Si l'approbation échoue en disant que l'ancrage est indisponible, ce n'est pas un défaut
 d'autorisation : la plateforme refuse de rendre opposable un document qu'elle ne saurait pas
