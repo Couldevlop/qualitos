@@ -74,6 +74,18 @@ public class NonConformity {
     private UUID reporterId;
 
     /**
+     * Nom lisible de la personne qui a signalé l'écart, figé au moment du
+     * signalement.
+     *
+     * <p>Une copie, pas une jointure : le nom doit rester lisible des années
+     * plus tard, quand le compte a été renommé, désactivé ou supprimé de
+     * l'annuaire. Nul sur les NC antérieures à cette colonne — on ne devine pas
+     * qui a signalé quoi.
+     */
+    @Column(name = "reporter_name", length = 255)
+    private String reporterName;
+
+    /**
      * Produit concerné, facultatif : une NC de service ou administrative n'en a
      * pas, et l'exiger empêcherait simplement de la saisir.
      */

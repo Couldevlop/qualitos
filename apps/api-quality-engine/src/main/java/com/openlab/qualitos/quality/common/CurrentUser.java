@@ -2,6 +2,7 @@ package com.openlab.qualitos.quality.common;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.util.StringUtils;
 
 import java.util.Optional;
@@ -28,6 +29,32 @@ public final class CurrentUser {
     /** @return le sub du JWT typé en UUID, ou lève {@link MissingTenantContextException}. */
     public static UUID requireUserId() {
         return userId().orElseThrow(MissingTenantContextException::new);
+    }
+
+    /**
+     * Nom lisible de l'utilisateur courant, tel que l'annuaire le connaît
+     * ({@code name}, à défaut {@code preferred_username}).
+     *
+     * <p>Lu dans le JETON, jamais dans le body : un « détecté par » que
+     * l'appelant pourrait écrire lui-même attribuerait un signalement à
+     * n'importe qui, ce qui est précisément ce qu'une piste d'audit doit
+     * empêcher (OWASP A01, même invariant que {@link #userId()}).
+     *
+     * <p>Vide hors contexte authentifié, ou si le jeton ne porte aucun de ces
+     * deux claims : mieux vaut une colonne vide qu'un nom reconstitué.
+     *
+     * @return le nom d'affichage, sans espaces superflus, ou vide.
+     */
+    public static Optional<String> displayName() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || !(auth.getPrincipal() instanceof Jwt jwt)) {
+            return Optional.empty();
+        }
+        String name = jwt.getClaimAsString("name");
+        if (!StringUtils.hasText(name)) {
+            name = jwt.getClaimAsString("preferred_username");
+        }
+        return StringUtils.hasText(name) ? Optional.of(name.trim()) : Optional.empty();
     }
 
     /** @return le sub du JWT typé en UUID si présent et bien formé, sinon vide. */

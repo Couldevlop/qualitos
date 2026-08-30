@@ -20,6 +20,10 @@
       </div>
 
       <div class="toolbar">
+        <button mat-stroked-button type="button" (click)="openReference()">
+          <mat-icon>menu_book</mat-icon>
+          <span i18n="@@fmea.reference.open">Référentiel de cotation</span>
+        </button>
         <button mat-stroked-button (click)="openEdit(p)">
           <mat-icon>edit</mat-icon> <span i18n="@@common.edit">Modifier</span>
         </button>

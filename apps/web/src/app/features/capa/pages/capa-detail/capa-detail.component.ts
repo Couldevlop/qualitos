@@ -9,6 +9,7 @@ import { catchError, finalize, shareReplay, switchMap, tap } from 'rxjs/operator
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
+import { capaTypeLabel } from '../../capa.labels';
 import { CapaService } from '../../capa.service';
 import {
   CapaEditDialogComponent,
@@ -36,7 +37,7 @@ export class CapaDetailComponent implements OnInit {
    * L'avancement et l'édition partagent la dernière colonne — deux colonnes de
    * boutons repousseraient le contenu hors de l'écran.
    */
-  readonly actionColumns = ['title', 'actionType', 'decidedOn', 'assignee', 'nonConformity',
+  readonly actionColumns = ['title', 'actionType', 'decidedOn', 'assignee',
                             'evidence', 'status', 'dueDate', 'rowActions'];
 
   /** Natures proposées, dans l'ordre du déroulé réel d'un traitement. */
@@ -754,6 +755,11 @@ export class CapaDetailComponent implements OnInit {
 
   canVerifyEffectiveness(s: CapaStatus): boolean {
     return s === 'RESOLVED';
+  }
+
+  /** Libellé lisible du type de DOSSIER (endiguement / corrective / préventive). */
+  caseTypeLabel(type: string): string {
+    return capaTypeLabel(type);
   }
 
   /** Libellé lisible d'une nature d'action, avec repli sur le code inconnu. */

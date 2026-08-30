@@ -43,6 +43,12 @@ export interface NcResponse {
   /** URLs des photos, une par ligne (chaîne unique côté backend). */
   photoUrls?: string;
   reporterId?: string;
+  /**
+   * Nom de la personne qui a signalé l'écart, figé au signalement par le
+   * serveur. Absent sur les NC antérieures à cette donnée : la liste affiche
+   * alors « — » plutôt qu'un identifiant qui n'apprend rien.
+   */
+  reporterName?: string;
   /** Produit concerné. Absent pour une NC de service ou administrative. */
   productId?: string;
   /**

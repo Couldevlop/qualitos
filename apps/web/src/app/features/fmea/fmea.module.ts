@@ -8,6 +8,9 @@ import { FmeaDetailComponent } from './pages/fmea-detail/fmea-detail.component';
 import { FmeaEditDialogComponent } from './pages/fmea-edit-dialog/fmea-edit-dialog.component';
 import { FmeaItemDialogComponent } from './pages/fmea-item-dialog/fmea-item-dialog.component';
 import { FmeaListComponent } from './pages/fmea-list/fmea-list.component';
+import {
+  FmeaReferenceDialogComponent
+} from './pages/fmea-reference-dialog/fmea-reference-dialog.component';
 
 const routes: Routes = [
   { path: '', component: FmeaListComponent },
@@ -20,7 +23,8 @@ const routes: Routes = [
     FmeaDetailComponent,
     FmeaCreateDialogComponent,
     FmeaEditDialogComponent,
-    FmeaItemDialogComponent
+    FmeaItemDialogComponent,
+    FmeaReferenceDialogComponent
   ],
   imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })

@@ -76,6 +76,15 @@
         <th mat-header-cell *matHeaderCellDef i18n="@@common.status">Statut</th>
         <td mat-cell *matCellDef="let n"><span [class]="statusBadgeClass(n.status)">{{ n.status }}</span></td>
       </ng-container>
+      <!-- Qui a vu l'écart. Un nom, jamais l'UUID du compte : dans une liste, un
+           identifiant technique ne désigne personne. -->
+      <ng-container matColumnDef="reporter">
+        <th mat-header-cell *matHeaderCellDef i18n="@@nc.list.col-reporter">Détecté par</th>
+        <td mat-cell *matCellDef="let n">
+          <span *ngIf="n.reporterName; else noReporter">{{ n.reporterName }}</span>
+          <ng-template #noReporter><span class="muted">—</span></ng-template>
+        </td>
+      </ng-container>
       <ng-container matColumnDef="detectedAt">
         <th mat-header-cell *matHeaderCellDef i18n="@@nc.list.col-detected">Détectée le</th>
         <td mat-cell *matCellDef="let n">{{ n.detectedAt | date:'short' }}</td>

@@ -66,7 +66,9 @@ describe('CapaCreateDialogComponent', () => {
     expect(component.form.controls.type.value).toBe('CORRECTIVE');
     expect(component.form.controls.criticity.value).toBe('MEDIUM');
     expect(component.form.controls.sourceType.value).toBe('INTERNAL');
-    expect(component.types).toEqual(['CORRECTIVE', 'PREVENTIVE']);
+    expect(component.types.map(t => t.value))
+      .toEqual(['CONTAINMENT', 'CORRECTIVE', 'PREVENTIVE']);
+    expect(component.types.every(t => !!t.label)).toBeTrue();
     expect(component.criticities).toEqual(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']);
   });
 
@@ -157,6 +159,108 @@ describe('CapaCreateDialogComponent', () => {
     http.expectNone(base);
 
     req.flush(created);
+  });
+
+  // --- endiguement (§4.2, 8D étape D3) --------------------------------------
+
+  it('permet d\'ouvrir un dossier d\'ENDIGUEMENT, distinct d\'un correctif', () => {
+    // Sans cette valeur, un dossier qui a seulement bloqué le lot partait comme
+    // « correctif » et se lisait comme un dossier où la cause avait été traitée.
+    component.form.patchValue({ title: 'Lot 4471 bloqué', type: 'CONTAINMENT' });
+    component.submit();
+
+    const req = http.expectOne(base);
+    expect(req.request.body.type).toBe('CONTAINMENT');
+    req.flush(created);
+    expect(dialogRef.close).toHaveBeenCalledWith(created);
+  });
+
+  // --- pièces jointes déposées dès l'ouverture ------------------------------
+
+  const fichier = (nom: string, octets = 1024): File =>
+    new File([new Uint8Array(octets)], nom, { type: 'application/pdf' });
+
+  const choisir = (...files: File[]): void => {
+    const input = { files, value: 'C:/faux' } as unknown as HTMLInputElement;
+    component.onFilesSelected({ target: input } as unknown as Event);
+  };
+
+  const preuve = (id: string, nom: string) => ({
+    id, contentType: 'application/pdf', sizeBytes: 1024,
+    originalFilename: nom, createdAt: '2026-07-01T00:00:00Z'
+  });
+
+  it('retient les fichiers choisis sans rien envoyer avant que le dossier existe', () => {
+    choisir(fichier('releve.pdf'));
+
+    expect(component.attachments.length).toBe(1);
+    // Rien ne part : le serveur classe une preuve SOUS un dossier, il n'y a
+    // encore aucun dossier auquel la rattacher.
+    http.expectNone(base);
+  });
+
+  it('dépose les pièces sur le dossier une fois celui-ci créé', () => {
+    choisir(fichier('releve.pdf'), fichier('photo.pdf'));
+    component.form.controls.title.setValue('Défaut étiquetage');
+    component.submit();
+
+    http.expectOne(base).flush(created);
+
+    const up1 = http.expectOne(`${base}/${created.id}/evidences`);
+    expect(up1.request.method).toBe('POST');
+    expect(up1.request.body instanceof FormData).toBeTrue();
+    up1.flush(preuve('e1', 'releve.pdf'));
+
+    // Une pièce à la fois : deux dépôts concurrents rendraient l'ordre de la
+    // liste imprévisible d'un dossier à l'autre.
+    const up2 = http.expectOne(`${base}/${created.id}/evidences`);
+    up2.flush(preuve('e2', 'photo.pdf'));
+
+    expect(component.uploaded).toBe(2);
+    expect(dialogRef.close).toHaveBeenCalledWith(created);
+    expect(component.submitting).toBeFalse();
+  });
+
+  it('ferme quand même sur un dépôt refusé : le dossier, lui, est bien créé', () => {
+    choisir(fichier('trop-lourd.pdf'));
+    component.form.controls.title.setValue('Défaut étiquetage');
+    component.submit();
+
+    http.expectOne(base).flush(created);
+    http.expectOne(`${base}/${created.id}/evidences`)
+        .flush({ title: 'too large' }, { status: 413, statusText: 'Payload Too Large' });
+
+    // Annuler un dossier créé parce qu'une pièce a été refusée perdrait la
+    // déclaration elle-même ; la pièce se rejoint depuis la fiche.
+    expect(component.uploaded).toBe(0);
+    expect(dialogRef.close).toHaveBeenCalledWith(created);
+  });
+
+  it('refuse tout de suite une pièce au-delà de 10 Mo, avant la création', () => {
+    choisir(fichier('enorme.pdf', 10 * 1024 * 1024 + 1));
+
+    expect(component.attachments.length).toBe(0);
+  });
+
+  it('s\'arrête à dix pièces', () => {
+    choisir(...Array.from({ length: 12 }, (_, i) => fichier(`p${i}.pdf`)));
+
+    expect(component.attachments.length).toBe(10);
+  });
+
+  it('retire une pièce de la file avant l\'envoi', () => {
+    const f = fichier('a-retirer.pdf');
+    choisir(f, fichier('garde.pdf'));
+
+    component.removeAttachment(f);
+
+    expect(component.attachments.map(a => a.name)).toEqual(['garde.pdf']);
+  });
+
+  it('affiche un poids lisible plutôt qu\'un nombre d\'octets', () => {
+    expect(component.formatSize(2 * 1024 * 1024)).toBe('2.0 Mo');
+    expect(component.formatSize(4096)).toBe('4 Ko');
+    expect(component.formatSize(10)).toBe('1 Ko');
   });
 
   it('ferme le dialogue sans rien créer à l\'annulation', () => {

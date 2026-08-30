@@ -11,6 +11,9 @@ import { safeErrorMessage } from '../../../../core/http/error-message';
 import { FmeaService } from '../../fmea.service';
 import { FmeaProjectPage, FmeaProjectResponse, FmeaStatus, FmeaType } from '../../fmea.types';
 import { FmeaCreateDialogComponent } from '../fmea-create-dialog/fmea-create-dialog.component';
+import {
+  FmeaReferenceDialogComponent
+} from '../fmea-reference-dialog/fmea-reference-dialog.component';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 const MAX_PAGE_SIZE = 100;
@@ -88,6 +91,18 @@ export class FmeaListComponent implements OnInit {
     this.pageIndex = Math.max(0, e.pageIndex);
     this.pageSize  = Math.min(MAX_PAGE_SIZE, Math.max(1, e.pageSize));
     this.page$.next({ index: this.pageIndex, size: this.pageSize });
+  }
+
+  /**
+   * Ouvre le référentiel de cotation (barèmes S/O/D et exemple de PFMEA).
+   * Purement documentaire : il ne modifie rien, d'où l'absence de suite au
+   * `afterClosed()`.
+   */
+  openReference(): void {
+    this.dialog.open(FmeaReferenceDialogComponent, {
+      autoFocus: 'first-tabbable', restoreFocus: true,
+      panelClass: 'qos-dialog-panel'
+    });
   }
 
   openCreate(): void {

@@ -78,6 +78,8 @@ public final class NcDto {
             Double geoLng,
             String photoUrls,
             UUID reporterId,
+            /** Nom du signalant, figé à la création (dérivé du JWT, jamais du body). */
+            String reporterName,
             UUID productId,
             UUID fmeaItemId,
             UUID capaCaseId,

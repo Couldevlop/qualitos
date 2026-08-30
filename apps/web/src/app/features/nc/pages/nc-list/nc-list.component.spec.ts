@@ -39,7 +39,20 @@ describe('NcListComponent', () => {
   });
 
   it('exposes the canonical NC statuses', () => {
-    expect(component.statuses).toEqual(['OPEN', 'UNDER_ANALYSIS', 'ACTION_DEFINED', 'RESOLVED', 'CLOSED', 'CANCELLED']);
+    expect(component.statuses)
+      .toEqual(['OPEN', 'UNDER_ANALYSIS', 'ACTION_DEFINED', 'CLOSED', 'CANCELLED']);
+  });
+
+  it('ne propose pas RESOLVED au filtre : c\'est un etat de passage', () => {
+    // Une NC resolue est cloturee dans la foulee ; proposer ce statut renvoyait
+    // presque toujours une liste vide. Les NC resolues se lisent sous CLOSED.
+    expect(component.statuses).not.toContain('RESOLVED');
+  });
+
+  it('affiche la colonne Detecte par apres le statut', () => {
+    expect(component.displayedColumns).toEqual([
+      'reference', 'title', 'category', 'severity', 'status', 'reporter', 'detectedAt'
+    ]);
   });
 
   it('exposes the canonical NC severities and categories', () => {
@@ -147,6 +160,35 @@ describe('NcListComponent — chargement, filtres et pagination', () => {
     expect(el.querySelectorAll('.pending').length).toBe(1);
     expect(el.querySelectorAll('tr.row-disabled').length).toBe(1);
     expect(el.querySelector('.empty')).toBeNull();
+  }));
+
+  it('rend une colonne « Détecté par » nommant l\'auteur du signalement', fakeAsync(() => {
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+
+    http.expectOne(r => r.url === endpoint).flush(page([
+      nc({ reporterName: 'Amina Dridi', reporterId: 'u-42' }),
+      nc({ id: 'a2', reference: 'NC-2026-1002' })
+    ]));
+    tick();
+    fixture.detectChanges();
+
+    const el: HTMLElement = fixture.nativeElement;
+    const entetes = Array.from(el.querySelectorAll('table.t th'))
+      .map(th => (th.textContent ?? '').trim());
+    expect(entetes).toContain('Détecté par');
+
+    const index = component.displayedColumns.indexOf('reporter');
+    const lignes = Array.from(el.querySelectorAll('table.t tbody tr'));
+    const cellule = (i: number) =>
+      (lignes[i].querySelectorAll('td')[index].textContent ?? '').trim();
+
+    expect(cellule(0)).toBe('Amina Dridi');
+    // Signalement antérieur à cette donnée : un tiret, jamais l'UUID du compte,
+    // qui ne désignerait personne dans une liste.
+    expect(cellule(1)).toBe('—');
+    expect(el.textContent).not.toContain('u-42');
   }));
 
   it('affiche l\'état vide quand aucune NC ne correspond au filtre', fakeAsync(() => {

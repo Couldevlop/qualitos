@@ -10,9 +10,6 @@ TRANSLATIONS = {
         'Date', 'Date', 'Fecha', 'التاريخ', '日付', '日期'),
     'capa.detail.col-assignee': (
         'Responsable', 'Owner', 'Responsable', 'المسؤول', '担当者', '负责人'),
-    'capa.detail.col-nc': (
-        'Non-conformité', 'Non-conformity', 'No conformidad',
-        'حالة عدم مطابقة', '不適合', '不符合项'),
     'capa.detail.col-evidence': (
         'Preuve', 'Evidence', 'Prueba', 'الدليل', '証拠', '证据'),
 

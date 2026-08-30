@@ -59,3 +59,7 @@
 }
 .row-disabled { cursor: default; opacity: 0.75; }
 .row-disabled:hover { background: transparent; }
+
+/* Colonne « Détecté par » sans valeur : le tiret se lit comme une absence,
+   pas comme une donnée. */
+.t .muted { color: var(--qos-text-muted, #6b7280); }

@@ -204,9 +204,13 @@
 /* Le libellé et l'écart d'origine sont les seuls textes libres : eux respirent
    et se tronquent proprement, le reste tient en un mot. */
 .actions-table td:first-child,
-.actions-table .nc-cell {
+/* L'ecart d'origine s'affiche desormais dans l'encart « Source » de l'en-tete,
+   a la suite du type et de la reference : il se met a la ligne plutot que d'etre
+   coupe, un titre de NC tronque ne designant plus rien. */
+.info-value .nc-cell {
+  display: inline;
   white-space: normal;
-  max-width: 280px;
+  font-size: inherit;
 }
 
 .nc-cell {

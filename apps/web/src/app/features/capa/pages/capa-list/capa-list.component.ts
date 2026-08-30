@@ -8,6 +8,7 @@ import { catchError, finalize, map, shareReplay, startWith, switchMap, tap } fro
 
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
+import { capaTypeLabel } from '../../capa.labels';
 import { CapaService } from '../../capa.service';
 import { CapaCaseResponse, CapaCriticity, CapaPage, CapaStatus } from '../../capa.types';
 import { CapaCreateDialogComponent } from '../capa-create-dialog/capa-create-dialog.component';
@@ -105,5 +106,8 @@ export class CapaListComponent implements OnInit {
   }
 
   statusBadge(s: CapaStatus): string { return 'badge badge-' + s.toLowerCase(); }
+
+  /** Libellé lisible du type de dossier ; la colonne affichait l'énumération brute. */
+  caseTypeLabel(type: string): string { return capaTypeLabel(type); }
   criticityBadge(c: CapaCriticity): string { return 'crit crit-' + c.toLowerCase(); }
 }

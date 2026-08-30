@@ -1,6 +1,12 @@
 import { SpringPage } from '../pdca/pdca.types';
 
-export type CapaType = 'CORRECTIVE' | 'PREVENTIVE';
+/**
+ * Raison d'ouverture du dossier. `CONTAINMENT` dit qu'on a d'abord protégé —
+ * lot bloqué, ligne arrêtée, client prévenu — sans encore rien avoir corrigé.
+ * Le confondre avec un dossier correctif laisse croire que le problème ne peut
+ * plus revenir (ISO 9001 §10.2, 8D étape D3).
+ */
+export type CapaType = 'CONTAINMENT' | 'CORRECTIVE' | 'PREVENTIVE';
 export type CapaCriticity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 export type CapaStatus = 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED' | 'REJECTED';
 export type CapaSourceType = 'NON_CONFORMITY' | 'AUDIT' | 'COMPLAINT' | 'INTERNAL' | 'IOT_ALERT' | 'OTHER';

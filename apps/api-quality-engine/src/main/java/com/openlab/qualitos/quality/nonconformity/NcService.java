@@ -99,6 +99,10 @@ public class NcService {
         nc.setGeoLng(request.geoLng());
         nc.setPhotoUrls(request.photoUrls());
         nc.setReporterId(reporterId);
+        // Le NOM suit la même règle que l'identifiant : il vient du jeton. Il est
+        // recopié une fois pour toutes parce qu'un signalement doit rester
+        // attribuable même quand le compte disparaît de l'annuaire.
+        nc.setReporterName(CurrentUser.displayName().orElse(null));
         nc.setProductId(request.productId());
         nc.setFmeaItemId(request.fmeaItemId());
 
@@ -270,7 +274,7 @@ public class NcService {
                 nc.getId(), nc.getTenantId(), nc.getReference(), nc.getTitle(), nc.getDescription(),
                 nc.getCategory(), nc.getSeverity(), nc.getStatus(), nc.getOrigin(), nc.getDetectedAt(),
                 nc.getZone(), nc.getGeoLat(), nc.getGeoLng(), nc.getPhotoUrls(),
-                nc.getReporterId(), nc.getProductId(), nc.getFmeaItemId(),
+                nc.getReporterId(), nc.getReporterName(), nc.getProductId(), nc.getFmeaItemId(),
                 nc.getCapaCaseId(), nc.getRootCause(), nc.getResolutionNote(),
                 nc.getResolvedAt(), nc.getClosedAt(), nc.getCreatedAt(), nc.getUpdatedAt());
     }
