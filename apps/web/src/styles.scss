@@ -434,6 +434,16 @@ html, body { overflow-x: hidden; }
  *   surface > [title, form > [content, actions]]  (dialogs formulaire)
  * ============================================================ */
 .qos-dialog-panel {
+  /* Le plafond de Material se pose par son TOKEN, pas par un `max-width`.
+     `.cdk-overlay-pane.mat-mdc-dialog-panel` applique
+     `max-width: var(--mat-dialog-container-max-width, 560px)` avec une
+     spécificité (0,2,0) qu'une classe simple (0,1,0) ne bat pas : le
+     `max-width: 94vw` ci-dessous n'a jamais rien plafonné, et les dialogues
+     s'ouvraient à 560 px alors que cette règle en annonce 680. Renseigner le
+     token laisse le cadre à Material et rend à la déclaration l'effet qu'elle
+     dit avoir — plutôt qu'une course à la spécificité qu'une montée de version
+     reperdrait en silence. */
+  --mat-dialog-container-max-width: 94vw;
   width: min(680px, 94vw);
   max-width: 94vw;
 
@@ -500,14 +510,9 @@ html, body { overflow-x: hidden; }
  * et l'en-tête sortait du cadre. Le contenu remplit ce qu'on lui donne ; c'est
  * l'ouverture du dialogue qui déclare de combien elle a besoin. */
 .qos-dialog-panel--wide {
-  /* Le plafond vient d'un TOKEN, pas d'une largeur en dur : Angular Material
-     applique `max-width: var(--mat-dialog-container-max-width, 560px)` via
-     `.cdk-overlay-pane.mat-mdc-dialog-panel`, dont la spécificité (0,2,0) bat
-     toute classe simple. Redéclarer `max-width` ici ne servirait donc à rien —
-     c'est ce qui faisait qu'un panneau demandant 1180 px en obtenait 560 et
-     rognait son tableau. On pose la valeur du token, que la règle de Material
-     lit elle-même : le cadre reste le sien, on ne fait que le renseigner. */
-  --mat-dialog-container-max-width: 94vw;
+  /* Seule la largeur change : le plafond est déjà rendu à 94vw par le token posé
+     sur `.qos-dialog-panel`, dont cette variante hérite. Le redéclarer ici
+     donnerait deux endroits à tenir d'accord pour une même décision. */
   width: min(1180px, 94vw);
 }
 

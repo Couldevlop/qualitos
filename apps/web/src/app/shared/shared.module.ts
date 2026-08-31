@@ -8,6 +8,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+
+import { IconNoTranslateModule } from './icon-no-translate/icon-no-translate.module';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -39,6 +41,7 @@ const MATERIAL = [
 @NgModule({
   declarations: [ConfirmDialogComponent],
   imports: [CommonModule, ...MATERIAL],
-  exports: [CommonModule, ReactiveFormsModule, RouterModule, ConfirmDialogComponent, ...MATERIAL]
+  exports: [CommonModule, ReactiveFormsModule, RouterModule, ConfirmDialogComponent,
+            IconNoTranslateModule, ...MATERIAL]
 })
 export class SharedModule {}
