@@ -17,15 +17,22 @@ import { Directive, HostBinding } from '@angular/core';
  * le droit de la demander à son navigateur. Ce qui ne doit pas être traduit,
  * c'est le nom technique d'un glyphe — pas le contenu qualité qui l'entoure.
  *
- * <p>Sélecteur d'élément et non attribut à poser : cent quarante-trois gabarits
- * emploient `<mat-icon>`, et une règle qu'il faut penser à répéter cent
+ * <p>Sélecteur automatique et non attribut à poser : cent quarante-trois
+ * gabarits emploient `<mat-icon>`, et une règle qu'il faut penser à répéter cent
  * quarante-trois fois est une règle qui sera oubliée à la cent quarante-quatrième.
+ *
+ * <p><b>Deux formes d'icône, pas une.</b> Une première version ne visait que
+ * l'élément `<mat-icon>` et laissait passer les icônes écrites en `<span
+ * class="material-symbols-outlined">` — dont TOUTE la barre de navigation. Elle
+ * ne corrigeait donc rien là où le défaut se voyait le plus. Ce qui compte n'est
+ * pas la balise choisie mais le fait que le nom du glyphe soit du texte : les
+ * classes de police à ligature sont visées au même titre.
  */
 @Directive({
   // Le projet est en NgModules (pas de composant autonome) ; Angular 20 rendant
   // `standalone` vrai par défaut, il faut le dire.
   standalone: false,
-  selector: 'mat-icon'
+  selector: 'mat-icon, .material-symbols-outlined, .material-icons'
 })
 export class IconNoTranslateDirective {
 
