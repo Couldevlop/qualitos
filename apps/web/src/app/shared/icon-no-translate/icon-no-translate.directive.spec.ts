@@ -9,6 +9,8 @@ import { IconNoTranslateModule } from './icon-no-translate.module';
   template: `
     <mat-icon>home</mat-icon>
     <mat-icon>chevron_left</mat-icon>
+    <span class="material-symbols-outlined">inventory_2</span>
+    <span class="material-icons">settings</span>
     <span class="libelle">Accueil</span>
   `
 })
@@ -39,11 +41,15 @@ describe('IconNoTranslateDirective', () => {
     fixture.detectChanges();
   });
 
-  it('pose translate="no" sur toutes les icones, sans en oublier', () => {
-    const icons: HTMLElement[] =
-      Array.from(fixture.nativeElement.querySelectorAll('mat-icon'));
+  it('pose translate="no" sur les icones balise ET sur les icones classe', () => {
+    // Les deux formes existent dans l'application, et la seconde porte TOUTE la
+    // barre de navigation — celle-la meme dont les noms de glyphes s'affichaient
+    // en toutes lettres. Ne viser que `<mat-icon>` ne corrigeait rien la ou le
+    // defaut se voyait le plus.
+    const icons: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll(
+      'mat-icon, .material-symbols-outlined, .material-icons'));
 
-    expect(icons.length).toBe(2);
+    expect(icons.length).toBe(4);
     icons.forEach(icon => expect(icon.getAttribute('translate')).toBe('no'));
   });
 

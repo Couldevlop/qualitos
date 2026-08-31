@@ -7,6 +7,17 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+
+  /* Cette enveloppe s'intercale entre la surface du dialogue et ses trois parties
+     (en-tête, contenu, actions). La mise en page globale dimensionne les ENFANTS
+     DIRECTS de la surface : elle ne voit donc que cette div, et sans borne celle-ci
+     grandit au-delà des 88vh de la surface — qui rogne, étant en `overflow: hidden`.
+     Le bouton « Fermer » se retrouvait coupé par le bas.
+
+     `100%` et non une seconde hauteur en vh : deux plafonds concurrents finissent
+     par se contredire. Celui de la surface fait autorité, on s'y conforme. */
+  min-height: 0;
+  max-height: 100%;
 }
 
 /* L'en-tête porte le retrait, et le titre ne le porte plus.
