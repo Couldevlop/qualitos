@@ -9,15 +9,21 @@
   min-width: 0;
 }
 
+/* L'en-tête porte le retrait, et le titre ne le porte plus.
+   Material inset le `mat-dialog-title` de son côté ; le sous-titre, lui, est un
+   frère qui n'héritait de rien — les deux textes commençaient donc à deux
+   abscisses différentes, à vingt-quatre pixels l'un de l'autre. Un seul bloc
+   décide de la marge, ce qui aligne aussi le contenu en dessous. */
 .ref-head {
   display: flex;
   align-items: flex-start;
   gap: 16px;
-  padding: 4px 0 8px;
+  padding: var(--qos-space-5) var(--qos-space-6) var(--qos-space-4);
 }
 
 .ref-title {
   margin: 0;
+  padding: 0;              /* le retrait appartient à `.ref-head` */
   font-size: 20px;
   line-height: 1.35;
 }
@@ -35,8 +41,10 @@
   flex: none;
 }
 
+/* Retrait horizontal aligné sur l'en-tête, aucun retrait en haut : les onglets
+   doivent toucher le filet du titre. */
 .ref-content {
-  padding: 0;
+  padding: 0 var(--qos-space-6) var(--qos-space-5);
   overflow: hidden;
   display: flex;
   flex-direction: column;

@@ -500,12 +500,24 @@ html, body { overflow-x: hidden; }
  * et l'en-tête sortait du cadre. Le contenu remplit ce qu'on lui donne ; c'est
  * l'ouverture du dialogue qui déclare de combien elle a besoin. */
 .qos-dialog-panel--wide {
+  /* Le plafond vient d'un TOKEN, pas d'une largeur en dur : Angular Material
+     applique `max-width: var(--mat-dialog-container-max-width, 560px)` via
+     `.cdk-overlay-pane.mat-mdc-dialog-panel`, dont la spécificité (0,2,0) bat
+     toute classe simple. Redéclarer `max-width` ici ne servirait donc à rien —
+     c'est ce qui faisait qu'un panneau demandant 1180 px en obtenait 560 et
+     rognait son tableau. On pose la valeur du token, que la règle de Material
+     lit elle-même : le cadre reste le sien, on ne fait que le renseigner. */
+  --mat-dialog-container-max-width: 94vw;
   width: min(1180px, 94vw);
 }
 
 /* Mobile : dialog plein écran (plus d'ergonomie tactile, zéro débordement). */
 @media (max-width: 640px) {
   .qos-dialog-panel {
+    /* Même raison qu'au-dessus : le plafond de Material se pose par son token,
+       sinon le `max-width` déclaré juste en dessous perd contre une règle plus
+       spécifique et le « plein écran » n'en est pas un. */
+    --mat-dialog-container-max-width: 100vw;
     width: 100vw;
     max-width: 100vw;
 
