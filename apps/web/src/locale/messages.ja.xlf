@@ -5212,10 +5212,6 @@
         <source>Responsable</source>
         <target state="translated">担当者</target>
       </trans-unit>
-      <trans-unit id="capa.detail.col-nc" datatype="html">
-        <source>Non-conformité</source>
-        <target state="translated">不適合</target>
-      </trans-unit>
       <trans-unit id="capa.detail.col-evidence" datatype="html">
         <source>Preuve</source>
         <target state="translated">証拠</target>
@@ -7335,6 +7331,190 @@
       <trans-unit id="nav.conformite-hub" datatype="html">
         <source>Conformité</source>
         <target state="translated">コンプライアンス</target>
+      </trans-unit>
+      <trans-unit id="capa.type.containment" datatype="html">
+        <source>Endiguement</source>
+        <target state="translated">暫定対応</target>
+      </trans-unit>
+      <trans-unit id="capa.type.corrective" datatype="html">
+        <source>Corrective</source>
+        <target state="translated">是正</target>
+      </trans-unit>
+      <trans-unit id="capa.type.preventive" datatype="html">
+        <source>Préventive</source>
+        <target state="translated">予防</target>
+      </trans-unit>
+      <trans-unit id="capa.create.attachments" datatype="html">
+        <source>Pièces jointes (optionnel)</source>
+        <target state="translated">添付ファイル（任意）</target>
+      </trans-unit>
+      <trans-unit id="capa.create.attachments-hint" datatype="html">
+        <source>Ce qui documente l'écart dès l'ouverture : photo, relevé, courriel. PDF, image, Word ou Excel, 10 Mo par pièce.</source>
+        <target state="translated">起票時点で逸脱を裏づけるもの（写真、測定値、メール）。PDF・画像・Word・Excel、1件あたり10MBまで。</target>
+      </trans-unit>
+      <trans-unit id="capa.create.attachment-add" datatype="html">
+        <source>Ajouter un fichier</source>
+        <target state="translated">ファイルを追加</target>
+      </trans-unit>
+      <trans-unit id="capa.create.attachment-remove-tooltip" datatype="html">
+        <source>Retirer ce fichier</source>
+        <target state="translated">このファイルを削除</target>
+      </trans-unit>
+      <trans-unit id="capa.create.attachment-progress" datatype="html">
+        <source>Dépôt des pièces</source>
+        <target state="translated">ファイルを送信中</target>
+      </trans-unit>
+      <trans-unit id="capa.create.evidence-limit" datatype="html">
+        <source>Dix pièces au maximum par dossier.</source>
+        <target state="translated">1件あたり添付は10件までです。</target>
+      </trans-unit>
+      <trans-unit id="capa.create.success-with-evidence" datatype="html">
+        <source>Cas CAPA créé, pièces jointes déposées.</source>
+        <target state="translated">CAPA案件を作成し、添付ファイルを登録しました。</target>
+      </trans-unit>
+      <trans-unit id="capa.create.success-partial-evidence" datatype="html">
+        <source>Cas CAPA créé, mais des pièces n'ont pas pu être déposées — reprends-les depuis la fiche.</source>
+        <target state="translated">CAPA案件は作成されましたが、一部の添付ファイルを送信できませんでした。案件画面から再度添付してください。</target>
+      </trans-unit>
+      <trans-unit id="nc.list.col-reporter" datatype="html">
+        <source>Détecté par</source>
+        <target state="translated">発見者</target>
+      </trans-unit>
+      <trans-unit id="common.close-aria" datatype="html">
+        <source>Fermer</source>
+        <target state="translated">閉じる</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.custom-badge" datatype="html">
+        <source>Barème de l'organisation</source>
+        <target state="translated">自社の評価基準</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.default-badge" datatype="html">
+        <source>Barème de référence</source>
+        <target state="translated">標準の評価基準</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.updated" datatype="html">
+        <source>Modifié le</source>
+        <target state="translated">更新日</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.edit" datatype="html">
+        <source>Adapter ce barème</source>
+        <target state="translated">この基準を調整</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.revert" datatype="html">
+        <source>Rétablir la référence</source>
+        <target state="translated">標準に戻す</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.incomplete" datatype="html">
+        <source>Chaque score doit porter un intitulé. Manquent les scores :</source>
+        <target state="translated">すべての点数に見出しが必要です。未記入の点数：</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.edit-hint" datatype="html">
+        <source>Le barème adopté ici sert à toute l'organisation. Les cotations déjà enregistrées ne changent pas de valeur, mais elles ont été portées sur l'échelle précédente : ne le modifiez pas au milieu d'une analyse.</source>
+        <target state="translated">ここで採用した基準は組織全体に適用されます。記録済みの評点は値を変えませんが、前の基準で付けられたものです。分析の途中で変更しないでください。</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.saved" datatype="html">
+        <source>Barème enregistré.</source>
+        <target state="translated">評価基準を保存しました。</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.reverted" datatype="html">
+        <source>Barème de référence rétabli.</source>
+        <target state="translated">標準の評価基準に戻しました。</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.save-failed" datatype="html">
+        <source>Barème refusé.</source>
+        <target state="translated">評価基準が拒否されました。</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.load-failed" datatype="html">
+        <source>Référentiel de cotation indisponible.</source>
+        <target state="translated">評価基準を読み込めません。</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.open" datatype="html">
+        <source>Référentiel de cotation</source>
+        <target state="translated">評価基準</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.title" datatype="html">
+        <source>Référentiel de cotation FMEA</source>
+        <target state="translated">FMEA 評価基準</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.subtitle" datatype="html">
+        <source>Les échelles sur lesquelles se cotent Sévérité, Occurrence et Détection. Deux RPN ne se comparent que s'ils sortent du même barème.</source>
+        <target state="translated">厳しさ・発生頻度・検出度を評価する尺度です。RPNは同じ尺度で算出したもの同士でしか比較できません。</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.tab-severity" datatype="html">
+        <source>Sévérité</source>
+        <target state="translated">厳しさ</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.tab-occurrence" datatype="html">
+        <source>Occurrence</source>
+        <target state="translated">発生頻度</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.tab-detection" datatype="html">
+        <source>Détection</source>
+        <target state="translated">検出度</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.tab-example" datatype="html">
+        <source>Exemple de PFMEA</source>
+        <target state="translated">PFMEAの例</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.example-hint" datatype="html">
+        <source>Modèle de rédaction : le niveau de détail attendu dans un mode de défaillance, un effet et une action recommandée.</source>
+        <target state="translated">記載例：故障モード・影響・推奨処置に求められる詳しさの目安です。</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-effect" datatype="html">
+        <source>Effet</source>
+        <target state="translated">影響</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-effects" datatype="html">
+        <source>Effets</source>
+        <target state="translated">影響</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-description" datatype="html">
+        <source>Description</source>
+        <target state="translated">説明</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-score" datatype="html">
+        <source>Score</source>
+        <target state="translated">点数</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-probability" datatype="html">
+        <source>Probabilité</source>
+        <target state="translated">発生確率</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-period" datatype="html">
+        <source>Période</source>
+        <target state="translated">期間</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-rate" datatype="html">
+        <source>Taux de défaillance</source>
+        <target state="translated">故障率</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-chance" datatype="html">
+        <source>Chance de détection</source>
+        <target state="translated">検出の可能性</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-step" datatype="html">
+        <source>Étape du processus</source>
+        <target state="translated">工程ステップ</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-failure-mode" datatype="html">
+        <source>Mode de défaillance</source>
+        <target state="translated">故障モード</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-causes" datatype="html">
+        <source>Causes</source>
+        <target state="translated">原因</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-controls" datatype="html">
+        <source>Contrôles actuels</source>
+        <target state="translated">現行の管理</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-action" datatype="html">
+        <source>Action recommandée</source>
+        <target state="translated">推奨処置</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-responsible" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">担当</target>
       </trans-unit>
       <trans-unit id="dbb.editor.back" datatype="html">
         <source>Retour à la liste</source>
@@ -16729,29 +16909,65 @@ historique 12 mois</source>
         <source>Qui mesure</source>
         <target state="translated">測定者</target>
       </trans-unit>
-      <trans-unit id="controlplan.col-trace" datatype="html">
-        <source>Trace</source>
-        <target state="translated">記録</target>
-      </trans-unit>
       <trans-unit id="controlplan.locked" datatype="html">
         <source>Ce plan est approuvé : ouvrez une révision pour le modifier.</source>
         <target state="translated">この計画書は承認済みです。変更するには改訂を開いてください。</target>
       </trans-unit>
       <trans-unit id="controlplan.col-characteristic" datatype="html">
-        <source>Caractéristique</source>
-        <target state="translated">特性</target>
+        <source>Ce qui est contrôlé</source>
+        <target state="translated">管理対象</target>
       </trans-unit>
       <trans-unit id="controlplan.col-spec" datatype="html">
         <source>Spécification</source>
         <target state="translated">規格</target>
       </trans-unit>
       <trans-unit id="controlplan.col-control" datatype="html">
-        <source>Contrôle</source>
+        <source>Méthode de contrôle</source>
         <target state="translated">管理方法</target>
       </trans-unit>
       <trans-unit id="controlplan.col-reaction" datatype="html">
-        <source>Plan de réaction</source>
-        <target state="translated">異常時の処置</target>
+        <source>Décision / action corrective</source>
+        <target state="translated">判定・是正処置</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-sop" datatype="html">
+        <source>Procédure</source>
+        <target state="translated">手順書</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-process-step" datatype="html">
+        <source>Étape du procédé</source>
+        <target state="translated">工程ステップ</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-input-output" datatype="html">
+        <source>Entrée / sortie</source>
+        <target state="translated">入力・出力</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-specified" datatype="html">
+        <source>Caractéristique spécifiée</source>
+        <target state="translated">規格特性</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-measurement" datatype="html">
+        <source>Moyen de mesure</source>
+        <target state="translated">測定方法</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-sample-size" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">サンプル数</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-frequency" datatype="html">
+        <source>Fréquence</source>
+        <target state="translated">頻度</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-recording" datatype="html">
+        <source>Enregistrement</source>
+        <target state="translated">記録場所</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-specified" datatype="html">
+        <source>Caractéristique spécifiée</source>
+        <target state="translated">規格特性</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-specified-placeholder" datatype="html">
+        <source>Ex. : cote de coupe ; hauteur de sertissage</source>
+        <target state="translated">例：切断寸法、圧着高さ</target>
       </trans-unit>
       <trans-unit id="controlplan.col-justification" datatype="html">
         <source>Justification</source>
@@ -16774,8 +16990,8 @@ historique 12 mois</source>
         <target state="translated">なし</target>
       </trans-unit>
       <trans-unit id="controlplan.field-characteristic" datatype="html">
-        <source>Caractéristique</source>
-        <target state="translated">特性</target>
+        <source>Ce qui est contrôlé</source>
+        <target state="translated">管理対象</target>
       </trans-unit>
       <trans-unit id="controlplan.field-type" datatype="html">
         <source>Type</source>

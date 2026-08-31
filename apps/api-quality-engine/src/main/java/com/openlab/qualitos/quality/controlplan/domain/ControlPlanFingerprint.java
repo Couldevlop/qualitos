@@ -23,6 +23,20 @@ import java.util.UUID;
  * justification à un contrôle CHANGE le document : c'est précisément ce qu'un
  * auditeur vient vérifier.
  *
+ * <p><b>Le calcul est VERSIONNÉ</b>, et il faut dire pourquoi. La version 1
+ * oubliait cinq colonnes de la trame — référence de procédure, entrée/sortie,
+ * qui mesure, lieu d'enregistrement, caractéristique spécifiée — arrivées après
+ * elle. Un plan pouvait donc voir changer où l'on range la preuve de ses
+ * contrôles sans que son empreinte bouge : exactement le trou que le scellement
+ * est censé fermer.
+ *
+ * <p>Corriger le calcul sans le versionner aurait rendu INVÉRIFIABLES tous les
+ * plans déjà scellés : l'auditeur qui rejoue le hachage d'un document de l'an
+ * dernier obtiendrait une autre valeur et conclurait à une falsification. Le
+ * plan porte donc le numéro de version avec lequel il a été scellé, et chaque
+ * version reste calculable pour toujours. On ne réécrit pas une preuve passée ;
+ * on cesse d'en produire d'incomplètes.
+ *
  * <p><b>Ce qui n'y entre pas</b> : les identifiants techniques des lignes et les
  * horodatages de modification. Recopier un plan à l'ouverture d'une révision
  * crée des lignes neuves ; si leurs identifiants comptaient, une révision qui ne
@@ -42,6 +56,15 @@ public final class ControlPlanFingerprint {
     /** Séparateur de lignes. */
     private static final char RECORD = '\u001E';
 
+    /** Le calcul d'origine, incomplet : conservé pour vérifier les plans anciens. */
+    public static final int VERSION_1 = 1;
+
+    /** Le calcul complet : toutes les colonnes de la trame entrent dans la preuve. */
+    public static final int VERSION_2 = 2;
+
+    /** Version employée pour tout nouveau scellement. */
+    public static final int CURRENT_VERSION = VERSION_2;
+
     private ControlPlanFingerprint() {
     }
 
@@ -52,7 +75,15 @@ public final class ControlPlanFingerprint {
      * @param lines ses lignes, dans n'importe quel ordre — elles sont triées ici
      */
     public static String of(ControlPlan plan, List<ControlPlanLine> lines) {
-        return sha256Hex(canonical(plan, lines));
+        return of(plan, lines, CURRENT_VERSION);
+    }
+
+    /**
+     * Rend l'empreinte selon une version DONNÉE du calcul — ce dont on a besoin
+     * pour rejouer celle d'un plan scellé avant que le calcul ne soit complété.
+     */
+    public static String of(ControlPlan plan, List<ControlPlanLine> lines, int version) {
+        return sha256Hex(canonical(plan, lines, version));
     }
 
     /**
@@ -61,9 +92,25 @@ public final class ControlPlanFingerprint {
      * l'a été.
      */
     public static String canonical(ControlPlan plan, List<ControlPlanLine> lines) {
+        return canonical(plan, lines, CURRENT_VERSION);
+    }
+
+    /**
+     * Le texte canonique d'une version donnée.
+     *
+     * <p>La version 2 s'annonce dans le texte lui-même (« control-plan/2 ») :
+     * deux versions du calcul ne doivent jamais pouvoir produire le même texte,
+     * sans quoi le versionnement ne protégerait de rien.
+     */
+    public static String canonical(ControlPlan plan, List<ControlPlanLine> lines, int version) {
+        if (version != VERSION_1 && version != VERSION_2) {
+            throw new IllegalArgumentException("Version d'empreinte inconnue : " + version);
+        }
+        boolean complete = version == VERSION_2;
         // Le type de document ouvre le texte, sans séparateur devant : une
         // empreinte doit rester lisible par l'humain qui la rejoue à la main.
-        StringBuilder out = new StringBuilder(512).append("control-plan");
+        StringBuilder out = new StringBuilder(512)
+                .append(complete ? "control-plan/2" : "control-plan");
         append(out, plan.getTenantId());
         append(out, plan.getProductId());
         append(out, plan.getPhase());
@@ -87,6 +134,7 @@ public final class ControlPlanFingerprint {
                     append(out, line.getMachine());
                     append(out, line.getCharacteristicNo());
                     append(out, line.getCharacteristicLabel());
+                    if (complete) append(out, line.getSpecifiedCharacteristic());
                     append(out, line.getCharacteristicType());
                     append(out, line.getSpecialClass());
                     append(out, line.getSpecification());
@@ -99,6 +147,16 @@ public final class ControlPlanFingerprint {
                     append(out, line.getControlMethod());
                     append(out, line.getReactionPlan());
                     append(out, line.getFmeaItemId());
+                    // Les colonnes arrivées avec la V116 : elles décrivent OÙ la
+                    // preuve du contrôle se trouve. Les laisser hors de
+                    // l'empreinte permettait de déplacer cette preuve sans que
+                    // le document scellé n'en dise rien.
+                    if (complete) {
+                        append(out, line.getSopReference());
+                        append(out, line.getInputOutput());
+                        append(out, line.getWhoMeasures());
+                        append(out, line.getRecordingLocation());
+                    }
                 });
         return out.toString();
     }

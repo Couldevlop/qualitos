@@ -133,7 +133,7 @@ describe('CapaDetailComponent — tableau des actions', () => {
     // La NATURE suit immédiatement le libellé : c'est la première question que
     // pose un auditeur devant une action — a-t-elle contenu, ou corrigé ?
     expect(component.actionColumns).toEqual([
-      'title', 'actionType', 'decidedOn', 'assignee', 'nonConformity',
+      'title', 'actionType', 'decidedOn', 'assignee',
       'evidence', 'status', 'dueDate', 'rowActions'
     ]);
     const entetes = Array.from((fixture.nativeElement as HTMLElement)
@@ -142,7 +142,6 @@ describe('CapaDetailComponent — tableau des actions', () => {
     expect(entetes).toContain('Nature');
     expect(entetes).toContain('Date');
     expect(entetes).toContain('Responsable');
-    expect(entetes).toContain('Non-conformité');
     expect(entetes).toContain('Preuve');
   });
 
@@ -186,22 +185,42 @@ describe('CapaDetailComponent — tableau des actions', () => {
     expect(texte()).not.toContain('9c1f2b7e');
   });
 
-  // --- colonne « Non-conformité » -----------------------------------------
+  // --- l'écart d'origine : dans l'en-tête, plus dans chaque ligne ----------
 
-  it('montre le nom de l\'écart d\'origine sur chaque ligne', () => {
+  it('ne répète plus l\'écart d\'origine sur chaque ligne d\'action', () => {
     setup(dossier({
       sourceNonConformity: {
         id: 'nc-1', reference: 'NC-2026-0018', title: 'Étiquetage lot 4471 illisible'
       }
     }));
 
-    expect(cellule('nonConformity')).toContain('Étiquetage lot 4471 illisible');
+    // La NC est celle du DOSSIER : identique sur toutes les lignes, elle
+    // occupait une colonne entière pour répéter la même chose et repoussait
+    // les colonnes qui, elles, varient d'une action à l'autre.
+    expect(component.actionColumns).not.toContain('nonConformity');
+    const entetes = Array.from((fixture.nativeElement as HTMLElement)
+      .querySelectorAll('.actions-table th')).map(th => (th.textContent ?? '').trim());
+    expect(entetes).not.toContain('Non-conformité');
+  });
+
+  it('garde l\'écart d\'origine visible, une fois, dans l\'en-tête du dossier', () => {
+    setup(dossier({
+      sourceNonConformity: {
+        id: 'nc-1', reference: 'NC-2026-0018', title: 'Étiquetage lot 4471 illisible'
+      }
+    }));
+
+    // Retirer la colonne ne doit pas faire disparaître l'information : elle
+    // remonte là où elle n'a besoin d'être écrite qu'une fois.
+    const info = (fixture.nativeElement as HTMLElement).querySelector('.info-card');
+    expect(info?.textContent).toContain('Étiquetage lot 4471 illisible');
   });
 
   it('reste muet quand le dossier ne procède d\'aucun écart', () => {
     setup(dossier({ sourceType: 'AUDIT', sourceNonConformity: undefined }));
 
-    expect(cellule('nonConformity')).toBe('—');
+    const info = (fixture.nativeElement as HTMLElement).querySelector('.info-card');
+    expect(info?.textContent).toContain('AUDIT');
   });
 
   // --- colonne « Preuve » --------------------------------------------------

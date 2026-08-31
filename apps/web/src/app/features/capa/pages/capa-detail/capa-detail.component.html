@@ -62,15 +62,21 @@
             </div>
             <div class="info-item">
               <span class="info-label" i18n="@@common.type">Type</span>
-              <span class="info-value">{{ c.type }}</span>
+              <span class="info-value">{{ caseTypeLabel(c.type) }}</span>
             </div>
             <div class="info-item">
               <span class="info-label" i18n="@@capa.detail.criticity">Criticité</span>
               <span [class]="criticityBadge(c.criticity)">{{ c.criticity }}</span>
             </div>
+            <!-- L'écart d'origine est celui du DOSSIER : il s'écrit une fois ici,
+                 et non répété à l'identique sur chaque ligne d'action. -->
             <div class="info-item">
               <span class="info-label" i18n="@@capa.detail.source">Source</span>
-              <span class="info-value">{{ c.sourceType }}<span *ngIf="c.sourceRef"> · {{ c.sourceRef }}</span></span>
+              <span class="info-value">
+                {{ c.sourceType }}<span *ngIf="c.sourceRef"> · {{ c.sourceRef }}</span>
+                <span class="nc-cell" *ngIf="c.sourceNonConformity as nc"
+                      [matTooltip]="nc.reference"> · {{ nc.title }}</span>
+              </span>
             </div>
             <div class="info-item">
               <span class="info-label" i18n="@@capa.detail.owner">Pilote</span>
@@ -250,19 +256,6 @@
             <ng-container matColumnDef="assignee">
               <th mat-header-cell *matHeaderCellDef i18n="@@capa.detail.col-assignee">Responsable</th>
               <td mat-cell *matCellDef="let a">{{ a.assigneeName || '—' }}</td>
-            </ng-container>
-
-            <!-- L'écart d'origine est celui du dossier : toutes les actions en
-                 procèdent, la colonne le rappelle ligne à ligne. -->
-            <ng-container matColumnDef="nonConformity">
-              <th mat-header-cell *matHeaderCellDef i18n="@@capa.detail.col-nc">Non-conformité</th>
-              <td mat-cell *matCellDef="let a">
-                <span class="nc-cell" *ngIf="c.sourceNonConformity as nc; else noNc"
-                      [matTooltip]="nc.reference">
-                  {{ nc.title }}
-                </span>
-                <ng-template #noNc><span class="muted">—</span></ng-template>
-              </td>
             </ng-container>
 
             <ng-container matColumnDef="evidence">

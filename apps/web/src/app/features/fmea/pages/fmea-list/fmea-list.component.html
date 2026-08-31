@@ -4,9 +4,17 @@
       <h1 i18n="@@fmea.list.title">FMEA — Risk Management</h1>
       <p i18n="@@fmea.list.subtitle">Analyse des modes de défaillance, RPN dynamique, bow-tie cyber/RGPD.</p>
     </div>
-    <button mat-flat-button color="primary" (click)="openCreate()">
-      <mat-icon>add</mat-icon> <span i18n="@@fmea.list.new-project">Nouveau projet</span>
-    </button>
+    <div class="head-actions">
+      <!-- Le barème avant la saisie : coter S, O et D sans l'échelle sous les
+           yeux, c'est produire des RPN qui ne se comparent pas entre eux. -->
+      <button mat-stroked-button type="button" (click)="openReference()">
+        <mat-icon>menu_book</mat-icon>
+        <span i18n="@@fmea.reference.open">Référentiel de cotation</span>
+      </button>
+      <button mat-flat-button color="primary" (click)="openCreate()">
+        <mat-icon>add</mat-icon> <span i18n="@@fmea.list.new-project">Nouveau projet</span>
+      </button>
+    </div>
   </header>
 
   <div class="filters">

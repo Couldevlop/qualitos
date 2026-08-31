@@ -64,6 +64,10 @@ public class ControlPlanJpaEntity {
     @Column(name = "anchor_tx_ref", length = 200)
     private String anchorTxRef;
 
+    /** Version du calcul d'empreinte au scellement ; 0 tant qu'il n'a pas eu lieu. */
+    @Column(name = "seal_version", nullable = false)
+    private int sealVersion;
+
     public UUID getId() { return id; }
     public void setId(UUID v) { this.id = v; }
     public UUID getTenantId() { return tenantId; }
@@ -90,6 +94,8 @@ public class ControlPlanJpaEntity {
     public void setCreatedAt(Instant v) { this.createdAt = v; }
     public Instant getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(Instant v) { this.updatedAt = v; }
+    public int getSealVersion() { return sealVersion; }
+    public void setSealVersion(int v) { this.sealVersion = v; }
     public String getSealSha256() { return sealSha256; }
     public void setSealSha256(String v) { this.sealSha256 = v; }
     public String getSealSignature() { return sealSignature; }

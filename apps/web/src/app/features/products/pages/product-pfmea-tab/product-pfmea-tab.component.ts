@@ -1,9 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { forkJoin, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { FmeaService } from '../../../fmea/fmea.service';
+import {
+  FmeaReferenceDialogComponent
+} from '../../../fmea/pages/fmea-reference-dialog/fmea-reference-dialog.component';
 import { ActionPriority, FmeaItemResponse, FmeaProjectResponse } from '../../../fmea/fmea.types';
 import { ProductsService } from '../../products.service';
 import { RevisionRequestView } from '../../products.types';
@@ -41,8 +45,24 @@ export class ProductPfmeaTabComponent implements OnInit {
   constructor(
     private readonly fmea: FmeaService,
     private readonly products: ProductsService,
+    private readonly dialog: MatDialog,
     private readonly snack: MatSnackBar
   ) {}
+
+  /**
+   * Ouvre le référentiel de cotation : les barèmes S/O/D du tenant et l'exemple
+   * de PFMEA.
+   *
+   * <p>Il s'ouvre ICI parce que c'est ici qu'on cote. Renvoyer l'évaluateur
+   * chercher l'échelle ailleurs revient à lui demander un chiffre de 1 à 10
+   * sans lui dire ce que le 8 signifie dans SON organisation.
+   */
+  openReference(): void {
+    this.dialog.open(FmeaReferenceDialogComponent, {
+      autoFocus: 'first-tabbable', restoreFocus: true,
+      panelClass: 'qos-dialog-panel'
+    });
+  }
 
   ngOnInit(): void {
     // `loading` est un champ simple, posé AVANT l'abonnement : le patron

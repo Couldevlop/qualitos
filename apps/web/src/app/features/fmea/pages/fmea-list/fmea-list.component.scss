@@ -33,3 +33,8 @@ code { font-family: 'IBM Plex Mono','Fira Code',monospace; font-size: 12px; }
 .tbadge-system_fmea  { background: #e0f7fa; color: #006064; }
 .tbadge-service_fmea { background: #fff3e0; color: #e65100; }
 .tbadge-bow_tie      { background: #f3e5f5; color: #6a1b9a; }
+
+/* Deux actions dans l'en-tête : consulter le barème et créer un projet. Elles
+   passent l'une sous l'autre quand la largeur manque, plutôt que de rogner le
+   titre. */
+.head-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }

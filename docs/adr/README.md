@@ -67,6 +67,8 @@ supersession).
 | [0060](./0060-alignement-sur-la-trame-aiag-et-efficacite-capa.md) | PFMEA et control plan alignés sur une trame AIAG réelle — taille d'échantillon en texte, procédure, entrée/sortie, qui mesure, où l'on enregistre, actions réalisées — et efficacité CAPA mesurée sur deux fenêtres de même durée (§3.4, §4.2, §4.5) | Accepté |
 | [0061](./0061-preuve-documentaire-par-etape-pdca.md) | La preuve documentaire d'un cycle PDCA se rattache à l'ÉTAPE et non au cycle — une pièce par étape garantie en base, dépôt et retrait consignés, mécanisme de stockage repris des preuves CAPA sans être factorisé (§3.1, §11.5) | Accepté |
 | [0062](./0062-empreintes-calculees-sur-des-horodatages-stockables.md) | Toute empreinte se calcule sur un horodatage ramené à la microseconde : la base arrondit ce que `Instant` exprime à la nanoseconde, et le registre d'audit s'accusait lui-même de falsification sur un journal intact ; les lignes antérieures restent invérifiables, leurs empreintes ne seront pas réécrites (§11.5, §3.4) | Accepté |
+| [0063](./0063-endiguement-preuves-a-l-ouverture-et-referentiel-fmea.md) | `CONTAINMENT` devient une raison d'ouverture de dossier CAPA, les pièces se joignent dès la déclaration, la NC dit qui a vu l'écart, et le barème FMEA s'affiche à côté de la cotation (§4.2, §4.3, §4.5) | Accepté |
+| [0064](./0064-bareme-fmea-redefinissable-et-empreinte-versionnee.md) | Le barème FMEA devient un référentiel de tenant — servi par défaut, jamais copié, remplacé d'un bloc de 1 à 10, réservé à la direction qualité et inscrit au journal chaîné — et l'empreinte du control plan se versionne pour intégrer toutes les colonnes de la trame sans rendre invérifiables les plans déjà scellés (§4.5, §11.5, §22.11) | Accepté |
 
 ## Statuts possibles
 

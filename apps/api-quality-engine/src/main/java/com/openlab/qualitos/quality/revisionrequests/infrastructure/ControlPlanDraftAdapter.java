@@ -73,7 +73,7 @@ public class ControlPlanDraftAdapter implements ControlPlanDraftPort {
         // vérifier, pas encore avec quel moyen ni à quelle fréquence. Le reste
         // se remplit à la main, et se voit vide en attendant.
         line.describe(new ControlPlanLine.Details(null, null, null, null, null, null, null,
-                null, null, null, null, controlMethod, null, null, null, null, null));
+                null, null, null, null, null, controlMethod, null, null, null, null, null));
         line.justifiedBy(fmeaItemId);
         return repo.saveLine(line).getId();
     }
@@ -90,7 +90,7 @@ public class ControlPlanDraftAdapter implements ControlPlanDraftPort {
                 source.getSequenceNo(), source.getCharacteristicLabel(), source.getCharacteristicType());
         copy.describe(new ControlPlanLine.Details(
                 source.getOperationId(), source.getMachine(), source.getCharacteristicNo(),
-                source.getSpecialClass(), source.getSpecification(), source.getToleranceLower(),
+                source.getSpecifiedCharacteristic(), source.getSpecialClass(), source.getSpecification(), source.getToleranceLower(),
                 source.getToleranceUpper(), source.getUnit(), source.getMeasurementTechnique(),
                 source.getSampleSize(), source.getSampleFrequency(), source.getControlMethod(),
                 source.getReactionPlan(), source.getSopReference(), source.getInputOutput(),

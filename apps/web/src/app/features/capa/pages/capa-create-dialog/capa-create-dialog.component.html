@@ -31,7 +31,7 @@
     <mat-form-field appearance="outline" class="col">
       <mat-label i18n="@@common.type">Type</mat-label>
       <mat-select formControlName="type">
-        <mat-option *ngFor="let t of types" [value]="t">{{ t }}</mat-option>
+        <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
       </mat-select>
     </mat-form-field>
 
@@ -63,5 +63,52 @@
     <mat-label i18n="@@capa.create.due-date">Échéance (optionnel)</mat-label>
     <input matInput formControlName="dueDate" type="date">
   </mat-form-field>
+
+  <!-- Les pièces sont retenues ici et déposées une fois le dossier créé : ce qui
+       a déclenché l'ouverture (photo du défaut, relevé, courriel client) se perd
+       si l'on doit revenir le chercher plus tard. -->
+  <div class="attachments">
+    <div class="attachments__head">
+      <span class="attachments__title" i18n="@@capa.create.attachments">Pièces jointes (optionnel)</span>
+      <span class="attachments__count" *ngIf="attachments.length">
+        {{ attachments.length }} / {{ maxEvidences }}
+      </span>
+    </div>
+    <p class="attachments__hint" i18n="@@capa.create.attachments-hint">
+      Ce qui documente l'écart dès l'ouverture : photo, relevé, courriel.
+      PDF, image, Word ou Excel, 10 Mo par pièce.
+    </p>
+
+    <ul class="attachments__list" *ngIf="attachments.length">
+      <li class="attachment" *ngFor="let f of attachments">
+        <mat-icon class="attachment__icon" aria-hidden="true">description</mat-icon>
+        <span class="attachment__name">{{ f.name }}</span>
+        <span class="attachment__size">{{ formatSize(f.size) }}</span>
+        <button mat-icon-button color="warn" type="button"
+                [disabled]="submitting"
+                (click)="removeAttachment(f)"
+                i18n-matTooltip="@@capa.create.attachment-remove-tooltip" matTooltip="Retirer ce fichier"
+                [attr.aria-label]="'Retirer ' + f.name">
+          <mat-icon>close</mat-icon>
+        </button>
+      </li>
+    </ul>
+
+    <input type="file" class="hidden-file" #evidenceInput multiple
+           [accept]="acceptedTypes"
+           (change)="onFilesSelected($event)"
+           aria-hidden="true" tabindex="-1">
+    <button mat-stroked-button color="primary" type="button" class="attachments__add"
+            [disabled]="submitting || attachments.length >= maxEvidences"
+            (click)="evidenceInput.click()">
+      <mat-icon aria-hidden="true">attach_file</mat-icon>
+      <span i18n="@@capa.create.attachment-add">Ajouter un fichier</span>
+    </button>
+
+    <p class="attachments__progress" *ngIf="submitting && attachments.length" role="status">
+      <ng-container i18n="@@capa.create.attachment-progress">Dépôt des pièces</ng-container>
+      {{ uploaded }} / {{ attachments.length }}
+    </p>
+  </div>
 
 </qos-form-dialog>

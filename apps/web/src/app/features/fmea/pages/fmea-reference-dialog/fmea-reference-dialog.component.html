@@ -1,0 +1,194 @@
+<div class="ref-dialog">
+  <header class="ref-head">
+    <div>
+      <h2 mat-dialog-title class="ref-title" i18n="@@fmea.reference.title">Référentiel de cotation FMEA</h2>
+      <p class="ref-subtitle" i18n="@@fmea.reference.subtitle">
+        Les échelles sur lesquelles se cotent Sévérité, Occurrence et Détection.
+        Deux RPN ne se comparent que s'ils sortent du même barème.
+      </p>
+    </div>
+    <button mat-icon-button type="button" (click)="close()"
+            i18n-aria-label="@@common.close-aria" aria-label="Fermer">
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <mat-dialog-content class="ref-content">
+    <div class="state-row" *ngIf="loading$ | async" role="status">
+      <mat-progress-spinner mode="indeterminate" diameter="28"
+                            i18n-aria-label="@@common.loading-aria" aria-label="Chargement"></mat-progress-spinner>
+    </div>
+
+    <div class="state-row error" *ngIf="error$ | async as err" role="alert">
+      <mat-icon aria-hidden="true">error_outline</mat-icon>
+      <span>{{ err }}</span>
+    </div>
+
+    <mat-tab-group animationDuration="0ms" *ngIf="(loading$ | async) === false">
+
+      <mat-tab *ngFor="let kind of kinds"
+               [label]="kind === 'SEVERITY' ? severityLabel
+                      : kind === 'OCCURRENCE' ? occurrenceLabel : detectionLabel">
+
+        <div class="scale-bar">
+          <!-- Dire sur QUEL barème l'organisation cote : deux RPN issus de
+               barèmes différents ne se comparent pas. -->
+          <span class="qos-badge" data-tone="success" *ngIf="isCustom(kind)"
+                i18n="@@fmea.reference.custom-badge">Barème de l'organisation</span>
+          <span class="qos-badge" *ngIf="!isCustom(kind)"
+                i18n="@@fmea.reference.default-badge">Barème de référence</span>
+
+          <span class="scale-updated" *ngIf="scale(kind)?.updatedAt as updated">
+            <ng-container i18n="@@fmea.reference.updated">Modifié le</ng-container>
+            {{ updated | date:'short' }}
+          </span>
+
+          <span class="spacer"></span>
+
+          <ng-container *ngIf="canEdit">
+            <button mat-stroked-button type="button" *ngIf="!isEditing(kind)"
+                    (click)="startEditing(kind)">
+              <mat-icon aria-hidden="true">edit</mat-icon>
+              <span i18n="@@fmea.reference.edit">Adapter ce barème</span>
+            </button>
+
+            <button mat-stroked-button type="button"
+                    *ngIf="!isEditing(kind) && isCustom(kind)"
+                    [disabled]="saving$ | async"
+                    (click)="revert(kind)">
+              <mat-icon aria-hidden="true">restart_alt</mat-icon>
+              <span i18n="@@fmea.reference.revert">Rétablir la référence</span>
+            </button>
+
+            <ng-container *ngIf="isEditing(kind)">
+              <button mat-button type="button" (click)="cancelEditing()"
+                      i18n="@@common.cancel">Annuler</button>
+              <button mat-flat-button color="primary" type="button"
+                      [disabled]="!canSave || (saving$ | async)"
+                      (click)="save()">
+                <mat-icon aria-hidden="true">save</mat-icon>
+                <span i18n="@@common.save">Enregistrer</span>
+              </button>
+            </ng-container>
+          </ng-container>
+        </div>
+
+        <!-- La règle est énoncée avant le refus, pas découverte au clic. -->
+        <p class="scale-warning" *ngIf="isEditing(kind) && incompleteScores.length"
+           role="status">
+          <ng-container i18n="@@fmea.reference.incomplete">
+            Chaque score doit porter un intitulé. Manquent les scores :
+          </ng-container>
+          {{ incompleteScores.join(', ') }}
+        </p>
+
+        <p class="scale-hint" *ngIf="isEditing(kind)" i18n="@@fmea.reference.edit-hint">
+          Le barème adopté ici sert à toute l'organisation. Les cotations déjà
+          enregistrées ne changent pas de valeur, mais elles ont été portées sur
+          l'échelle précédente : ne le modifiez pas au milieu d'une analyse.
+        </p>
+
+        <div class="table-scroll">
+          <table class="ref-table">
+            <thead>
+              <tr>
+                <th class="num" i18n="@@fmea.reference.col-score">Score</th>
+                <th i18n="@@fmea.reference.col-effect">Effet</th>
+                <th *ngIf="kind !== 'OCCURRENCE'" i18n="@@fmea.reference.col-description">Description</th>
+                <th *ngIf="kind === 'OCCURRENCE'" i18n="@@fmea.reference.col-period">Période</th>
+                <th *ngIf="kind === 'OCCURRENCE'" i18n="@@fmea.reference.col-rate">Taux de défaillance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of rows(kind)">
+                <td class="num"><span [class]="scoreClass(row.score)">{{ row.score }}</span></td>
+
+                <ng-container *ngIf="!isEditing(kind); else editable">
+                  <td class="strong">{{ row.label || '—' }}</td>
+                  <td *ngIf="kind !== 'OCCURRENCE'">{{ row.description || '—' }}</td>
+                  <td *ngIf="kind === 'OCCURRENCE'">{{ row.timePeriod || '—' }}</td>
+                  <td *ngIf="kind === 'OCCURRENCE'">{{ row.failureRate || '—' }}</td>
+                </ng-container>
+
+                <ng-template #editable>
+                  <td>
+                    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="cell-field">
+                      <input matInput [(ngModel)]="row.label" maxlength="120"
+                             [attr.aria-label]="'Intitulé du score ' + row.score">
+                    </mat-form-field>
+                  </td>
+                  <td *ngIf="kind !== 'OCCURRENCE'">
+                    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="cell-field">
+                      <input matInput [(ngModel)]="row.description" maxlength="500"
+                             [attr.aria-label]="'Description du score ' + row.score">
+                    </mat-form-field>
+                  </td>
+                  <td *ngIf="kind === 'OCCURRENCE'">
+                    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="cell-field">
+                      <input matInput [(ngModel)]="row.timePeriod" maxlength="120"
+                             [attr.aria-label]="'Période du score ' + row.score">
+                    </mat-form-field>
+                  </td>
+                  <td *ngIf="kind === 'OCCURRENCE'">
+                    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="cell-field">
+                      <input matInput [(ngModel)]="row.failureRate" maxlength="120"
+                             [attr.aria-label]="'Taux du score ' + row.score">
+                    </mat-form-field>
+                  </td>
+                </ng-template>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </mat-tab>
+
+      <mat-tab i18n-label="@@fmea.reference.tab-example" label="Exemple de PFMEA">
+        <p class="example-title">{{ exampleTitle }}</p>
+        <p class="example-hint" i18n="@@fmea.reference.example-hint">
+          Modèle de rédaction : le niveau de détail attendu dans un mode de
+          défaillance, un effet et une action recommandée.
+        </p>
+        <div class="table-scroll">
+          <table class="ref-table ref-table--example">
+            <thead>
+              <tr>
+                <th i18n="@@fmea.reference.col-step">Étape du processus</th>
+                <th i18n="@@fmea.reference.col-failure-mode">Mode de défaillance</th>
+                <th i18n="@@fmea.reference.col-effects">Effets</th>
+                <th class="num">S</th>
+                <th i18n="@@fmea.reference.col-causes">Causes</th>
+                <th class="num">O</th>
+                <th i18n="@@fmea.reference.col-controls">Contrôles actuels</th>
+                <th class="num">D</th>
+                <th class="num">RPN</th>
+                <th i18n="@@fmea.reference.col-action">Action recommandée</th>
+                <th i18n="@@fmea.reference.col-responsible">Responsable</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of exampleRows">
+                <td class="strong">{{ r.step }}</td>
+                <td>{{ r.failureMode }}</td>
+                <td>{{ r.effects }}</td>
+                <td class="num"><span [class]="scoreClass(r.severity)">{{ r.severity }}</span></td>
+                <td>{{ r.causes }}</td>
+                <td class="num"><span [class]="scoreClass(r.occurrence)">{{ r.occurrence }}</span></td>
+                <td>{{ r.controls }}</td>
+                <td class="num"><span [class]="scoreClass(r.detection)">{{ r.detection }}</span></td>
+                <td class="num"><span [class]="rpnClass(r.rpn)">{{ r.rpn }}</span></td>
+                <td>{{ r.recommendedAction }}</td>
+                <td>{{ r.responsible }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </mat-tab>
+
+    </mat-tab-group>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-flat-button color="primary" type="button" (click)="close()"
+            i18n="@@common.close">Fermer</button>
+  </mat-dialog-actions>
+</div>

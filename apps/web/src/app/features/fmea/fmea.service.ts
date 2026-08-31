@@ -5,7 +5,16 @@ import { delay } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
 import {
+  FMEA_DETECTION_SCALE,
+  FMEA_OCCURRENCE_SCALE,
+  FMEA_SEVERITY_SCALE
+} from './fmea.reference';
+import {
   CreateFmeaItemRequest,
+  FmeaScaleKind,
+  FmeaScaleReference,
+  FmeaScaleRow,
+  FmeaScaleView,
   CreateFmeaProjectRequest,
   FmeaItemPage,
   FmeaItemResponse,
@@ -27,6 +36,62 @@ export class FmeaService {
   private readonly mockItems: Record<string, FmeaItemResponse[]> = this.seedMockItems();
 
   constructor(private readonly http: HttpClient) {}
+
+  // ---------- Référentiel de cotation (barèmes S/O/D) ----------
+
+  /**
+   * Les trois barèmes du tenant. Le serveur sert le référentiel de base tant
+   * que rien n'a été redéfini : il n'y a donc jamais d'écran vide, et le mode
+   * hors-ligne se replie sur les mêmes valeurs.
+   */
+  ratingScales(): Observable<FmeaScaleReference> {
+    if (environment.useMockApi) {
+      return of(this.mockScales()).pipe(delay(120));
+    }
+    return this.http.get<FmeaScaleReference>(`${this.endpoint}/rating-scales`);
+  }
+
+  /** Remplace un barème d'un bloc : dix lignes, de 1 à 10, sans trou. */
+  replaceRatingScale(kind: FmeaScaleKind, rows: FmeaScaleRow[]): Observable<FmeaScaleView> {
+    return this.http.put<FmeaScaleView>(
+      `${this.endpoint}/rating-scales/${kind}`, { rows });
+  }
+
+  /** Revient au barème de référence. */
+  revertRatingScale(kind: FmeaScaleKind): Observable<FmeaScaleView> {
+    return this.http.delete<FmeaScaleView>(`${this.endpoint}/rating-scales/${kind}`);
+  }
+
+  /**
+   * En mode maquette, le barème servi est celui de référence — le même que le
+   * serveur rend à un tenant qui n'a rien redéfini. Inventer d'autres valeurs
+   * ferait mentir la démonstration.
+   */
+  private mockScales(): FmeaScaleReference {
+    return {
+      scales: [
+        {
+          kind: 'SEVERITY', custom: false,
+          rows: FMEA_SEVERITY_SCALE.map(r => ({
+            score: r.score, label: r.effect, description: r.description
+          }))
+        },
+        {
+          kind: 'OCCURRENCE', custom: false,
+          rows: FMEA_OCCURRENCE_SCALE.map(r => ({
+            score: r.score, label: r.probability,
+            timePeriod: r.timePeriod, failureRate: r.failureRate
+          }))
+        },
+        {
+          kind: 'DETECTION', custom: false,
+          rows: FMEA_DETECTION_SCALE.map(r => ({
+            score: r.score, label: r.chance, description: r.description
+          }))
+        }
+      ]
+    };
+  }
 
   // ---------- Projects ----------
 

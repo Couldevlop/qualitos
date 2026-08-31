@@ -169,7 +169,7 @@ class ControlPlanTest {
     void aRehydratedPlanKeepsItsStateWithoutReplayingAnyTransition() {
         ControlPlan plan = ControlPlan.rehydrate(UUID.randomUUID(), TENANT, PRODUCT,
                 ControlPlanPhase.PRE_LAUNCH, "CP-9", 3, ControlPlanStatus.ACTIVE, USER,
-                USER, NOW, USER, NOW, NOW, null, null, null);
+                USER, NOW, USER, NOW, NOW, null, null, null, 0);
 
         assertThat(plan.getStatus()).isEqualTo(ControlPlanStatus.ACTIVE);
         assertThat(plan.getRevision()).isEqualTo(3);
@@ -181,7 +181,8 @@ class ControlPlanTest {
     @Test
     void aRehydratedPlanWithoutStatusFallsBackToDraft() {
         ControlPlan plan = ControlPlan.rehydrate(UUID.randomUUID(), TENANT, PRODUCT,
-                ControlPlanPhase.PROTOTYPE, "CP-9", 1, null, null, null, null, USER, NOW, NOW, null, null, null);
+                ControlPlanPhase.PROTOTYPE, "CP-9", 1, null, null, null, null, USER, NOW, NOW,
+                null, null, null, 0);
 
         assertThat(plan.getStatus()).isEqualTo(ControlPlanStatus.DRAFT);
     }

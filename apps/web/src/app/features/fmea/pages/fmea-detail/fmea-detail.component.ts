@@ -18,6 +18,9 @@ import {
 } from '../../fmea.types';
 import { FmeaEditDialogComponent } from '../fmea-edit-dialog/fmea-edit-dialog.component';
 import { FmeaItemDialogComponent } from '../fmea-item-dialog/fmea-item-dialog.component';
+import {
+  FmeaReferenceDialogComponent
+} from '../fmea-reference-dialog/fmea-reference-dialog.component';
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -92,6 +95,18 @@ export class FmeaDetailComponent implements OnInit {
       }),
       shareReplay({ bufferSize: 1, refCount: true })
     );
+  }
+
+  /**
+   * Ouvre le référentiel de cotation (barèmes S/O/D et exemple de PFMEA).
+   * Purement documentaire : il ne modifie rien, d'où l'absence de suite au
+   * `afterClosed()`.
+   */
+  openReference(): void {
+    this.dialog.open(FmeaReferenceDialogComponent, {
+      autoFocus: 'first-tabbable', restoreFocus: true,
+      panelClass: 'qos-dialog-panel'
+    });
   }
 
   openEdit(p: FmeaProjectResponse): void {

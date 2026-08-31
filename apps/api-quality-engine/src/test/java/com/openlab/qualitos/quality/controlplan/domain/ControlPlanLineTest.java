@@ -61,7 +61,7 @@ class ControlPlanLineTest {
         ControlPlanLine line = ControlPlanLine.create(TENANT, PLAN, 10, "Cote", CharacteristicType.PRODUCT);
         UUID operation = UUID.randomUUID();
 
-        line.describe(new ControlPlanLine.Details(operation, "Tour CN 3", "12", null,
+        line.describe(new ControlPlanLine.Details(operation, "Tour CN 3", "12", "Cote de coupe", null,
                 "Ø 20 ±0,05", new BigDecimal("19.95"), new BigDecimal("20.05"), "mm",
                 "Micromètre", "5 au réglage puis 1 sur 50", "1 pièce / heure",
                 "Carte X-R", "Tri à 100 %", "SOP-103", InputOutput.OUTPUT,
@@ -80,6 +80,9 @@ class ControlPlanLineTest {
         assertThat(line.getSampleFrequency()).isEqualTo("1 pièce / heure");
         assertThat(line.getControlMethod()).isEqualTo("Carte X-R");
         assertThat(line.getReactionPlan()).isEqualTo("Tri à 100 %");
+        // La caractéristique SPÉCIFIÉE, distincte de ce qui est surveillé :
+        // c'est elle que l'opérateur mesure et qui porte la tolérance.
+        assertThat(line.getSpecifiedCharacteristic()).isEqualTo("Cote de coupe");
     }
 
     @Test
@@ -87,7 +90,7 @@ class ControlPlanLineTest {
         ControlPlanLine line = ControlPlanLine.create(TENANT, PLAN, 10, "Effort d'arrachement",
                 CharacteristicType.PRODUCT);
 
-        line.describe(new ControlPlanLine.Details(null, null, null, CharacteristicClass.SAFETY,
+        line.describe(new ControlPlanLine.Details(null, null, null, null, CharacteristicClass.SAFETY,
                 null, null, null, null, null, null, null, null, null, null, null, null, null));
 
         assertThat(line.getSpecialClass()).isEqualTo(CharacteristicClass.SAFETY);
@@ -127,7 +130,7 @@ class ControlPlanLineTest {
                 CharacteristicType.PRODUCT);
 
         line.describe(new ControlPlanLine.Details(null, null, null, null, null, null, null, null,
-                null, "100 % (automatisé)", "Chaque fil", null, null,
+                null, null, "100 % (automatisé)", "Chaque fil", null, null,
                 "SOP-101", InputOutput.OUTPUT, "Opérateur / capteur", "Production"));
 
         assertThat(line.getSopReference()).isEqualTo("SOP-101");
@@ -147,7 +150,7 @@ class ControlPlanLineTest {
                 CharacteristicType.PROCESS);
 
         line.describe(new ControlPlanLine.Details(null, null, null, null, null, null, null, null,
-                null, "5 pièces au réglage, puis 1 sur 50", "Au réglage et toutes les 50 pièces",
+                null, null, "5 pièces au réglage, puis 1 sur 50", "Au réglage et toutes les 50 pièces",
                 null, null, null, null, null, null));
 
         assertThat(line.getSampleSize()).isEqualTo("5 pièces au réglage, puis 1 sur 50");
@@ -175,7 +178,7 @@ class ControlPlanLineTest {
         String trop = "x".repeat(300);
 
         assertThatThrownBy(() -> line.describe(new ControlPlanLine.Details(null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null, trop, null)))
+                null, null, null, null, null, null, null, null, null, null, null, null, trop, null)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("whoMeasures");
     }
@@ -186,7 +189,7 @@ class ControlPlanLineTest {
                 CharacteristicType.PRODUCT);
 
         assertThatThrownBy(() -> line.describe(new ControlPlanLine.Details(null, null, null, null,
-                null, null, null, null, null, null, null, null, null, "S".repeat(65), null, null, null)))
+                null, null, null, null, null, null, null, null, null, null, "S".repeat(65), null, null, null)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("sopReference");
     }
@@ -197,7 +200,7 @@ class ControlPlanLineTest {
                 CharacteristicType.PRODUCT);
 
         assertThatThrownBy(() -> line.describe(new ControlPlanLine.Details(null, null, null, null,
-                null, null, null, null, null, "5".repeat(121), null, null, null, null, null, null, null)))
+                null, null, null, null, null, null, "5".repeat(121), null, null, null, null, null, null, null)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("sampleSize");
     }

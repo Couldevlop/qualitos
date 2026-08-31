@@ -186,7 +186,8 @@ public class ControlPlanService {
 
     private void apply(ControlPlanDto.LineCommand cmd, ControlPlanLine line, UUID productId) {
         line.describe(new ControlPlanLine.Details(
-                cmd.operationId(), cmd.machine(), cmd.characteristicNo(), cmd.specialClass(),
+                cmd.operationId(), cmd.machine(), cmd.characteristicNo(),
+                cmd.specifiedCharacteristic(), cmd.specialClass(),
                 cmd.specification(), cmd.toleranceLower(), cmd.toleranceUpper(), cmd.unit(),
                 cmd.measurementTechnique(), cmd.sampleSize(), cmd.sampleFrequency(),
                 cmd.controlMethod(), cmd.reactionPlan(), cmd.sopReference(),
@@ -229,7 +230,7 @@ public class ControlPlanService {
                 source.getSequenceNo(), source.getCharacteristicLabel(), source.getCharacteristicType());
         copy.describe(new ControlPlanLine.Details(
                 source.getOperationId(), source.getMachine(), source.getCharacteristicNo(),
-                source.getSpecialClass(), source.getSpecification(), source.getToleranceLower(),
+                source.getSpecifiedCharacteristic(), source.getSpecialClass(), source.getSpecification(), source.getToleranceLower(),
                 source.getToleranceUpper(), source.getUnit(), source.getMeasurementTechnique(),
                 source.getSampleSize(), source.getSampleFrequency(), source.getControlMethod(),
                 source.getReactionPlan(), source.getSopReference(), source.getInputOutput(),

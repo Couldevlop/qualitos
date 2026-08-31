@@ -1,0 +1,117 @@
+/* Un référentiel se consulte : large, lisible, et sans rien à saisir. La largeur
+   est prise sur la fenêtre, jamais fixée en pixels — l'exemple de PFMEA compte
+   onze colonnes et doit rester lisible sur un portable comme sur un écran
+   d'atelier. */
+.ref-dialog {
+  display: flex;
+  flex-direction: column;
+  width: min(1180px, 92vw);
+  max-height: 82vh;
+}
+
+.ref-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 4px 0 8px;
+}
+
+.ref-title {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.35;
+}
+
+.ref-subtitle {
+  margin: 4px 0 0;
+  max-width: 68ch;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--qos-text-muted, #6b7280);
+}
+
+.ref-head button {
+  margin-left: auto;
+  flex: none;
+}
+
+.ref-content {
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Le défilement appartient au tableau, pas au dialogue : l'en-tête et les
+   onglets doivent rester en place pendant qu'on parcourt le barème. */
+.table-scroll {
+  overflow: auto;
+  max-height: 56vh;
+  margin-top: 12px;
+}
+
+.ref-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.ref-table th,
+.ref-table td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--qos-border, rgba(0, 0, 0, 0.08));
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.ref-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--qos-bg-elevated, #fff);
+  font-weight: 600;
+  color: var(--qos-text-muted, #6b7280);
+  white-space: nowrap;
+}
+
+.ref-table td.strong { font-weight: 600; }
+
+.ref-table .num {
+  text-align: center;
+  width: 1%;
+  white-space: nowrap;
+}
+
+.ref-table--example td { min-width: 140px; }
+
+/* Une pastille par score : un barème se lit d'abord par la couleur. */
+.score {
+  display: inline-block;
+  min-width: 26px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 12px;
+  text-align: center;
+}
+
+.score--critical { background: rgba(220, 38, 38, 0.12); color: #b91c1c; }
+.score--high     { background: rgba(234, 88, 12, 0.12); color: #c2410c; }
+.score--medium   { background: rgba(202, 138, 4, 0.14); color: #a16207; }
+.score--low      { background: rgba(22, 163, 74, 0.12); color: #15803d; }
+
+.rpn { font-weight: 700; }
+.rpn--high { color: #c2410c; }
+.rpn--critical { color: #b91c1c; }
+
+.example-title {
+  margin: 14px 0 0;
+  font-weight: 600;
+}
+
+.example-hint {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--qos-text-muted, #6b7280);
+}

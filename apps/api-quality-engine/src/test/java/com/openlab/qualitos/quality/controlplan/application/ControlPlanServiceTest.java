@@ -232,7 +232,7 @@ class ControlPlanServiceTest {
     void aPlanOfAnotherTenantIsNotFoundNeverForbidden() {
         ControlPlan foreign = ControlPlan.rehydrate(PLAN, OTHER_TENANT, PRODUCT,
                 ControlPlanPhase.PRODUCTION, "CP-X", 1, ControlPlanStatus.DRAFT,
-                null, null, null, USER, NOW, NOW, null, null, null);
+                null, null, null, USER, NOW, NOW, null, null, null, 0);
         when(repo.findById(PLAN)).thenReturn(Optional.of(foreign));
 
         assertThatThrownBy(() -> service.get(PRODUCT, PLAN))
@@ -243,7 +243,7 @@ class ControlPlanServiceTest {
     void aPlanOfAnotherProductIsNotFoundEvenWithTheRightTenant() {
         ControlPlan elsewhere = ControlPlan.rehydrate(PLAN, TENANT, OTHER_PRODUCT,
                 ControlPlanPhase.PRODUCTION, "CP-X", 1, ControlPlanStatus.DRAFT,
-                null, null, null, USER, NOW, NOW, null, null, null);
+                null, null, null, USER, NOW, NOW, null, null, null, 0);
         when(repo.findById(PLAN)).thenReturn(Optional.of(elsewhere));
 
         assertThatThrownBy(() -> service.get(PRODUCT, PLAN))
@@ -331,7 +331,7 @@ class ControlPlanServiceTest {
         when(repo.findLine(LINE)).thenReturn(Optional.of(line(PLAN)));
 
         ControlPlanDto.LineView view = service.updateLine(PRODUCT, PLAN, LINE,
-                new ControlPlanDto.LineCommand(20, null, null, null, "Rugosité",
+                new ControlPlanDto.LineCommand(20, null, null, null, "Rugosité", null,
                         CharacteristicType.PROCESS, null, null, null, null, null, null,
                         null, null, null, null, null, null, null, null, null));
 
@@ -411,7 +411,7 @@ class ControlPlanServiceTest {
     @Test
     void aCodeCarryingAQuoteDoesNotBreakTheJournalLine() {
         ControlPlan draft = ControlPlan.rehydrate(PLAN, TENANT, PRODUCT, ControlPlanPhase.PRODUCTION,
-                "CP \"A\"", 1, ControlPlanStatus.DRAFT, null, null, null, USER, NOW, NOW, null, null, null);
+                "CP \"A\"", 1, ControlPlanStatus.DRAFT, null, null, null, USER, NOW, NOW, null, null, null, 0);
         when(repo.findById(PLAN)).thenReturn(Optional.of(draft));
         when(repo.findActive(TENANT, PRODUCT, ControlPlanPhase.PRODUCTION)).thenReturn(Optional.empty());
 
@@ -483,7 +483,8 @@ class ControlPlanServiceTest {
                 draft.getOwnerUserId(), draft.getApprovedBy(),
                 draft.getApprovedAt().truncatedTo(ChronoUnit.MICROS),
                 draft.getCreatedBy(), draft.getCreatedAt(), draft.getUpdatedAt(),
-                draft.getSealSha256(), draft.getSealSignature(), draft.getAnchorTxRef());
+                draft.getSealSha256(), draft.getSealSignature(), draft.getAnchorTxRef(),
+                draft.getSealVersion());
 
         assertThat(ControlPlanFingerprint.of(asReadBack, lines)).isEqualTo(view.sealSha256());
     }
@@ -529,7 +530,7 @@ class ControlPlanServiceTest {
 
     private ControlPlan draftPlan() {
         return ControlPlan.rehydrate(PLAN, TENANT, PRODUCT, ControlPlanPhase.PRODUCTION,
-                "CP-4471", 1, ControlPlanStatus.DRAFT, null, null, null, USER, NOW, NOW, null, null, null);
+                "CP-4471", 1, ControlPlanStatus.DRAFT, null, null, null, USER, NOW, NOW, null, null, null, 0);
     }
 
     private ControlPlan activePlan() {
@@ -538,13 +539,13 @@ class ControlPlanServiceTest {
 
     private ControlPlan activePlan(UUID id) {
         return ControlPlan.rehydrate(id, TENANT, PRODUCT, ControlPlanPhase.PRODUCTION,
-                "CP-4471", 1, ControlPlanStatus.ACTIVE, USER, USER, NOW, USER, NOW, NOW, null, null, null);
+                "CP-4471", 1, ControlPlanStatus.ACTIVE, USER, USER, NOW, USER, NOW, NOW, null, null, null, 0);
     }
 
     private ControlPlanLine line(UUID planId) {
         ControlPlanLine l = ControlPlanLine.rehydrate(LINE, TENANT, planId, 10, "Diamètre",
                 CharacteristicType.PRODUCT);
-        l.describe(new ControlPlanLine.Details(null, "Tour CN 3", "12", null, "Ø 20",
+        l.describe(new ControlPlanLine.Details(null, "Tour CN 3", "12", "Cote de coupe", null, "Ø 20",
                 null, null, "mm", "Micromètre", "5", "1/h", "Carte X-R", "Tri à 100 %",
                 "SOP-103", InputOutput.OUTPUT, "Opérateur", "Journal qualité"));
         return l;
@@ -552,7 +553,7 @@ class ControlPlanServiceTest {
 
     private ControlPlanDto.LineCommand lineCommand(UUID fmeaItemId) {
         return new ControlPlanDto.LineCommand(10, null, "Tour CN 3", "12", "Diamètre",
-                CharacteristicType.PRODUCT, null, "Ø 20", null, null, "mm", "Micromètre",
+                "Cote de coupe", CharacteristicType.PRODUCT, null, "Ø 20", null, null, "mm", "Micromètre",
                 "100 % (automatisé)", "1/h", "Carte X-R", "Tri à 100 %", fmeaItemId,
                 "SOP-103", InputOutput.OUTPUT, "Opérateur de ligne", "Journal qualité");
     }

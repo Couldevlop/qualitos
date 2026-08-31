@@ -39,6 +39,11 @@ public final class ControlPlanWebDto {
             @Size(max = 250) String machine,
             @Size(max = 32) String characteristicNo,
             @NotBlank @Size(max = 500) String characteristicLabel,
+            // La caracteristique qui porte la specification (« Specification
+            // characteristic » de la trame) : on surveille une longueur de fil,
+            // on specifie une cote de coupe. Facultative — un plan se remplit
+            // par passes, et exiger la colonne empecherait d'ouvrir la ligne.
+            @Size(max = 500) String specifiedCharacteristic,
             @NotNull CharacteristicType characteristicType,
             CharacteristicClass specialClass,
             @Size(max = 500) String specification,

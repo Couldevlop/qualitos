@@ -8,6 +8,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -70,6 +71,38 @@ class CapaServiceTest {
         assertThat(res).extracting(CapaDto.SuggestedAction::title)
                 .containsExactly("Auditer le fournisseur Alpha sur site",
                         "Renforcer le plan de contrôle réception");
+    }
+
+    /**
+     * Un dossier d'ENDIGUEMENT n'appelle pas les mêmes actions qu'un correctif :
+     * on lui demande de protéger tout de suite, pas de remonter à la cause.
+     * Sans cette branche, l'IA proposait des analyses là où il faut des gestes.
+     */
+    @Test
+    void suggestActions_containment_asksForImmediateProtectionNotRootCause() {
+        UUID id = UUID.randomUUID();
+        CapaCase c = new CapaCase();
+        c.setTenantId(TENANT);
+        c.setTitle("Lot 4471 suspect en cours d'expédition");
+        c.setType(CapaType.CONTAINMENT);
+        c.setCriticity(CapaCriticity.CRITICAL);
+        c.setStatus(CapaStatus.OPEN);
+        when(caseRepo.findByIdAndTenantId(id, TENANT)).thenReturn(Optional.of(c));
+        when(ai.complete(any(), any(), anyInt()))
+                .thenReturn(new AiCompletionResult("- Bloquer le lot 4471 en magasin",
+                        "ollama", 40, 500));
+
+        ArgumentCaptor<String> system = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> user = ArgumentCaptor.forClass(String.class);
+
+        List<CapaDto.SuggestedAction> res = service.suggestActions(id);
+
+        verify(ai).complete(system.capture(), user.capture(), anyInt());
+        assertThat(system.getValue()).contains("endiguement");
+        assertThat(system.getValue()).doesNotContain("cause racine");
+        assertThat(user.getValue()).contains("CONTAINMENT");
+        assertThat(res).extracting(CapaDto.SuggestedAction::title)
+                .containsExactly("Bloquer le lot 4471 en magasin");
     }
 
     @Test

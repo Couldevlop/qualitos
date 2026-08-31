@@ -262,9 +262,15 @@ public class CapaService {
     @Transactional(readOnly = true)
     public List<CapaDto.SuggestedAction> suggestActions(UUID capaId) {
         CapaCase c = loadCase(capaId);
-        String kind = c.getType() == CapaType.PREVENTIVE
-                ? "préventives (empêcher l'apparition du problème)"
-                : "correctives (corriger et éliminer la cause racine)";
+        // Un dossier d'endiguement n'attend pas les mêmes actions qu'un dossier
+        // correctif : on lui demande de protéger tout de suite, pas de remonter
+        // à la cause — sinon l'IA propose des analyses là où il faut des gestes.
+        String kind = switch (c.getType()) {
+            case PREVENTIVE -> "préventives (empêcher l'apparition du problème)";
+            case CONTAINMENT -> "d'endiguement (contenir l'effet immédiatement et protéger "
+                    + "le client, sans attendre l'identification de la cause)";
+            case CORRECTIVE -> "correctives (corriger et éliminer la cause racine)";
+        };
 
         String system = "Tu es un expert qualité (démarche CAPA). Pour le problème donné, propose "
                 + "des actions " + kind + " concrètes et activables. Donne UNE action par ligne, "

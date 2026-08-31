@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * L'empreinte d'un control plan.
@@ -63,11 +64,11 @@ class ControlPlanFingerprintTest {
     @Test
     void aToleranceWrittenWithMoreZeroesIsTheSameTolerance() {
         ControlPlanLine plain = line(10, "Diamètre");
-        plain.describe(new ControlPlanLine.Details(null, null, null, null, null,
+        plain.describe(new ControlPlanLine.Details(null, null, null, null, null, null,
                 new BigDecimal("10.0"), null, "mm", null, null, null, null, null,
                 null, null, null, null));
         ControlPlanLine padded = line(10, "Diamètre");
-        padded.describe(new ControlPlanLine.Details(null, null, null, null, null,
+        padded.describe(new ControlPlanLine.Details(null, null, null, null, null, null,
                 new BigDecimal("10.000"), null, "mm", null, null, null, null, null,
                 null, null, null, null));
 
@@ -79,7 +80,7 @@ class ControlPlanFingerprintTest {
     void changingAControlChangesTheFingerprint() {
         ControlPlanLine before = line(10, "Diamètre");
         ControlPlanLine after = line(10, "Diamètre");
-        after.describe(new ControlPlanLine.Details(null, null, null, null, "Ø 20 ±0,1",
+        after.describe(new ControlPlanLine.Details(null, null, null, null, null, "Ø 20 ±0,1",
                 null, null, "mm", null, null, null, null, null, null, null, null, null));
 
         assertThat(ControlPlanFingerprint.of(approvedPlan(), List.of(before)))
@@ -108,7 +109,7 @@ class ControlPlanFingerprintTest {
     void theRevisionIsPartOfTheIdentityOfTheDocument() {
         ControlPlan revised = ControlPlan.rehydrate(PLAN, TENANT, PRODUCT,
                 ControlPlanPhase.PRODUCTION, "CP-4471", 2, ControlPlanStatus.ACTIVE,
-                null, USER, NOW, USER, NOW, NOW, null, null, null);
+                null, USER, NOW, USER, NOW, NOW, null, null, null, 0);
 
         assertThat(ControlPlanFingerprint.of(approvedPlan(), List.of(line(10, "Diamètre"))))
                 .isNotEqualTo(ControlPlanFingerprint.of(revised, List.of(line(10, "Diamètre"))));
@@ -118,7 +119,7 @@ class ControlPlanFingerprintTest {
     void whoApprovedIsPartOfTheProof() {
         ControlPlan bySomeoneElse = ControlPlan.rehydrate(PLAN, TENANT, PRODUCT,
                 ControlPlanPhase.PRODUCTION, "CP-4471", 1, ControlPlanStatus.ACTIVE,
-                null, UUID.randomUUID(), NOW, USER, NOW, NOW, null, null, null);
+                null, UUID.randomUUID(), NOW, USER, NOW, NOW, null, null, null, 0);
 
         assertThat(ControlPlanFingerprint.of(approvedPlan(), List.of(line(10, "Diamètre"))))
                 .isNotEqualTo(ControlPlanFingerprint.of(bySomeoneElse, List.of(line(10, "Diamètre"))));
@@ -142,10 +143,10 @@ class ControlPlanFingerprintTest {
         // `machine` et `characteristicNo` se suivent dans le texte canonique :
         // c'est exactement la paire qu'un séparateur faible laisserait confondre.
         ControlPlanLine split = line(10, "Diamètre");
-        split.describe(new ControlPlanLine.Details(null, "Tour", "CN 3", null, null,
+        split.describe(new ControlPlanLine.Details(null, "Tour", "CN 3", null, null, null,
                 null, null, null, null, null, null, null, null, null, null, null, null));
         ControlPlanLine joined = line(10, "Diamètre");
-        joined.describe(new ControlPlanLine.Details(null, "TourCN 3", "", null, null,
+        joined.describe(new ControlPlanLine.Details(null, "TourCN 3", "", null, null, null,
                 null, null, null, null, null, null, null, null, null, null, null, null));
 
         assertThat(ControlPlanFingerprint.of(approvedPlan(), List.of(split)))
@@ -161,12 +162,99 @@ class ControlPlanFingerprintTest {
         assertThat(canonical).contains("Diamètre");
     }
 
+    // ---------- le calcul versionné ----------
+
+    /**
+     * Cinq colonnes de la trame échappaient à l'empreinte : la référence de
+     * procédure, entrée/sortie, qui mesure, le lieu d'enregistrement et la
+     * caractéristique spécifiée. On pouvait donc déplacer la preuve d'un
+     * contrôle sans que le document scellé n'en dise rien.
+     */
+    @Test
+    void movingTheRecordingLocationNowChangesTheFingerprint() {
+        ControlPlanLine before = line(10, "Diamètre");
+        ControlPlanLine after = line(10, "Diamètre");
+        after.describe(details("Journal atelier"));
+
+        assertThat(ControlPlanFingerprint.of(approvedPlan(), List.of(before)))
+                .isNotEqualTo(ControlPlanFingerprint.of(approvedPlan(), List.of(after)));
+    }
+
+    @Test
+    void theSpecifiedCharacteristicIsPartOfTheDocument() {
+        ControlPlanLine before = line(10, "Diamètre");
+        ControlPlanLine after = line(10, "Diamètre");
+        after.describe(new ControlPlanLine.Details(null, null, null, "Cote de coupe", null,
+                null, null, null, null, null, null, null, null, null, null, null, null, null));
+
+        assertThat(ControlPlanFingerprint.of(approvedPlan(), List.of(before)))
+                .isNotEqualTo(ControlPlanFingerprint.of(approvedPlan(), List.of(after)));
+    }
+
+    /**
+     * Le point qui compte pour un auditeur : un plan scellé l'an dernier reste
+     * vérifiable. Le calcul d'origine doit continuer de rendre EXACTEMENT ce
+     * qu'il rendait, sans quoi un document intact serait déclaré falsifié.
+     */
+    @Test
+    void theOriginalComputationKeepsIgnoringWhatItIgnored() {
+        ControlPlanLine plain = line(10, "Diamètre");
+        ControlPlanLine annotated = line(10, "Diamètre");
+        annotated.describe(details("Journal atelier"));
+
+        assertThat(ControlPlanFingerprint.of(approvedPlan(), List.of(plain),
+                ControlPlanFingerprint.VERSION_1))
+                .isEqualTo(ControlPlanFingerprint.of(approvedPlan(), List.of(annotated),
+                        ControlPlanFingerprint.VERSION_1));
+    }
+
+    @Test
+    void theTwoVersionsNeverProduceTheSameText() {
+        List<ControlPlanLine> lines = List.of(line(10, "Diamètre"));
+
+        String v1 = ControlPlanFingerprint.canonical(approvedPlan(), lines,
+                ControlPlanFingerprint.VERSION_1);
+        String v2 = ControlPlanFingerprint.canonical(approvedPlan(), lines,
+                ControlPlanFingerprint.VERSION_2);
+
+        // Le préfixe suffit à les séparer : sans lui, deux calculs pourraient
+        // converger sur une ligne dont toutes les colonnes tardives sont vides,
+        // et le versionnement ne protégerait plus de rien.
+        assertThat(v1).startsWith("control-plan");
+        assertThat(v2).startsWith("control-plan/2");
+        assertThat(v1).isNotEqualTo(v2);
+    }
+
+    @Test
+    void aNewSealUsesTheCompleteComputation() {
+        assertThat(ControlPlanFingerprint.CURRENT_VERSION)
+                .isEqualTo(ControlPlanFingerprint.VERSION_2);
+        assertThat(ControlPlanFingerprint.of(approvedPlan(), List.of(line(10, "Diamètre"))))
+                .isEqualTo(ControlPlanFingerprint.of(approvedPlan(), List.of(line(10, "Diamètre")),
+                        ControlPlanFingerprint.VERSION_2));
+    }
+
+    @Test
+    void anUnknownVersionIsRefusedRatherThanSilentlyApproximated() {
+        assertThatThrownBy(() -> ControlPlanFingerprint.of(approvedPlan(),
+                List.of(line(10, "Diamètre")), 99))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("99");
+    }
+
+    /** Une ligne dont seule la colonne « où se trouve la preuve » varie. */
+    private ControlPlanLine.Details details(String recordingLocation) {
+        return new ControlPlanLine.Details(null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, recordingLocation);
+    }
+
     // ---------- montage ----------
 
     private ControlPlan approvedPlan() {
         return ControlPlan.rehydrate(PLAN, TENANT, PRODUCT, ControlPlanPhase.PRODUCTION,
                 "CP-4471", 1, ControlPlanStatus.ACTIVE, null, USER, NOW, USER, NOW, NOW,
-                null, null, null);
+                null, null, null, 0);
     }
 
     private ControlPlanLine line(int rank, String characteristic) {

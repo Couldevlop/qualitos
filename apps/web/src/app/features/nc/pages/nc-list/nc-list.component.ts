@@ -26,12 +26,19 @@ const EMPTY_PAGE = { content: [], totalElements: 0, totalPages: 0, number: 0, si
 })
 export class NcListComponent implements OnInit {
 
-  readonly displayedColumns = ['reference', 'title', 'category', 'severity', 'status', 'detectedAt'];
+  readonly displayedColumns = ['reference', 'title', 'category', 'severity', 'status',
+                               'reporter', 'detectedAt'];
   readonly statusFilter = new FormControl<NcStatus | ''>('');
   readonly severityFilter = new FormControl<NcSeverity | ''>('');
   readonly categoryFilter = new FormControl<NcCategory | ''>('');
 
-  readonly statuses: NcStatus[] = ['OPEN', 'UNDER_ANALYSIS', 'ACTION_DEFINED', 'RESOLVED', 'CLOSED', 'CANCELLED'];
+  /**
+   * Statuts proposés au filtre. `RESOLVED` en est volontairement absent : c'est
+   * un état de passage, franchi le temps d'enregistrer la résolution puis
+   * clôturé dans la foulée, et le proposer renvoyait presque toujours une liste
+   * vide. Les NC résolues se retrouvent sous `CLOSED`.
+   */
+  readonly statuses: NcStatus[] = ['OPEN', 'UNDER_ANALYSIS', 'ACTION_DEFINED', 'CLOSED', 'CANCELLED'];
   readonly severities: NcSeverity[] = ['MINOR', 'MAJOR', 'CRITICAL'];
   readonly categories: NcCategory[] = ['PRODUCT', 'PROCESS', 'DOCUMENTATION', 'SUPPLIER', 'SAFETY', 'ENVIRONMENT', 'OTHER'];
 

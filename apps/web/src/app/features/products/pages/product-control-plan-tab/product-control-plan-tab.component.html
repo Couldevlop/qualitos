@@ -77,22 +77,58 @@
   <div class="qos-scroll-x" *ngIf="detail.lines.length > 0">
     <table mat-table [dataSource]="detail.lines" class="cp-table">
 
+      <!--
+        Une colonne de la trame = une colonne d'écran, dans l'ordre de lecture
+        du document papier : la référence de procédure, l'étape, ce qui est
+        surveillé, puis la spécification, puis les moyens, puis la preuve.
+      -->
       <ng-container matColumnDef="sequenceNo">
         <th mat-header-cell *matHeaderCellDef i18n="@@product.field-sequence">Rang</th>
         <td mat-cell *matCellDef="let line">{{ line.sequenceNo }}</td>
       </ng-container>
 
+      <ng-container matColumnDef="sopReference">
+        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-sop">Procédure</th>
+        <td mat-cell *matCellDef="let line">
+          <code *ngIf="line.sopReference; else noSop">{{ line.sopReference }}</code>
+          <ng-template #noSop><span class="dim">&mdash;</span></ng-template>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="processStep">
+        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-process-step">Étape du procédé</th>
+        <td mat-cell *matCellDef="let line">
+          <div>{{ operationLabel(line.operationId) }}</div>
+          <div class="dim" *ngIf="line.machine">{{ line.machine }}</div>
+        </td>
+      </ng-container>
+
       <ng-container matColumnDef="characteristic">
-        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-characteristic">Caractéristique</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-characteristic">Ce qui est contrôlé</th>
         <td mat-cell *matCellDef="let line">
           <div>{{ line.characteristicLabel }}</div>
           <div class="dim">
             {{ line.characteristicType }}
             <span *ngIf="line.specialClass && line.specialClass !== 'STANDARD'">
-              · {{ line.specialClass }}
+              &middot; {{ line.specialClass }}
             </span>
           </div>
         </td>
+      </ng-container>
+
+      <ng-container matColumnDef="inputOutput">
+        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-input-output">Entrée / sortie</th>
+        <td mat-cell *matCellDef="let line">{{ line.inputOutput || '—' }}</td>
+      </ng-container>
+
+      <!--
+        La grandeur qui PORTE la spécification, distincte de ce qui est
+        surveillé : on surveille une longueur de fil, on spécifie une cote de
+        coupe. C'est elle que l'opérateur mesure.
+      -->
+      <ng-container matColumnDef="specifiedCharacteristic">
+        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-specified">Caractéristique spécifiée</th>
+        <td mat-cell *matCellDef="let line">{{ line.specifiedCharacteristic || '—' }}</td>
       </ng-container>
 
       <ng-container matColumnDef="specification">
@@ -100,29 +136,45 @@
         <td mat-cell *matCellDef="let line">
           <div>{{ line.specification || '—' }}</div>
           <div class="dim" *ngIf="line.toleranceLower !== undefined || line.toleranceUpper !== undefined">
-            {{ line.toleranceLower }} … {{ line.toleranceUpper }} {{ line.unit }}
+            {{ line.toleranceLower }} &hellip; {{ line.toleranceUpper }} {{ line.unit }}
           </div>
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="control">
-        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-control">Contrôle</th>
-        <td mat-cell *matCellDef="let line">
-          <div>{{ line.controlMethod || '—' }}</div>
-          <div class="dim">{{ line.measurementTechnique }} {{ line.sampleFrequency }}</div>
-        </td>
+      <ng-container matColumnDef="measurementTechnique">
+        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-measurement">Moyen de mesure</th>
+        <td mat-cell *matCellDef="let line">{{ line.measurementTechnique || '—' }}</td>
       </ng-container>
 
-      <ng-container matColumnDef="measuredBy">
+      <ng-container matColumnDef="controlMethod">
+        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-control">Méthode de contrôle</th>
+        <td mat-cell *matCellDef="let line">{{ line.controlMethod || '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="sampleSize">
+        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-sample-size">Échantillon</th>
+        <td mat-cell *matCellDef="let line">{{ line.sampleSize || '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="sampleFrequency">
+        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-frequency">Fréquence</th>
+        <td mat-cell *matCellDef="let line">{{ line.sampleFrequency || '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="whoMeasures">
         <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-measured-by">Qui mesure</th>
-        <td mat-cell *matCellDef="let line">
-          <div>{{ line.whoMeasures || '—' }}</div>
-          <div class="dim">{{ line.sampleSize }}</div>
-        </td>
+        <td mat-cell *matCellDef="let line">{{ line.whoMeasures || '—' }}</td>
+      </ng-container>
+
+      <!-- La colonne que l'auditeur suit : où aller chercher la preuve que le
+           contrôle a bien eu lieu. -->
+      <ng-container matColumnDef="recordingLocation">
+        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-recording">Enregistrement</th>
+        <td mat-cell *matCellDef="let line">{{ line.recordingLocation || '—' }}</td>
       </ng-container>
 
       <ng-container matColumnDef="reaction">
-        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-reaction">Plan de réaction</th>
+        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-reaction">Décision / action corrective</th>
         <td mat-cell *matCellDef="let line">{{ line.reactionPlan || '—' }}</td>
       </ng-container>
 
@@ -133,19 +185,6 @@
                 i18n="@@controlplan.justified">PFMEA</span>
           <span class="qos-badge" data-tone="warning" *ngIf="!line.fmeaItemId"
                 i18n="@@controlplan.unjustified">sans justification</span>
-        </td>
-      </ng-container>
-
-      <!--
-        La trace : d'où vient le contrôle (la procédure) et où sa preuve est
-        conservée. Deux colonnes de la trame réunies sous un seul en-tête,
-        parce qu'elles se lisent ensemble et jamais séparément.
-      -->
-      <ng-container matColumnDef="trace">
-        <th mat-header-cell *matHeaderCellDef i18n="@@controlplan.col-trace">Trace</th>
-        <td mat-cell *matCellDef="let line">
-          <div>{{ line.sopReference || '—' }}</div>
-          <div class="dim">{{ line.recordingLocation }}</div>
         </td>
       </ng-container>
 

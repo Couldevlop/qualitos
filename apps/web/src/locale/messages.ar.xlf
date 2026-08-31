@@ -5212,10 +5212,6 @@
         <source>Responsable</source>
         <target state="translated">المسؤول</target>
       </trans-unit>
-      <trans-unit id="capa.detail.col-nc" datatype="html">
-        <source>Non-conformité</source>
-        <target state="translated">حالة عدم مطابقة</target>
-      </trans-unit>
       <trans-unit id="capa.detail.col-evidence" datatype="html">
         <source>Preuve</source>
         <target state="translated">الدليل</target>
@@ -7335,6 +7331,190 @@
       <trans-unit id="nav.conformite-hub" datatype="html">
         <source>Conformité</source>
         <target state="translated">الامتثال</target>
+      </trans-unit>
+      <trans-unit id="capa.type.containment" datatype="html">
+        <source>Endiguement</source>
+        <target state="translated">احتواء</target>
+      </trans-unit>
+      <trans-unit id="capa.type.corrective" datatype="html">
+        <source>Corrective</source>
+        <target state="translated">تصحيحي</target>
+      </trans-unit>
+      <trans-unit id="capa.type.preventive" datatype="html">
+        <source>Préventive</source>
+        <target state="translated">وقائي</target>
+      </trans-unit>
+      <trans-unit id="capa.create.attachments" datatype="html">
+        <source>Pièces jointes (optionnel)</source>
+        <target state="translated">المرفقات (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="capa.create.attachments-hint" datatype="html">
+        <source>Ce qui documente l'écart dès l'ouverture : photo, relevé, courriel. PDF, image, Word ou Excel, 10 Mo par pièce.</source>
+        <target state="translated">ما يوثّق الانحراف منذ الفتح: صورة، قياس، بريد إلكتروني. PDF أو صورة أو Word أو Excel، ‏10 ميغابايت لكل ملف.</target>
+      </trans-unit>
+      <trans-unit id="capa.create.attachment-add" datatype="html">
+        <source>Ajouter un fichier</source>
+        <target state="translated">إضافة ملف</target>
+      </trans-unit>
+      <trans-unit id="capa.create.attachment-remove-tooltip" datatype="html">
+        <source>Retirer ce fichier</source>
+        <target state="translated">إزالة هذا الملف</target>
+      </trans-unit>
+      <trans-unit id="capa.create.attachment-progress" datatype="html">
+        <source>Dépôt des pièces</source>
+        <target state="translated">جارٍ رفع الملفات</target>
+      </trans-unit>
+      <trans-unit id="capa.create.evidence-limit" datatype="html">
+        <source>Dix pièces au maximum par dossier.</source>
+        <target state="translated">عشرة ملفات كحد أقصى لكل ملف تصحيحي.</target>
+      </trans-unit>
+      <trans-unit id="capa.create.success-with-evidence" datatype="html">
+        <source>Cas CAPA créé, pièces jointes déposées.</source>
+        <target state="translated">تم إنشاء ملف CAPA ورفع المرفقات.</target>
+      </trans-unit>
+      <trans-unit id="capa.create.success-partial-evidence" datatype="html">
+        <source>Cas CAPA créé, mais des pièces n'ont pas pu être déposées — reprends-les depuis la fiche.</source>
+        <target state="translated">تم إنشاء ملف CAPA، لكن تعذّر رفع بعض المرفقات — أعد إضافتها من البطاقة.</target>
+      </trans-unit>
+      <trans-unit id="nc.list.col-reporter" datatype="html">
+        <source>Détecté par</source>
+        <target state="translated">اكتشفه</target>
+      </trans-unit>
+      <trans-unit id="common.close-aria" datatype="html">
+        <source>Fermer</source>
+        <target state="translated">إغلاق</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.custom-badge" datatype="html">
+        <source>Barème de l'organisation</source>
+        <target state="translated">مقياس المؤسسة</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.default-badge" datatype="html">
+        <source>Barème de référence</source>
+        <target state="translated">المقياس المرجعي</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.updated" datatype="html">
+        <source>Modifié le</source>
+        <target state="translated">عُدّل في</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.edit" datatype="html">
+        <source>Adapter ce barème</source>
+        <target state="translated">تكييف هذا المقياس</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.revert" datatype="html">
+        <source>Rétablir la référence</source>
+        <target state="translated">استعادة المرجع</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.incomplete" datatype="html">
+        <source>Chaque score doit porter un intitulé. Manquent les scores :</source>
+        <target state="translated">كل درجة تحتاج إلى عنوان. الدرجات الناقصة:</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.edit-hint" datatype="html">
+        <source>Le barème adopté ici sert à toute l'organisation. Les cotations déjà enregistrées ne changent pas de valeur, mais elles ont été portées sur l'échelle précédente : ne le modifiez pas au milieu d'une analyse.</source>
+        <target state="translated">المقياس المعتمد هنا يسري على المؤسسة كلها. التقييمات المسجَّلة سابقًا تحتفظ بقيمتها، لكنها أُعطيت وفق المقياس السابق: لا تغيّره في منتصف تحليل جارٍ.</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.saved" datatype="html">
+        <source>Barème enregistré.</source>
+        <target state="translated">تم حفظ المقياس.</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.reverted" datatype="html">
+        <source>Barème de référence rétabli.</source>
+        <target state="translated">تمت استعادة المقياس المرجعي.</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.save-failed" datatype="html">
+        <source>Barème refusé.</source>
+        <target state="translated">تم رفض المقياس.</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.load-failed" datatype="html">
+        <source>Référentiel de cotation indisponible.</source>
+        <target state="translated">مرجع التقييم غير متاح.</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.open" datatype="html">
+        <source>Référentiel de cotation</source>
+        <target state="translated">مرجع التقييم</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.title" datatype="html">
+        <source>Référentiel de cotation FMEA</source>
+        <target state="translated">مرجع تقييم FMEA</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.subtitle" datatype="html">
+        <source>Les échelles sur lesquelles se cotent Sévérité, Occurrence et Détection. Deux RPN ne se comparent que s'ils sortent du même barème.</source>
+        <target state="translated">المقاييس التي تُقيَّم بها الخطورة والتكرار والاكتشاف. لا يُقارَن رقمان للأولوية إلا إذا صدرا عن المقياس نفسه.</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.tab-severity" datatype="html">
+        <source>Sévérité</source>
+        <target state="translated">الخطورة</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.tab-occurrence" datatype="html">
+        <source>Occurrence</source>
+        <target state="translated">التكرار</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.tab-detection" datatype="html">
+        <source>Détection</source>
+        <target state="translated">الاكتشاف</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.tab-example" datatype="html">
+        <source>Exemple de PFMEA</source>
+        <target state="translated">مثال على PFMEA</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.example-hint" datatype="html">
+        <source>Modèle de rédaction : le niveau de détail attendu dans un mode de défaillance, un effet et une action recommandée.</source>
+        <target state="translated">نموذج للصياغة: مستوى التفصيل المتوقَّع في نمط الفشل والأثر والإجراء الموصى به.</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-effect" datatype="html">
+        <source>Effet</source>
+        <target state="translated">الأثر</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-effects" datatype="html">
+        <source>Effets</source>
+        <target state="translated">الآثار</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-description" datatype="html">
+        <source>Description</source>
+        <target state="translated">الوصف</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-score" datatype="html">
+        <source>Score</source>
+        <target state="translated">الدرجة</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-probability" datatype="html">
+        <source>Probabilité</source>
+        <target state="translated">الاحتمال</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-period" datatype="html">
+        <source>Période</source>
+        <target state="translated">الفترة</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-rate" datatype="html">
+        <source>Taux de défaillance</source>
+        <target state="translated">معدل الفشل</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-chance" datatype="html">
+        <source>Chance de détection</source>
+        <target state="translated">فرصة الاكتشاف</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-step" datatype="html">
+        <source>Étape du processus</source>
+        <target state="translated">خطوة العملية</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-failure-mode" datatype="html">
+        <source>Mode de défaillance</source>
+        <target state="translated">نمط الفشل</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-causes" datatype="html">
+        <source>Causes</source>
+        <target state="translated">الأسباب</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-controls" datatype="html">
+        <source>Contrôles actuels</source>
+        <target state="translated">الضوابط الحالية</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-action" datatype="html">
+        <source>Action recommandée</source>
+        <target state="translated">الإجراء الموصى به</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-responsible" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">المسؤول</target>
       </trans-unit>
       <trans-unit id="dbb.editor.back" datatype="html">
         <source>Retour à la liste</source>
@@ -16730,29 +16910,65 @@ historique 12 mois</source>
         <source>Qui mesure</source>
         <target state="translated">من يقيس</target>
       </trans-unit>
-      <trans-unit id="controlplan.col-trace" datatype="html">
-        <source>Trace</source>
-        <target state="translated">الأثر</target>
-      </trans-unit>
       <trans-unit id="controlplan.locked" datatype="html">
         <source>Ce plan est approuvé : ouvrez une révision pour le modifier.</source>
         <target state="translated">هذه الخطة معتمدة: افتح مراجعة لتعديلها.</target>
       </trans-unit>
       <trans-unit id="controlplan.col-characteristic" datatype="html">
-        <source>Caractéristique</source>
-        <target state="translated">الخاصية</target>
+        <source>Ce qui est contrôlé</source>
+        <target state="translated">ما يخضع للمراقبة</target>
       </trans-unit>
       <trans-unit id="controlplan.col-spec" datatype="html">
         <source>Spécification</source>
         <target state="translated">المواصفة</target>
       </trans-unit>
       <trans-unit id="controlplan.col-control" datatype="html">
-        <source>Contrôle</source>
-        <target state="translated">الفحص</target>
+        <source>Méthode de contrôle</source>
+        <target state="translated">طريقة الضبط</target>
       </trans-unit>
       <trans-unit id="controlplan.col-reaction" datatype="html">
-        <source>Plan de réaction</source>
-        <target state="translated">خطة الاستجابة</target>
+        <source>Décision / action corrective</source>
+        <target state="translated">القرار / الإجراء التصحيحي</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-sop" datatype="html">
+        <source>Procédure</source>
+        <target state="translated">الإجراء</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-process-step" datatype="html">
+        <source>Étape du procédé</source>
+        <target state="translated">خطوة العملية</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-input-output" datatype="html">
+        <source>Entrée / sortie</source>
+        <target state="translated">مدخل / مخرج</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-specified" datatype="html">
+        <source>Caractéristique spécifiée</source>
+        <target state="translated">الخاصية المواصفة</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-measurement" datatype="html">
+        <source>Moyen de mesure</source>
+        <target state="translated">وسيلة القياس</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-sample-size" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">حجم العينة</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-frequency" datatype="html">
+        <source>Fréquence</source>
+        <target state="translated">التكرار</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-recording" datatype="html">
+        <source>Enregistrement</source>
+        <target state="translated">مكان الحفظ</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-specified" datatype="html">
+        <source>Caractéristique spécifiée</source>
+        <target state="translated">الخاصية المواصفة</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-specified-placeholder" datatype="html">
+        <source>Ex. : cote de coupe ; hauteur de sertissage</source>
+        <target state="translated">مثال: طول القص؛ ارتفاع الكبس</target>
       </trans-unit>
       <trans-unit id="controlplan.col-justification" datatype="html">
         <source>Justification</source>
@@ -16775,8 +16991,8 @@ historique 12 mois</source>
         <target state="translated">لا شيء</target>
       </trans-unit>
       <trans-unit id="controlplan.field-characteristic" datatype="html">
-        <source>Caractéristique</source>
-        <target state="translated">الخاصية</target>
+        <source>Ce qui est contrôlé</source>
+        <target state="translated">ما يخضع للمراقبة</target>
       </trans-unit>
       <trans-unit id="controlplan.field-type" datatype="html">
         <source>Type</source>

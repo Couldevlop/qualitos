@@ -260,7 +260,7 @@ class NcControllerTest {
         return new NcDto.Response(
                 NC, TENANT, "NC-2026-0001", "t", null,
                 NcCategory.PRODUCT, NcSeverity.MAJOR, s, NcOrigin.INTERNAL, Instant.now(),
-                null, null, null, null, REPORTER, null, null, null, null, null,
+                null, null, null, null, REPORTER, "Ada Lovelace", null, null, null, null, null,
                 null, null, Instant.now(), Instant.now());
     }
 }

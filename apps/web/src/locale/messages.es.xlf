@@ -5212,10 +5212,6 @@
         <source>Responsable</source>
         <target state="translated">Responsable</target>
       </trans-unit>
-      <trans-unit id="capa.detail.col-nc" datatype="html">
-        <source>Non-conformité</source>
-        <target state="translated">No conformidad</target>
-      </trans-unit>
       <trans-unit id="capa.detail.col-evidence" datatype="html">
         <source>Preuve</source>
         <target state="translated">Prueba</target>
@@ -7335,6 +7331,190 @@
       <trans-unit id="nav.conformite-hub" datatype="html">
         <source>Conformité</source>
         <target state="translated">Cumplimiento</target>
+      </trans-unit>
+      <trans-unit id="capa.type.containment" datatype="html">
+        <source>Endiguement</source>
+        <target state="translated">Contención</target>
+      </trans-unit>
+      <trans-unit id="capa.type.corrective" datatype="html">
+        <source>Corrective</source>
+        <target state="translated">Correctiva</target>
+      </trans-unit>
+      <trans-unit id="capa.type.preventive" datatype="html">
+        <source>Préventive</source>
+        <target state="translated">Preventiva</target>
+      </trans-unit>
+      <trans-unit id="capa.create.attachments" datatype="html">
+        <source>Pièces jointes (optionnel)</source>
+        <target state="translated">Archivos adjuntos (opcional)</target>
+      </trans-unit>
+      <trans-unit id="capa.create.attachments-hint" datatype="html">
+        <source>Ce qui documente l'écart dès l'ouverture : photo, relevé, courriel. PDF, image, Word ou Excel, 10 Mo par pièce.</source>
+        <target state="translated">Lo que documenta la desviación desde el inicio: foto, medición, correo. PDF, imagen, Word o Excel, 10 MB por archivo.</target>
+      </trans-unit>
+      <trans-unit id="capa.create.attachment-add" datatype="html">
+        <source>Ajouter un fichier</source>
+        <target state="translated">Añadir un archivo</target>
+      </trans-unit>
+      <trans-unit id="capa.create.attachment-remove-tooltip" datatype="html">
+        <source>Retirer ce fichier</source>
+        <target state="translated">Quitar este archivo</target>
+      </trans-unit>
+      <trans-unit id="capa.create.attachment-progress" datatype="html">
+        <source>Dépôt des pièces</source>
+        <target state="translated">Subiendo archivos</target>
+      </trans-unit>
+      <trans-unit id="capa.create.evidence-limit" datatype="html">
+        <source>Dix pièces au maximum par dossier.</source>
+        <target state="translated">Diez archivos como máximo por caso.</target>
+      </trans-unit>
+      <trans-unit id="capa.create.success-with-evidence" datatype="html">
+        <source>Cas CAPA créé, pièces jointes déposées.</source>
+        <target state="translated">Caso CAPA creado, archivos adjuntos subidos.</target>
+      </trans-unit>
+      <trans-unit id="capa.create.success-partial-evidence" datatype="html">
+        <source>Cas CAPA créé, mais des pièces n'ont pas pu être déposées — reprends-les depuis la fiche.</source>
+        <target state="translated">Caso CAPA creado, pero algunos archivos no se pudieron subir: vuelve a añadirlos desde la ficha.</target>
+      </trans-unit>
+      <trans-unit id="nc.list.col-reporter" datatype="html">
+        <source>Détecté par</source>
+        <target state="translated">Detectado por</target>
+      </trans-unit>
+      <trans-unit id="common.close-aria" datatype="html">
+        <source>Fermer</source>
+        <target state="translated">Cerrar</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.custom-badge" datatype="html">
+        <source>Barème de l'organisation</source>
+        <target state="translated">Escala de la organización</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.default-badge" datatype="html">
+        <source>Barème de référence</source>
+        <target state="translated">Escala de referencia</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.updated" datatype="html">
+        <source>Modifié le</source>
+        <target state="translated">Modificado el</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.edit" datatype="html">
+        <source>Adapter ce barème</source>
+        <target state="translated">Adaptar esta escala</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.revert" datatype="html">
+        <source>Rétablir la référence</source>
+        <target state="translated">Restaurar la referencia</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.incomplete" datatype="html">
+        <source>Chaque score doit porter un intitulé. Manquent les scores :</source>
+        <target state="translated">Cada puntuación necesita un título. Faltan las puntuaciones:</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.edit-hint" datatype="html">
+        <source>Le barème adopté ici sert à toute l'organisation. Les cotations déjà enregistrées ne changent pas de valeur, mais elles ont été portées sur l'échelle précédente : ne le modifiez pas au milieu d'une analyse.</source>
+        <target state="translated">La escala adoptada aquí se aplica a toda la organización. Las puntuaciones ya registradas conservan su valor, pero se dieron con la escala anterior: no la cambie en mitad de un análisis.</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.saved" datatype="html">
+        <source>Barème enregistré.</source>
+        <target state="translated">Escala guardada.</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.reverted" datatype="html">
+        <source>Barème de référence rétabli.</source>
+        <target state="translated">Escala de referencia restaurada.</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.save-failed" datatype="html">
+        <source>Barème refusé.</source>
+        <target state="translated">Escala rechazada.</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.load-failed" datatype="html">
+        <source>Référentiel de cotation indisponible.</source>
+        <target state="translated">Referencia de puntuación no disponible.</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.open" datatype="html">
+        <source>Référentiel de cotation</source>
+        <target state="translated">Referencia de puntuación</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.title" datatype="html">
+        <source>Référentiel de cotation FMEA</source>
+        <target state="translated">Referencia de puntuación FMEA</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.subtitle" datatype="html">
+        <source>Les échelles sur lesquelles se cotent Sévérité, Occurrence et Détection. Deux RPN ne se comparent que s'ils sortent du même barème.</source>
+        <target state="translated">Las escalas con las que se puntúan Severidad, Ocurrencia y Detección. Dos RPN solo se comparan si proceden de la misma escala.</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.tab-severity" datatype="html">
+        <source>Sévérité</source>
+        <target state="translated">Severidad</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.tab-occurrence" datatype="html">
+        <source>Occurrence</source>
+        <target state="translated">Ocurrencia</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.tab-detection" datatype="html">
+        <source>Détection</source>
+        <target state="translated">Detección</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.tab-example" datatype="html">
+        <source>Exemple de PFMEA</source>
+        <target state="translated">Ejemplo de PFMEA</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.example-hint" datatype="html">
+        <source>Modèle de rédaction : le niveau de détail attendu dans un mode de défaillance, un effet et une action recommandée.</source>
+        <target state="translated">Modelo de redacción: el nivel de detalle esperado en un modo de fallo, un efecto y una acción recomendada.</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-effect" datatype="html">
+        <source>Effet</source>
+        <target state="translated">Efecto</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-effects" datatype="html">
+        <source>Effets</source>
+        <target state="translated">Efectos</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-description" datatype="html">
+        <source>Description</source>
+        <target state="translated">Descripción</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-score" datatype="html">
+        <source>Score</source>
+        <target state="translated">Puntuación</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-probability" datatype="html">
+        <source>Probabilité</source>
+        <target state="translated">Probabilidad</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-period" datatype="html">
+        <source>Période</source>
+        <target state="translated">Periodo</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-rate" datatype="html">
+        <source>Taux de défaillance</source>
+        <target state="translated">Tasa de fallos</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-chance" datatype="html">
+        <source>Chance de détection</source>
+        <target state="translated">Posibilidad de detección</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-step" datatype="html">
+        <source>Étape du processus</source>
+        <target state="translated">Etapa del proceso</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-failure-mode" datatype="html">
+        <source>Mode de défaillance</source>
+        <target state="translated">Modo de fallo</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-causes" datatype="html">
+        <source>Causes</source>
+        <target state="translated">Causas</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-controls" datatype="html">
+        <source>Contrôles actuels</source>
+        <target state="translated">Controles actuales</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-action" datatype="html">
+        <source>Action recommandée</source>
+        <target state="translated">Acción recomendada</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.col-responsible" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">Responsable</target>
       </trans-unit>
       <trans-unit id="dbb.editor.back" datatype="html">
         <source>Retour à la liste</source>
@@ -16730,29 +16910,65 @@ historial de 12 meses</target>
         <source>Qui mesure</source>
         <target state="translated">Quién mide</target>
       </trans-unit>
-      <trans-unit id="controlplan.col-trace" datatype="html">
-        <source>Trace</source>
-        <target state="translated">Traza</target>
-      </trans-unit>
       <trans-unit id="controlplan.locked" datatype="html">
         <source>Ce plan est approuvé : ouvrez une révision pour le modifier.</source>
         <target state="translated">Este plan está aprobado: abra una revisión para modificarlo.</target>
       </trans-unit>
       <trans-unit id="controlplan.col-characteristic" datatype="html">
-        <source>Caractéristique</source>
-        <target state="translated">Característica</target>
+        <source>Ce qui est contrôlé</source>
+        <target state="translated">Qué se controla</target>
       </trans-unit>
       <trans-unit id="controlplan.col-spec" datatype="html">
         <source>Spécification</source>
         <target state="translated">Especificación</target>
       </trans-unit>
       <trans-unit id="controlplan.col-control" datatype="html">
-        <source>Contrôle</source>
-        <target state="translated">Control</target>
+        <source>Méthode de contrôle</source>
+        <target state="translated">Método de control</target>
       </trans-unit>
       <trans-unit id="controlplan.col-reaction" datatype="html">
-        <source>Plan de réaction</source>
-        <target state="translated">Plan de reacción</target>
+        <source>Décision / action corrective</source>
+        <target state="translated">Decisión / acción correctiva</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-sop" datatype="html">
+        <source>Procédure</source>
+        <target state="translated">Procedimiento</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-process-step" datatype="html">
+        <source>Étape du procédé</source>
+        <target state="translated">Etapa del proceso</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-input-output" datatype="html">
+        <source>Entrée / sortie</source>
+        <target state="translated">Entrada / salida</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-specified" datatype="html">
+        <source>Caractéristique spécifiée</source>
+        <target state="translated">Característica especificada</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-measurement" datatype="html">
+        <source>Moyen de mesure</source>
+        <target state="translated">Método de medición</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-sample-size" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">Tamaño de muestra</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-frequency" datatype="html">
+        <source>Fréquence</source>
+        <target state="translated">Frecuencia</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-recording" datatype="html">
+        <source>Enregistrement</source>
+        <target state="translated">Registro</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-specified" datatype="html">
+        <source>Caractéristique spécifiée</source>
+        <target state="translated">Característica especificada</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-specified-placeholder" datatype="html">
+        <source>Ex. : cote de coupe ; hauteur de sertissage</source>
+        <target state="translated">Ej.: longitud de corte; altura de engaste</target>
       </trans-unit>
       <trans-unit id="controlplan.col-justification" datatype="html">
         <source>Justification</source>
@@ -16775,8 +16991,8 @@ historial de 12 meses</target>
         <target state="translated">Ninguna</target>
       </trans-unit>
       <trans-unit id="controlplan.field-characteristic" datatype="html">
-        <source>Caractéristique</source>
-        <target state="translated">Característica</target>
+        <source>Ce qui est contrôlé</source>
+        <target state="translated">Qué se controla</target>
       </trans-unit>
       <trans-unit id="controlplan.field-type" datatype="html">
         <source>Type</source>

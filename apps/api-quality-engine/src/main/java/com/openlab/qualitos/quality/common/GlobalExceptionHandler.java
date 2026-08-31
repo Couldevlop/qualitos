@@ -11,6 +11,7 @@ import com.openlab.qualitos.quality.capa.CapaEvidenceValidationException;
 import com.openlab.qualitos.quality.capa.CapaNotFoundException;
 import com.openlab.qualitos.quality.capa.CapaStateException;
 import com.openlab.qualitos.quality.capa.CapaValidationException;
+import com.openlab.qualitos.quality.fmeascale.FmeaScaleValidationException;
 import com.openlab.qualitos.quality.circle.CircleMeetingNotFoundException;
 import com.openlab.qualitos.quality.dmaic.DmaicProjectNotFoundException;
 import com.openlab.qualitos.quality.dmaic.DmaicStateException;
@@ -364,6 +365,20 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/capa-invalid-input"));
         problem.setTitle("Invalid CAPA Input");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * Barème de cotation refusé : trou dans l'échelle, doublon, intitulé vide.
+     * Le message NOMME ce qui manque — « le score 7 n'a aucune définition » —
+     * parce qu'un 400 sec devant dix lignes oblige à les relire une par une.
+     */
+    @ExceptionHandler(FmeaScaleValidationException.class)
+    public ProblemDetail handleFmeaScaleValidation(FmeaScaleValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/fmea-scale-invalid"));
+        problem.setTitle("Invalid FMEA Rating Scale");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
