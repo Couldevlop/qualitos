@@ -1,12 +1,12 @@
-/* Un référentiel se consulte : large, lisible, et sans rien à saisir. La largeur
-   est prise sur la fenêtre, jamais fixée en pixels — l'exemple de PFMEA compte
-   onze colonnes et doit rester lisible sur un portable comme sur un écran
-   d'atelier. */
+/* Un référentiel se consulte : large, lisible, et sans rien à saisir.
+   La LARGEUR n'est pas déclarée ici : elle appartient au panneau
+   (`qos-dialog-panel--wide`, styles.scss). Fixée à l'intérieur, elle débordait
+   d'une surface plus étroite qui rogne — le tableau perdait ses deux bords.
+   Le contenu remplit ce qu'on lui donne. */
 .ref-dialog {
   display: flex;
   flex-direction: column;
-  width: min(1180px, 92vw);
-  max-height: 82vh;
+  min-width: 0;
 }
 
 .ref-head {
