@@ -101,7 +101,7 @@ export class FmeaListComponent implements OnInit {
   openReference(): void {
     this.dialog.open(FmeaReferenceDialogComponent, {
       autoFocus: 'first-tabbable', restoreFocus: true,
-      panelClass: 'qos-dialog-panel'
+      panelClass: ['qos-dialog-panel', 'qos-dialog-panel--wide']
     });
   }
 

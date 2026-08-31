@@ -126,6 +126,37 @@ class FmeaScaleControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "QUALITY_MANAGER")
+    void aMalformedBodyFromSomeoneWithoutTheRoleIsStillARefusalAndNotABadRequest() throws Exception {
+        // Défaut d'ORDRE, pas de règle. Spring MVC valide la charge utile dans
+        // l'adaptateur de handler, AVANT l'advice qui porte @PreAuthorize : cet
+        // appel rendait donc 400. La réponse dépendait alors de ce que l'appelant
+        // envoyait, ce qui fait d'un point d'entrée fermé un oracle de validation
+        // — et fait analyser un corps hostile par une requête qui n'aurait jamais
+        // dû être lue (OWASP A01). Corrigé par
+        // MethodAuthorizationPreCheckInterceptor.
+        mockMvc.perform(put("/api/v1/fmea/rating-scales/SEVERITY")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"rows\":[]}"))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    @WithMockUser(roles = "DIRECTOR_QUALITY")
+    void aMalformedBodyFromSomeoneWhoMayEditIsStillABadRequest() throws Exception {
+        // Le pendant du banc précédent : le pré-contrôle ne doit RIEN changer pour
+        // qui a le droit d'écrire. S'il transformait aussi ce cas en 403, il
+        // masquerait les erreurs de saisie derrière un refus d'accès.
+        mockMvc.perform(put("/api/v1/fmea/rating-scales/SEVERITY")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     @WithMockUser(roles = "DIRECTOR_QUALITY")
     void restoringTheReferenceRendersTheScaleThatTakesEffect() throws Exception {
         when(service.revertToReference(FmeaScaleKind.SEVERITY)).thenReturn(view(false));

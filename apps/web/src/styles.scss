@@ -490,6 +490,19 @@ html, body { overflow-x: hidden; }
   .mat-mdc-form-field { width: 100%; }
 }
 
+/* Variante LARGE, pour les dialogues qui présentent un tableau et non un
+   formulaire — un référentiel de cotation, un barème, une trame à onze
+   colonnes.
+ *
+ * La largeur appartient au PANNEAU, jamais au contenu. Un composant qui se
+ * donnait `width: 1180px` à l'intérieur d'un panneau de 680 px débordait d'une
+ * surface en `overflow: hidden` : le tableau se retrouvait rogné des deux côtés
+ * et l'en-tête sortait du cadre. Le contenu remplit ce qu'on lui donne ; c'est
+ * l'ouverture du dialogue qui déclare de combien elle a besoin. */
+.qos-dialog-panel--wide {
+  width: min(1180px, 94vw);
+}
+
 /* Mobile : dialog plein écran (plus d'ergonomie tactile, zéro débordement). */
 @media (max-width: 640px) {
   .qos-dialog-panel {
