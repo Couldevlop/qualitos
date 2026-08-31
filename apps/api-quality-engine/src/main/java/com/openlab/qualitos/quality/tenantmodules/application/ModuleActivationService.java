@@ -11,7 +11,9 @@ import com.openlab.qualitos.quality.tenantmodules.domain.ModuleCatalogEntry;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -235,6 +237,17 @@ public class ModuleActivationService {
      *
      * <p>Les deux appelants partagent désormais cette méthode : l'interface ne peut
      * plus annoncer un module que la garde refuse de considérer.
+     *
+     * <p><b>Seule la décision COURANTE de chaque module compte.</b> Le dépôt rend
+     * l'historique complet, et un module désactivé puis réactivé porte DEUX
+     * lignes — le schéma le prévoit, son index d'unicité ne couvrant que les
+     * statuts non terminaux. Les parcourir toutes en appliquant tour à tour
+     * « ajoute » et « retire » faisait gagner la ligne lue en dernier : avec un
+     * tri par date décroissante, c'était la plus ANCIENNE. Une désactivation de
+     * la veille effaçait donc l'activation du jour, et le module réactivé ne
+     * revenait jamais dans l'interface. La dépendance lisant la même liste, tout
+     * module qui s'appuyait sur lui devenait à son tour inactivable, avec un 409
+     * « Missing dependency » qu'aucune manœuvre depuis l'écran ne pouvait lever.
      */
     private Set<String> availableModuleCodes(UUID tenantId) {
         Set<String> enabled = new java.util.LinkedHashSet<>();
@@ -243,7 +256,7 @@ public class ModuleActivationService {
                 enabled.add(entry.code());
             }
         }
-        for (ModuleActivation activation : repo.findAllByTenantId(tenantId)) {
+        for (ModuleActivation activation : currentDecisionPerModule(tenantId)) {
             if (activation.isEnabled()) {
                 enabled.add(activation.getModuleCode());
             } else {
@@ -253,6 +266,36 @@ public class ModuleActivationService {
             }
         }
         return enabled;
+    }
+
+    /**
+     * La décision qui fait foi pour chaque module : son activation OUVERTE si
+     * elle existe, sinon la plus récente de ses lignes fermées.
+     *
+     * <p>Ce n'est pas « la dernière ligne rendue » : l'ordre de lecture est un
+     * détail du dépôt, et fonder une décision d'autorisation dessus revient à
+     * tirer à pile ou face à chaque montée de version. La règle vient du schéma
+     * lui-même — {@code uk_tma_open_per_tenant_module} garantit AU PLUS UNE ligne
+     * non terminale par (tenant, module) — donc l'ouverte, quand il y en a une,
+     * est par construction la seule qui décrive l'état présent.
+     */
+    private Collection<ModuleActivation> currentDecisionPerModule(UUID tenantId) {
+        Map<String, ModuleActivation> current = new java.util.LinkedHashMap<>();
+        for (ModuleActivation candidate : repo.findAllByTenantId(tenantId)) {
+            current.merge(candidate.getModuleCode(), candidate,
+                    ModuleActivationService::moreAuthoritative);
+        }
+        return current.values();
+    }
+
+    /** Entre deux lignes du même module, celle qui décrit l'état présent. */
+    private static ModuleActivation moreAuthoritative(ModuleActivation kept, ModuleActivation other) {
+        if (kept.isTerminal() != other.isTerminal()) {
+            return kept.isTerminal() ? other : kept;
+        }
+        // Deux lignes de même nature : la plus récemment ouverte. Le cas ne se
+        // présente qu'entre lignes fermées, l'index n'en tolérant qu'une ouverte.
+        return other.getActivatedAt().isAfter(kept.getActivatedAt()) ? other : kept;
     }
 
     public ModuleActivationDto.TenantModuleSummary summary() {
