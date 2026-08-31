@@ -355,6 +355,115 @@ class ModuleActivationServiceTest {
         verify(events).publish(any(), eq(ModuleActivationEventPublisher.Action.EXPIRED));
     }
 
+    // ---------- la disponibilite ne se lit que sur la decision COURANTE ----------
+
+    @Test
+    void unModuleReactiveApresAvoirEteDesactiveRedevientDisponible() {
+        // Constate en preproduction le 2026-08-31. `product` etait ACTIVE en base
+        // et pourtant absent de la liste servie a l'interface : l'entree
+        // « Produits » ne revenait pas dans la navigation, et l'onglet Control
+        // Plan restait donc inatteignable.
+        //
+        // Le depot rend l'historique du PLUS RECENT au PLUS ANCIEN
+        // (`findByTenantIdOrderByActivatedAtDesc`), et la boucle appliquait
+        // `add`/`remove` dans cet ordre : la ligne traitee EN DERNIER l'emportait,
+        // c'est-a-dire la plus ANCIENNE. Une desactivation de la veille ecrasait
+        // l'activation du jour.
+        //
+        // Aucun banc ne l'avait vu parce que tous donnaient UNE ligne par module —
+        // or c'est justement la seconde ligne qui fait le defaut, et le schema en
+        // prevoit une par reactivation (l'index unique partiel ne porte que sur
+        // les statuts non terminaux).
+        when(repo.findAllByTenantId(TENANT)).thenReturn(List.of(
+                mockActive("product"),          // 27/08 — la decision courante
+                mockDisabled("product")));      // 26/08 — de l'histoire
+
+        assertThat(service.enabledModuleCodes()).contains("product");
+    }
+
+    @Test
+    void unModuleDesactiveEtNonRouvertResteIndisponible() {
+        // Le sens inverse, qui interdit de « corriger » en ignorant les fermetures.
+        //
+        // L'etat teste est celui que le schema autorise reellement : desactiver
+        // agit sur la ligne OUVERTE elle-meme, ce qui la rend terminale sans en
+        // creer d'autre. Un module ferme et jamais rouvert n'a donc qu'une ligne,
+        // terminale — et deux cycles en laissent deux, terminales toutes les deux.
+        when(repo.findAllByTenantId(TENANT)).thenReturn(List.of(
+                mockDisabledAt("webhooks", NOW.minusSeconds(3600)),
+                mockDisabledAt("webhooks", NOW.minusSeconds(86400))));
+
+        assertThat(service.enabledModuleCodes()).doesNotContain("webhooks");
+    }
+
+    @Test
+    void lActivationOuverteFaitFoiQuelQueSoitLOrdreDeLecture() {
+        // L'invariant que le correctif installe : la decision ne depend plus de
+        // l'ordre dans lequel le depot rend les lignes. Le meme jeu, lu dans les
+        // deux sens, doit donner le meme verdict — sans quoi une montee de
+        // version qui changerait ce tri rouvrirait le defaut en silence.
+        List<ModuleActivation> histoire = List.of(mockActive("product"), mockDisabled("product"));
+        List<ModuleActivation> inverse = List.of(mockDisabled("product"), mockActive("product"));
+
+        when(repo.findAllByTenantId(TENANT)).thenReturn(histoire);
+        assertThat(service.enabledModuleCodes()).contains("product");
+
+        when(repo.findAllByTenantId(TENANT)).thenReturn(inverse);
+        assertThat(service.enabledModuleCodes()).contains("product");
+    }
+
+    @Test
+    void leSocleResteDisponibleSansAucuneLigne() {
+        when(repo.findAllByTenantId(TENANT)).thenReturn(List.of());
+
+        assertThat(service.enabledModuleCodes())
+                .contains("pdca", "capa", "docs", "audit", "fives", "ishikawa");
+    }
+
+    @Test
+    void unModuleSuspenduNEstPasDisponible() {
+        // SUSPENDU n'est pas terminal, mais n'est pas utilisable pour autant.
+        when(repo.findAllByTenantId(TENANT))
+                .thenReturn(List.of(mockSuspended("product")));
+
+        assertThat(service.enabledModuleCodes()).doesNotContain("product");
+    }
+
+    @Test
+    void laDependanceLitLaMemeDisponibiliteQueLInterface() {
+        // Le corollaire, et le vrai cout du defaut : `controlplan` depend de
+        // `risk` et de `product`. Tant que `product` etait juge indisponible par
+        // une ligne perimee, son activation repondait 409 « Missing dependency »
+        // sur un tenant ou il etait pourtant bien actif — un refus qu'aucune
+        // manoeuvre depuis l'ecran ne pouvait lever.
+        when(tierProvider.currentTier(TENANT)).thenReturn(BillingTier.STANDARD);
+        when(repo.findOpenByTenantIdAndCode(TENANT, "controlplan")).thenReturn(Optional.empty());
+        when(repo.findAllByTenantId(TENANT)).thenReturn(List.of(
+                mockActive("risk"),
+                mockActive("product"),
+                mockDisabled("product")));
+        when(repo.save(any())).thenAnswer(inv -> {
+            ModuleActivation a = inv.getArgument(0); a.assignId(ID); return a;
+        });
+
+        ModuleActivationDto.ActivationView v = service.activate(
+                new ModuleActivationDto.ActivateRequest("controlplan", FUTURE));
+
+        assertThat(v.status()).isEqualTo(ActivationStatus.ACTIVE);
+    }
+
+    /** Une ligne DESACTIVEE plus ancienne que l'activation : de l'historique. */
+    private ModuleActivation mockDisabled(String code) {
+        return mockDisabledAt(code, NOW.minusSeconds(86400));
+    }
+
+    private ModuleActivation mockDisabledAt(String code, Instant activatedAt) {
+        ModuleActivation a = ModuleActivation.activateNow(TENANT, code,
+                BillingTier.STANDARD, FUTURE, ACTOR, activatedAt);
+        a.disable(ACTOR, activatedAt.plusSeconds(60));
+        return a;
+    }
+
     private ModuleActivation mockActive(String code) {
         return ModuleActivation.activateNow(TENANT, code, BillingTier.STANDARD,
                 FUTURE, ACTOR, NOW);
