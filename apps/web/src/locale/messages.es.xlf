@@ -7384,6 +7384,50 @@
         <source>Fermer</source>
         <target state="translated">Cerrar</target>
       </trans-unit>
+      <trans-unit id="fmea.reference.custom-badge" datatype="html">
+        <source>Barème de l'organisation</source>
+        <target state="translated">Escala de la organización</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.default-badge" datatype="html">
+        <source>Barème de référence</source>
+        <target state="translated">Escala de referencia</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.updated" datatype="html">
+        <source>Modifié le</source>
+        <target state="translated">Modificado el</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.edit" datatype="html">
+        <source>Adapter ce barème</source>
+        <target state="translated">Adaptar esta escala</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.revert" datatype="html">
+        <source>Rétablir la référence</source>
+        <target state="translated">Restaurar la referencia</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.incomplete" datatype="html">
+        <source>Chaque score doit porter un intitulé. Manquent les scores :</source>
+        <target state="translated">Cada puntuación necesita un título. Faltan las puntuaciones:</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.edit-hint" datatype="html">
+        <source>Le barème adopté ici sert à toute l'organisation. Les cotations déjà enregistrées ne changent pas de valeur, mais elles ont été portées sur l'échelle précédente : ne le modifiez pas au milieu d'une analyse.</source>
+        <target state="translated">La escala adoptada aquí se aplica a toda la organización. Las puntuaciones ya registradas conservan su valor, pero se dieron con la escala anterior: no la cambie en mitad de un análisis.</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.saved" datatype="html">
+        <source>Barème enregistré.</source>
+        <target state="translated">Escala guardada.</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.reverted" datatype="html">
+        <source>Barème de référence rétabli.</source>
+        <target state="translated">Escala de referencia restaurada.</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.save-failed" datatype="html">
+        <source>Barème refusé.</source>
+        <target state="translated">Escala rechazada.</target>
+      </trans-unit>
+      <trans-unit id="fmea.reference.load-failed" datatype="html">
+        <source>Référentiel de cotation indisponible.</source>
+        <target state="translated">Referencia de puntuación no disponible.</target>
+      </trans-unit>
       <trans-unit id="fmea.reference.open" datatype="html">
         <source>Référentiel de cotation</source>
         <target state="translated">Referencia de puntuación</target>
@@ -16866,29 +16910,65 @@ historial de 12 meses</target>
         <source>Qui mesure</source>
         <target state="translated">Quién mide</target>
       </trans-unit>
-      <trans-unit id="controlplan.col-trace" datatype="html">
-        <source>Trace</source>
-        <target state="translated">Traza</target>
-      </trans-unit>
       <trans-unit id="controlplan.locked" datatype="html">
         <source>Ce plan est approuvé : ouvrez une révision pour le modifier.</source>
         <target state="translated">Este plan está aprobado: abra una revisión para modificarlo.</target>
       </trans-unit>
       <trans-unit id="controlplan.col-characteristic" datatype="html">
-        <source>Caractéristique</source>
-        <target state="translated">Característica</target>
+        <source>Ce qui est contrôlé</source>
+        <target state="translated">Qué se controla</target>
       </trans-unit>
       <trans-unit id="controlplan.col-spec" datatype="html">
         <source>Spécification</source>
         <target state="translated">Especificación</target>
       </trans-unit>
       <trans-unit id="controlplan.col-control" datatype="html">
-        <source>Contrôle</source>
-        <target state="translated">Control</target>
+        <source>Méthode de contrôle</source>
+        <target state="translated">Método de control</target>
       </trans-unit>
       <trans-unit id="controlplan.col-reaction" datatype="html">
-        <source>Plan de réaction</source>
-        <target state="translated">Plan de reacción</target>
+        <source>Décision / action corrective</source>
+        <target state="translated">Decisión / acción correctiva</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-sop" datatype="html">
+        <source>Procédure</source>
+        <target state="translated">Procedimiento</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-process-step" datatype="html">
+        <source>Étape du procédé</source>
+        <target state="translated">Etapa del proceso</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-input-output" datatype="html">
+        <source>Entrée / sortie</source>
+        <target state="translated">Entrada / salida</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-specified" datatype="html">
+        <source>Caractéristique spécifiée</source>
+        <target state="translated">Característica especificada</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-measurement" datatype="html">
+        <source>Moyen de mesure</source>
+        <target state="translated">Método de medición</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-sample-size" datatype="html">
+        <source>Échantillon</source>
+        <target state="translated">Tamaño de muestra</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-frequency" datatype="html">
+        <source>Fréquence</source>
+        <target state="translated">Frecuencia</target>
+      </trans-unit>
+      <trans-unit id="controlplan.col-recording" datatype="html">
+        <source>Enregistrement</source>
+        <target state="translated">Registro</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-specified" datatype="html">
+        <source>Caractéristique spécifiée</source>
+        <target state="translated">Característica especificada</target>
+      </trans-unit>
+      <trans-unit id="controlplan.field-specified-placeholder" datatype="html">
+        <source>Ex. : cote de coupe ; hauteur de sertissage</source>
+        <target state="translated">Ej.: longitud de corte; altura de engaste</target>
       </trans-unit>
       <trans-unit id="controlplan.col-justification" datatype="html">
         <source>Justification</source>
@@ -16911,8 +16991,8 @@ historial de 12 meses</target>
         <target state="translated">Ninguna</target>
       </trans-unit>
       <trans-unit id="controlplan.field-characteristic" datatype="html">
-        <source>Caractéristique</source>
-        <target state="translated">Característica</target>
+        <source>Ce qui est contrôlé</source>
+        <target state="translated">Qué se controla</target>
       </trans-unit>
       <trans-unit id="controlplan.field-type" datatype="html">
         <source>Type</source>

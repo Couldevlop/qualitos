@@ -21,8 +21,18 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="span-2">
-      <mat-label i18n="@@controlplan.field-characteristic">Caractéristique</mat-label>
+      <mat-label i18n="@@controlplan.field-characteristic">Ce qui est contrôlé</mat-label>
       <input matInput formControlName="characteristicLabel" maxlength="500">
+    </mat-form-field>
+
+    <!-- Deux colonnes distinctes de la trame : on surveille une longueur de
+         fil, on spécifie une cote de coupe. C'est la seconde que l'opérateur
+         mesure et qui porte la tolérance. -->
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label i18n="@@controlplan.field-specified">Caractéristique spécifiée</mat-label>
+      <input matInput formControlName="specifiedCharacteristic" maxlength="500"
+             i18n-placeholder="@@controlplan.field-specified-placeholder"
+             placeholder="Ex. : cote de coupe ; hauteur de sertissage">
     </mat-form-field>
 
     <mat-form-field appearance="outline">

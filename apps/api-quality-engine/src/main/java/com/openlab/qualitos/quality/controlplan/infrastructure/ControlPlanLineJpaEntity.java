@@ -38,6 +38,14 @@ public class ControlPlanLineJpaEntity {
     @Column(name = "characteristic_label", nullable = false, length = 500)
     private String characteristicLabel;
 
+    /**
+     * La caracteristique QUI PORTE LA SPECIFICATION - colonne « Specification
+     * characteristic » de la trame. Distincte de ce qui est surveille : on
+     * surveille une longueur de fil, on specifie une cote de coupe.
+     */
+    @Column(name = "specified_characteristic", length = 500)
+    private String specifiedCharacteristic;
+
     @Column(name = "characteristic_type", nullable = false, length = 20)
     private String characteristicType;
 
@@ -107,6 +115,8 @@ public class ControlPlanLineJpaEntity {
     public void setCharacteristicNo(String v) { this.characteristicNo = v; }
     public String getCharacteristicLabel() { return characteristicLabel; }
     public void setCharacteristicLabel(String v) { this.characteristicLabel = v; }
+    public String getSpecifiedCharacteristic() { return specifiedCharacteristic; }
+    public void setSpecifiedCharacteristic(String v) { this.specifiedCharacteristic = v; }
     public String getCharacteristicType() { return characteristicType; }
     public void setCharacteristicType(String v) { this.characteristicType = v; }
     public String getSpecialClass() { return specialClass; }

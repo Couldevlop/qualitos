@@ -37,6 +37,7 @@ final class ControlPlanMapper {
         e.setSealSha256(p.getSealSha256());
         e.setSealSignature(p.getSealSignature());
         e.setAnchorTxRef(p.getAnchorTxRef());
+        e.setSealVersion(p.getSealVersion());
         return e;
     }
 
@@ -47,7 +48,8 @@ final class ControlPlanMapper {
                 ControlPlanStatus.valueOf(e.getStatus()), e.getOwnerUserId(),
                 e.getApprovedBy(), e.getApprovedAt(), e.getCreatedBy(),
                 e.getCreatedAt(), e.getUpdatedAt(),
-                e.getSealSha256(), e.getSealSignature(), e.getAnchorTxRef());
+                e.getSealSha256(), e.getSealSignature(), e.getAnchorTxRef(),
+                e.getSealVersion());
     }
 
     static ControlPlanLineJpaEntity toEntity(ControlPlanLine l, ControlPlanLineJpaEntity target) {
@@ -60,6 +62,7 @@ final class ControlPlanMapper {
         e.setMachine(l.getMachine());
         e.setCharacteristicNo(l.getCharacteristicNo());
         e.setCharacteristicLabel(l.getCharacteristicLabel());
+        e.setSpecifiedCharacteristic(l.getSpecifiedCharacteristic());
         e.setCharacteristicType(l.getCharacteristicType().name());
         e.setSpecialClass(l.getSpecialClass().name());
         e.setSpecification(l.getSpecification());
@@ -84,7 +87,7 @@ final class ControlPlanMapper {
                 e.getSequenceNo(), e.getCharacteristicLabel(),
                 CharacteristicType.valueOf(e.getCharacteristicType()));
         l.describe(new ControlPlanLine.Details(e.getOperationId(), e.getMachine(),
-                e.getCharacteristicNo(),
+                e.getCharacteristicNo(), e.getSpecifiedCharacteristic(),
                 e.getSpecialClass() == null ? null : CharacteristicClass.valueOf(e.getSpecialClass()),
                 e.getSpecification(), e.getToleranceLower(), e.getToleranceUpper(), e.getUnit(),
                 e.getMeasurementTechnique(), e.getSampleSize(), e.getSampleFrequency(),

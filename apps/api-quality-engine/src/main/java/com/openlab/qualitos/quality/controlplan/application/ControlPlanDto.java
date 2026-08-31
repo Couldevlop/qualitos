@@ -26,7 +26,8 @@ public final class ControlPlanDto {
 
     public record LineCommand(
             int sequenceNo, UUID operationId, String machine, String characteristicNo,
-            String characteristicLabel, CharacteristicType characteristicType,
+            String characteristicLabel, String specifiedCharacteristic,
+            CharacteristicType characteristicType,
             CharacteristicClass specialClass, String specification,
             BigDecimal toleranceLower, BigDecimal toleranceUpper, String unit,
             String measurementTechnique, String sampleSize, String sampleFrequency,
@@ -58,7 +59,8 @@ public final class ControlPlanDto {
 
     public record LineView(
             UUID id, int sequenceNo, UUID operationId, String machine, String characteristicNo,
-            String characteristicLabel, CharacteristicType characteristicType,
+            String characteristicLabel, String specifiedCharacteristic,
+            CharacteristicType characteristicType,
             CharacteristicClass specialClass, String specification,
             BigDecimal toleranceLower, BigDecimal toleranceUpper, String unit,
             String measurementTechnique, String sampleSize, String sampleFrequency,
@@ -69,7 +71,8 @@ public final class ControlPlanDto {
         public static LineView of(ControlPlanLine l) {
             return new LineView(
                     l.getId(), l.getSequenceNo(), l.getOperationId(), l.getMachine(),
-                    l.getCharacteristicNo(), l.getCharacteristicLabel(), l.getCharacteristicType(),
+                    l.getCharacteristicNo(), l.getCharacteristicLabel(),
+                    l.getSpecifiedCharacteristic(), l.getCharacteristicType(),
                     l.getSpecialClass(), l.getSpecification(), l.getToleranceLower(),
                     l.getToleranceUpper(), l.getUnit(), l.getMeasurementTechnique(),
                     l.getSampleSize(), l.getSampleFrequency(), l.getControlMethod(),

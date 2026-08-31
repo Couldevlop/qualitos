@@ -60,9 +60,9 @@ export interface FmeaSeverityRow { effect: string; description: string; score: n
 export interface FmeaDetectionRow { chance: string; description: string; score: number; }
 
 /**
- * Une ligne du bareme d'occurrence. `probability` est vide sur les lignes que
- * le referentiel regroupe sous l'intitule precedent - on ne complete pas ce
- * qu'il laisse en blanc.
+ * Une ligne du bareme d'occurrence. Le classeur FUSIONNE l'intitule sur
+ * plusieurs scores (« Moderate » couvre 6, 5 et 4) ; il est recopie sur chaque
+ * ligne, parce qu'un score sans nom ne se cote pas.
  */
 export interface FmeaOccurrenceRow {
   probability: string; timePeriod: string; failureRate: string; score: number;
@@ -118,9 +118,19 @@ def render():
 
     out.append('/** Occurrence : frequence attendue de la defaillance. */')
     out.append('export const FMEA_OCCURRENCE_SCALE: ReadonlyArray<FmeaOccurrenceRow> = [')
+    # La colonne « Probability of Failure » est FUSIONNEE dans le classeur :
+    # « Very High » couvre 10 et 9, « Moderate » couvre 6, 5 et 4 (plages I5:I6,
+    # I7:I8, I9:I11). openpyxl ne rend la valeur que sur la premiere cellule du
+    # bloc. Recopier l'intitule sur tout le bloc, c'est lire la fusion pour ce
+    # qu'elle dit ; laisser vide produirait un bareme ou la moitie des scores
+    # n'a aucun nom - et un tenant ne pourrait pas l'adopter tel quel.
+    inherited = ''
     for row in SCALE_ROWS:
+        cell = scales.cell(row, 9).value
+        if cell is not None and str(cell).strip():
+            inherited = str(cell)
         out.append('  { probability: %s, timePeriod: %s, failureRate: %s, score: %s },' % (
-            text(scales.cell(row, 9).value),
+            text(inherited),
             text(scales.cell(row, 10).value),
             text(scales.cell(row, 11).value),
             score(scales.cell(row, 12).value)))

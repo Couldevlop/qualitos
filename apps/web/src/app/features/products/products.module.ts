@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterModule, Routes } from '@angular/router';
 
+import { FmeaReferenceModule } from '../fmea/fmea-reference.module';
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
 import { ComponentDialogComponent } from './pages/component-dialog/component-dialog.component';
@@ -43,6 +44,7 @@ const routes: Routes = [
   // FormsModule et MatMenuModule ne sont réexportés ni par SharedModule ni par
   // UiModule : les specs les importent d'eux-mêmes et ne voient donc pas leur
   // absence — seul le build de production la voit.
-  imports: [SharedModule, UiModule, FormsModule, MatMenuModule, RouterModule.forChild(routes)]
+  imports: [SharedModule, UiModule, FormsModule, MatMenuModule, FmeaReferenceModule,
+            RouterModule.forChild(routes)]
 })
 export class ProductsModule {}

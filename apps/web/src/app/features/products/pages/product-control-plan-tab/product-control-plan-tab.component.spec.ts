@@ -44,7 +44,10 @@ describe('ProductControlPlanTabComponent', () => {
   async function setup(roles: string[]): Promise<void> {
     service = jasmine.createSpyObj<ProductsService>('ProductsService',
       ['controlPlans', 'controlPlan', 'createControlPlan', 'openRevision',
-        'approveControlPlan', 'deleteLine']);
+        'approveControlPlan', 'deleteLine', 'operations']);
+    // La gamme sert a NOMMER l'etape du procede : sans elle, la colonne affiche
+    // un tiret, mais le plan s'affiche.
+    service.operations.and.returnValue(of([]));
     auth = jasmine.createSpyObj<AuthService>('AuthService', ['hasAnyRole', 'stepUp']);
     action = new Subject<void>();
     snack = { open: jasmine.createSpy('open').and.returnValue({ onAction: () => action }) };
@@ -66,6 +69,122 @@ describe('ProductControlPlanTabComponent', () => {
     component = fixture.componentInstance;
     component.productId = 'p-1';
   }
+
+  /**
+   * Le control plan est un document à colonnes : c'est ainsi qu'il se lit au
+   * poste et qu'un auditeur le confronte à la trame. Les colonnes étaient
+   * regroupées quatre par quatre sous des en-têtes de synthèse, ce qui rendait
+   * impossible de comparer deux lignes sur une même grandeur.
+   */
+  it('porte les treize colonnes de la trame, une par une', fakeAsync(async () => {
+    await setup(['DIRECTOR_QUALITY']);
+    service.controlPlans.and.returnValue(of([plan()]));
+    service.controlPlan.and.returnValue(of({ plan: plan(), lines: [line()] }));
+
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+
+    expect(component.columns).toEqual([
+      'sequenceNo', 'sopReference', 'processStep', 'characteristic',
+      'inputOutput', 'specifiedCharacteristic', 'specification', 'measurementTechnique',
+      'controlMethod', 'sampleSize', 'sampleFrequency', 'whoMeasures', 'recordingLocation',
+      'reaction', 'justification', 'actions'
+    ]);
+
+    const entetes = Array.from((fixture.nativeElement as HTMLElement)
+      .querySelectorAll('.cp-table th')).map(th => (th.textContent ?? '').trim());
+    for (const attendu of ['Procédure', 'Étape du procédé', 'Ce qui est contrôlé',
+      'Entrée / sortie', 'Caractéristique spécifiée', 'Spécification',
+      'Moyen de mesure', 'Méthode de contrôle', 'Échantillon', 'Fréquence',
+      'Qui mesure', 'Enregistrement', 'Décision / action corrective']) {
+      expect(entetes).withContext(attendu).toContain(attendu);
+    }
+  }));
+
+  it('rend chaque colonne de la trame avec sa propre valeur', fakeAsync(async () => {
+    await setup(['DIRECTOR_QUALITY']);
+    service.controlPlans.and.returnValue(of([plan()]));
+    service.controlPlan.and.returnValue(of({
+      plan: plan(),
+      lines: [line({
+        sopReference: 'SOP-101',
+        specifiedCharacteristic: 'Cote de coupe',
+        inputOutput: 'OUTPUT',
+        specification: 'Selon plan ± 3 mm',
+        measurementTechnique: 'Mètre ruban étalonné',
+        controlMethod: 'Vérification laser en ligne',
+        sampleSize: '100 % (automatisé)',
+        sampleFrequency: 'Chaque fil',
+        whoMeasures: 'Opérateur de ligne',
+        recordingLocation: 'Production',
+        reactionPlan: 'Rebuter et recouper'
+      })]
+    }));
+
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+
+    const cellules = Array.from((fixture.nativeElement as HTMLElement)
+      .querySelectorAll('.cp-table tbody td')).map(td => (td.textContent ?? '').trim());
+    const cellule = (colonne: string) => cellules[component.columns.indexOf(colonne)];
+
+    expect(cellule('sopReference')).toBe('SOP-101');
+    expect(cellule('specifiedCharacteristic')).toBe('Cote de coupe');
+    expect(cellule('inputOutput')).toBe('OUTPUT');
+    expect(cellule('specification')).toContain('Selon plan');
+    expect(cellule('measurementTechnique')).toBe('Mètre ruban étalonné');
+    expect(cellule('controlMethod')).toBe('Vérification laser en ligne');
+    expect(cellule('sampleSize')).toBe('100 % (automatisé)');
+    expect(cellule('sampleFrequency')).toBe('Chaque fil');
+    expect(cellule('whoMeasures')).toBe('Opérateur de ligne');
+    expect(cellule('recordingLocation')).toBe('Production');
+    expect(cellule('reaction')).toBe('Rebuter et recouper');
+  }));
+
+  it('nomme l\'étape du procédé au lieu d\'en afficher l\'identifiant', fakeAsync(async () => {
+    await setup(['DIRECTOR_QUALITY']);
+    service.operations.and.returnValue(of([
+      { id: 'op-1', sequenceNo: 10, code: '30', label: 'Sertissage' }
+    ]));
+    service.controlPlans.and.returnValue(of([plan()]));
+    service.controlPlan.and.returnValue(of({
+      plan: plan(), lines: [line({ operationId: 'op-1' })]
+    }));
+
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+
+    expect(component.operationLabel('op-1')).toBe('30 · Sertissage');
+    // Un UUID dans une colonne « Étape » n'apprend rien à l'opérateur.
+    expect((fixture.nativeElement as HTMLElement).textContent).not.toContain('op-1');
+  }));
+
+  it('affiche un tiret quand la ligne ne se rattache à aucune opération', fakeAsync(async () => {
+    await setup(['DIRECTOR_QUALITY']);
+
+    // La trame l'admet : un contrôle peut porter sur le produit fini, hors gamme.
+    expect(component.operationLabel(undefined)).toBe('—');
+    expect(component.operationLabel('op-inconnue')).toBe('—');
+  }));
+
+  it('affiche quand même le plan si la gamme est indisponible', fakeAsync(async () => {
+    await setup(['DIRECTOR_QUALITY']);
+    service.operations.and.returnValue(throwError(() => new Error('503')));
+    service.controlPlans.and.returnValue(of([plan()]));
+    service.controlPlan.and.returnValue(of({ plan: plan(), lines: [line()] }));
+
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+
+    // Une colonne « Étape » vide vaut mieux qu'un control plan qui ne s'affiche pas.
+    expect(component.operations).toEqual([]);
+    expect((fixture.nativeElement as HTMLElement).querySelectorAll('.cp-table tbody tr').length)
+      .toBe(1);
+  }));
 
   it('marque « sans justification » une ligne qui ne cite aucune ligne de PFMEA', fakeAsync(async () => {
     await setup(['QUALITY_MANAGER']);

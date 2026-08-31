@@ -2,13 +2,17 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import { of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ProductsService } from '../../products.service';
 import {
   ControlPlanDetail,
   ControlPlanLineView,
   ControlPlanPhase,
-  ControlPlanView
+  ControlPlanView,
+  ProductOperationResponse
 } from '../../products.types';
 import {
   ControlPlanLineDialogComponent
@@ -32,16 +36,33 @@ export class ProductControlPlanTabComponent implements OnInit {
   @Input() productId = '';
 
   /**
-   * Les colonnes de la trame AIAG, dans l'ordre où elle les lit. « Où » —
-   * procédure et lieu d'enregistrement — vient en dernier avant les
-   * commandes : c'est ce que l'auditeur suit, pas ce que l'opérateur
-   * consulte au poste.
+   * TOUTES les colonnes de la trame, dans l'ordre où elle les lit, une par
+   * colonne d'écran.
+   *
+   * <p>Elles étaient auparavant regroupées quatre par quatre sous des en-têtes
+   * de synthèse — « Contrôle » réunissait méthode, technique et fréquence. La
+   * table tenait dans la largeur, mais on ne pouvait plus comparer deux lignes
+   * sur une même grandeur, ni retrouver une colonne de la trame en la
+   * cherchant par son nom. Un control plan se lit en colonnes, poste par
+   * poste : c'est sa fonction.
+   *
+   * <p>La table défile horizontalement plutôt que de compresser : mieux vaut
+   * faire glisser que deviner.
    */
-  readonly columns = ['sequenceNo', 'characteristic', 'specification', 'control',
-    'measuredBy', 'reaction', 'justification', 'trace', 'actions'];
+  readonly columns = ['sequenceNo', 'sopReference', 'processStep', 'characteristic',
+    'inputOutput', 'specifiedCharacteristic', 'specification', 'measurementTechnique',
+    'controlMethod', 'sampleSize', 'sampleFrequency', 'whoMeasures', 'recordingLocation',
+    'reaction', 'justification', 'actions'];
   readonly phases: ControlPlanPhase[] = ['PROTOTYPE', 'PRE_LAUNCH', 'PRODUCTION'];
 
   plans: ControlPlanView[] = [];
+
+  /**
+   * Les opérations du produit, pour nommer l'étape du procédé au lieu d'en
+   * afficher l'identifiant. Chargées une fois : la colonne « Étape » se lit sur
+   * chaque ligne, et une requête par ligne serait absurde.
+   */
+  operations: ProductOperationResponse[] = [];
   selected?: ControlPlanDetail;
   loading = false;
 
@@ -54,6 +75,23 @@ export class ProductControlPlanTabComponent implements OnInit {
 
   ngOnInit(): void {
     this.reload();
+    // La gamme sert à NOMMER l'étape du procédé sur chaque ligne. Son échec ne
+    // doit pas emporter le plan : une colonne « Étape » vide vaut mieux qu'un
+    // control plan qui ne s'affiche pas.
+    this.service.operations(this.productId)
+      .pipe(catchError(() => of([] as ProductOperationResponse[])))
+      .subscribe(operations => (this.operations = operations));
+  }
+
+  /**
+   * L'étape du procédé, telle que la gamme la nomme — « 30 · Sertissage » et
+   * non un UUID. Tiret quand la ligne n'est rattachée à aucune opération : la
+   * trame l'admet, un contrôle peut porter sur le produit fini.
+   */
+  operationLabel(operationId?: string): string {
+    if (!operationId) return '—';
+    const operation = this.operations.find(o => o.id === operationId);
+    return operation ? `${operation.code} · ${operation.label}` : '—';
   }
 
   /**

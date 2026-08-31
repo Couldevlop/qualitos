@@ -23,9 +23,9 @@ export interface FmeaSeverityRow { effect: string; description: string; score: n
 export interface FmeaDetectionRow { chance: string; description: string; score: number; }
 
 /**
- * Une ligne du bareme d'occurrence. `probability` est vide sur les lignes que
- * le referentiel regroupe sous l'intitule precedent - on ne complete pas ce
- * qu'il laisse en blanc.
+ * Une ligne du bareme d'occurrence. Le classeur FUSIONNE l'intitule sur
+ * plusieurs scores (« Moderate » couvre 6, 5 et 4) ; il est recopie sur chaque
+ * ligne, parce qu'un score sans nom ne se cote pas.
  */
 export interface FmeaOccurrenceRow {
   probability: string; timePeriod: string; failureRate: string; score: number;
@@ -69,12 +69,12 @@ export const FMEA_DETECTION_SCALE: ReadonlyArray<FmeaDetectionRow> = [
 /** Occurrence : frequence attendue de la defaillance. */
 export const FMEA_OCCURRENCE_SCALE: ReadonlyArray<FmeaOccurrenceRow> = [
   { probability: "Very High", timePeriod: "More than once per day", failureRate: "> 1 in 2", score: 10 },
-  { probability: '', timePeriod: "Once every 3-4 days", failureRate: "1 in 3000", score: 9 },
+  { probability: "Very High", timePeriod: "Once every 3-4 days", failureRate: "1 in 3000", score: 9 },
   { probability: "High", timePeriod: "Once every week", failureRate: "1 in 8", score: 8 },
-  { probability: '', timePeriod: "Once every month", failureRate: "1 in 20", score: 7 },
+  { probability: "High", timePeriod: "Once every month", failureRate: "1 in 20", score: 7 },
   { probability: "Moderate", timePeriod: "Once every 3 months", failureRate: "1 in 800", score: 6 },
-  { probability: '', timePeriod: "Once every 6 months", failureRate: "1 in 400", score: 5 },
-  { probability: '', timePeriod: "Once a year", failureRate: "1 in 800", score: 4 },
+  { probability: "Moderate", timePeriod: "Once every 6 months", failureRate: "1 in 400", score: 5 },
+  { probability: "Moderate", timePeriod: "Once a year", failureRate: "1 in 800", score: 4 },
   { probability: "Low", timePeriod: "Once every 1 - 3 years", failureRate: "1 in 1500", score: 3 },
   { probability: "Very Low", timePeriod: "Once every 3 - 6 years", failureRate: "1 in 3000", score: 2 },
   { probability: "Remote", timePeriod: "Once Every 7+ Years", failureRate: "1 in 6000", score: 1 },

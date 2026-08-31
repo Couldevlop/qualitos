@@ -105,6 +105,12 @@ export interface ControlPlanLineView {
   machine?: string;
   characteristicNo?: string;
   characteristicLabel: string;
+  /**
+   * La grandeur qui PORTE la spécification — colonne « Specification
+   * characteristic » de la trame. Distincte de ce qui est surveillé : on
+   * surveille une longueur de fil, on spécifie une cote de coupe.
+   */
+  specifiedCharacteristic?: string;
   characteristicType: CharacteristicType;
   specialClass?: CharacteristicClass;
   specification?: string;
@@ -149,6 +155,8 @@ export interface ControlPlanLineRequest {
   machine?: string;
   characteristicNo?: string;
   characteristicLabel: string;
+  /** Colonne « Specification characteristic » de la trame ; facultative. */
+  specifiedCharacteristic?: string;
   characteristicType: CharacteristicType;
   specialClass?: CharacteristicClass;
   specification?: string;

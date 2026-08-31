@@ -1,3 +1,15 @@
+<!--
+  Le barème AVANT la cotation, et depuis l'écran où l'on cote : demander un
+  chiffre de 1 à 10 sans dire ce que le 8 signifie dans CETTE organisation,
+  c'est produire des RPN qui ne se comparent pas.
+-->
+<div class="pfmea-actions">
+  <button mat-stroked-button type="button" (click)="openReference()">
+    <mat-icon aria-hidden="true">menu_book</mat-icon>
+    <span i18n="@@fmea.reference.open">Référentiel de cotation</span>
+  </button>
+</div>
+
 <div class="state-row" *ngIf="loading" role="status">
   <mat-progress-spinner mode="indeterminate" diameter="32"
                         aria-label="Chargement" i18n-aria-label="@@common.loading-aria"></mat-progress-spinner>

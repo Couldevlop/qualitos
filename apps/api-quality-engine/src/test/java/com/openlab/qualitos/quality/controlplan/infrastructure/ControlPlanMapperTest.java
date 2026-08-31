@@ -32,7 +32,7 @@ class ControlPlanMapperTest {
     void aPlanSurvivesTheRoundTrip() {
         ControlPlan source = ControlPlan.rehydrate(PLAN, TENANT, PRODUCT,
                 ControlPlanPhase.PRE_LAUNCH, "CP-4471", 4, ControlPlanStatus.ACTIVE,
-                USER, USER, NOW, USER, NOW, NOW.plusSeconds(60), "0f5a", "sig", "tx-1");
+                USER, USER, NOW, USER, NOW, NOW.plusSeconds(60), "0f5a", "sig", "tx-1", 2);
 
         ControlPlan back = ControlPlanMapper.toDomain(ControlPlanMapper.toEntity(source, null));
 
@@ -69,7 +69,7 @@ class ControlPlanMapperTest {
         existing.setId(PLAN);
         ControlPlan source = ControlPlan.rehydrate(PLAN, TENANT, PRODUCT,
                 ControlPlanPhase.PRODUCTION, "CP-2", 2, ControlPlanStatus.DRAFT,
-                null, null, null, USER, NOW, NOW, null, null, null);
+                null, null, null, USER, NOW, NOW, null, null, null, 0);
 
         ControlPlanJpaEntity target = ControlPlanMapper.toEntity(source, existing);
 
@@ -85,7 +85,7 @@ class ControlPlanMapperTest {
         ControlPlanLine source = ControlPlanLine.rehydrate(lineId, TENANT, PLAN, 30,
                 "Diamètre alésage", CharacteristicType.PRODUCT);
         source.describe(new ControlPlanLine.Details(operation, "Tour CN 3", "12",
-                CharacteristicClass.SAFETY, "Ø 20 ±0,05",
+                "Cote de coupe", CharacteristicClass.SAFETY, "Ø 20 ±0,05",
                 new BigDecimal("19.950000"), new BigDecimal("20.050000"), "mm",
                 "Micromètre", "100 %", "1 pièce / heure", "Carte X-R", "Tri à 100 %",
                 "SOP-103", InputOutput.OUTPUT, "Opérateur", "Journal qualité"));

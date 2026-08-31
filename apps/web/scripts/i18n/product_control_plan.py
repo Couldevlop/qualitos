@@ -123,18 +123,66 @@ TRANSLATIONS = {
     'controlplan.field-recording': ("Lieu d'enregistrement", 'Recording location', 'Lugar de registro', 'مكان التسجيل', '記録の保管場所', '记录存放位置'),
     'controlplan.field-recording-hint': ("Où l'auditeur ira chercher la preuve que le contrôle a eu lieu.", 'Where the auditor will look for evidence that the check took place.', 'Donde el auditor buscará la prueba de que el control se realizó.', 'حيث سيبحث المدقق عن دليل على إجراء الفحص.', '検査が行われた証拠を監査員が探す場所です。', '审核员将在此查找检验已执行的证据。'),
     'controlplan.col-measured-by': ('Qui mesure', 'Measured by', 'Quién mide', 'من يقيس', '測定者', '测量方'),
-    'controlplan.col-trace': ('Trace', 'Trace', 'Traza', 'الأثر', '記録', '追溯'),
     'controlplan.locked': ('Ce plan est approuvé : ouvrez une révision pour le modifier.', 'This plan is approved: open a revision to change it.', 'Este plan está aprobado: abra una revisión para modificarlo.', 'هذه الخطة معتمدة: افتح مراجعة لتعديلها.', 'この計画書は承認済みです。変更するには改訂を開いてください。', '该计划已批准：如需修改，请开启修订。'),
-    'controlplan.col-characteristic': ('Caractéristique', 'Characteristic', 'Característica', 'الخاصية', '特性', '特性'),
+    'controlplan.col-characteristic': (
+        "Ce qui est contrôlé", "What's controlled", 'Qué se controla',
+        'ما يخضع للمراقبة', '管理対象', '受控对象'),
     'controlplan.col-spec': ('Spécification', 'Specification', 'Especificación', 'المواصفة', '規格', '规范'),
-    'controlplan.col-control': ('Contrôle', 'Control', 'Control', 'الفحص', '管理方法', '控制'),
-    'controlplan.col-reaction': ('Plan de réaction', 'Reaction plan', 'Plan de reacción', 'خطة الاستجابة', '異常時の処置', '反应计划'),
+    'controlplan.col-control': (
+        'Méthode de contrôle', 'Method of control', 'Método de control',
+        'طريقة الضبط', '管理方法', '控制方法'),
+    'controlplan.col-reaction': (
+        'Décision / action corrective', 'Decision / corrective action',
+        'Decisión / acción correctiva', 'القرار / الإجراء التصحيحي',
+        '判定・是正処置', '判定 / 纠正措施'),
+    # --- les colonnes de la trame qui n'etaient pas affichees ----------------
+    # Elles existaient en base depuis la V116 mais restaient invisibles,
+    # regroupees sous des en-tetes de synthese. Une colonne du document = une
+    # colonne d'ecran.
+    'controlplan.col-sop': (
+        'Procédure', 'Procedure', 'Procedimiento',
+        'الإجراء', '手順書', '作业指导书'),
+    'controlplan.col-process-step': (
+        'Étape du procédé', 'Process step', 'Etapa del proceso',
+        'خطوة العملية', '工程ステップ', '过程步骤'),
+    'controlplan.col-input-output': (
+        'Entrée / sortie', 'Input / output', 'Entrada / salida',
+        'مدخل / مخرج', '入力・出力', '输入 / 输出'),
+    'controlplan.col-specified': (
+        'Caractéristique spécifiée', 'Specification characteristic',
+        'Característica especificada', 'الخاصية المواصفة',
+        '規格特性', '规范特性'),
+    'controlplan.col-measurement': (
+        'Moyen de mesure', 'Method of measurement', 'Método de medición',
+        'وسيلة القياس', '測定方法', '测量方法'),
+    'controlplan.col-sample-size': (
+        'Échantillon', 'Sample size', 'Tamaño de muestra',
+        'حجم العينة', 'サンプル数', '样本量'),
+    'controlplan.col-frequency': (
+        'Fréquence', 'Frequency', 'Frecuencia',
+        'التكرار', '頻度', '频次'),
+    'controlplan.col-recording': (
+        'Enregistrement', 'Recording location', 'Registro',
+        'مكان الحفظ', '記録場所', '记录位置'),
+    'controlplan.field-specified': (
+        'Caractéristique spécifiée', 'Specification characteristic',
+        'Característica especificada', 'الخاصية المواصفة',
+        '規格特性', '规范特性'),
+    'controlplan.field-specified-placeholder': (
+        'Ex. : cote de coupe ; hauteur de sertissage',
+        'E.g. cut length; crimp height',
+        'Ej.: longitud de corte; altura de engaste',
+        'مثال: طول القص؛ ارتفاع الكبس',
+        '例：切断寸法、圧着高さ',
+        '例：下料长度；压接高度'),
     'controlplan.col-justification': ('Justification', 'Justification', 'Justificación', 'المبرّر', '根拠', '依据'),
     'controlplan.justified': ('PFMEA', 'PFMEA', 'PFMEA', 'PFMEA', 'PFMEA', 'PFMEA'),
     'controlplan.unjustified': ('sans justification', 'unjustified', 'sin justificación', 'بلا مبرّر', '根拠なし', '无依据'),
     'controlplan.field-operation': ('Opération', 'Operation', 'Operación', 'العملية', '工程', '工序'),
     'controlplan.field-none': ('Aucune', 'None', 'Ninguna', 'لا شيء', 'なし', '无'),
-    'controlplan.field-characteristic': ('Caractéristique', 'Characteristic', 'Característica', 'الخاصية', '特性', '特性'),
+    'controlplan.field-characteristic': (
+        "Ce qui est contrôlé", "What's controlled", 'Qué se controla',
+        'ما يخضع للمراقبة', '管理対象', '受控对象'),
     'controlplan.field-type': ('Type', 'Type', 'Tipo', 'النوع', '種別', '类型'),
     'controlplan.field-class': ('Classement', 'Classification', 'Clasificación', 'التصنيف', '区分', '分类'),
     'controlplan.field-spec': ('Spécification', 'Specification', 'Especificación', 'المواصفة', '規格', '规范'),

@@ -30,6 +30,13 @@ public final class ControlPlan {
     private String sealSha256;
     private String sealSignature;
     private String anchorTxRef;
+    /**
+     * Version du calcul d'empreinte employée au scellement. Sans elle, un
+     * auditeur ne saurait pas AVEC QUOI rejouer le hachage d'un plan ancien, et
+     * conclurait à une falsification là où le calcul a simplement été complété
+     * depuis (voir {@link ControlPlanFingerprint}).
+     */
+    private int sealVersion;
 
     private ControlPlan(UUID tenantId, UUID productId, ControlPlanPhase phase, String code,
                         int revision, UUID createdBy, Instant now) {
@@ -56,7 +63,7 @@ public final class ControlPlan {
                                         UUID approvedBy, Instant approvedAt, UUID createdBy,
                                         Instant createdAt, Instant updatedAt,
                                         String sealSha256, String sealSignature,
-                                        String anchorTxRef) {
+                                        String anchorTxRef, int sealVersion) {
         ControlPlan plan = new ControlPlan(tenantId, productId, phase, code, revision, createdBy, createdAt);
         plan.id = id;
         plan.status = status == null ? ControlPlanStatus.DRAFT : status;
@@ -67,6 +74,10 @@ public final class ControlPlan {
         plan.sealSha256 = sealSha256;
         plan.sealSignature = sealSignature;
         plan.anchorTxRef = anchorTxRef;
+        // Un plan scellé avant le versionnement ne porte rien en base : c'est
+        // par définition la version 1, la seule qui existait alors.
+        plan.sealVersion = sealVersion > 0 ? sealVersion
+                : (sealSha256 != null ? ControlPlanFingerprint.VERSION_1 : 0);
         return plan;
     }
 
@@ -128,6 +139,7 @@ public final class ControlPlan {
         this.sealSha256 = hash;
         this.sealSignature = sig;
         this.anchorTxRef = tx;
+        this.sealVersion = ControlPlanFingerprint.CURRENT_VERSION;
     }
 
     private static String requireText(String value, String field) {
@@ -190,6 +202,8 @@ public final class ControlPlan {
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
     public String getSealSha256() { return sealSha256; }
+    /** 0 tant que le plan n'est pas scellé. */
+    public int getSealVersion() { return sealVersion; }
     public String getSealSignature() { return sealSignature; }
     public String getAnchorTxRef() { return anchorTxRef; }
 }

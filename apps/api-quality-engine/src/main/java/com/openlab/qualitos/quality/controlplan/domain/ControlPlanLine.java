@@ -25,6 +25,7 @@ public final class ControlPlanLine {
     private String machine;
     private String characteristicNo;
     private String characteristicLabel;
+    private String specifiedCharacteristic;
     private CharacteristicType characteristicType;
     private CharacteristicClass specialClass;
     private String specification;
@@ -83,6 +84,7 @@ public final class ControlPlanLine {
      * tolérance haute.
      */
     public record Details(UUID operationId, String machine, String characteristicNo,
+                          String specifiedCharacteristic,
                           CharacteristicClass specialClass, String specification,
                           BigDecimal toleranceLower, BigDecimal toleranceUpper, String unit,
                           String measurementTechnique, String sampleSize, String sampleFrequency,
@@ -101,6 +103,12 @@ public final class ControlPlanLine {
         this.operationId = details.operationId();
         this.machine = details.machine();
         this.characteristicNo = details.characteristicNo();
+        // « Ce qui est surveillé » et « la caractéristique spécifiée » sont deux
+        // colonnes distinctes de la trame : on surveille une longueur de fil, on
+        // spécifie une cote de coupe. Les confondre revient à perdre la
+        // grandeur réellement mesurée, celle qui porte la tolérance.
+        this.specifiedCharacteristic = bounded(details.specifiedCharacteristic(), 500,
+                "specifiedCharacteristic");
         this.specialClass = details.specialClass() == null
                 ? CharacteristicClass.STANDARD : details.specialClass();
         this.specification = details.specification();
@@ -150,6 +158,7 @@ public final class ControlPlanLine {
     public String getMachine() { return machine; }
     public String getCharacteristicNo() { return characteristicNo; }
     public String getCharacteristicLabel() { return characteristicLabel; }
+    public String getSpecifiedCharacteristic() { return specifiedCharacteristic; }
     public CharacteristicType getCharacteristicType() { return characteristicType; }
     public CharacteristicClass getSpecialClass() { return specialClass; }
     public String getSpecification() { return specification; }

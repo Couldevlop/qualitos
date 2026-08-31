@@ -145,3 +145,38 @@ export interface FmeaProjectStatistics {
   averageRpn: number;
   criticalRpnThreshold: number;
 }
+
+// ---------- Référentiel de cotation (barèmes S/O/D) ----------
+
+/** Les trois échelles dont le produit fait le RPN. */
+export type FmeaScaleKind = 'SEVERITY' | 'OCCURRENCE' | 'DETECTION';
+
+/** Une ligne de barème : ce que vaut un score, et pourquoi. */
+export interface FmeaScaleRow {
+  score: number;
+  label: string;
+  description?: string;
+  /** Occurrence seulement : « une fois par semaine ». */
+  timePeriod?: string;
+  /** Occurrence seulement : « 1 sur 8 ». */
+  failureRate?: string;
+}
+
+/**
+ * Une échelle telle que le serveur la rend.
+ *
+ * <p>`custom` dit si l'organisation cote sur SON barème ou sur celui de
+ * référence. Ce n'est pas cosmétique : deux RPN issus de barèmes différents ne
+ * se comparent pas, et l'écran doit pouvoir le signaler.
+ */
+export interface FmeaScaleView {
+  kind: FmeaScaleKind;
+  custom: boolean;
+  rows: FmeaScaleRow[];
+  updatedBy?: string;
+  updatedAt?: string;
+}
+
+export interface FmeaScaleReference {
+  scales: FmeaScaleView[];
+}

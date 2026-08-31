@@ -103,7 +103,11 @@ quitter l'analyse en cours.
 
 Deux choix méritent d'être écrits :
 
-- **Constante du code, pas donnée de tenant.** Ce ne sont pas les données d'une
+- **Constante du code, pas donnée de tenant.** *(Point REMPLACÉ par l'ADR 0064
+  du 2026-08-31 : le barème devient redéfinissable par le tenant, servi par
+  défaut et jamais copié, et chaque redéfinition s'inscrit au journal chaîné.
+  L'objection ci-dessous reste valable — c'est le SILENCE qu'elle vise, et c'est
+  lui que 0064 supprime.)* Ce ne sont pas les données d'une
   organisation, ce sont les règles de lecture des chiffres. Les stocker en base
   supposerait qu'un tenant puisse les modifier — et un barème modifié
   silencieusement invalide toutes les cotations passées.

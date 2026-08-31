@@ -120,7 +120,8 @@ public class ControlPlanController {
     private static ControlPlanDto.LineCommand toCommand(ControlPlanWebDto.LineRequest req) {
         return new ControlPlanDto.LineCommand(
                 req.sequenceNo(), req.operationId(), req.machine(), req.characteristicNo(),
-                req.characteristicLabel(), req.characteristicType(), req.specialClass(),
+                req.characteristicLabel(), req.specifiedCharacteristic(),
+                req.characteristicType(), req.specialClass(),
                 req.specification(), req.toleranceLower(), req.toleranceUpper(), req.unit(),
                 req.measurementTechnique(), req.sampleSize(), req.sampleFrequency(),
                 req.controlMethod(), req.reactionPlan(), req.fmeaItemId(),

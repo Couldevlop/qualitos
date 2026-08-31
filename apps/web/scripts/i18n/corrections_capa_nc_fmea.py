@@ -87,6 +87,63 @@ TRANSLATIONS = {
     'common.close-aria': (
         'Fermer', 'Close', 'Cerrar', 'إغلاق', '閉じる', '关闭'),
 
+    # --- referentiel de cotation propre au tenant ----------------------------
+    # « Perturbation majeure du service » ne recouvre pas la meme realite dans
+    # un atelier de sertissage et dans un centre d'appels : le bareme appartient
+    # a l'organisation, et l'ecran doit dire lequel est en vigueur.
+    'fmea.reference.custom-badge': (
+        "Barème de l'organisation", 'Organisation scale', 'Escala de la organización',
+        'مقياس المؤسسة', '自社の評価基準', '本组织标尺'),
+    'fmea.reference.default-badge': (
+        'Barème de référence', 'Reference scale', 'Escala de referencia',
+        'المقياس المرجعي', '標準の評価基準', '参考标尺'),
+    'fmea.reference.updated': (
+        'Modifié le', 'Updated on', 'Modificado el',
+        'عُدّل في', '更新日', '修改于'),
+    'fmea.reference.edit': (
+        'Adapter ce barème', 'Adapt this scale', 'Adaptar esta escala',
+        'تكييف هذا المقياس', 'この基準を調整', '调整该标尺'),
+    'fmea.reference.revert': (
+        'Rétablir la référence', 'Restore the reference', 'Restaurar la referencia',
+        'استعادة المرجع', '標準に戻す', '恢复参考标尺'),
+    'fmea.reference.incomplete': (
+        'Chaque score doit porter un intitulé. Manquent les scores :',
+        'Every score needs a label. Missing scores:',
+        'Cada puntuación necesita un título. Faltan las puntuaciones:',
+        'كل درجة تحتاج إلى عنوان. الدرجات الناقصة:',
+        'すべての点数に見出しが必要です。未記入の点数：',
+        '每个分值都需要名称。缺少的分值：'),
+    'fmea.reference.edit-hint': (
+        "Le barème adopté ici sert à toute l'organisation. Les cotations déjà "
+        "enregistrées ne changent pas de valeur, mais elles ont été portées sur "
+        "l'échelle précédente : ne le modifiez pas au milieu d'une analyse.",
+        'The scale adopted here applies to the whole organisation. Ratings already '
+        'recorded keep their value, but they were given on the previous scale: '
+        'do not change it in the middle of an analysis.',
+        'La escala adoptada aquí se aplica a toda la organización. Las puntuaciones '
+        'ya registradas conservan su valor, pero se dieron con la escala anterior: '
+        'no la cambie en mitad de un análisis.',
+        'المقياس المعتمد هنا يسري على المؤسسة كلها. التقييمات المسجَّلة سابقًا تحتفظ '
+        'بقيمتها، لكنها أُعطيت وفق المقياس السابق: لا تغيّره في منتصف تحليل جارٍ.',
+        'ここで採用した基準は組織全体に適用されます。記録済みの評点は値を変えませんが、'
+        '前の基準で付けられたものです。分析の途中で変更しないでください。',
+        '此处采用的标尺适用于整个组织。已记录的评分数值不变，但它们是按旧标尺给出的：'
+        '请勿在分析进行中修改。'),
+    'fmea.reference.saved': (
+        'Barème enregistré.', 'Scale saved.', 'Escala guardada.',
+        'تم حفظ المقياس.', '評価基準を保存しました。', '标尺已保存。'),
+    'fmea.reference.reverted': (
+        'Barème de référence rétabli.', 'Reference scale restored.',
+        'Escala de referencia restaurada.', 'تمت استعادة المقياس المرجعي.',
+        '標準の評価基準に戻しました。', '已恢复参考标尺。'),
+    'fmea.reference.save-failed': (
+        'Barème refusé.', 'Scale rejected.', 'Escala rechazada.',
+        'تم رفض المقياس.', '評価基準が拒否されました。', '标尺被拒绝。'),
+    'fmea.reference.load-failed': (
+        'Référentiel de cotation indisponible.', 'Rating reference unavailable.',
+        'Referencia de puntuación no disponible.', 'مرجع التقييم غير متاح.',
+        '評価基準を読み込めません。', '评分基准不可用。'),
+
     # --- FMEA : referentiel de cotation --------------------------------------
     'fmea.reference.open': (
         'Référentiel de cotation', 'Rating reference', 'Referencia de puntuación',

@@ -23,3 +23,11 @@
   color: var(--qos-fg-tertiary);
   font-size: var(--qos-text-xs);
 }
+
+/* La barre d'actions de l'onglet : le référentiel se consulte sans quitter
+   l'analyse en cours. */
+.pfmea-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
