@@ -6,6 +6,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+import { IconNoTranslateModule } from '../icon-no-translate/icon-no-translate.module';
 import { RouterModule } from '@angular/router';
 
 import { EchartComponent } from './echart/echart.component';
@@ -37,8 +39,9 @@ const COMPONENTS = [
   imports: [
     CommonModule, RouterModule, ReactiveFormsModule,
     MatButtonModule, MatDialogModule, MatIconModule, MatMenuModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    IconNoTranslateModule
   ],
-  exports: COMPONENTS
+  exports: [...COMPONENTS, IconNoTranslateModule]
 })
 export class UiModule {}
