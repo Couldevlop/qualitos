@@ -36,11 +36,18 @@ CREATE TABLE billing_profiles (
 
     CONSTRAINT chk_billing_currency  CHECK (currency ~ '^[A-Z]{3}$'),
     CONSTRAINT chk_billing_country   CHECK (country_code ~ '^[A-Z]{2}$'),
-    CONSTRAINT chk_billing_email     CHECK (billing_email LIKE '%@%'),
+    -- "@" tout seul passait le LIKE '%@%' initial sans etre une adresse : au
+    -- moins un caractere de part et d'autre du "@", et un point dans le
+    -- domaine, sans quoi la case reste vide plus tard.
+    CONSTRAINT chk_billing_email     CHECK (
+        billing_email ~ '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$'),
     -- Une exemption sans motif est une anomalie qu'un audit relèvera : on ne
-    -- renonce pas à facturer sans dire pourquoi.
+    -- renonce pas à facturer sans dire pourquoi. btrim(...) <> '' : un motif
+    -- vide ou compose uniquement d'espaces n'en est pas un — IS NOT NULL
+    -- seul laissait passer '' et '   '.
     CONSTRAINT chk_exemption_motivee CHECK (
-        billing_exempt = FALSE OR exemption_reason IS NOT NULL)
+        billing_exempt = FALSE
+        OR (exemption_reason IS NOT NULL AND btrim(exemption_reason) <> ''))
 );
 
 CREATE INDEX idx_billing_profiles_tenant ON billing_profiles (tenant_id);
