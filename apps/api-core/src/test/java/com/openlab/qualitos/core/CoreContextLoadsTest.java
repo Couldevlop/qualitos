@@ -1,5 +1,6 @@
 package com.openlab.qualitos.core;
 
+import com.openlab.qualitos.core.billing.BillingProfileService;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,22 @@ class CoreContextLoadsTest {
     @Autowired
     private ApplicationContext context;
 
+    @Autowired
+    private BillingProfileService billingProfileService;
+
     @Test
     void contextLoads() {
         assertThat(context).isNotNull();
+    }
+
+    /**
+     * {@code BillingProfileService} a un constructeur qui dépend d'un bean
+     * {@code Clock} : c'est exactement la classe de bug que ce test de boot
+     * réel existe pour attraper (voir javadoc de classe). Une injection par
+     * mock ne le verrait jamais — il faut le vrai conteneur Spring.
+     */
+    @Test
+    void leServiceDeFacturationSeCable() {
+        assertThat(billingProfileService).isNotNull();
     }
 }

@@ -39,17 +39,6 @@ class BillingProfileServiceTest {
     }
 
     @Test
-    void leConstructeurVuParSpringPoseLHorlogeSysteme() {
-        // Le constructeur a deux arguments est celui que Spring appelle
-        // (@Autowired) : sans lui, aucun bean Clock ne serait resolu et le
-        // contexte applicatif ne demarrerait pas. On verifie ici qu'il
-        // construit un service utilisable, horloge systeme comprise.
-        BillingProfileService viaSpring = new BillingProfileService(repo, tenants);
-
-        assertThat(viaSpring).isNotNull();
-    }
-
-    @Test
     void unProfilNePeutPasViserUnClientInconnu() {
         // Sans ce refus, on creerait des profils orphelins qu'aucune facture ne
         // pourrait rattacher a un client reel.
