@@ -40,10 +40,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * <p>{@code jwt()} plutôt que {@code @WithMockUser} — comme
  * {@code TenantControllerTest} — parce que {@link ModulePriceController}
- * résout l'acteur depuis {@code Authentication#getName()}, qui pour un
- * {@code JwtAuthenticationToken} renvoie le claim {@code sub} du jeton : il
- * faut un vrai principal JWT dont on contrôle le sujet pour vérifier que
- * l'acteur transmis au service est bien celui-là.
+ * résout l'acteur via {@code CurrentUser.requireUserId()}, qui pour un
+ * {@code JwtAuthenticationToken} lit le claim {@code sub} du jeton : il faut
+ * un vrai principal JWT dont on contrôle le sujet pour vérifier que l'acteur
+ * transmis au service est bien celui-là — et, ci-dessous, pour vérifier
+ * qu'un sujet non-UUID produit un refus propre (401) plutôt qu'un 500.
  */
 @WebMvcTest(ModulePriceController.class)
 @Import({SecurityConfig.class, GlobalExceptionHandler.class})
@@ -93,6 +94,13 @@ class ModulePriceControllerTest {
         return jwt().authorities(new SimpleGrantedAuthority("ROLE_ADMIN_TENANT"));
     }
 
+    // Un sub qui n'est pas un UUID : jeton de compte de service, ou tout
+    // principal dont l'annuaire ne pose pas un UUID en identifiant.
+    private SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor superAdminJwtAvecSubNonUuid() {
+        return jwt().jwt(builder -> builder.subject("service-account-facturation"))
+                .authorities(new SimpleGrantedAuthority("ROLE_SUPER_ADMIN"));
+    }
+
     private ModulePriceDto.View vueAttendue() {
         Instant now = Instant.now();
         return new ModulePriceDto.View(
@@ -140,6 +148,20 @@ class ModulePriceControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(CORPS_MONTANT_NEGATIF))
                     .andExpect(status().isBadRequest());
+            verifyNoInteractions(service);
+        }
+
+        @Test
+        void unSubNonUuidEstRefuseProprement_pasUn500() throws Exception {
+            // Le defaut corrige par cette ronde : sans CurrentUser, UUID.fromString()
+            // levait une IllegalArgumentException non geree, qui tombait dans le
+            // catch-all du GlobalExceptionHandler et rendait un 500 generique sur
+            // une action d'administration de facturation.
+            mockMvc.perform(put("/api/v1/admin/module-prices")
+                            .with(superAdminJwtAvecSubNonUuid()).with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(CORPS_VALIDE))
+                    .andExpect(status().isUnauthorized());
             verifyNoInteractions(service);
         }
     }

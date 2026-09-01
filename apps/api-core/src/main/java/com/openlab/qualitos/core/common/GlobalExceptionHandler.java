@@ -107,6 +107,22 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(UnresolvableActorException.class)
+    public ProblemDetail handleUnresolvableActor(UnresolvableActorException ex) {
+        // 401, pas 500 : un sub absent ou non-UUID (jeton de compte de service,
+        // principal non-JWT, claim personnalise) n'est pas une panne serveur —
+        // c'est l'identite du principal qui n'est pas exploitable. Sans ce
+        // handler, l'IllegalArgumentException de UUID.fromString() tombait dans
+        // le catch-all Exception -> 500 ci-dessous, et une action d'administration
+        // refusee pour cause d'identite illisible ressemblait a une panne.
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNAUTHORIZED, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/unresolvable-actor"));
+        problem.setTitle("Unresolvable Actor");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleGeneric(Exception ex) {
         log.error("Unhandled exception", ex);
