@@ -82,6 +82,28 @@ def load_tables() -> dict:
 #
 # Le français échappe au piège (il vient du gabarit, pas de la table), donc rien
 # ne se voit tant qu'on développe en français. D'où ce refus à la source.
+# Une entite XML deja echappee dans une table.
+#
+# Meme famille que ci-dessus : `esc()` echappe deja `&`, `<` et `>`. Une table
+# qui ecrit `&amp;` ressort donc en `&amp;amp;`, et l'ecran affiche l'entite EN
+# CLAIR — « Corrective &amp; Preventive » au lieu de « Corrective & Preventive ».
+# Le XLF reste bien forme, le build ne dit rien : cela ne se voit qu'a l'oeil.
+ESCAPED_ENTITY_RE = re.compile(r"&(amp|lt|gt|quot|apos|#\d+);")
+
+
+def reject_escaped_entities(translations: dict) -> None:
+    faulty = sorted(k for k, row in translations.items()
+                    if any(ESCAPED_ENTITY_RE.search(v) for v in row))
+    if faulty:
+        details = "\n".join("  - " + k for k in faulty)
+        sys.exit(
+            "ERREUR : entite XML deja echappee dans "
+            + str(len(faulty)) + " unite(s).\n"
+            "Ecrire le caractere lui-meme (& < >) : le generateur l'echappe.\n"
+            "Pre-echappee, elle ressort doublee et s'affiche en clair.\n"
+            + details)
+
+
 LITERAL_INTERPOLATION_RE = re.compile(r"\{\{.*?\}\}", re.S)
 
 
@@ -107,6 +129,7 @@ def esc(s: str) -> str:
 
 def write_xlf(translations: dict) -> None:
     reject_literal_interpolations(translations)
+    reject_escaped_entities(translations)
     os.makedirs(OUT_DIR, exist_ok=True)
     for idx, lang in enumerate(LANGS, start=1):
         path = os.path.join(OUT_DIR, "messages.%s.xlf" % lang)

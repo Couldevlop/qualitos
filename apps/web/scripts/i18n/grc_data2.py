@@ -38,7 +38,7 @@ TRANSLATIONS = {
     'dpa.detail.over-72h': ('(> 72h — non aligné CNIL)', "(> 72h — not aligned with supervisory authority)", "(> 72 h — no alineado con la autoridad de control)", "(> 72 ساعة — غير متوافق مع السلطة الرقابية)", "（72時間超 — 監督機関基準と不一致）", "（超过72小时 — 不符合监管机构要求）"),
     'dpa.detail.processor': ('Sous-traitant', "Processor", "Encargado del tratamiento", "المعالج", "処理者", "处理者"),
     'dpa.detail.safeguards-label': ('Garanties :', "Safeguards:", "Garantías:", "الضمانات:", "保護措置：", "保障措施："),
-    'dpa.detail.security-obligations': ('Sécurité &amp; obligations Art. 28', "Security &amp; Art. 28 obligations", "Seguridad y obligaciones del art. 28", "الأمن والتزامات المادة 28", "セキュリティと第28条の義務", "安全与第28条义务"),
+    'dpa.detail.security-obligations': ('Sécurité & obligations Art. 28', "Security & Art. 28 obligations", "Seguridad y obligaciones del art. 28", "الأمن والتزامات المادة 28", "セキュリティと第28条の義務", "安全与第28条义务"),
     'dpa.detail.services': ('Services confiés', "Entrusted services", "Servicios encomendados", "الخدمات الموكلة", "委託サービス", "受托服务"),
     'dpa.detail.signed-contract': ('Contrat signé', "Signed contract", "Contrato firmado", "العقد الموقّع", "署名済み契約", "已签署合同"),
     'dpa.detail.signed-on': ('Signé le', "Signed on", "Firmado el", "تاريخ التوقيع", "署名日", "签署于"),
