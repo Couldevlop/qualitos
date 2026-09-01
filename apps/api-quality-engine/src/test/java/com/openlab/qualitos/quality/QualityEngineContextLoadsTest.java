@@ -1,6 +1,7 @@
 package com.openlab.qualitos.quality;
 
 import com.openlab.qualitos.quality.ai.guard.TokenBucketAiGuard;
+import com.openlab.qualitos.quality.config.ModuleEnabledInterceptor;
 import com.openlab.qualitos.quality.erpconnector.DynamicsClient;
 import com.openlab.qualitos.quality.erpconnector.OracleFusionClient;
 import com.openlab.qualitos.quality.erpconnector.SapOdataClient;
@@ -42,6 +43,26 @@ class QualityEngineContextLoadsTest {
     @Test
     void contextLoads() {
         assertThat(context).isNotNull();
+    }
+
+    /**
+     * La frontière commerciale des modules doit être ARMÉE dans le contexte réel.
+     *
+     * <p>Le service dont dépend la garde est déclaré optionnel — il le faut, sinon
+     * les quatre-vingt-cinq tranches {@code @WebMvcTest} ne démarreraient plus.
+     * Mais cette tolérance a un revers : si le service venait à disparaître du
+     * contexte complet, la garde s'abstiendrait EN SILENCE et n'importe quel
+     * tenant pourrait écrire dans un module qu'il n'a pas souscrit, sans qu'aucun
+     * test ne bronche.
+     *
+     * <p>Ce banc est le seul endroit où l'absence se verrait, parce qu'il est le
+     * seul à monter le contexte entier.
+     */
+    @Test
+    void laGardeDesModulesEstArmeeDansLeContexteReel() {
+        assertThat(context.getBean(ModuleEnabledInterceptor.class).isActive())
+                .describedAs("garde des modules inactive : la frontiere commerciale ne s'applique plus")
+                .isTrue();
     }
 
     /**
