@@ -50,6 +50,24 @@ class MoneyTest {
     }
 
     @Test
+    void multiplierParUneQuantiteNegativeEstRefuse() {
+        // Une quantite negative sur une ligne de facture produirait un montant
+        // a retrancher la ou le modele ne prevoit que des montants dus : c'est
+        // un avoir deguise, et un avoir se traite comme un avoir, pas comme
+        // une multiplication. Le garde-fou existe deja ; ce banc prouve qu'il
+        // fonctionne (sans lui, on pourrait le supprimer sans qu'aucun test
+        // ne rougisse).
+        assertThatThrownBy(() -> Money.of(1250, "EUR").times(-1))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void uneDeviseNulleEstRefusee() {
+        assertThatThrownBy(() -> Money.of(100, null))
+                .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
     void uneAdditionQuiDeborderaitLevePlutotQueDeRendreUnMontantFaux() {
         // cents + other.cents peut depasser Long.MAX_VALUE et boucler vers un
         // petit nombre positif, qui passerait alors la validation "pas de
