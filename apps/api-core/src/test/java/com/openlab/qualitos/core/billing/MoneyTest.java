@@ -48,4 +48,25 @@ class MoneyTest {
         assertThat(resultat.cents()).isEqualTo(3750);
         assertThat(resultat.currency()).isEqualTo("EUR");
     }
+
+    @Test
+    void uneAdditionQuiDeborderaitLevePlutotQueDeRendreUnMontantFaux() {
+        // cents + other.cents peut depasser Long.MAX_VALUE et boucler vers un
+        // petit nombre positif, qui passerait alors la validation "pas de
+        // negatif" sans etre detecte. Un montant faux voyage jusqu'au client
+        // et devient un litige ; une exception, elle, s'arrete ici.
+        Money presqueMax = Money.of(Long.MAX_VALUE, "EUR");
+        Money unCentime = Money.of(1, "EUR");
+
+        assertThatThrownBy(() -> presqueMax.plus(unCentime))
+                .isInstanceOf(ArithmeticException.class);
+    }
+
+    @Test
+    void uneMultiplicationQuiDeborderaitLevePlutotQueDEnrouler() {
+        Money grosMontant = Money.of(Long.MAX_VALUE / 2 + 1, "EUR");
+
+        assertThatThrownBy(() -> grosMontant.times(4))
+                .isInstanceOf(ArithmeticException.class);
+    }
 }

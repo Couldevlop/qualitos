@@ -38,13 +38,21 @@ public record Money(long cents, String currency) {
             throw new IllegalArgumentException(
                     "devises differentes : " + currency + " et " + other.currency);
         }
-        return new Money(cents + other.cents, currency);
+        // addExact plutot que "+" : un depassement de Long.MAX_VALUE boucle
+        // silencieusement vers un petit nombre (potentiellement positif), qui
+        // franchirait alors la validation "pas de negatif" sans etre detecte.
+        // Un montant faux voyage jusqu'au client et devient un litige ; on
+        // prefere l'echec immediat, ici, au silence.
+        return new Money(Math.addExact(cents, other.cents), currency);
     }
 
     public Money times(int quantity) {
         if (quantity < 0) {
             throw new IllegalArgumentException("Quantite negative : " + quantity);
         }
-        return new Money(cents * quantity, currency);
+        // multiplyExact pour la meme raison que addExact dans plus() : un
+        // debordement de la multiplication doit faire echouer le calcul, pas
+        // produire un montant errone qui passerait inapercu.
+        return new Money(Math.multiplyExact(cents, quantity), currency);
     }
 }
