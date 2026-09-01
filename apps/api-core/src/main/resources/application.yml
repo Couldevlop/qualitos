@@ -103,3 +103,14 @@ springdoc:
     title: QualitOS API Core
     description: Core API — Authentication, Multi-tenancy, RBAC
     version: 0.1.0
+
+# Facturation — appels service à service vers le moteur de qualité.
+#
+# base-url est VIDE par défaut, et volontairement : sans elle, souscrire un
+# module échoue en disant pourquoi (voir QualityEngineActivationAdapter). Une
+# valeur par défaut plausible du genre http://api-quality-engine:8080 ferait
+# pire : dans un environnement où le moteur ne porte pas ce nom, la
+# souscription échouerait sur un timeout obscur au lieu d'un refus explicite.
+qualitos:
+  quality-engine:
+    base-url: ${QUALITY_ENGINE_BASE_URL:}

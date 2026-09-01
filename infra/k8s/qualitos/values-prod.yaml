@@ -109,6 +109,8 @@ services:
     replicas: 2
   api-core:
     replicas: 2
+    env:
+      QUALITY_ENGINE_BASE_URL: http://api-quality-engine.qualitos.svc.cluster.local:8082
   api-quality-engine:
     replicas: 2
     # Mode bearer OBLIGATOIRE : l'ai-service valide reellement les jetons, et

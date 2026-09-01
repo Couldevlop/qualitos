@@ -1,5 +1,7 @@
 package com.openlab.qualitos.core.common;
 
+import com.openlab.qualitos.core.billing.ModuleActivationFailedException;
+import com.openlab.qualitos.core.billing.SubscriptionNotFoundException;
 import com.openlab.qualitos.core.tenant.TenantAlreadyExistsException;
 import com.openlab.qualitos.core.tenant.TenantNotFoundException;
 import com.openlab.qualitos.core.user.UserAlreadyExistsException;
@@ -119,6 +121,64 @@ public class GlobalExceptionHandler {
                 HttpStatus.UNAUTHORIZED, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/unresolvable-actor"));
         problem.setTitle("Unresolvable Actor");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(SubscriptionNotFoundException.class)
+    public ProblemDetail handleSubscriptionNotFound(SubscriptionNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/subscription-not-found"));
+        problem.setTitle("Subscription Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ModuleActivationFailedException.class)
+    public ProblemDetail handleModuleActivationFailed(ModuleActivationFailedException ex) {
+        // 502 et non 500 : la panne n'est pas ici. api-core a fait son travail —
+        // c'est le moteur de qualité, en aval, qui n'a pas appliqué la décision.
+        // La distinction compte pour l'exploitation : un 500 enverrait chercher
+        // le défaut dans le mauvais service, et un 503 laisserait croire que la
+        // facturation elle-même est indisponible, ce qu'elle n'est pas.
+        //
+        // L'abonnement N'A PAS été enregistré (voir SubscriptionService) : rien
+        // à défaire côté appelant, l'appel peut être rejoué tel quel.
+        log.warn("quality engine refused a billing decision: {}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/module-activation-failed"));
+        problem.setTitle("Module Activation Failed");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ProblemDetail handleIllegalState(IllegalStateException ex) {
+        // 409 : l'état du système s'oppose à l'action (module déjà souscrit,
+        // abonnement déjà résilié, module sans tarif au catalogue). La requête
+        // est bien formée — la refuser en 400 laisserait croire à une erreur de
+        // saisie — et le serveur va bien — la refuser en 500 enverrait chercher
+        // une panne inexistante. Rejouer l'appel à l'identique ne changera rien
+        // tant que l'état n'aura pas changé, et c'est exactement ce que dit 409.
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/conflicting-state"));
+        problem.setTitle("Conflicting State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ProblemDetail handleIllegalArgument(IllegalArgumentException ex) {
+        // 400 : l'argument est refusé par une règle que les annotations de
+        // validation ne peuvent pas exprimer, parce qu'elle porte sur DEUX
+        // champs à la fois — « une exemption de facturation doit indiquer un
+        // motif » (BillingProfileService). Sans ce handler, ce refus tombait
+        // dans le catch-all ci-dessous : le client recevait un 500 « erreur
+        // inattendue » pour une saisie qu'il pouvait corriger lui-même, et le
+        // message expliquant quoi corriger était perdu en route.
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/invalid-argument"));
+        problem.setTitle("Invalid Argument");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

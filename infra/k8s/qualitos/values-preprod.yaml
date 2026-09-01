@@ -122,6 +122,7 @@ services:
     replicas: 1
     env:
       DB_URL: jdbc:postgresql://postgres.qualitos-preprod.svc.cluster.local:5432/qualitos_core
+      QUALITY_ENGINE_BASE_URL: http://api-quality-engine.qualitos-preprod.svc.cluster.local:8082
   api-quality-engine:
     replicas: 1
     env:
