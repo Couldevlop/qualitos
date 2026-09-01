@@ -1,15 +1,11 @@
 package com.openlab.qualitos.core.migration;
 
-import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.DockerClientFactory;
-import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -47,33 +43,21 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 @Tag("migration")
 class SubscriptionConstraintsOnPostgresTest {
 
-    private static final String IMAGE = "postgres:17-alpine";
-
-    private static PostgreSQLContainer<?> postgres;
     private static Connection connection;
 
     @BeforeAll
-    static void migrateOnARealServer() throws SQLException {
-        assumeTrue(DockerClientFactory.instance().isDockerAvailable(),
-                "Docker indisponible : les contraintes d'abonnement restent non verifiees sur cette machine");
-
-        postgres = new PostgreSQLContainer<>(IMAGE);
-        postgres.start();
-
-        Flyway.configure()
-                .dataSource(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword())
-                .locations("classpath:db/migration")
-                .load()
-                .migrate();
-
-        connection = DriverManager.getConnection(
-                postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword());
+    static void migrateOnASharedServer() throws SQLException {
+        assumeTrue(MigrationPostgres.dockerAvailable(),
+                "Docker indisponible : ces contraintes restent non verifiees sur cette machine");
+        // Un serveur PostgreSQL pour TOUS les bancs de migration, une
+        // connexion par banc : les classes tournent en parallele, et
+        // java.sql.Connection n'est pas sure entre fils d'execution.
+        connection = MigrationPostgres.connect();
     }
 
     @AfterAll
-    static void stop() throws SQLException {
+    static void closeConnection() throws SQLException {
         if (connection != null) connection.close();
-        if (postgres != null) postgres.stop();
     }
 
     // ---------- uk_subscription_vivante : la règle centrale ----------

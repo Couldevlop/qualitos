@@ -2,6 +2,7 @@ package com.openlab.qualitos.core.common;
 
 import com.openlab.qualitos.core.billing.ModuleActivationFailedException;
 import com.openlab.qualitos.core.billing.SubscriptionNotFoundException;
+import com.openlab.qualitos.core.billing.invoice.InvoiceNotFoundException;
 import com.openlab.qualitos.core.tenant.TenantAlreadyExistsException;
 import com.openlab.qualitos.core.tenant.TenantNotFoundException;
 import com.openlab.qualitos.core.user.UserAlreadyExistsException;
@@ -12,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.ServletRequestBindingException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -134,6 +138,15 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(InvoiceNotFoundException.class)
+    public ProblemDetail handleInvoiceNotFound(InvoiceNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/invoice-not-found"));
+        problem.setTitle("Invoice Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     @ExceptionHandler(ModuleActivationFailedException.class)
     public ProblemDetail handleModuleActivationFailed(ModuleActivationFailedException ex) {
         // 502 et non 500 : la panne n'est pas ici. api-core a fait son travail —
@@ -148,6 +161,33 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/module-activation-failed"));
         problem.setTitle("Module Activation Failed");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler({
+            MethodArgumentTypeMismatchException.class,
+            MissingServletRequestParameterException.class,
+            ServletRequestBindingException.class})
+    public ProblemDetail handleBadRequestBinding(Exception ex) {
+        // 400 : un parametre absent ou illisible est une erreur de l'APPELANT.
+        //
+        // Sans ce handler, une periode de facturation ecrite « septembre » au
+        // lieu de « 2026-09 » remontait en 500 « erreur inattendue » : le client
+        // de l'API cherchait une panne de serveur pour une faute de frappe, et
+        // le message qui disait quoi corriger etait perdu dans le catch-all.
+        // Meme famille de defaut que le 403 devenu 500, corrige plus haut : ces
+        // exceptions surgissent DANS le DispatcherServlet et n'ont pas de
+        // traitement par defaut une fois qu'un @RestControllerAdvice attrape
+        // Exception.
+        //
+        // Le detail est volontairement generique : le message d'origine porte
+        // le nom du parametre et la valeur recue, et rendre la valeur recue
+        // telle quelle serait un reflet d'entree utilisateur dans la reponse.
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST, "Request parameter missing or malformed");
+        problem.setType(URI.create("https://qualitos.io/errors/bad-request-parameter"));
+        problem.setTitle("Bad Request Parameter");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
