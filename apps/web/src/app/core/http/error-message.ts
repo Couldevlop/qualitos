@@ -17,7 +17,13 @@ export function safeErrorMessage(err: unknown, fallback: string): string {
   const status: unknown = (err as any)?.status;
   if (status === 0) return 'Service inaccessible — vérifiez votre connexion.';
   if (status === 400) return 'Champs invalides — vérifiez le formulaire.';
-  if (status === 401 || status === 403) return 'Vous n\'avez pas les droits pour cette action.';
+  // 401 et 403 ne disent PAS la même chose, et les confondre envoie l'utilisateur
+  // chercher au mauvais endroit : une session expirée se rouvre en se
+  // reconnectant, un refus de droits se règle avec son administrateur. Le message
+  // unique faisait passer la première pour la seconde — un écran paraissait
+  // interdit alors qu'il suffisait de se reconnecter.
+  if (status === 401) return 'Session expirée — reconnectez-vous.';
+  if (status === 403) return 'Vous n\'avez pas les droits pour cette action.';
   if (status === 404) return fallback;
   if (status === 409) return 'État incompatible — rechargez la page.';
   if (status === 422) return 'Données refusées par le serveur.';
