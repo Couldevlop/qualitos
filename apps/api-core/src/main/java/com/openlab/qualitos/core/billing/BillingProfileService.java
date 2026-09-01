@@ -2,7 +2,6 @@ package com.openlab.qualitos.core.billing;
 
 import com.openlab.qualitos.core.tenant.TenantNotFoundException;
 import com.openlab.qualitos.core.tenant.TenantRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,18 +35,12 @@ public class BillingProfileService {
     private final TenantRepository tenants;
     private final Clock clock;
 
-    // Deux constructeurs plutôt qu'un bean Clock séparé : celui-ci est le
-    // seul que Spring voit (@Autowired), il pose l'horloge système UTC — la
-    // seule horloge posée en production, quel que soit le fuseau du serveur.
-    @Autowired
-    public BillingProfileService(BillingProfileRepository billingProfiles, TenantRepository tenants) {
-        this(billingProfiles, tenants, Clock.systemUTC());
-    }
-
-    // Non public : réservé aux tests, qui figent l'horloge pour affirmer des
-    // horodatages exacts. Spring ne le voit pas (un seul constructeur peut
-    // porter @Autowired) et ne tentera donc jamais de résoudre un bean Clock.
-    BillingProfileService(BillingProfileRepository billingProfiles, TenantRepository tenants, Clock clock) {
+    // Constructeur unique : Spring l'utilise directement (une seule classe
+    // n'a jamais besoin de @Autowired) et lui fournit le bean Clock déclaré
+    // dans ClockConfig. Les tests injectent leur propre horloge fixe par le
+    // même constructeur — pas de second constructeur "vu des tests" à tenir
+    // à jour.
+    public BillingProfileService(BillingProfileRepository billingProfiles, TenantRepository tenants, Clock clock) {
         this.billingProfiles = billingProfiles;
         this.tenants = tenants;
         this.clock = clock;
