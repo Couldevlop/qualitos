@@ -76,6 +76,27 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler({
+            org.springframework.security.access.AccessDeniedException.class,
+            org.springframework.security.authorization.AuthorizationDeniedException.class})
+    public ProblemDetail handleAccessDenied(RuntimeException ex) {
+        // Un refus d'autorisation par @PreAuthorize (sécurité de méthode, comme sur
+        // BillingProfileController) n'est PAS intercepté par la chaîne de filtres
+        // Spring Security : l'exception surgit à l'intérieur du DispatcherServlet,
+        // après que le filtre a déjà laissé passer la requête (l'utilisateur est
+        // authentifié, seul son rôle est refusé). Sans ce handler explicite, le
+        // catch-all Exception -> 500 ci-dessous la capturait en premier et masquait
+        // le refus derrière une erreur serveur générique — un 403 devenait un 500,
+        // ce qu'aucun test de rôle bien écrit ne devait laisser passer silencieusement.
+        // Même correctif que le moteur de qualité (GlobalExceptionHandler, H1/C1).
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.FORBIDDEN, "Access denied");
+        problem.setType(URI.create("https://qualitos.io/errors/access-denied"));
+        problem.setTitle("Access Denied");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     @ExceptionHandler(MissingTenantContextException.class)
     public ProblemDetail handleMissingTenant(MissingTenantContextException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
