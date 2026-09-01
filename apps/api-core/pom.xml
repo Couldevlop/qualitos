@@ -123,10 +123,27 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- H2 pour tests (pas de Testcontainers) -->
+        <!-- H2 pour tests (profil "test" : Flyway désactivé, schéma Hibernate create-drop) -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- H2 en mode PostgreSQL ignore les contraintes CHECK complexes (regex,
+             btrim) des migrations Flyway. Les garanties de facturation — motif
+             d'exemption non vide, forme d'adresse email — ne se vérifient donc
+             que sur un vrai serveur : Testcontainers en démarre un le temps du
+             test, isolé du profil "test" par défaut. Versions héritées du BOM
+             Spring Boot (spring-boot-dependencies importe testcontainers-bom) —
+             pas de version figée ici. -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
