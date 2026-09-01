@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import com.openlab.qualitos.quality.config.RequiresModule;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +28,13 @@ import java.util.UUID;
  * aux rôles qui pilotent le système qualité (OWASP A01).
  */
 @RestController
+/**
+ * Écritures réservées aux tenants ayant souscrit le module « product » (§10.4).
+ *
+ * <p>Le référentiel produit est le SUJET du PFMEA et du control plan : sans lui,
+ * les deux n'ont rien à décrire. D'où sa présence dans leurs dépendances.
+ */
+@RequiresModule("product")
 @RequestMapping("/api/v1/products")
 @Validated
 @PreAuthorize("isAuthenticated()")

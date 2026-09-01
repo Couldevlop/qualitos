@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.config;
 
+import com.openlab.qualitos.quality.tenantmodules.application.ModuleActivationService;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
@@ -22,9 +24,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebMvcConfig implements WebMvcConfigurer {
 
     private final MethodAuthorizationPreCheckInterceptor authorizationPreCheck;
+    private final ModuleEnabledInterceptor moduleEnabled;
 
-    public WebMvcConfig(MethodAuthorizationPreCheckInterceptor authorizationPreCheck) {
+    public WebMvcConfig(MethodAuthorizationPreCheckInterceptor authorizationPreCheck,
+                        ModuleEnabledInterceptor moduleEnabled) {
         this.authorizationPreCheck = authorizationPreCheck;
+        this.moduleEnabled = moduleEnabled;
     }
 
     /**
@@ -36,8 +41,26 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return new MethodAuthorizationPreCheckInterceptor();
     }
 
+    /**
+     * Bean séparé pour rester injectable en test et n'avoir qu'un cache
+     * d'annotations dans le contexte.
+     */
+    @Bean
+    public static ModuleEnabledInterceptor moduleEnabledInterceptor(
+            ObjectProvider<ModuleActivationService> modules) {
+        return new ModuleEnabledInterceptor(modules);
+    }
+
+    /**
+     * L'ORDRE compte. Le rôle se décide avant le module : « tu n'as pas le droit
+     * de faire cela » prime sur « ton organisation n'a pas souscrit cela ».
+     * L'inverse révélerait à un utilisateur sans droits quels modules le tenant
+     * a souscrits — une information sur l'abonnement, obtenue en tapant sur une
+     * porte qui lui est de toute façon fermée.
+     */
     @Override
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
         registry.addInterceptor(authorizationPreCheck).addPathPatterns("/api/**");
+        registry.addInterceptor(moduleEnabled).addPathPatterns("/api/**");
     }
 }

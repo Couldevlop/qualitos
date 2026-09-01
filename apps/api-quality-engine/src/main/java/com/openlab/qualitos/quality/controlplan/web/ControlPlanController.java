@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import com.openlab.qualitos.quality.config.RequiresModule;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +30,14 @@ import java.util.UUID;
  * qualité, lecture ouverte à tout utilisateur authentifié (OWASP A01).
  */
 @RestController
+/**
+ * Écritures réservées aux tenants ayant souscrit le module « controlplan » (§10.4).
+ *
+ * <p>Le control plan est un module facturé à l'unité : sans souscription, on ne
+ * peut pas en créer ni en modifier. La LECTURE reste ouverte, pour qu'un plan
+ * déjà approuvé demeure opposable après une résiliation.
+ */
+@RequiresModule("controlplan")
 @RequestMapping("/api/v1/products/{productId}/control-plans")
 @Validated
 @PreAuthorize("isAuthenticated()")

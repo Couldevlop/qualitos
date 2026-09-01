@@ -1884,6 +1884,31 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    /**
+     * Module non souscrit (§10.4) — 403, mais d'un TYPE distinct du refus de droits.
+     *
+     * <p>Les deux se règlent à des endroits opposés : un manque de droits se voit
+     * avec l'administrateur du tenant, un module non souscrit avec l'éditeur. Un
+     * type unique enverrait l'utilisateur frapper à la mauvaise porte — le même
+     * travers que 401 rendu comme 403.
+     *
+     * <p>Le code du module figure dans la réponse : c'est le nom d'une ligne du
+     * catalogue public, pas une information interne, et le taire obligerait à
+     * deviner lequel des vingt modules manque.
+     */
+    @ExceptionHandler(com.openlab.qualitos.quality.config.ModuleNotEnabledException.class)
+    public ProblemDetail handleModuleNotEnabled(
+            com.openlab.qualitos.quality.config.ModuleNotEnabledException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.FORBIDDEN,
+                "Module not enabled for this tenant: " + ex.getModuleCode());
+        problem.setType(URI.create("https://qualitos.io/errors/module-not-enabled"));
+        problem.setTitle("Module Not Enabled");
+        problem.setProperty("moduleCode", ex.getModuleCode());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     @ExceptionHandler({
             org.springframework.security.access.AccessDeniedException.class,
             org.springframework.security.authorization.AuthorizationDeniedException.class})

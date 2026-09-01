@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.risk;
 
+import com.openlab.qualitos.quality.config.RequiresModule;
+
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +12,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
+/**
+ * Écritures réservées aux tenants ayant souscrit le module « risk » (§10.4).
+ *
+ * <p>Le module Risk/FMEA porte l'analyse des modes de défaillance. Le control plan
+ * en dépend : un contrôle sans mode de défaillance à couvrir n'a pas de raison
+ * d'être.
+ */
+@RequiresModule("risk")
 @RequestMapping("/api/v1/fmea")
 public class FmeaController {
 
