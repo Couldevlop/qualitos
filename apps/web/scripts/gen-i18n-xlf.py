@@ -73,6 +73,32 @@ def load_tables() -> dict:
     return merged
 
 
+# Une interpolation Angular écrite telle quelle dans une table.
+#
+# Elle ne se voit ni à la génération ni au build : le XLF sort bien formé, et le
+# défaut n'éclate qu'à l'EXÉCUTION, dans la langue traduite, sous la forme
+# « Unable to parse ICU expression » — parce que `$localize` prend l'accolade
+# pour une expression ICU. La vue lève alors, et l'écran reste vide.
+#
+# Le français échappe au piège (il vient du gabarit, pas de la table), donc rien
+# ne se voit tant qu'on développe en français. D'où ce refus à la source.
+LITERAL_INTERPOLATION_RE = re.compile(r"\{\{.*?\}\}", re.S)
+
+
+def reject_literal_interpolations(translations: dict) -> None:
+    faulty = sorted(k for k, row in translations.items()
+                    if any(LITERAL_INTERPOLATION_RE.search(v) for v in row))
+    if faulty:
+        details = "\n".join("  - " + k for k in faulty)
+        sys.exit(
+            "ERREUR : interpolation Angular ecrite litteralement dans "
+            + str(len(faulty)) + " unite(s).\n"
+            "Ecrire {$INTERPOLATION} : le generateur le rend en "
+            "<x id=\"INTERPOLATION\"/>.\n"
+            "Laissee telle quelle, l'accolade est lue comme une expression "
+            "ICU et l'ecran traduit leve a l'execution.\n"
+            + details)
+
 def esc(s: str) -> str:
     s = s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
     # Après échappement, restaure les placeholders {$nom} en éléments <x/> XLIFF.
@@ -80,6 +106,7 @@ def esc(s: str) -> str:
 
 
 def write_xlf(translations: dict) -> None:
+    reject_literal_interpolations(translations)
     os.makedirs(OUT_DIR, exist_ok=True)
     for idx, lang in enumerate(LANGS, start=1):
         path = os.path.join(OUT_DIR, "messages.%s.xlf" % lang)

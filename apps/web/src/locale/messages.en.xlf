@@ -16779,8 +16779,8 @@ declared income
         <target state="translated">This PFMEA contains no analysis line yet.</target>
       </trans-unit>
       <trans-unit id="pfmea.revision" datatype="html">
-        <source>révision {{ p.revision }}</source>
-        <target state="translated">revision {{ p.revision }}</target>
+        <source>révision <x id="INTERPOLATION"/></source>
+        <target state="translated">revision <x id="INTERPOLATION"/></target>
       </trans-unit>
       <trans-unit id="pfmea.col-failure-mode" datatype="html">
         <source>Mode de défaillance</source>
@@ -17107,8 +17107,8 @@ declared income
         <target state="translated">Suggest</target>
       </trans-unit>
       <trans-unit id="nc.create.matched-terms" datatype="html">
-        <source>termes communs : {{ choice.matchedTerms }}</source>
-        <target state="translated">shared terms: {{ choice.matchedTerms }}</target>
+        <source>termes communs : <x id="INTERPOLATION"/></source>
+        <target state="translated">shared terms: <x id="INTERPOLATION"/></target>
       </trans-unit>
       <trans-unit id="nc.create.none-matches" datatype="html">
         <source>Aucun mode ne correspond</source>
@@ -18339,8 +18339,8 @@ declared income
         <target state="translated">CAPA:</target>
       </trans-unit>
       <trans-unit id="audits.detail.checklist-count" datatype="html">
-        <source>Checklist ({{ p.checklist?.length || 0 }})</source>
-        <target state="translated">Checklist ({{ p.checklist?.length || 0 }})</target>
+        <source>Checklist (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">Checklist (<x id="INTERPOLATION"/>)</target>
       </trans-unit>
       <trans-unit id="audits.detail.checklist-empty" datatype="html">
         <source>Aucune question. Clique sur</source>
@@ -18419,8 +18419,8 @@ declared income
         <target state="translated">Audit plan · Internal / External / LPA / Certification</target>
       </trans-unit>
       <trans-unit id="audits.detail.findings-count" datatype="html">
-        <source>Constats ({{ p.findings?.length || 0 }})</source>
-        <target state="translated">Findings ({{ p.findings?.length || 0 }})</target>
+        <source>Constats (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">Findings (<x id="INTERPOLATION"/>)</target>
       </trans-unit>
       <trans-unit id="audits.detail.findings-empty" datatype="html">
         <source>Aucun constat. Les non-conformités majeures déclenchent un CAPA automatique.</source>
@@ -18775,8 +18775,8 @@ declared income
         <target state="translated">Action added to the CAPA.</target>
       </trans-unit>
       <trans-unit id="capa.detail.actions-count" datatype="html">
-        <source>Actions ({{ c.actions.length }})</source>
-        <target state="translated">Actions ({{ c.actions.length }})</target>
+        <source>Actions (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">Actions (<x id="INTERPOLATION"/>)</target>
       </trans-unit>
       <trans-unit id="capa.detail.actions-empty" datatype="html">
         <source>Aucune action. Clique sur</source>
@@ -19235,8 +19235,8 @@ declared income
         <target state="translated">Project deleted.</target>
       </trans-unit>
       <trans-unit id="fmea.detail.items-count" datatype="html">
-        <source>Items FMEA ({{ items.length }})</source>
-        <target state="translated">FMEA items ({{ items.length }})</target>
+        <source>Items FMEA (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">FMEA items (<x id="INTERPOLATION"/>)</target>
       </trans-unit>
       <trans-unit id="fmea.detail.items-empty" datatype="html">
         <source>Aucun item pour l'instant. Ajoutez le premier mode de défaillance.</source>
