@@ -146,6 +146,15 @@ public class SecurityConfig {
                 .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/tenant-modules/**")
                     .hasRole("SUPER_ADMIN")
 
+                // Surface PLATEFORME : l'éditeur ouvre et ferme des modules pour un
+                // client désigné par le chemin (conséquence technique d'un abonnement
+                // enregistré dans api-core). SUPER_ADMIN sur TOUTES les méthodes, la
+                // lecture comprise : « quel module pour quel client » est le catalogue
+                // clients de l'éditeur, et un admin de tenant n'a pas à le parcourir.
+                // Verrou d'URL en plus du @PreAuthorize de classe : une annotation
+                // oubliée sur une méthode future ne doit pas ouvrir la surface.
+                .requestMatchers("/api/v1/platform/**").hasRole("SUPER_ADMIN")
+
                 // Clés API (création/révocation) : Admin Tenant / Super Admin.
                 .requestMatchers("/api/v1/api-keys/**").hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN")
 

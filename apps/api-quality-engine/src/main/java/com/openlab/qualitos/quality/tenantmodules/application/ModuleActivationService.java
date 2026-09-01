@@ -14,6 +14,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -174,6 +175,105 @@ public class ModuleActivationService {
             }
         }
         return expired;
+    }
+
+    // ----- Surface plateforme : agir POUR un client designe -----
+    //
+    // Les methodes ci-dessus lisent le tenant du CONTEXTE : c'est ce qu'il faut
+    // quand un utilisateur agit chez lui. Celles-ci le recoivent en PARAMETRE,
+    // parce que l'editeur agit pour le compte d'un client qui n'est pas le sien
+    // — c'est la consequence technique d'un abonnement enregistre dans
+    // api-core (voir SubscriptionService la-bas).
+    //
+    // Le tenant ne vient pas pour autant du corps d'une requete : il vient du
+    // CHEMIN, sur une surface reservee au SUPER_ADMIN
+    // (PlatformModuleActivationController). §18.2 regle 2 interdit a un
+    // utilisateur de forger son appartenance ; l'editeur agissant sur son
+    // propre catalogue clients est un autre acteur, sur une autre surface.
+
+    /**
+     * Ouvre un module pour le client designe. <b>Idempotent</b> : demander
+     * l'ouverture d'un module deja ouvert rend l'activation existante au lieu
+     * d'echouer.
+     *
+     * <p>C'est le point important, et il repare par avance le piege de PR #122.
+     * Un module peut etre deja ouvert sans qu'aucune souscription ne le sache :
+     * active a la main par un administrateur, ou herite du socle. Refuser en
+     * 409 « already has an open activation » rendrait alors la souscription
+     * commerciale impossible, definitivement, sans qu'aucune manoeuvre depuis
+     * l'ecran ne puisse lever le blocage. Une demande d'ouverture dit ce qu'on
+     * veut obtenir — un module ouvert — pas une transition a executer.
+     *
+     * <p>Une activation SUSPENDUE est reprise plutot que doublee : l'index
+     * d'unicite n'admet qu'une ligne non terminale par (tenant, module), et une
+     * seconde tentative echouerait en base apres avoir semble reussir.
+     */
+    public ModuleActivationDto.ActivationView activateFor(UUID tenantId, String moduleCode,
+                                                          Instant expiresAt) {
+        ModuleCatalogEntry entry = ModuleCatalog.require(moduleCode);
+        Instant now = Instant.now(clock);
+        Optional<ModuleActivation> open = repo.findOpenByTenantIdAndCode(tenantId, moduleCode);
+        if (open.isPresent()) {
+            ModuleActivation existing = open.get();
+            if (existing.isEnabled()) {
+                // Deja ouvert : rien a faire, et rien a journaliser — un
+                // evenement pour un acte sans effet allongerait la chaine
+                // d'audit sans rien dire.
+                return ModuleActivationDto.ActivationView.of(existing);
+            }
+            existing.resume(actorProvider.requireActorId(), now);
+            ModuleActivation resumed = repo.save(existing);
+            events.publish(resumed, ModuleActivationEventPublisher.Action.PLATFORM_ACTIVATED);
+            return ModuleActivationDto.ActivationView.of(resumed);
+        }
+        // Les memes gardes que l'activation ordinaire : le palier du client et
+        // les dependances du catalogue valent aussi quand c'est l'editeur qui
+        // ouvre. Souscrire ne dispense pas d'avoir de quoi faire tourner le
+        // module.
+        ensureTierAllowed(tenantId, entry);
+        ensureDependenciesSatisfied(tenantId, entry);
+        ModuleActivation activation = ModuleActivation.activateNow(
+                tenantId, entry.code(), entry.minimumTier(),
+                expiresAt, actorProvider.requireActorId(), now);
+        ModuleActivation saved = repo.save(activation);
+        events.publish(saved, ModuleActivationEventPublisher.Action.PLATFORM_ACTIVATED);
+        return ModuleActivationDto.ActivationView.of(saved);
+    }
+
+    /**
+     * Ferme un module pour le client designe. <b>Idempotent</b> lui aussi :
+     * fermer un module deja ferme n'est pas une erreur — c'est l'etat demande.
+     *
+     * <p>Fermer ferme l'ECRITURE, jamais la lecture (invariant de
+     * {@code RequiresModule}) : une resiliation ne rend pas illisibles les
+     * enregistrements qualite produits pendant le contrat.
+     *
+     * <p>Les deux refus de {@link #disable} tiennent ici aussi, et ce sont des
+     * refus, pas des details : on ne coupe pas un module du socle, et on ne
+     * coupe pas un module dont un autre, encore ouvert, depend — sinon le
+     * client perd l'ecriture sur un module qu'il paie toujours.
+     */
+    public void deactivateFor(UUID tenantId, String moduleCode) {
+        ModuleCatalogEntry entry = ModuleCatalog.require(moduleCode);
+        if (entry.coreModule()) {
+            throw new ModuleActivationStateException(
+                    "Cannot disable a core module: " + entry.code());
+        }
+        Optional<ModuleActivation> open = repo.findOpenByTenantIdAndCode(tenantId, moduleCode);
+        if (open.isEmpty()) {
+            return;
+        }
+        ensureNoDependentModulesEnabled(tenantId, entry.code());
+        ModuleActivation activation = open.get();
+        activation.disable(actorProvider.requireActorId(), Instant.now(clock));
+        ModuleActivation saved = repo.save(activation);
+        events.publish(saved, ModuleActivationEventPublisher.Action.PLATFORM_DEACTIVATED);
+    }
+
+    /** Les activations d'un client designe — « quel module pour quel client ». */
+    public List<ModuleActivationDto.ActivationView> listFor(UUID tenantId) {
+        return repo.findAllByTenantId(tenantId).stream()
+                .map(ModuleActivationDto.ActivationView::of).toList();
     }
 
     // ----- Queries -----
