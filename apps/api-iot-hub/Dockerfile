@@ -30,9 +30,32 @@ COPY apps/api-iot-hub/src apps/api-iot-hub/src
 # -DskipTests: image built from a tested JAR (CI runs tests separately).
 RUN mvn -B -ntp -pl apps/api-iot-hub -am package -DskipTests
 
-FROM gcr.io/distroless/java21-debian12:nonroot
+# -----------------------------------------------------------------------------
+# Stage 2 : runtime (Chainguard JRE)
+# -----------------------------------------------------------------------------
+# Base CHAINGUARD et non distroless Google (CLAUDE.md §10.2 admet les deux).
+#
+# La base distroless/java21-debian12 accumulait des CVE que nous ne pouvions PAS
+# corriger : sans gestionnaire de paquets, on ne peut qu'attendre un rebuild
+# amont. Mesure du 2026-09-01 par scan direct : liblcms2 toujours en 2.14-2 alors
+# que +deb12u1 existait depuis un mois, plus libexpat1 arrivé entre-temps — soit
+# deux CVE Hautes bloquant la CD, et trois autres sans correctif. La même image
+# scannée le même jour : Chainguard rend ZÉRO.
+#
+# C'est la décision déjà prise le 2026-08-02 pour les trois images Python, pour
+# les mêmes symptômes : on change de base plutôt que de reconduire des exceptions
+# sur un socle en retard.
+#
+# JDK 26 alors que le projet cible Java 21 : le tier public de Chainguard ne
+# publie que `latest`. Vérifié AVANT de changer, pas après — le jar Java 21 a été
+# démarré sur cette JVM avec un PostgreSQL réel : 122 migrations Flyway
+# appliquées, métamodèle Hibernate initialisé, Tomcat en écoute, application
+# démarrée. Aucun avertissement de compatibilité.
+FROM cgr.dev/chainguard/jre:latest
 WORKDIR /app
 COPY --from=builder /workspace/apps/api-iot-hub/target/api-iot-hub-*.jar /app/app.jar
-USER nonroot:nonroot
+# UID numérique : l'image n'a pas de shell pour résoudre un nom, et c'est
+# ce que Kubernetes vérifie pour `runAsNonRoot`.
+USER 65532:65532
 EXPOSE 8083
-ENTRYPOINT ["java","-XX:MaxRAMPercentage=75","-jar","/app/app.jar"]
+ENTRYPOINT ["/usr/bin/java","-XX:MaxRAMPercentage=75","-jar","/app/app.jar"]

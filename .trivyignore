@@ -2,34 +2,37 @@
 # CVE Critique/Haute ne franchit la CI ; toute entrée ici doit citer le correctif
 # attendu et une date de revue).
 #
-# HISTORIQUE DU 2026-08-02 — ce fichier comptait six exceptions, dont cinq
-# portaient sur la base gcr.io/distroless/python3-debian12 (krb5, cpython ×3,
-# libssl3). Le re-scan direct des images a montré que l'hypothèse « rebuild amont
-# sous ~2 semaines » ne tenait pas : la base Python accusait deux crans de retard
-# sur cpython et traînait un correctif libssl depuis plus de cinq semaines. Une de
-# ces CVE (CVE-2026-6100, use-after-free de décompression) était de surcroît
-# réellement atteignable via les réponses gzip des fournisseurs LLM — la traiter
-# en exception revenait à accepter un risque, pas à écarter un faux positif.
+# ÉTAT AU 2026-09-01 : CE FICHIER NE PORTE PLUS AUCUNE EXCEPTION.
 #
-# Les trois images Python (ai-service, ai-vision-5s, edge-inference) ont donc été
-# migrées vers une base Chainguard reconstruite quotidiennement. Elles scannent
-# désormais à ZÉRO CVE Critique/Haute, et les cinq exceptions correspondantes ont
-# été SUPPRIMÉES plutôt que reconduites. Il n'en reste qu'une, ci-dessous.
+# HISTORIQUE DU 2026-08-02 — six exceptions, dont cinq sur la base
+# gcr.io/distroless/python3-debian12 (krb5, cpython ×3, libssl3). Le re-scan
+# direct avait montré que l'hypothèse « rebuild amont sous ~2 semaines » ne
+# tenait pas, et l'une des CVE était réellement atteignable. Les trois images
+# Python ont été migrées vers Chainguard, et les cinq exceptions SUPPRIMÉES
+# plutôt que reconduites. Il n'en restait qu'une : CVE-2026-41254 (liblcms2) sur
+# gcr.io/distroless/java21-debian12, à revoir le 2026-09-01.
 #
-# Contexte pour l'entrée restante : les images distroless (gcr.io) n'ont pas de
-# gestionnaire de paquets — impossible de patcher nous-mêmes ; on attend le
-# rebuild Google. À la date de revue : re-scanner
-# (docker run aquasec/trivy image <base>) ; si le rebuild est passé, SUPPRIMER
-# l'entrée. Si non, réévaluer — et, comme ci-dessus, envisager le changement de
-# base plutôt qu'une nouvelle reconduction.
-
-# ---------------------------------------------------------------------------
-# distroless/java21-debian12 (api-core, api-quality-engine, api-iot-hub)
-# ---------------------------------------------------------------------------
-# liblcms2 (color management, java.awt) — non utilisé par nos services (pas de
-# traitement d'image côté API). Fix deb12u1 publié, rebuild distroless attendu.
-# Vérifié par scan direct le 2026-08-02 : c'est la SEULE CVE Critique/Haute
-# corrigeable restante sur cette base, dont le rebuild a bien eu lieu par
-# ailleurs (libssl3 y est à jour).
-# Revue : 2026-09-01
-CVE-2026-41254
+# REVUE DU 2026-09-01 — la revue est arrivée à échéance, et la CD venait
+# justement d'échouer sur une CVE de PLUS (CVE-2026-56408, libexpat1). Le scan
+# direct de la base a tranché :
+#
+#   liblcms2-2  CVE-2026-41254  fixed  2.14-2            -> 2.14-2+deb12u1
+#   libexpat1   CVE-2026-56408  fixed  2.5.0-1+deb12u2   -> 2.5.0-1+deb12u3
+#   libuuid1    CVE-2026-53613 / 53615   affected, aucun correctif
+#   zlib1g      CVE-2023-45853  CRITICAL, will_not_fix
+#
+# Autrement dit : le rebuild Google n'avait TOUJOURS PAS eu lieu un mois après la
+# publication du correctif liblcms2, et un second paquet venait s'ajouter par le
+# même mécanisme. Reconduire aurait été exactement ce que la note du 2 août
+# déconseillait.
+#
+# Les quatre images Java (api-core, api-quality-engine, api-iot-hub,
+# blockchain-service) ont donc migré vers cgr.dev/chainguard/jre, qui scanne à
+# ZÉRO CVE Critique/Haute (mesuré le même jour, même commande). Compatibilité
+# JDK vérifiée AVANT la bascule : le jar Java 21 démarre entièrement sur cette
+# JVM — 122 migrations Flyway, métamodèle Hibernate, Tomcat en écoute.
+#
+# CONSÉQUENCE : plus aucune base sans gestionnaire de paquets dans le dépôt, donc
+# plus de CVE que nous ne pouvons pas corriger nous-mêmes. Si une entrée doit
+# réapparaître ici, se demander D'ABORD si ce n'est pas la base qu'il faut
+# changer — deux fois de suite, c'était la bonne réponse.
