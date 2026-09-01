@@ -1951,8 +1951,8 @@
         <target state="translated">(g) 与当局沟通</target>
       </trans-unit>
       <trans-unit id="ai-qms.detail.section-h" datatype="html">
-        <source>(h) Ressources &amp;amp; gouvernance</source>
-        <target state="translated">(h) 资源 &amp;amp; 治理</target>
+        <source>(h) Ressources &amp; gouvernance</source>
+        <target state="translated">(h) 资源 &amp; 治理</target>
       </trans-unit>
       <trans-unit id="ai-qms.detail.section-i" datatype="html">
         <source>(i) Surveillance fournisseurs</source>
@@ -2027,8 +2027,8 @@
         <target state="translated">(g) 与当局沟通</target>
       </trans-unit>
       <trans-unit id="ai-qms.dialog.label-h" datatype="html">
-        <source>(h) Ressources humaines &amp;amp; gouvernance</source>
-        <target state="translated">(h) 人力资源 &amp;amp; 治理</target>
+        <source>(h) Ressources humaines &amp; gouvernance</source>
+        <target state="translated">(h) 人力资源 &amp; 治理</target>
       </trans-unit>
       <trans-unit id="ai-qms.dialog.label-i" datatype="html">
         <source>(i) Surveillance des fournisseurs</source>
@@ -2987,8 +2987,10 @@
         <target state="translated">受影响服务（每行一个）</target>
       </trans-unit>
       <trans-unit id="cyber-incidents.detect.affected-services-ph" datatype="html">
-        <source>API publique&amp;#10;Portail clients</source>
-        <target state="translated">公开 API&amp;#10;客户门户</target>
+        <source>API publique
+Portail clients</source>
+        <target state="translated">公开 API
+客户门户</target>
       </trans-unit>
       <trans-unit id="cyber-incidents.detect.affected-users" datatype="html">
         <source>Utilisateurs impactés (estimation)</source>
@@ -8705,7 +8707,7 @@
         <target state="translated">缓解措施（§7.d）</target>
       </trans-unit>
       <trans-unit id="dpia.detail.necessity-title" datatype="html">
-        <source>Nécessité &amp;amp; proportionnalité (Art. 35§7.b)</source>
+        <source>Nécessité &amp; proportionnalité (Art. 35§7.b)</source>
         <target state="translated">必要性与相称性（第 35 条§7.b）</target>
       </trans-unit>
       <trans-unit id="dpia.detail.only-draft-deletable" datatype="html">
@@ -10065,7 +10067,7 @@
         <target state="translated">保障措施：</target>
       </trans-unit>
       <trans-unit id="dpa.detail.security-obligations" datatype="html">
-        <source>Sécurité &amp;amp; obligations Art. 28</source>
+        <source>Sécurité &amp; obligations Art. 28</source>
         <target state="translated">安全与第28条义务</target>
       </trans-unit>
       <trans-unit id="dpa.detail.services" datatype="html">
@@ -18915,8 +18917,8 @@ historique 12 mois</source>
         <target state="translated">已验证 ✓</target>
       </trans-unit>
       <trans-unit id="capa.detail.eyebrow" datatype="html">
-        <source>CAPA · Corrective &amp;amp; Preventive Actions</source>
-        <target state="translated">CAPA · Corrective &amp;amp; Preventive Actions</target>
+        <source>CAPA · Corrective &amp; Preventive Actions</source>
+        <target state="translated">CAPA · Corrective &amp; Preventive Actions</target>
       </trans-unit>
       <trans-unit id="capa.detail.generating" datatype="html">
         <source>Génération des actions… (peut prendre ~1 min sur CPU)</source>

@@ -38,7 +38,7 @@ TRANSLATIONS = {
     'dpia.detail.handled-by': ('Pilotée par', 'Handled by', 'Gestionada por', 'يتولاها', '担当者', '负责人'),
     'dpia.detail.linked-ropa-title': ('Activités RoPA liées', 'Linked RoPA activities', 'Actividades RAT vinculadas', 'أنشطة سجل المعالجة (RoPA) المرتبطة', '関連するRoPA活動', '关联的 RoPA 处理活动'),
     'dpia.detail.mitigation-title': ('Mesures de mitigation (§7.d)', 'Mitigation measures (§7.d)', 'Medidas de mitigación (§7.d)', 'تدابير التخفيف (§7.d)', '緩和措置（§7.d）', '缓解措施（§7.d）'),
-    'dpia.detail.necessity-title': ('Nécessité &amp; proportionnalité (Art. 35§7.b)', 'Necessity &amp; proportionality (Art. 35§7.b)', 'Necesidad y proporcionalidad (art. 35§7.b)', 'الضرورة والتناسب (المادة 35§7.b)', '必要性および比例性（第35条§7.b）', '必要性与相称性（第 35 条§7.b）'),
+    'dpia.detail.necessity-title': ('Nécessité & proportionnalité (Art. 35§7.b)', 'Necessity & proportionality (Art. 35§7.b)', 'Necesidad y proporcionalidad (art. 35§7.b)', 'الضرورة والتناسب (المادة 35§7.b)', '必要性および比例性（第35条§7.b）', '必要性与相称性（第 35 条§7.b）'),
     'dpia.detail.only-draft-deletable': ('Seule une DPIA en DRAFT peut être supprimée.', 'Only a DPIA in DRAFT can be deleted.', 'Solo se puede eliminar una EIPD en estado DRAFT.', 'يمكن حذف تقييم أثر حماية البيانات في حالة DRAFT فقط.', 'DRAFT状態のDPIAのみ削除できます。', '仅 DRAFT 状态的 DPIA 可被删除。'),
     'dpia.detail.only-draft-progress-editable': ("La fiche n'est éditable qu'en DRAFT ou IN_PROGRESS.", 'The record is editable only in DRAFT or IN_PROGRESS.', 'La ficha solo es editable en DRAFT o IN_PROGRESS.', 'لا يمكن تعديل السجل إلا في حالة DRAFT أو IN_PROGRESS.', 'このレコードはDRAFTまたはIN_PROGRESSでのみ編集できます。', '该记录仅在 DRAFT 或 IN_PROGRESS 状态下可编辑。'),
     'dpia.detail.opinion-favorable': ('(favorable)', '(favorable)', '(favorable)', '(إيجابي)', '（肯定的）', '（赞成）'),
