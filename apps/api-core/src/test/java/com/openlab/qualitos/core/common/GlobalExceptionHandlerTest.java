@@ -99,6 +99,17 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    @DisplayName("Returns 401 for UnresolvableActorException — not 500")
+    void handlesUnresolvableActor() {
+        // Le defaut corrige : un sub illisible (compte de service, principal
+        // non-JWT) ne doit jamais atterrir dans le catch-all 500.
+        UnresolvableActorException ex = new UnresolvableActorException();
+        ProblemDetail result = handler.handleUnresolvableActor(ex);
+        assertThat(result.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+        assertThat(result.getTitle()).isEqualTo("Unresolvable Actor");
+    }
+
+    @Test
     @DisplayName("Returns 500 for unhandled Exception")
     void handlesGeneric() {
         Exception ex = new RuntimeException("unexpected");

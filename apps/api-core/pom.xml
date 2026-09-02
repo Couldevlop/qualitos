@@ -100,6 +100,26 @@
         </dependency>
 
         <!-- OpenAPI Documentation -->
+        <!-- Rendu PDF de la facture (§7.4). Apache PDFBox 3.0.5, meme version et
+             meme moteur que l'export de tableau de bord du moteur de qualite
+             (PdfBoxDashboardRenderAdapter) : pur-Java, mature, aucune CVE
+             Haute/Critique connue (§18.2 #1). Pas de ZXing ici — une facture ne
+             porte pas de QR de verification blockchain, elle porte un numero de
+             sequence, qui est sa preuve d'existence en comptabilite. -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>3.0.5</version>
+        </dependency>
+
+        <!-- Envoi de la facture par courriel. Meme brique et meme discipline que
+             les rappels d'audit du moteur : l'adaptateur SMTP n'existe que si
+             qualitos.mail.enabled=true, sans quoi personne n'envoie rien. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -123,10 +143,27 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- H2 pour tests (pas de Testcontainers) -->
+        <!-- H2 pour tests (profil "test" : Flyway désactivé, schéma Hibernate create-drop) -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- H2 en mode PostgreSQL ignore les contraintes CHECK complexes (regex,
+             btrim) des migrations Flyway. Les garanties de facturation — motif
+             d'exemption non vide, forme d'adresse email — ne se vérifient donc
+             que sur un vrai serveur : Testcontainers en démarre un le temps du
+             test, isolé du profil "test" par défaut. Versions héritées du BOM
+             Spring Boot (spring-boot-dependencies importe testcontainers-bom) —
+             pas de version figée ici. -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

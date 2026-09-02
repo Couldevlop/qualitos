@@ -101,6 +101,11 @@ services:
     secretRef: qualitos-api-core
     env:
       DB_URL: jdbc:postgresql://postgres.qualitos.svc.cluster.local:5432/qualitos_core
+      # Facturation : souscrire un module fait appliquer la decision par le
+      # moteur de qualite. Sans cette adresse, toute souscription echoue en
+      # 502 plutot que d'enregistrer un abonnement dont le module resterait
+      # ferme (QualityEngineActivationAdapter, fail-closed).
+      QUALITY_ENGINE_BASE_URL: http://api-quality-engine.qualitos.svc.cluster.local:8082
     resources:
       requests: { cpu: 250m, memory: 512Mi }
       limits: { cpu: "1", memory: 1Gi }

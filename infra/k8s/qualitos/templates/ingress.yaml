@@ -34,6 +34,23 @@ spec:
               service:
                 name: api-core
                 port: { name: http }
+          # Surface d'ADMINISTRATION de la facturation (profils clients, tarifs
+          # des modules, abonnements, factures) : elle vit dans api-core, à côté
+          # de /api/v1/tenants, parce que le client facturé est une notion de
+          # socle et non de moteur qualité.
+          #
+          # Sans cette règle, tout /api/v1/admin/** tombait dans la règle
+          # fourre-tout /api ci-dessous et partait au moteur qualité, qui n'a
+          # aucun de ces chemins : la facturation aurait répondu 404 en
+          # préproduction alors qu'elle est complète et testée. nginx-ingress
+          # choisit le préfixe le PLUS LONG, l'ordre des règles n'y change rien —
+          # mais leur existence, si.
+          - path: /api/v1/admin
+            pathType: Prefix
+            backend:
+              service:
+                name: api-core
+                port: { name: http }
           - path: /api/v1/iot
             pathType: Prefix
             backend:

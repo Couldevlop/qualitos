@@ -1,5 +1,8 @@
 package com.openlab.qualitos.core.common;
 
+import com.openlab.qualitos.core.billing.ModuleActivationFailedException;
+import com.openlab.qualitos.core.billing.SubscriptionNotFoundException;
+import com.openlab.qualitos.core.billing.invoice.InvoiceNotFoundException;
 import com.openlab.qualitos.core.tenant.TenantAlreadyExistsException;
 import com.openlab.qualitos.core.tenant.TenantNotFoundException;
 import com.openlab.qualitos.core.user.UserAlreadyExistsException;
@@ -10,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.ServletRequestBindingException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -76,12 +82,143 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler({
+            org.springframework.security.access.AccessDeniedException.class,
+            org.springframework.security.authorization.AuthorizationDeniedException.class})
+    public ProblemDetail handleAccessDenied(RuntimeException ex) {
+        // Un refus d'autorisation par @PreAuthorize (sécurité de méthode, comme sur
+        // BillingProfileController) n'est PAS intercepté par la chaîne de filtres
+        // Spring Security : l'exception surgit à l'intérieur du DispatcherServlet,
+        // après que le filtre a déjà laissé passer la requête (l'utilisateur est
+        // authentifié, seul son rôle est refusé). Sans ce handler explicite, le
+        // catch-all Exception -> 500 ci-dessous la capturait en premier et masquait
+        // le refus derrière une erreur serveur générique — un 403 devenait un 500,
+        // ce qu'aucun test de rôle bien écrit ne devait laisser passer silencieusement.
+        // Même correctif que le moteur de qualité (GlobalExceptionHandler, H1/C1).
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.FORBIDDEN, "Access denied");
+        problem.setType(URI.create("https://qualitos.io/errors/access-denied"));
+        problem.setTitle("Access Denied");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     @ExceptionHandler(MissingTenantContextException.class)
     public ProblemDetail handleMissingTenant(MissingTenantContextException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
                 HttpStatus.UNAUTHORIZED, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/missing-tenant"));
         problem.setTitle("Missing Tenant Context");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(UnresolvableActorException.class)
+    public ProblemDetail handleUnresolvableActor(UnresolvableActorException ex) {
+        // 401, pas 500 : un sub absent ou non-UUID (jeton de compte de service,
+        // principal non-JWT, claim personnalise) n'est pas une panne serveur —
+        // c'est l'identite du principal qui n'est pas exploitable. Sans ce
+        // handler, l'IllegalArgumentException de UUID.fromString() tombait dans
+        // le catch-all Exception -> 500 ci-dessous, et une action d'administration
+        // refusee pour cause d'identite illisible ressemblait a une panne.
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNAUTHORIZED, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/unresolvable-actor"));
+        problem.setTitle("Unresolvable Actor");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(SubscriptionNotFoundException.class)
+    public ProblemDetail handleSubscriptionNotFound(SubscriptionNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/subscription-not-found"));
+        problem.setTitle("Subscription Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(InvoiceNotFoundException.class)
+    public ProblemDetail handleInvoiceNotFound(InvoiceNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/invoice-not-found"));
+        problem.setTitle("Invoice Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ModuleActivationFailedException.class)
+    public ProblemDetail handleModuleActivationFailed(ModuleActivationFailedException ex) {
+        // 502 et non 500 : la panne n'est pas ici. api-core a fait son travail —
+        // c'est le moteur de qualité, en aval, qui n'a pas appliqué la décision.
+        // La distinction compte pour l'exploitation : un 500 enverrait chercher
+        // le défaut dans le mauvais service, et un 503 laisserait croire que la
+        // facturation elle-même est indisponible, ce qu'elle n'est pas.
+        //
+        // L'abonnement N'A PAS été enregistré (voir SubscriptionService) : rien
+        // à défaire côté appelant, l'appel peut être rejoué tel quel.
+        log.warn("quality engine refused a billing decision: {}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/module-activation-failed"));
+        problem.setTitle("Module Activation Failed");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler({
+            MethodArgumentTypeMismatchException.class,
+            MissingServletRequestParameterException.class,
+            ServletRequestBindingException.class})
+    public ProblemDetail handleBadRequestBinding(Exception ex) {
+        // 400 : un parametre absent ou illisible est une erreur de l'APPELANT.
+        //
+        // Sans ce handler, une periode de facturation ecrite « septembre » au
+        // lieu de « 2026-09 » remontait en 500 « erreur inattendue » : le client
+        // de l'API cherchait une panne de serveur pour une faute de frappe, et
+        // le message qui disait quoi corriger etait perdu dans le catch-all.
+        // Meme famille de defaut que le 403 devenu 500, corrige plus haut : ces
+        // exceptions surgissent DANS le DispatcherServlet et n'ont pas de
+        // traitement par defaut une fois qu'un @RestControllerAdvice attrape
+        // Exception.
+        //
+        // Le detail est volontairement generique : le message d'origine porte
+        // le nom du parametre et la valeur recue, et rendre la valeur recue
+        // telle quelle serait un reflet d'entree utilisateur dans la reponse.
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST, "Request parameter missing or malformed");
+        problem.setType(URI.create("https://qualitos.io/errors/bad-request-parameter"));
+        problem.setTitle("Bad Request Parameter");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ProblemDetail handleIllegalState(IllegalStateException ex) {
+        // 409 : l'état du système s'oppose à l'action (module déjà souscrit,
+        // abonnement déjà résilié, module sans tarif au catalogue). La requête
+        // est bien formée — la refuser en 400 laisserait croire à une erreur de
+        // saisie — et le serveur va bien — la refuser en 500 enverrait chercher
+        // une panne inexistante. Rejouer l'appel à l'identique ne changera rien
+        // tant que l'état n'aura pas changé, et c'est exactement ce que dit 409.
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/conflicting-state"));
+        problem.setTitle("Conflicting State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ProblemDetail handleIllegalArgument(IllegalArgumentException ex) {
+        // 400 : l'argument est refusé par une règle que les annotations de
+        // validation ne peuvent pas exprimer, parce qu'elle porte sur DEUX
+        // champs à la fois — « une exemption de facturation doit indiquer un
+        // motif » (BillingProfileService). Sans ce handler, ce refus tombait
+        // dans le catch-all ci-dessous : le client recevait un 500 « erreur
+        // inattendue » pour une saisie qu'il pouvait corriger lui-même, et le
+        // message expliquant quoi corriger était perdu en route.
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/invalid-argument"));
+        problem.setTitle("Invalid Argument");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
