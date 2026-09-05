@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Table i18n - Exploration NLQ -> graphique (CLAUDE.md §7.3). id: (fr, en, es, ar, ja, zh)."""
+"""Table i18n - Exploration NLQ -> graphique. id: (fr, en, es, ar, ja, zh)."""
 
 TRANSLATIONS = {
     'nav.nlq-explore': ('Exploration NLQ', 'NLQ explorer', 'Explorador NLQ', 'استكشاف NLQ', 'NLQ探索', 'NLQ 探索'),

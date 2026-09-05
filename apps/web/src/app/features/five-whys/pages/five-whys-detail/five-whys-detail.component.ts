@@ -163,8 +163,6 @@ export class FiveWhysDetailComponent implements OnInit {
     });
   }
 
-  goBack(): void { this.router.navigate(['/five-whys']); }
-
   /** Retour à l'écart constaté d'où part l'analyse (§3.6 — référentiel commun). */
   openNc(): void {
     if (this.analysis) {

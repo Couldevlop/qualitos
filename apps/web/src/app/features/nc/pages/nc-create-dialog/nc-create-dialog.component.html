@@ -45,11 +45,19 @@
     <mat-error *ngIf="form.controls.zone.hasError('maxlength')" i18n="@@common.maxlength-255">255 caractères maximum.</mat-error>
   </mat-form-field>
 
+  <!-- La description n'est plus facultative : un titre seul (« Défaut peinture »)
+       ne dit ni ce qui a été constaté, ni où, ni ce que ça a produit. Six mois
+       plus tard, personne ne peut plus instruire l'écart, et l'analyse de cause
+       racine part de rien. -->
   <mat-form-field appearance="outline" class="full">
-    <mat-label i18n="@@common.description-optional">Description (optionnel)</mat-label>
-    <textarea matInput formControlName="description" rows="3"
+    <mat-label i18n="@@common.description">Description</mat-label>
+    <textarea matInput formControlName="description" rows="3" required
               i18n-placeholder="@@nc.create.description-placeholder"
               placeholder="Constat, contexte, impact observé…"></textarea>
+    <mat-error *ngIf="form.controls.description.hasError('required')"
+               i18n="@@nc.create.description-required">
+      Décrivez le constat : sans description, l'écart n'est pas instruisible.
+    </mat-error>
   </mat-form-field>
 
   <div class="geo-block">

@@ -9,10 +9,17 @@
        [attr.height]="layout.height"
        [attr.viewBox]="'0 0 ' + layout.width + ' ' + layout.height"
        preserveAspectRatio="xMinYMin meet"
-       focusable="false"
-       role="img"
+       role="group"
        [attr.aria-labelledby]="titleId + ' ' + descId">
 
+    <!--
+      `role="group"` et NON `role="img"` : une image est un tout opaque pour les
+      technologies d'assistance, qui en ignorent le contenu. Les causes étant
+      devenues des boutons focusables, les déclarer sous `img` reviendrait à les
+      rendre inatteignables au clavier tout en les laissant cliquables — le pire
+      des deux. Idem pour `focusable="false"`, retiré : il empêchait le focus
+      d'entrer dans le dessin.
+    -->
     <title [attr.id]="titleId">{{ diagramTitle }}</title>
     <desc [attr.id]="descId">{{ diagramDescription }}</desc>
 
@@ -45,7 +52,23 @@
             [attr.x]="bone.labelX" [attr.y]="bone.labelY"
             text-anchor="middle">{{ bone.label }}</text>
 
-      <g *ngFor="let cause of bone.causes; trackBy: trackByKey">
+      <!--
+        La cause est FOCUSABLE et cliquable depuis que les cartes de branche ont
+        disparu : c'était là qu'on ajoutait un sous-pourquoi, et une figure qu'on
+        ne peut que regarder aurait rendu la méthode inutilisable au-delà du
+        premier niveau. `role="button"` + `tabindex` parce qu'un `<g>` SVG n'est
+        ni l'un ni l'autre par défaut ; la barre d'espace autant que « Entrée »,
+        parce qu'un bouton répond aux deux.
+      -->
+      <g *ngFor="let cause of bone.causes; trackBy: trackByKey"
+         class="fishbone__cause-group"
+         role="button"
+         tabindex="0"
+         [attr.aria-label]="causeActionLabel(cause)"
+         (click)="causeActivate.emit(cause.key)"
+         (keydown.enter)="causeActivate.emit(cause.key)"
+         (keydown.space)="$event.preventDefault(); causeActivate.emit(cause.key)">
+        <title>{{ causeActionLabel(cause) }}</title>
         <line class="fishbone__tick"
               [attr.x1]="cause.tickX1" [attr.y1]="cause.tickY"
               [attr.x2]="cause.tickX2" [attr.y2]="cause.tickY"></line>
@@ -54,7 +77,10 @@
               [attr.text-anchor]="cause.anchor">{{ cause.label }}<!--
             Une cause qui en cache d'autres le dit par un compteur : tracer la
             hiérarchie sur l'oblique la rendrait illisible dès deux niveaux.
-          --><tspan class="fishbone__sub" *ngIf="cause.descendants > 0"> {{ subCountLabel(cause.descendants) }}</tspan></text>
+          --><tspan class="fishbone__sub" *ngIf="cause.descendants > 0"> {{ subCountLabel(cause.descendants) }}</tspan><!--
+            Le score de cause racine, quand il est renseigné : c'est ce qui
+            distingue une piste pesée d'une hypothèse de passage.
+          --><tspan [attr.class]="'fishbone__score fishbone__score--' + cause.scoreTone" *ngIf="cause.score"> {{ cause.score }}</tspan></text>
       </g>
     </g>
 

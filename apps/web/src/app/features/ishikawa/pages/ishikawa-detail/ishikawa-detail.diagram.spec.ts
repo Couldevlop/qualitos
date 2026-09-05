@@ -19,11 +19,12 @@ import { IshikawaDetailComponent } from './ishikawa-detail.component';
 /**
  * L'arête de poisson sur l'écran du diagramme.
  *
- * <p>Des cartes par branche RANGENT les causes ; elles ne montrent pas qu'elles
- * convergent toutes vers un même effet — or c'est tout le propos d'Ishikawa.
- * Ce qui se vérifie ici : que la figure suive la configuration réelle du
- * diagramme (6M, 7M, 8M), et que les cartes RESTENT à côté d'elle, puisque ce
- * sont elles qui portent le texte entier, la hiérarchie et les commandes.
+ * <p>Des cartes par branche RANGEAIENT les causes ; elles ne montraient pas
+ * qu'elles convergent toutes vers un même effet — or c'est tout le propos
+ * d'Ishikawa. Elles ont donc été retirées, et la figure a repris ce qu'elles
+ * seules portaient : le score, et l'ajout d'un sous-pourquoi. Ce qui se vérifie
+ * ici : que la figure suive la configuration réelle du diagramme (6M, 7M, 8M),
+ * et qu'activer une cause dessus ouvre bien le dialogue de sous-cause.
  */
 describe('IshikawaDetailComponent (arête de poisson)', () => {
 
@@ -121,13 +122,39 @@ describe('IshikawaDetailComponent (arête de poisson)', () => {
     expect(host().querySelector('.fishbone__sub')!.textContent).toContain('+2');
   });
 
-  it('garde les cartes de branche à côté du dessin', () => {
+  it('a retiré les cartes de branche au profit du dessin', () => {
     setup(diagram('SIX_M', [cause({ id: 'c-1', category: 'METHODS', label: 'Gamme obsolète' })]));
 
-    // Équivalent textuel du diagramme : libellés entiers, hiérarchie dépliée,
-    // et seul endroit où l'on agit sur une cause.
-    expect(host().querySelectorAll('.branch-card').length).toBe(6);
-    expect(host().querySelectorAll('.cause-item').length).toBe(1);
+    // Elles rangeaient les causes par famille sans jamais montrer la
+    // convergence vers l'effet — et doublaient la figure à l'écran.
+    expect(host().querySelectorAll('.branch-card').length).toBe(0);
+    expect(host().querySelectorAll('.fishbone__cause-group').length).toBe(1);
+  });
+
+  it('ouvre le dialogue de sous-cause quand une cause est activée sur le dessin', () => {
+    // C'était le rôle des cartes : depuis leur retrait, une figure qu'on ne peut
+    // que regarder rendrait la méthode inutilisable au-delà du premier niveau.
+    setup(diagram('SIX_M', [cause({ id: 'c-1', category: 'METHODS', label: 'Gamme obsolète' })]));
+    const ouvrir = spyOn(component, 'openAddSubCause');
+
+    (host().querySelector('.fishbone__cause-group') as HTMLElement)
+      .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    expect(ouvrir).toHaveBeenCalled();
+    expect(ouvrir.calls.mostRecent().args[1].id).toBe('c-1');
+  });
+
+  it('ignore en silence une cause qui n’existe plus', () => {
+    // Le seul cas réel est une activation qui arrive après un rechargement
+    // l'ayant supprimée : ouvrir un dialogue sur une cause disparue, ou afficher
+    // une erreur pour un clic devenu sans objet, serait pire que ne rien faire.
+    const d = diagram('SIX_M', [cause({ id: 'c-1', category: 'METHODS', label: 'Gamme' })]);
+    setup(d);
+    const ouvrir = spyOn(component, 'openAddSubCause');
+
+    component.onCauseActivate(d, 'c-disparue');
+
+    expect(ouvrir).not.toHaveBeenCalled();
   });
 
   it('porte l\'énoncé du problème dans la tête du dessin', () => {

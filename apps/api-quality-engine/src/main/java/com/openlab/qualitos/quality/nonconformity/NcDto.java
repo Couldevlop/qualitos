@@ -4,6 +4,7 @@ import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
@@ -15,7 +16,18 @@ public final class NcDto {
 
     public record CreateRequest(
             @NotBlank @Size(max = 255) String title,
-            String description,
+            /**
+             * Obligatoire. Un titre seul (« Défaut peinture ») ne dit ni ce qui a
+             * été constaté, ni où, ni ce que ça a produit : six mois plus tard,
+             * personne ne peut plus instruire l'écart, et l'analyse de cause
+             * racine part de rien.
+             *
+             * <p>Exigée ICI et pas seulement dans le formulaire : l'API est
+             * publique (§13.1) et l'application mobile rejoue sa file hors-ligne
+             * par le même chemin. Une règle qui ne vit que dans un écran n'est
+             * pas une règle.
+             */
+            @NotBlank String description,
             @NotNull NcCategory category,
             @NotNull NcSeverity severity,
             @NotNull Instant detectedAt,
@@ -32,6 +44,20 @@ public final class NcDto {
 
     public record UpdateRequest(
             @Size(max = 255) String title,
+            /**
+             * « Non blanche SI fournie » : la mise à jour est PARTIELLE — un champ
+             * absent vaut « inchangé » (voir {@code NcService.update}). Un
+             * {@code @NotBlank} rejetterait donc toute modification qui ne
+             * renvoie pas la description, c'est-à-dire presque toutes.
+             *
+             * <p>{@code @Pattern} laisse passer {@code null} par contrat Jakarta,
+             * et refuse la chaîne vide ou blanche : on ne peut pas EFFACER une
+             * description déjà écrite, ce qui reviendrait à contourner
+             * l'obligation posée à la création. {@code (?s)} pour que le point
+             * couvre les sauts de ligne d'un constat sur plusieurs lignes.
+             */
+            @Pattern(regexp = "(?s).*\\S.*",
+                     message = "description must not be blank when provided")
             String description,
             NcCategory category,
             NcSeverity severity,

@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, Optional } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of } from 'rxjs';
 import { catchError, finalize, map, switchMap } from 'rxjs/operators';
@@ -12,7 +12,19 @@ import { FmeaItemResponse } from '../../../fmea/fmea.types';
 import { ProductsService } from '../../../products/products.service';
 import { FailureModeSuggestion, ProductResponse } from '../../../products/products.types';
 import { NcService } from '../../nc.service';
-import { NcCategory, NcResponse, NcSeverity } from '../../nc.types';
+import { NcCategory, NcOrigin, NcResponse, NcSeverity } from '../../nc.types';
+
+/**
+ * Ce que la liste appelante transmet au dialogue.
+ *
+ * <p>`origin` porte l'origine de la LISTE d'où l'on déclare. Sans elle, le
+ * dialogue n'envoyait aucune origine et le serveur retombait sur INTERNAL :
+ * une non-conformité déclarée depuis l'écran « externes » atterrissait dans le
+ * tableau des internes, et n'était plus jamais visible là où on l'avait créée.
+ */
+export interface NcCreateDialogData {
+  origin?: NcOrigin;
+}
 
 /** Une suggestion, enrichie de l'intitulé du mode de défaillance qu'elle désigne. */
 export interface FailureModeChoice {
@@ -41,6 +53,12 @@ export class NcCreateDialogComponent implements OnInit {
   locating = false;
   suggesting = false;
 
+  /**
+   * Origine de la liste d'où la déclaration part, transmise au serveur telle
+   * quelle. `undefined` sur l'entrée `/nc` : le serveur décide alors.
+   */
+  readonly origin?: NcOrigin;
+
   products: ProductResponse[] = [];
   suggestions: FailureModeChoice[] = [];
 
@@ -52,7 +70,9 @@ export class NcCreateDialogComponent implements OnInit {
     category: ['PROCESS' as NcCategory, [Validators.required]],
     severity: ['MAJOR' as NcSeverity, [Validators.required]],
     zone: ['', [Validators.maxLength(255)]],
-    description: [''],
+    // Obligatoire : un titre seul ne dit ni ce qui a été constaté, ni où, ni
+    // ce que ça a produit — l'analyse de cause racine partirait de rien.
+    description: ['', [Validators.required]],
     geoLat: [null as number | null],
     geoLng: [null as number | null],
     photoUrls: [''],
@@ -68,8 +88,14 @@ export class NcCreateDialogComponent implements OnInit {
     private readonly snack: MatSnackBar,
     private readonly productsService: ProductsService,
     private readonly fmea: FmeaService,
-    private readonly dialogRef: MatDialogRef<NcCreateDialogComponent, NcResponse>
-  ) {}
+    private readonly dialogRef: MatDialogRef<NcCreateDialogComponent, NcResponse>,
+    @Optional() @Inject(MAT_DIALOG_DATA) data?: NcCreateDialogData
+  ) {
+    // `@Optional()` : le dialogue reste ouvrable sans donnée (entrée `/nc`,
+    // qui montre les deux origines). L'origine est alors laissée au serveur,
+    // qui applique son défaut INTERNAL.
+    this.origin = data?.origin;
+  }
 
   ngOnInit(): void {
     // Le référentiel produit est une aide à la saisie : son indisponibilité ne
@@ -175,7 +201,8 @@ export class NcCreateDialogComponent implements OnInit {
         category,
         severity,
         zone: zone?.trim() || undefined,
-        description: description?.trim() || undefined,
+        description: description.trim(),
+        origin: this.origin,
         geoLat: geoLat ?? undefined,
         geoLng: geoLng ?? undefined,
         photoUrls: cleanedPhotos || undefined,

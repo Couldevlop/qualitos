@@ -46,6 +46,17 @@ TRANSLATIONS = {
     'nc.create.title-required': ('Le titre est requis.', 'The title is required.', 'El título es obligatorio.', 'العنوان مطلوب.', 'タイトルは必須です。', '标题为必填项。'),
     'nc.create.zone-placeholder': ('Ex. : Atelier conditionnement A', 'E.g.: Packaging workshop A', 'Ej.: Taller de envasado A', 'مثال: ورشة التعبئة A', '例：包装工程A', '例：包装车间 A'),
     'nc.create.description-placeholder': ('Constat, contexte, impact observé…', 'Observation, context, observed impact…', 'Observación, contexto, impacto observado…', 'الملاحظة، السياق، الأثر المُلاحَظ…', '所見、状況、確認された影響…', '观察、背景、所见影响……'),
+
+    # La description est devenue OBLIGATOIRE : un titre seul ne dit ni ce qui a
+    # été constaté, ni où, ni ce que ça a produit — et l'analyse de cause racine
+    # part alors de rien.
+    'nc.create.description-required': (
+        "Décrivez le constat : sans description, l'écart n'est pas instruisible.",
+        'Describe what was observed: without a description, the gap cannot be investigated.',
+        'Describa la observación: sin descripción, la desviación no puede instruirse.',
+        'صِف الملاحظة: بدون وصف، لا يمكن التحقيق في الانحراف.',
+        '所見を記載してください。説明がないと逸脱を調査できません。',
+        '请描述所见情况：没有描述，该偏差无法调查。'),
     'nc.create.use-location': ('Utiliser ma position', 'Use my location', 'Usar mi ubicación', 'استخدام موقعي', '現在地を使用', '使用我的位置'),
     'nc.create.clear-location': ('Retirer', 'Remove', 'Quitar', 'إزالة', '削除', '移除'),
     'nc.create.geo-label': ('Position :', 'Location:', 'Ubicación:', 'الموقع:', '位置：', '位置：'),

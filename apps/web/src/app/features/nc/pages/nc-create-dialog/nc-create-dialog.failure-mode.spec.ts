@@ -153,7 +153,8 @@ describe('NcCreateDialogComponent — produit et mode de défaillance', () => {
     tick();
 
     component.form.patchValue({
-      title: 'Bavure', productId: 'p-1', failureMode: component.noFailureMode
+      title: 'Bavure', description: 'Bavure relevée au contrôle final.',
+      productId: 'p-1', failureMode: component.noFailureMode
     });
     component.submit();
     tick();
@@ -170,7 +171,10 @@ describe('NcCreateDialogComponent — produit et mode de défaillance', () => {
     fixture.detectChanges();
     tick();
 
-    component.form.patchValue({ title: 'Bavure', productId: 'p-1', failureMode: 'i-1' });
+    component.form.patchValue({
+      title: 'Bavure', description: 'Bavure relevée au contrôle final.',
+      productId: 'p-1', failureMode: 'i-1'
+    });
     component.submit();
     tick();
 

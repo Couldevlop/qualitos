@@ -8,6 +8,14 @@
       <mat-icon>archive</mat-icon>
       <span i18n="@@product.obsolete">Rendre obsolète</span>
     </button>
+    <!-- Le dossier du produit dans un seul classeur : ce qu'un audit client
+         réclame, et ce qu'on ne peut pas transmettre à quelqu'un qui n'a pas
+         la plateforme sans l'en sortir. -->
+    <button mat-stroked-button (click)="exportXlsx()" [disabled]="exporting"
+            [attr.aria-busy]="exporting">
+      <mat-icon aria-hidden="true">table_view</mat-icon>
+      <span i18n="@@product.export-xlsx">Exporter (Excel)</span>
+    </button>
   </qos-page-header>
 
   <mat-tab-group class="product-tabs" animationDuration="0ms">

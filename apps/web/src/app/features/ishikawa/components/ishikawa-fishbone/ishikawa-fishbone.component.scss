@@ -30,7 +30,7 @@
 }
 
 .fishbone__spine {
-  stroke: var(--qos-accent-bg);
+  stroke: var(--qos-bg-elevated);
   stroke-width: 3;
   stroke-linecap: round;
 }
@@ -48,7 +48,7 @@
 
 .fishbone__branch-box {
   fill: var(--qos-accent-bg-soft);
-  stroke: var(--qos-accent-bg);
+  stroke: var(--qos-bg-elevated);
   stroke-width: 1;
 }
 
@@ -90,6 +90,67 @@
   font-weight: var(--qos-fw-semibold);
 }
 
+/*
+  Le score de cause racine, accolé au libellé. La couleur donne le classement
+  au premier regard — c'est ce que faisaient les cartes de branche supprimées —
+  et le chiffre reste lisible pour qui veut la valeur exacte.
+
+  Les trois bandes reprennent EXACTEMENT la coloration des anciennes pastilles
+  (rouge fort / orange moyen / vert faible) : en changer la semantique au
+  passage aurait fait relire a contresens des diagrammes deja cotes.
+
+  La couleur ne porte JAMAIS l'information seule (WCAG 1.4.1) : le pourcentage
+  est écrit, et le nom accessible de la cause le répète.
+*/
+.fishbone__score {
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-bold);
+}
+
+.fishbone__score--high { fill: var(--qos-danger-fg); }
+.fishbone__score--mid  { fill: var(--qos-warn-fg); }
+.fishbone__score--low  { fill: var(--qos-success-fg); }
+
+/*
+  La cause est devenue le point d'action du dessin : elle doit se comporter
+  comme un bouton — curseur, survol, et surtout un anneau de focus VISIBLE au
+  clavier (WCAG 2.4.7). Un `outline` sur un `<g>` SVG n'est pas rendu de façon
+  fiable : on cercle le texte par son propre tracé.
+*/
+.fishbone__cause-group {
+  cursor: pointer;
+
+  &:hover .fishbone__cause,
+  &:focus-visible .fishbone__cause {
+    fill: var(--qos-accent-fg-soft);
+    text-decoration: underline;
+  }
+
+  &:hover .fishbone__tick,
+  &:focus-visible .fishbone__tick {
+    stroke: var(--qos-accent-fg-soft);
+    stroke-width: 2.5;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible .fishbone__cause {
+    paint-order: stroke;
+    stroke: var(--qos-bg-elevated);
+    stroke-width: 6;
+    stroke-linejoin: round;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fishbone__cause,
+  .fishbone__tick {
+    transition: fill 120ms ease, stroke 120ms ease;
+  }
+}
+
 .fishbone__head-box {
   fill: var(--qos-accent-bg);
   stroke: var(--qos-accent-bg-hover);
@@ -97,7 +158,7 @@
 }
 
 .fishbone__head-text {
-  fill: var(--qos-accent-fg);
+  fill: var(--qos-accent-fg-soft);
   font-size: var(--qos-fs-base);
   font-weight: var(--qos-fw-semibold);
 }

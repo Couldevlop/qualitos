@@ -145,24 +145,102 @@ describe('IshikawaFishboneComponent', () => {
 
   // --- accessibilité ------------------------------------------------------------------
 
-  it('expose le dessin comme une image nommée et décrite', () => {
+  it('expose le dessin comme un groupe nommé et décrit', () => {
+    // `group` et NON `img` : une image est un tout opaque pour les technologies
+    // d'assistance, qui en ignorent le contenu. Les causes étant devenues des
+    // boutons, `img` les rendrait inatteignables au clavier tout en les laissant
+    // cliquables — le pire des deux.
     render('Rebuts en hausse', branchesOf(7));
 
     const el = svg()!;
-    expect(el.getAttribute('role')).toBe('img');
+    expect(el.getAttribute('role')).toBe('group');
     expect(el.getAttribute('aria-labelledby')).toBe(`${component.titleId} ${component.descId}`);
     expect(el.querySelector('title')!.getAttribute('id')).toBe(component.titleId);
 
     const desc = el.querySelector('desc')!.textContent ?? '';
     expect(desc).toContain('7');        // familles de causes
     expect(desc).toContain('14');       // causes de premier niveau
-    expect(desc).toContain('cartes');   // renvoi vers l'équivalent textuel
+    expect(desc).toContain('sous-pourquoi');   // ce qu'une cause activée permet
   });
 
-  it('retire le dessin du parcours de tabulation', () => {
+  it('laisse le focus entrer dans le dessin', () => {
+    // `focusable="false"` a été retiré : il empêchait le clavier d'atteindre les
+    // causes, qui sont désormais le seul moyen d'ajouter un sous-pourquoi.
     render('P', branchesOf(6));
 
-    expect(svg()!.getAttribute('focusable')).toBe('false');
+    expect(svg()!.getAttribute('focusable')).toBeNull();
+  });
+
+  // --- une cause s'active ---------------------------------------------------------------
+
+  it('rend chaque cause focusable et actionnable', () => {
+    render('P', branchesOf(6, 1));
+
+    const causes = host().querySelectorAll('.fishbone__cause-group');
+    expect(causes.length).toBe(6);
+    expect(causes[0].getAttribute('role')).toBe('button');
+    expect(causes[0].getAttribute('tabindex')).toBe('0');
+  });
+
+  it('annonce le libellé ENTIER de la cause, là où le dessin le tronque', () => {
+    // Une cause coupée au milieu d'un mot ne s'identifie pas — et c'est
+    // précisément sur elle qu'on va cliquer.
+    render('P', [{
+      key: 'b-1', label: 'Méthodes',
+      causes: [{
+        id: 'c-1', descendants: 0,
+        label: 'Gamme de fabrication obsolète depuis la révision de mars'
+      }]
+    }]);
+
+    const nom = host().querySelector('.fishbone__cause-group')!.getAttribute('aria-label') ?? '';
+    expect(nom).toContain('Gamme de fabrication obsolète depuis la révision de mars');
+  });
+
+  it('émet l’identifiant de la cause activée, sans décider de la suite', () => {
+    // Le diagramme ne connaît ni le dialogue ni l'arbre complet : il dit
+    // seulement LAQUELLE. C'est ce qui le garde réutilisable ailleurs.
+    render('P', branchesOf(1, 1));
+    const emis: string[] = [];
+    component.causeActivate.subscribe(id => emis.push(id));
+
+    const cause = host().querySelector('.fishbone__cause-group') as HTMLElement;
+    cause.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    cause.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    cause.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+
+    // Clic, « Entrée » et barre d'espace : un bouton répond aux trois.
+    expect(emis.length).toBe(3);
+    expect(emis.every(id => id === emis[0])).toBeTrue();
+  });
+
+  // --- le score se lit sur l'arête ------------------------------------------------------
+
+  it('écrit le score de cause racine sur le dessin, avec sa bande de lecture', () => {
+    // Depuis le retrait des cartes de branche, l'arête est le seul endroit où
+    // on lit le score : une cause pesée à 80 % ne doit pas se confondre avec une
+    // hypothèse de passage.
+    render('P', [{
+      key: 'b-1', label: 'Méthodes',
+      causes: [
+        { id: 'c-1', label: 'Forte', descendants: 0, score: 0.8 },
+        { id: 'c-2', label: 'Moyenne', descendants: 0, score: 0.5 },
+        { id: 'c-3', label: 'Faible', descendants: 0, score: 0.1 }
+      ]
+    }]);
+
+    const scores = host().querySelectorAll('.fishbone__score');
+    expect(scores.length).toBe(3);
+    expect(scores[0].getAttribute('class')).toContain('fishbone__score--high');
+    expect(scores[1].getAttribute('class')).toContain('fishbone__score--mid');
+    expect(scores[2].getAttribute('class')).toContain('fishbone__score--low');
+  });
+
+  it('n’invente pas de score là où il n’a pas été renseigné', () => {
+    // Un « 0 % » affiché par défaut se lirait comme une cause écartée.
+    render('P', branchesOf(1, 1));
+
+    expect(host().querySelectorAll('.fishbone__score').length).toBe(0);
   });
 
   it('donne des identifiants distincts à deux arêtes de la même page', () => {

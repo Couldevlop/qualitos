@@ -69,8 +69,8 @@ class NcControllerTest {
     void create_returns201() throws Exception {
         when(service.create(any())).thenReturn(resp(NcStatus.OPEN));
         NcDto.CreateRequest req = new NcDto.CreateRequest(
-                "t", null, NcCategory.PRODUCT, NcSeverity.MAJOR, Instant.now(),
-                null, null, null, null, REPORTER, null, null, null);
+                "t", "Bavure constatee au poste 20", NcCategory.PRODUCT, NcSeverity.MAJOR,
+                Instant.now(), null, null, null, null, REPORTER, null, null, null);
         mockMvc.perform(post("/api/v1/nc").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))
@@ -83,6 +83,29 @@ class NcControllerTest {
         mockMvc.perform(post("/api/v1/nc").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"category\":\"PRODUCT\",\"severity\":\"MAJOR\",\"detectedAt\":\"2026-01-01T00:00:00Z\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test @WithMockUser
+    void create_missingDescription_returns400() throws Exception {
+        // La regle vit dans l'API et pas seulement dans le formulaire : l'API
+        // est publique (§13.1) et l'application mobile rejoue sa file hors-ligne
+        // par ce meme chemin. Un titre seul ne rend pas l'ecart instruisible.
+        mockMvc.perform(post("/api/v1/nc").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"t\",\"category\":\"PRODUCT\",\"severity\":\"MAJOR\","
+                                + "\"detectedAt\":\"2026-01-01T00:00:00Z\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test @WithMockUser
+    void create_blankDescription_returns400() throws Exception {
+        // Une chaine d'espaces contournerait la regle en la respectant a la
+        // lettre : elle est refusee comme une description absente.
+        mockMvc.perform(post("/api/v1/nc").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"t\",\"description\":\"   \",\"category\":\"PRODUCT\","
+                                + "\"severity\":\"MAJOR\",\"detectedAt\":\"2026-01-01T00:00:00Z\"}"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -138,6 +161,27 @@ class NcControllerTest {
         mockMvc.perform(put("/api/v1/nc/{id}", NC).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\":\"x\"}"))
+                .andExpect(status().isOk());
+    }
+
+    @Test @WithMockUser
+    void update_blankDescription_returns400() throws Exception {
+        // On ne peut pas EFFACER une description deja ecrite : ce serait
+        // contourner apres coup l'obligation posee a la creation.
+        mockMvc.perform(put("/api/v1/nc/{id}", NC).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"description\":\"   \"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test @WithMockUser
+    void update_multilineDescription_accepted() throws Exception {
+        // Un constat tient souvent sur plusieurs lignes : le motif doit couvrir
+        // les sauts de ligne, sinon toute description redigee serait refusee.
+        when(service.update(eq(NC), any())).thenReturn(resp(NcStatus.OPEN));
+        mockMvc.perform(put("/api/v1/nc/{id}", NC).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"description\":\"Constat au poste 20.\\nImpact : lot bloque.\"}"))
                 .andExpect(status().isOk());
     }
 
@@ -247,8 +291,8 @@ class NcControllerTest {
     void create_missingTenant_returns403() throws Exception {
         when(service.create(any())).thenThrow(new MissingTenantContextException());
         NcDto.CreateRequest req = new NcDto.CreateRequest(
-                "t", null, NcCategory.PRODUCT, NcSeverity.MAJOR, Instant.now(),
-                null, null, null, null, REPORTER, null, null, null);
+                "t", "Bavure constatee au poste 20", NcCategory.PRODUCT, NcSeverity.MAJOR,
+                Instant.now(), null, null, null, null, REPORTER, null, null, null);
         mockMvc.perform(post("/api/v1/nc").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(om.writeValueAsString(req)))

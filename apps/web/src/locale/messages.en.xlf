@@ -12524,6 +12524,14 @@ declared income
         <source>Suppression refusée.</source>
         <target state="translated">Deletion refused.</target>
       </trans-unit>
+      <trans-unit id="ishikawa.detail.text-alternative" datatype="html">
+        <source>Causes du diagramme, en texte</source>
+        <target state="translated">Diagram causes, as text</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.detail.score-label" datatype="html">
+        <source>score de cause racine</source>
+        <target state="translated">root-cause score</target>
+      </trans-unit>
       <trans-unit id="nav.marketplace" datatype="html">
         <source>Marketplace</source>
         <target state="translated">Marketplace</target>
@@ -12781,8 +12789,16 @@ declared income
         <target state="translated">Fishbone diagram</target>
       </trans-unit>
       <trans-unit id="ishikawa.diagram.desc" datatype="html">
-        <source>Arête de poisson : <x id="branches"/> familles de causes et <x id="causes"/> causes de premier niveau convergeant vers le problème. Le détail, sous-causes comprises, est repris dans les cartes qui suivent.</source>
-        <target state="translated">Fishbone: <x id="branches"/> cause families and <x id="causes"/> first-level causes converging on the problem. The detail, sub-causes included, is written out in the cards below.</target>
+        <source>Arête de poisson : <x id="branches"/> familles de causes et <x id="causes"/> causes de premier niveau convergeant vers le problème. Activez une cause pour lui ajouter un sous-pourquoi ; le détail complet, sous-causes comprises, est repris en texte sous le diagramme.</source>
+        <target state="translated">Fishbone: <x id="branches"/> cause families and <x id="causes"/> first-level causes converging on the problem. Activate a cause to add a sub-why to it; the full detail, sub-causes included, is written out as text below the diagram.</target>
+      </trans-unit>
+      <trans-unit id="ishikawa.diagram.cause-action" datatype="html">
+        <source>Ajouter un sous-pourquoi à : <x id="cause"/></source>
+        <target state="translated">Add a sub-why to: <x id="cause"/></target>
+      </trans-unit>
+      <trans-unit id="ishikawa.diagram.cause-scored" datatype="html">
+        <source><x id="label"/> — <x id="score"/></source>
+        <target state="translated"><x id="label"/> — <x id="score"/></target>
       </trans-unit>
       <trans-unit id="pdca.list.title" datatype="html">
         <source>Cycles PDCA</source>
@@ -14588,6 +14604,10 @@ declared income
         <source>Constat, contexte, impact observé…</source>
         <target state="translated">Observation, context, observed impact…</target>
       </trans-unit>
+      <trans-unit id="nc.create.description-required" datatype="html">
+        <source>Décrivez le constat : sans description, l'écart n'est pas instruisible.</source>
+        <target state="translated">Describe what was observed: without a description, the gap cannot be investigated.</target>
+      </trans-unit>
       <trans-unit id="nc.create.use-location" datatype="html">
         <source>Utiliser ma position</source>
         <target state="translated">Use my location</target>
@@ -15767,9 +15787,9 @@ declared income
         <target state="translated">New connection</target>
       </trans-unit>
       <trans-unit id="itsm.list.subtitle" datatype="html">
-        <source>Intégration ServiceNow / Jira SM (CLAUDE.md §13.3) — import des incidents,
+        <source>Intégration ServiceNow / Jira SM — import des incidents,
          changements et problèmes pour boucler la qualité avec le SAV IT.</source>
-        <target state="translated">ServiceNow / Jira SM integration (CLAUDE.md §13.3) — import of incidents,
+        <target state="translated">ServiceNow / Jira SM integration — import of incidents,
          changes and problems to close the quality loop with IT support.</target>
       </trans-unit>
       <trans-unit id="itsm.list.title" datatype="html">
@@ -16041,8 +16061,8 @@ declared income
         <target state="translated">New KPI</target>
       </trans-unit>
       <trans-unit id="kpis.list.subtitle" datatype="html">
-        <source>Indicateurs qualité, seuils, fréquences (CLAUDE.md §6) — fiche par KPI avec tendance et mesures.</source>
-        <target state="translated">Quality indicators, thresholds, frequencies (CLAUDE.md §6) — per-KPI sheet with trend and measurements.</target>
+        <source>Indicateurs qualité, seuils, fréquences — fiche par KPI avec tendance et mesures.</source>
+        <target state="translated">Quality indicators, thresholds, frequencies — per-KPI sheet with trend and measurements.</target>
       </trans-unit>
       <trans-unit id="kpis.list.title" datatype="html">
         <source>Catalogue KPI</source>
@@ -16241,8 +16261,8 @@ declared income
         <target state="translated">Start</target>
       </trans-unit>
       <trans-unit id="training.home.subtitle" datatype="html">
-        <source>Parcours, compétences, matrice utilisateur (CLAUDE.md §4.7).</source>
-        <target state="translated">Paths, skills, user matrix (CLAUDE.md §4.7).</target>
+        <source>Parcours, compétences, matrice utilisateur.</source>
+        <target state="translated">Paths, skills, user matrix.</target>
       </trans-unit>
       <trans-unit id="training.home.tab-enrollments" datatype="html">
         <source>Mes inscriptions</source>
@@ -16583,6 +16603,14 @@ declared income
       <trans-unit id="product.activate" datatype="html">
         <source>Activer</source>
         <target state="translated">Activate</target>
+      </trans-unit>
+      <trans-unit id="product.export-xlsx" datatype="html">
+        <source>Exporter (Excel)</source>
+        <target state="translated">Export (Excel)</target>
+      </trans-unit>
+      <trans-unit id="product.export-failed" datatype="html">
+        <source>Export impossible.</source>
+        <target state="translated">Export failed.</target>
       </trans-unit>
       <trans-unit id="product.obsolete" datatype="html">
         <source>Rendre obsolète</source>
@@ -17513,8 +17541,8 @@ declared income
         <target state="translated">New request</target>
       </trans-unit>
       <trans-unit id="changes.list.subtitle" datatype="html">
-        <source>Demandes de changement, analyse d'impact, validation multi-niveaux (CLAUDE.md §4.8).</source>
-        <target state="translated">Change requests, impact analysis, multi-level validation (CLAUDE.md §4.8).</target>
+        <source>Demandes de changement, analyse d'impact, validation multi-niveaux.</source>
+        <target state="translated">Change requests, impact analysis, multi-level validation.</target>
       </trans-unit>
       <trans-unit id="changes.list.title" datatype="html">
         <source>Gestion des changements</source>
@@ -17973,8 +18001,8 @@ declared income
         <target state="translated">New supplier</target>
       </trans-unit>
       <trans-unit id="suppliers.list.subtitle" datatype="html">
-        <source>Scorecards fournisseurs, audits, non-conformités, certificats (CLAUDE.md §4.6).</source>
-        <target state="translated">Supplier scorecards, audits, non-conformities, certificates (CLAUDE.md §4.6).</target>
+        <source>Scorecards fournisseurs, audits, non-conformités, certificats.</source>
+        <target state="translated">Supplier scorecards, audits, non-conformities, certificates.</target>
       </trans-unit>
       <trans-unit id="suppliers.list.title" datatype="html">
         <source>Supplier Quality</source>
@@ -19421,8 +19449,8 @@ declared income
         <target state="translated">EHS — Incidents</target>
       </trans-unit>
       <trans-unit id="ehs.list.subtitle" datatype="html">
-        <source>Environnement, hygiène, sécurité (CLAUDE.md §4.11) — déclaration, investigation, mitigation.</source>
-        <target state="translated">Environment, health, safety (CLAUDE.md §4.11) — reporting, investigation, mitigation.</target>
+        <source>Environnement, hygiène, sécurité — déclaration, investigation, mitigation.</source>
+        <target state="translated">Environment, health, safety — reporting, investigation, mitigation.</target>
       </trans-unit>
       <trans-unit id="ehs.list.report-incident" datatype="html">
         <source>Déclarer un incident</source>
@@ -22267,8 +22295,8 @@ India (service centre)</target>
         <target state="translated">My learning</target>
       </trans-unit>
       <trans-unit id="learning.subtitle" datatype="html">
-        <source>Votre progression qualité — ceinture, points et badges (CLAUDE.md §19.3).</source>
-        <target state="translated">Your quality journey — belt, points and badges (CLAUDE.md §19.3).</target>
+        <source>Votre progression qualité — ceinture, points et badges.</source>
+        <target state="translated">Your quality journey — belt, points and badges.</target>
       </trans-unit>
       <trans-unit id="learning.error-loading" datatype="html">
         <source>Erreur de chargement de votre progression.</source>

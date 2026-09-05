@@ -361,6 +361,25 @@ export class IshikawaDetailComponent implements OnInit {
   }
 
   /** Add a sub-cause (5-Whys child) of an existing cause. */
+  /**
+   * Une cause a été activée SUR LE DESSIN (clic, « Entrée », barre d'espace).
+   *
+   * <p>Le diagramme n'émet qu'un identifiant : il ne connaît ni le dialogue, ni
+   * l'arbre complet — il ne dessine que le premier niveau. C'est donc ici qu'on
+   * retrouve la cause, dans les données déjà chargées.
+   *
+   * <p>Une cause introuvable est ignorée en silence, et c'est voulu : le seul
+   * cas où cela arrive est une activation qui arrive après un rechargement qui
+   * l'a supprimée. Ouvrir un dialogue sur une cause disparue, ou afficher une
+   * erreur pour un clic devenu sans objet, serait pire que ne rien faire.
+   */
+  onCauseActivate(d: IshikawaDiagramResponse, causeId: string): void {
+    const cause = d.causes.find(c => c.id === causeId);
+    if (cause) {
+      this.openAddSubCause(d, cause);
+    }
+  }
+
   openAddSubCause(d: IshikawaDiagramResponse, parent: IshikawaCauseResponse): void {
     const data: IshikawaCauseDialogData = {
       diagramId: d.id,
@@ -528,12 +547,6 @@ export class IshikawaDetailComponent implements OnInit {
     return 'badge badge-' + status.toLowerCase();
   }
 
-  scoreClass(score?: number): string {
-    if (score === undefined || score === null) return 'score score-none';
-    if (score >= 0.7) return 'score score-high';
-    if (score >= 0.4) return 'score score-mid';
-    return 'score score-low';
-  }
 }
 
 /** Réduit l'arbre de causes à ce que le dessin sait représenter. */
@@ -544,6 +557,9 @@ function toFishboneBranches(view: BranchView[]): FishboneBranchInput[] {
     causes: b.roots.map(n => ({
       id: n.cause.id,
       label: n.cause.label,
+      // Le score suit la cause jusqu'au dessin : depuis le retrait des cartes
+      // de branche, l'arête est le seul endroit où on le lit.
+      score: n.cause.rootCauseScore,
       descendants: countDescendants(n)
     }))
   }));

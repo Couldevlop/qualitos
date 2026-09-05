@@ -125,6 +125,30 @@
             <artifactId>pdfbox</artifactId>
             <version>3.0.5</version>
         </dependency>
+        <!-- Extraction Excel du PFMEA et du plan de surveillance d'un produit.
+             Un VRAI classeur, et non un CSV renomme : les deux tableaux ne
+             tiennent pas dans un seul onglet, et le plan de surveillance
+             compte a lui seul une vingtaine de colonnes. poi-ooxml est le seul
+             moyen pur-Java d'ecrire du .xlsx multi-feuilles.
+             `poi-ooxml-lite` plutot que le schema complet : il porte les seuls
+             modeles XML dont SXSSF a besoin, pour ~10 Mo au lieu de ~15. -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.4.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.poi</groupId>
+                    <artifactId>poi-ooxml-full</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-lite</artifactId>
+            <version>5.4.1</version>
+        </dependency>
+
         <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>core</artifactId>

@@ -31,6 +31,16 @@ TRANSLATIONS = {
     # --- produit : fiche ---------------------------------------------
     'product.detail-failed': ('Produit introuvable.', 'Product not found.', 'Producto no encontrado.', 'المنتج غير موجود.', '製品が見つかりません。', '未找到该产品。'),
     'product.activate': ('Activer', 'Activate', 'Activar', 'تفعيل', '有効化', '启用'),
+    # Extraction Excel du dossier produit : le PFMEA et le plan de surveillance
+    # dans un seul classeur, ce qu'un audit client réclame et ce qu'on ne peut
+    # pas transmettre sans sortir de la plateforme.
+    'product.export-xlsx': (
+        'Exporter (Excel)', 'Export (Excel)', 'Exportar (Excel)',
+        'تصدير (Excel)', 'エクスポート（Excel）', '导出（Excel）'),
+    'product.export-failed': (
+        'Export impossible.', 'Export failed.', 'No se pudo exportar.',
+        'تعذّر التصدير.', 'エクスポートできませんでした。', '导出失败。'),
+
     'product.obsolete': ('Rendre obsolète', 'Mark obsolete', 'Marcar como obsoleto', 'جعله ملغى', '廃止にする', '标记为作废'),
     'product.no-revision': ('Rien en attente', 'Nothing pending', 'Nada pendiente', 'لا شيء قيد الانتظار', '保留中なし', '无待处理项'),
     'product.tab-summary': ('Synthèse', 'Summary', 'Síntesis', 'الملخّص', '概要', '概览'),

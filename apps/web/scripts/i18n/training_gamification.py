@@ -5,7 +5,7 @@ TRANSLATIONS = {
     'nav.mon-apprentissage': ('Mon apprentissage', 'My learning', 'Mi aprendizaje', 'تعلّمي', '私の学習', '我的学习'),
 
     'learning.title': ('Mon apprentissage', 'My learning', 'Mi aprendizaje', 'تعلّمي', '私の学習', '我的学习'),
-    'learning.subtitle': ('Votre progression qualité — ceinture, points et badges (CLAUDE.md §19.3).', 'Your quality journey — belt, points and badges (CLAUDE.md §19.3).', 'Su progreso de calidad — cinturón, puntos e insignias (CLAUDE.md §19.3).', 'تقدّمك في الجودة — الحزام والنقاط والشارات (CLAUDE.md §19.3).', '品質の進捗 — ベルト、ポイント、バッジ（CLAUDE.md §19.3）。', '您的质量进度——腰带、积分与徽章（CLAUDE.md §19.3）。'),
+    'learning.subtitle': ('Votre progression qualité — ceinture, points et badges.', 'Your quality journey — belt, points and badges.', 'Su progreso de calidad — cinturón, puntos e insignias.', 'تقدّمك في الجودة — الحزام والنقاط والشارات.', '品質の進捗 — ベルト、ポイント、バッジ。', '您的质量进度——腰带、积分与徽章。'),
     'learning.error-loading': ('Erreur de chargement de votre progression.', 'Failed to load your progress.', 'Error al cargar su progreso.', 'تعذّر تحميل تقدّمك.', '進捗の読み込みに失敗しました。', '加载进度失败。'),
     'learning.current-belt': ('Ceinture actuelle', 'Current belt', 'Cinturón actual', 'الحزام الحالي', '現在のベルト', '当前腰带'),
     'learning.points-to-next': ('Encore', 'Still', 'Faltan', 'لا يزال', 'あと', '还需'),

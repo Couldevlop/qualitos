@@ -41,4 +41,18 @@ TRANSLATIONS = {
         'アクションの追加は拒否されました。', '添加行动被拒绝。'),
     'ishikawa.actions.update-failed': ('Modification refusée.', 'Change refused.', 'Modificación rechazada.', 'تم رفض التعديل.', '変更は拒否されました。', '修改被拒绝。'),
     'ishikawa.actions.delete-failed': ('Suppression refusée.', 'Deletion refused.', 'Eliminación rechazada.', 'تم رفض الحذف.', '削除は拒否されました。', '删除被拒绝。'),
+
+    # Équivalent textuel du diagramme (WCAG 2.2 AA) : les cartes de branche qui
+    # dépliaient la hiérarchie ont été retirées, ce bloc masqué les remplace
+    # pour les lecteurs d'écran.
+    'ishikawa.detail.text-alternative': (
+        'Causes du diagramme, en texte',
+        'Diagram causes, as text',
+        'Causas del diagrama, en texto',
+        'أسباب المخطط، نصًّا',
+        '図の要因（テキスト）',
+        '图中原因（文字版）'),
+    'ishikawa.detail.score-label': (
+        'score de cause racine', 'root-cause score', 'puntuación de causa raíz',
+        'درجة السبب الجذري', '根本原因スコア', '根本原因评分'),
 }

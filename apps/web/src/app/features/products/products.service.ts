@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -42,6 +42,25 @@ export class ProductsService {
 
   get(id: string): Observable<ProductResponse> {
     return this.http.get<ProductResponse>(`${this.endpoint}/${id}`);
+  }
+
+  /**
+   * Le classeur Excel du produit : PFMEA et plan de surveillance, deux
+   * feuilles, un fichier.
+   *
+   * <p>`responseType: 'blob'` — sans lui, Angular tenterait de lire le .xlsx
+   * comme du JSON et échouerait sur le premier octet, avec une erreur d'analyse
+   * qui ne dirait rien du vrai problème.
+   *
+   * <p>`observe: 'response'` pour lire `Content-Disposition` : c'est le SERVEUR
+   * qui nomme le fichier. Le refabriquer côté navigateur ferait diverger les
+   * deux noms à la première évolution.
+   */
+  exportXlsx(id: string): Observable<HttpResponse<Blob>> {
+    return this.http.get(`${this.endpoint}/${id}/export/xlsx`, {
+      responseType: 'blob',
+      observe: 'response'
+    });
   }
 
   create(input: CreateProductRequest): Observable<ProductResponse> {
