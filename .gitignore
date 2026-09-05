@@ -123,3 +123,6 @@ docs/superpowers/
 
 # Fichiers de verrouillage Office (Excel/Word ouverts) — jamais versionnés.
 ~$*
+
+# Artefacts du plugin Semgrep Guardian (outil de poste, pas un livrable).
+.semgrep/

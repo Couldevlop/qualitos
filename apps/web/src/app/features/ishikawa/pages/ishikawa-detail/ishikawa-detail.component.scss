@@ -108,111 +108,16 @@
   line-height: 1.5;
 }
 
-.branches {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-}
+/*
+  Les cartes de branche (6M) et l'arbre de causes qui les remplissait ont été
+  retirés : l'arête porte désormais le score et reçoit les clics, et la liste
+  répétait en texte ce que la figure venait de montrer. Leurs styles partent
+  avec elles — du CSS qui ne s'applique plus à rien se recopie ensuite par
+  imitation dans le composant suivant.
 
-.branch-card {
-  display: flex;
-  flex-direction: column;
-}
-
-.branch-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.branch-bullet {
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-size: 12px;
-  color: var(--mat-sys-primary, #1976d2);
-}
-
-.branch-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 24px;
-  padding: 0 6px;
-  height: 22px;
-  border-radius: 11px;
-  background: var(--mat-sys-secondary-container, rgba(0, 0, 0, 0.08));
-  color: var(--mat-sys-on-secondary-container, #000);
-  font-size: 12px;
-}
-
-.cause-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.cause-item {
-  list-style: none;
-  padding: 8px 12px;
-  border-radius: 8px;
-  background: var(--mat-sys-surface-container-low, rgba(0, 0, 0, 0.03));
-}
-
-.cause-item-child {
-  background: transparent;
-  padding: 4px 0 4px 12px;
-  border-left: 2px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.12));
-  margin-top: 6px;
-}
-
-.cause-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.cause-children {
-  list-style: none;
-  margin: 8px 0 0;
-  padding: 0 0 0 12px;
-}
-
-.cause-text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.cause-text strong {
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.cause-text small {
-  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.55));
-  font-size: 12px;
-}
-
-.score {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  flex-shrink: 0;
-}
-.score-high { background: #ffebee; color: #b71c1c; }
-.score-mid  { background: #fff3e0; color: #e65100; }
-.score-low  { background: #e8f5e9; color: #2e7d32; }
+  Le score et sa coloration vivent maintenant dans le composant du diagramme
+  (`ishikawa-fishbone.component.scss`), avec les mêmes trois bandes.
+*/
 
 .empty {
   margin: 0;

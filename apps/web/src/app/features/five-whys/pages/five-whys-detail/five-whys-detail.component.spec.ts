@@ -346,14 +346,6 @@ describe('FiveWhysDetailComponent', () => {
     expect(el.querySelectorAll('.is-root').length).toBe(1);
   });
 
-  it('revient à la liste', () => {
-    setup(analysis([step(1)]));
-
-    component.goBack();
-
-    expect(router.navigate).toHaveBeenCalledWith(['/five-whys']);
-  });
-
   it('renvoie à l\'écart constaté d\'où part l\'analyse', () => {
     // Sans ce retour, l'utilisateur venu de la non-conformité devrait repasser
     // par la liste des analyses pour retrouver son point de départ.

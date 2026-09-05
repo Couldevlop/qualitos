@@ -97,11 +97,24 @@ describe('NcCreateDialogComponent', () => {
     expect(component.form.controls.title.touched).toBeTrue();
   });
 
+  it("exige une description : un titre seul ne rend pas l’écart instruisible", () => {
+    // « Défaut peinture » ne dit ni ce qui a été constaté, ni où, ni ce que ça
+    // a produit. Six mois plus tard, l'analyse de cause racine partirait de rien.
+    component.form.controls.title.setValue('Défaut peinture');
+    expect(component.form.controls.description.hasError('required')).toBeTrue();
+
+    component.submit();
+
+    http.expectNone(endpoint);
+    expect(component.form.controls.description.touched).toBeTrue();
+    expect(dialogRef.close).not.toHaveBeenCalled();
+  });
+
   it('refuse un titre ou une zone au-delà de 255 caractères', () => {
     component.form.controls.title.setValue('x'.repeat(256));
     expect(component.form.controls.title.hasError('maxlength')).toBeTrue();
 
-    component.form.controls.title.setValue('OK');
+    component.form.patchValue({ title: 'OK', description: 'Constat valide.' });
     component.form.controls.zone.setValue('z'.repeat(256));
     expect(component.form.controls.zone.hasError('maxlength')).toBeTrue();
     component.submit();
@@ -110,7 +123,9 @@ describe('NcCreateDialogComponent', () => {
 
   it('nettoie les champs optionnels vides plutôt que d\'envoyer des chaînes blanches', () => {
     component.form.patchValue({
-      title: '  Étiquetage lot manquant  ', zone: '   ', description: '  ', photoUrls: '  \n \n'
+      title: '  Étiquetage lot manquant  ', zone: '   ',
+      description: '  Sachet sorti de ligne sans étiquette de lot.  ',
+      photoUrls: '  \n \n'
     });
     component.submit();
 
@@ -118,7 +133,8 @@ describe('NcCreateDialogComponent', () => {
     expect(req.request.method).toBe('POST');
     expect(req.request.body.title).toBe('Étiquetage lot manquant');
     expect(req.request.body.zone).toBeUndefined();
-    expect(req.request.body.description).toBeUndefined();
+    // La description, elle, n'est PAS optionnelle : elle est seulement rognée.
+    expect(req.request.body.description).toBe('Sachet sorti de ligne sans étiquette de lot.');
     expect(req.request.body.photoUrls).toBeUndefined();
     expect(req.request.body.geoLat).toBeUndefined();
     expect(req.request.body.geoLng).toBeUndefined();
@@ -133,6 +149,7 @@ describe('NcCreateDialogComponent', () => {
   it('normalise le bloc photos : une URL par ligne, sans ligne vide ni espaces', () => {
     component.form.patchValue({
       title: 'NC',
+      description: 'Constat photographié sur place.',
       photoUrls: '  https://a/1.jpg  \n\n   \n https://a/2.jpg\n'
     });
     component.submit();
@@ -144,7 +161,7 @@ describe('NcCreateDialogComponent', () => {
 
   it('reste utilisable sans session : la NC part sans déclarant plutôt que d\'être bloquée', () => {
     currentUser = null;
-    component.form.controls.title.setValue('NC anonyme');
+    component.form.patchValue({ title: 'NC anonyme', description: 'Constat sans session.' });
     component.submit();
 
     const req = http.expectOne(endpoint);
@@ -156,7 +173,9 @@ describe('NcCreateDialogComponent', () => {
   it('hors-ligne : annonce la mise en file au lieu d\'une création confirmée', async () => {
     connectivity.online = false;
     const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
-    component.form.patchValue({ title: 'Zone blanche', severity: 'CRITICAL' });
+    component.form.patchValue({
+      title: 'Zone blanche', severity: 'CRITICAL', description: 'Constat hors couverture réseau.'
+    });
     component.submit();
     // la mise en file passe par le store (promesse) : on laisse filer la microtâche
     await new Promise<void>(resolve => setTimeout(resolve, 0));
@@ -170,7 +189,7 @@ describe('NcCreateDialogComponent', () => {
   });
 
   it('ignore un second envoi tant que le premier est en vol (anti double-déclaration)', () => {
-    component.form.controls.title.setValue('NC');
+    component.form.patchValue({ title: 'NC', description: 'Constat en double clic.' });
     component.submit();
     component.submit();
 
@@ -180,7 +199,7 @@ describe('NcCreateDialogComponent', () => {
 
   it('garde le dialogue ouvert quand le serveur refuse la saisie (400)', () => {
     const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
-    component.form.controls.title.setValue('NC');
+    component.form.patchValue({ title: 'NC', description: 'Constat refusé par le serveur.' });
     component.submit();
     http.expectOne(endpoint).flush(
       { title: 'ConstraintViolation: nc.title' }, { status: 400, statusText: 'Bad Request' });
@@ -251,8 +270,22 @@ describe('NcCreateDialogComponent', () => {
     expect(component.form.controls.geoLng.value).toBeNull();
   });
 
+  it("laisse le serveur trancher l’origine quand la liste n’en impose aucune", () => {
+    // Entrée historique `/nc`, qui montre les deux origines : aucune n'est
+    // impliquée par l'écran, et le serveur applique son défaut.
+    component.form.patchValue({ title: 'NC', description: 'Constat sans origine imposée.' });
+    component.submit();
+
+    const req = http.expectOne(endpoint);
+    expect(req.request.body.origin).toBeUndefined();
+    req.flush(created);
+  });
+
   it('joint la position au corps de la déclaration quand elle est renseignée', () => {
-    component.form.patchValue({ title: 'NC géolocalisée', geoLat: 48.856612, geoLng: 2.35222 });
+    component.form.patchValue({
+      title: 'NC géolocalisée', description: 'Constat relevé sur zone.',
+      geoLat: 48.856612, geoLng: 2.35222
+    });
     component.submit();
 
     const req = http.expectOne(endpoint);

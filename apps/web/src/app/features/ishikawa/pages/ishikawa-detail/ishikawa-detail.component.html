@@ -117,31 +117,34 @@
         </ul>
       </mat-card>
 
-      <!-- La figure d'abord : des cartes rangent les causes, l'arête montre
-           qu'elles convergent toutes vers un même effet. Les cartes qui suivent
-           restent l'équivalent textuel du dessin — libellés entiers, sous-causes
-           dépliées, commandes — et le seul endroit où l'on agit. -->
+      <!-- L'arête, et rien d'autre. Les cartes de branche qui la doublaient
+           disaient deux fois la même chose : le lecteur devait relire en liste
+           ce qu'il venait de voir en figure, et la page s'allongeait d'un écran
+           entier pour ça. Le dessin porte désormais le score et reçoit les
+           clics ; le détail complet reste accessible sous forme de texte, plus
+           bas, pour les lecteurs d'écran. -->
       <qos-ishikawa-fishbone [problem]="d.problemStatement"
-                             [branches]="fishboneBranches(d)"></qos-ishikawa-fishbone>
+                             [branches]="fishboneBranches(d)"
+                             (causeActivate)="onCauseActivate(d, $event)"></qos-ishikawa-fishbone>
 
-      <section class="branches">
-        <mat-card class="branch-card" *ngFor="let b of branches(d)">
-          <mat-card-header>
-            <mat-card-title class="branch-title">
-              <span class="branch-bullet">{{ b.label }}</span>
-              <span class="branch-count">{{ b.roots.length }}</span>
-            </mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <p class="empty" *ngIf="b.roots.length === 0" i18n="@@ishikawa.detail.branch-empty">Aucune cause pour cette branche.</p>
-            <ul class="cause-list" *ngIf="b.roots.length > 0">
-              <ng-container *ngFor="let n of b.roots">
-                <ng-container *ngTemplateOutlet="causeNode; context: { $implicit: n, depth: 0, diagram: d }"></ng-container>
-              </ng-container>
-            </ul>
-          </mat-card-content>
-        </mat-card>
-      </section>
+      <!-- Équivalent textuel du dessin (WCAG 2.2 AA, §15.1). Masqué à l'œil,
+           lu par les technologies d'assistance : une arête parcourue trait par
+           trait n'a aucun sens, et le SVG n'expose que les causes de premier
+           niveau. Ce bloc porte la hiérarchie entière, descriptions et scores
+           compris. Aucun élément focusable ici — un bouton invisible qui reçoit
+           le focus est un piège ; les commandes sont sur la figure. -->
+      <div class="visually-hidden">
+        <h2 i18n="@@ishikawa.detail.text-alternative">Causes du diagramme, en texte</h2>
+        <ng-container *ngFor="let b of branches(d)">
+          <h3>{{ b.label }}</h3>
+          <p *ngIf="b.roots.length === 0" i18n="@@ishikawa.detail.branch-empty">Aucune cause pour cette branche.</p>
+          <ul *ngIf="b.roots.length > 0">
+            <ng-container *ngFor="let n of b.roots">
+              <ng-container *ngTemplateOutlet="causeText; context: { $implicit: n }"></ng-container>
+            </ng-container>
+          </ul>
+        </ng-container>
+      </div>
 
       <!-- Plan d'actions : identifier les causes est un moyen, décider qui fait
            quoi est la fin. Le tableau se modifie cellule par cellule — on corrige
@@ -272,26 +275,20 @@
   </ng-container>
 
   <!-- Recursive cause renderer (parent → 5-Whys children, indented). -->
-  <ng-template #causeNode let-n let-depth="depth" let-diagram="diagram">
-    <li class="cause-item" [class.cause-item-child]="depth > 0">
-      <div class="cause-row">
-        <div class="cause-text">
-          <strong>{{ n.cause.label }}</strong>
-          <small *ngIf="n.cause.description">{{ n.cause.description }}</small>
-        </div>
-        <span [class]="scoreClass(n.cause.rootCauseScore)" *ngIf="n.cause.rootCauseScore !== undefined">
-          {{ (n.cause.rootCauseScore * 100) | number:'1.0-0' }} %
-        </span>
-        <button mat-icon-button type="button"
-                (click)="openAddSubCause(diagram, n.cause)"
-                i18n-matTooltip="@@ishikawa.detail.add-why-tooltip" matTooltip="Ajouter un Pourquoi ?"
-                [attr.aria-label]="'Ajouter un sous-pourquoi à ' + n.cause.label">
-          <mat-icon>add_circle_outline</mat-icon>
-        </button>
-      </div>
-      <ul class="cause-children" *ngIf="n.children.length > 0">
+  <!--
+    L'arbre des causes en TEXTE, pour l'équivalent accessible. Il n'affiche que
+    du contenu : plus de bouton, la figure porte les commandes. C'est ce qui
+    permet de le masquer à l'œil sans créer de piège au clavier.
+  -->
+  <ng-template #causeText let-n>
+    <li>
+      {{ n.cause.label }}<ng-container *ngIf="n.cause.rootCauseScore !== undefined">
+        — <span i18n="@@ishikawa.detail.score-label">score de cause racine</span>
+        {{ (n.cause.rootCauseScore * 100) | number:'1.0-0' }} %</ng-container>
+      <span *ngIf="n.cause.description"> — {{ n.cause.description }}</span>
+      <ul *ngIf="n.children.length > 0">
         <ng-container *ngFor="let child of n.children">
-          <ng-container *ngTemplateOutlet="causeNode; context: { $implicit: child, depth: depth + 1, diagram: diagram }"></ng-container>
+          <ng-container *ngTemplateOutlet="causeText; context: { $implicit: child }"></ng-container>
         </ng-container>
       </ul>
     </li>

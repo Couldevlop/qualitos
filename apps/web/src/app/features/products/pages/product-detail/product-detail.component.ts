@@ -1,3 +1,4 @@
+import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -33,6 +34,8 @@ export class ProductDetailComponent implements OnInit {
   operations: ProductOperationResponse[] = [];
   pendingRevisions = 0;
   loading = false;
+  /** Un export en cours : le bouton se verrouille, un second clic dupliquerait le fichier. */
+  exporting = false;
 
   readonly componentColumns = ['sequenceNo', 'reference', 'label', 'quantity', 'actions'];
   readonly operationColumns = ['sequenceNo', 'code', 'label', 'workstation', 'actions'];
@@ -82,6 +85,62 @@ export class ProductDetailComponent implements OnInit {
       next: product => (this.product = product),
       error: () => this.fail($localize`:@@product.save-failed:Enregistrement impossible.`)
     });
+  }
+
+  /**
+   * Télécharge le classeur du produit (PFMEA + plan de surveillance).
+   *
+   * <p>Le nom du fichier vient de `Content-Disposition`, donc du SERVEUR : le
+   * refabriquer ici ferait diverger les deux à la première évolution du format.
+   * Repli sur un nom neutre si l'en-tête manque — un téléchargement sans nom
+   * arrive chez l'utilisateur en « download » sans extension, et Excel refuse
+   * de l'ouvrir.
+   *
+   * <p>L'URL objet est RÉVOQUÉE après usage : sans cela, chaque export garde le
+   * classeur en mémoire jusqu'au rechargement de la page.
+   */
+  exportXlsx(): void {
+    if (this.exporting) {
+      return;   // un second clic dupliquerait le téléchargement
+    }
+    this.exporting = true;
+    this.service.exportXlsx(this.productId).subscribe({
+      next: response => {
+        this.exporting = false;
+        const blob = response.body;
+        if (!blob) {
+          this.fail($localize`:@@product.export-failed:Export impossible.`);
+          return;
+        }
+        this.saveAs(blob, this.filenameOf(response) ?? 'export.xlsx');
+      },
+      error: () => {
+        this.exporting = false;
+        this.fail($localize`:@@product.export-failed:Export impossible.`);
+      }
+    });
+  }
+
+  /** Le nom proposé par le serveur, lu dans `Content-Disposition`. */
+  private filenameOf(response: HttpResponse<Blob>): string | null {
+    const header = response.headers.get('Content-Disposition');
+    if (!header) {
+      // L'en-tête n'est visible du navigateur que s'il est EXPOSÉ par CORS.
+      // Le repli n'est donc pas théorique : il couvre le jour où l'API passe
+      // sur un autre domaine que l'application.
+      return null;
+    }
+    const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(header);
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  private saveAs(blob: Blob, filename: string): void {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
   }
 
   addComponent(): void {
