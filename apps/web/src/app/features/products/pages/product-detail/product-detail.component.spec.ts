@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -43,6 +43,7 @@ describe('ProductDetailComponent', () => {
     id: 'o-1', productId: 'p-1', sequenceNo: 20, code: 'OP20', label: 'Perçage'
   } as ProductOperationResponse;
 
+  let fixture: ComponentFixture<ProductDetailComponent>;
   let component: ProductDetailComponent;
   let service: jasmine.SpyObj<ProductsService>;
   let snack: jasmine.SpyObj<MatSnackBar>;
@@ -79,7 +80,8 @@ describe('ProductDetailComponent', () => {
       ]
     }).compileComponents();
 
-    component = TestBed.createComponent(ProductDetailComponent).componentInstance;
+    fixture = TestBed.createComponent(ProductDetailComponent);
+    component = fixture.componentInstance;
   });
 
   it('charge la fiche, sa nomenclature, sa gamme et son compteur de révisions', () => {
@@ -222,5 +224,22 @@ describe('ProductDetailComponent', () => {
     // La gamme n'est PAS relue : rien n'a changé côté serveur.
     expect(service.operations).not.toHaveBeenCalled();
     expect(snack.open).toHaveBeenCalled();
+  });
+
+  it("expose les commandes DANS l'en-tête, et non à côté", () => {
+    // `qos-page-header` ne projette QUE ce qui porte l'attribut `qosActions`
+    // (`<ng-content select="[qosActions]">`). Un bouton placé entre ses balises
+    // sans cet attribut n'est pas rejeté : il n'est simplement JAMAIS rendu.
+    // Rien ne le signale — ni la compilation, ni un banc qui appelle la methode
+    // directement. Seul le DOM le dit, d'où cette assertion.
+    fixture.detectChanges();
+
+    const enTete = fixture.nativeElement.querySelector('.qos-page-header__actions') as HTMLElement;
+    const libelles = Array.from(enTete.querySelectorAll('button'))
+      .map(b => (b as HTMLElement).textContent!.trim());
+
+    expect(libelles.some(l => l.includes('Exporter'))).toBeTrue();
+    // Le produit du banc est ACTIF : c'est « Rendre obsolète » qui l'accompagne.
+    expect(libelles.some(l => l.includes('obsol'))).toBeTrue();
   });
 });

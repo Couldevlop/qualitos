@@ -1,17 +1,17 @@
 <div class="qos-page" *ngIf="product as p">
   <qos-page-header [title]="p.code + ' — ' + p.designation" [subtitle]="p.family || ''">
-    <button mat-stroked-button *ngIf="p.status === 'DRAFT'" (click)="activate()">
+    <button qosActions mat-stroked-button *ngIf="p.status === 'DRAFT'" (click)="activate()">
       <mat-icon>check_circle</mat-icon>
       <span i18n="@@product.activate">Activer</span>
     </button>
-    <button mat-stroked-button *ngIf="p.status === 'ACTIVE'" (click)="markObsolete()">
+    <button qosActions mat-stroked-button *ngIf="p.status === 'ACTIVE'" (click)="markObsolete()">
       <mat-icon>archive</mat-icon>
       <span i18n="@@product.obsolete">Rendre obsolète</span>
     </button>
     <!-- Le dossier du produit dans un seul classeur : ce qu'un audit client
          réclame, et ce qu'on ne peut pas transmettre à quelqu'un qui n'a pas
          la plateforme sans l'en sortir. -->
-    <button mat-stroked-button (click)="exportXlsx()" [disabled]="exporting"
+    <button qosActions mat-stroked-button (click)="exportXlsx()" [disabled]="exporting"
             [attr.aria-busy]="exporting">
       <mat-icon aria-hidden="true">table_view</mat-icon>
       <span i18n="@@product.export-xlsx">Exporter (Excel)</span>
