@@ -298,7 +298,7 @@ TRANSLATIONS = {
     'fmea.item.added': ('Item ajouté.', "Item added.", "Ítem añadido.", "تمت إضافة العنصر.", "項目を追加しました。", "已添加项。"),
     'fmea.item.save-error': ("Erreur lors de l'enregistrement.", "Error while saving.", "Error al guardar.", "حدث خطأ أثناء الحفظ.", "保存中にエラーが発生しました。", "保存时出错。"),
     'ehs.list.title': ('EHS — Incidents', "EHS — Incidents", "EHS — Incidentes", "EHS — الحوادث", "EHS — インシデント", "EHS — 事件"),
-    'ehs.list.subtitle': ('Environnement, hygiène, sécurité (CLAUDE.md §4.11) — déclaration, investigation, mitigation.', "Environment, health, safety (CLAUDE.md §4.11) — reporting, investigation, mitigation.", "Medio ambiente, higiene, seguridad (CLAUDE.md §4.11) — declaración, investigación, mitigación.", "البيئة والصحة والسلامة (CLAUDE.md §4.11) — الإبلاغ والتحقيق والتخفيف.", "環境・衛生・安全（CLAUDE.md §4.11）— 報告、調査、緩和。", "环境、健康与安全（CLAUDE.md §4.11）— 申报、调查、缓解。"),
+    'ehs.list.subtitle': ('Environnement, hygiène, sécurité — déclaration, investigation, mitigation.', "Environment, health, safety — reporting, investigation, mitigation.", "Medio ambiente, higiene, seguridad — declaración, investigación, mitigación.", "البيئة والصحة والسلامة — الإبلاغ والتحقيق والتخفيف.", "環境・衛生・安全 — 報告、調査、緩和。", "环境、健康与安全 — 申报、调查、缓解。"),
     'ehs.list.report-incident': ('Déclarer un incident', "Report an incident", "Declarar un incidente", "الإبلاغ عن حادث", "インシデントを報告", "申报事件"),
     'ehs.list.stat-investigating': ('En investigation', "Investigating", "En investigación", "قيد التحقيق", "調査中", "调查中"),
     'ehs.list.stat-injuries': ('Accidents', "Accidents", "Accidentes", "الحوادث", "事故", "事故"),

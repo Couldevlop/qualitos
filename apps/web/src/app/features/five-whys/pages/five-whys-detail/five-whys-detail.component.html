@@ -3,10 +3,11 @@
     [title]="analysis?.problem || ''"
     eyebrow="5 Pourquoi" i18n-eyebrow="@@fivewhys.eyebrow"
     [subtitle]="analysis ? ('Non-conformité ' + analysis.ncReference) : ''">
-    <button qosActions mat-stroked-button type="button" (click)="goBack()">
-      <mat-icon aria-hidden="true">arrow_back</mat-icon>
-      <span i18n="@@common.back">Retour</span>
-    </button>
+    <!-- Pas de bouton « Retour » ici : le retour du navigateur ramène déjà
+         là d'où l'on vient, et un second bouton qui, lui, menait TOUJOURS à la
+         liste des analyses envoyait ailleurs qu'à son point de départ quiconque
+         arrivait depuis une non-conformité. La seule sortie qui reste est celle
+         qui nomme sa destination. -->
     <!-- L'analyse vient d'un écart constaté : on doit pouvoir y retourner sans
          repasser par la liste. -->
     <button qosActions mat-stroked-button type="button" class="open-nc"
