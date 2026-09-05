@@ -28,6 +28,14 @@ export interface FishboneCauseInput {
   label: string;
   /** Nombre de sous-causes, tous niveaux confondus. */
   descendants: number;
+  /**
+   * Score de cause racine, entre 0 et 1, quand il a été renseigné.
+   *
+   * <p>Il s'écrit SUR le dessin depuis que les cartes de branche ont disparu :
+   * c'était le seul endroit où on le lisait, et une cause pesée à 80 % ne se
+   * distingue plus d'une hypothèse de passage si le chiffre n'est nulle part.
+   */
+  score?: number;
 }
 
 export interface FishboneBranchInput {
@@ -51,6 +59,19 @@ export interface FishboneCauseVm {
   label: string;
   /** 0 = cause feuille ; sinon, nombre de sous-causes masquées par le dessin. */
   descendants: number;
+  /** Score de cause racine déjà mis en forme (« 80 % »), ou null s'il manque. */
+  score: string | null;
+  /**
+   * Bande de lecture du score : `high` ≥ 70 %, `mid` ≥ 40 %, `low` en dessous.
+   *
+   * <p>Elle vient des cartes de branche supprimées, où le score était coloré.
+   * Un pourcentage nu se compare mal d'une cause à l'autre en balayant une
+   * figure ; la couleur donne le classement au premier regard, et le chiffre
+   * reste là pour qui veut la valeur exacte.
+   */
+  scoreTone: 'high' | 'mid' | 'low' | null;
+  /** Le libellé ENTIER, pour l'infobulle et le nom accessible. */
+  fullLabel: string;
   tickX1: number;
   tickX2: number;
   tickY: number;
@@ -142,6 +163,35 @@ const BRANCH_MAX_CHARS = 17;
  */
 function countedWidth(descendants: number): number {
   return 2 + String(descendants).length;
+}
+
+/**
+ * Met en forme le score de cause racine, ou rend `null` quand il n'y en a pas.
+ *
+ * <p>`null` et non `« 0 % »` : une cause NON pesée et une cause pesée à zéro
+ * disent le contraire l'une de l'autre, et les confondre ferait écarter une
+ * piste que personne n'a encore examinée.
+ */
+function formatScore(score: number | undefined): string | null {
+  if (score === undefined || score === null || Number.isNaN(score)) {
+    return null;
+  }
+  return Math.round(score * 100) + ' %';
+}
+
+/** Largeur réservée au score, en caractères : une espace, les chiffres, « % ». */
+function scoreWidth(score: string | null): number {
+  return score === null ? 0 : score.length + 1;
+}
+
+/** Mêmes seuils que la coloration qu'appliquaient les cartes de branche. */
+function scoreTone(score: number | undefined): 'high' | 'mid' | 'low' | null {
+  if (score === undefined || score === null || Number.isNaN(score)) {
+    return null;
+  }
+  if (score >= 0.7) return 'high';
+  if (score >= 0.4) return 'mid';
+  return 'low';
 }
 
 const EMPTY_HEAD: FishboneHeadVm = {
@@ -246,15 +296,21 @@ export function buildFishboneLayout(
       // cette oblique et la suivante : l'écrire de l'autre côté le ferait sortir
       // du dessin sur la première colonne.
       const tickEnd = px + TICK_LEN;
+      const score = formatScore(cause.score);
       return {
         key: cause.id,
-        // Le compteur « +12 » s'écrit APRÈS le libellé, dans le même espace :
-        // il doit donc être réservé dans le budget, sinon une cause à
-        // sous-causes déborde de la largeur exactement de ce que le compteur
-        // occupe — et la dernière colonne passe sous l'encart de tête.
+        // Le compteur « +12 » et le score « 80 % » s'écrivent APRÈS le libellé,
+        // dans le même espace : ils doivent donc être réservés dans le budget,
+        // sinon une cause à sous-causes déborde de la largeur exactement de ce
+        // qu'ils occupent — et la dernière colonne passe sous l'encart de tête.
         label: truncateSvgText(
             cause.label,
-            CAUSE_MAX_CHARS - (cause.descendants > 0 ? countedWidth(cause.descendants) : 0)),
+            CAUSE_MAX_CHARS
+                - (cause.descendants > 0 ? countedWidth(cause.descendants) : 0)
+                - scoreWidth(score)),
+        fullLabel: cause.label,
+        score,
+        scoreTone: scoreTone(cause.score),
         descendants: cause.descendants,
         tickX1: mirrorX(px),
         tickX2: mirrorX(tickEnd),
