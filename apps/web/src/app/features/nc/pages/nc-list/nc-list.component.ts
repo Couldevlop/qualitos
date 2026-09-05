@@ -142,7 +142,17 @@ export class NcListComponent implements OnInit {
     const ref = this.dialog.open(NcCreateDialogComponent, {
       autoFocus: 'first-tabbable',
       restoreFocus: true,
-      panelClass: 'qos-dialog-panel'
+      panelClass: 'qos-dialog-panel',
+      // L'origine de la LISTE suit la déclaration. Sans elle, le dialogue
+      // n'envoyait aucune origine et le serveur retombait sur son défaut
+      // INTERNAL : une non-conformité déclarée depuis l'écran « externes »
+      // atterrissait dans le tableau des internes, donc hors de la liste d'où
+      // on venait de la créer — elle semblait s'être perdue.
+      //
+      // `undefined` sur l'entrée historique `/nc`, qui montre les deux : là,
+      // aucune origine n'est impliquée par l'écran, et c'est au serveur de
+      // trancher.
+      data: { origin: this.origin ?? undefined }
     });
     ref.afterClosed().subscribe(created => {
       if (created) {
