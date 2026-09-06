@@ -17,6 +17,7 @@ TRANSLATIONS = {
     'common.created-at': ('Créé le', 'Created on', 'Creado el', 'تاريخ الإنشاء', '作成日', '创建于'),
     'common.save': ('Enregistrer', 'Save', 'Guardar', 'حفظ', '保存', '保存'),
     'common.cancel': ('Annuler', 'Cancel', 'Cancelar', 'إلغاء', 'キャンセル', '取消'),
+    'common.form-blocked': ('Des champs obligatoires restent à renseigner.', 'Some required fields are still empty.', 'Faltan campos obligatorios por completar.', 'لا تزال هناك حقول إلزامية فارغة.', '必須項目が未入力です。', '仍有必填项未填写。'),
     'common.create': ('Créer', 'Create', 'Crear', 'إنشاء', '作成', '创建'),
     'common.close': ('Fermer', 'Close', 'Cerrar', 'إغلاق', '閉じる', '关闭'),
     'common.delete': ('Supprimer', 'Delete', 'Eliminar', 'حذف', '削除', '删除'),

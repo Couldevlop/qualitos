@@ -1,10 +1,21 @@
-<h2 mat-dialog-title>
-  <span *ngIf="!editing" i18n="@@controlplan.line-new">Ajouter une ligne</span>
-  <span *ngIf="editing" i18n="@@controlplan.line-edit">Modifier la ligne</span>
-</h2>
+<qos-form-dialog
+  [title]="editing ? titreEdition : titreCreation"
+  [formGroup]="form"
+  [submitting]="saving"
+  [submitDisabled]="form.invalid"
+  [blockedReason]="blockedReason"
+  i18n-submitLabel="@@common.save"
+  submitLabel="Enregistrer"
+  (submitted)="save()"
+  (cancelled)="cancel()">
 
-<mat-dialog-content>
-  <form [formGroup]="form" class="line-form">
+  <!-- Vingt champs a la file ne disent pas ce qu'on remplit. Cinq groupes
+       suivent l'ordre dans lequel un plan de surveillance se lit : ou l'on
+       controle, quoi, comment, ce qu'on fait si ca sort, et pourquoi ce
+       controle existe. -->
+  <div class="line-form">
+    <h3 class="qfd-section span-2" i18n="@@controlplan.section-where">Où, dans la gamme</h3>
+
     <mat-form-field appearance="outline">
       <mat-label i18n="@@product.field-sequence">Rang</mat-label>
       <input matInput type="number" formControlName="sequenceNo" min="0">
@@ -19,6 +30,8 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+
+    <h3 class="qfd-section span-2" i18n="@@controlplan.section-what">Ce qui est contrôlé</h3>
 
     <mat-form-field appearance="outline" class="span-2">
       <mat-label i18n="@@controlplan.field-characteristic">Ce qui est contrôlé</mat-label>
@@ -69,6 +82,8 @@
       <input matInput formControlName="unit" maxlength="24">
     </mat-form-field>
 
+    <h3 class="qfd-section span-2" i18n="@@controlplan.section-how">Comment on le mesure</h3>
+
     <mat-form-field appearance="outline">
       <mat-label i18n="@@controlplan.field-machine">Moyen</mat-label>
       <input matInput formControlName="machine" maxlength="250">
@@ -100,6 +115,8 @@
       <mat-label i18n="@@controlplan.field-method">Méthode de contrôle</mat-label>
       <input matInput formControlName="controlMethod" maxlength="500">
     </mat-form-field>
+
+    <h3 class="qfd-section span-2" i18n="@@controlplan.section-reaction">Si le contrôle sort des clous</h3>
 
     <mat-form-field appearance="outline" class="span-2">
       <mat-label i18n="@@controlplan.field-reaction">Plan de réaction</mat-label>
@@ -135,6 +152,8 @@
       </mat-hint>
     </mat-form-field>
 
+    <h3 class="qfd-section span-2" i18n="@@controlplan.section-why">Pourquoi ce contrôle existe</h3>
+
     <mat-form-field appearance="outline" class="span-2">
       <mat-label i18n="@@controlplan.field-fmea">Ligne de PFMEA qui justifie ce contrôle</mat-label>
       <mat-select formControlName="fmeaItemId">
@@ -146,11 +165,6 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-  </form>
-</mat-dialog-content>
+  </div>
 
-<mat-dialog-actions align="end">
-  <button mat-button (click)="cancel()" i18n="@@common.cancel">Annuler</button>
-  <button mat-flat-button color="primary" (click)="save()"
-          [disabled]="form.invalid || saving" i18n="@@common.save">Enregistrer</button>
-</mat-dialog-actions>
+</qos-form-dialog>

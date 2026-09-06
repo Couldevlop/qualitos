@@ -4,6 +4,7 @@
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  [blockedReason]="blockedReason"
   i18n-submitLabel="@@nc.create.submit"
   submitLabel="Déclarer"
   (submitted)="submit()"
@@ -12,6 +13,10 @@
   <p class="hint" i18n="@@nc.create.hint">Saisis l'essentiel sur le terrain : la NC pourra être analysée et
      résolue ensuite. Hors-ligne, elle est mise en attente et synchronisée au retour du réseau.</p>
 
+  <!-- Trois groupes nommés plutôt que huit champs à la file : sur le terrain,
+       on remplit ce qu'on a constaté, on le qualifie, puis on dit où. -->
+  <h3 class="qfd-section" i18n="@@nc.create.section-observation">Le constat</h3>
+
   <mat-form-field appearance="outline" class="full">
     <mat-label i18n="@@common.title">Titre</mat-label>
     <input matInput formControlName="title" maxlength="255" required
@@ -19,30 +24,6 @@
            placeholder="Ex. : Étiquetage lot manquant — ligne 1">
     <mat-error *ngIf="form.controls.title.hasError('required')" i18n="@@nc.create.title-required">Le titre est requis.</mat-error>
     <mat-error *ngIf="form.controls.title.hasError('maxlength')" i18n="@@common.maxlength-255">255 caractères maximum.</mat-error>
-  </mat-form-field>
-
-  <div class="row">
-    <mat-form-field appearance="outline" class="half">
-      <mat-label i18n="@@nc.create.category">Catégorie</mat-label>
-      <mat-select formControlName="category" required>
-        <mat-option *ngFor="let c of categories" [value]="c">{{ c }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="half">
-      <mat-label i18n="@@nc.create.severity">Sévérité</mat-label>
-      <mat-select formControlName="severity" required>
-        <mat-option *ngFor="let s of severities" [value]="s">{{ s }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-
-  <mat-form-field appearance="outline" class="full">
-    <mat-label i18n="@@common.zone">Zone</mat-label>
-    <input matInput formControlName="zone" maxlength="255"
-           i18n-placeholder="@@nc.create.zone-placeholder"
-           placeholder="Ex. : Atelier conditionnement A">
-    <mat-error *ngIf="form.controls.zone.hasError('maxlength')" i18n="@@common.maxlength-255">255 caractères maximum.</mat-error>
   </mat-form-field>
 
   <!-- La description n'est plus facultative : un titre seul (« Défaut peinture »)
@@ -54,10 +35,49 @@
     <textarea matInput formControlName="description" rows="3" required
               i18n-placeholder="@@nc.create.description-placeholder"
               placeholder="Constat, contexte, impact observé…"></textarea>
+    <mat-hint i18n="@@nc.create.description-hint">Ce qui a été constaté, où, et ce que ça a produit.</mat-hint>
     <mat-error *ngIf="form.controls.description.hasError('required')"
                i18n="@@nc.create.description-required">
       Décrivez le constat : sans description, l'écart n'est pas instruisible.
     </mat-error>
+  </mat-form-field>
+
+  <h3 class="qfd-section" i18n="@@nc.create.section-qualification">Qualification</h3>
+
+  <div class="qos-field-row">
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@nc.create.category">Catégorie</mat-label>
+      <mat-select formControlName="category" required>
+        <mat-option *ngFor="let c of categories" [value]="c">{{ c }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@nc.create.severity">Sévérité</mat-label>
+      <mat-select formControlName="severity" required>
+        <mat-option *ngFor="let s of severities" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <h3 class="qfd-section" i18n="@@nc.create.section-where">Où, et sur quoi</h3>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@common.zone">Zone</mat-label>
+    <input matInput formControlName="zone" maxlength="255"
+           i18n-placeholder="@@nc.create.zone-placeholder"
+           placeholder="Ex. : Atelier conditionnement A">
+    <mat-error *ngIf="form.controls.zone.hasError('maxlength')" i18n="@@common.maxlength-255">255 caractères maximum.</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@nc.create.product">Produit concerné</mat-label>
+    <mat-select formControlName="productId" (selectionChange)="refreshSuggestions()">
+      <mat-option value="" i18n="@@nc.create.no-product">Aucun — cette NC ne vise pas un produit</mat-option>
+      <mat-option *ngFor="let product of products" [value]="product.id">
+        {{ product.code }} — {{ product.designation }}
+      </mat-option>
+    </mat-select>
   </mat-form-field>
 
   <div class="geo-block">
@@ -79,24 +99,6 @@
       <span class="coords">{{ form.controls.geoLat.value | number:'1.5-6' }}, {{ form.controls.geoLng.value | number:'1.5-6' }}</span>
     </p>
   </div>
-
-  <mat-form-field appearance="outline" class="full">
-    <mat-label i18n="@@nc.create.photos">Photos — URLs (une par ligne)</mat-label>
-    <textarea matInput formControlName="photoUrls" rows="3"
-              i18n-placeholder="@@nc.create.photos-placeholder"
-              placeholder="https://… (une URL par ligne)"></textarea>
-    <mat-hint i18n="@@nc.create.photos-hint">L'envoi de fichiers depuis l'appareil arrivera prochainement.</mat-hint>
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="full">
-    <mat-label i18n="@@nc.create.product">Produit concerné</mat-label>
-    <mat-select formControlName="productId" (selectionChange)="refreshSuggestions()">
-      <mat-option value="" i18n="@@nc.create.no-product">Aucun — cette NC ne vise pas un produit</mat-option>
-      <mat-option *ngFor="let product of products" [value]="product.id">
-        {{ product.code }} — {{ product.designation }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
 
   <!--
     Le sélecteur de mode de défaillance n'apparaît qu'APRÈS le choix d'un produit :
@@ -135,5 +137,15 @@
       Aucune suggestion pour ce texte. « Aucun mode ne correspond » reste un choix valable.
     </p>
   </div>
+
+  <h3 class="qfd-section" i18n="@@nc.create.section-attachments">Pièces</h3>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@nc.create.photos">Photos — URLs (une par ligne)</mat-label>
+    <textarea matInput formControlName="photoUrls" rows="3"
+              i18n-placeholder="@@nc.create.photos-placeholder"
+              placeholder="https://… (une URL par ligne)"></textarea>
+    <mat-hint i18n="@@nc.create.photos-hint">L'envoi de fichiers depuis l'appareil arrivera prochainement.</mat-hint>
+  </mat-form-field>
 
 </qos-form-dialog>

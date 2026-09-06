@@ -6950,6 +6950,10 @@ Portail clients</source>
         <source>Annuler</source>
         <target state="translated">キャンセル</target>
       </trans-unit>
+      <trans-unit id="common.form-blocked" datatype="html">
+        <source>Des champs obligatoires restent à renseigner.</source>
+        <target state="translated">必須項目が未入力です。</target>
+      </trans-unit>
       <trans-unit id="common.create" datatype="html">
         <source>Créer</source>
         <target state="translated">作成</target>
@@ -14639,6 +14643,34 @@ historique 12 mois</source>
         <source>L'envoi de fichiers depuis l'appareil arrivera prochainement.</source>
         <target state="translated">端末からのファイルアップロードは近日対応予定です。</target>
       </trans-unit>
+      <trans-unit id="nc.create.section-observation" datatype="html">
+        <source>Le constat</source>
+        <target state="translated">確認事項</target>
+      </trans-unit>
+      <trans-unit id="nc.create.section-qualification" datatype="html">
+        <source>Qualification</source>
+        <target state="translated">分類</target>
+      </trans-unit>
+      <trans-unit id="nc.create.section-where" datatype="html">
+        <source>Où, et sur quoi</source>
+        <target state="translated">場所と対象</target>
+      </trans-unit>
+      <trans-unit id="nc.create.section-attachments" datatype="html">
+        <source>Pièces</source>
+        <target state="translated">添付</target>
+      </trans-unit>
+      <trans-unit id="nc.create.description-hint" datatype="html">
+        <source>Ce qui a été constaté, où, et ce que ça a produit.</source>
+        <target state="translated">何を、どこで確認し、何が起きたか。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-title" datatype="html">
+        <source>Renseignez le titre pour pouvoir déclarer.</source>
+        <target state="translated">報告するにはタイトルを入力してください。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-description" datatype="html">
+        <source>Renseignez la description pour pouvoir déclarer.</source>
+        <target state="translated">報告するには説明を入力してください。</target>
+      </trans-unit>
       <trans-unit id="nc.create.submit" datatype="html">
         <source>Déclarer</source>
         <target state="translated">報告</target>
@@ -16882,6 +16914,30 @@ historique 12 mois</source>
       <trans-unit id="controlplan.add-line" datatype="html">
         <source>Ajouter une ligne</source>
         <target state="translated">行を追加</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-where" datatype="html">
+        <source>Où, dans la gamme</source>
+        <target state="translated">工程のどこで</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-what" datatype="html">
+        <source>Ce qui est contrôlé</source>
+        <target state="translated">何を管理するか</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-how" datatype="html">
+        <source>Comment on le mesure</source>
+        <target state="translated">どう測定するか</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-reaction" datatype="html">
+        <source>Si le contrôle sort des clous</source>
+        <target state="translated">管理が外れた場合</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-why" datatype="html">
+        <source>Pourquoi ce contrôle existe</source>
+        <target state="translated">この管理が存在する理由</target>
+      </trans-unit>
+      <trans-unit id="controlplan.blocked-characteristic" datatype="html">
+        <source>Indiquez ce qui est contrôlé pour pouvoir enregistrer.</source>
+        <target state="translated">保存するには管理対象を入力してください。</target>
       </trans-unit>
       <trans-unit id="controlplan.line-new" datatype="html">
         <source>Ajouter une ligne</source>
@@ -19390,6 +19446,10 @@ historique 12 mois</source>
       <trans-unit id="fmea.item.initial-rating" datatype="html">
         <source>Cotation initiale</source>
         <target state="translated">初期評価</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.blocked-scale" datatype="html">
+        <source>Les notes S, O et D doivent rester entre 1 et 10.</source>
+        <target state="translated">S・O・D の評点は 1〜10 の範囲にしてください。</target>
       </trans-unit>
       <trans-unit id="fmea.item.severity" datatype="html">
         <source>Sévérité</source>

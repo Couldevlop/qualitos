@@ -13,3 +13,54 @@
 .mat-mdc-dialog-actions button mat-progress-spinner {
   margin-right: var(--qos-space-2);
 }
+
+/* ---- Barre d'actions : ce qui bloque à gauche, les boutons à droite. ----
+
+   Aucun `justify-content` n'est redéclaré ici : le `flex-end` global suffit,
+   puisque `margin-left: auto` sur le groupe de boutons absorbe l'espace libre
+   et laisse le motif à gauche. Une déclaration de plus aurait ouvert une course
+   à la spécificité avec `styles.scss` pour un résultat identique. */
+.mat-mdc-dialog-actions {
+  flex-wrap: wrap;
+}
+
+.qfd-blocked {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  margin: 0;
+  min-width: 0;                 /* le texte se réduit avant de pousser les boutons */
+  color: var(--qos-warn-fg);
+  font-size: var(--qos-fs-sm);
+  line-height: var(--qos-lh-snug);
+
+  mat-icon {
+    flex: 0 0 auto;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.qfd-buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-3);
+  margin-left: auto;
+}
+
+/* Sur un écran étroit, le motif passe AU-DESSUS des boutons plutôt que de les
+   comprimer : un message tronqué à « Renseignez la desc… » ne renseigne rien. */
+@media (max-width: 640px) {
+  .mat-mdc-dialog-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .qfd-blocked { margin-bottom: var(--qos-space-2); }
+
+  .qfd-buttons {
+    margin-left: 0;
+    width: 100%;
+  }
+}

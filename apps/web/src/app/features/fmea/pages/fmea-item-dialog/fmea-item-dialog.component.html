@@ -3,6 +3,7 @@
   [formGroup]="form"
   [submitting]="submitting"
   [submitDisabled]="form.invalid"
+  [blockedReason]="blockedReason"
   [submitLabel]="submitLabel"
   (submitted)="submit()"
   (cancelled)="cancel()">

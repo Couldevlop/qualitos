@@ -1,13 +1,16 @@
+/* La largeur appartient au PANNEAU, jamais au contenu (cf. styles.scss) : un
+   `min-width` posé ici poussait la grille contre une surface en
+   `overflow: hidden` et rognait la seconde colonne. L'ouverture du dialogue
+   déclare désormais `qos-dialog-panel--wide`. */
 .line-form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--qos-space-3) var(--qos-space-4);
-  min-width: min(640px, 80vw);
 }
 
 .span-2 { grid-column: span 2; }
 
 @media (max-width: 640px) {
-  .line-form { grid-template-columns: minmax(0, 1fr); min-width: 0; }
+  .line-form { grid-template-columns: minmax(0, 1fr); }
   .span-2 { grid-column: auto; }
 }

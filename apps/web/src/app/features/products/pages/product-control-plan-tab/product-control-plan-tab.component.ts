@@ -205,7 +205,9 @@ export class ProductControlPlanTabComponent implements OnInit {
     if (!this.selected) return;
     const plan = this.selected.plan;
     this.dialog.open(ControlPlanLineDialogComponent, {
-      panelClass: 'qos-dialog-panel',
+      // Vingt champs sur deux colonnes : 680 px les comprimaient. La largeur se
+      // déclare à l'ouverture, pas dans le contenu.
+      panelClass: ['qos-dialog-panel', 'qos-dialog-panel--wide'],
       data: { productId: this.productId, planId: plan.id, line }
     }).afterClosed().subscribe(saved => { if (saved) this.select(plan); });
   }

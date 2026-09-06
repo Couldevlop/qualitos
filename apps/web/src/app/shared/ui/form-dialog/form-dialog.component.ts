@@ -43,6 +43,34 @@ export class FormDialogComponent {
   @Input() submitColor: 'primary' | 'accent' | 'warn' = 'primary';
   @Input() cancelLabel = $localize`:@@common.cancel:Annuler`;
 
+  /**
+   * Ce qui empêche de valider, dit en clair dans la barre d'actions.
+   *
+   * <p>Un bouton grisé sans explication est une impasse : l'utilisateur voit
+   * qu'il ne peut pas valider, jamais pourquoi, et il lui reste à parcourir le
+   * formulaire à la recherche du champ fautif — d'autant que les erreurs des
+   * champs restés vides ne s'affichent qu'une fois touchés.
+   *
+   * <p>Laisser vide pour le repli générique ; le renseigner quand l'hôte sait
+   * nommer le champ manquant (« Renseignez la description »), ce qui vaut
+   * toujours mieux qu'une formule passe-partout.
+   */
+  @Input() blockedReason?: string;
+
+  /**
+   * Le message affiché, ou `undefined` quand il n'y a rien à dire.
+   *
+   * <p>Rien pendant l'envoi : le spinner parle déjà, et annoncer un blocage
+   * au moment où l'on valide serait un contresens.
+   */
+  get blockedMessage(): string | undefined {
+    if (!this.submitDisabled || this.submitting) {
+      return undefined;
+    }
+    return this.blockedReason
+      ?? $localize`:@@common.form-blocked:Des champs obligatoires restent à renseigner.`;
+  }
+
   /** Émis à la soumission (le parent appelle son service). */
   @Output() submitted = new EventEmitter<void>();
   /** Émis à l'annulation (le parent ferme le dialogRef). */

@@ -284,6 +284,7 @@ TRANSLATIONS = {
     'fmea.item.cause': ('Cause', "Cause", "Causa", "السبب", "原因", "原因"),
     'fmea.item.current-controls': ('Contrôles actuels', "Current controls", "Controles actuales", "الضوابط الحالية", "現行の管理策", "现行控制措施"),
     'fmea.item.initial-rating': ('Cotation initiale', "Initial rating", "Valoración inicial", "التقييم الأولي", "初期評価", "初始评级"),
+    'fmea.item.blocked-scale': ('Les notes S, O et D doivent rester entre 1 et 10.', 'S, O and D ratings must stay between 1 and 10.', 'Las notas S, O y D deben estar entre 1 y 10.', 'يجب أن تبقى درجات S وO وD بين 1 و10.', 'S・O・D の評点は 1〜10 の範囲にしてください。', 'S、O、D 评分必须介于 1 与 10 之间。'),
     'fmea.item.severity': ('Sévérité', "Severity", "Severidad", "الشدّة", "厳しさ", "严重度"),
     'fmea.item.occurrence': ('Occurrence', "Occurrence", "Ocurrencia", "التكرار", "発生度", "发生度"),
     'fmea.item.detection': ('Détection', "Detection", "Detección", "الاكتشاف", "検出度", "检测度"),
