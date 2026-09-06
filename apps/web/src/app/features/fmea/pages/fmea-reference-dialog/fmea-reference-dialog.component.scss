@@ -113,6 +113,14 @@
    il n'est simplement plus la condition pour voir le RPN. */
 .ref-table--example td:not(.num) { min-width: 118px; }
 
+/* Onze colonnes réclamaient encore 1 153 px pour 1 120 disponibles (mesuré sur
+   la préproduction) : le RPN était revenu dans le cadre, mais « Responsable »
+   se faisait rogner. Les gouttières de CE tableau — le plus dense des quatre
+   onglets — passent de 12 à 8 px : onze colonnes, deux côtés, 88 px rendus.
+   Les barèmes, eux, gardent leur respiration. */
+.ref-table--example th,
+.ref-table--example td { padding-left: 8px; padding-right: 8px; }
+
 /* Une pastille par score : un barème se lit d'abord par la couleur. */
 .score {
   display: inline-block;
