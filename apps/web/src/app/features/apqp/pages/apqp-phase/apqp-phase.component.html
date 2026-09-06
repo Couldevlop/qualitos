@@ -1,0 +1,47 @@
+<div class="qos-page" *ngIf="phase as p">
+  <qos-page-header
+    [eyebrow]="'APQP · ' + p.numero + '/5'"
+    [title]="p.titre"
+    [subtitle]="p.objet">
+    <a qosActions mat-stroked-button routerLink="/apqp">
+      <mat-icon aria-hidden="true">account_tree</mat-icon>
+      <span i18n="@@apqp.back-to-cycle">Voir le cycle</span>
+    </a>
+  </qos-page-header>
+
+  <!-- La question situe la phase mieux qu'un paragraphe : c'est ce qu'on se
+       demande en y entrant, et ce à quoi ses livrables répondent. -->
+  <p class="question">{{ p.question }}</p>
+
+  <mat-card class="livrables">
+    <mat-card-header class="livrables__tete">
+      <mat-card-title i18n="@@apqp.deliverables-title">Livrables attendus</mat-card-title>
+      <mat-card-subtitle i18n="@@apqp.deliverables-subtitle">
+        Ce que la phase doit avoir produit avant de passer à la suivante.
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <ul class="livrables__liste">
+        <li *ngFor="let livrable of p.livrables">
+          <mat-icon aria-hidden="true">check_circle</mat-icon>
+          <span>{{ livrable }}</span>
+        </li>
+      </ul>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Le cycle se parcourt dans l'ordre : on doit pouvoir avancer sans repasser
+       par la vue d'ensemble. -->
+  <nav class="enchainement" aria-label="Phases voisines" i18n-aria-label="@@apqp.neighbours-aria">
+    <a mat-stroked-button *ngIf="precedente as prec" [routerLink]="['/apqp', prec.slug]">
+      <mat-icon aria-hidden="true">arrow_back</mat-icon>
+      <span>{{ prec.numero }} · {{ prec.titre }}</span>
+    </a>
+    <a mat-stroked-button class="enchainement__suivante" *ngIf="suivante as suiv"
+       [routerLink]="['/apqp', suiv.slug]">
+      <span>{{ suiv.numero }} · {{ suiv.titre }}</span>
+      <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+    </a>
+  </nav>
+</div>

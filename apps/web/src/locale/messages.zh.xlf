@@ -4594,6 +4594,66 @@ Portail clients</source>
         <source>Recharger</source>
         <target state="translated">重新加载</target>
       </trans-unit>
+      <trans-unit id="nav.apqp" datatype="html">
+        <source>APQP</source>
+        <target state="translated">APQP</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-cycle" datatype="html">
+        <source>Le cycle</source>
+        <target state="translated">流程总览</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-1" datatype="html">
+        <source>1 · Planifier et définir</source>
+        <target state="translated">1 · 计划与定义</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-2" datatype="html">
+        <source>2 · Conception du produit</source>
+        <target state="translated">2 · 产品设计</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-3" datatype="html">
+        <source>3 · Conception du processus</source>
+        <target state="translated">3 · 过程设计</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-4" datatype="html">
+        <source>4 · Validation</source>
+        <target state="translated">4 · 验证</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-5" datatype="html">
+        <source>5 · Retour d'expérience</source>
+        <target state="translated">5 · 反馈</target>
+      </trans-unit>
+      <trans-unit id="apqp.eyebrow" datatype="html">
+        <source>APQP</source>
+        <target state="translated">APQP</target>
+      </trans-unit>
+      <trans-unit id="apqp.title" datatype="html">
+        <source>Planification qualité produit</source>
+        <target state="translated">产品质量先期策划</target>
+      </trans-unit>
+      <trans-unit id="apqp.subtitle" datatype="html">
+        <source>Cinq phases, de la voix du client au retour d'expérience. Chacune s'appuie sur la précédente.</source>
+        <target state="translated">从客户之声到反馈的五个阶段，每一阶段以前一阶段为基础。</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverables-suffix" datatype="html">
+        <source> livrables</source>
+        <target state="translated"> 项交付物</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverables-title" datatype="html">
+        <source>Livrables attendus</source>
+        <target state="translated">预期交付物</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverables-subtitle" datatype="html">
+        <source>Ce que la phase doit avoir produit avant de passer à la suivante.</source>
+        <target state="translated">进入下一阶段前，本阶段必须完成的内容。</target>
+      </trans-unit>
+      <trans-unit id="apqp.back-to-cycle" datatype="html">
+        <source>Voir le cycle</source>
+        <target state="translated">查看流程</target>
+      </trans-unit>
+      <trans-unit id="apqp.neighbours-aria" datatype="html">
+        <source>Phases voisines</source>
+        <target state="translated">相邻阶段</target>
+      </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>
         <target state="translated">审核计划</target>

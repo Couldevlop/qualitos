@@ -1,0 +1,34 @@
+<div class="qos-page">
+  <qos-page-header
+    eyebrow="APQP" i18n-eyebrow="@@apqp.eyebrow"
+    title="Planification qualité produit" i18n-title="@@apqp.title"
+    subtitle="Cinq phases, de la voix du client au retour d'expérience. Chacune s'appuie sur la précédente."
+    i18n-subtitle="@@apqp.subtitle">
+  </qos-page-header>
+
+  <!-- Le schéma EST la navigation : on entre dans une phase en cliquant dessus.
+       `<ol>` et non une suite de `<div>` — l'ordre est la méthode, et un lecteur
+       d'écran doit l'entendre comme une séquence numérotée. -->
+  <ol class="cycle">
+    <li class="cycle__etape" *ngFor="let phase of phases; let dernier = last; trackBy: trackBySlug">
+      <a class="phase" [routerLink]="['/apqp', phase.slug]">
+        <span class="phase__rang" aria-hidden="true">{{ phase.numero }}</span>
+        <span class="phase__corps">
+          <span class="phase__titre">{{ phase.titre }}</span>
+          <span class="phase__objet">{{ phase.objet }}</span>
+          <span class="phase__compte">
+            {{ compteLivrables(phase) }}<span i18n="@@apqp.deliverables-suffix">&nbsp;livrables</span>
+          </span>
+        </span>
+      </a>
+
+      <!-- La flèche relie deux phases ; elle ne se lit pas, elle se voit. -->
+      <span class="cycle__lien" *ngIf="!dernier" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M13 6l6 6-6 6"></path>
+        </svg>
+      </span>
+    </li>
+  </ol>
+</div>

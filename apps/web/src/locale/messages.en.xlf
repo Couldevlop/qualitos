@@ -4594,6 +4594,66 @@ Customer portal</target>
         <source>Recharger</source>
         <target state="translated">Reload</target>
       </trans-unit>
+      <trans-unit id="nav.apqp" datatype="html">
+        <source>APQP</source>
+        <target state="translated">APQP</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-cycle" datatype="html">
+        <source>Le cycle</source>
+        <target state="translated">The cycle</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-1" datatype="html">
+        <source>1 · Planifier et définir</source>
+        <target state="translated">1 · Plan and define</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-2" datatype="html">
+        <source>2 · Conception du produit</source>
+        <target state="translated">2 · Product design</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-3" datatype="html">
+        <source>3 · Conception du processus</source>
+        <target state="translated">3 · Process design</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-4" datatype="html">
+        <source>4 · Validation</source>
+        <target state="translated">4 · Validation</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-5" datatype="html">
+        <source>5 · Retour d'expérience</source>
+        <target state="translated">5 · Feedback</target>
+      </trans-unit>
+      <trans-unit id="apqp.eyebrow" datatype="html">
+        <source>APQP</source>
+        <target state="translated">APQP</target>
+      </trans-unit>
+      <trans-unit id="apqp.title" datatype="html">
+        <source>Planification qualité produit</source>
+        <target state="translated">Advanced product quality planning</target>
+      </trans-unit>
+      <trans-unit id="apqp.subtitle" datatype="html">
+        <source>Cinq phases, de la voix du client au retour d'expérience. Chacune s'appuie sur la précédente.</source>
+        <target state="translated">Five phases, from the voice of the customer to feedback. Each builds on the one before.</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverables-suffix" datatype="html">
+        <source> livrables</source>
+        <target state="translated"> deliverables</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverables-title" datatype="html">
+        <source>Livrables attendus</source>
+        <target state="translated">Expected deliverables</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverables-subtitle" datatype="html">
+        <source>Ce que la phase doit avoir produit avant de passer à la suivante.</source>
+        <target state="translated">What the phase must have produced before moving on.</target>
+      </trans-unit>
+      <trans-unit id="apqp.back-to-cycle" datatype="html">
+        <source>Voir le cycle</source>
+        <target state="translated">View the cycle</target>
+      </trans-unit>
+      <trans-unit id="apqp.neighbours-aria" datatype="html">
+        <source>Phases voisines</source>
+        <target state="translated">Adjacent phases</target>
+      </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>
         <target state="translated">Audit schedule</target>

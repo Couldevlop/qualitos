@@ -127,6 +127,22 @@ export class MainShellComponent implements OnInit, OnDestroy {
       ]
     },
     {
+      // Les cinq phases APQP sont listées une à une, comme les deux origines de
+      // non-conformité : on entre dans une phase précise, pas dans « le module ».
+      // L'entrée « Le cycle » garde le schéma d'ensemble à portée, puisque c'est
+      // lui qui porte l'enchaînement.
+      label: $localize`:@@nav.apqp:APQP`,
+      items: [
+        { label: $localize`:@@nav.apqp-cycle:Le cycle`,                   route: '/apqp',                        icon: 'account_tree' },
+        { label: $localize`:@@nav.apqp-1:1 · Planifier et définir`,       route: '/apqp/planification',          icon: 'flag' },
+        { label: $localize`:@@nav.apqp-2:2 · Conception du produit`,      route: '/apqp/conception-produit',     icon: 'draw' },
+        { label: $localize`:@@nav.apqp-3:3 · Conception du processus`,    route: '/apqp/conception-processus',   icon: 'precision_manufacturing' },
+        { label: $localize`:@@nav.apqp-4:4 · Validation`,                 route: '/apqp/validation',             icon: 'fact_check' },
+        { label: $localize`:@@nav.apqp-5:5 · Retour d'expérience`,        route: '/apqp/retour-experience',      icon: 'replay' }
+      ]
+    },
+
+    {
       // Ni Ishikawa ni les 5 Pourquoi n'ont d'entrée ici, et c'est voulu : ces
       // deux analyses partent d'un écart déjà constaté. On les ouvre depuis la
       // fiche de non-conformité, qui les crée sur son propre sujet et les

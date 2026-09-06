@@ -481,6 +481,22 @@ html, body { overflow-x: hidden; }
     min-height: 0;
   }
 
+  /* ---- La GÉOMÉTRIE du dialogue ne dépend d'aucune transition. ----
+
+     Material ouvre le dialogue par `transform: scale(0.8)` et compte sur une
+     transition pour revenir à `none`. Quand cette transition n'aboutit pas, la
+     surface reste peinte à 80 % de son cadre : mesuré sur la préproduction,
+     544 px dans un panneau de 680 pendant 24 secondes, la classe `--open`
+     pourtant posée. Le contenu, lui, est mis en page sur la VRAIE largeur —
+     les deux ne coïncident plus, et c'est ce décalage qu'on voit à l'écran.
+
+     Le fondu d'opacité est conservé : il ne porte aucune dimension, donc son
+     échec ne déforme rien. On ne parie pas sur l'aboutissement d'une
+     transition pour savoir quelle taille a une fenêtre. */
+  .mat-mdc-dialog-surface {
+    transform: none;
+    transition: opacity 0.15s linear;
+  }
   .mat-mdc-dialog-title {
     flex: 0 0 auto;
     margin: 0;

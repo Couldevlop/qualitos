@@ -4594,6 +4594,66 @@ Portail clients</source>
         <source>Recharger</source>
         <target state="translated">再読み込み</target>
       </trans-unit>
+      <trans-unit id="nav.apqp" datatype="html">
+        <source>APQP</source>
+        <target state="translated">APQP</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-cycle" datatype="html">
+        <source>Le cycle</source>
+        <target state="translated">サイクル</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-1" datatype="html">
+        <source>1 · Planifier et définir</source>
+        <target state="translated">1・計画と定義</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-2" datatype="html">
+        <source>2 · Conception du produit</source>
+        <target state="translated">2・製品設計</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-3" datatype="html">
+        <source>3 · Conception du processus</source>
+        <target state="translated">3・工程設計</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-4" datatype="html">
+        <source>4 · Validation</source>
+        <target state="translated">4・妥当性確認</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-5" datatype="html">
+        <source>5 · Retour d'expérience</source>
+        <target state="translated">5・フィードバック</target>
+      </trans-unit>
+      <trans-unit id="apqp.eyebrow" datatype="html">
+        <source>APQP</source>
+        <target state="translated">APQP</target>
+      </trans-unit>
+      <trans-unit id="apqp.title" datatype="html">
+        <source>Planification qualité produit</source>
+        <target state="translated">先行製品品質計画</target>
+      </trans-unit>
+      <trans-unit id="apqp.subtitle" datatype="html">
+        <source>Cinq phases, de la voix du client au retour d'expérience. Chacune s'appuie sur la précédente.</source>
+        <target state="translated">顧客の声からフィードバックまでの五つのフェーズ。各段階は前段を土台とします。</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverables-suffix" datatype="html">
+        <source> livrables</source>
+        <target state="translated">件の成果物</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverables-title" datatype="html">
+        <source>Livrables attendus</source>
+        <target state="translated">想定される成果物</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverables-subtitle" datatype="html">
+        <source>Ce que la phase doit avoir produit avant de passer à la suivante.</source>
+        <target state="translated">次のフェーズに進む前に、この段階が生み出しておくべきもの。</target>
+      </trans-unit>
+      <trans-unit id="apqp.back-to-cycle" datatype="html">
+        <source>Voir le cycle</source>
+        <target state="translated">サイクルを表示</target>
+      </trans-unit>
+      <trans-unit id="apqp.neighbours-aria" datatype="html">
+        <source>Phases voisines</source>
+        <target state="translated">前後のフェーズ</target>
+      </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>
         <target state="translated">監査スケジュール</target>
