@@ -102,7 +102,16 @@
   white-space: nowrap;
 }
 
-.ref-table--example td { min-width: 140px; }
+/* Onze colonnes à 140 px chacune réclamaient 1 540 px dans un dialogue qui en
+   offre 1 132 : le RPN -- le seul chiffre qui hiérarchise le tableau -- sortait
+   du cadre et ne se découvrait qu'après un défilement horizontal que rien ne
+   signalait. Vu de l'utilisateur, il était absent.
+
+   Les colonnes de score n'ont jamais eu besoin de 140 px (elles portent un
+   chiffre) : les exclure et resserrer les colonnes de texte ramène le tableau
+   sous la largeur disponible. Le défilement reste possible sur un écran étroit,
+   il n'est simplement plus la condition pour voir le RPN. */
+.ref-table--example td:not(.num) { min-width: 118px; }
 
 /* Une pastille par score : un barème se lit d'abord par la couleur. */
 .score {
