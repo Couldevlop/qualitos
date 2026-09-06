@@ -76,10 +76,10 @@ describe('MainShellComponent (navigation model)', () => {
     component = make();
   });
 
-  it('expose huit groupes de navigation', () => {
+  it('expose neuf groupes de navigation', () => {
     // Le septième est l'Administration ; le huitième, « Non-conformité », sorti
     // des Opérations pour porter ses deux origines (interne / externe).
-    expect(component.sections.length).toBe(8);
+    expect(component.sections.length).toBe(9);
   });
 
   it('orders the six groups as designed', () => {
@@ -100,11 +100,14 @@ describe('MainShellComponent (navigation model)', () => {
     // control plan, posé juste avant l'entrée FMEA qu'il alimente.
     // Methodes retombe a 5 et Non-conformite a 2 : Ishikawa et les 5 Pourquoi
     // quittent la barre laterale, on y accede depuis la fiche de NC.
-    expect(labels).toEqual([5, 5, 8, 2, 12, 11, 1, 7]);
+    expect(labels).toEqual([5, 5, 8, 6, 2, 12, 11, 1, 7]);
   });
 
   it('collapses the entire GRC mass into a single /compliance entry', () => {
-    const grc = component.sections[6];
+    // Repéré par sa ROUTE et non par son rang : ce banc dit « la masse GRC tient
+    // en une entrée », pas « le septième groupe ». Un groupe inséré avant elle
+    // le faisait tomber pour une raison étrangère à ce qu'il vérifie.
+    const grc = component.sections.find(s => s.items.some(i => i.route === '/compliance'))!;
     expect(grc.items.length).toBe(1);
     expect(grc.items[0].route).toBe('/compliance');
   });
@@ -433,10 +436,10 @@ describe('MainShellComponent (visibilité par rôle)', () => {
 
   it('supprime la section entière plutôt que d’afficher un titre orphelin', () => {
     // Toutes les entrées d'administration sont gardées : la section disparaît, et
-    // il reste les sept autres — Non-conformité comprise depuis qu'elle est
-    // sortie des Opérations.
+    // il reste les huit autres — Non-conformité et APQP comprises, sorties
+    // des Opérations pour porter leurs propres entrées.
     const sections = make().filterSections(['USER']);
-    expect(sections.length).toBe(7);
+    expect(sections.length).toBe(8);
     expect(sections.some(s => s.items.some(i => i.route.startsWith('/admin')))).toBeFalse();
   });
 
