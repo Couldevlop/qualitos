@@ -1,5 +1,12 @@
+/* L'hôte porte la colonne flex, comme la surface du dialogue et le `<form>`
+   qu'il contient : la chaîne doit être continue de la surface jusqu'au
+   contenu, faute de quoi le contenu pousse la barre d'actions hors du cadre.
+   `styles.scss` pose la même règle côté global — la déclarer ici aussi rend le
+   composant correct même sorti d'un dialogue. */
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .qfd-subtitle {

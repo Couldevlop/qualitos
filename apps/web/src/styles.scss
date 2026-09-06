@@ -457,8 +457,24 @@ html, body { overflow-x: hidden; }
     box-shadow: var(--qos-shadow-lg) !important;
   }
 
-  /* Si un <form> enveloppe contenu + actions, il porte la colonne flex. */
-  .mat-mdc-dialog-surface > form {
+  /* ---- La colonne flex doit TRAVERSER les éléments hôtes Angular. ----
+
+     Le seul enfant direct de la surface est l'hôte du composant de dialogue
+     (`qos-nc-create-dialog`), qui contient lui-même `qos-form-dialog`, qui
+     contient le `<form>`. Un élément hôte n'a aucun style par défaut : la
+     colonne s'arrêtait donc au premier, le `<form>` ne recevait jamais
+     `flex: 1 1 auto`, et le contenu poussait la barre d'actions HORS du cadre.
+
+     Mesuré sur la préproduction avant correction : actions à 1 145 px dans une
+     fenêtre de 953, et le contenu ne défilait pas. La surface étant en
+     `overflow: hidden`, « Enregistrer » devenait proprement inatteignable dès
+     qu'un dialogue dépassait la hauteur disponible.
+
+     La règle vise la classe que Material pose sur cet hôte plutôt que `> *`,
+     qui aurait aussi étiré le titre. */
+  .mat-mdc-dialog-surface > .mat-mdc-dialog-component-host,
+  .mat-mdc-dialog-component-host > qos-form-dialog,
+  .mat-mdc-dialog-surface form {
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
