@@ -6950,6 +6950,10 @@ Portal de clientes</target>
         <source>Annuler</source>
         <target state="translated">Cancelar</target>
       </trans-unit>
+      <trans-unit id="common.form-blocked" datatype="html">
+        <source>Des champs obligatoires restent à renseigner.</source>
+        <target state="translated">Faltan campos obligatorios por completar.</target>
+      </trans-unit>
       <trans-unit id="common.create" datatype="html">
         <source>Créer</source>
         <target state="translated">Crear</target>
@@ -14640,6 +14644,34 @@ historial de 12 meses</target>
         <source>L'envoi de fichiers depuis l'appareil arrivera prochainement.</source>
         <target state="translated">La subida de archivos desde el dispositivo llegará pronto.</target>
       </trans-unit>
+      <trans-unit id="nc.create.section-observation" datatype="html">
+        <source>Le constat</source>
+        <target state="translated">La constatación</target>
+      </trans-unit>
+      <trans-unit id="nc.create.section-qualification" datatype="html">
+        <source>Qualification</source>
+        <target state="translated">Calificación</target>
+      </trans-unit>
+      <trans-unit id="nc.create.section-where" datatype="html">
+        <source>Où, et sur quoi</source>
+        <target state="translated">Dónde, y sobre qué</target>
+      </trans-unit>
+      <trans-unit id="nc.create.section-attachments" datatype="html">
+        <source>Pièces</source>
+        <target state="translated">Adjuntos</target>
+      </trans-unit>
+      <trans-unit id="nc.create.description-hint" datatype="html">
+        <source>Ce qui a été constaté, où, et ce que ça a produit.</source>
+        <target state="translated">Lo constatado, dónde, y lo que produjo.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-title" datatype="html">
+        <source>Renseignez le titre pour pouvoir déclarer.</source>
+        <target state="translated">Complete el título para poder declarar.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-description" datatype="html">
+        <source>Renseignez la description pour pouvoir déclarer.</source>
+        <target state="translated">Complete la descripción para poder declarar.</target>
+      </trans-unit>
       <trans-unit id="nc.create.submit" datatype="html">
         <source>Déclarer</source>
         <target state="translated">Declarar</target>
@@ -16883,6 +16915,30 @@ historial de 12 meses</target>
       <trans-unit id="controlplan.add-line" datatype="html">
         <source>Ajouter une ligne</source>
         <target state="translated">Añadir una línea</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-where" datatype="html">
+        <source>Où, dans la gamme</source>
+        <target state="translated">Dónde, en la ruta</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-what" datatype="html">
+        <source>Ce qui est contrôlé</source>
+        <target state="translated">Qué se controla</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-how" datatype="html">
+        <source>Comment on le mesure</source>
+        <target state="translated">Cómo se mide</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-reaction" datatype="html">
+        <source>Si le contrôle sort des clous</source>
+        <target state="translated">Si el control se sale de límites</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-why" datatype="html">
+        <source>Pourquoi ce contrôle existe</source>
+        <target state="translated">Por qué existe este control</target>
+      </trans-unit>
+      <trans-unit id="controlplan.blocked-characteristic" datatype="html">
+        <source>Indiquez ce qui est contrôlé pour pouvoir enregistrer.</source>
+        <target state="translated">Indique qué se controla para poder guardar.</target>
       </trans-unit>
       <trans-unit id="controlplan.line-new" datatype="html">
         <source>Ajouter une ligne</source>
@@ -19391,6 +19447,10 @@ historial de 12 meses</target>
       <trans-unit id="fmea.item.initial-rating" datatype="html">
         <source>Cotation initiale</source>
         <target state="translated">Valoración inicial</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.blocked-scale" datatype="html">
+        <source>Les notes S, O et D doivent rester entre 1 et 10.</source>
+        <target state="translated">Las notas S, O y D deben estar entre 1 y 10.</target>
       </trans-unit>
       <trans-unit id="fmea.item.severity" datatype="html">
         <source>Sévérité</source>

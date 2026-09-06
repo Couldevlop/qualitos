@@ -1,25 +1,70 @@
-.item-form { display: flex; flex-direction: column; min-width: 680px; max-width: 820px; }
-.hint { margin: 0 0 12px; color: rgba(0,0,0,0.6); font-size: 13px; }
-mat-dialog-content { padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
-.full { width: 100%; }
-.row { display: flex; gap: 12px; }
-.col { flex: 1; min-width: 0; }
-.section { margin: 12px 0 6px; font-size: 13px; font-weight: 700; color: rgba(0,0,0,0.65); text-transform: uppercase; letter-spacing: 0.04em; }
+/* `.item-form` a disparu : la règle n'était appliquée à aucun élément du
+   gabarit, et son `min-width: 680px` aurait de toute façon débordé un panneau
+   passé en pleine largeur sur téléphone. La largeur appartient au panneau
+   (cf. styles.scss). */
 
-.rpn-row { display: flex; gap: 12px; align-items: center; }
-.col-sod { width: 110px; }
-.rpn-display { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-left: 8px; }
-.rpn-label { font-size: 11px; color: rgba(0,0,0,0.55); text-transform: uppercase; font-weight: 700; }
+.hint {
+  margin: 0 0 var(--qos-space-3);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+  line-height: var(--qos-lh-normal);
+}
+
+.full { width: 100%; }
+
+.row { display: flex; gap: var(--qos-space-3); }
+.col { flex: 1; min-width: 0; }
+
+/* `.section` reprend les jetons du socle plutôt que ses propres valeurs.
+   Les capitales forcées ont sauté au passage : elles allongent le mot sans
+   rien hiérarchiser de plus qu'une graisse, et un lecteur d'écran épelle
+   parfois un intitulé tout en capitales. */
+.section {
+  margin: var(--qos-space-5) 0 var(--qos-space-2);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Trois notes et leur RPN. `wrap` + base flexible : à 110 px fixes chacune,
+   la ligne réclamait 386 px et sortait du cadre sur un téléphone. */
+.rpn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-3);
+  align-items: center;
+}
+.col-sod { flex: 1 1 110px; min-width: 96px; }
+
+.rpn-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--qos-space-1);
+  margin-left: var(--qos-space-2);
+}
+.rpn-label {
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-tertiary);
+  font-weight: 600;
+}
 
 .rpn {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-width: 56px; padding: 6px 12px; border-radius: 10px;
-  font-variant-numeric: tabular-nums; font-weight: 800; font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border-radius: var(--qos-radius-md);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: var(--qos-fs-lg);
 }
-.rpn-na       { background: #f5f5f5; color: rgba(0,0,0,0.45); }
-.rpn-ok       { background: #e8f5e9; color: #1b5e20; }
-.rpn-high     { background: #fff3e0; color: #e65100; }
-.rpn-critical { background: #fbe9e7; color: #b71c1c; }
 
-mat-dialog-actions { padding: 12px 0 0; gap: 8px; }
-mat-dialog-actions button[type='submit'] { display: inline-flex; align-items: center; gap: 6px; }
+/* Jetons sémantiques, donc lisibles aussi en thème sombre — les couleurs
+   Material figées d'avant y devenaient un aplat clair sur fond sombre. */
+.rpn-na       { background: var(--qos-bg-sunken);      color: var(--qos-fg-disabled); }
+.rpn-ok       { background: var(--qos-success-bg-soft); color: var(--qos-success-fg); }
+.rpn-high     { background: var(--qos-warn-bg-soft);    color: var(--qos-warn-fg); }
+.rpn-critical { background: var(--qos-danger-bg-soft);  color: var(--qos-danger-fg); }

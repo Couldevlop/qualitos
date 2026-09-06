@@ -87,6 +87,19 @@ export class FmeaItemDialogComponent {
     return 'rpn rpn-ok';
   }
 
+  /**
+   * Ce qui empêche d'enregistrer.
+   *
+   * <p>Les trois notes ont une valeur par défaut : le blocage vient donc
+   * toujours d'une note sortie de l'échelle 1-10, jamais d'un champ vide. Le
+   * dire évite de chercher un champ obligatoire qui n'existe pas.
+   */
+  get blockedReason(): string | undefined {
+    return this.form.invalid
+      ? $localize`:@@fmea.item.blocked-scale:Les notes S, O et D doivent rester entre 1 et 10.`
+      : undefined;
+  }
+
   submit(): void {
     if (this.form.invalid || this.submitting) {
       this.form.markAllAsTouched();

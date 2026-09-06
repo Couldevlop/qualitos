@@ -97,6 +97,25 @@ export class NcCreateDialogComponent implements OnInit {
     this.origin = data?.origin;
   }
 
+  /**
+   * Ce qui empêche de déclarer, nommé plutôt que laissé à deviner.
+   *
+   * <p>Le formulaire n'a que deux champs obligatoires sans valeur par défaut :
+   * on peut donc dire LEQUEL manque, ce qui vaut mieux qu'un « des champs
+   * obligatoires restent à renseigner » que l'utilisateur devrait traduire en
+   * parcourant l'écran. Les erreurs des champs jamais touchés ne s'affichant
+   * pas, c'est souvent la seule indication à l'écran.
+   */
+  get blockedReason(): string | undefined {
+    if (this.form.controls.title.invalid) {
+      return $localize`:@@nc.create.blocked-title:Renseignez le titre pour pouvoir déclarer.`;
+    }
+    if (this.form.controls.description.invalid) {
+      return $localize`:@@nc.create.blocked-description:Renseignez la description pour pouvoir déclarer.`;
+    }
+    return undefined;   // repli générique du gabarit
+  }
+
   ngOnInit(): void {
     // Le référentiel produit est une aide à la saisie : son indisponibilité ne
     // doit pas empêcher de déclarer un défaut constaté au poste.

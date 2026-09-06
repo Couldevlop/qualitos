@@ -254,4 +254,30 @@ describe('ControlPlanLineDialogComponent', () => {
 
     expect(dialogRef.close).toHaveBeenCalledWith();
   });
+
+  it('nomme le seul champ obligatoire au lieu de laisser chercher', async () => {
+    // Une ligne de plan de surveillance porte vingt champs : « des champs
+    // obligatoires restent à renseigner » obligerait à tous les parcourir.
+    await setup();
+
+    expect(component.blockedReason).toContain('ce qui est contrôlé');
+
+    component.form.controls['characteristicLabel'].setValue('Cote de coupe');
+    expect(component.blockedReason).toBeUndefined();
+  });
+
+  it('groupe les vingt champs en sections nommées', async () => {
+    // Vingt champs à la file ne disent pas ce qu'on remplit ; l'ordre des
+    // sections suit la lecture d'un plan de surveillance.
+    await setup();
+    fixture.detectChanges();
+
+    const titres = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll('.qfd-section')
+    ).map(e => (e as HTMLElement).textContent!.trim());
+
+    expect(titres.length).toBe(5);
+    expect(titres[0]).toContain('gamme');
+    expect(titres[titres.length - 1]).toContain('Pourquoi');
+  });
 });

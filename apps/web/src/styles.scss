@@ -498,6 +498,59 @@ html, body { overflow-x: hidden; }
   }
 
   .mat-mdc-form-field { width: 100%; }
+
+  /* ---- Rythme vertical : l'écart entre deux champs n'est PAS la bande
+     d'indication. ----
+
+     Mesuré sur la préproduction : deux champs empilés se touchaient (écart
+     0 px). La bande de 20 px réservée sous un champ servait donc à la fois
+     d'indication ET d'écart. Or l'étiquette flottante d'un champ `outline` se
+     pose 7 px AU-DESSUS de son bord haut, sur le filet : elle atterrissait en
+     plein dans cette bande. Résultat, toute indication ou tout message
+     d'erreur se faisait recouvrir par l'étiquette du champ suivant — dans
+     les 132 dialogues, sans qu'aucun test puisse le voir.
+
+     L'écart est donc posé explicitement. `:not(:last-child)` pour ne pas
+     ajouter de vide avant la barre d'actions, qui porte déjà le sien. */
+  .mat-mdc-dialog-content .mat-mdc-form-field:not(:last-child) {
+    margin-bottom: var(--qos-space-2);
+  }
+
+  /* Une indication de deux lignes débordait de la bande fixe de 20 px et
+     mordait sur ce qui suit. La bande s'adapte à son contenu ; le rythme
+     ci-dessus garantit qu'elle ne rencontre jamais l'étiquette suivante. */
+  .mat-mdc-form-field-subscript-wrapper {
+    min-height: 20px;
+    height: auto;
+  }
+  .mat-mdc-form-field-bottom-align::before { content: none; }
+
+  /* ---- Titre de section dans un dialogue dense. ----
+
+     Huit champs identiques à la file ne disent pas ce qu'on remplit. Trois
+     groupes nommés le disent, sans rien coûter en hauteur utile : le titre
+     remplace l'écart qu'il aurait fallu de toute façon. Défini ici et non dans
+     le composant de dialogue-formulaire, parce qu'il s'applique à du contenu
+     PROJETÉ — que l'encapsulation de vue du composant ne peut pas atteindre
+     sans un `::ng-deep` qui fuirait de toute façon vers l'application entière. */
+  .qfd-section {
+    margin: var(--qos-space-6) 0 var(--qos-space-3);
+    color: var(--qos-fg-secondary);
+    font-size: var(--qos-fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .mat-mdc-dialog-content > .qfd-section:first-child { margin-top: 0; }
+
+  /* Deux champs sur une ligne. Remplace les `.row`/`.half` recopiés dans
+     chaque dialogue : c'est cette classe que la requête mobile ramène à une
+     colonne. */
+  .qos-field-row {
+    display: flex;
+    gap: var(--qos-space-4);
+
+    > * { flex: 1 1 0; min-width: 0; }
+  }
 }
 
 /* Variante LARGE, pour les dialogues qui présentent un tableau et non un
@@ -528,8 +581,38 @@ html, body { overflow-x: hidden; }
 
     .mat-mdc-dialog-surface {
       max-height: 100dvh;
+      /* Plein écran RÉEL. Sans hauteur imposée, le contenu poussait la barre
+         d'actions sous le bord de l'écran : « Déclarer » se trouvait à 890 px
+         du haut sur un téléphone qui en fait 844, et rien ne disait qu'il
+         fallait defiler pour valider. */
+      height: 100dvh;
       border-radius: 0;
     }
+
+    /* En-tête et actions ANCRÉS ; le contenu reste la seule zone qui défile. */
+    .mat-mdc-dialog-title { padding: var(--qos-space-4) var(--qos-space-5) var(--qos-space-3); }
+    .mat-mdc-dialog-content { padding: var(--qos-space-4) var(--qos-space-5); }
+    .mat-mdc-dialog-actions {
+      padding: var(--qos-space-3) var(--qos-space-5) var(--qos-space-5);
+      background: var(--qos-bg-app);
+    }
+
+    /* Cibles tactiles à 48 px (WCAG 2.2 AA, §2.5.8) et action primaire sur la
+       largeur restante — sous le pouce, pas dans un coin. */
+    .mat-mdc-dialog-actions .mat-mdc-button-base { min-height: 48px; }
+    .mat-mdc-dialog-actions .mat-mdc-raised-button,
+    .mat-mdc-dialog-actions .mat-mdc-unelevated-button { flex: 1 1 auto; }
+
+    /* Deux champs côte à côte tombaient à ~163 px chacun et tronquaient leur
+       valeur (« Aucun — cette NC ne vise pas... »). Une seule colonne.
+
+       `.row` est visé en plus de `qos-field-row` : 58 dialogues recopient ce
+       motif avec leur propre `.row`/`.half`. Une règle globale les corrige
+       tous, là où 58 modifications de gabarit auraient introduit 58 risques
+       pour un résultat identique. Les nouveaux dialogues prennent
+       `qos-field-row`, qui porte aussi la mise en page bureau. */
+    .mat-mdc-dialog-content .qos-field-row,
+    .mat-mdc-dialog-content .row { flex-direction: column; }
   }
 }
 

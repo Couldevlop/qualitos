@@ -47,6 +47,24 @@ export class ControlPlanLineDialogComponent implements OnInit {
   fmeaItems: FmeaItemResponse[] = [];
   saving = false;
 
+  /** Titres du dialogue, selon qu'on crée une ligne ou qu'on en modifie une. */
+  readonly titreCreation = $localize`:@@controlplan.line-new:Ajouter une ligne`;
+  readonly titreEdition = $localize`:@@controlplan.line-edit:Modifier la ligne`;
+
+  /**
+   * Ce qui empêche d'enregistrer.
+   *
+   * <p>Une ligne de plan de surveillance porte vingt champs : dire « des champs
+   * obligatoires restent à renseigner » obligerait à tous les parcourir. Le
+   * seul obligatoire est nommé.
+   */
+  get blockedReason(): string | undefined {
+    if (this.form.controls['characteristicLabel'].invalid) {
+      return $localize`:@@controlplan.blocked-characteristic:Indiquez ce qui est contrôlé pour pouvoir enregistrer.`;
+    }
+    return undefined;   // repli générique du gabarit
+  }
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly service: ProductsService,

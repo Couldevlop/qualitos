@@ -7,12 +7,10 @@
 
 .full { width: 100%; }
 
-.row {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-.half { flex: 1; min-width: 180px; }
+/* `.row`/`.half` ont laissé la place à `qos-field-row` (styles.scss) : la mise
+   sur une colonne sous 640 px appartient au socle des dialogues, pas à chaque
+   formulaire. Deux sélecteurs à `min-width: 180px` tenaient encore sur une
+   ligne dans 342 px utiles — écrasés à 163 px, ils tronquaient leur valeur. */
 
 .geo-block {
   margin: 0 0 16px;

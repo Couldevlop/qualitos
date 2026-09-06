@@ -6950,6 +6950,10 @@ Portail clients</source>
         <source>Annuler</source>
         <target state="translated">إلغاء</target>
       </trans-unit>
+      <trans-unit id="common.form-blocked" datatype="html">
+        <source>Des champs obligatoires restent à renseigner.</source>
+        <target state="translated">لا تزال هناك حقول إلزامية فارغة.</target>
+      </trans-unit>
       <trans-unit id="common.create" datatype="html">
         <source>Créer</source>
         <target state="translated">إنشاء</target>
@@ -14640,6 +14644,34 @@ historique 12 mois</source>
         <source>L'envoi de fichiers depuis l'appareil arrivera prochainement.</source>
         <target state="translated">سيتوفّر رفع الملفات من الجهاز قريبًا.</target>
       </trans-unit>
+      <trans-unit id="nc.create.section-observation" datatype="html">
+        <source>Le constat</source>
+        <target state="translated">المُعاينة</target>
+      </trans-unit>
+      <trans-unit id="nc.create.section-qualification" datatype="html">
+        <source>Qualification</source>
+        <target state="translated">التصنيف</target>
+      </trans-unit>
+      <trans-unit id="nc.create.section-where" datatype="html">
+        <source>Où, et sur quoi</source>
+        <target state="translated">اين، وعلى ماذا</target>
+      </trans-unit>
+      <trans-unit id="nc.create.section-attachments" datatype="html">
+        <source>Pièces</source>
+        <target state="translated">المرفقات</target>
+      </trans-unit>
+      <trans-unit id="nc.create.description-hint" datatype="html">
+        <source>Ce qui a été constaté, où, et ce que ça a produit.</source>
+        <target state="translated">ما لوحظ، وأين، وما نتج عنه.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-title" datatype="html">
+        <source>Renseignez le titre pour pouvoir déclarer.</source>
+        <target state="translated">أدخل العنوان لتتمكن من الإبلاغ.</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-description" datatype="html">
+        <source>Renseignez la description pour pouvoir déclarer.</source>
+        <target state="translated">أدخل الوصف لتتمكن من الإبلاغ.</target>
+      </trans-unit>
       <trans-unit id="nc.create.submit" datatype="html">
         <source>Déclarer</source>
         <target state="translated">إبلاغ</target>
@@ -16883,6 +16915,30 @@ historique 12 mois</source>
       <trans-unit id="controlplan.add-line" datatype="html">
         <source>Ajouter une ligne</source>
         <target state="translated">إضافة سطر</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-where" datatype="html">
+        <source>Où, dans la gamme</source>
+        <target state="translated">أين، ضمن المسار</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-what" datatype="html">
+        <source>Ce qui est contrôlé</source>
+        <target state="translated">ما يتم فحصه</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-how" datatype="html">
+        <source>Comment on le mesure</source>
+        <target state="translated">كيف يُقاس</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-reaction" datatype="html">
+        <source>Si le contrôle sort des clous</source>
+        <target state="translated">إذا خرج الفحص عن الحدود</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-why" datatype="html">
+        <source>Pourquoi ce contrôle existe</source>
+        <target state="translated">لماذا يوجد هذا الفحص</target>
+      </trans-unit>
+      <trans-unit id="controlplan.blocked-characteristic" datatype="html">
+        <source>Indiquez ce qui est contrôlé pour pouvoir enregistrer.</source>
+        <target state="translated">حدّد ما يتم فحصه لتتمكن من الحفظ.</target>
       </trans-unit>
       <trans-unit id="controlplan.line-new" datatype="html">
         <source>Ajouter une ligne</source>
@@ -19391,6 +19447,10 @@ historique 12 mois</source>
       <trans-unit id="fmea.item.initial-rating" datatype="html">
         <source>Cotation initiale</source>
         <target state="translated">التقييم الأولي</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.blocked-scale" datatype="html">
+        <source>Les notes S, O et D doivent rester entre 1 et 10.</source>
+        <target state="translated">يجب أن تبقى درجات S وO وD بين 1 و10.</target>
       </trans-unit>
       <trans-unit id="fmea.item.severity" datatype="html">
         <source>Sévérité</source>

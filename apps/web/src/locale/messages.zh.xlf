@@ -6950,6 +6950,10 @@ Portail clients</source>
         <source>Annuler</source>
         <target state="translated">取消</target>
       </trans-unit>
+      <trans-unit id="common.form-blocked" datatype="html">
+        <source>Des champs obligatoires restent à renseigner.</source>
+        <target state="translated">仍有必填项未填写。</target>
+      </trans-unit>
       <trans-unit id="common.create" datatype="html">
         <source>Créer</source>
         <target state="translated">创建</target>
@@ -14640,6 +14644,34 @@ historique 12 mois</source>
         <source>L'envoi de fichiers depuis l'appareil arrivera prochainement.</source>
         <target state="translated">从设备上传文件功能即将推出。</target>
       </trans-unit>
+      <trans-unit id="nc.create.section-observation" datatype="html">
+        <source>Le constat</source>
+        <target state="translated">观察事实</target>
+      </trans-unit>
+      <trans-unit id="nc.create.section-qualification" datatype="html">
+        <source>Qualification</source>
+        <target state="translated">定性</target>
+      </trans-unit>
+      <trans-unit id="nc.create.section-where" datatype="html">
+        <source>Où, et sur quoi</source>
+        <target state="translated">地点与对象</target>
+      </trans-unit>
+      <trans-unit id="nc.create.section-attachments" datatype="html">
+        <source>Pièces</source>
+        <target state="translated">附件</target>
+      </trans-unit>
+      <trans-unit id="nc.create.description-hint" datatype="html">
+        <source>Ce qui a été constaté, où, et ce que ça a produit.</source>
+        <target state="translated">观察到什么、在哪里、造成了什么。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-title" datatype="html">
+        <source>Renseignez le titre pour pouvoir déclarer.</source>
+        <target state="translated">填写标题后方可上报。</target>
+      </trans-unit>
+      <trans-unit id="nc.create.blocked-description" datatype="html">
+        <source>Renseignez la description pour pouvoir déclarer.</source>
+        <target state="translated">填写描述后方可上报。</target>
+      </trans-unit>
       <trans-unit id="nc.create.submit" datatype="html">
         <source>Déclarer</source>
         <target state="translated">上报</target>
@@ -16883,6 +16915,30 @@ historique 12 mois</source>
       <trans-unit id="controlplan.add-line" datatype="html">
         <source>Ajouter une ligne</source>
         <target state="translated">添加行</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-where" datatype="html">
+        <source>Où, dans la gamme</source>
+        <target state="translated">在工艺流程的何处</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-what" datatype="html">
+        <source>Ce qui est contrôlé</source>
+        <target state="translated">控制什么</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-how" datatype="html">
+        <source>Comment on le mesure</source>
+        <target state="translated">如何测量</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-reaction" datatype="html">
+        <source>Si le contrôle sort des clous</source>
+        <target state="translated">若控制超出范围</target>
+      </trans-unit>
+      <trans-unit id="controlplan.section-why" datatype="html">
+        <source>Pourquoi ce contrôle existe</source>
+        <target state="translated">该控制存在的原因</target>
+      </trans-unit>
+      <trans-unit id="controlplan.blocked-characteristic" datatype="html">
+        <source>Indiquez ce qui est contrôlé pour pouvoir enregistrer.</source>
+        <target state="translated">填写控制对象后方可保存。</target>
       </trans-unit>
       <trans-unit id="controlplan.line-new" datatype="html">
         <source>Ajouter une ligne</source>
@@ -19391,6 +19447,10 @@ historique 12 mois</source>
       <trans-unit id="fmea.item.initial-rating" datatype="html">
         <source>Cotation initiale</source>
         <target state="translated">初始评级</target>
+      </trans-unit>
+      <trans-unit id="fmea.item.blocked-scale" datatype="html">
+        <source>Les notes S, O et D doivent rester entre 1 et 10.</source>
+        <target state="translated">S、O、D 评分必须介于 1 与 10 之间。</target>
       </trans-unit>
       <trans-unit id="fmea.item.severity" datatype="html">
         <source>Sévérité</source>
