@@ -4367,8 +4367,8 @@ Portal de clientes</target>
         <target state="translated">Detección de anomalías no supervisada</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.subtitle" datatype="html">
-        <source>Détection multivariée par Isolation Forest ou reconstruction (ACP), calculée par l'IA — au-delà des règles SPC univariées.</source>
-        <target state="translated">Detección multivariante por Isolation Forest o reconstrucción (ACP), calculada por IA — más allá de las reglas SPC univariantes.</target>
+        <source>Détection multivariée par Isolation Forest ou reconstruction (ACP) — au-delà des règles SPC univariées.</source>
+        <target state="translated">Detección multivariante por Isolation Forest o reconstrucción (ACP) — más allá de las reglas SPC univariantes.</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.matrix-panel" datatype="html">
         <source>Matrice de données</source>
@@ -8483,8 +8483,8 @@ Portal de clientes</target>
         <target state="translated">Previsión de KPI</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.subtitle" datatype="html">
-        <source>Projection par lissage exponentiel Holt-Winters (niveau, tendance, saisonnalité) et probabilité d'atteindre la cible — calculée par l'IA.</source>
-        <target state="translated">Proyección por suavizado exponencial Holt-Winters (nivel, tendencia, estacionalidad) y probabilidad de alcanzar el objetivo — calculada por IA.</target>
+        <source>Projection par lissage exponentiel Holt-Winters (niveau, tendance, saisonnalité) et probabilité d'atteindre la cible.</source>
+        <target state="translated">Proyección por suavizado exponencial Holt-Winters (nivel, tendencia, estacionalidad) y probabilidad de alcanzar el objetivo.</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.series-panel" datatype="html">
         <source>Série &amp; cible</source>
@@ -13869,8 +13869,8 @@ historial de 12 meses</target>
         <target state="translated">Detección de anomalías SPC</target>
       </trans-unit>
       <trans-unit id="spc.analyze.subtitle" datatype="html">
-        <source>Carte des valeurs individuelles — limites de contrôle (σ = MR̄/d₂) et 8 règles de Nelson, calculées par l'IA.</source>
-        <target state="translated">Gráfico de valores individuales — límites de control (σ = MR̄/d₂) y 8 reglas de Nelson, calculados por IA.</target>
+        <source>Carte des valeurs individuelles — limites de contrôle (σ = MR̄/d₂) et 8 règles de Nelson.</source>
+        <target state="translated">Gráfico de valores individuales — límites de control (σ = MR̄/d₂) y 8 reglas de Nelson.</target>
       </trans-unit>
       <trans-unit id="spc.analyze.series-panel" datatype="html">
         <source>Série de mesures</source>
@@ -15053,8 +15053,8 @@ historial de 12 meses</target>
         <target state="translated">Agrupación de no conformidades</target>
       </trans-unit>
       <trans-unit id="nccluster.subtitle" datatype="html">
-        <source>Regroupement par densité (TF-IDF + DBSCAN) pour révéler les patterns récurrents de NC — calculé par l'IA.</source>
-        <target state="translated">Agrupación por densidad (TF-IDF + DBSCAN) para revelar patrones recurrentes de NC — calculada por IA.</target>
+        <source>Regroupement par densité (TF-IDF + DBSCAN) pour révéler les patterns récurrents de NC.</source>
+        <target state="translated">Agrupación por densidad (TF-IDF + DBSCAN) para revelar patrones recurrentes de NC.</target>
       </trans-unit>
       <trans-unit id="nccluster.input-panel" datatype="html">
         <source>Non-conformités</source>

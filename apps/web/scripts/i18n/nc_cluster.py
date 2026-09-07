@@ -5,7 +5,7 @@ TRANSLATIONS = {
     'nav.nc-clusters': ('Clustering NC', 'NC clustering', 'Agrupación de NC', 'تجميع حالات عدم المطابقة', 'NCクラスタリング', '不符合项聚类'),
 
     'nccluster.title': ('Clustering de non-conformités', 'Non-conformity clustering', 'Agrupación de no conformidades', 'تجميع حالات عدم المطابقة', '不適合のクラスタリング', '不符合项聚类'),
-    'nccluster.subtitle': ("Regroupement par densité (TF-IDF + DBSCAN) pour révéler les patterns récurrents de NC — calculé par l'IA.", 'Density-based grouping (TF-IDF + DBSCAN) to reveal recurrent NC patterns — computed by AI.', 'Agrupación por densidad (TF-IDF + DBSCAN) para revelar patrones recurrentes de NC — calculada por IA.', 'تجميع قائم على الكثافة (TF-IDF + DBSCAN) للكشف عن الأنماط المتكررة لحالات عدم المطابقة — محسوب بالذكاء الاصطناعي.', '密度ベースのグループ化（TF-IDF + DBSCAN）で不適合の繰り返しパターンをAIが抽出。', '基于密度的分组（TF-IDF + DBSCAN）以揭示不符合项的重复模式 — 由AI计算。'),
+    'nccluster.subtitle': ("Regroupement par densité (TF-IDF + DBSCAN) pour révéler les patterns récurrents de NC.", 'Density-based grouping (TF-IDF + DBSCAN) to reveal recurrent NC patterns.', 'Agrupación por densidad (TF-IDF + DBSCAN) para revelar patrones recurrentes de NC.', 'تجميع قائم على الكثافة (TF-IDF + DBSCAN) للكشف عن الأنماط المتكررة لحالات عدم المطابقة.', '密度ベースのグループ化（TF-IDF + DBSCAN）で不適合の繰り返しパターンを抽出。', '基于密度的分组（TF-IDF + DBSCAN）以揭示不符合项的重复模式。'),
 
     'nccluster.input-panel': ('Non-conformités', 'Non-conformities', 'No conformidades', 'حالات عدم المطابقة', '不適合', '不符合项'),
     'nccluster.texts-label': ('Une non-conformité par ligne', 'One non-conformity per line', 'Una no conformidad por línea', 'حالة عدم مطابقة واحدة لكل سطر', '1行に1件の不適合', '每行一个不符合项'),
