@@ -4367,8 +4367,8 @@ Portail clients</source>
         <target state="translated">教師なし異常検出</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.subtitle" datatype="html">
-        <source>Détection multivariée par Isolation Forest ou reconstruction (ACP), calculée par l'IA — au-delà des règles SPC univariées.</source>
-        <target state="translated">Isolation Forest または再構成（PCA）による多変量検出をAIが算出 — 単変量SPCルールを超える検出。</target>
+        <source>Détection multivariée par Isolation Forest ou reconstruction (ACP) — au-delà des règles SPC univariées.</source>
+        <target state="translated">Isolation Forest または再構成（PCA）による多変量検出 — 単変量SPCルールを超える検出。</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.matrix-panel" datatype="html">
         <source>Matrice de données</source>
@@ -8483,8 +8483,8 @@ Portail clients</source>
         <target state="translated">KPI予測</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.subtitle" datatype="html">
-        <source>Projection par lissage exponentiel Holt-Winters (niveau, tendance, saisonnalité) et probabilité d'atteindre la cible — calculée par l'IA.</source>
-        <target state="translated">Holt-Winters指数平滑（水準・トレンド・季節性）による予測と目標到達確率をAIが算出。</target>
+        <source>Projection par lissage exponentiel Holt-Winters (niveau, tendance, saisonnalité) et probabilité d'atteindre la cible.</source>
+        <target state="translated">Holt-Winters指数平滑（水準・トレンド・季節性）による予測と目標到達確率。</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.series-panel" datatype="html">
         <source>Série &amp; cible</source>
@@ -13868,8 +13868,8 @@ historique 12 mois</source>
         <target state="translated">SPC異常検出</target>
       </trans-unit>
       <trans-unit id="spc.analyze.subtitle" datatype="html">
-        <source>Carte des valeurs individuelles — limites de contrôle (σ = MR̄/d₂) et 8 règles de Nelson, calculées par l'IA.</source>
-        <target state="translated">個別値管理図 — 管理限界（σ = MR̄/d₂）とネルソンの8ルールをAIが算出。</target>
+        <source>Carte des valeurs individuelles — limites de contrôle (σ = MR̄/d₂) et 8 règles de Nelson.</source>
+        <target state="translated">個別値管理図 — 管理限界（σ = MR̄/d₂）とネルソンの8ルール。</target>
       </trans-unit>
       <trans-unit id="spc.analyze.series-panel" datatype="html">
         <source>Série de mesures</source>
@@ -15052,8 +15052,8 @@ historique 12 mois</source>
         <target state="translated">不適合のクラスタリング</target>
       </trans-unit>
       <trans-unit id="nccluster.subtitle" datatype="html">
-        <source>Regroupement par densité (TF-IDF + DBSCAN) pour révéler les patterns récurrents de NC — calculé par l'IA.</source>
-        <target state="translated">密度ベースのグループ化（TF-IDF + DBSCAN）で不適合の繰り返しパターンをAIが抽出。</target>
+        <source>Regroupement par densité (TF-IDF + DBSCAN) pour révéler les patterns récurrents de NC.</source>
+        <target state="translated">密度ベースのグループ化（TF-IDF + DBSCAN）で不適合の繰り返しパターンを抽出。</target>
       </trans-unit>
       <trans-unit id="nccluster.input-panel" datatype="html">
         <source>Non-conformités</source>

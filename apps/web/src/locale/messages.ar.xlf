@@ -4367,8 +4367,8 @@ Portail clients</source>
         <target state="translated">كشف الحالات الشاذة دون إشراف</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.subtitle" datatype="html">
-        <source>Détection multivariée par Isolation Forest ou reconstruction (ACP), calculée par l'IA — au-delà des règles SPC univariées.</source>
-        <target state="translated">كشف متعدد المتغيرات عبر Isolation Forest أو إعادة البناء (ACP)، محسوب بالذكاء الاصطناعي — يتجاوز قواعد SPC أحادية المتغير.</target>
+        <source>Détection multivariée par Isolation Forest ou reconstruction (ACP) — au-delà des règles SPC univariées.</source>
+        <target state="translated">كشف متعدد المتغيرات عبر Isolation Forest أو إعادة البناء (ACP) — يتجاوز قواعد SPC أحادية المتغير.</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.matrix-panel" datatype="html">
         <source>Matrice de données</source>
@@ -8483,8 +8483,8 @@ Portail clients</source>
         <target state="translated">التنبؤ بمؤشرات الأداء</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.subtitle" datatype="html">
-        <source>Projection par lissage exponentiel Holt-Winters (niveau, tendance, saisonnalité) et probabilité d'atteindre la cible — calculée par l'IA.</source>
-        <target state="translated">إسقاط عبر التنعيم الأسي Holt-Winters (المستوى، الاتجاه، الموسمية) واحتمال بلوغ الهدف — محسوب بالذكاء الاصطناعي.</target>
+        <source>Projection par lissage exponentiel Holt-Winters (niveau, tendance, saisonnalité) et probabilité d'atteindre la cible.</source>
+        <target state="translated">إسقاط عبر التنعيم الأسي Holt-Winters (المستوى، الاتجاه، الموسمية) واحتمال بلوغ الهدف.</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.series-panel" datatype="html">
         <source>Série &amp; cible</source>
@@ -13869,8 +13869,8 @@ historique 12 mois</source>
         <target state="translated">كشف الحالات الشاذة SPC</target>
       </trans-unit>
       <trans-unit id="spc.analyze.subtitle" datatype="html">
-        <source>Carte des valeurs individuelles — limites de contrôle (σ = MR̄/d₂) et 8 règles de Nelson, calculées par l'IA.</source>
-        <target state="translated">مخطط القيم الفردية — حدود التحكم (σ = MR̄/d₂) و8 قواعد نيلسون، محسوبة بالذكاء الاصطناعي.</target>
+        <source>Carte des valeurs individuelles — limites de contrôle (σ = MR̄/d₂) et 8 règles de Nelson.</source>
+        <target state="translated">مخطط القيم الفردية — حدود التحكم (σ = MR̄/d₂) و8 قواعد نيلسون.</target>
       </trans-unit>
       <trans-unit id="spc.analyze.series-panel" datatype="html">
         <source>Série de mesures</source>
@@ -15053,8 +15053,8 @@ historique 12 mois</source>
         <target state="translated">تجميع حالات عدم المطابقة</target>
       </trans-unit>
       <trans-unit id="nccluster.subtitle" datatype="html">
-        <source>Regroupement par densité (TF-IDF + DBSCAN) pour révéler les patterns récurrents de NC — calculé par l'IA.</source>
-        <target state="translated">تجميع قائم على الكثافة (TF-IDF + DBSCAN) للكشف عن الأنماط المتكررة لحالات عدم المطابقة — محسوب بالذكاء الاصطناعي.</target>
+        <source>Regroupement par densité (TF-IDF + DBSCAN) pour révéler les patterns récurrents de NC.</source>
+        <target state="translated">تجميع قائم على الكثافة (TF-IDF + DBSCAN) للكشف عن الأنماط المتكررة لحالات عدم المطابقة.</target>
       </trans-unit>
       <trans-unit id="nccluster.input-panel" datatype="html">
         <source>Non-conformités</source>

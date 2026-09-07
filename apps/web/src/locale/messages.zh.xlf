@@ -4367,8 +4367,8 @@ Portail clients</source>
         <target state="translated">无监督异常检测</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.subtitle" datatype="html">
-        <source>Détection multivariée par Isolation Forest ou reconstruction (ACP), calculée par l'IA — au-delà des règles SPC univariées.</source>
-        <target state="translated">通过 Isolation Forest 或重构（PCA）进行多变量检测，由AI计算 — 超越单变量SPC规则。</target>
+        <source>Détection multivariée par Isolation Forest ou reconstruction (ACP) — au-delà des règles SPC univariées.</source>
+        <target state="translated">通过 Isolation Forest 或重构（PCA）进行多变量检测 — 超越单变量SPC规则。</target>
       </trans-unit>
       <trans-unit id="anomaly.detect.matrix-panel" datatype="html">
         <source>Matrice de données</source>
@@ -8483,8 +8483,8 @@ Portail clients</source>
         <target state="translated">KPI预测</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.subtitle" datatype="html">
-        <source>Projection par lissage exponentiel Holt-Winters (niveau, tendance, saisonnalité) et probabilité d'atteindre la cible — calculée par l'IA.</source>
-        <target state="translated">通过 Holt-Winters 指数平滑（水平、趋势、季节性）进行预测，并计算达到目标的概率 — 由AI计算。</target>
+        <source>Projection par lissage exponentiel Holt-Winters (niveau, tendance, saisonnalité) et probabilité d'atteindre la cible.</source>
+        <target state="translated">通过 Holt-Winters 指数平滑（水平、趋势、季节性）进行预测，并计算达到目标的概率。</target>
       </trans-unit>
       <trans-unit id="forecast.kpi.series-panel" datatype="html">
         <source>Série &amp; cible</source>
@@ -13869,8 +13869,8 @@ historique 12 mois</source>
         <target state="translated">SPC异常检测</target>
       </trans-unit>
       <trans-unit id="spc.analyze.subtitle" datatype="html">
-        <source>Carte des valeurs individuelles — limites de contrôle (σ = MR̄/d₂) et 8 règles de Nelson, calculées par l'IA.</source>
-        <target state="translated">单值控制图 — 控制限（σ = MR̄/d₂）和8条Nelson规则，由AI计算。</target>
+        <source>Carte des valeurs individuelles — limites de contrôle (σ = MR̄/d₂) et 8 règles de Nelson.</source>
+        <target state="translated">单值控制图 — 控制限（σ = MR̄/d₂）和8条Nelson规则。</target>
       </trans-unit>
       <trans-unit id="spc.analyze.series-panel" datatype="html">
         <source>Série de mesures</source>
@@ -15053,8 +15053,8 @@ historique 12 mois</source>
         <target state="translated">不符合项聚类</target>
       </trans-unit>
       <trans-unit id="nccluster.subtitle" datatype="html">
-        <source>Regroupement par densité (TF-IDF + DBSCAN) pour révéler les patterns récurrents de NC — calculé par l'IA.</source>
-        <target state="translated">基于密度的分组（TF-IDF + DBSCAN）以揭示不符合项的重复模式 — 由AI计算。</target>
+        <source>Regroupement par densité (TF-IDF + DBSCAN) pour révéler les patterns récurrents de NC.</source>
+        <target state="translated">基于密度的分组（TF-IDF + DBSCAN）以揭示不符合项的重复模式。</target>
       </trans-unit>
       <trans-unit id="nccluster.input-panel" datatype="html">
         <source>Non-conformités</source>
