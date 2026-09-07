@@ -1,66 +1,126 @@
-/* Le cycle : cinq phases en file, reliées par des flèches.
+/* ---- Le V ----
 
-   `flex` et non `grid` : les cinq cartes n'ont pas le même poids de texte, et
-   une grille à colonnes égales aurait donné quatre cartes creuses pour une
-   pleine. Elles se partagent la largeur en gardant une base commune. */
-.cycle {
-  display: flex;
-  align-items: stretch;
-  gap: var(--qos-space-2);
-  margin: 0;
+   Cinq colonnes, trois rangs. La phase 1 occupe le rang haut à gauche, la 3 le
+   rang bas au centre, la 5 le rang haut à droite : la descente puis la remontée
+   se lisent sans qu'on ait à les expliquer. C'est une grille et non des marges
+   calculées, pour que la forme tienne quelle que soit la longueur des titres. */
+.v {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(3, auto);
+  gap: var(--qos-space-3);
+  margin: 0 0 var(--qos-space-6);
   padding: 0;
   list-style: none;
 }
 
-.cycle__etape {
+.v__case {
   display: flex;
-  align-items: stretch;
-  flex: 1 1 0;
   min-width: 0;
+
+  /* Le rang dans le V vient de la donnée, pas de l'ordre du gabarit : les
+     phases restent dans leur ordre de lecture dans le DOM — ce que suit un
+     lecteur d'écran — pendant que la grille les dispose en V. */
+  &[data-niveau='1'] { grid-row: 1; }
+  &[data-niveau='2'] { grid-row: 2; }
+  &[data-niveau='3'] { grid-row: 3; }
 }
 
-.cycle__lien {
+/* Un jalon du V. La flèche à droite dit le sens de parcours ; le dernier n'en
+   a pas, une flèche après lui promettrait une sixième phase. */
+.jalon {
+  position: relative;
   display: flex;
   align-items: center;
-  flex: 0 0 auto;
-  padding: 0 var(--qos-space-1);
-  color: var(--qos-fg-disabled);
-}
-
-.phase {
-  display: flex;
-  flex-direction: column;
   gap: var(--qos-space-3);
   flex: 1 1 auto;
   min-width: 0;
-  padding: var(--qos-space-5);
+  padding: var(--qos-space-4) var(--qos-space-5);
   border: 1px solid var(--qos-border-subtle);
   border-radius: var(--qos-radius-lg);
   background: var(--qos-bg-elevated);
   color: inherit;
-  text-decoration: none;
-  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
 
   &:hover {
     border-color: var(--qos-border-strong);
     box-shadow: var(--qos-shadow-sm);
   }
 
-  /* Le focus clavier doit être aussi net que le survol : c'est le même geste. */
   &:focus-visible {
     outline: 2px solid var(--qos-border-focus);
     outline-offset: 2px;
   }
 }
 
-/* Le rang porte la séquence. Il est assez gros pour se lire de loin, parce
-   qu'en APQP c'est « où en est-on » qui se demande en premier. */
-.phase__rang {
+/* La phase ouverte se distingue par un aplat plein : c'est le seul endroit du
+   schéma qui hausse la voix, et il désigne ce que montre le bloc du dessous. */
+.jalon--ouvert {
+  border-color: transparent;
+  background: var(--qos-accent-bg);
+
+  .jalon__rang {
+    background: rgba(255, 255, 255, 0.22);
+    color: var(--qos-accent-fg);
+  }
+
+  .jalon__titre { color: var(--qos-accent-fg); }
+}
+
+.jalon__rang {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--qos-radius-pill);
+  background: var(--qos-accent-bg-soft);
+  color: var(--qos-accent-fg-soft);
+  font-size: var(--qos-fs-sm);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.jalon__titre {
+  color: var(--qos-fg-primary);
+  font-size: var(--qos-fs-sm);
+  font-weight: 600;
+  line-height: var(--qos-lh-snug);
+  text-wrap: pretty;
+}
+
+.invite {
+  margin: 0;
+  color: var(--qos-fg-tertiary);
+  font-size: var(--qos-fs-sm);
+}
+
+/* ---- Le détail d'une phase, sous le schéma ---- */
+.detail {
+  padding: var(--qos-space-6);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+}
+
+.detail__tete {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--qos-space-4);
+  margin-bottom: var(--qos-space-4);
+}
+
+.detail__rang {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
   border-radius: var(--qos-radius-pill);
   background: var(--qos-accent-bg-soft);
   color: var(--qos-accent-fg-soft);
@@ -69,50 +129,82 @@
   font-variant-numeric: tabular-nums;
 }
 
-.phase__corps {
-  display: flex;
-  flex-direction: column;
-  gap: var(--qos-space-2);
-  min-width: 0;
-}
-
-.phase__titre {
-  color: var(--qos-fg-primary);
-  font-size: var(--qos-fs-md);
-  font-weight: 600;
+.detail__titre {
+  margin: 0;
+  font-size: var(--qos-fs-xl);
   line-height: var(--qos-lh-snug);
-  text-wrap: pretty;
 }
 
-.phase__objet {
+.detail__objet {
+  margin: var(--qos-space-1) 0 0;
+  max-width: 68ch;
   color: var(--qos-fg-secondary);
   font-size: var(--qos-fs-sm);
+  line-height: var(--qos-lh-normal);
+}
+
+.detail__question {
+  margin: 0 0 var(--qos-space-6);
+  max-width: 68ch;
+  color: var(--qos-fg-primary);
+  font-size: var(--qos-fs-md);
   line-height: var(--qos-lh-normal);
   text-wrap: pretty;
 }
 
-.phase__compte {
-  margin-top: auto;          /* colle le compte en bas, quelle que soit la hauteur du texte */
-  color: var(--qos-fg-tertiary);
-  font-size: var(--qos-fs-xs);
-  font-variant-numeric: tabular-nums;
+.detail__sous-titre {
+  margin: 0;
+  font-size: var(--qos-fs-md);
 }
 
-/* Sous 1024 px, cinq cartes côte à côte tombent sous 180 px chacune et leur
-   texte se hache. La file bascule à la verticale, flèches comprises — la
-   séquence reste lisible, elle change seulement d'axe. */
-@media (max-width: 1024px) {
-  .cycle { flex-direction: column; }
+.detail__aide {
+  margin: var(--qos-space-1) 0 var(--qos-space-4);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+}
 
-  .cycle__etape { flex-direction: column; }
+/* Plusieurs colonnes quand la place le permet : douze livrables en une colonne
+   forcent un défilement pour une liste qu'on veut embrasser d'un regard. */
+.livrables {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--qos-space-3) var(--qos-space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 
-  .cycle__lien {
-    justify-content: center;
-    padding: var(--qos-space-1) 0;
-    transform: rotate(90deg);
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--qos-space-2);
+    color: var(--qos-fg-primary);
+    font-size: var(--qos-fs-sm);
+    line-height: var(--qos-lh-normal);
   }
 
-  .phase { flex-direction: row; align-items: flex-start; gap: var(--qos-space-4); }
+  mat-icon {
+    flex: 0 0 auto;
+    margin-top: 1px;
+    color: var(--qos-fg-disabled);
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
 
-  .phase__compte { margin-top: 0; }
+/* Sous 1024 px, cinq colonnes tombent sous 180 px et les titres se hachent.
+   Le V se déplie en escalier vertical : la descente puis la remontée restent
+   lisibles par le retrait, qui change seulement d'axe. */
+@media (max-width: 1024px) {
+  .v {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+  }
+
+  .v__case {
+    grid-row: auto !important;      /* l'ordre du DOM reprend la main */
+
+    &[data-niveau='2'] { padding-left: var(--qos-space-6); }
+    &[data-niveau='3'] { padding-left: var(--qos-space-10); }
+  }
 }

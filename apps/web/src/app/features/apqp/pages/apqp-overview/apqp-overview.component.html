@@ -2,33 +2,56 @@
   <qos-page-header
     eyebrow="APQP" i18n-eyebrow="@@apqp.eyebrow"
     title="Planification qualité produit" i18n-title="@@apqp.title"
-    subtitle="Cinq phases, de la voix du client au retour d'expérience. Chacune s'appuie sur la précédente."
+    subtitle="Cinq phases en V : on descend jusqu'à la conception du processus, on remonte vers la production série."
     i18n-subtitle="@@apqp.subtitle">
   </qos-page-header>
 
-  <!-- Le schéma EST la navigation : on entre dans une phase en cliquant dessus.
-       `<ol>` et non une suite de `<div>` — l'ordre est la méthode, et un lecteur
-       d'écran doit l'entendre comme une séquence numérotée. -->
-  <ol class="cycle">
-    <li class="cycle__etape" *ngFor="let phase of phases; let dernier = last; trackBy: trackBySlug">
-      <a class="phase" [routerLink]="['/apqp', phase.slug]">
-        <span class="phase__rang" aria-hidden="true">{{ phase.numero }}</span>
-        <span class="phase__corps">
-          <span class="phase__titre">{{ phase.titre }}</span>
-          <span class="phase__objet">{{ phase.objet }}</span>
-          <span class="phase__compte">
-            {{ compteLivrables(phase) }}<span i18n="@@apqp.deliverables-suffix">&nbsp;livrables</span>
-          </span>
-        </span>
-      </a>
-
-      <!-- La flèche relie deux phases ; elle ne se lit pas, elle se voit. -->
-      <span class="cycle__lien" *ngIf="!dernier" aria-hidden="true">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 12h14M13 6l6 6-6 6"></path>
-        </svg>
-      </span>
+  <!-- Le schéma EST l'interface : on ouvre une phase en cliquant dessus, et son
+       contenu s'affiche dessous sans quitter l'écran. `<ol>` parce que l'ordre
+       est la méthode — un lecteur d'écran doit l'entendre comme une séquence. -->
+  <ol class="v" [attr.aria-label]="'Cycle APQP en cinq phases'"
+      i18n-aria-label="@@apqp.cycle-aria">
+    <li class="v__case" *ngFor="let phase of phases; trackBy: trackBySlug"
+        [attr.data-niveau]="niveau(phase)">
+      <button type="button" class="jalon"
+              [class.jalon--ouvert]="estChoisie(phase)"
+              [attr.aria-expanded]="estChoisie(phase)"
+              [attr.aria-controls]="'apqp-detail'"
+              (click)="basculer(phase)">
+        <span class="jalon__rang" aria-hidden="true">{{ phase.numero }}</span>
+        <span class="jalon__titre">{{ phase.titre }}</span>
+      </button>
     </li>
   </ol>
+
+  <!-- Rien d'ouvert : on dit quoi faire, plutôt que de laisser un blanc. -->
+  <p class="invite" *ngIf="!choisie" i18n="@@apqp.pick-a-phase">
+    Choisissez une phase du schéma pour voir ce qu'elle établit et ce qu'elle doit produire.
+  </p>
+
+  <section class="detail" id="apqp-detail" *ngIf="choisie as p">
+    <header class="detail__tete">
+      <span class="detail__rang" aria-hidden="true">{{ p.numero }}</span>
+      <div>
+        <h2 class="detail__titre">{{ p.titre }}</h2>
+        <p class="detail__objet">{{ p.objet }}</p>
+      </div>
+    </header>
+
+    <!-- La question situe la phase mieux qu'un paragraphe : c'est ce qu'on se
+         demande en y entrant, et ce à quoi ses livrables répondent. -->
+    <p class="detail__question">{{ p.question }}</p>
+
+    <h3 class="detail__sous-titre" i18n="@@apqp.deliverables-title">Livrables attendus</h3>
+    <p class="detail__aide" i18n="@@apqp.deliverables-subtitle">
+      Ce que la phase doit avoir produit avant de passer à la suivante.
+    </p>
+
+    <ul class="livrables">
+      <li *ngFor="let livrable of p.livrables">
+        <mat-icon aria-hidden="true">check_circle</mat-icon>
+        <span>{{ livrable }}</span>
+      </li>
+    </ul>
+  </section>
 </div>

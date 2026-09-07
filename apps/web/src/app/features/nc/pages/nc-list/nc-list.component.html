@@ -8,6 +8,23 @@
     </button>
   </qos-page-header>
 
+  <!-- Les tuiles comptent le MÊME périmètre que le tableau : sur l'écran
+       interne, les NC internes. Un total toutes origines confondues au-dessus
+       d'une liste filtrée serait un chiffre juste au mauvais endroit.
+
+       Chacune filtre la liste au clic — un nombre qu'on ne peut pas ouvrir
+       oblige à retrouver à la main les lignes qu'il désigne. -->
+  <div class="tiles" *ngIf="tiles$ | async as tiles">
+    <button type="button" class="tile" *ngFor="let t of tiles; trackBy: trackByTile"
+            [attr.data-tone]="t.tone"
+            [class.tile--active]="statusFilter.value === t.status"
+            [attr.aria-pressed]="statusFilter.value === t.status"
+            (click)="filterByStatus(t.status)">
+      <span class="tile__value">{{ t.value }}</span>
+      <span class="tile__label">{{ t.label }}</span>
+    </button>
+  </div>
+
   <mat-card class="filter-card">
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label i18n="@@common.filter-by-status">Filtrer par statut</mat-label>

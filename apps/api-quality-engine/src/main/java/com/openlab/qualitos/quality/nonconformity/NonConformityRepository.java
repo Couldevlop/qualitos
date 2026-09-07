@@ -33,6 +33,23 @@ public interface NonConformityRepository
     Page<NonConformity> findByTenantIdAndStatusAndSeverityAndCategory(
             UUID tenantId, NcStatus status, NcSeverity severity, NcCategory category, Pageable pageable);
 
+    /**
+     * Dénombrements pour les tuiles d'en-tête des listes de NC.
+     *
+     * <p>Compter en base plutôt que charger les entités : l'écran affiche un
+     * nombre, pas des lignes. Et compter PAR ORIGINE, parce que la tuile
+     * surmonte une liste déjà filtrée — un total toutes origines confondues
+     * au-dessus des seules NC internes serait un chiffre juste au mauvais
+     * endroit, donc un chiffre faux pour qui le lit.
+     */
+    long countByTenantId(UUID tenantId);
+
+    long countByTenantIdAndStatus(UUID tenantId, NcStatus status);
+
+    long countByTenantIdAndOrigin(UUID tenantId, NcOrigin origin);
+
+    long countByTenantIdAndOriginAndStatus(UUID tenantId, NcOrigin origin, NcStatus status);
+
     Optional<NonConformity> findByIdAndTenantId(UUID id, UUID tenantId);
 
     /** Vrai si la référence générée est déjà prise pour ce tenant (collision improbable). */

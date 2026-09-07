@@ -47,13 +47,6 @@ const routes: Routes = [
         loadChildren: () => import('./features/capa/capa.module').then(m => m.CapaModule)
       },
       {
-        // Réclamations clients / Voice of Customer (§4.9). À ne pas confondre avec
-        // `/complaints-nlp`, qui est l'analyse IA d'un lot de réclamations.
-        path: 'complaints',
-        loadChildren: () =>
-          import('./features/complaints/complaints.module').then(m => m.ComplaintsModule)
-      },
-      {
         // Calibration & gestion des équipements (§4.10).
         path: 'calibration',
         loadChildren: () =>
