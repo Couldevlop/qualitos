@@ -123,7 +123,12 @@ export class NcListComponent implements OnInit {
         catchError(() => of(null))          // les tuiles s'effacent, la liste reste
       )),
       map(s => s ? this.toTiles(s) : []),
-      shareReplay({ bufferSize: 1, refCount: true })
+      // `refCount: false` : le bloc des tuiles est sous un `*ngIf`, donc le
+      // tuyau async s'y désabonne et s'y réabonne au gré des rendus. Avec un
+      // comptage de références, chaque réabonnement relançait la requête —
+      // le serveur recomptait les NC pour un affichage qui n'avait pas changé.
+      // Sans comptage, la dernière valeur est rejouée et l'appel reste unique.
+      shareReplay({ bufferSize: 1, refCount: false })
     );
 
     this.ncs$ = combineLatest([
