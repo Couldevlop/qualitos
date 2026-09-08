@@ -4611,20 +4611,20 @@ Portail clients</source>
         <target state="translated">产品质量先期策划</target>
       </trans-unit>
       <trans-unit id="apqp.subtitle" datatype="html">
-        <source>Cinq phases en V : on descend jusqu'à la conception du processus, on remonte vers la production série.</source>
-        <target state="translated">V 形的五个阶段：下行至过程设计，再上行至量产。</target>
+        <source>Les phases se lisent en V : on descend jusqu'au point bas du projet, on remonte vers la production série.</source>
+        <target state="translated">各阶段呈 V 形：下行至项目低点，再上行至量产。</target>
       </trans-unit>
       <trans-unit id="apqp.cycle-aria" datatype="html">
-        <source>Cycle APQP en cinq phases</source>
-        <target state="translated">APQP 五阶段流程</target>
+        <source>Cycle APQP</source>
+        <target state="translated">APQP 流程</target>
       </trans-unit>
       <trans-unit id="apqp.pick-a-phase" datatype="html">
         <source>Choisissez une phase du schéma pour voir ce qu'elle établit et ce qu'elle doit produire.</source>
         <target state="translated">在示意图中选择一个阶段，查看其确立的内容与应产出的交付物。</target>
       </trans-unit>
-      <trans-unit id="apqp.deliverables-suffix" datatype="html">
-        <source> livrables</source>
-        <target state="translated"> 项交付物</target>
+      <trans-unit id="apqp.empty-cycle" datatype="html">
+        <source>Le cycle est vide. Ajoutez une première phase pour le redessiner.</source>
+        <target state="translated">流程为空。添加第一个阶段以重新绘制。</target>
       </trans-unit>
       <trans-unit id="apqp.deliverables-title" datatype="html">
         <source>Livrables attendus</source>
@@ -4633,6 +4633,114 @@ Portail clients</source>
       <trans-unit id="apqp.deliverables-subtitle" datatype="html">
         <source>Ce que la phase doit avoir produit avant de passer à la suivante.</source>
         <target state="translated">进入下一阶段前，本阶段必须完成的内容。</target>
+      </trans-unit>
+      <trans-unit id="apqp.no-deliverable" datatype="html">
+        <source>Aucun livrable pour l'instant — la phase ne dit pas encore ce qu'elle doit produire.</source>
+        <target state="translated">暂无交付物 — 该阶段尚未说明应产出什么。</target>
+      </trans-unit>
+      <trans-unit id="apqp.add-phase" datatype="html">
+        <source>Ajouter une phase</source>
+        <target state="translated">添加阶段</target>
+      </trans-unit>
+      <trans-unit id="apqp.add-deliverable" datatype="html">
+        <source>Ajouter un livrable</source>
+        <target state="translated">添加交付物</target>
+      </trans-unit>
+      <trans-unit id="apqp.edit-deliverable-aria" datatype="html">
+        <source>Modifier le livrable <x id="INTERPOLATION"/></source>
+        <target state="translated">编辑交付物 <x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="apqp.delete-deliverable-aria" datatype="html">
+        <source>Supprimer le livrable <x id="INTERPOLATION"/></source>
+        <target state="translated">删除交付物 <x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="apqp.move-earlier" datatype="html">
+        <source>Avancer la phase d'un rang</source>
+        <target state="translated">将阶段前移一位</target>
+      </trans-unit>
+      <trans-unit id="apqp.move-later" datatype="html">
+        <source>Reculer la phase d'un rang</source>
+        <target state="translated">将阶段后移一位</target>
+      </trans-unit>
+      <trans-unit id="apqp.confirm-delete-phase" datatype="html">
+        <source>Supprimer « <x id="INTERPOLATION"/> » et ses <x id="INTERPOLATION_1"/> livrables ? Cette suppression est définitive.</source>
+        <target state="translated">删除“<x id="INTERPOLATION"/>”及其 <x id="INTERPOLATION_1"/> 项交付物？此操作不可撤销。</target>
+      </trans-unit>
+      <trans-unit id="apqp.confirm-delete-deliverable" datatype="html">
+        <source>Retirer « <x id="INTERPOLATION"/> » des livrables ?</source>
+        <target state="translated">将“<x id="INTERPOLATION"/>”从交付物中移除？</target>
+      </trans-unit>
+      <trans-unit id="apqp.failed" datatype="html">
+        <source>Opération impossible sur le cycle APQP.</source>
+        <target state="translated">无法对 APQP 流程执行该操作。</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.title-create" datatype="html">
+        <source>Ajouter une phase</source>
+        <target state="translated">添加阶段</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.title-edit" datatype="html">
+        <source>Modifier la phase</source>
+        <target state="translated">编辑阶段</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.field-title" datatype="html">
+        <source>Intitulé de la phase</source>
+        <target state="translated">阶段名称</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.title-placeholder" datatype="html">
+        <source>Ex. : Conception du processus</source>
+        <target state="translated">例：过程设计</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.title-required" datatype="html">
+        <source>L'intitulé est requis : c'est le seul texte que porte le schéma.</source>
+        <target state="translated">名称为必填项：它是示意图上唯一的文字。</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.blocked-title" datatype="html">
+        <source>Donnez un intitulé : c'est ce que le schéma affiche.</source>
+        <target state="translated">请填写名称：示意图显示的正是它。</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.field-purpose" datatype="html">
+        <source>Ce que la phase établit</source>
+        <target state="translated">该阶段确立的内容</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.purpose-hint" datatype="html">
+        <source>Une phrase, pas un paragraphe — elle s'affiche sous l'intitulé.</source>
+        <target state="translated">一句话，而非一段：它显示在名称下方。</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.field-question" datatype="html">
+        <source>La question à laquelle elle répond</source>
+        <target state="translated">该阶段回答的问题</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.question-hint" datatype="html">
+        <source>Ce qu'on se demande en entrant dans la phase, et ce que ses livrables tranchent.</source>
+        <target state="translated">进入该阶段时的疑问，也是其交付物所要解答的。</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.title-create" datatype="html">
+        <source>Ajouter un livrable</source>
+        <target state="translated">添加交付物</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.title-edit" datatype="html">
+        <source>Reformuler un livrable</source>
+        <target state="translated">重述交付物</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.field-label" datatype="html">
+        <source>Livrable attendu</source>
+        <target state="translated">预期交付物</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.label-placeholder" datatype="html">
+        <source>Ex. : AMDEC processus (PFMEA)</source>
+        <target state="translated">例：过程 FMEA（PFMEA）</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.label-hint" datatype="html">
+        <source>Ce que la phase doit avoir produit avant de passer à la suivante.</source>
+        <target state="translated">进入下一阶段前，本阶段必须完成的内容。</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.label-required" datatype="html">
+        <source>Un livrable sans intitulé ne se vérifie pas.</source>
+        <target state="translated">没有名称的交付物无法核查。</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.blocked-label" datatype="html">
+        <source>Nommez le livrable attendu.</source>
+        <target state="translated">请填写预期交付物的名称。</target>
       </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>

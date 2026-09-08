@@ -1,13 +1,16 @@
 /* ---- Le V ----
 
-   Cinq colonnes, trois rangs. La phase 1 occupe le rang haut à gauche, la 3 le
-   rang bas au centre, la 5 le rang haut à droite : la descente puis la remontée
-   se lisent sans qu'on ait à les expliquer. C'est une grille et non des marges
-   calculées, pour que la forme tienne quelle que soit la longueur des titres. */
+   Une colonne par phase, autant de rangs qu'il faut pour descendre au point bas
+   et remonter. La première phase occupe le rang haut à gauche, la dernière le
+   rang haut à droite : la descente puis la remontée se lisent sans qu'on ait à
+   les expliquer. C'est une grille et non des marges calculées, pour que la
+   forme tienne quelle que soit la longueur des titres — et pour qu'elle tienne
+   encore quand le client passe de cinq phases à six. */
 .v {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  grid-template-rows: repeat(3, auto);
+  /* Les colonnes viennent du composant (`[style.grid-template-columns]`) : le
+     cycle appartient au client et n'a plus cinq phases par principe. Les rangs
+     se créent d'eux-mêmes, chaque jalon désignant le sien. */
   gap: var(--qos-space-3);
   margin: 0 0 var(--qos-space-6);
   padding: 0;
@@ -18,21 +21,11 @@
   display: flex;
   min-width: 0;
 
-  /* Le rang dans le V vient de la donnée, pas de l'ordre du gabarit : les
-     phases restent dans leur ordre de lecture dans le DOM — ce que suit un
-     lecteur d'écran — pendant que la grille les dispose en V. */
-  &[data-niveau='1'] { grid-row: 1; }
-  &[data-niveau='2'] { grid-row: 2; }
-  &[data-niveau='3'] { grid-row: 3; }
-
-  /* La COLONNE aussi doit être posée. Avec le seul rang, le placement
-     automatique tassait les cinq jalons sur deux colonnes : la grille remplit
-     la première colonne libre du rang demandé, et le V s'effondrait en L. */
-  &[data-rang='1'] { grid-column: 1; }
-  &[data-rang='2'] { grid-column: 2; }
-  &[data-rang='3'] { grid-column: 3; }
-  &[data-rang='4'] { grid-column: 4; }
-  &[data-rang='5'] { grid-column: 5; }
+  /* Le rang et la colonne sont posés par le composant, depuis la donnée : les
+     phases gardent leur ordre de lecture dans le DOM — ce que suit un lecteur
+     d'écran — pendant que la grille les dispose en V. Les figer ici en
+     `data-*` supposait cinq phases, et le V s'effondrait en L dès qu'on en
+     ajoutait une sixième. */
 }
 
 /* Un jalon du V, repris du schéma de référence (docs/APQP.PNG) : bloc plein,
@@ -70,9 +63,10 @@
   }
 }
 
-/* Les deux extrémités du cycle portent une pointe, comme sur le schéma. */
-.v__case[data-rang='1'] .jalon,
-.v__case[data-rang='5'] .jalon {
+/* Les deux extrémités du cycle portent une pointe, comme sur le schéma —
+   repérées comme extrémités et non par leur rang, qui bouge avec le cycle. */
+.jalon--entree,
+.jalon--sortie {
   padding-right: var(--qos-space-8);
   clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 50%, calc(100% - 18px) 100%, 0 100%);
 }
@@ -145,6 +139,35 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* L'intitulé prend la place restante pour que les commandes se rangent à
+   droite sans dépendre d'une largeur devinée. */
+.detail__intitule { flex: 1 1 auto; min-width: 0; }
+
+.detail__commandes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+  flex: 0 0 auto;
+
+  /* La suppression est la seule action irréversible de l'écran : elle se
+     signale, sans crier — le bouton reste secondaire, sa couleur seule dit ce
+     qu'il fait. */
+  .danger {
+    --mdc-outlined-button-label-text-color: var(--qos-danger-fg);
+    color: var(--qos-danger-fg);
+  }
+}
+
+/* Le titre des livrables et le bouton qui en ajoute, sur la même ligne : le
+   geste est là où on lit ce qu'il complète. */
+.detail__barre {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--qos-space-4);
+  margin-bottom: var(--qos-space-2);
+}
+
 .detail__titre {
   margin: 0;
   font-size: var(--qos-fs-xl);
@@ -191,16 +214,28 @@
 
   li {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: var(--qos-space-2);
+    min-height: 40px;
     color: var(--qos-fg-primary);
     font-size: var(--qos-fs-sm);
     line-height: var(--qos-lh-normal);
   }
 
-  mat-icon {
+  &__libelle { flex: 1 1 auto; min-width: 0; }
+
+  /* Les actions restent en place, visibles : les révéler au survol les rend
+     introuvables au clavier et au doigt. */
+  &__actions {
+    display: flex;
     flex: 0 0 auto;
-    margin-top: 1px;
+    gap: var(--qos-space-1);
+  }
+
+  /* La coche seulement : sans l'enfant direct, la règle rognait aussi les
+     icônes des boutons d'édition, qui ne sont pas des puces de liste. */
+  li > mat-icon {
+    flex: 0 0 auto;
     color: var(--qos-fg-disabled);
     font-size: 18px;
     width: 18px;
@@ -212,24 +247,36 @@
    Le V se déplie en escalier vertical : la descente puis la remontée restent
    lisibles par le retrait, qui change seulement d'axe. */
 @media (max-width: 1024px) {
+  /* `!important` parce que le composant pose les colonnes en style en ligne :
+     c'est la seule déclaration qui puisse le reprendre. */
   .v {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: none;
+    grid-template-columns: minmax(0, 1fr) !important;
   }
 
   .v__case {
     grid-row: auto !important;      /* l'ordre du DOM reprend la main */
     grid-column: auto !important;
 
+    /* Le retrait rend la descente puis la remontée, en changeant d'axe. Au-delà
+       du quatrième niveau il se stabilise : un cycle très long décalerait ses
+       phases centrales hors de l'écran. */
     &[data-niveau='2'] { padding-left: var(--qos-space-6); }
     &[data-niveau='3'] { padding-left: var(--qos-space-10); }
+    &[data-niveau='4'] { padding-left: var(--qos-space-12); }
   }
 
   /* La pointe désignait la phase de droite ; en colonne elle pointe dans le
      vide. */
-  .v__case[data-rang='1'] .jalon,
-  .v__case[data-rang='5'] .jalon {
+  .jalon--entree,
+  .jalon--sortie {
     padding-right: var(--qos-space-5);
     clip-path: none;
+  }
+
+  .detail__tete { flex-wrap: wrap; }
+
+  .detail__commandes,
+  .detail__barre {
+    width: 100%;
   }
 }

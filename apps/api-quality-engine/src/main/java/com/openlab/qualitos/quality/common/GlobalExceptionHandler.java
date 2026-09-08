@@ -152,6 +152,9 @@ import com.openlab.qualitos.quality.marketplace.domain.MarketplaceInstallationNo
 import com.openlab.qualitos.quality.marketplace.domain.MarketplacePackNotFoundException;
 import com.openlab.qualitos.quality.marketplace.domain.MarketplacePackStateException;
 import com.openlab.qualitos.quality.notifications.domain.NotificationNotFoundException;
+import com.openlab.qualitos.quality.apqp.ApqpDeliverableNotFoundException;
+import com.openlab.qualitos.quality.apqp.ApqpPhaseNotFoundException;
+import com.openlab.qualitos.quality.apqp.ApqpReorderException;
 import com.openlab.qualitos.quality.nonconformity.NcNotFoundException;
 import com.openlab.qualitos.quality.nonconformity.NcStateException;
 import com.openlab.qualitos.quality.nonconformity.NcPhotoNotFoundException;
@@ -406,6 +409,29 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/capa-evidence-too-large"));
         problem.setTitle("CAPA Evidence Too Large");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler({ApqpPhaseNotFoundException.class, ApqpDeliverableNotFoundException.class})
+    public ProblemDetail handleApqpNotFound(RuntimeException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/apqp-not-found"));
+        problem.setTitle("APQP Element Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * 422 et non 400 : la requête est bien formée — une liste d'identifiants —
+     * mais elle ne décrit pas le cycle. C'est le CONTENU qui est refusé.
+     */
+    @ExceptionHandler(ApqpReorderException.class)
+    public ProblemDetail handleApqpReorder(ApqpReorderException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/apqp-invalid-reorder"));
+        problem.setTitle("Invalid APQP Reorder");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

@@ -4611,20 +4611,20 @@ Customer portal</target>
         <target state="translated">Advanced product quality planning</target>
       </trans-unit>
       <trans-unit id="apqp.subtitle" datatype="html">
-        <source>Cinq phases en V : on descend jusqu'à la conception du processus, on remonte vers la production série.</source>
-        <target state="translated">Five phases in a V: down to process design, then back up to serial production.</target>
+        <source>Les phases se lisent en V : on descend jusqu'au point bas du projet, on remonte vers la production série.</source>
+        <target state="translated">The phases read as a V: down to the low point of the project, then back up to serial production.</target>
       </trans-unit>
       <trans-unit id="apqp.cycle-aria" datatype="html">
-        <source>Cycle APQP en cinq phases</source>
-        <target state="translated">APQP cycle in five phases</target>
+        <source>Cycle APQP</source>
+        <target state="translated">APQP cycle</target>
       </trans-unit>
       <trans-unit id="apqp.pick-a-phase" datatype="html">
         <source>Choisissez une phase du schéma pour voir ce qu'elle établit et ce qu'elle doit produire.</source>
         <target state="translated">Pick a phase on the diagram to see what it establishes and must produce.</target>
       </trans-unit>
-      <trans-unit id="apqp.deliverables-suffix" datatype="html">
-        <source> livrables</source>
-        <target state="translated"> deliverables</target>
+      <trans-unit id="apqp.empty-cycle" datatype="html">
+        <source>Le cycle est vide. Ajoutez une première phase pour le redessiner.</source>
+        <target state="translated">The cycle is empty. Add a first phase to redraw it.</target>
       </trans-unit>
       <trans-unit id="apqp.deliverables-title" datatype="html">
         <source>Livrables attendus</source>
@@ -4633,6 +4633,114 @@ Customer portal</target>
       <trans-unit id="apqp.deliverables-subtitle" datatype="html">
         <source>Ce que la phase doit avoir produit avant de passer à la suivante.</source>
         <target state="translated">What the phase must have produced before moving on.</target>
+      </trans-unit>
+      <trans-unit id="apqp.no-deliverable" datatype="html">
+        <source>Aucun livrable pour l'instant — la phase ne dit pas encore ce qu'elle doit produire.</source>
+        <target state="translated">No deliverable yet — the phase does not say what it must produce.</target>
+      </trans-unit>
+      <trans-unit id="apqp.add-phase" datatype="html">
+        <source>Ajouter une phase</source>
+        <target state="translated">Add a phase</target>
+      </trans-unit>
+      <trans-unit id="apqp.add-deliverable" datatype="html">
+        <source>Ajouter un livrable</source>
+        <target state="translated">Add a deliverable</target>
+      </trans-unit>
+      <trans-unit id="apqp.edit-deliverable-aria" datatype="html">
+        <source>Modifier le livrable <x id="INTERPOLATION"/></source>
+        <target state="translated">Edit deliverable <x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="apqp.delete-deliverable-aria" datatype="html">
+        <source>Supprimer le livrable <x id="INTERPOLATION"/></source>
+        <target state="translated">Delete deliverable <x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="apqp.move-earlier" datatype="html">
+        <source>Avancer la phase d'un rang</source>
+        <target state="translated">Move the phase one rank earlier</target>
+      </trans-unit>
+      <trans-unit id="apqp.move-later" datatype="html">
+        <source>Reculer la phase d'un rang</source>
+        <target state="translated">Move the phase one rank later</target>
+      </trans-unit>
+      <trans-unit id="apqp.confirm-delete-phase" datatype="html">
+        <source>Supprimer « <x id="INTERPOLATION"/> » et ses <x id="INTERPOLATION_1"/> livrables ? Cette suppression est définitive.</source>
+        <target state="translated">Delete “<x id="INTERPOLATION"/>” and its <x id="INTERPOLATION_1"/> deliverables? This cannot be undone.</target>
+      </trans-unit>
+      <trans-unit id="apqp.confirm-delete-deliverable" datatype="html">
+        <source>Retirer « <x id="INTERPOLATION"/> » des livrables ?</source>
+        <target state="translated">Remove “<x id="INTERPOLATION"/>” from the deliverables?</target>
+      </trans-unit>
+      <trans-unit id="apqp.failed" datatype="html">
+        <source>Opération impossible sur le cycle APQP.</source>
+        <target state="translated">That APQP cycle operation failed.</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.title-create" datatype="html">
+        <source>Ajouter une phase</source>
+        <target state="translated">Add a phase</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.title-edit" datatype="html">
+        <source>Modifier la phase</source>
+        <target state="translated">Edit the phase</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.field-title" datatype="html">
+        <source>Intitulé de la phase</source>
+        <target state="translated">Phase name</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.title-placeholder" datatype="html">
+        <source>Ex. : Conception du processus</source>
+        <target state="translated">E.g. Process design</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.title-required" datatype="html">
+        <source>L'intitulé est requis : c'est le seul texte que porte le schéma.</source>
+        <target state="translated">The name is required: it is the only text the diagram carries.</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.blocked-title" datatype="html">
+        <source>Donnez un intitulé : c'est ce que le schéma affiche.</source>
+        <target state="translated">Give it a name: that is what the diagram shows.</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.field-purpose" datatype="html">
+        <source>Ce que la phase établit</source>
+        <target state="translated">What the phase establishes</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.purpose-hint" datatype="html">
+        <source>Une phrase, pas un paragraphe — elle s'affiche sous l'intitulé.</source>
+        <target state="translated">One sentence, not a paragraph — it shows under the name.</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.field-question" datatype="html">
+        <source>La question à laquelle elle répond</source>
+        <target state="translated">The question it answers</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.question-hint" datatype="html">
+        <source>Ce qu'on se demande en entrant dans la phase, et ce que ses livrables tranchent.</source>
+        <target state="translated">What you ask entering the phase, and what its deliverables settle.</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.title-create" datatype="html">
+        <source>Ajouter un livrable</source>
+        <target state="translated">Add a deliverable</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.title-edit" datatype="html">
+        <source>Reformuler un livrable</source>
+        <target state="translated">Reword a deliverable</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.field-label" datatype="html">
+        <source>Livrable attendu</source>
+        <target state="translated">Expected deliverable</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.label-placeholder" datatype="html">
+        <source>Ex. : AMDEC processus (PFMEA)</source>
+        <target state="translated">E.g. Process FMEA (PFMEA)</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.label-hint" datatype="html">
+        <source>Ce que la phase doit avoir produit avant de passer à la suivante.</source>
+        <target state="translated">What the phase must have produced before moving on.</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.label-required" datatype="html">
+        <source>Un livrable sans intitulé ne se vérifie pas.</source>
+        <target state="translated">A deliverable with no name cannot be checked.</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.blocked-label" datatype="html">
+        <source>Nommez le livrable attendu.</source>
+        <target state="translated">Name the expected deliverable.</target>
       </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>
