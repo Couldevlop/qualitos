@@ -4611,20 +4611,20 @@ Portail clients</source>
         <target state="translated">先行製品品質計画</target>
       </trans-unit>
       <trans-unit id="apqp.subtitle" datatype="html">
-        <source>Cinq phases en V : on descend jusqu'à la conception du processus, on remonte vers la production série.</source>
-        <target state="translated">V字型の五つのフェーズ。工程設計まで下り、量産へと上がります。</target>
+        <source>Les phases se lisent en V : on descend jusqu'au point bas du projet, on remonte vers la production série.</source>
+        <target state="translated">フェーズはV字に読みます。プロジェクトの底まで下り、量産へと上がります。</target>
       </trans-unit>
       <trans-unit id="apqp.cycle-aria" datatype="html">
-        <source>Cycle APQP en cinq phases</source>
-        <target state="translated">APQP サイクル（五フェーズ）</target>
+        <source>Cycle APQP</source>
+        <target state="translated">APQP サイクル</target>
       </trans-unit>
       <trans-unit id="apqp.pick-a-phase" datatype="html">
         <source>Choisissez une phase du schéma pour voir ce qu'elle établit et ce qu'elle doit produire.</source>
         <target state="translated">図からフェーズを選ぶと、その目的と成果物が表示されます。</target>
       </trans-unit>
-      <trans-unit id="apqp.deliverables-suffix" datatype="html">
-        <source> livrables</source>
-        <target state="translated">件の成果物</target>
+      <trans-unit id="apqp.empty-cycle" datatype="html">
+        <source>Le cycle est vide. Ajoutez une première phase pour le redessiner.</source>
+        <target state="translated">サイクルが空です。最初のフェーズを追加して描き直してください。</target>
       </trans-unit>
       <trans-unit id="apqp.deliverables-title" datatype="html">
         <source>Livrables attendus</source>
@@ -4633,6 +4633,114 @@ Portail clients</source>
       <trans-unit id="apqp.deliverables-subtitle" datatype="html">
         <source>Ce que la phase doit avoir produit avant de passer à la suivante.</source>
         <target state="translated">次のフェーズに進む前に、この段階が生み出しておくべきもの。</target>
+      </trans-unit>
+      <trans-unit id="apqp.no-deliverable" datatype="html">
+        <source>Aucun livrable pour l'instant — la phase ne dit pas encore ce qu'elle doit produire.</source>
+        <target state="translated">まだ成果物がありません。この段階が何を生み出すかは未定です。</target>
+      </trans-unit>
+      <trans-unit id="apqp.add-phase" datatype="html">
+        <source>Ajouter une phase</source>
+        <target state="translated">フェーズを追加</target>
+      </trans-unit>
+      <trans-unit id="apqp.add-deliverable" datatype="html">
+        <source>Ajouter un livrable</source>
+        <target state="translated">成果物を追加</target>
+      </trans-unit>
+      <trans-unit id="apqp.edit-deliverable-aria" datatype="html">
+        <source>Modifier le livrable <x id="INTERPOLATION"/></source>
+        <target state="translated">成果物「<x id="INTERPOLATION"/>」を編集</target>
+      </trans-unit>
+      <trans-unit id="apqp.delete-deliverable-aria" datatype="html">
+        <source>Supprimer le livrable <x id="INTERPOLATION"/></source>
+        <target state="translated">成果物「<x id="INTERPOLATION"/>」を削除</target>
+      </trans-unit>
+      <trans-unit id="apqp.move-earlier" datatype="html">
+        <source>Avancer la phase d'un rang</source>
+        <target state="translated">フェーズを1つ前へ</target>
+      </trans-unit>
+      <trans-unit id="apqp.move-later" datatype="html">
+        <source>Reculer la phase d'un rang</source>
+        <target state="translated">フェーズを1つ後へ</target>
+      </trans-unit>
+      <trans-unit id="apqp.confirm-delete-phase" datatype="html">
+        <source>Supprimer « <x id="INTERPOLATION"/> » et ses <x id="INTERPOLATION_1"/> livrables ? Cette suppression est définitive.</source>
+        <target state="translated">「<x id="INTERPOLATION"/>」とその成果物 <x id="INTERPOLATION_1"/> 件を削除しますか。取り消せません。</target>
+      </trans-unit>
+      <trans-unit id="apqp.confirm-delete-deliverable" datatype="html">
+        <source>Retirer « <x id="INTERPOLATION"/> » des livrables ?</source>
+        <target state="translated">「<x id="INTERPOLATION"/>」を成果物から外しますか。</target>
+      </trans-unit>
+      <trans-unit id="apqp.failed" datatype="html">
+        <source>Opération impossible sur le cycle APQP.</source>
+        <target state="translated">APQP サイクルの操作を実行できませんでした。</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.title-create" datatype="html">
+        <source>Ajouter une phase</source>
+        <target state="translated">フェーズを追加</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.title-edit" datatype="html">
+        <source>Modifier la phase</source>
+        <target state="translated">フェーズを編集</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.field-title" datatype="html">
+        <source>Intitulé de la phase</source>
+        <target state="translated">フェーズ名</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.title-placeholder" datatype="html">
+        <source>Ex. : Conception du processus</source>
+        <target state="translated">例：工程設計</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.title-required" datatype="html">
+        <source>L'intitulé est requis : c'est le seul texte que porte le schéma.</source>
+        <target state="translated">名称は必須です。図に載る唯一の文字だからです。</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.blocked-title" datatype="html">
+        <source>Donnez un intitulé : c'est ce que le schéma affiche.</source>
+        <target state="translated">名称を入力してください。図に表示されるのはこれです。</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.field-purpose" datatype="html">
+        <source>Ce que la phase établit</source>
+        <target state="translated">この段階が定めること</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.purpose-hint" datatype="html">
+        <source>Une phrase, pas un paragraphe — elle s'affiche sous l'intitulé.</source>
+        <target state="translated">段落ではなく一文で。名称の下に表示されます。</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.field-question" datatype="html">
+        <source>La question à laquelle elle répond</source>
+        <target state="translated">この段階が答える問い</target>
+      </trans-unit>
+      <trans-unit id="apqp.phase-dialog.question-hint" datatype="html">
+        <source>Ce qu'on se demande en entrant dans la phase, et ce que ses livrables tranchent.</source>
+        <target state="translated">この段階に入るときの問いであり、成果物が決着させるもの。</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.title-create" datatype="html">
+        <source>Ajouter un livrable</source>
+        <target state="translated">成果物を追加</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.title-edit" datatype="html">
+        <source>Reformuler un livrable</source>
+        <target state="translated">成果物を書き直す</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.field-label" datatype="html">
+        <source>Livrable attendu</source>
+        <target state="translated">想定される成果物</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.label-placeholder" datatype="html">
+        <source>Ex. : AMDEC processus (PFMEA)</source>
+        <target state="translated">例：工程FMEA（PFMEA）</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.label-hint" datatype="html">
+        <source>Ce que la phase doit avoir produit avant de passer à la suivante.</source>
+        <target state="translated">次のフェーズに進む前に、この段階が生み出しておくべきもの。</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.label-required" datatype="html">
+        <source>Un livrable sans intitulé ne se vérifie pas.</source>
+        <target state="translated">名称のない成果物は確認できません。</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.blocked-label" datatype="html">
+        <source>Nommez le livrable attendu.</source>
+        <target state="translated">想定される成果物を入力してください。</target>
       </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>

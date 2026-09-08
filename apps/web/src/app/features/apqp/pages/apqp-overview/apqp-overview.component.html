@@ -2,56 +2,126 @@
   <qos-page-header
     eyebrow="APQP" i18n-eyebrow="@@apqp.eyebrow"
     title="Planification qualité produit" i18n-title="@@apqp.title"
-    subtitle="Cinq phases en V : on descend jusqu'à la conception du processus, on remonte vers la production série."
+    subtitle="Les phases se lisent en V : on descend jusqu'au point bas du projet, on remonte vers la production série."
     i18n-subtitle="@@apqp.subtitle">
+    <!-- L'attribut est ce que l'en-tête projette : sans lui le bouton n'est
+         jamais rendu, sans erreur ni trace. -->
+    <button qosActions mat-flat-button color="primary" *ngIf="editable"
+            type="button" (click)="ajouterPhase()">
+      <mat-icon aria-hidden="true">add</mat-icon>
+      <span i18n="@@apqp.add-phase">Ajouter une phase</span>
+    </button>
   </qos-page-header>
 
   <!-- Le schéma EST l'interface : on ouvre une phase en cliquant dessus, et son
        contenu s'affiche dessous sans quitter l'écran. `<ol>` parce que l'ordre
-       est la méthode — un lecteur d'écran doit l'entendre comme une séquence. -->
-  <ol class="v" [attr.aria-label]="'Cycle APQP en cinq phases'"
-      i18n-aria-label="@@apqp.cycle-aria">
-    <li class="v__case" *ngFor="let phase of phases; trackBy: trackBySlug"
-        [attr.data-niveau]="niveau(phase)" [attr.data-rang]="phase.numero">
+       est la méthode — un lecteur d'écran doit l'entendre comme une séquence.
+
+       Le nombre de colonnes suit le cycle du client : il n'a pas à rester cinq
+       parce que le manuel AIAG en compte cinq. -->
+  <ol class="v" [style.grid-template-columns]="colonnes"
+      [attr.aria-label]="cycleAria">
+    <li class="v__case" *ngFor="let phase of phases; first as premiere; last as derniere; trackBy: trackById"
+        [style.grid-row]="phase.level" [style.grid-column]="phase.position"
+        [attr.data-niveau]="phase.level">
       <button type="button" class="jalon"
+              [class.jalon--entree]="premiere"
+              [class.jalon--sortie]="derniere"
               [class.jalon--ouvert]="estChoisie(phase)"
               [attr.aria-expanded]="estChoisie(phase)"
-              [attr.aria-controls]="'apqp-detail'"
+              aria-controls="apqp-detail"
               (click)="basculer(phase)">
-        <span class="jalon__rang" aria-hidden="true">{{ phase.numero }}</span>
-        <span class="jalon__titre">{{ phase.titre }}</span>
+        <span class="jalon__rang" aria-hidden="true">{{ phase.position }}</span>
+        <span class="jalon__titre">{{ phase.title }}</span>
       </button>
     </li>
   </ol>
 
   <!-- Rien d'ouvert : on dit quoi faire, plutôt que de laisser un blanc. -->
-  <p class="invite" *ngIf="!choisie" i18n="@@apqp.pick-a-phase">
+  <p class="invite" *ngIf="!choisie && phases.length > 0" i18n="@@apqp.pick-a-phase">
     Choisissez une phase du schéma pour voir ce qu'elle établit et ce qu'elle doit produire.
+  </p>
+
+  <!-- Un cycle vide n'arrive qu'après avoir tout supprimé : on propose de le
+       reconstruire au lieu de laisser la page muette. -->
+  <p class="invite" *ngIf="!loading && phases.length === 0" i18n="@@apqp.empty-cycle">
+    Le cycle est vide. Ajoutez une première phase pour le redessiner.
   </p>
 
   <section class="detail" id="apqp-detail" *ngIf="choisie as p">
     <header class="detail__tete">
-      <span class="detail__rang" aria-hidden="true">{{ p.numero }}</span>
-      <div>
-        <h2 class="detail__titre">{{ p.titre }}</h2>
-        <p class="detail__objet">{{ p.objet }}</p>
+      <span class="detail__rang" aria-hidden="true">{{ p.position }}</span>
+      <div class="detail__intitule">
+        <h2 class="detail__titre">{{ p.title }}</h2>
+        <p class="detail__objet" *ngIf="p.purpose">{{ p.purpose }}</p>
+      </div>
+
+      <!-- Les commandes vivent ici et non sur les jalons : le schéma doit se
+           lire d'un coup d'œil, et des boutons posés dessus en feraient une
+           barre d'outils. -->
+      <div class="detail__commandes" *ngIf="editable">
+        <!-- Déplacer plutôt que glisser : le schéma tient sur une ligne de
+             grille, et un glisser-déposer y viserait des cibles de quelques
+             pixels — impraticable au doigt comme au clavier. -->
+        <button mat-icon-button type="button" [disabled]="!peutAvancer(p)"
+                [attr.aria-label]="ariaAvancer" [attr.title]="ariaAvancer"
+                (click)="deplacer(p, -1)">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <button mat-icon-button type="button" [disabled]="!peutReculer(p)"
+                [attr.aria-label]="ariaReculer" [attr.title]="ariaReculer"
+                (click)="deplacer(p, 1)">
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+        <button mat-stroked-button type="button" (click)="modifierPhase(p)">
+          <mat-icon aria-hidden="true">edit</mat-icon>
+          <span i18n="@@common.edit">Modifier</span>
+        </button>
+        <button mat-stroked-button type="button" class="danger" (click)="supprimerPhase(p)">
+          <mat-icon aria-hidden="true">delete_outline</mat-icon>
+          <span i18n="@@common.delete">Supprimer</span>
+        </button>
       </div>
     </header>
 
     <!-- La question situe la phase mieux qu'un paragraphe : c'est ce qu'on se
          demande en y entrant, et ce à quoi ses livrables répondent. -->
-    <p class="detail__question">{{ p.question }}</p>
+    <p class="detail__question" *ngIf="p.question">{{ p.question }}</p>
 
-    <h3 class="detail__sous-titre" i18n="@@apqp.deliverables-title">Livrables attendus</h3>
-    <p class="detail__aide" i18n="@@apqp.deliverables-subtitle">
-      Ce que la phase doit avoir produit avant de passer à la suivante.
-    </p>
+    <div class="detail__barre">
+      <div>
+        <h3 class="detail__sous-titre" i18n="@@apqp.deliverables-title">Livrables attendus</h3>
+        <p class="detail__aide" i18n="@@apqp.deliverables-subtitle">
+          Ce que la phase doit avoir produit avant de passer à la suivante.
+        </p>
+      </div>
+      <button mat-stroked-button type="button" *ngIf="editable" (click)="ajouterLivrable(p)">
+        <mat-icon aria-hidden="true">add</mat-icon>
+        <span i18n="@@apqp.add-deliverable">Ajouter un livrable</span>
+      </button>
+    </div>
 
     <ul class="livrables">
-      <li *ngFor="let livrable of p.livrables">
+      <li *ngFor="let livrable of p.deliverables; trackBy: trackById">
         <mat-icon aria-hidden="true">check_circle</mat-icon>
-        <span>{{ livrable }}</span>
+        <span class="livrables__libelle">{{ livrable.label }}</span>
+
+        <span class="livrables__actions" *ngIf="editable">
+          <button mat-icon-button type="button" (click)="modifierLivrable(p, livrable)"
+                  [attr.aria-label]="ariaModifier(livrable)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button type="button" (click)="supprimerLivrable(p, livrable)"
+                  [attr.aria-label]="ariaSupprimer(livrable)">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </span>
       </li>
     </ul>
+
+    <p class="detail__aide" *ngIf="p.deliverables.length === 0"
+       i18n="@@apqp.no-deliverable">
+      Aucun livrable pour l'instant — la phase ne dit pas encore ce qu'elle doit produire.
+    </p>
   </section>
 </div>

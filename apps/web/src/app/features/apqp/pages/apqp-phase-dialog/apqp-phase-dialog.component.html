@@ -1,0 +1,37 @@
+<qos-form-dialog
+  [title]="dialogTitle"
+  [formGroup]="form"
+  [submitDisabled]="form.invalid"
+  [blockedReason]="blockedReason"
+  [submitLabel]="submitLabel"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@apqp.phase-dialog.field-title">Intitulé de la phase</mat-label>
+    <input matInput formControlName="title" maxlength="255" required
+           i18n-placeholder="@@apqp.phase-dialog.title-placeholder"
+           placeholder="Ex. : Conception du processus">
+    <mat-error *ngIf="form.controls.title.hasError('required')"
+               i18n="@@apqp.phase-dialog.title-required">
+      L'intitulé est requis : c'est le seul texte que porte le schéma.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@apqp.phase-dialog.field-purpose">Ce que la phase établit</mat-label>
+    <textarea matInput formControlName="purpose" rows="2" maxlength="500"></textarea>
+    <mat-hint i18n="@@apqp.phase-dialog.purpose-hint">
+      Une phrase, pas un paragraphe — elle s'affiche sous l'intitulé.
+    </mat-hint>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@apqp.phase-dialog.field-question">La question à laquelle elle répond</mat-label>
+    <textarea matInput formControlName="question" rows="2" maxlength="500"></textarea>
+    <mat-hint i18n="@@apqp.phase-dialog.question-hint">
+      Ce qu'on se demande en entrant dans la phase, et ce que ses livrables tranchent.
+    </mat-hint>
+  </mat-form-field>
+
+</qos-form-dialog>

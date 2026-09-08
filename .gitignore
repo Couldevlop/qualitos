@@ -126,3 +126,6 @@ docs/superpowers/
 
 # Artefacts du plugin Semgrep Guardian (outil de poste, pas un livrable).
 .semgrep/
+
+# Bac à sable de poste (journaux de test, sorties de CI rejouées en local).
+tmp/

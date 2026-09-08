@@ -1,0 +1,25 @@
+<qos-form-dialog
+  [title]="dialogTitle"
+  [subtitle]="data.phaseTitle"
+  [formGroup]="form"
+  [submitDisabled]="form.invalid"
+  [blockedReason]="blockedReason"
+  [submitLabel]="submitLabel"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@apqp.deliverable-dialog.field-label">Livrable attendu</mat-label>
+    <textarea matInput formControlName="label" rows="2" maxlength="500" required
+              i18n-placeholder="@@apqp.deliverable-dialog.label-placeholder"
+              placeholder="Ex. : AMDEC processus (PFMEA)"></textarea>
+    <mat-hint i18n="@@apqp.deliverable-dialog.label-hint">
+      Ce que la phase doit avoir produit avant de passer à la suivante.
+    </mat-hint>
+    <mat-error *ngIf="form.controls.label.hasError('required')"
+               i18n="@@apqp.deliverable-dialog.label-required">
+      Un livrable sans intitulé ne se vérifie pas.
+    </mat-error>
+  </mat-form-field>
+
+</qos-form-dialog>
