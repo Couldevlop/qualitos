@@ -15,9 +15,7 @@ normative.
 TRANSLATIONS = {
     'nav.apqp': ('APQP', 'APQP', 'APQP', 'APQP', 'APQP', 'APQP'),
     'nav.apqp-cycle': (
-        'Planification qualité produit', 'Advanced product quality planning',
-        'Planificación avanzada de la calidad', 'التخطيط المتقدم لجودة المنتج',
-        '先行製品品質計画', '产品质量先期策划'),
+        'Le cycle', 'The cycle', 'El ciclo', 'الدورة', 'サイクル', '流程总览'),
 
     'apqp.eyebrow': ('APQP', 'APQP', 'APQP', 'APQP', 'APQP', 'APQP'),
     'apqp.title': (

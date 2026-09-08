@@ -12,7 +12,7 @@
   <ol class="v" [attr.aria-label]="'Cycle APQP en cinq phases'"
       i18n-aria-label="@@apqp.cycle-aria">
     <li class="v__case" *ngFor="let phase of phases; trackBy: trackBySlug"
-        [attr.data-niveau]="niveau(phase)">
+        [attr.data-niveau]="niveau(phase)" [attr.data-rang]="phase.numero">
       <button type="button" class="jalon"
               [class.jalon--ouvert]="estChoisie(phase)"
               [attr.aria-expanded]="estChoisie(phase)"

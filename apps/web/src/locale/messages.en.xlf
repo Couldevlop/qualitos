@@ -4599,8 +4599,8 @@ Customer portal</target>
         <target state="translated">APQP</target>
       </trans-unit>
       <trans-unit id="nav.apqp-cycle" datatype="html">
-        <source>Planification qualité produit</source>
-        <target state="translated">Advanced product quality planning</target>
+        <source>Le cycle</source>
+        <target state="translated">The cycle</target>
       </trans-unit>
       <trans-unit id="apqp.eyebrow" datatype="html">
         <source>APQP</source>

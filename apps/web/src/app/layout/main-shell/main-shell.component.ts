@@ -132,7 +132,7 @@ export class MainShellComponent implements OnInit, OnDestroy {
       // tenir deux listes d'accord pour le même parcours.
       label: $localize`:@@nav.apqp:APQP`,
       items: [
-        { label: $localize`:@@nav.apqp-cycle:Planification qualité produit`, route: '/apqp', icon: 'account_tree' }
+        { label: $localize`:@@nav.apqp-cycle:Le cycle`, route: '/apqp', icon: 'account_tree' }
       ]
     },
 
