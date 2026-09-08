@@ -140,7 +140,12 @@ describe('NcListComponent — chargement, filtres et pagination', () => {
     // parle de la LISTE ; on solde donc cet appel ici, et non dans chaque cas —
     // plusieurs n'appellent pas `start()`, et `verify()` les faisait tomber
     // pour une requête qui ne les concerne pas.
-    http.match(r => r.url === `${endpoint}/statistics`).forEach(r => r.flush(stats()));
+    // `.filter(r => !r.cancelled)` : recharger les tuiles après une déclaration
+    // passe par un `switchMap`, qui ABANDONNE la requête en vol. Répondre à une
+    // requête annulée lève « Cannot flush a cancelled request ».
+    http.match(r => r.url === `${endpoint}/statistics`)
+        .filter(r => !r.cancelled)
+        .forEach(r => r.flush(stats()));
     http.verify();
   });
 
