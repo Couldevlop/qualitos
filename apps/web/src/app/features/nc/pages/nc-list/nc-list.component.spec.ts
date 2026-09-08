@@ -107,10 +107,6 @@ describe('NcListComponent — chargement, filtres et pagination', () => {
 
   function start(): void {
     fixture.detectChanges();
-    // Les tuiles d'en-tête interrogent `/statistics` dès l'affichage. On y
-    // répond ici, sinon `http.verify()` compterait la requête comme oubliée et
-    // ferait tomber des bancs qui ne parlent pas des tuiles.
-    http.match(r => r.url === `${endpoint}/statistics`).forEach(r => r.flush(stats()));
     emitted = [];
     sub = component.ncs$.subscribe(rows => emitted.push(rows));
   }
@@ -140,6 +136,11 @@ describe('NcListComponent — chargement, filtres et pagination', () => {
   afterEach(() => {
     sub?.unsubscribe();
     environment.useMockApi = prevMock;
+    // Les tuiles d'en-tête interrogent `/statistics` dès l'affichage. Ce banc
+    // parle de la LISTE ; on solde donc cet appel ici, et non dans chaque cas —
+    // plusieurs n'appellent pas `start()`, et `verify()` les faisait tomber
+    // pour une requête qui ne les concerne pas.
+    http.match(r => r.url === `${endpoint}/statistics`).forEach(r => r.flush(stats()));
     http.verify();
   });
 
