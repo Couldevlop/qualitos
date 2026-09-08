@@ -25,8 +25,14 @@ describe('NcListComponent (origine portée par la route)', () => {
   };
 
   function setup(routeOrigin: string | null): void {
-    svc = jasmine.createSpyObj<NcService>('NcService', ['listNcs']);
+    svc = jasmine.createSpyObj<NcService>('NcService', ['listNcs', 'statistics']);
     svc.listNcs.and.returnValue(of(emptyPage));
+    // Les tuiles d'en-tête appellent `statistics` dès l'affichage : sans cette
+    // doublure, l'écran tombe avant d'avoir demandé sa liste.
+    svc.statistics.and.returnValue(of({
+      tenantId: 't-1', origin: null, total: 0,
+      open: 0, underAnalysis: 0, actionDefined: 0, resolved: 0, closed: 0, cancelled: 0
+    }));
 
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({

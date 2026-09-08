@@ -11,7 +11,7 @@ import { environment } from '../../../../../environments/environment';
 import { InMemoryQueueStore, OfflineQueueStore } from '../../../../core/offline/offline-queue.store';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
-import { NcPage, NcResponse } from '../../nc.types';
+import { NcPage, NcResponse, NcStatistics } from '../../nc.types';
 import { NcListComponent } from './nc-list.component';
 
 describe('NcListComponent', () => {
@@ -97,8 +97,20 @@ describe('NcListComponent — chargement, filtres et pagination', () => {
   }
 
   /** Monte le composant puis s'abonne au flux (la table est masquée au montage). */
+  /** Dénombrements rendus aux tuiles : leur contenu n'est pas le sujet ici. */
+  function stats(): NcStatistics {
+    return {
+      tenantId: 't-1', origin: null, total: 0,
+      open: 0, underAnalysis: 0, actionDefined: 0, resolved: 0, closed: 0, cancelled: 0
+    };
+  }
+
   function start(): void {
     fixture.detectChanges();
+    // Les tuiles d'en-tête interrogent `/statistics` dès l'affichage. On y
+    // répond ici, sinon `http.verify()` compterait la requête comme oubliée et
+    // ferait tomber des bancs qui ne parlent pas des tuiles.
+    http.match(r => r.url === `${endpoint}/statistics`).forEach(r => r.flush(stats()));
     emitted = [];
     sub = component.ncs$.subscribe(rows => emitted.push(rows));
   }
