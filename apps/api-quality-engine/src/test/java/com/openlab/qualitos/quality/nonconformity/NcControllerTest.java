@@ -307,4 +307,55 @@ class NcControllerTest {
                 null, null, null, null, REPORTER, "Ada Lovelace", null, null, null, null, null,
                 null, null, Instant.now(), Instant.now());
     }
+
+    /**
+     * Les tuiles surmontent une liste DÉJÀ filtrée : elles doivent compter le
+     * même périmètre qu'elle. Un total toutes origines confondues au-dessus des
+     * seules NC internes serait un chiffre juste au mauvais endroit — donc un
+     * chiffre faux pour qui le lit.
+     */
+    @Test @WithMockUser
+    void statistics_passesTheOriginOfTheScreen() throws Exception {
+        UUID tenant = UUID.randomUUID();
+        when(service.statistics(NcOrigin.INTERNAL)).thenReturn(
+                new NcDto.NcStatistics(tenant, NcOrigin.INTERNAL, 12, 5, 2, 1, 3, 1, 0));
+
+        mockMvc.perform(get("/api/v1/nc/statistics").param("origin", "INTERNAL"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.origin").value("INTERNAL"))
+                .andExpect(jsonPath("$.total").value(12))
+                .andExpect(jsonPath("$.open").value(5));
+
+        verify(service).statistics(NcOrigin.INTERNAL);
+    }
+
+    /** Sans origine : l'entrée historique `/nc`, qui montre les deux. */
+    @Test @WithMockUser
+    void statistics_withoutOrigin_countsBoth() throws Exception {
+        when(service.statistics(null)).thenReturn(
+                new NcDto.NcStatistics(UUID.randomUUID(), null, 20, 8, 3, 2, 4, 2, 1));
+
+        mockMvc.perform(get("/api/v1/nc/statistics"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.origin").doesNotExist())
+                .andExpect(jsonPath("$.total").value(20))
+                .andExpect(jsonPath("$.cancelled").value(1));
+
+        verify(service).statistics(null);
+    }
+
+    /**
+     * `/statistics` ne doit pas être pris pour un identifiant : le chemin
+     * littéral l'emporte sur `/{id}`. Sans cela, l'appel partirait chercher une
+     * non-conformité nommée « statistics » et rendrait 400.
+     */
+    @Test @WithMockUser
+    void statistics_isNotMistakenForAnId() throws Exception {
+        when(service.statistics(null)).thenReturn(
+                new NcDto.NcStatistics(UUID.randomUUID(), null, 0, 0, 0, 0, 0, 0, 0));
+
+        mockMvc.perform(get("/api/v1/nc/statistics")).andExpect(status().isOk());
+
+        verify(service, never()).findById(any());
+    }
 }

@@ -15,6 +15,7 @@ import {
   NcPhoto,
   NcResponse,
   NcSeverity,
+  NcStatistics,
   NcStatus,
   ResolveNcRequest,
   StartAnalysisNcRequest,
@@ -56,6 +57,17 @@ export class NcService {
     if (filters.origin) params = params.set('origin', filters.origin);
     if (filters.productId) params = params.set('productId', filters.productId);
     return this.http.get<NcPage>(this.endpoint, { params });
+  }
+
+  /**
+   * Dénombrements par statut pour les tuiles d'en-tête.
+   *
+   * <p>L'origine suit celle de la liste affichée : les tuiles surmontent un
+   * tableau déjà filtré, et doivent compter le même périmètre que lui.
+   */
+  statistics(origin?: NcOrigin): Observable<NcStatistics> {
+    const params = origin ? new HttpParams().set('origin', origin) : undefined;
+    return this.http.get<NcStatistics>(`${this.endpoint}/statistics`, { params });
   }
 
   getNc(id: string): Observable<NcResponse> {

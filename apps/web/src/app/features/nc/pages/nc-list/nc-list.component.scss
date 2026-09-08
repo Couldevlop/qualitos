@@ -63,3 +63,65 @@
 /* Colonne « Détecté par » sans valeur : le tiret se lit comme une absence,
    pas comme une donnée. */
 .t .muted { color: var(--qos-text-muted, #6b7280); }
+
+/* ---- Tuiles de dénombrement, au-dessus du tableau. ----
+
+   Même vocabulaire que les autres bandeaux de synthèse de l'application
+   (clés d'API, modules) : filet de gauche coloré, valeur en grand, libellé en
+   petit. Ce sont ici des BOUTONS et non des cartes — chacune filtre la liste —
+   d'où la remise à zéro des styles de bouton et l'anneau de focus. */
+.tiles {
+  display: flex;
+  gap: var(--qos-space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--qos-space-4);
+}
+
+.tile {
+  flex: 1 1 140px;
+  min-width: 140px;
+  padding: var(--qos-space-4);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-left: 3px solid var(--qos-border-default);
+  border-radius: var(--qos-radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+
+  &:hover { box-shadow: var(--qos-shadow-sm); }
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+/* La tuile active dit quel filtre est posé : sans cela, un tableau réduit à
+   trois lignes ressemble à une liste vide. */
+.tile--active {
+  border-color: var(--qos-accent-bg);
+  background: var(--qos-accent-bg-soft);
+}
+
+.tile__value {
+  font-size: var(--qos-fs-2xl);
+  font-weight: 600;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.tile__label {
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-secondary);
+}
+
+.tile[data-tone='info']    { border-left-color: var(--qos-accent-bg); }
+.tile[data-tone='success'] { border-left-color: var(--qos-success-fg); }
+.tile[data-tone='warn']    { border-left-color: var(--qos-warn-fg); }
+.tile[data-tone='danger']  { border-left-color: var(--qos-danger-fg); }

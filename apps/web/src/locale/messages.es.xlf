@@ -4599,28 +4599,8 @@ Portal de clientes</target>
         <target state="translated">APQP</target>
       </trans-unit>
       <trans-unit id="nav.apqp-cycle" datatype="html">
-        <source>Le cycle</source>
-        <target state="translated">El ciclo</target>
-      </trans-unit>
-      <trans-unit id="nav.apqp-1" datatype="html">
-        <source>1 · Planifier et définir</source>
-        <target state="translated">1 · Planificar y definir</target>
-      </trans-unit>
-      <trans-unit id="nav.apqp-2" datatype="html">
-        <source>2 · Conception du produit</source>
-        <target state="translated">2 · Diseño del producto</target>
-      </trans-unit>
-      <trans-unit id="nav.apqp-3" datatype="html">
-        <source>3 · Conception du processus</source>
-        <target state="translated">3 · Diseño del proceso</target>
-      </trans-unit>
-      <trans-unit id="nav.apqp-4" datatype="html">
-        <source>4 · Validation</source>
-        <target state="translated">4 · Validación</target>
-      </trans-unit>
-      <trans-unit id="nav.apqp-5" datatype="html">
-        <source>5 · Retour d'expérience</source>
-        <target state="translated">5 · Retroalimentación</target>
+        <source>Planification qualité produit</source>
+        <target state="translated">Planificación avanzada de la calidad</target>
       </trans-unit>
       <trans-unit id="apqp.eyebrow" datatype="html">
         <source>APQP</source>
@@ -4631,8 +4611,16 @@ Portal de clientes</target>
         <target state="translated">Planificación avanzada de la calidad</target>
       </trans-unit>
       <trans-unit id="apqp.subtitle" datatype="html">
-        <source>Cinq phases, de la voix du client au retour d'expérience. Chacune s'appuie sur la précédente.</source>
-        <target state="translated">Cinco fases, de la voz del cliente a la retroalimentación. Cada una se apoya en la anterior.</target>
+        <source>Cinq phases en V : on descend jusqu'à la conception du processus, on remonte vers la production série.</source>
+        <target state="translated">Cinco fases en V: se baja hasta el diseño del proceso y se remonta a la producción en serie.</target>
+      </trans-unit>
+      <trans-unit id="apqp.cycle-aria" datatype="html">
+        <source>Cycle APQP en cinq phases</source>
+        <target state="translated">Ciclo APQP en cinco fases</target>
+      </trans-unit>
+      <trans-unit id="apqp.pick-a-phase" datatype="html">
+        <source>Choisissez une phase du schéma pour voir ce qu'elle établit et ce qu'elle doit produire.</source>
+        <target state="translated">Elija una fase del esquema para ver qué establece y qué debe producir.</target>
       </trans-unit>
       <trans-unit id="apqp.deliverables-suffix" datatype="html">
         <source> livrables</source>
@@ -4645,14 +4633,6 @@ Portal de clientes</target>
       <trans-unit id="apqp.deliverables-subtitle" datatype="html">
         <source>Ce que la phase doit avoir produit avant de passer à la suivante.</source>
         <target state="translated">Lo que la fase debe haber producido antes de pasar a la siguiente.</target>
-      </trans-unit>
-      <trans-unit id="apqp.back-to-cycle" datatype="html">
-        <source>Voir le cycle</source>
-        <target state="translated">Ver el ciclo</target>
-      </trans-unit>
-      <trans-unit id="apqp.neighbours-aria" datatype="html">
-        <source>Phases voisines</source>
-        <target state="translated">Fases contiguas</target>
       </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>
@@ -14565,16 +14545,40 @@ historial de 12 meses</target>
         <target state="translated">NC interna</target>
       </trans-unit>
       <trans-unit id="nav.nc-externe" datatype="html">
-        <source>NC externe</source>
-        <target state="translated">NC externa</target>
+        <source>NC externe (Réclamations)</source>
+        <target state="translated">NC externa (Reclamaciones)</target>
       </trans-unit>
       <trans-unit id="nc.list.title-internal" datatype="html">
         <source>Non-conformités internes</source>
         <target state="translated">No conformidades internas</target>
       </trans-unit>
+      <trans-unit id="nc.list.tile-total" datatype="html">
+        <source>Total</source>
+        <target state="translated">Total</target>
+      </trans-unit>
+      <trans-unit id="nc.list.tile-open" datatype="html">
+        <source>Ouvertes</source>
+        <target state="translated">Abiertas</target>
+      </trans-unit>
+      <trans-unit id="nc.list.tile-analysis" datatype="html">
+        <source>En analyse</source>
+        <target state="translated">En análisis</target>
+      </trans-unit>
+      <trans-unit id="nc.list.tile-action" datatype="html">
+        <source>Action définie</source>
+        <target state="translated">Acción definida</target>
+      </trans-unit>
+      <trans-unit id="nc.list.tile-closed" datatype="html">
+        <source>Clôturées</source>
+        <target state="translated">Cerradas</target>
+      </trans-unit>
+      <trans-unit id="nc.list.tile-cancelled" datatype="html">
+        <source>Annulées</source>
+        <target state="translated">Anuladas</target>
+      </trans-unit>
       <trans-unit id="nc.list.title-external" datatype="html">
-        <source>Non-conformités externes</source>
-        <target state="translated">No conformidades externas</target>
+        <source>Non-conformités externes (Réclamations)</source>
+        <target state="translated">No conformidades externas (Reclamaciones)</target>
       </trans-unit>
       <trans-unit id="nc.list.subtitle-internal" datatype="html">
         <source>Écarts détectés par l'organisation elle-même : autocontrôle, audit interne, revue.</source>

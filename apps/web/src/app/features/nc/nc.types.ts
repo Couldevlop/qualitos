@@ -174,3 +174,25 @@ export interface StartAnalysisNcRequest {
 export interface EscalateCapaNcRequest {
   ownerId: string;
 }
+
+/**
+ * Dénombrements par statut, affichés en tuiles au-dessus d'une liste de NC.
+ *
+ * <p>`origin` rappelle SUR QUOI portent ces nombres : la même liste existe en
+ * interne, en externe et toutes origines confondues. Un total sans son
+ * périmètre se lit de travers.
+ *
+ * <p>`cancelled` n'a de sens que sur les écarts signalés du dehors — on
+ * n'annule pas un constat qu'on a fait soi-même, on le résout ou on le clôt.
+ */
+export interface NcStatistics {
+  tenantId: string;
+  origin: NcOrigin | null;
+  total: number;
+  open: number;
+  underAnalysis: number;
+  actionDefined: number;
+  resolved: number;
+  closed: number;
+  cancelled: number;
+}

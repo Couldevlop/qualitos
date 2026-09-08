@@ -11,7 +11,7 @@ import { environment } from '../../../../../environments/environment';
 import { InMemoryQueueStore, OfflineQueueStore } from '../../../../core/offline/offline-queue.store';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
-import { NcPage, NcResponse } from '../../nc.types';
+import { NcPage, NcResponse, NcStatistics } from '../../nc.types';
 import { NcListComponent } from './nc-list.component';
 
 describe('NcListComponent', () => {
@@ -97,6 +97,14 @@ describe('NcListComponent — chargement, filtres et pagination', () => {
   }
 
   /** Monte le composant puis s'abonne au flux (la table est masquée au montage). */
+  /** Dénombrements rendus aux tuiles : leur contenu n'est pas le sujet ici. */
+  function stats(): NcStatistics {
+    return {
+      tenantId: 't-1', origin: null, total: 0,
+      open: 0, underAnalysis: 0, actionDefined: 0, resolved: 0, closed: 0, cancelled: 0
+    };
+  }
+
   function start(): void {
     fixture.detectChanges();
     emitted = [];
@@ -128,6 +136,16 @@ describe('NcListComponent — chargement, filtres et pagination', () => {
   afterEach(() => {
     sub?.unsubscribe();
     environment.useMockApi = prevMock;
+    // Les tuiles d'en-tête interrogent `/statistics` dès l'affichage. Ce banc
+    // parle de la LISTE ; on solde donc cet appel ici, et non dans chaque cas —
+    // plusieurs n'appellent pas `start()`, et `verify()` les faisait tomber
+    // pour une requête qui ne les concerne pas.
+    // `.filter(r => !r.cancelled)` : recharger les tuiles après une déclaration
+    // passe par un `switchMap`, qui ABANDONNE la requête en vol. Répondre à une
+    // requête annulée lève « Cannot flush a cancelled request ».
+    http.match(r => r.url === `${endpoint}/statistics`)
+        .filter(r => !r.cancelled)
+        .forEach(r => r.flush(stats()));
     http.verify();
   });
 

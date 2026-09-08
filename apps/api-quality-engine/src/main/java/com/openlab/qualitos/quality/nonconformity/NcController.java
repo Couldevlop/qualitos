@@ -79,4 +79,15 @@ public class NcController {
                                          @Valid @RequestBody NcDto.EscalateRequest request) {
         return service.escalateToCapa(id, request);
     }
+
+    /**
+     * Dénombrements par statut, pour les tuiles d'en-tête de la liste.
+     *
+     * <p>{@code origin} suit celle de la liste affichée : les tuiles surmontent
+     * un tableau déjà filtré, et doivent compter le même périmètre que lui.
+     */
+    @GetMapping("/statistics")
+    public NcDto.NcStatistics statistics(@RequestParam(required = false) NcOrigin origin) {
+        return service.statistics(origin);
+    }
 }

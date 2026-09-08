@@ -127,18 +127,12 @@ export class MainShellComponent implements OnInit, OnDestroy {
       ]
     },
     {
-      // Les cinq phases APQP sont listées une à une, comme les deux origines de
-      // non-conformité : on entre dans une phase précise, pas dans « le module ».
-      // L'entrée « Le cycle » garde le schéma d'ensemble à portée, puisque c'est
-      // lui qui porte l'enchaînement.
+      // UNE seule entrée : le schéma en V porte lui-même la navigation entre
+      // phases, et un sous-menu qui doublerait ses cinq jalons demanderait de
+      // tenir deux listes d'accord pour le même parcours.
       label: $localize`:@@nav.apqp:APQP`,
       items: [
-        { label: $localize`:@@nav.apqp-cycle:Le cycle`,                   route: '/apqp',                        icon: 'account_tree' },
-        { label: $localize`:@@nav.apqp-1:1 · Planifier et définir`,       route: '/apqp/planification',          icon: 'flag' },
-        { label: $localize`:@@nav.apqp-2:2 · Conception du produit`,      route: '/apqp/conception-produit',     icon: 'draw' },
-        { label: $localize`:@@nav.apqp-3:3 · Conception du processus`,    route: '/apqp/conception-processus',   icon: 'precision_manufacturing' },
-        { label: $localize`:@@nav.apqp-4:4 · Validation`,                 route: '/apqp/validation',             icon: 'fact_check' },
-        { label: $localize`:@@nav.apqp-5:5 · Retour d'expérience`,        route: '/apqp/retour-experience',      icon: 'replay' }
+        { label: $localize`:@@nav.apqp-cycle:Planification qualité produit`, route: '/apqp', icon: 'account_tree' }
       ]
     },
 
@@ -150,7 +144,7 @@ export class MainShellComponent implements OnInit, OnDestroy {
       label: $localize`:@@nav.non-conformite:Non-conformité`,
       items: [
         { label: $localize`:@@nav.nc-interne:NC interne`,  route: '/nc/interne',  icon: 'home_repair_service', module: 'capa' },
-        { label: $localize`:@@nav.nc-externe:NC externe`,  route: '/nc/externe',  icon: 'campaign',            module: 'capa' }
+        { label: $localize`:@@nav.nc-externe:NC externe (Réclamations)`,  route: '/nc/externe',  icon: 'campaign',            module: 'capa' }
       ]
     },
     {
@@ -158,7 +152,6 @@ export class MainShellComponent implements OnInit, OnDestroy {
       items: [
         { label: $localize`:@@nav.capa:CAPA`,                       route: '/capa',      icon: 'engineering', module: 'capa' },
         { label: $localize`:@@nav.capa-efficacite:Efficacité CAPA`,   route: '/capa/efficacite', icon: 'insights', module: 'capa' },
-        { label: $localize`:@@nav.reclamations:Réclamations`,       route: '/complaints', icon: 'support_agent', module: 'complaints' },
         { label: $localize`:@@nav.calibration:Calibration`,         route: '/calibration', icon: 'straighten', module: 'calibration' },
         { label: $localize`:@@nav.iot:Parc IoT`,                    route: '/iot',        icon: 'sensors', module: 'iot' },
         { label: $localize`:@@nav.audits:Audits`,                   route: '/audits',    icon: 'fact_check', module: 'audit' },

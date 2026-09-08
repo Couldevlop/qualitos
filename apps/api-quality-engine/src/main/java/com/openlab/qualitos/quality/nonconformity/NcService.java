@@ -278,4 +278,40 @@ public class NcService {
                 nc.getCapaCaseId(), nc.getRootCause(), nc.getResolutionNote(),
                 nc.getResolvedAt(), nc.getClosedAt(), nc.getCreatedAt(), nc.getUpdatedAt());
     }
+
+    // ---------- Statistiques ----------
+
+    /**
+     * Dénombrements par statut, pour les tuiles d'en-tête d'une liste de NC.
+     *
+     * <p>Le périmètre suit l'ÉCRAN : la liste interne compte les NC internes,
+     * l'externe les externes. Un total toutes origines confondues au-dessus
+     * d'une liste filtrée serait un chiffre juste au mauvais endroit — donc un
+     * chiffre faux pour qui le lit.
+     *
+     * @param origin l'origine à compter, ou {@code null} pour les deux
+     */
+    @Transactional(readOnly = true)
+    public NcDto.NcStatistics statistics(NcOrigin origin) {
+        UUID tenantId = requireTenantId();
+        return new NcDto.NcStatistics(
+                tenantId,
+                origin,
+                origin == null
+                        ? repository.countByTenantId(tenantId)
+                        : repository.countByTenantIdAndOrigin(tenantId, origin),
+                compte(tenantId, origin, NcStatus.OPEN),
+                compte(tenantId, origin, NcStatus.UNDER_ANALYSIS),
+                compte(tenantId, origin, NcStatus.ACTION_DEFINED),
+                compte(tenantId, origin, NcStatus.RESOLVED),
+                compte(tenantId, origin, NcStatus.CLOSED),
+                compte(tenantId, origin, NcStatus.CANCELLED));
+    }
+
+    /** Un statut, dans le périmètre demandé. */
+    private long compte(UUID tenantId, NcOrigin origin, NcStatus status) {
+        return origin == null
+                ? repository.countByTenantIdAndStatus(tenantId, status)
+                : repository.countByTenantIdAndOriginAndStatus(tenantId, origin, status);
+    }
 }

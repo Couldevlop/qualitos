@@ -116,4 +116,27 @@ public final class NcDto {
             Instant createdAt,
             Instant updatedAt
     ) {}
+
+    /**
+     * Dénombrements affichés en tuiles au-dessus d'une liste de NC.
+     *
+     * <p>{@code origin} rappelle SUR QUOI portent ces nombres : la même liste
+     * existe en interne, en externe et toutes origines confondues, et un total
+     * sans son périmètre se lit de travers. {@code null} = les deux origines.
+     *
+     * <p>{@code cancelled} n'a de sens que sur les écarts signalés du dehors —
+     * on n'annule pas un constat qu'on a fait soi-même, on le résout ou on le
+     * clôt. L'écran interne ne l'affiche pas ; le champ reste rendu pour que
+     * l'API ne dépende pas de qui la consomme.
+     */
+    public record NcStatistics(
+            UUID tenantId,
+            NcOrigin origin,
+            long total,
+            long open,
+            long underAnalysis,
+            long actionDefined,
+            long resolved,
+            long closed,
+            long cancelled) {}
 }

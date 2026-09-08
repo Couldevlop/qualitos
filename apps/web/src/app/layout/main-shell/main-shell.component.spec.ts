@@ -100,7 +100,10 @@ describe('MainShellComponent (navigation model)', () => {
     // control plan, posé juste avant l'entrée FMEA qu'il alimente.
     // Methodes retombe a 5 et Non-conformite a 2 : Ishikawa et les 5 Pourquoi
     // quittent la barre laterale, on y accede depuis la fiche de NC.
-    expect(labels).toEqual([5, 5, 8, 6, 2, 12, 11, 1, 7]);
+    // APQP retombe à 1 : le schéma en V porte lui-même la navigation entre
+    // phases, un sous-menu doublerait ses cinq jalons. Opérations passe de 12
+    // à 11 : l'écran Réclamations a été retiré.
+    expect(labels).toEqual([5, 5, 8, 1, 2, 11, 11, 1, 7]);
   });
 
   it('collapses the entire GRC mass into a single /compliance entry', () => {

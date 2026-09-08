@@ -114,10 +114,10 @@ export const APQP_PHASES: readonly ApqpPhase[] = [
     ]
   },
   {
-    slug: 'retour-experience',
+    slug: 'production-serie',
     numero: 5,
-    titre: "Retour d'expérience",
-    objet: "Mesurer ce que le client constate, et réduire la variation restante.",
+    titre: 'Production série et retour d’expérience',
+    objet: "Produire en série, mesurer ce que le client constate, et réduire la variation restante.",
     question: "Ce qui sort de la ligne satisfait-il le client, et que corrige-t-on ?",
     livrables: [
       'Réduction de la variation',

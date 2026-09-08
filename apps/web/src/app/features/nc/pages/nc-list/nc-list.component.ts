@@ -9,7 +9,7 @@ import { catchError, finalize, map, shareReplay, startWith, switchMap, tap } fro
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { NcService } from '../../nc.service';
-import { NcCategory, NcOrigin, NcPage, NcResponse, NcSeverity, NcStatus } from '../../nc.types';
+import { NcCategory, NcOrigin, NcPage, NcResponse, NcSeverity, NcStatistics, NcStatus } from '../../nc.types';
 import { NcCreateDialogComponent } from '../nc-create-dialog/nc-create-dialog.component';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
@@ -18,6 +18,14 @@ const MAX_PAGE_SIZE = 100;
 /** Page vide emise quand le chargement echoue : vide la table et remet le compteur a zero. */
 const EMPTY_PAGE = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 };
 
+/** Une tuile de dénombrement au-dessus de la liste. */
+export interface NcTile {
+  label: string;
+  value: number;
+  tone: 'neutral' | 'info' | 'warn' | 'success' | 'danger';
+  /** Statut filtré au clic ; `''` remet la liste à plat (tuile « Total »). */
+  status: NcStatus | '';
+}
 @Component({
   selector: 'qos-nc-list',
   templateUrl: './nc-list.component.html',
@@ -82,7 +90,7 @@ export class NcListComponent implements OnInit {
       return $localize`:@@nc.list.title-internal:Non-conformités internes`;
     }
     if (this.origin === 'EXTERNAL') {
-      return $localize`:@@nc.list.title-external:Non-conformités externes`;
+      return $localize`:@@nc.list.title-external:Non-conformités externes (Réclamations)`;
     }
     return $localize`:@@nc.list.title:Non-conformités`;
   }
@@ -97,7 +105,32 @@ export class NcListComponent implements OnInit {
     return $localize`:@@nc.list.subtitle:Saisie terrain, analyse de cause racine, résolution et escalade CAPA — traçables de bout en bout.`;
   }
 
+  /**
+   * Dénombrements par statut, dans le périmètre de l'écran.
+   *
+   * <p>Rechargés à chaque déclaration : une NC créée doit se voir aussitôt
+   * dans les tuiles, sans quoi le chiffre dément le tableau juste en dessous.
+   */
+  tiles$!: Observable<NcTile[]>;
+  private readonly statsReload$ = new BehaviorSubject<void>(undefined);
+
   ngOnInit(): void {
+    // Les tuiles vivent hors du flux de la liste : les filtres n'ont pas à les
+    // recalculer (un dénombrement filtré par lui-même ne dirait plus rien), mais
+    // une déclaration, si.
+    this.tiles$ = this.statsReload$.pipe(
+      switchMap(() => this.svc.statistics(this.origin ?? undefined).pipe(
+        catchError(() => of(null))          // les tuiles s'effacent, la liste reste
+      )),
+      map(s => s ? this.toTiles(s) : []),
+      // `refCount: false` : le bloc des tuiles est sous un `*ngIf`, donc le
+      // tuyau async s'y désabonne et s'y réabonne au gré des rendus. Avec un
+      // comptage de références, chaque réabonnement relançait la requête —
+      // le serveur recomptait les NC pour un affichage qui n'avait pas changé.
+      // Sans comptage, la dernière valeur est rejouée et l'appel reste unique.
+      shareReplay({ bufferSize: 1, refCount: false })
+    );
+
     this.ncs$ = combineLatest([
       this.statusFilter.valueChanges.pipe(startWith(this.statusFilter.value)),
       this.severityFilter.valueChanges.pipe(startWith(this.severityFilter.value)),
@@ -158,6 +191,7 @@ export class NcListComponent implements OnInit {
       if (created) {
         this.pageIndex = 0;
         this.page$.next({ index: 0, size: this.pageSize });
+        this.statsReload$.next();   // sinon les tuiles démentiraient le tableau
       }
     });
   }
@@ -173,5 +207,42 @@ export class NcListComponent implements OnInit {
 
   severityBadgeClass(severity: NcSeverity): string {
     return 'sev sev-' + severity.toLowerCase();
+  }
+
+  /**
+   * Filtre la liste sur le statut d'une tuile, ou remet à plat si on reclique.
+   *
+   * <p>Un nombre qu'on ne peut pas ouvrir oblige à retrouver à la main les
+   * lignes qu'il désigne : la tuile est le chemin le plus court entre le
+   * constat et la liste.
+   */
+  filterByStatus(status: NcStatus | ''): void {
+    this.statusFilter.setValue(this.statusFilter.value === status ? '' : status);
+  }
+
+  trackByTile(_index: number, tile: NcTile): string {
+    return tile.label;
+  }
+
+  /**
+   * Les tuiles, dans l'ordre du cycle de vie d'un écart.
+   *
+   * <p>« Annulée » n'apparaît que sur les écarts signalés du dehors : on
+   * n'annule pas un constat qu'on a fait soi-même, on le résout ou on le clôt.
+   * La tuile serait donc à zéro à perpétuité sur l'écran interne — un chiffre
+   * qui n'apprend rien occupe une place qui compte.
+   */
+  private toTiles(s: NcStatistics): NcTile[] {
+    const tuiles: NcTile[] = [
+      { label: $localize`:@@nc.list.tile-total:Total`, value: s.total, tone: 'neutral', status: '' },
+      { label: $localize`:@@nc.list.tile-open:Ouvertes`, value: s.open, tone: 'info', status: 'OPEN' },
+      { label: $localize`:@@nc.list.tile-analysis:En analyse`, value: s.underAnalysis, tone: 'warn', status: 'UNDER_ANALYSIS' },
+      { label: $localize`:@@nc.list.tile-action:Action définie`, value: s.actionDefined, tone: 'warn', status: 'ACTION_DEFINED' },
+      { label: $localize`:@@nc.list.tile-closed:Clôturées`, value: s.closed, tone: 'success', status: 'CLOSED' }
+    ];
+    if (this.origin !== 'INTERNAL') {
+      tuiles.push({ label: $localize`:@@nc.list.tile-cancelled:Annulées`, value: s.cancelled, tone: 'danger', status: 'CANCELLED' });
+    }
+    return tuiles;
   }
 }

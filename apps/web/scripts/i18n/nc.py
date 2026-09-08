@@ -5,9 +5,15 @@ TRANSLATIONS = {
     # Groupe de navigation « Non-conformite » : deux origines, deux entrees.
     'nav.non-conformite': ('Non-conformité', 'Nonconformity', 'No conformidad', 'عدم المطابقة', '不適合', '不合格'),
     'nav.nc-interne': ('NC interne', 'Internal NC', 'NC interna', 'عدم مطابقة داخلي', '内部不適合', '内部不合格'),
-    'nav.nc-externe': ('NC externe', 'External NC', 'NC externa', 'عدم مطابقة خارجي', '外部不適合', '外部不合格'),
+    'nav.nc-externe': ('NC externe (Réclamations)', 'External NC (Complaints)', 'NC externa (Reclamaciones)', 'عدم مطابقة خارجي (شكاوى)', '外部不適合（クレーム）', '外部不合格（投诉）'),
     'nc.list.title-internal': ('Non-conformités internes', 'Internal nonconformities', 'No conformidades internas', 'حالات عدم المطابقة الداخلية', '内部不適合', '内部不合格'),
-    'nc.list.title-external': ('Non-conformités externes', 'External nonconformities', 'No conformidades externas', 'حالات عدم المطابقة الخارجية', '外部不適合', '外部不合格'),
+    'nc.list.tile-total': ('Total', 'Total', 'Total', 'الإجمالي', '合計', '总数'),
+    'nc.list.tile-open': ('Ouvertes', 'Open', 'Abiertas', 'مفتوحة', '未対応', '未处理'),
+    'nc.list.tile-analysis': ('En analyse', 'Under analysis', 'En análisis', 'قيد التحليل', '分析中', '分析中'),
+    'nc.list.tile-action': ('Action définie', 'Action defined', 'Acción definida', 'إجراء محدد', '対策決定', '已定措施'),
+    'nc.list.tile-closed': ('Clôturées', 'Closed', 'Cerradas', 'مغلقة', '完了', '已关闭'),
+    'nc.list.tile-cancelled': ('Annulées', 'Cancelled', 'Anuladas', 'ملغاة', '取消', '已取消'),
+    'nc.list.title-external': ('Non-conformités externes (Réclamations)', 'External nonconformities (Complaints)', 'No conformidades externas (Reclamaciones)', 'حالات عدم المطابقة الخارجية (شكاوى)', '外部不適合（クレーム）', '外部不合格（投诉）'),
     'nc.list.subtitle-internal': (
         "Écarts détectés par l'organisation elle-même : autocontrôle, audit interne, revue.",
         'Gaps found by the organisation itself: self-inspection, internal audit, review.',
