@@ -19,9 +19,20 @@ public class CircleProposal {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    /** Cercle d'origine, facultatif : une idée peut être déposée hors cercle (V125). */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "circle_id", nullable = false, updatable = false)
+    @JoinColumn(name = "circle_id", updatable = false)
     private QualityCircle circle;
+
+    /**
+     * Le client propriétaire.
+     *
+     * <p>Portée par la ligne et non plus déduite du cercle : depuis la V125 une
+     * idée peut n'avoir aucun cercle, et une ligne sans tenant déterminable
+     * mélangerait les clients à la première liste.
+     */
+    @Column(name = "tenant_id", nullable = false, updatable = false)
+    private UUID tenantId;
 
     /** Réunion d'origine (optionnelle : propositions hors-séance autorisées). */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -40,6 +51,16 @@ public class CircleProposal {
 
     @Column(name = "proposed_by", nullable = false)
     private UUID proposedBy;
+
+    /**
+     * Le nom de l'auteur, tel que l'annuaire le connaissait au dépôt.
+     *
+     * <p>Copié à l'écriture et non résolu à l'affichage : le tableau ne doit pas
+     * dépendre de la disponibilité de l'annuaire, et un départ ne réécrit pas
+     * qui a proposé quoi. Même choix que `reporter_name` sur la non-conformité.
+     */
+    @Column(name = "proposed_by_name", length = 255)
+    private String proposedByName;
 
     @Column(name = "validated_by")
     private UUID validatedBy;

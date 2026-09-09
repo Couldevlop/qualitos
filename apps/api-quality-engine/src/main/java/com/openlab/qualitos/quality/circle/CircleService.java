@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
 import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
 import com.openlab.qualitos.quality.aigateway.AiTranscriptionResult;
+import com.openlab.qualitos.quality.common.CurrentUser;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.slf4j.Logger;
@@ -247,9 +248,14 @@ public class CircleService {
         }
         CircleProposal p = new CircleProposal();
         p.setCircle(c);
+        // Portee par la ligne depuis la V125 : une creation hors cercle (module
+        // idees) n'a pas de cercle pour la deduire, donc on ne s'y appuie plus ici
+        // non plus, meme quand le cercle est connu.
+        p.setTenantId(c.getTenantId());
         p.setTitle(req.title());
         p.setDescription(req.description());
         p.setProposedBy(req.proposedBy());
+        p.setProposedByName(CurrentUser.displayName().orElse(null));
         p.setStatus(ProposalStatus.PROPOSED);
         if (req.meetingId() != null) {
             CircleMeeting m = loadMeeting(circleId, req.meetingId());
