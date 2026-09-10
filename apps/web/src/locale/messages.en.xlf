@@ -4647,12 +4647,12 @@ Customer portal</target>
         <target state="translated">Add a deliverable</target>
       </trans-unit>
       <trans-unit id="apqp.edit-deliverable-aria" datatype="html">
-        <source>Modifier le livrable <x id="INTERPOLATION"/></source>
-        <target state="translated">Edit deliverable <x id="INTERPOLATION"/></target>
+        <source>Modifier le livrable <x id="PH"/></source>
+        <target state="translated">Edit deliverable <x id="PH"/></target>
       </trans-unit>
       <trans-unit id="apqp.delete-deliverable-aria" datatype="html">
-        <source>Supprimer le livrable <x id="INTERPOLATION"/></source>
-        <target state="translated">Delete deliverable <x id="INTERPOLATION"/></target>
+        <source>Supprimer le livrable <x id="PH"/></source>
+        <target state="translated">Delete deliverable <x id="PH"/></target>
       </trans-unit>
       <trans-unit id="apqp.move-earlier" datatype="html">
         <source>Avancer la phase d'un rang</source>
@@ -4663,12 +4663,12 @@ Customer portal</target>
         <target state="translated">Move the phase one rank later</target>
       </trans-unit>
       <trans-unit id="apqp.confirm-delete-phase" datatype="html">
-        <source>Supprimer « <x id="INTERPOLATION"/> » et ses <x id="INTERPOLATION_1"/> livrables ? Cette suppression est définitive.</source>
-        <target state="translated">Delete “<x id="INTERPOLATION"/>” and its <x id="INTERPOLATION_1"/> deliverables? This cannot be undone.</target>
+        <source>Supprimer « <x id="PH"/> » et ses <x id="PH_1"/> livrables ? Cette suppression est définitive.</source>
+        <target state="translated">Delete “<x id="PH"/>” and its <x id="PH_1"/> deliverables? This cannot be undone.</target>
       </trans-unit>
       <trans-unit id="apqp.confirm-delete-deliverable" datatype="html">
-        <source>Retirer « <x id="INTERPOLATION"/> » des livrables ?</source>
-        <target state="translated">Remove “<x id="INTERPOLATION"/>” from the deliverables?</target>
+        <source>Retirer « <x id="PH"/> » des livrables ?</source>
+        <target state="translated">Remove “<x id="PH"/>” from the deliverables?</target>
       </trans-unit>
       <trans-unit id="apqp.failed" datatype="html">
         <source>Opération impossible sur le cycle APQP.</source>
@@ -11949,12 +11949,12 @@ declared income
         <target state="translated">Hide rejected ideas</target>
       </trans-unit>
       <trans-unit id="ideas.vote-aria" datatype="html">
-        <source>Soutenir <x id="TITLE"/> (<x id="VOTES"/> voix)</source>
-        <target state="translated">Back <x id="TITLE"/> (<x id="VOTES"/> votes)</target>
+        <source>Soutenir <x id="title"/> (<x id="votes"/> voix)</source>
+        <target state="translated">Back <x id="title"/> (<x id="votes"/> votes)</target>
       </trans-unit>
       <trans-unit id="ideas.unvote-aria" datatype="html">
-        <source>Retirer ma voix de <x id="TITLE"/> (<x id="VOTES"/> voix)</source>
-        <target state="translated">Withdraw my vote from <x id="TITLE"/> (<x id="VOTES"/> votes)</target>
+        <source>Retirer ma voix de <x id="title"/> (<x id="votes"/> voix)</source>
+        <target state="translated">Withdraw my vote from <x id="title"/> (<x id="votes"/> votes)</target>
       </trans-unit>
       <trans-unit id="ideas.reject-prompt" datatype="html">
         <source>Pourquoi cette idée est-elle écartée ?</source>

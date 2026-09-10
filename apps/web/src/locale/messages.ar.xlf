@@ -4647,12 +4647,12 @@ Portail clients</source>
         <target state="translated">إضافة مُخرج</target>
       </trans-unit>
       <trans-unit id="apqp.edit-deliverable-aria" datatype="html">
-        <source>Modifier le livrable <x id="INTERPOLATION"/></source>
-        <target state="translated">تعديل المُخرج <x id="INTERPOLATION"/></target>
+        <source>Modifier le livrable <x id="PH"/></source>
+        <target state="translated">تعديل المُخرج <x id="PH"/></target>
       </trans-unit>
       <trans-unit id="apqp.delete-deliverable-aria" datatype="html">
-        <source>Supprimer le livrable <x id="INTERPOLATION"/></source>
-        <target state="translated">حذف المُخرج <x id="INTERPOLATION"/></target>
+        <source>Supprimer le livrable <x id="PH"/></source>
+        <target state="translated">حذف المُخرج <x id="PH"/></target>
       </trans-unit>
       <trans-unit id="apqp.move-earlier" datatype="html">
         <source>Avancer la phase d'un rang</source>
@@ -4663,12 +4663,12 @@ Portail clients</source>
         <target state="translated">تأخير المرحلة مرتبة واحدة</target>
       </trans-unit>
       <trans-unit id="apqp.confirm-delete-phase" datatype="html">
-        <source>Supprimer « <x id="INTERPOLATION"/> » et ses <x id="INTERPOLATION_1"/> livrables ? Cette suppression est définitive.</source>
-        <target state="translated">حذف «<x id="INTERPOLATION"/>» و<x id="INTERPOLATION_1"/> من مُخرجاتها؟ هذا الحذف نهائي.</target>
+        <source>Supprimer « <x id="PH"/> » et ses <x id="PH_1"/> livrables ? Cette suppression est définitive.</source>
+        <target state="translated">حذف «<x id="PH"/>» و<x id="PH_1"/> من مُخرجاتها؟ هذا الحذف نهائي.</target>
       </trans-unit>
       <trans-unit id="apqp.confirm-delete-deliverable" datatype="html">
-        <source>Retirer « <x id="INTERPOLATION"/> » des livrables ?</source>
-        <target state="translated">إزالة «<x id="INTERPOLATION"/>» من المُخرجات؟</target>
+        <source>Retirer « <x id="PH"/> » des livrables ?</source>
+        <target state="translated">إزالة «<x id="PH"/>» من المُخرجات؟</target>
       </trans-unit>
       <trans-unit id="apqp.failed" datatype="html">
         <source>Opération impossible sur le cycle APQP.</source>
@@ -11949,12 +11949,12 @@ historique 12 mois</source>
         <target state="translated">إخفاء الأفكار المرفوضة</target>
       </trans-unit>
       <trans-unit id="ideas.vote-aria" datatype="html">
-        <source>Soutenir <x id="TITLE"/> (<x id="VOTES"/> voix)</source>
-        <target state="translated">دعم <x id="TITLE"/> (<x id="VOTES"/> صوتًا)</target>
+        <source>Soutenir <x id="title"/> (<x id="votes"/> voix)</source>
+        <target state="translated">دعم <x id="title"/> (<x id="votes"/> صوتًا)</target>
       </trans-unit>
       <trans-unit id="ideas.unvote-aria" datatype="html">
-        <source>Retirer ma voix de <x id="TITLE"/> (<x id="VOTES"/> voix)</source>
-        <target state="translated">سحب صوتي من <x id="TITLE"/> (<x id="VOTES"/> صوتًا)</target>
+        <source>Retirer ma voix de <x id="title"/> (<x id="votes"/> voix)</source>
+        <target state="translated">سحب صوتي من <x id="title"/> (<x id="votes"/> صوتًا)</target>
       </trans-unit>
       <trans-unit id="ideas.reject-prompt" datatype="html">
         <source>Pourquoi cette idée est-elle écartée ?</source>
