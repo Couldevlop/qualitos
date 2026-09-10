@@ -9,8 +9,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -59,6 +62,13 @@ class CircleGoldenPathTest {
     @AfterEach
     void clr() {
         TenantContext.clear();
+        SecurityContextHolder.clearContext();
+    }
+
+    /** Pose l'acteur connecte (le sub du JWT) comme le fait CurrentUser en production. */
+    private static void connecter(UUID sub) {
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(sub.toString(), "n/a", List.of()));
     }
 
     @Test
@@ -128,8 +138,9 @@ class CircleGoldenPathTest {
             return p;
         });
 
+        connecter(PROPOSER);
         CircleDto.ProposalResponse proposed = service.addProposal(circle.getId(),
-                new CircleDto.ProposalRequest("Réorganiser le poste", "desc", PROPOSER, null));
+                new CircleDto.ProposalRequest("Réorganiser le poste", "desc", null));
         assertThat(proposed.status()).isEqualTo(ProposalStatus.PROPOSED);
 
         // Reconstitue une proposition stable filée dans la suite du flux.
@@ -147,8 +158,9 @@ class CircleGoldenPathTest {
                 .isEqualTo(ProposalStatus.UNDER_REVIEW);
 
         // L'approbateur DOIT différer du proposeur (séparation des rôles).
+        connecter(APPROVER);
         CircleDto.ProposalResponse approved = service.approveProposal(circle.getId(), proposal.getId(),
-                new CircleDto.ApproveProposalRequest(APPROVER));
+                new CircleDto.ApproveProposalRequest());
         assertThat(approved.status()).isEqualTo(ProposalStatus.APPROVED);
         assertThat(proposal.getValidatedBy()).isEqualTo(APPROVER);
 

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 
+import { AuthService } from '../../core/auth/auth.service';
 import { environment } from '../../../environments/environment';
 import {
   AddMeetingRequest,
@@ -31,7 +32,10 @@ export class CirclesService {
 
   private readonly mockStore: CircleResponse[] = this.seedMockCircles();
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(
+    private readonly http: HttpClient,
+    private readonly auth: AuthService
+  ) {}
 
   listCircles(page = 0, size = 50, status?: CircleStatus): Observable<CirclesPage> {
     if (environment.useMockApi) return of(this.mockPage(status)).pipe(delay(150));
@@ -121,7 +125,13 @@ export class CirclesService {
       const proposal: CircleProposalResponse = {
         id: 'p-' + Math.random().toString(36).slice(2, 9),
         circleId, title: input.title, description: input.description,
-        status: 'PROPOSED', proposedBy: input.proposedBy,
+        // Pas de proposedBy dans l'ENTRÉE mock (l'API réelle le lit du jeton,
+        // jamais du corps de la requête) — mais la SORTIE, elle, doit porter
+        // un auteur : c'est ce que rendrait le serveur, et l'écran l'affiche
+        // (colonne « Proposé par »). L'utilisateur courant du mode démo en
+        // tient lieu, faute de jeton à lire ici.
+        status: 'PROPOSED',
+        proposedBy: this.auth.snapshot()?.userId,
         meetingId: input.meetingId,
         createdAt: now, updatedAt: now
       };

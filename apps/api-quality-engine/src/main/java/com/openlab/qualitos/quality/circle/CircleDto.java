@@ -50,19 +50,23 @@ public final class CircleDto {
 
     public record HoldMeetingRequest(String minutes) {}
 
+    /**
+     * Dépôt d'une proposition.
+     *
+     * <p>Plus aucun champ d'auteur : il vient du jeton. Un « proposé par » que
+     * l'appelant écrit lui-même attribue une proposition à n'importe qui, ce
+     * qu'une piste d'audit doit précisément empêcher (§18.2).
+     */
     public record ProposalRequest(
             @NotBlank @Size(max = 255) String title,
             String description,
-            @NotNull UUID proposedBy,
             UUID meetingId
     ) {}
 
-    public record ApproveProposalRequest(@NotNull UUID validatedBy) {}
+    /** Aucun champ : l'arbitre est l'utilisateur connecté. */
+    public record ApproveProposalRequest() {}
 
-    public record RejectProposalRequest(
-            @NotNull UUID validatedBy,
-            @NotBlank String reason
-    ) {}
+    public record RejectProposalRequest(@NotBlank String reason) {}
 
     public record ImpactRequest(@NotBlank String impactNote) {}
 

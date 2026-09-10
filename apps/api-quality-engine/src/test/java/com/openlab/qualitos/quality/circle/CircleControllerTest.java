@@ -41,7 +41,6 @@ class CircleControllerTest {
     static final UUID PROPOSAL = UUID.randomUUID();
     static final UUID TENANT = UUID.randomUUID();
     static final UUID USER = UUID.randomUUID();
-    static final UUID VALIDATOR = UUID.randomUUID();
 
     @BeforeEach
     void setup() {
@@ -253,21 +252,22 @@ class CircleControllerTest {
     @Test @WithMockUser
     void addProposal_returns201() throws Exception {
         when(service.addProposal(eq(CIRCLE), any())).thenReturn(proposalResp(ProposalStatus.PROPOSED));
-        CircleDto.ProposalRequest req = new CircleDto.ProposalRequest("Idée", "d", USER, null);
+        // Plus de proposedBy dans la requete : l'acteur vient du jeton, pas du corps.
+        CircleDto.ProposalRequest req = new CircleDto.ProposalRequest("Idée", "d", null);
         mockMvc.perform(post("/api/v1/circles/{id}/proposals", CIRCLE).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsString(req)))
                 .andExpect(status().isCreated());
     }
 
     @Test @WithMockUser
-    void addProposal_missingProposer_returns400() throws Exception {
+    void addProposal_missingTitle_returns400() throws Exception {
         mockMvc.perform(post("/api/v1/circles/{id}/proposals", CIRCLE).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"title\":\"x\"}"))
+                        .content("{}"))
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void review_success() throws Exception {
         when(service.reviewProposal(CIRCLE, PROPOSAL)).thenReturn(proposalResp(ProposalStatus.UNDER_REVIEW));
         mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/review", CIRCLE, PROPOSAL).with(csrf()))
@@ -275,41 +275,96 @@ class CircleControllerTest {
                 .andExpect(jsonPath("$.status").value("UNDER_REVIEW"));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void approve_success() throws Exception {
+        // ApproveProposalRequest n'a plus aucun champ : l'arbitre vient du jeton.
+        // Un corps vide "{}" doit rester accepte.
         when(service.approveProposal(eq(CIRCLE), eq(PROPOSAL), any()))
                 .thenReturn(proposalResp(ProposalStatus.APPROVED));
         mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/approve", CIRCLE, PROPOSAL).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"validatedBy\":\"" + VALIDATOR + "\"}"))
+                        .content("{}"))
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
-    void approve_missingValidator_returns400() throws Exception {
+    /**
+     * C2 — l'arbitrage réservé côté {@code IdeaController} ne doit pas être
+     * ouvert ici : les deux façades écrivent la même ligne (voir
+     * {@code ROLES_ARBITRAGE}).
+     */
+    @Test @WithMockUser(roles = "USER")
+    void approve_deniedForUser_returns403() throws Exception {
         mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/approve", CIRCLE, PROPOSAL).with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON).content("{}"))
-                .andExpect(status().isBadRequest());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isForbidden());
+        verify(service, never()).approveProposal(any(), any(), any());
     }
 
-    @Test @WithMockUser
+    /**
+     * Les quatre autres transitions, pour la même raison.
+     *
+     * <p>Ne verrouiller que {@code approve} laisserait une faute de frappe sur
+     * l'une des quatre autres annotations passer inaperçue — et il suffit d'une
+     * pour rouvrir le contournement que C2 vient de fermer.
+     */
+    @Test @WithMockUser(roles = "USER")
+    void review_deniedForUser_returns403() throws Exception {
+        mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/review", CIRCLE, PROPOSAL).with(csrf()))
+                .andExpect(status().isForbidden());
+        verify(service, never()).reviewProposal(any(), any());
+    }
+
+    @Test @WithMockUser(roles = "USER")
+    void reject_deniedForUser_returns403() throws Exception {
+        mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/reject", CIRCLE, PROPOSAL).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"reason\":\"r\"}"))
+                .andExpect(status().isForbidden());
+        verify(service, never()).rejectProposal(any(), any(), any());
+    }
+
+    @Test @WithMockUser(roles = "USER")
+    void implement_deniedForUser_returns403() throws Exception {
+        mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/implement", CIRCLE, PROPOSAL).with(csrf()))
+                .andExpect(status().isForbidden());
+        verify(service, never()).markImplemented(any(), any());
+    }
+
+    @Test @WithMockUser(roles = "USER")
+    void impact_deniedForUser_returns403() throws Exception {
+        mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/impact", CIRCLE, PROPOSAL).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"impactNote\":\"i\"}"))
+                .andExpect(status().isForbidden());
+        verify(service, never()).recordImpact(any(), any(), any());
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void reject_success() throws Exception {
         when(service.rejectProposal(eq(CIRCLE), eq(PROPOSAL), any()))
                 .thenReturn(proposalResp(ProposalStatus.REJECTED));
         mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/reject", CIRCLE, PROPOSAL).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"validatedBy\":\"" + VALIDATOR + "\",\"reason\":\"r\"}"))
+                        .content("{\"reason\":\"r\"}"))
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void reject_missingReason_returns400() throws Exception {
+        mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/reject", CIRCLE, PROPOSAL).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content("{}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void implement_success() throws Exception {
         when(service.markImplemented(CIRCLE, PROPOSAL)).thenReturn(proposalResp(ProposalStatus.IMPLEMENTED));
         mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/implement", CIRCLE, PROPOSAL).with(csrf()))
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void impact_success() throws Exception {
         when(service.recordImpact(eq(CIRCLE), eq(PROPOSAL), any()))
                 .thenReturn(proposalResp(ProposalStatus.MEASURED));
@@ -319,7 +374,7 @@ class CircleControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void impact_missing_returns400() throws Exception {
         mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/impact", CIRCLE, PROPOSAL).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON).content("{}"))

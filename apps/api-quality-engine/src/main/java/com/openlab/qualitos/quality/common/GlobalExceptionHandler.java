@@ -155,6 +155,9 @@ import com.openlab.qualitos.quality.notifications.domain.NotificationNotFoundExc
 import com.openlab.qualitos.quality.apqp.ApqpDeliverableNotFoundException;
 import com.openlab.qualitos.quality.apqp.ApqpPhaseNotFoundException;
 import com.openlab.qualitos.quality.apqp.ApqpReorderException;
+import com.openlab.qualitos.quality.ideas.domain.IdeaNotFoundException;
+import com.openlab.qualitos.quality.ideas.domain.IdeaStateException;
+import com.openlab.qualitos.quality.ideas.domain.VoteClosedException;
 import com.openlab.qualitos.quality.nonconformity.NcNotFoundException;
 import com.openlab.qualitos.quality.nonconformity.NcStateException;
 import com.openlab.qualitos.quality.nonconformity.NcPhotoNotFoundException;
@@ -432,6 +435,39 @@ public class GlobalExceptionHandler {
                 HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/apqp-invalid-reorder"));
         problem.setTitle("Invalid APQP Reorder");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(IdeaNotFoundException.class)
+    public ProblemDetail handleIdeaNotFound(IdeaNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/idea-not-found"));
+        problem.setTitle("Idea Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * 409 : la demande est licite, c'est le moment qui ne l'est plus. L'idée a
+     * été tranchée, et le compteur doit rester celui du jour de la décision.
+     */
+    @ExceptionHandler(VoteClosedException.class)
+    public ProblemDetail handleVoteClosed(VoteClosedException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/vote-closed"));
+        problem.setTitle("Vote Closed");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /** 422 : la requête est bien formée, mais la transition demandée n'existe pas d'ici. */
+    @ExceptionHandler(IdeaStateException.class)
+    public ProblemDetail handleIdeaState(IdeaStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/idea-invalid-transition"));
+        problem.setTitle("Invalid Idea Transition");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

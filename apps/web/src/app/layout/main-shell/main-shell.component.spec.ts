@@ -103,7 +103,9 @@ describe('MainShellComponent (navigation model)', () => {
     // APQP retombe à 1 : le schéma en V porte lui-même la navigation entre
     // phases, un sous-menu doublerait ses cinq jalons. Opérations passe de 12
     // à 11 : l'écran Réclamations a été retiré.
-    expect(labels).toEqual([5, 5, 8, 1, 2, 11, 11, 1, 7]);
+    // Méthodes passe à 6 : + Boîte à idées, sans attribut `module` puisqu'elle
+    // ne dépend pas de l'activation du module Cercle.
+    expect(labels).toEqual([5, 6, 8, 1, 2, 11, 11, 1, 7]);
   });
 
   it('collapses the entire GRC mass into a single /compliance entry', () => {

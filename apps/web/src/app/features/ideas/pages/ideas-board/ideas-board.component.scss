@@ -1,0 +1,200 @@
+/* ---- Le tableau ----
+
+   Quatre colonnes de largeur égale, qui passent en pile sous 900 px : sur un
+   poste terrain, une grille figée en quatre colonnes se serait tassée en
+   bandes de quelques caractères. */
+.tableau {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--qos-space-4);
+  align-items: start;
+  margin: 0 0 var(--qos-space-6);
+}
+
+.colonne {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-3);
+  min-width: 0;
+  padding: var(--qos-space-4);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+}
+
+.colonne__titre {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  margin: 0;
+  font-size: var(--qos-fs-md);
+  font-weight: 600;
+}
+
+.colonne__compte {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 var(--qos-space-1);
+  border-radius: var(--qos-radius-pill);
+  background: var(--qos-accent-bg-soft);
+  color: var(--qos-accent-fg-soft);
+  font-size: var(--qos-fs-xs);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.colonne__cartes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.colonne__vide {
+  margin: 0;
+  color: var(--qos-fg-tertiary);
+  font-size: var(--qos-fs-sm);
+}
+
+/* ---- Une carte ----
+
+   Le décompte de voix et l'arbitrage vivent au même endroit qu'un post-it de
+   mur qualité : on lit le titre, on voit qui soutient, et l'action est à
+   portée immédiate sans qu'il faille ouvrir la carte. */
+.carte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-2);
+  padding: var(--qos-space-3);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-app);
+}
+
+.carte__titre {
+  margin: 0;
+  font-size: var(--qos-fs-sm);
+  font-weight: 600;
+  line-height: var(--qos-lh-snug);
+  text-wrap: pretty;
+}
+
+.carte__description {
+  margin: 0;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-xs);
+  line-height: var(--qos-lh-normal);
+}
+
+.carte__impact {
+  margin: 0;
+  padding: var(--qos-space-2);
+  border-radius: var(--qos-radius-sm);
+  background: var(--qos-accent-bg-soft);
+  color: var(--qos-accent-fg-soft);
+  font-size: var(--qos-fs-xs);
+  line-height: var(--qos-lh-normal);
+}
+
+.carte__pied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-2);
+}
+
+.carte__auteur {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--qos-fg-tertiary);
+  font-size: var(--qos-fs-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.carte__soutien {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--qos-space-1);
+}
+
+.carte__voix {
+  min-width: 1.5em;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* Le bouton de vote se distingue une fois qu'on a soutenu : c'est le seul
+   signal qui dit « c'est fait », le compteur restant celui du serveur. */
+.carte__vote {
+  color: var(--qos-fg-tertiary);
+
+  &--actif {
+    color: var(--qos-accent-fg);
+  }
+}
+
+.carte__arbitrage {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+  margin-top: var(--qos-space-1);
+
+  /* Écarter est la seule action qui referme définitivement une idée : elle se
+     signale, sans crier — le bouton reste secondaire, sa couleur seule dit ce
+     qu'il fait. */
+  .danger {
+    --mdc-outlined-button-label-text-color: var(--qos-danger-fg);
+    color: var(--qos-danger-fg);
+  }
+}
+
+/* ---- Les idées écartées ---- */
+.ecartees {
+  padding-top: var(--qos-space-4);
+  border-top: 1px solid var(--qos-border-subtle);
+}
+
+.ecartees__bascule {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--qos-space-1);
+  color: var(--qos-fg-secondary);
+}
+
+.ecartees__cartes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--qos-space-3);
+  margin-top: var(--qos-space-3);
+  padding: 0;
+  list-style: none;
+}
+
+.carte--ecartee {
+  opacity: 0.85;
+}
+
+.carte__motif {
+  margin: 0;
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-xs);
+  line-height: var(--qos-lh-normal);
+}
+
+/* Sous 900 px, les quatre colonnes tassées ne laissent plus assez de place
+   pour lire un titre : elles se dépilent, dans l'ordre du flux qualité. */
+@media (max-width: 900px) {
+  .tableau {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

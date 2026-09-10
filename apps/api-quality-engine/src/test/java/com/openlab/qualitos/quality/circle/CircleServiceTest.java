@@ -7,6 +7,7 @@ import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,6 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.Instant;
 import java.util.List;
@@ -44,7 +47,13 @@ class CircleServiceTest {
     static final UUID OTHER = UUID.randomUUID();
 
     @BeforeEach void ctx() { TenantContext.setTenantId(TENANT.toString()); }
-    @AfterEach  void clr() { TenantContext.clear(); }
+    @AfterEach  void clr() { TenantContext.clear(); SecurityContextHolder.clearContext(); }
+
+    /** Pose l'acteur connecte (le sub du JWT) comme le fait CurrentUser en production. */
+    private static void connecter(UUID sub) {
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(sub.toString(), "n/a", List.of()));
+    }
 
     // --- create / list / find ---
     @Test
@@ -444,6 +453,7 @@ class CircleServiceTest {
     // --- proposals ---
     @Test
     void addProposal_success() {
+        connecter(USER);
         QualityCircle c = circle(CircleStatus.ACTIVE);
         when(circleRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(proposalRepo.save(any())).thenAnswer(inv -> {
@@ -452,28 +462,31 @@ class CircleServiceTest {
             return p;
         });
         CircleDto.ProposalResponse r = service.addProposal(c.getId(),
-                new CircleDto.ProposalRequest("Idée", "desc", USER, null));
+                new CircleDto.ProposalRequest("Idée", "desc", null));
         assertThat(r.status()).isEqualTo(ProposalStatus.PROPOSED);
+        assertThat(r.proposedBy()).isEqualTo(USER);
     }
 
     @Test
     void addProposal_withMeeting_success() {
+        connecter(USER);
         QualityCircle c = circle(CircleStatus.ACTIVE);
         CircleMeeting m = meeting(c, MeetingStatus.PLANNED);
         when(circleRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(meetingRepo.findByIdAndCircleId(m.getId(), c.getId())).thenReturn(Optional.of(m));
         when(proposalRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
         CircleDto.ProposalResponse r = service.addProposal(c.getId(),
-                new CircleDto.ProposalRequest("Idée", null, USER, m.getId()));
+                new CircleDto.ProposalRequest("Idée", null, m.getId()));
         assertThat(r.meetingId()).isEqualTo(m.getId());
     }
 
     @Test
     void addProposal_inactiveCircle_throws() {
+        connecter(USER);
         QualityCircle c = circle(CircleStatus.PAUSED);
         when(circleRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         assertThatThrownBy(() -> service.addProposal(c.getId(),
-                new CircleDto.ProposalRequest("x", null, USER, null)))
+                new CircleDto.ProposalRequest("x", null, null)))
                 .isInstanceOf(CircleStateException.class);
     }
 
@@ -500,13 +513,14 @@ class CircleServiceTest {
 
     @Test
     void approveProposal_success() {
+        connecter(OTHER);
         QualityCircle c = circle(CircleStatus.ACTIVE);
         CircleProposal p = proposal(c, ProposalStatus.UNDER_REVIEW);
         p.setProposedBy(USER);
         when(circleRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(proposalRepo.findByIdAndCircleId(p.getId(), c.getId())).thenReturn(Optional.of(p));
         when(proposalRepo.save(p)).thenReturn(p);
-        service.approveProposal(c.getId(), p.getId(), new CircleDto.ApproveProposalRequest(OTHER));
+        service.approveProposal(c.getId(), p.getId(), new CircleDto.ApproveProposalRequest());
         assertThat(p.getStatus()).isEqualTo(ProposalStatus.APPROVED);
         assertThat(p.getValidatedBy()).isEqualTo(OTHER);
         assertThat(p.getValidatedAt()).isNotNull();
@@ -514,50 +528,72 @@ class CircleServiceTest {
 
     @Test
     void approveProposal_selfApproval_throws() {
+        connecter(USER);
         QualityCircle c = circle(CircleStatus.ACTIVE);
         CircleProposal p = proposal(c, ProposalStatus.UNDER_REVIEW);
         p.setProposedBy(USER);
         when(circleRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(proposalRepo.findByIdAndCircleId(p.getId(), c.getId())).thenReturn(Optional.of(p));
         assertThatThrownBy(() -> service.approveProposal(c.getId(), p.getId(),
-                new CircleDto.ApproveProposalRequest(USER)))
+                new CircleDto.ApproveProposalRequest()))
                 .isInstanceOf(CircleStateException.class)
                 .hasMessageContaining("cannot be the proposer");
     }
 
     @Test
     void approveProposal_notUnderReview_throws() {
+        connecter(OTHER);
         QualityCircle c = circle(CircleStatus.ACTIVE);
         CircleProposal p = proposal(c, ProposalStatus.PROPOSED);
         when(circleRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(proposalRepo.findByIdAndCircleId(p.getId(), c.getId())).thenReturn(Optional.of(p));
         assertThatThrownBy(() -> service.approveProposal(c.getId(), p.getId(),
-                new CircleDto.ApproveProposalRequest(OTHER)))
+                new CircleDto.ApproveProposalRequest()))
                 .isInstanceOf(CircleStateException.class);
     }
 
     @Test
     void rejectProposal_fromProposed_success() {
+        connecter(OTHER);
         QualityCircle c = circle(CircleStatus.ACTIVE);
         CircleProposal p = proposal(c, ProposalStatus.PROPOSED);
         when(circleRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(proposalRepo.findByIdAndCircleId(p.getId(), c.getId())).thenReturn(Optional.of(p));
         when(proposalRepo.save(p)).thenReturn(p);
         service.rejectProposal(c.getId(), p.getId(),
-                new CircleDto.RejectProposalRequest(OTHER, "hors scope"));
+                new CircleDto.RejectProposalRequest("hors scope"));
         assertThat(p.getStatus()).isEqualTo(ProposalStatus.REJECTED);
         assertThat(p.getRejectionReason()).isEqualTo("hors scope");
+        assertThat(p.getValidatedBy()).isEqualTo(OTHER);
     }
 
     @Test
     void rejectProposal_approved_throws() {
+        connecter(OTHER);
         QualityCircle c = circle(CircleStatus.ACTIVE);
         CircleProposal p = proposal(c, ProposalStatus.APPROVED);
         when(circleRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         when(proposalRepo.findByIdAndCircleId(p.getId(), c.getId())).thenReturn(Optional.of(p));
         assertThatThrownBy(() -> service.rejectProposal(c.getId(), p.getId(),
-                new CircleDto.RejectProposalRequest(OTHER, "r")))
+                new CircleDto.RejectProposalRequest("r")))
                 .isInstanceOf(CircleStateException.class);
+    }
+
+    @Test
+    @DisplayName("ecarter sa propre proposition reste permis")
+    void rejectProposal_parLeProposeurLuiMeme_permis() {
+        // Contrainte du brief : seul approveProposal porte la garde
+        // « le validateur n'est pas le proposeur ». Rejeter, meme la sienne, reste permis.
+        connecter(USER);
+        QualityCircle c = circle(CircleStatus.ACTIVE);
+        CircleProposal p = proposal(c, ProposalStatus.PROPOSED);
+        p.setProposedBy(USER);
+        when(circleRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(proposalRepo.findByIdAndCircleId(p.getId(), c.getId())).thenReturn(Optional.of(p));
+        when(proposalRepo.save(p)).thenReturn(p);
+        service.rejectProposal(c.getId(), p.getId(), new CircleDto.RejectProposalRequest("je change d'avis"));
+        assertThat(p.getStatus()).isEqualTo(ProposalStatus.REJECTED);
+        assertThat(p.getValidatedBy()).isEqualTo(USER);
     }
 
     @Test

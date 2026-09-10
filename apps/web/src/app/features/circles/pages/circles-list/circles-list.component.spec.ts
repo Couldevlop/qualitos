@@ -7,6 +7,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
 import { Subscription, of } from 'rxjs';
 
+import { AuthService } from '../../../../core/auth/auth.service';
 import { environment } from '../../../../../environments/environment';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
@@ -52,7 +53,8 @@ describe('CirclesListComponent', () => {
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-        provideRouter([])
+        provideRouter([]),
+        { provide: AuthService, useValue: { snapshot: () => null } }
       ]
     }).compileComponents();
 

@@ -41,8 +41,9 @@ export class CirclesProposalDialogComponent {
       this.form.markAllAsTouched();
       return;
     }
-    const proposedBy = this.auth.snapshot()?.userId;
-    if (!proposedBy) {
+    // L'auteur n'est plus envoyé : le serveur le lit du jeton (§18.2). Ce garde-fou
+    // reste utile pour échouer vite côté client si la session a expiré.
+    if (!this.auth.snapshot()?.userId) {
       this.snack.open($localize`:@@circles.proposal.session-expired:Session expirée — veuillez vous reconnecter.`, $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
@@ -51,8 +52,7 @@ export class CirclesProposalDialogComponent {
     this.circles
       .addProposal(this.data.circleId, {
         title: v.title.trim(),
-        description: v.description?.trim() || undefined,
-        proposedBy
+        description: v.description?.trim() || undefined
       })
       .pipe(finalize(() => (this.submitting = false)))
       .subscribe({
