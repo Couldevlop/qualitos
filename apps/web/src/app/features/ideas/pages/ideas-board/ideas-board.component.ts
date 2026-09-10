@@ -62,6 +62,22 @@ export class IdeasBoardComponent implements OnInit {
   }
 
   /**
+   * Identité d'une colonne : son titre, stable puisqu'il vient de la même
+   * référence `COLONNES` à chaque rechargement.
+   *
+   * <p>Sans ce `trackBy`, `charger()` et `remplacer()` posent un tableau NEUF
+   * de colonnes à chaque vote ou geste d'arbitrage — y compris pour les
+   * colonnes non concernées. Angular comparerait alors par identité, ne
+   * reconnaîtrait aucune des 4 colonnes, et détruirait puis recréerait tout
+   * le sous-arbre DOM (les 4 sections, donc toutes les cartes) à chaque clic
+   * sur un vote — rendant inopérant le `trackBy` des cartes elles-mêmes,
+   * détruites avec leur hôte avant de pouvoir s'appliquer.
+   */
+  trackByColonne(_index: number, colonne: { titre: string }): string {
+    return colonne.titre;
+  }
+
+  /**
    * Soutenir une idée, ou retirer sa voix.
    *
    * <p>Aucun compteur optimiste : le décompte vient du serveur, qui est le seul

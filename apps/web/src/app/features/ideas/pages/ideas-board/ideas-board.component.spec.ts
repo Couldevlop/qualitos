@@ -133,6 +133,27 @@ describe('IdeasBoardComponent', () => {
     expect(component.colonnes[0].ideas[0].votes).toBe(9);
   });
 
+  it('garde le même nœud DOM de colonne après un vote, grâce au trackBy', async () => {
+    // charger() et remplacer() posent un tableau NEUF de colonnes à chaque
+    // vote, y compris pour les colonnes non concernées. Sans trackBy sur la
+    // boucle des colonnes, Angular détruirait et recréerait les 4 sections
+    // (donc toutes les cartes) à chaque clic — perte de focus, coût de rendu
+    // inutile, alors que les données elles-mêmes ne bougent pas. On capture
+    // ici l'IDENTITÉ du nœud, pas son contenu : `toBe`, pas `toEqual`.
+    await setup();
+    servirTableau();
+
+    const colonneAvant = hote().querySelector('.colonne');
+
+    component.basculerVote(component.colonnes[0].ideas[0]);
+    http.expectOne({ url: `${endpoint}/i1/vote`, method: 'POST' })
+      .flush({ ...idee('i1'), votes: 9, votedByMe: true });
+    fixture.detectChanges();
+
+    const colonneApres = hote().querySelector('.colonne');
+    expect(colonneApres).toBe(colonneAvant);
+  });
+
   it('recliquer retire la voix', async () => {
     await setup();
     servirTableau([{ status: 'PROPOSED', ideas: [{ ...idee('i1'), votedByMe: true }] }]);

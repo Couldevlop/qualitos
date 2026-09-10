@@ -14,7 +14,7 @@
        réalisée, et REJECTED n'a pas sa place ici — une colonne de refus
        permanente découragerait le dépôt suivant (cf. la bascule ci-dessous). -->
   <section class="tableau" role="list">
-    <section class="colonne" *ngFor="let colonne of colonnes" role="listitem">
+    <section class="colonne" *ngFor="let colonne of colonnes; trackBy: trackByColonne" role="listitem">
       <h2 class="colonne__titre">
         {{ colonne.titre }}
         <span class="colonne__compte" aria-hidden="true">{{ colonne.ideas.length }}</span>
