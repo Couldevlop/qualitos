@@ -254,7 +254,7 @@ public class CircleService {
         p.setTenantId(c.getTenantId());
         p.setTitle(req.title());
         p.setDescription(req.description());
-        p.setProposedBy(req.proposedBy());
+        p.setProposedBy(CurrentUser.requireUserId());
         p.setProposedByName(CurrentUser.displayName().orElse(null));
         p.setStatus(ProposalStatus.PROPOSED);
         if (req.meetingId() != null) {
@@ -281,11 +281,14 @@ public class CircleService {
         if (p.getStatus() != ProposalStatus.UNDER_REVIEW) {
             throw new CircleStateException("Only UNDER_REVIEW proposals can be approved");
         }
-        if (req.validatedBy().equals(p.getProposedBy())) {
+        UUID validator = CurrentUser.requireUserId();
+        if (validator.equals(p.getProposedBy())) {
+            // La garde ne valait rien tant que les deux valeurs venaient du même
+            // appelant : elle comparait ce qu'il avait écrit à ce qu'il avait écrit.
             throw new CircleStateException("Validator cannot be the proposer");
         }
         p.setStatus(ProposalStatus.APPROVED);
-        p.setValidatedBy(req.validatedBy());
+        p.setValidatedBy(validator);
         p.setValidatedAt(Instant.now());
         return toProposalResponse(proposalRepository.save(p));
     }
@@ -298,7 +301,7 @@ public class CircleService {
             throw new CircleStateException("Only PROPOSED or UNDER_REVIEW proposals can be rejected");
         }
         p.setStatus(ProposalStatus.REJECTED);
-        p.setValidatedBy(req.validatedBy());
+        p.setValidatedBy(CurrentUser.requireUserId());
         p.setValidatedAt(Instant.now());
         p.setRejectionReason(req.reason());
         return toProposalResponse(proposalRepository.save(p));

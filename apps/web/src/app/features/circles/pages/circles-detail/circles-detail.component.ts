@@ -21,7 +21,7 @@ import {
   CirclesProposalDialogComponent,
   CirclesProposalDialogData
 } from '../circles-proposal-dialog/circles-proposal-dialog.component';
-import { ApproveProposalRequest, CircleProposalResponse, CircleResponse, CircleStatus } from '../../circles.types';
+import { CircleProposalResponse, CircleResponse, CircleStatus } from '../../circles.types';
 import {
   CirclesMemberDialogComponent,
   CirclesMemberDialogData
@@ -38,8 +38,6 @@ import {
   CirclesImpactDialogComponent,
   CirclesImpactDialogData
 } from '../circles-impact-dialog/circles-impact-dialog.component';
-import { AuthService } from '../../../../core/auth/auth.service';
-
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 @Component({
@@ -74,8 +72,7 @@ export class CirclesDetailComponent implements OnInit {
     private readonly router: Router,
     private readonly circles: CirclesService,
     private readonly dialog: MatDialog,
-    private readonly snack: MatSnackBar,
-    private readonly auth: AuthService
+    private readonly snack: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -222,9 +219,9 @@ export class CirclesDetailComponent implements OnInit {
   }
 
   approveProposal(proposalId: string): void {
-    const validatedBy = this.auth.snapshot()?.userId ?? '';
-    const body: ApproveProposalRequest = { validatedBy };
-    this.circles.approveProposal(this.circleId, proposalId, body).subscribe({
+    // L'arbitre est l'utilisateur connecte, lu du jeton cote serveur : plus rien a
+    // fournir ici que le corps vide attendu par le contrat.
+    this.circles.approveProposal(this.circleId, proposalId, {}).subscribe({
       next: () => {
         this.snack.open($localize`:@@circles.proposal.approved:Proposition approuvée.`, $localize`:@@common.ok:OK`, { duration: 2000 });
         this.reload$.next();
@@ -244,8 +241,7 @@ export class CirclesDetailComponent implements OnInit {
       .afterClosed()
       .subscribe(reason => {
         if (!reason) return;
-        const validatedBy = this.auth.snapshot()?.userId ?? '';
-        this.circles.rejectProposal(this.circleId, p.id, { validatedBy, reason }).subscribe({
+        this.circles.rejectProposal(this.circleId, p.id, { reason }).subscribe({
           next: () => {
             this.snack.open($localize`:@@circles.proposal.rejected:Proposition rejetée.`, $localize`:@@common.ok:OK`, { duration: 2000 });
             this.reload$.next();

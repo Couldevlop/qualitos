@@ -41,7 +41,6 @@ class CircleControllerTest {
     static final UUID PROPOSAL = UUID.randomUUID();
     static final UUID TENANT = UUID.randomUUID();
     static final UUID USER = UUID.randomUUID();
-    static final UUID VALIDATOR = UUID.randomUUID();
 
     @BeforeEach
     void setup() {
@@ -253,17 +252,18 @@ class CircleControllerTest {
     @Test @WithMockUser
     void addProposal_returns201() throws Exception {
         when(service.addProposal(eq(CIRCLE), any())).thenReturn(proposalResp(ProposalStatus.PROPOSED));
-        CircleDto.ProposalRequest req = new CircleDto.ProposalRequest("Idée", "d", USER, null);
+        // Plus de proposedBy dans la requete : l'acteur vient du jeton, pas du corps.
+        CircleDto.ProposalRequest req = new CircleDto.ProposalRequest("Idée", "d", null);
         mockMvc.perform(post("/api/v1/circles/{id}/proposals", CIRCLE).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsString(req)))
                 .andExpect(status().isCreated());
     }
 
     @Test @WithMockUser
-    void addProposal_missingProposer_returns400() throws Exception {
+    void addProposal_missingTitle_returns400() throws Exception {
         mockMvc.perform(post("/api/v1/circles/{id}/proposals", CIRCLE).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"title\":\"x\"}"))
+                        .content("{}"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -277,19 +277,14 @@ class CircleControllerTest {
 
     @Test @WithMockUser
     void approve_success() throws Exception {
+        // ApproveProposalRequest n'a plus aucun champ : l'arbitre vient du jeton.
+        // Un corps vide "{}" doit rester accepte.
         when(service.approveProposal(eq(CIRCLE), eq(PROPOSAL), any()))
                 .thenReturn(proposalResp(ProposalStatus.APPROVED));
         mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/approve", CIRCLE, PROPOSAL).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"validatedBy\":\"" + VALIDATOR + "\"}"))
+                        .content("{}"))
                 .andExpect(status().isOk());
-    }
-
-    @Test @WithMockUser
-    void approve_missingValidator_returns400() throws Exception {
-        mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/approve", CIRCLE, PROPOSAL).with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON).content("{}"))
-                .andExpect(status().isBadRequest());
     }
 
     @Test @WithMockUser
@@ -298,8 +293,15 @@ class CircleControllerTest {
                 .thenReturn(proposalResp(ProposalStatus.REJECTED));
         mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/reject", CIRCLE, PROPOSAL).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"validatedBy\":\"" + VALIDATOR + "\",\"reason\":\"r\"}"))
+                        .content("{\"reason\":\"r\"}"))
                 .andExpect(status().isOk());
+    }
+
+    @Test @WithMockUser
+    void reject_missingReason_returns400() throws Exception {
+        mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/reject", CIRCLE, PROPOSAL).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content("{}"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test @WithMockUser

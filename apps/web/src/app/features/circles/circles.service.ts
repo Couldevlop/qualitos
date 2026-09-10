@@ -121,7 +121,9 @@ export class CirclesService {
       const proposal: CircleProposalResponse = {
         id: 'p-' + Math.random().toString(36).slice(2, 9),
         circleId, title: input.title, description: input.description,
-        status: 'PROPOSED', proposedBy: input.proposedBy,
+        // Pas de proposedBy dans l'entrée mock : l'API réelle le lit du jeton, le
+        // mock n'a pas de contexte d'authentification à simuler ici.
+        status: 'PROPOSED',
         meetingId: input.meetingId,
         createdAt: now, updatedAt: now
       };

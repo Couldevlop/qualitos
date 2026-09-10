@@ -46,7 +46,6 @@ describe('CirclesService', () => {
 
   const proposalReq = (over: Partial<AddProposalRequest> = {}): AddProposalRequest => ({
     title: 'Double contrôle des colis fragiles',
-    proposedBy: 'u3',
     ...over
   });
 
@@ -156,11 +155,12 @@ describe('CirclesService', () => {
       expect(run(service.getCircle('c2')).meetings.map(m => m.id)).toEqual([meeting.id]);
     }));
 
-    it('dépose une proposition à l\'état proposé, rattachée à son auteur', fakeAsync(() => {
+    it('dépose une proposition à l\'état proposé', fakeAsync(() => {
+      // Pas d'auteur dans la requête envoyée : le mock, comme le serveur reel,
+      // n'a plus a le recevoir du corps (l'auteur vient du jeton cote serveur).
       const proposal = run(service.addProposal('c2', proposalReq({ meetingId: 'mt1' })));
 
       expect(proposal.status).toBe('PROPOSED');
-      expect(proposal.proposedBy).toBe('u3');
       expect(proposal.meetingId).toBe('mt1');
       expect(run(service.getCircle('c2')).proposals.map(p => p.id)).toEqual([proposal.id]);
     }));
@@ -180,7 +180,7 @@ describe('CirclesService', () => {
 
     it('conduit une proposition de l\'idée à l\'impact mesuré', fakeAsync(() => {
       expect(run(service.reviewProposal('c1', 'p1')).status).toBe('UNDER_REVIEW');
-      expect(run(service.approveProposal('c1', 'p1', { validatedBy: 'u1' })).status).toBe('APPROVED');
+      expect(run(service.approveProposal('c1', 'p1', {})).status).toBe('APPROVED');
       expect(run(service.implementProposal('c1', 'p1')).status).toBe('IMPLEMENTED');
 
       const measured = run(service.recordImpact('c1', 'p1', {
@@ -192,7 +192,7 @@ describe('CirclesService', () => {
 
     it('conserve le motif de rejet', fakeAsync(() => {
       const rejected = run(service.rejectProposal('c1', 'p2', {
-        validatedBy: 'u1', reason: 'Coût disproportionné au regard du gain.'
+        reason: 'Coût disproportionné au regard du gain.'
       }));
 
       expect(rejected.status).toBe('REJECTED');
@@ -200,7 +200,7 @@ describe('CirclesService', () => {
     }));
 
     it('persiste la transition dans le cercle, pas seulement dans la réponse', fakeAsync(() => {
-      run(service.approveProposal('c1', 'p1', { validatedBy: 'u1' }));
+      run(service.approveProposal('c1', 'p1', {}));
 
       const stored = run(service.getCircle('c1')).proposals.find(p => p.id === 'p1');
       expect(stored?.status).toBe('APPROVED');
@@ -332,11 +332,11 @@ describe('CirclesService', () => {
       const transitions: Array<[string, () => void, unknown]> = [
         ['review', () => service.reviewProposal('c-1', 'p-1').subscribe(), {}],
         ['approve',
-          () => service.approveProposal('c-1', 'p-1', { validatedBy: 'u1' }).subscribe(),
-          { validatedBy: 'u1' }],
+          () => service.approveProposal('c-1', 'p-1', {}).subscribe(),
+          {}],
         ['reject',
-          () => service.rejectProposal('c-1', 'p-1', { validatedBy: 'u1', reason: 'r' }).subscribe(),
-          { validatedBy: 'u1', reason: 'r' }],
+          () => service.rejectProposal('c-1', 'p-1', { reason: 'r' }).subscribe(),
+          { reason: 'r' }],
         ['implement', () => service.implementProposal('c-1', 'p-1').subscribe(), {}],
         ['impact',
           () => service.recordImpact('c-1', 'p-1', { impactNote: 'n' }).subscribe(),

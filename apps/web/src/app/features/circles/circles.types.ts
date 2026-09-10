@@ -5,13 +5,14 @@ export type CircleRole = 'FACILITATOR' | 'SECRETARY' | 'MEMBER';
 export type ProposalStatus = 'PROPOSED' | 'UNDER_REVIEW' | 'APPROVED' | 'REJECTED' | 'IMPLEMENTED' | 'MEASURED';
 
 export interface RejectProposalRequest {
-  validatedBy: string;
   reason: string;
 }
 
-export interface ApproveProposalRequest {
-  validatedBy: string;
-}
+/**
+ * Aucun champ : l'arbitre est l'utilisateur connecté, lu du jeton côté serveur
+ * (voir CircleDto.ApproveProposalRequest). Le corps envoyé reste `{}`.
+ */
+export type ApproveProposalRequest = Record<string, never>;
 
 export interface RecordImpactRequest {
   impactNote: string;
@@ -65,10 +66,10 @@ export interface AddMeetingRequest {
   location?: string;
 }
 
+/** Pas de proposedBy : l'auteur est l'utilisateur connecté, lu du jeton côté serveur. */
 export interface AddProposalRequest {
   title: string;
   description?: string;
-  proposedBy: string;
   meetingId?: string;
 }
 
