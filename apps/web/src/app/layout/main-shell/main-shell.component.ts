@@ -110,6 +110,10 @@ export class MainShellComponent implements OnInit, OnDestroy {
         { label: $localize`:@@nav.5s:5S`,             route: '/fives',    icon: 'check_circle', module: 'fives' },
         { label: $localize`:@@nav.dmaic:DMAIC`,       route: '/dmaic',    icon: 'analytics', module: 'dmaic' },
         { label: $localize`:@@nav.cercles:Cercles`,   route: '/circles',  icon: 'groups', module: 'circle' },
+        // Pas d'attribut `module` : la boîte à idées ne dépend pas de
+        // l'activation du module Cercle. C'est tout son objet -- déposer une
+        // idée sans qu'un cercle existe.
+        { label: $localize`:@@nav.idees:Boîte à idées`, route: '/idees', icon: 'lightbulb' },
         { label: $localize`:@@nav.workflow-designer:Designer de workflow`, route: '/workflow-designer', icon: 'schema' }
       ]
     },

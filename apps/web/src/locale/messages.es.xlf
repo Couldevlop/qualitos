@@ -11880,6 +11880,146 @@ historial de 12 meses</target>
         <source>Mise à jour impossible.</source>
         <target state="translated">No se pudo actualizar.</target>
       </trans-unit>
+      <trans-unit id="nav.idees" datatype="html">
+        <source>Boîte à idées</source>
+        <target state="translated">Buzón de ideas</target>
+      </trans-unit>
+      <trans-unit id="ideas.eyebrow" datatype="html">
+        <source>Idées</source>
+        <target state="translated">Ideas</target>
+      </trans-unit>
+      <trans-unit id="ideas.title" datatype="html">
+        <source>Boîte à idées</source>
+        <target state="translated">Buzón de ideas</target>
+      </trans-unit>
+      <trans-unit id="ideas.subtitle" datatype="html">
+        <source>Déposez une idée, soutenez-la d'une voix : l'arbitrage retient, écarte ou marque réalisée.</source>
+        <target state="translated">Presente una idea y apóyela con un voto: la revisión la acepta, la rechaza o la marca como implementada.</target>
+      </trans-unit>
+      <trans-unit id="ideas.submit-button" datatype="html">
+        <source>Déposer une idée</source>
+        <target state="translated">Presentar una idea</target>
+      </trans-unit>
+      <trans-unit id="ideas.col-submitted" datatype="html">
+        <source>Soumise</source>
+        <target state="translated">Presentada</target>
+      </trans-unit>
+      <trans-unit id="ideas.col-review" datatype="html">
+        <source>À l'étude</source>
+        <target state="translated">En estudio</target>
+      </trans-unit>
+      <trans-unit id="ideas.col-approved" datatype="html">
+        <source>En cours</source>
+        <target state="translated">En curso</target>
+      </trans-unit>
+      <trans-unit id="ideas.col-done" datatype="html">
+        <source>Réalisée</source>
+        <target state="translated">Implementada</target>
+      </trans-unit>
+      <trans-unit id="ideas.column-empty" datatype="html">
+        <source>Aucune idée ici pour l’instant.</source>
+        <target state="translated">Todavía no hay ideas aquí.</target>
+      </trans-unit>
+      <trans-unit id="ideas.review-button" datatype="html">
+        <source>À l'étude</source>
+        <target state="translated">En estudio</target>
+      </trans-unit>
+      <trans-unit id="ideas.approve-button" datatype="html">
+        <source>Retenir</source>
+        <target state="translated">Aceptar</target>
+      </trans-unit>
+      <trans-unit id="ideas.reject-button" datatype="html">
+        <source>Écarter</source>
+        <target state="translated">Rechazar</target>
+      </trans-unit>
+      <trans-unit id="ideas.implement-button" datatype="html">
+        <source>Réalisée</source>
+        <target state="translated">Implementada</target>
+      </trans-unit>
+      <trans-unit id="ideas.measure-button" datatype="html">
+        <source>Consigner l'impact</source>
+        <target state="translated">Registrar el impacto</target>
+      </trans-unit>
+      <trans-unit id="ideas.show-rejected" datatype="html">
+        <source>Voir les idées écartées (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">Ver las ideas rechazadas (<x id="INTERPOLATION"/>)</target>
+      </trans-unit>
+      <trans-unit id="ideas.hide-rejected" datatype="html">
+        <source>Masquer les idées écartées</source>
+        <target state="translated">Ocultar las ideas rechazadas</target>
+      </trans-unit>
+      <trans-unit id="ideas.vote-aria" datatype="html">
+        <source>Soutenir <x id="INTERPOLATION"/></source>
+        <target state="translated">Apoyar <x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="ideas.unvote-aria" datatype="html">
+        <source>Retirer ma voix de <x id="INTERPOLATION"/></source>
+        <target state="translated">Retirar mi voto de <x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="ideas.reject-prompt" datatype="html">
+        <source>Pourquoi cette idée est-elle écartée ?</source>
+        <target state="translated">¿Por qué se rechaza esta idea?</target>
+      </trans-unit>
+      <trans-unit id="ideas.reject-submit" datatype="html">
+        <source>Écarter</source>
+        <target state="translated">Rechazar</target>
+      </trans-unit>
+      <trans-unit id="ideas.impact-prompt" datatype="html">
+        <source>Qu'a produit cette idée, une fois en place ?</source>
+        <target state="translated">¿Qué produjo esta idea, una vez implementada?</target>
+      </trans-unit>
+      <trans-unit id="ideas.impact-submit" datatype="html">
+        <source>Consigner</source>
+        <target state="translated">Registrar</target>
+      </trans-unit>
+      <trans-unit id="ideas.failed" datatype="html">
+        <source>Opération impossible sur cette idée.</source>
+        <target state="translated">No se pudo realizar esta operación sobre la idea.</target>
+      </trans-unit>
+      <trans-unit id="ideas.dialog.title" datatype="html">
+        <source>Déposer une idée</source>
+        <target state="translated">Presentar una idea</target>
+      </trans-unit>
+      <trans-unit id="ideas.dialog.submit" datatype="html">
+        <source>Déposer</source>
+        <target state="translated">Presentar</target>
+      </trans-unit>
+      <trans-unit id="ideas.dialog.field-title" datatype="html">
+        <source>Titre de l'idée</source>
+        <target state="translated">Título de la idea</target>
+      </trans-unit>
+      <trans-unit id="ideas.dialog.title-placeholder" datatype="html">
+        <source>Ex. : Un bac de tri près du poste 3</source>
+        <target state="translated">Ej.: Un contenedor de clasificación cerca del puesto 3</target>
+      </trans-unit>
+      <trans-unit id="ideas.dialog.title-required" datatype="html">
+        <source>Le titre est requis : c'est ce que chaque colonne affiche.</source>
+        <target state="translated">El título es obligatorio: es lo que muestra cada columna.</target>
+      </trans-unit>
+      <trans-unit id="ideas.dialog.field-description" datatype="html">
+        <source>Description (facultative)</source>
+        <target state="translated">Descripción (opcional)</target>
+      </trans-unit>
+      <trans-unit id="ideas.dialog.description-hint" datatype="html">
+        <source>Ce qui aide l'arbitrage à comprendre l'idée, et son intérêt.</source>
+        <target state="translated">Lo que ayuda a la revisión a entender la idea y su valor.</target>
+      </trans-unit>
+      <trans-unit id="ideas.dialog.blocked-title" datatype="html">
+        <source>Donnez un titre : c'est ce que chaque colonne affiche.</source>
+        <target state="translated">Indique un título: es lo que muestra cada columna.</target>
+      </trans-unit>
+      <trans-unit id="ideas.reject-dialog.field-text" datatype="html">
+        <source>Votre réponse</source>
+        <target state="translated">Su respuesta</target>
+      </trans-unit>
+      <trans-unit id="ideas.reject-dialog.required" datatype="html">
+        <source>Ce champ est requis pour valider.</source>
+        <target state="translated">Este campo es obligatorio para confirmar.</target>
+      </trans-unit>
+      <trans-unit id="ideas.reject-dialog.blocked" datatype="html">
+        <source>Ce champ est requis pour valider.</source>
+        <target state="translated">Este campo es obligatorio para confirmar.</target>
+      </trans-unit>
       <trans-unit id="industry-packs.list.title" datatype="html">
         <source>Packs sectoriels</source>
         <target state="translated">Packs sectoriales</target>

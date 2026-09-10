@@ -11880,6 +11880,146 @@ historique 12 mois</source>
         <source>Mise à jour impossible.</source>
         <target state="translated">无法更新。</target>
       </trans-unit>
+      <trans-unit id="nav.idees" datatype="html">
+        <source>Boîte à idées</source>
+        <target state="translated">创意箱</target>
+      </trans-unit>
+      <trans-unit id="ideas.eyebrow" datatype="html">
+        <source>Idées</source>
+        <target state="translated">创意</target>
+      </trans-unit>
+      <trans-unit id="ideas.title" datatype="html">
+        <source>Boîte à idées</source>
+        <target state="translated">创意箱</target>
+      </trans-unit>
+      <trans-unit id="ideas.subtitle" datatype="html">
+        <source>Déposez une idée, soutenez-la d'une voix : l'arbitrage retient, écarte ou marque réalisée.</source>
+        <target state="translated">提交一个创意并为其投票支持：评审会将其采纳、驳回或标记为已实施。</target>
+      </trans-unit>
+      <trans-unit id="ideas.submit-button" datatype="html">
+        <source>Déposer une idée</source>
+        <target state="translated">提交创意</target>
+      </trans-unit>
+      <trans-unit id="ideas.col-submitted" datatype="html">
+        <source>Soumise</source>
+        <target state="translated">已提交</target>
+      </trans-unit>
+      <trans-unit id="ideas.col-review" datatype="html">
+        <source>À l'étude</source>
+        <target state="translated">审议中</target>
+      </trans-unit>
+      <trans-unit id="ideas.col-approved" datatype="html">
+        <source>En cours</source>
+        <target state="translated">进行中</target>
+      </trans-unit>
+      <trans-unit id="ideas.col-done" datatype="html">
+        <source>Réalisée</source>
+        <target state="translated">已实施</target>
+      </trans-unit>
+      <trans-unit id="ideas.column-empty" datatype="html">
+        <source>Aucune idée ici pour l’instant.</source>
+        <target state="translated">这里暂时还没有创意。</target>
+      </trans-unit>
+      <trans-unit id="ideas.review-button" datatype="html">
+        <source>À l'étude</source>
+        <target state="translated">审议中</target>
+      </trans-unit>
+      <trans-unit id="ideas.approve-button" datatype="html">
+        <source>Retenir</source>
+        <target state="translated">采纳</target>
+      </trans-unit>
+      <trans-unit id="ideas.reject-button" datatype="html">
+        <source>Écarter</source>
+        <target state="translated">驳回</target>
+      </trans-unit>
+      <trans-unit id="ideas.implement-button" datatype="html">
+        <source>Réalisée</source>
+        <target state="translated">已实施</target>
+      </trans-unit>
+      <trans-unit id="ideas.measure-button" datatype="html">
+        <source>Consigner l'impact</source>
+        <target state="translated">记录成效</target>
+      </trans-unit>
+      <trans-unit id="ideas.show-rejected" datatype="html">
+        <source>Voir les idées écartées (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">查看被驳回的创意（<x id="INTERPOLATION"/>）</target>
+      </trans-unit>
+      <trans-unit id="ideas.hide-rejected" datatype="html">
+        <source>Masquer les idées écartées</source>
+        <target state="translated">隐藏被驳回的创意</target>
+      </trans-unit>
+      <trans-unit id="ideas.vote-aria" datatype="html">
+        <source>Soutenir <x id="INTERPOLATION"/></source>
+        <target state="translated">支持 <x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="ideas.unvote-aria" datatype="html">
+        <source>Retirer ma voix de <x id="INTERPOLATION"/></source>
+        <target state="translated">撤回我对 <x id="INTERPOLATION"/> 的支持</target>
+      </trans-unit>
+      <trans-unit id="ideas.reject-prompt" datatype="html">
+        <source>Pourquoi cette idée est-elle écartée ?</source>
+        <target state="translated">为什么驳回这个创意？</target>
+      </trans-unit>
+      <trans-unit id="ideas.reject-submit" datatype="html">
+        <source>Écarter</source>
+        <target state="translated">驳回</target>
+      </trans-unit>
+      <trans-unit id="ideas.impact-prompt" datatype="html">
+        <source>Qu'a produit cette idée, une fois en place ?</source>
+        <target state="translated">这个创意实施后带来了什么成效？</target>
+      </trans-unit>
+      <trans-unit id="ideas.impact-submit" datatype="html">
+        <source>Consigner</source>
+        <target state="translated">记录</target>
+      </trans-unit>
+      <trans-unit id="ideas.failed" datatype="html">
+        <source>Opération impossible sur cette idée.</source>
+        <target state="translated">无法对该创意执行此操作。</target>
+      </trans-unit>
+      <trans-unit id="ideas.dialog.title" datatype="html">
+        <source>Déposer une idée</source>
+        <target state="translated">提交创意</target>
+      </trans-unit>
+      <trans-unit id="ideas.dialog.submit" datatype="html">
+        <source>Déposer</source>
+        <target state="translated">提交</target>
+      </trans-unit>
+      <trans-unit id="ideas.dialog.field-title" datatype="html">
+        <source>Titre de l'idée</source>
+        <target state="translated">创意标题</target>
+      </trans-unit>
+      <trans-unit id="ideas.dialog.title-placeholder" datatype="html">
+        <source>Ex. : Un bac de tri près du poste 3</source>
+        <target state="translated">例如：3号工位附近的分类箱</target>
+      </trans-unit>
+      <trans-unit id="ideas.dialog.title-required" datatype="html">
+        <source>Le titre est requis : c'est ce que chaque colonne affiche.</source>
+        <target state="translated">标题为必填项：这是每一列所显示的内容。</target>
+      </trans-unit>
+      <trans-unit id="ideas.dialog.field-description" datatype="html">
+        <source>Description (facultative)</source>
+        <target state="translated">描述（可选）</target>
+      </trans-unit>
+      <trans-unit id="ideas.dialog.description-hint" datatype="html">
+        <source>Ce qui aide l'arbitrage à comprendre l'idée, et son intérêt.</source>
+        <target state="translated">帮助评审理解创意及其价值的信息。</target>
+      </trans-unit>
+      <trans-unit id="ideas.dialog.blocked-title" datatype="html">
+        <source>Donnez un titre : c'est ce que chaque colonne affiche.</source>
+        <target state="translated">请填写标题：这是每一列所显示的内容。</target>
+      </trans-unit>
+      <trans-unit id="ideas.reject-dialog.field-text" datatype="html">
+        <source>Votre réponse</source>
+        <target state="translated">您的回答</target>
+      </trans-unit>
+      <trans-unit id="ideas.reject-dialog.required" datatype="html">
+        <source>Ce champ est requis pour valider.</source>
+        <target state="translated">此字段为提交所必填。</target>
+      </trans-unit>
+      <trans-unit id="ideas.reject-dialog.blocked" datatype="html">
+        <source>Ce champ est requis pour valider.</source>
+        <target state="translated">此字段为提交所必填。</target>
+      </trans-unit>
       <trans-unit id="industry-packs.list.title" datatype="html">
         <source>Packs sectoriels</source>
         <target state="translated">行业包</target>
