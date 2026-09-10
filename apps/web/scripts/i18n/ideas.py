@@ -68,13 +68,13 @@ TRANSLATIONS = {
         'إخفاء الأفكار المرفوضة', '却下されたアイデアを隠す', '隐藏被驳回的创意'),
 
     'ideas.vote-aria': (
-        'Soutenir {$TITLE} ({$VOTES} voix)', 'Back {$TITLE} ({$VOTES} votes)',
-        'Apoyar {$TITLE} ({$VOTES} votos)', 'دعم {$TITLE} ({$VOTES} صوتًا)',
-        '{$TITLE} を支持（{$VOTES} 票）', '支持 {$TITLE}（{$VOTES} 票）'),
+        'Soutenir {$title} ({$votes} voix)', 'Back {$title} ({$votes} votes)',
+        'Apoyar {$title} ({$votes} votos)', 'دعم {$title} ({$votes} صوتًا)',
+        '{$title} を支持（{$votes} 票）', '支持 {$title}（{$votes} 票）'),
     'ideas.unvote-aria': (
-        'Retirer ma voix de {$TITLE} ({$VOTES} voix)', 'Withdraw my vote from {$TITLE} ({$VOTES} votes)',
-        'Retirar mi voto de {$TITLE} ({$VOTES} votos)', 'سحب صوتي من {$TITLE} ({$VOTES} صوتًا)',
-        '{$TITLE} への支持を取り消す（{$VOTES} 票）', '撤回我对 {$TITLE} 的支持（{$VOTES} 票）'),
+        'Retirer ma voix de {$title} ({$votes} voix)', 'Withdraw my vote from {$title} ({$votes} votes)',
+        'Retirar mi voto de {$title} ({$votes} votos)', 'سحب صوتي من {$title} ({$votes} صوتًا)',
+        '{$title} への支持を取り消す（{$votes} 票）', '撤回我对 {$title} 的支持（{$votes} 票）'),
 
     'ideas.reject-prompt': (
         'Pourquoi cette idée est-elle écartée ?', 'Why is this idea being rejected?',
