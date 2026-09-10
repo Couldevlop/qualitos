@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,6 +15,16 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/circles")
 public class CircleController {
+
+    /**
+     * Qui arbitre une proposition. Même liste que {@code IdeaController} : les
+     * deux façades écrivent la même ligne (une proposition de cercle EST une
+     * idée, cf. {@code IdeaMapper}), et laisser celle-ci ouverte permettrait à
+     * tout authentifié de contourner l'arbitrage de l'autre en appelant
+     * directement {@code /api/v1/circles/{id}/proposals/{pid}/...}.
+     */
+    private static final String ROLES_ARBITRAGE =
+            "hasAnyRole('QUALITY_MANAGER','DIRECTOR_QUALITY','ADMIN_TENANT','SUPER_ADMIN')";
 
     private final CircleService service;
 
@@ -134,28 +145,33 @@ public class CircleController {
     }
 
     @PatchMapping("/{id}/proposals/{pid}/review")
+    @PreAuthorize(ROLES_ARBITRAGE)
     public CircleDto.ProposalResponse reviewProposal(@PathVariable UUID id, @PathVariable UUID pid) {
         return service.reviewProposal(id, pid);
     }
 
     @PatchMapping("/{id}/proposals/{pid}/approve")
+    @PreAuthorize(ROLES_ARBITRAGE)
     public CircleDto.ProposalResponse approveProposal(@PathVariable UUID id, @PathVariable UUID pid,
                                                      @Valid @RequestBody CircleDto.ApproveProposalRequest req) {
         return service.approveProposal(id, pid, req);
     }
 
     @PatchMapping("/{id}/proposals/{pid}/reject")
+    @PreAuthorize(ROLES_ARBITRAGE)
     public CircleDto.ProposalResponse rejectProposal(@PathVariable UUID id, @PathVariable UUID pid,
                                                     @Valid @RequestBody CircleDto.RejectProposalRequest req) {
         return service.rejectProposal(id, pid, req);
     }
 
     @PatchMapping("/{id}/proposals/{pid}/implement")
+    @PreAuthorize(ROLES_ARBITRAGE)
     public CircleDto.ProposalResponse implementProposal(@PathVariable UUID id, @PathVariable UUID pid) {
         return service.markImplemented(id, pid);
     }
 
     @PatchMapping("/{id}/proposals/{pid}/impact")
+    @PreAuthorize(ROLES_ARBITRAGE)
     public CircleDto.ProposalResponse recordImpact(@PathVariable UUID id, @PathVariable UUID pid,
                                                   @Valid @RequestBody CircleDto.ImpactRequest req) {
         return service.recordImpact(id, pid, req);

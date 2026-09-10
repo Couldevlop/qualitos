@@ -2,6 +2,7 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
+import { AuthService } from '../../core/auth/auth.service';
 import { environment } from '../../../environments/environment';
 import { CirclesService } from './circles.service';
 
@@ -24,7 +25,10 @@ describe('CirclesService — transcription audio', () => {
     prevMock = environment.useMockApi;
     environment.useMockApi = false;
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+      providers: [
+        provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting(),
+        { provide: AuthService, useValue: { snapshot: () => null } }
+      ]
     });
     service = TestBed.inject(CirclesService);
     http = TestBed.inject(HttpTestingController);

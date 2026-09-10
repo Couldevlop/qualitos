@@ -11949,12 +11949,12 @@ historique 12 mois</source>
         <target state="translated">إخفاء الأفكار المرفوضة</target>
       </trans-unit>
       <trans-unit id="ideas.vote-aria" datatype="html">
-        <source>Soutenir <x id="INTERPOLATION"/></source>
-        <target state="translated">دعم <x id="INTERPOLATION"/></target>
+        <source>Soutenir <x id="TITLE"/> (<x id="VOTES"/> voix)</source>
+        <target state="translated">دعم <x id="TITLE"/> (<x id="VOTES"/> صوتًا)</target>
       </trans-unit>
       <trans-unit id="ideas.unvote-aria" datatype="html">
-        <source>Retirer ma voix de <x id="INTERPOLATION"/></source>
-        <target state="translated">سحب صوتي من <x id="INTERPOLATION"/></target>
+        <source>Retirer ma voix de <x id="TITLE"/> (<x id="VOTES"/> voix)</source>
+        <target state="translated">سحب صوتي من <x id="TITLE"/> (<x id="VOTES"/> صوتًا)</target>
       </trans-unit>
       <trans-unit id="ideas.reject-prompt" datatype="html">
         <source>Pourquoi cette idée est-elle écartée ?</source>

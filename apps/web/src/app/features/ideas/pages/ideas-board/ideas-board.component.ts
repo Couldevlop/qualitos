@@ -9,8 +9,19 @@ import { Idea, IdeaColumn, IdeaStatus } from '../../ideas.types';
 import { IdeaDialogComponent } from '../idea-dialog/idea-dialog.component';
 import { IdeaRejectDialogComponent } from '../idea-reject-dialog/idea-reject-dialog.component';
 
-/** Qui arbitre. Miroir exact du contrôle posé côté serveur. */
-const ROLES_ARBITRAGE = ['QUALITY_MANAGER', 'DIRECTOR_QUALITY', 'ADMIN_TENANT', 'SUPER_ADMIN'];
+/**
+ * Qui arbitre. Le serveur réserve l'arbitrage à ces mêmes rôles (voir
+ * `IdeaController.ROLES_ARBITRAGE`), mais il ALIASE aussi `QUALITY_DIRECTOR`
+ * et `DIRECTOR_QUALITY` l'un vers l'autre (`SecurityConfig`) — deux formes
+ * pour un même rôle, parce que le realm Keycloak nomme le directeur qualité
+ * `quality_director` alors que le code qualité écrit partout
+ * `DIRECTOR_QUALITY`. Le front n'a pas cet alias : il doit donc lister les
+ * deux formes, comme `fmea-reference-dialog.component.ts`. Sans les deux, un
+ * vrai directeur qualité (jeton `QUALITY_DIRECTOR`) ne voit aucun bouton
+ * d'arbitrage — alors que le serveur accepterait ses appels.
+ */
+const ROLES_ARBITRAGE =
+  ['QUALITY_MANAGER', 'DIRECTOR_QUALITY', 'QUALITY_DIRECTOR', 'ADMIN_TENANT', 'SUPER_ADMIN'];
 
 /** Les colonnes affichées, et les statuts que chacune regroupe. */
 const COLONNES: { titre: string; statuts: IdeaStatus[] }[] = [
@@ -178,10 +189,15 @@ export class IdeasBoardComponent implements OnInit {
     });
   }
 
+  /**
+   * Le score est l'information principale de la carte (§WCAG 2.2 AA), mais
+   * son compteur visuel est `aria-hidden` : ce libellé est donc le seul
+   * endroit où un lecteur d'écran l'entend, porté par le bouton de vote.
+   */
   ariaVote(idea: Idea): string {
     return idea.votedByMe
-      ? $localize`:@@ideas.unvote-aria:Retirer ma voix de ${idea.title}`
-      : $localize`:@@ideas.vote-aria:Soutenir ${idea.title}`;
+      ? $localize`:@@ideas.unvote-aria:Retirer ma voix de ${idea.title}:title: (${idea.votes}:votes: voix)`
+      : $localize`:@@ideas.vote-aria:Soutenir ${idea.title}:title: (${idea.votes}:votes: voix)`;
   }
 
   // ---------- interne ----------

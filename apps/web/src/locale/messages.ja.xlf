@@ -11948,12 +11948,12 @@ historique 12 mois</source>
         <target state="translated">却下されたアイデアを隠す</target>
       </trans-unit>
       <trans-unit id="ideas.vote-aria" datatype="html">
-        <source>Soutenir <x id="INTERPOLATION"/></source>
-        <target state="translated"><x id="INTERPOLATION"/> を支持</target>
+        <source>Soutenir <x id="TITLE"/> (<x id="VOTES"/> voix)</source>
+        <target state="translated"><x id="TITLE"/> を支持（<x id="VOTES"/> 票）</target>
       </trans-unit>
       <trans-unit id="ideas.unvote-aria" datatype="html">
-        <source>Retirer ma voix de <x id="INTERPOLATION"/></source>
-        <target state="translated"><x id="INTERPOLATION"/> への支持を取り消す</target>
+        <source>Retirer ma voix de <x id="TITLE"/> (<x id="VOTES"/> voix)</source>
+        <target state="translated"><x id="TITLE"/> への支持を取り消す（<x id="VOTES"/> 票）</target>
       </trans-unit>
       <trans-unit id="ideas.reject-prompt" datatype="html">
         <source>Pourquoi cette idée est-elle écartée ?</source>

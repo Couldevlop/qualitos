@@ -267,7 +267,7 @@ class CircleControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void review_success() throws Exception {
         when(service.reviewProposal(CIRCLE, PROPOSAL)).thenReturn(proposalResp(ProposalStatus.UNDER_REVIEW));
         mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/review", CIRCLE, PROPOSAL).with(csrf()))
@@ -275,7 +275,7 @@ class CircleControllerTest {
                 .andExpect(jsonPath("$.status").value("UNDER_REVIEW"));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void approve_success() throws Exception {
         // ApproveProposalRequest n'a plus aucun champ : l'arbitre vient du jeton.
         // Un corps vide "{}" doit rester accepte.
@@ -287,7 +287,21 @@ class CircleControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    /**
+     * C2 — l'arbitrage réservé côté {@code IdeaController} ne doit pas être
+     * ouvert ici : les deux façades écrivent la même ligne (voir
+     * {@code ROLES_ARBITRAGE}).
+     */
+    @Test @WithMockUser(roles = "USER")
+    void approve_deniedForUser_returns403() throws Exception {
+        mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/approve", CIRCLE, PROPOSAL).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isForbidden());
+        verify(service, never()).approveProposal(any(), any(), any());
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void reject_success() throws Exception {
         when(service.rejectProposal(eq(CIRCLE), eq(PROPOSAL), any()))
                 .thenReturn(proposalResp(ProposalStatus.REJECTED));
@@ -297,21 +311,21 @@ class CircleControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void reject_missingReason_returns400() throws Exception {
         mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/reject", CIRCLE, PROPOSAL).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void implement_success() throws Exception {
         when(service.markImplemented(CIRCLE, PROPOSAL)).thenReturn(proposalResp(ProposalStatus.IMPLEMENTED));
         mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/implement", CIRCLE, PROPOSAL).with(csrf()))
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void impact_success() throws Exception {
         when(service.recordImpact(eq(CIRCLE), eq(PROPOSAL), any()))
                 .thenReturn(proposalResp(ProposalStatus.MEASURED));
@@ -321,7 +335,7 @@ class CircleControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void impact_missing_returns400() throws Exception {
         mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/impact", CIRCLE, PROPOSAL).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON).content("{}"))

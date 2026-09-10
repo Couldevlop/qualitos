@@ -3,6 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { Observable } from 'rxjs';
 
+import { AuthService } from '../../core/auth/auth.service';
 import { environment } from '../../../environments/environment';
 import { CirclesService } from './circles.service';
 import {
@@ -30,6 +31,12 @@ import {
 describe('CirclesService', () => {
 
   const BASE = `${environment.apiBaseUrl}/api/v1/circles`;
+  const CURRENT_USER_ID = 'u-demo-1';
+  const authStub = {
+    snapshot: () => ({
+      userId: CURRENT_USER_ID, tenantId: 'demo-tenant', displayName: 'Démo', roles: []
+    })
+  };
 
   const circleReq = (over: Partial<CreateCircleRequest> = {}): CreateCircleRequest => ({
     name: 'Cercle logistique expédition',
@@ -69,7 +76,10 @@ describe('CirclesService', () => {
       prevMock = environment.useMockApi;
       environment.useMockApi = true;
       TestBed.configureTestingModule({
-        providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+        providers: [
+          provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting(),
+          { provide: AuthService, useValue: authStub }
+        ]
       });
       service = TestBed.inject(CirclesService);
       http = TestBed.inject(HttpTestingController);
@@ -165,6 +175,14 @@ describe('CirclesService', () => {
       expect(run(service.getCircle('c2')).proposals.map(p => p.id)).toEqual([proposal.id]);
     }));
 
+    it('renseigne l\'auteur de la proposition depuis l\'utilisateur courant', fakeAsync(() => {
+      // C6 : le mode démo n'a pas de jeton à lire, mais l'écran affiche
+      // quand même une colonne « Proposé par » — sans quoi elle rend « — ».
+      const proposal = run(service.addProposal('c2', proposalReq()));
+
+      expect(proposal.proposedBy).toBe(CURRENT_USER_ID);
+    }));
+
     it('rend l\'objet créé même quand le cercle visé n\'existe pas', fakeAsync(() => {
       // L'écran doit pouvoir afficher ce qu'il vient de créer sans dépendre de
       // la présence du cercle dans le magasin de démonstration.
@@ -257,7 +275,10 @@ describe('CirclesService', () => {
       prevMock = environment.useMockApi;
       environment.useMockApi = false;
       TestBed.configureTestingModule({
-        providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
+        providers: [
+          provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting(),
+          { provide: AuthService, useValue: authStub }
+        ]
       });
       service = TestBed.inject(CirclesService);
       http = TestBed.inject(HttpTestingController);
