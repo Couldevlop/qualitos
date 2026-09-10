@@ -1,0 +1,20 @@
+<qos-form-dialog
+  [title]="data.prompt"
+  [subtitle]="data.title"
+  [formGroup]="form"
+  [submitDisabled]="form.invalid"
+  [blockedReason]="blockedReason"
+  [submitLabel]="data.submitLabel"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@ideas.reject-dialog.field-text">Votre réponse</mat-label>
+    <textarea matInput formControlName="text" rows="4" maxlength="2000" required></textarea>
+    <mat-error *ngIf="form.controls.text.hasError('required')"
+               i18n="@@ideas.reject-dialog.required">
+      Ce champ est requis pour valider.
+    </mat-error>
+  </mat-form-field>
+
+</qos-form-dialog>

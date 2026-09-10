@@ -1,0 +1,29 @@
+<qos-form-dialog
+  title="Déposer une idée" i18n-title="@@ideas.dialog.title"
+  [formGroup]="form"
+  [submitDisabled]="form.invalid"
+  [blockedReason]="blockedReason"
+  submitLabel="Déposer" i18n-submitLabel="@@ideas.dialog.submit"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@ideas.dialog.field-title">Titre de l'idée</mat-label>
+    <input matInput formControlName="title" maxlength="255" required
+           i18n-placeholder="@@ideas.dialog.title-placeholder"
+           placeholder="Ex. : Un bac de tri près du poste 3">
+    <mat-error *ngIf="form.controls.title.hasError('required')"
+               i18n="@@ideas.dialog.title-required">
+      Le titre est requis : c'est ce que chaque colonne affiche.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@ideas.dialog.field-description">Description (facultative)</mat-label>
+    <textarea matInput formControlName="description" rows="3" maxlength="2000"></textarea>
+    <mat-hint i18n="@@ideas.dialog.description-hint">
+      Ce qui aide l'arbitrage à comprendre l'idée, et son intérêt.
+    </mat-hint>
+  </mat-form-field>
+
+</qos-form-dialog>
