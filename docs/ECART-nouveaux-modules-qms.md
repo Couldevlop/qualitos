@@ -6,16 +6,16 @@
 
 ## En une phrase
 
-**Un des six est livré** — l'efficacité CAPA, le 21/08 (ADR 0060). Les cinq
-autres restent à faire, mais le lot Produit / PFMEA / Control Plan leur pose des
-briques réutilisables.
+**Deux des six sont livrés** — l'efficacité CAPA, le 21/08 (ADR 0060), et la
+boîte à idées, le 10/09 (ADR 0067). Les quatre autres restent à faire, mais le
+lot Produit / PFMEA / Control Plan leur pose des briques réutilisables.
 
 ## L'état, module par module
 
 | Module maquetté | Couverture | Ce qui existe et sert |
 | --- | --- | --- |
 | **Efficacité CAPA** | **livré** | Mesure sur deux fenêtres de même durée, API `GET /api/v1/capa/effectiveness`, écran `/capa/efficacite` (ADR 0060) |
-| **Boîte à idées** | ~60 % en données | `circle.CircleProposal`, dont le cycle `PROPOSED → UNDER_REVIEW → APPROVED → REJECTED → IMPLEMENTED → MEASURED` recouvre les colonnes de la maquette. Manquent le **vote** et une saisie hors cercle |
+| **Boîte à idées** | **livrée** | `circle.CircleProposal` porte désormais son `tenant_id` propre (V125) et se dépose hors cercle ; le vote (`proposal_votes`, décompte calculé, fenêtre fermée à la décision) et la façade `/api/v1/ideas` en Clean Architecture complètent le cycle `PROPOSED → UNDER_REVIEW → APPROVED → REJECTED → IMPLEMENTED → MEASURED`, écran `/idees` (ADR 0067) |
 | **Suivi ESG** | ~25 %, épars | `Supplier.score` et `SupplierAuditRecord.score` pour la note fournisseur ; `ehs` porte un type d'incident `ENVIRONMENTAL`. Rien sur le CO₂, les déchets valorisés, ni la pondération d'un score ESG |
 | **Coût de la qualité** | ~10 % | Le catalogue KPI accepte n'importe quelle définition (code, unité, cible, seuils) : le COQ y tiendrait sans schéma neuf. Mais rien ne le décompose en prévention / évaluation / défaillance interne / externe, et le terme n'apparaît que dans un commentaire du pack automobile |
 | **Continuité d'activité** | ~5 % | ISO 22301 figure au catalogue du Standards Hub, et `nis2measures` traite de continuité côté cyber. Aucun registre d'incident de continuité, aucun plan |
@@ -52,7 +52,7 @@ la même chose — « l'agrégation est dans la donnée, pas dans l'UI »
 | Rang | Module | Pourquoi ici |
 | --- | --- | --- |
 | ~~1~~ | ~~Efficacité CAPA~~ | **Livré le 2026-08-21** (ADR 0060) |
-| 1 | Boîte à idées | Enrichit un modèle en place plutôt que d'en créer un |
+| ~~1~~ | ~~Boîte à idées~~ | **Livré le 2026-09-10** (ADR 0067) |
 | 2 | Coût de la qualité | Modèle simple, mais exige une convention comptable partagée avec le métier |
 | 3 | Suivi ESG | Dépend de sources externes (mesures, facteurs d'émission) qu'il faut d'abord décider |
 | 4 | Continuité d'activité | Modèle métier neuf, adossé à ISO 22301 |
