@@ -108,12 +108,6 @@ public class Idea {
         this.updatedAt = now;
     }
 
-    public void rename(String title, String description, Instant now) {
-        this.title = requireText(title, "An idea needs a title");
-        this.description = blankToNull(description);
-        this.updatedAt = now;
-    }
-
     public void assignId(UUID assigned) { this.id = assigned; }
 
     public boolean voteOpen() { return status.voteOpen(); }
