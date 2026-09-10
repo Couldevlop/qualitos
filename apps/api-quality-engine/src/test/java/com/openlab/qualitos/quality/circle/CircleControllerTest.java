@@ -301,6 +301,45 @@ class CircleControllerTest {
         verify(service, never()).approveProposal(any(), any(), any());
     }
 
+    /**
+     * Les quatre autres transitions, pour la même raison.
+     *
+     * <p>Ne verrouiller que {@code approve} laisserait une faute de frappe sur
+     * l'une des quatre autres annotations passer inaperçue — et il suffit d'une
+     * pour rouvrir le contournement que C2 vient de fermer.
+     */
+    @Test @WithMockUser(roles = "USER")
+    void review_deniedForUser_returns403() throws Exception {
+        mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/review", CIRCLE, PROPOSAL).with(csrf()))
+                .andExpect(status().isForbidden());
+        verify(service, never()).reviewProposal(any(), any());
+    }
+
+    @Test @WithMockUser(roles = "USER")
+    void reject_deniedForUser_returns403() throws Exception {
+        mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/reject", CIRCLE, PROPOSAL).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"reason\":\"r\"}"))
+                .andExpect(status().isForbidden());
+        verify(service, never()).rejectProposal(any(), any(), any());
+    }
+
+    @Test @WithMockUser(roles = "USER")
+    void implement_deniedForUser_returns403() throws Exception {
+        mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/implement", CIRCLE, PROPOSAL).with(csrf()))
+                .andExpect(status().isForbidden());
+        verify(service, never()).markImplemented(any(), any());
+    }
+
+    @Test @WithMockUser(roles = "USER")
+    void impact_deniedForUser_returns403() throws Exception {
+        mockMvc.perform(patch("/api/v1/circles/{id}/proposals/{pid}/impact", CIRCLE, PROPOSAL).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"impactNote\":\"i\"}"))
+                .andExpect(status().isForbidden());
+        verify(service, never()).recordImpact(any(), any(), any());
+    }
+
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void reject_success() throws Exception {
         when(service.rejectProposal(eq(CIRCLE), eq(PROPOSAL), any()))

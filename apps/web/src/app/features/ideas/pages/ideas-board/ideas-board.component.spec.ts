@@ -80,7 +80,13 @@ describe('IdeasBoardComponent', () => {
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-        { provide: AuthService, useValue: { hasAnyRole: () => roles.length > 0 } }
+        // La doublure compare VRAIMENT les noms de rôles : rendre `roles.length > 0`
+        // ferait passer l'écran pour habilité quelle que soit la liste attendue, et
+        // c'est exactement ce qui a laissé passer l'oubli de l'alias `QUALITY_DIRECTOR`.
+        {
+          provide: AuthService,
+          useValue: { hasAnyRole: (attendus: string[]) => attendus.some(r => roles.includes(r)) }
+        }
       ]
     }).compileComponents();
 
@@ -177,6 +183,18 @@ describe('IdeasBoardComponent', () => {
 
     expect(component.editable).toBeFalse();
     expect(hote().querySelector('.carte__arbitrage')).toBeNull();
+  });
+
+  it('montre l’arbitrage au directeur qualité, dont le jeton porte l’autre forme du rôle', async () => {
+    // Le serveur aliase `QUALITY_DIRECTOR` et `DIRECTOR_QUALITY` ; le realm nomme le
+    // rôle `quality_director`, donc un vrai directeur qualité porte la PREMIÈRE forme.
+    // L'écran, lui, n'aliase rien : s'il ne connaît qu'une des deux, il cache des
+    // commandes que le serveur accepterait — un refus muet, invisible côté serveur.
+    await setup(['QUALITY_DIRECTOR']);
+    servirTableau();
+
+    expect(component.editable).toBeTrue();
+    expect(hote().querySelector('.carte__arbitrage')).not.toBeNull();
   });
 
   it('recharge le tableau après un dépôt, car les colonnes bougent', async () => {
