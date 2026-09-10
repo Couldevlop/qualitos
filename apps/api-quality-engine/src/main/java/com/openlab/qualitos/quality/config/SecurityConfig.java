@@ -236,6 +236,14 @@ public class SecurityConfig {
                 // est appliquée dans DashboardAnnotationService).
                 .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/dashboards/annotations/**")
                     .authenticated()
+                // Boîte à idées : déposer et voter sont ouverts à tout authentifié
+                // (c'en est le principe), l'arbitrage est porté par @PreAuthorize sur
+                // le contrôleur. On nomme la surface ici pour qu'elle ne tombe pas
+                // dans la règle DELETE générique : retirer SA voix n'est pas une
+                // suppression de ressource qualité, et la réserver au manager
+                // qualité viderait le vote de son sens.
+                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/ideas/*/vote")
+                    .authenticated()
                 // Suppression générique de ressource qualité : Manager Qualité ou plus.
                 .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/**")
                     .hasAnyRole("ADMIN", "ADMIN_TENANT", "SUPER_ADMIN", "QUALITY_MANAGER")

@@ -168,4 +168,32 @@ class HexagonalArchitectureTest {
                 "jakarta.persistence..",
                 "org.hibernate..")
             .because("Application layer (revision requests) must depend on ports only.");
+
+    @ArchTest
+    static final ArchRule ideas_domain_has_no_framework_deps =
+        noClasses()
+            .that().resideInAPackage("..ideas.domain..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                "..ideas.infrastructure..",
+                "..ideas.web..",
+                "..circle..",
+                "org.springframework..",
+                "jakarta.persistence..",
+                "jakarta.validation..",
+                "org.hibernate..")
+            .because("Le domaine des idées reste sans framework, et ignore le module cercle "
+                   + "dont il ne fait que réutiliser les lignes (CLAUDE.md P5).");
+
+    @ArchTest
+    static final ArchRule ideas_application_has_no_framework_deps =
+        noClasses()
+            .that().resideInAPackage("..ideas.application..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                "..ideas.infrastructure..",
+                "..ideas.web..",
+                "..circle..",
+                "org.springframework..",
+                "jakarta.persistence..",
+                "org.hibernate..")
+            .because("La couche application des idées ne dépend que de ports.");
 }
