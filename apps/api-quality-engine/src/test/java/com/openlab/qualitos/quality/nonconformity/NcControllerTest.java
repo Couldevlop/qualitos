@@ -299,13 +299,54 @@ class NcControllerTest {
                 .andExpect(status().isForbidden());
     }
 
+    // --- rejet d'une réclamation externe ---
+
+    @Test @WithMockUser
+    void reject_passesTheReasonToTheService() throws Exception {
+        when(service.reject(eq(NC), any())).thenReturn(resp(NcStatus.REJECTED));
+
+        mockMvc.perform(post("/api/v1/nc/" + NC + "/reject")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"reason\":\"Hors périmètre contractuel.\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("REJECTED"));
+    }
+
+    @Test @WithMockUser
+    void reject_withoutReason_isRefusedAtTheBoundary() throws Exception {
+        // Écarter une réclamation sans dire pourquoi est indéfendable devant le
+        // client : la frontière refuse avant que le service ne soit touché.
+        mockMvc.perform(post("/api/v1/nc/" + NC + "/reject")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"reason\":\"   \"}"))
+                .andExpect(status().isBadRequest());
+
+        verify(service, never()).reject(any(), any());
+    }
+
+    @Test @WithMockUser
+    void reject_onAnInternalFinding_rendersTheServiceRefusal() throws Exception {
+        when(service.reject(eq(NC), any())).thenThrow(new NcStateException(
+                "Only an EXTERNAL non-conformity can be rejected"));
+
+        mockMvc.perform(post("/api/v1/nc/" + NC + "/reject")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"reason\":\"non fondée\"}"))
+                // 409 comme les autres transitions refusees du module : c'est l'ETAT
+                // de la ressource qui s'oppose, pas la forme de la requete.
+                .andExpect(status().isConflict());
+    }
+
     // helper
     private NcDto.Response resp(NcStatus s) {
         return new NcDto.Response(
                 NC, TENANT, "NC-2026-0001", "t", null,
                 NcCategory.PRODUCT, NcSeverity.MAJOR, s, NcOrigin.INTERNAL, Instant.now(),
                 null, null, null, null, REPORTER, "Ada Lovelace", null, null, null, null, null,
-                null, null, Instant.now(), Instant.now());
+                null, null, null, null, Instant.now(), Instant.now());
     }
 
     /**
@@ -318,7 +359,7 @@ class NcControllerTest {
     void statistics_passesTheOriginOfTheScreen() throws Exception {
         UUID tenant = UUID.randomUUID();
         when(service.statistics(NcOrigin.INTERNAL)).thenReturn(
-                new NcDto.NcStatistics(tenant, NcOrigin.INTERNAL, 12, 5, 2, 1, 3, 1, 0));
+                new NcDto.NcStatistics(tenant, NcOrigin.INTERNAL, 12, 5, 2, 1, 3, 1, 0, 0));
 
         mockMvc.perform(get("/api/v1/nc/statistics").param("origin", "INTERNAL"))
                 .andExpect(status().isOk())
@@ -333,7 +374,7 @@ class NcControllerTest {
     @Test @WithMockUser
     void statistics_withoutOrigin_countsBoth() throws Exception {
         when(service.statistics(null)).thenReturn(
-                new NcDto.NcStatistics(UUID.randomUUID(), null, 20, 8, 3, 2, 4, 2, 1));
+                new NcDto.NcStatistics(UUID.randomUUID(), null, 20, 8, 3, 2, 4, 2, 1, 0));
 
         mockMvc.perform(get("/api/v1/nc/statistics"))
                 .andExpect(status().isOk())
@@ -352,7 +393,7 @@ class NcControllerTest {
     @Test @WithMockUser
     void statistics_isNotMistakenForAnId() throws Exception {
         when(service.statistics(null)).thenReturn(
-                new NcDto.NcStatistics(UUID.randomUUID(), null, 0, 0, 0, 0, 0, 0, 0));
+                new NcDto.NcStatistics(UUID.randomUUID(), null, 0, 0, 0, 0, 0, 0, 0, 0));
 
         mockMvc.perform(get("/api/v1/nc/statistics")).andExpect(status().isOk());
 

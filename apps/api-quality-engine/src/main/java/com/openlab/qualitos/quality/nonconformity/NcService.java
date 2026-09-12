@@ -138,7 +138,11 @@ public class NcService {
 
     public NcDto.Response update(UUID id, NcDto.UpdateRequest request) {
         NonConformity nc = load(id);
-        if (nc.getStatus() == NcStatus.CLOSED || nc.getStatus() == NcStatus.CANCELLED) {
+        // REJECTED est terminal comme les deux autres : rouvrir la saisie d'un
+        // constat écarté laisserait réécrire ce que le client a lu.
+        if (nc.getStatus() == NcStatus.CLOSED
+                || nc.getStatus() == NcStatus.CANCELLED
+                || nc.getStatus() == NcStatus.REJECTED) {
             throw new NcStateException("Cannot modify a " + nc.getStatus() + " non-conformity");
         }
         if (request.origin() != null) nc.setOrigin(request.origin());
@@ -205,6 +209,35 @@ public class NcService {
             throw new NcStateException("Only OPEN or UNDER_ANALYSIS non-conformities can be cancelled");
         }
         nc.setStatus(NcStatus.CANCELLED);
+        return toResponse(repository.save(nc));
+    }
+
+    /**
+     * Écarte une réclamation examinée et jugée non fondée.
+     *
+     * <p>Réservé aux écarts signalés du DEHORS. Un constat qu'on a fait soi-même
+     * ne se rejette pas : on le résout, on le clôt, ou on l'annule. Le refus est
+     * porté ici et non par l'écran seul, faute de quoi un appel direct à l'API
+     * contournerait la règle.
+     *
+     * <p>Depuis {@code OPEN} ou {@code UNDER_ANALYSIS} seulement : une réclamation
+     * déjà résolue ou clôturée a reçu une réponse, et la reprendre en rejet
+     * réécrirait l'histoire que le client a lue.
+     */
+    public NcDto.Response reject(UUID id, NcDto.RejectRequest request) {
+        NonConformity nc = load(id);
+        if (nc.getOrigin() != NcOrigin.EXTERNAL) {
+            throw new NcStateException(
+                    "Only an EXTERNAL non-conformity can be rejected: an internal finding is"
+                    + " resolved, closed, or cancelled");
+        }
+        if (nc.getStatus() != NcStatus.OPEN && nc.getStatus() != NcStatus.UNDER_ANALYSIS) {
+            throw new NcStateException(
+                    "Only OPEN or UNDER_ANALYSIS non-conformities can be rejected");
+        }
+        nc.setStatus(NcStatus.REJECTED);
+        nc.setRejectionReason(request.reason().trim());
+        nc.setRejectedAt(Instant.now());
         return toResponse(repository.save(nc));
     }
 
@@ -276,7 +309,9 @@ public class NcService {
                 nc.getZone(), nc.getGeoLat(), nc.getGeoLng(), nc.getPhotoUrls(),
                 nc.getReporterId(), nc.getReporterName(), nc.getProductId(), nc.getFmeaItemId(),
                 nc.getCapaCaseId(), nc.getRootCause(), nc.getResolutionNote(),
-                nc.getResolvedAt(), nc.getClosedAt(), nc.getCreatedAt(), nc.getUpdatedAt());
+                nc.getResolvedAt(), nc.getClosedAt(),
+                nc.getRejectionReason(), nc.getRejectedAt(),
+                nc.getCreatedAt(), nc.getUpdatedAt());
     }
 
     // ---------- Statistiques ----------
@@ -305,7 +340,8 @@ public class NcService {
                 compte(tenantId, origin, NcStatus.ACTION_DEFINED),
                 compte(tenantId, origin, NcStatus.RESOLVED),
                 compte(tenantId, origin, NcStatus.CLOSED),
-                compte(tenantId, origin, NcStatus.CANCELLED));
+                compte(tenantId, origin, NcStatus.CANCELLED),
+                compte(tenantId, origin, NcStatus.REJECTED));
     }
 
     /** Un statut, dans le périmètre demandé. */
