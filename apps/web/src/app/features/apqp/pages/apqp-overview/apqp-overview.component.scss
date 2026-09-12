@@ -280,3 +280,44 @@
     width: 100%;
   }
 }
+
+/* --- la ligne d'un livrable ------------------------------------------------
+   La case a cocher a remplace une icone decorative : le libelle devient donc un
+   bouton, et il lui faut une cible lisible sans devenir un bloc colore. */
+
+.livrables__ouvrir {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover .livrables__libelle,
+  &:focus-visible .livrables__libelle {
+    text-decoration: underline;
+  }
+}
+
+.livrables__ppap {
+  flex: 0 0 auto;
+  color: var(--qos-text-muted);
+  font-weight: 700;
+  /* L'asterisque colle au libelle qu'elle marque : espacee, elle se lirait comme
+     une note de bas de page orpheline. */
+  margin-left: calc(-1 * var(--qos-space-1));
+}
+
+.livrables__preuve {
+  flex: 0 0 auto;
+  color: var(--qos-text-muted);
+  font-size: 1.125rem;
+  width: 1.125rem;
+  height: 1.125rem;
+}

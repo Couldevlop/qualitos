@@ -8,7 +8,10 @@ import { map, takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ApqpService } from '../../apqp.service';
-import { ApqpDeliverable, ApqpPhase } from '../../apqp.types';
+import { ApqpCycle, ApqpDeliverable, ApqpPhase } from '../../apqp.types';
+import {
+  ApqpDeliverableDetailDialogComponent, ApqpDeliverableDetailDialogData
+} from '../apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component';
 import {
   ApqpDeliverableDialogComponent, ApqpDeliverableDialogData
 } from '../apqp-deliverable-dialog/apqp-deliverable-dialog.component';
@@ -45,6 +48,10 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
 
   phases: ApqpPhase[] = [];
   loading = false;
+
+  /** Livrables du dossier PPAP acquis, et total — comptés par le serveur. */
+  ppapDone = 0;
+  ppapTotal = 0;
 
   /** La phase ouverte sous le schéma, ou `undefined` tant qu'on n'a rien choisi. */
   choisie?: ApqpPhase;
@@ -131,6 +138,18 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
 
   get cycleAria(): string {
     return $localize`:@@apqp.cycle-aria:Cycle APQP`;
+  }
+
+  ariaCocher(livrable: ApqpDeliverable): string {
+    return $localize`:@@apqp.toggle-deliverable-aria:Déclarer « ${livrable.label}:label: » acquis`;
+  }
+
+  get ariaPpap(): string {
+    return $localize`:@@apqp.ppap-mark-aria:Élément du dossier PPAP`;
+  }
+
+  ariaPreuves(livrable: ApqpDeliverable): string {
+    return $localize`:@@apqp.evidence-count-aria:${livrable.evidenceCount}:count: pièce(s) jointe(s)`;
   }
 
   ariaModifier(livrable: ApqpDeliverable): string {
@@ -284,6 +303,67 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Ouvre le livrable : ce qu'il attend, et ce qui le prouve.
+   *
+   * <p>Lecture ouverte à tous, écriture non : le popup reçoit le droit plutôt
+   * que de le redéduire, pour que les deux écrans ne divergent pas.
+   */
+  ouvrirLivrable(phase: ApqpPhase, livrable: ApqpDeliverable): void {
+    const ref = this.dialog.open(ApqpDeliverableDetailDialogComponent, {
+      panelClass: 'qos-dialog-panel',
+      autoFocus: 'first-tabbable',
+      restoreFocus: true,
+      width: '44rem',
+      data: {
+        phase, deliverable: livrable, editable: this.editable
+      } as ApqpDeliverableDetailDialogData
+    });
+    ref.afterClosed().subscribe(cycle => {
+      if (cycle) this.appliquer(cycle);
+    });
+  }
+
+  /**
+   * Coche ou décoche un livrable depuis la liste.
+   *
+   * <p>Le commentaire et le contenu déjà saisis sont renvoyés tels quels : sans
+   * cela, un clic sur la case effacerait ce que le popup avait enregistré.
+   */
+  basculerLivrable(phase: ApqpPhase, livrable: ApqpDeliverable, coche: boolean): void {
+    this.service.completeDeliverable(phase.id, livrable.id, {
+      done: coche,
+      comment: livrable.comment ?? null,
+      data: livrable.kind === 'CHECKLIST' || livrable.kind === 'DATA_ENTRY'
+        ? livrable.data ?? null
+        : null,
+      linkedKind: livrable.kind === 'MODULE_LINK' ? livrable.linkedKind ?? null : null,
+      linkedId: livrable.kind === 'MODULE_LINK' ? livrable.linkedId ?? null : null
+    }).subscribe({
+      next: cycle => this.appliquer(cycle),
+      error: err => this.echouer(err)
+    });
+  }
+
+  /**
+   * Rend au client le cycle du référentiel, en effaçant le sien.
+   *
+   * <p>`confirm` natif plutôt qu'un dialogue de plus : la question est fermée, et
+   * la perte est décrite dans le texte même.
+   */
+  reinitialiser(): void {
+    const question = $localize`:@@apqp.confirm-reset:Remplacer votre cycle par celui du référentiel ? Vos phases, vos livrables et les pièces qui les prouvent seront définitivement perdus.`;
+    if (!confirm(question)) return;
+
+    this.service.reset().subscribe({
+      next: cycle => {
+        void this.router.navigate(['/apqp']);
+        this.appliquer(cycle);
+      },
+      error: err => this.echouer(err)
+    });
+  }
+
   supprimerLivrable(phase: ApqpPhase, livrable: ApqpDeliverable): void {
     const question = $localize`:@@apqp.confirm-delete-deliverable:Retirer « ${livrable.label} » des livrables ?`;
     if (!confirm(question)) return;
@@ -299,16 +379,28 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
   private charger(): void {
     this.loading = true;
     this.service.cycle().subscribe({
-      next: phases => {
-        this.phases = phases;
+      next: cycle => {
+        this.appliquer(cycle);
         this.loading = false;
-        this.retenir();
       },
       error: err => {
         this.loading = false;
         this.echouer(err);
       }
     });
+  }
+
+  /**
+   * Prend le cycle rendu par le serveur : les phases ET l'état du dossier PPAP.
+   *
+   * <p>Les deux arrivent ensemble et s'appliquent ensemble : un compte posé à part
+   * se serait désynchronisé des cases, le temps d'un aller-retour.
+   */
+  private appliquer(cycle: ApqpCycle): void {
+    this.phases = cycle.phases;
+    this.ppapDone = cycle.ppapDone;
+    this.ppapTotal = cycle.ppapTotal;
+    this.retenir();
   }
 
   /**

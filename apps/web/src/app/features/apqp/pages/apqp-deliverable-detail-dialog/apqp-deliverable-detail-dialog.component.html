@@ -1,0 +1,163 @@
+<qos-form-dialog
+  [title]="titre"
+  [subtitle]="data.phase.title"
+  [formGroup]="form"
+  [submitting]="envoi"
+  [submitDisabled]="form.invalid || !data.editable"
+  [blockedReason]="blocage"
+  (submitted)="submit()"
+  (cancelled)="fermer()">
+
+  <!-- Le genre seul ne parle pas a l'utilisateur : « MODULE_LINK » n'explique pas
+       qu'on attend le numero d'une AMDEC deja saisie. -->
+  <p class="aide" data-test="aide-genre">{{ aide }}</p>
+
+  <p class="ppap" *ngIf="data.deliverable.ppap" data-test="marque-ppap-popup">
+    <mat-icon aria-hidden="true">workspace_premium</mat-icon>
+    <span i18n="@@apqp.deliverable.is-ppap">Ce livrable compose le dossier PPAP.</span>
+  </p>
+
+  <mat-checkbox formControlName="done" data-test="case-fait">
+    <span i18n="@@apqp.deliverable.done">Livrable acquis</span>
+  </mat-checkbox>
+
+  <!-- Qui l'a declare fait, et quand : c'est ce que l'auditeur demande en
+       premier, et un popup qui ne le montrerait pas obligerait a ouvrir le
+       journal. -->
+  <p class="trace" *ngIf="data.deliverable.done && data.deliverable.doneAt">
+    <span i18n="@@apqp.deliverable.done-at">Déclaré acquis le</span>
+    {{ data.deliverable.doneAt | date:'medium' }}
+  </p>
+
+  <!-- ATTACHMENT : le livrable EST un document. -->
+  <section class="pieces" *ngIf="kind === 'ATTACHMENT'" data-test="zone-pieces">
+    <h3 class="sous-titre" i18n="@@apqp.evidence.title">Pièces jointes</h3>
+
+    <ul class="pieces__liste" *ngIf="evidences.length > 0">
+      <li *ngFor="let piece of evidences; trackBy: trackById" data-test="piece">
+        <mat-icon aria-hidden="true">description</mat-icon>
+        <!-- Le nom est un LIEN : l'URL est presignee et courte, elle ne vit pas
+             en base. Un nom non cliquable obligerait a redemander le fichier a
+             celui qui l'a verse. -->
+        <a [href]="piece.url" target="_blank" rel="noopener" data-test="telecharger"
+           class="pieces__nom">{{ piece.originalFilename }}</a>
+        <span class="pieces__taille">{{ taille(piece.sizeBytes) }}</span>
+        <button mat-icon-button type="button" *ngIf="data.editable"
+                [attr.aria-label]="ariaRetirerPiece(piece)"
+                (click)="retirerPiece(piece)">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </li>
+    </ul>
+
+    <p class="aide" *ngIf="!chargement && evidences.length === 0"
+       i18n="@@apqp.evidence.empty">
+      Aucune pièce pour l'instant — le livrable n'est pas encore prouvé.
+    </p>
+
+    <div class="pieces__ajout" *ngIf="data.editable">
+      <input #fichier type="file" hidden [accept]="accept"
+             (change)="choisirFichier(fichier)">
+      <button mat-stroked-button type="button" [disabled]="envoi"
+              (click)="fichier.click()" data-test="verser-piece">
+        <mat-icon aria-hidden="true">attach_file</mat-icon>
+        <span i18n="@@apqp.evidence.add">Joindre un document</span>
+      </button>
+      <span class="aide" i18n="@@apqp.evidence.limits">
+        Word, Excel, PDF ou image — 10 Mo par fichier, 5 par livrable.
+      </span>
+    </div>
+  </section>
+
+  <!-- MODULE_LINK : le livrable est deja tenu ailleurs dans QualitOS. -->
+  <section class="renvoi" *ngIf="kind === 'MODULE_LINK'" data-test="renvoi-module">
+    <mat-form-field appearance="outline" class="full">
+      <mat-label i18n="@@apqp.link.kind">Module concerné</mat-label>
+      <mat-select formControlName="linkedKind">
+        <mat-option *ngFor="let choix of modules" [value]="choix.value">
+          {{ choix.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label i18n="@@apqp.link.id">Identifiant de l'enregistrement</mat-label>
+      <input matInput formControlName="linkedId" data-test="renvoi-id"
+             placeholder="00000000-0000-0000-0000-000000000000">
+      <mat-hint i18n="@@apqp.link.id-hint">
+        Copié depuis l'adresse de la fiche : c'est lui qui fait le lien.
+      </mat-hint>
+      <mat-error *ngIf="form.get('linkedId')?.hasError('pattern')"
+                 i18n="@@apqp.link.id-invalid">
+        Cet identifiant n'a pas la forme attendue.
+      </mat-error>
+    </mat-form-field>
+  </section>
+
+  <!-- DATA_ENTRY : des mesures, avec leur unite et leur date. -->
+  <section class="mesures" *ngIf="kind === 'DATA_ENTRY'" data-test="table-mesures">
+    <div class="mesures__ligne" *ngFor="let ligne of rows.controls; index as i; trackBy: trackByIndex"
+         [formGroup]="groupe(i)">
+      <mat-form-field appearance="outline" class="mesures__libelle">
+        <mat-label i18n="@@apqp.data.label">Indicateur</mat-label>
+        <input matInput formControlName="label" maxlength="200" required>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="mesures__valeur">
+        <mat-label i18n="@@apqp.data.value">Valeur</mat-label>
+        <input matInput formControlName="value" maxlength="60">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="mesures__unite">
+        <mat-label i18n="@@apqp.data.unit">Unité</mat-label>
+        <input matInput formControlName="unit" maxlength="20">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="mesures__date">
+        <mat-label i18n="@@apqp.data.measured-at">Mesuré le</mat-label>
+        <!-- Champ date natif : aucune autre page n'emporte de sélecteur Material,
+             et en câbler un pour ce seul champ ajouterait un adaptateur de date à
+             toute l'application. Le navigateur rend déjà « aaaa-mm-jj », qui est
+             exactement ce que le serveur attend. -->
+        <input matInput type="date" formControlName="measuredAt">
+      </mat-form-field>
+      <button mat-icon-button type="button" *ngIf="data.editable"
+              [attr.aria-label]="ariaRetirerLigne" (click)="retirerLigne(i)">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <button mat-stroked-button type="button" *ngIf="data.editable"
+            [disabled]="rows.length >= 12" (click)="ajouterLigne()">
+      <mat-icon aria-hidden="true">add</mat-icon>
+      <span i18n="@@apqp.data.add-row">Ajouter un indicateur</span>
+    </button>
+  </section>
+
+  <!-- CHECKLIST : le livrable n'est acquis que si ses points le sont. -->
+  <section class="points" *ngIf="kind === 'CHECKLIST'" data-test="liste-points">
+    <div class="points__ligne" *ngFor="let ligne of rows.controls; index as i; trackBy: trackByIndex"
+         [formGroup]="groupe(i)">
+      <mat-checkbox formControlName="checked" data-test="case-point"></mat-checkbox>
+      <mat-form-field appearance="outline" class="points__libelle">
+        <mat-label i18n="@@apqp.point.label">Point à acquitter</mat-label>
+        <input matInput formControlName="label" maxlength="200" required>
+      </mat-form-field>
+      <button mat-icon-button type="button" *ngIf="data.editable"
+              [attr.aria-label]="ariaRetirerLigne" (click)="retirerLigne(i)">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <button mat-stroked-button type="button" *ngIf="data.editable"
+            [disabled]="rows.length >= 30" (click)="ajouterLigne()">
+      <mat-icon aria-hidden="true">add</mat-icon>
+      <span i18n="@@apqp.point.add-row">Ajouter un point</span>
+    </button>
+  </section>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@apqp.deliverable.comment">Commentaire</mat-label>
+    <textarea matInput formControlName="comment" rows="2" maxlength="2000"
+              i18n-placeholder="@@apqp.deliverable.comment-placeholder"
+              placeholder="Ex. : reçu par courriel le 3 septembre, version 2"></textarea>
+  </mat-form-field>
+
+</qos-form-dialog>
