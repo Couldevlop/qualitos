@@ -16,6 +16,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -93,12 +94,21 @@ public class ApqpDeliverable {
     /**
      * Le contenu propre au genre, en JSON.
      *
-     * <p>Texte côté Java, {@code jsonb} côté base. Ce qui empêche cette colonne
-     * de devenir un fourre-tout n'est pas son type mais le validateur du service,
-     * qui n'accepte que deux formes — des mesures, ou des sous-points — selon le
-     * genre du livrable.
+     * <p>Texte des deux côtés. Ce qui empêche cette colonne de devenir un
+     * fourre-tout n'est pas son type mais le validateur du service, qui n'accepte
+     * que deux formes -- des mesures, ou des sous-points -- selon le genre du
+     * livrable.
+     *
+     * <p>TEXT et non {@code jsonb} : ce dernier NORMALISE le contenu (espaces
+     * réinsérés, ordre des clés refait), si bien que le texte relu n'est plus
+     * celui qu'on a écrit. Le jour où l'on scellera un dossier PPAP, l'empreinte
+     * ne serait plus recalculable -- la panne exacte du journal d'audit. Le
+     * {@code JdbcTypeCode} accompagne ce choix, comme sur
+     * {@code AuditEvent.payloadJson} : sans lui, Hibernate 6 viserait un autre
+     * type JDBC et PostgreSQL refuserait l'insertion, {@code null} compris.
      */
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "TEXT")
+    @JdbcTypeCode(java.sql.Types.LONGVARCHAR)
     private String data;
 
     /** Module visé quand le genre est {@code MODULE_LINK}, sinon {@code null}. */

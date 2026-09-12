@@ -31,7 +31,16 @@ ALTER TABLE apqp_deliverables
     -- selon `kind` : ce n'est pas un fourre-tout, c'est l'un de deux tableaux
     -- connus — des mesures, ou des sous-points. Une colonne par genre aurait
     -- laissé trois colonnes nulles sur quatre à chaque ligne.
-    ADD COLUMN data        JSONB,
+    --
+    -- TEXT et non JSONB, pour deux raisons mesurées. D'abord `jsonb` NORMALISE :
+    -- il reparse et réécrit, si bien que le texte relu n'est plus celui qu'on a
+    -- écrit (espaces réinsérés, ordre des clés refait). Le jour où l'on scellera
+    -- un dossier PPAP, l'empreinte calculée à l'écriture ne serait plus
+    -- recalculable à la lecture -- la panne exacte qui a frappé le journal
+    -- d'audit. Ensuite, rien n'interroge l'intérieur de cette colonne en SQL :
+    -- `jsonb` n'apporterait que sa normalisation. C'est le motif déjà retenu
+    -- pour `audit_events.payload_json`.
+    ADD COLUMN data        TEXT,
 
     ADD COLUMN linked_kind VARCHAR(32),
     ADD COLUMN linked_id   UUID;
