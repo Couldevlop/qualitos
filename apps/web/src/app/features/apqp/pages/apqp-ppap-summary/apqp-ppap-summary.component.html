@@ -2,16 +2,10 @@
      laisserait croire a un chargement qui n'aboutit pas. -->
 <section class="ppap" *ngIf="lignes.length > 0" data-test="section-ppap">
 
+  <!-- Ni titre ni legende ici : l'en-tete de l'ecran les porte deja, et les
+       repeter les affichait deux fois de suite. Ce composant rend ce qui lui est
+       propre -- le compte, l'avancement, et les lignes. -->
   <header class="ppap__tete">
-    <div>
-      <h2 class="ppap__titre" i18n="@@apqp.ppap.title">Dossier PPAP</h2>
-      <!-- La legende dit ce que l'asterisque veut dire, une fois, et non par
-           ligne : la repeter quarante fois ne l'expliquerait pas mieux. -->
-      <p class="ppap__legende" i18n="@@apqp.ppap.legend">
-        * Les livrables marqués d'un astérisque dans le référentiel composent le dossier
-        remis au client.
-      </p>
-    </div>
     <p class="ppap__compte" data-test="compte-ppap">{{ resume }}</p>
   </header>
 

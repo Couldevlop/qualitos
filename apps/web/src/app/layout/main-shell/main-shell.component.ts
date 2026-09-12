@@ -409,6 +409,35 @@ export class MainShellComponent implements OnInit, OnDestroy {
   onNavigate(): void { this.navOpen = false; }
 
   /**
+   * L'entree de menu correspondant a l'adresse courante.
+   *
+   * <p>`routerLinkActive` compare par PREFIXE : des qu'une route en prefixe une
+   * autre -- /apqp et /apqp/ppap -- les deux entrees s'allument, et le menu dit
+   * qu'on est a deux endroits a la fois. On garde donc la correspondance la plus
+   * longue parmi toutes les entrees.
+   *
+   * <p>Un prefixe reste une correspondance valable : sur /apqp/2, qui est un rang
+   * de phase et non une entree de menu, « Le cycle » doit rester allumee.
+   */
+  estActif(route: string): boolean {
+    const url = this.router.url.split('?')[0].split('#')[0];
+    return this.correspond(url, route)
+        && route.length === this.plusLongueCorrespondance(url);
+  }
+
+  /** Longueur de la route la plus longue qui corresponde a cette adresse. */
+  private plusLongueCorrespondance(url: string): number {
+    return this.sections
+      .flatMap(section => section.items)
+      .filter(item => this.correspond(url, item.route))
+      .reduce((max, item) => Math.max(max, item.route.length), 0);
+  }
+
+  private correspond(url: string, route: string): boolean {
+    return url === route || url.startsWith(route + '/');
+  }
+
+  /**
    * Bascule entre disposition large et étroite. Appelé au démarrage puis à chaque
    * changement de largeur. Repasser en large referme le tiroir : laissé ouvert, il
    * resterait superposé à un contenu qui a désormais toute la place.

@@ -64,7 +64,7 @@ export class ApqpPpapSummaryComponent {
   }
 
   get resume(): string {
-    return $localize`:@@apqp.ppap.progress:${this.done}:done: livrables acquis sur ${this.total}:total:`;
+    return $localize`:@@apqp.ppap.progress:${this.done}:done: / ${this.total}:total: livrables acquis`;
   }
 
   get ariaBarre(): string {

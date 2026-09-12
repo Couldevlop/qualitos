@@ -19,7 +19,7 @@ TRANSLATIONS = {
 
     'apqp.eyebrow': ('APQP', 'APQP', 'APQP', 'APQP', 'APQP', 'APQP'),
     'apqp.title': (
-        'Planification qualité produit', 'Advanced product quality planning',
+        'Planification qualité produit', 'Advanced Product Quality Planning',
         'Planificación avanzada de la calidad', 'التخطيط المتقدم لجودة المنتج',
         '先行製品品質計画', '产品质量先期策划'),
     'apqp.subtitle': (
@@ -224,10 +224,14 @@ TRANSLATIONS = {
         '* المُخرَجات المُعلَّمة بنجمة في المرجع تُشكِّل الملف المُقدَّم إلى العميل.',
         '※ 標準リストでアスタリスクが付いた成果物が、顧客に提出する資料を構成します。',
         '* 参考清单中带星号的交付物构成提交给客户的文件。'),
+    # Forme neutre au nombre : « 1 deliverables obtained » accordait mal, et une
+    # regle ICU pour un compteur de tableau de bord serait payer cher un pluriel.
     'apqp.ppap.progress': (
-        '{$done} livrables acquis sur {$total}', '{$done} deliverables obtained out of {$total}',
-        '{$done} entregables obtenidos de {$total}', '{$done} مُخرَجات مُنجَزة من {$total}',
-        '取得済み成果物 {$done} 件 / {$total} 件', '已取得 {$done} 项交付物，共 {$total} 项'),
+        '{$done} / {$total} livrables acquis', '{$done} of {$total} deliverables obtained',
+        '{$done} de {$total} entregables obtenidos',
+        '{$done} من {$total} مُخرَج مُنجَز',
+        '取得済み成果物 {$done} / {$total} 件',
+        '已取得 {$done} / {$total} 项交付物'),
     'apqp.ppap.progress-aria': (
         'Complétude du dossier PPAP : {$percent} %', 'PPAP file completeness: {$percent} %',
         'Integridad del expediente PPAP: {$percent} %', 'اكتمال ملف PPAP: {$percent} %',

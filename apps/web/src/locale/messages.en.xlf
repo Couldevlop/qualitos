@@ -4612,7 +4612,7 @@ Customer portal</target>
       </trans-unit>
       <trans-unit id="apqp.title" datatype="html">
         <source>Planification qualité produit</source>
-        <target state="translated">Advanced product quality planning</target>
+        <target state="translated">Advanced Product Quality Planning</target>
       </trans-unit>
       <trans-unit id="apqp.subtitle" datatype="html">
         <source>Les phases se lisent en V : on descend jusqu'au point bas du projet, on remonte vers la production série.</source>
@@ -4775,8 +4775,8 @@ Customer portal</target>
         <target state="translated">* Deliverables marked with an asterisk in the reference make up the file handed to the customer.</target>
       </trans-unit>
       <trans-unit id="apqp.ppap.progress" datatype="html">
-        <source><x id="done"/> livrables acquis sur <x id="total"/></source>
-        <target state="translated"><x id="done"/> deliverables obtained out of <x id="total"/></target>
+        <source><x id="done"/> / <x id="total"/> livrables acquis</source>
+        <target state="translated"><x id="done"/> of <x id="total"/> deliverables obtained</target>
       </trans-unit>
       <trans-unit id="apqp.ppap.progress-aria" datatype="html">
         <source>Complétude du dossier PPAP : <x id="percent"/> %</source>
