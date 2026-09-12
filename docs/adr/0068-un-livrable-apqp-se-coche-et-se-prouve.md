@@ -154,18 +154,32 @@ plus traître, et il a son banc sur vrai PostgreSQL.
 Pour qui a adapté son cycle et veut malgré tout la nouvelle liste :
 `POST /api/v1/apqp/phases/reset`, destructif, confirmé deux fois à l'écran.
 
-### 8. Les libellés du référentiel ne passent pas par la traduction
+### 8. Le référentiel se traduit ; ce que le client écrit lui appartient
 
-Ils sont écrits une fois, dans la langue du document de référence, et appartiennent
-au tenant dès la première copie. Un livrable normatif traduit librement n'est plus
-le même livrable : « Control plan » désigne un document précis, pas un plan de
-contrôle quelconque. C'est au tenant de les traduire s'il le souhaite — il en est
-propriétaire.
+> **Décision révisée en cours de lot** (voir ADR 0070). La version initiale posait
+> que les libellés ne passent jamais par la traduction, au motif qu'ils appartiennent
+> au tenant dès la première copie. L'utilisateur a tranché l'inverse : « le
+> multi-langue doit fonctionner sans condition ». Un utilisateur anglophone lisait un
+> V français dans une interface anglaise — un défaut, pas un choix.
+
+Le raisonnement qui restait juste est celui de la PROPRIÉTÉ, pas celui de la langue.
+La frontière est donc déplacée là où elle tient : **ce que la plateforme fournit se
+traduit, ce que le client a écrit lui appartient**. Chaque ligne d'amorçage porte sa
+clé de référentiel (**V129**) ; à la lecture, le texte suit la langue demandée à
+trois conditions cumulées — la ligne vient du référentiel, personne ne l'a retouchée
+(`updatedAt == createdAt`), la clé est connue. Dès qu'un utilisateur reformule un
+libellé, sa formulation gagne définitivement, dans toutes les langues.
+
+La réserve de fond survit dans la traduction elle-même, pas dans son absence : les
+désignations normatives prennent le terme du métier — « Control plan » devient
+« Plan de surveillance », jamais « plan de contrôle » — et les sigles d'usage (PPAP,
+FAIR, MSA, Cpk) restent tels quels.
 
 ## Conséquences
 
-- Migrations **V126** (colonnes d'achèvement, genre, marque PPAP, table des pièces)
-  et **V127** (reprise des cycles non touchés).
+- Migrations **V126** (colonnes d'achèvement, genre, marque PPAP, table des pièces),
+  **V127** (reprise des cycles non touchés) et **V129** (clé de référentiel, pour la
+  traduction de la section 8).
 - Un cinquième genre de livrable coûte trois écritures : l'énumération, la
   contrainte de la base, le formulaire. C'est voulu.
 - Les preuves PDCA/CAPA/NC gardent leur propre copie des gardes binaires : dette
