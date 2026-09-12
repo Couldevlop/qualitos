@@ -12,6 +12,15 @@ public interface FmeaProjectRepository extends JpaRepository<FmeaProject, UUID> 
 
     Optional<FmeaProject> findByTenantIdAndCode(UUID tenantId, String code);
 
+    /**
+     * Cette AMDEC appartient-elle bien à ce client ?
+     *
+     * <p>Posée par le cycle APQP, dont un livrable peut renvoyer à une AMDEC : il
+     * a besoin de savoir que le renvoi désigne un enregistrement réel, sans avoir
+     * à charger le projet entier pour le jeter ensuite.
+     */
+    boolean existsByIdAndTenantId(UUID id, UUID tenantId);
+
     Page<FmeaProject> findByTenantId(UUID tenantId, Pageable pageable);
 
     Page<FmeaProject> findByTenantIdAndStatus(UUID tenantId, FmeaStatus status, Pageable pageable);

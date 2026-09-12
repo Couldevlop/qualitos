@@ -25,6 +25,15 @@ public interface ApqpPhaseRepository extends JpaRepository<ApqpPhase, UUID> {
     /** Sert à savoir s'il faut amorcer le cycle depuis le référentiel AIAG. */
     boolean existsByTenantId(UUID tenantId);
 
+    /**
+     * Efface le cycle d'un client, pour le réamorcer depuis le référentiel.
+     *
+     * <p>Les livrables et leurs pièces suivent en cascade (contraintes des V124 et
+     * V126) : un livrable sans phase n'a pas d'existence propre, et une preuve sans
+     * livrable ne prouve plus rien.
+     */
+    void deleteByTenantId(UUID tenantId);
+
     /** Rang le plus élevé : une phase ajoutée se place à la suite. */
     Optional<ApqpPhase> findFirstByTenantIdOrderByPositionDesc(UUID tenantId);
 }

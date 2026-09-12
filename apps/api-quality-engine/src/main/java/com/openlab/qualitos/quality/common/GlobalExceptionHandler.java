@@ -152,7 +152,11 @@ import com.openlab.qualitos.quality.marketplace.domain.MarketplaceInstallationNo
 import com.openlab.qualitos.quality.marketplace.domain.MarketplacePackNotFoundException;
 import com.openlab.qualitos.quality.marketplace.domain.MarketplacePackStateException;
 import com.openlab.qualitos.quality.notifications.domain.NotificationNotFoundException;
+import com.openlab.qualitos.quality.apqp.ApqpDeliverableEvidenceNotFoundException;
+import com.openlab.qualitos.quality.apqp.ApqpDeliverableEvidenceTooLargeException;
+import com.openlab.qualitos.quality.apqp.ApqpDeliverableEvidenceValidationException;
 import com.openlab.qualitos.quality.apqp.ApqpDeliverableNotFoundException;
+import com.openlab.qualitos.quality.apqp.ApqpDeliverableValidationException;
 import com.openlab.qualitos.quality.apqp.ApqpPhaseNotFoundException;
 import com.openlab.qualitos.quality.apqp.ApqpReorderException;
 import com.openlab.qualitos.quality.ideas.domain.IdeaNotFoundException;
@@ -435,6 +439,56 @@ public class GlobalExceptionHandler {
                 HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/apqp-invalid-reorder"));
         problem.setTitle("Invalid APQP Reorder");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * 422 : la requête est bien formée, mais son contenu ne tient pas debout pour
+     * ce livrable — une liste de mesures sur une pièce jointe, un renvoi qui ne
+     * désigne aucun enregistrement du client.
+     */
+    @ExceptionHandler(ApqpDeliverableValidationException.class)
+    public ProblemDetail handleApqpDeliverableValidation(ApqpDeliverableValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/apqp-invalid-deliverable"));
+        problem.setTitle("Invalid APQP Deliverable Content");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ApqpDeliverableEvidenceNotFoundException.class)
+    public ProblemDetail handleApqpEvidenceNotFound(ApqpDeliverableEvidenceNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/apqp-evidence-not-found"));
+        problem.setTitle("APQP Evidence Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ApqpDeliverableEvidenceValidationException.class)
+    public ProblemDetail handleApqpEvidenceValidation(ApqpDeliverableEvidenceValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/apqp-invalid-evidence"));
+        problem.setTitle("Invalid APQP Evidence");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * 413 et non 400 : la requête est valide, c'est sa TAILLE qui est refusée — par
+     * fichier, par livrable, ou pour le cycle entier. Le message dit lequel des
+     * trois plafonds a parlé, sans quoi l'utilisateur réessaie avec un fichier plus
+     * petit alors que c'est le cinquième.
+     */
+    @ExceptionHandler(ApqpDeliverableEvidenceTooLargeException.class)
+    public ProblemDetail handleApqpEvidenceTooLarge(ApqpDeliverableEvidenceTooLargeException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/apqp-evidence-too-large"));
+        problem.setTitle("APQP Evidence Too Large");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

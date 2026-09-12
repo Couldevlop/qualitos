@@ -1,14 +1,18 @@
 package com.openlab.qualitos.quality.apqp;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +24,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -38,14 +44,23 @@ import static org.mockito.Mockito.when;
 class ApqpServiceTest {
 
     @Mock ApqpPhaseRepository repository;
+    @Mock ApqpDeliverableEvidenceRepository evidences;
+    @Mock ApqpLinkResolver linkResolver;
     ApqpService service;
 
     static final UUID TENANT = UUID.randomUUID();
+    static final UUID PHASE_ID = UUID.randomUUID();
+    static final UUID LIVRABLE_ID = UUID.randomUUID();
+    static final UUID ACTEUR = UUID.randomUUID();
+    static final UUID CIBLE = UUID.randomUUID();
 
     @BeforeEach
     void poserLeTenant() {
         TenantContext.setTenantId(TENANT.toString());
-        service = new ApqpService(repository);
+        // Le validateur est une fonction pure : la vraie instance dit la vérité
+        // là où une doublure dirait ce qu'on lui souffle.
+        service = new ApqpService(repository, evidences, new ApqpDeliverableDataValidator(),
+                linkResolver, new ObjectMapper().registerModule(new JavaTimeModule()));
     }
 
     @AfterEach
@@ -200,12 +215,12 @@ class ApqpServiceTest {
         when(repository.existsByTenantId(TENANT)).thenReturn(true);
         when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(cycleDe(5));
 
-        List<ApqpDto.PhaseResponse> cycle = service.cycle();
+        ApqpDto.CycleResponse cycle = service.cycle();
 
         // Sans cette garde, chaque ouverture aurait rajouté cinq phases.
         verify(repository, never()).saveAll(anyList());
-        assertThat(cycle).hasSize(5);
-        assertThat(cycle.stream().map(ApqpDto.PhaseResponse::level))
+        assertThat(cycle.phases()).hasSize(5);
+        assertThat(cycle.phases().stream().map(ApqpDto.PhaseResponse::level))
                 .containsExactly(1, 2, 3, 2, 1);
     }
 
@@ -330,7 +345,8 @@ class ApqpServiceTest {
         lenient().when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of(phase));
 
         ApqpDto.PhaseResponse apres = service.ajouterLivrable(
-                phase.getId(), new ApqpDto.DeliverableRequest("  C  "));
+                phase.getId(),
+                new ApqpDto.DeliverableRequest("  C  ", false, ApqpDeliverableKind.ATTACHMENT));
 
         assertThat(apres.deliverables()).hasSize(3);
         assertThat(apres.deliverables().get(2).label()).isEqualTo("C");
@@ -373,7 +389,8 @@ class ApqpServiceTest {
         lenient().when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of(phase));
 
         ApqpDto.PhaseResponse apres = service.modifierLivrable(
-                phase.getId(), second, new ApqpDto.DeliverableRequest("B modifié"));
+                phase.getId(), second,
+                new ApqpDto.DeliverableRequest("B modifié", false, ApqpDeliverableKind.ATTACHMENT));
 
         assertThat(apres.deliverables().stream().map(ApqpDto.DeliverableResponse::label))
                 .containsExactly("A", "B modifié");
@@ -426,7 +443,261 @@ class ApqpServiceTest {
         verify(repository, never()).findByTenantIdOrderByPositionAsc(any());
     }
 
+    // ---------- achèvement d'un livrable ----------
+
+    @Test
+    @DisplayName("cocher un livrable prend l'acteur du jeton et l'heure du serveur")
+    void completer_prendActeurEtHeureDuServeur() {
+        ApqpPhase phase = phaseAvecLivrable(ApqpDeliverableKind.ATTACHMENT);
+        when(repository.findByIdAndTenantId(PHASE_ID, TENANT)).thenReturn(Optional.of(phase));
+        when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of(phase));
+
+        service.completerLivrable(PHASE_ID, LIVRABLE_ID,
+                new ApqpDto.CompletionRequest(true, "  reçu par courriel  ", null, null, null),
+                ACTEUR);
+
+        ApqpDeliverable livrable = phase.getDeliverables().get(0);
+        assertThat(livrable.isDone()).isTrue();
+        assertThat(livrable.getDoneAt()).isNotNull();
+        assertThat(livrable.getDoneBy()).isEqualTo(ACTEUR);
+        assertThat(livrable.getComment()).isEqualTo("reçu par courriel");
+    }
+
+    @Test
+    @DisplayName("décocher efface qui et quand, plutôt que de laisser une trace fausse")
+    void decocher_effaceQuiEtQuand() {
+        ApqpPhase phase = phaseAvecLivrable(ApqpDeliverableKind.ATTACHMENT);
+        ApqpDeliverable livrable = phase.getDeliverables().get(0);
+        livrable.setDone(true);
+        livrable.setDoneAt(Instant.parse("2026-09-01T10:00:00Z"));
+        livrable.setDoneBy(ACTEUR);
+        when(repository.findByIdAndTenantId(PHASE_ID, TENANT)).thenReturn(Optional.of(phase));
+        when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of(phase));
+
+        service.completerLivrable(PHASE_ID, LIVRABLE_ID,
+                new ApqpDto.CompletionRequest(false, null, null, null, null), ACTEUR);
+
+        assertThat(livrable.isDone()).isFalse();
+        assertThat(livrable.getDoneAt()).isNull();
+        assertThat(livrable.getDoneBy()).isNull();
+    }
+
+    @Test
+    @DisplayName("un renvoi vers un enregistrement absent du client est refusé")
+    void renvoiMort_estRefuse() {
+        ApqpPhase phase = phaseAvecLivrable(ApqpDeliverableKind.MODULE_LINK);
+        when(repository.findByIdAndTenantId(PHASE_ID, TENANT)).thenReturn(Optional.of(phase));
+        doThrow(new ApqpDeliverableValidationException("No FMEA record"))
+                .when(linkResolver).verifier(ApqpLinkedKind.FMEA, CIBLE, TENANT);
+
+        assertThatThrownBy(() -> service.completerLivrable(PHASE_ID, LIVRABLE_ID,
+                new ApqpDto.CompletionRequest(true, null, null, ApqpLinkedKind.FMEA, CIBLE),
+                ACTEUR))
+                .isInstanceOf(ApqpDeliverableValidationException.class);
+
+        // Rien n'a bougé : un lien mort ne doit pas laisser un livrable coché à
+        // moitié, qui affirmerait qu'une preuve existe.
+        assertThat(phase.getDeliverables().get(0).isDone()).isFalse();
+        assertThat(phase.getDeliverables().get(0).getLinkedId()).isNull();
+    }
+
+    @Test
+    @DisplayName("un renvoi validé est enregistré avec le livrable")
+    void renvoiValide_estEnregistre() {
+        ApqpPhase phase = phaseAvecLivrable(ApqpDeliverableKind.MODULE_LINK);
+        when(repository.findByIdAndTenantId(PHASE_ID, TENANT)).thenReturn(Optional.of(phase));
+        when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of(phase));
+
+        service.completerLivrable(PHASE_ID, LIVRABLE_ID,
+                new ApqpDto.CompletionRequest(true, null, null, ApqpLinkedKind.CONTROL_PLAN, CIBLE),
+                ACTEUR);
+
+        verify(linkResolver).verifier(ApqpLinkedKind.CONTROL_PLAN, CIBLE, TENANT);
+        assertThat(phase.getDeliverables().get(0).getLinkedKind())
+                .isEqualTo(ApqpLinkedKind.CONTROL_PLAN);
+        assertThat(phase.getDeliverables().get(0).getLinkedId()).isEqualTo(CIBLE);
+    }
+
+    @Test
+    @DisplayName("un livrable à renvoi ne se coche pas sans son enregistrement")
+    void renvoiAbsent_empecheDeCocher() {
+        ApqpPhase phase = phaseAvecLivrable(ApqpDeliverableKind.MODULE_LINK);
+        when(repository.findByIdAndTenantId(PHASE_ID, TENANT)).thenReturn(Optional.of(phase));
+
+        // Coché sans enregistrement, il affirmerait qu'une AMDEC existe sans dire
+        // laquelle — la pire des deux situations.
+        assertThatThrownBy(() -> service.completerLivrable(PHASE_ID, LIVRABLE_ID,
+                new ApqpDto.CompletionRequest(true, null, null, null, null), ACTEUR))
+                .isInstanceOf(ApqpDeliverableValidationException.class)
+                .hasMessageContaining("MODULE_LINK");
+    }
+
+    @Test
+    @DisplayName("un renvoi sur un genre qui n'en porte pas est refusé")
+    void renvoiSurMauvaisGenre_estRefuse() {
+        ApqpPhase phase = phaseAvecLivrable(ApqpDeliverableKind.ATTACHMENT);
+        when(repository.findByIdAndTenantId(PHASE_ID, TENANT)).thenReturn(Optional.of(phase));
+
+        assertThatThrownBy(() -> service.completerLivrable(PHASE_ID, LIVRABLE_ID,
+                new ApqpDto.CompletionRequest(false, null, null, ApqpLinkedKind.PDCA, CIBLE),
+                ACTEUR))
+                .isInstanceOf(ApqpDeliverableValidationException.class);
+        verify(linkResolver, never()).verifier(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("le contenu d'une checklist revient tel qu'il a été coché")
+    void contenu_allerRetour() {
+        ApqpPhase phase = phaseAvecLivrable(ApqpDeliverableKind.CHECKLIST);
+        when(repository.findByIdAndTenantId(PHASE_ID, TENANT)).thenReturn(Optional.of(phase));
+        when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of(phase));
+
+        ApqpDto.CycleResponse apres = service.completerLivrable(PHASE_ID, LIVRABLE_ID,
+                new ApqpDto.CompletionRequest(false, null, List.of(
+                        new ApqpDto.DataRow("safety", null, null, null, true),
+                        new ApqpDto.DataRow("cost", null, null, null, false)), null, null),
+                ACTEUR);
+
+        List<ApqpDto.DataRow> lu = apres.phases().get(0).deliverables().get(0).data();
+        assertThat(lu).extracting(ApqpDto.DataRow::label).containsExactly("safety", "cost");
+        assertThat(lu).extracting(ApqpDto.DataRow::checked).containsExactly(true, false);
+    }
+
+    @Test
+    @DisplayName("un contenu illisible rend une liste vide au lieu de casser l'écran")
+    void contenuIllisible_neCassePasLEcran() {
+        ApqpPhase phase = phaseAvecLivrable(ApqpDeliverableKind.CHECKLIST);
+        // Une donnée d'avant ce lot, ou touchée à la main en base.
+        phase.getDeliverables().get(0).setData("ceci n'est pas du JSON");
+        when(repository.existsByTenantId(TENANT)).thenReturn(true);
+        when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of(phase));
+
+        ApqpDto.CycleResponse cycle = service.cycle();
+
+        assertThat(cycle.phases().get(0).deliverables().get(0).data()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("changer le genre d'un livrable vide son contenu et son renvoi")
+    void changerDeGenre_videLeContenu() {
+        ApqpPhase phase = phaseAvecLivrable(ApqpDeliverableKind.CHECKLIST);
+        ApqpDeliverable livrable = phase.getDeliverables().get(0);
+        livrable.setData("[{\"label\":\"safety\",\"checked\":true}]");
+        when(repository.findByIdAndTenantId(PHASE_ID, TENANT)).thenReturn(Optional.of(phase));
+        lenient().when(repository.findByTenantIdOrderByPositionAsc(TENANT))
+                .thenReturn(List.of(phase));
+
+        service.modifierLivrable(PHASE_ID, LIVRABLE_ID, new ApqpDto.DeliverableRequest(
+                "Project plan", true, ApqpDeliverableKind.ATTACHMENT));
+
+        // Une liste de points lue comme une table de mesures ne veut rien dire :
+        // on vide, plutôt que de garder un état qu'aucun formulaire ne rend.
+        assertThat(livrable.getData()).isNull();
+        assertThat(livrable.getKind()).isEqualTo(ApqpDeliverableKind.ATTACHMENT);
+        assertThat(livrable.isPpap()).isTrue();
+    }
+
+    @Test
+    @DisplayName("un livrable créé à la main peut être marqué PPAP")
+    void ajouterLivrable_peutEtrePpap() {
+        ApqpPhase phase = phaseAvecLivrable(ApqpDeliverableKind.ATTACHMENT);
+        when(repository.findByIdAndTenantId(PHASE_ID, TENANT)).thenReturn(Optional.of(phase));
+        lenient().when(repository.findByTenantIdOrderByPositionAsc(TENANT))
+                .thenReturn(List.of(phase));
+
+        service.ajouterLivrable(PHASE_ID, new ApqpDto.DeliverableRequest(
+                "Customer sign-off", true, ApqpDeliverableKind.ATTACHMENT));
+
+        ApqpDeliverable ajoute = phase.getDeliverables().get(phase.getDeliverables().size() - 1);
+        assertThat(ajoute.isPpap()).isTrue();
+        assertThat(ajoute.getLabel()).isEqualTo("Customer sign-off");
+    }
+
+    // ---------- dossier PPAP ----------
+
+    @Test
+    @DisplayName("le cycle dit combien de livrables PPAP sont acquis")
+    void cycle_compteLeDossierPpap() {
+        ApqpPhase phase = phaseAvecLivrable(ApqpDeliverableKind.ATTACHMENT);
+        ApqpDeliverable etoile = phase.getDeliverables().get(0);
+        etoile.setPpap(true);
+        etoile.setDone(true);
+
+        ApqpDeliverable autre = new ApqpDeliverable();
+        autre.setId(UUID.randomUUID());
+        autre.setPosition(2);
+        autre.setLabel("MSA");
+        autre.setPpap(true);
+        phase.addDeliverable(autre);
+
+        ApqpDeliverable ordinaire = new ApqpDeliverable();
+        ordinaire.setId(UUID.randomUUID());
+        ordinaire.setPosition(3);
+        ordinaire.setLabel("Floor plan layout");
+        phase.addDeliverable(ordinaire);
+
+        when(repository.existsByTenantId(TENANT)).thenReturn(true);
+        when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of(phase));
+
+        ApqpDto.CycleResponse cycle = service.cycle();
+
+        // Calculé par le SERVEUR : deux vues du même cycle doivent afficher le même
+        // chiffre, et la règle changera le jour où « acquis » voudra dire « coché ET
+        // prouvé ».
+        assertThat(cycle.ppapTotal()).isEqualTo(2);
+        assertThat(cycle.ppapDone()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("chaque livrable annonce combien de pièces le prouvent")
+    void cycle_compteLesPieces() {
+        ApqpPhase phase = phaseAvecLivrable(ApqpDeliverableKind.ATTACHMENT);
+        when(repository.existsByTenantId(TENANT)).thenReturn(true);
+        when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of(phase));
+        List<Object[]> comptes = new ArrayList<>();
+        comptes.add(new Object[] { LIVRABLE_ID, 3L });
+        when(evidences.countByDeliverableForTenant(TENANT)).thenReturn(comptes);
+
+        ApqpDto.CycleResponse cycle = service.cycle();
+
+        assertThat(cycle.phases().get(0).deliverables().get(0).evidenceCount()).isEqualTo(3);
+    }
+
+    // ---------- réinitialisation ----------
+
+    @Test
+    @DisplayName("la réinitialisation efface le cycle du client avant de le réamorcer")
+    void reinitialiser_effacePuisAmorce() {
+        when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of());
+
+        service.reinitialiser();
+
+        // L'ordre compte : effacer, VIDER le cache de persistance, puis insérer.
+        // Sans le vidage, l'insertion bute sur l'unicité (client, rang).
+        InOrder ordre = inOrder(repository);
+        ordre.verify(repository).deleteByTenantId(TENANT);
+        ordre.verify(repository).flush();
+        ordre.verify(repository).saveAll(anyList());
+    }
+
     // ---------- fabriques ----------
+
+    /** Une phase d'un seul livrable, du genre demandé. */
+    private ApqpPhase phaseAvecLivrable(ApqpDeliverableKind genre) {
+        ApqpPhase phase = new ApqpPhase();
+        phase.setId(PHASE_ID);
+        phase.setTenantId(TENANT);
+        phase.setPosition(1);
+        phase.setTitle("Planning");
+
+        ApqpDeliverable livrable = new ApqpDeliverable();
+        livrable.setId(LIVRABLE_ID);
+        livrable.setPosition(1);
+        livrable.setLabel("Project plan");
+        livrable.setKind(genre);
+        phase.addDeliverable(livrable);
+        return phase;
+    }
 
     /**
      * Les phases que l'amorçage vient d'écrire.
