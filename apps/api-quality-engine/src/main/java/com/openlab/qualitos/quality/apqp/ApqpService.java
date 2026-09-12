@@ -203,15 +203,50 @@ public class ApqpService {
             phase.setQuestion(modele.question());
 
             int rangLivrable = 1;
-            for (String libelle : modele.livrables()) {
+            for (ApqpReference.LivrableModele modeleLivrable : modele.livrables()) {
                 ApqpDeliverable livrable = new ApqpDeliverable();
-                livrable.setLabel(libelle);
+                livrable.setLabel(modeleLivrable.libelle());
                 livrable.setPosition(rangLivrable++);
+                livrable.setPpap(modeleLivrable.ppap());
+                livrable.setKind(modeleLivrable.genre());
+                livrable.setData(amorceEnJson(modeleLivrable));
                 phase.addDeliverable(livrable);
             }
             phases.add(phase);
         }
         repository.saveAll(phases);
+    }
+
+    /**
+     * Le contenu d'amorçage d'un livrable, en JSON, ou {@code null}.
+     *
+     * <p>Écrit à la main plutôt que par un sérialiseur : deux formes fermées,
+     * trois champs chacune, et des libellés qui viennent d'une constante du code.
+     * Passer par un mapper ferait dépendre ce qui entre en base d'une
+     * configuration tenue ailleurs, qui peut changer sans qu'on s'en avise.
+     *
+     * <p>Les guillemets sont malgré tout échappés : rien n'interdit qu'un libellé
+     * du référentiel en contienne demain.
+     */
+    private static String amorceEnJson(ApqpReference.LivrableModele modele) {
+        if (modele.amorce().isEmpty()) {
+            return null;
+        }
+        StringBuilder json = new StringBuilder("[");
+        for (int i = 0; i < modele.amorce().size(); i++) {
+            String libelle = modele.amorce().get(i).replace("\\", "\\\\").replace("\"", "\\\"");
+            if (i > 0) {
+                json.append(',');
+            }
+            json.append(switch (modele.genre()) {
+                case CHECKLIST -> "{\"label\":\"" + libelle + "\",\"checked\":false}";
+                case DATA_ENTRY -> "{\"label\":\"" + libelle
+                        + "\",\"value\":\"\",\"unit\":\"\",\"measuredAt\":null}";
+                case ATTACHMENT, MODULE_LINK -> throw new IllegalStateException(
+                        "Un livrable " + modele.genre() + " ne s'amorce pas avec des sous-points");
+            });
+        }
+        return json.append(']').toString();
     }
 
     private ApqpPhase charger(UUID phaseId, UUID tenantId) {

@@ -11,8 +11,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -67,27 +69,129 @@ class ApqpServiceTest {
     // ---------- amorçage ----------
 
     @Test
-    @DisplayName("la première lecture amorce le cycle depuis le référentiel AIAG")
+    @DisplayName("la première lecture amorce le cycle depuis le référentiel du document")
     void cycle_amorceALaPremiereLecture() {
         when(repository.existsByTenantId(TENANT)).thenReturn(false);
         when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of());
 
         service.cycle();
 
-        var capture = org.mockito.ArgumentCaptor.forClass(Iterable.class);
-        verify(repository).saveAll(capture.capture());
-
-        @SuppressWarnings("unchecked")
-        List<ApqpPhase> amorcees = new ArrayList<>();
-        ((Iterable<ApqpPhase>) capture.getValue()).forEach(amorcees::add);
+        List<ApqpPhase> amorcees = amorcage();
         assertThat(amorcees).hasSize(5);
-        assertThat(amorcees.get(0).getTitle()).isEqualTo("Planifier et définir");
-        assertThat(amorcees.get(4).getTitle()).contains("Production série");
+        // Les intitulés du document de référence, non traduits : « Control plan »
+        // désigne un document précis, pas un plan de contrôle quelconque.
+        assertThat(amorcees).extracting(ApqpPhase::getTitle)
+                .containsExactly("Planning",
+                                 "Product Design & Development",
+                                 "Process Design & Development",
+                                 "Product and Process Validation",
+                                 "Serial Production and feedback");
         // Les livrables viennent avec : un cycle sans eux n'aurait rien à dire.
-        assertThat(amorcees.get(0).getDeliverables()).hasSize(12);
+        assertThat(amorcees.get(0).getDeliverables()).hasSize(8);
+        assertThat(amorcees.get(1).getDeliverables()).hasSize(9);
+        assertThat(amorcees.get(2).getDeliverables()).hasSize(13);
+        assertThat(amorcees.get(3).getDeliverables()).hasSize(9);
+        assertThat(amorcees.get(4).getDeliverables()).hasSize(9);
         // Le tenant est porté par CHAQUE livrable, pas seulement par la phase :
         // une ligne sans client échapperait au cloisonnement.
         assertThat(amorcees.get(0).getDeliverables().get(0).getTenantId()).isEqualTo(TENANT);
+    }
+
+    @Test
+    @DisplayName("l'astérisque du document marque les livrables du dossier PPAP, et eux seuls")
+    void amorcage_marqueLesLivrablesPpap() {
+        when(repository.existsByTenantId(TENANT)).thenReturn(false);
+        when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of());
+
+        service.cycle();
+
+        List<ApqpPhase> amorcees = amorcage();
+        List<ApqpDeliverable> tous = amorcees.stream()
+                .flatMap(p -> p.getDeliverables().stream()).toList();
+
+        // Le document compte douze éléments PPAP : deux en phase 2, quatre en
+        // phase 3, six en phase 4. Ce chiffre est la raison d'être de la section
+        // PPAP : elle n'est juste que s'il l'est.
+        assertThat(tous).filteredOn(ApqpDeliverable::isPpap).hasSize(12);
+        // Aucun en phase 1 : le dossier ne se constitue qu'à partir de la
+        // conception produit.
+        assertThat(amorcees.get(0).getDeliverables()).noneMatch(ApqpDeliverable::isPpap);
+        assertThat(tous).filteredOn(ApqpDeliverable::isPpap)
+                .extracting(ApqpDeliverable::getLabel)
+                .contains("PFMEA", "Control plan", "MSA",
+                          "First Article Inspection Report (FAIR)",
+                          "PPAP file and approval form", "Customer specific requirements");
+    }
+
+    @Test
+    @DisplayName("chaque livrable reçoit le genre qui dit ce qu'il produit")
+    void amorcage_donneLeGenre() {
+        when(repository.existsByTenantId(TENANT)).thenReturn(false);
+        when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of());
+
+        service.cycle();
+
+        Map<String, ApqpDeliverable> parLibelle = amorcage().stream()
+                .flatMap(p -> p.getDeliverables().stream())
+                .collect(Collectors.toMap(ApqpDeliverable::getLabel, d -> d, (a, b) -> a));
+
+        // Une AMDEC et un plan de surveillance sont déjà tenus ailleurs dans
+        // QualitOS : on y renvoie, au lieu d'en demander une copie qui
+        // vieillirait à part.
+        assertThat(parLibelle.get("PFMEA").getKind()).isEqualTo(ApqpDeliverableKind.MODULE_LINK);
+        assertThat(parLibelle.get("Control plan").getKind())
+                .isEqualTo(ApqpDeliverableKind.MODULE_LINK);
+        assertThat(parLibelle.get("Preliminary BOM").getKind())
+                .isEqualTo(ApqpDeliverableKind.ATTACHMENT);
+        assertThat(parLibelle.get("Initial process capability studies").getKind())
+                .isEqualTo(ApqpDeliverableKind.DATA_ENTRY);
+        assertThat(parLibelle.get("Material handling, packaging, labelling,"
+                                 + " and part marking approvals").getKind())
+                .isEqualTo(ApqpDeliverableKind.CHECKLIST);
+    }
+
+    @Test
+    @DisplayName("les sous-points et les mesures du document sont amorcés, vides")
+    void amorcage_poseLesSousPointsEtLesMesures() {
+        when(repository.existsByTenantId(TENANT)).thenReturn(false);
+        when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of());
+
+        service.cycle();
+
+        List<ApqpPhase> amorcees = amorcage();
+        ApqpDeliverable cibles = amorcees.get(0).getDeliverables().get(1);
+        assertThat(cibles.getKind()).isEqualTo(ApqpDeliverableKind.CHECKLIST);
+        assertThat(cibles.getData())
+                .contains("\"label\":\"safety\"")
+                .contains("\"checked\":false")
+                .contains("maintainability");
+
+        ApqpDeliverable capabilite = amorcees.get(3).getDeliverables().stream()
+                .filter(d -> "Initial process capability studies".equals(d.getLabel()))
+                .findFirst().orElseThrow();
+        // Les intitulés sont posés, les valeurs restent à mesurer : c'est ce qui
+        // distingue un livrable amorcé d'un livrable renseigné.
+        assertThat(capabilite.getData())
+                .contains("\"label\":\"Cpk\"")
+                .contains("\"value\":\"\"")
+                .contains("\"measuredAt\":null");
+    }
+
+    @Test
+    @DisplayName("un livrable documentaire n'emporte aucun contenu d'amorçage")
+    void amorcage_laissePiecesJointesSansContenu() {
+        when(repository.existsByTenantId(TENANT)).thenReturn(false);
+        when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of());
+
+        service.cycle();
+
+        // Une chaîne vide aurait été lue comme un tableau vide par l'écran, donc
+        // comme une liste de points qu'on aurait effacée.
+        assertThat(amorcage().stream()
+                .flatMap(p -> p.getDeliverables().stream())
+                .filter(d -> d.getKind() == ApqpDeliverableKind.ATTACHMENT))
+                .isNotEmpty()
+                .allMatch(d -> d.getData() == null);
     }
 
     @Test
@@ -323,6 +427,23 @@ class ApqpServiceTest {
     }
 
     // ---------- fabriques ----------
+
+    /**
+     * Les phases que l'amorçage vient d'écrire.
+     *
+     * <p>Capturées sur {@code saveAll} plutôt que relues du dépôt : c'est bien ce
+     * que le service a composé qu'on éprouve, pas ce qu'une doublure rendrait.
+     */
+    private List<ApqpPhase> amorcage() {
+        var capture = org.mockito.ArgumentCaptor.forClass(Iterable.class);
+        verify(repository).saveAll(capture.capture());
+        List<ApqpPhase> amorcees = new ArrayList<>();
+        @SuppressWarnings("unchecked")
+        Iterable<ApqpPhase> capturees = (Iterable<ApqpPhase>) capture.getValue();
+        capturees.forEach(amorcees::add);
+        return amorcees;
+    }
+
 
     private List<Integer> niveaux(int total) {
         return java.util.stream.IntStream.rangeClosed(1, total)
