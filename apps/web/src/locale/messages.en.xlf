@@ -4970,6 +4970,14 @@ Customer portal</target>
         <source>Aucun livrable du cycle n'est marqué comme élément du dossier PPAP. Ouvrez une phase du cycle pour en marquer un.</source>
         <target state="translated">No deliverable in the cycle is marked as part of the PPAP file. Open a phase of the cycle to mark one.</target>
       </trans-unit>
+      <trans-unit id="apqp.link.open" datatype="html">
+        <source>Ouvrir la fiche</source>
+        <target state="translated">Open the record</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.no-route" datatype="html">
+        <source>Un plan de surveillance s'ouvre depuis son produit : il n'a pas d'adresse propre.</source>
+        <target state="translated">A control plan opens from its product: it has no address of its own.</target>
+      </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>
         <target state="translated">Audit schedule</target>

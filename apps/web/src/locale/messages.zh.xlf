@@ -4970,6 +4970,14 @@ Portail clients</source>
         <source>Aucun livrable du cycle n'est marqué comme élément du dossier PPAP. Ouvrez une phase du cycle pour en marquer un.</source>
         <target state="translated">循环中没有任何交付物被标记为 PPAP 文件的组成部分。请打开某个阶段进行标记。</target>
       </trans-unit>
+      <trans-unit id="apqp.link.open" datatype="html">
+        <source>Ouvrir la fiche</source>
+        <target state="translated">打开记录</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.no-route" datatype="html">
+        <source>Un plan de surveillance s'ouvre depuis son produit : il n'a pas d'adresse propre.</source>
+        <target state="translated">控制计划从其产品页面打开，没有独立地址。</target>
+      </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>
         <target state="translated">审核计划</target>

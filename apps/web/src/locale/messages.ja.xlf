@@ -4970,6 +4970,14 @@ Portail clients</source>
         <source>Aucun livrable du cycle n'est marqué comme élément du dossier PPAP. Ouvrez une phase du cycle pour en marquer un.</source>
         <target state="translated">サイクル内に PPAP 提出資料の構成要素として印の付いた成果物がありません。フェーズを開いて印を付けてください。</target>
       </trans-unit>
+      <trans-unit id="apqp.link.open" datatype="html">
+        <source>Ouvrir la fiche</source>
+        <target state="translated">レコードを開く</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.no-route" datatype="html">
+        <source>Un plan de surveillance s'ouvre depuis son produit : il n'a pas d'adresse propre.</source>
+        <target state="translated">コントロールプランは製品から開きます。単独の URL はありません。</target>
+      </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>
         <target state="translated">監査スケジュール</target>

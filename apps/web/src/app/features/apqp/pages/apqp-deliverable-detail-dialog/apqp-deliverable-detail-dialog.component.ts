@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 
 import { safeErrorMessage } from '../../../../core/http/error-message';
@@ -76,6 +77,7 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly service: ApqpService,
     private readonly snack: MatSnackBar,
+    private readonly router: Router,
     private readonly dialogRef: MatDialogRef<
       ApqpDeliverableDetailDialogComponent, ApqpCycle | undefined>,
     @Inject(MAT_DIALOG_DATA) public readonly data: ApqpDeliverableDetailDialogData
@@ -157,6 +159,48 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
 
   ariaRetirerPiece(piece: ApqpEvidence): string {
     return $localize`:@@apqp.evidence.remove-aria:Retirer la pièce ${piece.originalFilename}:filename:`;
+  }
+
+  /**
+   * La route de l'enregistrement vise, s'il en a une.
+   *
+   * <p>Un plan de surveillance n'en a pas : il vit dans l'onglet d'un produit, et
+   * rien ne l'atteint par son seul identifiant. On le dit plutot que d'offrir un
+   * lien qui tomberait a cote.
+   */
+  get routeEnregistrement(): string[] | null {
+    const kind = this.form.getRawValue().linkedKind;
+    const id = this.form.getRawValue().linkedId;
+    if (!kind || !id) {
+      return null;
+    }
+    switch (kind) {
+      case 'FMEA': return ['/fmea', id];
+      case 'PDCA': return ['/pdca', id];
+      case 'CAPA': return ['/capa', id];
+      default: return null;   // CONTROL_PLAN : pas de route par identifiant
+    }
+  }
+
+  /** Vrai quand le renvoi est pose mais qu'aucune route ne mene a la fiche. */
+  get renvoiSansRoute(): boolean {
+    const valeurs = this.form.getRawValue();
+    return !!valeurs.linkedKind && !!valeurs.linkedId && this.routeEnregistrement === null;
+  }
+
+  /**
+   * Ouvre la fiche visee, en refermant le popup.
+   *
+   * <p>Sans la fermeture, le dialogue resterait par-dessus l'ecran d'arrivee et
+   * l'utilisateur croirait que rien n'a bouge.
+   */
+  ouvrirEnregistrement(): void {
+    const route = this.routeEnregistrement;
+    if (!route) {
+      return;
+    }
+    this.dialogRef.close();
+    void this.router.navigate(route);
   }
 
   // ---------- contenu ----------

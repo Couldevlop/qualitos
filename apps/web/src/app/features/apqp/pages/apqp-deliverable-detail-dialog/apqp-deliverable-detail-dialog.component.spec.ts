@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 
@@ -24,6 +25,7 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
   let component: ApqpDeliverableDetailDialogComponent;
   let service: jasmine.SpyObj<ApqpService>;
   let dialogRef: jasmine.SpyObj<MatDialogRef<ApqpDeliverableDetailDialogComponent>>;
+  let routeur: jasmine.SpyObj<Router>;
 
   const hote = (): HTMLElement => fixture.nativeElement as HTMLElement;
 
@@ -50,6 +52,8 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
       of({ phases: [], ppapDone: 1, ppapTotal: 12 }));
     dialogRef = jasmine.createSpyObj<MatDialogRef<ApqpDeliverableDetailDialogComponent>>(
       'MatDialogRef', ['close']);
+    routeur = jasmine.createSpyObj<Router>('Router', ['navigate']);
+    routeur.navigate.and.resolveTo(true);
 
     await TestBed.resetTestingModule().configureTestingModule({
       declarations: [ApqpDeliverableDetailDialogComponent],
@@ -57,6 +61,7 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
       providers: [
         { provide: ApqpService, useValue: service },
         { provide: MatDialogRef, useValue: dialogRef },
+        { provide: Router, useValue: routeur },
         {
           provide: MAT_DIALOG_DATA,
           useValue: { phase, deliverable: livrable(partiel), editable }
@@ -121,6 +126,37 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
       { label: 'safety', value: '', unit: '', measuredAt: null, checked: true },
       { label: 'cost', value: '', unit: '', measuredAt: null, checked: false }
     ]);
+  });
+
+  it('ouvre la fiche visee, en refermant le popup', async () => {
+    const cible = '11111111-2222-3333-4444-555555555555';
+    await ouvrir({ kind: 'MODULE_LINK', linkedKind: 'FMEA', linkedId: cible });
+
+    hote().querySelector<HTMLButtonElement>('[data-test=ouvrir-enregistrement]')!.click();
+
+    // Sans la fermeture, le dialogue resterait par-dessus l'ecran d'arrivee et
+    // l'utilisateur croirait que rien n'a bouge.
+    expect(dialogRef.close).toHaveBeenCalled();
+    expect(routeur.navigate).toHaveBeenCalledWith(['/fmea', cible]);
+  });
+
+  it('dit pourquoi un plan de surveillance ne s’ouvre pas d’ici', async () => {
+    await ouvrir({
+      kind: 'MODULE_LINK', linkedKind: 'CONTROL_PLAN',
+      linkedId: '11111111-2222-3333-4444-555555555555'
+    });
+
+    // Il vit dans l'onglet d'un produit : aucune route ne l'atteint par son seul
+    // identifiant, et un lien qui tomberait a cote vaudrait moins qu'une phrase.
+    expect(hote().querySelector('[data-test=ouvrir-enregistrement]')).toBeNull();
+    expect(hote().querySelector('[data-test=renvoi-sans-route]')).not.toBeNull();
+  });
+
+  it('n’offre pas d’ouverture tant qu’aucun enregistrement n’est designe', async () => {
+    await ouvrir({ kind: 'MODULE_LINK' });
+
+    expect(hote().querySelector('[data-test=ouvrir-enregistrement]')).toBeNull();
+    expect(hote().querySelector('[data-test=renvoi-sans-route]')).toBeNull();
   });
 
   // ---------- ce que l'écran refuse ----------

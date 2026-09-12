@@ -443,4 +443,14 @@ TRANSLATIONS = {
         'لا يوجد مُخرَج في الدورة مُعلَّم كعنصر من ملف PPAP. افتح مرحلة من الدورة لتعليم أحدها.',
         'サイクル内に PPAP 提出資料の構成要素として印の付いた成果物がありません。フェーズを開いて印を付けてください。',
         '循环中没有任何交付物被标记为 PPAP 文件的组成部分。请打开某个阶段进行标记。'),
+    'apqp.link.open': (
+        'Ouvrir la fiche', 'Open the record', 'Abrir la ficha',
+        'فتح السجل', 'レコードを開く', '打开记录'),
+    'apqp.link.no-route': (
+        "Un plan de surveillance s'ouvre depuis son produit : il n'a pas d'adresse propre.",
+        'A control plan opens from its product: it has no address of its own.',
+        'Un plan de control se abre desde su producto: no tiene direccion propia.',
+        'تُفتح خطة المراقبة من منتجها: ليس لها عنوان خاص بها.',
+        'コントロールプランは製品から開きます。単独の URL はありません。',
+        '控制计划从其产品页面打开，没有独立地址。'),
 }

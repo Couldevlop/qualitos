@@ -92,6 +92,19 @@
         Cet identifiant n'a pas la forme attendue.
       </mat-error>
     </mat-form-field>
+
+    <!-- Designer l'enregistrement ne servirait qu'a moitie si l'on ne pouvait pas
+         l'ouvrir : c'est la question suivante de qui relit le livrable. -->
+    <button mat-stroked-button type="button" *ngIf="routeEnregistrement"
+            data-test="ouvrir-enregistrement" (click)="ouvrirEnregistrement()">
+      <mat-icon aria-hidden="true">open_in_new</mat-icon>
+      <span i18n="@@apqp.link.open">Ouvrir la fiche</span>
+    </button>
+
+    <p class="aide" *ngIf="renvoiSansRoute" data-test="renvoi-sans-route"
+       i18n="@@apqp.link.no-route">
+      Un plan de surveillance s'ouvre depuis son produit : il n'a pas d'adresse propre.
+    </p>
   </section>
 
   <!-- DATA_ENTRY : des mesures, avec leur unite et leur date. -->
