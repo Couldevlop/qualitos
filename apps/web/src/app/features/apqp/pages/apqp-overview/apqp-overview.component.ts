@@ -49,10 +49,6 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
   phases: ApqpPhase[] = [];
   loading = false;
 
-  /** Livrables du dossier PPAP acquis, et total — comptés par le serveur. */
-  ppapDone = 0;
-  ppapTotal = 0;
-
   /** La phase ouverte sous le schéma, ou `undefined` tant qu'on n'a rien choisi. */
   choisie?: ApqpPhase;
 
@@ -391,15 +387,14 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Prend le cycle rendu par le serveur : les phases ET l'état du dossier PPAP.
+   * Prend le cycle rendu par le serveur.
    *
-   * <p>Les deux arrivent ensemble et s'appliquent ensemble : un compte posé à part
-   * se serait désynchronisé des cases, le temps d'un aller-retour.
+   * <p>La réponse porte aussi l'état du dossier PPAP ; cet écran ne l'affiche pas
+   * — c'est l'écran « Dossier PPAP » qui s'en charge — mais il le reçoit du même
+   * appel, ce qui évite que les deux vues se répondent sur deux états.
    */
   private appliquer(cycle: ApqpCycle): void {
     this.phases = cycle.phases;
-    this.ppapDone = cycle.ppapDone;
-    this.ppapTotal = cycle.ppapTotal;
     this.retenir();
   }
 

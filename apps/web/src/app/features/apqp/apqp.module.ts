@@ -12,6 +12,9 @@ import {
 import { ApqpOverviewComponent } from './pages/apqp-overview/apqp-overview.component';
 import { ApqpPhaseDialogComponent } from './pages/apqp-phase-dialog/apqp-phase-dialog.component';
 import {
+  ApqpPpapPageComponent
+} from './pages/apqp-ppap-page/apqp-ppap-page.component';
+import {
   ApqpPpapSummaryComponent
 } from './pages/apqp-ppap-summary/apqp-ppap-summary.component';
 
@@ -23,6 +26,10 @@ import {
 // liens deja partages au premier renommage, et le cycle se renomme desormais.
 const routes: Routes = [
   { path: '', component: ApqpOverviewComponent },
+  // AVANT `:phase`, qui capterait « ppap » comme s'il etait un rang de phase.
+  // Le dossier PPAP a son propre ecran parce qu'on le travaille pour lui-meme a
+  // l'approche d'une soumission, et pas seulement en marge du cycle.
+  { path: 'ppap', component: ApqpPpapPageComponent },
   { path: ':phase', component: ApqpOverviewComponent }
 ];
 
@@ -32,6 +39,7 @@ const routes: Routes = [
     ApqpPhaseDialogComponent,
     ApqpDeliverableDialogComponent,
     ApqpDeliverableDetailDialogComponent,
+    ApqpPpapPageComponent,
     ApqpPpapSummaryComponent
   ],
   imports: [SharedModule, UiModule, RouterModule.forChild(routes)]

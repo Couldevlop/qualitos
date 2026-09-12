@@ -4602,6 +4602,10 @@ Portal de clientes</target>
         <source>Le cycle</source>
         <target state="translated">El ciclo</target>
       </trans-unit>
+      <trans-unit id="nav.apqp-ppap" datatype="html">
+        <source>Dossier PPAP</source>
+        <target state="translated">Expediente PPAP</target>
+      </trans-unit>
       <trans-unit id="apqp.eyebrow" datatype="html">
         <source>APQP</source>
         <target state="translated">APQP</target>
@@ -4957,6 +4961,14 @@ Portal de clientes</target>
       <trans-unit id="apqp.deliverable-dialog.ppap" datatype="html">
         <source>Ce livrable compose le dossier PPAP</source>
         <target state="translated">Este entregable forma parte del expediente PPAP</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.page-subtitle" datatype="html">
+        <source>Les livrables que le référentiel marque d'un astérisque : ce qui compose le dossier remis au client.</source>
+        <target state="translated">Los entregables marcados con asterisco en el referencial: lo que compone el expediente entregado al cliente.</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.empty" datatype="html">
+        <source>Aucun livrable du cycle n'est marqué comme élément du dossier PPAP. Ouvrez une phase du cycle pour en marquer un.</source>
+        <target state="translated">Ningún entregable del ciclo está marcado como elemento del expediente PPAP. Abra una fase del ciclo para marcar uno.</target>
       </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>

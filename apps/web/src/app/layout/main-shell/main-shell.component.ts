@@ -131,12 +131,15 @@ export class MainShellComponent implements OnInit, OnDestroy {
       ]
     },
     {
-      // UNE seule entrée : le schéma en V porte lui-même la navigation entre
-      // phases, et un sous-menu qui doublerait ses cinq jalons demanderait de
-      // tenir deux listes d'accord pour le même parcours.
+      // Deux entrées, et pas une par phase : le schéma en V porte lui-même la
+      // navigation entre phases, et un sous-menu qui doublerait ses cinq jalons
+      // demanderait de tenir deux listes d'accord pour le même parcours. Le
+      // dossier PPAP, lui, n'est pas une phase : c'est ce qu'on remet au client,
+      // et c'est cette liste qu'on parcourt à l'approche d'une soumission.
       label: $localize`:@@nav.apqp:APQP`,
       items: [
-        { label: $localize`:@@nav.apqp-cycle:Le cycle`, route: '/apqp', icon: 'account_tree' }
+        { label: $localize`:@@nav.apqp-cycle:Le cycle`, route: '/apqp', icon: 'account_tree' },
+        { label: $localize`:@@nav.apqp-ppap:Dossier PPAP`, route: '/apqp/ppap', icon: 'inventory_2' }
       ]
     },
 

@@ -13,6 +13,10 @@ TRANSLATIONS = {
     'nav.apqp-cycle': (
         'Le cycle', 'The cycle', 'El ciclo', 'الدورة', 'サイクル', '流程总览'),
 
+    'nav.apqp-ppap': (
+        'Dossier PPAP', 'PPAP file', 'Expediente PPAP', 'ملف PPAP',
+        'PPAP 提出資料', 'PPAP 文件'),
+
     'apqp.eyebrow': ('APQP', 'APQP', 'APQP', 'APQP', 'APQP', 'APQP'),
     'apqp.title': (
         'Planification qualité produit', 'Advanced product quality planning',
@@ -421,4 +425,18 @@ TRANSLATIONS = {
         'Ce livrable compose le dossier PPAP', 'This deliverable is part of the PPAP file',
         'Este entregable forma parte del expediente PPAP', 'هذا المُخرَج جزء من ملف PPAP',
         'この成果物は PPAP 提出資料の一部です', '该交付物属于 PPAP 文件'),
+    'apqp.ppap.page-subtitle': (
+        "Les livrables que le référentiel marque d'un astérisque : ce qui compose le dossier remis au client.",
+        'The deliverables the reference marks with an asterisk: what makes up the file handed to the customer.',
+        'Los entregables marcados con asterisco en el referencial: lo que compone el expediente entregado al cliente.',
+        'المُخرَجات التي يُعلِّمها المرجع بنجمة: ما يُشكِّل الملف المُقدَّم إلى العميل.',
+        '標準リストでアスタリスクが付いた成果物 — 顧客に提出する資料を構成します。',
+        '参考清单中带星号的交付物：构成提交给客户的文件。'),
+    'apqp.ppap.empty': (
+        "Aucun livrable du cycle n'est marqué comme élément du dossier PPAP. Ouvrez une phase du cycle pour en marquer un.",
+        'No deliverable in the cycle is marked as part of the PPAP file. Open a phase of the cycle to mark one.',
+        'Ningún entregable del ciclo está marcado como elemento del expediente PPAP. Abra una fase del ciclo para marcar uno.',
+        'لا يوجد مُخرَج في الدورة مُعلَّم كعنصر من ملف PPAP. افتح مرحلة من الدورة لتعليم أحدها.',
+        'サイクル内に PPAP 提出資料の構成要素として印の付いた成果物がありません。フェーズを開いて印を付けてください。',
+        '循环中没有任何交付物被标记为 PPAP 文件的组成部分。请打开某个阶段进行标记。'),
 }

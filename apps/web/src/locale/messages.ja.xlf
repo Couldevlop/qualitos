@@ -4602,6 +4602,10 @@ Portail clients</source>
         <source>Le cycle</source>
         <target state="translated">サイクル</target>
       </trans-unit>
+      <trans-unit id="nav.apqp-ppap" datatype="html">
+        <source>Dossier PPAP</source>
+        <target state="translated">PPAP 提出資料</target>
+      </trans-unit>
       <trans-unit id="apqp.eyebrow" datatype="html">
         <source>APQP</source>
         <target state="translated">APQP</target>
@@ -4957,6 +4961,14 @@ Portail clients</source>
       <trans-unit id="apqp.deliverable-dialog.ppap" datatype="html">
         <source>Ce livrable compose le dossier PPAP</source>
         <target state="translated">この成果物は PPAP 提出資料の一部です</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.page-subtitle" datatype="html">
+        <source>Les livrables que le référentiel marque d'un astérisque : ce qui compose le dossier remis au client.</source>
+        <target state="translated">標準リストでアスタリスクが付いた成果物 — 顧客に提出する資料を構成します。</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.empty" datatype="html">
+        <source>Aucun livrable du cycle n'est marqué comme élément du dossier PPAP. Ouvrez une phase du cycle pour en marquer un.</source>
+        <target state="translated">サイクル内に PPAP 提出資料の構成要素として印の付いた成果物がありません。フェーズを開いて印を付けてください。</target>
       </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>

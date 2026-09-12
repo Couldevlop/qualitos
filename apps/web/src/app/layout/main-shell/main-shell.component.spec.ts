@@ -82,6 +82,14 @@ describe('MainShellComponent (navigation model)', () => {
     expect(component.sections.length).toBe(9);
   });
 
+  it('le dossier PPAP a son entree, sous « Le cycle »', () => {
+    // Le dossier ne se travaille pas qu'en marge du cycle : c'est lui qu'on remet
+    // au client, et c'est cette liste qu'on parcourt a l'approche d'une
+    // soumission. D'ou une entree a lui, juste sous celle du cycle.
+    const apqp = component.sections.find(s => s.items.some(i => i.route === '/apqp'))!;
+    expect(apqp.items.map(i => i.route)).toEqual(['/apqp', '/apqp/ppap']);
+  });
+
   it('orders the six groups as designed', () => {
     const labels = component.sections.map(s => s.items.length);
     // Pilotage(5), Méthodes(6), Analyses IA(8), Opérations(10), Référentiels(10),

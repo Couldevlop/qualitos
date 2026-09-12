@@ -1,0 +1,21 @@
+<div class="qos-page">
+  <qos-page-header
+    eyebrow="APQP" i18n-eyebrow="@@apqp.eyebrow"
+    title="Dossier PPAP" i18n-title="@@apqp.ppap.title"
+    subtitle="Les livrables que le référentiel marque d'un astérisque : ce qui compose le dossier remis au client."
+    i18n-subtitle="@@apqp.ppap.page-subtitle">
+  </qos-page-header>
+
+  <!-- Le meme composant que sous le schema du cycle : une seconde implementation
+       aurait diverge de la premiere au premier ajustement. -->
+  <qos-apqp-ppap-summary [phases]="phases" [done]="ppapDone" [total]="ppapTotal"
+                         (ouvrir)="ouvrirLivrable($event)">
+  </qos-apqp-ppap-summary>
+
+  <!-- Un cycle sans livrable etoile n'arrive qu'apres les avoir tous retires :
+       on dit quoi faire, plutot que de laisser un blanc. -->
+  <p class="invite" *ngIf="vide" data-test="dossier-vide" i18n="@@apqp.ppap.empty">
+    Aucun livrable du cycle n'est marqué comme élément du dossier PPAP. Ouvrez une phase
+    du cycle pour en marquer un.
+  </p>
+</div>

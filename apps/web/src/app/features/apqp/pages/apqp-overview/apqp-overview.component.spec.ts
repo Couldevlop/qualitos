@@ -149,9 +149,11 @@ describe('ApqpOverviewComponent', () => {
     expect(req.request.body.done).toBeTrue();
     // Sans cela, un clic sur la case effacerait ce que le popup avait enregistre.
     expect(req.request.body.comment).toBe('reçu le 3');
+    // La reponse porte le cycle entier : l'ecran reprend ses phases, et l'ecran
+    // du dossier PPAP lira le meme etat au prochain affichage.
     req.flush({ phases, ppapDone: 2, ppapTotal: 10 });
 
-    expect(component.ppapDone).toBe(2);
+    expect(component.phases.length).toBe(5);
   });
 
   it('un livrable a renvoi ne se coche pas depuis la liste', async () => {
@@ -178,15 +180,33 @@ describe('ApqpOverviewComponent', () => {
     expect(ouvrir).toHaveBeenCalled();
   });
 
-  it('signale les livrables du dossier PPAP, et rend la section sous le schema', async () => {
+  it('signale les livrables du dossier PPAP, sans rendre le dossier lui-meme', async () => {
     await setup('1');
     servirCycle();
 
     expect(hote().querySelector('[data-test=marque-ppap]')).not.toBeNull();
-    // La section porte sur le cycle entier, pas sur la phase ouverte : elle est
-    // rendue meme avec une phase ouverte.
-    expect(hote().querySelector('[data-test=section-ppap]')).not.toBeNull();
-    expect(hote().querySelectorAll('[data-test=ligne-ppap]').length).toBe(5);
+    // Le dossier a son propre ecran. Ses douze lignes ont vecu ici, sous le
+    // schema, et repoussaient le detail de la phase sous la ligne de flottaison :
+    // ouvrir un autre jalon ne changeait alors rien de VISIBLE.
+    expect(hote().querySelector('[data-test=section-ppap]')).toBeNull();
+  });
+
+  it('ouvrir un autre jalon change le detail JUSTE SOUS le schema', async () => {
+    await setup('1');
+    servirCycle();
+
+    const detail = hote().querySelector('.detail')!;
+    expect(detail.textContent).toContain('Phase 1');
+
+    // Le detail suit immediatement le schema dans le DOM : rien ne s'intercale
+    // entre les deux, sans quoi le changement se produirait hors de l'ecran.
+    const schema = hote().querySelector('.v')!;
+    let suivant = schema.nextElementSibling;
+    while (suivant && !suivant.classList.contains('detail')
+           && suivant.tagName.toLowerCase() !== 'qos-apqp-ppap-summary') {
+      suivant = suivant.nextElementSibling;
+    }
+    expect(suivant?.classList.contains('detail')).toBeTrue();
   });
 
   it('ne reinitialise pas le cycle quand la confirmation est refusee', async () => {
@@ -214,7 +234,7 @@ describe('ApqpOverviewComponent', () => {
     req.flush({ phases: cycle(), ppapDone: 0, ppapTotal: 5 });
 
     expect(naviguer).toHaveBeenCalledWith(['/apqp']);
-    expect(component.ppapTotal).toBe(5);
+    expect(component.phases.length).toBe(5);
   });
 
   it('dessine le V à partir du rang que rend le serveur', async () => {

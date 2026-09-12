@@ -44,11 +44,11 @@
     </li>
   </ol>
 
-  <!-- Le dossier PPAP surmonte le detail : il porte sur le cycle entier, pas
-       sur la phase ouverte. -->
-  <qos-apqp-ppap-summary [phases]="phases" [done]="ppapDone" [total]="ppapTotal"
-                         (ouvrir)="ouvrirLivrable($event.phase, $event.deliverable)">
-  </qos-apqp-ppap-summary>
+  <!-- Le dossier PPAP a son propre ecran (« Dossier PPAP » dans le menu). Il a
+       vecu ici, sous le schema, et c'etait une erreur : ses douze lignes
+       repoussaient le detail de la phase sous la ligne de flottaison, si bien
+       qu'ouvrir un autre jalon ne changeait rien de VISIBLE. Le schema et ce
+       qu'il ouvre doivent rester l'un sous l'autre. -->
 
   <!-- Rien d'ouvert : on dit quoi faire, plutôt que de laisser un blanc. -->
   <p class="invite" *ngIf="!choisie && phases.length > 0" i18n="@@apqp.pick-a-phase">

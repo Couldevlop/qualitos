@@ -4602,6 +4602,10 @@ Portail clients</source>
         <source>Le cycle</source>
         <target state="translated">流程总览</target>
       </trans-unit>
+      <trans-unit id="nav.apqp-ppap" datatype="html">
+        <source>Dossier PPAP</source>
+        <target state="translated">PPAP 文件</target>
+      </trans-unit>
       <trans-unit id="apqp.eyebrow" datatype="html">
         <source>APQP</source>
         <target state="translated">APQP</target>
@@ -4957,6 +4961,14 @@ Portail clients</source>
       <trans-unit id="apqp.deliverable-dialog.ppap" datatype="html">
         <source>Ce livrable compose le dossier PPAP</source>
         <target state="translated">该交付物属于 PPAP 文件</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.page-subtitle" datatype="html">
+        <source>Les livrables que le référentiel marque d'un astérisque : ce qui compose le dossier remis au client.</source>
+        <target state="translated">参考清单中带星号的交付物：构成提交给客户的文件。</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.empty" datatype="html">
+        <source>Aucun livrable du cycle n'est marqué comme élément du dossier PPAP. Ouvrez une phase du cycle pour en marquer un.</source>
+        <target state="translated">循环中没有任何交付物被标记为 PPAP 文件的组成部分。请打开某个阶段进行标记。</target>
       </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>
