@@ -36,7 +36,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ApqpPhase {
+public class ApqpPhase implements ApqpTraduisible {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -51,6 +51,16 @@ public class ApqpPhase {
 
     @Column(nullable = false, length = 255)
     private String title;
+
+    /**
+     * Clé du référentiel, ou {@code null} si la phase vient du client.
+     *
+     * <p>Tant que la phase n'a pas été retouchée, c'est elle qui décide du texte
+     * rendu : le titre suit alors la langue de l'interface. Dès que le client
+     * renomme, c'est SON texte qui gagne — et la traduction se tait.
+     */
+    @Column(name = "reference_key", length = 80)
+    private String referenceKey;
 
     /** Ce que la phase établit, en une phrase. */
     @Column(length = 500)

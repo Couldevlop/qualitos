@@ -1,0 +1,117 @@
+/* Le dossier PPAP, sous le schéma : une liste dense et calme, qui ne dispute pas
+   l'attention au V. */
+
+.ppap {
+  margin: var(--qos-space-5) 0 var(--qos-space-4);
+  padding: var(--qos-space-4);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-md, 10px);
+  background: var(--qos-surface-raised, transparent);
+}
+
+.ppap__tete {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--qos-space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--qos-space-3);
+}
+
+.ppap__titre {
+  /* Interlignage explicite : sans lui, les jambages des majuscules accentuées se
+     font rogner — le défaut déjà corrigé sur les grands titres. */
+  margin: 0 0 var(--qos-space-1);
+  font-size: 1.0625rem;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.ppap__legende {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--qos-text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.ppap__compte {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ppap__liste {
+  margin: var(--qos-space-3) 0 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--qos-space-2);
+    padding: var(--qos-space-2) 0;
+    border-bottom: 1px solid var(--qos-border-subtle);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.ppap__etat {
+  flex: 0 0 auto;
+  color: var(--qos-text-muted);
+}
+
+.ppap__ligne--acquis .ppap__etat {
+  color: var(--qos-success, #2e7d32);
+}
+
+.ppap__ouvrir {
+  display: flex;
+  align-items: baseline;
+  gap: var(--qos-space-3);
+  flex: 1 1 auto;
+  /* Un bouton, parce que c'est une action ; mis à plat, parce que quarante
+     boutons dessinés feraient une barre d'outils là où il faut une liste. */
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover .ppap__libelle,
+  &:focus-visible .ppap__libelle {
+    text-decoration: underline;
+  }
+}
+
+.ppap__libelle {
+  overflow-wrap: anywhere;
+}
+
+.ppap__phase {
+  flex: 0 0 auto;
+  color: var(--qos-text-muted);
+  font-size: 0.8125rem;
+}
+
+.ppap__preuve {
+  flex: 0 0 auto;
+  color: var(--qos-text-muted);
+}
+
+@media (max-width: 640px) {
+  .ppap__ouvrir {
+    /* Au téléphone, la phase passe sous le libellé plutôt que de le comprimer. */
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+}

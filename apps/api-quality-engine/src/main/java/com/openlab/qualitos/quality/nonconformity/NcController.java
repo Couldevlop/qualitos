@@ -74,6 +74,18 @@ public class NcController {
         return service.cancel(id);
     }
 
+    /**
+     * Écarte une réclamation externe, motif à l'appui.
+     *
+     * <p>Le service refuse le geste sur un constat interne : la garde n'est pas
+     * seulement à l'écran.
+     */
+    @PostMapping("/{id}/reject")
+    public NcDto.Response reject(@PathVariable UUID id,
+                                 @Valid @RequestBody NcDto.RejectRequest request) {
+        return service.reject(id, request);
+    }
+
     @PostMapping("/{id}/escalate-capa")
     public NcDto.Response escalateToCapa(@PathVariable UUID id,
                                          @Valid @RequestBody NcDto.EscalateRequest request) {

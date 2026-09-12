@@ -4602,6 +4602,10 @@ Portal de clientes</target>
         <source>Le cycle</source>
         <target state="translated">El ciclo</target>
       </trans-unit>
+      <trans-unit id="nav.apqp-ppap" datatype="html">
+        <source>Dossier PPAP</source>
+        <target state="translated">Expediente PPAP</target>
+      </trans-unit>
       <trans-unit id="apqp.eyebrow" datatype="html">
         <source>APQP</source>
         <target state="translated">APQP</target>
@@ -4741,6 +4745,238 @@ Portal de clientes</target>
       <trans-unit id="apqp.deliverable-dialog.blocked-label" datatype="html">
         <source>Nommez le livrable attendu.</source>
         <target state="translated">Nombre el entregable esperado.</target>
+      </trans-unit>
+      <trans-unit id="apqp.reset" datatype="html">
+        <source>Réinitialiser depuis le référentiel</source>
+        <target state="translated">Restablecer desde el referencial</target>
+      </trans-unit>
+      <trans-unit id="apqp.confirm-reset" datatype="html">
+        <source>Remplacer votre cycle par celui du référentiel ? Vos phases, vos livrables et les pièces qui les prouvent seront définitivement perdus.</source>
+        <target state="translated">¿Sustituir su ciclo por el del referencial? Sus fases, sus entregables y los archivos que los prueban se perderán definitivamente.</target>
+      </trans-unit>
+      <trans-unit id="apqp.toggle-deliverable-aria" datatype="html">
+        <source>Déclarer « <x id="label"/> » acquis</source>
+        <target state="translated">Declarar «<x id="label"/>» obtenido</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap-mark-aria" datatype="html">
+        <source>Élément du dossier PPAP</source>
+        <target state="translated">Elemento del expediente PPAP</target>
+      </trans-unit>
+      <trans-unit id="apqp.evidence-count-aria" datatype="html">
+        <source><x id="count"/> pièce(s) jointe(s)</source>
+        <target state="translated"><x id="count"/> archivo(s) adjunto(s)</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.title" datatype="html">
+        <source>Dossier PPAP</source>
+        <target state="translated">Expediente PPAP</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.legend" datatype="html">
+        <source>* Les livrables marqués d'un astérisque dans le référentiel composent le dossier remis au client.</source>
+        <target state="translated">* Los entregables marcados con asterisco en el referencial componen el expediente entregado al cliente.</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.progress" datatype="html">
+        <source><x id="done"/> / <x id="total"/> livrables acquis</source>
+        <target state="translated"><x id="done"/> de <x id="total"/> entregables obtenidos</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.progress-aria" datatype="html">
+        <source>Complétude du dossier PPAP : <x id="percent"/> %</source>
+        <target state="translated">Integridad del expediente PPAP: <x id="percent"/> %</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.row-done" datatype="html">
+        <source><x id="label"/> — acquis</source>
+        <target state="translated"><x id="label"/> — obtenido</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.row-pending" datatype="html">
+        <source><x id="label"/> — à fournir</source>
+        <target state="translated"><x id="label"/> — pendiente de entrega</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.is-ppap" datatype="html">
+        <source>Ce livrable compose le dossier PPAP.</source>
+        <target state="translated">Este entregable forma parte del expediente PPAP.</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.done" datatype="html">
+        <source>Livrable acquis</source>
+        <target state="translated">Entregable obtenido</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.done-at" datatype="html">
+        <source>Déclaré acquis le</source>
+        <target state="translated">Declarado obtenido el</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.comment" datatype="html">
+        <source>Commentaire</source>
+        <target state="translated">Comentario</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.comment-placeholder" datatype="html">
+        <source>Ex. : reçu par courriel le 3 septembre, version 2</source>
+        <target state="translated">Ej.: recibido por correo el 3 de septiembre, versión 2</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.read-only" datatype="html">
+        <source>Vous pouvez consulter ce livrable, pas le modifier.</source>
+        <target state="translated">Puede consultar este entregable, pero no modificarlo.</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.blocked-link" datatype="html">
+        <source>Désignez l'enregistrement avant de déclarer ce livrable acquis.</source>
+        <target state="translated">Indique el registro antes de declarar el entregable obtenido.</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.blocked-rows" datatype="html">
+        <source>Chaque ligne a besoin d'un intitulé.</source>
+        <target state="translated">Cada línea necesita un título.</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.failed" datatype="html">
+        <source>Opération impossible sur ce livrable.</source>
+        <target state="translated">Operación imposible en este entregable.</target>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.title" datatype="html">
+        <source>Pièces jointes</source>
+        <target state="translated">Archivos adjuntos</target>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.empty" datatype="html">
+        <source>Aucune pièce pour l'instant — le livrable n'est pas encore prouvé.</source>
+        <target state="translated">Aún no hay archivos: el entregable no está probado.</target>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.add" datatype="html">
+        <source>Joindre un document</source>
+        <target state="translated">Adjuntar un documento</target>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.limits" datatype="html">
+        <source>Word, Excel, PDF ou image — 10 Mo par fichier, 5 par livrable.</source>
+        <target state="translated">Word, Excel, PDF o imagen: 10 MB por archivo, 5 por entregable.</target>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.added" datatype="html">
+        <source>Pièce versée au livrable.</source>
+        <target state="translated">Archivo adjuntado al entregable.</target>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.remove-aria" datatype="html">
+        <source>Retirer la pièce <x id="filename"/></source>
+        <target state="translated">Eliminar el archivo <x id="filename"/></target>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.confirm-delete" datatype="html">
+        <source>Retirer « <x id="filename"/> » de ce livrable ?</source>
+        <target state="translated">¿Eliminar «<x id="filename"/>» de este entregable?</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.kind" datatype="html">
+        <source>Module concerné</source>
+        <target state="translated">Módulo correspondiente</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.id" datatype="html">
+        <source>Identifiant de l'enregistrement</source>
+        <target state="translated">Identificador del registro</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.id-hint" datatype="html">
+        <source>Copié depuis l'adresse de la fiche : c'est lui qui fait le lien.</source>
+        <target state="translated">Copiado de la dirección de la ficha: es lo que crea el enlace.</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.id-invalid" datatype="html">
+        <source>Cet identifiant n'a pas la forme attendue.</source>
+        <target state="translated">Este identificador no tiene la forma esperada.</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.fmea" datatype="html">
+        <source>AMDEC (DFMEA / PFMEA)</source>
+        <target state="translated">AMFE (DFMEA / PFMEA)</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.control-plan" datatype="html">
+        <source>Plan de surveillance</source>
+        <target state="translated">Plan de control</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.pdca" datatype="html">
+        <source>Cycle PDCA</source>
+        <target state="translated">Ciclo PDCA</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.capa" datatype="html">
+        <source>Action corrective (CAPA)</source>
+        <target state="translated">Acción correctiva (CAPA)</target>
+      </trans-unit>
+      <trans-unit id="apqp.data.label" datatype="html">
+        <source>Indicateur</source>
+        <target state="translated">Indicador</target>
+      </trans-unit>
+      <trans-unit id="apqp.data.value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">Valor</target>
+      </trans-unit>
+      <trans-unit id="apqp.data.unit" datatype="html">
+        <source>Unité</source>
+        <target state="translated">Unidad</target>
+      </trans-unit>
+      <trans-unit id="apqp.data.measured-at" datatype="html">
+        <source>Mesuré le</source>
+        <target state="translated">Medido el</target>
+      </trans-unit>
+      <trans-unit id="apqp.data.add-row" datatype="html">
+        <source>Ajouter un indicateur</source>
+        <target state="translated">Añadir un indicador</target>
+      </trans-unit>
+      <trans-unit id="apqp.data.remove-row" datatype="html">
+        <source>Retirer cette ligne</source>
+        <target state="translated">Eliminar esta línea</target>
+      </trans-unit>
+      <trans-unit id="apqp.point.label" datatype="html">
+        <source>Point à acquitter</source>
+        <target state="translated">Punto a validar</target>
+      </trans-unit>
+      <trans-unit id="apqp.point.add-row" datatype="html">
+        <source>Ajouter un point</source>
+        <target state="translated">Añadir un punto</target>
+      </trans-unit>
+      <trans-unit id="apqp.kind-help.attachment" datatype="html">
+        <source>Joignez le document qui prouve ce livrable — Word, Excel, PDF ou photo.</source>
+        <target state="translated">Adjunte el documento que prueba el entregable: Word, Excel, PDF o foto.</target>
+      </trans-unit>
+      <trans-unit id="apqp.kind-help.module-link" datatype="html">
+        <source>Ce livrable est déjà tenu dans un module de QualitOS : désignez l'enregistrement concerné.</source>
+        <target state="translated">Este entregable ya existe en un módulo de QualitOS: indique el registro correspondiente.</target>
+      </trans-unit>
+      <trans-unit id="apqp.kind-help.data-entry" datatype="html">
+        <source>Saisissez les valeurs mesurées, avec leur unité et leur date.</source>
+        <target state="translated">Introduzca los valores medidos, con su unidad y fecha.</target>
+      </trans-unit>
+      <trans-unit id="apqp.kind-help.checklist" datatype="html">
+        <source>Ce livrable n'est acquis que si tous ses points le sont.</source>
+        <target state="translated">El entregable solo se obtiene cuando todos sus puntos lo están.</target>
+      </trans-unit>
+      <trans-unit id="apqp.kind.attachment" datatype="html">
+        <source>Un document à joindre</source>
+        <target state="translated">Un documento para adjuntar</target>
+      </trans-unit>
+      <trans-unit id="apqp.kind.module-link" datatype="html">
+        <source>Un enregistrement déjà tenu dans QualitOS</source>
+        <target state="translated">Un registro que ya existe en QualitOS</target>
+      </trans-unit>
+      <trans-unit id="apqp.kind.data-entry" datatype="html">
+        <source>Des mesures à saisir</source>
+        <target state="translated">Mediciones para introducir</target>
+      </trans-unit>
+      <trans-unit id="apqp.kind.checklist" datatype="html">
+        <source>Une liste de points à acquitter</source>
+        <target state="translated">Una lista de puntos a validar</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.field-kind" datatype="html">
+        <source>Ce que ce livrable produit</source>
+        <target state="translated">Lo que produce este entregable</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.kind-hint" datatype="html">
+        <source>Détermine ce que le livrable demandera : une pièce jointe, un renvoi, des mesures ou des points à cocher.</source>
+        <target state="translated">Determina lo que pedirá el entregable: un archivo adjunto, una referencia a un registro, mediciones o puntos para marcar.</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.ppap" datatype="html">
+        <source>Ce livrable compose le dossier PPAP</source>
+        <target state="translated">Este entregable forma parte del expediente PPAP</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.page-subtitle" datatype="html">
+        <source>Les livrables que le référentiel marque d'un astérisque : ce qui compose le dossier remis au client.</source>
+        <target state="translated">Los entregables marcados con asterisco en el referencial: lo que compone el expediente entregado al cliente.</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.empty" datatype="html">
+        <source>Aucun livrable du cycle n'est marqué comme élément du dossier PPAP. Ouvrez une phase du cycle pour en marquer un.</source>
+        <target state="translated">Ningún entregable del ciclo está marcado como elemento del expediente PPAP. Abra una fase del ciclo para marcar uno.</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.open" datatype="html">
+        <source>Ouvrir la fiche</source>
+        <target state="translated">Abrir la ficha</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.no-route" datatype="html">
+        <source>Un plan de surveillance s'ouvre depuis son produit : il n'a pas d'adresse propre.</source>
+        <target state="translated">Un plan de control se abre desde su producto: no tiene direccion propia.</target>
       </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>
@@ -15296,6 +15532,62 @@ historial de 12 meses</target>
         <source>Non-conformité résolue.</source>
         <target state="translated">No conformidad resuelta.</target>
       </trans-unit>
+      <trans-unit id="nc.detail.reject" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">Rechazar</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.reject-tooltip" datatype="html">
+        <source>Écarter la réclamation, motif à l'appui</source>
+        <target state="translated">Descartar la reclamación, indicando el motivo</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.rejection-reason" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">Motivo del rechazo</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.rejected-at" datatype="html">
+        <source>Rejetée le</source>
+        <target state="translated">Rechazada el</target>
+      </trans-unit>
+      <trans-unit id="nc.list.tile-rejected" datatype="html">
+        <source>Rejetées</source>
+        <target state="translated">Rechazadas</target>
+      </trans-unit>
+      <trans-unit id="nc.reject.title" datatype="html">
+        <source>Rejeter la réclamation</source>
+        <target state="translated">Rechazar la reclamación</target>
+      </trans-unit>
+      <trans-unit id="nc.reject.submit" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">Rechazar</target>
+      </trans-unit>
+      <trans-unit id="nc.reject.hint" datatype="html">
+        <source>Dis pourquoi la réclamation n'est pas retenue : ce motif sera lu par le client et par l'auditeur, et restera attaché à</source>
+        <target state="translated">Indique por qué no se admite la reclamación: este motivo lo leerán el cliente y el auditor, y quedará vinculado a</target>
+      </trans-unit>
+      <trans-unit id="nc.reject.reason-label" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">Motivo del rechazo</target>
+      </trans-unit>
+      <trans-unit id="nc.reject.reason-placeholder" datatype="html">
+        <source>Hors périmètre contractuel, constat non reproduit, pièce non fournie…</source>
+        <target state="translated">Fuera del ámbito contractual, hallazgo no reproducido, prueba no aportada…</target>
+      </trans-unit>
+      <trans-unit id="nc.reject.reason-required" datatype="html">
+        <source>Le motif du rejet est requis.</source>
+        <target state="translated">El motivo del rechazo es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="nc.reject.blocked" datatype="html">
+        <source>Dites pourquoi la réclamation n'est pas retenue.</source>
+        <target state="translated">Indique por qué no se admite la reclamación.</target>
+      </trans-unit>
+      <trans-unit id="nc.reject.success" datatype="html">
+        <source>Réclamation rejetée.</source>
+        <target state="translated">Reclamación rechazada.</target>
+      </trans-unit>
+      <trans-unit id="nc.reject.error" datatype="html">
+        <source>Rejet impossible.</source>
+        <target state="translated">Rechazo imposible.</target>
+      </trans-unit>
       <trans-unit id="nav.nc-clusters" datatype="html">
         <source>Clustering NC</source>
         <target state="translated">Agrupación de NC</target>
@@ -19697,8 +19989,8 @@ historial de 12 meses</target>
         <target state="translated">Nuevo proyecto</target>
       </trans-unit>
       <trans-unit id="fmea.list.subtitle" datatype="html">
-        <source>Analyse des modes de défaillance, RPN dynamique, bow-tie cyber/RGPD.</source>
-        <target state="translated">Análisis de modos de fallo, RPN dinámico, bow-tie ciber/RGPD.</target>
+        <source>Toute RPN supérieure à 200 exige une action corrective.</source>
+        <target state="translated">Todo RPN superior a 200 exige una acción correctiva.</target>
       </trans-unit>
       <trans-unit id="fmea.list.title" datatype="html">
         <source>FMEA — Risk Management</source>

@@ -7,6 +7,7 @@ import { UiModule } from '../../shared/ui/ui.module';
 import { NcCreateDialogComponent } from './pages/nc-create-dialog/nc-create-dialog.component';
 import { NcDetailComponent } from './pages/nc-detail/nc-detail.component';
 import { NcListComponent } from './pages/nc-list/nc-list.component';
+import { NcRejectDialogComponent } from './pages/nc-reject-dialog/nc-reject-dialog.component';
 import { NcResolveDialogComponent } from './pages/nc-resolve-dialog/nc-resolve-dialog.component';
 
 // Deux entrées de navigation, un seul écran : l'origine est portée par la ROUTE
@@ -27,6 +28,7 @@ const routes: Routes = [
     NcListComponent,
     NcDetailComponent,
     NcCreateDialogComponent,
+    NcRejectDialogComponent,
     NcResolveDialogComponent
   ],
   // MatRadioModule n'est pas réexporté par SharedModule : le choix du mode de

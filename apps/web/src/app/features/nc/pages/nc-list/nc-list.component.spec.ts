@@ -39,8 +39,8 @@ describe('NcListComponent', () => {
   });
 
   it('exposes the canonical NC statuses', () => {
-    expect(component.statuses)
-      .toEqual(['OPEN', 'UNDER_ANALYSIS', 'ACTION_DEFINED', 'CLOSED', 'CANCELLED']);
+    expect(component.statuses).toEqual(
+      ['OPEN', 'UNDER_ANALYSIS', 'ACTION_DEFINED', 'CLOSED', 'CANCELLED', 'REJECTED']);
   });
 
   it('ne propose pas RESOLVED au filtre : c\'est un etat de passage', () => {
@@ -101,7 +101,8 @@ describe('NcListComponent — chargement, filtres et pagination', () => {
   function stats(): NcStatistics {
     return {
       tenantId: 't-1', origin: null, total: 0,
-      open: 0, underAnalysis: 0, actionDefined: 0, resolved: 0, closed: 0, cancelled: 0
+      open: 0, underAnalysis: 0, actionDefined: 0, resolved: 0, closed: 0, cancelled: 0,
+      rejected: 0
     };
   }
 

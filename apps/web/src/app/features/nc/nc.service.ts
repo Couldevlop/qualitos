@@ -17,6 +17,7 @@ import {
   NcSeverity,
   NcStatistics,
   NcStatus,
+  RejectNcRequest,
   ResolveNcRequest,
   StartAnalysisNcRequest,
   UpdateNcRequest,
@@ -177,6 +178,16 @@ export class NcService {
     return this.transition(id, 'CANCELLED', 'cancel', {});
   }
 
+  /**
+   * Écarte une réclamation externe, motif à l'appui.
+   *
+   * <p>Le serveur refuse le geste sur un constat interne : l'écran ne propose
+   * donc le bouton que sur l'externe, mais ce n'est pas lui qui tient la règle.
+   */
+  reject(id: string, input: RejectNcRequest): Observable<NcResponse> {
+    return this.transition(id, 'REJECTED', 'reject', input);
+  }
+
   escalateToCapa(id: string, input: EscalateCapaNcRequest): Observable<NcResponse> {
     if (environment.useMockApi) {
       const n = this.mockStore.find(x => x.id === id);
@@ -256,7 +267,7 @@ export class NcService {
   private transition(
     id: string,
     targetStatus: NcStatus,
-    pathSegment: 'start-analysis' | 'define-action' | 'cancel',
+    pathSegment: 'start-analysis' | 'define-action' | 'cancel' | 'reject',
     body: unknown
   ): Observable<NcResponse> {
     if (environment.useMockApi) {
@@ -264,6 +275,13 @@ export class NcService {
       if (n) {
         n.status = targetStatus;
         n.updatedAt = new Date().toISOString();
+        if (targetStatus === 'REJECTED') {
+          // Le motif doit apparaître même en maquette : un rejet sans raison
+          // afficherait à l'écran ce que le serveur n'accepte pas.
+          const corps = body as { reason?: string } | undefined;
+          n.rejectionReason = corps?.reason;
+          n.rejectedAt = n.updatedAt;
+        }
         return of(n).pipe(delay(120));
       }
       return of(this.mockStore[0]).pipe(delay(120));

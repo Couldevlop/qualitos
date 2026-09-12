@@ -54,9 +54,14 @@
           class="qos-sidebar__items"
           *ngIf="collapsed || !isSectionCollapsed(section.label)">
           <li *ngFor="let item of section.items">
+            <!-- `routerLinkActive` allumait DEUX entrees des qu'une route en
+                 prefixait une autre : sur /apqp/ppap, « Le cycle » (/apqp)
+                 restait allumee en meme temps que « Dossier PPAP ». On decide
+                 donc ici, en gardant la correspondance la PLUS LONGUE -- ce qui
+                 laisse « Le cycle » allumee sur /apqp/2, un rang de phase. -->
             <a
               [routerLink]="item.route"
-              routerLinkActive="qos-sidebar__link--active"
+              [class.qos-sidebar__link--active]="estActif(item.route)"
               class="qos-sidebar__link"
               (click)="onNavigate()"
               [title]="collapsed ? item.label : null">

@@ -4,10 +4,19 @@ import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
 import {
+  ApqpDeliverableDetailDialogComponent
+} from './pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component';
+import {
   ApqpDeliverableDialogComponent
 } from './pages/apqp-deliverable-dialog/apqp-deliverable-dialog.component';
 import { ApqpOverviewComponent } from './pages/apqp-overview/apqp-overview.component';
 import { ApqpPhaseDialogComponent } from './pages/apqp-phase-dialog/apqp-phase-dialog.component';
+import {
+  ApqpPpapPageComponent
+} from './pages/apqp-ppap-page/apqp-ppap-page.component';
+import {
+  ApqpPpapSummaryComponent
+} from './pages/apqp-ppap-summary/apqp-ppap-summary.component';
 
 // Un seul ecran : le schema EST l'interface, et la phase ouverte vit dans
 // l'URL. Deux chemins pour un meme composant, donc, et non deux pages -- un
@@ -17,6 +26,10 @@ import { ApqpPhaseDialogComponent } from './pages/apqp-phase-dialog/apqp-phase-d
 // liens deja partages au premier renommage, et le cycle se renomme desormais.
 const routes: Routes = [
   { path: '', component: ApqpOverviewComponent },
+  // AVANT `:phase`, qui capterait « ppap » comme s'il etait un rang de phase.
+  // Le dossier PPAP a son propre ecran parce qu'on le travaille pour lui-meme a
+  // l'approche d'une soumission, et pas seulement en marge du cycle.
+  { path: 'ppap', component: ApqpPpapPageComponent },
   { path: ':phase', component: ApqpOverviewComponent }
 ];
 
@@ -24,7 +37,10 @@ const routes: Routes = [
   declarations: [
     ApqpOverviewComponent,
     ApqpPhaseDialogComponent,
-    ApqpDeliverableDialogComponent
+    ApqpDeliverableDialogComponent,
+    ApqpDeliverableDetailDialogComponent,
+    ApqpPpapPageComponent,
+    ApqpPpapSummaryComponent
   ],
   imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
 })

@@ -22,6 +22,14 @@
                 i18n-matTooltip="@@nc.detail.cancel-tooltip" matTooltip="Annuler la NC">
           <mat-icon>cancel</mat-icon> <span i18n="@@common.cancel">Annuler</span>
         </button>
+        <!-- Rejeter : sur une reclamation seulement, et tant qu'elle n'a pas recu
+             de reponse. Le serveur tient la meme garde. -->
+        <button mat-stroked-button (click)="openReject(n)" *ngIf="canReject(n)"
+                data-test="rejeter" [disabled]="acting$ | async"
+                i18n-matTooltip="@@nc.detail.reject-tooltip"
+                matTooltip="Écarter la réclamation, motif à l'appui">
+          <mat-icon>block</mat-icon> <span i18n="@@nc.detail.reject">Rejeter</span>
+        </button>
         <button mat-stroked-button (click)="escalateToCapa()"
                 [disabled]="(acting$ | async) || !canEscalate(n.status) || !!n.capaCaseId"
                 i18n-matTooltip="@@nc.detail.escalate-tooltip" matTooltip="Créer une CAPA liée">
@@ -112,6 +120,16 @@
             <div class="info-item" *ngIf="n.resolvedAt">
               <span class="info-label" i18n="@@nc.detail.resolved">Résolue le</span>
               <span class="info-value">{{ n.resolvedAt | date:'medium' }}</span>
+            </div>
+            <!-- Le motif du rejet : c'est ce que le client vient lire, et ce que
+                 l'auditeur demande. Il ne se cache pas dans le journal. -->
+            <div class="info-item" *ngIf="n.rejectionReason">
+              <span class="info-label" i18n="@@nc.detail.rejection-reason">Motif du rejet</span>
+              <span class="info-value">{{ n.rejectionReason }}</span>
+            </div>
+            <div class="info-item" *ngIf="n.rejectedAt">
+              <span class="info-label" i18n="@@nc.detail.rejected-at">Rejetée le</span>
+              <span class="info-value">{{ n.rejectedAt | date:'medium' }}</span>
             </div>
             <div class="info-item" *ngIf="n.closedAt">
               <span class="info-label" i18n="@@nc.detail.closed">Clôturée le</span>
