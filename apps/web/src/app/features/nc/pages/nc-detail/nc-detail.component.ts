@@ -17,6 +17,10 @@ import { IshikawaDiagramResponse } from '../../../ishikawa/ishikawa.types';
 import { NcService } from '../../nc.service';
 import { NcPhoto, NcResponse, NcSeverity, NcStatus, VisionAnalysis, VisionScore } from '../../nc.types';
 import {
+  NcRejectDialogComponent,
+  NcRejectDialogData
+} from '../nc-reject-dialog/nc-reject-dialog.component';
+import {
   NcResolveDialogComponent,
   NcResolveDialogData
 } from '../nc-resolve-dialog/nc-resolve-dialog.component';
@@ -464,6 +468,27 @@ export class NcDetailComponent implements OnInit {
     });
   }
 
+  /**
+   * Écarte la réclamation, motif obligatoire.
+   *
+   * <p>Un dialogue de saisie et non une simple confirmation : le motif est ce que
+   * le client lira, et ce que l'auditeur demandera.
+   */
+  openReject(n: NcResponse): void {
+    const data: NcRejectDialogData = { ncId: n.id, reference: n.reference };
+    this.dialog
+      .open(NcRejectDialogComponent, {
+        panelClass: 'qos-dialog-panel',
+        autoFocus: 'first-tabbable',
+        restoreFocus: true,
+        data
+      })
+      .afterClosed()
+      .subscribe(rejetee => {
+        if (rejetee) this.reload$.next();
+      });
+  }
+
   openResolve(n: NcResponse): void {
     const data: NcResolveDialogData = { ncId: n.id, reference: n.reference };
     this.dialog
@@ -541,7 +566,9 @@ export class NcDetailComponent implements OnInit {
   }
 
   isTerminal(status: NcStatus): boolean {
-    return status === 'CLOSED' || status === 'CANCELLED';
+    // REJECTED est terminal comme les deux autres : plus rien ne bouge sur un
+    // constat écarté, et le serveur refuse toute modification.
+    return status === 'CLOSED' || status === 'CANCELLED' || status === 'REJECTED';
   }
 
   canStartAnalysis(status: NcStatus): boolean { return status === 'OPEN'; }
@@ -549,6 +576,18 @@ export class NcDetailComponent implements OnInit {
   canResolve(status: NcStatus): boolean { return status === 'ACTION_DEFINED'; }
   canClose(status: NcStatus): boolean { return status === 'RESOLVED'; }
   canCancel(status: NcStatus): boolean { return !this.isTerminal(status); }
+
+  /**
+   * Rejeter ne se propose que sur un écart signalé DU DEHORS, et tant qu'il n'a
+   * pas reçu de réponse.
+   *
+   * <p>Miroir exact de la garde du serveur : exposer le bouton ailleurs
+   * reviendrait à proposer une action qu'on sait refusée.
+   */
+  canReject(nc: NcResponse): boolean {
+    return nc.origin === 'EXTERNAL'
+      && (nc.status === 'OPEN' || nc.status === 'UNDER_ANALYSIS');
+  }
   canEscalate(status: NcStatus): boolean { return !this.isTerminal(status); }
 
   statusBadgeClass(status: NcStatus): string {

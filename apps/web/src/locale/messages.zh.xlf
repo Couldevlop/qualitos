@@ -19697,8 +19697,8 @@ historique 12 mois</source>
         <target state="translated">新建项目</target>
       </trans-unit>
       <trans-unit id="fmea.list.subtitle" datatype="html">
-        <source>Analyse des modes de défaillance, RPN dynamique, bow-tie cyber/RGPD.</source>
-        <target state="translated">失效模式分析、动态 RPN、网络安全/GDPR 蝴蝶结分析。</target>
+        <source>Toute RPN supérieure à 200 exige une action corrective.</source>
+        <target state="translated">RPN 超过 200 时必须采取纠正措施。</target>
       </trans-unit>
       <trans-unit id="fmea.list.title" datatype="html">
         <source>FMEA — Risk Management</source>
@@ -23041,6 +23041,550 @@ Inde (centre de service)</source>
       <trans-unit id="workflow.editor.canvas-error" datatype="html">
         <source>Impossible de charger l'éditeur de diagramme.</source>
         <target state="translated">无法加载图编辑器。</target>
+      </trans-unit>
+          <trans-unit id="apqp.deliverable.is-ppap" datatype="html">
+        <source>Ce livrable compose le dossier PPAP.</source>
+        <target state="translated">该交付物属于 PPAP 文件。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">17,20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.done" datatype="html">
+        <source>Livrable acquis</source>
+        <target state="translated">交付物已取得</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">21,24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.done-at" datatype="html">
+        <source>Déclaré acquis le</source>
+        <target state="translated">声明取得于</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">28,29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.comment" datatype="html">
+        <source>Commentaire</source>
+        <target state="translated">备注</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">157,158</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.comment-placeholder" datatype="html">
+        <source>Ex. : reçu par courriel le 3 septembre, version 2</source>
+        <target state="translated">例如：9 月 3 日通过邮件收到，第 2 版</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">160,163</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.read-only" datatype="html">
+        <source>Vous pouvez consulter ce livrable, pas le modifier.</source>
+        <target state="translated">您可以查看该交付物，但不能修改。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">144</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.blocked-link" datatype="html">
+        <source>Désignez l&apos;enregistrement avant de déclarer ce livrable acquis.</source>
+        <target state="translated">在声明该交付物已取得之前，请先指定对应记录。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">147</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.blocked-rows" datatype="html">
+        <source>Chaque ligne a besoin d&apos;un intitulé.</source>
+        <target state="translated">每一行都需要名称。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">150</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.failed" datatype="html">
+        <source>Opération impossible sur ce livrable.</source>
+        <target state="translated">无法对该交付物执行此操作。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">325</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.title" datatype="html">
+        <source>Pièces jointes</source>
+        <target state="translated">附件</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">34,36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.empty" datatype="html">
+        <source> Aucune pièce pour l&apos;instant — le livrable n&apos;est pas encore prouvé. </source>
+        <target state="translated">尚无文件 — 该交付物尚未得到证明。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">55,58</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.add" datatype="html">
+        <source>Joindre un document</source>
+        <target state="translated">添加文档</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">64,66</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.limits" datatype="html">
+        <source> Word, Excel, PDF ou image — 10 Mo par fichier, 5 par livrable. </source>
+        <target state="translated">Word、Excel、PDF 或图片 — 每个文件 10 MB，每个交付物 5 个。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">67,70</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.added" datatype="html">
+        <source>Pièce versée au livrable.</source>
+        <target state="translated">文件已附加到交付物。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">191</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.remove-aria" datatype="html">
+        <source>Retirer la pièce <x id="filename" equiv-text="piece.originalFilename"/></source>
+        <target state="translated">删除文件 <x id="filename" equiv-text="piece.originalFilename"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">159</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.confirm-delete" datatype="html">
+        <source>Retirer « <x id="filename" equiv-text="piece.originalFilename"/> » de ce livrable ?</source>
+        <target state="translated">要将“<x id="filename" equiv-text="piece.originalFilename"/>”从该交付物中移除吗？</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">198</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.evidence-count-aria" datatype="html">
+        <source><x id="count" equiv-text="livrable.evidenceCount"/> pièce(s) jointe(s)</source>
+        <target state="translated"><x id="count" equiv-text="livrable.evidenceCount"/> 个附件</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-overview/apqp-overview.component.ts</context>
+          <context context-type="linenumber">152</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.link.kind" datatype="html">
+        <source>Module concerné</source>
+        <target state="translated">相关模块</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">75,76</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.link.id" datatype="html">
+        <source>Identifiant de l&apos;enregistrement</source>
+        <target state="translated">记录标识符</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">84,85</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.link.id-hint" datatype="html">
+        <source> Copié depuis l&apos;adresse de la fiche : c&apos;est lui qui fait le lien. </source>
+        <target state="translated">从记录地址中复制：正是它建立了关联。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">88,90</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.link.id-invalid" datatype="html">
+        <source> Cet identifiant n&apos;a pas la forme attendue. </source>
+        <target state="translated">该标识符格式不正确。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">92,94</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.link.fmea" datatype="html">
+        <source>AMDEC (DFMEA / PFMEA)</source>
+        <target state="translated">FMEA（DFMEA / PFMEA）</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">69</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.link.control-plan" datatype="html">
+        <source>Plan de surveillance</source>
+        <target state="translated">控制计划</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">70</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.link.pdca" datatype="html">
+        <source>Cycle PDCA</source>
+        <target state="translated">PDCA 循环</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.link.capa" datatype="html">
+        <source>Action corrective (CAPA)</source>
+        <target state="translated">纠正措施（CAPA）</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">72</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.data.label" datatype="html">
+        <source>Indicateur</source>
+        <target state="translated">指标</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">102,103</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.data.value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">数值</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">106,107</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.data.unit" datatype="html">
+        <source>Unité</source>
+        <target state="translated">单位</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">110,111</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.data.measured-at" datatype="html">
+        <source>Mesuré le</source>
+        <target state="translated">测量日期</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">114,115</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.data.add-row" datatype="html">
+        <source>Ajouter un indicateur</source>
+        <target state="translated">添加指标</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">130,132</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.data.remove-row" datatype="html">
+        <source>Retirer cette ligne</source>
+        <target state="translated">删除该行</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">155</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.point.label" datatype="html">
+        <source>Point à acquitter</source>
+        <target state="translated">待确认事项</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">140,141</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.point.add-row" datatype="html">
+        <source>Ajouter un point</source>
+        <target state="translated">添加事项</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">152,154</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.kind-help.attachment" datatype="html">
+        <source>Joignez le document qui prouve ce livrable — Word, Excel, PDF ou photo.</source>
+        <target state="translated">请附上证明该交付物的文档 — Word、Excel、PDF 或照片。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">126</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.kind-help.module-link" datatype="html">
+        <source>Ce livrable est déjà tenu dans un module de QualitOS : désignez l&apos;enregistrement concerné.</source>
+        <target state="translated">该交付物已存在于 QualitOS 的某个模块中：请指定对应记录。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">128</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.kind-help.data-entry" datatype="html">
+        <source>Saisissez les valeurs mesurées, avec leur unité et leur date.</source>
+        <target state="translated">请输入测量值及其单位和日期。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">130</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.kind-help.checklist" datatype="html">
+        <source>Ce livrable n&apos;est acquis que si tous ses points le sont.</source>
+        <target state="translated">仅当所有事项均完成时，该交付物才算取得。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">132</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.kind.attachment" datatype="html">
+        <source>Un document à joindre</source>
+        <target state="translated">需附加的文档</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-dialog/apqp-deliverable-dialog.component.ts</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.kind.module-link" datatype="html">
+        <source>Un enregistrement déjà tenu dans QualitOS</source>
+        <target state="translated">QualitOS 中已有的记录</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-dialog/apqp-deliverable-dialog.component.ts</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.kind.data-entry" datatype="html">
+        <source>Des mesures à saisir</source>
+        <target state="translated">需填写的测量值</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-dialog/apqp-deliverable-dialog.component.ts</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.kind.checklist" datatype="html">
+        <source>Une liste de points à acquitter</source>
+        <target state="translated">待确认事项清单</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-dialog/apqp-deliverable-dialog.component.ts</context>
+          <context context-type="linenumber">44</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.field-kind" datatype="html">
+        <source>Ce que ce livrable produit</source>
+        <target state="translated">该交付物产出什么</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-dialog/apqp-deliverable-dialog.component.html</context>
+          <context context-type="linenumber">26,27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.kind-hint" datatype="html">
+        <source> Détermine ce que le livrable demandera : une pièce jointe, un renvoi, des mesures ou des points à cocher. </source>
+        <target state="translated">决定该交付物将要求什么：附件、记录引用、测量值或勾选事项。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-dialog/apqp-deliverable-dialog.component.html</context>
+          <context context-type="linenumber">35,39</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.ppap" datatype="html">
+        <source>Ce livrable compose le dossier PPAP</source>
+        <target state="translated">该交付物属于 PPAP 文件</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-dialog/apqp-deliverable-dialog.component.html</context>
+          <context context-type="linenumber">41,44</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.reset" datatype="html">
+        <source>Réinitialiser depuis le référentiel</source>
+        <target state="translated">从参考清单重置</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-overview/apqp-overview.component.html</context>
+          <context context-type="linenumber">19,21</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.confirm-reset" datatype="html">
+        <source>Remplacer votre cycle par celui du référentiel ? Vos phases, vos livrables et les pièces qui les prouvent seront définitivement perdus.</source>
+        <target state="translated">要用参考清单替换您的循环吗？您的阶段、交付物及其证明文件将被永久删除。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-overview/apqp-overview.component.ts</context>
+          <context context-type="linenumber">355</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.toggle-deliverable-aria" datatype="html">
+        <source>Déclarer « <x id="label" equiv-text="livrable.label"/> » acquis</source>
+        <target state="translated">声明“<x id="label" equiv-text="livrable.label"/>”已取得</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-overview/apqp-overview.component.ts</context>
+          <context context-type="linenumber">144</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.ppap-mark-aria" datatype="html">
+        <source>Élément du dossier PPAP</source>
+        <target state="translated">PPAP 文件的组成部分</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-overview/apqp-overview.component.ts</context>
+          <context context-type="linenumber">148</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.title" datatype="html">
+        <source>Dossier PPAP</source>
+        <target state="translated">PPAP 文件</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-ppap-summary/apqp-ppap-summary.component.html</context>
+          <context context-type="linenumber">7,8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.legend" datatype="html">
+        <source> * Les livrables marqués d&apos;un astérisque dans le référentiel composent le dossier remis au client. </source>
+        <target state="translated">* 参考清单中带星号的交付物构成提交给客户的文件。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-ppap-summary/apqp-ppap-summary.component.html</context>
+          <context context-type="linenumber">11,14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.progress" datatype="html">
+        <source><x id="done" equiv-text="this.done"/> livrables acquis sur <x id="total" equiv-text="this.total"/></source>
+        <target state="translated">已取得 <x id="done" equiv-text="this.done"/> 项交付物，共 <x id="total" equiv-text="this.total"/> 项</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-ppap-summary/apqp-ppap-summary.component.ts</context>
+          <context context-type="linenumber">67</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.progress-aria" datatype="html">
+        <source>Complétude du dossier PPAP : <x id="percent" equiv-text="this.pourcentage"/> %</source>
+        <target state="translated">PPAP 文件完成度：<x id="percent" equiv-text="this.pourcentage"/> %</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-ppap-summary/apqp-ppap-summary.component.ts</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.row-done" datatype="html">
+        <source><x id="label" equiv-text="ligne.deliverable.label"/> — acquis</source>
+        <target state="translated"><x id="label" equiv-text="ligne.deliverable.label"/> — 已取得</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-ppap-summary/apqp-ppap-summary.component.ts</context>
+          <context context-type="linenumber">76</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.row-pending" datatype="html">
+        <source><x id="label" equiv-text="ligne.deliverable.label"/> — à fournir</source>
+        <target state="translated"><x id="label" equiv-text="ligne.deliverable.label"/> — 待提供</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-ppap-summary/apqp-ppap-summary.component.ts</context>
+          <context context-type="linenumber">77</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.detail.reject" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">驳回</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-detail/nc-detail.component.html</context>
+          <context context-type="linenumber">31,33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.detail.reject-tooltip" datatype="html">
+        <source>Écarter la réclamation, motif à l&apos;appui</source>
+        <target state="translated">说明理由后驳回投诉</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-detail/nc-detail.component.html</context>
+          <context context-type="linenumber">30,31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.detail.rejection-reason" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">驳回理由</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-detail/nc-detail.component.html</context>
+          <context context-type="linenumber">127,128</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.detail.rejected-at" datatype="html">
+        <source>Rejetée le</source>
+        <target state="translated">驳回于</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-detail/nc-detail.component.html</context>
+          <context context-type="linenumber">131,132</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.list.tile-rejected" datatype="html">
+        <source>Rejetées</source>
+        <target state="translated">已驳回</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-list/nc-list.component.ts</context>
+          <context context-type="linenumber">248</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.reject.title" datatype="html">
+        <source>Rejeter la réclamation</source>
+        <target state="translated">驳回投诉</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-reject-dialog/nc-reject-dialog.component.html</context>
+          <context context-type="linenumber">3,5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.reject.submit" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">驳回</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-reject-dialog/nc-reject-dialog.component.html</context>
+          <context context-type="linenumber">10,11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.reject.hint" datatype="html">
+        <source>Dis pourquoi la réclamation n&apos;est pas retenue : ce motif sera lu par le client et par l&apos;auditeur, et restera attaché à</source>
+        <target state="translated">请说明投诉不被采纳的原因：客户与审核员都会读到，并将始终附于</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-reject-dialog/nc-reject-dialog.component.html</context>
+          <context context-type="linenumber">16,17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.reject.reason-label" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">驳回理由</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-reject-dialog/nc-reject-dialog.component.html</context>
+          <context context-type="linenumber">21,22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.reject.reason-placeholder" datatype="html">
+        <source>Hors périmètre contractuel, constat non reproduit, pièce non fournie…</source>
+        <target state="translated">超出合同范围、问题无法复现、未提供证据……</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-reject-dialog/nc-reject-dialog.component.html</context>
+          <context context-type="linenumber">24,25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.reject.reason-required" datatype="html">
+        <source> Le motif du rejet est requis. </source>
+        <target state="translated">必须填写驳回理由。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-reject-dialog/nc-reject-dialog.component.html</context>
+          <context context-type="linenumber">27,29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.reject.blocked" datatype="html">
+        <source>Dites pourquoi la réclamation n&apos;est pas retenue.</source>
+        <target state="translated">请说明投诉不被采纳的原因。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-reject-dialog/nc-reject-dialog.component.ts</context>
+          <context context-type="linenumber">54</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.reject.success" datatype="html">
+        <source>Réclamation rejetée.</source>
+        <target state="translated">投诉已驳回。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-reject-dialog/nc-reject-dialog.component.ts</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.reject.error" datatype="html">
+        <source>Rejet impossible.</source>
+        <target state="translated">无法驳回。</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-reject-dialog/nc-reject-dialog.component.ts</context>
+          <context context-type="linenumber">79</context>
+        </context-group>
       </trans-unit>
     </body>
   </file>

@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
-import { of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
@@ -31,7 +31,8 @@ describe('NcListComponent (origine portée par la route)', () => {
     // doublure, l'écran tombe avant d'avoir demandé sa liste.
     svc.statistics.and.returnValue(of({
       tenantId: 't-1', origin: null, total: 0,
-      open: 0, underAnalysis: 0, actionDefined: 0, resolved: 0, closed: 0, cancelled: 0
+      open: 0, underAnalysis: 0, actionDefined: 0, resolved: 0, closed: 0, cancelled: 0,
+      rejected: 3
     }));
 
     TestBed.resetTestingModule();
@@ -74,6 +75,19 @@ describe('NcListComponent (origine portée par la route)', () => {
 
     const filters = svc.listNcs.calls.mostRecent().args[2];
     expect(filters?.origin).toBeUndefined();
+  });
+
+  it('la tuile « Rejetées » ne surmonte que la liste externe', async () => {
+    setup('EXTERNAL');
+    const externes = await firstValueFrom(fixture.componentInstance.tiles$);
+    expect(externes.map(t => t.status)).toContain('REJECTED');
+    expect(externes.find(t => t.status === 'REJECTED')?.value).toBe(3);
+
+    // Sur l'interne, la tuile serait a zero a perpetuite : on ne rejette pas un
+    // constat qu'on a fait soi-meme, on le resout, on le clot ou on l'annule.
+    setup('INTERNAL');
+    const internes = await firstValueFrom(fixture.componentInstance.tiles$);
+    expect(internes.map(t => t.status)).not.toContain('REJECTED');
   });
 
   it('annonce l’origine consultée dans le titre de l’écran', () => {

@@ -19697,8 +19697,8 @@ historial de 12 meses</target>
         <target state="translated">Nuevo proyecto</target>
       </trans-unit>
       <trans-unit id="fmea.list.subtitle" datatype="html">
-        <source>Analyse des modes de défaillance, RPN dynamique, bow-tie cyber/RGPD.</source>
-        <target state="translated">Análisis de modos de fallo, RPN dinámico, bow-tie ciber/RGPD.</target>
+        <source>Toute RPN supérieure à 200 exige une action corrective.</source>
+        <target state="translated">Todo RPN superior a 200 exige una acción correctiva.</target>
       </trans-unit>
       <trans-unit id="fmea.list.title" datatype="html">
         <source>FMEA — Risk Management</source>
@@ -23041,6 +23041,550 @@ India (centro de servicio)</target>
       <trans-unit id="workflow.editor.canvas-error" datatype="html">
         <source>Impossible de charger l'éditeur de diagramme.</source>
         <target state="translated">No se puede cargar el editor de diagramas.</target>
+      </trans-unit>
+          <trans-unit id="apqp.deliverable.is-ppap" datatype="html">
+        <source>Ce livrable compose le dossier PPAP.</source>
+        <target state="translated">Este entregable forma parte del expediente PPAP.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">17,20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.done" datatype="html">
+        <source>Livrable acquis</source>
+        <target state="translated">Entregable obtenido</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">21,24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.done-at" datatype="html">
+        <source>Déclaré acquis le</source>
+        <target state="translated">Declarado obtenido el</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">28,29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.comment" datatype="html">
+        <source>Commentaire</source>
+        <target state="translated">Comentario</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">157,158</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.comment-placeholder" datatype="html">
+        <source>Ex. : reçu par courriel le 3 septembre, version 2</source>
+        <target state="translated">Ej.: recibido por correo el 3 de septiembre, versión 2</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">160,163</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.read-only" datatype="html">
+        <source>Vous pouvez consulter ce livrable, pas le modifier.</source>
+        <target state="translated">Puede consultar este entregable, pero no modificarlo.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">144</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.blocked-link" datatype="html">
+        <source>Désignez l&apos;enregistrement avant de déclarer ce livrable acquis.</source>
+        <target state="translated">Indique el registro antes de declarar el entregable obtenido.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">147</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.blocked-rows" datatype="html">
+        <source>Chaque ligne a besoin d&apos;un intitulé.</source>
+        <target state="translated">Cada línea necesita un título.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">150</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.failed" datatype="html">
+        <source>Opération impossible sur ce livrable.</source>
+        <target state="translated">Operación imposible en este entregable.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">325</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.title" datatype="html">
+        <source>Pièces jointes</source>
+        <target state="translated">Archivos adjuntos</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">34,36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.empty" datatype="html">
+        <source> Aucune pièce pour l&apos;instant — le livrable n&apos;est pas encore prouvé. </source>
+        <target state="translated">Aún no hay archivos: el entregable no está probado.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">55,58</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.add" datatype="html">
+        <source>Joindre un document</source>
+        <target state="translated">Adjuntar un documento</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">64,66</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.limits" datatype="html">
+        <source> Word, Excel, PDF ou image — 10 Mo par fichier, 5 par livrable. </source>
+        <target state="translated">Word, Excel, PDF o imagen: 10 MB por archivo, 5 por entregable.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">67,70</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.added" datatype="html">
+        <source>Pièce versée au livrable.</source>
+        <target state="translated">Archivo adjuntado al entregable.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">191</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.remove-aria" datatype="html">
+        <source>Retirer la pièce <x id="filename" equiv-text="piece.originalFilename"/></source>
+        <target state="translated">Eliminar el archivo <x id="filename" equiv-text="piece.originalFilename"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">159</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.confirm-delete" datatype="html">
+        <source>Retirer « <x id="filename" equiv-text="piece.originalFilename"/> » de ce livrable ?</source>
+        <target state="translated">¿Eliminar «<x id="filename" equiv-text="piece.originalFilename"/>» de este entregable?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">198</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.evidence-count-aria" datatype="html">
+        <source><x id="count" equiv-text="livrable.evidenceCount"/> pièce(s) jointe(s)</source>
+        <target state="translated"><x id="count" equiv-text="livrable.evidenceCount"/> archivo(s) adjunto(s)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-overview/apqp-overview.component.ts</context>
+          <context context-type="linenumber">152</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.link.kind" datatype="html">
+        <source>Module concerné</source>
+        <target state="translated">Módulo correspondiente</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">75,76</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.link.id" datatype="html">
+        <source>Identifiant de l&apos;enregistrement</source>
+        <target state="translated">Identificador del registro</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">84,85</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.link.id-hint" datatype="html">
+        <source> Copié depuis l&apos;adresse de la fiche : c&apos;est lui qui fait le lien. </source>
+        <target state="translated">Copiado de la dirección de la ficha: es lo que crea el enlace.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">88,90</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.link.id-invalid" datatype="html">
+        <source> Cet identifiant n&apos;a pas la forme attendue. </source>
+        <target state="translated">Este identificador no tiene la forma esperada.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">92,94</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.link.fmea" datatype="html">
+        <source>AMDEC (DFMEA / PFMEA)</source>
+        <target state="translated">AMFE (DFMEA / PFMEA)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">69</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.link.control-plan" datatype="html">
+        <source>Plan de surveillance</source>
+        <target state="translated">Plan de control</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">70</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.link.pdca" datatype="html">
+        <source>Cycle PDCA</source>
+        <target state="translated">Ciclo PDCA</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.link.capa" datatype="html">
+        <source>Action corrective (CAPA)</source>
+        <target state="translated">Acción correctiva (CAPA)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">72</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.data.label" datatype="html">
+        <source>Indicateur</source>
+        <target state="translated">Indicador</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">102,103</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.data.value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">Valor</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">106,107</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.data.unit" datatype="html">
+        <source>Unité</source>
+        <target state="translated">Unidad</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">110,111</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.data.measured-at" datatype="html">
+        <source>Mesuré le</source>
+        <target state="translated">Medido el</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">114,115</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.data.add-row" datatype="html">
+        <source>Ajouter un indicateur</source>
+        <target state="translated">Añadir un indicador</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">130,132</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.data.remove-row" datatype="html">
+        <source>Retirer cette ligne</source>
+        <target state="translated">Eliminar esta línea</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">155</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.point.label" datatype="html">
+        <source>Point à acquitter</source>
+        <target state="translated">Punto a validar</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">140,141</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.point.add-row" datatype="html">
+        <source>Ajouter un point</source>
+        <target state="translated">Añadir un punto</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.html</context>
+          <context context-type="linenumber">152,154</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.kind-help.attachment" datatype="html">
+        <source>Joignez le document qui prouve ce livrable — Word, Excel, PDF ou photo.</source>
+        <target state="translated">Adjunte el documento que prueba el entregable: Word, Excel, PDF o foto.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">126</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.kind-help.module-link" datatype="html">
+        <source>Ce livrable est déjà tenu dans un module de QualitOS : désignez l&apos;enregistrement concerné.</source>
+        <target state="translated">Este entregable ya existe en un módulo de QualitOS: indique el registro correspondiente.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">128</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.kind-help.data-entry" datatype="html">
+        <source>Saisissez les valeurs mesurées, avec leur unité et leur date.</source>
+        <target state="translated">Introduzca los valores medidos, con su unidad y fecha.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">130</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.kind-help.checklist" datatype="html">
+        <source>Ce livrable n&apos;est acquis que si tous ses points le sont.</source>
+        <target state="translated">El entregable solo se obtiene cuando todos sus puntos lo están.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component.ts</context>
+          <context context-type="linenumber">132</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.kind.attachment" datatype="html">
+        <source>Un document à joindre</source>
+        <target state="translated">Un documento para adjuntar</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-dialog/apqp-deliverable-dialog.component.ts</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.kind.module-link" datatype="html">
+        <source>Un enregistrement déjà tenu dans QualitOS</source>
+        <target state="translated">Un registro que ya existe en QualitOS</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-dialog/apqp-deliverable-dialog.component.ts</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.kind.data-entry" datatype="html">
+        <source>Des mesures à saisir</source>
+        <target state="translated">Mediciones para introducir</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-dialog/apqp-deliverable-dialog.component.ts</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.kind.checklist" datatype="html">
+        <source>Une liste de points à acquitter</source>
+        <target state="translated">Una lista de puntos a validar</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-dialog/apqp-deliverable-dialog.component.ts</context>
+          <context context-type="linenumber">44</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.field-kind" datatype="html">
+        <source>Ce que ce livrable produit</source>
+        <target state="translated">Lo que produce este entregable</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-dialog/apqp-deliverable-dialog.component.html</context>
+          <context context-type="linenumber">26,27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.kind-hint" datatype="html">
+        <source> Détermine ce que le livrable demandera : une pièce jointe, un renvoi, des mesures ou des points à cocher. </source>
+        <target state="translated">Determina lo que pedirá el entregable: un archivo adjunto, una referencia a un registro, mediciones o puntos para marcar.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-dialog/apqp-deliverable-dialog.component.html</context>
+          <context context-type="linenumber">35,39</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.ppap" datatype="html">
+        <source>Ce livrable compose le dossier PPAP</source>
+        <target state="translated">Este entregable forma parte del expediente PPAP</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-deliverable-dialog/apqp-deliverable-dialog.component.html</context>
+          <context context-type="linenumber">41,44</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.reset" datatype="html">
+        <source>Réinitialiser depuis le référentiel</source>
+        <target state="translated">Restablecer desde el referencial</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-overview/apqp-overview.component.html</context>
+          <context context-type="linenumber">19,21</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.confirm-reset" datatype="html">
+        <source>Remplacer votre cycle par celui du référentiel ? Vos phases, vos livrables et les pièces qui les prouvent seront définitivement perdus.</source>
+        <target state="translated">¿Sustituir su ciclo por el del referencial? Sus fases, sus entregables y los archivos que los prueban se perderán definitivamente.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-overview/apqp-overview.component.ts</context>
+          <context context-type="linenumber">355</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.toggle-deliverable-aria" datatype="html">
+        <source>Déclarer « <x id="label" equiv-text="livrable.label"/> » acquis</source>
+        <target state="translated">Declarar «<x id="label" equiv-text="livrable.label"/>» obtenido</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-overview/apqp-overview.component.ts</context>
+          <context context-type="linenumber">144</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.ppap-mark-aria" datatype="html">
+        <source>Élément du dossier PPAP</source>
+        <target state="translated">Elemento del expediente PPAP</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-overview/apqp-overview.component.ts</context>
+          <context context-type="linenumber">148</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.title" datatype="html">
+        <source>Dossier PPAP</source>
+        <target state="translated">Expediente PPAP</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-ppap-summary/apqp-ppap-summary.component.html</context>
+          <context context-type="linenumber">7,8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.legend" datatype="html">
+        <source> * Les livrables marqués d&apos;un astérisque dans le référentiel composent le dossier remis au client. </source>
+        <target state="translated">* Los entregables marcados con asterisco en el referencial componen el expediente entregado al cliente.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-ppap-summary/apqp-ppap-summary.component.html</context>
+          <context context-type="linenumber">11,14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.progress" datatype="html">
+        <source><x id="done" equiv-text="this.done"/> livrables acquis sur <x id="total" equiv-text="this.total"/></source>
+        <target state="translated"><x id="done" equiv-text="this.done"/> entregables obtenidos de <x id="total" equiv-text="this.total"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-ppap-summary/apqp-ppap-summary.component.ts</context>
+          <context context-type="linenumber">67</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.progress-aria" datatype="html">
+        <source>Complétude du dossier PPAP : <x id="percent" equiv-text="this.pourcentage"/> %</source>
+        <target state="translated">Integridad del expediente PPAP: <x id="percent" equiv-text="this.pourcentage"/> %</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-ppap-summary/apqp-ppap-summary.component.ts</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.row-done" datatype="html">
+        <source><x id="label" equiv-text="ligne.deliverable.label"/> — acquis</source>
+        <target state="translated"><x id="label" equiv-text="ligne.deliverable.label"/> — obtenido</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-ppap-summary/apqp-ppap-summary.component.ts</context>
+          <context context-type="linenumber">76</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.row-pending" datatype="html">
+        <source><x id="label" equiv-text="ligne.deliverable.label"/> — à fournir</source>
+        <target state="translated"><x id="label" equiv-text="ligne.deliverable.label"/> — pendiente de entrega</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/apqp/pages/apqp-ppap-summary/apqp-ppap-summary.component.ts</context>
+          <context context-type="linenumber">77</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.detail.reject" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">Rechazar</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-detail/nc-detail.component.html</context>
+          <context context-type="linenumber">31,33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.detail.reject-tooltip" datatype="html">
+        <source>Écarter la réclamation, motif à l&apos;appui</source>
+        <target state="translated">Descartar la reclamación, indicando el motivo</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-detail/nc-detail.component.html</context>
+          <context context-type="linenumber">30,31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.detail.rejection-reason" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">Motivo del rechazo</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-detail/nc-detail.component.html</context>
+          <context context-type="linenumber">127,128</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.detail.rejected-at" datatype="html">
+        <source>Rejetée le</source>
+        <target state="translated">Rechazada el</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-detail/nc-detail.component.html</context>
+          <context context-type="linenumber">131,132</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.list.tile-rejected" datatype="html">
+        <source>Rejetées</source>
+        <target state="translated">Rechazadas</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-list/nc-list.component.ts</context>
+          <context context-type="linenumber">248</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.reject.title" datatype="html">
+        <source>Rejeter la réclamation</source>
+        <target state="translated">Rechazar la reclamación</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-reject-dialog/nc-reject-dialog.component.html</context>
+          <context context-type="linenumber">3,5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.reject.submit" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">Rechazar</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-reject-dialog/nc-reject-dialog.component.html</context>
+          <context context-type="linenumber">10,11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.reject.hint" datatype="html">
+        <source>Dis pourquoi la réclamation n&apos;est pas retenue : ce motif sera lu par le client et par l&apos;auditeur, et restera attaché à</source>
+        <target state="translated">Indique por qué no se admite la reclamación: este motivo lo leerán el cliente y el auditor, y quedará vinculado a</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-reject-dialog/nc-reject-dialog.component.html</context>
+          <context context-type="linenumber">16,17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.reject.reason-label" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">Motivo del rechazo</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-reject-dialog/nc-reject-dialog.component.html</context>
+          <context context-type="linenumber">21,22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.reject.reason-placeholder" datatype="html">
+        <source>Hors périmètre contractuel, constat non reproduit, pièce non fournie…</source>
+        <target state="translated">Fuera del ámbito contractual, hallazgo no reproducido, prueba no aportada…</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-reject-dialog/nc-reject-dialog.component.html</context>
+          <context context-type="linenumber">24,25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.reject.reason-required" datatype="html">
+        <source> Le motif du rejet est requis. </source>
+        <target state="translated">El motivo del rechazo es obligatorio.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-reject-dialog/nc-reject-dialog.component.html</context>
+          <context context-type="linenumber">27,29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.reject.blocked" datatype="html">
+        <source>Dites pourquoi la réclamation n&apos;est pas retenue.</source>
+        <target state="translated">Indique por qué no se admite la reclamación.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-reject-dialog/nc-reject-dialog.component.ts</context>
+          <context context-type="linenumber">54</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.reject.success" datatype="html">
+        <source>Réclamation rejetée.</source>
+        <target state="translated">Reclamación rechazada.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-reject-dialog/nc-reject-dialog.component.ts</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="nc.reject.error" datatype="html">
+        <source>Rejet impossible.</source>
+        <target state="translated">Rechazo imposible.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/nc/pages/nc-reject-dialog/nc-reject-dialog.component.ts</context>
+          <context context-type="linenumber">79</context>
+        </context-group>
       </trans-unit>
     </body>
   </file>
