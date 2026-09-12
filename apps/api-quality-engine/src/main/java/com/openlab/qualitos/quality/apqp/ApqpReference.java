@@ -11,11 +11,12 @@ import java.util.List;
  * schéma vide l'obligerait à ressaisir un contenu normatif que personne n'a
  * envie de retaper.
  *
- * <p>Ces libellés ne passent pas par la traduction. Un livrable normatif traduit
- * librement n'est plus le même livrable — « Control plan » désigne un document
- * précis, pas un plan de contrôle quelconque. Ils sont donc écrits une fois,
- * dans la langue du document de référence, et deviennent la propriété du client
- * dès la première copie : c'est lui qui les traduira s'il le souhaite.
+ * <p>Chaque phase et chaque livrable portent une CLÉ. C'est elle qui permet au
+ * texte de suivre la langue de l'interface : la part du cycle qui vient du
+ * référentiel est écrite dans le code, donc traduisible
+ * ({@link ApqpReferenceTranslations}), tandis que ce que le client réécrit lui
+ * appartient et reste tel quel. Le texte stocké ici est le français, langue
+ * source du projet : il sert de repli et de valeur d'amorçage.
  *
  * <p>L'astérisque du document (« this deliverable is a PPAP element ») devient
  * {@code ppap}. C'est ce qui permet au dossier PPAP d'être une VUE du cycle et
@@ -28,157 +29,116 @@ final class ApqpReference {
     /**
      * Un livrable de référence, avant qu'il n'appartienne à un client.
      *
-     * @param amorce sous-points d'une {@code CHECKLIST}, ou intitulés de mesures
-     *               d'un {@code DATA_ENTRY} ; vide pour les autres genres.
+     * @param cle    clé de traduction ; la ligne suit la langue tant qu'elle n'est
+     *               pas retouchée
+     * @param amorce clés des sous-points d'une {@code CHECKLIST} ou des mesures
+     *               d'un {@code DATA_ENTRY} ; vide pour les autres genres
      */
-    record LivrableModele(String libelle, boolean ppap,
+    record LivrableModele(String cle, boolean ppap,
                           ApqpDeliverableKind genre, List<String> amorce) {
 
         /** Un document : le cas de loin le plus fréquent. */
-        static LivrableModele piece(String libelle) {
-            return new LivrableModele(libelle, false, ApqpDeliverableKind.ATTACHMENT, List.of());
+        static LivrableModele piece(String cle) {
+            return new LivrableModele(cle, false, ApqpDeliverableKind.ATTACHMENT, List.of());
         }
 
         /** Un document qui compose le dossier PPAP. */
-        static LivrableModele piecePpap(String libelle) {
-            return new LivrableModele(libelle, true, ApqpDeliverableKind.ATTACHMENT, List.of());
+        static LivrableModele piecePpap(String cle) {
+            return new LivrableModele(cle, true, ApqpDeliverableKind.ATTACHMENT, List.of());
         }
 
         /** Un enregistrement déjà tenu ailleurs dans QualitOS. */
-        static LivrableModele renvoi(String libelle, boolean ppap) {
-            return new LivrableModele(libelle, ppap, ApqpDeliverableKind.MODULE_LINK, List.of());
+        static LivrableModele renvoi(String cle, boolean ppap) {
+            return new LivrableModele(cle, ppap, ApqpDeliverableKind.MODULE_LINK, List.of());
         }
 
         /** Des mesures, avec les intitulés que le document énumère. */
-        static LivrableModele mesures(String libelle, boolean ppap, String... intitules) {
-            return new LivrableModele(
-                    libelle, ppap, ApqpDeliverableKind.DATA_ENTRY, List.of(intitules));
+        static LivrableModele mesures(String cle, boolean ppap, String... intitules) {
+            return new LivrableModele(cle, ppap, ApqpDeliverableKind.DATA_ENTRY, List.of(intitules));
         }
 
         /** Des sous-points, dont l'acquittement fait le livrable. */
-        static LivrableModele points(String libelle, boolean ppap, String... points) {
-            return new LivrableModele(
-                    libelle, ppap, ApqpDeliverableKind.CHECKLIST, List.of(points));
+        static LivrableModele points(String cle, boolean ppap, String... points) {
+            return new LivrableModele(cle, ppap, ApqpDeliverableKind.CHECKLIST, List.of(points));
         }
     }
 
     /** Une phase de référence, avant qu'elle n'appartienne à un client. */
-    record PhaseModele(String titre, String objet, String question, List<LivrableModele> livrables) {}
+    record PhaseModele(String cle, List<LivrableModele> livrables) {}
 
     static final List<PhaseModele> PHASES = List.of(
-            new PhaseModele(
-                    "Planning",
-                    "Traduire la voix du client en objectifs de conception mesurables.",
-                    "Que demande le client, et qu'est-ce que cela impose au produit ?",
-                    List.of(
-                            LivrableModele.piece("Product design requirements"),
-                            // Le document énumère huit cibles : le livrable n'est
-                            // acquis que si les huit le sont, et une pièce jointe
-                            // unique les cacherait.
-                            LivrableModele.points(
-                                    "Project targets – safety, quality/manufacturability,"
-                                    + " service life, reliability, durability, maintainability,"
-                                    + " schedule, and cost",
-                                    false,
-                                    "safety", "quality/manufacturability", "service life",
-                                    "reliability", "durability", "maintainability",
-                                    "schedule", "cost"),
-                            LivrableModele.piece(
-                                    "Preliminary listing of Critical Items (CIs)"
-                                    + " and Key Characteristics (KCs)"),
-                            LivrableModele.piece("Preliminary BOM"),
-                            LivrableModele.piece("Preliminary process flow diagram"),
-                            LivrableModele.piece("SOW review"),
-                            LivrableModele.piece("Preliminary sourcing plan"),
-                            LivrableModele.piece("Project plan"))),
+            new PhaseModele("phase.planning", List.of(
+                    LivrableModele.piece("deliv.product-design-requirements"),
+                    // Le document énumère huit cibles : le livrable n'est acquis que
+                    // si les huit le sont, et une pièce jointe unique les cacherait.
+                    LivrableModele.points("deliv.project-targets", false,
+                            "row.safety", "row.quality-manufacturability", "row.service-life",
+                            "row.reliability", "row.durability", "row.maintainability",
+                            "row.schedule", "row.cost"),
+                    LivrableModele.piece("deliv.ci-kc-listing"),
+                    LivrableModele.piece("deliv.preliminary-bom"),
+                    LivrableModele.piece("deliv.preliminary-process-flow"),
+                    LivrableModele.piece("deliv.sow-review"),
+                    LivrableModele.piece("deliv.preliminary-sourcing-plan"),
+                    LivrableModele.piece("deliv.project-plan"))),
 
-            new PhaseModele(
-                    "Product Design & Development",
-                    "Figer une conception fabricable, vérifiée et documentée.",
-                    "Le produit tel que dessiné tient-il ses objectifs, et sait-on le fabriquer ?",
-                    List.of(
-                            // L'analyse de risque de conception EST une AMDEC : on
-                            // renvoie au module qui la tient, plutôt que d'en
-                            // demander une copie qui vieillirait à part.
-                            LivrableModele.renvoi("Design risk analysis", true),
-                            LivrableModele.piecePpap(
-                                    "Design records and BOM addressing the findings"
-                                    + " of the design risk analysis"),
-                            LivrableModele.piece("Special requirements, product KCs and CIs listings"),
-                            LivrableModele.piece("Preliminary risk analysis of sourcing plan"),
-                            LivrableModele.piece("Packaging specification"),
-                            LivrableModele.piece("Design review report"),
-                            LivrableModele.piece("Development product build plan"),
-                            LivrableModele.piece(
-                                    "Design verification and validation plans,"
-                                    + " and associated results"),
-                            LivrableModele.piece("Feasibility assessment"))),
+            new PhaseModele("phase.product-design", List.of(
+                    // L'analyse de risque de conception EST une AMDEC : on renvoie au
+                    // module qui la tient, plutôt que d'en demander une copie qui
+                    // vieillirait à part.
+                    LivrableModele.renvoi("deliv.design-risk-analysis", true),
+                    LivrableModele.piecePpap("deliv.design-records-bom"),
+                    LivrableModele.piece("deliv.special-requirements-kc-ci"),
+                    LivrableModele.piece("deliv.sourcing-risk-analysis"),
+                    LivrableModele.piece("deliv.packaging-specification"),
+                    LivrableModele.piece("deliv.design-review-report"),
+                    LivrableModele.piece("deliv.build-plan"),
+                    LivrableModele.piece("deliv.verification-validation-plans"),
+                    LivrableModele.piece("deliv.feasibility-assessment"))),
 
-            new PhaseModele(
-                    "Process Design & Development",
-                    "Définir le processus de fabrication et ce qui le surveillera.",
-                    "Comment fabrique-t-on, et comment saura-t-on que c'est conforme ?",
-                    List.of(
-                            LivrableModele.piecePpap("Process flow diagram"),
-                            LivrableModele.piece("Floor plan layout"),
-                            LivrableModele.piece("Production preparation plan"),
-                            LivrableModele.piece(
-                                    "Operator staffing and training plan (Human Resources)"),
-                            LivrableModele.renvoi("PFMEA", true),
-                            LivrableModele.piece("Process KCs"),
-                            LivrableModele.renvoi("Control plan", true),
-                            LivrableModele.piece("Preliminary capacity assessment"),
-                            LivrableModele.piece("Work station documentation"),
-                            LivrableModele.piece("Measurement Systems Analysis (MSA) Plan"),
-                            LivrableModele.piece("Supply Chain Risk Management Plan"),
-                            LivrableModele.points(
-                                    "Material handling, packaging, labelling,"
-                                    + " and part marking approvals",
-                                    true,
-                                    "material handling", "packaging", "labelling", "part marking"),
-                            LivrableModele.piece("Production Readiness Review (PRR) results"))),
+            new PhaseModele("phase.process-design", List.of(
+                    LivrableModele.piecePpap("deliv.process-flow-diagram"),
+                    LivrableModele.piece("deliv.floor-plan-layout"),
+                    LivrableModele.piece("deliv.production-preparation-plan"),
+                    LivrableModele.piece("deliv.staffing-training-plan"),
+                    LivrableModele.renvoi("deliv.pfmea", true),
+                    LivrableModele.piece("deliv.process-kcs"),
+                    LivrableModele.renvoi("deliv.control-plan", true),
+                    LivrableModele.piece("deliv.preliminary-capacity"),
+                    LivrableModele.piece("deliv.work-station-documentation"),
+                    LivrableModele.piece("deliv.msa-plan"),
+                    LivrableModele.piece("deliv.supply-chain-risk-plan"),
+                    LivrableModele.points("deliv.handling-packaging-labelling", true,
+                            "row.material-handling", "row.packaging",
+                            "row.labelling", "row.part-marking"),
+                    LivrableModele.piece("deliv.prr-results"))),
 
-            new PhaseModele(
-                    "Product and Process Validation",
-                    "Prouver sur une production réelle que le processus tient ses capabilités.",
-                    "Le processus réel, aux cadences réelles, produit-il conforme ?",
-                    List.of(
-                            LivrableModele.piece("Product from production process run(s)"),
-                            LivrableModele.piecePpap("MSA"),
-                            // Une étude de capabilité se lit par ses indices : les
-                            // demander en clair vaut mieux qu'un rapport dont
-                            // personne ne ressort le chiffre.
-                            LivrableModele.mesures("Initial process capability studies", true,
-                                    "Cp", "Cpk", "Pp", "Ppk"),
-                            LivrableModele.renvoi("Control plan", true),
-                            LivrableModele.piece("Capacity verification"),
-                            LivrableModele.piece("Product validation results"),
-                            LivrableModele.piecePpap("First Article Inspection Report (FAIR)"),
-                            LivrableModele.piecePpap("PPAP file and approval form"),
-                            LivrableModele.piecePpap("Customer specific requirements"))),
+            new PhaseModele("phase.validation", List.of(
+                    LivrableModele.piece("deliv.production-run"),
+                    LivrableModele.piecePpap("deliv.msa"),
+                    // Une étude de capabilité se lit par ses indices : les demander en
+                    // clair vaut mieux qu'un rapport dont personne ne ressort le chiffre.
+                    LivrableModele.mesures("deliv.initial-capability", true,
+                            "row.cp", "row.cpk", "row.pp", "row.ppk"),
+                    LivrableModele.renvoi("deliv.control-plan", true),
+                    LivrableModele.piece("deliv.capacity-verification"),
+                    LivrableModele.piece("deliv.product-validation-results"),
+                    LivrableModele.piecePpap("deliv.fair"),
+                    LivrableModele.piecePpap("deliv.ppap-file"),
+                    LivrableModele.piecePpap("deliv.customer-specific-requirements"))),
 
-            new PhaseModele(
-                    "Serial Production and feedback",
-                    "Produire en série, mesurer ce que le client constate, et réduire la variation restante.",
-                    "Ce qui sort de la ligne satisfait-il le client, et que corrige-t-on ?",
-                    List.of(
-                            LivrableModele.mesures(
-                                    "Quality indices [e.g., CpK, Parts Per Million (PPM),"
-                                    + " rejection rates]",
-                                    false, "CpK", "PPM", "rejection rate"),
-                            LivrableModele.piece("Key Performance Indicators (KPIs)"),
-                            LivrableModele.piece("Evidence that project targets have been met"),
-                            LivrableModele.mesures(
-                                    "On-time Delivery (OTD) and capacity KPIs", false,
-                                    "OTD", "capacity"),
-                            LivrableModele.piece("OTD and capacity improvement plan"),
-                            LivrableModele.piece("Project closure recommendations"),
-                            // Les actions d'amélioration vivent dans le PDCA ou la
-                            // CAPA : on y renvoie au lieu d'en tenir une liste de
-                            // plus, qui divergerait.
-                            LivrableModele.renvoi("Continuous improvement actions", false),
-                            LivrableModele.piece("Lessons learned"),
-                            LivrableModele.renvoi(
-                                    "Updated design risk analysis, PFMEA, and control plans",
-                                    false))));
+            new PhaseModele("phase.serial-production", List.of(
+                    LivrableModele.mesures("deliv.quality-indices", false,
+                            "row.cpk", "row.ppm", "row.rejection-rate"),
+                    LivrableModele.piece("deliv.kpis"),
+                    LivrableModele.piece("deliv.targets-met-evidence"),
+                    LivrableModele.mesures("deliv.otd-capacity-kpis", false,
+                            "row.otd", "row.capacity"),
+                    LivrableModele.piece("deliv.otd-improvement-plan"),
+                    LivrableModele.piece("deliv.closure-recommendations"),
+                    // Les actions d'amélioration vivent dans le PDCA ou la CAPA : on y
+                    // renvoie au lieu d'en tenir une liste de plus, qui divergerait.
+                    LivrableModele.renvoi("deliv.continuous-improvement", false),
+                    LivrableModele.piece("deliv.lessons-learned"),
+                    LivrableModele.renvoi("deliv.updated-risk-analyses", false))));
 }

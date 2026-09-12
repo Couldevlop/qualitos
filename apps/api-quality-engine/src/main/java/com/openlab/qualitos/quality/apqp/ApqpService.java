@@ -6,6 +6,7 @@ import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -316,25 +318,35 @@ public class ApqpService {
         return Math.min(position, total + 1 - position);
     }
 
+    /**
+     * Copie le référentiel dans le cycle du client.
+     *
+     * <p>Chaque ligne garde sa CLÉ en plus de son texte : le texte stocké est le
+     * français, langue source du projet, et la clé permet de rendre la ligne dans
+     * la langue demandée tant que personne ne l'a retouchée.
+     */
     private void amorcer(UUID tenantId) {
+        Locale source = Locale.forLanguageTag(ApqpReferenceTranslations.DEFAUT);
         int rang = 1;
         List<ApqpPhase> phases = new ArrayList<>();
         for (ApqpReference.PhaseModele modele : ApqpReference.PHASES) {
             ApqpPhase phase = new ApqpPhase();
             phase.setTenantId(tenantId);
             phase.setPosition(rang++);
-            phase.setTitle(modele.titre());
-            phase.setPurpose(modele.objet());
-            phase.setQuestion(modele.question());
+            phase.setReferenceKey(modele.cle());
+            phase.setTitle(ApqpReferenceTranslations.texte(modele.cle() + ".title", source));
+            phase.setPurpose(ApqpReferenceTranslations.texte(modele.cle() + ".purpose", source));
+            phase.setQuestion(ApqpReferenceTranslations.texte(modele.cle() + ".question", source));
 
             int rangLivrable = 1;
             for (ApqpReference.LivrableModele modeleLivrable : modele.livrables()) {
                 ApqpDeliverable livrable = new ApqpDeliverable();
-                livrable.setLabel(modeleLivrable.libelle());
+                livrable.setReferenceKey(modeleLivrable.cle());
+                livrable.setLabel(ApqpReferenceTranslations.texte(modeleLivrable.cle(), source));
                 livrable.setPosition(rangLivrable++);
                 livrable.setPpap(modeleLivrable.ppap());
                 livrable.setKind(modeleLivrable.genre());
-                livrable.setData(amorceEnJson(modeleLivrable));
+                livrable.setData(amorceEnJson(modeleLivrable, source));
                 phase.addDeliverable(livrable);
             }
             phases.add(phase);
@@ -353,13 +365,14 @@ public class ApqpService {
      * <p>Les guillemets sont malgré tout échappés : rien n'interdit qu'un libellé
      * du référentiel en contienne demain.
      */
-    private static String amorceEnJson(ApqpReference.LivrableModele modele) {
+    private static String amorceEnJson(ApqpReference.LivrableModele modele, Locale locale) {
         if (modele.amorce().isEmpty()) {
             return null;
         }
         StringBuilder json = new StringBuilder("[");
         for (int i = 0; i < modele.amorce().size(); i++) {
-            String libelle = modele.amorce().get(i).replace("\\", "\\\\").replace("\"", "\\\"");
+            String texte = ApqpReferenceTranslations.texte(modele.amorce().get(i), locale);
+            String libelle = texte.replace("\\", "\\\\").replace("\"", "\\\"");
             if (i > 0) {
                 json.append(',');
             }
@@ -433,13 +446,14 @@ public class ApqpService {
 
     private ApqpDto.PhaseResponse enReponse(ApqpPhase phase, int niveau,
                                             Map<UUID, Integer> pieces) {
+        Locale langue = LocaleContextHolder.getLocale();
         return new ApqpDto.PhaseResponse(
                 phase.getId(),
                 phase.getPosition(),
                 niveau,
-                phase.getTitle(),
-                phase.getPurpose(),
-                phase.getQuestion(),
+                traduit(phase.getReferenceKey(), ".title", phase, phase.getTitle(), langue),
+                traduit(phase.getReferenceKey(), ".purpose", phase, phase.getPurpose(), langue),
+                traduit(phase.getReferenceKey(), ".question", phase, phase.getQuestion(), langue),
                 phase.getDeliverables().stream()
                         .map(d -> enReponse(d, comptePieces(pieces, d)))
                         .toList());
@@ -458,10 +472,11 @@ public class ApqpService {
     }
 
     private ApqpDto.DeliverableResponse enReponse(ApqpDeliverable livrable, int pieces) {
+        Locale langue = LocaleContextHolder.getLocale();
         return new ApqpDto.DeliverableResponse(
                 livrable.getId(),
                 livrable.getPosition(),
-                livrable.getLabel(),
+                traduit(livrable.getReferenceKey(), "", livrable, livrable.getLabel(), langue),
                 livrable.isPpap(),
                 livrable.getKind(),
                 livrable.isDone(),
@@ -483,7 +498,37 @@ public class ApqpService {
      * journalise, plutot que de faire echouer tout l'ecran pour une ligne.
      */
     private List<ApqpDto.DataRow> relire(ApqpDeliverable livrable) {
-        String data = livrable.getData();
+        // Les sous-points et les intitulés de mesures viennent eux aussi du
+        // référentiel : tant que la ligne est intacte, ils suivent la langue.
+        String amorce = amorceTraduite(livrable);
+        if (amorce != null) {
+            return lire(amorce, livrable);
+        }
+        return lire(livrable.getData(), livrable);
+    }
+
+    /**
+     * Le contenu d'amorçage retraduit, ou {@code null} s'il n'y a rien à traduire.
+     *
+     * <p>Retraduire plutôt que traduire ligne à ligne : le contenu stocké est
+     * exactement celui qu'on a écrit à l'amorçage, donc le regénérer dans la
+     * langue demandée rend la même liste, dans le même ordre.
+     */
+    private String amorceTraduite(ApqpDeliverable livrable) {
+        String cle = livrable.getReferenceKey();
+        if (cle == null || livrable.getUpdatedAt() == null
+                || !livrable.getUpdatedAt().equals(livrable.getCreatedAt())) {
+            return null;
+        }
+        return ApqpReference.PHASES.stream()
+                .flatMap(phase -> phase.livrables().stream())
+                .filter(modele -> modele.cle().equals(cle) && !modele.amorce().isEmpty())
+                .findFirst()
+                .map(modele -> amorceEnJson(modele, LocaleContextHolder.getLocale()))
+                .orElse(null);
+    }
+
+    private List<ApqpDto.DataRow> lire(String data, ApqpDeliverable livrable) {
         if (data == null || data.isBlank()) {
             return List.of();
         }
@@ -494,6 +539,29 @@ public class ApqpService {
                     livrable.getId(), ex.getMessage());
             return List.of();
         }
+    }
+
+    /**
+     * Le texte d'une ligne du cycle, dans la langue demandée.
+     *
+     * <p>Trois conditions, et les trois sont nécessaires : la ligne vient du
+     * référentiel (elle porte une clé), personne ne l'a retouchée
+     * ({@code updatedAt == createdAt}), et la clé est connue de la table de
+     * traduction. Sinon, c'est le texte de la base qui sort — parce qu'il
+     * appartient alors au client, et qu'on ne traduit pas ce qu'un utilisateur a
+     * écrit.
+     *
+     * <p>C'est la même frontière que partout ailleurs : ce que la plateforme
+     * fournit se traduit, ce que le client écrit lui appartient.
+     */
+    private String traduit(String cle, String suffixe, ApqpTraduisible ligne,
+                           String stocke, Locale langue) {
+        if (cle == null || ligne.getUpdatedAt() == null || ligne.getCreatedAt() == null
+                || !ligne.getUpdatedAt().equals(ligne.getCreatedAt())) {
+            return stocke;
+        }
+        String traduction = ApqpReferenceTranslations.texte(cle + suffixe, langue);
+        return traduction == null ? stocke : traduction;
     }
 
     private ApqpDeliverable livrable(ApqpPhase phase, UUID deliverableId) {

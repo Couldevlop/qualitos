@@ -11,10 +11,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -53,6 +55,7 @@ class ApqpServiceTest {
     static final UUID LIVRABLE_ID = UUID.randomUUID();
     static final UUID ACTEUR = UUID.randomUUID();
     static final UUID CIBLE = UUID.randomUUID();
+    static final java.time.Instant AMORCAGE = java.time.Instant.parse("2026-09-13T08:00:00Z");
 
     @BeforeEach
     void poserLeTenant() {
@@ -66,6 +69,9 @@ class ApqpServiceTest {
     @AfterEach
     void retirerLeTenant() {
         TenantContext.clear();
+        // Le contexte de langue est un ThreadLocal : le laisser en anglais ferait
+        // echouer le banc suivant, et pour une raison invisible dans son code.
+        LocaleContextHolder.resetLocaleContext();
     }
 
     // ---------- la forme du V ----------
@@ -93,14 +99,16 @@ class ApqpServiceTest {
 
         List<ApqpPhase> amorcees = amorcage();
         assertThat(amorcees).hasSize(5);
-        // Les intitulés du document de référence, non traduits : « Control plan »
-        // désigne un document précis, pas un plan de contrôle quelconque.
+        // Les TITRES sont en français : ce sont des mots ordinaires, et le V est
+        // l'élément le plus visible de l'écran. Les LIVRABLES, eux, gardent la
+        // langue du document — « Control plan » désigne un document précis, pas
+        // un plan de contrôle quelconque (cf. le banc des genres ci-dessous).
         assertThat(amorcees).extracting(ApqpPhase::getTitle)
-                .containsExactly("Planning",
-                                 "Product Design & Development",
-                                 "Process Design & Development",
-                                 "Product and Process Validation",
-                                 "Serial Production and feedback");
+                .containsExactly("Planification",
+                                 "Conception du produit et développement",
+                                 "Conception du processus et développement",
+                                 "Validation du produit et du processus",
+                                 "Production série et retour d'expérience");
         // Les livrables viennent avec : un cycle sans eux n'aurait rien à dire.
         assertThat(amorcees.get(0).getDeliverables()).hasSize(8);
         assertThat(amorcees.get(1).getDeliverables()).hasSize(9);
@@ -133,9 +141,11 @@ class ApqpServiceTest {
         assertThat(amorcees.get(0).getDeliverables()).noneMatch(ApqpDeliverable::isPpap);
         assertThat(tous).filteredOn(ApqpDeliverable::isPpap)
                 .extracting(ApqpDeliverable::getLabel)
-                .contains("PFMEA", "Control plan", "MSA",
-                          "First Article Inspection Report (FAIR)",
-                          "PPAP file and approval form", "Customer specific requirements");
+                .contains("AMDEC processus (PFMEA)", "Plan de surveillance",
+                          "Analyse des systèmes de mesure (MSA)",
+                          "Rapport de contrôle du premier article (FAIR)",
+                          "Dossier PPAP et formulaire d'approbation",
+                          "Exigences spécifiques du client");
     }
 
     @Test
@@ -153,15 +163,16 @@ class ApqpServiceTest {
         // Une AMDEC et un plan de surveillance sont déjà tenus ailleurs dans
         // QualitOS : on y renvoie, au lieu d'en demander une copie qui
         // vieillirait à part.
-        assertThat(parLibelle.get("PFMEA").getKind()).isEqualTo(ApqpDeliverableKind.MODULE_LINK);
-        assertThat(parLibelle.get("Control plan").getKind())
+        assertThat(parLibelle.get("AMDEC processus (PFMEA)").getKind())
                 .isEqualTo(ApqpDeliverableKind.MODULE_LINK);
-        assertThat(parLibelle.get("Preliminary BOM").getKind())
+        assertThat(parLibelle.get("Plan de surveillance").getKind())
+                .isEqualTo(ApqpDeliverableKind.MODULE_LINK);
+        assertThat(parLibelle.get("Nomenclature préliminaire (BOM)").getKind())
                 .isEqualTo(ApqpDeliverableKind.ATTACHMENT);
-        assertThat(parLibelle.get("Initial process capability studies").getKind())
+        assertThat(parLibelle.get("Études de capabilité initiale du processus").getKind())
                 .isEqualTo(ApqpDeliverableKind.DATA_ENTRY);
-        assertThat(parLibelle.get("Material handling, packaging, labelling,"
-                                 + " and part marking approvals").getKind())
+        assertThat(parLibelle.get("Approbations de manutention, d'emballage,"
+                                 + " d'étiquetage et de marquage des pièces").getKind())
                 .isEqualTo(ApqpDeliverableKind.CHECKLIST);
     }
 
@@ -177,12 +188,12 @@ class ApqpServiceTest {
         ApqpDeliverable cibles = amorcees.get(0).getDeliverables().get(1);
         assertThat(cibles.getKind()).isEqualTo(ApqpDeliverableKind.CHECKLIST);
         assertThat(cibles.getData())
-                .contains("\"label\":\"safety\"")
+                .contains("\"label\":\"sécurité\"")
                 .contains("\"checked\":false")
-                .contains("maintainability");
+                .contains("maintenabilité");
 
         ApqpDeliverable capabilite = amorcees.get(3).getDeliverables().stream()
-                .filter(d -> "Initial process capability studies".equals(d.getLabel()))
+                .filter(d -> "Études de capabilité initiale du processus".equals(d.getLabel()))
                 .findFirst().orElseThrow();
         // Les intitulés sont posés, les valeurs restent à mesurer : c'est ce qui
         // distingue un livrable amorcé d'un livrable renseigné.
@@ -680,7 +691,150 @@ class ApqpServiceTest {
         ordre.verify(repository).saveAll(anyList());
     }
 
+    // ---------- le référentiel suit la langue ----------
+
+    @Test
+    @DisplayName("le cycle se lit dans la langue demandée tant qu'il n'est pas retouché")
+    void referentiel_suitLaLangue() {
+        ApqpPhase phase = phaseDuReferentiel();
+        when(repository.existsByTenantId(TENANT)).thenReturn(true);
+        when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of(phase));
+
+        LocaleContextHolder.setLocale(Locale.ENGLISH);
+        ApqpDto.CycleResponse anglais = service.cycle();
+        LocaleContextHolder.setLocale(Locale.forLanguageTag("es"));
+        ApqpDto.CycleResponse espagnol = service.cycle();
+
+        assertThat(anglais.phases().get(0).title()).isEqualTo("Process Design & Development");
+        assertThat(anglais.phases().get(0).deliverables().get(0).label()).isEqualTo("PFMEA");
+        assertThat(espagnol.phases().get(0).title())
+                .isEqualTo("Diseño y desarrollo del proceso");
+        assertThat(espagnol.phases().get(0).deliverables().get(0).label())
+                .isEqualTo("AMFE de proceso (PFMEA)");
+    }
+
+    @Test
+    @DisplayName("une langue inconnue retombe sur le français, langue source")
+    void langueInconnue_retombeSurLeFrancais() {
+        ApqpPhase phase = phaseDuReferentiel();
+        when(repository.existsByTenantId(TENANT)).thenReturn(true);
+        when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of(phase));
+
+        LocaleContextHolder.setLocale(Locale.forLanguageTag("it"));
+
+        assertThat(service.cycle().phases().get(0).title())
+                .isEqualTo("Conception du processus et développement");
+    }
+
+    @Test
+    @DisplayName("une ligne que le client a réécrite n'est plus traduite")
+    void ligneRetouchee_nEstPlusTraduite() {
+        ApqpPhase phase = phaseDuReferentiel();
+        // Le client a renommé : `updatedAt` se décale, et c'est SON texte qui doit
+        // sortir — dans SA langue, quelle que soit celle de l'interface.
+        phase.setTitle("Notre conception process");
+        phase.setUpdatedAt(phase.getCreatedAt().plusSeconds(1));
+        ApqpDeliverable livrable = phase.getDeliverables().get(0);
+        livrable.setLabel("AMDEC maison");
+        livrable.setUpdatedAt(livrable.getCreatedAt().plusSeconds(1));
+
+        when(repository.existsByTenantId(TENANT)).thenReturn(true);
+        when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of(phase));
+        LocaleContextHolder.setLocale(Locale.ENGLISH);
+
+        ApqpDto.CycleResponse cycle = service.cycle();
+
+        assertThat(cycle.phases().get(0).title()).isEqualTo("Notre conception process");
+        assertThat(cycle.phases().get(0).deliverables().get(0).label()).isEqualTo("AMDEC maison");
+    }
+
+    @Test
+    @DisplayName("une ligne que le client a ajoutée n'a pas de clé, donc pas de traduction")
+    void ligneDuClient_nEstJamaisTraduite() {
+        ApqpPhase phase = phaseDuReferentiel();
+        ApqpDeliverable sien = new ApqpDeliverable();
+        sien.setId(UUID.randomUUID());
+        sien.setPosition(2);
+        sien.setLabel("Revue de contrat client");
+        sien.setCreatedAt(phase.getCreatedAt());
+        sien.setUpdatedAt(phase.getCreatedAt());
+        phase.addDeliverable(sien);
+
+        when(repository.existsByTenantId(TENANT)).thenReturn(true);
+        when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of(phase));
+        LocaleContextHolder.setLocale(Locale.ENGLISH);
+
+        assertThat(service.cycle().phases().get(0).deliverables().get(1).label())
+                .isEqualTo("Revue de contrat client");
+    }
+
+    @Test
+    @DisplayName("les sous-points amorcés suivent la langue, eux aussi")
+    void sousPoints_suiventLaLangue() {
+        ApqpPhase phase = new ApqpPhase();
+        phase.setId(PHASE_ID);
+        phase.setTenantId(TENANT);
+        phase.setPosition(1);
+        phase.setTitle("Planification");
+        phase.setReferenceKey("phase.planning");
+        phase.setCreatedAt(AMORCAGE);
+        phase.setUpdatedAt(AMORCAGE);
+
+        ApqpDeliverable cibles = new ApqpDeliverable();
+        cibles.setId(LIVRABLE_ID);
+        cibles.setPosition(1);
+        cibles.setReferenceKey("deliv.project-targets");
+        cibles.setKind(ApqpDeliverableKind.CHECKLIST);
+        cibles.setLabel("Objectifs du projet");
+        cibles.setData("[{\"label\":\"sécurité\",\"checked\":false}]");
+        cibles.setCreatedAt(AMORCAGE);
+        cibles.setUpdatedAt(AMORCAGE);
+        phase.addDeliverable(cibles);
+
+        when(repository.existsByTenantId(TENANT)).thenReturn(true);
+        when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of(phase));
+        LocaleContextHolder.setLocale(Locale.ENGLISH);
+
+        List<ApqpDto.DataRow> lignes =
+                service.cycle().phases().get(0).deliverables().get(0).data();
+
+        assertThat(lignes).extracting(ApqpDto.DataRow::label)
+                .containsExactly("safety", "quality/manufacturability", "service life",
+                                 "reliability", "durability", "maintainability",
+                                 "schedule", "cost");
+    }
+
     // ---------- fabriques ----------
+
+    /**
+     * Une phase telle que l'amorçage l'écrit : clé posée, dates égales.
+     *
+     * <p>L'égalité des dates EST la condition de traduction : c'est elle qui dit
+     * que personne n'a retouché la ligne.
+     */
+    private ApqpPhase phaseDuReferentiel() {
+        ApqpPhase phase = new ApqpPhase();
+        phase.setId(PHASE_ID);
+        phase.setTenantId(TENANT);
+        phase.setPosition(1);
+        phase.setReferenceKey("phase.process-design");
+        phase.setTitle("Conception du processus et développement");
+        phase.setPurpose("Définir le processus de fabrication et ce qui le surveillera.");
+        phase.setQuestion("Comment fabrique-t-on, et comment saura-t-on que c'est conforme ?");
+        phase.setCreatedAt(AMORCAGE);
+        phase.setUpdatedAt(AMORCAGE);
+
+        ApqpDeliverable livrable = new ApqpDeliverable();
+        livrable.setId(LIVRABLE_ID);
+        livrable.setPosition(1);
+        livrable.setReferenceKey("deliv.pfmea");
+        livrable.setLabel("AMDEC processus (PFMEA)");
+        livrable.setKind(ApqpDeliverableKind.MODULE_LINK);
+        livrable.setCreatedAt(AMORCAGE);
+        livrable.setUpdatedAt(AMORCAGE);
+        phase.addDeliverable(livrable);
+        return phase;
+    }
 
     /** Une phase d'un seul livrable, du genre demandé. */
     private ApqpPhase phaseAvecLivrable(ApqpDeliverableKind genre) {

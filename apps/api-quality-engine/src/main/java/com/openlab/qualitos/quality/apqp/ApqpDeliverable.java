@@ -33,7 +33,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ApqpDeliverable {
+public class ApqpDeliverable implements ApqpTraduisible {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -58,6 +58,15 @@ public class ApqpDeliverable {
 
     @Column(nullable = false, length = 500)
     private String label;
+
+    /**
+     * Clé du référentiel, ou {@code null} si le livrable vient du client.
+     *
+     * <p>Même règle que pour la phase : traduit tant qu'il n'est pas retouché,
+     * littéral ensuite.
+     */
+    @Column(name = "reference_key", length = 80)
+    private String referenceKey;
 
     /**
      * Élément du dossier PPAP — l'astérisque du référentiel.
