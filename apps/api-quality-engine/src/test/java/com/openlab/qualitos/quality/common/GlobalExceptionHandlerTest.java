@@ -73,6 +73,37 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    void wrongHttpMethod_mapsTo405_withAllowHeader() {
+        // Constate en peuplant une instance de demonstration : un POST sur une route
+        // qui n'accepte que PATCH repondait « Internal Server Error ». Le serveur
+        // n'avait rien de casse -- il refusait, et disait le contraire.
+        var reponse = handler.handleMethodNotSupported(
+                new org.springframework.web.HttpRequestMethodNotSupportedException(
+                        "POST", java.util.List.of("PATCH", "GET")));
+
+        assertThat(reponse.getStatusCode().value())
+                .isEqualTo(HttpStatus.METHOD_NOT_ALLOWED.value());
+        assertThat(reponse.getBody()).isNotNull();
+        assertThat(reponse.getBody().getTitle()).isEqualTo("Method Not Allowed");
+        assertThat(reponse.getBody().getDetail()).contains("POST").contains("PATCH");
+        // L'en-tete `Allow` est exige par la RFC, et c'est lui qui dit au client
+        // quoi faire au lieu de le laisser deviner.
+        assertThat(reponse.getHeaders().getAllow())
+                .containsExactlyInAnyOrder(org.springframework.http.HttpMethod.PATCH,
+                                           org.springframework.http.HttpMethod.GET);
+    }
+
+    @Test
+    void wrongHttpMethod_withoutKnownAlternatives_stillAnswers405() {
+        var reponse = handler.handleMethodNotSupported(
+                new org.springframework.web.HttpRequestMethodNotSupportedException("DELETE"));
+
+        assertThat(reponse.getStatusCode().value())
+                .isEqualTo(HttpStatus.METHOD_NOT_ALLOWED.value());
+        assertThat(reponse.getHeaders().getAllow()).isEmpty();
+    }
+
+    @Test
     void fiveWhysNotFound_mapsTo404() {
         ProblemDetail pd = handler.handleFiveWhysNotFound(
                 new FiveWhysNotFoundException(UUID.randomUUID()));

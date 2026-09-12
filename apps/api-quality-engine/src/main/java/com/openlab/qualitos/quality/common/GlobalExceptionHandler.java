@@ -181,6 +181,11 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import java.util.Set;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -1780,6 +1785,42 @@ public class GlobalExceptionHandler {
         problem.setTitle("Missing Required Parameter");
         problem.setProperty("timestamp", Instant.now());
         return problem;
+    }
+
+    /**
+     * Mauvaise méthode HTTP sur une route qui existe → 405, et non 500.
+     *
+     * <p>Constaté en peuplant une instance de démonstration : un POST sur
+     * {@code /audits/plans/{id}/start}, qui est un PATCH, répondait « Internal
+     * Server Error ». Le serveur n'avait rien de cassé — il refusait, et disait le
+     * contraire. Un client qui lit 500 réessaie ou alerte ; sur 405 il corrige sa
+     * requête, et l'en-tête {@code Allow} lui dit comment.
+     *
+     * <p>Même famille que le paramètre requis absent, traité juste au-dessus : une
+     * exception de Spring MVC laissée sans gestionnaire tombe dans le fourre-tout
+     * des 500.
+     */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ProblemDetail> handleMethodNotSupported(
+            HttpRequestMethodNotSupportedException ex) {
+        Set<HttpMethod> permises = ex.getSupportedHttpMethods();
+        String detail = "Method " + ex.getMethod() + " is not supported on this endpoint"
+                + (permises == null || permises.isEmpty() ? ""
+                   : " (allowed: " + permises.stream().map(HttpMethod::name)
+                           .collect(Collectors.joining(", ")) + ")");
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.METHOD_NOT_ALLOWED, detail);
+        problem.setType(URI.create("https://qualitos.io/errors/method-not-allowed"));
+        problem.setTitle("Method Not Allowed");
+        problem.setProperty("timestamp", Instant.now());
+
+        // L'en-tête `Allow` est exigé par la RFC sur un 405, et c'est lui qui dit au
+        // client quoi faire au lieu de le laisser deviner.
+        HttpHeaders entetes = new HttpHeaders();
+        if (permises != null && !permises.isEmpty()) {
+            entetes.setAllow(permises);
+        }
+        return new ResponseEntity<>(problem, entetes, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
