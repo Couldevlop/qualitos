@@ -29,6 +29,18 @@ describe('LocaleSwitcherComponent', () => {
     component.navigate = (url: string) => { navigatedTo = url; };
   });
 
+  it('lit le chemin au moment du changement, et non a la construction', () => {
+    // Le defaut constate en preproduction : la coque n'est construite qu'une
+    // fois, donc un chemin fige au constructeur renvoyait l'utilisateur sur la
+    // page d'arrivee. Ici, aucune valeur n'est posee a la main : le composant
+    // doit interroger le navigateur a l'instant du clic.
+    history.replaceState({}, '', '/fr/apqp/ppap');
+
+    component.switchTo('en');
+
+    expect(navigatedTo).toBe('/en/apqp/ppap');
+  });
+
   it('propose les six langues servies par la plateforme', () => {
     expect(component.locales.map(l => l.code))
       .toEqual(['fr', 'en', 'es', 'ar', 'ja', 'zh']);
