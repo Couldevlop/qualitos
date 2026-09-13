@@ -54,6 +54,17 @@ class ApqpServiceTest {
     static final UUID PHASE_ID = UUID.randomUUID();
     static final UUID LIVRABLE_ID = UUID.randomUUID();
     static final UUID ACTEUR = UUID.randomUUID();
+
+    /** Les huit sous-points de « Objectifs du projet », tels que l'amorçage les écrit. */
+    static final String AMORCE_CIBLES = "["
+            + "{\"label\":\"sécurité\",\"checked\":false},"
+            + "{\"label\":\"qualité et fabricabilité\",\"checked\":false},"
+            + "{\"label\":\"durée de vie\",\"checked\":false},"
+            + "{\"label\":\"fiabilité\",\"checked\":false},"
+            + "{\"label\":\"durabilité\",\"checked\":false},"
+            + "{\"label\":\"maintenabilité\",\"checked\":false},"
+            + "{\"label\":\"planning\",\"checked\":false},"
+            + "{\"label\":\"coût\",\"checked\":false}]";
     static final UUID CIBLE = UUID.randomUUID();
     static final java.time.Instant AMORCAGE = java.time.Instant.parse("2026-09-13T08:00:00Z");
 
@@ -730,13 +741,13 @@ class ApqpServiceTest {
     @DisplayName("une ligne que le client a réécrite n'est plus traduite")
     void ligneRetouchee_nEstPlusTraduite() {
         ApqpPhase phase = phaseDuReferentiel();
-        // Le client a renommé : `updatedAt` se décale, et c'est SON texte qui doit
-        // sortir — dans SA langue, quelle que soit celle de l'interface.
+        // Le client a renommé : son texte ne coïncide plus avec le référentiel,
+        // donc c'est LE SIEN qui sort — dans SA langue, quelle que soit celle de
+        // l'interface. Aucune date n'est touchée ici, et c'est le point : la
+        // traduction se décide sur le texte, pas sur l'horodatage de la ligne.
         phase.setTitle("Notre conception process");
-        phase.setUpdatedAt(phase.getCreatedAt().plusSeconds(1));
         ApqpDeliverable livrable = phase.getDeliverables().get(0);
         livrable.setLabel("AMDEC maison");
-        livrable.setUpdatedAt(livrable.getCreatedAt().plusSeconds(1));
 
         when(repository.existsByTenantId(TENANT)).thenReturn(true);
         when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of(phase));
@@ -746,6 +757,50 @@ class ApqpServiceTest {
 
         assertThat(cycle.phases().get(0).title()).isEqualTo("Notre conception process");
         assertThat(cycle.phases().get(0).deliverables().get(0).label()).isEqualTo("AMDEC maison");
+    }
+
+    @Test
+    @DisplayName("cocher un livrable ne le fait pas sortir de la traduction")
+    void livrableCoche_resteTraduit() {
+        // Défaut constaté en préproduction : la traduction dépendait de
+        // `updatedAt`, or cocher une case touche la ligne sans toucher son
+        // libellé. Le premier livrable coché se figeait donc dans la langue
+        // d'amorçage, définitivement. Cocher n'est pas réécrire.
+        ApqpPhase phase = phaseDuReferentiel();
+        ApqpDeliverable livrable = phase.getDeliverables().get(0);
+        livrable.setDone(true);
+        livrable.setDoneAt(livrable.getCreatedAt().plusSeconds(30));
+        livrable.setDoneBy(ACTEUR);
+        livrable.setUpdatedAt(livrable.getCreatedAt().plusSeconds(30));
+
+        when(repository.existsByTenantId(TENANT)).thenReturn(true);
+        when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of(phase));
+        LocaleContextHolder.setLocale(Locale.ENGLISH);
+
+        ApqpDto.CycleResponse cycle = service.cycle();
+
+        assertThat(cycle.phases().get(0).deliverables().get(0).label()).isEqualTo("PFMEA");
+        assertThat(cycle.phases().get(0).deliverables().get(0).done()).isTrue();
+    }
+
+    @Test
+    @DisplayName("renommer une phase ne fait pas sortir ses livrables de la traduction")
+    void phaseRenommee_livrablesResteTraduits() {
+        // Même défaut, autre face : la condition portait sur la ligne, donc le
+        // moindre geste sur la phase emportait tout ce qu'elle contient.
+        ApqpPhase phase = phaseDuReferentiel();
+        phase.setTitle("Notre conception process");
+        phase.setUpdatedAt(phase.getCreatedAt().plusSeconds(5));
+
+        when(repository.existsByTenantId(TENANT)).thenReturn(true);
+        when(repository.findByTenantIdOrderByPositionAsc(TENANT)).thenReturn(List.of(phase));
+        LocaleContextHolder.setLocale(Locale.ENGLISH);
+
+        ApqpDto.PhaseResponse rendu = service.cycle().phases().get(0);
+
+        assertThat(rendu.title()).isEqualTo("Notre conception process");
+        assertThat(rendu.purpose()).isEqualTo("Define the manufacturing process and what will watch over it.");
+        assertThat(rendu.deliverables().get(0).label()).isEqualTo("PFMEA");
     }
 
     @Test
@@ -786,7 +841,9 @@ class ApqpServiceTest {
         cibles.setReferenceKey("deliv.project-targets");
         cibles.setKind(ApqpDeliverableKind.CHECKLIST);
         cibles.setLabel("Objectifs du projet");
-        cibles.setData("[{\"label\":\"sécurité\",\"checked\":false}]");
+        // Le contenu tel que l'amorçage l'écrit : les huit intitulés du référentiel,
+        // dans sa langue source. C'est l'état réel d'un livrable jamais touché.
+        cibles.setData(AMORCE_CIBLES);
         cibles.setCreatedAt(AMORCAGE);
         cibles.setUpdatedAt(AMORCAGE);
         phase.addDeliverable(cibles);
