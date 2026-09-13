@@ -6,6 +6,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
 import { NcCreateDialogComponent } from './pages/nc-create-dialog/nc-create-dialog.component';
 import { NcDetailComponent } from './pages/nc-detail/nc-detail.component';
+import { NcEightDComponent } from './pages/nc-eightd/nc-eightd.component';
 import { NcListComponent } from './pages/nc-list/nc-list.component';
 import { NcRejectDialogComponent } from './pages/nc-reject-dialog/nc-reject-dialog.component';
 import { NcResolveDialogComponent } from './pages/nc-resolve-dialog/nc-resolve-dialog.component';
@@ -20,6 +21,9 @@ const routes: Routes = [
   { path: '', component: NcListComponent },
   { path: 'interne', component: NcListComponent, data: { origin: 'INTERNAL' } },
   { path: 'externe', component: NcListComponent, data: { origin: 'EXTERNAL' } },
+  // Deux segments : `:id` ne capte pas « 8d », mais la route est posée avant
+  // pour que l'ordre reste lisible à qui ajoutera la suivante.
+  { path: ':id/8d', component: NcEightDComponent },
   { path: ':id', component: NcDetailComponent }
 ];
 
@@ -29,7 +33,8 @@ const routes: Routes = [
     NcDetailComponent,
     NcCreateDialogComponent,
     NcRejectDialogComponent,
-    NcResolveDialogComponent
+    NcResolveDialogComponent,
+    NcEightDComponent
   ],
   // MatRadioModule n'est pas réexporté par SharedModule : le choix du mode de
   // défaillance a besoin de boutons radio, un pour chaque suggestion et un pour

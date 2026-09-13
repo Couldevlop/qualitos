@@ -440,6 +440,22 @@ export class NcDetailComponent implements OnInit {
     return !this.isTerminal(status);
   }
 
+  /**
+   * Ouvre le rapport 8D de cette non-conformité.
+   *
+   * <p>Accessible à tout stade : le rapport se renseigne au fil du traitement et ne
+   * s'émet qu'à la clôture — le serveur tient cette seconde règle. Fermer l'écran
+   * avant la clôture obligerait à ressaisir D1, D3 et D8 le jour J.
+   */
+  openEightD(): void {
+    this.router.navigate(['/nc', this.ncIdForNavigation(), '8d']);
+  }
+
+  /** L'identifiant de la NC ouverte, tel que la route l'a fourni. */
+  private ncIdForNavigation(): string {
+    return this.route.snapshot.paramMap.get('id') ?? '';
+  }
+
   goBack(): void {
     this.router.navigate(['/nc']);
   }

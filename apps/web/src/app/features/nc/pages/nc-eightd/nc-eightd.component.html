@@ -1,0 +1,130 @@
+<div class="qos-page">
+
+  <header class="page-header">
+    <div class="title-block">
+      <button mat-icon-button (click)="retour()"
+              i18n-matTooltip="@@nc.8d.back-tooltip" matTooltip="Retour à la non-conformité">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h1 i18n="@@nc.8d.title">Rapport 8D</h1>
+        <p class="eyebrow" i18n="@@nc.8d.eyebrow">Huit disciplines · Agrégé depuis le dossier · Signé et ancré à l'émission</p>
+      </div>
+    </div>
+
+    <ng-container *ngIf="report$ | async as rapport">
+      <div class="actions" *ngIf="rapport">
+        <button mat-stroked-button *ngIf="saisieOuverte(rapport)" (click)="enregistrer()"
+                data-test="enregistrer" [disabled]="acting$ | async">
+          <mat-icon>save</mat-icon> <span i18n="@@common.save">Enregistrer</span>
+        </button>
+        <button mat-flat-button color="primary" *ngIf="editable && rapport.issuable"
+                (click)="emettre(rapport)" data-test="emettre" [disabled]="acting$ | async"
+                i18n-matTooltip="@@nc.8d.issue-tooltip"
+                matTooltip="Figer le contenu, signer son empreinte et l'ancrer">
+          <mat-icon>verified</mat-icon> <span i18n="@@nc.8d.issue">Émettre</span>
+        </button>
+        <button mat-stroked-button *ngIf="rapport.status === 'ISSUED'" (click)="telecharger()"
+                data-test="telecharger" [disabled]="acting$ | async">
+          <mat-icon>picture_as_pdf</mat-icon> <span i18n="@@nc.8d.download">Télécharger le PDF</span>
+        </button>
+      </div>
+    </ng-container>
+  </header>
+
+  <div class="state-row" *ngIf="loading$ | async">
+    <mat-progress-spinner mode="indeterminate" diameter="32"></mat-progress-spinner>
+    <span i18n="@@common.loading">Chargement…</span>
+  </div>
+
+  <div class="state-row error" *ngIf="error$ | async as err">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ err }}</span>
+  </div>
+
+  <ng-container *ngIf="report$ | async as rapport">
+    <ng-container *ngIf="rapport">
+
+      <mat-card class="info-card">
+        <mat-card-content>
+          <h2 class="nc-title">{{ rapport.ncReference }} — {{ rapport.ncTitle }}</h2>
+          <div class="badges">
+            <span class="badge" [class.issued]="rapport.status === 'ISSUED'">
+              <span *ngIf="rapport.status === 'ISSUED'" i18n="@@nc.8d.status-issued">Émis</span>
+              <span *ngIf="rapport.status === 'DRAFT'" i18n="@@nc.8d.status-draft">Brouillon</span>
+            </span>
+            <span class="badge partial" *ngIf="rapport.partial" data-test="badge-partiel"
+                  i18n="@@nc.8d.partial-badge">Partiel</span>
+          </div>
+
+          <!-- Un rapport partiel le dit, et dit lesquelles de ses disciplines sont
+               vides : c'est plus honnête qu'un document aux cases blanches. -->
+          <p class="partial-note" *ngIf="rapport.partial">
+            <span i18n="@@nc.8d.partial-note">Disciplines sans contenu :</span>
+            <span class="codes">{{ rapport.missingCodes.join(', ') }}</span>
+          </p>
+
+          <p class="sealed" *ngIf="rapport.seal as sceau" data-test="sceau">
+            <mat-icon inline>lock</mat-icon>
+            <span i18n="@@nc.8d.sealed">Contenu figé, signé (Ed25519 + ML-DSA-65) et ancré.</span>
+            <span class="mono">{{ sceau.sha256Hex }}</span>
+          </p>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- D1, D3, D8 : les trois disciplines qu'aucun module ne sait renseigner. -->
+      <mat-card class="saisie-card" *ngIf="saisieOuverte(rapport)">
+        <mat-card-header>
+          <mat-card-title i18n="@@nc.8d.saisies-title">Les trois disciplines à saisir</mat-card-title>
+        </mat-card-header>
+        <mat-card-content [formGroup]="form">
+          <p class="hint" i18n="@@nc.8d.saisies-hint">
+            L'équipe, l'endiguement et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.
+          </p>
+
+          <mat-form-field appearance="outline" class="full">
+            <mat-label i18n="@@nc.8d.team-label">D1 — Équipe</mat-label>
+            <textarea matInput formControlName="team" rows="3" maxlength="4000"
+                      i18n-placeholder="@@nc.8d.team-placeholder"
+                      placeholder="Une personne par ligne, avec son rôle dans le traitement de l'écart"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full">
+            <mat-label i18n="@@nc.8d.containment-label">D3 — Actions d'endiguement immédiates</mat-label>
+            <textarea matInput formControlName="containment" rows="3" maxlength="4000"
+                      i18n-placeholder="@@nc.8d.containment-placeholder"
+                      placeholder="Ce qui a protégé le client pendant la recherche de la cause : tri, blocage de lot, contrôle renforcé…"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full">
+            <mat-label i18n="@@nc.8d.recognition-label">D8 — Reconnaissance de l'équipe</mat-label>
+            <textarea matInput formControlName="recognition" rows="2" maxlength="4000"
+                      i18n-placeholder="@@nc.8d.recognition-placeholder"
+                      placeholder="Ce que l'équipe a appris, et ce qui mérite d'être dit"></textarea>
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="discipline-card" *ngFor="let discipline of rapport.disciplines"
+                [class.sans-source]="!discipline.sourced" data-test="discipline">
+        <mat-card-content>
+          <h3>
+            <span class="code">{{ discipline.code }}</span>
+            <span class="titre">{{ discipline.title }}</span>
+          </h3>
+          <p class="source" [class.manquante]="!discipline.sourced">{{ discipline.sourceLabel }}</p>
+
+          <ul class="lignes" *ngIf="discipline.lines.length > 0">
+            <li *ngFor="let ligne of discipline.lines">{{ ligne }}</li>
+          </ul>
+
+          <!-- Jamais un bloc vide : l'absence de contenu est dite. -->
+          <p class="vide" *ngIf="discipline.lines.length === 0" data-test="discipline-vide"
+             i18n="@@nc.8d.discipline-empty">Non renseigné.</p>
+        </mat-card-content>
+      </mat-card>
+
+    </ng-container>
+  </ng-container>
+
+</div>

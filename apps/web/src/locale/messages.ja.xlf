@@ -15587,6 +15587,130 @@ historique 12 mois</source>
         <source>Rejet impossible.</source>
         <target state="translated">却下できませんでした。</target>
       </trans-unit>
+      <trans-unit id="nc.8d.title" datatype="html">
+        <source>Rapport 8D</source>
+        <target state="translated">8D レポート</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.eyebrow" datatype="html">
+        <source>Huit disciplines · Agrégé depuis le dossier · Signé et ancré à l'émission</source>
+        <target state="translated">8 つの規律 · 案件から集約 · 発行時に署名・アンカー</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.back-tooltip" datatype="html">
+        <source>Retour à la non-conformité</source>
+        <target state="translated">不適合に戻る</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.status-draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">下書き</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.status-issued" datatype="html">
+        <source>Émis</source>
+        <target state="translated">発行済み</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.partial-badge" datatype="html">
+        <source>Partiel</source>
+        <target state="translated">一部未記入</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.partial-note" datatype="html">
+        <source>Disciplines sans contenu :</source>
+        <target state="translated">内容のない規律：</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.sealed" datatype="html">
+        <source>Contenu figé, signé (Ed25519 + ML-DSA-65) et ancré.</source>
+        <target state="translated">内容を確定し、署名（Ed25519 + ML-DSA-65）とアンカーを付与しました。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.saisies-title" datatype="html">
+        <source>Les trois disciplines à saisir</source>
+        <target state="translated">手入力する 3 つの規律</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.saisies-hint" datatype="html">
+        <source>L'équipe, l'endiguement et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
+        <target state="translated">チーム、暫定対策、功績の承認はプラットフォームに情報源がないため、ここで入力します。残る 5 つの規律は不適合の案件から集約されます。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.team-label" datatype="html">
+        <source>D1 — Équipe</source>
+        <target state="translated">D1 — チーム</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.team-placeholder" datatype="html">
+        <source>Une personne par ligne, avec son rôle dans le traitement de l'écart</source>
+        <target state="translated">1 行に 1 名、逸脱対応における役割を添えて</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.containment-label" datatype="html">
+        <source>D3 — Actions d'endiguement immédiates</source>
+        <target state="translated">D3 — 緊急の暫定対策</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.containment-placeholder" datatype="html">
+        <source>Ce qui a protégé le client pendant la recherche de la cause : tri, blocage de lot, contrôle renforcé…</source>
+        <target state="translated">原因究明の間に顧客を守った措置：選別、ロット保留、検査強化など</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.recognition-label" datatype="html">
+        <source>D8 — Reconnaissance de l'équipe</source>
+        <target state="translated">D8 — チームの功績の承認</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.recognition-placeholder" datatype="html">
+        <source>Ce que l'équipe a appris, et ce qui mérite d'être dit</source>
+        <target state="translated">チームが学んだこと、そして伝える価値のあること</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.discipline-empty" datatype="html">
+        <source>Non renseigné.</source>
+        <target state="translated">未記入です。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.issue" datatype="html">
+        <source>Émettre</source>
+        <target state="translated">発行</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.issue-tooltip" datatype="html">
+        <source>Figer le contenu, signer son empreinte et l'ancrer</source>
+        <target state="translated">内容を確定し、ハッシュに署名してアンカーを付与します</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.issue-confirm-title" datatype="html">
+        <source>Émettre le rapport 8D ?</source>
+        <target state="translated">8D レポートを発行しますか？</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.issue-confirm" datatype="html">
+        <source>Le contenu sera figé, signé et ancré. Il ne pourra plus être modifié.</source>
+        <target state="translated">内容は確定され、署名とアンカーが付きます。以後は変更できません。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.issue-confirm-partial" datatype="html">
+        <source>Des disciplines n'ont aucun contenu : le rapport sera marqué « partiel ». Son contenu sera figé, signé et ancré — il ne pourra plus être modifié.</source>
+        <target state="translated">内容のない規律があります。レポートは「一部未記入」と表示されます。内容は確定され、署名とアンカーが付き、以後は変更できません。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.issued" datatype="html">
+        <source>Rapport 8D émis, signé et ancré.</source>
+        <target state="translated">8D レポートを発行し、署名とアンカーを付与しました。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.issue-failed" datatype="html">
+        <source>Émission impossible.</source>
+        <target state="translated">発行できません。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.saved" datatype="html">
+        <source>Rapport 8D enregistré.</source>
+        <target state="translated">8D レポートを保存しました。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.save-failed" datatype="html">
+        <source>Enregistrement impossible.</source>
+        <target state="translated">保存できません。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.load-failed" datatype="html">
+        <source>Rapport 8D indisponible.</source>
+        <target state="translated">8D レポートを取得できません。</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.download" datatype="html">
+        <source>Télécharger le PDF</source>
+        <target state="translated">PDF をダウンロード</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.download-failed" datatype="html">
+        <source>Téléchargement impossible.</source>
+        <target state="translated">ダウンロードできません。</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.eightd" datatype="html">
+        <source>Rapport 8D</source>
+        <target state="translated">8D レポート</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.eightd-tooltip" datatype="html">
+        <source>Les huit disciplines, agrégées depuis ce dossier</source>
+        <target state="translated">8 つの規律を、この案件から集約して表示</target>
+      </trans-unit>
       <trans-unit id="nav.nc-clusters" datatype="html">
         <source>Clustering NC</source>
         <target state="translated">NCクラスタリング</target>

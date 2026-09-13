@@ -15588,6 +15588,130 @@ declared income
         <source>Rejet impossible.</source>
         <target state="translated">Rejection failed.</target>
       </trans-unit>
+      <trans-unit id="nc.8d.title" datatype="html">
+        <source>Rapport 8D</source>
+        <target state="translated">8D report</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.eyebrow" datatype="html">
+        <source>Huit disciplines · Agrégé depuis le dossier · Signé et ancré à l'émission</source>
+        <target state="translated">Eight disciplines · Aggregated from the case · Signed and anchored on issue</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.back-tooltip" datatype="html">
+        <source>Retour à la non-conformité</source>
+        <target state="translated">Back to the non-conformity</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.status-draft" datatype="html">
+        <source>Brouillon</source>
+        <target state="translated">Draft</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.status-issued" datatype="html">
+        <source>Émis</source>
+        <target state="translated">Issued</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.partial-badge" datatype="html">
+        <source>Partiel</source>
+        <target state="translated">Partial</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.partial-note" datatype="html">
+        <source>Disciplines sans contenu :</source>
+        <target state="translated">Disciplines with no content:</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.sealed" datatype="html">
+        <source>Contenu figé, signé (Ed25519 + ML-DSA-65) et ancré.</source>
+        <target state="translated">Content frozen, signed (Ed25519 + ML-DSA-65) and anchored.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.saisies-title" datatype="html">
+        <source>Les trois disciplines à saisir</source>
+        <target state="translated">The three disciplines to fill in</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.saisies-hint" datatype="html">
+        <source>L'équipe, l'endiguement et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
+        <target state="translated">The team, the containment and the recognition have no source in the platform: they are filled in here. The other five disciplines are aggregated from the non-conformity case.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.team-label" datatype="html">
+        <source>D1 — Équipe</source>
+        <target state="translated">D1 — Team</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.team-placeholder" datatype="html">
+        <source>Une personne par ligne, avec son rôle dans le traitement de l'écart</source>
+        <target state="translated">One person per line, with their role in handling the deviation</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.containment-label" datatype="html">
+        <source>D3 — Actions d'endiguement immédiates</source>
+        <target state="translated">D3 — Immediate containment actions</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.containment-placeholder" datatype="html">
+        <source>Ce qui a protégé le client pendant la recherche de la cause : tri, blocage de lot, contrôle renforcé…</source>
+        <target state="translated">What protected the customer while the cause was being found: sorting, lot hold, tightened inspection…</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.recognition-label" datatype="html">
+        <source>D8 — Reconnaissance de l'équipe</source>
+        <target state="translated">D8 — Team recognition</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.recognition-placeholder" datatype="html">
+        <source>Ce que l'équipe a appris, et ce qui mérite d'être dit</source>
+        <target state="translated">What the team learned, and what deserves to be said</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.discipline-empty" datatype="html">
+        <source>Non renseigné.</source>
+        <target state="translated">Not filled in.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.issue" datatype="html">
+        <source>Émettre</source>
+        <target state="translated">Issue</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.issue-tooltip" datatype="html">
+        <source>Figer le contenu, signer son empreinte et l'ancrer</source>
+        <target state="translated">Freeze the content, sign its fingerprint and anchor it</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.issue-confirm-title" datatype="html">
+        <source>Émettre le rapport 8D ?</source>
+        <target state="translated">Issue the 8D report?</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.issue-confirm" datatype="html">
+        <source>Le contenu sera figé, signé et ancré. Il ne pourra plus être modifié.</source>
+        <target state="translated">The content will be frozen, signed and anchored. It can no longer be changed.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.issue-confirm-partial" datatype="html">
+        <source>Des disciplines n'ont aucun contenu : le rapport sera marqué « partiel ». Son contenu sera figé, signé et ancré — il ne pourra plus être modifié.</source>
+        <target state="translated">Some disciplines have no content: the report will be marked "partial". Its content will be frozen, signed and anchored — it can no longer be changed.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.issued" datatype="html">
+        <source>Rapport 8D émis, signé et ancré.</source>
+        <target state="translated">8D report issued, signed and anchored.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.issue-failed" datatype="html">
+        <source>Émission impossible.</source>
+        <target state="translated">Cannot issue the report.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.saved" datatype="html">
+        <source>Rapport 8D enregistré.</source>
+        <target state="translated">8D report saved.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.save-failed" datatype="html">
+        <source>Enregistrement impossible.</source>
+        <target state="translated">Cannot save.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.load-failed" datatype="html">
+        <source>Rapport 8D indisponible.</source>
+        <target state="translated">8D report unavailable.</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.download" datatype="html">
+        <source>Télécharger le PDF</source>
+        <target state="translated">Download the PDF</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.download-failed" datatype="html">
+        <source>Téléchargement impossible.</source>
+        <target state="translated">Download failed.</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.eightd" datatype="html">
+        <source>Rapport 8D</source>
+        <target state="translated">8D report</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.eightd-tooltip" datatype="html">
+        <source>Les huit disciplines, agrégées depuis ce dossier</source>
+        <target state="translated">The eight disciplines, aggregated from this case</target>
+      </trans-unit>
       <trans-unit id="nav.nc-clusters" datatype="html">
         <source>Clustering NC</source>
         <target state="translated">NC clustering</target>

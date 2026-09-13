@@ -50,7 +50,10 @@ public class SecurityConfig {
         cfg.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
         cfg.setAllowedHeaders(List.of("Authorization","Content-Type","Accept","X-Requested-With","X-Tenant-Id","X-Correlation-Id"));
         cfg.setExposedHeaders(List.of("Location","X-Correlation-Id",
-                "Content-Disposition","X-Export-Verification-Code","X-Export-Sha256","X-Export-Anchor-Ref"));
+                "Content-Disposition","X-Export-Verification-Code","X-Export-Sha256","X-Export-Anchor-Ref",
+                // Le PDF du rapport 8D porte son empreinte et son code de vérification
+                // dans les en-têtes : sans exposition CORS, le front les lirait vides.
+                "X-EightD-Sha256","X-EightD-Verification-Code"));
         cfg.setAllowCredentials(true);
         cfg.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -113,6 +116,11 @@ public class SecurityConfig {
                 // des faits d'intégrité (booléen + empreinte), jamais de données tenant.
                 .requestMatchers(org.springframework.http.HttpMethod.GET,
                         "/api/v1/dashboards/public/exports/*/verify").permitAll()
+                // Vérification PUBLIQUE d'un rapport 8D signé (QR code du PDF) : même
+                // modèle que les deux précédentes — le code opaque EST l'autorité, et la
+                // réponse ne rend que des faits d'intégrité, jamais le contenu du rapport.
+                .requestMatchers(org.springframework.http.HttpMethod.GET,
+                        "/api/v1/nc/public/8d/*/verify").permitAll()
 
                 // --- H1 (OWASP A01) : durcissement des endpoints SENSIBLES ---
                 // On cible les actions d'ADMINISTRATION (plateforme/tenant), d'INTÉGRITÉ
