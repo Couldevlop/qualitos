@@ -13,6 +13,14 @@ Usage (moteur démarré, Keycloak debout) :
     python scripts/donnees-demo.py
     python scripts/donnees-demo.py --api http://localhost:8082 --utilisateur demo
 
+Les modules de palier STANDARD/PRO doivent etre actives avant usage, et ce droit
+appartient a l'administration du client : sous un compte de pilotage qualite, les
+appels d'activation repondent 403 -- c'est l'autorisation qui fonctionne, pas un
+defaut. En local, on peut poser les lignes une fois pour toutes dans
+`tenant_module_activations`, en respectant l'ordre des dependances du catalogue
+(`ModuleCatalog`) : risk depend de capa, controlplan de risk et product, change de
+docs, supplier de capa et audit.
+
 Le script est REJOUABLE : les codes portent un suffixe tiré de l'horodatage, donc
 un second passage crée un second jeu au lieu d'échouer sur des doublons.
 """
@@ -25,7 +33,10 @@ import urllib.request
 import uuid
 from datetime import date, datetime, timedelta, timezone
 
-SUFFIXE = datetime.now().strftime('%m%d%H%M')
+# A la SECONDE, et non a la minute : deux passages rapproches se heurtaient sinon
+# aux codes uniques des documents et des fournisseurs (409), ce qui contredisait la
+# promesse de rejouabilite annoncee juste au-dessus.
+SUFFIXE = datetime.now().strftime('%m%d%H%M%S')
 
 
 def maintenant(decalage_jours=0):
@@ -61,6 +72,10 @@ class Client:
     def patche(self, chemin, corps, quoi):
         """Plusieurs transitions d'etat sont des PATCH, et non des POST."""
         return self._appelle('PATCH', chemin, corps, quoi)
+
+    def met(self, chemin, corps, quoi):
+        """Remplacer une valeur entiere est un PUT : la reponse a une question l'est."""
+        return self._appelle('PUT', chemin, corps, quoi)
 
     def _appelle(self, methode, chemin, corps, quoi):
         requete = urllib.request.Request(
@@ -271,11 +286,40 @@ def audits(c):
         'plannedDate': jour(14), 'standard': 'ISO 9001:2015',
     }, 'plan d audit interne')
     if plan:
-        # Un constat ne se pose que sur un audit EN COURS : le plan doit d'abord
-        # demarrer. La garde est juste, c'est le scenario qui devait l'apprendre.
+        # Un audit ne demarre pas sans checklist, et un constat ne se pose que sur un
+        # audit EN COURS. Les deux gardes sont justes : un audit sans questions n'a
+        # rien a auditer, et un constat hors execution n'a pas de terrain. C'est le
+        # scenario qui devait apprendre l'ordre -- questionner, demarrer, constater.
+        items = []
+        for question, clause, attendu in [
+            ('Les enregistrements de controle final portent-ils le visa du controleur ?',
+             '8.5.1', 'Fiches de controle final signees, echantillon de 10 lots'),
+            ('Les instruments de mesure utilises sont-ils dans leur validite de calibration ?',
+             '7.1.5', 'Etiquettes de calibration et registre des equipements'),
+            ('Les non-conformites detectees en ligne sont-elles tracees et traitees ?',
+             '8.7', 'Registre des NC et preuves de traitement'),
+        ]:
+            item = c.poste('/api/v1/audits/plans/%s/checklist' % plan['id'],
+                           {'question': question, 'clauseRef': clause,
+                            'expectedEvidence': attendu, 'weight': 1,
+                            'orderIndex': len(items)},
+                           'question de checklist %s' % clause)
+            if item:
+                items.append(item)
         c.patche('/api/v1/audits/plans/%s/start' % plan['id'], {}, 'demarrage de l audit')
+        # Repondre aux questions fait l'execution de l'audit : sans reponses, un plan
+        # « en cours » reste une coquille et les ecrans d'avancement n'ont rien a montrer.
+        for item, conforme, reponse in zip(items, [False, True, True], [
+            'Trois fiches sur dix sans visa, poste 2.',
+            'Toutes les etiquettes en cours de validite.',
+            'Registre tenu, deux NC tracees et soldees.',
+        ]):
+            c.met('/api/v1/audits/plans/%s/checklist/%s/response' % (plan['id'], item['id']),
+                  {'response': reponse, 'conformant': conforme},
+                  'reponse a la question %s' % item.get('clauseRef'))
         c.poste('/api/v1/audits/plans/%s/findings' % plan['id'], {
             'type': 'MINOR_NC', 'clauseRef': '8.5.1', 'raisedBy': c.sujet,
+            'checklistItemId': items[0]['id'] if items else None,
             'description': 'Les enregistrements de controle final ne portent pas le visa du controleur.',
         }, 'constat d audit (NC mineure)')
         c.poste('/api/v1/audits/plans/%s/findings' % plan['id'], {
@@ -461,15 +505,27 @@ def main():
     changements(c)
     dmaic(c)
     iot(c)
+    # Un refus ATTENDU n'est pas une anomalie : activer un module est reserve a
+    # l'administration du client, et ce script tourne sous un compte de pilotage
+    # qualite. Les confondre ferait rendre 1 a chaque passage, et le code de sortie
+    # cesserait de signaler quoi que ce soit. On les compte donc a part, sans les
+    # cacher : un refus attendu reste affiche, il ne fait simplement pas echouer.
+    attendus = [e for e in c.echecs
+                if e[0].startswith('activation du module') and e[1] == 403]
+    anomalies = [e for e in c.echecs if e not in attendus]
 
     print('\n--- releve ---')
-    print('%d creations acceptees, %d refusees, en %.1f s'
-          % (len(c.reussites), len(c.echecs), time.time() - debut))
-    if c.echecs:
-        print('\nCe qui a ete refuse — a lire comme un relevé de fonctionnement :')
-        for quoi, code, detail in c.echecs:
+    print('%d creations acceptees, %d refus attendus, %d anomalies, en %.1f s'
+          % (len(c.reussites), len(attendus), len(anomalies), time.time() - debut))
+    if attendus:
+        print('\nRefus attendus, l autorisation fait son travail :')
+        for quoi, code, _ in attendus:
+            print('  %-46s %s' % (quoi, code))
+    if anomalies:
+        print('\nAnomalies, a lire comme un releve de fonctionnement :')
+        for quoi, code, detail in anomalies:
             print('  %-46s %s  %s' % (quoi, code, detail))
-    return 1 if c.echecs else 0
+    return 1 if anomalies else 0
 
 
 if __name__ == '__main__':
