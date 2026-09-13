@@ -16,6 +16,8 @@ possibilité d'y joindre des **photos**.
 4. **Suivre le traitement** : la NC évolue jusqu'à sa résolution.
 5. **Relier à une action** : une NC peut déclencher une [CAPA](capa.md), un cycle
    [PDCA](pdca.md) ou un projet [DMAIC](dmaic.md) selon la gravité.
+6. **Clôturer, et remettre le rapport** : le [rapport 8D](rapport-8d.md) rassemble les huit
+   disciplines attendues par le client, dont cinq sont reprises automatiquement de ce dossier.
 
 ## L'IA au service des NC
 
@@ -29,3 +31,5 @@ possibilité d'y joindre des **photos**.
   avant d'agir.
 - **Surveillez les récurrences** : une même NC qui revient signale une cause non traitée — vérifiez
   les clusters.
+- **Renseignez l'endiguement tôt** : le [rapport 8D](rapport-8d.md) le demande (D3), et c'est ce
+  qu'un client veut savoir en premier. Il s'oublie dès que la cause est trouvée.
