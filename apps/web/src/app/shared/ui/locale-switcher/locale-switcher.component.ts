@@ -43,9 +43,43 @@ export class LocaleSwitcherComponent {
 
   // Emplacement courant, isolé derrière des propriétés pour rester vérifiable
   // sans manipuler l'objet `location` du navigateur.
-  currentPath = typeof location !== 'undefined' ? location.pathname : '/';
-  currentSearch = typeof location !== 'undefined' ? location.search : '';
-  currentHash = typeof location !== 'undefined' ? location.hash : '';
+  //
+  // LU À CHAQUE ACCÈS, et non figé à la construction : ce composant vit dans la
+  // coque, qui n'est construite qu'une fois par chargement. Une valeur capturée
+  // au constructeur resterait celle de la page d'ARRIVÉE, et toute navigation
+  // interne ultérieure lui échapperait — on quittait `/fr/apqp/ppap` pour
+  // atterrir sur la page ouverte en premier. Les affectations restent possibles
+  // pour les tests : une valeur posée à la main prend le pas sur le navigateur.
+  private cheminForce?: string;
+  private rechercheForcee?: string;
+  private ancreForcee?: string;
+
+  get currentPath(): string {
+    return this.cheminForce
+        ?? (typeof location !== 'undefined' ? location.pathname : '/');
+  }
+
+  set currentPath(valeur: string) {
+    this.cheminForce = valeur;
+  }
+
+  get currentSearch(): string {
+    return this.rechercheForcee
+        ?? (typeof location !== 'undefined' ? location.search : '');
+  }
+
+  set currentSearch(valeur: string) {
+    this.rechercheForcee = valeur;
+  }
+
+  get currentHash(): string {
+    return this.ancreForcee
+        ?? (typeof location !== 'undefined' ? location.hash : '');
+  }
+
+  set currentHash(valeur: string) {
+    this.ancreForcee = valeur;
+  }
 
   /** Chargement de l'autre application ; substitué en test. */
   navigate: (url: string) => void = url => { location.href = url; };

@@ -498,33 +498,67 @@ public class ApqpService {
      * journalise, plutot que de faire echouer tout l'ecran pour une ligne.
      */
     private List<ApqpDto.DataRow> relire(ApqpDeliverable livrable) {
-        // Les sous-points et les intitulés de mesures viennent eux aussi du
-        // référentiel : tant que la ligne est intacte, ils suivent la langue.
-        String amorce = amorceTraduite(livrable);
-        if (amorce != null) {
-            return lire(amorce, livrable);
+        List<ApqpDto.DataRow> stockees = lire(livrable.getData(), livrable);
+        ApqpReference.LivrableModele modele = modeleDuReferentiel(livrable);
+        if (modele == null) {
+            return stockees;
         }
-        return lire(livrable.getData(), livrable);
+        // Rien en base : l'amorçage n'a laissé que la référence, on rend le
+        // référentiel dans la langue demandée.
+        if (stockees.isEmpty()) {
+            return lire(amorceEnJson(modele, LocaleContextHolder.getLocale()), livrable);
+        }
+        return traduireLignes(stockees, modele);
     }
 
     /**
-     * Le contenu d'amorçage retraduit, ou {@code null} s'il n'y a rien à traduire.
+     * Les sous-points traduits un à un, en gardant ce que l'utilisateur a saisi.
      *
-     * <p>Retraduire plutôt que traduire ligne à ligne : le contenu stocké est
-     * exactement celui qu'on a écrit à l'amorçage, donc le regénérer dans la
-     * langue demandée rend la même liste, dans le même ordre.
+     * <p>Traduire le CONTENU en bloc ne marcherait pas : dès qu'une case est
+     * cochée ou qu'une mesure est saisie, le contenu stocké diffère de
+     * l'amorçage, et tout le livrable retomberait dans la langue d'amorçage —
+     * alors que cocher n'est pas réécrire un intitulé.
+     *
+     * <p>On procède donc ligne à ligne : tant que chaque intitulé est encore
+     * exactement celui du référentiel dans sa langue source, il suit la langue
+     * demandée, et la valeur, l'unité, la date et la coche de l'utilisateur sont
+     * reportées telles quelles. Au premier intitulé réécrit — ou si le nombre de
+     * lignes a changé, ce qui veut dire qu'on en a ajouté ou retiré — la liste
+     * entière appartient au client et sort intacte : traduire la moitié d'une
+     * liste serait pire que de n'en traduire aucune.
      */
-    private String amorceTraduite(ApqpDeliverable livrable) {
+    private List<ApqpDto.DataRow> traduireLignes(List<ApqpDto.DataRow> stockees,
+                                                 ApqpReference.LivrableModele modele) {
+        List<String> cles = modele.amorce();
+        if (cles.size() != stockees.size()) {
+            return stockees;
+        }
+        Locale source = Locale.forLanguageTag(ApqpReferenceTranslations.DEFAUT);
+        Locale demandee = LocaleContextHolder.getLocale();
+        List<ApqpDto.DataRow> rendues = new ArrayList<>(stockees.size());
+        for (int i = 0; i < cles.size(); i++) {
+            ApqpDto.DataRow ligne = stockees.get(i);
+            String origine = ApqpReferenceTranslations.texte(cles.get(i), source);
+            if (origine == null || !origine.equals(ligne.label())) {
+                return stockees;
+            }
+            String traduit = ApqpReferenceTranslations.texte(cles.get(i), demandee);
+            rendues.add(new ApqpDto.DataRow(traduit == null ? ligne.label() : traduit,
+                    ligne.value(), ligne.unit(), ligne.measuredAt(), ligne.checked()));
+        }
+        return rendues;
+    }
+
+    /** Le modèle du référentiel derrière ce livrable, ou {@code null}. */
+    private ApqpReference.LivrableModele modeleDuReferentiel(ApqpDeliverable livrable) {
         String cle = livrable.getReferenceKey();
-        if (cle == null || livrable.getUpdatedAt() == null
-                || !livrable.getUpdatedAt().equals(livrable.getCreatedAt())) {
+        if (cle == null) {
             return null;
         }
         return ApqpReference.PHASES.stream()
                 .flatMap(phase -> phase.livrables().stream())
                 .filter(modele -> modele.cle().equals(cle) && !modele.amorce().isEmpty())
                 .findFirst()
-                .map(modele -> amorceEnJson(modele, LocaleContextHolder.getLocale()))
                 .orElse(null);
     }
 
@@ -544,24 +578,43 @@ public class ApqpService {
     /**
      * Le texte d'une ligne du cycle, dans la langue demandée.
      *
-     * <p>Trois conditions, et les trois sont nécessaires : la ligne vient du
-     * référentiel (elle porte une clé), personne ne l'a retouchée
-     * ({@code updatedAt == createdAt}), et la clé est connue de la table de
-     * traduction. Sinon, c'est le texte de la base qui sort — parce qu'il
-     * appartient alors au client, et qu'on ne traduit pas ce qu'un utilisateur a
-     * écrit.
+     * <p>La question n'est pas « la LIGNE a-t-elle bougé ? » mais « CE TEXTE-CI
+     * est-il encore celui de la plateforme ? ». La nuance n'est pas théorique :
+     * cocher un livrable touche la ligne sans toucher son libellé, et faire
+     * dépendre la traduction de {@code updatedAt} figeait le libellé dans la
+     * langue d'amorçage dès la première case cochée — un défaut, pas une règle.
      *
-     * <p>C'est la même frontière que partout ailleurs : ce que la plateforme
-     * fournit se traduit, ce que le client écrit lui appartient.
+     * <p>On compare donc le texte stocké à celui du référentiel dans sa langue
+     * source. Tant qu'ils coïncident, le texte est celui que la plateforme a
+     * écrit et il suit la langue demandée. Dès qu'ils diffèrent, un utilisateur
+     * l'a reformulé : sa formulation gagne, dans toutes les langues, parce
+     * qu'on ne traduit pas ce qu'un utilisateur a écrit.
+     *
+     * <p>C'est la même frontière que partout ailleurs, mesurée au bon endroit :
+     * ce que la plateforme fournit se traduit, ce que le client écrit lui
+     * appartient. Un client qui reformule un libellé à l'identique du
+     * référentiel n'a rien changé — le traduire reste juste.
      */
     private String traduit(String cle, String suffixe, ApqpTraduisible ligne,
                            String stocke, Locale langue) {
-        if (cle == null || ligne.getUpdatedAt() == null || ligne.getCreatedAt() == null
-                || !ligne.getUpdatedAt().equals(ligne.getCreatedAt())) {
+        if (cle == null || !estDeLaPlateforme(cle + suffixe, stocke)) {
             return stocke;
         }
         String traduction = ApqpReferenceTranslations.texte(cle + suffixe, langue);
         return traduction == null ? stocke : traduction;
+    }
+
+    /**
+     * Le texte stocké est-il encore, mot pour mot, celui du référentiel ?
+     *
+     * <p>La comparaison se fait dans la langue SOURCE du référentiel, car c'est
+     * dans cette langue que l'amorçage a écrit en base, quelle que soit la
+     * langue de lecture.
+     */
+    private boolean estDeLaPlateforme(String cle, String stocke) {
+        String source = ApqpReferenceTranslations.texte(cle, Locale.forLanguageTag(
+                ApqpReferenceTranslations.DEFAUT));
+        return source != null && source.equals(stocke);
     }
 
     private ApqpDeliverable livrable(ApqpPhase phase, UUID deliverableId) {
