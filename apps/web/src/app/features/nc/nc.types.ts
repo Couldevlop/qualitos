@@ -214,3 +214,58 @@ export interface NcStatistics {
   /** Rejetées — toujours 0 sur l'écran interne, qui ne rejette pas. */
   rejected: number;
 }
+
+// ---- Rapport 8D (extrait à la clôture d'une non-conformité) -----------------
+
+/** Brouillon tant qu'il se remanie ; émis, il est scellé et ne change plus. */
+export type EightDStatus = 'DRAFT' | 'ISSUED';
+
+/**
+ * Une des huit disciplines.
+ *
+ * `sourced` à false veut dire « rien à montrer », et `sourceLabel` dit alors
+ * POURQUOI : c'est ce qui distingue un 8D d'un formulaire aux cases vides.
+ * `editable` n'est vrai que pour D1, D3 et D8, les trois qui n'ont aucune source
+ * dans la plateforme.
+ */
+export interface EightDDiscipline {
+  code: string;
+  title: string;
+  sourced: boolean;
+  sourceLabel: string;
+  lines: string[];
+  editable: boolean;
+}
+
+/** La preuve d'intégrité d'un rapport émis. */
+export interface EightDSeal {
+  sha256Hex: string;
+  anchorTxRef: string;
+  verificationCode: string;
+  issuedAt: string;
+  issuedByName: string | null;
+}
+
+export interface EightDReport {
+  ncId: string;
+  ncReference: string;
+  ncTitle: string;
+  status: EightDStatus;
+  /** Vrai quand la NC est clôturée et que le rapport n'est pas encore émis. */
+  issuable: boolean;
+  /** Vrai dès qu'une discipline n'a rien à montrer. */
+  partial: boolean;
+  missingCodes: string[];
+  team: string | null;
+  containment: string | null;
+  recognition: string | null;
+  disciplines: EightDDiscipline[];
+  seal: EightDSeal | null;
+}
+
+/** Les trois disciplines saisies. Toutes facultatives : un rapport partiel s'émet. */
+export interface SaveEightDRequest {
+  team?: string | null;
+  containment?: string | null;
+  recognition?: string | null;
+}

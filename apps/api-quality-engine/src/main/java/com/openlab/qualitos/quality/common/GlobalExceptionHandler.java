@@ -167,6 +167,9 @@ import com.openlab.qualitos.quality.nonconformity.NcStateException;
 import com.openlab.qualitos.quality.nonconformity.NcPhotoNotFoundException;
 import com.openlab.qualitos.quality.nonconformity.NcPhotoTooLargeException;
 import com.openlab.qualitos.quality.nonconformity.NcPhotoValidationException;
+import com.openlab.qualitos.quality.nonconformity.eightd.domain.EightDReportNotFoundException;
+import com.openlab.qualitos.quality.nonconformity.eightd.domain.EightDStateException;
+import com.openlab.qualitos.quality.nonconformity.eightd.domain.EightDValidationException;
 import com.openlab.qualitos.quality.nonconformity.storage.StorageDisabledException;
 import com.openlab.qualitos.quality.product.domain.ProductNotFoundException;
 import com.openlab.qualitos.quality.product.domain.ProductStateException;
@@ -545,6 +548,38 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/non-conformity-invalid-state"));
         problem.setTitle("Invalid Non-Conformity State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(EightDReportNotFoundException.class)
+    public ProblemDetail handleEightDNotFound(EightDReportNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/eightd-report-not-found"));
+        problem.setTitle("8D Report Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * Émettre avant la clôture, modifier un rapport scellé, télécharger un document
+     * qui n'existe pas encore : un conflit d'état, pas une requête malformée.
+     */
+    @ExceptionHandler(EightDStateException.class)
+    public ProblemDetail handleEightDState(EightDStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/eightd-report-invalid-state"));
+        problem.setTitle("Invalid 8D Report State");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(EightDValidationException.class)
+    public ProblemDetail handleEightDValidation(EightDValidationException ex) {
+        ProblemDetail problem =
+                ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/eightd-report-invalid"));
+        problem.setTitle("Invalid 8D Report Content");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

@@ -56,6 +56,16 @@
           <span i18n="@@nc.detail.ishikawa">Ishikawa</span>
           <span class="fw-count" *ngIf="(ishikawa$ | async)?.length as ishCount">{{ ishCount }}</span>
         </button>
+        <!-- Le rapport 8D se lit et se renseigne depuis la fiche, comme les deux
+             analyses de cause : il part d'un écart constaté, et n'a donc pas
+             d'entrée de menu. -->
+        <button mat-stroked-button class="eightd-btn" (click)="openEightD()"
+                data-test="rapport-8d"
+                i18n-matTooltip="@@nc.detail.eightd-tooltip"
+                matTooltip="Les huit disciplines, agrégées depuis ce dossier">
+          <mat-icon>fact_check</mat-icon>
+          <span i18n="@@nc.detail.eightd">Rapport 8D</span>
+        </button>
         <button mat-stroked-button color="primary" (click)="startAnalysis()"
                 [disabled]="(acting$ | async) || !canStartAnalysis(n.status)"
                 i18n-matTooltip="@@nc.detail.start-analysis-tooltip" matTooltip="Démarrer l'analyse">

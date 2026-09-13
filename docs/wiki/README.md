@@ -48,6 +48,7 @@ la page de votre rôle :
 - [Non-conformités (NC)](modules/non-conformites.md) · `/nc`
 - [CAPA — Actions correctives & préventives](modules/capa.md) · `/capa`
 - [5 Pourquoi — Recherche de cause-racine](modules/five-whys.md) · `/five-whys`
+- [Rapport 8D — Clôture d'une non-conformité](modules/rapport-8d.md) · `/nc/:id/8d`
 - [Produit, PFMEA et Control Plan](modules/produit-pfmea-control-plan.md) · `/products`
 - [Efficacité des CAPA et matrice de compétences](modules/efficacite-capa-et-competences.md) · `/capa/efficacite`, `/training/competences`
 - [Audits](modules/audits.md) · `/audits` — dont le [planning et les rappels d'échéance](modules/audits.md#planning-et-rappels)

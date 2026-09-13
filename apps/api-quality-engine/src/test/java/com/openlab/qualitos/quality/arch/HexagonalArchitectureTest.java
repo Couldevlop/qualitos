@@ -196,4 +196,43 @@ class HexagonalArchitectureTest {
                 "jakarta.persistence..",
                 "org.hibernate..")
             .because("La couche application des idées ne dépend que de ports.");
+
+    @ArchTest
+    static final ArchRule eightd_domain_has_no_framework_deps =
+        noClasses()
+            .that().resideInAPackage("..nonconformity.eightd.domain..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                "..nonconformity.eightd.infrastructure..",
+                "..nonconformity.eightd.web..",
+                "org.springframework..",
+                "jakarta.persistence..",
+                "jakarta.validation..",
+                "org.hibernate..",
+                "org.apache.pdfbox..",
+                "com.google.zxing..",
+                "com.fasterxml.jackson..")
+            .because("L'instantané figé d'un rapport 8D est une donnée de preuve : il ne doit "
+                   + "dépendre ni de PDFBox, ni de Jackson, ni de JPA, sous peine de changer "
+                   + "de forme avec eux (CLAUDE.md P5).");
+
+    @ArchTest
+    static final ArchRule eightd_application_has_no_framework_deps =
+        noClasses()
+            .that().resideInAPackage("..nonconformity.eightd.application..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                "..nonconformity.eightd.infrastructure..",
+                "..nonconformity.eightd.web..",
+                "..capa..",
+                "..ishikawa..",
+                "..fivewhys..",
+                "..risk..",
+                "..controlplan..",
+                "org.springframework..",
+                "jakarta.persistence..",
+                "org.hibernate..",
+                "org.apache.pdfbox..",
+                "com.fasterxml.jackson..")
+            .because("Le cas d'usage 8D agrège par un PORT : s'il touchait lui-même les modules "
+                   + "CAPA, Ishikawa, 5 pourquoi, PFMEA ou control plan, il ne serait plus "
+                   + "testable sans base.");
 }

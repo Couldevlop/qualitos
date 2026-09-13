@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, delay, map } from 'rxjs/operators';
@@ -8,6 +8,8 @@ import { ConnectivityService } from '../../core/offline/connectivity.service';
 import { OfflineQueueService } from '../../core/offline/offline-queue.service';
 import {
   CreateNcRequest,
+  EightDDiscipline,
+  EightDReport,
   EscalateCapaNcRequest,
   NcCategory,
   NcOrigin,
@@ -19,6 +21,7 @@ import {
   NcStatus,
   RejectNcRequest,
   ResolveNcRequest,
+  SaveEightDRequest,
   StartAnalysisNcRequest,
   UpdateNcRequest,
   VisionAnalysis
@@ -264,6 +267,56 @@ export class NcService {
     return this.http.delete<void>(`${this.endpoint}/${ncId}/photos/${photoId}`);
   }
 
+  // ---- rapport 8D (§4.3 — extrait à la clôture) ------------------------------
+  // Le rapport AGRÈGE : cinq disciplines sur huit sont relues des autres modules
+  // par le serveur. L'écran n'en recompose aucune, il les affiche.
+
+  /** Le rapport de la NC : agrégé tant qu'il est en brouillon, figé dès qu'il est émis. */
+  getEightDReport(ncId: string): Observable<EightDReport> {
+    if (environment.useMockApi) {
+      return of(this.mockEightD(ncId)).pipe(delay(150));
+    }
+    return this.http.get<EightDReport>(`${this.endpoint}/${ncId}/8d`);
+  }
+
+  /** Renseigne D1, D3 et D8 — les trois disciplines sans source. */
+  saveEightDReport(ncId: string, input: SaveEightDRequest): Observable<EightDReport> {
+    if (environment.useMockApi) {
+      const rapport = this.mockEightD(ncId);
+      return of(this.mockEightDSaisi(rapport, input)).pipe(delay(150));
+    }
+    return this.http.put<EightDReport>(`${this.endpoint}/${ncId}/8d`, input);
+  }
+
+  /**
+   * Émet le rapport : le serveur fige le contenu, signe son empreinte et l'ancre.
+   *
+   * <p>Geste à sens unique, refusé avant la clôture de la NC et refusé deux fois.
+   * L'écran demande confirmation ; la règle, elle, est tenue par le serveur.
+   */
+  issueEightDReport(ncId: string): Observable<EightDReport> {
+    if (environment.useMockApi) {
+      const rapport = this.mockEightD(ncId);
+      return of(this.mockEightDEmis(rapport)).pipe(delay(250));
+    }
+    return this.http.post<EightDReport>(`${this.endpoint}/${ncId}/8d/issue`, {});
+  }
+
+  /**
+   * Télécharge le PDF signé du rapport émis.
+   *
+   * <p>`responseType: 'blob'` — sans lui, Angular lirait le PDF comme du JSON et
+   * échouerait sur le premier octet. `observe: 'response'` pour lire
+   * `Content-Disposition` : c'est le SERVEUR qui nomme le fichier, et le
+   * refabriquer ici ferait diverger les deux noms à la première évolution.
+   */
+  downloadEightDPdf(ncId: string): Observable<HttpResponse<Blob>> {
+    return this.http.get(`${this.endpoint}/${ncId}/8d/pdf`, {
+      responseType: 'blob',
+      observe: 'response'
+    });
+  }
+
   private transition(
     id: string,
     targetStatus: NcStatus,
@@ -418,5 +471,100 @@ export class NcService {
         createdAt: now, updatedAt: now
       }
     ];
+  }
+
+  // ---- maquette du rapport 8D ------------------------------------------------
+
+  private readonly mockEightDStore = new Map<string, EightDReport>();
+
+  /**
+   * Un rapport de démonstration : trois disciplines à saisir, D2 servie par la NC,
+   * et les autres sans source — ce qui est précisément le cas à montrer.
+   */
+  private mockEightD(ncId: string): EightDReport {
+    const existant = this.mockEightDStore.get(ncId);
+    if (existant) { return existant; }
+    const nc = this.mockStore.find(x => x.id === ncId) ?? this.mockStore[0];
+    const rapport: EightDReport = {
+      ncId,
+      ncReference: nc.reference,
+      ncTitle: nc.title,
+      status: 'DRAFT',
+      issuable: nc.status === 'CLOSED',
+      partial: true,
+      missingCodes: ['D1', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8'],
+      team: null,
+      containment: null,
+      recognition: null,
+      disciplines: [
+        this.mockDiscipline('D1', 'Équipe', false, true, []),
+        this.mockDiscipline('D2', 'Description du problème', true, false, [
+          `Référence : ${nc.reference}`,
+          `Intitulé : ${nc.title}`,
+          `Gravité : ${nc.severity}`
+        ]),
+        this.mockDiscipline('D3', "Actions d'endiguement immédiates", false, true, []),
+        this.mockDiscipline('D4', 'Cause racine', false, false, []),
+        this.mockDiscipline('D5', 'Actions correctives retenues', false, false, []),
+        this.mockDiscipline('D6', 'Mise en œuvre et preuves', false, false, []),
+        this.mockDiscipline('D7', 'Prévention de la récurrence', false, false, []),
+        this.mockDiscipline('D8', "Reconnaissance de l'équipe", false, true, [])
+      ],
+      seal: null
+    };
+    this.mockEightDStore.set(ncId, rapport);
+    return rapport;
+  }
+
+  private mockDiscipline(
+    code: string, title: string, sourced: boolean, editable: boolean, lines: string[]
+  ): EightDDiscipline {
+    return {
+      code,
+      title,
+      sourced,
+      sourceLabel: sourced
+        ? 'Agrégé depuis le dossier de la non-conformité'
+        : "Aucune source dans la plateforme — cette discipline se saisit",
+      lines,
+      editable
+    };
+  }
+
+  private mockEightDSaisi(rapport: EightDReport, input: SaveEightDRequest): EightDReport {
+    rapport.team = input.team?.trim() || null;
+    rapport.containment = input.containment?.trim() || null;
+    rapport.recognition = input.recognition?.trim() || null;
+    const saisies: Record<string, string | null> = {
+      D1: rapport.team, D3: rapport.containment, D8: rapport.recognition
+    };
+    rapport.disciplines = rapport.disciplines.map(d => {
+      if (!(d.code in saisies)) { return d; }
+      const texte = saisies[d.code];
+      return {
+        ...d,
+        sourced: !!texte,
+        lines: texte ? texte.split(/\r?\n/).filter(l => l.trim().length > 0) : [],
+        sourceLabel: texte
+          ? "Saisi par l'équipe qualité"
+          : "Aucune source dans la plateforme — cette discipline se saisit"
+      };
+    });
+    rapport.missingCodes = rapport.disciplines.filter(d => !d.sourced).map(d => d.code);
+    rapport.partial = rapport.missingCodes.length > 0;
+    return rapport;
+  }
+
+  private mockEightDEmis(rapport: EightDReport): EightDReport {
+    rapport.status = 'ISSUED';
+    rapport.issuable = false;
+    rapport.seal = {
+      sha256Hex: 'f'.repeat(64),
+      anchorTxRef: 'tx-maquette',
+      verificationCode: 'MAQUETTE012345678901',
+      issuedAt: new Date().toISOString(),
+      issuedByName: 'Utilisateur de démonstration'
+    };
+    return rapport;
   }
 }
