@@ -366,6 +366,82 @@ class NcServiceTest {
         verify(capaRepo, never()).save(any());
     }
 
+    // --- rejet d'une réclamation externe ---
+
+    @Test
+    void reject_externalComplaint_recordsReasonAndDate() {
+        NonConformity n = nc(TENANT, NcStatus.UNDER_ANALYSIS);
+        n.setOrigin(NcOrigin.EXTERNAL);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+        when(repo.save(any(NonConformity.class))).thenAnswer(i -> i.getArgument(0));
+
+        NcDto.Response apres = service.reject(n.getId(), new NcDto.RejectRequest(
+                "  Hors périmètre contractuel, pièce non fournie.  "));
+
+        assertThat(apres.status()).isEqualTo(NcStatus.REJECTED);
+        assertThat(apres.rejectionReason())
+                .isEqualTo("Hors périmètre contractuel, pièce non fournie.");
+        assertThat(apres.rejectedAt()).isNotNull();
+    }
+
+    @Test
+    void reject_internalFinding_isRefusedByTheService() {
+        NonConformity n = nc(TENANT, NcStatus.OPEN);
+        n.setOrigin(NcOrigin.INTERNAL);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+
+        // On ne rejette pas un constat qu'on a fait soi-même : on le résout, on le
+        // clôt, ou on l'annule. Le refus est porté par le SERVICE, faute de quoi un
+        // appel direct à l'API contournerait la règle de l'écran.
+        assertThatThrownBy(() -> service.reject(n.getId(), new NcDto.RejectRequest("non")))
+                .isInstanceOf(NcStateException.class)
+                .hasMessageContaining("EXTERNAL");
+
+        assertThat(n.getStatus()).isEqualTo(NcStatus.OPEN);
+        verify(repo, never()).save(any());
+    }
+
+    @Test
+    void reject_fromResolvedOrClosed_isRefused() {
+        for (NcStatus statut : java.util.List.of(NcStatus.ACTION_DEFINED, NcStatus.RESOLVED,
+                NcStatus.CLOSED, NcStatus.CANCELLED, NcStatus.REJECTED)) {
+            NonConformity n = nc(TENANT, statut);
+            n.setOrigin(NcOrigin.EXTERNAL);
+            when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+
+            // Une réclamation déjà traitée a reçu une réponse : la reprendre en rejet
+            // réécrirait l'histoire que le client a lue.
+            assertThatThrownBy(() -> service.reject(n.getId(), new NcDto.RejectRequest("tardif")))
+                    .as("rejet depuis %s", statut)
+                    .isInstanceOf(NcStateException.class);
+        }
+    }
+
+    @Test
+    void rejected_isTerminal_andCannotBeEdited() {
+        NonConformity n = nc(TENANT, NcStatus.REJECTED);
+        n.setOrigin(NcOrigin.EXTERNAL);
+        when(repo.findByIdAndTenantId(n.getId(), TENANT)).thenReturn(Optional.of(n));
+
+        assertThatThrownBy(() -> service.update(n.getId(), new NcDto.UpdateRequest(
+                "autre titre", null, null, null, null, null, null, null, null, null, null)))
+                .isInstanceOf(NcStateException.class)
+                .hasMessageContaining("REJECTED");
+    }
+
+    @Test
+    void statistics_countsRejectedInTheSameScopeAsTheTable() {
+        lenient().when(repo.countByTenantIdAndOrigin(TENANT, NcOrigin.EXTERNAL)).thenReturn(9L);
+        // `lenient` : le denombrement interroge les sept statuts, et les six autres
+        // appels n'ont pas a etre declares pour que celui-ci soit verifie.
+        lenient().when(repo.countByTenantIdAndOriginAndStatus(
+                TENANT, NcOrigin.EXTERNAL, NcStatus.REJECTED)).thenReturn(4L);
+
+        // Les tuiles surmontent un tableau déjà filtré : un total toutes origines
+        // confondues serait un chiffre juste au mauvais endroit, donc faux.
+        assertThat(service.statistics(NcOrigin.EXTERNAL).rejected()).isEqualTo(4);
+    }
+
     // --- helpers ---
     private NcDto.CreateRequest req() {
         return new NcDto.CreateRequest(

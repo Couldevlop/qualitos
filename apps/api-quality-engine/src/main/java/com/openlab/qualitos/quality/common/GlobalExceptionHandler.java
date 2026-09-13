@@ -152,7 +152,11 @@ import com.openlab.qualitos.quality.marketplace.domain.MarketplaceInstallationNo
 import com.openlab.qualitos.quality.marketplace.domain.MarketplacePackNotFoundException;
 import com.openlab.qualitos.quality.marketplace.domain.MarketplacePackStateException;
 import com.openlab.qualitos.quality.notifications.domain.NotificationNotFoundException;
+import com.openlab.qualitos.quality.apqp.ApqpDeliverableEvidenceNotFoundException;
+import com.openlab.qualitos.quality.apqp.ApqpDeliverableEvidenceTooLargeException;
+import com.openlab.qualitos.quality.apqp.ApqpDeliverableEvidenceValidationException;
 import com.openlab.qualitos.quality.apqp.ApqpDeliverableNotFoundException;
+import com.openlab.qualitos.quality.apqp.ApqpDeliverableValidationException;
 import com.openlab.qualitos.quality.apqp.ApqpPhaseNotFoundException;
 import com.openlab.qualitos.quality.apqp.ApqpReorderException;
 import com.openlab.qualitos.quality.ideas.domain.IdeaNotFoundException;
@@ -177,6 +181,11 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import java.util.Set;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -435,6 +444,56 @@ public class GlobalExceptionHandler {
                 HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/apqp-invalid-reorder"));
         problem.setTitle("Invalid APQP Reorder");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * 422 : la requête est bien formée, mais son contenu ne tient pas debout pour
+     * ce livrable — une liste de mesures sur une pièce jointe, un renvoi qui ne
+     * désigne aucun enregistrement du client.
+     */
+    @ExceptionHandler(ApqpDeliverableValidationException.class)
+    public ProblemDetail handleApqpDeliverableValidation(ApqpDeliverableValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/apqp-invalid-deliverable"));
+        problem.setTitle("Invalid APQP Deliverable Content");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ApqpDeliverableEvidenceNotFoundException.class)
+    public ProblemDetail handleApqpEvidenceNotFound(ApqpDeliverableEvidenceNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/apqp-evidence-not-found"));
+        problem.setTitle("APQP Evidence Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(ApqpDeliverableEvidenceValidationException.class)
+    public ProblemDetail handleApqpEvidenceValidation(ApqpDeliverableEvidenceValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/apqp-invalid-evidence"));
+        problem.setTitle("Invalid APQP Evidence");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * 413 et non 400 : la requête est valide, c'est sa TAILLE qui est refusée — par
+     * fichier, par livrable, ou pour le cycle entier. Le message dit lequel des
+     * trois plafonds a parlé, sans quoi l'utilisateur réessaie avec un fichier plus
+     * petit alors que c'est le cinquième.
+     */
+    @ExceptionHandler(ApqpDeliverableEvidenceTooLargeException.class)
+    public ProblemDetail handleApqpEvidenceTooLarge(ApqpDeliverableEvidenceTooLargeException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/apqp-evidence-too-large"));
+        problem.setTitle("APQP Evidence Too Large");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
@@ -1726,6 +1785,42 @@ public class GlobalExceptionHandler {
         problem.setTitle("Missing Required Parameter");
         problem.setProperty("timestamp", Instant.now());
         return problem;
+    }
+
+    /**
+     * Mauvaise méthode HTTP sur une route qui existe → 405, et non 500.
+     *
+     * <p>Constaté en peuplant une instance de démonstration : un POST sur
+     * {@code /audits/plans/{id}/start}, qui est un PATCH, répondait « Internal
+     * Server Error ». Le serveur n'avait rien de cassé — il refusait, et disait le
+     * contraire. Un client qui lit 500 réessaie ou alerte ; sur 405 il corrige sa
+     * requête, et l'en-tête {@code Allow} lui dit comment.
+     *
+     * <p>Même famille que le paramètre requis absent, traité juste au-dessus : une
+     * exception de Spring MVC laissée sans gestionnaire tombe dans le fourre-tout
+     * des 500.
+     */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ProblemDetail> handleMethodNotSupported(
+            HttpRequestMethodNotSupportedException ex) {
+        Set<HttpMethod> permises = ex.getSupportedHttpMethods();
+        String detail = "Method " + ex.getMethod() + " is not supported on this endpoint"
+                + (permises == null || permises.isEmpty() ? ""
+                   : " (allowed: " + permises.stream().map(HttpMethod::name)
+                           .collect(Collectors.joining(", ")) + ")");
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.METHOD_NOT_ALLOWED, detail);
+        problem.setType(URI.create("https://qualitos.io/errors/method-not-allowed"));
+        problem.setTitle("Method Not Allowed");
+        problem.setProperty("timestamp", Instant.now());
+
+        // L'en-tête `Allow` est exigé par la RFC sur un 405, et c'est lui qui dit au
+        // client quoi faire au lieu de le laisser deviner.
+        HttpHeaders entetes = new HttpHeaders();
+        if (permises != null && !permises.isEmpty()) {
+            entetes.setAllow(permises);
+        }
+        return new ResponseEntity<>(problem, entetes, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

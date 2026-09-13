@@ -84,6 +84,15 @@ public final class NcDto {
      * Escalade vers une CAPA. La NC ne porte pas toujours de responsable ;
      * la CAPA exige un owner (cf. CapaCase.ownerId NOT NULL) → fourni ici.
      */
+    /**
+     * Le rejet d'une réclamation externe.
+     *
+     * <p>Le motif est obligatoire : écarter une réclamation sans dire pourquoi est
+     * indéfendable devant le client comme devant l'auditeur.
+     */
+    public record RejectRequest(
+            @NotBlank @Size(max = 2000) String reason) {}
+
     public record EscalateRequest(
             @NotNull UUID ownerId
     ) {}
@@ -113,6 +122,9 @@ public final class NcDto {
             String resolutionNote,
             Instant resolvedAt,
             Instant closedAt,
+            /** Pourquoi la réclamation a été écartée — ce que le client vient lire. */
+            String rejectionReason,
+            Instant rejectedAt,
             Instant createdAt,
             Instant updatedAt
     ) {}
@@ -138,5 +150,7 @@ public final class NcDto {
             long actionDefined,
             long resolved,
             long closed,
-            long cancelled) {}
+            long cancelled,
+            /** Rejetées — toujours 0 sur l'écran interne, qui ne rejette pas. */
+            long rejected) {}
 }

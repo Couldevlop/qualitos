@@ -58,22 +58,33 @@ describe('ApqpDeliverableDialogComponent', () => {
   it('reprend le libellé en reformulation, et le rend rogné', async () => {
     await setup({
       phaseTitle: 'Planification',
-      deliverable: { id: 'l1', position: 1, label: 'AMDEC processus' }
+      deliverable: {
+        id: 'l1', position: 1, label: 'AMDEC processus',
+        ppap: true, kind: 'MODULE_LINK', done: false, evidenceCount: 0
+      }
     });
     expect(component.editing).toBeTrue();
     expect(component.form.getRawValue().label).toBe('AMDEC processus');
+    // Le genre et la marque viennent du livrable : un dialogue qui les remettrait
+    // a zero ferait d'une reformulation une requalification silencieuse.
+    expect(component.form.getRawValue().kind).toBe('MODULE_LINK');
+    expect(component.form.getRawValue().ppap).toBeTrue();
 
-    component.form.setValue({ label: '  AMDEC processus (PFMEA)  ' });
+    component.form.setValue({
+      label: '  AMDEC processus (PFMEA)  ', kind: 'MODULE_LINK', ppap: true
+    });
     component.submit();
 
-    expect(dialogRef.close).toHaveBeenCalledWith({ label: 'AMDEC processus (PFMEA)' });
+    expect(dialogRef.close).toHaveBeenCalledWith({
+      label: 'AMDEC processus (PFMEA)', kind: 'MODULE_LINK', ppap: true
+    });
   });
 
   it('refuse un livrable réduit à des espaces', async () => {
     // `Validators.required` laisse passer '   ' : le dialogue rendait alors un
     // libellé vide, et la liste affichait une puce sans texte.
     await setup({ phaseTitle: 'Planification' });
-    component.form.setValue({ label: '   ' });
+    component.form.setValue({ label: '   ', kind: 'ATTACHMENT', ppap: false });
 
     component.submit();
 

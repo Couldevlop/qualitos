@@ -1,0 +1,127 @@
+/* Le popup d'un livrable : quatre corps selon le genre, une seule mise en page.
+   Les espacements viennent des jetons du système de conception, jamais de
+   valeurs posées ici — sinon ce dialogue dériverait des cent trente autres. */
+
+.aide {
+  margin: 0 0 var(--qos-space-3);
+  color: var(--qos-text-muted);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.sous-titre {
+  margin: var(--qos-space-4) 0 var(--qos-space-2);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.ppap {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  margin: 0 0 var(--qos-space-3);
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border-radius: var(--qos-radius-sm);
+  background: var(--qos-surface-accent, rgba(0 0 0 / 4%));
+  font-size: 0.875rem;
+
+  mat-icon {
+    flex: 0 0 auto;
+  }
+}
+
+.trace {
+  margin: calc(-1 * var(--qos-space-1)) 0 var(--qos-space-3);
+  color: var(--qos-text-muted);
+  font-size: 0.8125rem;
+}
+
+.full {
+  width: 100%;
+}
+
+/* --- pièces jointes ------------------------------------------------------- */
+
+.pieces__liste {
+  margin: 0 0 var(--qos-space-2);
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--qos-space-2);
+    padding: var(--qos-space-2) 0;
+    border-bottom: 1px solid var(--qos-border-subtle);
+  }
+}
+
+.pieces__nom {
+  flex: 1 1 auto;
+  /* Un nom long ne doit pas pousser la taille et le bouton hors du dialogue. */
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.pieces__taille {
+  flex: 0 0 auto;
+  color: var(--qos-text-muted);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.pieces__ajout {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-3);
+  flex-wrap: wrap;
+
+  .aide {
+    margin: 0;
+  }
+}
+
+/* --- mesures et points ---------------------------------------------------- */
+
+.mesures__ligne,
+.points__ligne {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  /* Au doigt, quatre champs sur une ligne deviennent illisibles : ils passent
+     l'un sous l'autre plutôt que de rétrécir jusqu'à l'inutile. */
+  flex-wrap: wrap;
+}
+
+.mesures__libelle,
+.points__libelle {
+  flex: 1 1 14rem;
+}
+
+.mesures__valeur {
+  flex: 0 1 8rem;
+}
+
+.mesures__unite {
+  flex: 0 1 6rem;
+}
+
+.mesures__date {
+  flex: 0 1 11rem;
+}
+
+.points__ligne {
+  mat-checkbox {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .mesures__libelle,
+  .mesures__valeur,
+  .mesures__unite,
+  .mesures__date,
+  .points__libelle {
+    flex: 1 1 100%;
+  }
+}

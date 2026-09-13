@@ -58,7 +58,19 @@ class ApqpControllerTest {
         return new ApqpDto.PhaseResponse(
                 PHASE, 2, 2, "Conception du processus",
                 "Traduire le produit en moyens", "Sait-on le fabriquer ?",
-                List.of(new ApqpDto.DeliverableResponse(LIVRABLE, 1, "AMDEC processus (PFMEA)")));
+                List.of(livrable()));
+    }
+
+    /** Un livrable tel que le service le rend : genre, marque PPAP, achèvement. */
+    private static ApqpDto.DeliverableResponse livrable() {
+        return new ApqpDto.DeliverableResponse(
+                LIVRABLE, 1, "PFMEA", true, ApqpDeliverableKind.MODULE_LINK,
+                false, null, null, null, List.of(), null, null, 0);
+    }
+
+    /** Le cycle tel que la lecture le rend : les phases, et l'état du dossier PPAP. */
+    private static ApqpDto.CycleResponse cycle() {
+        return new ApqpDto.CycleResponse(List.of(phase()), 0, 1);
     }
 
     // ---------- lecture ----------
@@ -66,13 +78,18 @@ class ApqpControllerTest {
     @Test
     @WithMockUser(roles = "USER")
     void toutUtilisateurAuthentifieLitLeCycle() throws Exception {
-        when(service.cycle()).thenReturn(List.of(phase()));
+        when(service.cycle()).thenReturn(cycle());
 
         mockMvc.perform(get("/api/v1/apqp/phases"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].title").value("Conception du processus"))
-                .andExpect(jsonPath("$[0].level").value(2))
-                .andExpect(jsonPath("$[0].deliverables[0].label").value("AMDEC processus (PFMEA)"));
+                .andExpect(jsonPath("$.phases[0].title").value("Conception du processus"))
+                .andExpect(jsonPath("$.phases[0].level").value(2))
+                .andExpect(jsonPath("$.phases[0].deliverables[0].label").value("PFMEA"))
+                .andExpect(jsonPath("$.phases[0].deliverables[0].ppap").value(true))
+                // Le compte voyage avec le cycle : la section PPAP et le schéma
+                // lisent le même état.
+                .andExpect(jsonPath("$.ppapTotal").value(1))
+                .andExpect(jsonPath("$.ppapDone").value(0));
     }
 
     @Test
@@ -118,7 +135,8 @@ class ApqpControllerTest {
         mockMvc.perform(post("/api/v1/apqp/phases/" + PHASE + "/deliverables")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"label\":\"Plan de surveillance\"}"))
+                        .content("{\"label\":\"Plan de surveillance\","
+                                + "\"ppap\":true,\"kind\":\"MODULE_LINK\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.deliverables[0].position").value(1));
     }
@@ -195,6 +213,88 @@ class ApqpControllerTest {
                         .content("{\"label\":\"\"}"))
                 .andExpect(status().isBadRequest());
         verifyNoInteractions(service);
+    }
+
+    // ---------- achèvement d'un livrable ----------
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void unOperateurNeCochePasUnLivrable() throws Exception {
+        mockMvc.perform(put("/api/v1/apqp/phases/" + PHASE + "/deliverables/" + LIVRABLE
+                        + "/completion")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"done\":true}"))
+                .andExpect(status().isForbidden());
+
+        // L'autorisation se décide AVANT la lecture du corps (ADR 0065) : le
+        // service ne doit pas avoir été touché.
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    @WithMockUser(roles = "QUALITY_MANAGER")
+    void leManagerQualiteCocheUnLivrable() throws Exception {
+        when(service.completerLivrable(eq(PHASE), eq(LIVRABLE), any(), any()))
+                .thenReturn(cycle());
+
+        mockMvc.perform(put("/api/v1/apqp/phases/" + PHASE + "/deliverables/" + LIVRABLE
+                        + "/completion")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"done\":true,\"comment\":\"reçu par courriel\"}"))
+                .andExpect(status().isOk())
+                // La réponse porte le cycle entier : cocher un livrable change le
+                // compte du dossier PPAP.
+                .andExpect(jsonPath("$.ppapTotal").value(1));
+    }
+
+    @Test
+    @WithMockUser(roles = "QUALITY_MANAGER")
+    void unContenuIncompatibleAvecLeGenreRend422() throws Exception {
+        when(service.completerLivrable(eq(PHASE), eq(LIVRABLE), any(), any()))
+                .thenThrow(new ApqpDeliverableValidationException(
+                        "A ATTACHMENT deliverable carries no data rows"));
+
+        mockMvc.perform(put("/api/v1/apqp/phases/" + PHASE + "/deliverables/" + LIVRABLE
+                        + "/completion")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"done\":true,\"data\":[{\"label\":\"x\"}]}"))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.title").value("Invalid APQP Deliverable Content"));
+    }
+
+    @Test
+    @WithMockUser(roles = "QUALITY_MANAGER")
+    void unSousPointSansLibelleEstRefuseALaFrontiere() throws Exception {
+        mockMvc.perform(put("/api/v1/apqp/phases/" + PHASE + "/deliverables/" + LIVRABLE
+                        + "/completion")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"done\":false,\"data\":[{\"label\":\"  \"}]}"))
+                .andExpect(status().isBadRequest());
+        verifyNoInteractions(service);
+    }
+
+    // ---------- réinitialisation ----------
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void unOperateurNeReinitialisePasLeCycle() throws Exception {
+        mockMvc.perform(post("/api/v1/apqp/phases/reset").with(csrf()))
+                .andExpect(status().isForbidden());
+        verifyNoInteractions(service);
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN_TENANT")
+    void lAdministrateurDuClientReinitialiseLeCycle() throws Exception {
+        when(service.reinitialiser()).thenReturn(cycle());
+
+        mockMvc.perform(post("/api/v1/apqp/phases/reset").with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.phases[0].title").value("Conception du processus"));
     }
 
     // ---------- ce que rendent les refus du service ----------

@@ -22,4 +22,23 @@
     </mat-error>
   </mat-form-field>
 
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@apqp.deliverable-dialog.field-kind">Ce que ce livrable produit</mat-label>
+    <mat-select formControlName="kind" required>
+      <mat-option *ngFor="let genre of genres" [value]="genre.value">
+        {{ genre.label }}
+      </mat-option>
+    </mat-select>
+    <!-- Le choix n'est pas evident : il decide du formulaire que l'utilisateur
+         verra en ouvrant le livrable. -->
+    <mat-hint data-test="aide-genre" i18n="@@apqp.deliverable-dialog.kind-hint">
+      Détermine ce que le livrable demandera : une pièce jointe, un renvoi, des mesures
+      ou des points à cocher.
+    </mat-hint>
+  </mat-form-field>
+
+  <mat-checkbox formControlName="ppap" data-test="case-ppap">
+    <span i18n="@@apqp.deliverable-dialog.ppap">Ce livrable compose le dossier PPAP</span>
+  </mat-checkbox>
+
 </qos-form-dialog>

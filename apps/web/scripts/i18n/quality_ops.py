@@ -268,7 +268,16 @@ TRANSLATIONS = {
     'fmea.list.col-revision': ('Rév.', "Rev.", "Rev.", "مراجعة", "改訂", "版本"),
     'fmea.list.col-rpn-threshold': ('Seuil RPN critique', "Critical RPN threshold", "Umbral RPN crítico", "عتبة RPN الحرجة", "クリティカル RPN しきい値", "关键 RPN 阈值"),
     'fmea.list.new-project': ('Nouveau projet', "New project", "Nuevo proyecto", "مشروع جديد", "新しいプロジェクト", "新建项目"),
-    'fmea.list.subtitle': ('Analyse des modes de défaillance, RPN dynamique, bow-tie cyber/RGPD.', "Failure mode analysis, dynamic RPN, cyber/GDPR bow-tie.", "Análisis de modos de fallo, RPN dinámico, bow-tie ciber/RGPD.", "تحليل أنماط الفشل، RPN ديناميكي، bow-tie للأمن السيبراني/اللائحة العامة لحماية البيانات.", "故障モード解析、動的 RPN、サイバー/GDPR ボウタイ。", "失效模式分析、动态 RPN、网络安全/GDPR 蝴蝶结分析。"),
+    # L'ecran enonce la regle qui engage, et non l'outillage : au-dela de 200, le
+    # RPN impose une action corrective. La cible anglaise est la formulation
+    # demandee au mot par le commanditaire.
+    'fmea.list.subtitle': (
+        'Toute RPN supérieure à 200 exige une action corrective.',
+        'For each RPN superior to 200, a corrective action is required',
+        'Todo RPN superior a 200 exige una acción correctiva.',
+        'كل RPN يتجاوز 200 يستلزم إجراءً تصحيحيًا.',
+        'RPN が 200 を超える場合は是正処置が必要です。',
+        'RPN 超过 200 时必须采取纠正措施。'),
     'fmea.list.title': ('FMEA — Risk Management', "FMEA — Risk Management", "AMFE — Gestión de riesgos", "FMEA — إدارة المخاطر", "FMEA — リスクマネジメント", "FMEA — 风险管理"),
     'fmea.type.bow-tie': ('Bow-tie', "Bow-tie", "Bow-tie", "Bow-tie", "ボウタイ", "蝴蝶结"),
     'fmea.type.design': ('Conception', "Design", "Diseño", "التصميم", "設計", "设计"),

@@ -1,0 +1,10 @@
+/* La page ne porte presque rien : le dossier est rendu par le composant partage,
+   et l'en-tete par celui de la plateforme. Seule l'invite du cas vide a besoin
+   d'un style, repris de l'ecran du cycle pour que les deux se lisent pareil. */
+
+.invite {
+  margin: var(--qos-space-4) 0;
+  max-width: 62ch;
+  color: var(--qos-text-muted);
+  line-height: 1.55;
+}

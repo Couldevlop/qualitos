@@ -82,6 +82,40 @@ describe('MainShellComponent (navigation model)', () => {
     expect(component.sections.length).toBe(9);
   });
 
+  it('une seule entree s’allume, meme quand une route en prefixe une autre', () => {
+    const h = harness();
+    const shell = h.component;
+    // Le montage commun fabrique un routeur simule : on lui pose l'adresse
+    // courante, qui est la seule entree de la regle.
+    const routeur = h.router as unknown as { url: string };
+
+    // Sur le dossier, « Le cycle » (/apqp) prefixe /apqp/ppap : sans la regle de
+    // la correspondance la plus longue, les deux s'allumaient et le menu disait
+    // qu'on etait a deux endroits a la fois.
+    routeur.url = '/apqp/ppap';
+    expect(shell.estActif('/apqp/ppap')).toBeTrue();
+    expect(shell.estActif('/apqp')).toBeFalse();
+
+    // Mais un prefixe reste une correspondance valable : /apqp/2 est un rang de
+    // phase, pas une entree de menu, et « Le cycle » doit y rester allumee.
+    routeur.url = '/apqp/2';
+    expect(shell.estActif('/apqp')).toBeTrue();
+    expect(shell.estActif('/apqp/ppap')).toBeFalse();
+
+    // Les parametres de requete et l'ancre ne changent pas l'entree active.
+    routeur.url = '/apqp/ppap?from=menu#haut';
+    expect(shell.estActif('/apqp/ppap')).toBeTrue();
+    expect(shell.estActif('/apqp')).toBeFalse();
+  });
+
+  it('le dossier PPAP a son entree, sous « Le cycle »', () => {
+    // Le dossier ne se travaille pas qu'en marge du cycle : c'est lui qu'on remet
+    // au client, et c'est cette liste qu'on parcourt a l'approche d'une
+    // soumission. D'ou une entree a lui, juste sous celle du cycle.
+    const apqp = component.sections.find(s => s.items.some(i => i.route === '/apqp'))!;
+    expect(apqp.items.map(i => i.route)).toEqual(['/apqp', '/apqp/ppap']);
+  });
+
   it('orders the six groups as designed', () => {
     const labels = component.sections.map(s => s.items.length);
     // Pilotage(5), Méthodes(6), Analyses IA(8), Opérations(10), Référentiels(10),
@@ -100,12 +134,15 @@ describe('MainShellComponent (navigation model)', () => {
     // control plan, posé juste avant l'entrée FMEA qu'il alimente.
     // Methodes retombe a 5 et Non-conformite a 2 : Ishikawa et les 5 Pourquoi
     // quittent la barre laterale, on y accede depuis la fiche de NC.
+    // APQP remonte a 2 : « Le cycle » et « Dossier PPAP » -- le dossier n'est pas
+    // une phase, c'est ce qu'on remet au client, et c'est cette liste qu'on
+    // parcourt a l'approche d'une soumission.
     // APQP retombe à 1 : le schéma en V porte lui-même la navigation entre
     // phases, un sous-menu doublerait ses cinq jalons. Opérations passe de 12
     // à 11 : l'écran Réclamations a été retiré.
     // Méthodes passe à 6 : + Boîte à idées, sans attribut `module` puisqu'elle
     // ne dépend pas de l'activation du module Cercle.
-    expect(labels).toEqual([5, 6, 8, 1, 2, 11, 11, 1, 7]);
+    expect(labels).toEqual([5, 6, 8, 2, 2, 11, 11, 1, 7]);
   });
 
   it('collapses the entire GRC mass into a single /compliance entry', () => {

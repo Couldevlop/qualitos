@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,9 +53,24 @@ public class ApqpController {
     }
 
     @GetMapping
-    @Operation(summary = "The tenant's APQP cycle, seeded from the AIAG reference on first read")
-    public List<ApqpDto.PhaseResponse> cycle() {
+    @Operation(summary = "The tenant's APQP cycle and PPAP completion, seeded on first read")
+    public ApqpDto.CycleResponse cycle() {
         return service.cycle();
+    }
+
+    /**
+     * Rend au client le cycle du référentiel, en effaçant le sien.
+     *
+     * <p>Destructif : c'est pourquoi l'écran le demande deux fois. Sans cette
+     * porte, un client dont le cycle a été laissé intact par la reprise n'aurait
+     * aucun moyen d'adopter la nouvelle liste, sinon en supprimant ses phases une
+     * à une.
+     */
+    @PostMapping("/reset")
+    @PreAuthorize(ROLES_ECRITURE)
+    @Operation(summary = "Discard the tenant's cycle and seed it again from the reference")
+    public ApqpDto.CycleResponse reinitialiser() {
+        return service.reinitialiser();
     }
 
     @PostMapping
@@ -114,6 +131,23 @@ public class ApqpController {
         return service.modifierLivrable(phaseId, deliverableId, requete);
     }
 
+    /**
+     * Déclare où en est un livrable.
+     *
+     * <p>Rend le cycle entier : cocher un livrable change le compte du dossier
+     * PPAP affiché sous le schéma. L'acteur vient du jeton, jamais du corps.
+     */
+    @PutMapping("/{phaseId}/deliverables/{deliverableId}/completion")
+    @PreAuthorize(ROLES_ECRITURE)
+    @Operation(summary = "Declare where a deliverable stands, and what proves it")
+    public ApqpDto.CycleResponse completerLivrable(
+            @PathVariable UUID phaseId,
+            @PathVariable UUID deliverableId,
+            @Valid @RequestBody ApqpDto.CompletionRequest requete,
+            @AuthenticationPrincipal Jwt jwt) {
+        return service.completerLivrable(phaseId, deliverableId, requete, acteur(jwt));
+    }
+
     @DeleteMapping("/{phaseId}/deliverables/{deliverableId}")
     @PreAuthorize(ROLES_ECRITURE)
     @Operation(summary = "Remove a deliverable and close the ranks")
@@ -121,5 +155,23 @@ public class ApqpController {
             @PathVariable UUID phaseId,
             @PathVariable UUID deliverableId) {
         return service.supprimerLivrable(phaseId, deliverableId);
+    }
+
+    /**
+     * Qui coche, d'après le sujet du jeton.
+     *
+     * <p>Si le sujet n'est pas un UUID, le champ reste vide : mieux vaut un
+     * achèvement sans auteur qu'un auteur inventé. Jamais lu du corps, qui est
+     * falsifiable.
+     */
+    private static UUID acteur(Jwt jwt) {
+        if (jwt == null || jwt.getSubject() == null) {
+            return null;
+        }
+        try {
+            return UUID.fromString(jwt.getSubject());
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 }

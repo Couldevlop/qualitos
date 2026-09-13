@@ -1,0 +1,31 @@
+<qos-form-dialog
+  i18n-title="@@nc.reject.title"
+  title="Rejeter la réclamation"
+  [formGroup]="form"
+  [submitting]="submitting"
+  [submitDisabled]="form.invalid"
+  [blockedReason]="blockedReason"
+  i18n-submitLabel="@@nc.reject.submit"
+  submitLabel="Rejeter"
+  submitIcon="block"
+  submitColor="warn"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <p class="hint">
+    <span i18n="@@nc.reject.hint">Dis pourquoi la réclamation n'est pas retenue : ce motif sera lu par le client et par l'auditeur, et restera attaché à</span>
+    <span class="ref">{{ data.reference }}</span>.
+  </p>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@nc.reject.reason-label">Motif du rejet</mat-label>
+    <textarea matInput formControlName="reason" rows="5" maxlength="2000" required
+              i18n-placeholder="@@nc.reject.reason-placeholder"
+              placeholder="Hors périmètre contractuel, constat non reproduit, pièce non fournie…"></textarea>
+    <mat-error *ngIf="form.controls.reason.hasError('required')"
+               i18n="@@nc.reject.reason-required">
+      Le motif du rejet est requis.
+    </mat-error>
+  </mat-form-field>
+
+</qos-form-dialog>

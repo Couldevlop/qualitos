@@ -1,0 +1,34 @@
+<!-- Rien a afficher si le client a retire tous ses livrables PPAP : un cadre vide
+     laisserait croire a un chargement qui n'aboutit pas. -->
+<section class="ppap" *ngIf="lignes.length > 0" data-test="section-ppap">
+
+  <!-- Ni titre ni legende ici : l'en-tete de l'ecran les porte deja, et les
+       repeter les affichait deux fois de suite. Ce composant rend ce qui lui est
+       propre -- le compte, l'avancement, et les lignes. -->
+  <header class="ppap__tete">
+    <p class="ppap__compte" data-test="compte-ppap">{{ resume }}</p>
+  </header>
+
+  <mat-progress-bar mode="determinate" [value]="pourcentage"
+                    [attr.aria-label]="ariaBarre"></mat-progress-bar>
+
+  <ul class="ppap__liste">
+    <li *ngFor="let ligne of lignes; trackBy: trackByLigne" data-test="ligne-ppap"
+        [class.ppap__ligne--acquis]="ligne.deliverable.done">
+      <mat-icon class="ppap__etat" aria-hidden="true">
+        {{ ligne.deliverable.done ? 'check_circle' : 'radio_button_unchecked' }}
+      </mat-icon>
+
+      <button type="button" class="ppap__ouvrir" [attr.aria-label]="ariaLigne(ligne)"
+              (click)="ouvrir.emit(ligne)">
+        <span class="ppap__libelle">{{ ligne.deliverable.label }}</span>
+        <span class="ppap__phase">{{ ligne.phase.title }}</span>
+      </button>
+
+      <!-- Prouve n'est pas la meme chose qu'acquis : on coche une declaration,
+           on verse une piece. Les deux se lisent separement. -->
+      <mat-icon class="ppap__preuve" *ngIf="ligne.deliverable.evidenceCount > 0"
+                aria-hidden="true">attach_file</mat-icon>
+    </li>
+  </ul>
+</section>

@@ -164,4 +164,55 @@ TRANSLATIONS = {
     'nc.resolve.note-required': ('La note de résolution est requise.', 'The resolution note is required.', 'La nota de resolución es obligatoria.', 'ملاحظة الحل مطلوبة.', '解決ノートは必須です。', '解决说明为必填项。'),
     'nc.resolve.submit': ('Résoudre', 'Resolve', 'Resolver', 'حل', '解決', '解决'),
     'nc.resolve.success': ('Non-conformité résolue.', 'Non-conformance resolved.', 'No conformidad resuelta.', 'تم حل عدم المطابقة.', '不適合を解決しました。', '不合格项已解决。'),
+
+    # --- rejet d'une réclamation externe (ADR 0069) ---------------------------
+    'nc.detail.reject': ('Rejeter', 'Reject', 'Rechazar', 'رفض', '却下', '驳回'),
+    'nc.detail.reject-tooltip': (
+        "Écarter la réclamation, motif à l'appui", 'Set the complaint aside, with a reason',
+        'Descartar la reclamación, indicando el motivo', 'استبعاد الشكوى مع بيان السبب',
+        '理由を添えてクレームを却下する', '说明理由后驳回投诉'),
+    'nc.detail.rejection-reason': (
+        'Motif du rejet', 'Reason for rejection', 'Motivo del rechazo',
+        'سبب الرفض', '却下の理由', '驳回理由'),
+    'nc.detail.rejected-at': (
+        'Rejetée le', 'Rejected on', 'Rechazada el', 'تاريخ الرفض', '却下日', '驳回于'),
+    'nc.list.tile-rejected': (
+        'Rejetées', 'Rejected', 'Rechazadas', 'مرفوضة', '却下', '已驳回'),
+    'nc.reject.title': (
+        'Rejeter la réclamation', 'Reject the complaint', 'Rechazar la reclamación',
+        'رفض الشكوى', 'クレームを却下する', '驳回投诉'),
+    'nc.reject.submit': ('Rejeter', 'Reject', 'Rechazar', 'رفض', '却下', '驳回'),
+    'nc.reject.hint': (
+        "Dis pourquoi la réclamation n'est pas retenue : ce motif sera lu par le client et par l'auditeur, et restera attaché à",
+        'Say why the complaint is not upheld: this reason will be read by the customer and by the auditor, and will stay attached to',
+        'Indique por qué no se admite la reclamación: este motivo lo leerán el cliente y el auditor, y quedará vinculado a',
+        'بيِّن سبب عدم قبول الشكوى: سيقرأ هذا السبب العميل والمُراجِع، وسيبقى مرتبطًا بـ',
+        'クレームを認めない理由を記してください。この理由は顧客と監査人が読み、次の記録に残り続けます：',
+        '请说明投诉不被采纳的原因：客户与审核员都会读到，并将始终附于'),
+    'nc.reject.reason-label': (
+        'Motif du rejet', 'Reason for rejection', 'Motivo del rechazo',
+        'سبب الرفض', '却下の理由', '驳回理由'),
+    'nc.reject.reason-placeholder': (
+        'Hors périmètre contractuel, constat non reproduit, pièce non fournie…',
+        'Outside contractual scope, finding not reproduced, evidence not supplied…',
+        'Fuera del ámbito contractual, hallazgo no reproducido, prueba no aportada…',
+        'خارج النطاق التعاقدي، لم يُعَد إنتاج الملاحظة، لم تُقدَّم الأدلة…',
+        '契約範囲外、事象の再現なし、証拠の提出なし…',
+        '超出合同范围、问题无法复现、未提供证据……'),
+    'nc.reject.reason-required': (
+        'Le motif du rejet est requis.', 'The reason for rejection is required.',
+        'El motivo del rechazo es obligatorio.', 'سبب الرفض مطلوب.',
+        '却下の理由は必須です。', '必须填写驳回理由。'),
+    'nc.reject.blocked': (
+        "Dites pourquoi la réclamation n'est pas retenue.",
+        'Say why the complaint is not upheld.',
+        'Indique por qué no se admite la reclamación.',
+        'بيِّن سبب عدم قبول الشكوى.',
+        'クレームを認めない理由を記してください。', '请说明投诉不被采纳的原因。'),
+    'nc.reject.success': (
+        'Réclamation rejetée.', 'Complaint rejected.', 'Reclamación rechazada.',
+        'تم رفض الشكوى.', 'クレームを却下しました。', '投诉已驳回。'),
+    'nc.reject.error': (
+        'Rejet impossible.', 'Rejection failed.', 'Rechazo imposible.',
+        'تعذَّر الرفض.', '却下できませんでした。', '无法驳回。'),
 }

@@ -115,6 +115,19 @@ public class NonConformity {
     @Column(name = "closed_at")
     private Instant closedAt;
 
+    /**
+     * Pourquoi la réclamation a été écartée.
+     *
+     * <p>Colonne propre, et non un réemploi de {@code resolutionNote} : celle-ci
+     * dit ce qui a résolu l'écart, et y ranger un refus mentirait sur ce qui s'est
+     * passé.
+     */
+    @Column(name = "rejection_reason", length = 2000)
+    private String rejectionReason;
+
+    @Column(name = "rejected_at")
+    private Instant rejectedAt;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 

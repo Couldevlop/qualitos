@@ -24,7 +24,15 @@ export type NcStatus =
   | 'ACTION_DEFINED'
   | 'RESOLVED'
   | 'CLOSED'
-  | 'CANCELLED';
+  | 'CANCELLED'
+  /**
+   * Le constat a été instruit et écarté — réservé aux écarts signalés du dehors.
+   *
+   * <p>Distinct de `CANCELLED` : annuler dit « ce constat n'avait pas lieu
+   * d'être », rejeter dit « il a été examiné, voici pourquoi il n'est pas
+   * retenu ». C'est la seconde phrase qu'un client vient lire.
+   */
+  | 'REJECTED';
 
 export interface NcResponse {
   id: string;
@@ -59,6 +67,9 @@ export interface NcResponse {
   capaCaseId?: string;
   rootCause?: string;
   resolutionNote?: string;
+  /** Pourquoi la réclamation a été écartée. */
+  rejectionReason?: string;
+  rejectedAt?: string;
   resolvedAt?: string;
   closedAt?: string;
   createdAt: string;
@@ -119,6 +130,11 @@ export interface UpdateNcRequest {
 
 export interface ResolveNcRequest {
   resolutionNote: string;
+}
+
+/** Le rejet d'une réclamation externe : le motif est obligatoire. */
+export interface RejectNcRequest {
+  reason: string;
 }
 
 // --- Analyse Vision 5S par IA (§3.2 / §1.4) ----------------------------------
@@ -195,4 +211,6 @@ export interface NcStatistics {
   resolved: number;
   closed: number;
   cancelled: number;
+  /** Rejetées — toujours 0 sur l'écran interne, qui ne rejette pas. */
+  rejected: number;
 }

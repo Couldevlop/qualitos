@@ -131,12 +131,15 @@ export class MainShellComponent implements OnInit, OnDestroy {
       ]
     },
     {
-      // UNE seule entrée : le schéma en V porte lui-même la navigation entre
-      // phases, et un sous-menu qui doublerait ses cinq jalons demanderait de
-      // tenir deux listes d'accord pour le même parcours.
+      // Deux entrées, et pas une par phase : le schéma en V porte lui-même la
+      // navigation entre phases, et un sous-menu qui doublerait ses cinq jalons
+      // demanderait de tenir deux listes d'accord pour le même parcours. Le
+      // dossier PPAP, lui, n'est pas une phase : c'est ce qu'on remet au client,
+      // et c'est cette liste qu'on parcourt à l'approche d'une soumission.
       label: $localize`:@@nav.apqp:APQP`,
       items: [
-        { label: $localize`:@@nav.apqp-cycle:Le cycle`, route: '/apqp', icon: 'account_tree' }
+        { label: $localize`:@@nav.apqp-cycle:Le cycle`, route: '/apqp', icon: 'account_tree' },
+        { label: $localize`:@@nav.apqp-ppap:Dossier PPAP`, route: '/apqp/ppap', icon: 'inventory_2' }
       ]
     },
 
@@ -404,6 +407,35 @@ export class MainShellComponent implements OnInit, OnDestroy {
    * la page que l'on vient de demander, il doit donc s'effacer.
    */
   onNavigate(): void { this.navOpen = false; }
+
+  /**
+   * L'entree de menu correspondant a l'adresse courante.
+   *
+   * <p>`routerLinkActive` compare par PREFIXE : des qu'une route en prefixe une
+   * autre -- /apqp et /apqp/ppap -- les deux entrees s'allument, et le menu dit
+   * qu'on est a deux endroits a la fois. On garde donc la correspondance la plus
+   * longue parmi toutes les entrees.
+   *
+   * <p>Un prefixe reste une correspondance valable : sur /apqp/2, qui est un rang
+   * de phase et non une entree de menu, « Le cycle » doit rester allumee.
+   */
+  estActif(route: string): boolean {
+    const url = this.router.url.split('?')[0].split('#')[0];
+    return this.correspond(url, route)
+        && route.length === this.plusLongueCorrespondance(url);
+  }
+
+  /** Longueur de la route la plus longue qui corresponde a cette adresse. */
+  private plusLongueCorrespondance(url: string): number {
+    return this.sections
+      .flatMap(section => section.items)
+      .filter(item => this.correspond(url, item.route))
+      .reduce((max, item) => Math.max(max, item.route.length), 0);
+  }
+
+  private correspond(url: string, route: string): boolean {
+    return url === route || url.startsWith(route + '/');
+  }
 
   /**
    * Bascule entre disposition large et étroite. Appelé au démarrage puis à chaque

@@ -11,6 +11,13 @@
       <mat-icon aria-hidden="true">add</mat-icon>
       <span i18n="@@apqp.add-phase">Ajouter une phase</span>
     </button>
+    <!-- Destructif : la confirmation dit ce qui sera perdu, et le serveur ne la
+         redemande pas. -->
+    <button qosActions mat-stroked-button *ngIf="editable" type="button"
+            data-test="reinitialiser" (click)="reinitialiser()">
+      <mat-icon aria-hidden="true">restart_alt</mat-icon>
+      <span i18n="@@apqp.reset">Réinitialiser depuis le référentiel</span>
+    </button>
   </qos-page-header>
 
   <!-- Le schéma EST l'interface : on ouvre une phase en cliquant dessus, et son
@@ -36,6 +43,12 @@
       </button>
     </li>
   </ol>
+
+  <!-- Le dossier PPAP a son propre ecran (« Dossier PPAP » dans le menu). Il a
+       vecu ici, sous le schema, et c'etait une erreur : ses douze lignes
+       repoussaient le detail de la phase sous la ligne de flottaison, si bien
+       qu'ouvrir un autre jalon ne changeait rien de VISIBLE. Le schema et ce
+       qu'il ouvre doivent rester l'un sous l'autre. -->
 
   <!-- Rien d'ouvert : on dit quoi faire, plutôt que de laisser un blanc. -->
   <p class="invite" *ngIf="!choisie && phases.length > 0" i18n="@@apqp.pick-a-phase">
@@ -103,8 +116,24 @@
 
     <ul class="livrables">
       <li *ngFor="let livrable of p.deliverables; trackBy: trackById">
-        <mat-icon aria-hidden="true">check_circle</mat-icon>
-        <span class="livrables__libelle">{{ livrable.label }}</span>
+        <!-- La case REMPLACE l'icone decorative : elle affichait « coche » sans
+             rien savoir de ce qui etait fait. Un livrable a renvoi n'est pas
+             cochable d'ici -- il lui faut son enregistrement, donc son popup. -->
+        <mat-checkbox data-test="case-livrable" [checked]="livrable.done"
+                      [disabled]="!editable || livrable.kind === 'MODULE_LINK'"
+                      [attr.aria-label]="ariaCocher(livrable)"
+                      (change)="basculerLivrable(p, livrable, $event.checked)"></mat-checkbox>
+
+        <button type="button" class="livrables__ouvrir" data-test="ouvrir-livrable"
+                (click)="ouvrirLivrable(p, livrable)">
+          <span class="livrables__libelle">{{ livrable.label }}</span>
+          <!-- L'asterisque du referentiel, avec ce qu'elle veut dire a portee de
+               lecteur d'ecran : un symbole seul n'apprend rien. -->
+          <span class="livrables__ppap" data-test="marque-ppap" *ngIf="livrable.ppap"
+                [attr.title]="ariaPpap" [attr.aria-label]="ariaPpap">*</span>
+          <mat-icon class="livrables__preuve" *ngIf="livrable.evidenceCount > 0"
+                    [attr.aria-label]="ariaPreuves(livrable)">attach_file</mat-icon>
+        </button>
 
         <span class="livrables__actions" *ngIf="editable">
           <button mat-icon-button type="button" (click)="modifierLivrable(p, livrable)"

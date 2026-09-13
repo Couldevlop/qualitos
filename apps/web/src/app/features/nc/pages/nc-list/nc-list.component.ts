@@ -46,7 +46,8 @@ export class NcListComponent implements OnInit {
    * clôturé dans la foulée, et le proposer renvoyait presque toujours une liste
    * vide. Les NC résolues se retrouvent sous `CLOSED`.
    */
-  readonly statuses: NcStatus[] = ['OPEN', 'UNDER_ANALYSIS', 'ACTION_DEFINED', 'CLOSED', 'CANCELLED'];
+  readonly statuses: NcStatus[] = [
+    'OPEN', 'UNDER_ANALYSIS', 'ACTION_DEFINED', 'CLOSED', 'CANCELLED', 'REJECTED'];
   readonly severities: NcSeverity[] = ['MINOR', 'MAJOR', 'CRITICAL'];
   readonly categories: NcCategory[] = ['PRODUCT', 'PROCESS', 'DOCUMENTATION', 'SUPPLIER', 'SAFETY', 'ENVIRONMENT', 'OTHER'];
 
@@ -242,6 +243,9 @@ export class NcListComponent implements OnInit {
     ];
     if (this.origin !== 'INTERNAL') {
       tuiles.push({ label: $localize`:@@nc.list.tile-cancelled:Annulées`, value: s.cancelled, tone: 'danger', status: 'CANCELLED' });
+      // « Rejetées » n'a de sens que sur l'externe : on ne rejette pas un constat
+      // qu'on a fait soi-même, on le résout, on le clôt ou on l'annule.
+      tuiles.push({ label: $localize`:@@nc.list.tile-rejected:Rejetées`, value: s.rejected, tone: 'danger', status: 'REJECTED' });
     }
     return tuiles;
   }

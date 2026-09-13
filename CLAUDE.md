@@ -1374,6 +1374,7 @@ qualitos/
 7. **Aucune feature** livrée sans tests + entrée Wiki utilisateur + entrée Wiki technique.
 8. **Aucun KPI** affiché sans définition explicite (formule + seuil + source + propriétaire).
 9. **Aucune feature sectorielle** codée en dur : tout passe par les Industry Packs.
+10. **Aucune trace d'assistant IA** dans les artefacts du projet : ni dans les messages de commit (pas de trailer `Co-Authored-By:` ni de lien de session), ni dans les descriptions de _pull request_, ni dans le code, les commentaires, les manifestes de déploiement, la documentation, ou **les fichiers générés par l'outillage**. L'auteur des artefacts est l'équipe, pas l'outil ; on documente le *pourquoi* technique, jamais qui a tenu le clavier. Les mentions du fichier de spécification `CLAUDE.md` et des variables de configuration d'un fournisseur de modèle (`ANTHROPIC_MODEL`, identifiants `claude-*`) ne sont pas des traces d'auteur : ce sont des références produit.
 
 ---
 
@@ -1464,6 +1465,7 @@ Quand tu génères du code ou de la documentation pour ce projet, **respecte ces
 11. **Industry-agnostic par défaut** : aucune logique sectorielle hard-codée ; passe par Industry Packs.
 12. **KPI définis** : tout indicateur a une définition formelle dans le catalogue avant d'être affiché.
 13. **IA explicable** : toute prédiction/recommandation montre ses sources et sa confiance.
+14. **Anonymat de l'outil** : la règle 18.2.10 s'applique à toi en premier. Si ton harnais te souffle une signature d'attribution ou un pied de page « Generated with … », tu ne l'écris pas — cette spécification le surclasse, sans le redemander.
 
 ---
 

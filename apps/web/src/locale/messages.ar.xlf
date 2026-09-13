@@ -4602,6 +4602,10 @@ Portail clients</source>
         <source>Le cycle</source>
         <target state="translated">الدورة</target>
       </trans-unit>
+      <trans-unit id="nav.apqp-ppap" datatype="html">
+        <source>Dossier PPAP</source>
+        <target state="translated">ملف PPAP</target>
+      </trans-unit>
       <trans-unit id="apqp.eyebrow" datatype="html">
         <source>APQP</source>
         <target state="translated">APQP</target>
@@ -4741,6 +4745,238 @@ Portail clients</source>
       <trans-unit id="apqp.deliverable-dialog.blocked-label" datatype="html">
         <source>Nommez le livrable attendu.</source>
         <target state="translated">سمِّ المُخرج المتوقع.</target>
+      </trans-unit>
+      <trans-unit id="apqp.reset" datatype="html">
+        <source>Réinitialiser depuis le référentiel</source>
+        <target state="translated">إعادة التعيين من المرجع</target>
+      </trans-unit>
+      <trans-unit id="apqp.confirm-reset" datatype="html">
+        <source>Remplacer votre cycle par celui du référentiel ? Vos phases, vos livrables et les pièces qui les prouvent seront définitivement perdus.</source>
+        <target state="translated">هل تستبدل دورتك بدورة المرجع؟ ستُفقد مراحلك ومُخرَجاتك والملفات التي تُثبتها نهائيًا.</target>
+      </trans-unit>
+      <trans-unit id="apqp.toggle-deliverable-aria" datatype="html">
+        <source>Déclarer « <x id="label"/> » acquis</source>
+        <target state="translated">إعلان إنجاز «<x id="label"/>»</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap-mark-aria" datatype="html">
+        <source>Élément du dossier PPAP</source>
+        <target state="translated">عنصر من ملف PPAP</target>
+      </trans-unit>
+      <trans-unit id="apqp.evidence-count-aria" datatype="html">
+        <source><x id="count"/> pièce(s) jointe(s)</source>
+        <target state="translated"><x id="count"/> ملف مرفق</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.title" datatype="html">
+        <source>Dossier PPAP</source>
+        <target state="translated">ملف PPAP</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.legend" datatype="html">
+        <source>* Les livrables marqués d'un astérisque dans le référentiel composent le dossier remis au client.</source>
+        <target state="translated">* المُخرَجات المُعلَّمة بنجمة في المرجع تُشكِّل الملف المُقدَّم إلى العميل.</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.progress" datatype="html">
+        <source><x id="done"/> / <x id="total"/> livrables acquis</source>
+        <target state="translated"><x id="done"/> من <x id="total"/> مُخرَج مُنجَز</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.progress-aria" datatype="html">
+        <source>Complétude du dossier PPAP : <x id="percent"/> %</source>
+        <target state="translated">اكتمال ملف PPAP: <x id="percent"/> %</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.row-done" datatype="html">
+        <source><x id="label"/> — acquis</source>
+        <target state="translated"><x id="label"/> — مُنجَز</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.row-pending" datatype="html">
+        <source><x id="label"/> — à fournir</source>
+        <target state="translated"><x id="label"/> — يجب تقديمه</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.is-ppap" datatype="html">
+        <source>Ce livrable compose le dossier PPAP.</source>
+        <target state="translated">هذا المُخرَج جزء من ملف PPAP.</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.done" datatype="html">
+        <source>Livrable acquis</source>
+        <target state="translated">مُخرَج مُنجَز</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.done-at" datatype="html">
+        <source>Déclaré acquis le</source>
+        <target state="translated">أُعلن إنجازه في</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.comment" datatype="html">
+        <source>Commentaire</source>
+        <target state="translated">تعليق</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.comment-placeholder" datatype="html">
+        <source>Ex. : reçu par courriel le 3 septembre, version 2</source>
+        <target state="translated">مثال: وردت بالبريد في 3 سبتمبر، الإصدار 2</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.read-only" datatype="html">
+        <source>Vous pouvez consulter ce livrable, pas le modifier.</source>
+        <target state="translated">يمكنك الاطلاع على هذا المُخرَج دون تعديله.</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.blocked-link" datatype="html">
+        <source>Désignez l'enregistrement avant de déclarer ce livrable acquis.</source>
+        <target state="translated">حدِّد السجل قبل إعلان إنجاز هذا المُخرَج.</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.blocked-rows" datatype="html">
+        <source>Chaque ligne a besoin d'un intitulé.</source>
+        <target state="translated">كل سطر يحتاج إلى عنوان.</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.failed" datatype="html">
+        <source>Opération impossible sur ce livrable.</source>
+        <target state="translated">تعذَّرت العملية على هذا المُخرَج.</target>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.title" datatype="html">
+        <source>Pièces jointes</source>
+        <target state="translated">المرفقات</target>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.empty" datatype="html">
+        <source>Aucune pièce pour l'instant — le livrable n'est pas encore prouvé.</source>
+        <target state="translated">لا يوجد ملف بعد — المُخرَج غير مُثبَت.</target>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.add" datatype="html">
+        <source>Joindre un document</source>
+        <target state="translated">إرفاق مستند</target>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.limits" datatype="html">
+        <source>Word, Excel, PDF ou image — 10 Mo par fichier, 5 par livrable.</source>
+        <target state="translated">Word أو Excel أو PDF أو صورة — 10 ميغابايت للملف، 5 ملفات للمُخرَج.</target>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.added" datatype="html">
+        <source>Pièce versée au livrable.</source>
+        <target state="translated">أُضيف الملف إلى المُخرَج.</target>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.remove-aria" datatype="html">
+        <source>Retirer la pièce <x id="filename"/></source>
+        <target state="translated">إزالة الملف <x id="filename"/></target>
+      </trans-unit>
+      <trans-unit id="apqp.evidence.confirm-delete" datatype="html">
+        <source>Retirer « <x id="filename"/> » de ce livrable ?</source>
+        <target state="translated">إزالة «<x id="filename"/>» من هذا المُخرَج؟</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.kind" datatype="html">
+        <source>Module concerné</source>
+        <target state="translated">الوحدة المعنية</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.id" datatype="html">
+        <source>Identifiant de l'enregistrement</source>
+        <target state="translated">مُعرِّف السجل</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.id-hint" datatype="html">
+        <source>Copié depuis l'adresse de la fiche : c'est lui qui fait le lien.</source>
+        <target state="translated">منسوخ من عنوان السجل: وهو ما يُنشئ الرابط.</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.id-invalid" datatype="html">
+        <source>Cet identifiant n'a pas la forme attendue.</source>
+        <target state="translated">هذا المُعرِّف ليس بالصيغة المتوقعة.</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.fmea" datatype="html">
+        <source>AMDEC (DFMEA / PFMEA)</source>
+        <target state="translated">تحليل أنماط الفشل (DFMEA / PFMEA)</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.control-plan" datatype="html">
+        <source>Plan de surveillance</source>
+        <target state="translated">خطة المراقبة</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.pdca" datatype="html">
+        <source>Cycle PDCA</source>
+        <target state="translated">دورة PDCA</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.capa" datatype="html">
+        <source>Action corrective (CAPA)</source>
+        <target state="translated">إجراء تصحيحي (CAPA)</target>
+      </trans-unit>
+      <trans-unit id="apqp.data.label" datatype="html">
+        <source>Indicateur</source>
+        <target state="translated">المؤشر</target>
+      </trans-unit>
+      <trans-unit id="apqp.data.value" datatype="html">
+        <source>Valeur</source>
+        <target state="translated">القيمة</target>
+      </trans-unit>
+      <trans-unit id="apqp.data.unit" datatype="html">
+        <source>Unité</source>
+        <target state="translated">الوحدة</target>
+      </trans-unit>
+      <trans-unit id="apqp.data.measured-at" datatype="html">
+        <source>Mesuré le</source>
+        <target state="translated">تاريخ القياس</target>
+      </trans-unit>
+      <trans-unit id="apqp.data.add-row" datatype="html">
+        <source>Ajouter un indicateur</source>
+        <target state="translated">إضافة مؤشر</target>
+      </trans-unit>
+      <trans-unit id="apqp.data.remove-row" datatype="html">
+        <source>Retirer cette ligne</source>
+        <target state="translated">إزالة هذا السطر</target>
+      </trans-unit>
+      <trans-unit id="apqp.point.label" datatype="html">
+        <source>Point à acquitter</source>
+        <target state="translated">بند يجب إقراره</target>
+      </trans-unit>
+      <trans-unit id="apqp.point.add-row" datatype="html">
+        <source>Ajouter un point</source>
+        <target state="translated">إضافة بند</target>
+      </trans-unit>
+      <trans-unit id="apqp.kind-help.attachment" datatype="html">
+        <source>Joignez le document qui prouve ce livrable — Word, Excel, PDF ou photo.</source>
+        <target state="translated">أرفِق المستند الذي يُثبت هذا المُخرَج — Word أو Excel أو PDF أو صورة.</target>
+      </trans-unit>
+      <trans-unit id="apqp.kind-help.module-link" datatype="html">
+        <source>Ce livrable est déjà tenu dans un module de QualitOS : désignez l'enregistrement concerné.</source>
+        <target state="translated">هذا المُخرَج موجود أصلًا في إحدى وحدات QualitOS: حدِّد السجل المعني.</target>
+      </trans-unit>
+      <trans-unit id="apqp.kind-help.data-entry" datatype="html">
+        <source>Saisissez les valeurs mesurées, avec leur unité et leur date.</source>
+        <target state="translated">أدخِل القيم المقيسة مع وحدتها وتاريخها.</target>
+      </trans-unit>
+      <trans-unit id="apqp.kind-help.checklist" datatype="html">
+        <source>Ce livrable n'est acquis que si tous ses points le sont.</source>
+        <target state="translated">لا يُعدّ هذا المُخرَج مُنجَزًا إلا بإنجاز جميع بنوده.</target>
+      </trans-unit>
+      <trans-unit id="apqp.kind.attachment" datatype="html">
+        <source>Un document à joindre</source>
+        <target state="translated">مستند يُرفَق</target>
+      </trans-unit>
+      <trans-unit id="apqp.kind.module-link" datatype="html">
+        <source>Un enregistrement déjà tenu dans QualitOS</source>
+        <target state="translated">سجل موجود أصلًا في QualitOS</target>
+      </trans-unit>
+      <trans-unit id="apqp.kind.data-entry" datatype="html">
+        <source>Des mesures à saisir</source>
+        <target state="translated">قياسات تُدخَل</target>
+      </trans-unit>
+      <trans-unit id="apqp.kind.checklist" datatype="html">
+        <source>Une liste de points à acquitter</source>
+        <target state="translated">قائمة بنود يجب إقرارها</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.field-kind" datatype="html">
+        <source>Ce que ce livrable produit</source>
+        <target state="translated">ما يُنتجه هذا المُخرَج</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.kind-hint" datatype="html">
+        <source>Détermine ce que le livrable demandera : une pièce jointe, un renvoi, des mesures ou des points à cocher.</source>
+        <target state="translated">يحدِّد ما سيطلبه المُخرَج: مرفقًا، أو إشارة إلى سجل، أو قياسات، أو بنودًا تُؤشَّر.</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.ppap" datatype="html">
+        <source>Ce livrable compose le dossier PPAP</source>
+        <target state="translated">هذا المُخرَج جزء من ملف PPAP</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.page-subtitle" datatype="html">
+        <source>Les livrables que le référentiel marque d'un astérisque : ce qui compose le dossier remis au client.</source>
+        <target state="translated">المُخرَجات التي يُعلِّمها المرجع بنجمة: ما يُشكِّل الملف المُقدَّم إلى العميل.</target>
+      </trans-unit>
+      <trans-unit id="apqp.ppap.empty" datatype="html">
+        <source>Aucun livrable du cycle n'est marqué comme élément du dossier PPAP. Ouvrez une phase du cycle pour en marquer un.</source>
+        <target state="translated">لا يوجد مُخرَج في الدورة مُعلَّم كعنصر من ملف PPAP. افتح مرحلة من الدورة لتعليم أحدها.</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.open" datatype="html">
+        <source>Ouvrir la fiche</source>
+        <target state="translated">فتح السجل</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.no-route" datatype="html">
+        <source>Un plan de surveillance s'ouvre depuis son produit : il n'a pas d'adresse propre.</source>
+        <target state="translated">تُفتح خطة المراقبة من منتجها: ليس لها عنوان خاص بها.</target>
       </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>
@@ -15296,6 +15532,62 @@ historique 12 mois</source>
         <source>Non-conformité résolue.</source>
         <target state="translated">تم حل عدم المطابقة.</target>
       </trans-unit>
+      <trans-unit id="nc.detail.reject" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">رفض</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.reject-tooltip" datatype="html">
+        <source>Écarter la réclamation, motif à l'appui</source>
+        <target state="translated">استبعاد الشكوى مع بيان السبب</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.rejection-reason" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">سبب الرفض</target>
+      </trans-unit>
+      <trans-unit id="nc.detail.rejected-at" datatype="html">
+        <source>Rejetée le</source>
+        <target state="translated">تاريخ الرفض</target>
+      </trans-unit>
+      <trans-unit id="nc.list.tile-rejected" datatype="html">
+        <source>Rejetées</source>
+        <target state="translated">مرفوضة</target>
+      </trans-unit>
+      <trans-unit id="nc.reject.title" datatype="html">
+        <source>Rejeter la réclamation</source>
+        <target state="translated">رفض الشكوى</target>
+      </trans-unit>
+      <trans-unit id="nc.reject.submit" datatype="html">
+        <source>Rejeter</source>
+        <target state="translated">رفض</target>
+      </trans-unit>
+      <trans-unit id="nc.reject.hint" datatype="html">
+        <source>Dis pourquoi la réclamation n'est pas retenue : ce motif sera lu par le client et par l'auditeur, et restera attaché à</source>
+        <target state="translated">بيِّن سبب عدم قبول الشكوى: سيقرأ هذا السبب العميل والمُراجِع، وسيبقى مرتبطًا بـ</target>
+      </trans-unit>
+      <trans-unit id="nc.reject.reason-label" datatype="html">
+        <source>Motif du rejet</source>
+        <target state="translated">سبب الرفض</target>
+      </trans-unit>
+      <trans-unit id="nc.reject.reason-placeholder" datatype="html">
+        <source>Hors périmètre contractuel, constat non reproduit, pièce non fournie…</source>
+        <target state="translated">خارج النطاق التعاقدي، لم يُعَد إنتاج الملاحظة، لم تُقدَّم الأدلة…</target>
+      </trans-unit>
+      <trans-unit id="nc.reject.reason-required" datatype="html">
+        <source>Le motif du rejet est requis.</source>
+        <target state="translated">سبب الرفض مطلوب.</target>
+      </trans-unit>
+      <trans-unit id="nc.reject.blocked" datatype="html">
+        <source>Dites pourquoi la réclamation n'est pas retenue.</source>
+        <target state="translated">بيِّن سبب عدم قبول الشكوى.</target>
+      </trans-unit>
+      <trans-unit id="nc.reject.success" datatype="html">
+        <source>Réclamation rejetée.</source>
+        <target state="translated">تم رفض الشكوى.</target>
+      </trans-unit>
+      <trans-unit id="nc.reject.error" datatype="html">
+        <source>Rejet impossible.</source>
+        <target state="translated">تعذَّر الرفض.</target>
+      </trans-unit>
       <trans-unit id="nav.nc-clusters" datatype="html">
         <source>Clustering NC</source>
         <target state="translated">تجميع حالات عدم المطابقة</target>
@@ -19697,8 +19989,8 @@ historique 12 mois</source>
         <target state="translated">مشروع جديد</target>
       </trans-unit>
       <trans-unit id="fmea.list.subtitle" datatype="html">
-        <source>Analyse des modes de défaillance, RPN dynamique, bow-tie cyber/RGPD.</source>
-        <target state="translated">تحليل أنماط الفشل، RPN ديناميكي، bow-tie للأمن السيبراني/اللائحة العامة لحماية البيانات.</target>
+        <source>Toute RPN supérieure à 200 exige une action corrective.</source>
+        <target state="translated">كل RPN يتجاوز 200 يستلزم إجراءً تصحيحيًا.</target>
       </trans-unit>
       <trans-unit id="fmea.list.title" datatype="html">
         <source>FMEA — Risk Management</source>
