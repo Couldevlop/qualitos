@@ -13,7 +13,11 @@ import {
  *
  * <p>Le sous-titre y porte la phase : sur un cycle de cinq à six phases portant
  * chacune une dizaine de livrables, un dialogue qui ne dirait pas où l'on écrit
- * laisserait un doute au moment de valider. C'est le point que ce banc tient.
+ * laisserait un doute au moment de valider.
+ *
+ * <p>Et l'on n'y choisit plus de « genre » : il décidait du formulaire qu'on
+ * verrait en ouvrant le livrable, donc de ce qu'on aurait le droit d'y mettre,
+ * avant même d'avoir travaillé le sujet. À sa place, un texte libre.
  */
 describe('ApqpDeliverableDialogComponent', () => {
 
@@ -55,28 +59,49 @@ describe('ApqpDeliverableDialogComponent', () => {
     expect(component.blockedReason).toContain('livrable');
   });
 
+  it('ne propose plus de genre, mais un artefact attendu en texte libre', async () => {
+    await setup({ phaseTitle: 'Planification' });
+
+    // Le genre decidait du formulaire qu'on verrait en ouvrant le livrable :
+    // le remplacer par un texte n'interdit plus rien.
+    expect(hote().querySelector('mat-select')).toBeNull();
+    expect(hote().querySelector('[data-test=artefact-attendu]')).not.toBeNull();
+  });
+
   it('reprend le libellé en reformulation, et le rend rogné', async () => {
     await setup({
       phaseTitle: 'Planification',
       deliverable: {
         id: 'l1', position: 1, label: 'AMDEC processus',
-        ppap: true, kind: 'MODULE_LINK', done: false, evidenceCount: 0
+        expectedArtifact: 'Tableau PFMEA', ppap: true,
+        status: 'IN_PROGRESS', percentComplete: 40, done: false, evidenceCount: 0
       }
     });
     expect(component.editing).toBeTrue();
     expect(component.form.getRawValue().label).toBe('AMDEC processus');
-    // Le genre et la marque viennent du livrable : un dialogue qui les remettrait
-    // a zero ferait d'une reformulation une requalification silencieuse.
-    expect(component.form.getRawValue().kind).toBe('MODULE_LINK');
+    // L'artefact et la marque viennent du livrable : un dialogue qui les
+    // remettrait a zero effacerait silencieusement ce qui etait decrit.
+    expect(component.form.getRawValue().expectedArtifact).toBe('Tableau PFMEA');
     expect(component.form.getRawValue().ppap).toBeTrue();
 
     component.form.setValue({
-      label: '  AMDEC processus (PFMEA)  ', kind: 'MODULE_LINK', ppap: true
+      label: '  AMDEC processus (PFMEA)  ', expectedArtifact: '  Tableau PFMEA  ', ppap: true
     });
     component.submit();
 
     expect(dialogRef.close).toHaveBeenCalledWith({
-      label: 'AMDEC processus (PFMEA)', kind: 'MODULE_LINK', ppap: true
+      label: 'AMDEC processus (PFMEA)', expectedArtifact: 'Tableau PFMEA', ppap: true
+    });
+  });
+
+  it('rend null pour un artefact laissé vide, jamais une chaîne blanche', async () => {
+    await setup({ phaseTitle: 'Planification' });
+
+    component.form.setValue({ label: 'Plan projet', expectedArtifact: '   ', ppap: false });
+    component.submit();
+
+    expect(dialogRef.close).toHaveBeenCalledWith({
+      label: 'Plan projet', expectedArtifact: null, ppap: false
     });
   });
 
@@ -84,7 +109,7 @@ describe('ApqpDeliverableDialogComponent', () => {
     // `Validators.required` laisse passer '   ' : le dialogue rendait alors un
     // libellé vide, et la liste affichait une puce sans texte.
     await setup({ phaseTitle: 'Planification' });
-    component.form.setValue({ label: '   ', kind: 'ATTACHMENT', ppap: false });
+    component.form.setValue({ label: '   ', expectedArtifact: '', ppap: false });
 
     component.submit();
 

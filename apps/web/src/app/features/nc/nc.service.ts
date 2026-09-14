@@ -503,7 +503,7 @@ export class NcService {
           `Intitulé : ${nc.title}`,
           `Gravité : ${nc.severity}`
         ]),
-        this.mockDiscipline('D3', "Actions d'endiguement immédiates", false, true, []),
+        this.mockDiscipline('D3', "Actions de sécurisation immédiates", false, true, []),
         this.mockDiscipline('D4', 'Cause racine', false, false, []),
         this.mockDiscipline('D5', 'Actions correctives retenues', false, false, []),
         this.mockDiscipline('D6', 'Mise en œuvre et preuves', false, false, []),

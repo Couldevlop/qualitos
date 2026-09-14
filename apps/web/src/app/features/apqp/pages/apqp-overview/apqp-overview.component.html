@@ -1,11 +1,21 @@
 <div class="qos-page">
   <qos-page-header
     eyebrow="APQP" i18n-eyebrow="@@apqp.eyebrow"
-    title="Planification qualité produit" i18n-title="@@apqp.title"
-    subtitle="Les phases se lisent en V : on descend jusqu'au point bas du projet, on remonte vers la production série."
-    i18n-subtitle="@@apqp.subtitle">
+    [title]="projetNom"
+    [subtitle]="sousTitreProjet">
     <!-- L'attribut est ce que l'en-tête projette : sans lui le bouton n'est
          jamais rendu, sans erreur ni trace. -->
+    <button qosActions mat-stroked-button type="button" data-test="retour-projets"
+            [routerLink]="['/apqp']">
+      <mat-icon aria-hidden="true">arrow_back</mat-icon>
+      <span i18n="@@apqp.back-to-projects">Retour aux projets</span>
+    </button>
+    <!-- Le dossier appartient au projet : il n'a plus d'adresse globale. -->
+    <button qosActions mat-stroked-button type="button" data-test="ouvrir-dossier-ppap"
+            [routerLink]="['/apqp', projetId, 'ppap']">
+      <mat-icon aria-hidden="true">inventory_2</mat-icon>
+      <span i18n="@@apqp.ppap.title">Dossier PPAP</span>
+    </button>
     <button qosActions mat-flat-button color="primary" *ngIf="editable"
             type="button" (click)="ajouterPhase()">
       <mat-icon aria-hidden="true">add</mat-icon>
@@ -20,11 +30,15 @@
     </button>
   </qos-page-header>
 
+  <p class="projet-type" *ngIf="projetType" data-test="type-projet">
+    {{ typeLabel(projetType) }}
+  </p>
+
   <!-- Le schéma EST l'interface : on ouvre une phase en cliquant dessus, et son
        contenu s'affiche dessous sans quitter l'écran. `<ol>` parce que l'ordre
        est la méthode — un lecteur d'écran doit l'entendre comme une séquence.
 
-       Le nombre de colonnes suit le cycle du client : il n'a pas à rester cinq
+       Le nombre de colonnes suit le cycle du projet : il n'a pas à rester cinq
        parce que le manuel AIAG en compte cinq. -->
   <ol class="v" [style.grid-template-columns]="colonnes"
       [attr.aria-label]="cycleAria">
@@ -44,11 +58,10 @@
     </li>
   </ol>
 
-  <!-- Le dossier PPAP a son propre ecran (« Dossier PPAP » dans le menu). Il a
-       vecu ici, sous le schema, et c'etait une erreur : ses douze lignes
-       repoussaient le detail de la phase sous la ligne de flottaison, si bien
-       qu'ouvrir un autre jalon ne changeait rien de VISIBLE. Le schema et ce
-       qu'il ouvre doivent rester l'un sous l'autre. -->
+  <!-- Le dossier PPAP a son propre ecran, propre au projet. Il a vecu ici, sous
+       le schema, et c'etait une erreur : ses douze lignes repoussaient le detail
+       de la phase sous la ligne de flottaison, si bien qu'ouvrir un autre jalon
+       ne changeait rien de VISIBLE. -->
 
   <!-- Rien d'ouvert : on dit quoi faire, plutôt que de laisser un blanc. -->
   <p class="invite" *ngIf="!choisie && phases.length > 0" i18n="@@apqp.pick-a-phase">
@@ -116,23 +129,37 @@
 
     <ul class="livrables">
       <li *ngFor="let livrable of p.deliverables; trackBy: trackById">
-        <!-- La case REMPLACE l'icone decorative : elle affichait « coche » sans
-             rien savoir de ce qui etait fait. Un livrable a renvoi n'est pas
-             cochable d'ici -- il lui faut son enregistrement, donc son popup. -->
+        <!-- TOUT livrable se coche : la condition sur le genre a disparu avec le
+             genre lui-meme, et elle obligeait a ouvrir le popup pour un geste
+             d'une seconde. Le serveur applique la regle « la case pilote ». -->
         <mat-checkbox data-test="case-livrable" [checked]="livrable.done"
-                      [disabled]="!editable || livrable.kind === 'MODULE_LINK'"
+                      [disabled]="!editable"
                       [attr.aria-label]="ariaCocher(livrable)"
                       (change)="basculerLivrable(p, livrable, $event.checked)"></mat-checkbox>
 
         <button type="button" class="livrables__ouvrir" data-test="ouvrir-livrable"
                 (click)="ouvrirLivrable(p, livrable)">
-          <span class="livrables__libelle">{{ livrable.label }}</span>
-          <!-- L'asterisque du referentiel, avec ce qu'elle veut dire a portee de
-               lecteur d'ecran : un symbole seul n'apprend rien. -->
-          <span class="livrables__ppap" data-test="marque-ppap" *ngIf="livrable.ppap"
-                [attr.title]="ariaPpap" [attr.aria-label]="ariaPpap">*</span>
-          <mat-icon class="livrables__preuve" *ngIf="livrable.evidenceCount > 0"
-                    [attr.aria-label]="ariaPreuves(livrable)">attach_file</mat-icon>
+          <span class="livrables__ligne">
+            <span class="livrables__libelle">{{ livrable.label }}</span>
+            <!-- La marque du dossier PPAP, avec ce qu'elle veut dire a portee de
+                 lecteur d'ecran : un symbole seul n'apprend rien. -->
+            <span class="livrables__ppap" data-test="marque-ppap" *ngIf="livrable.ppap"
+                  [attr.title]="ariaPpap" [attr.aria-label]="ariaPpap">*</span>
+            <mat-icon class="livrables__preuve" *ngIf="livrable.evidenceCount > 0"
+                      [attr.aria-label]="ariaPreuves(livrable)">attach_file</mat-icon>
+          </span>
+          <!-- Ce que le livrable doit PRODUIRE : sans cette ligne, « Plan de
+               surveillance » ne dit pas si l'on attend un tableur ou un accord. -->
+          <span class="livrables__artefact" *ngIf="livrable.expectedArtifact"
+                data-test="artefact-attendu">{{ livrable.expectedArtifact }}</span>
+          <span class="livrables__etat">
+            <span [class]="statutClasse(livrable.status)" data-test="statut-livrable">
+              {{ statutLabel(livrable.status) }}
+            </span>
+            <span class="livrables__pourcent" data-test="avancement-livrable">
+              {{ livrable.percentComplete }} %
+            </span>
+          </span>
         </button>
 
         <span class="livrables__actions" *ngIf="editable">

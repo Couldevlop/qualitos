@@ -23,6 +23,18 @@ import java.util.UUID;
         })
 public class FmeaProject {
 
+    /**
+     * Le seuil propose quand le client n'en fixe aucun.
+     *
+     * <p>200, et non 100 : c'est le seuil que la plateforme AFFICHE comme regle
+     * (« toute RPN superieure a 200 exige une action corrective »). Proposer 100
+     * tout en affichant 200 faisait dire deux choses differentes au meme ecran, et
+     * declarait critiques des lignes que la regle ne vise pas.
+     *
+     * <p>Un seuil deja choisi par un client n'est pas touche : il lui appartient.
+     */
+    public static final int SEUIL_RPN_PAR_DEFAUT = 200;
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -82,7 +94,7 @@ public class FmeaProject {
         if (createdAt == null) createdAt = now;
         if (updatedAt == null) updatedAt = now;
         if (status == null) status = FmeaStatus.DRAFT;
-        if (criticalRpnThreshold == 0) criticalRpnThreshold = 100;
+        if (criticalRpnThreshold == 0) criticalRpnThreshold = SEUIL_RPN_PAR_DEFAUT;
         if (revision == 0) revision = 1;
     }
 

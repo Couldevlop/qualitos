@@ -46,7 +46,7 @@ class FmeaServiceTest {
     // ----- Projects -----
 
     @Test
-    void createProject_default100Threshold_andRevision1() {
+    void createProject_seuilParDefaut_andRevision1() {
         when(projectRepo.findByTenantIdAndCode(TENANT, "p1")).thenReturn(Optional.empty());
         when(projectRepo.save(any())).thenAnswer(inv -> {
             FmeaProject p = inv.getArgument(0);
@@ -55,7 +55,9 @@ class FmeaServiceTest {
         });
         FmeaDto.ProjectResponse out = service.createProject(new FmeaDto.CreateProjectRequest(
                 "p1", "Process A", null, FmeaType.PROCESS_FMEA, null, null, USER, null));
-        assertThat(out.criticalRpnThreshold()).isEqualTo(100);
+        // Le seuil propose dit la meme chose que la regle affichee a l'ecran :
+        // « toute RPN superieure a 200 exige une action corrective ».
+        assertThat(out.criticalRpnThreshold()).isEqualTo(FmeaProject.SEUIL_RPN_PAR_DEFAUT);
         assertThat(out.revision()).isOne();
         assertThat(out.status()).isEqualTo(FmeaStatus.DRAFT);
     }

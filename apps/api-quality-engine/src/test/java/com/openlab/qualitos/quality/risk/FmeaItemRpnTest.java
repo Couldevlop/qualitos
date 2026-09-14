@@ -70,7 +70,7 @@ class FmeaItemRpnTest {
         FmeaProject p = new FmeaProject();
         invoke(p, "prePersist");
         assertThat(p.getStatus()).isEqualTo(FmeaStatus.DRAFT);
-        assertThat(p.getCriticalRpnThreshold()).isEqualTo(100);
+        assertThat(p.getCriticalRpnThreshold()).isEqualTo(FmeaProject.SEUIL_RPN_PAR_DEFAUT);
         assertThat(p.getRevision()).isEqualTo(1);
         assertThat(p.getCreatedAt()).isNotNull();
     }

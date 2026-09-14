@@ -114,7 +114,7 @@ describe('FmeaService', () => {
     }));
 
     it('applique le seuil de criticité par défaut quand il n\'est pas fourni', fakeAsync(() => {
-      expect(run(service.create(projectReq())).criticalRpnThreshold).toBe(100);
+      expect(run(service.create(projectReq())).criticalRpnThreshold).toBe(200);
       expect(run(service.create(projectReq({
         code: 'PFMEA-NEW-901', criticalRpnThreshold: 60
       }))).criticalRpnThreshold).toBe(60);
@@ -180,7 +180,7 @@ describe('FmeaService', () => {
     }));
 
     it('juge la criticité contre le seuil DU PROJET, pas contre une constante', fakeAsync(() => {
-      // Même cotation, IPR 84 : sous le seuil de fmea-1 (100), au-dessus de celui
+      // Même cotation, IPR 84 : sous le seuil de fmea-1 (200), au-dessus de celui
       // de fmea-3 (80). C'est le projet qui définit ce qui est critique.
       const cotation = itemReq({ severity: 7, occurrence: 3, detection: 4 });
 
@@ -189,9 +189,10 @@ describe('FmeaService', () => {
     }));
 
     it('traite le seuil comme une borne atteinte, pas seulement dépassée', fakeAsync(() => {
-      // IPR exactement égal au seuil de fmea-1 (100) : critique.
+      // IPR exactement égal au seuil de fmea-1 (200) : critique. C'est la borne
+      // qui est testée ici, pas sa valeur — d'où une cotation qui l'atteint pile.
       expect(run(service.addItem('fmea-1', itemReq({
-        severity: 10, occurrence: 10, detection: 1
+        severity: 10, occurrence: 10, detection: 2
       }))).critical).toBeTrue();
     }));
 
@@ -215,9 +216,11 @@ describe('FmeaService', () => {
     // ---- Lignes : mise à jour ------------------------------------------------
 
     it('recalcule l\'IPR et la criticité à chaque mise à jour de cotation', fakeAsync(() => {
-      const updated = run(service.updateItem('fmea-1', 'fmi-2', { occurrence: 6 }));
+      // Occurrence portee a 8 : l'IPR passe a 224 et franchit le seuil de 200
+      // du projet. C'est le RECALCUL qui est teste, pas la valeur du seuil.
+      const updated = run(service.updateItem('fmea-1', 'fmi-2', { occurrence: 8 }));
 
-      expect(updated.rpn).toBe(7 * 6 * 4);
+      expect(updated.rpn).toBe(7 * 8 * 4);
       expect(updated.critical).toBeTrue();
     }));
 
@@ -251,10 +254,13 @@ describe('FmeaService', () => {
       const stats = run(service.statistics('fmea-1'));
 
       expect(stats.totalItems).toBe(2);
-      expect(stats.criticalItems).toBe(1);
+      // Aucune des deux lignes (160 et 84) n'atteint le seuil de 200 : c'est
+      // precisement ce que dit la regle affichee a l'ecran, « toute RPN
+      // superieure a 200 exige une action corrective ».
+      expect(stats.criticalItems).toBe(0);
       expect(stats.maxRpn).toBe(160);
       expect(stats.averageRpn).toBe((160 + 84) / 2);
-      expect(stats.criticalRpnThreshold).toBe(100);
+      expect(stats.criticalRpnThreshold).toBe(200);
     }));
 
     it('ne divise pas par zéro sur un projet sans ligne', fakeAsync(() => {
@@ -270,7 +276,7 @@ describe('FmeaService', () => {
 
       expect(stats.projectId).toBe('projet-inconnu');
       expect(stats.totalItems).toBe(0);
-      expect(stats.criticalRpnThreshold).toBe(100);
+      expect(stats.criticalRpnThreshold).toBe(200);
     }));
   });
 

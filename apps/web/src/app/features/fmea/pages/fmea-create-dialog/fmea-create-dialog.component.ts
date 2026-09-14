@@ -35,7 +35,7 @@ export class FmeaCreateDialogComponent {
     name: ['', [Validators.required, Validators.maxLength(250)]],
     scope: ['', [Validators.maxLength(1000)]],
     type: ['PROCESS_FMEA' as FmeaType, [Validators.required]],
-    criticalRpnThreshold: [100, [Validators.required, Validators.min(1), Validators.max(1000)]]
+    criticalRpnThreshold: [200, [Validators.required, Validators.min(1), Validators.max(1000)]]
   });
 
   constructor(

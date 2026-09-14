@@ -9,7 +9,7 @@ package com.openlab.qualitos.quality.nonconformity.eightd.domain;
  *
  * <p>Chaque discipline dit aussi <b>d'où vient son contenu</b> :
  * {@link #estSaisie()} distingue les trois qui n'ont aucune source dans la
- * plateforme (l'équipe, l'endiguement, la reconnaissance) des cinq qui agrègent
+ * plateforme (l'équipe, la sécurisation, la reconnaissance) des cinq qui agrègent
  * ce que les autres modules savent déjà. C'est la frontière qui justifie
  * l'existence du module : on n'ajoute un champ de saisie que là où rien ne
  * répond.
@@ -23,7 +23,7 @@ public enum EightDDiscipline {
     D2("D2", "Description du problème", false),
 
     /** Ce qui a protégé le client en attendant la cause. Aucune source : se saisit. */
-    D3("D3", "Actions d'endiguement immédiates", true),
+    D3("D3", "Actions de sécurisation immédiates", true),
 
     /** La cause racine. Sources : Ishikawa, 5 pourquoi, cause racine de la NC. */
     D4("D4", "Cause racine", false),

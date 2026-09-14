@@ -66,9 +66,14 @@ class ApqpDeliverableCompletionOnPostgresTest {
         insertPhase(PHASE, TENANT, 1, "Planifier et definir");
         insertDeliverable(LIVRABLE, TENANT, PHASE, 1, "Plan d'assurance produit");
 
+        // On s'arrête a la V126, celle que ce banc éprouve. Aller jusqu'au bout
+        // ferait passer la V131, qui retire `kind` et `data` : le banc
+        // interrogerait alors des colonnes disparues, et ne dirait plus rien de
+        // ce que la V126 a posé. La V131 a son propre banc.
         Flyway.configure()
                 .dataSource(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword())
                 .locations("classpath:db/migration")
+                .target("126")
                 .load()
                 .migrate();
     }

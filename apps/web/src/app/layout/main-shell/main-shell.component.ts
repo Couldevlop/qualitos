@@ -131,15 +131,14 @@ export class MainShellComponent implements OnInit, OnDestroy {
       ]
     },
     {
-      // Deux entrées, et pas une par phase : le schéma en V porte lui-même la
-      // navigation entre phases, et un sous-menu qui doublerait ses cinq jalons
-      // demanderait de tenir deux listes d'accord pour le même parcours. Le
-      // dossier PPAP, lui, n'est pas une phase : c'est ce qu'on remet au client,
-      // et c'est cette liste qu'on parcourt à l'approche d'une soumission.
+      // Une seule entrée : les projets. Le cycle en V d'un projet porte lui-même
+      // la navigation entre ses phases, et un sous-menu qui doublerait ses cinq
+      // jalons demanderait de tenir deux listes d'accord pour le même parcours.
+      // Le dossier PPAP n'a plus d'entrée non plus : il appartient désormais à un
+      // projet, et une entrée globale n'aurait pas su duquel elle parlait.
       label: $localize`:@@nav.apqp:APQP`,
       items: [
-        { label: $localize`:@@nav.apqp-cycle:Le cycle`, route: '/apqp', icon: 'account_tree' },
-        { label: $localize`:@@nav.apqp-ppap:Dossier PPAP`, route: '/apqp/ppap', icon: 'inventory_2' }
+        { label: $localize`:@@nav.apqp-projects:Projets`, route: '/apqp', icon: 'account_tree' }
       ]
     },
 
@@ -412,12 +411,13 @@ export class MainShellComponent implements OnInit, OnDestroy {
    * L'entree de menu correspondant a l'adresse courante.
    *
    * <p>`routerLinkActive` compare par PREFIXE : des qu'une route en prefixe une
-   * autre -- /apqp et /apqp/ppap -- les deux entrees s'allument, et le menu dit
-   * qu'on est a deux endroits a la fois. On garde donc la correspondance la plus
-   * longue parmi toutes les entrees.
+   * autre -- /admin et /admin/modules -- les deux entrees s'allument, et le menu
+   * dit qu'on est a deux endroits a la fois. On garde donc la correspondance la
+   * plus longue parmi toutes les entrees.
    *
-   * <p>Un prefixe reste une correspondance valable : sur /apqp/2, qui est un rang
-   * de phase et non une entree de menu, « Le cycle » doit rester allumee.
+   * <p>Un prefixe reste une correspondance valable : sur /apqp/<projet>/2, qui
+   * designe un rang de phase et non une entree de menu, « Projets » doit rester
+   * allumee.
    */
   estActif(route: string): boolean {
     const url = this.router.url.split('?')[0].split('#')[0];

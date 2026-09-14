@@ -409,50 +409,353 @@ final class ApqpReferenceTranslations {
           "設計リスク分析・PFMEA・コントロールプランの更新",
           "更新设计风险分析、PFMEA 与控制计划");
 
-        // ---------- sous-points et intitulés de mesures amorcés ----------
+        // ---------- artefacts attendus : la colonne D du classeur ----------
+        //
+        // Le libellé dit CE QU'ON DOIT PRODUIRE ; l'artefact dit SOUS QUELLE
+        // FORME, et c'est lui qu'un auditeur confronte à la pièce versée. Les
+        // textes anglais sont ceux du classeur du commanditaire, mot pour mot.
+        //
+        // « Control plan » paraît DEUX fois dans le classeur — en phase 3 pour le
+        // plan de pré-lancement, en phase 4 pour celui de production. Deux clés
+        // d'artefact pour une seule clé de livrable : c'est le même livrable à
+        // deux états, et confondre les deux artefacts effacerait la nuance qui
+        // justifie sa double présence.
 
-        t("row.safety", "sécurité", "safety", "seguridad", "السلامة", "安全性", "安全");
-        t("row.quality-manufacturability",
-          "qualité et fabricabilité", "quality/manufacturability",
-          "calidad y fabricabilidad", "الجودة وقابلية التصنيع",
-          "品質・製造性", "质量与可制造性");
-        t("row.service-life",
-          "durée de vie", "service life", "vida útil", "عمر الخدمة", "耐用寿命", "使用寿命");
-        t("row.reliability",
-          "fiabilité", "reliability", "fiabilidad", "الموثوقية", "信頼性", "可靠性");
-        t("row.durability",
-          "durabilité", "durability", "durabilidad", "المتانة", "耐久性", "耐久性");
-        t("row.maintainability",
-          "maintenabilité", "maintainability", "mantenibilidad", "قابلية الصيانة",
-          "保全性", "可维护性");
-        t("row.schedule", "planning", "schedule", "plazos", "الجدول الزمني", "日程", "进度");
-        t("row.cost", "coût", "cost", "coste", "التكلفة", "コスト", "成本");
-
-        t("row.material-handling",
-          "manutention", "material handling", "manipulación", "المناولة",
-          "運搬", "物料搬运");
-        t("row.packaging",
-          "emballage", "packaging", "embalaje", "التغليف", "包装", "包装");
-        t("row.labelling",
-          "étiquetage", "labelling", "etiquetado", "وضع الملصقات", "ラベル表示", "标签");
-        t("row.part-marking",
-          "marquage des pièces", "part marking", "marcado de piezas", "وسم القطع",
-          "部品刻印", "零件标识");
-
-        // Les indices statistiques gardent leur sigle : c'est ainsi qu'ils se lisent
-        // dans tous les ateliers, et les traduire les rendrait méconnaissables.
-        t("row.cp", "Cp", "Cp", "Cp", "Cp", "Cp", "Cp");
-        t("row.cpk", "Cpk", "Cpk", "Cpk", "Cpk", "Cpk", "Cpk");
-        t("row.pp", "Pp", "Pp", "Pp", "Pp", "Pp", "Pp");
-        t("row.ppk", "Ppk", "Ppk", "Ppk", "Ppk", "Ppk", "Ppk");
-        t("row.ppm", "PPM", "PPM", "PPM", "PPM", "PPM", "PPM");
-        t("row.rejection-rate",
-          "taux de rebut", "rejection rate", "tasa de rechazo", "معدل الرفض",
-          "不良率", "拒收率");
-        t("row.otd",
-          "livraison à l'heure (OTD)", "OTD", "entrega a tiempo (OTD)",
-          "التسليم في الموعد (OTD)", "納期遵守（OTD）", "准时交付（OTD）");
-        t("row.capacity",
-          "capacité", "capacity", "capacidad", "الطاقة الإنتاجية", "能力", "产能");
+        t("deliv.product-design-requirements.artifact",
+          "Synthèse de la voix du client, cahier des charges technique, liste des normes et exigences réglementaires applicables, note d'intention de conception",
+          "VOC summary, engineering spec document, applicable standards/regulatory list, design intent statement",
+          "Síntesis de la voz del cliente, pliego técnico, lista de normas y requisitos reglamentarios aplicables, nota de intención de diseño",
+          "ملخص صوت العميل، وثيقة المواصفات الهندسية، قائمة المعايير والمتطلبات التنظيمية المنطبقة، بيان نية التصميم",
+          "VOC 要約、技術仕様書、適用規格・法規一覧、設計意図書",
+          "客户之声汇总、工程规范文件、适用标准与法规清单、设计意图说明");
+        t("deliv.project-targets.artifact",
+          "Fiche d'objectifs chiffrés (cible PPM, cible garantie, seuils de gravité DFMEA, coût cible par pièce, jalons du programme), validée par l'équipe pluridisciplinaire",
+          "Quantified target sheet (PPM target, warranty target, DFMEA severity thresholds, target cost/piece, program timing milestones) - CFT signed off",
+          "Ficha de objetivos cuantificados (objetivo PPM, objetivo de garantía, umbrales de gravedad del AMFE de diseño, coste objetivo por pieza, hitos del programa), aprobada por el equipo multidisciplinar",
+          "ورقة أهداف مُحدَّدة كميًا (هدف PPM، هدف الضمان، عتبات الخطورة في DFMEA، التكلفة المستهدفة للقطعة، محطات جدول البرنامج) معتمدة من الفريق متعدد الوظائف",
+          "定量目標シート（PPM 目標、保証目標、DFMEA 厳しさ基準、目標単価、プログラム日程マイルストーン）— CFT 承認済み",
+          "量化目标表（PPM 目标、保修目标、DFMEA 严重度阈值、单件目标成本、项目节点），经跨职能小组签署");
+        t("deliv.ci-kc-listing.artifact",
+          "Registre provisoire des éléments critiques et matrice des caractéristiques clés, rattachés au plan ou à la spécification du client, avec leur justification",
+          "Draft CI register and KC matrix linked to customer print/spec with rationale",
+          "Registro provisional de elementos críticos y matriz de características clave, vinculados al plano o especificación del cliente, con su justificación",
+          "سجل أولي للعناصر الحرجة ومصفوفة الخصائص الرئيسية مرتبطة برسم أو مواصفة العميل مع المبررات",
+          "重要アイテム暫定登録簿および重要特性マトリクス（顧客図面・仕様に紐づけ、根拠付き）",
+          "关键项目初稿登记表与关键特性矩阵，与客户图纸/规范关联并附理由");
+        t("deliv.preliminary-bom.artifact",
+          "Nomenclature multi-niveaux (fabriqué ou acheté signalé), plan de codification provisoire, indice de révision d'ingénierie relevé",
+          "Multi-level BOM (make/buy flagged), draft part numbering, engineering revision level noted",
+          "Lista de materiales multinivel (fabricar o comprar señalado), codificación provisional, índice de revisión de ingeniería anotado",
+          "قائمة مواد متعددة المستويات (مع تحديد التصنيع أو الشراء)، ترقيم أولي للقطع، وتسجيل مستوى المراجعة الهندسية",
+          "多階層 BOM（内製・購入の区分付き）、暫定部品番号体系、技術改訂レベルの記載",
+          "多层级物料清单（标注自制/外购）、零件编号草案、记录工程版本");
+        t("deliv.preliminary-process-flow.artifact",
+          "Schéma en blocs de haut niveau, de la réception à l'expédition, montrant les grandes étapes du processus",
+          "High-level box diagram (receiving to shipping) showing major process steps",
+          "Diagrama de bloques de alto nivel, de la recepción a la expedición, con las grandes etapas del proceso",
+          "مخطط صندوقي عام (من الاستلام إلى الشحن) يوضح الخطوات الرئيسية للعملية",
+          "受入から出荷までの概略ブロック図（主要工程ステップを表示）",
+          "从收货到发运的高层方框图，显示主要过程步骤");
+        t("deliv.sow-review.artifact",
+          "Analyse d'écarts du cahier des charges ou liste de conformité au contrat client, avec le journal des actions",
+          "SOW gap analysis / compliance checklist vs. customer contract, action item log",
+          "Análisis de brechas del pliego o lista de conformidad frente al contrato del cliente, con el registro de acciones",
+          "تحليل الفجوات في بيان العمل أو قائمة المطابقة مقابل عقد العميل، مع سجل الإجراءات",
+          "SOW ギャップ分析／顧客契約との適合チェックリスト、アクション記録",
+          "工作说明书差距分析／对照客户合同的符合性检查表，以及行动项记录");
+        t("deliv.preliminary-sourcing-plan.artifact",
+          "Matrice de décision fabriquer ou acheter, liste des fournisseurs candidats, calendrier d'approvisionnement",
+          "Make/buy decision matrix, candidate supplier list, sourcing timing plan",
+          "Matriz de decisión fabricar o comprar, lista de proveedores candidatos, calendario de aprovisionamiento",
+          "مصفوفة قرار التصنيع أو الشراء، قائمة الموردين المرشحين، الجدول الزمني للتوريد",
+          "内製・購入の意思決定マトリクス、候補サプライヤー一覧、調達日程計画",
+          "自制/外购决策矩阵、候选供应商清单、采购时间计划");
+        t("deliv.project-plan.artifact",
+          "Planning APQP (diagramme de Gantt), matrice RACI et composition de l'équipe, calendrier des jalons et des revues de passage, journal des risques du programme",
+          "APQP timing chart (Gantt), RACI/team roster, milestone/gate schedule, program risk log",
+          "Planificación APQP (diagrama de Gantt), matriz RACI y composición del equipo, calendario de hitos y puertas, registro de riesgos del programa",
+          "جدول زمني لـ APQP (مخطط جانت)، مصفوفة RACI وقائمة الفريق، جدول المحطات والبوابات، سجل مخاطر البرنامج",
+          "APQP 日程表（ガントチャート）、RACI・チーム名簿、マイルストーン／ゲート日程、プログラムリスク記録",
+          "APQP 进度表（甘特图）、RACI 与团队名册、里程碑/关口计划、项目风险记录");
+        t("deliv.design-risk-analysis.artifact",
+          "AMDEC produit initiale, liste de revue de conception, cotation du risque (RPN ou AP)",
+          "DFMEA (initial), design review checklist, risk ranking (RPN/AP)",
+          "AMFE de diseño inicial, lista de revisión de diseño, valoración del riesgo (RPN o AP)",
+          "تحليل أنماط الفشل للتصميم (أولي)، قائمة مراجعة التصميم، ترتيب المخاطر (RPN أو AP)",
+          "初版 DFMEA、設計審査チェックリスト、リスク評価（RPN／AP）",
+          "初版 DFMEA、设计评审检查表、风险评级（RPN/AP）");
+        t("deliv.design-records-bom.artifact",
+          "Plans diffusés ou mis à jour, modèles 3D, nomenclature d'ingénierie révisée pour solder les actions de l'AMDEC produit",
+          "Released/updated drawings, 3D models, engineering BOM revised to close DFMEA actions",
+          "Planos publicados o actualizados, modelos 3D, lista de materiales de ingeniería revisada para cerrar las acciones del AMFE de diseño",
+          "رسومات صادرة أو محدَّثة، نماذج ثلاثية الأبعاد، قائمة مواد هندسية منقَّحة لإغلاق إجراءات DFMEA",
+          "発行・更新済み図面、3D モデル、DFMEA 処置を完了させるよう改訂した技術 BOM",
+          "已发布/更新的图纸、3D 模型、为关闭 DFMEA 措施而修订的工程 BOM");
+        t("deliv.special-requirements-kc-ci.artifact",
+          "Matrice définitive des caractéristiques spéciales (symboles du client), liste des éléments critiques et des caractéristiques clés avec leur méthode de maîtrise",
+          "Finalized special characteristics matrix (customer symbols), CI/KC list with control method flagged",
+          "Matriz definitiva de características especiales (símbolos del cliente), lista de elementos críticos y características clave con su método de control",
+          "مصفوفة نهائية للخصائص الخاصة (رموز العميل)، قائمة العناصر الحرجة والخصائص الرئيسية مع تحديد أسلوب الضبط",
+          "特別特性マトリクス確定版（顧客記号）、管理方法を明示した CI／KC リスト",
+          "最终版特殊特性矩阵（客户符号）、标注控制方法的 CI/KC 清单");
+        t("deliv.sourcing-risk-analysis.artifact",
+          "Évaluation du risque fournisseur (savoir-faire, capacité, santé financière, situation géographique) et plan d'atténuation",
+          "Supplier risk assessment (capability, capacity, financial, geographic), mitigation plan",
+          "Evaluación del riesgo de proveedores (capacidad técnica, capacidad productiva, solidez financiera, situación geográfica) y plan de mitigación",
+          "تقييم مخاطر المورّدين (الكفاءة، الطاقة، الوضع المالي، الموقع الجغرافي) وخطة التخفيف",
+          "サプライヤーリスク評価（技術力、能力、財務、地理）と低減計画",
+          "供应商风险评估（能力、产能、财务、地域）与缓解计划");
+        t("deliv.packaging-specification.artifact",
+          "Spécification d'emballage consigné ou perdu, plan d'emballage, projet d'exigences d'étiquetage",
+          "Returnable/expendable packaging spec, packaging drawing, labeling requirements draft",
+          "Especificación de embalaje retornable o de un solo uso, plano de embalaje, borrador de requisitos de etiquetado",
+          "مواصفات التغليف القابل للإرجاع أو المستهلك، رسم التغليف، مسودة متطلبات وضع الملصقات",
+          "リターナブル／使い捨て包装仕様、包装図面、ラベル要求事項の草案",
+          "可回收/一次性包装规范、包装图纸、标签要求草案");
+        t("deliv.design-review-report.artifact",
+          "Compte rendu formel de la revue de conception, journal des actions avec responsables et échéances, feuille d'approbation",
+          "Formal DR meeting minutes, action item log with owners/due dates, sign-off sheet",
+          "Acta formal de la revisión de diseño, registro de acciones con responsables y fechas, hoja de aprobación",
+          "محضر رسمي لمراجعة التصميم، سجل الإجراءات مع المسؤولين والمواعيد، ورقة الاعتماد",
+          "設計審査の正式議事録、責任者・期限付きアクション記録、承認書",
+          "正式设计评审会议纪要、含责任人与到期日的行动项记录、签署表");
+        t("deliv.build-plan.artifact",
+          "Plan de surveillance prototype, calendrier de fabrication, besoins en ressources et en outillages",
+          "Prototype/proto-build control plan, build schedule, resource/tooling requirements",
+          "Plan de control de prototipo, calendario de fabricación, necesidades de recursos y utillaje",
+          "خطة مراقبة النموذج الأولي، جدول التصنيع، احتياجات الموارد والعُدَد",
+          "試作コントロールプラン、製作日程、要員・治工具の要求",
+          "样件控制计划、试制日程、资源与工装需求");
+        t("deliv.verification-validation-plans.artifact",
+          "Plan et rapport de vérification et validation de la conception (DVP&R), avec les résultats d'essai et leur verdict",
+          "DVP&R with test results and pass/fail status",
+          "Plan e informe de verificación y validación del diseño (DVP&R), con resultados de ensayo y su veredicto",
+          "خطة وتقرير التحقق والتصديق على التصميم (DVP&R) مع نتائج الاختبار وحالة النجاح أو الرسوب",
+          "試験結果と合否を含む設計検証・妥当性確認計画書（DVP&R）",
+          "含试验结果与合格/不合格判定的设计验证与确认计划（DVP&R）");
+        t("deliv.feasibility-assessment.artifact",
+          "Engagement de faisabilité industrielle signé (fabrication, qualité, achats, outillage) et journal des risques de faisabilité",
+          "Manufacturing feasibility commitment sign-off (mfg, quality, purchasing, tooling), feasibility risk log",
+          "Compromiso de viabilidad industrial firmado (fabricación, calidad, compras, utillaje) y registro de riesgos de viabilidad",
+          "تعهد الجدوى التصنيعية الموقَّع (التصنيع، الجودة، المشتريات، العُدَد) وسجل مخاطر الجدوى",
+          "製造可能性コミットメントの承認（製造・品質・購買・治工具）、実現可能性リスク記録",
+          "制造可行性承诺签署（制造、质量、采购、工装）与可行性风险记录");
+        t("deliv.process-flow-diagram.artifact",
+          "Schéma de flux détaillé poste par poste, dont la numérotation coïncide avec celle de l'AMDEC processus et du plan de surveillance",
+          "Detailed station-by-station flow diagram matching PFMEA/Control Plan numbering",
+          "Diagrama de flujo detallado puesto por puesto, cuya numeración coincide con la del AMFE de proceso y el plan de control",
+          "مخطط تدفق تفصيلي محطة بمحطة يطابق ترقيم PFMEA وخطة المراقبة",
+          "PFMEA・コントロールプランと番号が一致する工程別詳細フロー図",
+          "逐工位的详细流程图，其编号与 PFMEA 和控制计划一致");
+        t("deliv.floor-plan-layout.artifact",
+          "Plan d'implantation du site ou de la ligne montrant les flux matière, les en-cours, les points de contrôle et l'ergonomie",
+          "Facility/line layout drawing showing material flow, WIP, inspection points, ergonomics",
+          "Plano de implantación de la planta o de la línea con flujos de material, en curso, puntos de control y ergonomía",
+          "رسم تخطيطي للمنشأة أو الخط يبيّن تدفق المواد والعمل تحت التشغيل ونقاط الفحص وبيئة العمل",
+          "物流、仕掛品、検査ポイント、人間工学を示す工場・ライン配置図",
+          "显示物流、在制品、检验点与人机工程的厂房/生产线布置图");
+        t("deliv.production-preparation-plan.artifact",
+          "Liste d'aptitude à l'essai de cadence, planning de pré-lancement",
+          "Run-at-rate readiness checklist, pre-launch timing plan",
+          "Lista de preparación para la prueba de cadencia, calendario de prelanzamiento",
+          "قائمة الجاهزية لاختبار المعدل الإنتاجي، الجدول الزمني لما قبل الإطلاق",
+          "量産速度試行の準備チェックリスト、量産前日程計画",
+          "节拍试生产准备检查表、试生产前进度计划");
+        t("deliv.staffing-training-plan.artifact",
+          "Matrice de compétences, plan et calendrier de formation, effectifs prévus par équipe",
+          "Skills matrix, training plan/schedule, staffing headcount plan by shift",
+          "Matriz de competencias, plan y calendario de formación, plantilla prevista por turno",
+          "مصفوفة المهارات، خطة وجدول التدريب، خطة أعداد العاملين لكل وردية",
+          "スキルマトリクス、教育訓練計画・日程、シフト別要員計画",
+          "技能矩阵、培训计划与日程、按班次的人员编制计划");
+        t("deliv.pfmea.artifact",
+          "AMDEC processus rattachée à l'AMDEC produit et au schéma de flux, cotation RPN ou AP, plan d'actions",
+          "Process FMEA linked to DFMEA/process flow, RPN/AP ranking, action plan",
+          "AMFE de proceso vinculado al AMFE de diseño y al diagrama de flujo, valoración RPN o AP, plan de acciones",
+          "تحليل أنماط الفشل للعملية مرتبط بـ DFMEA ومخطط التدفق، ترتيب RPN أو AP، خطة الإجراءات",
+          "DFMEA・工程フローに紐づく工程 FMEA、RPN／AP 評価、処置計画",
+          "与 DFMEA 和流程图关联的过程 FMEA、RPN/AP 评级、措施计划");
+        t("deliv.process-kcs.artifact",
+          "Liste des caractéristiques du processus mises en regard des caractéristiques clés produit, avec la méthode de maîtrise retenue",
+          "Process characteristic list mapped to product KCs, control method identified",
+          "Lista de características del proceso relacionadas con las características clave del producto, con el método de control definido",
+          "قائمة خصائص العملية مرتبطة بالخصائص الرئيسية للمنتج مع تحديد أسلوب الضبط",
+          "製品 KC に対応づけた工程特性一覧と、特定された管理方法",
+          "与产品关键特性对应的过程特性清单，并明确控制方法");
+        t("deliv.control-plan.artifact.prelaunch",
+          "Plan de surveillance prototype ou de pré-lancement (entrées, spécification, méthode, taille et fréquence d'échantillon, plan de réaction)",
+          "Prototype/Pre-launch Control Plan (inputs, spec, method, sample size/freq, reaction plan)",
+          "Plan de control de prototipo o de prelanzamiento (entradas, especificación, método, tamaño y frecuencia de muestra, plan de reacción)",
+          "خطة مراقبة النموذج الأولي أو ما قبل الإطلاق (المدخلات، المواصفة، الأسلوب، حجم العينة وتواترها، خطة الاستجابة)",
+          "試作／量産前コントロールプラン（入力、規格、方法、サンプル数・頻度、反応計画）",
+          "样件/试生产控制计划（输入、规范、方法、样本量与频次、反应计划）");
+        t("deliv.preliminary-capacity.artifact",
+          "Étude de capacité (théorique face à démontrée), hypothèses de TRS, analyse du goulot",
+          "Capacity study (theoretical vs. demonstrated), OEE assumptions, bottleneck analysis",
+          "Estudio de capacidad (teórica frente a demostrada), hipótesis de OEE, análisis del cuello de botella",
+          "دراسة الطاقة الإنتاجية (النظرية مقابل المُثبتة)، افتراضات OEE، تحليل عنق الزجاجة",
+          "能力調査（理論値と実証値）、OEE 前提条件、ボトルネック分析",
+          "产能研究（理论值与验证值）、OEE 假设、瓶颈分析");
+        t("deliv.work-station-documentation.artifact",
+          "Instructions de travail standardisées, aides visuelles, leçons ponctuelles",
+          "Standard Work Instructions (SWI), visual aids, one-point lessons",
+          "Instrucciones de trabajo estandarizadas, ayudas visuales, lecciones puntuales",
+          "تعليمات العمل القياسية، الوسائل البصرية، الدروس أحادية النقطة",
+          "標準作業手順書（SWI）、目で見る補助具、ワンポイントレッスン",
+          "标准作业指导书（SWI）、目视辅助、单点课程");
+        t("deliv.msa-plan.artifact",
+          "Liste des moyens de mesure, calendrier des études MSA, plan de R&R par caractéristique",
+          "Gage list, MSA study schedule, gage R&R plan per characteristic",
+          "Lista de medios de medición, calendario de estudios MSA, plan de R&R por característica",
+          "قائمة أدوات القياس، جدول دراسات MSA، خطة R&R لكل خاصية",
+          "ゲージ一覧、MSA 実施日程、特性ごとのゲージ R&R 計画",
+          "量具清单、MSA 研究日程、按特性的量具 R&R 计划");
+        t("deliv.supply-chain-risk-plan.artifact",
+          "Registre des risques des fournisseurs de rang inférieur, plan de secours ou de double source",
+          "Sub-tier supplier risk register, contingency/dual-sourcing plan",
+          "Registro de riesgos de proveedores de nivel inferior, plan de contingencia o de doble fuente",
+          "سجل مخاطر مورّدي المستويات الأدنى، خطة الطوارئ أو التوريد المزدوج",
+          "二次以下サプライヤーのリスク登録簿、代替・二重調達計画",
+          "次级供应商风险登记表、应急/双源采购计划");
+        t("deliv.handling-packaging-labelling.artifact",
+          "Rapport d'essai d'emballage approuvé, validation de l'étiquette et du code-barres, vérification du marquage des pièces",
+          "Approved packaging trial report, label/barcode approval, part marking verification",
+          "Informe aprobado del ensayo de embalaje, validación de la etiqueta y del código de barras, verificación del marcado de piezas",
+          "تقرير تجربة التغليف المعتمد، اعتماد الملصق والباركود، التحقق من وسم القطع",
+          "承認済み包装トライアル報告書、ラベル・バーコード承認、部品刻印の検証",
+          "已批准的包装试验报告、标签/条码批准、零件标识验证");
+        t("deliv.prr-results.artifact",
+          "Grille de notation de la revue d'aptitude au lancement, liste des points ouverts, décision de passage ou de report",
+          "PRR scorecard, open issues list, go/no-go decision record",
+          "Cuadro de puntuación de la revisión de preparación, lista de puntos abiertos, decisión de seguir o no",
+          "بطاقة تقييم مراجعة الجاهزية، قائمة النقاط المفتوحة، سجل قرار المضي أو التوقف",
+          "PRR スコアカード、未解決課題一覧、GO／NO-GO 判定記録",
+          "生产准备度评审记分卡、未决事项清单、放行/不放行决定记录");
+        t("deliv.production-run.artifact",
+          "Rapport d'essai de cadence ou de production significative (pièces produites à la cadence prévue, outillage et processus dans leur état définitif)",
+          "Run-at-rate/significant production run report (parts built at rate, tooling/process at intended state)",
+          "Informe de la prueba de cadencia o de la producción significativa (piezas fabricadas al ritmo previsto, utillaje y proceso en su estado definitivo)",
+          "تقرير اختبار المعدل الإنتاجي أو تشغيلة الإنتاج المعتبرة (قطع مُنتجة بالمعدل، العُدَد والعملية في حالتهما النهائية)",
+          "量産速度試行／本格生産試行の報告書（規定速度での製作、治工具・工程は本番状態）",
+          "节拍试生产/重要生产运行报告（按节拍生产的零件，工装与过程处于最终状态）");
+        t("deliv.msa.artifact",
+          "Résultats de R&R (%GRR, ndc), analyse de concordance des attributs, approbation",
+          "Gage R&R results (%GRR, ndc), attribute agreement analysis, sign-off",
+          "Resultados de R&R (%GRR, ndc), análisis de concordancia de atributos, aprobación",
+          "نتائج R&R (‏%GRR، ndc)، تحليل توافق الخصائص الوصفية، الاعتماد",
+          "ゲージ R&R 結果（%GRR、ndc）、計数値一致性分析、承認",
+          "量具 R&R 结果（%GRR、ndc）、计数型一致性分析、签署");
+        t("deliv.initial-capability.artifact",
+          "Rapport d'étude Cpk/Ppk par caractéristique clé, tableau de synthèse de la capabilité",
+          "Cpk/Ppk study report per KC, capability summary sheet",
+          "Informe del estudio Cpk/Ppk por característica clave, cuadro resumen de capacidad",
+          "تقرير دراسة Cpk/Ppk لكل خاصية رئيسية، ورقة ملخص القدرة",
+          "重要特性ごとの Cpk／Ppk 調査報告書、工程能力サマリー",
+          "按关键特性的 Cpk/Ppk 研究报告、能力汇总表");
+        t("deliv.control-plan.artifact.production",
+          "Plan de surveillance de production, finalisé après l'essai de cadence",
+          "Production Control Plan (finalized, post run-at-rate)",
+          "Plan de control de producción, finalizado tras la prueba de cadencia",
+          "خطة مراقبة الإنتاج، نهائية بعد اختبار المعدل الإنتاجي",
+          "量産コントロールプラン（量産速度試行後に確定）",
+          "生产控制计划（节拍试生产后定稿）");
+        t("deliv.capacity-verification.artifact",
+          "Rapport de capacité réellement démontrée, comparée à la demande du client (pièces à l'heure, TRS)",
+          "Actual demonstrated capacity report vs. customer demand (parts/hr, OEE)",
+          "Informe de capacidad realmente demostrada frente a la demanda del cliente (piezas por hora, OEE)",
+          "تقرير الطاقة المُثبتة فعليًا مقارنة بطلب العميل (قطع/ساعة، OEE)",
+          "顧客要求と対比した実証能力報告書（個／時、OEE）",
+          "实际验证产能与客户需求的对比报告（件/小时、OEE）");
+        t("deliv.product-validation-results.artifact",
+          "Rapport d'essais fonctionnels et de performance au regard du DVP&R, sur des pièces représentatives de la production",
+          "Functional/performance test report against DVP&R at production intent",
+          "Informe de ensayos funcionales y de rendimiento frente al DVP&R, con piezas representativas de la producción",
+          "تقرير الاختبارات الوظيفية والأدائية مقابل DVP&R على قطع ممثلة للإنتاج",
+          "量産想定品での DVP&R に対する機能・性能試験報告書",
+          "在量产状态下对照 DVP&R 的功能/性能试验报告");
+        t("deliv.fair.artifact",
+          "Rapport de contrôle du premier article selon AS9102 ou équivalent, plan coté par repères, traçabilité de chaque caractéristique",
+          "AS9102 or equivalent FAIR, ballooned drawing, characteristic accountability",
+          "Informe de inspección del primer artículo según AS9102 o equivalente, plano numerado por globos, trazabilidad de cada característica",
+          "تقرير فحص العينة الأولى وفق AS9102 أو ما يعادله، رسم مُرقَّم بالبالونات، تتبع كل خاصية",
+          "AS9102 または同等の初品検査報告書、バルーン付き図面、特性の網羅確認",
+          "符合 AS9102 或等效标准的首件检验报告、气球标注图纸、特性逐项追溯");
+        t("deliv.ppap-file.artifact",
+          "Dossier PPAP complet (éléments 1 à 18 de l'AIAG), formulaire d'approbation signé par le client",
+          "Full PPAP package (elements 1-18 per AIAG), PSW signed by customer",
+          "Expediente PPAP completo (elementos 1 a 18 según AIAG), formulario de aprobación firmado por el cliente",
+          "ملف PPAP كامل (العناصر 1 إلى 18 وفق AIAG)، نموذج الاعتماد موقَّع من العميل",
+          "完全な PPAP 一式（AIAG の要素 1〜18）、顧客署名済み PSW",
+          "完整 PPAP 资料包（AIAG 第 1–18 项要素）、客户签署的零件提交保证书");
+        t("deliv.customer-specific-requirements.artifact",
+          "Liste ou matrice de conformité aux exigences spécifiques du client, dossier de preuves conforme aux attentes de son portail",
+          "CSR compliance checklist/matrix, evidence file per customer portal requirements",
+          "Lista o matriz de conformidad con los requisitos específicos del cliente, expediente de pruebas conforme a las exigencias de su portal",
+          "قائمة أو مصفوفة المطابقة للمتطلبات الخاصة بالعميل، ملف أدلة وفق متطلبات بوابته",
+          "顧客固有要求への適合チェックリスト／マトリクス、顧客ポータル要件に沿った証拠ファイル",
+          "顾客特殊要求符合性检查表/矩阵，以及符合客户门户要求的证据文件");
+        t("deliv.quality-indices.artifact",
+          "Tableau de bord de maîtrise statistique du processus, bilan qualité mensuel, courbes de tendance",
+          "SPC dashboard, monthly quality scorecard, trend charts",
+          "Cuadro de mando de control estadístico del proceso, balance mensual de calidad, gráficos de tendencia",
+          "لوحة متابعة الضبط الإحصائي للعملية، بطاقة الجودة الشهرية، مخططات الاتجاه",
+          "SPC ダッシュボード、月次品質スコアカード、トレンドチャート",
+          "SPC 仪表板、月度质量记分卡、趋势图");
+        t("deliv.kpis.artifact",
+          "Tableau de bord des indicateurs (sécurité, qualité, livraison, coût) avec la cible face au réalisé",
+          "KPI dashboard (safety, quality, delivery, cost) with targets vs. actuals",
+          "Cuadro de mando de indicadores (seguridad, calidad, entrega, coste) con objetivo frente a realizado",
+          "لوحة مؤشرات الأداء (السلامة، الجودة، التسليم، التكلفة) مع المستهدف مقابل المحقق",
+          "KPI ダッシュボード（安全・品質・納入・コスト）— 目標と実績の対比",
+          "KPI 仪表板（安全、质量、交付、成本），目标与实际对比");
+        t("deliv.targets-met-evidence.artifact",
+          "Rapport ou matrice de clôture des objectifs de la phase 1, traçant chaque objectif jusqu'à son résultat réel",
+          "Phase 1 target closure report/matrix (traceability from targets to actual results)",
+          "Informe o matriz de cierre de los objetivos de la fase 1, con trazabilidad de cada objetivo hasta su resultado real",
+          "تقرير أو مصفوفة إغلاق أهداف المرحلة الأولى (تتبع من الأهداف إلى النتائج الفعلية)",
+          "フェーズ 1 目標の締めくくり報告書／マトリクス（目標から実績までの追跡）",
+          "第 1 阶段目标关闭报告/矩阵（从目标到实际结果的追溯）");
+        t("deliv.otd-capacity-kpis.artifact",
+          "Rapport de tendance de la livraison à l'heure, rapport d'utilisation de la capacité",
+          "OTD trend report, capacity utilization report",
+          "Informe de tendencia de la entrega a tiempo, informe de utilización de la capacidad",
+          "تقرير اتجاه التسليم في الموعد، تقرير استغلال الطاقة الإنتاجية",
+          "納期遵守率の推移報告、能力稼働率報告",
+          "准时交付趋势报告、产能利用率报告");
+        t("deliv.otd-improvement-plan.artifact",
+          "Plan d'actions correctives, avec ses jalons, pour tout indicateur au rouge",
+          "Corrective action plan with milestones for any red KPIs",
+          "Plan de acciones correctivas, con sus hitos, para todo indicador en rojo",
+          "خطة إجراءات تصحيحية بمحطاتها لكل مؤشر في المنطقة الحمراء",
+          "赤信号の KPI に対するマイルストーン付き是正処置計画",
+          "针对任何红色 KPI 的纠正措施计划及其节点");
+        t("deliv.closure-recommendations.artifact",
+          "Rapport de clôture du programme, traitement des points restés ouverts, approbation du client",
+          "Program closure report, open issue disposition, customer sign-off",
+          "Informe de cierre del programa, tratamiento de los puntos abiertos, aprobación del cliente",
+          "تقرير إغلاق البرنامج، معالجة النقاط المفتوحة، اعتماد العميل",
+          "プログラム終結報告書、未解決課題の処置、顧客承認",
+          "项目收尾报告、未决事项处置、客户签署");
+        t("deliv.continuous-improvement.artifact",
+          "Journal des actions kaizen et d'amélioration continue, suivi des gains de coût et de qualité",
+          "Kaizen/CI action log, cost/quality improvement tracker",
+          "Registro de acciones kaizen y de mejora continua, seguimiento de las mejoras de coste y calidad",
+          "سجل إجراءات الكايزن والتحسين المستمر، متابعة مكاسب التكلفة والجودة",
+          "改善（カイゼン）・CI 活動記録、コスト／品質改善の管理表",
+          "改善/持续改进行动记录、成本与质量改进跟踪表");
+        t("deliv.lessons-learned.artifact",
+          "Registre des leçons apprises (technique, processus, conduite de programme)",
+          "Lessons learned register (technical, process, program management)",
+          "Registro de lecciones aprendidas (técnica, proceso, gestión del programa)",
+          "سجل الدروس المستفادة (تقني، عملياتي، إدارة البرنامج)",
+          "教訓登録簿（技術、工程、プログラム運営）",
+          "经验教训登记表（技术、过程、项目管理）");
+        t("deliv.updated-risk-analyses.artifact",
+          "Documents vivants sous gestion des révisions, mis à jour au vu des données terrain et de garantie, des avis de modification ou des actions d'amélioration",
+          "Revision-controlled living documents updated per field/warranty data, ECNs, or CI actions",
+          "Documentos vivos bajo control de revisiones, actualizados según los datos de campo y de garantía, los avisos de modificación o las acciones de mejora",
+          "وثائق حيّة خاضعة لضبط المراجعات، محدَّثة وفق بيانات الميدان والضمان أو إشعارات التغيير أو إجراءات التحسين",
+          "改訂管理された生きた文書（市場・保証データ、設計変更通知、改善活動に応じて更新）",
+          "受版本控制的动态文件，依据现场/保修数据、工程变更通知或改进措施更新");
     }
 }

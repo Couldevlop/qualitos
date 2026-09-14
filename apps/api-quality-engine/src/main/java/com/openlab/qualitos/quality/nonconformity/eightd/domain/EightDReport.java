@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  *
  * <p>Agrégat au sens strict : il ne contient PAS les cinq disciplines agrégées
  * (elles vivent dans les autres modules et sont collectées à la demande), mais
- * seulement ce que lui seul détient — l'équipe (D1), l'endiguement (D3), la
+ * seulement ce que lui seul détient — l'équipe (D1), la sécurisation (D3), la
  * reconnaissance (D8) — et, une fois émis, l'instantané figé des huit avec sa
  * preuve d'intégrité.
  *
@@ -118,7 +118,7 @@ public final class EightDReport {
     public void saisir(String team, String containment, String recognition, Instant now) {
         requireModifiable();
         this.team = limiter(team, "D1 (équipe)");
-        this.containment = limiter(containment, "D3 (endiguement)");
+        this.containment = limiter(containment, "D3 (sécurisation)");
         this.recognition = limiter(recognition, "D8 (reconnaissance)");
         this.updatedAt = Objects.requireNonNull(now, "now");
     }

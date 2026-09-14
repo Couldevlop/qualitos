@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -7,12 +7,13 @@ import { finalize } from 'rxjs/operators';
 
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ApqpService } from '../../apqp.service';
-import { nonBlank } from '../../apqp.validators';
 import {
-  ApqpCycle, ApqpDataRow, ApqpDeliverable, ApqpEvidence, ApqpLinkedKind, ApqpPhase
+  ApqpCycle, ApqpDeliverable, ApqpDeliverableStatus, ApqpEvidence, ApqpLinkedKind, ApqpPhase
 } from '../../apqp.types';
 
 export interface ApqpDeliverableDetailDialogData {
+  /** Le projet dont relève la phase : toutes les routes du cycle en dépendent. */
+  projectId: string;
   phase: ApqpPhase;
   deliverable: ApqpDeliverable;
   /** Vrai si l'utilisateur peut écrire : sinon le popup se lit, il ne se remplit pas. */
@@ -26,17 +27,22 @@ interface ChoixModule {
 }
 
 /**
- * Ce qu'un livrable APQP demande, et ce qui le prouve.
+ * Le formulaire UNIQUE d'un livrable APQP.
  *
- * <p>Un popup par GENRE plutôt qu'un formulaire par livrable : le référentiel en
- * compte une cinquantaine, et les coder un par un les figerait. Ils ne diffèrent
- * que par la nature de ce qu'ils produisent — un document, un enregistrement déjà
- * tenu ailleurs dans QualitOS, des mesures, une liste de points à acquitter.
+ * <p>Il y avait quatre corps, choisis par un « genre » posé à la création :
+ * pièces, renvoi, mesures, points. C'était une erreur de fond. Le genre obligeait
+ * à décider de ce qu'un livrable produirait AVANT de l'avoir travaillé, il
+ * interdisait de joindre une preuve à un livrable qualifié « renvoi » — ce que
+ * l'auditeur demande en premier — et il rendait sa case incochable.
  *
- * <p>Le genre vient du serveur : l'écran ne le devine pas du libellé. Deviner
- * qu'« Control plan » renvoie au module des plans de surveillance marcherait sur
- * le référentiel et sur rien d'autre, et personne ne comprendrait pourquoi son
- * propre libellé n'ouvre pas le même formulaire.
+ * <p>Un seul corps, donc, où chaque champ est facultatif sauf la case : le
+ * responsable, l'échéance, l'état, l'avancement, les notes, les pièces et le
+ * renvoi cohabitent, et c'est l'usage qui décide de ce qu'on remplit.
+ *
+ * <p>La case PILOTE l'état et l'avancement, ici comme au serveur : cocher fixe
+ * « acquis » et 100 %, décocher ramène sous les 100. Les trois contrôles sont
+ * synchronisés à l'écran pour que l'utilisateur voie la règle plutôt que de la
+ * découvrir après enregistrement.
  */
 @Component({
   selector: 'qos-apqp-deliverable-detail-dialog',
@@ -59,12 +65,12 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
 
   readonly form: FormGroup;
 
-  /** Les lignes de contenu : sous-points d'une checklist, ou mesures. */
-  readonly rows: FormArray;
-
   evidences: ApqpEvidence[] = [];
   chargement = false;
   envoi = false;
+
+  readonly statuts: ApqpDeliverableStatus[] =
+    ['NOT_STARTED', 'IN_PROGRESS', 'BLOCKED', 'DONE'];
 
   readonly modules: ChoixModule[] = [
     { value: 'FMEA', label: $localize`:@@apqp.link.fmea:AMDEC (DFMEA / PFMEA)` },
@@ -83,56 +89,44 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public readonly data: ApqpDeliverableDetailDialogData
   ) {
     const livrable = data.deliverable;
-    this.rows = this.fb.array(
-      (livrable.data ?? []).map(ligne => this.ligneEnGroupe(ligne)));
 
     this.form = this.fb.group({
       done: [livrable.done],
+      expectedArtifact: [livrable.expectedArtifact ?? '', [Validators.maxLength(1000)]],
+      ppap: [livrable.ppap],
+      owner: [livrable.owner ?? '', [Validators.maxLength(150)]],
+      dueDate: [livrable.dueDate ?? null],
+      status: [livrable.status],
+      percentComplete: [
+        livrable.percentComplete, [Validators.min(0), Validators.max(100)]],
       comment: [livrable.comment ?? '', [Validators.maxLength(2000)]],
       linkedKind: [livrable.linkedKind ?? null],
       linkedId: [livrable.linkedId ?? '', [Validators.pattern(
-        /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/)]],
-      rows: this.rows
+        /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/)]]
     }, { validators: [() => this.renvoiCoherent()] });
 
+    // La case pilote : on reflète la règle du serveur DANS le formulaire, pour
+    // que l'utilisateur la voie au lieu de la découvrir après enregistrement.
+    this.form.get('done')!.valueChanges.subscribe(
+      (coche: boolean) => this.refleterLaCase(coche));
+
     if (!data.editable) {
-      this.form.disable();
+      // `emitEvent: false` : desactiver emet sinon un changement par controle,
+      // qui rejouerait la regle de la case sur un formulaire qu'on ne remplit
+      // pas -- et modifierait l'affichage d'un livrable en simple lecture.
+      this.form.disable({ emitEvent: false });
     }
   }
 
   ngOnInit(): void {
-    if (this.data.deliverable.kind === 'ATTACHMENT') {
-      this.chargerPieces();
-    }
-  }
-
-  // ---------- ce que le genre commande ----------
-
-  get kind(): ApqpDeliverable['kind'] {
-    return this.data.deliverable.kind;
+    // TOUJOURS : un livrable quelconque peut avoir une preuve, et c'est ce que
+    // l'auditeur demande en premier. L'ancien popup ne chargeait les pièces que
+    // pour un genre, et les autres semblaient n'en porter aucune.
+    this.chargerPieces();
   }
 
   get titre(): string {
     return this.data.deliverable.label;
-  }
-
-  /**
-   * Ce que ce genre de livrable attend, dit en une phrase.
-   *
-   * <p>Le genre seul ne parle pas à l'utilisateur : « MODULE_LINK » n'explique
-   * pas qu'on attend le numéro d'une AMDEC déjà saisie.
-   */
-  get aide(): string {
-    switch (this.kind) {
-      case 'ATTACHMENT':
-        return $localize`:@@apqp.kind-help.attachment:Joignez le document qui prouve ce livrable — Word, Excel, PDF ou photo.`;
-      case 'MODULE_LINK':
-        return $localize`:@@apqp.kind-help.module-link:Ce livrable est déjà tenu dans un module de QualitOS : désignez l'enregistrement concerné.`;
-      case 'DATA_ENTRY':
-        return $localize`:@@apqp.kind-help.data-entry:Saisissez les valeurs mesurées, avec leur unité et leur date.`;
-      default:
-        return $localize`:@@apqp.kind-help.checklist:Ce livrable n'est acquis que si tous ses points le sont.`;
-    }
   }
 
   /**
@@ -145,54 +139,58 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
     if (!this.data.editable) {
       return $localize`:@@apqp.deliverable.read-only:Vous pouvez consulter ce livrable, pas le modifier.`;
     }
-    if (this.form.hasError('renvoiManquant')) {
-      return $localize`:@@apqp.deliverable.blocked-link:Désignez l'enregistrement avant de déclarer ce livrable acquis.`;
+    if (this.form.hasError('renvoiIncomplet')) {
+      return $localize`:@@apqp.deliverable.blocked-link:Un renvoi se pose entier : le module ET son identifiant, ou ni l'un ni l'autre.`;
     }
     return this.form.invalid
-      ? $localize`:@@apqp.deliverable.blocked-rows:Chaque ligne a besoin d'un intitulé.`
+      ? $localize`:@@apqp.deliverable.blocked-fields:Un champ du formulaire est hors limites.`
       : undefined;
-  }
-
-  get ariaRetirerLigne(): string {
-    return $localize`:@@apqp.data.remove-row:Retirer cette ligne`;
   }
 
   ariaRetirerPiece(piece: ApqpEvidence): string {
     return $localize`:@@apqp.evidence.remove-aria:Retirer la pièce ${piece.originalFilename}:filename:`;
   }
 
+  statutLabel(statut: ApqpDeliverableStatus): string {
+    return ({
+      NOT_STARTED: $localize`:@@apqp.status.not-started:Non commencé`,
+      IN_PROGRESS: $localize`:@@apqp.status.in-progress:En cours`,
+      BLOCKED: $localize`:@@apqp.status.blocked:Bloqué`,
+      DONE: $localize`:@@apqp.status.done:Acquis`
+    })[statut];
+  }
+
   /**
-   * La route de l'enregistrement vise, s'il en a une.
+   * La route de l'enregistrement visé, s'il en a une.
    *
    * <p>Un plan de surveillance n'en a pas : il vit dans l'onglet d'un produit, et
-   * rien ne l'atteint par son seul identifiant. On le dit plutot que d'offrir un
-   * lien qui tomberait a cote.
+   * rien ne l'atteint par son seul identifiant. On le dit plutôt que d'offrir un
+   * lien qui tomberait à côté.
    */
   get routeEnregistrement(): string[] | null {
-    const kind = this.form.getRawValue().linkedKind;
-    const id = this.form.getRawValue().linkedId;
-    if (!kind || !id) {
+    const { linkedKind, linkedId } = this.form.getRawValue();
+    if (!linkedKind || !linkedId) {
       return null;
     }
-    switch (kind) {
-      case 'FMEA': return ['/fmea', id];
-      case 'PDCA': return ['/pdca', id];
-      case 'CAPA': return ['/capa', id];
+    switch (linkedKind) {
+      case 'FMEA': return ['/fmea', linkedId];
+      case 'PDCA': return ['/pdca', linkedId];
+      case 'CAPA': return ['/capa', linkedId];
       default: return null;   // CONTROL_PLAN : pas de route par identifiant
     }
   }
 
-  /** Vrai quand le renvoi est pose mais qu'aucune route ne mene a la fiche. */
+  /** Vrai quand le renvoi est posé mais qu'aucune route ne mène à la fiche. */
   get renvoiSansRoute(): boolean {
     const valeurs = this.form.getRawValue();
     return !!valeurs.linkedKind && !!valeurs.linkedId && this.routeEnregistrement === null;
   }
 
   /**
-   * Ouvre la fiche visee, en refermant le popup.
+   * Ouvre la fiche visée, en refermant le popup.
    *
-   * <p>Sans la fermeture, le dialogue resterait par-dessus l'ecran d'arrivee et
-   * l'utilisateur croirait que rien n'a bouge.
+   * <p>Sans la fermeture, le dialogue resterait par-dessus l'écran d'arrivée et
+   * l'utilisateur croirait que rien n'a bougé.
    */
   ouvrirEnregistrement(): void {
     const route = this.routeEnregistrement;
@@ -201,20 +199,6 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
     }
     this.dialogRef.close();
     void this.router.navigate(route);
-  }
-
-  // ---------- contenu ----------
-
-  groupe(index: number): FormGroup {
-    return this.rows.at(index) as FormGroup;
-  }
-
-  ajouterLigne(): void {
-    this.rows.push(this.ligneEnGroupe({ label: '' }));
-  }
-
-  retirerLigne(index: number): void {
-    this.rows.removeAt(index);
   }
 
   // ---------- pièces jointes ----------
@@ -227,7 +211,8 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
     if (!fichier) return;
 
     this.envoi = true;
-    this.service.uploadEvidence(this.data.phase.id, this.data.deliverable.id, fichier)
+    this.service.uploadEvidence(
+      this.data.projectId, this.data.phase.id, this.data.deliverable.id, fichier)
       .pipe(finalize(() => (this.envoi = false)))
       .subscribe({
         next: () => {
@@ -242,7 +227,8 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
     const question = $localize`:@@apqp.evidence.confirm-delete:Retirer « ${piece.originalFilename}:filename: » de ce livrable ?`;
     if (!confirm(question)) return;
 
-    this.service.deleteEvidence(this.data.phase.id, this.data.deliverable.id, piece.id)
+    this.service.deleteEvidence(
+      this.data.projectId, this.data.phase.id, this.data.deliverable.id, piece.id)
       .subscribe({
         next: () => this.chargerPieces(),
         error: err => this.echouer(err)
@@ -266,19 +252,23 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
     const valeurs = this.form.getRawValue();
     this.envoi = true;
 
-    this.service.completeDeliverable(this.data.phase.id, this.data.deliverable.id, {
-      done: valeurs.done,
-      comment: valeurs.comment?.trim() ? valeurs.comment.trim() : null,
-      // Le contenu n'est envoyé que par les genres qui en portent : le serveur
-      // refuse une liste de mesures sur une pièce jointe, et il a raison.
-      data: this.kind === 'CHECKLIST' || this.kind === 'DATA_ENTRY'
-        ? this.lignesEnvoyees()
-        : null,
-      linkedKind: this.kind === 'MODULE_LINK' ? valeurs.linkedKind ?? null : null,
-      linkedId: this.kind === 'MODULE_LINK' && valeurs.linkedId
-        ? valeurs.linkedId.trim()
-        : null
-    })
+    this.service.completeDeliverable(
+      this.data.projectId, this.data.phase.id, this.data.deliverable.id, {
+        done: valeurs.done,
+        expectedArtifact: this.rogne(valeurs.expectedArtifact),
+        ppap: valeurs.ppap,
+        owner: this.rogne(valeurs.owner),
+        dueDate: this.enDateIso(valeurs.dueDate),
+        // Le serveur applique la règle « la case pilote » ; l'écran envoie ce
+        // qu'il affiche, et les deux disent alors la même chose.
+        status: valeurs.status,
+        percentComplete: valeurs.percentComplete,
+        comment: this.rogne(valeurs.comment),
+        // Un renvoi à moitié posé vaut un 422 : le validateur l'a déjà refusé,
+        // et l'un sans l'autre ne part donc jamais.
+        linkedKind: valeurs.linkedKind ?? null,
+        linkedId: this.rogne(valeurs.linkedId)
+      })
       .pipe(finalize(() => (this.envoi = false)))
       .subscribe({
         next: cycle => this.dialogRef.close(cycle),
@@ -290,45 +280,45 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  trackByIndex(index: number): number {
-    return index;
-  }
-
   trackById(_index: number, piece: ApqpEvidence): string {
     return piece.id;
   }
 
   // ---------- interne ----------
 
-  private ligneEnGroupe(ligne: ApqpDataRow): FormGroup {
-    return this.fb.group({
-      // `nonBlank` en plus de `required` : ce dernier laisse passer '   ', et une
-      // ligne sans intitule lisible part alors au serveur, qui la refuse en 422.
-      label: [ligne.label ?? '', [Validators.required, nonBlank, Validators.maxLength(200)]],
-      value: [ligne.value ?? '', [Validators.maxLength(60)]],
-      unit: [ligne.unit ?? '', [Validators.maxLength(20)]],
-      measuredAt: [ligne.measuredAt ?? null],
-      checked: [ligne.checked ?? false]
-    });
+  /**
+   * Aligne l'état et l'avancement sur la case, comme le fera le serveur.
+   *
+   * <p>`emitEvent: false` : ces deux contrôles ne pilotent rien en retour, et une
+   * émission relancerait la validation croisée au milieu de sa propre exécution.
+   */
+  private refleterLaCase(coche: boolean): void {
+    const statut = this.form.get('status')!;
+    const avancement = this.form.get('percentComplete')!;
+
+    if (coche) {
+      statut.setValue('DONE', { emitEvent: false });
+      avancement.setValue(100, { emitEvent: false });
+      return;
+    }
+    if (statut.value === 'DONE') {
+      statut.setValue('IN_PROGRESS', { emitEvent: false });
+    }
+    if (Number(avancement.value) >= 100) {
+      avancement.setValue(0, { emitEvent: false });
+    }
   }
 
-  private lignesEnvoyees(): ApqpDataRow[] {
-    return this.rows.getRawValue()
-      .filter((ligne: ApqpDataRow) => (ligne.label ?? '').trim().length > 0)
-      .map((ligne: ApqpDataRow) => ({
-        label: (ligne.label ?? '').trim(),
-        value: ligne.value ?? '',
-        unit: ligne.unit ?? '',
-        measuredAt: this.enDateIso(ligne.measuredAt),
-        checked: ligne.checked ?? false
-      }));
+  private rogne(valeur: unknown): string | null {
+    const texte = typeof valeur === 'string' ? valeur.trim() : '';
+    return texte.length > 0 ? texte : null;
   }
 
   /**
    * La date au format que le serveur attend (yyyy-MM-dd).
    *
-   * <p>Le sélecteur Material rend un `Date` ; l'envoyer tel quel produirait un
-   * horodatage complet, que la validation refuse.
+   * <p>Le champ natif rend déjà « aaaa-mm-jj » ; la conversion couvre le cas où
+   * un sélecteur rendrait un `Date`, dont l'horodatage complet serait refusé.
    */
   private enDateIso(valeur: unknown): string | null {
     if (!valeur) return null;
@@ -337,22 +327,24 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
   }
 
   /**
-   * Un renvoi coché doit désigner son enregistrement.
+   * Un renvoi se pose ENTIER, ou pas du tout.
    *
    * <p>Vérifié à l'écran aussi, et non seulement au serveur : mieux vaut
-   * désactiver le bouton que proposer une action qu'on sait refusée.
+   * désactiver le bouton que proposer une action qu'on sait refusée par un 422.
    */
   private renvoiCoherent(): { [key: string]: boolean } | null {
-    if (!this.form || this.kind !== 'MODULE_LINK') return null;
-    const coche = this.form.get('done')?.value === true;
-    const cible = this.form.get('linkedId')?.value;
+    if (!this.form) return null;
     const genre = this.form.get('linkedKind')?.value;
-    return coche && (!cible || !genre) ? { renvoiManquant: true } : null;
+    const cible = this.form.get('linkedId')?.value;
+    const poseGenre = !!genre;
+    const poseCible = !!(typeof cible === 'string' ? cible.trim() : cible);
+    return poseGenre !== poseCible ? { renvoiIncomplet: true } : null;
   }
 
   private chargerPieces(): void {
     this.chargement = true;
-    this.service.evidences(this.data.phase.id, this.data.deliverable.id)
+    this.service.evidences(
+      this.data.projectId, this.data.phase.id, this.data.deliverable.id)
       .pipe(finalize(() => (this.chargement = false)))
       .subscribe({
         next: pieces => (this.evidences = pieces),

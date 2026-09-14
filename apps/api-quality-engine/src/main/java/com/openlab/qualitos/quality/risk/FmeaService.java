@@ -54,7 +54,7 @@ public class FmeaService {
         p.setType(req.type());
         p.setStatus(FmeaStatus.DRAFT);
         p.setRevision(1);
-        p.setCriticalRpnThreshold(req.criticalRpnThreshold() == null ? 100 : req.criticalRpnThreshold());
+        p.setCriticalRpnThreshold(req.criticalRpnThreshold() == null ? FmeaProject.SEUIL_RPN_PAR_DEFAUT : req.criticalRpnThreshold());
         p.setOwnerUserId(req.ownerUserId());
         p.setCreatedBy(req.createdBy());
         if (req.productId() != null) {

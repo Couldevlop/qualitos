@@ -16,9 +16,9 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -27,13 +27,20 @@ import java.util.UUID;
  * <p>Ce que la phase doit avoir produit avant qu'on passe à la suivante :
  * « AMDEC processus (PFMEA) », « Plan de surveillance de pré-lancement ». La
  * liste vient du manuel AIAG à l'amorçage, puis appartient au client.
+ *
+ * <p>Ses colonnes sont celles du classeur de suivi que le commanditaire tient
+ * déjà — artefact attendu, PPAP requis, responsable, échéance, statut,
+ * avancement, notes — et elles sont les MÊMES pour tous les livrables (ADR
+ * 0072). Le genre fermé qui décidait autrefois du formulaire a disparu : il
+ * empêchait de cocher la moitié des lignes et multipliait les écrans pour une
+ * seule question, « où en est-on ? ».
  */
 @Entity
 @Table(name = "apqp_deliverables")
 @Getter
 @Setter
 @NoArgsConstructor
-public class ApqpDeliverable implements ApqpTraduisible {
+public class ApqpDeliverable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -69,18 +76,52 @@ public class ApqpDeliverable implements ApqpTraduisible {
     private String referenceKey;
 
     /**
-     * Élément du dossier PPAP — l'astérisque du référentiel.
+     * L'artefact attendu — colonne D du classeur.
+     *
+     * <p>Le libellé dit CE QU'ON DOIT PRODUIRE, l'artefact dit SOUS QUELLE
+     * FORME : « Plan de surveillance » et « Plan de surveillance de
+     * pré-lancement (entrées, spécification, méthode, taille et fréquence
+     * d'échantillon, plan de réaction) » ne se vérifient pas pareil. C'est ce
+     * second texte qu'un auditeur confronte à la pièce versée.
+     *
+     * <p>{@code null} tant que personne ne l'a écrit : la lecture rend alors
+     * celui du référentiel, dans la langue demandée.
+     */
+    @Column(name = "expected_artifact", length = 1000)
+    private String expectedArtifact;
+
+    /**
+     * Élément du dossier PPAP — colonne E du classeur.
      *
      * <p>Porté par le livrable et non par une liste à part : le dossier PPAP est
-     * une vue du cycle, qui appartient au client et qu'il adapte.
+     * une vue du cycle, qui appartient au client et qu'il adapte. Amorcé sur les
+     * douze « Y » du classeur, puis piloté livrable par livrable — ce n'est plus
+     * une marque figée du référentiel (ADR 0072).
      */
     @Column(nullable = false)
     private boolean ppap;
 
-    /** Ce que le formulaire du livrable demande. Voir {@link ApqpDeliverableKind}. */
+    /** Le responsable — colonne F. Un nom, pas un compte : il peut être externe. */
+    @Column(length = 150)
+    private String owner;
+
+    /** L'échéance — colonne G. */
+    @Column(name = "due_date")
+    private LocalDate dueDate;
+
+    /**
+     * Où en est le livrable — colonne H.
+     *
+     * <p>Tenu d'accord avec {@code done} par le service : cocher pose
+     * {@code DONE}, décocher le retire.
+     */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 32)
-    private ApqpDeliverableKind kind = ApqpDeliverableKind.ATTACHMENT;
+    private ApqpDeliverableStatus status = ApqpDeliverableStatus.NOT_STARTED;
+
+    /** L'avancement en pourcentage — colonne I, de 0 à 100. */
+    @Column(name = "percent_complete", nullable = false)
+    private int percentComplete;
 
     @Column(nullable = false)
     private boolean done;
@@ -97,30 +138,18 @@ public class ApqpDeliverable implements ApqpTraduisible {
     @Column(name = "done_by")
     private UUID doneBy;
 
+    /** Notes — colonne J. */
     @Column(length = 2000)
     private String comment;
 
     /**
-     * Le contenu propre au genre, en JSON.
+     * Module visé par le renvoi facultatif, ou {@code null}.
      *
-     * <p>Texte des deux côtés. Ce qui empêche cette colonne de devenir un
-     * fourre-tout n'est pas son type mais le validateur du service, qui n'accepte
-     * que deux formes -- des mesures, ou des sous-points -- selon le genre du
-     * livrable.
-     *
-     * <p>TEXT et non {@code jsonb} : ce dernier NORMALISE le contenu (espaces
-     * réinsérés, ordre des clés refait), si bien que le texte relu n'est plus
-     * celui qu'on a écrit. Le jour où l'on scellera un dossier PPAP, l'empreinte
-     * ne serait plus recalculable -- la panne exacte du journal d'audit. Le
-     * {@code JdbcTypeCode} accompagne ce choix, comme sur
-     * {@code AuditEvent.payloadJson} : sans lui, Hibernate 6 viserait un autre
-     * type JDBC et PostgreSQL refuserait l'insertion, {@code null} compris.
+     * <p>Renvoyer vers une AMDEC, un cycle PDCA ou une CAPA n'est plus un genre
+     * de livrable mais un CHAMP de plus (ADR 0072) : tout livrable peut porter
+     * son enregistrement, et aucun n'y est obligé. L'existence de
+     * l'enregistrement reste vérifiée dans le tenant ({@code ApqpLinkResolver}).
      */
-    @Column(columnDefinition = "TEXT")
-    @JdbcTypeCode(java.sql.Types.LONGVARCHAR)
-    private String data;
-
-    /** Module visé quand le genre est {@code MODULE_LINK}, sinon {@code null}. */
     @Enumerated(EnumType.STRING)
     @Column(name = "linked_kind", length = 32)
     private ApqpLinkedKind linkedKind;

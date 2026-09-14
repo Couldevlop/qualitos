@@ -4598,25 +4598,9 @@ Portail clients</source>
         <source>APQP</source>
         <target state="translated">APQP</target>
       </trans-unit>
-      <trans-unit id="nav.apqp-cycle" datatype="html">
-        <source>Le cycle</source>
-        <target state="translated">流程总览</target>
-      </trans-unit>
-      <trans-unit id="nav.apqp-ppap" datatype="html">
-        <source>Dossier PPAP</source>
-        <target state="translated">PPAP 文件</target>
-      </trans-unit>
       <trans-unit id="apqp.eyebrow" datatype="html">
         <source>APQP</source>
         <target state="translated">APQP</target>
-      </trans-unit>
-      <trans-unit id="apqp.title" datatype="html">
-        <source>Planification qualité produit</source>
-        <target state="translated">产品质量先期策划</target>
-      </trans-unit>
-      <trans-unit id="apqp.subtitle" datatype="html">
-        <source>Les phases se lisent en V : on descend jusqu'au point bas du projet, on remonte vers la production série.</source>
-        <target state="translated">各阶段呈 V 形：下行至项目低点，再上行至量产。</target>
       </trans-unit>
       <trans-unit id="apqp.cycle-aria" datatype="html">
         <source>Cycle APQP</source>
@@ -4751,16 +4735,16 @@ Portail clients</source>
         <target state="translated">从参考清单重置</target>
       </trans-unit>
       <trans-unit id="apqp.confirm-reset" datatype="html">
-        <source>Remplacer votre cycle par celui du référentiel ? Vos phases, vos livrables et les pièces qui les prouvent seront définitivement perdus.</source>
-        <target state="translated">要用参考清单替换您的循环吗？您的阶段、交付物及其证明文件将被永久删除。</target>
+        <source>Remplacer le cycle de ce projet par celui du référentiel ? Ses phases, ses livrables et les pièces qui les prouvent seront définitivement perdus.</source>
+        <target state="translated">要用参考清单替换该项目的循环吗？其阶段、交付物及其证明文件将被永久删除。</target>
       </trans-unit>
       <trans-unit id="apqp.toggle-deliverable-aria" datatype="html">
         <source>Déclarer « <x id="label"/> » acquis</source>
         <target state="translated">声明“<x id="label"/>”已取得</target>
       </trans-unit>
       <trans-unit id="apqp.ppap-mark-aria" datatype="html">
-        <source>Élément du dossier PPAP</source>
-        <target state="translated">PPAP 文件的组成部分</target>
+        <source>Livrable requis au dossier PPAP</source>
+        <target state="translated">PPAP 文件所需的交付物</target>
       </trans-unit>
       <trans-unit id="apqp.evidence-count-aria" datatype="html">
         <source><x id="count"/> pièce(s) jointe(s)</source>
@@ -4770,21 +4754,17 @@ Portail clients</source>
         <source>Dossier PPAP</source>
         <target state="translated">PPAP 文件</target>
       </trans-unit>
-      <trans-unit id="apqp.ppap.legend" datatype="html">
-        <source>* Les livrables marqués d'un astérisque dans le référentiel composent le dossier remis au client.</source>
-        <target state="translated">* 参考清单中带星号的交付物构成提交给客户的文件。</target>
-      </trans-unit>
       <trans-unit id="apqp.ppap.progress" datatype="html">
-        <source><x id="done"/> / <x id="total"/> livrables acquis</source>
-        <target state="translated">已取得 <x id="done"/> / <x id="total"/> 项交付物</target>
+        <source><x id="done"/> / <x id="total"/> livrables requis fournis</source>
+        <target state="translated">已提供 <x id="done"/> / <x id="total"/> 项必需交付物</target>
       </trans-unit>
       <trans-unit id="apqp.ppap.progress-aria" datatype="html">
         <source>Complétude du dossier PPAP : <x id="percent"/> %</source>
         <target state="translated">PPAP 文件完成度：<x id="percent"/> %</target>
       </trans-unit>
       <trans-unit id="apqp.ppap.row-done" datatype="html">
-        <source><x id="label"/> — acquis</source>
-        <target state="translated"><x id="label"/> — 已取得</target>
+        <source><x id="label"/> — fourni</source>
+        <target state="translated"><x id="label"/> — 已提供</target>
       </trans-unit>
       <trans-unit id="apqp.ppap.row-pending" datatype="html">
         <source><x id="label"/> — à fournir</source>
@@ -4815,12 +4795,8 @@ Portail clients</source>
         <target state="translated">您可以查看该交付物，但不能修改。</target>
       </trans-unit>
       <trans-unit id="apqp.deliverable.blocked-link" datatype="html">
-        <source>Désignez l'enregistrement avant de déclarer ce livrable acquis.</source>
-        <target state="translated">在声明该交付物已取得之前，请先指定对应记录。</target>
-      </trans-unit>
-      <trans-unit id="apqp.deliverable.blocked-rows" datatype="html">
-        <source>Chaque ligne a besoin d'un intitulé.</source>
-        <target state="translated">每一行都需要名称。</target>
+        <source>Un renvoi se pose entier : le module ET son identifiant, ou ni l'un ni l'autre.</source>
+        <target state="translated">引用需成对填写：模块与其标识符，或两者都不填。</target>
       </trans-unit>
       <trans-unit id="apqp.deliverable.failed" datatype="html">
         <source>Opération impossible sur ce livrable.</source>
@@ -4886,89 +4862,17 @@ Portail clients</source>
         <source>Action corrective (CAPA)</source>
         <target state="translated">纠正措施（CAPA）</target>
       </trans-unit>
-      <trans-unit id="apqp.data.label" datatype="html">
-        <source>Indicateur</source>
-        <target state="translated">指标</target>
-      </trans-unit>
-      <trans-unit id="apqp.data.value" datatype="html">
-        <source>Valeur</source>
-        <target state="translated">数值</target>
-      </trans-unit>
-      <trans-unit id="apqp.data.unit" datatype="html">
-        <source>Unité</source>
-        <target state="translated">单位</target>
-      </trans-unit>
-      <trans-unit id="apqp.data.measured-at" datatype="html">
-        <source>Mesuré le</source>
-        <target state="translated">测量日期</target>
-      </trans-unit>
-      <trans-unit id="apqp.data.add-row" datatype="html">
-        <source>Ajouter un indicateur</source>
-        <target state="translated">添加指标</target>
-      </trans-unit>
-      <trans-unit id="apqp.data.remove-row" datatype="html">
-        <source>Retirer cette ligne</source>
-        <target state="translated">删除该行</target>
-      </trans-unit>
-      <trans-unit id="apqp.point.label" datatype="html">
-        <source>Point à acquitter</source>
-        <target state="translated">待确认事项</target>
-      </trans-unit>
-      <trans-unit id="apqp.point.add-row" datatype="html">
-        <source>Ajouter un point</source>
-        <target state="translated">添加事项</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind-help.attachment" datatype="html">
-        <source>Joignez le document qui prouve ce livrable — Word, Excel, PDF ou photo.</source>
-        <target state="translated">请附上证明该交付物的文档 — Word、Excel、PDF 或照片。</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind-help.module-link" datatype="html">
-        <source>Ce livrable est déjà tenu dans un module de QualitOS : désignez l'enregistrement concerné.</source>
-        <target state="translated">该交付物已存在于 QualitOS 的某个模块中：请指定对应记录。</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind-help.data-entry" datatype="html">
-        <source>Saisissez les valeurs mesurées, avec leur unité et leur date.</source>
-        <target state="translated">请输入测量值及其单位和日期。</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind-help.checklist" datatype="html">
-        <source>Ce livrable n'est acquis que si tous ses points le sont.</source>
-        <target state="translated">仅当所有事项均完成时，该交付物才算取得。</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind.attachment" datatype="html">
-        <source>Un document à joindre</source>
-        <target state="translated">需附加的文档</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind.module-link" datatype="html">
-        <source>Un enregistrement déjà tenu dans QualitOS</source>
-        <target state="translated">QualitOS 中已有的记录</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind.data-entry" datatype="html">
-        <source>Des mesures à saisir</source>
-        <target state="translated">需填写的测量值</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind.checklist" datatype="html">
-        <source>Une liste de points à acquitter</source>
-        <target state="translated">待确认事项清单</target>
-      </trans-unit>
-      <trans-unit id="apqp.deliverable-dialog.field-kind" datatype="html">
-        <source>Ce que ce livrable produit</source>
-        <target state="translated">该交付物产出什么</target>
-      </trans-unit>
-      <trans-unit id="apqp.deliverable-dialog.kind-hint" datatype="html">
-        <source>Détermine ce que le livrable demandera : une pièce jointe, un renvoi, des mesures ou des points à cocher.</source>
-        <target state="translated">决定该交付物将要求什么：附件、记录引用、测量值或勾选事项。</target>
-      </trans-unit>
       <trans-unit id="apqp.deliverable-dialog.ppap" datatype="html">
-        <source>Ce livrable compose le dossier PPAP</source>
-        <target state="translated">该交付物属于 PPAP 文件</target>
+        <source>Ce livrable est requis au dossier PPAP</source>
+        <target state="translated">该交付物为 PPAP 文件所需</target>
       </trans-unit>
       <trans-unit id="apqp.ppap.page-subtitle" datatype="html">
-        <source>Les livrables que le référentiel marque d'un astérisque : ce qui compose le dossier remis au client.</source>
-        <target state="translated">参考清单中带星号的交付物：构成提交给客户的文件。</target>
+        <source>Les livrables que vous avez marqués « requis au dossier PPAP » : ce qui compose le dossier remis au client.</source>
+        <target state="translated">您标记为「PPAP 文件所需」的交付物：构成提交给客户的文件。</target>
       </trans-unit>
       <trans-unit id="apqp.ppap.empty" datatype="html">
-        <source>Aucun livrable du cycle n'est marqué comme élément du dossier PPAP. Ouvrez une phase du cycle pour en marquer un.</source>
-        <target state="translated">循环中没有任何交付物被标记为 PPAP 文件的组成部分。请打开某个阶段进行标记。</target>
+        <source>Aucun livrable de ce projet n'est marqué « requis au dossier PPAP ». Ouvrez un livrable du cycle pour l'y ajouter.</source>
+        <target state="translated">该项目中没有交付物被标记为「PPAP 文件所需」。请打开循环中的某个交付物进行添加。</target>
       </trans-unit>
       <trans-unit id="apqp.link.open" datatype="html">
         <source>Ouvrir la fiche</source>
@@ -4977,6 +4881,182 @@ Portail clients</source>
       <trans-unit id="apqp.link.no-route" datatype="html">
         <source>Un plan de surveillance s'ouvre depuis son produit : il n'a pas d'adresse propre.</source>
         <target state="translated">控制计划从其产品页面打开，没有独立地址。</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-projects" datatype="html">
+        <source>Projets</source>
+        <target state="translated">项目</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.title" datatype="html">
+        <source>APQP — Projets</source>
+        <target state="translated">APQP — 项目</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.subtitle" datatype="html">
+        <source>Chaque projet porte son propre cycle en V, ses livrables et son dossier PPAP.</source>
+        <target state="translated">每个项目都有各自的 V 形流程、交付物和 PPAP 文件。</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.new" datatype="html">
+        <source>Nouveau projet</source>
+        <target state="translated">新建项目</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.col-deliverables" datatype="html">
+        <source>Livrables</source>
+        <target state="translated">交付物</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.col-ppap" datatype="html">
+        <source>Dossier PPAP</source>
+        <target state="translated">PPAP 文件</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.empty" datatype="html">
+        <source>Aucun projet pour l'instant. Créez-en un : il partira du cycle du référentiel, que vous adapterez ensuite.</source>
+        <target state="translated">尚无项目。新建一个：它将从参考清单的循环开始，之后可自行调整。</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.delete-aria" datatype="html">
+        <source>Supprimer le projet <x id="name"/></source>
+        <target state="translated">删除项目 <x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.confirm-delete" datatype="html">
+        <source>Supprimer le projet « <x id="name"/> » ? Son cycle, ses livrables et les pièces qui les prouvent seront définitivement perdus.</source>
+        <target state="translated">删除项目“<x id="name"/>”？其循环、交付物及其证明文件将被永久删除。</target>
+      </trans-unit>
+      <trans-unit id="apqp.project.type.npi" datatype="html">
+        <source>NPI — nouveau produit</source>
+        <target state="translated">NPI — 新产品</target>
+      </trans-unit>
+      <trans-unit id="apqp.project.type.tow" datatype="html">
+        <source>ToW — transfert d'activité</source>
+        <target state="translated">ToW — 业务转移</target>
+      </trans-unit>
+      <trans-unit id="apqp.project.type.new-customer" datatype="html">
+        <source>Nouveau client</source>
+        <target state="translated">新客户</target>
+      </trans-unit>
+      <trans-unit id="apqp.project.type.other" datatype="html">
+        <source>Autre</source>
+        <target state="translated">其他</target>
+      </trans-unit>
+      <trans-unit id="apqp.project.customer" datatype="html">
+        <source>Client</source>
+        <target state="translated">客户</target>
+      </trans-unit>
+      <trans-unit id="apqp.project.reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">编号</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.title-create" datatype="html">
+        <source>Nouveau projet APQP</source>
+        <target state="translated">新建 APQP 项目</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.title-edit" datatype="html">
+        <source>Modifier le projet</source>
+        <target state="translated">修改项目</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.field-name" datatype="html">
+        <source>Nom du projet</source>
+        <target state="translated">项目名称</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.name-placeholder" datatype="html">
+        <source>Ex. : Support moteur — ligne 4</source>
+        <target state="translated">例如：发动机支架 — 4 号线</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.name-required" datatype="html">
+        <source>Un projet sans nom ne se retrouve pas dans la liste.</source>
+        <target state="translated">没有名称的项目无法在列表中找到。</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.blocked-name" datatype="html">
+        <source>Donnez un nom au projet : c'est ce que la liste affiche.</source>
+        <target state="translated">请为项目命名：列表显示的正是它。</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.field-type" datatype="html">
+        <source>Type de projet</source>
+        <target state="translated">项目类型</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.type-hint" datatype="html">
+        <source>Ce qui motive le projet : un lancement, un transfert, une ouverture de compte.</source>
+        <target state="translated">项目的缘由：新品导入、业务转移或开拓新客户。</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.reference-hint" datatype="html">
+        <source>La référence pièce ou le numéro d'affaire — celle que le client cite.</source>
+        <target state="translated">零件编号或项目编号 — 客户所引用的那个。</target>
+      </trans-unit>
+      <trans-unit id="apqp.back-to-projects" datatype="html">
+        <source>Retour aux projets</source>
+        <target state="translated">返回项目列表</target>
+      </trans-unit>
+      <trans-unit id="apqp.back-to-project" datatype="html">
+        <source>Retour au projet</source>
+        <target state="translated">返回项目</target>
+      </trans-unit>
+      <trans-unit id="apqp.status.not-started" datatype="html">
+        <source>Non commencé</source>
+        <target state="translated">未开始</target>
+      </trans-unit>
+      <trans-unit id="apqp.status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">进行中</target>
+      </trans-unit>
+      <trans-unit id="apqp.status.blocked" datatype="html">
+        <source>Bloqué</source>
+        <target state="translated">受阻</target>
+      </trans-unit>
+      <trans-unit id="apqp.status.done" datatype="html">
+        <source>Acquis</source>
+        <target state="translated">已取得</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.owner" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">负责人</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.due-date" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">截止日期</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.percent" datatype="html">
+        <source>Avancement (%)</source>
+        <target state="translated">进度（%）</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.percent-range" datatype="html">
+        <source>L'avancement se compte de 0 à 100.</source>
+        <target state="translated">进度取值为 0 到 100。</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.expected-artifact" datatype="html">
+        <source>Artefact attendu</source>
+        <target state="translated">预期产出物</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.expected-artifact-placeholder" datatype="html">
+        <source>Ex. : plan de surveillance signé, au format tableur</source>
+        <target state="translated">例如：已签署的控制计划，电子表格格式</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.expected-artifact-hint" datatype="html">
+        <source>Ce que ce livrable doit produire, dit en clair : c'est ce qu'on vérifiera.</source>
+        <target state="translated">用平实的话写明该交付物应产出什么：这正是将被核查的内容。</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.blocked-fields" datatype="html">
+        <source>Un champ du formulaire est hors limites.</source>
+        <target state="translated">表单中有字段超出允许范围。</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.section" datatype="html">
+        <source>Renvoi vers un enregistrement</source>
+        <target state="translated">指向某条记录的引用</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.optional-hint" datatype="html">
+        <source>Facultatif. Les deux champs se posent ensemble, ou aucun des deux.</source>
+        <target state="translated">可选。两个字段要么都填，要么都不填。</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.none" datatype="html">
+        <source>Aucun</source>
+        <target state="translated">无</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.field-artifact" datatype="html">
+        <source>Artefact attendu</source>
+        <target state="translated">预期产出物</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.artifact-placeholder" datatype="html">
+        <source>Ex. : tableur signé par le responsable méthodes</source>
+        <target state="translated">例如：由工艺负责人签署的电子表格</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.artifact-hint" datatype="html">
+        <source>Facultatif. Ce que ce livrable doit produire concrètement : c'est ce qu'on vérifiera.</source>
+        <target state="translated">可选。该交付物具体应产出什么：这正是将被核查的内容。</target>
       </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>
@@ -15625,7 +15705,7 @@ historique 12 mois</source>
         <target state="translated">需手工填写的三个步骤</target>
       </trans-unit>
       <trans-unit id="nc.8d.saisies-hint" datatype="html">
-        <source>L'équipe, l'endiguement et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
+        <source>L'équipe, la sécurisation et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
         <target state="translated">团队、围堵措施和团队认可在平台中没有数据来源，需在此填写。其余五个步骤从不合格项案卷中汇总。</target>
       </trans-unit>
       <trans-unit id="nc.8d.team-label" datatype="html">
@@ -15636,8 +15716,24 @@ historique 12 mois</source>
         <source>Une personne par ligne, avec son rôle dans le traitement de l'écart</source>
         <target state="translated">每行一人，并注明其在偏差处理中的角色</target>
       </trans-unit>
+      <trans-unit id="nc.8d.export" datatype="html">
+        <source>Exporter</source>
+        <target state="translated">导出</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-tooltip" datatype="html">
+        <source>Le PDF signé et ancré du rapport</source>
+        <target state="translated">经签名并锚定的报告 PDF</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-issue-title" datatype="html">
+        <source>Émettre avant d'exporter ?</source>
+        <target state="translated">导出前先签发？</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-issue" datatype="html">
+        <source>Le PDF n'existe qu'une fois le rapport émis : l'émission fige le contenu, signe son empreinte et l'ancre. Sans cela, deux exports du même rapport pourraient différer.</source>
+        <target state="translated">只有在报告签发之后才有 PDF：签发会冻结内容、对其指纹签名并锚定。否则同一报告的两次导出可能不一致。</target>
+      </trans-unit>
       <trans-unit id="nc.8d.containment-label" datatype="html">
-        <source>D3 — Actions d'endiguement immédiates</source>
+        <source>D3 — Actions de sécurisation immédiates</source>
         <target state="translated">D3 — 立即围堵措施</target>
       </trans-unit>
       <trans-unit id="nc.8d.containment-placeholder" datatype="html">

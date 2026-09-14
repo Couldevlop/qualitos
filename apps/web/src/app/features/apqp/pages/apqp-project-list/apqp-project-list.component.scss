@@ -1,0 +1,120 @@
+/* La liste des projets APQP. Même grammaire que la liste des projets FMEA :
+   deux écrans qui listent des projets doivent se lire pareil, sinon chacun
+   réapprend la même chose à son lecteur. */
+
+.apqp-projets {
+  padding: var(--qos-space-5, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-4, 16px);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-3, 12px);
+  flex-wrap: wrap;
+}
+
+.head h1 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  /* Interlignage explicite : sans lui, les jambages des majuscules accentuées se
+     font rogner. */
+  line-height: 1.35;
+}
+
+.head p {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--qos-text-muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.head-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2, 8px);
+  flex-wrap: wrap;
+}
+
+.filters {
+  display: flex;
+  gap: var(--qos-space-3, 12px);
+  flex-wrap: wrap;
+}
+
+.filters mat-form-field {
+  min-width: 220px;
+}
+
+.banner {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.banner-error { background: #fbe9e7; color: #b71c1c; }
+.banner-info  { background: #e3f2fd; color: #0d47a1; }
+
+.table-wrap {
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  overflow: auto;
+}
+
+.title-link {
+  color: var(--mat-sys-primary, #1565c0);
+  font-weight: 600;
+}
+
+.dim {
+  display: block;
+  color: var(--qos-text-muted);
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+/* Les comptes s'alignent chiffre sous chiffre : c'est ce qui rend la colonne
+   comparable d'une ligne à l'autre. */
+.compte {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.dates {
+  font-variant-numeric: tabular-nums;
+}
+
+.ligne-supprimer {
+  margin-inline-start: var(--qos-space-2, 8px);
+}
+
+.row-clickable { cursor: pointer; }
+.row-clickable:hover { background: rgba(0 0 0 / 2.5%); }
+
+.tbadge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tbadge-npi          { background: #e3f2fd; color: #0d47a1; }
+.tbadge-tow          { background: #ede7f6; color: #4527a0; }
+.tbadge-new_customer { background: #e8f5e9; color: #1b5e20; }
+.tbadge-other        { background: #f5f5f5; color: #424242; }
+
+.invite {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--qos-text-muted);
+  line-height: 1.55;
+}

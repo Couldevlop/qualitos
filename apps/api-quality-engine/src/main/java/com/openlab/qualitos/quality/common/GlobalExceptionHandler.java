@@ -158,6 +158,7 @@ import com.openlab.qualitos.quality.apqp.ApqpDeliverableEvidenceValidationExcept
 import com.openlab.qualitos.quality.apqp.ApqpDeliverableNotFoundException;
 import com.openlab.qualitos.quality.apqp.ApqpDeliverableValidationException;
 import com.openlab.qualitos.quality.apqp.ApqpPhaseNotFoundException;
+import com.openlab.qualitos.quality.apqp.ApqpProjectNotFoundException;
 import com.openlab.qualitos.quality.apqp.ApqpReorderException;
 import com.openlab.qualitos.quality.ideas.domain.IdeaNotFoundException;
 import com.openlab.qualitos.quality.ideas.domain.IdeaStateException;
@@ -428,7 +429,8 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
-    @ExceptionHandler({ApqpPhaseNotFoundException.class, ApqpDeliverableNotFoundException.class})
+    @ExceptionHandler({ApqpProjectNotFoundException.class, ApqpPhaseNotFoundException.class,
+            ApqpDeliverableNotFoundException.class})
     public ProblemDetail handleApqpNotFound(RuntimeException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/apqp-not-found"));

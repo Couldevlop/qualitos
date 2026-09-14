@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
@@ -15,16 +18,15 @@ import { LignePpap } from '../apqp-ppap-summary/apqp-ppap-summary.component';
 const ROLES_ECRITURE = ['QUALITY_MANAGER', 'DIRECTOR_QUALITY', 'ADMIN_TENANT', 'SUPER_ADMIN'];
 
 /**
- * Le dossier PPAP, à lui seul.
+ * Le dossier PPAP d'un PROJET, à lui seul.
  *
- * <p>Il vit déjà sous le schéma du cycle, où il donne son contexte : ce qui reste
- * à fournir, à côté des phases qui le produisent. Mais le dossier se travaille
- * aussi POUR LUI-MÊME — c'est lui qu'on remet au client, et c'est cette liste-là
- * qu'on parcourt à l'approche d'une soumission. D'où une entrée de menu et un
- * écran à part.
+ * <p>Il n'a plus d'adresse globale : le dossier est ce qu'on remet au client d'un
+ * projet donné, et deux projets n'ont pas le même. D'où une adresse nichée sous
+ * le projet, et un retour vers lui.
  *
- * <p>Le même composant rend les deux : une seconde implémentation aurait divergé
- * de la première au premier ajustement.
+ * <p>Les livrables retenus sont ceux que l'UTILISATEUR a marqués « requis au
+ * dossier PPAP ». Ce n'est plus l'astérisque d'un référentiel : c'est lui qui
+ * sait ce que son client attend, et un projet peut en exiger plus ou moins.
  */
 @Component({
   selector: 'qos-apqp-ppap-page',
@@ -32,29 +34,45 @@ const ROLES_ECRITURE = ['QUALITY_MANAGER', 'DIRECTOR_QUALITY', 'ADMIN_TENANT', '
   styleUrls: ['./apqp-ppap-page.component.scss'],
   standalone: false
 })
-export class ApqpPpapPageComponent implements OnInit {
+export class ApqpPpapPageComponent implements OnInit, OnDestroy {
 
   phases: ApqpPhase[] = [];
   ppapDone = 0;
   ppapTotal = 0;
   loading = false;
 
+  projetId = '';
+  projetNom = '';
+
   readonly editable: boolean;
+
+  private readonly detruit$ = new Subject<void>();
 
   constructor(
     private readonly service: ApqpService,
     private readonly dialog: MatDialog,
     private readonly snack: MatSnackBar,
+    private readonly route: ActivatedRoute,
     auth: AuthService
   ) {
     this.editable = auth.hasAnyRole(ROLES_ECRITURE);
   }
 
   ngOnInit(): void {
-    this.charger();
+    this.route.paramMap
+      .pipe(takeUntil(this.detruit$))
+      .subscribe(params => {
+        this.projetId = params.get('projetId') ?? '';
+        this.charger();
+      });
   }
 
-  /** Le cycle compte-t-il seulement un livrable du dossier ? */
+  ngOnDestroy(): void {
+    this.detruit$.next();
+    this.detruit$.complete();
+  }
+
+  /** Le projet compte-t-il seulement un livrable requis au dossier ? */
   get vide(): boolean {
     return !this.loading && this.ppapTotal === 0;
   }
@@ -69,7 +87,9 @@ export class ApqpPpapPageComponent implements OnInit {
       autoFocus: 'first-tabbable',
       restoreFocus: true,
       width: '44rem',
-      data: { phase, deliverable, editable: this.editable } as ApqpDeliverableDetailDialogData
+      data: {
+        projectId: this.projetId, phase, deliverable, editable: this.editable
+      } as ApqpDeliverableDetailDialogData
     });
     ref.afterClosed().subscribe(cycle => {
       if (cycle) this.appliquer(cycle);
@@ -77,8 +97,9 @@ export class ApqpPpapPageComponent implements OnInit {
   }
 
   private charger(): void {
+    if (!this.projetId) return;
     this.loading = true;
-    this.service.cycle().subscribe({
+    this.service.cycle(this.projetId).subscribe({
       next: cycle => {
         this.appliquer(cycle);
         this.loading = false;
@@ -94,6 +115,7 @@ export class ApqpPpapPageComponent implements OnInit {
 
   private appliquer(cycle: ApqpCycle): void {
     this.phases = cycle.phases;
+    this.projetNom = cycle.projectName;
     this.ppapDone = cycle.ppapDone;
     this.ppapTotal = cycle.ppapTotal;
   }

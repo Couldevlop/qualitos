@@ -2,9 +2,20 @@
   <qos-page-header
     eyebrow="APQP" i18n-eyebrow="@@apqp.eyebrow"
     title="Dossier PPAP" i18n-title="@@apqp.ppap.title"
-    subtitle="Les livrables que le référentiel marque d'un astérisque : ce qui compose le dossier remis au client."
-    i18n-subtitle="@@apqp.ppap.page-subtitle">
+    [subtitle]="projetNom">
+    <!-- Le dossier appartient au projet : on y revient d'ici, il n'a plus
+         d'adresse globale d'ou l'on repartirait vers nulle part. -->
+    <button qosActions mat-stroked-button type="button" data-test="retour-projet"
+            [routerLink]="['/apqp', projetId]">
+      <mat-icon aria-hidden="true">arrow_back</mat-icon>
+      <span i18n="@@apqp.back-to-project">Retour au projet</span>
+    </button>
   </qos-page-header>
+
+  <p class="legende" i18n="@@apqp.ppap.page-subtitle">
+    Les livrables que vous avez marqués « requis au dossier PPAP » : ce qui compose
+    le dossier remis au client.
+  </p>
 
   <!-- Le meme composant que sous le schema du cycle : une seconde implementation
        aurait diverge de la premiere au premier ajustement. -->
@@ -12,10 +23,10 @@
                          (ouvrir)="ouvrirLivrable($event)">
   </qos-apqp-ppap-summary>
 
-  <!-- Un cycle sans livrable etoile n'arrive qu'apres les avoir tous retires :
+  <!-- Un projet sans livrable requis n'arrive qu'avant d'en avoir marque un :
        on dit quoi faire, plutot que de laisser un blanc. -->
   <p class="invite" *ngIf="vide" data-test="dossier-vide" i18n="@@apqp.ppap.empty">
-    Aucun livrable du cycle n'est marqué comme élément du dossier PPAP. Ouvrez une phase
-    du cycle pour en marquer un.
+    Aucun livrable de ce projet n'est marqué « requis au dossier PPAP ». Ouvrez un
+    livrable du cycle pour l'y ajouter.
   </p>
 </div>

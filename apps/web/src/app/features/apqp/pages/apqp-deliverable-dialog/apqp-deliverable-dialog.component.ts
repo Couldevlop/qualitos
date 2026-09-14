@@ -2,9 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-import {
-  ApqpDeliverable, ApqpDeliverableKind, ApqpDeliverableRequest
-} from '../../apqp.types';
+import { ApqpDeliverable, ApqpDeliverableRequest } from '../../apqp.types';
 import { nonBlank } from '../../apqp.validators';
 
 /** La phase concernée, et le livrable à reformuler s'il en existe un. */
@@ -19,6 +17,11 @@ export interface ApqpDeliverableDialogData {
  * <p>Le titre rappelle la PHASE : sur un cycle de cinq à six phases portant
  * chacune une dizaine de livrables, un dialogue qui ne dirait pas où l'on écrit
  * laisserait un doute au moment de valider.
+ *
+ * <p>Le choix d'un « genre » a disparu : il décidait du formulaire qu'on verrait
+ * en ouvrant le livrable, donc de ce qu'on aurait le droit d'y mettre, avant même
+ * d'avoir travaillé le sujet. À sa place, un texte libre — l'artefact attendu —
+ * qui DÉCRIT ce que le livrable doit produire sans rien interdire.
  */
 @Component({
   selector: 'qos-apqp-deliverable-dialog',
@@ -29,20 +32,9 @@ export class ApqpDeliverableDialogComponent {
 
   readonly form = this.fb.nonNullable.group({
     label: ['', [Validators.required, nonBlank, Validators.maxLength(500)]],
-    // Le genre decide de ce que le popup du livrable demandera : une piece, un
-    // renvoi, des mesures, des points. Par defaut une piece -- le cas le plus
-    // frequent, et celui qui ne suppose rien.
-    kind: ['ATTACHMENT' as ApqpDeliverableKind, [Validators.required]],
+    expectedArtifact: ['', [Validators.maxLength(1000)]],
     ppap: [false]
   });
-
-  /** Les genres, avec ce que chacun demande dit en clair. */
-  readonly genres: { value: ApqpDeliverableKind; label: string }[] = [
-    { value: 'ATTACHMENT', label: $localize`:@@apqp.kind.attachment:Un document à joindre` },
-    { value: 'MODULE_LINK', label: $localize`:@@apqp.kind.module-link:Un enregistrement déjà tenu dans QualitOS` },
-    { value: 'DATA_ENTRY', label: $localize`:@@apqp.kind.data-entry:Des mesures à saisir` },
-    { value: 'CHECKLIST', label: $localize`:@@apqp.kind.checklist:Une liste de points à acquitter` }
-  ];
 
   readonly editing: boolean;
 
@@ -56,7 +48,7 @@ export class ApqpDeliverableDialogComponent {
     if (data?.deliverable) {
       this.form.patchValue({
         label: data.deliverable.label,
-        kind: data.deliverable.kind,
+        expectedArtifact: data.deliverable.expectedArtifact ?? '',
         ppap: data.deliverable.ppap
       });
     }
@@ -86,9 +78,11 @@ export class ApqpDeliverableDialogComponent {
       return;
     }
     const saisie = this.form.getRawValue();
+    // Un champ réduit à des espaces n'est pas une valeur : on rend `null` plutôt
+    // qu'une ligne blanche que la liste afficherait comme un sous-titre vide.
     this.dialogRef.close({
       label: saisie.label.trim(),
-      kind: saisie.kind,
+      expectedArtifact: saisie.expectedArtifact.trim() || null,
       ppap: saisie.ppap
     });
   }

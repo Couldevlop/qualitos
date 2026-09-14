@@ -4598,25 +4598,9 @@ Customer portal</target>
         <source>APQP</source>
         <target state="translated">APQP</target>
       </trans-unit>
-      <trans-unit id="nav.apqp-cycle" datatype="html">
-        <source>Le cycle</source>
-        <target state="translated">The cycle</target>
-      </trans-unit>
-      <trans-unit id="nav.apqp-ppap" datatype="html">
-        <source>Dossier PPAP</source>
-        <target state="translated">PPAP file</target>
-      </trans-unit>
       <trans-unit id="apqp.eyebrow" datatype="html">
         <source>APQP</source>
         <target state="translated">APQP</target>
-      </trans-unit>
-      <trans-unit id="apqp.title" datatype="html">
-        <source>Planification qualité produit</source>
-        <target state="translated">Advanced Product Quality Planning</target>
-      </trans-unit>
-      <trans-unit id="apqp.subtitle" datatype="html">
-        <source>Les phases se lisent en V : on descend jusqu'au point bas du projet, on remonte vers la production série.</source>
-        <target state="translated">The phases read as a V: down to the low point of the project, then back up to serial production.</target>
       </trans-unit>
       <trans-unit id="apqp.cycle-aria" datatype="html">
         <source>Cycle APQP</source>
@@ -4751,16 +4735,16 @@ Customer portal</target>
         <target state="translated">Reset from the reference</target>
       </trans-unit>
       <trans-unit id="apqp.confirm-reset" datatype="html">
-        <source>Remplacer votre cycle par celui du référentiel ? Vos phases, vos livrables et les pièces qui les prouvent seront définitivement perdus.</source>
-        <target state="translated">Replace your cycle with the reference one? Your phases, your deliverables and the files proving them will be lost for good.</target>
+        <source>Remplacer le cycle de ce projet par celui du référentiel ? Ses phases, ses livrables et les pièces qui les prouvent seront définitivement perdus.</source>
+        <target state="translated">Replace this project’s cycle with the reference one? Its phases, its deliverables and the files proving them will be lost for good.</target>
       </trans-unit>
       <trans-unit id="apqp.toggle-deliverable-aria" datatype="html">
         <source>Déclarer « <x id="label"/> » acquis</source>
         <target state="translated">Declare “<x id="label"/>” obtained</target>
       </trans-unit>
       <trans-unit id="apqp.ppap-mark-aria" datatype="html">
-        <source>Élément du dossier PPAP</source>
-        <target state="translated">Part of the PPAP file</target>
+        <source>Livrable requis au dossier PPAP</source>
+        <target state="translated">Deliverable required for the PPAP file</target>
       </trans-unit>
       <trans-unit id="apqp.evidence-count-aria" datatype="html">
         <source><x id="count"/> pièce(s) jointe(s)</source>
@@ -4770,21 +4754,17 @@ Customer portal</target>
         <source>Dossier PPAP</source>
         <target state="translated">PPAP file</target>
       </trans-unit>
-      <trans-unit id="apqp.ppap.legend" datatype="html">
-        <source>* Les livrables marqués d'un astérisque dans le référentiel composent le dossier remis au client.</source>
-        <target state="translated">* Deliverables marked with an asterisk in the reference make up the file handed to the customer.</target>
-      </trans-unit>
       <trans-unit id="apqp.ppap.progress" datatype="html">
-        <source><x id="done"/> / <x id="total"/> livrables acquis</source>
-        <target state="translated"><x id="done"/> of <x id="total"/> deliverables obtained</target>
+        <source><x id="done"/> / <x id="total"/> livrables requis fournis</source>
+        <target state="translated"><x id="done"/> of <x id="total"/> required deliverables supplied</target>
       </trans-unit>
       <trans-unit id="apqp.ppap.progress-aria" datatype="html">
         <source>Complétude du dossier PPAP : <x id="percent"/> %</source>
         <target state="translated">PPAP file completeness: <x id="percent"/> %</target>
       </trans-unit>
       <trans-unit id="apqp.ppap.row-done" datatype="html">
-        <source><x id="label"/> — acquis</source>
-        <target state="translated"><x id="label"/> — obtained</target>
+        <source><x id="label"/> — fourni</source>
+        <target state="translated"><x id="label"/> — supplied</target>
       </trans-unit>
       <trans-unit id="apqp.ppap.row-pending" datatype="html">
         <source><x id="label"/> — à fournir</source>
@@ -4815,12 +4795,8 @@ Customer portal</target>
         <target state="translated">You can view this deliverable, not change it.</target>
       </trans-unit>
       <trans-unit id="apqp.deliverable.blocked-link" datatype="html">
-        <source>Désignez l'enregistrement avant de déclarer ce livrable acquis.</source>
-        <target state="translated">Point to the record before declaring this deliverable obtained.</target>
-      </trans-unit>
-      <trans-unit id="apqp.deliverable.blocked-rows" datatype="html">
-        <source>Chaque ligne a besoin d'un intitulé.</source>
-        <target state="translated">Every row needs a label.</target>
+        <source>Un renvoi se pose entier : le module ET son identifiant, ou ni l'un ni l'autre.</source>
+        <target state="translated">A reference is set whole: the module AND its identifier, or neither.</target>
       </trans-unit>
       <trans-unit id="apqp.deliverable.failed" datatype="html">
         <source>Opération impossible sur ce livrable.</source>
@@ -4886,89 +4862,17 @@ Customer portal</target>
         <source>Action corrective (CAPA)</source>
         <target state="translated">Corrective action (CAPA)</target>
       </trans-unit>
-      <trans-unit id="apqp.data.label" datatype="html">
-        <source>Indicateur</source>
-        <target state="translated">Indicator</target>
-      </trans-unit>
-      <trans-unit id="apqp.data.value" datatype="html">
-        <source>Valeur</source>
-        <target state="translated">Value</target>
-      </trans-unit>
-      <trans-unit id="apqp.data.unit" datatype="html">
-        <source>Unité</source>
-        <target state="translated">Unit</target>
-      </trans-unit>
-      <trans-unit id="apqp.data.measured-at" datatype="html">
-        <source>Mesuré le</source>
-        <target state="translated">Measured on</target>
-      </trans-unit>
-      <trans-unit id="apqp.data.add-row" datatype="html">
-        <source>Ajouter un indicateur</source>
-        <target state="translated">Add an indicator</target>
-      </trans-unit>
-      <trans-unit id="apqp.data.remove-row" datatype="html">
-        <source>Retirer cette ligne</source>
-        <target state="translated">Remove this row</target>
-      </trans-unit>
-      <trans-unit id="apqp.point.label" datatype="html">
-        <source>Point à acquitter</source>
-        <target state="translated">Point to acknowledge</target>
-      </trans-unit>
-      <trans-unit id="apqp.point.add-row" datatype="html">
-        <source>Ajouter un point</source>
-        <target state="translated">Add a point</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind-help.attachment" datatype="html">
-        <source>Joignez le document qui prouve ce livrable — Word, Excel, PDF ou photo.</source>
-        <target state="translated">Attach the document that proves this deliverable — Word, Excel, PDF or photo.</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind-help.module-link" datatype="html">
-        <source>Ce livrable est déjà tenu dans un module de QualitOS : désignez l'enregistrement concerné.</source>
-        <target state="translated">This deliverable already lives in a QualitOS module: point to the record concerned.</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind-help.data-entry" datatype="html">
-        <source>Saisissez les valeurs mesurées, avec leur unité et leur date.</source>
-        <target state="translated">Enter the measured values, with their unit and date.</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind-help.checklist" datatype="html">
-        <source>Ce livrable n'est acquis que si tous ses points le sont.</source>
-        <target state="translated">This deliverable is obtained only once all its points are.</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind.attachment" datatype="html">
-        <source>Un document à joindre</source>
-        <target state="translated">A document to attach</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind.module-link" datatype="html">
-        <source>Un enregistrement déjà tenu dans QualitOS</source>
-        <target state="translated">A record already held in QualitOS</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind.data-entry" datatype="html">
-        <source>Des mesures à saisir</source>
-        <target state="translated">Measurements to enter</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind.checklist" datatype="html">
-        <source>Une liste de points à acquitter</source>
-        <target state="translated">A list of points to acknowledge</target>
-      </trans-unit>
-      <trans-unit id="apqp.deliverable-dialog.field-kind" datatype="html">
-        <source>Ce que ce livrable produit</source>
-        <target state="translated">What this deliverable produces</target>
-      </trans-unit>
-      <trans-unit id="apqp.deliverable-dialog.kind-hint" datatype="html">
-        <source>Détermine ce que le livrable demandera : une pièce jointe, un renvoi, des mesures ou des points à cocher.</source>
-        <target state="translated">Sets what the deliverable will ask for: an attachment, a record reference, measurements, or points to tick.</target>
-      </trans-unit>
       <trans-unit id="apqp.deliverable-dialog.ppap" datatype="html">
-        <source>Ce livrable compose le dossier PPAP</source>
-        <target state="translated">This deliverable is part of the PPAP file</target>
+        <source>Ce livrable est requis au dossier PPAP</source>
+        <target state="translated">This deliverable is required for the PPAP file</target>
       </trans-unit>
       <trans-unit id="apqp.ppap.page-subtitle" datatype="html">
-        <source>Les livrables que le référentiel marque d'un astérisque : ce qui compose le dossier remis au client.</source>
-        <target state="translated">The deliverables the reference marks with an asterisk: what makes up the file handed to the customer.</target>
+        <source>Les livrables que vous avez marqués « requis au dossier PPAP » : ce qui compose le dossier remis au client.</source>
+        <target state="translated">The deliverables you marked “required for the PPAP file”: what makes up the file handed to the customer.</target>
       </trans-unit>
       <trans-unit id="apqp.ppap.empty" datatype="html">
-        <source>Aucun livrable du cycle n'est marqué comme élément du dossier PPAP. Ouvrez une phase du cycle pour en marquer un.</source>
-        <target state="translated">No deliverable in the cycle is marked as part of the PPAP file. Open a phase of the cycle to mark one.</target>
+        <source>Aucun livrable de ce projet n'est marqué « requis au dossier PPAP ». Ouvrez un livrable du cycle pour l'y ajouter.</source>
+        <target state="translated">No deliverable in this project is marked “required for the PPAP file”. Open a deliverable of the cycle to add one.</target>
       </trans-unit>
       <trans-unit id="apqp.link.open" datatype="html">
         <source>Ouvrir la fiche</source>
@@ -4977,6 +4881,182 @@ Customer portal</target>
       <trans-unit id="apqp.link.no-route" datatype="html">
         <source>Un plan de surveillance s'ouvre depuis son produit : il n'a pas d'adresse propre.</source>
         <target state="translated">A control plan opens from its product: it has no address of its own.</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-projects" datatype="html">
+        <source>Projets</source>
+        <target state="translated">Projects</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.title" datatype="html">
+        <source>APQP — Projets</source>
+        <target state="translated">APQP — Projects</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.subtitle" datatype="html">
+        <source>Chaque projet porte son propre cycle en V, ses livrables et son dossier PPAP.</source>
+        <target state="translated">Each project carries its own V cycle, its deliverables and its PPAP file.</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.new" datatype="html">
+        <source>Nouveau projet</source>
+        <target state="translated">New project</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.col-deliverables" datatype="html">
+        <source>Livrables</source>
+        <target state="translated">Deliverables</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.col-ppap" datatype="html">
+        <source>Dossier PPAP</source>
+        <target state="translated">PPAP file</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.empty" datatype="html">
+        <source>Aucun projet pour l'instant. Créez-en un : il partira du cycle du référentiel, que vous adapterez ensuite.</source>
+        <target state="translated">No project yet. Create one: it starts from the reference cycle, which you then adapt.</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.delete-aria" datatype="html">
+        <source>Supprimer le projet <x id="name"/></source>
+        <target state="translated">Delete project <x id="name"/></target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.confirm-delete" datatype="html">
+        <source>Supprimer le projet « <x id="name"/> » ? Son cycle, ses livrables et les pièces qui les prouvent seront définitivement perdus.</source>
+        <target state="translated">Delete project “<x id="name"/>”? Its cycle, its deliverables and the files proving them will be lost for good.</target>
+      </trans-unit>
+      <trans-unit id="apqp.project.type.npi" datatype="html">
+        <source>NPI — nouveau produit</source>
+        <target state="translated">NPI — new product</target>
+      </trans-unit>
+      <trans-unit id="apqp.project.type.tow" datatype="html">
+        <source>ToW — transfert d'activité</source>
+        <target state="translated">ToW — transfer of work</target>
+      </trans-unit>
+      <trans-unit id="apqp.project.type.new-customer" datatype="html">
+        <source>Nouveau client</source>
+        <target state="translated">New customer</target>
+      </trans-unit>
+      <trans-unit id="apqp.project.type.other" datatype="html">
+        <source>Autre</source>
+        <target state="translated">Other</target>
+      </trans-unit>
+      <trans-unit id="apqp.project.customer" datatype="html">
+        <source>Client</source>
+        <target state="translated">Customer</target>
+      </trans-unit>
+      <trans-unit id="apqp.project.reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">Reference</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.title-create" datatype="html">
+        <source>Nouveau projet APQP</source>
+        <target state="translated">New APQP project</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.title-edit" datatype="html">
+        <source>Modifier le projet</source>
+        <target state="translated">Edit the project</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.field-name" datatype="html">
+        <source>Nom du projet</source>
+        <target state="translated">Project name</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.name-placeholder" datatype="html">
+        <source>Ex. : Support moteur — ligne 4</source>
+        <target state="translated">E.g. engine mount — line 4</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.name-required" datatype="html">
+        <source>Un projet sans nom ne se retrouve pas dans la liste.</source>
+        <target state="translated">A project without a name cannot be found in the list.</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.blocked-name" datatype="html">
+        <source>Donnez un nom au projet : c'est ce que la liste affiche.</source>
+        <target state="translated">Give the project a name: it is what the list shows.</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.field-type" datatype="html">
+        <source>Type de projet</source>
+        <target state="translated">Project type</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.type-hint" datatype="html">
+        <source>Ce qui motive le projet : un lancement, un transfert, une ouverture de compte.</source>
+        <target state="translated">What drives the project: a launch, a transfer, a new account.</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.reference-hint" datatype="html">
+        <source>La référence pièce ou le numéro d'affaire — celle que le client cite.</source>
+        <target state="translated">The part reference or job number — the one the customer quotes.</target>
+      </trans-unit>
+      <trans-unit id="apqp.back-to-projects" datatype="html">
+        <source>Retour aux projets</source>
+        <target state="translated">Back to projects</target>
+      </trans-unit>
+      <trans-unit id="apqp.back-to-project" datatype="html">
+        <source>Retour au projet</source>
+        <target state="translated">Back to the project</target>
+      </trans-unit>
+      <trans-unit id="apqp.status.not-started" datatype="html">
+        <source>Non commencé</source>
+        <target state="translated">Not started</target>
+      </trans-unit>
+      <trans-unit id="apqp.status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">In progress</target>
+      </trans-unit>
+      <trans-unit id="apqp.status.blocked" datatype="html">
+        <source>Bloqué</source>
+        <target state="translated">Blocked</target>
+      </trans-unit>
+      <trans-unit id="apqp.status.done" datatype="html">
+        <source>Acquis</source>
+        <target state="translated">Obtained</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.owner" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">Owner</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.due-date" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">Due date</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.percent" datatype="html">
+        <source>Avancement (%)</source>
+        <target state="translated">Progress (%)</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.percent-range" datatype="html">
+        <source>L'avancement se compte de 0 à 100.</source>
+        <target state="translated">Progress runs from 0 to 100.</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.expected-artifact" datatype="html">
+        <source>Artefact attendu</source>
+        <target state="translated">Expected artefact</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.expected-artifact-placeholder" datatype="html">
+        <source>Ex. : plan de surveillance signé, au format tableur</source>
+        <target state="translated">E.g. signed control plan, as a spreadsheet</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.expected-artifact-hint" datatype="html">
+        <source>Ce que ce livrable doit produire, dit en clair : c'est ce qu'on vérifiera.</source>
+        <target state="translated">What this deliverable must produce, plainly stated: that is what will be checked.</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.blocked-fields" datatype="html">
+        <source>Un champ du formulaire est hors limites.</source>
+        <target state="translated">A field of the form is out of bounds.</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.section" datatype="html">
+        <source>Renvoi vers un enregistrement</source>
+        <target state="translated">Reference to a record</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.optional-hint" datatype="html">
+        <source>Facultatif. Les deux champs se posent ensemble, ou aucun des deux.</source>
+        <target state="translated">Optional. Both fields are set together, or neither.</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.none" datatype="html">
+        <source>Aucun</source>
+        <target state="translated">None</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.field-artifact" datatype="html">
+        <source>Artefact attendu</source>
+        <target state="translated">Expected artefact</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.artifact-placeholder" datatype="html">
+        <source>Ex. : tableur signé par le responsable méthodes</source>
+        <target state="translated">E.g. spreadsheet signed by the methods engineer</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.artifact-hint" datatype="html">
+        <source>Facultatif. Ce que ce livrable doit produire concrètement : c'est ce qu'on vérifiera.</source>
+        <target state="translated">Optional. What this deliverable must concretely produce: that is what will be checked.</target>
       </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>
@@ -15625,7 +15705,7 @@ declared income
         <target state="translated">The three disciplines to fill in</target>
       </trans-unit>
       <trans-unit id="nc.8d.saisies-hint" datatype="html">
-        <source>L'équipe, l'endiguement et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
+        <source>L'équipe, la sécurisation et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
         <target state="translated">The team, the containment and the recognition have no source in the platform: they are filled in here. The other five disciplines are aggregated from the non-conformity case.</target>
       </trans-unit>
       <trans-unit id="nc.8d.team-label" datatype="html">
@@ -15636,8 +15716,24 @@ declared income
         <source>Une personne par ligne, avec son rôle dans le traitement de l'écart</source>
         <target state="translated">One person per line, with their role in handling the deviation</target>
       </trans-unit>
+      <trans-unit id="nc.8d.export" datatype="html">
+        <source>Exporter</source>
+        <target state="translated">Export</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-tooltip" datatype="html">
+        <source>Le PDF signé et ancré du rapport</source>
+        <target state="translated">The signed and anchored PDF of the report</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-issue-title" datatype="html">
+        <source>Émettre avant d'exporter ?</source>
+        <target state="translated">Issue before exporting?</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-issue" datatype="html">
+        <source>Le PDF n'existe qu'une fois le rapport émis : l'émission fige le contenu, signe son empreinte et l'ancre. Sans cela, deux exports du même rapport pourraient différer.</source>
+        <target state="translated">The PDF exists only once the report is issued: issuing freezes the content, signs its fingerprint and anchors it. Without that, two exports of the same report could differ.</target>
+      </trans-unit>
       <trans-unit id="nc.8d.containment-label" datatype="html">
-        <source>D3 — Actions d'endiguement immédiates</source>
+        <source>D3 — Actions de sécurisation immédiates</source>
         <target state="translated">D3 — Immediate containment actions</target>
       </trans-unit>
       <trans-unit id="nc.8d.containment-placeholder" datatype="html">

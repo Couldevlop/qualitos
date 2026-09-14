@@ -4598,25 +4598,9 @@ Portail clients</source>
         <source>APQP</source>
         <target state="translated">APQP</target>
       </trans-unit>
-      <trans-unit id="nav.apqp-cycle" datatype="html">
-        <source>Le cycle</source>
-        <target state="translated">サイクル</target>
-      </trans-unit>
-      <trans-unit id="nav.apqp-ppap" datatype="html">
-        <source>Dossier PPAP</source>
-        <target state="translated">PPAP 提出資料</target>
-      </trans-unit>
       <trans-unit id="apqp.eyebrow" datatype="html">
         <source>APQP</source>
         <target state="translated">APQP</target>
-      </trans-unit>
-      <trans-unit id="apqp.title" datatype="html">
-        <source>Planification qualité produit</source>
-        <target state="translated">先行製品品質計画</target>
-      </trans-unit>
-      <trans-unit id="apqp.subtitle" datatype="html">
-        <source>Les phases se lisent en V : on descend jusqu'au point bas du projet, on remonte vers la production série.</source>
-        <target state="translated">フェーズはV字に読みます。プロジェクトの底まで下り、量産へと上がります。</target>
       </trans-unit>
       <trans-unit id="apqp.cycle-aria" datatype="html">
         <source>Cycle APQP</source>
@@ -4751,16 +4735,16 @@ Portail clients</source>
         <target state="translated">標準リストから再設定</target>
       </trans-unit>
       <trans-unit id="apqp.confirm-reset" datatype="html">
-        <source>Remplacer votre cycle par celui du référentiel ? Vos phases, vos livrables et les pièces qui les prouvent seront définitivement perdus.</source>
-        <target state="translated">ご自身のサイクルを標準リストで置き換えますか？フェーズ、成果物、それを証明するファイルは完全に失われます。</target>
+        <source>Remplacer le cycle de ce projet par celui du référentiel ? Ses phases, ses livrables et les pièces qui les prouvent seront définitivement perdus.</source>
+        <target state="translated">このプロジェクトのサイクルを標準リストで置き換えますか？フェーズ、成果物、それを証明するファイルは完全に失われます。</target>
       </trans-unit>
       <trans-unit id="apqp.toggle-deliverable-aria" datatype="html">
         <source>Déclarer « <x id="label"/> » acquis</source>
         <target state="translated">「<x id="label"/>」を取得済みとする</target>
       </trans-unit>
       <trans-unit id="apqp.ppap-mark-aria" datatype="html">
-        <source>Élément du dossier PPAP</source>
-        <target state="translated">PPAP 提出資料の構成要素</target>
+        <source>Livrable requis au dossier PPAP</source>
+        <target state="translated">PPAP 提出資料に必要な成果物</target>
       </trans-unit>
       <trans-unit id="apqp.evidence-count-aria" datatype="html">
         <source><x id="count"/> pièce(s) jointe(s)</source>
@@ -4770,21 +4754,17 @@ Portail clients</source>
         <source>Dossier PPAP</source>
         <target state="translated">PPAP 提出資料</target>
       </trans-unit>
-      <trans-unit id="apqp.ppap.legend" datatype="html">
-        <source>* Les livrables marqués d'un astérisque dans le référentiel composent le dossier remis au client.</source>
-        <target state="translated">※ 標準リストでアスタリスクが付いた成果物が、顧客に提出する資料を構成します。</target>
-      </trans-unit>
       <trans-unit id="apqp.ppap.progress" datatype="html">
-        <source><x id="done"/> / <x id="total"/> livrables acquis</source>
-        <target state="translated">取得済み成果物 <x id="done"/> / <x id="total"/> 件</target>
+        <source><x id="done"/> / <x id="total"/> livrables requis fournis</source>
+        <target state="translated">提出済みの必須成果物 <x id="done"/> / <x id="total"/> 件</target>
       </trans-unit>
       <trans-unit id="apqp.ppap.progress-aria" datatype="html">
         <source>Complétude du dossier PPAP : <x id="percent"/> %</source>
         <target state="translated">PPAP 提出資料の充足度：<x id="percent"/> %</target>
       </trans-unit>
       <trans-unit id="apqp.ppap.row-done" datatype="html">
-        <source><x id="label"/> — acquis</source>
-        <target state="translated"><x id="label"/> — 取得済み</target>
+        <source><x id="label"/> — fourni</source>
+        <target state="translated"><x id="label"/> — 提出済み</target>
       </trans-unit>
       <trans-unit id="apqp.ppap.row-pending" datatype="html">
         <source><x id="label"/> — à fournir</source>
@@ -4815,12 +4795,8 @@ Portail clients</source>
         <target state="translated">この成果物は閲覧のみ可能で、変更はできません。</target>
       </trans-unit>
       <trans-unit id="apqp.deliverable.blocked-link" datatype="html">
-        <source>Désignez l'enregistrement avant de déclarer ce livrable acquis.</source>
-        <target state="translated">成果物を取得済みとする前に、対象レコードを指定してください。</target>
-      </trans-unit>
-      <trans-unit id="apqp.deliverable.blocked-rows" datatype="html">
-        <source>Chaque ligne a besoin d'un intitulé.</source>
-        <target state="translated">各行には名称が必要です。</target>
+        <source>Un renvoi se pose entier : le module ET son identifiant, ou ni l'un ni l'autre.</source>
+        <target state="translated">参照は一括で指定します。モジュールと識別子の両方、またはどちらも指定しません。</target>
       </trans-unit>
       <trans-unit id="apqp.deliverable.failed" datatype="html">
         <source>Opération impossible sur ce livrable.</source>
@@ -4886,89 +4862,17 @@ Portail clients</source>
         <source>Action corrective (CAPA)</source>
         <target state="translated">是正処置（CAPA）</target>
       </trans-unit>
-      <trans-unit id="apqp.data.label" datatype="html">
-        <source>Indicateur</source>
-        <target state="translated">指標</target>
-      </trans-unit>
-      <trans-unit id="apqp.data.value" datatype="html">
-        <source>Valeur</source>
-        <target state="translated">値</target>
-      </trans-unit>
-      <trans-unit id="apqp.data.unit" datatype="html">
-        <source>Unité</source>
-        <target state="translated">単位</target>
-      </trans-unit>
-      <trans-unit id="apqp.data.measured-at" datatype="html">
-        <source>Mesuré le</source>
-        <target state="translated">測定日</target>
-      </trans-unit>
-      <trans-unit id="apqp.data.add-row" datatype="html">
-        <source>Ajouter un indicateur</source>
-        <target state="translated">指標を追加</target>
-      </trans-unit>
-      <trans-unit id="apqp.data.remove-row" datatype="html">
-        <source>Retirer cette ligne</source>
-        <target state="translated">この行を削除</target>
-      </trans-unit>
-      <trans-unit id="apqp.point.label" datatype="html">
-        <source>Point à acquitter</source>
-        <target state="translated">確認すべき項目</target>
-      </trans-unit>
-      <trans-unit id="apqp.point.add-row" datatype="html">
-        <source>Ajouter un point</source>
-        <target state="translated">項目を追加</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind-help.attachment" datatype="html">
-        <source>Joignez le document qui prouve ce livrable — Word, Excel, PDF ou photo.</source>
-        <target state="translated">この成果物を証明する文書を添付してください（Word・Excel・PDF・写真）。</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind-help.module-link" datatype="html">
-        <source>Ce livrable est déjà tenu dans un module de QualitOS : désignez l'enregistrement concerné.</source>
-        <target state="translated">この成果物は QualitOS の別モジュールで管理されています。該当レコードを指定してください。</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind-help.data-entry" datatype="html">
-        <source>Saisissez les valeurs mesurées, avec leur unité et leur date.</source>
-        <target state="translated">測定値を、単位と日付とともに入力してください。</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind-help.checklist" datatype="html">
-        <source>Ce livrable n'est acquis que si tous ses points le sont.</source>
-        <target state="translated">この成果物は、すべての項目が満たされて初めて取得となります。</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind.attachment" datatype="html">
-        <source>Un document à joindre</source>
-        <target state="translated">添付する文書</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind.module-link" datatype="html">
-        <source>Un enregistrement déjà tenu dans QualitOS</source>
-        <target state="translated">QualitOS で既に管理されているレコード</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind.data-entry" datatype="html">
-        <source>Des mesures à saisir</source>
-        <target state="translated">入力する測定値</target>
-      </trans-unit>
-      <trans-unit id="apqp.kind.checklist" datatype="html">
-        <source>Une liste de points à acquitter</source>
-        <target state="translated">確認項目のリスト</target>
-      </trans-unit>
-      <trans-unit id="apqp.deliverable-dialog.field-kind" datatype="html">
-        <source>Ce que ce livrable produit</source>
-        <target state="translated">この成果物が生み出すもの</target>
-      </trans-unit>
-      <trans-unit id="apqp.deliverable-dialog.kind-hint" datatype="html">
-        <source>Détermine ce que le livrable demandera : une pièce jointe, un renvoi, des mesures ou des points à cocher.</source>
-        <target state="translated">成果物が何を求めるかを決めます：添付ファイル、レコード参照、測定値、チェック項目。</target>
-      </trans-unit>
       <trans-unit id="apqp.deliverable-dialog.ppap" datatype="html">
-        <source>Ce livrable compose le dossier PPAP</source>
-        <target state="translated">この成果物は PPAP 提出資料の一部です</target>
+        <source>Ce livrable est requis au dossier PPAP</source>
+        <target state="translated">この成果物は PPAP 提出資料に必要です</target>
       </trans-unit>
       <trans-unit id="apqp.ppap.page-subtitle" datatype="html">
-        <source>Les livrables que le référentiel marque d'un astérisque : ce qui compose le dossier remis au client.</source>
-        <target state="translated">標準リストでアスタリスクが付いた成果物 — 顧客に提出する資料を構成します。</target>
+        <source>Les livrables que vous avez marqués « requis au dossier PPAP » : ce qui compose le dossier remis au client.</source>
+        <target state="translated">「PPAP 提出資料に必要」と印を付けた成果物 — 顧客に提出する資料を構成します。</target>
       </trans-unit>
       <trans-unit id="apqp.ppap.empty" datatype="html">
-        <source>Aucun livrable du cycle n'est marqué comme élément du dossier PPAP. Ouvrez une phase du cycle pour en marquer un.</source>
-        <target state="translated">サイクル内に PPAP 提出資料の構成要素として印の付いた成果物がありません。フェーズを開いて印を付けてください。</target>
+        <source>Aucun livrable de ce projet n'est marqué « requis au dossier PPAP ». Ouvrez un livrable du cycle pour l'y ajouter.</source>
+        <target state="translated">このプロジェクトには「PPAP 提出資料に必要」と印の付いた成果物がありません。サイクルの成果物を開いて追加してください。</target>
       </trans-unit>
       <trans-unit id="apqp.link.open" datatype="html">
         <source>Ouvrir la fiche</source>
@@ -4977,6 +4881,182 @@ Portail clients</source>
       <trans-unit id="apqp.link.no-route" datatype="html">
         <source>Un plan de surveillance s'ouvre depuis son produit : il n'a pas d'adresse propre.</source>
         <target state="translated">コントロールプランは製品から開きます。単独の URL はありません。</target>
+      </trans-unit>
+      <trans-unit id="nav.apqp-projects" datatype="html">
+        <source>Projets</source>
+        <target state="translated">プロジェクト</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.title" datatype="html">
+        <source>APQP — Projets</source>
+        <target state="translated">APQP — プロジェクト</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.subtitle" datatype="html">
+        <source>Chaque projet porte son propre cycle en V, ses livrables et son dossier PPAP.</source>
+        <target state="translated">各プロジェクトは、独自の V 字サイクル、成果物、PPAP 提出資料を持ちます。</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.new" datatype="html">
+        <source>Nouveau projet</source>
+        <target state="translated">新規プロジェクト</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.col-deliverables" datatype="html">
+        <source>Livrables</source>
+        <target state="translated">成果物</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.col-ppap" datatype="html">
+        <source>Dossier PPAP</source>
+        <target state="translated">PPAP 提出資料</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.empty" datatype="html">
+        <source>Aucun projet pour l'instant. Créez-en un : il partira du cycle du référentiel, que vous adapterez ensuite.</source>
+        <target state="translated">プロジェクトがまだありません。作成すると標準リストのサイクルから始まり、以後は自由に調整できます。</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.delete-aria" datatype="html">
+        <source>Supprimer le projet <x id="name"/></source>
+        <target state="translated">プロジェクト「<x id="name"/>」を削除</target>
+      </trans-unit>
+      <trans-unit id="apqp.projects.confirm-delete" datatype="html">
+        <source>Supprimer le projet « <x id="name"/> » ? Son cycle, ses livrables et les pièces qui les prouvent seront définitivement perdus.</source>
+        <target state="translated">プロジェクト「<x id="name"/>」を削除しますか？そのサイクル、成果物、証明ファイルは完全に失われます。</target>
+      </trans-unit>
+      <trans-unit id="apqp.project.type.npi" datatype="html">
+        <source>NPI — nouveau produit</source>
+        <target state="translated">NPI — 新製品</target>
+      </trans-unit>
+      <trans-unit id="apqp.project.type.tow" datatype="html">
+        <source>ToW — transfert d'activité</source>
+        <target state="translated">ToW — 業務移管</target>
+      </trans-unit>
+      <trans-unit id="apqp.project.type.new-customer" datatype="html">
+        <source>Nouveau client</source>
+        <target state="translated">新規顧客</target>
+      </trans-unit>
+      <trans-unit id="apqp.project.type.other" datatype="html">
+        <source>Autre</source>
+        <target state="translated">その他</target>
+      </trans-unit>
+      <trans-unit id="apqp.project.customer" datatype="html">
+        <source>Client</source>
+        <target state="translated">顧客</target>
+      </trans-unit>
+      <trans-unit id="apqp.project.reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">参照番号</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.title-create" datatype="html">
+        <source>Nouveau projet APQP</source>
+        <target state="translated">新規 APQP プロジェクト</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.title-edit" datatype="html">
+        <source>Modifier le projet</source>
+        <target state="translated">プロジェクトを編集</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.field-name" datatype="html">
+        <source>Nom du projet</source>
+        <target state="translated">プロジェクト名</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.name-placeholder" datatype="html">
+        <source>Ex. : Support moteur — ligne 4</source>
+        <target state="translated">例：エンジンマウント — ライン 4</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.name-required" datatype="html">
+        <source>Un projet sans nom ne se retrouve pas dans la liste.</source>
+        <target state="translated">名称のないプロジェクトは一覧で見つけられません。</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.blocked-name" datatype="html">
+        <source>Donnez un nom au projet : c'est ce que la liste affiche.</source>
+        <target state="translated">プロジェクトに名前を付けてください。一覧に表示されるのはこれです。</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.field-type" datatype="html">
+        <source>Type de projet</source>
+        <target state="translated">プロジェクト種別</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.type-hint" datatype="html">
+        <source>Ce qui motive le projet : un lancement, un transfert, une ouverture de compte.</source>
+        <target state="translated">プロジェクトの動機：立ち上げ、移管、新規取引の開始。</target>
+      </trans-unit>
+      <trans-unit id="apqp.project-dialog.reference-hint" datatype="html">
+        <source>La référence pièce ou le numéro d'affaire — celle que le client cite.</source>
+        <target state="translated">部品番号または案件番号 — 顧客が使う番号です。</target>
+      </trans-unit>
+      <trans-unit id="apqp.back-to-projects" datatype="html">
+        <source>Retour aux projets</source>
+        <target state="translated">プロジェクト一覧に戻る</target>
+      </trans-unit>
+      <trans-unit id="apqp.back-to-project" datatype="html">
+        <source>Retour au projet</source>
+        <target state="translated">プロジェクトに戻る</target>
+      </trans-unit>
+      <trans-unit id="apqp.status.not-started" datatype="html">
+        <source>Non commencé</source>
+        <target state="translated">未着手</target>
+      </trans-unit>
+      <trans-unit id="apqp.status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">進行中</target>
+      </trans-unit>
+      <trans-unit id="apqp.status.blocked" datatype="html">
+        <source>Bloqué</source>
+        <target state="translated">停滞</target>
+      </trans-unit>
+      <trans-unit id="apqp.status.done" datatype="html">
+        <source>Acquis</source>
+        <target state="translated">取得済み</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.owner" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">担当者</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.due-date" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">期限</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.percent" datatype="html">
+        <source>Avancement (%)</source>
+        <target state="translated">進捗（%）</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.percent-range" datatype="html">
+        <source>L'avancement se compte de 0 à 100.</source>
+        <target state="translated">進捗は 0 から 100 までです。</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.expected-artifact" datatype="html">
+        <source>Artefact attendu</source>
+        <target state="translated">想定される成果物</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.expected-artifact-placeholder" datatype="html">
+        <source>Ex. : plan de surveillance signé, au format tableur</source>
+        <target state="translated">例：署名済みのコントロールプラン（表計算形式）</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.expected-artifact-hint" datatype="html">
+        <source>Ce que ce livrable doit produire, dit en clair : c'est ce qu'on vérifiera.</source>
+        <target state="translated">この成果物が生み出すべきものを平易に。検証されるのはこれです。</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.blocked-fields" datatype="html">
+        <source>Un champ du formulaire est hors limites.</source>
+        <target state="translated">フォームの項目が許容範囲を超えています。</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.section" datatype="html">
+        <source>Renvoi vers un enregistrement</source>
+        <target state="translated">レコードへの参照</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.optional-hint" datatype="html">
+        <source>Facultatif. Les deux champs se posent ensemble, ou aucun des deux.</source>
+        <target state="translated">任意です。2 つの項目は両方指定するか、どちらも指定しません。</target>
+      </trans-unit>
+      <trans-unit id="apqp.link.none" datatype="html">
+        <source>Aucun</source>
+        <target state="translated">なし</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.field-artifact" datatype="html">
+        <source>Artefact attendu</source>
+        <target state="translated">想定される成果物</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.artifact-placeholder" datatype="html">
+        <source>Ex. : tableur signé par le responsable méthodes</source>
+        <target state="translated">例：生産技術責任者が署名した表計算ファイル</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable-dialog.artifact-hint" datatype="html">
+        <source>Facultatif. Ce que ce livrable doit produire concrètement : c'est ce qu'on vérifiera.</source>
+        <target state="translated">任意です。この成果物が具体的に生み出すもの。検証されるのはこれです。</target>
       </trans-unit>
       <trans-unit id="nav.audits-planning" datatype="html">
         <source>Planning audits</source>
@@ -15624,7 +15704,7 @@ historique 12 mois</source>
         <target state="translated">手入力する 3 つの規律</target>
       </trans-unit>
       <trans-unit id="nc.8d.saisies-hint" datatype="html">
-        <source>L'équipe, l'endiguement et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
+        <source>L'équipe, la sécurisation et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
         <target state="translated">チーム、暫定対策、功績の承認はプラットフォームに情報源がないため、ここで入力します。残る 5 つの規律は不適合の案件から集約されます。</target>
       </trans-unit>
       <trans-unit id="nc.8d.team-label" datatype="html">
@@ -15635,8 +15715,24 @@ historique 12 mois</source>
         <source>Une personne par ligne, avec son rôle dans le traitement de l'écart</source>
         <target state="translated">1 行に 1 名、逸脱対応における役割を添えて</target>
       </trans-unit>
+      <trans-unit id="nc.8d.export" datatype="html">
+        <source>Exporter</source>
+        <target state="translated">エクスポート</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-tooltip" datatype="html">
+        <source>Le PDF signé et ancré du rapport</source>
+        <target state="translated">署名・アンカー済みのレポート PDF</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-issue-title" datatype="html">
+        <source>Émettre avant d'exporter ?</source>
+        <target state="translated">エクスポートの前に発行しますか？</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-issue" datatype="html">
+        <source>Le PDF n'existe qu'une fois le rapport émis : l'émission fige le contenu, signe son empreinte et l'ancre. Sans cela, deux exports du même rapport pourraient différer.</source>
+        <target state="translated">PDF はレポートを発行して初めて存在します。発行は内容を確定し、そのフィンガープリントに署名してアンカーします。これがないと、同じレポートの二つのエクスポートが食い違う可能性があります。</target>
+      </trans-unit>
       <trans-unit id="nc.8d.containment-label" datatype="html">
-        <source>D3 — Actions d'endiguement immédiates</source>
+        <source>D3 — Actions de sécurisation immédiates</source>
         <target state="translated">D3 — 緊急の暫定対策</target>
       </trans-unit>
       <trans-unit id="nc.8d.containment-placeholder" datatype="html">

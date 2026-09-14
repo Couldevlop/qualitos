@@ -21,16 +21,21 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Le cycle APQP d'un client.
+ * Le cycle APQP d'un PROJET.
  *
  * <p><b>Lire est ouvert à tout utilisateur authentifié, écrire ne l'est pas.</b>
  * Le cycle décrit la méthode de l'organisation : chacun doit pouvoir la
  * consulter pour savoir ce qu'on attend de lui, mais la refondre est un acte de
  * pilotage qualité. Un opérateur qui supprimerait une phase effacerait ses
  * livrables avec elle.
+ *
+ * <p>Le projet est dans le CHEMIN et le client dans le jeton : les deux filtres
+ * s'appliquent ensemble à chaque opération, si bien qu'un identifiant de phase
+ * emprunté à un autre projet — ou à un autre client — rend 404 et non 403 (OWASP
+ * A01 : ne rien dire de l'existence de la ressource).
  */
 @RestController
-@RequestMapping("/api/v1/apqp/phases")
+@RequestMapping("/api/v1/apqp/projects/{projectId}/phases")
 @PreAuthorize("isAuthenticated()")
 @Tag(name = "APQP", description = "Advanced product quality planning cycle")
 public class ApqpController {
@@ -53,49 +58,50 @@ public class ApqpController {
     }
 
     @GetMapping
-    @Operation(summary = "The tenant's APQP cycle and PPAP completion, seeded on first read")
-    public ApqpDto.CycleResponse cycle() {
-        return service.cycle();
+    @Operation(summary = "A project's APQP cycle and PPAP completion")
+    public ApqpDto.CycleResponse cycle(@PathVariable UUID projectId) {
+        return service.cycle(projectId);
     }
 
     /**
-     * Rend au client le cycle du référentiel, en effaçant le sien.
+     * Rend au projet le cycle du référentiel, en effaçant le sien.
      *
      * <p>Destructif : c'est pourquoi l'écran le demande deux fois. Sans cette
-     * porte, un client dont le cycle a été laissé intact par la reprise n'aurait
-     * aucun moyen d'adopter la nouvelle liste, sinon en supprimant ses phases une
-     * à une.
+     * porte, un projet dont le cycle a été adapté n'aurait aucun moyen d'adopter
+     * la nouvelle liste, sinon en supprimant ses phases une à une.
      */
     @PostMapping("/reset")
     @PreAuthorize(ROLES_ECRITURE)
-    @Operation(summary = "Discard the tenant's cycle and seed it again from the reference")
-    public ApqpDto.CycleResponse reinitialiser() {
-        return service.reinitialiser();
+    @Operation(summary = "Discard the project's cycle and seed it again from the reference")
+    public ApqpDto.CycleResponse reinitialiser(@PathVariable UUID projectId) {
+        return service.reinitialiser(projectId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize(ROLES_ECRITURE)
     @Operation(summary = "Add a phase at the end of the cycle")
-    public ApqpDto.PhaseResponse creer(@Valid @RequestBody ApqpDto.CreatePhaseRequest requete) {
-        return service.creerPhase(requete);
+    public ApqpDto.PhaseResponse creer(@PathVariable UUID projectId,
+                                       @Valid @RequestBody ApqpDto.CreatePhaseRequest requete) {
+        return service.creerPhase(projectId, requete);
     }
 
     @PutMapping("/{phaseId}")
     @PreAuthorize(ROLES_ECRITURE)
     @Operation(summary = "Rename a phase or restate what it establishes")
     public ApqpDto.PhaseResponse modifier(
+            @PathVariable UUID projectId,
             @PathVariable UUID phaseId,
             @Valid @RequestBody ApqpDto.UpdatePhaseRequest requete) {
-        return service.modifierPhase(phaseId, requete);
+        return service.modifierPhase(projectId, phaseId, requete);
     }
 
     @DeleteMapping("/{phaseId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize(ROLES_ECRITURE)
     @Operation(summary = "Remove a phase and its deliverables, then close the ranks")
-    public void supprimer(@PathVariable UUID phaseId) {
-        service.supprimerPhase(phaseId);
+    public void supprimer(@PathVariable UUID projectId, @PathVariable UUID phaseId) {
+        service.supprimerPhase(projectId, phaseId);
     }
 
     /**
@@ -108,70 +114,59 @@ public class ApqpController {
     @PutMapping("/order")
     @PreAuthorize(ROLES_ECRITURE)
     @Operation(summary = "Reorder the whole cycle")
-    public List<ApqpDto.PhaseResponse> reorganiser(@RequestBody ApqpDto.ReorderRequest requete) {
-        return service.reorganiser(requete);
+    public List<ApqpDto.PhaseResponse> reorganiser(
+            @PathVariable UUID projectId,
+            @RequestBody ApqpDto.ReorderRequest requete) {
+        return service.reorganiser(projectId, requete);
     }
 
     @PostMapping("/{phaseId}/deliverables")
     @PreAuthorize(ROLES_ECRITURE)
     @Operation(summary = "Add a deliverable to a phase")
     public ApqpDto.PhaseResponse ajouterLivrable(
+            @PathVariable UUID projectId,
             @PathVariable UUID phaseId,
             @Valid @RequestBody ApqpDto.DeliverableRequest requete) {
-        return service.ajouterLivrable(phaseId, requete);
+        return service.ajouterLivrable(projectId, phaseId, requete);
     }
 
     @PutMapping("/{phaseId}/deliverables/{deliverableId}")
     @PreAuthorize(ROLES_ECRITURE)
-    @Operation(summary = "Reword a deliverable")
+    @Operation(summary = "Reword a deliverable or restate the artifact it must produce")
     public ApqpDto.PhaseResponse modifierLivrable(
+            @PathVariable UUID projectId,
             @PathVariable UUID phaseId,
             @PathVariable UUID deliverableId,
             @Valid @RequestBody ApqpDto.DeliverableRequest requete) {
-        return service.modifierLivrable(phaseId, deliverableId, requete);
+        return service.modifierLivrable(projectId, phaseId, deliverableId, requete);
     }
 
     /**
-     * Déclare où en est un livrable.
+     * Déclare où en est un livrable — le formulaire UNIQUE (ADR 0072).
      *
      * <p>Rend le cycle entier : cocher un livrable change le compte du dossier
-     * PPAP affiché sous le schéma. L'acteur vient du jeton, jamais du corps.
+     * PPAP. L'acteur vient du jeton, jamais du corps.
      */
     @PutMapping("/{phaseId}/deliverables/{deliverableId}/completion")
     @PreAuthorize(ROLES_ECRITURE)
     @Operation(summary = "Declare where a deliverable stands, and what proves it")
     public ApqpDto.CycleResponse completerLivrable(
+            @PathVariable UUID projectId,
             @PathVariable UUID phaseId,
             @PathVariable UUID deliverableId,
             @Valid @RequestBody ApqpDto.CompletionRequest requete,
             @AuthenticationPrincipal Jwt jwt) {
-        return service.completerLivrable(phaseId, deliverableId, requete, acteur(jwt));
+        return service.completerLivrable(
+                projectId, phaseId, deliverableId, requete, ApqpActor.de(jwt));
     }
 
     @DeleteMapping("/{phaseId}/deliverables/{deliverableId}")
     @PreAuthorize(ROLES_ECRITURE)
     @Operation(summary = "Remove a deliverable and close the ranks")
     public ApqpDto.PhaseResponse supprimerLivrable(
+            @PathVariable UUID projectId,
             @PathVariable UUID phaseId,
             @PathVariable UUID deliverableId) {
-        return service.supprimerLivrable(phaseId, deliverableId);
-    }
-
-    /**
-     * Qui coche, d'après le sujet du jeton.
-     *
-     * <p>Si le sujet n'est pas un UUID, le champ reste vide : mieux vaut un
-     * achèvement sans auteur qu'un auteur inventé. Jamais lu du corps, qui est
-     * falsifiable.
-     */
-    private static UUID acteur(Jwt jwt) {
-        if (jwt == null || jwt.getSubject() == null) {
-            return null;
-        }
-        try {
-            return UUID.fromString(jwt.getSubject());
-        } catch (IllegalArgumentException ex) {
-            return null;
-        }
+        return service.supprimerLivrable(projectId, phaseId, deliverableId);
     }
 }

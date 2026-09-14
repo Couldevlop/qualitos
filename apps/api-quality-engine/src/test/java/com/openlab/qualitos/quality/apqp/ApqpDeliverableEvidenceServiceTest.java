@@ -40,6 +40,7 @@ import static org.mockito.Mockito.when;
 class ApqpDeliverableEvidenceServiceTest {
 
     private static final UUID TENANT = UUID.randomUUID();
+    private static final UUID PROJET = UUID.randomUUID();
     private static final UUID PHASE = UUID.randomUUID();
     private static final UUID LIVRABLE = UUID.randomUUID();
     private static final UUID ACTEUR = UUID.randomUUID();
@@ -74,12 +75,12 @@ class ApqpDeliverableEvidenceServiceTest {
     @Test
     @DisplayName("un .docx est accepté : c'est la forme réelle de ces livrables")
     void docx_estAccepte() {
-        when(phases.findByIdAndTenantId(PHASE, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
+        when(phases.findByIdAndProjectIdAndTenantId(PHASE, PROJET, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
         when(evidences.countByTenantIdAndDeliverableId(TENANT, LIVRABLE)).thenReturn(0L);
         when(evidences.sumSizeBytes(TENANT)).thenReturn(0L);
         when(evidences.save(any())).thenAnswer(i -> i.getArgument(0));
 
-        var reponse = service.upload(PHASE, LIVRABLE, DOCX, "control plan.docx",
+        var reponse = service.upload(PROJET, PHASE, LIVRABLE, DOCX, "control plan.docx",
                 OCTETS_DOCX, ACTEUR);
 
         // La clé est construite d'identifiants tenus par la plateforme, et son
@@ -95,9 +96,9 @@ class ApqpDeliverableEvidenceServiceTest {
     @Test
     @DisplayName("un type hors liste blanche est refusé avant toute écriture")
     void typeInterdit_refuse() {
-        when(phases.findByIdAndTenantId(PHASE, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
+        when(phases.findByIdAndProjectIdAndTenantId(PHASE, PROJET, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
 
-        assertThatThrownBy(() -> service.upload(PHASE, LIVRABLE, "application/zip",
+        assertThatThrownBy(() -> service.upload(PROJET, PHASE, LIVRABLE, "application/zip",
                 "tout.zip", OCTETS_DOCX, ACTEUR))
                 .isInstanceOf(ApqpDeliverableEvidenceValidationException.class)
                 .hasMessageContaining("Unsupported content type");
@@ -109,13 +110,13 @@ class ApqpDeliverableEvidenceServiceTest {
     @Test
     @DisplayName("des octets qui démentent le type déclaré sont refusés")
     void octetsIncoherents_refuses() {
-        when(phases.findByIdAndTenantId(PHASE, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
+        when(phases.findByIdAndProjectIdAndTenantId(PHASE, PROJET, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
 
         // Un exécutable renommé en .docx passerait la liste blanche : c'est la
         // signature binaire qui l'arrête.
         byte[] pasUneArchive = "MZ executable".getBytes(StandardCharsets.UTF_8);
 
-        assertThatThrownBy(() -> service.upload(PHASE, LIVRABLE, DOCX, "plan.docx",
+        assertThatThrownBy(() -> service.upload(PROJET, PHASE, LIVRABLE, DOCX, "plan.docx",
                 pasUneArchive, ACTEUR))
                 .isInstanceOf(ApqpDeliverableEvidenceValidationException.class)
                 .hasMessageContaining("does not match");
@@ -126,9 +127,9 @@ class ApqpDeliverableEvidenceServiceTest {
     @Test
     @DisplayName("un fichier vide est refusé : il ne prouve rien")
     void fichierVide_refuse() {
-        when(phases.findByIdAndTenantId(PHASE, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
+        when(phases.findByIdAndProjectIdAndTenantId(PHASE, PROJET, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
 
-        assertThatThrownBy(() -> service.upload(PHASE, LIVRABLE, DOCX, "vide.docx",
+        assertThatThrownBy(() -> service.upload(PROJET, PHASE, LIVRABLE, DOCX, "vide.docx",
                 new byte[0], ACTEUR))
                 .isInstanceOf(ApqpDeliverableEvidenceValidationException.class);
     }
@@ -136,7 +137,7 @@ class ApqpDeliverableEvidenceServiceTest {
     @Test
     @DisplayName("au-delà de dix mégaoctets par fichier, c'est refusé")
     void fichierTropLourd_refuse() {
-        when(phases.findByIdAndTenantId(PHASE, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
+        when(phases.findByIdAndProjectIdAndTenantId(PHASE, PROJET, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
 
         byte[] trop = new byte[10 * 1024 * 1024 + 1];
         trop[0] = 0x50;
@@ -144,7 +145,7 @@ class ApqpDeliverableEvidenceServiceTest {
         trop[2] = 0x03;
         trop[3] = 0x04;
 
-        assertThatThrownBy(() -> service.upload(PHASE, LIVRABLE, DOCX, "gros.docx", trop, ACTEUR))
+        assertThatThrownBy(() -> service.upload(PROJET, PHASE, LIVRABLE, DOCX, "gros.docx", trop, ACTEUR))
                 .isInstanceOf(ApqpDeliverableEvidenceTooLargeException.class)
                 .hasMessageContaining("single file");
     }
@@ -152,12 +153,12 @@ class ApqpDeliverableEvidenceServiceTest {
     @Test
     @DisplayName("la sixième pièce d'un même livrable est refusée")
     void sixiemePiece_refusee() {
-        when(phases.findByIdAndTenantId(PHASE, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
+        when(phases.findByIdAndProjectIdAndTenantId(PHASE, PROJET, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
         when(evidences.countByTenantIdAndDeliverableId(TENANT, LIVRABLE)).thenReturn(5L);
 
         // Cinq, et non une comme sur une étape PDCA : un dossier PPAP se compose de
         // pièces distinctes. Mais pas sans fin.
-        assertThatThrownBy(() -> service.upload(PHASE, LIVRABLE, DOCX, "sixieme.docx",
+        assertThatThrownBy(() -> service.upload(PROJET, PHASE, LIVRABLE, DOCX, "sixieme.docx",
                 OCTETS_DOCX, ACTEUR))
                 .isInstanceOf(ApqpDeliverableEvidenceTooLargeException.class)
                 .hasMessageContaining("at most 5");
@@ -166,11 +167,11 @@ class ApqpDeliverableEvidenceServiceTest {
     @Test
     @DisplayName("au-delà de cinquante mégaoctets pour le cycle entier, c'est refusé")
     void cycleTropLourd_refuse() {
-        when(phases.findByIdAndTenantId(PHASE, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
+        when(phases.findByIdAndProjectIdAndTenantId(PHASE, PROJET, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
         when(evidences.countByTenantIdAndDeliverableId(TENANT, LIVRABLE)).thenReturn(1L);
         when(evidences.sumSizeBytes(TENANT)).thenReturn(50L * 1024 * 1024);
 
-        assertThatThrownBy(() -> service.upload(PHASE, LIVRABLE, DOCX, "goutte.docx",
+        assertThatThrownBy(() -> service.upload(PROJET, PHASE, LIVRABLE, DOCX, "goutte.docx",
                 OCTETS_DOCX, ACTEUR))
                 .isInstanceOf(ApqpDeliverableEvidenceTooLargeException.class)
                 .hasMessageContaining("APQP cycle");
@@ -179,33 +180,33 @@ class ApqpDeliverableEvidenceServiceTest {
     @Test
     @DisplayName("la phase d'un autre client est introuvable, pas interdite")
     void phaseDUnAutreClient_introuvable() {
-        when(phases.findByIdAndTenantId(PHASE, TENANT)).thenReturn(Optional.empty());
+        when(phases.findByIdAndProjectIdAndTenantId(PHASE, PROJET, TENANT)).thenReturn(Optional.empty());
 
         // 404 et non 403 : ne rien dire de l'existence de la ressource (OWASP A01).
-        assertThatThrownBy(() -> service.list(PHASE, LIVRABLE))
+        assertThatThrownBy(() -> service.list(PROJET, PHASE, LIVRABLE))
                 .isInstanceOf(ApqpPhaseNotFoundException.class);
     }
 
     @Test
     @DisplayName("un livrable d'une autre phase est introuvable")
     void livrableDUneAutrePhase_introuvable() {
-        when(phases.findByIdAndTenantId(PHASE, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
+        when(phases.findByIdAndProjectIdAndTenantId(PHASE, PROJET, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
 
-        assertThatThrownBy(() -> service.list(PHASE, UUID.randomUUID()))
+        assertThatThrownBy(() -> service.list(PROJET, PHASE, UUID.randomUUID()))
                 .isInstanceOf(ApqpDeliverableNotFoundException.class);
     }
 
     @Test
     @DisplayName("la lecture présigne une URL par pièce, sans la stocker")
     void lecture_presigneLesUrl() throws Exception {
-        when(phases.findByIdAndTenantId(PHASE, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
+        when(phases.findByIdAndProjectIdAndTenantId(PHASE, PROJET, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
         ApqpDeliverableEvidence piece = piece("tenants/x/apqp/y.docx");
         when(evidences.findByTenantIdAndDeliverableIdOrderByCreatedAtAsc(TENANT, LIVRABLE))
                 .thenReturn(List.of(piece));
         when(storage.presignGet(piece.getObjectKey(), ApqpDeliverableEvidenceService.PRESIGN_TTL))
                 .thenReturn(URI.create("https://minio.local/lien-court").toURL());
 
-        List<ApqpDeliverableEvidenceDto.ListItem> lues = service.list(PHASE, LIVRABLE);
+        List<ApqpDeliverableEvidenceDto.ListItem> lues = service.list(PROJET, PHASE, LIVRABLE);
 
         assertThat(lues).singleElement()
                 .satisfies(item -> assertThat(item.url()).isEqualTo("https://minio.local/lien-court"));
@@ -214,12 +215,12 @@ class ApqpDeliverableEvidenceServiceTest {
     @Test
     @DisplayName("retirer une pièce efface la ligne et le binaire, et se consigne")
     void retrait_effaceLigneEtBinaire() {
-        when(phases.findByIdAndTenantId(PHASE, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
+        when(phases.findByIdAndProjectIdAndTenantId(PHASE, PROJET, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
         ApqpDeliverableEvidence piece = piece("tenants/x/apqp/y.docx");
         when(evidences.findByIdAndTenantIdAndDeliverableId(piece.getId(), TENANT, LIVRABLE))
                 .thenReturn(Optional.of(piece));
 
-        service.delete(PHASE, LIVRABLE, piece.getId(), ACTEUR);
+        service.delete(PROJET, PHASE, LIVRABLE, piece.getId(), ACTEUR);
 
         verify(evidences).delete(piece);
         verify(storage).delete("tenants/x/apqp/y.docx");
@@ -231,12 +232,12 @@ class ApqpDeliverableEvidenceServiceTest {
     @Test
     @DisplayName("une pièce versée sur un autre livrable ne se supprime pas d'ici")
     void pieceDUnAutreLivrable_introuvable() {
-        when(phases.findByIdAndTenantId(PHASE, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
+        when(phases.findByIdAndProjectIdAndTenantId(PHASE, PROJET, TENANT)).thenReturn(Optional.of(phaseAvecLivrable()));
         UUID etrangere = UUID.randomUUID();
         when(evidences.findByIdAndTenantIdAndDeliverableId(etrangere, TENANT, LIVRABLE))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.delete(PHASE, LIVRABLE, etrangere, ACTEUR))
+        assertThatThrownBy(() -> service.delete(PROJET, PHASE, LIVRABLE, etrangere, ACTEUR))
                 .isInstanceOf(ApqpDeliverableEvidenceNotFoundException.class);
         verify(storage, never()).delete(anyString());
     }

@@ -89,31 +89,31 @@ describe('MainShellComponent (navigation model)', () => {
     // courante, qui est la seule entree de la regle.
     const routeur = h.router as unknown as { url: string };
 
-    // Sur le dossier, « Le cycle » (/apqp) prefixe /apqp/ppap : sans la regle de
-    // la correspondance la plus longue, les deux s'allumaient et le menu disait
-    // qu'on etait a deux endroits a la fois.
-    routeur.url = '/apqp/ppap';
-    expect(shell.estActif('/apqp/ppap')).toBeTrue();
-    expect(shell.estActif('/apqp')).toBeFalse();
+    // Sur l'efficacite des CAPA, « CAPA » (/capa) prefixe /capa/efficacite :
+    // sans la regle de la correspondance la plus longue, les deux s'allumaient
+    // et le menu disait qu'on etait a deux endroits a la fois.
+    routeur.url = '/capa/efficacite';
+    expect(shell.estActif('/capa/efficacite')).toBeTrue();
+    expect(shell.estActif('/capa')).toBeFalse();
 
-    // Mais un prefixe reste une correspondance valable : /apqp/2 est un rang de
-    // phase, pas une entree de menu, et « Le cycle » doit y rester allumee.
-    routeur.url = '/apqp/2';
+    // Mais un prefixe reste une correspondance valable : /apqp/pr1/2 designe un
+    // projet et un rang de phase, pas une entree de menu, et « Projets » doit y
+    // rester allumee.
+    routeur.url = '/apqp/pr1/2';
     expect(shell.estActif('/apqp')).toBeTrue();
-    expect(shell.estActif('/apqp/ppap')).toBeFalse();
 
     // Les parametres de requete et l'ancre ne changent pas l'entree active.
-    routeur.url = '/apqp/ppap?from=menu#haut';
-    expect(shell.estActif('/apqp/ppap')).toBeTrue();
-    expect(shell.estActif('/apqp')).toBeFalse();
+    routeur.url = '/capa/efficacite?from=menu#haut';
+    expect(shell.estActif('/capa/efficacite')).toBeTrue();
+    expect(shell.estActif('/capa')).toBeFalse();
   });
 
-  it('le dossier PPAP a son entree, sous « Le cycle »', () => {
-    // Le dossier ne se travaille pas qu'en marge du cycle : c'est lui qu'on remet
-    // au client, et c'est cette liste qu'on parcourt a l'approche d'une
-    // soumission. D'ou une entree a lui, juste sous celle du cycle.
+  it('APQP n’a qu’une entree : les projets', () => {
+    // Le dossier PPAP n'a plus d'entree globale : il appartient a un projet, et
+    // /apqp/ppap n'existe plus -- une entree de menu y menerait a une page qui
+    // chercherait un projet nomme « ppap ».
     const apqp = component.sections.find(s => s.items.some(i => i.route === '/apqp'))!;
-    expect(apqp.items.map(i => i.route)).toEqual(['/apqp', '/apqp/ppap']);
+    expect(apqp.items.map(i => i.route)).toEqual(['/apqp']);
   });
 
   it('orders the six groups as designed', () => {
@@ -134,15 +134,13 @@ describe('MainShellComponent (navigation model)', () => {
     // control plan, posé juste avant l'entrée FMEA qu'il alimente.
     // Methodes retombe a 5 et Non-conformite a 2 : Ishikawa et les 5 Pourquoi
     // quittent la barre laterale, on y accede depuis la fiche de NC.
-    // APQP remonte a 2 : « Le cycle » et « Dossier PPAP » -- le dossier n'est pas
-    // une phase, c'est ce qu'on remet au client, et c'est cette liste qu'on
-    // parcourt a l'approche d'une soumission.
-    // APQP retombe à 1 : le schéma en V porte lui-même la navigation entre
-    // phases, un sous-menu doublerait ses cinq jalons. Opérations passe de 12
+    // APQP tient en 1 : « Projets ». Le schema en V d'un projet porte lui-meme
+    // la navigation entre ses phases, et le dossier PPAP appartient desormais a
+    // un projet -- il n'a plus d'adresse globale. Operations passe de 12
     // à 11 : l'écran Réclamations a été retiré.
     // Méthodes passe à 6 : + Boîte à idées, sans attribut `module` puisqu'elle
     // ne dépend pas de l'activation du module Cercle.
-    expect(labels).toEqual([5, 6, 8, 2, 2, 11, 11, 1, 7]);
+    expect(labels).toEqual([5, 6, 8, 1, 2, 11, 11, 1, 7]);
   });
 
   it('collapses the entire GRC mass into a single /compliance entry', () => {
