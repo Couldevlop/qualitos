@@ -45,7 +45,7 @@ TRANSLATIONS = {
         'Las tres disciplinas que se rellenan', 'المراحل الثلاث التي تُدخَل يدوياً',
         '手入力する 3 つの規律', '需手工填写的三个步骤'),
     'nc.8d.saisies-hint': (
-        "L'équipe, l'endiguement et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.",
+        "L'équipe, la sécurisation et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.",
         'The team, the containment and the recognition have no source in the platform: they are filled in here. The other five disciplines are aggregated from the non-conformity case.',
         'El equipo, la contención y el reconocimiento no tienen ninguna fuente en la plataforma: se rellenan aquí. Las otras cinco disciplinas se agregan del expediente de la no conformidad.',
         'الفريق والاحتواء وتقدير الجهد لا مصدر لها في المنصة: تُدخَل هنا. أما المراحل الخمس الأخرى فتُجمَّع من ملف حالة عدم المطابقة.',
@@ -61,8 +61,25 @@ TRANSLATIONS = {
         'شخص واحد في كل سطر، مع دوره في معالجة الانحراف',
         '1 行に 1 名、逸脱対応における役割を添えて',
         '每行一人，并注明其在偏差处理中的角色'),
+    'nc.8d.export': (
+        'Exporter', 'Export', 'Exportar', 'تصدير', 'エクスポート', '导出'),
+    'nc.8d.export-tooltip': (
+        'Le PDF signé et ancré du rapport', 'The signed and anchored PDF of the report',
+        'El PDF firmado y anclado del informe', 'ملف PDF الموقَّع والمرسَّخ للتقرير',
+        '署名・アンカー済みのレポート PDF', '经签名并锚定的报告 PDF'),
+    'nc.8d.export-needs-issue-title': (
+        "Émettre avant d'exporter ?", 'Issue before exporting?',
+        '¿Emitir antes de exportar?', 'هل تُصدر التقرير قبل التصدير؟',
+        'エクスポートの前に発行しますか？', '导出前先签发？'),
+    'nc.8d.export-needs-issue': (
+        "Le PDF n'existe qu'une fois le rapport émis : l'émission fige le contenu, signe son empreinte et l'ancre. Sans cela, deux exports du même rapport pourraient différer.",
+        'The PDF exists only once the report is issued: issuing freezes the content, signs its fingerprint and anchors it. Without that, two exports of the same report could differ.',
+        'El PDF solo existe una vez emitido el informe: la emisión congela el contenido, firma su huella y la ancla. Sin eso, dos exportaciones del mismo informe podrían diferir.',
+        'لا يوجد ملف PDF إلا بعد إصدار التقرير: الإصدار يجمّد المحتوى ويوقّع بصمته ويرسّخها. وبدون ذلك قد يختلف تصديران للتقرير نفسه.',
+        'PDF はレポートを発行して初めて存在します。発行は内容を確定し、そのフィンガープリントに署名してアンカーします。これがないと、同じレポートの二つのエクスポートが食い違う可能性があります。',
+        '只有在报告签发之后才有 PDF：签发会冻结内容、对其指纹签名并锚定。否则同一报告的两次导出可能不一致。'),
     'nc.8d.containment-label': (
-        "D3 — Actions d'endiguement immédiates", 'D3 — Immediate containment actions',
+        "D3 — Actions de sécurisation immédiates", 'D3 — Immediate containment actions',
         'D3 — Acciones de contención inmediatas', 'D3 — إجراءات الاحتواء الفورية',
         'D3 — 緊急の暫定対策', 'D3 — 立即围堵措施'),
     'nc.8d.containment-placeholder': (

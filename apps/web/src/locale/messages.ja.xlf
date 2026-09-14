@@ -15624,7 +15624,7 @@ historique 12 mois</source>
         <target state="translated">手入力する 3 つの規律</target>
       </trans-unit>
       <trans-unit id="nc.8d.saisies-hint" datatype="html">
-        <source>L'équipe, l'endiguement et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
+        <source>L'équipe, la sécurisation et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
         <target state="translated">チーム、暫定対策、功績の承認はプラットフォームに情報源がないため、ここで入力します。残る 5 つの規律は不適合の案件から集約されます。</target>
       </trans-unit>
       <trans-unit id="nc.8d.team-label" datatype="html">
@@ -15635,8 +15635,24 @@ historique 12 mois</source>
         <source>Une personne par ligne, avec son rôle dans le traitement de l'écart</source>
         <target state="translated">1 行に 1 名、逸脱対応における役割を添えて</target>
       </trans-unit>
+      <trans-unit id="nc.8d.export" datatype="html">
+        <source>Exporter</source>
+        <target state="translated">エクスポート</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-tooltip" datatype="html">
+        <source>Le PDF signé et ancré du rapport</source>
+        <target state="translated">署名・アンカー済みのレポート PDF</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-issue-title" datatype="html">
+        <source>Émettre avant d'exporter ?</source>
+        <target state="translated">エクスポートの前に発行しますか？</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-issue" datatype="html">
+        <source>Le PDF n'existe qu'une fois le rapport émis : l'émission fige le contenu, signe son empreinte et l'ancre. Sans cela, deux exports du même rapport pourraient différer.</source>
+        <target state="translated">PDF はレポートを発行して初めて存在します。発行は内容を確定し、そのフィンガープリントに署名してアンカーします。これがないと、同じレポートの二つのエクスポートが食い違う可能性があります。</target>
+      </trans-unit>
       <trans-unit id="nc.8d.containment-label" datatype="html">
-        <source>D3 — Actions d'endiguement immédiates</source>
+        <source>D3 — Actions de sécurisation immédiates</source>
         <target state="translated">D3 — 緊急の暫定対策</target>
       </trans-unit>
       <trans-unit id="nc.8d.containment-placeholder" datatype="html">

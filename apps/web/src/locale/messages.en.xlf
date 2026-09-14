@@ -15625,7 +15625,7 @@ declared income
         <target state="translated">The three disciplines to fill in</target>
       </trans-unit>
       <trans-unit id="nc.8d.saisies-hint" datatype="html">
-        <source>L'équipe, l'endiguement et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
+        <source>L'équipe, la sécurisation et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
         <target state="translated">The team, the containment and the recognition have no source in the platform: they are filled in here. The other five disciplines are aggregated from the non-conformity case.</target>
       </trans-unit>
       <trans-unit id="nc.8d.team-label" datatype="html">
@@ -15636,8 +15636,24 @@ declared income
         <source>Une personne par ligne, avec son rôle dans le traitement de l'écart</source>
         <target state="translated">One person per line, with their role in handling the deviation</target>
       </trans-unit>
+      <trans-unit id="nc.8d.export" datatype="html">
+        <source>Exporter</source>
+        <target state="translated">Export</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-tooltip" datatype="html">
+        <source>Le PDF signé et ancré du rapport</source>
+        <target state="translated">The signed and anchored PDF of the report</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-issue-title" datatype="html">
+        <source>Émettre avant d'exporter ?</source>
+        <target state="translated">Issue before exporting?</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-issue" datatype="html">
+        <source>Le PDF n'existe qu'une fois le rapport émis : l'émission fige le contenu, signe son empreinte et l'ancre. Sans cela, deux exports du même rapport pourraient différer.</source>
+        <target state="translated">The PDF exists only once the report is issued: issuing freezes the content, signs its fingerprint and anchors it. Without that, two exports of the same report could differ.</target>
+      </trans-unit>
       <trans-unit id="nc.8d.containment-label" datatype="html">
-        <source>D3 — Actions d'endiguement immédiates</source>
+        <source>D3 — Actions de sécurisation immédiates</source>
         <target state="translated">D3 — Immediate containment actions</target>
       </trans-unit>
       <trans-unit id="nc.8d.containment-placeholder" datatype="html">

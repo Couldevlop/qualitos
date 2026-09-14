@@ -15625,7 +15625,7 @@ historial de 12 meses</target>
         <target state="translated">Las tres disciplinas que se rellenan</target>
       </trans-unit>
       <trans-unit id="nc.8d.saisies-hint" datatype="html">
-        <source>L'équipe, l'endiguement et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
+        <source>L'équipe, la sécurisation et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
         <target state="translated">El equipo, la contención y el reconocimiento no tienen ninguna fuente en la plataforma: se rellenan aquí. Las otras cinco disciplinas se agregan del expediente de la no conformidad.</target>
       </trans-unit>
       <trans-unit id="nc.8d.team-label" datatype="html">
@@ -15636,8 +15636,24 @@ historial de 12 meses</target>
         <source>Une personne par ligne, avec son rôle dans le traitement de l'écart</source>
         <target state="translated">Una persona por línea, con su función en el tratamiento de la desviación</target>
       </trans-unit>
+      <trans-unit id="nc.8d.export" datatype="html">
+        <source>Exporter</source>
+        <target state="translated">Exportar</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-tooltip" datatype="html">
+        <source>Le PDF signé et ancré du rapport</source>
+        <target state="translated">El PDF firmado y anclado del informe</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-issue-title" datatype="html">
+        <source>Émettre avant d'exporter ?</source>
+        <target state="translated">¿Emitir antes de exportar?</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-issue" datatype="html">
+        <source>Le PDF n'existe qu'une fois le rapport émis : l'émission fige le contenu, signe son empreinte et l'ancre. Sans cela, deux exports du même rapport pourraient différer.</source>
+        <target state="translated">El PDF solo existe una vez emitido el informe: la emisión congela el contenido, firma su huella y la ancla. Sin eso, dos exportaciones del mismo informe podrían diferir.</target>
+      </trans-unit>
       <trans-unit id="nc.8d.containment-label" datatype="html">
-        <source>D3 — Actions d'endiguement immédiates</source>
+        <source>D3 — Actions de sécurisation immédiates</source>
         <target state="translated">D3 — Acciones de contención inmediatas</target>
       </trans-unit>
       <trans-unit id="nc.8d.containment-placeholder" datatype="html">

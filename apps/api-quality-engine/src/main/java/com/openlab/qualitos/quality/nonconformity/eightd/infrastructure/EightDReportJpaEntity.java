@@ -41,7 +41,7 @@ public class EightDReportJpaEntity {
     @Column(name = "team", length = 4000)
     private String team;
 
-    /** D3 — l'endiguement immédiat. */
+    /** D3 — la sécurisation immédiate. */
     @Column(name = "containment", length = 4000)
     private String containment;
 

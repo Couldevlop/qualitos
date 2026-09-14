@@ -31,7 +31,7 @@ const ROLES_ECRITURE = ['QUALITY_MANAGER', 'DIRECTOR_QUALITY', 'ADMIN_TENANT', '
  *
  * <p>L'écran ne compose rien : les huit disciplines viennent du serveur, qui en
  * agrège cinq depuis la NC, les analyses de cause, la CAPA escaladée, le PFMEA et
- * les plans de surveillance. Seules trois se saisissent ici — l'équipe, l'endiguement,
+ * les plans de surveillance. Seules trois se saisissent ici — l'équipe, la sécurisation,
  * la reconnaissance — parce que rien, dans la plateforme, ne sait y répondre.
  *
  * <p>Une discipline sans contenu est affichée avec la raison de son absence, jamais
@@ -178,6 +178,33 @@ export class NcEightDComponent implements OnInit {
           },
           error: err => this.echec(err, $localize`:@@nc.8d.issue-failed:Émission impossible.`)
         });
+    });
+  }
+
+  /**
+   * Exporte le rapport : le PDF signé et ancré.
+   *
+   * <p>Un brouillon n'a pas de PDF, et c'est voulu : le document n'existe qu'une
+   * fois le contenu FIGÉ, sans quoi deux exports du même rapport ne diraient pas
+   * la même chose. Plutôt que de masquer le bouton — ce qui laisse croire que
+   * l'export n'existe pas —, on l'affiche toujours et on explique ce qu'il
+   * manque, en proposant le geste qui débloque.
+   */
+  exporter(rapport: EightDReport): void {
+    if (this.acting$.value) { return; }
+    if (rapport.status === 'ISSUED') {
+      this.telecharger();
+      return;
+    }
+    const donnees: ConfirmDialogData = {
+      title: $localize`:@@nc.8d.export-needs-issue-title:Émettre avant d'exporter ?`,
+      message: $localize`:@@nc.8d.export-needs-issue:Le PDF n'existe qu'une fois le rapport émis : l'émission fige le contenu, signe son empreinte et l'ancre. Sans cela, deux exports du même rapport pourraient différer.`,
+      confirmLabel: $localize`:@@nc.8d.issue:Émettre`
+    };
+    this.dialog.open(ConfirmDialogComponent, {
+      data: donnees, panelClass: 'qos-dialog-panel', autoFocus: false, restoreFocus: true
+    }).afterClosed().subscribe(ok => {
+      if (ok) { this.emettre(rapport); }
     });
   }
 

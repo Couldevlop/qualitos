@@ -24,9 +24,11 @@
                 matTooltip="Figer le contenu, signer son empreinte et l'ancrer">
           <mat-icon>verified</mat-icon> <span i18n="@@nc.8d.issue">Émettre</span>
         </button>
-        <button mat-stroked-button *ngIf="rapport.status === 'ISSUED'" (click)="telecharger()"
-                data-test="telecharger" [disabled]="acting$ | async">
-          <mat-icon>picture_as_pdf</mat-icon> <span i18n="@@nc.8d.download">Télécharger le PDF</span>
+        <button mat-stroked-button (click)="exporter(rapport)"
+                data-test="exporter" [disabled]="acting$ | async"
+                i18n-matTooltip="@@nc.8d.export-tooltip"
+                matTooltip="Le PDF signé et ancré du rapport">
+          <mat-icon>picture_as_pdf</mat-icon> <span i18n="@@nc.8d.export">Exporter</span>
         </button>
       </div>
     </ng-container>
@@ -79,7 +81,7 @@
         </mat-card-header>
         <mat-card-content [formGroup]="form">
           <p class="hint" i18n="@@nc.8d.saisies-hint">
-            L'équipe, l'endiguement et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.
+            L'équipe, la sécurisation et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.
           </p>
 
           <mat-form-field appearance="outline" class="full">
@@ -90,7 +92,7 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full">
-            <mat-label i18n="@@nc.8d.containment-label">D3 — Actions d'endiguement immédiates</mat-label>
+            <mat-label i18n="@@nc.8d.containment-label">D3 — Actions de sécurisation immédiates</mat-label>
             <textarea matInput formControlName="containment" rows="3" maxlength="4000"
                       i18n-placeholder="@@nc.8d.containment-placeholder"
                       placeholder="Ce qui a protégé le client pendant la recherche de la cause : tri, blocage de lot, contrôle renforcé…"></textarea>

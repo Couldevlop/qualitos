@@ -317,7 +317,7 @@ export class FmeaService {
         code: 'PFMEA-ASM-A', name: 'FMEA processus — ligne assemblage A',
         scope: 'Postes 1 à 7, OF série 50 000+ pièces/an.',
         type: 'PROCESS_FMEA', status: 'ACTIVE',
-        criticalRpnThreshold: 100, revision: 2,
+        criticalRpnThreshold: 200, revision: 2,
         ownerUserId: 'demo-user', createdBy: 'demo-user',
         createdAt: now, updatedAt: now
       },

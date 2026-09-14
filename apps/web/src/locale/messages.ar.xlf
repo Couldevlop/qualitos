@@ -15625,7 +15625,7 @@ historique 12 mois</source>
         <target state="translated">المراحل الثلاث التي تُدخَل يدوياً</target>
       </trans-unit>
       <trans-unit id="nc.8d.saisies-hint" datatype="html">
-        <source>L'équipe, l'endiguement et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
+        <source>L'équipe, la sécurisation et la reconnaissance n'ont aucune source dans la plateforme : elles se saisissent. Les cinq autres disciplines sont agrégées depuis le dossier de la non-conformité.</source>
         <target state="translated">الفريق والاحتواء وتقدير الجهد لا مصدر لها في المنصة: تُدخَل هنا. أما المراحل الخمس الأخرى فتُجمَّع من ملف حالة عدم المطابقة.</target>
       </trans-unit>
       <trans-unit id="nc.8d.team-label" datatype="html">
@@ -15636,8 +15636,24 @@ historique 12 mois</source>
         <source>Une personne par ligne, avec son rôle dans le traitement de l'écart</source>
         <target state="translated">شخص واحد في كل سطر، مع دوره في معالجة الانحراف</target>
       </trans-unit>
+      <trans-unit id="nc.8d.export" datatype="html">
+        <source>Exporter</source>
+        <target state="translated">تصدير</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-tooltip" datatype="html">
+        <source>Le PDF signé et ancré du rapport</source>
+        <target state="translated">ملف PDF الموقَّع والمرسَّخ للتقرير</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-issue-title" datatype="html">
+        <source>Émettre avant d'exporter ?</source>
+        <target state="translated">هل تُصدر التقرير قبل التصدير؟</target>
+      </trans-unit>
+      <trans-unit id="nc.8d.export-needs-issue" datatype="html">
+        <source>Le PDF n'existe qu'une fois le rapport émis : l'émission fige le contenu, signe son empreinte et l'ancre. Sans cela, deux exports du même rapport pourraient différer.</source>
+        <target state="translated">لا يوجد ملف PDF إلا بعد إصدار التقرير: الإصدار يجمّد المحتوى ويوقّع بصمته ويرسّخها. وبدون ذلك قد يختلف تصديران للتقرير نفسه.</target>
+      </trans-unit>
       <trans-unit id="nc.8d.containment-label" datatype="html">
-        <source>D3 — Actions d'endiguement immédiates</source>
+        <source>D3 — Actions de sécurisation immédiates</source>
         <target state="translated">D3 — إجراءات الاحتواء الفورية</target>
       </trans-unit>
       <trans-unit id="nc.8d.containment-placeholder" datatype="html">
