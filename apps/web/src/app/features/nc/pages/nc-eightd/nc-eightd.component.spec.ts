@@ -213,7 +213,7 @@ describe('NcEightDComponent', () => {
     fixture.detectChanges();
 
     expect(hote().querySelector('[data-test="sceau"]')).toBeTruthy();
-    expect(hote().querySelector('[data-test="telecharger"]')).toBeTruthy();
+    expect(hote().querySelector('[data-test="exporter"]')).toBeTruthy();
     // Scellé : le formulaire de saisie disparaît.
     expect(hote().querySelector('[data-test="enregistrer"]')).toBeNull();
   });

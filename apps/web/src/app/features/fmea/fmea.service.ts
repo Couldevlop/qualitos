@@ -27,6 +27,17 @@ import {
   UpdateFmeaProjectRequest
 } from './fmea.types';
 
+/**
+ * Le seuil proposé quand aucun n'est fourni.
+ *
+ * 200, et non 100 : c'est le seuil que la plateforme AFFICHE comme règle
+ * (« toute RPN supérieure à 200 exige une action corrective »). Proposer 100
+ * tout en affichant 200 faisait dire deux choses au même écran. Miroir exact de
+ * `FmeaProject.SEUIL_RPN_PAR_DEFAUT` côté serveur : si les deux divergent, le
+ * mode démonstration ment sur ce que fera la vraie API.
+ */
+const SEUIL_RPN_PAR_DEFAUT = 200;
+
 @Injectable({ providedIn: 'root' })
 export class FmeaService {
 
@@ -136,7 +147,7 @@ export class FmeaService {
         scope: input.scope,
         type: input.type,
         status: 'DRAFT',
-        criticalRpnThreshold: input.criticalRpnThreshold ?? 100,
+        criticalRpnThreshold: input.criticalRpnThreshold ?? SEUIL_RPN_PAR_DEFAUT,
         revision: 1,
         ownerUserId: input.ownerUserId,
         createdBy: input.createdBy,
@@ -213,7 +224,7 @@ export class FmeaService {
         criticalItems: critical,
         maxRpn: max,
         averageRpn: avg,
-        criticalRpnThreshold: p?.criticalRpnThreshold ?? 100
+        criticalRpnThreshold: p?.criticalRpnThreshold ?? SEUIL_RPN_PAR_DEFAUT
       }).pipe(delay(120));
     }
     return this.http.get<FmeaProjectStatistics>(`${this.endpoint}/projects/${id}/statistics`);
@@ -262,7 +273,7 @@ export class FmeaService {
         resultingOccurrence: input.resultingOccurrence,
         resultingDetection: input.resultingDetection,
         rpnAfter,
-        critical: rpn >= (project?.criticalRpnThreshold ?? 100),
+        critical: rpn >= (project?.criticalRpnThreshold ?? SEUIL_RPN_PAR_DEFAUT),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
@@ -286,7 +297,7 @@ export class FmeaService {
         if (item.resultingSeverity && item.resultingOccurrence && item.resultingDetection) {
           item.rpnAfter = item.resultingSeverity * item.resultingOccurrence * item.resultingDetection;
         }
-        item.critical = item.rpn >= (project?.criticalRpnThreshold ?? 100);
+        item.critical = item.rpn >= (project?.criticalRpnThreshold ?? SEUIL_RPN_PAR_DEFAUT);
         item.updatedAt = new Date().toISOString();
         return of(item).pipe(delay(120));
       }
@@ -355,7 +366,10 @@ export class FmeaService {
           currentControls: 'Vision post-soudure 1/10',
           severity: 8, occurrence: 4, detection: 5, rpn: 160,
           recommendedAction: 'Mettre en place SPC en continu sur courant + vision 100%',
-          critical: true,
+          // 160 : sous le seuil de 200 que ce projet s'est fixe, donc NON critique.
+          // Le drapeau est amorce en dur ; le laisser a `true` ferait compter une
+          // ligne critique que la regle affichee ne vise pas.
+          critical: false,
           createdAt: now, updatedAt: now
         },
         {
