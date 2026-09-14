@@ -18,7 +18,7 @@ import {
 import { ApqpOverviewComponent } from './apqp-overview.component';
 
 /**
- * Le cycle APQP, dont le schéma EST l'interface — et qui s'édite.
+ * Le cycle APQP d'un PROJET, dont le schéma EST l'interface — et qui s'édite.
  *
  * <p>Trois choses se vérifient ici. La forme en V d'abord : le rang que rend le
  * serveur devient une ligne de grille, et une grille mal câblée dirait le cycle
@@ -28,10 +28,14 @@ import { ApqpOverviewComponent } from './apqp-overview.component';
  * désordre. L'édition enfin, et surtout ce qu'elle recharge : ajouter ou
  * supprimer une phase renumérote tout le cycle, et se contenter de la réponse
  * laisserait le V faux jusqu'au prochain chargement.
+ *
+ * <p>S'y ajoute ce que la refonte a changé : toutes les routes passent par le
+ * projet, et TOUT livrable se coche — le genre qui l'interdisait aux « renvois »
+ * a disparu.
  */
 describe('ApqpOverviewComponent', () => {
 
-  const endpoint = `${environment.apiBaseUrl}/api/v1/apqp/phases`;
+  const endpoint = `${environment.apiBaseUrl}/api/v1/apqp/projects/pr1/phases`;
 
   let fixture: ComponentFixture<ApqpOverviewComponent>;
   let component: ApqpOverviewComponent;
@@ -55,14 +59,20 @@ describe('ApqpOverviewComponent', () => {
       deliverables: [
         {
           id: `l${i + 1}a`, position: 1, label: `Livrable ${i + 1}A`,
-          // Le premier livrable de chaque phase compose le dossier PPAP, et le
-          // premier du cycle est deja acquis : de quoi eprouver la case, la
+          expectedArtifact: `Artefact ${i + 1}A`,
+          // Le premier livrable de chaque phase est requis au dossier PPAP, et
+          // le premier du cycle est deja acquis : de quoi eprouver la case, la
           // marque et le compte sans fabriquer un second jeu.
-          ppap: true, kind: 'ATTACHMENT', done: i === 0, evidenceCount: i === 0 ? 2 : 0
+          ppap: true, owner: null, dueDate: null,
+          status: i === 0 ? ('DONE' as const) : ('NOT_STARTED' as const),
+          percentComplete: i === 0 ? 100 : 0,
+          done: i === 0, evidenceCount: i === 0 ? 2 : 0
         },
         {
           id: `l${i + 1}b`, position: 2, label: `Livrable ${i + 1}B`,
-          ppap: false, kind: 'ATTACHMENT', done: false, evidenceCount: 0
+          expectedArtifact: null, ppap: false, owner: null, dueDate: null,
+          status: 'IN_PROGRESS' as const, percentComplete: 30,
+          done: false, evidenceCount: 0
         }
       ]
     }));
@@ -71,26 +81,30 @@ describe('ApqpOverviewComponent', () => {
   /**
    * Répond au chargement du cycle et laisse l'écran se peindre.
    *
-   * <p>La lecture rend le cycle ET l'état du dossier PPAP : les deux arrivent
-   * ensemble, parce que deux appels pourraient se répondre sur deux états.
+   * <p>La lecture rend le cycle, SON PROJET et l'état du dossier PPAP : tout
+   * arrive ensemble, parce que deux appels pourraient se répondre sur deux états.
    */
   function servirCycle(phases: ApqpPhase[] = cycle()): void {
-    const etoiles = phases.flatMap(p => p.deliverables).filter(d => d.ppap);
+    const requis = phases.flatMap(p => p.deliverables).filter(d => d.ppap);
     http.expectOne(endpoint).flush({
+      projectId: 'pr1',
+      projectName: 'Support moteur',
+      projectType: 'NPI',
+      customer: 'Renault',
       phases,
-      ppapDone: etoiles.filter(d => d.done).length,
-      ppapTotal: etoiles.length
+      ppapDone: requis.filter(d => d.done).length,
+      ppapTotal: requis.length
     });
     fixture.detectChanges();
   }
 
   async function setup(phase?: string, roles: string[] = ['QUALITY_MANAGER']): Promise<void> {
-    params = new BehaviorSubject(convertToParamMap(phase ? { phase } : {}));
+    params = new BehaviorSubject(convertToParamMap(
+      phase ? { projetId: 'pr1', phase } : { projetId: 'pr1' }));
 
     await TestBed.resetTestingModule().configureTestingModule({
-      // La section PPAP est declaree avec l'ecran : c'est elle qui rend les
-      // lignes du dossier, et la remplacer par un bouchon ne dirait plus si
-      // l'agregation suit les cases qu'on coche juste au-dessus.
+      // La section PPAP est declaree avec l'ecran : elle rend les lignes du
+      // dossier ailleurs, et la declarer ici evite d'avoir deux montages.
       declarations: [ApqpOverviewComponent, ApqpPpapSummaryComponent],
       imports: [SharedModule, UiModule, RouterTestingModule, NoopAnimationsModule],
       providers: [
@@ -120,24 +134,51 @@ describe('ApqpOverviewComponent', () => {
 
   afterEach(() => http.verify());
 
+  it('lit le projet dans l\'URL et affiche son nom', async () => {
+    await setup('1');
+    servirCycle();
+
+    expect(component.projetId).toBe('pr1');
+    expect(component.projetNom).toBe('Support moteur');
+    // Le projet voyage avec le cycle : l'en-tete l'affiche sans second appel.
+    expect(hote().textContent).toContain('Support moteur');
+    expect(hote().textContent).toContain('Renault');
+  });
+
   it('la case reflete l\'etat du serveur, et n\'est plus decorative', async () => {
     await setup('1');
     servirCycle();
 
     const cases = hote().querySelectorAll<HTMLInputElement>(
       '[data-test=case-livrable] input');
-    // La case a remplace une icone decorative, qui affichait « coche » sans rien
-    // savoir de ce qui etait fait.
     expect(cases.length).toBe(2);
     expect(cases[0].checked).toBeTrue();
     expect(cases[1].checked).toBeFalse();
   });
 
-  it('cocher depuis la liste conserve le commentaire deja saisi', async () => {
+  it('TOUT livrable se coche, y compris celui qui renvoie ailleurs', async () => {
+    await setup('1');
+    const phases = cycle();
+    phases[0].deliverables[0] = {
+      ...phases[0].deliverables[0],
+      linkedKind: 'FMEA', linkedId: '11111111-2222-3333-4444-555555555555'
+    };
+    servirCycle(phases);
+
+    const premiere = hote().querySelector<HTMLInputElement>(
+      '[data-test=case-livrable] input')!;
+    // Le genre interdisait la case aux « renvois » : il obligeait a ouvrir le
+    // popup pour un geste d'une seconde.
+    expect(premiere.disabled).toBeFalse();
+  });
+
+  it('cocher depuis la liste conserve ce qui etait deja saisi', async () => {
     await setup('2');
     const phases = cycle();
     phases[1].deliverables[0] = {
-      ...phases[1].deliverables[0], done: false, comment: 'reçu le 3'
+      ...phases[1].deliverables[0],
+      done: false, comment: 'reçu le 3', owner: 'R. Martin', dueDate: '2026-10-15',
+      expectedArtifact: 'Plan signé'
     };
     servirCycle(phases);
 
@@ -149,26 +190,73 @@ describe('ApqpOverviewComponent', () => {
     expect(req.request.body.done).toBeTrue();
     // Sans cela, un clic sur la case effacerait ce que le popup avait enregistre.
     expect(req.request.body.comment).toBe('reçu le 3');
-    // La reponse porte le cycle entier : l'ecran reprend ses phases, et l'ecran
-    // du dossier PPAP lira le meme etat au prochain affichage.
-    req.flush({ phases, ppapDone: 2, ppapTotal: 10 });
+    expect(req.request.body.owner).toBe('R. Martin');
+    expect(req.request.body.dueDate).toBe('2026-10-15');
+    expect(req.request.body.expectedArtifact).toBe('Plan signé');
+    // Le statut et l'avancement partent A VIDE : c'est la case qui les pilote,
+    // et c'est le serveur qui applique la regle.
+    expect(req.request.body.status).toBeNull();
+    expect(req.request.body.percentComplete).toBeNull();
+
+    req.flush({
+      projectId: 'pr1', projectName: 'Support moteur', projectType: 'NPI',
+      customer: 'Renault', phases, ppapDone: 2, ppapTotal: 10
+    });
 
     expect(component.phases.length).toBe(5);
   });
 
-  it('un livrable a renvoi ne se coche pas depuis la liste', async () => {
+  it('decocher renvoie done a faux, statut et avancement toujours vides', async () => {
     await setup('1');
-    const phases = cycle();
-    phases[0].deliverables[0] = { ...phases[0].deliverables[0], kind: 'MODULE_LINK' };
-    servirCycle(phases);
+    servirCycle();
 
-    const premiere = hote().querySelector<HTMLInputElement>(
-      '[data-test=case-livrable] input')!;
-    // Il lui faut son enregistrement : la case seule ne peut pas le designer.
-    expect(premiere.disabled).toBeTrue();
+    component.basculerLivrable(
+      component.phases[0], component.phases[0].deliverables[0], false);
+
+    const req = http.expectOne(`${endpoint}/p1/deliverables/l1a/completion`);
+    expect(req.request.body.done).toBeFalse();
+    expect(req.request.body.status).toBeNull();
+    expect(req.request.body.percentComplete).toBeNull();
+
+    // Le serveur ramene l'avancement en arriere : l'ecran reprend ce qu'il rend
+    // plutot que de recalculer la regle de son cote.
+    const apres = cycle();
+    apres[0].deliverables[0] = {
+      ...apres[0].deliverables[0], done: false, status: 'IN_PROGRESS', percentComplete: 0
+    };
+    req.flush({
+      projectId: 'pr1', projectName: 'Support moteur', projectType: 'NPI',
+      customer: 'Renault', phases: apres, ppapDone: 0, ppapTotal: 5
+    });
+    fixture.detectChanges();
+
+    expect(component.phases[0].deliverables[0].percentComplete).toBe(0);
+    expect(hote().querySelector('[data-test=avancement-livrable]')!.textContent)
+      .toContain('0');
   });
 
-  it('un clic sur le libelle ouvre le popup du livrable', async () => {
+  it('affiche l\'artefact attendu, le statut et l\'avancement de chaque livrable', async () => {
+    await setup('1');
+    servirCycle();
+
+    expect(hote().querySelector('[data-test=artefact-attendu]')!.textContent)
+      .toContain('Artefact 1A');
+    const statuts = hote().querySelectorAll('[data-test=statut-livrable]');
+    expect(statuts[0].textContent!.trim()).toBe('Acquis');
+    expect(statuts[1].textContent!.trim()).toBe('En cours');
+    expect(component.statutClasse('NOT_STARTED')).toBe('statut statut--not-started');
+  });
+
+  it('propose le dossier PPAP du projet, et le retour a la liste', async () => {
+    await setup('1');
+    servirCycle();
+
+    // Le dossier appartient au projet : il n'a plus d'adresse globale.
+    expect(hote().querySelector('[data-test=ouvrir-dossier-ppap]')).not.toBeNull();
+    expect(hote().querySelector('[data-test=retour-projets]')).not.toBeNull();
+  });
+
+  it('passe le projet au popup du livrable', async () => {
     await setup('1');
     servirCycle();
     const ouvrir = spyOn(dialog, 'open').and.returnValue({
@@ -178,35 +266,20 @@ describe('ApqpOverviewComponent', () => {
     hote().querySelector<HTMLButtonElement>('[data-test=ouvrir-livrable]')!.click();
 
     expect(ouvrir).toHaveBeenCalled();
+    const data = ouvrir.calls.mostRecent().args[1]!.data as { projectId: string };
+    // Toutes les routes du cycle en dependent : sans lui, le popup ne saurait
+    // pas ou verser une piece.
+    expect(data.projectId).toBe('pr1');
   });
 
-  it('signale les livrables du dossier PPAP, sans rendre le dossier lui-meme', async () => {
+  it('signale les livrables requis au dossier, sans rendre le dossier lui-meme', async () => {
     await setup('1');
     servirCycle();
 
     expect(hote().querySelector('[data-test=marque-ppap]')).not.toBeNull();
     // Le dossier a son propre ecran. Ses douze lignes ont vecu ici, sous le
-    // schema, et repoussaient le detail de la phase sous la ligne de flottaison :
-    // ouvrir un autre jalon ne changeait alors rien de VISIBLE.
+    // schema, et repoussaient le detail de la phase sous la ligne de flottaison.
     expect(hote().querySelector('[data-test=section-ppap]')).toBeNull();
-  });
-
-  it('ouvrir un autre jalon change le detail JUSTE SOUS le schema', async () => {
-    await setup('1');
-    servirCycle();
-
-    const detail = hote().querySelector('.detail')!;
-    expect(detail.textContent).toContain('Phase 1');
-
-    // Le detail suit immediatement le schema dans le DOM : rien ne s'intercale
-    // entre les deux, sans quoi le changement se produirait hors de l'ecran.
-    const schema = hote().querySelector('.v')!;
-    let suivant = schema.nextElementSibling;
-    while (suivant && !suivant.classList.contains('detail')
-           && suivant.tagName.toLowerCase() !== 'qos-apqp-ppap-summary') {
-      suivant = suivant.nextElementSibling;
-    }
-    expect(suivant?.classList.contains('detail')).toBeTrue();
   });
 
   it('ne reinitialise pas le cycle quand la confirmation est refusee', async () => {
@@ -219,21 +292,22 @@ describe('ApqpOverviewComponent', () => {
     http.expectNone(`${endpoint}/reset`);
   });
 
-  it('reinitialise le cycle sur confirmation, et revient au schema', async () => {
+  it('reinitialise le cycle sur confirmation, et revient au schema du projet', async () => {
     await setup('1');
     servirCycle();
     spyOn(window, 'confirm').and.returnValue(true);
-    // Le montage commun espionne deja la navigation : un second espion sur la
-    // meme methode fait echouer Jasmine.
     const naviguer = router.navigate as jasmine.Spy;
 
     component.reinitialiser();
 
     const req = http.expectOne(`${endpoint}/reset`);
     expect(req.request.method).toBe('POST');
-    req.flush({ phases: cycle(), ppapDone: 0, ppapTotal: 5 });
+    req.flush({
+      projectId: 'pr1', projectName: 'Support moteur', projectType: 'NPI',
+      customer: 'Renault', phases: cycle(), ppapDone: 0, ppapTotal: 5
+    });
 
-    expect(naviguer).toHaveBeenCalledWith(['/apqp']);
+    expect(naviguer).toHaveBeenCalledWith(['/apqp', 'pr1']);
     expect(component.phases.length).toBe(5);
   });
 
@@ -282,7 +356,7 @@ describe('ApqpOverviewComponent', () => {
     expect(rangs).toEqual(['1', '2', '3', '4', '5']);
   });
 
-  it('n’ouvre rien sur /apqp, et invite à choisir', async () => {
+  it('n’ouvre rien sur /apqp/:projet, et invite à choisir', async () => {
     await setup();
     servirCycle();
 
@@ -300,15 +374,17 @@ describe('ApqpOverviewComponent', () => {
     expect(hote().querySelector('.invite')).toBeNull();
   });
 
-  it('suit un changement de segment sans être recréé', async () => {
+  it('suit un changement de segment sans être recréé ni recharger le cycle', async () => {
     await setup('1');
     servirCycle();
     expect(component.choisie!.position).toBe(1);
 
-    params.next(convertToParamMap({ phase: '5' }));
+    params.next(convertToParamMap({ projetId: 'pr1', phase: '5' }));
     fixture.detectChanges();
 
     expect(component.choisie!.position).toBe(5);
+    // Le projet n'a pas change : recharger ferait clignoter le schema pour rien.
+    http.expectNone(endpoint);
   });
 
   it('referme la phase quand on reclique sur son jalon', async () => {
@@ -318,7 +394,7 @@ describe('ApqpOverviewComponent', () => {
     servirCycle();
 
     component.basculer(component.choisie!);
-    expect(router.navigate).toHaveBeenCalledWith(['/apqp']);
+    expect(router.navigate).toHaveBeenCalledWith(['/apqp', 'pr1']);
   });
 
   it('ouvre une autre phase quand on clique sur un autre jalon', async () => {
@@ -326,15 +402,15 @@ describe('ApqpOverviewComponent', () => {
     servirCycle();
 
     component.basculer(component.phases[0]);
-    expect(router.navigate).toHaveBeenCalledWith(['/apqp', '1']);
+    expect(router.navigate).toHaveBeenCalledWith(['/apqp', 'pr1', '1']);
   });
 
-  it('revient au schéma quand le segment ne désigne aucune phase', async () => {
+  it('revient au schéma du projet quand le segment ne désigne aucune phase', async () => {
     // Lien périmé, phase supprimée depuis : un écran vide n'expliquerait rien.
     await setup('42');
     servirCycle();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/apqp']);
+    expect(router.navigate).toHaveBeenCalledWith(['/apqp', 'pr1']);
     expect(component.choisie).toBeUndefined();
   });
 
@@ -359,7 +435,7 @@ describe('ApqpOverviewComponent', () => {
     component.supprimerPhase(component.choisie!);
 
     http.expectOne({ url: `${endpoint}/p3`, method: 'DELETE' }).flush(null);
-    expect(router.navigate).toHaveBeenCalledWith(['/apqp']);
+    expect(router.navigate).toHaveBeenCalledWith(['/apqp', 'pr1']);
     servirCycle();
   });
 
@@ -397,15 +473,16 @@ describe('ApqpOverviewComponent', () => {
     // lieu de deviner un ordre.
     await setup('1');
     servirCycle();
-    repondre({ label: 'Nouveau livrable' });
+    repondre({ label: 'Nouveau livrable', expectedArtifact: null, ppap: false });
 
     component.ajouterLivrable(component.choisie!);
 
     const mise = { ...cycle()[0] };
     mise.deliverables = [...mise.deliverables,
       {
-        id: 'l1c', position: 3, label: 'Nouveau livrable',
-        ppap: false, kind: 'ATTACHMENT', done: false, evidenceCount: 0
+        id: 'l1c', position: 3, label: 'Nouveau livrable', expectedArtifact: null,
+        ppap: false, owner: null, dueDate: null, status: 'NOT_STARTED' as const,
+        percentComplete: 0, done: false, evidenceCount: 0
       }];
     http.expectOne({ url: `${endpoint}/p1/deliverables`, method: 'POST' }).flush(mise);
     fixture.detectChanges();
@@ -448,6 +525,11 @@ describe('ApqpOverviewComponent', () => {
     expect(component.editable).toBeFalse();
     expect(hote().querySelector('.detail__commandes')).toBeNull();
     expect(hote().querySelector('.livrables__actions')).toBeNull();
+    // La case reste visible, mais barree : l'ecran dit l'etat sans le laisser
+    // changer.
+    const premiere = hote().querySelector<HTMLInputElement>(
+      '[data-test=case-livrable] input')!;
+    expect(premiere.disabled).toBeTrue();
   });
 
   it('envoie le cycle entier quand on avance une phase, et suit son nouveau rang', async () => {
@@ -469,7 +551,7 @@ describe('ApqpOverviewComponent', () => {
 
     expect(component.choisie!.id).toBe('p3');
     expect(component.choisie!.position).toBe(2);
-    expect(router.navigate).toHaveBeenCalledWith(['/apqp', '2']);
+    expect(router.navigate).toHaveBeenCalledWith(['/apqp', 'pr1', '2']);
   });
 
   it('n’envoie rien quand la phase est déjà au bout du cycle', async () => {

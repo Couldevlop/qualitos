@@ -3,9 +3,12 @@ package com.openlab.qualitos.quality.apqp;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.PrePersist;
@@ -21,7 +24,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Une phase du cycle APQP, propre à un client.
+ * Une phase du cycle APQP d'un PROJET.
  *
  * <p>Les cinq phases du manuel AIAG servent d'amorçage, pas de contrainte : un
  * équipementier automobile n'attend pas les mêmes livrables qu'un fabricant de
@@ -36,7 +39,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ApqpPhase implements ApqpTraduisible {
+public class ApqpPhase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -44,6 +47,16 @@ public class ApqpPhase implements ApqpTraduisible {
 
     @Column(name = "tenant_id", nullable = false, updatable = false)
     private UUID tenantId;
+
+    /**
+     * Le projet dont cette phase dessine le cycle.
+     *
+     * <p>{@code LAZY} : les écrans du cycle partent du projet et descendent vers
+     * ses phases ; remonter depuis chacune d'elles ne sert qu'aux contrôles.
+     */
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "project_id", nullable = false)
+    private ApqpProject project;
 
     /** Rang dans le cycle, à partir de 1. */
     @Column(nullable = false)

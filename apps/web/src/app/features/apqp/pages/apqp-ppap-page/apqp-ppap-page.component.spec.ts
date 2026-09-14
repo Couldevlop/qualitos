@@ -1,7 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { of, throwError } from 'rxjs';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { BehaviorSubject, of, throwError } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { SharedModule } from '../../../../shared/shared.module';
@@ -17,11 +19,12 @@ import {
 import { ApqpPpapPageComponent } from './apqp-ppap-page.component';
 
 /**
- * Le dossier PPAP, sur son propre écran.
+ * Le dossier PPAP d'un projet, sur son propre écran.
  *
- * <p>Ce que ce banc tient : l'écran rend le MÊME composant que sous le schéma du
- * cycle — pas une seconde implémentation qui divergerait — et il ouvre le même
- * popup de livrable. Et un cycle sans livrable étoilé dit quoi faire au lieu de
+ * <p>Ce que ce banc tient : l'écran lit le PROJET dans l'URL — le dossier n'a
+ * plus d'adresse globale —, il rend le MÊME composant que sous le schéma du
+ * cycle (pas une seconde implémentation qui divergerait) et il ouvre le même
+ * popup de livrable. Un projet sans livrable requis dit quoi faire au lieu de
  * laisser un blanc.
  */
 describe('ApqpPpapPageComponent', () => {
@@ -35,7 +38,8 @@ describe('ApqpPpapPageComponent', () => {
 
   function livrable(partiel: Partial<ApqpDeliverable>): ApqpDeliverable {
     return {
-      id: 'd1', position: 1, label: 'MSA', ppap: true, kind: 'ATTACHMENT',
+      id: 'd1', position: 1, label: 'MSA', expectedArtifact: null, ppap: true,
+      owner: null, dueDate: null, status: 'NOT_STARTED', percentComplete: 0,
       done: false, evidenceCount: 0, ...partiel
     };
   }
@@ -46,26 +50,40 @@ describe('ApqpPpapPageComponent', () => {
       purpose: null, question: null, deliverables: livrables
     };
     return {
+      projectId: 'pr1',
+      projectName: 'Support moteur',
+      projectType: 'NPI',
+      customer: 'Renault',
       phases: [phase],
       ppapDone: done,
       ppapTotal: livrables.filter(d => d.ppap).length
     };
   }
 
-  async function monter(rendu: ApqpCycle, roles: string[] = ['QUALITY_MANAGER']): Promise<void> {
+  async function monter(
+    rendu: ApqpCycle | Error, roles: string[] = ['QUALITY_MANAGER']
+  ): Promise<void> {
     service = jasmine.createSpyObj<ApqpService>('ApqpService', ['cycle']);
-    service.cycle.and.returnValue(of(rendu));
+    service.cycle.and.returnValue(
+      rendu instanceof Error ? throwError(() => ({ status: 500 })) : of(rendu));
     dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
     dialog.open.and.returnValue(
       { afterClosed: () => of(undefined) } as unknown as MatDialogRef<unknown>);
 
     await TestBed.resetTestingModule().configureTestingModule({
       declarations: [ApqpPpapPageComponent, ApqpPpapSummaryComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, RouterTestingModule, NoopAnimationsModule],
       providers: [
         { provide: ApqpService, useValue: service },
         { provide: MatDialog, useValue: dialog },
-        { provide: AuthService, useValue: { hasAnyRole: () => roles.length > 0 } }
+        { provide: AuthService, useValue: { hasAnyRole: () => roles.length > 0 } },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            paramMap: new BehaviorSubject(convertToParamMap({ projetId: 'pr1' }))
+              .asObservable()
+          }
+        }
       ]
     }).compileComponents();
 
@@ -73,6 +91,16 @@ describe('ApqpPpapPageComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
   }
+
+  it('lit le projet dans l\'URL et lui demande son cycle', async () => {
+    await monter(cycle([livrable({})]));
+
+    // Le dossier appartient au projet : une lecture globale ne saurait pas
+    // duquel elle parle.
+    expect(service.cycle).toHaveBeenCalledWith('pr1');
+    expect(component.projetNom).toBe('Support moteur');
+    expect(hote().querySelector('[data-test=retour-projet]')).not.toBeNull();
+  });
 
   it('rend le dossier avec le compte venu du serveur', async () => {
     await monter(cycle([
@@ -86,7 +114,7 @@ describe('ApqpPpapPageComponent', () => {
     expect(hote().querySelector('[data-test=compte-ppap]')!.textContent).toContain('2');
   });
 
-  it('ouvre le popup du livrable cliqué', async () => {
+  it('ouvre le popup du livrable cliqué, avec le projet', async () => {
     await monter(cycle([livrable({ label: 'PPAP file and approval form' })]));
 
     hote().querySelector<HTMLButtonElement>('[data-test=ligne-ppap] button')!.click();
@@ -94,10 +122,11 @@ describe('ApqpPpapPageComponent', () => {
     expect(dialog.open).toHaveBeenCalled();
     const data = dialog.open.calls.mostRecent().args[1]!.data as ApqpDeliverableDetailDialogData;
     expect(data.deliverable.label).toBe('PPAP file and approval form');
+    expect(data.projectId).toBe('pr1');
     expect(data.editable).toBeTrue();
   });
 
-  it('dit quoi faire quand aucun livrable n\'est marqué PPAP', async () => {
+  it('dit quoi faire quand aucun livrable n\'est requis au dossier', async () => {
     await monter(cycle([livrable({ ppap: false, label: 'Floor plan layout' })]));
 
     // Un écran muet laisserait croire à un chargement qui n'aboutit pas.
@@ -115,23 +144,7 @@ describe('ApqpPpapPageComponent', () => {
   });
 
   it('survit à un refus du serveur sans écran blanc', async () => {
-    service = jasmine.createSpyObj<ApqpService>('ApqpService', ['cycle']);
-    service.cycle.and.returnValue(throwError(() => ({ status: 500 })));
-    dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
-
-    await TestBed.resetTestingModule().configureTestingModule({
-      declarations: [ApqpPpapPageComponent, ApqpPpapSummaryComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
-      providers: [
-        { provide: ApqpService, useValue: service },
-        { provide: MatDialog, useValue: dialog },
-        { provide: AuthService, useValue: { hasAnyRole: () => true } }
-      ]
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(ApqpPpapPageComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    await monter(new Error('boum'));
 
     expect(component.loading).toBeFalse();
     expect(component.phases).toEqual([]);

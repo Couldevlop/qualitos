@@ -30,7 +30,8 @@ import java.util.UUID;
  * de pilotage qualité.
  */
 @RestController
-@RequestMapping("/api/v1/apqp/phases/{phaseId}/deliverables/{deliverableId}/evidences")
+@RequestMapping("/api/v1/apqp/projects/{projectId}/phases/{phaseId}"
+        + "/deliverables/{deliverableId}/evidences")
 @PreAuthorize("isAuthenticated()")
 @Tag(name = "APQP", description = "Evidence attached to an APQP deliverable")
 public class ApqpDeliverableEvidenceController {
@@ -47,9 +48,10 @@ public class ApqpDeliverableEvidenceController {
 
     @GetMapping
     @Operation(summary = "The files proving a deliverable, with short-lived read URLs")
-    public List<ApqpDeliverableEvidenceDto.ListItem> list(@PathVariable UUID phaseId,
+    public List<ApqpDeliverableEvidenceDto.ListItem> list(@PathVariable UUID projectId,
+                                                          @PathVariable UUID phaseId,
                                                           @PathVariable UUID deliverableId) {
-        return service.list(phaseId, deliverableId);
+        return service.list(projectId, phaseId, deliverableId);
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -57,6 +59,7 @@ public class ApqpDeliverableEvidenceController {
     @PreAuthorize(ROLES_ECRITURE)
     @Operation(summary = "Attach a file (docx, xlsx, pdf, image) to a deliverable")
     public ApqpDeliverableEvidenceDto.Response upload(
+            @PathVariable UUID projectId,
             @PathVariable UUID phaseId,
             @PathVariable UUID deliverableId,
             @RequestParam("file") MultipartFile file,
@@ -64,36 +67,20 @@ public class ApqpDeliverableEvidenceController {
         if (file == null || file.isEmpty()) {
             throw new ApqpDeliverableEvidenceValidationException("Missing or empty 'file' part");
         }
-        return service.upload(phaseId, deliverableId, file.getContentType(),
-                file.getOriginalFilename(), file.getBytes(), parseActor(jwt));
+        return service.upload(projectId, phaseId, deliverableId, file.getContentType(),
+                file.getOriginalFilename(), file.getBytes(), ApqpActor.de(jwt));
     }
 
     @DeleteMapping("/{evidenceId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize(ROLES_ECRITURE)
     @Operation(summary = "Remove a file from a deliverable")
-    public void delete(@PathVariable UUID phaseId,
+    public void delete(@PathVariable UUID projectId,
+                       @PathVariable UUID phaseId,
                        @PathVariable UUID deliverableId,
                        @PathVariable UUID evidenceId,
                        @AuthenticationPrincipal Jwt jwt) {
-        service.delete(phaseId, deliverableId, evidenceId, parseActor(jwt));
+        service.delete(projectId, phaseId, deliverableId, evidenceId, ApqpActor.de(jwt));
     }
 
-    /**
-     * L'auteur du dépôt vient du sujet du jeton.
-     *
-     * <p>Si le sujet n'est pas un UUID, le champ reste vide : mieux vaut une preuve
-     * sans auteur qu'un auteur inventé. Jamais lu du formulaire multipart, qui est
-     * falsifiable.
-     */
-    private static UUID parseActor(Jwt jwt) {
-        if (jwt == null || jwt.getSubject() == null) {
-            return null;
-        }
-        try {
-            return UUID.fromString(jwt.getSubject());
-        } catch (IllegalArgumentException ex) {
-            return null;
-        }
-    }
 }

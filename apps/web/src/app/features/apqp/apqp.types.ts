@@ -1,53 +1,88 @@
 /**
- * Le cycle APQP d'un client, tel que le serveur le rend.
+ * Les projets APQP d'un client, et le cycle de chacun, tels que le serveur les rend.
  *
- * <p>Les cinq phases du document de référence ne sont plus une constante du
- * code : elles amorcent le cycle d'un client, qui le remanie ensuite. D'où ces
- * types, là où un fichier de référence suffisait.
+ * <p>Le cycle n'appartient plus au client mais à un PROJET : un même client mène
+ * de front un lancement de produit, un transfert d'activité et l'ouverture d'un
+ * nouveau client, et chacun a ses phases, ses livrables et son dossier PPAP. Un
+ * cycle unique par client obligeait à les mélanger, ce qui rendait le dossier
+ * remis au client illisible.
  */
 
 /**
- * Le genre d'un livrable : ce que son formulaire demande.
+ * Ce qui motive un projet APQP.
  *
- * <p>Un jeu fermé, décidé par le serveur, et non déduit du libellé : deviner
- * qu'« Control plan » renvoie au module des plans de surveillance marcherait sur
- * le référentiel et sur rien d'autre.
+ * <p>Un jeu fermé, décidé par le serveur : il oriente les livrables attendus, et
+ * une saisie libre aurait interdit tout filtre et tout comparatif entre projets.
  */
-export type ApqpDeliverableKind = 'ATTACHMENT' | 'MODULE_LINK' | 'DATA_ENTRY' | 'CHECKLIST';
+export type ApqpProjectType = 'NPI' | 'TOW' | 'NEW_CUSTOMER' | 'OTHER';
 
-/** Le module visé par un livrable de genre `MODULE_LINK`. */
+/** Le module visé par le renvoi FACULTATIF d'un livrable. */
 export type ApqpLinkedKind = 'FMEA' | 'CONTROL_PLAN' | 'PDCA' | 'CAPA';
 
 /**
- * Une ligne du contenu d'un livrable.
+ * Où en est un livrable.
  *
- * <p>Une seule forme pour les deux genres qui en portent : un sous-point
- * n'utilise que `label` et `checked`, une mesure que `label`, `value`, `unit` et
- * `measuredAt`. Deux types auraient obligé l'écran à choisir avant d'avoir lu le
- * genre du livrable.
+ * <p>Quatre états, dont `BLOCKED` : un livrable en attente d'un tiers n'est ni
+ * « pas commencé » ni « en cours », et les confondre masquait exactement ce qui
+ * retarde le projet.
  */
-export interface ApqpDataRow {
-  label: string;
-  value?: string | null;
-  unit?: string | null;
-  /** Date ISO (yyyy-MM-dd), ou absente : une mesure peut ne pas être datée. */
-  measuredAt?: string | null;
-  checked?: boolean | null;
+export type ApqpDeliverableStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'BLOCKED' | 'DONE';
+
+/** Un projet APQP, avec l'avancement que le serveur compte pour lui. */
+export interface ApqpProject {
+  id: string;
+  name: string;
+  type: ApqpProjectType;
+  customer?: string | null;
+  reference?: string | null;
+  description?: string | null;
+  /** Livrables du projet, tous confondus — comptés par le serveur. */
+  deliverablesTotal: number;
+  deliverablesDone: number;
+  /** Livrables que l'utilisateur a marqués « requis au dossier PPAP ». */
+  ppapTotal: number;
+  ppapDone: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
-/** Un livrable attendu en sortie de phase. */
+export interface CreateApqpProjectRequest {
+  name: string;
+  type: ApqpProjectType;
+  customer?: string | null;
+  reference?: string | null;
+  description?: string | null;
+}
+
+export type UpdateApqpProjectRequest = CreateApqpProjectRequest;
+
+/**
+ * Un livrable attendu en sortie de phase.
+ *
+ * <p>Un seul formulaire pour tous : le genre qui décidait autrefois du corps du
+ * popup a disparu. Il obligeait à qualifier un livrable avant de savoir ce qu'on
+ * en ferait, et interdisait de joindre une pièce à un livrable qualifié
+ * « renvoi » — alors que c'est précisément ce qu'un auditeur demande.
+ */
 export interface ApqpDeliverable {
   id: string;
   position: number;
   label: string;
-  /** Élément du dossier PPAP — l'astérisque du référentiel. */
+  /** Ce que le livrable doit produire, en clair : un document, un relevé, un accord. */
+  expectedArtifact?: string | null;
+  /** Requis au dossier PPAP — c'est l'UTILISATEUR qui en décide, pas un référentiel. */
   ppap: boolean;
-  kind: ApqpDeliverableKind;
+  owner?: string | null;
+  /** Date ISO (yyyy-MM-dd), ou absente : une échéance peut n'être pas posée. */
+  dueDate?: string | null;
+  status: ApqpDeliverableStatus;
+  /** Avancement déclaré, de 0 à 100. */
+  percentComplete: number;
   done: boolean;
   doneAt?: string | null;
   doneBy?: string | null;
   comment?: string | null;
-  data?: ApqpDataRow[] | null;
+  /** Renvoi FACULTATIF vers un enregistrement déjà tenu ailleurs dans QualitOS. */
   linkedKind?: ApqpLinkedKind | null;
   linkedId?: string | null;
   /**
@@ -78,12 +113,16 @@ export interface ApqpPhase {
 }
 
 /**
- * Le cycle, et l'état de son dossier PPAP.
+ * Le cycle d'un projet, et l'état de son dossier PPAP.
  *
- * <p>Le compte voyage avec le cycle : la section PPAP surmonte le même cycle que
- * le schéma, et deux requêtes pourraient se répondre sur deux états différents.
+ * <p>Le projet voyage avec le cycle : l'écran affiche son nom et son client sans
+ * un second appel, et deux requêtes ne peuvent pas se répondre sur deux états.
  */
 export interface ApqpCycle {
+  projectId: string;
+  projectName: string;
+  projectType: ApqpProjectType;
+  customer?: string | null;
   phases: ApqpPhase[];
   ppapDone: number;
   ppapTotal: number;
@@ -97,22 +136,33 @@ export interface CreateApqpPhaseRequest {
 
 export type UpdateApqpPhaseRequest = CreateApqpPhaseRequest;
 
+/** Ce qu'on dit d'un livrable en le créant ou en le reformulant. */
 export interface ApqpDeliverableRequest {
   label: string;
+  expectedArtifact?: string | null;
   ppap: boolean;
-  kind: ApqpDeliverableKind;
 }
 
 /**
- * Ce qu'on déclare d'un livrable.
+ * Le formulaire UNIQUE du livrable.
  *
  * <p>Ni l'heure ni l'auteur : le serveur les pose depuis le jeton. Les envoyer
  * laisserait antidater un livrable et l'attribuer à quelqu'un d'autre.
+ *
+ * <p>`status` et `percentComplete` sont FACULTATIFS parce que la case pilote :
+ * `done:true` impose `DONE` et 100, `done:false` ramène sous les 100. Les
+ * laisser absents, c'est demander au serveur d'appliquer sa règle plutôt que de
+ * lui dicter un état que l'écran aurait recalculé de son côté.
  */
 export interface ApqpCompletionRequest {
   done: boolean;
+  expectedArtifact?: string | null;
+  ppap?: boolean | null;
+  owner?: string | null;
+  dueDate?: string | null;
+  status?: ApqpDeliverableStatus | null;
+  percentComplete?: number | null;
   comment?: string | null;
-  data?: ApqpDataRow[] | null;
   linkedKind?: ApqpLinkedKind | null;
   linkedId?: string | null;
 }

@@ -1,0 +1,51 @@
+<qos-form-dialog
+  [title]="dialogTitle"
+  [formGroup]="form"
+  [submitDisabled]="form.invalid"
+  [blockedReason]="blockedReason"
+  [submitLabel]="submitLabel"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@apqp.project-dialog.field-name">Nom du projet</mat-label>
+    <input matInput formControlName="name" maxlength="255" required
+           i18n-placeholder="@@apqp.project-dialog.name-placeholder"
+           placeholder="Ex. : Support moteur — ligne 4">
+    <mat-error *ngIf="form.controls.name.hasError('required')"
+               i18n="@@apqp.project-dialog.name-required">
+      Un projet sans nom ne se retrouve pas dans la liste.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@apqp.project-dialog.field-type">Type de projet</mat-label>
+    <mat-select formControlName="type" required data-test="type-projet">
+      <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
+    </mat-select>
+    <!-- Le type dit POURQUOI le projet existe : c'est la seule chose qui permette
+         de comparer deux projets entre eux. -->
+    <mat-hint i18n="@@apqp.project-dialog.type-hint">
+      Ce qui motive le projet : un lancement, un transfert, une ouverture de compte.
+    </mat-hint>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@apqp.project.customer">Client</mat-label>
+    <input matInput formControlName="customer" maxlength="255">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@apqp.project.reference">Référence</mat-label>
+    <input matInput formControlName="reference" maxlength="120">
+    <mat-hint i18n="@@apqp.project-dialog.reference-hint">
+      La référence pièce ou le numéro d'affaire — celle que le client cite.
+    </mat-hint>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@common.description">Description</mat-label>
+    <textarea matInput formControlName="description" rows="3" maxlength="2000"></textarea>
+  </mat-form-field>
+
+</qos-form-dialog>

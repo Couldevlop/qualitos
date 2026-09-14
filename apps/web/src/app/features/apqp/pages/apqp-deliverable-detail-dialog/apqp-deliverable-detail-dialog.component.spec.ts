@@ -7,17 +7,18 @@ import { of, throwError } from 'rxjs';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { ApqpService } from '../../apqp.service';
-import { ApqpDeliverable, ApqpPhase } from '../../apqp.types';
+import { ApqpCycle, ApqpDeliverable, ApqpPhase } from '../../apqp.types';
 import {
   ApqpDeliverableDetailDialogComponent
 } from './apqp-deliverable-detail-dialog.component';
 
 /**
- * Le popup d'un livrable, composé selon son GENRE.
+ * Le formulaire UNIQUE d'un livrable APQP.
  *
- * <p>Ce que ce banc tient : chaque genre demande ce qu'il exige et rien d'autre,
- * un renvoi ne se coche pas sans son enregistrement, et l'écran n'envoie jamais
- * l'heure ni l'auteur — que le serveur pose depuis le jeton.
+ * <p>Ce que ce banc tient : il n'y a plus qu'un corps, quel que soit le livrable
+ * — les pièces sont TOUJOURS proposées, le renvoi est FACULTATIF — et la case
+ * pilote l'état et l'avancement à l'écran comme au serveur. L'écran n'envoie
+ * jamais l'heure ni l'auteur : le serveur les pose depuis le jeton.
  */
 describe('ApqpDeliverableDetailDialogComponent', () => {
 
@@ -34,10 +35,16 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
     purpose: null, question: null, deliverables: []
   };
 
+  const cycle: ApqpCycle = {
+    projectId: 'pr1', projectName: 'Support moteur', projectType: 'NPI',
+    customer: 'Renault', phases: [], ppapDone: 1, ppapTotal: 12
+  };
+
   function livrable(partiel: Partial<ApqpDeliverable>): ApqpDeliverable {
     return {
-      id: 'd1', position: 1, label: 'Control plan', ppap: true,
-      kind: 'ATTACHMENT', done: false, evidenceCount: 0, ...partiel
+      id: 'd1', position: 1, label: 'Control plan', expectedArtifact: null,
+      ppap: true, owner: null, dueDate: null, status: 'NOT_STARTED',
+      percentComplete: 0, done: false, evidenceCount: 0, ...partiel
     };
   }
 
@@ -48,8 +55,7 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
       'completeDeliverable', 'evidences', 'uploadEvidence', 'deleteEvidence'
     ]);
     service.evidences.and.returnValue(of([]));
-    service.completeDeliverable.and.returnValue(
-      of({ phases: [], ppapDone: 1, ppapTotal: 12 }));
+    service.completeDeliverable.and.returnValue(of(cycle));
     dialogRef = jasmine.createSpyObj<MatDialogRef<ApqpDeliverableDetailDialogComponent>>(
       'MatDialogRef', ['close']);
     routeur = jasmine.createSpyObj<Router>('Router', ['navigate']);
@@ -64,7 +70,9 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
         { provide: Router, useValue: routeur },
         {
           provide: MAT_DIALOG_DATA,
-          useValue: { phase, deliverable: livrable(partiel), editable }
+          useValue: {
+            projectId: 'pr1', phase, deliverable: livrable(partiel), editable
+          }
         }
       ]
     }).compileComponents();
@@ -74,63 +82,94 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
     fixture.detectChanges();
   }
 
-  // ---------- un corps par genre ----------
+  // ---------- un seul corps, pour tous ----------
 
-  it('demande des pièces pour un livrable documentaire, et rien d\'autre', async () => {
-    await ouvrir({ kind: 'ATTACHMENT' });
+  it('rend le corps entier pour un livrable quelconque', async () => {
+    await ouvrir({});
 
+    // Il y avait quatre corps choisis par un « genre » ; il n'en reste qu'un.
     expect(hote().querySelector('[data-test=zone-pieces]')).not.toBeNull();
-    expect(hote().querySelector('[data-test=table-mesures]')).toBeNull();
-    expect(hote().querySelector('[data-test=renvoi-module]')).toBeNull();
-    expect(hote().querySelector('[data-test=liste-points]')).toBeNull();
-    // Les pièces sont demandées à l'ouverture : un popup qui n'afficherait rien
-    // laisserait croire qu'aucune preuve n'a été versée.
-    expect(service.evidences).toHaveBeenCalledWith('p1', 'd1');
-  });
-
-  it('demande l\'enregistrement visé pour un renvoi, et ne charge aucune pièce', async () => {
-    await ouvrir({ kind: 'MODULE_LINK' });
-
     expect(hote().querySelector('[data-test=renvoi-module]')).not.toBeNull();
-    expect(hote().querySelector('[data-test=zone-pieces]')).toBeNull();
-    expect(service.evidences).not.toHaveBeenCalled();
+    expect(hote().querySelector('[data-test=responsable]')).not.toBeNull();
+    expect(hote().querySelector('[data-test=echeance]')).not.toBeNull();
+    expect(hote().querySelector('[data-test=statut]')).not.toBeNull();
+    expect(hote().querySelector('[data-test=avancement]')).not.toBeNull();
   });
 
-  it('amorce la table des mesures avec les intitulés venus du serveur', async () => {
-    await ouvrir({
-      kind: 'DATA_ENTRY',
-      data: [
-        { label: 'Cp', value: '', unit: '', measuredAt: null },
-        { label: 'Cpk', value: '1.42', unit: '', measuredAt: '2026-09-12' }
-      ]
-    });
+  it('charge TOUJOURS les pièces, même pour un livrable qui renvoie ailleurs', async () => {
+    await ouvrir({ linkedKind: 'FMEA', linkedId: '11111111-2222-3333-4444-555555555555' });
 
-    expect(hote().querySelector('[data-test=table-mesures]')).not.toBeNull();
-    expect(component.rows.length).toBe(2);
-    expect(component.rows.at(0).getRawValue().label).toBe('Cp');
-    expect(component.rows.at(1).getRawValue().value).toBe('1.42');
+    // L'ancien popup ne les chargeait que pour un genre, et les autres
+    // semblaient n'en porter aucune — ce que l'auditeur demande en premier.
+    expect(service.evidences).toHaveBeenCalledWith('pr1', 'p1', 'd1');
+    expect(hote().querySelector('[data-test=zone-pieces]')).not.toBeNull();
   });
 
-  it('coche les sous-points d\'une checklist et les renvoie tels quels', async () => {
-    await ouvrir({
-      kind: 'CHECKLIST',
-      data: [{ label: 'safety', checked: false }, { label: 'cost', checked: false }]
-    });
+  // ---------- la case pilote ----------
 
-    component.rows.at(0).patchValue({ checked: true });
+  it('cocher fixe l\'état à « acquis » et l\'avancement à 100', async () => {
+    await ouvrir({ status: 'IN_PROGRESS', percentComplete: 40 });
+
+    component.form.patchValue({ done: true });
+
+    expect(component.form.getRawValue().status).toBe('DONE');
+    expect(component.form.getRawValue().percentComplete).toBe(100);
+  });
+
+  it('décocher ramène l\'avancement en arrière et quitte l\'état « acquis »', async () => {
+    await ouvrir({ done: true, status: 'DONE', percentComplete: 100 });
+
+    component.form.patchValue({ done: false });
+
+    // Laisser « acquis » à 100 % sur un livrable décoché ferait dire deux
+    // choses contraires au même écran.
+    expect(component.form.getRawValue().status).toBe('IN_PROGRESS');
+    expect(component.form.getRawValue().percentComplete).toBe(0);
+  });
+
+  it('décocher laisse un avancement partiel tel quel', async () => {
+    await ouvrir({ done: false, status: 'BLOCKED', percentComplete: 60 });
+
+    component.form.patchValue({ done: false });
+
+    expect(component.form.getRawValue().status).toBe('BLOCKED');
+    expect(component.form.getRawValue().percentComplete).toBe(60);
+  });
+
+  // ---------- le renvoi, facultatif mais entier ----------
+
+  it('accepte un livrable sans aucun renvoi', async () => {
+    await ouvrir({});
+
+    expect(component.form.valid).toBeTrue();
+    expect(hote().querySelector('[data-test=ouvrir-enregistrement]')).toBeNull();
+    expect(hote().querySelector('[data-test=renvoi-sans-route]')).toBeNull();
+  });
+
+  it('refuse un renvoi posé à moitié', async () => {
+    await ouvrir({});
+
+    component.form.patchValue({ linkedKind: 'FMEA', linkedId: '' });
+
+    // Le serveur repond 422 : mieux vaut desactiver le bouton que proposer une
+    // action qu'on sait refusee.
+    expect(component.form.invalid).toBeTrue();
+    expect(component.blocage).toContain('entier');
     component.submit();
-
-    expect(service.completeDeliverable).toHaveBeenCalled();
-    const envoye = service.completeDeliverable.calls.mostRecent().args[2];
-    expect(envoye.data).toEqual([
-      { label: 'safety', value: '', unit: '', measuredAt: null, checked: true },
-      { label: 'cost', value: '', unit: '', measuredAt: null, checked: false }
-    ]);
+    expect(service.completeDeliverable).not.toHaveBeenCalled();
   });
 
-  it('ouvre la fiche visee, en refermant le popup', async () => {
+  it('refuse un identifiant de renvoi mal formé', async () => {
+    await ouvrir({});
+
+    component.form.patchValue({ linkedKind: 'FMEA', linkedId: 'pas-un-uuid' });
+
+    expect(component.form.get('linkedId')?.hasError('pattern')).toBeTrue();
+  });
+
+  it('ouvre la fiche visée, en refermant le popup', async () => {
     const cible = '11111111-2222-3333-4444-555555555555';
-    await ouvrir({ kind: 'MODULE_LINK', linkedKind: 'FMEA', linkedId: cible });
+    await ouvrir({ linkedKind: 'FMEA', linkedId: cible });
 
     hote().querySelector<HTMLButtonElement>('[data-test=ouvrir-enregistrement]')!.click();
 
@@ -142,8 +181,7 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
 
   it('dit pourquoi un plan de surveillance ne s’ouvre pas d’ici', async () => {
     await ouvrir({
-      kind: 'MODULE_LINK', linkedKind: 'CONTROL_PLAN',
-      linkedId: '11111111-2222-3333-4444-555555555555'
+      linkedKind: 'CONTROL_PLAN', linkedId: '11111111-2222-3333-4444-555555555555'
     });
 
     // Il vit dans l'onglet d'un produit : aucune route ne l'atteint par son seul
@@ -152,71 +190,45 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
     expect(hote().querySelector('[data-test=renvoi-sans-route]')).not.toBeNull();
   });
 
-  it('n’offre pas d’ouverture tant qu’aucun enregistrement n’est designe', async () => {
-    await ouvrir({ kind: 'MODULE_LINK' });
-
-    expect(hote().querySelector('[data-test=ouvrir-enregistrement]')).toBeNull();
-    expect(hote().querySelector('[data-test=renvoi-sans-route]')).toBeNull();
-  });
-
-  // ---------- ce que l'écran refuse ----------
-
-  it('refuse de cocher un renvoi sans son enregistrement', async () => {
-    await ouvrir({ kind: 'MODULE_LINK' });
-
-    component.form.patchValue({ done: true, linkedId: '', linkedKind: null });
-    component.submit();
-
-    // Mieux vaut désactiver le bouton que proposer une action qu'on sait refusée.
-    expect(component.form.invalid).toBeTrue();
-    expect(component.blocage).toContain('enregistrement');
-    expect(service.completeDeliverable).not.toHaveBeenCalled();
-  });
-
-  it('refuse un identifiant de renvoi mal formé', async () => {
-    await ouvrir({ kind: 'MODULE_LINK' });
-
-    component.form.patchValue({ linkedKind: 'FMEA', linkedId: 'pas-un-uuid' });
-
-    expect(component.form.get('linkedId')?.hasError('pattern')).toBeTrue();
-  });
-
-  it('refuse une ligne sans intitulé plutôt que de l\'envoyer au serveur', async () => {
-    await ouvrir({ kind: 'CHECKLIST', data: [{ label: 'safety', checked: false }] });
-
-    component.rows.at(0).patchValue({ label: '   ' });
-    component.submit();
-
-    expect(component.form.invalid).toBeTrue();
-    expect(service.completeDeliverable).not.toHaveBeenCalled();
-  });
-
-  it('se lit sans se remplir quand l\'utilisateur ne peut pas écrire', async () => {
-    await ouvrir({ kind: 'ATTACHMENT' }, false);
-
-    expect(component.form.disabled).toBeTrue();
-    expect(component.blocage).toContain('consulter');
-    expect(hote().querySelector('[data-test=verser-piece]')).toBeNull();
-  });
-
   // ---------- ce que l'écran envoie ----------
 
-  it('n\'envoie ni l\'heure ni l\'auteur : le serveur les pose', async () => {
-    await ouvrir({ kind: 'ATTACHMENT' });
+  it('envoie le suivi complet, sans l\'heure ni l\'auteur', async () => {
+    await ouvrir({});
 
-    component.form.patchValue({ done: true });
+    component.form.patchValue({
+      done: true,
+      expectedArtifact: '  Plan signé  ',
+      ppap: true,
+      owner: '  R. Martin  ',
+      dueDate: '2026-10-15',
+      comment: '  reçu le 3  '
+    });
     component.submit();
 
-    const envoye = service.completeDeliverable.calls.mostRecent().args[2];
+    expect(service.completeDeliverable).toHaveBeenCalled();
+    const appel = service.completeDeliverable.calls.mostRecent().args;
+    expect(appel[0]).toBe('pr1');
+    expect(appel[1]).toBe('p1');
+    expect(appel[2]).toBe('d1');
+    const envoye = appel[3];
+    expect(envoye.done).toBeTrue();
+    expect(envoye.expectedArtifact).toBe('Plan signé');
+    expect(envoye.ppap).toBeTrue();
+    expect(envoye.owner).toBe('R. Martin');
+    expect(envoye.dueDate).toBe('2026-10-15');
+    expect(envoye.comment).toBe('reçu le 3');
+    // La case pilote : l'ecran envoie ce qu'il affiche, et le serveur applique
+    // la meme regle -- les deux disent alors la meme chose.
+    expect(envoye.status).toBe('DONE');
+    expect(envoye.percentComplete).toBe(100);
+    expect(envoye.linkedKind).toBeNull();
+    expect(envoye.linkedId).toBeNull();
     expect('doneAt' in envoye).toBeFalse();
     expect('doneBy' in envoye).toBeFalse();
-    // Une pièce jointe ne porte pas de contenu : l'envoyer vaudrait un 422.
-    expect(envoye.data).toBeNull();
-    expect(envoye.linkedId).toBeNull();
   });
 
   it('rend le cycle au parent en se fermant, pour qu\'il recompte le dossier PPAP', async () => {
-    await ouvrir({ kind: 'ATTACHMENT' });
+    await ouvrir({});
 
     component.submit();
 
@@ -224,10 +236,28 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
       jasmine.objectContaining({ ppapDone: 1, ppapTotal: 12 }));
   });
 
+  it('refuse un avancement hors de 0-100', async () => {
+    await ouvrir({});
+
+    component.form.patchValue({ percentComplete: 140 });
+
+    expect(component.form.invalid).toBeTrue();
+    component.submit();
+    expect(service.completeDeliverable).not.toHaveBeenCalled();
+  });
+
+  it('se lit sans se remplir quand l\'utilisateur ne peut pas écrire', async () => {
+    await ouvrir({}, false);
+
+    expect(component.form.disabled).toBeTrue();
+    expect(component.blocage).toContain('consulter');
+    expect(hote().querySelector('[data-test=verser-piece]')).toBeNull();
+  });
+
   // ---------- pièces jointes ----------
 
   it('verse le fichier choisi, puis relit la liste', async () => {
-    await ouvrir({ kind: 'ATTACHMENT' });
+    await ouvrir({});
     service.uploadEvidence.and.returnValue(of({
       id: 'e1', phaseId: 'p1', deliverableId: 'd1', contentType: 'application/pdf',
       sizeBytes: 2048, originalFilename: 'ppap.pdf', createdAt: '2026-09-12T10:00:00Z'
@@ -237,7 +267,7 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
     const input = { files: [fichier], value: 'ppap.pdf' } as unknown as HTMLInputElement;
     component.choisirFichier(input);
 
-    expect(service.uploadEvidence).toHaveBeenCalledWith('p1', 'd1', fichier);
+    expect(service.uploadEvidence).toHaveBeenCalledWith('pr1', 'p1', 'd1', fichier);
     // La saisie est vidée : sans cela, reverser le même fichier après un refus ne
     // déclencherait aucun événement.
     expect(input.value).toBe('');
@@ -245,7 +275,7 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
   });
 
   it('explique un refus du serveur sans perdre le popup', async () => {
-    await ouvrir({ kind: 'ATTACHMENT' });
+    await ouvrir({});
     service.uploadEvidence.and.returnValue(
       throwError(() => ({ status: 413, error: { detail: 'trop lourd' } })));
 
@@ -258,12 +288,20 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
   });
 
   it('affiche la taille en unités lisibles', async () => {
-    await ouvrir({ kind: 'ATTACHMENT' });
+    await ouvrir({});
 
     expect(component.taille(2 * 1024 * 1024)).toBe('2.0 Mo');
     expect(component.taille(4096)).toBe('4 Ko');
     // Un fichier minuscule ne doit pas s'afficher « 0 Ko », ce qui se lirait
     // comme un fichier vide.
     expect(component.taille(120)).toBe('1 Ko');
+  });
+
+  it('nomme les quatre états en clair, jamais en constante serveur', async () => {
+    await ouvrir({});
+
+    expect(component.statutLabel('NOT_STARTED')).toBe('Non commencé');
+    expect(component.statutLabel('BLOCKED')).toBe('Bloqué');
+    expect(component.statuts.length).toBe(4);
   });
 });

@@ -9,15 +9,15 @@ export interface LignePpap {
 }
 
 /**
- * Le dossier PPAP : une VUE du cycle, jamais une seconde liste.
+ * Le dossier PPAP d'un projet : une VUE de son cycle, jamais une seconde liste.
  *
- * <p>Les livrables retenus sont ceux que le référentiel marque d'un astérisque
- * (« this deliverable is a PPAP element »). Tenir à part une liste normative
- * aurait divergé du cycle dès que le client l'adapte — et c'est le cycle qui fait
- * foi, puisqu'il lui appartient.
+ * <p>Les livrables retenus sont ceux que l'UTILISATEUR a marqués « requis au
+ * dossier PPAP ». Ce n'est plus l'astérisque d'un référentiel : c'est lui qui
+ * sait ce que son client attend, et deux projets n'exigent pas la même chose.
+ * Tenir à part une liste normative aurait divergé du cycle dès qu'on l'adapte.
  *
  * <p>Le compte vient du SERVEUR : deux vues du même cycle doivent afficher le
- * même chiffre, et la règle changera le jour où « acquis » voudra dire « coché ET
+ * même chiffre, et la règle changera le jour où « fourni » voudra dire « coché ET
  * prouvé ».
  */
 @Component({
@@ -30,10 +30,10 @@ export class ApqpPpapSummaryComponent {
 
   @Input() phases: ApqpPhase[] = [];
 
-  /** Livrables PPAP acquis, comptés par le serveur. */
+  /** Livrables requis déjà fournis, comptés par le serveur. */
   @Input() done = 0;
 
-  /** Livrables PPAP au total, comptés par le serveur. */
+  /** Livrables requis au dossier, en tout, comptés par le serveur. */
   @Input() total = 0;
 
   /** Le parent sait ouvrir le popup : la section ne fait que désigner la ligne. */
@@ -64,7 +64,7 @@ export class ApqpPpapSummaryComponent {
   }
 
   get resume(): string {
-    return $localize`:@@apqp.ppap.progress:${this.done}:done: / ${this.total}:total: livrables acquis`;
+    return $localize`:@@apqp.ppap.progress:${this.done}:done: / ${this.total}:total: livrables requis fournis`;
   }
 
   get ariaBarre(): string {
@@ -73,7 +73,7 @@ export class ApqpPpapSummaryComponent {
 
   ariaLigne(ligne: LignePpap): string {
     return ligne.deliverable.done
-      ? $localize`:@@apqp.ppap.row-done:${ligne.deliverable.label}:label: — acquis`
+      ? $localize`:@@apqp.ppap.row-done:${ligne.deliverable.label}:label: — fourni`
       : $localize`:@@apqp.ppap.row-pending:${ligne.deliverable.label}:label: — à fournir`;
   }
 

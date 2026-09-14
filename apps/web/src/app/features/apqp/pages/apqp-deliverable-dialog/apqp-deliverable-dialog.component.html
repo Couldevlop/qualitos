@@ -22,23 +22,22 @@
     </mat-error>
   </mat-form-field>
 
+  <!-- Un texte libre, et non un genre a choisir : le genre decidait du
+       formulaire qu'on verrait en ouvrant le livrable, donc de ce qu'on aurait
+       le droit d'y mettre, avant meme d'avoir travaille le sujet. -->
   <mat-form-field appearance="outline" class="full">
-    <mat-label i18n="@@apqp.deliverable-dialog.field-kind">Ce que ce livrable produit</mat-label>
-    <mat-select formControlName="kind" required>
-      <mat-option *ngFor="let genre of genres" [value]="genre.value">
-        {{ genre.label }}
-      </mat-option>
-    </mat-select>
-    <!-- Le choix n'est pas evident : il decide du formulaire que l'utilisateur
-         verra en ouvrant le livrable. -->
-    <mat-hint data-test="aide-genre" i18n="@@apqp.deliverable-dialog.kind-hint">
-      Détermine ce que le livrable demandera : une pièce jointe, un renvoi, des mesures
-      ou des points à cocher.
+    <mat-label i18n="@@apqp.deliverable-dialog.field-artifact">Artefact attendu</mat-label>
+    <textarea matInput formControlName="expectedArtifact" rows="2" maxlength="1000"
+              data-test="artefact-attendu"
+              i18n-placeholder="@@apqp.deliverable-dialog.artifact-placeholder"
+              placeholder="Ex. : tableur signé par le responsable méthodes"></textarea>
+    <mat-hint data-test="aide-artefact" i18n="@@apqp.deliverable-dialog.artifact-hint">
+      Facultatif. Ce que ce livrable doit produire concrètement : c'est ce qu'on vérifiera.
     </mat-hint>
   </mat-form-field>
 
   <mat-checkbox formControlName="ppap" data-test="case-ppap">
-    <span i18n="@@apqp.deliverable-dialog.ppap">Ce livrable compose le dossier PPAP</span>
+    <span i18n="@@apqp.deliverable-dialog.ppap">Ce livrable est requis au dossier PPAP</span>
   </mat-checkbox>
 
 </qos-form-dialog>

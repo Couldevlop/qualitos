@@ -17,24 +17,35 @@ import {
 import {
   ApqpPpapSummaryComponent
 } from './pages/apqp-ppap-summary/apqp-ppap-summary.component';
+import {
+  ApqpProjectDialogComponent
+} from './pages/apqp-project-dialog/apqp-project-dialog.component';
+import {
+  ApqpProjectListComponent
+} from './pages/apqp-project-list/apqp-project-list.component';
 
-// Un seul ecran : le schema EST l'interface, et la phase ouverte vit dans
-// l'URL. Deux chemins pour un meme composant, donc, et non deux pages -- un
-// lien vers une phase reste partageable sans qu'on quitte la vue d'ensemble.
+// La racine liste les PROJETS : le cycle n'appartient plus au client mais a un
+// projet, et un client en mene plusieurs de front.
 //
-// Le segment est le RANG de la phase. Un mot tire du titre aurait casse les
-// liens deja partages au premier renommage, et le cycle se renomme desormais.
+// Sous un projet, le schema EST l'interface et la phase ouverte vit dans l'URL.
+// Deux chemins pour un meme composant, donc, et non deux pages -- un lien vers
+// une phase reste partageable sans qu'on quitte la vue d'ensemble. Le segment
+// est le RANG de la phase : un mot tire du titre aurait casse les liens deja
+// partages au premier renommage, et le cycle se renomme desormais.
 const routes: Routes = [
-  { path: '', component: ApqpOverviewComponent },
-  // AVANT `:phase`, qui capterait « ppap » comme s'il etait un rang de phase.
-  // Le dossier PPAP a son propre ecran parce qu'on le travaille pour lui-meme a
-  // l'approche d'une soumission, et pas seulement en marge du cycle.
-  { path: 'ppap', component: ApqpPpapPageComponent },
-  { path: ':phase', component: ApqpOverviewComponent }
+  { path: '', component: ApqpProjectListComponent },
+  // AVANT `:projetId/:phase`, qui capterait « ppap » comme s'il etait un rang de
+  // phase. Le dossier PPAP a son propre ecran parce qu'on le travaille pour
+  // lui-meme a l'approche d'une soumission, et pas seulement en marge du cycle.
+  { path: ':projetId/ppap', component: ApqpPpapPageComponent },
+  { path: ':projetId', component: ApqpOverviewComponent },
+  { path: ':projetId/:phase', component: ApqpOverviewComponent }
 ];
 
 @NgModule({
   declarations: [
+    ApqpProjectListComponent,
+    ApqpProjectDialogComponent,
     ApqpOverviewComponent,
     ApqpPhaseDialogComponent,
     ApqpDeliverableDialogComponent,

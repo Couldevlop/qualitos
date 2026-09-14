@@ -10,25 +10,9 @@ précis et non un plan de contrôle quelconque. Seule la coquille est traduite.
 
 TRANSLATIONS = {
     'nav.apqp': ('APQP', 'APQP', 'APQP', 'APQP', 'APQP', 'APQP'),
-    'nav.apqp-cycle': (
-        'Le cycle', 'The cycle', 'El ciclo', 'الدورة', 'サイクル', '流程总览'),
 
-    'nav.apqp-ppap': (
-        'Dossier PPAP', 'PPAP file', 'Expediente PPAP', 'ملف PPAP',
-        'PPAP 提出資料', 'PPAP 文件'),
 
     'apqp.eyebrow': ('APQP', 'APQP', 'APQP', 'APQP', 'APQP', 'APQP'),
-    'apqp.title': (
-        'Planification qualité produit', 'Advanced Product Quality Planning',
-        'Planificación avanzada de la calidad', 'التخطيط المتقدم لجودة المنتج',
-        '先行製品品質計画', '产品质量先期策划'),
-    'apqp.subtitle': (
-        "Les phases se lisent en V : on descend jusqu'au point bas du projet, on remonte vers la production série.",
-        'The phases read as a V: down to the low point of the project, then back up to serial production.',
-        'Las fases se leen en V: se baja hasta el punto bajo del proyecto y se remonta a la producción en serie.',
-        'تُقرأ المراحل على شكل V: نزولاً إلى أدنى نقطة في المشروع ثم صعوداً إلى الإنتاج المتسلسل.',
-        'フェーズはV字に読みます。プロジェクトの底まで下り、量産へと上がります。',
-        '各阶段呈 V 形：下行至项目低点，再上行至量产。'),
     'apqp.cycle-aria': (
         'Cycle APQP', 'APQP cycle', 'Ciclo APQP',
         'دورة APQP', 'APQP サイクル', 'APQP 流程'),
@@ -195,20 +179,20 @@ TRANSLATIONS = {
         'Restablecer desde el referencial', 'إعادة التعيين من المرجع',
         '標準リストから再設定', '从参考清单重置'),
     'apqp.confirm-reset': (
-        'Remplacer votre cycle par celui du référentiel ? Vos phases, vos livrables et les pièces qui les prouvent seront définitivement perdus.',
-        'Replace your cycle with the reference one? Your phases, your deliverables and the files proving them will be lost for good.',
-        '¿Sustituir su ciclo por el del referencial? Sus fases, sus entregables y los archivos que los prueban se perderán definitivamente.',
-        'هل تستبدل دورتك بدورة المرجع؟ ستُفقد مراحلك ومُخرَجاتك والملفات التي تُثبتها نهائيًا.',
-        'ご自身のサイクルを標準リストで置き換えますか？フェーズ、成果物、それを証明するファイルは完全に失われます。',
-        '要用参考清单替换您的循环吗？您的阶段、交付物及其证明文件将被永久删除。'),
+        'Remplacer le cycle de ce projet par celui du référentiel ? Ses phases, ses livrables et les pièces qui les prouvent seront définitivement perdus.',
+        'Replace this project’s cycle with the reference one? Its phases, its deliverables and the files proving them will be lost for good.',
+        '¿Sustituir el ciclo de este proyecto por el del referencial? Sus fases, sus entregables y los archivos que los prueban se perderán definitivamente.',
+        'هل تستبدل دورة هذا المشروع بدورة المرجع؟ ستُفقد مراحله ومُخرَجاته والملفات التي تُثبتها نهائيًا.',
+        'このプロジェクトのサイクルを標準リストで置き換えますか？フェーズ、成果物、それを証明するファイルは完全に失われます。',
+        '要用参考清单替换该项目的循环吗？其阶段、交付物及其证明文件将被永久删除。'),
     'apqp.toggle-deliverable-aria': (
         'Déclarer « {$label} » acquis', 'Declare “{$label}” obtained',
         'Declarar «{$label}» obtenido', 'إعلان إنجاز «{$label}»',
         '「{$label}」を取得済みとする', '声明“{$label}”已取得'),
     'apqp.ppap-mark-aria': (
-        'Élément du dossier PPAP', 'Part of the PPAP file',
-        'Elemento del expediente PPAP', 'عنصر من ملف PPAP',
-        'PPAP 提出資料の構成要素', 'PPAP 文件的组成部分'),
+        'Livrable requis au dossier PPAP', 'Deliverable required for the PPAP file',
+        'Entregable requerido para el expediente PPAP', 'مُخرَج مطلوب لملف PPAP',
+        'PPAP 提出資料に必要な成果物', 'PPAP 文件所需的交付物'),
     'apqp.evidence-count-aria': (
         '{$count} pièce(s) jointe(s)', '{$count} attached file(s)',
         '{$count} archivo(s) adjunto(s)', '{$count} ملف مرفق',
@@ -217,28 +201,24 @@ TRANSLATIONS = {
     'apqp.ppap.title': (
         'Dossier PPAP', 'PPAP file', 'Expediente PPAP', 'ملف PPAP',
         'PPAP 提出資料', 'PPAP 文件'),
-    'apqp.ppap.legend': (
-        "* Les livrables marqués d'un astérisque dans le référentiel composent le dossier remis au client.",
-        '* Deliverables marked with an asterisk in the reference make up the file handed to the customer.',
-        '* Los entregables marcados con asterisco en el referencial componen el expediente entregado al cliente.',
-        '* المُخرَجات المُعلَّمة بنجمة في المرجع تُشكِّل الملف المُقدَّم إلى العميل.',
-        '※ 標準リストでアスタリスクが付いた成果物が、顧客に提出する資料を構成します。',
-        '* 参考清单中带星号的交付物构成提交给客户的文件。'),
     # Forme neutre au nombre : « 1 deliverables obtained » accordait mal, et une
     # regle ICU pour un compteur de tableau de bord serait payer cher un pluriel.
+    # Forme neutre au nombre : « 1 deliverables supplied » accordait mal, et une
+    # regle ICU pour un compteur de tableau de bord serait payer cher un pluriel.
     'apqp.ppap.progress': (
-        '{$done} / {$total} livrables acquis', '{$done} of {$total} deliverables obtained',
-        '{$done} de {$total} entregables obtenidos',
-        '{$done} من {$total} مُخرَج مُنجَز',
-        '取得済み成果物 {$done} / {$total} 件',
-        '已取得 {$done} / {$total} 项交付物'),
+        '{$done} / {$total} livrables requis fournis',
+        '{$done} of {$total} required deliverables supplied',
+        '{$done} de {$total} entregables requeridos entregados',
+        '{$done} من {$total} مُخرَج مطلوب تم تقديمه',
+        '提出済みの必須成果物 {$done} / {$total} 件',
+        '已提供 {$done} / {$total} 项必需交付物'),
     'apqp.ppap.progress-aria': (
         'Complétude du dossier PPAP : {$percent} %', 'PPAP file completeness: {$percent} %',
         'Integridad del expediente PPAP: {$percent} %', 'اكتمال ملف PPAP: {$percent} %',
         'PPAP 提出資料の充足度：{$percent} %', 'PPAP 文件完成度：{$percent} %'),
     'apqp.ppap.row-done': (
-        '{$label} — acquis', '{$label} — obtained', '{$label} — obtenido',
-        '{$label} — مُنجَز', '{$label} — 取得済み', '{$label} — 已取得'),
+        '{$label} — fourni', '{$label} — supplied', '{$label} — entregado',
+        '{$label} — مُقدَّم', '{$label} — 提出済み', '{$label} — 已提供'),
     'apqp.ppap.row-pending': (
         '{$label} — à fournir', '{$label} — to be supplied',
         '{$label} — pendiente de entrega', '{$label} — يجب تقديمه',
@@ -269,16 +249,12 @@ TRANSLATIONS = {
         'يمكنك الاطلاع على هذا المُخرَج دون تعديله.',
         'この成果物は閲覧のみ可能で、変更はできません。', '您可以查看该交付物，但不能修改。'),
     'apqp.deliverable.blocked-link': (
-        "Désignez l'enregistrement avant de déclarer ce livrable acquis.",
-        'Point to the record before declaring this deliverable obtained.',
-        'Indique el registro antes de declarar el entregable obtenido.',
-        'حدِّد السجل قبل إعلان إنجاز هذا المُخرَج.',
-        '成果物を取得済みとする前に、対象レコードを指定してください。',
-        '在声明该交付物已取得之前，请先指定对应记录。'),
-    'apqp.deliverable.blocked-rows': (
-        "Chaque ligne a besoin d'un intitulé.", 'Every row needs a label.',
-        'Cada línea necesita un título.', 'كل سطر يحتاج إلى عنوان.',
-        '各行には名称が必要です。', '每一行都需要名称。'),
+        "Un renvoi se pose entier : le module ET son identifiant, ou ni l'un ni l'autre.",
+        'A reference is set whole: the module AND its identifier, or neither.',
+        'Una referencia se define entera: el módulo Y su identificador, o ninguno.',
+        'تُحدَّد الإشارة كاملة: الوحدة ومُعرِّفها معًا، أو لا شيء.',
+        '参照は一括で指定します。モジュールと識別子の両方、またはどちらも指定しません。',
+        '引用需成对填写：模块与其标识符，或两者都不填。'),
     'apqp.deliverable.failed': (
         'Opération impossible sur ce livrable.',
         'That operation is not possible on this deliverable.',
@@ -353,96 +329,27 @@ TRANSLATIONS = {
         'Acción correctiva (CAPA)', 'إجراء تصحيحي (CAPA)', '是正処置（CAPA）',
         '纠正措施（CAPA）'),
 
-    'apqp.data.label': (
-        'Indicateur', 'Indicator', 'Indicador', 'المؤشر', '指標', '指标'),
-    'apqp.data.value': ('Valeur', 'Value', 'Valor', 'القيمة', '値', '数值'),
-    'apqp.data.unit': ('Unité', 'Unit', 'Unidad', 'الوحدة', '単位', '单位'),
-    'apqp.data.measured-at': (
-        'Mesuré le', 'Measured on', 'Medido el', 'تاريخ القياس', '測定日', '测量日期'),
-    'apqp.data.add-row': (
-        'Ajouter un indicateur', 'Add an indicator', 'Añadir un indicador',
-        'إضافة مؤشر', '指標を追加', '添加指标'),
-    'apqp.data.remove-row': (
-        'Retirer cette ligne', 'Remove this row', 'Eliminar esta línea',
-        'إزالة هذا السطر', 'この行を削除', '删除该行'),
-    'apqp.point.label': (
-        'Point à acquitter', 'Point to acknowledge', 'Punto a validar',
-        'بند يجب إقراره', '確認すべき項目', '待确认事项'),
-    'apqp.point.add-row': (
-        'Ajouter un point', 'Add a point', 'Añadir un punto', 'إضافة بند',
-        '項目を追加', '添加事项'),
 
-    'apqp.kind-help.attachment': (
-        'Joignez le document qui prouve ce livrable — Word, Excel, PDF ou photo.',
-        'Attach the document that proves this deliverable — Word, Excel, PDF or photo.',
-        'Adjunte el documento que prueba el entregable: Word, Excel, PDF o foto.',
-        'أرفِق المستند الذي يُثبت هذا المُخرَج — Word أو Excel أو PDF أو صورة.',
-        'この成果物を証明する文書を添付してください（Word・Excel・PDF・写真）。',
-        '请附上证明该交付物的文档 — Word、Excel、PDF 或照片。'),
-    'apqp.kind-help.module-link': (
-        "Ce livrable est déjà tenu dans un module de QualitOS : désignez l'enregistrement concerné.",
-        'This deliverable already lives in a QualitOS module: point to the record concerned.',
-        'Este entregable ya existe en un módulo de QualitOS: indique el registro correspondiente.',
-        'هذا المُخرَج موجود أصلًا في إحدى وحدات QualitOS: حدِّد السجل المعني.',
-        'この成果物は QualitOS の別モジュールで管理されています。該当レコードを指定してください。',
-        '该交付物已存在于 QualitOS 的某个模块中：请指定对应记录。'),
-    'apqp.kind-help.data-entry': (
-        'Saisissez les valeurs mesurées, avec leur unité et leur date.',
-        'Enter the measured values, with their unit and date.',
-        'Introduzca los valores medidos, con su unidad y fecha.',
-        'أدخِل القيم المقيسة مع وحدتها وتاريخها.',
-        '測定値を、単位と日付とともに入力してください。', '请输入测量值及其单位和日期。'),
-    'apqp.kind-help.checklist': (
-        "Ce livrable n'est acquis que si tous ses points le sont.",
-        'This deliverable is obtained only once all its points are.',
-        'El entregable solo se obtiene cuando todos sus puntos lo están.',
-        'لا يُعدّ هذا المُخرَج مُنجَزًا إلا بإنجاز جميع بنوده.',
-        'この成果物は、すべての項目が満たされて初めて取得となります。',
-        '仅当所有事项均完成时，该交付物才算取得。'),
-    'apqp.kind.attachment': (
-        'Un document à joindre', 'A document to attach', 'Un documento para adjuntar',
-        'مستند يُرفَق', '添付する文書', '需附加的文档'),
-    'apqp.kind.module-link': (
-        'Un enregistrement déjà tenu dans QualitOS',
-        'A record already held in QualitOS', 'Un registro que ya existe en QualitOS',
-        'سجل موجود أصلًا في QualitOS', 'QualitOS で既に管理されているレコード',
-        'QualitOS 中已有的记录'),
-    'apqp.kind.data-entry': (
-        'Des mesures à saisir', 'Measurements to enter', 'Mediciones para introducir',
-        'قياسات تُدخَل', '入力する測定値', '需填写的测量值'),
-    'apqp.kind.checklist': (
-        'Une liste de points à acquitter', 'A list of points to acknowledge',
-        'Una lista de puntos a validar', 'قائمة بنود يجب إقرارها',
-        '確認項目のリスト', '待确认事项清单'),
-    'apqp.deliverable-dialog.field-kind': (
-        'Ce que ce livrable produit', 'What this deliverable produces',
-        'Lo que produce este entregable', 'ما يُنتجه هذا المُخرَج',
-        'この成果物が生み出すもの', '该交付物产出什么'),
-    'apqp.deliverable-dialog.kind-hint': (
-        'Détermine ce que le livrable demandera : une pièce jointe, un renvoi, des mesures ou des points à cocher.',
-        'Sets what the deliverable will ask for: an attachment, a record reference, measurements, or points to tick.',
-        'Determina lo que pedirá el entregable: un archivo adjunto, una referencia a un registro, mediciones o puntos para marcar.',
-        'يحدِّد ما سيطلبه المُخرَج: مرفقًا، أو إشارة إلى سجل، أو قياسات، أو بنودًا تُؤشَّر.',
-        '成果物が何を求めるかを決めます：添付ファイル、レコード参照、測定値、チェック項目。',
-        '决定该交付物将要求什么：附件、记录引用、测量值或勾选事项。'),
     'apqp.deliverable-dialog.ppap': (
-        'Ce livrable compose le dossier PPAP', 'This deliverable is part of the PPAP file',
-        'Este entregable forma parte del expediente PPAP', 'هذا المُخرَج جزء من ملف PPAP',
-        'この成果物は PPAP 提出資料の一部です', '该交付物属于 PPAP 文件'),
+        'Ce livrable est requis au dossier PPAP',
+        'This deliverable is required for the PPAP file',
+        'Este entregable es requerido para el expediente PPAP',
+        'هذا المُخرَج مطلوب لملف PPAP',
+        'この成果物は PPAP 提出資料に必要です', '该交付物为 PPAP 文件所需'),
     'apqp.ppap.page-subtitle': (
-        "Les livrables que le référentiel marque d'un astérisque : ce qui compose le dossier remis au client.",
-        'The deliverables the reference marks with an asterisk: what makes up the file handed to the customer.',
-        'Los entregables marcados con asterisco en el referencial: lo que compone el expediente entregado al cliente.',
-        'المُخرَجات التي يُعلِّمها المرجع بنجمة: ما يُشكِّل الملف المُقدَّم إلى العميل.',
-        '標準リストでアスタリスクが付いた成果物 — 顧客に提出する資料を構成します。',
-        '参考清单中带星号的交付物：构成提交给客户的文件。'),
+        "Les livrables que vous avez marqués « requis au dossier PPAP » : ce qui compose le dossier remis au client.",
+        'The deliverables you marked “required for the PPAP file”: what makes up the file handed to the customer.',
+        'Los entregables que ha marcado «requeridos para el expediente PPAP»: lo que compone el expediente entregado al cliente.',
+        'المُخرَجات التي وسمتَها «مطلوبة لملف PPAP»: ما يُشكِّل الملف المُقدَّم إلى العميل.',
+        '「PPAP 提出資料に必要」と印を付けた成果物 — 顧客に提出する資料を構成します。',
+        '您标记为「PPAP 文件所需」的交付物：构成提交给客户的文件。'),
     'apqp.ppap.empty': (
-        "Aucun livrable du cycle n'est marqué comme élément du dossier PPAP. Ouvrez une phase du cycle pour en marquer un.",
-        'No deliverable in the cycle is marked as part of the PPAP file. Open a phase of the cycle to mark one.',
-        'Ningún entregable del ciclo está marcado como elemento del expediente PPAP. Abra una fase del ciclo para marcar uno.',
-        'لا يوجد مُخرَج في الدورة مُعلَّم كعنصر من ملف PPAP. افتح مرحلة من الدورة لتعليم أحدها.',
-        'サイクル内に PPAP 提出資料の構成要素として印の付いた成果物がありません。フェーズを開いて印を付けてください。',
-        '循环中没有任何交付物被标记为 PPAP 文件的组成部分。请打开某个阶段进行标记。'),
+        "Aucun livrable de ce projet n'est marqué « requis au dossier PPAP ». Ouvrez un livrable du cycle pour l'y ajouter.",
+        'No deliverable in this project is marked “required for the PPAP file”. Open a deliverable of the cycle to add one.',
+        'Ningún entregable de este proyecto está marcado como «requerido para el expediente PPAP». Abra un entregable del ciclo para añadirlo.',
+        'لا يوجد مُخرَج في هذا المشروع موسوم «مطلوب لملف PPAP». افتح مُخرَجًا من الدورة لإضافته.',
+        'このプロジェクトには「PPAP 提出資料に必要」と印の付いた成果物がありません。サイクルの成果物を開いて追加してください。',
+        '该项目中没有交付物被标记为「PPAP 文件所需」。请打开循环中的某个交付物进行添加。'),
     'apqp.link.open': (
         'Ouvrir la fiche', 'Open the record', 'Abrir la ficha',
         'فتح السجل', 'レコードを開く', '打开记录'),
@@ -453,4 +360,189 @@ TRANSLATIONS = {
         'تُفتح خطة المراقبة من منتجها: ليس لها عنوان خاص بها.',
         'コントロールプランは製品から開きます。単独の URL はありません。',
         '控制计划从其产品页面打开，没有独立地址。'),
+
+    # --- les projets APQP : la racine du module ------------------------------
+    'nav.apqp-projects': (
+        'Projets', 'Projects', 'Proyectos', 'المشاريع', 'プロジェクト', '项目'),
+    'apqp.projects.title': (
+        'APQP — Projets', 'APQP — Projects', 'APQP — Proyectos',
+        'APQP — المشاريع', 'APQP — プロジェクト', 'APQP — 项目'),
+    'apqp.projects.subtitle': (
+        'Chaque projet porte son propre cycle en V, ses livrables et son dossier PPAP.',
+        'Each project carries its own V cycle, its deliverables and its PPAP file.',
+        'Cada proyecto tiene su propio ciclo en V, sus entregables y su expediente PPAP.',
+        'يحمل كل مشروع دورته على شكل V ومُخرَجاته وملف PPAP الخاص به.',
+        '各プロジェクトは、独自の V 字サイクル、成果物、PPAP 提出資料を持ちます。',
+        '每个项目都有各自的 V 形流程、交付物和 PPAP 文件。'),
+    'apqp.projects.new': (
+        'Nouveau projet', 'New project', 'Nuevo proyecto', 'مشروع جديد',
+        '新規プロジェクト', '新建项目'),
+    'apqp.projects.col-deliverables': (
+        'Livrables', 'Deliverables', 'Entregables', 'المُخرَجات', '成果物', '交付物'),
+    'apqp.projects.col-ppap': (
+        'Dossier PPAP', 'PPAP file', 'Expediente PPAP', 'ملف PPAP',
+        'PPAP 提出資料', 'PPAP 文件'),
+    'apqp.projects.empty': (
+        "Aucun projet pour l'instant. Créez-en un : il partira du cycle du référentiel, que vous adapterez ensuite.",
+        'No project yet. Create one: it starts from the reference cycle, which you then adapt.',
+        'Aún no hay proyectos. Cree uno: partirá del ciclo del referencial, que luego adaptará.',
+        'لا يوجد مشروع بعد. أنشئ مشروعًا: سينطلق من دورة المرجع التي تُكيِّفها بعد ذلك.',
+        'プロジェクトがまだありません。作成すると標準リストのサイクルから始まり、以後は自由に調整できます。',
+        '尚无项目。新建一个：它将从参考清单的循环开始，之后可自行调整。'),
+    'apqp.projects.delete-aria': (
+        'Supprimer le projet {$name}', 'Delete project {$name}',
+        'Eliminar el proyecto {$name}', 'حذف المشروع {$name}',
+        'プロジェクト「{$name}」を削除', '删除项目 {$name}'),
+    'apqp.projects.confirm-delete': (
+        'Supprimer le projet « {$name} » ? Son cycle, ses livrables et les pièces qui les prouvent seront définitivement perdus.',
+        'Delete project “{$name}”? Its cycle, its deliverables and the files proving them will be lost for good.',
+        '¿Eliminar el proyecto «{$name}»? Su ciclo, sus entregables y los archivos que los prueban se perderán definitivamente.',
+        'حذف المشروع «{$name}»؟ ستُفقد دورته ومُخرَجاته والملفات التي تُثبتها نهائيًا.',
+        'プロジェクト「{$name}」を削除しますか？そのサイクル、成果物、証明ファイルは完全に失われます。',
+        '删除项目“{$name}”？其循环、交付物及其证明文件将被永久删除。'),
+
+    'apqp.project.type.npi': (
+        'NPI — nouveau produit', 'NPI — new product', 'NPI — nuevo producto',
+        'NPI — منتج جديد', 'NPI — 新製品', 'NPI — 新产品'),
+    'apqp.project.type.tow': (
+        "ToW — transfert d'activité", 'ToW — transfer of work',
+        'ToW — transferencia de actividad', 'ToW — نقل نشاط',
+        'ToW — 業務移管', 'ToW — 业务转移'),
+    'apqp.project.type.new-customer': (
+        'Nouveau client', 'New customer', 'Nuevo cliente', 'عميل جديد',
+        '新規顧客', '新客户'),
+    'apqp.project.type.other': (
+        'Autre', 'Other', 'Otro', 'أخرى', 'その他', '其他'),
+    'apqp.project.customer': (
+        'Client', 'Customer', 'Cliente', 'العميل', '顧客', '客户'),
+    'apqp.project.reference': (
+        'Référence', 'Reference', 'Referencia', 'المرجع', '参照番号', '编号'),
+
+    'apqp.project-dialog.title-create': (
+        'Nouveau projet APQP', 'New APQP project', 'Nuevo proyecto APQP',
+        'مشروع APQP جديد', '新規 APQP プロジェクト', '新建 APQP 项目'),
+    'apqp.project-dialog.title-edit': (
+        'Modifier le projet', 'Edit the project', 'Modificar el proyecto',
+        'تعديل المشروع', 'プロジェクトを編集', '修改项目'),
+    'apqp.project-dialog.field-name': (
+        'Nom du projet', 'Project name', 'Nombre del proyecto', 'اسم المشروع',
+        'プロジェクト名', '项目名称'),
+    'apqp.project-dialog.name-placeholder': (
+        'Ex. : Support moteur — ligne 4', 'E.g. engine mount — line 4',
+        'Ej.: soporte de motor — línea 4', 'مثال: حامل المحرك — الخط 4',
+        '例：エンジンマウント — ライン 4', '例如：发动机支架 — 4 号线'),
+    'apqp.project-dialog.name-required': (
+        'Un projet sans nom ne se retrouve pas dans la liste.',
+        'A project without a name cannot be found in the list.',
+        'Un proyecto sin nombre no se encuentra en la lista.',
+        'المشروع بلا اسم لا يُعثر عليه في القائمة.',
+        '名称のないプロジェクトは一覧で見つけられません。', '没有名称的项目无法在列表中找到。'),
+    'apqp.project-dialog.blocked-name': (
+        "Donnez un nom au projet : c'est ce que la liste affiche.",
+        'Give the project a name: it is what the list shows.',
+        'Dé un nombre al proyecto: es lo que muestra la lista.',
+        'أعطِ المشروع اسمًا: هو ما تعرضه القائمة.',
+        'プロジェクトに名前を付けてください。一覧に表示されるのはこれです。',
+        '请为项目命名：列表显示的正是它。'),
+    'apqp.project-dialog.field-type': (
+        'Type de projet', 'Project type', 'Tipo de proyecto', 'نوع المشروع',
+        'プロジェクト種別', '项目类型'),
+    'apqp.project-dialog.type-hint': (
+        'Ce qui motive le projet : un lancement, un transfert, une ouverture de compte.',
+        'What drives the project: a launch, a transfer, a new account.',
+        'Lo que motiva el proyecto: un lanzamiento, una transferencia, una nueva cuenta.',
+        'ما يُبرِّر المشروع: إطلاق أو نقل أو فتح حساب جديد.',
+        'プロジェクトの動機：立ち上げ、移管、新規取引の開始。',
+        '项目的缘由：新品导入、业务转移或开拓新客户。'),
+    'apqp.project-dialog.reference-hint': (
+        "La référence pièce ou le numéro d'affaire — celle que le client cite.",
+        'The part reference or job number — the one the customer quotes.',
+        'La referencia de pieza o el número de expediente: el que cita el cliente.',
+        'مرجع القطعة أو رقم الصفقة — الذي يذكره العميل.',
+        '部品番号または案件番号 — 顧客が使う番号です。',
+        '零件编号或项目编号 — 客户所引用的那个。'),
+
+    'apqp.back-to-projects': (
+        'Retour aux projets', 'Back to projects', 'Volver a los proyectos',
+        'العودة إلى المشاريع', 'プロジェクト一覧に戻る', '返回项目列表'),
+    'apqp.back-to-project': (
+        'Retour au projet', 'Back to the project', 'Volver al proyecto',
+        'العودة إلى المشروع', 'プロジェクトに戻る', '返回项目'),
+
+    # --- l'etat d'un livrable -------------------------------------------------
+    'apqp.status.not-started': (
+        'Non commencé', 'Not started', 'No iniciado', 'لم يبدأ', '未着手', '未开始'),
+    'apqp.status.in-progress': (
+        'En cours', 'In progress', 'En curso', 'قيد التنفيذ', '進行中', '进行中'),
+    'apqp.status.blocked': (
+        'Bloqué', 'Blocked', 'Bloqueado', 'مُعطَّل', '停滞', '受阻'),
+    'apqp.status.done': (
+        'Acquis', 'Obtained', 'Obtenido', 'مُنجَز', '取得済み', '已取得'),
+
+    'apqp.deliverable.owner': (
+        'Responsable', 'Owner', 'Responsable', 'المسؤول', '担当者', '负责人'),
+    'apqp.deliverable.due-date': (
+        'Échéance', 'Due date', 'Fecha límite', 'الموعد النهائي', '期限', '截止日期'),
+    'apqp.deliverable.percent': (
+        'Avancement (%)', 'Progress (%)', 'Progreso (%)', 'التقدم (%)',
+        '進捗（%）', '进度（%）'),
+    'apqp.deliverable.percent-range': (
+        "L'avancement se compte de 0 à 100.", 'Progress runs from 0 to 100.',
+        'El progreso va de 0 a 100.', 'يُحسب التقدم من 0 إلى 100.',
+        '進捗は 0 から 100 までです。', '进度取值为 0 到 100。'),
+    'apqp.deliverable.expected-artifact': (
+        'Artefact attendu', 'Expected artefact', 'Artefacto esperado',
+        'المُنتَج المتوقع', '想定される成果物', '预期产出物'),
+    'apqp.deliverable.expected-artifact-placeholder': (
+        'Ex. : plan de surveillance signé, au format tableur',
+        'E.g. signed control plan, as a spreadsheet',
+        'Ej.: plan de control firmado, en formato de hoja de cálculo',
+        'مثال: خطة مراقبة موقَّعة بصيغة جدول بيانات',
+        '例：署名済みのコントロールプラン（表計算形式）',
+        '例如：已签署的控制计划，电子表格格式'),
+    'apqp.deliverable.expected-artifact-hint': (
+        "Ce que ce livrable doit produire, dit en clair : c'est ce qu'on vérifiera.",
+        'What this deliverable must produce, plainly stated: that is what will be checked.',
+        'Lo que debe producir este entregable, dicho con claridad: es lo que se verificará.',
+        'ما يجب أن يُنتجه هذا المُخرَج بوضوح: هو ما سيُتحقَّق منه.',
+        'この成果物が生み出すべきものを平易に。検証されるのはこれです。',
+        '用平实的话写明该交付物应产出什么：这正是将被核查的内容。'),
+    'apqp.deliverable.blocked-fields': (
+        'Un champ du formulaire est hors limites.',
+        'A field of the form is out of bounds.',
+        'Un campo del formulario está fuera de límites.',
+        'أحد حقول النموذج خارج الحدود المسموحة.',
+        'フォームの項目が許容範囲を超えています。', '表单中有字段超出允许范围。'),
+
+    'apqp.link.section': (
+        'Renvoi vers un enregistrement', 'Reference to a record',
+        'Referencia a un registro', 'إشارة إلى سجل',
+        'レコードへの参照', '指向某条记录的引用'),
+    'apqp.link.optional-hint': (
+        'Facultatif. Les deux champs se posent ensemble, ou aucun des deux.',
+        'Optional. Both fields are set together, or neither.',
+        'Opcional. Ambos campos se rellenan juntos, o ninguno.',
+        'اختياري. يُملأ الحقلان معًا أو لا يُملأ أيٌّ منهما.',
+        '任意です。2 つの項目は両方指定するか、どちらも指定しません。',
+        '可选。两个字段要么都填，要么都不填。'),
+    'apqp.link.none': (
+        'Aucun', 'None', 'Ninguno', 'لا شيء', 'なし', '无'),
+
+    'apqp.deliverable-dialog.field-artifact': (
+        'Artefact attendu', 'Expected artefact', 'Artefacto esperado',
+        'المُنتَج المتوقع', '想定される成果物', '预期产出物'),
+    'apqp.deliverable-dialog.artifact-placeholder': (
+        'Ex. : tableur signé par le responsable méthodes',
+        'E.g. spreadsheet signed by the methods engineer',
+        'Ej.: hoja de cálculo firmada por el responsable de métodos',
+        'مثال: جدول بيانات موقَّع من مسؤول الأساليب',
+        '例：生産技術責任者が署名した表計算ファイル',
+        '例如：由工艺负责人签署的电子表格'),
+    'apqp.deliverable-dialog.artifact-hint': (
+        "Facultatif. Ce que ce livrable doit produire concrètement : c'est ce qu'on vérifiera.",
+        'Optional. What this deliverable must concretely produce: that is what will be checked.',
+        'Opcional. Lo que debe producir concretamente este entregable: es lo que se verificará.',
+        'اختياري. ما يجب أن يُنتجه هذا المُخرَج فعليًا: هو ما سيُتحقَّق منه.',
+        '任意です。この成果物が具体的に生み出すもの。検証されるのはこれです。',
+        '可选。该交付物具体应产出什么：这正是将被核查的内容。'),
 }

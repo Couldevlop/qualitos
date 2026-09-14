@@ -3,12 +3,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ApqpService } from '../../apqp.service';
-import { ApqpCycle, ApqpDeliverable, ApqpPhase } from '../../apqp.types';
+import {
+  ApqpCycle, ApqpDeliverable, ApqpDeliverableStatus, ApqpPhase, ApqpProjectType
+} from '../../apqp.types';
 import {
   ApqpDeliverableDetailDialogComponent, ApqpDeliverableDetailDialogData
 } from '../apqp-deliverable-detail-dialog/apqp-deliverable-detail-dialog.component';
@@ -23,14 +25,14 @@ import {
 const ROLES_ECRITURE = ['QUALITY_MANAGER', 'DIRECTOR_QUALITY', 'ADMIN_TENANT', 'SUPER_ADMIN'];
 
 /**
- * Le cycle APQP : le schéma EST l'interface, et il s'édite.
+ * Le cycle APQP d'un PROJET : le schéma EST l'interface, et il s'édite.
  *
  * <p>Les cinq phases se lisent en V — on descend de la planification vers la
  * conception du processus, on remonte vers la production série. Cette forme
  * n'est pas décorative : elle dit que le milieu du V est le point bas du
  * projet, celui où tout se joue avant de pouvoir remonter.
  *
- * <p>Le cycle vient du SERVEUR et appartient au client : le manuel AIAG ne fait
+ * <p>Le cycle vient du SERVEUR et appartient au projet : le manuel AIAG ne fait
  * que l'amorcer. On renomme une phase, on en retire une, on en ajoute une
  * sixième — et le V se redessine, son rang étant calculé par le serveur.
  *
@@ -48,6 +50,12 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
 
   phases: ApqpPhase[] = [];
   loading = false;
+
+  /** Le projet dont on lit le cycle. Vient de l'URL, jamais d'un corps de requête. */
+  projetId = '';
+  projetNom = '';
+  projetType?: ApqpProjectType;
+  client?: string | null;
 
   /** La phase ouverte sous le schéma, ou `undefined` tant qu'on n'a rien choisi. */
   choisie?: ApqpPhase;
@@ -73,13 +81,19 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
     // On s'abonne plutôt que de lire un instantané : passer d'une phase à
     // l'autre ne recrée pas le composant, et un instantané figerait l'écran.
     this.route.paramMap
-      .pipe(map(p => p.get('phase')), takeUntil(this.detruit$))
-      .subscribe(slug => {
-        this.slugDemande = slug;
+      .pipe(takeUntil(this.detruit$))
+      .subscribe(params => {
+        const projet = params.get('projetId') ?? '';
+        this.slugDemande = params.get('phase');
+        if (projet !== this.projetId) {
+          // Changer de projet change TOUT le cycle : on recharge plutôt que de
+          // réaligner une phase choisie qui n'existe plus.
+          this.projetId = projet;
+          this.charger();
+          return;
+        }
         this.retenir();
       });
-
-    this.charger();
   }
 
   ngOnDestroy(): void {
@@ -97,7 +111,9 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
    */
   basculer(phase: ApqpPhase): void {
     void this.router.navigate(
-      this.choisie?.id === phase.id ? ['/apqp'] : ['/apqp', this.slug(phase)]
+      this.choisie?.id === phase.id
+        ? ['/apqp', this.projetId]
+        : ['/apqp', this.projetId, this.slug(phase)]
     );
   }
 
@@ -124,7 +140,7 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
    * Les colonnes du V : autant que de phases.
    *
    * <p>Posé en style plutôt qu'en feuille : le nombre appartient au cycle du
-   * client, et une règle CSS ne peut pas le connaître. La bascule mobile le
+   * projet, et une règle CSS ne peut pas le connaître. La bascule mobile le
    * reprend avec `!important` — c'est la seule façon de battre un style en
    * ligne, et elle est assumée là-bas.
    */
@@ -136,12 +152,26 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
     return $localize`:@@apqp.cycle-aria:Cycle APQP`;
   }
 
+  /** Le sur-titre de la page : le projet, pas le module. */
+  get sousTitreProjet(): string | undefined {
+    return this.client ? this.client : undefined;
+  }
+
+  typeLabel(type: ApqpProjectType): string {
+    return ({
+      NPI: $localize`:@@apqp.project.type.npi:NPI — nouveau produit`,
+      TOW: $localize`:@@apqp.project.type.tow:ToW — transfert d'activité`,
+      NEW_CUSTOMER: $localize`:@@apqp.project.type.new-customer:Nouveau client`,
+      OTHER: $localize`:@@apqp.project.type.other:Autre`
+    })[type];
+  }
+
   ariaCocher(livrable: ApqpDeliverable): string {
     return $localize`:@@apqp.toggle-deliverable-aria:Déclarer « ${livrable.label}:label: » acquis`;
   }
 
   get ariaPpap(): string {
-    return $localize`:@@apqp.ppap-mark-aria:Élément du dossier PPAP`;
+    return $localize`:@@apqp.ppap-mark-aria:Livrable requis au dossier PPAP`;
   }
 
   ariaPreuves(livrable: ApqpDeliverable): string {
@@ -164,6 +194,20 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
     return $localize`:@@apqp.move-later:Reculer la phase d'un rang`;
   }
 
+  /** L'état d'un livrable, dit en clair plutôt qu'en constante serveur. */
+  statutLabel(statut: ApqpDeliverableStatus): string {
+    return ({
+      NOT_STARTED: $localize`:@@apqp.status.not-started:Non commencé`,
+      IN_PROGRESS: $localize`:@@apqp.status.in-progress:En cours`,
+      BLOCKED: $localize`:@@apqp.status.blocked:Bloqué`,
+      DONE: $localize`:@@apqp.status.done:Acquis`
+    })[statut];
+  }
+
+  statutClasse(statut: ApqpDeliverableStatus): string {
+    return 'statut statut--' + statut.toLowerCase().replace('_', '-');
+  }
+
   // ---------- ordre du cycle ----------
 
   peutAvancer(phase: ApqpPhase): boolean {
@@ -180,7 +224,7 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
    * <p>Sans cela, une phase ajoutée resterait à jamais en fin de cycle : le
    * serveur la pose à la suite, et rien ne permettrait de l'intercaler là où
    * elle a lieu d'être — ce qui vide de sa portée le fait que le cycle
-   * appartienne au client.
+   * appartienne au projet.
    *
    * <p>On envoie le cycle ENTIER dans son nouvel ordre, jamais un déplacement
    * isolé : le serveur refuse un ordre partiel, et le V se lit comme un
@@ -194,7 +238,7 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
     const ordre = this.phases.map(p => p.id);
     [ordre[depuis], ordre[vers]] = [ordre[vers], ordre[depuis]];
 
-    this.service.reorder({ phaseIds: ordre }).subscribe({
+    this.service.reorder(this.projetId, { phaseIds: ordre }).subscribe({
       next: phases => {
         this.phases = phases;
         // Le rang EST le segment d'URL : la phase déplacée a changé d'adresse.
@@ -205,7 +249,7 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
           this.slugDemande = this.slug(deplacee);
         }
         this.retenir();
-        void this.router.navigate(['/apqp', this.slugDemande]);
+        void this.router.navigate(['/apqp', this.projetId, this.slugDemande]);
       },
       error: err => this.echouer(err)
     });
@@ -222,7 +266,7 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
     });
     ref.afterClosed().subscribe(saisie => {
       if (!saisie) return;
-      this.service.createPhase(saisie).subscribe({
+      this.service.createPhase(this.projetId, saisie).subscribe({
         // On recharge tout : ajouter une phase change le rang de TOUTES les
         // autres dans le V. Insérer la nouvelle dans la liste locale
         // laisserait le schéma faux jusqu'au prochain chargement.
@@ -241,7 +285,7 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
     });
     ref.afterClosed().subscribe(saisie => {
       if (!saisie) return;
-      this.service.updatePhase(phase.id, saisie).subscribe({
+      this.service.updatePhase(this.projetId, phase.id, saisie).subscribe({
         next: mise => this.remplacer(mise),
         error: err => this.echouer(err)
       });
@@ -254,11 +298,11 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
     const question = $localize`:@@apqp.confirm-delete-phase:Supprimer « ${phase.title} » et ses ${phase.deliverables.length} livrables ? Cette suppression est définitive.`;
     if (!confirm(question)) return;
 
-    this.service.deletePhase(phase.id).subscribe({
+    this.service.deletePhase(this.projetId, phase.id).subscribe({
       next: () => {
         // Retour au schéma : la phase ouverte n'existe plus, et le rang des
         // suivantes a changé — l'URL ne désigne plus ce qu'elle désignait.
-        void this.router.navigate(['/apqp']);
+        void this.router.navigate(['/apqp', this.projetId]);
         this.charger();
       },
       error: err => this.echouer(err)
@@ -276,7 +320,7 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
     });
     ref.afterClosed().subscribe(saisie => {
       if (!saisie) return;
-      this.service.addDeliverable(phase.id, saisie).subscribe({
+      this.service.addDeliverable(this.projetId, phase.id, saisie).subscribe({
         next: mise => this.remplacer(mise),
         error: err => this.echouer(err)
       });
@@ -292,7 +336,7 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
     });
     ref.afterClosed().subscribe(saisie => {
       if (!saisie) return;
-      this.service.updateDeliverable(phase.id, livrable.id, saisie).subscribe({
+      this.service.updateDeliverable(this.projetId, phase.id, livrable.id, saisie).subscribe({
         next: mise => this.remplacer(mise),
         error: err => this.echouer(err)
       });
@@ -300,7 +344,7 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Ouvre le livrable : ce qu'il attend, et ce qui le prouve.
+   * Ouvre le livrable : ce qu'il attend, où il en est, et ce qui le prouve.
    *
    * <p>Lecture ouverte à tous, écriture non : le popup reçoit le droit plutôt
    * que de le redéduire, pour que les deux écrans ne divergent pas.
@@ -312,7 +356,7 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
       restoreFocus: true,
       width: '44rem',
       data: {
-        phase, deliverable: livrable, editable: this.editable
+        projectId: this.projetId, phase, deliverable: livrable, editable: this.editable
       } as ApqpDeliverableDetailDialogData
     });
     ref.afterClosed().subscribe(cycle => {
@@ -323,18 +367,28 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
   /**
    * Coche ou décoche un livrable depuis la liste.
    *
-   * <p>Le commentaire et le contenu déjà saisis sont renvoyés tels quels : sans
-   * cela, un clic sur la case effacerait ce que le popup avait enregistré.
+   * <p>TOUT livrable se coche désormais : le genre qui interdisait la case aux
+   * « renvois » a disparu, et il obligeait à ouvrir le popup pour un geste d'une
+   * seconde.
+   *
+   * <p>Ce qui a déjà été saisi repart tel quel — sans cela, un clic sur la case
+   * effacerait ce que le popup avait enregistré. Le statut et l'avancement, eux,
+   * partent À VIDE : c'est la case qui les pilote, et c'est le serveur qui
+   * applique la règle, pour que les deux écrans ne la recalculent pas chacun de
+   * son côté.
    */
   basculerLivrable(phase: ApqpPhase, livrable: ApqpDeliverable, coche: boolean): void {
-    this.service.completeDeliverable(phase.id, livrable.id, {
+    this.service.completeDeliverable(this.projetId, phase.id, livrable.id, {
       done: coche,
+      expectedArtifact: livrable.expectedArtifact ?? null,
+      ppap: livrable.ppap,
+      owner: livrable.owner ?? null,
+      dueDate: livrable.dueDate ?? null,
+      status: null,
+      percentComplete: null,
       comment: livrable.comment ?? null,
-      data: livrable.kind === 'CHECKLIST' || livrable.kind === 'DATA_ENTRY'
-        ? livrable.data ?? null
-        : null,
-      linkedKind: livrable.kind === 'MODULE_LINK' ? livrable.linkedKind ?? null : null,
-      linkedId: livrable.kind === 'MODULE_LINK' ? livrable.linkedId ?? null : null
+      linkedKind: livrable.linkedKind ?? null,
+      linkedId: livrable.linkedId ?? null
     }).subscribe({
       next: cycle => this.appliquer(cycle),
       error: err => this.echouer(err)
@@ -342,18 +396,18 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Rend au client le cycle du référentiel, en effaçant le sien.
+   * Rend au projet le cycle du référentiel, en effaçant le sien.
    *
    * <p>`confirm` natif plutôt qu'un dialogue de plus : la question est fermée, et
    * la perte est décrite dans le texte même.
    */
   reinitialiser(): void {
-    const question = $localize`:@@apqp.confirm-reset:Remplacer votre cycle par celui du référentiel ? Vos phases, vos livrables et les pièces qui les prouvent seront définitivement perdus.`;
+    const question = $localize`:@@apqp.confirm-reset:Remplacer le cycle de ce projet par celui du référentiel ? Ses phases, ses livrables et les pièces qui les prouvent seront définitivement perdus.`;
     if (!confirm(question)) return;
 
-    this.service.reset().subscribe({
+    this.service.reset(this.projetId).subscribe({
       next: cycle => {
-        void this.router.navigate(['/apqp']);
+        void this.router.navigate(['/apqp', this.projetId]);
         this.appliquer(cycle);
       },
       error: err => this.echouer(err)
@@ -364,7 +418,7 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
     const question = $localize`:@@apqp.confirm-delete-deliverable:Retirer « ${livrable.label} » des livrables ?`;
     if (!confirm(question)) return;
 
-    this.service.deleteDeliverable(phase.id, livrable.id).subscribe({
+    this.service.deleteDeliverable(this.projetId, phase.id, livrable.id).subscribe({
       next: mise => this.remplacer(mise),
       error: err => this.echouer(err)
     });
@@ -373,8 +427,13 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
   // ---------- interne ----------
 
   private charger(): void {
+    if (!this.projetId) {
+      // Adresse sans projet : la liste est le seul écran qui ait un sens.
+      void this.router.navigate(['/apqp']);
+      return;
+    }
     this.loading = true;
-    this.service.cycle().subscribe({
+    this.service.cycle(this.projetId).subscribe({
       next: cycle => {
         this.appliquer(cycle);
         this.loading = false;
@@ -389,12 +448,16 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
   /**
    * Prend le cycle rendu par le serveur.
    *
-   * <p>La réponse porte aussi l'état du dossier PPAP ; cet écran ne l'affiche pas
-   * — c'est l'écran « Dossier PPAP » qui s'en charge — mais il le reçoit du même
-   * appel, ce qui évite que les deux vues se répondent sur deux états.
+   * <p>La réponse porte aussi le projet et l'état de son dossier PPAP ; l'écran
+   * affiche le premier et pas le second — c'est l'écran « Dossier PPAP » qui s'en
+   * charge — mais il reçoit les deux du même appel, ce qui évite que les vues se
+   * répondent sur deux états.
    */
   private appliquer(cycle: ApqpCycle): void {
     this.phases = cycle.phases;
+    this.projetNom = cycle.projectName;
+    this.projetType = cycle.projectType;
+    this.client = cycle.customer ?? null;
     this.retenir();
   }
 
@@ -422,7 +485,7 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
     if (!trouvee && this.phases.length > 0) {
       // Rang inconnu — lien périmé, phase supprimée depuis : on montre le
       // schéma plutôt qu'un écran vide qui n'expliquerait rien.
-      void this.router.navigate(['/apqp']);
+      void this.router.navigate(['/apqp', this.projetId]);
       return;
     }
     this.choisie = trouvee;

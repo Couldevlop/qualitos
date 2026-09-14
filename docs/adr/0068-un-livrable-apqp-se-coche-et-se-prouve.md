@@ -35,6 +35,15 @@ document de référence fourni (`docs/APQP delivrables.docx`), en anglais.
 
 ### 1. Quatre genres fermés, et non un formulaire par livrable
 
+> **Décision révisée** (voir ADR 0072). Le genre fermé évitait bien d'écrire une
+> cinquantaine de formulaires, mais il a produit trois défauts : la moitié des
+> livrables — ceux de genre `MODULE_LINK` — n'était pas cochable, quatre écrans
+> répondaient à une seule question (« où en est-on ? »), et aucun des quatre ne
+> portait les colonnes que le client tient réellement dans son classeur de suivi.
+> Le genre disparaît au profit d'un formulaire UNIQUE, celui du classeur ; ce que le
+> genre prétendait dire — sous quelle forme le livrable est attendu — est dit en
+> clair par un champ « artefact attendu ».
+
 `ApqpDeliverableKind` : `ATTACHMENT`, `MODULE_LINK`, `DATA_ENTRY`, `CHECKLIST`.
 Le genre est porté par le livrable, donné par le serveur, et décide de ce que son
 popup demande.
@@ -56,6 +65,11 @@ marcherait sur le référentiel et sur rien d'autre, et personne ne comprendrait
 pourquoi son propre libellé n'ouvre pas le même formulaire.
 
 ### 2. Un seul `data jsonb`, validé par genre, et non une colonne par genre
+
+> **Décision révisée** (voir ADR 0072). La colonne et son validateur tombent avec le
+> genre qui les commandait. La migration **V131** replie le contenu réellement saisi
+> dans les notes du livrable avant de retirer la colonne : ce qu'un utilisateur y
+> avait écrit lui appartient, et ne part pas avec le modèle qui le portait.
 
 Les sous-points d'une checklist et les mesures d'une saisie tiennent dans la même
 colonne, sous deux formes fermées. Ce qui empêche cette colonne d'être un

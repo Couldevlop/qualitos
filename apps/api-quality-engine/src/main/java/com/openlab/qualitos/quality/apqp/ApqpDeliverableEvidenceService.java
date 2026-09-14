@@ -88,10 +88,11 @@ public class ApqpDeliverableEvidenceService {
     }
 
     @Transactional(readOnly = true)
-    public List<ApqpDeliverableEvidenceDto.ListItem> list(UUID phaseId, UUID deliverableId) {
+    public List<ApqpDeliverableEvidenceDto.ListItem> list(UUID projectId, UUID phaseId,
+                                                          UUID deliverableId) {
         UUID tenantId = requireTenantId();
         ObjectStorage storage = requireStorage();
-        requireDeliverable(phaseId, deliverableId, tenantId);
+        requireDeliverable(projectId, phaseId, deliverableId, tenantId);
 
         return evidences.findByTenantIdAndDeliverableIdOrderByCreatedAtAsc(tenantId, deliverableId)
                 .stream()
@@ -108,12 +109,14 @@ public class ApqpDeliverableEvidenceService {
      * étranger. C'est un 404 et non un 403 : ne rien dire de l'existence de la
      * ressource est le comportement attendu (OWASP A01).
      */
-    public ApqpDeliverableEvidenceDto.Response upload(UUID phaseId, UUID deliverableId,
+    public ApqpDeliverableEvidenceDto.Response upload(UUID projectId, UUID phaseId,
+                                                      UUID deliverableId,
                                                       String contentType, String originalFilename,
                                                       byte[] content, UUID uploadedBy) {
         UUID tenantId = requireTenantId();
         ObjectStorage storage = requireStorage();
-        ApqpDeliverable livrable = requireDeliverable(phaseId, deliverableId, tenantId);
+        ApqpDeliverable livrable =
+                requireDeliverable(projectId, phaseId, deliverableId, tenantId);
 
         if (content == null || content.length == 0) {
             throw new ApqpDeliverableEvidenceValidationException("Empty evidence upload");
@@ -177,10 +180,12 @@ public class ApqpDeliverableEvidenceService {
      * <p>La pièce est cherchée POUR ce livrable : passer l'identifiant d'une pièce
      * versée ailleurs ne doit pas la faire disparaître d'un livrable voisin.
      */
-    public void delete(UUID phaseId, UUID deliverableId, UUID evidenceId, UUID removedBy) {
+    public void delete(UUID projectId, UUID phaseId, UUID deliverableId, UUID evidenceId,
+                       UUID removedBy) {
         UUID tenantId = requireTenantId();
         ObjectStorage storage = requireStorage();
-        ApqpDeliverable livrable = requireDeliverable(phaseId, deliverableId, tenantId);
+        ApqpDeliverable livrable =
+                requireDeliverable(projectId, phaseId, deliverableId, tenantId);
 
         ApqpDeliverableEvidence evidence = evidences
                 .findByIdAndTenantIdAndDeliverableId(evidenceId, tenantId, deliverableId)
@@ -200,13 +205,17 @@ public class ApqpDeliverableEvidenceService {
     // ---------- garde-fous ----------
 
     /**
-     * Le livrable, à condition qu'il appartienne à cette phase et à ce client.
+     * Le livrable, à condition qu'il appartienne à cette phase, à ce projet et à
+     * ce client.
      *
-     * <p>La phase est filtrée par client, le livrable par phase : deux contrôles
-     * qui, ensemble, ferment la porte à un identifiant emprunté ailleurs.
+     * <p>La phase est filtrée par projet ET par client, le livrable par phase :
+     * trois contrôles qui, ensemble, ferment la porte à un identifiant emprunté
+     * ailleurs — y compris à un autre programme du même client, dont le dossier
+     * PPAP se remet pourtant séparément.
      */
-    private ApqpDeliverable requireDeliverable(UUID phaseId, UUID deliverableId, UUID tenantId) {
-        ApqpPhase phase = phases.findByIdAndTenantId(phaseId, tenantId)
+    private ApqpDeliverable requireDeliverable(UUID projectId, UUID phaseId,
+                                               UUID deliverableId, UUID tenantId) {
+        ApqpPhase phase = phases.findByIdAndProjectIdAndTenantId(phaseId, projectId, tenantId)
                 .orElseThrow(() -> new ApqpPhaseNotFoundException(phaseId));
         return phase.getDeliverables().stream()
                 .filter(d -> d.getId().equals(deliverableId))

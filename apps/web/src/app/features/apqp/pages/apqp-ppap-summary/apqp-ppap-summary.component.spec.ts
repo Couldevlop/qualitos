@@ -10,8 +10,8 @@ import { ApqpPpapSummaryComponent, LignePpap } from './apqp-ppap-summary.compone
  * Le dossier PPAP sous le schéma.
  *
  * <p>Ce que ce banc tient : la section AGRÈGE le cycle et ne tient aucune liste
- * propre — une liste normative à part divergerait dès que le client adapte son
- * cycle. Et le compte affiché est celui du serveur, pas un recalcul local qui
+ * propre — une liste normative à part divergerait dès qu'on adapte le cycle du
+ * projet. Et le compte affiché est celui du serveur, pas un recalcul local qui
  * pourrait le démentir.
  */
 describe('ApqpPpapSummaryComponent', () => {
@@ -36,8 +36,12 @@ describe('ApqpPpapSummaryComponent', () => {
       id: partiel.label ?? 'd1',
       position: 1,
       label: 'Livrable',
+      expectedArtifact: null,
       ppap: false,
-      kind: 'ATTACHMENT',
+      owner: null,
+      dueDate: null,
+      status: 'NOT_STARTED',
+      percentComplete: 0,
       done: false,
       evidenceCount: 0,
       ...partiel
@@ -118,7 +122,7 @@ describe('ApqpPpapSummaryComponent', () => {
     expect(recu?.phase.title).toBe('Validation');
   });
 
-  it('distingue « acquis » de « prouvé » : la coche et le trombone sont deux lectures', () => {
+  it('distingue « fourni » de « prouvé » : la coche et le trombone sont deux lectures', () => {
     composant.phases = [phase(4, 'Validation', [
       livrable({ label: 'MSA', ppap: true, done: true, evidenceCount: 0 }),
       livrable({ label: 'FAIR', ppap: true, done: false, evidenceCount: 2 })
