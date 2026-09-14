@@ -55,6 +55,8 @@ class ApqpProjetsRepriseOnPostgresTest {
     private static final UUID LIVRABLE_PROUVE = UUID.randomUUID();
     private static final UUID LIVRABLE_MESURES = UUID.randomUUID();
     private static final UUID LIVRABLE_POINTS_VIERGES = UUID.randomUUID();
+    /** Un contenu que rien ne peut relire : la migration doit passer outre. */
+    private static final UUID LIVRABLE_ILLISIBLE = UUID.randomUUID();
     private static final UUID LIVRABLE_B = UUID.randomUUID();
 
     private static final UUID PIECE = UUID.randomUUID();
@@ -101,6 +103,14 @@ class ApqpProjetsRepriseOnPostgresTest {
                 "CHECKLIST", false, false, null,
                 "[{\"label\":\"sécurité\",\"checked\":false},"
                 + "{\"label\":\"coût\",\"checked\":false}]");
+        // Un contenu ILLISIBLE, qui commence pourtant par un crochet. La colonne
+        // est du TEXT : rien n'empêche qu'une ligne ait été touchée à la main, ou
+        // écrite par une version antérieure. La migration doit l'ignorer et
+        // continuer — une seule valeur douteuse ne peut pas interrompre la mise à
+        // jour de toute une base.
+        ecrireLivrable(LIVRABLE_ILLISIBLE, TENANT_A, PHASE_A2, 3, "Plan de surveillance",
+                "CHECKLIST", false, false, "note d'origine",
+                "[{\"label\": ceci n'est pas du JSON");
         ecrireLivrable(LIVRABLE_B, TENANT_B, PHASE_B1, 1, "Nomenclature préliminaire",
                 "ATTACHMENT", false, false, null, null);
 
@@ -241,7 +251,9 @@ class ApqpProjetsRepriseOnPostgresTest {
     @Test
     @DisplayName("aucun livrable ni aucune phase n'a disparu au passage")
     void rienNAEteSupprime() throws SQLException {
-        assertThat(compterLivrables()).isEqualTo(5);
+        // Six : les cinq du depart, plus celui au contenu illisible -- lui aussi
+        // doit survivre, car c'est SON contenu qui etait douteux, pas lui.
+        assertThat(compterLivrables()).isEqualTo(6);
         try (PreparedStatement ps = connection.prepareStatement(
                 "SELECT count(*) FROM apqp_phases");
              ResultSet rs = ps.executeQuery()) {
@@ -378,6 +390,16 @@ class ApqpProjetsRepriseOnPostgresTest {
             ps.setTimestamp(7, maintenant);
             ps.executeUpdate();
         }
+    }
+
+    @Test
+    @DisplayName("un contenu illisible est ignore, il n arrete pas la migration")
+    void contenuIllisible_estIgnore_pasFatal() throws SQLException {
+        // Si la migration s'était arrêtée, aucun des bancs de cette classe ne
+        // tournerait : Flyway aurait échoué dans le @BeforeAll. Que l'on soit ici
+        // prouve déjà l'essentiel. Reste à vérifier qu'on n'a pas « réussi » en
+        // jetant la note que le client avait écrite à côté.
+        assertThat(notesDe(LIVRABLE_ILLISIBLE)).isEqualTo("note d'origine");
     }
 
     private static void ecrireLivrable(UUID id, UUID tenant, UUID phase, int rang, String libelle,

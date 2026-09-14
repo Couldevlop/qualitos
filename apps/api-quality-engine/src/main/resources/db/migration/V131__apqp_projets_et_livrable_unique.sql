@@ -161,9 +161,10 @@ UPDATE apqp_deliverables
 -- cochée, ou une valeur non vide. Recopier l'amorçage intact aurait rempli les
 -- notes de tout le monde avec ce que le référentiel disait déjà.
 --
--- Le filtre `data LIKE '[%'` garde la conversion à l'abri : la colonne est du
--- TEXT, et seul le validateur y a jamais écrit, mais une ligne touchée à la main
--- ne doit pas faire échouer la migration entière.
+-- La colonne est du TEXT et seul le validateur y a jamais écrit, mais une ligne
+-- touchée à la main ne doit pas faire échouer la migration entière : la
+-- conversion est donc gardée ligne à ligne, et une valeur illisible est ignorée
+-- au lieu d'interrompre la mise à jour.
 WITH replie AS (
     SELECT d.id,
            string_agg(
@@ -178,10 +179,18 @@ WITH replie AS (
                || CASE WHEN (ligne ->> 'checked') = 'true' THEN ' [acquis]' ELSE '' END,
                ' ; ' ORDER BY ordinalite) AS texte
       FROM apqp_deliverables d
-      CROSS JOIN LATERAL jsonb_array_elements(d.data::jsonb)
+      -- La conversion est portee PAR LA LIGNE et non par la clause WHERE : un
+      -- filtre `WHERE d.data LIKE '[%'` n'est pas garanti de s'evaluer AVANT la
+      -- fonction laterale, et une seule valeur mal formee ferait alors echouer
+      -- la migration entiere -- sur la base d'un client, en pleine mise a jour.
+      -- `pg_input_is_valid` (PostgreSQL 16+) repond sans lever, et une valeur
+      -- illisible rend un tableau vide : elle est ignoree, pas fatale.
+      CROSS JOIN LATERAL jsonb_array_elements(
+               CASE WHEN d.data LIKE '[%' AND pg_input_is_valid(d.data, 'jsonb')
+                    THEN d.data::jsonb
+                    ELSE '[]'::jsonb END)
                     WITH ORDINALITY AS t(ligne, ordinalite)
      WHERE d.data IS NOT NULL
-       AND d.data LIKE '[%'
      GROUP BY d.id
     HAVING bool_or((ligne ->> 'checked') = 'true'
                    OR coalesce(ligne ->> 'value', '') <> '')
