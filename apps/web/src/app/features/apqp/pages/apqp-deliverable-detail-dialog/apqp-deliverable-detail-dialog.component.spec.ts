@@ -89,15 +89,16 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
 
     // Il y avait quatre corps choisis par un « genre » ; il n'en reste qu'un.
     expect(hote().querySelector('[data-test=zone-pieces]')).not.toBeNull();
-    expect(hote().querySelector('[data-test=renvoi-module]')).not.toBeNull();
+    // Le renvoi vers un module a ete retire du formulaire.
+    expect(hote().querySelector('[data-test=renvoi-module]')).toBeNull();
     expect(hote().querySelector('[data-test=responsable]')).not.toBeNull();
     expect(hote().querySelector('[data-test=echeance]')).not.toBeNull();
     expect(hote().querySelector('[data-test=statut]')).not.toBeNull();
     expect(hote().querySelector('[data-test=avancement]')).not.toBeNull();
   });
 
-  it('charge TOUJOURS les pièces, même pour un livrable qui renvoie ailleurs', async () => {
-    await ouvrir({ linkedKind: 'FMEA', linkedId: '11111111-2222-3333-4444-555555555555' });
+  it('charge TOUJOURS les pièces, quel que soit le livrable', async () => {
+    await ouvrir({});
 
     // L'ancien popup ne les chargeait que pour un genre, et les autres
     // semblaient n'en porter aucune — ce que l'auditeur demande en premier.
@@ -134,60 +135,6 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
 
     expect(component.form.getRawValue().status).toBe('BLOCKED');
     expect(component.form.getRawValue().percentComplete).toBe(60);
-  });
-
-  // ---------- le renvoi, facultatif mais entier ----------
-
-  it('accepte un livrable sans aucun renvoi', async () => {
-    await ouvrir({});
-
-    expect(component.form.valid).toBeTrue();
-    expect(hote().querySelector('[data-test=ouvrir-enregistrement]')).toBeNull();
-    expect(hote().querySelector('[data-test=renvoi-sans-route]')).toBeNull();
-  });
-
-  it('refuse un renvoi posé à moitié', async () => {
-    await ouvrir({});
-
-    component.form.patchValue({ linkedKind: 'FMEA', linkedId: '' });
-
-    // Le serveur repond 422 : mieux vaut desactiver le bouton que proposer une
-    // action qu'on sait refusee.
-    expect(component.form.invalid).toBeTrue();
-    expect(component.blocage).toContain('entier');
-    component.submit();
-    expect(service.completeDeliverable).not.toHaveBeenCalled();
-  });
-
-  it('refuse un identifiant de renvoi mal formé', async () => {
-    await ouvrir({});
-
-    component.form.patchValue({ linkedKind: 'FMEA', linkedId: 'pas-un-uuid' });
-
-    expect(component.form.get('linkedId')?.hasError('pattern')).toBeTrue();
-  });
-
-  it('ouvre la fiche visée, en refermant le popup', async () => {
-    const cible = '11111111-2222-3333-4444-555555555555';
-    await ouvrir({ linkedKind: 'FMEA', linkedId: cible });
-
-    hote().querySelector<HTMLButtonElement>('[data-test=ouvrir-enregistrement]')!.click();
-
-    // Sans la fermeture, le dialogue resterait par-dessus l'ecran d'arrivee et
-    // l'utilisateur croirait que rien n'a bouge.
-    expect(dialogRef.close).toHaveBeenCalled();
-    expect(routeur.navigate).toHaveBeenCalledWith(['/fmea', cible]);
-  });
-
-  it('dit pourquoi un plan de surveillance ne s’ouvre pas d’ici', async () => {
-    await ouvrir({
-      linkedKind: 'CONTROL_PLAN', linkedId: '11111111-2222-3333-4444-555555555555'
-    });
-
-    // Il vit dans l'onglet d'un produit : aucune route ne l'atteint par son seul
-    // identifiant, et un lien qui tomberait a cote vaudrait moins qu'une phrase.
-    expect(hote().querySelector('[data-test=ouvrir-enregistrement]')).toBeNull();
-    expect(hote().querySelector('[data-test=renvoi-sans-route]')).not.toBeNull();
   });
 
   // ---------- ce que l'écran envoie ----------

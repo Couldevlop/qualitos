@@ -2,13 +2,12 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { ApqpService } from '../../apqp.service';
 import {
-  ApqpCycle, ApqpDeliverable, ApqpDeliverableStatus, ApqpEvidence, ApqpLinkedKind, ApqpPhase
+  ApqpCycle, ApqpDeliverable, ApqpDeliverableStatus, ApqpEvidence, ApqpPhase
 } from '../../apqp.types';
 
 export interface ApqpDeliverableDetailDialogData {
@@ -18,12 +17,6 @@ export interface ApqpDeliverableDetailDialogData {
   deliverable: ApqpDeliverable;
   /** Vrai si l'utilisateur peut écrire : sinon le popup se lit, il ne se remplit pas. */
   editable: boolean;
-}
-
-/** Les modules vers lesquels un livrable peut renvoyer, avec leur libellé traduit. */
-interface ChoixModule {
-  value: ApqpLinkedKind;
-  label: string;
 }
 
 /**
@@ -69,21 +62,14 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
   chargement = false;
   envoi = false;
 
+  /** Les quatre etats qu'un livrable peut prendre, dans l'ordre du classeur. */
   readonly statuts: ApqpDeliverableStatus[] =
     ['NOT_STARTED', 'IN_PROGRESS', 'BLOCKED', 'DONE'];
-
-  readonly modules: ChoixModule[] = [
-    { value: 'FMEA', label: $localize`:@@apqp.link.fmea:AMDEC (DFMEA / PFMEA)` },
-    { value: 'CONTROL_PLAN', label: $localize`:@@apqp.link.control-plan:Plan de surveillance` },
-    { value: 'PDCA', label: $localize`:@@apqp.link.pdca:Cycle PDCA` },
-    { value: 'CAPA', label: $localize`:@@apqp.link.capa:Action corrective (CAPA)` }
-  ];
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly service: ApqpService,
     private readonly snack: MatSnackBar,
-    private readonly router: Router,
     private readonly dialogRef: MatDialogRef<
       ApqpDeliverableDetailDialogComponent, ApqpCycle | undefined>,
     @Inject(MAT_DIALOG_DATA) public readonly data: ApqpDeliverableDetailDialogData
@@ -99,11 +85,8 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
       status: [livrable.status],
       percentComplete: [
         livrable.percentComplete, [Validators.min(0), Validators.max(100)]],
-      comment: [livrable.comment ?? '', [Validators.maxLength(2000)]],
-      linkedKind: [livrable.linkedKind ?? null],
-      linkedId: [livrable.linkedId ?? '', [Validators.pattern(
-        /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/)]]
-    }, { validators: [() => this.renvoiCoherent()] });
+      comment: [livrable.comment ?? '', [Validators.maxLength(2000)]]
+    });
 
     // La case pilote : on reflète la règle du serveur DANS le formulaire, pour
     // que l'utilisateur la voie au lieu de la découvrir après enregistrement.
@@ -139,9 +122,6 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
     if (!this.data.editable) {
       return $localize`:@@apqp.deliverable.read-only:Vous pouvez consulter ce livrable, pas le modifier.`;
     }
-    if (this.form.hasError('renvoiIncomplet')) {
-      return $localize`:@@apqp.deliverable.blocked-link:Un renvoi se pose entier : le module ET son identifiant, ou ni l'un ni l'autre.`;
-    }
     return this.form.invalid
       ? $localize`:@@apqp.deliverable.blocked-fields:Un champ du formulaire est hors limites.`
       : undefined;
@@ -158,47 +138,6 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
       BLOCKED: $localize`:@@apqp.status.blocked:Bloqué`,
       DONE: $localize`:@@apqp.status.done:Acquis`
     })[statut];
-  }
-
-  /**
-   * La route de l'enregistrement visé, s'il en a une.
-   *
-   * <p>Un plan de surveillance n'en a pas : il vit dans l'onglet d'un produit, et
-   * rien ne l'atteint par son seul identifiant. On le dit plutôt que d'offrir un
-   * lien qui tomberait à côté.
-   */
-  get routeEnregistrement(): string[] | null {
-    const { linkedKind, linkedId } = this.form.getRawValue();
-    if (!linkedKind || !linkedId) {
-      return null;
-    }
-    switch (linkedKind) {
-      case 'FMEA': return ['/fmea', linkedId];
-      case 'PDCA': return ['/pdca', linkedId];
-      case 'CAPA': return ['/capa', linkedId];
-      default: return null;   // CONTROL_PLAN : pas de route par identifiant
-    }
-  }
-
-  /** Vrai quand le renvoi est posé mais qu'aucune route ne mène à la fiche. */
-  get renvoiSansRoute(): boolean {
-    const valeurs = this.form.getRawValue();
-    return !!valeurs.linkedKind && !!valeurs.linkedId && this.routeEnregistrement === null;
-  }
-
-  /**
-   * Ouvre la fiche visée, en refermant le popup.
-   *
-   * <p>Sans la fermeture, le dialogue resterait par-dessus l'écran d'arrivée et
-   * l'utilisateur croirait que rien n'a bougé.
-   */
-  ouvrirEnregistrement(): void {
-    const route = this.routeEnregistrement;
-    if (!route) {
-      return;
-    }
-    this.dialogRef.close();
-    void this.router.navigate(route);
   }
 
   // ---------- pièces jointes ----------
@@ -264,10 +203,11 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
         status: valeurs.status,
         percentComplete: valeurs.percentComplete,
         comment: this.rogne(valeurs.comment),
-        // Un renvoi à moitié posé vaut un 422 : le validateur l'a déjà refusé,
-        // et l'un sans l'autre ne part donc jamais.
-        linkedKind: valeurs.linkedKind ?? null,
-        linkedId: this.rogne(valeurs.linkedId)
+        // Le renvoi vers un enregistrement ne se pose plus depuis cet écran. On
+        // envoie `null` plutôt que d'omettre les champs : un renvoi hérité d'une
+        // saisie antérieure doit pouvoir se retirer, et non rester coincé.
+        linkedKind: null,
+        linkedId: null
       })
       .pipe(finalize(() => (this.envoi = false)))
       .subscribe({
@@ -324,21 +264,6 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
     if (!valeur) return null;
     const date = valeur instanceof Date ? valeur : new Date(String(valeur));
     return Number.isNaN(date.getTime()) ? null : date.toISOString().slice(0, 10);
-  }
-
-  /**
-   * Un renvoi se pose ENTIER, ou pas du tout.
-   *
-   * <p>Vérifié à l'écran aussi, et non seulement au serveur : mieux vaut
-   * désactiver le bouton que proposer une action qu'on sait refusée par un 422.
-   */
-  private renvoiCoherent(): { [key: string]: boolean } | null {
-    if (!this.form) return null;
-    const genre = this.form.get('linkedKind')?.value;
-    const cible = this.form.get('linkedId')?.value;
-    const poseGenre = !!genre;
-    const poseCible = !!(typeof cible === 'string' ? cible.trim() : cible);
-    return poseGenre !== poseCible ? { renvoiIncomplet: true } : null;
   }
 
   private chargerPieces(): void {
