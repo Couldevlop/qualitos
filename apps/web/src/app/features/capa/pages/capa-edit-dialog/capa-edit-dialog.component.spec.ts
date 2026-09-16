@@ -167,6 +167,7 @@ describe('CapaEditDialogComponent', () => {
     expect(hote().querySelector('[data-test=verification-qui]')).toBeNull();
 
     component.form.controls.verificationRequired.setValue(true);
+    await Promise.resolve();   // le champ d'affichage se pose au microtour suivant
     fixture.detectChanges();
 
     expect(component.verificationExigee).toBeTrue();
@@ -177,6 +178,7 @@ describe('CapaEditDialogComponent', () => {
     await build({ capa: existing });
 
     component.form.controls.verificationRequired.setValue(true);
+    await Promise.resolve();   // le champ d'affichage se pose au microtour suivant
     fixture.detectChanges();
 
     // Exiger sans designer est refuse par le serveur : on le dit ici plutot que
@@ -225,6 +227,7 @@ describe('CapaEditDialogComponent', () => {
     expect(component.form.controls.verificationAssigneeId.value).toBe('u-verif');
 
     component.form.controls.verificationRequired.setValue(false);
+    await Promise.resolve();
     fixture.detectChanges();
 
     // Laisser trainer un verificateur laisserait croire qu'une verification est
@@ -274,6 +277,7 @@ describe('CapaEditDialogComponent', () => {
     http.expectOne(r => r.url.endsWith('/api/v1/users'))
         .flush('indisponible', { status: 503, statusText: 'Service Unavailable' });
     component.form.controls.verificationRequired.setValue(true);
+    await Promise.resolve();   // le champ d'affichage se pose au microtour suivant
     fixture.detectChanges();
 
     expect(component.annuaireIndisponible).toBeTrue();

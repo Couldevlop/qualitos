@@ -69,8 +69,14 @@ export class CapaEditDialogComponent implements OnInit {
     });
 
     // Repasser à « non exigée » doit effacer le vérificateur et les consignes.
-    this.form.controls.verificationRequired.valueChanges.subscribe(
-      exigee => this.appliquerExigence(exigee));
+    this.form.controls.verificationRequired.valueChanges.subscribe(exigee =>
+      // `queueMicrotask` : le groupe de boutons radio se synchronise PENDANT le
+      // rendu, et modifier alors un champ que le gabarit vient de lire déclenche
+      // NG0100. On diffère d'un tour de boucle, le temps que le cycle de
+      // détection s'achève — remède déjà employé ailleurs dans ce dépôt.
+      queueMicrotask(() => this.appliquerExigence(exigee)));
+    // À l'initialisation, en revanche, rien n'a encore été rendu : la valeur peut
+    // être posée tout de suite, et le premier rendu sera déjà le bon.
     this.appliquerExigence(this.form.controls.verificationRequired.value);
   }
 
