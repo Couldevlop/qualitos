@@ -17,28 +17,28 @@ package com.openlab.qualitos.quality.nonconformity.eightd.domain;
 public enum EightDDiscipline {
 
     /** L'équipe qui a traité l'écart. Aucune source : se saisit. */
-    D1("D1", "Équipe", true),
+    D1("D1", "Team", true),
 
     /** Le problème tel qu'il a été constaté. Source : la non-conformité. */
-    D2("D2", "Description du problème", false),
+    D2("D2", "Problem description", false),
 
     /** Ce qui a protégé le client en attendant la cause. Aucune source : se saisit. */
-    D3("D3", "Actions de sécurisation immédiates", true),
+    D3("D3", "Immediate containment actions", true),
 
     /** La cause racine. Sources : Ishikawa, 5 pourquoi, cause racine de la NC. */
-    D4("D4", "Cause racine", false),
+    D4("D4", "Root cause", false),
 
     /** Les actions correctives décidées. Source : la CAPA escaladée. */
-    D5("D5", "Actions correctives retenues", false),
+    D5("D5", "Chosen corrective actions", false),
 
     /** Leur mise en œuvre et ses preuves. Source : la CAPA escaladée. */
-    D6("D6", "Mise en œuvre et preuves", false),
+    D6("D6", "Implementation and evidence", false),
 
     /** Ce qui empêche le retour de l'écart. Sources : PFMEA, plan de surveillance. */
-    D7("D7", "Prévention de la récurrence", false),
+    D7("D7", "Recurrence prevention", false),
 
     /** La reconnaissance de l'équipe. Aucune source : se saisit. */
-    D8("D8", "Reconnaissance de l'équipe", true);
+    D8("D8", "Team recognition", true);
 
     private final String code;
     private final String titre;
@@ -54,7 +54,13 @@ public enum EightDDiscipline {
         return code;
     }
 
-    /** Le titre tel qu'il paraît dans le document émis. */
+    /**
+     * Le titre tel qu'il paraît dans le document émis.
+     *
+     * <p>En ANGLAIS, et non dans la langue de l'interface : le 8D est remis à un
+     * client, la pratique est anglophone, et un document opposable ne change pas
+     * de langue selon qui l'affiche. L'interface autour reste traduite.
+     */
     public String titre() {
         return titre;
     }

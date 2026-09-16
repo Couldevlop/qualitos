@@ -9,3 +9,7 @@ yarn-debug.log*
 yarn-error.log*
 .env
 .env.local
+
+# Artefacts d'execution Playwright : une trace locale, pas un livrable.
+test-results/
+playwright-report/

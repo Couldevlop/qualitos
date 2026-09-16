@@ -136,7 +136,7 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
     }
 
     private void figerMetadonnees(PDDocument doc, EightDSnapshot snapshot) {
-        doc.getDocumentInformation().setTitle("Rapport 8D " + sanitize(snapshot.ncReference()));
+        doc.getDocumentInformation().setTitle("8D Report " + sanitize(snapshot.ncReference()));
         doc.getDocumentInformation().setSubject(sanitize(snapshot.ncTitle()));
         doc.getDocumentInformation().setProducer("QualitOS");
         doc.getDocumentInformation().setCreator("QualitOS");
@@ -160,28 +160,28 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
             System.arraycopy(complet, 0, court, 0, 16);
             return court;
         } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-256 indisponible", e);
+            throw new IllegalStateException("SHA-256 unavailable", e);
         }
     }
 
     private float entete(PDPageContentStream c, PDType1Font bold, PDType1Font regular,
                          EightDSnapshot snapshot, float y) throws IOException {
-        texte(c, bold, 22, INDIGO, MARGIN, y, "Rapport 8D");
+        texte(c, bold, 22, INDIGO, MARGIN, y, "8D Report");
         texte(c, regular, 11, MUTED, MARGIN + 120, y,
                 sanitize(snapshot.ncReference()));
         y -= 8;
         ligne(c, INDIGO, MARGIN, y, WIDTH - MARGIN, y, 2f);
         y -= 18;
         texte(c, regular, 10, MUTED, MARGIN, y,
-                "Resolution de probleme en huit disciplines - QualitOS"
-                + " (signe ML-DSA + ancre blockchain)");
+                "Eight-discipline problem solving - QualitOS"
+                + " (ML-DSA signed + blockchain anchored)");
         y -= 16;
         if (snapshot.partial()) {
             // Dit en tête, pas en note de bas de page : un lecteur doit savoir avant
             // de lire que le document est incomplet, et lesquelles de ses parties
             // n'ont pas de contenu.
             texte(c, bold, 10, ALERT, MARGIN, y,
-                    "RAPPORT PARTIEL - disciplines sans contenu : "
+                    "PARTIAL REPORT - disciplines with no content: "
                     + String.join(", ", snapshot.missingCodes()));
             y -= 16;
         }
@@ -194,10 +194,10 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         rect(c, PANEL, MARGIN, y - hauteur, CONTENT_W, hauteur);
         float x = MARGIN + 14;
         float ligne = y - 18;
-        cle(c, bold, regular, x, ligne, "Non-conformite", snapshot.ncReference());
-        cle(c, bold, regular, x, ligne - 18, "Intitule", snapshot.ncTitle());
-        cle(c, bold, regular, x, ligne - 36, "Emis le",
-                snapshot.issuedAtText() == null ? "(brouillon)" : snapshot.issuedAtText());
+        cle(c, bold, regular, x, ligne, "Non-conformity", snapshot.ncReference());
+        cle(c, bold, regular, x, ligne - 18, "Title", snapshot.ncTitle());
+        cle(c, bold, regular, x, ligne - 36, "Issued on",
+                snapshot.issuedAtText() == null ? "(draft)" : snapshot.issuedAtText());
         return y - hauteur - 22;
     }
 
@@ -215,7 +215,7 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
 
         if (section.lines().isEmpty()) {
             page = place(doc, page, 16f);
-            texte(page.flux, regular, 9.5f, ALERT, MARGIN + 10, page.y, "Non renseigne.");
+            texte(page.flux, regular, 9.5f, ALERT, MARGIN + 10, page.y, "Not filled in.");
             page.y -= 14;
             return page;
         }
@@ -249,21 +249,21 @@ public class PdfBoxEightDRenderAdapter implements EightDPdfRenderPort {
         float haut = MARGIN + FOOTER_H;
         ligne(c, MUTED, MARGIN, haut, WIDTH - MARGIN, haut, 0.5f);
         float y = haut - 18;
-        texte(c, bold, 12, INDIGO, MARGIN, y, "Integrite & verification");
+        texte(c, bold, 12, INDIGO, MARGIN, y, "Integrity & verification");
         y -= 15;
         texte(c, regular, 9, INK, MARGIN, y,
                 "Ce rapport est signe (Ed25519 + ML-DSA-65) et son empreinte est ancree.");
         y -= 13;
         texte(c, regular, 9, INK, MARGIN, y,
-                "Son contenu est fige : il dit ce qu'il disait le jour de l'emission.");
+                "Its content is frozen: it says what it said on the day it was issued.");
         y -= 13;
         if (snapshot.issuedByName() != null) {
-            texte(c, regular, 9, MUTED, MARGIN, y, "Emis par : " + sanitize(snapshot.issuedByName()));
+            texte(c, regular, 9, MUTED, MARGIN, y, "Issued by: " + sanitize(snapshot.issuedByName()));
         }
         texte(c, regular, 8, MUTED, MARGIN, MARGIN + 30,
                 "Scannez le QR code pour verifier l'authenticite de ce document sur QualitOS.");
         if (snapshot.tenantLabel() != null) {
-            texte(c, mono, 7.5f, MUTED, MARGIN, MARGIN + 16, "Tenant : " + snapshot.tenantLabel());
+            texte(c, mono, 7.5f, MUTED, MARGIN, MARGIN + 16, "Tenant: " + snapshot.tenantLabel());
         }
 
         float taille = 110f;

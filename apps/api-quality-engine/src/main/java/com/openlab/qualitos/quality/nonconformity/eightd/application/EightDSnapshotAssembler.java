@@ -36,8 +36,8 @@ public class EightDSnapshotAssembler {
     private static final DateTimeFormatter JOUR = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private static final String A_SAISIR =
-            "Aucune source dans la plateforme — cette discipline se saisit";
-    private static final String SAISI = "Saisi par l'équipe qualité";
+            "No source in the platform \u2014 this discipline is filled in by hand";
+    private static final String SAISI = "Filled in by the quality team";
 
     /**
      * @param sources      ce que les autres modules savent de l'écart
@@ -83,45 +83,45 @@ public class EightDSnapshotAssembler {
 
     private EightDSnapshot.Section probleme(EightDSources.Nc nc) {
         List<String> lignes = new ArrayList<>();
-        ajouter(lignes, "Référence", nc.reference());
-        ajouter(lignes, "Intitulé", nc.title());
-        ajouter(lignes, "Constat", nc.description());
-        ajouter(lignes, "Catégorie", nc.category());
-        ajouter(lignes, "Gravité", nc.severity());
-        ajouter(lignes, "Origine", nc.origin());
-        ajouter(lignes, "Détecté le", horodatage(nc.detectedAt()));
-        ajouter(lignes, "Clôturé le", horodatage(nc.closedAt()));
-        ajouter(lignes, "Zone", nc.zone());
-        ajouter(lignes, "Signalé par", nc.reporterName());
+        ajouter(lignes, "Reference", nc.reference());
+        ajouter(lignes, "Title", nc.title());
+        ajouter(lignes, "Finding", nc.description());
+        ajouter(lignes, "Category", nc.category());
+        ajouter(lignes, "Severity", nc.severity());
+        ajouter(lignes, "Origin", nc.origin());
+        ajouter(lignes, "Detected on", horodatage(nc.detectedAt()));
+        ajouter(lignes, "Closed on", horodatage(nc.closedAt()));
+        ajouter(lignes, "Area", nc.zone());
+        ajouter(lignes, "Reported by", nc.reporterName());
         // Le NOMBRE de photos, et non les images : un 8D se relit des années plus
         // tard, et un PDF qui embarquerait les clichés terrain pèserait des dizaines
         // de mégaoctets pour des preuves qui vivent déjà dans la fiche.
-        ajouter(lignes, "Photos terrain", nc.photoCount() == 0 ? null : nc.photoCount() + " pièce(s)");
-        ajouter(lignes, "Note de résolution", nc.resolutionNote());
+        ajouter(lignes, "Field photos", nc.photoCount() == 0 ? null : nc.photoCount() + " file(s)");
+        ajouter(lignes, "Resolution note", nc.resolutionNote());
         // D2 est toujours servi : la non-conformité existe, sinon rien de tout ceci
         // n'aurait été demandé.
         return section(EightDDiscipline.D2, true,
-                "Non-conformité " + nc.reference(), lignes);
+                "Non-conformity " + nc.reference(), lignes);
     }
 
     // ---------- D4 : Ishikawa, 5 pourquoi, cause racine de la NC ----------
 
     private EightDSnapshot.Section causeRacine(EightDSources sources) {
         List<String> lignes = new ArrayList<>();
-        ajouter(lignes, "Cause racine retenue sur la non-conformité", sources.nc().rootCause());
+        ajouter(lignes, "Root cause recorded on the non-conformity", sources.nc().rootCause());
 
         for (EightDSources.CauseTree arbre : sources.ishikawas()) {
-            lignes.add("Ishikawa — " + texteOu(arbre.problemStatement(), "(sans énoncé)")
+            lignes.add("Ishikawa \u2014 " + texteOu(arbre.problemStatement(), "(no statement)")
                     + " [" + texteOu(arbre.status(), "?") + "]");
             for (EightDSources.Cause cause : arbre.causes()) {
                 StringBuilder ligne = new StringBuilder("    ")
                         .append(texteOu(cause.category(), "?")).append(" : ")
-                        .append(texteOu(cause.label(), "(sans libellé)"));
+                        .append(texteOu(cause.label(), "(no label)"));
                 if (cause.description() != null && !cause.description().isBlank()) {
                     ligne.append(" — ").append(cause.description().trim());
                 }
                 if (cause.rootCauseScore() != null) {
-                    ligne.append(" (score cause racine ")
+                    ligne.append(" (root-cause score ")
                             .append(String.format(java.util.Locale.ROOT, "%.2f", cause.rootCauseScore()))
                             .append(')');
                 }
@@ -130,21 +130,21 @@ public class EightDSnapshotAssembler {
         }
 
         for (EightDSources.WhysChain chaine : sources.fiveWhys()) {
-            lignes.add("5 pourquoi — " + texteOu(chaine.problem(), "(sans énoncé)"));
+            lignes.add("5 whys \u2014 " + texteOu(chaine.problem(), "(no statement)"));
             int rang = 1;
             for (String reponse : chaine.answers()) {
-                lignes.add("    Pourquoi " + rang++ + " : " + texteOu(reponse, "(sans réponse)"));
+                lignes.add("    Why " + rang++ + " : " + texteOu(reponse, "(no answer)"));
             }
             if (chaine.rootCause() != null && !chaine.rootCause().isBlank()) {
-                lignes.add("    Cause racine : " + chaine.rootCause().trim());
+                lignes.add("    Root cause: " + chaine.rootCause().trim());
             }
         }
 
         boolean servi = !lignes.isEmpty();
         String label = servi
                 ? libelleD4(sources)
-                : "Aucun Ishikawa ni analyse 5 pourquoi rattachés à cet écart, et aucune"
-                  + " cause racine saisie sur la non-conformité";
+                : "No Ishikawa and no 5-whys analysis linked to this deviation, and no"
+                  + " root cause recorded on the non-conformity";
         return section(EightDDiscipline.D4, servi, label, lignes);
     }
 
@@ -154,12 +154,12 @@ public class EightDSnapshotAssembler {
             parts.add(sources.ishikawas().size() + " Ishikawa");
         }
         if (!sources.fiveWhys().isEmpty()) {
-            parts.add(sources.fiveWhys().size() + " analyse(s) 5 pourquoi");
+            parts.add(sources.fiveWhys().size() + " 5-whys analysis(es)");
         }
         if (sources.nc().rootCause() != null && !sources.nc().rootCause().isBlank()) {
-            parts.add("cause racine de la non-conformité");
+            parts.add("root cause of the non-conformity");
         }
-        return "Agrégé depuis : " + String.join(", ", parts);
+        return "Aggregated from: " + String.join(", ", parts);
     }
 
     // ---------- D5 : les actions décidées ----------
@@ -171,23 +171,23 @@ public class EightDSnapshotAssembler {
         List<String> lignes = new ArrayList<>();
         ajouter(lignes, "CAPA", capa.title());
         ajouter(lignes, "Type", capa.type());
-        ajouter(lignes, "Criticité", capa.criticity());
-        ajouter(lignes, "Statut", capa.status());
-        ajouter(lignes, "Échéance", jour(capa.dueDate()));
+        ajouter(lignes, "Criticality", capa.criticity());
+        ajouter(lignes, "Status", capa.status());
+        ajouter(lignes, "Due date", jour(capa.dueDate()));
         for (EightDSources.Action action : capa.actions()) {
             lignes.add("Action [" + texteOu(action.actionType(), "?") + "] "
-                    + texteOu(action.title(), "(sans intitulé)")
+                    + texteOu(action.title(), "(no title)")
                     + " — " + texteOu(action.status(), "?")
                     + (action.assigneeName() == null ? "" : " — " + action.assigneeName())
-                    + (action.dueDate() == null ? "" : " — échéance " + jour(action.dueDate())));
+                    + (action.dueDate() == null ? "" : " \u2014 due " + jour(action.dueDate())));
             if (action.description() != null && !action.description().isBlank()) {
                 lignes.add("    " + action.description().trim());
             }
         }
         boolean servi = !capa.actions().isEmpty();
         String label = servi
-                ? "CAPA escaladée — " + capa.actions().size() + " action(s) décidée(s)"
-                : "La CAPA escaladée ne porte encore aucune action";
+                ? "Escalated CAPA \u2014 " + capa.actions().size() + " action(s) decided"
+                : "The escalated CAPA carries no action yet";
         return section(EightDDiscipline.D5, servi, label, lignes);
     }
 
@@ -206,26 +206,26 @@ public class EightDSnapshotAssembler {
                 continue;
             }
             menees++;
-            lignes.add(texteOu(action.title(), "(sans intitulé)")
-                    + " — menée à terme le " + horodatage(action.completedAt())
-                    + " — " + action.evidenceCount() + " preuve(s)");
+            lignes.add(texteOu(action.title(), "(no title)")
+                    + " \u2014 completed on " + horodatage(action.completedAt())
+                    + " — " + action.evidenceCount() + " evidence item(s)");
         }
         if (capa.caseEvidenceCount() > 0) {
-            lignes.add("Preuves versées au dossier CAPA : " + capa.caseEvidenceCount());
+            lignes.add("Evidence filed on the CAPA case: " + capa.caseEvidenceCount());
         }
-        ajouter(lignes, "CAPA clôturée le", horodatage(capa.closedAt()));
+        ajouter(lignes, "CAPA closed on", horodatage(capa.closedAt()));
         if (Boolean.TRUE.equals(capa.effectivenessVerified())) {
-            lignes.add("Efficacité vérifiée le " + horodatage(capa.effectivenessVerifiedAt()));
+            lignes.add("Effectiveness verified on " + horodatage(capa.effectivenessVerifiedAt()));
         }
         boolean servi = menees > 0 || preuves > 0;
         String label = servi
-                ? "CAPA escaladée — " + menees + " action(s) menée(s) à terme, " + preuves + " preuve(s)"
-                : "Aucune action menée à terme et aucune preuve versée sur la CAPA escaladée";
+                ? "Escalated CAPA \u2014 " + menees + " action(s) completed, " + preuves + " evidence item(s)"
+                : "No completed action and no evidence filed on the escalated CAPA";
         return section(EightDDiscipline.D6, servi, label, lignes);
     }
 
     private String sansCapa() {
-        return "Aucune CAPA n'a été escaladée depuis cette non-conformité : rien à agréger";
+        return "No CAPA has been escalated from this non-conformity: nothing to aggregate";
     }
 
     // ---------- D7 : ce qui empêche le retour de l'écart ----------
@@ -234,23 +234,23 @@ public class EightDSnapshotAssembler {
         List<String> lignes = new ArrayList<>();
         EightDSources.Fmea fmea = sources.fmea();
         if (fmea != null) {
-            lignes.add("PFMEA — mode de défaillance : " + texteOu(fmea.failureMode(), "(non décrit)"));
-            ajouter(lignes, "    Effet", fmea.failureEffect());
+            lignes.add("PFMEA \u2014 failure mode: " + texteOu(fmea.failureMode(), "(not described)"));
+            ajouter(lignes, "    Effect", fmea.failureEffect());
             ajouter(lignes, "    Cause", fmea.failureCause());
-            ajouter(lignes, "    Maîtrise en place", fmea.currentControls());
-            lignes.add("    RPN : " + fmea.rpn()
-                    + (fmea.rpnAfter() == null ? "" : " → " + fmea.rpnAfter() + " après actions"));
-            ajouter(lignes, "    Priorité d'action", fmea.actionPriority());
-            ajouter(lignes, "    Action recommandée", fmea.recommendedAction());
-            ajouter(lignes, "    Actions menées", fmea.actionsTaken());
+            ajouter(lignes, "    Controls in place", fmea.currentControls());
+            lignes.add("    RPN: " + fmea.rpn()
+                    + (fmea.rpnAfter() == null ? "" : " → " + fmea.rpnAfter() + " after actions"));
+            ajouter(lignes, "    Action priority", fmea.actionPriority());
+            ajouter(lignes, "    Recommended action", fmea.recommendedAction());
+            ajouter(lignes, "    Actions taken", fmea.actionsTaken());
         }
         for (EightDSources.Surveillance plan : sources.surveillance()) {
-            lignes.add("Plan de surveillance " + texteOu(plan.code(), "(sans code)")
-                    + " rév. " + plan.revision()
+            lignes.add("Control plan " + texteOu(plan.code(), "(no code)")
+                    + " rev. " + plan.revision()
                     + " — " + texteOu(plan.phase(), "?")
                     + " — " + texteOu(plan.status(), "?")
-                    + " — " + plan.lineCount() + " ligne(s)"
-                    + (plan.sealSha256() == null ? "" : " — scellé"));
+                    + " — " + plan.lineCount() + " line(s)"
+                    + (plan.sealSha256() == null ? "" : " \u2014 sealed"));
         }
         boolean servi = !lignes.isEmpty();
         String label = servi
@@ -258,22 +258,21 @@ public class EightDSnapshotAssembler {
                 // Dit explicitement ce qui n'existe pas ET pourquoi le Poka-Yoke
                 // n'y figure pas : un dispositif se rattache aujourd'hui à un projet
                 // DMAIC, pas à un écart. Le taire laisserait croire qu'on l'a cherché.
-                : "Aucun mode de défaillance PFMEA rattaché à l'écart et aucun plan de"
-                  + " surveillance sur le produit concerné. Les dispositifs Poka-Yoke se"
-                  + " rattachent à un projet DMAIC et non à une non-conformité : ils ne"
-                  + " sont pas agrégeables ici.";
+                : "No PFMEA failure mode linked to the deviation, and no control plan on"
+                  + " the product concerned. Poka-Yoke devices attach to a DMAIC project"
+                  + " and not to a non-conformity: they cannot be aggregated here.";
         return section(EightDDiscipline.D7, servi, label, lignes);
     }
 
     private String libelleD7(EightDSources.Fmea fmea, int plans) {
         List<String> parts = new ArrayList<>();
         if (fmea != null) {
-            parts.add("mode de défaillance PFMEA");
+            parts.add("PFMEA failure mode");
         }
         if (plans > 0) {
-            parts.add(plans + " plan(s) de surveillance");
+            parts.add(plans + " control plan(s)");
         }
-        return "Agrégé depuis : " + String.join(", ", parts);
+        return "Aggregated from: " + String.join(", ", parts);
     }
 
     // ---------- fabrique de lignes ----------
