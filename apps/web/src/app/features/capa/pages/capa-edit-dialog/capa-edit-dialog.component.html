@@ -68,7 +68,13 @@
             {{ membre.email }}
           </mat-option>
         </mat-select>
-        <mat-error *ngIf="form.controls.verificationAssigneeId.hasError('required')"
+        <!-- `touched` d'abord : le validateur `required` s'attache AU MOMENT ou ce
+             bloc apparait, donc l'erreur passe de faux a vrai PENDANT la passe de
+             detection, et Angular le refuse (NG0100). Attendre que l'utilisateur
+             ait touche le champ evite cela -- et accessoirement on ne reproche
+             rien a quelqu'un qui n'a encore rien saisi. -->
+        <mat-error *ngIf="form.controls.verificationAssigneeId.touched
+                          && form.controls.verificationAssigneeId.hasError('required')"
                    i18n="@@capa.verification.assignee-required">
           Une vérification exigée doit être confiée à quelqu'un.
         </mat-error>
