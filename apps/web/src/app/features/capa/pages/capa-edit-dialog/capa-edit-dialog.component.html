@@ -38,4 +38,54 @@
     <input matInput formControlName="sourceRef" maxlength="255">
   </mat-form-field>
 
+  <!-- La vérification d'efficacité : l'EXIGENCE, à distinguer du constat qu'elle
+       a eu lieu. Sans elle, rien ne sépare un dossier qu'on a choisi de ne pas
+       vérifier d'un dossier qu'on a oublié de vérifier. -->
+  <section class="verification" data-test="bloc-verification">
+    <h3 class="sous-titre" i18n="@@capa.verification.title">Vérification d'efficacité</h3>
+
+    <mat-radio-group formControlName="verificationRequired" class="choix"
+                     data-test="verification-exigee">
+      <mat-radio-button [value]="true" i18n="@@common.yes">Oui</mat-radio-button>
+      <mat-radio-button [value]="false" i18n="@@common.no">Non</mat-radio-button>
+    </mat-radio-group>
+    <p class="aide" i18n="@@capa.verification.hint">
+      Une vérification est-elle exigée sur ce dossier ? Répondre « non » est une
+      décision, qui se lit ; ne pas répondre laisse la question ouverte.
+    </p>
+
+    <ng-container *ngIf="verificationExigee">
+      <mat-form-field appearance="outline" class="full">
+        <mat-label i18n="@@capa.verification.assignee">Vérification confiée à</mat-label>
+        <!-- `[required]` suit l'affichage du champ : c'est la SEULE source de la
+             règle « exiger sans désigner ne veut rien dire ». Le doubler côté
+             composant donnait deux validateurs, dont un seul se retirait. -->
+        <mat-select formControlName="verificationAssigneeId" data-test="verification-qui"
+                    [required]="verificationExigee">
+          <mat-option *ngFor="let membre of membres" [value]="membre.id">
+            {{ membre.email }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.controls.verificationAssigneeId.hasError('required')"
+                   i18n="@@capa.verification.assignee-required">
+          Une vérification exigée doit être confiée à quelqu'un.
+        </mat-error>
+      </mat-form-field>
+
+      <p class="aide erreur" *ngIf="annuaireIndisponible"
+         data-test="annuaire-indisponible" i18n="@@capa.verification.directory-down">
+        L'annuaire de l'organisation n'a pas répondu : la liste est vide, et le
+        dossier ne pourra pas être enregistré avec une vérification exigée.
+      </p>
+
+      <mat-form-field appearance="outline" class="full">
+        <mat-label i18n="@@capa.verification.instructions">Instructions de vérification</mat-label>
+        <textarea matInput formControlName="verificationInstructions" rows="3"
+                  maxlength="4000" data-test="verification-consignes"
+                  i18n-placeholder="@@capa.verification.instructions-placeholder"
+                  placeholder="Ce qu'il faut vérifier, et comment : échantillon, délai, critère d'acceptation…"></textarea>
+      </mat-form-field>
+    </ng-container>
+  </section>
+
 </qos-form-dialog>

@@ -6050,6 +6050,50 @@ Portail clients</source>
         <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
         <target state="translated">تخزين المرفقات معطّل في هذه البيئة: لا يمكن إيداع أي دليل ولا الاطّلاع عليه.</target>
       </trans-unit>
+      <trans-unit id="common.yes" datatype="html">
+        <source>Oui</source>
+        <target state="translated">نعم</target>
+      </trans-unit>
+      <trans-unit id="common.no" datatype="html">
+        <source>Non</source>
+        <target state="translated">لا</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.title" datatype="html">
+        <source>Vérification d'efficacité</source>
+        <target state="translated">التحقق من الفعالية</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.hint" datatype="html">
+        <source>Une vérification est-elle exigée sur ce dossier ? Répondre « non » est une décision, qui se lit ; ne pas répondre laisse la question ouverte.</source>
+        <target state="translated">هل يُشترط التحقق في هذا الملف؟ الإجابة بـ«لا» قرار يُقرأ، أما عدم الإجابة فيُبقي السؤال مفتوحاً.</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.required" datatype="html">
+        <source>Exigée</source>
+        <target state="translated">مطلوب</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.not-required" datatype="html">
+        <source>Non exigée</source>
+        <target state="translated">غير مطلوب</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.assignee" datatype="html">
+        <source>Vérification confiée à</source>
+        <target state="translated">التحقق مُسند إلى</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.assignee-required" datatype="html">
+        <source>Une vérification exigée doit être confiée à quelqu'un.</source>
+        <target state="translated">التحقق المطلوب يجب إسناده إلى شخص ما.</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.directory-down" datatype="html">
+        <source>L'annuaire de l'organisation n'a pas répondu : la liste est vide, et le dossier ne pourra pas être enregistré avec une vérification exigée.</source>
+        <target state="translated">لم يستجب دليل المؤسسة: القائمة فارغة، ولا يمكن حفظ الملف مع اشتراط التحقق.</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.instructions" datatype="html">
+        <source>Instructions de vérification</source>
+        <target state="translated">تعليمات التحقق</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.instructions-placeholder" datatype="html">
+        <source>Ce qu'il faut vérifier, et comment : échantillon, délai, critère d'acceptation…</source>
+        <target state="translated">ما الذي يجب التحقق منه وكيف: العينة، المهلة، معيار القبول…</target>
+      </trans-unit>
       <trans-unit id="nav.complaints-nlp" datatype="html">
         <source>Réclamations IA</source>
         <target state="translated">الشكاوى بالذكاء الاصطناعي</target>

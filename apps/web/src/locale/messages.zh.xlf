@@ -6050,6 +6050,50 @@ Portail clients</source>
         <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
         <target state="translated">本环境的附件存储已停用：无法在此上传或查阅任何证据。</target>
       </trans-unit>
+      <trans-unit id="common.yes" datatype="html">
+        <source>Oui</source>
+        <target state="translated">是</target>
+      </trans-unit>
+      <trans-unit id="common.no" datatype="html">
+        <source>Non</source>
+        <target state="translated">否</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.title" datatype="html">
+        <source>Vérification d'efficacité</source>
+        <target state="translated">有效性验证</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.hint" datatype="html">
+        <source>Une vérification est-elle exigée sur ce dossier ? Répondre « non » est une décision, qui se lit ; ne pas répondre laisse la question ouverte.</source>
+        <target state="translated">本案卷是否要求验证？回答「否」是一项会被读到的决定；不作答则问题仍然悬而未决。</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.required" datatype="html">
+        <source>Exigée</source>
+        <target state="translated">要求</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.not-required" datatype="html">
+        <source>Non exigée</source>
+        <target state="translated">不要求</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.assignee" datatype="html">
+        <source>Vérification confiée à</source>
+        <target state="translated">验证指派给</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.assignee-required" datatype="html">
+        <source>Une vérification exigée doit être confiée à quelqu'un.</source>
+        <target state="translated">被要求的验证必须指派给某个人。</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.directory-down" datatype="html">
+        <source>L'annuaire de l'organisation n'a pas répondu : la liste est vide, et le dossier ne pourra pas être enregistré avec une vérification exigée.</source>
+        <target state="translated">组织目录没有响应：列表为空，且在要求验证的状态下无法保存本案卷。</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.instructions" datatype="html">
+        <source>Instructions de vérification</source>
+        <target state="translated">验证说明</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.instructions-placeholder" datatype="html">
+        <source>Ce qu'il faut vérifier, et comment : échantillon, délai, critère d'acceptation…</source>
+        <target state="translated">验证什么、如何验证：样本、时限、接受准则……</target>
+      </trans-unit>
       <trans-unit id="nav.complaints-nlp" datatype="html">
         <source>Réclamations IA</source>
         <target state="translated">AI投诉</target>

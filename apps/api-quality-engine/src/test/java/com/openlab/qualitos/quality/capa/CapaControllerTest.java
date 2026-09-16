@@ -256,7 +256,9 @@ class CapaControllerTest {
         when(service.findById(CAPA)).thenReturn(new CapaDto.CaseResponse(
                 CAPA, TENANT, "t", null, CapaType.CORRECTIVE, CapaCriticity.HIGH, CapaStatus.OPEN,
                 CapaSourceType.NON_CONFORMITY, "NC-2026-0018", OWNER, null, null,
-                null, null, null, null, Instant.now(), Instant.now(), List.of(),
+                null, null, null, null,
+                null, null, null, null,
+                Instant.now(), Instant.now(), List.of(),
                 new CapaDto.LinkedNonConformity(NC, "NC-2026-0018", "Étiquetage lot 4471 illisible"), List.of()));
 
         mockMvc.perform(get("/api/v1/capa/cases/{id}", CAPA))
@@ -290,6 +292,7 @@ class CapaControllerTest {
         return new CapaDto.CaseResponse(
                 CAPA, TENANT, "t", null, CapaType.CORRECTIVE, CapaCriticity.HIGH, s,
                 CapaSourceType.NON_CONFORMITY, null, OWNER, null, null,
+                null, null, null, null,
                 null, null, null, null,
                 Instant.now(), Instant.now(), List.of(), null, List.of());
     }
