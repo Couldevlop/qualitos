@@ -52,9 +52,9 @@ class PdfBoxEightDRenderAdapterTest {
         // D1, D3 et D8 vides : le document doit l'annoncer, pas laisser trois blancs.
         String texte = texteDe(renderer.render(snapshot(false), URL));
 
-        assertThat(texte).contains("RAPPORT PARTIEL");
+        assertThat(texte).contains("PARTIAL REPORT");
         assertThat(texte).contains("D1, D3, D8");
-        assertThat(texte).contains("Non renseigne.");
+        assertThat(texte).contains("Not filled in.");
         assertThat(texte).contains("cette discipline se saisit");
     }
 
@@ -62,10 +62,10 @@ class PdfBoxEightDRenderAdapterTest {
     void le_rapport_complet_ne_porte_aucune_mention_de_partiel() throws IOException {
         String texte = texteDe(renderer.render(snapshot(true), URL));
 
-        assertThat(texte).doesNotContain("RAPPORT PARTIEL");
+        assertThat(texte).doesNotContain("PARTIAL REPORT");
         assertThat(texte).contains("NC-2026-0007");
-        assertThat(texte).contains("D4 - Cause racine");
-        assertThat(texte).contains("Integrite & verification");
+        assertThat(texte).contains("D4 - Root cause");
+        assertThat(texte).contains("Integrity & verification");
     }
 
     @Test

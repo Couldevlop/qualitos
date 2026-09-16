@@ -30,13 +30,13 @@ class EightDSnapshotAssemblerTest {
 
         EightDSnapshot.Section d2 = section(snapshot, "D2");
         assertThat(d2.sourced()).isTrue();
-        assertThat(d2.sourceLabel()).isEqualTo("Non-conformité NC-2026-0007");
-        assertThat(d2.lines()).contains("Référence : NC-2026-0007");
-        assertThat(d2.lines()).contains("Gravité : MAJOR");
+        assertThat(d2.sourceLabel()).isEqualTo("Non-conformity NC-2026-0007");
+        assertThat(d2.lines()).contains("Reference : NC-2026-0007");
+        assertThat(d2.lines()).contains("Severity : MAJOR");
         // La date est du TEXTE dans l'instantané : c'est ce qui rend le rendu, donc
         // l'empreinte, recalculables à l'identique des années plus tard.
-        assertThat(d2.lines()).contains("Détecté le : 01/09/2026 08:30 UTC");
-        assertThat(d2.lines()).contains("Clôturé le : 12/09/2026 16:00 UTC");
+        assertThat(d2.lines()).contains("Detected on : 01/09/2026 08:30 UTC");
+        assertThat(d2.lines()).contains("Closed on : 12/09/2026 16:00 UTC");
     }
 
     @Test
@@ -50,7 +50,7 @@ class EightDSnapshotAssemblerTest {
             EightDSnapshot.Section s = section(snapshot, code);
             assertThat(s.sourced()).isFalse();
             assertThat(s.lines()).isEmpty();
-            assertThat(s.sourceLabel()).contains("se saisit");
+            assertThat(s.sourceLabel()).contains("filled in by hand");
         }
     }
 
@@ -83,12 +83,12 @@ class EightDSnapshotAssemblerTest {
         assertThat(d4.sourced()).isTrue();
         assertThat(d4.sourceLabel())
                 .contains("1 Ishikawa")
-                .contains("1 analyse(s) 5 pourquoi")
-                .contains("cause racine de la non-conformité");
+                .contains("1 5-whys analysis(es)")
+                .contains("root cause of the non-conformity");
         assertThat(d4.lines()).anyMatch(l -> l.contains("Joint usé") && l.contains("0,82")
                 || l.contains("Joint usé") && l.contains("0.82"));
-        assertThat(d4.lines()).anyMatch(l -> l.startsWith("    Pourquoi 1 : Le joint a cédé"));
-        assertThat(d4.lines()).anyMatch(l -> l.contains("Cause racine : Absence de plan préventif"));
+        assertThat(d4.lines()).anyMatch(l -> l.startsWith("    Why 1 : Le joint a cédé"));
+        assertThat(d4.lines()).anyMatch(l -> l.contains("Root cause: Absence de plan préventif"));
     }
 
     @Test
@@ -98,9 +98,9 @@ class EightDSnapshotAssemblerTest {
 
         assertThat(d4.sourced()).isFalse();
         assertThat(d4.sourceLabel())
-                .contains("Aucun Ishikawa")
-                .contains("5 pourquoi")
-                .contains("cause racine");
+                .contains("No Ishikawa")
+                .contains("5-whys")
+                .contains("root cause");
     }
 
     @Test
@@ -108,8 +108,8 @@ class EightDSnapshotAssemblerTest {
         EightDSnapshot snapshot = assembler.assemble(sourcesMinimales(), null, null, null,
                 "t", null, null);
 
-        assertThat(section(snapshot, "D5").sourceLabel()).contains("Aucune CAPA");
-        assertThat(section(snapshot, "D6").sourceLabel()).contains("Aucune CAPA");
+        assertThat(section(snapshot, "D5").sourceLabel()).contains("No CAPA");
+        assertThat(section(snapshot, "D6").sourceLabel()).contains("No CAPA");
         assertThat(section(snapshot, "D5").sourced()).isFalse();
     }
 
@@ -132,16 +132,16 @@ class EightDSnapshotAssemblerTest {
 
         EightDSnapshot.Section d5 = section(snapshot, "D5");
         assertThat(d5.sourced()).isTrue();
-        assertThat(d5.sourceLabel()).contains("2 action(s) décidée(s)");
+        assertThat(d5.sourceLabel()).contains("2 action(s) decided");
         assertThat(d5.lines()).anyMatch(l -> l.contains("[PREVENTIVE] Former les opérateurs"));
-        assertThat(d5.lines()).anyMatch(l -> l.contains("échéance 10/09/2026"));
+        assertThat(d5.lines()).anyMatch(l -> l.contains("due 10/09/2026"));
 
         EightDSnapshot.Section d6 = section(snapshot, "D6");
         assertThat(d6.sourced()).isTrue();
-        assertThat(d6.sourceLabel()).contains("1 action(s) menée(s) à terme").contains("3 preuve(s)");
+        assertThat(d6.sourceLabel()).contains("1 action(s) completed").contains("3 evidence item(s)");
         assertThat(d6.lines()).anyMatch(l -> l.contains("Remplacer le joint")
                 && l.contains("09/09/2026 09:00 UTC"));
-        assertThat(d6.lines()).anyMatch(l -> l.contains("Efficacité vérifiée"));
+        assertThat(d6.lines()).anyMatch(l -> l.contains("Effectiveness verified"));
         // Une action encore en cours n'a pas sa place dans D6 : elle n'est pas mise en œuvre.
         assertThat(d6.lines()).noneMatch(l -> l.contains("Former les opérateurs"));
     }
@@ -160,11 +160,11 @@ class EightDSnapshotAssemblerTest {
                 assembler.assemble(sources, null, null, null, "t", null, null), "D7");
 
         assertThat(d7.sourced()).isTrue();
-        assertThat(d7.sourceLabel()).contains("mode de défaillance PFMEA")
-                .contains("1 plan(s) de surveillance");
-        assertThat(d7.lines()).anyMatch(l -> l.contains("RPN : 160 → 40 après actions"));
-        assertThat(d7.lines()).anyMatch(l -> l.contains("CP-4471") && l.contains("rév. 3")
-                && l.contains("12 ligne(s)") && l.contains("scellé"));
+        assertThat(d7.sourceLabel()).contains("PFMEA failure mode")
+                .contains("1 control plan(s)");
+        assertThat(d7.lines()).anyMatch(l -> l.contains("RPN: 160 → 40 after actions"));
+        assertThat(d7.lines()).anyMatch(l -> l.contains("CP-4471") && l.contains("rev. 3")
+                && l.contains("12 line(s)") && l.contains("sealed"));
     }
 
     @Test
@@ -176,8 +176,8 @@ class EightDSnapshotAssemblerTest {
 
         assertThat(d7.sourced()).isFalse();
         assertThat(d7.sourceLabel())
-                .contains("Aucun mode de défaillance PFMEA")
-                .contains("plan de surveillance")
+                .contains("No PFMEA failure mode")
+                .contains("control plan")
                 .contains("Poka-Yoke");
     }
 

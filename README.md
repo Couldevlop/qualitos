@@ -6,6 +6,11 @@ QualitOS agrège les méthodes fondamentales de la qualité totale (PDCA, 5S, Ce
 DMAIC + Poka-Yoke, Ishikawa) dans un référentiel unique, augmenté par l'IA et certifié par
 blockchain. Voir [`CLAUDE.md`](./CLAUDE.md) pour le projet complet.
 
+> **Vous reprenez le projet ?** Commencez par
+> [`docs/PASSATION.md`](./docs/PASSATION.md) : l'architecture, les six motifs qui
+> expliquent la quasi-totalité du code, comment retrouver n'importe quoi, les
+> pièges d'environnement, et ce qui reste ouvert.
+
 ## Démarrage rapide (Docker)
 
 ```bash
