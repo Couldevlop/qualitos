@@ -167,7 +167,7 @@ describe('CapaEditDialogComponent', () => {
     expect(hote().querySelector('[data-test=verification-qui]')).toBeNull();
 
     component.form.controls.verificationRequired.setValue(true);
-    await Promise.resolve();   // le champ d'affichage se pose au microtour suivant
+    await macrotache();   // `deferredView` livre en macrotâche
     fixture.detectChanges();
 
     expect(component.verificationExigee).toBeTrue();
@@ -178,7 +178,7 @@ describe('CapaEditDialogComponent', () => {
     await build({ capa: existing });
 
     component.form.controls.verificationRequired.setValue(true);
-    await Promise.resolve();   // le champ d'affichage se pose au microtour suivant
+    await macrotache();   // `deferredView` livre en macrotâche
     fixture.detectChanges();
 
     // Exiger sans designer est refuse par le serveur : on le dit ici plutot que
@@ -227,7 +227,7 @@ describe('CapaEditDialogComponent', () => {
     expect(component.form.controls.verificationAssigneeId.value).toBe('u-verif');
 
     component.form.controls.verificationRequired.setValue(false);
-    await Promise.resolve();
+    await macrotache();
     fixture.detectChanges();
 
     // Laisser trainer un verificateur laisserait croire qu'une verification est
@@ -277,12 +277,23 @@ describe('CapaEditDialogComponent', () => {
     http.expectOne(r => r.url.endsWith('/api/v1/users'))
         .flush('indisponible', { status: 503, statusText: 'Service Unavailable' });
     component.form.controls.verificationRequired.setValue(true);
-    await Promise.resolve();   // le champ d'affichage se pose au microtour suivant
+    await macrotache();   // `deferredView` livre en macrotâche
     fixture.detectChanges();
 
     expect(component.annuaireIndisponible).toBeTrue();
     expect(hote().querySelector('[data-test=annuaire-indisponible]')).not.toBeNull();
   });
+
+  /**
+   * Rend la main a la boucle d'evenements.
+   *
+   * <p>Les etats d'affichage passent par `deferredView`, qui livre en
+   * MACROTACHE : un microtour ne suffit pas a les voir arriver, et un banc qui
+   * s'en contenterait jugerait un ecran qui n'a pas fini de se mettre a jour.
+   */
+  function macrotache(): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, 0));
+  }
 
   /** L'element hote du composant, pour interroger le rendu. */
   function hote(): HTMLElement {

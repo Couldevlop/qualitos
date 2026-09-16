@@ -2,7 +2,10 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { BehaviorSubject } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+
+import { deferredView } from '../../../../core/rx/deferred-view';
 
 import { TenantUser } from '../../../admin/admin.types';
 import { TenantTeamService } from '../../../admin/tenant-team.service';
@@ -32,8 +35,20 @@ export class CapaEditDialogComponent implements OnInit {
    */
   membres: TenantUser[] = [];
 
-  /** Vrai quand l'annuaire n'a pas répondu : on le DIT, on ne fait pas semblant. */
-  annuaireIndisponible = false;
+  /**
+   * Vrai quand l'annuaire n'a pas répondu : on le DIT, on ne fait pas semblant.
+   *
+   * <p>Livré en MACROTÂCHE (`deferredView`), comme partout ailleurs dans ce
+   * dépôt : cet état bascule depuis un retour HTTP, donc potentiellement pendant
+   * la passe de détection en cours, et le lire directement rend NG0100.
+   */
+  private readonly annuaireState$ = new BehaviorSubject<boolean>(false);
+  readonly annuaireIndisponible$ = deferredView(this.annuaireState$);
+
+  /** État courant, pour la logique et les bancs — le gabarit passe par le flux. */
+  get annuaireIndisponible(): boolean {
+    return this.annuaireState$.value;
+  }
 
   readonly criticities: CapaCriticity[] = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
 
@@ -69,33 +84,35 @@ export class CapaEditDialogComponent implements OnInit {
     });
 
     // Repasser à « non exigée » doit effacer le vérificateur et les consignes.
-    this.form.controls.verificationRequired.valueChanges.subscribe(exigee =>
-      // `queueMicrotask` : le groupe de boutons radio se synchronise PENDANT le
-      // rendu, et modifier alors un champ que le gabarit vient de lire déclenche
-      // NG0100. On diffère d'un tour de boucle, le temps que le cycle de
-      // détection s'achève — remède déjà employé ailleurs dans ce dépôt.
-      queueMicrotask(() => this.appliquerExigence(exigee)));
-    // À l'initialisation, en revanche, rien n'a encore été rendu : la valeur peut
-    // être posée tout de suite, et le premier rendu sera déjà le bon.
+    this.form.controls.verificationRequired.valueChanges.subscribe(
+      exigee => this.appliquerExigence(exigee));
     this.appliquerExigence(this.form.controls.verificationRequired.value);
   }
 
   ngOnInit(): void {
     this.equipe.list(0, 200).subscribe({
       next: page => (this.membres = page.content.filter(m => m.active)),
-      error: () => (this.annuaireIndisponible = true)
+      error: () => this.annuaireState$.next(true)
     });
   }
 
   /**
    * Vrai quand le bloc « à qui » et « quoi vérifier » a lieu d'être rempli.
    *
-   * <p>Un CHAMP tenu à jour, et non un accesseur qui lirait l'état vivant du
-   * formulaire : un accesseur change de valeur au milieu du cycle de détection
-   * de changements et déclenche NG0100 — défaut déjà rencontré ailleurs dans ce
-   * dépôt.
+   * <p>Livré en MACROTÂCHE, et non lu directement : le groupe de boutons radio
+   * se synchronise PENDANT le premier rendu, si bien qu'une lecture directe —
+   * accesseur comme champ mis à jour dans l'abonnement — change de valeur au
+   * milieu de la passe de détection et déclenche NG0100. Un microtour ne suffit
+   * pas : sous Zone.js il peut encore retomber dans la même passe. `deferredView`
+   * est le remède déjà employé dans ce dépôt, et il est délibérément le seul.
    */
-  verificationExigee = false;
+  private readonly exigenceState$ = new BehaviorSubject<boolean>(false);
+  readonly verificationExigee$ = deferredView(this.exigenceState$);
+
+  /** État courant, pour la logique et les bancs — le gabarit passe par le flux. */
+  get verificationExigee(): boolean {
+    return this.exigenceState$.value;
+  }
 
   /**
    * Ce qu'entraîne le passage à « non exigée ».
@@ -106,7 +123,7 @@ export class CapaEditDialogComponent implements OnInit {
    * seul se retirait — et le formulaire restait invalide sans le dire.
    */
   private appliquerExigence(exigee: boolean | null): void {
-    this.verificationExigee = exigee === true;
+    this.exigenceState$.next(exigee === true);
     if (exigee !== false) {
       return;
     }
