@@ -84,9 +84,17 @@ export class CapaEditDialogComponent implements OnInit {
     });
 
     // Repasser à « non exigée » doit effacer le vérificateur et les consignes.
+    // L'abonnement ne fait QUE publier l'état : aucune mutation du formulaire ici.
+    // Le groupe de boutons radio se synchronise pendant le premier rendu, et
+    // toucher au formulaire à ce moment ferait basculer `form.invalid` au milieu
+    // de la passe de détection — ce qu'Angular refuse (NG0100).
     this.form.controls.verificationRequired.valueChanges.subscribe(
-      exigee => this.appliquerExigence(exigee));
-    this.appliquerExigence(this.form.controls.verificationRequired.value);
+      exigee => this.exigenceState$.next(exigee === true));
+    this.exigenceState$.next(this.form.controls.verificationRequired.value === true);
+
+    // Les mutations, elles, suivent le flux DIFFÉRÉ : livrées en macrotâche, donc
+    // jamais pendant un rendu.
+    this.verificationExigee$.subscribe(exigee => this.appliquerExigence(exigee));
   }
 
   ngOnInit(): void {
@@ -115,22 +123,33 @@ export class CapaEditDialogComponent implements OnInit {
   }
 
   /**
-   * Ce qu'entraîne le passage à « non exigée ».
+   * Ce qu'entraîne l'exigence, ou son retrait.
    *
-   * <p>Le caractère OBLIGATOIRE du vérificateur, lui, n'est pas posé ici : il
-   * l'est par le gabarit, où `[required]` suit l'affichage du champ. Le tenir
-   * aux deux endroits donnait deux validateurs pour une seule règle, dont un
-   * seul se retirait — et le formulaire restait invalide sans le dire.
+   * <p>Appelé depuis le flux DIFFÉRÉ, donc toujours hors d'une passe de
+   * détection : c'est ce qui permet de toucher au formulaire sans faire basculer
+   * `form.invalid` — lu par le bouton d'envoi — au milieu d'un rendu.
+   *
+   * <p>Une seule source pour la règle « exiger sans désigner ne veut rien
+   * dire » : ce validateur. Le doubler d'un `required` dans le gabarit donnait
+   * deux validateurs, dont un seul se retirait.
    */
-  private appliquerExigence(exigee: boolean | null): void {
-    this.exigenceState$.next(exigee === true);
-    if (exigee !== false) {
+  private appliquerExigence(exigee: boolean): void {
+    const qui = this.form.controls.verificationAssigneeId;
+
+    if (exigee) {
+      // Le validateur est posé ICI et non par un `required` dans le gabarit : la
+      // directive l'attacherait à la naissance du champ, donc pendant le rendu.
+      qui.addValidators(Validators.required);
+      qui.updateValueAndValidity({ emitEvent: false });
       return;
     }
+
+    qui.removeValidators(Validators.required);
     // Ne plus exiger efface ce qui n'a plus d'objet : laisser un vérificateur
     // derrière soi laisserait croire qu'une vérification est encore attendue.
-    this.form.controls.verificationAssigneeId.setValue(null, { emitEvent: false });
+    qui.setValue(null, { emitEvent: false });
     this.form.controls.verificationInstructions.setValue('', { emitEvent: false });
+    qui.updateValueAndValidity({ emitEvent: false });
   }
 
   submit(): void {

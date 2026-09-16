@@ -57,13 +57,11 @@
     <ng-container *ngIf="verificationExigee$ | async">
       <mat-form-field appearance="outline" class="full">
         <mat-label i18n="@@capa.verification.assignee">Vérification confiée à</mat-label>
-        <!-- `required` STATIQUE, à l'intérieur du bloc conditionnel : le
-             validateur naît avec le champ et meurt avec lui. C'est la seule
-             source de la règle « exiger sans désigner ne veut rien dire » — la
-             doubler côté composant donnait deux validateurs, dont un seul se
-             retirait, et le formulaire restait invalide sans le dire. -->
-        <mat-select formControlName="verificationAssigneeId" data-test="verification-qui"
-                    required>
+        <!-- AUCUN `required` ici : la directive attacherait son validateur à la
+             naissance du champ, donc pendant le rendu, et `form.invalid` — lu par
+             le bouton d'envoi du dialogue — basculerait au milieu de la passe.
+             Le validateur est posé par le composant, depuis le flux différé. -->
+        <mat-select formControlName="verificationAssigneeId" data-test="verification-qui">
           <mat-option *ngFor="let membre of membres" [value]="membre.id">
             {{ membre.email }}
           </mat-option>
