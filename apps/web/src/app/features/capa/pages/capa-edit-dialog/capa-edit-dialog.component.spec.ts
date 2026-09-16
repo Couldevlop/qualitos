@@ -279,6 +279,12 @@ describe('CapaEditDialogComponent', () => {
     component.form.controls.verificationRequired.setValue(true);
     await macrotache();   // `deferredView` livre en macrotâche
     fixture.detectChanges();
+    // DEUX tours : le paragraphe vit DANS le bloc conditionnel, donc son tuyau
+    // `async` ne s'abonne qu'une fois le bloc rendu, et sa premiere valeur
+    // n'arrive qu'au tour suivant. L'ecran fait exactement cela, un battement
+    // plus tard et sans que personne ne le remarque.
+    await macrotache();
+    fixture.detectChanges();
 
     expect(component.annuaireIndisponible).toBeTrue();
     expect(hote().querySelector('[data-test=annuaire-indisponible]')).not.toBeNull();
