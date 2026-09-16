@@ -2,8 +2,10 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatRadioModule } from '@angular/material/radio';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
+import { TenantUser } from '../../../admin/admin.types';
 import { environment } from '../../../../../environments/environment';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
@@ -36,7 +38,7 @@ describe('CapaEditDialogComponent', () => {
       'MatDialogRef', ['close']);
     await TestBed.configureTestingModule({
       declarations: [CapaEditDialogComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      imports: [SharedModule, UiModule, MatRadioModule, NoopAnimationsModule],
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
@@ -49,6 +51,23 @@ describe('CapaEditDialogComponent', () => {
     component = fixture.componentInstance;
     http = TestBed.inject(HttpTestingController);
     fixture.detectChanges();
+    repondreAnnuaire();
+  }
+
+  /**
+   * Sert l'annuaire interroge par `ngOnInit`.
+   *
+   * <p>Sans cela, `http.verify()` echoue sur une requete en suspens a la fin de
+   * CHAQUE banc : le composant va chercher les membres des sa construction, et
+   * un banc qui l'ignore ne teste pas le composant reel.
+   */
+  function repondreAnnuaire(membres: Partial<TenantUser>[] = [
+    { id: 'u-verif', email: 'controle@exemple.fr', active: true },
+    { id: 'u-parti', email: 'parti@exemple.fr', active: false }
+  ]): void {
+    const req = http.expectOne(r => r.url.endsWith('/api/v1/users'));
+    req.flush({ content: membres, totalElements: membres.length,
+                totalPages: 1, number: 0, size: 200 });
   }
 
   beforeEach(() => {
@@ -137,4 +156,153 @@ describe('CapaEditDialogComponent', () => {
     expect(dialogRef.close).toHaveBeenCalledWith();
     http.expectNone(`${base}/c1`);
   });
+
+  // ---------- verification d'efficacite ----------
+
+  it('ne propose le verificateur que si la verification est exigee', async () => {
+    await build({ capa: existing });
+
+    // Question non tranchee : le bloc « a qui » n'a pas lieu d'etre.
+    expect(component.verificationExigee).toBeFalse();
+    expect(hote().querySelector('[data-test=verification-qui]')).toBeNull();
+
+    component.form.controls.verificationRequired.setValue(true);
+    await macrotache();   // `deferredView` livre en macrotâche
+    fixture.detectChanges();
+
+    expect(component.verificationExigee).toBeTrue();
+    expect(hote().querySelector('[data-test=verification-qui]')).not.toBeNull();
+  });
+
+  it('rend le verificateur obligatoire des que la verification l est', async () => {
+    await build({ capa: existing });
+
+    component.form.controls.verificationRequired.setValue(true);
+    await macrotache();   // `deferredView` livre en macrotâche
+    fixture.detectChanges();
+
+    // Exiger sans designer est refuse par le serveur : on le dit ici plutot que
+    // d'aller chercher un 422 pour l'apprendre.
+    expect(component.form.controls.verificationAssigneeId.hasError('required')).toBeTrue();
+    component.submit();
+    http.expectNone(`${base}/c1`);
+  });
+
+  it('n offre que les membres actifs de l organisation', async () => {
+    await build({ capa: existing });
+
+    // Un compte desactive ne peut plus verifier quoi que ce soit : le proposer
+    // reviendrait a confier la tache a personne.
+    expect(component.membres.map(m => m.email)).toEqual(['controle@exemple.fr']);
+  });
+
+  it('envoie l identifiant ET le nom du verificateur', async () => {
+    await build({ capa: existing });
+    component.form.patchValue({
+      verificationRequired: true,
+      verificationAssigneeId: 'u-verif',
+      verificationInstructions: '  Reprendre 30 pieces au calibre.  '
+    });
+
+    component.submit();
+
+    const req = http.expectOne(`${base}/c1`);
+    expect(req.request.body.verificationRequired).toBeTrue();
+    expect(req.request.body.verificationAssigneeId).toBe('u-verif');
+    // Le nom part avec l'identifiant : il est recopie dans le dossier pour rester
+    // lisible meme si le compte disparait de l'annuaire.
+    expect(req.request.body.verificationAssigneeName).toBe('controle@exemple.fr');
+    expect(req.request.body.verificationInstructions)
+        .toBe('Reprendre 30 pieces au calibre.');
+    req.flush(existing);
+  });
+
+  it('efface le verificateur et les consignes quand la verification cesse d etre exigee',
+     async () => {
+    await build({ capa: {
+      ...existing, verificationRequired: true,
+      verificationAssigneeId: 'u-verif', verificationAssigneeName: 'controle@exemple.fr',
+      verificationInstructions: 'Reprendre 30 pieces.'
+    } });
+    expect(component.form.controls.verificationAssigneeId.value).toBe('u-verif');
+
+    component.form.controls.verificationRequired.setValue(false);
+    await macrotache();
+    fixture.detectChanges();
+
+    // Laisser trainer un verificateur laisserait croire qu'une verification est
+    // encore attendue.
+    expect(component.form.controls.verificationAssigneeId.value).toBeNull();
+    expect(component.form.controls.verificationInstructions.value).toBe('');
+
+    component.submit();
+    const req = http.expectOne(`${base}/c1`);
+    expect(req.request.body.verificationRequired).toBeFalse();
+    expect(req.request.body.verificationAssigneeId).toBeUndefined();
+    req.flush(existing);
+  });
+
+  it('n envoie rien sur la verification quand la question reste ouverte', async () => {
+    await build({ capa: existing });
+    component.form.controls.title.setValue('Autre titre');
+
+    component.submit();
+
+    // `null` veut dire « non tranche » : l'envoyer effacerait une decision prise
+    // ailleurs, et ne pas l'envoyer laisse le dossier tel qu'il est.
+    const req = http.expectOne(`${base}/c1`);
+    expect(req.request.body.verificationRequired).toBeUndefined();
+    req.flush(existing);
+  });
+
+  it('dit que l annuaire est indisponible plutot que d afficher une liste vide',
+     async () => {
+    dialogRef = jasmine.createSpyObj<MatDialogRef<CapaEditDialogComponent, CapaCaseResponse>>(
+      'MatDialogRef', ['close']);
+    await TestBed.configureTestingModule({
+      declarations: [CapaEditDialogComponent],
+      imports: [SharedModule, UiModule, MatRadioModule, NoopAnimationsModule],
+      providers: [
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+        { provide: MatDialogRef, useValue: dialogRef },
+        { provide: MAT_DIALOG_DATA, useValue: { capa: existing } }
+      ]
+    }).compileComponents();
+    fixture = TestBed.createComponent(CapaEditDialogComponent);
+    component = fixture.componentInstance;
+    http = TestBed.inject(HttpTestingController);
+    fixture.detectChanges();
+
+    http.expectOne(r => r.url.endsWith('/api/v1/users'))
+        .flush('indisponible', { status: 503, statusText: 'Service Unavailable' });
+    component.form.controls.verificationRequired.setValue(true);
+    await macrotache();   // `deferredView` livre en macrotâche
+    fixture.detectChanges();
+    // DEUX tours : le paragraphe vit DANS le bloc conditionnel, donc son tuyau
+    // `async` ne s'abonne qu'une fois le bloc rendu, et sa premiere valeur
+    // n'arrive qu'au tour suivant. L'ecran fait exactement cela, un battement
+    // plus tard et sans que personne ne le remarque.
+    await macrotache();
+    fixture.detectChanges();
+
+    expect(component.annuaireIndisponible).toBeTrue();
+    expect(hote().querySelector('[data-test=annuaire-indisponible]')).not.toBeNull();
+  });
+
+  /**
+   * Rend la main a la boucle d'evenements.
+   *
+   * <p>Les etats d'affichage passent par `deferredView`, qui livre en
+   * MACROTACHE : un microtour ne suffit pas a les voir arriver, et un banc qui
+   * s'en contenterait jugerait un ecran qui n'a pas fini de se mettre a jour.
+   */
+  function macrotache(): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, 0));
+  }
+
+  /** L'element hote du composant, pour interroger le rendu. */
+  function hote(): HTMLElement {
+    return fixture.nativeElement as HTMLElement;
+  }
 });

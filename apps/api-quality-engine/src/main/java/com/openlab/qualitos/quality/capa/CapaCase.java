@@ -73,6 +73,39 @@ public class CapaCase {
     @Column(name = "effectiveness_verified_at")
     private Instant effectivenessVerifiedAt;
 
+    /**
+     * Une vérification d'efficacité est-elle EXIGÉE sur ce dossier ?
+     *
+     * <p>À distinguer de {@code effectivenessVerified}, qui dit si elle a eu
+     * lieu. Sans cette exigence, rien ne séparait un dossier qu'on a
+     * délibérément choisi de ne pas vérifier d'un dossier qu'on a oublié de
+     * vérifier — et c'est la première question d'un auditeur.
+     *
+     * <p>{@code null} veut dire « pas encore tranché », et ce n'est pas la même
+     * chose que {@code false} : dire « non » est une décision, qui se lit.
+     */
+    @Column(name = "verification_required")
+    private Boolean verificationRequired;
+
+    /** À qui la vérification est confiée. Identifiant de l'annuaire du client. */
+    @Column(name = "verification_assignee_id")
+    private UUID verificationAssigneeId;
+
+    /**
+     * Le libellé du vérificateur, recopié depuis l'annuaire.
+     *
+     * <p>Recopié et non résolu à la lecture : un compte désactivé ou supprimé ne
+     * doit pas effacer le nom de qui a vérifié. Un dossier CAPA se relit des
+     * années après, souvent en audit, et « (utilisateur inconnu) » y vaudrait
+     * aveu de négligence.
+     */
+    @Column(name = "verification_assignee_name", length = 255)
+    private String verificationAssigneeName;
+
+    /** Ce qu'il faut vérifier, et comment. Texte libre : aucune liste ne suffirait. */
+    @Column(name = "verification_instructions", columnDefinition = "TEXT")
+    private String verificationInstructions;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 

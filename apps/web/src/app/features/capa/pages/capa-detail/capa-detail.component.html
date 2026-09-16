@@ -96,6 +96,30 @@
                 {{ effectivenessLabel(c.effectivenessVerified) }}
               </span>
             </div>
+            <!-- L'EXIGENCE de verification, distincte du constat qu'elle a eu lieu.
+                 Affichee meme quand la reponse est « non » : dire non est une
+                 decision, et c'est la premiere question d'un auditeur. -->
+            <div class="info-item" *ngIf="c.verificationRequired != null"
+                 data-test="verification-exigee">
+              <span class="info-label" i18n="@@capa.verification.title">Vérification d'efficacité</span>
+              <span [class]="c.verificationRequired ? 'badge badge-open' : 'badge'">
+                <ng-container *ngIf="c.verificationRequired; else pasDeVerification"
+                              i18n="@@capa.verification.required">Exigée</ng-container>
+                <ng-template #pasDeVerification>
+                  <span i18n="@@capa.verification.not-required">Non exigée</span>
+                </ng-template>
+              </span>
+            </div>
+            <div class="info-item" *ngIf="c.verificationAssigneeName"
+                 data-test="verification-qui">
+              <span class="info-label" i18n="@@capa.verification.assignee">Vérification confiée à</span>
+              <span class="info-value">{{ c.verificationAssigneeName }}</span>
+            </div>
+            <div class="info-item full" *ngIf="c.verificationInstructions"
+                 data-test="verification-consignes">
+              <span class="info-label" i18n="@@capa.verification.instructions">Instructions de vérification</span>
+              <span class="info-value">{{ c.verificationInstructions }}</span>
+            </div>
             <div class="info-item">
               <span class="info-label" i18n="@@capa.detail.updated">MAJ</span>
               <span class="info-value">{{ c.updatedAt | date:'medium' }}</span>

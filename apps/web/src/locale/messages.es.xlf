@@ -6050,6 +6050,50 @@ Portal de clientes</target>
         <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
         <target state="translated">El almacenamiento de adjuntos está desactivado en este entorno: no se puede añadir ni leer ninguna prueba.</target>
       </trans-unit>
+      <trans-unit id="common.yes" datatype="html">
+        <source>Oui</source>
+        <target state="translated">Sí</target>
+      </trans-unit>
+      <trans-unit id="common.no" datatype="html">
+        <source>Non</source>
+        <target state="translated">No</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.title" datatype="html">
+        <source>Vérification d'efficacité</source>
+        <target state="translated">Verificación de la eficacia</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.hint" datatype="html">
+        <source>Une vérification est-elle exigée sur ce dossier ? Répondre « non » est une décision, qui se lit ; ne pas répondre laisse la question ouverte.</source>
+        <target state="translated">¿Se exige una verificación en este expediente? Responder «no» es una decisión, y se lee; no responder deja la pregunta abierta.</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.required" datatype="html">
+        <source>Exigée</source>
+        <target state="translated">Exigida</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.not-required" datatype="html">
+        <source>Non exigée</source>
+        <target state="translated">No exigida</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.assignee" datatype="html">
+        <source>Vérification confiée à</source>
+        <target state="translated">Verificación asignada a</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.assignee-required" datatype="html">
+        <source>Une vérification exigée doit être confiée à quelqu'un.</source>
+        <target state="translated">Una verificación exigida debe asignarse a alguien.</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.directory-down" datatype="html">
+        <source>L'annuaire de l'organisation n'a pas répondu : la liste est vide, et le dossier ne pourra pas être enregistré avec une vérification exigée.</source>
+        <target state="translated">El directorio de la organización no respondió: la lista está vacía y el expediente no podrá guardarse con una verificación exigida.</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.instructions" datatype="html">
+        <source>Instructions de vérification</source>
+        <target state="translated">Instrucciones de verificación</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.instructions-placeholder" datatype="html">
+        <source>Ce qu'il faut vérifier, et comment : échantillon, délai, critère d'acceptation…</source>
+        <target state="translated">Qué verificar y cómo: muestra, plazo, criterio de aceptación…</target>
+      </trans-unit>
       <trans-unit id="nav.complaints-nlp" datatype="html">
         <source>Réclamations IA</source>
         <target state="translated">Reclamaciones IA</target>

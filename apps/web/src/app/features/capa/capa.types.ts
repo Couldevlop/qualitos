@@ -71,6 +71,18 @@ export interface CapaCaseResponse {
   resolvedAt?: string;
   closedAt?: string;
   effectivenessVerified?: boolean;
+  /**
+   * Une vérification d'efficacité est-elle EXIGÉE ?
+   *
+   * À distinguer de `effectivenessVerified`, qui dit si elle a eu lieu.
+   * `undefined` veut dire « la question n'a pas été tranchée » — ce n'est pas
+   * la même chose que `false`, qui est une décision.
+   */
+  verificationRequired?: boolean;
+  verificationAssigneeId?: string;
+  /** Recopié depuis l'annuaire : un compte désactivé n'efface pas le nom. */
+  verificationAssigneeName?: string;
+  verificationInstructions?: string;
   createdAt: string;
   updatedAt: string;
   actions: CapaActionResponse[];
@@ -189,6 +201,15 @@ export interface UpdateCapaCaseRequest {
   sourceRef?: string;
   rootCauseId?: string;
   dueDate?: string;
+  /**
+   * `undefined` laisse la décision en l'état, `false` la prend explicitement.
+   * Le serveur applique la règle : exiger sans désigner est refusé (422), et
+   * ne plus exiger efface le vérificateur et les consignes.
+   */
+  verificationRequired?: boolean;
+  verificationAssigneeId?: string;
+  verificationAssigneeName?: string;
+  verificationInstructions?: string;
 }
 
 /** Ce que le terrain dit d'une CAPA close, par opposition a ce qu'on avait declare. */

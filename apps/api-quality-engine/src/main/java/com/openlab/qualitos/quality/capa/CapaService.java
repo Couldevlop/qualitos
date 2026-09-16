@@ -112,9 +112,81 @@ public class CapaService {
         if (request.sourceRef() != null) c.setSourceRef(request.sourceRef());
         if (request.rootCauseId() != null) c.setRootCauseId(request.rootCauseId());
         if (request.dueDate() != null) c.setDueDate(request.dueDate());
+        appliquerVerification(c, request);
         CapaCase saved = caseRepository.save(c);
         journal.record(saved, CapaTransition.UPDATED);
         return toResponse(saved);
+    }
+
+    /**
+     * L'exigence de vérification, et ce qu'elle entraîne.
+     *
+     * <p>Trois règles, et chacune répond à une question qu'un auditeur pose :
+     *
+     * <ol>
+     *   <li><b>Exiger sans désigner ne veut rien dire.</b> Une vérification que
+     *       personne ne doit faire n'aura pas lieu ; on refuse donc (422) plutôt
+     *       que d'enregistrer une intention sans titulaire.</li>
+     *   <li><b>Ne plus exiger efface ce qui n'a plus d'objet.</b> Passer à
+     *       « non » retire le vérificateur et les consignes : les laisser
+     *       traîner laisserait croire qu'une vérification est attendue.</li>
+     *   <li><b>Désigner quelqu'un sans exiger la vérification est un refus.</b>
+     *       C'est presque toujours une case oubliée, et l'accepter en silence
+     *       produirait un dossier qui se croit couvert.</li>
+     * </ol>
+     *
+     * <p>{@code null} sur {@code verificationRequired} laisse tout en l'état :
+     * la mise à jour est partielle, et ne rien dire n'est pas dire « non ».
+     */
+    private void appliquerVerification(CapaCase c, CapaDto.UpdateCaseRequest request) {
+        Boolean exigee = request.verificationRequired();
+
+        if (Boolean.FALSE.equals(exigee)) {
+            c.setVerificationRequired(false);
+            c.setVerificationAssigneeId(null);
+            c.setVerificationAssigneeName(null);
+            c.setVerificationInstructions(null);
+            return;
+        }
+
+        boolean exigeeApres = Boolean.TRUE.equals(exigee)
+                || (exigee == null && Boolean.TRUE.equals(c.getVerificationRequired()));
+
+        if (!exigeeApres
+                && (request.verificationAssigneeId() != null
+                    || nonVide(request.verificationInstructions()))) {
+            throw new CapaValidationException(
+                    "A verifier or verification instructions require verificationRequired=true");
+        }
+
+        if (Boolean.TRUE.equals(exigee)) {
+            c.setVerificationRequired(true);
+        }
+        if (request.verificationAssigneeId() != null) {
+            c.setVerificationAssigneeId(request.verificationAssigneeId());
+        }
+        if (request.verificationAssigneeName() != null) {
+            c.setVerificationAssigneeName(nettoyer(request.verificationAssigneeName()));
+        }
+        if (request.verificationInstructions() != null) {
+            c.setVerificationInstructions(nettoyer(request.verificationInstructions()));
+        }
+
+        if (exigeeApres && c.getVerificationAssigneeId() == null) {
+            throw new CapaValidationException(
+                    "A required verification must be assigned to someone");
+        }
+    }
+
+    /** `null` et blancs sont la même absence : on ne stocke pas une chaîne vide. */
+    private String nettoyer(String valeur) {
+        if (valeur == null) return null;
+        String rogne = valeur.trim();
+        return rogne.isEmpty() ? null : rogne;
+    }
+
+    private boolean nonVide(String valeur) {
+        return valeur != null && !valeur.isBlank();
     }
 
     public CapaDto.CaseResponse startCase(UUID id) {
@@ -449,6 +521,8 @@ public class CapaService {
                 c.getRootCauseId(), c.getDueDate(),
                 c.getResolvedAt(), c.getClosedAt(),
                 c.getEffectivenessVerified(), c.getEffectivenessVerifiedAt(),
+                c.getVerificationRequired(), c.getVerificationAssigneeId(),
+                c.getVerificationAssigneeName(), c.getVerificationInstructions(),
                 c.getCreatedAt(), c.getUpdatedAt(),
                 c.getActions().stream().map(this::toActionResponse).toList(),
                 detailed ? resolveSourceNc(c) : null,

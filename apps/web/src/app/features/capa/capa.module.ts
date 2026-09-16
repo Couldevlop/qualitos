@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatRadioModule } from '@angular/material/radio';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
@@ -36,6 +37,11 @@ const routes: Routes = [
   ],
   // MatButtonToggleModule n'est re-exporte ni par SharedModule ni par UiModule :
   // les specs l'importent d'elles-memes, seul le build de production le voit.
-  imports: [SharedModule, UiModule, MatButtonToggleModule, RouterModule.forChild(routes)]
+  // MatRadioModule n'est pas reexporte par SharedModule : le choix « vérification
+  // exigée : oui / non » est une question fermée a deux reponses, ou un groupe de
+  // boutons radio dit mieux qu'une case a cocher qu'AUCUNE des deux n'est cochee
+  // tant que la question n'a pas ete tranchee.
+  imports: [SharedModule, UiModule, MatButtonToggleModule, MatRadioModule,
+            RouterModule.forChild(routes)]
 })
 export class CapaModule {}

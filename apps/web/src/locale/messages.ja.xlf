@@ -6050,6 +6050,50 @@ Portail clients</source>
         <source>Le stockage des pièces jointes est désactivé sur cet environnement : aucune preuve ne peut y être déposée ni relue.</source>
         <target state="translated">この環境では添付ファイルの保管が無効です。証拠の追加も閲覧もできません。</target>
       </trans-unit>
+      <trans-unit id="common.yes" datatype="html">
+        <source>Oui</source>
+        <target state="translated">はい</target>
+      </trans-unit>
+      <trans-unit id="common.no" datatype="html">
+        <source>Non</source>
+        <target state="translated">いいえ</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.title" datatype="html">
+        <source>Vérification d'efficacité</source>
+        <target state="translated">有効性の検証</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.hint" datatype="html">
+        <source>Une vérification est-elle exigée sur ce dossier ? Répondre « non » est une décision, qui se lit ; ne pas répondre laisse la question ouverte.</source>
+        <target state="translated">この案件で検証は必要ですか。「いいえ」も記録に残る判断です。未回答のままだと問いは開いたままになります。</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.required" datatype="html">
+        <source>Exigée</source>
+        <target state="translated">必要</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.not-required" datatype="html">
+        <source>Non exigée</source>
+        <target state="translated">不要</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.assignee" datatype="html">
+        <source>Vérification confiée à</source>
+        <target state="translated">検証の担当者</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.assignee-required" datatype="html">
+        <source>Une vérification exigée doit être confiée à quelqu'un.</source>
+        <target state="translated">必要とされた検証は、担当者を定めなければなりません。</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.directory-down" datatype="html">
+        <source>L'annuaire de l'organisation n'a pas répondu : la liste est vide, et le dossier ne pourra pas être enregistré avec une vérification exigée.</source>
+        <target state="translated">組織のディレクトリが応答しませんでした。一覧は空で、検証を必要とした状態では案件を保存できません。</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.instructions" datatype="html">
+        <source>Instructions de vérification</source>
+        <target state="translated">検証手順</target>
+      </trans-unit>
+      <trans-unit id="capa.verification.instructions-placeholder" datatype="html">
+        <source>Ce qu'il faut vérifier, et comment : échantillon, délai, critère d'acceptation…</source>
+        <target state="translated">何を、どう検証するか：サンプル、期限、合否基準など</target>
+      </trans-unit>
       <trans-unit id="nav.complaints-nlp" datatype="html">
         <source>Réclamations IA</source>
         <target state="translated">AIクレーム</target>

@@ -98,6 +98,27 @@ export class CapaService {
         if (input.criticity !== undefined) c.criticity = input.criticity;
         if (input.sourceRef !== undefined) c.sourceRef = input.sourceRef;
         if (input.dueDate !== undefined) c.dueDate = input.dueDate;
+        // Même règle que le serveur, sinon le mode démonstration mentirait sur
+        // ce que fera la vraie API : ne plus exiger efface ce qui n'a plus d'objet.
+        if (input.verificationRequired === false) {
+          c.verificationRequired = false;
+          c.verificationAssigneeId = undefined;
+          c.verificationAssigneeName = undefined;
+          c.verificationInstructions = undefined;
+        } else {
+          if (input.verificationRequired !== undefined) {
+            c.verificationRequired = input.verificationRequired;
+          }
+          if (input.verificationAssigneeId !== undefined) {
+            c.verificationAssigneeId = input.verificationAssigneeId;
+          }
+          if (input.verificationAssigneeName !== undefined) {
+            c.verificationAssigneeName = input.verificationAssigneeName;
+          }
+          if (input.verificationInstructions !== undefined) {
+            c.verificationInstructions = input.verificationInstructions;
+          }
+        }
         c.updatedAt = new Date().toISOString();
         return of(c).pipe(delay(120));
       }

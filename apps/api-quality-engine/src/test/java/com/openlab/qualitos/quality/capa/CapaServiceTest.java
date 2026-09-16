@@ -224,7 +224,8 @@ class CapaServiceTest {
         UUID rc = UUID.randomUUID();
         LocalDate due = LocalDate.now().plusDays(10);
         CapaDto.UpdateCaseRequest req = new CapaDto.UpdateCaseRequest(
-                "t2", "d2", CapaCriticity.CRITICAL, "ref2", rc, due);
+                "t2", "d2", CapaCriticity.CRITICAL, "ref2", rc, due,
+                null, null, null, null);
         service.updateCase(c.getId(), req);
         assertThat(c.getTitle()).isEqualTo("t2");
         assertThat(c.getCriticity()).isEqualTo(CapaCriticity.CRITICAL);
@@ -237,7 +238,8 @@ class CapaServiceTest {
         CapaCase c = capa(TENANT, CapaStatus.CLOSED);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         assertThatThrownBy(() -> service.updateCase(c.getId(),
-                new CapaDto.UpdateCaseRequest("x", null, null, null, null, null)))
+                new CapaDto.UpdateCaseRequest("x", null, null, null, null, null,
+                        null, null, null, null)))
                 .isInstanceOf(CapaStateException.class);
     }
 
@@ -246,8 +248,115 @@ class CapaServiceTest {
         CapaCase c = capa(TENANT, CapaStatus.REJECTED);
         when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
         assertThatThrownBy(() -> service.updateCase(c.getId(),
-                new CapaDto.UpdateCaseRequest("x", null, null, null, null, null)))
+                new CapaDto.UpdateCaseRequest("x", null, null, null, null, null,
+                        null, null, null, null)))
                 .isInstanceOf(CapaStateException.class);
+    }
+
+    // --- verification exigee ---
+
+    /** Raccourci de lisibilite : seuls les quatre champs de verification varient. */
+    private CapaDto.UpdateCaseRequest verification(Boolean exigee, UUID qui,
+                                                   String nom, String consignes) {
+        return new CapaDto.UpdateCaseRequest(null, null, null, null, null, null,
+                exigee, qui, nom, consignes);
+    }
+
+    @Test
+    void verification_exigee_et_assignee_est_enregistree() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(c)).thenReturn(c);
+        UUID verificateur = UUID.randomUUID();
+
+        service.updateCase(c.getId(), verification(
+                true, verificateur, "  controle@exemple.fr  ",
+                "  Reprendre 30 pieces au calibre apres 2 semaines de production.  "));
+
+        assertThat(c.getVerificationRequired()).isTrue();
+        assertThat(c.getVerificationAssigneeId()).isEqualTo(verificateur);
+        // Rogne : un nom entoure d'espaces est le meme nom.
+        assertThat(c.getVerificationAssigneeName()).isEqualTo("controle@exemple.fr");
+        assertThat(c.getVerificationInstructions())
+                .isEqualTo("Reprendre 30 pieces au calibre apres 2 semaines de production.");
+    }
+
+    @Test
+    void verification_exigee_sans_verificateur_est_refusee() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        // Une verification que personne ne doit faire n'aura pas lieu : mieux vaut
+        // la refuser que d'enregistrer une intention sans titulaire.
+        assertThatThrownBy(() -> service.updateCase(c.getId(),
+                verification(true, null, null, "Controler le couple de serrage.")))
+                .isInstanceOf(CapaValidationException.class);
+        verify(caseRepo, never()).save(any());
+    }
+
+    @Test
+    void ne_plus_exiger_la_verification_efface_ce_qui_n_a_plus_d_objet() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        c.setVerificationRequired(true);
+        c.setVerificationAssigneeId(UUID.randomUUID());
+        c.setVerificationAssigneeName("controle@exemple.fr");
+        c.setVerificationInstructions("Reprendre 30 pieces.");
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.updateCase(c.getId(), verification(false, null, null, null));
+
+        // Laisser trainer un verificateur laisserait croire qu'une verification
+        // est encore attendue.
+        assertThat(c.getVerificationRequired()).isFalse();
+        assertThat(c.getVerificationAssigneeId()).isNull();
+        assertThat(c.getVerificationAssigneeName()).isNull();
+        assertThat(c.getVerificationInstructions()).isNull();
+    }
+
+    @Test
+    void designer_un_verificateur_sans_exiger_la_verification_est_refuse() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+
+        // C'est presque toujours une case oubliee ; l'accepter en silence
+        // produirait un dossier qui se croit couvert.
+        assertThatThrownBy(() -> service.updateCase(c.getId(),
+                verification(null, UUID.randomUUID(), "controle@exemple.fr", null)))
+                .isInstanceOf(CapaValidationException.class);
+        verify(caseRepo, never()).save(any());
+    }
+
+    @Test
+    void une_mise_a_jour_muette_ne_touche_pas_a_la_verification() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        UUID verificateur = UUID.randomUUID();
+        c.setVerificationRequired(true);
+        c.setVerificationAssigneeId(verificateur);
+        c.setVerificationAssigneeName("controle@exemple.fr");
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(c)).thenReturn(c);
+
+        // La mise a jour est PARTIELLE : ne rien dire n'est pas dire « non ».
+        service.updateCase(c.getId(), new CapaDto.UpdateCaseRequest(
+                "nouveau titre", null, null, null, null, null, null, null, null, null));
+
+        assertThat(c.getTitle()).isEqualTo("nouveau titre");
+        assertThat(c.getVerificationRequired()).isTrue();
+        assertThat(c.getVerificationAssigneeId()).isEqualTo(verificateur);
+    }
+
+    @Test
+    void les_consignes_seules_se_modifient_sur_un_dossier_deja_exige() {
+        CapaCase c = capa(TENANT, CapaStatus.IN_PROGRESS);
+        c.setVerificationRequired(true);
+        c.setVerificationAssigneeId(UUID.randomUUID());
+        when(caseRepo.findByIdAndTenantId(c.getId(), TENANT)).thenReturn(Optional.of(c));
+        when(caseRepo.save(c)).thenReturn(c);
+
+        service.updateCase(c.getId(), verification(null, null, null, "Nouvelle consigne."));
+
+        assertThat(c.getVerificationInstructions()).isEqualTo("Nouvelle consigne.");
     }
 
     // --- start ---

@@ -25,13 +25,24 @@ public final class CapaDto {
             LocalDate dueDate
     ) {}
 
+    /**
+     * Mise à jour PARTIELLE : un champ nul veut dire « ne touche pas ».
+     *
+     * <p>C'est pourquoi {@code verificationRequired} est un {@code Boolean} et
+     * non un {@code boolean} : {@code null} laisse la décision en l'état,
+     * {@code FALSE} la prend explicitement. Les deux ne disent pas la même chose.
+     */
     public record UpdateCaseRequest(
             @Size(max = 255) String title,
             String description,
             CapaCriticity criticity,
             @Size(max = 255) String sourceRef,
             UUID rootCauseId,
-            LocalDate dueDate
+            LocalDate dueDate,
+            Boolean verificationRequired,
+            UUID verificationAssigneeId,
+            @Size(max = 255) String verificationAssigneeName,
+            @Size(max = 4000) String verificationInstructions
     ) {}
 
     public record EffectivenessRequest(@NotNull Boolean effective) {}
@@ -75,6 +86,12 @@ public final class CapaDto {
             Instant closedAt,
             Boolean effectivenessVerified,
             Instant effectivenessVerifiedAt,
+            // L'EXIGENCE de vérification, à distinguer du constat qu'elle a eu
+            // lieu. `null` = la question n'a pas été tranchée sur ce dossier.
+            Boolean verificationRequired,
+            UUID verificationAssigneeId,
+            String verificationAssigneeName,
+            String verificationInstructions,
             Instant createdAt,
             Instant updatedAt,
             List<ActionResponse> actions,
