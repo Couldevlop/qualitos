@@ -168,6 +168,33 @@
                         </properties>
                     </configuration>
                 </plugin>
+                <!-- Javadoc : la référence de classes de `docs/PASSATION.md` §5.
+                     Aucune exécution n'est liée à une phase — le but n'est pas
+                     d'alourdir `verify`, mais que `mvn javadoc:javadoc` marche
+                     sans qu'on ait à retrouver les bons drapeaux.
+
+                     `doclint` est DÉSACTIVÉ, et c'est délibéré : le code est
+                     commenté en français, densément, pour dire le POURQUOI —
+                     pas pour satisfaire un vérificateur de balises. Avec
+                     doclint actif, un `@param` manquant sur une méthode privée
+                     fait échouer la génération entière, et on perd 5 000 pages
+                     utiles pour une balise absente. Si l'on veut un jour tenir
+                     les balises, ce sera une décision séparée, avec l'effort de
+                     reprise qui va avec. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                        <doclint>none</doclint>
+                        <encoding>UTF-8</encoding>
+                        <docencoding>UTF-8</docencoding>
+                        <charset>UTF-8</charset>
+                        <locale>fr</locale>
+                        <!-- Les tests ne sont pas une surface à documenter. -->
+                        <includeDependencySources>false</includeDependencySources>
+                        <quiet>true</quiet>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>

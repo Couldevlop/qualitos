@@ -5,20 +5,40 @@
 > personne. Il ne remplace pas `CLAUDE.md`, qui reste la **spécification** et les
 > invariants ; il explique comment le code les applique.
 >
-> Rédigé le 16 septembre 2026, sur `main` à `596737c`.
+> Rédigé le 16 septembre 2026. Remis à jour le 17 septembre, sur `main` à `6f5a37e`.
 
 ---
 
 ## 1. Ce que vous reprenez, en chiffres
 
+**Ne recopiez pas ces chiffres, remesurez-les.** La première version de ce
+document a menti en UN JOUR : elle annonçait « migrations jusqu'à V131 » et
+« vérification CAPA : non commencé » alors que V132 était déjà appliquée en
+préproduction. Un tableau écrit à la main ne vieillit pas, il pourrit — et un
+document de reprise qui se trompe sur l'état du code est pire que pas de
+document, parce qu'on le croit.
+
+```bash
+bash scripts/passation-chiffres.sh
+```
+
+Ce que ce script rendait le 17 septembre 2026, sur `main` à `6f5a37e` :
+
 | | |
 | --- | --- |
-| Backend qualité | **1 547** fichiers Java, **5 576** tests, 0 échec |
-| Front | **549** fichiers TypeScript (hors tests), **3 723** tests, 0 échec |
-| End-to-end | **13** tests Playwright, 0 échec (3,6 min) |
-| Migrations Flyway | jusqu'à **V131** |
-| Décisions d'architecture | **72** ADR, indexés dans `docs/adr/README.md` |
-| Langues servies | 6 — `fr` (source), `en`, `es`, `ar`, `ja`, `zh` |
+| Fichiers Java — moteur qualité | **1 547** |
+| Fichiers Java — tous services et bibliothèques | **1 743** |
+| Fichiers TypeScript front (hors tests) | **554** |
+| Fichiers de test front | **262** |
+| Fichiers de test end-to-end | **3** |
+| Migrations Flyway | jusqu'à **V132** |
+| Décisions d'architecture | **71** ADR, numérotés jusqu'à **0073** (0004 et 0005 n'existent pas), indexés dans `docs/adr/README.md` |
+| Langues servies | 6 — `fr` (source, dans les gabarits) + 5 traductions |
+
+Le **nombre de tests** n'est volontairement pas dans ce tableau : il ne s'obtient
+qu'en lançant les suites (§6.2). Un `grep @Test` donnerait un chiffre faux — tests
+paramétrés, tests désactivés, classes imbriquées — et un chiffre faux sur la
+couverture est exactement le genre de chiffre qu'on ne rattrape plus.
 
 Sept applications dans `apps/`, quatre bibliothèques dans `libs/`. Le gros du
 métier est dans **`api-quality-engine`** ; `api-core` porte l'authentification,
@@ -205,12 +225,19 @@ références **générées depuis le code**, qui restent vraies :
 | Quoi | Comment |
 | --- | --- |
 | API HTTP | Déjà en place : springdoc. Démarrez le moteur, ouvrez `/swagger-ui.html` |
-| Classes Java | `mvn javadoc:javadoc` — le code est commenté en français, densément |
+| Classes Java | `mvn javadoc:javadoc` → **`target/reports/apidocs/index.html`** (5 288 pages sur le moteur ; ce n'est plus `target/site/apidocs`, le chemin a changé avec le greffon 3.x) |
 | Composants Angular | `npx @compodoc/compodoc -p tsconfig.app.json` |
 | Schéma de base | `pg_dump --schema-only`, ou lire les migrations dans l'ordre |
 
 Le code porte **beaucoup** de commentaires, et ils disent le *pourquoi*, pas le
 *quoi*. C'est là que se trouve la connaissance qu'aucun diagramme ne donne.
+
+> **`doclint` est coupé dans le `pom.xml` racine, et c'est délibéré.** Les
+> commentaires de ce dépôt sont écrits pour être *lus*, pas pour satisfaire un
+> vérificateur de balises. Avec `doclint` actif, un `@param` manquant sur une
+> méthode privée fait échouer la génération **entière** : on perdrait 5 288 pages
+> utiles pour une balise absente. Aucune exécution n'est liée à une phase — la
+> génération n'alourdit pas `verify`, elle marche simplement quand on la demande.
 
 ---
 
@@ -236,7 +263,8 @@ TEMP=D:/tmp TMP=D:/tmp TESTCONTAINERS_RYUK_DISABLED=true mvn clean verify
 # Front
 cd apps/web && npx ng test --watch=false --browsers=ChromeHeadless
 
-# End-to-end
+# End-to-end — 18 tests, ~3,5 min. Sert la SPA lui-même (ng serve en
+# configuration `e2e`) : ni backend ni Keycloak à démarrer avant.
 cd apps/web && npx playwright test
 
 # Sécurité, mêmes règles que la CI
@@ -313,15 +341,14 @@ pas un choix :
 
 | Sujet | État |
 | --- | --- |
-| **CAPA — vérification requise** | **Spécifié, non commencé.** Sur le dossier CAPA : « vérification requise » oui/non, « assignée à » (liste des membres via `/api/v1/users`), et des instructions. Les champs sont à ajouter sur `CapaCase`, migration **V132**, plus le dialogue d'édition et la fiche. |
-| **Tests end-to-end** | **13 tests, et ils sont minces** : navigation sans erreur JS sur 10 routes + 3 scénarios Standards Hub. **Aucun** ne couvre l'APQP, le 8D ni la CAPA. C'est la dette la plus rentable à combler. |
+| **Tests end-to-end** | **18 tests**, tous verts en 3,5 min : 10 routes en navigation sans erreur JS, 3 scénarios Standards Hub, 5 sur la vérification CAPA. Restent **non couverts : l'APQP et le 8D** — les deux plus gros lots récents, et donc la dette la plus rentable à combler. Le patron à recopier est `capa-verification.spec.ts` : des accroches `data-test` dans le gabarit, aucun compteur codé en dur, et `pageerror` écouté pour attraper les `NG0100`. |
 | **Couverture front des fonctions** | Le seuil global est à 93 % et la marge est mince (mesurée à 93,07 % après le lot 8D). Une fonctionnalité peu testée fera échouer la CI. |
 | **Journal d'audit hors transaction** | L'émission d'un 8D et l'approbation d'un control plan écrivent le journal dans une transaction séparée. Cohérent entre eux, mais un incident entre les deux laisserait un acte non journalisé. |
 | **Modules anciens en disposition plate** | `capa`, `nonconformity`, `apqp`, `risk` n'ont pas la découpe hexagonale. À migrer quand on y retouche, pas avant. |
 
 ---
 
-## 10. Les cinq derniers lots, pour le contexte
+## 10. Les six derniers lots, pour le contexte
 
 Ce qui vient d'être livré, avec la décision qui l'explique :
 
@@ -332,6 +359,7 @@ Ce qui vient d'être livré, avec la décision qui l'explique :
 | Le référentiel APQP suit la langue | 0070 | Révise 0068 : la traduction se décide sur le TEXTE, pas sur la ligne |
 | Rapport 8D | 0071 | Agrège le dossier, fige, signe, ancre ; vérification publique par QR |
 | Projets APQP | 0072 | Révise 0068 : plusieurs projets, un seul formulaire de livrable |
+| Vérification d'efficacité CAPA | 0073 | On EXIGE avant de constater ; `NULL` n'est pas `false` — trois états, pas deux |
 
 Lisez-les dans cet ordre : chacun explique pourquoi le précédent ne suffisait pas.
 C'est le meilleur résumé de la manière dont ce code évolue.
