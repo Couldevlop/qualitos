@@ -115,6 +115,7 @@ TRANSLATIONS = {
     'ishikawa.list.empty': ('Aucun diagramme pour ce filtre.', 'No diagram for this filter.', 'Ningún diagrama para este filtro.', 'لا يوجد مخطط لهذا المرشّح.', 'このフィルターに該当するダイアグラムはありません。', '此筛选条件下没有图。'),
     'ishikawa.list.paginator-aria': ('Pagination des diagrammes', 'Diagram pagination', 'Paginación de diagramas', 'ترقيم صفحات المخططات', 'ダイアグラムのページネーション', '图分页'),
     'ishikawa.detail.back-tooltip': ('Retour à la liste', 'Back to list', 'Volver a la lista', 'العودة إلى القائمة', '一覧に戻る', '返回列表'),
+    'ishikawa.detail.back-to-nc': ('Retour à la non-conformité', 'Back to the non-conformance', 'Volver a la no conformidad', 'العودة إلى عدم المطابقة', '不適合に戻る', '返回不合格项'),
     'ishikawa.detail.eyebrow': ('Diagramme Ishikawa · Cause–effet', 'Ishikawa diagram · Cause–effect', 'Diagrama de Ishikawa · Causa–efecto', 'مخطط إيشيكاوا · السبب–الأثر', '特性要因図 · 原因と結果', '鱼骨图 · 因果'),
     'ishikawa.detail.delete-tooltip': ('Supprimer le diagramme', 'Delete diagram', 'Eliminar el diagrama', 'حذف المخطط', 'ダイアグラムを削除', '删除图'),
     'ishikawa.detail.suggest-tooltip': ("Suggérer des causes probables par l'IA", 'Suggest probable causes with AI', 'Sugerir causas probables con IA', 'اقتراح الأسباب المحتملة بالذكاء الاصطناعي', 'AIで考えられる原因を提案', '用AI建议可能的原因'),

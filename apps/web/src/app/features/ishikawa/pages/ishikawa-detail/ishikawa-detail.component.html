@@ -2,7 +2,13 @@
 
   <header class="page-header">
     <div class="title-block">
-      <button mat-icon-button (click)="goBack()" i18n-matTooltip="@@ishikawa.detail.back-tooltip" matTooltip="Retour à la liste">
+      <!-- Le retour dit OU il ramene : « la liste » sur un diagramme autonome,
+           « la non-conformite » quand l'analyse part d'un ecart constate. Une
+           fleche muette laissait deviner, et ramenait au mauvais endroit. -->
+      <button mat-icon-button (click)="goBack()" data-test="retour"
+              [matTooltip]="ncOrigine
+                ? retourVersNcLibelle
+                : retourVersListeLibelle">
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div>

@@ -64,6 +64,21 @@ export class IshikawaDetailComponent implements OnInit {
   private diagramId = '';
   private readonly reload$ = new BehaviorSubject<void>(undefined);
 
+  /**
+   * La non-conformite dont ce diagramme est issu, s'il en vient d'une.
+   *
+   * <p>Lu au chargement et relu a chaque rechargement : c'est ce qui permet au
+   * bouton de retour de ramener a la fiche qu'on etait en train de traiter.
+   * `null` pour un diagramme cree hors de toute NC.
+   */
+  ncOrigine: string | null = null;
+
+  /** Les deux libelles du bouton de retour, traduits a la construction. */
+  readonly retourVersNcLibelle =
+    $localize`:@@ishikawa.detail.back-to-nc:Retour à la non-conformité`;
+  readonly retourVersListeLibelle =
+    $localize`:@@ishikawa.detail.back-tooltip:Retour à la liste`;
+
   /** Arbre des branches mémorisé (cf. `branches`), indexé par référence. */
   private branchCache: {
     source: IshikawaDiagramResponse;
@@ -113,6 +128,9 @@ export class IshikawaDetailComponent implements OnInit {
           this.errorState$.next(safeErrorMessage(err, $localize`:@@ishikawa.detail.not-found:Diagramme introuvable.`));
           return of(null);
         }),
+        // L'origine est retenue ICI : `goBack` repond a un clic et n'a pas de
+        // point d'accroche sur le flux au moment ou il s'execute.
+        tap(diagramme => (this.ncOrigine = diagramme?.ncId ?? null)),
         finalize(() => this.loadingState$.next(false))
       )),
       shareReplay({ bufferSize: 1, refCount: true })
@@ -120,7 +138,24 @@ export class IshikawaDetailComponent implements OnInit {
     this.reload$.next();
   }
 
+  /**
+   * Revenir la ou l'on etait avant d'ouvrir ce diagramme.
+   *
+   * <p>Un Ishikawa part presque toujours d'un ecart deja constate : on l'ouvre
+   * depuis une fiche de non-conformite, on cherche les causes, et on veut
+   * revenir a CETTE fiche pour la traiter. Ramener a la liste de tous les
+   * diagrammes faisait perdre le fil -- il fallait retrouver sa NC a la main,
+   * dans un ecran qui ne parle meme pas de non-conformites.
+   *
+   * <p>Le diagramme porte l'identifiant de la NC dont il est issu ; quand il
+   * l'a, c'est la qu'on retourne. Un diagramme cree hors de toute NC n'a pas
+   * cette origine et retombe sur la liste, faute de mieux.
+   */
   goBack(): void {
+    if (this.ncOrigine) {
+      this.router.navigate(['/nc', this.ncOrigine]);
+      return;
+    }
     this.router.navigate(['/ishikawa']);
   }
 
