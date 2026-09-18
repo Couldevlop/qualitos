@@ -9,6 +9,30 @@
 
 ---
 
+## 0. Reprendre la main : six capacités, et où chacune se trouve
+
+Tenir ce projet seul, c'est pouvoir faire six choses. Le reste de ce document est
+rangé pour y répondre — cette table est la porte d'entrée, à lire en premier.
+
+| | Capacité | Où | État |
+| --- | --- | --- | --- |
+| 1 | **Lancer** — la plateforme tourne sur votre poste | `README.md` § Démarrage rapide, puis §6.1 ici | Une commande Docker, 15 services |
+| 2 | **Comprendre** — ouvrir n'importe quel fichier et savoir ce qu'il fait | **§2 à §5** — c'est le cœur de ce document | Six motifs expliquent la quasi-totalité du code |
+| 3 | **Modifier sans casser** — changer quelque chose et le savoir | **§6** (lancer les suites, les pièges) et **§8** (les invariants) | Tests + CI + 8 règles non négociables |
+| 4 | **Livrer** — une modification arrive en ligne | **§7** | Branche → PR → CI → fusion → le cluster tire |
+| 5 | **Exploiter** — voir ce qui tourne, et pourquoi | **§7.3** et `docs/runbooks/README.md` | Douze runbooks, indexés |
+| 6 | **Réparer** — revenir en arrière, restaurer | `docs/runbooks/README.md` § Réparer | Retour arrière + sauvegardes, vérifiées |
+
+**Si vous ne lisez qu'une chose**, lisez le **§2** : il donne les six motifs qui
+rendent les 1 700 fichiers Java lisibles sans les ouvrir un par un. Le reste se
+consulte au besoin.
+
+**L'ordre conseillé pour une prise en main complète** : §0 → §6.1 (faire tourner,
+pour voir ce dont on parle) → §2 (les motifs) → §3 (tracer une requête de bout en
+bout) → §6.2 et §6.3 (vérifier, et les pièges) → §7 (livrer) → les runbooks.
+
+---
+
 ## 1. Ce que vous reprenez, en chiffres
 
 **Ne recopiez pas ces chiffres, remesurez-les.** La première version de ce
@@ -307,7 +331,55 @@ Le flux est décrit dans `docs/git-workflow.md`. En pratique :
 2. commits **en français**, sujet court, corps qui dit le **pourquoi** ;
 3. `mvn clean verify` + suite front verts **avant** de pousser ;
 4. pull request → la CI décide ;
-5. fusion dans `main` → **`CD préproduction` déploie tout seul**.
+5. fusion dans `main` → la mise en ligne se fait seule, **mais pas comme on croit** :
+   voir juste en dessous.
+
+### 7.1 Le déploiement est TIRÉ par le cluster, pas poussé par GitHub
+
+C'est le point le plus contre-intuitif de la chaîne, et celui qui fait perdre le
+plus de temps quand on l'ignore.
+
+Le workflow `CD préproduction` **ne déploie rien**. Il construit les images, les
+scanne (Trivy, bloquant) et les publie. C'est tout.
+
+C'est le **cluster** qui déploie : un minuteur systemd sur le nœud exécute
+`infra/k8s/auto-deploy.sh`, qui surveille `main` et, dès que les images d'un
+commit sont publiées, rejoue `infra/k8s/deploy.sh`.
+
+**Pourquoi ce sens** : déployer depuis GitHub imposerait d'y déposer une clé
+d'accès au cluster ; quiconque l'obtiendrait obtiendrait l'environnement. En
+inversant, aucun secret ne quitte l'infrastructure.
+
+**Ce que ça change pour vous** : entre la fusion et la mise en ligne, il y a le
+délai du minuteur. Un `CD préproduction` vert ne signifie pas « c'est en ligne »,
+mais « les images sont prêtes à être prises ». Pour savoir ce qui tourne
+vraiment, il faut demander au cluster (§7.3).
+
+### 7.2 Retour arrière, sauvegardes
+
+`docs/runbooks/retour-arriere-production.md` — et lisez-le **avant** d'en avoir
+besoin : il contient un piège de fond (un `helm rollback` seul ne suffit pas).
+`docs/runbooks/sauvegarde-et-restauration.md` pour les bases.
+
+### 7.3 Voir ce qui tourne
+
+```bash
+ssh root@62.238.11.20
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+NS=qualitos-preprod
+
+kubectl -n "$NS" get pods,deploy,ingress
+# Quelle VERSION est servie — la question à poser en premier :
+kubectl -n "$NS" get deploy \
+  -o custom-columns=NOM:.metadata.name,IMAGE:'.spec.template.spec.containers[0].image'
+```
+
+L'étiquette d'image porte le commit. Si elle correspond à votre fusion, le code
+est déployé — et si l'écran montre encore l'ancien comportement, c'est le
+navigateur (§6.3, le piège PWA), pas le déploiement.
+
+Le reste de l'exploitation — observabilité, stockage objet, annuaire, Edge,
+vision — est indexé dans **`docs/runbooks/README.md`**.
 
 La CI bloque sur : tests, **Semgrep (ERROR)**, Trivy, et un contrôle que les
 fichiers i18n générés sont à jour (`--check` + `git diff --exit-code`).
@@ -316,7 +388,13 @@ Retour arrière : `docs/runbooks/retour-arriere-production.md`.
 Sauvegardes : `docs/runbooks/sauvegarde-et-restauration.md`.
 
 > **Il n'existe pas de production.** La préproduction EST l'environnement
-> (`preprod.qualitos.openlabconsulting.com`). Ne lancez jamais `deploy.sh prod`.
+> (`preprod.qualitos.openlabconsulting.com`), et son espace de noms est
+> **`qualitos-preprod`**. Ne lancez jamais `deploy.sh prod`.
+>
+> Certains runbooks, écrits quand un espace « production » était envisagé,
+> prennent encore `NS=qualitos` par défaut. Vérifiez l'espace avant toute
+> commande destructrice : une restauration jouée au mauvais endroit ne se
+> rattrape pas.
 
 ---
 
