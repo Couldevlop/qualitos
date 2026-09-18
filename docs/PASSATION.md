@@ -5,7 +5,7 @@
 > personne. Il ne remplace pas `CLAUDE.md`, qui reste la **spécification** et les
 > invariants ; il explique comment le code les applique.
 >
-> Rédigé le 16 septembre 2026. Remis à jour le 17 septembre, sur `main` à `6f5a37e`.
+> Rédigé le 16 septembre 2026. Remis à jour le 18 septembre, sur `main` à `355e74c`.
 
 ---
 
@@ -22,13 +22,13 @@ document, parce qu'on le croit.
 bash scripts/passation-chiffres.sh
 ```
 
-Ce que ce script rendait le 17 septembre 2026, sur `main` à `6f5a37e` :
+Ce que ce script rendait le 18 septembre 2026, sur `main` à `355e74c` :
 
 | | |
 | --- | --- |
 | Fichiers Java — moteur qualité | **1 547** |
 | Fichiers Java — tous services et bibliothèques | **1 743** |
-| Fichiers TypeScript front (hors tests) | **554** |
+| Fichiers TypeScript front (hors tests) | **555** |
 | Fichiers de test front | **262** |
 | Fichiers de test end-to-end | **3** |
 | Migrations Flyway | jusqu'à **V133** |
@@ -263,8 +263,10 @@ TEMP=D:/tmp TMP=D:/tmp TESTCONTAINERS_RYUK_DISABLED=true mvn clean verify
 # Front
 cd apps/web && npx ng test --watch=false --browsers=ChromeHeadless
 
-# End-to-end — 18 tests, ~3,5 min. Sert la SPA lui-même (ng serve en
+# End-to-end — quelques minutes. Sert la SPA lui-même (ng serve en
 # configuration `e2e`) : ni backend ni Keycloak à démarrer avant.
+# Le nombre de cas n'est pas écrit ici : c'est une mesure d'EXÉCUTION, et un
+# chiffre recopié aurait la même espérance de vie que ceux du §1.
 cd apps/web && npx playwright test
 
 # Sécurité, mêmes règles que la CI
@@ -341,7 +343,7 @@ pas un choix :
 
 | Sujet | État |
 | --- | --- |
-| **Tests end-to-end** | **18 tests**, tous verts en 3,5 min : 10 routes en navigation sans erreur JS, 3 scénarios Standards Hub, 5 sur la vérification CAPA. Restent **non couverts : l'APQP et le 8D** — les deux plus gros lots récents, et donc la dette la plus rentable à combler. Le patron à recopier est `capa-verification.spec.ts` : des accroches `data-test` dans le gabarit, aucun compteur codé en dur, et `pageerror` écouté pour attraper les `NG0100`. |
+| **Tests end-to-end** | Trois fichiers, tous verts. **Couvert** : la navigation sans erreur JS sur dix routes, le Standards Hub, et la vérification CAPA par ses **deux** portes — le dialogue d'édition et le popup d'action d'une NC. **Non couvert : l'APQP et le 8D**, les deux plus gros lots récents, et donc la dette la plus rentable à combler. Le patron à recopier est `capa-verification.spec.ts` : des accroches `data-test` dans le gabarit, aucun compteur codé en dur, et `pageerror` écouté pour attraper les `NG0100`. (Le nombre de cas se lit en lançant la suite, pas ici — §6.2.) |
 | **Couverture front des fonctions** | Le seuil global est à 93 % et la marge est mince (mesurée à 93,07 % après le lot 8D). Une fonctionnalité peu testée fera échouer la CI. |
 | **Journal d'audit hors transaction** | L'émission d'un 8D et l'approbation d'un control plan écrivent le journal dans une transaction séparée. Cohérent entre eux, mais un incident entre les deux laisserait un acte non journalisé. |
 | **Modules anciens en disposition plate** | `capa`, `nonconformity`, `apqp`, `risk` n'ont pas la découpe hexagonale. À migrer quand on y retouche, pas avant. |
@@ -361,6 +363,7 @@ Ce qui vient d'être livré, avec la décision qui l'explique :
 | Projets APQP | 0072 | Révise 0068 : plusieurs projets, un seul formulaire de livrable |
 | Vérification d'efficacité CAPA | 0073 | On EXIGE avant de constater ; `NULL` n'est pas `false` — trois états, pas deux |
 | L'action avant le dossier | 0074 | Révise 0072 : « Ajouter une action » remplace « Escalader CAPA », le type dit un travail |
+| La vérification dans le popup d'action | 0073 (amendé) | Depuis une NC, la question est posée là — et **obligatoire** : c'est le seul chemin où elle se pose |
 
 Lisez-les dans cet ordre : chacun explique pourquoi le précédent ne suffisait pas.
 C'est le meilleur résumé de la manière dont ce code évolue.
