@@ -4,8 +4,8 @@ import { MatRadioModule } from '@angular/material/radio';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
+import { CapaActionDialogModule } from './capa-action-dialog.module';
 import { UiModule } from '../../shared/ui/ui.module';
-import { CapaActionDialogComponent } from './pages/capa-action-dialog/capa-action-dialog.component';
 import { CapaCreateDialogComponent } from './pages/capa-create-dialog/capa-create-dialog.component';
 import { CapaDetailComponent } from './pages/capa-detail/capa-detail.component';
 import {
@@ -30,7 +30,6 @@ const routes: Routes = [
     CapaListComponent,
     CapaDetailComponent,
     CapaCreateDialogComponent,
-    CapaActionDialogComponent,
     CapaEditDialogComponent,
     CapaRevisionImpactComponent,
     CapaEffectivenessComponent
@@ -41,7 +40,9 @@ const routes: Routes = [
   // exigée : oui / non » est une question fermée a deux reponses, ou un groupe de
   // boutons radio dit mieux qu'une case a cocher qu'AUCUNE des deux n'est cochee
   // tant que la question n'a pas ete tranchee.
+  // `CapaActionDialogModule` : le formulaire d'action est partage avec la fiche
+  // de non-conformite, qui l'ouvre directement. Il est donc declare a part.
   imports: [SharedModule, UiModule, MatButtonToggleModule, MatRadioModule,
-            RouterModule.forChild(routes)]
+            CapaActionDialogModule, RouterModule.forChild(routes)]
 })
 export class CapaModule {}
