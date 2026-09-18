@@ -13,7 +13,7 @@
        synchronisent a l'ecran pour qu'on voie la regle plutot que de la
        decouvrir apres enregistrement. -->
   <mat-checkbox formControlName="done" data-test="case-fait">
-    <span i18n="@@apqp.deliverable.done">Livrable acquis</span>
+    <span i18n="@@apqp.deliverable.done">Livrable</span>
   </mat-checkbox>
 
   <!-- Qui l'a declare fait, et quand : c'est ce que l'auditeur demande en
@@ -49,11 +49,21 @@
 
     <mat-form-field appearance="outline">
       <mat-label i18n="@@apqp.deliverable.due-date">Échéance</mat-label>
-      <!-- Champ date natif : aucune autre page n'emporte de selecteur Material,
-           et en cabler un pour ce seul champ ajouterait un adaptateur de date a
-           toute l'application. Le navigateur rend deja « aaaa-mm-jj », qui est
-           exactement ce que le serveur attend. -->
-      <input matInput type="date" formControlName="dueDate" data-test="echeance">
+      <!-- Calendrier Material plutot que le champ date natif : celui-ci se rend
+           differemment selon le navigateur -- calendrier ici, trois cases a
+           taper ailleurs -- et son format suivait la langue de l'OS, pas celle
+           de l'application. Le calendrier, lui, s'affiche pareil partout et dans
+           la langue du build.
+
+           Le controle porte un `Date`, pas une chaine : la conversion vers le
+           « aaaa-mm-jj » attendu par le serveur se fait aux deux bouts, sur les
+           composantes LOCALES de la date (cf. `enDateIso`). -->
+      <input matInput [matDatepicker]="echeance" formControlName="dueDate"
+             data-test="echeance">
+      <mat-datepicker-toggle matIconSuffix [for]="echeance"
+                             i18n-aria-label="@@apqp.deliverable.due-date-open"
+                             aria-label="Ouvrir le calendrier"></mat-datepicker-toggle>
+      <mat-datepicker #echeance></mat-datepicker>
     </mat-form-field>
 
     <mat-form-field appearance="outline">

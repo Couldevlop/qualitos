@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 
@@ -63,7 +65,11 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
 
     await TestBed.resetTestingModule().configureTestingModule({
       declarations: [ApqpDeliverableDetailDialogComponent],
-      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      // Le calendrier n'est ni dans SharedModule ni dans UiModule : il est cable
+      // sur le seul module APQP, pour ne pas imposer son adaptateur de date a
+      // toute l'application. Le banc l'importe donc lui-meme.
+      imports: [SharedModule, UiModule, NoopAnimationsModule,
+                MatDatepickerModule, MatNativeDateModule],
       providers: [
         { provide: ApqpService, useValue: service },
         { provide: MatDialogRef, useValue: dialogRef },
@@ -135,6 +141,49 @@ describe('ApqpDeliverableDetailDialogComponent', () => {
 
     expect(component.form.getRawValue().status).toBe('BLOCKED');
     expect(component.form.getRawValue().percentComplete).toBe(60);
+  });
+
+  // ---------- l'echeance, et le fuseau qui la decale ----------
+  //
+  // Le calendrier Material rend un `Date` a MINUIT LOCAL, la ou le serveur
+  // attend « aaaa-mm-jj ». Traduire l'un en l'autre par `toISOString()` passe
+  // par UTC : a Paris, le 15 octobre a minuit vaut le 14 a 22 h UTC, et
+  // l'echeance saisie serait enregistree la veille. Le defaut ne se voit ni sur
+  // une machine reglee sur UTC ni dans le fuseau d'un serveur d'integration --
+  // seulement chez l'utilisateur. Les deux sens sont donc verifies ici.
+
+  it('ouvre le calendrier sur le jour enregistre, et non sur la veille', async () => {
+    await ouvrir({ dueDate: '2026-10-15' });
+
+    const ouverte = component.form.get('dueDate')!.value as Date;
+    expect(ouverte instanceof Date).toBeTrue();
+    expect(ouverte.getFullYear()).toBe(2026);
+    // Les composantes LOCALES : ce sont celles que le calendrier affiche.
+    expect(ouverte.getMonth()).toBe(9);
+    expect(ouverte.getDate()).toBe(15);
+  });
+
+  it('renvoie le jour choisi au calendrier, sans le decaler', async () => {
+    await ouvrir({});
+
+    // Ce que produit un clic dans le calendrier : minuit local.
+    component.form.patchValue({ dueDate: new Date(2026, 9, 15) });
+    component.submit();
+
+    const envoye = service.completeDeliverable.calls.mostRecent().args[3];
+    expect(envoye.dueDate).toBe('2026-10-15');
+  });
+
+  it('efface l’echeance quand le champ est vide', async () => {
+    await ouvrir({ dueDate: '2026-10-15' });
+
+    component.form.patchValue({ dueDate: null });
+    component.submit();
+
+    // `null` et non la date d'origine : une echeance retiree doit pouvoir
+    // partir, sinon elle reste coincee sur le livrable.
+    const envoye = service.completeDeliverable.calls.mostRecent().args[3];
+    expect(envoye.dueDate).toBeNull();
   });
 
   // ---------- ce que l'écran envoie ----------

@@ -235,12 +235,14 @@ describe('ApqpOverviewComponent', () => {
       .toContain('0');
   });
 
-  it('affiche l\'artefact attendu, le statut et l\'avancement de chaque livrable', async () => {
+  it('affiche le statut et l\'avancement, sans l\'artefact attendu', async () => {
     await setup('1');
     servirCycle();
 
-    expect(hote().querySelector('[data-test=artefact-attendu]')!.textContent)
-      .toContain('Artefact 1A');
+    // L'artefact attendu ne se lit plus DANS LA LISTE : il doublait la hauteur
+    // de chaque ligne et noyait le nom, seule chose qu'on cherche en parcourant
+    // une phase. Il reste saisissable et lisible dans la fenetre du livrable.
+    expect(hote().querySelector('[data-test=artefact-attendu]')).toBeNull();
     const statuts = hote().querySelectorAll('[data-test=statut-livrable]');
     expect(statuts[0].textContent!.trim()).toBe('Acquis');
     expect(statuts[1].textContent!.trim()).toBe('En cours');

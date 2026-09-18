@@ -229,8 +229,11 @@ TRANSLATIONS = {
         'Este entregable forma parte del expediente PPAP.', 'هذا المُخرَج جزء من ملف PPAP.',
         'この成果物は PPAP 提出資料の一部です。', '该交付物属于 PPAP 文件。'),
     'apqp.deliverable.done': (
-        'Livrable acquis', 'Deliverable obtained', 'Entregable obtenido',
-        'مُخرَج مُنجَز', '成果物を取得済み', '交付物已取得'),
+        'Livrable', 'Deliverable', 'Entregable',
+        'مُخرَج', '成果物', '交付物'),
+    'apqp.deliverable.due-date-open': (
+        'Ouvrir le calendrier', 'Open the calendar', 'Abrir el calendario',
+        'فتح التقويم', 'カレンダーを開く', '打开日历'),
     'apqp.deliverable.done-at': (
         'Déclaré acquis le', 'Declared obtained on', 'Declarado obtenido el',
         'أُعلن إنجازه في', '取得宣言日', '声明取得于'),
@@ -408,9 +411,9 @@ TRANSLATIONS = {
         "ToW — transfert d'activité", 'ToW — transfer of work',
         'ToW — transferencia de actividad', 'ToW — نقل نشاط',
         'ToW — 業務移管', 'ToW — 业务转移'),
-    'apqp.project.type.new-customer': (
-        'Nouveau client', 'New customer', 'Nuevo cliente', 'عميل جديد',
-        '新規顧客', '新客户'),
+    'apqp.project.type.major-modification': (
+        'Modification majeure', 'Major modification', 'Modificación importante',
+        'تعديل جوهري', '重要な設計変更', '重大变更'),
     'apqp.project.type.other': (
         'Autre', 'Other', 'Otro', 'أخرى', 'その他', '其他'),
     'apqp.project.customer': (
