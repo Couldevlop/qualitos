@@ -5,6 +5,12 @@
 > personne. Il ne remplace pas `CLAUDE.md`, qui reste la **spécification** et les
 > invariants ; il explique comment le code les applique.
 >
+> **Si c'est une ÉQUIPE qui reprend**, lisez d'abord
+> [`PASSATION-EQUIPE.md`](./PASSATION-EQUIPE.md) : il organise la reprise — qui
+> apprend quoi, dans quel ordre, avec quels premiers travaux et quels critères de
+> sortie. Ce document-ci reste la référence sur **le code** ; l'autre organise
+> **les gens**.
+>
 > Rédigé le 16 septembre 2026. Remis à jour le 18 septembre, sur `main` à `355e74c`.
 
 ---

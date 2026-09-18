@@ -12,6 +12,11 @@ blockchain. Voir [`CLAUDE.md`](./CLAUDE.md) pour le projet complet.
 > **comprendre**, **modifier sans casser**, **livrer**, **exploiter**, **réparer**.
 > Les procédures d'exploitation sont indexées dans
 > [`docs/runbooks/README.md`](./docs/runbooks/README.md).
+>
+> **Une équipe reprend le projet ?** Le plan de reprise —
+> découpage en zones, séquence d'intégration, registre des risques, premiers
+> travaux et critères de réussite datés — est dans
+> [`docs/PASSATION-EQUIPE.md`](./docs/PASSATION-EQUIPE.md).
 
 ## Démarrage rapide (Docker)
 
