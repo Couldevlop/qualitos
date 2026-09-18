@@ -4775,8 +4775,12 @@ Portail clients</source>
         <target state="translated">该交付物属于 PPAP 文件。</target>
       </trans-unit>
       <trans-unit id="apqp.deliverable.done" datatype="html">
-        <source>Livrable acquis</source>
-        <target state="translated">交付物已取得</target>
+        <source>Livrable</source>
+        <target state="translated">交付物</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.due-date-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">打开日历</target>
       </trans-unit>
       <trans-unit id="apqp.deliverable.done-at" datatype="html">
         <source>Déclaré acquis le</source>
@@ -4926,9 +4930,9 @@ Portail clients</source>
         <source>ToW — transfert d'activité</source>
         <target state="translated">ToW — 业务转移</target>
       </trans-unit>
-      <trans-unit id="apqp.project.type.new-customer" datatype="html">
-        <source>Nouveau client</source>
-        <target state="translated">新客户</target>
+      <trans-unit id="apqp.project.type.major-modification" datatype="html">
+        <source>Modification majeure</source>
+        <target state="translated">重大变更</target>
       </trans-unit>
       <trans-unit id="apqp.project.type.other" datatype="html">
         <source>Autre</source>
@@ -13904,6 +13908,10 @@ historique 12 mois</source>
         <source>Retour à la liste</source>
         <target state="translated">返回列表</target>
       </trans-unit>
+      <trans-unit id="ishikawa.detail.back-to-nc" datatype="html">
+        <source>Retour à la non-conformité</source>
+        <target state="translated">返回不合格项</target>
+      </trans-unit>
       <trans-unit id="ishikawa.detail.eyebrow" datatype="html">
         <source>Diagramme Ishikawa · Cause–effet</source>
         <target state="translated">鱼骨图 · 因果</target>
@@ -15444,25 +15452,17 @@ historique 12 mois</source>
         <source>La non-conformité sera marquée comme annulée. Cette décision est traçable.</source>
         <target state="translated">该不合格项将被标记为已取消。此决定可追溯。</target>
       </trans-unit>
-      <trans-unit id="nc.detail.escalate" datatype="html">
-        <source>Escalader CAPA</source>
-        <target state="translated">升级为 CAPA</target>
+      <trans-unit id="nc.detail.add-action" datatype="html">
+        <source>Ajouter une action</source>
+        <target state="translated">添加措施</target>
       </trans-unit>
-      <trans-unit id="nc.detail.escalate-tooltip" datatype="html">
-        <source>Créer une CAPA liée</source>
-        <target state="translated">创建关联 CAPA</target>
+      <trans-unit id="nc.detail.add-action-tooltip" datatype="html">
+        <source>Poser une action corrective sur cette non-conformité</source>
+        <target state="translated">为此不合格项登记纠正措施</target>
       </trans-unit>
-      <trans-unit id="nc.detail.escalate-confirm-title" datatype="html">
-        <source>Escalader vers une CAPA ?</source>
-        <target state="translated">升级为 CAPA？</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.escalate-confirm-message" datatype="html">
-        <source>Une action corrective/préventive (CAPA) sera créée et liée à cette non-conformité.</source>
-        <target state="translated">将创建一项纠正/预防措施（CAPA）并关联到此不合格项。</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.escalate-success" datatype="html">
-        <source>CAPA créée et liée à la non-conformité.</source>
-        <target state="translated">已创建 CAPA 并关联到不合格项。</target>
+      <trans-unit id="nc.detail.add-action-no-case" datatype="html">
+        <source>Dossier créé, mais introuvable pour y ajouter l'action. Ouvrez-le depuis la CAPA.</source>
+        <target state="translated">已创建案卷，但无法找到以添加措施。请从 CAPA 打开。</target>
       </trans-unit>
       <trans-unit id="nc.detail.escalate-error" datatype="html">
         <source>Erreur lors de l'escalade.</source>

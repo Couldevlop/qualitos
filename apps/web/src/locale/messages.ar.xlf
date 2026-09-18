@@ -4775,8 +4775,12 @@ Portail clients</source>
         <target state="translated">هذا المُخرَج جزء من ملف PPAP.</target>
       </trans-unit>
       <trans-unit id="apqp.deliverable.done" datatype="html">
-        <source>Livrable acquis</source>
-        <target state="translated">مُخرَج مُنجَز</target>
+        <source>Livrable</source>
+        <target state="translated">مُخرَج</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.due-date-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">فتح التقويم</target>
       </trans-unit>
       <trans-unit id="apqp.deliverable.done-at" datatype="html">
         <source>Déclaré acquis le</source>
@@ -4926,9 +4930,9 @@ Portail clients</source>
         <source>ToW — transfert d'activité</source>
         <target state="translated">ToW — نقل نشاط</target>
       </trans-unit>
-      <trans-unit id="apqp.project.type.new-customer" datatype="html">
-        <source>Nouveau client</source>
-        <target state="translated">عميل جديد</target>
+      <trans-unit id="apqp.project.type.major-modification" datatype="html">
+        <source>Modification majeure</source>
+        <target state="translated">تعديل جوهري</target>
       </trans-unit>
       <trans-unit id="apqp.project.type.other" datatype="html">
         <source>Autre</source>
@@ -13904,6 +13908,10 @@ historique 12 mois</source>
         <source>Retour à la liste</source>
         <target state="translated">العودة إلى القائمة</target>
       </trans-unit>
+      <trans-unit id="ishikawa.detail.back-to-nc" datatype="html">
+        <source>Retour à la non-conformité</source>
+        <target state="translated">العودة إلى عدم المطابقة</target>
+      </trans-unit>
       <trans-unit id="ishikawa.detail.eyebrow" datatype="html">
         <source>Diagramme Ishikawa · Cause–effet</source>
         <target state="translated">مخطط إيشيكاوا · السبب–الأثر</target>
@@ -15444,25 +15452,17 @@ historique 12 mois</source>
         <source>La non-conformité sera marquée comme annulée. Cette décision est traçable.</source>
         <target state="translated">سيتم وضع علامة على عدم المطابقة بأنها ملغاة. هذا القرار قابل للتتبّع.</target>
       </trans-unit>
-      <trans-unit id="nc.detail.escalate" datatype="html">
-        <source>Escalader CAPA</source>
-        <target state="translated">التصعيد إلى CAPA</target>
+      <trans-unit id="nc.detail.add-action" datatype="html">
+        <source>Ajouter une action</source>
+        <target state="translated">إضافة إجراء</target>
       </trans-unit>
-      <trans-unit id="nc.detail.escalate-tooltip" datatype="html">
-        <source>Créer une CAPA liée</source>
-        <target state="translated">إنشاء CAPA مرتبطة</target>
+      <trans-unit id="nc.detail.add-action-tooltip" datatype="html">
+        <source>Poser une action corrective sur cette non-conformité</source>
+        <target state="translated">تسجيل إجراء تصحيحي على عدم المطابقة هذه</target>
       </trans-unit>
-      <trans-unit id="nc.detail.escalate-confirm-title" datatype="html">
-        <source>Escalader vers une CAPA ?</source>
-        <target state="translated">التصعيد إلى CAPA؟</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.escalate-confirm-message" datatype="html">
-        <source>Une action corrective/préventive (CAPA) sera créée et liée à cette non-conformité.</source>
-        <target state="translated">سيتم إنشاء إجراء تصحيحي/وقائي (CAPA) وربطه بعدم المطابقة هذه.</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.escalate-success" datatype="html">
-        <source>CAPA créée et liée à la non-conformité.</source>
-        <target state="translated">تم إنشاء CAPA وربطها بعدم المطابقة.</target>
+      <trans-unit id="nc.detail.add-action-no-case" datatype="html">
+        <source>Dossier créé, mais introuvable pour y ajouter l'action. Ouvrez-le depuis la CAPA.</source>
+        <target state="translated">تم إنشاء الملف، لكن تعذر العثور عليه لإضافة الإجراء. افتحه من CAPA.</target>
       </trans-unit>
       <trans-unit id="nc.detail.escalate-error" datatype="html">
         <source>Erreur lors de l'escalade.</source>
