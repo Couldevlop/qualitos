@@ -19660,6 +19660,10 @@ historique 12 mois</source>
         <source>Échéance (optionnel)</source>
         <target state="translated">截止日期（可选）</target>
       </trans-unit>
+      <trans-unit id="capa.action.verification-hint" datatype="html">
+        <source>Une vérification est-elle exigée sur ce dossier ? Il faut trancher : répondre « non » est une décision, qui se lit.</source>
+        <target state="translated">此案卷是否要求验证？必须作出判断：回答「否」本身也是一项决定，并会被记录。</target>
+      </trans-unit>
       <trans-unit id="capa.action.subtitle" datatype="html">
         <source>Définis l'action concrète à mener pour résoudre ce cas.</source>
         <target state="translated">定义解决此案例需采取的具体措施。</target>

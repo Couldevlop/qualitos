@@ -569,7 +569,11 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     // Aucun dossier cree : il existe deja. Une escalade de plus en aurait
     // ouvert un second, et la NC en porte un seul.
     expect(svc.escalateToCapa).not.toHaveBeenCalled();
-    expect(openSpy.calls.mostRecent().args[1]?.data).toEqual({ caseId: 'capa-1' });
+    // `askVerification` : depuis une NC, le dossier vient peut-etre d'etre cree
+    // et personne n'a vu son formulaire d'edition -- la question de la
+    // verification ne serait jamais posee sur ce chemin.
+    expect(openSpy.calls.mostRecent().args[1]?.data)
+      .toEqual({ caseId: 'capa-1', askVerification: true });
     // Une action ajoutee change la fiche : on la relit.
     expect(svc.getNc).toHaveBeenCalledTimes(1);
   });
@@ -585,7 +589,8 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     expect(svc.escalateToCapa).toHaveBeenCalledWith(UUID, { ownerId: 'u1' });
     // Le formulaire s'ouvre sur le dossier QUI VIENT D'ETRE CREE : l'ouvrir sur
     // l'ancien identifiant (absent) ecrirait l'action dans le vide.
-    expect(openSpy.calls.mostRecent().args[1]?.data).toEqual({ caseId: 'capa-9' });
+    expect(openSpy.calls.mostRecent().args[1]?.data)
+      .toEqual({ caseId: 'capa-9', askVerification: true });
   });
 
   it('ne referme pas la boucle quand le serveur ne rend aucun identifiant', () => {
