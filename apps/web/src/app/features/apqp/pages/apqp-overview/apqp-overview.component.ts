@@ -161,7 +161,7 @@ export class ApqpOverviewComponent implements OnInit, OnDestroy {
     return ({
       NPI: $localize`:@@apqp.project.type.npi:NPI — nouveau produit`,
       TOW: $localize`:@@apqp.project.type.tow:ToW — transfert d'activité`,
-      NEW_CUSTOMER: $localize`:@@apqp.project.type.new-customer:Nouveau client`,
+      MAJOR_MODIFICATION: $localize`:@@apqp.project.type.major-modification:Modification majeure`,
       OTHER: $localize`:@@apqp.project.type.other:Autre`
     })[type];
   }

@@ -146,7 +146,10 @@ class ApqpProjetsRepriseOnPostgresTest {
             ps.setObject(1, TENANT_A);
             try (ResultSet rs = ps.executeQuery()) {
                 assertThat(rs.next()).isTrue();
-                assertThat(rs.getString("name")).isEqualTo("Projet par défaut");
+                // La V133 le renomme en anglais : ce nom est une DONNEE, il ne
+                // traverse pas la traduction, et il se lit dans un dossier PPAP
+                // remis a un donneur d'ordre.
+                assertThat(rs.getString("name")).isEqualTo("Default project");
                 assertThat(rs.getString("type")).isEqualTo("OTHER");
             }
         }

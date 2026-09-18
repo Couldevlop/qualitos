@@ -14,7 +14,7 @@
  * <p>Un jeu fermé, décidé par le serveur : il oriente les livrables attendus, et
  * une saisie libre aurait interdit tout filtre et tout comparatif entre projets.
  */
-export type ApqpProjectType = 'NPI' | 'TOW' | 'NEW_CUSTOMER' | 'OTHER';
+export type ApqpProjectType = 'NPI' | 'TOW' | 'MAJOR_MODIFICATION' | 'OTHER';
 
 /** Le module visé par le renvoi FACULTATIF d'un livrable. */
 export type ApqpLinkedKind = 'FMEA' | 'CONTROL_PLAN' | 'PDCA' | 'CAPA';

@@ -21,9 +21,18 @@ public enum ApqpProjectType {
     /** Transfer of Work : un produit existant change de site ou de ligne. */
     TOW,
 
-    /** Un produit connu, pour un client qui ne l'était pas. */
-    NEW_CUSTOMER,
+    /**
+     * Un produit déjà en série dont la définition, l'outillage ou un procédé
+     * change assez pour rouvrir un cycle APQP resserré.
+     *
+     * <p>Remplace {@code NEW_CUSTOMER}, qui nommait un contexte commercial et
+     * non un travail : « produit connu, client nouveau » ouvre le cycle d'un NPI
+     * ou d'un ToW selon ce qui change réellement, et n'apprenait donc rien à qui
+     * filtrait la liste. La modification majeure, elle, est le cas le plus
+     * fréquent après le NPI, et tombait faute de mieux dans {@code OTHER}.
+     */
+    MAJOR_MODIFICATION,
 
-    /** Tout le reste — requalification, relance, évolution majeure. */
+    /** Tout le reste — requalification, relance. */
     OTHER
 }
