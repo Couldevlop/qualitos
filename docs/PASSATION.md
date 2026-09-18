@@ -31,8 +31,8 @@ Ce que ce script rendait le 17 septembre 2026, sur `main` à `6f5a37e` :
 | Fichiers TypeScript front (hors tests) | **554** |
 | Fichiers de test front | **262** |
 | Fichiers de test end-to-end | **3** |
-| Migrations Flyway | jusqu'à **V132** |
-| Décisions d'architecture | **71** ADR, numérotés jusqu'à **0073** (0004 et 0005 n'existent pas), indexés dans `docs/adr/README.md` |
+| Migrations Flyway | jusqu'à **V133** |
+| Décisions d'architecture | **72** ADR, numérotés jusqu'à **0074** (0004 et 0005 n'existent pas), indexés dans `docs/adr/README.md` |
 | Langues servies | 6 — `fr` (source, dans les gabarits) + 5 traductions |
 
 Le **nombre de tests** n'est volontairement pas dans ce tableau : il ne s'obtient
@@ -348,7 +348,7 @@ pas un choix :
 
 ---
 
-## 10. Les six derniers lots, pour le contexte
+## 10. Les sept derniers lots, pour le contexte
 
 Ce qui vient d'être livré, avec la décision qui l'explique :
 
@@ -360,6 +360,7 @@ Ce qui vient d'être livré, avec la décision qui l'explique :
 | Rapport 8D | 0071 | Agrège le dossier, fige, signe, ancre ; vérification publique par QR |
 | Projets APQP | 0072 | Révise 0068 : plusieurs projets, un seul formulaire de livrable |
 | Vérification d'efficacité CAPA | 0073 | On EXIGE avant de constater ; `NULL` n'est pas `false` — trois états, pas deux |
+| L'action avant le dossier | 0074 | Révise 0072 : « Ajouter une action » remplace « Escalader CAPA », le type dit un travail |
 
 Lisez-les dans cet ordre : chacun explique pourquoi le précédent ne suffisait pas.
 C'est le meilleur résumé de la manière dont ce code évolue.
