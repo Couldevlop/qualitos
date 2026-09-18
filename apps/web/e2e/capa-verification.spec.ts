@@ -132,3 +132,55 @@ test.describe('CAPA — vérification d\'efficacité', () => {
     await expect(ligne).toContainText(/Non exig[ée]e/);
   });
 });
+
+/**
+ * Le même bloc, atteint par l'autre porte : depuis une non-conformité.
+ *
+ * <p>Sur ce chemin, le dossier CAPA vient peut-être d'être créé et personne n'a
+ * vu son formulaire d'édition — la question de la vérification ne serait donc
+ * jamais posée. Elle l'est dans le popup d'ajout d'action, et elle y est
+ * OBLIGATOIRE : c'est le moment où elle a un sens.
+ *
+ * <p>Ce banc ne vérifie que ce que le harnais rend observable (`useMockApi`,
+ * aucun backend) : que le bloc soit là, qu'il exige une réponse, et qu'il
+ * s'ouvre en demandant à qui et quoi vérifier.
+ */
+test.describe('NC — le popup d\'action pose la vérification', () => {
+
+  test('le formulaire d\'action porte la question, et exige une réponse', async ({ page }) => {
+    const erreurs: string[] = [];
+    page.on('pageerror', (err) => erreurs.push(err.message));
+
+    await page.goto('/nc/interne');
+    await expect(page.locator('.qos-sidebar__link').first()).toBeVisible({ timeout: 15_000 });
+
+    const lignes = page.locator('tr[mat-row]');
+    await expect(lignes.first()).toBeVisible({ timeout: 15_000 });
+    await lignes.first().click();
+
+    const ajouter = page.locator('[data-test="ajouter-action"]');
+    await expect(ajouter).toBeVisible({ timeout: 15_000 });
+    await ajouter.click();
+
+    const dialogue = page.getByRole('dialog');
+    // Le bloc est là : sans lui, la question ne serait jamais posée ici.
+    await expect(dialogue.locator('[data-test="bloc-verification"]'))
+      .toBeVisible({ timeout: 10_000 });
+
+    const choix = dialogue.locator('[data-test="verification-exigee"]');
+    await expect(choix.getByRole('radio', { name: /^Oui$/ })).toBeVisible();
+    await expect(choix.getByRole('radio', { name: /^Non$/ })).toBeVisible();
+
+    // Rien de demandé tant que rien n'est répondu.
+    await expect(dialogue.locator('[data-test="verification-qui"]')).toHaveCount(0);
+
+    await choix.getByRole('radio', { name: /^Oui$/ }).click();
+    await expect(dialogue.locator('[data-test="verification-qui"]')).toBeVisible();
+    await expect(dialogue.locator('[data-test="verification-consignes"]')).toBeVisible();
+
+    // L'apparition du bloc attache ses validateurs : c'est exactement ce qui a
+    // produit quatre NG0100 sur le dialogue d'édition. NG0100 est une erreur en
+    // mode développement, donc `pageerror` la capterait.
+    expect(erreurs).toEqual([]);
+  });
+});

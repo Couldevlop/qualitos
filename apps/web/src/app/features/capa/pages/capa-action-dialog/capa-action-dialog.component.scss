@@ -26,3 +26,48 @@ mat-dialog-actions button[type='submit'] {
   align-items: center;
   gap: 6px;
 }
+
+/* --- vérification d'efficacité du dossier ---------------------------------
+   Le bloc n'apparaît que sur le chemin venu d'une non-conformité. Il est séparé
+   du reste par un filet : ce qui précède décrit l'ACTION, ce qui suit décide de
+   sa VÉRIFICATION — deux questions distinctes, et les enchaîner sans rupture
+   visuelle donnait un formulaire qu'on lit d'un bloc sans voir qu'il change de
+   sujet.
+
+   Les mêmes classes servent au dialogue d'édition CAPA, où elles n'ont jamais
+   reçu de style : là-bas le bloc s'affiche encore sans hiérarchie. C'est une
+   dette connue, laissée hors de ce lot pour ne pas retoucher un écran qui n'est
+   pas celui qu'on demande. */
+.verification {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--qos-space-2);
+  padding-top: var(--qos-space-4);
+  border-top: 1px solid var(--qos-border, rgba(0, 0, 0, 0.12));
+}
+
+.sous-titre {
+  margin: 0 0 var(--qos-space-2);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+/* Les deux réponses côte à côte : elles sont exclusives, et les empiler
+   laissait croire à une liste où l'on pourrait cocher les deux. */
+.choix {
+  display: flex;
+  gap: var(--qos-space-5);
+  margin-bottom: var(--qos-space-2);
+}
+
+.aide {
+  margin: 0 0 var(--qos-space-3);
+  color: var(--qos-text-muted);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+/* L'annuaire muet : c'est un empêchement, pas une explication. */
+.aide.erreur {
+  color: var(--qos-danger, #b3261e);
+}

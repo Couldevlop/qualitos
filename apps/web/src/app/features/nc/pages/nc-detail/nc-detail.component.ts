@@ -583,7 +583,12 @@ export class NcDetailComponent implements OnInit {
   /** Ouvre le formulaire d'action de la CAPA, et rafraîchit la fiche au retour. */
   private ouvrirFormulaireAction(caseId: string): void {
     this.dialog.open(CapaActionDialogComponent, {
-      data: <CapaActionDialogData>{ caseId },
+      // `askVerification` : depuis une NC, le dossier vient peut-etre d'etre
+      // cree et personne n'a vu son formulaire d'edition. Sans cela, la
+      // verification d'efficacite ne serait jamais posee sur ce chemin -- et un
+      // dossier sans decision est exactement ce que l'ADR 0073 cherche a
+      // distinguer d'un dossier delibérément juge non verifiable.
+      data: <CapaActionDialogData>{ caseId, askVerification: true },
       autoFocus: 'first-tabbable',
       restoreFocus: true
     }).afterClosed().subscribe(action => {

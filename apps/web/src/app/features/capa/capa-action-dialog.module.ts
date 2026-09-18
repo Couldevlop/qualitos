@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { MatRadioModule } from '@angular/material/radio';
 
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
@@ -22,7 +23,11 @@ import { CapaActionDialogComponent } from './pages/capa-action-dialog/capa-actio
  */
 @NgModule({
   declarations: [CapaActionDialogComponent],
-  imports: [SharedModule, UiModule],
+  // MatRadioModule n'est pas reexporte par SharedModule. « Verification
+  // exigee : oui / non » est une question fermee a deux reponses, ou un groupe
+  // de boutons radio dit mieux qu'une case a cocher qu'AUCUNE des deux n'est
+  // cochee tant que la question n'a pas ete tranchee (ADR 0073).
+  imports: [SharedModule, UiModule, MatRadioModule],
   exports: [CapaActionDialogComponent]
 })
 export class CapaActionDialogModule {}
