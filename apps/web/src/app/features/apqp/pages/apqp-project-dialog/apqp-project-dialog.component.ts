@@ -40,7 +40,7 @@ export class ApqpProjectDialogComponent {
   readonly types: { value: ApqpProjectType; label: string }[] = [
     { value: 'NPI', label: $localize`:@@apqp.project.type.npi:NPI — nouveau produit` },
     { value: 'TOW', label: $localize`:@@apqp.project.type.tow:ToW — transfert d'activité` },
-    { value: 'NEW_CUSTOMER', label: $localize`:@@apqp.project.type.new-customer:Nouveau client` },
+    { value: 'MAJOR_MODIFICATION', label: $localize`:@@apqp.project.type.major-modification:Modification majeure` },
     { value: 'OTHER', label: $localize`:@@apqp.project.type.other:Autre` }
   ];
 

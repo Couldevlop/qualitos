@@ -8,6 +8,9 @@ import { catchError, finalize, shareReplay, switchMap, tap } from 'rxjs/operator
 import { deferredView } from '../../../../core/rx/deferred-view';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
+import {
+  CapaActionDialogComponent, CapaActionDialogData
+} from '../../../capa/pages/capa-action-dialog/capa-action-dialog.component';
 import { ConnectivityService } from '../../../../core/offline/connectivity.service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { FiveWhysService } from '../../../five-whys/five-whys.service';
@@ -516,8 +519,33 @@ export class NcDetailComponent implements OnInit {
       .subscribe(resolved => { if (resolved) this.reload$.next(); });
   }
 
-  escalateToCapa(): void {
+  /**
+   * Poser une action corrective sur cette non-conformité.
+   *
+   * <p><b>Ce que ce geste remplace.</b> Le bouton disait « Escalader CAPA » et
+   * ouvrait une simple confirmation : on créait un dossier vide, et il fallait
+   * ensuite le retrouver pour y écrire ce qu'on allait faire. Or ce qu'on a en
+   * tête à ce moment-là, c'est l'action — pas le dossier qui la range.
+   *
+   * <p>C'est donc LE MÊME formulaire que « Ajouter une action » dans une CAPA,
+   * et non un jumeau : {@link CapaActionDialogComponent}, partagé par les deux
+   * écrans. Deux formulaires séparés auraient divergé au premier champ ajouté
+   * d'un seul côté.
+   *
+   * <p>Le dossier CAPA reste la structure qui porte l'action, mais il devient
+   * une conséquence : s'il n'existe pas encore, on le crée en chemin, sans rien
+   * demander. Si la NC en a déjà un, on y ajoute simplement une action de plus.
+   */
+  addAction(nc: NcResponse): void {
     if (this.acting$.value) return;
+
+    if (nc.capaCaseId) {
+      this.ouvrirFormulaireAction(nc.capaCaseId);
+      return;
+    }
+
+    // Pas encore de dossier : il se cree maintenant. Le pilote est celui qui
+    // pose l'action -- un dossier sans pilote n'avance pas.
     const ownerId = this.auth.snapshot()?.userId;
     if (!ownerId) {
       this.snack.open(
@@ -525,34 +553,44 @@ export class NcDetailComponent implements OnInit {
         $localize`:@@common.ok:OK`, { duration: 4000 });
       return;
     }
-    this.dialog.open(ConfirmDialogComponent, {
-      data: <ConfirmDialogData>{
-        title: $localize`:@@nc.detail.escalate-confirm-title:Escalader vers une CAPA ?`,
-        message: $localize`:@@nc.detail.escalate-confirm-message:Une action corrective/préventive (CAPA) sera créée et liée à cette non-conformité.`,
-        confirmLabel: $localize`:@@nc.detail.escalate:Escalader CAPA`
-      },
-      autoFocus: false,
-      restoreFocus: true
-    }).afterClosed().subscribe(confirmed => {
-      if (!confirmed) return;
-      this.acting$.next(true);
-      this.svc.escalateToCapa(this.ncId, { ownerId })
-        .pipe(finalize(() => this.acting$.next(false)))
-        .subscribe({
-          next: () => {
+    this.acting$.next(true);
+    this.svc.escalateToCapa(this.ncId, { ownerId })
+      .pipe(finalize(() => this.acting$.next(false)))
+      .subscribe({
+        next: cree => {
+          this.reload$.next();
+          if (cree.capaCaseId) {
+            this.ouvrirFormulaireAction(cree.capaCaseId);
+          } else {
+            // Le serveur a accepte mais n'a pas rendu l'identifiant : on le DIT
+            // plutot que d'ouvrir un formulaire qui n'aurait nulle part ou
+            // ecrire, et qui echouerait a l'enregistrement.
             this.snack.open(
-              $localize`:@@nc.detail.escalate-success:CAPA créée et liée à la non-conformité.`,
-              $localize`:@@common.ok:OK`, { duration: 2500 });
-            this.reload$.next();
-          },
-          error: err => {
-            // eslint-disable-next-line no-console
-            console.warn('[nc-detail] escalate failed', err?.status, err?.error?.title);
-            this.snack.open(
-              safeErrorMessage(err, $localize`:@@nc.detail.escalate-error:Erreur lors de l'escalade.`),
-              'OK', { duration: 4000 });
+              $localize`:@@nc.detail.add-action-no-case:Dossier créé, mais introuvable pour y ajouter l'action. Ouvrez-le depuis la CAPA.`,
+              $localize`:@@common.ok:OK`, { duration: 5000 });
           }
-        });
+        },
+        error: err => {
+          // eslint-disable-next-line no-console
+          console.warn('[nc-detail] escalate failed', err?.status, err?.error?.title);
+          this.snack.open(
+            safeErrorMessage(err, $localize`:@@nc.detail.escalate-error:Erreur lors de l'escalade.`),
+            'OK', { duration: 4000 });
+        }
+      });
+  }
+
+  /** Ouvre le formulaire d'action de la CAPA, et rafraîchit la fiche au retour. */
+  private ouvrirFormulaireAction(caseId: string): void {
+    this.dialog.open(CapaActionDialogComponent, {
+      data: <CapaActionDialogData>{ caseId },
+      autoFocus: 'first-tabbable',
+      restoreFocus: true
+    }).afterClosed().subscribe(action => {
+      // Rien n'a ete ajoute si l'utilisateur a referme : on ne recharge pas, et
+      // on ne lui annonce surtout pas une action qu'il n'a pas creee.
+      if (!action) return;
+      this.reload$.next();
     });
   }
 

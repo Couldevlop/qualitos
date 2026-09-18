@@ -1,4 +1,6 @@
 import { NgModule } from '@angular/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
@@ -53,6 +55,17 @@ const routes: Routes = [
     ApqpPpapPageComponent,
     ApqpPpapSummaryComponent
   ],
-  imports: [SharedModule, UiModule, RouterModule.forChild(routes)]
+  // Le selecteur de date n'est cable QUE sur ce module, pas dans le module
+  // partage : il traine un adaptateur de date, et l'imposer a toute
+  // l'application pour un champ d'echeance chargerait chaque page qui n'en a pas
+  // l'usage. APQP etant charge a la demande, le cout reste ou il sert.
+  //
+  // `MatNativeDateModule` prend la langue du build via `LOCALE_ID` : le
+  // calendrier s'ouvre donc en francais ou en japonais sans reglage de plus.
+  imports: [
+    SharedModule, UiModule,
+    MatDatepickerModule, MatNativeDateModule,
+    RouterModule.forChild(routes)
+  ]
 })
 export class ApqpModule {}

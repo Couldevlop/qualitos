@@ -81,7 +81,7 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
       expectedArtifact: [livrable.expectedArtifact ?? '', [Validators.maxLength(1000)]],
       ppap: [livrable.ppap],
       owner: [livrable.owner ?? '', [Validators.maxLength(150)]],
-      dueDate: [livrable.dueDate ?? null],
+      dueDate: [ApqpDeliverableDetailDialogComponent.enDateLocale(livrable.dueDate)],
       status: [livrable.status],
       percentComplete: [
         livrable.percentComplete, [Validators.min(0), Validators.max(100)]],
@@ -260,10 +260,45 @@ export class ApqpDeliverableDetailDialogComponent implements OnInit {
    * <p>Le champ natif rend déjà « aaaa-mm-jj » ; la conversion couvre le cas où
    * un sélecteur rendrait un `Date`, dont l'horodatage complet serait refusé.
    */
+  /**
+   * Le « aaaa-mm-jj » attendu par le serveur, lu sur les composantes LOCALES.
+   *
+   * <p>Surtout pas {@code toISOString()} : il repasse par UTC. Le calendrier rend
+   * un minuit LOCAL, donc le 18 septembre a Paris vaut le 17 a 22 h UTC, et
+   * l'echeance saisie serait enregistree la veille. Le bug n'apparait ni en test
+   * ni sur un poste regle sur UTC -- seulement chez l'utilisateur.
+   */
   private enDateIso(valeur: unknown): string | null {
     if (!valeur) return null;
-    const date = valeur instanceof Date ? valeur : new Date(String(valeur));
-    return Number.isNaN(date.getTime()) ? null : date.toISOString().slice(0, 10);
+
+    // Deja au bon format : on le rend tel quel. Le faire passer par `new Date`
+    // serait le traduire en UTC pour le relire en local, soit un decalage d'un
+    // jour a l'ouest de Greenwich -- pour une valeur qui n'avait pas besoin
+    // d'etre convertie.
+    if (typeof valeur === 'string') {
+      const deja = /^\d{4}-\d{2}-\d{2}/.exec(valeur);
+      return deja ? deja[0] : null;
+    }
+
+    if (!(valeur instanceof Date) || Number.isNaN(valeur.getTime())) return null;
+    const mois = String(valeur.getMonth() + 1).padStart(2, '0');
+    const jour = String(valeur.getDate()).padStart(2, '0');
+    return `${valeur.getFullYear()}-${mois}-${jour}`;
+  }
+
+  /**
+   * L'inverse : le « aaaa-mm-jj » du serveur devient un {@code Date} local.
+   *
+   * <p>Meme piege dans l'autre sens. {@code new Date('2026-09-18')} est interprete
+   * comme de l'UTC par la specification du langage ; a l'ouest de Greenwich, le
+   * calendrier se serait ouvert sur le 17. On construit donc la date composante
+   * par composante, ou aucun fuseau n'intervient.
+   */
+  private static enDateLocale(valeur: string | null | undefined): Date | null {
+    if (!valeur) return null;
+    const parties = /^(\d{4})-(\d{2})-(\d{2})/.exec(valeur);
+    if (!parties) return null;
+    return new Date(+parties[1], +parties[2] - 1, +parties[3]);
   }
 
   private chargerPieces(): void {

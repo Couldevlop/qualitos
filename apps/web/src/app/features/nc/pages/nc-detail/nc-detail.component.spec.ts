@@ -555,46 +555,84 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
     expect(svc.cancel).not.toHaveBeenCalled();
   });
 
-  it('escalade en CAPA avec le pilote issu de la session', () => {
+  // « Ajouter une action » remplace « Escalader CAPA ». Le dossier CAPA n'est
+  // plus ce qu'on demande a l'utilisateur : il se cree en chemin s'il manque,
+  // et le formulaire qui s'ouvre est CELUI de la CAPA, pas un jumeau.
+
+  it('ouvre directement le formulaire d’action quand la NC porte deja une CAPA', () => {
     setup();
-    confirmWith(true);
-    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
-    svc.escalateToCapa.and.returnValue(of(buildNc({ capaCaseId: 'capa-1' })));
+    const openSpy = spyOn(TestBed.inject(MatDialog), 'open')
+      .and.returnValue({ afterClosed: () => of({ id: 'act-1' }) } as never);
 
-    component.escalateToCapa();
+    component.addAction(buildNc({ capaCaseId: 'capa-1' }));
 
-    expect(svc.escalateToCapa).toHaveBeenCalledWith(UUID, { ownerId: 'u1' });
-    expect(snackSpy).toHaveBeenCalled();
+    // Aucun dossier cree : il existe deja. Une escalade de plus en aurait
+    // ouvert un second, et la NC en porte un seul.
+    expect(svc.escalateToCapa).not.toHaveBeenCalled();
+    expect(openSpy.calls.mostRecent().args[1]?.data).toEqual({ caseId: 'capa-1' });
+    // Une action ajoutee change la fiche : on la relit.
     expect(svc.getNc).toHaveBeenCalledTimes(1);
   });
 
-  it('refuse l\'escalade sans session plutôt que de créer une CAPA sans pilote', () => {
+  it('cree le dossier puis enchaine sur le formulaire quand la NC n’en a pas', () => {
     setup();
-    currentUser = null;
-    const openSpy = confirmWith(true);
+    svc.escalateToCapa.and.returnValue(of(buildNc({ capaCaseId: 'capa-9' })));
+    const openSpy = spyOn(TestBed.inject(MatDialog), 'open')
+      .and.returnValue({ afterClosed: () => of({ id: 'act-1' }) } as never);
+
+    component.addAction(buildNc({ capaCaseId: undefined }));
+
+    expect(svc.escalateToCapa).toHaveBeenCalledWith(UUID, { ownerId: 'u1' });
+    // Le formulaire s'ouvre sur le dossier QUI VIENT D'ETRE CREE : l'ouvrir sur
+    // l'ancien identifiant (absent) ecrirait l'action dans le vide.
+    expect(openSpy.calls.mostRecent().args[1]?.data).toEqual({ caseId: 'capa-9' });
+  });
+
+  it('ne referme pas la boucle quand le serveur ne rend aucun identifiant', () => {
+    setup();
+    // Le serveur accepte mais ne dit pas ou : on le DIT, plutot que d'ouvrir un
+    // formulaire qui echouerait a l'enregistrement.
+    svc.escalateToCapa.and.returnValue(of(buildNc({ capaCaseId: undefined })));
+    const openSpy = spyOn(TestBed.inject(MatDialog), 'open');
     const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
 
-    component.escalateToCapa();
+    component.addAction(buildNc({ capaCaseId: undefined }));
+
+    expect(openSpy).not.toHaveBeenCalled();
+    expect(snackSpy).toHaveBeenCalled();
+  });
+
+  it('refuse d’agir sans session plutot que de creer une CAPA sans pilote', () => {
+    setup();
+    currentUser = null;
+    const openSpy = spyOn(TestBed.inject(MatDialog), 'open');
+    const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
+
+    component.addAction(buildNc({ capaCaseId: undefined }));
 
     expect(openSpy).not.toHaveBeenCalled();
     expect(svc.escalateToCapa).not.toHaveBeenCalled();
     expect(snackSpy).toHaveBeenCalled();
   });
 
-  it('n\'escalade pas quand la confirmation est refusée', () => {
+  it('ne recharge pas la fiche quand le formulaire est referme sans rien ajouter', () => {
     setup();
-    confirmWith(false);
-    component.escalateToCapa();
-    expect(svc.escalateToCapa).not.toHaveBeenCalled();
+    spyOn(TestBed.inject(MatDialog), 'open')
+      .and.returnValue({ afterClosed: () => of(undefined) } as never);
+
+    component.addAction(buildNc({ capaCaseId: 'capa-1' }));
+
+    // Annoncer une action que l'utilisateur n'a pas creee serait un mensonge,
+    // et relire la fiche pour rien fait clignoter l'ecran.
+    expect(svc.getNc).not.toHaveBeenCalled();
   });
 
-  it('signale l\'échec d\'escalade et réarme les actions', () => {
+  it('signale l’echec de creation du dossier et rearme les actions', () => {
     setup();
-    confirmWith(true);
     const snackSpy = spyOn(TestBed.inject(MatSnackBar), 'open');
     svc.escalateToCapa.and.returnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
 
-    component.escalateToCapa();
+    component.addAction(buildNc({ capaCaseId: undefined }));
 
     expect(snackSpy).toHaveBeenCalledWith(
       'Erreur serveur — réessayez dans un instant.', 'OK', { duration: 4000 });

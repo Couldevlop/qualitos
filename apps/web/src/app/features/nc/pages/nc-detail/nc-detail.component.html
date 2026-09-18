@@ -30,10 +30,20 @@
                 matTooltip="Écarter la réclamation, motif à l'appui">
           <mat-icon>block</mat-icon> <span i18n="@@nc.detail.reject">Rejeter</span>
         </button>
-        <button mat-stroked-button (click)="escalateToCapa()"
-                [disabled]="(acting$ | async) || !canEscalate(n.status) || !!n.capaCaseId"
-                i18n-matTooltip="@@nc.detail.escalate-tooltip" matTooltip="Créer une CAPA liée">
-          <mat-icon>engineering</mat-icon> <span i18n="@@nc.detail.escalate">Escalader CAPA</span>
+        <!-- « Ajouter une action » et non « Escalader CAPA » : ce qu'on veut
+             poser ici, c'est l'action qu'on a decidee, pas un dossier abstrait.
+             Le dossier CAPA reste la structure qui la porte -- il se cree tout
+             seul a la premiere action si la NC n'en a pas encore -- mais il
+             n'est plus ce qu'on demande a l'utilisateur de faire.
+
+             Plus barre non plus quand la NC porte deja une CAPA : on ajoute une
+             DEUXIEME action, un troisieme, autant que le traitement en demande. -->
+        <button mat-stroked-button (click)="addAction(n)" data-test="ajouter-action"
+                [disabled]="(acting$ | async) || !canEscalate(n.status)"
+                i18n-matTooltip="@@nc.detail.add-action-tooltip"
+                matTooltip="Poser une action corrective sur cette non-conformité">
+          <mat-icon>engineering</mat-icon>
+          <span i18n="@@nc.detail.add-action">Ajouter une action</span>
         </button>
         <!-- L'analyse des 5 Pourquoi part d'un écart constaté : c'est d'ici
              qu'elle se déroule. Le compteur dit s'il y en a déjà une. -->

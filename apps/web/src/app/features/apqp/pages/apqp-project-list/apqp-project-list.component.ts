@@ -38,7 +38,7 @@ export class ApqpProjectListComponent implements OnInit {
 
   readonly displayedColumns = ['name', 'type', 'deliverables', 'ppap', 'createdAt'];
 
-  readonly types: ApqpProjectType[] = ['NPI', 'TOW', 'NEW_CUSTOMER', 'OTHER'];
+  readonly types: ApqpProjectType[] = ['NPI', 'TOW', 'MAJOR_MODIFICATION', 'OTHER'];
 
   readonly typeFilter = new FormControl<ApqpProjectType | ''>('');
 
@@ -138,7 +138,7 @@ export class ApqpProjectListComponent implements OnInit {
     return ({
       NPI: $localize`:@@apqp.project.type.npi:NPI — nouveau produit`,
       TOW: $localize`:@@apqp.project.type.tow:ToW — transfert d'activité`,
-      NEW_CUSTOMER: $localize`:@@apqp.project.type.new-customer:Nouveau client`,
+      MAJOR_MODIFICATION: $localize`:@@apqp.project.type.major-modification:Modification majeure`,
       OTHER: $localize`:@@apqp.project.type.other:Autre`
     })[type];
   }

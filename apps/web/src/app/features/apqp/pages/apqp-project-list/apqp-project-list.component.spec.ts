@@ -204,8 +204,8 @@ describe('ApqpProjectListComponent', () => {
 
     expect(component.typeLabel('NPI')).toContain('NPI');
     expect(component.typeLabel('TOW')).toContain('ToW');
-    expect(component.typeLabel('NEW_CUSTOMER')).toBe('Nouveau client');
+    expect(component.typeLabel('MAJOR_MODIFICATION')).toBe('Modification majeure');
     expect(component.typeLabel('OTHER')).toBe('Autre');
-    expect(component.typeBadge('NEW_CUSTOMER')).toBe('tbadge tbadge-new_customer');
+    expect(component.typeBadge('MAJOR_MODIFICATION')).toBe('tbadge tbadge-major_modification');
   }));
 });

@@ -148,10 +148,6 @@
             <mat-icon class="livrables__preuve" *ngIf="livrable.evidenceCount > 0"
                       [attr.aria-label]="ariaPreuves(livrable)">attach_file</mat-icon>
           </span>
-          <!-- Ce que le livrable doit PRODUIRE : sans cette ligne, « Plan de
-               surveillance » ne dit pas si l'on attend un tableur ou un accord. -->
-          <span class="livrables__artefact" *ngIf="livrable.expectedArtifact"
-                data-test="artefact-attendu">{{ livrable.expectedArtifact }}</span>
           <span class="livrables__etat">
             <span [class]="statutClasse(livrable.status)" data-test="statut-livrable">
               {{ statutLabel(livrable.status) }}

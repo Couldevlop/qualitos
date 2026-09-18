@@ -4775,8 +4775,12 @@ Customer portal</target>
         <target state="translated">This deliverable is part of the PPAP file.</target>
       </trans-unit>
       <trans-unit id="apqp.deliverable.done" datatype="html">
-        <source>Livrable acquis</source>
-        <target state="translated">Deliverable obtained</target>
+        <source>Livrable</source>
+        <target state="translated">Deliverable</target>
+      </trans-unit>
+      <trans-unit id="apqp.deliverable.due-date-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">Open the calendar</target>
       </trans-unit>
       <trans-unit id="apqp.deliverable.done-at" datatype="html">
         <source>Déclaré acquis le</source>
@@ -4926,9 +4930,9 @@ Customer portal</target>
         <source>ToW — transfert d'activité</source>
         <target state="translated">ToW — transfer of work</target>
       </trans-unit>
-      <trans-unit id="apqp.project.type.new-customer" datatype="html">
-        <source>Nouveau client</source>
-        <target state="translated">New customer</target>
+      <trans-unit id="apqp.project.type.major-modification" datatype="html">
+        <source>Modification majeure</source>
+        <target state="translated">Major modification</target>
       </trans-unit>
       <trans-unit id="apqp.project.type.other" datatype="html">
         <source>Autre</source>
@@ -13904,6 +13908,10 @@ declared income
         <source>Retour à la liste</source>
         <target state="translated">Back to list</target>
       </trans-unit>
+      <trans-unit id="ishikawa.detail.back-to-nc" datatype="html">
+        <source>Retour à la non-conformité</source>
+        <target state="translated">Back to the non-conformance</target>
+      </trans-unit>
       <trans-unit id="ishikawa.detail.eyebrow" datatype="html">
         <source>Diagramme Ishikawa · Cause–effet</source>
         <target state="translated">Ishikawa diagram · Cause–effect</target>
@@ -15444,25 +15452,17 @@ declared income
         <source>La non-conformité sera marquée comme annulée. Cette décision est traçable.</source>
         <target state="translated">The non-conformance will be marked as cancelled. This decision is traceable.</target>
       </trans-unit>
-      <trans-unit id="nc.detail.escalate" datatype="html">
-        <source>Escalader CAPA</source>
-        <target state="translated">Escalate to CAPA</target>
+      <trans-unit id="nc.detail.add-action" datatype="html">
+        <source>Ajouter une action</source>
+        <target state="translated">Add action</target>
       </trans-unit>
-      <trans-unit id="nc.detail.escalate-tooltip" datatype="html">
-        <source>Créer une CAPA liée</source>
-        <target state="translated">Create a linked CAPA</target>
+      <trans-unit id="nc.detail.add-action-tooltip" datatype="html">
+        <source>Poser une action corrective sur cette non-conformité</source>
+        <target state="translated">Record a corrective action on this non-conformance</target>
       </trans-unit>
-      <trans-unit id="nc.detail.escalate-confirm-title" datatype="html">
-        <source>Escalader vers une CAPA ?</source>
-        <target state="translated">Escalate to a CAPA?</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.escalate-confirm-message" datatype="html">
-        <source>Une action corrective/préventive (CAPA) sera créée et liée à cette non-conformité.</source>
-        <target state="translated">A corrective/preventive action (CAPA) will be created and linked to this non-conformance.</target>
-      </trans-unit>
-      <trans-unit id="nc.detail.escalate-success" datatype="html">
-        <source>CAPA créée et liée à la non-conformité.</source>
-        <target state="translated">CAPA created and linked to the non-conformance.</target>
+      <trans-unit id="nc.detail.add-action-no-case" datatype="html">
+        <source>Dossier créé, mais introuvable pour y ajouter l'action. Ouvrez-le depuis la CAPA.</source>
+        <target state="translated">Case created, but it could not be found to add the action. Open it from CAPA.</target>
       </trans-unit>
       <trans-unit id="nc.detail.escalate-error" datatype="html">
         <source>Erreur lors de l'escalade.</source>
