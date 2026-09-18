@@ -104,6 +104,42 @@ L'index n'existe que pour « les dossiers dont la vérification m'incombe et res
 à faire ». Il n'indexe pas les dossiers pour lesquels la question ne se pose pas —
 c'est-à-dire la grande majorité.
 
+### 6. Amendement du 18 septembre 2026 — la question est OBLIGATOIRE depuis une non-conformité
+
+La décision n° 1 pose que `NULL` est un état légitime : ne pas répondre laisse la
+question ouverte, et c'est acceptable. **Une exception a été ajoutée depuis**, et
+elle mérite d'être écrite ici plutôt que découverte dans un formulaire.
+
+Quand on ajoute une action corrective **depuis une fiche de non-conformité**
+(ADR 0074 §1), le popup d'action pose aussi les trois champs de vérification, et
+y répondre est **obligatoire** — le formulaire ne part pas tant que la question
+n'est pas tranchée.
+
+Pourquoi cette entorse :
+
+- C'est le **seul chemin** où la question se pose. Le dossier CAPA vient
+  peut-être d'être créé à l'instant par ce même geste, et personne n'aura ouvert
+  son formulaire d'édition. Laisser `NULL` ici, ce n'est pas « laisser la
+  question ouverte » — c'est garantir qu'elle ne sera jamais posée.
+- C'est le **moment où elle a un sens**. On pose une action corrective : décider
+  si son effet sera vérifié fait partie du même raisonnement, pas d'une revue
+  ultérieure.
+
+L'état à trois valeurs n'est pas remis en cause : `NULL` reste ce que porte un
+dossier ancien, ou un dossier créé par une autre porte. L'obligation vit dans
+**ce formulaire-là**, pas dans le modèle — la base reste nullable et le service
+accepte toujours une mise à jour qui ne dit rien.
+
+**Le bloc est absent du popup d'action ouvert depuis une fiche CAPA**, et c'est
+délibéré : la vérification s'y règle déjà dans « Modifier » et se lit sur la
+fiche. La poser une seconde fois dans le même écran donnerait deux endroits pour
+décider de la même chose, dont le dernier enregistré gagnerait en silence.
+
+Enfin, l'ordre des appels : la **vérification part avant l'action**. C'est elle
+qui porte les gardes de la décision n° 2 (422). Créer l'action d'abord puis
+échouer sur la vérification laisserait une action que l'utilisateur, en
+réessayant, **doublerait**.
+
 ## Conséquences
 
 - ✅ Migration **V132** : quatre colonnes facultatives, l'index partiel, et les
@@ -126,6 +162,7 @@ c'est-à-dire la grande majorité.
   à jour partielle qui ne décide rien.
 - `capa-edit-dialog.component.spec.ts` — apparition et disparition du bloc,
   annuaire indisponible annoncé.
+- `capa-action-dialog.component.spec.ts` — l'amendement n° 6 : la question qu'il faut trancher, l'ordre des deux appels, l'intitulé du dossier qui ne part PAS depuis un formulaire qui ne l'affiche pas, et le refus serveur qui ne crée aucune action.
 - `apps/web/e2e/capa-verification.spec.ts` — le parcours réel : les deux réponses
   offertes, « oui » qui demande à qui et quoi, le retour à « non » qui referme, et
   un « non » enregistré qui se relit sur la fiche. Le banc écoute `pageerror` :

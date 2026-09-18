@@ -7,16 +7,29 @@ DMAIC + Poka-Yoke, Ishikawa) dans un référentiel unique, augmenté par l'IA et
 blockchain. Voir [`CLAUDE.md`](./CLAUDE.md) pour le projet complet.
 
 > **Vous reprenez le projet ?** Commencez par
-> [`docs/PASSATION.md`](./docs/PASSATION.md) : l'architecture, les six motifs qui
-> expliquent la quasi-totalité du code, comment retrouver n'importe quoi, les
-> pièges d'environnement, et ce qui reste ouvert.
+> [`docs/PASSATION.md`](./docs/PASSATION.md). Son **§0** range tout ce qu'il faut
+> savoir sous les six capacités qui font qu'on tient un projet seul : **lancer**,
+> **comprendre**, **modifier sans casser**, **livrer**, **exploiter**, **réparer**.
+> Les procédures d'exploitation sont indexées dans
+> [`docs/runbooks/README.md`](./docs/runbooks/README.md).
+>
+> **Une équipe reprend le projet ?** Le plan de reprise —
+> découpage en zones, séquence d'intégration, registre des risques, premiers
+> travaux et critères de réussite datés — est dans
+> [`docs/PASSATION-EQUIPE.md`](./docs/PASSATION-EQUIPE.md).
 
 ## Démarrage rapide (Docker)
 
 ```bash
-# Démarre tout : Postgres + Keycloak + api-core + api-quality-engine + web
+# Démarre tout : 15 services (Postgres, Keycloak, MinIO, Redpanda, Qdrant,
+# Ollama, Prometheus, Grafana, les quatre services applicatifs et le front).
 docker compose -f docker-compose.dev.yml up --build
 ```
+
+> Le tableau ci-dessous ne liste que les points d'entrée utiles au quotidien.
+> **Postgres écoute sur 5434 et non 5432** : un PostgreSQL natif occupe souvent
+> déjà le port standard, et le conflit se manifeste par un démarrage qui semble
+> réussir mais parle à la mauvaise base.
 
 Accès :
 
@@ -26,7 +39,7 @@ Accès :
 | api-core               | http://localhost:8181/swagger-ui.html | JWT requis (port 8181 car httpd local sur 8081) |
 | api-quality-engine     | http://localhost:8082/swagger-ui.html | JWT requis        |
 | Keycloak               | http://localhost:8080                | admin / admin     |
-| Postgres               | localhost:5432                       | qualitos / qualitos |
+| Postgres               | localhost:**5434**                   | qualitos / qualitos |
 
 Le realm `qualitos` est pré-seedé avec **trois comptes** et les rôles plateforme :
 

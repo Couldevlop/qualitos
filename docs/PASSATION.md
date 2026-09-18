@@ -5,7 +5,37 @@
 > personne. Il ne remplace pas `CLAUDE.md`, qui reste la **spécification** et les
 > invariants ; il explique comment le code les applique.
 >
-> Rédigé le 16 septembre 2026. Remis à jour le 17 septembre, sur `main` à `6f5a37e`.
+> **Si c'est une ÉQUIPE qui reprend**, lisez d'abord
+> [`PASSATION-EQUIPE.md`](./PASSATION-EQUIPE.md) : il organise la reprise — qui
+> apprend quoi, dans quel ordre, avec quels premiers travaux et quels critères de
+> sortie. Ce document-ci reste la référence sur **le code** ; l'autre organise
+> **les gens**.
+>
+> Rédigé le 16 septembre 2026. Remis à jour le 18 septembre, sur `main` à `355e74c`.
+
+---
+
+## 0. Reprendre la main : six capacités, et où chacune se trouve
+
+Tenir ce projet seul, c'est pouvoir faire six choses. Le reste de ce document est
+rangé pour y répondre — cette table est la porte d'entrée, à lire en premier.
+
+| | Capacité | Où | État |
+| --- | --- | --- | --- |
+| 1 | **Lancer** — la plateforme tourne sur votre poste | `README.md` § Démarrage rapide, puis §6.1 ici | Une commande Docker, 15 services |
+| 2 | **Comprendre** — ouvrir n'importe quel fichier et savoir ce qu'il fait | **§2 à §5** — c'est le cœur de ce document | Six motifs expliquent la quasi-totalité du code |
+| 3 | **Modifier sans casser** — changer quelque chose et le savoir | **§6** (lancer les suites, les pièges) et **§8** (les invariants) | Tests + CI + 8 règles non négociables |
+| 4 | **Livrer** — une modification arrive en ligne | **§7** | Branche → PR → CI → fusion → le cluster tire |
+| 5 | **Exploiter** — voir ce qui tourne, et pourquoi | **§7.3** et `docs/runbooks/README.md` | Douze runbooks, indexés |
+| 6 | **Réparer** — revenir en arrière, restaurer | `docs/runbooks/README.md` § Réparer | Retour arrière + sauvegardes, vérifiées |
+
+**Si vous ne lisez qu'une chose**, lisez le **§2** : il donne les six motifs qui
+rendent les 1 700 fichiers Java lisibles sans les ouvrir un par un. Le reste se
+consulte au besoin.
+
+**L'ordre conseillé pour une prise en main complète** : §0 → §6.1 (faire tourner,
+pour voir ce dont on parle) → §2 (les motifs) → §3 (tracer une requête de bout en
+bout) → §6.2 et §6.3 (vérifier, et les pièges) → §7 (livrer) → les runbooks.
 
 ---
 
@@ -22,13 +52,13 @@ document, parce qu'on le croit.
 bash scripts/passation-chiffres.sh
 ```
 
-Ce que ce script rendait le 17 septembre 2026, sur `main` à `6f5a37e` :
+Ce que ce script rendait le 18 septembre 2026, sur `main` à `355e74c` :
 
 | | |
 | --- | --- |
 | Fichiers Java — moteur qualité | **1 547** |
 | Fichiers Java — tous services et bibliothèques | **1 743** |
-| Fichiers TypeScript front (hors tests) | **554** |
+| Fichiers TypeScript front (hors tests) | **555** |
 | Fichiers de test front | **262** |
 | Fichiers de test end-to-end | **3** |
 | Migrations Flyway | jusqu'à **V133** |
@@ -263,8 +293,10 @@ TEMP=D:/tmp TMP=D:/tmp TESTCONTAINERS_RYUK_DISABLED=true mvn clean verify
 # Front
 cd apps/web && npx ng test --watch=false --browsers=ChromeHeadless
 
-# End-to-end — 18 tests, ~3,5 min. Sert la SPA lui-même (ng serve en
+# End-to-end — quelques minutes. Sert la SPA lui-même (ng serve en
 # configuration `e2e`) : ni backend ni Keycloak à démarrer avant.
+# Le nombre de cas n'est pas écrit ici : c'est une mesure d'EXÉCUTION, et un
+# chiffre recopié aurait la même espérance de vie que ceux du §1.
 cd apps/web && npx playwright test
 
 # Sécurité, mêmes règles que la CI
@@ -305,7 +337,55 @@ Le flux est décrit dans `docs/git-workflow.md`. En pratique :
 2. commits **en français**, sujet court, corps qui dit le **pourquoi** ;
 3. `mvn clean verify` + suite front verts **avant** de pousser ;
 4. pull request → la CI décide ;
-5. fusion dans `main` → **`CD préproduction` déploie tout seul**.
+5. fusion dans `main` → la mise en ligne se fait seule, **mais pas comme on croit** :
+   voir juste en dessous.
+
+### 7.1 Le déploiement est TIRÉ par le cluster, pas poussé par GitHub
+
+C'est le point le plus contre-intuitif de la chaîne, et celui qui fait perdre le
+plus de temps quand on l'ignore.
+
+Le workflow `CD préproduction` **ne déploie rien**. Il construit les images, les
+scanne (Trivy, bloquant) et les publie. C'est tout.
+
+C'est le **cluster** qui déploie : un minuteur systemd sur le nœud exécute
+`infra/k8s/auto-deploy.sh`, qui surveille `main` et, dès que les images d'un
+commit sont publiées, rejoue `infra/k8s/deploy.sh`.
+
+**Pourquoi ce sens** : déployer depuis GitHub imposerait d'y déposer une clé
+d'accès au cluster ; quiconque l'obtiendrait obtiendrait l'environnement. En
+inversant, aucun secret ne quitte l'infrastructure.
+
+**Ce que ça change pour vous** : entre la fusion et la mise en ligne, il y a le
+délai du minuteur. Un `CD préproduction` vert ne signifie pas « c'est en ligne »,
+mais « les images sont prêtes à être prises ». Pour savoir ce qui tourne
+vraiment, il faut demander au cluster (§7.3).
+
+### 7.2 Retour arrière, sauvegardes
+
+`docs/runbooks/retour-arriere-production.md` — et lisez-le **avant** d'en avoir
+besoin : il contient un piège de fond (un `helm rollback` seul ne suffit pas).
+`docs/runbooks/sauvegarde-et-restauration.md` pour les bases.
+
+### 7.3 Voir ce qui tourne
+
+```bash
+ssh root@62.238.11.20
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+NS=qualitos-preprod
+
+kubectl -n "$NS" get pods,deploy,ingress
+# Quelle VERSION est servie — la question à poser en premier :
+kubectl -n "$NS" get deploy \
+  -o custom-columns=NOM:.metadata.name,IMAGE:'.spec.template.spec.containers[0].image'
+```
+
+L'étiquette d'image porte le commit. Si elle correspond à votre fusion, le code
+est déployé — et si l'écran montre encore l'ancien comportement, c'est le
+navigateur (§6.3, le piège PWA), pas le déploiement.
+
+Le reste de l'exploitation — observabilité, stockage objet, annuaire, Edge,
+vision — est indexé dans **`docs/runbooks/README.md`**.
 
 La CI bloque sur : tests, **Semgrep (ERROR)**, Trivy, et un contrôle que les
 fichiers i18n générés sont à jour (`--check` + `git diff --exit-code`).
@@ -314,7 +394,13 @@ Retour arrière : `docs/runbooks/retour-arriere-production.md`.
 Sauvegardes : `docs/runbooks/sauvegarde-et-restauration.md`.
 
 > **Il n'existe pas de production.** La préproduction EST l'environnement
-> (`preprod.qualitos.openlabconsulting.com`). Ne lancez jamais `deploy.sh prod`.
+> (`preprod.qualitos.openlabconsulting.com`), et son espace de noms est
+> **`qualitos-preprod`**. Ne lancez jamais `deploy.sh prod`.
+>
+> Certains runbooks, écrits quand un espace « production » était envisagé,
+> prennent encore `NS=qualitos` par défaut. Vérifiez l'espace avant toute
+> commande destructrice : une restauration jouée au mauvais endroit ne se
+> rattrape pas.
 
 ---
 
@@ -341,7 +427,7 @@ pas un choix :
 
 | Sujet | État |
 | --- | --- |
-| **Tests end-to-end** | **18 tests**, tous verts en 3,5 min : 10 routes en navigation sans erreur JS, 3 scénarios Standards Hub, 5 sur la vérification CAPA. Restent **non couverts : l'APQP et le 8D** — les deux plus gros lots récents, et donc la dette la plus rentable à combler. Le patron à recopier est `capa-verification.spec.ts` : des accroches `data-test` dans le gabarit, aucun compteur codé en dur, et `pageerror` écouté pour attraper les `NG0100`. |
+| **Tests end-to-end** | Trois fichiers, tous verts. **Couvert** : la navigation sans erreur JS sur dix routes, le Standards Hub, et la vérification CAPA par ses **deux** portes — le dialogue d'édition et le popup d'action d'une NC. **Non couvert : l'APQP et le 8D**, les deux plus gros lots récents, et donc la dette la plus rentable à combler. Le patron à recopier est `capa-verification.spec.ts` : des accroches `data-test` dans le gabarit, aucun compteur codé en dur, et `pageerror` écouté pour attraper les `NG0100`. (Le nombre de cas se lit en lançant la suite, pas ici — §6.2.) |
 | **Couverture front des fonctions** | Le seuil global est à 93 % et la marge est mince (mesurée à 93,07 % après le lot 8D). Une fonctionnalité peu testée fera échouer la CI. |
 | **Journal d'audit hors transaction** | L'émission d'un 8D et l'approbation d'un control plan écrivent le journal dans une transaction séparée. Cohérent entre eux, mais un incident entre les deux laisserait un acte non journalisé. |
 | **Modules anciens en disposition plate** | `capa`, `nonconformity`, `apqp`, `risk` n'ont pas la découpe hexagonale. À migrer quand on y retouche, pas avant. |
@@ -361,6 +447,7 @@ Ce qui vient d'être livré, avec la décision qui l'explique :
 | Projets APQP | 0072 | Révise 0068 : plusieurs projets, un seul formulaire de livrable |
 | Vérification d'efficacité CAPA | 0073 | On EXIGE avant de constater ; `NULL` n'est pas `false` — trois états, pas deux |
 | L'action avant le dossier | 0074 | Révise 0072 : « Ajouter une action » remplace « Escalader CAPA », le type dit un travail |
+| La vérification dans le popup d'action | 0073 (amendé) | Depuis une NC, la question est posée là — et **obligatoire** : c'est le seul chemin où elle se pose |
 
 Lisez-les dans cet ordre : chacun explique pourquoi le précédent ne suffisait pas.
 C'est le meilleur résumé de la manière dont ce code évolue.
