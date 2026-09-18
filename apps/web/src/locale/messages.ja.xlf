@@ -19659,6 +19659,10 @@ historique 12 mois</source>
         <source>Échéance (optionnel)</source>
         <target state="translated">期限（任意）</target>
       </trans-unit>
+      <trans-unit id="capa.action.verification-hint" datatype="html">
+        <source>Une vérification est-elle exigée sur ce dossier ? Il faut trancher : répondre « non » est une décision, qui se lit.</source>
+        <target state="translated">この案件に有効性検証は必要ですか。判断が必要です — 「いいえ」も記録される一つの判断です。</target>
+      </trans-unit>
       <trans-unit id="capa.action.subtitle" datatype="html">
         <source>Définis l'action concrète à mener pour résoudre ce cas.</source>
         <target state="translated">このケースを解決するために実施する具体的なアクションを定義します。</target>

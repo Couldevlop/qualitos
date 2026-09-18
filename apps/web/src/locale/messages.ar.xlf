@@ -19660,6 +19660,10 @@ historique 12 mois</source>
         <source>Échéance (optionnel)</source>
         <target state="translated">تاريخ الاستحقاق (اختياري)</target>
       </trans-unit>
+      <trans-unit id="capa.action.verification-hint" datatype="html">
+        <source>Une vérification est-elle exigée sur ce dossier ? Il faut trancher : répondre « non » est une décision, qui se lit.</source>
+        <target state="translated">هل يُشترط التحقق في هذا الملف؟ يجب الحسم: الإجابة بـ«لا» قرار، وهو مُسجَّل.</target>
+      </trans-unit>
       <trans-unit id="capa.action.subtitle" datatype="html">
         <source>Définis l'action concrète à mener pour résoudre ce cas.</source>
         <target state="translated">حدّد الإجراء الملموس الذي يجب اتخاذه لحلّ هذه الحالة.</target>
