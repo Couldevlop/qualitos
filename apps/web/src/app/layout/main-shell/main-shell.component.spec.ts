@@ -140,7 +140,9 @@ describe('MainShellComponent (navigation model)', () => {
     // à 11 : l'écran Réclamations a été retiré.
     // Méthodes passe à 6 : + Boîte à idées, sans attribut `module` puisqu'elle
     // ne dépend pas de l'activation du module Cercle.
-    expect(labels).toEqual([5, 6, 8, 1, 2, 11, 11, 1, 7]);
+    // Non-conformite passe de 2 a 4 et Operations de 11 a 9 : CAPA et
+    // Efficacite CAPA rejoignent le groupe de l'ecart qu'elles traitent.
+    expect(labels).toEqual([5, 6, 8, 1, 4, 9, 11, 1, 7]);
   });
 
   it('collapses the entire GRC mass into a single /compliance entry', () => {
