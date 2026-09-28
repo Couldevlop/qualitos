@@ -44,12 +44,12 @@
              grpc 1.65.1). -->
         <protobuf-java.version>4.28.3</protobuf-java.version>
         <!-- fabric-gateway tire Bouncy Castle 1.79, porteur de CVE-2025-14813
-             (CRITICAL). Le pom racine impose déjà 1.84, mais ce module a son
+             (CRITICAL). Le pom racine impose déjà 1.86, mais ce module a son
              PROPRE parent et n'hérite d'aucune de ses surcharges : la version
              doit donc être répétée ici. C'est exactement le coût de l'autonomie
              revendiquée par ce module, et la raison pour laquelle ses versions
              doivent être suivies séparément. -->
-        <bouncycastle.version>1.84</bouncycastle.version>
+        <bouncycastle.version>1.86</bouncycastle.version>
     </properties>
 
     <dependencies>
