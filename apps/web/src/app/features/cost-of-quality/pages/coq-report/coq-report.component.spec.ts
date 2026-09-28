@@ -186,6 +186,8 @@ describe('CoqReportComponent', () => {
     expect(data.category).toBe('PREVENTION');
     expect(data.labels.map((l: CoqLabel) => l.id)).toEqual(['l-form']);
     expect(data.readOnly).toBeFalse();
+    // Ajouter une ligne : le curseur va au libellé, où la liste s'ouvre.
+    expect(ouverture.calls.mostRecent().args[1]!.autoFocus).toBe('first-tabbable');
 
     const post = http.expectOne({ url: `${endpoint}/entries`, method: 'POST' });
     expect(post.request.body).toEqual({ ...resultat.entry, labelId: 'l-form' });
@@ -225,6 +227,8 @@ describe('CoqReportComponent', () => {
 
     const b = component.report!.blocks[2];
     component.ouvrir(b, b.lines[0]);
+    expect((dialog.open as jasmine.Spy).calls.mostRecent().args[1]!.autoFocus)
+      .toBe('input[data-test="montant"]');
 
     http.expectOne({ url: `${endpoint}/entries/e1`, method: 'PUT' }).flush(ligne());
     http.expectOne(estRapport(component.year, component.month)).flush(rapport());
@@ -241,6 +245,8 @@ describe('CoqReportComponent', () => {
     const data = ouverture.calls.mostRecent().args[1]!.data;
     expect(data.presetLabelId).toBe('l-form');
     expect(data.line).toBeUndefined();
+    // Le libellé est déjà connu : le curseur va au montant, la liste ne se déroule pas.
+    expect(ouverture.calls.mostRecent().args[1]!.autoFocus).toBe('input[data-test="montant"]');
   });
 
   it('corriger le montant dans la liste renvoie la ligne entière avec le nouveau montant', async () => {
