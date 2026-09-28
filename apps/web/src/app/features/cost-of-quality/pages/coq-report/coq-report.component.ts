@@ -252,7 +252,7 @@ export class CoqReportComponent implements OnInit {
       CoqEntryDialogComponent, {
         data,
         panelClass: 'qos-dialog-panel',
-        autoFocus: 'first-tabbable',
+        autoFocus: CoqReportComponent.focusInitial(line, presetLabelId),
         restoreFocus: true
       }).afterClosed().subscribe(result => {
       if (!result) return;
@@ -271,6 +271,18 @@ export class CoqReportComponent implements OnInit {
         error: err => this.echouer(err)
       });
     });
+  }
+
+  /**
+   * Où poser le curseur à l'ouverture.
+   *
+   * <p>Ouverte depuis une ligne, la fenêtre connaît déjà son libellé : le focus
+   * va au montant. Le poser sur le libellé déroulerait la liste de la famille
+   * alors qu'on est déjà dedans. « Ajouter une ligne » garde le premier champ,
+   * où la liste s'ouvre, puisque c'est là qu'on choisit.
+   */
+  static focusInitial(line?: CoqLine, presetLabelId?: string): string {
+    return line || presetLabelId ? 'input[data-test="montant"]' : 'first-tabbable';
   }
 
   /** Le libellé retenu, créé d'abord s'il a été tapé en texte libre. */
