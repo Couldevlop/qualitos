@@ -6,8 +6,9 @@
 
 ## En une phrase
 
-**Deux des six sont livrés** — l'efficacité CAPA, le 21/08 (ADR 0060), et la
-boîte à idées, le 10/09 (ADR 0067). Les quatre autres restent à faire, mais le
+**Trois des six sont livrés** — l'efficacité CAPA, le 21/08 (ADR 0060), la
+boîte à idées, le 10/09 (ADR 0067), et le coût de la qualité, le 28/09 (ADR 0075).
+Les trois autres restent à faire, mais le
 lot Produit / PFMEA / Control Plan leur pose des briques réutilisables.
 
 ## L'état, module par module
@@ -17,7 +18,7 @@ lot Produit / PFMEA / Control Plan leur pose des briques réutilisables.
 | **Efficacité CAPA** | **livré** | Mesure sur deux fenêtres de même durée, API `GET /api/v1/capa/effectiveness`, écran `/capa/efficacite` (ADR 0060) |
 | **Boîte à idées** | **livrée** | `circle.CircleProposal` porte désormais son `tenant_id` propre (V125) et se dépose hors cercle ; le vote (`proposal_votes`, décompte calculé, fenêtre fermée à la décision) et la façade `/api/v1/ideas` en Clean Architecture complètent le cycle `PROPOSED → UNDER_REVIEW → APPROVED → REJECTED → IMPLEMENTED → MEASURED`, écran `/idees` (ADR 0067) |
 | **Suivi ESG** | ~25 %, épars | `Supplier.score` et `SupplierAuditRecord.score` pour la note fournisseur ; `ehs` porte un type d'incident `ENVIRONMENTAL`. Rien sur le CO₂, les déchets valorisés, ni la pondération d'un score ESG |
-| **Coût de la qualité** | ~10 % | Le catalogue KPI accepte n'importe quelle définition (code, unité, cible, seuils) : le COQ y tiendrait sans schéma neuf. Mais rien ne le décompose en prévention / évaluation / défaillance interne / externe, et le terme n'apparaît que dans un commentaire du pack automobile |
+| **Coût de la qualité** | **livré** | Modèle PAF par mois ou par année, une ligne par imputation rangée par sa date, libellés en liste déroulante extensible en texte libre, champs pièces (référence, nombre, lot, date de réception/fabrication) exigés sur les contrôles de pièces ; API `/api/v1/cost-of-quality`, écran `/cout-qualite` (ADR 0075) |
 | **Continuité d'activité** | ~5 % | ISO 22301 figure au catalogue du Standards Hub, et `nis2measures` traite de continuité côté cyber. Aucun registre d'incident de continuité, aucun plan |
 | **Revue de contrat** | 0 % | Rien : ni exigence client, ni capacité interne, ni écart |
 
@@ -53,7 +54,7 @@ la même chose — « l'agrégation est dans la donnée, pas dans l'UI »
 | --- | --- | --- |
 | ~~1~~ | ~~Efficacité CAPA~~ | **Livré le 2026-08-21** (ADR 0060) |
 | ~~1~~ | ~~Boîte à idées~~ | **Livré le 2026-09-10** (ADR 0067) |
-| 2 | Coût de la qualité | Modèle simple, mais exige une convention comptable partagée avec le métier |
+| ~~2~~ | ~~Coût de la qualité~~ | **Livré le 2026-09-28** (ADR 0075) |
 | 3 | Suivi ESG | Dépend de sources externes (mesures, facteurs d'émission) qu'il faut d'abord décider |
 | 4 | Continuité d'activité | Modèle métier neuf, adossé à ISO 22301 |
 | 5 | Revue de contrat | Tout est à faire, et c'est le seul qui exige un modèle métier entièrement neuf |
