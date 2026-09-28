@@ -8034,6 +8034,378 @@ Portail clients</source>
         <source>Responsable</source>
         <target state="translated">担当</target>
       </trans-unit>
+      <trans-unit id="nav.cout-qualite" datatype="html">
+        <source>Coûts de non-qualité</source>
+        <target state="translated">品質コスト</target>
+      </trans-unit>
+      <trans-unit id="coq.eyebrow" datatype="html">
+        <source>Pilotage</source>
+        <target state="translated">管理</target>
+      </trans-unit>
+      <trans-unit id="coq.title" datatype="html">
+        <source>Coûts de non-qualité</source>
+        <target state="translated">品質コスト</target>
+      </trans-unit>
+      <trans-unit id="coq.subtitle" datatype="html">
+        <source>Recensez et pilotez les coûts liés à la qualité selon le modèle PAF (Prévention – Appréciation – Défaillances). Chaque ligne représente une dépense réelle, imputée à sa date.</source>
+        <target state="translated">PAFモデル（予防・評価・失敗）に基づき品質関連コストを記録・管理します。各行は計上日付きの実際の支出です。</target>
+      </trans-unit>
+      <trans-unit id="coq.period-mode" datatype="html">
+        <source>Granularité de la période</source>
+        <target state="translated">期間の単位</target>
+      </trans-unit>
+      <trans-unit id="coq.mode-month" datatype="html">
+        <source>Mois</source>
+        <target state="translated">月</target>
+      </trans-unit>
+      <trans-unit id="coq.mode-year" datatype="html">
+        <source>Année</source>
+        <target state="translated">年</target>
+      </trans-unit>
+      <trans-unit id="coq.period-nav" datatype="html">
+        <source>Changer de période</source>
+        <target state="translated">期間を変更</target>
+      </trans-unit>
+      <trans-unit id="coq.previous" datatype="html">
+        <source>Période précédente</source>
+        <target state="translated">前の期間</target>
+      </trans-unit>
+      <trans-unit id="coq.next" datatype="html">
+        <source>Période suivante</source>
+        <target state="translated">次の期間</target>
+      </trans-unit>
+      <trans-unit id="coq.currency" datatype="html">
+        <source>Devise</source>
+        <target state="translated">通貨</target>
+      </trans-unit>
+      <trans-unit id="coq.load-failed" datatype="html">
+        <source>Le rapport n'a pas pu être chargé.</source>
+        <target state="translated">レポートを読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="coq.error" datatype="html">
+        <source>Le coût de la qualité est indisponible.</source>
+        <target state="translated">品質コストを利用できません。</target>
+      </trans-unit>
+      <trans-unit id="coq.summary" datatype="html">
+        <source>Synthèse</source>
+        <target state="translated">概要</target>
+      </trans-unit>
+      <trans-unit id="coq.total-label" datatype="html">
+        <source>Coût total de non-qualité (CNQ)</source>
+        <target state="translated">不良品質コスト合計（COPQ）</target>
+      </trans-unit>
+      <trans-unit id="coq.conformance-costs" datatype="html">
+        <source>Coûts de conformité (investissement)</source>
+        <target state="translated">適合コスト（投資）</target>
+      </trans-unit>
+      <trans-unit id="coq.non-conformance-costs" datatype="html">
+        <source>Coûts de non-conformité (pertes)</source>
+        <target state="translated">不適合コスト（損失）</target>
+      </trans-unit>
+      <trans-unit id="coq.ratio-sentence" datatype="html">
+        <source>Ratio conformité / non-conformité : <x id="START_TAG_STRONG"/><x id="INTERPOLATION"/><x id="CLOSE_TAG_STRONG"/>. Un CNQ élevé face à un faible investissement en prévention indique un potentiel d'amélioration : chaque euro investi en prévention évite généralement plusieurs euros de défaillance.</source>
+        <target state="translated">適合／不適合比率：<x id="START_TAG_STRONG"/><x id="INTERPOLATION"/><x id="CLOSE_TAG_STRONG"/>。予防への投資が少ないまま不良品質コストが高い場合、改善の余地があります。予防に投じた1ユーロは、通常その数倍の失敗コストを防ぎます。</target>
+      </trans-unit>
+      <trans-unit id="coq.ratio-none" datatype="html">
+        <source>Aucune perte de non-conformité sur la période : le ratio ne se calcule pas.</source>
+        <target state="translated">この期間に不適合損失はありません。比率は算出されません。</target>
+      </trans-unit>
+      <trans-unit id="coq.monthly-chart" datatype="html">
+        <source>Répartition mensuelle</source>
+        <target state="translated">月別内訳</target>
+      </trans-unit>
+      <trans-unit id="coq.monthly-title" datatype="html">
+        <source>Répartition par mois</source>
+        <target state="translated">月ごとの内訳</target>
+      </trans-unit>
+      <trans-unit id="coq.year-read-only" datatype="html">
+        <source>Vue annuelle en lecture seule : chaque libellé y est cumulé sur l'année. La saisie se fait dans le mois concerné.</source>
+        <target state="translated">年間ビューは閲覧専用です。各項目は年間で合算されます。入力は該当する月で行います。</target>
+      </trans-unit>
+      <trans-unit id="coq.conformance-heading" datatype="html">
+        <source>Coûts de conformité</source>
+        <target state="translated">適合コスト</target>
+      </trans-unit>
+      <trans-unit id="coq.conformance-kind" datatype="html">
+        <source>dépenses volontaires</source>
+        <target state="translated">自発的な支出</target>
+      </trans-unit>
+      <trans-unit id="coq.non-conformance-heading" datatype="html">
+        <source>Coûts de non-conformité</source>
+        <target state="translated">不適合コスト</target>
+      </trans-unit>
+      <trans-unit id="coq.non-conformance-kind" datatype="html">
+        <source>pertes subies</source>
+        <target state="translated">被った損失</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.prevention-badge" datatype="html">
+        <source>P</source>
+        <target state="translated">予</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.prevention-title" datatype="html">
+        <source>Coûts de prévention</source>
+        <target state="translated">予防コスト</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.prevention-desc" datatype="html">
+        <source>Dépenses engagées en amont pour empêcher l'apparition de défauts : formation, planification qualité, conception, fiabilisation des processus.</source>
+        <target state="translated">欠陥の発生を防ぐための事前の支出：教育、品質計画、設計、プロセスの信頼性向上。</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.appraisal-badge" datatype="html">
+        <source>A</source>
+        <target state="translated">評</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.appraisal-title" datatype="html">
+        <source>Coûts d'appréciation (détection)</source>
+        <target state="translated">評価コスト（検出）</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.appraisal-desc" datatype="html">
+        <source>Dépenses liées à la vérification de la conformité : contrôles, inspections et essais qui détectent les défauts avant livraison.</source>
+        <target state="translated">適合性の検証に関する支出：出荷前に欠陥を検出する検査・点検・試験。</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.internal-badge" datatype="html">
+        <source>IF</source>
+        <target state="translated">内</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.internal-title" datatype="html">
+        <source>Coûts des anomalies internes</source>
+        <target state="translated">内部失敗コスト</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.internal-desc" datatype="html">
+        <source>Coûts des défauts détectés avant livraison au client : rebuts, retouches, arrêts de production liés à la non-qualité.</source>
+        <target state="translated">顧客への出荷前に検出された欠陥のコスト：スクラップ、手直し、品質不良による生産停止。</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.external-badge" datatype="html">
+        <source>EF</source>
+        <target state="translated">外</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.external-title" datatype="html">
+        <source>Coûts des anomalies externes</source>
+        <target state="translated">外部失敗コスト</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.external-desc" datatype="html">
+        <source>Coûts des défauts découverts après livraison : réclamations, retours, garanties et impact sur la relation client.</source>
+        <target state="translated">出荷後に発見された欠陥のコスト：クレーム、返品、保証、顧客関係への影響。</target>
+      </trans-unit>
+      <trans-unit id="coq.label.prevention-training" datatype="html">
+        <source>Formation qualité du personnel</source>
+        <target state="translated">従業員の品質教育</target>
+      </trans-unit>
+      <trans-unit id="coq.label.prevention-planning" datatype="html">
+        <source>Planification et système qualité</source>
+        <target state="translated">品質計画と品質システム</target>
+      </trans-unit>
+      <trans-unit id="coq.label.prevention-audits" datatype="html">
+        <source>Audits qualité internes</source>
+        <target state="translated">内部品質監査</target>
+      </trans-unit>
+      <trans-unit id="coq.label.prevention-design-review" datatype="html">
+        <source>Revue de conception / AMDEC</source>
+        <target state="translated">設計審査／FMEA</target>
+      </trans-unit>
+      <trans-unit id="coq.label.appraisal-incoming" datatype="html">
+        <source>Contrôle réception matières</source>
+        <target state="translated">受入材料検査</target>
+      </trans-unit>
+      <trans-unit id="coq.label.appraisal-in-process" datatype="html">
+        <source>Inspections en cours de production</source>
+        <target state="translated">工程内検査</target>
+      </trans-unit>
+      <trans-unit id="coq.label.appraisal-testing" datatype="html">
+        <source>Essais et étalonnage</source>
+        <target state="translated">試験と校正</target>
+      </trans-unit>
+      <trans-unit id="coq.label.appraisal-product-audit" datatype="html">
+        <source>Audit produit / process</source>
+        <target state="translated">製品／工程監査</target>
+      </trans-unit>
+      <trans-unit id="coq.label.internal-scrap" datatype="html">
+        <source>Rebuts et mise au rebut</source>
+        <target state="translated">スクラップと廃棄</target>
+      </trans-unit>
+      <trans-unit id="coq.label.internal-rework" datatype="html">
+        <source>Retouches et réparations</source>
+        <target state="translated">手直しと修理</target>
+      </trans-unit>
+      <trans-unit id="coq.label.internal-reinspection" datatype="html">
+        <source>Re-contrôles après retouche</source>
+        <target state="translated">手直し後の再検査</target>
+      </trans-unit>
+      <trans-unit id="coq.label.internal-downtime" datatype="html">
+        <source>Arrêts de production liés aux défauts</source>
+        <target state="translated">欠陥に起因する生産停止</target>
+      </trans-unit>
+      <trans-unit id="coq.label.external-complaints" datatype="html">
+        <source>Réclamations et traitement litiges</source>
+        <target state="translated">クレームと紛争対応</target>
+      </trans-unit>
+      <trans-unit id="coq.label.external-returns" datatype="html">
+        <source>Retours produits et remplacements</source>
+        <target state="translated">製品の返品と交換</target>
+      </trans-unit>
+      <trans-unit id="coq.label.external-warranty" datatype="html">
+        <source>Garanties et interventions terrain</source>
+        <target state="translated">保証と現地対応</target>
+      </trans-unit>
+      <trans-unit id="coq.label.external-penalties" datatype="html">
+        <source>Pénalités contractuelles</source>
+        <target state="translated">契約上の違約金</target>
+      </trans-unit>
+      <trans-unit id="coq.line-lot" datatype="html">
+        <source>lot <x id="INTERPOLATION"/></source>
+        <target state="translated">ロット <x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="coq.line-pieces" datatype="html">
+        <source>pcs</source>
+        <target state="translated">個</target>
+      </trans-unit>
+      <trans-unit id="coq.line-count" datatype="html">
+        <source><x id="INTERPOLATION"/> imputation(s)</source>
+        <target state="translated"><x id="INTERPOLATION"/> 件の計上</target>
+      </trans-unit>
+      <trans-unit id="coq.add-line" datatype="html">
+        <source>Ajouter une ligne</source>
+        <target state="translated">行を追加</target>
+      </trans-unit>
+      <trans-unit id="coq.delete-line" datatype="html">
+        <source>Supprimer la ligne</source>
+        <target state="translated">行を削除</target>
+      </trans-unit>
+      <trans-unit id="coq.delete-title" datatype="html">
+        <source>Supprimer cette ligne ?</source>
+        <target state="translated">この行を削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="coq.delete-message" datatype="html">
+        <source>Le montant sort des totaux de la période. La suppression est tracée dans le journal d'audit.</source>
+        <target state="translated">金額は期間の合計から除外されます。削除は監査ログに記録されます。</target>
+      </trans-unit>
+      <trans-unit id="coq.amount-invalid" datatype="html">
+        <source>Montant invalide : un nombre positif ou nul.</source>
+        <target state="translated">金額が無効です。0以上の数値を入力してください。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.new-title" datatype="html">
+        <source>Nouvelle ligne</source>
+        <target state="translated">新しい行</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.submit" datatype="html">
+        <source>Enregistrer</source>
+        <target state="translated">保存</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.read-only" datatype="html">
+        <source>Consultation seule : la saisie des coûts est réservée aux profils de pilotage qualité.</source>
+        <target state="translated">閲覧のみ：コストの入力は品質管理担当のプロファイルに限られます。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-label" datatype="html">
+        <source>Libellé de la ligne</source>
+        <target state="translated">行の項目</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.new-label-hint" datatype="html">
+        <source>Nouveau libellé : il rejoindra la liste de cette famille.</source>
+        <target state="translated">新しい項目：この区分のリストに追加されます。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.label-required" datatype="html">
+        <source>Le libellé est requis.</source>
+        <target state="translated">項目は必須です。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.new-label-parts" datatype="html">
+        <source>Ce libellé porte sur un contrôle qualité de pièces</source>
+        <target state="translated">この項目は部品の品質検査に関するものです</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-amount" datatype="html">
+        <source>Montant (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">金額（<x id="INTERPOLATION"/>）</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.amount-invalid" datatype="html">
+        <source>Montant requis, positif ou nul.</source>
+        <target state="translated">金額は必須です（0以上）。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-date" datatype="html">
+        <source>Date d'imputation</source>
+        <target state="translated">計上日</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.date-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">カレンダーを開く</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.date-hint" datatype="html">
+        <source>Elle range la ligne dans son mois.</source>
+        <target state="translated">行はこの日付の月に計上されます。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.date-required" datatype="html">
+        <source>La date d'imputation est requise.</source>
+        <target state="translated">計上日は必須です。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-responsible" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">責任者</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.responsible-required" datatype="html">
+        <source>Le responsable est requis.</source>
+        <target state="translated">責任者は必須です。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.parts-legend" datatype="html">
+        <source>Contrôle qualité de pièces</source>
+        <target state="translated">部品の品質検査</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-part-reference" datatype="html">
+        <source>Référence pièce ou produit</source>
+        <target state="translated">部品または製品の品番</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.part-reference-required" datatype="html">
+        <source>La référence est requise.</source>
+        <target state="translated">品番は必須です。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-part-quantity" datatype="html">
+        <source>Nombre de pièces</source>
+        <target state="translated">部品数</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.part-quantity-invalid" datatype="html">
+        <source>Un nombre entier d'au moins 1.</source>
+        <target state="translated">1以上の整数を入力してください。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-lot" datatype="html">
+        <source>Lot</source>
+        <target state="translated">ロット</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.lot-required" datatype="html">
+        <source>Le lot est requis.</source>
+        <target state="translated">ロットは必須です。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-received" datatype="html">
+        <source>Date de réception ou fabrication</source>
+        <target state="translated">受入日または製造日</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.received-required" datatype="html">
+        <source>Cette date est requise.</source>
+        <target state="translated">この日付は必須です。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-comment" datatype="html">
+        <source>Commentaire (facultatif)</source>
+        <target state="translated">コメント（任意）</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.required-legend" datatype="html">
+        <source>* champ obligatoire</source>
+        <target state="translated">* 必須項目</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.blocked-label" datatype="html">
+        <source>Choisissez ou saisissez un libellé.</source>
+        <target state="translated">項目を選択または入力してください。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.blocked-amount" datatype="html">
+        <source>Indiquez un montant positif ou nul.</source>
+        <target state="translated">0以上の金額を入力してください。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.blocked-responsible" datatype="html">
+        <source>Indiquez le responsable.</source>
+        <target state="translated">責任者を入力してください。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.blocked-date" datatype="html">
+        <source>Indiquez la date d'imputation.</source>
+        <target state="translated">計上日を入力してください。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.blocked-parts" datatype="html">
+        <source>Un contrôle de pièces exige la référence, le nombre de pièces, le lot et la date de réception ou de fabrication.</source>
+        <target state="translated">部品検査には、品番、部品数、ロット、受入日または製造日が必要です。</target>
+      </trans-unit>
       <trans-unit id="dbb.editor.back" datatype="html">
         <source>Retour à la liste</source>
         <target state="translated">一覧に戻る</target>

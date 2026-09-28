@@ -8034,6 +8034,378 @@ Portal de clientes</target>
         <source>Responsable</source>
         <target state="translated">Responsable</target>
       </trans-unit>
+      <trans-unit id="nav.cout-qualite" datatype="html">
+        <source>Coûts de non-qualité</source>
+        <target state="translated">Costes de la no calidad</target>
+      </trans-unit>
+      <trans-unit id="coq.eyebrow" datatype="html">
+        <source>Pilotage</source>
+        <target state="translated">Pilotaje</target>
+      </trans-unit>
+      <trans-unit id="coq.title" datatype="html">
+        <source>Coûts de non-qualité</source>
+        <target state="translated">Costes de la no calidad</target>
+      </trans-unit>
+      <trans-unit id="coq.subtitle" datatype="html">
+        <source>Recensez et pilotez les coûts liés à la qualité selon le modèle PAF (Prévention – Appréciation – Défaillances). Chaque ligne représente une dépense réelle, imputée à sa date.</source>
+        <target state="translated">Registre y gestione los costes relacionados con la calidad según el modelo PAF (Prevención – Evaluación – Fallos). Cada línea es un gasto real, imputado en su fecha.</target>
+      </trans-unit>
+      <trans-unit id="coq.period-mode" datatype="html">
+        <source>Granularité de la période</source>
+        <target state="translated">Granularidad del periodo</target>
+      </trans-unit>
+      <trans-unit id="coq.mode-month" datatype="html">
+        <source>Mois</source>
+        <target state="translated">Mes</target>
+      </trans-unit>
+      <trans-unit id="coq.mode-year" datatype="html">
+        <source>Année</source>
+        <target state="translated">Año</target>
+      </trans-unit>
+      <trans-unit id="coq.period-nav" datatype="html">
+        <source>Changer de période</source>
+        <target state="translated">Cambiar de periodo</target>
+      </trans-unit>
+      <trans-unit id="coq.previous" datatype="html">
+        <source>Période précédente</source>
+        <target state="translated">Periodo anterior</target>
+      </trans-unit>
+      <trans-unit id="coq.next" datatype="html">
+        <source>Période suivante</source>
+        <target state="translated">Periodo siguiente</target>
+      </trans-unit>
+      <trans-unit id="coq.currency" datatype="html">
+        <source>Devise</source>
+        <target state="translated">Moneda</target>
+      </trans-unit>
+      <trans-unit id="coq.load-failed" datatype="html">
+        <source>Le rapport n'a pas pu être chargé.</source>
+        <target state="translated">No se pudo cargar el informe.</target>
+      </trans-unit>
+      <trans-unit id="coq.error" datatype="html">
+        <source>Le coût de la qualité est indisponible.</source>
+        <target state="translated">El coste de la calidad no está disponible.</target>
+      </trans-unit>
+      <trans-unit id="coq.summary" datatype="html">
+        <source>Synthèse</source>
+        <target state="translated">Resumen</target>
+      </trans-unit>
+      <trans-unit id="coq.total-label" datatype="html">
+        <source>Coût total de non-qualité (CNQ)</source>
+        <target state="translated">Coste total de la no calidad (CNC)</target>
+      </trans-unit>
+      <trans-unit id="coq.conformance-costs" datatype="html">
+        <source>Coûts de conformité (investissement)</source>
+        <target state="translated">Costes de conformidad (inversión)</target>
+      </trans-unit>
+      <trans-unit id="coq.non-conformance-costs" datatype="html">
+        <source>Coûts de non-conformité (pertes)</source>
+        <target state="translated">Costes de no conformidad (pérdidas)</target>
+      </trans-unit>
+      <trans-unit id="coq.ratio-sentence" datatype="html">
+        <source>Ratio conformité / non-conformité : <x id="START_TAG_STRONG"/><x id="INTERPOLATION"/><x id="CLOSE_TAG_STRONG"/>. Un CNQ élevé face à un faible investissement en prévention indique un potentiel d'amélioration : chaque euro investi en prévention évite généralement plusieurs euros de défaillance.</source>
+        <target state="translated">Ratio conformidad / no conformidad: <x id="START_TAG_STRONG"/><x id="INTERPOLATION"/><x id="CLOSE_TAG_STRONG"/>. Un coste de no calidad elevado frente a una baja inversión en prevención indica un potencial de mejora: cada euro invertido en prevención suele evitar varios euros de fallos.</target>
+      </trans-unit>
+      <trans-unit id="coq.ratio-none" datatype="html">
+        <source>Aucune perte de non-conformité sur la période : le ratio ne se calcule pas.</source>
+        <target state="translated">Ninguna pérdida por no conformidad en el periodo: el ratio no se calcula.</target>
+      </trans-unit>
+      <trans-unit id="coq.monthly-chart" datatype="html">
+        <source>Répartition mensuelle</source>
+        <target state="translated">Desglose mensual</target>
+      </trans-unit>
+      <trans-unit id="coq.monthly-title" datatype="html">
+        <source>Répartition par mois</source>
+        <target state="translated">Desglose por mes</target>
+      </trans-unit>
+      <trans-unit id="coq.year-read-only" datatype="html">
+        <source>Vue annuelle en lecture seule : chaque libellé y est cumulé sur l'année. La saisie se fait dans le mois concerné.</source>
+        <target state="translated">Vista anual de solo lectura: cada concepto se acumula en el año. La introducción se hace en el mes correspondiente.</target>
+      </trans-unit>
+      <trans-unit id="coq.conformance-heading" datatype="html">
+        <source>Coûts de conformité</source>
+        <target state="translated">Costes de conformidad</target>
+      </trans-unit>
+      <trans-unit id="coq.conformance-kind" datatype="html">
+        <source>dépenses volontaires</source>
+        <target state="translated">gastos voluntarios</target>
+      </trans-unit>
+      <trans-unit id="coq.non-conformance-heading" datatype="html">
+        <source>Coûts de non-conformité</source>
+        <target state="translated">Costes de no conformidad</target>
+      </trans-unit>
+      <trans-unit id="coq.non-conformance-kind" datatype="html">
+        <source>pertes subies</source>
+        <target state="translated">pérdidas sufridas</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.prevention-badge" datatype="html">
+        <source>P</source>
+        <target state="translated">P</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.prevention-title" datatype="html">
+        <source>Coûts de prévention</source>
+        <target state="translated">Costes de prevención</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.prevention-desc" datatype="html">
+        <source>Dépenses engagées en amont pour empêcher l'apparition de défauts : formation, planification qualité, conception, fiabilisation des processus.</source>
+        <target state="translated">Gastos realizados de antemano para impedir la aparición de defectos: formación, planificación de la calidad, diseño, fiabilización de los procesos.</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.appraisal-badge" datatype="html">
+        <source>A</source>
+        <target state="translated">E</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.appraisal-title" datatype="html">
+        <source>Coûts d'appréciation (détection)</source>
+        <target state="translated">Costes de evaluación (detección)</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.appraisal-desc" datatype="html">
+        <source>Dépenses liées à la vérification de la conformité : contrôles, inspections et essais qui détectent les défauts avant livraison.</source>
+        <target state="translated">Gastos ligados a la verificación de la conformidad: controles, inspecciones y ensayos que detectan los defectos antes de la entrega.</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.internal-badge" datatype="html">
+        <source>IF</source>
+        <target state="translated">FI</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.internal-title" datatype="html">
+        <source>Coûts des anomalies internes</source>
+        <target state="translated">Costes de fallos internos</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.internal-desc" datatype="html">
+        <source>Coûts des défauts détectés avant livraison au client : rebuts, retouches, arrêts de production liés à la non-qualité.</source>
+        <target state="translated">Costes de los defectos detectados antes de la entrega al cliente: desechos, retoques, paradas de producción debidas a la no calidad.</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.external-badge" datatype="html">
+        <source>EF</source>
+        <target state="translated">FE</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.external-title" datatype="html">
+        <source>Coûts des anomalies externes</source>
+        <target state="translated">Costes de fallos externos</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.external-desc" datatype="html">
+        <source>Coûts des défauts découverts après livraison : réclamations, retours, garanties et impact sur la relation client.</source>
+        <target state="translated">Costes de los defectos descubiertos tras la entrega: reclamaciones, devoluciones, garantías e impacto en la relación con el cliente.</target>
+      </trans-unit>
+      <trans-unit id="coq.label.prevention-training" datatype="html">
+        <source>Formation qualité du personnel</source>
+        <target state="translated">Formación en calidad del personal</target>
+      </trans-unit>
+      <trans-unit id="coq.label.prevention-planning" datatype="html">
+        <source>Planification et système qualité</source>
+        <target state="translated">Planificación y sistema de calidad</target>
+      </trans-unit>
+      <trans-unit id="coq.label.prevention-audits" datatype="html">
+        <source>Audits qualité internes</source>
+        <target state="translated">Auditorías de calidad internas</target>
+      </trans-unit>
+      <trans-unit id="coq.label.prevention-design-review" datatype="html">
+        <source>Revue de conception / AMDEC</source>
+        <target state="translated">Revisión de diseño / AMFE</target>
+      </trans-unit>
+      <trans-unit id="coq.label.appraisal-incoming" datatype="html">
+        <source>Contrôle réception matières</source>
+        <target state="translated">Control de recepción de materiales</target>
+      </trans-unit>
+      <trans-unit id="coq.label.appraisal-in-process" datatype="html">
+        <source>Inspections en cours de production</source>
+        <target state="translated">Inspecciones durante la producción</target>
+      </trans-unit>
+      <trans-unit id="coq.label.appraisal-testing" datatype="html">
+        <source>Essais et étalonnage</source>
+        <target state="translated">Ensayos y calibración</target>
+      </trans-unit>
+      <trans-unit id="coq.label.appraisal-product-audit" datatype="html">
+        <source>Audit produit / process</source>
+        <target state="translated">Auditoría de producto / proceso</target>
+      </trans-unit>
+      <trans-unit id="coq.label.internal-scrap" datatype="html">
+        <source>Rebuts et mise au rebut</source>
+        <target state="translated">Desechos y eliminación</target>
+      </trans-unit>
+      <trans-unit id="coq.label.internal-rework" datatype="html">
+        <source>Retouches et réparations</source>
+        <target state="translated">Retoques y reparaciones</target>
+      </trans-unit>
+      <trans-unit id="coq.label.internal-reinspection" datatype="html">
+        <source>Re-contrôles après retouche</source>
+        <target state="translated">Recontroles tras retoque</target>
+      </trans-unit>
+      <trans-unit id="coq.label.internal-downtime" datatype="html">
+        <source>Arrêts de production liés aux défauts</source>
+        <target state="translated">Paradas de producción por defectos</target>
+      </trans-unit>
+      <trans-unit id="coq.label.external-complaints" datatype="html">
+        <source>Réclamations et traitement litiges</source>
+        <target state="translated">Reclamaciones y gestión de litigios</target>
+      </trans-unit>
+      <trans-unit id="coq.label.external-returns" datatype="html">
+        <source>Retours produits et remplacements</source>
+        <target state="translated">Devoluciones y sustituciones de productos</target>
+      </trans-unit>
+      <trans-unit id="coq.label.external-warranty" datatype="html">
+        <source>Garanties et interventions terrain</source>
+        <target state="translated">Garantías e intervenciones en campo</target>
+      </trans-unit>
+      <trans-unit id="coq.label.external-penalties" datatype="html">
+        <source>Pénalités contractuelles</source>
+        <target state="translated">Penalizaciones contractuales</target>
+      </trans-unit>
+      <trans-unit id="coq.line-lot" datatype="html">
+        <source>lot <x id="INTERPOLATION"/></source>
+        <target state="translated">lote <x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="coq.line-pieces" datatype="html">
+        <source>pcs</source>
+        <target state="translated">uds</target>
+      </trans-unit>
+      <trans-unit id="coq.line-count" datatype="html">
+        <source><x id="INTERPOLATION"/> imputation(s)</source>
+        <target state="translated"><x id="INTERPOLATION"/> imputación(es)</target>
+      </trans-unit>
+      <trans-unit id="coq.add-line" datatype="html">
+        <source>Ajouter une ligne</source>
+        <target state="translated">Añadir una línea</target>
+      </trans-unit>
+      <trans-unit id="coq.delete-line" datatype="html">
+        <source>Supprimer la ligne</source>
+        <target state="translated">Eliminar la línea</target>
+      </trans-unit>
+      <trans-unit id="coq.delete-title" datatype="html">
+        <source>Supprimer cette ligne ?</source>
+        <target state="translated">¿Eliminar esta línea?</target>
+      </trans-unit>
+      <trans-unit id="coq.delete-message" datatype="html">
+        <source>Le montant sort des totaux de la période. La suppression est tracée dans le journal d'audit.</source>
+        <target state="translated">El importe sale de los totales del periodo. La eliminación queda registrada en el registro de auditoría.</target>
+      </trans-unit>
+      <trans-unit id="coq.amount-invalid" datatype="html">
+        <source>Montant invalide : un nombre positif ou nul.</source>
+        <target state="translated">Importe no válido: un número positivo o cero.</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.new-title" datatype="html">
+        <source>Nouvelle ligne</source>
+        <target state="translated">Nueva línea</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.submit" datatype="html">
+        <source>Enregistrer</source>
+        <target state="translated">Guardar</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.read-only" datatype="html">
+        <source>Consultation seule : la saisie des coûts est réservée aux profils de pilotage qualité.</source>
+        <target state="translated">Solo consulta: la introducción de costes está reservada a los perfiles de gestión de la calidad.</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-label" datatype="html">
+        <source>Libellé de la ligne</source>
+        <target state="translated">Concepto de la línea</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.new-label-hint" datatype="html">
+        <source>Nouveau libellé : il rejoindra la liste de cette famille.</source>
+        <target state="translated">Concepto nuevo: se añadirá a la lista de esta familia.</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.label-required" datatype="html">
+        <source>Le libellé est requis.</source>
+        <target state="translated">El concepto es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.new-label-parts" datatype="html">
+        <source>Ce libellé porte sur un contrôle qualité de pièces</source>
+        <target state="translated">Este concepto corresponde a un control de calidad de piezas</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-amount" datatype="html">
+        <source>Montant (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">Importe (<x id="INTERPOLATION"/>)</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.amount-invalid" datatype="html">
+        <source>Montant requis, positif ou nul.</source>
+        <target state="translated">Importe obligatorio, positivo o cero.</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-date" datatype="html">
+        <source>Date d'imputation</source>
+        <target state="translated">Fecha de imputación</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.date-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">Abrir el calendario</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.date-hint" datatype="html">
+        <source>Elle range la ligne dans son mois.</source>
+        <target state="translated">Sitúa la línea en su mes.</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.date-required" datatype="html">
+        <source>La date d'imputation est requise.</source>
+        <target state="translated">La fecha de imputación es obligatoria.</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-responsible" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">Responsable</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.responsible-required" datatype="html">
+        <source>Le responsable est requis.</source>
+        <target state="translated">El responsable es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.parts-legend" datatype="html">
+        <source>Contrôle qualité de pièces</source>
+        <target state="translated">Control de calidad de piezas</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-part-reference" datatype="html">
+        <source>Référence pièce ou produit</source>
+        <target state="translated">Referencia de pieza o producto</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.part-reference-required" datatype="html">
+        <source>La référence est requise.</source>
+        <target state="translated">La referencia es obligatoria.</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-part-quantity" datatype="html">
+        <source>Nombre de pièces</source>
+        <target state="translated">Número de piezas</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.part-quantity-invalid" datatype="html">
+        <source>Un nombre entier d'au moins 1.</source>
+        <target state="translated">Un número entero de al menos 1.</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-lot" datatype="html">
+        <source>Lot</source>
+        <target state="translated">Lote</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.lot-required" datatype="html">
+        <source>Le lot est requis.</source>
+        <target state="translated">El lote es obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-received" datatype="html">
+        <source>Date de réception ou fabrication</source>
+        <target state="translated">Fecha de recepción o fabricación</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.received-required" datatype="html">
+        <source>Cette date est requise.</source>
+        <target state="translated">Esta fecha es obligatoria.</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-comment" datatype="html">
+        <source>Commentaire (facultatif)</source>
+        <target state="translated">Comentario (opcional)</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.required-legend" datatype="html">
+        <source>* champ obligatoire</source>
+        <target state="translated">* campo obligatorio</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.blocked-label" datatype="html">
+        <source>Choisissez ou saisissez un libellé.</source>
+        <target state="translated">Elija o escriba un concepto.</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.blocked-amount" datatype="html">
+        <source>Indiquez un montant positif ou nul.</source>
+        <target state="translated">Indique un importe positivo o cero.</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.blocked-responsible" datatype="html">
+        <source>Indiquez le responsable.</source>
+        <target state="translated">Indique el responsable.</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.blocked-date" datatype="html">
+        <source>Indiquez la date d'imputation.</source>
+        <target state="translated">Indique la fecha de imputación.</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.blocked-parts" datatype="html">
+        <source>Un contrôle de pièces exige la référence, le nombre de pièces, le lot et la date de réception ou de fabrication.</source>
+        <target state="translated">Un control de piezas exige la referencia, el número de piezas, el lote y la fecha de recepción o fabricación.</target>
+      </trans-unit>
       <trans-unit id="dbb.editor.back" datatype="html">
         <source>Retour à la liste</source>
         <target state="translated">Volver a la lista</target>

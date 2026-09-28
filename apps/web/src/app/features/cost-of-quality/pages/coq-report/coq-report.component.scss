@@ -1,0 +1,412 @@
+// Le coût de la qualité : la mise en page de la maquette (docs/quality.png),
+// traduite dans les jetons du design system pour suivre les thèmes clair et
+// sombre. Conformité en couleur d'accent, pertes en couleur de danger.
+
+:host {
+  display: block;
+}
+
+// ---------- période ----------
+
+.barre-periode {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-4);
+  margin-bottom: var(--qos-space-4);
+}
+
+.navigation {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--qos-space-1);
+
+  &__periode {
+    min-width: 11rem;
+    text-align: center;
+    font-weight: var(--qos-fw-semibold);
+    text-transform: capitalize;
+  }
+}
+
+.devise {
+  width: 8rem;
+  margin-left: auto;
+}
+
+.echec {
+  color: var(--qos-danger-fg);
+}
+
+// ---------- synthèse ----------
+
+.synthese {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: var(--qos-space-4);
+  margin: var(--qos-space-4) 0 var(--qos-space-6);
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+
+  &__total {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--qos-space-2);
+    padding: var(--qos-space-6);
+    border-radius: var(--qos-radius-lg);
+    background: var(--qos-fg-primary);
+    color: var(--qos-fg-inverse);
+    box-shadow: var(--qos-shadow-sm);
+  }
+
+  &__intitule {
+    font-size: var(--qos-fs-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.75;
+  }
+
+  &__montant {
+    font-size: var(--qos-fs-4xl);
+    font-weight: var(--qos-fw-bold);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--qos-lh-snug);
+  }
+
+  &__repartition {
+    display: flex;
+    flex-direction: column;
+    gap: var(--qos-space-3);
+    padding: var(--qos-space-5);
+    border: 1px solid var(--qos-border-subtle);
+    border-radius: var(--qos-radius-lg);
+    background: var(--qos-bg-elevated);
+  }
+
+  &__ratio {
+    margin: 0;
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-secondary);
+    line-height: var(--qos-lh-normal);
+  }
+}
+
+.jauge {
+  &__ligne {
+    display: flex;
+    align-items: center;
+    gap: var(--qos-space-2);
+    font-size: var(--qos-fs-sm);
+  }
+
+  &__nom {
+    flex: 1;
+    color: var(--qos-fg-secondary);
+  }
+
+  &__valeur {
+    font-weight: var(--qos-fw-semibold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__piste {
+    height: 6px;
+    margin-top: var(--qos-space-1);
+    border-radius: var(--qos-radius-pill);
+    background: var(--qos-bg-sunken);
+    overflow: hidden;
+  }
+
+  &__barre {
+    height: 100%;
+    border-radius: inherit;
+    transition: width var(--qos-motion-base);
+
+    &--conformite { background: var(--qos-accent-bg); }
+    &--non-conformite { background: var(--qos-danger-fg); }
+  }
+}
+
+.pastille {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+
+  &--conformite { background: var(--qos-accent-bg); }
+  &--non-conformite { background: var(--qos-danger-fg); }
+}
+
+// ---------- histogramme (vue année) ----------
+
+.histogramme {
+  margin-bottom: var(--qos-space-6);
+  padding: var(--qos-space-5);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+
+  &__titre {
+    margin: 0 0 var(--qos-space-4);
+    font-size: var(--qos-fs-sm);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-secondary);
+  }
+
+  &__mois {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--qos-space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__colonne {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--qos-space-1);
+  }
+
+  &__pile {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    width: 100%;
+    max-width: 2.25rem;
+    height: 8rem;
+  }
+
+  &__barre {
+    width: 100%;
+    transition: height var(--qos-motion-base);
+
+    &--conformite { background: var(--qos-accent-bg); border-radius: 0 0 2px 2px; }
+    &--non-conformite { background: var(--qos-danger-fg); border-radius: 2px 2px 0 0; }
+  }
+
+  &__etiquette {
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-tertiary);
+    text-transform: capitalize;
+  }
+}
+
+// ---------- les deux moitiés ----------
+
+.colonnes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--qos-space-6);
+
+  @media (max-width: 1100px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.colonne {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-4);
+
+  // Le pointillé de la maquette, qui sépare ce qu'on choisit de dépenser de ce
+  // qu'on subit.
+  &--pertes {
+    padding-left: var(--qos-space-6);
+    border-left: 2px dotted var(--qos-danger-fg);
+
+    @media (max-width: 1100px) {
+      padding-left: 0;
+      padding-top: var(--qos-space-4);
+      border-left: 0;
+      border-top: 2px dotted var(--qos-danger-fg);
+    }
+  }
+
+  &__entete {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+
+    h2 {
+      margin: 0;
+      font-size: var(--qos-fs-md);
+      font-weight: var(--qos-fw-semibold);
+    }
+
+    span {
+      font-size: var(--qos-fs-xs);
+      color: var(--qos-fg-tertiary);
+    }
+  }
+}
+
+// ---------- un bloc ----------
+
+.bloc {
+  padding: var(--qos-space-5);
+  border: 1px solid var(--qos-border-subtle);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  box-shadow: var(--qos-shadow-xs);
+
+  &__entete {
+    display: flex;
+    gap: var(--qos-space-3);
+    margin-bottom: var(--qos-space-4);
+  }
+
+  &__badge {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.75rem;
+    height: 1.75rem;
+    padding: 0 var(--qos-space-1);
+    border-radius: var(--qos-radius-sm);
+    background: var(--qos-success-bg-soft);
+    color: var(--qos-success-fg);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-bold);
+
+    &--perte {
+      background: var(--qos-danger-bg-soft);
+      color: var(--qos-danger-fg);
+    }
+  }
+
+  &__titre {
+    margin: 0;
+    font-size: var(--qos-fs-base);
+    font-weight: var(--qos-fw-semibold);
+  }
+
+  &__description {
+    margin: var(--qos-space-1) 0 0;
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-tertiary);
+    line-height: var(--qos-lh-normal);
+  }
+
+  &__lignes {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__pied {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--qos-space-3);
+    margin-top: var(--qos-space-3);
+    padding-top: var(--qos-space-3);
+    border-top: 1px solid var(--qos-border-subtle);
+  }
+
+  &__total {
+    margin-left: auto;
+    font-weight: var(--qos-fw-bold);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+// ---------- une ligne ----------
+
+.ligne {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 7.5rem 2.5rem;
+  align-items: center;
+  gap: var(--qos-space-2);
+  padding: var(--qos-space-1) 0;
+  border-bottom: 1px solid var(--qos-border-subtle);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  &__libelle {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    min-width: 0;
+    padding: var(--qos-space-2) var(--qos-space-2);
+    margin-left: calc(-1 * var(--qos-space-2));
+    border: 0;
+    border-radius: var(--qos-radius-sm);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background var(--qos-motion-fast);
+
+    &:hover:not(:disabled) {
+      background: var(--qos-bg-hover);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--qos-ring-focus);
+    }
+
+    &:disabled {
+      cursor: default;
+    }
+  }
+
+  &__nom {
+    font-size: var(--qos-fs-sm);
+    overflow-wrap: anywhere;
+  }
+
+  &__meta {
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-tertiary);
+  }
+
+  &__montant {
+    width: 100%;
+    box-sizing: border-box;
+    padding: var(--qos-space-2) var(--qos-space-3);
+    border: 1px solid transparent;
+    border-radius: var(--qos-radius-sm);
+    background: var(--qos-bg-subtle);
+    font: inherit;
+    font-size: var(--qos-fs-sm);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    color: var(--qos-fg-primary);
+
+    &--saisie {
+      border-color: var(--qos-border-default);
+      background: var(--qos-bg-elevated);
+
+      &:focus {
+        outline: none;
+        border-color: var(--qos-border-focus);
+        box-shadow: var(--qos-ring-focus);
+      }
+    }
+  }
+
+  &--vide &__nom,
+  &--vide &__montant {
+    color: var(--qos-fg-tertiary);
+  }
+
+  &__supprimer {
+    color: var(--qos-fg-tertiary);
+  }
+}
+
+.pied {
+  margin-top: var(--qos-space-6);
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-tertiary);
+}

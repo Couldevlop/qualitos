@@ -160,6 +160,8 @@ import com.openlab.qualitos.quality.apqp.ApqpDeliverableValidationException;
 import com.openlab.qualitos.quality.apqp.ApqpPhaseNotFoundException;
 import com.openlab.qualitos.quality.apqp.ApqpProjectNotFoundException;
 import com.openlab.qualitos.quality.apqp.ApqpReorderException;
+import com.openlab.qualitos.quality.costofquality.domain.CoqNotFoundException;
+import com.openlab.qualitos.quality.costofquality.domain.CoqValidationException;
 import com.openlab.qualitos.quality.ideas.domain.IdeaNotFoundException;
 import com.openlab.qualitos.quality.ideas.domain.IdeaStateException;
 import com.openlab.qualitos.quality.ideas.domain.VoteClosedException;
@@ -499,6 +501,31 @@ public class GlobalExceptionHandler {
                 HttpStatus.PAYLOAD_TOO_LARGE, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/apqp-evidence-too-large"));
         problem.setTitle("APQP Evidence Too Large");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(CoqNotFoundException.class)
+    public ProblemDetail handleCoqNotFound(CoqNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/coq-not-found"));
+        problem.setTitle("Cost Of Quality Item Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * 422 : la ligne est bien formée mais incomplète au regard de son libellé
+     * (un contrôle de pièces sans lot, par exemple). {@code field} dit lequel,
+     * pour que l'écran l'accroche au bon contrôle.
+     */
+    @ExceptionHandler(CoqValidationException.class)
+    public ProblemDetail handleCoqValidation(CoqValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/coq-invalid"));
+        problem.setTitle("Invalid Cost Of Quality Line");
+        problem.setProperty("field", ex.getField());
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

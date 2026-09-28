@@ -100,7 +100,11 @@ export class MainShellComponent implements OnInit, OnDestroy {
         { label: $localize`:@@nav.tableau-de-bord:Tableau de bord`, route: '/dashboard',         icon: 'dashboard' },
         { label: $localize`:@@nav.mes-dashboards:Mes dashboards`,   route: '/dashboard-builder', icon: 'dashboard_customize' },
         { label: $localize`:@@nav.tv-mode:Mode TV / Salle qualité`, route: '/tv',                icon: 'tv' },
-        { label: $localize`:@@nav.indicateurs-kpi:Indicateurs (KPI)`, route: '/kpis',            icon: 'monitoring', module: 'kpi' }
+        { label: $localize`:@@nav.indicateurs-kpi:Indicateurs (KPI)`, route: '/kpis',            icon: 'monitoring', module: 'kpi' },
+        // Pas d'attribut `module` : le coût de la qualité n'a pas encore d'entrée
+        // au catalogue des modules activables. Lecture ouverte à tous, saisie
+        // réservée au pilotage qualité -- c'est le serveur qui tranche.
+        { label: $localize`:@@nav.cout-qualite:Coûts de non-qualité`, route: '/cout-qualite', icon: 'savings' }
       ]
     },
     {

@@ -75,8 +75,10 @@
              provider BCJSSE — cf. §11.4 « TLS hybride X25519 + ML-KEM-768 ». Les
              versions 1.79/1.80 n'exposent que des ML-KEM purs (pas d'hybride X25519).
              1.84 : corrige CVE-2026-5598 (fuite de clé privée via comparaisons non
-             constant-time) — critique pour nos signatures ML-DSA. -->
-        <bouncycastle.version>1.84</bouncycastle.version>
+             constant-time) — critique pour nos signatures ML-DSA.
+             1.86 : corrige CVE-2026-8763 (CRITICAL) et CVE-2026-13506 (HIGH, déni
+             de service), publiées sur 1.84 et bloquantes au scan SCA. -->
+        <bouncycastle.version>1.86</bouncycastle.version>
         <!-- Boot 3.5.16 gère pgjdbc 42.7.11 — CVE-2026-54291 (client SCAM embarqué
              par le pilote) corrigée en 42.7.12 ; on prend le dernier patch de la
              ligne 42.7.x. À retirer quand Boot rattrape. -->
