@@ -142,7 +142,9 @@ describe('MainShellComponent (navigation model)', () => {
     // ne dépend pas de l'activation du module Cercle.
     // Non-conformite passe de 2 a 4 et Operations de 11 a 9 : CAPA et
     // Efficacite CAPA rejoignent le groupe de l'ecart qu'elles traitent.
-    expect(labels).toEqual([5, 6, 8, 1, 4, 9, 11, 1, 7]);
+    // Pilotage passe a 6 : + Couts de non-qualite, sans attribut `module`
+    // (pas encore d'entree au catalogue des modules activables).
+    expect(labels).toEqual([6, 6, 8, 1, 4, 9, 11, 1, 7]);
   });
 
   it('collapses the entire GRC mass into a single /compliance entry', () => {

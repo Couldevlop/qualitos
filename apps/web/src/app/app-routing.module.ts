@@ -39,6 +39,11 @@ const routes: Routes = [
         loadChildren: () => import('./features/apqp/apqp.module').then(m => m.ApqpModule)
       },
       {
+        path: 'cout-qualite',
+        loadChildren: () => import('./features/cost-of-quality/cost-of-quality.module')
+          .then(m => m.CostOfQualityModule)
+      },
+      {
         path: 'idees',
         loadChildren: () => import('./features/ideas/ideas.module').then(m => m.IdeasModule)
       },

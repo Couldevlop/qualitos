@@ -8034,6 +8034,378 @@ Portail clients</source>
         <source>Responsable</source>
         <target state="translated">责任人</target>
       </trans-unit>
+      <trans-unit id="nav.cout-qualite" datatype="html">
+        <source>Coûts de non-qualité</source>
+        <target state="translated">质量成本</target>
+      </trans-unit>
+      <trans-unit id="coq.eyebrow" datatype="html">
+        <source>Pilotage</source>
+        <target state="translated">管控</target>
+      </trans-unit>
+      <trans-unit id="coq.title" datatype="html">
+        <source>Coûts de non-qualité</source>
+        <target state="translated">质量成本</target>
+      </trans-unit>
+      <trans-unit id="coq.subtitle" datatype="html">
+        <source>Recensez et pilotez les coûts liés à la qualité selon le modèle PAF (Prévention – Appréciation – Défaillances). Chaque ligne représente une dépense réelle, imputée à sa date.</source>
+        <target state="translated">按 PAF 模型（预防—鉴定—失败）记录和管理与质量相关的成本。每一行都是按其日期入账的实际支出。</target>
+      </trans-unit>
+      <trans-unit id="coq.period-mode" datatype="html">
+        <source>Granularité de la période</source>
+        <target state="translated">期间粒度</target>
+      </trans-unit>
+      <trans-unit id="coq.mode-month" datatype="html">
+        <source>Mois</source>
+        <target state="translated">月</target>
+      </trans-unit>
+      <trans-unit id="coq.mode-year" datatype="html">
+        <source>Année</source>
+        <target state="translated">年</target>
+      </trans-unit>
+      <trans-unit id="coq.period-nav" datatype="html">
+        <source>Changer de période</source>
+        <target state="translated">切换期间</target>
+      </trans-unit>
+      <trans-unit id="coq.previous" datatype="html">
+        <source>Période précédente</source>
+        <target state="translated">上一期间</target>
+      </trans-unit>
+      <trans-unit id="coq.next" datatype="html">
+        <source>Période suivante</source>
+        <target state="translated">下一期间</target>
+      </trans-unit>
+      <trans-unit id="coq.currency" datatype="html">
+        <source>Devise</source>
+        <target state="translated">货币</target>
+      </trans-unit>
+      <trans-unit id="coq.load-failed" datatype="html">
+        <source>Le rapport n'a pas pu être chargé.</source>
+        <target state="translated">无法加载报告。</target>
+      </trans-unit>
+      <trans-unit id="coq.error" datatype="html">
+        <source>Le coût de la qualité est indisponible.</source>
+        <target state="translated">质量成本暂不可用。</target>
+      </trans-unit>
+      <trans-unit id="coq.summary" datatype="html">
+        <source>Synthèse</source>
+        <target state="translated">概览</target>
+      </trans-unit>
+      <trans-unit id="coq.total-label" datatype="html">
+        <source>Coût total de non-qualité (CNQ)</source>
+        <target state="translated">劣质成本总额（COPQ）</target>
+      </trans-unit>
+      <trans-unit id="coq.conformance-costs" datatype="html">
+        <source>Coûts de conformité (investissement)</source>
+        <target state="translated">符合性成本（投入）</target>
+      </trans-unit>
+      <trans-unit id="coq.non-conformance-costs" datatype="html">
+        <source>Coûts de non-conformité (pertes)</source>
+        <target state="translated">不符合成本（损失）</target>
+      </trans-unit>
+      <trans-unit id="coq.ratio-sentence" datatype="html">
+        <source>Ratio conformité / non-conformité : <x id="START_TAG_STRONG"/><x id="INTERPOLATION"/><x id="CLOSE_TAG_STRONG"/>. Un CNQ élevé face à un faible investissement en prévention indique un potentiel d'amélioration : chaque euro investi en prévention évite généralement plusieurs euros de défaillance.</source>
+        <target state="translated">符合 / 不符合比率：<x id="START_TAG_STRONG"/><x id="INTERPOLATION"/><x id="CLOSE_TAG_STRONG"/>。劣质成本高而预防投入低，说明存在改进空间：在预防上每投入一欧元，通常可避免数欧元的失败损失。</target>
+      </trans-unit>
+      <trans-unit id="coq.ratio-none" datatype="html">
+        <source>Aucune perte de non-conformité sur la période : le ratio ne se calcule pas.</source>
+        <target state="translated">本期间无不符合损失：无法计算比率。</target>
+      </trans-unit>
+      <trans-unit id="coq.monthly-chart" datatype="html">
+        <source>Répartition mensuelle</source>
+        <target state="translated">按月分布</target>
+      </trans-unit>
+      <trans-unit id="coq.monthly-title" datatype="html">
+        <source>Répartition par mois</source>
+        <target state="translated">逐月分布</target>
+      </trans-unit>
+      <trans-unit id="coq.year-read-only" datatype="html">
+        <source>Vue annuelle en lecture seule : chaque libellé y est cumulé sur l'année. La saisie se fait dans le mois concerné.</source>
+        <target state="translated">年度视图为只读：每个科目按全年累计。请在对应月份中录入。</target>
+      </trans-unit>
+      <trans-unit id="coq.conformance-heading" datatype="html">
+        <source>Coûts de conformité</source>
+        <target state="translated">符合性成本</target>
+      </trans-unit>
+      <trans-unit id="coq.conformance-kind" datatype="html">
+        <source>dépenses volontaires</source>
+        <target state="translated">主动支出</target>
+      </trans-unit>
+      <trans-unit id="coq.non-conformance-heading" datatype="html">
+        <source>Coûts de non-conformité</source>
+        <target state="translated">不符合成本</target>
+      </trans-unit>
+      <trans-unit id="coq.non-conformance-kind" datatype="html">
+        <source>pertes subies</source>
+        <target state="translated">已发生损失</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.prevention-badge" datatype="html">
+        <source>P</source>
+        <target state="translated">防</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.prevention-title" datatype="html">
+        <source>Coûts de prévention</source>
+        <target state="translated">预防成本</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.prevention-desc" datatype="html">
+        <source>Dépenses engagées en amont pour empêcher l'apparition de défauts : formation, planification qualité, conception, fiabilisation des processus.</source>
+        <target state="translated">为防止缺陷出现而预先投入的支出：培训、质量策划、设计、过程可靠性提升。</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.appraisal-badge" datatype="html">
+        <source>A</source>
+        <target state="translated">鉴</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.appraisal-title" datatype="html">
+        <source>Coûts d'appréciation (détection)</source>
+        <target state="translated">鉴定成本（检测）</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.appraisal-desc" datatype="html">
+        <source>Dépenses liées à la vérification de la conformité : contrôles, inspections et essais qui détectent les défauts avant livraison.</source>
+        <target state="translated">与符合性验证相关的支出：在交付前发现缺陷的检查、检验和试验。</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.internal-badge" datatype="html">
+        <source>IF</source>
+        <target state="translated">内</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.internal-title" datatype="html">
+        <source>Coûts des anomalies internes</source>
+        <target state="translated">内部失败成本</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.internal-desc" datatype="html">
+        <source>Coûts des défauts détectés avant livraison au client : rebuts, retouches, arrêts de production liés à la non-qualité.</source>
+        <target state="translated">在交付客户前发现的缺陷成本：报废、返工、因质量问题导致的停产。</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.external-badge" datatype="html">
+        <source>EF</source>
+        <target state="translated">外</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.external-title" datatype="html">
+        <source>Coûts des anomalies externes</source>
+        <target state="translated">外部失败成本</target>
+      </trans-unit>
+      <trans-unit id="coq.cat.external-desc" datatype="html">
+        <source>Coûts des défauts découverts après livraison : réclamations, retours, garanties et impact sur la relation client.</source>
+        <target state="translated">交付后发现的缺陷成本：投诉、退货、保修以及对客户关系的影响。</target>
+      </trans-unit>
+      <trans-unit id="coq.label.prevention-training" datatype="html">
+        <source>Formation qualité du personnel</source>
+        <target state="translated">员工质量培训</target>
+      </trans-unit>
+      <trans-unit id="coq.label.prevention-planning" datatype="html">
+        <source>Planification et système qualité</source>
+        <target state="translated">质量策划与质量体系</target>
+      </trans-unit>
+      <trans-unit id="coq.label.prevention-audits" datatype="html">
+        <source>Audits qualité internes</source>
+        <target state="translated">内部质量审核</target>
+      </trans-unit>
+      <trans-unit id="coq.label.prevention-design-review" datatype="html">
+        <source>Revue de conception / AMDEC</source>
+        <target state="translated">设计评审 / FMEA</target>
+      </trans-unit>
+      <trans-unit id="coq.label.appraisal-incoming" datatype="html">
+        <source>Contrôle réception matières</source>
+        <target state="translated">来料检验</target>
+      </trans-unit>
+      <trans-unit id="coq.label.appraisal-in-process" datatype="html">
+        <source>Inspections en cours de production</source>
+        <target state="translated">过程检验</target>
+      </trans-unit>
+      <trans-unit id="coq.label.appraisal-testing" datatype="html">
+        <source>Essais et étalonnage</source>
+        <target state="translated">试验与校准</target>
+      </trans-unit>
+      <trans-unit id="coq.label.appraisal-product-audit" datatype="html">
+        <source>Audit produit / process</source>
+        <target state="translated">产品 / 过程审核</target>
+      </trans-unit>
+      <trans-unit id="coq.label.internal-scrap" datatype="html">
+        <source>Rebuts et mise au rebut</source>
+        <target state="translated">报废与处置</target>
+      </trans-unit>
+      <trans-unit id="coq.label.internal-rework" datatype="html">
+        <source>Retouches et réparations</source>
+        <target state="translated">返工与返修</target>
+      </trans-unit>
+      <trans-unit id="coq.label.internal-reinspection" datatype="html">
+        <source>Re-contrôles après retouche</source>
+        <target state="translated">返工后复检</target>
+      </trans-unit>
+      <trans-unit id="coq.label.internal-downtime" datatype="html">
+        <source>Arrêts de production liés aux défauts</source>
+        <target state="translated">缺陷导致的停产</target>
+      </trans-unit>
+      <trans-unit id="coq.label.external-complaints" datatype="html">
+        <source>Réclamations et traitement litiges</source>
+        <target state="translated">投诉与纠纷处理</target>
+      </trans-unit>
+      <trans-unit id="coq.label.external-returns" datatype="html">
+        <source>Retours produits et remplacements</source>
+        <target state="translated">产品退货与更换</target>
+      </trans-unit>
+      <trans-unit id="coq.label.external-warranty" datatype="html">
+        <source>Garanties et interventions terrain</source>
+        <target state="translated">保修与现场服务</target>
+      </trans-unit>
+      <trans-unit id="coq.label.external-penalties" datatype="html">
+        <source>Pénalités contractuelles</source>
+        <target state="translated">合同罚金</target>
+      </trans-unit>
+      <trans-unit id="coq.line-lot" datatype="html">
+        <source>lot <x id="INTERPOLATION"/></source>
+        <target state="translated">批次 <x id="INTERPOLATION"/></target>
+      </trans-unit>
+      <trans-unit id="coq.line-pieces" datatype="html">
+        <source>pcs</source>
+        <target state="translated">件</target>
+      </trans-unit>
+      <trans-unit id="coq.line-count" datatype="html">
+        <source><x id="INTERPOLATION"/> imputation(s)</source>
+        <target state="translated"><x id="INTERPOLATION"/> 笔入账</target>
+      </trans-unit>
+      <trans-unit id="coq.add-line" datatype="html">
+        <source>Ajouter une ligne</source>
+        <target state="translated">添加一行</target>
+      </trans-unit>
+      <trans-unit id="coq.delete-line" datatype="html">
+        <source>Supprimer la ligne</source>
+        <target state="translated">删除该行</target>
+      </trans-unit>
+      <trans-unit id="coq.delete-title" datatype="html">
+        <source>Supprimer cette ligne ?</source>
+        <target state="translated">删除此行？</target>
+      </trans-unit>
+      <trans-unit id="coq.delete-message" datatype="html">
+        <source>Le montant sort des totaux de la période. La suppression est tracée dans le journal d'audit.</source>
+        <target state="translated">该金额将从本期合计中移除。删除操作会记录在审计日志中。</target>
+      </trans-unit>
+      <trans-unit id="coq.amount-invalid" datatype="html">
+        <source>Montant invalide : un nombre positif ou nul.</source>
+        <target state="translated">金额无效：须为正数或零。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.new-title" datatype="html">
+        <source>Nouvelle ligne</source>
+        <target state="translated">新建一行</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.submit" datatype="html">
+        <source>Enregistrer</source>
+        <target state="translated">保存</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.read-only" datatype="html">
+        <source>Consultation seule : la saisie des coûts est réservée aux profils de pilotage qualité.</source>
+        <target state="translated">仅供查看：成本录入仅限质量管理角色。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-label" datatype="html">
+        <source>Libellé de la ligne</source>
+        <target state="translated">行科目</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.new-label-hint" datatype="html">
+        <source>Nouveau libellé : il rejoindra la liste de cette famille.</source>
+        <target state="translated">新科目：将加入此类别的列表。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.label-required" datatype="html">
+        <source>Le libellé est requis.</source>
+        <target state="translated">科目为必填项。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.new-label-parts" datatype="html">
+        <source>Ce libellé porte sur un contrôle qualité de pièces</source>
+        <target state="translated">该科目涉及零件质量检验</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-amount" datatype="html">
+        <source>Montant (<x id="INTERPOLATION"/>)</source>
+        <target state="translated">金额（<x id="INTERPOLATION"/>）</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.amount-invalid" datatype="html">
+        <source>Montant requis, positif ou nul.</source>
+        <target state="translated">金额为必填项，须为正数或零。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-date" datatype="html">
+        <source>Date d'imputation</source>
+        <target state="translated">入账日期</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.date-open" datatype="html">
+        <source>Ouvrir le calendrier</source>
+        <target state="translated">打开日历</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.date-hint" datatype="html">
+        <source>Elle range la ligne dans son mois.</source>
+        <target state="translated">该日期决定此行归属的月份。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.date-required" datatype="html">
+        <source>La date d'imputation est requise.</source>
+        <target state="translated">入账日期为必填项。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-responsible" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">负责人</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.responsible-required" datatype="html">
+        <source>Le responsable est requis.</source>
+        <target state="translated">负责人为必填项。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.parts-legend" datatype="html">
+        <source>Contrôle qualité de pièces</source>
+        <target state="translated">零件质量检验</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-part-reference" datatype="html">
+        <source>Référence pièce ou produit</source>
+        <target state="translated">零件或产品编号</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.part-reference-required" datatype="html">
+        <source>La référence est requise.</source>
+        <target state="translated">编号为必填项。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-part-quantity" datatype="html">
+        <source>Nombre de pièces</source>
+        <target state="translated">零件数量</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.part-quantity-invalid" datatype="html">
+        <source>Un nombre entier d'au moins 1.</source>
+        <target state="translated">须为不小于 1 的整数。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-lot" datatype="html">
+        <source>Lot</source>
+        <target state="translated">批次</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.lot-required" datatype="html">
+        <source>Le lot est requis.</source>
+        <target state="translated">批次为必填项。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-received" datatype="html">
+        <source>Date de réception ou fabrication</source>
+        <target state="translated">收货或生产日期</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.received-required" datatype="html">
+        <source>Cette date est requise.</source>
+        <target state="translated">该日期为必填项。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.field-comment" datatype="html">
+        <source>Commentaire (facultatif)</source>
+        <target state="translated">备注（可选）</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.required-legend" datatype="html">
+        <source>* champ obligatoire</source>
+        <target state="translated">* 必填字段</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.blocked-label" datatype="html">
+        <source>Choisissez ou saisissez un libellé.</source>
+        <target state="translated">请选择或输入科目。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.blocked-amount" datatype="html">
+        <source>Indiquez un montant positif ou nul.</source>
+        <target state="translated">请输入正数或零的金额。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.blocked-responsible" datatype="html">
+        <source>Indiquez le responsable.</source>
+        <target state="translated">请填写负责人。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.blocked-date" datatype="html">
+        <source>Indiquez la date d'imputation.</source>
+        <target state="translated">请填写入账日期。</target>
+      </trans-unit>
+      <trans-unit id="coq.dialog.blocked-parts" datatype="html">
+        <source>Un contrôle de pièces exige la référence, le nombre de pièces, le lot et la date de réception ou de fabrication.</source>
+        <target state="translated">零件检验须填写编号、零件数量、批次以及收货或生产日期。</target>
+      </trans-unit>
       <trans-unit id="dbb.editor.back" datatype="html">
         <source>Retour à la liste</source>
         <target state="translated">返回列表</target>

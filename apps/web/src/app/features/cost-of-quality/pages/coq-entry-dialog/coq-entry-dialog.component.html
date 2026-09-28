@@ -1,0 +1,107 @@
+<qos-form-dialog
+  [title]="title"
+  [subtitle]="categoryTitle"
+  [formGroup]="form"
+  [submitDisabled]="form.invalid || data.readOnly"
+  [blockedReason]="data.readOnly ? undefined : blockedReason"
+  submitLabel="Enregistrer" i18n-submitLabel="@@coq.dialog.submit"
+  (submitted)="submit()"
+  (cancelled)="cancel()">
+
+  <p class="lecture-seule" *ngIf="data.readOnly" i18n="@@coq.dialog.read-only">
+    Consultation seule : la saisie des coûts est réservée aux profils de pilotage qualité.
+  </p>
+
+  <!-- Le libellé : la liste propose le catalogue de la famille, mais le champ
+       accepte aussi un texte libre, qui rejoindra la liste. -->
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@coq.dialog.field-label">Libellé de la ligne</mat-label>
+    <input matInput formControlName="label" maxlength="150" required data-test="libelle"
+           [matAutocomplete]="catalogue">
+    <mat-autocomplete #catalogue="matAutocomplete">
+      <mat-option *ngFor="let l of suggestions" [value]="labelText(l)">
+        {{ labelText(l) }}
+        <mat-icon *ngIf="l.partControl" class="option-pieces" aria-hidden="true">inventory_2</mat-icon>
+      </mat-option>
+    </mat-autocomplete>
+    <mat-hint *ngIf="isNewLabel" i18n="@@coq.dialog.new-label-hint">
+      Nouveau libellé : il rejoindra la liste de cette famille.
+    </mat-hint>
+    <mat-error i18n="@@coq.dialog.label-required">Le libellé est requis.</mat-error>
+  </mat-form-field>
+
+  <mat-checkbox *ngIf="isNewLabel" formControlName="newPartControl" class="full" data-test="nouveau-pieces"
+                i18n="@@coq.dialog.new-label-parts">
+    Ce libellé porte sur un contrôle qualité de pièces
+  </mat-checkbox>
+
+  <div class="rangee">
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@coq.dialog.field-amount">Montant ({{ data.currency }})</mat-label>
+      <input matInput type="number" min="0" step="0.01" formControlName="amount" required data-test="montant">
+      <mat-error i18n="@@coq.dialog.amount-invalid">Montant requis, positif ou nul.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@coq.dialog.field-date">Date d'imputation</mat-label>
+      <input matInput [matDatepicker]="imputation" formControlName="imputationDate" required data-test="date">
+      <mat-datepicker-toggle matIconSuffix [for]="imputation"
+                             i18n-aria-label="@@coq.dialog.date-open"
+                             aria-label="Ouvrir le calendrier"></mat-datepicker-toggle>
+      <mat-datepicker #imputation></mat-datepicker>
+      <mat-hint i18n="@@coq.dialog.date-hint">Elle range la ligne dans son mois.</mat-hint>
+      <mat-error i18n="@@coq.dialog.date-required">La date d'imputation est requise.</mat-error>
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@coq.dialog.field-responsible">Responsable</mat-label>
+    <input matInput formControlName="responsible" maxlength="150" required data-test="responsable">
+    <mat-error i18n="@@coq.dialog.responsible-required">Le responsable est requis.</mat-error>
+  </mat-form-field>
+
+  <!-- Contrôle qualité de pièces : quatre champs, tous obligatoires. -->
+  <fieldset class="pieces" *ngIf="partControl" data-test="bloc-pieces">
+    <legend i18n="@@coq.dialog.parts-legend">Contrôle qualité de pièces</legend>
+
+    <div class="rangee">
+      <mat-form-field appearance="outline">
+        <mat-label i18n="@@coq.dialog.field-part-reference">Référence pièce ou produit</mat-label>
+        <input matInput formControlName="partReference" maxlength="120" required data-test="reference">
+        <mat-error i18n="@@coq.dialog.part-reference-required">La référence est requise.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label i18n="@@coq.dialog.field-part-quantity">Nombre de pièces</mat-label>
+        <input matInput type="number" min="1" step="1" formControlName="partQuantity" required data-test="quantite">
+        <mat-error i18n="@@coq.dialog.part-quantity-invalid">Un nombre entier d'au moins 1.</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="rangee">
+      <mat-form-field appearance="outline">
+        <mat-label i18n="@@coq.dialog.field-lot">Lot</mat-label>
+        <input matInput formControlName="lot" maxlength="120" required data-test="lot">
+        <mat-error i18n="@@coq.dialog.lot-required">Le lot est requis.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label i18n="@@coq.dialog.field-received">Date de réception ou fabrication</mat-label>
+        <input matInput [matDatepicker]="reception" formControlName="receivedOrMadeOn" required
+               data-test="reception">
+        <mat-datepicker-toggle matIconSuffix [for]="reception"
+                               i18n-aria-label="@@coq.dialog.date-open"
+                               aria-label="Ouvrir le calendrier"></mat-datepicker-toggle>
+        <mat-datepicker #reception></mat-datepicker>
+        <mat-error i18n="@@coq.dialog.received-required">Cette date est requise.</mat-error>
+      </mat-form-field>
+    </div>
+  </fieldset>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label i18n="@@coq.dialog.field-comment">Commentaire (facultatif)</mat-label>
+    <textarea matInput formControlName="comment" rows="3" maxlength="2000" data-test="commentaire"></textarea>
+  </mat-form-field>
+
+  <p class="legende" i18n="@@coq.dialog.required-legend">* champ obligatoire</p>
+</qos-form-dialog>

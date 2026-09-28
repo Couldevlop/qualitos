@@ -1,0 +1,204 @@
+<div class="qos-page">
+  <qos-page-header
+    eyebrow="Pilotage" i18n-eyebrow="@@coq.eyebrow"
+    title="Coûts de non-qualité" i18n-title="@@coq.title"
+    subtitle="Recensez et pilotez les coûts liés à la qualité selon le modèle PAF (Prévention – Appréciation – Défaillances). Chaque ligne représente une dépense réelle, imputée à sa date."
+    i18n-subtitle="@@coq.subtitle">
+  </qos-page-header>
+
+  <!-- La période : mois ou année, puis la navigation, puis la devise. -->
+  <div class="barre-periode">
+    <mat-button-toggle-group [value]="mode" (change)="setMode($event.value)"
+                             i18n-aria-label="@@coq.period-mode" aria-label="Granularité de la période"
+                             hideSingleSelectionIndicator>
+      <mat-button-toggle value="month" data-test="vue-mois" i18n="@@coq.mode-month">Mois</mat-button-toggle>
+      <mat-button-toggle value="year" data-test="vue-annee" i18n="@@coq.mode-year">Année</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <div class="navigation" role="group" i18n-aria-label="@@coq.period-nav" aria-label="Changer de période">
+      <button mat-icon-button type="button" (click)="precedent()" data-test="precedent"
+              i18n-aria-label="@@coq.previous" aria-label="Période précédente">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <span class="navigation__periode" aria-live="polite" data-test="periode">
+        {{ isMonth ? (periodDate | date: 'MMMM y') : (periodDate | date: 'y') }}
+      </span>
+      <button mat-icon-button type="button" (click)="suivant()" data-test="suivant"
+              i18n-aria-label="@@coq.next" aria-label="Période suivante">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+
+    <mat-form-field appearance="outline" class="devise" subscriptSizing="dynamic" *ngIf="report">
+      <mat-label i18n="@@coq.currency">Devise</mat-label>
+      <mat-select [value]="report.currency" (selectionChange)="changerDevise($event.value)"
+                  [disabled]="!editable" data-test="devise">
+        <mat-option *ngFor="let c of currencies" [value]="c">{{ c }}</mat-option>
+        <mat-option *ngIf="!currencies.includes(report.currency)" [value]="report.currency">
+          {{ report.currency }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed && !report" role="alert" i18n="@@coq.load-failed">
+    Le rapport n'a pas pu être chargé.
+  </p>
+
+  <ng-container *ngIf="report as r">
+    <!-- La synthèse : le total, puis les deux moitiés qui le composent. -->
+    <section class="synthese" i18n-aria-label="@@coq.summary" aria-label="Synthèse">
+      <div class="synthese__total">
+        <span class="synthese__intitule" i18n="@@coq.total-label">Coût total de non-qualité (CNQ)</span>
+        <span class="synthese__montant" data-test="total">
+          {{ r.total | currency: r.currency : 'symbol-narrow' : '1.0-2' }}
+        </span>
+      </div>
+
+      <div class="synthese__repartition">
+        <div class="jauge">
+          <div class="jauge__ligne">
+            <span class="pastille pastille--conformite" aria-hidden="true"></span>
+            <span class="jauge__nom" i18n="@@coq.conformance-costs">Coûts de conformité (investissement)</span>
+            <span class="jauge__valeur" data-test="conformite">
+              {{ r.conformanceTotal | currency: r.currency : 'symbol-narrow' : '1.0-2' }}
+            </span>
+          </div>
+          <div class="jauge__piste" aria-hidden="true">
+            <div class="jauge__barre jauge__barre--conformite" [style.width.%]="share(r.conformanceTotal)"></div>
+          </div>
+        </div>
+
+        <div class="jauge">
+          <div class="jauge__ligne">
+            <span class="pastille pastille--non-conformite" aria-hidden="true"></span>
+            <span class="jauge__nom" i18n="@@coq.non-conformance-costs">Coûts de non-conformité (pertes)</span>
+            <span class="jauge__valeur" data-test="non-conformite">
+              {{ r.nonConformanceTotal | currency: r.currency : 'symbol-narrow' : '1.0-2' }}
+            </span>
+          </div>
+          <div class="jauge__piste" aria-hidden="true">
+            <div class="jauge__barre jauge__barre--non-conformite" [style.width.%]="share(r.nonConformanceTotal)"></div>
+          </div>
+        </div>
+
+        <p class="synthese__ratio" *ngIf="r.ratio !== null" data-test="ratio"
+           i18n="@@coq.ratio-sentence">
+          Ratio conformité / non-conformité : <strong>{{ r.ratio | number: '1.2-2' }}</strong>.
+          Un CNQ élevé face à un faible investissement en prévention indique un potentiel
+          d'amélioration : chaque euro investi en prévention évite généralement plusieurs euros de défaillance.
+        </p>
+        <p class="synthese__ratio" *ngIf="r.ratio === null" i18n="@@coq.ratio-none">
+          Aucune perte de non-conformité sur la période : le ratio ne se calcule pas.
+        </p>
+      </div>
+    </section>
+
+    <!-- Vue année : l'histogramme des douze mois, conformité et pertes empilées. -->
+    <section class="histogramme" *ngIf="!isMonth" data-test="histogramme"
+             i18n-aria-label="@@coq.monthly-chart" aria-label="Répartition mensuelle">
+      <h2 class="histogramme__titre" i18n="@@coq.monthly-title">Répartition par mois</h2>
+      <ol class="histogramme__mois">
+        <li *ngFor="let m of r.months" class="histogramme__colonne">
+          <div class="histogramme__pile"
+               [attr.aria-label]="(monthDate(m.month) | date: 'MMMM') + ' : ' + (m.conformance | currency: r.currency : 'symbol-narrow' : '1.0-0') + ' / ' + (m.nonConformance | currency: r.currency : 'symbol-narrow' : '1.0-0')"
+               role="img">
+            <div class="histogramme__barre histogramme__barre--non-conformite"
+                 [style.height.%]="barHeight(m.nonConformance)"></div>
+            <div class="histogramme__barre histogramme__barre--conformite"
+                 [style.height.%]="barHeight(m.conformance)"></div>
+          </div>
+          <span class="histogramme__etiquette" aria-hidden="true">{{ monthDate(m.month) | date: 'MMM' }}</span>
+        </li>
+      </ol>
+    </section>
+
+    <!-- Les deux moitiés du modèle PAF, séparées comme sur la maquette. -->
+    <div class="colonnes">
+      <section class="colonne">
+        <header class="colonne__entete">
+          <h2 i18n="@@coq.conformance-heading">Coûts de conformité</h2>
+          <span i18n="@@coq.conformance-kind">dépenses volontaires</span>
+        </header>
+        <ng-container *ngFor="let block of conformanceBlocks; trackBy: trackByCategory">
+          <ng-container *ngTemplateOutlet="bloc; context: { $implicit: block, r: r }"></ng-container>
+        </ng-container>
+      </section>
+
+      <section class="colonne colonne--pertes">
+        <header class="colonne__entete">
+          <h2 i18n="@@coq.non-conformance-heading">Coûts de non-conformité</h2>
+          <span i18n="@@coq.non-conformance-kind">pertes subies</span>
+        </header>
+        <ng-container *ngFor="let block of nonConformanceBlocks; trackBy: trackByCategory">
+          <ng-container *ngTemplateOutlet="bloc; context: { $implicit: block, r: r }"></ng-container>
+        </ng-container>
+      </section>
+    </div>
+
+    <p class="pied" *ngIf="!isMonth" i18n="@@coq.year-read-only">
+      Vue annuelle en lecture seule : chaque libellé y est cumulé sur l'année. La saisie se fait dans le mois concerné.
+    </p>
+  </ng-container>
+</div>
+
+<ng-template #bloc let-block let-r="r">
+  <article class="bloc" [attr.data-category]="block.category" [attr.data-test]="'bloc-' + block.category">
+    <header class="bloc__entete">
+      <span class="bloc__badge" [class.bloc__badge--perte]="block.category === 'INTERNAL_FAILURE' || block.category === 'EXTERNAL_FAILURE'"
+            aria-hidden="true">{{ textOf(block).badge }}</span>
+      <div>
+        <h3 class="bloc__titre">{{ textOf(block).title }}</h3>
+        <p class="bloc__description">{{ textOf(block).description }}</p>
+      </div>
+    </header>
+
+    <ul class="bloc__lignes">
+      <li class="ligne" *ngFor="let line of block.lines; trackBy: trackByLine"
+          [class.ligne--vide]="!line.entryId && isMonth" data-test="ligne">
+        <button type="button" class="ligne__libelle" [disabled]="!isMonth || (!line.entryId && !editable)"
+                (click)="ouvrir(block, line)">
+          <span class="ligne__nom">{{ lineText(line) }}</span>
+          <span class="ligne__meta" *ngIf="isMonth && line.entryId">
+            {{ line.imputationDate | date: 'shortDate' }}
+            <ng-container *ngIf="line.partControl"> · <span i18n="@@coq.line-lot">lot {{ line.lot }}</span> · {{ line.partQuantity }}
+              <span i18n="@@coq.line-pieces">pcs</span></ng-container>
+          </span>
+          <span class="ligne__meta" *ngIf="!isMonth && line.entryCount > 0" i18n="@@coq.line-count">
+            {{ line.entryCount }} imputation(s)
+          </span>
+        </button>
+
+        <!-- Le montant se corrige dans la liste quand la ligne existe et que
+             l'utilisateur saisit ; partout ailleurs, il s'affiche. -->
+        <input *ngIf="isMonth && line.entryId && editable; else montantLu"
+               class="ligne__montant ligne__montant--saisie" type="number" min="0" step="0.01"
+               [value]="line.amount" (change)="changerMontant(line, $any($event.target).value)"
+               [attr.aria-label]="lineText(line)" data-test="montant-ligne">
+        <ng-template #montantLu>
+          <span class="ligne__montant">{{ line.amount | number: '1.0-2' }}</span>
+        </ng-template>
+
+        <button mat-icon-button type="button" class="ligne__supprimer"
+                *ngIf="isMonth && line.entryId && editable" (click)="supprimer(line)"
+                i18n-aria-label="@@coq.delete-line" aria-label="Supprimer la ligne" data-test="supprimer">
+          <mat-icon>close</mat-icon>
+        </button>
+        <span class="ligne__place" *ngIf="!(isMonth && line.entryId && editable)" aria-hidden="true"></span>
+      </li>
+    </ul>
+
+    <footer class="bloc__pied">
+      <button mat-stroked-button type="button" *ngIf="isMonth && editable" (click)="ajouter(block)"
+              data-test="ajouter">
+        <mat-icon aria-hidden="true">add</mat-icon>
+        <span i18n="@@coq.add-line">Ajouter une ligne</span>
+      </button>
+      <span class="bloc__total" data-test="total-bloc">
+        {{ block.total | currency: r.currency : 'symbol-narrow' : '1.0-2' }}
+      </span>
+    </footer>
+  </article>
+</ng-template>

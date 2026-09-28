@@ -1,0 +1,61 @@
+:host {
+  display: block;
+}
+
+.full {
+  width: 100%;
+}
+
+.rangee {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--qos-space-3);
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+mat-checkbox.full {
+  display: block;
+  margin: calc(-1 * var(--qos-space-2)) 0 var(--qos-space-3);
+}
+
+.pieces {
+  margin: 0 0 var(--qos-space-3);
+  padding: var(--qos-space-3) var(--qos-space-4) 0;
+  border: 1px solid var(--qos-border-default);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-subtle);
+
+  legend {
+    padding: 0 var(--qos-space-2);
+    font-size: var(--qos-fs-sm);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-secondary);
+  }
+}
+
+.option-pieces {
+  margin-left: var(--qos-space-2);
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  color: var(--qos-fg-tertiary);
+}
+
+.lecture-seule {
+  margin: 0 0 var(--qos-space-3);
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border-radius: var(--qos-radius-sm);
+  background: var(--qos-bg-subtle);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-sm);
+}
+
+.legende {
+  margin: 0;
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-tertiary);
+}
