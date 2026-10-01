@@ -1,0 +1,211 @@
+// La fiche : le contenu à gauche, la cotation et le suivi à droite, comme la maquette.
+@use '../../risk-register.shared' as rr;
+
+:host {
+  display: block;
+}
+
+@include rr.cotation;
+
+.echec {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  color: var(--qos-danger-fg);
+}
+
+.etiquettes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+}
+
+.etiquette {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: var(--qos-radius-pill);
+  background: var(--qos-bg-sunken);
+  border: 1px solid var(--qos-border-subtle);
+  color: var(--qos-fg-secondary);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-semibold);
+}
+
+.grille {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr);
+  gap: var(--qos-space-4);
+  align-items: start;
+
+  @media (max-width: 1000px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.colonne {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-4);
+}
+
+.carte {
+  padding: var(--qos-space-5);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  box-shadow: var(--qos-shadow-xs);
+
+  &__titre {
+    margin: 0 0 var(--qos-space-4);
+    font-size: var(--qos-fs-md);
+    font-weight: var(--qos-fw-semibold);
+  }
+}
+
+.champs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--qos-space-4);
+  margin: 0;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+
+  dt {
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-tertiary);
+  }
+
+  dd {
+    margin: var(--qos-space-1) 0 0;
+    white-space: pre-line;
+  }
+}
+
+.ref {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.liste {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--qos-fs-sm);
+
+  th {
+    text-align: left;
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-medium);
+    color: var(--qos-fg-tertiary);
+    padding: 0 var(--qos-space-2) var(--qos-space-2);
+  }
+
+  td {
+    padding: var(--qos-space-2);
+    border-top: 1px solid var(--qos-border-subtle);
+  }
+
+  .boutons {
+    white-space: nowrap;
+    text-align: right;
+  }
+}
+
+.vide {
+  margin: 0;
+  color: var(--qos-fg-tertiary);
+}
+
+.aide {
+  margin: var(--qos-space-3) 0 0;
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-tertiary);
+}
+
+.boites {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-4);
+}
+
+.boite {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--qos-space-1);
+  padding: var(--qos-space-3);
+  border-radius: var(--qos-radius-md);
+  border: 1px solid var(--qos-border-subtle);
+
+  &__titre {
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-tertiary);
+  }
+
+  &__calcul {
+    font-size: var(--qos-fs-xl);
+    font-weight: var(--qos-fw-bold);
+    color: var(--qos-fg-primary);
+  }
+}
+
+.barre {
+  margin-top: var(--qos-space-3);
+
+  &__nom {
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-secondary);
+  }
+
+  &__piste {
+    height: 6px;
+    margin-top: var(--qos-space-1);
+    border-radius: var(--qos-radius-pill);
+    background: var(--qos-bg-sunken);
+    overflow: hidden;
+  }
+
+  &__plein {
+    height: 100%;
+    border-radius: inherit;
+    background: var(--qos-accent-bg);
+  }
+}
+
+.score {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--qos-space-2);
+  font-size: var(--qos-fs-sm);
+}
+
+.suivi {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 var(--qos-space-3);
+  border-left: 2px solid var(--qos-border-default);
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-3);
+  font-size: var(--qos-fs-sm);
+}
+
+.prochaine {
+  margin-top: var(--qos-space-4);
+  padding: var(--qos-space-3);
+  border-left: 2px solid var(--qos-accent-bg);
+  background: var(--qos-bg-subtle);
+  font-size: var(--qos-fs-sm);
+
+  p {
+    margin: 0;
+  }
+
+  p + p {
+    margin-top: var(--qos-space-1);
+  }
+}

@@ -76,6 +76,16 @@
           <mat-icon>fact_check</mat-icon>
           <span i18n="@@nc.detail.eightd">Rapport 8D</span>
         </button>
+        <!-- Un écart constaté, ou qui se répète, peut révéler un risque à
+             inscrire au registre (ISO 9001 §6.1). Le formulaire part de cette
+             NC, relue par le serveur : sa référence n'est pas retapée. -->
+        <a mat-stroked-button data-test="creer-risque"
+           [routerLink]="['/risques', 'nouveau']" [queryParams]="{ origine: 'NON_CONFORMITY', source: n.id }"
+           i18n-matTooltip="@@rr.create-from-nc-tooltip"
+           matTooltip="Inscrire au registre le risque que révèle cet écart">
+          <mat-icon>shield</mat-icon>
+          <span i18n="@@rr.create-risk">Créer un risque</span>
+        </a>
         <button mat-stroked-button color="primary" (click)="startAnalysis()"
                 [disabled]="(acting$ | async) || !canStartAnalysis(n.status)"
                 i18n-matTooltip="@@nc.detail.start-analysis-tooltip" matTooltip="Démarrer l'analyse">

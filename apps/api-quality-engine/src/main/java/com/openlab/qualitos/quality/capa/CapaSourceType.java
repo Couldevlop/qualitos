@@ -10,5 +10,11 @@ public enum CapaSourceType {
      * l'alerte pour juger de sa valeur.
      */
     ANOMALY,
+    /**
+     * Dossier ouvert depuis une fiche du registre des risques (ISO 9001 §6.1) :
+     * {@code sourceRef} porte la référence du risque (R-014). C'est ce couple
+     * qui permet à la fiche de retrouver les actions qui la traitent.
+     */
+    RISK,
     OTHER
 }

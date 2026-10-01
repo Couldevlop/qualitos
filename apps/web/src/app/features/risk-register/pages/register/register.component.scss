@@ -1,0 +1,149 @@
+// Le registre : la maquette (docs/Registre des risques et opportunites.pptx),
+// traduite dans les jetons du design system pour suivre les thèmes clair et sombre.
+@use '../../risk-register.shared' as rr;
+
+:host {
+  display: block;
+}
+
+@include rr.cotation;
+
+// ---------- onglets ----------
+
+.onglets {
+  display: flex;
+  gap: var(--qos-space-6);
+  border-bottom: 1px solid var(--qos-border-subtle);
+  margin-bottom: var(--qos-space-4);
+}
+
+.onglet {
+  appearance: none;
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: var(--qos-space-2) 0;
+  margin-bottom: -1px;
+  font: inherit;
+  font-weight: var(--qos-fw-medium);
+  color: var(--qos-fg-secondary);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--qos-fg-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-border-focus);
+    outline-offset: 2px;
+  }
+
+  &--actif {
+    color: var(--qos-accent-fg);
+    border-bottom-color: var(--qos-accent-bg);
+    font-weight: var(--qos-fw-semibold);
+  }
+}
+
+// ---------- filtres ----------
+
+.filtres {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--qos-space-3);
+  margin-bottom: var(--qos-space-4);
+
+  &__recherche {
+    flex: 1 1 16rem;
+    max-width: 22rem;
+  }
+
+  &__liste {
+    width: 11rem;
+  }
+}
+
+.echec {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  color: var(--qos-danger-fg);
+}
+
+// ---------- tableau ----------
+
+.tableau {
+  overflow-x: auto;
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  box-shadow: var(--qos-shadow-sm);
+  border: 1px solid var(--qos-border-subtle);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--qos-fs-sm);
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  text-align: left;
+  padding: var(--qos-space-3) var(--qos-space-4);
+  background: var(--qos-fg-primary);
+  color: var(--qos-fg-inverse);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-semibold);
+  white-space: nowrap;
+}
+
+tbody td {
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border-top: 1px solid var(--qos-border-subtle);
+  vertical-align: middle;
+}
+
+.ligne {
+  cursor: pointer;
+
+  &:hover {
+    background: var(--qos-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-border-focus);
+    outline-offset: -2px;
+  }
+}
+
+.ref {
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--qos-fg-secondary);
+  white-space: nowrap;
+}
+
+.intitule {
+  min-width: 14rem;
+  max-width: 24rem;
+  color: var(--qos-fg-primary);
+}
+
+.vide {
+  color: var(--qos-fg-tertiary);
+}
+
+.aucun {
+  text-align: center;
+  padding: var(--qos-space-8);
+  color: var(--qos-fg-secondary);
+}
+
+.legende {
+  margin: 0;
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border-top: 1px solid var(--qos-border-subtle);
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-tertiary);
+}

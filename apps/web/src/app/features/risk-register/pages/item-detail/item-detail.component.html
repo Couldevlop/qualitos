@@ -1,0 +1,247 @@
+<div class="qos-page">
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert">
+    <span i18n="@@rr.detail.failed">La fiche est indisponible.</span>
+    <a mat-button [routerLink]="isRisk ? '/risques' : '/risques/opportunites'" i18n="@@rr.detail.back">Retour au registre</a>
+  </p>
+
+  <!-- ===================== Fiche risque ===================== -->
+  <ng-container *ngIf="isRisk && risk as s">
+    <qos-page-header [title]="s.risk.title" [breadcrumbs]="breadcrumbs">
+      <div qosMeta class="etiquettes">
+        <span class="etiquette">{{ typeText(s.risk.type) }}</span>
+        <span class="etiquette">{{ s.risk.process }}</span>
+        <span class="etiquette" *ngIf="s.risk.site"><span i18n="@@rr.form.site">Site</span> : {{ s.risk.site }}</span>
+        <span class="etiquette"><span i18n="@@rr.col.status">Statut</span> : {{ riskStatusText(s.risk.status) }}</span>
+      </div>
+      <ng-container qosActions>
+        <button mat-stroked-button type="button" *ngIf="editable" (click)="edit()" data-test="modifier"
+                i18n="@@common.edit">Modifier</button>
+        <button mat-flat-button color="primary" type="button" *ngIf="editable" (click)="createAction()"
+                [disabled]="busy || s.risk.status === 'CLOSED'" data-test="creer-capa"
+                i18n="@@rr.action.capa-title">Créer une action CAPA</button>
+      </ng-container>
+    </qos-page-header>
+
+    <div class="grille">
+      <div class="colonne">
+        <section class="carte">
+          <h2 class="carte__titre" i18n="@@rr.form.description">Description</h2>
+          <dl class="champs">
+            <div><dt i18n="@@rr.form.cause">Cause</dt><dd>{{ s.risk.cause || '—' }}</dd></div>
+            <div><dt i18n="@@rr.form.effect">Effet</dt><dd>{{ s.risk.effect || '—' }}</dd></div>
+            <div><dt i18n="@@rr.col.owner">Propriétaire</dt><dd>{{ s.risk.owner }}</dd></div>
+            <div>
+              <dt i18n="@@rr.form.origin">Origine</dt>
+              <dd data-test="origine">
+                {{ originText(s.risk.origin) }}
+                <ng-container *ngIf="s.risk.originRef">
+                  <a *ngIf="sourceLink as lien; else refTexte" [routerLink]="lien">{{ s.risk.originRef }}</a>
+                  <ng-template #refTexte><span class="ref">{{ s.risk.originRef }}</span></ng-template>
+                </ng-container>
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="carte">
+          <h2 class="carte__titre">
+            <span i18n="@@rr.form.treatment">Traitement</span> ·
+            <span i18n="@@rr.form.decision">Décision</span> : {{ riskDecisionText(s.risk.decision) }}
+          </h2>
+          <table class="liste" *ngIf="s.capas.length; else aucuneCapa" data-test="capas">
+            <thead>
+              <tr>
+                <th scope="col" i18n="@@rr.detail.action">Action</th>
+                <th scope="col" i18n="@@rr.action.title">Intitulé</th>
+                <th scope="col" i18n="@@rr.col.due">Échéance</th>
+                <th scope="col" i18n="@@rr.col.status">Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of s.capas; trackBy: trackById">
+                <td><a [routerLink]="['/capa', c.id]">CAPA</a></td>
+                <td>{{ c.title }}</td>
+                <td>{{ c.dueDate ? (c.dueDate | date: 'mediumDate') : '—' }}</td>
+                <td>{{ capaStatusText(c.status) }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <ng-template #aucuneCapa>
+            <p class="vide" i18n="@@rr.detail.no-capa">Aucune action CAPA liée pour l'instant.</p>
+          </ng-template>
+        </section>
+
+        <section class="carte">
+          <h2 class="carte__titre" i18n="@@rr.detail.requirements">Exigences couvertes</h2>
+          <div class="etiquettes" *ngIf="s.risk.requirements.length; else aucuneExigence">
+            <span class="etiquette" *ngFor="let r of s.risk.requirements; trackBy: trackByCode">{{ requirementText(r) }}</span>
+          </div>
+          <ng-template #aucuneExigence><p class="vide">—</p></ng-template>
+          <p class="aide" i18n="@@rr.detail.requirements-note">Cette fiche compte comme preuve pour chacune de ces exigences dans la matrice du SMI.</p>
+        </section>
+      </div>
+
+      <div class="colonne colonne--etroite">
+        <section class="carte">
+          <h2 class="carte__titre" i18n="@@rr.detail.rating">Cotation</h2>
+          <div class="boites">
+            <div class="boite" data-test="cotation-brute">
+              <span class="boite__titre" i18n="@@rr.detail.gross">Brute</span>
+              <span class="boite__calcul">{{ s.risk.grossSeverity }} × {{ s.risk.grossProbability }} = {{ s.risk.grossScore }}</span>
+              <span class="cotation cotation--{{ s.risk.grossLevel }}">{{ riskLevelText(s.risk.grossLevel) }}</span>
+            </div>
+            <div class="boite" data-test="cotation-residuelle">
+              <span class="boite__titre" i18n="@@rr.detail.residual-target">Résiduelle visée</span>
+              <ng-container *ngIf="s.risk.residualScore !== null; else sansResiduelle">
+                <span class="boite__calcul">{{ s.risk.residualSeverity }} × {{ s.risk.residualProbability }} = {{ s.risk.residualScore }}</span>
+                <span class="cotation cotation--{{ s.risk.residualLevel }}">{{ riskLevelText(s.risk.residualLevel) }}</span>
+              </ng-container>
+              <ng-template #sansResiduelle><span class="vide" i18n="@@rr.detail.not-set">Non fixée</span></ng-template>
+            </div>
+          </div>
+          <div class="barre">
+            <span class="barre__nom"><span i18n="@@rr.severity">Gravité</span> {{ s.risk.grossSeverity }} / 5</span>
+            <div class="barre__piste" aria-hidden="true"><div class="barre__plein" [style.width.%]="bar(s.risk.grossSeverity)"></div></div>
+          </div>
+          <div class="barre">
+            <span class="barre__nom"><span i18n="@@rr.probability">Probabilité</span> {{ s.risk.grossProbability }} / 5</span>
+            <div class="barre__piste" aria-hidden="true"><div class="barre__plein" [style.width.%]="bar(s.risk.grossProbability)"></div></div>
+          </div>
+        </section>
+
+        <section class="carte">
+          <h2 class="carte__titre" i18n="@@rr.form.follow-up">Suivi</h2>
+          <ol class="suivi" data-test="suivi">
+            <li *ngFor="let e of s.events; trackBy: trackById">
+              <strong>{{ e.at | date: 'mediumDate' }}</strong> · {{ eventLine(e) }}
+            </li>
+          </ol>
+          <div class="prochaine">
+            <p><strong i18n="@@rr.form.next-review">Prochaine revue</strong> · {{ s.risk.nextReviewOn ? (s.risk.nextReviewOn | date: 'mediumDate') : '—' }}</p>
+            <p><span i18n="@@rr.detail.effectiveness">Vérification d'efficacité</span> : {{ s.risk.effectivenessCriterion || '—' }}</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ===================== Fiche opportunité ===================== -->
+  <ng-container *ngIf="!isRisk && opportunity as s">
+    <qos-page-header [title]="s.opportunity.title" [breadcrumbs]="breadcrumbs">
+      <div qosMeta class="etiquettes">
+        <span class="etiquette">{{ typeText(s.opportunity.type) }}</span>
+        <span class="etiquette">{{ s.opportunity.process }}</span>
+        <span class="etiquette" *ngIf="s.opportunity.site"><span i18n="@@rr.form.site">Site</span> : {{ s.opportunity.site }}</span>
+        <span class="etiquette"><span i18n="@@rr.col.status">Statut</span> : {{ opportunityStatusText(s.opportunity.status) }}</span>
+      </div>
+      <ng-container qosActions>
+        <button mat-stroked-button type="button" *ngIf="editable" (click)="edit()" data-test="modifier"
+                i18n="@@common.edit">Modifier</button>
+        <button mat-flat-button color="primary" type="button" *ngIf="editable" (click)="createAction()"
+                [disabled]="busy" data-test="creer-action" i18n="@@rr.action.new-title">Créer une action</button>
+      </ng-container>
+    </qos-page-header>
+
+    <div class="grille">
+      <div class="colonne">
+        <section class="carte">
+          <h2 class="carte__titre" i18n="@@rr.form.description">Description</h2>
+          <dl class="champs">
+            <div><dt i18n="@@rr.form.context">Contexte et levier</dt><dd>{{ s.opportunity.context || '—' }}</dd></div>
+            <div><dt i18n="@@rr.form.benefit">Bénéfice attendu</dt><dd>{{ s.opportunity.benefit || '—' }}</dd></div>
+            <div><dt i18n="@@rr.col.owner">Propriétaire</dt><dd>{{ s.opportunity.owner }}</dd></div>
+            <div>
+              <dt i18n="@@rr.form.origin">Origine</dt>
+              <dd>{{ originText(s.opportunity.origin) }} <span class="ref" *ngIf="s.opportunity.originRef">{{ s.opportunity.originRef }}</span></dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="carte">
+          <h2 class="carte__titre">
+            <span i18n="@@rr.form.implementation">Mise en œuvre</span> ·
+            <span i18n="@@rr.form.decision">Décision</span> : {{ opportunityDecisionText(s.opportunity.decision) }}
+          </h2>
+          <table class="liste" *ngIf="s.actions.length; else aucuneAction" data-test="actions">
+            <thead>
+              <tr>
+                <th scope="col" i18n="@@rr.detail.action">Action</th>
+                <th scope="col" i18n="@@rr.action.title">Intitulé</th>
+                <th scope="col" i18n="@@rr.col.due">Échéance</th>
+                <th scope="col" i18n="@@rr.col.status">Statut</th>
+                <th scope="col" *ngIf="editable"><span class="cdk-visually-hidden" i18n="@@rr.detail.row-actions">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let a of s.actions; trackBy: trackById">
+                <td class="ref">ACT-{{ a.number }}</td>
+                <td>{{ a.title }}</td>
+                <td>{{ a.dueDate ? (a.dueDate | date: 'mediumDate') : '—' }}</td>
+                <td>{{ actionStatusText(a.status) }}</td>
+                <td *ngIf="editable" class="boutons">
+                  <button mat-icon-button type="button" (click)="editAction(a)"
+                          i18n-aria-label="@@common.edit" aria-label="Modifier"
+                          i18n-matTooltip="@@common.edit" matTooltip="Modifier"><mat-icon>edit</mat-icon></button>
+                  <button mat-icon-button type="button" (click)="deleteAction(a)"
+                          i18n-aria-label="@@common.delete" aria-label="Supprimer"
+                          i18n-matTooltip="@@common.delete" matTooltip="Supprimer"><mat-icon>delete</mat-icon></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <ng-template #aucuneAction>
+            <p class="vide" i18n="@@rr.detail.no-action">Aucune action pour l'instant.</p>
+          </ng-template>
+        </section>
+
+        <section class="carte">
+          <h2 class="carte__titre" i18n="@@rr.detail.requirements">Exigences couvertes</h2>
+          <div class="etiquettes" *ngIf="s.opportunity.requirements.length; else aucuneExigenceO">
+            <span class="etiquette" *ngFor="let r of s.opportunity.requirements; trackBy: trackByCode">{{ requirementText(r) }}</span>
+          </div>
+          <ng-template #aucuneExigenceO><p class="vide">—</p></ng-template>
+          <p class="aide" i18n="@@rr.detail.requirements-note">Cette fiche compte comme preuve pour chacune de ces exigences dans la matrice du SMI.</p>
+        </section>
+      </div>
+
+      <div class="colonne colonne--etroite">
+        <section class="carte">
+          <h2 class="carte__titre" i18n="@@rr.form.evaluation">Évaluation</h2>
+          <div class="boites">
+            <div class="boite">
+              <span class="boite__titre" i18n="@@rr.gain">Gain attendu</span>
+              <span class="boite__calcul">{{ s.opportunity.gain }} / 5</span>
+              <span class="etiquette">{{ gainWord(s.opportunity.gain) }}</span>
+            </div>
+            <div class="boite">
+              <span class="boite__titre" i18n="@@rr.feasibility">Faisabilité</span>
+              <span class="boite__calcul">{{ s.opportunity.feasibility }} / 5</span>
+              <span class="etiquette">{{ feasibilityWord(s.opportunity.feasibility) }}</span>
+            </div>
+          </div>
+          <div class="score" data-test="score">
+            <span><span i18n="@@rr.form.score">Score</span> : <strong>{{ s.opportunity.gain }} × {{ s.opportunity.feasibility }} = {{ s.opportunity.score }}</strong></span>
+            <span class="cotation cotation--{{ s.opportunity.level }}">{{ opportunityLevelText(s.opportunity.level) }}</span>
+          </div>
+          <div class="barre__piste" aria-hidden="true"><div class="barre__plein" [style.width.%]="s.opportunity.score * 4"></div></div>
+          <p class="aide" i18n="@@rr.form.opportunity-scale">Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Prioritaire 15–25</p>
+        </section>
+
+        <section class="carte">
+          <h2 class="carte__titre" i18n="@@rr.form.follow-up">Suivi</h2>
+          <ol class="suivi" data-test="suivi">
+            <li *ngFor="let e of s.events; trackBy: trackById">
+              <strong>{{ e.at | date: 'mediumDate' }}</strong> · {{ eventLine(e) }}
+            </li>
+          </ol>
+          <div class="prochaine">
+            <p><strong i18n="@@rr.form.target-date">Échéance visée</strong> · {{ s.opportunity.targetDate ? (s.opportunity.targetDate | date: 'mediumDate') : '—' }}</p>
+            <p><span i18n="@@rr.detail.benefit-check">Vérification du bénéfice</span> : {{ s.opportunity.benefitCriterion || '—' }}</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </ng-container>
+</div>

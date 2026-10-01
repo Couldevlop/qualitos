@@ -163,6 +163,16 @@ export class MainShellComponent implements OnInit, OnDestroy {
       ]
     },
     {
+      // Un groupe à lui, comme l'APQP et la non-conformité : le registre unique
+      // du SMI (ISO 9001 §6.1). Une seule entrée, le registre ; ses deux onglets
+      // -- risques, opportunités -- portent la navigation interne. Module
+      // « risk », comme l'AMDEC : le serveur refuse les écritures sans lui.
+      label: $localize`:@@nav.risques-opportunites:Risques & opportunités`,
+      items: [
+        { label: $localize`:@@nav.registre-risques:Registre`, route: '/risques', icon: 'shield', module: 'risk' }
+      ]
+    },
+    {
       label: $localize`:@@nav.operations:Opérations`,
       items: [
         { label: $localize`:@@nav.calibration:Calibration`,         route: '/calibration', icon: 'straighten', module: 'calibration' },

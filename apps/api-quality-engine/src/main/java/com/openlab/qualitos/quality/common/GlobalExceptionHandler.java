@@ -162,6 +162,8 @@ import com.openlab.qualitos.quality.apqp.ApqpProjectNotFoundException;
 import com.openlab.qualitos.quality.apqp.ApqpReorderException;
 import com.openlab.qualitos.quality.costofquality.domain.CoqNotFoundException;
 import com.openlab.qualitos.quality.costofquality.domain.CoqValidationException;
+import com.openlab.qualitos.quality.riskregister.domain.RegisterNotFoundException;
+import com.openlab.qualitos.quality.riskregister.domain.RegisterValidationException;
 import com.openlab.qualitos.quality.ideas.domain.IdeaNotFoundException;
 import com.openlab.qualitos.quality.ideas.domain.IdeaStateException;
 import com.openlab.qualitos.quality.ideas.domain.VoteClosedException;
@@ -525,6 +527,30 @@ public class GlobalExceptionHandler {
                 HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/coq-invalid"));
         problem.setTitle("Invalid Cost Of Quality Line");
+        problem.setProperty("field", ex.getField());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(RegisterNotFoundException.class)
+    public ProblemDetail handleRegisterNotFound(RegisterNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/risk-register-not-found"));
+        problem.setTitle("Risk Register Item Not Found");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * 422 : la fiche est bien formée mais incohérente (résiduelle au-dessus de
+     * la brute, exigence d'un autre registre…). {@code field} dit laquelle.
+     */
+    @ExceptionHandler(RegisterValidationException.class)
+    public ProblemDetail handleRegisterValidation(RegisterValidationException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/risk-register-invalid"));
+        problem.setTitle("Invalid Risk Register Item");
         problem.setProperty("field", ex.getField());
         problem.setProperty("timestamp", Instant.now());
         return problem;

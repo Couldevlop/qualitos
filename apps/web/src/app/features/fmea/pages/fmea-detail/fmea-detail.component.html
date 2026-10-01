@@ -122,6 +122,14 @@
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef></th>
               <td mat-cell *matCellDef="let i" class="actions">
+                <!-- Une ligne au-delà du seuil de criticité du projet peut devenir un
+                     risque du registre ; le serveur revérifie le seuil. -->
+                <a mat-icon-button *ngIf="i.critical" data-test="creer-risque"
+                   [routerLink]="['/risques', 'nouveau']" [queryParams]="{ origine: 'FMEA', source: i.id }"
+                   i18n-matTooltip="@@rr.create-from-fmea-tooltip" matTooltip="Transformer cette ligne en risque du registre"
+                   i18n-aria-label="@@rr.create-risk" aria-label="Créer un risque">
+                  <mat-icon>shield</mat-icon>
+                </a>
                 <button mat-icon-button (click)="openEditItem(p, i)" i18n-matTooltip="@@common.edit" matTooltip="Modifier"
                         [disabled]="p.status === 'ARCHIVED'">
                   <mat-icon>edit</mat-icon>

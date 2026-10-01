@@ -44,6 +44,11 @@ const routes: Routes = [
           .then(m => m.CostOfQualityModule)
       },
       {
+        path: 'risques',
+        loadChildren: () => import('./features/risk-register/risk-register.module')
+          .then(m => m.RiskRegisterModule)
+      },
+      {
         path: 'idees',
         loadChildren: () => import('./features/ideas/ideas.module').then(m => m.IdeasModule)
       },

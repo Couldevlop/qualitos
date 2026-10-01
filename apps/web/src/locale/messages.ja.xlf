@@ -21063,6 +21063,834 @@ historique 12 mois</source>
         <source>Lien impossible.</source>
         <target state="translated">リンクできませんでした。</target>
       </trans-unit>
+      <trans-unit id="common.retry" datatype="html">
+        <source>Réessayer</source>
+        <target state="translated">再試行</target>
+      </trans-unit>
+      <trans-unit id="nav.risques-opportunites" datatype="html">
+        <source>Risques &amp; opportunités</source>
+        <target state="translated">リスクと機会</target>
+      </trans-unit>
+      <trans-unit id="nav.registre-risques" datatype="html">
+        <source>Registre</source>
+        <target state="translated">登録簿</target>
+      </trans-unit>
+      <trans-unit id="rr.eyebrow" datatype="html">
+        <source>Risques &amp; conformité</source>
+        <target state="translated">リスクとコンプライアンス</target>
+      </trans-unit>
+      <trans-unit id="rr.title" datatype="html">
+        <source>Risques et opportunités</source>
+        <target state="translated">リスクと機会</target>
+      </trans-unit>
+      <trans-unit id="rr.subtitle" datatype="html">
+        <source>Registre unique du système de management : chaque ligne est cotée, traitée et rattachée aux exigences qu'elle couvre.</source>
+        <target state="translated">マネジメントシステムの統合登録簿：各行は評価・対応され、対象となる要求事項に紐づけられます。</target>
+      </trans-unit>
+      <trans-unit id="rr.crumb.register" datatype="html">
+        <source>Registre</source>
+        <target state="translated">登録簿</target>
+      </trans-unit>
+      <trans-unit id="rr.tabs" datatype="html">
+        <source>Registres</source>
+        <target state="translated">登録簿</target>
+      </trans-unit>
+      <trans-unit id="rr.tab-risks" datatype="html">
+        <source>Risques</source>
+        <target state="translated">リスク</target>
+      </trans-unit>
+      <trans-unit id="rr.tab-opportunities" datatype="html">
+        <source>Opportunités</source>
+        <target state="translated">機会</target>
+      </trans-unit>
+      <trans-unit id="rr.new-risk" datatype="html">
+        <source>Nouveau risque</source>
+        <target state="translated">新規リスク</target>
+      </trans-unit>
+      <trans-unit id="rr.new-opportunity" datatype="html">
+        <source>Nouvelle opportunité</source>
+        <target state="translated">新規機会</target>
+      </trans-unit>
+      <trans-unit id="rr.create-risk" datatype="html">
+        <source>Créer un risque</source>
+        <target state="translated">リスクを作成</target>
+      </trans-unit>
+      <trans-unit id="rr.export" datatype="html">
+        <source>Exporter</source>
+        <target state="translated">エクスポート</target>
+      </trans-unit>
+      <trans-unit id="rr.load-failed" datatype="html">
+        <source>Le registre n'a pas pu être chargé.</source>
+        <target state="translated">登録簿を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="rr.search-risk" datatype="html">
+        <source>Rechercher un risque</source>
+        <target state="translated">リスクを検索</target>
+      </trans-unit>
+      <trans-unit id="rr.search-opportunity" datatype="html">
+        <source>Rechercher une opportunité</source>
+        <target state="translated">機会を検索</target>
+      </trans-unit>
+      <trans-unit id="rr.filter-type" datatype="html">
+        <source>Filtrer par type</source>
+        <target state="translated">種類で絞り込み</target>
+      </trans-unit>
+      <trans-unit id="rr.filter-process" datatype="html">
+        <source>Filtrer par processus</source>
+        <target state="translated">プロセスで絞り込み</target>
+      </trans-unit>
+      <trans-unit id="rr.filter-status" datatype="html">
+        <source>Filtrer par statut</source>
+        <target state="translated">ステータスで絞り込み</target>
+      </trans-unit>
+      <trans-unit id="rr.all-types" datatype="html">
+        <source>Tous types</source>
+        <target state="translated">すべての種類</target>
+      </trans-unit>
+      <trans-unit id="rr.all-processes" datatype="html">
+        <source>Tous processus</source>
+        <target state="translated">すべてのプロセス</target>
+      </trans-unit>
+      <trans-unit id="rr.all-statuses" datatype="html">
+        <source>Tous statuts</source>
+        <target state="translated">すべてのステータス</target>
+      </trans-unit>
+      <trans-unit id="rr.all-opportunities" datatype="html">
+        <source>Toutes</source>
+        <target state="translated">すべて</target>
+      </trans-unit>
+      <trans-unit id="rr.priority-filter" datatype="html">
+        <source>Filtre de priorité</source>
+        <target state="translated">優先度フィルター</target>
+      </trans-unit>
+      <trans-unit id="rr.priority-only" datatype="html">
+        <source>Prioritaires</source>
+        <target state="translated">優先</target>
+      </trans-unit>
+      <trans-unit id="rr.rating-view" datatype="html">
+        <source>Cotation affichée</source>
+        <target state="translated">表示する評価</target>
+      </trans-unit>
+      <trans-unit id="rr.gross" datatype="html">
+        <source>Brut</source>
+        <target state="translated">固有</target>
+      </trans-unit>
+      <trans-unit id="rr.residual" datatype="html">
+        <source>Résiduel</source>
+        <target state="translated">残留</target>
+      </trans-unit>
+      <trans-unit id="rr.reset-filters" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">フィルターをクリア</target>
+      </trans-unit>
+      <trans-unit id="rr.no-risk" datatype="html">
+        <source>Aucun risque dans le registre.</source>
+        <target state="translated">登録簿にリスクはありません。</target>
+      </trans-unit>
+      <trans-unit id="rr.no-opportunity" datatype="html">
+        <source>Aucune opportunité dans le registre.</source>
+        <target state="translated">登録簿に機会はありません。</target>
+      </trans-unit>
+      <trans-unit id="rr.no-match" datatype="html">
+        <source>Aucune ligne ne correspond aux filtres.</source>
+        <target state="translated">フィルターに一致する行はありません。</target>
+      </trans-unit>
+      <trans-unit id="rr.shown-risks" datatype="html">
+        <source><x id="shown"/> risques affichés sur <x id="total"/></source>
+        <target state="translated"><x id="total"/> 件中 <x id="shown"/> 件のリスクを表示</target>
+      </trans-unit>
+      <trans-unit id="rr.shown-opportunities" datatype="html">
+        <source><x id="shown"/> opportunités affichées sur <x id="total"/></source>
+        <target state="translated"><x id="total"/> 件中 <x id="shown"/> 件の機会を表示</target>
+      </trans-unit>
+      <trans-unit id="rr.legend-risk" datatype="html">
+        <source>Niveau = gravité × probabilité · Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Critique 15–25</source>
+        <target state="translated">レベル = 重大度 × 発生可能性 · 低 1–4 · 中 5–9 · 高 10–14 · 重大 15–25</target>
+      </trans-unit>
+      <trans-unit id="rr.legend-opportunity" datatype="html">
+        <source>Score = gain attendu × faisabilité (1 à 5 chacun) · Moyen 5–9 · Élevé 10–14 · Prioritaire 15–25</source>
+        <target state="translated">スコア = 期待効果 × 実現可能性（各1〜5） · 中 5–9 · 高 10–14 · 優先 15–25</target>
+      </trans-unit>
+      <trans-unit id="rr.col.ref" datatype="html">
+        <source>Réf.</source>
+        <target state="translated">参照</target>
+      </trans-unit>
+      <trans-unit id="rr.col.risk" datatype="html">
+        <source>Risque</source>
+        <target state="translated">リスク</target>
+      </trans-unit>
+      <trans-unit id="rr.col.opportunity" datatype="html">
+        <source>Opportunité</source>
+        <target state="translated">機会</target>
+      </trans-unit>
+      <trans-unit id="rr.col.type" datatype="html">
+        <source>Type</source>
+        <target state="translated">種類</target>
+      </trans-unit>
+      <trans-unit id="rr.col.process" datatype="html">
+        <source>Processus</source>
+        <target state="translated">プロセス</target>
+      </trans-unit>
+      <trans-unit id="rr.col.owner" datatype="html">
+        <source>Propriétaire</source>
+        <target state="translated">オーナー</target>
+      </trans-unit>
+      <trans-unit id="rr.col.gross" datatype="html">
+        <source>Cotation brute</source>
+        <target state="translated">固有評価</target>
+      </trans-unit>
+      <trans-unit id="rr.col.residual" datatype="html">
+        <source>Résiduel</source>
+        <target state="translated">残留</target>
+      </trans-unit>
+      <trans-unit id="rr.col.score" datatype="html">
+        <source>Gain × faisabilité</source>
+        <target state="translated">効果 × 実現可能性</target>
+      </trans-unit>
+      <trans-unit id="rr.col.status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">ステータス</target>
+      </trans-unit>
+      <trans-unit id="rr.col.due" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">期限</target>
+      </trans-unit>
+      <trans-unit id="rr.create-from-fmea-tooltip" datatype="html">
+        <source>Transformer cette ligne en risque du registre</source>
+        <target state="translated">この行を登録簿のリスクに変換</target>
+      </trans-unit>
+      <trans-unit id="rr.create-from-nc-tooltip" datatype="html">
+        <source>Inscrire au registre le risque que révèle cet écart</source>
+        <target state="translated">この不適合が示すリスクを登録簿に登録</target>
+      </trans-unit>
+      <trans-unit id="rr.create-from-change-tooltip" datatype="html">
+        <source>Inscrire au registre un risque issu de l'analyse d'impact</source>
+        <target state="translated">影響分析から特定されたリスクを登録簿に登録</target>
+      </trans-unit>
+      <trans-unit id="rr.form.new-risk" datatype="html">
+        <source>Nouveau risque</source>
+        <target state="translated">新規リスク</target>
+      </trans-unit>
+      <trans-unit id="rr.form.new-opportunity" datatype="html">
+        <source>Nouvelle opportunité</source>
+        <target state="translated">新規機会</target>
+      </trans-unit>
+      <trans-unit id="rr.form.edit-risk" datatype="html">
+        <source>Modifier le risque</source>
+        <target state="translated">リスクを編集</target>
+      </trans-unit>
+      <trans-unit id="rr.form.edit-opportunity" datatype="html">
+        <source>Modifier l'opportunité</source>
+        <target state="translated">機会を編集</target>
+      </trans-unit>
+      <trans-unit id="rr.form.read-only" datatype="html">
+        <source>Votre profil permet de consulter le registre, pas de l'alimenter. Un responsable qualité peut créer cette fiche.</source>
+        <target state="translated">お使いのプロファイルでは登録簿の閲覧のみ可能で、登録はできません。品質管理者がこの記録を作成できます。</target>
+      </trans-unit>
+      <trans-unit id="rr.form.identification" datatype="html">
+        <source>Identification</source>
+        <target state="translated">特定</target>
+      </trans-unit>
+      <trans-unit id="rr.form.risk-title" datatype="html">
+        <source>Intitulé du risque</source>
+        <target state="translated">リスクの名称</target>
+      </trans-unit>
+      <trans-unit id="rr.form.risk-title-placeholder" datatype="html">
+        <source>Décrire le risque en une phrase</source>
+        <target state="translated">リスクを一文で記述</target>
+      </trans-unit>
+      <trans-unit id="rr.form.opportunity-title" datatype="html">
+        <source>Intitulé de l'opportunité</source>
+        <target state="translated">機会の名称</target>
+      </trans-unit>
+      <trans-unit id="rr.form.opportunity-title-placeholder" datatype="html">
+        <source>Décrire l'opportunité en une phrase</source>
+        <target state="translated">機会を一文で記述</target>
+      </trans-unit>
+      <trans-unit id="rr.form.description" datatype="html">
+        <source>Description</source>
+        <target state="translated">説明</target>
+      </trans-unit>
+      <trans-unit id="rr.form.cause" datatype="html">
+        <source>Cause</source>
+        <target state="translated">原因</target>
+      </trans-unit>
+      <trans-unit id="rr.form.cause-placeholder" datatype="html">
+        <source>Qu'est-ce qui peut provoquer ce risque ?</source>
+        <target state="translated">このリスクを引き起こし得るものは？</target>
+      </trans-unit>
+      <trans-unit id="rr.form.effect" datatype="html">
+        <source>Effet</source>
+        <target state="translated">影響</target>
+      </trans-unit>
+      <trans-unit id="rr.form.effect-placeholder" datatype="html">
+        <source>Quelles conséquences s'il se produit ?</source>
+        <target state="translated">発生した場合の結果は？</target>
+      </trans-unit>
+      <trans-unit id="rr.form.context" datatype="html">
+        <source>Contexte et levier</source>
+        <target state="translated">背景と推進要因</target>
+      </trans-unit>
+      <trans-unit id="rr.form.context-placeholder" datatype="html">
+        <source>Qu'est-ce qui rend cette opportunité possible ?</source>
+        <target state="translated">この機会を可能にしているものは？</target>
+      </trans-unit>
+      <trans-unit id="rr.form.benefit" datatype="html">
+        <source>Bénéfice attendu</source>
+        <target state="translated">期待される効果</target>
+      </trans-unit>
+      <trans-unit id="rr.form.benefit-placeholder" datatype="html">
+        <source>Quel gain en attendez-vous ?</source>
+        <target state="translated">どのような効果を期待しますか？</target>
+      </trans-unit>
+      <trans-unit id="rr.form.site" datatype="html">
+        <source>Site</source>
+        <target state="translated">サイト</target>
+      </trans-unit>
+      <trans-unit id="rr.form.origin" datatype="html">
+        <source>Origine</source>
+        <target state="translated">発生源</target>
+      </trans-unit>
+      <trans-unit id="rr.form.origin-ref" datatype="html">
+        <source>Référence liée (facultatif)</source>
+        <target state="translated">関連参照（任意）</target>
+      </trans-unit>
+      <trans-unit id="rr.form.origin-locked" datatype="html">
+        <source>Fixée par l'objet dont le risque est issu.</source>
+        <target state="translated">リスクの発生元の項目により固定されています。</target>
+      </trans-unit>
+      <trans-unit id="rr.form.from-source" datatype="html">
+        <source>Risque issu de</source>
+        <target state="translated">リスクの発生元</target>
+      </trans-unit>
+      <trans-unit id="rr.form.source" datatype="html">
+        <source>Source</source>
+        <target state="translated">ソース</target>
+      </trans-unit>
+      <trans-unit id="rr.form.already-linked" datatype="html">
+        <source>Déjà au registre depuis cet objet :</source>
+        <target state="translated">この項目から既に登録済み：</target>
+      </trans-unit>
+      <trans-unit id="rr.form.not-eligible" datatype="html">
+        <source>Cet objet ne justifie pas un risque.</source>
+        <target state="translated">この項目はリスク登録に該当しません。</target>
+      </trans-unit>
+      <trans-unit id="rr.form.not-a-gap" datatype="html">
+        <source>Ce constat n'est pas un écart : il ne justifie pas un risque.</source>
+        <target state="translated">この所見は不適合ではないため、リスク登録に該当しません。</target>
+      </trans-unit>
+      <trans-unit id="rr.form.below-threshold" datatype="html">
+        <source>Cette ligne d'AMDEC est sous le seuil de criticité du projet : elle ne justifie pas un risque.</source>
+        <target state="translated">このFMEA行はプロジェクトの重要度しきい値未満のため、リスク登録に該当しません。</target>
+      </trans-unit>
+      <trans-unit id="rr.form.requirements" datatype="html">
+        <source>Exigences concernées</source>
+        <target state="translated">対象となる要求事項</target>
+      </trans-unit>
+      <trans-unit id="rr.form.evaluation" datatype="html">
+        <source>Évaluation</source>
+        <target state="translated">評価</target>
+      </trans-unit>
+      <trans-unit id="rr.form.gross-rating" datatype="html">
+        <source>Cotation brute</source>
+        <target state="translated">固有評価</target>
+      </trans-unit>
+      <trans-unit id="rr.form.residual-rating" datatype="html">
+        <source>Cotation résiduelle visée</source>
+        <target state="translated">目標残留評価</target>
+      </trans-unit>
+      <trans-unit id="rr.form.residual-too-high" datatype="html">
+        <source>La cotation résiduelle visée ne peut pas dépasser la cotation brute.</source>
+        <target state="translated">目標残留評価は固有評価を超えることはできません。</target>
+      </trans-unit>
+      <trans-unit id="rr.form.level" datatype="html">
+        <source>Niveau</source>
+        <target state="translated">レベル</target>
+      </trans-unit>
+      <trans-unit id="rr.form.score" datatype="html">
+        <source>Score</source>
+        <target state="translated">スコア</target>
+      </trans-unit>
+      <trans-unit id="rr.form.risk-scale" datatype="html">
+        <source>Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Critique 15–25</source>
+        <target state="translated">低 1–4 · 中 5–9 · 高 10–14 · 重大 15–25</target>
+      </trans-unit>
+      <trans-unit id="rr.form.opportunity-scale" datatype="html">
+        <source>Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Prioritaire 15–25</source>
+        <target state="translated">低 1–4 · 中 5–9 · 高 10–14 · 優先 15–25</target>
+      </trans-unit>
+      <trans-unit id="rr.form.treatment" datatype="html">
+        <source>Traitement</source>
+        <target state="translated">対応</target>
+      </trans-unit>
+      <trans-unit id="rr.form.implementation" datatype="html">
+        <source>Mise en œuvre</source>
+        <target state="translated">実施</target>
+      </trans-unit>
+      <trans-unit id="rr.form.decision" datatype="html">
+        <source>Décision</source>
+        <target state="translated">決定</target>
+      </trans-unit>
+      <trans-unit id="rr.form.follow-up" datatype="html">
+        <source>Suivi</source>
+        <target state="translated">フォローアップ</target>
+      </trans-unit>
+      <trans-unit id="rr.form.target-date" datatype="html">
+        <source>Échéance visée</source>
+        <target state="translated">目標期日</target>
+      </trans-unit>
+      <trans-unit id="rr.form.next-review" datatype="html">
+        <source>Prochaine revue</source>
+        <target state="translated">次回レビュー</target>
+      </trans-unit>
+      <trans-unit id="rr.form.effectiveness" datatype="html">
+        <source>Vérification d'efficacité (critère)</source>
+        <target state="translated">有効性確認（基準）</target>
+      </trans-unit>
+      <trans-unit id="rr.form.benefit-check" datatype="html">
+        <source>Vérification du bénéfice (critère)</source>
+        <target state="translated">効果確認（基準）</target>
+      </trans-unit>
+      <trans-unit id="rr.form.required" datatype="html">
+        <source>Champ obligatoire.</source>
+        <target state="translated">必須項目です。</target>
+      </trans-unit>
+      <trans-unit id="rr.form.save-risk" datatype="html">
+        <source>Enregistrer le risque</source>
+        <target state="translated">リスクを保存</target>
+      </trans-unit>
+      <trans-unit id="rr.form.save-opportunity" datatype="html">
+        <source>Enregistrer l'opportunité</source>
+        <target state="translated">機会を保存</target>
+      </trans-unit>
+      <trans-unit id="rr.form.risk-saved" datatype="html">
+        <source>Risque enregistré.</source>
+        <target state="translated">リスクを保存しました。</target>
+      </trans-unit>
+      <trans-unit id="rr.form.opportunity-saved" datatype="html">
+        <source>Opportunité enregistrée.</source>
+        <target state="translated">機会を保存しました。</target>
+      </trans-unit>
+      <trans-unit id="rr.form.save-failed" datatype="html">
+        <source>L'enregistrement a échoué.</source>
+        <target state="translated">保存に失敗しました。</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.back" datatype="html">
+        <source>Retour au registre</source>
+        <target state="translated">登録簿に戻る</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.failed" datatype="html">
+        <source>La fiche est indisponible.</source>
+        <target state="translated">記録を利用できません。</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.rating" datatype="html">
+        <source>Cotation</source>
+        <target state="translated">評価</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.gross" datatype="html">
+        <source>Brute</source>
+        <target state="translated">固有</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.residual-target" datatype="html">
+        <source>Résiduelle visée</source>
+        <target state="translated">目標残留</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.not-set" datatype="html">
+        <source>Non fixée</source>
+        <target state="translated">未設定</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.effectiveness" datatype="html">
+        <source>Vérification d'efficacité</source>
+        <target state="translated">有効性確認</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.benefit-check" datatype="html">
+        <source>Vérification du bénéfice</source>
+        <target state="translated">効果確認</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.requirements" datatype="html">
+        <source>Exigences couvertes</source>
+        <target state="translated">対象の要求事項</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.requirements-note" datatype="html">
+        <source>Cette fiche compte comme preuve pour chacune de ces exigences dans la matrice du SMI.</source>
+        <target state="translated">この記録は、統合マネジメントシステム（IMS）マトリクスにおいて、これらの各要求事項の証拠として扱われます。</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.action" datatype="html">
+        <source>Action</source>
+        <target state="translated">アクション</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.row-actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">アクション</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.no-action" datatype="html">
+        <source>Aucune action pour l'instant.</source>
+        <target state="translated">アクションはまだありません。</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.no-capa" datatype="html">
+        <source>Aucune action CAPA liée pour l'instant.</source>
+        <target state="translated">関連するCAPAアクションはまだありません。</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.capa-opened" datatype="html">
+        <source>Dossier CAPA ouvert.</source>
+        <target state="translated">CAPAケースを開始しました。</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.delete-action-title" datatype="html">
+        <source>Supprimer ACT-<x id="number"/> ?</source>
+        <target state="translated">ACT-<x id="number"/> を削除しますか？</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.delete-action-message" datatype="html">
+        <source>L'action quitte la fiche. La suppression est tracée dans le journal d'audit.</source>
+        <target state="translated">アクションは記録から削除されます。削除は監査証跡に記録されます。</target>
+      </trans-unit>
+      <trans-unit id="rr.action.new-title" datatype="html">
+        <source>Créer une action</source>
+        <target state="translated">アクションを作成</target>
+      </trans-unit>
+      <trans-unit id="rr.action.title" datatype="html">
+        <source>Intitulé</source>
+        <target state="translated">名称</target>
+      </trans-unit>
+      <trans-unit id="rr.action.description" datatype="html">
+        <source>Description (facultatif)</source>
+        <target state="translated">説明（任意）</target>
+      </trans-unit>
+      <trans-unit id="rr.action.capa-title" datatype="html">
+        <source>Créer une action CAPA</source>
+        <target state="translated">CAPAアクションを作成</target>
+      </trans-unit>
+      <trans-unit id="rr.action.capa-help" datatype="html">
+        <source>Un dossier CAPA préventif est ouvert dans le module CAPA, à votre nom, avec la criticité du niveau brut du risque. Il apparaîtra dans le tableau « Traitement » de la fiche.</source>
+        <target state="translated">CAPAモジュールで、あなたの名前で予防的CAPAケースが開始され、リスクの固有レベルに応じた重要度が設定されます。記録の「対応」表に表示されます。</target>
+      </trans-unit>
+      <trans-unit id="rr.action.open-capa" datatype="html">
+        <source>Ouvrir le dossier CAPA</source>
+        <target state="translated">CAPAケースを開く</target>
+      </trans-unit>
+      <trans-unit id="rr.action-status.to-start" datatype="html">
+        <source>À démarrer</source>
+        <target state="translated">未着手</target>
+      </trans-unit>
+      <trans-unit id="rr.action-status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">進行中</target>
+      </trans-unit>
+      <trans-unit id="rr.action-status.done" datatype="html">
+        <source>Terminée</source>
+        <target state="translated">完了</target>
+      </trans-unit>
+      <trans-unit id="rr.action-status.cancelled" datatype="html">
+        <source>Annulée</source>
+        <target state="translated">取消</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.open" datatype="html">
+        <source>À démarrer</source>
+        <target state="translated">未着手</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">進行中</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.resolved" datatype="html">
+        <source>Résolue</source>
+        <target state="translated">解決済み</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.closed" datatype="html">
+        <source>Clôturée</source>
+        <target state="translated">完了</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.rejected" datatype="html">
+        <source>Rejetée</source>
+        <target state="translated">却下</target>
+      </trans-unit>
+      <trans-unit id="rr.severity" datatype="html">
+        <source>Gravité</source>
+        <target state="translated">重大度</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.1" datatype="html">
+        <source>1 · Négligeable</source>
+        <target state="translated">1 · 軽微</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.2" datatype="html">
+        <source>2 · Mineure</source>
+        <target state="translated">2 · 小</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.3" datatype="html">
+        <source>3 · Significative</source>
+        <target state="translated">3 · 中程度</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.4" datatype="html">
+        <source>4 · Grave</source>
+        <target state="translated">4 · 重大</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.5" datatype="html">
+        <source>5 · Catastrophique</source>
+        <target state="translated">5 · 壊滅的</target>
+      </trans-unit>
+      <trans-unit id="rr.probability" datatype="html">
+        <source>Probabilité</source>
+        <target state="translated">発生可能性</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.1" datatype="html">
+        <source>1 · Rare</source>
+        <target state="translated">1 · まれ</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.2" datatype="html">
+        <source>2 · Peu probable</source>
+        <target state="translated">2 · 可能性低</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.3" datatype="html">
+        <source>3 · Possible</source>
+        <target state="translated">3 · あり得る</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.4" datatype="html">
+        <source>4 · Probable</source>
+        <target state="translated">4 · 可能性高</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.5" datatype="html">
+        <source>5 · Quasi certaine</source>
+        <target state="translated">5 · ほぼ確実</target>
+      </trans-unit>
+      <trans-unit id="rr.gain" datatype="html">
+        <source>Gain attendu</source>
+        <target state="translated">期待効果</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.1" datatype="html">
+        <source>1 · Faible</source>
+        <target state="translated">1 · 低</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.2" datatype="html">
+        <source>2 · Modéré</source>
+        <target state="translated">2 · 中程度</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.3" datatype="html">
+        <source>3 · Significatif</source>
+        <target state="translated">3 · 大きい</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.4" datatype="html">
+        <source>4 · Fort</source>
+        <target state="translated">4 · 非常に大きい</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.5" datatype="html">
+        <source>5 · Très fort</source>
+        <target state="translated">5 · 極めて大きい</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility" datatype="html">
+        <source>Faisabilité</source>
+        <target state="translated">実現可能性</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.1" datatype="html">
+        <source>1 · Très difficile</source>
+        <target state="translated">1 · 非常に困難</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.2" datatype="html">
+        <source>2 · Difficile</source>
+        <target state="translated">2 · 困難</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.3" datatype="html">
+        <source>3 · Réaliste</source>
+        <target state="translated">3 · 現実的</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.4" datatype="html">
+        <source>4 · Facile</source>
+        <target state="translated">4 · 容易</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.5" datatype="html">
+        <source>5 · Très facile</source>
+        <target state="translated">5 · 非常に容易</target>
+      </trans-unit>
+      <trans-unit id="rr.level.low" datatype="html">
+        <source>Faible</source>
+        <target state="translated">低</target>
+      </trans-unit>
+      <trans-unit id="rr.level.medium" datatype="html">
+        <source>Moyen</source>
+        <target state="translated">中</target>
+      </trans-unit>
+      <trans-unit id="rr.level.high" datatype="html">
+        <source>Élevé</source>
+        <target state="translated">高</target>
+      </trans-unit>
+      <trans-unit id="rr.level.critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">重大</target>
+      </trans-unit>
+      <trans-unit id="rr.level.priority" datatype="html">
+        <source>Prioritaire</source>
+        <target state="translated">優先</target>
+      </trans-unit>
+      <trans-unit id="rr.type.quality" datatype="html">
+        <source>Qualité</source>
+        <target state="translated">品質</target>
+      </trans-unit>
+      <trans-unit id="rr.type.environment" datatype="html">
+        <source>Environnement</source>
+        <target state="translated">環境</target>
+      </trans-unit>
+      <trans-unit id="rr.type.health-safety" datatype="html">
+        <source>SST</source>
+        <target state="translated">労働安全衛生</target>
+      </trans-unit>
+      <trans-unit id="rr.type.information-security" datatype="html">
+        <source>Sécurité de l'information</source>
+        <target state="translated">情報セキュリティ</target>
+      </trans-unit>
+      <trans-unit id="rr.type.legal" datatype="html">
+        <source>Exigences légales</source>
+        <target state="translated">法的要求事項</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.direct" datatype="html">
+        <source>Saisie directe</source>
+        <target state="translated">直接入力</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.fmea" datatype="html">
+        <source>AMDEC</source>
+        <target state="translated">FMEA</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.non-conformity" datatype="html">
+        <source>Non-conformité</source>
+        <target state="translated">不適合</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.audit" datatype="html">
+        <source>Audit</source>
+        <target state="translated">監査</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.change" datatype="html">
+        <source>Changement (MOC)</source>
+        <target state="translated">変更（MOC）</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.incident" datatype="html">
+        <source>Incident</source>
+        <target state="translated">インシデント</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.customer-feedback" datatype="html">
+        <source>Retour client</source>
+        <target state="translated">顧客フィードバック</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.management-review" datatype="html">
+        <source>Revue de direction</source>
+        <target state="translated">マネジメントレビュー</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.monitoring" datatype="html">
+        <source>Veille</source>
+        <target state="translated">モニタリング</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.undecided" datatype="html">
+        <source>À décider</source>
+        <target state="translated">未決定</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.reduce" datatype="html">
+        <source>Réduire</source>
+        <target state="translated">低減</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.avoid" datatype="html">
+        <source>Éviter</source>
+        <target state="translated">回避</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.transfer" datatype="html">
+        <source>Transférer</source>
+        <target state="translated">移転</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.accept" datatype="html">
+        <source>Accepter</source>
+        <target state="translated">受容</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.to-treat" datatype="html">
+        <source>À traiter</source>
+        <target state="translated">未対応</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.in-treatment" datatype="html">
+        <source>En traitement</source>
+        <target state="translated">対応中</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.monitored" datatype="html">
+        <source>Surveillé</source>
+        <target state="translated">監視中</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.accepted" datatype="html">
+        <source>Accepté</source>
+        <target state="translated">受容済み</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.closed" datatype="html">
+        <source>Clos</source>
+        <target state="translated">クローズ</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.undecided" datatype="html">
+        <source>À décider</source>
+        <target state="translated">未決定</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.study" datatype="html">
+        <source>Étudier</source>
+        <target state="translated">検討</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.plan" datatype="html">
+        <source>Planifier</source>
+        <target state="translated">計画</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.postpone" datatype="html">
+        <source>Reporter</source>
+        <target state="translated">延期</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.discard" datatype="html">
+        <source>Écarter</source>
+        <target state="translated">見送り</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.under-study" datatype="html">
+        <source>En étude</source>
+        <target state="translated">検討中</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.planned" datatype="html">
+        <source>Planifiée</source>
+        <target state="translated">計画済み</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">進行中</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.done" datatype="html">
+        <source>Réalisée</source>
+        <target state="translated">実現済み</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.discarded" datatype="html">
+        <source>Écartée</source>
+        <target state="translated">見送り済み</target>
+      </trans-unit>
+      <trans-unit id="rr.event.risk-created" datatype="html">
+        <source>Risque créé — origine : <x id="origin"/><x id="ref"/></source>
+        <target state="translated">リスク作成 — 発生源：<x id="origin"/><x id="ref"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.opportunity-created" datatype="html">
+        <source>Opportunité créée — origine : <x id="origin"/><x id="ref"/></source>
+        <target state="translated">機会作成 — 発生源：<x id="origin"/><x id="ref"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.rating" datatype="html">
+        <source>Cotation brute passée de <x id="from"/> à <x id="to"/></source>
+        <target state="translated">固有評価が <x id="from"/> から <x id="to"/> に変更</target>
+      </trans-unit>
+      <trans-unit id="rr.event.evaluation" datatype="html">
+        <source>Évaluation passée de <x id="from"/> à <x id="to"/></source>
+        <target state="translated">評価が <x id="from"/> から <x id="to"/> に変更</target>
+      </trans-unit>
+      <trans-unit id="rr.event.residual" datatype="html">
+        <source>Cotation résiduelle visée : <x id="from"/> → <x id="to"/></source>
+        <target state="translated">目標残留評価：<x id="from"/> → <x id="to"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.decision" datatype="html">
+        <source>Décision : <x id="from"/> → <x id="to"/></source>
+        <target state="translated">決定：<x id="from"/> → <x id="to"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.status" datatype="html">
+        <source>Statut : <x id="from"/> → <x id="to"/></source>
+        <target state="translated">ステータス：<x id="from"/> → <x id="to"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.action-opened" datatype="html">
+        <source>Action <x id="number"/> ouverte : <x id="title"/></source>
+        <target state="translated">アクション <x id="number"/> を開始：<x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.capa-opened" datatype="html">
+        <source>Action CAPA ouverte : <x id="title"/></source>
+        <target state="translated">CAPAアクションを開始：<x id="title"/></target>
+      </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>
         <target state="translated">操作</target>

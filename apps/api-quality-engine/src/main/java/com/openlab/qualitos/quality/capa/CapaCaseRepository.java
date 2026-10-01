@@ -33,6 +33,13 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
      * non terminale existe déjà pour la même origine. Évite le spam d'une CAPA
      * par mesure tant que la précédente n'est pas clôturée.
      */
+    /**
+     * Les dossiers ouverts depuis une même origine, du plus ancien au plus
+     * récent : le tableau « Traitement » d'une fiche de risque.
+     */
+    List<CapaCase> findByTenantIdAndSourceTypeAndSourceRefOrderByCreatedAtAsc(
+            UUID tenantId, CapaSourceType sourceType, String sourceRef);
+
     boolean existsByTenantIdAndSourceTypeAndSourceRefAndStatusIn(
             UUID tenantId, CapaSourceType sourceType, String sourceRef, Collection<CapaStatus> statuses);
 
