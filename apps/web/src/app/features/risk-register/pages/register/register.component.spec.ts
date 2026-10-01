@@ -186,7 +186,9 @@ describe('RegisterComponent', () => {
   it('signale un échec de chargement et propose de réessayer', async () => {
     await setup();
     http.expectOne(`${endpoint}/risks`).flush('x', { status: 500, statusText: 'KO' });
-    http.expectOne(`${endpoint}/opportunities`).flush([]);
+    // forkJoin annule la seconde lecture dès que la première échoue : elle part,
+    // mais il n'y a plus personne pour lire sa réponse.
+    expect(http.expectOne(`${endpoint}/opportunities`).cancelled).toBeTrue();
     fixture.detectChanges();
     expect(component.failed).toBeTrue();
     expect(hote().querySelector('[role="alert"]')).not.toBeNull();
