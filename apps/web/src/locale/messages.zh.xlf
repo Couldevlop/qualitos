@@ -21197,12 +21197,12 @@ historique 12 mois</source>
         <target state="translated">没有符合筛选条件的行。</target>
       </trans-unit>
       <trans-unit id="rr.shown-risks" datatype="html">
-        <source><x id="shown"/> risques affichés sur <x id="total"/></source>
-        <target state="translated">显示 <x id="shown"/> / <x id="total"/> 项风险</target>
+        <source><x id="SHOWN"/> risques affichés sur <x id="TOTAL"/></source>
+        <target state="translated">显示 <x id="SHOWN"/> / <x id="TOTAL"/> 项风险</target>
       </trans-unit>
       <trans-unit id="rr.shown-opportunities" datatype="html">
-        <source><x id="shown"/> opportunités affichées sur <x id="total"/></source>
-        <target state="translated">显示 <x id="shown"/> / <x id="total"/> 项机遇</target>
+        <source><x id="SHOWN"/> opportunités affichées sur <x id="TOTAL"/></source>
+        <target state="translated">显示 <x id="SHOWN"/> / <x id="TOTAL"/> 项机遇</target>
       </trans-unit>
       <trans-unit id="rr.legend-risk" datatype="html">
         <source>Niveau = gravité × probabilité · Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Critique 15–25</source>

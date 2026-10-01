@@ -21197,12 +21197,12 @@ historial de 12 meses</target>
         <target state="translated">Ninguna línea coincide con los filtros.</target>
       </trans-unit>
       <trans-unit id="rr.shown-risks" datatype="html">
-        <source><x id="shown"/> risques affichés sur <x id="total"/></source>
-        <target state="translated"><x id="shown"/> de <x id="total"/> riesgos mostrados</target>
+        <source><x id="SHOWN"/> risques affichés sur <x id="TOTAL"/></source>
+        <target state="translated"><x id="SHOWN"/> de <x id="TOTAL"/> riesgos mostrados</target>
       </trans-unit>
       <trans-unit id="rr.shown-opportunities" datatype="html">
-        <source><x id="shown"/> opportunités affichées sur <x id="total"/></source>
-        <target state="translated"><x id="shown"/> de <x id="total"/> oportunidades mostradas</target>
+        <source><x id="SHOWN"/> opportunités affichées sur <x id="TOTAL"/></source>
+        <target state="translated"><x id="SHOWN"/> de <x id="TOTAL"/> oportunidades mostradas</target>
       </trans-unit>
       <trans-unit id="rr.legend-risk" datatype="html">
         <source>Niveau = gravité × probabilité · Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Critique 15–25</source>

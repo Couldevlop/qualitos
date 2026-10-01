@@ -21196,12 +21196,12 @@ historique 12 mois</source>
         <target state="translated">フィルターに一致する行はありません。</target>
       </trans-unit>
       <trans-unit id="rr.shown-risks" datatype="html">
-        <source><x id="shown"/> risques affichés sur <x id="total"/></source>
-        <target state="translated"><x id="total"/> 件中 <x id="shown"/> 件のリスクを表示</target>
+        <source><x id="SHOWN"/> risques affichés sur <x id="TOTAL"/></source>
+        <target state="translated"><x id="TOTAL"/> 件中 <x id="SHOWN"/> 件のリスクを表示</target>
       </trans-unit>
       <trans-unit id="rr.shown-opportunities" datatype="html">
-        <source><x id="shown"/> opportunités affichées sur <x id="total"/></source>
-        <target state="translated"><x id="total"/> 件中 <x id="shown"/> 件の機会を表示</target>
+        <source><x id="SHOWN"/> opportunités affichées sur <x id="TOTAL"/></source>
+        <target state="translated"><x id="TOTAL"/> 件中 <x id="SHOWN"/> 件の機会を表示</target>
       </trans-unit>
       <trans-unit id="rr.legend-risk" datatype="html">
         <source>Niveau = gravité × probabilité · Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Critique 15–25</source>
