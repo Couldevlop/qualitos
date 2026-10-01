@@ -205,6 +205,13 @@
                 <div class="cell">
                   <strong>{{ f.description }}</strong>
                   <small *ngIf="f.capaId"><span i18n="@@audits.detail.capa-label">CAPA :</span> {{ f.capaId }}</small>
+                  <!-- Un écart ou une observation peut révéler un risque ; un constat
+                       de conformité, non. Le serveur relit le constat via son plan. -->
+                  <a *ngIf="f.type === 'MINOR_NC' || f.type === 'MAJOR_NC' || f.type === 'OBSERVATION'"
+                     class="creer-risque" data-test="creer-risque"
+                     [routerLink]="['/risques', 'nouveau']" [queryParams]="{ origine: 'AUDIT', source: f.id }">
+                    <span i18n="@@rr.create-risk">Créer un risque</span>
+                  </a>
                 </div>
               </td>
             </ng-container>

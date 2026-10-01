@@ -1,0 +1,276 @@
+<div class="qos-page">
+  <qos-page-header
+    [title]="isRisk ? (isEdit ? editRiskTitle : newRiskTitle) : (isEdit ? editOpportunityTitle : newOpportunityTitle)"
+    [breadcrumbs]="breadcrumbs">
+  </qos-page-header>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="avis" *ngIf="!editable" role="note" data-test="lecture-seule" i18n="@@rr.form.read-only">
+    Votre profil permet de consulter le registre, pas de l'alimenter. Un responsable qualité peut créer cette fiche.
+  </p>
+
+  <!-- Créé depuis un objet de la plateforme : on le dit, et on signale les risques déjà issus de lui. -->
+  <section class="source" *ngIf="draft as d" data-test="source">
+    <mat-icon aria-hidden="true">link</mat-icon>
+    <div>
+      <p class="source__titre">
+        <span i18n="@@rr.form.from-source">Risque issu de</span> {{ originText }} · <strong>{{ d.originRef }}</strong>
+      </p>
+      <p class="source__alerte" *ngIf="!d.eligible" role="alert" data-test="source-non-eligible">
+        <ng-container [ngSwitch]="d.reason">
+          <span *ngSwitchCase="'BELOW_THRESHOLD'" i18n="@@rr.form.below-threshold">Cette ligne d'AMDEC est sous le seuil de criticité du projet : elle ne justifie pas un risque.</span>
+          <span *ngSwitchCase="'NOT_A_GAP'" i18n="@@rr.form.not-a-gap">Ce constat n'est pas un écart : il ne justifie pas un risque.</span>
+          <span *ngSwitchDefault i18n="@@rr.form.not-eligible">Cet objet ne justifie pas un risque.</span>
+        </ng-container>
+      </p>
+      <p class="source__existants" *ngIf="d.existing.length" data-test="source-existants">
+        <span i18n="@@rr.form.already-linked">Déjà au registre depuis cet objet :</span>
+        <a *ngFor="let e of d.existing; let last = last" [routerLink]="['/risques', e.id]">{{ e.reference }}<span *ngIf="!last">, </span></a>
+      </p>
+    </div>
+  </section>
+
+  <form *ngIf="!failed" [formGroup]="form" (ngSubmit)="submit()" class="grille" novalidate>
+    <div class="colonne">
+      <!-- Identification -->
+      <section class="carte">
+        <h2 class="carte__titre" i18n="@@rr.form.identification">Identification</h2>
+        <mat-form-field appearance="outline" class="plein">
+          <mat-label *ngIf="isRisk" i18n="@@rr.form.risk-title">Intitulé du risque</mat-label>
+          <mat-label *ngIf="!isRisk" i18n="@@rr.form.opportunity-title">Intitulé de l'opportunité</mat-label>
+          <input matInput formControlName="title" maxlength="255" data-test="intitule"
+                 [placeholder]="isRisk ? riskTitlePlaceholder : opportunityTitlePlaceholder">
+          <mat-error *ngIf="form.get('title')?.hasError('required')" i18n="@@rr.form.required">Champ obligatoire.</mat-error>
+          <mat-error *ngIf="serverError('title') as e">{{ e }}</mat-error>
+        </mat-form-field>
+
+        <div class="deux">
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@rr.col.type">Type</mat-label>
+            <mat-select formControlName="type" data-test="type">
+              <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@rr.col.process">Processus</mat-label>
+            <input matInput formControlName="process" maxlength="120" [matAutocomplete]="autoProcessus"
+                   data-test="processus">
+            <mat-autocomplete #autoProcessus="matAutocomplete">
+              <mat-option *ngFor="let p of filtered(suggestions.processes, 'process')" [value]="p">{{ p }}</mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="form.get('process')?.hasError('required')" i18n="@@rr.form.required">Champ obligatoire.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@rr.form.site">Site</mat-label>
+            <input matInput formControlName="site" maxlength="120" [matAutocomplete]="autoSite" data-test="site">
+            <mat-autocomplete #autoSite="matAutocomplete">
+              <mat-option *ngFor="let s of filtered(suggestions.sites, 'site')" [value]="s">{{ s }}</mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@rr.col.owner">Propriétaire</mat-label>
+            <input matInput formControlName="owner" maxlength="150" [matAutocomplete]="autoProprio"
+                   data-test="proprietaire">
+            <mat-autocomplete #autoProprio="matAutocomplete">
+              <mat-option *ngFor="let o of filtered(suggestions.owners, 'owner')" [value]="o">{{ o }}</mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="form.get('owner')?.hasError('required')" i18n="@@rr.form.required">Champ obligatoire.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" *ngIf="!isRisk">
+            <mat-label i18n="@@rr.form.target-date">Échéance visée</mat-label>
+            <input matInput type="date" formControlName="targetDate" data-test="echeance">
+          </mat-form-field>
+        </div>
+      </section>
+
+      <!-- Description -->
+      <section class="carte">
+        <h2 class="carte__titre" i18n="@@rr.form.description">Description</h2>
+        <div class="deux" *ngIf="isRisk">
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@rr.form.cause">Cause</mat-label>
+            <textarea matInput formControlName="cause" rows="3" maxlength="4000" data-test="cause"
+                      [placeholder]="causePlaceholder"></textarea>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@rr.form.effect">Effet</mat-label>
+            <textarea matInput formControlName="effect" rows="3" maxlength="4000" data-test="effet"
+                      [placeholder]="effectPlaceholder"></textarea>
+          </mat-form-field>
+        </div>
+        <div class="deux" *ngIf="!isRisk">
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@rr.form.context">Contexte et levier</mat-label>
+            <textarea matInput formControlName="context" rows="3" maxlength="4000" data-test="contexte"
+                      [placeholder]="contextPlaceholder"></textarea>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@rr.form.benefit">Bénéfice attendu</mat-label>
+            <textarea matInput formControlName="benefit" rows="3" maxlength="4000" data-test="benefice"
+                      [placeholder]="benefitPlaceholder"></textarea>
+          </mat-form-field>
+        </div>
+      </section>
+
+      <!-- Origine -->
+      <section class="carte">
+        <h2 class="carte__titre" i18n="@@rr.form.origin">Origine</h2>
+        <div class="deux">
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@rr.form.source">Source</mat-label>
+            <mat-select formControlName="origin" data-test="origine">
+              <mat-option *ngFor="let o of origins" [value]="o.value">{{ o.label }}</mat-option>
+            </mat-select>
+            <mat-hint *ngIf="originLocked" i18n="@@rr.form.origin-locked">Fixée par l'objet dont le risque est issu.</mat-hint>
+            <mat-error *ngIf="serverError('origin') as e">{{ e }}</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@rr.form.origin-ref">Référence liée (facultatif)</mat-label>
+            <input matInput formControlName="originRef" maxlength="120" data-test="reference-liee"
+                   placeholder="NC-…, AUD-…">
+          </mat-form-field>
+        </div>
+      </section>
+
+      <!-- Suivi : n'existe qu'une fois la fiche vécue. -->
+      <section class="carte" *ngIf="isEdit">
+        <h2 class="carte__titre" i18n="@@rr.form.follow-up">Suivi</h2>
+        <div class="deux">
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@rr.col.status">Statut</mat-label>
+            <mat-select formControlName="status" data-test="statut">
+              <ng-container *ngIf="isRisk">
+                <mat-option *ngFor="let s of riskStatuses" [value]="s.value">{{ s.label }}</mat-option>
+              </ng-container>
+              <ng-container *ngIf="!isRisk">
+                <mat-option *ngFor="let s of opportunityStatuses" [value]="s.value">{{ s.label }}</mat-option>
+              </ng-container>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" *ngIf="isRisk">
+            <mat-label i18n="@@rr.form.next-review">Prochaine revue</mat-label>
+            <input matInput type="date" formControlName="nextReviewOn" data-test="prochaine-revue">
+          </mat-form-field>
+        </div>
+        <mat-form-field appearance="outline" class="plein" *ngIf="isRisk">
+          <mat-label i18n="@@rr.form.effectiveness">Vérification d'efficacité (critère)</mat-label>
+          <input matInput formControlName="effectivenessCriterion" maxlength="1000" data-test="critere">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="plein" *ngIf="!isRisk">
+          <mat-label i18n="@@rr.form.benefit-check">Vérification du bénéfice (critère)</mat-label>
+          <input matInput formControlName="benefitCriterion" maxlength="1000" data-test="critere">
+        </mat-form-field>
+      </section>
+    </div>
+
+    <div class="colonne colonne--etroite">
+      <!-- Cotation brute / évaluation -->
+      <section class="carte">
+        <h2 class="carte__titre" *ngIf="isRisk" i18n="@@rr.form.gross-rating">Cotation brute</h2>
+        <h2 class="carte__titre" *ngIf="!isRisk" i18n="@@rr.form.evaluation">Évaluation</h2>
+        <div class="deux deux--serre" *ngIf="isRisk">
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@rr.severity">Gravité</mat-label>
+            <mat-select formControlName="grossSeverity" data-test="gravite">
+              <mat-option *ngFor="let n of severities" [value]="n.value">{{ n.label }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@rr.probability">Probabilité</mat-label>
+            <mat-select formControlName="grossProbability" data-test="probabilite">
+              <mat-option *ngFor="let n of probabilities" [value]="n.value">{{ n.label }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="deux deux--serre" *ngIf="!isRisk">
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@rr.gain">Gain attendu</mat-label>
+            <mat-select formControlName="gain" data-test="gain">
+              <mat-option *ngFor="let n of gains" [value]="n.value">{{ n.label }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@rr.feasibility">Faisabilité</mat-label>
+            <mat-select formControlName="feasibility" data-test="faisabilite">
+              <mat-option *ngFor="let n of feasibilities" [value]="n.value">{{ n.label }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="niveau" aria-live="polite" data-test="apercu-niveau">
+          <span>
+            <span *ngIf="isRisk" i18n="@@rr.form.level">Niveau</span><span *ngIf="!isRisk" i18n="@@rr.form.score">Score</span> :
+            <strong>{{ isRisk ? form.value.grossSeverity : form.value.gain }} × {{ isRisk ? form.value.grossProbability : form.value.feasibility }} = {{ grossScore }}</strong>
+          </span>
+          <span class="cotation cotation--{{ grossLevel }}">{{ grossLevelText }}</span>
+        </div>
+        <p class="aide" *ngIf="isRisk" i18n="@@rr.form.risk-scale">Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Critique 15–25</p>
+        <p class="aide" *ngIf="!isRisk" i18n="@@rr.form.opportunity-scale">Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Prioritaire 15–25</p>
+      </section>
+
+      <!-- Cotation résiduelle visée : en modification seulement. -->
+      <section class="carte" *ngIf="isRisk && isEdit">
+        <h2 class="carte__titre" i18n="@@rr.form.residual-rating">Cotation résiduelle visée</h2>
+        <div class="deux deux--serre">
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@rr.severity">Gravité</mat-label>
+            <mat-select formControlName="residualSeverity" data-test="gravite-residuelle">
+              <mat-option [value]="null">—</mat-option>
+              <mat-option *ngFor="let n of severities" [value]="n.value">{{ n.label }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label i18n="@@rr.probability">Probabilité</mat-label>
+            <mat-select formControlName="residualProbability" data-test="probabilite-residuelle">
+              <mat-option [value]="null">—</mat-option>
+              <mat-option *ngFor="let n of probabilities" [value]="n.value">{{ n.label }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="niveau" *ngIf="residualScore !== null">
+          <span><span i18n="@@rr.form.level">Niveau</span> : <strong>{{ residualScore }}</strong></span>
+          <span class="cotation cotation--{{ residualLevel }}">{{ residualLevelText }}</span>
+        </div>
+        <p class="erreur" *ngIf="residualTooHigh" role="alert" data-test="residuelle-trop-haute"
+           i18n="@@rr.form.residual-too-high">La cotation résiduelle visée ne peut pas dépasser la cotation brute.</p>
+        <p class="erreur" *ngIf="serverError('residualSeverity') as e" role="alert">{{ e }}</p>
+      </section>
+
+      <!-- Traitement -->
+      <section class="carte">
+        <h2 class="carte__titre" *ngIf="isRisk" i18n="@@rr.form.treatment">Traitement</h2>
+        <h2 class="carte__titre" *ngIf="!isRisk" i18n="@@rr.form.implementation">Mise en œuvre</h2>
+        <mat-form-field appearance="outline" class="plein">
+          <mat-label i18n="@@rr.form.decision">Décision</mat-label>
+          <mat-select formControlName="decision" data-test="decision">
+            <mat-option *ngFor="let d of decisions" [value]="d.value">{{ d.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </section>
+
+      <!-- Exigences -->
+      <section class="carte">
+        <h2 class="carte__titre" id="exigences-titre" i18n="@@rr.form.requirements">Exigences concernées</h2>
+        <div class="exigences" role="group" aria-labelledby="exigences-titre">
+          <mat-checkbox *ngFor="let r of requirements" [checked]="hasRequirement(r.value)"
+                        [disabled]="!editable" (change)="toggleRequirement(r.value, $event.checked)"
+                        [attr.data-test]="'exigence-' + r.value">{{ r.label }}</mat-checkbox>
+        </div>
+        <p class="erreur" *ngIf="serverError('requirements') as e" role="alert">{{ e }}</p>
+      </section>
+    </div>
+
+    <div class="pied">
+      <button mat-stroked-button type="button" (click)="cancel()" data-test="annuler" i18n="@@common.cancel">Annuler</button>
+      <button mat-flat-button color="primary" type="submit" data-test="enregistrer"
+              [disabled]="!editable || saving || loading || (draft !== null && !draft.eligible)">
+        <span *ngIf="isRisk" i18n="@@rr.form.save-risk">Enregistrer le risque</span>
+        <span *ngIf="!isRisk" i18n="@@rr.form.save-opportunity">Enregistrer l'opportunité</span>
+      </button>
+    </div>
+  </form>
+</div>

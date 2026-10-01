@@ -76,10 +76,11 @@ describe('MainShellComponent (navigation model)', () => {
     component = make();
   });
 
-  it('expose neuf groupes de navigation', () => {
+  it('expose dix groupes de navigation', () => {
     // Le septième est l'Administration ; le huitième, « Non-conformité », sorti
-    // des Opérations pour porter ses deux origines (interne / externe).
-    expect(component.sections.length).toBe(9);
+    // des Opérations pour porter ses deux origines (interne / externe). Le
+    // dixième, « Risques & opportunités », suit la non-conformité.
+    expect(component.sections.length).toBe(10);
   });
 
   it('une seule entree s’allume, meme quand une route en prefixe une autre', () => {
@@ -144,7 +145,17 @@ describe('MainShellComponent (navigation model)', () => {
     // Efficacite CAPA rejoignent le groupe de l'ecart qu'elles traitent.
     // Pilotage passe a 6 : + Couts de non-qualite, sans attribut `module`
     // (pas encore d'entree au catalogue des modules activables).
-    expect(labels).toEqual([6, 6, 8, 1, 4, 9, 11, 1, 7]);
+    // Risques & opportunites (1) s'insere apres la non-conformite : le registre
+    // unique (ISO 9001 6.1), dont les onglets portent la navigation interne.
+    expect(labels).toEqual([6, 6, 8, 1, 4, 1, 9, 11, 1, 7]);
+  });
+
+  it('le registre des risques a son groupe, juste apres la non-conformite', () => {
+    const noms = component.sections.map(s => s.items.map(i => i.route));
+    const nc = noms.findIndex(r => r.includes('/nc/interne'));
+    expect(noms[nc + 1]).toEqual(['/risques']);
+    // L'AMDEC reste ou elle est : le registre ne la remplace pas.
+    expect(noms.flat()).toContain('/fmea');
   });
 
   it('collapses the entire GRC mass into a single /compliance entry', () => {
@@ -480,10 +491,10 @@ describe('MainShellComponent (visibilité par rôle)', () => {
 
   it('supprime la section entière plutôt que d’afficher un titre orphelin', () => {
     // Toutes les entrées d'administration sont gardées : la section disparaît, et
-    // il reste les huit autres — Non-conformité et APQP comprises, sorties
-    // des Opérations pour porter leurs propres entrées.
+    // il reste les neuf autres — Non-conformité, APQP et Risques & opportunités
+    // comprises, chacune avec ses propres entrées.
     const sections = make().filterSections(['USER']);
-    expect(sections.length).toBe(8);
+    expect(sections.length).toBe(9);
     expect(sections.some(s => s.items.some(i => i.route.startsWith('/admin')))).toBeFalse();
   });
 

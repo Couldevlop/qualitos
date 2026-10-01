@@ -21064,6 +21064,834 @@ historial de 12 meses</target>
         <source>Lien impossible.</source>
         <target state="translated">No se pudo vincular.</target>
       </trans-unit>
+      <trans-unit id="common.retry" datatype="html">
+        <source>Réessayer</source>
+        <target state="translated">Reintentar</target>
+      </trans-unit>
+      <trans-unit id="nav.risques-opportunites" datatype="html">
+        <source>Risques &amp; opportunités</source>
+        <target state="translated">Riesgos y oportunidades</target>
+      </trans-unit>
+      <trans-unit id="nav.registre-risques" datatype="html">
+        <source>Registre</source>
+        <target state="translated">Registro</target>
+      </trans-unit>
+      <trans-unit id="rr.eyebrow" datatype="html">
+        <source>Risques &amp; conformité</source>
+        <target state="translated">Riesgos y conformidad</target>
+      </trans-unit>
+      <trans-unit id="rr.title" datatype="html">
+        <source>Risques et opportunités</source>
+        <target state="translated">Riesgos y oportunidades</target>
+      </trans-unit>
+      <trans-unit id="rr.subtitle" datatype="html">
+        <source>Registre unique du système de management : chaque ligne est cotée, traitée et rattachée aux exigences qu'elle couvre.</source>
+        <target state="translated">Registro único del sistema de gestión: cada línea se valora, se trata y se vincula a los requisitos que cubre.</target>
+      </trans-unit>
+      <trans-unit id="rr.crumb.register" datatype="html">
+        <source>Registre</source>
+        <target state="translated">Registro</target>
+      </trans-unit>
+      <trans-unit id="rr.tabs" datatype="html">
+        <source>Registres</source>
+        <target state="translated">Registros</target>
+      </trans-unit>
+      <trans-unit id="rr.tab-risks" datatype="html">
+        <source>Risques</source>
+        <target state="translated">Riesgos</target>
+      </trans-unit>
+      <trans-unit id="rr.tab-opportunities" datatype="html">
+        <source>Opportunités</source>
+        <target state="translated">Oportunidades</target>
+      </trans-unit>
+      <trans-unit id="rr.new-risk" datatype="html">
+        <source>Nouveau risque</source>
+        <target state="translated">Nuevo riesgo</target>
+      </trans-unit>
+      <trans-unit id="rr.new-opportunity" datatype="html">
+        <source>Nouvelle opportunité</source>
+        <target state="translated">Nueva oportunidad</target>
+      </trans-unit>
+      <trans-unit id="rr.create-risk" datatype="html">
+        <source>Créer un risque</source>
+        <target state="translated">Crear un riesgo</target>
+      </trans-unit>
+      <trans-unit id="rr.export" datatype="html">
+        <source>Exporter</source>
+        <target state="translated">Exportar</target>
+      </trans-unit>
+      <trans-unit id="rr.load-failed" datatype="html">
+        <source>Le registre n'a pas pu être chargé.</source>
+        <target state="translated">No se pudo cargar el registro.</target>
+      </trans-unit>
+      <trans-unit id="rr.search-risk" datatype="html">
+        <source>Rechercher un risque</source>
+        <target state="translated">Buscar un riesgo</target>
+      </trans-unit>
+      <trans-unit id="rr.search-opportunity" datatype="html">
+        <source>Rechercher une opportunité</source>
+        <target state="translated">Buscar una oportunidad</target>
+      </trans-unit>
+      <trans-unit id="rr.filter-type" datatype="html">
+        <source>Filtrer par type</source>
+        <target state="translated">Filtrar por tipo</target>
+      </trans-unit>
+      <trans-unit id="rr.filter-process" datatype="html">
+        <source>Filtrer par processus</source>
+        <target state="translated">Filtrar por proceso</target>
+      </trans-unit>
+      <trans-unit id="rr.filter-status" datatype="html">
+        <source>Filtrer par statut</source>
+        <target state="translated">Filtrar por estado</target>
+      </trans-unit>
+      <trans-unit id="rr.all-types" datatype="html">
+        <source>Tous types</source>
+        <target state="translated">Todos los tipos</target>
+      </trans-unit>
+      <trans-unit id="rr.all-processes" datatype="html">
+        <source>Tous processus</source>
+        <target state="translated">Todos los procesos</target>
+      </trans-unit>
+      <trans-unit id="rr.all-statuses" datatype="html">
+        <source>Tous statuts</source>
+        <target state="translated">Todos los estados</target>
+      </trans-unit>
+      <trans-unit id="rr.all-opportunities" datatype="html">
+        <source>Toutes</source>
+        <target state="translated">Todas</target>
+      </trans-unit>
+      <trans-unit id="rr.priority-filter" datatype="html">
+        <source>Filtre de priorité</source>
+        <target state="translated">Filtro de prioridad</target>
+      </trans-unit>
+      <trans-unit id="rr.priority-only" datatype="html">
+        <source>Prioritaires</source>
+        <target state="translated">Prioritarias</target>
+      </trans-unit>
+      <trans-unit id="rr.rating-view" datatype="html">
+        <source>Cotation affichée</source>
+        <target state="translated">Valoración mostrada</target>
+      </trans-unit>
+      <trans-unit id="rr.gross" datatype="html">
+        <source>Brut</source>
+        <target state="translated">Bruto</target>
+      </trans-unit>
+      <trans-unit id="rr.residual" datatype="html">
+        <source>Résiduel</source>
+        <target state="translated">Residual</target>
+      </trans-unit>
+      <trans-unit id="rr.reset-filters" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">Borrar filtros</target>
+      </trans-unit>
+      <trans-unit id="rr.no-risk" datatype="html">
+        <source>Aucun risque dans le registre.</source>
+        <target state="translated">No hay riesgos en el registro.</target>
+      </trans-unit>
+      <trans-unit id="rr.no-opportunity" datatype="html">
+        <source>Aucune opportunité dans le registre.</source>
+        <target state="translated">No hay oportunidades en el registro.</target>
+      </trans-unit>
+      <trans-unit id="rr.no-match" datatype="html">
+        <source>Aucune ligne ne correspond aux filtres.</source>
+        <target state="translated">Ninguna línea coincide con los filtros.</target>
+      </trans-unit>
+      <trans-unit id="rr.shown-risks" datatype="html">
+        <source><x id="shown"/> risques affichés sur <x id="total"/></source>
+        <target state="translated"><x id="shown"/> de <x id="total"/> riesgos mostrados</target>
+      </trans-unit>
+      <trans-unit id="rr.shown-opportunities" datatype="html">
+        <source><x id="shown"/> opportunités affichées sur <x id="total"/></source>
+        <target state="translated"><x id="shown"/> de <x id="total"/> oportunidades mostradas</target>
+      </trans-unit>
+      <trans-unit id="rr.legend-risk" datatype="html">
+        <source>Niveau = gravité × probabilité · Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Critique 15–25</source>
+        <target state="translated">Nivel = gravedad × probabilidad · Bajo 1–4 · Medio 5–9 · Alto 10–14 · Crítico 15–25</target>
+      </trans-unit>
+      <trans-unit id="rr.legend-opportunity" datatype="html">
+        <source>Score = gain attendu × faisabilité (1 à 5 chacun) · Moyen 5–9 · Élevé 10–14 · Prioritaire 15–25</source>
+        <target state="translated">Puntuación = beneficio esperado × viabilidad (1 a 5 cada uno) · Medio 5–9 · Alto 10–14 · Prioritario 15–25</target>
+      </trans-unit>
+      <trans-unit id="rr.col.ref" datatype="html">
+        <source>Réf.</source>
+        <target state="translated">Ref.</target>
+      </trans-unit>
+      <trans-unit id="rr.col.risk" datatype="html">
+        <source>Risque</source>
+        <target state="translated">Riesgo</target>
+      </trans-unit>
+      <trans-unit id="rr.col.opportunity" datatype="html">
+        <source>Opportunité</source>
+        <target state="translated">Oportunidad</target>
+      </trans-unit>
+      <trans-unit id="rr.col.type" datatype="html">
+        <source>Type</source>
+        <target state="translated">Tipo</target>
+      </trans-unit>
+      <trans-unit id="rr.col.process" datatype="html">
+        <source>Processus</source>
+        <target state="translated">Proceso</target>
+      </trans-unit>
+      <trans-unit id="rr.col.owner" datatype="html">
+        <source>Propriétaire</source>
+        <target state="translated">Responsable</target>
+      </trans-unit>
+      <trans-unit id="rr.col.gross" datatype="html">
+        <source>Cotation brute</source>
+        <target state="translated">Valoración bruta</target>
+      </trans-unit>
+      <trans-unit id="rr.col.residual" datatype="html">
+        <source>Résiduel</source>
+        <target state="translated">Residual</target>
+      </trans-unit>
+      <trans-unit id="rr.col.score" datatype="html">
+        <source>Gain × faisabilité</source>
+        <target state="translated">Beneficio × viabilidad</target>
+      </trans-unit>
+      <trans-unit id="rr.col.status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">Estado</target>
+      </trans-unit>
+      <trans-unit id="rr.col.due" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">Vencimiento</target>
+      </trans-unit>
+      <trans-unit id="rr.create-from-fmea-tooltip" datatype="html">
+        <source>Transformer cette ligne en risque du registre</source>
+        <target state="translated">Convertir esta línea en un riesgo del registro</target>
+      </trans-unit>
+      <trans-unit id="rr.create-from-nc-tooltip" datatype="html">
+        <source>Inscrire au registre le risque que révèle cet écart</source>
+        <target state="translated">Registrar el riesgo que revela esta desviación</target>
+      </trans-unit>
+      <trans-unit id="rr.create-from-change-tooltip" datatype="html">
+        <source>Inscrire au registre un risque issu de l'analyse d'impact</source>
+        <target state="translated">Registrar un riesgo derivado del análisis de impacto</target>
+      </trans-unit>
+      <trans-unit id="rr.form.new-risk" datatype="html">
+        <source>Nouveau risque</source>
+        <target state="translated">Nuevo riesgo</target>
+      </trans-unit>
+      <trans-unit id="rr.form.new-opportunity" datatype="html">
+        <source>Nouvelle opportunité</source>
+        <target state="translated">Nueva oportunidad</target>
+      </trans-unit>
+      <trans-unit id="rr.form.edit-risk" datatype="html">
+        <source>Modifier le risque</source>
+        <target state="translated">Editar el riesgo</target>
+      </trans-unit>
+      <trans-unit id="rr.form.edit-opportunity" datatype="html">
+        <source>Modifier l'opportunité</source>
+        <target state="translated">Editar la oportunidad</target>
+      </trans-unit>
+      <trans-unit id="rr.form.read-only" datatype="html">
+        <source>Votre profil permet de consulter le registre, pas de l'alimenter. Un responsable qualité peut créer cette fiche.</source>
+        <target state="translated">Su perfil permite consultar el registro, no alimentarlo. Un responsable de calidad puede crear este registro.</target>
+      </trans-unit>
+      <trans-unit id="rr.form.identification" datatype="html">
+        <source>Identification</source>
+        <target state="translated">Identificación</target>
+      </trans-unit>
+      <trans-unit id="rr.form.risk-title" datatype="html">
+        <source>Intitulé du risque</source>
+        <target state="translated">Título del riesgo</target>
+      </trans-unit>
+      <trans-unit id="rr.form.risk-title-placeholder" datatype="html">
+        <source>Décrire le risque en une phrase</source>
+        <target state="translated">Describa el riesgo en una frase</target>
+      </trans-unit>
+      <trans-unit id="rr.form.opportunity-title" datatype="html">
+        <source>Intitulé de l'opportunité</source>
+        <target state="translated">Título de la oportunidad</target>
+      </trans-unit>
+      <trans-unit id="rr.form.opportunity-title-placeholder" datatype="html">
+        <source>Décrire l'opportunité en une phrase</source>
+        <target state="translated">Describa la oportunidad en una frase</target>
+      </trans-unit>
+      <trans-unit id="rr.form.description" datatype="html">
+        <source>Description</source>
+        <target state="translated">Descripción</target>
+      </trans-unit>
+      <trans-unit id="rr.form.cause" datatype="html">
+        <source>Cause</source>
+        <target state="translated">Causa</target>
+      </trans-unit>
+      <trans-unit id="rr.form.cause-placeholder" datatype="html">
+        <source>Qu'est-ce qui peut provoquer ce risque ?</source>
+        <target state="translated">¿Qué puede provocar este riesgo?</target>
+      </trans-unit>
+      <trans-unit id="rr.form.effect" datatype="html">
+        <source>Effet</source>
+        <target state="translated">Efecto</target>
+      </trans-unit>
+      <trans-unit id="rr.form.effect-placeholder" datatype="html">
+        <source>Quelles conséquences s'il se produit ?</source>
+        <target state="translated">¿Qué consecuencias si se produce?</target>
+      </trans-unit>
+      <trans-unit id="rr.form.context" datatype="html">
+        <source>Contexte et levier</source>
+        <target state="translated">Contexto y palanca</target>
+      </trans-unit>
+      <trans-unit id="rr.form.context-placeholder" datatype="html">
+        <source>Qu'est-ce qui rend cette opportunité possible ?</source>
+        <target state="translated">¿Qué hace posible esta oportunidad?</target>
+      </trans-unit>
+      <trans-unit id="rr.form.benefit" datatype="html">
+        <source>Bénéfice attendu</source>
+        <target state="translated">Beneficio esperado</target>
+      </trans-unit>
+      <trans-unit id="rr.form.benefit-placeholder" datatype="html">
+        <source>Quel gain en attendez-vous ?</source>
+        <target state="translated">¿Qué beneficio espera?</target>
+      </trans-unit>
+      <trans-unit id="rr.form.site" datatype="html">
+        <source>Site</source>
+        <target state="translated">Sede</target>
+      </trans-unit>
+      <trans-unit id="rr.form.origin" datatype="html">
+        <source>Origine</source>
+        <target state="translated">Origen</target>
+      </trans-unit>
+      <trans-unit id="rr.form.origin-ref" datatype="html">
+        <source>Référence liée (facultatif)</source>
+        <target state="translated">Referencia vinculada (opcional)</target>
+      </trans-unit>
+      <trans-unit id="rr.form.origin-locked" datatype="html">
+        <source>Fixée par l'objet dont le risque est issu.</source>
+        <target state="translated">Fijado por el objeto del que procede el riesgo.</target>
+      </trans-unit>
+      <trans-unit id="rr.form.from-source" datatype="html">
+        <source>Risque issu de</source>
+        <target state="translated">Riesgo derivado de</target>
+      </trans-unit>
+      <trans-unit id="rr.form.source" datatype="html">
+        <source>Source</source>
+        <target state="translated">Fuente</target>
+      </trans-unit>
+      <trans-unit id="rr.form.already-linked" datatype="html">
+        <source>Déjà au registre depuis cet objet :</source>
+        <target state="translated">Ya en el registro desde este objeto:</target>
+      </trans-unit>
+      <trans-unit id="rr.form.not-eligible" datatype="html">
+        <source>Cet objet ne justifie pas un risque.</source>
+        <target state="translated">Este objeto no justifica un riesgo.</target>
+      </trans-unit>
+      <trans-unit id="rr.form.not-a-gap" datatype="html">
+        <source>Ce constat n'est pas un écart : il ne justifie pas un risque.</source>
+        <target state="translated">Este hallazgo no es una desviación: no justifica un riesgo.</target>
+      </trans-unit>
+      <trans-unit id="rr.form.below-threshold" datatype="html">
+        <source>Cette ligne d'AMDEC est sous le seuil de criticité du projet : elle ne justifie pas un risque.</source>
+        <target state="translated">Esta línea de AMFE está por debajo del umbral de criticidad del proyecto: no justifica un riesgo.</target>
+      </trans-unit>
+      <trans-unit id="rr.form.requirements" datatype="html">
+        <source>Exigences concernées</source>
+        <target state="translated">Requisitos afectados</target>
+      </trans-unit>
+      <trans-unit id="rr.form.evaluation" datatype="html">
+        <source>Évaluation</source>
+        <target state="translated">Evaluación</target>
+      </trans-unit>
+      <trans-unit id="rr.form.gross-rating" datatype="html">
+        <source>Cotation brute</source>
+        <target state="translated">Valoración bruta</target>
+      </trans-unit>
+      <trans-unit id="rr.form.residual-rating" datatype="html">
+        <source>Cotation résiduelle visée</source>
+        <target state="translated">Valoración residual objetivo</target>
+      </trans-unit>
+      <trans-unit id="rr.form.residual-too-high" datatype="html">
+        <source>La cotation résiduelle visée ne peut pas dépasser la cotation brute.</source>
+        <target state="translated">La valoración residual objetivo no puede superar la valoración bruta.</target>
+      </trans-unit>
+      <trans-unit id="rr.form.level" datatype="html">
+        <source>Niveau</source>
+        <target state="translated">Nivel</target>
+      </trans-unit>
+      <trans-unit id="rr.form.score" datatype="html">
+        <source>Score</source>
+        <target state="translated">Puntuación</target>
+      </trans-unit>
+      <trans-unit id="rr.form.risk-scale" datatype="html">
+        <source>Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Critique 15–25</source>
+        <target state="translated">Bajo 1–4 · Medio 5–9 · Alto 10–14 · Crítico 15–25</target>
+      </trans-unit>
+      <trans-unit id="rr.form.opportunity-scale" datatype="html">
+        <source>Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Prioritaire 15–25</source>
+        <target state="translated">Bajo 1–4 · Medio 5–9 · Alto 10–14 · Prioritario 15–25</target>
+      </trans-unit>
+      <trans-unit id="rr.form.treatment" datatype="html">
+        <source>Traitement</source>
+        <target state="translated">Tratamiento</target>
+      </trans-unit>
+      <trans-unit id="rr.form.implementation" datatype="html">
+        <source>Mise en œuvre</source>
+        <target state="translated">Implementación</target>
+      </trans-unit>
+      <trans-unit id="rr.form.decision" datatype="html">
+        <source>Décision</source>
+        <target state="translated">Decisión</target>
+      </trans-unit>
+      <trans-unit id="rr.form.follow-up" datatype="html">
+        <source>Suivi</source>
+        <target state="translated">Seguimiento</target>
+      </trans-unit>
+      <trans-unit id="rr.form.target-date" datatype="html">
+        <source>Échéance visée</source>
+        <target state="translated">Fecha objetivo</target>
+      </trans-unit>
+      <trans-unit id="rr.form.next-review" datatype="html">
+        <source>Prochaine revue</source>
+        <target state="translated">Próxima revisión</target>
+      </trans-unit>
+      <trans-unit id="rr.form.effectiveness" datatype="html">
+        <source>Vérification d'efficacité (critère)</source>
+        <target state="translated">Verificación de eficacia (criterio)</target>
+      </trans-unit>
+      <trans-unit id="rr.form.benefit-check" datatype="html">
+        <source>Vérification du bénéfice (critère)</source>
+        <target state="translated">Verificación del beneficio (criterio)</target>
+      </trans-unit>
+      <trans-unit id="rr.form.required" datatype="html">
+        <source>Champ obligatoire.</source>
+        <target state="translated">Campo obligatorio.</target>
+      </trans-unit>
+      <trans-unit id="rr.form.save-risk" datatype="html">
+        <source>Enregistrer le risque</source>
+        <target state="translated">Guardar el riesgo</target>
+      </trans-unit>
+      <trans-unit id="rr.form.save-opportunity" datatype="html">
+        <source>Enregistrer l'opportunité</source>
+        <target state="translated">Guardar la oportunidad</target>
+      </trans-unit>
+      <trans-unit id="rr.form.risk-saved" datatype="html">
+        <source>Risque enregistré.</source>
+        <target state="translated">Riesgo guardado.</target>
+      </trans-unit>
+      <trans-unit id="rr.form.opportunity-saved" datatype="html">
+        <source>Opportunité enregistrée.</source>
+        <target state="translated">Oportunidad guardada.</target>
+      </trans-unit>
+      <trans-unit id="rr.form.save-failed" datatype="html">
+        <source>L'enregistrement a échoué.</source>
+        <target state="translated">No se pudo guardar.</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.back" datatype="html">
+        <source>Retour au registre</source>
+        <target state="translated">Volver al registro</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.failed" datatype="html">
+        <source>La fiche est indisponible.</source>
+        <target state="translated">El registro no está disponible.</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.rating" datatype="html">
+        <source>Cotation</source>
+        <target state="translated">Valoración</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.gross" datatype="html">
+        <source>Brute</source>
+        <target state="translated">Bruta</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.residual-target" datatype="html">
+        <source>Résiduelle visée</source>
+        <target state="translated">Residual objetivo</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.not-set" datatype="html">
+        <source>Non fixée</source>
+        <target state="translated">No definida</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.effectiveness" datatype="html">
+        <source>Vérification d'efficacité</source>
+        <target state="translated">Verificación de eficacia</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.benefit-check" datatype="html">
+        <source>Vérification du bénéfice</source>
+        <target state="translated">Verificación del beneficio</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.requirements" datatype="html">
+        <source>Exigences couvertes</source>
+        <target state="translated">Requisitos cubiertos</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.requirements-note" datatype="html">
+        <source>Cette fiche compte comme preuve pour chacune de ces exigences dans la matrice du SMI.</source>
+        <target state="translated">Este registro cuenta como evidencia para cada uno de estos requisitos en la matriz del SIG.</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.action" datatype="html">
+        <source>Action</source>
+        <target state="translated">Acción</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.row-actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">Acciones</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.no-action" datatype="html">
+        <source>Aucune action pour l'instant.</source>
+        <target state="translated">Aún no hay acciones.</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.no-capa" datatype="html">
+        <source>Aucune action CAPA liée pour l'instant.</source>
+        <target state="translated">Aún no hay acciones CAPA vinculadas.</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.capa-opened" datatype="html">
+        <source>Dossier CAPA ouvert.</source>
+        <target state="translated">Expediente CAPA abierto.</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.delete-action-title" datatype="html">
+        <source>Supprimer ACT-<x id="number"/> ?</source>
+        <target state="translated">¿Eliminar ACT-<x id="number"/>?</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.delete-action-message" datatype="html">
+        <source>L'action quitte la fiche. La suppression est tracée dans le journal d'audit.</source>
+        <target state="translated">La acción se retira del registro. La eliminación queda registrada en el registro de auditoría.</target>
+      </trans-unit>
+      <trans-unit id="rr.action.new-title" datatype="html">
+        <source>Créer une action</source>
+        <target state="translated">Crear una acción</target>
+      </trans-unit>
+      <trans-unit id="rr.action.title" datatype="html">
+        <source>Intitulé</source>
+        <target state="translated">Título</target>
+      </trans-unit>
+      <trans-unit id="rr.action.description" datatype="html">
+        <source>Description (facultatif)</source>
+        <target state="translated">Descripción (opcional)</target>
+      </trans-unit>
+      <trans-unit id="rr.action.capa-title" datatype="html">
+        <source>Créer une action CAPA</source>
+        <target state="translated">Crear una acción CAPA</target>
+      </trans-unit>
+      <trans-unit id="rr.action.capa-help" datatype="html">
+        <source>Un dossier CAPA préventif est ouvert dans le module CAPA, à votre nom, avec la criticité du niveau brut du risque. Il apparaîtra dans le tableau « Traitement » de la fiche.</source>
+        <target state="translated">Se abre un expediente CAPA preventivo en el módulo CAPA, a su nombre, con la criticidad del nivel bruto del riesgo. Aparecerá en la tabla «Tratamiento» del registro.</target>
+      </trans-unit>
+      <trans-unit id="rr.action.open-capa" datatype="html">
+        <source>Ouvrir le dossier CAPA</source>
+        <target state="translated">Abrir el expediente CAPA</target>
+      </trans-unit>
+      <trans-unit id="rr.action-status.to-start" datatype="html">
+        <source>À démarrer</source>
+        <target state="translated">Por iniciar</target>
+      </trans-unit>
+      <trans-unit id="rr.action-status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">En curso</target>
+      </trans-unit>
+      <trans-unit id="rr.action-status.done" datatype="html">
+        <source>Terminée</source>
+        <target state="translated">Terminada</target>
+      </trans-unit>
+      <trans-unit id="rr.action-status.cancelled" datatype="html">
+        <source>Annulée</source>
+        <target state="translated">Cancelada</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.open" datatype="html">
+        <source>À démarrer</source>
+        <target state="translated">Por iniciar</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">En curso</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.resolved" datatype="html">
+        <source>Résolue</source>
+        <target state="translated">Resuelta</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.closed" datatype="html">
+        <source>Clôturée</source>
+        <target state="translated">Cerrada</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.rejected" datatype="html">
+        <source>Rejetée</source>
+        <target state="translated">Rechazada</target>
+      </trans-unit>
+      <trans-unit id="rr.severity" datatype="html">
+        <source>Gravité</source>
+        <target state="translated">Gravedad</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.1" datatype="html">
+        <source>1 · Négligeable</source>
+        <target state="translated">1 · Insignificante</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.2" datatype="html">
+        <source>2 · Mineure</source>
+        <target state="translated">2 · Menor</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.3" datatype="html">
+        <source>3 · Significative</source>
+        <target state="translated">3 · Significativa</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.4" datatype="html">
+        <source>4 · Grave</source>
+        <target state="translated">4 · Grave</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.5" datatype="html">
+        <source>5 · Catastrophique</source>
+        <target state="translated">5 · Catastrófica</target>
+      </trans-unit>
+      <trans-unit id="rr.probability" datatype="html">
+        <source>Probabilité</source>
+        <target state="translated">Probabilidad</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.1" datatype="html">
+        <source>1 · Rare</source>
+        <target state="translated">1 · Rara</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.2" datatype="html">
+        <source>2 · Peu probable</source>
+        <target state="translated">2 · Poco probable</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.3" datatype="html">
+        <source>3 · Possible</source>
+        <target state="translated">3 · Posible</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.4" datatype="html">
+        <source>4 · Probable</source>
+        <target state="translated">4 · Probable</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.5" datatype="html">
+        <source>5 · Quasi certaine</source>
+        <target state="translated">5 · Casi segura</target>
+      </trans-unit>
+      <trans-unit id="rr.gain" datatype="html">
+        <source>Gain attendu</source>
+        <target state="translated">Beneficio esperado</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.1" datatype="html">
+        <source>1 · Faible</source>
+        <target state="translated">1 · Bajo</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.2" datatype="html">
+        <source>2 · Modéré</source>
+        <target state="translated">2 · Moderado</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.3" datatype="html">
+        <source>3 · Significatif</source>
+        <target state="translated">3 · Significativo</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.4" datatype="html">
+        <source>4 · Fort</source>
+        <target state="translated">4 · Alto</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.5" datatype="html">
+        <source>5 · Très fort</source>
+        <target state="translated">5 · Muy alto</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility" datatype="html">
+        <source>Faisabilité</source>
+        <target state="translated">Viabilidad</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.1" datatype="html">
+        <source>1 · Très difficile</source>
+        <target state="translated">1 · Muy difícil</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.2" datatype="html">
+        <source>2 · Difficile</source>
+        <target state="translated">2 · Difícil</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.3" datatype="html">
+        <source>3 · Réaliste</source>
+        <target state="translated">3 · Realista</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.4" datatype="html">
+        <source>4 · Facile</source>
+        <target state="translated">4 · Fácil</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.5" datatype="html">
+        <source>5 · Très facile</source>
+        <target state="translated">5 · Muy fácil</target>
+      </trans-unit>
+      <trans-unit id="rr.level.low" datatype="html">
+        <source>Faible</source>
+        <target state="translated">Bajo</target>
+      </trans-unit>
+      <trans-unit id="rr.level.medium" datatype="html">
+        <source>Moyen</source>
+        <target state="translated">Medio</target>
+      </trans-unit>
+      <trans-unit id="rr.level.high" datatype="html">
+        <source>Élevé</source>
+        <target state="translated">Alto</target>
+      </trans-unit>
+      <trans-unit id="rr.level.critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">Crítico</target>
+      </trans-unit>
+      <trans-unit id="rr.level.priority" datatype="html">
+        <source>Prioritaire</source>
+        <target state="translated">Prioritario</target>
+      </trans-unit>
+      <trans-unit id="rr.type.quality" datatype="html">
+        <source>Qualité</source>
+        <target state="translated">Calidad</target>
+      </trans-unit>
+      <trans-unit id="rr.type.environment" datatype="html">
+        <source>Environnement</source>
+        <target state="translated">Medio ambiente</target>
+      </trans-unit>
+      <trans-unit id="rr.type.health-safety" datatype="html">
+        <source>SST</source>
+        <target state="translated">SST</target>
+      </trans-unit>
+      <trans-unit id="rr.type.information-security" datatype="html">
+        <source>Sécurité de l'information</source>
+        <target state="translated">Seguridad de la información</target>
+      </trans-unit>
+      <trans-unit id="rr.type.legal" datatype="html">
+        <source>Exigences légales</source>
+        <target state="translated">Requisitos legales</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.direct" datatype="html">
+        <source>Saisie directe</source>
+        <target state="translated">Entrada directa</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.fmea" datatype="html">
+        <source>AMDEC</source>
+        <target state="translated">AMFE</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.non-conformity" datatype="html">
+        <source>Non-conformité</source>
+        <target state="translated">No conformidad</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.audit" datatype="html">
+        <source>Audit</source>
+        <target state="translated">Auditoría</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.change" datatype="html">
+        <source>Changement (MOC)</source>
+        <target state="translated">Cambio (MOC)</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.incident" datatype="html">
+        <source>Incident</source>
+        <target state="translated">Incidente</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.customer-feedback" datatype="html">
+        <source>Retour client</source>
+        <target state="translated">Opinión del cliente</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.management-review" datatype="html">
+        <source>Revue de direction</source>
+        <target state="translated">Revisión por la dirección</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.monitoring" datatype="html">
+        <source>Veille</source>
+        <target state="translated">Vigilancia</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.undecided" datatype="html">
+        <source>À décider</source>
+        <target state="translated">Por decidir</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.reduce" datatype="html">
+        <source>Réduire</source>
+        <target state="translated">Reducir</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.avoid" datatype="html">
+        <source>Éviter</source>
+        <target state="translated">Evitar</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.transfer" datatype="html">
+        <source>Transférer</source>
+        <target state="translated">Transferir</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.accept" datatype="html">
+        <source>Accepter</source>
+        <target state="translated">Aceptar</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.to-treat" datatype="html">
+        <source>À traiter</source>
+        <target state="translated">Por tratar</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.in-treatment" datatype="html">
+        <source>En traitement</source>
+        <target state="translated">En tratamiento</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.monitored" datatype="html">
+        <source>Surveillé</source>
+        <target state="translated">Vigilado</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.accepted" datatype="html">
+        <source>Accepté</source>
+        <target state="translated">Aceptado</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.closed" datatype="html">
+        <source>Clos</source>
+        <target state="translated">Cerrado</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.undecided" datatype="html">
+        <source>À décider</source>
+        <target state="translated">Por decidir</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.study" datatype="html">
+        <source>Étudier</source>
+        <target state="translated">Estudiar</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.plan" datatype="html">
+        <source>Planifier</source>
+        <target state="translated">Planificar</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.postpone" datatype="html">
+        <source>Reporter</source>
+        <target state="translated">Aplazar</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.discard" datatype="html">
+        <source>Écarter</source>
+        <target state="translated">Descartar</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.under-study" datatype="html">
+        <source>En étude</source>
+        <target state="translated">En estudio</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.planned" datatype="html">
+        <source>Planifiée</source>
+        <target state="translated">Planificada</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">En curso</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.done" datatype="html">
+        <source>Réalisée</source>
+        <target state="translated">Realizada</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.discarded" datatype="html">
+        <source>Écartée</source>
+        <target state="translated">Descartada</target>
+      </trans-unit>
+      <trans-unit id="rr.event.risk-created" datatype="html">
+        <source>Risque créé — origine : <x id="origin"/><x id="ref"/></source>
+        <target state="translated">Riesgo creado — origen: <x id="origin"/><x id="ref"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.opportunity-created" datatype="html">
+        <source>Opportunité créée — origine : <x id="origin"/><x id="ref"/></source>
+        <target state="translated">Oportunidad creada — origen: <x id="origin"/><x id="ref"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.rating" datatype="html">
+        <source>Cotation brute passée de <x id="from"/> à <x id="to"/></source>
+        <target state="translated">Valoración bruta cambiada de <x id="from"/> a <x id="to"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.evaluation" datatype="html">
+        <source>Évaluation passée de <x id="from"/> à <x id="to"/></source>
+        <target state="translated">Evaluación cambiada de <x id="from"/> a <x id="to"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.residual" datatype="html">
+        <source>Cotation résiduelle visée : <x id="from"/> → <x id="to"/></source>
+        <target state="translated">Valoración residual objetivo: <x id="from"/> → <x id="to"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.decision" datatype="html">
+        <source>Décision : <x id="from"/> → <x id="to"/></source>
+        <target state="translated">Decisión: <x id="from"/> → <x id="to"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.status" datatype="html">
+        <source>Statut : <x id="from"/> → <x id="to"/></source>
+        <target state="translated">Estado: <x id="from"/> → <x id="to"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.action-opened" datatype="html">
+        <source>Action <x id="number"/> ouverte : <x id="title"/></source>
+        <target state="translated">Acción <x id="number"/> abierta: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.capa-opened" datatype="html">
+        <source>Action CAPA ouverte : <x id="title"/></source>
+        <target state="translated">Acción CAPA abierta: <x id="title"/></target>
+      </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>
         <target state="translated">Acciones</target>

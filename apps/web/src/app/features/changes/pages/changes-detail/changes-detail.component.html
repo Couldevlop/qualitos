@@ -35,6 +35,14 @@
                 (click)="cancel(c)">
           <mat-icon>cancel</mat-icon> <span i18n="@@common.cancel">Annuler</span>
         </button>
+        <!-- L'analyse d'impact d'un changement (MOC) crée les risques associés :
+             le formulaire part de ce changement, relu par le serveur. -->
+        <a mat-stroked-button data-test="creer-risque"
+           [routerLink]="['/risques', 'nouveau']" [queryParams]="{ origine: 'CHANGE', source: c.id }"
+           i18n-matTooltip="@@rr.create-from-change-tooltip"
+           matTooltip="Inscrire au registre un risque issu de l'analyse d'impact">
+          <mat-icon>shield</mat-icon> <span i18n="@@rr.create-risk">Créer un risque</span>
+        </a>
         <button mat-stroked-button color="warn" (click)="remove(c)">
           <mat-icon>delete</mat-icon> <span i18n="@@common.delete">Supprimer</span>
         </button>

@@ -21064,6 +21064,834 @@ historique 12 mois</source>
         <source>Lien impossible.</source>
         <target state="translated">无法关联。</target>
       </trans-unit>
+      <trans-unit id="common.retry" datatype="html">
+        <source>Réessayer</source>
+        <target state="translated">重试</target>
+      </trans-unit>
+      <trans-unit id="nav.risques-opportunites" datatype="html">
+        <source>Risques &amp; opportunités</source>
+        <target state="translated">风险与机遇</target>
+      </trans-unit>
+      <trans-unit id="nav.registre-risques" datatype="html">
+        <source>Registre</source>
+        <target state="translated">登记册</target>
+      </trans-unit>
+      <trans-unit id="rr.eyebrow" datatype="html">
+        <source>Risques &amp; conformité</source>
+        <target state="translated">风险与合规</target>
+      </trans-unit>
+      <trans-unit id="rr.title" datatype="html">
+        <source>Risques et opportunités</source>
+        <target state="translated">风险与机遇</target>
+      </trans-unit>
+      <trans-unit id="rr.subtitle" datatype="html">
+        <source>Registre unique du système de management : chaque ligne est cotée, traitée et rattachée aux exigences qu'elle couvre.</source>
+        <target state="translated">管理体系的统一登记册：每一行都经过评级、处理，并关联到其覆盖的要求。</target>
+      </trans-unit>
+      <trans-unit id="rr.crumb.register" datatype="html">
+        <source>Registre</source>
+        <target state="translated">登记册</target>
+      </trans-unit>
+      <trans-unit id="rr.tabs" datatype="html">
+        <source>Registres</source>
+        <target state="translated">登记册</target>
+      </trans-unit>
+      <trans-unit id="rr.tab-risks" datatype="html">
+        <source>Risques</source>
+        <target state="translated">风险</target>
+      </trans-unit>
+      <trans-unit id="rr.tab-opportunities" datatype="html">
+        <source>Opportunités</source>
+        <target state="translated">机遇</target>
+      </trans-unit>
+      <trans-unit id="rr.new-risk" datatype="html">
+        <source>Nouveau risque</source>
+        <target state="translated">新建风险</target>
+      </trans-unit>
+      <trans-unit id="rr.new-opportunity" datatype="html">
+        <source>Nouvelle opportunité</source>
+        <target state="translated">新建机遇</target>
+      </trans-unit>
+      <trans-unit id="rr.create-risk" datatype="html">
+        <source>Créer un risque</source>
+        <target state="translated">创建风险</target>
+      </trans-unit>
+      <trans-unit id="rr.export" datatype="html">
+        <source>Exporter</source>
+        <target state="translated">导出</target>
+      </trans-unit>
+      <trans-unit id="rr.load-failed" datatype="html">
+        <source>Le registre n'a pas pu être chargé.</source>
+        <target state="translated">无法加载登记册。</target>
+      </trans-unit>
+      <trans-unit id="rr.search-risk" datatype="html">
+        <source>Rechercher un risque</source>
+        <target state="translated">搜索风险</target>
+      </trans-unit>
+      <trans-unit id="rr.search-opportunity" datatype="html">
+        <source>Rechercher une opportunité</source>
+        <target state="translated">搜索机遇</target>
+      </trans-unit>
+      <trans-unit id="rr.filter-type" datatype="html">
+        <source>Filtrer par type</source>
+        <target state="translated">按类型筛选</target>
+      </trans-unit>
+      <trans-unit id="rr.filter-process" datatype="html">
+        <source>Filtrer par processus</source>
+        <target state="translated">按过程筛选</target>
+      </trans-unit>
+      <trans-unit id="rr.filter-status" datatype="html">
+        <source>Filtrer par statut</source>
+        <target state="translated">按状态筛选</target>
+      </trans-unit>
+      <trans-unit id="rr.all-types" datatype="html">
+        <source>Tous types</source>
+        <target state="translated">所有类型</target>
+      </trans-unit>
+      <trans-unit id="rr.all-processes" datatype="html">
+        <source>Tous processus</source>
+        <target state="translated">所有过程</target>
+      </trans-unit>
+      <trans-unit id="rr.all-statuses" datatype="html">
+        <source>Tous statuts</source>
+        <target state="translated">所有状态</target>
+      </trans-unit>
+      <trans-unit id="rr.all-opportunities" datatype="html">
+        <source>Toutes</source>
+        <target state="translated">全部</target>
+      </trans-unit>
+      <trans-unit id="rr.priority-filter" datatype="html">
+        <source>Filtre de priorité</source>
+        <target state="translated">优先级筛选</target>
+      </trans-unit>
+      <trans-unit id="rr.priority-only" datatype="html">
+        <source>Prioritaires</source>
+        <target state="translated">优先</target>
+      </trans-unit>
+      <trans-unit id="rr.rating-view" datatype="html">
+        <source>Cotation affichée</source>
+        <target state="translated">显示的评级</target>
+      </trans-unit>
+      <trans-unit id="rr.gross" datatype="html">
+        <source>Brut</source>
+        <target state="translated">固有</target>
+      </trans-unit>
+      <trans-unit id="rr.residual" datatype="html">
+        <source>Résiduel</source>
+        <target state="translated">剩余</target>
+      </trans-unit>
+      <trans-unit id="rr.reset-filters" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">清除筛选</target>
+      </trans-unit>
+      <trans-unit id="rr.no-risk" datatype="html">
+        <source>Aucun risque dans le registre.</source>
+        <target state="translated">登记册中没有风险。</target>
+      </trans-unit>
+      <trans-unit id="rr.no-opportunity" datatype="html">
+        <source>Aucune opportunité dans le registre.</source>
+        <target state="translated">登记册中没有机遇。</target>
+      </trans-unit>
+      <trans-unit id="rr.no-match" datatype="html">
+        <source>Aucune ligne ne correspond aux filtres.</source>
+        <target state="translated">没有符合筛选条件的行。</target>
+      </trans-unit>
+      <trans-unit id="rr.shown-risks" datatype="html">
+        <source><x id="shown"/> risques affichés sur <x id="total"/></source>
+        <target state="translated">显示 <x id="shown"/> / <x id="total"/> 项风险</target>
+      </trans-unit>
+      <trans-unit id="rr.shown-opportunities" datatype="html">
+        <source><x id="shown"/> opportunités affichées sur <x id="total"/></source>
+        <target state="translated">显示 <x id="shown"/> / <x id="total"/> 项机遇</target>
+      </trans-unit>
+      <trans-unit id="rr.legend-risk" datatype="html">
+        <source>Niveau = gravité × probabilité · Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Critique 15–25</source>
+        <target state="translated">等级 = 严重度 × 可能性 · 低 1–4 · 中 5–9 · 高 10–14 · 严重 15–25</target>
+      </trans-unit>
+      <trans-unit id="rr.legend-opportunity" datatype="html">
+        <source>Score = gain attendu × faisabilité (1 à 5 chacun) · Moyen 5–9 · Élevé 10–14 · Prioritaire 15–25</source>
+        <target state="translated">得分 = 预期收益 × 可行性（各 1 至 5） · 中 5–9 · 高 10–14 · 优先 15–25</target>
+      </trans-unit>
+      <trans-unit id="rr.col.ref" datatype="html">
+        <source>Réf.</source>
+        <target state="translated">编号</target>
+      </trans-unit>
+      <trans-unit id="rr.col.risk" datatype="html">
+        <source>Risque</source>
+        <target state="translated">风险</target>
+      </trans-unit>
+      <trans-unit id="rr.col.opportunity" datatype="html">
+        <source>Opportunité</source>
+        <target state="translated">机遇</target>
+      </trans-unit>
+      <trans-unit id="rr.col.type" datatype="html">
+        <source>Type</source>
+        <target state="translated">类型</target>
+      </trans-unit>
+      <trans-unit id="rr.col.process" datatype="html">
+        <source>Processus</source>
+        <target state="translated">过程</target>
+      </trans-unit>
+      <trans-unit id="rr.col.owner" datatype="html">
+        <source>Propriétaire</source>
+        <target state="translated">负责人</target>
+      </trans-unit>
+      <trans-unit id="rr.col.gross" datatype="html">
+        <source>Cotation brute</source>
+        <target state="translated">固有评级</target>
+      </trans-unit>
+      <trans-unit id="rr.col.residual" datatype="html">
+        <source>Résiduel</source>
+        <target state="translated">剩余</target>
+      </trans-unit>
+      <trans-unit id="rr.col.score" datatype="html">
+        <source>Gain × faisabilité</source>
+        <target state="translated">收益 × 可行性</target>
+      </trans-unit>
+      <trans-unit id="rr.col.status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">状态</target>
+      </trans-unit>
+      <trans-unit id="rr.col.due" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">截止日期</target>
+      </trans-unit>
+      <trans-unit id="rr.create-from-fmea-tooltip" datatype="html">
+        <source>Transformer cette ligne en risque du registre</source>
+        <target state="translated">将此行转为登记册中的风险</target>
+      </trans-unit>
+      <trans-unit id="rr.create-from-nc-tooltip" datatype="html">
+        <source>Inscrire au registre le risque que révèle cet écart</source>
+        <target state="translated">将此偏差揭示的风险登记入册</target>
+      </trans-unit>
+      <trans-unit id="rr.create-from-change-tooltip" datatype="html">
+        <source>Inscrire au registre un risque issu de l'analyse d'impact</source>
+        <target state="translated">将影响分析得出的风险登记入册</target>
+      </trans-unit>
+      <trans-unit id="rr.form.new-risk" datatype="html">
+        <source>Nouveau risque</source>
+        <target state="translated">新建风险</target>
+      </trans-unit>
+      <trans-unit id="rr.form.new-opportunity" datatype="html">
+        <source>Nouvelle opportunité</source>
+        <target state="translated">新建机遇</target>
+      </trans-unit>
+      <trans-unit id="rr.form.edit-risk" datatype="html">
+        <source>Modifier le risque</source>
+        <target state="translated">编辑风险</target>
+      </trans-unit>
+      <trans-unit id="rr.form.edit-opportunity" datatype="html">
+        <source>Modifier l'opportunité</source>
+        <target state="translated">编辑机遇</target>
+      </trans-unit>
+      <trans-unit id="rr.form.read-only" datatype="html">
+        <source>Votre profil permet de consulter le registre, pas de l'alimenter. Un responsable qualité peut créer cette fiche.</source>
+        <target state="translated">您的角色只能查看登记册，不能录入。质量负责人可创建此记录。</target>
+      </trans-unit>
+      <trans-unit id="rr.form.identification" datatype="html">
+        <source>Identification</source>
+        <target state="translated">识别</target>
+      </trans-unit>
+      <trans-unit id="rr.form.risk-title" datatype="html">
+        <source>Intitulé du risque</source>
+        <target state="translated">风险名称</target>
+      </trans-unit>
+      <trans-unit id="rr.form.risk-title-placeholder" datatype="html">
+        <source>Décrire le risque en une phrase</source>
+        <target state="translated">用一句话描述风险</target>
+      </trans-unit>
+      <trans-unit id="rr.form.opportunity-title" datatype="html">
+        <source>Intitulé de l'opportunité</source>
+        <target state="translated">机遇名称</target>
+      </trans-unit>
+      <trans-unit id="rr.form.opportunity-title-placeholder" datatype="html">
+        <source>Décrire l'opportunité en une phrase</source>
+        <target state="translated">用一句话描述机遇</target>
+      </trans-unit>
+      <trans-unit id="rr.form.description" datatype="html">
+        <source>Description</source>
+        <target state="translated">描述</target>
+      </trans-unit>
+      <trans-unit id="rr.form.cause" datatype="html">
+        <source>Cause</source>
+        <target state="translated">原因</target>
+      </trans-unit>
+      <trans-unit id="rr.form.cause-placeholder" datatype="html">
+        <source>Qu'est-ce qui peut provoquer ce risque ?</source>
+        <target state="translated">什么可能引发此风险？</target>
+      </trans-unit>
+      <trans-unit id="rr.form.effect" datatype="html">
+        <source>Effet</source>
+        <target state="translated">后果</target>
+      </trans-unit>
+      <trans-unit id="rr.form.effect-placeholder" datatype="html">
+        <source>Quelles conséquences s'il se produit ?</source>
+        <target state="translated">一旦发生会有什么后果？</target>
+      </trans-unit>
+      <trans-unit id="rr.form.context" datatype="html">
+        <source>Contexte et levier</source>
+        <target state="translated">背景与杠杆</target>
+      </trans-unit>
+      <trans-unit id="rr.form.context-placeholder" datatype="html">
+        <source>Qu'est-ce qui rend cette opportunité possible ?</source>
+        <target state="translated">是什么使这一机遇成为可能？</target>
+      </trans-unit>
+      <trans-unit id="rr.form.benefit" datatype="html">
+        <source>Bénéfice attendu</source>
+        <target state="translated">预期效益</target>
+      </trans-unit>
+      <trans-unit id="rr.form.benefit-placeholder" datatype="html">
+        <source>Quel gain en attendez-vous ?</source>
+        <target state="translated">您期望获得什么收益？</target>
+      </trans-unit>
+      <trans-unit id="rr.form.site" datatype="html">
+        <source>Site</source>
+        <target state="translated">场所</target>
+      </trans-unit>
+      <trans-unit id="rr.form.origin" datatype="html">
+        <source>Origine</source>
+        <target state="translated">来源</target>
+      </trans-unit>
+      <trans-unit id="rr.form.origin-ref" datatype="html">
+        <source>Référence liée (facultatif)</source>
+        <target state="translated">关联编号（可选）</target>
+      </trans-unit>
+      <trans-unit id="rr.form.origin-locked" datatype="html">
+        <source>Fixée par l'objet dont le risque est issu.</source>
+        <target state="translated">由产生该风险的对象确定。</target>
+      </trans-unit>
+      <trans-unit id="rr.form.from-source" datatype="html">
+        <source>Risque issu de</source>
+        <target state="translated">风险来源</target>
+      </trans-unit>
+      <trans-unit id="rr.form.source" datatype="html">
+        <source>Source</source>
+        <target state="translated">来源</target>
+      </trans-unit>
+      <trans-unit id="rr.form.already-linked" datatype="html">
+        <source>Déjà au registre depuis cet objet :</source>
+        <target state="translated">已从此对象登记入册：</target>
+      </trans-unit>
+      <trans-unit id="rr.form.not-eligible" datatype="html">
+        <source>Cet objet ne justifie pas un risque.</source>
+        <target state="translated">此对象不构成风险。</target>
+      </trans-unit>
+      <trans-unit id="rr.form.not-a-gap" datatype="html">
+        <source>Ce constat n'est pas un écart : il ne justifie pas un risque.</source>
+        <target state="translated">此发现不是偏差：不构成风险。</target>
+      </trans-unit>
+      <trans-unit id="rr.form.below-threshold" datatype="html">
+        <source>Cette ligne d'AMDEC est sous le seuil de criticité du projet : elle ne justifie pas un risque.</source>
+        <target state="translated">此 FMEA 行低于项目的关键度阈值：不构成风险。</target>
+      </trans-unit>
+      <trans-unit id="rr.form.requirements" datatype="html">
+        <source>Exigences concernées</source>
+        <target state="translated">涉及的要求</target>
+      </trans-unit>
+      <trans-unit id="rr.form.evaluation" datatype="html">
+        <source>Évaluation</source>
+        <target state="translated">评估</target>
+      </trans-unit>
+      <trans-unit id="rr.form.gross-rating" datatype="html">
+        <source>Cotation brute</source>
+        <target state="translated">固有评级</target>
+      </trans-unit>
+      <trans-unit id="rr.form.residual-rating" datatype="html">
+        <source>Cotation résiduelle visée</source>
+        <target state="translated">目标剩余评级</target>
+      </trans-unit>
+      <trans-unit id="rr.form.residual-too-high" datatype="html">
+        <source>La cotation résiduelle visée ne peut pas dépasser la cotation brute.</source>
+        <target state="translated">目标剩余评级不能高于固有评级。</target>
+      </trans-unit>
+      <trans-unit id="rr.form.level" datatype="html">
+        <source>Niveau</source>
+        <target state="translated">等级</target>
+      </trans-unit>
+      <trans-unit id="rr.form.score" datatype="html">
+        <source>Score</source>
+        <target state="translated">得分</target>
+      </trans-unit>
+      <trans-unit id="rr.form.risk-scale" datatype="html">
+        <source>Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Critique 15–25</source>
+        <target state="translated">低 1–4 · 中 5–9 · 高 10–14 · 严重 15–25</target>
+      </trans-unit>
+      <trans-unit id="rr.form.opportunity-scale" datatype="html">
+        <source>Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Prioritaire 15–25</source>
+        <target state="translated">低 1–4 · 中 5–9 · 高 10–14 · 优先 15–25</target>
+      </trans-unit>
+      <trans-unit id="rr.form.treatment" datatype="html">
+        <source>Traitement</source>
+        <target state="translated">处理</target>
+      </trans-unit>
+      <trans-unit id="rr.form.implementation" datatype="html">
+        <source>Mise en œuvre</source>
+        <target state="translated">实施</target>
+      </trans-unit>
+      <trans-unit id="rr.form.decision" datatype="html">
+        <source>Décision</source>
+        <target state="translated">决定</target>
+      </trans-unit>
+      <trans-unit id="rr.form.follow-up" datatype="html">
+        <source>Suivi</source>
+        <target state="translated">跟踪</target>
+      </trans-unit>
+      <trans-unit id="rr.form.target-date" datatype="html">
+        <source>Échéance visée</source>
+        <target state="translated">目标日期</target>
+      </trans-unit>
+      <trans-unit id="rr.form.next-review" datatype="html">
+        <source>Prochaine revue</source>
+        <target state="translated">下次评审</target>
+      </trans-unit>
+      <trans-unit id="rr.form.effectiveness" datatype="html">
+        <source>Vérification d'efficacité (critère)</source>
+        <target state="translated">有效性验证（准则）</target>
+      </trans-unit>
+      <trans-unit id="rr.form.benefit-check" datatype="html">
+        <source>Vérification du bénéfice (critère)</source>
+        <target state="translated">效益验证（准则）</target>
+      </trans-unit>
+      <trans-unit id="rr.form.required" datatype="html">
+        <source>Champ obligatoire.</source>
+        <target state="translated">必填字段。</target>
+      </trans-unit>
+      <trans-unit id="rr.form.save-risk" datatype="html">
+        <source>Enregistrer le risque</source>
+        <target state="translated">保存风险</target>
+      </trans-unit>
+      <trans-unit id="rr.form.save-opportunity" datatype="html">
+        <source>Enregistrer l'opportunité</source>
+        <target state="translated">保存机遇</target>
+      </trans-unit>
+      <trans-unit id="rr.form.risk-saved" datatype="html">
+        <source>Risque enregistré.</source>
+        <target state="translated">风险已保存。</target>
+      </trans-unit>
+      <trans-unit id="rr.form.opportunity-saved" datatype="html">
+        <source>Opportunité enregistrée.</source>
+        <target state="translated">机遇已保存。</target>
+      </trans-unit>
+      <trans-unit id="rr.form.save-failed" datatype="html">
+        <source>L'enregistrement a échoué.</source>
+        <target state="translated">保存失败。</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.back" datatype="html">
+        <source>Retour au registre</source>
+        <target state="translated">返回登记册</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.failed" datatype="html">
+        <source>La fiche est indisponible.</source>
+        <target state="translated">记录不可用。</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.rating" datatype="html">
+        <source>Cotation</source>
+        <target state="translated">评级</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.gross" datatype="html">
+        <source>Brute</source>
+        <target state="translated">固有</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.residual-target" datatype="html">
+        <source>Résiduelle visée</source>
+        <target state="translated">目标剩余</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.not-set" datatype="html">
+        <source>Non fixée</source>
+        <target state="translated">未设定</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.effectiveness" datatype="html">
+        <source>Vérification d'efficacité</source>
+        <target state="translated">有效性验证</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.benefit-check" datatype="html">
+        <source>Vérification du bénéfice</source>
+        <target state="translated">效益验证</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.requirements" datatype="html">
+        <source>Exigences couvertes</source>
+        <target state="translated">覆盖的要求</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.requirements-note" datatype="html">
+        <source>Cette fiche compte comme preuve pour chacune de ces exigences dans la matrice du SMI.</source>
+        <target state="translated">此记录在一体化管理体系（IMS）矩阵中作为上述每项要求的证据。</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.action" datatype="html">
+        <source>Action</source>
+        <target state="translated">措施</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.row-actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">操作</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.no-action" datatype="html">
+        <source>Aucune action pour l'instant.</source>
+        <target state="translated">暂无措施。</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.no-capa" datatype="html">
+        <source>Aucune action CAPA liée pour l'instant.</source>
+        <target state="translated">暂无关联的 CAPA 措施。</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.capa-opened" datatype="html">
+        <source>Dossier CAPA ouvert.</source>
+        <target state="translated">CAPA 案例已开启。</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.delete-action-title" datatype="html">
+        <source>Supprimer ACT-<x id="number"/> ?</source>
+        <target state="translated">删除 ACT-<x id="number"/>？</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.delete-action-message" datatype="html">
+        <source>L'action quitte la fiche. La suppression est tracée dans le journal d'audit.</source>
+        <target state="translated">该措施将从记录中移除。删除操作会记入审计日志。</target>
+      </trans-unit>
+      <trans-unit id="rr.action.new-title" datatype="html">
+        <source>Créer une action</source>
+        <target state="translated">创建措施</target>
+      </trans-unit>
+      <trans-unit id="rr.action.title" datatype="html">
+        <source>Intitulé</source>
+        <target state="translated">名称</target>
+      </trans-unit>
+      <trans-unit id="rr.action.description" datatype="html">
+        <source>Description (facultatif)</source>
+        <target state="translated">描述（可选）</target>
+      </trans-unit>
+      <trans-unit id="rr.action.capa-title" datatype="html">
+        <source>Créer une action CAPA</source>
+        <target state="translated">创建 CAPA 措施</target>
+      </trans-unit>
+      <trans-unit id="rr.action.capa-help" datatype="html">
+        <source>Un dossier CAPA préventif est ouvert dans le module CAPA, à votre nom, avec la criticité du niveau brut du risque. Il apparaîtra dans le tableau « Traitement » de la fiche.</source>
+        <target state="translated">将在 CAPA 模块中以您的名义开启一个预防性 CAPA 案例，其关键度取风险的固有等级。它将显示在记录的“处理”表中。</target>
+      </trans-unit>
+      <trans-unit id="rr.action.open-capa" datatype="html">
+        <source>Ouvrir le dossier CAPA</source>
+        <target state="translated">打开 CAPA 案例</target>
+      </trans-unit>
+      <trans-unit id="rr.action-status.to-start" datatype="html">
+        <source>À démarrer</source>
+        <target state="translated">待开始</target>
+      </trans-unit>
+      <trans-unit id="rr.action-status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">进行中</target>
+      </trans-unit>
+      <trans-unit id="rr.action-status.done" datatype="html">
+        <source>Terminée</source>
+        <target state="translated">已完成</target>
+      </trans-unit>
+      <trans-unit id="rr.action-status.cancelled" datatype="html">
+        <source>Annulée</source>
+        <target state="translated">已取消</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.open" datatype="html">
+        <source>À démarrer</source>
+        <target state="translated">待开始</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">进行中</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.resolved" datatype="html">
+        <source>Résolue</source>
+        <target state="translated">已解决</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.closed" datatype="html">
+        <source>Clôturée</source>
+        <target state="translated">已关闭</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.rejected" datatype="html">
+        <source>Rejetée</source>
+        <target state="translated">已驳回</target>
+      </trans-unit>
+      <trans-unit id="rr.severity" datatype="html">
+        <source>Gravité</source>
+        <target state="translated">严重度</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.1" datatype="html">
+        <source>1 · Négligeable</source>
+        <target state="translated">1 · 可忽略</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.2" datatype="html">
+        <source>2 · Mineure</source>
+        <target state="translated">2 · 轻微</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.3" datatype="html">
+        <source>3 · Significative</source>
+        <target state="translated">3 · 显著</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.4" datatype="html">
+        <source>4 · Grave</source>
+        <target state="translated">4 · 严重</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.5" datatype="html">
+        <source>5 · Catastrophique</source>
+        <target state="translated">5 · 灾难性</target>
+      </trans-unit>
+      <trans-unit id="rr.probability" datatype="html">
+        <source>Probabilité</source>
+        <target state="translated">可能性</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.1" datatype="html">
+        <source>1 · Rare</source>
+        <target state="translated">1 · 罕见</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.2" datatype="html">
+        <source>2 · Peu probable</source>
+        <target state="translated">2 · 不太可能</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.3" datatype="html">
+        <source>3 · Possible</source>
+        <target state="translated">3 · 可能</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.4" datatype="html">
+        <source>4 · Probable</source>
+        <target state="translated">4 · 很可能</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.5" datatype="html">
+        <source>5 · Quasi certaine</source>
+        <target state="translated">5 · 几乎确定</target>
+      </trans-unit>
+      <trans-unit id="rr.gain" datatype="html">
+        <source>Gain attendu</source>
+        <target state="translated">预期收益</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.1" datatype="html">
+        <source>1 · Faible</source>
+        <target state="translated">1 · 低</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.2" datatype="html">
+        <source>2 · Modéré</source>
+        <target state="translated">2 · 中等</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.3" datatype="html">
+        <source>3 · Significatif</source>
+        <target state="translated">3 · 显著</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.4" datatype="html">
+        <source>4 · Fort</source>
+        <target state="translated">4 · 高</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.5" datatype="html">
+        <source>5 · Très fort</source>
+        <target state="translated">5 · 极高</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility" datatype="html">
+        <source>Faisabilité</source>
+        <target state="translated">可行性</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.1" datatype="html">
+        <source>1 · Très difficile</source>
+        <target state="translated">1 · 非常困难</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.2" datatype="html">
+        <source>2 · Difficile</source>
+        <target state="translated">2 · 困难</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.3" datatype="html">
+        <source>3 · Réaliste</source>
+        <target state="translated">3 · 可行</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.4" datatype="html">
+        <source>4 · Facile</source>
+        <target state="translated">4 · 容易</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.5" datatype="html">
+        <source>5 · Très facile</source>
+        <target state="translated">5 · 非常容易</target>
+      </trans-unit>
+      <trans-unit id="rr.level.low" datatype="html">
+        <source>Faible</source>
+        <target state="translated">低</target>
+      </trans-unit>
+      <trans-unit id="rr.level.medium" datatype="html">
+        <source>Moyen</source>
+        <target state="translated">中</target>
+      </trans-unit>
+      <trans-unit id="rr.level.high" datatype="html">
+        <source>Élevé</source>
+        <target state="translated">高</target>
+      </trans-unit>
+      <trans-unit id="rr.level.critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">严重</target>
+      </trans-unit>
+      <trans-unit id="rr.level.priority" datatype="html">
+        <source>Prioritaire</source>
+        <target state="translated">优先</target>
+      </trans-unit>
+      <trans-unit id="rr.type.quality" datatype="html">
+        <source>Qualité</source>
+        <target state="translated">质量</target>
+      </trans-unit>
+      <trans-unit id="rr.type.environment" datatype="html">
+        <source>Environnement</source>
+        <target state="translated">环境</target>
+      </trans-unit>
+      <trans-unit id="rr.type.health-safety" datatype="html">
+        <source>SST</source>
+        <target state="translated">职业健康安全</target>
+      </trans-unit>
+      <trans-unit id="rr.type.information-security" datatype="html">
+        <source>Sécurité de l'information</source>
+        <target state="translated">信息安全</target>
+      </trans-unit>
+      <trans-unit id="rr.type.legal" datatype="html">
+        <source>Exigences légales</source>
+        <target state="translated">法律要求</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.direct" datatype="html">
+        <source>Saisie directe</source>
+        <target state="translated">直接录入</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.fmea" datatype="html">
+        <source>AMDEC</source>
+        <target state="translated">FMEA</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.non-conformity" datatype="html">
+        <source>Non-conformité</source>
+        <target state="translated">不符合项</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.audit" datatype="html">
+        <source>Audit</source>
+        <target state="translated">审核</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.change" datatype="html">
+        <source>Changement (MOC)</source>
+        <target state="translated">变更（MOC）</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.incident" datatype="html">
+        <source>Incident</source>
+        <target state="translated">事件</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.customer-feedback" datatype="html">
+        <source>Retour client</source>
+        <target state="translated">客户反馈</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.management-review" datatype="html">
+        <source>Revue de direction</source>
+        <target state="translated">管理评审</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.monitoring" datatype="html">
+        <source>Veille</source>
+        <target state="translated">监测</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.undecided" datatype="html">
+        <source>À décider</source>
+        <target state="translated">待决定</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.reduce" datatype="html">
+        <source>Réduire</source>
+        <target state="translated">降低</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.avoid" datatype="html">
+        <source>Éviter</source>
+        <target state="translated">规避</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.transfer" datatype="html">
+        <source>Transférer</source>
+        <target state="translated">转移</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.accept" datatype="html">
+        <source>Accepter</source>
+        <target state="translated">接受</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.to-treat" datatype="html">
+        <source>À traiter</source>
+        <target state="translated">待处理</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.in-treatment" datatype="html">
+        <source>En traitement</source>
+        <target state="translated">处理中</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.monitored" datatype="html">
+        <source>Surveillé</source>
+        <target state="translated">监控中</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.accepted" datatype="html">
+        <source>Accepté</source>
+        <target state="translated">已接受</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.closed" datatype="html">
+        <source>Clos</source>
+        <target state="translated">已关闭</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.undecided" datatype="html">
+        <source>À décider</source>
+        <target state="translated">待决定</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.study" datatype="html">
+        <source>Étudier</source>
+        <target state="translated">研究</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.plan" datatype="html">
+        <source>Planifier</source>
+        <target state="translated">计划</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.postpone" datatype="html">
+        <source>Reporter</source>
+        <target state="translated">推迟</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.discard" datatype="html">
+        <source>Écarter</source>
+        <target state="translated">放弃</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.under-study" datatype="html">
+        <source>En étude</source>
+        <target state="translated">研究中</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.planned" datatype="html">
+        <source>Planifiée</source>
+        <target state="translated">已计划</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">进行中</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.done" datatype="html">
+        <source>Réalisée</source>
+        <target state="translated">已实现</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.discarded" datatype="html">
+        <source>Écartée</source>
+        <target state="translated">已放弃</target>
+      </trans-unit>
+      <trans-unit id="rr.event.risk-created" datatype="html">
+        <source>Risque créé — origine : <x id="origin"/><x id="ref"/></source>
+        <target state="translated">风险已创建 — 来源：<x id="origin"/><x id="ref"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.opportunity-created" datatype="html">
+        <source>Opportunité créée — origine : <x id="origin"/><x id="ref"/></source>
+        <target state="translated">机遇已创建 — 来源：<x id="origin"/><x id="ref"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.rating" datatype="html">
+        <source>Cotation brute passée de <x id="from"/> à <x id="to"/></source>
+        <target state="translated">固有评级由 <x id="from"/> 变为 <x id="to"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.evaluation" datatype="html">
+        <source>Évaluation passée de <x id="from"/> à <x id="to"/></source>
+        <target state="translated">评估由 <x id="from"/> 变为 <x id="to"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.residual" datatype="html">
+        <source>Cotation résiduelle visée : <x id="from"/> → <x id="to"/></source>
+        <target state="translated">目标剩余评级：<x id="from"/> → <x id="to"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.decision" datatype="html">
+        <source>Décision : <x id="from"/> → <x id="to"/></source>
+        <target state="translated">决定：<x id="from"/> → <x id="to"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.status" datatype="html">
+        <source>Statut : <x id="from"/> → <x id="to"/></source>
+        <target state="translated">状态：<x id="from"/> → <x id="to"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.action-opened" datatype="html">
+        <source>Action <x id="number"/> ouverte : <x id="title"/></source>
+        <target state="translated">措施 <x id="number"/> 已开启：<x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.capa-opened" datatype="html">
+        <source>Action CAPA ouverte : <x id="title"/></source>
+        <target state="translated">CAPA 措施已开启：<x id="title"/></target>
+      </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>
         <target state="translated">操作</target>

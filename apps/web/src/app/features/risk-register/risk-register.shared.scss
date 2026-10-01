@@ -1,0 +1,40 @@
+// Les pastilles de cotation, communes au registre et aux fiches.
+// Quatre niveaux, quatre intensités : la couleur monte avec le risque, et le
+// niveau est toujours écrit en toutes lettres — la couleur seule ne suffit pas
+// à qui ne la perçoit pas (WCAG 1.4.1).
+
+@mixin cotation {
+  .cotation {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--qos-space-1);
+    padding: 2px 8px;
+    border-radius: var(--qos-radius-sm);
+    font-size: var(--qos-fs-xs);
+    font-weight: var(--qos-fw-semibold);
+    white-space: nowrap;
+    border: 1px solid transparent;
+
+    &--LOW {
+      background: var(--qos-bg-sunken);
+      color: var(--qos-fg-secondary);
+      border-color: var(--qos-border-subtle);
+    }
+
+    &--MEDIUM {
+      background: var(--qos-warn-bg-soft);
+      color: var(--qos-warn-fg);
+    }
+
+    &--HIGH {
+      background: var(--qos-danger-bg-soft);
+      color: var(--qos-danger-fg);
+    }
+
+    &--CRITICAL,
+    &--PRIORITY {
+      background: var(--qos-danger-fg);
+      color: var(--qos-fg-inverse);
+    }
+  }
+}

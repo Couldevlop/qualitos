@@ -1,0 +1,24 @@
+.ref {
+  font-weight: var(--qos-fw-regular);
+  color: var(--qos-fg-tertiary);
+}
+
+.plein {
+  width: 100%;
+}
+
+.deux {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--qos-space-3);
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.aide {
+  margin: 0 0 var(--qos-space-4);
+  font-size: var(--qos-fs-sm);
+  color: var(--qos-fg-secondary);
+}

@@ -9,7 +9,8 @@ import { SpringPage } from '../pdca/pdca.types';
 export type CapaType = 'CONTAINMENT' | 'CORRECTIVE' | 'PREVENTIVE';
 export type CapaCriticity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 export type CapaStatus = 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED' | 'REJECTED';
-export type CapaSourceType = 'NON_CONFORMITY' | 'AUDIT' | 'COMPLAINT' | 'INTERNAL' | 'IOT_ALERT' | 'OTHER';
+// RISK : dossier ouvert depuis une fiche du registre des risques (sourceRef = R-xxx).
+export type CapaSourceType = 'NON_CONFORMITY' | 'AUDIT' | 'COMPLAINT' | 'INTERNAL' | 'IOT_ALERT' | 'RISK' | 'OTHER';
 
 /**
  * Nature d'une action (§4.2, ISO 9001 §10.2, 8D étape D3).

@@ -118,3 +118,9 @@
 .score-high { background: #e8f5e9; color: #1b5e20; }
 .score-mid  { background: #fff3e0; color: #e65100; }
 .score-low  { background: #ffebee; color: #b71c1c; }
+
+// Lien « Créer un risque » d'un constat : discret, sous la description.
+.creer-risque {
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-link);
+}

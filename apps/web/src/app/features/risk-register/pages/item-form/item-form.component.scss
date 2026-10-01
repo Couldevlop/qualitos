@@ -1,0 +1,132 @@
+// Le formulaire : deux colonnes comme la maquette — identification,
+// description, origine à gauche ; cotation, traitement, exigences à droite.
+@use '../../risk-register.shared' as rr;
+
+:host {
+  display: block;
+}
+
+@include rr.cotation;
+
+.grille {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr);
+  gap: var(--qos-space-4);
+  align-items: start;
+
+  @media (max-width: 1000px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.colonne {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-4);
+}
+
+.carte {
+  padding: var(--qos-space-5);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  box-shadow: var(--qos-shadow-xs);
+
+  &__titre {
+    margin: 0 0 var(--qos-space-4);
+    font-size: var(--qos-fs-md);
+    font-weight: var(--qos-fw-semibold);
+  }
+}
+
+.plein {
+  width: 100%;
+}
+
+.deux {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--qos-space-4);
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+
+  &--serre {
+    column-gap: var(--qos-space-3);
+  }
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.niveau {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-2);
+  padding: var(--qos-space-3);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-subtle);
+  border: 1px solid var(--qos-border-subtle);
+  font-size: var(--qos-fs-sm);
+}
+
+.aide {
+  margin: var(--qos-space-2) 0 0;
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-tertiary);
+}
+
+.erreur {
+  margin: var(--qos-space-2) 0 0;
+  font-size: var(--qos-fs-sm);
+  color: var(--qos-danger-fg);
+}
+
+.exigences {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-1);
+}
+
+.avis {
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-warn-bg-soft);
+  color: var(--qos-warn-fg);
+}
+
+.source {
+  display: flex;
+  gap: var(--qos-space-3);
+  align-items: flex-start;
+  margin-bottom: var(--qos-space-4);
+  padding: var(--qos-space-3) var(--qos-space-4);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-accent-bg-soft);
+  color: var(--qos-accent-fg-soft);
+
+  p {
+    margin: 0;
+  }
+
+  &__alerte {
+    margin-top: var(--qos-space-1) !important;
+    color: var(--qos-danger-fg);
+    font-weight: var(--qos-fw-medium);
+  }
+
+  &__existants {
+    margin-top: var(--qos-space-1) !important;
+  }
+}
+
+.pied {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--qos-space-3);
+  padding-top: var(--qos-space-2);
+}

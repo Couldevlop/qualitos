@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>
+  <ng-container *ngIf="isCapa" i18n="@@rr.action.capa-title">Créer une action CAPA</ng-container>
+  <ng-container *ngIf="!isCapa && !isEdit" i18n="@@rr.action.new-title">Créer une action</ng-container>
+  <ng-container *ngIf="!isCapa && isEdit">ACT-{{ data.number }}</ng-container>
+  <span class="ref">· {{ data.reference }}</span>
+</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <mat-dialog-content>
+    <p class="aide" *ngIf="isCapa" i18n="@@rr.action.capa-help">
+      Un dossier CAPA préventif est ouvert dans le module CAPA, à votre nom, avec la criticité du niveau brut du risque. Il apparaîtra dans le tableau « Traitement » de la fiche.
+    </p>
+
+    <mat-form-field appearance="outline" class="plein">
+      <mat-label i18n="@@rr.action.title">Intitulé</mat-label>
+      <input matInput formControlName="title" maxlength="255" data-test="action-intitule">
+      <mat-error *ngIf="form.controls.title.hasError('required')" i18n="@@rr.form.required">Champ obligatoire.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="plein" *ngIf="isCapa">
+      <mat-label i18n="@@rr.action.description">Description (facultatif)</mat-label>
+      <textarea matInput formControlName="description" rows="3" maxlength="4000" data-test="action-description"></textarea>
+    </mat-form-field>
+
+    <div class="deux">
+      <mat-form-field appearance="outline">
+        <mat-label i18n="@@rr.col.due">Échéance</mat-label>
+        <input matInput type="date" formControlName="dueDate" data-test="action-echeance">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" *ngIf="!isCapa">
+        <mat-label i18n="@@rr.col.status">Statut</mat-label>
+        <mat-select formControlName="status" data-test="action-statut">
+          <mat-option *ngFor="let s of statuses" [value]="s.value">{{ s.label }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button type="button" mat-dialog-close i18n="@@common.cancel">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" data-test="action-valider">
+      <ng-container *ngIf="isCapa" i18n="@@rr.action.open-capa">Ouvrir le dossier CAPA</ng-container>
+      <ng-container *ngIf="!isCapa" i18n="@@common.save">Enregistrer</ng-container>
+    </button>
+  </mat-dialog-actions>
+</form>

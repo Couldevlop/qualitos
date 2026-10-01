@@ -1,0 +1,197 @@
+<div class="qos-page">
+  <qos-page-header
+    eyebrow="Risques & conformité" i18n-eyebrow="@@rr.eyebrow"
+    title="Risques et opportunités" i18n-title="@@rr.title"
+    subtitle="Registre unique du système de management : chaque ligne est cotée, traitée et rattachée aux exigences qu'elle couvre."
+    i18n-subtitle="@@rr.subtitle">
+    <ng-container qosActions>
+      <button mat-stroked-button type="button" (click)="exporter()" data-test="exporter"
+              [disabled]="loading">
+        <mat-icon>download</mat-icon>
+        <span i18n="@@rr.export">Exporter</span>
+      </button>
+      <button mat-flat-button color="primary" type="button" *ngIf="editable" (click)="create()"
+              data-test="nouveau">
+        <mat-icon>add</mat-icon>
+        <span *ngIf="tab === 'risks'" i18n="@@rr.new-risk">Nouveau risque</span>
+        <span *ngIf="tab === 'opportunities'" i18n="@@rr.new-opportunity">Nouvelle opportunité</span>
+      </button>
+    </ng-container>
+  </qos-page-header>
+
+  <nav class="onglets" role="tablist" i18n-aria-label="@@rr.tabs" aria-label="Registres">
+    <button type="button" role="tab" class="onglet" [class.onglet--actif]="tab === 'risks'"
+            [attr.aria-selected]="tab === 'risks'" (click)="setTab('risks')" data-test="onglet-risques">
+      <span i18n="@@rr.tab-risks">Risques</span> · {{ risks.length }}
+    </button>
+    <button type="button" role="tab" class="onglet" [class.onglet--actif]="tab === 'opportunities'"
+            [attr.aria-selected]="tab === 'opportunities'" (click)="setTab('opportunities')"
+            data-test="onglet-opportunites">
+      <span i18n="@@rr.tab-opportunities">Opportunités</span> · {{ opportunities.length }}
+    </button>
+  </nav>
+
+  <!-- La barre de filtres : recherche, bascule, puis les trois listes. -->
+  <div class="filtres">
+    <mat-form-field appearance="outline" class="filtres__recherche" subscriptSizing="dynamic">
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [(ngModel)]="search" data-test="recherche"
+             [placeholder]="tab === 'risks' ? searchRiskPlaceholder : searchOpportunityPlaceholder"
+             [attr.aria-label]="tab === 'risks' ? searchRiskPlaceholder : searchOpportunityPlaceholder">
+    </mat-form-field>
+
+    <mat-button-toggle-group *ngIf="tab === 'risks'" [(ngModel)]="ratingView" hideSingleSelectionIndicator
+                             i18n-aria-label="@@rr.rating-view" aria-label="Cotation affichée">
+      <mat-button-toggle value="gross" data-test="vue-brute" i18n="@@rr.gross">Brut</mat-button-toggle>
+      <mat-button-toggle value="residual" data-test="vue-residuelle" i18n="@@rr.residual">Résiduel</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <mat-button-toggle-group *ngIf="tab === 'opportunities'" [(ngModel)]="priorityOnly"
+                             hideSingleSelectionIndicator
+                             i18n-aria-label="@@rr.priority-filter" aria-label="Filtre de priorité">
+      <mat-button-toggle [value]="false" data-test="toutes" i18n="@@rr.all-opportunities">Toutes</mat-button-toggle>
+      <mat-button-toggle [value]="true" data-test="prioritaires" i18n="@@rr.priority-only">Prioritaires</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <mat-form-field appearance="outline" class="filtres__liste" subscriptSizing="dynamic">
+      <mat-select [(ngModel)]="typeFilter" data-test="filtre-type"
+                  i18n-aria-label="@@rr.filter-type" aria-label="Filtrer par type">
+        <mat-option value="" i18n="@@rr.all-types">Tous types</mat-option>
+        <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filtres__liste" subscriptSizing="dynamic">
+      <mat-select [(ngModel)]="processFilter" data-test="filtre-processus"
+                  i18n-aria-label="@@rr.filter-process" aria-label="Filtrer par processus">
+        <mat-option value="" i18n="@@rr.all-processes">Tous processus</mat-option>
+        <mat-option *ngFor="let p of processes" [value]="p">{{ p }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filtres__liste" subscriptSizing="dynamic">
+      <mat-select [(ngModel)]="statusFilter" data-test="filtre-statut"
+                  i18n-aria-label="@@rr.filter-status" aria-label="Filtrer par statut">
+        <mat-option value="" i18n="@@rr.all-statuses">Tous statuts</mat-option>
+        <ng-container *ngIf="tab === 'risks'">
+          <mat-option *ngFor="let s of riskStatuses" [value]="s.value">{{ s.label }}</mat-option>
+        </ng-container>
+        <ng-container *ngIf="tab === 'opportunities'">
+          <mat-option *ngFor="let s of opportunityStatuses" [value]="s.value">{{ s.label }}</mat-option>
+        </ng-container>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert">
+    <span i18n="@@rr.load-failed">Le registre n'a pas pu être chargé.</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <!-- ===================== Risques ===================== -->
+  <ng-container *ngIf="!failed && tab === 'risks'">
+    <div class="tableau" *ngIf="filteredRisks as lignes">
+      <table data-test="table-risques">
+        <thead>
+          <tr>
+            <th scope="col" i18n="@@rr.col.ref">Réf.</th>
+            <th scope="col" i18n="@@rr.col.risk">Risque</th>
+            <th scope="col" i18n="@@rr.col.type">Type</th>
+            <th scope="col" i18n="@@rr.col.process">Processus</th>
+            <th scope="col" i18n="@@rr.col.owner">Propriétaire</th>
+            <th scope="col" i18n="@@rr.col.gross">Cotation brute</th>
+            <th scope="col" i18n="@@rr.col.residual">Résiduel</th>
+            <th scope="col" i18n="@@rr.col.status">Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of lignes; trackBy: trackById" class="ligne" tabindex="0"
+              (click)="openRisk(r)" (keydown.enter)="openRisk(r)" data-test="ligne-risque">
+            <td class="ref">{{ r.reference }}</td>
+            <td class="intitule">{{ r.title }}</td>
+            <td>{{ typeText(r.type) }}</td>
+            <td>{{ r.process }}</td>
+            <td>{{ r.owner }}</td>
+            <td>
+              <span class="cotation cotation--{{ r.grossLevel }}">
+                {{ r.grossSeverity }}×{{ r.grossProbability }} = {{ r.grossScore }} {{ riskLevelText(r.grossLevel) }}
+              </span>
+            </td>
+            <td>
+              <span *ngIf="r.residualLevel; else sansResiduelle" class="cotation cotation--{{ r.residualLevel }}">
+                {{ r.residualScore }} {{ riskLevelText(r.residualLevel) }}
+              </span>
+              <ng-template #sansResiduelle><span class="vide">—</span></ng-template>
+            </td>
+            <td>{{ riskStatusText(r.status) }}</td>
+          </tr>
+          <tr *ngIf="!loading && lignes.length === 0">
+            <td colspan="8" class="aucun">
+              <span *ngIf="risks.length === 0" i18n="@@rr.no-risk">Aucun risque dans le registre.</span>
+              <ng-container *ngIf="risks.length > 0">
+                <span i18n="@@rr.no-match">Aucune ligne ne correspond aux filtres.</span>
+                <button mat-button type="button" (click)="resetFilters()" i18n="@@rr.reset-filters">Effacer les filtres</button>
+              </ng-container>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="legende" data-test="legende-risques">
+        <span i18n="@@rr.legend-risk">Niveau = gravité × probabilité · Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Critique 15–25</span>
+        · <span i18n="@@rr.shown-risks">{{ lignes.length // i18n(ph="shown") }} risques affichés sur {{ risks.length // i18n(ph="total") }}</span>
+      </p>
+    </div>
+  </ng-container>
+
+  <!-- ===================== Opportunités ===================== -->
+  <ng-container *ngIf="!failed && tab === 'opportunities'">
+    <div class="tableau" *ngIf="filteredOpportunities as lignes">
+      <table data-test="table-opportunites">
+        <thead>
+          <tr>
+            <th scope="col" i18n="@@rr.col.ref">Réf.</th>
+            <th scope="col" i18n="@@rr.col.opportunity">Opportunité</th>
+            <th scope="col" i18n="@@rr.col.type">Type</th>
+            <th scope="col" i18n="@@rr.col.process">Processus</th>
+            <th scope="col" i18n="@@rr.col.owner">Propriétaire</th>
+            <th scope="col" i18n="@@rr.col.score">Gain × faisabilité</th>
+            <th scope="col" i18n="@@rr.col.due">Échéance</th>
+            <th scope="col" i18n="@@rr.col.status">Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let o of lignes; trackBy: trackById" class="ligne" tabindex="0"
+              (click)="openOpportunity(o)" (keydown.enter)="openOpportunity(o)" data-test="ligne-opportunite">
+            <td class="ref">{{ o.reference }}</td>
+            <td class="intitule">{{ o.title }}</td>
+            <td>{{ typeText(o.type) }}</td>
+            <td>{{ o.process }}</td>
+            <td>{{ o.owner }}</td>
+            <td>
+              <span class="cotation cotation--{{ o.level }}">
+                {{ o.gain }}×{{ o.feasibility }} = {{ o.score }} {{ opportunityLevelText(o.level) }}
+              </span>
+            </td>
+            <td>{{ o.targetDate ? (o.targetDate | date: 'mediumDate') : '—' }}</td>
+            <td>{{ opportunityStatusText(o.status) }}</td>
+          </tr>
+          <tr *ngIf="!loading && lignes.length === 0">
+            <td colspan="8" class="aucun">
+              <span *ngIf="opportunities.length === 0" i18n="@@rr.no-opportunity">Aucune opportunité dans le registre.</span>
+              <ng-container *ngIf="opportunities.length > 0">
+                <span i18n="@@rr.no-match">Aucune ligne ne correspond aux filtres.</span>
+                <button mat-button type="button" (click)="resetFilters()" i18n="@@rr.reset-filters">Effacer les filtres</button>
+              </ng-container>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="legende" data-test="legende-opportunites">
+        <span i18n="@@rr.legend-opportunity">Score = gain attendu × faisabilité (1 à 5 chacun) · Moyen 5–9 · Élevé 10–14 · Prioritaire 15–25</span>
+        · <span i18n="@@rr.shown-opportunities">{{ lignes.length // i18n(ph="shown") }} opportunités affichées sur {{ opportunities.length // i18n(ph="total") }}</span>
+      </p>
+    </div>
+  </ng-container>
+</div>

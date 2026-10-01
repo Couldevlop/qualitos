@@ -21064,6 +21064,834 @@ historique 12 mois</source>
         <source>Lien impossible.</source>
         <target state="translated">تعذّر الربط.</target>
       </trans-unit>
+      <trans-unit id="common.retry" datatype="html">
+        <source>Réessayer</source>
+        <target state="translated">إعادة المحاولة</target>
+      </trans-unit>
+      <trans-unit id="nav.risques-opportunites" datatype="html">
+        <source>Risques &amp; opportunités</source>
+        <target state="translated">المخاطر والفرص</target>
+      </trans-unit>
+      <trans-unit id="nav.registre-risques" datatype="html">
+        <source>Registre</source>
+        <target state="translated">السجل</target>
+      </trans-unit>
+      <trans-unit id="rr.eyebrow" datatype="html">
+        <source>Risques &amp; conformité</source>
+        <target state="translated">المخاطر والامتثال</target>
+      </trans-unit>
+      <trans-unit id="rr.title" datatype="html">
+        <source>Risques et opportunités</source>
+        <target state="translated">المخاطر والفرص</target>
+      </trans-unit>
+      <trans-unit id="rr.subtitle" datatype="html">
+        <source>Registre unique du système de management : chaque ligne est cotée, traitée et rattachée aux exigences qu'elle couvre.</source>
+        <target state="translated">سجل موحّد لنظام الإدارة: كل سطر مُقيَّم ومُعالَج ومرتبط بالمتطلبات التي يغطيها.</target>
+      </trans-unit>
+      <trans-unit id="rr.crumb.register" datatype="html">
+        <source>Registre</source>
+        <target state="translated">السجل</target>
+      </trans-unit>
+      <trans-unit id="rr.tabs" datatype="html">
+        <source>Registres</source>
+        <target state="translated">السجلات</target>
+      </trans-unit>
+      <trans-unit id="rr.tab-risks" datatype="html">
+        <source>Risques</source>
+        <target state="translated">المخاطر</target>
+      </trans-unit>
+      <trans-unit id="rr.tab-opportunities" datatype="html">
+        <source>Opportunités</source>
+        <target state="translated">الفرص</target>
+      </trans-unit>
+      <trans-unit id="rr.new-risk" datatype="html">
+        <source>Nouveau risque</source>
+        <target state="translated">خطر جديد</target>
+      </trans-unit>
+      <trans-unit id="rr.new-opportunity" datatype="html">
+        <source>Nouvelle opportunité</source>
+        <target state="translated">فرصة جديدة</target>
+      </trans-unit>
+      <trans-unit id="rr.create-risk" datatype="html">
+        <source>Créer un risque</source>
+        <target state="translated">إنشاء خطر</target>
+      </trans-unit>
+      <trans-unit id="rr.export" datatype="html">
+        <source>Exporter</source>
+        <target state="translated">تصدير</target>
+      </trans-unit>
+      <trans-unit id="rr.load-failed" datatype="html">
+        <source>Le registre n'a pas pu être chargé.</source>
+        <target state="translated">تعذّر تحميل السجل.</target>
+      </trans-unit>
+      <trans-unit id="rr.search-risk" datatype="html">
+        <source>Rechercher un risque</source>
+        <target state="translated">البحث عن خطر</target>
+      </trans-unit>
+      <trans-unit id="rr.search-opportunity" datatype="html">
+        <source>Rechercher une opportunité</source>
+        <target state="translated">البحث عن فرصة</target>
+      </trans-unit>
+      <trans-unit id="rr.filter-type" datatype="html">
+        <source>Filtrer par type</source>
+        <target state="translated">تصفية حسب النوع</target>
+      </trans-unit>
+      <trans-unit id="rr.filter-process" datatype="html">
+        <source>Filtrer par processus</source>
+        <target state="translated">تصفية حسب العملية</target>
+      </trans-unit>
+      <trans-unit id="rr.filter-status" datatype="html">
+        <source>Filtrer par statut</source>
+        <target state="translated">تصفية حسب الحالة</target>
+      </trans-unit>
+      <trans-unit id="rr.all-types" datatype="html">
+        <source>Tous types</source>
+        <target state="translated">جميع الأنواع</target>
+      </trans-unit>
+      <trans-unit id="rr.all-processes" datatype="html">
+        <source>Tous processus</source>
+        <target state="translated">جميع العمليات</target>
+      </trans-unit>
+      <trans-unit id="rr.all-statuses" datatype="html">
+        <source>Tous statuts</source>
+        <target state="translated">جميع الحالات</target>
+      </trans-unit>
+      <trans-unit id="rr.all-opportunities" datatype="html">
+        <source>Toutes</source>
+        <target state="translated">الكل</target>
+      </trans-unit>
+      <trans-unit id="rr.priority-filter" datatype="html">
+        <source>Filtre de priorité</source>
+        <target state="translated">مرشّح الأولوية</target>
+      </trans-unit>
+      <trans-unit id="rr.priority-only" datatype="html">
+        <source>Prioritaires</source>
+        <target state="translated">ذات الأولوية</target>
+      </trans-unit>
+      <trans-unit id="rr.rating-view" datatype="html">
+        <source>Cotation affichée</source>
+        <target state="translated">التقييم المعروض</target>
+      </trans-unit>
+      <trans-unit id="rr.gross" datatype="html">
+        <source>Brut</source>
+        <target state="translated">إجمالي</target>
+      </trans-unit>
+      <trans-unit id="rr.residual" datatype="html">
+        <source>Résiduel</source>
+        <target state="translated">متبقٍ</target>
+      </trans-unit>
+      <trans-unit id="rr.reset-filters" datatype="html">
+        <source>Effacer les filtres</source>
+        <target state="translated">مسح عوامل التصفية</target>
+      </trans-unit>
+      <trans-unit id="rr.no-risk" datatype="html">
+        <source>Aucun risque dans le registre.</source>
+        <target state="translated">لا توجد مخاطر في السجل.</target>
+      </trans-unit>
+      <trans-unit id="rr.no-opportunity" datatype="html">
+        <source>Aucune opportunité dans le registre.</source>
+        <target state="translated">لا توجد فرص في السجل.</target>
+      </trans-unit>
+      <trans-unit id="rr.no-match" datatype="html">
+        <source>Aucune ligne ne correspond aux filtres.</source>
+        <target state="translated">لا توجد أسطر مطابقة لعوامل التصفية.</target>
+      </trans-unit>
+      <trans-unit id="rr.shown-risks" datatype="html">
+        <source><x id="shown"/> risques affichés sur <x id="total"/></source>
+        <target state="translated">عرض <x id="shown"/> من أصل <x id="total"/> خطر</target>
+      </trans-unit>
+      <trans-unit id="rr.shown-opportunities" datatype="html">
+        <source><x id="shown"/> opportunités affichées sur <x id="total"/></source>
+        <target state="translated">عرض <x id="shown"/> من أصل <x id="total"/> فرصة</target>
+      </trans-unit>
+      <trans-unit id="rr.legend-risk" datatype="html">
+        <source>Niveau = gravité × probabilité · Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Critique 15–25</source>
+        <target state="translated">المستوى = الشدة × الاحتمالية · منخفض 1–4 · متوسط 5–9 · مرتفع 10–14 · حرج 15–25</target>
+      </trans-unit>
+      <trans-unit id="rr.legend-opportunity" datatype="html">
+        <source>Score = gain attendu × faisabilité (1 à 5 chacun) · Moyen 5–9 · Élevé 10–14 · Prioritaire 15–25</source>
+        <target state="translated">الدرجة = المكسب المتوقع × قابلية التنفيذ (من 1 إلى 5 لكل منهما) · متوسط 5–9 · مرتفع 10–14 · ذو أولوية 15–25</target>
+      </trans-unit>
+      <trans-unit id="rr.col.ref" datatype="html">
+        <source>Réf.</source>
+        <target state="translated">المرجع</target>
+      </trans-unit>
+      <trans-unit id="rr.col.risk" datatype="html">
+        <source>Risque</source>
+        <target state="translated">الخطر</target>
+      </trans-unit>
+      <trans-unit id="rr.col.opportunity" datatype="html">
+        <source>Opportunité</source>
+        <target state="translated">الفرصة</target>
+      </trans-unit>
+      <trans-unit id="rr.col.type" datatype="html">
+        <source>Type</source>
+        <target state="translated">النوع</target>
+      </trans-unit>
+      <trans-unit id="rr.col.process" datatype="html">
+        <source>Processus</source>
+        <target state="translated">العملية</target>
+      </trans-unit>
+      <trans-unit id="rr.col.owner" datatype="html">
+        <source>Propriétaire</source>
+        <target state="translated">المالك</target>
+      </trans-unit>
+      <trans-unit id="rr.col.gross" datatype="html">
+        <source>Cotation brute</source>
+        <target state="translated">التقييم الإجمالي</target>
+      </trans-unit>
+      <trans-unit id="rr.col.residual" datatype="html">
+        <source>Résiduel</source>
+        <target state="translated">متبقٍ</target>
+      </trans-unit>
+      <trans-unit id="rr.col.score" datatype="html">
+        <source>Gain × faisabilité</source>
+        <target state="translated">المكسب × قابلية التنفيذ</target>
+      </trans-unit>
+      <trans-unit id="rr.col.status" datatype="html">
+        <source>Statut</source>
+        <target state="translated">الحالة</target>
+      </trans-unit>
+      <trans-unit id="rr.col.due" datatype="html">
+        <source>Échéance</source>
+        <target state="translated">تاريخ الاستحقاق</target>
+      </trans-unit>
+      <trans-unit id="rr.create-from-fmea-tooltip" datatype="html">
+        <source>Transformer cette ligne en risque du registre</source>
+        <target state="translated">تحويل هذا السطر إلى خطر في السجل</target>
+      </trans-unit>
+      <trans-unit id="rr.create-from-nc-tooltip" datatype="html">
+        <source>Inscrire au registre le risque que révèle cet écart</source>
+        <target state="translated">تسجيل الخطر الذي تكشفه هذه الفجوة في السجل</target>
+      </trans-unit>
+      <trans-unit id="rr.create-from-change-tooltip" datatype="html">
+        <source>Inscrire au registre un risque issu de l'analyse d'impact</source>
+        <target state="translated">تسجيل خطر ناتج عن تحليل الأثر في السجل</target>
+      </trans-unit>
+      <trans-unit id="rr.form.new-risk" datatype="html">
+        <source>Nouveau risque</source>
+        <target state="translated">خطر جديد</target>
+      </trans-unit>
+      <trans-unit id="rr.form.new-opportunity" datatype="html">
+        <source>Nouvelle opportunité</source>
+        <target state="translated">فرصة جديدة</target>
+      </trans-unit>
+      <trans-unit id="rr.form.edit-risk" datatype="html">
+        <source>Modifier le risque</source>
+        <target state="translated">تعديل الخطر</target>
+      </trans-unit>
+      <trans-unit id="rr.form.edit-opportunity" datatype="html">
+        <source>Modifier l'opportunité</source>
+        <target state="translated">تعديل الفرصة</target>
+      </trans-unit>
+      <trans-unit id="rr.form.read-only" datatype="html">
+        <source>Votre profil permet de consulter le registre, pas de l'alimenter. Un responsable qualité peut créer cette fiche.</source>
+        <target state="translated">يتيح لك ملفك الشخصي الاطلاع على السجل دون الإضافة إليه. يمكن لمسؤول الجودة إنشاء هذا السجل.</target>
+      </trans-unit>
+      <trans-unit id="rr.form.identification" datatype="html">
+        <source>Identification</source>
+        <target state="translated">التحديد</target>
+      </trans-unit>
+      <trans-unit id="rr.form.risk-title" datatype="html">
+        <source>Intitulé du risque</source>
+        <target state="translated">عنوان الخطر</target>
+      </trans-unit>
+      <trans-unit id="rr.form.risk-title-placeholder" datatype="html">
+        <source>Décrire le risque en une phrase</source>
+        <target state="translated">صِف الخطر في جملة واحدة</target>
+      </trans-unit>
+      <trans-unit id="rr.form.opportunity-title" datatype="html">
+        <source>Intitulé de l'opportunité</source>
+        <target state="translated">عنوان الفرصة</target>
+      </trans-unit>
+      <trans-unit id="rr.form.opportunity-title-placeholder" datatype="html">
+        <source>Décrire l'opportunité en une phrase</source>
+        <target state="translated">صِف الفرصة في جملة واحدة</target>
+      </trans-unit>
+      <trans-unit id="rr.form.description" datatype="html">
+        <source>Description</source>
+        <target state="translated">الوصف</target>
+      </trans-unit>
+      <trans-unit id="rr.form.cause" datatype="html">
+        <source>Cause</source>
+        <target state="translated">السبب</target>
+      </trans-unit>
+      <trans-unit id="rr.form.cause-placeholder" datatype="html">
+        <source>Qu'est-ce qui peut provoquer ce risque ?</source>
+        <target state="translated">ما الذي قد يتسبب في هذا الخطر؟</target>
+      </trans-unit>
+      <trans-unit id="rr.form.effect" datatype="html">
+        <source>Effet</source>
+        <target state="translated">الأثر</target>
+      </trans-unit>
+      <trans-unit id="rr.form.effect-placeholder" datatype="html">
+        <source>Quelles conséquences s'il se produit ?</source>
+        <target state="translated">ما العواقب إذا حدث؟</target>
+      </trans-unit>
+      <trans-unit id="rr.form.context" datatype="html">
+        <source>Contexte et levier</source>
+        <target state="translated">السياق والرافعة</target>
+      </trans-unit>
+      <trans-unit id="rr.form.context-placeholder" datatype="html">
+        <source>Qu'est-ce qui rend cette opportunité possible ?</source>
+        <target state="translated">ما الذي يجعل هذه الفرصة ممكنة؟</target>
+      </trans-unit>
+      <trans-unit id="rr.form.benefit" datatype="html">
+        <source>Bénéfice attendu</source>
+        <target state="translated">الفائدة المتوقعة</target>
+      </trans-unit>
+      <trans-unit id="rr.form.benefit-placeholder" datatype="html">
+        <source>Quel gain en attendez-vous ?</source>
+        <target state="translated">ما المكسب الذي تتوقعه؟</target>
+      </trans-unit>
+      <trans-unit id="rr.form.site" datatype="html">
+        <source>Site</source>
+        <target state="translated">الموقع</target>
+      </trans-unit>
+      <trans-unit id="rr.form.origin" datatype="html">
+        <source>Origine</source>
+        <target state="translated">المصدر</target>
+      </trans-unit>
+      <trans-unit id="rr.form.origin-ref" datatype="html">
+        <source>Référence liée (facultatif)</source>
+        <target state="translated">المرجع المرتبط (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="rr.form.origin-locked" datatype="html">
+        <source>Fixée par l'objet dont le risque est issu.</source>
+        <target state="translated">محدد بواسطة العنصر الذي نشأ عنه الخطر.</target>
+      </trans-unit>
+      <trans-unit id="rr.form.from-source" datatype="html">
+        <source>Risque issu de</source>
+        <target state="translated">خطر ناشئ عن</target>
+      </trans-unit>
+      <trans-unit id="rr.form.source" datatype="html">
+        <source>Source</source>
+        <target state="translated">المصدر</target>
+      </trans-unit>
+      <trans-unit id="rr.form.already-linked" datatype="html">
+        <source>Déjà au registre depuis cet objet :</source>
+        <target state="translated">موجود بالفعل في السجل من هذا العنصر:</target>
+      </trans-unit>
+      <trans-unit id="rr.form.not-eligible" datatype="html">
+        <source>Cet objet ne justifie pas un risque.</source>
+        <target state="translated">هذا العنصر لا يستدعي تسجيل خطر.</target>
+      </trans-unit>
+      <trans-unit id="rr.form.not-a-gap" datatype="html">
+        <source>Ce constat n'est pas un écart : il ne justifie pas un risque.</source>
+        <target state="translated">هذه الملاحظة ليست فجوة: فهي لا تستدعي تسجيل خطر.</target>
+      </trans-unit>
+      <trans-unit id="rr.form.below-threshold" datatype="html">
+        <source>Cette ligne d'AMDEC est sous le seuil de criticité du projet : elle ne justifie pas un risque.</source>
+        <target state="translated">سطر FMEA هذا دون عتبة الحرجية للمشروع: فهو لا يستدعي تسجيل خطر.</target>
+      </trans-unit>
+      <trans-unit id="rr.form.requirements" datatype="html">
+        <source>Exigences concernées</source>
+        <target state="translated">المتطلبات المعنية</target>
+      </trans-unit>
+      <trans-unit id="rr.form.evaluation" datatype="html">
+        <source>Évaluation</source>
+        <target state="translated">التقييم</target>
+      </trans-unit>
+      <trans-unit id="rr.form.gross-rating" datatype="html">
+        <source>Cotation brute</source>
+        <target state="translated">التقييم الإجمالي</target>
+      </trans-unit>
+      <trans-unit id="rr.form.residual-rating" datatype="html">
+        <source>Cotation résiduelle visée</source>
+        <target state="translated">التقييم المتبقي المستهدف</target>
+      </trans-unit>
+      <trans-unit id="rr.form.residual-too-high" datatype="html">
+        <source>La cotation résiduelle visée ne peut pas dépasser la cotation brute.</source>
+        <target state="translated">لا يمكن أن يتجاوز التقييم المتبقي المستهدف التقييم الإجمالي.</target>
+      </trans-unit>
+      <trans-unit id="rr.form.level" datatype="html">
+        <source>Niveau</source>
+        <target state="translated">المستوى</target>
+      </trans-unit>
+      <trans-unit id="rr.form.score" datatype="html">
+        <source>Score</source>
+        <target state="translated">الدرجة</target>
+      </trans-unit>
+      <trans-unit id="rr.form.risk-scale" datatype="html">
+        <source>Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Critique 15–25</source>
+        <target state="translated">منخفض 1–4 · متوسط 5–9 · مرتفع 10–14 · حرج 15–25</target>
+      </trans-unit>
+      <trans-unit id="rr.form.opportunity-scale" datatype="html">
+        <source>Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Prioritaire 15–25</source>
+        <target state="translated">منخفض 1–4 · متوسط 5–9 · مرتفع 10–14 · ذو أولوية 15–25</target>
+      </trans-unit>
+      <trans-unit id="rr.form.treatment" datatype="html">
+        <source>Traitement</source>
+        <target state="translated">المعالجة</target>
+      </trans-unit>
+      <trans-unit id="rr.form.implementation" datatype="html">
+        <source>Mise en œuvre</source>
+        <target state="translated">التنفيذ</target>
+      </trans-unit>
+      <trans-unit id="rr.form.decision" datatype="html">
+        <source>Décision</source>
+        <target state="translated">القرار</target>
+      </trans-unit>
+      <trans-unit id="rr.form.follow-up" datatype="html">
+        <source>Suivi</source>
+        <target state="translated">المتابعة</target>
+      </trans-unit>
+      <trans-unit id="rr.form.target-date" datatype="html">
+        <source>Échéance visée</source>
+        <target state="translated">التاريخ المستهدف</target>
+      </trans-unit>
+      <trans-unit id="rr.form.next-review" datatype="html">
+        <source>Prochaine revue</source>
+        <target state="translated">المراجعة القادمة</target>
+      </trans-unit>
+      <trans-unit id="rr.form.effectiveness" datatype="html">
+        <source>Vérification d'efficacité (critère)</source>
+        <target state="translated">التحقق من الفعالية (المعيار)</target>
+      </trans-unit>
+      <trans-unit id="rr.form.benefit-check" datatype="html">
+        <source>Vérification du bénéfice (critère)</source>
+        <target state="translated">التحقق من الفائدة (المعيار)</target>
+      </trans-unit>
+      <trans-unit id="rr.form.required" datatype="html">
+        <source>Champ obligatoire.</source>
+        <target state="translated">حقل إلزامي.</target>
+      </trans-unit>
+      <trans-unit id="rr.form.save-risk" datatype="html">
+        <source>Enregistrer le risque</source>
+        <target state="translated">حفظ الخطر</target>
+      </trans-unit>
+      <trans-unit id="rr.form.save-opportunity" datatype="html">
+        <source>Enregistrer l'opportunité</source>
+        <target state="translated">حفظ الفرصة</target>
+      </trans-unit>
+      <trans-unit id="rr.form.risk-saved" datatype="html">
+        <source>Risque enregistré.</source>
+        <target state="translated">تم حفظ الخطر.</target>
+      </trans-unit>
+      <trans-unit id="rr.form.opportunity-saved" datatype="html">
+        <source>Opportunité enregistrée.</source>
+        <target state="translated">تم حفظ الفرصة.</target>
+      </trans-unit>
+      <trans-unit id="rr.form.save-failed" datatype="html">
+        <source>L'enregistrement a échoué.</source>
+        <target state="translated">فشل الحفظ.</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.back" datatype="html">
+        <source>Retour au registre</source>
+        <target state="translated">العودة إلى السجل</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.failed" datatype="html">
+        <source>La fiche est indisponible.</source>
+        <target state="translated">السجل غير متاح.</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.rating" datatype="html">
+        <source>Cotation</source>
+        <target state="translated">التقييم</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.gross" datatype="html">
+        <source>Brute</source>
+        <target state="translated">إجمالي</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.residual-target" datatype="html">
+        <source>Résiduelle visée</source>
+        <target state="translated">المتبقي المستهدف</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.not-set" datatype="html">
+        <source>Non fixée</source>
+        <target state="translated">غير محدد</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.effectiveness" datatype="html">
+        <source>Vérification d'efficacité</source>
+        <target state="translated">التحقق من الفعالية</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.benefit-check" datatype="html">
+        <source>Vérification du bénéfice</source>
+        <target state="translated">التحقق من الفائدة</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.requirements" datatype="html">
+        <source>Exigences couvertes</source>
+        <target state="translated">المتطلبات المغطاة</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.requirements-note" datatype="html">
+        <source>Cette fiche compte comme preuve pour chacune de ces exigences dans la matrice du SMI.</source>
+        <target state="translated">يُعَدّ هذا السجل دليلاً لكل من هذه المتطلبات في مصفوفة نظام الإدارة المتكامل.</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.action" datatype="html">
+        <source>Action</source>
+        <target state="translated">الإجراء</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.row-actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">الإجراءات</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.no-action" datatype="html">
+        <source>Aucune action pour l'instant.</source>
+        <target state="translated">لا توجد إجراءات حتى الآن.</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.no-capa" datatype="html">
+        <source>Aucune action CAPA liée pour l'instant.</source>
+        <target state="translated">لا توجد إجراءات CAPA مرتبطة حتى الآن.</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.capa-opened" datatype="html">
+        <source>Dossier CAPA ouvert.</source>
+        <target state="translated">تم فتح ملف CAPA.</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.delete-action-title" datatype="html">
+        <source>Supprimer ACT-<x id="number"/> ?</source>
+        <target state="translated">حذف ACT-<x id="number"/>؟</target>
+      </trans-unit>
+      <trans-unit id="rr.detail.delete-action-message" datatype="html">
+        <source>L'action quitte la fiche. La suppression est tracée dans le journal d'audit.</source>
+        <target state="translated">يُزال الإجراء من السجل. ويُوثَّق الحذف في سجل التدقيق.</target>
+      </trans-unit>
+      <trans-unit id="rr.action.new-title" datatype="html">
+        <source>Créer une action</source>
+        <target state="translated">إنشاء إجراء</target>
+      </trans-unit>
+      <trans-unit id="rr.action.title" datatype="html">
+        <source>Intitulé</source>
+        <target state="translated">العنوان</target>
+      </trans-unit>
+      <trans-unit id="rr.action.description" datatype="html">
+        <source>Description (facultatif)</source>
+        <target state="translated">الوصف (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="rr.action.capa-title" datatype="html">
+        <source>Créer une action CAPA</source>
+        <target state="translated">إنشاء إجراء CAPA</target>
+      </trans-unit>
+      <trans-unit id="rr.action.capa-help" datatype="html">
+        <source>Un dossier CAPA préventif est ouvert dans le module CAPA, à votre nom, avec la criticité du niveau brut du risque. Il apparaîtra dans le tableau « Traitement » de la fiche.</source>
+        <target state="translated">يُفتح ملف CAPA وقائي في وحدة CAPA باسمك، بدرجة حرجية مساوية للمستوى الإجمالي للخطر. وسيظهر في جدول «المعالجة» في السجل.</target>
+      </trans-unit>
+      <trans-unit id="rr.action.open-capa" datatype="html">
+        <source>Ouvrir le dossier CAPA</source>
+        <target state="translated">فتح ملف CAPA</target>
+      </trans-unit>
+      <trans-unit id="rr.action-status.to-start" datatype="html">
+        <source>À démarrer</source>
+        <target state="translated">للبدء</target>
+      </trans-unit>
+      <trans-unit id="rr.action-status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">قيد التنفيذ</target>
+      </trans-unit>
+      <trans-unit id="rr.action-status.done" datatype="html">
+        <source>Terminée</source>
+        <target state="translated">منتهٍ</target>
+      </trans-unit>
+      <trans-unit id="rr.action-status.cancelled" datatype="html">
+        <source>Annulée</source>
+        <target state="translated">ملغى</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.open" datatype="html">
+        <source>À démarrer</source>
+        <target state="translated">للبدء</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">قيد التنفيذ</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.resolved" datatype="html">
+        <source>Résolue</source>
+        <target state="translated">تم الحل</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.closed" datatype="html">
+        <source>Clôturée</source>
+        <target state="translated">مغلق</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-status.rejected" datatype="html">
+        <source>Rejetée</source>
+        <target state="translated">مرفوض</target>
+      </trans-unit>
+      <trans-unit id="rr.severity" datatype="html">
+        <source>Gravité</source>
+        <target state="translated">الشدة</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.1" datatype="html">
+        <source>1 · Négligeable</source>
+        <target state="translated">1 · ضئيلة</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.2" datatype="html">
+        <source>2 · Mineure</source>
+        <target state="translated">2 · طفيفة</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.3" datatype="html">
+        <source>3 · Significative</source>
+        <target state="translated">3 · ملموسة</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.4" datatype="html">
+        <source>4 · Grave</source>
+        <target state="translated">4 · خطيرة</target>
+      </trans-unit>
+      <trans-unit id="rr.severity.5" datatype="html">
+        <source>5 · Catastrophique</source>
+        <target state="translated">5 · كارثية</target>
+      </trans-unit>
+      <trans-unit id="rr.probability" datatype="html">
+        <source>Probabilité</source>
+        <target state="translated">الاحتمالية</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.1" datatype="html">
+        <source>1 · Rare</source>
+        <target state="translated">1 · نادرة</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.2" datatype="html">
+        <source>2 · Peu probable</source>
+        <target state="translated">2 · غير مرجحة</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.3" datatype="html">
+        <source>3 · Possible</source>
+        <target state="translated">3 · ممكنة</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.4" datatype="html">
+        <source>4 · Probable</source>
+        <target state="translated">4 · مرجحة</target>
+      </trans-unit>
+      <trans-unit id="rr.probability.5" datatype="html">
+        <source>5 · Quasi certaine</source>
+        <target state="translated">5 · شبه مؤكدة</target>
+      </trans-unit>
+      <trans-unit id="rr.gain" datatype="html">
+        <source>Gain attendu</source>
+        <target state="translated">المكسب المتوقع</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.1" datatype="html">
+        <source>1 · Faible</source>
+        <target state="translated">1 · منخفض</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.2" datatype="html">
+        <source>2 · Modéré</source>
+        <target state="translated">2 · معتدل</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.3" datatype="html">
+        <source>3 · Significatif</source>
+        <target state="translated">3 · ملموس</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.4" datatype="html">
+        <source>4 · Fort</source>
+        <target state="translated">4 · مرتفع</target>
+      </trans-unit>
+      <trans-unit id="rr.gain.5" datatype="html">
+        <source>5 · Très fort</source>
+        <target state="translated">5 · مرتفع جدًا</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility" datatype="html">
+        <source>Faisabilité</source>
+        <target state="translated">قابلية التنفيذ</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.1" datatype="html">
+        <source>1 · Très difficile</source>
+        <target state="translated">1 · صعبة جدًا</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.2" datatype="html">
+        <source>2 · Difficile</source>
+        <target state="translated">2 · صعبة</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.3" datatype="html">
+        <source>3 · Réaliste</source>
+        <target state="translated">3 · واقعية</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.4" datatype="html">
+        <source>4 · Facile</source>
+        <target state="translated">4 · سهلة</target>
+      </trans-unit>
+      <trans-unit id="rr.feasibility.5" datatype="html">
+        <source>5 · Très facile</source>
+        <target state="translated">5 · سهلة جدًا</target>
+      </trans-unit>
+      <trans-unit id="rr.level.low" datatype="html">
+        <source>Faible</source>
+        <target state="translated">منخفض</target>
+      </trans-unit>
+      <trans-unit id="rr.level.medium" datatype="html">
+        <source>Moyen</source>
+        <target state="translated">متوسط</target>
+      </trans-unit>
+      <trans-unit id="rr.level.high" datatype="html">
+        <source>Élevé</source>
+        <target state="translated">مرتفع</target>
+      </trans-unit>
+      <trans-unit id="rr.level.critical" datatype="html">
+        <source>Critique</source>
+        <target state="translated">حرج</target>
+      </trans-unit>
+      <trans-unit id="rr.level.priority" datatype="html">
+        <source>Prioritaire</source>
+        <target state="translated">ذو أولوية</target>
+      </trans-unit>
+      <trans-unit id="rr.type.quality" datatype="html">
+        <source>Qualité</source>
+        <target state="translated">الجودة</target>
+      </trans-unit>
+      <trans-unit id="rr.type.environment" datatype="html">
+        <source>Environnement</source>
+        <target state="translated">البيئة</target>
+      </trans-unit>
+      <trans-unit id="rr.type.health-safety" datatype="html">
+        <source>SST</source>
+        <target state="translated">الصحة والسلامة المهنية</target>
+      </trans-unit>
+      <trans-unit id="rr.type.information-security" datatype="html">
+        <source>Sécurité de l'information</source>
+        <target state="translated">أمن المعلومات</target>
+      </trans-unit>
+      <trans-unit id="rr.type.legal" datatype="html">
+        <source>Exigences légales</source>
+        <target state="translated">المتطلبات القانونية</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.direct" datatype="html">
+        <source>Saisie directe</source>
+        <target state="translated">إدخال مباشر</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.fmea" datatype="html">
+        <source>AMDEC</source>
+        <target state="translated">FMEA</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.non-conformity" datatype="html">
+        <source>Non-conformité</source>
+        <target state="translated">عدم مطابقة</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.audit" datatype="html">
+        <source>Audit</source>
+        <target state="translated">التدقيق</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.change" datatype="html">
+        <source>Changement (MOC)</source>
+        <target state="translated">تغيير (MOC)</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.incident" datatype="html">
+        <source>Incident</source>
+        <target state="translated">حادث</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.customer-feedback" datatype="html">
+        <source>Retour client</source>
+        <target state="translated">ملاحظات العملاء</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.management-review" datatype="html">
+        <source>Revue de direction</source>
+        <target state="translated">مراجعة الإدارة</target>
+      </trans-unit>
+      <trans-unit id="rr.origin.monitoring" datatype="html">
+        <source>Veille</source>
+        <target state="translated">الرصد</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.undecided" datatype="html">
+        <source>À décider</source>
+        <target state="translated">قيد القرار</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.reduce" datatype="html">
+        <source>Réduire</source>
+        <target state="translated">تخفيف</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.avoid" datatype="html">
+        <source>Éviter</source>
+        <target state="translated">تجنّب</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.transfer" datatype="html">
+        <source>Transférer</source>
+        <target state="translated">نقل</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-decision.accept" datatype="html">
+        <source>Accepter</source>
+        <target state="translated">قبول</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.to-treat" datatype="html">
+        <source>À traiter</source>
+        <target state="translated">للمعالجة</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.in-treatment" datatype="html">
+        <source>En traitement</source>
+        <target state="translated">قيد المعالجة</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.monitored" datatype="html">
+        <source>Surveillé</source>
+        <target state="translated">تحت المراقبة</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.accepted" datatype="html">
+        <source>Accepté</source>
+        <target state="translated">مقبول</target>
+      </trans-unit>
+      <trans-unit id="rr.risk-status.closed" datatype="html">
+        <source>Clos</source>
+        <target state="translated">مغلق</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.undecided" datatype="html">
+        <source>À décider</source>
+        <target state="translated">قيد القرار</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.study" datatype="html">
+        <source>Étudier</source>
+        <target state="translated">دراسة</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.plan" datatype="html">
+        <source>Planifier</source>
+        <target state="translated">تخطيط</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.postpone" datatype="html">
+        <source>Reporter</source>
+        <target state="translated">تأجيل</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-decision.discard" datatype="html">
+        <source>Écarter</source>
+        <target state="translated">استبعاد</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.under-study" datatype="html">
+        <source>En étude</source>
+        <target state="translated">قيد الدراسة</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.planned" datatype="html">
+        <source>Planifiée</source>
+        <target state="translated">مخطط لها</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.in-progress" datatype="html">
+        <source>En cours</source>
+        <target state="translated">قيد التنفيذ</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.done" datatype="html">
+        <source>Réalisée</source>
+        <target state="translated">منجزة</target>
+      </trans-unit>
+      <trans-unit id="rr.opp-status.discarded" datatype="html">
+        <source>Écartée</source>
+        <target state="translated">مستبعدة</target>
+      </trans-unit>
+      <trans-unit id="rr.event.risk-created" datatype="html">
+        <source>Risque créé — origine : <x id="origin"/><x id="ref"/></source>
+        <target state="translated">تم إنشاء الخطر — المصدر: <x id="origin"/><x id="ref"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.opportunity-created" datatype="html">
+        <source>Opportunité créée — origine : <x id="origin"/><x id="ref"/></source>
+        <target state="translated">تم إنشاء الفرصة — المصدر: <x id="origin"/><x id="ref"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.rating" datatype="html">
+        <source>Cotation brute passée de <x id="from"/> à <x id="to"/></source>
+        <target state="translated">تغيّر التقييم الإجمالي من <x id="from"/> إلى <x id="to"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.evaluation" datatype="html">
+        <source>Évaluation passée de <x id="from"/> à <x id="to"/></source>
+        <target state="translated">تغيّر التقييم من <x id="from"/> إلى <x id="to"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.residual" datatype="html">
+        <source>Cotation résiduelle visée : <x id="from"/> → <x id="to"/></source>
+        <target state="translated">التقييم المتبقي المستهدف: <x id="from"/> → <x id="to"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.decision" datatype="html">
+        <source>Décision : <x id="from"/> → <x id="to"/></source>
+        <target state="translated">القرار: <x id="from"/> → <x id="to"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.status" datatype="html">
+        <source>Statut : <x id="from"/> → <x id="to"/></source>
+        <target state="translated">الحالة: <x id="from"/> → <x id="to"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.action-opened" datatype="html">
+        <source>Action <x id="number"/> ouverte : <x id="title"/></source>
+        <target state="translated">تم فتح الإجراء <x id="number"/>: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="rr.event.capa-opened" datatype="html">
+        <source>Action CAPA ouverte : <x id="title"/></source>
+        <target state="translated">تم فتح إجراء CAPA: <x id="title"/></target>
+      </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>
         <target state="translated">إجراءات</target>
