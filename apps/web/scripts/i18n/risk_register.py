@@ -87,13 +87,13 @@ TRANSLATIONS = {
         'Ninguna línea coincide con los filtros.', 'لا توجد أسطر مطابقة لعوامل التصفية.',
         'フィルターに一致する行はありません。', '没有符合筛选条件的行。'),
     'rr.shown-risks': (
-        '{$shown} risques affichés sur {$total}', '{$shown} of {$total} risks shown',
-        '{$shown} de {$total} riesgos mostrados', 'عرض {$shown} من أصل {$total} خطر',
-        '{$total} 件中 {$shown} 件のリスクを表示', '显示 {$shown} / {$total} 项风险'),
+        '{$SHOWN} risques affichés sur {$TOTAL}', '{$SHOWN} of {$TOTAL} risks shown',
+        '{$SHOWN} de {$TOTAL} riesgos mostrados', 'عرض {$SHOWN} من أصل {$TOTAL} خطر',
+        '{$TOTAL} 件中 {$SHOWN} 件のリスクを表示', '显示 {$SHOWN} / {$TOTAL} 项风险'),
     'rr.shown-opportunities': (
-        '{$shown} opportunités affichées sur {$total}', '{$shown} of {$total} opportunities shown',
-        '{$shown} de {$total} oportunidades mostradas', 'عرض {$shown} من أصل {$total} فرصة',
-        '{$total} 件中 {$shown} 件の機会を表示', '显示 {$shown} / {$total} 项机遇'),
+        '{$SHOWN} opportunités affichées sur {$TOTAL}', '{$SHOWN} of {$TOTAL} opportunities shown',
+        '{$SHOWN} de {$TOTAL} oportunidades mostradas', 'عرض {$SHOWN} من أصل {$TOTAL} فرصة',
+        '{$TOTAL} 件中 {$SHOWN} 件の機会を表示', '显示 {$SHOWN} / {$TOTAL} 项机遇'),
     'rr.legend-risk': (
         'Niveau = gravité × probabilité · Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Critique 15–25',
         'Level = severity × likelihood · Low 1–4 · Medium 5–9 · High 10–14 · Critical 15–25',

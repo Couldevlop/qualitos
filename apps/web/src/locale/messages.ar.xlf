@@ -21197,12 +21197,12 @@ historique 12 mois</source>
         <target state="translated">لا توجد أسطر مطابقة لعوامل التصفية.</target>
       </trans-unit>
       <trans-unit id="rr.shown-risks" datatype="html">
-        <source><x id="shown"/> risques affichés sur <x id="total"/></source>
-        <target state="translated">عرض <x id="shown"/> من أصل <x id="total"/> خطر</target>
+        <source><x id="SHOWN"/> risques affichés sur <x id="TOTAL"/></source>
+        <target state="translated">عرض <x id="SHOWN"/> من أصل <x id="TOTAL"/> خطر</target>
       </trans-unit>
       <trans-unit id="rr.shown-opportunities" datatype="html">
-        <source><x id="shown"/> opportunités affichées sur <x id="total"/></source>
-        <target state="translated">عرض <x id="shown"/> من أصل <x id="total"/> فرصة</target>
+        <source><x id="SHOWN"/> opportunités affichées sur <x id="TOTAL"/></source>
+        <target state="translated">عرض <x id="SHOWN"/> من أصل <x id="TOTAL"/> فرصة</target>
       </trans-unit>
       <trans-unit id="rr.legend-risk" datatype="html">
         <source>Niveau = gravité × probabilité · Faible 1–4 · Moyen 5–9 · Élevé 10–14 · Critique 15–25</source>
