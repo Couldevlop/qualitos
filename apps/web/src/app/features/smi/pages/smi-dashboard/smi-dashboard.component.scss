@@ -1,0 +1,460 @@
+// Le tableau de bord SMI : la maquette docs/Tableau de bord SMI.pptx, traduite
+// dans les jetons du design system pour suivre les thèmes clair et sombre.
+@use '../../smi.shared' as smi;
+
+:host {
+  display: block;
+}
+
+@include smi.carte;
+@include smi.niveaux;
+
+.echec {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  color: var(--qos-danger-fg);
+}
+
+.vide {
+  margin: 0;
+  color: var(--qos-fg-tertiary);
+}
+
+.aide {
+  margin: var(--qos-space-4) 0 0;
+  font-size: var(--qos-fs-sm);
+  color: var(--qos-fg-secondary);
+  line-height: 1.5;
+
+  a {
+    margin-left: var(--qos-space-1);
+    color: var(--qos-fg-link);
+    font-weight: var(--qos-fw-medium);
+  }
+}
+
+// ---------- filtre de norme ----------
+
+.normes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+  margin-bottom: var(--qos-space-5);
+}
+
+.norme {
+  appearance: none;
+  font: inherit;
+  font-size: var(--qos-fs-sm);
+  font-weight: var(--qos-fw-medium);
+  padding: 6px 14px;
+  border-radius: var(--qos-radius-pill);
+  border: 1px solid var(--qos-border-default);
+  background: var(--qos-bg-elevated);
+  color: var(--qos-fg-primary);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--qos-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-border-focus);
+    outline-offset: 2px;
+  }
+
+  &--active {
+    background: var(--qos-fg-primary);
+    border-color: var(--qos-fg-primary);
+    color: var(--qos-bg-elevated);
+
+    &:hover {
+      background: var(--qos-fg-primary);
+    }
+  }
+}
+
+// ---------- indicateurs ----------
+
+.indicateurs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--qos-space-4);
+  margin-bottom: var(--qos-space-4);
+
+  @media (max-width: 1100px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.indicateur {
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-2);
+  text-decoration: none;
+  color: inherit;
+
+  &--lien {
+    transition: box-shadow 120ms ease, border-color 120ms ease;
+
+    &:hover {
+      border-color: var(--qos-border-default);
+      box-shadow: var(--qos-shadow-sm);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--qos-border-focus);
+      outline-offset: 2px;
+    }
+  }
+
+  &__titre {
+    margin: 0;
+    font-size: var(--qos-fs-sm);
+    font-weight: var(--qos-fw-medium);
+    color: var(--qos-fg-secondary);
+  }
+
+  &__valeur {
+    margin: 0;
+    font-size: var(--qos-fs-3xl);
+    font-weight: var(--qos-fw-bold);
+    line-height: 1.15;
+    color: var(--qos-fg-primary);
+    font-variant-numeric: tabular-nums;
+
+    &--vide {
+      color: var(--qos-fg-tertiary);
+    }
+  }
+
+  &__audit {
+    font-size: var(--qos-fs-lg);
+    font-weight: var(--qos-fw-semibold);
+    line-height: 1.3;
+    color: var(--qos-fg-primary);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__note {
+    margin: 0;
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-secondary);
+
+    &--alerte {
+      color: var(--qos-danger-fg);
+      font-weight: var(--qos-fw-medium);
+    }
+
+    a {
+      margin-left: var(--qos-space-1);
+      color: var(--qos-fg-link);
+    }
+  }
+}
+
+.piste {
+  height: 8px;
+  border-radius: var(--qos-radius-pill);
+  background: var(--qos-bg-sunken);
+  overflow: hidden;
+
+  &__plein {
+    height: 100%;
+    border-radius: inherit;
+    background: var(--qos-accent-bg);
+  }
+}
+
+// ---------- blocs ----------
+
+.blocs {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--qos-space-4);
+  align-items: start;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (max-width: 760px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.carte__entete {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--qos-space-3);
+  flex-wrap: wrap;
+
+  .carte__titre {
+    margin-bottom: var(--qos-space-3);
+  }
+}
+
+.bascule {
+  font-size: var(--qos-fs-xs);
+}
+
+// barres par norme
+.barres {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--qos-space-4);
+}
+
+.barre {
+  &__entete {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--qos-space-2);
+    margin-bottom: var(--qos-space-1);
+    font-size: var(--qos-fs-sm);
+  }
+
+  &__nom {
+    color: var(--qos-fg-primary);
+  }
+
+  &__score {
+    font-weight: var(--qos-fw-semibold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &--choisie .barre__nom {
+    font-weight: var(--qos-fw-semibold);
+  }
+}
+
+// matrice des risques
+.matrice {
+  display: flex;
+  align-items: stretch;
+  gap: var(--qos-space-2);
+
+  &__axe {
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-tertiary);
+
+    &--g {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      text-align: center;
+    }
+
+    &--p {
+      display: block;
+      text-align: center;
+      margin-top: var(--qos-space-1);
+    }
+  }
+
+  &__corps {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__ligne {
+    display: grid;
+    grid-template-columns: 1.25rem repeat(5, minmax(0, 1fr));
+    gap: 4px;
+    margin-bottom: 4px;
+
+    &--axe {
+      margin-bottom: 0;
+    }
+  }
+
+  &__graduation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-tertiary);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.case {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1.35;
+  min-height: 2.25rem;
+  border-radius: var(--qos-radius-sm);
+  font-weight: var(--qos-fw-semibold);
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+  transition: transform 100ms ease, box-shadow 100ms ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--qos-shadow-sm);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-border-focus);
+    outline-offset: 2px;
+  }
+
+  &--vide {
+    opacity: 0.55;
+  }
+}
+
+.legende {
+  list-style: none;
+  margin: var(--qos-space-3) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2) var(--qos-space-4);
+  font-size: var(--qos-fs-xs);
+  color: var(--qos-fg-secondary);
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.pastille {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+// à traiter cette semaine
+.semaine {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li + li {
+    border-top: 1px solid var(--qos-border-subtle);
+  }
+
+  &__ligne {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--qos-space-3);
+    padding: var(--qos-space-3) 0;
+    color: inherit;
+    text-decoration: none;
+
+    &:hover .semaine__titre {
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--qos-border-focus);
+      outline-offset: 2px;
+      border-radius: var(--qos-radius-sm);
+    }
+  }
+
+  &__texte {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__titre {
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-primary);
+    overflow-wrap: anywhere;
+  }
+
+  &__type {
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-tertiary);
+  }
+}
+
+.echeance {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: var(--qos-radius-sm);
+  font-size: var(--qos-fs-xs);
+  font-weight: var(--qos-fw-semibold);
+  white-space: nowrap;
+  background: var(--qos-bg-sunken);
+  color: var(--qos-fg-secondary);
+
+  &--proche {
+    background: var(--qos-warn-bg-soft);
+    color: var(--qos-warn-fg);
+  }
+
+  &--echue {
+    background: var(--qos-danger-bg-soft);
+    color: var(--qos-danger-fg);
+  }
+}
+
+// ---------- passage vers la matrice des exigences ----------
+
+.passage {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--qos-space-4);
+  margin-top: var(--qos-space-5);
+  padding: var(--qos-space-5) var(--qos-space-6);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-accent-bg-soft);
+  border: 1px solid color-mix(in srgb, var(--qos-accent-bg) 30%, transparent);
+  color: var(--qos-fg-primary);
+  text-decoration: none;
+  transition: box-shadow 120ms ease;
+
+  &:hover {
+    box-shadow: var(--qos-shadow-md);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--qos-border-focus);
+    outline-offset: 2px;
+  }
+
+  &__texte {
+    display: flex;
+    flex-direction: column;
+    gap: var(--qos-space-1);
+  }
+
+  &__titre {
+    font-size: var(--qos-fs-xl);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-accent-fg-soft);
+    line-height: 1.3;
+  }
+
+  &__sous-titre {
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-secondary);
+  }
+
+  mat-icon {
+    flex-shrink: 0;
+    color: var(--qos-accent-fg-soft);
+  }
+}

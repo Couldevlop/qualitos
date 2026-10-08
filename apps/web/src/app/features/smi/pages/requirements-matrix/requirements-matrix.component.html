@@ -1,0 +1,95 @@
+<div class="qos-page">
+  <qos-page-header
+    title="Matrice des exigences · une preuve, plusieurs référentiels" i18n-title="@@smi.requirements.title"
+    subtitle="Les chapitres communs à toutes les normes de système de management, croisés avec chaque norme adoptée."
+    i18n-subtitle="@@smi.req.subtitle"
+    [breadcrumbs]="breadcrumbs">
+  </qos-page-header>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="error" role="alert">
+    <span>{{ error }}</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <ng-container *ngIf="matrix as m">
+    <p class="vide-page" *ngIf="!m.standards.length" data-test="aucune-norme">
+      <span i18n="@@smi.kpi.no-standard">Aucune norme adoptée.</span>
+      <a routerLink="/standards" i18n="@@smi.kpi.adopt">Adopter une norme</a>
+    </p>
+
+    <div class="grille" *ngIf="m.standards.length">
+      <section class="carte carte--tableau">
+        <div class="tableau">
+          <table data-test="matrice-exigences">
+            <thead>
+              <tr>
+                <th scope="col" i18n="@@smi.req.col-chapter">Chapitre commun (HLS)</th>
+                <th scope="col" *ngFor="let s of m.standards; trackBy: trackByCode">{{ s.name }}</th>
+                <th scope="col" i18n="@@smi.req.col-module">Module QualitOS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of m.rows; trackBy: trackByChapter">
+                <th scope="row" class="chapitre">{{ chapterText(row.chapter) }}</th>
+                <td *ngFor="let c of row.cells; let i = index; trackBy: trackByCode">
+                  <button type="button" class="etat etat--{{ c.status }}" *ngIf="c.status !== 'NOT_APPLICABLE'; else sansObjet"
+                          [class.etat--choisi]="isSelected(row, i)" [attr.aria-pressed]="isSelected(row, i)"
+                          [attr.aria-label]="cellLabel(row, c, i)" (click)="select(row, c, i)"
+                          [attr.data-test]="'case-' + row.chapter + '-' + c.standardCode">
+                    <span class="etat__marque" aria-hidden="true"></span>{{ coverageText(c.status) }}
+                  </button>
+                  <ng-template #sansObjet><span class="sans-objet" [attr.aria-label]="coverageText(c.status)">—</span></ng-template>
+                </td>
+                <td class="modules">{{ modulesText(row.modules) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="legende">
+          <span i18n="@@smi.req.legend">Légende :</span>
+          <span class="legende__item"><span class="etat__marque etat__marque--COVERED" aria-hidden="true"></span><span i18n="@@smi.req.legend-covered">couvert : toutes les exigences du chapitre sont prouvées</span></span>
+          <span class="legende__item"><span class="etat__marque etat__marque--PARTIAL" aria-hidden="true"></span><span i18n="@@smi.req.legend-partial">partiel : une partie seulement</span></span>
+          <span class="legende__item"><span class="etat__marque etat__marque--GAP" aria-hidden="true"></span><span i18n="@@smi.req.legend-gap">écart : aucune preuve</span></span>
+        </p>
+      </section>
+
+      <!-- Détail de la case choisie -->
+      <aside class="carte detail" data-test="detail" aria-live="polite">
+        <ng-container *ngIf="selected as s; else rienChoisi">
+          <p class="detail__surtitre"><span i18n="@@smi.req.detail-chapter">Détail · chapitre {{ s.row.chapter // i18n(ph="chapter") }}</span></p>
+          <h2 class="detail__titre">{{ coverageText(s.cell.status) }} {{ s.standard.name }} · {{ s.row.chapter }}</h2>
+          <p class="detail__texte">
+            {{ chapterText(s.row.chapter) }} —
+            <span i18n="@@smi.req.detail-count">{{ s.cell.covered // i18n(ph="covered") }} exigence(s) prouvée(s) sur {{ s.cell.total // i18n(ph="total") }}.</span>
+          </p>
+
+          <ng-container *ngIf="s.cell.status !== 'COVERED'">
+            <h3 class="detail__sous-titre" i18n="@@smi.req.detail-missing">Clauses à prouver</h3>
+            <p class="vide" *ngIf="gapsLoading" i18n="@@common.loading">Chargement…</p>
+            <p class="vide" *ngIf="gapsFailed" role="alert" i18n="@@smi.req.detail-failed">Le détail des clauses n'a pas pu être chargé.</p>
+            <ul class="clauses" *ngIf="!gapsLoading && gaps.length" data-test="clauses">
+              <li *ngFor="let c of gaps; trackBy: trackByClause">
+                <span class="ref">{{ c.clauseCode }}</span>
+                <span class="clauses__titre">{{ c.clauseTitle }}</span>
+                <span class="clauses__compte">{{ c.coveredRequirements }}/{{ c.totalRequirements }}</span>
+              </li>
+            </ul>
+          </ng-container>
+
+          <div class="detail__boutons">
+            <a mat-flat-button color="primary" [routerLink]="['/standards', 'adoptions', s.standard.adoptionId]"
+               data-test="completer" i18n="@@smi.req.complete">Compléter les preuves</a>
+            <a mat-stroked-button routerLink="/capa" [queryParams]="capaQuery" *ngIf="s.cell.status !== 'COVERED'"
+               data-test="creer-capa" i18n="@@rr.action.capa-title">Créer une action CAPA</a>
+          </div>
+          <p class="aide" i18n="@@smi.req.reuse">Une preuve rattachée à une exigence commune compte pour toutes les normes qui partagent ce chapitre.</p>
+        </ng-container>
+        <ng-template #rienChoisi>
+          <p class="vide" i18n="@@smi.req.all-covered">Tout est couvert : choisissez une case pour en voir le détail.</p>
+        </ng-template>
+      </aside>
+    </div>
+  </ng-container>
+</div>

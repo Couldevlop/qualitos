@@ -21561,8 +21561,8 @@ historique 12 mois</source>
         <target state="translated">创建 CAPA 措施</target>
       </trans-unit>
       <trans-unit id="rr.action.capa-help" datatype="html">
-        <source>Un dossier CAPA préventif est ouvert dans le module CAPA, à votre nom, avec la criticité du niveau brut du risque. Il apparaîtra dans le tableau « Traitement » de la fiche.</source>
-        <target state="translated">将在 CAPA 模块中以您的名义开启一个预防性 CAPA 案例，其关键度取风险的固有等级。它将显示在记录的“处理”表中。</target>
+        <source>Un dossier CAPA est ouvert dans le module CAPA, avec la criticité du niveau brut du risque. Il porte cette action, confiée au responsable désigné, et apparaîtra dans le tableau « Traitement » de la fiche.</source>
+        <target state="translated">将在 CAPA 模块中开启一个 CAPA 案例，其关键度取风险的固有等级。该案例承载此措施并指派给指定负责人，并将显示在记录的“处理”表中。</target>
       </trans-unit>
       <trans-unit id="rr.action.open-capa" datatype="html">
         <source>Ouvrir le dossier CAPA</source>
@@ -21891,6 +21891,454 @@ historique 12 mois</source>
       <trans-unit id="rr.event.capa-opened" datatype="html">
         <source>Action CAPA ouverte : <x id="title"/></source>
         <target state="translated">CAPA 措施已开启：<x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="nav.smi" datatype="html">
+        <source>Tableau de bord SMI</source>
+        <target state="translated">综合管理体系仪表板</target>
+      </trans-unit>
+      <trans-unit id="rr.action.kind" datatype="html">
+        <source>Nature de l'action</source>
+        <target state="translated">措施性质</target>
+      </trans-unit>
+      <trans-unit id="rr.action.kind-short" datatype="html">
+        <source>Nature</source>
+        <target state="translated">性质</target>
+      </trans-unit>
+      <trans-unit id="rr.action.kind-hint" datatype="html">
+        <source>Préventive : l'écart ne s'est pas encore produit. Corrective : il s'est déjà produit, on en supprime la cause.</source>
+        <target state="translated">预防：偏差尚未发生。纠正：偏差已经发生，需消除其原因。</target>
+      </trans-unit>
+      <trans-unit id="rr.action.assignee" datatype="html">
+        <source>Responsable de l'action</source>
+        <target state="translated">措施负责人</target>
+      </trans-unit>
+      <trans-unit id="rr.action.assignee-short" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">负责人</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-kind.preventive" datatype="html">
+        <source>Préventive</source>
+        <target state="translated">预防</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-kind.corrective" datatype="html">
+        <source>Corrective</source>
+        <target state="translated">纠正</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.single-action" datatype="html">
+        <source>Action</source>
+        <target state="translated">措施</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.single-action-assignee" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">负责人</target>
+      </trans-unit>
+      <trans-unit id="smi.eyebrow" datatype="html">
+        <source>Pilotage</source>
+        <target state="translated">管理驾驶</target>
+      </trans-unit>
+      <trans-unit id="smi.title" datatype="html">
+        <source>Système de Management Intégré</source>
+        <target state="translated">综合管理体系</target>
+      </trans-unit>
+      <trans-unit id="smi.subtitle" datatype="html">
+        <source>Vue consolidée : une preuve compte pour toutes les normes qu'elle couvre.</source>
+        <target state="translated">综合视图：一项证据适用于其覆盖的所有标准。</target>
+      </trans-unit>
+      <trans-unit id="smi.filter" datatype="html">
+        <source>Filtrer par norme</source>
+        <target state="translated">按标准筛选</target>
+      </trans-unit>
+      <trans-unit id="smi.filter-all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">全部</target>
+      </trans-unit>
+      <trans-unit id="smi.load-failed" datatype="html">
+        <source>Le tableau de bord SMI n'a pas pu être chargé.</source>
+        <target state="translated">无法加载综合管理体系仪表板。</target>
+      </trans-unit>
+      <trans-unit id="smi.kpis" datatype="html">
+        <source>Indicateurs clés</source>
+        <target state="translated">关键指标</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.compliance" datatype="html">
+        <source>Conformité globale</source>
+        <target state="translated">总体符合率</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.no-standard" datatype="html">
+        <source>Aucune norme adoptée.</source>
+        <target state="translated">尚未采用任何标准。</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.adopt" datatype="html">
+        <source>Adopter une norme</source>
+        <target state="translated">采用标准</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.overdue" datatype="html">
+        <source>Actions en retard</source>
+        <target state="translated">逾期措施</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.overdue-critical" datatype="html">
+        <source>dont <x id="CRITICAL"/> critiques</source>
+        <target state="translated">其中 <x id="CRITICAL"/> 项严重</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.major-risks" datatype="html">
+        <source>Risques majeurs ouverts</source>
+        <target state="translated">未关闭的重大风险</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.major-risks-detail" datatype="html">
+        <source><x id="CRITICAL"/> critiques · <x id="HIGH"/> élevés (niveau ≥ 10)</source>
+        <target state="translated"><x id="CRITICAL"/> 项严重 · <x id="HIGH"/> 项高（等级 ≥ 10）</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.next-audit" datatype="html">
+        <source>Prochain audit</source>
+        <target state="translated">下次审核</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.in-days" datatype="html">
+        <source>dans <x id="DAYS"/> j</source>
+        <target state="translated"><x id="DAYS"/> 天后</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.no-audit" datatype="html">
+        <source>Aucun audit planifié.</source>
+        <target state="translated">没有计划的审核。</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.plan-audit" datatype="html">
+        <source>Planifier</source>
+        <target state="translated">安排</target>
+      </trans-unit>
+      <trans-unit id="smi.by-standard" datatype="html">
+        <source>Conformité par référentiel</source>
+        <target state="translated">按标准的符合率</target>
+      </trans-unit>
+      <trans-unit id="smi.by-standard-note" datatype="html">
+        <source>Une même preuve (procédure, audit, action) est comptée pour tous les référentiels concernés.</source>
+        <target state="translated">同一证据（程序、审核、措施）适用于所有相关标准。</target>
+      </trans-unit>
+      <trans-unit id="smi.see-matrix" datatype="html">
+        <source>Voir la matrice des exigences</source>
+        <target state="translated">查看要求矩阵</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.title" datatype="html">
+        <source>Matrice des risques · <x id="OPEN"/> risques ouverts</source>
+        <target state="translated">风险矩阵 · <x id="OPEN"/> 项未关闭风险</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.view" datatype="html">
+        <source>Cotation affichée</source>
+        <target state="translated">显示的评级</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.grid" datatype="html">
+        <source>Matrice gravité × probabilité</source>
+        <target state="translated">严重度 × 可能性矩阵</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.cell-label" datatype="html">
+        <source>Gravité <x id="severity"/> × probabilité <x id="probability"/> : <x id="count"/> risque(s), niveau <x id="level"/></source>
+        <target state="translated">严重度 <x id="severity"/> × 可能性 <x id="probability"/>：<x id="count"/> 项风险，等级 <x id="level"/></target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.residual-missing" datatype="html">
+        <source><x id="MISSING"/> risque(s) sans cotation résiduelle visée n'apparaissent pas.</source>
+        <target state="translated"><x id="MISSING"/> 项没有目标剩余评级的风险未显示。</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.legend" datatype="html">
+        <source>Légende des niveaux</source>
+        <target state="translated">等级图例</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.low" datatype="html">
+        <source>Faible 1–4</source>
+        <target state="translated">低 1–4</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.medium" datatype="html">
+        <source>Moyen 5–9</source>
+        <target state="translated">中 5–9</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.high" datatype="html">
+        <source>Élevé 10–14</source>
+        <target state="translated">高 10–14</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.critical" datatype="html">
+        <source>Critique 15–25</source>
+        <target state="translated">严重 15–25</target>
+      </trans-unit>
+      <trans-unit id="smi.week.title" datatype="html">
+        <source>À traiter cette semaine</source>
+        <target state="translated">本周待处理</target>
+      </trans-unit>
+      <trans-unit id="smi.week.empty" datatype="html">
+        <source>Rien d'échu ni d'attendu d'ici sept jours.</source>
+        <target state="translated">没有逾期项，也没有七天内到期的事项。</target>
+      </trans-unit>
+      <trans-unit id="smi.requirements.title" datatype="html">
+        <source>Matrice des exigences · une preuve, plusieurs référentiels</source>
+        <target state="translated">要求矩阵 · 一项证据，多项标准</target>
+      </trans-unit>
+      <trans-unit id="smi.requirements.teaser" datatype="html">
+        <source>Chapitres communs 4 à 10, croisés avec chaque norme adoptée : couvert, partiel ou en écart.</source>
+        <target state="translated">通用章节 4 至 10 与每项已采用标准交叉对照：已覆盖、部分或差距。</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.capa-action" datatype="html">
+        <source>Action CAPA</source>
+        <target state="translated">CAPA 措施</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.calibration" datatype="html">
+        <source>Étalonnage</source>
+        <target state="translated">校准</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.change" datatype="html">
+        <source>Validation de changement</source>
+        <target state="translated">变更审批</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.risk-review" datatype="html">
+        <source>Revue de risque</source>
+        <target state="translated">风险评审</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.audit" datatype="html">
+        <source>Audit</source>
+        <target state="translated">审核</target>
+      </trans-unit>
+      <trans-unit id="smi.due.overdue" datatype="html">
+        <source>Échu</source>
+        <target state="translated">已逾期</target>
+      </trans-unit>
+      <trans-unit id="smi.due.today" datatype="html">
+        <source>Aujourd'hui</source>
+        <target state="translated">今天</target>
+      </trans-unit>
+      <trans-unit id="smi.due.in-days" datatype="html">
+        <source>J-<x id="days"/></source>
+        <target state="translated">剩 <x id="days"/> 天</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.4" datatype="html">
+        <source>Contexte de l'organisme</source>
+        <target state="translated">组织环境</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.5" datatype="html">
+        <source>Leadership et politique</source>
+        <target state="translated">领导作用与方针</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.6" datatype="html">
+        <source>Risques, objectifs, exigences légales</source>
+        <target state="translated">风险、目标、法律要求</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.7" datatype="html">
+        <source>Ressources, compétences, documents</source>
+        <target state="translated">资源、能力、文件</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.8" datatype="html">
+        <source>Réalisation opérationnelle</source>
+        <target state="translated">运行</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.9" datatype="html">
+        <source>Évaluation des performances</source>
+        <target state="translated">绩效评价</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.10" datatype="html">
+        <source>Amélioration</source>
+        <target state="translated">改进</target>
+      </trans-unit>
+      <trans-unit id="smi.module.process-map" datatype="html">
+        <source>Cartographie</source>
+        <target state="translated">过程图</target>
+      </trans-unit>
+      <trans-unit id="smi.module.risk-register" datatype="html">
+        <source>Risques</source>
+        <target state="translated">风险</target>
+      </trans-unit>
+      <trans-unit id="smi.module.documents" datatype="html">
+        <source>GED</source>
+        <target state="translated">文件管理</target>
+      </trans-unit>
+      <trans-unit id="smi.module.policy" datatype="html">
+        <source>Politique</source>
+        <target state="translated">方针</target>
+      </trans-unit>
+      <trans-unit id="smi.module.objectives" datatype="html">
+        <source>Objectifs</source>
+        <target state="translated">目标</target>
+      </trans-unit>
+      <trans-unit id="smi.module.training" datatype="html">
+        <source>Compétences</source>
+        <target state="translated">能力</target>
+      </trans-unit>
+      <trans-unit id="smi.module.calibration" datatype="html">
+        <source>Métrologie</source>
+        <target state="translated">计量</target>
+      </trans-unit>
+      <trans-unit id="smi.module.apqp" datatype="html">
+        <source>APQP</source>
+        <target state="translated">APQP</target>
+      </trans-unit>
+      <trans-unit id="smi.module.spc" datatype="html">
+        <source>SPC</source>
+        <target state="translated">SPC</target>
+      </trans-unit>
+      <trans-unit id="smi.module.changes" datatype="html">
+        <source>MOC</source>
+        <target state="translated">变更管理</target>
+      </trans-unit>
+      <trans-unit id="smi.module.audits" datatype="html">
+        <source>Audits</source>
+        <target state="translated">审核</target>
+      </trans-unit>
+      <trans-unit id="smi.module.kpi" datatype="html">
+        <source>Indicateurs</source>
+        <target state="translated">指标</target>
+      </trans-unit>
+      <trans-unit id="smi.module.management-review" datatype="html">
+        <source>Revue</source>
+        <target state="translated">评审</target>
+      </trans-unit>
+      <trans-unit id="smi.module.nc" datatype="html">
+        <source>NC</source>
+        <target state="translated">不合格</target>
+      </trans-unit>
+      <trans-unit id="smi.module.capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.covered" datatype="html">
+        <source>Couvert</source>
+        <target state="translated">已覆盖</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.partial" datatype="html">
+        <source>Partiel</source>
+        <target state="translated">部分</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.gap" datatype="html">
+        <source>Écart</source>
+        <target state="translated">差距</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.not-applicable" datatype="html">
+        <source>Sans objet</source>
+        <target state="translated">不适用</target>
+      </trans-unit>
+      <trans-unit id="smi.crumb" datatype="html">
+        <source>Tableau de bord SMI</source>
+        <target state="translated">综合管理体系仪表板</target>
+      </trans-unit>
+      <trans-unit id="smi.crumb-matrix" datatype="html">
+        <source>Matrice des risques</source>
+        <target state="translated">风险矩阵</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.crumb" datatype="html">
+        <source>Gravité <x id="severity"/> × probabilité <x id="probability"/></source>
+        <target state="translated">严重度 <x id="severity"/> × 可能性 <x id="probability"/></target>
+      </trans-unit>
+      <trans-unit id="smi.cell.title" datatype="html">
+        <source><x id="count"/> risque(s) · niveau <x id="level"/> (<x id="score"/>)</source>
+        <target state="translated"><x id="count"/> 项风险 · 等级 <x id="level"/>（<x id="score"/>）</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.filter-site" datatype="html">
+        <source>Filtrer par site</source>
+        <target state="translated">按场所筛选</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.all-sites" datatype="html">
+        <source>Tous sites</source>
+        <target state="translated">所有场所</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.failed" datatype="html">
+        <source>Les risques n'ont pas pu être chargés.</source>
+        <target state="translated">无法加载风险。</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.col-actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">措施</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.capa-count" datatype="html">
+        <source><x id="COUNT"/> en cours</source>
+        <target state="translated"><x id="COUNT"/> 项进行中</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.empty" datatype="html">
+        <source>Aucun risque ouvert dans cette case.</source>
+        <target state="translated">此单元格中没有未关闭的风险。</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.detail" datatype="html">
+        <source>Détail</source>
+        <target state="translated">详情</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.gross" datatype="html">
+        <source>Cotation brute</source>
+        <target state="translated">固有评级</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.linked-actions" datatype="html">
+        <source>Actions liées</source>
+        <target state="translated">关联措施</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.open-risk" datatype="html">
+        <source>Ouvrir la fiche risque</source>
+        <target state="translated">打开风险记录</target>
+      </trans-unit>
+      <trans-unit id="smi.req.subtitle" datatype="html">
+        <source>Les chapitres communs à toutes les normes de système de management, croisés avec chaque norme adoptée.</source>
+        <target state="translated">所有管理体系标准共有的章节，与每项已采用标准交叉对照。</target>
+      </trans-unit>
+      <trans-unit id="smi.req.crumb" datatype="html">
+        <source>Matrice des exigences</source>
+        <target state="translated">要求矩阵</target>
+      </trans-unit>
+      <trans-unit id="smi.req.failed" datatype="html">
+        <source>La matrice des exigences n'a pas pu être chargée.</source>
+        <target state="translated">无法加载要求矩阵。</target>
+      </trans-unit>
+      <trans-unit id="smi.req.col-chapter" datatype="html">
+        <source>Chapitre commun (HLS)</source>
+        <target state="translated">通用章节（HLS）</target>
+      </trans-unit>
+      <trans-unit id="smi.req.col-module" datatype="html">
+        <source>Module QualitOS</source>
+        <target state="translated">QualitOS 模块</target>
+      </trans-unit>
+      <trans-unit id="smi.req.cell-label" datatype="html">
+        <source><x id="standard"/>, chapitre <x id="chapter"/> : <x id="status"/>, <x id="covered"/> sur <x id="total"/></source>
+        <target state="translated"><x id="standard"/>，第 <x id="chapter"/> 章：<x id="status"/>，<x id="total"/> 项中 <x id="covered"/> 项</target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend" datatype="html">
+        <source>Légende :</source>
+        <target state="translated">图例：</target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend-covered" datatype="html">
+        <source>couvert : toutes les exigences du chapitre sont prouvées</source>
+        <target state="translated">已覆盖：该章节的所有要求均有证据</target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend-partial" datatype="html">
+        <source>partiel : une partie seulement</source>
+        <target state="translated">部分：仅部分要求</target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend-gap" datatype="html">
+        <source>écart : aucune preuve</source>
+        <target state="translated">差距：无任何证据</target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-chapter" datatype="html">
+        <source>Détail · chapitre <x id="CHAPTER"/></source>
+        <target state="translated">详情 · 第 <x id="CHAPTER"/> 章</target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-count" datatype="html">
+        <source><x id="COVERED"/> exigence(s) prouvée(s) sur <x id="TOTAL"/>.</source>
+        <target state="translated"><x id="TOTAL"/> 项要求中有 <x id="COVERED"/> 项有证据。</target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-missing" datatype="html">
+        <source>Clauses à prouver</source>
+        <target state="translated">待提供证据的条款</target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-failed" datatype="html">
+        <source>Le détail des clauses n'a pas pu être chargé.</source>
+        <target state="translated">无法加载条款详情。</target>
+      </trans-unit>
+      <trans-unit id="smi.req.complete" datatype="html">
+        <source>Compléter les preuves</source>
+        <target state="translated">补充证据</target>
+      </trans-unit>
+      <trans-unit id="smi.req.reuse" datatype="html">
+        <source>Une preuve rattachée à une exigence commune compte pour toutes les normes qui partagent ce chapitre.</source>
+        <target state="translated">关联到通用要求的证据，适用于共享该章节的所有标准。</target>
+      </trans-unit>
+      <trans-unit id="smi.req.all-covered" datatype="html">
+        <source>Tout est couvert : choisissez une case pour en voir le détail.</source>
+        <target state="translated">全部已覆盖：选择一个单元格查看详情。</target>
+      </trans-unit>
+      <trans-unit id="smi.req.capa-title" datatype="html">
+        <source><x id="status"/> <x id="standard"/> · <x id="chapter"/> <x id="title"/></source>
+        <target state="translated"><x id="status"/> <x id="standard"/> · <x id="chapter"/> <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="smi.req.capa-description" datatype="html">
+        <source><x id="covered"/> exigence(s) prouvée(s) sur <x id="total"/> au chapitre <x id="chapter"/> de <x id="standard"/>.</source>
+        <target state="translated"><x id="standard"/> 第 <x id="chapter"/> 章：<x id="total"/> 项要求中有 <x id="covered"/> 项有证据。</target>
       </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>

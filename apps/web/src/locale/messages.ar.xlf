@@ -21561,8 +21561,8 @@ historique 12 mois</source>
         <target state="translated">إنشاء إجراء CAPA</target>
       </trans-unit>
       <trans-unit id="rr.action.capa-help" datatype="html">
-        <source>Un dossier CAPA préventif est ouvert dans le module CAPA, à votre nom, avec la criticité du niveau brut du risque. Il apparaîtra dans le tableau « Traitement » de la fiche.</source>
-        <target state="translated">يُفتح ملف CAPA وقائي في وحدة CAPA باسمك، بدرجة حرجية مساوية للمستوى الإجمالي للخطر. وسيظهر في جدول «المعالجة» في السجل.</target>
+        <source>Un dossier CAPA est ouvert dans le module CAPA, avec la criticité du niveau brut du risque. Il porte cette action, confiée au responsable désigné, et apparaîtra dans le tableau « Traitement » de la fiche.</source>
+        <target state="translated">يُفتح ملف CAPA في وحدة CAPA بدرجة حرجية مساوية للمستوى الإجمالي للخطر. ويحمل هذا الإجراء المسند إلى المسؤول المعيّن، وسيظهر في جدول «المعالجة» في السجل.</target>
       </trans-unit>
       <trans-unit id="rr.action.open-capa" datatype="html">
         <source>Ouvrir le dossier CAPA</source>
@@ -21891,6 +21891,454 @@ historique 12 mois</source>
       <trans-unit id="rr.event.capa-opened" datatype="html">
         <source>Action CAPA ouverte : <x id="title"/></source>
         <target state="translated">تم فتح إجراء CAPA: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="nav.smi" datatype="html">
+        <source>Tableau de bord SMI</source>
+        <target state="translated">لوحة نظام الإدارة المتكامل</target>
+      </trans-unit>
+      <trans-unit id="rr.action.kind" datatype="html">
+        <source>Nature de l'action</source>
+        <target state="translated">طبيعة الإجراء</target>
+      </trans-unit>
+      <trans-unit id="rr.action.kind-short" datatype="html">
+        <source>Nature</source>
+        <target state="translated">الطبيعة</target>
+      </trans-unit>
+      <trans-unit id="rr.action.kind-hint" datatype="html">
+        <source>Préventive : l'écart ne s'est pas encore produit. Corrective : il s'est déjà produit, on en supprime la cause.</source>
+        <target state="translated">وقائي: لم يقع الانحراف بعد. تصحيحي: وقع بالفعل ويُزال سببه.</target>
+      </trans-unit>
+      <trans-unit id="rr.action.assignee" datatype="html">
+        <source>Responsable de l'action</source>
+        <target state="translated">مسؤول الإجراء</target>
+      </trans-unit>
+      <trans-unit id="rr.action.assignee-short" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">المسؤول</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-kind.preventive" datatype="html">
+        <source>Préventive</source>
+        <target state="translated">وقائي</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-kind.corrective" datatype="html">
+        <source>Corrective</source>
+        <target state="translated">تصحيحي</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.single-action" datatype="html">
+        <source>Action</source>
+        <target state="translated">الإجراء</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.single-action-assignee" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">المسؤول</target>
+      </trans-unit>
+      <trans-unit id="smi.eyebrow" datatype="html">
+        <source>Pilotage</source>
+        <target state="translated">القيادة</target>
+      </trans-unit>
+      <trans-unit id="smi.title" datatype="html">
+        <source>Système de Management Intégré</source>
+        <target state="translated">نظام الإدارة المتكامل</target>
+      </trans-unit>
+      <trans-unit id="smi.subtitle" datatype="html">
+        <source>Vue consolidée : une preuve compte pour toutes les normes qu'elle couvre.</source>
+        <target state="translated">عرض موحّد: يُحتسب الدليل لكل المعايير التي يغطيها.</target>
+      </trans-unit>
+      <trans-unit id="smi.filter" datatype="html">
+        <source>Filtrer par norme</source>
+        <target state="translated">تصفية حسب المعيار</target>
+      </trans-unit>
+      <trans-unit id="smi.filter-all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">الكل</target>
+      </trans-unit>
+      <trans-unit id="smi.load-failed" datatype="html">
+        <source>Le tableau de bord SMI n'a pas pu être chargé.</source>
+        <target state="translated">تعذّر تحميل لوحة نظام الإدارة المتكامل.</target>
+      </trans-unit>
+      <trans-unit id="smi.kpis" datatype="html">
+        <source>Indicateurs clés</source>
+        <target state="translated">المؤشرات الرئيسية</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.compliance" datatype="html">
+        <source>Conformité globale</source>
+        <target state="translated">الامتثال الإجمالي</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.no-standard" datatype="html">
+        <source>Aucune norme adoptée.</source>
+        <target state="translated">لم يُعتمد أي معيار.</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.adopt" datatype="html">
+        <source>Adopter une norme</source>
+        <target state="translated">اعتماد معيار</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.overdue" datatype="html">
+        <source>Actions en retard</source>
+        <target state="translated">إجراءات متأخرة</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.overdue-critical" datatype="html">
+        <source>dont <x id="CRITICAL"/> critiques</source>
+        <target state="translated">منها <x id="CRITICAL"/> حرجة</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.major-risks" datatype="html">
+        <source>Risques majeurs ouverts</source>
+        <target state="translated">مخاطر كبرى مفتوحة</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.major-risks-detail" datatype="html">
+        <source><x id="CRITICAL"/> critiques · <x id="HIGH"/> élevés (niveau ≥ 10)</source>
+        <target state="translated"><x id="CRITICAL"/> حرجة · <x id="HIGH"/> مرتفعة (المستوى ≥ 10)</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.next-audit" datatype="html">
+        <source>Prochain audit</source>
+        <target state="translated">التدقيق القادم</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.in-days" datatype="html">
+        <source>dans <x id="DAYS"/> j</source>
+        <target state="translated">خلال <x id="DAYS"/> يوم</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.no-audit" datatype="html">
+        <source>Aucun audit planifié.</source>
+        <target state="translated">لا يوجد تدقيق مخطط.</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.plan-audit" datatype="html">
+        <source>Planifier</source>
+        <target state="translated">التخطيط</target>
+      </trans-unit>
+      <trans-unit id="smi.by-standard" datatype="html">
+        <source>Conformité par référentiel</source>
+        <target state="translated">الامتثال حسب المرجع</target>
+      </trans-unit>
+      <trans-unit id="smi.by-standard-note" datatype="html">
+        <source>Une même preuve (procédure, audit, action) est comptée pour tous les référentiels concernés.</source>
+        <target state="translated">يُحتسب الدليل الواحد (إجراء موثّق، تدقيق، إجراء تصحيحي) لكل المراجع المعنية.</target>
+      </trans-unit>
+      <trans-unit id="smi.see-matrix" datatype="html">
+        <source>Voir la matrice des exigences</source>
+        <target state="translated">عرض مصفوفة المتطلبات</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.title" datatype="html">
+        <source>Matrice des risques · <x id="OPEN"/> risques ouverts</source>
+        <target state="translated">مصفوفة المخاطر · <x id="OPEN"/> مخاطر مفتوحة</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.view" datatype="html">
+        <source>Cotation affichée</source>
+        <target state="translated">التقييم المعروض</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.grid" datatype="html">
+        <source>Matrice gravité × probabilité</source>
+        <target state="translated">مصفوفة الخطورة × الاحتمال</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.cell-label" datatype="html">
+        <source>Gravité <x id="severity"/> × probabilité <x id="probability"/> : <x id="count"/> risque(s), niveau <x id="level"/></source>
+        <target state="translated">الخطورة <x id="severity"/> × الاحتمال <x id="probability"/>: <x id="count"/> خطر، المستوى <x id="level"/></target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.residual-missing" datatype="html">
+        <source><x id="MISSING"/> risque(s) sans cotation résiduelle visée n'apparaissent pas.</source>
+        <target state="translated">لا يظهر <x id="MISSING"/> خطر بدون تقييم متبقٍ مستهدف.</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.legend" datatype="html">
+        <source>Légende des niveaux</source>
+        <target state="translated">مفتاح المستويات</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.low" datatype="html">
+        <source>Faible 1–4</source>
+        <target state="translated">منخفض 1–4</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.medium" datatype="html">
+        <source>Moyen 5–9</source>
+        <target state="translated">متوسط 5–9</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.high" datatype="html">
+        <source>Élevé 10–14</source>
+        <target state="translated">مرتفع 10–14</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.critical" datatype="html">
+        <source>Critique 15–25</source>
+        <target state="translated">حرج 15–25</target>
+      </trans-unit>
+      <trans-unit id="smi.week.title" datatype="html">
+        <source>À traiter cette semaine</source>
+        <target state="translated">للمعالجة هذا الأسبوع</target>
+      </trans-unit>
+      <trans-unit id="smi.week.empty" datatype="html">
+        <source>Rien d'échu ni d'attendu d'ici sept jours.</source>
+        <target state="translated">لا شيء متأخر أو مستحق خلال سبعة أيام.</target>
+      </trans-unit>
+      <trans-unit id="smi.requirements.title" datatype="html">
+        <source>Matrice des exigences · une preuve, plusieurs référentiels</source>
+        <target state="translated">مصفوفة المتطلبات · دليل واحد لعدة مراجع</target>
+      </trans-unit>
+      <trans-unit id="smi.requirements.teaser" datatype="html">
+        <source>Chapitres communs 4 à 10, croisés avec chaque norme adoptée : couvert, partiel ou en écart.</source>
+        <target state="translated">الفصول المشتركة من 4 إلى 10 مقابل كل معيار معتمد: مغطّى أو جزئي أو فجوة.</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.capa-action" datatype="html">
+        <source>Action CAPA</source>
+        <target state="translated">إجراء CAPA</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.calibration" datatype="html">
+        <source>Étalonnage</source>
+        <target state="translated">معايرة</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.change" datatype="html">
+        <source>Validation de changement</source>
+        <target state="translated">اعتماد تغيير</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.risk-review" datatype="html">
+        <source>Revue de risque</source>
+        <target state="translated">مراجعة خطر</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.audit" datatype="html">
+        <source>Audit</source>
+        <target state="translated">تدقيق</target>
+      </trans-unit>
+      <trans-unit id="smi.due.overdue" datatype="html">
+        <source>Échu</source>
+        <target state="translated">متأخر</target>
+      </trans-unit>
+      <trans-unit id="smi.due.today" datatype="html">
+        <source>Aujourd'hui</source>
+        <target state="translated">اليوم</target>
+      </trans-unit>
+      <trans-unit id="smi.due.in-days" datatype="html">
+        <source>J-<x id="days"/></source>
+        <target state="translated">ي-<x id="days"/></target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.4" datatype="html">
+        <source>Contexte de l'organisme</source>
+        <target state="translated">سياق المنظمة</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.5" datatype="html">
+        <source>Leadership et politique</source>
+        <target state="translated">القيادة والسياسة</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.6" datatype="html">
+        <source>Risques, objectifs, exigences légales</source>
+        <target state="translated">المخاطر والأهداف والمتطلبات القانونية</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.7" datatype="html">
+        <source>Ressources, compétences, documents</source>
+        <target state="translated">الموارد والكفاءات والوثائق</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.8" datatype="html">
+        <source>Réalisation opérationnelle</source>
+        <target state="translated">التشغيل</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.9" datatype="html">
+        <source>Évaluation des performances</source>
+        <target state="translated">تقييم الأداء</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.10" datatype="html">
+        <source>Amélioration</source>
+        <target state="translated">التحسين</target>
+      </trans-unit>
+      <trans-unit id="smi.module.process-map" datatype="html">
+        <source>Cartographie</source>
+        <target state="translated">خريطة العمليات</target>
+      </trans-unit>
+      <trans-unit id="smi.module.risk-register" datatype="html">
+        <source>Risques</source>
+        <target state="translated">المخاطر</target>
+      </trans-unit>
+      <trans-unit id="smi.module.documents" datatype="html">
+        <source>GED</source>
+        <target state="translated">الوثائق</target>
+      </trans-unit>
+      <trans-unit id="smi.module.policy" datatype="html">
+        <source>Politique</source>
+        <target state="translated">السياسة</target>
+      </trans-unit>
+      <trans-unit id="smi.module.objectives" datatype="html">
+        <source>Objectifs</source>
+        <target state="translated">الأهداف</target>
+      </trans-unit>
+      <trans-unit id="smi.module.training" datatype="html">
+        <source>Compétences</source>
+        <target state="translated">الكفاءات</target>
+      </trans-unit>
+      <trans-unit id="smi.module.calibration" datatype="html">
+        <source>Métrologie</source>
+        <target state="translated">القياسة</target>
+      </trans-unit>
+      <trans-unit id="smi.module.apqp" datatype="html">
+        <source>APQP</source>
+        <target state="translated">APQP</target>
+      </trans-unit>
+      <trans-unit id="smi.module.spc" datatype="html">
+        <source>SPC</source>
+        <target state="translated">SPC</target>
+      </trans-unit>
+      <trans-unit id="smi.module.changes" datatype="html">
+        <source>MOC</source>
+        <target state="translated">إدارة التغيير</target>
+      </trans-unit>
+      <trans-unit id="smi.module.audits" datatype="html">
+        <source>Audits</source>
+        <target state="translated">التدقيقات</target>
+      </trans-unit>
+      <trans-unit id="smi.module.kpi" datatype="html">
+        <source>Indicateurs</source>
+        <target state="translated">المؤشرات</target>
+      </trans-unit>
+      <trans-unit id="smi.module.management-review" datatype="html">
+        <source>Revue</source>
+        <target state="translated">المراجعة</target>
+      </trans-unit>
+      <trans-unit id="smi.module.nc" datatype="html">
+        <source>NC</source>
+        <target state="translated">عدم المطابقة</target>
+      </trans-unit>
+      <trans-unit id="smi.module.capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.covered" datatype="html">
+        <source>Couvert</source>
+        <target state="translated">مغطّى</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.partial" datatype="html">
+        <source>Partiel</source>
+        <target state="translated">جزئي</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.gap" datatype="html">
+        <source>Écart</source>
+        <target state="translated">فجوة</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.not-applicable" datatype="html">
+        <source>Sans objet</source>
+        <target state="translated">لا ينطبق</target>
+      </trans-unit>
+      <trans-unit id="smi.crumb" datatype="html">
+        <source>Tableau de bord SMI</source>
+        <target state="translated">لوحة نظام الإدارة المتكامل</target>
+      </trans-unit>
+      <trans-unit id="smi.crumb-matrix" datatype="html">
+        <source>Matrice des risques</source>
+        <target state="translated">مصفوفة المخاطر</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.crumb" datatype="html">
+        <source>Gravité <x id="severity"/> × probabilité <x id="probability"/></source>
+        <target state="translated">الخطورة <x id="severity"/> × الاحتمال <x id="probability"/></target>
+      </trans-unit>
+      <trans-unit id="smi.cell.title" datatype="html">
+        <source><x id="count"/> risque(s) · niveau <x id="level"/> (<x id="score"/>)</source>
+        <target state="translated"><x id="count"/> خطر · المستوى <x id="level"/> (<x id="score"/>)</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.filter-site" datatype="html">
+        <source>Filtrer par site</source>
+        <target state="translated">تصفية حسب الموقع</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.all-sites" datatype="html">
+        <source>Tous sites</source>
+        <target state="translated">جميع المواقع</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.failed" datatype="html">
+        <source>Les risques n'ont pas pu être chargés.</source>
+        <target state="translated">تعذّر تحميل المخاطر.</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.col-actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">الإجراءات</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.capa-count" datatype="html">
+        <source><x id="COUNT"/> en cours</source>
+        <target state="translated"><x id="COUNT"/> قيد التنفيذ</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.empty" datatype="html">
+        <source>Aucun risque ouvert dans cette case.</source>
+        <target state="translated">لا يوجد خطر مفتوح في هذه الخانة.</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.detail" datatype="html">
+        <source>Détail</source>
+        <target state="translated">التفاصيل</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.gross" datatype="html">
+        <source>Cotation brute</source>
+        <target state="translated">التقييم الإجمالي</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.linked-actions" datatype="html">
+        <source>Actions liées</source>
+        <target state="translated">الإجراءات المرتبطة</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.open-risk" datatype="html">
+        <source>Ouvrir la fiche risque</source>
+        <target state="translated">فتح سجل الخطر</target>
+      </trans-unit>
+      <trans-unit id="smi.req.subtitle" datatype="html">
+        <source>Les chapitres communs à toutes les normes de système de management, croisés avec chaque norme adoptée.</source>
+        <target state="translated">الفصول المشتركة بين جميع معايير أنظمة الإدارة، مقابل كل معيار معتمد.</target>
+      </trans-unit>
+      <trans-unit id="smi.req.crumb" datatype="html">
+        <source>Matrice des exigences</source>
+        <target state="translated">مصفوفة المتطلبات</target>
+      </trans-unit>
+      <trans-unit id="smi.req.failed" datatype="html">
+        <source>La matrice des exigences n'a pas pu être chargée.</source>
+        <target state="translated">تعذّر تحميل مصفوفة المتطلبات.</target>
+      </trans-unit>
+      <trans-unit id="smi.req.col-chapter" datatype="html">
+        <source>Chapitre commun (HLS)</source>
+        <target state="translated">الفصل المشترك (HLS)</target>
+      </trans-unit>
+      <trans-unit id="smi.req.col-module" datatype="html">
+        <source>Module QualitOS</source>
+        <target state="translated">وحدة QualitOS</target>
+      </trans-unit>
+      <trans-unit id="smi.req.cell-label" datatype="html">
+        <source><x id="standard"/>, chapitre <x id="chapter"/> : <x id="status"/>, <x id="covered"/> sur <x id="total"/></source>
+        <target state="translated"><x id="standard"/>، الفصل <x id="chapter"/>: <x id="status"/>، <x id="covered"/> من <x id="total"/></target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend" datatype="html">
+        <source>Légende :</source>
+        <target state="translated">المفتاح:</target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend-covered" datatype="html">
+        <source>couvert : toutes les exigences du chapitre sont prouvées</source>
+        <target state="translated">مغطّى: كل متطلبات الفصل مدعومة بأدلة</target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend-partial" datatype="html">
+        <source>partiel : une partie seulement</source>
+        <target state="translated">جزئي: جزء منها فقط</target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend-gap" datatype="html">
+        <source>écart : aucune preuve</source>
+        <target state="translated">فجوة: لا يوجد دليل</target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-chapter" datatype="html">
+        <source>Détail · chapitre <x id="CHAPTER"/></source>
+        <target state="translated">التفاصيل · الفصل <x id="CHAPTER"/></target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-count" datatype="html">
+        <source><x id="COVERED"/> exigence(s) prouvée(s) sur <x id="TOTAL"/>.</source>
+        <target state="translated"><x id="COVERED"/> متطلب مدعوم بدليل من أصل <x id="TOTAL"/>.</target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-missing" datatype="html">
+        <source>Clauses à prouver</source>
+        <target state="translated">البنود التي تحتاج أدلة</target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-failed" datatype="html">
+        <source>Le détail des clauses n'a pas pu être chargé.</source>
+        <target state="translated">تعذّر تحميل تفاصيل البنود.</target>
+      </trans-unit>
+      <trans-unit id="smi.req.complete" datatype="html">
+        <source>Compléter les preuves</source>
+        <target state="translated">استكمال الأدلة</target>
+      </trans-unit>
+      <trans-unit id="smi.req.reuse" datatype="html">
+        <source>Une preuve rattachée à une exigence commune compte pour toutes les normes qui partagent ce chapitre.</source>
+        <target state="translated">الدليل المرتبط بمتطلب مشترك يُحتسب لكل المعايير التي تشترك في هذا الفصل.</target>
+      </trans-unit>
+      <trans-unit id="smi.req.all-covered" datatype="html">
+        <source>Tout est couvert : choisissez une case pour en voir le détail.</source>
+        <target state="translated">كل شيء مغطّى: اختر خانة لعرض تفاصيلها.</target>
+      </trans-unit>
+      <trans-unit id="smi.req.capa-title" datatype="html">
+        <source><x id="status"/> <x id="standard"/> · <x id="chapter"/> <x id="title"/></source>
+        <target state="translated"><x id="status"/> <x id="standard"/> · <x id="chapter"/> <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="smi.req.capa-description" datatype="html">
+        <source><x id="covered"/> exigence(s) prouvée(s) sur <x id="total"/> au chapitre <x id="chapter"/> de <x id="standard"/>.</source>
+        <target state="translated"><x id="covered"/> متطلب مدعوم بدليل من أصل <x id="total"/> في الفصل <x id="chapter"/> من <x id="standard"/>.</target>
       </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>

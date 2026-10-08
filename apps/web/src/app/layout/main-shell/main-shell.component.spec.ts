@@ -147,7 +147,9 @@ describe('MainShellComponent (navigation model)', () => {
     // (pas encore d'entree au catalogue des modules activables).
     // Risques & opportunites (1) s'insere apres la non-conformite : le registre
     // unique (ISO 9001 6.1), dont les onglets portent la navigation interne.
-    expect(labels).toEqual([6, 6, 8, 1, 4, 1, 9, 11, 1, 7]);
+    // Pilotage passe a 7 : + Tableau de bord SMI, sans attribut `module` -- il
+    // ne fait que relire les autres modules.
+    expect(labels).toEqual([7, 6, 8, 1, 4, 1, 9, 11, 1, 7]);
   });
 
   it('le registre des risques a son groupe, juste apres la non-conformite', () => {
@@ -186,7 +188,7 @@ describe('MainShellComponent (navigation model)', () => {
 
   it('keeps all core method/operation routes reachable from the sidebar', () => {
     const allRoutes = component.sections.flatMap(s => s.items.map(i => i.route));
-    ['/home', '/dashboard', '/pdca', '/fives', '/dmaic', '/spc',
+    ['/home', '/dashboard', '/smi', '/pdca', '/fives', '/dmaic', '/spc',
      '/nc/interne', '/nc/externe', '/capa', '/audits', '/standards', '/itsm', '/compliance']
       .forEach(r => expect(allRoutes).withContext(r).toContain(r));
   });

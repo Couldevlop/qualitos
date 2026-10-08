@@ -21560,8 +21560,8 @@ historique 12 mois</source>
         <target state="translated">CAPAアクションを作成</target>
       </trans-unit>
       <trans-unit id="rr.action.capa-help" datatype="html">
-        <source>Un dossier CAPA préventif est ouvert dans le module CAPA, à votre nom, avec la criticité du niveau brut du risque. Il apparaîtra dans le tableau « Traitement » de la fiche.</source>
-        <target state="translated">CAPAモジュールで、あなたの名前で予防的CAPAケースが開始され、リスクの固有レベルに応じた重要度が設定されます。記録の「対応」表に表示されます。</target>
+        <source>Un dossier CAPA est ouvert dans le module CAPA, avec la criticité du niveau brut du risque. Il porte cette action, confiée au responsable désigné, et apparaîtra dans le tableau « Traitement » de la fiche.</source>
+        <target state="translated">CAPAモジュールでCAPAケースが開始され、リスクの固有レベルに応じた重要度が設定されます。このアクションは指定された責任者に割り当てられ、記録の「対応」表に表示されます。</target>
       </trans-unit>
       <trans-unit id="rr.action.open-capa" datatype="html">
         <source>Ouvrir le dossier CAPA</source>
@@ -21890,6 +21890,454 @@ historique 12 mois</source>
       <trans-unit id="rr.event.capa-opened" datatype="html">
         <source>Action CAPA ouverte : <x id="title"/></source>
         <target state="translated">CAPAアクションを開始：<x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="nav.smi" datatype="html">
+        <source>Tableau de bord SMI</source>
+        <target state="translated">統合マネジメントシステム ダッシュボード</target>
+      </trans-unit>
+      <trans-unit id="rr.action.kind" datatype="html">
+        <source>Nature de l'action</source>
+        <target state="translated">アクションの種類</target>
+      </trans-unit>
+      <trans-unit id="rr.action.kind-short" datatype="html">
+        <source>Nature</source>
+        <target state="translated">種類</target>
+      </trans-unit>
+      <trans-unit id="rr.action.kind-hint" datatype="html">
+        <source>Préventive : l'écart ne s'est pas encore produit. Corrective : il s'est déjà produit, on en supprime la cause.</source>
+        <target state="translated">予防：逸脱はまだ発生していない。是正：既に発生しており、その原因を取り除く。</target>
+      </trans-unit>
+      <trans-unit id="rr.action.assignee" datatype="html">
+        <source>Responsable de l'action</source>
+        <target state="translated">アクション責任者</target>
+      </trans-unit>
+      <trans-unit id="rr.action.assignee-short" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">責任者</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-kind.preventive" datatype="html">
+        <source>Préventive</source>
+        <target state="translated">予防</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-kind.corrective" datatype="html">
+        <source>Corrective</source>
+        <target state="translated">是正</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.single-action" datatype="html">
+        <source>Action</source>
+        <target state="translated">アクション</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.single-action-assignee" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">責任者</target>
+      </trans-unit>
+      <trans-unit id="smi.eyebrow" datatype="html">
+        <source>Pilotage</source>
+        <target state="translated">運営管理</target>
+      </trans-unit>
+      <trans-unit id="smi.title" datatype="html">
+        <source>Système de Management Intégré</source>
+        <target state="translated">統合マネジメントシステム</target>
+      </trans-unit>
+      <trans-unit id="smi.subtitle" datatype="html">
+        <source>Vue consolidée : une preuve compte pour toutes les normes qu'elle couvre.</source>
+        <target state="translated">統合ビュー：1つの証拠は、それが対象とするすべての規格に有効です。</target>
+      </trans-unit>
+      <trans-unit id="smi.filter" datatype="html">
+        <source>Filtrer par norme</source>
+        <target state="translated">規格で絞り込み</target>
+      </trans-unit>
+      <trans-unit id="smi.filter-all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">すべて</target>
+      </trans-unit>
+      <trans-unit id="smi.load-failed" datatype="html">
+        <source>Le tableau de bord SMI n'a pas pu être chargé.</source>
+        <target state="translated">統合マネジメントシステムのダッシュボードを読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="smi.kpis" datatype="html">
+        <source>Indicateurs clés</source>
+        <target state="translated">主要指標</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.compliance" datatype="html">
+        <source>Conformité globale</source>
+        <target state="translated">総合適合率</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.no-standard" datatype="html">
+        <source>Aucune norme adoptée.</source>
+        <target state="translated">採用された規格はありません。</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.adopt" datatype="html">
+        <source>Adopter une norme</source>
+        <target state="translated">規格を採用</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.overdue" datatype="html">
+        <source>Actions en retard</source>
+        <target state="translated">期限超過のアクション</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.overdue-critical" datatype="html">
+        <source>dont <x id="CRITICAL"/> critiques</source>
+        <target state="translated">うち重大 <x id="CRITICAL"/> 件</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.major-risks" datatype="html">
+        <source>Risques majeurs ouverts</source>
+        <target state="translated">未解決の重大リスク</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.major-risks-detail" datatype="html">
+        <source><x id="CRITICAL"/> critiques · <x id="HIGH"/> élevés (niveau ≥ 10)</source>
+        <target state="translated">重大 <x id="CRITICAL"/> · 高 <x id="HIGH"/>（レベル ≥ 10）</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.next-audit" datatype="html">
+        <source>Prochain audit</source>
+        <target state="translated">次回監査</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.in-days" datatype="html">
+        <source>dans <x id="DAYS"/> j</source>
+        <target state="translated"><x id="DAYS"/> 日後</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.no-audit" datatype="html">
+        <source>Aucun audit planifié.</source>
+        <target state="translated">計画された監査はありません。</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.plan-audit" datatype="html">
+        <source>Planifier</source>
+        <target state="translated">計画する</target>
+      </trans-unit>
+      <trans-unit id="smi.by-standard" datatype="html">
+        <source>Conformité par référentiel</source>
+        <target state="translated">規格別の適合率</target>
+      </trans-unit>
+      <trans-unit id="smi.by-standard-note" datatype="html">
+        <source>Une même preuve (procédure, audit, action) est comptée pour tous les référentiels concernés.</source>
+        <target state="translated">同じ証拠（手順、監査、アクション）が関係するすべての規格に有効です。</target>
+      </trans-unit>
+      <trans-unit id="smi.see-matrix" datatype="html">
+        <source>Voir la matrice des exigences</source>
+        <target state="translated">要求事項マトリクスを見る</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.title" datatype="html">
+        <source>Matrice des risques · <x id="OPEN"/> risques ouverts</source>
+        <target state="translated">リスクマトリクス · 未解決 <x id="OPEN"/> 件</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.view" datatype="html">
+        <source>Cotation affichée</source>
+        <target state="translated">表示する評価</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.grid" datatype="html">
+        <source>Matrice gravité × probabilité</source>
+        <target state="translated">重大度 × 発生確率マトリクス</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.cell-label" datatype="html">
+        <source>Gravité <x id="severity"/> × probabilité <x id="probability"/> : <x id="count"/> risque(s), niveau <x id="level"/></source>
+        <target state="translated">重大度 <x id="severity"/> × 発生確率 <x id="probability"/>：リスク <x id="count"/> 件、レベル <x id="level"/></target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.residual-missing" datatype="html">
+        <source><x id="MISSING"/> risque(s) sans cotation résiduelle visée n'apparaissent pas.</source>
+        <target state="translated">目標残留評価のないリスク <x id="MISSING"/> 件は表示されません。</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.legend" datatype="html">
+        <source>Légende des niveaux</source>
+        <target state="translated">レベルの凡例</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.low" datatype="html">
+        <source>Faible 1–4</source>
+        <target state="translated">低 1–4</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.medium" datatype="html">
+        <source>Moyen 5–9</source>
+        <target state="translated">中 5–9</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.high" datatype="html">
+        <source>Élevé 10–14</source>
+        <target state="translated">高 10–14</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.critical" datatype="html">
+        <source>Critique 15–25</source>
+        <target state="translated">重大 15–25</target>
+      </trans-unit>
+      <trans-unit id="smi.week.title" datatype="html">
+        <source>À traiter cette semaine</source>
+        <target state="translated">今週の対応事項</target>
+      </trans-unit>
+      <trans-unit id="smi.week.empty" datatype="html">
+        <source>Rien d'échu ni d'attendu d'ici sept jours.</source>
+        <target state="translated">期限超過も7日以内の期限もありません。</target>
+      </trans-unit>
+      <trans-unit id="smi.requirements.title" datatype="html">
+        <source>Matrice des exigences · une preuve, plusieurs référentiels</source>
+        <target state="translated">要求事項マトリクス · 1つの証拠で複数の規格</target>
+      </trans-unit>
+      <trans-unit id="smi.requirements.teaser" datatype="html">
+        <source>Chapitres communs 4 à 10, croisés avec chaque norme adoptée : couvert, partiel ou en écart.</source>
+        <target state="translated">共通の箇条 4〜10 と採用した各規格の対照：適合、部分的、ギャップ。</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.capa-action" datatype="html">
+        <source>Action CAPA</source>
+        <target state="translated">CAPAアクション</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.calibration" datatype="html">
+        <source>Étalonnage</source>
+        <target state="translated">校正</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.change" datatype="html">
+        <source>Validation de changement</source>
+        <target state="translated">変更承認</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.risk-review" datatype="html">
+        <source>Revue de risque</source>
+        <target state="translated">リスクレビュー</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.audit" datatype="html">
+        <source>Audit</source>
+        <target state="translated">監査</target>
+      </trans-unit>
+      <trans-unit id="smi.due.overdue" datatype="html">
+        <source>Échu</source>
+        <target state="translated">期限超過</target>
+      </trans-unit>
+      <trans-unit id="smi.due.today" datatype="html">
+        <source>Aujourd'hui</source>
+        <target state="translated">今日</target>
+      </trans-unit>
+      <trans-unit id="smi.due.in-days" datatype="html">
+        <source>J-<x id="days"/></source>
+        <target state="translated">残り<x id="days"/>日</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.4" datatype="html">
+        <source>Contexte de l'organisme</source>
+        <target state="translated">組織の状況</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.5" datatype="html">
+        <source>Leadership et politique</source>
+        <target state="translated">リーダーシップと方針</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.6" datatype="html">
+        <source>Risques, objectifs, exigences légales</source>
+        <target state="translated">リスク、目標、法的要求事項</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.7" datatype="html">
+        <source>Ressources, compétences, documents</source>
+        <target state="translated">資源、力量、文書</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.8" datatype="html">
+        <source>Réalisation opérationnelle</source>
+        <target state="translated">運用</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.9" datatype="html">
+        <source>Évaluation des performances</source>
+        <target state="translated">パフォーマンス評価</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.10" datatype="html">
+        <source>Amélioration</source>
+        <target state="translated">改善</target>
+      </trans-unit>
+      <trans-unit id="smi.module.process-map" datatype="html">
+        <source>Cartographie</source>
+        <target state="translated">プロセスマップ</target>
+      </trans-unit>
+      <trans-unit id="smi.module.risk-register" datatype="html">
+        <source>Risques</source>
+        <target state="translated">リスク</target>
+      </trans-unit>
+      <trans-unit id="smi.module.documents" datatype="html">
+        <source>GED</source>
+        <target state="translated">文書管理</target>
+      </trans-unit>
+      <trans-unit id="smi.module.policy" datatype="html">
+        <source>Politique</source>
+        <target state="translated">方針</target>
+      </trans-unit>
+      <trans-unit id="smi.module.objectives" datatype="html">
+        <source>Objectifs</source>
+        <target state="translated">目標</target>
+      </trans-unit>
+      <trans-unit id="smi.module.training" datatype="html">
+        <source>Compétences</source>
+        <target state="translated">力量</target>
+      </trans-unit>
+      <trans-unit id="smi.module.calibration" datatype="html">
+        <source>Métrologie</source>
+        <target state="translated">計測管理</target>
+      </trans-unit>
+      <trans-unit id="smi.module.apqp" datatype="html">
+        <source>APQP</source>
+        <target state="translated">APQP</target>
+      </trans-unit>
+      <trans-unit id="smi.module.spc" datatype="html">
+        <source>SPC</source>
+        <target state="translated">SPC</target>
+      </trans-unit>
+      <trans-unit id="smi.module.changes" datatype="html">
+        <source>MOC</source>
+        <target state="translated">変更管理</target>
+      </trans-unit>
+      <trans-unit id="smi.module.audits" datatype="html">
+        <source>Audits</source>
+        <target state="translated">監査</target>
+      </trans-unit>
+      <trans-unit id="smi.module.kpi" datatype="html">
+        <source>Indicateurs</source>
+        <target state="translated">指標</target>
+      </trans-unit>
+      <trans-unit id="smi.module.management-review" datatype="html">
+        <source>Revue</source>
+        <target state="translated">レビュー</target>
+      </trans-unit>
+      <trans-unit id="smi.module.nc" datatype="html">
+        <source>NC</source>
+        <target state="translated">不適合</target>
+      </trans-unit>
+      <trans-unit id="smi.module.capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.covered" datatype="html">
+        <source>Couvert</source>
+        <target state="translated">適合</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.partial" datatype="html">
+        <source>Partiel</source>
+        <target state="translated">部分的</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.gap" datatype="html">
+        <source>Écart</source>
+        <target state="translated">ギャップ</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.not-applicable" datatype="html">
+        <source>Sans objet</source>
+        <target state="translated">該当なし</target>
+      </trans-unit>
+      <trans-unit id="smi.crumb" datatype="html">
+        <source>Tableau de bord SMI</source>
+        <target state="translated">統合MS ダッシュボード</target>
+      </trans-unit>
+      <trans-unit id="smi.crumb-matrix" datatype="html">
+        <source>Matrice des risques</source>
+        <target state="translated">リスクマトリクス</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.crumb" datatype="html">
+        <source>Gravité <x id="severity"/> × probabilité <x id="probability"/></source>
+        <target state="translated">重大度 <x id="severity"/> × 発生確率 <x id="probability"/></target>
+      </trans-unit>
+      <trans-unit id="smi.cell.title" datatype="html">
+        <source><x id="count"/> risque(s) · niveau <x id="level"/> (<x id="score"/>)</source>
+        <target state="translated">リスク <x id="count"/> 件 · レベル <x id="level"/>（<x id="score"/>）</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.filter-site" datatype="html">
+        <source>Filtrer par site</source>
+        <target state="translated">拠点で絞り込み</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.all-sites" datatype="html">
+        <source>Tous sites</source>
+        <target state="translated">すべての拠点</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.failed" datatype="html">
+        <source>Les risques n'ont pas pu être chargés.</source>
+        <target state="translated">リスクを読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.col-actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">アクション</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.capa-count" datatype="html">
+        <source><x id="COUNT"/> en cours</source>
+        <target state="translated">進行中 <x id="COUNT"/></target>
+      </trans-unit>
+      <trans-unit id="smi.cell.empty" datatype="html">
+        <source>Aucun risque ouvert dans cette case.</source>
+        <target state="translated">このセルに未解決のリスクはありません。</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.detail" datatype="html">
+        <source>Détail</source>
+        <target state="translated">詳細</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.gross" datatype="html">
+        <source>Cotation brute</source>
+        <target state="translated">固有評価</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.linked-actions" datatype="html">
+        <source>Actions liées</source>
+        <target state="translated">関連アクション</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.open-risk" datatype="html">
+        <source>Ouvrir la fiche risque</source>
+        <target state="translated">リスク記録を開く</target>
+      </trans-unit>
+      <trans-unit id="smi.req.subtitle" datatype="html">
+        <source>Les chapitres communs à toutes les normes de système de management, croisés avec chaque norme adoptée.</source>
+        <target state="translated">すべてのマネジメントシステム規格に共通する箇条と、採用した各規格との対照。</target>
+      </trans-unit>
+      <trans-unit id="smi.req.crumb" datatype="html">
+        <source>Matrice des exigences</source>
+        <target state="translated">要求事項マトリクス</target>
+      </trans-unit>
+      <trans-unit id="smi.req.failed" datatype="html">
+        <source>La matrice des exigences n'a pas pu être chargée.</source>
+        <target state="translated">要求事項マトリクスを読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="smi.req.col-chapter" datatype="html">
+        <source>Chapitre commun (HLS)</source>
+        <target state="translated">共通箇条（HLS）</target>
+      </trans-unit>
+      <trans-unit id="smi.req.col-module" datatype="html">
+        <source>Module QualitOS</source>
+        <target state="translated">QualitOS モジュール</target>
+      </trans-unit>
+      <trans-unit id="smi.req.cell-label" datatype="html">
+        <source><x id="standard"/>, chapitre <x id="chapter"/> : <x id="status"/>, <x id="covered"/> sur <x id="total"/></source>
+        <target state="translated"><x id="standard"/>、箇条 <x id="chapter"/>：<x id="status"/>、<x id="total"/> 中 <x id="covered"/></target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend" datatype="html">
+        <source>Légende :</source>
+        <target state="translated">凡例：</target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend-covered" datatype="html">
+        <source>couvert : toutes les exigences du chapitre sont prouvées</source>
+        <target state="translated">適合：箇条のすべての要求事項に証拠がある</target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend-partial" datatype="html">
+        <source>partiel : une partie seulement</source>
+        <target state="translated">部分的：一部のみ</target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend-gap" datatype="html">
+        <source>écart : aucune preuve</source>
+        <target state="translated">ギャップ：証拠なし</target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-chapter" datatype="html">
+        <source>Détail · chapitre <x id="CHAPTER"/></source>
+        <target state="translated">詳細 · 箇条 <x id="CHAPTER"/></target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-count" datatype="html">
+        <source><x id="COVERED"/> exigence(s) prouvée(s) sur <x id="TOTAL"/>.</source>
+        <target state="translated"><x id="TOTAL"/> 件中 <x id="COVERED"/> 件の要求事項に証拠あり。</target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-missing" datatype="html">
+        <source>Clauses à prouver</source>
+        <target state="translated">証拠が必要な細分箇条</target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-failed" datatype="html">
+        <source>Le détail des clauses n'a pas pu être chargé.</source>
+        <target state="translated">細分箇条の詳細を読み込めませんでした。</target>
+      </trans-unit>
+      <trans-unit id="smi.req.complete" datatype="html">
+        <source>Compléter les preuves</source>
+        <target state="translated">証拠を追加</target>
+      </trans-unit>
+      <trans-unit id="smi.req.reuse" datatype="html">
+        <source>Une preuve rattachée à une exigence commune compte pour toutes les normes qui partagent ce chapitre.</source>
+        <target state="translated">共通の要求事項に紐づく証拠は、この箇条を共有するすべての規格に有効です。</target>
+      </trans-unit>
+      <trans-unit id="smi.req.all-covered" datatype="html">
+        <source>Tout est couvert : choisissez une case pour en voir le détail.</source>
+        <target state="translated">すべて適合しています。セルを選んで詳細を表示してください。</target>
+      </trans-unit>
+      <trans-unit id="smi.req.capa-title" datatype="html">
+        <source><x id="status"/> <x id="standard"/> · <x id="chapter"/> <x id="title"/></source>
+        <target state="translated"><x id="status"/> <x id="standard"/> · <x id="chapter"/> <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="smi.req.capa-description" datatype="html">
+        <source><x id="covered"/> exigence(s) prouvée(s) sur <x id="total"/> au chapitre <x id="chapter"/> de <x id="standard"/>.</source>
+        <target state="translated"><x id="standard"/> の箇条 <x id="chapter"/>：<x id="total"/> 件中 <x id="covered"/> 件の要求事項に証拠あり。</target>
       </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>

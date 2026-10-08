@@ -98,6 +98,8 @@ export class MainShellComponent implements OnInit, OnDestroy {
       items: [
         { label: $localize`:@@nav.accueil:Accueil`,                route: '/home',              icon: 'home' },
         { label: $localize`:@@nav.tableau-de-bord:Tableau de bord`, route: '/dashboard',         icon: 'dashboard' },
+        // Pas d'attribut `module` : le SMI ne fait que relire les autres modules.
+        { label: $localize`:@@nav.smi:Tableau de bord SMI`, route: '/smi',                    icon: 'hub' },
         { label: $localize`:@@nav.mes-dashboards:Mes dashboards`,   route: '/dashboard-builder', icon: 'dashboard_customize' },
         { label: $localize`:@@nav.tv-mode:Mode TV / Salle qualité`, route: '/tv',                icon: 'tv' },
         { label: $localize`:@@nav.indicateurs-kpi:Indicateurs (KPI)`, route: '/kpis',            icon: 'monitoring', module: 'kpi' },

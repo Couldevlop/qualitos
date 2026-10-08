@@ -21561,8 +21561,8 @@ historial de 12 meses</target>
         <target state="translated">Crear una acción CAPA</target>
       </trans-unit>
       <trans-unit id="rr.action.capa-help" datatype="html">
-        <source>Un dossier CAPA préventif est ouvert dans le module CAPA, à votre nom, avec la criticité du niveau brut du risque. Il apparaîtra dans le tableau « Traitement » de la fiche.</source>
-        <target state="translated">Se abre un expediente CAPA preventivo en el módulo CAPA, a su nombre, con la criticidad del nivel bruto del riesgo. Aparecerá en la tabla «Tratamiento» del registro.</target>
+        <source>Un dossier CAPA est ouvert dans le module CAPA, avec la criticité du niveau brut du risque. Il porte cette action, confiée au responsable désigné, et apparaîtra dans le tableau « Traitement » de la fiche.</source>
+        <target state="translated">Se abre un expediente CAPA en el módulo CAPA, con la criticidad del nivel bruto del riesgo. Lleva esta acción, asignada al responsable designado, y aparecerá en la tabla «Tratamiento» del registro.</target>
       </trans-unit>
       <trans-unit id="rr.action.open-capa" datatype="html">
         <source>Ouvrir le dossier CAPA</source>
@@ -21891,6 +21891,454 @@ historial de 12 meses</target>
       <trans-unit id="rr.event.capa-opened" datatype="html">
         <source>Action CAPA ouverte : <x id="title"/></source>
         <target state="translated">Acción CAPA abierta: <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="nav.smi" datatype="html">
+        <source>Tableau de bord SMI</source>
+        <target state="translated">Panel del SGI</target>
+      </trans-unit>
+      <trans-unit id="rr.action.kind" datatype="html">
+        <source>Nature de l'action</source>
+        <target state="translated">Naturaleza de la acción</target>
+      </trans-unit>
+      <trans-unit id="rr.action.kind-short" datatype="html">
+        <source>Nature</source>
+        <target state="translated">Naturaleza</target>
+      </trans-unit>
+      <trans-unit id="rr.action.kind-hint" datatype="html">
+        <source>Préventive : l'écart ne s'est pas encore produit. Corrective : il s'est déjà produit, on en supprime la cause.</source>
+        <target state="translated">Preventiva: la desviación aún no se ha producido. Correctiva: ya se ha producido y se elimina su causa.</target>
+      </trans-unit>
+      <trans-unit id="rr.action.assignee" datatype="html">
+        <source>Responsable de l'action</source>
+        <target state="translated">Responsable de la acción</target>
+      </trans-unit>
+      <trans-unit id="rr.action.assignee-short" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">Responsable</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-kind.preventive" datatype="html">
+        <source>Préventive</source>
+        <target state="translated">Preventiva</target>
+      </trans-unit>
+      <trans-unit id="rr.capa-kind.corrective" datatype="html">
+        <source>Corrective</source>
+        <target state="translated">Correctiva</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.single-action" datatype="html">
+        <source>Action</source>
+        <target state="translated">Acción</target>
+      </trans-unit>
+      <trans-unit id="capa.detail.single-action-assignee" datatype="html">
+        <source>Responsable</source>
+        <target state="translated">Responsable</target>
+      </trans-unit>
+      <trans-unit id="smi.eyebrow" datatype="html">
+        <source>Pilotage</source>
+        <target state="translated">Pilotaje</target>
+      </trans-unit>
+      <trans-unit id="smi.title" datatype="html">
+        <source>Système de Management Intégré</source>
+        <target state="translated">Sistema de Gestión Integrado</target>
+      </trans-unit>
+      <trans-unit id="smi.subtitle" datatype="html">
+        <source>Vue consolidée : une preuve compte pour toutes les normes qu'elle couvre.</source>
+        <target state="translated">Vista consolidada: una evidencia cuenta para todas las normas que cubre.</target>
+      </trans-unit>
+      <trans-unit id="smi.filter" datatype="html">
+        <source>Filtrer par norme</source>
+        <target state="translated">Filtrar por norma</target>
+      </trans-unit>
+      <trans-unit id="smi.filter-all" datatype="html">
+        <source>Tous</source>
+        <target state="translated">Todas</target>
+      </trans-unit>
+      <trans-unit id="smi.load-failed" datatype="html">
+        <source>Le tableau de bord SMI n'a pas pu être chargé.</source>
+        <target state="translated">No se pudo cargar el panel del SGI.</target>
+      </trans-unit>
+      <trans-unit id="smi.kpis" datatype="html">
+        <source>Indicateurs clés</source>
+        <target state="translated">Indicadores clave</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.compliance" datatype="html">
+        <source>Conformité globale</source>
+        <target state="translated">Conformidad global</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.no-standard" datatype="html">
+        <source>Aucune norme adoptée.</source>
+        <target state="translated">Ninguna norma adoptada.</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.adopt" datatype="html">
+        <source>Adopter une norme</source>
+        <target state="translated">Adoptar una norma</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.overdue" datatype="html">
+        <source>Actions en retard</source>
+        <target state="translated">Acciones atrasadas</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.overdue-critical" datatype="html">
+        <source>dont <x id="CRITICAL"/> critiques</source>
+        <target state="translated">de ellas <x id="CRITICAL"/> críticas</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.major-risks" datatype="html">
+        <source>Risques majeurs ouverts</source>
+        <target state="translated">Riesgos mayores abiertos</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.major-risks-detail" datatype="html">
+        <source><x id="CRITICAL"/> critiques · <x id="HIGH"/> élevés (niveau ≥ 10)</source>
+        <target state="translated"><x id="CRITICAL"/> críticos · <x id="HIGH"/> altos (nivel ≥ 10)</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.next-audit" datatype="html">
+        <source>Prochain audit</source>
+        <target state="translated">Próxima auditoría</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.in-days" datatype="html">
+        <source>dans <x id="DAYS"/> j</source>
+        <target state="translated">en <x id="DAYS"/> d</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.no-audit" datatype="html">
+        <source>Aucun audit planifié.</source>
+        <target state="translated">Ninguna auditoría planificada.</target>
+      </trans-unit>
+      <trans-unit id="smi.kpi.plan-audit" datatype="html">
+        <source>Planifier</source>
+        <target state="translated">Planificar</target>
+      </trans-unit>
+      <trans-unit id="smi.by-standard" datatype="html">
+        <source>Conformité par référentiel</source>
+        <target state="translated">Conformidad por norma</target>
+      </trans-unit>
+      <trans-unit id="smi.by-standard-note" datatype="html">
+        <source>Une même preuve (procédure, audit, action) est comptée pour tous les référentiels concernés.</source>
+        <target state="translated">Una misma evidencia (procedimiento, auditoría, acción) cuenta para todas las normas afectadas.</target>
+      </trans-unit>
+      <trans-unit id="smi.see-matrix" datatype="html">
+        <source>Voir la matrice des exigences</source>
+        <target state="translated">Ver la matriz de requisitos</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.title" datatype="html">
+        <source>Matrice des risques · <x id="OPEN"/> risques ouverts</source>
+        <target state="translated">Matriz de riesgos · <x id="OPEN"/> riesgos abiertos</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.view" datatype="html">
+        <source>Cotation affichée</source>
+        <target state="translated">Valoración mostrada</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.grid" datatype="html">
+        <source>Matrice gravité × probabilité</source>
+        <target state="translated">Matriz gravedad × probabilidad</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.cell-label" datatype="html">
+        <source>Gravité <x id="severity"/> × probabilité <x id="probability"/> : <x id="count"/> risque(s), niveau <x id="level"/></source>
+        <target state="translated">Gravedad <x id="severity"/> × probabilidad <x id="probability"/>: <x id="count"/> riesgo(s), nivel <x id="level"/></target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.residual-missing" datatype="html">
+        <source><x id="MISSING"/> risque(s) sans cotation résiduelle visée n'apparaissent pas.</source>
+        <target state="translated">No aparecen <x id="MISSING"/> riesgo(s) sin valoración residual objetivo.</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.legend" datatype="html">
+        <source>Légende des niveaux</source>
+        <target state="translated">Leyenda de niveles</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.low" datatype="html">
+        <source>Faible 1–4</source>
+        <target state="translated">Bajo 1–4</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.medium" datatype="html">
+        <source>Moyen 5–9</source>
+        <target state="translated">Medio 5–9</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.high" datatype="html">
+        <source>Élevé 10–14</source>
+        <target state="translated">Alto 10–14</target>
+      </trans-unit>
+      <trans-unit id="smi.matrix.critical" datatype="html">
+        <source>Critique 15–25</source>
+        <target state="translated">Crítico 15–25</target>
+      </trans-unit>
+      <trans-unit id="smi.week.title" datatype="html">
+        <source>À traiter cette semaine</source>
+        <target state="translated">Por tratar esta semana</target>
+      </trans-unit>
+      <trans-unit id="smi.week.empty" datatype="html">
+        <source>Rien d'échu ni d'attendu d'ici sept jours.</source>
+        <target state="translated">Nada vencido ni previsto en los próximos siete días.</target>
+      </trans-unit>
+      <trans-unit id="smi.requirements.title" datatype="html">
+        <source>Matrice des exigences · une preuve, plusieurs référentiels</source>
+        <target state="translated">Matriz de requisitos · una evidencia, varias normas</target>
+      </trans-unit>
+      <trans-unit id="smi.requirements.teaser" datatype="html">
+        <source>Chapitres communs 4 à 10, croisés avec chaque norme adoptée : couvert, partiel ou en écart.</source>
+        <target state="translated">Capítulos comunes 4 a 10, cruzados con cada norma adoptada: cubierto, parcial o brecha.</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.capa-action" datatype="html">
+        <source>Action CAPA</source>
+        <target state="translated">Acción CAPA</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.calibration" datatype="html">
+        <source>Étalonnage</source>
+        <target state="translated">Calibración</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.change" datatype="html">
+        <source>Validation de changement</source>
+        <target state="translated">Validación de cambio</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.risk-review" datatype="html">
+        <source>Revue de risque</source>
+        <target state="translated">Revisión de riesgo</target>
+      </trans-unit>
+      <trans-unit id="smi.upcoming.audit" datatype="html">
+        <source>Audit</source>
+        <target state="translated">Auditoría</target>
+      </trans-unit>
+      <trans-unit id="smi.due.overdue" datatype="html">
+        <source>Échu</source>
+        <target state="translated">Vencido</target>
+      </trans-unit>
+      <trans-unit id="smi.due.today" datatype="html">
+        <source>Aujourd'hui</source>
+        <target state="translated">Hoy</target>
+      </trans-unit>
+      <trans-unit id="smi.due.in-days" datatype="html">
+        <source>J-<x id="days"/></source>
+        <target state="translated">D-<x id="days"/></target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.4" datatype="html">
+        <source>Contexte de l'organisme</source>
+        <target state="translated">Contexto de la organización</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.5" datatype="html">
+        <source>Leadership et politique</source>
+        <target state="translated">Liderazgo y política</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.6" datatype="html">
+        <source>Risques, objectifs, exigences légales</source>
+        <target state="translated">Riesgos, objetivos, requisitos legales</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.7" datatype="html">
+        <source>Ressources, compétences, documents</source>
+        <target state="translated">Recursos, competencias, documentos</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.8" datatype="html">
+        <source>Réalisation opérationnelle</source>
+        <target state="translated">Operación</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.9" datatype="html">
+        <source>Évaluation des performances</source>
+        <target state="translated">Evaluación del desempeño</target>
+      </trans-unit>
+      <trans-unit id="smi.chapter.10" datatype="html">
+        <source>Amélioration</source>
+        <target state="translated">Mejora</target>
+      </trans-unit>
+      <trans-unit id="smi.module.process-map" datatype="html">
+        <source>Cartographie</source>
+        <target state="translated">Mapa de procesos</target>
+      </trans-unit>
+      <trans-unit id="smi.module.risk-register" datatype="html">
+        <source>Risques</source>
+        <target state="translated">Riesgos</target>
+      </trans-unit>
+      <trans-unit id="smi.module.documents" datatype="html">
+        <source>GED</source>
+        <target state="translated">Documentos</target>
+      </trans-unit>
+      <trans-unit id="smi.module.policy" datatype="html">
+        <source>Politique</source>
+        <target state="translated">Política</target>
+      </trans-unit>
+      <trans-unit id="smi.module.objectives" datatype="html">
+        <source>Objectifs</source>
+        <target state="translated">Objetivos</target>
+      </trans-unit>
+      <trans-unit id="smi.module.training" datatype="html">
+        <source>Compétences</source>
+        <target state="translated">Competencias</target>
+      </trans-unit>
+      <trans-unit id="smi.module.calibration" datatype="html">
+        <source>Métrologie</source>
+        <target state="translated">Metrología</target>
+      </trans-unit>
+      <trans-unit id="smi.module.apqp" datatype="html">
+        <source>APQP</source>
+        <target state="translated">APQP</target>
+      </trans-unit>
+      <trans-unit id="smi.module.spc" datatype="html">
+        <source>SPC</source>
+        <target state="translated">SPC</target>
+      </trans-unit>
+      <trans-unit id="smi.module.changes" datatype="html">
+        <source>MOC</source>
+        <target state="translated">MOC</target>
+      </trans-unit>
+      <trans-unit id="smi.module.audits" datatype="html">
+        <source>Audits</source>
+        <target state="translated">Auditorías</target>
+      </trans-unit>
+      <trans-unit id="smi.module.kpi" datatype="html">
+        <source>Indicateurs</source>
+        <target state="translated">Indicadores</target>
+      </trans-unit>
+      <trans-unit id="smi.module.management-review" datatype="html">
+        <source>Revue</source>
+        <target state="translated">Revisión</target>
+      </trans-unit>
+      <trans-unit id="smi.module.nc" datatype="html">
+        <source>NC</source>
+        <target state="translated">NC</target>
+      </trans-unit>
+      <trans-unit id="smi.module.capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.covered" datatype="html">
+        <source>Couvert</source>
+        <target state="translated">Cubierto</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.partial" datatype="html">
+        <source>Partiel</source>
+        <target state="translated">Parcial</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.gap" datatype="html">
+        <source>Écart</source>
+        <target state="translated">Brecha</target>
+      </trans-unit>
+      <trans-unit id="smi.coverage.not-applicable" datatype="html">
+        <source>Sans objet</source>
+        <target state="translated">No aplica</target>
+      </trans-unit>
+      <trans-unit id="smi.crumb" datatype="html">
+        <source>Tableau de bord SMI</source>
+        <target state="translated">Panel del SGI</target>
+      </trans-unit>
+      <trans-unit id="smi.crumb-matrix" datatype="html">
+        <source>Matrice des risques</source>
+        <target state="translated">Matriz de riesgos</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.crumb" datatype="html">
+        <source>Gravité <x id="severity"/> × probabilité <x id="probability"/></source>
+        <target state="translated">Gravedad <x id="severity"/> × probabilidad <x id="probability"/></target>
+      </trans-unit>
+      <trans-unit id="smi.cell.title" datatype="html">
+        <source><x id="count"/> risque(s) · niveau <x id="level"/> (<x id="score"/>)</source>
+        <target state="translated"><x id="count"/> riesgo(s) · nivel <x id="level"/> (<x id="score"/>)</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.filter-site" datatype="html">
+        <source>Filtrer par site</source>
+        <target state="translated">Filtrar por sitio</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.all-sites" datatype="html">
+        <source>Tous sites</source>
+        <target state="translated">Todos los sitios</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.failed" datatype="html">
+        <source>Les risques n'ont pas pu être chargés.</source>
+        <target state="translated">No se pudieron cargar los riesgos.</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.col-actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">Acciones</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.capa-count" datatype="html">
+        <source><x id="COUNT"/> en cours</source>
+        <target state="translated"><x id="COUNT"/> en curso</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.empty" datatype="html">
+        <source>Aucun risque ouvert dans cette case.</source>
+        <target state="translated">Ningún riesgo abierto en esta casilla.</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.detail" datatype="html">
+        <source>Détail</source>
+        <target state="translated">Detalle</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.gross" datatype="html">
+        <source>Cotation brute</source>
+        <target state="translated">Valoración bruta</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.linked-actions" datatype="html">
+        <source>Actions liées</source>
+        <target state="translated">Acciones vinculadas</target>
+      </trans-unit>
+      <trans-unit id="smi.cell.open-risk" datatype="html">
+        <source>Ouvrir la fiche risque</source>
+        <target state="translated">Abrir la ficha del riesgo</target>
+      </trans-unit>
+      <trans-unit id="smi.req.subtitle" datatype="html">
+        <source>Les chapitres communs à toutes les normes de système de management, croisés avec chaque norme adoptée.</source>
+        <target state="translated">Los capítulos comunes a todas las normas de sistemas de gestión, cruzados con cada norma adoptada.</target>
+      </trans-unit>
+      <trans-unit id="smi.req.crumb" datatype="html">
+        <source>Matrice des exigences</source>
+        <target state="translated">Matriz de requisitos</target>
+      </trans-unit>
+      <trans-unit id="smi.req.failed" datatype="html">
+        <source>La matrice des exigences n'a pas pu être chargée.</source>
+        <target state="translated">No se pudo cargar la matriz de requisitos.</target>
+      </trans-unit>
+      <trans-unit id="smi.req.col-chapter" datatype="html">
+        <source>Chapitre commun (HLS)</source>
+        <target state="translated">Capítulo común (HLS)</target>
+      </trans-unit>
+      <trans-unit id="smi.req.col-module" datatype="html">
+        <source>Module QualitOS</source>
+        <target state="translated">Módulo QualitOS</target>
+      </trans-unit>
+      <trans-unit id="smi.req.cell-label" datatype="html">
+        <source><x id="standard"/>, chapitre <x id="chapter"/> : <x id="status"/>, <x id="covered"/> sur <x id="total"/></source>
+        <target state="translated"><x id="standard"/>, capítulo <x id="chapter"/>: <x id="status"/>, <x id="covered"/> de <x id="total"/></target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend" datatype="html">
+        <source>Légende :</source>
+        <target state="translated">Leyenda:</target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend-covered" datatype="html">
+        <source>couvert : toutes les exigences du chapitre sont prouvées</source>
+        <target state="translated">cubierto: todos los requisitos del capítulo están evidenciados</target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend-partial" datatype="html">
+        <source>partiel : une partie seulement</source>
+        <target state="translated">parcial: solo una parte</target>
+      </trans-unit>
+      <trans-unit id="smi.req.legend-gap" datatype="html">
+        <source>écart : aucune preuve</source>
+        <target state="translated">brecha: ninguna evidencia</target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-chapter" datatype="html">
+        <source>Détail · chapitre <x id="CHAPTER"/></source>
+        <target state="translated">Detalle · capítulo <x id="CHAPTER"/></target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-count" datatype="html">
+        <source><x id="COVERED"/> exigence(s) prouvée(s) sur <x id="TOTAL"/>.</source>
+        <target state="translated"><x id="COVERED"/> requisito(s) evidenciado(s) de <x id="TOTAL"/>.</target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-missing" datatype="html">
+        <source>Clauses à prouver</source>
+        <target state="translated">Cláusulas por evidenciar</target>
+      </trans-unit>
+      <trans-unit id="smi.req.detail-failed" datatype="html">
+        <source>Le détail des clauses n'a pas pu être chargé.</source>
+        <target state="translated">No se pudo cargar el detalle de las cláusulas.</target>
+      </trans-unit>
+      <trans-unit id="smi.req.complete" datatype="html">
+        <source>Compléter les preuves</source>
+        <target state="translated">Completar las evidencias</target>
+      </trans-unit>
+      <trans-unit id="smi.req.reuse" datatype="html">
+        <source>Une preuve rattachée à une exigence commune compte pour toutes les normes qui partagent ce chapitre.</source>
+        <target state="translated">Una evidencia vinculada a un requisito común cuenta para todas las normas que comparten este capítulo.</target>
+      </trans-unit>
+      <trans-unit id="smi.req.all-covered" datatype="html">
+        <source>Tout est couvert : choisissez une case pour en voir le détail.</source>
+        <target state="translated">Todo está cubierto: elija una casilla para ver su detalle.</target>
+      </trans-unit>
+      <trans-unit id="smi.req.capa-title" datatype="html">
+        <source><x id="status"/> <x id="standard"/> · <x id="chapter"/> <x id="title"/></source>
+        <target state="translated"><x id="status"/> <x id="standard"/> · <x id="chapter"/> <x id="title"/></target>
+      </trans-unit>
+      <trans-unit id="smi.req.capa-description" datatype="html">
+        <source><x id="covered"/> exigence(s) prouvée(s) sur <x id="total"/> au chapitre <x id="chapter"/> de <x id="standard"/>.</source>
+        <target state="translated"><x id="covered"/> requisito(s) evidenciado(s) de <x id="total"/> en el capítulo <x id="chapter"/> de <x id="standard"/>.</target>
       </trans-unit>
       <trans-unit id="standards-extras.actions" datatype="html">
         <source>Actions</source>

@@ -1,0 +1,134 @@
+<div class="qos-page">
+  <qos-page-header
+    [title]="cellTitle"
+    [breadcrumbs]="breadcrumbs">
+  </qos-page-header>
+
+  <!-- Bascule et filtres -->
+  <div class="filtres">
+    <mat-button-toggle-group [value]="view" (change)="setView($event.value)" hideSingleSelectionIndicator
+                             i18n-aria-label="@@smi.matrix.view" aria-label="Cotation affichée">
+      <mat-button-toggle value="gross" data-test="vue-brute" i18n="@@rr.gross">Brut</mat-button-toggle>
+      <mat-button-toggle value="residual" data-test="vue-residuelle" i18n="@@rr.residual">Résiduel</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <mat-form-field appearance="outline" class="filtres__liste" subscriptSizing="dynamic">
+      <mat-select [(ngModel)]="typeFilter" (selectionChange)="onFilterChange()" data-test="filtre-type"
+                  i18n-aria-label="@@rr.filter-type" aria-label="Filtrer par type">
+        <mat-option value="" i18n="@@rr.all-types">Tous types</mat-option>
+        <mat-option *ngFor="let t of types" [value]="t.value">{{ t.label }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filtres__liste" subscriptSizing="dynamic">
+      <mat-select [(ngModel)]="processFilter" (selectionChange)="onFilterChange()" data-test="filtre-processus"
+                  i18n-aria-label="@@rr.filter-process" aria-label="Filtrer par processus">
+        <mat-option value="" i18n="@@rr.all-processes">Tous processus</mat-option>
+        <mat-option *ngFor="let p of processes" [value]="p">{{ p }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filtres__liste" subscriptSizing="dynamic">
+      <mat-select [(ngModel)]="siteFilter" (selectionChange)="onFilterChange()" data-test="filtre-site"
+                  i18n-aria-label="@@smi.cell.filter-site" aria-label="Filtrer par site">
+        <mat-option value="" i18n="@@smi.cell.all-sites">Tous sites</mat-option>
+        <mat-option *ngFor="let s of sites" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert">
+    <span i18n="@@smi.cell.failed">Les risques n'ont pas pu être chargés.</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <div class="grille" *ngIf="!failed && !loading">
+    <!-- Liste -->
+    <div class="tableau">
+      <table data-test="table-case">
+        <thead>
+          <tr>
+            <th scope="col" i18n="@@rr.col.ref">Réf.</th>
+            <th scope="col" i18n="@@rr.col.risk">Risque</th>
+            <th scope="col" i18n="@@rr.col.type">Type</th>
+            <th scope="col" i18n="@@rr.col.process">Processus</th>
+            <th scope="col" i18n="@@rr.col.owner">Propriétaire</th>
+            <th scope="col" i18n="@@smi.cell.col-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of rows; trackBy: trackById" class="ligne" tabindex="0"
+              [class.ligne--choisie]="selected?.risk?.id === r.id" [attr.aria-selected]="selected?.risk?.id === r.id"
+              (click)="select(r)" (keydown.enter)="select(r)" data-test="ligne-risque">
+            <td class="ref">{{ r.reference }}</td>
+            <td class="intitule">{{ r.title }}</td>
+            <td><span class="etiquette">{{ typeText(r.type) }}</span></td>
+            <td>{{ r.process }}</td>
+            <td>{{ r.owner }}</td>
+            <td>
+              <ng-container *ngIf="capaCounts[r.id] !== undefined; else compteEnAttente">
+                <span i18n="@@smi.cell.capa-count">{{ capaCounts[r.id] // i18n(ph="count") }} en cours</span>
+              </ng-container>
+              <ng-template #compteEnAttente><span class="vide">…</span></ng-template>
+            </td>
+          </tr>
+          <tr *ngIf="rows.length === 0">
+            <td colspan="6" class="aucun">
+              <span *ngIf="inCell.length === 0" i18n="@@smi.cell.empty">Aucun risque ouvert dans cette case.</span>
+              <span *ngIf="inCell.length > 0" i18n="@@rr.no-match">Aucune ligne ne correspond aux filtres.</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Détail -->
+    <aside class="carte detail" *ngIf="selected as s" data-test="detail" aria-live="polite">
+      <p class="detail__surtitre"><span class="ref">{{ s.risk.reference }}</span> · <span i18n="@@smi.cell.detail">Détail</span></p>
+      <h2 class="detail__titre">{{ s.risk.title }}</h2>
+
+      <div class="boites">
+        <div class="boite" data-test="detail-brute">
+          <span class="boite__titre" i18n="@@smi.cell.gross">Cotation brute</span>
+          <span class="boite__calcul">{{ s.risk.grossSeverity }} × {{ s.risk.grossProbability }} = {{ s.risk.grossScore }}</span>
+        </div>
+        <div class="boite" data-test="detail-residuelle">
+          <span class="boite__titre" i18n="@@rr.detail.residual-target">Résiduelle visée</span>
+          <span class="boite__calcul" *ngIf="s.risk.residualScore !== null; else nonFixee">
+            {{ s.risk.residualSeverity }} × {{ s.risk.residualProbability }} = {{ s.risk.residualScore }}
+          </span>
+          <ng-template #nonFixee><span class="vide" i18n="@@rr.detail.not-set">Non fixée</span></ng-template>
+        </div>
+      </div>
+
+      <dl class="champs">
+        <div>
+          <dt i18n="@@rr.form.origin">Origine</dt>
+          <dd>{{ originText(s.risk.origin) }}<ng-container *ngIf="s.risk.originRef"> · {{ s.risk.originRef }}</ng-container></dd>
+        </div>
+        <div>
+          <dt i18n="@@smi.cell.linked-actions">Actions liées</dt>
+          <dd>
+            <ng-container *ngIf="s.capas.length; else aucuneAction">
+              <a *ngFor="let c of s.capas; let last = last; trackBy: trackById" [routerLink]="['/capa', c.id]">{{ c.title }}<span *ngIf="!last">, </span></a>
+            </ng-container>
+            <ng-template #aucuneAction>—</ng-template>
+          </dd>
+        </div>
+        <div>
+          <dt i18n="@@rr.form.next-review">Prochaine revue</dt>
+          <dd>{{ s.risk.nextReviewOn ? (s.risk.nextReviewOn | date: 'mediumDate') : '—' }}</dd>
+        </div>
+      </dl>
+
+      <div class="detail__boutons">
+        <button mat-flat-button color="primary" type="button" *ngIf="editable" (click)="createCapa()"
+                [disabled]="busy" data-test="creer-capa" i18n="@@rr.action.capa-title">Créer une action CAPA</button>
+        <button mat-stroked-button type="button" (click)="openRisk()" data-test="ouvrir-fiche"
+                i18n="@@smi.cell.open-risk">Ouvrir la fiche risque</button>
+      </div>
+    </aside>
+  </div>
+</div>
