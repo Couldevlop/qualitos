@@ -15,6 +15,7 @@ import com.openlab.qualitos.quality.riskregister.domain.RegisterRequirement;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterType;
 import com.openlab.qualitos.quality.riskregister.domain.RegisterValidationException;
 import com.openlab.qualitos.quality.riskregister.domain.Risk;
+import com.openlab.qualitos.quality.riskregister.domain.RiskCapaKind;
 import com.openlab.qualitos.quality.riskregister.domain.RiskDecision;
 import com.openlab.qualitos.quality.riskregister.domain.RiskLevel;
 import com.openlab.qualitos.quality.riskregister.domain.RiskStatus;
@@ -84,7 +85,7 @@ class RiskRegisterServiceTest {
 
     static RiskRegisterDto.RiskCommand revision(int g, int p, Integer rg, Integer rp, RiskStatus statut) {
         return new RiskRegisterDto.RiskCommand("Dérive soudure", RegisterType.QUALITY, "Production", null,
-                "M. Kone", null, null, RegisterOrigin.FMEA, "AMDEC-12", null, g, p, rg, rp, RiskDecision.REDUCE,
+                "M. Kone", "Usure buse", "Soudure KO", RegisterOrigin.FMEA, "AMDEC-12", null, g, p, rg, rp, RiskDecision.REDUCE,
                 statut, List.of(RegisterRequirement.IATF_16949_6_1_2, RegisterRequirement.ISO_9001_6_1),
                 LocalDate.of(2027, 1, 15), "Cpk > 1,33");
     }
@@ -159,7 +160,7 @@ class RiskRegisterServiceTest {
         UUID id = service.createRisk(risque("Dérive soudure", 3, 3)).id();
         service.reviseRisk(id, revision(4, 3, null, null, RiskStatus.TO_TREAT));
         capas.lies.add(new RiskCapaGateway.LinkedCapa(UUID.randomUUID(), "Carte SPC", LocalDate.of(2026, 11, 1),
-                "IN_PROGRESS"));
+                "IN_PROGRESS", RiskCapaKind.CORRECTIVE, "A. Diallo"));
 
         RiskRegisterDto.RiskSheet fiche = service.risk(id);
 
@@ -167,6 +168,8 @@ class RiskRegisterServiceTest {
         assertThat(fiche.capas()).singleElement().satisfies(c -> {
             assertThat(c.title()).isEqualTo("Carte SPC");
             assertThat(c.status()).isEqualTo("IN_PROGRESS");
+            assertThat(c.kind()).isEqualTo(RiskCapaKind.CORRECTIVE);
+            assertThat(c.assignee()).isEqualTo("A. Diallo");
         });
         assertThat(fiche.events()).extracting(RiskRegisterDto.EventView::type)
                 .containsExactly(RegisterEventType.DECISION_CHANGED, RegisterEventType.RATING_CHANGED,
@@ -182,7 +185,7 @@ class RiskRegisterServiceTest {
         assertThatThrownBy(() -> service.risk(id)).isInstanceOf(RegisterNotFoundException.class);
         assertThatThrownBy(() -> service.reviseRisk(id, revision(4, 3, null, null, null)))
                 .isInstanceOf(RegisterNotFoundException.class);
-        assertThatThrownBy(() -> service.openCapa(id, new RiskRegisterDto.CapaCommand("x", null, null)))
+        assertThatThrownBy(() -> service.openCapa(id, capa("x")))
                 .isInstanceOf(RegisterNotFoundException.class);
         assertThat(capas.ouvertes).isEmpty();
     }
@@ -200,12 +203,18 @@ class RiskRegisterServiceTest {
         UUID id = service.createRisk(risque("Dérive soudure", 4, 3)).id();
 
         RiskRegisterDto.CapaView capa = service.openCapa(id,
-                new RiskRegisterDto.CapaCommand("  Carte SPC sur le cordon ", " ", LocalDate.of(2026, 12, 1)));
+                new RiskRegisterDto.CapaCommand("  Carte SPC sur le cordon ", " ", RiskCapaKind.CORRECTIVE,
+                        "  A. Diallo ", LocalDate.of(2026, 12, 1)));
 
         assertThat(capa.title()).isEqualTo("Carte SPC sur le cordon");
+        assertThat(capa.kind()).isEqualTo(RiskCapaKind.CORRECTIVE);
+        assertThat(capa.assignee()).isEqualTo("A. Diallo");
         assertThat(capas.ouvertes).singleElement().satisfies(o -> {
             assertThat(o.title()).isEqualTo("Carte SPC sur le cordon");
             assertThat(o.description()).isNull();
+            assertThat(o.kind()).isEqualTo(RiskCapaKind.CORRECTIVE);
+            assertThat(o.assignee()).isEqualTo("A. Diallo");
+            assertThat(o.due()).isEqualTo(LocalDate.of(2026, 12, 1));
             assertThat(o.owner()).isEqualTo(ACTEUR);
             assertThat(o.risk().getReference()).isEqualTo("R-001");
         });
@@ -221,7 +230,7 @@ class RiskRegisterServiceTest {
         UUID id = service.createRisk(risque("Dérive soudure", 4, 3)).id();
         service.reviseRisk(id, revision(4, 3, null, null, RiskStatus.CLOSED));
 
-        assertThatThrownBy(() -> service.openCapa(id, new RiskRegisterDto.CapaCommand("x", null, null)))
+        assertThatThrownBy(() -> service.openCapa(id, capa("x")))
                 .isInstanceOf(RegisterValidationException.class)
                 .extracting("field").isEqualTo("status");
         assertThat(capas.ouvertes).isEmpty();
@@ -231,13 +240,47 @@ class RiskRegisterServiceTest {
     void uneCapaSansIntituleOuTropLongueEstRefusee() {
         UUID id = service.createRisk(risque("Dérive soudure", 4, 3)).id();
 
-        assertThatThrownBy(() -> service.openCapa(id, new RiskRegisterDto.CapaCommand(" ", null, null)))
+        assertThatThrownBy(() -> service.openCapa(id, capa(" ")))
                 .extracting("field").isEqualTo("title");
         assertThatThrownBy(() -> service.openCapa(id, null)).extracting("field").isEqualTo("title");
         assertThatThrownBy(() -> service.openCapa(id, new RiskRegisterDto.CapaCommand("t",
-                "d".repeat(RiskRegisterService.CAPA_DESCRIPTION_MAX + 1), null)))
+                "d".repeat(RiskRegisterService.CAPA_DESCRIPTION_MAX + 1), RiskCapaKind.PREVENTIVE, "A",
+                LocalDate.of(2026, 12, 1))))
                 .extracting("field").isEqualTo("description");
         verify(audit, never()).riskCapaOpened(any(), any(), any());
+    }
+
+    @Test
+    void natureResponsableEtEcheanceSontObligatoires() {
+        UUID id = service.createRisk(risque("Dérive soudure", 4, 3)).id();
+        LocalDate demain = LocalDate.ofInstant(MAINTENANT, ZoneOffset.UTC).plusDays(1);
+
+        assertThatThrownBy(() -> service.openCapa(id,
+                new RiskRegisterDto.CapaCommand("t", null, null, "A", demain)))
+                .extracting("field").isEqualTo("kind");
+        assertThatThrownBy(() -> service.openCapa(id,
+                new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, "  ", demain)))
+                .extracting("field").isEqualTo("assignee");
+        assertThatThrownBy(() -> service.openCapa(id,
+                new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, "A", null)))
+                .extracting("field").isEqualTo("dueDate");
+        assertThatThrownBy(() -> service.openCapa(id,
+                new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, "A", demain.minusDays(2))))
+                .extracting("field").isEqualTo("dueDate");
+        assertThatThrownBy(() -> service.openCapa(id, new RiskRegisterDto.CapaCommand("t", null,
+                RiskCapaKind.PREVENTIVE, "x".repeat(RiskRegisterService.CAPA_ASSIGNEE_MAX + 1), demain)))
+                .extracting("field").isEqualTo("assignee");
+        assertThat(capas.ouvertes).isEmpty();
+
+        // Le jour même est accepté : l'échéance n'est pas encore passée.
+        service.openCapa(id, new RiskRegisterDto.CapaCommand("t", null, RiskCapaKind.PREVENTIVE, "A",
+                demain.minusDays(1)));
+        assertThat(capas.ouvertes).hasSize(1);
+    }
+
+    private static RiskRegisterDto.CapaCommand capa(String titre) {
+        return new RiskRegisterDto.CapaCommand(titre, null, RiskCapaKind.PREVENTIVE, "A. Diallo",
+                LocalDate.of(2026, 12, 1));
     }
 
     @Test
@@ -252,7 +295,7 @@ class RiskRegisterServiceTest {
 
     static RiskRegisterDto.RiskCommand depuisAmdec(UUID source, String refTapee) {
         return new RiskRegisterDto.RiskCommand("Dérive soudure", RegisterType.QUALITY, "Production", null,
-                "M. Kone", null, null, RegisterOrigin.FMEA, refTapee, source, 4, 3, null, null, null, null,
+                "M. Kone", "Usure buse", "Soudure KO", RegisterOrigin.FMEA, refTapee, source, 4, 3, null, null, null, null,
                 List.of(), null, null);
     }
 
@@ -313,7 +356,7 @@ class RiskRegisterServiceTest {
     @Test
     void uneOrigineSansObjetNePeutPasPorterDeSource() {
         RiskRegisterDto.RiskCommand directe = new RiskRegisterDto.RiskCommand("x", RegisterType.QUALITY, "P",
-                null, "O", null, null, RegisterOrigin.DIRECT, null, UUID.randomUUID(), 2, 2, null, null, null,
+                null, "O", "c", "e", RegisterOrigin.DIRECT, null, UUID.randomUUID(), 2, 2, null, null, null,
                 null, null, null, null);
 
         assertThatThrownBy(() -> service.createRisk(directe)).extracting("field").isEqualTo("origin");
@@ -329,7 +372,7 @@ class RiskRegisterServiceTest {
                 4, 3, null, true, null));
         UUID id = service.createRisk(depuisAmdec(LIGNE_AMDEC, null)).id();
         RiskRegisterDto.RiskCommand detache = new RiskRegisterDto.RiskCommand("Dérive", RegisterType.QUALITY,
-                "Production", null, "M. Kone", null, null, RegisterOrigin.DIRECT, "AUTRE", null, 4, 3, null, null,
+                "Production", null, "M. Kone", "c", "e", RegisterOrigin.DIRECT, "AUTRE", null, 4, 3, null, null,
                 null, null, null, null, null);
 
         RiskRegisterDto.RiskView vue = service.reviseRisk(id, detache);
@@ -420,7 +463,7 @@ class RiskRegisterServiceTest {
     void lesSuggestionsSontDedoubleesSansCasseEtGardentLaPremiereOrthographe() {
         service.createRisk(risque("Un", 3, 3));
         RiskRegisterDto.RiskCommand casse = new RiskRegisterDto.RiskCommand("Deux", RegisterType.QUALITY,
-                "  production ", null, "m.  kone", null, null, null, null, null, 2, 2, null, null, null, null,
+                "  production ", null, "m.  kone", "c", "e", null, null, null, 2, 2, null, null, null, null,
                 null, null, null);
         service.createRisk(casse);
         service.createOpportunity(opportunite("Opp", 3, 3));
@@ -606,16 +649,18 @@ class RiskRegisterServiceTest {
         }
     }
 
-    record Ouverture(Risk risk, String title, String description, LocalDate due, UUID owner) {}
+    record Ouverture(Risk risk, String title, String description, RiskCapaKind kind, String assignee,
+                     LocalDate due, UUID owner) {}
 
     static final class FakeCapas implements RiskCapaGateway {
         final List<Ouverture> ouvertes = new ArrayList<>();
         final List<LinkedCapa> lies = new ArrayList<>();
 
         @Override
-        public LinkedCapa open(Risk risk, String title, String description, LocalDate dueDate, UUID ownerId) {
-            ouvertes.add(new Ouverture(risk, title, description, dueDate, ownerId));
-            LinkedCapa capa = new LinkedCapa(UUID.randomUUID(), title, dueDate, "OPEN");
+        public LinkedCapa open(Risk risk, String title, String description, RiskCapaKind kind,
+                               String assignee, LocalDate dueDate, UUID ownerId) {
+            ouvertes.add(new Ouverture(risk, title, description, kind, assignee, dueDate, ownerId));
+            LinkedCapa capa = new LinkedCapa(UUID.randomUUID(), title, dueDate, "OPEN", kind, assignee);
             lies.add(capa);
             return capa;
         }

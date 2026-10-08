@@ -59,11 +59,17 @@ export interface RiskView {
   updatedAt: string;
 }
 
+/** Corrective : l'écart s'est déjà produit ; préventive : il ne s'est pas encore produit. */
+export type CapaKind = 'CORRECTIVE' | 'PREVENTIVE';
+
 export interface CapaLink {
   id: string;
   title: string;
   dueDate: string | null;
   status: string;
+  kind: CapaKind;
+  /** Le responsable de l'action ; absent sur un dossier ouvert avant qu'on le désigne. */
+  assignee: string | null;
 }
 
 export interface RegisterEvent {
@@ -189,7 +195,9 @@ export interface OpportunityRequest {
 export interface CapaRequest {
   title: string;
   description?: string | null;
-  dueDate?: string | null;
+  kind: CapaKind;
+  assignee: string;
+  dueDate: string;
 }
 
 export interface ActionRequest {

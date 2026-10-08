@@ -8,7 +8,7 @@
 <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
   <mat-dialog-content>
     <p class="aide" *ngIf="isCapa" i18n="@@rr.action.capa-help">
-      Un dossier CAPA préventif est ouvert dans le module CAPA, à votre nom, avec la criticité du niveau brut du risque. Il apparaîtra dans le tableau « Traitement » de la fiche.
+      Un dossier CAPA est ouvert dans le module CAPA, avec la criticité du niveau brut du risque. Il porte cette action, confiée au responsable désigné, et apparaîtra dans le tableau « Traitement » de la fiche.
     </p>
 
     <mat-form-field appearance="outline" class="plein">
@@ -17,15 +17,38 @@
       <mat-error *ngIf="form.controls.title.hasError('required')" i18n="@@rr.form.required">Champ obligatoire.</mat-error>
     </mat-form-field>
 
+    <!-- Nature de l'action : préventive quand l'écart ne s'est pas produit,
+         corrective quand il s'est déjà produit au moins une fois. -->
+    <div class="nature" *ngIf="isCapa">
+      <span class="nature__titre" id="rr-capa-nature" i18n="@@rr.action.kind">Nature de l'action</span>
+      <mat-radio-group formControlName="kind" class="nature__choix" aria-labelledby="rr-capa-nature"
+                       data-test="action-nature">
+        <mat-radio-button *ngFor="let k of kinds" [value]="k.value">{{ k.label }}</mat-radio-button>
+      </mat-radio-group>
+      <p class="aide" i18n="@@rr.action.kind-hint">Préventive : l'écart ne s'est pas encore produit. Corrective : il s'est déjà produit, on en supprime la cause.</p>
+    </div>
+
     <mat-form-field appearance="outline" class="plein" *ngIf="isCapa">
       <mat-label i18n="@@rr.action.description">Description (facultatif)</mat-label>
       <textarea matInput formControlName="description" rows="3" maxlength="4000" data-test="action-description"></textarea>
     </mat-form-field>
 
     <div class="deux">
+      <mat-form-field appearance="outline" *ngIf="isCapa">
+        <mat-label i18n="@@rr.action.assignee">Responsable de l'action</mat-label>
+        <input matInput formControlName="assignee" maxlength="255" required [matAutocomplete]="autoResponsable"
+               data-test="action-responsable">
+        <mat-autocomplete #autoResponsable="matAutocomplete">
+          <mat-option *ngFor="let n of assigneeOptions" [value]="n">{{ n }}</mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="form.controls.assignee.hasError('required')" i18n="@@rr.form.required">Champ obligatoire.</mat-error>
+      </mat-form-field>
+
       <mat-form-field appearance="outline">
         <mat-label i18n="@@rr.col.due">Échéance</mat-label>
-        <input matInput type="date" formControlName="dueDate" data-test="action-echeance">
+        <input matInput type="date" formControlName="dueDate" data-test="action-echeance"
+               [required]="isCapa" [attr.min]="isCapa ? today : null">
+        <mat-error *ngIf="form.controls.dueDate.hasError('required')" i18n="@@rr.form.required">Champ obligatoire.</mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="outline" *ngIf="!isCapa">

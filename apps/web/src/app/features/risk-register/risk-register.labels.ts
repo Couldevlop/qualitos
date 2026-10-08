@@ -1,5 +1,5 @@
 import {
-  OpportunityActionStatus, OpportunityDecision, OpportunityLevel, OpportunityStatus, RegisterEvent,
+  CapaKind, OpportunityActionStatus, OpportunityDecision, OpportunityLevel, OpportunityStatus, RegisterEvent,
   RegisterOrigin, RegisterRequirement, RegisterType, RiskDecision, RiskLevel, RiskStatus
 } from './risk-register.types';
 
@@ -152,6 +152,12 @@ function find<T>(list: ReadonlyArray<Choice<T>>, value: T | null | undefined): s
   return list.find(c => c.value === value)?.label ?? String(value);
 }
 
+export const CAPA_KINDS: ReadonlyArray<Choice<CapaKind>> = [
+  { value: 'PREVENTIVE', label: $localize`:@@rr.capa-kind.preventive:Préventive` },
+  { value: 'CORRECTIVE', label: $localize`:@@rr.capa-kind.corrective:Corrective` }
+];
+
+export const capaKindLabel = (v: CapaKind | null | undefined) => find(CAPA_KINDS, v);
 export const typeLabel = (v: RegisterType | null | undefined) => find(TYPES, v);
 export const originLabel = (v: RegisterOrigin | null | undefined) => find(RISK_ORIGINS, v);
 export const riskStatusLabel = (v: RiskStatus | null | undefined) => find(RISK_STATUSES, v);

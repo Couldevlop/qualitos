@@ -4,7 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { provideRouter, Router } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 import { firstValueFrom, of } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 
@@ -227,5 +227,56 @@ describe('CapaListComponent (chargement API)', () => {
     component.openCreate();
     http.expectNone(r => r.url === base);
     expect(component.pageIndex).toBe(0);
+  });
+});
+
+describe('CapaListComponent — création ouverte par un lien', () => {
+
+  it('/capa?nouveau=1 ouvre la création préremplie et nettoie l’adresse', async () => {
+    const dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
+    dialog.open.and.returnValue({ afterClosed: () => of(undefined) } as MatDialogRef<unknown>);
+    await TestBed.resetTestingModule().configureTestingModule({
+      declarations: [CapaListComponent],
+      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      providers: [
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        { provide: MatDialog, useValue: dialog },
+        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({
+          nouveau: '1', titre: 'Écart ISO 45001 · 6', ref: 'iso-45001 §6', description: 'x'.repeat(5000)
+        }) } } }
+      ]
+    }).compileComponents();
+    const router = TestBed.inject(Router);
+    spyOn(router, 'navigate').and.resolveTo(true);
+
+    const fixture = TestBed.createComponent(CapaListComponent);
+    fixture.componentInstance.ngOnInit();
+    await Promise.resolve();
+
+    const data = dialog.open.calls.mostRecent().args[1]!.data as { title: string; sourceRef: string; description: string };
+    expect(data.title).toBe('Écart ISO 45001 · 6');
+    expect(data.sourceRef).toBe('iso-45001 §6');
+    expect(data.description.length).toBe(4000);
+    expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParams: {}, replaceUrl: true }));
+  });
+
+  it('sans le paramètre, rien ne s’ouvre', async () => {
+    const dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
+    await TestBed.resetTestingModule().configureTestingModule({
+      declarations: [CapaListComponent],
+      imports: [SharedModule, UiModule, NoopAnimationsModule],
+      providers: [
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        { provide: MatDialog, useValue: dialog },
+        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({}) } } }
+      ]
+    }).compileComponents();
+    TestBed.createComponent(CapaListComponent).componentInstance.ngOnInit();
+    await Promise.resolve();
+    expect(dialog.open).not.toHaveBeenCalled();
   });
 });

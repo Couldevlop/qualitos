@@ -33,7 +33,8 @@ describe('ItemDetailComponent', () => {
 
   const FICHE_RISQUE: RiskSheet = {
     risk: risque({ sourceId: 'nc-1', origin: 'NON_CONFORMITY', originRef: 'NC-2026-0042' }),
-    capas: [{ id: 'c1', title: 'Carte SPC sur le cordon', dueDate: '2026-12-01', status: 'IN_PROGRESS' }],
+    capas: [{ id: 'c1', title: 'Carte SPC sur le cordon', dueDate: '2026-12-01', status: 'IN_PROGRESS',
+      kind: 'CORRECTIVE', assignee: 'A. Diallo' }],
     events: [
       { id: 'e2', type: 'RATING_CHANGED', fromValue: '3x3', toValue: '4x3', detail: null, at: '2026-10-02T08:00:00Z' },
       { id: 'e1', type: 'CREATED', fromValue: null, toValue: 'NON_CONFORMITY', detail: 'NC-2026-0042', at: '2026-10-01T08:00:00Z' }
@@ -72,6 +73,11 @@ describe('ItemDetailComponent', () => {
     return spyOn(dialog, 'open').and.returnValue({ afterClosed: () => of(result) } as MatDialogRef<unknown>);
   }
 
+  /** La fenêtre CAPA propose les noms déjà employés : ils arrivent d'abord. */
+  function suggestions(): void {
+    http.expectOne(`${endpoint}/suggestions`).flush({ processes: [], sites: [], owners: ['M. Kone', 'A. Diallo'] });
+  }
+
   afterEach(() => http.verify());
 
   it('montre la cotation brute et résiduelle, les CAPA liées et le suivi rédigé', async () => {
@@ -83,6 +89,8 @@ describe('ItemDetailComponent', () => {
     expect(hote().querySelector('[data-test="cotation-residuelle"]')!.textContent).toContain('4 × 2 = 8');
     expect(hote().querySelector('[data-test="capas"]')!.textContent).toContain('Carte SPC sur le cordon');
     expect(hote().querySelector('[data-test="capas"]')!.textContent).toContain('En cours');
+    expect(hote().querySelector('[data-test="capas"]')!.textContent).toContain('Corrective');
+    expect(hote().querySelector('[data-test="capas"]')!.textContent).toContain('A. Diallo');
     const suivi = hote().querySelector('[data-test="suivi"]')!.textContent!;
     expect(suivi).toContain('Cotation brute passée de 3 × 3 à 4 × 3');
     expect(suivi).toContain('NC-2026-0042');
@@ -94,14 +102,21 @@ describe('ItemDetailComponent', () => {
     await setup('risk');
     http.expectOne(`${endpoint}/risks/r1`).flush(FICHE_RISQUE);
     fixture.detectChanges();
-    const ouverture = repondre({ title: 'Carte SPC', description: null, dueDate: '2026-12-01', status: 'TO_START' });
+    const ouverture = repondre({ title: 'Carte SPC', description: null, dueDate: '2026-12-01', status: 'TO_START', kind: 'CORRECTIVE', assignee: 'A. Diallo' });
 
     (hote().querySelector('[data-test="creer-capa"]') as HTMLElement).click();
+    suggestions();
 
     expect(ouverture.calls.mostRecent().args[0]).toBe(ActionDialogComponent);
+    // Le propriétaire du risque est proposé comme responsable.
+    expect(ouverture.calls.mostRecent().args[1]!.data).toEqual(jasmine.objectContaining({
+      mode: 'capa', reference: 'R-014', assignee: 'M. Kone', assignees: ['M. Kone', 'A. Diallo']
+    }));
     const req = http.expectOne(`${endpoint}/risks/r1/capa`);
-    expect(req.request.body).toEqual({ title: 'Carte SPC', description: null, dueDate: '2026-12-01' });
-    req.flush({ id: 'c2', title: 'Carte SPC', dueDate: '2026-12-01', status: 'OPEN' });
+    expect(req.request.body).toEqual({
+      title: 'Carte SPC', description: null, kind: 'CORRECTIVE', assignee: 'A. Diallo', dueDate: '2026-12-01'
+    });
+    req.flush({ id: 'c2', title: 'Carte SPC', dueDate: '2026-12-01', status: 'OPEN', kind: 'CORRECTIVE', assignee: 'A. Diallo' });
     http.expectOne(`${endpoint}/risks/r1`).flush(FICHE_RISQUE);
   });
 
@@ -110,7 +125,9 @@ describe('ItemDetailComponent', () => {
     http.expectOne(`${endpoint}/risks/r1`).flush(FICHE_RISQUE);
     repondre(undefined);
     component.createAction();
+    suggestions();
     http.expectNone(`${endpoint}/risks/r1/capa`);
+    expect(component.busy).toBeFalse();
   });
 
   it('modifier mène au formulaire prérempli', async () => {
@@ -127,7 +144,7 @@ describe('ItemDetailComponent', () => {
     fixture.detectChanges();
     expect(hote().querySelector('[data-test="modifier"]')).toBeNull();
     expect(hote().querySelector('[data-test="creer-capa"]')).toBeNull();
-    const spy = repondre({ title: 'x', description: null, dueDate: null, status: 'TO_START' });
+    const spy = repondre({ title: 'Carte SPC', description: null, dueDate: '2026-12-01', status: 'TO_START', kind: 'CORRECTIVE', assignee: 'A. Diallo' });
     component.createAction();
     expect(spy).not.toHaveBeenCalled();
   });
@@ -151,12 +168,12 @@ describe('ItemDetailComponent', () => {
     expect(component.gainWord(4)).toBe('Fort');
     expect(component.feasibilityWord(4)).toBe('Facile');
 
-    const spy = repondre({ title: 'Piloter', description: null, dueDate: null, status: 'TO_START' });
+    const spy = repondre({ title: 'Piloter', description: null, dueDate: null, status: 'TO_START', kind: null, assignee: null });
     component.createAction();
     http.expectOne(`${endpoint}/opportunities/o1/actions`).flush({ id: 'a2', number: 4, title: 'Piloter', dueDate: null, status: 'TO_START' });
     http.expectOne(`${endpoint}/opportunities/o1`).flush(FICHE_OPP);
 
-    spy.and.returnValue({ afterClosed: () => of({ title: 'Chiffrer', description: null, dueDate: null, status: 'DONE' }) } as MatDialogRef<unknown>);
+    spy.and.returnValue({ afterClosed: () => of({ title: 'Chiffrer', description: null, dueDate: null, status: 'DONE', kind: null, assignee: null }) } as MatDialogRef<unknown>);
     component.editAction(FICHE_OPP.actions[0]);
     const revue = http.expectOne(`${endpoint}/opportunities/o1/actions/a1`);
     expect(revue.request.method).toBe('PUT');
@@ -182,8 +199,9 @@ describe('ItemDetailComponent', () => {
   it('une erreur d’ouverture de CAPA est signalée, sans recharger', async () => {
     await setup('risk');
     http.expectOne(`${endpoint}/risks/r1`).flush(FICHE_RISQUE);
-    repondre({ title: 'x', description: null, dueDate: null, status: 'TO_START' });
+    repondre({ title: 'Carte SPC', description: null, dueDate: '2026-12-01', status: 'TO_START', kind: 'CORRECTIVE', assignee: 'A. Diallo' });
     component.createAction();
+    suggestions();
     http.expectOne(`${endpoint}/risks/r1/capa`).flush({ field: 'status' }, { status: 422, statusText: 'KO' });
     expect(component.busy).toBeFalse();
   });

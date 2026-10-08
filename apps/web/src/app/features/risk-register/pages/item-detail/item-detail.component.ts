@@ -10,8 +10,9 @@ import {
   ConfirmDialogComponent, ConfirmDialogData
 } from '../../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { RiskRegisterService } from '../../risk-register.service';
+import { RiskCapaOpener } from '../../risk-capa-opener.service';
 import {
-  actionStatusLabel, capaStatusLabel, eventText, opportunityDecisionLabel, opportunityLevelLabel,
+  actionStatusLabel, capaKindLabel, capaStatusLabel, eventText, opportunityDecisionLabel, opportunityLevelLabel,
   opportunityStatusLabel, originLabel, requirementLabel, riskDecisionLabel, riskLevelLabel, riskStatusLabel,
   typeLabel, GAINS, FEASIBILITIES
 } from '../../risk-register.labels';
@@ -56,6 +57,7 @@ export class ItemDetailComponent implements OnInit {
     private readonly router: Router,
     private readonly dialog: MatDialog,
     private readonly snack: MatSnackBar,
+    private readonly capaOpener: RiskCapaOpener,
     auth: AuthService
   ) {
     this.editable = auth.hasAnyRole(ROLES_PILOTAGE);
@@ -125,28 +127,29 @@ export class ItemDetailComponent implements OnInit {
   /** « Créer une action CAPA » (risque) ou « Créer une action » (opportunité). */
   createAction(): void {
     if (!this.editable || this.busy) return;
-    this.ouvrir({ mode: this.isRisk ? 'capa' : 'action', reference: this.reference }, result => {
-      if (this.isRisk) {
-        this.busy = true;
-        this.service.openCapa(this.id, {
-          title: result.title, description: result.description, dueDate: result.dueDate
-        }).subscribe({
-          next: () => {
-            this.busy = false;
-            this.snack.open($localize`:@@rr.detail.capa-opened:Dossier CAPA ouvert.`, undefined, { duration: 2500 });
-            this.charger();
-          },
-          error: err => { this.busy = false; this.echouer(err); }
-        });
-      } else {
-        this.busy = true;
-        this.service.addAction(this.id, {
-          title: result.title, dueDate: result.dueDate, status: result.status
-        }).subscribe({
-          next: () => { this.busy = false; this.charger(); },
-          error: err => { this.busy = false; this.echouer(err); }
-        });
-      }
+    if (this.isRisk) {
+      const r = this.risk?.risk;
+      if (!r) return;
+      this.busy = true;
+      this.capaOpener.open({ id: r.id, reference: r.reference, owner: r.owner }).subscribe({
+        next: capa => {
+          this.busy = false;
+          if (!capa) return;
+          this.snack.open($localize`:@@rr.detail.capa-opened:Dossier CAPA ouvert.`, undefined, { duration: 2500 });
+          this.charger();
+        },
+        error: err => { this.busy = false; this.echouer(err); }
+      });
+      return;
+    }
+    this.ouvrir({ mode: 'action', reference: this.reference }, result => {
+      this.busy = true;
+      this.service.addAction(this.id, {
+        title: result.title, dueDate: result.dueDate, status: result.status
+      }).subscribe({
+        next: () => { this.busy = false; this.charger(); },
+        error: err => { this.busy = false; this.echouer(err); }
+      });
     });
   }
 
@@ -206,6 +209,7 @@ export class ItemDetailComponent implements OnInit {
   opportunityDecisionText = opportunityDecisionLabel;
   opportunityLevelText = opportunityLevelLabel;
   capaStatusText = capaStatusLabel;
+  capaKindText = capaKindLabel;
   actionStatusText = actionStatusLabel;
   requirementText = requirementLabel;
 

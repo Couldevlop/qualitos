@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Inject, Optional } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, from, of } from 'rxjs';
 import { catchError, concatMap, finalize, map, switchMap, tap, toArray } from 'rxjs/operators';
@@ -15,6 +15,13 @@ import {
   CapaSourceType,
   CapaType
 } from '../../capa.types';
+
+/** Ce qu'un autre écran peut proposer à la création : jamais la criticité ni le type, que l'on tranche ici. */
+export interface CapaCreatePrefill {
+  title?: string;
+  description?: string;
+  sourceRef?: string;
+}
 
 @Component({
   selector: 'qos-capa-create-dialog',
@@ -68,8 +75,15 @@ export class CapaCreateDialogComponent {
     private readonly capa: CapaService,
     private readonly auth: AuthService,
     private readonly snack: MatSnackBar,
-    private readonly dialogRef: MatDialogRef<CapaCreateDialogComponent, CapaCaseResponse>
-  ) {}
+    private readonly dialogRef: MatDialogRef<CapaCreateDialogComponent, CapaCaseResponse>,
+    @Optional() @Inject(MAT_DIALOG_DATA) prefill: CapaCreatePrefill | null
+  ) {
+    if (prefill) {
+      this.form.patchValue({
+        title: prefill.title ?? '', description: prefill.description ?? '', sourceRef: prefill.sourceRef ?? ''
+      });
+    }
+  }
 
   submit(): void {
     if (this.form.invalid || this.submitting) {

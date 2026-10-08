@@ -1,6 +1,8 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormBuilder } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialogRef } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -8,6 +10,7 @@ import { environment } from '../../../../../environments/environment';
 import { AuthService, AuthUser } from '../../../../core/auth/auth.service';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
+import { CapaService } from '../../capa.service';
 import { CapaCaseResponse } from '../../capa.types';
 import { CapaCreateDialogComponent } from './capa-create-dialog.component';
 
@@ -267,5 +270,15 @@ describe('CapaCreateDialogComponent', () => {
     component.cancel();
     expect(dialogRef.close).toHaveBeenCalledWith();
     http.expectNone(base);
+  });
+  it('un autre écran peut préremplir intitulé, description et référence, rien d’autre', () => {
+    const prerempli = new CapaCreateDialogComponent(TestBed.inject(FormBuilder), TestBed.inject(CapaService),
+      TestBed.inject(AuthService), TestBed.inject(MatSnackBar), dialogRef,
+      { title: 'Écart ISO 45001 · 6', description: 'Aucune preuve', sourceRef: 'iso-45001 §6' });
+    expect(prerempli.form.getRawValue()).toEqual(jasmine.objectContaining({
+      title: 'Écart ISO 45001 · 6', description: 'Aucune preuve', sourceRef: 'iso-45001 §6',
+      type: 'CORRECTIVE', criticity: 'MEDIUM'
+    }));
+    expect(component.form.controls.title.value).toBe('');
   });
 });

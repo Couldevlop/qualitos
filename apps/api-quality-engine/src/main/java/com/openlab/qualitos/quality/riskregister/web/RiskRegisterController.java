@@ -94,7 +94,8 @@ public class RiskRegisterController {
     @Operation(summary = "Open a preventive CAPA case on this risk")
     public RiskRegisterDto.CapaView openCapa(@PathVariable UUID id,
                                              @Valid @RequestBody RiskRegisterWebDto.CapaRequest r) {
-        return service.openCapa(id, new RiskRegisterDto.CapaCommand(r.title(), r.description(), r.dueDate()));
+        return service.openCapa(id, new RiskRegisterDto.CapaCommand(r.title(), r.description(), r.kind(),
+                r.assignee(), r.dueDate()));
     }
 
     /**

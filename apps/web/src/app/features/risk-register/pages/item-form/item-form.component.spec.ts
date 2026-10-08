@@ -65,7 +65,9 @@ describe('ItemFormComponent', () => {
   }
 
   function remplir(): void {
-    component.form.patchValue({ title: '  Dérive soudure ', process: 'Production', owner: 'M. Kone' });
+    component.form.patchValue({
+      title: '  Dérive soudure ', process: 'Production', owner: 'M. Kone', cause: 'Buse usée', effect: 'Fuite'
+    });
   }
 
   afterEach(() => http.verify());
@@ -89,6 +91,19 @@ describe('ItemFormComponent', () => {
     expect(req.request.body.reference).toBeUndefined();
     req.flush(risque({ id: 'nouveau-id' }));
     expect(router.navigate).toHaveBeenCalledWith(['/risques', 'nouveau-id']);
+  });
+
+  it('un risque sans cause ni effet ne part pas', async () => {
+    await setup();
+    remplir();
+    component.form.patchValue({ cause: '', effect: '' });
+    fixture.detectChanges();
+
+    component.submit();
+
+    http.expectNone(`${endpoint}/risks`);
+    expect(component.form.get('cause')!.hasError('required')).toBeTrue();
+    expect(component.form.get('effect')!.hasError('required')).toBeTrue();
   });
 
   it('montre le niveau avant l’enregistrement, mêmes seuils que le serveur', async () => {

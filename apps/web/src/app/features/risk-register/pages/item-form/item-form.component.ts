@@ -223,8 +223,10 @@ export class ItemFormComponent implements OnInit {
     if (this.kind === 'risk') {
       return this.fb.nonNullable.group({
         ...commun,
-        cause: ['', Validators.maxLength(4000)],
-        effect: ['', Validators.maxLength(4000)],
+        // Obligatoires : sans cause on ne sait pas quoi traiter, sans effet on
+        // ne sait pas ce que la gravité mesure. Le serveur l'exige aussi.
+        cause: ['', [Validators.required, Validators.maxLength(4000)]],
+        effect: ['', [Validators.required, Validators.maxLength(4000)]],
         grossSeverity: [3, Validators.required],
         grossProbability: [3, Validators.required],
         residualSeverity: [null as number | null],

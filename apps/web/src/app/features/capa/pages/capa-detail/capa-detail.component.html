@@ -167,6 +167,37 @@
         </mat-card-content>
       </mat-card>
 
+      <!-- Un dossier ouvert depuis un risque EST son action : elle a été décidée
+           à l'ouverture (nature, responsable, échéance). Ni ajout, ni
+           suggestion IA ici — seulement la faire avancer. Un ancien dossier de
+           risque sans action garde le bloc complet, sans quoi il ne pourrait
+           jamais être clôturé. -->
+      <mat-card class="action-unique" *ngIf="isSingleActionCase(c); else blocActions"
+                data-test="action-unique">
+        <mat-card-header>
+          <mat-card-title i18n="@@capa.detail.single-action">Action</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="action-unique__ligne" *ngFor="let a of c.actions; trackBy: trackActionById">
+            <div class="action-unique__texte">
+              <p class="action-unique__titre">{{ a.title }}</p>
+              <dl class="action-unique__champs">
+                <div><dt i18n="@@capa.action.action-type">Nature de l'action</dt><dd>{{ actionTypeLabel(a.actionType) }}</dd></div>
+                <div><dt i18n="@@capa.detail.single-action-assignee">Responsable</dt><dd>{{ a.assigneeName || '—' }}</dd></div>
+                <div><dt i18n="@@capa.detail.due-date">Échéance</dt><dd>{{ a.dueDate ? (a.dueDate | date) : '—' }}</dd></div>
+                <div><dt i18n="@@common.status">Statut</dt><dd><span [class]="actionBadge(a.status)">{{ actionStatusLabel(a.status) }}</span></dd></div>
+              </dl>
+            </div>
+            <button mat-flat-button color="primary" type="button" *ngIf="nextActionStatus(a.status)"
+                    [disabled]="!canAdvanceAction(a, c.status)" (click)="advanceAction(a)"
+                    data-test="avancer-action">
+              {{ advanceActionLabel(a.status) }}
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <ng-template #blocActions>
       <mat-card class="actions-card">
         <mat-card-header class="actions-header">
           <mat-card-title i18n="@@capa.detail.actions-count">Actions ({{ c.actions.length }})</mat-card-title>
@@ -403,6 +434,7 @@
           </p>
         </mat-card-content>
       </mat-card>
+      </ng-template>
 
       <!-- Preuves du dossier : une CAPA se clôt sur une vérification d'efficacité,
            et l'efficacité se prouve (ISO 9001 §10.2). -->

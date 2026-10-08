@@ -121,8 +121,11 @@ public final class Risk {
             throw new RegisterValidationException("title", "L'intitulé est obligatoire.");
         }
         Identification ident = d.identification().validated(true);
-        String laCause = Texts.optional("cause", d.cause(), CAUSE_MAX);
-        String lEffet = Texts.optional("effect", d.effect(), EFFECT_MAX);
+        // Cause et effet sont obligatoires : un risque sans cause ne se traite
+        // pas (on ne sait pas quoi supprimer), sans effet il ne se cote pas (on
+        // ne sait pas ce que la gravité mesure). ISO 31000 §6.4.2.
+        String laCause = Texts.required("cause", d.cause(), CAUSE_MAX, "La cause est obligatoire.");
+        String lEffet = Texts.required("effect", d.effect(), EFFECT_MAX, "L'effet est obligatoire.");
         Rating brute = Rating.of(d.grossSeverity(), d.grossProbability(),
                 "grossSeverity", "grossProbability");
         Rating visee = residuelle(d, brute);

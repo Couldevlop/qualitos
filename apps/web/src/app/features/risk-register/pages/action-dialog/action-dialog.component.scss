@@ -22,3 +22,25 @@
   font-size: var(--qos-fs-sm);
   color: var(--qos-fg-secondary);
 }
+
+.nature {
+  margin-bottom: var(--qos-space-3);
+
+  &__titre {
+    display: block;
+    margin-bottom: var(--qos-space-1);
+    font-size: var(--qos-fs-sm);
+    font-weight: var(--qos-fw-medium);
+    color: var(--qos-fg-primary);
+  }
+
+  &__choix {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--qos-space-4);
+  }
+
+  .aide {
+    margin-top: var(--qos-space-1);
+  }
+}

@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Optional } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
 import { catchError, finalize, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 
@@ -11,7 +11,9 @@ import { safeErrorMessage } from '../../../../core/http/error-message';
 import { capaTypeLabel } from '../../capa.labels';
 import { CapaService } from '../../capa.service';
 import { CapaCaseResponse, CapaCriticity, CapaPage, CapaStatus } from '../../capa.types';
-import { CapaCreateDialogComponent } from '../capa-create-dialog/capa-create-dialog.component';
+import {
+  CapaCreateDialogComponent, CapaCreatePrefill
+} from '../capa-create-dialog/capa-create-dialog.component';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 const MAX_PAGE_SIZE = 100;
@@ -48,10 +50,13 @@ export class CapaListComponent implements OnInit {
   constructor(
     private readonly svc: CapaService,
     private readonly dialog: MatDialog,
-    private readonly router: Router
+    private readonly router: Router,
+    // Facultatif : la liste s'ouvre aussi hors routeur (bancs de test).
+    @Optional() private readonly route?: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.openCreateFromLink();
     this.cases$ = combineLatest([
       this.statusFilter.valueChanges.pipe(startWith(this.statusFilter.value)),
       this.page$,
@@ -86,11 +91,12 @@ export class CapaListComponent implements OnInit {
     this.page$.next({ index: this.pageIndex, size: this.pageSize });
   }
 
-  openCreate(): void {
+  openCreate(prefill?: CapaCreatePrefill): void {
     const ref = this.dialog.open(CapaCreateDialogComponent, {
       autoFocus: 'first-tabbable',
       restoreFocus: true,
-      panelClass: 'qos-dialog-panel'
+      panelClass: 'qos-dialog-panel',
+      data: prefill ?? null
     });
     ref.afterClosed().subscribe(created => {
       if (created) {
@@ -98,6 +104,29 @@ export class CapaListComponent implements OnInit {
         this.page$.next({ index: 0, size: this.pageSize });
         this.refresh$.next();
       }
+    });
+  }
+
+  /**
+   * `/capa?nouveau=1&titre=…&ref=…&description=…` ouvre la création, préremplie.
+   *
+   * <p>C'est ainsi qu'un autre écran — la matrice des exigences du SMI — propose
+   * « Créer une action CAPA » sans embarquer le module CAPA. Les paramètres sont
+   * retirés de l'adresse aussitôt lus : recharger la page ne rouvre pas la
+   * fenêtre. Rien n'est créé sans que l'utilisateur valide.
+   */
+  private openCreateFromLink(): void {
+    const q = this.route?.snapshot.queryParamMap;
+    if (q?.get('nouveau') !== '1') return;
+    const texte = (cle: string, max: number) => (q.get(cle) ?? '').slice(0, max);
+    const prefill: CapaCreatePrefill = {
+      title: texte('titre', 255), description: texte('description', 4000), sourceRef: texte('ref', 255)
+    };
+    // Après la passe de détection en cours : ouvrir une fenêtre pendant
+    // l'initialisation modifie la vue que cette passe vérifie (NG0100).
+    queueMicrotask(() => {
+      this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
+      this.openCreate(prefill);
     });
   }
 

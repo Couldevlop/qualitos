@@ -526,4 +526,39 @@ describe('CapaDetailComponent — tableau des actions', () => {
     expect(cellule('status')).toBe('En cours');
     expect(cellule('status')).not.toContain('IN_PROGRESS');
   });
+  // --- dossier ouvert depuis un risque ------------------------------------
+
+  it('un dossier issu d’un risque montre son action seule, sans ajout ni suggestion IA', () => {
+    setup(dossier({
+      sourceType: 'RISK', sourceRef: 'R-014', type: 'PREVENTIVE',
+      actions: [action({ actionType: 'PREVENTIVE', assigneeName: 'A. Diallo', dueDate: '2026-12-01' })]
+    }));
+    const el = fixture.nativeElement as HTMLElement;
+
+    expect(el.querySelector('[data-test="action-unique"]')).not.toBeNull();
+    expect(el.querySelector('.actions-card')).toBeNull();
+    expect(texte()).not.toContain('Ajouter une action');
+    expect(el.querySelector('.ia-btn')).toBeNull();
+    const carte = el.querySelector('[data-test="action-unique"]')!.textContent!;
+    expect(carte).toContain('Réviser le plan de contrôle réception');
+    expect(carte).toContain('A. Diallo');
+
+    capa.updateAction.and.returnValue(of(action({ status: 'IN_PROGRESS' })));
+    (el.querySelector('[data-test="avancer-action"]') as HTMLButtonElement).click();
+    expect(capa.updateAction).toHaveBeenCalledWith(CASE_ID, ACTION_ID, { status: 'IN_PROGRESS' });
+  });
+
+  it('une action terminée n’offre plus de bouton d’avancement', () => {
+    setup(dossier({ sourceType: 'RISK', actions: [action({ status: 'DONE' })] }));
+    expect((fixture.nativeElement as HTMLElement).querySelector('[data-test="avancer-action"]')).toBeNull();
+  });
+
+  it('un ancien dossier de risque sans action garde le bloc complet, pour pouvoir être clôturé', () => {
+    setup(dossier({ sourceType: 'RISK', actions: [] }));
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('[data-test="action-unique"]')).toBeNull();
+    expect(el.querySelector('.actions-card')).not.toBeNull();
+    expect(component.isSingleActionCase(dossier())).toBeFalse();
+    expect(component.trackActionById(0, action())).toBe(ACTION_ID);
+  });
 });

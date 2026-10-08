@@ -19,6 +19,7 @@ import com.openlab.qualitos.quality.riskregister.domain.RiskStatus;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -47,6 +48,7 @@ public class RiskRegisterService {
     static final String OPPORTUNITY_PREFIX = "O-";
     static final int CAPA_TITLE_MAX = 255;
     static final int CAPA_DESCRIPTION_MAX = 4000;
+    static final int CAPA_ASSIGNEE_MAX = 255;
 
     private final RegisterRepositories.Risks risks;
     private final RegisterRepositories.Opportunities opportunities;
@@ -151,12 +153,25 @@ public class RiskRegisterService {
         }
         String titre = texte("title", commande.title(), CAPA_TITLE_MAX, true);
         String description = texte("description", commande.description(), CAPA_DESCRIPTION_MAX, false);
+        if (commande.kind() == null) {
+            throw new RegisterValidationException("kind", "Choisissez une action corrective ou préventive.");
+        }
+        String responsable = texte("assignee", commande.assignee(), CAPA_ASSIGNEE_MAX, true);
+        if (commande.dueDate() == null) {
+            throw new RegisterValidationException("dueDate", "L'échéance est obligatoire.");
+        }
+        // Une échéance déjà passée ferait naître le dossier en retard : c'est
+        // une erreur de saisie, pas une décision.
+        if (commande.dueDate().isBefore(LocalDate.ofInstant(clock.instant(), clock.getZone()))) {
+            throw new RegisterValidationException("dueDate", "L'échéance ne peut pas être passée.");
+        }
 
-        RiskCapaGateway.LinkedCapa capa = capas.open(risque, titre, description, commande.dueDate(), acteur);
+        RiskCapaGateway.LinkedCapa capa = capas.open(risque, titre, description, commande.kind(),
+                responsable, commande.dueDate(), acteur);
         tracer(tenant, RegisterItemKind.RISK, risque.getId(), RegisterEventType.ACTION_OPENED, null,
                 null, titre, acteur, clock.instant());
         audit.riskCapaOpened(risque, capa.id(), acteur);
-        return new RiskRegisterDto.CapaView(capa.id(), capa.title(), capa.dueDate(), capa.status());
+        return toView(capa);
     }
 
     /**
@@ -281,7 +296,7 @@ public class RiskRegisterService {
 
     private RiskRegisterDto.RiskSheet fiche(Risk risque, UUID tenant) {
         List<RiskRegisterDto.CapaView> liees = capas.linkedTo(risque).stream()
-                .map(c -> new RiskRegisterDto.CapaView(c.id(), c.title(), c.dueDate(), c.status()))
+                .map(RiskRegisterService::toView)
                 .toList();
         return new RiskRegisterDto.RiskSheet(vue(risque), liees,
                 suivi(tenant, RegisterItemKind.RISK, risque.getId()));
@@ -488,5 +503,9 @@ public class RiskRegisterService {
     static RiskRegisterDto.ActionView vue(OpportunityAction a) {
         return new RiskRegisterDto.ActionView(a.getId(), a.getNumber(), a.getTitle(), a.getDueDate(),
                 a.getStatus());
+    }
+
+    private static RiskRegisterDto.CapaView toView(RiskCapaGateway.LinkedCapa c) {
+        return new RiskRegisterDto.CapaView(c.id(), c.title(), c.dueDate(), c.status(), c.kind(), c.assignee());
     }
 }
