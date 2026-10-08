@@ -3,9 +3,11 @@ package com.openlab.qualitos.quality.tenantmodules.infrastructure;
 import com.openlab.qualitos.quality.tenantmodules.application.ActorProvider;
 import com.openlab.qualitos.quality.tenantmodules.application.ModuleActivationEventPublisher;
 import com.openlab.qualitos.quality.tenantmodules.application.ModuleActivationService;
+import com.openlab.qualitos.quality.tenantmodules.application.ModuleLicense;
 import com.openlab.qualitos.quality.tenantmodules.application.TenantProvider;
 import com.openlab.qualitos.quality.tenantmodules.application.TenantTierProvider;
 import com.openlab.qualitos.quality.tenantmodules.domain.ModuleActivationRepository;
+import com.openlab.qualitos.licensing.application.Licensing;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -23,9 +25,11 @@ public class TenantModulesBeanConfiguration {
             TenantTierProvider tierProvider,
             ActorProvider actorProvider,
             ModuleActivationEventPublisher events,
-            Clock clock) {
+            Clock clock,
+            Licensing licensing) {
         return new ModuleActivationService(
-                repo, tenantProvider, tierProvider, actorProvider, events, clock);
+                repo, tenantProvider, tierProvider, actorProvider, events, clock,
+                licensing.isOnPrem() ? new LicensedModules(licensing) : ModuleLicense.NONE);
     }
 
     /**
@@ -37,7 +41,8 @@ public class TenantModulesBeanConfiguration {
     @Bean
     @ConditionalOnMissingBean(TenantTierProvider.class)
     public TenantTierProvider defaultTenantTierProvider(
-            @Value("${qualitos.modules.default-tier:FREE}") String defaultTier) {
-        return new ConfiguredTenantTierProvider(defaultTier);
+            @Value("${qualitos.modules.default-tier:FREE}") String defaultTier, Licensing licensing) {
+        // En on-premise, le palier est celui de la licence (ADR 0082).
+        return licensing.isOnPrem() ? new LicensedModules(licensing) : new ConfiguredTenantTierProvider(defaultTier);
     }
 }
