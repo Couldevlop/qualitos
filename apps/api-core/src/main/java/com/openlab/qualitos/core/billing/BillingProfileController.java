@@ -1,5 +1,6 @@
 package com.openlab.qualitos.core.billing;
 
+import com.openlab.qualitos.core.edition.SaasOnly;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -36,6 +37,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/admin/clients/{tenantId}/billing-profile")
 @PreAuthorize("hasRole('SUPER_ADMIN')")
 @Tag(name = "Billing Profile", description = "Client billing profile management — Super Admin only")
+@SaasOnly
 public class BillingProfileController {
 
     private final BillingProfileService billingProfileService;

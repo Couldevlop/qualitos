@@ -1,11 +1,13 @@
 package com.openlab.qualitos.core.user;
 
 import com.openlab.qualitos.core.common.MissingTenantContextException;
+import com.openlab.qualitos.core.edition.MemberLimit;
 import com.openlab.qualitos.core.identity.IdentityProvider;
 import com.openlab.qualitos.core.identity.PlatformRoles;
 import com.openlab.qualitos.core.security.TenantContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,10 +37,17 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final IdentityProvider identity;
+    private final MemberLimit memberLimit;
 
     public UserService(UserRepository userRepository, IdentityProvider identity) {
+        this(userRepository, identity, MemberLimit.NONE);
+    }
+
+    @Autowired
+    public UserService(UserRepository userRepository, IdentityProvider identity, MemberLimit memberLimit) {
         this.userRepository = userRepository;
         this.identity = identity;
+        this.memberLimit = memberLimit;
     }
 
     /**
@@ -79,6 +88,7 @@ public class UserService {
         if (userRepository.existsByKeycloakId(request.keycloakId())) {
             throw new UserAlreadyExistsException(request.keycloakId());
         }
+        memberLimit.ensureRoomForOneMore(userRepository.countByTenantIdAndActiveTrue(tenantId));
 
         AppUser user = AppUser.builder()
                 .tenantId(tenantId)
@@ -102,6 +112,8 @@ public class UserService {
     public UserDto.InviteResponse invite(UserDto.InviteRequest request) {
         UUID tenantId = resolveTenantId();
         Set<String> roles = PlatformRoles.validated(request.roles());
+        // Avant de créer le compte : un refus ne laisse rien derrière lui (ADR 0082).
+        memberLimit.ensureRoomForOneMore(userRepository.countByTenantIdAndActiveTrue(tenantId));
         IdentityProvider.CreatedAccount compte = identity.create(new IdentityProvider.NewAccount(
                 tenantId, request.email().strip(), request.firstName(), request.lastName(), roles));
         try {
@@ -135,6 +147,9 @@ public class UserService {
             user.setRoles(roles);
         }
         if (request.active() != null && request.active() != user.isActive()) {
+            if (request.active()) {
+                memberLimit.ensureRoomForOneMore(userRepository.countByTenantIdAndActiveTrue(user.getTenantId()));
+            }
             identity.setEnabled(user.getKeycloakId(), request.active());
             user.setActive(request.active());
         }

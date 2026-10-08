@@ -1,5 +1,6 @@
 package com.openlab.qualitos.core.tenant;
 
+import com.openlab.qualitos.core.edition.SaasOnly;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -23,6 +24,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/tenants")
 @PreAuthorize("hasRole('SUPER_ADMIN')")
 @Tag(name = "Tenants", description = "Tenant management — Super Admin only")
+@SaasOnly
 public class TenantController {
 
     private final TenantService tenantService;

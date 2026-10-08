@@ -94,6 +94,38 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    /** 404 : la console éditeur n'existe pas dans une installation on-premise (ADR 0082). */
+    @ExceptionHandler(com.openlab.qualitos.core.edition.EditionExceptions.NotInThisEdition.class)
+    public ProblemDetail handleNotInThisEdition(com.openlab.qualitos.core.edition.EditionExceptions.NotInThisEdition ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/not-in-this-edition"));
+        problem.setTitle("Not In This Edition");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /** 403 : l'installation on-premise est en lecture seule faute de licence valable. */
+    @ExceptionHandler(com.openlab.qualitos.core.edition.EditionExceptions.LicenseReadOnly.class)
+    public ProblemDetail handleLicenseReadOnly(com.openlab.qualitos.core.edition.EditionExceptions.LicenseReadOnly ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/license-read-only"));
+        problem.setTitle("License Read Only");
+        problem.setProperty("licenseStatus", ex.getStatus().name());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /** 409 : le plafond d'utilisateurs actifs de la licence est atteint. */
+    @ExceptionHandler(com.openlab.qualitos.core.edition.EditionExceptions.MemberLimitReached.class)
+    public ProblemDetail handleMemberLimit(com.openlab.qualitos.core.edition.EditionExceptions.MemberLimitReached ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/license-member-limit"));
+        problem.setTitle("License Member Limit");
+        problem.setProperty("limit", ex.getLimit());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ProblemDetail handleUserAlreadyExists(UserAlreadyExistsException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());

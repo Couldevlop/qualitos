@@ -2,6 +2,8 @@ package com.openlab.qualitos.core.user;
 
 import com.openlab.qualitos.core.common.MissingTenantContextException;
 import com.openlab.qualitos.core.security.TenantContext;
+import com.openlab.qualitos.core.edition.EditionExceptions;
+import com.openlab.qualitos.core.edition.MemberLimit;
 import com.openlab.qualitos.core.identity.IdentityProvider;
 import com.openlab.qualitos.core.identity.InvalidRoleException;
 import org.junit.jupiter.api.AfterEach;
@@ -29,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
@@ -41,6 +44,10 @@ class UserServiceTest {
 
     @Mock
     private IdentityProvider identity;
+
+    /** Le plafond d'utilisateurs de la licence : sans réglage, il ne refuse rien. */
+    @Mock
+    private MemberLimit memberLimit;
 
     @InjectMocks
     private UserService userService;
@@ -377,6 +384,30 @@ class UserServiceTest {
             assertThatThrownBy(() -> userService.invite(new UserDto.InviteRequest("bob@acme.fr", null, null, Set.of("user"))))
                     .isInstanceOf(IllegalStateException.class);
             verify(identity).delete("kc-new");
+        }
+
+        @Test
+        @DisplayName("Licence pleine : l'invitation est refusée AVANT de créer le compte (ADR 0082)")
+        void plafondDeLaLicence() {
+            given(userRepository.countByTenantIdAndActiveTrue(TENANT_ID)).willReturn(25L);
+            willThrow(new EditionExceptions.MemberLimitReached(25)).given(memberLimit).ensureRoomForOneMore(25L);
+
+            assertThatThrownBy(() -> userService.invite(new UserDto.InviteRequest("bob@acme.fr", null, null,
+                    Set.of("user")))).isInstanceOf(EditionExceptions.MemberLimitReached.class);
+            verifyNoInteractions(identity);
+        }
+
+        @Test
+        @DisplayName("Réactiver un compte compte aussi dans le plafond ; le désactiver, non")
+        void reactiverCompteDansLePlafond() {
+            sampleUser.setActive(false);
+            given(userRepository.findById(USER_ID)).willReturn(Optional.of(sampleUser));
+            given(userRepository.countByTenantIdAndActiveTrue(TENANT_ID)).willReturn(25L);
+            willThrow(new EditionExceptions.MemberLimitReached(25)).given(memberLimit).ensureRoomForOneMore(25L);
+
+            assertThatThrownBy(() -> userService.update(USER_ID, new UserDto.UpdateRequest(null, true)))
+                    .isInstanceOf(EditionExceptions.MemberLimitReached.class);
+            verifyNoInteractions(identity);
         }
 
         @Test

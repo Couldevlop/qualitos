@@ -1,5 +1,6 @@
 package com.openlab.qualitos.core.billing;
 
+import com.openlab.qualitos.core.edition.SaasOnly;
 import com.openlab.qualitos.core.common.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -46,6 +47,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/admin/clients/{tenantId}/subscriptions")
 @PreAuthorize("hasRole('SUPER_ADMIN')")
 @Tag(name = "Subscriptions", description = "Client module subscriptions — Super Admin only")
+@SaasOnly
 public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;
