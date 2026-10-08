@@ -3,6 +3,8 @@ package com.openlab.qualitos.quality.capa;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -17,6 +19,22 @@ public interface CapaCaseRepository extends JpaRepository<CapaCase, UUID> {
     Page<CapaCase> findByTenantIdAndStatus(UUID tenantId, CapaStatus status, Pageable pageable);
 
     Optional<CapaCase> findByIdAndTenantId(UUID id, UUID tenantId);
+
+    /**
+     * Les dossiers qui concernent un utilisateur (ADR 0081) : il les pilote, il en
+     * vérifie l'efficacité, ou une de leurs actions lui est confiée. Filtré en
+     * base, pour que la pagination reste juste. Un statut nul ne filtre pas.
+     */
+    @Query("""
+            select c from CapaCase c
+            where c.tenantId = :tenantId
+              and (:status is null or c.status = :status)
+              and (c.ownerId = :user
+                   or c.verificationAssigneeId = :user
+                   or exists (select a.id from CapaAction a where a.capa = c and a.assigneeId = :user))
+            """)
+    Page<CapaCase> findConcerning(@Param("tenantId") UUID tenantId, @Param("status") CapaStatus status,
+                                  @Param("user") UUID user, Pageable pageable);
 
     /**
      * Les dossiers clos d'un tenant, du plus récent au plus ancien.

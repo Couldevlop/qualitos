@@ -42,8 +42,11 @@ class AuthzDomainTest {
         // L'éditeur a tout.
         assertThat(TenantRole.defaultsOf(SystemRole.SUPER_ADMIN).permissions())
                 .containsExactlyInAnyOrder(Permission.values());
+        // L'auditeur externe acquitte ses lectures ; comme chacun, il voit tout le
+        // registre de chaque module tant que le client ne le restreint pas (ADR 0081).
         assertThat(TenantRole.defaultsOf(SystemRole.EXTERNAL_AUDITOR).permissions())
-                .containsExactly(Permission.DOCUMENT_ACKNOWLEDGE);
+                .containsExactlyInAnyOrder(Permission.DOCUMENT_ACKNOWLEDGE, Permission.NC_VIEW_ALL,
+                        Permission.CAPA_VIEW_ALL, Permission.RISK_VIEW_ALL);
     }
 
     @Test

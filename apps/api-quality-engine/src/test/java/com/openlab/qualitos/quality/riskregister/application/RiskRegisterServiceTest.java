@@ -315,6 +315,44 @@ class RiskRegisterServiceTest {
                 .extracting(RiskRegisterDto.RiskLink::reference).containsExactly("R-001");
     }
 
+    // ---------- qui voit quoi (ADR 0081) ----------
+
+    @Test
+    void sansVoirToutOnNeVoitQueCeQuOnAInscrit() {
+        UUID marie = UUID.randomUUID();
+        RiskRegisterDto.RiskView duCollegue = service.createRisk(risque("Inscrit par un collègue", 3, 3));
+        RiskRegisterDto.OpportunityView oppCollegue = service.createOpportunity(opportunite("Collègue", 3, 3));
+        context.acteur = marie;
+        RiskRegisterDto.RiskView sien = service.createRisk(risque("Inscrit par Marie", 2, 2));
+        RiskRegisterDto.OpportunityView oppSienne = service.createOpportunity(opportunite("Marie", 2, 2));
+
+        context.seulement = Optional.of(marie);
+
+        assertThat(service.risks()).extracting(RiskRegisterDto.RiskView::id).containsExactly(sien.id());
+        assertThat(service.opportunities()).extracting(RiskRegisterDto.OpportunityView::id)
+                .containsExactly(oppSienne.id());
+        assertThat(service.risk(sien.id())).isNotNull();
+        // Hors de portée, la fiche n'existe pas — ni en lecture, ni en révision.
+        assertThatThrownBy(() -> service.risk(duCollegue.id())).isInstanceOf(RegisterNotFoundException.class);
+        assertThatThrownBy(() -> service.reviseRisk(duCollegue.id(), risque("x", 1, 1)))
+                .isInstanceOf(RegisterNotFoundException.class);
+        assertThatThrownBy(() -> service.opportunity(oppCollegue.id())).isInstanceOf(RegisterNotFoundException.class);
+
+        context.seulement = Optional.empty();
+        assertThat(service.risks()).hasSize(2);
+    }
+
+    @Test
+    void leBrouillonNeCiteQueLesRisquesQueLOnVoit() {
+        sources.objets.put(LIGNE_AMDEC, new RiskSourceCatalog.SourceDraft("PFMEA-7 #3", "Cordon poreux",
+                "Buse usée", "Fuite", 4, 3, null, true, null));
+        service.createRisk(depuisAmdec(LIGNE_AMDEC, null));
+
+        context.seulement = Optional.of(UUID.randomUUID());
+
+        assertThat(service.draft(RegisterOrigin.FMEA, LIGNE_AMDEC).existing()).isEmpty();
+    }
+
     @Test
     void laReferenceDOrigineEstCelleDeLaSourcePasCelleDuCorps() {
         sources.objets.put(LIGNE_AMDEC, new RiskSourceCatalog.SourceDraft("PFMEA-7 #3", "x", null, null,
@@ -493,7 +531,14 @@ class RiskRegisterServiceTest {
         UUID tenant = TENANT_A;
 
         @Override public UUID requireTenantId() { return tenant; }
-        @Override public UUID requireActorId() { return ACTEUR; }
+        UUID acteur = ACTEUR;
+
+        @Override public UUID requireActorId() { return acteur; }
+
+        /** Vide par défaut : le registre entier, comme avant la portée (ADR 0081). */
+        Optional<UUID> seulement = Optional.empty();
+
+        @Override public Optional<UUID> visibleOnlyTo() { return seulement; }
     }
 
     static final class FakeRisks implements RegisterRepositories.Risks {

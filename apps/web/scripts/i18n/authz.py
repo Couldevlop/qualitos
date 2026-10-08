@@ -159,4 +159,33 @@ TRANSLATIONS = {
         'يفقد أعضاؤه الصلاحيات التي كان يمنحها لهم. ويُسجَّل الحذف في سجل التدقيق.',
         'メンバーはこのロールの権限を失います。削除は監査ログに記録されます。',
         '其成员将失去该角色授予的权限。删除操作会记录在审计日志中。'),
+    # ---------- qui voit quoi (ADR 0081) ----------
+    'authz.perm.capa-view-all': (
+        'Voir tous les dossiers (sinon : ceux qui le concernent)', 'See all cases (otherwise: those that concern them)',
+        'Ver todos los expedientes (si no: los que le conciernen)', 'رؤية كل الملفات (وإلا: ما يخصه منها)',
+        'すべてのケースを表示（それ以外は関係するもののみ）', '查看全部案例（否则：仅与其相关的）'),
+    'authz.perm.nc-view-all': (
+        "Voir toutes les non-conformités (sinon : celles qu'il a déclarées)",
+        'See all nonconformities (otherwise: those they reported)',
+        'Ver todas las no conformidades (si no: las que declaró)', 'رؤية كل حالات عدم المطابقة (وإلا: ما أبلغ عنه)',
+        'すべての不適合を表示（それ以外は自分が報告したもののみ）', '查看全部不合格（否则：仅其报告的）'),
+    'authz.perm.risk-view-all': (
+        "Voir tout le registre (sinon : ce qu'il a inscrit)", 'See the whole register (otherwise: what they entered)',
+        'Ver todo el registro (si no: lo que inscribió)', 'رؤية السجل كاملًا (وإلا: ما أدرجه)',
+        '登録簿全体を表示（それ以外は自分が登録したもののみ）', '查看整个登记册（否则：仅其登记的）'),
+    'capa.list.scope': (
+        'Vous voyez les dossiers que vous pilotez, que vous vérifiez, ou dont une action vous est confiée.',
+        'You see the cases you lead, verify, or hold an action on.',
+        'Ve los expedientes que dirige, verifica o en los que tiene una acción asignada.',
+        'ترى الملفات التي تقودها أو تتحقق منها أو أُسند إليك إجراء فيها.',
+        '担当・検証しているケース、またはアクションを任されたケースが表示されます。',
+        '您可以看到您负责、验证或被分派了行动的案例。'),
+    'nc.list.scope': (
+        'Vous voyez les non-conformités que vous avez déclarées.', 'You see the nonconformities you reported.',
+        'Ve las no conformidades que ha declarado.', 'ترى حالات عدم المطابقة التي أبلغت عنها.',
+        'あなたが報告した不適合が表示されます。', '您可以看到您报告的不合格。'),
+    'rr.scope': (
+        'Vous voyez les risques et opportunités que vous avez inscrits.', 'You see the risks and opportunities you entered.',
+        'Ve los riesgos y oportunidades que ha inscrito.', 'ترى المخاطر والفرص التي أدرجتها.',
+        'あなたが登録したリスクと機会が表示されます。', '您可以看到您登记的风险和机遇。'),
 }

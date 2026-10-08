@@ -33,6 +33,8 @@ public enum Permission {
     AUTHZ_MANAGE("authz.manage", "admin", EnumSet.of(ADMIN_TENANT)),
 
     // ---------- CAPA ----------
+    /** Sans elle, on ne voit que les dossiers qu'on pilote, qu'on vérifie ou dont on porte une action (ADR 0081). */
+    CAPA_VIEW_ALL("capa.view.all", "capa", tous()),
     CAPA_CREATE("capa.create", "capa", pilotage()),
     CAPA_EDIT("capa.edit", "capa", pilotage()),
     CAPA_RESOLVE("capa.resolve", "capa", pilotage()),
@@ -43,6 +45,8 @@ public enum Permission {
     CAPA_ACTION_UPDATE("capa.action.update", "capa", plus(pilotage(), USER)),
 
     // ---------- non-conformités ----------
+    /** Sans elle, on ne voit que les non-conformités qu'on a déclarées (ADR 0081). */
+    NC_VIEW_ALL("nc.view.all", "nc", tous()),
     NC_CREATE("nc.create", "nc", plus(pilotage(), USER, AUDITOR)),
     NC_EDIT("nc.edit", "nc", pilotage()),
     NC_PHOTO("nc.photo", "nc", plus(pilotage(), USER, AUDITOR)),
@@ -60,6 +64,8 @@ public enum Permission {
             plus(pilotage(), USER, AUDITOR, SystemRole.EXTERNAL_AUDITOR)),
 
     // ---------- registre des risques et opportunités ----------
+    /** Sans elle, on ne voit que les risques et opportunités qu'on a inscrits (ADR 0081). */
+    RISK_VIEW_ALL("risk.view.all", "risk", tous()),
     RISK_MANAGE("risk.manage", "risk", pilotage()),
     OPPORTUNITY_MANAGE("opportunity.manage", "risk", pilotage());
 
@@ -95,6 +101,15 @@ public enum Permission {
     /** Ceux qui pilotent la qualité : administrateur du client, directeur, manager. */
     private static EnumSet<SystemRole> pilotage() {
         return EnumSet.of(ADMIN_TENANT, QUALITY_DIRECTOR, QUALITY_MANAGER);
+    }
+
+    /**
+     * Tous les rôles d'un client. Voir tout le registre d'un module reste le défaut :
+     * c'est ce que chacun voyait avant que la visibilité se règle, et le client
+     * restreint ensuite qui il veut.
+     */
+    private static EnumSet<SystemRole> tous() {
+        return EnumSet.complementOf(EnumSet.of(SUPER_ADMIN));
     }
 
     private static EnumSet<SystemRole> plus(EnumSet<SystemRole> base, SystemRole... autres) {

@@ -6,6 +6,7 @@
 
 const PERMISSIONS: Record<string, string> = {
   'authz.manage': $localize`:@@authz.perm.authz-manage:Administrer les rôles et les droits`,
+  'capa.view.all': $localize`:@@authz.perm.capa-view-all:Voir tous les dossiers (sinon : ceux qui le concernent)`,
   'capa.create': $localize`:@@authz.perm.capa-create:Ouvrir un dossier CAPA`,
   'capa.edit': $localize`:@@authz.perm.capa-edit:Modifier et démarrer un dossier`,
   'capa.resolve': $localize`:@@authz.perm.capa-resolve:Résoudre un dossier`,
@@ -14,6 +15,7 @@ const PERMISSIONS: Record<string, string> = {
   'capa.delete': $localize`:@@authz.perm.capa-delete:Supprimer un dossier`,
   'capa.action.manage': $localize`:@@authz.perm.capa-action-manage:Ajouter et retirer des actions`,
   'capa.action.update': $localize`:@@authz.perm.capa-action-update:Faire avancer une action`,
+  'nc.view.all': $localize`:@@authz.perm.nc-view-all:Voir toutes les non-conformités (sinon : celles qu'il a déclarées)`,
   'nc.create': $localize`:@@authz.perm.nc-create:Déclarer une non-conformité`,
   'nc.edit': $localize`:@@authz.perm.nc-edit:Modifier une non-conformité`,
   'nc.photo': $localize`:@@authz.perm.nc-photo:Ajouter des photos`,
@@ -26,6 +28,7 @@ const PERMISSIONS: Record<string, string> = {
   'document.approve': $localize`:@@authz.perm.document-approve:Approuver`,
   'document.publish': $localize`:@@authz.perm.document-publish:Publier`,
   'document.acknowledge': $localize`:@@authz.perm.document-acknowledge:Acquitter une lecture`,
+  'risk.view.all': $localize`:@@authz.perm.risk-view-all:Voir tout le registre (sinon : ce qu'il a inscrit)`,
   'risk.manage': $localize`:@@authz.perm.risk-manage:Tenir le registre des risques`,
   'opportunity.manage': $localize`:@@authz.perm.opportunity-manage:Tenir le registre des opportunités`
 };

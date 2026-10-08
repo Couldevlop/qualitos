@@ -5646,6 +5646,30 @@ Portal de clientes</target>
         <source>Ses membres perdent les droits qu'il leur donnait. La suppression est tracée dans le journal d'audit.</source>
         <target state="translated">Sus miembros pierden los permisos que les daba. La eliminación queda registrada en el registro de auditoría.</target>
       </trans-unit>
+      <trans-unit id="authz.perm.capa-view-all" datatype="html">
+        <source>Voir tous les dossiers (sinon : ceux qui le concernent)</source>
+        <target state="translated">Ver todos los expedientes (si no: los que le conciernen)</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-view-all" datatype="html">
+        <source>Voir toutes les non-conformités (sinon : celles qu'il a déclarées)</source>
+        <target state="translated">Ver todas las no conformidades (si no: las que declaró)</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.risk-view-all" datatype="html">
+        <source>Voir tout le registre (sinon : ce qu'il a inscrit)</source>
+        <target state="translated">Ver todo el registro (si no: lo que inscribió)</target>
+      </trans-unit>
+      <trans-unit id="capa.list.scope" datatype="html">
+        <source>Vous voyez les dossiers que vous pilotez, que vous vérifiez, ou dont une action vous est confiée.</source>
+        <target state="translated">Ve los expedientes que dirige, verifica o en los que tiene una acción asignada.</target>
+      </trans-unit>
+      <trans-unit id="nc.list.scope" datatype="html">
+        <source>Vous voyez les non-conformités que vous avez déclarées.</source>
+        <target state="translated">Ve las no conformidades que ha declarado.</target>
+      </trans-unit>
+      <trans-unit id="rr.scope" datatype="html">
+        <source>Vous voyez les risques et opportunités que vous avez inscrits.</source>
+        <target state="translated">Ve los riesgos y oportunidades que ha inscrito.</target>
+      </trans-unit>
       <trans-unit id="calibration.col-due" datatype="html">
         <source>Prochaine calibration</source>
         <target state="translated">Próxima calibración</target>

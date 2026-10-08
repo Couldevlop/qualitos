@@ -5646,6 +5646,30 @@ Portail clients</source>
         <source>Ses membres perdent les droits qu'il leur donnait. La suppression est tracée dans le journal d'audit.</source>
         <target state="translated">其成员将失去该角色授予的权限。删除操作会记录在审计日志中。</target>
       </trans-unit>
+      <trans-unit id="authz.perm.capa-view-all" datatype="html">
+        <source>Voir tous les dossiers (sinon : ceux qui le concernent)</source>
+        <target state="translated">查看全部案例（否则：仅与其相关的）</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-view-all" datatype="html">
+        <source>Voir toutes les non-conformités (sinon : celles qu'il a déclarées)</source>
+        <target state="translated">查看全部不合格（否则：仅其报告的）</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.risk-view-all" datatype="html">
+        <source>Voir tout le registre (sinon : ce qu'il a inscrit)</source>
+        <target state="translated">查看整个登记册（否则：仅其登记的）</target>
+      </trans-unit>
+      <trans-unit id="capa.list.scope" datatype="html">
+        <source>Vous voyez les dossiers que vous pilotez, que vous vérifiez, ou dont une action vous est confiée.</source>
+        <target state="translated">您可以看到您负责、验证或被分派了行动的案例。</target>
+      </trans-unit>
+      <trans-unit id="nc.list.scope" datatype="html">
+        <source>Vous voyez les non-conformités que vous avez déclarées.</source>
+        <target state="translated">您可以看到您报告的不合格。</target>
+      </trans-unit>
+      <trans-unit id="rr.scope" datatype="html">
+        <source>Vous voyez les risques et opportunités que vous avez inscrits.</source>
+        <target state="translated">您可以看到您登记的风险和机遇。</target>
+      </trans-unit>
       <trans-unit id="calibration.col-due" datatype="html">
         <source>Prochaine calibration</source>
         <target state="translated">下次校准</target>

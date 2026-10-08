@@ -84,12 +84,22 @@ class EightDSourceAdapterTest {
         fmeaItems = mock(FmeaItemRepository.class);
         plans = mock(ControlPlanRepository.class);
         adapter = new EightDSourceAdapter(ncs, photos, ishikawas, fiveWhys, etapes,
-                capas, preuves, fmeaItems, plans);
+                capas, preuves, fmeaItems, plans, viewAll -> Optional.empty());
 
         when(photos.findByTenantIdAndNcIdOrderByCreatedAtAsc(any(), any())).thenReturn(List.of());
         when(ishikawas.findByTenantIdAndNcIdOrderByCreatedAtDesc(any(), any())).thenReturn(List.of());
         when(fiveWhys.findByNonConformityIdAndTenantIdOrderByCreatedAtDesc(any(), any()))
                 .thenReturn(List.of());
+    }
+
+    @Test
+    void le_8d_d_une_nc_hors_de_portee_est_introuvable() {
+        // ADR 0081 : sans « voir toutes les NC », celle d'un autre déclarant n'existe pas.
+        adapter = new EightDSourceAdapter(ncs, photos, ishikawas, fiveWhys, etapes,
+                capas, preuves, fmeaItems, plans, viewAll -> Optional.of(UUID.randomUUID()));
+        when(ncs.findByIdAndTenantId(NC, TENANT)).thenReturn(Optional.of(nc()));
+
+        assertThatThrownBy(() -> adapter.collect(TENANT, NC)).isInstanceOf(NcNotFoundException.class);
     }
 
     @Test

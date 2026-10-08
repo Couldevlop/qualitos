@@ -5646,6 +5646,30 @@ Portail clients</source>
         <source>Ses membres perdent les droits qu'il leur donnait. La suppression est tracée dans le journal d'audit.</source>
         <target state="translated">يفقد أعضاؤه الصلاحيات التي كان يمنحها لهم. ويُسجَّل الحذف في سجل التدقيق.</target>
       </trans-unit>
+      <trans-unit id="authz.perm.capa-view-all" datatype="html">
+        <source>Voir tous les dossiers (sinon : ceux qui le concernent)</source>
+        <target state="translated">رؤية كل الملفات (وإلا: ما يخصه منها)</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-view-all" datatype="html">
+        <source>Voir toutes les non-conformités (sinon : celles qu'il a déclarées)</source>
+        <target state="translated">رؤية كل حالات عدم المطابقة (وإلا: ما أبلغ عنه)</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.risk-view-all" datatype="html">
+        <source>Voir tout le registre (sinon : ce qu'il a inscrit)</source>
+        <target state="translated">رؤية السجل كاملًا (وإلا: ما أدرجه)</target>
+      </trans-unit>
+      <trans-unit id="capa.list.scope" datatype="html">
+        <source>Vous voyez les dossiers que vous pilotez, que vous vérifiez, ou dont une action vous est confiée.</source>
+        <target state="translated">ترى الملفات التي تقودها أو تتحقق منها أو أُسند إليك إجراء فيها.</target>
+      </trans-unit>
+      <trans-unit id="nc.list.scope" datatype="html">
+        <source>Vous voyez les non-conformités que vous avez déclarées.</source>
+        <target state="translated">ترى حالات عدم المطابقة التي أبلغت عنها.</target>
+      </trans-unit>
+      <trans-unit id="rr.scope" datatype="html">
+        <source>Vous voyez les risques et opportunités que vous avez inscrits.</source>
+        <target state="translated">ترى المخاطر والفرص التي أدرجتها.</target>
+      </trans-unit>
       <trans-unit id="calibration.col-due" datatype="html">
         <source>Prochaine calibration</source>
         <target state="translated">المعايرة التالية</target>
