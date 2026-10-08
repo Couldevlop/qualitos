@@ -229,6 +229,14 @@ export class MainShellComponent implements OnInit, OnDestroy {
           roles: ADMIN_ROLES
         },
         {
+          // La matrice des droits par client (ADR 0078) : actions × rôles, et
+          // l'équipe qu'on glisse sur un rôle.
+          label: $localize`:@@nav.admin-roles:Rôles et droits`,
+          route: '/admin/roles',
+          icon: 'admin_panel_settings',
+          roles: ADMIN_ROLES
+        },
+        {
           label: $localize`:@@nav.admin-api-keys:Clés d'API`,
           route: '/admin/api-keys',
           icon: 'key',

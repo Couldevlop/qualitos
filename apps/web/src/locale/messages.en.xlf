@@ -5162,6 +5162,302 @@ Customer portal</target>
         <source>Videz le champ pour ne plus envoyer de rappel par courriel.</source>
         <target state="translated">Clear the field to stop sending email reminders.</target>
       </trans-unit>
+      <trans-unit id="nav.admin-roles" datatype="html">
+        <source>Rôles et droits</source>
+        <target state="translated">Roles and permissions</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.authz-manage" datatype="html">
+        <source>Administrer les rôles et les droits</source>
+        <target state="translated">Manage roles and permissions</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-create" datatype="html">
+        <source>Ouvrir un dossier CAPA</source>
+        <target state="translated">Open a CAPA case</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-edit" datatype="html">
+        <source>Modifier et démarrer un dossier</source>
+        <target state="translated">Edit and start a case</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-resolve" datatype="html">
+        <source>Résoudre un dossier</source>
+        <target state="translated">Resolve a case</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-reject" datatype="html">
+        <source>Rejeter un dossier</source>
+        <target state="translated">Reject a case</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-verify" datatype="html">
+        <source>Vérifier l'efficacité</source>
+        <target state="translated">Verify effectiveness</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-delete" datatype="html">
+        <source>Supprimer un dossier</source>
+        <target state="translated">Delete a case</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-action-manage" datatype="html">
+        <source>Ajouter et retirer des actions</source>
+        <target state="translated">Add and remove actions</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-action-update" datatype="html">
+        <source>Faire avancer une action</source>
+        <target state="translated">Progress an action</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-create" datatype="html">
+        <source>Déclarer une non-conformité</source>
+        <target state="translated">Report a nonconformity</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-edit" datatype="html">
+        <source>Modifier une non-conformité</source>
+        <target state="translated">Edit a nonconformity</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-photo" datatype="html">
+        <source>Ajouter des photos</source>
+        <target state="translated">Add photos</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-process" datatype="html">
+        <source>Analyser et résoudre</source>
+        <target state="translated">Analyse and resolve</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-close" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">Close</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-reject" datatype="html">
+        <source>Annuler ou rejeter</source>
+        <target state="translated">Cancel or reject</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-escalate" datatype="html">
+        <source>Poser une action corrective</source>
+        <target state="translated">Raise a corrective action</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-edit" datatype="html">
+        <source>Rédiger et archiver</source>
+        <target state="translated">Write and archive</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-submit" datatype="html">
+        <source>Soumettre à revue</source>
+        <target state="translated">Submit for review</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-approve" datatype="html">
+        <source>Approuver</source>
+        <target state="translated">Approve</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-publish" datatype="html">
+        <source>Publier</source>
+        <target state="translated">Publish</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-acknowledge" datatype="html">
+        <source>Acquitter une lecture</source>
+        <target state="translated">Acknowledge reading</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.risk-manage" datatype="html">
+        <source>Tenir le registre des risques</source>
+        <target state="translated">Maintain the risk register</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.opportunity-manage" datatype="html">
+        <source>Tenir le registre des opportunités</source>
+        <target state="translated">Maintain the opportunity register</target>
+      </trans-unit>
+      <trans-unit id="authz.module.admin" datatype="html">
+        <source>Administration</source>
+        <target state="translated">Administration</target>
+      </trans-unit>
+      <trans-unit id="authz.module.capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="authz.module.nc" datatype="html">
+        <source>Non-conformités</source>
+        <target state="translated">Nonconformities</target>
+      </trans-unit>
+      <trans-unit id="authz.module.document" datatype="html">
+        <source>Documents</source>
+        <target state="translated">Documents</target>
+      </trans-unit>
+      <trans-unit id="authz.module.risk" datatype="html">
+        <source>Risques et opportunités</source>
+        <target state="translated">Risks and opportunities</target>
+      </trans-unit>
+      <trans-unit id="authz.role.admin-tenant" datatype="html">
+        <source>Administrateur</source>
+        <target state="translated">Administrator</target>
+      </trans-unit>
+      <trans-unit id="authz.role.quality-director" datatype="html">
+        <source>Directeur qualité</source>
+        <target state="translated">Quality director</target>
+      </trans-unit>
+      <trans-unit id="authz.role.quality-manager" datatype="html">
+        <source>Manager qualité</source>
+        <target state="translated">Quality manager</target>
+      </trans-unit>
+      <trans-unit id="authz.role.auditor" datatype="html">
+        <source>Auditeur</source>
+        <target state="translated">Auditor</target>
+      </trans-unit>
+      <trans-unit id="authz.role.user" datatype="html">
+        <source>Utilisateur</source>
+        <target state="translated">User</target>
+      </trans-unit>
+      <trans-unit id="authz.role.external-auditor" datatype="html">
+        <source>Auditeur externe</source>
+        <target state="translated">External auditor</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.title" datatype="html">
+        <source>Rôles et droits</source>
+        <target state="translated">Roles and permissions</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.subtitle" datatype="html">
+        <source>Ce que chaque rôle peut faire, et qui le porte. Glissez un membre sur un rôle pour le lui donner.</source>
+        <target state="translated">What each role can do, and who holds it. Drag a member onto a role to give it to them.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.new-role" datatype="html">
+        <source>Nouveau rôle</source>
+        <target state="translated">New role</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.load-failed" datatype="html">
+        <source>Les droits n'ont pas pu être chargés.</source>
+        <target state="translated">The permissions could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.failed" datatype="html">
+        <source>L'opération sur les droits a échoué.</source>
+        <target state="translated">The permissions operation failed.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-name" datatype="html">
+        <source>Nom du rôle</source>
+        <target state="translated">Role name</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-name-placeholder" datatype="html">
+        <source>Pilote de site</source>
+        <target state="translated">Site lead</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-code" datatype="html">
+        <source>Code</source>
+        <target state="translated">Code</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-code-hint" datatype="html">
+        <source>Lettres, chiffres et _ ; il ne change plus ensuite.</source>
+        <target state="translated">Letters, digits and _; it cannot change later.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-code-invalid" datatype="html">
+        <source>Lettres, chiffres et _, en commençant par une lettre.</source>
+        <target state="translated">Letters, digits and _, starting with a letter.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-description" datatype="html">
+        <source>Description (facultatif)</source>
+        <target state="translated">Description (optional)</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.create" datatype="html">
+        <source>Créer le rôle</source>
+        <target state="translated">Create the role</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.created" datatype="html">
+        <source>Rôle créé : cochez maintenant ses droits.</source>
+        <target state="translated">Role created: now tick its permissions.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team" datatype="html">
+        <source>Équipe</source>
+        <target state="translated">Team</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team-help" datatype="html">
+        <source>Glissez une carte sur une colonne, ou ouvrez son menu.</source>
+        <target state="translated">Drag a card onto a column, or open its menu.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team-failed" datatype="html">
+        <source>L'annuaire de l'équipe ne répond pas : la matrice reste modifiable, l'attribution attendra.</source>
+        <target state="translated">The team directory is not responding: the matrix can still be edited, assignment will have to wait.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team-empty" datatype="html">
+        <source>Aucun membre actif pour l'instant.</source>
+        <target state="translated">No active member yet.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.account-roles-only" datatype="html">
+        <source>Rôles de son compte seulement</source>
+        <target state="translated">Account roles only</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.assign" datatype="html">
+        <source>Attribuer un rôle</source>
+        <target state="translated">Assign a role</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.assigned" datatype="html">
+        <source><x id="member"/> a désormais le rôle <x id="role"/>.</source>
+        <target state="translated"><x id="member"/> now has the <x id="role"/> role.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.unassigned" datatype="html">
+        <source><x id="member"/> n'a plus le rôle <x id="role"/>.</source>
+        <target state="translated"><x id="member"/> no longer has the <x id="role"/> role.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.unassign-aria" datatype="html">
+        <source>Retirer le rôle <x id="role"/> à <x id="member"/></source>
+        <target state="translated">Remove the <x id="role"/> role from <x id="member"/></target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.grid" datatype="html">
+        <source>Matrice des droits</source>
+        <target state="translated">Permission matrix</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">Actions</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-menu" datatype="html">
+        <source>Options du rôle</source>
+        <target state="translated">Role options</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.reset" datatype="html">
+        <source>Rétablir</source>
+        <target state="translated">Restore</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.custom" datatype="html">
+        <source>Sur mesure</source>
+        <target state="translated">Custom</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.customized" datatype="html">
+        <source>Réglé</source>
+        <target state="translated">Adjusted</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.delivered" datatype="html">
+        <source>Droits livrés</source>
+        <target state="translated">Default permissions</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.granted-count" datatype="html">
+        <source><x id="COUNT"/> actions</source>
+        <target state="translated"><x id="COUNT"/> actions</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.drop-here" datatype="html">
+        <source>Déposer ici</source>
+        <target state="translated">Drop here</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.locked" datatype="html">
+        <source>L'administrateur garde toujours ce droit : sans lui, plus personne ne pourrait rétablir les autres.</source>
+        <target state="translated">The administrator always keeps this permission: without it, no one could restore the others.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.pending" datatype="html">
+        <source>Rôles modifiés : <x id="COUNT"/></source>
+        <target state="translated">Roles changed: <x id="COUNT"/></target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.discard" datatype="html">
+        <source>Annuler les changements</source>
+        <target state="translated">Discard changes</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.saved" datatype="html">
+        <source>Droits enregistrés.</source>
+        <target state="translated">Permissions saved.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.reset-title" datatype="html">
+        <source>Rendre au rôle <x id="role"/> ses droits d'origine ?</source>
+        <target state="translated">Restore the default permissions of the <x id="role"/> role?</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.reset-message" datatype="html">
+        <source>Les droits livrés par la plateforme remplacent vos réglages. Ses membres le gardent.</source>
+        <target state="translated">The platform defaults replace your adjustments. Its members keep the role.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.delete-title" datatype="html">
+        <source>Supprimer le rôle <x id="role"/> ?</source>
+        <target state="translated">Delete the <x id="role"/> role?</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.delete-message" datatype="html">
+        <source>Ses membres perdent les droits qu'il leur donnait. La suppression est tracée dans le journal d'audit.</source>
+        <target state="translated">Its members lose the permissions it gave them. The deletion is recorded in the audit log.</target>
+      </trans-unit>
       <trans-unit id="calibration.col-due" datatype="html">
         <source>Prochaine calibration</source>
         <target state="translated">Next calibration</target>

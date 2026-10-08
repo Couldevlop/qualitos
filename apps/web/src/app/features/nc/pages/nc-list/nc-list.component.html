@@ -2,7 +2,7 @@
   <qos-page-header
     [title]="pageTitle"
     [subtitle]="pageSubtitle">
-    <button qosActions mat-flat-button color="primary" type="button" (click)="openCreate()">
+    <button qosActions mat-flat-button color="primary" type="button" (click)="openCreate()" *qosCan="'nc.create'">
       <mat-icon>add</mat-icon>
       <span i18n="@@nc.list.new-nc">Déclarer une NC</span>
     </button>

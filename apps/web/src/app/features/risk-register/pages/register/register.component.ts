@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { forkJoin } from 'rxjs';
 
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthzService } from '../../../../core/authz/authz.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { RiskRegisterService } from '../../risk-register.service';
 import {
@@ -14,10 +15,6 @@ import {
   OpportunityLevel, OpportunityStatus, OpportunityView, RegisterType, RiskLevel, RiskStatus, RiskView
 } from '../../risk-register.types';
 import { csvCell } from '../../risk-register.csv';
-
-/** Qui écrit : le serveur tranche (`RiskRegisterController.ROLES_PILOTAGE`), l'écran n'affiche que ce qui servira. */
-export const ROLES_PILOTAGE =
-  ['QUALITY_MANAGER', 'DIRECTOR_QUALITY', 'QUALITY_DIRECTOR', 'ADMIN_TENANT', 'SUPER_ADMIN'];
 
 export type RegisterTab = 'risks' | 'opportunities';
 /** Sur quelle cotation se lit et se trie le registre des risques. */
@@ -42,7 +39,9 @@ export class RegisterComponent implements OnInit {
   readonly types = TYPES;
   readonly riskStatuses = RISK_STATUSES;
   readonly opportunityStatuses = OPPORTUNITY_STATUSES;
-  readonly editable: boolean;
+  /** Qui écrit : le serveur tranche (actions risk.manage / opportunity.manage, ADR 0078) ; l'écran n'affiche que ce qui servira. */
+  canRisks = false;
+  canOpportunities = false;
   readonly searchRiskPlaceholder = $localize`:@@rr.search-risk:Rechercher un risque`;
   readonly searchOpportunityPlaceholder = $localize`:@@rr.search-opportunity:Rechercher une opportunité`;
 
@@ -64,9 +63,15 @@ export class RegisterComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly snack: MatSnackBar,
-    auth: AuthService
+    authz: AuthzService
   ) {
-    this.editable = auth.hasAnyRole(ROLES_PILOTAGE);
+    authz.can('risk.manage').pipe(takeUntilDestroyed()).subscribe(v => this.canRisks = v);
+    authz.can('opportunity.manage').pipe(takeUntilDestroyed()).subscribe(v => this.canOpportunities = v);
+  }
+
+  /** Peut-on créer dans l'onglet affiché ? */
+  get editable(): boolean {
+    return this.tab === 'risks' ? this.canRisks : this.canOpportunities;
   }
 
   ngOnInit(): void {

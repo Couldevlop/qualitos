@@ -1,0 +1,163 @@
+<div class="qos-page console">
+  <qos-page-header
+    title="Rôles et droits" i18n-title="@@authz.matrix.title"
+    subtitle="Ce que chaque rôle peut faire, et qui le porte. Glissez un membre sur un rôle pour le lui donner."
+    i18n-subtitle="@@authz.matrix.subtitle">
+    <ng-container qosActions>
+      <button mat-flat-button color="primary" type="button" (click)="openCreate()" [disabled]="loading || creating"
+              data-test="nouveau-role">
+        <mat-icon>add</mat-icon>
+        <span i18n="@@authz.matrix.new-role">Nouveau rôle</span>
+      </button>
+    </ng-container>
+  </qos-page-header>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert">
+    <span i18n="@@authz.matrix.load-failed">Les droits n'ont pas pu être chargés.</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <!-- Nouveau rôle : un nom, un code, puis on coche ses droits dans la matrice. -->
+  <form class="creation" *ngIf="creating" [formGroup]="createForm" (ngSubmit)="createRole()" novalidate
+        data-test="form-role">
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@authz.matrix.role-name">Nom du rôle</mat-label>
+      <input matInput formControlName="name" maxlength="120" (input)="suggestCode()" data-test="role-nom"
+             i18n-placeholder="@@authz.matrix.role-name-placeholder" placeholder="Pilote de site">
+      <mat-error *ngIf="createForm.controls.name.hasError('required')" i18n="@@rr.form.required">Champ obligatoire.</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label i18n="@@authz.matrix.role-code">Code</mat-label>
+      <input matInput formControlName="code" maxlength="64" data-test="role-code">
+      <mat-hint i18n="@@authz.matrix.role-code-hint">Lettres, chiffres et _ ; il ne change plus ensuite.</mat-hint>
+      <mat-error *ngIf="createForm.controls.code.invalid" i18n="@@authz.matrix.role-code-invalid">Lettres, chiffres et _, en commençant par une lettre.</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="creation__description">
+      <mat-label i18n="@@authz.matrix.role-description">Description (facultatif)</mat-label>
+      <input matInput formControlName="description" maxlength="500">
+    </mat-form-field>
+    <div class="creation__boutons">
+      <button mat-stroked-button type="button" (click)="creating = false" i18n="@@common.cancel">Annuler</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="saving" data-test="role-creer"
+              i18n="@@authz.matrix.create">Créer le rôle</button>
+    </div>
+  </form>
+
+  <div class="plateau" *ngIf="!failed && !loading && roles.length" cdkDropListGroup>
+
+    <!-- ===== Vivier : l'équipe, qu'on glisse sur un rôle ===== -->
+    <aside class="vivier" aria-labelledby="vivier-titre">
+      <h2 class="vivier__titre" id="vivier-titre" i18n="@@authz.matrix.team">Équipe</h2>
+      <p class="vivier__aide" i18n="@@authz.matrix.team-help">Glissez une carte sur une colonne, ou ouvrez son menu.</p>
+
+      <p class="vivier__vide" *ngIf="teamFailed" role="note" data-test="equipe-indisponible"
+         i18n="@@authz.matrix.team-failed">L'annuaire de l'équipe ne répond pas : la matrice reste modifiable, l'attribution attendra.</p>
+      <p class="vivier__vide" *ngIf="!teamFailed && !team.length" i18n="@@authz.matrix.team-empty">Aucun membre actif pour l'instant.</p>
+
+      <ul class="vivier__liste" cdkDropList [cdkDropListData]="''" [cdkDropListSortingDisabled]="true"
+          [cdkDropListEnterPredicate]="neverEnter">
+        <li *ngFor="let u of team; trackBy: trackByUser" class="membre" cdkDrag [cdkDragData]="u"
+            data-test="membre">
+          <span class="pastille pastille--neutre" aria-hidden="true">{{ initials(u) }}</span>
+          <span class="membre__texte">
+            <span class="membre__nom">{{ u.email }}</span>
+            <span class="membre__roles" *ngIf="rolesOf(u).length; else sansRole">
+              <ng-container *ngFor="let c of rolesOf(u); let last = last">{{ labelOf(c) }}<ng-container *ngIf="!last">, </ng-container></ng-container>
+            </span>
+            <ng-template #sansRole><span class="membre__roles membre__roles--vide" i18n="@@authz.matrix.account-roles-only">Rôles de son compte seulement</span></ng-template>
+          </span>
+          <button mat-icon-button type="button" [matMenuTriggerFor]="menuMembre"
+                  i18n-aria-label="@@authz.matrix.assign" aria-label="Attribuer un rôle"
+                  i18n-matTooltip="@@authz.matrix.assign" matTooltip="Attribuer un rôle">
+            <mat-icon>person_add</mat-icon>
+          </button>
+          <mat-menu #menuMembre="matMenu">
+            <button mat-menu-item *ngFor="let r of roles; trackBy: trackByCode" (click)="assign(u, r.code)"
+                    [disabled]="rolesOf(u).includes(r.code)">
+              <span class="point point--{{ hue(r) }}" aria-hidden="true"></span>{{ roleText(r) }}
+            </button>
+          </mat-menu>
+          <div *cdkDragPreview class="membre membre--apercu">
+            <span class="pastille pastille--neutre">{{ initials(u) }}</span>{{ u.email }}
+          </div>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- ===== Matrice : actions × rôles ===== -->
+    <div class="matrice" role="region" i18n-aria-label="@@authz.matrix.grid" aria-label="Matrice des droits">
+      <table data-test="matrice">
+        <thead>
+          <tr>
+            <th scope="col" class="coin">
+              <span i18n="@@authz.matrix.actions">Actions</span>
+            </th>
+            <th scope="col" *ngFor="let r of roles; trackBy: trackByCode" class="role teinte-{{ hue(r) }}"
+                [class.role--modifie]="isChanged(r)" [attr.data-test]="'role-' + r.code">
+              <div class="role__entete">
+                <span class="role__nom">{{ roleText(r) }}</span>
+                <button mat-icon-button type="button" class="role__menu" [matMenuTriggerFor]="menuRole"
+                        *ngIf="!r.system || r.customized"
+                        i18n-aria-label="@@authz.matrix.role-menu" aria-label="Options du rôle">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menuRole="matMenu">
+                  <button mat-menu-item (click)="removeOrReset(r)" [attr.data-test]="'retablir-' + r.code">
+                    <mat-icon>{{ r.system ? 'restart_alt' : 'delete' }}</mat-icon>
+                    <span *ngIf="r.system" i18n="@@authz.matrix.reset">Rétablir</span>
+                    <span *ngIf="!r.system" i18n="@@common.delete">Supprimer</span>
+                  </button>
+                </mat-menu>
+              </div>
+              <span class="role__statut">
+                <ng-container *ngIf="!r.system" i18n="@@authz.matrix.custom">Sur mesure</ng-container>
+                <ng-container *ngIf="r.system && r.customized" i18n="@@authz.matrix.customized">Réglé</ng-container>
+                <ng-container *ngIf="r.system && !r.customized" i18n="@@authz.matrix.delivered">Droits livrés</ng-container>
+                · <span i18n="@@authz.matrix.granted-count">{{ grantedCount(r) // i18n(ph="count") }} actions</span>
+              </span>
+              <!-- La zone de dépôt : les membres qui portent ce rôle dans l'application. -->
+              <div class="role__depot" cdkDropList [cdkDropListData]="r.code" (cdkDropListDropped)="dropOnRole($event)"
+                   [attr.data-test]="'depot-' + r.code">
+                <span *ngFor="let u of membersOf(r); trackBy: trackByUser" class="pastille" [matTooltip]="u.email">
+                  {{ initials(u) }}
+                  <button type="button" class="pastille__retirer" (click)="unassign(u, r.code)"
+                          [attr.aria-label]="labelRetrait(u, r)">×</button>
+                </span>
+                <span class="role__deposer" *ngIf="!membersOf(r).length" i18n="@@authz.matrix.drop-here">Déposer ici</span>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let g of groups; trackBy: trackByModule">
+          <tr class="module">
+            <th scope="colgroup" [attr.colspan]="roles.length + 1">{{ moduleText(g.module) }}</th>
+          </tr>
+          <tr *ngFor="let p of g.permissions; trackBy: trackByPermission">
+            <th scope="row" class="action">{{ permissionText(p) }}</th>
+            <td *ngFor="let r of roles; trackBy: trackByCode" class="cellule teinte-{{ hue(r) }}">
+              <button type="button" role="switch" class="interrupteur" [class.interrupteur--on]="isGranted(r, p)"
+                      [attr.aria-checked]="isGranted(r, p)" [disabled]="isLocked(r, p) || saving"
+                      [attr.aria-label]="roleText(r) + ' — ' + permissionText(p)"
+                      [matTooltip]="isLocked(r, p) ? lockedText : ''"
+                      (click)="toggle(r, p)" [attr.data-test]="'cellule-' + r.code + '-' + p">
+                <mat-icon *ngIf="isGranted(r, p)" aria-hidden="true">{{ isLocked(r, p) ? 'lock' : 'check' }}</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Barre d'enregistrement : présente seulement quand quelque chose change. -->
+  <div class="barre" *ngIf="changedCount" role="status" data-test="barre">
+    <span i18n="@@authz.matrix.pending">Rôles modifiés : {{ changedCount // i18n(ph="count") }}</span>
+    <span class="barre__boutons">
+      <button mat-stroked-button type="button" (click)="discard()" [disabled]="saving" i18n="@@authz.matrix.discard">Annuler les changements</button>
+      <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="saving" data-test="enregistrer"
+              i18n="@@common.save">Enregistrer</button>
+    </span>
+  </div>
+</div>

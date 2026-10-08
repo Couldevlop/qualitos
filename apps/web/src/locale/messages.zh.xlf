@@ -5162,6 +5162,302 @@ Portail clients</source>
         <source>Videz le champ pour ne plus envoyer de rappel par courriel.</source>
         <target state="translated">清空该字段即可停止发送邮件提醒。</target>
       </trans-unit>
+      <trans-unit id="nav.admin-roles" datatype="html">
+        <source>Rôles et droits</source>
+        <target state="translated">角色与权限</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.authz-manage" datatype="html">
+        <source>Administrer les rôles et les droits</source>
+        <target state="translated">管理角色与权限</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-create" datatype="html">
+        <source>Ouvrir un dossier CAPA</source>
+        <target state="translated">开启 CAPA 案例</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-edit" datatype="html">
+        <source>Modifier et démarrer un dossier</source>
+        <target state="translated">编辑并启动案例</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-resolve" datatype="html">
+        <source>Résoudre un dossier</source>
+        <target state="translated">解决案例</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-reject" datatype="html">
+        <source>Rejeter un dossier</source>
+        <target state="translated">驳回案例</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-verify" datatype="html">
+        <source>Vérifier l'efficacité</source>
+        <target state="translated">验证有效性</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-delete" datatype="html">
+        <source>Supprimer un dossier</source>
+        <target state="translated">删除案例</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-action-manage" datatype="html">
+        <source>Ajouter et retirer des actions</source>
+        <target state="translated">添加和移除措施</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-action-update" datatype="html">
+        <source>Faire avancer une action</source>
+        <target state="translated">推进措施</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-create" datatype="html">
+        <source>Déclarer une non-conformité</source>
+        <target state="translated">报告不合格</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-edit" datatype="html">
+        <source>Modifier une non-conformité</source>
+        <target state="translated">编辑不合格</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-photo" datatype="html">
+        <source>Ajouter des photos</source>
+        <target state="translated">添加照片</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-process" datatype="html">
+        <source>Analyser et résoudre</source>
+        <target state="translated">分析并解决</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-close" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">关闭</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-reject" datatype="html">
+        <source>Annuler ou rejeter</source>
+        <target state="translated">取消或驳回</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-escalate" datatype="html">
+        <source>Poser une action corrective</source>
+        <target state="translated">提出纠正措施</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-edit" datatype="html">
+        <source>Rédiger et archiver</source>
+        <target state="translated">编写与归档</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-submit" datatype="html">
+        <source>Soumettre à revue</source>
+        <target state="translated">提交审阅</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-approve" datatype="html">
+        <source>Approuver</source>
+        <target state="translated">批准</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-publish" datatype="html">
+        <source>Publier</source>
+        <target state="translated">发布</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-acknowledge" datatype="html">
+        <source>Acquitter une lecture</source>
+        <target state="translated">确认阅读</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.risk-manage" datatype="html">
+        <source>Tenir le registre des risques</source>
+        <target state="translated">维护风险登记册</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.opportunity-manage" datatype="html">
+        <source>Tenir le registre des opportunités</source>
+        <target state="translated">维护机遇登记册</target>
+      </trans-unit>
+      <trans-unit id="authz.module.admin" datatype="html">
+        <source>Administration</source>
+        <target state="translated">管理</target>
+      </trans-unit>
+      <trans-unit id="authz.module.capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="authz.module.nc" datatype="html">
+        <source>Non-conformités</source>
+        <target state="translated">不合格</target>
+      </trans-unit>
+      <trans-unit id="authz.module.document" datatype="html">
+        <source>Documents</source>
+        <target state="translated">文件</target>
+      </trans-unit>
+      <trans-unit id="authz.module.risk" datatype="html">
+        <source>Risques et opportunités</source>
+        <target state="translated">风险与机遇</target>
+      </trans-unit>
+      <trans-unit id="authz.role.admin-tenant" datatype="html">
+        <source>Administrateur</source>
+        <target state="translated">管理员</target>
+      </trans-unit>
+      <trans-unit id="authz.role.quality-director" datatype="html">
+        <source>Directeur qualité</source>
+        <target state="translated">质量总监</target>
+      </trans-unit>
+      <trans-unit id="authz.role.quality-manager" datatype="html">
+        <source>Manager qualité</source>
+        <target state="translated">质量经理</target>
+      </trans-unit>
+      <trans-unit id="authz.role.auditor" datatype="html">
+        <source>Auditeur</source>
+        <target state="translated">审核员</target>
+      </trans-unit>
+      <trans-unit id="authz.role.user" datatype="html">
+        <source>Utilisateur</source>
+        <target state="translated">用户</target>
+      </trans-unit>
+      <trans-unit id="authz.role.external-auditor" datatype="html">
+        <source>Auditeur externe</source>
+        <target state="translated">外部审核员</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.title" datatype="html">
+        <source>Rôles et droits</source>
+        <target state="translated">角色与权限</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.subtitle" datatype="html">
+        <source>Ce que chaque rôle peut faire, et qui le porte. Glissez un membre sur un rôle pour le lui donner.</source>
+        <target state="translated">每个角色能做什么、由谁担任。将成员拖到角色上即可授予。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.new-role" datatype="html">
+        <source>Nouveau rôle</source>
+        <target state="translated">新建角色</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.load-failed" datatype="html">
+        <source>Les droits n'ont pas pu être chargés.</source>
+        <target state="translated">无法加载权限。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.failed" datatype="html">
+        <source>L'opération sur les droits a échoué.</source>
+        <target state="translated">权限操作失败。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-name" datatype="html">
+        <source>Nom du rôle</source>
+        <target state="translated">角色名称</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-name-placeholder" datatype="html">
+        <source>Pilote de site</source>
+        <target state="translated">现场负责人</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-code" datatype="html">
+        <source>Code</source>
+        <target state="translated">代码</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-code-hint" datatype="html">
+        <source>Lettres, chiffres et _ ; il ne change plus ensuite.</source>
+        <target state="translated">字母、数字和 _；之后不可更改。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-code-invalid" datatype="html">
+        <source>Lettres, chiffres et _, en commençant par une lettre.</source>
+        <target state="translated">以字母开头的字母、数字和 _。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-description" datatype="html">
+        <source>Description (facultatif)</source>
+        <target state="translated">描述（可选）</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.create" datatype="html">
+        <source>Créer le rôle</source>
+        <target state="translated">创建角色</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.created" datatype="html">
+        <source>Rôle créé : cochez maintenant ses droits.</source>
+        <target state="translated">角色已创建：现在勾选其权限。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team" datatype="html">
+        <source>Équipe</source>
+        <target state="translated">团队</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team-help" datatype="html">
+        <source>Glissez une carte sur une colonne, ou ouvrez son menu.</source>
+        <target state="translated">将卡片拖到某一列，或打开其菜单。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team-failed" datatype="html">
+        <source>L'annuaire de l'équipe ne répond pas : la matrice reste modifiable, l'attribution attendra.</source>
+        <target state="translated">团队目录无响应：矩阵仍可编辑，分配需稍后进行。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team-empty" datatype="html">
+        <source>Aucun membre actif pour l'instant.</source>
+        <target state="translated">暂无活跃成员。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.account-roles-only" datatype="html">
+        <source>Rôles de son compte seulement</source>
+        <target state="translated">仅账户角色</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.assign" datatype="html">
+        <source>Attribuer un rôle</source>
+        <target state="translated">分配角色</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.assigned" datatype="html">
+        <source><x id="member"/> a désormais le rôle <x id="role"/>.</source>
+        <target state="translated"><x id="member"/> 现在拥有 <x id="role"/> 角色。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.unassigned" datatype="html">
+        <source><x id="member"/> n'a plus le rôle <x id="role"/>.</source>
+        <target state="translated"><x id="member"/> 不再拥有 <x id="role"/> 角色。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.unassign-aria" datatype="html">
+        <source>Retirer le rôle <x id="role"/> à <x id="member"/></source>
+        <target state="translated">移除 <x id="member"/> 的 <x id="role"/> 角色</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.grid" datatype="html">
+        <source>Matrice des droits</source>
+        <target state="translated">权限矩阵</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">操作</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-menu" datatype="html">
+        <source>Options du rôle</source>
+        <target state="translated">角色选项</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.reset" datatype="html">
+        <source>Rétablir</source>
+        <target state="translated">恢复</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.custom" datatype="html">
+        <source>Sur mesure</source>
+        <target state="translated">自定义</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.customized" datatype="html">
+        <source>Réglé</source>
+        <target state="translated">已调整</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.delivered" datatype="html">
+        <source>Droits livrés</source>
+        <target state="translated">默认权限</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.granted-count" datatype="html">
+        <source><x id="COUNT"/> actions</source>
+        <target state="translated"><x id="COUNT"/> 项操作</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.drop-here" datatype="html">
+        <source>Déposer ici</source>
+        <target state="translated">拖放到此处</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.locked" datatype="html">
+        <source>L'administrateur garde toujours ce droit : sans lui, plus personne ne pourrait rétablir les autres.</source>
+        <target state="translated">管理员始终保留此权限：没有它，任何人都无法恢复其他权限。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.pending" datatype="html">
+        <source>Rôles modifiés : <x id="COUNT"/></source>
+        <target state="translated">已修改角色：<x id="COUNT"/></target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.discard" datatype="html">
+        <source>Annuler les changements</source>
+        <target state="translated">放弃更改</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.saved" datatype="html">
+        <source>Droits enregistrés.</source>
+        <target state="translated">权限已保存。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.reset-title" datatype="html">
+        <source>Rendre au rôle <x id="role"/> ses droits d'origine ?</source>
+        <target state="translated">将 <x id="role"/> 角色恢复为默认权限？</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.reset-message" datatype="html">
+        <source>Les droits livrés par la plateforme remplacent vos réglages. Ses membres le gardent.</source>
+        <target state="translated">平台默认权限将替换您的调整。其成员保留该角色。</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.delete-title" datatype="html">
+        <source>Supprimer le rôle <x id="role"/> ?</source>
+        <target state="translated">删除 <x id="role"/> 角色？</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.delete-message" datatype="html">
+        <source>Ses membres perdent les droits qu'il leur donnait. La suppression est tracée dans le journal d'audit.</source>
+        <target state="translated">其成员将失去该角色授予的权限。删除操作会记录在审计日志中。</target>
+      </trans-unit>
       <trans-unit id="calibration.col-due" datatype="html">
         <source>Prochaine calibration</source>
         <target state="translated">下次校准</target>

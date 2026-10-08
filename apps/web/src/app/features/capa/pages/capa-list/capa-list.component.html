@@ -4,7 +4,7 @@
       <h1 i18n="@@capa.list.title">CAPA</h1>
       <p i18n="@@capa.list.subtitle">Actions correctives & préventives — workflow et vérification d'efficacité.</p>
     </div>
-    <button mat-flat-button color="primary" type="button" (click)="openCreate()">
+    <button mat-flat-button color="primary" type="button" (click)="openCreate()" *qosCan="'capa.create'">
       <mat-icon>add</mat-icon>
       <span i18n="@@capa.list.new-capa">Nouveau CAPA</span>
     </button>

@@ -76,7 +76,8 @@ describe('SmiDashboardComponent', () => {
     fixture.detectChanges();
   }
 
-  afterEach(() => http.verify());
+  // `http` manque quand un test n'appelle pas setup() et passe en premier (ordre aléatoire).
+  afterEach(() => http?.verify());
 
   it('montre les quatre indicateurs, la conformité par norme et la semaine', async () => {
     await setup();

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -6,7 +6,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
 
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthzService } from '../../../../core/authz/authz.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { PageBreadcrumb } from '../../../../shared/ui/page-header/page-header.component';
 import { RiskRegisterService } from '../../risk-register.service';
@@ -19,7 +20,6 @@ import {
   OpportunityLevel, OpportunityRequest, OpportunityView, RegisterOrigin, RegisterRequirement,
   RegisterSuggestions, RiskDraft, RiskLevel, RiskRequest, RiskSourceOrigin, RiskView
 } from '../../risk-register.types';
-import { ROLES_PILOTAGE } from '../register/register.component';
 
 export type ItemKind = 'risk' | 'opportunity';
 
@@ -54,7 +54,10 @@ export class ItemFormComponent implements OnInit {
   readonly feasibilities = FEASIBILITIES;
   readonly riskStatuses = RISK_STATUSES;
   readonly opportunityStatuses = OPPORTUNITY_STATUSES;
-  readonly editable: boolean;
+  /** Faux tant que les droits ne sont pas lus ; {@link rightsKnown} dit quand ils le sont. */
+  editable = false;
+  rightsKnown = false;
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly newRiskTitle = $localize`:@@rr.form.new-risk:Nouveau risque`;
   readonly editRiskTitle = $localize`:@@rr.form.edit-risk:Modifier le risque`;
@@ -91,15 +94,18 @@ export class ItemFormComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly snack: MatSnackBar,
-    auth: AuthService
-  ) {
-    this.editable = auth.hasAnyRole(ROLES_PILOTAGE);
-  }
+    private readonly authz: AuthzService
+  ) {}
 
   ngOnInit(): void {
     const snap = this.route.snapshot;
     this.kind = snap.data['kind'] === 'opportunity' ? 'opportunity' : 'risk';
     this.itemId = snap.paramMap.get('id');
+    // Risque ou opportunité : chacun son action (ADR 0078). Le serveur tranche ;
+    // l'écran n'affiche que ce qui servira.
+    this.authz.can(this.kind === 'risk' ? 'risk.manage' : 'opportunity.manage')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(v => { this.editable = v; this.rightsKnown = true; });
     this.form = this.construire();
     this.service.suggestions().pipe(catchError(() => of(this.suggestions)))
       .subscribe(s => this.suggestions = s);

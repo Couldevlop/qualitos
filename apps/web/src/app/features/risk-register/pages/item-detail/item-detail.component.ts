@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthzService } from '../../../../core/authz/authz.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { PageBreadcrumb } from '../../../../shared/ui/page-header/page-header.component';
 import {
@@ -19,7 +20,6 @@ import {
 import {
   OpportunityAction, OpportunitySheet, RegisterEvent, RegisterRequirement, RiskSheet
 } from '../../risk-register.types';
-import { ROLES_PILOTAGE } from '../register/register.component';
 import { ItemKind } from '../item-form/item-form.component';
 import {
   ActionDialogComponent, ActionDialogData, ActionDialogResult
@@ -41,7 +41,10 @@ import {
 })
 export class ItemDetailComponent implements OnInit {
 
-  readonly editable: boolean;
+  /** Faux tant que les droits ne sont pas lus ; {@link rightsKnown} dit quand ils le sont. */
+  editable = false;
+  rightsKnown = false;
+  private readonly destroyRef = inject(DestroyRef);
 
   kind: ItemKind = 'risk';
   id = '';
@@ -58,14 +61,17 @@ export class ItemDetailComponent implements OnInit {
     private readonly dialog: MatDialog,
     private readonly snack: MatSnackBar,
     private readonly capaOpener: RiskCapaOpener,
-    auth: AuthService
-  ) {
-    this.editable = auth.hasAnyRole(ROLES_PILOTAGE);
-  }
+    private readonly authz: AuthzService
+  ) {}
 
   ngOnInit(): void {
     this.kind = this.route.snapshot.data['kind'] === 'opportunity' ? 'opportunity' : 'risk';
     this.id = this.route.snapshot.paramMap.get('id') ?? '';
+    // Risque ou opportunité : chacun son action (ADR 0078). Le serveur tranche ;
+    // l'écran n'affiche que ce qui servira.
+    this.authz.can(this.kind === 'risk' ? 'risk.manage' : 'opportunity.manage')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(v => { this.editable = v; this.rightsKnown = true; });
     this.charger();
   }
 

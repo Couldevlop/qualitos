@@ -13,6 +13,7 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { DocumentResponse } from '../../documents.types';
 import { DocumentsListComponent } from './documents-list.component';
+import { AuthzService } from '../../../../core/authz/authz.service';
 
 function doc(overrides: Partial<DocumentResponse> = {}): DocumentResponse {
   return {
@@ -39,6 +40,8 @@ describe('DocumentsListComponent', () => {
       declarations: [DocumentsListComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
+        // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
+        { provide: AuthzService, useValue: { can: () => of(true) } },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideRouter([])
@@ -129,6 +132,8 @@ describe('DocumentsListComponent (chargement API)', () => {
       declarations: [DocumentsListComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
+        // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
+        { provide: AuthzService, useValue: { can: () => of(true) } },
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideRouter([])

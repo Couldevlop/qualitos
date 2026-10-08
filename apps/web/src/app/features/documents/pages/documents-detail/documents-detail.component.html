@@ -18,7 +18,7 @@
         <p *ngIf="d.description" class="desc">{{ d.description }}</p>
       </div>
 
-      <div class="toolbar">
+      <div class="toolbar" *qosCan="'document.edit'">
         <button mat-stroked-button (click)="openEdit(d)">
           <mat-icon>edit</mat-icon> <span i18n="@@common.edit">Modifier</span>
         </button>
@@ -69,22 +69,30 @@
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef i18n="@@documents.detail.col-workflow">Workflow</th>
             <td mat-cell *matCellDef="let v" class="actions">
+              <ng-container *qosCan="'document.submit'">
               <button mat-icon-button *ngIf="v.status === 'DRAFT'" (click)="submitForReview(v)"
                       matTooltip="Soumettre à revue" i18n-matTooltip="@@documents.detail.submit-review-tooltip">
                 <mat-icon>send</mat-icon>
               </button>
+              </ng-container>
+              <ng-container *qosCan="'document.approve'">
               <button mat-icon-button *ngIf="v.status === 'IN_REVIEW'" (click)="approve(v)"
                       matTooltip="Approuver" i18n-matTooltip="@@documents.detail.approve-tooltip">
                 <mat-icon>verified</mat-icon>
               </button>
+              </ng-container>
+              <ng-container *qosCan="'document.publish'">
               <button mat-icon-button *ngIf="v.status === 'APPROVED'" (click)="publish(v)"
                       matTooltip="Publier" i18n-matTooltip="@@documents.detail.publish-tooltip" color="primary">
                 <mat-icon>publish</mat-icon>
               </button>
+              </ng-container>
+              <ng-container *qosCan="'document.acknowledge'">
               <button mat-icon-button *ngIf="v.status === 'PUBLISHED' && d.mandatoryRead"
                       (click)="acknowledge(v)" matTooltip="Acquitter la lecture" i18n-matTooltip="@@documents.detail.acknowledge-tooltip">
                 <mat-icon>task_alt</mat-icon>
               </button>
+              </ng-container>
               <span *ngIf="v.blockchainTxHash" matTooltip="Ancré blockchain" i18n-matTooltip="@@documents.detail.anchored-tooltip" class="chain">
                 <mat-icon>link</mat-icon>
               </span>

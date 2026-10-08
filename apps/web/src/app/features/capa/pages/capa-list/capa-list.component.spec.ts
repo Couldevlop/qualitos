@@ -13,6 +13,7 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { CapaCaseResponse } from '../../capa.types';
 import { CapaListComponent } from './capa-list.component';
+import { AuthzService } from '../../../../core/authz/authz.service';
 
 describe('CapaListComponent', () => {
   let component: CapaListComponent;
@@ -28,7 +29,8 @@ describe('CapaListComponent', () => {
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-        provideRouter([])
+        provideRouter([]),
+        { provide: AuthzService, useValue: { can: () => of(true) } }
       ]
     }).compileComponents();
     fixture = TestBed.createComponent(CapaListComponent);
@@ -113,7 +115,8 @@ describe('CapaListComponent (chargement API)', () => {
       providers: [
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
-        provideRouter([])
+        provideRouter([]),
+        { provide: AuthzService, useValue: { can: () => of(true) } }
       ]
     }).compileComponents();
     fixture = TestBed.createComponent(CapaListComponent);
@@ -242,6 +245,7 @@ describe('CapaListComponent — création ouverte par un lien', () => {
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideRouter([]),
+        { provide: AuthzService, useValue: { can: () => of(true) } },
         { provide: MatDialog, useValue: dialog },
         { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({
           nouveau: '1', titre: 'Écart ISO 45001 · 6', ref: 'iso-45001 §6', description: 'x'.repeat(5000)
@@ -271,6 +275,7 @@ describe('CapaListComponent — création ouverte par un lien', () => {
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         provideRouter([]),
+        { provide: AuthzService, useValue: { can: () => of(true) } },
         { provide: MatDialog, useValue: dialog },
         { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: convertToParamMap({}) } } }
       ]
