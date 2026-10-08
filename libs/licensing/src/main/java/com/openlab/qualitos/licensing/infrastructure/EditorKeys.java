@@ -73,8 +73,40 @@ public final class EditorKeys {
             priv.setProperty(a.name() + ".private", Base64.getEncoder().encodeToString(km.privateKey()));
             pub.setProperty(a.name() + ".public", pubB64);
         }
+        restrictToOwner(privateFile);
         store(priv, privateFile, "QualitOS - cles PRIVEES de l'editeur. Ne jamais versionner ni copier sur un serveur.");
         store(pub, publicFile, "QualitOS - cles PUBLIQUES de l'editeur, epinglees dans l'application.");
+    }
+
+    /**
+     * Crée le fichier des clés privées lisible par son seul propriétaire, AVANT d'y
+     * écrire quoi que ce soit : jamais de fenêtre pendant laquelle la clé serait
+     * lisible par d'autres comptes. POSIX : {@code rw-------}. Ailleurs (Windows),
+     * les droits « tout le monde » sont retirés et réservés au propriétaire.
+     */
+    static void restrictToOwner(Path file) throws IOException {
+        if (file.getParent() != null) {
+            Files.createDirectories(file.getParent());
+        }
+        if (file.getFileSystem().supportedFileAttributeViews().contains("posix")) {
+            Files.createFile(file, java.nio.file.attribute.PosixFilePermissions.asFileAttribute(
+                    java.nio.file.attribute.PosixFilePermissions.fromString("rw-------")));
+            return;
+        }
+        Files.createFile(file);
+        java.nio.file.attribute.AclFileAttributeView acl =
+                Files.getFileAttributeView(file, java.nio.file.attribute.AclFileAttributeView.class);
+        if (acl == null) {
+            Files.delete(file);
+            throw new IOException("Impossible de restreindre les droits de " + file
+                    + " : ni POSIX ni ACL sur ce système de fichiers.");
+        }
+        // Une seule entrée : le propriétaire, tous les droits. Rien d'hérité du dossier.
+        acl.setAcl(java.util.List.of(java.nio.file.attribute.AclEntry.newBuilder()
+                .setType(java.nio.file.attribute.AclEntryType.ALLOW)
+                .setPrincipal(Files.getOwner(file))
+                .setPermissions(java.util.EnumSet.allOf(java.nio.file.attribute.AclEntryPermission.class))
+                .build()));
     }
 
     private static Map<SignatureAlgorithm, byte[]> publicKeys(Properties p) {

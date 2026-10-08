@@ -358,6 +358,18 @@ class LicensingTest {
             Path priv = dir.resolve("p/privees.properties");
             Path pub = dir.resolve("publiques.properties");
             EditorKeys.generate(priv, pub);
+            if (priv.getFileSystem().supportedFileAttributeViews().contains("posix")) {
+                // Le fichier des clés privées n'est lisible que par son propriétaire.
+                assertThat(java.nio.file.attribute.PosixFilePermissions.toString(
+                        Files.getPosixFilePermissions(priv))).isEqualTo("rw-------");
+            } else {
+                java.nio.file.attribute.AclFileAttributeView acl = Files.getFileAttributeView(priv,
+                        java.nio.file.attribute.AclFileAttributeView.class);
+                assertThat(acl.getAcl()).singleElement()
+                        .satisfies(e -> assertThat(e.principal()).isEqualTo(Files.getOwner(priv)));
+            }
+            assertThatThrownBy(() -> EditorKeys.generate(priv, pub))
+                    .isInstanceOf(java.nio.file.FileAlreadyExistsException.class);
             Map<SignatureAlgorithm, KeyMaterial> relues = EditorKeys.readPrivate(priv);
             License l = licence(Set.of("*"), 0);
             assertThat(new LicenseVerifier(EditorKeys.readPublic(pub)).verify(emettre(l, relues))).isEqualTo(l);
