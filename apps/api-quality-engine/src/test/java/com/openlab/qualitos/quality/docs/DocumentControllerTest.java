@@ -207,6 +207,33 @@ class DocumentControllerTest {
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void reject_withReason_ok() throws Exception {
+        when(service.rejectVersion(eq(DOC), eq(VER), any())).thenReturn(verResp(VersionStatus.DRAFT));
+        mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}/reject", DOC, VER).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"reason\":\"Section 4 incomplète\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("DRAFT"));
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
+    void reject_withoutReason_400() throws Exception {
+        mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}/reject", DOC, VER).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"reason\":\"  \"}"))
+                .andExpect(status().isBadRequest());
+        verify(service, never()).rejectVersion(any(), any(), any());
+    }
+
+    @Test @WithMockUser(roles = "USER")
+    void reject_withoutTheRightToApprove_403() throws Exception {
+        mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}/reject", DOC, VER).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"reason\":\"non\"}"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void publish_success() throws Exception {
         when(service.publishVersion(DOC, VER)).thenReturn(verResp(VersionStatus.PUBLISHED));
         mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}/publish", DOC, VER).with(csrf()))
@@ -274,6 +301,6 @@ class DocumentControllerTest {
     private DocumentDto.VersionResponse verResp(VersionStatus s) {
         return new DocumentDto.VersionResponse(
                 VER, DOC, 1, null, null, null, null, s, OWNER, null, null, null, null,
-                Instant.now(), Instant.now());
+                Instant.now(), Instant.now(), null, null, null);
     }
 }

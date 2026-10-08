@@ -18,6 +18,7 @@ import {
   VersionStatus
 } from '../../documents.types';
 import { DocumentsEditDialogComponent } from '../documents-edit-dialog/documents-edit-dialog.component';
+import { DocumentsRejectDialogComponent } from '../documents-reject-dialog/documents-reject-dialog.component';
 import { DocumentsVersionDialogComponent } from '../documents-version-dialog/documents-version-dialog.component';
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -128,9 +129,32 @@ export class DocumentsDetailComponent implements OnInit {
       return;
     }
     this.svc.approve(v.documentId, v.id, { approverId }).subscribe({
-      next: () => { this.snack.open($localize`:@@documents.detail.approved:Version approuvée.`, $localize`:@@common.ok:OK`, { duration: 2200 }); this.refresh$.next(); },
+      next: r => {
+        // Avec un circuit, une approbation peut ne franchir qu'une étape (ADR 0080).
+        this.snack.open(r.status === 'APPROVED'
+          ? $localize`:@@documents.detail.approved:Version approuvée.`
+          : $localize`:@@documents.detail.step-approved:Votre approbation est enregistrée : la validation continue.`,
+        $localize`:@@common.ok:OK`, { duration: 2800 });
+        this.refresh$.next();
+      },
       error: err => this.fail(err, $localize`:@@documents.detail.approve-failed:Approbation impossible.`)
     });
+  }
+
+  reject(v: DocumentVersionResponse): void {
+    this.dialog.open(DocumentsRejectDialogComponent, {
+      data: { version: v }, autoFocus: 'first-tabbable', restoreFocus: true,
+      panelClass: 'qos-dialog-panel'
+    }).afterClosed().subscribe(r => { if (r) this.refresh$.next(); });
+  }
+
+  /** Les versions qui demandent l'attention : celle en revue, et un brouillon revenu d'un refus. */
+  attention(d: DocumentResponse): DocumentVersionResponse[] {
+    return d.versions.filter(v => v.status === 'IN_REVIEW' || (v.status === 'DRAFT' && !!v.rejectionReason));
+  }
+
+  trackById(_i: number, v: DocumentVersionResponse): string {
+    return v.id;
   }
 
   publish(v: DocumentVersionResponse): void {

@@ -33,6 +33,9 @@
       </div>
     </header>
 
+    <!-- La version en revue et son circuit, ou la raison du dernier refus. -->
+    <qos-document-circuit *ngFor="let v of attention(d); trackBy: trackById" [version]="v"></qos-document-circuit>
+
     <mat-card class="versions-card">
       <mat-card-header><mat-card-title><span i18n="@@documents.detail.versions-title">Versions</span> ({{ d.versions.length }})</mat-card-title></mat-card-header>
       <mat-card-content>
@@ -77,8 +80,14 @@
               </ng-container>
               <ng-container *qosCan="'document.approve'">
               <button mat-icon-button *ngIf="v.status === 'IN_REVIEW'" (click)="approve(v)"
-                      matTooltip="Approuver" i18n-matTooltip="@@documents.detail.approve-tooltip">
+                      matTooltip="Approuver" i18n-matTooltip="@@documents.detail.approve-tooltip"
+                      i18n-aria-label="@@documents.detail.approve-tooltip" aria-label="Approuver">
                 <mat-icon>verified</mat-icon>
+              </button>
+              <button mat-icon-button *ngIf="v.status === 'IN_REVIEW'" (click)="reject(v)" data-test="refuser"
+                      matTooltip="Refuser" i18n-matTooltip="@@documents.detail.reject-tooltip"
+                      i18n-aria-label="@@documents.detail.reject-tooltip" aria-label="Refuser">
+                <mat-icon>undo</mat-icon>
               </button>
               </ng-container>
               <ng-container *qosCan="'document.publish'">

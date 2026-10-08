@@ -6582,6 +6582,254 @@ Customer portal</target>
         <source>Ce qu'il faut vérifier, et comment : échantillon, délai, critère d'acceptation…</source>
         <target state="translated">What to verify, and how: sample, lead time, acceptance criterion…</target>
       </trans-unit>
+      <trans-unit id="nav.admin-circuits" datatype="html">
+        <source>Circuits de validation</source>
+        <target state="translated">Approval workflows</target>
+      </trans-unit>
+      <trans-unit id="circuits.title" datatype="html">
+        <source>Circuits de validation</source>
+        <target state="translated">Approval workflows</target>
+      </trans-unit>
+      <trans-unit id="circuits.subtitle" datatype="html">
+        <source>Qui approuve, et dans quel ordre. Glissez un rôle sur le parcours pour ajouter une étape ; glissez une étape pour la déplacer.</source>
+        <target state="translated">Who approves, and in what order. Drag a role onto the path to add a step; drag a step to move it.</target>
+      </trans-unit>
+      <trans-unit id="circuits.load-failed" datatype="html">
+        <source>Le circuit n'a pas pu être chargé.</source>
+        <target state="translated">The workflow could not be loaded.</target>
+      </trans-unit>
+      <trans-unit id="circuits.palette" datatype="html">
+        <source>Rôles qui approuvent</source>
+        <target state="translated">Roles that approve</target>
+      </trans-unit>
+      <trans-unit id="circuits.palette-help" datatype="html">
+        <source>Glissez un rôle sur le parcours, ou utilisez son bouton +.</source>
+        <target state="translated">Drag a role onto the path, or use its + button.</target>
+      </trans-unit>
+      <trans-unit id="circuits.add-aria" datatype="html">
+        <source>Ajouter une étape tenue par <x id="role"/></source>
+        <target state="translated">Add a step held by <x id="role"/></target>
+      </trans-unit>
+      <trans-unit id="circuits.no-approver" datatype="html">
+        <source>Aucun rôle n'a le droit d'approuver un document.</source>
+        <target state="translated">No role is allowed to approve a document.</target>
+      </trans-unit>
+      <trans-unit id="circuits.others" datatype="html">
+        <source>Sans le droit d'approuver</source>
+        <target state="translated">Without the right to approve</target>
+      </trans-unit>
+      <trans-unit id="circuits.grant-link" datatype="html">
+        <source>Leur donner ce droit dans « Rôles et droits »</source>
+        <target state="translated">Grant them this right in “Roles and rights”</target>
+      </trans-unit>
+      <trans-unit id="circuits.subject.document-version" datatype="html">
+        <source>Versions de document</source>
+        <target state="translated">Document versions</target>
+      </trans-unit>
+      <trans-unit id="circuits.start" datatype="html">
+        <source>Soumise à revue</source>
+        <target state="translated">Submitted for review</target>
+      </trans-unit>
+      <trans-unit id="circuits.start-help" datatype="html">
+        <source>par son auteur, qui ne l'approuvera jamais lui-même</source>
+        <target state="translated">by its author, who will never approve it themselves</target>
+      </trans-unit>
+      <trans-unit id="circuits.steps" datatype="html">
+        <source>Étapes du circuit</source>
+        <target state="translated">Workflow steps</target>
+      </trans-unit>
+      <trans-unit id="circuits.step-name" datatype="html">
+        <source>Nom de l'étape</source>
+        <target state="translated">Step name</target>
+      </trans-unit>
+      <trans-unit id="circuits.step-name-required" datatype="html">
+        <source>Donnez un nom à l'étape.</source>
+        <target state="translated">Give the step a name.</target>
+      </trans-unit>
+      <trans-unit id="circuits.step-role" datatype="html">
+        <source>Qui approuve</source>
+        <target state="translated">Who approves</target>
+      </trans-unit>
+      <trans-unit id="circuits.fewer" datatype="html">
+        <source>Une approbation de moins</source>
+        <target state="translated">One approval fewer</target>
+      </trans-unit>
+      <trans-unit id="circuits.more" datatype="html">
+        <source>Une approbation de plus</source>
+        <target state="translated">One approval more</target>
+      </trans-unit>
+      <trans-unit id="circuits.approvals-needed" datatype="html">
+        <source>approbation(s) distincte(s)</source>
+        <target state="translated">distinct approval(s)</target>
+      </trans-unit>
+      <trans-unit id="circuits.orphan" datatype="html">
+        <source>Ce rôle n'a plus le droit d'approuver : choisissez-en un autre.</source>
+        <target state="translated">This role can no longer approve: choose another one.</target>
+      </trans-unit>
+      <trans-unit id="circuits.up" datatype="html">
+        <source>Monter l'étape</source>
+        <target state="translated">Move step up</target>
+      </trans-unit>
+      <trans-unit id="circuits.down" datatype="html">
+        <source>Descendre l'étape</source>
+        <target state="translated">Move step down</target>
+      </trans-unit>
+      <trans-unit id="circuits.remove" datatype="html">
+        <source>Retirer l'étape</source>
+        <target state="translated">Remove step</target>
+      </trans-unit>
+      <trans-unit id="circuits.empty" datatype="html">
+        <source>Aucun circuit : une seule approbation suffit. Déposez un rôle ici pour créer la première étape.</source>
+        <target state="translated">No workflow: a single approval is enough. Drop a role here to create the first step.</target>
+      </trans-unit>
+      <trans-unit id="circuits.full" datatype="html">
+        <source>Un circuit compte au plus <x id="MAX"/> étapes.</source>
+        <target state="translated">A workflow has at most <x id="MAX"/> steps.</target>
+      </trans-unit>
+      <trans-unit id="circuits.end" datatype="html">
+        <source>Approuvée</source>
+        <target state="translated">Approved</target>
+      </trans-unit>
+      <trans-unit id="circuits.end-help" datatype="html">
+        <source>prête à publier. Un refus, à n'importe quelle étape, la renvoie en brouillon avec sa raison.</source>
+        <target state="translated">ready to publish. A rejection at any step sends it back to draft with its reason.</target>
+      </trans-unit>
+      <trans-unit id="circuits.note" datatype="html">
+        <source>Une même personne ne décide qu'une fois par circuit. Les versions déjà soumises gardent le circuit de leur soumission.</source>
+        <target state="translated">The same person decides only once per workflow. Versions already submitted keep the workflow of their submission.</target>
+      </trans-unit>
+      <trans-unit id="circuits.pending" datatype="html">
+        <source>Circuit modifié</source>
+        <target state="translated">Workflow changed</target>
+      </trans-unit>
+      <trans-unit id="circuits.pending-invalid" datatype="html">
+        <source>Chaque étape doit porter un nom</source>
+        <target state="translated">Every step needs a name</target>
+      </trans-unit>
+      <trans-unit id="circuits.saved" datatype="html">
+        <source>Circuit enregistré. Les prochaines soumissions le suivront.</source>
+        <target state="translated">Workflow saved. Upcoming submissions will follow it.</target>
+      </trans-unit>
+      <trans-unit id="circuits.cleared" datatype="html">
+        <source>Circuit retiré : une seule approbation suffit de nouveau.</source>
+        <target state="translated">Workflow removed: a single approval is enough again.</target>
+      </trans-unit>
+      <trans-unit id="circuits.failed" datatype="html">
+        <source>L'opération sur le circuit a échoué.</source>
+        <target state="translated">The workflow operation failed.</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.none" datatype="html">
+        <source>Aujourd'hui, une seule approbation suffit, par toute personne qui a le droit d'approuver.</source>
+        <target state="translated">Today, a single approval is enough, by anyone allowed to approve.</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.lead" datatype="html">
+        <source>Une version soumise est approuvée par <x id="steps"/>.</source>
+        <target state="translated">A submitted version is approved by <x id="steps"/>.</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.then" datatype="html">
+        <source>, puis </source>
+        <target state="translated">, then </target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.one" datatype="html">
+        <source>une personne « <x id="role"/> »</source>
+        <target state="translated">one “<x id="role"/>”</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.many" datatype="html">
+        <source><x id="count"/> personnes « <x id="role"/> »</source>
+        <target state="translated"><x id="count"/> “<x id="role"/>”</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.reject-tooltip" datatype="html">
+        <source>Refuser</source>
+        <target state="translated">Reject</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.step-approved" datatype="html">
+        <source>Votre approbation est enregistrée : la validation continue.</source>
+        <target state="translated">Your approval is recorded: the review continues.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.title" datatype="html">
+        <source>Validation de la version v<x id="NUMBER"/></source>
+        <target state="translated">Approval of version v<x id="NUMBER"/></target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-yours" datatype="html">
+        <source>C'est à vous : approuvez ou refusez cette étape.</source>
+        <target state="translated">Your turn: approve or reject this step.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-decided" datatype="html">
+        <source>Vous avez décidé : une autre personne doit valider la suite.</source>
+        <target state="translated">You have decided: someone else must approve what comes next.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-author" datatype="html">
+        <source>Vous en êtes l'auteur : d'autres la valident.</source>
+        <target state="translated">You are its author: others approve it.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-waiting" datatype="html">
+        <source>En attente de : <x id="ROLE"/>.</source>
+        <target state="translated">Waiting for: <x id="ROLE"/>.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.simple" datatype="html">
+        <source>Approbation simple : une personne ayant le droit d'approuver suffit.</source>
+        <target state="translated">Simple approval: one person allowed to approve is enough.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.failed" datatype="html">
+        <source>L'avancement de la validation n'a pas pu être lu.</source>
+        <target state="translated">The approval progress could not be read.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.count" datatype="html">
+        <source><x id="DONE"/> sur <x id="NEEDED"/></source>
+        <target state="translated"><x id="DONE"/> of <x id="NEEDED"/></target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.you" datatype="html">
+        <source>Vous</source>
+        <target state="translated">You</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.someone" datatype="html">
+        <source>Un membre</source>
+        <target state="translated">A member</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.rejected" datatype="html">
+        <source>Version v<x id="NUMBER"/> refusée le <x id="DATE"/></source>
+        <target state="translated">Version v<x id="NUMBER"/> rejected on <x id="DATE"/></target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.rejected-next" datatype="html">
+        <source>Corrigez-la, puis soumettez-la de nouveau : le circuit repartira de la première étape.</source>
+        <target state="translated">Correct it, then submit it again: the workflow will restart from the first step.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.title" datatype="html">
+        <source>Refuser la version v<x id="number"/></source>
+        <target state="translated">Reject version v<x id="number"/></target>
+      </trans-unit>
+      <trans-unit id="documents.reject.subtitle" datatype="html">
+        <source>La version revient en brouillon. Son auteur lira votre raison, la corrigera et la soumettra de nouveau.</source>
+        <target state="translated">The version goes back to draft. Its author will read your reason, correct it and submit it again.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.blocked" datatype="html">
+        <source>Écrivez la raison du refus.</source>
+        <target state="translated">Write the reason for the rejection.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.submit" datatype="html">
+        <source>Refuser</source>
+        <target state="translated">Reject</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.reason" datatype="html">
+        <source>Raison du refus</source>
+        <target state="translated">Reason for rejection</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.reason-placeholder" datatype="html">
+        <source>Ce qui manque, ce qui est à corriger</source>
+        <target state="translated">What is missing, what needs correcting</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.reason-required" datatype="html">
+        <source>Un refus se motive.</source>
+        <target state="translated">A rejection needs a reason.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.done" datatype="html">
+        <source>Version refusée : elle revient en brouillon chez son auteur.</source>
+        <target state="translated">Version rejected: it goes back to its author as a draft.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.failed" datatype="html">
+        <source>Refus impossible.</source>
+        <target state="translated">Rejection failed.</target>
+      </trans-unit>
       <trans-unit id="nav.complaints-nlp" datatype="html">
         <source>Réclamations IA</source>
         <target state="translated">AI complaints</target>

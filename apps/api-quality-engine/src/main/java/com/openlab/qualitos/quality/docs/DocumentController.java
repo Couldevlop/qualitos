@@ -80,6 +80,13 @@ public class DocumentController {
         return service.approveVersion(id, vid, req);
     }
 
+    @PatchMapping("/{id}/versions/{vid}/reject")
+    @RequiresPermission(Permission.DOCUMENT_APPROVE)
+    public DocumentDto.VersionResponse reject(@PathVariable UUID id, @PathVariable UUID vid,
+                                              @Valid @RequestBody DocumentDto.RejectionRequest req) {
+        return service.rejectVersion(id, vid, req);
+    }
+
     @PatchMapping("/{id}/versions/{vid}/publish")
     @RequiresPermission(Permission.DOCUMENT_PUBLISH)
     public DocumentDto.VersionResponse publish(@PathVariable UUID id, @PathVariable UUID vid) {

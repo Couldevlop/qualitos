@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Qui peut faire quoi, dans le client du jeton.
@@ -71,6 +72,23 @@ public class AuthorizationService {
         TenantRoles tous = tenantRoles(context.requireTenantId());
         return new AuthzDto.Me(context.userId().orElse(null), List.copyOf(new TreeSet<>(codes)),
                 tous.effective(codes).stream().map(Permission::code).sorted().toList());
+    }
+
+    /** Les rôles de l'utilisateur courant : ceux du jeton et ceux attribués dans l'application. */
+    public Set<String> currentRoleCodes() {
+        return Set.copyOf(effectiveRoleCodes());
+    }
+
+    /** Les codes des rôles que le client connaît : rôles système et rôles créés. */
+    public Set<String> tenantRoleCodes() {
+        return tenantRoles(context.requireTenantId()).manageable().stream()
+                .map(TenantRole::code)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    /** Vrai si le rôle, tel que le client l'a réglé, accorde ce droit. */
+    public boolean roleGrants(String roleCode, Permission permission) {
+        return tenantRoles(context.requireTenantId()).effective(Set.of(roleCode)).contains(permission);
     }
 
     private Set<Permission> effectivePermissions() {

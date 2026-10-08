@@ -50,8 +50,20 @@ public final class DocumentDto {
             String changeNote
     ) {}
 
-    /** L'approbateur est l'utilisateur du jeton (ADR 0080) ; le champ n'est gardé que pour vérifier qu'il concorde. */
-    public record ApprovalRequest(UUID approverId) {}
+    /**
+     * L'approbateur est l'utilisateur du jeton (ADR 0080) ; le champ n'est gardé
+     * que pour vérifier qu'il concorde. Le commentaire accompagne une étape de
+     * circuit.
+     */
+    public record ApprovalRequest(UUID approverId, @Size(max = 1000) String comment) {
+
+        public ApprovalRequest(UUID approverId) {
+            this(approverId, null);
+        }
+    }
+
+    /** Un refus se motive : la version revient en brouillon et l'auteur lit pourquoi. */
+    public record RejectionRequest(@NotBlank @Size(max = 1000) String reason) {}
 
     /** Celui qui acquitte est l'utilisateur du jeton (ADR 0080) : nul n'acquitte pour un autre. */
     public record AcknowledgeRequest(UUID userId) {}
@@ -87,7 +99,10 @@ public final class DocumentDto {
             Instant publishedAt,
             String blockchainTxHash,
             Instant createdAt,
-            Instant updatedAt
+            Instant updatedAt,
+            UUID rejectedBy,
+            Instant rejectedAt,
+            String rejectionReason
     ) {}
 
     public record AcknowledgmentResponse(

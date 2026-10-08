@@ -6582,6 +6582,254 @@ Portail clients</source>
         <source>Ce qu'il faut vérifier, et comment : échantillon, délai, critère d'acceptation…</source>
         <target state="translated">ما الذي يجب التحقق منه وكيف: العينة، المهلة، معيار القبول…</target>
       </trans-unit>
+      <trans-unit id="nav.admin-circuits" datatype="html">
+        <source>Circuits de validation</source>
+        <target state="translated">مسارات الاعتماد</target>
+      </trans-unit>
+      <trans-unit id="circuits.title" datatype="html">
+        <source>Circuits de validation</source>
+        <target state="translated">مسارات الاعتماد</target>
+      </trans-unit>
+      <trans-unit id="circuits.subtitle" datatype="html">
+        <source>Qui approuve, et dans quel ordre. Glissez un rôle sur le parcours pour ajouter une étape ; glissez une étape pour la déplacer.</source>
+        <target state="translated">من يعتمد وبأي ترتيب. اسحب دورًا إلى المسار لإضافة مرحلة، واسحب مرحلة لنقلها.</target>
+      </trans-unit>
+      <trans-unit id="circuits.load-failed" datatype="html">
+        <source>Le circuit n'a pas pu être chargé.</source>
+        <target state="translated">تعذّر تحميل المسار.</target>
+      </trans-unit>
+      <trans-unit id="circuits.palette" datatype="html">
+        <source>Rôles qui approuvent</source>
+        <target state="translated">الأدوار التي تعتمد</target>
+      </trans-unit>
+      <trans-unit id="circuits.palette-help" datatype="html">
+        <source>Glissez un rôle sur le parcours, ou utilisez son bouton +.</source>
+        <target state="translated">اسحب دورًا إلى المسار أو استخدم زر + الخاص به.</target>
+      </trans-unit>
+      <trans-unit id="circuits.add-aria" datatype="html">
+        <source>Ajouter une étape tenue par <x id="role"/></source>
+        <target state="translated">إضافة مرحلة يتولاها <x id="role"/></target>
+      </trans-unit>
+      <trans-unit id="circuits.no-approver" datatype="html">
+        <source>Aucun rôle n'a le droit d'approuver un document.</source>
+        <target state="translated">لا يملك أي دور صلاحية اعتماد مستند.</target>
+      </trans-unit>
+      <trans-unit id="circuits.others" datatype="html">
+        <source>Sans le droit d'approuver</source>
+        <target state="translated">بدون صلاحية الاعتماد</target>
+      </trans-unit>
+      <trans-unit id="circuits.grant-link" datatype="html">
+        <source>Leur donner ce droit dans « Rôles et droits »</source>
+        <target state="translated">امنحهم هذه الصلاحية في «الأدوار والصلاحيات»</target>
+      </trans-unit>
+      <trans-unit id="circuits.subject.document-version" datatype="html">
+        <source>Versions de document</source>
+        <target state="translated">إصدارات المستندات</target>
+      </trans-unit>
+      <trans-unit id="circuits.start" datatype="html">
+        <source>Soumise à revue</source>
+        <target state="translated">مُقدَّم للمراجعة</target>
+      </trans-unit>
+      <trans-unit id="circuits.start-help" datatype="html">
+        <source>par son auteur, qui ne l'approuvera jamais lui-même</source>
+        <target state="translated">من قِبل مؤلفه، الذي لن يعتمده بنفسه أبدًا</target>
+      </trans-unit>
+      <trans-unit id="circuits.steps" datatype="html">
+        <source>Étapes du circuit</source>
+        <target state="translated">مراحل المسار</target>
+      </trans-unit>
+      <trans-unit id="circuits.step-name" datatype="html">
+        <source>Nom de l'étape</source>
+        <target state="translated">اسم المرحلة</target>
+      </trans-unit>
+      <trans-unit id="circuits.step-name-required" datatype="html">
+        <source>Donnez un nom à l'étape.</source>
+        <target state="translated">أعطِ المرحلة اسمًا.</target>
+      </trans-unit>
+      <trans-unit id="circuits.step-role" datatype="html">
+        <source>Qui approuve</source>
+        <target state="translated">من يعتمد</target>
+      </trans-unit>
+      <trans-unit id="circuits.fewer" datatype="html">
+        <source>Une approbation de moins</source>
+        <target state="translated">اعتماد واحد أقل</target>
+      </trans-unit>
+      <trans-unit id="circuits.more" datatype="html">
+        <source>Une approbation de plus</source>
+        <target state="translated">اعتماد واحد إضافي</target>
+      </trans-unit>
+      <trans-unit id="circuits.approvals-needed" datatype="html">
+        <source>approbation(s) distincte(s)</source>
+        <target state="translated">اعتماد (اعتمادات) منفصلة</target>
+      </trans-unit>
+      <trans-unit id="circuits.orphan" datatype="html">
+        <source>Ce rôle n'a plus le droit d'approuver : choisissez-en un autre.</source>
+        <target state="translated">لم يعد لهذا الدور صلاحية الاعتماد: اختر دورًا آخر.</target>
+      </trans-unit>
+      <trans-unit id="circuits.up" datatype="html">
+        <source>Monter l'étape</source>
+        <target state="translated">نقل المرحلة لأعلى</target>
+      </trans-unit>
+      <trans-unit id="circuits.down" datatype="html">
+        <source>Descendre l'étape</source>
+        <target state="translated">نقل المرحلة لأسفل</target>
+      </trans-unit>
+      <trans-unit id="circuits.remove" datatype="html">
+        <source>Retirer l'étape</source>
+        <target state="translated">إزالة المرحلة</target>
+      </trans-unit>
+      <trans-unit id="circuits.empty" datatype="html">
+        <source>Aucun circuit : une seule approbation suffit. Déposez un rôle ici pour créer la première étape.</source>
+        <target state="translated">لا يوجد مسار: يكفي اعتماد واحد. أفلِت دورًا هنا لإنشاء المرحلة الأولى.</target>
+      </trans-unit>
+      <trans-unit id="circuits.full" datatype="html">
+        <source>Un circuit compte au plus <x id="MAX"/> étapes.</source>
+        <target state="translated">يضم المسار <x id="MAX"/> مراحل على الأكثر.</target>
+      </trans-unit>
+      <trans-unit id="circuits.end" datatype="html">
+        <source>Approuvée</source>
+        <target state="translated">معتمد</target>
+      </trans-unit>
+      <trans-unit id="circuits.end-help" datatype="html">
+        <source>prête à publier. Un refus, à n'importe quelle étape, la renvoie en brouillon avec sa raison.</source>
+        <target state="translated">جاهز للنشر. أي رفض في أي مرحلة يعيده إلى المسودة مع سببه.</target>
+      </trans-unit>
+      <trans-unit id="circuits.note" datatype="html">
+        <source>Une même personne ne décide qu'une fois par circuit. Les versions déjà soumises gardent le circuit de leur soumission.</source>
+        <target state="translated">يقرر الشخص الواحد مرة واحدة فقط في كل مسار. تحتفظ الإصدارات المقدَّمة بالمسار الساري عند تقديمها.</target>
+      </trans-unit>
+      <trans-unit id="circuits.pending" datatype="html">
+        <source>Circuit modifié</source>
+        <target state="translated">تم تعديل المسار</target>
+      </trans-unit>
+      <trans-unit id="circuits.pending-invalid" datatype="html">
+        <source>Chaque étape doit porter un nom</source>
+        <target state="translated">يجب أن تحمل كل مرحلة اسمًا</target>
+      </trans-unit>
+      <trans-unit id="circuits.saved" datatype="html">
+        <source>Circuit enregistré. Les prochaines soumissions le suivront.</source>
+        <target state="translated">تم حفظ المسار. ستتبعه عمليات التقديم القادمة.</target>
+      </trans-unit>
+      <trans-unit id="circuits.cleared" datatype="html">
+        <source>Circuit retiré : une seule approbation suffit de nouveau.</source>
+        <target state="translated">تمت إزالة المسار: يكفي اعتماد واحد من جديد.</target>
+      </trans-unit>
+      <trans-unit id="circuits.failed" datatype="html">
+        <source>L'opération sur le circuit a échoué.</source>
+        <target state="translated">فشلت العملية على المسار.</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.none" datatype="html">
+        <source>Aujourd'hui, une seule approbation suffit, par toute personne qui a le droit d'approuver.</source>
+        <target state="translated">حاليًا يكفي اعتماد واحد من أي شخص يملك صلاحية الاعتماد.</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.lead" datatype="html">
+        <source>Une version soumise est approuvée par <x id="steps"/>.</source>
+        <target state="translated">يُعتمد الإصدار المقدَّم من قِبل <x id="steps"/>.</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.then" datatype="html">
+        <source>, puis </source>
+        <target state="translated">، ثم </target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.one" datatype="html">
+        <source>une personne « <x id="role"/> »</source>
+        <target state="translated">شخص واحد «<x id="role"/>»</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.many" datatype="html">
+        <source><x id="count"/> personnes « <x id="role"/> »</source>
+        <target state="translated"><x id="count"/> أشخاص «<x id="role"/>»</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.reject-tooltip" datatype="html">
+        <source>Refuser</source>
+        <target state="translated">رفض</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.step-approved" datatype="html">
+        <source>Votre approbation est enregistrée : la validation continue.</source>
+        <target state="translated">تم تسجيل اعتمادك: يستمر الاعتماد.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.title" datatype="html">
+        <source>Validation de la version v<x id="NUMBER"/></source>
+        <target state="translated">اعتماد الإصدار v<x id="NUMBER"/></target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-yours" datatype="html">
+        <source>C'est à vous : approuvez ou refusez cette étape.</source>
+        <target state="translated">دورك: اعتمد هذه المرحلة أو ارفضها.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-decided" datatype="html">
+        <source>Vous avez décidé : une autre personne doit valider la suite.</source>
+        <target state="translated">لقد اتخذت قرارك: يجب أن يعتمد شخص آخر ما يلي.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-author" datatype="html">
+        <source>Vous en êtes l'auteur : d'autres la valident.</source>
+        <target state="translated">أنت مؤلفه: يعتمده آخرون.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-waiting" datatype="html">
+        <source>En attente de : <x id="ROLE"/>.</source>
+        <target state="translated">بانتظار: <x id="ROLE"/>.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.simple" datatype="html">
+        <source>Approbation simple : une personne ayant le droit d'approuver suffit.</source>
+        <target state="translated">اعتماد بسيط: يكفي شخص واحد يملك صلاحية الاعتماد.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.failed" datatype="html">
+        <source>L'avancement de la validation n'a pas pu être lu.</source>
+        <target state="translated">تعذّرت قراءة تقدّم الاعتماد.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.count" datatype="html">
+        <source><x id="DONE"/> sur <x id="NEEDED"/></source>
+        <target state="translated"><x id="DONE"/> من <x id="NEEDED"/></target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.you" datatype="html">
+        <source>Vous</source>
+        <target state="translated">أنت</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.someone" datatype="html">
+        <source>Un membre</source>
+        <target state="translated">عضو</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.rejected" datatype="html">
+        <source>Version v<x id="NUMBER"/> refusée le <x id="DATE"/></source>
+        <target state="translated">رُفض الإصدار v<x id="NUMBER"/> في <x id="DATE"/></target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.rejected-next" datatype="html">
+        <source>Corrigez-la, puis soumettez-la de nouveau : le circuit repartira de la première étape.</source>
+        <target state="translated">صحّحه ثم قدّمه من جديد: سيبدأ المسار من المرحلة الأولى.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.title" datatype="html">
+        <source>Refuser la version v<x id="number"/></source>
+        <target state="translated">رفض الإصدار v<x id="number"/></target>
+      </trans-unit>
+      <trans-unit id="documents.reject.subtitle" datatype="html">
+        <source>La version revient en brouillon. Son auteur lira votre raison, la corrigera et la soumettra de nouveau.</source>
+        <target state="translated">يعود الإصدار إلى المسودة. سيقرأ مؤلفه سببك ويصحّحه ثم يقدّمه من جديد.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.blocked" datatype="html">
+        <source>Écrivez la raison du refus.</source>
+        <target state="translated">اكتب سبب الرفض.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.submit" datatype="html">
+        <source>Refuser</source>
+        <target state="translated">رفض</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.reason" datatype="html">
+        <source>Raison du refus</source>
+        <target state="translated">سبب الرفض</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.reason-placeholder" datatype="html">
+        <source>Ce qui manque, ce qui est à corriger</source>
+        <target state="translated">ما الذي ينقص وما الذي يجب تصحيحه</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.reason-required" datatype="html">
+        <source>Un refus se motive.</source>
+        <target state="translated">يجب تعليل الرفض.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.done" datatype="html">
+        <source>Version refusée : elle revient en brouillon chez son auteur.</source>
+        <target state="translated">تم رفض الإصدار: يعود مسودةً إلى مؤلفه.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.failed" datatype="html">
+        <source>Refus impossible.</source>
+        <target state="translated">تعذّر الرفض.</target>
+      </trans-unit>
       <trans-unit id="nav.complaints-nlp" datatype="html">
         <source>Réclamations IA</source>
         <target state="translated">الشكاوى بالذكاء الاصطناعي</target>

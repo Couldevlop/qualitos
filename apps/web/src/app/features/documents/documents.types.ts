@@ -29,6 +29,10 @@ export interface DocumentVersionResponse {
   blockchainTxHash?: string;
   createdAt: string;
   updatedAt: string;
+  /** Le dernier refus : la version est revenue en brouillon avec sa raison (ADR 0080). */
+  rejectedBy?: string | null;
+  rejectedAt?: string | null;
+  rejectionReason?: string | null;
 }
 
 export interface DocumentResponse {
@@ -84,6 +88,8 @@ export interface UpdateVersionRequest {
 
 export interface ApprovalRequest {
   approverId: string;
+  /** Accompagne une étape de circuit ; facultatif. */
+  comment?: string;
 }
 
 export interface AcknowledgeRequest {

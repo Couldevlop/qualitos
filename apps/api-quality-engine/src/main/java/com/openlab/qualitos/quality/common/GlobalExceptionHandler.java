@@ -554,6 +554,40 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    /**
+     * Circuits de validation (ADR 0080) : 422 circuit mal formé, 404 type d'objet
+     * inconnu, 403 étape qui revient à un autre rôle, 409 état qui ne permet pas
+     * la décision (auteur, déjà décidé, circuit terminé).
+     */
+    @ExceptionHandler(com.openlab.qualitos.quality.circuit.domain.CircuitException.class)
+    public ProblemDetail handleCircuit(com.openlab.qualitos.quality.circuit.domain.CircuitException ex) {
+        HttpStatus status = switch (ex.getReason()) {
+            case INVALID -> HttpStatus.UNPROCESSABLE_ENTITY;
+            case UNKNOWN_SUBJECT -> HttpStatus.NOT_FOUND;
+            case NOT_YOUR_STEP -> HttpStatus.FORBIDDEN;
+            case NOT_IN_PROGRESS, AUTHOR_CANNOT_DECIDE, ALREADY_DECIDED -> HttpStatus.CONFLICT;
+        };
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(status, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/circuit-"
+                + ex.getReason().name().toLowerCase(java.util.Locale.ROOT).replace('_', '-')));
+        problem.setTitle("Approval Circuit");
+        problem.setProperty("reason", ex.getReason().name());
+        problem.setProperty("field", ex.getField());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /** 409 : l'objet a changé entre la lecture et l'écriture (deux décisions au même instant). */
+    @ExceptionHandler(org.springframework.dao.OptimisticLockingFailureException.class)
+    public ProblemDetail handleOptimisticLock(org.springframework.dao.OptimisticLockingFailureException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,
+                "Cet élément vient d'être modifié par quelqu'un d'autre : rechargez puis recommencez.");
+        problem.setType(URI.create("https://qualitos.io/errors/concurrent-update"));
+        problem.setTitle("Concurrent Update");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     @ExceptionHandler(RegisterNotFoundException.class)
     public ProblemDetail handleRegisterNotFound(RegisterNotFoundException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());

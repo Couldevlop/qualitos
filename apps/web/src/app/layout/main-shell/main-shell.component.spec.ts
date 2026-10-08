@@ -149,8 +149,9 @@ describe('MainShellComponent (navigation model)', () => {
     // unique (ISO 9001 6.1), dont les onglets portent la navigation interne.
     // Pilotage passe a 7 : + Tableau de bord SMI, sans attribut `module` -- il
     // ne fait que relire les autres modules.
-    // Administration passe a 8 : + Roles et droits (ADR 0078), puis a 9 : + Clients (ADR 0079).
-    expect(labels).toEqual([7, 6, 8, 1, 4, 1, 9, 11, 1, 9]);
+    // Administration passe a 8 : + Roles et droits (ADR 0078), puis a 9 : + Clients (ADR 0079),
+    // puis a 10 : + Circuits de validation (ADR 0080).
+    expect(labels).toEqual([7, 6, 8, 1, 4, 1, 9, 11, 1, 10]);
   });
 
   it('le registre des risques a son groupe, juste apres la non-conformite', () => {

@@ -76,6 +76,22 @@ class AuthorizationServiceTest {
     }
 
     @Test
+    void lesCircuitsLisentLesRolesDeLActeurEtCeuxQueLeClientConnait() {
+        service.createRole(new AuthzDto.RoleCommand("PILOTE_SITE", "Pilote de site", null, List.of("document.approve")));
+        service.replaceMemberRoles(MARIE, List.of("PILOTE_SITE"));
+
+        assertThat(service.tenantRoleCodes()).contains("PILOTE_SITE", "QUALITY_MANAGER", "USER")
+                .doesNotContain("SUPER_ADMIN");
+        assertThat(service.roleGrants("PILOTE_SITE", Permission.DOCUMENT_APPROVE)).isTrue();
+        assertThat(service.roleGrants("USER", Permission.DOCUMENT_APPROVE)).isFalse();
+        assertThat(service.roleGrants("INCONNU", Permission.DOCUMENT_APPROVE)).isFalse();
+
+        context.user = MARIE;
+        context.token = Set.of("USER");
+        assertThat(service.currentRoleCodes()).containsExactlyInAnyOrder("USER", "PILOTE_SITE");
+    }
+
+    @Test
     void regler_unRoleSystemeChangeLesDroitsDeTousSesPorteurs() {
         AuthzDto.RoleView regle = service.updateRole("USER",
                 new AuthzDto.RoleCommand(null, "Opérateur", null, List.of("nc.photo")));

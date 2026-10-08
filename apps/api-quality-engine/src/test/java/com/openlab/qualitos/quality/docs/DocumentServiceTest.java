@@ -1,5 +1,8 @@
 package com.openlab.qualitos.quality.docs;
 
+import com.openlab.qualitos.quality.circuit.application.ApprovalCircuits;
+import com.openlab.qualitos.quality.circuit.application.CircuitDto;
+import com.openlab.qualitos.quality.circuit.domain.CircuitSubject;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,6 +34,8 @@ class DocumentServiceTest {
     @Mock DocumentRepository docRepo;
     @Mock DocumentVersionRepository versionRepo;
     @Mock DocumentAcknowledgmentRepository ackRepo;
+    /** Sans réglage, Mockito rend Optional.empty() : l'approbation simple d'avant. */
+    @Mock ApprovalCircuits circuits;
     @InjectMocks DocumentService service;
 
     static final UUID TENANT = UUID.randomUUID();
@@ -309,6 +314,112 @@ class DocumentServiceTest {
         connecte(APPROVER);
         assertThatThrownBy(() -> service.approveVersion(d.getId(), v.getId(),
                 new DocumentDto.ApprovalRequest(APPROVER)))
+                .isInstanceOf(DocumentStateException.class);
+    }
+
+    // --- circuits de validation (ADR 0080) ---
+
+    static CircuitDto.RunView passage(UUID versionId, String status) {
+        return new CircuitDto.RunView(UUID.randomUUID(), "document-version", versionId, status, 0,
+                List.of(), List.of(), Instant.now(), null);
+    }
+
+    @Test
+    void submitForReview_startsTheCircuit_withTheAuthor() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = ver(d, 1, VersionStatus.DRAFT);
+        v.setAuthorId(AUTHOR);
+        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+        when(versionRepo.save(v)).thenReturn(v);
+
+        service.submitForReview(d.getId(), v.getId());
+
+        verify(circuits).start(CircuitSubject.DOCUMENT_VERSION, v.getId(), AUTHOR);
+    }
+
+    @Test
+    void approveVersion_circuitStillRunning_staysInReview() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = ver(d, 1, VersionStatus.IN_REVIEW);
+        v.setAuthorId(AUTHOR);
+        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+        when(circuits.decide(CircuitSubject.DOCUMENT_VERSION, v.getId(), true, "vu"))
+                .thenReturn(Optional.of(passage(v.getId(), "IN_PROGRESS")));
+        connecte(APPROVER);
+
+        DocumentDto.VersionResponse r = service.approveVersion(d.getId(), v.getId(),
+                new DocumentDto.ApprovalRequest(null, "vu"));
+
+        assertThat(r.status()).isEqualTo(VersionStatus.IN_REVIEW);
+        assertThat(v.getApprovedBy()).isNull();
+        verify(versionRepo, never()).save(any());
+    }
+
+    @Test
+    void approveVersion_lastStepOfTheCircuit_approves() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = ver(d, 1, VersionStatus.IN_REVIEW);
+        v.setAuthorId(AUTHOR);
+        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+        when(versionRepo.save(v)).thenReturn(v);
+        when(circuits.decide(CircuitSubject.DOCUMENT_VERSION, v.getId(), true, null))
+                .thenReturn(Optional.of(passage(v.getId(), "APPROVED")));
+        connecte(APPROVER);
+
+        service.approveVersion(d.getId(), v.getId(), new DocumentDto.ApprovalRequest(null));
+
+        assertThat(v.getStatus()).isEqualTo(VersionStatus.APPROVED);
+        assertThat(v.getApprovedBy()).isEqualTo(APPROVER);
+    }
+
+    @Test
+    void rejectVersion_backToDraft_withTheReason_andTellsTheCircuit() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = ver(d, 1, VersionStatus.IN_REVIEW);
+        v.setAuthorId(AUTHOR);
+        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+        when(versionRepo.save(v)).thenReturn(v);
+        connecte(APPROVER);
+
+        DocumentDto.VersionResponse r = service.rejectVersion(d.getId(), v.getId(),
+                new DocumentDto.RejectionRequest("  Section 4 incomplète  "));
+
+        assertThat(r.status()).isEqualTo(VersionStatus.DRAFT);
+        assertThat(r.rejectedBy()).isEqualTo(APPROVER);
+        assertThat(r.rejectedAt()).isNotNull();
+        assertThat(r.rejectionReason()).isEqualTo("Section 4 incomplète");
+        verify(circuits).decide(CircuitSubject.DOCUMENT_VERSION, v.getId(), false, "Section 4 incomplète");
+    }
+
+    @Test
+    void rejectVersion_byTheAuthor_refused() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = ver(d, 1, VersionStatus.IN_REVIEW);
+        v.setAuthorId(AUTHOR);
+        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+        connecte(AUTHOR);
+
+        assertThatThrownBy(() -> service.rejectVersion(d.getId(), v.getId(),
+                new DocumentDto.RejectionRequest("non")))
+                .isInstanceOf(DocumentStateException.class);
+        verifyNoInteractions(circuits);
+    }
+
+    @Test
+    void rejectVersion_notInReview_refused() {
+        Document d = doc(TENANT, DocumentStatus.ACTIVE);
+        DocumentVersion v = ver(d, 1, VersionStatus.DRAFT);
+        when(docRepo.findByIdAndTenantId(d.getId(), TENANT)).thenReturn(Optional.of(d));
+        when(versionRepo.findByIdAndDocumentId(v.getId(), d.getId())).thenReturn(Optional.of(v));
+        connecte(APPROVER);
+
+        assertThatThrownBy(() -> service.rejectVersion(d.getId(), v.getId(),
+                new DocumentDto.RejectionRequest("non")))
                 .isInstanceOf(DocumentStateException.class);
     }
 

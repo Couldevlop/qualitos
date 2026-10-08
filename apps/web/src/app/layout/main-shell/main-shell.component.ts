@@ -244,6 +244,13 @@ export class MainShellComponent implements OnInit, OnDestroy {
           roles: ADMIN_ROLES
         },
         {
+          // Les circuits de validation (ADR 0080) : qui approuve, dans quel ordre.
+          label: $localize`:@@nav.admin-circuits:Circuits de validation`,
+          route: '/admin/circuits',
+          icon: 'alt_route',
+          roles: ADMIN_ROLES
+        },
+        {
           label: $localize`:@@nav.admin-api-keys:Clés d'API`,
           route: '/admin/api-keys',
           icon: 'key',
