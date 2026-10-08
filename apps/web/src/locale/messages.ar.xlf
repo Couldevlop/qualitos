@@ -192,6 +192,194 @@
         <source>L'inscription a échoué.</source>
         <target state="translated">فشل التسجيل.</target>
       </trans-unit>
+      <trans-unit id="nav.admin-clients" datatype="html">
+        <source>Clients</source>
+        <target state="translated">العملاء</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.title" datatype="html">
+        <source>Transmettez ces identifiants</source>
+        <target state="translated">أرسل بيانات الدخول هذه</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.help" datatype="html">
+        <source>Le mot de passe provisoire n'apparaîtra plus. Il devra être changé à la première connexion.</source>
+        <target state="translated">لن تظهر كلمة المرور المؤقتة مرة أخرى. ويجب تغييرها عند أول تسجيل دخول.</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.login" datatype="html">
+        <source>Identifiant</source>
+        <target state="translated">اسم الدخول</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.password" datatype="html">
+        <source>Mot de passe provisoire</source>
+        <target state="translated">كلمة المرور المؤقتة</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.copy" datatype="html">
+        <source>Copier</source>
+        <target state="translated">نسخ</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.copied" datatype="html">
+        <source>Copié</source>
+        <target state="translated">تم النسخ</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.done" datatype="html">
+        <source>C'est transmis</source>
+        <target state="translated">تم الإرسال</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.sent-title" datatype="html">
+        <source>Invitation envoyée</source>
+        <target state="translated">تم إرسال الدعوة</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.sent-help" datatype="html">
+        <source><x id="EMAIL"/> reçoit un lien pour choisir son mot de passe.</source>
+        <target state="translated">يتلقى <x id="EMAIL"/> رابطًا لاختيار كلمة المرور.</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite" datatype="html">
+        <source>Inviter un membre</source>
+        <target state="translated">دعوة عضو</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-title" datatype="html">
+        <source>Nouveau membre</source>
+        <target state="translated">عضو جديد</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-email" datatype="html">
+        <source>Adresse e-mail</source>
+        <target state="translated">البريد الإلكتروني</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-email-invalid" datatype="html">
+        <source>Une adresse e-mail valide est attendue.</source>
+        <target state="translated">يلزم بريد إلكتروني صالح.</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-first-name" datatype="html">
+        <source>Prénom (facultatif)</source>
+        <target state="translated">الاسم الأول (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-last-name" datatype="html">
+        <source>Nom (facultatif)</source>
+        <target state="translated">اسم العائلة (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-roles" datatype="html">
+        <source>Rôles de son compte</source>
+        <target state="translated">أدوار حسابه</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-send" datatype="html">
+        <source>Créer son compte</source>
+        <target state="translated">إنشاء حسابه</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-failed" datatype="html">
+        <source>L'invitation a échoué.</source>
+        <target state="translated">فشلت الدعوة.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.title" datatype="html">
+        <source>Clients</source>
+        <target state="translated">العملاء</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.subtitle" datatype="html">
+        <source>Chaque organisation qui utilise QualitOS : son offre, ses modules, son administrateur.</source>
+        <target state="translated">كل مؤسسة تستخدم QualitOS: عرضها ووحداتها ومسؤولها.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.new" datatype="html">
+        <source>Nouveau client</source>
+        <target state="translated">عميل جديد</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.wizard-title" datatype="html">
+        <source>Nouveau client</source>
+        <target state="translated">عميل جديد</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.step-company" datatype="html">
+        <source>Entreprise</source>
+        <target state="translated">المؤسسة</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.step-modules" datatype="html">
+        <source>Modules</source>
+        <target state="translated">الوحدات</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.step-admin" datatype="html">
+        <source>Administrateur</source>
+        <target state="translated">المسؤول</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.name" datatype="html">
+        <source>Nom de l'organisation</source>
+        <target state="translated">اسم المؤسسة</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.name-placeholder" datatype="html">
+        <source>Hôpital Saint-Jean</source>
+        <target state="translated">مستشفى سانت جان</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slug" datatype="html">
+        <source>Identifiant</source>
+        <target state="translated">المعرّف</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slug-hint" datatype="html">
+        <source>Minuscules, chiffres et tirets ; il ne change plus.</source>
+        <target state="translated">أحرف صغيرة وأرقام وشرطات؛ لا يتغيّر بعد ذلك.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slug-invalid" datatype="html">
+        <source>3 à 63 caractères : minuscules, chiffres et tirets.</source>
+        <target state="translated">من 3 إلى 63 حرفًا: أحرف صغيرة وأرقام وشرطات.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.plan" datatype="html">
+        <source>Offre</source>
+        <target state="translated">العرض</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.next" datatype="html">
+        <source>Continuer</source>
+        <target state="translated">متابعة</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.back" datatype="html">
+        <source>Retour</source>
+        <target state="translated">رجوع</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.modules-help" datatype="html">
+        <source>Cochez ce que l'organisation utilisera. Ce dont un module a besoin se coche avec lui ; le socle est inclus d'office.</source>
+        <target state="translated">حدّد ما ستستخدمه المؤسسة. ما تحتاجه الوحدة يُحدَّد معها؛ والأساس مضمّن دائمًا.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.catalog-failed" datatype="html">
+        <source>Le catalogue des modules ne répond pas : le client peut être créé sans module, à compléter ensuite.</source>
+        <target state="translated">كتالوج الوحدات لا يستجيب: يمكن إنشاء العميل بلا وحدات واستكماله لاحقًا.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.core" datatype="html">
+        <source>Socle</source>
+        <target state="translated">الأساس</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.required-by" datatype="html">
+        <source>Requis par <x id="modules"/></source>
+        <target state="translated">مطلوب من <x id="modules"/></target>
+      </trans-unit>
+      <trans-unit id="admin.clients.admin-help" datatype="html">
+        <source>Son compte est créé maintenant ; il invitera ensuite son équipe et réglera ses droits.</source>
+        <target state="translated">يُنشأ حسابه الآن؛ ثم يدعو فريقه ويضبط صلاحياته.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.modules-count" datatype="html">
+        <source><x id="COUNT"/> module(s) choisi(s)</source>
+        <target state="translated"><x id="COUNT"/> وحدة مختارة</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.create" datatype="html">
+        <source>Créer le client</source>
+        <target state="translated">إنشاء العميل</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.create-failed" datatype="html">
+        <source>La création du client a échoué.</source>
+        <target state="translated">فشل إنشاء العميل.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.created" datatype="html">
+        <source>Client créé :</source>
+        <target state="translated">تم إنشاء العميل:</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.modules-failed" datatype="html">
+        <source>Certains modules n'ont pas été ouverts : reprenez-les depuis la console des modules du client.</source>
+        <target state="translated">لم تُفتح بعض الوحدات: أعد المحاولة من وحدة تحكم وحدات العميل.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.load-failed" datatype="html">
+        <source>La liste des clients n'a pas pu être chargée.</source>
+        <target state="translated">تعذّر تحميل قائمة العملاء.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.inactive" datatype="html">
+        <source>Désactivé</source>
+        <target state="translated">معطّل</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.empty" datatype="html">
+        <source>Aucun client pour l'instant : créez le premier.</source>
+        <target state="translated">لا يوجد عميل بعد: أنشئ الأول.</target>
+      </trans-unit>
       <trans-unit id="admin.api-keys.cancel" datatype="html">
         <source>Annuler</source>
         <target state="translated">إلغاء الأمر</target>

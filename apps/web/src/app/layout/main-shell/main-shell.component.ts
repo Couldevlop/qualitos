@@ -217,6 +217,13 @@ export class MainShellComponent implements OnInit, OnDestroy {
       label: $localize`:@@nav.administration:Administration`,
       items: [
         {
+          // L'éditeur seulement : créer une organisation, ses modules, son administrateur.
+          label: $localize`:@@nav.admin-clients:Clients`,
+          route: '/admin/clients',
+          icon: 'domain_add',
+          roles: ['SUPER_ADMIN']
+        },
+        {
           label: $localize`:@@nav.admin-modules:Modules du tenant`,
           route: '/admin/modules',
           icon: 'tune',

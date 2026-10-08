@@ -192,6 +192,194 @@
         <source>L'inscription a échoué.</source>
         <target state="translated">La inscripción ha fallado.</target>
       </trans-unit>
+      <trans-unit id="nav.admin-clients" datatype="html">
+        <source>Clients</source>
+        <target state="translated">Clientes</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.title" datatype="html">
+        <source>Transmettez ces identifiants</source>
+        <target state="translated">Transmita estas credenciales</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.help" datatype="html">
+        <source>Le mot de passe provisoire n'apparaîtra plus. Il devra être changé à la première connexion.</source>
+        <target state="translated">La contraseña provisional no volverá a mostrarse. Deberá cambiarse en el primer inicio de sesión.</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.login" datatype="html">
+        <source>Identifiant</source>
+        <target state="translated">Usuario</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.password" datatype="html">
+        <source>Mot de passe provisoire</source>
+        <target state="translated">Contraseña provisional</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.copy" datatype="html">
+        <source>Copier</source>
+        <target state="translated">Copiar</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.copied" datatype="html">
+        <source>Copié</source>
+        <target state="translated">Copiado</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.done" datatype="html">
+        <source>C'est transmis</source>
+        <target state="translated">Ya está transmitido</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.sent-title" datatype="html">
+        <source>Invitation envoyée</source>
+        <target state="translated">Invitación enviada</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.sent-help" datatype="html">
+        <source><x id="EMAIL"/> reçoit un lien pour choisir son mot de passe.</source>
+        <target state="translated"><x id="EMAIL"/> recibe un enlace para elegir su contraseña.</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite" datatype="html">
+        <source>Inviter un membre</source>
+        <target state="translated">Invitar a un miembro</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-title" datatype="html">
+        <source>Nouveau membre</source>
+        <target state="translated">Nuevo miembro</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-email" datatype="html">
+        <source>Adresse e-mail</source>
+        <target state="translated">Correo electrónico</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-email-invalid" datatype="html">
+        <source>Une adresse e-mail valide est attendue.</source>
+        <target state="translated">Se espera un correo electrónico válido.</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-first-name" datatype="html">
+        <source>Prénom (facultatif)</source>
+        <target state="translated">Nombre (opcional)</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-last-name" datatype="html">
+        <source>Nom (facultatif)</source>
+        <target state="translated">Apellido (opcional)</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-roles" datatype="html">
+        <source>Rôles de son compte</source>
+        <target state="translated">Roles de su cuenta</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-send" datatype="html">
+        <source>Créer son compte</source>
+        <target state="translated">Crear su cuenta</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-failed" datatype="html">
+        <source>L'invitation a échoué.</source>
+        <target state="translated">La invitación ha fallado.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.title" datatype="html">
+        <source>Clients</source>
+        <target state="translated">Clientes</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.subtitle" datatype="html">
+        <source>Chaque organisation qui utilise QualitOS : son offre, ses modules, son administrateur.</source>
+        <target state="translated">Cada organización que usa QualitOS: su oferta, sus módulos, su administrador.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.new" datatype="html">
+        <source>Nouveau client</source>
+        <target state="translated">Nuevo cliente</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.wizard-title" datatype="html">
+        <source>Nouveau client</source>
+        <target state="translated">Nuevo cliente</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.step-company" datatype="html">
+        <source>Entreprise</source>
+        <target state="translated">Empresa</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.step-modules" datatype="html">
+        <source>Modules</source>
+        <target state="translated">Módulos</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.step-admin" datatype="html">
+        <source>Administrateur</source>
+        <target state="translated">Administrador</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.name" datatype="html">
+        <source>Nom de l'organisation</source>
+        <target state="translated">Nombre de la organización</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.name-placeholder" datatype="html">
+        <source>Hôpital Saint-Jean</source>
+        <target state="translated">Hospital San Juan</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slug" datatype="html">
+        <source>Identifiant</source>
+        <target state="translated">Identificador</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slug-hint" datatype="html">
+        <source>Minuscules, chiffres et tirets ; il ne change plus.</source>
+        <target state="translated">Minúsculas, cifras y guiones; no cambia después.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slug-invalid" datatype="html">
+        <source>3 à 63 caractères : minuscules, chiffres et tirets.</source>
+        <target state="translated">De 3 a 63 caracteres: minúsculas, cifras y guiones.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.plan" datatype="html">
+        <source>Offre</source>
+        <target state="translated">Oferta</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.next" datatype="html">
+        <source>Continuer</source>
+        <target state="translated">Continuar</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.back" datatype="html">
+        <source>Retour</source>
+        <target state="translated">Volver</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.modules-help" datatype="html">
+        <source>Cochez ce que l'organisation utilisera. Ce dont un module a besoin se coche avec lui ; le socle est inclus d'office.</source>
+        <target state="translated">Marque lo que usará la organización. Lo que necesita un módulo se marca con él; el núcleo se incluye siempre.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.catalog-failed" datatype="html">
+        <source>Le catalogue des modules ne répond pas : le client peut être créé sans module, à compléter ensuite.</source>
+        <target state="translated">El catálogo de módulos no responde: el cliente puede crearse sin módulos y completarse después.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.core" datatype="html">
+        <source>Socle</source>
+        <target state="translated">Núcleo</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.required-by" datatype="html">
+        <source>Requis par <x id="modules"/></source>
+        <target state="translated">Requerido por <x id="modules"/></target>
+      </trans-unit>
+      <trans-unit id="admin.clients.admin-help" datatype="html">
+        <source>Son compte est créé maintenant ; il invitera ensuite son équipe et réglera ses droits.</source>
+        <target state="translated">Su cuenta se crea ahora; después invitará a su equipo y ajustará sus permisos.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.modules-count" datatype="html">
+        <source><x id="COUNT"/> module(s) choisi(s)</source>
+        <target state="translated"><x id="COUNT"/> módulo(s) elegido(s)</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.create" datatype="html">
+        <source>Créer le client</source>
+        <target state="translated">Crear el cliente</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.create-failed" datatype="html">
+        <source>La création du client a échoué.</source>
+        <target state="translated">La creación del cliente ha fallado.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.created" datatype="html">
+        <source>Client créé :</source>
+        <target state="translated">Cliente creado:</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.modules-failed" datatype="html">
+        <source>Certains modules n'ont pas été ouverts : reprenez-les depuis la console des modules du client.</source>
+        <target state="translated">Algunos módulos no se abrieron: reinténtelos desde la consola de módulos del cliente.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.load-failed" datatype="html">
+        <source>La liste des clients n'a pas pu être chargée.</source>
+        <target state="translated">No se pudo cargar la lista de clientes.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.inactive" datatype="html">
+        <source>Désactivé</source>
+        <target state="translated">Desactivado</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.empty" datatype="html">
+        <source>Aucun client pour l'instant : créez le premier.</source>
+        <target state="translated">Ningún cliente por ahora: cree el primero.</target>
+      </trans-unit>
       <trans-unit id="admin.api-keys.cancel" datatype="html">
         <source>Annuler</source>
         <target state="translated">Cancelar</target>

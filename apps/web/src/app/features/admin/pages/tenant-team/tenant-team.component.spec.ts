@@ -8,6 +8,7 @@ import { UiModule } from '../../../../shared/ui/ui.module';
 import { TenantUser } from '../../admin.types';
 import { TenantTeamService } from '../../tenant-team.service';
 import { TenantTeamComponent } from './tenant-team.component';
+import { CredentialRevealComponent } from '../../components/credential-reveal/credential-reveal.component';
 
 describe('TenantTeamComponent', () => {
   let component: TenantTeamComponent;
@@ -27,14 +28,14 @@ describe('TenantTeamComponent', () => {
 
   beforeEach(async () => {
     service = jasmine.createSpyObj<TenantTeamService>(
-      'TenantTeamService', ['list', 'setRoles', 'deactivate']);
+      'TenantTeamService', ['list', 'setRoles', 'deactivate', 'invite']);
     service.list.and.returnValue(of(page([user(), user({
       id: 'u2', email: 'bob@acme.com', roles: ['auditor'], active: false
     })])));
     snack = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
 
     await TestBed.configureTestingModule({
-      declarations: [TenantTeamComponent],
+      declarations: [TenantTeamComponent, CredentialRevealComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
         { provide: TenantTeamService, useValue: service },
@@ -126,5 +127,45 @@ describe('TenantTeamComponent', () => {
 
     expect(component.loading).toBeFalse();
     expect(snack.open).toHaveBeenCalled();
+  });
+
+  describe('inviter un membre (ADR 0079)', () => {
+
+    it('crée son compte avec ses rôles, l’ajoute à la liste et montre ses identifiants une fois', () => {
+      const bob = { id: 'u9', tenantId: 't', keycloakId: 'kc-bob', email: 'bob@acme.fr', roles: ['user', 'auditor'],
+        active: true, createdAt: '', updatedAt: '' };
+      service.invite.and.returnValue(of({ user: bob, temporaryPassword: 'Tmp4Pass', invitationSent: false }));
+
+      component.openInvite();
+      fixture.detectChanges();
+      component.toggleInviteRole('auditor');
+      component.inviteForm.patchValue({ email: 'bob@acme.fr', firstName: ' Bob ' });
+      component.sendInvite();
+      fixture.detectChanges();
+
+      expect(service.invite).toHaveBeenCalledWith({
+        email: 'bob@acme.fr', firstName: 'Bob', lastName: null, roles: ['user', 'auditor']
+      });
+      expect(component.members[0].email).toBe('bob@acme.fr');
+      expect(component.inviting).toBeFalse();
+      const el = fixture.nativeElement as HTMLElement;
+      expect(el.querySelector('[data-test="remise-mdp"]')!.textContent).toContain('Tmp4Pass');
+    });
+
+    it('sans adresse valide ou sans rôle, rien ne part ; un refus est annoncé', () => {
+      component.openInvite();
+      component.sendInvite();
+      component.inviteForm.patchValue({ email: 'bob@acme.fr' });
+      component.toggleInviteRole('user');
+      component.sendInvite();
+      expect(service.invite).not.toHaveBeenCalled();
+
+      component.toggleInviteRole('quality_manager');
+      service.invite.and.returnValue(throwError(() => new Error('409')));
+      component.sendInvite();
+      expect(service.invite).toHaveBeenCalledTimes(1);
+      expect(component.sending).toBeFalse();
+      expect(component.inviting).toBeTrue();
+    });
   });
 });

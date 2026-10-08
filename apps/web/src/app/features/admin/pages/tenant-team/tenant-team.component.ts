@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { finalize } from 'rxjs/operators';
 
-import { ASSIGNABLE_ROLES, TenantUser } from '../../admin.types';
+import { safeErrorMessage } from '../../../../core/http/error-message';
+import { ASSIGNABLE_ROLES, InviteResponse, TenantUser } from '../../admin.types';
 import { TenantTeamService } from '../../tenant-team.service';
 
 /**
@@ -32,9 +35,24 @@ export class TenantTeamComponent implements OnInit {
   pendingUserId: string | null = null;
   search = '';
 
+  /** Le panneau d'invitation est ouvert. */
+  inviting = false;
+  sending = false;
+  /** Le dernier membre invité : ses identifiants, à transmettre une fois. */
+  invited: InviteResponse | null = null;
+  /** Les rôles cochés dans le panneau d'invitation ; « Utilisateur » d'office. */
+  inviteRoles = new Set<string>(['user']);
+
+  readonly inviteForm = this.fb.nonNullable.group({
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(254)]],
+    firstName: ['', Validators.maxLength(100)],
+    lastName: ['', Validators.maxLength(100)]
+  });
+
   constructor(
     private readonly service: TenantTeamService,
-    private readonly snack: MatSnackBar
+    private readonly snack: MatSnackBar,
+    private readonly fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
@@ -115,6 +133,51 @@ export class TenantTeamComponent implements OnInit {
           $localize`:@@admin.team.save-failed:Modification refusée.`,
           $localize`:@@common.ok:OK`, { duration: 4000 });
       }
+    });
+  }
+
+  // ---------- invitation (ADR 0079) ----------
+
+  openInvite(): void {
+    this.inviting = true;
+    this.invited = null;
+    this.inviteForm.reset();
+    this.inviteRoles = new Set(['user']);
+  }
+
+  toggleInviteRole(role: string): void {
+    const roles = new Set(this.inviteRoles);
+    if (roles.has(role)) {
+      roles.delete(role);
+    } else {
+      roles.add(role);
+    }
+    this.inviteRoles = roles;
+  }
+
+  /**
+   * Crée le compte du membre dans l'organisation : il apparaît dans la liste,
+   * et ses identifiants s'affichent une fois.
+   */
+  sendInvite(): void {
+    if (this.inviteForm.invalid || this.inviteRoles.size === 0 || this.sending) {
+      this.inviteForm.markAllAsTouched();
+      return;
+    }
+    const v = this.inviteForm.getRawValue();
+    this.sending = true;
+    this.service.invite({
+      email: v.email.trim(), firstName: v.firstName.trim() || null, lastName: v.lastName.trim() || null,
+      roles: [...this.inviteRoles]
+    }).pipe(finalize(() => this.sending = false)).subscribe({
+      next: r => {
+        this.invited = r;
+        this.inviting = false;
+        this.members = [r.user, ...this.members];
+      },
+      error: err => this.snack.open(
+        safeErrorMessage(err, $localize`:@@admin.team.invite-failed:L'invitation a échoué.`),
+        $localize`:@@common.ok:OK`, { duration: 5000 })
     });
   }
 

@@ -5,6 +5,8 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../../shared/shared.module';
 import { UiModule } from '../../shared/ui/ui.module';
+import { CredentialRevealComponent } from './components/credential-reveal/credential-reveal.component';
+import { ClientsComponent } from './pages/clients/clients.component';
 import { RolesMatrixComponent } from './pages/roles-matrix/roles-matrix.component';
 import { TenantModulesComponent } from './pages/tenant-modules/tenant-modules.component';
 import { TenantTeamComponent } from './pages/tenant-team/tenant-team.component';
@@ -22,6 +24,8 @@ const routes: Routes = [
   { path: 'team', component: TenantTeamComponent },
   // Rôles et droits par client (ADR 0078) : la matrice, et l'équipe qu'on y glisse.
   { path: 'roles', component: RolesMatrixComponent },
+  // Les clients de la plateforme et leur création (éditeur, ADR 0079).
+  { path: 'clients', component: ClientsComponent },
   // Les autres surfaces d'administration sont des modules paresseux distincts,
   // déclarés ICI plutôt qu'à la racine : sans cela, la route `admin` de
   // app-routing.module.ts capterait `/admin/api-keys` par correspondance de préfixe
@@ -49,7 +53,8 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [TenantModulesComponent, TenantTeamComponent, RolesMatrixComponent],
+  declarations: [TenantModulesComponent, TenantTeamComponent, RolesMatrixComponent, ClientsComponent,
+    CredentialRevealComponent],
   imports: [SharedModule, UiModule, DragDropModule, MatMenuModule, RouterModule.forChild(routes)]
 })
 export class AdminModule {}
