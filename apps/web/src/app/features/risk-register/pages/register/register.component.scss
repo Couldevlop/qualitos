@@ -39,7 +39,10 @@
   }
 
   &--actif {
-    color: var(--qos-accent-fg);
+    // `accent-fg` est le texte posé SUR l'accent (blanc) : sur le fond de la
+    // page, l'onglet actif devenait invisible. `accent-fg-soft` est l'accent
+    // lisible sur fond neutre, dans les deux thèmes.
+    color: var(--qos-accent-fg-soft);
     border-bottom-color: var(--qos-accent-bg);
     font-weight: var(--qos-fw-semibold);
   }
