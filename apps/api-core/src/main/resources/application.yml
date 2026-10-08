@@ -114,3 +114,16 @@ springdoc:
 qualitos:
   quality-engine:
     base-url: ${QUALITY_ENGINE_BASE_URL:}
+  # Comptes de connexion (ADR 0079) : compte de service « qualitos-provisioner »,
+  # droits de gestion des utilisateurs du realm seulement. URL INTERNE au cluster :
+  # le WAF de l'ingress refuse les écritures de l'API d'administration Keycloak.
+  # Sans secret, créer ou modifier un compte répond 502 — jamais de compte fantôme.
+  identity:
+    # Adresse INTERNE quand KEYCLOAK_URL est publique (préprod) : IDENTITY_KEYCLOAK_URL.
+    base-url: ${IDENTITY_KEYCLOAK_URL:${KEYCLOAK_URL:http://localhost:8080}}
+    realm: ${KEYCLOAK_REALM:qualitos}
+    client-id: ${KEYCLOAK_PROVISIONER_CLIENT_ID:qualitos-provisioner}
+    client-secret: ${KEYCLOAK_PROVISIONER_SECRET:}
+    # temporary-password (mot de passe provisoire montré une fois) ou email
+    # (lien d'activation, exige un SMTP sur le realm).
+    invitation-mode: ${IDENTITY_INVITATION_MODE:temporary-password}

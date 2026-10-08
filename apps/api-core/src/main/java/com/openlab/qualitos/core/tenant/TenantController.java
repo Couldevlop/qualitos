@@ -26,9 +26,24 @@ import java.util.UUID;
 public class TenantController {
 
     private final TenantService tenantService;
+    private final TenantOnboardingService onboarding;
 
-    public TenantController(TenantService tenantService) {
+    public TenantController(TenantService tenantService, TenantOnboardingService onboarding) {
         this.tenantService = tenantService;
+        this.onboarding = onboarding;
+    }
+
+    /**
+     * Crée un client de bout en bout : l'entreprise, le compte de son premier
+     * administrateur, ses modules. Le mot de passe provisoire n'est rendu qu'ici.
+     */
+    @PostMapping("/onboard")
+    @Operation(summary = "Onboard a tenant: company, first administrator account, modules")
+    public ResponseEntity<OnboardingDto.Response> onboardTenant(@Valid @RequestBody OnboardingDto.Request request) {
+        OnboardingDto.Response created = onboarding.onboard(request);
+        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/v1/tenants/{id}").buildAndExpand(created.tenant().id()).toUri();
+        return ResponseEntity.created(location).header("Cache-Control", "no-store").body(created);
     }
 
     @GetMapping

@@ -123,6 +123,11 @@ services:
     env:
       DB_URL: jdbc:postgresql://postgres.qualitos-preprod.svc.cluster.local:5432/qualitos_core
       QUALITY_ENGINE_BASE_URL: http://api-quality-engine.qualitos-preprod.svc.cluster.local:8082
+      # Comptes de connexion (ADR 0079) : l'API d'administration Keycloak par
+      # l'adresse INTERNE — le WAF de l'ingress refuse ses écritures.
+      IDENTITY_KEYCLOAK_URL: http://keycloak.qualitos-preprod.svc.cluster.local:8080/auth
+    # KEYCLOAK_PROVISIONER_SECRET, lu dans Keycloak par deploy.sh.
+    extraSecretRefs: [qualitos-api-core-identity]
   api-quality-engine:
     replicas: 1
     env:

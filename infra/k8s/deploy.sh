@@ -186,6 +186,7 @@ echo "  secret qualitos-api-iot-hub : à jour"
 # répondent 502 — exactement la panne rencontrée au premier déploiement.
 KC_POD="$(kubectl -n "$NS" get pod -l app.kubernetes.io/name=keycloak --field-selector=status.phase=Running -o name | head -1)"
 AI_SECRET=""
+PROV_SECRET=""
 if [ -n "$KC_POD" ]; then
   KC_ADMIN="$(kubectl -n "$NS" get secret qualitos-keycloak -o jsonpath='{.data.KEYCLOAK_ADMIN}' | base64 -d)"
   KC_PWD="$(kubectl -n "$NS" get secret qualitos-keycloak -o jsonpath='{.data.KEYCLOAK_ADMIN_PASSWORD}' | base64 -d)"
@@ -325,7 +326,49 @@ if [ -n "$KC_POD" ]; then
     AI_SECRET="$(kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh get "clients/$AI_CID/client-secret" \
       -r qualitos --fields value --format csv --noquotes 2>/dev/null | tr -d '\r' | head -1)"
   fi
+
+  # Compte de service qui crée et règle les comptes de connexion (ADR 0079).
+  # Le realm-export ne se réimporte que sur une base vide : sur un realm déjà en
+  # service, c'est ICI qu'il naît. kcadm travaille depuis le pod — pas de WAF.
+  # Droits : manage-users, view-users, query-users du realm, et rien d'autre.
+  KC="kubectl -n $NS exec $KC_POD -- /opt/keycloak/bin/kcadm.sh"
+  PROV_CID="$($KC get clients -r qualitos -q clientId=qualitos-provisioner --fields id --format csv --noquotes 2>/dev/null | tr -d '\r' | head -1 || true)"
+  if [ -z "$PROV_CID" ]; then
+    if $KC create clients -r qualitos -s clientId=qualitos-provisioner -s enabled=true \
+         -s publicClient=false -s serviceAccountsEnabled=true -s standardFlowEnabled=false \
+         -s directAccessGrantsEnabled=false -s implicitFlowEnabled=false \
+         -s 'attributes."access.token.lifespan"=300' >/dev/null; then
+      echo "  client qualitos-provisioner : créé"
+    else
+      echo "  ATTENTION : création du client qualitos-provisioner refusée par Keycloak." >&2
+    fi
+    PROV_CID="$($KC get clients -r qualitos -q clientId=qualitos-provisioner --fields id --format csv --noquotes 2>/dev/null | tr -d '\r' | head -1 || true)"
+  fi
+  if [ -n "$PROV_CID" ]; then
+    # Idempotent : réattribuer un rôle déjà porté ne fait rien.
+    if $KC add-roles -r qualitos --uusername service-account-qualitos-provisioner \
+         --cclientid realm-management --rolename manage-users --rolename view-users \
+         --rolename query-users >/dev/null; then
+      echo "  compte de service qualitos-provisioner : droits de gestion des utilisateurs en place"
+    else
+      echo "  ATTENTION : droits du compte de service qualitos-provisioner non posés." >&2
+    fi
+    PROV_SECRET="$($KC get "clients/$PROV_CID/client-secret" -r qualitos --fields value --format csv --noquotes 2>/dev/null | tr -d '\r' | head -1 || true)"
+  fi
 fi
+
+if [ -n "$PROV_SECRET" ]; then
+  echo "  secret du compte de service des comptes : récupéré depuis Keycloak"
+else
+  # Pas de repli : sans ce secret, créer un client ou inviter un membre répond
+  # 502 avec un message clair, et aucun compte fantôme n'est annoncé.
+  echo "  ATTENTION : secret de qualitos-provisioner introuvable — la création des" >&2
+  echo "  clients et l'invitation des membres resteront indisponibles." >&2
+fi
+kubectl -n "$NS" create secret generic qualitos-api-core-identity \
+  --from-literal=KEYCLOAK_PROVISIONER_SECRET="$PROV_SECRET" \
+  --dry-run=client -o yaml | kubectl apply -f - >/dev/null
+echo "  secret qualitos-api-core-identity : à jour"
 
 if [ -n "$AI_SECRET" ]; then
   echo "  secret du client IA : récupéré depuis Keycloak"

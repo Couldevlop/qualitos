@@ -7,6 +7,9 @@ import com.openlab.qualitos.core.tenant.TenantAlreadyExistsException;
 import com.openlab.qualitos.core.tenant.TenantNotFoundException;
 import com.openlab.qualitos.core.user.UserAlreadyExistsException;
 import com.openlab.qualitos.core.user.UserNotFoundException;
+import com.openlab.qualitos.core.identity.InvalidRoleException;
+import com.openlab.qualitos.core.identity.IdentityProviderException;
+import com.openlab.qualitos.core.identity.AccountAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -43,6 +46,41 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         problem.setType(URI.create("https://qualitos.io/errors/tenant-conflict"));
         problem.setTitle("Tenant Already Exists");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(AccountAlreadyExistsException.class)
+    public ProblemDetail handleAccountExists(AccountAlreadyExistsException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/account-conflict"));
+        problem.setTitle("Account Already Exists");
+        problem.setProperty("field", "email");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    @ExceptionHandler(InvalidRoleException.class)
+    public ProblemDetail handleInvalidRole(InvalidRoleException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/invalid-role"));
+        problem.setTitle("Invalid Role");
+        problem.setProperty("field", "roles");
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
+    /**
+     * 502 : le fournisseur d'identité a refusé ou ne répond pas. Le détail
+     * technique va au journal ; la réponse ne dit que ce que l'appelant peut
+     * faire de l'erreur.
+     */
+    @ExceptionHandler(IdentityProviderException.class)
+    public ProblemDetail handleIdentityProvider(IdentityProviderException ex) {
+        log.error("identity.provider.failed message={}", ex.getMessage());
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/identity-provider"));
+        problem.setTitle("Identity Provider Unavailable");
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }

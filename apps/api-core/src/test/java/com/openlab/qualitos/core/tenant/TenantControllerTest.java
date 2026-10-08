@@ -3,6 +3,7 @@ package com.openlab.qualitos.core.tenant;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openlab.qualitos.core.common.GlobalExceptionHandler;
 import com.openlab.qualitos.core.config.SecurityConfig;
+import com.openlab.qualitos.core.user.UserDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -43,6 +45,9 @@ class TenantControllerTest {
 
     @MockBean
     private TenantService tenantService;
+
+    @MockBean
+    private TenantOnboardingService onboardingService;
 
     // JwtDecoder est requis par SecurityConfig (oauth2ResourceServer)
     // TenantJwtFilter est créé via SecurityConfig.tenantJwtFilter(JwtDecoder)
@@ -257,6 +262,49 @@ class TenantControllerTest {
 
             mockMvc.perform(delete("/api/v1/tenants/{id}", TENANT_ID).with(superAdminJwt()))
                     .andExpect(status().isNotFound());
+        }
+    }
+
+    @Nested
+    @DisplayName("POST /api/v1/tenants/onboard")
+    class Onboard {
+
+        static final String CORPS = "{\"name\":\"ACME\",\"slug\":\"acme\",\"modules\":[\"capa\"],"
+                + "\"admin\":{\"email\":\"alice@acme.fr\"}}";
+
+        @Test
+        @DisplayName("Le super administrateur crée un client de bout en bout")
+        void superAdminOnboards() throws Exception {
+            TenantDto.Response client = new TenantDto.Response(TENANT_ID, "acme", "ACME", Tenant.Plan.STARTER,
+                    true, Instant.now(), Instant.now());
+            given(onboardingService.onboard(any())).willReturn(new OnboardingDto.Response(client,
+                    new UserDto.Response(UUID.randomUUID(), TENANT_ID, "kc", "alice@acme.fr", Set.of("admin_tenant"),
+                            true, Instant.now(), Instant.now()),
+                    "Tmp4Pass", false, List.of(new OnboardingDto.ModuleOutcome("capa", true, null))));
+
+            mockMvc.perform(post("/api/v1/tenants/onboard").with(superAdminJwt())
+                            .contentType(MediaType.APPLICATION_JSON).content(CORPS))
+                    .andExpect(status().isCreated())
+                    .andExpect(header().string("Cache-Control", "no-store"))
+                    .andExpect(jsonPath("$.admin.roles[0]").value("admin_tenant"))
+                    .andExpect(jsonPath("$.modules[0].activated").value(true));
+        }
+
+        @Test
+        @DisplayName("Un administrateur de client ne crée pas de client ; un slug ou un module mal formé est refusé")
+        void refus() throws Exception {
+            mockMvc.perform(post("/api/v1/tenants/onboard")
+                            .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_ADMIN_TENANT")))
+                            .contentType(MediaType.APPLICATION_JSON).content(CORPS))
+                    .andExpect(status().isForbidden());
+            mockMvc.perform(post("/api/v1/tenants/onboard").with(superAdminJwt())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(CORPS.replace("\"acme\"", "\"ACME Corp\"")))
+                    .andExpect(status().isBadRequest());
+            mockMvc.perform(post("/api/v1/tenants/onboard").with(superAdminJwt())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(CORPS.replace("\"capa\"", "\"../x\"")))
+                    .andExpect(status().isBadRequest());
         }
     }
 }

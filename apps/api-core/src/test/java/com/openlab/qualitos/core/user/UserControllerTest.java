@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openlab.qualitos.core.common.GlobalExceptionHandler;
 import com.openlab.qualitos.core.common.MissingTenantContextException;
 import com.openlab.qualitos.core.config.SecurityConfig;
+import com.openlab.qualitos.core.identity.InvalidRoleException;
+import com.openlab.qualitos.core.identity.IdentityProviderException;
+import com.openlab.qualitos.core.identity.AccountAlreadyExistsException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -353,6 +356,51 @@ class UserControllerTest {
 
             mockMvc.perform(delete("/api/v1/users/{id}", USER_ID).with(adminJwt()))
                     .andExpect(status().isNotFound());
+        }
+    }
+
+    @Nested
+    @DisplayName("POST /api/v1/users/invite")
+    class InviteUser {
+
+        static final String CORPS = "{\"email\":\"bob@acme.fr\",\"firstName\":\"Bob\",\"roles\":[\"quality_manager\"]}";
+
+        @Test
+        @DisplayName("L'administrateur du client invite ; le mot de passe provisoire ne se met pas en cache")
+        void tenantAdminInvites() throws Exception {
+            given(userService.invite(any())).willReturn(new UserDto.InviteResponse(sampleResponse(), "Tmp4Pass", false));
+
+            mockMvc.perform(post("/api/v1/users/invite").with(tenantAdminJwt())
+                            .contentType(MediaType.APPLICATION_JSON).content(CORPS))
+                    .andExpect(status().isCreated())
+                    .andExpect(header().string("Cache-Control", "no-store"))
+                    .andExpect(header().exists("Location"))
+                    .andExpect(jsonPath("$.temporaryPassword").value("Tmp4Pass"));
+        }
+
+        @Test
+        @DisplayName("Un simple utilisateur n'invite pas ; un corps invalide est refusé")
+        void refus() throws Exception {
+            mockMvc.perform(post("/api/v1/users/invite").with(userJwt())
+                            .contentType(MediaType.APPLICATION_JSON).content(CORPS))
+                    .andExpect(status().isForbidden());
+            mockMvc.perform(post("/api/v1/users/invite").with(tenantAdminJwt())
+                            .contentType(MediaType.APPLICATION_JSON).content("{\"email\":\"pas-un-email\",\"roles\":[]}"))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Adresse déjà prise : 409 ; rôle non attribuable : 422 ; fournisseur indisponible : 502")
+        void erreursDuFournisseur() throws Exception {
+            given(userService.invite(any()))
+                    .willThrow(new AccountAlreadyExistsException("bob@acme.fr"))
+                    .willThrow(new InvalidRoleException("Rôle non attribuable : super_admin"))
+                    .willThrow(new IdentityProviderException("Le fournisseur d'identité n'est pas configuré"));
+            for (int attendu : new int[]{409, 422, 502}) {
+                mockMvc.perform(post("/api/v1/users/invite").with(tenantAdminJwt())
+                                .contentType(MediaType.APPLICATION_JSON).content(CORPS))
+                        .andExpect(status().is(attendu));
+            }
         }
     }
 }
