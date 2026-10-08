@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.docs;
 
+import org.springframework.security.access.AccessDeniedException;
+import com.openlab.qualitos.quality.common.CurrentUser;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.data.domain.Page;
@@ -71,7 +73,10 @@ public class DocumentService {
         v.setContentHash(computeHash(req.initialContent()));
         v.setChangeNote(req.initialChangeNote());
         v.setStatus(VersionStatus.DRAFT);
-        v.setAuthorId(req.ownerId());
+        // L'auteur de la première version est celui qui la rédige, pas le
+        // propriétaire désigné : sans quoi la règle « l'approbateur n'est pas
+        // l'auteur » se contournait en désignant un autre propriétaire.
+        v.setAuthorId(CurrentUser.requireUserId());
         versionRepository.save(v);
         d.getVersions().add(v);
 
@@ -125,7 +130,7 @@ public class DocumentService {
         v.setContentHash(computeHash(req.content()));
         v.setChangeNote(req.changeNote());
         v.setStatus(VersionStatus.DRAFT);
-        v.setAuthorId(req.authorId());
+        v.setAuthorId(actingAs(req.authorId()));
         return toVersionResponse(versionRepository.save(v));
     }
 
@@ -163,11 +168,12 @@ public class DocumentService {
         if (v.getStatus() != VersionStatus.IN_REVIEW) {
             throw new DocumentStateException("Only IN_REVIEW versions can be approved");
         }
-        if (req.approverId().equals(v.getAuthorId())) {
+        UUID approbateur = actingAs(req == null ? null : req.approverId());
+        if (approbateur.equals(v.getAuthorId())) {
             throw new DocumentStateException("Approver cannot be the author of the version");
         }
         v.setStatus(VersionStatus.APPROVED);
-        v.setApprovedBy(req.approverId());
+        v.setApprovedBy(approbateur);
         v.setApprovedAt(Instant.now());
         return toVersionResponse(versionRepository.save(v));
     }
@@ -213,12 +219,13 @@ public class DocumentService {
         if (!d.isMandatoryRead()) {
             throw new DocumentStateException("Document is not marked as mandatory-read");
         }
-        DocumentAcknowledgment ack = ackRepository.findByVersionIdAndUserId(versionId, req.userId())
+        UUID lecteur = actingAs(req == null ? null : req.userId());
+        DocumentAcknowledgment ack = ackRepository.findByVersionIdAndUserId(versionId, lecteur)
                 .orElseGet(() -> {
                     DocumentAcknowledgment a = new DocumentAcknowledgment();
                     a.setVersion(v);
                     a.setTenantId(tenantId);
-                    a.setUserId(req.userId());
+                    a.setUserId(lecteur);
                     return a;
                 });
         ack = ackRepository.save(ack);
@@ -244,6 +251,19 @@ public class DocumentService {
     private DocumentVersion loadVersion(UUID documentId, UUID versionId) {
         return versionRepository.findByIdAndDocumentId(versionId, documentId)
                 .orElseThrow(() -> new DocumentVersionNotFoundException(versionId));
+    }
+
+    /**
+     * L'utilisateur du jeton, qui agit (ADR 0080). Un identifiant fourni dans le
+     * corps doit être le sien : agir au nom d'un autre est refusé (403), pas
+     * corrigé en silence — la tentative doit se voir.
+     */
+    static UUID actingAs(UUID declared) {
+        UUID acteur = CurrentUser.requireUserId();
+        if (declared != null && !declared.equals(acteur)) {
+            throw new AccessDeniedException("Acting on behalf of another user is not allowed");
+        }
+        return acteur;
     }
 
     private UUID requireTenantId() {

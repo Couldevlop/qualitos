@@ -67,8 +67,9 @@ public final class ChangeDto {
             @Min(1) Integer approvalLevel
     ) {}
 
+    /** L'approbateur est l'utilisateur du jeton (ADR 0080) ; le champ n'est gardé que pour vérifier qu'il concorde. */
     public record DecisionRequest(
-            @NotNull UUID approverUserId,
+            UUID approverUserId,
             @NotNull ApprovalDecision decision,
             @Size(max = 1000) String comment
     ) {}

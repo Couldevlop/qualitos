@@ -144,11 +144,13 @@ class DocumentControllerTest {
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
-    void createVersion_missingAuthor_returns400() throws Exception {
+    void createVersion_withoutAuthor_isAccepted_authorComesFromTheToken() throws Exception {
+        // ADR 0080 : l'auteur n'est plus lu dans le corps ; le service le prend du jeton.
+        when(service.createVersion(eq(DOC), any())).thenReturn(verResp(VersionStatus.DRAFT));
         mockMvc.perform(post("/api/v1/documents/{id}/versions", DOC).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isCreated());
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
@@ -195,11 +197,13 @@ class DocumentControllerTest {
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
-    void approve_missingApprover_returns400() throws Exception {
+    void approve_withoutApprover_isAccepted_approverComesFromTheToken() throws Exception {
+        // ADR 0080 : l'approbateur est l'utilisateur du jeton.
+        when(service.approveVersion(eq(DOC), eq(VER), any())).thenReturn(verResp(VersionStatus.APPROVED));
         mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}/approve", DOC, VER).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk());
     }
 
     @Test @WithMockUser(roles = "QUALITY_MANAGER")
