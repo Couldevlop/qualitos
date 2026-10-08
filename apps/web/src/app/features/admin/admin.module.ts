@@ -8,6 +8,7 @@ import { UiModule } from '../../shared/ui/ui.module';
 import { CredentialRevealComponent } from './components/credential-reveal/credential-reveal.component';
 import { CircuitsComponent } from './pages/circuits/circuits.component';
 import { ClientsComponent } from './pages/clients/clients.component';
+import { LicenseComponent } from './pages/license/license.component';
 import { RolesMatrixComponent } from './pages/roles-matrix/roles-matrix.component';
 import { TenantModulesComponent } from './pages/tenant-modules/tenant-modules.component';
 import { TenantTeamComponent } from './pages/tenant-team/tenant-team.component';
@@ -27,6 +28,8 @@ const routes: Routes = [
   { path: 'roles', component: RolesMatrixComponent },
   // Les circuits de validation (ADR 0080) : qui approuve, et dans quel ordre.
   { path: 'circuits', component: CircuitsComponent },
+  // La licence d'une installation on-premise (ADR 0082).
+  { path: 'licence', component: LicenseComponent },
   // Les clients de la plateforme et leur création (éditeur, ADR 0079).
   { path: 'clients', component: ClientsComponent },
   // Les autres surfaces d'administration sont des modules paresseux distincts,
@@ -56,7 +59,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [TenantModulesComponent, TenantTeamComponent, RolesMatrixComponent, CircuitsComponent, ClientsComponent,
+  declarations: [TenantModulesComponent, TenantTeamComponent, RolesMatrixComponent, CircuitsComponent, ClientsComponent, LicenseComponent,
     CredentialRevealComponent],
   imports: [SharedModule, UiModule, DragDropModule, MatMenuModule, RouterModule.forChild(routes)]
 })

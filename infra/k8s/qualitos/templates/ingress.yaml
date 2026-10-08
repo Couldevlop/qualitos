@@ -34,6 +34,15 @@ spec:
               service:
                 name: api-core
                 port: { name: http }
+          # Édition de l'installation et état de la licence (ADR 0082) : api-core.
+          # Sans cette règle, le chemin tomberait dans la règle fourre-tout /api et
+          # partirait au moteur qualité, qui ne le connaît pas.
+          - path: /api/v1/edition
+            pathType: Prefix
+            backend:
+              service:
+                name: api-core
+                port: { name: http }
           # Surface d'ADMINISTRATION de la facturation (profils clients, tarifs
           # des modules, abonnements, factures) : elle vit dans api-core, à côté
           # de /api/v1/tenants, parce que le client facturé est une notion de

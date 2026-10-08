@@ -9906,6 +9906,142 @@ Portail clients</source>
         <source>Échec de l'opération (HTTP <x id="status"/>).</source>
         <target state="translated">فشلت العملية (HTTP <x id="status"/>).</target>
       </trans-unit>
+      <trans-unit id="nav.admin-license" datatype="html">
+        <source>Licence</source>
+        <target state="translated">الترخيص</target>
+      </trans-unit>
+      <trans-unit id="license.title" datatype="html">
+        <source>Licence</source>
+        <target state="translated">الترخيص</target>
+      </trans-unit>
+      <trans-unit id="license.subtitle" datatype="html">
+        <source>Ce que couvre la licence de cette installation, et jusqu'à quand.</source>
+        <target state="translated">ما يغطيه ترخيص هذا التثبيت، وحتى متى.</target>
+      </trans-unit>
+      <trans-unit id="license.saas" datatype="html">
+        <source>Cette installation est la plateforme QualitOS de l'éditeur : la licence ne s'y applique pas.</source>
+        <target state="translated">هذا التثبيت هو منصة QualitOS الخاصة بالناشر: لا ينطبق الترخيص هنا.</target>
+      </trans-unit>
+      <trans-unit id="license.until" datatype="html">
+        <source>Valable jusqu'au</source>
+        <target state="translated">صالح حتى</target>
+      </trans-unit>
+      <trans-unit id="license.grace-until" datatype="html">
+        <source>Délai de grâce jusqu'au</source>
+        <target state="translated">فترة السماح حتى</target>
+      </trans-unit>
+      <trans-unit id="license.tier" datatype="html">
+        <source>Palier</source>
+        <target state="translated">المستوى</target>
+      </trans-unit>
+      <trans-unit id="license.reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">المرجع</target>
+      </trans-unit>
+      <trans-unit id="license.users" datatype="html">
+        <source>Utilisateurs</source>
+        <target state="translated">المستخدمون</target>
+      </trans-unit>
+      <trans-unit id="license.users-count" datatype="html">
+        <source><x id="ACTIVE"/> comptes actifs sur <x id="MAX"/></source>
+        <target state="translated"><x id="ACTIVE"/> حسابات نشطة من أصل <x id="MAX"/></target>
+      </trans-unit>
+      <trans-unit id="license.users-gauge" datatype="html">
+        <source>Places utilisées</source>
+        <target state="translated">المقاعد المستخدمة</target>
+      </trans-unit>
+      <trans-unit id="license.users-help" datatype="html">
+        <source>Désactiver un compte libère une place.</source>
+        <target state="translated">تعطيل حساب يحرر مقعدًا.</target>
+      </trans-unit>
+      <trans-unit id="license.users-unlimited" datatype="html">
+        <source>Nombre d'utilisateurs illimité.</source>
+        <target state="translated">عدد غير محدود من المستخدمين.</target>
+      </trans-unit>
+      <trans-unit id="license.modules" datatype="html">
+        <source>Modules ouverts</source>
+        <target state="translated">الوحدات المتاحة</target>
+      </trans-unit>
+      <trans-unit id="license.modules-all" datatype="html">
+        <source>Tous les modules de QualitOS.</source>
+        <target state="translated">جميع وحدات QualitOS.</target>
+      </trans-unit>
+      <trans-unit id="license.modules-help" datatype="html">
+        <source>Les modules du socle (PDCA, CAPA, documents, audits…) sont toujours ouverts.</source>
+        <target state="translated">الوحدات الأساسية (PDCA وCAPA والمستندات والتدقيق…) متاحة دائمًا.</target>
+      </trans-unit>
+      <trans-unit id="license.renew" datatype="html">
+        <source>Renouveler</source>
+        <target state="translated">التجديد</target>
+      </trans-unit>
+      <trans-unit id="license.renew-help" datatype="html">
+        <source>Votre prestataire remplace le fichier de licence de l'installation. La nouvelle licence est prise en compte en moins d'une minute, sans redémarrage ni interruption.</source>
+        <target state="translated">يستبدل مزودك ملف ترخيص التثبيت. يُطبَّق الترخيص الجديد خلال أقل من دقيقة، دون إعادة تشغيل أو انقطاع.</target>
+      </trans-unit>
+      <trans-unit id="license.read-only-help" datatype="html">
+        <source>Sans licence valable, l'installation passe en lecture seule : vos enregistrements restent consultables et exportables.</source>
+        <target state="translated">من دون ترخيص صالح، يصبح التثبيت للقراءة فقط: تبقى سجلاتك قابلة للاطلاع والتصدير.</target>
+      </trans-unit>
+      <trans-unit id="license.status.valid" datatype="html">
+        <source>Valide</source>
+        <target state="translated">صالح</target>
+      </trans-unit>
+      <trans-unit id="license.status.grace" datatype="html">
+        <source>Échue — délai de grâce</source>
+        <target state="translated">منتهٍ — فترة سماح</target>
+      </trans-unit>
+      <trans-unit id="license.status.expired" datatype="html">
+        <source>Échue — lecture seule</source>
+        <target state="translated">منتهٍ — للقراءة فقط</target>
+      </trans-unit>
+      <trans-unit id="license.status.not-yet" datatype="html">
+        <source>Pas encore en vigueur</source>
+        <target state="translated">لم يدخل حيز التنفيذ بعد</target>
+      </trans-unit>
+      <trans-unit id="license.status.invalid" datatype="html">
+        <source>Non vérifiée</source>
+        <target state="translated">غير متحقق منه</target>
+      </trans-unit>
+      <trans-unit id="license.status.missing" datatype="html">
+        <source>Absente</source>
+        <target state="translated">غير موجود</target>
+      </trans-unit>
+      <trans-unit id="license.status.not-required" datatype="html">
+        <source>Sans objet</source>
+        <target state="translated">لا ينطبق</target>
+      </trans-unit>
+      <trans-unit id="license.banner.details" datatype="html">
+        <source>Voir la licence</source>
+        <target state="translated">عرض الترخيص</target>
+      </trans-unit>
+      <trans-unit id="license.banner.read-only-tail" datatype="html">
+        <source>Vos données restent consultables et exportables.</source>
+        <target state="translated">تبقى بياناتك قابلة للاطلاع والتصدير.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.expires-soon" datatype="html">
+        <source>La licence expire le <x id="date"/> : pensez à la renouveler.</source>
+        <target state="translated">ينتهي الترخيص في <x id="date"/>: تذكّر تجديده.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.grace" datatype="html">
+        <source>La licence a expiré le <x id="date"/>. Tout fonctionne jusqu'au <x id="grace"/> ; renouvelez-la avant cette date.</source>
+        <target state="translated">انتهى الترخيص في <x id="date"/>. يعمل كل شيء حتى <x id="grace"/>؛ جدّده قبل ذلك التاريخ.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.expired" datatype="html">
+        <source>Licence expirée : l'installation est en lecture seule.</source>
+        <target state="translated">انتهى الترخيص: التثبيت للقراءة فقط.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.not-yet" datatype="html">
+        <source>La licence n'est pas encore en vigueur : l'installation est en lecture seule.</source>
+        <target state="translated">الترخيص لم يدخل حيز التنفيذ بعد: التثبيت للقراءة فقط.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.missing" datatype="html">
+        <source>Aucune licence installée : l'installation est en lecture seule.</source>
+        <target state="translated">لا يوجد ترخيص مثبت: التثبيت للقراءة فقط.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.invalid" datatype="html">
+        <source>La licence n'a pas pu être vérifiée : l'installation est en lecture seule.</source>
+        <target state="translated">تعذّر التحقق من الترخيص: التثبيت للقراءة فقط.</target>
+      </trans-unit>
       <trans-unit id="nav.cinq-pourquoi" datatype="html">
         <source>5 Pourquoi</source>
         <target state="translated">الأسباب الخمسة</target>

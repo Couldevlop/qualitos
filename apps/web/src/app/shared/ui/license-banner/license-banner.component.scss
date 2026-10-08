@@ -1,0 +1,47 @@
+// Une ligne sous la barre du haut : discrète tant qu'elle informe, franche quand
+// l'installation est en lecture seule.
+.bandeau {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-3);
+  padding: var(--qos-space-2) var(--qos-space-5);
+  font-size: var(--qos-fs-sm);
+  border-bottom: 1px solid var(--qos-border-subtle);
+
+  mat-icon {
+    flex-shrink: 0;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &__texte {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__lien {
+    flex-shrink: 0;
+    font-weight: var(--qos-fw-medium);
+    color: inherit;
+  }
+
+  &--info {
+    background: var(--qos-bg-sunken);
+    color: var(--qos-fg-secondary);
+  }
+
+  &--warning {
+    background: color-mix(in srgb, var(--qos-chart-4) 14%, var(--qos-bg-elevated));
+    color: var(--qos-fg-primary);
+  }
+
+  &--blocked {
+    background: var(--qos-danger-bg-soft);
+    color: var(--qos-fg-primary);
+
+    mat-icon {
+      color: var(--qos-danger-fg);
+    }
+  }
+}

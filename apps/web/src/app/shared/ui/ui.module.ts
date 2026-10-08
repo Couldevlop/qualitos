@@ -13,6 +13,7 @@ import { RouterModule } from '@angular/router';
 import { EchartComponent } from './echart/echart.component';
 import { FormDialogComponent } from './form-dialog/form-dialog.component';
 import { KpiCardComponent } from './kpi-card/kpi-card.component';
+import { LicenseBannerComponent } from './license-banner/license-banner.component';
 import { LocaleSwitcherComponent } from './locale-switcher/locale-switcher.component';
 import { PageHeaderComponent } from './page-header/page-header.component';
 import { PanelComponent } from './panel/panel.component';
@@ -29,7 +30,8 @@ const COMPONENTS = [
   LocaleSwitcherComponent,
   EchartComponent,
   FormDialogComponent,
-  ScopeNoteComponent
+  ScopeNoteComponent,
+  LicenseBannerComponent
 ];
 
 /**
