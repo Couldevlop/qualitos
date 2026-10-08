@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.nonconformity;
 
+import com.openlab.qualitos.quality.authz.domain.Permission;
+import com.openlab.qualitos.quality.authz.web.RequiresPermission;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +35,7 @@ public class NcController {
     }
 
     @PostMapping
+    @RequiresPermission(Permission.NC_CREATE)
     @ResponseStatus(HttpStatus.CREATED)
     public NcDto.Response create(@Valid @RequestBody NcDto.CreateRequest request) {
         return service.create(request);
@@ -42,34 +45,40 @@ public class NcController {
     public NcDto.Response get(@PathVariable UUID id) { return service.findById(id); }
 
     @PutMapping("/{id}")
+    @RequiresPermission(Permission.NC_EDIT)
     public NcDto.Response update(@PathVariable UUID id,
                                  @Valid @RequestBody NcDto.UpdateRequest request) {
         return service.update(id, request);
     }
 
     @PostMapping("/{id}/start-analysis")
+    @RequiresPermission(Permission.NC_PROCESS)
     public NcDto.Response startAnalysis(@PathVariable UUID id,
                                         @RequestBody(required = false) NcDto.StartAnalysisRequest request) {
         return service.startAnalysis(id, request);
     }
 
     @PostMapping("/{id}/define-action")
+    @RequiresPermission(Permission.NC_PROCESS)
     public NcDto.Response defineAction(@PathVariable UUID id) {
         return service.defineAction(id);
     }
 
     @PostMapping("/{id}/resolve")
+    @RequiresPermission(Permission.NC_PROCESS)
     public NcDto.Response resolve(@PathVariable UUID id,
                                   @Valid @RequestBody NcDto.ResolveRequest request) {
         return service.resolve(id, request);
     }
 
     @PostMapping("/{id}/close")
+    @RequiresPermission(Permission.NC_CLOSE)
     public NcDto.Response close(@PathVariable UUID id) {
         return service.close(id);
     }
 
     @PostMapping("/{id}/cancel")
+    @RequiresPermission(Permission.NC_REJECT)
     public NcDto.Response cancel(@PathVariable UUID id) {
         return service.cancel(id);
     }
@@ -81,12 +90,14 @@ public class NcController {
      * seulement à l'écran.
      */
     @PostMapping("/{id}/reject")
+    @RequiresPermission(Permission.NC_REJECT)
     public NcDto.Response reject(@PathVariable UUID id,
                                  @Valid @RequestBody NcDto.RejectRequest request) {
         return service.reject(id, request);
     }
 
     @PostMapping("/{id}/escalate-capa")
+    @RequiresPermission(Permission.NC_ESCALATE)
     public NcDto.Response escalateToCapa(@PathVariable UUID id,
                                          @Valid @RequestBody NcDto.EscalateRequest request) {
         return service.escalateToCapa(id, request);

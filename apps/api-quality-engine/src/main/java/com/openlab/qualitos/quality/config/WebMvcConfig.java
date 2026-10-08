@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.config;
 
+import com.openlab.qualitos.quality.authz.application.AuthorizationService;
+import com.openlab.qualitos.quality.authz.web.PermissionInterceptor;
 import com.openlab.qualitos.quality.tenantmodules.application.ModuleActivationService;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
@@ -24,11 +26,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebMvcConfig implements WebMvcConfigurer {
 
     private final MethodAuthorizationPreCheckInterceptor authorizationPreCheck;
+    private final PermissionInterceptor permissions;
     private final ModuleEnabledInterceptor moduleEnabled;
 
     public WebMvcConfig(MethodAuthorizationPreCheckInterceptor authorizationPreCheck,
+                        PermissionInterceptor permissions,
                         ModuleEnabledInterceptor moduleEnabled) {
         this.authorizationPreCheck = authorizationPreCheck;
+        this.permissions = permissions;
         this.moduleEnabled = moduleEnabled;
     }
 
@@ -39,6 +44,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Bean
     public static MethodAuthorizationPreCheckInterceptor methodAuthorizationPreCheckInterceptor() {
         return new MethodAuthorizationPreCheckInterceptor();
+    }
+
+    /**
+     * Les actions réglables par client (ADR 0078). Service optionnel, pour la
+     * même raison que les modules : les tranches {@code @WebMvcTest} ne
+     * l'instancient pas — l'intercepteur applique alors les droits livrés.
+     */
+    @Bean
+    public static PermissionInterceptor permissionInterceptor(ObjectProvider<AuthorizationService> service) {
+        return new PermissionInterceptor(service);
     }
 
     /**
@@ -61,6 +76,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
         registry.addInterceptor(authorizationPreCheck).addPathPatterns("/api/**");
+        registry.addInterceptor(permissions).addPathPatterns("/api/**");
         registry.addInterceptor(moduleEnabled).addPathPatterns("/api/**");
     }
 }

@@ -47,7 +47,7 @@ class CapaControllerTest {
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_returns200() throws Exception {
         when(service.findAll(any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(caseResp(CapaStatus.OPEN))));
@@ -56,7 +56,7 @@ class CapaControllerTest {
                 .andExpect(jsonPath("$.content[0].id").value(CAPA.toString()));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void suggestActions_returns200() throws Exception {
         when(service.suggestActions(CAPA)).thenReturn(List.of(
                 new CapaDto.SuggestedAction("Auditer le fournisseur Alpha sur site", null),
@@ -67,7 +67,7 @@ class CapaControllerTest {
                 .andExpect(jsonPath("$[0].title").value("Auditer le fournisseur Alpha sur site"));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_withFilter() throws Exception {
         when(service.findAll(eq(CapaStatus.CLOSED), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(caseResp(CapaStatus.CLOSED))));
@@ -76,7 +76,7 @@ class CapaControllerTest {
                 .andExpect(jsonPath("$.content[0].status").value("CLOSED"));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_returns201() throws Exception {
         when(service.createCase(any())).thenReturn(caseResp(CapaStatus.OPEN));
         CapaDto.CreateCaseRequest req = new CapaDto.CreateCaseRequest(
@@ -89,7 +89,7 @@ class CapaControllerTest {
                 .andExpect(jsonPath("$.id").value(CAPA.toString()));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_missingTitle_returns400() throws Exception {
         mockMvc.perform(post("/api/v1/capa/cases").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -98,7 +98,7 @@ class CapaControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_missingType_returns400() throws Exception {
         mockMvc.perform(post("/api/v1/capa/cases").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -107,19 +107,19 @@ class CapaControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void get_found() throws Exception {
         when(service.findById(CAPA)).thenReturn(caseResp(CapaStatus.OPEN));
         mockMvc.perform(get("/api/v1/capa/cases/{id}", CAPA)).andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void get_notFound() throws Exception {
         when(service.findById(CAPA)).thenThrow(new CapaNotFoundException(CAPA));
         mockMvc.perform(get("/api/v1/capa/cases/{id}", CAPA)).andExpect(status().isNotFound());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void update_success() throws Exception {
         when(service.updateCase(eq(CAPA), any())).thenReturn(caseResp(CapaStatus.OPEN));
         mockMvc.perform(patch("/api/v1/capa/cases/{id}", CAPA).with(csrf())
@@ -128,7 +128,7 @@ class CapaControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void start_success() throws Exception {
         when(service.startCase(CAPA)).thenReturn(caseResp(CapaStatus.IN_PROGRESS));
         mockMvc.perform(patch("/api/v1/capa/cases/{id}/start", CAPA).with(csrf()))
@@ -136,21 +136,21 @@ class CapaControllerTest {
                 .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void start_invalid_returns409() throws Exception {
         when(service.startCase(CAPA)).thenThrow(new CapaStateException("nope"));
         mockMvc.perform(patch("/api/v1/capa/cases/{id}/start", CAPA).with(csrf()))
                 .andExpect(status().isConflict());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void resolve_success() throws Exception {
         when(service.resolveCase(CAPA)).thenReturn(caseResp(CapaStatus.RESOLVED));
         mockMvc.perform(patch("/api/v1/capa/cases/{id}/resolve", CAPA).with(csrf()))
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void effectiveness_success() throws Exception {
         when(service.verifyEffectiveness(eq(CAPA), any())).thenReturn(caseResp(CapaStatus.CLOSED));
         mockMvc.perform(patch("/api/v1/capa/cases/{id}/effectiveness", CAPA).with(csrf())
@@ -160,7 +160,7 @@ class CapaControllerTest {
                 .andExpect(jsonPath("$.status").value("CLOSED"));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void effectiveness_missingField_returns400() throws Exception {
         mockMvc.perform(patch("/api/v1/capa/cases/{id}/effectiveness", CAPA).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -168,28 +168,28 @@ class CapaControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void reject_success() throws Exception {
         when(service.rejectCase(CAPA)).thenReturn(caseResp(CapaStatus.REJECTED));
         mockMvc.perform(patch("/api/v1/capa/cases/{id}/reject", CAPA).with(csrf()))
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void delete_success() throws Exception {
         doNothing().when(service).deleteCase(CAPA);
         mockMvc.perform(delete("/api/v1/capa/cases/{id}", CAPA).with(csrf()))
                 .andExpect(status().isNoContent());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void delete_closed_returns409() throws Exception {
         doThrow(new CapaStateException("c")).when(service).deleteCase(CAPA);
         mockMvc.perform(delete("/api/v1/capa/cases/{id}", CAPA).with(csrf()))
                 .andExpect(status().isConflict());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void addAction_success() throws Exception {
         when(service.addAction(eq(CAPA), any())).thenReturn(actionResp());
         CapaDto.ActionRequest req = new CapaDto.ActionRequest("a", null, null, null, null, null, null, null);
@@ -200,7 +200,7 @@ class CapaControllerTest {
                 .andExpect(jsonPath("$.id").value(ACTION.toString()));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void addAction_missingTitle_returns400() throws Exception {
         mockMvc.perform(post("/api/v1/capa/cases/{id}/actions", CAPA).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -208,7 +208,7 @@ class CapaControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void updateAction_success() throws Exception {
         when(service.updateAction(eq(CAPA), eq(ACTION), any())).thenReturn(actionResp());
         mockMvc.perform(patch("/api/v1/capa/cases/{id}/actions/{aid}", CAPA, ACTION).with(csrf())
@@ -217,7 +217,7 @@ class CapaControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void updateAction_notFound_returns404() throws Exception {
         when(service.updateAction(eq(CAPA), eq(ACTION), any()))
                 .thenThrow(new CapaActionNotFoundException(ACTION));
@@ -227,7 +227,7 @@ class CapaControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void updateAction_editionEnLigne_titreEtStatut_retourne200() throws Exception {
         // L'édition en ligne du tableau n'envoie que ce qu'elle change.
         when(service.updateAction(eq(CAPA), eq(ACTION), any())).thenReturn(actionResp());
@@ -237,7 +237,7 @@ class CapaControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void updateAction_libelleVide_retourne400_etNon500() throws Exception {
         // Le PATCH n'est pas validé par Jakarta (un champ absent doit rester
         // intouché) : le refus vient du service, et doit sortir en 400 — sinon
@@ -251,7 +251,7 @@ class CapaControllerTest {
                 .andExpect(jsonPath("$.title").value("Invalid CAPA Input"));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void get_exposeLEcartDOrigine_pourLaColonneNonConformite() throws Exception {
         when(service.findById(CAPA)).thenReturn(new CapaDto.CaseResponse(
                 CAPA, TENANT, "t", null, CapaType.CORRECTIVE, CapaCriticity.HIGH, CapaStatus.OPEN,
@@ -268,14 +268,14 @@ class CapaControllerTest {
                 .andExpect(jsonPath("$.sourceNonConformity.reference").value("NC-2026-0018"));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void deleteAction_success() throws Exception {
         doNothing().when(service).deleteAction(CAPA, ACTION);
         mockMvc.perform(delete("/api/v1/capa/cases/{id}/actions/{aid}", CAPA, ACTION).with(csrf()))
                 .andExpect(status().isNoContent());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_missingTenant_returns403() throws Exception {
         when(service.createCase(any())).thenThrow(new MissingTenantContextException());
         CapaDto.CreateCaseRequest req = new CapaDto.CreateCaseRequest(

@@ -7,6 +7,8 @@ import com.openlab.qualitos.quality.blockchain.application.AnchoringService;
 import com.openlab.qualitos.quality.blockchain.web.AnchoringController;
 import com.openlab.qualitos.quality.capa.CapaController;
 import com.openlab.qualitos.quality.capa.CapaService;
+import com.openlab.qualitos.quality.nonconformity.NcController;
+import com.openlab.qualitos.quality.nonconformity.NcService;
 import com.openlab.qualitos.quality.common.TenantContext;
 import com.openlab.qualitos.quality.industry.IndustryPackController;
 import com.openlab.qualitos.quality.industry.IndustryPackService;
@@ -49,7 +51,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Tag("web")
 @WebMvcTest(controllers = {
         IndustryPackController.class, ApiKeyController.class, AnchoringController.class,
-        ModuleActivationController.class, CapaController.class, WorkflowController.class})
+        ModuleActivationController.class, CapaController.class, WorkflowController.class,
+        NcController.class})
 @Import(SecurityConfig.class)
 class SecurityConfigAuthorizationTest {
 
@@ -62,6 +65,7 @@ class SecurityConfigAuthorizationTest {
     @MockitoBean AnchorVerificationService anchorVerificationService;
     @MockitoBean ModuleActivationService moduleActivationService;
     @MockitoBean CapaService capaService;
+    @MockitoBean NcService ncService;
     @MockitoBean WorkflowService workflowService;
 
     @BeforeEach
@@ -200,10 +204,19 @@ class SecurityConfigAuthorizationTest {
     }
 
     @Test @WithMockUser(roles = "USER")
-    void capaCreate_plainUser_allowed() throws Exception {
-        // Écriture métier (création CAPA) : RESTE ouverte au user terrain (pas de 403).
-        // Le corps invalide → 400, ce qui prouve qu'on a passé la couche d'autorisation.
+    void capaCreate_plainUser_403() throws Exception {
+        // ADR 0078 : ouvrir un dossier CAPA est un geste de pilotage (capa.create),
+        // refusé au user terrain par les droits livrés — AVANT la lecture du corps.
         mockMvc.perform(post("/api/v1/capa/cases").with(csrf())
+                        .contentType("application/json").content("{}"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test @WithMockUser(roles = "USER")
+    void ncCreate_plainUser_allowed() throws Exception {
+        // Le user terrain DÉCLARE l'écart (nc.create) : pas de 403. Le corps
+        // invalide → 400, ce qui prouve qu'on a passé la couche d'autorisation.
+        mockMvc.perform(post("/api/v1/nc").with(csrf())
                         .contentType("application/json").content("{}"))
                 .andExpect(status().isBadRequest());
     }

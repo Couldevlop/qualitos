@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.docs;
 
+import com.openlab.qualitos.quality.authz.domain.Permission;
+import com.openlab.qualitos.quality.authz.web.RequiresPermission;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +28,7 @@ public class DocumentController {
     }
 
     @PostMapping
+    @RequiresPermission(Permission.DOCUMENT_EDIT)
     @ResponseStatus(HttpStatus.CREATED)
     public DocumentDto.DocumentResponse create(@Valid @RequestBody DocumentDto.CreateDocumentRequest req) {
         return service.createDocument(req);
@@ -35,18 +38,21 @@ public class DocumentController {
     public DocumentDto.DocumentResponse get(@PathVariable UUID id) { return service.findById(id); }
 
     @PatchMapping("/{id}")
+    @RequiresPermission(Permission.DOCUMENT_EDIT)
     public DocumentDto.DocumentResponse update(@PathVariable UUID id,
                                                @Valid @RequestBody DocumentDto.UpdateDocumentRequest req) {
         return service.updateDocument(id, req);
     }
 
     @PatchMapping("/{id}/archive")
+    @RequiresPermission(Permission.DOCUMENT_EDIT)
     public DocumentDto.DocumentResponse archive(@PathVariable UUID id) {
         return service.archiveDocument(id);
     }
 
     // versions
     @PostMapping("/{id}/versions")
+    @RequiresPermission(Permission.DOCUMENT_EDIT)
     @ResponseStatus(HttpStatus.CREATED)
     public DocumentDto.VersionResponse createVersion(
             @PathVariable UUID id, @Valid @RequestBody DocumentDto.CreateVersionRequest req) {
@@ -54,6 +60,7 @@ public class DocumentController {
     }
 
     @PatchMapping("/{id}/versions/{vid}")
+    @RequiresPermission(Permission.DOCUMENT_EDIT)
     public DocumentDto.VersionResponse updateVersion(
             @PathVariable UUID id, @PathVariable UUID vid,
             @RequestBody DocumentDto.UpdateVersionRequest req) {
@@ -61,22 +68,26 @@ public class DocumentController {
     }
 
     @PatchMapping("/{id}/versions/{vid}/submit")
+    @RequiresPermission(Permission.DOCUMENT_SUBMIT)
     public DocumentDto.VersionResponse submit(@PathVariable UUID id, @PathVariable UUID vid) {
         return service.submitForReview(id, vid);
     }
 
     @PatchMapping("/{id}/versions/{vid}/approve")
+    @RequiresPermission(Permission.DOCUMENT_APPROVE)
     public DocumentDto.VersionResponse approve(@PathVariable UUID id, @PathVariable UUID vid,
                                                @Valid @RequestBody DocumentDto.ApprovalRequest req) {
         return service.approveVersion(id, vid, req);
     }
 
     @PatchMapping("/{id}/versions/{vid}/publish")
+    @RequiresPermission(Permission.DOCUMENT_PUBLISH)
     public DocumentDto.VersionResponse publish(@PathVariable UUID id, @PathVariable UUID vid) {
         return service.publishVersion(id, vid);
     }
 
     @PatchMapping("/{id}/versions/{vid}/blockchain")
+    @RequiresPermission(Permission.DOCUMENT_PUBLISH)
     public DocumentDto.VersionResponse setBlockchainTx(
             @PathVariable UUID id, @PathVariable UUID vid,
             @RequestBody Map<String, String> body) {
@@ -85,6 +96,7 @@ public class DocumentController {
 
     // acknowledgments
     @PostMapping("/{id}/versions/{vid}/acknowledge")
+    @RequiresPermission(Permission.DOCUMENT_ACKNOWLEDGE)
     @ResponseStatus(HttpStatus.CREATED)
     public DocumentDto.AcknowledgmentResponse acknowledge(
             @PathVariable UUID id, @PathVariable UUID vid,

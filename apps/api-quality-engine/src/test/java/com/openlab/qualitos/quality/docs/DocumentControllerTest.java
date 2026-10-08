@@ -48,7 +48,7 @@ class DocumentControllerTest {
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_returns200() throws Exception {
         when(service.findAll(any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(docResp(DocumentStatus.ACTIVE))));
@@ -57,7 +57,7 @@ class DocumentControllerTest {
                 .andExpect(jsonPath("$.content[0].id").value(DOC.toString()));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_withFilter() throws Exception {
         when(service.findAll(eq(DocumentStatus.ARCHIVED), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(docResp(DocumentStatus.ARCHIVED))));
@@ -65,7 +65,7 @@ class DocumentControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_returns201() throws Exception {
         when(service.createDocument(any())).thenReturn(docResp(DocumentStatus.ACTIVE));
         DocumentDto.CreateDocumentRequest req = new DocumentDto.CreateDocumentRequest(
@@ -77,7 +77,7 @@ class DocumentControllerTest {
                 .andExpect(jsonPath("$.id").value(DOC.toString()));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_missingCode_returns400() throws Exception {
         mockMvc.perform(post("/api/v1/documents").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -85,7 +85,7 @@ class DocumentControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_codeConflict_returns409() throws Exception {
         when(service.createDocument(any())).thenThrow(new DocumentCodeConflictException("X"));
         DocumentDto.CreateDocumentRequest req = new DocumentDto.CreateDocumentRequest(
@@ -96,20 +96,20 @@ class DocumentControllerTest {
                 .andExpect(status().isConflict());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void get_notFound() throws Exception {
         when(service.findById(DOC)).thenThrow(new DocumentNotFoundException(DOC));
         mockMvc.perform(get("/api/v1/documents/{id}", DOC))
                 .andExpect(status().isNotFound());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void get_success() throws Exception {
         when(service.findById(DOC)).thenReturn(docResp(DocumentStatus.ACTIVE));
         mockMvc.perform(get("/api/v1/documents/{id}", DOC)).andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void update_success() throws Exception {
         when(service.updateDocument(eq(DOC), any())).thenReturn(docResp(DocumentStatus.ACTIVE));
         mockMvc.perform(patch("/api/v1/documents/{id}", DOC).with(csrf())
@@ -118,21 +118,21 @@ class DocumentControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void archive_success() throws Exception {
         when(service.archiveDocument(DOC)).thenReturn(docResp(DocumentStatus.ARCHIVED));
         mockMvc.perform(patch("/api/v1/documents/{id}/archive", DOC).with(csrf()))
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void archive_alreadyArchived_returns409() throws Exception {
         when(service.archiveDocument(DOC)).thenThrow(new DocumentStateException("c"));
         mockMvc.perform(patch("/api/v1/documents/{id}/archive", DOC).with(csrf()))
                 .andExpect(status().isConflict());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void createVersion_returns201() throws Exception {
         when(service.createVersion(eq(DOC), any())).thenReturn(verResp(VersionStatus.DRAFT));
         DocumentDto.CreateVersionRequest req = new DocumentDto.CreateVersionRequest(
@@ -143,7 +143,7 @@ class DocumentControllerTest {
                 .andExpect(status().isCreated());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void createVersion_missingAuthor_returns400() throws Exception {
         mockMvc.perform(post("/api/v1/documents/{id}/versions", DOC).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -151,7 +151,7 @@ class DocumentControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void updateVersion_success() throws Exception {
         when(service.updateVersion(eq(DOC), eq(VER), any())).thenReturn(verResp(VersionStatus.DRAFT));
         mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}", DOC, VER).with(csrf())
@@ -160,7 +160,7 @@ class DocumentControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void updateVersion_versionNotFound_returns404() throws Exception {
         when(service.updateVersion(eq(DOC), eq(VER), any()))
                 .thenThrow(new DocumentVersionNotFoundException(VER));
@@ -170,21 +170,21 @@ class DocumentControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void submit_success() throws Exception {
         when(service.submitForReview(DOC, VER)).thenReturn(verResp(VersionStatus.IN_REVIEW));
         mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}/submit", DOC, VER).with(csrf()))
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void submit_invalid_returns409() throws Exception {
         when(service.submitForReview(DOC, VER)).thenThrow(new DocumentStateException("nope"));
         mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}/submit", DOC, VER).with(csrf()))
                 .andExpect(status().isConflict());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void approve_success() throws Exception {
         when(service.approveVersion(eq(DOC), eq(VER), any())).thenReturn(verResp(VersionStatus.APPROVED));
         DocumentDto.ApprovalRequest req = new DocumentDto.ApprovalRequest(APPROVER);
@@ -194,7 +194,7 @@ class DocumentControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void approve_missingApprover_returns400() throws Exception {
         mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}/approve", DOC, VER).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -202,14 +202,14 @@ class DocumentControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void publish_success() throws Exception {
         when(service.publishVersion(DOC, VER)).thenReturn(verResp(VersionStatus.PUBLISHED));
         mockMvc.perform(patch("/api/v1/documents/{id}/versions/{vid}/publish", DOC, VER).with(csrf()))
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void setBlockchain_success() throws Exception {
         when(service.setBlockchainTx(eq(DOC), eq(VER), eq("0xabc")))
                 .thenReturn(verResp(VersionStatus.PUBLISHED));
@@ -219,7 +219,7 @@ class DocumentControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void acknowledge_returns201() throws Exception {
         when(service.acknowledge(eq(DOC), eq(VER), any())).thenReturn(
                 new DocumentDto.AcknowledgmentResponse(UUID.randomUUID(), VER, USER, Instant.now()));
@@ -230,7 +230,7 @@ class DocumentControllerTest {
                 .andExpect(status().isCreated());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void acknowledge_notMandatory_returns409() throws Exception {
         when(service.acknowledge(eq(DOC), eq(VER), any()))
                 .thenThrow(new DocumentStateException("Document is not marked as mandatory-read"));
@@ -241,7 +241,7 @@ class DocumentControllerTest {
                 .andExpect(status().isConflict());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void countAcks_returnsCount() throws Exception {
         when(service.countAcknowledgments(DOC, VER)).thenReturn(7L);
         mockMvc.perform(get("/api/v1/documents/{id}/versions/{vid}/acknowledgments/count", DOC, VER))
@@ -249,7 +249,7 @@ class DocumentControllerTest {
                 .andExpect(jsonPath("$.count").value(7));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_missingTenant_returns403() throws Exception {
         when(service.createDocument(any())).thenThrow(new MissingTenantContextException());
         DocumentDto.CreateDocumentRequest req = new DocumentDto.CreateDocumentRequest(
