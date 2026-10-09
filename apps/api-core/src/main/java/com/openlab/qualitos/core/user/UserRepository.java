@@ -19,4 +19,7 @@ public interface UserRepository extends JpaRepository<AppUser, UUID> {
     Optional<AppUser> findByTenantIdAndEmail(UUID tenantId, String email);
 
     boolean existsByKeycloakId(String keycloakId);
+
+    /** Les membres actifs d'un client : ce que compte le plafond de la licence (ADR 0082). */
+    long countByTenantIdAndActiveTrue(UUID tenantId);
 }

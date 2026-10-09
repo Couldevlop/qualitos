@@ -1,0 +1,171 @@
+// La licence : une carte d'identité (le client, l'état, l'échéance), puis ce
+// qu'elle ouvre. Le liseré de la carte porte l'état ; le reste est neutre.
+
+:host {
+  display: block;
+}
+
+.sans-objet {
+  max-width: 40rem;
+  color: var(--qos-fg-secondary);
+}
+
+.carte {
+  max-width: 56rem;
+  padding: var(--qos-space-5);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+  border-top: 4px solid var(--etat);
+  box-shadow: var(--qos-shadow-sm);
+
+  --etat: var(--qos-success-fg);
+
+  &--warning {
+    --etat: var(--qos-chart-4);
+  }
+
+  &--blocked {
+    --etat: var(--qos-danger-fg);
+  }
+
+  &__tete {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--qos-space-3);
+  }
+
+  &__client {
+    margin: 0;
+    font-size: var(--qos-fs-xl);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-primary);
+  }
+
+  &__raison {
+    margin: var(--qos-space-3) 0 0;
+    color: var(--qos-danger-fg);
+  }
+}
+
+.etat {
+  padding: 2px var(--qos-space-3);
+  border-radius: var(--qos-radius-pill);
+  font-size: var(--qos-fs-sm);
+  font-weight: var(--qos-fw-medium);
+  color: var(--qos-fg-primary);
+  background: color-mix(in srgb, var(--etat, var(--qos-success-fg)) 14%, var(--qos-bg-elevated));
+
+  &--ok {
+    --etat: var(--qos-success-fg);
+  }
+
+  &--warning {
+    --etat: var(--qos-chart-4);
+  }
+
+  &--blocked {
+    --etat: var(--qos-danger-fg);
+  }
+}
+
+.faits {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--qos-space-4);
+  margin: var(--qos-space-5) 0 0;
+
+  dt {
+    font-size: var(--qos-fs-xs);
+    color: var(--qos-fg-tertiary);
+  }
+
+  dd {
+    margin: 2px 0 0;
+    font-size: var(--qos-fs-md);
+    color: var(--qos-fg-primary);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.colonnes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: var(--qos-space-4);
+  max-width: 56rem;
+  margin-top: var(--qos-space-4);
+}
+
+.bloc {
+  padding: var(--qos-space-4) var(--qos-space-5);
+  border-radius: var(--qos-radius-lg);
+  background: var(--qos-bg-elevated);
+  border: 1px solid var(--qos-border-subtle);
+
+  h3 {
+    margin: 0 0 var(--qos-space-3);
+    font-size: var(--qos-fs-md);
+    font-weight: var(--qos-fw-semibold);
+    color: var(--qos-fg-primary);
+  }
+
+  p {
+    margin: 0 0 var(--qos-space-2);
+    color: var(--qos-fg-secondary);
+  }
+
+  // La ligne qui compte les places : plus lisible que le texte d'aide.
+  .jauge__texte {
+    color: var(--qos-fg-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &--renouveler {
+    max-width: 56rem;
+    margin-top: var(--qos-space-4);
+    background: var(--qos-bg-sunken);
+    border-style: dashed;
+  }
+}
+
+.jauge {
+  height: 0.5rem;
+  margin: var(--qos-space-2) 0;
+  border-radius: var(--qos-radius-pill);
+  background: var(--qos-bg-sunken);
+  overflow: hidden;
+
+
+  &__plein {
+    display: block;
+    height: 100%;
+    background: var(--qos-accent-bg);
+
+    &--plein {
+      background: var(--qos-chart-4);
+    }
+  }
+}
+
+.aide {
+  font-size: var(--qos-fs-xs);
+}
+
+.modules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--qos-space-2);
+  margin: 0 0 var(--qos-space-3);
+  padding: 0;
+  list-style: none;
+
+  li {
+    padding: 2px var(--qos-space-3);
+    border-radius: var(--qos-radius-pill);
+    border: 1px solid var(--qos-border-default);
+    font-size: var(--qos-fs-sm);
+    color: var(--qos-fg-primary);
+  }
+}

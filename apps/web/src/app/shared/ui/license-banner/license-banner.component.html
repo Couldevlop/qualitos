@@ -1,0 +1,6 @@
+<div class="bandeau bandeau--{{ n.tone }}" *ngIf="notice$ | async as n"
+     [attr.role]="n.tone === 'blocked' ? 'alert' : 'status'" data-test="license-banner">
+  <mat-icon aria-hidden="true">{{ n.tone === 'blocked' ? 'lock' : 'event' }}</mat-icon>
+  <span class="bandeau__texte">{{ n.message }}</span>
+  <a class="bandeau__lien" routerLink="/admin/licence" i18n="@@license.banner.details">Voir la licence</a>
+</div>

@@ -20,6 +20,13 @@
 #
 # Les mots de passe non fournis sont générés et affichés UNE FOIS en fin
 # d'exécution : à consigner immédiatement dans le gestionnaire de secrets.
+#
+# Édition on-premise (ADR 0083) — QOS_EDITION=onprem, avec QOS_TENANT_ID (le
+# client que fixe la licence) et QOS_ADMIN_EMAIL : le realm ne garde AUCUN compte
+# de démonstration ni de super-administrateur (la console éditeur n'existe pas
+# chez un client). Il porte un seul administrateur, rattaché au client de la
+# licence, avec un mot de passe provisoire à changer et un second facteur à
+# enrôler dès la première connexion.
 
 set -euo pipefail
 
@@ -30,55 +37,21 @@ SRC="$(cd "$(dirname "$0")/../../.." && pwd)/infra/keycloak/realm-export.json"
 [ -f "$SRC" ] || { echo "realm introuvable : $SRC" >&2; exit 1; }
 
 gen() { openssl rand -base64 18 | tr -d '/+=' | cut -c1-20; }
+EDITION="${QOS_EDITION:-saas}"
+TENANT_ID="${QOS_TENANT_ID:-}"
+ADMIN_EMAIL="${QOS_ADMIN_EMAIL:-}"
+if [ "$EDITION" = onprem ]; then
+  [ -n "$TENANT_ID" ] || { echo "QOS_TENANT_ID est requis en on-premise (lu dans la licence)" >&2; exit 1; }
+  [ -n "$ADMIN_EMAIL" ] || { echo "QOS_ADMIN_EMAIL est requis en on-premise" >&2; exit 1; }
+fi
 SUPERADMIN_PWD="${QOS_SUPERADMIN_PASSWORD:-$(gen)}"
 ADMIN_PWD="${QOS_ADMIN_PASSWORD:-$(gen)}"
 
 OUT="$(mktemp)"
 trap 'rm -f "$OUT"' EXIT
 
-python3 - "$SRC" "$OUT" "$HOST" "$SUPERADMIN_PWD" "$ADMIN_PWD" <<'PY'
-import io, json, sys
-
-src, out, host, superadmin_pwd, admin_pwd = sys.argv[1:6]
-realm = json.load(io.open(src, encoding="utf-8"))
-
-origin = "https://%s" % host
-
-for client in realm.get("clients") or []:
-    if client.get("clientId") == "qualitos-web":
-        # On REMPLACE au lieu d'ajouter : laisser localhost dans la liste d'un
-        # environnement exposé ouvrirait une redirection vers une machine tierce
-        # si un poste de développement écoutait sur ce port.
-        client["redirectUris"] = ["%s/*" % origin]
-        client["webOrigins"] = [origin]
-        client["rootUrl"] = origin
-        client["baseUrl"] = "/"
-        # L'URI de POST-DÉCONNEXION est un réglage distinct des URI de
-        # redirection, et Keycloak ne retombe PAS sur celles-ci : attribut absent
-        # ou vide = aucune redirection autorisée après déconnexion, et l'écran
-        # « Invalid redirect uri » remplace le retour à l'application. Oublier
-        # cette ligne laissait donc une déconnexion cassée sur tout domaine
-        # exposé — la connexion, elle, fonctionnait, ce qui rendait la panne
-        # d'autant plus tardive à découvrir.
-        client.setdefault("attributes", {})["post.logout.redirect.uris"] = "%s/*" % origin
-
-passwords = {"superadmin": superadmin_pwd, "admin": admin_pwd}
-for user in realm.get("users") or []:
-    pwd = passwords.get(user.get("username"))
-    if pwd:
-        user["credentials"] = [
-            {"type": "password", "value": pwd, "temporary": False}
-        ]
-
-# Refuse tout échange non chiffré ailleurs qu'en boucle locale. Le TLS est
-# terminé par l'ingress, mais ce réglage empêche Keycloak d'accepter une session
-# en clair si quelqu'un l'atteignait directement dans le cluster.
-realm["sslRequired"] = "external"
-
-io.open(out, "w", encoding="utf-8").write(json.dumps(realm, ensure_ascii=False, indent=2))
-print("realm rendu : %d utilisateurs, %d clients, hôte %s"
-      % (len(realm.get("users") or []), len(realm.get("clients") or []), host))
-PY
+python3 "$(cd "$(dirname "$0")/../../keycloak" && pwd)/render_realm.py" \
+  "$SRC" "$OUT" "$HOST" "$SUPERADMIN_PWD" "$ADMIN_PWD" "$EDITION" "$TENANT_ID" "$ADMIN_EMAIL"
 
 kubectl -n "$NS" create configmap qualitos-keycloak-realm \
   --from-file=qualitos-realm.json="$OUT" \
@@ -99,9 +72,30 @@ kubectl -n "$NS" create configmap qualitos-keycloak-realm \
 # régénérés.
 if kubectl -n "$NS" get secret qualitos-realm-accounts >/dev/null 2>&1; then
   ACCOUNTS_NOTE="secret qualitos-realm-accounts déjà en place, inchangé"
+elif [ "$EDITION" = onprem ]; then
+  kubectl -n "$NS" create secret generic qualitos-realm-accounts     --from-literal=ADMIN_USERNAME=admin --from-literal=ADMIN_PASSWORD="$ADMIN_PWD" >/dev/null
+  ACCOUNTS_NOTE="secret qualitos-realm-accounts créé"
 else
   kubectl -n "$NS" create secret generic qualitos-realm-accounts     --from-literal=SUPERADMIN_USERNAME=superadmin     --from-literal=SUPERADMIN_PASSWORD="$SUPERADMIN_PWD"     --from-literal=ADMIN_USERNAME=admin     --from-literal=ADMIN_PASSWORD="$ADMIN_PWD" >/dev/null
   ACCOUNTS_NOTE="secret qualitos-realm-accounts créé"
+fi
+
+if [ "$EDITION" = onprem ]; then
+  cat <<EOF
+
+ConfigMap qualitos-keycloak-realm appliquée dans le namespace ${NS}.
+${ACCOUNTS_NOTE}.
+
+Administrateur du client (${ADMIN_EMAIL}) :
+  identifiant  : admin
+  mot de passe : ${ADMIN_PWD}   (PROVISOIRE — à changer à la première connexion)
+
+La première connexion demande aussi l'enrôlement d'un second facteur (TOTP).
+Pour relire ce mot de passe provisoire tant qu'il n'a pas été changé :
+
+  kubectl -n ${NS} get secret qualitos-realm-accounts -o jsonpath='{.data.ADMIN_PASSWORD}' | base64 -d
+EOF
+  exit 0
 fi
 
 cat <<EOF

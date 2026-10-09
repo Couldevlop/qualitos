@@ -1,0 +1,69 @@
+<div class="qos-page licence" *ngIf="page$ | async as p">
+  <qos-page-header title="Licence" i18n-title="@@license.title"
+    subtitle="Ce que couvre la licence de cette installation, et jusqu'à quand."
+    i18n-subtitle="@@license.subtitle">
+  </qos-page-header>
+
+  <!-- Édition SaaS : la page n'a rien à dire, et le dit. -->
+  <p class="sans-objet" *ngIf="p.view.edition === 'SAAS'" data-test="saas" i18n="@@license.saas">Cette installation est la plateforme QualitOS de l'éditeur : la licence ne s'y applique pas.</p>
+
+  <ng-container *ngIf="p.view.edition === 'ONPREM'">
+    <section class="carte carte--{{ tone(p.view.licenseStatus) }}" aria-labelledby="licence-client">
+      <div class="carte__tete">
+        <h2 id="licence-client" class="carte__client">{{ p.view.customer || '—' }}</h2>
+        <span class="etat etat--{{ tone(p.view.licenseStatus) }}" data-test="etat">{{ statusText(p.view.licenseStatus) }}</span>
+      </div>
+
+      <p class="carte__raison" *ngIf="p.view.reason" role="alert" data-test="raison">{{ p.view.reason }}</p>
+
+      <dl class="faits" *ngIf="p.view.licenseId">
+        <div>
+          <dt i18n="@@license.until">Valable jusqu'au</dt>
+          <dd data-test="echeance">{{ p.view.expiresAt | date:'longDate' }}</dd>
+        </div>
+        <div *ngIf="p.view.licenseStatus === 'GRACE'">
+          <dt i18n="@@license.grace-until">Délai de grâce jusqu'au</dt>
+          <dd>{{ p.view.graceEndsAt | date:'longDate' }}</dd>
+        </div>
+        <div>
+          <dt i18n="@@license.tier">Palier</dt>
+          <dd>{{ p.view.tier }}</dd>
+        </div>
+        <div>
+          <dt i18n="@@license.reference">Référence</dt>
+          <dd>{{ p.view.licenseId }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <div class="colonnes" *ngIf="p.view.licenseId">
+      <section class="bloc" aria-labelledby="licence-utilisateurs">
+        <h3 id="licence-utilisateurs" i18n="@@license.users">Utilisateurs</h3>
+        <ng-container *ngIf="p.view.maxUsers; else illimite">
+          <p class="jauge__texte" data-test="utilisateurs" i18n="@@license.users-count">{{ p.view.activeUsers ?? 0 // i18n(ph="active") }} comptes actifs sur {{ p.view.maxUsers // i18n(ph="max") }}</p>
+          <div class="jauge" role="progressbar" [attr.aria-valuenow]="usage(p.view)" aria-valuemin="0" aria-valuemax="100"
+               i18n-aria-label="@@license.users-gauge" aria-label="Places utilisées">
+            <span class="jauge__plein" [style.width.%]="usage(p.view)" [class.jauge__plein--plein]="usage(p.view) >= 90"></span>
+          </div>
+          <p class="aide" i18n="@@license.users-help">Désactiver un compte libère une place.</p>
+        </ng-container>
+        <ng-template #illimite><p class="jauge__texte" data-test="illimite" i18n="@@license.users-unlimited">Nombre d'utilisateurs illimité.</p></ng-template>
+      </section>
+
+      <section class="bloc" aria-labelledby="licence-modules">
+        <h3 id="licence-modules" i18n="@@license.modules">Modules ouverts</h3>
+        <p *ngIf="p.allModules" data-test="tous" i18n="@@license.modules-all">Tous les modules de QualitOS.</p>
+        <ul class="modules" *ngIf="!p.allModules" data-test="modules">
+          <li *ngFor="let m of p.modules">{{ m }}</li>
+        </ul>
+        <p class="aide" i18n="@@license.modules-help">Les modules du socle (PDCA, CAPA, documents, audits…) sont toujours ouverts.</p>
+      </section>
+    </div>
+
+    <section class="bloc bloc--renouveler" aria-labelledby="licence-renouveler">
+      <h3 id="licence-renouveler" i18n="@@license.renew">Renouveler</h3>
+      <p i18n="@@license.renew-help">Votre prestataire remplace le fichier de licence de l'installation. La nouvelle licence est prise en compte en moins d'une minute, sans redémarrage ni interruption.</p>
+      <p i18n="@@license.read-only-help">Sans licence valable, l'installation passe en lecture seule : vos enregistrements restent consultables et exportables.</p>
+    </section>
+  </ng-container>
+</div>

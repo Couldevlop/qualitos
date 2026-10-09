@@ -1,7 +1,9 @@
 package com.openlab.qualitos.quality.config;
 
 import com.openlab.qualitos.quality.authz.application.AuthorizationService;
+import com.openlab.qualitos.licensing.application.Licensing;
 import com.openlab.qualitos.quality.authz.web.PermissionInterceptor;
+import com.openlab.qualitos.quality.edition.LicenseWriteGuard;
 import com.openlab.qualitos.quality.tenantmodules.application.ModuleActivationService;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
@@ -28,13 +30,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
     private final MethodAuthorizationPreCheckInterceptor authorizationPreCheck;
     private final PermissionInterceptor permissions;
     private final ModuleEnabledInterceptor moduleEnabled;
+    private final LicenseWriteGuard licenseWriteGuard;
 
     public WebMvcConfig(MethodAuthorizationPreCheckInterceptor authorizationPreCheck,
                         PermissionInterceptor permissions,
-                        ModuleEnabledInterceptor moduleEnabled) {
+                        ModuleEnabledInterceptor moduleEnabled,
+                        LicenseWriteGuard licenseWriteGuard) {
         this.authorizationPreCheck = authorizationPreCheck;
         this.permissions = permissions;
         this.moduleEnabled = moduleEnabled;
+        this.licenseWriteGuard = licenseWriteGuard;
     }
 
     /**
@@ -67,6 +72,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     /**
+     * La lecture seule d'une installation on-premise sans licence valable (ADR 0082).
+     * Licence optionnelle, comme les autres services : les tranches de test ne la
+     * portent pas, et la garde ne fait alors rien.
+     */
+    @Bean
+    public static LicenseWriteGuard licenseWriteGuard(ObjectProvider<Licensing> licensing) {
+        return new LicenseWriteGuard(licensing);
+    }
+
+    /**
      * L'ORDRE compte. Le rôle se décide avant le module : « tu n'as pas le droit
      * de faire cela » prime sur « ton organisation n'a pas souscrit cela ».
      * L'inverse révélerait à un utilisateur sans droits quels modules le tenant
@@ -77,6 +92,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
         registry.addInterceptor(authorizationPreCheck).addPathPatterns("/api/**");
         registry.addInterceptor(permissions).addPathPatterns("/api/**");
+        // Après les droits, comme le module : un utilisateur sans droit n'apprend
+        // rien de l'état de la licence en tapant sur une porte qui lui est fermée.
+        registry.addInterceptor(licenseWriteGuard).addPathPatterns("/api/**");
         registry.addInterceptor(moduleEnabled).addPathPatterns("/api/**");
     }
 }

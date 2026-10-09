@@ -1,6 +1,8 @@
 import { Router } from '@angular/router';
 import { NEVER, Observable, of } from 'rxjs';
 
+import { EditionService } from '../../core/edition/edition.service';
+import { Edition } from '../../core/edition/edition.types';
 import { TenantModulesService } from '../../features/admin/tenant-modules.service';
 
 import { AuthService } from '../../core/auth/auth.service';
@@ -57,9 +59,12 @@ function harness(): ShellHarness {
     'webhooks', 'itsm'
   ]));
 
+  const editions = jasmine.createSpyObj<EditionService>('EditionService', ['edition']);
+  editions.edition.and.returnValue(of<Edition>('SAAS'));
+
   return {
     component: new MainShellComponent(
-      auth, connectivity, offline, notifications, router, modules),
+      auth, connectivity, offline, notifications, router, modules, editions),
     notifications, router, auth, modules
   };
 }
@@ -150,8 +155,9 @@ describe('MainShellComponent (navigation model)', () => {
     // Pilotage passe a 7 : + Tableau de bord SMI, sans attribut `module` -- il
     // ne fait que relire les autres modules.
     // Administration passe a 8 : + Roles et droits (ADR 0078), puis a 9 : + Clients (ADR 0079),
-    // puis a 10 : + Circuits de validation (ADR 0080).
-    expect(labels).toEqual([7, 6, 8, 1, 4, 1, 9, 11, 1, 10]);
+    // puis a 10 : + Circuits de validation (ADR 0080), puis a 11 : + Licence
+    // (ADR 0082) — qui n'apparait qu'en on-premise, comme Clients qu'en SaaS.
+    expect(labels).toEqual([7, 6, 8, 1, 4, 1, 9, 11, 1, 11]);
   });
 
   it('le registre des risques a son groupe, juste apres la non-conformite', () => {
@@ -519,5 +525,16 @@ describe('MainShellComponent (visibilité par rôle)', () => {
     const routes = sections.flatMap(s => s.items.map(i => i.route));
     expect(routes).toContain('/pdca');
     expect(routes).toContain('/compliance');
+  });
+  it('montre la console éditeur en SaaS et la licence en on-premise, jamais les deux (ADR 0082)', () => {
+    const routes = (edition: Edition | null) => make().filterSections(['SUPER_ADMIN', 'ADMIN_TENANT'], null, edition)
+      .flatMap(sec => sec.items.map(i => i.route));
+    expect(routes('SAAS')).toContain('/admin/clients');
+    expect(routes('SAAS')).not.toContain('/admin/licence');
+    expect(routes('ONPREM')).toContain('/admin/licence');
+    expect(routes('ONPREM')).not.toContain('/admin/clients');
+    // Édition encore inconnue : rien n'est retiré.
+    expect(routes(null)).toContain('/admin/clients');
+    expect(routes(null)).toContain('/admin/licence');
   });
 });

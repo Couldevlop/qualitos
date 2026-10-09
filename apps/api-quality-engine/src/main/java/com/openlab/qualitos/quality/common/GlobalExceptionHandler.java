@@ -577,6 +577,20 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    /**
+     * 403 : l'installation on-premise est en lecture seule faute de licence
+     * valable (ADR 0082). La raison est montrée à l'administrateur.
+     */
+    @ExceptionHandler(com.openlab.qualitos.quality.edition.LicenseReadOnlyException.class)
+    public ProblemDetail handleLicenseReadOnly(com.openlab.qualitos.quality.edition.LicenseReadOnlyException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+        problem.setType(URI.create("https://qualitos.io/errors/license-read-only"));
+        problem.setTitle("License Read Only");
+        problem.setProperty("licenseStatus", ex.getStatus().name());
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
+    }
+
     /** 409 : l'objet a changé entre la lecture et l'écriture (deux décisions au même instant). */
     @ExceptionHandler(org.springframework.dao.OptimisticLockingFailureException.class)
     public ProblemDetail handleOptimisticLock(org.springframework.dao.OptimisticLockingFailureException ex) {

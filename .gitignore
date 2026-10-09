@@ -129,3 +129,8 @@ docs/superpowers/
 
 # Bac à sable de poste (journaux de test, sorties de CI rejouées en local).
 tmp/
+
+# Cles PRIVEES de l editeur (licences on-premise, ADR 0082) : jamais dans le depot.
+*cles-privees*.properties
+*private-keys*.properties
+*.lic

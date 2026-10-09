@@ -134,14 +134,24 @@ spec:
           resources:
             {{- toYaml ($svc.resources | default dict) | nindent 12 }}
           {{- $writable := $svc.writableDirs | default (ternary (list "/tmp") (list) ($svc.isSpringBoot | default false)) }}
-          {{- if $writable }}
+          {{- $secretMounts := $svc.extraSecretMounts | default (list) }}
+          {{- if or $writable $secretMounts }}
           volumeMounts:
             {{- range $i, $dir := $writable }}
             - name: writable-{{ $i }}
               mountPath: {{ $dir }}
             {{- end }}
+            {{- /* Secrets montés en fichiers, en lecture seule : la licence
+                 on-premise (ADR 0082). Monté sans subPath, un secret mis à jour
+                 se propage de lui-même dans le pod : renouveler une licence ne
+                 demande aucun redémarrage. */}}
+            {{- range $i, $m := $secretMounts }}
+            - name: secret-{{ $i }}
+              mountPath: {{ $m.mountPath }}
+              readOnly: true
+            {{- end }}
           {{- end }}
-      {{- if $writable }}
+      {{- if or $writable $secretMounts }}
       volumes:
         {{/* Le rootfs est monté en lecture seule (durcissement OWASP A05). Les
              quelques répertoires que le conteneur DOIT pouvoir écrire sont
@@ -153,6 +163,15 @@ spec:
         {{- range $i, $dir := $writable }}
         - name: writable-{{ $i }}
           emptyDir: {}
+        {{- end }}
+        {{- range $i, $m := $secretMounts }}
+        - name: secret-{{ $i }}
+          secret:
+            secretName: {{ $m.secret }}
+            {{- /* Facultatif : sans licence montée, le service démarre en
+                 lecture seule et dit pourquoi, plutôt que de rester en attente. */}}
+            optional: true
+            defaultMode: 0440
         {{- end }}
       {{- end }}
 {{- end }}

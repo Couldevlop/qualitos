@@ -9906,6 +9906,142 @@ Customer portal</target>
         <source>Échec de l'opération (HTTP <x id="status"/>).</source>
         <target state="translated">Operation failed (HTTP <x id="status"/>).</target>
       </trans-unit>
+      <trans-unit id="nav.admin-license" datatype="html">
+        <source>Licence</source>
+        <target state="translated">License</target>
+      </trans-unit>
+      <trans-unit id="license.title" datatype="html">
+        <source>Licence</source>
+        <target state="translated">License</target>
+      </trans-unit>
+      <trans-unit id="license.subtitle" datatype="html">
+        <source>Ce que couvre la licence de cette installation, et jusqu'à quand.</source>
+        <target state="translated">What this installation's license covers, and until when.</target>
+      </trans-unit>
+      <trans-unit id="license.saas" datatype="html">
+        <source>Cette installation est la plateforme QualitOS de l'éditeur : la licence ne s'y applique pas.</source>
+        <target state="translated">This installation is the vendor's QualitOS platform: the license does not apply here.</target>
+      </trans-unit>
+      <trans-unit id="license.until" datatype="html">
+        <source>Valable jusqu'au</source>
+        <target state="translated">Valid until</target>
+      </trans-unit>
+      <trans-unit id="license.grace-until" datatype="html">
+        <source>Délai de grâce jusqu'au</source>
+        <target state="translated">Grace period until</target>
+      </trans-unit>
+      <trans-unit id="license.tier" datatype="html">
+        <source>Palier</source>
+        <target state="translated">Tier</target>
+      </trans-unit>
+      <trans-unit id="license.reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">Reference</target>
+      </trans-unit>
+      <trans-unit id="license.users" datatype="html">
+        <source>Utilisateurs</source>
+        <target state="translated">Users</target>
+      </trans-unit>
+      <trans-unit id="license.users-count" datatype="html">
+        <source><x id="ACTIVE"/> comptes actifs sur <x id="MAX"/></source>
+        <target state="translated"><x id="ACTIVE"/> active accounts out of <x id="MAX"/></target>
+      </trans-unit>
+      <trans-unit id="license.users-gauge" datatype="html">
+        <source>Places utilisées</source>
+        <target state="translated">Seats used</target>
+      </trans-unit>
+      <trans-unit id="license.users-help" datatype="html">
+        <source>Désactiver un compte libère une place.</source>
+        <target state="translated">Deactivating an account frees a seat.</target>
+      </trans-unit>
+      <trans-unit id="license.users-unlimited" datatype="html">
+        <source>Nombre d'utilisateurs illimité.</source>
+        <target state="translated">Unlimited number of users.</target>
+      </trans-unit>
+      <trans-unit id="license.modules" datatype="html">
+        <source>Modules ouverts</source>
+        <target state="translated">Modules included</target>
+      </trans-unit>
+      <trans-unit id="license.modules-all" datatype="html">
+        <source>Tous les modules de QualitOS.</source>
+        <target state="translated">All QualitOS modules.</target>
+      </trans-unit>
+      <trans-unit id="license.modules-help" datatype="html">
+        <source>Les modules du socle (PDCA, CAPA, documents, audits…) sont toujours ouverts.</source>
+        <target state="translated">Core modules (PDCA, CAPA, documents, audits…) are always included.</target>
+      </trans-unit>
+      <trans-unit id="license.renew" datatype="html">
+        <source>Renouveler</source>
+        <target state="translated">Renew</target>
+      </trans-unit>
+      <trans-unit id="license.renew-help" datatype="html">
+        <source>Votre prestataire remplace le fichier de licence de l'installation. La nouvelle licence est prise en compte en moins d'une minute, sans redémarrage ni interruption.</source>
+        <target state="translated">Your provider replaces the installation's license file. The new license takes effect within a minute, with no restart or interruption.</target>
+      </trans-unit>
+      <trans-unit id="license.read-only-help" datatype="html">
+        <source>Sans licence valable, l'installation passe en lecture seule : vos enregistrements restent consultables et exportables.</source>
+        <target state="translated">Without a valid license, the installation becomes read-only: your records remain viewable and exportable.</target>
+      </trans-unit>
+      <trans-unit id="license.status.valid" datatype="html">
+        <source>Valide</source>
+        <target state="translated">Valid</target>
+      </trans-unit>
+      <trans-unit id="license.status.grace" datatype="html">
+        <source>Échue — délai de grâce</source>
+        <target state="translated">Expired — grace period</target>
+      </trans-unit>
+      <trans-unit id="license.status.expired" datatype="html">
+        <source>Échue — lecture seule</source>
+        <target state="translated">Expired — read-only</target>
+      </trans-unit>
+      <trans-unit id="license.status.not-yet" datatype="html">
+        <source>Pas encore en vigueur</source>
+        <target state="translated">Not yet in effect</target>
+      </trans-unit>
+      <trans-unit id="license.status.invalid" datatype="html">
+        <source>Non vérifiée</source>
+        <target state="translated">Not verified</target>
+      </trans-unit>
+      <trans-unit id="license.status.missing" datatype="html">
+        <source>Absente</source>
+        <target state="translated">Missing</target>
+      </trans-unit>
+      <trans-unit id="license.status.not-required" datatype="html">
+        <source>Sans objet</source>
+        <target state="translated">Not applicable</target>
+      </trans-unit>
+      <trans-unit id="license.banner.details" datatype="html">
+        <source>Voir la licence</source>
+        <target state="translated">View license</target>
+      </trans-unit>
+      <trans-unit id="license.banner.read-only-tail" datatype="html">
+        <source>Vos données restent consultables et exportables.</source>
+        <target state="translated">Your data remains viewable and exportable.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.expires-soon" datatype="html">
+        <source>La licence expire le <x id="date"/> : pensez à la renouveler.</source>
+        <target state="translated">The license expires on <x id="date"/>: remember to renew it.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.grace" datatype="html">
+        <source>La licence a expiré le <x id="date"/>. Tout fonctionne jusqu'au <x id="grace"/> ; renouvelez-la avant cette date.</source>
+        <target state="translated">The license expired on <x id="date"/>. Everything works until <x id="grace"/>; renew it before then.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.expired" datatype="html">
+        <source>Licence expirée : l'installation est en lecture seule.</source>
+        <target state="translated">License expired: the installation is read-only.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.not-yet" datatype="html">
+        <source>La licence n'est pas encore en vigueur : l'installation est en lecture seule.</source>
+        <target state="translated">The license is not yet in effect: the installation is read-only.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.missing" datatype="html">
+        <source>Aucune licence installée : l'installation est en lecture seule.</source>
+        <target state="translated">No license installed: the installation is read-only.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.invalid" datatype="html">
+        <source>La licence n'a pas pu être vérifiée : l'installation est en lecture seule.</source>
+        <target state="translated">The license could not be verified: the installation is read-only.</target>
+      </trans-unit>
       <trans-unit id="nav.cinq-pourquoi" datatype="html">
         <source>5 Pourquoi</source>
         <target state="translated">5 Whys</target>
