@@ -76,7 +76,12 @@ describe('SmiDashboardComponent', () => {
     fixture.detectChanges();
   }
 
-  afterEach(() => http.verify());
+  // Certains tests ne montent pas le composant : rien à vérifier pour eux, et on
+  // ne vérifie jamais le contrôleur HTTP laissé par le test précédent.
+  afterEach(() => {
+    http?.verify();
+    http = undefined as unknown as HttpTestingController;
+  });
 
   it('montre les quatre indicateurs, la conformité par norme et la semaine', async () => {
     await setup();
