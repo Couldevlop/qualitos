@@ -145,7 +145,7 @@
     {
       "clientId": "qualitos-provisioner",
       "name": "Creation et reglage des comptes (api-core)",
-      "description": "Client confidentiel client_credentials : son compte de service n'a QUE manage-users, view-users et query-users du realm (ADR 0079). api-core borne chaque operation au client du jeton de l'appelant. Le secret n'est PAS ici : genere au deploiement et injecte par variable d'environnement (SS18.2-3).",
+      "description": "client_credentials ; compte de service limite a manage-users, view-users, query-users (ADR 0079). Secret genere au deploiement, jamais ici (SS18.2-3).",
       "enabled": true,
       "protocol": "openid-connect",
       "publicClient": false,
