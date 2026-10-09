@@ -1,0 +1,155 @@
+# Ollama DANS le cluster — installations on-premise sans serveur d'IA existant
+# (ADR 0083). La plateforme SaaS utilise l'Ollama de l'hôte (40-ollama-external) ;
+# un client, lui, n'a souvent rien : le modèle tourne alors ici, et les données
+# ne quittent pas le site (CLAUDE.md §12.2).
+#
+# Les modèles vivent dans un volume : ils survivent aux redémarrages et aux mises
+# à jour. Le Job `ollama-models` les tire depuis Internet quand le site y a accès ;
+# sur un site isolé, le paquet hors ligne les dépose dans le volume (lot suivant).
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ollama-models
+  labels:
+    app.kubernetes.io/name: ollama
+    app.kubernetes.io/part-of: qualitos
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: local-path
+  resources:
+    requests:
+      # Un modèle 7B quantifié (~5 Go) et les plongements bge-m3 (~1,2 Go), avec
+      # de la marge pour un second modèle.
+      storage: 30Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama
+  labels:
+    app.kubernetes.io/name: ollama
+    app.kubernetes.io/part-of: qualitos
+spec:
+  selector:
+    app.kubernetes.io/name: ollama
+  ports:
+    - name: http
+      port: 11434
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  labels:
+    app.kubernetes.io/name: ollama
+    app.kubernetes.io/part-of: qualitos
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ollama
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ollama
+        app.kubernetes.io/part-of: qualitos
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: ollama
+          image: ollama/ollama:0.6.8
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          env:
+            # Modèles ET clé d'identité d'Ollama dans le volume : rien n'est écrit
+            # hors de lui, le conteneur tourne sans privilège.
+            - name: OLLAMA_MODELS
+              value: /models
+            - name: HOME
+              value: /models
+            - name: OLLAMA_HOST
+              value: 0.0.0.0:11434
+            # Un seul modèle chargé à la fois : un serveur client n'a pas la
+            # mémoire d'un nœud de calcul.
+            - name: OLLAMA_MAX_LOADED_MODELS
+              value: "1"
+          ports:
+            - name: http
+              containerPort: 11434
+          volumeMounts:
+            - name: models
+              mountPath: /models
+          readinessProbe:
+            httpGet:
+              path: /api/version
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/version
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            failureThreshold: 6
+          resources:
+            requests: { cpu: "1", memory: 6Gi }
+            limits: { cpu: "4", memory: 10Gi }
+      volumes:
+        - name: models
+          persistentVolumeClaim:
+            claimName: ollama-models
+---
+# Tire les modèles s'ils manquent. IMMUABLE une fois créé : `deploy.sh` le
+# supprime avant de le réappliquer (même règle que minio-init). `ollama pull`
+# d'un modèle déjà présent ne télécharge rien.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ollama-models
+  labels:
+    app.kubernetes.io/name: ollama-models
+    app.kubernetes.io/part-of: qualitos
+spec:
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ollama-models
+        app.kubernetes.io/part-of: qualitos
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: pull
+          image: ollama/ollama:0.6.8
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          env:
+            - name: OLLAMA_HOST
+              value: http://ollama:11434
+            - name: HOME
+              value: /tmp
+          command: ["sh", "-c", "ollama pull '__OLLAMA_MODEL__' && ollama pull bge-m3"]
+          resources:
+            requests: { cpu: 50m, memory: 64Mi }
+            limits: { cpu: 500m, memory: 256Mi }

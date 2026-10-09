@@ -1,0 +1,95 @@
+# =============================================================================
+# QualitOS — configuration d'une installation on-premise (ADR 0082, 0083)
+# =============================================================================
+#
+# Copiez ce fichier en `qualitos.conf`, renseignez-le, puis :
+#
+#     ./infra/onprem/install.sh qualitos.conf <version>
+#
+# Tout ce qui est propre au site vit ICI, et nulle part ailleurs : nom d'hôte,
+# certificats, registre d'images, stockage, annuaire. Le reste de l'installation
+# est le même code que la plateforme SaaS.
+#
+# Ce fichier ne contient AUCUN mot de passe de l'application : ils sont générés à
+# l'installation et conservés dans des secrets Kubernetes. Seul le mot de passe
+# de liaison à l'annuaire (s'il y en a un) est à fournir, et il n'est lu qu'au
+# moment de l'installation.
+
+# --- Site ---------------------------------------------------------------------
+
+# Nom d'hôte par lequel les utilisateurs joignent QualitOS. Un enregistrement DNS
+# doit pointer vers l'entrée du cluster (ingress).
+QOS_HOST=qualitos.example.local
+
+# Namespace Kubernetes de l'installation.
+QOS_NAMESPACE=qualitos
+
+# Adresse e-mail de l'administrateur du client, créé à l'installation. Il reçoit
+# un mot de passe provisoire (affiché une fois) et enrôle son second facteur à la
+# première connexion.
+QOS_ADMIN_EMAIL=admin@example.local
+
+# --- Licence ------------------------------------------------------------------
+
+# Le fichier de licence remis par l'éditeur. Il fixe le client, ses modules et
+# son nombre d'utilisateurs. Sans licence, l'installation démarre en lecture seule.
+QOS_LICENSE_FILE=./licence.lic
+
+# --- Images -------------------------------------------------------------------
+
+# Registre d'où le cluster tire les images. Sur un site sans accès à Internet :
+# le registre interne dans lequel le paquet hors ligne a été chargé.
+QOS_REGISTRY=ghcr.io/couldevlop/qualitos
+
+# Registre miroir des images tierces (PostgreSQL, Keycloak, MinIO, Qdrant…).
+# Vide : elles sont tirées de leurs registres publics. Sur un site isolé : le même
+# registre interne que ci-dessus.
+QOS_MIRROR_REGISTRY=
+
+# Secret Kubernetes (type docker-registry) donnant accès au registre, s'il en faut
+# un. Vide : registre public ou accès déjà accordé au nœud.
+QOS_PULL_SECRET=
+
+# --- Certificats --------------------------------------------------------------
+
+# letsencrypt : cert-manager obtient un certificat (le site doit être joignable
+#               depuis Internet) — exige un ClusterIssuer nommé dans QOS_CLUSTER_ISSUER.
+# issuer      : cert-manager avec l'autorité interne du site (QOS_CLUSTER_ISSUER).
+# secret      : un certificat déjà émis, posé dans le secret QOS_TLS_SECRET
+#               (kubectl create secret tls ...) — le cas le plus courant sur site.
+QOS_TLS_MODE=secret
+QOS_CLUSTER_ISSUER=
+QOS_TLS_SECRET=qualitos-tls
+
+# --- Plateforme Kubernetes ----------------------------------------------------
+
+# Classe d'ingress et classe de stockage du cluster. k3s : nginx installé à part,
+# et local-path fourni d'office.
+QOS_INGRESS_CLASS=nginx
+QOS_STORAGE_CLASS=local-path
+
+# Le contrôleur d'ingress porte-t-il ModSecurity + OWASP CRS (ingress-nginx avec
+# enable-modsecurity) ? Sinon, les annotations WAF sont simplement omises.
+QOS_WAF=false
+
+# --- IA -----------------------------------------------------------------------
+
+# Où tourne le modèle de langage local (Ollama). Les données ne quittent pas le
+# site. Vide : Ollama est déployé dans le cluster.
+QOS_OLLAMA_URL=
+QOS_OLLAMA_MODEL=hf.co/OpenLLM-France/Lucie-7B-Instruct-v1.1-gguf:Q4_K_M
+
+# --- Annuaire d'entreprise (facultatif) --------------------------------------
+
+# Laisser QOS_LDAP_URL vide pour n'utiliser que les comptes créés dans QualitOS.
+# Les comptes de l'annuaire sont rattachés au client de la licence et reçoivent le
+# rôle « utilisateur » ; l'administrateur règle ensuite leurs droits dans
+# « Rôles et droits ».
+QOS_LDAP_URL=
+# ad (Active Directory) ou other (OpenLDAP, FreeIPA…)
+QOS_LDAP_VENDOR=ad
+QOS_LDAP_USERS_DN=
+QOS_LDAP_BIND_DN=
+# Lu à l'installation seulement ; peut aussi être passé par la variable
+# d'environnement QOS_LDAP_BIND_PASSWORD pour ne pas l'écrire sur disque.
+QOS_LDAP_BIND_PASSWORD=

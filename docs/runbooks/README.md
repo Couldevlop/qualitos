@@ -48,6 +48,7 @@ navigateur qui sert l'ancien code (voir `PASSATION.md` §6.3, le piège PWA).
 | --- | --- |
 | [`observability.md`](./observability.md) | Métriques, traces, journaux : où regarder, et quoi. |
 | [`nc-photos-storage.md`](./nc-photos-storage.md) | Stockage objet (MinIO) des pièces jointes : quotas, orphelins, URL présignées. |
+| [`installation-on-premise.md`](./installation-on-premise.md) | Installer, mettre à jour et renouveler la licence de QualitOS chez un client. |
 | [`keycloak-spi-ldap.md`](./keycloak-spi-ldap.md) | Brancher l'annuaire d'un client sur Keycloak (Active Directory, OpenLDAP). |
 | [`edge-inference.md`](./edge-inference.md) | Passerelle Edge et modèles embarqués. |
 | [`vision-5s.md`](./vision-5s.md) | Service de vision 5S : modèles, seuils, exploitation. |
