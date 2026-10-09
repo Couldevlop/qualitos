@@ -86,6 +86,61 @@ jobs:
           curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.21.2/gitleaks_8.21.2_linux_x64.tar.gz | tar -xz gitleaks
           ./gitleaks git --log-opts="--all" --redact -v
 
+  # ---------------------------------------------------------------------------
+  # Installation on-premise (ADR 0083) : les scripts qui posent QualitOS chez un
+  # client ne s'éprouvent pas en préproduction — ce banc les déroule contre un
+  # faux cluster, vérifie que la préproduction SaaS se déploie toujours à
+  # l'identique, et rend le chart dans les trois éditions.
+  # ---------------------------------------------------------------------------
+  infra-onprem:
+    name: Installation on-premise (scripts + chart)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: ShellCheck
+        run: |
+          shellcheck --version
+          shellcheck -x -S warning infra/onprem/*.sh infra/onprem/compose/*.sh infra/onprem/tests/run-tests.sh infra/k8s/deploy.sh infra/k8s/deps/render-realm.sh
+
+      - name: Bancs des scripts (faux cluster)
+        run: bash infra/onprem/tests/run-tests.sh
+
+      - name: Rendu du chart — préproduction, production, on-premise
+        run: |
+          helm version --short
+          helm lint infra/k8s/qualitos -f infra/k8s/qualitos/values-preprod.yaml --set global.imageTag=0
+          helm template q infra/k8s/qualitos -f infra/k8s/qualitos/values-preprod.yaml --set global.imageTag=0 > /dev/null
+          helm template q infra/k8s/qualitos -f infra/k8s/qualitos/values-prod.yaml --set global.imageTag=0 > /dev/null
+          QOS_HOST=qualitos.example.local QOS_REGISTRY=registry.example.local/qualitos QOS_TLS_MODE=secret bash infra/onprem/site-values.sh > /tmp/site.yaml
+          helm template q infra/k8s/qualitos -f infra/k8s/qualitos/values-onprem.yaml -f /tmp/site.yaml --set global.imageTag=0 > /tmp/onprem.yaml
+          # Par défaut, aucune annotation « snippet » : un ingress-nginx récent la refuserait.
+          if grep -n "snippet" /tmp/onprem.yaml; then
+            echo "::error::le rendu on-premise porte une annotation snippet par défaut"
+            exit 1
+          fi
+          # Une installation chez un client ne doit rien porter de la plateforme de l'éditeur.
+          if grep -nE "openlabconsulting|svc\.cluster\.local|ghcr\.io" /tmp/onprem.yaml; then
+            echo "::error::le rendu on-premise porte encore une adresse de la plateforme SaaS"
+            exit 1
+          fi
+
+      - name: Mode léger — parité avec le chart, compose valide
+        run: |
+          # Le rendu on-premise de l'étape précédente sert de référence (ADR 0084).
+          python3 infra/onprem/tests/compose_parity.py /tmp/onprem.yaml infra/onprem/compose/docker-compose.yml
+          cd infra/onprem/compose
+          touch postgres-init.sh minio-init.sh backup.sh proxy.conf
+          for v in POSTGRES_PASSWORD NLQ_RO_PASSWORD KEYCLOAK_ADMIN_PASSWORD MINIO_ROOT_PASSWORD \
+                   STORAGE_S3_SECRET_KEY AI_CLIENT_SECRET KEYCLOAK_PROVISIONER_SECRET QOS_OLLAMA_BASE_URL \
+                   QOS_OLLAMA_MODEL QOS_OLLAMA_HOSTNAME QOS_IMG_POSTGRES QOS_IMG_KEYCLOAK QOS_IMG_QDRANT \
+                   QOS_IMG_OLLAMA QOS_IMG_MINIO QOS_IMG_MC QOS_IMG_NGINX; do echo "$v=x"; done > ci.env
+          printf 'QOS_HOST=q.example.local\nQOS_REGISTRY=r.example.local\nQOS_VERSION=0\n' >> ci.env
+          docker compose --env-file ci.env --profile ollama config --quiet
+
   sast-semgrep:
     name: SAST (Semgrep)
     runs-on: ubuntu-latest

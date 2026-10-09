@@ -48,6 +48,10 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
   host: qualitos.example.com
+  # Annotations « snippet » d'ingress-nginx (en-têtes durcis du stockage objet).
+  # Vrai sur la plateforme SaaS ; une installation cliente les active seulement
+  # si son contrôleur les autorise (QOS_INGRESS_SNIPPETS, ADR 0083).
+  snippets: true
   tls:
     enabled: true
     secretName: qualitos-tls
