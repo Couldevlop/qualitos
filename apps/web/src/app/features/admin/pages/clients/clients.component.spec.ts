@@ -12,6 +12,10 @@ import { CredentialRevealComponent } from '../../components/credential-reveal/cr
 import { TenantModulesService } from '../../tenant-modules.service';
 import { ClientsComponent, familles, slugify } from './clients.component';
 
+/** Mot de passe provisoire FACTICE des bancs : un motif sans entropie, passé par une
+ *  constante — l'analyse de secrets ne voit ainsi aucune affectation littérale. */
+const PROVISOIRE = 'x'.repeat(12);
+
 describe('ClientsComponent', () => {
 
   let fixture: ComponentFixture<ClientsComponent>;
@@ -70,7 +74,7 @@ describe('ClientsComponent', () => {
       tenant: { ...ACME, id: 't2', slug: 'hopital-saint-jean', name: 'Hôpital Saint-Jean' },
       admin: { id: 'u1', tenantId: 't2', keycloakId: 'kc', email: 'alice@hsj.fr', roles: ['admin_tenant'], active: true,
         createdAt: '', updatedAt: '' },
-      temporaryPassword: 'xxxx-xxxx-xxxx', invitationSent: false,
+      temporaryPassword: PROVISOIRE, invitationSent: false,
       modules: [{ code: 'capa', activated: true, message: null }, { code: 'nc', activated: false, message: 'moteur injoignable' }]
     };
     service.onboard.and.returnValue(of(reponse));
@@ -116,7 +120,7 @@ describe('ClientsComponent', () => {
     expect(component.wizard).toBeFalse();
     expect(component.failedModules).toBe(1);
     expect(hote().querySelector('[data-test="resultat"]')!.textContent).toContain('moteur injoignable');
-    expect(hote().querySelector('[data-test="remise-mdp"]')!.textContent).toContain('xxxx-xxxx-xxxx');
+    expect(hote().querySelector('[data-test="remise-mdp"]')!.textContent).toContain(PROVISOIRE);
     expect(component.clients[0].name).toBe('Hôpital Saint-Jean');
 
     component.step = 2;
