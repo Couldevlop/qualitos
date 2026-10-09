@@ -52,7 +52,7 @@ class TenantOnboardingServiceTest {
 
         when(tenants.create(any())).thenReturn(new TenantDto.Response(tenantId, "acme", "ACME", Tenant.Plan.STARTER,
                 true, Instant.now(), Instant.now()));
-        when(identity.create(any())).thenReturn(new IdentityProvider.CreatedAccount("kc-admin", "Tmp4Pass", false));
+        when(identity.create(any())).thenReturn(new IdentityProvider.CreatedAccount("kc-admin", "xxxx-xxxx-xxxx", false));
         when(users.saveAndFlush(any(AppUser.class))).thenAnswer(inv -> {
             AppUser u = inv.getArgument(0);
             u.setId(UUID.randomUUID());
@@ -83,7 +83,7 @@ class TenantOnboardingServiceTest {
 
         assertThat(r.admin().tenantId()).isEqualTo(tenantId);
         assertThat(r.admin().roles()).containsExactly("admin_tenant");
-        assertThat(r.temporaryPassword()).isEqualTo("Tmp4Pass");
+        assertThat(r.temporaryPassword()).isEqualTo("xxxx-xxxx-xxxx");
         // Un module demandé deux fois n'est ouvert qu'une fois.
         assertThat(r.modules()).extracting(OnboardingDto.ModuleOutcome::code).containsExactly("pdca", "capa");
         assertThat(r.modules()).allMatch(OnboardingDto.ModuleOutcome::activated);

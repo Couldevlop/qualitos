@@ -27,6 +27,20 @@
 #      même forme, entropie nulle. Aucune exception nécessaire — quand on peut
 #      supprimer la ressemblance, on la supprime.
 
+# AUDIT DU 2026-10-09 — alertes « Generic Password » sur les PR #163 et #165.
+# Toutes portaient sur des VALEURS DE BANC, aucune sur un secret :
+#
+#   - `temporaryPassword: 'Tmp4Pass'` (#163, incident 38005100) : mot de passe
+#     provisoire factice des bancs de création de client et d'invitation, dans
+#     sept fichiers de test. CORRIGÉ dans le code : remplacé par le motif
+#     `xxxx-xxxx-xxxx`, sans entropie. Le commit d'origine reste dans l'historique
+#     de la PR : l'incident se classe « faux positif — donnée de test » dans le
+#     tableau de bord.
+#   - Trois valeurs du banc d'installation on-premise (#165) : CORRIGÉES avant
+#     fusion, historique de la branche réécrit (elle n'avait pas été partagée).
+#
+# Aucune exception ajoutée : on a supprimé la ressemblance, pas l'alerte.
+
 version: 2
 
 secret:
