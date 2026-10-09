@@ -368,14 +368,14 @@ class UserControllerTest {
         @Test
         @DisplayName("L'administrateur du client invite ; le mot de passe provisoire ne se met pas en cache")
         void tenantAdminInvites() throws Exception {
-            given(userService.invite(any())).willReturn(new UserDto.InviteResponse(sampleResponse(), "Tmp4Pass", false));
+            given(userService.invite(any())).willReturn(new UserDto.InviteResponse(sampleResponse(), "xxxx-xxxx-xxxx", false));
 
             mockMvc.perform(post("/api/v1/users/invite").with(tenantAdminJwt())
                             .contentType(MediaType.APPLICATION_JSON).content(CORPS))
                     .andExpect(status().isCreated())
                     .andExpect(header().string("Cache-Control", "no-store"))
                     .andExpect(header().exists("Location"))
-                    .andExpect(jsonPath("$.temporaryPassword").value("Tmp4Pass"));
+                    .andExpect(jsonPath("$.temporaryPassword").value("xxxx-xxxx-xxxx"));
         }
 
         @Test

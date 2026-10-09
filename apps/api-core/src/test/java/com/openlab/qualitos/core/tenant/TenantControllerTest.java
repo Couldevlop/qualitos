@@ -280,7 +280,7 @@ class TenantControllerTest {
             given(onboardingService.onboard(any())).willReturn(new OnboardingDto.Response(client,
                     new UserDto.Response(UUID.randomUUID(), TENANT_ID, "kc", "alice@acme.fr", Set.of("admin_tenant"),
                             true, Instant.now(), Instant.now()),
-                    "Tmp4Pass", false, List.of(new OnboardingDto.ModuleOutcome("capa", true, null))));
+                    "xxxx-xxxx-xxxx", false, List.of(new OnboardingDto.ModuleOutcome("capa", true, null))));
 
             mockMvc.perform(post("/api/v1/tenants/onboard").with(superAdminJwt())
                             .contentType(MediaType.APPLICATION_JSON).content(CORPS))

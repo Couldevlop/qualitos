@@ -19,16 +19,16 @@ describe('CredentialRevealComponent', () => {
   });
 
   it('montre le mot de passe provisoire une fois, et le copie avec l’identifiant', fakeAsync(() => {
-    component.password = 'Tmp4Pass';
+    component.password = 'xxxx-xxxx-xxxx';
     fixture.detectChanges();
     const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('[data-test="remise-mdp"]')!.textContent).toContain('Tmp4Pass');
+    expect(el.querySelector('[data-test="remise-mdp"]')!.textContent).toContain('xxxx-xxxx-xxxx');
     const ecrire = spyOn(navigator.clipboard, 'writeText').and.resolveTo();
 
     (el.querySelector('[data-test="remise-copier"]') as HTMLButtonElement).click();
     tick();
 
-    expect(ecrire).toHaveBeenCalledWith('bob@acme.fr\nTmp4Pass');
+    expect(ecrire).toHaveBeenCalledWith('bob@acme.fr\nxxxx-xxxx-xxxx');
     expect(component.copied).toBeTrue();
     let ferme = false;
     component.closed.subscribe(() => ferme = true);
@@ -37,7 +37,7 @@ describe('CredentialRevealComponent', () => {
   }));
 
   it('une copie refusée ne prétend pas avoir copié', fakeAsync(() => {
-    component.password = 'Tmp4Pass';
+    component.password = 'xxxx-xxxx-xxxx';
     spyOn(navigator.clipboard, 'writeText').and.rejectWith(new Error('refus'));
     component.copy();
     tick();

@@ -70,7 +70,7 @@ describe('ClientsComponent', () => {
       tenant: { ...ACME, id: 't2', slug: 'hopital-saint-jean', name: 'Hôpital Saint-Jean' },
       admin: { id: 'u1', tenantId: 't2', keycloakId: 'kc', email: 'alice@hsj.fr', roles: ['admin_tenant'], active: true,
         createdAt: '', updatedAt: '' },
-      temporaryPassword: 'Tmp4Pass', invitationSent: false,
+      temporaryPassword: 'xxxx-xxxx-xxxx', invitationSent: false,
       modules: [{ code: 'capa', activated: true, message: null }, { code: 'nc', activated: false, message: 'moteur injoignable' }]
     };
     service.onboard.and.returnValue(of(reponse));
@@ -116,7 +116,7 @@ describe('ClientsComponent', () => {
     expect(component.wizard).toBeFalse();
     expect(component.failedModules).toBe(1);
     expect(hote().querySelector('[data-test="resultat"]')!.textContent).toContain('moteur injoignable');
-    expect(hote().querySelector('[data-test="remise-mdp"]')!.textContent).toContain('Tmp4Pass');
+    expect(hote().querySelector('[data-test="remise-mdp"]')!.textContent).toContain('xxxx-xxxx-xxxx');
     expect(component.clients[0].name).toBe('Hôpital Saint-Jean');
 
     component.step = 2;
