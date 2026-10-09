@@ -55,7 +55,7 @@
   color: var(--qos-fg-secondary);
 
   &--yours {
-    color: var(--qos-accent-fg);
+    color: var(--qos-accent-fg-soft);
     font-weight: var(--qos-fw-semibold);
   }
 
@@ -126,14 +126,14 @@
   }
 
   &--current {
-    border-color: var(--qos-accent-fg);
+    border-color: var(--qos-accent-bg);
     background: var(--qos-bg-elevated);
     box-shadow: var(--qos-shadow-sm);
   }
 
   &--current &__marque {
-    border-color: var(--qos-accent-fg);
-    color: var(--qos-accent-fg);
+    border-color: var(--qos-accent-bg);
+    color: var(--qos-accent-fg-soft);
   }
 
   &--rejected &__marque {
