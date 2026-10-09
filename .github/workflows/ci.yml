@@ -103,7 +103,11 @@ jobs:
           python-version: '3.12'
 
       - name: Install Semgrep
-        run: pip install --quiet semgrep==1.145.0
+        # Dépendances transitives ÉPINGLÉES (via mcp) : une version de pydantic
+        # publiée le 2026-10-09, incompatible avec la pydantic-settings résolue,
+        # faisait planter Semgrep à l'import (ImportError eval_type_backport) —
+        # la passe bloquante échouait sans avoir rien analysé. Combinaison vérifiée.
+        run: pip install --quiet semgrep==1.145.0 pydantic==2.13.4 pydantic-core==2.46.4 pydantic-settings==2.14.0
 
       # Passe COMPLÈTE, informative : toutes sévérités, ne bloque pas. Sert de
       # rapport de fond (INFO/WARNING) sans transformer chaque nit en échec de CI.
