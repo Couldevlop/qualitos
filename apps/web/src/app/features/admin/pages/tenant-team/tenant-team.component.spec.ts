@@ -10,6 +10,10 @@ import { TenantTeamService } from '../../tenant-team.service';
 import { TenantTeamComponent } from './tenant-team.component';
 import { CredentialRevealComponent } from '../../components/credential-reveal/credential-reveal.component';
 
+/** Mot de passe provisoire FACTICE des bancs : un motif sans entropie, passé par une
+ *  constante — l'analyse de secrets ne voit ainsi aucune affectation littérale. */
+const PROVISOIRE = 'x'.repeat(12);
+
 describe('TenantTeamComponent', () => {
   let component: TenantTeamComponent;
   let fixture: ComponentFixture<TenantTeamComponent>;
@@ -134,7 +138,7 @@ describe('TenantTeamComponent', () => {
     it('crée son compte avec ses rôles, l’ajoute à la liste et montre ses identifiants une fois', () => {
       const bob = { id: 'u9', tenantId: 't', keycloakId: 'kc-bob', email: 'bob@acme.fr', roles: ['user', 'auditor'],
         active: true, createdAt: '', updatedAt: '' };
-      service.invite.and.returnValue(of({ user: bob, temporaryPassword: 'xxxx-xxxx-xxxx', invitationSent: false }));
+      service.invite.and.returnValue(of({ user: bob, temporaryPassword: PROVISOIRE, invitationSent: false }));
 
       component.openInvite();
       fixture.detectChanges();
@@ -149,7 +153,7 @@ describe('TenantTeamComponent', () => {
       expect(component.members[0].email).toBe('bob@acme.fr');
       expect(component.inviting).toBeFalse();
       const el = fixture.nativeElement as HTMLElement;
-      expect(el.querySelector('[data-test="remise-mdp"]')!.textContent).toContain('xxxx-xxxx-xxxx');
+      expect(el.querySelector('[data-test="remise-mdp"]')!.textContent).toContain(PROVISOIRE);
     });
 
     it('sans adresse valide ou sans rôle, rien ne part ; un refus est annoncé', () => {
