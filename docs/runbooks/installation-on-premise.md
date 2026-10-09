@@ -2,7 +2,8 @@
 
 Ce guide s'adresse à l'intégrateur qui pose QualitOS sur l'infrastructure d'un
 client. Il suppose un cluster Kubernetes disponible (k3s convient très bien sur un
-serveur seul). ADR 0082 (édition et licence), ADR 0083 (installation).
+serveur seul) — sans cluster, voir « Mode léger » plus bas. ADR 0082 (édition et
+licence), ADR 0083 (installation), ADR 0084 (mode léger).
 
 ## Ce qu'il faut avant de commencer
 
@@ -102,6 +103,42 @@ l'échéance, puis pendant le délai de grâce.
 Un vidage de sûreté de la base est pris juste avant la mise à jour. Les
 migrations de schéma ne se défont pas : un retour arrière passe par la
 restauration de ce vidage (voir `sauvegarde-et-restauration.md`).
+
+## Mode léger : un serveur, sans Kubernetes
+
+Pour un site qui n'a pas de cluster : un serveur Linux avec Docker suffit
+(ADR 0084). Même `qualitos.conf`, plus trois clés : `QOS_TLS_CERT` et
+`QOS_TLS_KEY` (le certificat et sa clé en fichiers PEM), `QOS_COMPOSE_DIR` (où
+vit l'installation, `/opt/qualitos` par défaut) et `QOS_BACKUP_DIR`.
+
+| Élément | Détail |
+| --- | --- |
+| Serveur | Linux, Docker 24+ avec `docker compose` v2, ports 80 et 443 libres. |
+| Mémoire | 16 Go avec le modèle d'IA sur le serveur ; 8 Go si le site fournit son serveur Ollama. |
+| Outils | `python3`, `openssl`, `curl`. |
+| DNS | Le nom d'hôte pointe vers ce serveur. |
+
+```bash
+sudo ./infra/onprem/compose/qualitos-compose.sh verifier  qualitos.conf
+sudo ./infra/onprem/compose/qualitos-compose.sh installer qualitos.conf 1.4.0
+```
+
+`verifier` contrôle aussi que le certificat est valide, couvre le nom d'hôte et
+correspond à sa clé. `installer` est rejouable : relancé avec une nouvelle
+version, il prend un vidage de sûreté puis met à jour. Les secrets générés à la
+première installation (`/opt/qualitos/.env`, lisible par root seulement) ne
+changent jamais ; ne pas les modifier à la main.
+
+| Besoin | Commande |
+| --- | --- |
+| Renouveler la licence | `qualitos-compose.sh licence qualitos.conf` (prise en compte en moins d'une minute) |
+| Vidage immédiat | `qualitos-compose.sh sauvegarder qualitos.conf` |
+| État des services | `qualitos-compose.sh etat qualitos.conf` |
+| Journaux d'un service | `cd /opt/qualitos && docker compose logs -f api-quality-engine` |
+
+Les vidages quotidiens (14 jours gardés) vont dans `QOS_BACKUP_DIR`. Tant que ce
+dossier est sur le disque du serveur, ils ne protègent pas de sa perte : le placer
+sur un montage distant, ou le recopier ailleurs chaque jour.
 
 ## Ce qui diffère de la plateforme SaaS
 

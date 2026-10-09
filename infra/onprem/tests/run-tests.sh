@@ -6,7 +6,8 @@
 #
 # Couvre : lecture de qualitos.conf (sans exécution de ce qu'il contient),
 # images vers un registre miroir, lecture de la licence, valeurs du site,
-# composants d'annuaire, rendu du realm on-premise, vérification des prérequis.
+# composants d'annuaire, rendu du realm on-premise, vérification des prérequis,
+# mode léger docker-compose (faux `docker`).
 
 set -uo pipefail
 
@@ -268,6 +269,127 @@ check "release qualitos-preprod"           contains "$HELM_ARGS" "upgrade --inst
 check "valeurs de préproduction seules"    contains "$HELM_ARGS" "values-preprod.yaml"
 check "pas de valeurs on-premise"          lacks "$HELM_ARGS" "values-onprem"
 check "promotion en production annoncée"   contains "$SAAS_OUT" "Promotion en production"
+
+# ---------------------------------------------------------------------------
+echo "mode léger : scripts repris des manifestes"
+EXTRACT="$PY $ONPREM/compose/extract-script.py"
+PG_INIT="$($EXTRACT "$ROOT/infra/k8s/deps/10-postgres.yaml" '^kind: ConfigMap' 'init\.sh: \|')"
+check "init PostgreSQL extrait"            contains "$PG_INIT" "qualitos_nlq_ro"
+check "init PostgreSQL : syntaxe"          bash -n <(printf '%s\n' "$PG_INIT")
+MINIO_INIT="$($EXTRACT "$ROOT/infra/k8s/deps/50-minio.yaml" '^kind: Job' '^\s+- \|')"
+check "init MinIO extrait"                 contains "$MINIO_INIT" "qualitos-evidence"
+check "init MinIO : syntaxe"               bash -n <(printf '%s\n' "$MINIO_INIT")
+BACKUP="$($EXTRACT "$ROOT/infra/k8s/deps/60-backup.yaml" '^kind: CronJob' '^\s+- \|')"
+check "sauvegarde extraite"                contains "$BACKUP" "pg_dump"
+check "manifeste sans le script : refus"   bash -c "! $EXTRACT '$ROOT/infra/k8s/deps/30-qdrant.yaml' '^kind: Job' 'rien' >/dev/null 2>&1"
+
+# ---------------------------------------------------------------------------
+echo "mode léger : installation à blanc (faux docker)"
+mkdir -p "$WORK/cbin"
+# Faux docker : journalise chaque appel, répond ce qu'un Keycloak sain répondrait.
+cat > "$WORK/cbin/docker" <<'DOCKER'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >> "$DOCKER_LOG"
+args=" $* "
+case "$args" in
+  *" compose version --short "*) echo 2.29.7; exit 0 ;;
+  *" compose version "*) echo "Docker Compose version v2.29.7"; exit 0 ;;
+  " info "*) exit 0 ;;
+  " ps --format "*) exit 0 ;;
+  " inspect "*) echo healthy; exit 0 ;;
+  *" ps --status running --services "*) [ -n "${FAKE_RUNNING:-}" ] && echo postgres; exit 0 ;;
+  *" ps -q keycloak "*) echo cid-keycloak; exit 0 ;;
+  *" -f - "*) cat >/dev/null; exit 0 ;;
+  *" get clients/"*"/client-secret "*) echo "secret-${args#* get clients/}" | cut -d/ -f1; exit 0 ;;
+  *" get clients "*"clientId=qualitos-web "*) echo id-web; exit 0 ;;
+  *" get clients "*"clientId=api-quality-engine-ai "*) echo id-ai; exit 0 ;;
+  *" get clients "*"clientId=qualitos-provisioner "*)
+    [ -f "$DOCKER_LOG.prov" ] && echo id-prov; exit 0 ;;
+  *" create clients "*"clientId=qualitos-provisioner "*) touch "$DOCKER_LOG.prov"; exit 0 ;;
+esac
+exit 0
+DOCKER
+printf '#!/usr/bin/env bash\nexec "%s" "$@"\n' "$PY" > "$WORK/cbin/python3"
+printf '#!/usr/bin/env bash\nexit 7\n' > "$WORK/cbin/curl"
+chmod +x "$WORK/cbin/"*
+# Un vrai certificat pour l'hôte : la vérification des prérequis l'éprouve.
+# Chemins relatifs : l'openssl natif d'un poste Windows ne lit pas /tmp.
+(
+  cd "$WORK" || exit 1
+  MSYS_NO_PATHCONV=1 openssl req -x509 -newkey rsa:2048 -nodes -days 30 -subj "/CN=q.acme.local" \
+    -addext "subjectAltName=DNS:q.acme.local" -keyout tls.key -out tls.crt >/dev/null 2>&1
+  MSYS_NO_PATHCONV=1 openssl req -x509 -newkey rsa:2048 -nodes -days 30 -subj "/CN=autre.local" \
+    -keyout autre.key -out autre.crt >/dev/null 2>&1
+)
+cat > "$WORK/leger.conf" <<CONF
+QOS_HOST=q.acme.local
+QOS_ADMIN_EMAIL=dsi@acme.local
+QOS_LICENSE_FILE=./licence.lic
+QOS_REGISTRY=reg.acme.local/qualitos
+QOS_MIRROR_REGISTRY=reg.acme.local/miroir
+QOS_TLS_CERT=./tls.crt
+QOS_TLS_KEY=./tls.key
+QOS_COMPOSE_DIR=$WORK/opt
+CONF
+leger() {
+  DOCKER_LOG="$WORK/docker.log" PATH="$WORK/cbin:$PATH" PYTHONIOENCODING=utf-8 \
+    bash "$ONPREM/compose/qualitos-compose.sh" "$@" 2>&1
+}
+OUT="$(leger verifier "$WORK/leger.conf")"; RC=$?
+check "prérequis du mode léger réunis"     eq "$RC" 0
+[ "$RC" = 0 ] || printf '%s\n' "$OUT" | tail -15 >&2
+sed 's#^QOS_TLS_CERT=.*#QOS_TLS_CERT=./autre.crt#; s#^QOS_TLS_KEY=.*#QOS_TLS_KEY=./autre.key#' "$WORK/leger.conf" > "$WORK/leger-autre.conf"
+OUT="$(leger verifier "$WORK/leger-autre.conf")"; RC=$?
+check "certificat d'un autre hôte : arrêt" eq "$RC" 1
+check "dit que le certificat ne couvre pas l'hôte" contains "$OUT" "ne couvre pas q.acme.local"
+sed 's#^QOS_TLS_KEY=.*#QOS_TLS_KEY=./autre.key#' "$WORK/leger.conf" > "$WORK/leger-cle.conf"
+OUT="$(leger verifier "$WORK/leger-cle.conf")"
+check "clé d'un autre certificat refusée"  contains "$OUT" "ne correspond pas au certificat"
+
+: > "$WORK/docker.log"
+OUT="$(leger installer "$WORK/leger.conf" v1.2.3)"; RC=$?
+check "l'installation va au bout"          eq "$RC" 0
+[ "$RC" = 0 ] || printf '%s\n' "$OUT" | tail -20 >&2
+ENVF="$(cat "$WORK/opt/.env" 2>/dev/null)"
+check "version sans le v"                  contains "$ENVF" "QOS_VERSION=1.2.3"
+check "images depuis le miroir"            contains "$ENVF" "QOS_IMG_POSTGRES=reg.acme.local/miroir/library/postgres:"
+check "Keycloak depuis le miroir"          contains "$ENVF" "QOS_IMG_KEYCLOAK=reg.acme.local/miroir/keycloak/keycloak:"
+check "IA dans le serveur"                 contains "$ENVF" "COMPOSE_PROFILES=ollama"
+check "secret du client IA récupéré"       contains "$ENVF" "AI_CLIENT_SECRET=secret-id-ai"
+check "compte de service créé puis lu"     contains "$ENVF" "KEYCLOAK_PROVISIONER_SECRET=secret-id-prov"
+PG1="$(grep '^POSTGRES_PASSWORD=' "$WORK/opt/.env")"
+check "mot de passe PostgreSQL généré"     test "${#PG1}" -ge 30
+check "proxy à l'hôte du site"             contains "$(cat "$WORK/opt/proxy.conf" 2>/dev/null)" "server_name q.acme.local;"
+check "plus de marqueur dans le proxy"     lacks "$(cat "$WORK/opt/proxy.conf" 2>/dev/null)" "__QOS_HOST__"
+check "script de vidage : syntaxe"         sh -n "$WORK/opt/backup.sh"
+check "vidage : même script que le CronJob" contains "$(cat "$WORK/opt/backup.sh" 2>/dev/null)" "sauvegarde vide pour"
+check "licence posée"                      cmp -s "$WORK/licence.lic" "$WORK/opt/license/license.lic"
+REALM="$(cat "$WORK/opt/realm/qualitos-realm.json" 2>/dev/null)"
+check "realm : client de la licence"       contains "$REALM" "$TENANT"
+check "realm : administrateur du site"     contains "$REALM" "dsi@acme.local"
+check "realm : hôte du site"               contains "$REALM" "https://q.acme.local/*"
+LOG="$(cat "$WORK/docker.log")"
+check "Keycloak démarré avant l'application" bash -c "grep -n ' up -d postgres keycloak' '$WORK/docker.log' | head -1 | cut -d: -f1 > '$WORK/a'; grep -n ' up -d --remove-orphans' '$WORK/docker.log' | head -1 | cut -d: -f1 > '$WORK/b'; [ \"\$(cat '$WORK/a')\" -lt \"\$(cat '$WORK/b')\" ]"
+check "anti-force-brute du realm master"   contains "$LOG" "update realms/master -s bruteForceProtected=true"
+check "droits du compte de service"        contains "$LOG" "--rolename manage-users"
+check "modèle d'IA téléchargé"             contains "$LOG" "ollama pull"
+check "pas de vidage à la 1re installation" lacks "$LOG" "backup.sh une-fois"
+
+: > "$WORK/docker.log"
+OUT="$(FAKE_RUNNING=1 leger installer "$WORK/leger.conf" v1.2.4)"; RC=$?
+check "mise à jour : va au bout"           eq "$RC" 0
+check "mise à jour : secrets inchangés"    eq "$(grep '^POSTGRES_PASSWORD=' "$WORK/opt/.env")" "$PG1"
+check "mise à jour : nouvelle version"     contains "$(cat "$WORK/opt/.env")" "QOS_VERSION=1.2.4"
+check "mise à jour : une seule version"    eq "$(grep -c '^QOS_VERSION=' "$WORK/opt/.env")" 1
+check "mise à jour : vidage de sûreté"     contains "$(cat "$WORK/docker.log")" "backup.sh une-fois"
+
+printf 'QOS_OLLAMA_URL=http://ia.acme.local:11434\n' >> "$WORK/leger.conf"
+OUT="$(leger installer "$WORK/leger.conf" v1.2.4)"
+ENVF="$(cat "$WORK/opt/.env")"
+check "IA du site : pas d'Ollama local"    contains "$ENVF" "COMPOSE_PROFILES="
+check "IA du site : adresse"               contains "$ENVF" "QOS_OLLAMA_BASE_URL=http://ia.acme.local:11434"
+check "IA du site : hôte autorisé"         contains "$ENVF" "QOS_OLLAMA_HOSTNAME=ia.acme.local"
+check "IA du site : un seul profil"        eq "$(grep -c '^COMPOSE_PROFILES=' "$WORK/opt/.env")" 1
 
 echo
 echo "$PASS réussi(s), $FAIL échec(s)"
