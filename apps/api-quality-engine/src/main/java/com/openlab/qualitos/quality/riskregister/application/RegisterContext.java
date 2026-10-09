@@ -1,5 +1,6 @@
 package com.openlab.qualitos.quality.riskregister.application;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -13,4 +14,10 @@ public interface RegisterContext {
     UUID requireTenantId();
 
     UUID requireActorId();
+
+    /**
+     * Vide : l'utilisateur voit tout le registre. Sinon : seulement les risques
+     * et opportunités qu'il a inscrits (ADR 0081).
+     */
+    Optional<UUID> visibleOnlyTo();
 }

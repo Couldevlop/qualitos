@@ -1,5 +1,7 @@
 package com.openlab.qualitos.quality.riskregister.web;
 
+import com.openlab.qualitos.quality.authz.domain.Permission;
+import com.openlab.qualitos.quality.authz.web.RequiresPermission;
 import com.openlab.qualitos.quality.config.RequiresModule;
 import com.openlab.qualitos.quality.riskregister.application.RiskRegisterDto;
 import com.openlab.qualitos.quality.riskregister.application.RiskRegisterService;
@@ -44,9 +46,6 @@ import java.util.UUID;
 @Tag(name = "Risk register", description = "Risks and opportunities register (ISO 9001 6.1)")
 public class RiskRegisterController {
 
-    private static final String ROLES_PILOTAGE =
-            "hasAnyRole('QUALITY_MANAGER','DIRECTOR_QUALITY','ADMIN_TENANT','SUPER_ADMIN')";
-
     private final RiskRegisterService service;
 
     public RiskRegisterController(RiskRegisterService service) {
@@ -71,7 +70,7 @@ public class RiskRegisterController {
 
     @PostMapping("/risks")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize(ROLES_PILOTAGE)
+    @RequiresPermission(Permission.RISK_MANAGE)
     @Transactional
     @Operation(summary = "Record a risk; the server assigns its reference")
     public RiskRegisterDto.RiskView createRisk(@Valid @RequestBody RiskRegisterWebDto.RiskRequest r) {
@@ -79,7 +78,7 @@ public class RiskRegisterController {
     }
 
     @PutMapping("/risks/{id}")
-    @PreAuthorize(ROLES_PILOTAGE)
+    @RequiresPermission(Permission.RISK_MANAGE)
     @Transactional
     @Operation(summary = "Revise a risk; rating, status and decision changes are added to its history")
     public RiskRegisterDto.RiskView reviseRisk(@PathVariable UUID id,
@@ -89,7 +88,7 @@ public class RiskRegisterController {
 
     @PostMapping("/risks/{id}/capa")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize(ROLES_PILOTAGE)
+    @RequiresPermission(Permission.RISK_MANAGE)
     @Transactional
     @Operation(summary = "Open a preventive CAPA case on this risk")
     public RiskRegisterDto.CapaView openCapa(@PathVariable UUID id,
@@ -104,7 +103,7 @@ public class RiskRegisterController {
      * le texte de l'objet source.
      */
     @GetMapping("/sources/{origin}/{sourceId}")
-    @PreAuthorize(ROLES_PILOTAGE)
+    @RequiresPermission(Permission.RISK_MANAGE)
     @Transactional(readOnly = true)
     @Operation(summary = "Draft a risk from an FMEA line, a non-conformity, an audit finding or a change")
     public RiskRegisterDto.RiskDraft draft(@PathVariable RegisterOrigin origin, @PathVariable UUID sourceId) {
@@ -129,7 +128,7 @@ public class RiskRegisterController {
 
     @PostMapping("/opportunities")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize(ROLES_PILOTAGE)
+    @RequiresPermission(Permission.OPPORTUNITY_MANAGE)
     @Transactional
     @Operation(summary = "Record an opportunity; the server assigns its reference")
     public RiskRegisterDto.OpportunityView createOpportunity(
@@ -138,7 +137,7 @@ public class RiskRegisterController {
     }
 
     @PutMapping("/opportunities/{id}")
-    @PreAuthorize(ROLES_PILOTAGE)
+    @RequiresPermission(Permission.OPPORTUNITY_MANAGE)
     @Transactional
     @Operation(summary = "Revise an opportunity")
     public RiskRegisterDto.OpportunityView reviseOpportunity(
@@ -148,7 +147,7 @@ public class RiskRegisterController {
 
     @PostMapping("/opportunities/{id}/actions")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize(ROLES_PILOTAGE)
+    @RequiresPermission(Permission.OPPORTUNITY_MANAGE)
     @Transactional
     @Operation(summary = "Add an implementation action (ACT-n) to an opportunity")
     public RiskRegisterDto.ActionView addAction(@PathVariable UUID id,
@@ -157,7 +156,7 @@ public class RiskRegisterController {
     }
 
     @PutMapping("/opportunities/{id}/actions/{actionId}")
-    @PreAuthorize(ROLES_PILOTAGE)
+    @RequiresPermission(Permission.OPPORTUNITY_MANAGE)
     @Transactional
     @Operation(summary = "Revise an opportunity action")
     public RiskRegisterDto.ActionView reviseAction(@PathVariable UUID id, @PathVariable UUID actionId,
@@ -167,7 +166,7 @@ public class RiskRegisterController {
 
     @DeleteMapping("/opportunities/{id}/actions/{actionId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize(ROLES_PILOTAGE)
+    @RequiresPermission(Permission.OPPORTUNITY_MANAGE)
     @Transactional
     @Operation(summary = "Delete an opportunity action")
     public void deleteAction(@PathVariable UUID id, @PathVariable UUID actionId) {

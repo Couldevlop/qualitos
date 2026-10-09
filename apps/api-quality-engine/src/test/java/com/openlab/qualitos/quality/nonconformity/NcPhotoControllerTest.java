@@ -37,7 +37,7 @@ class NcPhotoControllerTest {
     }
 
     // --- 503 when storage OFF (default behaviour) ---
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void upload_storageDisabled_returns503() throws Exception {
         when(service.upload(eq(NC), any(), any(), any())).thenThrow(new StorageDisabledException());
         mockMvc.perform(multipart("/api/v1/nc/{id}/photos", NC).file(file("image/png")).with(csrf()))
@@ -45,7 +45,7 @@ class NcPhotoControllerTest {
                 .andExpect(jsonPath("$.type").value("https://qualitos.io/errors/storage-disabled"));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_storageDisabled_returns503() throws Exception {
         when(service.list(NC)).thenThrow(new StorageDisabledException());
         mockMvc.perform(get("/api/v1/nc/{id}/photos", NC))
@@ -53,7 +53,7 @@ class NcPhotoControllerTest {
     }
 
     // --- happy paths (storage ON) ---
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void upload_returns201() throws Exception {
         when(service.upload(eq(NC), eq("image/png"), any(), any()))
                 .thenReturn(new NcPhotoDto.Response(PHOTO, NC, "tenants/t/nc/n/x.png",
@@ -66,14 +66,14 @@ class NcPhotoControllerTest {
                 .andExpect(jsonPath("$.sizeBytes").value(3));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void upload_missingFilePart_returns400() throws Exception {
         // Pas de part 'file' → MissingServletRequestPartException → 400.
         mockMvc.perform(multipart("/api/v1/nc/{id}/photos", NC).with(csrf()))
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void upload_emptyFile_returns400() throws Exception {
         MockMultipartFile empty = new MockMultipartFile("file", "e.png", "image/png", new byte[0]);
         mockMvc.perform(multipart("/api/v1/nc/{id}/photos", NC).file(empty).with(csrf()))
@@ -81,7 +81,7 @@ class NcPhotoControllerTest {
         verifyNoInteractions(service);
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void upload_unsupportedType_returns400() throws Exception {
         when(service.upload(eq(NC), eq("application/pdf"), any(), any()))
                 .thenThrow(new NcPhotoValidationException("Unsupported content type"));
@@ -90,7 +90,7 @@ class NcPhotoControllerTest {
                 .andExpect(jsonPath("$.type").value("https://qualitos.io/errors/non-conformity-photo-invalid"));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void upload_tooLarge_returns413() throws Exception {
         when(service.upload(eq(NC), any(), any(), any()))
                 .thenThrow(new NcPhotoTooLargeException(99L, 10L));
@@ -98,7 +98,7 @@ class NcPhotoControllerTest {
                 .andExpect(status().isPayloadTooLarge());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void upload_closedNc_returns409() throws Exception {
         when(service.upload(eq(NC), any(), any(), any()))
                 .thenThrow(new NcStateException("Cannot attach a photo to a CLOSED non-conformity"));
@@ -106,14 +106,14 @@ class NcPhotoControllerTest {
                 .andExpect(status().isConflict());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void upload_ncNotFound_returns404() throws Exception {
         when(service.upload(eq(NC), any(), any(), any())).thenThrow(new NcNotFoundException(NC));
         mockMvc.perform(multipart("/api/v1/nc/{id}/photos", NC).file(file("image/png")).with(csrf()))
                 .andExpect(status().isNotFound());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_returns200_withUrls() throws Exception {
         when(service.list(NC)).thenReturn(List.of(new NcPhotoDto.ListItem(
                 PHOTO, NC, "tenants/t/nc/n/x.png", "image/png", 3L, "photo.png",
@@ -124,7 +124,7 @@ class NcPhotoControllerTest {
                 .andExpect(jsonPath("$[0].url").value("https://storage.test/x?ttl=900"));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void delete_returns204() throws Exception {
         doNothing().when(service).delete(NC, PHOTO);
         mockMvc.perform(delete("/api/v1/nc/{id}/photos/{photoId}", NC, PHOTO).with(csrf()))
@@ -132,7 +132,7 @@ class NcPhotoControllerTest {
         verify(service).delete(NC, PHOTO);
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void delete_notFound_returns404() throws Exception {
         doThrow(new NcPhotoNotFoundException(PHOTO)).when(service).delete(NC, PHOTO);
         mockMvc.perform(delete("/api/v1/nc/{id}/photos/{photoId}", NC, PHOTO).with(csrf()))

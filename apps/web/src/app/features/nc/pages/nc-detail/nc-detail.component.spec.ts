@@ -18,6 +18,7 @@ import { IshikawaDiagramResponse } from '../../../ishikawa/ishikawa.types';
 import { NcService } from '../../nc.service';
 import { NcPhoto, NcResponse, NcStatus, VisionAnalysis } from '../../nc.types';
 import { NcDetailComponent } from './nc-detail.component';
+import { AuthzService } from '../../../../core/authz/authz.service';
 
 function buildFiveWhys(overrides: Partial<FiveWhysAnalysis> = {}): FiveWhysAnalysis {
   return {
@@ -95,6 +96,8 @@ describe('NcDetailComponent — section photos', () => {
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
+        // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
+        { provide: AuthzService, useValue: { can: () => of(true) } },
         { provide: NcService, useValue: svc },
         { provide: ConnectivityService, useValue: connectivity },
         { provide: AuthService, useValue: { snapshot: () => ({ userId: 'u1' }) } },
@@ -452,6 +455,8 @@ describe('NcDetailComponent — workflow et escalade CAPA', () => {
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
+        // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
+        { provide: AuthzService, useValue: { can: () => of(true) } },
         { provide: NcService, useValue: svc },
         { provide: ConnectivityService, useValue: new FakeConnectivity() },
         { provide: AuthService, useValue: { snapshot: () => currentUser } },
@@ -755,6 +760,8 @@ describe('NcDetailComponent — entrée 5 Pourquoi', () => {
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
+        // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
+        { provide: AuthzService, useValue: { can: () => of(true) } },
         { provide: NcService, useValue: svc },
         { provide: ConnectivityService, useValue: new FakeConnectivity() },
         { provide: AuthService, useValue: { snapshot: () => ({ userId: 'u1' }) } },
@@ -911,6 +918,8 @@ describe('NcDetailComponent — entrée Ishikawa', () => {
       declarations: [NcDetailComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
+        // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
+        { provide: AuthzService, useValue: { can: () => of(true) } },
         { provide: NcService, useValue: svc },
         { provide: ConnectivityService, useValue: new FakeConnectivity() },
         { provide: AuthService, useValue: { snapshot: () => ({ userId: 'u1' }) } },

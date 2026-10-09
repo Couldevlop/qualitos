@@ -101,3 +101,64 @@ export const ASSIGNABLE_ROLES = [
 ] as const;
 
 export type AssignableRole = typeof ASSIGNABLE_ROLES[number];
+
+// ---------- comptes : invitation et création de client (ADR 0079) ----------
+
+export interface InviteRequest {
+  email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  roles: string[];
+}
+
+/**
+ * Le membre invité, et comment il entrera. Le mot de passe provisoire n'est
+ * rendu qu'une fois : rien ne le relira plus tard, ni le serveur ni l'écran.
+ */
+export interface InviteResponse {
+  user: TenantUser;
+  temporaryPassword: string | null;
+  invitationSent: boolean;
+}
+
+export type TenantPlan = 'STARTER' | 'PRO' | 'ENTERPRISE';
+
+export interface TenantSummary {
+  id: string;
+  slug: string;
+  name: string;
+  plan: TenantPlan;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TenantPage {
+  content: TenantSummary[];
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+}
+
+export interface OnboardRequest {
+  name: string;
+  slug: string;
+  plan: TenantPlan;
+  modules: string[];
+  admin: { email: string; firstName?: string | null; lastName?: string | null };
+}
+
+export interface ModuleOutcome {
+  code: string;
+  activated: boolean;
+  message: string | null;
+}
+
+export interface OnboardResponse {
+  tenant: TenantSummary;
+  admin: TenantUser;
+  temporaryPassword: string | null;
+  invitationSent: boolean;
+  modules: ModuleOutcome[];
+}

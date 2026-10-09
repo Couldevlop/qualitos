@@ -8,6 +8,8 @@ import { NotificationView } from '../../core/notifications/notification.types';
 import { NotificationsService } from '../../core/notifications/notifications.service';
 import { ConnectivityService } from '../../core/offline/connectivity.service';
 import { OfflineQueueService } from '../../core/offline/offline-queue.service';
+import { EditionService } from '../../core/edition/edition.service';
+import { Edition } from '../../core/edition/edition.types';
 import { TenantModulesService } from '../../features/admin/tenant-modules.service';
 
 export interface NavItem {
@@ -29,6 +31,12 @@ export interface NavItem {
    * refermera, il ne remplace pas l'autorisation.
    */
   module?: string;
+  /**
+   * L'édition où l'entrée existe (ADR 0082). Absente = les deux. La console
+   * éditeur n'a pas de sens dans une installation on-premise ; la page de
+   * licence n'en a pas en SaaS.
+   */
+  edition?: Edition;
 }
 
 export interface NavSection {
@@ -217,6 +225,22 @@ export class MainShellComponent implements OnInit, OnDestroy {
       label: $localize`:@@nav.administration:Administration`,
       items: [
         {
+          // L'éditeur seulement : créer une organisation, ses modules, son administrateur.
+          label: $localize`:@@nav.admin-clients:Clients`,
+          route: '/admin/clients',
+          icon: 'domain_add',
+          roles: ['SUPER_ADMIN'],
+          edition: 'SAAS'
+        },
+        {
+          // La licence de l'installation on-premise : échéance, modules, utilisateurs.
+          label: $localize`:@@nav.admin-license:Licence`,
+          route: '/admin/licence',
+          icon: 'verified_user',
+          roles: ADMIN_ROLES,
+          edition: 'ONPREM'
+        },
+        {
           label: $localize`:@@nav.admin-modules:Modules du tenant`,
           route: '/admin/modules',
           icon: 'tune',
@@ -226,6 +250,21 @@ export class MainShellComponent implements OnInit, OnDestroy {
           label: $localize`:@@nav.admin-team:Équipe & habilitations`,
           route: '/admin/team',
           icon: 'group',
+          roles: ADMIN_ROLES
+        },
+        {
+          // La matrice des droits par client (ADR 0078) : actions × rôles, et
+          // l'équipe qu'on glisse sur un rôle.
+          label: $localize`:@@nav.admin-roles:Rôles et droits`,
+          route: '/admin/roles',
+          icon: 'admin_panel_settings',
+          roles: ADMIN_ROLES
+        },
+        {
+          // Les circuits de validation (ADR 0080) : qui approuve, dans quel ordre.
+          label: $localize`:@@nav.admin-circuits:Circuits de validation`,
+          route: '/admin/circuits',
+          icon: 'alt_route',
           roles: ADMIN_ROLES
         },
         {
@@ -283,7 +322,8 @@ export class MainShellComponent implements OnInit, OnDestroy {
     private readonly offlineQueue: OfflineQueueService,
     private readonly notificationsService: NotificationsService,
     private readonly router: Router,
-    private readonly modules: TenantModulesService
+    private readonly modules: TenantModulesService,
+    private readonly editions: EditionService
   ) {}
 
   ngOnInit(): void {
@@ -298,8 +338,12 @@ export class MainShellComponent implements OnInit, OnDestroy {
       shareReplay({ bufferSize: 1, refCount: false })
     );
 
-    this.visibleSections$ = combineLatest([this.user$, modules$]).pipe(
-      map(([user, modules]) => this.filterSections(user?.roles ?? [], modules))
+    // L'édition, elle, est connue tôt et ne change pas : tant qu'elle ne l'est pas,
+    // rien n'est retiré, comme pour les modules.
+    const edition$ = this.editions.edition().pipe(startWith(null as Edition | null));
+
+    this.visibleSections$ = combineLatest([this.user$, modules$, edition$]).pipe(
+      map(([user, modules, edition]) => this.filterSections(user?.roles ?? [], modules, edition))
     );
     this.online$ = this.connectivity.online$;
     this.pendingSync$ = this.offlineQueue.pendingCount$;
@@ -385,7 +429,7 @@ export class MainShellComponent implements OnInit, OnDestroy {
    * Retient les entrées visibles pour ces rôles, puis élimine les sections vides.
    * La comparaison ignore un éventuel préfixe `ROLE_` : Keycloak le pose, pas nous.
    */
-  filterSections(roles: string[], modules: string[] | null = null): NavSection[] {
+  filterSections(roles: string[], modules: string[] | null = null, edition: Edition | null = null): NavSection[] {
     // Normaliser AVANT de retirer le préfixe : Keycloak peut émettre `role_admin`
     // en minuscules, auquel cas un strip sensible à la casse laisserait passer le
     // préfixe et ferait échouer la comparaison.
@@ -398,7 +442,8 @@ export class MainShellComponent implements OnInit, OnDestroy {
         ...section,
         items: section.items.filter(item =>
           (!item.roles || item.roles.some(r => owned.has(r)))
-          && (enabled === null || !item.module || enabled.has(item.module)))
+          && (enabled === null || !item.module || enabled.has(item.module))
+          && (edition === null || !item.edition || item.edition === edition))
       }))
       .filter(section => section.items.length > 0);
   }

@@ -68,6 +68,22 @@ public class UserController {
         return ResponseEntity.created(location).body(created);
     }
 
+    /**
+     * Invite un membre : son compte de connexion est créé dans le client du jeton.
+     * Le mot de passe provisoire éventuel n'est rendu qu'ici, une seule fois.
+     */
+    @PostMapping("/invite")
+    @Operation(summary = "Invite a member: create their login account in the current tenant")
+    public ResponseEntity<UserDto.InviteResponse> inviteUser(@Valid @RequestBody UserDto.InviteRequest request) {
+        UserDto.InviteResponse invited = userService.invite(request);
+        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/v1/users/{id}").buildAndExpand(invited.user().id()).toUri();
+        return ResponseEntity.created(location)
+                // Un mot de passe, même provisoire, ne se met pas en cache.
+                .header("Cache-Control", "no-store")
+                .body(invited);
+    }
+
     @PutMapping("/{id}")
     @Operation(summary = "Update user roles or active status")
     public ResponseEntity<UserDto.Response> updateUser(

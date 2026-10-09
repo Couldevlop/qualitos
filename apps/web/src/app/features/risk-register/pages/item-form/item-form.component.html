@@ -6,7 +6,7 @@
 
   <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
 
-  <p class="avis" *ngIf="!editable" role="note" data-test="lecture-seule" i18n="@@rr.form.read-only">
+  <p class="avis" *ngIf="rightsKnown && !editable" role="note" data-test="lecture-seule" i18n="@@rr.form.read-only">
     Votre profil permet de consulter le registre, pas de l'alimenter. Un responsable qualité peut créer cette fiche.
   </p>
 

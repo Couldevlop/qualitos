@@ -1,0 +1,53 @@
+<!-- Une version revenue en brouillon : la raison du dernier refus, pour son auteur. -->
+<div class="refus" *ngIf="rejected" role="note" data-test="refus">
+  <mat-icon aria-hidden="true">undo</mat-icon>
+  <div>
+    <strong i18n="@@documents.circuit.rejected">Version v{{ version.versionNumber // i18n(ph="number") }} refusée le {{ version.rejectedAt | date:'short' // i18n(ph="date") }}</strong>
+    <p class="refus__raison">{{ version.rejectionReason }}</p>
+    <p class="refus__suite" i18n="@@documents.circuit.rejected-next">Corrigez-la, puis soumettez-la de nouveau : le circuit repartira de la première étape.</p>
+  </div>
+</div>
+
+<section class="circuit" *ngIf="inReview && loaded" aria-labelledby="circuit-titre" data-test="circuit">
+  <header class="circuit__entete">
+    <h3 id="circuit-titre" i18n="@@documents.circuit.title">Validation de la version v{{ version.versionNumber // i18n(ph="number") }}</h3>
+
+    <ng-container *ngIf="run; else simple">
+      <p class="tour tour--{{ turn }}" [ngSwitch]="turn" data-test="tour">
+        <ng-container *ngSwitchCase="'yours'" i18n="@@documents.circuit.turn-yours">C'est à vous : approuvez ou refusez cette étape.</ng-container>
+        <ng-container *ngSwitchCase="'decided'" i18n="@@documents.circuit.turn-decided">Vous avez décidé : une autre personne doit valider la suite.</ng-container>
+        <ng-container *ngSwitchCase="'author'" i18n="@@documents.circuit.turn-author">Vous en êtes l'auteur : d'autres la valident.</ng-container>
+        <ng-container *ngSwitchDefault i18n="@@documents.circuit.turn-waiting">En attente de : {{ roleText(current!.roleCode) // i18n(ph="role") }}.</ng-container>
+      </p>
+    </ng-container>
+    <ng-template #simple>
+      <p class="tour" *ngIf="!failed" data-test="simple" i18n="@@documents.circuit.simple">Approbation simple : une personne ayant le droit d'approuver suffit.</p>
+      <p class="tour tour--echec" *ngIf="failed" role="alert" i18n="@@documents.circuit.failed">L'avancement de la validation n'a pas pu être lu.</p>
+    </ng-template>
+  </header>
+
+  <ol class="etapes" *ngIf="run">
+    <li *ngFor="let s of run.steps; let i = index; trackBy: trackByIndex" class="etape etape--{{ state(i) }}"
+        [attr.aria-current]="state(i) === 'current' ? 'step' : null" [attr.data-test]="'etape-' + i">
+      <span class="etape__marque" aria-hidden="true">
+        <mat-icon *ngIf="state(i) === 'done'">check</mat-icon>
+        <ng-container *ngIf="state(i) !== 'done'">{{ i + 1 }}</ng-container>
+      </span>
+      <div class="etape__texte">
+        <strong>{{ s.name }}</strong>
+        <span class="etape__role">{{ roleText(s.roleCode) }}</span>
+        <span class="etape__compte" i18n="@@documents.circuit.count">{{ approvalsAt(i) // i18n(ph="done") }} sur {{ s.minApprovals // i18n(ph="needed") }}</span>
+        <ul class="decisions" *ngIf="decisionsAt(i).length">
+          <li *ngFor="let d of decisionsAt(i)" [class.decisions__refus]="!d.approved">
+            <mat-icon aria-hidden="true">{{ d.approved ? 'thumb_up' : 'thumb_down' }}</mat-icon>
+            <span>
+              <ng-container *ngIf="mine(d)" i18n="@@documents.circuit.you">Vous</ng-container>
+              <ng-container *ngIf="!mine(d)" i18n="@@documents.circuit.someone">Un membre</ng-container>,
+              {{ d.at | date:'short' }}<ng-container *ngIf="d.comment"> — « {{ d.comment }} »</ng-container>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </li>
+  </ol>
+</section>

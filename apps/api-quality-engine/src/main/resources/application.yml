@@ -173,6 +173,11 @@ springdoc:
 
 # Passerelle IA (ai-service) — ADR 0014. Entièrement paramétrable par variables d'env.
 qualitos:
+  # Édition de l'installation : saas (défaut) ou onprem (ADR 0082).
+  edition: ${QUALITOS_EDITION:saas}
+  license:
+    # Fichier de licence monté (secret), lu et vérifié hors ligne en on-premise.
+    file: ${QUALITOS_LICENSE_FILE:}
   security:
     # Second facteur exigé sur les actions critiques : approuver un control plan,
     # accepter une proposition de révision (CLAUDE.md §18.2 règle 5).

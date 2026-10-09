@@ -2,6 +2,8 @@ package com.openlab.qualitos.quality.change;
 
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,10 +49,20 @@ class ChangeRequestServiceTest {
     void setup() {
         service = new ChangeRequestService(requestRepo, impactRepo, approvalRepo, CLOCK);
         TenantContext.setTenantId(TENANT.toString());
+        // L'approbateur qui décide est l'utilisateur du jeton (ADR 0080).
+        connecte(APPROVER_A);
     }
 
     @AfterEach
-    void tearDown() { TenantContext.clear(); }
+    void tearDown() {
+        TenantContext.clear();
+        SecurityContextHolder.clearContext();
+    }
+
+    static void connecte(UUID user) {
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(user.toString(), "n/a", java.util.List.of()));
+    }
 
     // ---- CRUD ----
 
@@ -373,9 +385,36 @@ class ChangeRequestServiceTest {
         when(requestRepo.findById(CHG)).thenReturn(Optional.of(c));
         when(approvalRepo.findByChangeIdAndApproverUserId(CHG, APPROVER_B))
                 .thenReturn(Optional.empty());
+        connecte(APPROVER_B);
         assertThatThrownBy(() -> service.decide(CHG, new ChangeDto.DecisionRequest(
                 APPROVER_B, ApprovalDecision.APPROVED, null)))
                 .isInstanceOf(ChangeChildNotFoundException.class);
+    }
+
+    @Test
+    void decide_onBehalfOfAnotherApprover_forbidden() {
+        ChangeRequest c = change(); c.setStatus(ChangeRequestStatus.SUBMITTED);
+        when(requestRepo.findById(CHG)).thenReturn(Optional.of(c));
+        // Connecté A, décide « pour » B : refusé avant toute lecture des approbations.
+        assertThatThrownBy(() -> service.decide(CHG, new ChangeDto.DecisionRequest(
+                APPROVER_B, ApprovalDecision.APPROVED, null)))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        verify(approvalRepo, never()).save(any());
+    }
+
+    @Test
+    void decide_withoutApproverInBody_usesTheToken() {
+        ChangeRequest c = change(); c.setStatus(ChangeRequestStatus.SUBMITTED);
+        when(requestRepo.findById(CHG)).thenReturn(Optional.of(c));
+        ChangeApproval a = approval(APPROVER_A, ApprovalDecision.PENDING);
+        when(approvalRepo.findByChangeIdAndApproverUserId(CHG, APPROVER_A)).thenReturn(Optional.of(a));
+        when(approvalRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(approvalRepo.countByChangeId(CHG)).thenReturn(1L);
+        when(approvalRepo.countByChangeIdAndDecision(CHG, ApprovalDecision.APPROVED)).thenReturn(1L);
+        when(approvalRepo.countByChangeIdAndDecision(CHG, ApprovalDecision.REJECTED)).thenReturn(0L);
+        when(requestRepo.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        service.decide(CHG, new ChangeDto.DecisionRequest(null, ApprovalDecision.APPROVED, null));
+        assertThat(a.getDecision()).isEqualTo(ApprovalDecision.APPROVED);
     }
 
     // ---- Impacts ----

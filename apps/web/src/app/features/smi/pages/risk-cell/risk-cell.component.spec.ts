@@ -8,7 +8,7 @@ import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angul
 import { BehaviorSubject, of, throwError } from 'rxjs';
 
 import { environment } from '../../../../../environments/environment';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthzService } from '../../../../core/authz/authz.service';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UiModule } from '../../../../shared/ui/ui.module';
 import { RiskCapaOpener } from '../../../risk-register/risk-capa-opener.service';
@@ -52,7 +52,8 @@ describe('RiskCellComponent', () => {
         provideRouter([]),
         { provide: ActivatedRoute, useValue: { queryParamMap: query$ } },
         { provide: RiskCapaOpener, useValue: opener },
-        { provide: AuthService, useValue: { hasAnyRole: (a: string[]) => a.some(r => roles.includes(r)) } }
+        // Les droits livrés : risk.manage et opportunity.manage vont au pilotage qualité.
+        { provide: AuthzService, useValue: { can: () => of(roles.some(r => ['QUALITY_MANAGER', 'DIRECTOR_QUALITY', 'QUALITY_DIRECTOR', 'ADMIN_TENANT', 'SUPER_ADMIN'].includes(r))) } }
       ]
     }).compileComponents();
     http = TestBed.inject(HttpTestingController);

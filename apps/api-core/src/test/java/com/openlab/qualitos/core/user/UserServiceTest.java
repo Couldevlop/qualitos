@@ -2,6 +2,10 @@ package com.openlab.qualitos.core.user;
 
 import com.openlab.qualitos.core.common.MissingTenantContextException;
 import com.openlab.qualitos.core.security.TenantContext;
+import com.openlab.qualitos.core.edition.EditionExceptions;
+import com.openlab.qualitos.core.edition.MemberLimit;
+import com.openlab.qualitos.core.identity.IdentityProvider;
+import com.openlab.qualitos.core.identity.InvalidRoleException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +31,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("UserService")
@@ -35,6 +41,13 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private IdentityProvider identity;
+
+    /** Le plafond d'utilisateurs de la licence : sans réglage, il ne refuse rien. */
+    @Mock
+    private MemberLimit memberLimit;
 
     @InjectMocks
     private UserService userService;
@@ -96,6 +109,11 @@ class UserServiceTest {
     @DisplayName("findById")
     class FindById {
 
+        @BeforeEach
+        void tenant() {
+            TenantContext.setTenantId(TENANT_ID.toString());
+        }
+
         @Test
         @DisplayName("Returns user DTO when found")
         void returnsDtoWhenFound() {
@@ -122,6 +140,11 @@ class UserServiceTest {
     @Nested
     @DisplayName("findByKeycloakId")
     class FindByKeycloakId {
+
+        @BeforeEach
+        void tenant() {
+            TenantContext.setTenantId(TENANT_ID.toString());
+        }
 
         @Test
         @DisplayName("Returns user DTO when keycloakId found")
@@ -212,6 +235,11 @@ class UserServiceTest {
     @DisplayName("update")
     class Update {
 
+        @BeforeEach
+        void tenant() {
+            TenantContext.setTenantId(TENANT_ID.toString());
+        }
+
         @Test
         @DisplayName("Updates roles when roles are provided")
         void updatesRoles() {
@@ -223,7 +251,9 @@ class UserServiceTest {
 
             UserDto.Response result = userService.update(USER_ID, request);
 
-            assertThat(result.roles()).containsExactlyInAnyOrder("QUALITY_DIRECTOR", "AUDITOR");
+            // Normalisés en noms du realm, et réglés dans le compte de connexion d'abord.
+            assertThat(result.roles()).containsExactlyInAnyOrder("quality_director", "auditor");
+            verify(identity).setRoles("kc-user-abc", Set.of("quality_director", "auditor"));
         }
 
         @Test
@@ -238,6 +268,7 @@ class UserServiceTest {
             UserDto.Response result = userService.update(USER_ID, request);
 
             assertThat(result.active()).isFalse();
+            verify(identity).setEnabled("kc-user-abc", false);
         }
 
         @Test
@@ -255,6 +286,11 @@ class UserServiceTest {
     @DisplayName("deactivate")
     class Deactivate {
 
+        @BeforeEach
+        void tenant() {
+            TenantContext.setTenantId(TENANT_ID.toString());
+        }
+
         @Test
         @DisplayName("Sets active to false on user")
         void deactivatesUser() {
@@ -266,6 +302,7 @@ class UserServiceTest {
             ArgumentCaptor<AppUser> captor = ArgumentCaptor.forClass(AppUser.class);
             verify(userRepository).save(captor.capture());
             assertThat(captor.getValue().isActive()).isFalse();
+            verify(identity).setEnabled("kc-user-abc", false);
         }
 
         @Test
@@ -275,6 +312,111 @@ class UserServiceTest {
 
             assertThatThrownBy(() -> userService.deactivate(USER_ID))
                     .isInstanceOf(UserNotFoundException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("isolation et invitation")
+    class IsolationEtInvitation {
+
+        @BeforeEach
+        void tenant() {
+            TenantContext.setTenantId(TENANT_ID.toString());
+        }
+
+        @Test
+        @DisplayName("Un membre d'un autre client est introuvable, en lecture comme en écriture")
+        void autreClientIntrouvable() {
+            AppUser etranger = AppUser.builder().id(USER_ID).tenantId(UUID.randomUUID()).keycloakId("kc-x")
+                    .email("x@autre.fr").roles(Set.of("user")).active(true).build();
+            given(userRepository.findById(USER_ID)).willReturn(Optional.of(etranger));
+            given(userRepository.findByKeycloakId("kc-x")).willReturn(Optional.of(etranger));
+
+            assertThatThrownBy(() -> userService.findById(USER_ID)).isInstanceOf(UserNotFoundException.class);
+            assertThatThrownBy(() -> userService.findByKeycloakId("kc-x")).isInstanceOf(UserNotFoundException.class);
+            assertThatThrownBy(() -> userService.update(USER_ID, new UserDto.UpdateRequest(Set.of("admin_tenant"), null)))
+                    .isInstanceOf(UserNotFoundException.class);
+            assertThatThrownBy(() -> userService.deactivate(USER_ID)).isInstanceOf(UserNotFoundException.class);
+            verifyNoInteractions(identity);
+        }
+
+        @Test
+        @DisplayName("Un rôle hors liste — super_admin compris — est refusé avant d'écrire où que ce soit")
+        void roleNonAttribuable() {
+            given(userRepository.findById(USER_ID)).willReturn(Optional.of(sampleUser));
+            assertThatThrownBy(() -> userService.update(USER_ID, new UserDto.UpdateRequest(Set.of("super_admin"), null)))
+                    .isInstanceOf(InvalidRoleException.class);
+            assertThatThrownBy(() -> userService.invite(new UserDto.InviteRequest("b@acme.fr", null, null, Set.of("super_admin"))))
+                    .isInstanceOf(InvalidRoleException.class);
+            verifyNoInteractions(identity);
+        }
+
+        @Test
+        @DisplayName("Inviter crée le compte dans le client du jeton, puis le membre ; le mot de passe provisoire est rendu")
+        void inviteDansLeClientDuJeton() {
+            given(identity.create(any())).willReturn(new IdentityProvider.CreatedAccount("kc-new", "xxxx-xxxx-xxxx", false));
+            given(userRepository.saveAndFlush(any(AppUser.class))).willAnswer(inv -> {
+                AppUser u = inv.getArgument(0);
+                u.setId(UUID.randomUUID());
+                return u;
+            });
+
+            UserDto.InviteResponse r = userService.invite(new UserDto.InviteRequest(
+                    " bob@acme.fr ", "Bob", "Martin", Set.of("Quality_Manager")));
+
+            ArgumentCaptor<IdentityProvider.NewAccount> compte = ArgumentCaptor.forClass(IdentityProvider.NewAccount.class);
+            verify(identity).create(compte.capture());
+            assertThat(compte.getValue().tenantId()).isEqualTo(TENANT_ID);
+            assertThat(compte.getValue().email()).isEqualTo("bob@acme.fr");
+            assertThat(compte.getValue().roles()).containsExactly("quality_manager");
+            assertThat(r.user().keycloakId()).isEqualTo("kc-new");
+            assertThat(r.user().tenantId()).isEqualTo(TENANT_ID);
+            assertThat(r.temporaryPassword()).isEqualTo("xxxx-xxxx-xxxx");
+            assertThat(r.invitationSent()).isFalse();
+        }
+
+        @Test
+        @DisplayName("Si le membre ne s'enregistre pas, le compte créé est supprimé")
+        void compensation() {
+            given(identity.create(any())).willReturn(new IdentityProvider.CreatedAccount("kc-new", null, true));
+            given(userRepository.saveAndFlush(any(AppUser.class))).willThrow(new IllegalStateException("contrainte"));
+
+            assertThatThrownBy(() -> userService.invite(new UserDto.InviteRequest("bob@acme.fr", null, null, Set.of("user"))))
+                    .isInstanceOf(IllegalStateException.class);
+            verify(identity).delete("kc-new");
+        }
+
+        @Test
+        @DisplayName("Licence pleine : l'invitation est refusée AVANT de créer le compte (ADR 0082)")
+        void plafondDeLaLicence() {
+            given(userRepository.countByTenantIdAndActiveTrue(TENANT_ID)).willReturn(25L);
+            willThrow(new EditionExceptions.MemberLimitReached(25)).given(memberLimit).ensureRoomForOneMore(25L);
+
+            assertThatThrownBy(() -> userService.invite(new UserDto.InviteRequest("bob@acme.fr", null, null,
+                    Set.of("user")))).isInstanceOf(EditionExceptions.MemberLimitReached.class);
+            verifyNoInteractions(identity);
+        }
+
+        @Test
+        @DisplayName("Réactiver un compte compte aussi dans le plafond ; le désactiver, non")
+        void reactiverCompteDansLePlafond() {
+            sampleUser.setActive(false);
+            given(userRepository.findById(USER_ID)).willReturn(Optional.of(sampleUser));
+            given(userRepository.countByTenantIdAndActiveTrue(TENANT_ID)).willReturn(25L);
+            willThrow(new EditionExceptions.MemberLimitReached(25)).given(memberLimit).ensureRoomForOneMore(25L);
+
+            assertThatThrownBy(() -> userService.update(USER_ID, new UserDto.UpdateRequest(null, true)))
+                    .isInstanceOf(EditionExceptions.MemberLimitReached.class);
+            verifyNoInteractions(identity);
+        }
+
+        @Test
+        @DisplayName("Changer seulement l'état ne touche pas aux rôles ; un état inchangé ne part pas")
+        void etatSeul() {
+            given(userRepository.findById(USER_ID)).willReturn(Optional.of(sampleUser));
+            given(userRepository.save(any(AppUser.class))).willAnswer(inv -> inv.getArgument(0));
+            userService.update(USER_ID, new UserDto.UpdateRequest(null, true));
+            verifyNoInteractions(identity);
         }
     }
 }

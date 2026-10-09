@@ -19,6 +19,8 @@
     </ng-container>
   </qos-page-header>
 
+  <qos-scope-note permission="risk.view.all" i18n="@@rr.scope">Vous voyez les risques et opportunités que vous avez inscrits.</qos-scope-note>
+
   <nav class="onglets" role="tablist" i18n-aria-label="@@rr.tabs" aria-label="Registres">
     <button type="button" role="tab" class="onglet" [class.onglet--actif]="tab === 'risks'"
             [attr.aria-selected]="tab === 'risks'" (click)="setTab('risks')" data-test="onglet-risques">

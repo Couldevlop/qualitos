@@ -4,7 +4,7 @@
       <h1 i18n="@@documents.list.title">Document Control</h1>
       <p i18n="@@documents.list.subtitle">GED qualité — versioning, workflow d'approbation, lecture obligatoire et ancrage blockchain.</p>
     </div>
-    <button mat-flat-button color="primary" (click)="openCreate()">
+    <button mat-flat-button color="primary" (click)="openCreate()" *qosCan="'document.edit'">
       <mat-icon>note_add</mat-icon> <span i18n="@@documents.list.new-document">Nouveau document</span>
     </button>
   </header>

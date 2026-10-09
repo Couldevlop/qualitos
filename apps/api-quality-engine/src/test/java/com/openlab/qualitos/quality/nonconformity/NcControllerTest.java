@@ -46,7 +46,7 @@ class NcControllerTest {
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_returns200() throws Exception {
         when(service.findAll(any(), any(), any(), any(), any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(resp(NcStatus.OPEN))));
@@ -55,7 +55,7 @@ class NcControllerTest {
                 .andExpect(jsonPath("$.content[0].id").value(NC.toString()));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void list_withFilters() throws Exception {
         when(service.findAll(eq(NcStatus.OPEN), eq(NcSeverity.MAJOR), eq(NcCategory.PRODUCT), any(), any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(resp(NcStatus.OPEN))));
@@ -65,7 +65,7 @@ class NcControllerTest {
                 .andExpect(jsonPath("$.content[0].status").value("OPEN"));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_returns201() throws Exception {
         when(service.create(any())).thenReturn(resp(NcStatus.OPEN));
         NcDto.CreateRequest req = new NcDto.CreateRequest(
@@ -78,7 +78,7 @@ class NcControllerTest {
                 .andExpect(jsonPath("$.reference").value("NC-2026-0001"));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_missingTitle_returns400() throws Exception {
         mockMvc.perform(post("/api/v1/nc").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -86,7 +86,7 @@ class NcControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_missingDescription_returns400() throws Exception {
         // La regle vit dans l'API et pas seulement dans le formulaire : l'API
         // est publique (§13.1) et l'application mobile rejoue sa file hors-ligne
@@ -98,7 +98,7 @@ class NcControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_blankDescription_returns400() throws Exception {
         // Une chaine d'espaces contournerait la regle en la respectant a la
         // lettre : elle est refusee comme une description absente.
@@ -109,7 +109,7 @@ class NcControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_missingCategory_returns400() throws Exception {
         mockMvc.perform(post("/api/v1/nc").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -117,7 +117,7 @@ class NcControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_missingDetectedAt_returns400() throws Exception {
         mockMvc.perform(post("/api/v1/nc").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -125,7 +125,7 @@ class NcControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_latOutOfBounds_returns400() throws Exception {
         mockMvc.perform(post("/api/v1/nc").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -134,7 +134,7 @@ class NcControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_lngOutOfBounds_returns400() throws Exception {
         mockMvc.perform(post("/api/v1/nc").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -143,19 +143,19 @@ class NcControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void get_found() throws Exception {
         when(service.findById(NC)).thenReturn(resp(NcStatus.OPEN));
         mockMvc.perform(get("/api/v1/nc/{id}", NC)).andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void get_notFound_returns404() throws Exception {
         when(service.findById(NC)).thenThrow(new NcNotFoundException(NC));
         mockMvc.perform(get("/api/v1/nc/{id}", NC)).andExpect(status().isNotFound());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void update_success() throws Exception {
         when(service.update(eq(NC), any())).thenReturn(resp(NcStatus.OPEN));
         mockMvc.perform(put("/api/v1/nc/{id}", NC).with(csrf())
@@ -164,7 +164,7 @@ class NcControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void update_blankDescription_returns400() throws Exception {
         // On ne peut pas EFFACER une description deja ecrite : ce serait
         // contourner apres coup l'obligation posee a la creation.
@@ -174,7 +174,7 @@ class NcControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void update_multilineDescription_accepted() throws Exception {
         // Un constat tient souvent sur plusieurs lignes : le motif doit couvrir
         // les sauts de ligne, sinon toute description redigee serait refusee.
@@ -185,7 +185,7 @@ class NcControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void update_closed_returns409() throws Exception {
         when(service.update(eq(NC), any())).thenThrow(new NcStateException("closed"));
         mockMvc.perform(put("/api/v1/nc/{id}", NC).with(csrf())
@@ -194,7 +194,7 @@ class NcControllerTest {
                 .andExpect(status().isConflict());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void startAnalysis_success() throws Exception {
         when(service.startAnalysis(eq(NC), any())).thenReturn(resp(NcStatus.UNDER_ANALYSIS));
         mockMvc.perform(post("/api/v1/nc/{id}/start-analysis", NC).with(csrf())
@@ -204,14 +204,14 @@ class NcControllerTest {
                 .andExpect(jsonPath("$.status").value("UNDER_ANALYSIS"));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void startAnalysis_noBody_ok() throws Exception {
         when(service.startAnalysis(eq(NC), any())).thenReturn(resp(NcStatus.UNDER_ANALYSIS));
         mockMvc.perform(post("/api/v1/nc/{id}/start-analysis", NC).with(csrf()))
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void startAnalysis_invalid_returns409() throws Exception {
         when(service.startAnalysis(eq(NC), any())).thenThrow(new NcStateException("nope"));
         mockMvc.perform(post("/api/v1/nc/{id}/start-analysis", NC).with(csrf())
@@ -219,7 +219,7 @@ class NcControllerTest {
                 .andExpect(status().isConflict());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void defineAction_success() throws Exception {
         when(service.defineAction(NC)).thenReturn(resp(NcStatus.ACTION_DEFINED));
         mockMvc.perform(post("/api/v1/nc/{id}/define-action", NC).with(csrf()))
@@ -227,7 +227,7 @@ class NcControllerTest {
                 .andExpect(jsonPath("$.status").value("ACTION_DEFINED"));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void resolve_success() throws Exception {
         when(service.resolve(eq(NC), any())).thenReturn(resp(NcStatus.RESOLVED));
         mockMvc.perform(post("/api/v1/nc/{id}/resolve", NC).with(csrf())
@@ -237,7 +237,7 @@ class NcControllerTest {
                 .andExpect(jsonPath("$.status").value("RESOLVED"));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void resolve_missingNote_returns400() throws Exception {
         mockMvc.perform(post("/api/v1/nc/{id}/resolve", NC).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -245,7 +245,7 @@ class NcControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void close_success() throws Exception {
         when(service.close(NC)).thenReturn(resp(NcStatus.CLOSED));
         mockMvc.perform(post("/api/v1/nc/{id}/close", NC).with(csrf()))
@@ -253,7 +253,7 @@ class NcControllerTest {
                 .andExpect(jsonPath("$.status").value("CLOSED"));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void cancel_success() throws Exception {
         when(service.cancel(NC)).thenReturn(resp(NcStatus.CANCELLED));
         mockMvc.perform(post("/api/v1/nc/{id}/cancel", NC).with(csrf()))
@@ -261,7 +261,7 @@ class NcControllerTest {
                 .andExpect(jsonPath("$.status").value("CANCELLED"));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void escalate_success() throws Exception {
         when(service.escalateToCapa(eq(NC), any())).thenReturn(resp(NcStatus.UNDER_ANALYSIS));
         mockMvc.perform(post("/api/v1/nc/{id}/escalate-capa", NC).with(csrf())
@@ -270,7 +270,7 @@ class NcControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void escalate_missingOwner_returns400() throws Exception {
         mockMvc.perform(post("/api/v1/nc/{id}/escalate-capa", NC).with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -278,7 +278,7 @@ class NcControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void escalate_alreadyDone_returns409() throws Exception {
         when(service.escalateToCapa(eq(NC), any())).thenThrow(new NcStateException("already escalated"));
         mockMvc.perform(post("/api/v1/nc/{id}/escalate-capa", NC).with(csrf())
@@ -287,7 +287,7 @@ class NcControllerTest {
                 .andExpect(status().isConflict());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void create_missingTenant_returns403() throws Exception {
         when(service.create(any())).thenThrow(new MissingTenantContextException());
         NcDto.CreateRequest req = new NcDto.CreateRequest(
@@ -301,7 +301,7 @@ class NcControllerTest {
 
     // --- rejet d'une réclamation externe ---
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void reject_passesTheReasonToTheService() throws Exception {
         when(service.reject(eq(NC), any())).thenReturn(resp(NcStatus.REJECTED));
 
@@ -313,7 +313,7 @@ class NcControllerTest {
                 .andExpect(jsonPath("$.status").value("REJECTED"));
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void reject_withoutReason_isRefusedAtTheBoundary() throws Exception {
         // Écarter une réclamation sans dire pourquoi est indéfendable devant le
         // client : la frontière refuse avant que le service ne soit touché.
@@ -326,7 +326,7 @@ class NcControllerTest {
         verify(service, never()).reject(any(), any());
     }
 
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void reject_onAnInternalFinding_rendersTheServiceRefusal() throws Exception {
         when(service.reject(eq(NC), any())).thenThrow(new NcStateException(
                 "Only an EXTERNAL non-conformity can be rejected"));
@@ -355,7 +355,7 @@ class NcControllerTest {
      * seules NC internes serait un chiffre juste au mauvais endroit — donc un
      * chiffre faux pour qui le lit.
      */
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void statistics_passesTheOriginOfTheScreen() throws Exception {
         UUID tenant = UUID.randomUUID();
         when(service.statistics(NcOrigin.INTERNAL)).thenReturn(
@@ -371,7 +371,7 @@ class NcControllerTest {
     }
 
     /** Sans origine : l'entrée historique `/nc`, qui montre les deux. */
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void statistics_withoutOrigin_countsBoth() throws Exception {
         when(service.statistics(null)).thenReturn(
                 new NcDto.NcStatistics(UUID.randomUUID(), null, 20, 8, 3, 2, 4, 2, 1, 0));
@@ -390,7 +390,7 @@ class NcControllerTest {
      * littéral l'emporte sur `/{id}`. Sans cela, l'appel partirait chercher une
      * non-conformité nommée « statistics » et rendrait 400.
      */
-    @Test @WithMockUser
+    @Test @WithMockUser(roles = "QUALITY_MANAGER")
     void statistics_isNotMistakenForAnId() throws Exception {
         when(service.statistics(null)).thenReturn(
                 new NcDto.NcStatistics(UUID.randomUUID(), null, 0, 0, 0, 0, 0, 0, 0, 0));

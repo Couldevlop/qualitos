@@ -2,6 +2,7 @@ package com.openlab.qualitos.quality.capa;
 
 import com.openlab.qualitos.quality.aigateway.AiCompletionResult;
 import com.openlab.qualitos.quality.aigateway.AiGatewayClient;
+import com.openlab.qualitos.quality.authz.application.RecordScope;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.nonconformity.NcStatus;
 import com.openlab.qualitos.quality.nonconformity.NonConformityRepository;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -48,17 +50,21 @@ public class CapaService {
      * objet et n'a pas à le connaître.
      */
     private final CapaEvidenceRepository evidenceRepository;
+    /** Sans « voir tous les dossiers », on ne voit que ceux qui nous concernent (ADR 0081). */
+    private final RecordScope scope;
 
     public CapaService(CapaCaseRepository caseRepository, CapaActionRepository actionRepository,
                        AiGatewayClient ai, CapaLifecycleJournal journal,
                        NonConformityRepository ncRepository,
-                       CapaEvidenceRepository evidenceRepository) {
+                       CapaEvidenceRepository evidenceRepository,
+                       RecordScope scope) {
         this.caseRepository = caseRepository;
         this.actionRepository = actionRepository;
         this.ai = ai;
         this.journal = journal;
         this.ncRepository = ncRepository;
         this.evidenceRepository = evidenceRepository;
+        this.scope = scope;
     }
 
     /**
@@ -71,6 +77,11 @@ public class CapaService {
     @Transactional(readOnly = true)
     public Page<CapaDto.CaseResponse> findAll(CapaStatus status, Pageable pageable) {
         UUID tenantId = requireTenantId();
+        Optional<UUID> seulement = CapaScope.restriction(scope);
+        if (seulement.isPresent()) {
+            return caseRepository.findConcerning(tenantId, status, seulement.get(), pageable)
+                    .map(c -> toResponse(c, false));
+        }
         Page<CapaCase> page = status != null
                 ? caseRepository.findByTenantIdAndStatus(tenantId, status, pageable)
                 : caseRepository.findByTenantId(tenantId, pageable);
@@ -492,7 +503,10 @@ public class CapaService {
 
     private CapaCase loadCase(UUID id) {
         UUID tenantId = requireTenantId();
+        // Hors de portée, le dossier n'existe pas : ni lecture ni action (ADR 0081).
+        Optional<UUID> seulement = CapaScope.restriction(scope);
         return caseRepository.findByIdAndTenantId(id, tenantId)
+                .filter(c -> CapaScope.sees(seulement, c))
                 .orElseThrow(() -> new CapaNotFoundException(id));
     }
 

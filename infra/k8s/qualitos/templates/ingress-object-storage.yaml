@@ -38,6 +38,11 @@ metadata:
     # Aucun corps ne transite par ici : les dépôts passent par l'API, pas par le
     # stockage. Une limite basse ferme la porte sans rien gêner.
     nginx.ingress.kubernetes.io/proxy-body-size: 1k
+    {{- /* Les ingress-nginx récents refusent les annotations « snippet » par
+         défaut (installation chez un client, ADR 0083) : elles deviennent
+         optionnelles. Sans elles, la défense repose sur la liste fermée des
+         types de pièces acceptés, vérifiés à leur signature binaire. */}}
+    {{- if .Values.ingress.snippets }}
     nginx.ingress.kubernetes.io/configuration-snippet: |
       # Lecture seule, refusée au niveau du proxy. MinIO refuserait déjà toute
       # écriture non signée, mais cette barrière ne dépend d'aucune configuration
@@ -63,6 +68,7 @@ metadata:
       # Une URL présignée expire : la garder en cache partagé la ferait survivre
       # à sa propre validité, et exposerait une preuve à qui partage le cache.
       add_header Cache-Control "private, no-store" always;
+    {{- end }}
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   rules:

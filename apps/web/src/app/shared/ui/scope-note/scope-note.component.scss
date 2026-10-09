@@ -1,0 +1,19 @@
+// Une ligne discrète au-dessus de la liste : une information, pas une alerte.
+.note {
+  display: flex;
+  align-items: center;
+  gap: var(--qos-space-2);
+  margin: 0 0 var(--qos-space-3);
+  padding: var(--qos-space-2) var(--qos-space-3);
+  border-radius: var(--qos-radius-md);
+  background: var(--qos-bg-sunken);
+  font-size: var(--qos-fs-sm);
+  color: var(--qos-fg-secondary);
+
+  mat-icon {
+    flex-shrink: 0;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}

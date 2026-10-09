@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,7 +52,7 @@ class NcCreatedEventPublicationTest {
     void setUp() {
         repo = mock(NonConformityRepository.class);
         events = mock(ApplicationEventPublisher.class);
-        service = new NcService(repo, mock(CapaCaseRepository.class), events);
+        service = new NcService(repo, mock(CapaCaseRepository.class), events, viewAll -> Optional.empty());
         TenantContext.setTenantId(CONTEXT_TENANT.toString());
     }
 

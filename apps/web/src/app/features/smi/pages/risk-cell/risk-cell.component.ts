@@ -1,13 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthzService } from '../../../../core/authz/authz.service';
 import { safeErrorMessage } from '../../../../core/http/error-message';
 import { PageBreadcrumb } from '../../../../shared/ui/page-header/page-header.component';
-import { ROLES_PILOTAGE } from '../../../risk-register/pages/register/register.component';
 import { RiskCapaOpener } from '../../../risk-register/risk-capa-opener.service';
 import {
   TYPES, levelOf, originLabel, riskLevelLabel, typeLabel
@@ -37,7 +37,8 @@ const CAPA_EN_COURS = (status: string) => status !== 'CLOSED' && status !== 'REJ
 export class RiskCellComponent implements OnInit, OnDestroy {
 
   readonly types = TYPES;
-  readonly editable: boolean;
+  /** « Créer une action CAPA » : l'action risk.manage du registre (ADR 0078). */
+  editable = false;
 
   severity = 1;
   probability = 1;
@@ -66,9 +67,9 @@ export class RiskCellComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly snack: MatSnackBar,
-    auth: AuthService
+    authz: AuthzService
   ) {
-    this.editable = auth.hasAnyRole(ROLES_PILOTAGE);
+    authz.can('risk.manage').pipe(takeUntilDestroyed()).subscribe(v => this.editable = v);
   }
 
   ngOnInit(): void {

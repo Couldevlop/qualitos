@@ -1,5 +1,6 @@
 package com.openlab.qualitos.core.billing.invoice;
 
+import com.openlab.qualitos.core.edition.SaasOnly;
 import com.openlab.qualitos.core.common.CurrentUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,6 +45,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/admin")
 @PreAuthorize("hasRole('SUPER_ADMIN')")
 @Tag(name = "Invoices", description = "Invoice issuance, rendering and sending — Super Admin only")
+@SaasOnly
 public class InvoiceController {
 
     private final InvoiceService invoiceService;

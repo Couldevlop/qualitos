@@ -192,6 +192,194 @@
         <source>L'inscription a échoué.</source>
         <target state="translated">فشل التسجيل.</target>
       </trans-unit>
+      <trans-unit id="nav.admin-clients" datatype="html">
+        <source>Clients</source>
+        <target state="translated">العملاء</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.title" datatype="html">
+        <source>Transmettez ces identifiants</source>
+        <target state="translated">أرسل بيانات الدخول هذه</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.help" datatype="html">
+        <source>Le mot de passe provisoire n'apparaîtra plus. Il devra être changé à la première connexion.</source>
+        <target state="translated">لن تظهر كلمة المرور المؤقتة مرة أخرى. ويجب تغييرها عند أول تسجيل دخول.</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.login" datatype="html">
+        <source>Identifiant</source>
+        <target state="translated">اسم الدخول</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.password" datatype="html">
+        <source>Mot de passe provisoire</source>
+        <target state="translated">كلمة المرور المؤقتة</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.copy" datatype="html">
+        <source>Copier</source>
+        <target state="translated">نسخ</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.copied" datatype="html">
+        <source>Copié</source>
+        <target state="translated">تم النسخ</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.done" datatype="html">
+        <source>C'est transmis</source>
+        <target state="translated">تم الإرسال</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.sent-title" datatype="html">
+        <source>Invitation envoyée</source>
+        <target state="translated">تم إرسال الدعوة</target>
+      </trans-unit>
+      <trans-unit id="admin.credential.sent-help" datatype="html">
+        <source><x id="EMAIL"/> reçoit un lien pour choisir son mot de passe.</source>
+        <target state="translated">يتلقى <x id="EMAIL"/> رابطًا لاختيار كلمة المرور.</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite" datatype="html">
+        <source>Inviter un membre</source>
+        <target state="translated">دعوة عضو</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-title" datatype="html">
+        <source>Nouveau membre</source>
+        <target state="translated">عضو جديد</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-email" datatype="html">
+        <source>Adresse e-mail</source>
+        <target state="translated">البريد الإلكتروني</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-email-invalid" datatype="html">
+        <source>Une adresse e-mail valide est attendue.</source>
+        <target state="translated">يلزم بريد إلكتروني صالح.</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-first-name" datatype="html">
+        <source>Prénom (facultatif)</source>
+        <target state="translated">الاسم الأول (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-last-name" datatype="html">
+        <source>Nom (facultatif)</source>
+        <target state="translated">اسم العائلة (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-roles" datatype="html">
+        <source>Rôles de son compte</source>
+        <target state="translated">أدوار حسابه</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-send" datatype="html">
+        <source>Créer son compte</source>
+        <target state="translated">إنشاء حسابه</target>
+      </trans-unit>
+      <trans-unit id="admin.team.invite-failed" datatype="html">
+        <source>L'invitation a échoué.</source>
+        <target state="translated">فشلت الدعوة.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.title" datatype="html">
+        <source>Clients</source>
+        <target state="translated">العملاء</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.subtitle" datatype="html">
+        <source>Chaque organisation qui utilise QualitOS : son offre, ses modules, son administrateur.</source>
+        <target state="translated">كل مؤسسة تستخدم QualitOS: عرضها ووحداتها ومسؤولها.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.new" datatype="html">
+        <source>Nouveau client</source>
+        <target state="translated">عميل جديد</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.wizard-title" datatype="html">
+        <source>Nouveau client</source>
+        <target state="translated">عميل جديد</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.step-company" datatype="html">
+        <source>Entreprise</source>
+        <target state="translated">المؤسسة</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.step-modules" datatype="html">
+        <source>Modules</source>
+        <target state="translated">الوحدات</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.step-admin" datatype="html">
+        <source>Administrateur</source>
+        <target state="translated">المسؤول</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.name" datatype="html">
+        <source>Nom de l'organisation</source>
+        <target state="translated">اسم المؤسسة</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.name-placeholder" datatype="html">
+        <source>Hôpital Saint-Jean</source>
+        <target state="translated">مستشفى سانت جان</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slug" datatype="html">
+        <source>Identifiant</source>
+        <target state="translated">المعرّف</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slug-hint" datatype="html">
+        <source>Minuscules, chiffres et tirets ; il ne change plus.</source>
+        <target state="translated">أحرف صغيرة وأرقام وشرطات؛ لا يتغيّر بعد ذلك.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.slug-invalid" datatype="html">
+        <source>3 à 63 caractères : minuscules, chiffres et tirets.</source>
+        <target state="translated">من 3 إلى 63 حرفًا: أحرف صغيرة وأرقام وشرطات.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.plan" datatype="html">
+        <source>Offre</source>
+        <target state="translated">العرض</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.next" datatype="html">
+        <source>Continuer</source>
+        <target state="translated">متابعة</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.back" datatype="html">
+        <source>Retour</source>
+        <target state="translated">رجوع</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.modules-help" datatype="html">
+        <source>Cochez ce que l'organisation utilisera. Ce dont un module a besoin se coche avec lui ; le socle est inclus d'office.</source>
+        <target state="translated">حدّد ما ستستخدمه المؤسسة. ما تحتاجه الوحدة يُحدَّد معها؛ والأساس مضمّن دائمًا.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.catalog-failed" datatype="html">
+        <source>Le catalogue des modules ne répond pas : le client peut être créé sans module, à compléter ensuite.</source>
+        <target state="translated">كتالوج الوحدات لا يستجيب: يمكن إنشاء العميل بلا وحدات واستكماله لاحقًا.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.core" datatype="html">
+        <source>Socle</source>
+        <target state="translated">الأساس</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.required-by" datatype="html">
+        <source>Requis par <x id="modules"/></source>
+        <target state="translated">مطلوب من <x id="modules"/></target>
+      </trans-unit>
+      <trans-unit id="admin.clients.admin-help" datatype="html">
+        <source>Son compte est créé maintenant ; il invitera ensuite son équipe et réglera ses droits.</source>
+        <target state="translated">يُنشأ حسابه الآن؛ ثم يدعو فريقه ويضبط صلاحياته.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.modules-count" datatype="html">
+        <source><x id="COUNT"/> module(s) choisi(s)</source>
+        <target state="translated"><x id="COUNT"/> وحدة مختارة</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.create" datatype="html">
+        <source>Créer le client</source>
+        <target state="translated">إنشاء العميل</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.create-failed" datatype="html">
+        <source>La création du client a échoué.</source>
+        <target state="translated">فشل إنشاء العميل.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.created" datatype="html">
+        <source>Client créé :</source>
+        <target state="translated">تم إنشاء العميل:</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.modules-failed" datatype="html">
+        <source>Certains modules n'ont pas été ouverts : reprenez-les depuis la console des modules du client.</source>
+        <target state="translated">لم تُفتح بعض الوحدات: أعد المحاولة من وحدة تحكم وحدات العميل.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.load-failed" datatype="html">
+        <source>La liste des clients n'a pas pu être chargée.</source>
+        <target state="translated">تعذّر تحميل قائمة العملاء.</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.inactive" datatype="html">
+        <source>Désactivé</source>
+        <target state="translated">معطّل</target>
+      </trans-unit>
+      <trans-unit id="admin.clients.empty" datatype="html">
+        <source>Aucun client pour l'instant : créez le premier.</source>
+        <target state="translated">لا يوجد عميل بعد: أنشئ الأول.</target>
+      </trans-unit>
       <trans-unit id="admin.api-keys.cancel" datatype="html">
         <source>Annuler</source>
         <target state="translated">إلغاء الأمر</target>
@@ -5162,6 +5350,326 @@ Portail clients</source>
         <source>Videz le champ pour ne plus envoyer de rappel par courriel.</source>
         <target state="translated">أفرغ الحقل لإيقاف إرسال التذكير بالبريد.</target>
       </trans-unit>
+      <trans-unit id="nav.admin-roles" datatype="html">
+        <source>Rôles et droits</source>
+        <target state="translated">الأدوار والصلاحيات</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.authz-manage" datatype="html">
+        <source>Administrer les rôles et les droits</source>
+        <target state="translated">إدارة الأدوار والصلاحيات</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-create" datatype="html">
+        <source>Ouvrir un dossier CAPA</source>
+        <target state="translated">فتح ملف CAPA</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-edit" datatype="html">
+        <source>Modifier et démarrer un dossier</source>
+        <target state="translated">تعديل ملف وبدء معالجته</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-resolve" datatype="html">
+        <source>Résoudre un dossier</source>
+        <target state="translated">حل ملف</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-reject" datatype="html">
+        <source>Rejeter un dossier</source>
+        <target state="translated">رفض ملف</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-verify" datatype="html">
+        <source>Vérifier l'efficacité</source>
+        <target state="translated">التحقق من الفعالية</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-delete" datatype="html">
+        <source>Supprimer un dossier</source>
+        <target state="translated">حذف ملف</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-action-manage" datatype="html">
+        <source>Ajouter et retirer des actions</source>
+        <target state="translated">إضافة الإجراءات وإزالتها</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-action-update" datatype="html">
+        <source>Faire avancer une action</source>
+        <target state="translated">تقدّم إجراء</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-create" datatype="html">
+        <source>Déclarer une non-conformité</source>
+        <target state="translated">الإبلاغ عن عدم مطابقة</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-edit" datatype="html">
+        <source>Modifier une non-conformité</source>
+        <target state="translated">تعديل عدم مطابقة</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-photo" datatype="html">
+        <source>Ajouter des photos</source>
+        <target state="translated">إضافة صور</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-process" datatype="html">
+        <source>Analyser et résoudre</source>
+        <target state="translated">التحليل والحل</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-close" datatype="html">
+        <source>Clôturer</source>
+        <target state="translated">إغلاق</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-reject" datatype="html">
+        <source>Annuler ou rejeter</source>
+        <target state="translated">إلغاء أو رفض</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-escalate" datatype="html">
+        <source>Poser une action corrective</source>
+        <target state="translated">وضع إجراء تصحيحي</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-edit" datatype="html">
+        <source>Rédiger et archiver</source>
+        <target state="translated">التحرير والأرشفة</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-submit" datatype="html">
+        <source>Soumettre à revue</source>
+        <target state="translated">إرسال للمراجعة</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-approve" datatype="html">
+        <source>Approuver</source>
+        <target state="translated">الموافقة</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-publish" datatype="html">
+        <source>Publier</source>
+        <target state="translated">النشر</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.document-acknowledge" datatype="html">
+        <source>Acquitter une lecture</source>
+        <target state="translated">الإقرار بالقراءة</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.risk-manage" datatype="html">
+        <source>Tenir le registre des risques</source>
+        <target state="translated">إدارة سجل المخاطر</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.opportunity-manage" datatype="html">
+        <source>Tenir le registre des opportunités</source>
+        <target state="translated">إدارة سجل الفرص</target>
+      </trans-unit>
+      <trans-unit id="authz.module.admin" datatype="html">
+        <source>Administration</source>
+        <target state="translated">الإدارة</target>
+      </trans-unit>
+      <trans-unit id="authz.module.capa" datatype="html">
+        <source>CAPA</source>
+        <target state="translated">CAPA</target>
+      </trans-unit>
+      <trans-unit id="authz.module.nc" datatype="html">
+        <source>Non-conformités</source>
+        <target state="translated">حالات عدم المطابقة</target>
+      </trans-unit>
+      <trans-unit id="authz.module.document" datatype="html">
+        <source>Documents</source>
+        <target state="translated">الوثائق</target>
+      </trans-unit>
+      <trans-unit id="authz.module.risk" datatype="html">
+        <source>Risques et opportunités</source>
+        <target state="translated">المخاطر والفرص</target>
+      </trans-unit>
+      <trans-unit id="authz.role.admin-tenant" datatype="html">
+        <source>Administrateur</source>
+        <target state="translated">المسؤول</target>
+      </trans-unit>
+      <trans-unit id="authz.role.quality-director" datatype="html">
+        <source>Directeur qualité</source>
+        <target state="translated">مدير الجودة</target>
+      </trans-unit>
+      <trans-unit id="authz.role.quality-manager" datatype="html">
+        <source>Manager qualité</source>
+        <target state="translated">مسؤول الجودة</target>
+      </trans-unit>
+      <trans-unit id="authz.role.auditor" datatype="html">
+        <source>Auditeur</source>
+        <target state="translated">المدقق</target>
+      </trans-unit>
+      <trans-unit id="authz.role.user" datatype="html">
+        <source>Utilisateur</source>
+        <target state="translated">المستخدم</target>
+      </trans-unit>
+      <trans-unit id="authz.role.external-auditor" datatype="html">
+        <source>Auditeur externe</source>
+        <target state="translated">مدقق خارجي</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.title" datatype="html">
+        <source>Rôles et droits</source>
+        <target state="translated">الأدوار والصلاحيات</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.subtitle" datatype="html">
+        <source>Ce que chaque rôle peut faire, et qui le porte. Glissez un membre sur un rôle pour le lui donner.</source>
+        <target state="translated">ما يستطيع كل دور فعله ومن يحمله. اسحب عضوًا إلى دور لمنحه إياه.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.new-role" datatype="html">
+        <source>Nouveau rôle</source>
+        <target state="translated">دور جديد</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.load-failed" datatype="html">
+        <source>Les droits n'ont pas pu être chargés.</source>
+        <target state="translated">تعذّر تحميل الصلاحيات.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.failed" datatype="html">
+        <source>L'opération sur les droits a échoué.</source>
+        <target state="translated">فشلت العملية على الصلاحيات.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-name" datatype="html">
+        <source>Nom du rôle</source>
+        <target state="translated">اسم الدور</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-name-placeholder" datatype="html">
+        <source>Pilote de site</source>
+        <target state="translated">مسؤول الموقع</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-code" datatype="html">
+        <source>Code</source>
+        <target state="translated">الرمز</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-code-hint" datatype="html">
+        <source>Lettres, chiffres et _ ; il ne change plus ensuite.</source>
+        <target state="translated">أحرف وأرقام و _؛ لا يتغيّر بعد ذلك.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-code-invalid" datatype="html">
+        <source>Lettres, chiffres et _, en commençant par une lettre.</source>
+        <target state="translated">أحرف وأرقام و _ ، تبدأ بحرف.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-description" datatype="html">
+        <source>Description (facultatif)</source>
+        <target state="translated">الوصف (اختياري)</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.create" datatype="html">
+        <source>Créer le rôle</source>
+        <target state="translated">إنشاء الدور</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.created" datatype="html">
+        <source>Rôle créé : cochez maintenant ses droits.</source>
+        <target state="translated">تم إنشاء الدور: حدّد الآن صلاحياته.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team" datatype="html">
+        <source>Équipe</source>
+        <target state="translated">الفريق</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team-help" datatype="html">
+        <source>Glissez une carte sur une colonne, ou ouvrez son menu.</source>
+        <target state="translated">اسحب بطاقة إلى عمود أو افتح قائمتها.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team-failed" datatype="html">
+        <source>L'annuaire de l'équipe ne répond pas : la matrice reste modifiable, l'attribution attendra.</source>
+        <target state="translated">دليل الفريق لا يستجيب: تبقى المصفوفة قابلة للتعديل، وسينتظر الإسناد.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.team-empty" datatype="html">
+        <source>Aucun membre actif pour l'instant.</source>
+        <target state="translated">لا يوجد عضو نشط حاليًا.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.account-roles-only" datatype="html">
+        <source>Rôles de son compte seulement</source>
+        <target state="translated">أدوار حسابه فقط</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.assign" datatype="html">
+        <source>Attribuer un rôle</source>
+        <target state="translated">إسناد دور</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.assigned" datatype="html">
+        <source><x id="member"/> a désormais le rôle <x id="role"/>.</source>
+        <target state="translated">أصبح لدى <x id="member"/> الدور <x id="role"/>.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.unassigned" datatype="html">
+        <source><x id="member"/> n'a plus le rôle <x id="role"/>.</source>
+        <target state="translated">لم يعد لدى <x id="member"/> الدور <x id="role"/>.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.unassign-aria" datatype="html">
+        <source>Retirer le rôle <x id="role"/> à <x id="member"/></source>
+        <target state="translated">إزالة الدور <x id="role"/> من <x id="member"/></target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.grid" datatype="html">
+        <source>Matrice des droits</source>
+        <target state="translated">مصفوفة الصلاحيات</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.actions" datatype="html">
+        <source>Actions</source>
+        <target state="translated">الإجراءات</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.role-menu" datatype="html">
+        <source>Options du rôle</source>
+        <target state="translated">خيارات الدور</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.reset" datatype="html">
+        <source>Rétablir</source>
+        <target state="translated">استعادة</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.custom" datatype="html">
+        <source>Sur mesure</source>
+        <target state="translated">مخصّص</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.customized" datatype="html">
+        <source>Réglé</source>
+        <target state="translated">معدّل</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.delivered" datatype="html">
+        <source>Droits livrés</source>
+        <target state="translated">الصلاحيات الافتراضية</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.granted-count" datatype="html">
+        <source><x id="COUNT"/> actions</source>
+        <target state="translated"><x id="COUNT"/> إجراءات</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.drop-here" datatype="html">
+        <source>Déposer ici</source>
+        <target state="translated">أفلت هنا</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.locked" datatype="html">
+        <source>L'administrateur garde toujours ce droit : sans lui, plus personne ne pourrait rétablir les autres.</source>
+        <target state="translated">يحتفظ المسؤول دائمًا بهذه الصلاحية: بدونها لن يتمكن أحد من استعادة الصلاحيات الأخرى.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.pending" datatype="html">
+        <source>Rôles modifiés : <x id="COUNT"/></source>
+        <target state="translated">الأدوار المعدّلة: <x id="COUNT"/></target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.discard" datatype="html">
+        <source>Annuler les changements</source>
+        <target state="translated">تجاهل التغييرات</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.saved" datatype="html">
+        <source>Droits enregistrés.</source>
+        <target state="translated">تم حفظ الصلاحيات.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.reset-title" datatype="html">
+        <source>Rendre au rôle <x id="role"/> ses droits d'origine ?</source>
+        <target state="translated">استعادة الصلاحيات الأصلية للدور <x id="role"/>؟</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.reset-message" datatype="html">
+        <source>Les droits livrés par la plateforme remplacent vos réglages. Ses membres le gardent.</source>
+        <target state="translated">تحل صلاحيات المنصة الافتراضية محل تعديلاتك. ويحتفظ أعضاؤه به.</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.delete-title" datatype="html">
+        <source>Supprimer le rôle <x id="role"/> ?</source>
+        <target state="translated">حذف الدور <x id="role"/>؟</target>
+      </trans-unit>
+      <trans-unit id="authz.matrix.delete-message" datatype="html">
+        <source>Ses membres perdent les droits qu'il leur donnait. La suppression est tracée dans le journal d'audit.</source>
+        <target state="translated">يفقد أعضاؤه الصلاحيات التي كان يمنحها لهم. ويُسجَّل الحذف في سجل التدقيق.</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.capa-view-all" datatype="html">
+        <source>Voir tous les dossiers (sinon : ceux qui le concernent)</source>
+        <target state="translated">رؤية كل الملفات (وإلا: ما يخصه منها)</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.nc-view-all" datatype="html">
+        <source>Voir toutes les non-conformités (sinon : celles qu'il a déclarées)</source>
+        <target state="translated">رؤية كل حالات عدم المطابقة (وإلا: ما أبلغ عنه)</target>
+      </trans-unit>
+      <trans-unit id="authz.perm.risk-view-all" datatype="html">
+        <source>Voir tout le registre (sinon : ce qu'il a inscrit)</source>
+        <target state="translated">رؤية السجل كاملًا (وإلا: ما أدرجه)</target>
+      </trans-unit>
+      <trans-unit id="capa.list.scope" datatype="html">
+        <source>Vous voyez les dossiers que vous pilotez, que vous vérifiez, ou dont une action vous est confiée.</source>
+        <target state="translated">ترى الملفات التي تقودها أو تتحقق منها أو أُسند إليك إجراء فيها.</target>
+      </trans-unit>
+      <trans-unit id="nc.list.scope" datatype="html">
+        <source>Vous voyez les non-conformités que vous avez déclarées.</source>
+        <target state="translated">ترى حالات عدم المطابقة التي أبلغت عنها.</target>
+      </trans-unit>
+      <trans-unit id="rr.scope" datatype="html">
+        <source>Vous voyez les risques et opportunités que vous avez inscrits.</source>
+        <target state="translated">ترى المخاطر والفرص التي أدرجتها.</target>
+      </trans-unit>
       <trans-unit id="calibration.col-due" datatype="html">
         <source>Prochaine calibration</source>
         <target state="translated">المعايرة التالية</target>
@@ -6097,6 +6605,254 @@ Portail clients</source>
       <trans-unit id="capa.verification.instructions-placeholder" datatype="html">
         <source>Ce qu'il faut vérifier, et comment : échantillon, délai, critère d'acceptation…</source>
         <target state="translated">ما الذي يجب التحقق منه وكيف: العينة، المهلة، معيار القبول…</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-circuits" datatype="html">
+        <source>Circuits de validation</source>
+        <target state="translated">مسارات الاعتماد</target>
+      </trans-unit>
+      <trans-unit id="circuits.title" datatype="html">
+        <source>Circuits de validation</source>
+        <target state="translated">مسارات الاعتماد</target>
+      </trans-unit>
+      <trans-unit id="circuits.subtitle" datatype="html">
+        <source>Qui approuve, et dans quel ordre. Glissez un rôle sur le parcours pour ajouter une étape ; glissez une étape pour la déplacer.</source>
+        <target state="translated">من يعتمد وبأي ترتيب. اسحب دورًا إلى المسار لإضافة مرحلة، واسحب مرحلة لنقلها.</target>
+      </trans-unit>
+      <trans-unit id="circuits.load-failed" datatype="html">
+        <source>Le circuit n'a pas pu être chargé.</source>
+        <target state="translated">تعذّر تحميل المسار.</target>
+      </trans-unit>
+      <trans-unit id="circuits.palette" datatype="html">
+        <source>Rôles qui approuvent</source>
+        <target state="translated">الأدوار التي تعتمد</target>
+      </trans-unit>
+      <trans-unit id="circuits.palette-help" datatype="html">
+        <source>Glissez un rôle sur le parcours, ou utilisez son bouton +.</source>
+        <target state="translated">اسحب دورًا إلى المسار أو استخدم زر + الخاص به.</target>
+      </trans-unit>
+      <trans-unit id="circuits.add-aria" datatype="html">
+        <source>Ajouter une étape tenue par <x id="role"/></source>
+        <target state="translated">إضافة مرحلة يتولاها <x id="role"/></target>
+      </trans-unit>
+      <trans-unit id="circuits.no-approver" datatype="html">
+        <source>Aucun rôle n'a le droit d'approuver un document.</source>
+        <target state="translated">لا يملك أي دور صلاحية اعتماد مستند.</target>
+      </trans-unit>
+      <trans-unit id="circuits.others" datatype="html">
+        <source>Sans le droit d'approuver</source>
+        <target state="translated">بدون صلاحية الاعتماد</target>
+      </trans-unit>
+      <trans-unit id="circuits.grant-link" datatype="html">
+        <source>Leur donner ce droit dans « Rôles et droits »</source>
+        <target state="translated">امنحهم هذه الصلاحية في «الأدوار والصلاحيات»</target>
+      </trans-unit>
+      <trans-unit id="circuits.subject.document-version" datatype="html">
+        <source>Versions de document</source>
+        <target state="translated">إصدارات المستندات</target>
+      </trans-unit>
+      <trans-unit id="circuits.start" datatype="html">
+        <source>Soumise à revue</source>
+        <target state="translated">مُقدَّم للمراجعة</target>
+      </trans-unit>
+      <trans-unit id="circuits.start-help" datatype="html">
+        <source>par son auteur, qui ne l'approuvera jamais lui-même</source>
+        <target state="translated">من قِبل مؤلفه، الذي لن يعتمده بنفسه أبدًا</target>
+      </trans-unit>
+      <trans-unit id="circuits.steps" datatype="html">
+        <source>Étapes du circuit</source>
+        <target state="translated">مراحل المسار</target>
+      </trans-unit>
+      <trans-unit id="circuits.step-name" datatype="html">
+        <source>Nom de l'étape</source>
+        <target state="translated">اسم المرحلة</target>
+      </trans-unit>
+      <trans-unit id="circuits.step-name-required" datatype="html">
+        <source>Donnez un nom à l'étape.</source>
+        <target state="translated">أعطِ المرحلة اسمًا.</target>
+      </trans-unit>
+      <trans-unit id="circuits.step-role" datatype="html">
+        <source>Qui approuve</source>
+        <target state="translated">من يعتمد</target>
+      </trans-unit>
+      <trans-unit id="circuits.fewer" datatype="html">
+        <source>Une approbation de moins</source>
+        <target state="translated">اعتماد واحد أقل</target>
+      </trans-unit>
+      <trans-unit id="circuits.more" datatype="html">
+        <source>Une approbation de plus</source>
+        <target state="translated">اعتماد واحد إضافي</target>
+      </trans-unit>
+      <trans-unit id="circuits.approvals-needed" datatype="html">
+        <source>approbation(s) distincte(s)</source>
+        <target state="translated">اعتماد (اعتمادات) منفصلة</target>
+      </trans-unit>
+      <trans-unit id="circuits.orphan" datatype="html">
+        <source>Ce rôle n'a plus le droit d'approuver : choisissez-en un autre.</source>
+        <target state="translated">لم يعد لهذا الدور صلاحية الاعتماد: اختر دورًا آخر.</target>
+      </trans-unit>
+      <trans-unit id="circuits.up" datatype="html">
+        <source>Monter l'étape</source>
+        <target state="translated">نقل المرحلة لأعلى</target>
+      </trans-unit>
+      <trans-unit id="circuits.down" datatype="html">
+        <source>Descendre l'étape</source>
+        <target state="translated">نقل المرحلة لأسفل</target>
+      </trans-unit>
+      <trans-unit id="circuits.remove" datatype="html">
+        <source>Retirer l'étape</source>
+        <target state="translated">إزالة المرحلة</target>
+      </trans-unit>
+      <trans-unit id="circuits.empty" datatype="html">
+        <source>Aucun circuit : une seule approbation suffit. Déposez un rôle ici pour créer la première étape.</source>
+        <target state="translated">لا يوجد مسار: يكفي اعتماد واحد. أفلِت دورًا هنا لإنشاء المرحلة الأولى.</target>
+      </trans-unit>
+      <trans-unit id="circuits.full" datatype="html">
+        <source>Un circuit compte au plus <x id="MAX"/> étapes.</source>
+        <target state="translated">يضم المسار <x id="MAX"/> مراحل على الأكثر.</target>
+      </trans-unit>
+      <trans-unit id="circuits.end" datatype="html">
+        <source>Approuvée</source>
+        <target state="translated">معتمد</target>
+      </trans-unit>
+      <trans-unit id="circuits.end-help" datatype="html">
+        <source>prête à publier. Un refus, à n'importe quelle étape, la renvoie en brouillon avec sa raison.</source>
+        <target state="translated">جاهز للنشر. أي رفض في أي مرحلة يعيده إلى المسودة مع سببه.</target>
+      </trans-unit>
+      <trans-unit id="circuits.note" datatype="html">
+        <source>Une même personne ne décide qu'une fois par circuit. Les versions déjà soumises gardent le circuit de leur soumission.</source>
+        <target state="translated">يقرر الشخص الواحد مرة واحدة فقط في كل مسار. تحتفظ الإصدارات المقدَّمة بالمسار الساري عند تقديمها.</target>
+      </trans-unit>
+      <trans-unit id="circuits.pending" datatype="html">
+        <source>Circuit modifié</source>
+        <target state="translated">تم تعديل المسار</target>
+      </trans-unit>
+      <trans-unit id="circuits.pending-invalid" datatype="html">
+        <source>Chaque étape doit porter un nom</source>
+        <target state="translated">يجب أن تحمل كل مرحلة اسمًا</target>
+      </trans-unit>
+      <trans-unit id="circuits.saved" datatype="html">
+        <source>Circuit enregistré. Les prochaines soumissions le suivront.</source>
+        <target state="translated">تم حفظ المسار. ستتبعه عمليات التقديم القادمة.</target>
+      </trans-unit>
+      <trans-unit id="circuits.cleared" datatype="html">
+        <source>Circuit retiré : une seule approbation suffit de nouveau.</source>
+        <target state="translated">تمت إزالة المسار: يكفي اعتماد واحد من جديد.</target>
+      </trans-unit>
+      <trans-unit id="circuits.failed" datatype="html">
+        <source>L'opération sur le circuit a échoué.</source>
+        <target state="translated">فشلت العملية على المسار.</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.none" datatype="html">
+        <source>Aujourd'hui, une seule approbation suffit, par toute personne qui a le droit d'approuver.</source>
+        <target state="translated">حاليًا يكفي اعتماد واحد من أي شخص يملك صلاحية الاعتماد.</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.lead" datatype="html">
+        <source>Une version soumise est approuvée par <x id="steps"/>.</source>
+        <target state="translated">يُعتمد الإصدار المقدَّم من قِبل <x id="steps"/>.</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.then" datatype="html">
+        <source>, puis </source>
+        <target state="translated">، ثم </target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.one" datatype="html">
+        <source>une personne « <x id="role"/> »</source>
+        <target state="translated">شخص واحد «<x id="role"/>»</target>
+      </trans-unit>
+      <trans-unit id="circuits.summary.many" datatype="html">
+        <source><x id="count"/> personnes « <x id="role"/> »</source>
+        <target state="translated"><x id="count"/> أشخاص «<x id="role"/>»</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.reject-tooltip" datatype="html">
+        <source>Refuser</source>
+        <target state="translated">رفض</target>
+      </trans-unit>
+      <trans-unit id="documents.detail.step-approved" datatype="html">
+        <source>Votre approbation est enregistrée : la validation continue.</source>
+        <target state="translated">تم تسجيل اعتمادك: يستمر الاعتماد.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.title" datatype="html">
+        <source>Validation de la version v<x id="NUMBER"/></source>
+        <target state="translated">اعتماد الإصدار v<x id="NUMBER"/></target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-yours" datatype="html">
+        <source>C'est à vous : approuvez ou refusez cette étape.</source>
+        <target state="translated">دورك: اعتمد هذه المرحلة أو ارفضها.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-decided" datatype="html">
+        <source>Vous avez décidé : une autre personne doit valider la suite.</source>
+        <target state="translated">لقد اتخذت قرارك: يجب أن يعتمد شخص آخر ما يلي.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-author" datatype="html">
+        <source>Vous en êtes l'auteur : d'autres la valident.</source>
+        <target state="translated">أنت مؤلفه: يعتمده آخرون.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.turn-waiting" datatype="html">
+        <source>En attente de : <x id="ROLE"/>.</source>
+        <target state="translated">بانتظار: <x id="ROLE"/>.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.simple" datatype="html">
+        <source>Approbation simple : une personne ayant le droit d'approuver suffit.</source>
+        <target state="translated">اعتماد بسيط: يكفي شخص واحد يملك صلاحية الاعتماد.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.failed" datatype="html">
+        <source>L'avancement de la validation n'a pas pu être lu.</source>
+        <target state="translated">تعذّرت قراءة تقدّم الاعتماد.</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.count" datatype="html">
+        <source><x id="DONE"/> sur <x id="NEEDED"/></source>
+        <target state="translated"><x id="DONE"/> من <x id="NEEDED"/></target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.you" datatype="html">
+        <source>Vous</source>
+        <target state="translated">أنت</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.someone" datatype="html">
+        <source>Un membre</source>
+        <target state="translated">عضو</target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.rejected" datatype="html">
+        <source>Version v<x id="NUMBER"/> refusée le <x id="DATE"/></source>
+        <target state="translated">رُفض الإصدار v<x id="NUMBER"/> في <x id="DATE"/></target>
+      </trans-unit>
+      <trans-unit id="documents.circuit.rejected-next" datatype="html">
+        <source>Corrigez-la, puis soumettez-la de nouveau : le circuit repartira de la première étape.</source>
+        <target state="translated">صحّحه ثم قدّمه من جديد: سيبدأ المسار من المرحلة الأولى.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.title" datatype="html">
+        <source>Refuser la version v<x id="number"/></source>
+        <target state="translated">رفض الإصدار v<x id="number"/></target>
+      </trans-unit>
+      <trans-unit id="documents.reject.subtitle" datatype="html">
+        <source>La version revient en brouillon. Son auteur lira votre raison, la corrigera et la soumettra de nouveau.</source>
+        <target state="translated">يعود الإصدار إلى المسودة. سيقرأ مؤلفه سببك ويصحّحه ثم يقدّمه من جديد.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.blocked" datatype="html">
+        <source>Écrivez la raison du refus.</source>
+        <target state="translated">اكتب سبب الرفض.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.submit" datatype="html">
+        <source>Refuser</source>
+        <target state="translated">رفض</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.reason" datatype="html">
+        <source>Raison du refus</source>
+        <target state="translated">سبب الرفض</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.reason-placeholder" datatype="html">
+        <source>Ce qui manque, ce qui est à corriger</source>
+        <target state="translated">ما الذي ينقص وما الذي يجب تصحيحه</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.reason-required" datatype="html">
+        <source>Un refus se motive.</source>
+        <target state="translated">يجب تعليل الرفض.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.done" datatype="html">
+        <source>Version refusée : elle revient en brouillon chez son auteur.</source>
+        <target state="translated">تم رفض الإصدار: يعود مسودةً إلى مؤلفه.</target>
+      </trans-unit>
+      <trans-unit id="documents.reject.failed" datatype="html">
+        <source>Refus impossible.</source>
+        <target state="translated">تعذّر الرفض.</target>
       </trans-unit>
       <trans-unit id="nav.complaints-nlp" datatype="html">
         <source>Réclamations IA</source>
@@ -9149,6 +9905,142 @@ Portail clients</source>
       <trans-unit id="docreview.err.generic" datatype="html">
         <source>Échec de l'opération (HTTP <x id="status"/>).</source>
         <target state="translated">فشلت العملية (HTTP <x id="status"/>).</target>
+      </trans-unit>
+      <trans-unit id="nav.admin-license" datatype="html">
+        <source>Licence</source>
+        <target state="translated">الترخيص</target>
+      </trans-unit>
+      <trans-unit id="license.title" datatype="html">
+        <source>Licence</source>
+        <target state="translated">الترخيص</target>
+      </trans-unit>
+      <trans-unit id="license.subtitle" datatype="html">
+        <source>Ce que couvre la licence de cette installation, et jusqu'à quand.</source>
+        <target state="translated">ما يغطيه ترخيص هذا التثبيت، وحتى متى.</target>
+      </trans-unit>
+      <trans-unit id="license.saas" datatype="html">
+        <source>Cette installation est la plateforme QualitOS de l'éditeur : la licence ne s'y applique pas.</source>
+        <target state="translated">هذا التثبيت هو منصة QualitOS الخاصة بالناشر: لا ينطبق الترخيص هنا.</target>
+      </trans-unit>
+      <trans-unit id="license.until" datatype="html">
+        <source>Valable jusqu'au</source>
+        <target state="translated">صالح حتى</target>
+      </trans-unit>
+      <trans-unit id="license.grace-until" datatype="html">
+        <source>Délai de grâce jusqu'au</source>
+        <target state="translated">فترة السماح حتى</target>
+      </trans-unit>
+      <trans-unit id="license.tier" datatype="html">
+        <source>Palier</source>
+        <target state="translated">المستوى</target>
+      </trans-unit>
+      <trans-unit id="license.reference" datatype="html">
+        <source>Référence</source>
+        <target state="translated">المرجع</target>
+      </trans-unit>
+      <trans-unit id="license.users" datatype="html">
+        <source>Utilisateurs</source>
+        <target state="translated">المستخدمون</target>
+      </trans-unit>
+      <trans-unit id="license.users-count" datatype="html">
+        <source><x id="ACTIVE"/> comptes actifs sur <x id="MAX"/></source>
+        <target state="translated"><x id="ACTIVE"/> حسابات نشطة من أصل <x id="MAX"/></target>
+      </trans-unit>
+      <trans-unit id="license.users-gauge" datatype="html">
+        <source>Places utilisées</source>
+        <target state="translated">المقاعد المستخدمة</target>
+      </trans-unit>
+      <trans-unit id="license.users-help" datatype="html">
+        <source>Désactiver un compte libère une place.</source>
+        <target state="translated">تعطيل حساب يحرر مقعدًا.</target>
+      </trans-unit>
+      <trans-unit id="license.users-unlimited" datatype="html">
+        <source>Nombre d'utilisateurs illimité.</source>
+        <target state="translated">عدد غير محدود من المستخدمين.</target>
+      </trans-unit>
+      <trans-unit id="license.modules" datatype="html">
+        <source>Modules ouverts</source>
+        <target state="translated">الوحدات المتاحة</target>
+      </trans-unit>
+      <trans-unit id="license.modules-all" datatype="html">
+        <source>Tous les modules de QualitOS.</source>
+        <target state="translated">جميع وحدات QualitOS.</target>
+      </trans-unit>
+      <trans-unit id="license.modules-help" datatype="html">
+        <source>Les modules du socle (PDCA, CAPA, documents, audits…) sont toujours ouverts.</source>
+        <target state="translated">الوحدات الأساسية (PDCA وCAPA والمستندات والتدقيق…) متاحة دائمًا.</target>
+      </trans-unit>
+      <trans-unit id="license.renew" datatype="html">
+        <source>Renouveler</source>
+        <target state="translated">التجديد</target>
+      </trans-unit>
+      <trans-unit id="license.renew-help" datatype="html">
+        <source>Votre prestataire remplace le fichier de licence de l'installation. La nouvelle licence est prise en compte en moins d'une minute, sans redémarrage ni interruption.</source>
+        <target state="translated">يستبدل مزودك ملف ترخيص التثبيت. يُطبَّق الترخيص الجديد خلال أقل من دقيقة، دون إعادة تشغيل أو انقطاع.</target>
+      </trans-unit>
+      <trans-unit id="license.read-only-help" datatype="html">
+        <source>Sans licence valable, l'installation passe en lecture seule : vos enregistrements restent consultables et exportables.</source>
+        <target state="translated">من دون ترخيص صالح، يصبح التثبيت للقراءة فقط: تبقى سجلاتك قابلة للاطلاع والتصدير.</target>
+      </trans-unit>
+      <trans-unit id="license.status.valid" datatype="html">
+        <source>Valide</source>
+        <target state="translated">صالح</target>
+      </trans-unit>
+      <trans-unit id="license.status.grace" datatype="html">
+        <source>Échue — délai de grâce</source>
+        <target state="translated">منتهٍ — فترة سماح</target>
+      </trans-unit>
+      <trans-unit id="license.status.expired" datatype="html">
+        <source>Échue — lecture seule</source>
+        <target state="translated">منتهٍ — للقراءة فقط</target>
+      </trans-unit>
+      <trans-unit id="license.status.not-yet" datatype="html">
+        <source>Pas encore en vigueur</source>
+        <target state="translated">لم يدخل حيز التنفيذ بعد</target>
+      </trans-unit>
+      <trans-unit id="license.status.invalid" datatype="html">
+        <source>Non vérifiée</source>
+        <target state="translated">غير متحقق منه</target>
+      </trans-unit>
+      <trans-unit id="license.status.missing" datatype="html">
+        <source>Absente</source>
+        <target state="translated">غير موجود</target>
+      </trans-unit>
+      <trans-unit id="license.status.not-required" datatype="html">
+        <source>Sans objet</source>
+        <target state="translated">لا ينطبق</target>
+      </trans-unit>
+      <trans-unit id="license.banner.details" datatype="html">
+        <source>Voir la licence</source>
+        <target state="translated">عرض الترخيص</target>
+      </trans-unit>
+      <trans-unit id="license.banner.read-only-tail" datatype="html">
+        <source>Vos données restent consultables et exportables.</source>
+        <target state="translated">تبقى بياناتك قابلة للاطلاع والتصدير.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.expires-soon" datatype="html">
+        <source>La licence expire le <x id="date"/> : pensez à la renouveler.</source>
+        <target state="translated">ينتهي الترخيص في <x id="date"/>: تذكّر تجديده.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.grace" datatype="html">
+        <source>La licence a expiré le <x id="date"/>. Tout fonctionne jusqu'au <x id="grace"/> ; renouvelez-la avant cette date.</source>
+        <target state="translated">انتهى الترخيص في <x id="date"/>. يعمل كل شيء حتى <x id="grace"/>؛ جدّده قبل ذلك التاريخ.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.expired" datatype="html">
+        <source>Licence expirée : l'installation est en lecture seule.</source>
+        <target state="translated">انتهى الترخيص: التثبيت للقراءة فقط.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.not-yet" datatype="html">
+        <source>La licence n'est pas encore en vigueur : l'installation est en lecture seule.</source>
+        <target state="translated">الترخيص لم يدخل حيز التنفيذ بعد: التثبيت للقراءة فقط.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.missing" datatype="html">
+        <source>Aucune licence installée : l'installation est en lecture seule.</source>
+        <target state="translated">لا يوجد ترخيص مثبت: التثبيت للقراءة فقط.</target>
+      </trans-unit>
+      <trans-unit id="license.banner.invalid" datatype="html">
+        <source>La licence n'a pas pu être vérifiée : l'installation est en lecture seule.</source>
+        <target state="translated">تعذّر التحقق من الترخيص: التثبيت للقراءة فقط.</target>
       </trans-unit>
       <trans-unit id="nav.cinq-pourquoi" datatype="html">
         <source>5 Pourquoi</source>

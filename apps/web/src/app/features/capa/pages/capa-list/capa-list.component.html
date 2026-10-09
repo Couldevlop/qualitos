@@ -4,11 +4,13 @@
       <h1 i18n="@@capa.list.title">CAPA</h1>
       <p i18n="@@capa.list.subtitle">Actions correctives & préventives — workflow et vérification d'efficacité.</p>
     </div>
-    <button mat-flat-button color="primary" type="button" (click)="openCreate()">
+    <button mat-flat-button color="primary" type="button" (click)="openCreate()" *qosCan="'capa.create'">
       <mat-icon>add</mat-icon>
       <span i18n="@@capa.list.new-capa">Nouveau CAPA</span>
     </button>
   </header>
+
+  <qos-scope-note permission="capa.view.all" i18n="@@capa.list.scope">Vous voyez les dossiers que vous pilotez, que vous vérifiez, ou dont une action vous est confiée.</qos-scope-note>
 
   <mat-card class="filter-card">
     <mat-form-field appearance="outline" class="status-filter">

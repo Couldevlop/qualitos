@@ -1,5 +1,11 @@
 package com.openlab.qualitos.quality.docs;
 
+import com.openlab.qualitos.quality.circuit.application.ApprovalCircuits;
+import com.openlab.qualitos.quality.circuit.application.CircuitDto;
+import com.openlab.qualitos.quality.circuit.domain.CircuitRun;
+import com.openlab.qualitos.quality.circuit.domain.CircuitSubject;
+import org.springframework.security.access.AccessDeniedException;
+import com.openlab.qualitos.quality.common.CurrentUser;
 import com.openlab.qualitos.quality.common.MissingTenantContextException;
 import com.openlab.qualitos.quality.common.TenantContext;
 import org.springframework.data.domain.Page;
@@ -12,6 +18,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.HexFormat;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -21,13 +28,16 @@ public class DocumentService {
     private final DocumentRepository documentRepository;
     private final DocumentVersionRepository versionRepository;
     private final DocumentAcknowledgmentRepository ackRepository;
+    private final ApprovalCircuits circuits;
 
     public DocumentService(DocumentRepository documentRepository,
                            DocumentVersionRepository versionRepository,
-                           DocumentAcknowledgmentRepository ackRepository) {
+                           DocumentAcknowledgmentRepository ackRepository,
+                           ApprovalCircuits circuits) {
         this.documentRepository = documentRepository;
         this.versionRepository = versionRepository;
         this.ackRepository = ackRepository;
+        this.circuits = circuits;
     }
 
     // --- documents ---
@@ -71,7 +81,10 @@ public class DocumentService {
         v.setContentHash(computeHash(req.initialContent()));
         v.setChangeNote(req.initialChangeNote());
         v.setStatus(VersionStatus.DRAFT);
-        v.setAuthorId(req.ownerId());
+        // L'auteur de la première version est celui qui la rédige, pas le
+        // propriétaire désigné : sans quoi la règle « l'approbateur n'est pas
+        // l'auteur » se contournait en désignant un autre propriétaire.
+        v.setAuthorId(CurrentUser.requireUserId());
         versionRepository.save(v);
         d.getVersions().add(v);
 
@@ -125,7 +138,7 @@ public class DocumentService {
         v.setContentHash(computeHash(req.content()));
         v.setChangeNote(req.changeNote());
         v.setStatus(VersionStatus.DRAFT);
-        v.setAuthorId(req.authorId());
+        v.setAuthorId(actingAs(req.authorId()));
         return toVersionResponse(versionRepository.save(v));
     }
 
@@ -153,7 +166,10 @@ public class DocumentService {
             throw new DocumentStateException("Only DRAFT versions can be submitted for review");
         }
         v.setStatus(VersionStatus.IN_REVIEW);
-        return toVersionResponse(versionRepository.save(v));
+        DocumentVersion soumise = versionRepository.save(v);
+        // Si le client a réglé un circuit, le passage commence ici (ADR 0080).
+        circuits.start(CircuitSubject.DOCUMENT_VERSION, soumise.getId(), soumise.getAuthorId());
+        return toVersionResponse(soumise);
     }
 
     public DocumentDto.VersionResponse approveVersion(UUID documentId, UUID versionId,
@@ -163,12 +179,45 @@ public class DocumentService {
         if (v.getStatus() != VersionStatus.IN_REVIEW) {
             throw new DocumentStateException("Only IN_REVIEW versions can be approved");
         }
-        if (req.approverId().equals(v.getAuthorId())) {
+        UUID approbateur = actingAs(req == null ? null : req.approverId());
+        if (approbateur.equals(v.getAuthorId())) {
             throw new DocumentStateException("Approver cannot be the author of the version");
         }
+        // Avec un circuit, l'approbation franchit une étape ; la version n'est
+        // approuvée qu'à la dernière. Sans circuit, une approbation suffit.
+        Optional<CircuitDto.RunView> passage = circuits.decide(CircuitSubject.DOCUMENT_VERSION, v.getId(), true,
+                req == null ? null : req.comment());
+        if (passage.isPresent() && !CircuitRun.Status.APPROVED.name().equals(passage.get().status())) {
+            return toVersionResponse(v);
+        }
         v.setStatus(VersionStatus.APPROVED);
-        v.setApprovedBy(req.approverId());
+        v.setApprovedBy(approbateur);
         v.setApprovedAt(Instant.now());
+        return toVersionResponse(versionRepository.save(v));
+    }
+
+    /**
+     * Refuse une version en revue : elle revient en brouillon avec la raison,
+     * pour que l'auteur la corrige et la soumette à nouveau. Avec un circuit,
+     * seul le porteur du rôle de l'étape en cours refuse.
+     */
+    public DocumentDto.VersionResponse rejectVersion(UUID documentId, UUID versionId,
+                                                    DocumentDto.RejectionRequest req) {
+        loadDocument(documentId);
+        DocumentVersion v = loadVersion(documentId, versionId);
+        if (v.getStatus() != VersionStatus.IN_REVIEW) {
+            throw new DocumentStateException("Only IN_REVIEW versions can be rejected");
+        }
+        UUID acteur = CurrentUser.requireUserId();
+        if (acteur.equals(v.getAuthorId())) {
+            throw new DocumentStateException("The author cannot reject their own version");
+        }
+        String raison = req.reason().strip();
+        circuits.decide(CircuitSubject.DOCUMENT_VERSION, v.getId(), false, raison);
+        v.setStatus(VersionStatus.DRAFT);
+        v.setRejectedBy(acteur);
+        v.setRejectedAt(Instant.now());
+        v.setRejectionReason(raison);
         return toVersionResponse(versionRepository.save(v));
     }
 
@@ -213,12 +262,13 @@ public class DocumentService {
         if (!d.isMandatoryRead()) {
             throw new DocumentStateException("Document is not marked as mandatory-read");
         }
-        DocumentAcknowledgment ack = ackRepository.findByVersionIdAndUserId(versionId, req.userId())
+        UUID lecteur = actingAs(req == null ? null : req.userId());
+        DocumentAcknowledgment ack = ackRepository.findByVersionIdAndUserId(versionId, lecteur)
                 .orElseGet(() -> {
                     DocumentAcknowledgment a = new DocumentAcknowledgment();
                     a.setVersion(v);
                     a.setTenantId(tenantId);
-                    a.setUserId(req.userId());
+                    a.setUserId(lecteur);
                     return a;
                 });
         ack = ackRepository.save(ack);
@@ -244,6 +294,19 @@ public class DocumentService {
     private DocumentVersion loadVersion(UUID documentId, UUID versionId) {
         return versionRepository.findByIdAndDocumentId(versionId, documentId)
                 .orElseThrow(() -> new DocumentVersionNotFoundException(versionId));
+    }
+
+    /**
+     * L'utilisateur du jeton, qui agit (ADR 0080). Un identifiant fourni dans le
+     * corps doit être le sien : agir au nom d'un autre est refusé (403), pas
+     * corrigé en silence — la tentative doit se voir.
+     */
+    static UUID actingAs(UUID declared) {
+        UUID acteur = CurrentUser.requireUserId();
+        if (declared != null && !declared.equals(acteur)) {
+            throw new AccessDeniedException("Acting on behalf of another user is not allowed");
+        }
+        return acteur;
     }
 
     private UUID requireTenantId() {
@@ -278,6 +341,7 @@ public class DocumentService {
                 v.getContent(), v.getContentUri(), v.getContentHash(), v.getChangeNote(),
                 v.getStatus(), v.getAuthorId(), v.getApprovedBy(), v.getApprovedAt(),
                 v.getPublishedAt(), v.getBlockchainTxHash(),
-                v.getCreatedAt(), v.getUpdatedAt());
+                v.getCreatedAt(), v.getUpdatedAt(),
+                v.getRejectedBy(), v.getRejectedAt(), v.getRejectionReason());
     }
 }

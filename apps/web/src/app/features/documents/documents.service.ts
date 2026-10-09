@@ -170,6 +170,26 @@ export class DocumentsService {
     );
   }
 
+  /** Refuse une version en revue : elle revient en brouillon avec la raison. */
+  reject(documentId: string, versionId: string, reason: string): Observable<DocumentVersionResponse> {
+    if (environment.useMockApi) {
+      const v = this.findVersion(documentId, versionId);
+      if (v) {
+        const now = new Date().toISOString();
+        v.status = 'DRAFT';
+        v.rejectedBy = 'demo-user';
+        v.rejectedAt = now;
+        v.rejectionReason = reason;
+        v.updatedAt = now;
+        return of(v).pipe(delay(120));
+      }
+      return of(this.mockStore[0].versions[0]).pipe(delay(120));
+    }
+    return this.http.patch<DocumentVersionResponse>(
+      `${this.endpoint}/${documentId}/versions/${versionId}/reject`, { reason }
+    );
+  }
+
   publish(documentId: string, versionId: string): Observable<DocumentVersionResponse> {
     if (environment.useMockApi) {
       const d = this.mockStore.find(x => x.id === documentId);

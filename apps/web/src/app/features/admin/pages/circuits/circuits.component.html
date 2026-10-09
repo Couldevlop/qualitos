@@ -1,0 +1,163 @@
+<div class="qos-page circuits">
+  <qos-page-header
+    title="Circuits de validation" i18n-title="@@circuits.title"
+    subtitle="Qui approuve, et dans quel ordre. Glissez un rôle sur le parcours pour ajouter une étape ; glissez une étape pour la déplacer."
+    i18n-subtitle="@@circuits.subtitle">
+  </qos-page-header>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <p class="echec" *ngIf="failed" role="alert">
+    <span i18n="@@circuits.load-failed">Le circuit n'a pas pu être chargé.</span>
+    <button mat-button type="button" (click)="charger()" i18n="@@common.retry">Réessayer</button>
+  </p>
+
+  <div class="plateau" *ngIf="!failed && !loading" cdkDropListGroup>
+
+    <!-- ===== Palette : les rôles qui peuvent tenir une étape ===== -->
+    <aside class="palette" aria-labelledby="palette-titre">
+      <h2 class="palette__titre" id="palette-titre" i18n="@@circuits.palette">Rôles qui approuvent</h2>
+      <p class="palette__aide" i18n="@@circuits.palette-help">Glissez un rôle sur le parcours, ou utilisez son bouton +.</p>
+
+      <ul class="palette__liste" cdkDropList [cdkDropListData]="[]" [cdkDropListSortingDisabled]="true"
+          [cdkDropListEnterPredicate]="neverEnter">
+        <li *ngFor="let r of approvers; trackBy: trackByCode" class="jeton teinte-{{ hue(r.code) }}"
+            cdkDrag [cdkDragData]="r" [cdkDragDisabled]="full || saving" [attr.data-test]="'palette-' + r.code">
+          <span class="jeton__point" aria-hidden="true"></span>
+          <span class="jeton__nom">{{ roleText(r) }}</span>
+          <button mat-icon-button type="button" (click)="add(r)" [disabled]="full || saving"
+                  [attr.aria-label]="addLabel(r)" [matTooltip]="addLabel(r)" [attr.data-test]="'ajouter-' + r.code">
+            <mat-icon>add</mat-icon>
+          </button>
+          <div *cdkDragPreview class="jeton jeton--apercu teinte-{{ hue(r.code) }}">
+            <span class="jeton__point"></span>{{ roleText(r) }}
+          </div>
+        </li>
+      </ul>
+      <p class="palette__vide" *ngIf="!approvers.length" i18n="@@circuits.no-approver">Aucun rôle n'a le droit d'approuver un document.</p>
+
+      <div class="palette__autres" *ngIf="others.length">
+        <h3 i18n="@@circuits.others">Sans le droit d'approuver</h3>
+        <p>
+          <ng-container *ngFor="let r of others; let last = last">{{ roleText(r) }}<ng-container *ngIf="!last">, </ng-container></ng-container>
+        </p>
+        <a routerLink="/admin/roles" class="palette__lien" i18n="@@circuits.grant-link">Leur donner ce droit dans « Rôles et droits »</a>
+      </div>
+    </aside>
+
+    <!-- ===== Parcours : de la soumission à l'approbation ===== -->
+    <section class="parcours" aria-labelledby="parcours-titre">
+      <header class="parcours__entete">
+        <h2 id="parcours-titre" i18n="@@circuits.subject.document-version">Versions de document</h2>
+        <p class="parcours__resume" data-test="resume" aria-live="polite">{{ summary }}</p>
+      </header>
+
+      <ol class="rail">
+        <li class="borne">
+          <span class="borne__marque" aria-hidden="true"><mat-icon>edit_note</mat-icon></span>
+          <span class="borne__texte">
+            <strong i18n="@@circuits.start">Soumise à revue</strong>
+            <span i18n="@@circuits.start-help">par son auteur, qui ne l'approuvera jamais lui-même</span>
+          </span>
+        </li>
+
+        <li class="rail__etapes">
+          <ol cdkDropList [cdkDropListData]="steps" (cdkDropListDropped)="drop($event)"
+              class="etapes" [class.etapes--vide]="!steps.length" data-test="parcours"
+              i18n-aria-label="@@circuits.steps" aria-label="Étapes du circuit">
+            <li *ngFor="let s of steps; let i = index; let first = first; let last = last; trackBy: trackByKey"
+                class="etape teinte-{{ hue(s.roleCode) }}" cdkDrag [cdkDragData]="s" [cdkDragDisabled]="saving"
+                [attr.data-test]="'etape-' + i">
+              <span class="etape__numero" aria-hidden="true">{{ i + 1 }}</span>
+
+              <div class="etape__corps">
+                <div class="etape__ligne">
+                  <mat-form-field appearance="outline" class="etape__nom" subscriptSizing="dynamic">
+                    <mat-label i18n="@@circuits.step-name">Nom de l'étape</mat-label>
+                    <input matInput [value]="s.name" (input)="rename(s, $any($event.target).value)"
+                           [attr.maxlength]="nameMax" [attr.data-test]="'nom-' + i" [attr.aria-invalid]="nameInvalid(s)">
+                    <mat-hint *ngIf="nameInvalid(s)" class="etape__erreur" i18n="@@circuits.step-name-required">Donnez un nom à l'étape.</mat-hint>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="etape__role" subscriptSizing="dynamic">
+                    <mat-label i18n="@@circuits.step-role">Qui approuve</mat-label>
+                    <mat-select [value]="s.roleCode" (selectionChange)="setRole(s, $event.value)"
+                                [attr.data-test]="'role-' + i">
+                      <mat-option *ngFor="let r of approvers; trackBy: trackByCode" [value]="r.code">{{ roleText(r) }}</mat-option>
+                      <mat-option *ngIf="orphan(s)" [value]="s.roleCode" disabled>{{ labelOf(s.roleCode) }}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <div class="etape__ligne etape__ligne--bas">
+                  <div class="compteur" role="group" [attr.aria-label]="stepSentence(s)">
+                    <button mat-icon-button type="button" (click)="approvals(s, -1)" [disabled]="s.minApprovals <= 1 || saving"
+                            i18n-aria-label="@@circuits.fewer" aria-label="Une approbation de moins"
+                            [attr.data-test]="'moins-' + i">
+                      <mat-icon>remove</mat-icon>
+                    </button>
+                    <span class="compteur__valeur" [attr.data-test]="'approbations-' + i">{{ s.minApprovals }}</span>
+                    <button mat-icon-button type="button" (click)="approvals(s, 1)" [disabled]="s.minApprovals >= maxApprovals || saving"
+                            i18n-aria-label="@@circuits.more" aria-label="Une approbation de plus"
+                            [attr.data-test]="'plus-' + i">
+                      <mat-icon>add</mat-icon>
+                    </button>
+                    <span class="compteur__texte" i18n="@@circuits.approvals-needed">approbation(s) distincte(s)</span>
+                  </div>
+
+                  <p class="etape__alerte" *ngIf="orphan(s)" role="note" i18n="@@circuits.orphan">Ce rôle n'a plus le droit d'approuver : choisissez-en un autre.</p>
+
+                  <span class="etape__outils">
+                    <button mat-icon-button type="button" (click)="move(i, -1)" [disabled]="first || saving"
+                            i18n-aria-label="@@circuits.up" aria-label="Monter l'étape">
+                      <mat-icon>arrow_upward</mat-icon>
+                    </button>
+                    <button mat-icon-button type="button" (click)="move(i, 1)" [disabled]="last || saving"
+                            i18n-aria-label="@@circuits.down" aria-label="Descendre l'étape">
+                      <mat-icon>arrow_downward</mat-icon>
+                    </button>
+                    <button mat-icon-button type="button" (click)="remove(i)" [disabled]="saving"
+                            i18n-aria-label="@@circuits.remove" aria-label="Retirer l'étape"
+                            [attr.data-test]="'retirer-' + i">
+                      <mat-icon>delete_outline</mat-icon>
+                    </button>
+                    <span class="etape__poignee" cdkDragHandle aria-hidden="true"><mat-icon>drag_indicator</mat-icon></span>
+                  </span>
+                </div>
+              </div>
+
+              <div *cdkDragPlaceholder class="etape etape--place"></div>
+            </li>
+
+            <li class="depot" *ngIf="!steps.length" data-test="depot-vide">
+              <mat-icon aria-hidden="true">south</mat-icon>
+              <span i18n="@@circuits.empty">Aucun circuit : une seule approbation suffit. Déposez un rôle ici pour créer la première étape.</span>
+            </li>
+          </ol>
+          <p class="rail__plein" *ngIf="full" i18n="@@circuits.full">Un circuit compte au plus {{ maxSteps // i18n(ph="max") }} étapes.</p>
+        </li>
+
+        <li class="borne borne--fin">
+          <span class="borne__marque" aria-hidden="true"><mat-icon>verified</mat-icon></span>
+          <span class="borne__texte">
+            <strong i18n="@@circuits.end">Approuvée</strong>
+            <span i18n="@@circuits.end-help">prête à publier. Un refus, à n'importe quelle étape, la renvoie en brouillon avec sa raison.</span>
+          </span>
+        </li>
+      </ol>
+
+      <p class="parcours__note" i18n="@@circuits.note">Une même personne ne décide qu'une fois par circuit. Les versions déjà soumises gardent le circuit de leur soumission.</p>
+    </section>
+  </div>
+
+  <!-- Barre d'enregistrement : présente seulement quand le parcours change. -->
+  <div class="barre" *ngIf="dirty" role="status" data-test="barre">
+    <span *ngIf="!invalid" i18n="@@circuits.pending">Circuit modifié</span>
+    <span *ngIf="invalid" i18n="@@circuits.pending-invalid">Chaque étape doit porter un nom</span>
+    <span class="barre__boutons">
+      <button mat-stroked-button type="button" (click)="discard()" [disabled]="saving" i18n="@@authz.matrix.discard">Annuler les changements</button>
+      <button mat-flat-button color="primary" type="button" (click)="save()" [disabled]="saving || invalid"
+              data-test="enregistrer" i18n="@@common.save">Enregistrer</button>
+    </span>
+  </div>
+</div>

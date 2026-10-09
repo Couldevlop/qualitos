@@ -67,7 +67,8 @@ class CapaEvidenceServiceTest {
     void setUp() {
         TenantContext.setTenantId(TENANT.toString());
         lenient().when(storageProvider.getIfAvailable()).thenReturn(storage);
-        service = new CapaEvidenceService(evidenceRepo, caseRepo, actionRepo, storageProvider, auditEvents);
+        service = new CapaEvidenceService(evidenceRepo, caseRepo, actionRepo, storageProvider, auditEvents,
+                viewAll -> Optional.empty());
     }
 
     @AfterEach
@@ -268,6 +269,16 @@ class CapaEvidenceServiceTest {
     }
 
     // --- lecture --------------------------------------------------------------------
+
+    @Test
+    void lesPreuvesDUnDossierHorsDePorteeNExistentPas() {
+        // ADR 0081 : sans « voir tous les dossiers », un dossier qui ne nous concerne pas répond 404.
+        service = new CapaEvidenceService(evidenceRepo, caseRepo, actionRepo, storageProvider, auditEvents,
+                viewAll -> Optional.of(UUID.randomUUID()));
+        when(caseRepo.findByIdAndTenantId(CAPA, TENANT)).thenReturn(Optional.of(capa(CapaStatus.OPEN)));
+
+        assertThatThrownBy(() -> service.list(CAPA)).isInstanceOf(CapaNotFoundException.class);
+    }
 
     @Test
     void liste_avecUneUrlDeLectureAtemporaire() throws Exception {

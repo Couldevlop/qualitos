@@ -16,6 +16,7 @@ COPY apps/api-quality-engine/pom.xml apps/api-quality-engine/
 # <modules> de /pom.xml.
 COPY libs/industry-commons/pom.xml libs/industry-commons/
 COPY libs/security-commons-crypto/pom.xml libs/security-commons-crypto/
+COPY libs/licensing/pom.xml libs/licensing/
 COPY libs/keycloak-spi-ldap/pom.xml libs/keycloak-spi-ldap/
 COPY apps/api-iot-hub/pom.xml apps/api-iot-hub/
 COPY apps/blockchain-service/pom.xml apps/blockchain-service/
@@ -25,6 +26,8 @@ RUN mvn -B -ntp -pl apps/api-quality-engine -am dependency:go-offline || true
 # -am construit aussi les dépendances réacteur du module : security-commons-crypto
 # (signatures hybrides ML-DSA) a besoin de ses sources.
 COPY libs/security-commons-crypto/src libs/security-commons-crypto/src
+# Édition et licence on-premise (ADR 0082), avec ses clés publiques épinglées.
+COPY libs/licensing/src libs/licensing/src
 COPY apps/api-quality-engine/src apps/api-quality-engine/src
 RUN mvn -B -ntp -pl apps/api-quality-engine -am package -DskipTests
 

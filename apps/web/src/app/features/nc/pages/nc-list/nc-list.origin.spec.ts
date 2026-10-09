@@ -9,6 +9,7 @@ import { UiModule } from '../../../../shared/ui/ui.module';
 import { NcService } from '../../nc.service';
 import { NcPage } from '../../nc.types';
 import { NcListComponent } from './nc-list.component';
+import { AuthzService } from '../../../../core/authz/authz.service';
 
 /**
  * Deux entrées de navigation, un seul écran : « NC interne » et « NC externe »
@@ -40,6 +41,8 @@ describe('NcListComponent (origine portée par la route)', () => {
       declarations: [NcListComponent],
       imports: [SharedModule, UiModule, NoopAnimationsModule],
       providers: [
+        // Tous les droits : ces bancs testent l'écran, pas la matrice (ADR 0078).
+        { provide: AuthzService, useValue: { can: () => of(true) } },
         { provide: NcService, useValue: svc },
         { provide: MatDialog, useValue: jasmine.createSpyObj('MatDialog', ['open']) },
         { provide: Router, useValue: jasmine.createSpyObj('Router', ['navigate']) },

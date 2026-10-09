@@ -3,6 +3,12 @@
 #
 #   ./infra/k8s/deploy.sh preprod v0.1.1
 #   ./infra/k8s/deploy.sh prod    v0.1.1
+#   ./infra/k8s/deploy.sh onprem  v0.1.1 qualitos.conf   (installation chez un client)
+#
+# L'édition on-premise (ADR 0082, 0083) lit TOUT ce qui est propre au site dans
+# qualitos.conf (hôte, certificats, registre, stockage, annuaire, licence) : le
+# reste est le même chemin que la plateforme SaaS. On l'appelle d'ordinaire par
+# infra/onprem/install.sh, qui vérifie d'abord les prérequis.
 #
 # Le script est IDEMPOTENT : le relancer sur un environnement déjà en place ne
 # recrée rien et ne régénère aucun mot de passe. C'est la propriété qui rend le
@@ -26,10 +32,12 @@ set -euo pipefail
 
 ENV="${1:-}"
 VERSION="${2:-}"
+CONF="${3:-}"
 
 usage() {
   cat >&2 <<USAGE
 usage: $0 <preprod|prod> <version>
+       $0 onprem <version> <qualitos.conf>
 
   version : tag d'image publié par le pipeline de release, par exemple v0.1.1.
             Il est EXIGÉ : déployer « la dernière » sans savoir laquelle est un
@@ -44,11 +52,41 @@ USAGE
 
 [ -n "$ENV" ] && [ -n "$VERSION" ] || usage
 
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+# shellcheck source=../onprem/lib.sh
+. "$ROOT/infra/onprem/lib.sh"
+
+EDITION=saas
+RELEASE="qualitos-$ENV"
 case "$ENV" in
   preprod) NS=qualitos-preprod; HOST=preprod.qualitos.openlabconsulting.com ;;
   prod)    NS=qualitos;         HOST=qualitos.openlabconsulting.com ;;
+  onprem)
+    [ -n "$CONF" ] || usage
+    qos_load_conf "$CONF"
+    qos_require QOS_HOST QOS_NAMESPACE QOS_ADMIN_EMAIL QOS_LICENSE_FILE QOS_REGISTRY
+    EDITION=onprem
+    NS="$QOS_NAMESPACE"
+    HOST="$QOS_HOST"
+    RELEASE=qualitos
+    # Un chemin relatif dans qualitos.conf se lit depuis le dossier du fichier.
+    case "$QOS_LICENSE_FILE" in
+      /*) LICENSE_FILE="$QOS_LICENSE_FILE" ;;
+      *)  LICENSE_FILE="$(cd "$(dirname "$CONF")" && pwd)/$QOS_LICENSE_FILE" ;;
+    esac
+    [ -f "$LICENSE_FILE" ] || { echo "licence introuvable : $LICENSE_FILE" >&2; exit 1; }
+    TENANT_ID="$(qos_license_tenant "$LICENSE_FILE" || true)"
+    [ -n "$TENANT_ID" ] || { echo "licence illisible : aucun client (tenantId) dans $LICENSE_FILE" >&2; exit 1; }
+    ;;
   *)       usage ;;
 esac
+
+# Réglages du site, avec les valeurs de la plateforme SaaS par défaut : en
+# préproduction et en production, rien ne change.
+: "${QOS_STORAGE_CLASS:=local-path}"
+: "${QOS_MIRROR_REGISTRY:=}"
+: "${QOS_OLLAMA_URL:=}"
+: "${QOS_OLLAMA_MODEL:=hf.co/OpenLLM-France/Lucie-7B-Instruct-v1.1-gguf:Q4_K_M}"
 
 # Le pipeline de release publie ses images SANS le « v » du tag git
 # (${GITHUB_REF_NAME#v}). On accepte donc les deux ecritures et on normalise :
@@ -56,7 +94,6 @@ esac
 # une perte de temps evitable.
 IMAGE_TAG="${VERSION#v}"
 
-ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 # Port local du tunnel vers Keycloak (cf. la configuration des paliers, plus bas).
 STEP_UP_PORT="${STEP_UP_PORT:-18080}"
 DEPS="$ROOT/infra/k8s/deps"
@@ -66,6 +103,16 @@ VALUES="$CHART/values-$ENV.yaml"
 [ -f "$VALUES" ] || { echo "fichier de valeurs introuvable : $VALUES" >&2; exit 1; }
 
 say() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
+
+# Un manifeste de dépendance, rendu pour le site : hôte, modèle d'IA, classe de
+# stockage, et images tirées du registre miroir s'il y en a un. Sans réglage de
+# site (préprod, prod), le manifeste sort tel quel.
+render_dep() {
+  sed -e "s|__QOS_HOST__|$HOST|g" \
+      -e "s|__OLLAMA_MODEL__|$QOS_OLLAMA_MODEL|g" \
+      -e "s|storageClassName: local-path|storageClassName: $QOS_STORAGE_CLASS|" "$1" \
+    | qos_mirror_images "$QOS_MIRROR_REGISTRY"
+}
 gen() { openssl rand -base64 24 | tr -d '/+=' | cut -c1-24; }
 
 # Un secret n'est créé que s'il est absent. Sans ce garde-fou, relancer le script
@@ -121,27 +168,53 @@ say "3/6 Realm Keycloak"
 if kubectl -n "$NS" get configmap qualitos-keycloak-realm >/dev/null 2>&1; then
   echo "  realm déjà publié, inchangé (l'import Keycloak n'a lieu qu'au premier démarrage)"
 else
-  QOS_HOST="$HOST" "$DEPS/render-realm.sh" "$NS"
+  if [ "$EDITION" = onprem ]; then
+    QOS_HOST="$HOST" QOS_EDITION=onprem QOS_TENANT_ID="$TENANT_ID" QOS_ADMIN_EMAIL="$QOS_ADMIN_EMAIL" \
+      "$DEPS/render-realm.sh" "$NS"
+  else
+    QOS_HOST="$HOST" "$DEPS/render-realm.sh" "$NS"
+  fi
 fi
 
 say "4/6 Dépendances d'état"
-kubectl -n "$NS" apply -f "$DEPS/10-postgres.yaml" \
-                       -f "$DEPS/30-qdrant.yaml" \
-                       -f "$DEPS/40-ollama-external.yaml" \
-                       -f "$DEPS/60-backup.yaml"
-sed "s/__QOS_HOST__/$HOST/g" "$DEPS/20-keycloak.yaml" | kubectl -n "$NS" apply -f -
+# Un registre privé (miroir d'un site isolé) : le compte de service par défaut,
+# celui des dépendances, reçoit le secret d'accès.
+if [ -n "${QOS_PULL_SECRET:-}" ]; then
+  kubectl -n "$NS" patch serviceaccount default --type merge \
+    -p "{\"imagePullSecrets\":[{\"name\":\"$QOS_PULL_SECRET\"}]}" >/dev/null
+fi
+for dep in 10-postgres.yaml 30-qdrant.yaml 60-backup.yaml 20-keycloak.yaml; do
+  render_dep "$DEPS/$dep" | kubectl -n "$NS" apply -f -
+done
+# Le modèle de langage : celui de l'hôte pour la plateforme SaaS ; chez un client,
+# le sien s'il en a un (QOS_OLLAMA_URL), sinon un Ollama dans le cluster.
+OLLAMA_IN_CLUSTER=0
+if [ "$EDITION" = saas ]; then
+  render_dep "$DEPS/40-ollama-external.yaml" | kubectl -n "$NS" apply -f -
+elif [ -z "$QOS_OLLAMA_URL" ]; then
+  OLLAMA_IN_CLUSTER=1
+  kubectl -n "$NS" delete job ollama-models --ignore-not-found >/dev/null
+  render_dep "$DEPS/45-ollama.yaml" | kubectl -n "$NS" apply -f -
+fi
 
 # Le travail d'initialisation du bucket est IMMUABLE une fois créé : le
 # supprimer d'abord est ce qui rend le déploiement rejouable. Sans cela, la
 # deuxième exécution échouerait sur un champ non modifiable, et l'échec
 # porterait sur le bucket alors que rien ne va mal.
 kubectl -n "$NS" delete job minio-init --ignore-not-found >/dev/null
-kubectl -n "$NS" apply -f "$DEPS/50-minio.yaml"
+render_dep "$DEPS/50-minio.yaml" | kubectl -n "$NS" apply -f -
 
 kubectl -n "$NS" rollout status deploy/postgres --timeout=180s
 kubectl -n "$NS" rollout status deploy/qdrant   --timeout=180s
 kubectl -n "$NS" rollout status deploy/minio    --timeout=180s
 kubectl -n "$NS" rollout status deploy/keycloak --timeout=420s
+if [ "$OLLAMA_IN_CLUSTER" = 1 ]; then
+  kubectl -n "$NS" rollout status deploy/ollama --timeout=300s
+  # Les modèles se téléchargent en arrière-plan : plusieurs gigaoctets. On ne les
+  # attend pas — l'application démarre sans eux, seules les fonctions d'IA
+  # répondront « indisponible » le temps du téléchargement.
+  echo "  modèles d'IA : téléchargement en arrière-plan (kubectl -n $NS logs -f job/ollama-models)"
+fi
 
 # Le bucket doit exister AVANT que l'engine n'accepte un dépôt : sans lui, la
 # première pièce jointe échouerait sur « NoSuchBucket », longtemps après le
@@ -186,6 +259,7 @@ echo "  secret qualitos-api-iot-hub : à jour"
 # répondent 502 — exactement la panne rencontrée au premier déploiement.
 KC_POD="$(kubectl -n "$NS" get pod -l app.kubernetes.io/name=keycloak --field-selector=status.phase=Running -o name | head -1)"
 AI_SECRET=""
+PROV_SECRET=""
 if [ -n "$KC_POD" ]; then
   KC_ADMIN="$(kubectl -n "$NS" get secret qualitos-keycloak -o jsonpath='{.data.KEYCLOAK_ADMIN}' | base64 -d)"
   KC_PWD="$(kubectl -n "$NS" get secret qualitos-keycloak -o jsonpath='{.data.KEYCLOAK_ADMIN_PASSWORD}' | base64 -d)"
@@ -325,7 +399,90 @@ if [ -n "$KC_POD" ]; then
     AI_SECRET="$(kubectl -n "$NS" exec "$KC_POD" -- /opt/keycloak/bin/kcadm.sh get "clients/$AI_CID/client-secret" \
       -r qualitos --fields value --format csv --noquotes 2>/dev/null | tr -d '\r' | head -1)"
   fi
+
+  # Compte de service qui crée et règle les comptes de connexion (ADR 0079).
+  # Le realm-export ne se réimporte que sur une base vide : sur un realm déjà en
+  # service, c'est ICI qu'il naît. kcadm travaille depuis le pod — pas de WAF.
+  # Droits : manage-users, view-users, query-users du realm, et rien d'autre.
+  KC="kubectl -n $NS exec $KC_POD -- /opt/keycloak/bin/kcadm.sh"
+  PROV_CID="$($KC get clients -r qualitos -q clientId=qualitos-provisioner --fields id --format csv --noquotes 2>/dev/null | tr -d '\r' | head -1 || true)"
+  if [ -z "$PROV_CID" ]; then
+    if $KC create clients -r qualitos -s clientId=qualitos-provisioner -s enabled=true \
+         -s publicClient=false -s serviceAccountsEnabled=true -s standardFlowEnabled=false \
+         -s directAccessGrantsEnabled=false -s implicitFlowEnabled=false \
+         -s 'attributes."access.token.lifespan"=300' >/dev/null; then
+      echo "  client qualitos-provisioner : créé"
+    else
+      echo "  ATTENTION : création du client qualitos-provisioner refusée par Keycloak." >&2
+    fi
+    PROV_CID="$($KC get clients -r qualitos -q clientId=qualitos-provisioner --fields id --format csv --noquotes 2>/dev/null | tr -d '\r' | head -1 || true)"
+  fi
+  if [ -n "$PROV_CID" ]; then
+    # Idempotent : réattribuer un rôle déjà porté ne fait rien.
+    if $KC add-roles -r qualitos --uusername service-account-qualitos-provisioner \
+         --cclientid realm-management --rolename manage-users --rolename view-users \
+         --rolename query-users >/dev/null; then
+      echo "  compte de service qualitos-provisioner : droits de gestion des utilisateurs en place"
+    else
+      echo "  ATTENTION : droits du compte de service qualitos-provisioner non posés." >&2
+    fi
+    PROV_SECRET="$($KC get "clients/$PROV_CID/client-secret" -r qualitos --fields value --format csv --noquotes 2>/dev/null | tr -d '\r' | head -1 || true)"
+  fi
+
+  # Annuaire d'entreprise (LDAP / Active Directory) d'une installation on-premise
+  # (ADR 0083). Posé par kcadm, après démarrage : il vaut ainsi pour un realm
+  # déjà en service comme pour un neuf, et le mot de passe de liaison reste dans
+  # la base de Keycloak — il ne transite par aucune ConfigMap. Le JSON est
+  # transmis sur l'entrée standard : le mot de passe n'apparaît sur aucune ligne
+  # de commande, donc dans aucune liste de processus.
+  #
+  # Chaque compte de l'annuaire reçoit le `tenant_id` du client de la licence
+  # (mappeur d'attribut fixe) et le rôle « user » : sans le premier, son jeton ne
+  # désignerait aucun client et toute requête répondrait 400.
+  if [ "$EDITION" = onprem ] && [ -n "${QOS_LDAP_URL:-}" ]; then
+    REALM_ID="$($KC get realms/qualitos --fields id --format csv --noquotes 2>/dev/null | tr -d '\r' | head -1 || true)"
+    LDAP_ID="$($KC get components -r qualitos -q name=annuaire --fields id --format csv --noquotes 2>/dev/null | tr -d '\r' | head -1 || true)"
+    LDAP_JSON="$(REALM_ID="$REALM_ID" python3 "$ROOT/infra/onprem/ldap-component.py" provider)"
+    if [ -z "$LDAP_ID" ]; then
+      if printf '%s' "$LDAP_JSON" | kubectl -n "$NS" exec -i "$KC_POD" -- /opt/keycloak/bin/kcadm.sh \
+           create components -r qualitos -f - >/dev/null; then
+        echo "  annuaire $QOS_LDAP_URL : relié"
+      else
+        echo "  ATTENTION : l'annuaire n'a pas pu être relié (adresse, DN de liaison ou mot de passe ?)." >&2
+      fi
+      LDAP_ID="$($KC get components -r qualitos -q name=annuaire --fields id --format csv --noquotes 2>/dev/null | tr -d '\r' | head -1 || true)"
+    else
+      printf '%s' "$LDAP_JSON" | kubectl -n "$NS" exec -i "$KC_POD" -- /opt/keycloak/bin/kcadm.sh \
+        update "components/$LDAP_ID" -r qualitos -f - >/dev/null \
+        && echo "  annuaire $QOS_LDAP_URL : réglages à jour" \
+        || echo "  ATTENTION : réglages de l'annuaire non mis à jour." >&2
+    fi
+    if [ -n "$LDAP_ID" ]; then
+      for mapper in tenant role; do
+        NAME="qualitos-$mapper"
+        if [ -z "$($KC get components -r qualitos -q parent="$LDAP_ID" -q name="$NAME" --fields id --format csv --noquotes 2>/dev/null | tr -d '\r' | head -1 || true)" ]; then
+          LDAP_ID="$LDAP_ID" TENANT_ID="$TENANT_ID" python3 "$ROOT/infra/onprem/ldap-component.py" "$mapper" \
+            | kubectl -n "$NS" exec -i "$KC_POD" -- /opt/keycloak/bin/kcadm.sh create components -r qualitos -f - >/dev/null \
+            && echo "  annuaire : mappeur $NAME posé" \
+            || echo "  ATTENTION : mappeur $NAME non posé." >&2
+        fi
+      done
+    fi
+  fi
 fi
+
+if [ -n "$PROV_SECRET" ]; then
+  echo "  secret du compte de service des comptes : récupéré depuis Keycloak"
+else
+  # Pas de repli : sans ce secret, créer un client ou inviter un membre répond
+  # 502 avec un message clair, et aucun compte fantôme n'est annoncé.
+  echo "  ATTENTION : secret de qualitos-provisioner introuvable — la création des" >&2
+  echo "  clients et l'invitation des membres resteront indisponibles." >&2
+fi
+kubectl -n "$NS" create secret generic qualitos-api-core-identity \
+  --from-literal=KEYCLOAK_PROVISIONER_SECRET="$PROV_SECRET" \
+  --dry-run=client -o yaml | kubectl apply -f - >/dev/null
+echo "  secret qualitos-api-core-identity : à jour"
 
 if [ -n "$AI_SECRET" ]; then
   echo "  secret du client IA : récupéré depuis Keycloak"
@@ -361,6 +518,17 @@ kubectl -n "$NS" create secret generic qualitos-ai-service \
   --dry-run=client -o yaml | kubectl apply -f - >/dev/null
 echo "  secret qualitos-ai-service : à jour"
 
+# La licence d'une installation on-premise, montée en fichier dans api-core et le
+# moteur (ADR 0082). Réappliquée à chaque passage : remplacer le fichier dans
+# qualitos.conf puis relancer suffit à renouveler — les services la relisent
+# d'eux-mêmes en moins d'une minute, sans redémarrage.
+if [ "$EDITION" = onprem ]; then
+  kubectl -n "$NS" create secret generic qualitos-license \
+    --from-file=license.lic="$LICENSE_FILE" \
+    --dry-run=client -o yaml | kubectl apply -f - >/dev/null
+  echo "  secret qualitos-license : à jour ($(qos_license_customer "$LICENSE_FILE" || echo 'client ?'))"
+fi
+
 # Vidage de SÛRETÉ, uniquement sur un environnement DÉJÀ installé — à la première
 # installation il n'y a rien à sauver, et le CronJob vient d'être créé.
 #
@@ -372,7 +540,7 @@ echo "  secret qualitos-ai-service : à jour"
 #
 # L'échec du vidage n'ARRÊTE PAS le déploiement : refuser de livrer parce qu'une
 # sauvegarde a échoué transformerait une gêne en blocage. Il est signalé, bruyamment.
-if helm status "qualitos-$ENV" -n "$NS" >/dev/null 2>&1; then
+if helm status "$RELEASE" -n "$NS" >/dev/null 2>&1; then
   say "5bis/6 Vidage de sûreté avant mise à jour"
   kubectl -n "$NS" delete job vidage-avant-deploiement --ignore-not-found >/dev/null
   if kubectl -n "$NS" create job --from=cronjob/postgres-backup vidage-avant-deploiement >/dev/null 2>&1 &&
@@ -387,14 +555,40 @@ if helm status "qualitos-$ENV" -n "$NS" >/dev/null 2>&1; then
 fi
 
 say "6/6 Chart applicatif"
-helm upgrade --install "qualitos-$ENV" "$CHART" \
+VALUES_ARGS=(--values "$VALUES")
+if [ "$EDITION" = onprem ]; then
+  # Ce qui est propre au site : hôte, certificats, registre, modèle d'IA.
+  SITE_VALUES="$(mktemp)"
+  trap 'rm -f "$SITE_VALUES"' EXIT
+  "$ROOT/infra/onprem/site-values.sh" > "$SITE_VALUES"
+  VALUES_ARGS+=(--values "$SITE_VALUES")
+fi
+helm upgrade --install "$RELEASE" "$CHART" \
   --namespace "$NS" \
-  --values "$VALUES" \
+  "${VALUES_ARGS[@]}" \
   --set "global.imageTag=$IMAGE_TAG" \
   --wait --timeout 10m
 
 say "Terminé"
 kubectl -n "$NS" get pods
+if [ "$EDITION" = onprem ]; then
+  cat <<EOF
+
+Installation   : $(qos_license_customer "$LICENSE_FILE" || echo "$HOST")
+Namespace      : $NS
+Version        : $IMAGE_TAG
+Application    : https://$HOST
+Administrateur : admin ($QOS_ADMIN_EMAIL) — mot de passe provisoire :
+    kubectl -n $NS get secret qualitos-realm-accounts -o jsonpath='{.data.ADMIN_PASSWORD}' | base64 -d
+
+Renouveler la licence : remplacer le fichier indiqué dans qualitos.conf, puis
+relancer la même commande. Mettre à jour : infra/onprem/install.sh avec la
+nouvelle version.
+
+EOF
+  exit 0
+fi
+
 cat <<EOF
 
 Environnement  : $ENV

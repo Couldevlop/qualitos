@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -83,7 +84,9 @@ public class RiskRegisterService {
     /** Le registre entier, par référence. Quelques centaines de lignes au plus par client. */
     public List<RiskRegisterDto.RiskView> risks() {
         UUID tenant = context.requireTenantId();
+        Optional<UUID> seulement = context.visibleOnlyTo();
         return risks.findByTenant(tenant).stream()
+                .filter(r -> voit(seulement, r.getCreatedBy()))
                 .sorted(Comparator.comparing(Risk::getReference))
                 .map(RiskRegisterService::vue)
                 .toList();
@@ -181,7 +184,9 @@ public class RiskRegisterService {
     public RiskRegisterDto.RiskDraft draft(RegisterOrigin origin, UUID sourceId) {
         UUID tenant = context.requireTenantId();
         RiskSourceCatalog.SourceDraft src = source(origin, tenant, sourceId);
+        Optional<UUID> seulement = context.visibleOnlyTo();
         List<RiskRegisterDto.RiskLink> existants = risks.findBySource(tenant, origin, sourceId).stream()
+                .filter(r -> voit(seulement, r.getCreatedBy()))
                 .sorted(Comparator.comparing(Risk::getReference))
                 .map(r -> new RiskRegisterDto.RiskLink(r.getId(), r.getReference()))
                 .toList();
@@ -194,7 +199,9 @@ public class RiskRegisterService {
 
     public List<RiskRegisterDto.OpportunityView> opportunities() {
         UUID tenant = context.requireTenantId();
+        Optional<UUID> seulement = context.visibleOnlyTo();
         return opportunities.findByTenant(tenant).stream()
+                .filter(o -> voit(seulement, o.getCreatedBy()))
                 .sorted(Comparator.comparing(Opportunity::getReference))
                 .map(RiskRegisterService::vue)
                 .toList();
@@ -340,13 +347,26 @@ public class RiskRegisterService {
     }
 
     private Risk chargerRisque(UUID id, UUID tenant) {
+        Optional<UUID> seulement = context.visibleOnlyTo();
         return risks.findByIdAndTenant(id, tenant)
+                .filter(r -> voit(seulement, r.getCreatedBy()))
                 .orElseThrow(() -> new RegisterNotFoundException("Risk", id));
     }
 
     private Opportunity chargerOpportunite(UUID id, UUID tenant) {
+        Optional<UUID> seulement = context.visibleOnlyTo();
         return opportunities.findByIdAndTenant(id, tenant)
+                .filter(o -> voit(seulement, o.getCreatedBy()))
                 .orElseThrow(() -> new RegisterNotFoundException("Opportunity", id));
+    }
+
+    /**
+     * Hors de portée, une fiche n'existe pas : ni lecture ni action (ADR 0081).
+     * Concerne celui qui l'a inscrite ; le « propriétaire » d'une fiche est un nom
+     * libre, pas un compte, et ne peut pas servir à cela.
+     */
+    private static boolean voit(Optional<UUID> seulement, UUID inscritPar) {
+        return seulement.map(moi -> moi.equals(inscritPar)).orElse(true);
     }
 
     /** Une action d'une AUTRE opportunité répond 404 : l'adresse est fausse, quel que soit le client. */
