@@ -347,7 +347,7 @@ class UserServiceTest {
         @Test
         @DisplayName("Inviter crée le compte dans le client du jeton, puis le membre ; le mot de passe provisoire est rendu")
         void inviteDansLeClientDuJeton() {
-            given(identity.create(any())).willReturn(new IdentityProvider.CreatedAccount("kc-new", "Tmp4Pass", false));
+            given(identity.create(any())).willReturn(new IdentityProvider.CreatedAccount("kc-new", "xxxx-xxxx-xxxx", false));
             given(userRepository.saveAndFlush(any(AppUser.class))).willAnswer(inv -> {
                 AppUser u = inv.getArgument(0);
                 u.setId(UUID.randomUUID());
@@ -364,7 +364,7 @@ class UserServiceTest {
             assertThat(compte.getValue().roles()).containsExactly("quality_manager");
             assertThat(r.user().keycloakId()).isEqualTo("kc-new");
             assertThat(r.user().tenantId()).isEqualTo(TENANT_ID);
-            assertThat(r.temporaryPassword()).isEqualTo("Tmp4Pass");
+            assertThat(r.temporaryPassword()).isEqualTo("xxxx-xxxx-xxxx");
             assertThat(r.invitationSent()).isFalse();
         }
 

@@ -134,7 +134,7 @@ describe('TenantTeamComponent', () => {
     it('crée son compte avec ses rôles, l’ajoute à la liste et montre ses identifiants une fois', () => {
       const bob = { id: 'u9', tenantId: 't', keycloakId: 'kc-bob', email: 'bob@acme.fr', roles: ['user', 'auditor'],
         active: true, createdAt: '', updatedAt: '' };
-      service.invite.and.returnValue(of({ user: bob, temporaryPassword: 'Tmp4Pass', invitationSent: false }));
+      service.invite.and.returnValue(of({ user: bob, temporaryPassword: 'xxxx-xxxx-xxxx', invitationSent: false }));
 
       component.openInvite();
       fixture.detectChanges();
@@ -149,7 +149,7 @@ describe('TenantTeamComponent', () => {
       expect(component.members[0].email).toBe('bob@acme.fr');
       expect(component.inviting).toBeFalse();
       const el = fixture.nativeElement as HTMLElement;
-      expect(el.querySelector('[data-test="remise-mdp"]')!.textContent).toContain('Tmp4Pass');
+      expect(el.querySelector('[data-test="remise-mdp"]')!.textContent).toContain('xxxx-xxxx-xxxx');
     });
 
     it('sans adresse valide ou sans rôle, rien ne part ; un refus est annoncé', () => {
