@@ -91,13 +91,16 @@ check "registre du site"                   contains "$SITE" 'imageRegistry: "reg
 check "émetteur des jetons sur l'hôte"     contains "$SITE" 'https://q.acme.local/auth/realms/qualitos'
 check "Ollama du cluster par défaut"       contains "$SITE" 'OLLAMA_BASE_URL: "http://ollama:11434"'
 check "seul l'hôte du modèle est autorisé" contains "$SITE" 'QOS_AI_ALLOWED_HOSTS: "ollama"'
-check "aucune annotation snippet sans WAF" lacks "$SITE" "snippet"
+check "aucune annotation snippet sans WAF" lacks "$SITE" "snippet:"
+check "snippets désactivés par défaut"     contains "$SITE" "snippets: false"
+check "snippets activés sur demande"       contains "$(QOS_HOST=h QOS_REGISTRY=r QOS_INGRESS_SNIPPETS=true bash "$ONPREM/site-values.sh")" "snippets: true"
 check "pas d'émetteur en mode secret"      lacks "$SITE" "cluster-issuer"
 SITE2="$(QOS_HOST=q.acme.local QOS_REGISTRY=r QOS_TLS_MODE=issuer QOS_CLUSTER_ISSUER=pki QOS_PULL_SECRET=acces \
   QOS_WAF=true QOS_OLLAMA_URL=https://ia.acme.local:11434 bash "$ONPREM/site-values.sh")"
 check "émetteur de certificats du site"    contains "$SITE2" 'cert-manager.io/cluster-issuer: "pki"'
 check "secret d'accès au registre"         contains "$SITE2" 'name: "acces"'
 check "WAF et ses exclusions"              contains "$SITE2" "SecRuleRemoveById 911100"
+check "le WAF suppose les snippets permis"  contains "$SITE2" "snippets: true"
 check "Ollama du site"                     contains "$SITE2" 'QOS_AI_ALLOWED_HOSTS: "ia.acme.local"'
 check "émetteur requis en mode issuer"     bash -c "! QOS_HOST=h QOS_REGISTRY=r QOS_TLS_MODE=issuer bash '$ONPREM/site-values.sh' >/dev/null 2>&1"
 check "mode TLS inconnu refusé"            bash -c "! QOS_HOST=h QOS_REGISTRY=r QOS_TLS_MODE=auto bash '$ONPREM/site-values.sh' >/dev/null 2>&1"

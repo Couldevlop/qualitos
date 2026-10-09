@@ -72,6 +72,13 @@ QOS_STORAGE_CLASS=local-path
 # enable-modsecurity) ? Sinon, les annotations WAF sont simplement omises.
 QOS_WAF=false
 
+# Le contrôleur d'ingress autorise-t-il les annotations « snippet »
+# (allow-snippet-annotations) ? Elles ajoutent des en-têtes durcis aux pièces
+# jointes servies par le stockage objet. Les versions récentes d'ingress-nginx les
+# refusent par défaut : laisser false dans ce cas, l'ingress serait sinon rejeté.
+# Activé d'office avec le WAF.
+QOS_INGRESS_SNIPPETS=false
+
 # --- IA -----------------------------------------------------------------------
 
 # Où tourne le modèle de langage local (Ollama). Les données ne quittent pas le

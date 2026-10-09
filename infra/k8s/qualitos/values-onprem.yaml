@@ -21,6 +21,11 @@ externalServices:
 objectStorage:
   enabled: true
 
+# Le contrôleur d'un client refuse le plus souvent les annotations « snippet » :
+# désactivées par défaut, réactivées par le site s'il les autorise.
+ingress:
+  snippets: false
+
 services:
   web:
     replicas: 1

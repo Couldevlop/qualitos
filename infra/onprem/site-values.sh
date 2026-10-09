@@ -20,6 +20,9 @@ set -euo pipefail
 : "${QOS_CLUSTER_ISSUER:=}"
 : "${QOS_PULL_SECRET:=}"
 : "${QOS_WAF:=false}"
+: "${QOS_INGRESS_SNIPPETS:=false}"
+# Le WAF passe lui-même par des annotations snippet : il les suppose autorisées.
+[ "$QOS_WAF" = true ] && QOS_INGRESS_SNIPPETS=true
 : "${QOS_OLLAMA_URL:=}"
 : "${QOS_OLLAMA_MODEL:=hf.co/OpenLLM-France/Lucie-7B-Instruct-v1.1-gguf:Q4_K_M}"
 
@@ -54,6 +57,7 @@ cat <<YAML
 ingress:
   enabled: true
   className: "$QOS_INGRESS_CLASS"
+  snippets: $QOS_INGRESS_SNIPPETS
   host: "$QOS_HOST"
   tls:
     enabled: true

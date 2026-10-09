@@ -117,6 +117,11 @@ jobs:
           helm template q infra/k8s/qualitos -f infra/k8s/qualitos/values-prod.yaml --set global.imageTag=0 > /dev/null
           QOS_HOST=qualitos.example.local QOS_REGISTRY=registry.example.local/qualitos QOS_TLS_MODE=secret bash infra/onprem/site-values.sh > /tmp/site.yaml
           helm template q infra/k8s/qualitos -f infra/k8s/qualitos/values-onprem.yaml -f /tmp/site.yaml --set global.imageTag=0 > /tmp/onprem.yaml
+          # Par défaut, aucune annotation « snippet » : un ingress-nginx récent la refuserait.
+          if grep -n "snippet" /tmp/onprem.yaml; then
+            echo "::error::le rendu on-premise porte une annotation snippet par défaut"
+            exit 1
+          fi
           # Une installation chez un client ne doit rien porter de la plateforme de l'éditeur.
           if grep -nE "openlabconsulting|svc\.cluster\.local|ghcr\.io" /tmp/onprem.yaml; then
             echo "::error::le rendu on-premise porte encore une adresse de la plateforme SaaS"

@@ -109,9 +109,13 @@ restauration de ce vidage (voir `sauvegarde-et-restauration.md`).
 - Pas de console éditeur (clients, abonnements, factures) : elle n'existe pas.
 - Les modules ouverts sont ceux de la licence.
 - Une réplique par service, et le modèle d'IA dans le cluster si le site n'en a pas.
-- Aucune annotation « snippet » d'ingress : le conteneur web pose lui-même ses
-  en-têtes de sécurité (CSP, etc.). Le WAF (`QOS_WAF=true`) suppose un
-  ingress-nginx qui autorise ces annotations.
+- Aucune annotation « snippet » d'ingress par défaut : le conteneur web pose
+  lui-même ses en-têtes de sécurité (CSP, etc.). Si le contrôleur les autorise
+  (`allow-snippet-annotations`), activer `QOS_INGRESS_SNIPPETS=true` : les pièces
+  jointes reçoivent alors des en-têtes durcis (bac à sable CSP, lecture seule).
+  Sans eux, la défense repose sur la liste fermée des types de pièces acceptés
+  (PDF et images), vérifiés à leur signature binaire. Le WAF (`QOS_WAF=true`)
+  suppose ces annotations autorisées.
 
 ## Diagnostiquer
 
