@@ -100,3 +100,16 @@ QOS_LDAP_BIND_DN=
 # Lu à l'installation seulement ; peut aussi être passé par la variable
 # d'environnement QOS_LDAP_BIND_PASSWORD pour ne pas l'écrire sur disque.
 QOS_LDAP_BIND_PASSWORD=
+
+# ---------------------------------------------------------------------------
+# Mode léger (un serveur, docker compose — infra/onprem/compose/qualitos-compose.sh).
+# Ignoré par l'installation Kubernetes.
+#
+# Le certificat et sa clé, en fichiers PEM (chaîne complète dans le certificat).
+QOS_TLS_CERT=./tls/qualitos.crt
+QOS_TLS_KEY=./tls/qualitos.key
+# Où vit l'installation : compose, .env des secrets, realm, licence.
+QOS_COMPOSE_DIR=/opt/qualitos
+# Vidages quotidiens des bases. À placer de préférence sur un montage distant
+# (NFS, partage du site) : un vidage sur le disque du serveur ne survit pas à sa perte.
+QOS_BACKUP_DIR=/opt/qualitos/sauvegardes
