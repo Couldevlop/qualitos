@@ -13,6 +13,15 @@ realm = json.load(io.open(src, encoding="utf-8"))
 
 origin = "https://%s" % host
 
+# Keycloak borne nom et description d'un client à 255 caractères : au-delà,
+# l'import échoue et Keycloak ne démarre pas sur une installation neuve. On le
+# dit ici, avant le déploiement, plutôt qu'au démarrage chez le client.
+for client in realm.get("clients") or []:
+    for field in ("name", "description"):
+        if len(client.get(field) or "") > 255:
+            sys.exit("realm : %s du client %s dépasse 255 caractères (%d)"
+                     % (field, client.get("clientId"), len(client[field])))
+
 for client in realm.get("clients") or []:
     if client.get("clientId") == "qualitos-web":
         # On REMPLACE au lieu d'ajouter : laisser localhost dans la liste d'un

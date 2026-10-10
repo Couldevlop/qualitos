@@ -1,0 +1,90 @@
+# Copie HORS DU SERVEUR des vidages et des pièces jointes (ADR 0085).
+#
+# Les vidages du CronJob postgres-backup restent sur le disque du nœud : ils ne
+# survivent ni à sa perte, ni à un chiffrement par rançongiciel du serveur. Ce
+# travail les recopie, avec le bucket des pièces jointes (photos de NC, preuves
+# CAPA — absentes des vidages), vers un stockage S3 du site ou de l'éditeur.
+#
+# Appliqué par deploy.sh seulement quand une destination est configurée
+# (QOS_BACKUP_S3_URL) ; le mode léger en extrait le script (une seule source).
+#
+# Copie SANS suppression (`mc mirror` sans --remove) : effacer les vidages locaux
+# — rétention, erreur, attaque — ne doit jamais effacer la copie distante. La
+# rétention distante relève d'une règle de cycle de vie du bucket de destination,
+# et le guide conseille d'y activer le verrouillage d'objets (WORM).
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-offsite
+  labels:
+    app.kubernetes.io/name: backup-offsite
+    app.kubernetes.io/part-of: qualitos
+spec:
+  # Après le vidage de 2 h, avec de la marge.
+  schedule: "30 3 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  startingDeadlineSeconds: 3600
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: backup-offsite
+            app.kubernetes.io/part-of: qualitos
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: mirror
+              image: minio/mc:RELEASE.2025-08-13T08-35-41Z
+              envFrom:
+                - secretRef:
+                    name: qualitos-minio
+                - secretRef:
+                    name: qualitos-backup-offsite
+              env:
+                # /root n'est pas inscriptible sans capacités : voir 50-minio.yaml.
+                - name: MC_CONFIG_DIR
+                  value: /tmp/.mc
+                - name: MINIO_URL
+                  value: http://minio:9000
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  set -eu
+                  # QOS_BACKUP_S3_URL = https://hôte[:port]/bucket[/préfixe]
+                  schema="${QOS_BACKUP_S3_URL%%://*}"
+                  reste="${QOS_BACKUP_S3_URL#*://}"
+                  hote="${reste%%/*}"
+                  chemin="${reste#*/}"
+                  [ "$schema" = https ] || { echo "ECHEC : destination non chiffrée ($schema) refusée"; exit 1; }
+                  [ "$chemin" != "$reste" ] && [ -n "$chemin" ] || { echo "ECHEC : bucket absent de QOS_BACKUP_S3_URL"; exit 1; }
+                  mc alias set dest "https://$hote" "$QOS_BACKUP_S3_ACCESS_KEY" "$QOS_BACKUP_S3_SECRET_KEY" >/dev/null
+                  mc alias set qos "$MINIO_URL" "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD" >/dev/null
+
+                  mc mirror --overwrite /backups "dest/$chemin/bases"
+                  mc mirror --overwrite qos/qualitos-evidence "dest/$chemin/pieces-jointes"
+
+                  # Une copie que l'on ne relit pas n'est qu'un espoir : le
+                  # vidage du jour doit être là-bas, entier.
+                  JOUR="$(date -u +%Y-%m-%d)"
+                  for f in qualitos_core qualitos_quality qualitos_iot keycloak; do
+                    [ -f "/backups/$JOUR/$f.dump" ] || continue
+                    local_taille=$(wc -c < "/backups/$JOUR/$f.dump")
+                    distante=$(mc stat --json "dest/$chemin/bases/$JOUR/$f.dump" | sed -n 's/.*"size":\([0-9]*\).*/\1/p')
+                    [ "$distante" = "$local_taille" ] || { echo "ECHEC : $f.dump incomplet à destination"; exit 1; }
+                  done
+                  echo "copie hors serveur $JOUR terminee"
+              volumeMounts:
+                - name: backups
+                  mountPath: /backups
+                  readOnly: true
+              resources:
+                requests: { cpu: 50m, memory: 64Mi }
+                limits: { cpu: "1", memory: 256Mi }
+          volumes:
+            - name: backups
+              persistentVolumeClaim:
+                claimName: postgres-backups
