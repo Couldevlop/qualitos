@@ -13,6 +13,10 @@
 #
 # Rejouable : relancer avec une nouvelle version met à jour, avec un vidage de
 # sûreté de la base juste avant (voir deploy.sh). ADR 0082, 0083.
+#
+# Site sans Internet : QOS_BUNDLE=<dossier du paquet hors ligne> (ADR 0085). Le
+# paquet est vérifié, ses images poussées vers QOS_REGISTRY et QOS_MIRROR_REGISTRY
+# depuis ce poste (docker connecté au registre du site), ses modèles d'IA posés.
 
 set -euo pipefail
 
@@ -47,6 +51,13 @@ qos_load_conf "$CONF"
 : "${QOS_STORAGE_CLASS:=local-path}"
 : "${QOS_TLS_MODE:=secret}"
 : "${QOS_TLS_SECRET:=qualitos-tls}"
+
+BUNDLE=""
+case "${QOS_BUNDLE:-}" in
+  '') ;;
+  /*) BUNDLE="$QOS_BUNDLE" ;;
+  *)  BUNDLE="$(cd "$(dirname "$CONF")" && pwd)/$QOS_BUNDLE" ;;
+esac
 
 case "${QOS_LICENSE_FILE:-}" in
   '') LICENSE_FILE="" ;;
@@ -185,6 +196,19 @@ if [ -n "${QOS_LDAP_URL:-}" ]; then
   esac
 fi
 
+if [ -n "$BUNDLE" ]; then
+  if qos_bundle_verify "$BUNDLE" "$HERE/bundle/editeur-paquet.pub"; then
+    ok "paquet hors ligne $(cat "$BUNDLE/VERSION") : signature et empreintes vérifiées"
+  else
+    ko "paquet hors ligne refusé : $BUNDLE"
+  fi
+  if [ -n "$VERSION" ] && [ "$(cat "$BUNDLE/VERSION" 2>/dev/null)" != "${VERSION#v}" ]; then
+    ko "le paquet porte la version $(cat "$BUNDLE/VERSION" 2>/dev/null), pas ${VERSION#v}"
+  fi
+  [ -n "${QOS_MIRROR_REGISTRY:-}" ] || ko "QOS_MIRROR_REGISTRY requis avec un paquet hors ligne (images tierces)"
+  command -v docker >/dev/null 2>&1 && ok "outil docker (envoi des images)" || ko "outil docker introuvable : requis pour pousser les images du paquet"
+fi
+
 echo
 if [ "$ERRORS" -gt 0 ]; then
   echo "$ERRORS prérequis manquant(s) : rien n'a été modifié. Corrigez puis relancez." >&2
@@ -196,4 +220,22 @@ if [ "$MODE" = verifier ]; then
   exit 0
 fi
 
-exec "$ROOT/infra/k8s/deploy.sh" onprem "$VERSION" "$CONF"
+if [ -n "$BUNDLE" ]; then
+  echo
+  echo "Envoi des images du paquet vers le registre du site"
+  qos_bundle_load "$BUNDLE" push
+fi
+
+"$ROOT/infra/k8s/deploy.sh" onprem "$VERSION" "$CONF"
+
+# Les modèles d'IA du paquet, dans l'Ollama du cluster : le téléchargement en
+# ligne (job ollama-models) ne peut pas aboutir sur un site isolé.
+if [ -n "$BUNDLE" ] && [ -z "${QOS_OLLAMA_URL:-}" ]; then
+  kubectl -n "$QOS_NAMESPACE" delete job ollama-models --ignore-not-found >/dev/null
+  if [ -f "$BUNDLE/models/ollama-models.tar.gz" ]; then
+    kubectl -n "$QOS_NAMESPACE" exec -i deploy/ollama -- tar --no-same-owner -C /models -xzf - \
+      < "$BUNDLE/models/ollama-models.tar.gz" && echo "  modèles d'IA posés depuis le paquet"
+  else
+    echo "  ATTENTION : paquet sans modèles d'IA (--modeles) : fonctions d'IA indisponibles" >&2
+  fi
+fi

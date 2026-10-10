@@ -86,6 +86,7 @@ esac
 : "${QOS_STORAGE_CLASS:=local-path}"
 : "${QOS_MIRROR_REGISTRY:=}"
 : "${QOS_OLLAMA_URL:=}"
+: "${QOS_BACKUP_S3_URL:=}"
 : "${QOS_OLLAMA_MODEL:=hf.co/OpenLLM-France/Lucie-7B-Instruct-v1.1-gguf:Q4_K_M}"
 
 # Le pipeline de release publie ses images SANS le « v » du tag git
@@ -192,6 +193,19 @@ fi
 for dep in 10-postgres.yaml 30-qdrant.yaml 60-backup.yaml 20-keycloak.yaml; do
   render_dep "$DEPS/$dep" | kubectl -n "$NS" apply -f -
 done
+# Copie hors serveur des vidages et des pièces jointes, si une destination est
+# donnée (ADR 0085). Les accès suivent qualitos.conf : réécrits à chaque passage.
+if [ -n "$QOS_BACKUP_S3_URL" ]; then
+  : "${QOS_BACKUP_S3_ACCESS_KEY:?QOS_BACKUP_S3_ACCESS_KEY requis avec QOS_BACKUP_S3_URL}"
+  : "${QOS_BACKUP_S3_SECRET_KEY:?QOS_BACKUP_S3_SECRET_KEY requis avec QOS_BACKUP_S3_URL}"
+  kubectl -n "$NS" create secret generic qualitos-backup-offsite --dry-run=client -o yaml \
+    --from-literal=QOS_BACKUP_S3_URL="$QOS_BACKUP_S3_URL" \
+    --from-literal=QOS_BACKUP_S3_ACCESS_KEY="$QOS_BACKUP_S3_ACCESS_KEY" \
+    --from-literal=QOS_BACKUP_S3_SECRET_KEY="$QOS_BACKUP_S3_SECRET_KEY" | kubectl -n "$NS" apply -f - >/dev/null
+  render_dep "$DEPS/61-backup-offsite.yaml" | kubectl -n "$NS" apply -f -
+else
+  kubectl -n "$NS" delete cronjob backup-offsite --ignore-not-found >/dev/null
+fi
 # Le modèle de langage : celui de l'hôte pour la plateforme SaaS ; chez un client,
 # le sien s'il en a un (QOS_OLLAMA_URL), sinon un Ollama dans le cluster.
 OLLAMA_IN_CLUSTER=0

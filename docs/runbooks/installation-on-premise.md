@@ -140,6 +140,33 @@ Les vidages quotidiens (14 jours gardés) vont dans `QOS_BACKUP_DIR`. Tant que c
 dossier est sur le disque du serveur, ils ne protègent pas de sa perte : le placer
 sur un montage distant, ou le recopier ailleurs chaque jour.
 
+## Site sans Internet : le paquet hors ligne
+
+L'éditeur remet un dossier par version (ADR 0085) : images, scripts
+d'installation, modèles d'IA s'ils sont demandés. Le copier sur le serveur (ou le
+poste d'installation), puis renseigner `QOS_BUNDLE=<dossier>` dans `qualitos.conf`
+et lancer l'installation habituelle — mode léger ou Kubernetes, même commande
+pour installer et pour mettre à jour.
+
+- Le paquet est **vérifié avant tout chargement** : signature de l'éditeur sur
+  `SHA256SUMS`, puis l'empreinte de chaque fichier. Un paquet modifié en route est
+  refusé, et rien n'est posé. OpenSSL 3.0 ou plus récent est requis.
+- En Kubernetes, les images sont poussées depuis le poste d'installation vers
+  `QOS_REGISTRY` et `QOS_MIRROR_REGISTRY` : `docker login` sur le registre du site
+  au préalable.
+- Vérification à la main, si besoin :
+  `openssl base64 -d -A -in SHA256SUMS.sig -out sig.bin && openssl pkeyutl -verify -pubin -inkey infra/onprem/bundle/editeur-paquet.pub -rawin -in SHA256SUMS -sigfile sig.bin && sha256sum -c SHA256SUMS`
+
+Côté éditeur : `QOS_BUNDLE_KEY=<clé privée> ./infra/onprem/bundle/build-bundle.sh 1.4.0 /chemin/qualitos-1.4.0 --modeles`.
+
+## Copie hors serveur
+
+Renseigner `QOS_BACKUP_S3_URL` (`https://hôte/bucket/préfixe`), `QOS_BACKUP_S3_ACCESS_KEY`
+et `QOS_BACKUP_S3_SECRET_KEY`, puis relancer l'installation. Chaque jour, les
+vidages **et les pièces jointes** sont recopiés vers ce stockage, en HTTPS
+seulement, sans jamais rien y effacer. Sur le bucket de destination : activer le
+verrouillage d'objets (WORM) et une règle de rétention.
+
 ## Ce qui diffère de la plateforme SaaS
 
 - Un seul client, créé au premier démarrage avec l'identifiant que fixe la licence.
