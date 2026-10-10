@@ -315,6 +315,12 @@ public class CapaService {
         if (c.getStatus() == CapaStatus.CLOSED || c.getStatus() == CapaStatus.REJECTED) {
             throw new CapaStateException("Cannot add actions to a " + c.getStatus() + " CAPA");
         }
+        // Un dossier ouvert depuis le registre des risques EST son action (ADR 0077) :
+        // une seule, décidée à l'ouverture. Un ancien dossier sans action peut
+        // recevoir la sienne — sans quoi il ne serait jamais clôturable —, pas une deuxième.
+        if (c.getSourceType() == CapaSourceType.RISK && !c.getActions().isEmpty()) {
+            throw new CapaStateException("A CAPA opened from a risk carries a single action");
+        }
         CapaAction a = new CapaAction();
         a.setCapa(c);
         a.setTitle(requireUsableTitle(request.title()));

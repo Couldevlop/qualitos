@@ -328,6 +328,19 @@
 }
 
 // Dossier issu d'un risque : son action, seule, sans le tableau d'édition.
+.action-unique__vide {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  p {
+    margin: 0;
+    color: var(--qos-text-muted);
+  }
+}
+
 .action-unique {
   &__ligne {
     display: flex;
