@@ -138,7 +138,7 @@ services:
       STORAGE_S3_BUCKET: qualitos-evidence
     # Second Secret : porte AI_CLIENT_SECRET, renseigne par deploy.sh depuis Keycloak.
     # Troisieme : les cles du stockage objet, derivees du secret MinIO par deploy.sh.
-    extraSecretRefs: [qualitos-api-quality-engine-ai, qualitos-api-quality-engine-storage]
+    extraSecretRefs: [qualitos-api-quality-engine-ai, qualitos-api-quality-engine-storage, qualitos-api-quality-engine-db]
   api-iot-hub:
     replicas: 1
   ai-service:

@@ -60,7 +60,7 @@ services:
       STORAGE_S3_ENABLED: "true"
       STORAGE_S3_ENDPOINT: http://minio:9000
       STORAGE_S3_BUCKET: qualitos-evidence
-    extraSecretRefs: [qualitos-api-quality-engine-ai, qualitos-api-quality-engine-storage]
+    extraSecretRefs: [qualitos-api-quality-engine-ai, qualitos-api-quality-engine-storage, qualitos-api-quality-engine-db]
     extraSecretMounts:
       - secret: qualitos-license
         mountPath: /etc/qualitos/license

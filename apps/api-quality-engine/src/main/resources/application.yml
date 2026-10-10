@@ -4,8 +4,11 @@ spring:
 
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/qualitos_quality}
-    username: ${DB_USER:qualitos}
-    password: ${DB_PASSWORD:qualitos}
+    # Isolation par la base (ADR 0086) : l'application travaille sous un rôle
+    # restreint (DB_APP_USER) quand il est fourni ; les migrations gardent le
+    # rôle propriétaire (DB_USER). Sans DB_APP_USER, comportement inchangé.
+    username: ${DB_APP_USER:${DB_USER:qualitos}}
+    password: ${DB_APP_PASSWORD:${DB_PASSWORD}}
     hikari:
       maximum-pool-size: 20
       minimum-idle: 5
@@ -57,6 +60,8 @@ spring:
 
   flyway:
     enabled: true
+    user: ${DB_USER:qualitos}
+    password: ${DB_PASSWORD}
     locations: classpath:db/migration
     baseline-on-migrate: false
     validate-on-migrate: true
@@ -173,6 +178,11 @@ springdoc:
 
 # Passerelle IA (ai-service) — ADR 0014. Entièrement paramétrable par variables d'env.
 qualitos:
+  # Isolation des clients par la base (Row-Level Security, ADR 0086).
+  rls:
+    enabled: ${QUALITOS_RLS_ENABLED:false}
+    app-user: ${DB_APP_USER:}
+    app-password: ${DB_APP_PASSWORD:}
   # Édition de l'installation : saas (défaut) ou onprem (ADR 0082).
   edition: ${QUALITOS_EDITION:saas}
   license:
@@ -341,3 +351,4 @@ qualitos:
       # interrogerait le stockage pour ne rien trouver.
       initial-delay-ms: ${STORAGE_ORPHAN_SWEEP_INITIAL_DELAY_MS:300000}
       fixed-delay-ms: ${STORAGE_ORPHAN_SWEEP_FIXED_DELAY_MS:86400000}
+

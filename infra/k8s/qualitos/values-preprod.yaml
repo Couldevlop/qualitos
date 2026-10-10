@@ -145,6 +145,9 @@ services:
       AI_TOKEN_URI: https://preprod.qualitos.openlabconsulting.com/auth/realms/qualitos/protocol/openid-connect/token
       AI_CLIENT_ID: api-quality-engine-ai
       QUALITOS_KAFKA_ENABLED: "false"
+      # Isolation des clients par la base (ADR 0086). Retour arrière : "false",
+      # pris en compte au redémarrage suivant, sans migration.
+      QUALITOS_RLS_ENABLED: "true"
       # Stockage objet des pièces jointes (photos de NC §4.3, preuves CAPA §4.2).
       # Tant qu'il est coupé, les deux répondent 503 : l'écran annonce alors que
       # le stockage est désactivé sur cet environnement — franc, mais muet.
@@ -165,7 +168,7 @@ services:
     # Troisième Secret : les clés du stockage objet, dérivées du secret MinIO par
     # deploy.sh. Séparé pour la même raison — faire tourner une clé de stockage
     # ne doit pas obliger à toucher aux mots de passe de base.
-    extraSecretRefs: [qualitos-api-quality-engine-ai, qualitos-api-quality-engine-storage]
+    extraSecretRefs: [qualitos-api-quality-engine-ai, qualitos-api-quality-engine-storage, qualitos-api-quality-engine-db]
   api-iot-hub:
     replicas: 1
     env:
