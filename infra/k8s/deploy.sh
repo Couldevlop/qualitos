@@ -146,6 +146,12 @@ ensure_secret qualitos-postgres \
   --from-literal=POSTGRES_USER=qualitos \
   --from-literal=POSTGRES_PASSWORD="$(gen)" \
   --from-literal=NLQ_RO_PASSWORD="$(gen)"
+# Rôle RESTREINT sous lequel l'engine travaille (ADR 0086) : ni superutilisateur
+# ni propriétaire des tables, donc soumis à l'isolation par la base. L'engine le
+# crée lui-même au démarrage (sous le rôle propriétaire), avec ce mot de passe.
+ensure_secret qualitos-api-quality-engine-db \
+  --from-literal=DB_APP_USER=qualitos_app \
+  --from-literal=DB_APP_PASSWORD="$(gen)$(gen)"
 ensure_secret qualitos-keycloak \
   --from-literal=KEYCLOAK_ADMIN=admin \
   --from-literal=KEYCLOAK_ADMIN_PASSWORD="$(gen)"
